@@ -1,11 +1,19 @@
 <template>
-  <v-container class="flex-column margin-top-handle pt-0">
+  <div
+    class="w-100 d-flex align-center justify-start flex-column margin-top-handle"
+  >
     <school-add-stepper
       :steps="steps"
       :step-index="currentStep"
       @change-step="changeStep"
     />
-  </v-container>
+    <v-container class="w-100 mt-2 d-flex justify-center">
+      <school-add-step-location
+        v-if="currentStep == STEP_INDEX.Location"
+        @next-step="changeLocationStep"
+      />
+    </v-container>
+  </div>
 </template>
 
 <script setup>
@@ -50,12 +58,17 @@ const changeStep = (step) => {
   currentStep.value = step.value;
 };
 // end section step
+
+const changeLocationStep = () => {
+  currentStep.value = STEP_INDEX.Category;
+};
 </script>
 
 <style scoped>
 .margin-top-handle {
   margin-top: 64px;
   min-height: calc(100vh - 64px);
+  background-color: #f8f7f7;
 }
 
 @media (min-width: 960px) {

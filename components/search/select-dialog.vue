@@ -13,10 +13,7 @@
         <v-col cols="6">
           <span class="text-h3">{{ titleModal }}</span>
         </v-col>
-        <v-col
-          cols="6"
-          class="d-flex align-center justify-end ga-2"
-        >
+        <v-col cols="6" class="d-flex align-center justify-end ga-2">
           <span class="text-h5 text-grey">result</span>
           <span class="text-h4 text-green font-weight-bold">{{
             filteredItems.length
@@ -56,7 +53,7 @@
           </template>
         </v-text-field>
       </v-row>
-      <v-list max-height="320">
+      <v-list v-if="!isLoading" max-height="320">
         <v-list-item
           v-for="(item, i) in filteredItems"
           :key="item.title"
@@ -72,8 +69,12 @@
         </v-list-item>
       </v-list>
 
+      <div v-if="isLoading" class="text-center pt-8">
+        <v-progress-circular indeterminate :width="3" color="primary" />
+      </div>
+
       <v-alert
-        v-if="searchText && filteredItems.length === 0"
+        v-if="searchText && filteredItems.length === 0 && !isLoading"
         type="info"
         color="#FFB600"
         density="compact"
@@ -84,7 +85,9 @@
         search term.
       </v-alert>
       <v-alert
-        v-if="searchText.length == 0 && filteredItems.length === 0"
+        v-if="
+          searchText.length == 0 && filteredItems.length === 0 && !isLoading
+        "
         type="info"
         color="#FFB600"
         density="compact"
@@ -98,9 +101,9 @@
 </template>
 
 <script setup>
-import { useDisplay } from 'vuetify'
+import { useDisplay } from "vuetify";
 
-const { mdAndUp } = useDisplay()
+const { mdAndUp } = useDisplay();
 
 const props = defineProps({
   titleModal: {
@@ -118,49 +121,53 @@ const props = defineProps({
   selectedItem: {
     type: Object,
   },
-})
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+});
 
-const emit = defineEmits(['update:showDialog', 'changeSelectedItem'])
+const emit = defineEmits(["update:showDialog", "changeSelectedItem"]);
 
 // Start Section Search Item In List
-const searchText = ref('')
+const searchText = ref("");
 const filteredItems = computed(() => {
-  if (!searchText.value) return props.items
-  return props.items.filter(item =>
-    item.title.toLowerCase().includes(searchText.value.toLowerCase()),
-  )
-})
+  if (!searchText.value) return props.items;
+  return props.items.filter((item) =>
+    item.title.toLowerCase().includes(searchText.value.toLowerCase())
+  );
+});
 const highlightSearchText = (text) => {
-  if (!searchText.value) return text
-  const regex = new RegExp(`(${searchText.value})`, 'gi')
-  return text.replace(regex, '<mark>$1</mark>')
-}
+  if (!searchText.value) return text;
+  const regex = new RegExp(`(${searchText.value})`, "gi");
+  return text.replace(regex, "<mark>$1</mark>");
+};
 // End Section Search Item In List
 
 // Start Section Handle Status Modal
 const dialogModel = computed({
   get: () => props.showDialog,
-  set: value => emit('update:showDialog', value),
-})
+  set: (value) => emit("update:showDialog", value),
+});
 
 const closeModal = () => {
-  emit('update:showDialog', false)
-}
+  emit("update:showDialog", false);
+};
 // End Section Handle Status Modal
 
 const changeSelectedItem = (item) => {
-  emit('changeSelectedItem', item)
-}
+  emit("changeSelectedItem", item);
+};
 
 const clickOnOverlay = () => {
   if (!mdAndUp.value) {
-    emit('update:showDialog', false)
+    emit("update:showDialog", false);
   }
-}
+};
 
 const clickOnModal = (event) => {
-  event.stopPropagation()
-}
+  event.stopPropagation();
+};
 </script>
 
 <style scoped>

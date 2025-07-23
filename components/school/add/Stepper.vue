@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 pt-1 pb-2 bg-white position-absolute left-0 shadow">
+  <div class="w-100 pt-1 pb-2 bg-white position-relative shadow">
     <v-container class="d-flex justify-space-between align-center">
       <div
         v-for="(step, index) in steps"
