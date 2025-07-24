@@ -466,7 +466,7 @@ const fetchBlogData = async () => {
   try {
     loading.value = true
     const response = await useApiService.get(
-      `/api/v2/blogs/posts/${route.params.id}`,
+      `/api/v2/blogs/contributions/${route.params.id}`,
     )
     if (response && response.succeeded) {
       const blogData = response.data
@@ -498,18 +498,15 @@ const fetchBlogData = async () => {
           isFormValid.value = valid
         }
       })
-    }
-    else {
-      $toast.error('Failed to fetch blog data')
+    } else {
+      $toast.error(response?.errors?.[0]?.message || 'Failed to fetch blog data')
       router.push('/user/blogs')
     }
-  }
-  catch (error) {
+  } catch (error) {
     console.error('Error fetching blog:', error)
-    $toast.error('Failed to fetch blog data')
+    $toast.error('Network error while fetching blog data. Please try again.')
     router.push('/user/blogs')
-  }
-  finally {
+  } finally {
     loading.value = false
   }
 }
@@ -638,17 +635,15 @@ const createCategory = async () => {
       $toast.success('Category created successfully!')
       categorySearch.value = ''
       await fetchCategories()
-    }
-    else {
+    } else {
       $toast.error(
         response?.errors?.[0]?.message || 'Failed to create category.',
       )
     }
-  }
-  catch (e) {
-    $toast.error('Failed to create category.')
-  }
-  finally {
+  } catch (error) {
+    console.error('Error creating category:', error)
+    $toast.error('Network error while creating category. Please try again.')
+  } finally {
     categoryLoader.value = false
   }
 }
@@ -659,12 +654,13 @@ const fetchCategories = async () => {
     const response = await useApiService.get('/api/v2/tags/Post')
     if (response && response.succeeded) {
       categoryList.value = response.data
+    } else {
+      $toast.error(response?.errors?.[0]?.message || 'Failed to load categories')
     }
-  }
-  catch (e) {
-    $toast.error('Failed to load categories')
-  }
-  finally {
+  } catch (error) {
+    console.error('Error fetching categories:', error)
+    $toast.error('Network error while loading categories. Please try again.')
+  } finally {
     categoriesLoading.value = false
   }
 }
@@ -697,13 +693,14 @@ const createSlug = async () => {
     if (response && response.succeeded && response.data) {
       slug.value = response.data
       return response.data
-    }
-    else {
+    } else {
+      // Fallback to local slug generation
       slug.value = $slugGenerator.convert(blog.value.title || '')
       return slug.value
     }
-  }
-  catch (e) {
+  } catch (error) {
+    console.error('Error generating slug:', error)
+    // Fallback to local slug generation
     slug.value = $slugGenerator.convert(blog.value.title || '')
     return slug.value
   }
