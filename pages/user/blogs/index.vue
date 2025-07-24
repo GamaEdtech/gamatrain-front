@@ -190,7 +190,6 @@ useHead({
 })
 
 // State
-const singleSelect = ref(false)
 const selected = ref([])
 const activeTab = ref('Published')
 const page = ref(1)
@@ -219,10 +218,10 @@ const fetchBlogs = async () => {
   loading.value = true
   const skip = (page.value - 1) * pageSize.value
   try {
-    const response = await useApiService.get('/api/v2/blogs/posts', {
-      'PagingDto.PageFilter.Size': pageSize.value,
-      'PagingDto.PageFilter.Skip': skip,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+    const response = await useApiService.get('/api/v2/blogs/contributions', {
+    'PagingDto.PageFilter.Size': pageSize.value,
+    'PagingDto.PageFilter.Skip': skip,
+    'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
     })
 
     if (response && response.succeeded) {
@@ -252,7 +251,7 @@ const handleDelete = async () => {
   if (itemToDelete.value) {
     try {
       await useApiService.remove(
-        `/api/v2/blogs/posts/${itemToDelete.value.id}`,
+        `/api/v2/blogs/contributions/${itemToDelete.value.id}`,
         {
           postId: itemToDelete.value.id,
         },
@@ -263,9 +262,10 @@ const handleDelete = async () => {
       tableItems.value = tableItems.value.filter(
         item => item.id !== itemToDelete.value.id,
       )
-    }
-    catch (e) {
-      $toast.error('Failed to delete blog.')
+      totalRecords.value = Math.max(0, totalRecords.value - 1)
+    } catch (error) {
+      console.error('Error deleting blog:', error)
+      $toast.error(error?.response?.data?.errors?.[0]?.message || 'Failed to delete blog.')
     }
   }
   itemToDelete.value = null
@@ -298,7 +298,7 @@ watch(perPage, (val) => {
 
 watch(searchQuery, () => {
   // Implement search logic here
-  fetchBlogs()
+    fetchBlogs()
 })
 
 watch(activeTab, () => {
