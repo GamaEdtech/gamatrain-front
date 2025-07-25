@@ -7,16 +7,43 @@
       :step-index="currentStep"
       @change-step="changeStep"
     />
-    <v-container class="w-100 mt-2 d-flex justify-center">
+    <v-container class="w-100 mt-2 d-flex justify-center handle-height">
       <school-add-step-location
         v-if="currentStep == STEP_INDEX.Location"
         @next-step="changeLocationStep"
+      />
+      <school-add-step-category
+        v-if="currentStep == STEP_INDEX.Category"
+        @next-step="changeCategoryStep"
+        @prev-step="backLocationStep"
       />
     </v-container>
   </div>
 </template>
 
 <script setup>
+// {
+//   //"name": "string",
+//   "latitude": 0,
+//   "longitude": 0,
+//   //"stateId": 0,
+//   //"cityId": 0,
+//   //"countryId": 0,
+//   "localName": "string",
+//   "schoolType": "Public",
+//   "zipCode": "string",
+//   //"address": "string",
+//   //"webSite": "string",
+//   "localAddress": "string",
+//   //"email": "string",
+//   "faxNumber": "string",
+//   //"phoneNumber": "string",
+//   "quarter": "string",
+//   "tags": [
+//     0
+//   ],
+//   //"tuition": 0
+// }
 // start section step
 const STEP_INDEX = {
   Location: 0,
@@ -62,6 +89,13 @@ const changeStep = (step) => {
 const changeLocationStep = () => {
   currentStep.value = STEP_INDEX.Category;
 };
+const backLocationStep = () => {
+  currentStep.value = STEP_INDEX.Location;
+};
+
+const changeCategoryStep = () => {
+  currentStep.value = STEP_INDEX.Contact;
+};
 </script>
 
 <style scoped>
@@ -70,11 +104,17 @@ const changeLocationStep = () => {
   min-height: calc(100vh - 64px);
   background-color: #f8f7f7;
 }
+.handle-height {
+  min-height: calc(100vh - 64px - 90px);
+}
 
 @media (min-width: 960px) {
   .margin-top-handle {
     margin-top: 6.4rem;
     min-height: calc(100vh - 6.4rem);
+  }
+  .handle-height {
+    min-height: calc(100vh - 6.4rem - 90px);
   }
 }
 </style>

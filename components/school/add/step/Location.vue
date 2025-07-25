@@ -1,84 +1,86 @@
 <template>
   <div
-    class="w-100 d-flex flex-column align-center justify-start ga-8 max-width-container"
+    class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
-    <v-alert
-      class="primary-gray-700 font-weight-bold"
-      text="You're adding a new school.Please enter the details carefully!"
-      border="start"
-      color="#ffdb804d"
-      border-color="#FFB600"
-      rounded="lg"
-    >
-      <template #prepend>
-        <v-icon color="#FFB600">mdi-lightbulb-alert</v-icon>
-      </template>
-    </v-alert>
+    <div class="w-100 d-flex flex-column align-center justify-start ga-10">
+      <v-alert
+        class="primary-gray-700 font-weight-bold"
+        text="You're adding a new school.Please enter the details carefully!"
+        border="start"
+        color="#ffdb804d"
+        border-color="#FFB600"
+        rounded="lg"
+      >
+        <template #prepend>
+          <v-icon color="#FFB600">mdi-lightbulb-alert</v-icon>
+        </template>
+      </v-alert>
 
-    <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-      <div class="text-h6 font-weight-bold primary-gray-700 ml-2">Title</div>
-      <v-text-field
-        v-model="title"
-        rounded
-        density="compact"
-        placeholder="Title"
-        variant="outlined"
-        hide-details
-        autocomplete="new-password"
-        role="presentation"
-        clearable
-        persistent-clear
-        base-color="#E4E7EC"
-        color="#ffb600"
-        active-color="#ffb600"
-        bg-color="#ffffff"
-        class="w-100"
-      ></v-text-field>
-    </div>
-
-    <div
-      v-for="(location, index) in locationData"
-      :key="index"
-      class="w-100 d-flex flex-column align-start justify-start ga-1"
-    >
-      <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
-        {{ location.lable }}
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">Title</div>
+        <v-text-field
+          v-model="title"
+          rounded
+          density="compact"
+          placeholder="Title"
+          variant="outlined"
+          hide-details
+          autocomplete="new-password"
+          role="presentation"
+          clearable
+          persistent-clear
+          base-color="#E4E7EC"
+          color="#ffb600"
+          active-color="#ffb600"
+          bg-color="#ffffff"
+          class="w-100"
+        ></v-text-field>
       </div>
-      <v-text-field
-        v-model="location.selected.title"
-        rounded
-        density="compact"
-        :placeholder="location.lable"
-        variant="outlined"
-        hide-details
-        autocomplete="new-password"
-        role="presentation"
-        clearable
-        persistent-clear
-        base-color="#E4E7EC"
-        color="#ffb600"
-        active-color="#ffb600"
-        bg-color="#ffffff"
-        class="w-100"
-        readonly
-        append-inner-icon="mdi-chevron-down"
-        @click="openModal(location)"
-        @click:clear="clearValue(index)"
-        :disabled="checkDisable(index)"
-      ></v-text-field>
 
-      <search-select-dialog
-        v-model:show-dialog="location.isOpenModal"
-        :title-modal="location.lable"
-        :items="location.items"
-        :selected-item="location.selected"
-        @change-selected-item="onFilterUpdate($event, index)"
-        :is-loading="location.loading"
-      />
+      <div
+        v-for="(location, index) in locationData"
+        :key="index"
+        class="w-100 d-flex flex-column align-start justify-start ga-1"
+      >
+        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+          {{ location.lable }}
+        </div>
+        <v-text-field
+          v-model="location.selected.title"
+          rounded
+          density="compact"
+          :placeholder="location.lable"
+          variant="outlined"
+          hide-details
+          autocomplete="new-password"
+          role="presentation"
+          clearable
+          persistent-clear
+          base-color="#E4E7EC"
+          color="#ffb600"
+          active-color="#ffb600"
+          bg-color="#ffffff"
+          class="w-100"
+          readonly
+          append-inner-icon="mdi-chevron-down"
+          @click="openModal(location)"
+          @click:clear="clearValue(index)"
+          :disabled="checkDisable(index)"
+        ></v-text-field>
+
+        <search-select-dialog
+          v-model:show-dialog="location.isOpenModal"
+          :title-modal="location.lable"
+          :items="location.items"
+          :selected-item="location.selected"
+          @change-selected-item="onFilterUpdate($event, index)"
+          :is-loading="location.loading"
+        />
+      </div>
     </div>
 
     <div class="w-100 d-flex align-center justify-center ga-3">
-      <v-btn variant="text" class="text-h5"> Cancel </v-btn>
+      <v-btn @click="cancel" variant="text" class="text-h5"> Cancel </v-btn>
       <v-btn
         color="#ffb600"
         flat
@@ -97,6 +99,7 @@
 </template>
 
 <script setup>
+const router = useRouter();
 const emit = defineEmits(["nextStep"]);
 
 onMounted(() => {
@@ -248,6 +251,10 @@ const checkSchoolAvailable = async () => {
   } finally {
     loadingFindSchool.value = false;
   }
+};
+
+const cancel = () => {
+  router.push("/school");
 };
 </script>
 
