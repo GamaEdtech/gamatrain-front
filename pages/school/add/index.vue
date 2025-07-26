@@ -17,6 +17,22 @@
         @next-step="changeCategoryStep"
         @prev-step="backLocationStep"
       />
+      <school-add-step-contact
+        v-if="currentStep == STEP_INDEX.Contact"
+        @next-step="changeFacilityStep"
+        @prev-step="backCategoryStep"
+      />
+      <school-add-step-facility
+        v-if="currentStep == STEP_INDEX.Facilities"
+        @next-step="changeScoreStep"
+        @prev-step="backContactStep"
+      />
+
+      <school-add-step-score
+        v-if="currentStep == STEP_INDEX.Score"
+        @next-step="submitSchool"
+        @prev-step="backFacilityStep"
+      />
     </v-container>
   </div>
 </template>
@@ -39,7 +55,7 @@
 //   "faxNumber": "string",
 //   //"phoneNumber": "string",
 //   "quarter": "string",
-//   "tags": [
+//   //"tags": [
 //     0
 //   ],
 //   //"tuition": 0
@@ -79,7 +95,7 @@ const steps = [
     icon: "mdi-star",
   },
 ];
-const currentStep = ref(STEP_INDEX.Location);
+const currentStep = ref(STEP_INDEX.Score);
 
 const changeStep = (step) => {
   currentStep.value = step.value;
@@ -96,6 +112,24 @@ const backLocationStep = () => {
 const changeCategoryStep = () => {
   currentStep.value = STEP_INDEX.Contact;
 };
+const backCategoryStep = () => {
+  currentStep.value = STEP_INDEX.Category;
+};
+
+const changeFacilityStep = () => {
+  currentStep.value = STEP_INDEX.Facilities;
+};
+const backContactStep = () => {
+  currentStep.value = STEP_INDEX.Contact;
+};
+
+const changeScoreStep = () => {
+  currentStep.value = STEP_INDEX.Score;
+};
+const backFacilityStep = () => {
+  currentStep.value = STEP_INDEX.Facilities;
+};
+const submitSchool = () => {};
 </script>
 
 <style scoped>
