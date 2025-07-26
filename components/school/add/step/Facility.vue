@@ -93,7 +93,7 @@ const getTags = async (params, type) => {
 };
 
 const isLoadingTag = ref(true);
-const selectedTags = ref([7]);
+const selectedTags = ref([]);
 const tags = ref([]);
 
 const chooseTag = (tag) => {
@@ -105,7 +105,10 @@ const chooseTag = (tag) => {
 };
 
 const submitForm = () => {
-  emit("nextStep");
+  const facilityStepInfo = {
+    tags: [...selectedTags.value],
+  };
+  emit("nextStep", facilityStepInfo);
 };
 
 const preStep = () => {

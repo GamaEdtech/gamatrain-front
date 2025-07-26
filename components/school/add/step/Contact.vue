@@ -24,7 +24,7 @@
           active-color="#ffb600"
           bg-color="#ffffff"
           class="w-100"
-          :rules="[urlRule]"
+          :rules="[urlRule, requiredRule]"
         ></v-text-field>
       </div>
 
@@ -148,12 +148,19 @@ const isFormValid = computed(() => {
   return (
     emailRule(email.value) === true &&
     phoneRule(phone.value) === true &&
-    requiredRule(location.value) === true
+    requiredRule(location.value) === true &&
+    requiredRule(website.value) === true
   );
 });
 const submitForm = () => {
   if (isFormValid.value) {
-    emit("nextStep");
+    const contactStepInfo = {
+      webSite: website.value,
+      email: email.value,
+      phoneNumber: phone.value,
+      address: location.value,
+    };
+    emit("nextStep", contactStepInfo);
   }
 };
 

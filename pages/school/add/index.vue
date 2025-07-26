@@ -8,58 +8,59 @@
       @change-step="changeStep"
     />
     <v-container class="w-100 mt-2 d-flex justify-center handle-height">
-      <school-add-step-location
-        v-if="currentStep == STEP_INDEX.Location"
-        @next-step="changeLocationStep"
-      />
-      <school-add-step-category
-        v-if="currentStep == STEP_INDEX.Category"
-        @next-step="changeCategoryStep"
-        @prev-step="backLocationStep"
-      />
-      <school-add-step-contact
-        v-if="currentStep == STEP_INDEX.Contact"
-        @next-step="changeFacilityStep"
-        @prev-step="backCategoryStep"
-      />
-      <school-add-step-facility
-        v-if="currentStep == STEP_INDEX.Facilities"
-        @next-step="changeScoreStep"
-        @prev-step="backContactStep"
-      />
-
-      <school-add-step-score
-        v-if="currentStep == STEP_INDEX.Score"
-        @next-step="submitSchool"
-        @prev-step="backFacilityStep"
-      />
+      <div class="display-set" v-show="currentStep == STEP_INDEX.Location">
+        <school-add-step-location
+          @next-step="nextStep"
+          :school-information="schoolInformation"
+        />
+      </div>
+      <div class="display-set" v-show="currentStep == STEP_INDEX.Category">
+        <school-add-step-category @next-step="nextStep" @prev-step="backStep" />
+      </div>
+      <div class="display-set" v-show="currentStep == STEP_INDEX.Contact">
+        <school-add-step-contact @next-step="nextStep" @prev-step="backStep" />
+      </div>
+      <div class="display-set" v-show="currentStep == STEP_INDEX.Facilities">
+        <school-add-step-facility
+          @next-step="submitSchool"
+          @prev-step="backStep"
+        />
+      </div>
+      <div class="display-set" v-show="currentStep == STEP_INDEX.Score">
+        <school-add-step-score
+          @next-step="sendCommentOnSchool"
+          @prev-step="backStep"
+        />
+      </div>
     </v-container>
   </div>
 </template>
 
 <script setup>
-// {
-//   //"name": "string",
-//   "latitude": 0,
-//   "longitude": 0,
-//   //"stateId": 0,
-//   //"cityId": 0,
-//   //"countryId": 0,
-//   "localName": "string",
-//   "schoolType": "Public",
-//   "zipCode": "string",
-//   //"address": "string",
-//   //"webSite": "string",
-//   "localAddress": "string",
-//   //"email": "string",
-//   "faxNumber": "string",
-//   //"phoneNumber": "string",
-//   "quarter": "string",
-//   //"tags": [
-//     0
-//   ],
-//   //"tuition": 0
-// }
+const nuxtApp = useNuxtApp();
+
+const loadingSubmitSchool = ref(false);
+const schoolInformation = ref({
+  name: "",
+  latitude: 0,
+  longitude: 0,
+  stateId: null,
+  cityId: null,
+  countryId: null,
+  // localName: "",
+  // "schoolType": "Public",
+  // zipCode: "",
+  address: "",
+  webSite: "",
+  // localAddress: "",
+  email: "",
+  // faxNumber: "",
+  phoneNumber: "",
+  // quarter: "",
+  tags: [],
+  tuition: 0,
+});
+
 // start section step
 const STEP_INDEX = {
   Location: 0,
@@ -95,41 +96,56 @@ const steps = [
     icon: "mdi-star",
   },
 ];
-const currentStep = ref(STEP_INDEX.Score);
+const currentStep = ref(STEP_INDEX.Location);
 
 const changeStep = (step) => {
   currentStep.value = step.value;
 };
 // end section step
 
-const changeLocationStep = () => {
-  currentStep.value = STEP_INDEX.Category;
+const nextStep = (data) => {
+  schoolInformation.value = {
+    ...schoolInformation.value,
+    ...data,
+  };
+  currentStep.value += 1;
 };
-const backLocationStep = () => {
-  currentStep.value = STEP_INDEX.Location;
+const backStep = () => {
+  currentStep.value -= 1;
+};
+const submitSchool = (data) => {
+  loadingSubmitSchool.value = true;
+  schoolInformation.value = {
+    ...schoolInformation.value,
+    ...data,
+  };
+  console.log(schoolInformation.value);
+
+  useApiService
+    .post(`/api/v2/schools/contributions`, schoolInformation.value)
+    .then(async (response) => {
+      console.log("final response", response);
+
+      if (response.succeeded) {
+        nuxtApp.$toast?.success(
+          "Thank you! Your contribution has been successfully submitted."
+        );
+      } else {
+        nuxtApp.$toast?.error(response?.errors[0]?.message);
+      }
+    })
+    .catch((err) => {
+      console.log("err", err);
+
+      if (err?.response?.status == 401 || err?.response?.status == 403) {
+      } else nuxtApp.$toast?.error(err?.response?.data?.message);
+    })
+    .finally(() => {
+      loadingSubmitSchool.value = false;
+    });
 };
 
-const changeCategoryStep = () => {
-  currentStep.value = STEP_INDEX.Contact;
-};
-const backCategoryStep = () => {
-  currentStep.value = STEP_INDEX.Category;
-};
-
-const changeFacilityStep = () => {
-  currentStep.value = STEP_INDEX.Facilities;
-};
-const backContactStep = () => {
-  currentStep.value = STEP_INDEX.Contact;
-};
-
-const changeScoreStep = () => {
-  currentStep.value = STEP_INDEX.Score;
-};
-const backFacilityStep = () => {
-  currentStep.value = STEP_INDEX.Facilities;
-};
-const submitSchool = () => {};
+const sendCommentOnSchool = () => {};
 </script>
 
 <style scoped>
@@ -141,7 +157,11 @@ const submitSchool = () => {};
 .handle-height {
   min-height: calc(100vh - 64px - 90px);
 }
-
+.display-set {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
 @media (min-width: 960px) {
   .margin-top-handle {
     margin-top: 6.4rem;

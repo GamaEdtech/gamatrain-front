@@ -245,39 +245,39 @@ onMounted(() => {
   // getInformationList({ type: "religion" }, "religion");
 });
 
-const getInformationList = async (params, type) => {
-  try {
-    const endpoint = "/api/v1/types/list";
+// const getInformationList = async (params, type) => {
+//   try {
+//     const endpoint = "/api/v1/types/list";
 
-    const response = await $fetch(endpoint, { params });
-    console.log("reposne", type, response);
-    if (type == "stage") {
-      stages.value = response.data;
-    } else if (type == "coed_status") {
-      ceods.value = response.data;
-    } else if (type == "school_type") {
-      schoolTypes.value = response.data;
-    } else if (type == "boarding_type") {
-      boardingTypes.value = response.data;
-    } else if (type == "religion") {
-      religions.value = response.data;
-    }
-  } catch (err) {
-    console.error("Error fetching location data:", err);
-  } finally {
-    if (type == "stage") {
-      stageLoading.value = false;
-    } else if (type == "coed_status") {
-      ceodLoading.value = false;
-    } else if (type == "school_type") {
-      schoolTypesLoading.value = false;
-    } else if (type == "boarding_type") {
-      boardingTypesLoading.value = false;
-    } else if (type == "religion") {
-      religionLoading.value = false;
-    }
-  }
-};
+//     const response = await $fetch(endpoint, { params });
+//     console.log("reposne", type, response);
+//     if (type == "stage") {
+//       stages.value = response.data;
+//     } else if (type == "coed_status") {
+//       ceods.value = response.data;
+//     } else if (type == "school_type") {
+//       schoolTypes.value = response.data;
+//     } else if (type == "boarding_type") {
+//       boardingTypes.value = response.data;
+//     } else if (type == "religion") {
+//       religions.value = response.data;
+//     }
+//   } catch (err) {
+//     console.error("Error fetching location data:", err);
+//   } finally {
+//     if (type == "stage") {
+//       stageLoading.value = false;
+//     } else if (type == "coed_status") {
+//       ceodLoading.value = false;
+//     } else if (type == "school_type") {
+//       schoolTypesLoading.value = false;
+//     } else if (type == "boarding_type") {
+//       boardingTypesLoading.value = false;
+//     } else if (type == "religion") {
+//       religionLoading.value = false;
+//     }
+//   }
+// };
 
 // start stage section
 const stageLoading = ref(false);
@@ -379,7 +379,10 @@ const isFormValid = computed(() => {
 
 const submitForm = () => {
   if (isFormValid.value) {
-    emit("nextStep");
+    const categoryStepInformation = {
+      tuition: valueTuition.value,
+    };
+    emit("nextStep", categoryStepInformation);
   }
 };
 

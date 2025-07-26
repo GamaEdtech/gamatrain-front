@@ -100,6 +100,12 @@
 
 <script setup>
 const router = useRouter();
+
+const props = defineProps({
+  schoolInformation: {
+    type: Object,
+  },
+});
 const emit = defineEmits(["nextStep"]);
 
 onMounted(() => {
@@ -243,9 +249,15 @@ const checkSchoolAvailable = async () => {
 
     const response = await useApiService.get("/api/v2/schools", params);
     if (response.data.list == null || response.data.list.length == 0) {
-      emit("nextStep");
+      const locationStepInfo = {
+        name: title.value,
+        countryId: locationData.value[0].selected.id,
+        stateId: locationData.value[1].selected.id,
+        cityId: locationData.value[2].selected.id,
+      };
+      emit("nextStep", locationStepInfo);
     }
-    console.log("response", response);
+    // console.log("response", response);
   } catch (err) {
     console.error(err);
   } finally {
