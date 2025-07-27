@@ -106,7 +106,7 @@ const props = defineProps({
     type: Object,
   },
 });
-const emit = defineEmits(["nextStep"]);
+const emit = defineEmits(["nextStep", "schoolFindInSearch"]);
 
 onMounted(() => {
   getLocationList({ "PagingDto.PageFilter.Size": 250 }, "Country");
@@ -248,14 +248,16 @@ const checkSchoolAvailable = async () => {
     };
 
     const response = await useApiService.get("/api/v2/schools", params);
+    const locationStepInfo = {
+      name: title.value,
+      countryId: locationData.value[0].selected.id,
+      stateId: locationData.value[1].selected.id,
+      cityId: locationData.value[2].selected.id,
+    };
     if (response.data.list == null || response.data.list.length == 0) {
-      const locationStepInfo = {
-        name: title.value,
-        countryId: locationData.value[0].selected.id,
-        stateId: locationData.value[1].selected.id,
-        cityId: locationData.value[2].selected.id,
-      };
       emit("nextStep", locationStepInfo);
+    } else {
+      emit("schoolFindInSearch", response.data.list[0], locationStepInfo);
     }
     // console.log("response", response);
   } catch (err) {

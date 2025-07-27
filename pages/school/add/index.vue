@@ -7,10 +7,17 @@
       :step-index="currentStep"
       @change-step="changeStep"
     />
+    <school-add-modal-detail
+      v-model:show-dialog="showModalDetailSchool"
+      :school-information="schoolFindedInSearch"
+      @new-school="startAddNewSchool"
+      @edit-school="editSchool"
+    />
     <v-container class="w-100 mt-2 d-flex justify-center handle-height">
       <div class="display-set" v-show="currentStep == STEP_INDEX.Location">
         <school-add-step-location
           @next-step="nextStep"
+          @school-find-in-search="schoolFindInSearch"
           :school-information="schoolInformation"
         />
       </div>
@@ -26,7 +33,7 @@
           @prev-step="backStep"
         />
       </div>
-      <div class="display-set" v-show="currentStep == STEP_INDEX.Score">
+      <div class="display-set" v-if="currentStep == STEP_INDEX.Score">
         <school-add-step-score
           @next-step="sendCommentOnSchool"
           @prev-step="backStep"
@@ -39,6 +46,8 @@
 <script setup>
 const nuxtApp = useNuxtApp();
 
+const schoolFindedInSearch = ref();
+const showModalDetailSchool = ref(false);
 const loadingSubmitSchool = ref(false);
 const schoolInformation = ref({
   name: "",
@@ -102,6 +111,25 @@ const changeStep = (step) => {
   currentStep.value = step.value;
 };
 // end section step
+
+const schoolFindInSearch = (school, data) => {
+  schoolInformation.value = {
+    ...schoolInformation.value,
+    ...data,
+  };
+  schoolFindedInSearch.value = school;
+  showModalDetailSchool.value = true;
+};
+
+const startAddNewSchool = () => {
+  showModalDetailSchool.value = false;
+  currentStep.value = STEP_INDEX.Category;
+};
+
+const editSchool = () => {
+  showModalDetailSchool.value = false;
+  currentStep.value = STEP_INDEX.Category;
+};
 
 const nextStep = (data) => {
   schoolInformation.value = {
