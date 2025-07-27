@@ -22,6 +22,7 @@ const menuItems = [
         { title: "Analysis", link: "/admin/analysis", icon: "mdi-chart-line" },
         { title: "Contact Us", link: "/admin/contact-us", icon: "mdi-archive-arrow-down-outline",},
         { title: "User Managment ", link: "/admin/users", icon: "mdi-account-group-outline",},
+        { title: "User Managment ", link: "/admin/schools/images", icon: "mdi-account-group-outline",},
       ]
 
 const navigate = (link) => {
