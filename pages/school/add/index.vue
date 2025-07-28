@@ -82,27 +82,27 @@ const steps = [
   {
     title: "Location",
     value: 0,
-    icon: "mdi-map-marker",
+    icon: "md:location_on",
   },
   {
     title: "Category",
     value: 1,
-    icon: "mdi-shape",
+    icon: "md:category",
   },
   {
     title: "Contact",
     value: 2,
-    icon: "mdi-phone",
+    icon: "md:call",
   },
   {
     title: "Facilities",
     value: 3,
-    icon: "mdi-playlist-check",
+    icon: "md:playlist_add_check",
   },
   {
     title: "Score",
     value: 4,
-    icon: "mdi-star",
+    icon: "md:star",
   },
 ];
 const currentStep = ref(STEP_INDEX.Location);

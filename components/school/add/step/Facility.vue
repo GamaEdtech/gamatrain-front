@@ -39,7 +39,7 @@
             height="48"
           >
             <v-icon size="x-large" color="#ffffff">{{
-              "mdi-" + tag.icon
+              "md:" + tag.icon
             }}</v-icon>
           </v-btn>
           <span class="font-weight-bold text-h5 primary-gray-900">{{
@@ -54,7 +54,7 @@
         Cancel
       </v-btn>
       <v-btn @click="preStep" icon color="#1D2939" height="40" width="40" flat>
-        <v-icon size="x-large">mdi-arrow-left</v-icon>
+        <v-icon size="x-large">md:arrow_back</v-icon>
       </v-btn>
       <v-btn
         color="#ffb600"

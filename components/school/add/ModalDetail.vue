@@ -11,7 +11,7 @@
     >
       <div class="w-100 d-none d-md-flex align-center justify-end">
         <v-icon class="ml-4" size="x-large" color="#D0D5DD" @click="closeModal">
-          mdi-close-circle
+          md:cancel
         </v-icon>
       </div>
       <div class="w-100 d-flex justify-center align-center mt-4 pa-2 pa-md-4">
@@ -25,7 +25,7 @@
             color="#344054"
             size="small"
             class="position-absolute position-bookmark"
-            >mdi-bookmark</v-icon
+            >md:bookmark</v-icon
           >
           <NuxtImg
             v-if="schoolInformation?.defaultImageUri"
@@ -47,14 +47,6 @@
             <span
               class="w-100 text-h5 font-weight-bold primary-gray-700 ga-2 mb-2"
             >
-              <!-- <v-btn
-                size="x-small"
-                color="#12B76A"
-                flat
-                icon="mdi-cloud-upload"
-                width="20"
-                height="20"
-              ></v-btn> -->
               {{ schoolInformation?.name }}
             </span>
 
@@ -170,7 +162,7 @@
                 height="30"
                 :disabled="!schoolInformation.hasLocation"
               >
-                <v-icon color="#344054"> mdi-map-marker </v-icon>
+                <v-icon color="#344054"> md:location_on </v-icon>
               </v-btn>
               <v-btn
                 variant="text"
@@ -179,7 +171,7 @@
                 height="30"
                 :disabled="!schoolInformation.hasPhone"
               >
-                <v-icon color="#344054"> mdi-phone </v-icon>
+                <v-icon color="#344054"> md:call </v-icon>
               </v-btn>
               <v-btn
                 variant="text"
@@ -188,7 +180,7 @@
                 height="30"
                 :disabled="!schoolInformation.hasEmail"
               >
-                <v-icon color="#344054"> mdi-email </v-icon>
+                <v-icon color="#344054"> md:email </v-icon>
               </v-btn>
               <v-btn
                 variant="text"
@@ -197,7 +189,7 @@
                 height="30"
                 :disabled="!schoolInformation.hasWebsite"
               >
-                <v-icon color="#344054"> mdi-web </v-icon>
+                <v-icon color="#344054"> md:language </v-icon>
               </v-btn>
             </div>
             <div class="d-flex align-center">
@@ -316,6 +308,7 @@ const editSchool = () => {
   z-index: 2;
 }
 .position-bookmark {
+  z-index: 2;
   top: 10px;
   right: 10px;
 }

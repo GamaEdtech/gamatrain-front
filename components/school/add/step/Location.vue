@@ -12,7 +12,7 @@
         rounded="lg"
       >
         <template #prepend>
-          <v-icon color="#FFB600">mdi-lightbulb-alert</v-icon>
+          <v-icon color="#FFB600">md:lightbulb</v-icon>
         </template>
       </v-alert>
 
@@ -62,7 +62,7 @@
           bg-color="#ffffff"
           class="w-100"
           readonly
-          append-inner-icon="mdi-chevron-down"
+          append-inner-icon="md:keyboard_arrow_down"
           @click="openModal(location)"
           @click:clear="clearValue(index)"
           :disabled="checkDisable(index)"

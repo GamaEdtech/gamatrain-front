@@ -24,7 +24,7 @@
           bg-color="#ffffff"
           class="w-100"
           readonly
-          append-inner-icon="mdi-chevron-down"
+          append-inner-icon="md:keyboard_arrow_down"
           @click="openStageModal"
           @click:clear="clearStageValue"
         ></v-text-field>
@@ -99,7 +99,7 @@
             {{ type.title }}
             <v-icon
               v-if="selectedschoolTypes.includes(type.id)"
-              icon="mdi-close-circle"
+              icon="md:cancel"
               end
             ></v-icon>
           </v-chip>
@@ -133,7 +133,7 @@
             {{ type.title }}
             <v-icon
               v-if="selectedboardingTypes.includes(type.id)"
-              icon="mdi-close-circle"
+              icon="md:cancel"
               end
             ></v-icon>
           </v-chip>
@@ -165,7 +165,7 @@
             {{ type.title }}
             <v-icon
               v-if="selectedReligions.includes(type.id)"
-              icon="mdi-close-circle"
+              icon="md:cancel"
               end
             ></v-icon>
           </v-chip>
@@ -209,7 +209,7 @@
         Cancel
       </v-btn>
       <v-btn @click="preStep" icon color="#1D2939" height="40" width="40" flat>
-        <v-icon size="x-large">mdi-arrow-left</v-icon>
+        <v-icon size="x-large">md:arrow_back</v-icon>
       </v-btn>
       <v-btn
         color="#ffb600"
