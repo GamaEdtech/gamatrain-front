@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue'
 
 const props = defineProps<{
-  levelUpModal: boolean;
-  level: number;
-}>();
+  levelUpModal: boolean
+  level: number
+}>()
 
-const isModalShow = computed(() => props.levelUpModal);
+const isModalShow = computed(() => props.levelUpModal)
 
-const emits = defineEmits(["closeLevelUpModal"]);
+const emits = defineEmits(['closeLevelUpModal'])
 
 const closeLevelUp = () => {
-  emits("closeLevelUpModal");
-};
+  emits('closeLevelUpModal')
+}
 </script>
 
 <template>
@@ -28,7 +28,13 @@ const closeLevelUp = () => {
       elevation="12"
       rounded
     >
-      <v-icon size="80" color="white" class="bounce-icon mb-4">mdi-star</v-icon>
+      <v-icon
+        size="80"
+        color="white"
+        class="bounce-icon mb-4"
+      >
+        mdi-star
+      </v-icon>
 
       <!-- Level Up Title -->
       <h1 class="text-h3 font-weight-bold text-white level-up-title mb-2">

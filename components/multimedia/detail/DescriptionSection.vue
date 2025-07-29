@@ -1,8 +1,11 @@
 <template>
   <div class="description-holder my-4">
-    <!--Description-->
+    <!-- Description -->
     <div class="description-tabs">
-      <v-tabs v-model="activeTab" color="teal">
+      <v-tabs
+        v-model="activeTab"
+        color="teal"
+      >
         <v-tab value="tab-description">
           <span class="gama-text-caption">Description</span>
         </v-tab>
@@ -13,36 +16,39 @@
     </div>
     <div class="description-tabs">
       <v-window v-model="activeTab">
-        <v-window-item value="tab-description" class="px-3 py-3">
+        <v-window-item
+          value="tab-description"
+          class="px-3 py-3"
+        >
           <span
-            class="gama-text-body2"
             v-show="!isEditing"
+            class="gama-text-body2"
             v-html="formattedDescription"
           />
           <v-btn
             v-if="canEdit"
             v-show="!isEditing"
-            @click="startEditing"
             icon
             size="x-small"
+            @click="startEditing"
           >
             <v-icon>mdi-pencil</v-icon>
           </v-btn>
           <div>
             <v-textarea
               v-if="isEditing"
+              v-model="description"
               width="100%"
               rows="18"
               placeholder="Description"
-              v-model="description"
             >
-              <template v-slot:append-inner>
+              <template #append-inner>
                 <v-btn
                   color="success"
-                  @click="saveDescription"
                   icon
                   size="x-small"
                   :loading="saving"
+                  @click="saveDescription"
                 >
                   <v-icon>mdi-check</v-icon>
                 </v-btn>
@@ -50,14 +56,27 @@
             </v-textarea>
           </div>
         </v-window-item>
-        <v-window-item value="tab-chapters" class="px-3 py-3">
-          <div color="#F5F5F5" flat style="max-height: 25rem; overflow-y: auto">
-            <ul class="pl-0" style="list-style-type: none">
-              <li v-for="(item, index) in collectionList" :key="index">
+        <v-window-item
+          value="tab-chapters"
+          class="px-3 py-3"
+        >
+          <div
+            color="#F5F5F5"
+            flat
+            style="max-height: 25rem; overflow-y: auto"
+          >
+            <ul
+              class="pl-0"
+              style="list-style-type: none"
+            >
+              <li
+                v-for="(item, index) in collectionList"
+                :key="index"
+              >
                 <strong>{{ item.title }}</strong>
                 <ul
-                  style="list-style-type: none"
                   v-if="item.chapters && item.chapters.length"
+                  style="list-style-type: none"
                 >
                   <li
                     v-for="(chapter, chapterIndex) in item.chapters"
@@ -72,17 +91,17 @@
         </v-window-item>
       </v-window>
     </div>
-    <!--End description-->
+    <!-- End description -->
   </div>
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   description: {
     type: String,
-    default: "",
+    default: '',
   },
   collectionList: {
     type: Array,
@@ -92,38 +111,38 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-});
+})
 
-const emit = defineEmits(["update:description", "save"]);
+const emit = defineEmits(['update:description', 'save'])
 
 // UI state
-const activeTab = ref("tab-description");
-const isEditing = ref(false);
-const saving = ref(false);
-const description = ref(props.description);
+const activeTab = ref('tab-description')
+const isEditing = ref(false)
+const saving = ref(false)
+const description = ref(props.description)
 
 // Formatted description with line breaks
 const formattedDescription = computed(() => {
-  return description.value ? description.value.replace(/\n/g, "<br />") : "";
-});
+  return description.value ? description.value.replace(/\n/g, '<br />') : ''
+})
 
 // Methods
 function startEditing() {
-  isEditing.value = true;
+  isEditing.value = true
 }
 
 async function saveDescription() {
-  saving.value = true;
+  saving.value = true
 
   // Update the parent component
-  emit("update:description", description.value);
+  emit('update:description', description.value)
 
   // Tell the parent to save
-  await emit("save");
+  await emit('save')
 
   // Reset UI state
-  isEditing.value = false;
-  saving.value = false;
+  isEditing.value = false
+  saving.value = false
 }
 
 // Watch for prop changes
@@ -131,10 +150,10 @@ watch(
   () => props.description,
   (newVal) => {
     if (newVal !== description.value) {
-      description.value = newVal;
+      description.value = newVal
     }
-  }
-);
+  },
+)
 </script>
 
 <style scoped>

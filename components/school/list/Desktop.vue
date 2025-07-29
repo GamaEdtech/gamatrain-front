@@ -1,125 +1,149 @@
 <template>
   <div :class="`main-list-school-div ${isExpanded ? `` : `closed-list`}`">
     <div
-      class="container-button-load-previous-data"
       v-if="pageNumberForLoadPreviousData != 1 && !isInitialLoading"
+      class="container-button-load-previous-data"
     >
       <v-btn
-        @click="loadPreviousPage"
         class="text-h5 text-md-h4"
         height="50"
         variant="outlined"
         color="#ffb300"
         rounded="xl"
+        @click="loadPreviousPage"
       >
         Load Previous Data
       </v-btn>
     </div>
     <div
+      ref="scrollDivRef"
       :class="`container-list-div ${
         pageNumberForLoadPreviousData != 1 ? `adjust-height` : ``
       }`"
-      ref="scrollDivRef"
     >
       <div class="container-scroll">
-        <CardSchoolSkeleton v-if="isInitialLoading" v-for="item in 4" />
+        <template v-if="isInitialLoading">
+          <CardSchoolSkeleton
+            v-for="(item, index) in 4"
+            :key="index"
+          />
+        </template>
 
         <CardSchoolSkeleton v-if="isPaginationPreviousLoading" />
 
-        <NuxtLink
-          v-if="!isInitialLoading"
-          class="card-school"
-          v-for="(school, index) in schoolList"
-          :to="`/school/${school.id}/${$slugGenerator(school.name)}`"
-        >
-          <div class="name-address-image">
-            <div class="name-div">
-              <span class="name gtext-t4 font-weight-semibold">{{
-                school.name
-              }}</span>
-              <div class="d-flex align-center justify-start flex-wrap ga-3">
-                <v-chip
-                  class="text-subtitle-1"
-                  variant="elevated"
-                  color="#546e7a"
-                  v-if="school.countryTitle && school.countryTitle.length > 0"
-                >
-                  {{ school.countryTitle }}
-                </v-chip>
-                <v-chip
-                  class="text-subtitle-1"
-                  variant="elevated"
-                  color="#546e7a"
-                  v-if="school.stateTitle && school.stateTitle.length > 0"
-                  >{{ school.stateTitle }}</v-chip
-                >
-                <v-chip
-                  class="text-subtitle-1"
-                  variant="elevated"
-                  color="#546e7a"
-                  v-if="school.cityTitle && school.cityTitle.length > 0"
-                  >United {{ school.cityTitle }}</v-chip
-                >
-              </div>
-            </div>
-            <div
-              class="img-div d-none d-md-block"
-              v-if="school.defaultImageUri && isExpanded"
-            >
-              <NuxtImg
-                alt="school.name"
-                v-show="school.defaultImageUri"
-                width="180px"
-                :src="school.defaultImageUri?.replace(/^http:\/\//, 'https://')"
-                placeholder
-                class="h-100"
-              />
-            </div>
-          </div>
-          <div class="line-seperator"></div>
-          <div
-            class="w-100 d-flex align-center justify-space-between mt-3 flex-wrap ga-5"
+        <template v-if="!isInitialLoading">
+          <NuxtLink
+            v-for="(school, index) in schoolList"
+            :key="school.id || index"
+            class="card-school"
+            :to="`/school/${school.id}/${$slugGenerator(school.name)}`"
           >
-            <div class="d-flex align-center">
-              <v-btn variant="text" icon :disabled="!school.hasLocation">
-                <v-icon size="x-large"> mdi-map-marker </v-icon>
-              </v-btn>
-              <v-btn variant="text" icon :disabled="!school.hasPhon">
-                <v-icon size="x-large"> mdi-phone </v-icon>
-              </v-btn>
-              <v-btn variant="text" icon :disabled="!school.hasEmail">
-                <v-icon size="x-large"> mdi-email </v-icon>
-              </v-btn>
-              <v-btn variant="text" icon :disabled="!school.hasWebsite">
-                <v-icon size="x-large"> mdi-web </v-icon>
-              </v-btn>
-            </div>
-            <div class="d-flex align-center ga-2">
+            <div class="name-address-image">
+              <div class="name-div">
+                <span class="name gtext-t4 font-weight-semibold">{{
+                  school.name
+                }}</span>
+                <div class="d-flex align-center justify-start flex-wrap ga-3">
+                  <v-chip
+                    v-if="school.countryTitle && school.countryTitle.length > 0"
+                    class="text-subtitle-1"
+                    variant="elevated"
+                    color="#546e7a"
+                  >
+                    {{ school.countryTitle }}
+                  </v-chip>
+                  <v-chip
+                    v-if="school.stateTitle && school.stateTitle.length > 0"
+                    class="text-subtitle-1"
+                    variant="elevated"
+                    color="#546e7a"
+                  >{{ school.stateTitle }}</v-chip>
+                  <v-chip
+                    v-if="school.cityTitle && school.cityTitle.length > 0"
+                    class="text-subtitle-1"
+                    variant="elevated"
+                    color="#546e7a"
+                  >United {{ school.cityTitle }}</v-chip>
+                </div>
+              </div>
               <div
-                class="d-flex align-center ga-2 gtext-t6 font-weight-semibold"
+                v-if="school.defaultImageUri && isExpanded"
+                class="img-div d-none d-md-block"
               >
-                <v-icon size="x-large" color="primary"> mdi-star </v-icon>
-                {{ school.score ? school.score.toFixed(1) : "New" }}
-              </div>
-              <div class="d-flex align-center ga-2 gtext-t6 primary-gray-300">
-                <v-icon size="x-large">mdi-update</v-icon>
-                <span class="primary-gray-600">
-                  {{ $dayjs(school.lastModifyDate).format("YYYY-MM-DD") }}
-                </span>
+                <NuxtImg
+                  v-show="school.defaultImageUri"
+                  alt="school.name"
+                  width="180px"
+                  :src="school.defaultImageUri?.replace(/^http:\/\//, 'https://')"
+                  placeholder
+                  class="h-100"
+                />
               </div>
             </div>
-          </div>
-        </NuxtLink>
+            <div class="line-seperator" />
+            <div
+              class="w-100 d-flex align-center justify-space-between mt-3 flex-wrap ga-5"
+            >
+              <div class="d-flex align-center">
+                <v-btn
+                  variant="text"
+                  icon
+                  :disabled="!school.hasLocation"
+                >
+                  <v-icon size="x-large"> mdi-map-marker </v-icon>
+                </v-btn>
+                <v-btn
+                  variant="text"
+                  icon
+                  :disabled="!school.hasPhon"
+                >
+                  <v-icon size="x-large"> mdi-phone </v-icon>
+                </v-btn>
+                <v-btn
+                  variant="text"
+                  icon
+                  :disabled="!school.hasEmail"
+                >
+                  <v-icon size="x-large"> mdi-email </v-icon>
+                </v-btn>
+                <v-btn
+                  variant="text"
+                  icon
+                  :disabled="!school.hasWebsite"
+                >
+                  <v-icon size="x-large"> mdi-web </v-icon>
+                </v-btn>
+              </div>
+              <div class="d-flex align-center ga-2">
+                <div
+                  class="d-flex align-center ga-2 gtext-t6 font-weight-semibold"
+                >
+                  <v-icon
+                    size="x-large"
+                    color="primary"
+                  > mdi-star </v-icon>
+                  {{ school.score ? school.score.toFixed(1) : "New" }}
+                </div>
+                <div class="d-flex align-center ga-2 gtext-t6 primary-gray-300">
+                  <v-icon size="x-large">mdi-update</v-icon>
+                  <span class="primary-gray-600">
+                    {{ $dayjs(school.lastModifyDate).format("YYYY-MM-DD") }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </NuxtLink>
+        </template>
 
         <div
-          class="line-specifier-load-more"
           ref="lineSpecifierLoadMoreRef"
-        ></div>
+          class="line-specifier-load-more"
+        />
 
         <CardSchoolSkeleton v-if="isPaginationLoading" />
         <div
-          class="not-found-div"
           v-if="!isInitialLoading && schoolList.length == 0"
+          class="not-found-div"
         >
           Opps! no data found
         </div>
@@ -129,9 +153,9 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from "vue";
+import { onMounted, onUnmounted } from 'vue'
 
-import CardSchoolSkeleton from "../CardSchoolSkeleton.vue";
+import CardSchoolSkeleton from '../CardSchoolSkeleton.vue'
 
 const props = defineProps({
   schoolList: {
@@ -162,52 +186,51 @@ const props = defineProps({
     type: Number,
     required: true,
   },
-});
+})
 
-const emit = defineEmits(["loadNextPage", "loadPreviousPage"]);
+const emit = defineEmits(['loadNextPage', 'loadPreviousPage'])
 
-const { $slugGenerator } = useNuxtApp();
+const { $slugGenerator } = useNuxtApp()
 
-const lineSpecifierLoadMoreRef = ref(null);
-const scrollDivRef = ref(null);
+const lineSpecifierLoadMoreRef = ref(null)
+const scrollDivRef = ref(null)
 
 onMounted(() => {
-  setupScrollListener();
-});
+  setupScrollListener()
+})
 
 onUnmounted(() => {
   if (scrollDivRef.value) {
-    scrollDivRef.value.removeEventListener("scroll", handleScrollListener);
+    scrollDivRef.value.removeEventListener('scroll', handleScrollListener)
   }
-});
+})
 
 const setupScrollListener = () => {
-  scrollDivRef.value.addEventListener("scroll", handleScrollListener);
-};
+  scrollDivRef.value.addEventListener('scroll', handleScrollListener)
+}
 
 const handleScrollListener = () => {
-  const targetDiv = lineSpecifierLoadMoreRef.value;
-  const rect = targetDiv.getBoundingClientRect();
-  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+  const targetDiv = lineSpecifierLoadMoreRef.value
+  const rect = targetDiv.getBoundingClientRect()
+  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight
 
   if (
-    isDivInView &&
-    !props.isInitialLoading &&
-    !props.isPaginationLoading &&
-    !props.isAllDataLoaded
+    isDivInView
+    && !props.isInitialLoading
+    && !props.isPaginationLoading
+    && !props.isAllDataLoaded
   ) {
-    emit("loadNextPage");
+    emit('loadNextPage')
   }
-};
+}
 
 const loadPreviousPage = () => {
-  emit("loadPreviousPage");
-};
+  emit('loadPreviousPage')
+}
 </script>
 
 <style lang="scss" scoped>
 @use "../../../assets/scss//app.scss" as style;
-
 
 // comment import css-file &  using particular styles for Mobile-Desktop view
 /* @import "../../../assets/scss/school/list.scss"; */

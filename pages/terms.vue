@@ -1,12 +1,19 @@
 <template>
   <div class="main">
-    <v-container fluid id="terms-page-header">
+    <v-container
+      id="terms-page-header"
+      fluid
+    >
       <v-container>
         <v-row>
           <v-col cols="12">
             <div id="main-title-holder">
-              <h1 class="gama-text-h1">Terms</h1>
-              <p class="gama-text-subtitle2">Terms and Conditions</p>
+              <h1 class="gama-text-h1">
+                Terms
+              </h1>
+              <p class="gama-text-subtitle2">
+                Terms and Conditions
+              </p>
             </div>
           </v-col>
         </v-row>
@@ -27,8 +34,7 @@
                 color="#ffb600"
                 icon-color=""
                 label="Search"
-              >
-              </v-text-field>
+              />
               <div class="pt-4 h-100">
                 <v-btn
                   height="100%"
@@ -45,33 +51,51 @@
       </v-row>
 
       <v-row id="list-rows">
-        <v-col cols="12" md="3">
-          <v-card id="terms-navigation" class="mx-auto">
+        <v-col
+          cols="12"
+          md="3"
+        >
+          <v-card
+            id="terms-navigation"
+            class="mx-auto"
+          >
             <v-list height="100%">
               <v-list-item
+                v-for="(item, index) in filteredItems"
+                :key="index"
                 active-class="active-title"
                 :active="isItemActive(item)"
-                v-for="(item, index) in filteredItems"
                 :value="item"
-                :key="index"
-                @click="scrollToSection(item.id)"
                 style="cursor: pointer"
+                @click="scrollToSection(item.id)"
               >
                 <v-list-item-title>{{ item.title }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-card>
         </v-col>
-        <v-col cols="12" md="9">
-          <v-card flat class="mx-auto">
+        <v-col
+          cols="12"
+          md="9"
+        >
+          <v-card
+            flat
+            class="mx-auto"
+          >
             <v-card-text>
-              <div v-for="(item, index) in filteredItems" :key="index">
-                <div :id="item.id" class="section-anchor"></div>
+              <div
+                v-for="(item, index) in filteredItems"
+                :key="index"
+              >
+                <div
+                  :id="item.id"
+                  class="section-anchor"
+                />
                 <h2 class="gama-text-h4">
                   {{ item.title }}
                 </h2>
-                <div v-html="item.describe"></div>
-                <div class="section-spacer"></div>
+                <div v-html="item.describe" />
+                <div class="section-spacer" />
               </div>
             </v-card-text>
           </v-card>
@@ -84,205 +108,236 @@
 <script>
 export default {
   auth: false,
-  head() {
-    return {
-      titleTemplate: "%s",
-      title: "Terms and Conditions: Understanding Our Commitment to You",
-
-      meta: [
-        {
-          hid: "apple-mobile-web-app-title",
-          name: "apple-mobile-web-app-title",
-          content: "Terms and Conditions: Understanding Our Commitment to You",
-        },
-        {
-          hid: "og:title",
-          name: "og:title",
-          content: "Terms and Conditions: Understanding Our Commitment to You",
-        },
-        {
-          hid: "og:site_name",
-          name: "og:site_name",
-          content: "GamaTrain",
-        },
-        {
-          hid: "description",
-          name: "description",
-          content:
-            "Ensure a smooth and secure learning experience by reviewing GamaTrain's Terms and Conditions, outlining our commitment to user privacy and responsible platform usage.",
-        },
-        {
-          hid: "og:description",
-          name: "og:description",
-          content:
-            "Ensure a smooth and secure learning experience by reviewing GamaTrain's Terms and Conditions, outlining our commitment to user privacy and responsible platform usage.",
-        },
-      ],
-    };
-  },
 
   data() {
     return {
-      searchQuery: "",
+      searchQuery: '',
       activeSection: null,
-      currentHash: "",
+      currentHash: '',
       isClient: false,
       observer: null,
       isScrolling: false,
       scrollTimeout: null,
       termsSection: [
         {
-          id: "introduction",
-          title: "Introduction",
+          id: 'introduction',
+          title: 'Introduction',
           describe:
-            "<p class='gama-text-body1'>" +
-            "Thank you for choosing the GamaTrain website for your activities. The GamaTrain website" +
-            "has" +
-            "started its activities with the aim of creating a repository of sample exam questions" +
-            "and" +
-            "scientific tests for various levels of education. This repository, with questions" +
-            "contributed by" +
-            "teachers from all over the world, is regularly updated, allowing easy access to sample" +
-            "questions" +
-            "for students, teachers, and schools across the world through a simple search." +
-            "</p>" +
-            "<br>" +
-            "<p class='gama-text-body1'>" +
-            "In order to maintain the rights of the GamaTrain website and ensure the comfort of all" +
-            "users," +
-            "rules have been established that users are required to follow. If a user violates these" +
-            "regulations, the system administrators have the right to remove the content generated by" +
-            "that" +
-            "user, and in some cases, their dedicated profile, from the system. These rules are fully" +
-            "published below and may change at any time. Please pay attention to messages that may" +
-            "reach" +
-            "users on some days, informing them of the latest website rules. After carefully reading" +
-            "these" +
-            'rules, check the option "I agree to carefully read the rules and regulations of the' +
-            "GamaTrain" +
-            'website" and then press the "Register" button.' +
-            "</p>" +
-            "<br>" +
-            "<p class='gama-text-body1'>" +
-            'The GamaTrain website may update these "Terms and Conditions" at any time by updating' +
-            "the terms" +
-            "of use of the website. You are bound and committed to such revisions, so it is necessary" +
-            "to" +
-            "periodically check this page to be informed of the current conditions and requirements." +
-            "With the hope that by implementing the system's rules and future guidelines, we can gain" +
-            "the" +
-            "satisfaction of our esteemed users." +
-            "</p>",
+            '<p class=\'gama-text-body1\'>'
+            + 'Thank you for choosing the GamaTrain website for your activities. The GamaTrain website'
+            + 'has'
+            + 'started its activities with the aim of creating a repository of sample exam questions'
+            + 'and'
+            + 'scientific tests for various levels of education. This repository, with questions'
+            + 'contributed by'
+            + 'teachers from all over the world, is regularly updated, allowing easy access to sample'
+            + 'questions'
+            + 'for students, teachers, and schools across the world through a simple search.'
+            + '</p>'
+            + '<br>'
+            + '<p class=\'gama-text-body1\'>'
+            + 'In order to maintain the rights of the GamaTrain website and ensure the comfort of all'
+            + 'users,'
+            + 'rules have been established that users are required to follow. If a user violates these'
+            + 'regulations, the system administrators have the right to remove the content generated by'
+            + 'that'
+            + 'user, and in some cases, their dedicated profile, from the system. These rules are fully'
+            + 'published below and may change at any time. Please pay attention to messages that may'
+            + 'reach'
+            + 'users on some days, informing them of the latest website rules. After carefully reading'
+            + 'these'
+            + 'rules, check the option "I agree to carefully read the rules and regulations of the'
+            + 'GamaTrain'
+            + 'website" and then press the "Register" button.'
+            + '</p>'
+            + '<br>'
+            + '<p class=\'gama-text-body1\'>'
+            + 'The GamaTrain website may update these "Terms and Conditions" at any time by updating'
+            + 'the terms'
+            + 'of use of the website. You are bound and committed to such revisions, so it is necessary'
+            + 'to'
+            + 'periodically check this page to be informed of the current conditions and requirements.'
+            + 'With the hope that by implementing the system\'s rules and future guidelines, we can gain'
+            + 'the'
+            + 'satisfaction of our esteemed users.'
+            + '</p>',
         },
         {
-          id: "registration",
-          title: "Registration",
+          id: 'registration',
+          title: 'Registration',
           describe:
-            "<ul class='gama-text-body1'>" +
-            "<li>All users must use appropriate words when registering on the website. In case of" +
-            "inappropriate" +
-            "or offensive words, the profile of that user will be deleted at the first opportunity." +
-            "Please" +
-            "use English letters for usernames and passwords.</li>" +
-            "<li>Each user is allowed to register one or more unique identifiers and profiles. To" +
-            "activate each" +
-            "identifier, click on its activation link from your email. For example, a user can" +
-            "register both" +
-            "as a teacher and as an educational institution on the website.</li>" +
-            "<li>" +
-            "Respectable users must provide accurate personal information during registration. If" +
-            "there is" +
-            "any deficiency in the provided information, such as address, phone number, etc. The" +
-            "GamaTrain" +
-            "website is not responsible." +
-            "</li>" +
-            "<li>" +
-            "Respectable teachers and educational institutions are required to complete their profile" +
-            "information accurately and truthfully to enable them to benefit from advertising" +
-            "capabilities" +
-            "and ensure users' access to accurate information." +
-            "</li>" +
-            "</ul>",
+            '<ul class=\'gama-text-body1\'>'
+            + '<li>All users must use appropriate words when registering on the website. In case of'
+            + 'inappropriate'
+            + 'or offensive words, the profile of that user will be deleted at the first opportunity.'
+            + 'Please'
+            + 'use English letters for usernames and passwords.</li>'
+            + '<li>Each user is allowed to register one or more unique identifiers and profiles. To'
+            + 'activate each'
+            + 'identifier, click on its activation link from your email. For example, a user can'
+            + 'register both'
+            + 'as a teacher and as an educational institution on the website.</li>'
+            + '<li>'
+            + 'Respectable users must provide accurate personal information during registration. If'
+            + 'there is'
+            + 'any deficiency in the provided information, such as address, phone number, etc. The'
+            + 'GamaTrain'
+            + 'website is not responsible.'
+            + '</li>'
+            + '<li>'
+            + 'Respectable teachers and educational institutions are required to complete their profile'
+            + 'information accurately and truthfully to enable them to benefit from advertising'
+            + 'capabilities'
+            + 'and ensure users\' access to accurate information.'
+            + '</li>'
+            + '</ul>',
         },
         {
-          id: "content-guidelines",
-          title: "Content Guidelines",
+          id: 'content-guidelines',
+          title: 'Content Guidelines',
           describe:
-            "<ul class='gama-text-body1'>" +
-            "<li>" +
-            "When registering or searching for exams, there is a scientific classification. Teachers" +
-            "must" +
-            "carefully categorize the exams into different categories to better introduce them to" +
-            "other" +
-            "users." +
-            "</li>" +
-            "<li>" +
-            "Respectable teachers commit to the authenticity of exam designs. In case of any claims" +
-            "by third" +
-            "parties regarding the authorship of registered exams, the responsibility lies with the" +
-            "registering teacher, and the GamaTrain website management will not be held accountable." +
-            "</li>" +
-            "<li>" +
-            "The GamaTrain website is not responsible for protecting the copyright rights of exam" +
-            "creators." +
-            "Respectable teachers, by registering exams, grant permission for their publication to" +
-            "the" +
-            "GamaTrain website. In return, they receive the right to authorship of the exam according" +
-            "to the" +
-            "assigned shares and values." +
-            "</li>" +
-            "<li>" +
-            "While GamaTrain makes maximum efforts to verify the accuracy and quality of exams using" +
-            "an" +
-            "expert team, it does not guarantee their accuracy or quality. GamaTrain website bears no" +
-            "commitment or responsibility for exams registered by teachers on the site. The exams are" +
-            "registered by teachers who have no real or legal relationship with this site. The direct" +
-            "responsibility for a registered exam rests with the registering user, and GamaTrain's" +
-            "system" +
-            "does not claim or guarantee its accuracy or validity." +
-            "</li>" +
-            "<li>" +
-            "The GamaTrain website displays teachers' exams. The exams listed on the system may" +
-            "change or be" +
-            "updated continuously by teachers. In this regard, the GamaTrain website does not accept" +
-            " any " +
-            "responsibility for the exams listed on the site, and the GamaTrain system merely" +
-            "displays exams" +
-            "registered by users." +
-            "</li>" +
-            "</ul>",
+            '<ul class=\'gama-text-body1\'>'
+            + '<li>'
+            + 'When registering or searching for exams, there is a scientific classification. Teachers'
+            + 'must'
+            + 'carefully categorize the exams into different categories to better introduce them to'
+            + 'other'
+            + 'users.'
+            + '</li>'
+            + '<li>'
+            + 'Respectable teachers commit to the authenticity of exam designs. In case of any claims'
+            + 'by third'
+            + 'parties regarding the authorship of registered exams, the responsibility lies with the'
+            + 'registering teacher, and the GamaTrain website management will not be held accountable.'
+            + '</li>'
+            + '<li>'
+            + 'The GamaTrain website is not responsible for protecting the copyright rights of exam'
+            + 'creators.'
+            + 'Respectable teachers, by registering exams, grant permission for their publication to'
+            + 'the'
+            + 'GamaTrain website. In return, they receive the right to authorship of the exam according'
+            + 'to the'
+            + 'assigned shares and values.'
+            + '</li>'
+            + '<li>'
+            + 'While GamaTrain makes maximum efforts to verify the accuracy and quality of exams using'
+            + 'an'
+            + 'expert team, it does not guarantee their accuracy or quality. GamaTrain website bears no'
+            + 'commitment or responsibility for exams registered by teachers on the site. The exams are'
+            + 'registered by teachers who have no real or legal relationship with this site. The direct'
+            + 'responsibility for a registered exam rests with the registering user, and GamaTrain\'s'
+            + 'system'
+            + 'does not claim or guarantee its accuracy or validity.'
+            + '</li>'
+            + '<li>'
+            + 'The GamaTrain website displays teachers\' exams. The exams listed on the system may'
+            + 'change or be'
+            + 'updated continuously by teachers. In this regard, the GamaTrain website does not accept'
+            + ' any '
+            + 'responsibility for the exams listed on the site, and the GamaTrain system merely'
+            + 'displays exams'
+            + 'registered by users.'
+            + '</li>'
+            + '</ul>',
         },
       ],
-    };
+    }
+  },
+  head() {
+    return {
+      titleTemplate: '%s',
+      title: 'Terms and Conditions: Understanding Our Commitment to You',
+
+      meta: [
+        {
+          hid: 'apple-mobile-web-app-title',
+          name: 'apple-mobile-web-app-title',
+          content: 'Terms and Conditions: Understanding Our Commitment to You',
+        },
+        {
+          hid: 'og:title',
+          name: 'og:title',
+          content: 'Terms and Conditions: Understanding Our Commitment to You',
+        },
+        {
+          hid: 'og:site_name',
+          name: 'og:site_name',
+          content: 'GamaTrain',
+        },
+        {
+          hid: 'description',
+          name: 'description',
+          content:
+            'Ensure a smooth and secure learning experience by reviewing GamaTrain\'s Terms and Conditions, outlining our commitment to user privacy and responsible platform usage.',
+        },
+        {
+          hid: 'og:description',
+          name: 'og:description',
+          content:
+            'Ensure a smooth and secure learning experience by reviewing GamaTrain\'s Terms and Conditions, outlining our commitment to user privacy and responsible platform usage.',
+        },
+      ],
+    }
+  },
+
+  computed: {
+    filteredItems() {
+      if (!this.searchQuery) {
+        return this.termsSection
+      }
+      const query = this.searchQuery.toLowerCase()
+      return this.termsSection.filter(
+        item =>
+          item.title.toLowerCase().includes(query)
+          || item.describe.toLowerCase().includes(query),
+      )
+    },
+  },
+
+  watch: {
+    '$route.hash': {
+      handler(newHash) {
+        if (this.isClient && !this.isScrolling) {
+          const targetId = newHash.replace('#', '')
+          if (
+            targetId
+            && this.termsSection.find(item => item.id === targetId)
+          ) {
+            this.activeSection = targetId
+          }
+        }
+      },
+      immediate: false,
+    },
   },
 
   mounted() {
-    this.isClient = true;
+    this.isClient = true
 
     // Set initial active section
-    this.activeSection = this.termsSection[0].id;
+    this.activeSection = this.termsSection[0].id
 
     // Initialize intersection observer
-    this.initializeObserver();
+    this.initializeObserver()
 
     // Handle initial hash if present
     if (this.$route.hash) {
-      const targetId = this.$route.hash.replace("#", "");
-      if (this.termsSection.find((item) => item.id === targetId)) {
-        this.activeSection = targetId;
+      const targetId = this.$route.hash.replace('#', '')
+      if (this.termsSection.find(item => item.id === targetId)) {
+        this.activeSection = targetId
         this.$nextTick(() => {
-          this.scrollToSection(targetId, false);
-        });
+          this.scrollToSection(targetId, false)
+        })
       }
     }
   },
 
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.observer) {
-      this.observer.disconnect();
+      this.observer.disconnect()
     }
     if (this.scrollTimeout) {
-      clearTimeout(this.scrollTimeout);
+      clearTimeout(this.scrollTimeout)
     }
   },
 
@@ -290,42 +345,42 @@ export default {
     initializeObserver() {
       const options = {
         root: null,
-        rootMargin: "-20% 0px -70% 0px", // Only trigger when section is in the top 30% of viewport
+        rootMargin: '-20% 0px -70% 0px', // Only trigger when section is in the top 30% of viewport
         threshold: 0,
-      };
+      }
 
       this.observer = new IntersectionObserver((entries) => {
-        if (this.isScrolling) return; // Don't update during programmatic scrolling
+        if (this.isScrolling) return // Don't update during programmatic scrolling
 
         // Find the section that's most visible
-        let mostVisibleEntry = null;
-        let maxRatio = 0;
+        let mostVisibleEntry = null
+        let maxRatio = 0
 
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.intersectionRatio > maxRatio) {
-            maxRatio = entry.intersectionRatio;
-            mostVisibleEntry = entry;
+            maxRatio = entry.intersectionRatio
+            mostVisibleEntry = entry
           }
-        });
+        })
 
         if (mostVisibleEntry) {
-          const sectionId = mostVisibleEntry.target.id;
+          const sectionId = mostVisibleEntry.target.id
           if (sectionId && sectionId !== this.activeSection) {
-            this.activeSection = sectionId;
-            this.updateHash(sectionId);
+            this.activeSection = sectionId
+            this.updateHash(sectionId)
           }
         }
-      }, options);
+      }, options)
 
       // Observe all sections
       this.$nextTick(() => {
         this.termsSection.forEach((section) => {
-          const element = document.getElementById(section.id);
+          const element = document.getElementById(section.id)
           if (element) {
-            this.observer.observe(element);
+            this.observer.observe(element)
           }
-        });
-      });
+        })
+      })
     },
 
     updateHash(sectionId) {
@@ -334,78 +389,47 @@ export default {
         this.$router.replace({
           path: this.$route.path,
           hash: `#${sectionId}`,
-        });
+        })
       }
     },
 
     scrollToSection(sectionId, smooth = true) {
-      this.isScrolling = true;
-      this.activeSection = sectionId;
+      this.isScrolling = true
+      this.activeSection = sectionId
 
-      const element = document.getElementById(sectionId);
+      const element = document.getElementById(sectionId)
       if (element) {
-        const headerOffset = 100; // Adjust based on your fixed header height
-        const elementPosition = element.getBoundingClientRect().top;
-        const offsetPosition =
-          elementPosition + window.pageYOffset - headerOffset;
+        const headerOffset = 100 // Adjust based on your fixed header height
+        const elementPosition = element.getBoundingClientRect().top
+        const offsetPosition
+          = elementPosition + window.pageYOffset - headerOffset
 
         window.scrollTo({
           top: offsetPosition,
-          behavior: smooth ? "smooth" : "auto",
-        });
+          behavior: smooth ? 'smooth' : 'auto',
+        })
 
-        this.updateHash(sectionId);
+        this.updateHash(sectionId)
       }
 
       // Reset scrolling flag after animation
       if (this.scrollTimeout) {
-        clearTimeout(this.scrollTimeout);
+        clearTimeout(this.scrollTimeout)
       }
       this.scrollTimeout = setTimeout(
         () => {
-          this.isScrolling = false;
+          this.isScrolling = false
         },
-        smooth ? 1000 : 100
-      );
+        smooth ? 1000 : 100,
+      )
     },
 
     isItemActive(item) {
-      if (!this.isClient) return false;
-      return this.activeSection === item.id;
+      if (!this.isClient) return false
+      return this.activeSection === item.id
     },
   },
-
-  computed: {
-    filteredItems() {
-      if (!this.searchQuery) {
-        return this.termsSection;
-      }
-      const query = this.searchQuery.toLowerCase();
-      return this.termsSection.filter(
-        (item) =>
-          item.title.toLowerCase().includes(query) ||
-          item.describe.toLowerCase().includes(query)
-      );
-    },
-  },
-
-  watch: {
-    "$route.hash": {
-      handler(newHash) {
-        if (this.isClient && !this.isScrolling) {
-          const targetId = newHash.replace("#", "");
-          if (
-            targetId &&
-            this.termsSection.find((item) => item.id === targetId)
-          ) {
-            this.activeSection = targetId;
-          }
-        }
-      },
-      immediate: false,
-    },
-  },
-};
+}
 </script>
 
 <style scoped>

@@ -1,6 +1,6 @@
 <script setup>
-import { Ckeditor } from "@ckeditor/ckeditor5-vue";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { Ckeditor } from '@ckeditor/ckeditor5-vue'
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
 
 // Define props to customize the editor features
 const props = defineProps({
@@ -13,53 +13,56 @@ const props = defineProps({
     type: Array,
     default: () => ['bold', 'italic', 'underline', 'alignment'],
   },
-  
+
   /**
    * Placeholder text for the editor
    * @type {String}
    */
   placeholder: {
     type: String,
-    default: ""
+    default: '',
   },
-  
+
   /**
    * Initial content for the editor
    * @type {String}
    */
   initialData: {
     type: String,
-    default: ""
+    default: '',
   },
-  
+
   /**
    * Editor min-height
    * @type {String}
    */
   minHeight: {
     type: String,
-    default: "250px"
+    default: '250px',
   },
-  
+
   /**
    * Additional styles as an object
    * @type {Object}
    */
   additionalStyles: {
     type: Object,
-    default: () => ({})
-  }
-});
+    default: () => ({}),
+  },
+})
 
-const modelValue = defineModel("modelValue");
+const modelValue = defineModel({
+  type: String,
+  default: '',
+})
 
 // Define the mapping between feature names and toolbar items
-const featureToToolbarItem = {
-  bold: "bold",
-  italic: "italic",
-  underline: "underline",
-  alignment: "alignment"
-};
+const _featureToToolbarItem = {
+  bold: 'bold',
+  italic: 'italic',
+  underline: 'underline',
+  alignment: 'alignment',
+}
 
 // Create editor configuration with basic toolbar
 const editorConfig = {
@@ -68,30 +71,31 @@ const editorConfig = {
   },
   placeholder: props.placeholder,
   initialData: props.initialData,
-};
+}
 
 // Computed property to generate styles
 const editorStyles = {
   width: '100%',
   minHeight: props.minHeight,
   ...props.additionalStyles,
-};
+}
 </script>
+
 <template>
-  <div 
+  <div
     class="rich-editor-container"
     :style="{
-      '--editor-min-height': minHeight
+      '--editor-min-height': minHeight,
     }"
   >
     <Ckeditor
+      v-model="modelValue"
       :editor="ClassicEditor"
       :config="editorConfig"
       :style="editorStyles"
-      v-model="modelValue"
     />
     <div class="editor-custom-tools">
-      <slot name="content"></slot>
+      <slot name="content" />
     </div>
   </div>
 </template>
@@ -108,7 +112,7 @@ const editorStyles = {
 /* Customize the editor's toolbar */
 .rich-editor-container .ck-toolbar {
   border-bottom-color: inherit;
-  background-color: #FAFAFA !important;
+  background-color: #fafafa !important;
 }
 
 /* Customize the editor's content area */
@@ -128,11 +132,11 @@ const editorStyles = {
   gap: 8px;
 }
 
-.editor-custom-tools .v-card img{
+.editor-custom-tools .v-card img {
   height: 7rem !important;
   width: 7rem !important;
 }
-.ck-content > p{
+.ck-content > p {
   font-size: 20px !important;
 }
 </style>

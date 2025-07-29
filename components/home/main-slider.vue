@@ -1,6 +1,11 @@
 <template>
   <div id="slider-container">
-    <v-col cols="12" sm="12" md="12" class="pt-0 px-0 pt-sm-0">
+    <v-col
+      cols="12"
+      sm="12"
+      md="12"
+      class="pt-0 px-0 pt-sm-0"
+    >
       <v-carousel
         id="main-slider"
         v-model="carousel_model"
@@ -10,73 +15,109 @@
         hide-delimiter-background
         :show-arrows="false"
       >
-        <v-carousel-item v-for="(slide, i) in slides" :key="i">
-          <v-sheet class="section1" :id="slide.id">
+        <v-carousel-item
+          v-for="(slide, i) in slides"
+          :key="i"
+        >
+          <v-sheet
+            :id="slide.id"
+            class="section1"
+          >
             <v-container class="pt-0 pt-sm-6 pt-md-6 pt-lg-8">
-              <v-card flat class="px-4 px-sm-8 px-md-12">
+              <v-card
+                flat
+                class="px-4 px-sm-8 px-md-12"
+              >
                 <v-row class="text-white">
                   <v-col col="12">
-                    <div class="slide-title" v-html="slide.title" />
+                    <div
+                      class="slide-title"
+                      v-html="slide.title"
+                    />
                     <div
                       class="slide-describe gama-text-body1 mt-6 d-none d-md-block"
                       v-html="slide.text"
-                    ></div>
+                    />
                     <v-btn
+                      id="read-about-btn"
                       rounded
                       :to="slide.link"
                       class="d-none d-md-inline-flex"
-                      id="read-about-btn"
                       size="x-large"
-                      >Learn more</v-btn
                     >
+                      Learn more
+                    </v-btn>
 
                     <v-btn
+                      id="slide-register-btn"
                       variant="text"
                       :to="slide.link"
-                      id="slide-register-btn"
                       class="d-md-none"
                     >
                       Learn more
-                      <v-icon color="#FFB300"> mdi-arrow-right-bold </v-icon>
+                      <v-icon color="#FFB300">
+                        mdi-arrow-right-bold
+                      </v-icon>
                     </v-btn>
                   </v-col>
                 </v-row>
               </v-card>
             </v-container>
           </v-sheet>
-          <v-sheet class="section2"> </v-sheet>
+          <v-sheet class="section2" />
         </v-carousel-item>
-        <v-card id="main-search" class="d-none d-md-block">
+        <v-card
+          id="main-search"
+          class="d-none d-md-block"
+        >
           <v-card-text class="mt-1">
             <v-row class="text-center">
-              <v-col cols="7" id="main-search-keyword">
+              <v-col
+                id="main-search-keyword"
+                cols="7"
+              >
                 <v-text-field
-                  class="h-100"
                   ref="keywordInput"
                   v-model="searchKey"
+                  class="h-100"
                   rounded="s-pill"
                   label="Ex: Paper Summer Session"
                   density="compact"
                   :append-inner-icon="searchKey ? 'mdi-close-circle' : ''"
-                  @click:append-inner="closeSearch()"
                   hide-details
                   variant="solo"
                   autocomplete="off"
+                  @click:append-inner="closeSearch()"
                 />
               </v-col>
-              <v-col cols="4" class="pl-0" id="keysearch-cate">
+              <v-col
+                id="keysearch-cate"
+                cols="4"
+                class="pl-0"
+              >
                 <v-autocomplete
+                  v-model="searchCate"
                   hide-details
                   density="compact"
-                  v-model="searchCate"
                   label="Select category"
                   :items="['Paper', 'Multimedia', 'Q&A', 'Exam', 'Tutorial']"
                   variant="solo"
-                ></v-autocomplete>
+                />
               </v-col>
-              <v-col cols="1" class="pl-0">
-                <v-btn color="#FFB300" class="text-white">
-                  <v-icon color="#ffffff" size="20"> mdi-magnify </v-icon>
+              <v-col
+                cols="1"
+                class="pl-0"
+              >
+                <v-btn
+                  color="#FFB300"
+                  class="text-white"
+                >
+                  <v-icon
+                    color="#ffffff"
+                    size="20"
+                  >
+                    mdi-magnify
+                  </v-icon>
                 </v-btn>
               </v-col>
             </v-row>
@@ -84,8 +125,15 @@
         </v-card>
       </v-carousel>
     </v-col>
-    <div id="search-result-container" v-if="searchResultsSection">
-      <div id="search-result" ref="searchResult" @scroll="checkSearchScroll">
+    <div
+      v-if="searchResultsSection"
+      id="search-result-container"
+    >
+      <div
+        id="search-result"
+        ref="searchResult"
+        @scroll="checkSearchScroll"
+      >
         <div id="result-stat">
           <span class="gama-text-overline"> Search result </span>
           <span class="gama-text-button">
@@ -94,17 +142,20 @@
         </div>
         <div v-if="searchCount > 0">
           <v-row
-            class="list-item"
             v-for="(item, index) in searchResults"
             :key="index"
+            class="list-item"
           >
-            <v-col cols="1" class="pr-1">
+            <v-col
+              cols="1"
+              class="pr-1"
+            >
               <nuxt-link :to="`/${calcPath(item.type)}/${item.id}`">
                 <div
                   v-if="item.type == 'gama_tests'"
                   class="avatar paper-avatar"
                 >
-                  <span class="icon icon-paper"></span>
+                  <span class="icon icon-paper" />
                 </div>
                 <div
                   v-else-if="
@@ -112,49 +163,49 @@
                   "
                   class="avatar multimedia-avatar"
                 >
-                  <span class="icon icon-multimedia"></span>
+                  <span class="icon icon-multimedia" />
                 </div>
                 <div
                   v-else-if="item.type == 'gama_azmoons'"
                   class="avatar exam-avatar"
                 >
-                  <span class="icon icon-exam"></span>
+                  <span class="icon icon-exam" />
                 </div>
                 <div
                   v-else-if="item.type == 'gama_questions'"
                   class="avatar qa-avatar"
                 >
-                  <span class="icon icon-q-a"></span>
+                  <span class="icon icon-q-a" />
                 </div>
                 <div
                   v-else-if="item.type == 'gama_dars'"
                   class="avatar tutorial-avatar"
                 >
-                  <span class="icon icon-tutorial"></span>
+                  <span class="icon icon-tutorial" />
                 </div>
                 <div
                   v-else-if="item.type == 'gama_teachers'"
                   class="avatar teacher-avatar"
                 >
-                  <span class="icon icon-teacher"></span>
+                  <span class="icon icon-teacher" />
                 </div>
                 <div
                   v-else-if="item.type == 'gama_schools'"
                   class="avatar school-avatar"
                 >
-                  <span class="icon icon-school"></span>
+                  <span class="icon icon-school" />
                 </div>
                 <div
                   v-else-if="item.type == 'gama_live'"
                   class="avatar live-avatar"
                 >
-                  <span class="icon icon-live"></span>
+                  <span class="icon icon-live" />
                 </div>
                 <div
                   v-else-if="item.type == 'gama_students'"
                   class="avatar student-avatar"
                 >
-                  <span class="icon icon-live"></span>
+                  <span class="icon icon-live" />
                 </div>
               </nuxt-link>
             </v-col>
@@ -165,34 +216,43 @@
                 }}</nuxt-link>
               </div>
               <div class="chip-container">
-                <div class="chip" v-if="item.lesson_title">
+                <div
+                  v-if="item.lesson_title"
+                  class="chip"
+                >
                   <nuxt-link
                     :to="`/search?type=test&section=${item.section}&base=${item.base}&lesson=${item.lesson}`"
-                    >{{ item.lesson_title }}</nuxt-link
-                  >
+                  >{{ item.lesson_title }}</nuxt-link>
                 </div>
-                <div class="chip" v-if="item.base_title">
+                <div
+                  v-if="item.base_title"
+                  class="chip"
+                >
                   <nuxt-link
                     :to="`/search?type=test&section=${item.section}&base=${item.base}`"
-                    >{{ item.base_title }}</nuxt-link
-                  >
+                  >{{ item.base_title }}</nuxt-link>
                 </div>
-                <div class="chip" v-if="item.section_title">
+                <div
+                  v-if="item.section_title"
+                  class="chip"
+                >
                   <nuxt-link
                     :to="`/search?type=test&section=${item.section}`"
-                    >{{ item.section_title }}</nuxt-link
-                  >
+                  >{{ item.section_title }}</nuxt-link>
                 </div>
               </div>
             </v-col>
           </v-row>
           <div
-            class="line-specifier-load-more"
             ref="lineSpecifierLoadMoreRef"
-          ></div>
-          <v-row v-if="allDataLoaded == false" class="list-item">
+            class="line-specifier-load-more"
+          />
+          <v-row
+            v-if="allDataLoaded == false"
+            class="list-item"
+          >
             <v-col cols="12">
-              <v-skeleton-loader type="list-item-avatar"></v-skeleton-loader>
+              <v-skeleton-loader type="list-item-avatar" />
             </v-col>
           </v-row>
         </div>
@@ -203,9 +263,13 @@
           <span class="gama-text-button"> Opps! no data found </span>
         </div>
         <div v-else>
-          <v-row class="list-item" v-for="i in 3" :key="i">
+          <v-row
+            v-for="i in 3"
+            :key="i"
+            class="list-item"
+          >
             <v-col cols="12">
-              <v-skeleton-loader type="list-item-avatar"></v-skeleton-loader>
+              <v-skeleton-loader type="list-item-avatar" />
             </v-col>
           </v-row>
         </div>
@@ -215,88 +279,89 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 
-const carousel_model = ref(0);
-const colors = ["#24292F", "#0092A9"];
+const carousel_model = ref(0)
+const _colors = ['#24292F', '#0092A9']
 
 const slides = [
   {
     title:
       '<span class="gama-text-h1">AI</span> <span class="gama-text-h4 text-white">&nbspSystem <span class="d-sm-none"><br>&nbsp&nbsp</span>in Education</span>',
-    img: "ai-robot.png",
-    text: "Discover the future of education with our AI-powered learning platform,<br> revolutionizing the way you acquire knowledge and skills.",
-    id: "ai-slide",
-    link: "/smart-learning",
+    img: 'ai-robot.png',
+    text: 'Discover the future of education with our AI-powered learning platform,<br> revolutionizing the way you acquire knowledge and skills.',
+    id: 'ai-slide',
+    link: '/smart-learning',
   },
   {
     title: '<span class="gama-text-h1">School finder</span>',
-    img: "school-finder.png",
-    text: "Discover the future of education with our AI-powered learning platform,<br> revolutionizing the way you acquire knowledge and skills.",
-    id: "school-finder-slide",
-    link: "/school",
+    img: 'school-finder.png',
+    text: 'Discover the future of education with our AI-powered learning platform,<br> revolutionizing the way you acquire knowledge and skills.',
+    id: 'school-finder-slide',
+    link: '/school',
   },
   {
     title:
       '<span class="gama-text-h1 font-weight-bold">Question<span class="d-sm-none"><br>&nbsp&nbsp</span> & Answer</span>',
-    text: "Q&A made easy. Connect with classmates and<br> teachers for quick answers to your questions.",
-    img: "a-q.png",
-    id: "aq-slide",
-    link: "/search?type=question",
+    text: 'Q&A made easy. Connect with classmates and<br> teachers for quick answers to your questions.',
+    img: 'a-q.png',
+    id: 'aq-slide',
+    link: '/search?type=question',
   },
-];
+]
 
-//Search section
-const searchResults = ref([]);
-const searchCount = ref("...");
-const searchKey = ref("");
-const searchCate = ref(null);
-const searchLoading = ref(true);
-const pageNum = ref(1);
-const timer = ref(0);
-const searchResultsSection = ref(false);
-const allDataLoaded = ref(false);
-//End search section
+// Search section
+const searchResults = ref([])
+const searchCount = ref('...')
+const searchKey = ref('')
+const searchCate = ref(null)
+const searchLoading = ref(true)
+const pageNum = ref(1)
+const timer = ref(0)
+const searchResultsSection = ref(false)
+const allDataLoaded = ref(false)
+// End search section
 
-const router = useRouter();
-const keywordInput = ref(null);
-const searchResult = ref(null);
+const router = useRouter()
+const keywordInput = ref(null)
+const searchResult = ref(null)
 
 watch(searchKey, (val) => {
-  if (val.trim() === "") {
-    searchResultsSection.value = false;
-  } else {
-    searchResultsSection.value = true;
+  if (val.trim() === '') {
+    searchResultsSection.value = false
   }
-  pageNum.value = 1;
-  searchCount.value = "...";
-  allDataLoaded.value = false;
-  searchResults.value = [];
-  search();
-});
+  else {
+    searchResultsSection.value = true
+  }
+  pageNum.value = 1
+  searchCount.value = '...'
+  allDataLoaded.value = false
+  searchResults.value = []
+  search()
+})
 
-const openAuthDialog = (val) => {
-  router.push({ query: { auth_form: val } });
-};
+const _openAuthDialog = (val) => {
+  router.push({ query: { auth_form: val } })
+}
 
-const lineSpecifierLoadMoreRef = ref(null);
+const lineSpecifierLoadMoreRef = ref(null)
 const checkSearchScroll = () => {
-  const targetDiv = lineSpecifierLoadMoreRef.value;
-  const rect = targetDiv.getBoundingClientRect();
-  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+  const targetDiv = lineSpecifierLoadMoreRef.value
+  const rect = targetDiv.getBoundingClientRect()
+  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight
 
   if (isDivInView && !searchLoading.value && !allDataLoaded.value) {
-    pageNum.value++;
-    search();
+    pageNum.value++
+    search()
   }
-};
+}
 
 const search = () => {
-  searchLoading.value = true;
+  searchLoading.value = true
   if (timer.value) {
-    clearTimeout(timer.value);
-    timer.value = null;
+    clearTimeout(timer.value)
+    timer.value = null
   }
 
   timer.value = setTimeout(async () => {
@@ -305,45 +370,47 @@ const search = () => {
         const params = {
           query: searchKey.value,
           page: pageNum.value,
-        };
-        const response = await $fetch("/api/v1/search/text", {
+        }
+        const response = await $fetch('/api/v1/search/text', {
           params,
-        });
+        })
         if (response.data) {
-          searchCount.value = response.data.num;
-          searchResults.value.push(...response.data.list);
+          searchCount.value = response.data.num
+          searchResults.value.push(...response.data.list)
 
           if (response.data.list.length < 20) {
-            allDataLoaded.value = true;
+            allDataLoaded.value = true
           }
         }
-      } catch (error) {
-        console.log(err);
-      } finally {
-        searchLoading.value = false;
+      }
+      catch (error) {
+        console.log(error)
+      }
+      finally {
+        searchLoading.value = false
       }
     }
-  }, 800);
-};
+  }, 800)
+}
 
 const closeSearch = () => {
-  searchResultsSection.value = false;
-  searchKey.value = "";
-  keywordInput.value?.blur();
-};
+  searchResultsSection.value = false
+  searchKey.value = ''
+  keywordInput.value?.blur()
+}
 
 const calcPath = (type) => {
-  if (type == "gama_tests") return "paper";
-  else if (type == "gama_learnfiles" || type == "gama_files")
-    return "multimedia";
-  else if (type == "gama_azmoons") return "exams";
-  else if (type == "gama_questions") return "qa";
-  else if (type == "gama_dars") return "tutorial";
-  else if (type == "gama_teachers") return "teacher";
-  else if (type == "gama_schools") return "school";
-  else if (type == "gama_live") return "live";
-  else if (type == "gama_students") return "student";
-};
+  if (type == 'gama_tests') return 'paper'
+  else if (type == 'gama_learnfiles' || type == 'gama_files')
+    return 'multimedia'
+  else if (type == 'gama_azmoons') return 'exams'
+  else if (type == 'gama_questions') return 'qa'
+  else if (type == 'gama_dars') return 'tutorial'
+  else if (type == 'gama_teachers') return 'teacher'
+  else if (type == 'gama_schools') return 'school'
+  else if (type == 'gama_live') return 'live'
+  else if (type == 'gama_students') return 'student'
+}
 </script>
 
 <style>

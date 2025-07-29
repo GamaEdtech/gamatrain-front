@@ -1,5 +1,8 @@
 <template>
-  <v-skeleton-loader v-if="isLoadingPapers" type="table"></v-skeleton-loader>
+  <v-skeleton-loader
+    v-if="isLoadingPapers"
+    type="table"
+  />
   <template v-else>
     <!-- Start Desktop View  -->
     <v-data-table
@@ -12,7 +15,7 @@
       items-per-page="-1"
       :item-class="rowClass"
     >
-      <template v-slot:[`header.title`]="{ header }">
+      <template #[`header.title`]="{ header }">
         {{ header.title }}
       </template>
       <!-- Column Classification -->
@@ -42,71 +45,117 @@
       <template #[`item.downloadFilesContains`]="{ item }">
         <div class="d-flex flex-wrap justify-center">
           <v-chip
-            @click="startDownload('q_pdf', item)"
             small
             class="ma-1 chip-pill"
             color="#F04438"
             :disabled="!item.q_file"
-            >qp</v-chip
+            @click="startDownload('q_pdf', item)"
           >
+            qp
+          </v-chip>
           <v-chip
-            @click="startDownload('a_file', item)"
             small
             class="ma-1 chip-pill"
             color="#12B76A"
             :disabled="!item.a_file"
-            >ms</v-chip
+            @click="startDownload('a_file', item)"
           >
+            ms
+          </v-chip>
 
           <v-chip
-            @click="startDownload('sf_file', item)"
             small
             class="ma-1 chip-pill"
             color="#F79009"
             :disabled="!item.sf_file"
-            >sf</v-chip
+            @click="startDownload('sf_file', item)"
           >
+            sf
+          </v-chip>
 
           <v-chip
-            @click="startDownload('in_file', item)"
             small
             class="ma-1 chip-pill"
             color="#8F4949"
             :disabled="!item.in_file"
-            >in</v-chip
+            @click="startDownload('in_file', item)"
           >
+            in
+          </v-chip>
         </div>
       </template>
 
       <!-- Column ExamHub -->
       <template #[`item.examHubIcon`]="{ item }">
         <div class="d-flex justify-center">
-          <v-chip
-            class="d-flex align-center justify-center v-chip--link"
-            color="#7F56D9"
-            link
-            v-if="item.exam_id"
-            v-for="(exam, index) in safeParseArray(item.exam_id)"
-            :key="index"
-            :to="`/exam/${exam}`"
-            :disabled="!item.exam_id"
-          >
-            <v-icon size="x-large" color="#7F56D9">
-              mdi-clipboard-text-outline
-            </v-icon>
-          </v-chip>
+          <template v-if="item.exam_id">
+            <v-chip
+              v-for="(exam, index) in safeParseArray(item.exam_id)"
+              :key="index"
+              class="d-flex align-center justify-center v-chip--link"
+              color="#7F56D9"
+              link
+              :to="`/exam/${exam}`"
+              :disabled="!item.exam_id"
+            >
+              <v-icon
+                size="x-large"
+                color="#7F56D9"
+              >
+                mdi-clipboard-text-outline
+              </v-icon>
+            </v-chip>
+          </template>
           <v-chip
             v-if="!item.exam_id"
             class="d-flex align-center justify-center v-chip--link"
             color="#7F56D9"
             :disabled="true"
           >
-            <v-icon size="x-large" color="#7F56D9">
+            <v-icon
+              size="x-large"
+              color="#7F56D9"
+            >
               mdi-clipboard-text-outline
             </v-icon>
           </v-chip>
         </div>
       </template>
+
+      <!-- ExamHub Chip -->
+      <template v-if="item.exam_id">
+        <v-chip
+          v-for="(exam, index) in safeParseArray(item.exam_id)"
+          :key="index"
+          class="exam-hub-chip"
+          color="#7F56D9"
+          link
+          x-small
+          :to="`/exam/${exam}`"
+          :disabled="!item.exam_id"
+        >
+          <v-icon
+            size="large"
+            color="#7F56D9"
+          >
+            mdi-clipboard-text-outline
+          </v-icon>
+        </v-chip>
+      </template>
+      <v-chip
+        v-if="!item.exam_id"
+        class="exam-hub-chip"
+        color="#7F56D9"
+        x-small
+        :disabled="true"
+      >
+        <v-icon
+          size="large"
+          color="#7F56D9"
+        >
+          mdi-clipboard-text-outline
+        </v-icon>
+      </v-chip>
     </v-data-table>
     <!-- Start Desktop View  -->
 
@@ -118,13 +167,15 @@
     >
       <div class="mobile-headers">
         <div
-          class="mobile-header-item"
           v-for="(header, index) in mobileHeaders"
           :key="index"
+          class="mobile-header-item"
         >
           <div class="d-flex align-center">
             {{ header.title }}
-            <v-icon small>mdi-menu-down</v-icon>
+            <v-icon small>
+              mdi-menu-down
+            </v-icon>
           </div>
         </div>
       </div>
@@ -158,58 +209,66 @@
               <div class="paper-chips">
                 <!-- QP Chip -->
                 <v-chip
-                  @click="startDownload('q_pdf', item)"
                   x-small
                   class="chip-pill"
                   color="#F04438"
                   :disabled="!item.q_file"
-                  >qp</v-chip
+                  @click="startDownload('q_pdf', item)"
                 >
+                  qp
+                </v-chip>
                 <!-- MS Chip -->
                 <v-chip
-                  @click="startDownload('a_file', item)"
                   x-small
                   class="chip-pill"
                   color="#12B76A"
                   :disabled="!item.a_file"
-                  >ms</v-chip
+                  @click="startDownload('a_file', item)"
                 >
+                  ms
+                </v-chip>
                 <!-- SF Chip -->
                 <v-chip
-                  @click="startDownload('sf_file', item)"
                   x-small
                   class="chip-pill"
                   color="#F79009"
                   :disabled="!item.sf_file"
-                  >sf</v-chip
+                  @click="startDownload('sf_file', item)"
                 >
+                  sf
+                </v-chip>
 
                 <!-- IN Chip -->
                 <v-chip
-                  @click="startDownload('in_file', item)"
                   x-small
                   class="chip-pill"
                   color="#8F4949"
                   :disabled="!item.in_file"
-                  >in</v-chip
+                  @click="startDownload('in_file', item)"
                 >
+                  in
+                </v-chip>
 
                 <!-- ExamHub Chip -->
-                <v-chip
-                  class="exam-hub-chip"
-                  color="#7F56D9"
-                  link
-                  x-small
-                  v-if="item.exam_id"
-                  v-for="(exam, index) in safeParseArray(item.exam_id)"
-                  :key="index"
-                  :to="`/exam/${exam}`"
-                  :disabled="!item.exam_id"
-                >
-                  <v-icon size="large" color="#7F56D9">
-                    mdi-clipboard-text-outline
-                  </v-icon>
-                </v-chip>
+                <template v-if="item.exam_id">
+                  <v-chip
+                    v-for="(exam, examIndex) in safeParseArray(item.exam_id)"
+                    :key="examIndex"
+                    class="exam-hub-chip"
+                    color="#7F56D9"
+                    link
+                    x-small
+                    :to="`/exam/${exam}`"
+                    :disabled="!item.exam_id"
+                  >
+                    <v-icon
+                      size="large"
+                      color="#7F56D9"
+                    >
+                      mdi-clipboard-text-outline
+                    </v-icon>
+                  </v-chip>
+                </template>
                 <v-chip
                   v-if="!item.exam_id"
                   class="exam-hub-chip"
@@ -217,12 +276,18 @@
                   x-small
                   :disabled="true"
                 >
-                  <v-icon size="large" color="#7F56D9">
+                  <v-icon
+                    size="large"
+                    color="#7F56D9"
+                  >
                     mdi-clipboard-text-outline
                   </v-icon>
                 </v-chip>
               </div>
-              <div class="separator" v-if="index < data.length - 1"></div>
+              <div
+                v-if="index < data.length - 1"
+                class="separator"
+              />
             </div>
           </template>
         </v-data-table>
@@ -230,7 +295,10 @@
     </div>
     <!-- End Tablet & Mobile Views -->
 
-    <div class="line-infinite-loading" ref="lineDetectLoadMorePaperRef"></div>
+    <div
+      ref="lineDetectLoadMorePaperRef"
+      class="line-infinite-loading"
+    />
     <div
       v-if="isLoadingInfiniteScroll"
       class="w-100 d-flex flex-row align-start justify-space-around justify-lg-space-between"
@@ -239,27 +307,32 @@
         v-if="!isMobile && !isTablet"
         class="w-100"
         type="table-tbody"
-      ></v-skeleton-loader>
-      <div v-else class="w-100 d-flex flex-column align-start">
+      />
+      <div
+        v-else
+        class="w-100 d-flex flex-column align-start"
+      >
         <v-skeleton-loader
-          v-for="item in 3"
+          v-for="(item, index) in 3"
+          :key="index"
           class="w-50 min-width-200"
           type="subtitle"
-        ></v-skeleton-loader>
+        />
         <div class="d-flex">
           <v-skeleton-loader
-            v-for="item in 3"
+            v-for="(item, index) in 3"
+            :key="index"
             type="avatar"
-          ></v-skeleton-loader>
+          />
         </div>
-        <div class="separator"></div>
+        <div class="separator" />
       </div>
     </div>
   </template>
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const props = defineProps({
   desktopHeader: {
@@ -286,97 +359,99 @@ const props = defineProps({
     type: Array,
     required: true,
   },
-});
+})
 
-const emit = defineEmits(["loadNextPageData"]);
+const emit = defineEmits(['loadNextPageData'])
 
-const nuxtApp = useNuxtApp();
+const nuxtApp = useNuxtApp()
 
 onMounted(() => {
-  checkScreenSize();
-  window.addEventListener("resize", checkScreenSize);
-  window.addEventListener("scroll", detectNeedLoadMoreData);
-});
+  checkScreenSize()
+  window.addEventListener('resize', checkScreenSize)
+  window.addEventListener('scroll', detectNeedLoadMoreData)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener("resize", checkScreenSize);
-  window.removeEventListener("scroll", detectNeedLoadMoreData);
-});
+  window.removeEventListener('resize', checkScreenSize)
+  window.removeEventListener('scroll', detectNeedLoadMoreData)
+})
 
-const isMobile = ref(false);
-const isTablet = ref(false);
+const isMobile = ref(false)
+const isTablet = ref(false)
 
 const checkScreenSize = () => {
-  const width = window.innerWidth;
-  isMobile.value = width < 768;
-  isTablet.value = width >= 768 && width < 960;
-};
+  const width = window.innerWidth
+  isMobile.value = width < 768
+  isTablet.value = width >= 768 && width < 960
+}
 
 const rowClass = (_item, index) => {
-  return (index + 1) % 3 === 0 ? "my-4" : "";
-};
+  return (index + 1) % 3 === 0 ? 'my-4' : ''
+}
 
 const safeParseArray = (stringList) => {
   try {
-    const parsed = JSON.parse(stringList);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
+    const parsed = JSON.parse(stringList)
+    return Array.isArray(parsed) ? parsed : []
   }
-};
+  catch {
+    return []
+  }
+}
 
 const startDownload = async (type, item) => {
-  let apiUrl = "";
-  if (type === "q_word") apiUrl = `/api/v1/tests/download/${item.id}/word`;
-  if (type === "q_pdf") apiUrl = `/api/v1/tests/download/${item.id}/pdf`;
-  if (type === "a_file") apiUrl = `/api/v1/tests/download/${item.id}/answer`;
-  if (type === "sf_file")
-    apiUrl = `/api/v1/tests/download/${item.id}/extra/${item.sf_file_id}`;
-  if (type === "in_file")
-    apiUrl = `/api/v1/tests/download/${item.id}/extra/${item.in_file_id}`;
+  let apiUrl = ''
+  if (type === 'q_word') apiUrl = `/api/v1/tests/download/${item.id}/word`
+  if (type === 'q_pdf') apiUrl = `/api/v1/tests/download/${item.id}/pdf`
+  if (type === 'a_file') apiUrl = `/api/v1/tests/download/${item.id}/answer`
+  if (type === 'sf_file')
+    apiUrl = `/api/v1/tests/download/${item.id}/extra/${item.sf_file_id}`
+  if (type === 'in_file')
+    apiUrl = `/api/v1/tests/download/${item.id}/extra/${item.in_file_id}`
 
   try {
-    const response = await $fetch(apiUrl);
+    const response = await $fetch(apiUrl)
 
-    const { saveAs } = await import("file-saver");
-    saveAs(response.data.url, response.data.name);
-  } catch (err) {
+    const { saveAs } = await import('file-saver')
+    saveAs(response.data.url, response.data.name)
+  }
+  catch (err) {
     if (err.response?.status === 400) {
       if (
-        err.response.data?.status === 0 &&
-        err.response.data?.error === "creditNotEnough"
+        err.response.data?.status === 0
+        && err.response.data?.error === 'creditNotEnough'
       ) {
         // useToast().info("No enough credit");
       }
     }
-    console.error(err);
+    console.error(err)
   }
-};
+}
 
-const lineDetectLoadMorePaperRef = ref(null);
+const lineDetectLoadMorePaperRef = ref(null)
 
 const detectNeedLoadMoreData = () => {
-  const targetDiv = lineDetectLoadMorePaperRef.value;
+  const targetDiv = lineDetectLoadMorePaperRef.value
   if (targetDiv) {
-    const rect = targetDiv.getBoundingClientRect();
-    const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+    const rect = targetDiv.getBoundingClientRect()
+    const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight
 
     if (
-      isDivInView &&
-      !props.isLoadingInfiniteScroll &&
-      !props.isLoadingPapers &&
-      !props.isAllDataLoaded
+      isDivInView
+      && !props.isLoadingInfiniteScroll
+      && !props.isLoadingPapers
+      && !props.isAllDataLoaded
     ) {
-      emit("loadNextPageData");
+      emit('loadNextPageData')
     }
   }
-};
+}
 
 function getMonthName(monthNumber) {
   return nuxtApp
     .$dayjs()
     .month(Number(monthNumber) - 1)
-    .format("MMMM");
+    .format('MMMM')
 }
 </script>
 

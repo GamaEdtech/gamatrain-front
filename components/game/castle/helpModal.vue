@@ -1,124 +1,174 @@
 <template>
-    <v-dialog v-model="showModal" persistent max-width="500px">
-        <v-card class="guide-card" color="primary">
-            <v-card-title class="guide-title">
-                Game Controls Guide
-                <v-icon class="close-icon" @click="closeModal">mdi-close</v-icon>
-            </v-card-title>
+  <v-dialog
+    v-model="showModal"
+    persistent
+    max-width="500px"
+  >
+    <v-card
+      class="guide-card"
+      color="primary"
+    >
+      <v-card-title class="guide-title">
+        Game Controls Guide
+        <v-icon
+          class="close-icon"
+          @click="closeModal"
+        >
+          mdi-close
+        </v-icon>
+      </v-card-title>
 
-            <v-card-text class="guide-content">
-                <div class="control-section">
-                    <h3 class="section-title">
-                        <v-icon>mdi-keyboard</v-icon>
-                        Desktop Controls
-                    </h3>
-                    <div class="controls-grid">
-                        <div class="control-item">
-                            <div class="key">W</div>
-                            <span>Move Forward</span>
-                        </div>
-                        <div class="control-item">
-                            <div class="key">S</div>
-                            <span>Move Backward</span>
-                        </div>
-                        <div class="control-item">
-                            <div class="key">A</div>
-                            <span>Move Left</span>
-                        </div>
-                        <div class="control-item">
-                            <div class="key">D</div>
-                            <span>Move Right</span>
-                        </div>
-                        <div class="control-item">
-                            <div class="key">Mouse</div>
-                            <span>Rotate View</span>
-                        </div>
-                    </div>
-                </div>
+      <v-card-text class="guide-content">
+        <div class="control-section">
+          <h3 class="section-title">
+            <v-icon>mdi-keyboard</v-icon>
+            Desktop Controls
+          </h3>
+          <div class="controls-grid">
+            <div class="control-item">
+              <div class="key">
+                W
+              </div>
+              <span>Move Forward</span>
+            </div>
+            <div class="control-item">
+              <div class="key">
+                S
+              </div>
+              <span>Move Backward</span>
+            </div>
+            <div class="control-item">
+              <div class="key">
+                A
+              </div>
+              <span>Move Left</span>
+            </div>
+            <div class="control-item">
+              <div class="key">
+                D
+              </div>
+              <span>Move Right</span>
+            </div>
+            <div class="control-item">
+              <div class="key">
+                Mouse
+              </div>
+              <span>Rotate View</span>
+            </div>
+          </div>
+        </div>
 
-                <v-divider class="divider" v-if="isMobileOrTablet"></v-divider>
+        <v-divider
+          v-if="isMobileOrTablet"
+          class="divider"
+        />
 
-                <div class="control-section" v-if="isMobileOrTablet">
-                    <h3 class="section-title">
-                        <v-icon>mdi-cellphone</v-icon>
-                        Mobile Controls
-                    </h3>
-                    <div class="mobile-controls">
-                        <div class="mobile-control-group">
-                            <v-btn class="control-btn" fab>
-                                <v-icon>mdi-arrow-up</v-icon>
-                            </v-btn>
-                        </div>
-                        <div class="mobile-control-group">
-                            <v-btn class="control-btn"  fab>
-                                <v-icon>mdi-arrow-left</v-icon>
-                            </v-btn>
-                            <v-btn class="control-btn" fab>
-                                <v-icon>mdi-arrow-down</v-icon>
-                            </v-btn>
-                            <v-btn class="control-btn" fab>
-                                <v-icon>mdi-arrow-right</v-icon>
-                            </v-btn>
-                        </div>
-                        <div class="mobile-control-group">
-                            <v-btn class="rotate-btn" fab>
-                                <v-icon>mdi-rotate-3d-variant</v-icon>
-                            </v-btn>
-                            <span>Touch and drag to rotate</span>
-                        </div>
-                    </div>
-                </div>
+        <div
+          v-if="isMobileOrTablet"
+          class="control-section"
+        >
+          <h3 class="section-title">
+            <v-icon>mdi-cellphone</v-icon>
+            Mobile Controls
+          </h3>
+          <div class="mobile-controls">
+            <div class="mobile-control-group">
+              <v-btn
+                class="control-btn"
+                fab
+              >
+                <v-icon>mdi-arrow-up</v-icon>
+              </v-btn>
+            </div>
+            <div class="mobile-control-group">
+              <v-btn
+                class="control-btn"
+                fab
+              >
+                <v-icon>mdi-arrow-left</v-icon>
+              </v-btn>
+              <v-btn
+                class="control-btn"
+                fab
+              >
+                <v-icon>mdi-arrow-down</v-icon>
+              </v-btn>
+              <v-btn
+                class="control-btn"
+                fab
+              >
+                <v-icon>mdi-arrow-right</v-icon>
+              </v-btn>
+            </div>
+            <div class="mobile-control-group">
+              <v-btn
+                class="rotate-btn"
+                fab
+              >
+                <v-icon>mdi-rotate-3d-variant</v-icon>
+              </v-btn>
+              <span>Touch and drag to rotate</span>
+            </div>
+          </div>
+        </div>
 
-                <div class="dont-show-container">
-                    <v-checkbox v-model="dontShowAgain" label="Don't show this again" color="white"
-                        hide-details></v-checkbox>
-                </div>
-            </v-card-text>
+        <div class="dont-show-container">
+          <v-checkbox
+            v-model="dontShowAgain"
+            label="Don't show this again"
+            color="white"
+            hide-details
+          />
+        </div>
+      </v-card-text>
 
-            <v-card-actions class="guide-actions">
-                <v-btn class="start-btn" @click="closeModal" block>
-                    <span class="btn-text">Got it, let's start!</span>
-                </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>
+      <v-card-actions class="guide-actions">
+        <v-btn
+          class="start-btn"
+          block
+          @click="closeModal"
+        >
+          <span class="btn-text">Got it, let's start!</span>
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue'
 
-const showModal = ref(true);
-const isMobileOrTablet = ref(window.innerWidth <= 1024);
-const dontShowAgain = ref(false);
+const showModal = ref(true)
+const isMobileOrTablet = ref(window.innerWidth <= 1024)
+const dontShowAgain = ref(false)
 
 // Check localStorage for saved preference
 const checkSavedPreference = () => {
-    const savedPreference = localStorage.getItem('dontShowControlsGuide');
-    if (savedPreference === 'true') {
-        showModal.value = false;
-    }
-};
+  const savedPreference = localStorage.getItem('dontShowControlsGuide')
+  if (savedPreference === 'true') {
+    showModal.value = false
+  }
+}
 
 const closeModal = () => {
-    if (dontShowAgain.value) {
-        localStorage.setItem('dontShowControlsGuide', 'true');
-    }
-    showModal.value = false;
-};
-
+  if (dontShowAgain.value) {
+    localStorage.setItem('dontShowControlsGuide', 'true')
+  }
+  showModal.value = false
+}
 
 onMounted(() => {
-    checkSavedPreference();
-    window.addEventListener('resize', () => {
-        isMobileOrTablet.value = window.innerWidth <= 1024;
-    });
-});
+  checkSavedPreference()
+  window.addEventListener('resize', () => {
+    isMobileOrTablet.value = window.innerWidth <= 1024
+  })
+})
 
 onUnmounted(() => {
-    window.removeEventListener('resize', () => {
-        isMobileOrTablet.value = window.innerWidth <= 1024;
-    });
-});
+  window.removeEventListener('resize', () => {
+    isMobileOrTablet.value = window.innerWidth <= 1024
+  })
+})
 </script>
 
 <style scoped>

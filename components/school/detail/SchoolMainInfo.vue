@@ -2,7 +2,9 @@
   <div>
     <div class="d-flex info-itm ml-md-6">
       <div class="info-sign">
-        <v-icon color="primary"> mdi-web </v-icon>
+        <v-icon color="primary">
+          mdi-web
+        </v-icon>
       </div>
       <div class="info-data overflow-hidden">
         <a
@@ -16,27 +18,29 @@
         <template v-if="contentData.webSite">
           <v-btn
             v-if="!generalDataEditMode.website"
-            @click="handleEdit('website')"
             class="ml-2"
             icon
             color="blue-grey"
             variant="text"
+            @click="handleEdit('website')"
           >
-            <v-icon size="large"> mdi-pencil </v-icon>
+            <v-icon size="large">
+              mdi-pencil
+            </v-icon>
           </v-btn>
         </template>
         <template v-else>
           <span
             v-show="!(contentData.webSite || generalDataEditMode.website)"
-            @click="handleEdit('website')"
             class="gtext-t4 primary-blue-500 align-self-center pointer"
+            @click="handleEdit('website')"
           >
             Contribute
           </span>
         </template>
         <v-text-field
-          v-model="form.web"
           v-if="generalDataEditMode.website"
+          v-model="form.web"
           placeholder="Website"
           :rules="webUrlRule"
           variant="underlined"
@@ -45,12 +49,14 @@
             <v-btn
               :loading="webSubmitLoader"
               color="success"
-              @click="handleUpdate('website')"
               variant="flat"
               size="x-small"
               icon
+              @click="handleUpdate('website')"
             >
-              <v-icon size="large"> mdi-check </v-icon>
+              <v-icon size="large">
+                mdi-check
+              </v-icon>
             </v-btn>
           </template>
         </v-text-field>
@@ -58,12 +64,14 @@
     </div>
     <div class="d-flex info-itm ml-md-6">
       <div class="info-sign">
-        <v-icon color="primary"> mdi-email </v-icon>
+        <v-icon color="primary">
+          mdi-email
+        </v-icon>
       </div>
       <div class="info-data">
         <a
-          class="flex-grow-1"
           v-show="contentData.email && !generalDataEditMode.email"
+          class="flex-grow-1"
           :href="`mailto:${contentData.email}`"
         >
           {{ contentData.email }}
@@ -71,28 +79,30 @@
         <template v-if="contentData.email">
           <v-btn
             v-if="!generalDataEditMode.email"
-            @click="handleEdit('email')"
             class="ml-2"
             icon
             color="blue-grey"
             variant="text"
+            @click="handleEdit('email')"
           >
-            <v-icon size="large"> mdi-pencil </v-icon>
+            <v-icon size="large">
+              mdi-pencil
+            </v-icon>
           </v-btn>
         </template>
         <template v-else>
           <span
             v-show="!(contentData.email || generalDataEditMode.email)"
-            @click="handleEdit('email')"
             class="gtext-t4 primary-blue-500 align-self-center pointer"
+            @click="handleEdit('email')"
           >
             Contribute
           </span>
         </template>
         <v-text-field
-          :rules="emailRule"
-          v-model="form.email"
           v-if="generalDataEditMode.email"
+          v-model="form.email"
+          :rules="emailRule"
           placeholder="Email"
           variant="underlined"
         >
@@ -100,12 +110,14 @@
             <v-btn
               :loading="emailSubmitLoader"
               color="success"
-              @click="handleUpdate('email')"
               variant="flat"
               size="x-small"
               icon
+              @click="handleUpdate('email')"
             >
-              <v-icon size="large"> mdi-check </v-icon>
+              <v-icon size="large">
+                mdi-check
+              </v-icon>
             </v-btn>
           </template>
         </v-text-field>
@@ -113,12 +125,14 @@
     </div>
     <div class="d-flex info-itm ml-md-6">
       <div class="info-sign">
-        <v-icon color="primary"> mdi-phone </v-icon>
+        <v-icon color="primary">
+          mdi-phone
+        </v-icon>
       </div>
       <div class="info-data">
         <a
-          class="flex-grow-1"
           v-show="contentData.phoneNumber && !generalDataEditMode.phone1"
+          class="flex-grow-1"
           :href="`tel: ${contentData.phoneNumber}`"
         >
           {{ contentData.phoneNumber }}
@@ -126,28 +140,30 @@
         <template v-if="contentData.phoneNumber">
           <v-btn
             v-if="!generalDataEditMode.phone1"
-            @click="handleEdit('phone')"
             class="ml-2"
             icon
             color="blue-grey"
             variant="text"
+            @click="handleEdit('phone')"
           >
-            <v-icon size="large"> mdi-pencil </v-icon>
+            <v-icon size="large">
+              mdi-pencil
+            </v-icon>
           </v-btn>
         </template>
         <template v-else>
           <span
-            @click="handleEdit('phone')"
             v-show="!(contentData.phoneNumber || generalDataEditMode.phone1)"
             class="gtext-t4 primary-blue-500 align-self-center pointer"
+            @click="handleEdit('phone')"
           >
             Contribute
           </span>
         </template>
         <v-text-field
-          :rules="phoneRule"
-          v-model="form.phone"
           v-if="generalDataEditMode.phone1"
+          v-model="form.phone"
+          :rules="phoneRule"
           placeholder="Phone"
           variant="underlined"
         >
@@ -155,12 +171,14 @@
             <v-btn
               :loading="phoneSubmitLoader"
               color="success"
-              @click="handleUpdate('phone')"
               variant="flat"
               size="x-small"
               icon
+              @click="handleUpdate('phone')"
             >
-              <v-icon size="large"> mdi-check </v-icon>
+              <v-icon size="large">
+                mdi-check
+              </v-icon>
             </v-btn>
           </template>
         </v-text-field>
@@ -168,38 +186,44 @@
     </div>
     <div class="d-flex info-itm ml-md-6">
       <div class="info-sign">
-        <v-icon size="20" color="primary"> mdi-map-marker </v-icon>
+        <v-icon
+          size="20"
+          color="primary"
+        >
+          mdi-map-marker
+        </v-icon>
       </div>
       <div class="info-data info-data-address">
         <span
-          class="flex-grow-1"
           v-show="contentData.address && !generalDataEditMode.address"
-          >{{ contentData.address }}</span
-        >
+          class="flex-grow-1"
+        >{{ contentData.address }}</span>
         <template v-if="contentData.address">
           <v-btn
             v-if="!generalDataEditMode.address"
-            @click="handleEdit('address')"
             class="ml-2"
             icon
             color="blue-grey"
             variant="text"
+            @click="handleEdit('address')"
           >
-            <v-icon size="large"> mdi-pencil </v-icon>
+            <v-icon size="large">
+              mdi-pencil
+            </v-icon>
           </v-btn>
         </template>
         <template v-else>
           <span
-            @click="handleEdit('address')"
             v-show="!(contentData.address || generalDataEditMode.address)"
             class="gtext-t4 primary-blue-500 align-self-center pointer"
+            @click="handleEdit('address')"
           >
             Contribute
           </span>
         </template>
         <v-text-field
-          v-model="form.address"
           v-if="generalDataEditMode.address"
+          v-model="form.address"
           placeholder="Enter address"
           :rules="addressRule"
           variant="underlined"
@@ -208,12 +232,14 @@
             <v-btn
               :loading="addressSubmitLoader"
               color="success"
-              @click="handleUpdate('address')"
               variant="flat"
               size="x-small"
               icon
+              @click="handleUpdate('address')"
             >
-              <v-icon size="large"> mdi-check </v-icon>
+              <v-icon size="large">
+                mdi-check
+              </v-icon>
             </v-btn>
           </template>
         </v-text-field>
@@ -225,184 +251,192 @@
 <script setup>
 const props = defineProps({
   content: { type: Object, required: true },
-});
-const contentData = ref(props.content);
-const emit = defineEmits(["edit", "update"]);
-const nuxtApp = useNuxtApp();
-const route = useRoute();
-const router = useRouter();
+})
+const contentData = ref(props.content)
+const emit = defineEmits(['edit', 'update'])
+const nuxtApp = useNuxtApp()
+const route = useRoute()
 const generalDataEditMode = reactive({
   website: false,
   email: false,
   phone1: false,
   address: false,
-});
+})
 const form = reactive({
-  web: "",
-  email: "",
-  phone: "",
-  address: "",
-});
-const webSubmitLoader = ref(false);
-const emailSubmitLoader = ref(false);
-const phoneSubmitLoader = ref(false);
-const addressSubmitLoader = ref(false);
+  web: '',
+  email: '',
+  phone: '',
+  address: '',
+})
+const webSubmitLoader = ref(false)
+const emailSubmitLoader = ref(false)
+const phoneSubmitLoader = ref(false)
+const addressSubmitLoader = ref(false)
 const webUrlRule = [
-  (v) =>
-    !v ||
-    /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)$/.test(
-      v
-    ) ||
-    "Please enter a valid URL",
-  (v) => !v || v.length <= 255 || "URL must be less than 255 characters",
-];
+  v =>
+    !v
+    || /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/.test(
+      v,
+    )
+    || 'Please enter a valid URL',
+  v => !v || v.length <= 255 || 'URL must be less than 255 characters',
+]
 const emailRule = [
-  (v) => !!v || "Email is required",
-  (v) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ||
-    "Please enter a valid email address",
-];
-const phoneRule = [(v) => !!v || "Phone number is required"];
-const addressRule = [(v) => !!v || "Address is required"];
+  v => !!v || 'Email is required',
+  v =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+    || 'Please enter a valid email address',
+]
+const phoneRule = [v => !!v || 'Phone number is required']
+const addressRule = [v => !!v || 'Address is required']
 
 function normalizeURL(url) {
-  if (!url) return "";
-  if (!url.startsWith("http://") && !url.startsWith("https://")) {
-    return "http://" + url;
+  if (!url) return ''
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return 'http://' + url
   }
-  return url;
+  return url
 }
 function handleEdit(field) {
-  if (field === "website") {
-    form.web = contentData.value.webSite || "";
-    generalDataEditMode.website = true;
-  } else if (field === "email") {
-    form.email = contentData.value.email || "";
-    generalDataEditMode.email = true;
-  } else if (field === "phone") {
-    form.phone = contentData.value.phoneNumber || "";
-    generalDataEditMode.phone1 = true;
-  } else if (field === "address") {
-    form.address = contentData.value.address || "";
-    generalDataEditMode.address = true;
+  if (field === 'website') {
+    form.web = contentData.value.webSite || ''
+    generalDataEditMode.website = true
   }
-  emit("edit", field);
+  else if (field === 'email') {
+    form.email = contentData.value.email || ''
+    generalDataEditMode.email = true
+  }
+  else if (field === 'phone') {
+    form.phone = contentData.value.phoneNumber || ''
+    generalDataEditMode.phone1 = true
+  }
+  else if (field === 'address') {
+    form.address = contentData.value.address || ''
+    generalDataEditMode.address = true
+  }
+  emit('edit', field)
 }
 function isValidUrl(url) {
   try {
-    new URL(url);
-    return /^https?:\/\//.test(url);
-  } catch (e) {
-    return false;
+    new URL(url)
+    return /^https?:\/\//.test(url)
+  }
+  catch {
+    return false
   }
 }
 function isValidEmail(email) {
   try {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  } catch (e) {
-    return false;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+  }
+  catch {
+    return false
   }
 }
 function isRequired(value) {
   try {
-    return !!value.trim();
-  } catch (e) {
-    return false;
+    return !!value.trim()
+  }
+  catch {
+    return false
   }
 }
 function handleUpdate(value) {
-  let formData = {};
-  if (value == "website") {
+  let formData = {}
+  if (value == 'website') {
     if (!isValidUrl(form.web)) {
-      nuxtApp.$toast?.error("Please enter a valid website URL");
-      return;
+      nuxtApp.$toast?.error('Please enter a valid website URL')
+      return
     }
-    generalDataEditMode.website = false;
-    formData = { webSite: form.web ?? null };
+    generalDataEditMode.website = false
+    formData = { webSite: form.web ?? null }
   }
-  if (value == "email") {
+  if (value == 'email') {
     if (!isValidEmail(form.email)) {
-      nuxtApp.$toast?.error("Please enter a valid Email");
-      return;
+      nuxtApp.$toast?.error('Please enter a valid Email')
+      return
     }
-    generalDataEditMode.email = false;
-    formData = { email: form.email ?? null };
+    generalDataEditMode.email = false
+    formData = { email: form.email ?? null }
   }
-  if (value == "phone") {
+  if (value == 'phone') {
     if (!isRequired(form.phone)) {
-      nuxtApp.$toast?.error("Please enter a valid Phone Number");
-      return;
+      nuxtApp.$toast?.error('Please enter a valid Phone Number')
+      return
     }
-    generalDataEditMode.phone1 = false;
-    formData = { phoneNumber: form.phone ?? null };
+    generalDataEditMode.phone1 = false
+    formData = { phoneNumber: form.phone ?? null }
   }
-  if (value == "address") {
+  if (value == 'address') {
     if (!isRequired(form.address)) {
       nuxtApp.$toast?.error(
-        "Please enter a valid address (minimum 10 characters)"
-      );
-      return;
+        'Please enter a valid address (minimum 10 characters)',
+      )
+      return
     }
-    generalDataEditMode.address = false;
-    formData = { address: form.address ?? null };
+    generalDataEditMode.address = false
+    formData = { address: form.address ?? null }
   }
 
-  let loaderRef = {
+  const loaderRef = {
     website: webSubmitLoader,
     email: emailSubmitLoader,
     phone: phoneSubmitLoader,
     address: addressSubmitLoader,
-  }[value];
-  if (loaderRef) loaderRef.value = true;
+  }[value]
+  if (loaderRef) loaderRef.value = true
   useApiService
     .post(`/api/v2/schools/${route.params.id}/contributions`, formData)
     .then(async (response) => {
       if (response.succeeded) {
         nuxtApp.$toast?.success(
-          "Your contribution has been successfully submitted"
-        );
+          'Your contribution has been successfully submitted',
+        )
         switch (value) {
-          case "name":
-            contentData.value.name = form.name;
-            break;
-          case "website":
-            contentData.value.webSite = form.web;
-            break;
-          case "phone":
-            contentData.value.phoneNumber = form.phone;
-            break;
-          case "address":
-            contentData.value.address = form.address;
-            break;
-          case "email":
-            contentData.value.email = form.email;
-            break;
+          case 'name':
+            contentData.value.name = form.name
+            break
+          case 'website':
+            contentData.value.webSite = form.web
+            break
+          case 'phone':
+            contentData.value.phoneNumber = form.phone
+            break
+          case 'address':
+            contentData.value.address = form.address
+            break
+          case 'email':
+            contentData.value.email = form.email
+            break
           default:
-            break;
+            break
         }
 
-        emit("update", form.value);
-      } else {
-        nuxtApp.$toast?.error(response?.errors[0]?.message);
+        emit('update', form.value)
+      }
+      else {
+        nuxtApp.$toast?.error(response?.errors[0]?.message)
       }
     })
     .catch((err) => {
-      console.log("err", err);
+      console.log('err', err)
 
       if (err?.response?.status == 401 || err?.response?.status == 403) {
-      } else nuxtApp.$toast?.error(err?.response?.data?.message);
+        nuxtApp.$toast?.error('Please login to contribute')
+      }
+      else nuxtApp.$toast?.error(err?.response?.data?.message)
     })
     .finally(() => {
-      form.web = null;
-      form.email = null;
-      form.phone = null;
-      form.address = null;
-      webSubmitLoader.value = false;
-      emailSubmitLoader.value = false;
-      phoneSubmitLoader.value = false;
-      addressSubmitLoader.value = false;
-    });
+      form.web = null
+      form.email = null
+      form.phone = null
+      form.address = null
+      webSubmitLoader.value = false
+      emailSubmitLoader.value = false
+      phoneSubmitLoader.value = false
+      addressSubmitLoader.value = false
+    })
 }
 </script>
 

@@ -1,165 +1,169 @@
 <script setup>
 import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
-import UserDetailModal from '~/components/admin/usermanagment/userDetailModal.vue';
-import addUserDialog from '~/components/admin/usermanagment/addUserDialog.vue';
-import useApiService from '~/composables/useApiService';
+import UserDetailModal from '~/components/admin/usermanagment/userDetailModal.vue'
+import addUserDialog from '~/components/admin/usermanagment/addUserDialog.vue'
+import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',
   auth: true,
-});
+})
 
-const { $toast } = useNuxtApp();
+const { $toast } = useNuxtApp()
 
-const list = ref([]);
+const list = ref([])
 const headers = [
   { title: 'Username', key: 'username', sortable: false, width: '15vw' },
   { title: 'Email', key: 'email', sortable: false, width: '15vw' },
   { title: 'Status', key: 'enabled', sortable: false, width: '10vw' },
   { title: 'Actions', key: 'actions', sortable: false, width: '5vw' },
-];
+]
 
-const tableLoading = ref(true);
-const dialogVisible = ref(false);
-const isDeleteModalOpen = ref(false);
-const showAddUserDialog = ref(false);
-const selectedEmail = ref('');
-const selectedName = ref('');
-const selectedId = ref(null);
+const tableLoading = ref(true)
+const dialogVisible = ref(false)
+const isDeleteModalOpen = ref(false)
+const showAddUserDialog = ref(false)
+const selectedEmail = ref('')
+const selectedName = ref('')
+const selectedId = ref(null)
 const selectedPhoneNumber = ref('')
-const selectedDeleteId = ref(null);
-const filter = ref('all');
-const filteredList = ref([]);
-const selectedAction = ref(null);
-const selectedPageSize = ref(10);
-const page = ref(1);
-const pageCount = ref(0);
-const totalCount = ref(0);
-let selected = ref([]);
+const selectedDeleteId = ref(null)
+const filter = ref('all')
+const filteredList = ref([])
+const selectedAction = ref(null)
+const selectedPageSize = ref(10)
+const page = ref(1)
+const pageCount = ref(0)
+const totalCount = ref(0)
+const selected = ref([])
 
 const allActions = [
   { label: 'Delete All', value: 'deleteAll' },
-];
+]
 
 const allPageSize = [
   { label: '10 Rows', value: 10 },
   { label: '20 Rows', value: 20 },
   { label: '50 Rows', value: 50 },
-];
+]
 
 const fetchUsers = async () => {
-  tableLoading.value = true;
+  tableLoading.value = true
   try {
     const response = await useApiService.get('/api/v2/admin/identities', {
       'PagingDto.PageFilter.Size': selectedPageSize.value,
       'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-    });
-    list.value = response.data.list;
-    filteredList.value = list.value;
-    totalCount.value = response.data.totalRecordsCount;
-    pageCount.value = Math.ceil(totalCount.value / selectedPageSize.value);
-  } catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message);
-    }
-  } finally {
-    tableLoading.value = false;
+    })
+    list.value = response.data.list
+    filteredList.value = list.value
+    totalCount.value = response.data.totalRecordsCount
+    pageCount.value = Math.ceil(totalCount.value / selectedPageSize.value)
   }
-};
+  catch (err) {
+    if (err.response?.status === 400) {
+      $toast.error(err.response.data.message)
+    }
+  }
+  finally {
+    tableLoading.value = false
+  }
+}
 
 const viewMessageDetails = async (id) => {
   try {
-    const response = await useApiService.get(`/api/v2/admin/identities/${id}`);
+    const response = await useApiService.get(`/api/v2/admin/identities/${id}`)
 
-    selectedEmail.value = response.data.email;
-    selectedName.value = response.data.username;
-    selectedId.value = response.data.id;
-    selectedPhoneNumber.value = response.data.phoneNumber;
-    dialogVisible.value = true;
-  } catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message);
-    }
+    selectedEmail.value = response.data.email
+    selectedName.value = response.data.username
+    selectedId.value = response.data.id
+    selectedPhoneNumber.value = response.data.phoneNumber
+    dialogVisible.value = true
   }
-};
-
-const toggleUserStatus = async (id) => {
-  const token = localStorage.getItem('v2_token')
-  try{
-    const res = await $fetch(`/api/v2/admin/identities/${id}/toggle`,{
-      method : 'PATCH',
-      headers: {
-        Authorization: `Bearer ${token}`,
-    }});
-    if(res.succeeded){
-      $toast.success('User Status Toggled Successfully')
-      fetchUsers();
-    }
-    else 
-      $toast.error(res.errors[0].message)
-  }catch (err) {
+  catch (err) {
     if (err.response?.status === 400) {
-      $toast.error(err.response.data.message);
+      $toast.error(err.response.data.message)
     }
   }
 }
 
+const toggleUserStatus = async (id) => {
+  const token = localStorage.getItem('v2_token')
+  try {
+    const res = await $fetch(`/api/v2/admin/identities/${id}/toggle`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      } })
+    if (res.succeeded) {
+      $toast.success('User Status Toggled Successfully')
+      fetchUsers()
+    }
+    else
+      $toast.error(res.errors[0].message)
+  }
+  catch (err) {
+    if (err.response?.status === 400) {
+      $toast.error(err.response.data.message)
+    }
+  }
+}
 
 const deleteUser = async () => {
   try {
-    const res = await useApiService.remove(`/api/v2/admin/identities/${selectedDeleteId.value}`);
+    const res = await useApiService.remove(`/api/v2/admin/identities/${selectedDeleteId.value}`)
 
-    list.value = list.value.filter((i) => i.id !== selectedDeleteId.value);
-    filteredList.value = list.value;
-    if(res.succeeded === true)
-      $toast.success('User deleted successfully!');
-    else 
+    list.value = list.value.filter(i => i.id !== selectedDeleteId.value)
+    filteredList.value = list.value
+    if (res.succeeded === true)
+      $toast.success('User deleted successfully!')
+    else
       $toast.error(res.errors[0].message)
-  } catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message);
-    }
-  } finally {
-    isDeleteModalOpen.value = false;
-    dialogVisible.value = false
-    fetchUsers();
   }
-};
+  catch (err) {
+    if (err.response?.status === 400) {
+      $toast.error(err.response.data.message)
+    }
+  }
+  finally {
+    isDeleteModalOpen.value = false
+    dialogVisible.value = false
+    fetchUsers()
+  }
+}
 
 const handleDelete = (id) => {
-  isDeleteModalOpen.value = true;
-  selectedDeleteId.value = id;
-};
+  isDeleteModalOpen.value = true
+  selectedDeleteId.value = id
+}
 
 const doAll = async () => {
   if (selectedAction.value === 'Delete All') {
     for (const item of selected.value) {
-      selectedDeleteId.value = item;
-      await deleteUser();
+      selectedDeleteId.value = item
+      await deleteUser()
     }
 
-    selected.value = [];
-    $toast.success('All selected Users deleted!');
+    selected.value = []
+    $toast.success('All selected Users deleted!')
   }
-};
+}
 
 onMounted(() => {
-  selectedAction.value = allActions[0].label;
-  selectedPageSize.value = allPageSize[0].value;
-  fetchUsers();
-});
+  selectedAction.value = allActions[0].label
+  selectedPageSize.value = allPageSize[0].value
+  fetchUsers()
+})
 
 watch(page, () => {
-  filter.value = 'all';
-  fetchUsers();
-});
+  filter.value = 'all'
+  fetchUsers()
+})
 
 watch(selectedPageSize, () => {
-  page.value = 1;
-  fetchUsers();
-});
-
+  page.value = 1
+  fetchUsers()
+})
 </script>
 
 <template>
@@ -175,70 +179,96 @@ watch(selectedPageSize, () => {
 
     <div class="scrollable-table">
       <v-data-table
+        v-model="selected"
         :headers="headers"
         :items="filteredList"
         :items-per-page="selectedPageSize"
         class="elevation-1"
         :loading="tableLoading"
-        v-model="selected"
         hide-default-footer
         show-select
       >
-
-        <template #item.username="{ item }">
+        <template #[`item.username`]="{ item }">
           <div class="d-flex align-center">
             <span class="truncate-text">{{ item.username }}</span>
           </div>
         </template>
 
-        <template #item.email="{ item }">
+        <template #[`item.email`]="{ item }">
           <div class="d-flex align-center">
             <span class="truncate-text">{{ item.email }}</span>
           </div>
         </template>
 
-        <template #header.actions>
+        <template #[`header.actions`]>
           <div class="d-flex justify-end pr-6">
             Actions
           </div>
         </template>
 
-        <template #item.enabled="{ item }">
-          <span v-if="item.enabled == true" class="gtext-t5 green-12b76a">enable</span>
-          <span v-else class="gtext-t5 red-F04438">disable</span>
+        <template #[`item.enabled`]="{ item }">
+          <span
+            v-if="item.enabled == true"
+            class="gtext-t5 green-12b76a"
+          >enable</span>
+          <span
+            v-else
+            class="gtext-t5 red-F04438"
+          >disable</span>
         </template>
 
-        <template #item.actions="{ item }">
+        <template #[`item.actions`]="{ item }">
           <div class="d-flex justify-end pr-2">
-            <v-btn variant="plain" class="px-0 min-width-10">
-              <v-icon small class="mr-2 gtext-t1" @click="viewMessageDetails(item.id)">
+            <v-btn
+              variant="plain"
+              class="px-0 min-width-10"
+            >
+              <v-icon
+                small
+                class="mr-2 gtext-t1"
+                @click="viewMessageDetails(item.id)"
+              >
                 mdi-file-find
               </v-icon>
               <v-tooltip
-              activator="parent"
-              location="top"
+                activator="parent"
+                location="top"
               >
                 Details
               </v-tooltip>
             </v-btn>
-            <v-btn variant="plain" class="px-0 min-width-10">
-              <v-icon small class="mr-2 gtext-t1" @click="toggleUserStatus(item.id)">
+            <v-btn
+              variant="plain"
+              class="px-0 min-width-10"
+            >
+              <v-icon
+                small
+                class="mr-2 gtext-t1"
+                @click="toggleUserStatus(item.id)"
+              >
                 mdi mdi-account-alert
               </v-icon>
               <v-tooltip
-              activator="parent"
-              location="top"
+                activator="parent"
+                location="top"
               >
                 Toggle status
               </v-tooltip>
             </v-btn>
-            <v-btn variant="plain" class="px-0 min-width-10">
-              <v-icon small class="gtext-t1" @click="handleDelete(item.id)">
+            <v-btn
+              variant="plain"
+              class="px-0 min-width-10"
+            >
+              <v-icon
+                small
+                class="gtext-t1"
+                @click="handleDelete(item.id)"
+              >
                 mdi-delete
               </v-icon>
               <v-tooltip
-              activator="parent"
-              location="top"
+                activator="parent"
+                location="top"
               >
                 Delete
               </v-tooltip>
@@ -248,12 +278,12 @@ watch(selectedPageSize, () => {
       </v-data-table>
 
       <UserDetailModal
+        :id="selectedId"
         v-model="dialogVisible"
         :username="selectedName"
         :email="selectedEmail"
-        :phoneNumber="selectedPhoneNumber"
-        :id="selectedId"
-        @fetchUser="fetchUsers"
+        :phone-number="selectedPhoneNumber"
+        @fetch-user="fetchUsers"
       />
 
       <DeleteItemModal
@@ -263,30 +293,37 @@ watch(selectedPageSize, () => {
       <addUserDialog
         v-model="showAddUserDialog"
         @confirm="deleteUser"
-        @fetchUser="fetchUsers"
+        @fetch-user="fetchUsers"
       />
-
     </div>
 
-    <v-row class="mt-2" align="center" justify="space-between" no-gutters>
-      <v-col cols="12" class="d-flex flex-wrap flex-sm-nowrap align-center justify-space-between">
+    <v-row
+      class="mt-2"
+      align="center"
+      justify="space-between"
+      no-gutters
+    >
+      <v-col
+        cols="12"
+        class="d-flex flex-wrap flex-sm-nowrap align-center justify-space-between"
+      >
         <div class="d-flex align-center mb-2 mb-sm-0">
           <v-select
-          v-model="selectedAction"
-          :items="allActions"
-          item-title="label"
-          item-value="value"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          class="rounded-pill footerBtns"
-          :disabled="selected.length === 0"
+            v-model="selectedAction"
+            :items="allActions"
+            item-title="label"
+            item-value="value"
+            variant="outlined"
+            density="compact"
+            rounded
+            hide-details
+            class="rounded-pill footerBtns"
+            :disabled="selected.length === 0"
           />
           <v-btn
-          class="rounded-pill gtext-t5 bg-primary-gray-700 text-white ml-4"
-          :disabled="selected.length === 0" 
-          @click="doAll"
+            class="rounded-pill gtext-t5 bg-primary-gray-700 text-white ml-4"
+            :disabled="selected.length === 0"
+            @click="doAll"
           >
             <span>Do</span>
           </v-btn>
@@ -295,39 +332,42 @@ watch(selectedPageSize, () => {
         <!-- Pagination (hidden on mobile) -->
         <div class="d-none d-sm-flex">
           <v-pagination
+            v-model="page"
+            :length="pageCount"
+            :total-visible="5"
+            class="custom-pagination"
+            next-icon="mdi-arrow-right"
+            prev-icon="mdi-arrow-left"
+          />
+        </div>
+
+        <div class="mb-2 mb-sm-0">
+          <v-select
+            v-model="selectedPageSize"
+            :items="allPageSize"
+            item-title="label"
+            item-value="value"
+            variant="outlined"
+            density="compact"
+            rounded
+            hide-details
+            class="rounded-pill footerBtns"
+          />
+        </div>
+      </v-col>
+
+      <!-- Pagination (visible only on xs) -->
+      <v-col
+        cols="12"
+        class="d-flex justify-center d-sm-none mt-2"
+      >
+        <v-pagination
           v-model="page"
           :length="pageCount"
           :total-visible="5"
           class="custom-pagination"
           next-icon="mdi-arrow-right"
           prev-icon="mdi-arrow-left"
-          />
-        </div>
-
-        <div class="mb-2 mb-sm-0">
-          <v-select
-          v-model="selectedPageSize"
-          :items="allPageSize"
-          item-title="label"
-          item-value="value"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          class="rounded-pill footerBtns"
-          />
-        </div>
-      </v-col>
-
-      <!-- Pagination (visible only on xs) -->
-      <v-col cols="12" class="d-flex justify-center d-sm-none mt-2">
-        <v-pagination
-        v-model="page"
-        :length="pageCount"
-        :total-visible="5"
-        class="custom-pagination"
-        next-icon="mdi-arrow-right"
-        prev-icon="mdi-arrow-left"
         />
       </v-col>
     </v-row>
@@ -448,5 +488,4 @@ watch(selectedPageSize, () => {
   min-width: 10px !important;
   height: 10px !important;
 }
-
 </style>

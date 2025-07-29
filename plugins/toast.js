@@ -7,7 +7,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     show: false,
     text: '',
     color: 'success',
-    timeout: 3000
+    timeout: 3000,
   })
 
   // Create toast methods
@@ -29,7 +29,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     },
     warning(text, options = {}) {
       this.show(text, { color: 'warning', ...options })
-    }
+    },
   }
 
   // Provide both the reactive snackbar state and the toast methods

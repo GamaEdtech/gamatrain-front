@@ -1,9 +1,15 @@
 <template>
   <div class="blog-create-page">
-    <v-form ref="form" @submit.prevent="validate">
+    <v-form
+      ref="form"
+      @submit.prevent="validate"
+    >
       <div class="d-flex flex-wrap flex-mobile">
         <v-row>
-          <v-col cols="12" md="7">
+          <v-col
+            cols="12"
+            md="7"
+          >
             <!-- Left side - Content Editor -->
             <div class="content-editor">
               <!-- Title input -->
@@ -18,8 +24,13 @@
                   required
                 >
                   <template #append-inner>
-                    <div class="cursor-pointer" @click="showSlugDialog">
-                      <v-icon color="#2E90FA">mdi-link</v-icon>
+                    <div
+                      class="cursor-pointer"
+                      @click="showSlugDialog"
+                    >
+                      <v-icon color="#2E90FA">
+                        mdi-link
+                      </v-icon>
                     </div>
                   </template>
                 </v-text-field>
@@ -28,12 +39,12 @@
               <div class="mt-10">
                 <label class="mb-2 d-block form-label-title">Abstract</label>
                 <v-textarea
-                  rounded
                   v-model="blog.summary"
+                  rounded
                   class="textarea-input"
                   variant="outlined"
                   placeholder="Enter here.............."
-                ></v-textarea>
+                />
               </div>
 
               <!-- Rich text editor -->
@@ -68,7 +79,10 @@
             </div>
           </v-col>
 
-          <v-col cols="12" md="5">
+          <v-col
+            cols="12"
+            md="5"
+          >
             <!-- Right side - Publishing Options -->
             <div class="publishing-options mobile-full">
               <v-card
@@ -97,13 +111,17 @@
                     variant="text"
                     class="mobile-mb-2"
                   >
-                    <v-icon size="large">mdi-delete</v-icon>
+                    <v-icon size="large">
+                      mdi-delete
+                    </v-icon>
                   </v-btn>
                 </div>
                 <div
                   class="d-flex align-center justify-space-between mb-3 pa-4 mobile-stack"
                 >
-                  <div class="primary-gray-700 font-size-16">State</div>
+                  <div class="primary-gray-700 font-size-16">
+                    State
+                  </div>
                   <div class="card-select-item mobile-full">
                     <v-select
                       v-model="blog.status"
@@ -115,13 +133,15 @@
                       :items="['Drafted', 'Published', 'Archived']"
                       value="Drafted"
                       class="rounded-select mobile-full"
-                    ></v-select>
+                    />
                   </div>
                 </div>
                 <div
                   class="d-flex align-center justify-space-between mb-3 pa-4 mobile-stack"
                 >
-                  <div class="primary-gray-700 font-size-16">Visibility</div>
+                  <div class="primary-gray-700 font-size-16">
+                    Visibility
+                  </div>
                   <div class="card-select-item mobile-full">
                     <v-select
                       v-model="blog.visibility"
@@ -132,33 +152,38 @@
                       :items="['General', 'Premium', 'Private']"
                       value="General"
                       class="rounded-select mobile-full"
-                    ></v-select>
+                    />
                   </div>
                 </div>
                 <div
                   class="d-flex align-center justify-space-between mb-3 pa-4 mobile-stack"
                 >
-                  <div class="primary-gray-700 font-size-16">Publish time</div>
+                  <div class="primary-gray-700 font-size-16">
+                    Publish time
+                  </div>
                   <div class="card-select-item mobile-full">
                     <v-select
+                      v-model="blog.publishTime"
                       variant="outlined"
                       density="compact"
                       rounded
                       hide-details
                       :items="['Immediately', 'Schedule']"
-                      v-model="blog.publishTime"
                       class="rounded-select mobile-full"
-                    ></v-select>
+                    />
                   </div>
                 </div>
-                <div v-if="blog.publishTime === 'Schedule'" class="px-4 pb-4">
+                <div
+                  v-if="blog.publishTime === 'Schedule'"
+                  class="px-4 pb-4"
+                >
                   <v-menu
                     v-model="menu"
                     :close-on-content-click="false"
                     transition="scale-transition"
                     location="bottom"
                   >
-                    <template v-slot:activator="{ props }">
+                    <template #activator="{ props }">
                       <v-text-field
                         v-model="blog.scheduledDate"
                         label="Select date"
@@ -169,12 +194,12 @@
                         variant="outlined"
                         hide-details
                         class="rounded-select mobile-full"
-                      ></v-text-field>
+                      />
                     </template>
                     <v-date-picker
                       v-model="blog.scheduledDate"
                       @update:model-value="menu = false"
-                    ></v-date-picker>
+                    />
                   </v-menu>
                 </div>
               </v-card>
@@ -209,7 +234,10 @@
                           :loading="categoryLoader"
                           @click.prevent="createCategory"
                         >
-                          <v-icon size="small" color="#1D2939">
+                          <v-icon
+                            size="small"
+                            color="#1D2939"
+                          >
                             mdi-subdirectory-arrow-left
                           </v-icon>
                         </v-btn>
@@ -218,9 +246,7 @@
                   </div>
                   <div class="category-options-list">
                     <template v-if="categoriesLoading">
-                      <v-skeleton-loader
-                        type="list-item-two-line"
-                      ></v-skeleton-loader>
+                      <v-skeleton-loader type="list-item-two-line" />
                     </template>
                     <template v-else>
                       <v-checkbox
@@ -233,7 +259,7 @@
                         class="category-checkbox"
                         dense
                         :rules="categoryRules"
-                      ></v-checkbox>
+                      />
                     </template>
                   </div>
                 </v-card-text>
@@ -269,7 +295,10 @@
                           :loading="categoryLoader"
                           @click.prevent="createKeyword"
                         >
-                          <v-icon size="small" color="#1D2939">
+                          <v-icon
+                            size="small"
+                            color="#1D2939"
+                          >
                             mdi-subdirectory-arrow-left
                           </v-icon>
                         </v-btn>
@@ -282,33 +311,47 @@
 
                   <div class="d-flex flex-wrap align-center">
                     <div
-                      class="keyword-item mr-1 mb-2"
                       v-for="(kitem, index) in keywords"
                       :key="index"
+                      class="keyword-item mr-1 mb-2"
                     >
-                      <div class="keyword-item__title">{{ kitem }}</div>
+                      <div class="keyword-item__title">
+                        {{ kitem }}
+                      </div>
                       <div
                         class="keyword-item__icon cursor-pointer"
                         @click="deleteKeyword(kitem, index)"
                       >
-                        <v-icon small color="#98A2B3">mdi-close-circle </v-icon>
+                        <v-icon
+                          small
+                          color="#98A2B3"
+                        >
+                          mdi-close-circle
+                        </v-icon>
                       </div>
                     </div>
                   </div>
                 </v-card-text>
               </v-card>
 
-              <v-card class="options-card mobile-full" color="#F9FAFB" flat>
+              <v-card
+                class="options-card mobile-full"
+                color="#F9FAFB"
+                flat
+              >
                 <v-card-title class="options-title pb-4 mt-3 primary-gray-700">
                   Index image
                 </v-card-title>
                 <v-card-text class="pt-0">
-                  <div class="image-preview mb-2" v-if="imagePreview">
+                  <div
+                    v-if="imagePreview"
+                    class="image-preview mb-2"
+                  >
                     <img
                       :src="imagePreview"
                       alt="Index image"
                       class="preview-image"
-                    />
+                    >
                   </div>
                   <div class="d-flex justify-space-between mobile-stack">
                     <v-btn
@@ -324,29 +367,35 @@
                       icon
                       variant="text"
                       color="error"
-                      @click="deleteImage"
                       :disabled="!imagePreview"
                       class="mobile-mb-2"
                       size="large"
+                      @click="deleteImage"
                     >
-                      <v-icon size="large" class="primary-gray-500">
+                      <v-icon
+                        size="large"
+                        class="primary-gray-500"
+                      >
                         mdi-delete
                       </v-icon>
                     </v-btn>
                     <input
-                      type="file"
                       ref="imageInput"
+                      type="file"
                       accept="image/*"
                       style="display: none"
                       @change="onImageSelected"
-                    />
+                    >
                   </div>
                   <v-text-field
                     v-model="imageValidation"
                     :rules="imageRules"
                     style="display: none"
-                  ></v-text-field>
-                  <div v-if="!blog.image" class="error-message">
+                  />
+                  <div
+                    v-if="!blog.image"
+                    class="error-message"
+                  >
                     Featured image is required
                   </div>
                 </v-card-text>
@@ -367,281 +416,292 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import BlogSlugDialog from "@/components/admin/blogs/BlogSlugDialog.vue";
-import RichEditorContent from "@/components/common/RichEditor.vue";
+import { ref, computed } from 'vue'
+import BlogSlugDialog from '@/components/admin/blogs/BlogSlugDialog.vue'
+import RichEditorContent from '@/components/common/RichEditor.vue'
 
-const { $slugGenerator, $toast } = useNuxtApp();
-const router = useRouter();
-const { $axios } = useNuxtApp();
+const { $slugGenerator, $toast } = useNuxtApp()
+const router = useRouter()
+const { $axios: _axios } = useNuxtApp()
 
 definePageMeta({
-  layout: "dashboard-layout",
-  middleware: ["auth", "user-type"],
-});
+  layout: 'dashboard-layout',
+  middleware: ['auth', 'user-type'],
+})
 
 // Form refs
-const form = ref(null);
-const imageInput = ref(null);
+const form = ref(null)
+const imageInput = ref(null)
 
 // Form state
-const categoryLoader = ref(false);
-const slugDialog = ref(false);
-const loading = ref(false);
-const isFormValid = ref(false);
-const keywords = ref([]);
-const imageValidation = ref("");
+const categoryLoader = ref(false)
+const slugDialog = ref(false)
+const loading = ref(false)
+const isFormValid = ref(false)
+const keywords = ref([])
+const imageValidation = ref('')
 const blog = ref({
-  title: "",
-  content: "",
+  title: '',
+  content: '',
   summary: null,
-  status: "draft",
-  visibility: "General",
-  publishTime: "Immediately",
+  status: 'draft',
+  visibility: 'General',
+  publishTime: 'Immediately',
   categories: [],
   image: null,
   scheduledDate: null,
-});
-const slug = ref("");
-const imagePreview = ref(null);
-const menu = ref(false);
-const categoryList = ref([]);
-const categoriesLoading = ref(true);
-const categorySearch = ref("");
-const keywordSearch = ref("");
-let _slugDebounce = null;
+})
+const slug = ref('')
+const imagePreview = ref(null)
+const menu = ref(false)
+const categoryList = ref([])
+const categoriesLoading = ref(true)
+const categorySearch = ref('')
+const keywordSearch = ref('')
+let _slugDebounce = null
 
 // Validation rules
 const titleRules = [
-  (v) => !!v || "Title is required",
-  (v) => (v && v.length >= 3) || "Title must be at least 3 characters",
-];
+  v => !!v || 'Title is required',
+  v => (v && v.length >= 3) || 'Title must be at least 3 characters',
+]
 
 const contentRules = [
-  (v) => !!v || "Content is required",
-  (v) => (v && v.trim() !== "" && v !== "<p></p>") || "Content cannot be empty",
-];
+  v => !!v || 'Content is required',
+  v => (v && v.trim() !== '' && v !== '<p></p>') || 'Content cannot be empty',
+]
 
 const categoryRules = [
-  (v) => (v && v.length > 0) || "Select at least one category",
-];
+  v => (v && v.length > 0) || 'Select at least one category',
+]
 
-const imageRules = [(v) => !!v || "Featured image is required"];
+const imageRules = [v => !!v || 'Featured image is required']
 
 // Form methods
 async function validate() {
-  const { valid } = await form.value.validate();
-  isFormValid.value = valid;
+  const { valid } = await form.value.validate()
+  isFormValid.value = valid
 
   if (valid) {
-    onSubmit();
+    onSubmit()
   }
 }
 
-function reset() {
-  form.value.reset();
-  isFormValid.value = false;
+function _reset() {
+  form.value.reset()
+  isFormValid.value = false
 }
 
-function resetValidation() {
-  form.value.resetValidation();
-  isFormValid.value = false;
+function _resetValidation() {
+  form.value.resetValidation()
+  isFormValid.value = false
 }
 
 const createKeyword = async () => {
-  if (!keywordSearch.value) return;
+  if (!keywordSearch.value) return
   const newKeywords = keywordSearch.value
-    .split(",")
-    .map((k) => k.trim())
-    .filter((k) => k.length > 0);
-  keywords.value.push(...newKeywords);
-  keywordSearch.value = "";
-};
+    .split(',')
+    .map(k => k.trim())
+    .filter(k => k.length > 0)
+  keywords.value.push(...newKeywords)
+  keywordSearch.value = ''
+}
 
 const deleteKeyword = async (row, index) => {
-  keywords.value.splice(index, 1);
-};
+  keywords.value.splice(index, 1)
+}
 
 const onSubmit = async () => {
   try {
-    loading.value = true;
-    const formData = new FormData();
+    loading.value = true
+    const formData = new FormData()
 
     // Add text fields
-    formData.append("Title", blog.value.title);
-    formData.append("Body", blog.value.content);
-    formData.append("Summary", blog.value.summary || "");
-    formData.append("VisibilityType", blog.value.visibility.toLowerCase());
+    formData.append('Title', blog.value.title)
+    formData.append('Body', blog.value.content)
+    formData.append('Summary', blog.value.summary || '')
+    formData.append('VisibilityType', blog.value.visibility.toLowerCase())
 
-    let publishDate;
-    if (blog.value.publishTime === "Immediately") {
-      publishDate = new Date().toISOString();
-    } else if (
-      blog.value.publishTime === "Schedule" &&
-      blog.value.scheduledDate
+    let publishDate
+    if (blog.value.publishTime === 'Immediately') {
+      publishDate = new Date().toISOString()
+    }
+    else if (
+      blog.value.publishTime === 'Schedule'
+      && blog.value.scheduledDate
     ) {
-      const date = new Date(blog.value.scheduledDate);
-      publishDate = date.toISOString();
+      const date = new Date(blog.value.scheduledDate)
+      publishDate = date.toISOString()
     }
 
-    formData.append("PublishDate", publishDate);
-    formData.append("Slug", slug.value);
+    formData.append('PublishDate', publishDate)
+    formData.append('Slug', slug.value)
 
     // Add categories
     blog.value.categories.forEach((categoryId) => {
-      formData.append("Tags[]", categoryId);
-    });
+      formData.append('Tags[]', categoryId)
+    })
 
     // Add keywords
     if (keywords.value.length >= 1) {
-      formData.append("Keywords", keywords.value.join(","));
+      formData.append('Keywords', keywords.value.join(','))
     }
 
     // Add image if exists
     if (blog.value.image) {
-      formData.append("image", blog.value.image);
+      formData.append('image', blog.value.image)
     }
 
     const response = await useApiService.post(
-      "/api/v2/blogs/contributions",
-      formData
-    );
+      '/api/v2/blogs/contributions',
+      formData,
+    )
 
     if (response && response.succeeded) {
-      $toast.success("Blog post created successfully!");
-      router.push("/user/blogs");
-    } else {
-      $toast.error(
-        response?.errors?.[0]?.message || "Failed to create blog post."
-      );
+      $toast.success('Blog post created successfully!')
+      router.push('/user/blogs')
     }
-  } catch (error) {
-    console.error("Error creating blog post:", error);
-    $toast.error("Failed to create blog post. Please try again.");
-  } finally {
-    loading.value = false;
+    else {
+      $toast.error(
+        response?.errors?.[0]?.message || 'Failed to create blog post.',
+      )
+    }
   }
-};
+  catch (error) {
+    console.error('Error creating blog post:', error)
+    $toast.error('Failed to create blog post. Please try again.')
+  }
+  finally {
+    loading.value = false
+  }
+}
 
 // Image handling functions
 const triggerImageUpload = () => {
-  imageInput.value.click();
-};
+  imageInput.value.click()
+}
 
 const onImageSelected = (event) => {
-  const file = event.target.files[0];
+  const file = event.target.files[0]
   if (file) {
-    blog.value.image = file;
-    imagePreview.value = URL.createObjectURL(file);
-    imageValidation.value = "valid"; // Set validation when image is selected
+    blog.value.image = file
+    imagePreview.value = URL.createObjectURL(file)
+    imageValidation.value = 'valid' // Set validation when image is selected
   }
-};
+}
 
 const deleteImage = () => {
-  blog.value.image = null;
-  imagePreview.value = null;
-  imageInput.value.value = "";
-  imageValidation.value = ""; // Clear validation when image is deleted
-};
+  blog.value.image = null
+  imagePreview.value = null
+  imageInput.value.value = ''
+  imageValidation.value = '' // Clear validation when image is deleted
+}
 
 // Category handling
 const createCategory = async () => {
-  const name = categorySearch.value && categorySearch.value.trim();
+  const name = categorySearch.value && categorySearch.value.trim()
   if (!name) {
-    $toast.error("Please enter a category name.");
-    return;
+    $toast.error('Please enter a category name.')
+    return
   }
   try {
-    categoryLoader.value = true;
-    const response = await useApiService.post("/api/v2/admin/tags", {
+    categoryLoader.value = true
+    const response = await useApiService.post('/api/v2/admin/tags', {
       name,
-      icon: "shape-outline",
-      tagType: "Post",
-    });
+      icon: 'shape-outline',
+      tagType: 'Post',
+    })
     if (response && response.succeeded) {
-      $toast.success("Category created successfully!");
-      categorySearch.value = "";
-      await fetchCategories();
-    } else {
-      $toast.error(
-        response?.errors?.[0]?.message || "Failed to create category."
-      );
+      $toast.success('Category created successfully!')
+      categorySearch.value = ''
+      await fetchCategories()
     }
-  } catch (e) {
-    $toast.error("Failed to create category.");
-  } finally {
-    categoryLoader.value = false;
+    else {
+      $toast.error(
+        response?.errors?.[0]?.message || 'Failed to create category.',
+      )
+    }
   }
-};
+  catch {
+    $toast.error('Failed to create category.')
+  }
+  finally {
+    categoryLoader.value = false
+  }
+}
 
 const fetchCategories = async () => {
   try {
-    categoriesLoading.value = true;
-    const response = await useApiService.get("/api/v2/tags/Post");
+    categoriesLoading.value = true
+    const response = await useApiService.get('/api/v2/tags/Post')
     if (response && response.succeeded) {
-      categoryList.value = response.data;
+      categoryList.value = response.data
     }
-  } catch (e) {
-    $toast.error("Failed to load categories");
-  } finally {
-    categoriesLoading.value = false;
   }
-};
+  catch {
+    $toast.error('Failed to load categories')
+  }
+  finally {
+    categoriesLoading.value = false
+  }
+}
 
 // Slug handling
 const createSlug = async () => {
   if (!blog.value.title) {
-    slug.value = "";
-    return "";
+    slug.value = ''
+    return ''
   }
   try {
-    const response = await useApiService.get("/api/v2/blogs/slugs/generate", {
+    const response = await useApiService.get('/api/v2/blogs/slugs/generate', {
       title: blog.value.title,
-    });
+    })
     if (response && response.succeeded && response.data) {
-      slug.value = response.data;
-      return response.data;
-    } else {
-      slug.value = $slugGenerator.convert(blog.value.title || "");
-      return slug.value;
+      slug.value = response.data
+      return response.data
     }
-  } catch (e) {
-    slug.value = $slugGenerator.convert(blog.value.title || "");
-    return slug.value;
+    else {
+      slug.value = $slugGenerator.convert(blog.value.title || '')
+      return slug.value
+    }
   }
-};
+  catch {
+    slug.value = $slugGenerator.convert(blog.value.title || '')
+    return slug.value
+  }
+}
 
 const showSlugDialog = () => {
-  slugDialog.value = true;
-};
+  slugDialog.value = true
+}
 
 const closeDialog = () => {
-  slugDialog.value = false;
-};
+  slugDialog.value = false
+}
 
 const onSlugSave = (newSlug) => {
-  slug.value = newSlug;
-  closeDialog();
-};
+  slug.value = newSlug
+  closeDialog()
+}
 
 // Computed
 const filteredCategories = computed(() => {
-  if (!categorySearch.value) return categoryList.value;
-  return categoryList.value.filter((cat) =>
-    cat.name.toLowerCase().includes(categorySearch.value.toLowerCase())
-  );
-});
+  if (!categorySearch.value) return categoryList.value
+  return categoryList.value.filter(cat =>
+    cat.name.toLowerCase().includes(categorySearch.value.toLowerCase()),
+  )
+})
 
 // Watch for title changes to generate slug
 watch(
   () => blog.value.title,
-  (newTitle) => {
-    if (_slugDebounce) clearTimeout(_slugDebounce);
+  () => {
+    if (_slugDebounce) clearTimeout(_slugDebounce)
     _slugDebounce = setTimeout(() => {
-      createSlug();
-    }, 500);
-  }
-);
+      createSlug()
+    }, 500)
+  },
+)
 
 // Watch for changes in required fields to validate form
 watch(
@@ -653,17 +713,17 @@ watch(
   ],
   async () => {
     if (form.value) {
-      const { valid } = await form.value.validate();
-      isFormValid.value = valid;
+      const { valid } = await form.value.validate()
+      isFormValid.value = valid
     }
   },
-  { deep: true }
-);
+  { deep: true },
+)
 
 // Lifecycle
 onMounted(() => {
-  fetchCategories();
-});
+  fetchCategories()
+})
 </script>
 
 <style scoped>

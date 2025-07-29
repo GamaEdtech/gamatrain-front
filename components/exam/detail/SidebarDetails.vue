@@ -1,5 +1,8 @@
 <template>
-  <v-card flat class="content_main_info">
+  <v-card
+    flat
+    class="content_main_info"
+  >
     <!-- Author info -->
     <v-row class="align-center">
       <v-col cols="3">
@@ -12,7 +15,10 @@
           width="48"
         />
       </v-col>
-      <v-col cols="9" class="pl-0">
+      <v-col
+        cols="9"
+        class="pl-0"
+      >
         <p class="creator_title">
           {{ contentData.first_name }} {{ contentData.last_name }}
         </p>
@@ -23,26 +29,44 @@
 
     <!-- Exam metadata -->
     <v-row>
-      <v-col cols="12" class="pb-0">
-        <i class="fa-solid fa-folder mr-1 icon"></i>
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <i class="fa-solid fa-folder mr-1 icon" />
         File type: {{ contentData.azmoon_type_title }}
       </v-col>
-      <v-col cols="12" class="pb-0">
-        <i class="fa-solid fa-eye mr-1 icon"></i>
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <i class="fa-solid fa-eye mr-1 icon" />
         Viewed: {{ contentData.views || "Unknown" }}
       </v-col>
-      <v-col cols="12" class="pb-0">
-        <i class="fa-solid fa-calendar-alt mr-1 icon"></i>
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <i class="fa-solid fa-calendar-alt mr-1 icon" />
         Last update: {{ lastUpdate }}
       </v-col>
-      <v-col cols="12" class="pb-0">
-        <div class="pointer" @click="onCrashReport">
-          <i class="fa-solid fa-bug mr-1 icon"></i>
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <div
+          class="pointer"
+          @click="onCrashReport"
+        >
+          <i class="fa-solid fa-bug mr-1 icon" />
           Crash report
         </div>
       </v-col>
-      <v-col cols="12" class="pb-0">
-        <!--Dialog for share-->
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <!-- Dialog for share -->
         <exam-detail-share-dialog
           :title="contentData.title"
           @copy-url="onCopyUrl"
@@ -60,7 +84,7 @@
         color="yellow-darken-3"
         size="35"
         half-increments
-      ></v-rating>
+      />
     </div>
 
     <v-divider class="d-none d-md-block" />
@@ -73,22 +97,22 @@
         cols="12"
         class="pb-0"
       >
-        <!--For not authenticated user-->
+        <!-- For not authenticated user -->
         <v-btn
           v-show="!isLoggedIn"
-          @click="onLogin"
           v-if="key === 'participation'"
           block
           color="success"
+          @click="onLogin"
         >
           Start Exam{{ item.price > 0 ? " | $" + item.price : "" }}
         </v-btn>
 
-        <!--For authenticated user-->
+        <!-- For authenticated user -->
         <v-btn
           v-show="isLoggedIn"
-          :to="`/exam/start/${contentData.id}`"
           v-if="key === 'participation'"
+          :to="`/exam/start/${contentData.id}`"
           block
           color="success"
         >
@@ -100,16 +124,20 @@
           </span>
         </v-btn>
 
-        <v-btn v-else-if="key === 'word'" block color="primary">
+        <v-btn
+          v-else-if="key === 'word'"
+          block
+          color="primary"
+        >
           Download WORD{{ item.price > 0 ? " | $" + item.price : "" }}
         </v-btn>
 
         <v-btn
-          @click="onDownload('pdf')"
-          :loading="downloadLoading"
           v-else-if="key === 'pdf'"
+          :loading="downloadLoading"
           block
           color="error"
+          @click="onDownload('pdf')"
         >
           Download PDF{{ item.price > 0 ? " | $" + item.price : "" }}
         </v-btn>
@@ -119,8 +147,8 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import ExamDetailShareDialog from "./ShareDialog.vue";
+import { ref, computed } from 'vue'
+import ExamDetailShareDialog from './ShareDialog.vue'
 
 const props = defineProps({
   contentData: {
@@ -139,54 +167,54 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-});
+})
 
 // Add a shortcut computed property for better readability in the code
-const contentData = computed(() => props.contentData);
+const contentData = computed(() => props.contentData)
 
 const emit = defineEmits([
-  "download",
-  "login",
-  "copy-url",
-  "share",
-  "crash-report",
-]);
+  'download',
+  'login',
+  'copy-url',
+  'share',
+  'crash-report',
+])
 
 // Reactive data
-const rating = ref(4.5);
+const rating = ref(4.5)
 
 // Computed properties
 const lastUpdate = computed(() => {
   // You can use a time-ago filter here if available
-  return contentData.value.up_date || "Unknown";
-});
+  return contentData.value.up_date || 'Unknown'
+})
 
 // Methods
 function onDownload(type) {
-  emit("download", type);
+  emit('download', type)
 }
 
 function onLogin() {
-  emit("login");
+  emit('login')
 }
 
 function onCopyUrl() {
-  emit("copy-url");
+  emit('copy-url')
 }
 
 function onShare(platform) {
-  const pageTitle = contentData.value?.title || "";
+  const pageTitle = contentData.value?.title || ''
 
-  if (platform === "whatsapp")
-    window.open(`https://api.whatsapp.com/send?text=${window.location.href}`);
-  else if (platform === "telegram")
+  if (platform === 'whatsapp')
+    window.open(`https://api.whatsapp.com/send?text=${window.location.href}`)
+  else if (platform === 'telegram')
     window.open(
-      `https://telegram.me/share/url?url=${window.location.href}&text=${pageTitle}`
-    );
+      `https://telegram.me/share/url?url=${window.location.href}&text=${pageTitle}`,
+    )
 }
 
 function onCrashReport() {
-  emit("crash-report");
+  emit('crash-report')
 }
 </script>
 

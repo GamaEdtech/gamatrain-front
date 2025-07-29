@@ -1,24 +1,23 @@
 <script setup>
-
-const props = defineProps({
+const _props = defineProps({
   modelValue: {
     type: Boolean,
-    required: true
+    required: true,
   },
   itemType: {
     type: String,
-    default: ""
-  }
+    default: '',
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'confirm', 'close'])
 
 const newItem = ref({
   title: '',
-  date: new Date().toISOString().split("T")[0] // Default to today's date
+  date: new Date().toISOString().split('T')[0], // Default to today's date
 })
 
-function handleDelete() {
+function _handleDelete() {
   emit('confirm', { ...newItem.value })
   close()
 }
@@ -33,23 +32,28 @@ function onDialogInput(val) {
   }
 }
 </script>
+
 <template>
   <v-dialog
     :model-value="modelValue"
-    @update:modelValue="$emit('update:modelValue', $event)"
     max-width="600px"
+    @update:model-value="$emit('update:modelValue', $event)"
     @input="onDialogInput"
     @click:outside="close"
   >
     <v-card class="boxs">
       <div class="d-flex flex-column align-center justify-center pt-6 mb-6">
         <div class="icon-container">
-          <!-- <img src="~assets/images/Vector (1).svg" alt="Icon" /> -->
-          <v-icon color="red" style="font-size: 48px !important;">mdi-delete</v-icon>
+          <v-icon
+            color="red"
+            style="font-size: 48px !important"
+          >
+            mdi-delete
+          </v-icon>
         </div>
-        <v-card-title class="gtext-t3 primary-gray-700 font-bold"
-          >Are you Sure?</v-card-title
-        >
+        <v-card-title class="gtext-t3 primary-gray-700 font-bold">
+          Are you Sure?
+        </v-card-title>
       </div>
 
       <div class="text-box">
@@ -60,7 +64,7 @@ function onDialogInput(val) {
         <v-card-actions class="action-buttons">
           <v-btn
             class="w-50 rounded-pill primary-gray-900 gtext-t5"
-            style="background-color: white; border: 1px solid #E4E7EC;"
+            style="background-color: white; border: 1px solid #e4e7ec"
             @click="close"
           >
             Cancel
@@ -68,7 +72,7 @@ function onDialogInput(val) {
 
           <v-btn
             class="w-50 rounded-pill text-white gtext-t5"
-            style="background-color: #F04438;"
+            style="background-color: #f04438"
             @click="$emit('confirm')"
           >
             Delete

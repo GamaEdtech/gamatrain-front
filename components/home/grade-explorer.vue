@@ -1,14 +1,22 @@
 <template>
   <v-container id="content-stats-container">
     <div>
-      <div class="board-hint-row" v-show="showBoardHint">
+      <div
+        v-show="showBoardHint"
+        class="board-hint-row"
+      >
         <div class="board-hint">
           <div class="hint-container">
             <div class="hint">
               <div class="pt-14">
-                <div class="px-5">Select your Board!</div>
+                <div class="px-5">
+                  Select your Board!
+                </div>
                 <div class="arrow pt-3">
-                  <img src="/images/select-board-arrow.svg" alt="" />
+                  <img
+                    src="/images/select-board-arrow.svg"
+                    alt=""
+                  >
                 </div>
               </div>
             </div>
@@ -18,29 +26,29 @@
       <div class="ex-selector">
         <div class="ex-board-select">
           <v-select
+            v-model="selectedBoard"
             color="#4C4AFF"
             base-color="#4C4AFF"
             bg-color="#4C4AFF"
-            v-model="selectedBoard"
             :items="boardList"
             density="compact"
             item-title="title"
             item-value="id"
-            @update:modelValue="fetchGradeList"
             hide-details
             return-object
+            @update:model-value="fetchGradeList"
             @update:focused="handleBoardFocused"
           >
-            <template v-slot:selection="{ item, props }">
+            <template #selection>
               <div class="d-flex align-center ex-select-board-label pr-5">
                 <div>
                   <v-avatar size="small">
-                    <v-img :src="selectedBoard.img" />
+                    <v-img :src="selectedBoard?.img" />
                   </v-avatar>
                 </div>
                 <div class="pl-2 ex-select-board-label">
                   <span class="ex-select-board-title">
-                    {{ selectedBoard.title }}
+                    {{ selectedBoard?.title }}
                   </span>
                 </div>
               </div>
@@ -49,23 +57,29 @@
         </div>
         <div class="ex-grade-select">
           <v-select
+            v-model="selectedGrade"
             :disabled="gradeLoader"
             color="#4C4AFF"
             base-color="#4C4AFF"
             bg-color="#4C4AFF"
-            v-model="selectedGrade"
             :items="gradeList"
             density="compact"
             item-title="title"
             item-value="id"
             hide-details
-          >
-          </v-select>
+          />
         </div>
       </div>
       <div class="mt-10">
         <v-row justify="center">
-          <v-col cols="12" sm="4" md="3" lg="2" v-for="category in categories">
+          <v-col
+            v-for="category in categories"
+            :key="category.key"
+            cols="12"
+            sm="4"
+            md="3"
+            lg="2"
+          >
             <nuxt-link
               :to="`/search?type=${category.type}&section=${selectedBoard?.id}&base=${selectedGrade}`"
             >
@@ -75,24 +89,29 @@
                     {{ category.stat }}
                   </div>
                   <span class="d-sm-none">
-                    <v-icon size="x-large" color="#D0D5DD"
-                      >mdi-chevron-right</v-icon
-                    >
+                    <v-icon
+                      size="x-large"
+                      color="#D0D5DD"
+                    >mdi-chevron-right</v-icon>
                   </span>
                 </div>
 
                 <div class="d-flex align-center order-first order-sm-last">
                   <div class="ex-category__card--icon">
-                    <span class="stat-icon" :class="category.icon"></span>
+                    <span
+                      class="stat-icon"
+                      :class="category.icon"
+                    />
                   </div>
                   <div class="d-flex align-center pl-1">
                     <span class="ex-category__card--subtitle">
                       {{ category.title }}
                     </span>
                     <span class="pl-1 d-none d-sm-block">
-                      <v-icon size="x-large" color="#D0D5DD"
-                        >mdi-chevron-right</v-icon
-                      >
+                      <v-icon
+                        size="x-large"
+                        color="#D0D5DD"
+                      >mdi-chevron-right</v-icon>
                     </span>
                   </div>
                 </div>
@@ -106,57 +125,57 @@
 </template>
 
 <script setup>
-import cieIcon from "~/assets/images/boards/CIE.svg";
-import edexcelIcon from "~/assets/images/boards/Edexcel.svg";
-import AQAIcon from "~/assets/images/boards/AQA.svg";
-import OCRIcon from "~/assets/images/boards/OCR.svg";
-import GamaIcon from "~/assets/images/boards/Gama.svg";
-import ScientificIcon from "~/assets/images/boards/Scientific Competition.svg";
-import { ref, watch, onMounted } from "vue";
+import cieIcon from '~/assets/images/boards/CIE.svg'
+import edexcelIcon from '~/assets/images/boards/Edexcel.svg'
+import AQAIcon from '~/assets/images/boards/AQA.svg'
+import OCRIcon from '~/assets/images/boards/OCR.svg'
+import GamaIcon from '~/assets/images/boards/Gama.svg'
+import ScientificIcon from '~/assets/images/boards/Scientific Competition.svg'
+import { ref, watch, onMounted } from 'vue'
 
 const categories = ref([
   {
-    type: "learnfiles",
-    key: "files",
-    stat: "220",
-    title: "Multimedia",
-    icon: "icon-multimedia",
+    type: 'learnfiles',
+    key: 'files',
+    stat: '220',
+    title: 'Multimedia',
+    icon: 'icon-multimedia',
   },
   {
-    type: "azmoon",
-    key: "exams",
-    stat: "410",
-    title: "QuizHub",
-    icon: "icon-exam",
+    type: 'azmoon',
+    key: 'exams',
+    stat: '410',
+    title: 'QuizHub',
+    icon: 'icon-exam',
   },
   {
-    type: "test",
-    key: "tests",
-    stat: "34,519",
-    title: "Past Paper",
-    icon: "icon-paper",
+    type: 'test',
+    key: 'tests',
+    stat: '34,519',
+    title: 'Past Paper',
+    icon: 'icon-paper',
   },
   {
-    type: "question",
-    key: "questions",
-    stat: "+1,000",
-    title: "Forum",
-    icon: "icon-q-a",
+    type: 'question',
+    key: 'questions',
+    stat: '+1,000',
+    title: 'Forum',
+    icon: 'icon-q-a',
   },
   {
-    type: "dars",
-    key: "tutorial",
-    stat: "50",
-    title: "Tutorial",
-    icon: "icon-tutorial",
+    type: 'dars',
+    key: 'tutorial',
+    stat: '50',
+    title: 'Tutorial',
+    icon: 'icon-tutorial',
   },
-]);
-const selectLoader = ref(true);
-const boardList = ref([]);
-const gradeList = ref([]);
-const gradeLoader = ref(false);
-const selectedBoard = ref(null);
-const selectedGrade = ref(null);
+])
+const _selectLoader = ref(true)
+const boardList = ref([])
+const gradeList = ref([])
+const gradeLoader = ref(false)
+const selectedBoard = ref(null)
+const selectedGrade = ref(null)
 const boardImgs = ref([
   cieIcon,
   edexcelIcon,
@@ -164,107 +183,126 @@ const boardImgs = ref([
   OCRIcon,
   GamaIcon,
   ScientificIcon,
-]);
-const showBoardHint = ref(false);
+])
+const showBoardHint = ref(false)
 
 const fetchInitialData = async () => {
-  let params = { type: "section" };
-  const response = await $fetch(`/api/v1/types/list`, { params });
+  const params = { type: 'section' }
+  const response = await $fetch(`/api/v1/types/list`, { params })
   boardList.value = response.data.map((item, index) => ({
     ...item,
     img: boardImgs.value[index % boardImgs.value.length],
-  }));
+  }))
 
   // Try to restore selectedBoard from localStorage
-  let storedBoard = null;
+  let storedBoard = null
   try {
-    storedBoard = JSON.parse(localStorage.getItem("selectedBoard"));
-  } catch (e) {}
+    storedBoard = JSON.parse(localStorage.getItem('selectedBoard'))
+  }
+  catch {
+    // Ignore parse errors - use default board
+  }
   if (storedBoard && storedBoard.id) {
     // Find the matching board in the new boardList by id
-    const match = boardList.value.find((b) => b.id === storedBoard.id);
-    selectedBoard.value = match || boardList.value[0];
-  } else {
-    selectedBoard.value = boardList.value[0];
+    const match = boardList.value.find(b => b.id === storedBoard.id)
+    selectedBoard.value = match || boardList.value[0]
   }
-  fetchGradeList();
-};
+  else {
+    selectedBoard.value = boardList.value[0]
+  }
+  fetchGradeList()
+}
 const fetchGradeList = async () => {
   try {
-    gradeLoader.value = true;
-    let params = { type: "base" };
-    params.section_id = selectedBoard.value.id;
-    const response = await $fetch(`/api/v1/types/list`, { params });
-    gradeList.value = response.data;
-    selectedGrade.value = response.data[0].id;
-  } catch (error) {
-  } finally {
-    gradeLoader.value = false;
+    if (!selectedBoard.value) {
+      return
+    }
+
+    gradeLoader.value = true
+    const params = { type: 'base' }
+    params.section_id = selectedBoard.value.id
+    const response = await $fetch(`/api/v1/types/list`, { params })
+    gradeList.value = response.data
+    selectedGrade.value = response.data[0].id
   }
-};
+  catch (error) {
+    console.error('Error fetching grade list:', error)
+  }
+  finally {
+    gradeLoader.value = false
+  }
+}
 const fetchCategoryCounts = async () => {
   try {
-    const params = new URLSearchParams();
-    params.append("type", "test");
-    params.append("page", "1");
-    params.append("section", selectedBoard.value.id);
-    params.append("base", selectedGrade.value);
-    const requestUrl = `/api/v1/search?${params.toString()}`;
-    const response = await $fetch(requestUrl);
-    if (
-      response &&
-      response.status === 1 &&
-      response.data &&
-      response.data.types_stats
-    ) {
-      categories.value.find((cat, i) => cat.key == "tests").stat =
-        parseInt(response.data.types_stats.test) || 0;
-
-      categories.value.find((cat, i) => cat.key == "files").stat =
-        parseInt(response.data.types_stats.learnfiles) || 0;
-
-      categories.value.find((cat, i) => cat.key == "exams").stat =
-        parseInt(response.data.types_stats.azmoon) || 0;
-
-      categories.value.find((cat, i) => cat.key == "questions").stat =
-        parseInt(response.data.types_stats.question) || 0;
-
-      categories.value.find((cat, i) => cat.key == "tutorial").stat =
-        parseInt(response.data.types_stats.tutorial) || 0;
+    if (!selectedBoard.value || !selectedGrade.value) {
+      return
     }
-  } catch (error) {}
-};
+
+    const params = new URLSearchParams()
+    params.append('type', 'test')
+    params.append('page', '1')
+    params.append('section', selectedBoard.value.id)
+    params.append('base', selectedGrade.value)
+    const requestUrl = `/api/v1/search?${params.toString()}`
+    const response = await $fetch(requestUrl)
+    if (
+      response
+      && response.status === 1
+      && response.data
+      && response.data.types_stats
+    ) {
+      categories.value.find((cat, _i) => cat.key == 'tests').stat
+        = parseInt(response.data.types_stats.test) || 0
+
+      categories.value.find((cat, _i) => cat.key == 'files').stat
+        = parseInt(response.data.types_stats.learnfiles) || 0
+
+      categories.value.find((cat, _i) => cat.key == 'exams').stat
+        = parseInt(response.data.types_stats.azmoon) || 0
+
+      categories.value.find((cat, _i) => cat.key == 'questions').stat
+        = parseInt(response.data.types_stats.question) || 0
+
+      categories.value.find((cat, _i) => cat.key == 'tutorial').stat
+        = parseInt(response.data.types_stats.tutorial) || 0
+    }
+  }
+  catch (error) {
+    console.error('Error fetching category counts:', error)
+  }
+}
 const handleBoardFocused = () => {
   if (selectedBoard.value && showBoardHint.value) {
-    localStorage.setItem("boardHintShown", "true");
-    showBoardHint.value = false;
+    localStorage.setItem('boardHintShown', 'true')
+    showBoardHint.value = false
   }
-};
+}
 watch(
   () => selectedGrade.value,
-  (val) => {
-    fetchCategoryCounts();
+  (_val) => {
+    fetchCategoryCounts()
   },
   {
     immediate: true,
-  }
-);
+  },
+)
 
 watch(
   () => selectedBoard.value,
-  (val) => {
-    localStorage.setItem("selectedBoard", JSON.stringify(selectedBoard.value));
-  }
-);
+  (_val) => {
+    localStorage.setItem('selectedBoard', JSON.stringify(selectedBoard.value))
+  },
+)
 
 onMounted(() => {
-  fetchInitialData();
-  if (localStorage.getItem("boardHintShown") === "true") {
-    showBoardHint.value = false;
-  } else {
-    showBoardHint.value = true;
+  fetchInitialData()
+  if (localStorage.getItem('boardHintShown') === 'true') {
+    showBoardHint.value = false
   }
-});
+  else {
+    showBoardHint.value = true
+  }
+})
 </script>
 
 <style scoped>

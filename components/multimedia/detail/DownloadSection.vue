@@ -6,32 +6,39 @@
       class="d-none d-md-block mb-4 gama-text-body2 text-center"
     >
       <span v-if="!isLoggedIn">
-        <span class="mdi mdi-bell icon"></span>
-        <span @click="openAuthDialog('login')" class="login pointer"
-          >Login</span
+        <span class="mdi mdi-bell icon" />
+        <span
+          class="login pointer"
+          @click="openAuthDialog('login')"
+        >Login</span>
+        <span
+          class="register pointer"
+          @click="openAuthDialog('register')"
         >
-        <span @click="openAuthDialog('register')" class="register pointer">
           (register)
         </span>
         to download and charge your wallet.
       </span>
       <span v-else>
         Your wallet charge is ${{ credit }}
-        <nuxt-link class="blue--text" v-if="isLoggedIn" to="/user/charge-wallet"
-          >(Top Up Wallet)</nuxt-link
-        >
+        <nuxt-link
+          v-if="isLoggedIn"
+          class="blue--text"
+          to="/user/charge-wallet"
+        >(Top Up Wallet)</nuxt-link>
       </span>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-const { isAuthenticated } = useAuth();
+import { computed } from 'vue'
+
+const { isAuthenticated } = useAuth()
 const props = defineProps({
   fileExt: {
     type: String,
-    default: "pptx",
+    default: 'pptx',
   },
   price: {
     type: Number,
@@ -45,23 +52,23 @@ const props = defineProps({
     type: [Number, String],
     default: 0,
   },
-});
+})
 
-const emit = defineEmits(["login", "register"]);
+const emit = defineEmits(['login', 'register'])
 
 // Computed properties
 const checkIsFree = computed(() => {
-  return !props.price || props.price <= 0;
-});
+  return !props.price || props.price <= 0
+})
 
 // Methods
 function openAuthDialog(type) {
-  emit(type);
+  emit(type)
 }
 
 const isLoggedIn = computed(() => {
-  return isAuthenticated.value ?? false;
-});
+  return isAuthenticated.value ?? false
+})
 </script>
 
 <style scoped>

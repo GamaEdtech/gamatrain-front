@@ -1,50 +1,65 @@
 <template>
   <div class="d-flex d-md-none">
-    <div :class="tourClass" v-if="contentData.tour && !tourImgPreview">
+    <div
+      v-if="contentData.tour && !tourImgPreview"
+      :class="tourClass"
+    >
       <img
-        @click="openTourImgInput"
         class="pointer schoolDetailsImg"
         :src="contentData.tour"
         alt="School image Preview"
-      />
+        @click="openTourImgInput"
+      >
 
       <div class="upload-overlay">
         <v-btn
-          @click="openTourImgInput"
           class=""
           icon
           color="white"
           variant="text"
+          @click="openTourImgInput"
         >
-          <v-icon size="large"> mdi-pencil </v-icon>
+          <v-icon size="large">
+            mdi-pencil
+          </v-icon>
         </v-btn>
       </div>
     </div>
-    <div v-else-if="tourImgPreview" :class="['enter-img-holder', tourClass]">
+    <div
+      v-else-if="tourImgPreview"
+      :class="['enter-img-holder', tourClass]"
+    >
       <img
         class="pointer schoolDetailsImg"
         :src="tourImgPreview"
         alt="School image Preview"
-      />
+      >
       <div class="upload-overlay">
         <v-btn
           color="primary"
           size="small"
           icon
-          @click="uploadTourImage"
           :loading="loading"
           class="text-transform-none gtext-t6 font-weight-medium"
+          @click="uploadTourImage"
         >
-          <v-icon small color="white">mdi-cloud-upload</v-icon>
+          <v-icon
+            small
+            color="white"
+          >
+            mdi-cloud-upload
+          </v-icon>
         </v-btn>
         <v-btn
           color="error"
           size="small"
           icon
-          @click="clearTourImage"
           class="text-transform-none gtext-t6 font-weight-medium"
+          @click="clearTourImage"
         >
-          <v-icon small>mdi-delete</v-icon>
+          <v-icon small>
+            mdi-delete
+          </v-icon>
         </v-btn>
       </div>
     </div>
@@ -56,12 +71,17 @@
     >
       <div class="text-center">
         <client-only>
-          <v-icon :size="iconSize" class="primary-gray-300 mb-2 mb-md-10"
-            >mdi-rotate-360</v-icon
+          <v-icon
+            :size="iconSize"
+            class="primary-gray-300 mb-2 mb-md-10"
           >
+            mdi-rotate-360
+          </v-icon>
         </client-only>
 
-        <div class="gtext-t6 gtext-md-t4 primary-blue-500">Contribute</div>
+        <div class="gtext-t6 gtext-md-t4 primary-blue-500">
+          Contribute
+        </div>
       </div>
     </div>
   </div>
@@ -72,17 +92,19 @@
           class="pointer schoolDetailsImg"
           :src="contentData.tour"
           alt="School image Preview"
-        />
+        >
         <div class="upload-overlay px-3">
           <div class="px-3 d-flex justify-center align-center">
             <v-btn
-              @click="openTourImgInput"
               class=""
               icon
               color="white"
               variant="text"
+              @click="openTourImgInput"
             >
-              <v-icon size="large"> mdi-pencil </v-icon>
+              <v-icon size="large">
+                mdi-pencil
+              </v-icon>
             </v-btn>
           </div>
         </div>
@@ -95,39 +117,57 @@
             class="pointer schoolDetailsImg"
             :src="tourImgPreview"
             alt="School image Preview"
-          />
+          >
           <div class="upload-overlay px-3">
             <div class="px-3 d-flex justify-center align-center">
               <v-btn
                 size="small"
                 icon
                 color="primary"
-                @click="uploadTourImage"
                 :loading="loading"
                 class="text-transform-none gtext-t4 font-weight-medium mr-3"
+                @click="uploadTourImage"
               >
-                <v-icon size="small" color="white">mdi-cloud-upload</v-icon>
+                <v-icon
+                  size="small"
+                  color="white"
+                >
+                  mdi-cloud-upload
+                </v-icon>
               </v-btn>
               <v-btn
                 size="small"
                 icon
                 color="error"
-                @click="clearTourImage"
                 class="text-transform-none gtext-t4 font-weight-medium"
+                @click="clearTourImage"
               >
-                <v-icon size="small" color="white">mdi-delete</v-icon>
+                <v-icon
+                  size="small"
+                  color="white"
+                >
+                  mdi-delete
+                </v-icon>
               </v-btn>
             </div>
           </div>
         </div>
       </template>
       <template v-else>
-        <div class="enter-img-holder pointer" @click="openTourImgInput">
+        <div
+          class="enter-img-holder pointer"
+          @click="openTourImgInput"
+        >
           <div class="text-center">
-            <v-icon size="48" class="primary-gray-300 mb-10"
-              >mdi-rotate-360</v-icon
+            <v-icon
+              size="48"
+              class="primary-gray-300 mb-10"
             >
-            <div class="gtext-t4 primary-blue-500">Contribute</div>
+              mdi-rotate-360
+            </v-icon>
+            <div class="gtext-t4 primary-blue-500">
+              Contribute
+            </div>
             <div class="mt-2 gtext-t6 primary-gray-400">
               Accepted formats: JPG, PNG, WebP
             </div>
@@ -138,132 +178,141 @@
   </div>
 
   <v-file-input
-    class="d-none"
-    v-model="tourImg"
     ref="tourImgRef"
+    v-model="tourImg"
+    class="d-none"
     accept="image/jpeg, image/png, image/jpg, image/webp"
     hide-details
-    @update:modelValue="validateAndProcessImage"
-  ></v-file-input>
+    @update:model-value="validateAndProcessImage"
+  />
 </template>
 
 <script setup>
-import { useDisplay } from "vuetify/lib/composables/display";
-import { computed, ref, watch, nextTick } from "vue";
+import { useDisplay } from 'vuetify/lib/composables/display'
+import { computed, ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
-  content: {},
-  class: {},
-});
-const emit = defineEmits(["fetch"]);
+  content: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  class: {
+    type: String,
+    required: false,
+    default: '',
+  },
+})
+const emit = defineEmits(['fetch'])
 
-const display = useDisplay();
-const loading = ref(false);
-const tourClass = ref(props.class);
-const nuxtApp = useNuxtApp();
-const route = useRoute();
-const router = useRouter();
-const contentData = ref(props.content);
-const tourImgPreview = ref(null);
-const tourImg = ref(null);
-const tourImgRef = ref(null);
+const display = useDisplay()
+const loading = ref(false)
+const tourClass = ref(props.class)
+const nuxtApp = useNuxtApp()
+const route = useRoute()
+const contentData = ref(props.content)
+const tourImgPreview = ref(null)
+const tourImg = ref(null)
+const tourImgRef = ref(null)
 
 // Use a computed property for icon size to avoid hydration mismatch
-const iconSize = computed(() => (display.mdAndUp.value ? 48 : 24));
+const iconSize = computed(() => (display.mdAndUp.value ? 48 : 24))
 
 function validateAndProcessImage(file) {
-  if (!file) return;
-  const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
-  console.log("file.type", file.type);
+  if (!file) return
+  const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
+  console.log('file.type', file.type)
 
   if (!validTypes.includes(file.type)) {
     nuxtApp.$toast?.error(
-      "Invalid file type. Please use JPG, PNG or WebP images."
-    );
-    tourImg.value = null;
-    return;
+      'Invalid file type. Please use JPG, PNG or WebP images.',
+    )
+    tourImg.value = null
+    return
   }
-  const maxSize = 5 * 1024 * 1024;
+  const maxSize = 5 * 1024 * 1024
   if (file.size > maxSize) {
-    nuxtApp.$toast?.error("File too large. Maximum size is 5MB.");
-    tourImg.value = null;
-    return;
+    nuxtApp.$toast?.error('File too large. Maximum size is 5MB.')
+    tourImg.value = null
+    return
   }
-  const reader = new FileReader();
+  const reader = new FileReader()
   reader.onload = (e) => {
-    tourImgPreview.value = e.target.result;
-  };
-  reader.readAsDataURL(file);
+    tourImgPreview.value = e.target.result
+  }
+  reader.readAsDataURL(file)
 }
 function uploadTourImage() {
   if (!tourImg.value) {
-    nuxtApp.$toast?.error("Please select an image to upload");
-    return;
+    nuxtApp.$toast?.error('Please select an image to upload')
+    return
   }
-  const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+  const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
   if (!validTypes.includes(tourImg.value.type)) {
     nuxtApp.$toast?.error(
-      "Invalid file type. Please use JPG, PNG or WebP images."
-    );
-    return;
+      'Invalid file type. Please use JPG, PNG or WebP images.',
+    )
+    return
   }
-  loading.value = true;
-  let formData = new FormData();
-  formData.append("File", tourImg.value);
-  formData.append("FileType", "Tour360");
+  loading.value = true
+  const formData = new FormData()
+  formData.append('File', tourImg.value)
+  formData.append('FileType', 'Tour360')
   useApiService
     .post(`/api/v2/schools/${route.params.id}/images`, formData)
     .then(() => {
       nuxtApp.$toast?.success(
-        "Your 360° tour image has been successfully uploaded"
-      );
-      emit("fetch");
-      tourImg.value = null;
-      tourImgPreview.value = null;
+        'Your 360° tour image has been successfully uploaded',
+      )
+      emit('fetch')
+      tourImg.value = null
+      tourImgPreview.value = null
       setTimeout(() => {
-        refreshTourContent();
-      }, 500);
+        refreshTourContent()
+      }, 500)
     })
     .catch((err) => {
       if (err?.response?.status == 401 || err?.response?.status == 403) {
-      } else {
-        nuxtApp.$toast?.error(err?.response?.data?.message || "Upload failed");
+        nuxtApp.$toast?.error('Please login to update tour content')
+      }
+      else {
+        nuxtApp.$toast?.error(err?.response?.data?.message || 'Upload failed')
       }
     })
     .finally(() => {
-      loading.value = false;
-    });
+      loading.value = false
+    })
 }
 function refreshTourContent() {
-  const currentTour = contentData.value.tour;
-  contentData.value.tour = null;
+  const currentTour = contentData.value.tour
+  contentData.value.tour = null
   nextTick(() => {
-    contentData.value.tour = currentTour;
-  });
+    contentData.value.tour = currentTour
+  })
 }
 function openTourImgInput() {
   if (tourImgRef.value) {
-    tourImgRef.value.click();
+    tourImgRef.value.click()
   }
 }
 function clearTourImage() {
-  tourImg.value = null;
-  tourImgPreview.value = null;
-  nuxtApp.$toast?.info("Image removed");
+  tourImg.value = null
+  tourImgPreview.value = null
+  nuxtApp.$toast?.info('Image removed')
 }
 
 watch(
   () => props.class,
   (val) => {
-    tourClass.value = val;
-  }
-);
+    tourClass.value = val
+  },
+)
 watch(
   () => props.content,
   (val) => {
-    contentData.value = val;
-  }
-);
+    contentData.value = val
+  },
+)
 </script>
 
 <style scoped>

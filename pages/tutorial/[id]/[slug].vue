@@ -17,11 +17,15 @@
       rounded
       @click.stop="drawer = !drawer"
     >
-      <v-icon style="font-size: 24px"> mdi-format-list-numbered </v-icon>
+      <v-icon style="font-size: 24px">
+        mdi-format-list-numbered
+      </v-icon>
       <v-slide-x-reverse-transition>
-        <span v-show="expandListMenu" style="font-size: 1.5rem" class="text-h6"
-          >&nbsp;List</span
-        >
+        <span
+          v-show="expandListMenu"
+          style="font-size: 1.5rem"
+          class="text-h6"
+        >&nbsp;List</span>
       </v-slide-x-reverse-transition>
     </v-btn>
 
@@ -30,24 +34,37 @@
     <section class="lesson d-none d-md-block">
       <v-container class="lesson-section">
         <v-row>
-          <v-col md="3" cols="12" class="lesson-details">
+          <v-col
+            md="3"
+            cols="12"
+            class="lesson-details"
+          >
             <div class="d-flex flex-column details-content">
               <div class="last-update mb-3">
-                <i class="fa-solid fa-calendar-days mr-2"></i>Last update:
+                <i class="fa-solid fa-calendar-days mr-2" />Last update:
                 {{ tutorialInfo.up_date.split(" ")[0] }}
               </div>
               <div class="visit mb-3">
-                <i class="fa-solid fa-eye mr-2"></i>Viewed:
+                <i class="fa-solid fa-eye mr-2" />Viewed:
                 {{ tutorialInfo.views }}
               </div>
-              <div class="error-report pointer" @click="openCrashReportDialog">
-                <i class="fa-solid fa-circle-exclamation mr-2"></i>Crash report
+              <div
+                class="error-report pointer"
+                @click="openCrashReportDialog"
+              >
+                <i class="fa-solid fa-circle-exclamation mr-2" />Crash report
               </div>
             </div>
           </v-col>
-          <v-col md="9" cols="12" class="lessons-title">
+          <v-col
+            md="9"
+            cols="12"
+            class="lessons-title"
+          >
             <div class="d-flex flex-column text-center lesson-content">
-              <p class="lesson-title gama-text-h5 mb-4">{{ lesson.title }}</p>
+              <p class="lesson-title gama-text-h5 mb-4">
+                {{ lesson.title }}
+              </p>
               <p class="lesson-subtitle gama-text-h6">
                 {{ lesson.topic_title }}
               </p>
@@ -62,29 +79,42 @@
         <v-row>
           <v-col cols="12">
             <div class="d-flex flex-column text-center lesson-content">
-              <p class="lesson-title gama-text-h5 mb-4">{{ lesson.title }}</p>
+              <p class="lesson-title gama-text-h5 mb-4">
+                {{ lesson.title }}
+              </p>
               <p class="lesson-subtitle gama-text-6">
                 {{ lesson.topic_title }}
               </p>
             </div>
           </v-col>
-          <v-col cols="12" class="lesson-details">
+          <v-col
+            cols="12"
+            class="lesson-details"
+          >
             <v-divider />
             <v-row>
-              <v-col cols="5" class="last-update">
-                <i class="fa-solid fa-calendar-days mr-2"></i>
+              <v-col
+                cols="5"
+                class="last-update"
+              >
+                <i class="fa-solid fa-calendar-days mr-2" />
                 {{ tutorialInfo.up_date.split(" ")[0] }}
               </v-col>
-              <v-col cols="3" class="visit">
-                <i class="fa-solid fa-eye mr-2"></i>{{ tutorialInfo.views }}
+              <v-col
+                cols="3"
+                class="visit"
+              >
+                <i class="fa-solid fa-eye mr-2" />{{ tutorialInfo.views }}
               </v-col>
-              <v-col cols="4" class="error-report">
+              <v-col
+                cols="4"
+                class="error-report"
+              >
                 <div
                   class="error-report pointer"
                   @click="openCrashReportDialog"
                 >
-                  <i class="fa-solid fa-circle-exclamation mr-2"></i>Crash
-                  report
+                  <i class="fa-solid fa-circle-exclamation mr-2" />Crash report
                 </div>
               </v-col>
             </v-row>
@@ -96,7 +126,10 @@
     <v-container>
       <section class="book">
         <v-row>
-          <v-col md="3" class="d-none d-md-block">
+          <v-col
+            md="3"
+            class="d-none d-md-block"
+          >
             <div class="cataloge pa-2">
               <div class="cataloge-content">
                 <common-TutorialTree
@@ -107,7 +140,11 @@
               </div>
             </div>
           </v-col>
-          <v-col cols="12" md="9" class="pa-0 pa-md-3">
+          <v-col
+            cols="12"
+            md="9"
+            class="pa-0 pa-md-3"
+          >
             <div class="book-contents pa-3 pa-md-6">
               <v-navigation-drawer
                 v-model="drawer"
@@ -120,8 +157,14 @@
                   :is-root-level="true"
                 />
               </v-navigation-drawer>
-              <div class="book-content" ref="bookContentRef">
-                <div class="bookText e-mathjax" v-html="tutorialInfo.content" />
+              <div
+                ref="bookContentRef"
+                class="book-content"
+              >
+                <div
+                  class="bookText e-mathjax"
+                  v-html="tutorialInfo.content"
+                />
               </div>
             </div>
           </v-col>
@@ -132,9 +175,10 @@
     <common-crash-report ref="crashReportRef" />
   </div>
 </template>
+
 <script setup>
-import { useRuntimeConfig } from "nuxt/app";
-import { useNuxtApp } from "#app";
+import { useRuntimeConfig } from 'nuxt/app'
+import { useNuxtApp } from '#app'
 import {
   ref,
   watch,
@@ -142,140 +186,135 @@ import {
   onMounted,
   onBeforeUnmount,
   computed,
-} from "vue";
+} from 'vue'
 
-const config = useRuntimeConfig();
-const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp();
-const bookContentRef = ref(null);
+const _config = useRuntimeConfig()
+const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
+const bookContentRef = ref(null)
 
-const route = useRoute();
+const route = useRoute()
 
 // Fetch tutorial data
-let { data: tutorialInfo, error: tutorialError } = await useAsyncData(
+const { data: tutorialInfo, error: _tutorialError } = await useAsyncData(
   `tutorialInfo-${route.params.id}`,
   async () => {
-    try {
-      const response = await useApiService.get(
-        `/api/v1/tutorials/${route.params.id}`
-      );
-      return response.data;
-    } catch (e) {
-      throw e;
-    }
+    const response = await useApiService.get(
+      `/api/v1/tutorials/${route.params.id}`,
+    )
+    return response.data
   },
   {
     watch: [() => route.params.id],
-  }
-);
+  },
+)
 
 // Fetch lesson tree
-const { data: lessonTree, error: lessonTreeError } = await useAsyncData(
-  "lessonTree",
+const { data: lessonTree, error: _lessonTreeError } = await useAsyncData(
+  `lessonTree-${route.params.id}`,
   async () => {
-    try {
-      if (!tutorialInfo.value?.lesson) return null;
-      const response = await useApiService.get(
-        `/api/v1/tutorials/lessonTree/${tutorialInfo.value.lesson}`
-      );
-      return response.data;
-    } catch (e) {
-      throw e;
-    }
-  }
-);
+    if (!tutorialInfo.value?.lesson) return null
+    const response = await useApiService.get(
+      `/api/v1/tutorials/lessonTree/${tutorialInfo.value.lesson}`,
+    )
+    return response.data
+  },
+)
 
 const filteredTree = computed(
   () =>
     lessonTree.value?.list?.filter(
-      (x) => x.tutorials?.length > 0 || x.chapters?.length > 0
-    ) || []
-);
+      x => x.tutorials?.length > 0 || x.chapters?.length > 0,
+    ) || [],
+)
 
-const lessonInfo = tutorialInfo.value?.title?.split("|") || [];
+const lessonInfo = tutorialInfo.value?.title?.split('|') || []
 const lesson = {
-  title: lessonInfo[0] || "",
-  topic_title: lessonInfo[1] || "",
-};
+  title: lessonInfo[0] || '',
+  topic_title: lessonInfo[1] || '',
+}
 
 const typesetMathInSpecificContainer = async (containerRef) => {
-  if (process.client && containerRef.value) {
+  if (import.meta.client && containerRef.value) {
     try {
-      await $ensureMathJaxReady();
+      await $ensureMathJaxReady()
 
       if (!window.MathJax || !window.MathJax.Hub) {
-        return;
+        return
       }
 
-      let elementToProcess = null;
+      let elementToProcess = null
       if (
-        containerRef.value.$el &&
-        containerRef.value.$el instanceof HTMLElement
+        containerRef.value.$el
+        && containerRef.value.$el instanceof HTMLElement
       ) {
-        elementToProcess = containerRef.value.$el;
-      } else if (containerRef.value instanceof HTMLElement) {
-        elementToProcess = containerRef.value;
+        elementToProcess = containerRef.value.$el
+      }
+      else if (containerRef.value instanceof HTMLElement) {
+        elementToProcess = containerRef.value
       }
 
       if (elementToProcess) {
-        await nextTick();
-        $renderMathInElement(elementToProcess);
+        await nextTick()
+        $renderMathInElement(elementToProcess)
       }
-    } catch (error) {
-      console.error("Error during MathJax typesetting:", error);
+    }
+    catch (error) {
+      console.error('Error during MathJax typesetting:', error)
     }
   }
-};
+}
 onMounted(() => {
-  typesetMathInSpecificContainer(bookContentRef);
-  activeMenu.value = route.params.id;
-  if (process.client) {
-    window.addEventListener("scroll", handleScroll);
+  typesetMathInSpecificContainer(bookContentRef)
+  activeMenu.value = route.params.id
+  if (import.meta.client) {
+    window.addEventListener('scroll', handleScroll)
   }
-});
+})
 
 watch(
   () => tutorialInfo.value?.content,
   (newContent, oldContent) => {
     if (newContent && newContent !== oldContent) {
       nextTick(() => {
-        typesetMathInSpecificContainer(bookContentRef);
-      });
+        typesetMathInSpecificContainer(bookContentRef)
+      })
     }
-  }
-);
+  },
+)
 
-const expandListMenu = ref(true);
-const drawer = ref(false);
-const activeMenu = ref(null);
-const requestURL = ref(useRequestURL().host);
+const expandListMenu = ref(true)
+const drawer = ref(false)
+const activeMenu = ref(null)
+const requestURL = ref(useRequestURL().host)
 
 onBeforeUnmount(() => {
-  if (process.client) {
-    window.removeEventListener("scroll", handleScroll);
+  if (import.meta.client) {
+    window.removeEventListener('scroll', handleScroll)
   }
-});
+})
 
 const handleScroll = () => {
-  if (window.scrollY > 1000) expandListMenu.value = false;
-  else expandListMenu.value = true;
-};
+  if (window.scrollY > 1000) expandListMenu.value = false
+  else expandListMenu.value = true
+}
 
-const crashReportRef = ref(null);
+const crashReportRef = ref(null)
 const openCrashReportDialog = () => {
-  crashReportRef.value.dialog = true;
-  crashReportRef.value.form.type = "tutorial";
-};
+  crashReportRef.value.dialog = true
+  crashReportRef.value.form.type = 'tutorial'
+}
 
 useHead({
-  title: tutorialInfo.value?.title || "",
+  title: tutorialInfo.value?.title || '',
   link: [
     {
-      rel: "canonical",
+      rel: 'canonical',
       href: `https://${requestURL.value}/tutorial/${tutorialInfo.value.id}/${tutorialInfo.value.title_url}`,
     },
   ],
-});
+})
 </script>
+
 <style>
 .video-wrapper {
   width: 100%;

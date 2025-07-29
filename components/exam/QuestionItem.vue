@@ -1,5 +1,8 @@
 <template>
-  <div ref="questionRootRef" class="question-item pa-4">
+  <div
+    ref="questionRootRef"
+    class="question-item pa-4"
+  >
     <div class="d-flex align-baseline mb-2 gtext-t3">
       <div class="font-weight-bold mr-2 text-grey-darken-1">
         {{ index + 1 }})
@@ -17,13 +20,13 @@
       :src="item.q_file"
       alt="Question Image"
       loading="lazy"
-    />
+    >
 
     <v-radio-group
       :model-value="modelValue"
-      @update:modelValue="onAnswerChange"
       class="answer-group"
       color="orange"
+      @update:model-value="onAnswerChange"
     >
       <v-radio
         :value="'1'"
@@ -34,14 +37,14 @@
           <div
             class="mr-6 d-flex align-center gtext-t4 text-grey-darken-1"
             v-html="`1)&nbsp;&nbsp;${item.answer_a}`"
-          ></div>
+          />
           <img
             v-if="item.a_file && item.a_file !== '0'"
             class="answer-img mt-2"
             :src="item.a_file"
             alt="Answer A Image"
             loading="lazy"
-          />
+          >
         </template>
       </v-radio>
       <v-radio
@@ -53,14 +56,14 @@
           <div
             class="mr-6 d-flex align-center gtext-t4 text-grey-darken-1"
             v-html="`2)&nbsp;&nbsp;${item.answer_b}`"
-          ></div>
+          />
           <img
             v-if="item.b_file && item.b_file !== '0'"
             class="answer-img mt-2"
             :src="item.b_file"
             alt="Answer B Image"
             loading="lazy"
-          />
+          >
         </template>
       </v-radio>
       <v-radio
@@ -72,29 +75,33 @@
           <div
             class="mr-6 d-flex align-center gtext-t4 text-grey-darken-1"
             v-html="`3)&nbsp;&nbsp;${item.answer_c}`"
-          ></div>
+          />
           <img
             v-if="item.c_file && item.c_file !== '0'"
             class="answer-img mt-2"
             :src="item.c_file"
             alt="Answer C Image"
             loading="lazy"
-          />
+          >
         </template>
       </v-radio>
-      <v-radio :value="'4'" density="compact" style="font-size: 1.5rem">
+      <v-radio
+        :value="'4'"
+        density="compact"
+        style="font-size: 1.5rem"
+      >
         <template #label>
           <div
             class="mr-6 d-flex align-center gtext-t4 text-grey-darken-1"
             v-html="`4)&nbsp;&nbsp;${item.answer_d}`"
-          ></div>
+          />
           <img
             v-if="item.d_file && item.d_file !== '0'"
             class="answer-img mt-2"
             :src="item.d_file"
             alt="Answer D Image"
             loading="lazy"
-          />
+          >
         </template>
       </v-radio>
     </v-radio-group>
@@ -105,17 +112,17 @@
         size="x-small"
         variant="text"
         class="mr-2"
-        @click="$emit('erase', item.id)"
         aria-label="Erase answer"
-      ></v-btn>
+        @click="$emit('erase', item.id)"
+      />
       <v-btn
         icon="mdi-pin"
         size="x-small"
         :color="isPinned ? 'teal' : 'default'"
         variant="text"
-        @click="$emit('pin', item.id)"
         aria-label="Pin question"
-      ></v-btn>
+        @click="$emit('pin', item.id)"
+      />
     </div>
 
     <v-divider class="mt-4" />
@@ -123,32 +130,33 @@
 </template>
 
 <script setup>
-const props = defineProps({
+const _props = defineProps({
   item: { type: Object, required: true },
   index: { type: Number, required: true },
   modelValue: { type: [String, Number], default: null },
   isPinned: { type: Boolean, default: false },
-});
+})
 
-const emit = defineEmits(["update:modelValue", "pin", "erase"]);
+const emit = defineEmits(['update:modelValue', 'pin', 'erase'])
 
-const questionRootRef = ref(null);
-const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp();
+const questionRootRef = ref(null)
+const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 
 const onAnswerChange = (value) => {
-  emit("update:modelValue", value);
-};
+  emit('update:modelValue', value)
+}
 
 onMounted(async () => {
-  if (process.client && questionRootRef.value) {
+  if (import.meta.client && questionRootRef.value) {
     try {
-      await $ensureMathJaxReady();
-      $renderMathInElement(questionRootRef.value);
-    } catch (error) {
-      console.error("Error during MathJax typesetting in QuestionItem:", error);
+      await $ensureMathJaxReady()
+      $renderMathInElement(questionRootRef.value)
+    }
+    catch (error) {
+      console.error('Error during MathJax typesetting in QuestionItem:', error)
     }
   }
-});
+})
 </script>
 
 <style scoped>

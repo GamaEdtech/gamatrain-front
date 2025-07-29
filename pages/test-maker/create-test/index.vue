@@ -9,23 +9,23 @@
 </template>
 
 <script setup>
-import CreateTestForm from "~/components/test-maker/create-test-form.vue";
+import CreateTestForm from '~/components/test-maker/create-test-form.vue'
 
 // Define layout and page metadata
 definePageMeta({
-  layout: "test-maker-layout",
-  middleware: ["auth", "user-type"],
-});
+  layout: 'test-maker-layout',
+  middleware: ['auth', 'user-type'],
+})
 
 useHead({
-  title: "Create New Test",
+  title: 'Create New Test',
   meta: [
     {
-      name: "description",
-      content: "Create a standalone test for your educational content",
+      name: 'description',
+      content: 'Create a standalone test for your educational content',
     },
   ],
-});
+})
 </script>
 
 <style lang="scss">

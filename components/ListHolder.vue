@@ -1,23 +1,35 @@
 <template>
-  <div class="data-holder" ref="container">
+  <div
+    ref="container"
+    class="data-holder"
+  >
     <gama-button
+      v-show="scrollPage.top > 1"
       class="mx-auto"
-      @click="loadPreviousPage()"
-      v-show="this.scrollPage.top > 1"
       small
       outlined
       :loading="loading"
-      >Load Previous Data</gama-button
+      @click="loadPreviousPage()"
     >
+      Load Previous Data
+    </gama-button>
     <!-- <div ref="topSentinel"></div> -->
     <slot />
-    <div style="height: 100px" ref="bottomSentinel"></div>
+    <div
+      ref="bottomSentinel"
+      style="height: 100px"
+    />
   </div>
 </template>
 
 <script>
-import GamaButton from "@/components/gama/Button";
+import GamaButton from '@/components/gama/Button'
+
 export default {
+  components: {
+    GamaButton,
+  },
+  emits: ['updatePage'],
   data() {
     return {
       currentPage: this.$route.query.page ? Number(this.$route.query.page) : 1, // Start from page 1
@@ -27,24 +39,21 @@ export default {
         top: null,
         bottom: null,
       },
-    };
-  },
-  components: {
-    GamaButton,
+    }
   },
   mounted() {
-    this.loadedPages.push(this.currentPage);
-    this.scrollPage.top = this.currentPage;
-    this.scrollPage.bottom = this.currentPage;
-    this.initObservers();
+    this.loadedPages.push(this.currentPage)
+    this.scrollPage.top = this.currentPage
+    this.scrollPage.bottom = this.currentPage
+    this.initObservers()
   },
-  beforeDestroy() {
-    if (this.topObserver) this.topObserver.disconnect();
-    if (this.bottomObserver) this.bottomObserver.disconnect();
+  beforeUnmount() {
+    if (this.topObserver) this.topObserver.disconnect()
+    if (this.bottomObserver) this.bottomObserver.disconnect()
   },
   methods: {
     initObservers() {
-      const observerOptions = { root: null, threshold: 0.1 };
+      const observerOptions = { root: null, threshold: 0.1 }
 
       // Top Observer (Emit `arriveTop`)
       // this.topObserver = new IntersectionObserver((entries) => {
@@ -57,34 +66,34 @@ export default {
       // Bottom Observer (Emit `arriveBottom`)
       this.bottomObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting) {
-          this.loadNextPage();
+          this.loadNextPage()
         }
-      }, observerOptions);
-      this.bottomObserver.observe(this.$refs.bottomSentinel);
+      }, observerOptions)
+      this.bottomObserver.observe(this.$refs.bottomSentinel)
     },
     loadNextPage() {
-      this.scrollPage.bottom++;
+      this.scrollPage.bottom++
       if (!this.loadedPages.includes(this.scrollPage.bottom)) {
-        this.loadedPages.push(this.scrollPage.bottom);
-        this.$emit("updatePage", "bottom", this.scrollPage.bottom);
+        this.loadedPages.push(this.scrollPage.bottom)
+        this.$emit('updatePage', 'bottom', this.scrollPage.bottom)
       }
     },
 
     loadPreviousPage() {
-      this.loading = true;
+      this.loading = true
       if (this.scrollPage.top > 1) {
-        this.scrollPage.top--;
+        this.scrollPage.top--
         if (!this.loadedPages.includes(this.scrollPage.top)) {
-          this.loadedPages.push(this.scrollPage.top);
-          this.$emit("updatePage", "top", this.scrollPage.top);
+          this.loadedPages.push(this.scrollPage.top)
+          this.$emit('updatePage', 'top', this.scrollPage.top)
         }
       }
       setTimeout(() => {
-        this.loading = false;
-      }, 2000);
+        this.loading = false
+      }, 2000)
     },
   },
-};
+}
 </script>
 
 <style scoped>

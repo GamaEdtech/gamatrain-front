@@ -1,8 +1,9 @@
 <template>
   <v-app>
     <common-header />
-    <div >
+    <div>
       <slot />
     </div>
+    <AppGlobalSnackbar />
   </v-app>
 </template>

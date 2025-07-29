@@ -85,27 +85,40 @@
   <section>
     <v-container>
       <v-row>
-        <v-col cols="12" md="6">
-          <h4 class="section-title gama-text-h5 mb-4">Releated questions</h4>
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <h4 class="section-title gama-text-h5 mb-4">
+            Releated questions
+          </h4>
           <div v-if="loading">
-            <v-row class="latest-card" v-for="i in 3" :key="i">
+            <v-row
+              v-for="i in 3"
+              :key="i"
+              class="latest-card"
+            >
               <v-col cols="12">
-                <v-skeleton-loader type="list-item-avatar"></v-skeleton-loader>
+                <v-skeleton-loader type="list-item-avatar" />
               </v-col>
             </v-row>
           </div>
           <div v-else>
             <div v-if="relatedQuestion.length">
               <v-card
-                class="latest-card"
-                flat
                 v-for="item in relatedQuestion"
                 :key="item.id"
+                class="latest-card"
+                flat
               >
                 <v-row>
                   <v-col cols="1">
-                    <v-avatar class="my-3" size="32" rounded="0">
-                      <v-img :src="item.avatar"></v-img>
+                    <v-avatar
+                      class="my-3"
+                      size="32"
+                      rounded="0"
+                    >
+                      <v-img :src="item.avatar" />
                     </v-avatar>
                   </v-col>
                   <v-col cols="11">
@@ -114,7 +127,7 @@
                         class="gama-text-caption"
                         :to="`/qa/${item.id}/${item.title_url}`"
                       >
-                        <span v-html="item.title"></span>
+                        <span v-html="item.title" />
                       </nuxt-link>
                     </v-card-title>
 
@@ -131,7 +144,9 @@
                           cols="4"
                           class="subdate-container gama-text-overline"
                         >
-                          <v-icon size="12">mdi-calendar</v-icon>
+                          <v-icon size="12">
+                            mdi-calendar
+                          </v-icon>
                           {{ $dayjs(item.subdate).format("MMM DD") }}
                         </v-col>
                       </v-row>
@@ -140,30 +155,45 @@
                 </v-row>
               </v-card>
             </div>
-            <div v-else>Not found any related questions</div>
+            <div v-else>
+              Not found any related questions
+            </div>
           </div>
         </v-col>
-        <v-col cols="12" md="6">
-          <h4 class="section-title gama-text-h5 mb-4">Related Past Papers</h4>
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <h4 class="section-title gama-text-h5 mb-4">
+            Related Past Papers
+          </h4>
           <div v-if="loading">
-            <v-row class="latest-card" v-for="i in 3" :key="i">
+            <v-row
+              v-for="i in 3"
+              :key="i"
+              class="latest-card"
+            >
               <v-col cols="12">
-                <v-skeleton-loader type="list-item-avatar"></v-skeleton-loader>
+                <v-skeleton-loader type="list-item-avatar" />
               </v-col>
             </v-row>
           </div>
           <div v-else>
             <div v-if="relatedPapers.length">
               <v-card
-                class="latest-card"
-                flat
                 v-for="item in relatedPapers"
                 :key="item.id"
+                class="latest-card"
+                flat
               >
                 <v-row>
                   <v-col cols="1">
-                    <v-avatar class="my-3" size="32" rounded="0">
-                      <v-img :src="item.avatar"></v-img>
+                    <v-avatar
+                      class="my-3"
+                      size="32"
+                      rounded="0"
+                    >
+                      <v-img :src="item.avatar" />
                     </v-avatar>
                   </v-col>
                   <v-col cols="11">
@@ -172,7 +202,7 @@
                         class="gama-text-caption"
                         :to="`/paper/${item.id}/${item.title_url}`"
                       >
-                        <span v-html="item.title"></span>
+                        <span v-html="item.title" />
                       </nuxt-link>
                     </v-card-title>
 
@@ -189,7 +219,9 @@
                           cols="4"
                           class="subdate-container gama-text-overline"
                         >
-                          <v-icon size="12">mdi-calendar</v-icon>
+                          <v-icon size="12">
+                            mdi-calendar
+                          </v-icon>
                           {{ $dayjs(item.subdate).format("MMM DD") }}
                         </v-col>
                       </v-row>
@@ -198,7 +230,9 @@
                 </v-row>
               </v-card>
             </div>
-            <div v-else>Not found any related past papers</div>
+            <div v-else>
+              Not found any related past papers
+            </div>
           </div>
         </v-col>
       </v-row>
@@ -210,71 +244,60 @@
 
 <script>
 export default {
-  name: "related-content",
+  name: 'RelatedContent',
+  props: {
+    testType: {
+      type: String,
+      required: false,
+      default: '',
+    },
+  },
   data() {
     return {
       relatedQuestion: [],
       relatedPapers: [],
       loading: true,
-    };
-  },
-  props: {
-    board: {
-      type: String | null,
-      default: null,
-    },
-    grade: {
-      type: String | null,
-      default: null,
-    },
-    subject: {
-      type: String | null,
-      default: null,
-    },
-    test_type: {
-      type: String | null,
-      default: null,
-    },
+    }
   },
   mounted() {
-    this.getContentList("test", 6);
-    this.getContentList("question", 5);
+    this.getContentList('test', 6)
+    this.getContentList('question', 5)
   },
   methods: {
     async getContentList(type, perpage) {
-      this.loading = true;
-      let params = {
+      this.loading = true
+      const params = {
         type,
         page: 1,
         perpage,
-        sortby: "subdateasc",
+        sortby: 'subdateasc',
         section: this.board,
         base: this.grade,
         lesson: this.subject,
         test_type: this.test_type,
-      };
+      }
 
       await this.$fetch
-        .$get("/api/v1/search", {
+        .$get('/api/v1/search', {
           params: params,
         })
         .then((response) => {
-          let findIndex = response.data.list.findIndex(
-            (x) => x.id == this.$route.params.id
-          );
-          if (findIndex > -1) response.data.list.splice(findIndex, 1);
-          if (type === "question")
-            this.relatedQuestion.push(...response.data.list);
+          const findIndex = response.data.list.findIndex(
+            x => x.id == this.$route.params.id,
+          )
+          if (findIndex > -1) response.data.list.splice(findIndex, 1)
+          if (type === 'question')
+            this.relatedQuestion.push(...response.data.list)
 
-          if (type === "test") this.relatedPapers.push(...response.data.list);
+          if (type === 'test') this.relatedPapers.push(...response.data.list)
         })
-        .catch((err) => {})
+        .catch((_err) => {})
         .finally(() => {
-          this.loading = false;
-        });
+          this.loading = false
+        })
     },
   },
-};
+}
 </script>
 
 <style scoped></style>

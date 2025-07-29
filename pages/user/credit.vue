@@ -1,13 +1,11 @@
 <template>
-<div>
-
-</div>
+  <div />
 </template>
 
 <script>
 export default {
+  name: 'Credit',
   layout: 'dashboard_layout',
-  name: "credit"
 }
 </script>
 

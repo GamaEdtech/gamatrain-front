@@ -9,60 +9,81 @@
             v-if="pending"
             class="mx-auto"
             height="60"
-          ></v-skeleton-loader>
-          <widgets-breadcrumb v-else :breads="breads" />
+          />
+          <widgets-breadcrumb
+            v-else
+            :breads="breads"
+          />
         </div>
       </v-container>
     </section>
 
     <section>
       <v-container class="py-0">
-        <div v-if="pending" class="detail mt-md-8">
+        <div
+          v-if="pending"
+          class="detail mt-md-8"
+        >
           <v-row>
-            <v-col cols="12" md="3">
+            <v-col
+              cols="12"
+              md="3"
+            >
               <v-skeleton-loader
                 class="mx-auto"
                 height="300"
-              ></v-skeleton-loader>
+              />
             </v-col>
 
-            <v-col cols="12" md="6">
+            <v-col
+              cols="12"
+              md="6"
+            >
               <v-skeleton-loader
                 class="mx-auto"
                 height="300"
-              ></v-skeleton-loader>
+              />
             </v-col>
 
             <v-col md="3">
               <v-skeleton-loader
                 class="mx-auto"
                 type="list-item-avatar"
-              ></v-skeleton-loader>
+              />
 
               <v-skeleton-loader
                 class="mx-auto mt-2"
                 type="list-item-three-line"
                 repeat="4"
-              ></v-skeleton-loader>
+              />
 
               <v-skeleton-loader
                 class="mx-auto mt-4"
                 type="button"
-              ></v-skeleton-loader>
+              />
             </v-col>
           </v-row>
         </div>
 
-        <div v-else class="detail mt-md-8">
+        <div
+          v-else
+          class="detail mt-md-8"
+        >
           <v-row>
-            <v-col cols="12" md="3">
+            <v-col
+              cols="12"
+              md="3"
+            >
               <details-preview-gallery
                 :image-urls="galleryImages"
                 :help-link-data="galleryHelpData"
                 :initial-slide="1"
               />
             </v-col>
-            <v-col cols="12" md="6">
+            <v-col
+              cols="12"
+              md="6"
+            >
               <exam-detail-description-section
                 :content-data="contentData"
                 :is-logged-in="auth.isAuthenticated.value"
@@ -108,78 +129,74 @@
 
 <script setup>
 // Get api, router, and route
-const route = useRoute();
-const router = useRouter();
-const auth = useAuth();
-const user = useUser();
-const { $toast } = useNuxtApp();
-const requestURL = ref(useRequestURL().host);
+const route = useRoute()
+const router = useRouter()
+const auth = useAuth()
+const user = useUser()
+const { $toast } = useNuxtApp()
+const requestURL = ref(useRequestURL().host)
 // Component data
-const contentData = ref({});
-const crash_report = ref(null);
-const copy_btn = ref("Copy");
-const download_loading = ref(false);
+const contentData = ref({})
+const crash_report = ref(null)
+const copy_btn = ref('Copy')
+const download_loading = ref(false)
 
-const breads = reactive([]);
+const breads = reactive([])
 
-const galleryImages = ref([]);
+const galleryImages = ref([])
 const galleryHelpData = ref({
-  state: "",
-  section: "",
-  base: "",
-  course: "",
-  lesson: "",
-});
+  state: '',
+  section: '',
+  base: '',
+  course: '',
+  lesson: '',
+})
 
 // Fetch the exam data
 async function fetchExamData() {
-  try {
-    const { id } = route.params;
-    const response = await useApiService.get(`/api/v1/exams/${id}`);
+  const { id } = route.params
+  const response = await useApiService.get(`/api/v1/exams/${id}`)
 
-    if (response.status === 1 && response.data) {
-      return response.data;
-    }
-
-    return response;
-  } catch (err) {
-    throw err;
+  if (response.status === 1 && response.data) {
+    return response.data
   }
+
+  return response
 }
 
 // Use asyncData to fetch data
-const { data, pending, error } = await useAsyncData(
+const { data, pending, _error } = await useAsyncData(
   `exam-${route.params.id}`,
   async () => {
-    const data = await fetchExamData();
-    return data;
-  }
-);
+    const data = await fetchExamData()
+    return data
+  },
+)
 
 watchEffect(async () => {
   if (data.value) {
-    contentData.value = data.value;
-    await initBreadCrumb();
-    await updateGalleryData();
+    contentData.value = data.value
+    await initBreadCrumb()
+    await updateGalleryData()
   }
-});
+})
 
 // Method to initialize breadcrumbs
 async function initBreadCrumb() {
-  if (!contentData.value) return;
+  if (!contentData.value) return
 
   breads.push({
-    text: "Online exam",
+    text: 'Online exam',
     disabled: false,
-    href: "/search?type=azmoon",
-  });
+    href: '/search?type=azmoon',
+  })
 
   if (contentData.value.section_title) {
     breads.push({
       text: contentData.value.section_title,
       disabled: false,
       href: `/search?type=azmoon&section=${contentData.value.section}`,
-    });
+    })
   }
 
   if (contentData.value.base_title) {
@@ -187,7 +204,7 @@ async function initBreadCrumb() {
       text: contentData.value.base_title,
       disabled: false,
       href: `/search?type=azmoon&section=${contentData.value.section}&base=${contentData.value.base}`,
-    });
+    })
   }
 
   if (contentData.value.lesson_title) {
@@ -195,79 +212,81 @@ async function initBreadCrumb() {
       text: contentData.value.lesson_title,
       disabled: false,
       href: `/search?type=azmoon&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
-    });
+    })
   }
 }
 
 // Function to update gallery data
 function updateGalleryData() {
   if (contentData.value?.thumb_pic_url) {
-    galleryImages.value = [contentData.value.thumb_pic_url];
+    galleryImages.value = [contentData.value.thumb_pic_url]
   }
 
   galleryHelpData.value = {
-    state: contentData.value?.state || "",
-    section: contentData.value?.section || "",
-    base: contentData.value?.base || "",
-    course: contentData.value?.course || "",
-    lesson: contentData.value?.lesson || "",
-  };
+    state: contentData.value?.state || '',
+    section: contentData.value?.section || '',
+    base: contentData.value?.base || '',
+    course: contentData.value?.course || '',
+    lesson: contentData.value?.lesson || '',
+  }
 }
 
 useHead(() => ({
-  title: contentData.value?.title || "Exam Details",
+  title: contentData.value?.title || 'Exam Details',
   link: [
     {
-      rel: "canonical",
+      rel: 'canonical',
       href: `https://${requestURL.value}/exam/${contentData.value?.id}/${contentData.value?.title_url}`,
     },
   ],
-}));
+}))
 
 // Methods
 const openAuthDialog = (val) => {
-  router.push({ query: { auth_form: val } });
-};
+  router.push({ query: { auth_form: val } })
+}
 
 const copyUrl = () => {
-  navigator.clipboard.writeText(window.location.href);
-  copy_btn.value = "Copied";
-};
+  navigator.clipboard.writeText(window.location.href)
+  copy_btn.value = 'Copied'
+}
 
 const startDownload = async () => {
-  download_loading.value = true;
+  download_loading.value = true
   try {
     const response = await useApiService.get(
-      `/api/v1/exams/download/${route.params.id}`
-    );
-    const FileSaver = await import("file-saver");
-    FileSaver.saveAs(response.data.url, response.data.name);
-  } catch (err) {
+      `/api/v1/exams/download/${route.params.id}`,
+    )
+    const FileSaver = await import('file-saver')
+    FileSaver.saveAs(response.data.url, response.data.name)
+  }
+  catch (err) {
     if (err.response?.status == 400) {
       if (
-        err.response.data.status == 0 &&
-        err.response.data.error == "creditNotEnough"
+        err.response.data.status == 0
+        && err.response.data.error == 'creditNotEnough'
       ) {
-        $toast.info("No enough credit");
+        $toast.info('No enough credit')
       }
     }
-  } finally {
-    download_loading.value = false;
   }
-};
+  finally {
+    download_loading.value = false
+  }
+}
 
 const openCrashReportDialog = () => {
-  crash_report.value.dialog = true;
-  crash_report.value.form.type = "test";
-};
+  crash_report.value.dialog = true
+  crash_report.value.form.type = 'test'
+}
 </script>
 
 <script>
 // Component metadata
 export default {
-  name: "exam-details",
+  name: 'ExamDetails',
   auth: false,
-};
+}
 </script>
 
 <style>

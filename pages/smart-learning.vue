@@ -1,14 +1,17 @@
 <template>
   <div>
-    <v-container fluid id="service-page-header">
-      <div class="overlay"></div>
+    <v-container
+      id="service-page-header"
+      fluid
+    >
+      <div class="overlay" />
 
       <v-container>
         <v-row>
           <v-col cols="12">
             <div id="main-title-holder">
               <h1 class="gama-text-h1">
-                Empowering<br />
+                Empowering<br>
                 Smart Learning!
               </h1>
             </div>
@@ -48,10 +51,17 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-comprehensive-curriculum">
+    <v-container
+      id="service-comprehensive-curriculum"
+      fluid
+    >
       <v-container>
         <v-row>
-          <v-col cols="12" md="6" class="order-last order-md-first">
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
             <h2 class="gama-text-h4 text-white">
               Comprehensive Curriculum and Materials
             </h2>
@@ -64,7 +74,10 @@
               engaging and enriching study materials.
             </p>
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col
+            cols="12"
+            md="6"
+          >
             <v-img
               src="/images/comprehensive-curriculum.png"
               alt="Empowering Smart Learning!"
@@ -76,14 +89,22 @@
 
     <v-container id="service-smart-assistance">
       <v-row>
-        <v-col cols="12" md="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <v-img
             src="/images/smart-assistance.svg"
             alt="24/7 Smart Assistance"
           />
         </v-col>
-        <v-col cols="12" md="6">
-          <h2 class="gama-text-h4 mb-2">24/7 Smart Assistance</h2>
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <h2 class="gama-text-h4 mb-2">
+            24/7 Smart Assistance
+          </h2>
           <p class="gama-text-body1">
             GamaTrain's extensive library of educational materials covers a wide
             range of subjects and levels. From first grade to 12th grade
@@ -96,11 +117,20 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-progress-tracking">
+    <v-container
+      id="service-progress-tracking"
+      fluid
+    >
       <v-container>
         <v-row>
-          <v-col cols="12" md="6" class="order-last order-md-first">
-            <h2 class="gama-text-h4">Real-Time Progress Tracking</h2>
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
+            <h2 class="gama-text-h4">
+              Real-Time Progress Tracking
+            </h2>
             <p class="gama-text-body1">
               Stay on top of your academic growth with GamaTrain's real-time
               progress tracking. Our AI algorithms analyze your performance,
@@ -108,7 +138,10 @@
               Be informed, stay motivated, and excel in your studies.
             </p>
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col
+            cols="12"
+            md="6"
+          >
             <v-img
               src="/images/progress-tracking.png"
               alt="Real-Time Progress Tracking"
@@ -120,14 +153,22 @@
 
     <v-container id="service-smart-collaboration">
       <v-row>
-        <v-col cols="12" md="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <v-img
             src="/images/smart-assistance.png"
             alt="Smart Collaboration and Engagement"
           />
         </v-col>
-        <v-col cols="12" md="6">
-          <h2 class="gama-text-h4">Smart Collaboration and Engagement</h2>
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <h2 class="gama-text-h4">
+            Smart Collaboration and Engagement
+          </h2>
           <p class="gama-text-body1">
             Stay on top of your academic growth with GamaTrain's real-time
             progress tracking. Our AI algorithms analyze your performance,
@@ -138,10 +179,17 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-content-sharing">
+    <v-container
+      id="service-content-sharing"
+      fluid
+    >
       <v-container>
         <v-row>
-          <v-col cols="12" md="6" class="order-last order-md-first">
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
             <h2 class="gama-text-h4">
               Simplify Content Sharing and Elevate Education with AI Assistance.
             </h2>
@@ -154,7 +202,10 @@
               for students.
             </p>
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col
+            cols="12"
+            md="6"
+          >
             <v-img
               src="/images/content-sharing.png"
               alt="Simplify Content Sharing and Elevate Education with AI Assistance."
@@ -166,14 +217,22 @@
 
     <v-container id="service-content-upload">
       <v-row>
-        <v-col cols="12" md="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <v-img
             src="/images/content-upload.png"
             alt="Seamless Content Upload"
           />
         </v-col>
-        <v-col cols="12" md="6">
-          <h2 class="gama-text-h4">Seamless Content Upload</h2>
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <h2 class="gama-text-h4">
+            Seamless Content Upload
+          </h2>
           <p class="gama-text-body1">
             With GamaTrain’s AI-enhanced content sharing platform, uploading
             educational materials has never been easier. Teachers can
@@ -186,11 +245,20 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-content-review">
+    <v-container
+      id="service-content-review"
+      fluid
+    >
       <v-container>
         <v-row>
-          <v-col cols="12" md="6" class="order-last order-md-first">
-            <h2 class="gama-text-h4 mb-2">Intelligent Content Review</h2>
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
+            <h2 class="gama-text-h4 mb-2">
+              Intelligent Content Review
+            </h2>
             <p class="gama-text-body1">
               GamaTrain’s AI-driven expert review takes content evaluation to a
               whole new level. Our advanced algorithms analyze uploaded
@@ -200,7 +268,10 @@
               teaching practices.
             </p>
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col
+            cols="12"
+            md="6"
+          >
             <v-img
               src="/images/content-review.png"
               alt="Intelligent Content Review"
@@ -210,10 +281,18 @@
       </v-container>
     </v-container>
 
-    <v-container fluid id="service-education-future">
+    <v-container
+      id="service-education-future"
+      fluid
+    >
       <v-row>
-        <v-col cols="12" md="12">
-          <p class="gama-text-h4">Join the Future of Education Today!</p>
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <p class="gama-text-h4">
+            Join the Future of Education Today!
+          </p>
         </v-col>
       </v-row>
     </v-container>
@@ -225,10 +304,10 @@ export default {
   auth: false,
   head() {
     return {
-      title: "Smart learning",
-    };
+      title: 'Smart learning',
+    }
   },
-};
+}
 </script>
 
 <style scoped>

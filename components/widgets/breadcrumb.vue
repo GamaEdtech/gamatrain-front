@@ -6,11 +6,11 @@
     }"
   >
     <v-breadcrumbs
+      v-if="breadItems.length"
       class="flex-wrap"
       :items="breadItems"
-      v-if="breadItems.length"
     >
-      <template v-slot:divider>
+      <template #divider>
         <v-icon>mdi-chevron-right</v-icon>
       </template>
     </v-breadcrumbs>
@@ -26,23 +26,23 @@ const props = defineProps({
   },
   backgroundColor: {
     type: String,
-    default: "#f5f5f5",
+    default: '#f5f5f5',
   },
-});
+})
 
 // Transform breadcrumb data to match Vuetify's expected format
 const breadItems = computed(() => {
   if (!props.breads || props.breads.length === 0) {
-    return [];
+    return []
   }
 
-  return props.breads.map((bread) => ({
+  return props.breads.map(bread => ({
     title: bread.text,
     disabled: bread.disabled,
     to: bread.href,
     exact: true,
-  }));
-});
+  }))
+})
 </script>
 
 <style scoped>

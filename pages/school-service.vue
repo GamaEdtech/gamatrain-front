@@ -1,7 +1,10 @@
 <template>
   <div>
-    <v-container fluid id="service-page-header">
-      <div class="overlay"></div>
+    <v-container
+      id="service-page-header"
+      fluid
+    >
+      <div class="overlay" />
 
       <v-container>
         <v-row>
@@ -38,10 +41,17 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-informed-choices">
+    <v-container
+      id="service-informed-choices"
+      fluid
+    >
       <v-container>
         <v-row>
-          <v-col cols="12" md="6" class="order-last order-md-first">
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
             <h2 class="gama-text-h4 text-white">
               The Power of Informed Choices
             </h2>
@@ -54,23 +64,32 @@
               and educational goals.
             </p>
           </v-col>
-          <v-col cols="12" md="6">
-            <!-- <v-img src="/images/service-informed-choices.png" alt="The Power of Informed Choices" /> -->
-          </v-col>
+          <v-col
+            cols="12"
+            md="6"
+          />
         </v-row>
       </v-container>
     </v-container>
 
     <v-container id="service-extensive-database">
       <v-row>
-        <v-col cols="12" md="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <!-- <v-img
             src="images/service-extensive-database.png"
             alt="Extensive Database"
           /> -->
         </v-col>
-        <v-col cols="12" md="6">
-          <h2 class="gama-text-h4">Extensive Database</h2>
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <h2 class="gama-text-h4">
+            Extensive Database
+          </h2>
           <p class="gama-text-body1">
             Our vast and up-to-date database includes a diverse range of
             schools, colleges, and universities. From public to private
@@ -82,11 +101,20 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-friendly-interface">
+    <v-container
+      id="service-friendly-interface"
+      fluid
+    >
       <v-container>
         <v-row>
-          <v-col cols="12" md="6" class="order-last order-md-first">
-            <h2 class="gama-text-h4">User-Friendly Interface</h2>
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
+            <h2 class="gama-text-h4">
+              User-Friendly Interface
+            </h2>
             <p class="gama-text-body1">
               Navigating through GamaTrain School Finder is a breeze. Our
               user-friendly interface allows you to filter your search based on
@@ -95,7 +123,10 @@
               match.
             </p>
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col
+            cols="12"
+            md="6"
+          >
             <v-img
               src="/images/service-friendly-interface.png"
               alt="User-Friendly Interface"
@@ -107,14 +138,22 @@
 
     <v-container id="service-detailed-insights">
       <v-row>
-        <v-col cols="12" md="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <v-img
             src="/images/service-detailed-insights.png"
             alt="Detailed Insights"
           />
         </v-col>
-        <v-col cols="12" md="6">
-          <h2 class="gama-text-h4">Detailed Insights</h2>
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <h2 class="gama-text-h4">
+            Detailed Insights
+          </h2>
           <p class="gama-text-body1">
             GamaTrain provides in-depth insights into each educational
             institution. Learn about their academic programs, faculty
@@ -126,11 +165,20 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-real-reviews">
+    <v-container
+      id="service-real-reviews"
+      fluid
+    >
       <v-container>
         <v-row>
-          <v-col cols="12" md="6" class="order-last order-md-first">
-            <h2 class="gama-text-h4">Real Reviews from Real People</h2>
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
+            <h2 class="gama-text-h4">
+              Real Reviews from Real People
+            </h2>
             <p class="gama-text-body1">
               Gain valuable insights from real reviews written by students,
               parents, and alumni of the schools you're interested in. Honest
@@ -138,26 +186,32 @@
               understanding of the institution's culture and atmosphere.
             </p>
           </v-col>
-          <v-col cols="12" md="6">
-            <!-- <v-img
-              src="/images/service-real-reviews.png"
-              alt="Real Reviews from Real People"
-            /> -->
-          </v-col>
+          <v-col
+            cols="12"
+            md="6"
+          />
         </v-row>
       </v-container>
     </v-container>
 
     <v-container id="service-save-favorites">
       <v-row>
-        <v-col cols="12" md="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <v-img
             src="/images/service-save-favorites.png"
             alt="Save Favorites and Compare"
           />
         </v-col>
-        <v-col cols="12" md="6">
-          <h2 class="gama-text-h4">Save Favorites and Compare</h2>
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <h2 class="gama-text-h4">
+            Save Favorites and Compare
+          </h2>
           <p class="gama-text-body1">
             Found a school you love? Save it to your favorites for easy access
             later. Additionally, use our comparison feature to analyze multiple
@@ -168,11 +222,20 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-personalized">
+    <v-container
+      id="service-personalized"
+      fluid
+    >
       <v-container>
         <v-row>
-          <v-col cols="12" md="6" class="order-last order-md-first">
-            <h2 class="gama-text-h4">Personalized Recommendations</h2>
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
+            <h2 class="gama-text-h4">
+              Personalized Recommendations
+            </h2>
             <p class="gama-text-body1">
               Tell us about your preferences, interests, and academic goals, and
               let GamaTrain School Finder suggest educational institutions
@@ -181,20 +244,26 @@
               with your aspirations.
             </p>
           </v-col>
-          <v-col cols="12" md="6">
-            <!-- <v-img
-              src="/images/service-personalized.png"
-              alt="Personalized Recommendations"
-            /> -->
-          </v-col>
+          <v-col
+            cols="12"
+            md="6"
+          />
         </v-row>
       </v-container>
     </v-container>
 
-    <v-container fluid id="service-education-future">
+    <v-container
+      id="service-education-future"
+      fluid
+    >
       <v-row>
-        <v-col cols="12" md="12">
-          <p class="gama-text-h4">Join the Future of Education Today!</p>
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <p class="gama-text-h4">
+            Join the Future of Education Today!
+          </p>
         </v-col>
       </v-row>
     </v-container>
@@ -205,11 +274,11 @@
 export default {
   head() {
     return {
-      title: "School Service",
-    };
+      title: 'School Service',
+    }
   },
   auth: false,
-};
+}
 </script>
 
 <style scoped>

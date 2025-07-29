@@ -1,12 +1,27 @@
 <template>
-  <v-row id="similar-schools" v-show="similarSchools && similarSchools.length">
+  <v-row
+    v-show="similarSchools && similarSchools.length"
+    id="similar-schools"
+  >
     <v-col cols="12">
-      <h3 class="gtext-h5 primary-gray-600">Similar schools</h3>
+      <h3 class="gtext-h5 primary-gray-600">
+        Similar schools
+      </h3>
     </v-col>
     <v-col cols="12">
-      <v-slide-group class="slider py-sm-4" :show-arrows="true">
-        <v-slide-group-item v-for="(item, idx) in similarSchools" :key="idx">
-          <v-card rounded class="list-item" :to="`/school/${item.id}`">
+      <v-slide-group
+        class="slider py-sm-4"
+        :show-arrows="true"
+      >
+        <v-slide-group-item
+          v-for="(item, idx) in similarSchools"
+          :key="idx"
+        >
+          <v-card
+            rounded
+            class="list-item"
+            :to="`/school/${item.id}`"
+          >
             <v-card-text>
               <div class="item-info">
                 <div class="main-data">
@@ -14,12 +29,15 @@
                     <h2 class="gtext-t4 font-weight-semibold mb-4">
                       {{ item.name }}
                     </h2>
-                    <v-chip class="list-chip gtext-t5 font-weight-medium" small>
+                    <v-chip
+                      class="list-chip gtext-t5 font-weight-medium"
+                      small
+                    >
                       {{ item.schoolTypeTitle || "Pre-K" }}
                     </v-chip>
                   </div>
                   <div class="item-img float-right">
-                    <img :src="item.pic || '/images/default-school.png'" />
+                    <img :src="item.pic || '/images/default-school.png'">
                   </div>
                 </div>
                 <v-divider class="mb-3" />
@@ -34,7 +52,9 @@
                       class="rate-section gtext-t6 font-weight-semibold mr-1"
                     >
                       {{ item.score || 4 }}
-                      <v-icon color="primary"> mdi-star </v-icon>
+                      <v-icon color="primary">
+                        mdi-star
+                      </v-icon>
                     </div>
                     <div class="gtext-t6 primary-gray-300">
                       Update:
@@ -54,12 +74,12 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   similarSchools: {
     type: Array,
     required: true,
   },
-});
+})
 </script>
 
 <style scoped>

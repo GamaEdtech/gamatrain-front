@@ -13,13 +13,13 @@ import {
   Tooltip,
   ArcElement,
   CategoryScale,
-} from "chart.js";
-import { Pie } from "vue-chartjs";
+} from 'chart.js'
+import { Pie } from 'vue-chartjs'
 
-ChartJS.register(Title, Tooltip, ArcElement, CategoryScale);
+ChartJS.register(Title, Tooltip, ArcElement, CategoryScale)
 
 export default {
-  name: "PieChart",
+  name: 'PieChart',
   components: {
     Pie,
   },
@@ -48,7 +48,7 @@ export default {
           },
         },
       },
-    };
+    }
   },
-};
+}
 </script>

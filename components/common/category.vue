@@ -1,11 +1,17 @@
 <template>
-  <div id="main-category " class="mt-md-16">
+  <div
+    id="main-category "
+    class="mt-md-16"
+  >
     <!--   Start: category  main-container Desktop -->
     <v-container id="main-category-container">
       <v-row>
         <v-col cols="12">
           <v-sheet class="category-sheet mx-auto">
-            <v-slide-group multiple show-arrows>
+            <v-slide-group
+              multiple
+              show-arrows
+            >
               <v-slide-group-item
                 v-for="(item, category) in items"
                 :key="category"
@@ -17,9 +23,15 @@
                     :color="item.color"
                     depressed
                   >
-                    <span :class="item.icon" class="icon text-white"></span>
+                    <span
+                      :class="item.icon"
+                      class="icon text-white"
+                    />
                   </v-btn>
-                  <div :style="`color:${item.color}`" class="category-text">
+                  <div
+                    :style="`color:${item.color}`"
+                    class="category-text"
+                  >
                     {{ item.text }}
                   </div>
                 </div>
@@ -40,47 +52,47 @@ export default {
     showMore: false,
     items: [
       {
-        class: "test",
-        color: "#01579b",
-        text: "Past Papers",
-        icon: "icon-paper",
-        link: "/search?type=test",
+        class: 'test',
+        color: '#01579b',
+        text: 'Past Papers',
+        icon: 'icon-paper',
+        link: '/search?type=test',
       },
       {
-        class: "content",
-        color: "#2e7d32",
-        text: "Multimedia",
-        icon: "icon-multimedia",
-        link: "/search?type=learnfiles",
+        class: 'content',
+        color: '#2e7d32',
+        text: 'Multimedia',
+        icon: 'icon-multimedia',
+        link: '/search?type=learnfiles',
       },
       {
-        class: "faq",
-        color: "#bf360c",
-        text: "Forum",
-        icon: "icon-q-a",
-        link: "/search?type=question",
+        class: 'faq',
+        color: '#bf360c',
+        text: 'Forum',
+        icon: 'icon-q-a',
+        link: '/search?type=question',
       },
       {
-        class: "exam",
-        color: "#5600e8",
-        text: "QuizHub",
-        icon: "icon-exam",
-        link: "/search?type=azmoon",
+        class: 'exam',
+        color: '#5600e8',
+        text: 'QuizHub',
+        icon: 'icon-exam',
+        link: '/search?type=azmoon',
       },
       {
-        class: "textbook",
-        color: "#bd081c",
-        text: "Tutorial",
-        icon: "icon-tutorial",
-        link: "/search?type=dars",
+        class: 'textbook',
+        color: '#bd081c',
+        text: 'Tutorial',
+        icon: 'icon-tutorial',
+        link: '/search?type=dars',
       },
       {
-        class: "school",
-        color: "#a5673f",
-        text: "School",
-        icon: "icon-school",
-        link: "/school",
-        status: "disabled",
+        class: 'school',
+        color: '#a5673f',
+        text: 'School',
+        icon: 'icon-school',
+        link: '/school',
+        status: 'disabled',
       },
       // {
       //   class: "tutor",
@@ -92,7 +104,7 @@ export default {
       // },
     ],
   }),
-};
+}
 </script>
 
 <style>

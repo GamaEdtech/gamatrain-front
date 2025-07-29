@@ -1,10 +1,16 @@
 <template>
   <v-row>
-    <v-col cols="12" class="px-0 px-sm-2">
+    <v-col
+      cols="12"
+      class="px-0 px-sm-2"
+    >
       <v-row>
-        <v-col cols="12" class="pl-5">
+        <v-col
+          cols="12"
+          class="pl-5"
+        >
           <p class="text-h4 teal--text">
-            <span class="fa-solid fa-envelope"></span>
+            <span class="fa-solid fa-envelope" />
             <span>
               {{ ticketData.title }}
             </span>
@@ -17,8 +23,11 @@
 
       <v-card class="mt-3">
         <v-card-text>
-          <v-row align="center" justify="center">
-            <!--Start ticket-->
+          <v-row
+            align="center"
+            justify="center"
+          >
+            <!-- Start ticket -->
             <v-col cols="12">
               <p
                 class="text-h5"
@@ -27,12 +36,18 @@
 
               <v-divider class="my-3" />
             </v-col>
-            <!--End start ticket-->
+            <!-- End start ticket -->
 
-            <!--Start replies-->
-            <v-col cols="12" class="px-0 px-md-2">
+            <!-- Start replies -->
+            <v-col
+              cols="12"
+              class="px-0 px-md-2"
+            >
               <v-container class="fill-height">
-                <v-row class="fill-height pb-14" align="end">
+                <v-row
+                  class="fill-height pb-14"
+                  align="end"
+                >
                   <v-col>
                     <div
                       v-for="(item, index) in ticketData.replies"
@@ -50,13 +65,16 @@
                       >
                         <v-card-text>
                           <v-row>
-                            <v-col cols="12" class="font-size-20">
+                            <v-col
+                              cols="12"
+                              class="font-size-20"
+                            >
                               {{ item.message }}
                             </v-col>
                             <v-col
+                              v-if="item.file != 0"
                               cols="12"
                               class="py-0 mt-2"
-                              v-if="item.file != 0"
                             >
                               <a
                                 class="v-btn--outlined pa-1 rounded font-size-16"
@@ -78,20 +96,29 @@
                         </v-card-actions>
                       </v-card>
 
-                      <!--Chat avatar section-->
-                      <v-avatar v-if="item.side == 'me'" size="36">
+                      <!-- Chat avatar section -->
+                      <v-avatar
+                        v-if="item.side == 'me'"
+                        size="36"
+                      >
                         <v-img
                           v-if="ticketData.contact.me.avatar"
                           :src="ticketData.contact.me.avatar"
                         />
-                        <span v-else class="text-white">
+                        <span
+                          v-else
+                          class="text-white"
+                        >
                           {{ item.first_name[0] }}
                         </span>
                       </v-avatar>
-                      <v-avatar v-else size="36">
+                      <v-avatar
+                        v-else
+                        size="36"
+                      >
                         <v-img :src="ticketData.contact.that.avatar" />
                       </v-avatar>
-                      <!--End chat avatar section-->
+                      <!-- End chat avatar section -->
 
                       <v-card
                         v-if="item.side == 'that'"
@@ -101,13 +128,16 @@
                       >
                         <v-card-text class="black--text">
                           <v-row>
-                            <v-col cols="12" class="font-size-20">
+                            <v-col
+                              cols="12"
+                              class="font-size-20"
+                            >
                               {{ item.message }}
                             </v-col>
                             <v-col
+                              v-if="item.file != 0"
                               cols="12"
                               class="py-0 mt-2"
-                              v-if="item.file != 0"
                             >
                               <a
                                 class="v-btn--outlined pa-1 rounded font-size-16"
@@ -132,24 +162,33 @@
                 </v-row>
               </v-container>
             </v-col>
-            <!--End replies-->
+            <!-- End replies -->
           </v-row>
           <v-divider class="mt-3" />
         </v-card-text>
-        <v-card-text class="px-0 px-sm-8 px-md-4" v-if="ticketData.replyable">
-          <v-card flat class="mt-3">
+        <v-card-text
+          v-if="ticketData.replyable"
+          class="px-0 px-sm-8 px-md-4"
+        >
+          <v-card
+            flat
+            class="mt-3"
+          >
             <!-- <validation-observer ref="observer" v-slot="{ invalid }"> -->
             <form @submit.prevent="submitContent">
               <v-row>
-                <v-col cols="12" md="12">
+                <v-col
+                  cols="12"
+                  md="12"
+                >
                   <!-- <validation-provider
                       v-slot="{ errors }"
                       name="text"
                       rules="required|min:10"
                     > -->
                   <v-textarea
-                    dense
                     v-model="form.message"
+                    dense
                     :error-messages="errors"
                     label="Message text"
                     outlined
@@ -162,7 +201,10 @@
                     </strong>
                   </nuxt-link>
                 </v-col>
-                <v-col cols="12" md="4">
+                <v-col
+                  cols="12"
+                  md="4"
+                >
                   <!-- <validation-provider
                       v-slot="{ validate, errors }"
                       rules="mimes:image/png,image/jpg,image/jpeg,image/gif,video/mp4,audio/mp3,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats,officedocument.presentationml.presentation"
@@ -170,23 +212,27 @@
                       name="file"
                     > -->
                   <v-file-input
-                    dense
                     v-model="file"
+                    dense
                     :error-messages="errors"
                     label="Attach file"
                     accept=".jpg,.jpeg,.png,.gif,.docx,.pptx,.pdf,.mp4,.mp3"
-                    @change="uploadFile('file', $event), validate"
                     :prepend-icon="null"
                     color="red"
                     prepend-inner-icon="mdi-file"
                     append-icon="mdi-folder-open"
                     outlined
+                    @change="uploadFile('file', $event), validate"
                   />
                   <!-- </validation-provider> -->
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="12" md="6" class="pb-0">
+                <v-col
+                  cols="12"
+                  md="6"
+                  class="pb-0"
+                >
                   <v-btn
                     type="submit"
                     lg
@@ -198,8 +244,17 @@
                     Send
                   </v-btn>
                 </v-col>
-                <v-col cols="12" md="6">
-                  <v-btn lg outlined color="error" to="/user/ticket" block>
+                <v-col
+                  cols="12"
+                  md="6"
+                >
+                  <v-btn
+                    lg
+                    outlined
+                    color="error"
+                    to="/user/ticket"
+                    block
+                  >
                     Discard
                   </v-btn>
                 </v-col>
@@ -215,172 +270,169 @@
 
 <script>
 // import { ValidationObserver, ValidationProvider } from "vee-validate";
-import TopicSelector from "~/components/form/topic-selector.vue";
-import ticket from "../index.vue";
+import ticket from '../index.vue'
 
 export default {
-  computed: {
-    ticket() {
-      return ticket;
-    },
+  name: 'TicketDetail',
+  components: {
+    // Remove TopicSelector since it's not used
   },
-  layout: "dashboard_layout",
-  name: "ticket-detail",
+  layout: 'dashboard_layout',
+
+  async asyncData({ params, $axios }) {
+    // This could also be an action dispatch
+    const content = await $axios.$get(`/api/v1/tickets/${params.id}`)
+    let ticketData = []
+
+    // Check data exist
+    if (content.status === 1) {
+      ticketData = content.data
+    }
+
+    return { ticketData }
+  },
   data() {
     return {
       form: {
         id: this.$route.params.id,
-        message: "",
-        file: "",
+        message: '',
+        file: '',
       },
       file: null,
       subject_list: [],
 
-      //Handle loading object
+      // Handle loading object
       loading: {
-        file: false, //Upload file
-        form: false, //Submit multimedia form
+        file: false, // Upload file
+        form: false, // Submit multimedia form
       },
-    };
+    }
   },
   head() {
     return {
-      title: "Ticket detail",
-    };
-  },
-
-  async asyncData({ params, $axios }) {
-    // This could also be an action dispatch
-    const content = await $axios.$get(`/api/v1/tickets/${params.id}`);
-    var ticketData = [];
-
-    //Check data exist
-    if (content.status === 1) {
-      ticketData = content.data;
+      title: 'Ticket detail',
     }
-
-    return { ticketData };
   },
-  components: {
-    TopicSelector,
-    // ValidationProvider,
-    // ValidationObserver,
+  computed: {
+    ticket() {
+      return ticket
+    },
   },
   mounted() {
-    this.getTypeList("ticket_type");
+    this.getTypeList('ticket_type')
   },
   methods: {
-    getTypeList(type, parent = "") {
-      var params = {
+    getTypeList(type, _parent = '') {
+      const params = {
         type: type,
-      };
+      }
 
       this.$fetch
-        .$get("/api/v1/types/list", {
+        .$get('/api/v1/types/list', {
           params,
         })
         .then((res) => {
-          this.subject_list = res.data;
+          this.subject_list = res.data
         })
         .catch((err) => {
-          this.$toast.error(err);
-        });
+          this.$toast.error(err)
+        })
     },
 
     submitContent() {
-      this.loading.form = true;
-      //Arrange to form data
-      let formData = new FormData();
-      for (let key in this.form) {
-        formData.append(key, this.form[key]);
+      this.loading.form = true
+      // Arrange to form data
+      const formData = new FormData()
+      for (const key in this.form) {
+        formData.append(key, this.form[key])
       }
 
       this.$fetch
-        .$post("/api/v1/ticketReplies", this.urlencodeFormData(formData), {
+        .$post('/api/v1/ticketReplies', this.urlencodeFormData(formData), {
           headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
         })
-        .then((response) => {
-          this.$toast.success("Submit successfully");
-          this.refreshTickets();
+        .then((_response) => {
+          this.$toast.success('Submit successfully')
+          this.refreshTickets()
         })
         .catch((err) => {
           if (err.response.status == 403)
-            this.$router.push({ query: { auth_form: "login" } });
+            this.$router.push({ query: { auth_form: 'login' } })
           else if (err.response.status == 400)
-            this.$toast.error(err.response.data.message);
+            this.$toast.error(err.response.data.message)
         })
         .finally(() => {
-          this.loading.form = false;
-        });
+          this.loading.form = false
+        })
     },
 
     async uploadFile(file_name, value) {
-      if (!value) return;
+      if (!value) return
 
-      const { valid } = await this.$refs.file_provider.validate(value);
+      const { valid } = await this.$refs.file_provider.validate(value)
 
       if (valid) {
-        this.loading.file = true;
+        this.loading.file = true
         if (!value)
-          //Check empty request
-          return;
-        let formData = new FormData();
-        formData.append("file", value);
+          // Check empty request
+          return
+        const formData = new FormData()
+        formData.append('file', value)
 
         this.$fetch
-          .$post("/api/v1/upload", formData, {
+          .$post('/api/v1/upload', formData, {
             headers: {
-              accept: "*/*",
-              "Content-Type": "multipart/form-data",
+              'accept': '*/*',
+              'Content-Type': 'multipart/form-data',
             },
           })
-          .then((response) => {
-            this.form.file = response.data[0].file.name;
+          .then((_response) => {
+            this.form.file = response.data[0].file.name
           })
-          .catch((err) => {
-            this.$toast.error("An error occurred");
+          .catch((_err) => {
+            this.$toast.error('An error occurred')
           })
           .finally(() => {
-            this.loading.file = false;
-          });
+            this.loading.file = false
+          })
       }
 
-      console.log("Pass4");
+      console.log('Pass4')
 
       // }
     },
 
-    //Convert form data from multipart to urlencode
+    // Convert form data from multipart to urlencode
     urlencodeFormData(fd) {
-      var s = "";
+      let s = ''
 
-      for (var pair of fd.entries()) {
-        if (typeof pair[1] == "string") {
-          s +=
-            (s ? "&" : "") + this.encode(pair[0]) + "=" + this.encode(pair[1]);
+      for (const pair of fd.entries()) {
+        if (typeof pair[1] == 'string') {
+          s
+            += (s ? '&' : '') + this.encode(pair[0]) + '=' + this.encode(pair[1])
         }
       }
-      return s;
+      return s
     },
     encode(s) {
-      return encodeURIComponent(s).replace(/%20/g, "+");
+      return encodeURIComponent(s).replace(/%20/g, '+')
     },
-    //End convert form data from multipart to urlencode
+    // End convert form data from multipart to urlencode
 
     refreshTickets() {
       this.$fetch
         .$get(`/api/v1/tickets/${this.$route.params.id}`)
-        .then((response) => {
-          this.ticketData = response.data;
-          this.form.message = "";
-          this.form.file = "";
+        .then((_response) => {
+          this.ticketData = response.data
+          this.form.message = ''
+          this.form.file = ''
         })
-        .catch((err) => {});
+        .catch((_err) => {})
     },
   },
-};
+}
 </script>
 
 <style>

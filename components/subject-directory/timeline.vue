@@ -1,19 +1,23 @@
 <template>
   <div
     :class="`timeline-column position-relative d-flex flex-column align-center text-center h-100 ${
-      !isLoading && timeline.length == 0 ? `hide-line` : ``
+      !isLoading && timeline.length == 0 ? 'hide-line' : ''
     }`"
   >
-    <div v-if="isLoading" class="d-flex flex-column align-center w-100">
+    <div
+      v-if="isLoading"
+      class="d-flex flex-column align-center w-100"
+    >
       <v-skeleton-loader
-        v-for="item in 3"
+        v-for="(item, index) in 3"
+        :key="index"
         class="time-line-box-skeleton"
         type="image"
-      ></v-skeleton-loader>
+      />
     </div>
     <div
-      v-else
       v-for="(yearData, yearIndex) in timeline"
+      v-else
       :key="yearIndex"
       class="d-flex justify-center mb-6"
     >
@@ -33,7 +37,7 @@
           top: `${getMarkerPosition(
             yearData.positions[monthIndex],
             yearIndex,
-            monthIndex
+            monthIndex,
           )}px`,
         }"
       >
@@ -44,7 +48,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   timeline: {
     type: Array,
     required: true,
@@ -53,14 +57,14 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-});
+})
 
 const getMarkerPosition = (itemIndex, yearIndex, monthIndex = 0) => {
-  const heightSizeTableElement =
-    window.innerWidth > 960 ? 52 : window.innerWidth > 768 ? 177.5 : 169;
-  const extraSizeForHeaderTable = yearIndex == 0 && monthIndex == 0 ? 0 : 56;
-  return itemIndex * heightSizeTableElement + extraSizeForHeaderTable;
-};
+  const heightSizeTableElement
+    = window.innerWidth > 960 ? 52 : window.innerWidth > 768 ? 177.5 : 169
+  const extraSizeForHeaderTable = yearIndex == 0 && monthIndex == 0 ? 0 : 56
+  return itemIndex * heightSizeTableElement + extraSizeForHeaderTable
+}
 </script>
 
 <style scoped>

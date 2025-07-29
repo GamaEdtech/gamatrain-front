@@ -1,10 +1,18 @@
 <template>
-  <v-container id="blog" v-if="error">
+  <v-container
+    v-if="error"
+    id="blog"
+  >
     <v-row>
-      <h1 class="gama-text-h3 font-weight-bold">Pleas Try Again Later.</h1>
+      <h1 class="gama-text-h3 font-weight-bold">
+        Pleas Try Again Later.
+      </h1>
     </v-row>
   </v-container>
-  <v-container id="blog" v-else>
+  <v-container
+    v-else
+    id="blog"
+  >
     <v-row>
       <v-col cols="12">
         <div id="general-data-holder">
@@ -30,14 +38,19 @@
               />
               <figcaption id="general-data-footer">
                 <div id="autor-holder">
-                  <NuxtImg width="30px" :src="contentData.avatar" placeholder />
-                  <span class="gama-text-overline"
-                    >{{ contentData.first_name }}
-                    {{ contentData.last_name }}</span
-                  >
+                  <NuxtImg
+                    width="30px"
+                    :src="contentData.avatar"
+                    placeholder
+                  />
+                  <span class="gama-text-overline">{{ contentData.first_name }}
+                    {{ contentData.last_name }}</span>
                 </div>
                 <div id="date-holder">
-                  <v-icon @click="share" class="pr-6">
+                  <v-icon
+                    class="pr-6"
+                    @click="share"
+                  >
                     mdi-share-variant
                   </v-icon>
                   <v-icon> mdi-eye </v-icon>
@@ -58,24 +71,32 @@
     <v-row>
       <v-col cols="12">
         <div id="blog-body">
-          <div id="blog-describe" v-html="contentData.body"></div>
+          <div
+            id="blog-describe"
+            v-html="contentData.body"
+          />
 
-          <div id="blog-tags" v-if="contentData.tags">
+          <div
+            v-if="contentData.tags"
+            id="blog-tags"
+          >
             <v-btn
+              v-for="(item, index) in contentData.tags"
+              :key="index"
               :to="`/blog/${contentData.id}/${$slugGenerator(
-                contentData.title
+                contentData.title,
               )}`"
               plain
               :x-small="xs"
               :small="sm"
-              v-for="(item, index) in contentData.tags"
-              :key="index"
             >
               #{{ item }}
             </v-btn>
           </div>
           <div id="blog-like-section">
-            <p class="gama-text-h6">Did you like this article?</p>
+            <p class="gama-text-h6">
+              Did you like this article?
+            </p>
             <div id="like-area">
               <div class="btn dislike-btn">
                 <v-icon> mdi-thumb-down </v-icon>
@@ -92,39 +113,34 @@
 </template>
 
 <script setup>
-import { useRoute } from "vue-router";
-import { useDisplay } from "vuetify";
-import dayjs from "dayjs";
+import { useRoute } from 'vue-router'
+import { useDisplay } from 'vuetify'
 
-const { $slugGenerator } = useNuxtApp();
-const route = useRoute();
-const blogId = route.params.id;
-const { xs, sm } = useDisplay();
-const requestURL = ref(useRequestURL().href);
-const {
-  data: contentData,
-  pending,
-  error,
-} = await useAsyncData(
+const { $slugGenerator } = useNuxtApp()
+const route = useRoute()
+const blogId = route.params.id
+const { xs, sm } = useDisplay()
+const requestURL = ref(useRequestURL().href)
+const { data: contentData, error } = await useAsyncData(
   `blog-${blogId}`,
   () => $fetch(`/api/v1/blogs/${blogId}`),
   {
     transform: (response) => {
-      return response.status === 1 ? response.data : [];
+      return response.status === 1 ? response.data : []
     },
-  }
-);
+  },
+)
 
 // SEO
 useHead({
   title: contentData.value?.title,
   link: [
     {
-      rel: "canonical",
+      rel: 'canonical',
       href: requestURL.value,
     },
   ],
-});
+})
 
 const share = async () => {
   if (navigator.share) {
@@ -133,14 +149,16 @@ const share = async () => {
         title: contentData.value.title,
         text: contentData.value.body,
         url: `https://gamatrain.com/blog/${contentData.value.id}`,
-      });
-    } catch (error) {
-      console.error("Error sharing:", error);
+      })
     }
-  } else {
-    console.warn("Share API is not supported in this browser");
+    catch (error) {
+      console.error('Error sharing:', error)
+    }
   }
-};
+  else {
+    console.warn('Share API is not supported in this browser')
+  }
+}
 </script>
 
 <style>

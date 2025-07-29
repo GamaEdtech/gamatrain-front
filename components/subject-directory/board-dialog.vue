@@ -1,30 +1,40 @@
 <template>
   <div class="w-100">
-    <v-dialog v-model="dialogModel" :persistent="false" max-width="600">
+    <v-dialog
+      v-model="dialogModel"
+      :persistent="false"
+      max-width="600"
+    >
       <v-card>
         <div class="d-flex justify-space-between align-center">
-          <v-card-title class="text-h4"> Board </v-card-title>
+          <v-card-title class="text-h4">
+            Board
+          </v-card-title>
           <v-card-subtitle
             class="ma-0 pa-4 ga-3 d-flex align-center justify-space-between"
           >
-            <div class="text-h6">Search result</div>
-            <div class="search-count">{{ filteredItems.length }}</div>
+            <div class="text-h6">
+              Search result
+            </div>
+            <div class="search-count">
+              {{ filteredItems.length }}
+            </div>
           </v-card-subtitle>
         </div>
         <v-card-text>
           <div class="mb-4 d-flex align-center">
             <v-text-field
+              ref="searchField"
               v-model="searchTerm"
               label="Search Board"
               variant="outlined"
               density="compact"
               prepend-inner-icon="mdi-magnify"
               hide-details
-              ref="searchField"
               :loading="isLoading"
               color="#ffb600"
               clearable
-            ></v-text-field>
+            />
             <v-btn
               class="ml-2"
               base-color="#ffb600"
@@ -49,23 +59,28 @@
             <v-list-item
               v-for="item in filteredItems"
               :key="item.id"
-              @click="selectItem(item)"
               class="list-item"
               :value="item.id"
+              @click="selectItem(item)"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <v-avatar>
                   <v-img :src="item.img" />
                 </v-avatar>
               </template>
-              <v-list-item-title class="text-h6" v-if="!searchTerm">{{
-                item.title
-              }}</v-list-item-title>
+              <v-list-item-title
+                v-if="!searchTerm"
+                class="text-h6"
+              >
+                {{
+                  item.title
+                }}
+              </v-list-item-title>
               <div
                 v-else
                 class="v-list-item-title text-h6"
                 v-html="highlightMatch(item.title)"
-              ></div>
+              />
             </v-list-item>
           </v-list>
         </v-card-text>
@@ -75,7 +90,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed } from 'vue'
 
 const props = defineProps({
   showDialog: {
@@ -84,49 +99,49 @@ const props = defineProps({
   },
   items: {
     type: Array,
-    default: [],
+    default: () => [],
   },
-});
-const emit = defineEmits(["update:showDialog", "changeSelectedItem"]);
+})
+const emit = defineEmits(['update:showDialog', 'changeSelectedItem'])
 
-const searchTerm = ref("");
-const selectedItem = ref(null);
+const searchTerm = ref('')
+const selectedItem = ref(null)
 
 const filteredItems = computed(() => {
-  if (!searchTerm.value) return props.items;
-  const searchLower = searchTerm.value.toLowerCase();
+  if (!searchTerm.value) return props.items
+  const searchLower = searchTerm.value.toLowerCase()
   return props.items.filter((item) => {
-    const itemName = (item.title || "").toLowerCase();
-    return itemName.includes(searchLower);
-  });
-});
-const isLoading = ref(false);
+    const itemName = (item.title || '').toLowerCase()
+    return itemName.includes(searchLower)
+  })
+})
+const isLoading = ref(false)
 
 const highlightMatch = (text) => {
-  if (!searchTerm.value || !text) return text;
+  if (!searchTerm.value || !text) return text
   const escapedSearchTerm = searchTerm.value.replace(
     /[.*+?^${}()|[\]\\]/g,
-    "\\$&"
-  );
-  const regex = new RegExp(`(${escapedSearchTerm})`, "gi");
-  return text.replace(regex, '<span class="highlighted-text">$1</span>');
-};
+    '\\$&',
+  )
+  const regex = new RegExp(`(${escapedSearchTerm})`, 'gi')
+  return text.replace(regex, '<span class="highlighted-text">$1</span>')
+}
 
 const selectItem = (item) => {
-  const itemId = item.id !== undefined ? String(item.id) : "";
-  const itemTitle = item.title || `Board ${itemId}`;
+  const itemId = item.id !== undefined ? String(item.id) : ''
+  const itemTitle = item.title || `Board ${itemId}`
   selectedItem.value = {
     id: itemId,
     title: itemTitle,
     logo: item.img,
-  };
-  emit("update:showDialog", false);
-  emit("changeSelectedItem", selectedItem.value);
-};
+  }
+  emit('update:showDialog', false)
+  emit('changeSelectedItem', selectedItem.value)
+}
 const dialogModel = computed({
   get: () => props.showDialog,
-  set: (value) => emit("update:showDialog", value),
-});
+  set: value => emit('update:showDialog', value),
+})
 </script>
 
 <style scoped>

@@ -1,22 +1,22 @@
 <template>
   <div :class="mapClass">
     <client-only>
-      <l-map  
+      <l-map
+        id="schoolDetailsMap"
         ref="schoolMap"
         :zoom="map.zoom"
         :min-zoom="map.minZoom"
         :center="map.center"
-        id="schoolDetailsMap"
-        @click="openLocationDialog"
         :use-global-leaflet="false"
+        @click="openLocationDialog"
       >
-        <l-tile-layer :url="map.url"></l-tile-layer>
+        <l-tile-layer :url="map.url" />
         <l-marker :lat-lng="map.latLng">
           <LIcon
             :icon-url="map.schoolIcon"
             :icon-size="[64, 64]"
             :icon-anchor="[16, 32]"
-          ></LIcon>
+          />
         </l-marker>
       </l-map>
       <div>{{ mapClass }}</div>
@@ -25,127 +25,134 @@
 
   <SelectLocationDialog
     v-model="showSelectLocationDialog"
-    :contentData="contentData"
+    :content-data="contentData"
     :map="map"
-    :mapSubmitLoader="mapSubmitLoader"
+    :map-submit-loader="mapSubmitLoader"
     @update="handleSelectLocationUpdate"
   />
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, watch } from "vue";
-import SelectLocationDialog from "@/components/common/SelectLocationDialog.vue";
+import { ref, reactive, onMounted, watch } from 'vue'
+import SelectLocationDialog from '@/components/common/SelectLocationDialog.vue'
+
 const props = defineProps({
-  class: {},
+  class: {
+    type: String,
+    required: false,
+    default: '',
+  },
   content: {
     type: Object,
     required: true,
   },
-});
-const emit = defineEmits(["location-updated"]);
-const schoolMap = ref(null);
-const nuxtApp = useNuxtApp();
-const route = useRoute();
-const router = useRouter();
-const contentData = ref(props.content);
-const showSelectLocationDialog = ref(false);
-const mapSubmitLoader = ref(false);
-const mapMarkerData = ref({});
+})
+const emit = defineEmits(['location-updated'])
+const schoolMap = ref(null)
+const nuxtApp = useNuxtApp()
+const route = useRoute()
+const contentData = ref(props.content)
+const showSelectLocationDialog = ref(false)
+const mapSubmitLoader = ref(false)
+const mapMarkerData = ref({})
 const map = reactive({
-  url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+  url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
   zoom: 10,
   minZoom: 2,
   center: [0, 0],
   latLng: [0, 0],
   object: null,
   boundingBox: {},
-  schoolIcon: "/images/school-marker.png",
-});
-const mapClass = ref(props.class);
+  schoolIcon: '/images/school-marker.png',
+})
+const mapClass = ref(props.class)
 
 function openLocationDialog() {
-  showSelectLocationDialog.value = true;
+  showSelectLocationDialog.value = true
   setTimeout(() => {
     // Implement with template refs if needed
-    window.dispatchEvent(new Event("resize"));
-  }, 500);
+    window.dispatchEvent(new Event('resize'))
+  }, 500)
 }
 function handleSelectLocationUpdate(payload) {
-  mapMarkerData.value = payload;
-  handleUpdate();
+  mapMarkerData.value = payload
+  handleUpdate()
 }
 function handleUpdate() {
-  let formData = {
+  const formData = {
     latitude: mapMarkerData.value.lat,
     longitude: mapMarkerData.value.lng,
-  };
+  }
 
   if (mapMarkerData.value?.countryId) {
-    formData.countryId = mapMarkerData.value.countryId;
+    formData.countryId = mapMarkerData.value.countryId
   }
   if (mapMarkerData.value?.stateId) {
-    formData.stateId = mapMarkerData.value.stateId;
+    formData.stateId = mapMarkerData.value.stateId
   }
   if (mapMarkerData.value?.cityId) {
-    formData.cityId = mapMarkerData.value.cityId;
+    formData.cityId = mapMarkerData.value.cityId
   }
 
-  mapSubmitLoader.value = true;
+  mapSubmitLoader.value = true
   useApiService
     .post(`/api/v2/schools/${route.params.id}/contributions`, formData)
     .then(async (response) => {
       if (response.succeeded) {
-        showSelectLocationDialog.value = false;
+        showSelectLocationDialog.value = false
         nuxtApp.$toast?.success(
-          "Your contribution has been successfully submitted"
-        );
+          'Your contribution has been successfully submitted',
+        )
         // Emit the updated location data
-        emit("location-updated", {
+        emit('location-updated', {
           countryId: mapMarkerData.value?.countryId,
           stateId: mapMarkerData.value?.stateId,
           cityId: mapMarkerData.value?.cityId,
           countryTitle: mapMarkerData.value?.countryTitle,
           stateTitle: mapMarkerData.value?.stateTitle,
           cityTitle: mapMarkerData.value?.cityTitle,
-        });
-      } else {
-        nuxtApp.$toast?.error(response?.errors[0]?.message);
+        })
+      }
+      else {
+        nuxtApp.$toast?.error(response?.errors[0]?.message)
       }
     })
     .catch((err) => {
       if (err?.response?.status == 401 || err?.response?.status == 403) {
-      } else nuxtApp.$toast?.error(err?.response?.data?.message);
+        nuxtApp.$toast?.error('Please login to update location')
+      }
+      else nuxtApp.$toast?.error(err?.response?.data?.message)
     })
     .finally(() => {
-      mapSubmitLoader.value = false;
-    });
+      mapSubmitLoader.value = false
+    })
 }
 
 watch(
   () => props.class,
   (val) => {
-    mapClass.value = val;
-  }
-);
+    mapClass.value = val
+  },
+)
 
 watch(
   () => props.content,
   (newContent) => {
-    contentData.value = newContent;
+    contentData.value = newContent
     if (newContent?.latitude && newContent?.longitude) {
-      map.center = [newContent.latitude, newContent.longitude];
-      map.latLng = [newContent.latitude, newContent.longitude];
+      map.center = [newContent.latitude, newContent.longitude]
+      map.latLng = [newContent.latitude, newContent.longitude]
     }
   },
-  { deep: true }
-);
+  { deep: true },
+)
 
 onMounted(() => {
   if (contentData.value.latitude && contentData.value.longitude) {
-    map.center = [contentData.value.latitude, contentData.value.longitude];
-    map.latLng = [contentData.value.latitude, contentData.value.longitude];
+    map.center = [contentData.value.latitude, contentData.value.longitude]
+    map.latLng = [contentData.value.latitude, contentData.value.longitude]
   }
-});
+})
 </script>
 
 <style scoped>

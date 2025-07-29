@@ -25,7 +25,9 @@
           size="large"
           variant="flat"
         >
-          <v-icon left>mdi-plus</v-icon>
+          <v-icon left>
+            mdi-plus
+          </v-icon>
           New blog
         </v-btn>
         <v-text-field
@@ -39,13 +41,16 @@
           single-line
           class="search-input mr-4"
           style="max-width: 300px; width: 300px"
-        ></v-text-field>
+        />
         <span class="item-count grey--text">{{ totalRecords }} Item</span>
       </div>
     </div>
 
     <!-- Table -->
-    <v-card flat class="rounded-lg">
+    <v-card
+      flat
+      class="rounded-lg"
+    >
       <v-data-table
         v-model="selected"
         :headers="headers"
@@ -58,26 +63,36 @@
         :loading="loading"
       >
         <!-- Title column with avatar -->
-        <template v-slot:item.title="{ item }">
+        <template #[`item.title`]="{ item }">
           <div class="d-flex align-center py-2">
-            <v-avatar size="40" class="mr-3">
-              <v-img :src="item.avatar" :alt="item.title"></v-img>
+            <v-avatar
+              size="40"
+              class="mr-3"
+            >
+              <v-img
+                :src="item.avatar"
+                :alt="item.title"
+              />
             </v-avatar>
             <span class="font-weight-medium">{{ item.title }}</span>
           </div>
         </template>
 
         <!-- Category column with icon -->
-        <template v-slot:item.category="{ item }">
+        <template #[`item.category`]="{ item }">
           <div class="d-flex align-center">
-            <v-icon small class="mr-1" color="grey darken-1">
+            <v-icon
+              small
+              class="mr-1"
+              color="grey darken-1"
+            >
               {{ item.category === "News" ? "mdi-newspaper" : "mdi-bullhorn" }}
             </v-icon>
             <span>{{ item.category }}</span>
           </div>
         </template>
 
-        <template v-slot:item.edit="{ item }">
+        <template #[`item.edit`]="{ item }">
           <v-btn
             variant="text"
             :to="`/user/blogs/edit/${item.id}`"
@@ -85,11 +100,13 @@
             small
             color="warning"
           >
-            <v-icon small>mdi-pencil</v-icon>
+            <v-icon small>
+              mdi-pencil
+            </v-icon>
           </v-btn>
         </template>
 
-        <template v-slot:item.delete="{ item }">
+        <template #[`item.delete`]="{ item }">
           <v-btn
             variant="text"
             icon
@@ -97,7 +114,9 @@
             color="error"
             @click="openDeleteModal(item)"
           >
-            <v-icon small>mdi-delete</v-icon>
+            <v-icon small>
+              mdi-delete
+            </v-icon>
           </v-btn>
         </template>
       </v-data-table>
@@ -115,7 +134,7 @@
           hide-details
           class="bulk-action-select mr-2"
           :disabled="!selected.length"
-        ></v-select>
+        />
         <v-btn
           :disabled="!selected.length"
           rounded
@@ -132,7 +151,7 @@
         :length="Math.ceil(totalRecords / pageSize)"
         :total-visible="7"
         class="custom-pagination"
-      ></v-pagination>
+      />
 
       <v-select
         v-model="perPage"
@@ -142,13 +161,13 @@
         rounded
         hide-details
         class="row-select"
-      ></v-select>
+      />
     </div>
 
     <!-- Delete Modal -->
     <DeleteModal
-      v-model:isOpen="isDeleteModalOpen"
-      :itemType="'blog'"
+      v-model:is-open="isDeleteModalOpen"
+      :item-type="'blog'"
       @confirm="handleDelete"
       @close="isDeleteModalOpen = false"
     />
@@ -156,77 +175,78 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from "vue";
-import DeleteModal from "@/components/modals/DeleteModal.vue";
+import { ref, watch, onMounted } from 'vue'
+import DeleteModal from '@/components/modals/DeleteModal.vue'
 
-const { $toast } = useNuxtApp();
+const { $toast } = useNuxtApp()
 
 definePageMeta({
-  layout: "dashboard-layout",
-  middleware: ["auth", "user-type"],
-});
+  layout: 'dashboard-layout',
+  middleware: ['auth', 'user-type'],
+})
 
 useHead({
-  title: "Blog Management",
-});
+  title: 'Blog Management',
+})
 
 // State
-const singleSelect = ref(false);
-const selected = ref([]);
-const activeTab = ref("Published");
-const page = ref(1);
-const pageSize = ref(10);
-const perPage = ref("10 Row");
-const totalRecords = ref(0);
-const isDeleteModalOpen = ref(false);
-const itemToDelete = ref(null);
-const loading = ref(false);
-const searchQuery = ref("");
-const bulkAction = ref("Delete All");
+const _singleSelect = ref(false)
+const selected = ref([])
+const activeTab = ref('Published')
+const page = ref(1)
+const pageSize = ref(10)
+const perPage = ref('10 Row')
+const totalRecords = ref(0)
+const isDeleteModalOpen = ref(false)
+const itemToDelete = ref(null)
+const loading = ref(false)
+const searchQuery = ref('')
+const bulkAction = ref('Delete All')
 
 const headers = [
-  { title: "Name", value: "title" },
-  { title: "Category", value: "category", sortable: true },
-  { title: "Author", value: "author", sortable: true },
-  { title: "Date", value: "date", sortable: true },
-  { title: "Edit", value: "edit", sortable: false, align: "center" },
-  { title: "Delete", value: "delete", sortable: false, align: "center" },
-];
+  { title: 'Name', value: 'title' },
+  { title: 'Category', value: 'category', sortable: true },
+  { title: 'Author', value: 'author', sortable: true },
+  { title: 'Date', value: 'date', sortable: true },
+  { title: 'Edit', value: 'edit', sortable: false, align: 'center' },
+  { title: 'Delete', value: 'delete', sortable: false, align: 'center' },
+]
 
-const tableItems = ref([]);
+const tableItems = ref([])
 
 // Methods
 const fetchBlogs = async () => {
-  loading.value = true;
-  const skip = (page.value - 1) * pageSize.value;
+  loading.value = true
+  const skip = (page.value - 1) * pageSize.value
   try {
-    const response = await useApiService.get("/api/v2/blogs/posts", {
-      "PagingDto.PageFilter.Size": pageSize.value,
-      "PagingDto.PageFilter.Skip": skip,
-      "PagingDto.PageFilter.ReturnTotalRecordsCount": true,
-    });
+    const response = await useApiService.get('/api/v2/blogs/posts', {
+      'PagingDto.PageFilter.Size': pageSize.value,
+      'PagingDto.PageFilter.Skip': skip,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+    })
 
     if (response && response.succeeded) {
-      tableItems.value = (response.data.list || []).map((item) => ({
+      tableItems.value = (response.data.list || []).map(item => ({
         id: item.id,
         title: item.title,
-        category: item.category || "",
-        author: item.author || "",
-        date: item.date || "",
-        avatar: item.imageUri || "",
-        summary: item.summary || "",
-      }));
-      totalRecords.value = response.data.totalRecordsCount || 0;
+        category: item.category || '',
+        author: item.author || '',
+        date: item.date || '',
+        avatar: item.imageUri || '',
+        summary: item.summary || '',
+      }))
+      totalRecords.value = response.data.totalRecordsCount || 0
     }
-  } finally {
-    loading.value = false;
   }
-};
+  finally {
+    loading.value = false
+  }
+}
 
 const openDeleteModal = (item) => {
-  itemToDelete.value = item;
-  isDeleteModalOpen.value = true;
-};
+  itemToDelete.value = item
+  isDeleteModalOpen.value = true
+}
 
 const handleDelete = async () => {
   if (itemToDelete.value) {
@@ -235,59 +255,61 @@ const handleDelete = async () => {
         `/api/v2/blogs/posts/${itemToDelete.value.id}`,
         {
           postId: itemToDelete.value.id,
-        }
-      );
+        },
+      )
 
-      $toast.success("Blog deleted successfully!");
+      $toast.success('Blog deleted successfully!')
 
       tableItems.value = tableItems.value.filter(
-        (item) => item.id !== itemToDelete.value.id
-      );
-    } catch (e) {
-      $toast.error("Failed to delete blog.");
+        item => item.id !== itemToDelete.value.id,
+      )
+    }
+    catch {
+      $toast.error('Failed to delete blog.')
     }
   }
-  itemToDelete.value = null;
-  isDeleteModalOpen.value = false;
-};
+  itemToDelete.value = null
+  isDeleteModalOpen.value = false
+}
 
 const handleBulkAction = async () => {
-  if (selected.value.length && bulkAction.value === "Delete All") {
+  if (selected.value.length && bulkAction.value === 'Delete All') {
     try {
       // Implement bulk delete logic here
-      $toast.success("Selected items deleted successfully!");
-      selected.value = [];
-    } catch (e) {
-      $toast.error("Failed to delete selected items.");
+      $toast.success('Selected items deleted successfully!')
+      selected.value = []
+    }
+    catch {
+      $toast.error('Failed to delete selected items.')
     }
   }
-};
+}
 
 // Watchers
 watch(page, () => {
-  fetchBlogs();
-});
+  fetchBlogs()
+})
 
 watch(perPage, (val) => {
-  pageSize.value = parseInt(val);
-  page.value = 1;
-  fetchBlogs();
-});
+  pageSize.value = parseInt(val)
+  page.value = 1
+  fetchBlogs()
+})
 
 watch(searchQuery, () => {
   // Implement search logic here
-  fetchBlogs();
-});
+  fetchBlogs()
+})
 
 watch(activeTab, () => {
   // Implement tab change logic here
-  fetchBlogs();
-});
+  fetchBlogs()
+})
 
 // Lifecycle
 onMounted(() => {
-  fetchBlogs();
-});
+  fetchBlogs()
+})
 </script>
 
 <style scoped>

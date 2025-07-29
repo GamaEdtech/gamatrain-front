@@ -1,18 +1,33 @@
 <template>
-  <v-container fluid class="px-0 py-0 mt-md-0">
+  <v-container
+    fluid
+    class="px-0 py-0 mt-md-0"
+  >
     <home-main-slider />
 
     <lazy-home-grade-explorer />
 
     <home-level-guid-banner :slide-arr="slideArr" />
 
-    <!--Ai learn banner-->
+    <!-- Ai learn banner -->
     <v-container>
       <v-row>
-        <v-col cols="12" id="ai-learn-banner">
-          <img id="img-top" alt="AI Learn" src="/images/ai-learn-bg1.png" />
-          <v-card flat class="overflow-unset">
-            <h2 class="gama-text-h2">AI Learn</h2>
+        <v-col
+          id="ai-learn-banner"
+          cols="12"
+        >
+          <img
+            id="img-top"
+            alt="AI Learn"
+            src="/images/ai-learn-bg1.png"
+          >
+          <v-card
+            flat
+            class="overflow-unset"
+          >
+            <h2 class="gama-text-h2">
+              AI Learn
+            </h2>
             <p class="gama-text-subtitle1">
               Discover Your Full Potential with AI-based Education
             </p>
@@ -29,40 +44,61 @@
               id="img-bottom"
               alt="AI Learn"
               src="/images/ai-learn-bg2.png"
-            />
+            >
           </v-card>
         </v-col>
       </v-row>
     </v-container>
-    <!--End ai learn banner-->
+    <!-- End ai learn banner -->
 
-    <!--Sudent help banner-->
-    <v-container id="student-help-container" fluid>
+    <!-- Sudent help banner -->
+    <v-container
+      id="student-help-container"
+      fluid
+    >
       <v-container>
         <v-row>
           <v-col cols="12">
-            <h2 class="gama-text-h4">Study Smarter, Not Harder</h2>
+            <h2 class="gama-text-h4">
+              Study Smarter, Not Harder
+            </h2>
           </v-col>
-          <v-col cols="12" sm="6">
-            <v-card class="fill-height float-sm-right" to="/search?type=test">
+          <v-col
+            cols="12"
+            sm="6"
+          >
+            <v-card
+              class="fill-height float-sm-right"
+              to="/search?type=test"
+            >
               <v-card-title class="gama-text-h6 pt-4 pb-3">
-                <v-icon size="48" class="text-primary icon mr-2"
-                  >mdi-cloud-download</v-icon
+                <v-icon
+                  size="48"
+                  class="text-primary icon mr-2"
                 >
+                  mdi-cloud-download
+                </v-icon>
                 <span class="text-white">Educational Content</span>
               </v-card-title>
               <v-card-text class="gama-text-body2">
-                <span class="text-white"
-                  >Empower Your Studies. Download Worksheets and Educational
-                  Materials.</span
-                >
+                <span class="text-white">Empower Your Studies. Download Worksheets and Educational
+                  Materials.</span>
               </v-card-text>
             </v-card>
           </v-col>
-          <v-col cols="12" sm="6">
-            <v-card class="fill-height float-sm-left" to="/search?type=azmoon">
+          <v-col
+            cols="12"
+            sm="6"
+          >
+            <v-card
+              class="fill-height float-sm-left"
+              to="/search?type=azmoon"
+            >
               <v-card-title class="gama-text-h6 pt-4 pb-3">
-                <v-icon size="48" class="text-primary icon icon-exam"></v-icon>
+                <v-icon
+                  size="48"
+                  class="text-primary icon icon-exam"
+                />
                 <span class="text-white">&nbsp; Exam</span>
               </v-card-title>
               <v-card-text class="gama-text-body2 text-white">
@@ -75,10 +111,13 @@
       </v-container>
     </v-container>
 
-    <!--School service banner-->
+    <!-- School service banner -->
     <v-container id="school-service-container">
       <v-row>
-        <v-col cols="12" sm="4">
+        <v-col
+          cols="12"
+          sm="4"
+        >
           <v-img
             width="246"
             height="184"
@@ -86,7 +125,10 @@
             src="/images/school-service.png"
           />
         </v-col>
-        <v-col cols="12" sm="8">
+        <v-col
+          cols="12"
+          sm="8"
+        >
           <h2 class="gama-text-h4">
             Search Nearby Schools by Location, Ratings & Reviews
           </h2>
@@ -101,12 +143,13 @@
             rounded
             class="primary gama-btn"
             to="/school"
-            >School finder</v-btn
           >
+            School finder
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
-    <!--End school service banner-->
+    <!-- End school service banner -->
 
     <!-- Car Race container -->
     <home-car-race-banner />
@@ -120,77 +163,92 @@
     <home-blog-container />
     <!-- End blog container -->
 
-    <!--Earn money banner-->
-    <v-container fluid id="earn-money-container">
+    <!-- Earn money banner -->
+    <v-container
+      id="earn-money-container"
+      fluid
+    >
       <v-container>
         <v-row>
-          <v-col cols="12" sm="12" md="12" class="text-md-right">
+          <v-col
+            cols="12"
+            sm="12"
+            md="12"
+            class="text-md-right"
+          >
             <h2 class="gama-text-h6 text-center">
               Monetize Your Teaching Skills
             </h2>
           </v-col>
-          <v-col cols="12" sm="12" md="12" class="text-center">
+          <v-col
+            cols="12"
+            sm="12"
+            md="12"
+            class="text-center"
+          >
             <v-btn
               rounded
               :size="display.mdAndUp ? 'large' : 'small'"
               to="/earn-money"
               class="primary gama-btn"
-              >Earn money</v-btn
             >
+              Earn money
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
     </v-container>
-    <!--End earn money banner-->
+    <!-- End earn money banner -->
   </v-container>
 </template>
+
 <script setup>
-import { useDisplay } from "vuetify/lib/framework.mjs";
+import { useDisplay } from 'vuetify/lib/framework.mjs'
 
-const display = useDisplay();
+const display = useDisplay()
 // Data
-const test_schools = ref("");
-const less = ref(true);
-const showLess = ref(true);
+const _test_schools = ref('')
+const _less = ref(true)
+const _showLess = ref(true)
 
-const items = ref([
+const _items = ref([
   {
-    src: "banner_home_2.jpg",
+    src: 'banner_home_2.jpg',
   },
   {
-    src: "banner_home_2.jpg",
+    src: 'banner_home_2.jpg',
   },
-]);
+])
 
 const slideArr = ref([
   {
-    img: "guid-banner1.svg",
-    caption: "Sign Up",
-    describe: "Register and Create Your Content Creator Profile",
+    img: 'guid-banner1.svg',
+    caption: 'Sign Up',
+    describe: 'Register and Create Your Content Creator Profile',
   },
   {
-    img: "guid-banner2.png",
-    caption: "Upload Your Content",
-    describe: "Share Your Lesson Plans, Study Guides, and More.",
+    img: 'guid-banner2.png',
+    caption: 'Upload Your Content',
+    describe: 'Share Your Lesson Plans, Study Guides, and More.',
   },
   {
-    img: "guid-banner3.svg",
-    caption: "Reach Students",
-    describe: "Gain Exposure through Our Platform and Network.",
+    img: 'guid-banner3.svg',
+    caption: 'Reach Students',
+    describe: 'Gain Exposure through Our Platform and Network.',
   },
   {
-    img: "guid-banner4.svg",
-    caption: "Earn Big",
-    describe: "Reap the Rewards as Students Purchase Your Content.",
+    img: 'guid-banner4.svg',
+    caption: 'Earn Big',
+    describe: 'Reap the Rewards as Students Purchase Your Content.',
   },
-]);
+])
 
-const slideColor = computed(() => {
+const _slideColor = computed(() => {
   if (colors.value && carousel_model.value) {
-    return colors.value[carousel_model.value];
+    return colors.value[carousel_model.value]
   }
-  return "#24292F"; // Default color if colors or carousel_model are not available
-});
+  return '#24292F' // Default color if colors or carousel_model are not available
+})
 
 // Lifecycle Hook (onMounted)
 

@@ -1,53 +1,93 @@
 <template>
-  <div class="balance-card rounded-lg h-full" dark>
+  <div
+    class="balance-card rounded-lg h-full"
+    dark
+  >
     <div class="balance-card-content pb-5 pt-6">
       <div
         class="balance-title d-flex align-center mb-4 cursor-pointer"
         @click="toggleBalanceVisibility"
       >
         <span class="text-xl-h4 gray--text">Main balance</span>
-        <v-icon class="ml-2 gray--text">{{
-          showBalance ? "mdi-eye" : "mdi-eye-off"
-        }}</v-icon>
+        <v-icon class="ml-2 gray--text">
+          {{ showBalance ? "mdi-eye" : "mdi-eye-off" }}
+        </v-icon>
       </div>
 
-      <div v-if="loading" class="balance-amount d-flex align-center">
+      <div
+        v-if="loading"
+        class="balance-amount d-flex align-center"
+      >
         <v-skeleton-loader
           type="image"
           width="100"
           height="30"
           class="my-2"
           color="grey"
-        ></v-skeleton-loader>
+        />
       </div>
 
-      <div v-else-if="!showBalance" class="balance-amount d-flex align-center">
+      <div
+        v-else-if="!showBalance"
+        class="balance-amount d-flex align-center"
+      >
         <div class="hidden-balance">
-          <span v-for="n in 4" :key="n" class="dot mx-1"></span>
+          <span
+            v-for="n in 4"
+            :key="n"
+            class="dot mx-1"
+          />
         </div>
       </div>
 
-      <div v-else class="balance-amount d-flex align-center mb-8">
+      <div
+        v-else
+        class="balance-amount d-flex align-center mb-8"
+      >
         <span class="currency mr-2 mt-3 yellow--text-darken">$GET</span>
         <span class="amount text-white">{{ Math.floor(balance) }}</span>
         <span class="decimal text-white">.{{ getDecimal(balance) }}</span>
-        <img class="mr-4 mb-4" src="/images/wallet/wallet-amount.png" />
+        <img
+          class="mr-4 mb-4"
+          src="/images/wallet/wallet-amount.png"
+        >
       </div>
 
       <div class="balance-actions d-flex justify-space-between">
         <div class="action-btn text-center">
-          <v-icon small class="gray--text">mdi-tray-arrow-up</v-icon>
-          <div class="text-lg-h6 yellow--text-darken mt-2">Top up</div>
+          <v-icon
+            small
+            class="gray--text"
+          >
+            mdi-tray-arrow-up
+          </v-icon>
+          <div class="text-lg-h6 yellow--text-darken mt-2">
+            Top up
+          </div>
         </div>
-        <div class="vertical-divider"></div>
+        <div class="vertical-divider" />
         <div class="action-btn text-center">
-          <v-icon small class="gray--text">mdi-tray-arrow-down</v-icon>
-          <div class="text-lg-h6 yellow--text-darken mt-2">Withdraw</div>
+          <v-icon
+            small
+            class="gray--text"
+          >
+            mdi-tray-arrow-down
+          </v-icon>
+          <div class="text-lg-h6 yellow--text-darken mt-2">
+            Withdraw
+          </div>
         </div>
-        <div class="vertical-divider"></div>
+        <div class="vertical-divider" />
         <div class="action-btn text-center">
-          <v-icon small class="gray--text">mdi-swap-horizontal</v-icon>
-          <div class="text-lg-h6 yellow--text-darken mt-2">Transfer</div>
+          <v-icon
+            small
+            class="gray--text"
+          >
+            mdi-swap-horizontal
+          </v-icon>
+          <div class="text-lg-h6 yellow--text-darken mt-2">
+            Transfer
+          </div>
         </div>
       </div>
     </div>
@@ -55,65 +95,67 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import { useAuth } from "~/composables/useAuth";
-import { useApiService } from "~/composables/useApiService";
+import { ref, onMounted } from 'vue'
+import { useAuth } from '~/composables/useAuth'
+import { useApiService } from '~/composables/useApiService'
 
 // Composables
-const auth = useAuth();
-const { $toast } = useNuxtApp();
+const auth = useAuth()
+const { $toast: _toast } = useNuxtApp()
 
 // Reactive state
-const balance = ref(0);
-const loading = ref(true);
-const showBalance = ref(true);
-const token = ref("");
+const balance = ref(0)
+const loading = ref(true)
+const showBalance = ref(true)
+const token = ref('')
 
 // Methods
 const getToken = () => {
-  if (process.client) {
-    token.value = localStorage.getItem("v2_token") || "";
+  if (import.meta.client) {
+    token.value = localStorage.getItem('v2_token') || ''
   }
-};
+}
 
 const fetchBalance = async () => {
-  loading.value = true;
+  loading.value = true
   try {
-    const response = await useApiService("/api/v2/transactions/balance", {
-      method: "GET",
+    const response = await useApiService('/api/v2/transactions/balance', {
+      method: 'GET',
       headers: {
         Authorization: `Bearer ${token.value}`,
       },
-    });
+    })
 
     if (response.succeeded) {
-      balance.value = response.data;
+      balance.value = response.data
     }
-  } catch (err) {
-    if (err.response && err.response.status === 403) {
-      auth.logout();
-    }
-    console.error("Error fetching balance:", err);
-  } finally {
-    loading.value = false;
   }
-};
+  catch (err) {
+    if (err.response && err.response.status === 403) {
+      auth.logout()
+    }
+    console.error('Error fetching balance:', err)
+  }
+  finally {
+    loading.value = false
+  }
+}
 
 const getDecimal = (num) => {
   return Math.floor((num % 1) * 100)
     .toString()
-    .padStart(2, "0");
-};
+    .padStart(2, '0')
+}
 
 const toggleBalanceVisibility = () => {
-  showBalance.value = !showBalance.value;
-};
+  showBalance.value = !showBalance.value
+}
 
 // Lifecycle hooks
 onMounted(() => {
-  getToken();
-  fetchBalance();
-});
+  getToken()
+  fetchBalance()
+})
 </script>
 
 <style scoped>

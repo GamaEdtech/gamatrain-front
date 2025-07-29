@@ -6,18 +6,20 @@
       </div>
       <v-btn
         v-if="!generalDataEditMode.name"
-        @click="handleEdit"
         class="ml-4"
         icon
         color="blue-grey"
         variant="text"
+        @click="handleEdit"
       >
-        <v-icon size="large"> mdi-pencil </v-icon>
+        <v-icon size="large">
+          mdi-pencil
+        </v-icon>
       </v-btn>
       <div class="w-70 w-md-100">
         <v-text-field
-          v-model="form.name"
           v-if="generalDataEditMode.name"
+          v-model="form.name"
           placeholder="Name"
           :rules="[(v) => !!v || 'Name is required']"
           variant="underlined"
@@ -26,12 +28,14 @@
             <v-btn
               :loading="nameSubmitLoader"
               color="success"
-              @click="handleUpdate"
               variant="flat"
               size="x-small"
               icon
+              @click="handleUpdate"
             >
-              <v-icon size="large"> mdi-check </v-icon>
+              <v-icon size="large">
+                mdi-check
+              </v-icon>
             </v-btn>
           </template>
         </v-text-field>
@@ -51,64 +55,67 @@
 </template>
 
 <script setup>
-const emit = defineEmits(["edit", "update"]);
+const emit = defineEmits(['edit', 'update'])
 const props = defineProps({
   content: {
     type: Object,
     required: true,
   },
-});
-const nuxtApp = useNuxtApp();
-const route = useRoute();
-const router = useRouter();
-const contentData = ref(props.content);
-const nameSubmitLoader = ref(false);
+})
+const nuxtApp = useNuxtApp()
+const route = useRoute()
+const contentData = ref(props.content)
+const nameSubmitLoader = ref(false)
 const generalDataEditMode = reactive({
   name: false,
-});
+})
 const form = reactive({
-  name: "",
-});
+  name: '',
+})
 function handleEdit() {
-  form.name = contentData.value.name || "";
-  generalDataEditMode.name = true;
+  form.name = contentData.value.name || ''
+  generalDataEditMode.name = true
 }
 function isRequired(value) {
   try {
-    return !!value.trim();
-  } catch (e) {
-    return false;
+    return !!value.trim()
+  }
+  catch {
+    return false
   }
 }
 function handleUpdate() {
-  let formData = {};
+  let formData = {}
   if (!isRequired(form.name)) {
-    nuxtApp.$toast?.error("Please enter a valid Name");
-    return;
+    nuxtApp.$toast?.error('Please enter a valid Name')
+    return
   }
-  generalDataEditMode.name = false;
-  formData = { name: form.name ?? null };
-  nameSubmitLoader.value = true;
+  generalDataEditMode.name = false
+  formData = { name: form.name ?? null }
+  nameSubmitLoader.value = true
   useApiService
     .post(`/api/v2/schools/${route.params.id}/contributions`, formData)
     .then(async (response) => {
       if (response.succeeded) {
         nuxtApp.$toast?.success(
-          "Your contribution has been successfully submitted"
-        );
-        contentData.value.name = form.name;
-        emit("update", form.value);
-      } else {
-        nuxtApp.$toast?.error(response?.errors[0]?.message);
+          'Your contribution has been successfully submitted',
+        )
+        contentData.value.name = form.name
+        emit('update', form.value)
+      }
+      else {
+        nuxtApp.$toast?.error(response?.errors[0]?.message)
       }
     })
     .catch((err) => {
       if (err?.response?.status == 401 || err?.response?.status == 403) {
-      } else nuxtApp.$toast?.error(err?.response?.data?.message);
+        nuxtApp.$toast?.error('Please login to update school name')
+      }
+      else nuxtApp.$toast?.error(err?.response?.data?.message)
     })
     .finally(() => {
-      form.name = null;
-      nameSubmitLoader.value = false;
-    });
+      form.name = null
+      nameSubmitLoader.value = false
+    })
 }
 </script>

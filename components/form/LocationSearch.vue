@@ -1,8 +1,8 @@
 <template>
   <v-autocomplete
     v-if="render"
-    class="locationField"
     v-model="selectedItem"
+    class="locationField"
     :loading="loading"
     :items="items"
     color="primary"
@@ -11,13 +11,13 @@
     variant="solo"
     item-title="display_name"
     item-value="location"
-    @update:search="search = $event"
     :placeholder="props.placeholder"
-    @keydown="toggleSearch(true)"
     prepend-inner-icon="mdi-magnify"
     rounded
     density="comfortable"
     return-object
+    @update:search="search = $event"
+    @keydown="toggleSearch(true)"
   >
     <template #no-data>
       <v-list-item>
@@ -31,8 +31,7 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, onMounted } from "vue";
-import { useNuxtApp } from "#app";
+import { ref, watch, onMounted } from 'vue'
 
 const props = defineProps({
   label: String,
@@ -40,71 +39,72 @@ const props = defineProps({
   rounded: Boolean,
   placeholder: {
     type: String,
-    default: "Search anything ..",
+    default: 'Search anything ..',
   },
-});
-const emit = defineEmits(["locationSelected"]);
+})
+const emit = defineEmits(['locationSelected'])
 
-const search = ref(null);
-const selectedItem = ref(null);
-const items = ref([]);
-const loading = ref(false);
-const timer = ref(null);
-const waitTime = 750;
-const searchToggle = ref(false);
-const render = ref(true);
+const search = ref(null)
+const selectedItem = ref(null)
+const items = ref([])
+const loading = ref(false)
+const timer = ref(null)
+const waitTime = 750
+const searchToggle = ref(false)
+const render = ref(true)
 
 async function searchLocation(searchVal) {
-  loading.value = true;
+  loading.value = true
   try {
     const searchLocation = await $fetch(
-      "https://nominatim.openstreetmap.org/search.php",
+      'https://nominatim.openstreetmap.org/search.php',
       {
         params: {
           q: searchVal,
-          format: "json",
+          format: 'json',
         },
         headers: {
-          "Accept-Language": "en;q=0.3",
+          'Accept-Language': 'en;q=0.3',
         },
-      }
-    );
-    items.value = [];
+      },
+    )
+    items.value = []
     for (let i = 0; i < searchLocation.length; i++) {
-      items.value[i] = {};
-      items.value[i]["display_name"] =
-        searchLocation[i].display_name.substr(0, 38) +
-        (searchLocation[i].display_name.length > 38 ? "..." : "");
-      items.value[i]["location"] = [
+      items.value[i] = {}
+      items.value[i]['display_name']
+        = searchLocation[i].display_name.substr(0, 38)
+          + (searchLocation[i].display_name.length > 38 ? '...' : '')
+      items.value[i]['location'] = [
         searchLocation[i].lat,
         searchLocation[i].lon,
-      ];
+      ]
     }
-  } finally {
-    loading.value = false;
+  }
+  finally {
+    loading.value = false
   }
 }
 
 function toggleSearch(val) {
-  searchToggle.value = val;
+  searchToggle.value = val
 }
 
 onMounted(() => {
-  timer.value = setTimeout(() => {}, waitTime);
-});
+  timer.value = setTimeout(() => {}, waitTime)
+})
 
 watch(search, (val) => {
   if (val && searchToggle.value) {
-    clearTimeout(timer.value);
+    clearTimeout(timer.value)
     timer.value = setTimeout(() => {
-      if (val !== selectedItem.value) searchLocation(val);
-    }, waitTime);
+      if (val !== selectedItem.value) searchLocation(val)
+    }, waitTime)
   }
-});
+})
 
 watch(selectedItem, (val) => {
-  if (val && searchToggle.value) emit("locationSelected", val.location);
-});
+  if (val && searchToggle.value) emit('locationSelected', val.location)
+})
 </script>
 
 <style>

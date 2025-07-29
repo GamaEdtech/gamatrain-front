@@ -1,26 +1,31 @@
 <template>
   <div class="dashboard-menu">
-    <!--Desktop dashboard menu-->
+    <!-- Desktop dashboard menu -->
     <div class="dashboard-menu-container">
-      <v-list-item class="px-2" to="/user">
-        <template v-slot:prepend>
+      <v-list-item
+        class="px-2"
+        to="/user"
+      >
+        <template #prepend>
           <v-avatar>
-            <v-img src="@/assets/images/dashboard-icon.png"></v-img>
+            <v-img src="/images/dashboard-icon.png" />
           </v-avatar>
         </template>
 
-        <v-list-item-title class="text-h5">Dashboard</v-list-item-title>
+        <v-list-item-title class="text-h5">
+          Dashboard
+        </v-list-item-title>
       </v-list-item>
 
-      <v-divider></v-divider>
+      <v-divider />
       <navigation />
     </div>
-    <!--End desktop dashboard menu-->
+    <!-- End desktop dashboard menu -->
   </div>
 </template>
 
 <script setup>
-import Navigation from "@/components/dashboard/navigation";
+import Navigation from '@/components/dashboard/navigation'
 </script>
 
 <style scoped>

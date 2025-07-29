@@ -29,65 +29,65 @@
         {{ localContentData?.schoolType?.name }}
       </v-chip>
       <v-chip
-        :to="`/school?school_type=${localContentData.school_type}`"
         v-if="localContentData.school_type_title"
+        :to="`/school?school_type=${localContentData.school_type}`"
         class="bg-blue-grey-darken-1 text-white mr-1"
       >
         {{ localContentData.school_type_title }}
       </v-chip>
       <v-chip
-        :to="`/school?section=${localContentData.section}`"
         v-if="localContentData.section_title"
+        :to="`/school?section=${localContentData.section}`"
         class="bg-blue-grey-darken-1 text-white mr-1"
       >
         {{ localContentData.section_title }}
       </v-chip>
       <v-chip
-        :to="`/school?coed_status=${localContentData.sex}`"
         v-if="localContentData.sex_title"
+        :to="`/school?coed_status=${localContentData.sex}`"
         class="bg-blue-grey-darken-1 text-white mr-1"
       >
         {{ localContentData.sex_title }}
       </v-chip>
     </v-sheet>
     <v-spacer />
-    <div class="gtext-t4 primary-blue-500 cursor-pointer">Contribute</div>
+    <div class="gtext-t4 primary-blue-500 cursor-pointer">
+      Contribute
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, computed } from "vue";
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   contentData: {
     type: Object,
     required: true,
   },
-});
+})
 
-const emit = defineEmits(['onChipsClick'])
-
-const localContentData = ref(props.contentData);
+const localContentData = ref(props.contentData)
 
 watch(
   () => props.contentData,
   (newContent) => {
-    localContentData.value = newContent;
+    localContentData.value = newContent
   },
-  { deep: true }
-);
+  { deep: true },
+)
 
 function buildSchoolListUrl(type, data) {
-  const query = {};
-  if (data.countryId) query.country = data.countryId;
+  const query = {}
+  if (data.countryId) query.country = data.countryId
   if (type === 'state' || type === 'city') {
-    if (data.stateId) query.state = data.stateId;
+    if (data.stateId) query.state = data.stateId
   }
   if (type === 'city') {
-    if (data.cityId) query.city = data.cityId;
+    if (data.cityId) query.city = data.cityId
   }
-  const params = new URLSearchParams(query).toString();
-  return `/school?${params}`;
+  const params = new URLSearchParams(query).toString()
+  return `/school?${params}`
 }
 </script>
 

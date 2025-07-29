@@ -1,9 +1,15 @@
 <template>
-  <v-card outlined :class="'grade-card grade-card' + (itm_index + 1)">
-    <p v-show="stat.showMore" class="total-content">
+  <v-card
+    outlined
+    :class="'grade-card grade-card' + (itm_index + 1)"
+  >
+    <p
+      v-show="stat.showMore"
+      class="total-content"
+    >
       <nuxt-link
-        v-for="item in stat.lessons"
-        :key="stat.id"
+        v-for="(item, index) in stat.lessons"
+        :key="item.id || index"
         :to="`/search?type=test&section=${stat.section}&base=${stat.base}&lesson=${stat.lesson}&sortby=best`"
         class="content grade-list-lessons"
       >
@@ -12,11 +18,11 @@
         </span>
       </nuxt-link>
       <v-btn
-        @click="lessonExpand(itm_index)"
         plain
         :class="
           'mt-5 font-size-14  text-lowercase showmore-btn' + (itm_index + 1)
         "
+        @click="lessonExpand(itm_index)"
       >
         Return
       </v-btn>
@@ -35,31 +41,38 @@
             {{ stat.base_title }}
           </nuxt-link>
           <div class="d-flex align-center res-update d-sm-none">
-            <i class="fa-solid fa-calendar-days mx-3"></i>
+            <i class="fa-solid fa-calendar-days mx-3" />
             <p>{{ $dayjs(stat.last_update).format("MMM DD") }}</p>
           </div>
         </div>
-        <v-card flat min-height="40" color="transparent" class="d-inline-block">
+        <v-card
+          flat
+          min-height="40"
+          color="transparent"
+          class="d-inline-block"
+        >
           <nuxt-link
-            v-for="(item, itm_index) in stat.lessons.slice(0, 3)"
-            :key="stat.id"
+            v-for="(item, index) in stat.lessons.slice(0, 3)"
+            :key="item.id || index"
             :to="`/search?type=test&section=${stat.section}&base=${stat.base}&lesson=${stat.lesson}&sortby=best`"
             class="content grade-list-lessons"
           >
             <span class="font-size-14">
               {{ item.title }}
             </span>
-            <span class="font-size-14" v-show="itm_index < 2"> , </span>
+            <span
+              v-show="index < 2"
+              class="font-size-14"
+            > , </span>
           </nuxt-link>
           <span
             v-show="stat.lessons.length > 3"
             class="btn-transparent more-content pointer font-size-14"
             @click="lessonExpand(itm_index)"
-            >... more</span
-          >
+          >... more</span>
         </v-card>
       </v-card-title>
-      <v-divider class="mb-2"></v-divider>
+      <v-divider class="mb-2" />
 
       <v-card-text class="pa-0 grade-items mb-3">
         <nuxt-link
@@ -67,14 +80,17 @@
           class="d-flex align-center justify-space-between pa-0 pb-0 grade__item"
         >
           <div class="py-0 d-flex align-center right grade__item-title">
-            <v-icon class="mr-4 icon icong-test"></v-icon>
+            <v-icon class="mr-4 icon icong-test" />
             <p
               class="text-center type my-2 grade-item__text"
               v-text="'Paper'"
-            ></p>
+            />
           </div>
           <div class="py-1 left">
-            <p class="text-left stat" v-text="stat.tests"></p>
+            <p
+              class="text-left stat"
+              v-text="stat.tests"
+            />
           </div>
         </nuxt-link>
         <nuxt-link
@@ -82,14 +98,17 @@
           class="d-flex align-center justify-space-between pa-0 pb-0 grade__item"
         >
           <div class="py-0 d-flex align-center right grade__item-title">
-            <v-icon class="mr-4 icon icong-learnfiles"></v-icon>
+            <v-icon class="mr-4 icon icong-learnfiles" />
             <p
               class="text-center type my-2 grade-item__text"
               v-text="'Multimedia'"
-            ></p>
+            />
           </div>
           <div class="py-1 left">
-            <p class="text-left stat" v-text="stat.files"></p>
+            <p
+              class="text-left stat"
+              v-text="stat.files"
+            />
           </div>
         </nuxt-link>
         <nuxt-link
@@ -97,14 +116,17 @@
           class="d-flex align-center justify-space-between pa-0 pb-0 grade__item"
         >
           <div class="py-0 d-flex align-center right grade__item-title">
-            <v-icon class="mr-4 icon icong-azmoon"></v-icon>
+            <v-icon class="mr-4 icon icong-azmoon" />
             <p
               class="text-center type my-2 grade-item__text"
               v-text="'Exam'"
-            ></p>
+            />
           </div>
           <div class="py-1 left">
-            <p class="text-left stat" v-text="stat.exams"></p>
+            <p
+              class="text-left stat"
+              v-text="stat.exams"
+            />
           </div>
         </nuxt-link>
         <nuxt-link
@@ -112,18 +134,21 @@
           class="d-flex align-center justify-space-between pa-0 pb-0 grade__item"
         >
           <div class="py-0 d-flex align-center right grade__item-title">
-            <v-icon class="mr-4 icon icong-qa"></v-icon>
+            <v-icon class="mr-4 icon icong-qa" />
             <p
               class="text-center type my-2 grade-item__text"
               v-text="'Q & A'"
-            ></p>
+            />
           </div>
           <div class="py-1 left">
-            <p class="text-left stat" v-text="stat.questions"></p>
+            <p
+              class="text-left stat"
+              v-text="stat.questions"
+            />
           </div>
         </nuxt-link>
       </v-card-text>
-      <v-divider class="grade-divider"></v-divider>
+      <v-divider class="grade-divider" />
       <v-card-text
         class="pt-3 px-0 grade-card__update d-sm-flex d-none justify-end"
       >
@@ -132,7 +157,7 @@
         >
           <span
             class="fa-solid fa-calendar-days footer-card-calendar ml-2"
-          ></span>
+          />
           <span class="ml-1 last-update font-size-14">Last update:&nbsp;</span>
           <span class="last-update font-size-14">{{
             $dayjs(stat.last_update).format("MMM DD")
@@ -145,24 +170,24 @@
 
 <script>
 export default {
+  name: 'DesktopStatsCardComponent',
   props: {
-    stat: {
-      type: Object,
-    },
-    itm_index: {
+    itmIndex: {
       type: Number,
+      required: false,
+      default: 0,
     },
   },
-  name: "DesktopStatsCardComponent",
+  emits: ['lessonExpand'],
   data() {
-    return {};
+    return {}
   },
   methods: {
     lessonExpand(index) {
-      this.$emit("lessonExpand", index);
+      this.$emit('lessonExpand', index)
     },
   },
-};
+}
 </script>
 
 <style scoped></style>

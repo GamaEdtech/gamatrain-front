@@ -1,18 +1,24 @@
 <template>
   <v-container id="blog-list-page">
     <!-- Featued blog section -->
-    <v-row class="d-none d-md-flex" id="desktop-featured-blog">
-      <v-col cols="9" id="preview-section">
+    <v-row
+      id="desktop-featured-blog"
+      class="d-none d-md-flex"
+    >
+      <v-col
+        id="preview-section"
+        cols="9"
+      >
         <v-skeleton-loader
           v-if="isLoading"
           class="mx-auto slide-loading"
           type="image"
-        ></v-skeleton-loader>
+        />
         <v-card
           v-else-if="featuredItems[0]"
           flat
           :to="`/blog/${featuredItems[slideIndex].id}/${$slugGenerator(
-            featuredItems[0].title
+            featuredItems[0].title,
           )}`"
           class="ma-1"
         >
@@ -32,23 +38,32 @@
           </v-card>
         </v-card>
       </v-col>
-      <v-col cols="3" id="list-section">
-        <h2 class="gama-text-button">Featured Post</h2>
+      <v-col
+        id="list-section"
+        cols="3"
+      >
+        <h2 class="gama-text-button">
+          Featured Post
+        </h2>
         <div v-if="isLoading">
-          <v-row class="featured-item" v-for="i in 5" :key="i">
+          <v-row
+            v-for="i in 5"
+            :key="i"
+            class="featured-item"
+          >
             <div class="d-flex">
               <div>
-                <v-skeleton-loader type="image"></v-skeleton-loader>
+                <v-skeleton-loader type="image" />
               </div>
               <div class="text-loader-section">
-                <v-skeleton-loader type="heading"></v-skeleton-loader>
+                <v-skeleton-loader type="heading" />
               </div>
             </div>
           </v-row>
         </div>
         <div
-          v-else
           v-for="(item, n) in featuredItems.slice(0, 5)"
+          v-else
           :key="n"
           class="featured-item"
         >
@@ -72,7 +87,10 @@
         </div>
       </v-col>
     </v-row>
-    <div class="d-block d-md-none" id="featured-blog">
+    <div
+      id="featured-blog"
+      class="d-block d-md-none"
+    >
       <v-row>
         <v-col cols="12">
           <v-slide-group
@@ -80,18 +98,24 @@
             class="slider py-sm-4"
             :show-arrows="lgAndUp"
           >
-            <div class="d-flex" v-if="isLoading">
-              <v-slide-group-item v-for="i in 10" :key="i">
+            <div
+              v-if="isLoading"
+              class="d-flex"
+            >
+              <v-slide-group-item
+                v-for="i in 10"
+                :key="i"
+              >
                 <v-skeleton-loader
                   class="mx-auto slide-loading"
                   type="image"
-                ></v-skeleton-loader>
+                />
               </v-slide-group-item>
             </div>
 
             <v-slide-group-item
-              v-else
               v-for="(item, n) in featuredItems"
+              v-else
               :key="n"
             >
               <v-card
@@ -124,13 +148,16 @@
 
     <!-- Search section -->
     <v-row id="blog-search">
-      <v-col cols="12" class="pb-0">
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
         <v-text-field
+          v-model="searchQuery"
           class="rounded-ts pr-0"
           density="compact"
           variant="outlined"
           hide-details
-          v-model="searchQuery"
           label="Search"
         >
           <template #append>
@@ -149,30 +176,36 @@
     <!-- Search section -->
 
     <!-- Category section -->
-    <v-row justify="space-around" id="category-section">
+    <v-row
+      id="category-section"
+      justify="space-around"
+    >
       <v-col cols="12">
-        <v-card flat class="pb-4 px-1">
+        <v-card
+          flat
+          class="pb-4 px-1"
+        >
           <v-chip-group
             v-model="categoryValue"
             mandatory
             selected-class="active-cate"
           >
             <v-chip
+              :key="0"
               :x-small="xs"
               :large="mdAndUp"
-              :key="0"
-              @click="categoryValue = 0"
               :value="0"
+              @click="categoryValue = 0"
             >
               All
             </v-chip>
             <v-chip
-              :x-small="xs"
-              :large="mdAndUp"
               v-for="cat in blogCategories"
               :key="cat.id"
-              @click="categoryValue = cat.id"
+              :x-small="xs"
+              :large="mdAndUp"
               :value="cat.id"
+              @click="categoryValue = cat.id"
             >
               {{ cat.title }}
             </v-chip>
@@ -185,9 +218,19 @@
     <!-- Blog list section -->
     <div id="blog-list-section">
       <div v-if="blogList.length">
-        <v-row class="blog-item" v-for="(item, index) in blogList" :key="index">
-          <v-col cols="9" class="mobile-item d-block d-sm-none">
-            <v-card flat :to="`/blog/${item.id}/${$slugGenerator(item.title)}`">
+        <v-row
+          v-for="(item, index) in blogList"
+          :key="index"
+          class="blog-item"
+        >
+          <v-col
+            cols="9"
+            class="mobile-item d-block d-sm-none"
+          >
+            <v-card
+              flat
+              :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
+            >
               <v-card class="ma-1">
                 <NuxtImg
                   width="180px"
@@ -203,12 +246,16 @@
                 </v-card-title>
               </v-card>
               <div class="gama-text-subtitle2">
-                <span v-html="truncateBody(item.body, 32)"></span>
+                <span v-html="truncateBody(item.body, 32)" />
                 <span class="read-more">Read more</span>
               </div>
             </v-card>
           </v-col>
-          <v-col cols="10" sm="10" class="d-none d-sm-block">
+          <v-col
+            cols="10"
+            sm="10"
+            class="d-none d-sm-block"
+          >
             <div class="d-flex">
               <nuxt-link :to="`/blog/${item.id}/${$slugGenerator(item.title)}`">
                 <NuxtImg
@@ -228,13 +275,16 @@
                   <span
                     class="gama-text-subtitle2"
                     v-html="truncateBody(item.body, 142)"
-                  ></span>
+                  />
                   <span class="gama-text-subtitle2 read-more">Read more</span>
                 </nuxt-link>
               </div>
             </div>
           </v-col>
-          <v-col cols="3" sm="2">
+          <v-col
+            cols="3"
+            sm="2"
+          >
             <div class="date-holder-container">
               <div class="date-holder">
                 <div>
@@ -246,42 +296,49 @@
                   </div>
                 </div>
               </div>
-              <div class="vertical-line"></div>
+              <div class="vertical-line" />
               <div
                 v-if="blogList.length - 1 == index"
                 class="last-vertical-line"
-              ></div>
-              <div class="year-holder" v-if="item.yearDisplay">
-                <div v-if="index != 0" class="top-sign"></div>
+              />
+              <div
+                v-if="item.yearDisplay"
+                class="year-holder"
+              >
+                <div
+                  v-if="index != 0"
+                  class="top-sign"
+                />
                 <div class="gama-text-overline">
                   {{ $dayjs(item.subdate).format("YYYY") }}
                 </div>
-                <div class="bottom-sign"></div>
+                <div class="bottom-sign" />
               </div>
             </div>
           </v-col>
         </v-row>
         <v-row
-          class="blog-item"
           v-if="
-            allDataLoaded == false &&
-            paginateStatus == false &&
-            blogList.length > 2
+            allDataLoaded == false
+              && paginateStatus == false
+              && blogList.length > 2
           "
+          class="blog-item"
         >
           <v-col cols="12">
             <div class="d-none d-sm-flex">
               <div>
-                <v-skeleton-loader type="image"></v-skeleton-loader>
+                <v-skeleton-loader type="image" />
               </div>
               <div class="text-loader-section">
-                <v-skeleton-loader
-                  type="heading,list-item-two-line"
-                ></v-skeleton-loader>
+                <v-skeleton-loader type="heading,list-item-two-line" />
               </div>
             </div>
             <div class="d-flex d-sm-none mobile-item">
-              <v-skeleton-loader class="mx-auto slide-loading" type="image" />
+              <v-skeleton-loader
+                class="mx-auto slide-loading"
+                type="image"
+              />
             </div>
           </v-col>
         </v-row>
@@ -293,23 +350,25 @@
         <span class="gama-text-button"> Opps! no data found </span>
       </div>
       <div v-else>
-        <v-row class="blog-item" v-for="i in 3" :key="i">
+        <v-row
+          v-for="i in 3"
+          :key="i"
+          class="blog-item"
+        >
           <v-col cols="12">
             <div class="d-none d-sm-flex">
               <div>
-                <v-skeleton-loader type="image"></v-skeleton-loader>
+                <v-skeleton-loader type="image" />
               </div>
               <div class="text-loader-section">
-                <v-skeleton-loader
-                  type="heading,list-item-two-line"
-                ></v-skeleton-loader>
+                <v-skeleton-loader type="heading,list-item-two-line" />
               </div>
             </div>
             <div class="d-flex d-sm-none mobile-item">
               <v-skeleton-loader
                 class="mx-auto slide-loading"
                 type="image"
-              ></v-skeleton-loader>
+              />
             </div>
           </v-col>
         </v-row>
@@ -321,323 +380,328 @@
           v-model="pageNum"
           :length="pageCount"
           circle
-        ></v-pagination>
+        />
       </div>
 
-      <div ref="loaderSection"></div>
+      <div ref="loaderSection" />
     </div>
     <!-- End blog list section -->
   </v-container>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onBeforeUnmount } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import dayjs from "dayjs";
-import { useDisplay } from "vuetify";
+import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import dayjs from 'dayjs'
+import { useDisplay } from 'vuetify'
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const { lgAndUp, mdAndUp, xs, sm } = useDisplay();
-const { $slugGenerator } = useNuxtApp();
+const { lgAndUp, mdAndUp, xs, sm } = useDisplay()
+const { $slugGenerator } = useNuxtApp()
 
 // SEO
 useHead({
-  title: "Exploring the Latest Insights in K12 Education | GamaTrain Blog",
+  title: 'Exploring the Latest Insights in K12 Education | GamaTrain Blog',
   meta: [
     {
-      name: "apple-mobile-web-app-title",
+      name: 'apple-mobile-web-app-title',
       content:
-        "Exploring the Latest Insights in K12 Education | GamaTrain Blog",
+        'Exploring the Latest Insights in K12 Education | GamaTrain Blog',
     },
     {
-      name: "og:title",
+      name: 'og:title',
       content:
-        "Exploring the Latest Insights in K12 Education | GamaTrain Blog",
+        'Exploring the Latest Insights in K12 Education | GamaTrain Blog',
     },
     {
-      name: "og:site_name",
-      content: "GamaTrain",
+      name: 'og:site_name',
+      content: 'GamaTrain',
     },
     {
-      name: "description",
+      name: 'description',
       content:
-        "Stay informed and inspired with GamaTrain's insightful blog, featuring thought-provoking articles on the latest trends and best practices in K12 education.",
+        'Stay informed and inspired with GamaTrain\'s insightful blog, featuring thought-provoking articles on the latest trends and best practices in K12 education.',
     },
     {
-      name: "og:description",
+      name: 'og:description',
       content:
-        "Stay informed and inspired with GamaTrain's insightful blog, featuring thought-provoking articles on the latest trends and best practices in K12 education.",
+        'Stay informed and inspired with GamaTrain\'s insightful blog, featuring thought-provoking articles on the latest trends and best practices in K12 education.',
     },
   ],
-});
+})
 
 onMounted(() => {
-  window.addEventListener("scroll", setupScrollListener);
-  updateQueryParams();
-  handleAutoCycle();
-});
+  window.addEventListener('scroll', setupScrollListener)
+  updateQueryParams()
+  handleAutoCycle()
+})
 
 onBeforeUnmount(() => {
-  stopInterval();
-  window.removeEventListener("scroll", setupScrollListener);
-});
+  stopInterval()
+  window.removeEventListener('scroll', setupScrollListener)
+})
 
 // Featued blog section Start
-const { data: featuredItemsResponse, pending: loadingFeatured } =
-  await useAsyncData("featured", () =>
-    $fetch("/api/v1/blogs/search", { params: { featured: 1 } })
-  );
-const featuredItems = ref(featuredItemsResponse.value?.data.list || []);
-const isLoading = ref(loadingFeatured.value);
-const featureVal = ref(0);
-const intervalId = ref(null);
-const slideIndex = ref(0);
-const activeSlide = ref(true);
+const { data: featuredItemsResponse, pending: loadingFeatured }
+  = await useAsyncData('featured', () =>
+    $fetch('/api/v1/blogs/search', { params: { featured: 1 } }),
+  )
+const featuredItems = ref(featuredItemsResponse.value?.data.list || [])
+const isLoading = ref(loadingFeatured.value)
+const featureVal = ref(0)
+const intervalId = ref(null)
+const slideIndex = ref(0)
+const activeSlide = ref(true)
 
 const handleAutoCycle = () => {
   intervalId.value = setInterval(() => {
-    activeSlide.value = false;
+    activeSlide.value = false
     if (slideIndex.value == featuredItems.value.length - 1)
-      slideIndex.value = 0;
-    else slideIndex.value += 1;
+      slideIndex.value = 0
+    else slideIndex.value += 1
     setTimeout(() => {
-      activeSlide.value = true;
-    }, 300);
-  }, 5000);
-};
+      activeSlide.value = true
+    }, 300)
+  }, 5000)
+}
 const stopInterval = () => {
-  clearInterval(intervalId.value); // Clear the interval using the interval ID
-};
+  clearInterval(intervalId.value) // Clear the interval using the interval ID
+}
 // Featued blog section End
 
 // blog serch section Start
-const searchLoading = ref(false);
-const searchQuery = ref(route.query.keyword || "");
-const timer = ref(null);
+const searchLoading = ref(false)
+const searchQuery = ref(route.query.keyword || '')
+const timer = ref(null)
 
 watch(
   () => route.query.keyword,
-  (value) => {
-    searchLoading.value = true;
+  (_value) => {
+    searchLoading.value = true
 
     if (timer.value) {
-      clearTimeout(timer.value);
-      timer.value = null;
+      clearTimeout(timer.value)
+      timer.value = null
     }
 
     timer.value = setTimeout(() => {
-      allDataLoaded.value = false;
-      paginateStatus.value = false;
-      printedYearArr.value = [];
-      pageNum.value = 1;
-      blogList.value = [];
+      allDataLoaded.value = false
+      paginateStatus.value = false
+      printedYearArr.value = []
+      pageNum.value = 1
+      blogList.value = []
 
-      getBlogList();
-    }, 800);
-  }
-);
+      getBlogList()
+    }, 800)
+  },
+)
 
 watch(
   () => searchQuery.value,
-  (value) => {
-    updateQueryParams();
-  }
-);
+  (_value) => {
+    updateQueryParams()
+  },
+)
 // blog serch section End
 
 // category section start
-const { data: blogCategoriesResponse, pending: loadingCategories } =
-  await useAsyncData("categories", () =>
-    $fetch("/api/v1/types/list", { params: { type: "blog_cat" } })
-  );
+const { data: blogCategoriesResponse } = await useAsyncData('categories', () =>
+  $fetch('/api/v1/types/list', { params: { type: 'blog_cat' } }),
+)
 
-const categoryValue = ref(route.query.cat || 0);
-const blogCategories = ref(blogCategoriesResponse.value?.data || []);
+const categoryValue = ref(route.query.cat || 0)
+const blogCategories = ref(blogCategoriesResponse.value?.data || [])
 
 watch(
   () => route.query.cat,
-  (value) => {
-    allDataLoaded.value = false;
-    paginateStatus.value = false;
-    printedYearArr.value = [];
-    pageNum.value = 1;
-    blogList.value = [];
-    getBlogList();
-  }
-);
+  (_value) => {
+    allDataLoaded.value = false
+    paginateStatus.value = false
+    printedYearArr.value = []
+    pageNum.value = 1
+    blogList.value = []
+    getBlogList()
+  },
+)
 
 watch(
   () => categoryValue.value,
-  (value) => {
-    updateQueryParams();
-  }
-);
+  (_value) => {
+    updateQueryParams()
+  },
+)
 
 // category section end
 
 // Blog List Section Start
-const blogList = ref([]);
-const printedYearArr = ref([]);
-const pageNum = ref(1);
-const pageSize = ref(15);
-const pageCount = ref(0);
-const allDataLoaded = ref(false);
-const paginateStatus = ref(false);
-const enablePaginateStatus = 10;
+const blogList = ref([])
+const printedYearArr = ref([])
+const pageNum = ref(1)
+const pageSize = ref(15)
+const pageCount = ref(0)
+const allDataLoaded = ref(false)
+const paginateStatus = ref(false)
+const enablePaginateStatus = 10
 
 const { data: initialBlogs, pending: loadingBlogsServer } = await useAsyncData(
-  "blogListSSR",
+  'blogListSSR',
   () => {
     const params = {
-      title: route.query.keyword || "",
+      title: route.query.keyword || '',
       cat: route.query.cat || 0,
       page: 1,
       perpage: pageSize.value,
-    };
+    }
 
-    return $fetch("/api/v1/blogs/search", { params });
-  }
-);
+    return $fetch('/api/v1/blogs/search', { params })
+  },
+)
 
-const blogLoading = ref(loadingBlogsServer.value);
+const blogLoading = ref(loadingBlogsServer.value)
 
 const processBlogs = (list) => {
   for (let i = 0; i < list.length; i++) {
-    const year = dayjs(list[i].subdate).format("YYYY");
+    const year = dayjs(list[i].subdate).format('YYYY')
     if (printedYearArr.value.includes(year)) {
-      list[i].yearDisplay = false;
-    } else {
-      list[i].yearDisplay = true;
-      printedYearArr.value.push(year);
+      list[i].yearDisplay = false
+    }
+    else {
+      list[i].yearDisplay = true
+      printedYearArr.value.push(year)
     }
   }
-  return list;
-};
+  return list
+}
 
 if (initialBlogs.value?.data?.list) {
-  blogList.value = processBlogs(initialBlogs.value.data.list);
-  pageCount.value = Math.ceil(initialBlogs.value.data.num / pageSize.value);
+  blogList.value = processBlogs(initialBlogs.value.data.list)
+  pageCount.value = Math.ceil(initialBlogs.value.data.num / pageSize.value)
 }
 
 const getBlogList = async () => {
-  let params = {};
-  blogLoading.value = true;
-  params.title = searchQuery.value;
+  const params = {}
+  blogLoading.value = true
+  params.title = searchQuery.value
 
   if (categoryValue.value != 0) {
-    params.cat = categoryValue.value;
+    params.cat = categoryValue.value
   }
 
-  params.page = pageNum.value;
-  params.perpage = pageSize.value;
+  params.page = pageNum.value
+  params.perpage = pageSize.value
 
   try {
-    const response = await $fetch("/api/v1/blogs/search", { params });
-    const data = response.data;
-    pageCount.value = Math.ceil(data.num / pageSize.value);
+    const response = await $fetch('/api/v1/blogs/search', { params })
+    const data = response.data
+    pageCount.value = Math.ceil(data.num / pageSize.value)
 
     if (data.list.length === 0 && paginateStatus.value == false) {
-      allDataLoaded.value = true; //To end loop
-      pageNum.value -= 1;
+      allDataLoaded.value = true // To end loop
+      pageNum.value -= 1
     }
 
-    //Arrange data for show year
+    // Arrange data for show year
     for (let i = 0; i < data.list.length; i++) {
-      const year = dayjs(data.list[i].subdate).format("YYYY");
+      const year = dayjs(data.list[i].subdate).format('YYYY')
       if (printedYearArr.value.includes(year)) {
-        data.list[i].yearDisplay = false;
-      } else {
-        data.list[i].yearDisplay = true;
-        printedYearArr.value.push(year);
+        data.list[i].yearDisplay = false
+      }
+      else {
+        data.list[i].yearDisplay = true
+        printedYearArr.value.push(year)
       }
     }
-    //End arrange data for show year
+    // End arrange data for show year
 
     if (paginateStatus.value == false) {
-      blogList.value.push(...data.list);
-    } else {
-      blogList.value = data.list;
+      blogList.value.push(...data.list)
     }
-  } catch (error) {
-    console.log(error);
-  } finally {
-    blogLoading.value = false;
-    searchLoading.value = false;
-    if (pageNum.value > enablePaginateStatus) paginateStatus.value = true;
+    else {
+      blogList.value = data.list
+    }
   }
-};
+  catch (error) {
+    console.log(error)
+  }
+  finally {
+    blogLoading.value = false
+    searchLoading.value = false
+    if (pageNum.value > enablePaginateStatus) paginateStatus.value = true
+  }
+}
 
 const updateQueryParams = () => {
-  const query = {};
+  const query = {}
   if (pageNum.value !== 0) {
-    query.page = pageNum.value;
+    query.page = pageNum.value
   }
-  if (searchQuery.value != "") {
-    query.keyword = searchQuery.value;
+  if (searchQuery.value != '') {
+    query.keyword = searchQuery.value
   }
   if (categoryValue.value !== 0) {
-    query.cat = categoryValue.value;
+    query.cat = categoryValue.value
   }
 
   // Handle more query parameters here ...
-  router.replace({ query: query }).catch((err) => {
-    //Do noting
-  });
-};
+  router.replace({ query: query }).catch((_err) => {
+    // Do noting
+  })
+}
 // Blog List Section End
 
 const truncateBody = (text, fixedLength = null) => {
-  let cutLength = fixedLength ?? 200;
+  let cutLength = fixedLength ?? 200
   if (!fixedLength) {
-    if (sm.value) cutLength = 142;
-    else if (xs.value) cutLength = 38;
+    if (sm.value) cutLength = 142
+    else if (xs.value) cutLength = 38
   }
-  return text.length > cutLength ? text.slice(0, cutLength) + "..." : text;
-};
+  return text.length > cutLength ? text.slice(0, cutLength) + '...' : text
+}
 
 // Start Infinit Scroll Section
-const loaderSection = ref(null);
+const loaderSection = ref(null)
 
 const setupScrollListener = () => {
-  if (!loaderSection.value) return;
-  const rect = loaderSection.value.getBoundingClientRect();
-  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+  if (!loaderSection.value) return
+  const rect = loaderSection.value.getBoundingClientRect()
+  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight
 
   if (
-    isDivInView &&
-    !allDataLoaded.value &&
-    !blogLoading.value &&
-    !paginateStatus.value
+    isDivInView
+    && !allDataLoaded.value
+    && !blogLoading.value
+    && !paginateStatus.value
   ) {
-    pageNum.value += 1;
-    getBlogList();
+    pageNum.value += 1
+    getBlogList()
   }
-};
+}
 
 watch(
   () => pageNum.value,
-  (value) => {
-    updateQueryParams();
-  }
-);
+  (_value) => {
+    updateQueryParams()
+  },
+)
 
 watch(
   () => route.query.page,
-  (value) => {
+  (_value) => {
     if (paginateStatus.value) {
-      const currentScrollPosition = window.scrollY;
+      const currentScrollPosition = window.scrollY
       if (currentScrollPosition >= 10) {
-        window.scrollTo(0, currentScrollPosition - 10);
-      } else {
-        window.scrollTo(0, 0);
+        window.scrollTo(0, currentScrollPosition - 10)
       }
-      printedYearArr.value = [];
-      getBlogList();
+      else {
+        window.scrollTo(0, 0)
+      }
+      printedYearArr.value = []
+      getBlogList()
     }
-  }
-);
+  },
+)
 // End Infinit Scroll Section
 </script>
 

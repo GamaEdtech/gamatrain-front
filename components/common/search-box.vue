@@ -9,9 +9,11 @@
     dense
     label="Search..."
   >
-    <template slot="prepend-inner">
+    <template #prepend-inner>
       <v-btn icon>
-        <v-icon class="search-icon pb-2">mdi-magnify</v-icon>
+        <v-icon class="search-icon pb-2">
+          mdi-magnify
+        </v-icon>
       </v-btn>
     </template>
   </v-text-field>
@@ -20,7 +22,7 @@
 
 <script>
 export default {
-  name: "search-box"
+  name: 'SearchBox',
 }
 </script>
 

@@ -1,37 +1,41 @@
 <template>
   <div class="d-flex d-md-none">
-      <v-carousel
-       v-if="galleryImages && galleryImages.length > 0"
-        :show-arrows="false"
-        hide-delimiters
-        show-arrows-on-hover
-        height="26.4rem"
-        :class="imageClass"
-        cycle
-        interval="3000"
+    <v-carousel
+      v-if="galleryImages && galleryImages.length > 0"
+      v-model="activeGalleryIndex"
+      :show-arrows="false"
+      hide-delimiters
+      show-arrows-on-hover
+      height="26.4rem"
+      :class="imageClass"
+      cycle
+      interval="3000"
+      @click="openGalleryDialog"
+      @change="updateMainGalleryImage"
+    >
+      <v-carousel-item
+        v-for="(image, index) in galleryImages"
+        :key="index"
+        :src="image?.fileUri?.replace(/^http:\/\//, 'https://')"
+        eager
+        cover
+        class="pointer"
         @click="openGalleryDialog"
-        v-model="activeGalleryIndex"
-        @change="updateMainGalleryImage"
       >
-        <v-carousel-item
-          v-for="(image, index) in galleryImages"
-          :key="index"
-          :src="image?.fileUri?.replace(/^http:\/\//, 'https://')"
-          eager
-          cover
-          class="pointer"
-          @click="openGalleryDialog"
-        >
-          <template v-slot:placeholder>
-            <v-row class="fill-height ma-0" align="center" justify="center">
-              <v-progress-circular
-                indeterminate
-                color="primary"
-              ></v-progress-circular>
-            </v-row>
-          </template>
-        </v-carousel-item>
-      </v-carousel>
+        <template #placeholder>
+          <v-row
+            class="fill-height ma-0"
+            align="center"
+            justify="center"
+          >
+            <v-progress-circular
+              indeterminate
+              color="primary"
+            />
+          </v-row>
+        </template>
+      </v-carousel-item>
+    </v-carousel>
     <div
       v-else
       class="enter-img-holder pointer"
@@ -43,21 +47,24 @@
           <v-icon
             :size="display.mdAndUp.value ? 48 : 24"
             class="primary-gray-300 mb-2 mb-md-10"
-            >mdi-panorama-outline</v-icon
           >
+            mdi-panorama-outline
+          </v-icon>
         </client-only>
-        <div class="gtext-t6 gtext-md-t4 primary-blue-500">Contribute</div>
+        <div class="gtext-t6 gtext-md-t4 primary-blue-500">
+          Contribute
+        </div>
       </div>
     </div>
   </div>
   <div class="d-none d-md-flex">
     <template v-if="galleryImages && galleryImages.length > 0">
       <v-carousel
+        v-model="activeGalleryIndex"
         hide-delimiters
         show-arrows="hover"
         height="28.1rem"
         class="rounded-lg gallery-carousel"
-        v-model="activeGalleryIndex"
         @change="updateMainGalleryImage"
       >
         <v-carousel-item
@@ -69,25 +76,38 @@
           class="pointer"
           @click="openGalleryDialog"
         >
-          <template v-slot:placeholder>
-            <v-row class="fill-height ma-0" align="center" justify="center">
+          <template #placeholder>
+            <v-row
+              class="fill-height ma-0"
+              align="center"
+              justify="center"
+            >
               <v-progress-circular
                 indeterminate
                 color="primary"
-              ></v-progress-circular>
+              />
             </v-row>
           </template>
         </v-carousel-item>
       </v-carousel>
     </template>
-    <div v-else class="enter-img-holder pointer" @click="openGalleryDialog">
+    <div
+      v-else
+      class="enter-img-holder pointer"
+      @click="openGalleryDialog"
+    >
       <div class="text-center">
         <client-only>
-          <v-icon size="48" class="primary-gray-300 mb-10"
-            >mdi-panorama-outline</v-icon
+          <v-icon
+            size="48"
+            class="primary-gray-300 mb-10"
           >
+            mdi-panorama-outline
+          </v-icon>
         </client-only>
-        <p class="gtext-t4 primary-blue-500">Contribute</p>
+        <p class="gtext-t4 primary-blue-500">
+          Contribute
+        </p>
         <div class="mt-2 gtext-t6 primary-gray-400">
           Accepted formats: JPG, PNG, WebP
         </div>
@@ -97,54 +117,71 @@
 
   <school-detail-gallery-dialog
     v-model="showGalleryDialog"
-    :contentData="contentData"
+    :content-data="contentData"
     :images="galleryImages"
     @refresh-gallery="loadGalleryImages"
   />
 </template>
 
 <script setup>
-import { useDisplay } from "vuetify/lib/composables/display";
-const display = useDisplay();
-const nuxtApp = useNuxtApp();
-const route = useRoute();
-const router = useRouter();
-const imageClass = ref(null);
-const emit = defineEmits(["fetch"]);
+import { useDisplay } from 'vuetify/lib/composables/display'
+
+const display = useDisplay()
+const imageClass = ref(null)
+const emit = defineEmits(['fetch'])
 const props = defineProps({
-  content: {},
-  class: {},
-  images: {},
-});
-const contentData = ref(props.content);
-const activeGalleryIndex = ref(0);
-const showGalleryDialog = ref(false);
-const galleryImages = ref(props.images);
+  content: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  class: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  images: {
+    type: Array,
+    required: false,
+    default: () => [],
+    validator(value) {
+      return value.every(
+        item =>
+          typeof item === 'string'
+          || (typeof item === 'object' && 'url' in item),
+      )
+    },
+  },
+})
+const contentData = ref(props.content)
+const activeGalleryIndex = ref(0)
+const showGalleryDialog = ref(false)
+const galleryImages = ref(props.images)
 
 watch(
   () => props.class,
   (val) => {
-    imageClass.value = val;
-  }
-);
+    imageClass.value = val
+  },
+)
 watch(
   () => props.images,
   (val) => {
-    galleryImages.value = val;
-  }
-);
+    galleryImages.value = val
+  },
+)
 
 function openGalleryDialog() {
-  showGalleryDialog.value = true;
+  showGalleryDialog.value = true
 }
 function updateMainGalleryImage(index) {
-  activeGalleryIndex.value = index;
+  activeGalleryIndex.value = index
 }
 function loadGalleryImages() {
-  emit("fetch");
+  emit('fetch')
 }
 
-onMounted(() => {});
+onMounted(() => {})
 </script>
 
 <style scoped>

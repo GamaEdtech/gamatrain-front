@@ -6,27 +6,39 @@
           class="w-100"
           max-width="250"
           type="heading"
-        ></v-skeleton-loader>
+        />
         <div class="d-flex align-center justify-start flex-wrap">
-          <v-skeleton-loader width="100" type="chip"></v-skeleton-loader>
-          <v-skeleton-loader width="100" type="chip"></v-skeleton-loader>
-          <v-skeleton-loader width="100" type="chip"></v-skeleton-loader>
+          <v-skeleton-loader
+            width="100"
+            type="chip"
+          />
+          <v-skeleton-loader
+            width="100"
+            type="chip"
+          />
+          <v-skeleton-loader
+            width="100"
+            type="chip"
+          />
         </div>
       </div>
       <v-skeleton-loader
         min-width="120"
         height="110"
         type="image"
-      ></v-skeleton-loader>
+      />
     </div>
-    <div class="line-seperator"></div>
+    <div class="line-seperator" />
     <div class="w-100 d-flex justify-space-between align-center flex-wrap ga-3">
       <div class="d-flex align-center flex-wrap">
-        <v-skeleton-loader type="avatar"></v-skeleton-loader>
-        <v-skeleton-loader type="avatar"></v-skeleton-loader>
-        <v-skeleton-loader type="avatar"></v-skeleton-loader>
+        <v-skeleton-loader type="avatar" />
+        <v-skeleton-loader type="avatar" />
+        <v-skeleton-loader type="avatar" />
       </div>
-      <v-skeleton-loader width="220" type="heading"></v-skeleton-loader>
+      <v-skeleton-loader
+        width="220"
+        type="heading"
+      />
     </div>
   </div>
 </template>

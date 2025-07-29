@@ -1,216 +1,269 @@
 <template>
-    <div>
-        <v-container fluid id="earn-page-header">
+  <div>
+    <v-container
+      id="earn-page-header"
+      fluid
+    >
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <div id="main-title-holder">
+              <h1 class="gama-text-h1 ">
+                Earn money
+              </h1>
+              <p class="gama-text-subtitle2">
+                Empower Educators with Our Lucrative Content Monetization Service
+              </p>
+            </div>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-container>
 
-            <v-container>
-                <v-row>
-                    <v-col cols="12">
-                        <div id="main-title-holder">
-                            <h1 class="gama-text-h1 ">
-                                Earn money
-                            </h1>
-                            <p class="gama-text-subtitle2">
-                                Empower Educators with Our Lucrative Content Monetization Service
-                            </p>
-                        </div>
-                    </v-col>
+    <v-container
+      id="earn-page-banner"
+      fluid
+    >
+      <v-container>
+        <img
+          id="mov-img"
+          src="/images/mov-img.svg"
+        >
+        <img
+          id="doc-img"
+          src="/images/doc-img.svg"
+        >
+        <img
+          id="zip-img"
+          src="/images/zip-img.svg"
+        >
+        <img
+          id="pdf-img"
+          src="/images/pdf-img.svg"
+        >
+        <img
+          id="gif-img"
+          src="/images/gif-img.svg"
+        >
+        <img
+          id="mp3-img"
+          src="/images/mp3-img.svg"
+        >
+      </v-container>
+    </v-container>
 
-                </v-row>
-            </v-container>
-        </v-container>
+    <v-conteiner id="earn-content-monetization">
+      <v-row>
+        <h2 class="gama-text-h4 monetization-title">
+          Why Choose Our Content Monetization Service?
+        </h2>
+        <div id="content-monetization-steps">
+          <div class="step">
+            <div class="step-num">
+              <h3 class="gama-text-h4">
+                1
+              </h3>
+            </div>
 
+            <div class="step-info">
+              <h3 class="gama-text-h6">
+                Maximize Your Earnings
+              </h3>
+              <div class="gama-text-body2">
+                Earn the Highest Share of Sales in the Industry.
+              </div>
+            </div>
+          </div>
 
-        <v-container fluid id="earn-page-banner">
-            <v-container>
-                <img src="/images/mov-img.svg" id="mov-img" />
-                <img src="/images/doc-img.svg" id="doc-img" />
-                <img src="/images/zip-img.svg" id="zip-img" />
-                <img src="/images/pdf-img.svg" id="pdf-img" />
-                <img src="/images/gif-img.svg" id="gif-img" />
-                <img src="/images/mp3-img.svg" id="mp3-img" />
-            </v-container>
-        </v-container>
+          <div class="step">
+            <div class="step-num">
+              <h3 class="gama-text-h4">
+                2
+              </h3>
+            </div>
 
+            <div class="step-info">
+              <h3 class="gama-text-h6">
+                Share Your Expertise
+              </h3>
+              <p class="gama-text-body2">
+                Empower K-12 Students with Your Valuable Educational Content.
+              </p>
+            </div>
+          </div>
 
-        <v-conteiner id="earn-content-monetization">
-            <v-row>
-                <h2 class="gama-text-h4 monetization-title">Why Choose Our Content Monetization Service?</h2>
-                <div id="content-monetization-steps">
-                    <div class="step">
-                        <div class="step-num">
-                            <h3 class="gama-text-h4">1</h3>
-                        </div>
+          <div class="step">
+            <div class="step-num">
+              <h3 class="gama-text-h4">
+                3
+              </h3>
+            </div>
 
-                        <div class="step-info">
-                            <h3 class="gama-text-h6">Maximize Your Earnings</h3>
-                            <div class="gama-text-body2">Earn the Highest Share of Sales in the Industry.</div>
-                        </div>
-                    </div>
+            <div class="step-info">
+              <h3 class="gama-text-h6">
+                Flexible Formats
+              </h3>
+              <p class="gama-text-body2">
+                Share Word, PDF, PowerPoint, and More.
+              </p>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">
+              <h3 class="gama-text-h4">
+                4
+              </h3>
+            </div>
 
-                    <div class="step">
-                        <div class="step-num">
-                            <h3 class="gama-text-h4">2</h3>
-                        </div>
-
-                        <div class="step-info">
-                            <h3 class="gama-text-h6">Share Your Expertise</h3>
-                            <p class="gama-text-body2">Empower K-12 Students with Your Valuable Educational Content.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="step">
-                        <div class="step-num">
-                            <h3 class="gama-text-h4">3</h3>
-                        </div>
-
-                        <div class="step-info">
-                            <h3 class="gama-text-h6">Flexible Formats</h3>
-                            <p class="gama-text-body2">Share Word, PDF, PowerPoint, and More.</p>
-                        </div>
-                    </div>
-                    <div class="step">
-                        <div class="step-num">
-                            <h3 class="gama-text-h4">4</h3>
-                        </div>
-
-                        <div class="step-info">
-                            <h3 class="gama-text-h6">Easy Setup</h3>
-                            <p class="gama-text-body2">Quick and Hassle-Free Integration into Your Workflow.</p>
-                        </div>
-                    </div>
-
-                </div>
-            </v-row>
-        </v-conteiner>
-
-
-        <v-container fluid id="earn-how-work">
-            <v-container>
-                <h2 class="gama-text-h4">
-                    How It Works?
-                </h2>
-                <p class="gama-text-body1">
-                    So easy, just follow these steps
-                </p>
-            </v-container>
-
-
-        </v-container>
-
-        <div id="earn-how-work-level">
-            <LevelGuidBanner :slide-arr="slideArr" />
+            <div class="step-info">
+              <h3 class="gama-text-h6">
+                Easy Setup
+              </h3>
+              <p class="gama-text-body2">
+                Quick and Hassle-Free Integration into Your Workflow.
+              </p>
+            </div>
+          </div>
         </div>
+      </v-row>
+    </v-conteiner>
 
+    <v-container
+      id="earn-how-work"
+      fluid
+    >
+      <v-container>
+        <h2 class="gama-text-h4">
+          How It Works?
+        </h2>
+        <p class="gama-text-body1">
+          So easy, just follow these steps
+        </p>
+      </v-container>
+    </v-container>
 
-
-        <v-container id="earn-features">
-            <v-row>
-                <v-card flat>
-                    <h2 class="gama-text-h4">
-                        What Features and Benefits?
-                    </h2>
-                    <div v-for="(item, index) in featureList" :key="index" class="feature-box">
-                        <h4 class="gama-text-h6"><v-icon>mdi-{{ item.icon }}</v-icon>{{ item.title }}</h4>
-                        <p class="gama-text-body1">{{ item.describe }}</p>
-                    </div>
-                </v-card>
-            </v-row>
-        </v-container>
-
-
-        <v-container fluid id="start-monetizing-job">
-            <v-container>
-                <v-row>
-                    <v-col cols="12">
-                        <p class="gama-text-h6">Join Our Community.Start Monetizing Your Content Now.</p>
-                        <button class="gama-primary-btn">Get Started Today!</button>
-                    </v-col>
-                </v-row>
-            </v-container>
-        </v-container>
+    <div id="earn-how-work-level">
+      <LevelGuidBanner :slide-arr="slideArr" />
     </div>
+
+    <v-container id="earn-features">
+      <v-row>
+        <v-card flat>
+          <h2 class="gama-text-h4">
+            What Features and Benefits?
+          </h2>
+          <div
+            v-for="(item, index) in featureList"
+            :key="index"
+            class="feature-box"
+          >
+            <h4 class="gama-text-h6">
+              <v-icon>mdi-{{ item.icon }}</v-icon>{{ item.title }}
+            </h4>
+            <p class="gama-text-body1">
+              {{ item.describe }}
+            </p>
+          </div>
+        </v-card>
+      </v-row>
+    </v-container>
+
+    <v-container
+      id="start-monetizing-job"
+      fluid
+    >
+      <v-container>
+        <v-row>
+          <v-col cols="12">
+            <p class="gama-text-h6">
+              Join Our Community.Start Monetizing Your Content Now.
+            </p>
+            <button class="gama-primary-btn">
+              Get Started Today!
+            </button>
+          </v-col>
+        </v-row>
+      </v-container>
+    </v-container>
+  </div>
 </template>
 
-
 <script>
-import LevelGuidBanner from '~/components/home/level-guid-banner.vue';
+import LevelGuidBanner from '~/components/home/level-guid-banner.vue'
 
 export default {
-    auth: false,
-    head() {
-        return {
-            title: 'Earn money'
-        }
-    },
-    data() {
-        return {
-            slideArr: [
-                {
-                    img: 'guid-banner1.svg',
-                    caption: 'Sign Up',
-                    describe: "Register and Create Your Content Creator Profile"
-                },
-                {
-                    img: 'guid-banner2.png',
-                    caption: 'Upload Your Content',
-                    describe: 'Share Your Lesson Plans, Study Guides, and More.'
-                },
-                {
-                    img: 'guid-banner3.svg',
-                    caption: 'Reach Students',
-                    describe: 'Gain Exposure through Our Platform and Network.'
-                },
-                {
-                    img: 'guid-banner4.svg',
-                    caption: 'Earn Big',
-                    describe: 'Reap the Rewards as Students Purchase Your Content.'
-                }
-            ],
-            featureList: [
-                {
-                    icon: 'eye',
-                    title: 'High Visibility',
-                    describe: 'Reach a Wide Audience of K-12 Students.',
-                },
-                {
-                    icon: 'account-circle',
-                    title: 'Personalized Branding',
-                    describe: 'Showcase Your Unique Teaching Style.',
-                },
-                {
-                    icon: 'security',
-                    title: 'Secure Transactions',
-                    describe: 'Trustworthy Payment Processing.',
-                },
-                {
-                    icon: 'chart-donut',
-                    title: 'Data Insights',
-                    describe: 'Understand Your Audience and Optimize Your Strategy.',
-                },
-                {
-                    icon: 'headset',
-                    title: 'Dedicated Support',
-                    describe: 'Our Team is Here to Assist You Every Step of the Way.',
-                },
-            ]
-        };
-    },
-    methods: {},
-    watch: {},
-    computed: {},
-    components: { LevelGuidBanner }
+  auth: false,
+  components: { LevelGuidBanner },
+  data() {
+    return {
+      slideArr: [
+        {
+          img: 'guid-banner1.svg',
+          caption: 'Sign Up',
+          describe: 'Register and Create Your Content Creator Profile',
+        },
+        {
+          img: 'guid-banner2.png',
+          caption: 'Upload Your Content',
+          describe: 'Share Your Lesson Plans, Study Guides, and More.',
+        },
+        {
+          img: 'guid-banner3.svg',
+          caption: 'Reach Students',
+          describe: 'Gain Exposure through Our Platform and Network.',
+        },
+        {
+          img: 'guid-banner4.svg',
+          caption: 'Earn Big',
+          describe: 'Reap the Rewards as Students Purchase Your Content.',
+        },
+      ],
+      featureList: [
+        {
+          icon: 'eye',
+          title: 'High Visibility',
+          describe: 'Reach a Wide Audience of K-12 Students.',
+        },
+        {
+          icon: 'account-circle',
+          title: 'Personalized Branding',
+          describe: 'Showcase Your Unique Teaching Style.',
+        },
+        {
+          icon: 'security',
+          title: 'Secure Transactions',
+          describe: 'Trustworthy Payment Processing.',
+        },
+        {
+          icon: 'chart-donut',
+          title: 'Data Insights',
+          describe: 'Understand Your Audience and Optimize Your Strategy.',
+        },
+        {
+          icon: 'headset',
+          title: 'Dedicated Support',
+          describe: 'Our Team is Here to Assist You Every Step of the Way.',
+        },
+      ],
+    }
+  },
+  head() {
+    return {
+      title: 'Earn money',
+    }
+  },
+  computed: {},
+  watch: {},
+  methods: {},
 }
 </script>
 
-
-<style >
+<style>
 #earn-page-header {
     margin-bottom: 4.2rem;
     height: 20rem;
     background: #24292F;
     position: relative;
-
 
     #main-title-holder {
         max-width: 31.2rem;
@@ -231,11 +284,7 @@ export default {
         }
     }
 
-
 }
-
-
-
 
 #earn-page-banner {
     height: 44rem;
@@ -249,8 +298,6 @@ export default {
     .container {
         position: relative;
             height: 44rem;
-
-
 
         #mov-img {
             position: absolute;
@@ -279,7 +326,6 @@ export default {
             /* Keeps the final state of the animation */
         }
 
-
         #zip-img {
             position: absolute;
             top: 14.5rem;
@@ -292,7 +338,6 @@ export default {
             animation-fill-mode: forwards;
             /* Keeps the final state of the animation */
         }
-
 
         #pdf-img {
             position: absolute;
@@ -309,7 +354,6 @@ export default {
 
         }
 
-
         #gif-img {
             position: absolute;
             top: 8.03rem;
@@ -323,7 +367,6 @@ export default {
             /* Keeps the final state of the animation */
             z-index: 2;
         }
-
 
         #mp3-img {
             position: absolute;
@@ -352,7 +395,6 @@ export default {
         margin: auto auto;
         margin-bottom: 3rem;
 
-
     }
 
     #content-monetization-steps {
@@ -360,7 +402,6 @@ export default {
         overflow-x: hidden;
         margin: auto auto;
         padding-bottom: 5.8rem;
-
 
         .step {
             border-left: 6.4rem solid #24292F1A;
@@ -388,22 +429,16 @@ export default {
                 padding: 1.6rem 1.6rem 1.6rem 1.6rem;
                 text-align: left;
 
-
                 .gama-text-h6 {
                     margin-bottom: 0.8rem;
                 }
 
-               
-
             }
-
 
         }
 
-
     }
 }
-
 
 #earn-how-work {
     text-align: center;
@@ -431,10 +466,6 @@ export default {
         width: 100vw;
         margin: auto;
     }
-
-
-
-
 
     .gama-text-h4 {
         margin: auto;
@@ -477,11 +508,7 @@ export default {
         margin-bottom: 2.4rem;
     }
 
-
-
-
 }
-
 
 @media (min-width: 438px) {
     #earn-page-banner {
@@ -500,18 +527,16 @@ export default {
         height: 24.2rem;
         margin-bottom: 3.4rem;
 
-
         #main-title-holder {
             max-width: 71.2rem;
             top: 11.8rem;
         }
 
-
     }
 
     #earn-page-banner {
         height: 40rem;
-        
+
         background: url('/images/earn-banner-sm.svg');
         background-repeat: no-repeat;
         background-size: 140% auto;
@@ -520,7 +545,6 @@ export default {
         .container {
             position: relative;
             height: 50rem;
-            
 
             #mov-img {
                 position: absolute;
@@ -549,7 +573,6 @@ export default {
                 /* Keeps the final state of the animation */
             }
 
-
             #zip-img {
                 position: absolute;
                 bottom: -10rem;
@@ -562,7 +585,6 @@ export default {
                 animation-fill-mode: forwards;
                 /* Keeps the final state of the animation */
             }
-
 
             #pdf-img {
                 position: absolute;
@@ -577,7 +599,6 @@ export default {
                 /* Keeps the final state of the animation */
             }
 
-
             #gif-img {
                 position: absolute;
                 top: 5.83rem;
@@ -590,7 +611,6 @@ export default {
                 animation-fill-mode: forwards;
                 /* Keeps the final state of the animation */
             }
-
 
             #mp3-img {
                 position: absolute;
@@ -612,16 +632,12 @@ export default {
     #earn-content-monetization {
         text-align: center;
 
-
-
         #content-monetization-steps {
             width: 100vw;
             padding-left: 1.6rem;
             padding-right: 1.6rem;
             padding-bottom: 5.8rem;
             margin: auto auto;
-
-
 
             .step {
                 border-left: 6.4rem solid #24292F1A;
@@ -644,7 +660,6 @@ export default {
                     padding: 2.4rem 1.6rem 1.6rem 1.6rem;
                     text-align: left;
 
-
                     .gama-text-h6 {
                         margin-bottom: 0.8rem;
                     }
@@ -653,15 +668,10 @@ export default {
 
                 }
 
-
             }
-
 
         }
     }
-
-
-
 
     #earn-how-work-level {
         margin-bottom: 4.8rem;
@@ -670,7 +680,6 @@ export default {
     #earn-features {
         text-align: center;
         margin-bottom: 6.4rem;
-
 
         .gama-text-h4 {
             margin: auto;
@@ -714,11 +723,9 @@ export default {
         }
     }
 
-
     #earn-features {
         text-align: center;
         margin-bottom: 6.4rem;
-
 
         .gama-text-h4 {
             margin: auto;
@@ -747,19 +754,13 @@ export default {
         }
     }
 
-
-
-
-
 }
-
 
 @media (min-width: 750px) {
     #earn-page-banner {
         height: 45rem;
     }
 }
-
 
 @media (min-width: 850px) {
     #earn-page-banner {
@@ -769,8 +770,6 @@ export default {
 
 @media only screen and (min-width: 960px) {
 
-
-
     #earn-page-banner {
         background: url('/images/earn-banner-md.svg');
         height: 34.4rem;
@@ -779,11 +778,9 @@ export default {
         background-size: 120% auto;
         width: 100%;
 
-
         .container {
             position: relative;
             height: 38.4rem;
-
 
             #mov-img {
                 position: absolute;
@@ -812,7 +809,6 @@ export default {
                 /* Keeps the final state of the animation */
             }
 
-
             #zip-img {
                 position: absolute;
                 bottom: -10rem;
@@ -825,7 +821,6 @@ export default {
                 animation-fill-mode: forwards;
                 /* Keeps the final state of the animation */
             }
-
 
             #pdf-img {
                 position: absolute;
@@ -840,7 +835,6 @@ export default {
                 /* Keeps the final state of the animation */
             }
 
-
             #gif-img {
                 position: absolute;
                 top: 5.83rem;
@@ -853,7 +847,6 @@ export default {
                 animation-fill-mode: forwards;
                 /* Keeps the final state of the animation */
             }
-
 
             #mp3-img {
                 position: absolute;
@@ -872,7 +865,6 @@ export default {
 
     }
 
-
     #earn-content-monetization {
         text-align: center;
 
@@ -882,14 +874,12 @@ export default {
             margin: auto auto;
             margin-bottom: 3rem;
 
-
         }
 
         #content-monetization-steps {
             width: 78vw;
             margin: auto auto;
             padding-bottom: 5.8rem;
-
 
             .step {
                 border-left: 6.4rem solid #24292F1A;
@@ -917,7 +907,6 @@ export default {
                     padding: 2.4rem 1.6rem 1.6rem 1.6rem;
                     text-align: left;
 
-
                     .gama-text-h6 {
                         margin-bottom: 0.8rem;
                     }
@@ -926,9 +915,7 @@ export default {
 
                 }
 
-
             }
-
 
         }
     }
@@ -942,11 +929,9 @@ export default {
         margin-bottom: 10rem;
     }
 
-
     #earn-features {
         text-align: center;
         margin-bottom: 6.4rem;
-
 
         .gama-text-h4 {
             margin: auto;
@@ -978,7 +963,6 @@ export default {
         }
     }
 }
-
 
 @media (min-width: 1100px) {
     #earn-page-banner {
@@ -1026,8 +1010,6 @@ export default {
     }
 }
 
-
-
 /* Animate for mobile*/
 @keyframes slideAndRotateMovMobileAnimation {
     0% {
@@ -1044,7 +1026,6 @@ export default {
         /* Rotate to 45 degrees */
     }
 }
-
 
 @keyframes slideAndRotateDocMobileAnimation {
     0% {
@@ -1077,7 +1058,6 @@ export default {
     }
 }
 
-
 @keyframes slideAndRotatePdfMobileAnimation {
     0% {
         top: 40rem;
@@ -1094,7 +1074,6 @@ export default {
         /* Rotate to 45 degrees */
     }
 }
-
 
 @keyframes slideAndRotateGifMobileAnimation {
     0% {
@@ -1113,7 +1092,6 @@ export default {
     }
 }
 
-
 @keyframes slideAndRotateMp3MobileAnimation {
     0% {
         top: 20.81rem;
@@ -1131,11 +1109,6 @@ export default {
 
 /* End animate for mobile*/
 
-
-
-
-
-
 /* Animate for tablet*/
 @keyframes slideAndRotateMovTabletAnimation {
     0% {
@@ -1152,7 +1125,6 @@ export default {
         /* Rotate to 45 degrees */
     }
 }
-
 
 @keyframes slideAndRotateDocTabletAnimation {
     0% {
@@ -1186,7 +1158,6 @@ export default {
     }
 }
 
-
 @keyframes slideAndRotatePdfTabletAnimation {
     0% {
         top: 40rem;
@@ -1203,7 +1174,6 @@ export default {
         /* Rotate to 45 degrees */
     }
 }
-
 
 @keyframes slideAndRotateGifTabletAnimation {
     0% {
@@ -1222,7 +1192,6 @@ export default {
     }
 }
 
-
 @keyframes slideAndRotateMp3TabletAnimation {
     0% {
         top: 20.81rem;
@@ -1240,8 +1209,6 @@ export default {
 
 /* End animate for tablet*/
 
-
-
 /* Animate for desktop*/
 @keyframes slideAndRotateMovDesktopAnimation {
     0% {
@@ -1257,7 +1224,6 @@ export default {
         /* Rotate to 45 degrees */
     }
 }
-
 
 @keyframes slideAndRotateDocDesktopAnimation {
     0% {
@@ -1289,7 +1255,6 @@ export default {
     }
 }
 
-
 @keyframes slideAndRotatePdfDesktopAnimation {
     0% {
         top: 40rem;
@@ -1307,7 +1272,6 @@ export default {
     }
 }
 
-
 @keyframes slideAndRotateGifDesktopAnimation {
     0% {
         top: -100rem;
@@ -1324,7 +1288,6 @@ export default {
         /* Rotate to 45 degrees */
     }
 }
-
 
 @keyframes slideAndRotateMp3DesktopAnimation {
     0% {

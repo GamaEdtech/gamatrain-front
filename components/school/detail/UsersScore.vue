@@ -1,14 +1,19 @@
 <template>
   <v-row class="mt-16">
-    <v-col cols="12" md="4">
-      <h3 class="gtext-h5 primary-gray-600 mb-15 font-weight-bold">Score</h3>
+    <v-col
+      cols="12"
+      md="4"
+    >
+      <h3 class="gtext-h5 primary-gray-600 mb-15 font-weight-bold">
+        Score
+      </h3>
       <div class="d-flex">
         <img
-          src="/images/score.png"
           id="score-img"
+          src="/images/score.png"
           alt="Users score"
           class="mr-8"
-        />
+        >
         <div class="mt-10">
           <div class="gtext-t6 primary-gray-400 mb-10">
             Total comments
@@ -25,14 +30,13 @@
               hover
               size="24"
               readonly
-            ></v-rating>
+            />
           </div>
           <div class="gtext-t6 primary-gray-400">
             Average score &nbsp;<span
               class="primary-gray-900 gtext-t4 font-weight-medium"
             >
-              {{ averageRate ? averageRate.toFixed(1) : "New" }} </span
-            ><span>&nbsp;/&nbsp;5</span>
+              {{ averageRate ? averageRate.toFixed(1) : "New" }} </span><span>&nbsp;/&nbsp;5</span>
           </div>
         </div>
       </div>
@@ -43,14 +47,21 @@
           rounded
           size="x-large"
           @click="emit('leave-comment')"
-          >Leave a Comment</v-btn
         >
+          Leave a Comment
+        </v-btn>
       </div>
     </v-col>
-    <v-col cols="12" md="8">
-      <ul id="score-results" class="pl-0 mr-4">
+    <v-col
+      cols="12"
+      md="8"
+    >
+      <ul
+        id="score-results"
+        class="pl-0 mr-4"
+      >
         <li class="d-flex mb-4">
-          <div class="bullet"></div>
+          <div class="bullet" />
           <div class="gtext-t4 font-weight-medium score-title">
             Classroom & facility quality
           </div>
@@ -66,7 +77,7 @@
           </div>
         </li>
         <li class="d-flex mb-4">
-          <div class="bullet"></div>
+          <div class="bullet" />
           <div class="gtext-t4 font-weight-medium score-title">
             Teachers' expertise
           </div>
@@ -76,13 +87,13 @@
             :model-value="(ratingData.educationRate * 100) / 5"
             height="8"
             class="mt-3"
-          ></v-progress-linear>
+          />
           <div class="gtext-t4 font-weight-medium rate-title ml-2">
             {{ convertRateToString(ratingData.educationRate) }}
           </div>
         </li>
         <li class="d-flex mb-4">
-          <div class="bullet"></div>
+          <div class="bullet" />
           <div class="gtext-t4 font-weight-medium score-title">
             Tech accessibility
           </div>
@@ -92,13 +103,13 @@
             :model-value="(ratingData.itTrainingRate * 100) / 5"
             height="8"
             class="mt-3"
-          ></v-progress-linear>
+          />
           <div class="gtext-t4 font-weight-medium rate-title ml-2">
             {{ convertRateToString(ratingData.itTrainingRate) }}
           </div>
         </li>
         <li class="d-flex mb-4">
-          <div class="bullet"></div>
+          <div class="bullet" />
           <div class="gtext-t4 font-weight-medium score-title">
             Safety & environment
           </div>
@@ -108,13 +119,13 @@
             :model-value="(ratingData.safetyAndHappinessRate * 100) / 5"
             height="8"
             class="mt-3"
-          ></v-progress-linear>
+          />
           <div class="gtext-t4 font-weight-medium rate-title ml-2">
             {{ convertRateToString(ratingData.safetyAndHappinessRate) }}
           </div>
         </li>
         <li class="d-flex mb-4">
-          <div class="bullet"></div>
+          <div class="bullet" />
           <div class="gtext-t4 font-weight-medium score-title">
             Staff behavior
           </div>
@@ -130,7 +141,7 @@
           </div>
         </li>
         <li class="d-flex mb-4">
-          <div class="bullet"></div>
+          <div class="bullet" />
           <div class="gtext-t4 font-weight-medium score-title">
             Value for tuition
           </div>
@@ -146,7 +157,7 @@
           </div>
         </li>
         <li class="d-flex mb-4">
-          <div class="bullet"></div>
+          <div class="bullet" />
           <div class="gtext-t4 font-weight-medium score-title">
             Sports facilities
           </div>
@@ -156,13 +167,13 @@
             :model-value="(ratingData.facilitiesRate * 100) / 5"
             height="8"
             class="mt-3"
-          ></v-progress-linear>
+          />
           <div class="gtext-t4 font-weight-medium rate-title ml-2">
             {{ convertRateToString(ratingData.facilitiesRate) }}
           </div>
         </li>
         <li class="d-flex">
-          <div class="bullet"></div>
+          <div class="bullet" />
           <div class="gtext-t4 font-weight-medium score-title">
             Art & counseling programs
           </div>
@@ -172,7 +183,7 @@
             :model-value="(ratingData.artisticActivitiesRate * 100) / 5"
             height="8"
             class="mt-3"
-          ></v-progress-linear>
+          />
           <div class="gtext-t4 font-weight-medium rate-title ml-2">
             {{ convertRateToString(ratingData.artisticActivitiesRate) }}
           </div>
@@ -183,20 +194,21 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed } from 'vue'
+
 const props = defineProps({
   ratingData: {
     type: Object,
     required: true,
   },
-});
-const emit = defineEmits(["leave-comment"]);
-const averageRate = computed(() => props.ratingData.averageRate || 0);
+})
+const emit = defineEmits(['leave-comment'])
+const averageRate = computed(() => props.ratingData.averageRate || 0)
 function convertRateToString(value) {
-  if (value > 3.5) return "Good";
-  else if (value > 2) return "Average";
-  else if (value <= 2) return "Poor";
-  else return "Unknown";
+  if (value > 3.5) return 'Good'
+  else if (value > 2) return 'Average'
+  else if (value <= 2) return 'Poor'
+  else return 'Unknown'
 }
 </script>
 

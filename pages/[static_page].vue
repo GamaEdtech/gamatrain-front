@@ -3,9 +3,14 @@
   <v-container>
     <v-row>
       <v-col cols="12">
-        <h1 class="text-h4 font-weight-bold">{{ pageData.title }}</h1>
+        <h1 class="text-h4 font-weight-bold">
+          {{ pageData.title }}
+        </h1>
 
-        <p class="mt-3" v-html="pageData.content" />
+        <p
+          class="mt-3"
+          v-html="pageData.content"
+        />
       </v-col>
     </v-row>
   </v-container>
@@ -13,25 +18,25 @@
 
 <script>
 export default {
-  name: "static_page",
+  name: 'StaticPage',
   async asyncData({ params, error }) {
-    var param = "";
-    if (params.static_page == "terms-and-conditions") param = "terms";
-    else param = params.static_page;
+    let param = ''
+    if (params.static_page == 'terms-and-conditions') param = 'terms'
+    else param = params.static_page
 
-    const page_info = await useApiService.get(`/api/v1/pages/${param}`);
+    const page_info = await useApiService.get(`/api/v1/pages/${param}`)
 
     if (!page_info.data.title)
-      error({ statusCode: 404, message: "Page not found" });
+      error({ statusCode: 404, message: 'Page not found' })
     else {
-      const pageData = page_info.data;
-      return { pageData };
+      const pageData = page_info.data
+      return { pageData }
     }
   },
   head() {
     return {
       title: this.pageData.title,
-    };
+    }
   },
-};
+}
 </script>

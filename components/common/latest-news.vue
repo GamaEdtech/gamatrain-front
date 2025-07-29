@@ -6,12 +6,16 @@
         alt=""
         class="mx-2"
         width="28"
-      />
+      >
       Latest News
     </div>
 
     <div class="d-flex flex-column pa-3">
-      <div class="feed-box-item d-flex" v-for="item in news">
+      <div
+        v-for="(item, index) in news"
+        :key="index"
+        class="feed-box-item d-flex"
+      >
         <div class="feedBoxImg">
           <v-img
             max-width="100"
@@ -28,49 +32,52 @@
           </p>
           <div class="d-flex justify-space-between">
             <div class="feed-title">
-              <i class="fa-solid fa-grip-vertical ml-2"></i>
+              <i class="fa-solid fa-grip-vertical ml-2" />
               {{ item.cat_title }}
             </div>
             <div class="feed-date">
-              <i class="fa-solid fa-calendar-days ml-2"></i>
+              <i class="fa-solid fa-calendar-days ml-2" />
               {{ $dayjs(item.subdate).format("MMM DD") }}
             </div>
           </div>
         </div>
       </div>
-      <v-divider></v-divider>
+      <v-divider />
     </div>
     <div class="feed-footer d-flex align-center pa-3">
-      <nuxt-link to="/" class="pb-0 feed-more mr-4">More </nuxt-link>
+      <nuxt-link
+        to="/"
+        class="pb-0 feed-more mr-4"
+      >More </nuxt-link>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "latest-news",
+  name: 'LatestNews',
   data() {
     return {
-      thirdFeedBoxIcon: "News.png",
+      thirdFeedBoxIcon: 'News.png',
       news: [],
-    };
+    }
   },
   mounted() {
-    this.getNews();
+    this.getNews()
   },
   methods: {
     async getNews() {
       await useApiService
-        .get("/api/v1/home/news")
+        .get('/api/v1/home/news')
         .then((res) => {
-          this.news = res.data;
+          this.news = res.data
         })
         .catch((err) => {
-          console.log(err);
-        });
+          console.log(err)
+        })
     },
   },
-};
+}
 </script>
 
 <style scoped></style>

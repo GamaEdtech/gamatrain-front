@@ -1,33 +1,58 @@
 <template>
   <!-- Start Loader Skeleton -->
-  <v-col cols="12" sm="8" md="8" v-if="isLoading" class="d-flex flex-column">
-    <v-skeleton-loader v-for="item in 4" type="paragraph"></v-skeleton-loader>
+  <v-col
+    v-if="isLoading"
+    cols="12"
+    sm="8"
+    md="8"
+    class="d-flex flex-column"
+  >
+    <v-skeleton-loader
+      v-for="(item, index) in 4"
+      :key="`desktop-${index}`"
+      type="paragraph"
+    />
   </v-col>
   <!-- End Loader Skeleton -->
 
   <!-- <div class="d-block" v-if="!isLoading && data.length > 0"> -->
-  <v-col cols="12" sm="8" md="8" v-if="!isLoading && data.length > 0">
+  <v-col
+    v-if="!isLoading && data.length > 0"
+    cols="12"
+    sm="8"
+    md="8"
+  >
     <!-- Start Resource Section -->
-    <v-list lines="two" class="d-block list-item-resource">
-      <template v-for="(resource, index) in data" :key="`desktop-${index}`">
+    <v-list
+      lines="two"
+      class="d-block list-item-resource"
+    >
+      <template
+        v-for="(resource, index) in data"
+        :key="`desktop-${index}`"
+      >
         <v-list-item
-          class="pa-0"
           v-if="
-            resource.items &&
-            resource.items.length > 0 &&
-            resource.title != `Topical`
+            resource.items
+              && resource.items.length > 0
+              && resource.title != `Topical`
           "
+          class="pa-0"
         >
-          <template v-slot:prepend>
+          <template #prepend>
             <v-icon
+              v-if="resource.useCustomIcon"
               color="#ffb600"
               size="24"
-              v-if="resource.useCustomIcon"
               :class="resource.icon"
-            ></v-icon>
-            <v-icon color="#ffb600" size="24" v-else>{{
-              getMaterialIcon(resource.icon)
-            }}</v-icon>
+            />
+            <v-icon
+              v-else
+              color="#ffb600"
+              size="24"
+            >
+              {{ getMaterialIcon(resource.icon) }}
+            </v-icon>
           </template>
 
           <v-list-item-title class="text-h6 text-md-h4 font-weight-bold">
@@ -35,9 +60,9 @@
           </v-list-item-title>
           <div class="container-links">
             <NuxtLink
-              class="font-weight-medium primary-subtitle-500"
               v-for="(item, j) in resource.items"
               :key="j"
+              class="font-weight-medium primary-subtitle-500"
               :to="`/paper/${item.id}/${item.title_url}`"
             >
               {{
@@ -62,13 +87,18 @@
         class="pa-0 d-inline-flex flex-row align-center"
         style="min-height: fit-content"
       >
-        <template v-slot:prepend>
-          <v-icon color="#ffb600" size="24">mdi-book-open-variant</v-icon>
+        <template #prepend>
+          <v-icon
+            color="#ffb600"
+            size="24"
+          >
+            mdi-book-open-variant
+          </v-icon>
         </template>
 
-        <v-list-item-title class="text-h6 text-md-h4 font-weight-bold">{{
-          topicalData.label
-        }}</v-list-item-title>
+        <v-list-item-title class="text-h6 text-md-h4 font-weight-bold">
+          {{ topicalData.label }}
+        </v-list-item-title>
       </v-list-item>
       <div class="container-topical-chip">
         <v-chip-group>
@@ -95,7 +125,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   data: {
     type: Array,
   },
@@ -106,23 +136,23 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-});
+})
 
 const getMaterialIcon = (iconName) => {
   // Map your current icon names to Material Design icon names
   const iconMap = {
-    "ExamHub.svg": "mdi-notebook-edit-outline",
-    "PaperIcon.svg": "mdi-file-document-outline",
-    "QA.svg": "mdi-forum",
-    "Guide.svg": "mdi-sign-direction",
-    "Tutorial.svg": "mdi-book-open-page-variant-outline",
+    'ExamHub.svg': 'mdi-notebook-edit-outline',
+    'PaperIcon.svg': 'mdi-file-document-outline',
+    'QA.svg': 'mdi-forum',
+    'Guide.svg': 'mdi-sign-direction',
+    'Tutorial.svg': 'mdi-book-open-page-variant-outline',
     // Add more mappings as needed
     // Default icon if not found in mapping
-    default: "mdi-file-outline",
-  };
+    'default': 'mdi-file-outline',
+  }
 
-  return iconMap[iconName] || iconMap.default;
-};
+  return iconMap[iconName] || iconMap.default
+}
 </script>
 
 <style>

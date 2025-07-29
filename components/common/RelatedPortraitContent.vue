@@ -1,7 +1,13 @@
 <template>
   <div class="mx-4">
-    <div class="d-flex mb-3" style="gap: 8px">
-      <h1 class="gtext-t4 font-weight-semibold" style="color: #344054">
+    <div
+      class="d-flex mb-3"
+      style="gap: 8px"
+    >
+      <h1
+        class="gtext-t4 font-weight-semibold"
+        style="color: #344054"
+      >
         Related {{ pageName }}
       </h1>
     </div>
@@ -11,84 +17,97 @@
       :style="{ height: `${CardHeight}` }"
     >
       <template #prev>
-        <v-btn icon size="sm">
+        <v-btn
+          icon
+          size="sm"
+        >
           <v-icon>mdi-chevron-left</v-icon>
         </v-btn>
       </template>
 
       <template #next>
-        <v-btn icon size="sm">
+        <v-btn
+          icon
+          size="sm"
+        >
           <v-icon>mdi-chevron-right</v-icon>
         </v-btn>
       </template>
 
-      <v-slide-group-item v-for="item in data" :key="item.id">
+      <v-slide-group-item
+        v-for="item in data"
+        :key="item.id"
+      >
         <nuxt-link :to="`/${pageType}/${item.id}/${item.title_url}`">
           <common-related-portrait-content-card
-            :cardPicture="item.thumb_pic || fallbackImage"
-            :cardTitle="item.title"
+            :card-picture="item.thumb_pic || fallbackImage"
+            :card-title="item.title"
             :score="item.referee_score || item.type_title"
-            :showScoreLabel="!!item.referee_score"
+            :show-score-label="!!item.referee_score"
           />
         </nuxt-link>
       </v-slide-group-item>
     </v-slide-group>
   </div>
 </template>
+
 <script setup>
 const props = defineProps({
   pageType: String,
   pageName: String,
   source: String,
   request: String,
-});
+})
 
-const route = useRoute();
+const route = useRoute()
 
-const data = ref(null);
-const relatedId = route.params.id ? route.params.id : route.params.slug[0];
-const fallbackImage = "/images/GamaBag.webp";
+const data = ref(null)
+const relatedId = route.params.id ? route.params.id : route.params.slug[0]
+const fallbackImage = '/images/GamaBag.webp'
 
 const getRelatedContent = async () => {
   try {
-    const response = await $fetch("/api/v1/recommendations/related", {
-      method: "GET",
+    const response = await $fetch('/api/v1/recommendations/related', {
+      method: 'GET',
       params: {
         source: props.source,
         request: props.request,
         id: relatedId,
       },
-    });
-    const arrays = response.data;
+    })
+    const arrays = response.data
     for (const key in arrays) {
       if (Array.isArray(arrays[key]) && arrays[key].length > 0) {
-        data.value = arrays[key];
-        break;
+        data.value = arrays[key]
+        break
       }
     }
 
     if (!data.value) {
-      data.value = [];
+      data.value = []
     }
-  } catch (error) {
-    console.error("Search error:", error);
   }
-};
+  catch (error) {
+    console.error('Search error:', error)
+  }
+}
 
 onMounted(() => {
-  console.log(relatedId);
-  getRelatedContent();
-});
+  console.log(relatedId)
+  getRelatedContent()
+})
 
 const CardHeight = computed(() => {
-  if (props.pageType === "paper") {
-    return "243px";
-  } else if (props.pageType === "multimedia") {
-    return "120px";
+  if (props.pageType === 'paper') {
+    return '243px'
   }
-  return "auto";
-});
+  else if (props.pageType === 'multimedia') {
+    return '120px'
+  }
+  return 'auto'
+})
 </script>
+
 <style>
 .v-slide-group__content {
   margin-top: 10px !important;

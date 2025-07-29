@@ -1,22 +1,37 @@
 <template>
-  <v-container fluid id="level-guid-banner">
+  <v-container
+    id="level-guid-banner"
+    fluid
+  >
     <v-container>
       <v-row>
-        <v-col cols="12" class="text-center">
-          <h2 class="gama-text-h4 black--text">Earn Money with GamaTrain</h2>
+        <v-col
+          cols="12"
+          class="text-center"
+        >
+          <h2 class="gama-text-h4 black--text">
+            Earn Money with GamaTrain
+          </h2>
         </v-col>
-        <v-col cols="12" class="text-center">
-          <h2 class="gama-text-h4">{{ slideArr[slideIndex].caption }}</h2>
+        <v-col
+          cols="12"
+          class="text-center"
+        >
+          <h2 class="gama-text-h4">
+            {{ slideArr[slideIndex].caption }}
+          </h2>
         </v-col>
         <v-col cols="12">
-          <p class="gama-text-body1">{{ slideArr[slideIndex].describe }}</p>
+          <p class="gama-text-body1">
+            {{ slideArr[slideIndex].describe }}
+          </p>
           <div class="img-holder">
             <v-slide-x-transition>
               <img
-                :alt="slideArr[slideIndex].caption"
                 v-if="expand"
+                :alt="slideArr[slideIndex].caption"
                 :src="`/images/${slideArr[slideIndex].img}`"
-              />
+              >
             </v-slide-x-transition>
           </div>
 
@@ -24,8 +39,15 @@
             v-model="slideIndex"
             class="paginate d-flex justify-space-between"
           >
-            <v-item v-for="n in slideArr.length" :key="n">
-              <v-btn icon variant="text" @click="slideIndex = n - 1">
+            <v-item
+              v-for="n in slideArr.length"
+              :key="n"
+            >
+              <v-btn
+                icon
+                variant="text"
+                @click="slideIndex = n - 1"
+              >
                 {{ n }}
               </v-btn>
             </v-item>
@@ -35,12 +57,15 @@
     </v-container>
   </v-container>
 </template>
+
 <script>
 export default {
-  name: "level-guid-banner",
+  name: 'LevelGuidBanner',
   props: {
     slideArr: {
-      default: [],
+      type: Array,
+      required: false,
+      default: () => [],
     },
   },
   data() {
@@ -48,35 +73,35 @@ export default {
       slideIndex: 0,
       expand: true,
       intervalId: null, // Store the interval ID
-    };
+    }
+  },
+  watch: {
+    slideIndex(_val) {
+      this.expand = false
+
+      setTimeout(() => {
+        this.expand = true
+      }, 500)
+    },
+  },
+  mounted() {
+    this.handleAutoCycle()
+  },
+  beforeUnmount() {
+    this.stopInterval()
   },
   methods: {
     handleAutoCycle() {
       this.intervalId = setInterval(() => {
-        if (this.slideIndex == this.slideArr.length - 1) this.slideIndex = 0;
-        else this.slideIndex++;
-      }, 8000);
+        if (this.slideIndex == this.slideArr.length - 1) this.slideIndex = 0
+        else this.slideIndex++
+      }, 8000)
     },
     stopInterval() {
-      clearInterval(this.intervalId); // Clear the interval using the interval ID
+      clearInterval(this.intervalId) // Clear the interval using the interval ID
     },
   },
-  watch: {
-    slideIndex(val) {
-      this.expand = false;
-
-      setTimeout(() => {
-        this.expand = true;
-      }, 500);
-    },
-  },
-  mounted() {
-    this.handleAutoCycle();
-  },
-  beforeDestroy() {
-    this.stopInterval();
-  },
-};
+}
 </script>
 
 <style>

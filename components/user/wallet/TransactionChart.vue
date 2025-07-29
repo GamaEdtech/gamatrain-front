@@ -8,10 +8,16 @@
       v-if="loading"
       class="chart-loading d-flex justify-center align-center"
     >
-      <v-progress-circular indeterminate color="primary"></v-progress-circular>
+      <v-progress-circular
+        indeterminate
+        color="primary"
+      />
     </div>
 
-    <div v-else class="chart-wrapper">
+    <div
+      v-else
+      class="chart-wrapper"
+    >
       <LineChart
         :data="chartData"
         :options="chartOptions"
@@ -22,9 +28,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import { useAuth } from "~/composables/useAuth";
-import { useApiService } from "~/composables/useApiService";
+import { ref, reactive, onMounted } from 'vue'
+import { useAuth } from '~/composables/useAuth'
+import { useApiService } from '~/composables/useApiService'
 import {
   Chart as ChartJS,
   Title,
@@ -34,8 +40,8 @@ import {
   LinearScale,
   CategoryScale,
   PointElement,
-} from "chart.js";
-import { Line as LineChart } from "vue-chartjs";
+} from 'chart.js'
+import { Line as LineChart } from 'vue-chartjs'
 
 // Register Chart.js components
 ChartJS.register(
@@ -45,48 +51,48 @@ ChartJS.register(
   LineElement,
   LinearScale,
   CategoryScale,
-  PointElement
-);
+  PointElement,
+)
 
 // Composables
-const auth = useAuth();
-const { $toast } = useNuxtApp();
+const auth = useAuth()
+const { $toast: _toast } = useNuxtApp()
 
 // Reactive state
-const loading = ref(false);
-const selectedPeriod = ref("MonthOfYear");
-const token = ref("");
+const loading = ref(false)
+const selectedPeriod = ref('MonthOfYear')
+const token = ref('')
 
-const periodOptions = [
-  { text: "Monthly", value: "MonthOfYear" },
-  { text: "Weekly", value: "DayOfWeek" },
-];
+const _periodOptions = [
+  { text: 'Monthly', value: 'MonthOfYear' },
+  { text: 'Weekly', value: 'DayOfWeek' },
+]
 
 const chartData = reactive({
   labels: [],
   datasets: [
     {
-      label: "Spent",
+      label: 'Spent',
       data: [],
-      borderColor: "rgb(235, 77, 75)",
-      backgroundColor: "rgb(235, 77, 75)",
+      borderColor: 'rgb(235, 77, 75)',
+      backgroundColor: 'rgb(235, 77, 75)',
       tension: 0.4,
       pointRadius: 0,
       borderWidth: 2,
       fill: false,
     },
     {
-      label: "Earned",
+      label: 'Earned',
       data: [],
-      borderColor: "rgb(46, 213, 115)",
-      backgroundColor: "rgb(46, 213, 115)",
+      borderColor: 'rgb(46, 213, 115)',
+      backgroundColor: 'rgb(46, 213, 115)',
       tension: 0.4,
       pointRadius: 0,
       borderWidth: 2,
       fill: false,
     },
   ],
-});
+})
 
 const chartOptions = reactive({
   responsive: true,
@@ -94,36 +100,36 @@ const chartOptions = reactive({
   plugins: {
     legend: {
       display: true,
-      position: "top",
-      align: "end",
+      position: 'top',
+      align: 'end',
       labels: {
         usePointStyle: true,
-        pointStyle: "circle",
+        pointStyle: 'circle',
         padding: 25,
         boxWidth: 10,
         boxHeight: 10,
-        color: "#666",
+        color: '#666',
         font: {
           size: 12,
         },
       },
     },
     tooltip: {
-      backgroundColor: "white",
-      titleColor: "#333",
-      bodyColor: "#666",
-      borderColor: "#eee",
+      backgroundColor: 'white',
+      titleColor: '#333',
+      bodyColor: '#666',
+      borderColor: '#eee',
       borderWidth: 1,
       padding: 10,
       displayColors: true,
       callbacks: {
         label: function (context) {
-          let label = context.dataset.label || "";
+          let label = context.dataset.label || ''
           if (label) {
-            label += ": ";
+            label += ': '
           }
-          label += context.parsed.y + " $GET";
-          return label;
+          label += context.parsed.y + ' $GET'
+          return label
         },
       },
     },
@@ -134,7 +140,7 @@ const chartOptions = reactive({
         display: false,
       },
       ticks: {
-        color: "#999",
+        color: '#999',
         font: {
           size: 12,
         },
@@ -146,87 +152,89 @@ const chartOptions = reactive({
       ticks: {
         stepSize: 50,
         callback: function (value) {
-          return value;
+          return value
         },
-        color: "#999",
+        color: '#999',
         font: {
           size: 12,
         },
         padding: 10,
       },
       grid: {
-        color: "rgba(0, 0, 0, 0.05)",
+        color: 'rgba(0, 0, 0, 0.05)',
         borderDash: [3],
         drawBorder: false,
       },
     },
   },
-});
+})
 
 // Methods
 const getToken = () => {
-  if (process.client) {
-    token.value = localStorage.getItem("v2_token") || "";
+  if (import.meta.client) {
+    token.value = localStorage.getItem('v2_token') || ''
   }
-};
+}
 
 const fetchChartData = async () => {
-  loading.value = true;
+  loading.value = true
 
   try {
-    const response = await useApiService("/api/v2/transactions/statistics", {
-      method: "GET",
+    const response = await useApiService('/api/v2/transactions/statistics', {
+      method: 'GET',
       params: {
         Period: selectedPeriod.value,
       },
       headers: {
         Authorization: `Bearer ${token.value}`,
       },
-    });
+    })
 
     if (response.succeeded && response.data) {
-      updateChartWithData(response.data);
+      updateChartWithData(response.data)
     }
-  } catch (err) {
-    if (err.response && err.response.status === 403) {
-      auth.logout();
-    }
-    console.error("Error fetching chart data:", err);
-  } finally {
-    loading.value = false;
   }
-};
+  catch (err) {
+    if (err.response && err.response.status === 403) {
+      auth.logout()
+    }
+    console.error('Error fetching chart data:', err)
+  }
+  finally {
+    loading.value = false
+  }
+}
 
 const updateChartWithData = (data) => {
   // Filter out the empty record
-  const filteredData = data.filter((item) => item.name !== "");
+  const filteredData = data.filter(item => item.name !== '')
 
   // Extract labels and values
-  const labels = filteredData.map((item) => item.name);
-  const debitValues = filteredData.map((item) => item.debitValue);
-  const creditValues = filteredData.map((item) => item.creditValue);
+  const labels = filteredData.map(item => item.name)
+  const debitValues = filteredData.map(item => item.debitValue)
+  const creditValues = filteredData.map(item => item.creditValue)
 
   // Calculate max value for Y axis
   const maxValue = Math.max(
     ...debitValues,
     ...creditValues,
-    50 // Minimum value to show on the chart
-  );
+    50, // Minimum value to show on the chart
+  )
 
   // Update chart data
-  chartData.labels = labels;
-  chartData.datasets[0].data = debitValues;
-  chartData.datasets[1].data = creditValues;
+  chartData.labels = labels
+  chartData.datasets[0].data = debitValues
+  chartData.datasets[1].data = creditValues
 
   // Update Y axis scale
-  chartOptions.scales.y.suggestedMax = Math.ceil(maxValue * 1.1); // Add 10% padding
-};
+  chartOptions.scales.y.suggestedMax = Math.ceil(maxValue * 1.1) // Add 10% padding
+}
 
 // Lifecycle hooks
 onMounted(() => {
-  getToken();
-  fetchChartData();
-});
+  getToken()
+  fetchChartData()
+})
 </script>
 
 <style scoped>

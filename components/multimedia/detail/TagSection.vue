@@ -1,12 +1,20 @@
 <template>
   <div class="label-holder mt-4">
-    <v-chip v-if="sectionTitle" link class="mr-1 bg-blue-grey-darken-2">
+    <v-chip
+      v-if="sectionTitle"
+      link
+      class="mr-1 bg-blue-grey-darken-2"
+    >
       <nuxt-link :to="`/search?type=learnfiles&section=${sectionId}`">
         {{ sectionTitle }}
       </nuxt-link>
     </v-chip>
 
-    <v-chip v-if="baseTitle" link class="mr-1 bg-blue-grey-darken-2">
+    <v-chip
+      v-if="baseTitle"
+      link
+      class="mr-1 bg-blue-grey-darken-2"
+    >
       <nuxt-link
         :to="`/search?type=learnfiles&section=${sectionId}&base=${baseId}`"
       >
@@ -14,7 +22,11 @@
       </nuxt-link>
     </v-chip>
 
-    <v-chip v-if="lessonTitle" link class="ma-1 bg-blue-grey-darken-2">
+    <v-chip
+      v-if="lessonTitle"
+      link
+      class="ma-1 bg-blue-grey-darken-2"
+    >
       <nuxt-link
         :to="`/search?type=learnfiles&section=${sectionId}&base=${baseId}&lesson=${lessonId}`"
       >
@@ -27,34 +39,32 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
-
-const props = defineProps({
+defineProps({
   sectionId: {
     type: String,
-    default: "",
+    default: '',
   },
   sectionTitle: {
     type: String,
-    default: "",
+    default: '',
   },
   baseId: {
     type: String,
-    default: "",
+    default: '',
   },
   baseTitle: {
     type: String,
-    default: "",
+    default: '',
   },
   lessonId: {
     type: String,
-    default: "",
+    default: '',
   },
   lessonTitle: {
     type: String,
-    default: "",
+    default: '',
   },
-});
+})
 </script>
 
 <style scoped>

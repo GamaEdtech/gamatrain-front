@@ -1,33 +1,30 @@
-import { onMounted, onUnmounted, ref } from 'vue'
-import type { Ref } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 export function useClickOutside(
-    elementRef: Ref<HTMLElement | HTMLElement[] | null | undefined>,
-    callback: () => void
+  elementRef: Ref<HTMLElement | HTMLElement[] | null | undefined>,
+  callback: () => void,
 ) {
-    const handler = (event: MouseEvent) => {
-        const target = event.target as Node
+  const handler = (event: MouseEvent) => {
+    const target = event.target as Node
 
-        if (Array.isArray(elementRef.value)) {
-            const isInside = elementRef.value.some(el =>
-                el?.contains(target)
-            )
-            if (!isInside) {
-                callback()
-            }
-        }
-        else if (elementRef.value?.contains) {
-            if (!elementRef.value.contains(target)) {
-                callback()
-            }
-        }
+    if (Array.isArray(elementRef.value)) {
+      const isInside = elementRef.value.some(el => el?.contains(target))
+      if (!isInside) {
+        callback()
+      }
     }
+    else if (elementRef.value?.contains) {
+      if (!elementRef.value.contains(target)) {
+        callback()
+      }
+    }
+  }
 
-    onMounted(() => {
-        document.addEventListener('click', handler)
-    })
+  onMounted(() => {
+    document.addEventListener('click', handler)
+  })
 
-    onUnmounted(() => {
-        document.removeEventListener('click', handler)
-    })
+  onUnmounted(() => {
+    document.removeEventListener('click', handler)
+  })
 }

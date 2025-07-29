@@ -1,21 +1,30 @@
 <template>
   <v-container>
     <div>
-      <v-col cols="12" class="px-0 px-sm-2">
+      <v-col
+        cols="12"
+        class="px-0 px-sm-2"
+      >
         <v-row>
-          <v-col cols="12" class="pl-5">
-            <span class="icon icong-qa text-h3 teal--text"></span>
+          <v-col
+            cols="12"
+            class="pl-5"
+          >
+            <span class="icon icong-qa text-h3 teal--text" />
             <span class="text-h4 teal--text"> Results </span>
           </v-col>
         </v-row>
         <v-card class="mt-3">
           <v-card-text class="px-sm-8 px-md-4">
-            <!--Filter section-->
+            <!-- Filter section -->
             <v-row class="d-none d-md-flex">
-              <v-col cols="12" md="3">
+              <v-col
+                cols="12"
+                md="3"
+              >
                 <v-autocomplete
-                  dense
                   v-model="filter.level"
+                  dense
                   clearable
                   :items="level_list"
                   item-text="title"
@@ -24,10 +33,13 @@
                   outlined
                 />
               </v-col>
-              <v-col cols="12" md="3">
+              <v-col
+                cols="12"
+                md="3"
+              >
                 <v-autocomplete
-                  dense
                   v-model="filter.grade"
+                  dense
                   clearable
                   :items="grade_list"
                   item-value="id"
@@ -36,37 +48,51 @@
                   outlined
                 />
               </v-col>
-              <v-col cols="12" md="3">
+              <v-col
+                cols="12"
+                md="3"
+              >
                 <v-autocomplete
+                  v-model="filter.lesson"
                   dense
                   :items="lesson_list"
                   item-value="id"
                   item-text="title"
-                  v-model="filter.lesson"
                   clearable
                   label="Subject"
                   outlined
                 />
               </v-col>
             </v-row>
-            <!--End filter section-->
+            <!-- End filter section -->
 
             <v-row>
-              <v-col cols="12" class="px-0 px-sm-4 px-md-4">
+              <v-col
+                cols="12"
+                class="px-0 px-sm-4 px-md-4"
+              >
                 <v-simple-table class="exams_table">
-                  <template v-slot:default>
+                  <template #default>
                     <thead>
                       <tr>
-                        <th class="text-h5">Title</th>
-                        <th class="text-center text-h5">Date</th>
-                        <th class="text-center text-h5">Status</th>
-                        <th class="text-center text-h5">Report card</th>
+                        <th class="text-h5">
+                          Title
+                        </th>
+                        <th class="text-center text-h5">
+                          Date
+                        </th>
+                        <th class="text-center text-h5">
+                          Status
+                        </th>
+                        <th class="text-center text-h5">
+                          Report card
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr
-                        v-show="exam_list.length > 0"
                         v-for="item in exam_list"
+                        v-show="exam_list.length > 0"
                         :key="item.id"
                       >
                         <td>
@@ -108,7 +134,10 @@
                         </td>
                       </tr>
                       <tr v-show="page_loading">
-                        <td cols="4" class="text-center">
+                        <td
+                          cols="4"
+                          class="text-center"
+                        >
                           <v-progress-circular
                             :size="40"
                             :width="4"
@@ -132,19 +161,14 @@
 
 <script>
 export default {
-  layout: "test-maker-layout",
-  name: "user-exams-results",
-  head() {
-    return {
-      title: "Results",
-    };
-  },
+  name: 'UserExamsResults',
+  layout: 'test-maker-layout',
   data() {
     return {
       filter: {
-        level: "",
-        grade: "",
-        lesson: "",
+        level: '',
+        grade: '',
+        lesson: '',
       },
 
       level_list: [],
@@ -156,73 +180,80 @@ export default {
       page_loading: false,
       page: 1,
       all_files_loaded: false,
-    };
+    }
   },
-  mounted() {
-    this.getTypeList("section");
-    this.getExams();
-    this.scroll();
+  head() {
+    return {
+      title: 'Results',
+    }
   },
   watch: {
-    "filter.level"(val) {
-      this.filter.grade = "";
-      this.filter.lesson = "";
-      if (val) this.getTypeList("base", val);
+    'filter.level'(val) {
+      this.filter.grade = ''
+      this.filter.lesson = ''
+      if (val) this.getTypeList('base', val)
 
-      this.page = 1;
-      this.all_files_loaded = false;
-      this.exam_list = [];
-      this.getExams();
+      this.page = 1
+      this.all_files_loaded = false
+      this.exam_list = []
+      this.getExams()
     },
-    "filter.grade"(val) {
-      this.filter.lesson = "";
-      if (val) this.getTypeList("lesson", val);
+    'filter.grade'(val) {
+      this.filter.lesson = ''
+      if (val) this.getTypeList('lesson', val)
 
-      this.page = 1;
-      this.all_files_loaded = false;
-      this.exam_list = [];
-      this.getExams();
+      this.page = 1
+      this.all_files_loaded = false
+      this.exam_list = []
+      this.getExams()
     },
-    "filter.lesson"(val) {
-      this.page = 1;
-      this.all_files_loaded = false;
-      this.exam_list = [];
-      this.getExams();
+    'filter.lesson'(_val) {
+      this.page = 1
+      this.all_files_loaded = false
+      this.exam_list = []
+      this.getExams()
     },
   },
+  mounted() {
+    this.getTypeList('section')
+    this.getExams()
+    this.scroll()
+  },
   methods: {
-    getTypeList(type, parent = "") {
-      var params = {
+    getTypeList(type, _val) {
+      const params = {
         type: type,
-      };
-      if (type === "base") params.section_id = parent;
-      if (type === "lesson") {
-        params.base_id = parent;
+      }
+      if (type === 'base') params.section_id = _val
+      if (type === 'lesson') {
+        params.base_id = _val
       }
 
       this.$fetch
-        .$get("/api/v1/types/list", {
+        .$get('/api/v1/types/list', {
           params,
         })
         .then((res) => {
-          var data = {};
-          if (type === "section") {
-            this.level_list = res.data;
-          } else if (type === "base") {
-            this.grade_list = res.data;
-          } else if (type === "lesson") {
-            this.lesson_list = res.data;
+          const _data = {}
+          if (type === 'section') {
+            this.level_list = res.data
+          }
+          else if (type === 'base') {
+            this.grade_list = res.data
+          }
+          else if (type === 'lesson') {
+            this.lesson_list = res.data
           }
         })
         .catch((err) => {
-          this.$toast.error(err);
-        });
+          this.$toast.error(err)
+        })
     },
     getExams() {
       if (!this.all_files_loaded) {
-        this.page_loading = true;
+        this.page_loading = true
         this.$fetch
-          .$get("/api/v1/exams/results", {
+          .$get('/api/v1/exams/results', {
             params: {
               perpage: 20,
               page: this.page,
@@ -232,57 +263,57 @@ export default {
             },
           })
           .then((response) => {
-            this.exam_list.push(...response.data.list);
+            this.exam_list.push(...response.data.list)
 
             if (response.data.list.length === 0)
-              //For terminate auto load request
-              this.all_files_loaded = true;
+              // For terminate auto load request
+              this.all_files_loaded = true
           })
           .catch((err) => {
-            console.log(err);
+            console.log(err)
           })
           .finally(() => {
-            this.page_loading = false;
-          });
+            this.page_loading = false
+          })
       }
     },
     showStatus(id) {
-      if (id === "6") return "Under construction";
-      else if (id === "7") return "Published";
+      if (id === '6') return 'Under construction'
+      else if (id === '7') return 'Published'
     },
     scroll() {
-      //For infinite loading
+      // For infinite loading
       window.onscroll = () => {
-        //Scroll position
-        var scrollPosition =
-          Math.max(
+        // Scroll position
+        const scrollPosition
+          = Math.max(
             window.pageYOffset,
             document.documentElement.scrollTop,
-            document.body.scrollTop
-          ) +
-          window.innerHeight +
-          50;
-        let bottomOfWindow =
-          scrollPosition >= document.documentElement.offsetHeight;
+            document.body.scrollTop,
+          )
+          + window.innerHeight
+          + 50
+        const bottomOfWindow
+          = scrollPosition >= document.documentElement.offsetHeight
 
-        //Avoid the number of requests
+        // Avoid the number of requests
         if (this.timer) {
-          clearTimeout(this.timer);
-          this.timer = null;
+          clearTimeout(this.timer)
+          this.timer = null
         }
 
-        //Load next page
+        // Load next page
         if (bottomOfWindow && this.all_files_loaded === false) {
-          this.page_loading = true;
+          this.page_loading = true
           this.timer = setTimeout(() => {
-            this.page++;
-            this.getExams();
-          }, 800);
+            this.page++
+            this.getExams()
+          }, 800)
         }
-      };
+      }
     },
   },
-};
+}
 </script>
 
 <style scoped>

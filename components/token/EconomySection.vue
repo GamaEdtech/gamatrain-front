@@ -4,7 +4,9 @@
   >
     <v-container class="d-flex flex-column align-center justify-center py-12">
       <div class="economy-title-box mb-4">
-        <h2 class="economy-title">Ready to Join the $GET Economy?</h2>
+        <h2 class="economy-title">
+          Ready to Join the $GET Economy?
+        </h2>
       </div>
       <div class="economy-desc-box mb-3">
         <p class="economy-desc">

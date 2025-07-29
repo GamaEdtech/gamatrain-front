@@ -1,16 +1,22 @@
 <template>
-  <v-card class="order-btn-holder d-block d-md-none" width="100%">
+  <v-card
+    class="order-btn-holder d-block d-md-none"
+    width="100%"
+  >
     <v-card-text class="pb-0">
       <v-row class="px-10 text-center">
-        <v-col cols="12" class="py-4">
+        <v-col
+          cols="12"
+          class="py-4"
+        >
           <div v-if="fileExt">
             <v-btn
-              @click="startDownload"
               block
               color="#bf360c"
               dark
               class="mb-2"
               :loading="downloadLoading"
+              @click="startDownload"
             >
               Download {{ fileExt.toUpperCase()
               }}{{ showPrice ? " | $" + price : "" }}
@@ -18,14 +24,21 @@
           </div>
         </v-col>
 
-        <v-col cols="12" v-if="!isFree">
+        <v-col
+          v-if="!isFree"
+          cols="12"
+        >
           <div class="mb-4">
             <p v-if="!isLoggedIn">
-              <span class="mdi mdi-bell icon"></span>
-              <span @click="handleLogin" class="login blue--text pointer"
-                >Login</span
+              <span class="mdi mdi-bell icon" />
+              <span
+                class="login blue--text pointer"
+                @click="handleLogin"
+              >Login</span>
+              <span
+                class="register blue--text pointer"
+                @click="handleRegister"
               >
-              <span @click="handleRegister" class="register blue--text pointer">
                 (register)
               </span>
               <span>to download and charge.</span>
@@ -33,11 +46,10 @@
             <span v-else>
               Your wallet charge is ${{ credit }}
               <nuxt-link
-                class="blue--text"
                 v-if="isLoggedIn"
+                class="blue--text"
                 to="/user/charge-wallet"
-                >(Top Up Wallet)</nuxt-link
-              >
+              >(Top Up Wallet)</nuxt-link>
             </span>
           </div>
         </v-col>
@@ -47,12 +59,12 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed } from 'vue'
 
 const props = defineProps({
   fileExt: {
     type: String,
-    default: "pptx",
+    default: 'pptx',
   },
   price: {
     type: Number,
@@ -70,30 +82,30 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-});
+})
 
-const emit = defineEmits(["download", "login", "register"]);
+const emit = defineEmits(['download', 'login', 'register'])
 
 // Computed properties
 const isFree = computed(() => {
-  return !props.price || props.price <= 0;
-});
+  return !props.price || props.price <= 0
+})
 
 const showPrice = computed(() => {
-  return props.price > 0;
-});
+  return props.price > 0
+})
 
 // Methods
 function startDownload() {
-  emit("download", props.fileExt);
+  emit('download', props.fileExt)
 }
 
 function handleLogin() {
-  emit("login");
+  emit('login')
 }
 
 function handleRegister() {
-  emit("register");
+  emit('register')
 }
 </script>
 

@@ -3,14 +3,23 @@
     <div class="wallet-page-container">
       <!-- Balance Card and Chart Section -->
       <v-row>
-        <v-col cols="12" sm="6" md="6">
-          <user-wallet-balance-card></user-wallet-balance-card>
+        <v-col
+          cols="12"
+          sm="6"
+          md="6"
+        >
+          <user-wallet-balance-card />
         </v-col>
 
-        <v-col cols="12" sm="6" md="6" class="d-none d-sm-block">
+        <v-col
+          cols="12"
+          sm="6"
+          md="6"
+          class="d-none d-sm-block"
+        >
           <user-wallet-transaction-chart
             class="transaction-chart"
-          ></user-wallet-transaction-chart>
+          />
         </v-col>
       </v-row>
     </div>
@@ -24,42 +33,42 @@
           <div class="pa-4 rounded-lg bg-primary-gray-100">
             <user-wallet-transaction-chart
               class="transaction-chart h-full"
-            ></user-wallet-transaction-chart>
+            />
           </div>
         </div>
       </v-expand-transition>
 
       <!-- Transaction History Section -->
       <user-wallet-transaction-history
-        @toggle-chart="toggleMobileChart"
         :is-chart-visible="showMobileChart"
-      ></user-wallet-transaction-history>
+        @toggle-chart="toggleMobileChart"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue'
 // Page metadata
 definePageMeta({
-  layout: "dashboard-layout",
-});
+  layout: 'dashboard-layout',
+})
 
 // Set page title
 useHead({
-  title: "Wallet - Gama",
+  title: 'Wallet - Gama',
   meta: [
-    { name: 'description', content: 'Manage your GET tokens and view transaction history' }
-  ]
-});
+    { name: 'description', content: 'Manage your GET tokens and view transaction history' },
+  ],
+})
 
 // Define reactive state
-const showMobileChart = ref(false);
+const showMobileChart = ref(false)
 
 // Methods
 const toggleMobileChart = () => {
-  showMobileChart.value = !showMobileChart.value;
-};
+  showMobileChart.value = !showMobileChart.value
+}
 </script>
 
 <style scoped>

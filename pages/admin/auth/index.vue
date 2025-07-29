@@ -1,5 +1,4 @@
 <script setup>
-
 definePageMeta({
   name: 'admin-auth',
   layout: 'default',
@@ -11,7 +10,7 @@ const router = useRouter()
 const isFormValid = ref(false)
 const passwordShow = ref(false)
 
-const emailRules = [(v) => !!v || 'Email or username is required']
+const emailRules = [v => !!v || 'Email or username is required']
 const passwordRules = [
   v => !!v || 'Password is required',
   v => (v && v.length >= 4) || 'Password must be at least 4 characters',
@@ -22,59 +21,79 @@ const form = reactive({
   password: '',
 })
 
-//No API to sign in via token yet
+// No API to sign in via token yet
 const rememberMe = ref(false)
 
 const Btnloading = ref(false)
 const loginError = ref(null)
 
 const submit = async () => {
-  const auth = useAuth();
+  const auth = useAuth()
   try {
     Btnloading.value = true
 
     const result = await useApiService.post(
-      '/api/v2/identities/tokens',{
+      '/api/v2/identities/tokens', {
         username: form.email,
         password: form.password,
       })
 
     if (result.succeeded == true) {
-      localStorage.setItem("v2_token", result.data.token);
-      auth.setUserToken(result.data.token);
+      localStorage.setItem('v2_token', result.data.token)
+      auth.setUserToken(result.data.token)
       router.push('/admin/contact-us')
-    } else {
+    }
+    else {
       const errorMessage = result?.errors?.[0]?.message
       switch (errorMessage) {
         case 'WrongUsernameOrPassword':
           loginError.value = 'Invalid username or password. Please try again.'
           break
         case 'UserLockedOut':
-          loginError.value ='Your account has been locked due to multiple failed login attempts. Please contact an administrator.'
+          loginError.value = 'Your account has been locked due to multiple failed login attempts. Please contact an administrator.'
           break
         default:
           loginError.value = errorMessage || 'Login failed. Please try again.'
       }
     }
-  } catch (err) {
+  }
+  catch (err) {
     console.error('Login error:', err)
     loginError.value = 'An error occurred during login. Please try again.'
-  } finally {
+  }
+  finally {
     Btnloading.value = false
   }
 }
 </script>
+
 <template>
-  <v-container class="fill-height my-9" fluid>
-    <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="6" lg="5">
-        <v-card class="pa-8" elevation="0" color="#F2F4F7" rounded="lg">
+  <v-container
+    class="fill-height my-9"
+    fluid
+  >
+    <v-row
+      align="center"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        sm="8"
+        md="6"
+        lg="5"
+      >
+        <v-card
+          class="pa-8"
+          elevation="0"
+          color="#F2F4F7"
+          rounded="lg"
+        >
           <div class="text-center mb-6">
-              <img
-                src="/public/images/adminAuth.png"
-                alt="Gama"
-                class="wh-100"
-              />
+            <img
+              src="/images/adminAuth.png"
+              alt="Gama"
+              class="wh-100"
+            >
             <h1 class="font-size-18 primary-gray-900 font-weight-bold mt-4">
               Admin Login
             </h1>
@@ -94,8 +113,8 @@ const submit = async () => {
 
           <v-form
             ref="adminForm"
-            class="soft-form__inputs-border"
             v-model="isFormValid"
+            class="soft-form__inputs-border"
           >
             <label class="primary-gray-700 gtext-t6 font-weight-medium">
               User Name / Email
@@ -115,13 +134,13 @@ const submit = async () => {
             <v-text-field
               v-model="form.password"
               :append-inner-icon="passwordShow ? 'mdi-eye' : 'mdi-eye-off'"
-              @click:append-inner="passwordShow = !passwordShow"
               placeholder="Enter Password"
               variant="solo"
               density="comfortable"
               :rules="passwordRules"
               :type="passwordShow ? 'text' : 'password'"
               class="mb-4 mt-1"
+              @click:append-inner="passwordShow = !passwordShow"
             />
 
             <div class="d-flex align-center justify-space-between mb-4">
@@ -131,13 +150,14 @@ const submit = async () => {
                 hide-details
                 class="gtext-t5"
                 color="primary"
-              ></v-checkbox>
+              />
               <v-btn
                 variant="plain"
                 color="#FFB600"
                 class="gtext-t5 pa-0 font-weight-semibold"
-                >Forgot Password?</v-btn
               >
+                Forgot Password?
+              </v-btn>
             </div>
 
             <v-btn

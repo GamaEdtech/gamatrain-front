@@ -8,18 +8,24 @@
           <v-divider class="my-2" />
 
           <v-radio-group v-model="userType">
-            <v-radio value="6" label="I'm student" />
-            <v-radio value="5" label="I'm teacher" />
+            <v-radio
+              value="6"
+              label="I'm student"
+            />
+            <v-radio
+              value="5"
+              label="I'm teacher"
+            />
           </v-radio-group>
 
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
-          <br />
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
+          <br>
         </v-col>
       </v-row>
     </v-container>
@@ -27,30 +33,30 @@
 </template>
 
 <script setup>
-const { $toast } = useNuxtApp();
-const router = useRouter();
-const { user, setUser } = useUser();
+const { $toast } = useNuxtApp()
+const router = useRouter()
+const { user, setUser } = useUser()
 
-const userType = ref("2");
+const userType = ref('2')
 
 // Redirect to user page on mount
 onMounted(() => {
-  router.push("/user");
-});
+  router.push('/user')
+})
 
 // Watch for user type changes
-watch(userType, async (newType) => {
-  await setUserType();
-});
+watch(userType, async (_newType) => {
+  await setUserType()
+})
 
 // Update user type
 async function setUserType() {
   try {
-    const response = await useApiService.post("/api/v1/users/group", {
+    const response = await useApiService.post('/api/v1/users/group', {
       group: userType.value,
-    });
-    const data = response;
-    console.log("data", data);
+    })
+    const data = response
+    console.log('data', data)
     if (data?.status === 1) {
       // Update user data
       const updatedData = {
@@ -62,19 +68,20 @@ async function setUserType() {
         last_name: user.value?.last_name,
         phone: user.value?.phone,
         sex: user.value?.sex,
-      };
+      }
 
-      console.log("updatedData", updatedData);
+      console.log('updatedData', updatedData)
 
       // Update user state
-      await setUser(updatedData);
-      user.value.group_id = userType.value.toString();
+      await setUser(updatedData)
+      user.value.group_id = userType.value.toString()
 
       // Navigate to user page
-      router.push("/user");
+      router.push('/user')
     }
-  } catch (err) {
-    $toast.error(err?.message || "An error occurred");
+  }
+  catch (err) {
+    $toast.error(err?.message || 'An error occurred')
   }
 }
 </script>

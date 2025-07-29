@@ -18,26 +18,34 @@ export default defineEventHandler(async (event) => {
   const { userComment } = body || {}
 
   if (!userComment) {
-    throw createError({ statusCode: 400, statusMessage: 'Comment is required' })
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Comment is required',
+    })
   }
 
   try {
-    const response = await $fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        'Content-Type': 'application/json',
+    const response = await $fetch(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: {
+          model: 'gpt-4o',
+          messages: [{ role: 'user', content: userComment }],
+          max_tokens: 220,
+        },
       },
-      body: {
-        model: 'gpt-4o',
-        messages: [{ role: 'user', content: userComment }],
-        max_tokens: 220,
-      },
-    })
+    )
 
     return { response: response.choices[0].message.content }
-  } catch (error: any) {
-    console.error('ChatGPT API error:', error?.data || error?.message)
+  }
+  catch (error: unknown) {
+    const apiError = error as { data?: unknown, message?: string }
+    console.error('ChatGPT API error:', apiError?.data || apiError?.message)
     throw createError({
       statusCode: 500,
       statusMessage: 'Failed to fetch AI response',

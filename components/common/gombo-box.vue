@@ -1,19 +1,22 @@
 <template>
-  <div class="gombo-box" id="gombo-box">
+  <div
+    id="gombo-box"
+    class="gombo-box"
+  >
     <v-text-field
-      @click="getList"
-      @click:clear="clearValue"
+      v-model="inputText"
       rounded
       readonly
       variant="outlined"
       hide-details
       append-inner-icon="mdi-chevron-down"
-      v-model="inputText"
       :dense="dense"
       :disabled="disabled"
       clearable
       class="gombo-box-input"
       color="#ffb300"
+      @click="getList"
+      @click:clear="clearValue"
     >
       <template #label>
         <span class="primary-gray-700 font-weight-medium size-lable">{{
@@ -23,32 +26,37 @@
     </v-text-field>
 
     <v-bottom-sheet v-model="sheet">
-      <v-card class="gombo-box-list" v-if="sheet">
+      <v-card
+        v-if="sheet"
+        class="gombo-box-list"
+      >
         <v-row>
           <v-col cols="12">
             <div class="px-5 mt-4">
               <v-list v-if="dataLoading">
-                <v-list-subheader class="gtext-h5 mb-4">{{
-                  label
-                }}</v-list-subheader>
+                <v-list-subheader class="gtext-h5 mb-4">
+                  {{
+                    label
+                  }}
+                </v-list-subheader>
                 <v-text-field
-                  prepend-inner-icon="mdi-magnify"
                   id="search-field"
+                  v-model="keyword"
+                  prepend-inner-icon="mdi-magnify"
                   hide-details
                   label="Search anything..."
                   dense
                   variant="outlined"
-                  v-model="keyword"
                   rounded
                   autocomplete="off"
                   color="#ffb300"
                 >
-                  <template v-slot:append-inner>
+                  <template #append-inner>
                     <v-btn
+                      id="search-btn"
                       size="large"
                       class="primary"
                       :loading="searchLoading"
-                      id="search-btn"
                       rounded
                       color="#ffb300"
                     >
@@ -58,24 +66,28 @@
                 </v-text-field>
                 <div class="data-list">
                   <v-list-item
-                    class="pointer"
                     v-for="(item, index) in filteredItems"
                     :key="index"
+                    class="pointer"
                   >
                     <v-list-item-title
                       class="gtext-t5"
                       @click="setValue(item[itemValue], item[itemTitle])"
-                      >{{ item[itemTitle] }}</v-list-item-title
                     >
+                      {{ item[itemTitle] }}
+                    </v-list-item-title>
                   </v-list-item>
                 </div>
               </v-list>
-              <div v-else class="text-center pt-8">
+              <div
+                v-else
+                class="text-center pt-8"
+              >
                 <v-progress-circular
                   indeterminate
                   :width="3"
                   color="primary"
-                ></v-progress-circular>
+                />
               </div>
             </div>
           </v-col>
@@ -86,12 +98,12 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted } from 'vue'
 
 const props = defineProps({
   label: {
     type: String,
-    default: "",
+    default: '',
   },
   items: {
     type: Array,
@@ -102,11 +114,11 @@ const props = defineProps({
   },
   itemTitle: {
     type: String,
-    default: "title",
+    default: 'title',
   },
   itemValue: {
     type: String,
-    default: "id",
+    default: 'id',
   },
   disabled: {
     type: Boolean,
@@ -120,74 +132,76 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-});
+})
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(['update:modelValue'])
 
-const sheet = ref(false);
-const keyword = ref("");
-const inputText = ref("");
-const dense = ref(false);
+const sheet = ref(false)
+const keyword = ref('')
+const inputText = ref('')
+const dense = ref(false)
 
 const filteredItems = computed(() => {
-  const filterTextLower = keyword.value.toLowerCase().trim();
-  return props.items.filter((item) =>
-    item[props.itemTitle].toLowerCase().includes(filterTextLower)
-  );
-});
+  const filterTextLower = keyword.value.toLowerCase().trim()
+  return props.items.filter(item =>
+    item[props.itemTitle].toLowerCase().includes(filterTextLower),
+  )
+})
 
 watch(
   () => props.items,
   (newValue) => {
     if (newValue.length > 0) {
       const foundObj = props.items.find(
-        (x) => x[props.itemValue] == Number(props.modelValue)
-      );
-      if (foundObj) inputText.value = foundObj[props.itemTitle];
-      else inputText.value = "";
-    } else {
-      inputText.value = "";
+        x => x[props.itemValue] == Number(props.modelValue),
+      )
+      if (foundObj) inputText.value = foundObj[props.itemTitle]
+      else inputText.value = ''
     }
-  }
-);
+    else {
+      inputText.value = ''
+    }
+  },
+)
 
 watch(
   () => props.modelValue,
   (newValue) => {
     if (props.items.length > 0) {
       const foundObj = props.items.find(
-        (x) => x[props.itemValue] == Number(newValue)
-      );
-      inputText.value = foundObj ? foundObj[props.itemTitle] : "";
-    } else {
-      inputText.value = "";
+        x => x[props.itemValue] == Number(newValue),
+      )
+      inputText.value = foundObj ? foundObj[props.itemTitle] : ''
     }
-  }
-);
+    else {
+      inputText.value = ''
+    }
+  },
+)
 
 const getList = () => {
-  sheet.value = true;
-};
+  sheet.value = true
+}
 
 const clearValue = () => {
-  emit("update:modelValue", "");
-  inputText.value = "";
-};
+  emit('update:modelValue', '')
+  inputText.value = ''
+}
 
 const setValue = (val, title) => {
-  emit("update:modelValue", val.toString());
-  inputText.value = title;
-  sheet.value = false;
-};
+  emit('update:modelValue', val.toString())
+  inputText.value = title
+  sheet.value = false
+}
 
 onMounted(() => {
   if (props.items.length > 0) {
     const foundObj = props.items.find(
-      (x) => x[props.itemValue] == Number(props.modelValue)
-    );
-    inputText.value = foundObj ? foundObj[props.itemTitle] : "";
+      x => x[props.itemValue] == Number(props.modelValue),
+    )
+    inputText.value = foundObj ? foundObj[props.itemTitle] : ''
   }
-});
+})
 </script>
 
 <style>

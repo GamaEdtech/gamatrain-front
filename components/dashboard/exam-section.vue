@@ -1,15 +1,23 @@
 <template>
   <v-row v-if="userType === 6">
-    <v-col cols="12" class="px-0 px-sm-2">
+    <v-col
+      cols="12"
+      class="px-0 px-sm-2"
+    >
       <v-card>
         <v-card-title class="text-h4">
           <v-row>
             <v-col cols="6">
-              <i class="fa-solid fa-laptop mr-2"></i>
+              <i class="fa-solid fa-laptop mr-2" />
               Exams
             </v-col>
-            <v-col cols="6" class="text-right">
-              <v-btn color="warning"> See result </v-btn>
+            <v-col
+              cols="6"
+              class="text-right"
+            >
+              <v-btn color="warning">
+                See result
+              </v-btn>
             </v-col>
           </v-row>
         </v-card-title>
@@ -21,41 +29,51 @@
           <v-row class="mt-5 d-flex d-md-none">
             <v-col cols="6">
               <p class="text-h5">
-                <i class="fa-regular fa-circle-check green--text"></i>
+                <i class="fa-regular fa-circle-check green--text" />
                 Participated
               </p>
             </v-col>
             <v-col cols="6">
               <p class="text-h5">
-                <i class="fa-regular fa-times-circle red--text"></i>
+                <i class="fa-regular fa-times-circle red--text" />
                 Not Participated
               </p>
             </v-col>
           </v-row>
           <v-row>
-            <v-col cols="12" class="px-0 px-sm-4 px-md-4">
+            <v-col
+              cols="12"
+              class="px-0 px-sm-4 px-md-4"
+            >
               <v-table class="exams_table">
                 <thead>
                   <tr>
-                    <th class="text-left text-h5">Course name</th>
+                    <th class="text-left text-h5">
+                      Course name
+                    </th>
                     <th class="text-center teal--text text-h5">
                       <i
                         class="fa-regular fa-circle-check fa-xl green--text d-block d-md-none"
-                      ></i>
+                      />
                       <span class="d-none d-md-block"> Participated </span>
                     </th>
                     <th class="text-center orange--text text-h5">
                       <i
                         class="fa-regular fa-times-circle fa-xl red--text d-block d-md-none"
-                      ></i>
+                      />
                       <span class="d-none d-md-block"> Not Participated </span>
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="item in examData?.lessons || []" :key="item.id">
+                  <tr
+                    v-for="item in examData?.lessons || []"
+                    :key="item.id"
+                  >
                     <td>{{ item.title }}</td>
-                    <td class="text-center">{{ item.participated }}</td>
+                    <td class="text-center">
+                      {{ item.participated }}
+                    </td>
                     <td class="text-center">
                       {{ item.total - item.participated }}
                     </td>
@@ -82,15 +100,15 @@
 </template>
 
 <script setup>
-const props = defineProps({
+const _props = defineProps({
   examData: {
     type: Object,
     default: () => ({}),
   },
-});
+})
 
-const { user } = useUser();
-const userType = computed(() => user.value?.group_id);
+const { user } = useUser()
+const userType = computed(() => user.value?.group_id)
 </script>
 
 <style scoped>

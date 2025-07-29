@@ -44,44 +44,71 @@ function isActive(link) {
       app
       color="#1d2939"
     >
-    <div class="text--white font-weight-semibold pa-4 gtext-t2 mb-6">
+      <div class="text--white font-weight-semibold pa-4 gtext-t2 mb-6">
         Dashboard
-    </div>
-    <div class="d-flex ga-3 py-1 px-4 w-100 align-center gtext-t3 font-weight-medium primary-gray-300 mb-2">
-      <img class="rounded-pill" style="width: 36px; height: 36px;" src="/public/images/adminAuth.png" alt="">
-      Admin Panel
-    </div>
+      </div>
+      <div class="d-flex ga-3 py-1 px-4 w-100 align-center gtext-t3 font-weight-medium primary-gray-300 mb-2">
+        <img
+          class="rounded-pill"
+          style="width: 36px; height: 36px;"
+          src="/images/adminAuth.png"
+          alt=""
+        >
+        Admin Panel
+      </div>
       <v-list>
         <v-list-item
           v-for="item in menuItems"
           :key="item.link"
           link
-          @click="navigate(item.link)"
           class="px-3"
+          @click="navigate(item.link)"
         >
-        <div class="d-flex align-center ga-3 py-3 px-5" :class="{ 'active-tab': isActive(item.link) }">
+          <div
+            class="d-flex align-center ga-3 py-3 px-5"
+            :class="{ 'active-tab': isActive(item.link) }"
+          >
             <v-list-item-icon>
-                <v-icon class="primary-gray-400">{{ item.icon }}</v-icon>
+              <v-icon class="primary-gray-400">
+                {{ item.icon }}
+              </v-icon>
             </v-list-item-icon>
-            <v-list-item-title class="primary-gray-400 gtext-t5">{{ item.title }}</v-list-item-title>
-        </div>
-          
+            <v-list-item-title class="primary-gray-400 gtext-t5">
+              {{ item.title }}
+            </v-list-item-title>
+          </div>
         </v-list-item>
       </v-list>
-      <div class="d-flex align-center ga-2" style="position: absolute;bottom: 20px; left: 20px;">
-        <img class="rounded-pill" style="width: 36px; height: 36px;border: 1px solid white;" src="/public/images/adminAuth.png" alt="">
+      <div
+        class="d-flex align-center ga-2"
+        style="position: absolute;bottom: 20px; left: 20px;"
+      >
+        <img
+          class="rounded-pill"
+          style="width: 36px; height: 36px;border: 1px solid white;"
+          src="/images/adminAuth.png"
+          alt=""
+        >
         <div>
-          <p class="gtext-t5 font-weight-medium">shelina Shay</p>
-          <p class="gtext-t6 primary-gray-400">Admin@Gama</p>
+          <p class="gtext-t5 font-weight-medium">
+            shelina Shay
+          </p>
+          <p class="gtext-t6 primary-gray-400">
+            Admin@Gama
+          </p>
         </div>
       </div>
     </v-navigation-drawer>
 
-    <v-app-bar app color="#1d2939" dark>
+    <v-app-bar
+      app
+      color="#1d2939"
+      dark
+    >
       <v-app-bar-nav-icon
         v-if="mobile"
         @click="drawer = !drawer"
-      ></v-app-bar-nav-icon>
+      />
     </v-app-bar>
 
     <v-main>

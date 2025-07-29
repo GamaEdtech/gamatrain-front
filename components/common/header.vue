@@ -1,54 +1,55 @@
 <script setup>
-import CommonLogin from "~/components/common/login.vue";
-import CommonRegister from "~/components/common/register.vue";
-import CommonRecover from "~/components/common/pass-recover.vue";
-import { useAuth } from "~/composables/useAuth";
-import { useUser } from "~/composables/useUser";
-import { useCookie } from "nuxt/app";
-const auth = useAuth();
-const isAuthModalOpen = ref(false);
-const currentAuthComponent = ref("login");
+import CommonLogin from '~/components/common/login.vue'
+import CommonRegister from '~/components/common/register.vue'
+import CommonRecover from '~/components/common/pass-recover.vue'
+import { useAuth } from '~/composables/useAuth'
+import { useUser } from '~/composables/useUser'
+import { useCookie } from 'nuxt/app'
 
-const loginDialogVisible = ref(false);
+const auth = useAuth()
+const isAuthModalOpen = ref(false)
+const currentAuthComponent = ref('login')
+
+const loginDialogVisible = ref(false)
 
 const currentAuthComponentMap = {
   login: CommonLogin,
   register: CommonRegister,
   recover: CommonRecover,
-};
+}
 
 function switchTo(name) {
-  currentAuthComponent.value = name;
+  currentAuthComponent.value = name
 }
-const sidebar = ref(false);
-const dialog = ref(false);
-const logo = ref("mainlogo-gamatrain.png");
-const avatar = ref("dexter-morse.png");
-const notificationComponent = ref(null);
+const sidebar = ref(false)
+const _dialog = ref(false)
+const _logo = ref('mainlogo-gamatrain.png')
+const _avatar = ref('dexter-morse.png')
+const notificationComponent = ref(null)
 const menuItems = [
   {
-    title: "About us",
-    link: "/about-us",
-    icon: "mdi-account-multiple",
-    icon_color: "",
+    title: 'About us',
+    link: '/about-us',
+    icon: 'mdi-account-multiple',
+    icon_color: '',
   },
   {
-    title: "Services",
-    link: "/services",
-    icon: "mdi-view-module",
-    icon_color: "",
+    title: 'Services',
+    link: '/services',
+    icon: 'mdi-view-module',
+    icon_color: '',
   },
   {
-    title: "Faq",
-    link: "/faq",
-    icon: "mdi-information",
-    icon_color: "",
+    title: 'Faq',
+    link: '/faq',
+    icon: 'mdi-information',
+    icon_color: '',
   },
   {
-    title: "$GET Token",
-    link: "/get-token",
-    icon: "mdi-currency-usd",
-    icon_color: "",
+    title: '$GET Token',
+    link: '/get-token',
+    icon: 'mdi-currency-usd',
+    icon_color: '',
   },
 
   // {
@@ -57,258 +58,260 @@ const menuItems = [
   //   icon: "mdi-wallet-giftcard",
   //   icon_color: 'primary'
   // },
-];
-const selectedItem = 1;
-const socialList = [
-  { link: "telegram", icon: "fa-telegram" },
-  { link: "twitter", icon: "fa-twitter" },
-  { link: "instagram", icon: "fa-instagram" },
-  { link: "Youtube", icon: "fa-youtube" },
-];
+]
+const _selectedItem = 1
+const _socialList = [
+  { link: 'telegram', icon: 'fa-telegram' },
+  { link: 'twitter', icon: 'fa-twitter' },
+  { link: 'instagram', icon: 'fa-instagram' },
+  { link: 'Youtube', icon: 'fa-youtube' },
+]
 
 const menuLink = [
   {
-    title: "Home",
-    link: "/",
-    icon: "",
+    title: 'Home',
+    link: '/',
+    icon: '',
   },
   {
-    title: "About us",
-    link: "/about-us",
-    icon: "",
+    title: 'About us',
+    link: '/about-us',
+    icon: '',
   },
   {
-    title: "Services",
-    link: "/services",
-    icon: "",
+    title: 'Services',
+    link: '/services',
+    icon: '',
   },
   {
-    title: "FAQ",
-    link: "/faq",
-    icon: "",
+    title: 'FAQ',
+    link: '/faq',
+    icon: '',
   },
   {
-    title: "$GET Token",
-    link: "/get-token",
-    icon: "",
+    title: '$GET Token',
+    link: '/get-token',
+    icon: '',
   },
   // {
   //   title: 'Offers',
   //   link: '/offers',
   //   icon: 'mdi-wallet-giftcard'
   // },
-];
-const currentOpenDialog = ref("");
-const mobileSearchSheet = ref(false);
+]
+const currentOpenDialog = ref('')
+const mobileSearchSheet = ref(false)
 const mobileSearchSheetConfig = ref({
   isDragging: false,
   startDragY: 0,
   sheetHeight: 70,
-});
+})
 const searchFilterItems = [
   {
-    title: "Past Papers",
-    key: "paper",
+    title: 'Past Papers',
+    key: 'paper',
   },
   {
-    title: "Multimedia",
-    key: "multimedia",
+    title: 'Multimedia',
+    key: 'multimedia',
   },
   {
-    title: "QuizHub",
-    key: "exam",
+    title: 'QuizHub',
+    key: 'exam',
   },
   {
-    title: "Forum",
-    key: "q-a",
+    title: 'Forum',
+    key: 'q-a',
   },
   {
-    title: "Tutorial",
-    key: "tutorial",
+    title: 'Tutorial',
+    key: 'tutorial',
   },
   {
-    title: "Teacher",
-    key: "teacher",
+    title: 'Teacher',
+    key: 'teacher',
   },
   {
-    title: "Student",
-    key: "student",
+    title: 'Student',
+    key: 'student',
   },
-];
-const mobileSearchFilter = ref("");
-const keyword = ref("");
+]
+const mobileSearchFilter = ref('')
+const _keyword = ref('')
 
 const user_profile_items = [
   {
-    title: "Dashboard",
-    icon: "mdi-view-dashboard",
-    link: "/user",
+    title: 'Dashboard',
+    icon: 'mdi-view-dashboard',
+    link: '/user',
   },
   {
-    title: "Messages",
-    icon: "mdi-email-outline",
-    link: "/user/ticket",
+    title: 'Messages',
+    icon: 'mdi-email-outline',
+    link: '/user/ticket',
   },
   {
-    title: "Edit Profile",
-    icon: "mdi-account-outline",
-    link: "/user/profile",
+    title: 'Edit Profile',
+    icon: 'mdi-account-outline',
+    link: '/user/profile',
   },
   {
-    title: "Change Password",
-    icon: "mdi-key",
-    link: "/user/edit-pass",
+    title: 'Change Password',
+    icon: 'mdi-key',
+    link: '/user/edit-pass',
   },
-];
-const notificationListDialog = ref(false);
+]
+const notificationListDialog = ref(false)
 const notificationItems = [
   {
-    icon: "mdi-table-furniture",
-    date: "Today, 11:48 am",
-    title: "Sample Question uploded",
+    icon: 'mdi-table-furniture',
+    date: 'Today, 11:48 am',
+    title: 'Sample Question uploded',
     describe:
-      "Satisfied course question sample has been uploaded for your level of education.",
+      'Satisfied course question sample has been uploaded for your level of education.',
   },
   {
-    icon: "mdi-map-marker-check",
-    date: "Today, 11:48 am",
-    title: "Sample Question uploded",
+    icon: 'mdi-map-marker-check',
+    date: 'Today, 11:48 am',
+    title: 'Sample Question uploded',
     describe:
-      "Satisfied course question sample has been uploaded for your level of education.",
+      'Satisfied course question sample has been uploaded for your level of education.',
   },
-];
+]
 
 const menuSetting = ref({
-  logo: "gamatrain-logo-black.svg",
-  bgColor: "#fff",
+  logo: 'gamatrain-logo-black.svg',
+  bgColor: '#fff',
   fixedStatus: false,
-  linkColor: "#424A53",
-  class: "",
-});
+  linkColor: '#424A53',
+  class: '',
+})
 
-//Search section
-const searchResults = ref([]);
-const searchCount = ref("...");
-const searchKey = ref("");
-const searchCate = ref("");
-const searchLoading = ref(true);
-const pageNum = ref(1);
-const timer = ref(0);
-const searchResultsSection = ref(false);
-const allDataLoaded = ref(false);
-//End search section
+// Search section
+const searchResults = ref([])
+const searchCount = ref('...')
+const searchKey = ref('')
+const _searchCate = ref('')
+const searchLoading = ref(true)
+const pageNum = ref(1)
+const timer = ref(0)
+const searchResultsSection = ref(false)
+const allDataLoaded = ref(false)
+// End search section
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const cookieToken = useCookie("authToken");
-const { user, setUser, cleanUser } = useUser();
+const _cookieToken = useCookie('authToken')
+const { user, _setUser, cleanUser } = useUser()
 
 const logout = () => {
-  cleanUser();
-  auth.logout();
-};
+  cleanUser()
+  auth.logout()
+}
 
 onMounted(async () => {
   // if (window.innerWidth <= 960 && this.$auth.loggedIn) {
   //   this.$refs["notification-section"].getNotifications();
   // }
   if (
-    route.name == "index" ||
-    route.name == "smart-learning" ||
-    route.name == "services" ||
-    route.name == "school-service" ||
-    route.name == "faq" ||
-    route.name == "terms" ||
-    route.name == "about-us" ||
-    route.name == "earn-money"
+    route.name == 'index'
+    || route.name == 'smart-learning'
+    || route.name == 'services'
+    || route.name == 'school-service'
+    || route.name == 'faq'
+    || route.name == 'terms'
+    || route.name == 'about-us'
+    || route.name == 'earn-money'
   ) {
     if (window.scrollY > 60) {
       menuSetting.value = {
-        logo: "gamatrain-logo-black.svg",
-        bgColor: "#fff",
+        logo: 'gamatrain-logo-black.svg',
+        bgColor: '#fff',
         fixedStatus: true,
-        linkColor: "#424A53",
-        class: "",
-      };
-    } else {
+        linkColor: '#424A53',
+        class: '',
+      }
+    }
+    else {
       menuSetting.value = {
-        logo: "gamatrain-logo.svg",
-        bgColor: "#000",
+        logo: 'gamatrain-logo.svg',
+        bgColor: '#000',
         fixedStatus: true,
-        linkColor: "#fff",
-        class: "transparentMenu",
-      };
+        linkColor: '#fff',
+        class: 'transparentMenu',
+      }
     }
   }
-  window.addEventListener("scroll", handleScroll);
-});
+  window.addEventListener('scroll', handleScroll)
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener("scroll", handleScroll);
-});
-const login_modal = ref(null);
-const openLoginDialog = (componentName = "login") => {
-  currentAuthComponent.value = componentName;
-  isAuthModalOpen.value = true;
-  loginDialogVisible.value = true;
-};
-const openRegisterDialog = () => {
-  register_modal.value.register_dialog = true;
-};
+  window.removeEventListener('scroll', handleScroll)
+})
+const login_modal = ref(null)
+const openLoginDialog = (componentName = 'login') => {
+  currentAuthComponent.value = componentName
+  isAuthModalOpen.value = true
+  loginDialogVisible.value = true
+}
+const _openRegisterDialog = () => {
+  register_modal.value.register_dialog = true
+}
 
 const handleScroll = () => {
   if (
-    route.name == "index" ||
-    route.name == "smart-learning" ||
-    route.name == "services" ||
-    route.name == "school-service" ||
-    route.name == "faq" ||
-    route.name == "terms" ||
-    route.name == "about-us" ||
-    route.name == "earn-money"
+    route.name == 'index'
+    || route.name == 'smart-learning'
+    || route.name == 'services'
+    || route.name == 'school-service'
+    || route.name == 'faq'
+    || route.name == 'terms'
+    || route.name == 'about-us'
+    || route.name == 'earn-money'
   )
     if (window.scrollY > 60) {
       menuSetting.value = {
-        logo: "gamatrain-logo-black.svg",
-        bgColor: "#fff",
+        logo: 'gamatrain-logo-black.svg',
+        bgColor: '#fff',
         fixedStatus: true,
-        linkColor: "#424A53",
-        class: "",
-      };
-    } else {
-      menuSetting.value = {
-        logo: "gamatrain-logo.svg",
-        bgColor: "#000",
-        fixedStatus: true,
-        linkColor: "#fff",
-        class: "transparentMenu",
-      };
+        linkColor: '#424A53',
+        class: '',
+      }
     }
-};
-const setActiveFilter = (val) => {
-  mobileSearchFilter.value = val;
-};
+    else {
+      menuSetting.value = {
+        logo: 'gamatrain-logo.svg',
+        bgColor: '#000',
+        fixedStatus: true,
+        linkColor: '#fff',
+        class: 'transparentMenu',
+      }
+    }
+}
+const _setActiveFilter = (val) => {
+  mobileSearchFilter.value = val
+}
 
-//Search section
-const mobileSearchResult = ref(null);
-const lineSpecifierLoadMoreMobileRef = ref(null);
+// Search section
+const mobileSearchResult = ref(null)
+const lineSpecifierLoadMoreMobileRef = ref(null)
 const checkSearchScroll = () => {
-  const targetDiv = lineSpecifierLoadMoreMobileRef.value;
-  const rect = targetDiv.getBoundingClientRect();
-  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+  const targetDiv = lineSpecifierLoadMoreMobileRef.value
+  const rect = targetDiv.getBoundingClientRect()
+  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight
 
   if (isDivInView && !searchLoading.value && !allDataLoaded.value) {
-    pageNum.value++;
-    search();
+    pageNum.value++
+    search()
   }
-};
+}
 
 const search = () => {
-  searchLoading.value = true;
+  searchLoading.value = true
   if (timer.value) {
-    clearTimeout(timer.value);
-    timer.value = null;
+    clearTimeout(timer.value)
+    timer.value = null
   }
 
   timer.value = setTimeout(async () => {
@@ -317,200 +320,218 @@ const search = () => {
         const params = {
           query: searchKey.value,
           page: pageNum.value,
-        };
-        const response = await $fetch("/api/v1/search/text", {
+        }
+        const response = await $fetch('/api/v1/search/text', {
           params,
-        });
+        })
         if (response.data) {
-          searchCount.value = response.data.num;
-          searchResults.value.push(...response.data.list);
+          searchCount.value = response.data.num
+          searchResults.value.push(...response.data.list)
 
           if (response.data.list.length < 20) {
-            allDataLoaded.value = true;
+            allDataLoaded.value = true
           }
         }
-      } catch (error) {
-        console.log(err);
-      } finally {
-        searchLoading.value = false;
+      }
+      catch (error) {
+        console.log(error)
+      }
+      finally {
+        searchLoading.value = false
       }
     }
-  }, 800);
-};
+  }, 800)
+}
 
 const closeSearch = () => {
-  searchResultsSection.value = false;
-  searchKey.value = "";
-};
+  searchResultsSection.value = false
+  searchKey.value = ''
+}
 const calcPath = (type) => {
-  if (type == "gama_tests") return "paper";
-  else if (type == "gama_learnfiles" || type == "gama_files")
-    return "multimedia";
-  else if (type == "gama_azmoons") return "exams";
-  else if (type == "gama_questions") return "qa";
-  else if (type == "gama_dars") return "tutorial";
-  else if (type == "gama_teachers") return "teacher";
-  else if (type == "gama_schools") return "school";
-  else if (type == "gama_live") return "live";
-  else if (type == "gama_students") return "student";
-  else "/";
-};
+  if (type == 'gama_tests') return 'paper'
+  else if (type == 'gama_learnfiles' || type == 'gama_files')
+    return 'multimedia'
+  else if (type == 'gama_azmoons') return 'exams'
+  else if (type == 'gama_questions') return 'qa'
+  else if (type == 'gama_dars') return 'tutorial'
+  else if (type == 'gama_teachers') return 'teacher'
+  else if (type == 'gama_schools') return 'school'
+  else if (type == 'gama_live') return 'live'
+  else if (type == 'gama_students') return 'student'
+  else return '/'
+}
 
 const startDrag = (e) => {
-  mobileSearchSheetConfig.value.isDragging = true;
-  mobileSearchSheetConfig.value.startDragY = e.touches[0].clientY;
-};
+  mobileSearchSheetConfig.value.isDragging = true
+  mobileSearchSheetConfig.value.startDragY = e.touches[0].clientY
+}
 const handleDrag = () => {
   if (mobileSearchSheetConfig.value.isDragging) {
-    e.preventDefault();
+    e.preventDefault()
 
-    const currentY = e.touches[0].clientY;
-    const dragDistance = mobileSearchSheetConfig.value.startDragY - currentY;
-    const viewportHeight = window.innerHeight;
+    const currentY = e.touches[0].clientY
+    const dragDistance = mobileSearchSheetConfig.value.startDragY - currentY
+    const viewportHeight = window.innerHeight
 
-    const currentHeight = mobileSearchSheetConfig.value.sheetHeight;
-    const newHeightVH = currentHeight + (dragDistance / viewportHeight) * 100;
+    const currentHeight = mobileSearchSheetConfig.value.sheetHeight
+    const newHeightVH = currentHeight + (dragDistance / viewportHeight) * 100
 
     // Limit the newHeightVH to reasonable values
-    const newHeight = Math.min(Math.max(newHeightVH, 10), 100); // 10vh to 100vh
+    const newHeight = Math.min(Math.max(newHeightVH, 10), 100) // 10vh to 100vh
 
-    mobileSearchSheetConfig.value.sheetHeight = newHeight;
-    mobileSearchSheetConfig.value.startDragY = currentY;
+    mobileSearchSheetConfig.value.sheetHeight = newHeight
+    mobileSearchSheetConfig.value.startDragY = currentY
   }
-};
-const endDrag = (e) => {
-  mobileSearchSheetConfig.value.isDragging = false;
+}
+const endDrag = (_e) => {
+  mobileSearchSheetConfig.value.isDragging = false
   if (mobileSearchSheetConfig.value.sheetHeight < 30)
-    mobileSearchSheet.value = false;
-};
-//End search section
+    mobileSearchSheet.value = false
+}
+// End search section
 watch(currentOpenDialog, (val) => {
-  if (val === "login") {
-    register_modal.value.register_dialog = false;
-    pass_recover_modal.value.pass_recover_dialog = false;
-    login_modal.value.login_dialog = true;
-  } else if (val === "register") {
-    login_modal.value.login_dialog = false;
-    pass_recover_modal.value.pass_recover_dialog = false;
-    register_modal.value.register_dialog = true;
-  } else if (val === "pass_recover") {
-    login_modal.value.login_dialog = false;
-    register_modal.value.register_dialog = false;
-    pass_recover_modal.value.pass_recover_dialog = true;
-  } else {
-    login_modal.value.login_dialog = false;
-    login_modal.value.register_dialog = false;
-    pass_recover_modal.value.pass_recover_dialog = false;
+  if (val === 'login') {
+    register_modal.value.register_dialog = false
+    pass_recover_modal.value.pass_recover_dialog = false
+    login_modal.value.login_dialog = true
   }
-});
+  else if (val === 'register') {
+    login_modal.value.login_dialog = false
+    pass_recover_modal.value.pass_recover_dialog = false
+    register_modal.value.register_dialog = true
+  }
+  else if (val === 'pass_recover') {
+    login_modal.value.login_dialog = false
+    register_modal.value.register_dialog = false
+    pass_recover_modal.value.pass_recover_dialog = true
+  }
+  else {
+    login_modal.value.login_dialog = false
+    login_modal.value.register_dialog = false
+    pass_recover_modal.value.pass_recover_dialog = false
+  }
+})
 
-//Handle auth form from all of section
+// Handle auth form from all of section
 watch(
   () => route.query.auth_form,
   (val) => {
-    if (val === "login") {
+    if (val === 'login') {
       // login_modal.value.login_dialog = true;
-      openLoginDialog();
-      router.push({ query: {} });
-    } else if (val == "register") {
-      register_modal.value.register_dialog = true;
-      router.push({ query: {} });
+      openLoginDialog()
+      router.push({ query: {} })
     }
-  }
-);
+    else if (val == 'register') {
+      register_modal.value.register_dialog = true
+      router.push({ query: {} })
+    }
+  },
+)
 
 watch(
   () => route.name,
   (val) => {
-    mobileSearchSheet.value = false;
+    mobileSearchSheet.value = false
 
     if (
-      val == "index" ||
-      val == "smart-learning" ||
-      val == "services" ||
-      val == "school-service" ||
-      val == "faq" ||
-      val == "terms" ||
-      val == "about-us" ||
-      val == "earn-money"
+      val == 'index'
+      || val == 'smart-learning'
+      || val == 'services'
+      || val == 'school-service'
+      || val == 'faq'
+      || val == 'terms'
+      || val == 'about-us'
+      || val == 'earn-money'
     ) {
       menuSetting.value = {
-        logo: "gamatrain-logo.svg",
-        bgColor: "#000",
+        logo: 'gamatrain-logo.svg',
+        bgColor: '#000',
         fixedStatus: true,
-        linkColor: "#fff",
-        class: "transparentMenu",
-      };
-    } else {
-      menuSetting.value = {
-        logo: "gamatrain-logo-black.svg",
-        bgColor: "#fff",
-        fixedStatus: false,
-        linkColor: "#424A53",
-        class: "",
-      };
+        linkColor: '#fff',
+        class: 'transparentMenu',
+      }
     }
-  }
-);
+    else {
+      menuSetting.value = {
+        logo: 'gamatrain-logo-black.svg',
+        bgColor: '#fff',
+        fixedStatus: false,
+        linkColor: '#424A53',
+        class: '',
+      }
+    }
+  },
+)
 
 watch(
   () => searchKey.value,
   (val) => {
-    if (val.trim() === "") {
-      searchResultsSection.value = false;
-    } else {
-      searchResultsSection.value = true;
+    if (val.trim() === '') {
+      searchResultsSection.value = false
     }
-    pageNum.value = 1;
-    searchCount.value = "...";
-    allDataLoaded.value = false;
-    searchResults.value = [];
-    search();
-  }
-);
+    else {
+      searchResultsSection.value = true
+    }
+    pageNum.value = 1
+    searchCount.value = '...'
+    allDataLoaded.value = false
+    searchResults.value = []
+    search()
+  },
+)
 
 watch(
   () => mobileSearchSheet.value,
   (val) => {
-    if (val == true) mobileSearchSheetConfig.value.sheetHeight = 70;
-  }
-);
+    if (val == true) mobileSearchSheetConfig.value.sheetHeight = 70
+  },
+)
 </script>
+
 <template>
   <div>
     <header id="main-header">
-      <!--Desktop menu-->
+      <!-- Desktop menu -->
 
       <v-app-bar
+        id="main-menu"
         flat
         :fixed="menuSetting.fixedStatus"
-        id="main-menu"
         :class="menuSetting.class"
         class="d-none d-lg-block"
       >
         <v-container class="px-0">
           <v-row>
-            <v-col cols="6" md="9" lg="9" xl="9">
+            <v-col
+              cols="6"
+              md="9"
+              lg="9"
+              xl="9"
+            >
               <div class="d-flex">
                 <nuxt-link to="/">
                   <img
-                    alt="Gamatrain"
                     id="main-logo"
+                    alt="Gamatrain"
                     :src="`/images/${menuSetting.logo}`"
-                  />
+                  >
                 </nuxt-link>
 
                 <div class="pt-2">
                   <v-btn
-                    tile
                     v-for="(link, i) in menuLink"
-                    :to="link.link"
                     :key="i"
+                    tile
+                    :to="link.link"
                     :color="menuSetting.linkColor"
                     text
                     class="mx-2 mx-md-0 mx-lg-2 text-transform-none gtext-t4"
                   >
-                    <v-icon class="mb-2 mr-1" v-if="link.icon" color="#FFB300">
+                    <v-icon
+                      v-if="link.icon"
+                      class="mb-2 mr-1"
+                      color="#FFB300"
+                    >
                       {{ link.icon }}
                     </v-icon>
                     {{ link.title }}
@@ -518,10 +539,16 @@ watch(
                 </div>
               </div>
             </v-col>
-            <v-col cols="4" md="3" lg="3" xl="3" class="text-right mt-md-1">
+            <v-col
+              cols="4"
+              md="3"
+              lg="3"
+              xl="3"
+              class="text-right mt-md-1"
+            >
               <div
-                class="d-flex text-right align-md-center"
                 v-if="auth.isAuthenticated.value"
+                class="d-flex text-right align-md-center"
               >
                 <v-spacer />
                 <v-menu
@@ -529,22 +556,34 @@ watch(
                   offset-y
                   min-width="150"
                 >
-                  <template v-slot:activator="{ props }">
-                    <div v-bind="props" class="d-flex">
+                  <template #activator="{ props }">
+                    <div
+                      v-bind="props"
+                      class="d-flex"
+                    >
                       <div
-                        class="gama-text-subtitle1"
                         :id="
                           menuSetting.bgColor == '#fff'
                             ? 'header-username-dark'
                             : 'header-username-light'
                         "
+                        class="gama-text-subtitle1"
                       >
                         {{ user?.first_name || user?.last_name || "NO NAME" }}
                       </div>
-                      <v-avatar size="32" v-if="user?.avatar">
-                        <v-img :src="user?.avatar" alt="user avatar" />
+                      <v-avatar
+                        v-if="user?.avatar"
+                        size="32"
+                      >
+                        <v-img
+                          :src="user?.avatar"
+                          alt="user avatar"
+                        />
                       </v-avatar>
-                      <v-icon v-else :color="menuSetting.linkColor">
+                      <v-icon
+                        v-else
+                        :color="menuSetting.linkColor"
+                      >
                         mdi-account
                       </v-icon>
                     </div>
@@ -555,8 +594,11 @@ watch(
                       :key="i"
                       :to="item.link"
                     >
-                      <template v-slot:prepend>
-                        <v-icon size="small" class="mr-0 nt">
+                      <template #prepend>
+                        <v-icon
+                          size="small"
+                          class="mr-0 nt"
+                        >
                           {{ item.icon }}
                         </v-icon>
                       </template>
@@ -564,9 +606,17 @@ watch(
                         {{ item.title }}
                       </v-list-item-title>
                     </v-list-item>
-                    <v-list-item class="pointer" @click="logout">
-                      <template v-slot:prepend>
-                        <v-icon size="small" class="mr-0"> mdi-logout </v-icon>
+                    <v-list-item
+                      class="pointer"
+                      @click="logout"
+                    >
+                      <template #prepend>
+                        <v-icon
+                          size="small"
+                          class="mr-0"
+                        >
+                          mdi-logout
+                        </v-icon>
                       </template>
                       <v-list-item-title> Logout </v-list-item-title>
                     </v-list-item>
@@ -581,18 +631,19 @@ watch(
                     class="wallet-icon pt-1"
                     :color="menuSetting.linkColor"
                     size="small"
-                    ><v-icon>mdi-wallet-outline</v-icon></v-btn
                   >
+                    <v-icon>mdi-wallet-outline</v-icon>
+                  </v-btn>
                 </div>
 
-                <!--Desktop version-->
+                <!-- Desktop version -->
                 <common-notification-component
-                  :menuSetting="menuSetting"
                   ref="notificationComponent"
+                  :menu-setting="menuSetting"
                   class="d-none d-lg-block"
                 />
               </div>
-              <div v-else></div>
+              <div v-else />
               <div>
                 <v-btn
                   v-if="!auth.isAuthenticated.value"
@@ -610,36 +661,36 @@ watch(
       </v-app-bar>
 
       <div>
-        <!--Login component-->
+        <!-- Login component -->
         <component
-          v-model:dialog="loginDialogVisible"
           :is="currentAuthComponentMap[currentAuthComponent]"
-          @switchToLogin="switchTo('login')"
-          @switchToRegister="switchTo('register')"
-          @switchToRecover="switchTo('recover')"
+          v-model:dialog="loginDialogVisible"
+          @switch-to-login="switchTo('login')"
+          @switch-to-register="switchTo('register')"
+          @switch-to-recover="switchTo('recover')"
         />
-        <!--End login component-->
+        <!-- End login component -->
 
-        <!--Register component-->
+        <!-- Register component -->
         <!-- <common-register
           ref="register_modal"
           :switchToLogin.sync="currentOpenDialog"
         /> -->
-        <!--End register component-->
+        <!-- End register component -->
 
-        <!--Recover password component-->
+        <!-- Recover password component -->
         <!-- <common-pass-recover
           ref="pass_recover_modal"
           :switchToLogin.sync="currentOpenDialog"
           :switchToRegister.sync="currentOpenDialog"
         /> -->
-        <!--End recover password component-->
+        <!-- End recover password component -->
       </div>
-      <!--End desktop menu-->
+      <!-- End desktop menu -->
 
       <v-navigation-drawer
         v-model="sidebar"
-        :modelValue="sidebar"
+        :model-value="sidebar"
         temporary
         location="left"
         class="hidden-lg-and-up main-sidebar"
@@ -651,7 +702,7 @@ watch(
             v-if="auth.isAuthenticated.value"
             active-class="menu_group_active"
           >
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-list-item v-bind="props">
                 <v-icon icon="mdi-account-outline" />
                 <v-list-item-title>
@@ -660,15 +711,19 @@ watch(
               </v-list-item>
             </template>
 
-            <v-list-item v-for="(item, i) in user_profile_items" :key="i" link>
-              <template v-slot:prepend>
+            <v-list-item
+              v-for="(item, i) in user_profile_items"
+              :key="i"
+              link
+            >
+              <template #prepend>
                 <v-icon :icon="item.icon" />
               </template>
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
 
             <v-list-item @click="logout">
-              <template v-slot:prepend>
+              <template #prepend>
                 <v-icon icon="mdi-exit-to-app" />
               </template>
               <v-list-item-title>Logout</v-list-item-title>
@@ -680,8 +735,11 @@ watch(
             v-if="auth.isAuthenticated.value"
             @click="notificationListDialog = true"
           >
-            <template v-slot:prepend>
-              <v-badge overlap content="3">
+            <template #prepend>
+              <v-badge
+                overlap
+                content="3"
+              >
                 <v-icon icon="mdi-bell-outline" />
               </v-badge>
             </template>
@@ -690,10 +748,10 @@ watch(
 
           <!-- Login Button -->
           <v-list-item
-            @click="openLoginDialog()"
             v-if="!auth.isAuthenticated.value"
+            @click="openLoginDialog()"
           >
-            <template v-slot:prepend>
+            <template #prepend>
               <v-icon icon="mdi-account-outline" />
             </template>
             <v-list-item-title>
@@ -702,18 +760,31 @@ watch(
           </v-list-item>
 
           <!-- Menu Items -->
-          <div v-for="(item, index) in menuItems" :key="index">
+          <div
+            v-for="(item, index) in menuItems"
+            :key="index"
+          >
             <!-- Normal Items -->
-            <v-list-item v-if="!item.subMenuList" :to="item.link">
-              <template v-slot:prepend>
-                <v-icon :icon="item.icon" :color="item.icon_color" />
+            <v-list-item
+              v-if="!item.subMenuList"
+              :to="item.link"
+            >
+              <template #prepend>
+                <v-icon
+                  :icon="item.icon"
+                  :color="item.icon_color"
+                />
               </template>
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
 
             <!-- Submenu Items -->
-            <v-list-group v-else active-class="menu_group_active" no-action>
-              <template v-slot:activator="{ props }">
+            <v-list-group
+              v-else
+              active-class="menu_group_active"
+              no-action
+            >
+              <template #activator="{ props }">
                 <v-list-item v-bind="props">
                   <v-list-item-title>{{ item.title }}</v-list-item-title>
                 </v-list-item>
@@ -735,7 +806,7 @@ watch(
 
       <!--   Start: navbar   main-container -->
 
-      <!--Mobile nav-->
+      <!-- Mobile nav -->
       <v-app-bar
         class="d-block d-lg-none mobile_bar top-0 px-5"
         fixed
@@ -743,25 +814,28 @@ watch(
         :class="menuSetting.class"
       >
         <v-icon
-          @click="sidebar = !sidebar"
           class="px-2"
           :class="menuSetting.bgColor == '#fff' ? '' : 'text-white'"
+          @click="sidebar = !sidebar"
         >
           mdi-menu
         </v-icon>
-        <!--Logo section-->
+        <!-- Logo section -->
         <nuxt-link to="/">
-          <img id="main-logo" :src="`/images/${menuSetting.logo}`" />
+          <img
+            id="main-logo"
+            :src="`/images/${menuSetting.logo}`"
+          >
         </nuxt-link>
-        <!--End logo section-->
+        <!-- End logo section -->
 
-        <v-spacer></v-spacer>
+        <v-spacer />
 
-        <!--   hamburgers-icon in mobile-->
+        <!--   hamburgers-icon in mobile -->
 
         <div class="text-center">
           <v-bottom-sheet v-model="mobileSearchSheet">
-            <template v-slot:activator="{ props }">
+            <template #activator="{ props }">
               <v-icon
                 v-bind="props"
                 :color="menuSetting.linkColor"
@@ -780,7 +854,7 @@ watch(
                 @touchend="endDrag"
                 @touchmove="handleDrag"
               >
-                <div id="search-sheet-handler"></div>
+                <div id="search-sheet-handler" />
               </div>
 
               <v-slide-group
@@ -792,10 +866,13 @@ watch(
                 <v-slide-group-item
                   v-for="(item, n) in searchFilterItems"
                   :key="n"
-                  :value="item.key"
                   v-slot="{ isSelected, toggle }"
+                  :value="item.key"
                 >
-                  <div @click="toggle" class="ma-4">
+                  <div
+                    class="ma-4"
+                    @click="toggle"
+                  >
                     <div
                       :class="`${
                         isSelected
@@ -804,10 +881,12 @@ watch(
                       }`"
                     >
                       <div :class="`avatar ${item.key}-avatar`">
-                        <span :class="`icon icon-${item.key}`"></span>
+                        <span :class="`icon icon-${item.key}`" />
                       </div>
                     </div>
-                    <div class="gama-text-caption">{{ item.title }}</div>
+                    <div class="gama-text-caption">
+                      {{ item.title }}
+                    </div>
                   </div>
                 </v-slide-group-item>
               </v-slide-group>
@@ -815,8 +894,12 @@ watch(
                 <v-card flat>
                   <div id="keyword-card">
                     <v-row>
-                      <v-col cols="12" class="pb-0 px-6">
+                      <v-col
+                        cols="12"
+                        class="pb-0 px-6"
+                      >
                         <v-text-field
+                          v-model="searchKey"
                           label="Ex: Paper Summer Session"
                           prepend-inner-icon="mdi-magnify"
                           glow
@@ -825,13 +908,12 @@ watch(
                           icon-color="#FFB600"
                           density="compact"
                           rounded="xl"
-                          v-model="searchKey"
                           clearable
-                          @click:clear="closeSearch"
                           autocomplete="off"
                           class="w-100"
+                          @click:clear="closeSearch"
                         >
-                          <template v-slot:append-inner>
+                          <template #append-inner>
                             <v-icon
                               class="mr-n3"
                               color="#FFB600"
@@ -842,17 +924,24 @@ watch(
                               mdi-close-circle
                             </v-icon>
                           </template>
-                          <template v-slot:append-outer>
-                            <v-btn dense color="#FFB300" class="text-white">
+                          <template #append-outer>
+                            <v-btn
+                              dense
+                              color="#FFB300"
+                              class="text-white"
+                            >
                               <v-icon>mdi-magnify</v-icon>
                             </v-btn>
                           </template>
                         </v-text-field>
                       </v-col>
-                      <v-col cols="12" class="pt-0">
+                      <v-col
+                        cols="12"
+                        class="pt-0"
+                      >
                         <div
-                          id="mobile-search-result-container"
                           v-if="searchResultsSection"
+                          id="mobile-search-result-container"
                         >
                           <div
                             id="search-result"
@@ -869,9 +958,9 @@ watch(
                             </div>
                             <div v-if="searchCount > 0">
                               <v-row
-                                class="list-item"
                                 v-for="(item, index) in searchResults"
                                 :key="index"
+                                class="list-item"
                               >
                                 <v-col cols="1">
                                   <nuxt-link
@@ -881,58 +970,58 @@ watch(
                                       v-if="item.type == 'gama_tests'"
                                       class="avatar paper-avatar"
                                     >
-                                      <span class="icon icon-paper"></span>
+                                      <span class="icon icon-paper" />
                                     </div>
                                     <div
                                       v-else-if="
-                                        item.type == 'gama_learnfiles' ||
-                                        item.type == 'gama_files'
+                                        item.type == 'gama_learnfiles'
+                                          || item.type == 'gama_files'
                                       "
                                       class="avatar multimedia-avatar"
                                     >
-                                      <span class="icon icon-multimedia"></span>
+                                      <span class="icon icon-multimedia" />
                                     </div>
                                     <div
                                       v-else-if="item.type == 'gama_azmoons'"
                                       class="avatar exam-avatar"
                                     >
-                                      <span class="icon icon-exam"></span>
+                                      <span class="icon icon-exam" />
                                     </div>
                                     <div
                                       v-else-if="item.type == 'gama_questions'"
                                       class="avatar qa-avatar"
                                     >
-                                      <span class="icon icon-q-a"></span>
+                                      <span class="icon icon-q-a" />
                                     </div>
                                     <div
                                       v-else-if="item.type == 'gama_dars'"
                                       class="avatar tutorial-avatar"
                                     >
-                                      <span class="icon icon-tutorial"></span>
+                                      <span class="icon icon-tutorial" />
                                     </div>
                                     <div
                                       v-else-if="item.type == 'gama_teachers'"
                                       class="avatar teacher-avatar"
                                     >
-                                      <span class="icon icon-teacher"></span>
+                                      <span class="icon icon-teacher" />
                                     </div>
                                     <div
                                       v-else-if="item.type == 'gama_schools'"
                                       class="avatar school-avatar"
                                     >
-                                      <span class="icon icon-school"></span>
+                                      <span class="icon icon-school" />
                                     </div>
                                     <div
                                       v-else-if="item.type == 'gama_live'"
                                       class="avatar live-avatar"
                                     >
-                                      <span class="icon icon-live"></span>
+                                      <span class="icon icon-live" />
                                     </div>
                                     <div
                                       v-else-if="item.type == 'gama_students'"
                                       class="avatar student-avatar"
                                     >
-                                      <span class="icon icon-live"></span>
+                                      <span class="icon icon-live" />
                                     </div>
                                   </nuxt-link>
                                 </v-col>
@@ -940,43 +1029,46 @@ watch(
                                   <div class="gama-text-button ml-2">
                                     <nuxt-link
                                       :to="`/${calcPath(item.type)}/${item.id}`"
-                                      >{{ item.title }}</nuxt-link
-                                    >
+                                    >{{ item.title }}</nuxt-link>
                                   </div>
                                   <div class="chip-container ml-2">
-                                    <div class="chip" v-if="item.lesson_title">
+                                    <div
+                                      v-if="item.lesson_title"
+                                      class="chip"
+                                    >
                                       <nuxt-link
                                         :to="`/search?type=test&section=${item.section}&base=${item.base}&lesson=${item.lesson}`"
-                                        >{{ item.lesson_title }}</nuxt-link
-                                      >
+                                      >{{ item.lesson_title }}</nuxt-link>
                                     </div>
-                                    <div class="chip" v-if="item.base_title">
+                                    <div
+                                      v-if="item.base_title"
+                                      class="chip"
+                                    >
                                       <nuxt-link
                                         :to="`/search?type=test&section=${item.section}&base=${item.base}`"
-                                        >{{ item.base_title }}</nuxt-link
-                                      >
+                                      >{{ item.base_title }}</nuxt-link>
                                     </div>
-                                    <div class="chip" v-if="item.section_title">
+                                    <div
+                                      v-if="item.section_title"
+                                      class="chip"
+                                    >
                                       <nuxt-link
                                         :to="`/search?type=test&section=${item.section}`"
-                                        >{{ item.section_title }}</nuxt-link
-                                      >
+                                      >{{ item.section_title }}</nuxt-link>
                                     </div>
                                   </div>
                                 </v-col>
                               </v-row>
                               <div
-                                class="line-specifier-load-more"
                                 ref="lineSpecifierLoadMoreMobileRef"
-                              ></div>
+                                class="line-specifier-load-more"
+                              />
                               <v-row
                                 v-if="allDataLoaded == false"
                                 class="list-item"
                               >
                                 <v-col cols="12">
-                                  <v-skeleton-loader
-                                    type="list-item-avatar"
-                                  ></v-skeleton-loader>
+                                  <v-skeleton-loader type="list-item-avatar" />
                                 </v-col>
                               </v-row>
                             </div>
@@ -991,11 +1083,13 @@ watch(
                               </span>
                             </div>
                             <div v-else>
-                              <v-row class="list-item" v-for="i in 3" :key="i">
+                              <v-row
+                                v-for="i in 3"
+                                :key="i"
+                                class="list-item"
+                              >
                                 <v-col cols="12">
-                                  <v-skeleton-loader
-                                    type="list-item-avatar"
-                                  ></v-skeleton-loader>
+                                  <v-skeleton-loader type="list-item-avatar" />
                                 </v-col>
                               </v-row>
                             </div>
@@ -1012,8 +1106,8 @@ watch(
 
         <v-btn
           v-if="!auth.isAuthenticated.value"
-          rounded
           id="mobile-signin-btn"
+          rounded
           class="primary gama-btn"
           @click="openLoginDialog()"
         >
@@ -1021,14 +1115,18 @@ watch(
         </v-btn>
         <common-notification-component
           v-if="auth.isAuthenticated.value"
-          :menuSetting="menuSetting"
           ref="notificationComponent"
+          :menu-setting="menuSetting"
           class="d-block d-lg-none"
         />
-        <nuxt-link to="/user/wallet" class="wallet-div wallet-mobile">
-          <v-icon class="wallet-icon" :color="menuSetting.linkColor"
-            >mdi-wallet-outline</v-icon
-          >
+        <nuxt-link
+          to="/user/wallet"
+          class="wallet-div wallet-mobile"
+        >
+          <v-icon
+            class="wallet-icon"
+            :color="menuSetting.linkColor"
+          >mdi-wallet-outline</v-icon>
         </nuxt-link>
         <v-menu
           v-if="auth.isAuthenticated.value"
@@ -1036,12 +1134,22 @@ watch(
           offset-y
           min-width="150"
         >
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <div v-bind="props">
-              <v-avatar v-if="auth?.user?.avatar" class="ml-2">
-                <v-img :src="auth?.user?.avatar" alt="user avatar" />
+              <v-avatar
+                v-if="auth?.user?.avatar"
+                class="ml-2"
+              >
+                <v-img
+                  :src="auth?.user?.avatar"
+                  alt="user avatar"
+                />
               </v-avatar>
-              <v-icon v-else class="ml-2" :color="menuSetting.linkColor">
+              <v-icon
+                v-else
+                class="ml-2"
+                :color="menuSetting.linkColor"
+              >
                 mdi-account
               </v-icon>
             </div>
@@ -1052,24 +1160,36 @@ watch(
               :key="i"
               :to="item.link"
             >
-              <template v-slot:prepend>
-                <v-icon class="mr-0 nt" :icon="item.icon" size="small"></v-icon>
+              <template #prepend>
+                <v-icon
+                  class="mr-0 nt"
+                  :icon="item.icon"
+                  size="small"
+                />
               </template>
 
               <v-list-item-title>
                 {{ item.title }}
               </v-list-item-title>
             </v-list-item>
-            <v-list-item class="pointer" @click="logout">
-              <template v-slot:prepend>
-                <v-icon small class="mr-0"> mdi-logout </v-icon>
+            <v-list-item
+              class="pointer"
+              @click="logout"
+            >
+              <template #prepend>
+                <v-icon
+                  small
+                  class="mr-0"
+                >
+                  mdi-logout
+                </v-icon>
               </template>
               <v-list-item-title> Logout </v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
       </v-app-bar>
-      <!--End mobile nav-->
+      <!-- End mobile nav -->
 
       <!--   End: navbar   -->
     </header>
@@ -1083,33 +1203,41 @@ watch(
       <v-card id="notificationListCard">
         <v-card-text>
           <v-toolbar flat>
-            <h2 class="main-title">Notifications</h2>
-            <v-spacer></v-spacer>
+            <h2 class="main-title">
+              Notifications
+            </h2>
+            <v-spacer />
 
-            <v-btn icon @click="notificationListDialog = false">
+            <v-btn
+              icon
+              @click="notificationListDialog = false"
+            >
               <v-icon>mdi-close</v-icon>
             </v-btn>
           </v-toolbar>
           <v-list three-line>
-            <template>
-              <v-list-item
-                v-for="(item, index) in notificationItems"
-                :key="index"
-              >
-                <template v-slot:prepend>
-                  <v-icon :icon="item.icon"></v-icon>
-                </template>
+            <v-list-item
+              v-for="(item, index) in notificationItems"
+              :key="index"
+            >
+              <template #prepend>
+                <v-icon :icon="item.icon" />
+              </template>
 
-                <v-list-item>
-                  <div class="date">{{ item.date }}</div>
-                  <v-list-item-title class="title" :title="item.title" />
-                  <v-list-item-subtitle
-                    class="describe"
-                    :title="item.describe"
-                  />
-                </v-list-item>
+              <v-list-item>
+                <div class="date">
+                  {{ item.date }}
+                </div>
+                <v-list-item-title
+                  class="title"
+                  :title="item.title"
+                />
+                <v-list-item-subtitle
+                  class="describe"
+                  :title="item.describe"
+                />
               </v-list-item>
-            </template>
+            </v-list-item>
           </v-list>
         </v-card-text>
       </v-card>

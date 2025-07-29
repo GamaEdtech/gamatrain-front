@@ -1,26 +1,32 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue'
 
 const props = defineProps<{
-    step: number
+  step: number
 }>()
 
 const step = computed(() => props.step)
-const progress = computed(() => ((step.value-1) / 4) * 100); // درصد پیشرفت
+const progress = computed(() => ((step.value - 1) / 4) * 100) // درصد پیشرفت
 </script>
 
 <template>
-    <div class="progress-container">
-        <div class="progress-wrapper">
-            <v-progress-linear :model-value="progress" color="#ffb300" height="24" rounded class="progress-bar">
-                <template #default>
-                    <div class="progress-text">
-                        Steps
-                    </div>
-                </template>
-            </v-progress-linear>
-        </div>
+  <div class="progress-container">
+    <div class="progress-wrapper">
+      <v-progress-linear
+        :model-value="progress"
+        color="#ffb300"
+        height="24"
+        rounded
+        class="progress-bar"
+      >
+        <template #default>
+          <div class="progress-text">
+            Steps
+          </div>
+        </template>
+      </v-progress-linear>
     </div>
+  </div>
 </template>
 
 <style scoped>

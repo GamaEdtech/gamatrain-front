@@ -8,9 +8,9 @@
         </div>
         <v-btn
           icon
-          @click="toggleChart"
           class="chart-toggle-icon"
           :color="isChartVisible ? 'primary' : ''"
+          @click="toggleChart"
         >
           <v-icon>mdi-chart-line-variant</v-icon>
         </v-btn>
@@ -24,26 +24,41 @@
             background-color="transparent"
             slider-color="amber"
           >
-            <v-tab class="text-subtitle-2">All</v-tab>
-            <v-tab class="text-subtitle-2">Earned</v-tab>
-            <v-tab class="text-subtitle-2">Spent</v-tab>
+            <v-tab class="text-subtitle-2">
+              All
+            </v-tab>
+            <v-tab class="text-subtitle-2">
+              Earned
+            </v-tab>
+            <v-tab class="text-subtitle-2">
+              Spent
+            </v-tab>
           </v-tabs>
-          <v-icon class="ml-1">mdi-tune-vertical</v-icon>
+          <v-icon class="ml-1">
+            mdi-tune-vertical
+          </v-icon>
         </div>
       </div>
 
       <!-- Loading State for Mobile -->
-      <div v-if="loading && mobileTransactions.length === 0" class="py-4">
+      <div
+        v-if="loading && mobileTransactions.length === 0"
+        class="py-4"
+      >
         <v-skeleton-loader
           v-for="i in 3"
           :key="i"
           type="list-item-two-line"
           class="mb-3"
-        ></v-skeleton-loader>
+        />
       </div>
 
       <!-- Transactions List with Infinite Scroll -->
-      <v-list v-else class="transaction-list pa-0" flat>
+      <v-list
+        v-else
+        class="transaction-list pa-0"
+        flat
+      >
         <div
           ref="infiniteContainer"
           class="infinite-container"
@@ -54,26 +69,36 @@
             :key="i"
             class="transaction-item py-3"
           >
-            <template v-slot:prepend>
+            <template #prepend>
               <div class="d-flex flex-column">
                 <div class="transaction-name mb-1">
                   {{ transaction.description }}
                 </div>
                 <div class="d-flex align-center">
-                  <div class="" v-if="transaction.isDebit">
+                  <div
+                    v-if="transaction.isDebit"
+                    class=""
+                  >
                     <div class="state-icon-wrapper spent">
                       <span class="state-icon spent align-center">
-                        <v-icon color="red" size="18">mdi-tray-arrow-up</v-icon>
+                        <v-icon
+                          color="red"
+                          size="18"
+                        >mdi-tray-arrow-up</v-icon>
                       </span>
                       <span class="state-text spent ml-2">Spent</span>
                     </div>
                   </div>
-                  <div class="" v-else>
+                  <div
+                    v-else
+                    class=""
+                  >
                     <div class="state-icon-wrapper earned">
                       <span class="state-icon earned align-center">
-                        <v-icon color="green" size="18"
-                          >mdi-tray-arrow-down</v-icon
-                        >
+                        <v-icon
+                          color="green"
+                          size="18"
+                        >mdi-tray-arrow-down</v-icon>
                       </span>
                       <span class="state-text earned ml-2">Earned</span>
                     </div>
@@ -82,7 +107,7 @@
               </div>
             </template>
 
-            <template v-slot:append>
+            <template #append>
               <div class="d-flex flex-column align-end">
                 <div class="transaction-amount mb-1">
                   <span class="font-weight-medium">{{
@@ -91,9 +116,12 @@
                   <span class="ml-1 caption grey--text">$GET</span>
                 </div>
                 <div class="d-flex align-center">
-                  <v-icon x-small class="mr-1 grey--text text--lighten-1"
-                    >mdi-clock-outline</v-icon
+                  <v-icon
+                    x-small
+                    class="mr-1 grey--text text--lighten-1"
                   >
+                    mdi-clock-outline
+                  </v-icon>
                   <span class="caption grey--text text--darken-1">{{
                     transaction.creationDate
                   }}</span>
@@ -103,12 +131,15 @@
           </v-list-item>
 
           <!-- Loading More Indicator for Mobile -->
-          <div v-if="loadingMore" class="pa-4 text-center">
+          <div
+            v-if="loadingMore"
+            class="pa-4 text-center"
+          >
             <v-progress-circular
               indeterminate
               color="primary"
               size="24"
-            ></v-progress-circular>
+            />
           </div>
 
           <!-- End of List Message -->
@@ -125,18 +156,37 @@
             class="text-center py-8"
           >
             <template v-if="activeTab === 0">
-              <v-icon size="64" color="grey lighten-2"
-                >mdi-wallet-outline</v-icon
+              <v-icon
+                size="64"
+                color="grey lighten-2"
               >
-              <p class="mt-4 grey--text">No transactions found</p>
+                mdi-wallet-outline
+              </v-icon>
+              <p class="mt-4 grey--text">
+                No transactions found
+              </p>
             </template>
             <template v-if="activeTab === 1">
-              <v-icon size="64" color="green lighten-4">mdi-cash-plus</v-icon>
-              <p class="mt-4 grey--text">No earned transactions yet</p>
+              <v-icon
+                size="64"
+                color="green lighten-4"
+              >
+                mdi-cash-plus
+              </v-icon>
+              <p class="mt-4 grey--text">
+                No earned transactions yet
+              </p>
             </template>
             <template v-if="activeTab === 2">
-              <v-icon size="64" color="red lighten-4">mdi-cash-minus</v-icon>
-              <p class="mt-4 grey--text">No spent transactions yet</p>
+              <v-icon
+                size="64"
+                color="red lighten-4"
+              >
+                mdi-cash-minus
+              </v-icon>
+              <p class="mt-4 grey--text">
+                No spent transactions yet
+              </p>
             </template>
           </div>
         </div>
@@ -144,7 +194,10 @@
     </div>
 
     <!-- Desktop View Transaction History -->
-    <div class="mt-8 d-none d-sm-block" elevation="0">
+    <div
+      class="mt-8 d-none d-sm-block"
+      elevation="0"
+    >
       <div class="text-h5 primary-gray-700 font-weight-bold pb-2">
         Transaction History
       </div>
@@ -155,9 +208,15 @@
           background-color="transparent"
           color="primary"
         >
-          <v-tab class="font-weight-regular">All</v-tab>
-          <v-tab class="font-weight-regular">Earned</v-tab>
-          <v-tab class="font-weight-regular">Spent</v-tab>
+          <v-tab class="font-weight-regular">
+            All
+          </v-tab>
+          <v-tab class="font-weight-regular">
+            Earned
+          </v-tab>
+          <v-tab class="font-weight-regular">
+            Spent
+          </v-tab>
         </v-tabs>
       </div>
 
@@ -170,23 +229,26 @@
           :loading="loading"
           @update:options="loadDesktopTransactions"
         >
-          <template #item.description="{ item }">
+          <template #[`item.description`]="{ item }">
             {{ item.description }}
           </template>
 
-          <template #item.points="{ item }">
+          <template #[`item.points`]="{ item }">
             <div class="d-flex align-center">
               <span class="font-weight-bold">{{ item.points }}</span>
               <span class="ml-1 caption grey--text">$GET</span>
             </div>
           </template>
 
-          <template #item.isDebit="{ item }">
+          <template #[`item.isDebit`]="{ item }">
             <div class="d-flex align-center">
               <div v-if="item.isDebit">
                 <div class="state-icon-wrapper spent">
                   <span class="state-icon spent align-center">
-                    <v-icon color="red" size="18">mdi-tray-arrow-up</v-icon>
+                    <v-icon
+                      color="red"
+                      size="18"
+                    >mdi-tray-arrow-up</v-icon>
                   </span>
                   <span class="state-text spent ml-2">Spent</span>
                 </div>
@@ -194,7 +256,10 @@
               <div v-else>
                 <div class="state-icon-wrapper earned">
                   <span class="state-icon earned align-center">
-                    <v-icon color="green" size="18">mdi-tray-arrow-down</v-icon>
+                    <v-icon
+                      color="green"
+                      size="18"
+                    >mdi-tray-arrow-down</v-icon>
                   </span>
                   <span class="state-text earned ml-2">Earned</span>
                 </div>
@@ -202,11 +267,14 @@
             </div>
           </template>
 
-          <template #item.creationDate="{ item }">
+          <template #[`item.creationDate`]="{ item }">
             <div class="d-flex align-center">
-              <v-icon small class="mr-1 primary-gray-300"
-                >mdi-clock-outline</v-icon
+              <v-icon
+                small
+                class="mr-1 primary-gray-300"
               >
+                mdi-clock-outline
+              </v-icon>
               <span class="primary-gray-500">{{ item.creationDate }}</span>
             </div>
           </template>
@@ -217,232 +285,243 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { useAuth } from "~/composables/useAuth";
-import { useApiService } from "~/composables/useApiService";
+import { ref, onMounted, watch } from 'vue'
+import { useAuth } from '~/composables/useAuth'
+import { useApiService } from '~/composables/useApiService'
 
 // Props
 defineProps({
   isChartVisible: { type: Boolean, default: false },
-});
+})
 
 // Emits
-const emit = defineEmits(["toggle-chart"]);
+const emit = defineEmits(['toggle-chart'])
 
 // Composables
-const auth = useAuth();
+const auth = useAuth()
 
 // --- Unified Reactive State ---
-const activeTab = ref(0);
-const token = ref("");
-const transactionType = ref(null);
-const loading = ref(false); // Unified loading state for initial load
-const loadingMore = ref(false); // Specific loading state for mobile infinite scroll
+const activeTab = ref(0)
+const token = ref('')
+const transactionType = ref(null)
+const loading = ref(false) // Unified loading state for initial load
+const loadingMore = ref(false) // Specific loading state for mobile infinite scroll
 
 // Data states
-const transactions = ref([]); // For Desktop Table
-const mobileTransactions = ref([]); // For Mobile List
+const transactions = ref([]) // For Desktop Table
+const mobileTransactions = ref([]) // For Mobile List
 
 // Pagination & Infinite Scroll states
-const totalRecords = ref(0);
-const pageSize = ref(10); // For Desktop
-const hasMoreItems = ref(true); // For Mobile
-const MOBILE_PAGE_SIZE = 15;
+const totalRecords = ref(0)
+const pageSize = ref(10) // For Desktop
+const hasMoreItems = ref(true) // For Mobile
+const MOBILE_PAGE_SIZE = 15
 
 // Template Refs
-const infiniteContainer = ref(null);
+const infiniteContainer = ref(null)
 
 // --- Data table headers ---
 const headers = [
   {
-    title: "Description",
-    key: "description",
+    title: 'Description',
+    key: 'description',
     sortable: true,
-    align: "start",
-    class: "font-weight-medium",
+    align: 'start',
+    class: 'font-weight-medium',
   },
   {
-    title: "Amount",
-    key: "points",
+    title: 'Amount',
+    key: 'points',
     sortable: true,
-    align: "start",
-    class: "font-weight-medium",
+    align: 'start',
+    class: 'font-weight-medium',
   },
   {
-    title: "State",
-    key: "isDebit",
+    title: 'State',
+    key: 'isDebit',
     sortable: true,
-    align: "start",
-    class: "font-weight-medium",
+    align: 'start',
+    class: 'font-weight-medium',
   },
   {
-    title: "Date",
-    key: "creationDate",
+    title: 'Date',
+    key: 'creationDate',
     sortable: true,
-    align: "start",
-    class: "font-weight-medium",
+    align: 'start',
+    class: 'font-weight-medium',
   },
-];
+]
 
 // --- Methods ---
 
 const getToken = () => {
-  if (process.client) {
-    token.value = localStorage.getItem("v2_token") || "";
+  if (import.meta.client) {
+    token.value = localStorage.getItem('v2_token') || ''
   }
-};
+}
 
 /**
  * REFACTORED: Main function to fetch initial data when tab changes.
  * Sends ONE request and populates both desktop and mobile lists.
  */
 const resetAndFetchInitialData = async () => {
-  if (loading.value) return;
-  loading.value = true;
+  if (loading.value) return
+  loading.value = true
 
   // Reset states
-  transactions.value = [];
-  mobileTransactions.value = [];
-  totalRecords.value = 0;
-  hasMoreItems.value = true;
+  transactions.value = []
+  mobileTransactions.value = []
+  totalRecords.value = 0
+  hasMoreItems.value = true
   if (infiniteContainer.value) {
-    infiniteContainer.value.scrollTop = 0;
+    infiniteContainer.value.scrollTop = 0
   }
 
   try {
     const params = {
-      "PagingDto.PageFilter.Size": pageSize.value, // Fetch first page based on desktop size
-      "PagingDto.PageFilter.Skip": 0,
-      "PagingDto.PageFilter.ReturnTotalRecordsCount": true,
-    };
+      'PagingDto.PageFilter.Size': pageSize.value, // Fetch first page based on desktop size
+      'PagingDto.PageFilter.Skip': 0,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+    }
     if (transactionType.value !== null) {
-      params["IsDebit"] = transactionType.value;
+      params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService("/api/v2/transactions", {
-      method: "GET",
+    const response = await useApiService('/api/v2/transactions', {
+      method: 'GET',
       params,
       headers: { Authorization: `Bearer ${token.value}` },
-    });
+    })
 
     if (response.succeeded && response.data) {
       // Populate both lists with the same initial data
-      transactions.value = response.data.list;
-      mobileTransactions.value = response.data.list;
-      totalRecords.value = response.data.totalRecordsCount;
-      hasMoreItems.value = mobileTransactions.value.length < totalRecords.value;
+      transactions.value = response.data.list
+      mobileTransactions.value = response.data.list
+      totalRecords.value = response.data.totalRecordsCount
+      hasMoreItems.value = mobileTransactions.value.length < totalRecords.value
     }
-  } catch (err) {
-    if (err.response && err.response.status === 403) auth.logout();
-    console.error("Error fetching initial transactions:", err);
-  } finally {
-    loading.value = false;
   }
-};
+  catch (err) {
+    if (err.response && err.response.status === 403) auth.logout()
+    console.error('Error fetching initial transactions:', err)
+  }
+  finally {
+    loading.value = false
+  }
+}
 
 /**
  * Fetches subsequent pages for the DESKTOP table.
  */
-const loadDesktopTransactions = async ({ page, itemsPerPage, sortBy }) => {
-  loading.value = true;
-  const skip = (page - 1) * itemsPerPage;
+const loadDesktopTransactions = async ({
+  page,
+  itemsPerPage,
+  sortBy: _sortBy,
+}) => {
+  loading.value = true
+  const skip = (page - 1) * itemsPerPage
 
   try {
     const params = {
-      "PagingDto.PageFilter.Size": itemsPerPage,
-      "PagingDto.PageFilter.Skip": skip,
-      "PagingDto.PageFilter.ReturnTotalRecordsCount": true,
-    };
+      'PagingDto.PageFilter.Size': itemsPerPage,
+      'PagingDto.PageFilter.Skip': skip,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+    }
     if (transactionType.value !== null) {
-      params["IsDebit"] = transactionType.value;
+      params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService("/api/v2/transactions", {
-      method: "GET",
+    const response = await useApiService('/api/v2/transactions', {
+      method: 'GET',
       params,
       headers: { Authorization: `Bearer ${token.value}` },
-    });
+    })
 
     if (response.succeeded && response.data) {
-      transactions.value = response.data.list;
-      totalRecords.value = response.data.totalRecordsCount;
+      transactions.value = response.data.list
+      totalRecords.value = response.data.totalRecordsCount
     }
-  } catch (err) {
-    if (err.response && err.response.status === 403) auth.logout();
-    console.error("Error fetching desktop page:", err);
-  } finally {
-    loading.value = false;
   }
-};
+  catch (err) {
+    if (err.response && err.response.status === 403) auth.logout()
+    console.error('Error fetching desktop page:', err)
+  }
+  finally {
+    loading.value = false
+  }
+}
 
 /**
  * Fetches more items for MOBILE infinite scroll.
  */
 const fetchMoreMobileTransactions = async () => {
-  if (loadingMore.value || !hasMoreItems.value) return;
-  loadingMore.value = true;
+  if (loadingMore.value || !hasMoreItems.value) return
+  loadingMore.value = true
 
-  const skip = mobileTransactions.value.length;
+  const skip = mobileTransactions.value.length
 
   try {
     const params = {
-      "PagingDto.PageFilter.Size": MOBILE_PAGE_SIZE,
-      "PagingDto.PageFilter.Skip": skip,
-      "PagingDto.PageFilter.ReturnTotalRecordsCount": false, // No need for total count here
-    };
+      'PagingDto.PageFilter.Size': MOBILE_PAGE_SIZE,
+      'PagingDto.PageFilter.Skip': skip,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': false, // No need for total count here
+    }
     if (transactionType.value !== null) {
-      params["IsDebit"] = transactionType.value;
+      params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService("/api/v2/transactions", {
-      method: "GET",
+    const response = await useApiService('/api/v2/transactions', {
+      method: 'GET',
       params,
       headers: { Authorization: `Bearer ${token.value}` },
-    });
+    })
 
     if (response.succeeded && response.data) {
-      mobileTransactions.value.push(...response.data.list);
-      hasMoreItems.value = mobileTransactions.value.length < totalRecords.value;
+      mobileTransactions.value.push(...response.data.list)
+      hasMoreItems.value = mobileTransactions.value.length < totalRecords.value
     }
-  } catch (err) {
-    if (err.response && err.response.status === 403) auth.logout();
-    console.error("Error fetching more mobile transactions:", err);
-  } finally {
-    loadingMore.value = false;
   }
-};
+  catch (err) {
+    if (err.response && err.response.status === 403) auth.logout()
+    console.error('Error fetching more mobile transactions:', err)
+  }
+  finally {
+    loadingMore.value = false
+  }
+}
 
 // --- Event Handlers ---
 const handleScroll = (event) => {
-  const container = event.target;
-  const scrollPosition = container.scrollTop + container.clientHeight;
-  const scrollThreshold = container.scrollHeight - 100;
+  const container = event.target
+  const scrollPosition = container.scrollTop + container.clientHeight
+  const scrollThreshold = container.scrollHeight - 100
 
   if (scrollPosition >= scrollThreshold) {
-    fetchMoreMobileTransactions();
+    fetchMoreMobileTransactions()
   }
-};
+}
 
 const toggleChart = () => {
-  emit("toggle-chart");
-};
+  emit('toggle-chart')
+}
 
 // --- Watchers ---
 watch(activeTab, (newTab) => {
-  if (newTab === 0) transactionType.value = null;
-  else if (newTab === 1) transactionType.value = false;
-  else if (newTab === 2) transactionType.value = true;
+  if (newTab === 0) transactionType.value = null
+  else if (newTab === 1) transactionType.value = false
+  else if (newTab === 2) transactionType.value = true
 
   // This will now be the single point of entry for fetching data on tab change
-  resetAndFetchInitialData();
-});
+  resetAndFetchInitialData()
+})
 
 // --- Lifecycle Hooks ---
 onMounted(() => {
-  getToken();
-  resetAndFetchInitialData(); // Initial data load on component mount
-});
+  getToken()
+  resetAndFetchInitialData() // Initial data load on component mount
+})
 </script>
+
 <style scoped>
 .transaction-tabs-wrapper {
   border-bottom: 1px solid #f0f0f0;

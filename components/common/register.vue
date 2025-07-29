@@ -1,229 +1,245 @@
 <script setup>
-import { useAuth } from "~/composables/useAuth";
+import { useAuth } from '~/composables/useAuth'
 
-const { $toast } = useNuxtApp();
+const { $toast } = useNuxtApp()
 const props = defineProps({
   dialog: Boolean,
-});
+})
 
-let register_dialog = ref(false);
-let google_register_loading = ref(true);
-let show1 = ref(false);
-let password = ref("");
-let confirmPassword = ref("");
-let register_loading = ref(false);
-let googleRegisterBtn = ref(null);
-let timerId = ref(null);
+const register_dialog = ref(false)
+const google_register_loading = ref(true)
+const show1 = ref(false)
+const password = ref('')
+const confirmPassword = ref('')
+const register_loading = ref(false)
+const googleRegisterBtn = ref(null)
+const timerId = ref(null)
 
-let otp = ref("");
-let identity = ref("");
-let otp_loading = ref(false);
-let countDown = ref(60);
-let sendOtpBtnStatus = ref(true);
-let identity_holder = ref(true);
-let otp_holder = ref(false);
-let select_pass_holder = ref(false);
+const otp = ref('')
+const identity = ref('')
+const otp_loading = ref(false)
+const countDown = ref(60)
+const sendOtpBtnStatus = ref(true)
+const identity_holder = ref(true)
+const otp_holder = ref(false)
+const select_pass_holder = ref(false)
 
 onMounted(() => {
   setTimeout(() => {
     if (window.google?.accounts?.id && googleRegisterBtn.value) {
       window.google.accounts.id.initialize({
         client_id:
-          "231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com",
+          '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
         callback: handleCredentialResponse,
         auto_select: true,
-      });
+      })
 
       window.google.accounts.id.renderButton(googleRegisterBtn.value, {
-        text: "Login",
-        size: "large",
-        width: "252",
-        theme: "outline",
-      });
+        text: 'Login',
+        size: 'large',
+        width: '252',
+        theme: 'outline',
+      })
 
-      google_register_loading.value = false;
+      google_register_loading.value = false
     }
-  }, 4000);
-});
+  }, 4000)
+})
 
 watch(countDown, (val) => {
-  //When user wait 10 second
-  if (val === 0) sendOtpBtnStatus.value = false;
-  //When user request new otp code
-  if (val === 60) countDownTimer();
-});
+  // When user wait 10 second
+  if (val === 0) sendOtpBtnStatus.value = false
+  // When user request new otp code
+  if (val === 60) countDownTimer()
+})
 
-const emit = defineEmits(["switchToRegister", "update:dialog"]);
+const emit = defineEmits([
+  'switchToLogin',
+  'switchToRegister',
+  'update:dialog',
+])
 // Switch to login page
 const switchToLogin = () => {
-  emit("switchToLogin");
-};
+  emit('switchToLogin')
+}
 function closeDialog() {
-  register_dialog.value = false;
-  identity_holder.value = true;
-  otp_holder.value = false;
-  select_pass_holder.value = false;
-  emit("update:dialog", false);
+  register_dialog.value = false
+  identity_holder.value = true
+  otp_holder.value = false
+  select_pass_holder.value = false
+  emit('update:dialog', false)
 }
 
 const recheckEnteredIdentity = () => {
-  otp_holder.value = false;
-  identity_holder.value = true;
-};
+  otp_holder.value = false
+  identity_holder.value = true
+}
 
-const cancelRegister = () => {
-  register_dialog.value = false;
-  identity_holder.value = true;
-  otp_holder.value = false;
-  select_pass_holder.value = false;
-};
+const _cancelRegister = () => {
+  register_dialog.value = false
+  identity_holder.value = true
+  otp_holder.value = false
+  select_pass_holder.value = false
+}
 
 const requestRegister = async () => {
-  register_loading.value = true;
+  register_loading.value = true
   try {
     const response = await useApiService.post(
-      "/api/v1/users/register",
+      '/api/v1/users/register',
       new URLSearchParams({
-        type: "request",
+        type: 'request',
         identity: identity.value,
-      })
-    );
+      }),
+    )
     if (response.status === 1) {
-      $toast.success("Otp code sent");
-      identity_holder.value = false;
-      otp_holder.value = true;
-      countDownTimer();
-    } else {
-      $toast.error(response.message);
+      $toast.success('Otp code sent')
+      identity_holder.value = false
+      otp_holder.value = true
+      countDownTimer()
     }
-  } catch (error) {
-    const errorData = error?.response?._data;
-
-    if (error?.response?.status === 400) $toast.error(errorData.message);
-    else $toast.error("Something went wrong.");
-  } finally {
-    register_loading.value = false;
+    else {
+      $toast.error(response.message)
+    }
   }
-};
+  catch (error) {
+    const errorData = error?.response?._data
+
+    if (error?.response?.status === 400) $toast.error(errorData.message)
+    else $toast.error('Something went wrong.')
+  }
+  finally {
+    register_loading.value = false
+  }
+}
 
 const onFinish = async () => {
   try {
     const response = await useApiService.post(
-      "/api/v1/users/register",
+      '/api/v1/users/register',
       new URLSearchParams({
-        type: "confirm",
+        type: 'confirm',
         identity: identity.value,
         code: otp.value,
-      })
-    );
+      }),
+    )
     if (response.status === 1) {
-      otp_holder.value = false;
-      select_pass_holder.value = true;
+      otp_holder.value = false
+      select_pass_holder.value = true
     }
-  } catch (error) {
-    const errorData = error?.response?._data;
-
-    if (error?.response?.status === 400) $toast.error(errorData.message);
-    else $toast.error("Something went wrong.");
   }
-};
+  catch (error) {
+    const errorData = error?.response?._data
+
+    if (error?.response?.status === 400) $toast.error(errorData.message)
+    else $toast.error('Something went wrong.')
+  }
+}
 
 const sendOtpCodeAgain = async () => {
   try {
-    const response = await useApiService.post(
-      "/api/v1/users/register",
+    const _response = await useApiService.post(
+      '/api/v1/users/register',
       new URLSearchParams({
-        type: "resend_code",
+        type: 'resend_code',
         identity: identity.value,
-      })
-    );
-    countDownTimer();
-    sendOtpBtnStatus.value = true;
-    $toast.success("Otp code sent again");
-  } catch (error) {
-    const errorData = error?.response?._data;
-
-    if (error?.response?.status === 400) $toast.error(errorData.message);
-    else $toast.error("Something went wrong.");
+      }),
+    )
+    countDownTimer()
+    sendOtpBtnStatus.value = true
+    $toast.success('Otp code sent again')
   }
-};
+  catch (error) {
+    const errorData = error?.response?._data
+
+    if (error?.response?.status === 400) $toast.error(errorData.message)
+    else $toast.error('Something went wrong.')
+  }
+}
 
 const countDownTimer = () => {
-  if (timerId) {
-    clearTimeout(timerId);
-    timerId = null;
+  if (timerId.value) {
+    clearTimeout(timerId)
+    timerId.value = null
   }
-  countDown.value = 60;
-  tick();
-};
+  countDown.value = 60
+  tick()
+}
 
 const tick = () => {
   if (countDown.value > 0) {
-    timerId = setTimeout(() => {
-      countDown.value -= 1;
-      tick();
-    }, 1000);
-  } else {
-    timerId = null;
+    timerId.value = setTimeout(() => {
+      countDown.value -= 1
+      tick()
+    }, 1000)
   }
-};
+  else {
+    timerId.value = null
+  }
+}
 
 const finalRegister = async () => {
-  register_loading.value = true;
-  const auth = useAuth();
+  register_loading.value = true
+  const auth = useAuth()
   try {
     await auth.register({
       identity: identity.value,
       pass: password.value,
-    });
-    $toast.success("Registered successfully");
-    register_dialog.value = false;
-    identity_holder.value = true;
-    otp_holder.value = false;
-    select_pass_holder.value = false;
-  } catch (error) {
-    const errorData = error?.response?._data;
-
-    if (error?.response?.status === 400) $toast.error(errorData.message);
-    else $toast.error("Something went wrong.");
-  } finally {
-    register_loading.value = false;
-    closeDialog();
+    })
+    $toast.success('Registered successfully')
+    register_dialog.value = false
+    identity_holder.value = true
+    otp_holder.value = false
+    select_pass_holder.value = false
   }
-};
+  catch (error) {
+    const errorData = error?.response?._data
+
+    if (error?.response?.status === 400) $toast.error(errorData.message)
+    else $toast.error('Something went wrong.')
+  }
+  finally {
+    register_loading.value = false
+    closeDialog()
+  }
+}
 
 async function handleCredentialResponse(value) {
-  const auth = useAuth();
+  const auth = useAuth()
   try {
     const response = await useApiService.post(
-      "/api/v1/users/googleAuth",
+      '/api/v1/users/googleAuth',
       new URLSearchParams({
         id_token: value.credential,
-      })
-    );
+      }),
+    )
 
     if (response.status === 1) {
-      $toast.success("Logged in successfully");
-      auth.setUserToken(response.data.jwtToken);
-      closeDialog();
-      navigateTo("/user");
+      $toast.success('Logged in successfully')
+      auth.setUserToken(response.data.jwtToken)
+      closeDialog()
+      navigateTo('/user')
     }
-  } catch (err) {
-    const status = err?.response?.status;
+  }
+  catch (err) {
+    const status = err?.response?.status
 
     if (status === 401) {
-      $toast.error(useNuxtApp().$t("LOGIN_WRONG_DATA"));
-    } else if (status === 500 || status === 504) {
-      $toast.error(useNuxtApp().$t("REQUEST_FAILED"));
+      $toast.error(useNuxtApp().$t('LOGIN_WRONG_DATA'))
+    }
+    else if (status === 500 || status === 504) {
+      $toast.error(useNuxtApp().$t('REQUEST_FAILED'))
     }
   }
 }
 </script>
+
 <template>
   <v-dialog
-    v-model="props.dialog"
+    :model-value="props.dialog"
     max-width="300px"
     style="z-index: 20001"
+    @update:model-value="(val) => emit('update:dialog', val)"
     @click:outside="closeDialog"
   >
     <v-card>
@@ -232,7 +248,10 @@ async function handleCredentialResponse(value) {
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="12" class="text-center">
+          <v-col
+            cols="12"
+            class="text-center"
+          >
             <v-divider class="my-2" />
 
             <div v-show="google_register_loading">
@@ -242,11 +261,13 @@ async function handleCredentialResponse(value) {
                 size="20"
                 width="2"
                 indeterminate
-              >
-              </v-progress-circular>
+              />
               <span style="font-size: 1.2rem"> Loading google sign in</span>
             </div>
-            <div v-show="!google_register_loading" ref="googleRegisterBtn" />
+            <div
+              v-show="!google_register_loading"
+              ref="googleRegisterBtn"
+            />
           </v-col>
           <v-col cols="12">
             <div v-show="identity_holder">
@@ -259,9 +280,9 @@ async function handleCredentialResponse(value) {
                         rules="required"
                       >
                         <v-text-field
+                          v-model="identity"
                           dense
                           label="Email"
-                          v-model="identity"
                           outlined
                         />
                       </validation-provider>
@@ -284,10 +305,21 @@ async function handleCredentialResponse(value) {
                     </v-col>
                   </v-row>
                   <v-row>
-                    <v-col cols="6" lg="6">
-                      <v-btn outlined @click="closeDialog"> Cancel </v-btn>
+                    <v-col
+                      cols="6"
+                      lg="6"
+                    >
+                      <v-btn
+                        outlined
+                        @click="closeDialog"
+                      >
+                        Cancel
+                      </v-btn>
                     </v-col>
-                    <v-col cols="6" lg="6">
+                    <v-col
+                      cols="6"
+                      lg="6"
+                    >
                       <v-btn
                         color="primary"
                         type="submit"
@@ -301,7 +333,7 @@ async function handleCredentialResponse(value) {
               </validation-observer>
             </div>
             <div v-show="otp_holder">
-              <!--Otp holder-->
+              <!-- Otp holder -->
               <v-col cols="12">
                 <p class="text-h6">
                   Please enter code received your email address?
@@ -311,7 +343,7 @@ async function handleCredentialResponse(value) {
                   :disabled="otp_loading"
                   length="5"
                   @finish="onFinish"
-                ></v-otp-input>
+                />
               </v-col>
 
               <v-col cols="12">
@@ -327,19 +359,24 @@ async function handleCredentialResponse(value) {
                 <v-btn
                   plain
                   class="text-none pointer"
-                  @click="sendOtpCodeAgain()"
                   :disabled="sendOtpBtnStatus"
+                  @click="sendOtpCodeAgain()"
                 >
                   Send code again
-                  <span v-show="countDown" class="ml-3">{{ countDown }}</span>
+                  <span
+                    v-show="countDown"
+                    class="ml-3"
+                  >{{ countDown }}</span>
                 </v-btn>
               </v-col>
-              <!--End otp holder-->
+              <!-- End otp holder -->
             </div>
             <div v-show="select_pass_holder">
-              <!--Otp holder-->
+              <!-- Otp holder -->
               <v-col cols="12">
-                <p class="text-h6">Please enter password</p>
+                <p class="text-h6">
+                  Please enter password
+                </p>
                 <!-- <validation-observer -->
                 <form @submit.prevent="finalRegister()">
                   <v-row>
@@ -348,16 +385,15 @@ async function handleCredentialResponse(value) {
                       <!-- v-slot="{ errors }" name="password" rules="required|min:8"
                       > -->
                       <v-text-field
-                        label="Password"
                         v-model="password"
+                        label="Password"
                         outlined
                         :error-messages="errors"
                         dense
-                        type="password"
                         :type="show1 ? 'text' : 'password'"
                         :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                        @click:append="show1 = !show1"
                         required
+                        @click:append="show1 = !show1"
                       />
                       <!-- </validation-provider> -->
                     </v-col>
@@ -373,17 +409,27 @@ async function handleCredentialResponse(value) {
                         label="Confirm password"
                         dense
                         outlined
-                      >
-                      </v-text-field>
+                      />
                       <!-- </validation-provider> -->
                     </v-col>
                   </v-row>
 
                   <v-row>
-                    <v-col cols="6" lg="6">
-                      <v-btn outlined @click="closeDialog"> Cancel </v-btn>
+                    <v-col
+                      cols="6"
+                      lg="6"
+                    >
+                      <v-btn
+                        outlined
+                        @click="closeDialog"
+                      >
+                        Cancel
+                      </v-btn>
                     </v-col>
-                    <v-col cols="6" lg="6">
+                    <v-col
+                      cols="6"
+                      lg="6"
+                    >
                       <v-btn
                         color="primary"
                         type="submit"
@@ -398,7 +444,7 @@ async function handleCredentialResponse(value) {
                 <!-- </validation-observer> -->
               </v-col>
 
-              <!--End otp holder-->
+              <!-- End otp holder -->
             </div>
           </v-col>
         </v-row>

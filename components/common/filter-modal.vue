@@ -1,8 +1,12 @@
 <template>
+  <div class="filter-modal">
+    <!-- Filter modal content will go here -->
+  </div>
 </template>
+
 <script>
 export default {
-  name: "filter-modal",
+  name: 'FilterModal',
   data() {
     return {
       scroll: 0,
@@ -10,10 +14,10 @@ export default {
     }
   },
   beforeMount() {
-    window.addEventListener('scroll', this.testScroll);
+    window.addEventListener('scroll', this.testScroll)
   },
-  beforeDestroy() {
-    window.removeEventListener('scroll', this.testScroll);
+  beforeUnmount() {
+    window.removeEventListener('scroll', this.testScroll)
   },
   methods: {
   },

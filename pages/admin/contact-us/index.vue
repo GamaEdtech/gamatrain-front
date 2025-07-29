@@ -1,190 +1,199 @@
 <script setup>
 import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
 import viewMessageDetailsModal from '@/components/admin/contactus/viewMessageDetailsModal.vue'
-import useApiService from '~/composables/useApiService';
+import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',
   auth: true,
-});
+})
 
-const { $toast } = useNuxtApp();
+const { $toast } = useNuxtApp()
 
-const list = ref([]);
+const list = ref([])
 const headers = [
   { title: 'Name', key: 'fullName', sortable: false, width: '15vw' },
   { title: 'Subject', key: 'subject', sortable: false, width: '15vw' },
   { key: 'attachedFile', sortable: false, width: '17vw' },
   { title: 'Date', key: 'date', width: '10vw' },
   { title: 'Actions', key: 'actions', sortable: false, width: '5vw' },
-];
+]
 
-const tableLoading = ref(true);
-const dialogVisible = ref(false);
-const isDeleteModalOpen = ref(false);
-const selectedMessage = ref('');
-const selectedEmail = ref('');
-const selectedName = ref('');
-const selectedId = ref(null);
-const selectedDeleteId = ref(null);
-const search = ref(null);
-const filter = ref('all');
-const filteredList = ref([]);
-const selectedAction = ref(null);
-const selectedPageSize = ref(10);
-const page = ref(1);
-const pageCount = ref(0);
-const totalCount = ref(0);
-let selected = ref([]);
-const disableNextBtn = ref(false);
-const disableBackBtn = ref(false);
+const tableLoading = ref(true)
+const dialogVisible = ref(false)
+const isDeleteModalOpen = ref(false)
+const selectedMessage = ref('')
+const selectedEmail = ref('')
+const selectedName = ref('')
+const selectedId = ref(null)
+const selectedDeleteId = ref(null)
+const search = ref(null)
+const filter = ref('all')
+const filteredList = ref([])
+const selectedAction = ref(null)
+const selectedPageSize = ref(10)
+const page = ref(1)
+const pageCount = ref(0)
+const totalCount = ref(0)
+const selected = ref([])
+const disableNextBtn = ref(false)
+const disableBackBtn = ref(false)
 
 const allActions = [
   { label: 'Delete All', value: 'deleteAll' },
   { label: 'Read All', value: 'readAll' },
-];
+]
 
 const allPageSize = [
   { label: '10 Rows', value: 10 },
   { label: '20 Rows', value: 20 },
   { label: '50 Rows', value: 50 },
-];
+]
 
 const fetchContactUs = async () => {
-  tableLoading.value = true;
+  tableLoading.value = true
   try {
     const response = await useApiService.get('/api/v2/admin/contacts', {
-        'PagingDto.PageFilter.Size': selectedPageSize.value,
-        'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
-        'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-    });
-    list.value = response.data.list;
-    filteredList.value = list.value;
-    totalCount.value = response.data.totalRecordsCount;
-    pageCount.value = Math.ceil(totalCount.value / selectedPageSize.value);
-  } catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message);
-    }
-  } finally {
-    tableLoading.value = false;
+      'PagingDto.PageFilter.Size': selectedPageSize.value,
+      'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+    })
+    list.value = response.data.list
+    filteredList.value = list.value
+    totalCount.value = response.data.totalRecordsCount
+    pageCount.value = Math.ceil(totalCount.value / selectedPageSize.value)
   }
-};
+  catch (err) {
+    if (err.response?.status === 400) {
+      $toast.error(err.response.data.message)
+    }
+  }
+  finally {
+    tableLoading.value = false
+  }
+}
 
 const viewMessageDetails = async (id) => {
   try {
-    const response = await useApiService.get(`/api/v2/admin/contacts/${id}`);
+    const response = await useApiService.get(`/api/v2/admin/contacts/${id}`)
 
-    selectedMessage.value = response.data.body;
-    selectedEmail.value = response.data.email;
-    selectedName.value = response.data.fullName;
-    selectedId.value = response.data.id;
-    dialogVisible.value = true;
+    selectedMessage.value = response.data.body
+    selectedEmail.value = response.data.email
+    selectedName.value = response.data.fullName
+    selectedId.value = response.data.id
+    dialogVisible.value = true
 
-    const index = list.value.findIndex((item) => item.id === id);
+    const index = list.value.findIndex(item => item.id === id)
     setTimeout(() => {
       if (index !== -1) {
-        list.value[index] = { ...list.value[index], isRead: true };
+        list.value[index] = { ...list.value[index], isRead: true }
       }
-    }, 1500);
+    }, 1500)
 
-    disableNextBtn.value = index >= list.value.length - 1;
-    disableBackBtn.value = index <= 0;
-  } catch (err) {
+    disableNextBtn.value = index >= list.value.length - 1
+    disableBackBtn.value = index <= 0
+  }
+  catch (err) {
     if (err.response?.status === 400) {
-      $toast.error(err.response.data.message);
+      $toast.error(err.response.data.message)
     }
   }
-};
+}
 
 const goToNextMessage = (id) => {
-  const index = list.value.findIndex((item) => item.id === id);
+  const index = list.value.findIndex(item => item.id === id)
   if (index < list.value.length - 1) {
-    viewMessageDetails(list.value[index + 1].id);
+    viewMessageDetails(list.value[index + 1].id)
   }
-};
+}
 
 const goToPreviousMessage = (id) => {
-  const index = list.value.findIndex((item) => item.id === id);
+  const index = list.value.findIndex(item => item.id === id)
   if (index > 0) {
-    viewMessageDetails(list.value[index - 1].id);
+    viewMessageDetails(list.value[index - 1].id)
   }
-};
+}
 
 const deleteMessage = async () => {
   try {
-    await useApiService.remove(`/api/v2/admin/contacts/${selectedDeleteId.value}`);
+    await useApiService.remove(`/api/v2/admin/contacts/${selectedDeleteId.value}`)
 
-    list.value = list.value.filter((i) => i.id !== selectedDeleteId.value);
-    filteredList.value = list.value;
-    $toast.success('Message deleted successfully!');
-  } catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message);
-    }
-  } finally {
-    isDeleteModalOpen.value = false;
-    fetchContactUs();
+    list.value = list.value.filter(i => i.id !== selectedDeleteId.value)
+    filteredList.value = list.value
+    $toast.success('Message deleted successfully!')
   }
-};
+  catch (err) {
+    if (err.response?.status === 400) {
+      $toast.error(err.response.data.message)
+    }
+  }
+  finally {
+    isDeleteModalOpen.value = false
+    fetchContactUs()
+  }
+}
 
 const handleDelete = (id) => {
-  isDeleteModalOpen.value = true;
-  selectedDeleteId.value = id;
-};
+  isDeleteModalOpen.value = true
+  selectedDeleteId.value = id
+}
 
 const doAll = async () => {
   if (selectedAction.value === 'Delete All') {
     for (const item of selected.value) {
-      selectedDeleteId.value = item;
-      await deleteMessage();
+      selectedDeleteId.value = item
+      await deleteMessage()
     }
 
-    selected.value = [];
-    $toast.success('All selected messages deleted!');
-  } else {
+    selected.value = []
+    $toast.success('All selected messages deleted!')
+  }
+  else {
     for (const id of selected.value) {
-      const index = list.value.findIndex((msg) => msg.id === id);
-        try {
-          await $fetch(`/api/v2/admin/contacts/${id}/toggle`, {
-            method:'PATCH',
-          });
+      const index = list.value.findIndex(msg => msg.id === id)
+      try {
+        await $fetch(`/api/v2/admin/contacts/${id}/toggle`, {
+          method: 'PATCH',
+        })
 
-          list.value[index] = { ...list.value[index], isRead: true };
-          selected.value = [];
-          $toast.success('All selected messages marked as read!');
-        } catch (err) {
-          console.error(`Failed to mark message ${id} as read`, err);
-        }
+        list.value[index] = { ...list.value[index], isRead: true }
+        selected.value = []
+        $toast.success('All selected messages marked as read!')
+      }
+      catch (err) {
+        console.error(`Failed to mark message ${id} as read`, err)
+      }
     }
   }
-};
+}
 
 onMounted(() => {
-  selectedAction.value = allActions[0].label;
-  selectedPageSize.value = allPageSize[0].value;
-  fetchContactUs();
-});
+  selectedAction.value = allActions[0].label
+  selectedPageSize.value = allPageSize[0].value
+  fetchContactUs()
+})
 
 watch(page, () => {
-  filter.value = 'all';
-  fetchContactUs();
-});
+  filter.value = 'all'
+  fetchContactUs()
+})
 
 watch(selectedPageSize, () => {
-  page.value = 1;
-  fetchContactUs();
-});
+  page.value = 1
+  fetchContactUs()
+})
 
 watch(filter, (val) => {
   if (val === 'read') {
-    filteredList.value = list.value.filter((item) => item.isRead);
-  } else if (val === 'unread') {
-    filteredList.value = list.value.filter((item) => !item.isRead);
-  } else {
-    filteredList.value = list.value;
+    filteredList.value = list.value.filter(item => item.isRead)
   }
-}, { immediate: true });
+  else if (val === 'unread') {
+    filteredList.value = list.value.filter(item => !item.isRead)
+  }
+  else {
+    filteredList.value = list.value
+  }
+}, { immediate: true })
 </script>
 
 <template>
@@ -194,20 +203,20 @@ watch(filter, (val) => {
         <v-btn
           :class="{ 'active-filter': filter === 'all', 'inactive-filter': filter !== 'all' }"
           depressed
-          @click="filter = 'all'"
           rounded
           variant="plain"
           class="gtext-t4 font-weight-regular"
+          @click="filter = 'all'"
         >
           All
         </v-btn>
         <v-btn
           :class="{ 'active-filter': filter === 'unread', 'inactive-filter': filter !== 'unread' }"
           depressed
-          @click="filter = 'unread'"
           rounded
           variant="plain"
           class="gtext-t4 font-weight-regular"
+          @click="filter = 'unread'"
         >
           Unread
         </v-btn>
@@ -216,70 +225,89 @@ watch(filter, (val) => {
           :class="{ 'active-filter': filter === 'read', 'inactive-filter': filter !== 'read' }"
           depressed
           class="ml-2 gtext-t4 font-weight-regular"
-          @click="filter = 'read'"
           rounded
           variant="plain"
+          @click="filter = 'read'"
         >
           Read
         </v-btn>
       </div>
 
       <v-text-field
-            v-model="search"
-            label="Search anything..."
-            variant="outlined"
-            density="compact"
-            rounded
-            hide-details
-            class="searchInput"
-          >
-            <template #prepend-inner>
-                <span class="primary-gray-300"><v-icon>mdi-magnify </v-icon></span>
-                <span class="primary-gray-300 ">|</span>
-            </template>
-         </v-text-field>
+        v-model="search"
+        label="Search anything..."
+        variant="outlined"
+        density="compact"
+        rounded
+        hide-details
+        class="searchInput"
+      >
+        <template #prepend-inner>
+          <span class="primary-gray-300"><v-icon>mdi-magnify </v-icon></span>
+          <span class="primary-gray-300 ">|</span>
+        </template>
+      </v-text-field>
     </div>
 
     <div class="scrollable-table">
       <v-data-table
+        v-model="selected"
         :headers="headers"
         :items="filteredList"
         :items-per-page="selectedPageSize"
         class="elevation-1"
         :loading="tableLoading"
-        v-model="selected"
         hide-default-footer
         show-select
       >
-
-
-        <template #item.fullName="{ item }">
+        <template #[`item.fullName`]="{ item }">
           <div class="d-flex align-center">
-            <v-avatar size="40" class="mr-2" v-if="item.avatar">
-              <img :src="item.avatar" alt="Avatar" />
+            <v-avatar
+              v-if="item.avatar"
+              size="40"
+              class="mr-2"
+            >
+              <img
+                :src="item.avatar"
+                alt="Avatar"
+              >
             </v-avatar>
             <span :class="item.isRead === false ? 'font-weight-bold' : ''">{{ item.fullName }}</span>
           </div>
         </template>
-        <template #item.subject="{ item }">
+
+        <template #[`item.subject`]="{ item }">
           <div class="d-flex align-center">
             <span :class="item.isRead === false ? 'font-weight-bold' : ''">{{ item.subject }}</span>
           </div>
         </template>
 
-        <template #header.attachedFile>
+        <template #[`header.attachedFile`]>
           <div class="d-flex align-center">
-            <v-icon small class="mr-1">mdi-paperclip</v-icon>
+            <v-icon
+              small
+              class="mr-1"
+            >
+              mdi-paperclip
+            </v-icon>
             Attachment File
           </div>
-    </template>
+        </template>
 
-        <template #item.actions="{ item }">
+        <template #[`item.actions`]="{ item }">
           <div class="d-flex">
-            <v-icon small class="mr-2 gtext-t1" @click="viewMessageDetails(item.id)">
+            <v-icon
+              small
+              class="mr-2 gtext-t1"
+              @click="viewMessageDetails(item.id)"
+            >
               mdi-file-find
             </v-icon>
-            <v-icon small class="gtext-t1" @click="handleDelete(item.id)">
+            <v-icon
+              small
+              class="gtext-t1"
+              @click="handleDelete(item.id)"
+            >
               mdi-delete
             </v-icon>
           </div>
@@ -291,10 +319,10 @@ watch(filter, (val) => {
         :message="selectedMessage"
         :email="selectedEmail"
         :name="selectedName"
+        :disable-next="disableNextBtn"
+        :disable-back="disableBackBtn"
         @next="goToNextMessage(selectedId)"
-        :disableNext="disableNextBtn"
         @back="goToPreviousMessage(selectedId)"
-        :disableBack="disableBackBtn"
       />
 
       <DeleteItemModal
@@ -303,8 +331,16 @@ watch(filter, (val) => {
       />
     </div>
 
-    <v-row class="mt-2" align="center" justify="space-between" no-gutters>
-      <v-col cols="12" class="d-flex flex-wrap flex-sm-nowrap align-center justify-space-between">
+    <v-row
+      class="mt-2"
+      align="center"
+      justify="space-between"
+      no-gutters
+    >
+      <v-col
+        cols="12"
+        class="d-flex flex-wrap flex-sm-nowrap align-center justify-space-between"
+      >
         <div class="d-flex align-center mb-2 mb-sm-0">
           <v-select
             v-model="selectedAction"
@@ -320,7 +356,8 @@ watch(filter, (val) => {
           />
           <v-btn
             class="rounded-pill gtext-t5 bg-primary-gray-700 text-white ml-4"
-            :disabled="selected.length === 0" @click="doAll"
+            :disabled="selected.length === 0"
+            @click="doAll"
           >
             <span>Do</span>
           </v-btn>
@@ -354,7 +391,10 @@ watch(filter, (val) => {
       </v-col>
 
       <!-- Pagination (visible only on xs, second row) -->
-      <v-col cols="12" class="d-flex justify-center d-sm-none mt-2">
+      <v-col
+        cols="12"
+        class="d-flex justify-center d-sm-none mt-2"
+      >
         <v-pagination
           v-model="page"
           :length="pageCount"
@@ -370,7 +410,7 @@ watch(filter, (val) => {
 
 <style scoped>
 .scrollable-table {
-  max-height: 70vh;  
+  max-height: 70vh;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -448,5 +488,4 @@ watch(filter, (val) => {
 :deep(.v-btn--variant-plain){
   opacity: 1 !important;
 }
-
 </style>

@@ -1,8 +1,11 @@
- <template>
+<template>
   <v-container class="test-maker">
     <v-container>
       <v-row class="mt-14">
-        <v-col cols="12" md="12">
+        <v-col
+          cols="12"
+          md="12"
+        >
           <span
             class="text-teal"
             style="
@@ -20,16 +23,24 @@
         </v-col>
       </v-row>
     </v-container>
-    <v-card elevation="2" class="mb-16">
+    <v-card
+      elevation="2"
+      class="mb-16"
+    >
       <v-card-text>
         <v-container>
           <v-row>
-            <v-col cols="12" md="12">
+            <v-col
+              cols="12"
+              md="12"
+            >
               <ClientOnly>
                 <v-table class="exams_table">
                   <thead>
                     <tr style="color: rgba(0, 0, 0, 0.6)">
-                      <th class="text-left text-h5">Participant</th>
+                      <th class="text-left text-h5">
+                        Participant
+                      </th>
                       <th class="text-center text-h5">
                         <span
                           class="d-block d-md-none fa-regular fa-circle-play fa-lg"
@@ -73,60 +84,88 @@
           </v-row>
 
           <v-row class="mt-8">
-            <v-col class="d-none d-md-block" md="12">
+            <v-col
+              class="d-none d-md-block"
+              md="12"
+            >
               <span class="mr-2">
-                <i class="fa-solid fa-circle-check fa-lg text-green"></i>
+                <i class="fa-solid fa-circle-check fa-lg text-green" />
                 : Correct answers
               </span>
               <span class="mr-2 my-1">
-                <i class="fa-regular fa-times-circle fa-lg text-red"></i>
+                <i class="fa-regular fa-times-circle fa-lg text-red" />
                 : Wrong answer
               </span>
               <span class="mr-2 my-1">
-                <i class="fa-regular fa-circle-check fa-lg text-green"></i>
+                <i class="fa-regular fa-circle-check fa-lg text-green" />
                 : Correct option
               </span>
               <span class="mr-2 my-1">
-                <i class="fa-regular fa-circle fa-lg"></i>
+                <i class="fa-regular fa-circle fa-lg" />
                 : No answer
               </span>
             </v-col>
-            <v-col cols="6" class="d-block d-md-none">
+            <v-col
+              cols="6"
+              class="d-block d-md-none"
+            >
               <span class="mr-2">
-                <i class="fa-solid fa-circle-check fa-lg text-green"></i>
+                <i class="fa-solid fa-circle-check fa-lg text-green" />
                 : Correct answers
               </span>
             </v-col>
-            <v-col cols="6" class="d-block d-md-none">
+            <v-col
+              cols="6"
+              class="d-block d-md-none"
+            >
               <span class="mr-2 my-1">
-                <i class="fa-regular fa-times-circle fa-lg text-red"></i>
+                <i class="fa-regular fa-times-circle fa-lg text-red" />
                 : Wrong answer
               </span>
             </v-col>
-            <v-col cols="6" class="d-block d-md-none">
+            <v-col
+              cols="6"
+              class="d-block d-md-none"
+            >
               <span class="mr-2 my-1">
-                <i class="fa-regular fa-circle-check fa-lg text-green"></i>
+                <i class="fa-regular fa-circle-check fa-lg text-green" />
                 : Correct option
               </span>
             </v-col>
-            <v-col cols="6" class="d-block d-md-none">
+            <v-col
+              cols="6"
+              class="d-block d-md-none"
+            >
               <span class="mr-2 my-1">
-                <i class="fa-regular fa-circle fa-lg"></i>
+                <i class="fa-regular fa-circle fa-lg" />
                 : No answer
               </span>
             </v-col>
           </v-row>
 
           <v-row>
-            <v-col cols="12" md="4">
+            <v-col
+              cols="12"
+              md="4"
+            >
               <v-table class="exams_table">
                 <thead>
                   <tr style="color: rgba()">
-                    <th class="text-left text-h5">#</th>
-                    <th class="text-center text-h5">1</th>
-                    <th class="text-center text-h5">2</th>
-                    <th class="text-center text-h5">3</th>
-                    <th class="text-center text-h5">4</th>
+                    <th class="text-left text-h5">
+                      #
+                    </th>
+                    <th class="text-center text-h5">
+                      1
+                    </th>
+                    <th class="text-center text-h5">
+                      2
+                    </th>
+                    <th class="text-center text-h5">
+                      3
+                    </th>
+                    <th class="text-center text-h5">
+                      4
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -137,19 +176,23 @@
                     @click="questionDetails(item)"
                   >
                     <td>{{ key + 1 }}</td>
-                    <td v-for="option in 4" :key="option" class="text-center">
+                    <td
+                      v-for="option in 4"
+                      :key="option"
+                      class="text-center"
+                    >
                       <span
                         v-if="
-                          item.user_answer == option &&
-                          item.true_answer == option
+                          item.user_answer == option
+                            && item.true_answer == option
                         "
                         class="text-green fa-solid fa-circle-check fa-lg"
                         size="large"
                       />
                       <span
                         v-else-if="
-                          item.user_answer == option &&
-                          item.true_answer != option
+                          item.user_answer == option
+                            && item.true_answer != option
                         "
                         class="text-red fa-regular fa-times-circle fa-lg"
                         size="large"
@@ -169,14 +212,21 @@
                 </tbody>
               </v-table>
             </v-col>
-            <v-col cols="12" md="8">
+            <v-col
+              cols="12"
+              md="8"
+            >
               <v-row>
                 <v-col cols="12">
                   <v-table class="exams_table">
                     <thead>
                       <tr>
-                        <th class="text-left text-h5">Lesson</th>
-                        <th class="text-center text-h5">Count</th>
+                        <th class="text-left text-h5">
+                          Lesson
+                        </th>
+                        <th class="text-center text-h5">
+                          Count
+                        </th>
                         <th class="text-center text-h5">
                           <span
                             class="text-green fa-solid fa-circle-check fa-lg"
@@ -190,7 +240,9 @@
                         <th class="text-center text-h5">
                           <span class="fa-regular fa-circle fa-lg" />
                         </th>
-                        <th class="text-center text-h5">%</th>
+                        <th class="text-center text-h5">
+                          %
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -199,11 +251,21 @@
                         :key="index"
                       >
                         <td>{{ item.title }}</td>
-                        <td class="text-center">{{ item.num }}</td>
-                        <td class="text-center">{{ item.true }}</td>
-                        <td class="text-center">{{ item.false }}</td>
-                        <td class="text-center">{{ item.noanswer }}</td>
-                        <td class="text-center">{{ item.percent }}</td>
+                        <td class="text-center">
+                          {{ item.num }}
+                        </td>
+                        <td class="text-center">
+                          {{ item.true }}
+                        </td>
+                        <td class="text-center">
+                          {{ item.false }}
+                        </td>
+                        <td class="text-center">
+                          {{ item.noanswer }}
+                        </td>
+                        <td class="text-center">
+                          {{ item.percent }}
+                        </td>
                       </tr>
                     </tbody>
                     <tfoot>
@@ -230,7 +292,10 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="12" md="6">
+                <v-col
+                  cols="12"
+                  md="6"
+                >
                   <v-table class="exams_table">
                     <tbody>
                       <tr>
@@ -265,37 +330,52 @@
                       <tr>
                         <td>Rank in country:</td>
                         <td
-                          class="text-center"
                           v-if="contentData.rank && contentData.rank.total"
+                          class="text-center"
                         >
                           <strong>
                             {{ contentData.rank.total.user }}
                           </strong>
                           of {{ contentData.rank.total.total }} participants
                         </td>
-                        <td v-else class="text-center">-</td>
+                        <td
+                          v-else
+                          class="text-center"
+                        >
+                          -
+                        </td>
                       </tr>
                       <tr>
                         <td>Rank in state:</td>
                         <td
-                          class="text-center"
                           v-if="contentData.rank && contentData.rank.state"
+                          class="text-center"
                         >
                           <strong>{{ contentData.rank.state.user }}</strong>
                           of {{ contentData.rank.state.total }} participants
                         </td>
-                        <td class="text-center" v-else>-</td>
+                        <td
+                          v-else
+                          class="text-center"
+                        >
+                          -
+                        </td>
                       </tr>
                       <tr>
                         <td>Rank in area:</td>
                         <td
-                          class="text-center"
                           v-if="contentData.rank && contentData.rank.area"
+                          class="text-center"
                         >
                           <strong> {{ contentData.rank.area.user }}</strong>
                           of {{ contentData.rank.area.total }} participants
                         </td>
-                        <td v-else class="text-center">-</td>
+                        <td
+                          v-else
+                          class="text-center"
+                        >
+                          -
+                        </td>
                       </tr>
                     </tbody>
                   </v-table>
@@ -308,8 +388,8 @@
                     size="large"
                     variant="flat"
                     color="error"
-                    @click="startDownload"
                     style="color: #fff !important"
+                    @click="startDownload"
                   >
                     <div
                       style="font-size: 14px !important; text-transform: none"
@@ -323,7 +403,11 @@
                     </div>
                   </v-btn>
                 </v-col>
-                <v-col cols="12" md="6" style="height: 250px">
+                <v-col
+                  cols="12"
+                  md="6"
+                  style="height: 250px"
+                >
                   <pie-chart :chart-data="chartData" />
                 </v-col>
               </v-row>
@@ -334,10 +418,19 @@
     </v-card>
 
     <ClientOnly>
-      <v-dialog v-model="dialog.status" max-width="700">
+      <v-dialog
+        v-model="dialog.status"
+        max-width="700"
+      >
         <v-card>
-          <v-card-text class="py-4" ref="dialogMathJaxContainerRef">
-            <v-col class="test-list" cols="12">
+          <v-card-text
+            ref="dialogMathJaxContainerRef"
+            class="py-4"
+          >
+            <v-col
+              class="test-list"
+              cols="12"
+            >
               <div
                 id="test-question"
                 style="
@@ -352,10 +445,13 @@
               <img
                 v-if="dialog.q_file && dialog.q_file !== '0'"
                 :src="dialog.q_file"
-              />
+              >
 
               <div class="mt-4">
-                <div class="answer" v-if="dialog.answer_a">
+                <div
+                  v-if="dialog.answer_a"
+                  class="answer"
+                >
                   <v-icon
                     v-if="dialog.true_answer == '1'"
                     class="true_answer"
@@ -371,15 +467,18 @@
                     size="large"
                   />
                   <span>1)&nbsp;</span>
-                  <span v-html="dialog.answer_a"></span>
+                  <span v-html="dialog.answer_a" />
                   <img
                     v-if="dialog.a_file && dialog.a_file !== '0'"
                     :src="dialog.a_file"
                     class="answer-img"
-                  />
+                  >
                 </div>
 
-                <div class="answer" v-if="dialog.answer_b">
+                <div
+                  v-if="dialog.answer_b"
+                  class="answer"
+                >
                   <v-icon
                     v-if="dialog.true_answer == '2'"
                     class="true_answer"
@@ -395,15 +494,18 @@
                     size="large"
                   />
                   <span>2)&nbsp;</span>
-                  <span v-html="dialog.answer_b"></span>
+                  <span v-html="dialog.answer_b" />
                   <img
                     v-if="dialog.b_file && dialog.b_file !== '0'"
                     :src="dialog.b_file"
                     class="answer-img"
-                  />
+                  >
                 </div>
 
-                <div class="answer" v-if="dialog.answer_c">
+                <div
+                  v-if="dialog.answer_c"
+                  class="answer"
+                >
                   <v-icon
                     v-if="dialog.true_answer == '3'"
                     class="true_answer"
@@ -419,15 +521,18 @@
                     size="large"
                   />
                   <span>3)&nbsp;</span>
-                  <span v-html="dialog.answer_c"></span>
+                  <span v-html="dialog.answer_c" />
                   <img
                     v-if="dialog.c_file && dialog.c_file !== '0'"
                     :src="dialog.c_file"
                     class="answer-img"
-                  />
+                  >
                 </div>
 
-                <div class="answer" v-if="dialog.answer_d">
+                <div
+                  v-if="dialog.answer_d"
+                  class="answer"
+                >
                   <v-icon
                     v-if="dialog.true_answer == '4'"
                     class="true_answer"
@@ -448,7 +553,7 @@
                     v-if="dialog.d_file && dialog.d_file !== '0'"
                     :src="dialog.d_file"
                     class="answer-img"
-                  />
+                  >
                 </div>
               </div>
 
@@ -460,26 +565,28 @@
                     color="blue"
                     style="font-size: 15px"
                     @click="openCrashReportDialog"
-                  ></v-btn>
-                  <NuxtLink :to="`/test/${dialog.id}`"
-                    ><v-btn
-                      color="green"
-                      variant="text"
-                      style="font-size: 15px"
-                      icon="mdi-eye"
-                    ></v-btn
-                  ></NuxtLink>
+                  />
+                  <NuxtLink :to="`/test/${dialog.id}`"><v-btn
+                    color="green"
+                    variant="text"
+                    style="font-size: 15px"
+                    icon="mdi-eye"
+                  /></NuxtLink>
                 </v-col>
-                <v-col class="text-right" cols="2">
+                <v-col
+                  class="text-right"
+                  cols="2"
+                >
                   <v-btn
                     color="red"
                     variant="outlined"
                     density="comfortable"
                     size="large"
-                    @click="dialog.status = false"
                     style="text-transform: none !important; font-size: 13px"
-                    >Close</v-btn
+                    @click="dialog.status = false"
                   >
+                    Close
+                  </v-btn>
                 </v-col>
               </v-row>
             </v-col>
@@ -495,197 +602,198 @@
   </v-container>
 </template>
 
-
-
 <script setup>
-import { ref, reactive, onMounted, computed, nextTick, watch } from "vue";
-import { useRoute } from "vue-router";
-import { useHead } from "#app";
-import PieChart from "@/components/chart/PieChart";
-import CrashReport from "~/components/common/crash-report.vue";
-import { useAuth } from "~/composables/useAuth";
+import { ref, reactive, onMounted, computed, nextTick, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useHead } from '#app'
+import PieChart from '@/components/chart/PieChart'
+import { useAuth } from '~/composables/useAuth'
 
-const route = useRoute();
-const id = route.params.id;
+const route = useRoute()
+const _id = route.params.id
 
-const auth = useAuth();
-const authToken = auth.getUserToken();
+const auth = useAuth()
+const _authToken = auth.getUserToken()
 
-const download_loading = ref(false);
+const download_loading = ref(false)
 
-const crashReportRef = ref(null);
+const crashReportRef = ref(null)
 const dialog = reactive({
   status: false,
-  question: "",
-  q_file: "",
-  true_answer: "",
-  user_answer: "",
-  id: "",
-  answer_a: "",
-  a_file: "",
-  answer_b: "",
-  b_file: "",
-  answer_c: "",
-  c_file: "",
-  answer_d: "",
-  d_file: "",
-});
+  question: '',
+  q_file: '',
+  true_answer: '',
+  user_answer: '',
+  id: '',
+  answer_a: '',
+  a_file: '',
+  answer_b: '',
+  b_file: '',
+  answer_c: '',
+  c_file: '',
+  answer_d: '',
+  d_file: '',
+})
 
 const report_type_list = ref([
   {
     value: 1,
-    label: "The selected option in the answer sheet is not correct.",
+    label: 'The selected option in the answer sheet is not correct.',
   },
-  { value: 2, label: "There is more than one correct option." },
-  { value: 3, label: "None of the options are correct." },
-  { value: 4, label: "There are typos in questions or options." },
-  { value: 5, label: "This test is similar to another test in the same test." },
-  { value: 6, label: "There are problems in the descriptive answer." },
-  { value: 7, label: "This test is out of budget or topic." },
-  { value: 8, label: "Other cases" },
-]);
+  { value: 2, label: 'There is more than one correct option.' },
+  { value: 3, label: 'None of the options are correct.' },
+  { value: 4, label: 'There are typos in questions or options.' },
+  { value: 5, label: 'This test is similar to another test in the same test.' },
+  { value: 6, label: 'There are problems in the descriptive answer.' },
+  { value: 7, label: 'This test is out of budget or topic.' },
+  { value: 8, label: 'Other cases' },
+])
 
-const dialogMathJaxContainerRef = ref(null);
-const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp();
+const dialogMathJaxContainerRef = ref(null)
+const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 
 const typesetDialog = async () => {
-  if (process.client && dialogMathJaxContainerRef.value) {
+  if (import.meta.client && dialogMathJaxContainerRef.value) {
     try {
-      await $ensureMathJaxReady();
-      if (!window.MathJax?.Hub) return;
-      const elementToProcess =
-        dialogMathJaxContainerRef.value.$el ?? dialogMathJaxContainerRef.value;
+      await $ensureMathJaxReady()
+      if (!window.MathJax?.Hub) return
+      const elementToProcess
+        = dialogMathJaxContainerRef.value.$el ?? dialogMathJaxContainerRef.value
       if (elementToProcess instanceof HTMLElement) {
-        await nextTick();
-        $renderMathInElement(elementToProcess);
+        await nextTick()
+        $renderMathInElement(elementToProcess)
       }
-    } catch (err) {
-      console.error("Error during MathJax typesetting in dialog:", err);
+    }
+    catch (err) {
+      console.error('Error during MathJax typesetting in dialog:', err)
     }
   }
-};
+}
 
-const crash_report = ref(null);
+const _crash_report = ref(null)
 
 useHead({
-  title: "Online exam result",
-});
+  title: 'Online exam result',
+})
 
 const { data: contentData } = await useAsyncData(
   `exam-result-${route.params.id}`,
   async () => {
-    const authToken = auth.getUserToken();
+    const authToken = auth.getUserToken()
     if (!authToken) {
       throw createError({
         statusCode: 403,
-        message: "Authentication required.",
-      });
+        message: 'Authentication required.',
+      })
     }
     try {
       const response = await $fetch(`/api/v1/exams/result/${route.params.id}`, {
         headers: { Authorization: `Bearer ${authToken}` },
-      });
+      })
       if (response?.status === 1 && response.data) {
-        return response.data;
+        return response.data
       }
-      return null;
-    } catch (err) {
-      console.error("API Error fetching exam results:", err);
-      return null;
+      return null
     }
-  }
-);
+    catch (err) {
+      console.error('API Error fetching exam results:', err)
+      return null
+    }
+  },
+)
 
 const startDownload = async () => {
-  download_loading.value = true;
+  download_loading.value = true
   try {
     const response = await $fetch(
-      `/api/v1/exams/download/${contentData.value.exam.id}`
-    );
+      `/api/v1/exams/download/${contentData.value.exam.id}`,
+    )
     // Use dynamic import for file-saver
-    const FileSaver = await import("file-saver");
-    FileSaver.saveAs(response.data.url, response.data.name);
-  } catch (err) {
-    if (
-      err.response?.status === 400 &&
-      err.response?.data?.error === "creditNotEnough"
-    ) {
-      toast.info("No enough credit");
-    }
-    console.error(err);
-  } finally {
-    download_loading.value = false;
+    const FileSaver = await import('file-saver')
+    FileSaver.saveAs(response.data.url, response.data.name)
   }
-};
+  catch (err) {
+    if (
+      err.response?.status === 400
+      && err.response?.data?.error === 'creditNotEnough'
+    ) {
+      toast.info('No enough credit')
+    }
+    console.error(err)
+  }
+  finally {
+    download_loading.value = false
+  }
+}
 
 const chartData = computed(() => {
-  const stats = contentData.value?.answerStats?.total;
+  const stats = contentData.value?.answerStats?.total
   if (!stats) {
     // Return a valid empty chart data object
     return {
-      labels: ["Correct answers", "Wrong answers", "No answer"],
+      labels: ['Correct answers', 'Wrong answers', 'No answer'],
       datasets: [
         {
-          borderColor: "#e1e2e3",
-          backgroundColor: ["#4CAF50", "#F44336", "#EEEEEE"],
+          borderColor: '#e1e2e3',
+          backgroundColor: ['#4CAF50', '#F44336', '#EEEEEE'],
           data: [0, 0, 0],
         },
       ],
-    };
+    }
   }
 
   return {
-    labels: ["Correct answers", "Wrong answers", "No answer"],
+    labels: ['Correct answers', 'Wrong answers', 'No answer'],
     datasets: [
       {
-        borderColor: "#e1e2e3",
-        backgroundColor: ["#4CAF50", "#F44336", "#fff"],
+        borderColor: '#e1e2e3',
+        backgroundColor: ['#4CAF50', '#F44336', '#fff'],
         data: [stats.true || 0, stats.false || 0, stats.noAnswer || 0],
       },
     ],
-  };
-});
+  }
+})
 
 const questionDetails = (item) => {
-  dialog.status = false;
+  dialog.status = false
   nextTick(() => {
-    Object.assign(dialog, { ...item, status: true });
-  });
-};
+    Object.assign(dialog, { ...item, status: true })
+  })
+}
 const openCrashReportDialog = () => {
-  dialog.status = false;
+  dialog.status = false
   if (crashReportRef.value) {
-    crashReportRef.value.dialog = true;
-    crashReportRef.value.form.id = dialog.id;
-    crashReportRef.value.form.type = "examTest";
+    crashReportRef.value.dialog = true
+    crashReportRef.value.form.id = dialog.id
+    crashReportRef.value.form.type = 'examTest'
   }
-};
+}
 
 watch(
   () => dialog.status,
   (isOpening) => {
     if (isOpening) {
       nextTick(() => {
-        typesetDialog();
-      });
+        typesetDialog()
+      })
     }
-  }
-);
+  },
+)
 
 onMounted(() => {
-  if (process.client) {
+  if (import.meta.client) {
     const allExamStats = JSON.parse(
-      localStorage.getItem("allExamStats") || "[]"
-    );
+      localStorage.getItem('allExamStats') || '[]',
+    )
     const index = allExamStats.findIndex(
-      (x) => x.id == contentData.value.exam.id
-    );
+      x => x.id == contentData.value.exam.id,
+    )
     if (index !== -1) {
-      allExamStats.splice(index, 1);
-      localStorage.setItem("allExamStats", JSON.stringify(allExamStats));
+      allExamStats.splice(index, 1)
+      localStorage.setItem('allExamStats', JSON.stringify(allExamStats))
     }
   }
-});
+})
 </script>
 
 <style scoped>

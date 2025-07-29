@@ -1,15 +1,27 @@
 <template>
   <v-row v-if="progressInfoData?.num < 10 || userInfoData?.username === '0'">
-    <v-col cols="12" md="8">
-      <div class="d-flex pb-0" v-if="progressInfoData?.num < 10">
+    <v-col
+      cols="12"
+      md="8"
+    >
+      <div
+        v-if="progressInfoData?.num < 10"
+        class="d-flex pb-0"
+      >
         <NuxtLink to="/user/profile">
           <img
+            v-if="userInfoData?.avatar"
             width="72"
             height="72"
-            v-if="userInfoData?.avatar"
             :src="userInfoData?.avatar"
-          />
-          <v-btn v-else class="d-flex" outlined fab x-large>
+          >
+          <v-btn
+            v-else
+            class="d-flex"
+            outlined
+            fab
+            x-large
+          >
             <v-icon> mdi-account-outline </v-icon>
           </v-btn>
         </NuxtLink>
@@ -26,10 +38,18 @@
         </div>
       </div>
     </v-col>
-    <v-col cols="12" md="4" class="text-right pb-0">
-      <!--Choose username-->
+    <v-col
+      cols="12"
+      md="4"
+      class="text-right pb-0"
+    >
+      <!-- Choose username -->
       <v-row v-if="userInfoData.username && userInfoData.username === '0'">
-        <v-col cols="12" md="12" class="pa-0 pa-md-3">
+        <v-col
+          cols="12"
+          md="12"
+          class="pa-0 pa-md-3"
+        >
           <v-form @submit="updateUsername">
             <v-text-field
               v-model="username"
@@ -43,9 +63,9 @@
               <template #append-inner>
                 <v-btn
                   class="default"
-                  @click="updateUsername"
                   :disabled="!username || username.length < 6"
                   absolute
+                  @click="updateUsername"
                 >
                   choose
                 </v-btn>
@@ -54,11 +74,15 @@
           </v-form>
         </v-col>
       </v-row>
-      <!--End choose username-->
+      <!-- End choose username -->
     </v-col>
 
-    <!--Profile complete progress-->
-    <v-col cols="12" class="pt-0" v-if="progressInfoData?.num < 10">
+    <!-- Profile complete progress -->
+    <v-col
+      v-if="progressInfoData?.num < 10"
+      cols="12"
+      class="pt-0"
+    >
       <NuxtLink to="/user/profile">
         <p class="text-h5 font-weight-bold mt-3 mb-3">
           Profile complete: {{ progressInfoData?.num * 10 }}% | Now complete
@@ -73,14 +97,14 @@
         buffer-value="0"
         :model-value="progressInfoData?.num * 10"
         stream
-      ></v-progress-linear>
+      />
     </v-col>
-    <!--End profile complete progress-->
+    <!-- End profile complete progress -->
   </v-row>
 </template>
 
 <script setup>
-const auth = useAuth();
+const _auth = useAuth()
 // Define props using defineProps
 const props = defineProps({
   userData: {
@@ -91,62 +115,63 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-});
+})
 
 // Get auth user
-const { user } = useUser();
+const { user } = useUser()
 
 // Reactive state
-const userInfoData = ref({});
-const progressInfoData = ref({});
-const username = ref("");
-const errors = ref([]);
+const userInfoData = ref({})
+const progressInfoData = ref({})
+const username = ref('')
+const errors = ref([])
 
 // Vuetify validation rules
 const usernameRules = [
-  (v) => !!v || "Username is required",
-  (v) => (v && v.length >= 6) || "Username must be at least 6 characters",
-];
+  v => !!v || 'Username is required',
+  v => (v && v.length >= 6) || 'Username must be at least 6 characters',
+]
 
 // Watch for props changes
 watch(
   () => props.userData,
   (newValue) => {
     if (newValue) {
-      userInfoData.value = newValue;
+      userInfoData.value = newValue
     }
   },
-  { immediate: true, deep: true }
-);
+  { immediate: true, deep: true },
+)
 
 watch(
   () => props.progressData,
   (newValue) => {
     if (newValue) {
-      progressInfoData.value = newValue;
+      progressInfoData.value = newValue
     }
   },
-  { immediate: true, deep: true }
-);
+  { immediate: true, deep: true },
+)
 
 // Methods
 const updateUsername = async () => {
-  if (!username.value || username.value.length < 6) return;
+  if (!username.value || username.value.length < 6) return
   try {
-    const { data } = await useApiService.put("/api/v1/users/username", {
+    const { _data } = await useApiService.put('/api/v1/users/username', {
       username: username.value,
-    });
-    userInfoData.value.username = username.value;
-    errors.value = [];
-  } catch (error) {
-    errors.value = [error.response?.data?.message || "An error occurred"];
+    })
+    userInfoData.value.username = username.value
+    errors.value = []
   }
-};
+  catch (error) {
+    errors.value = [error.response?.data?.message || 'An error occurred']
+  }
+}
 
 // Lifecycle hook
 onMounted(() => {
   // Initialize component
-});
+})
 </script>
 
 <style scoped></style>

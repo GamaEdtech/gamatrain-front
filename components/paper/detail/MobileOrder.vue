@@ -2,14 +2,17 @@
   <v-card class="order-btn-holder d-block d-md-none">
     <v-card-text class="pb-0">
       <v-row class="px-10 text-center">
-        <v-col cols="12" class="pb-1 pt-0">
+        <v-col
+          cols="12"
+          class="pb-1 pt-0"
+        >
           <div v-if="contentData?.files?.word.exist">
             <v-btn
-              @click="$emit('download', 'q_word')"
               block
               color="primary"
               class="mb-2"
               :loading="qWordFileDownloadLoading"
+              @click="$emit('download', 'q_word')"
             >
               Download Question Doc
               {{
@@ -21,11 +24,11 @@
           </div>
           <div v-if="contentData?.files.pdf.exist">
             <v-btn
-              @click="$emit('download', 'q_pdf')"
               class="mb-2 text-white font-weight-bold"
               block
               color="#E60012"
               :loading="qPdfFileDownloadLoading"
+              @click="$emit('download', 'q_pdf')"
             >
               Question Paper
               {{
@@ -39,10 +42,10 @@
             <v-btn
               v-show="contentData?.files.answer.ext == 'pdf'"
               class="mb-2 font-weight-bold"
-              @click="$emit('download', 'a_file')"
               block
               color="teal accent-3"
               :loading="answerFileDownloadLoading"
+              @click="$emit('download', 'a_file')"
             >
               Mark Scheme
               {{
@@ -53,11 +56,11 @@
             </v-btn>
             <v-btn
               v-show="contentData?.files.answer.ext == 'word'"
-              @click="$emit('download', 'a_file')"
               block
               color="primary"
               class="mb-2"
               :loading="answerFileDownloadLoading"
+              @click="$emit('download', 'a_file')"
             >
               Download Answer Doc
               {{
@@ -75,11 +78,11 @@
             <v-btn
               v-for="(extra, index) in contentData.files.extra"
               :key="index"
-              @click="$emit('download', 'extra', extra.id)"
               block
               color="blue"
               class="mb-2 font-weight-bold"
               :loading="extraFileDownloadLoading"
+              @click="$emit('download', 'extra', extra.id)"
             >
               {{ extra.type_title ? extra.type_title : "Extra" }}
               {{ extra.price > 0 ? "| $" + extra.price : "" }}
@@ -88,17 +91,19 @@
         </v-col>
 
         <v-col cols="12">
-          <div class="mb-4" v-if="!isFree">
+          <div
+            v-if="!isFree"
+            class="mb-4"
+          >
             <p v-if="!isLoggedIn">
-              <span class="mdi mdi-bell icon"></span>
+              <span class="mdi mdi-bell icon" />
               <span
-                @click="$emit('open-auth', 'login')"
                 class="login blue--text"
-                >Login</span
-              >
+                @click="$emit('open-auth', 'login')"
+              >Login</span>
               <span
-                @click="$emit('open-auth', 'register')"
                 class="register blue--text"
+                @click="$emit('open-auth', 'register')"
               >
                 (register)
               </span>
@@ -107,11 +112,10 @@
             <span v-else>
               Your wallet charge is ${{ userCredit }}
               <nuxt-link
-                class="blue--text"
                 v-if="isLoggedIn"
+                class="blue--text"
                 to="/user/charge-wallet"
-                >(Top Up Wallet)</nuxt-link
-              >
+              >(Top Up Wallet)</nuxt-link>
             </span>
           </div>
         </v-col>
@@ -121,7 +125,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   contentData: {
     type: Object,
     required: true,
@@ -154,9 +158,9 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-});
+})
 
-const emits = defineEmits(["download", "open-auth"]);
+const _emits = defineEmits(['download', 'open-auth'])
 </script>
 
 <style scoped>

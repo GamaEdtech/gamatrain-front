@@ -2,7 +2,10 @@
   <div
     class="w-100 height-main-div d-flex justify-center align-center position-relative"
   >
-    <canvas id="canvas" class="wrbgl position-absolute left-0 top-0"></canvas>
+    <canvas
+      id="canvas"
+      class="wrbgl position-absolute left-0 top-0"
+    />
 
     <div class="top-items">
       <v-btn
@@ -13,9 +16,17 @@
         :class="`${stepGuidMenu == `pause` || !isShowGuidMenu ? `` : `fade`}`"
         @click="setPlayingStatus(false)"
       >
-        <v-icon size="x-large" color="white">mdi-pause</v-icon>
+        <v-icon
+          size="x-large"
+          color="white"
+        >
+          mdi-pause
+        </v-icon>
       </v-btn>
-      <div class="description-guid" v-if="stepGuidMenu == `pause`">
+      <div
+        v-if="stepGuidMenu == `pause`"
+        class="description-guid"
+      >
         You Can Stop The Game
 
         <v-btn
@@ -39,7 +50,10 @@
       >
         {{ questions[currentQuestionIndex].text }}
 
-        <div class="description-guid" v-if="stepGuidMenu == `questionBox`">
+        <div
+          v-if="stepGuidMenu == `questionBox`"
+          class="description-guid"
+        >
           You Can See The Current Question
 
           <v-btn
@@ -62,7 +76,9 @@
       >
         <div class="gems-show">
           <div class="gem-image-div">
-            <v-icon color="white">mdi-diamond-stone</v-icon>
+            <v-icon color="white">
+              mdi-diamond-stone
+            </v-icon>
           </div>
 
           <span class="count-gem">{{ countGemCollected }}</span>
@@ -70,7 +86,12 @@
 
         <div class="score-div">
           <span class="score-text">{{ score }}</span>
-          <v-icon class="icon-score" color="#ed8a19"> mdi-star </v-icon>
+          <v-icon
+            class="icon-score"
+            color="#ed8a19"
+          >
+            mdi-star
+          </v-icon>
         </div>
         <div :class="['timer-box', { danger: timerDanger }]">
           {{ Math.ceil(timer) }}
@@ -83,18 +104,26 @@
           :readonly="isShowGuidMenu"
           @click="changeCameraMode"
         >
-          <v-icon size="x-large" color="white" v-if="cameraMode == `default`">
+          <v-icon
+            v-if="cameraMode == `default`"
+            size="x-large"
+            color="white"
+          >
             mdi-webcam
           </v-icon>
 
-          <v-icon size="x-large" color="white" v-if="cameraMode == `close`">
+          <v-icon
+            v-if="cameraMode == `close`"
+            size="x-large"
+            color="white"
+          >
             mdi-camera
           </v-icon>
         </v-btn>
 
         <div
-          class="description-guid score-time"
           v-if="stepGuidMenu == `timerScore`"
+          class="description-guid score-time"
         >
           You Can See The Remaining time , Score, Gems and changing Mode Camera.
 
@@ -113,16 +142,16 @@
     </div>
 
     <div
-      class="gem-collect-animation"
       v-if="showGemAnimation"
+      class="gem-collect-animation"
       :style="gemAnimationStyle"
     >
       +1
     </div>
 
     <div
-      :class="`overlay-pause ${isShowGuidMenu ? `zindex-less` : ``}`"
       v-if="!isPlayingGame && resultGame == `pending`"
+      :class="`overlay-pause ${isShowGuidMenu ? `zindex-less` : ``}`"
     >
       <v-btn
         size="large"
@@ -132,10 +161,18 @@
         :class="`${stepGuidMenu == `play` || !isShowGuidMenu ? `` : `fade`}`"
         @click="setPlayingStatus(true)"
       >
-        <v-icon size="x-large" color="white"> mdi-play </v-icon>
+        <v-icon
+          size="x-large"
+          color="white"
+        >
+          mdi-play
+        </v-icon>
       </v-btn>
 
-      <div class="description-guid play-game" v-if="stepGuidMenu == `play`">
+      <div
+        v-if="stepGuidMenu == `play`"
+        class="description-guid play-game"
+      >
         You Can Play the game
 
         <v-btn
@@ -151,7 +188,10 @@
       </div>
     </div>
 
-    <div class="overlay-result-game" v-if="resultGame != `pending`">
+    <div
+      v-if="resultGame != `pending`"
+      class="overlay-result-game"
+    >
       <div :class="`modal-status ${resultGame}-modal`">
         <span
           v-if="level != maxLevel"
@@ -159,55 +199,87 @@
         >
           {{ resultGame == "failed" ? "Game Over!" : "Great!" }}
         </span>
-        <span v-if="level != maxLevel" class="status-text">
+        <span
+          v-if="level != maxLevel"
+          class="status-text"
+        >
           Your Level Is {{ level }}
         </span>
 
-        <span v-if="level == maxLevel" class="status-text success-text">
-          Congratulations <br />
+        <span
+          v-if="level == maxLevel"
+          class="status-text success-text"
+        >
+          Congratulations <br>
           Complete All Level
         </span>
 
         <v-btn
+          v-if="resultGame == `failed` && level != maxLevel"
           size="large"
           color="#ffb300"
           icon
-          v-if="resultGame == `failed` && level != maxLevel"
           @click="resetGame"
         >
-          <v-icon size="x-large" color="white"> mdi-refresh </v-icon>
+          <v-icon
+            size="x-large"
+            color="white"
+          >
+            mdi-refresh
+          </v-icon>
         </v-btn>
 
         <v-btn
+          v-if="level == maxLevel"
           size="large"
           color="#ffb300"
           icon
-          v-if="level == maxLevel"
           @click="resetWholeGame"
         >
-          <v-icon size="x-large" color="white"> mdi-refresh </v-icon>
+          <v-icon
+            size="x-large"
+            color="white"
+          >
+            mdi-refresh
+          </v-icon>
         </v-btn>
 
         <v-btn
+          v-if="resultGame == `success` && level != maxLevel"
           size="large"
           color="#ffb300"
           icon
-          v-if="resultGame == `success` && level != maxLevel"
           @click="loadNextLevel"
         >
-          <v-icon size="x-large" color="white"> mdi-skip-next </v-icon>
+          <v-icon
+            size="x-large"
+            color="white"
+          >
+            mdi-skip-next
+          </v-icon>
         </v-btn>
       </div>
     </div>
 
-    <div class="overlay-loading" v-if="isLoading">Loading ...</div>
+    <div
+      v-if="isLoading"
+      class="overlay-loading"
+    >
+      Loading ...
+    </div>
 
-    <div class="counter-container" v-if="showCounterFirstPlay">
-      <transition name="zoom-fade" @after-enter="nextCount">
+    <div
+      v-if="showCounterFirstPlay"
+      class="counter-container"
+    >
+      <transition
+        name="zoom-fade"
+        @after-enter="nextCount"
+      >
         <div
-          class="counter-number"
           v-if="currentCountFirstPlay !== 0"
           :key="currentCountFirstPlay"
+          class="counter-number"
         >
           {{ currentCountFirstPlay }}
         </div>
@@ -226,7 +298,12 @@
         :readonly="isShowGuidMenu"
         @click="changeLane(-1)"
       >
-        <v-icon size="x-large" color="white"> mdi-arrow-left-bold </v-icon>
+        <v-icon
+          size="x-large"
+          color="white"
+        >
+          mdi-arrow-left-bold
+        </v-icon>
       </v-btn>
       <v-btn
         size="large"
@@ -235,12 +312,17 @@
         :readonly="isShowGuidMenu"
         @click="changeLane(1)"
       >
-        <v-icon size="x-large" color="white"> mdi-arrow-right-bold </v-icon>
+        <v-icon
+          size="x-large"
+          color="white"
+        >
+          mdi-arrow-right-bold
+        </v-icon>
       </v-btn>
 
       <div
-        class="description-guid guid-btn-change-lane"
         v-if="stepGuidMenu == `ChangeLaneBtn`"
+        class="description-guid guid-btn-change-lane"
       >
         You Can Change Lane Car
 
@@ -260,182 +342,184 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 // Reactive state
-const experience = ref(null);
-const ExperienceModule = ref(null);
+const experience = ref(null)
+const ExperienceModule = ref(null)
 // question status : error,success,normal
-const questionStatus = ref("normal");
+const questionStatus = ref('normal')
 const questions = ref([
   {
-    text: "10 - 2 =",
-    choices: ["4", "22", "45", "8"],
+    text: '10 - 2 =',
+    choices: ['4', '22', '45', '8'],
     indexAnswer: 3,
   },
   {
-    text: "22 * 2 =",
-    choices: ["4", "44", "81", "95"],
+    text: '22 * 2 =',
+    choices: ['4', '44', '81', '95'],
     indexAnswer: 1,
   },
   {
-    text: "1 + 1 =",
-    choices: ["2", "15", "56", "64"],
+    text: '1 + 1 =',
+    choices: ['2', '15', '56', '64'],
     indexAnswer: 0,
   },
   {
-    text: "9 * 8 =",
-    choices: ["72", "35", "12", "64"],
+    text: '9 * 8 =',
+    choices: ['72', '35', '12', '64'],
     indexAnswer: 0,
   },
-]);
-const currentQuestionIndex = ref(0);
-const timer = ref(40);
-const timerDanger = ref(false);
-const isPlayingGame = ref(false);
-const score = ref(0);
+])
+const currentQuestionIndex = ref(0)
+const timer = ref(40)
+const timerDanger = ref(false)
+const isPlayingGame = ref(false)
+const score = ref(0)
 
 // reslut game option : success,failed,pending
-const resultGame = ref("pending");
-const isLoading = ref(true);
-const currentCountFirstPlay = ref(3);
-const showCounterFirstPlay = ref(false);
-const isFirstTimePlayingGame = ref(true);
+const resultGame = ref('pending')
+const isLoading = ref(true)
+const currentCountFirstPlay = ref(3)
+const showCounterFirstPlay = ref(false)
+const isFirstTimePlayingGame = ref(true)
 
 // camera mocde : close,default
-const cameraMode = ref("default");
-const isShowGuidMenu = ref(false);
+const cameraMode = ref('default')
+const isShowGuidMenu = ref(false)
 
 // Step Guid Menu : pause,questionBox,timerScore,play,ChangeLaneBtn,Finish
-const stepGuidMenu = ref("Finish");
-const isUpdateTimer = ref(true);
-const countGemCollected = ref(0);
-const showGemAnimation = ref(false);
-const gemAnimationStyle = ref({});
-const animationGemCollectDuration = ref(1500);
-const level = ref(1);
-const maxLevel = ref(4);
+const stepGuidMenu = ref('Finish')
+const isUpdateTimer = ref(true)
+const countGemCollected = ref(0)
+const showGemAnimation = ref(false)
+const gemAnimationStyle = ref({})
+const animationGemCollectDuration = ref(1500)
+const level = ref(1)
+const maxLevel = ref(4)
 
 // Methods
 const onChangeSceneReady = () => {
-  isLoading.value = false;
-};
+  isLoading.value = false
+}
 
 const changeStepGuid = (event, step) => {
-  event.stopImmediatePropagation();
-  stepGuidMenu.value = step;
-  if (step == "Finish") {
-    isShowGuidMenu.value = false;
+  event.stopImmediatePropagation()
+  stepGuidMenu.value = step
+  if (step == 'Finish') {
+    isShowGuidMenu.value = false
   }
-};
+}
 
 const changeLane = (direction) => {
-  experience.value.changeLane(direction);
-};
+  experience.value.changeLane(direction)
+}
 
 const setPlayingStatus = (status) => {
   if (isFirstTimePlayingGame.value) {
-    isFirstTimePlayingGame.value = false;
-    showCounterFirstPlay.value = true;
-    nextCount();
-    isPlayingGame.value = status;
+    isFirstTimePlayingGame.value = false
+    showCounterFirstPlay.value = true
+    nextCount()
+    isPlayingGame.value = status
 
     setTimeout(() => {
-      experience.value.setPlayingStatus(status);
-    }, 3000);
-  } else {
-    isPlayingGame.value = status;
-    experience.value.setPlayingStatus(status);
+      experience.value.setPlayingStatus(status)
+    }, 3000)
   }
-};
+  else {
+    isPlayingGame.value = status
+    experience.value.setPlayingStatus(status)
+  }
+}
 
 const onQuestionChange = () => {
   if (currentQuestionIndex.value < questions.value.length - 1) {
-    currentQuestionIndex.value += 1;
+    currentQuestionIndex.value += 1
   }
-};
+}
 
 const onQuestionStatusChange = (status) => {
-  questionStatus.value = status;
+  questionStatus.value = status
   setTimeout(() => {
-    questionStatus.value = "normal";
-  }, 3000);
-};
+    questionStatus.value = 'normal'
+  }, 3000)
+}
 
 const onChangeIsUpdateTimer = (state) => {
-  isUpdateTimer.value = state;
-};
+  isUpdateTimer.value = state
+}
 
 const onTimerUpdate = (delta) => {
   if (timer.value > 0) {
     if (isUpdateTimer.value) {
-      timer.value -= delta;
+      timer.value -= delta
 
       if (timer.value <= 10 && !timerDanger.value) {
-        timerDanger.value = true;
+        timerDanger.value = true
       }
     }
-  } else {
-    timer.value = 0;
-    timerDanger.value = false;
-
-    setPlayingStatus(false);
-    resultGame.value = "failed";
   }
-};
+  else {
+    timer.value = 0
+    timerDanger.value = false
+
+    setPlayingStatus(false)
+    resultGame.value = 'failed'
+  }
+}
 
 const onScoreChange = (bonus) => {
-  score.value += bonus;
-};
+  score.value += bonus
+}
 
 const onResultGameChange = (result) => {
-  if (result.status == "success") {
-    setPlayingStatus(false);
-    resultGame.value = "success";
+  if (result.status == 'success') {
+    setPlayingStatus(false)
+    resultGame.value = 'success'
   }
-};
+}
 
 const resetGame = () => {
-  isUpdateTimer.value = true;
-  isLoading.value = true;
-  experience.value.resetGame();
-  currentQuestionIndex.value = 0;
-  timer.value = 40;
-  questionStatus.value = "normal";
-  timerDanger.value = false;
-  score.value = 0;
-  resultGame.value = "pending";
-  setPlayingStatus(true);
-  currentCountFirstPlay.value = 3;
+  isUpdateTimer.value = true
+  isLoading.value = true
+  experience.value.resetGame()
+  currentQuestionIndex.value = 0
+  timer.value = 40
+  questionStatus.value = 'normal'
+  timerDanger.value = false
+  score.value = 0
+  resultGame.value = 'pending'
+  setPlayingStatus(true)
+  currentCountFirstPlay.value = 3
 
   setTimeout(() => {
-    setPlayingStatus(false);
-    isLoading.value = false;
-    isFirstTimePlayingGame.value = true;
-  }, 1000);
-};
+    setPlayingStatus(false)
+    isLoading.value = false
+    isFirstTimePlayingGame.value = true
+  }, 1000)
+}
 
 const resetWholeGame = () => {
-  level.value = 1;
-  isUpdateTimer.value = true;
-  isLoading.value = true;
-  score.value = 0;
-  countGemCollected.value = 0;
-  currentQuestionIndex.value = 0;
-  timer.value = 40;
-  questionStatus.value = "normal";
-  timerDanger.value = false;
-  resultGame.value = "pending";
-  setPlayingStatus(true);
-  currentCountFirstPlay.value = 3;
-  experience.value.destroy();
-  experience.value = null;
+  level.value = 1
+  isUpdateTimer.value = true
+  isLoading.value = true
+  score.value = 0
+  countGemCollected.value = 0
+  currentQuestionIndex.value = 0
+  timer.value = 40
+  questionStatus.value = 'normal'
+  timerDanger.value = false
+  resultGame.value = 'pending'
+  setPlayingStatus(true)
+  currentCountFirstPlay.value = 3
+  experience.value.destroy()
+  experience.value = null
 
-  import("@/threeJsExperience/car-racing/Experience.js")
+  import('@/threeJsExperience/car-racing/Experience.js')
     .then((module) => {
-      ExperienceModule.value = module.default;
+      ExperienceModule.value = module.default
       experience.value = new ExperienceModule.value(
-        document.getElementById("canvas"),
+        document.getElementById('canvas'),
         questions.value,
         level.value,
         {
@@ -447,40 +531,40 @@ const resetWholeGame = () => {
           onChangeSceneReady,
           onChangeIsUpdateTimer,
           onGemColocted,
-        }
-      );
+        },
+      )
     })
     .catch((error) => {
-      console.log("error", error);
-    });
+      console.log('error', error)
+    })
 
   setTimeout(() => {
-    setPlayingStatus(false);
-    isLoading.value = false;
-    isFirstTimePlayingGame.value = true;
-  }, 1000);
-};
+    setPlayingStatus(false)
+    isLoading.value = false
+    isFirstTimePlayingGame.value = true
+  }, 1000)
+}
 
 const loadNextLevel = () => {
   if (level.value < maxLevel.value) {
-    level.value += 1;
-    isUpdateTimer.value = true;
-    isLoading.value = true;
-    currentQuestionIndex.value = 0;
-    timer.value = 40;
-    questionStatus.value = "normal";
-    timerDanger.value = false;
-    resultGame.value = "pending";
-    setPlayingStatus(true);
-    currentCountFirstPlay.value = 3;
-    experience.value.destroy();
-    experience.value = null;
+    level.value += 1
+    isUpdateTimer.value = true
+    isLoading.value = true
+    currentQuestionIndex.value = 0
+    timer.value = 40
+    questionStatus.value = 'normal'
+    timerDanger.value = false
+    resultGame.value = 'pending'
+    setPlayingStatus(true)
+    currentCountFirstPlay.value = 3
+    experience.value.destroy()
+    experience.value = null
 
-    import("@/threeJsExperience/car-racing/Experience.js")
+    import('@/threeJsExperience/car-racing/Experience.js')
       .then((module) => {
-        ExperienceModule.value = module.default;
+        ExperienceModule.value = module.default
         experience.value = new ExperienceModule.value(
-          document.getElementById("canvas"),
+          document.getElementById('canvas'),
           questions.value,
           level.value,
           {
@@ -492,105 +576,107 @@ const loadNextLevel = () => {
             onChangeSceneReady,
             onChangeIsUpdateTimer,
             onGemColocted,
-          }
-        );
+          },
+        )
       })
       .catch((error) => {
-        console.log("error", error);
-      });
+        console.log('error', error)
+      })
 
     setTimeout(() => {
-      setPlayingStatus(false);
-      isLoading.value = false;
-      isFirstTimePlayingGame.value = true;
-    }, 1000);
+      setPlayingStatus(false)
+      isLoading.value = false
+      isFirstTimePlayingGame.value = true
+    }, 1000)
   }
-};
+}
 
 const nextCount = () => {
   if (currentCountFirstPlay.value > 1) {
     setTimeout(() => {
-      currentCountFirstPlay.value--;
-    }, 500);
-  } else {
-    setTimeout(() => {
-      currentCountFirstPlay.value = 0;
-      showCounterFirstPlay.value = false;
-    }, 500);
+      currentCountFirstPlay.value--
+    }, 500)
   }
-};
+  else {
+    setTimeout(() => {
+      currentCountFirstPlay.value = 0
+      showCounterFirstPlay.value = false
+    }, 500)
+  }
+}
 
 const changeCameraMode = () => {
-  if (cameraMode.value == "default") {
-    experience.value.changeCameraMode("close");
-    cameraMode.value = "close";
-  } else {
-    experience.value.changeCameraMode("default");
-    cameraMode.value = "default";
+  if (cameraMode.value == 'default') {
+    experience.value.changeCameraMode('close')
+    cameraMode.value = 'close'
   }
-};
+  else {
+    experience.value.changeCameraMode('default')
+    cameraMode.value = 'default'
+  }
+}
 
 const startAnimationGemCollect = async () => {
-  const startX = window.innerWidth / 2;
-  const startY = window.innerHeight / 2;
-  const gemElement = document.querySelector(".gems-show");
+  const startX = window.innerWidth / 2
+  const startY = window.innerHeight / 2
+  const gemElement = document.querySelector('.gems-show')
   if (gemElement) {
-    const gemRect = gemElement.getBoundingClientRect();
-    const endX = gemRect.left + gemRect.width / 2;
-    const endY = gemRect.top + gemRect.height / 2;
+    const gemRect = gemElement.getBoundingClientRect()
+    const endX = gemRect.left + gemRect.width / 2
+    const endY = gemRect.top + gemRect.height / 2
 
     gemAnimationStyle.value = {
       left: `${startX}px`,
       top: `${startY}px`,
-      opacity: "1",
-      transform: "scale(1)",
-    };
-    showGemAnimation.value = true;
+      opacity: '1',
+      transform: 'scale(1)',
+    }
+    showGemAnimation.value = true
     await new Promise((resolve) => {
       setTimeout(() => {
         gemAnimationStyle.value = {
           left: `${endX}px`,
           top: `${endY}px`,
-          opacity: "0",
-          transform: "scale(0.8)",
+          opacity: '0',
+          transform: 'scale(0.8)',
           transition: `all ${animationGemCollectDuration.value}ms ease-out`,
-        };
-        resolve();
-      }, 50);
-    });
+        }
+        resolve()
+      }, 50)
+    })
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, animationGemCollectDuration.value)
-    );
-    showGemAnimation.value = false;
+    await new Promise(resolve =>
+      setTimeout(resolve, animationGemCollectDuration.value),
+    )
+    showGemAnimation.value = false
   }
-};
+}
 
 const onGemColocted = () => {
-  countGemCollected.value += 1;
-  startAnimationGemCollect();
-};
+  countGemCollected.value += 1
+  startAnimationGemCollect()
+}
 
 // Lifecycle hooks
 onMounted(() => {
   // hide footer
-  const footer = document.getElementById("footer-container");
+  const footer = document.getElementById('footer-container')
   if (footer) {
-    footer.style.display = "none";
+    footer.style.display = 'none'
   }
 
-  const hasSeenGuide = localStorage.getItem("hasSeenGuideMenu");
+  const hasSeenGuide = localStorage.getItem('hasSeenGuideMenu')
   if (!hasSeenGuide) {
-    stepGuidMenu.value = "pause";
-    isShowGuidMenu.value = true;
-    localStorage.setItem("hasSeenGuideMenu", "true");
+    stepGuidMenu.value = 'pause'
+    isShowGuidMenu.value = true
+    localStorage.setItem('hasSeenGuideMenu', 'true')
   }
 
-  import("@/threeJsExperience/car-racing/Experience.js")
+  import('@/threeJsExperience/car-racing/Experience.js')
     .then((module) => {
-      ExperienceModule.value = module.default;
+      ExperienceModule.value = module.default
       experience.value = new ExperienceModule.value(
-        document.getElementById("canvas"),
+        document.getElementById('canvas'),
         questions.value,
         level.value,
         {
@@ -602,24 +688,24 @@ onMounted(() => {
           onChangeSceneReady,
           onChangeIsUpdateTimer,
           onGemColocted,
-        }
-      );
+        },
+      )
     })
     .catch((error) => {
-      console.log("error", error);
-    });
-});
+      console.log('error', error)
+    })
+})
 
 onBeforeUnmount(() => {
-  const footer = document.getElementById("footer-container");
+  const footer = document.getElementById('footer-container')
   if (footer) {
-    footer.style.display = "unset";
+    footer.style.display = 'unset'
   }
   if (experience.value) {
-    experience.value.destroy();
-    experience.value = null;
+    experience.value.destroy()
+    experience.value = null
   }
-});
+})
 </script>
 
 <style scoped>

@@ -1,5 +1,8 @@
 <template>
-  <v-card class="order-btn-holder d-block d-md-none" width="100%">
+  <v-card
+    class="order-btn-holder d-block d-md-none"
+    width="100%"
+  >
     <v-card-text class="pb-0">
       <v-row class="px-10 text-center">
         <v-col
@@ -11,10 +14,10 @@
           <!-- For not authenticated user -->
           <v-btn
             v-show="!isLoggedIn"
-            @click="handleLogin"
             v-if="key === 'participation'"
             block
             color="success"
+            @click="handleLogin"
           >
             Start Exam{{ item.price > 0 ? " | $" + item.price : "" }}
           </v-btn>
@@ -22,8 +25,8 @@
           <!-- For authenticated user -->
           <v-btn
             v-show="isLoggedIn"
-            :to="`/exam/start/${examId}`"
             v-if="key === 'participation'"
+            :to="`/exam/start/${examId}`"
             block
             color="success"
           >
@@ -34,30 +37,43 @@
           </v-btn>
 
           <!-- Word download button -->
-          <v-btn v-else-if="key === 'word'" block color="primary">
+          <v-btn
+            v-else-if="key === 'word'"
+            block
+            color="primary"
+          >
             Download WORD{{ item.price > 0 ? " | $" + item.price : "" }}
           </v-btn>
 
           <!-- PDF download button -->
           <v-btn
             v-else-if="key === 'pdf'"
-            @click="handleDownload('pdf')"
             :loading="downloadLoading"
             block
             color="error"
+            @click="handleDownload('pdf')"
           >
             Download PDF{{ item.price > 0 ? " | $" + item.price : "" }}
           </v-btn>
         </v-col>
 
         <v-col cols="12">
-          <div v-if="!isFree" class="mb-4">
+          <div
+            v-if="!isFree"
+            class="mb-4"
+          >
             <p v-if="!isLoggedIn">
-              <span class="mdi mdi-bell icon"></span>
-              <span @click="handleLogin" class="login blue--text pointer">
+              <span class="mdi mdi-bell icon" />
+              <span
+                class="login blue--text pointer"
+                @click="handleLogin"
+              >
                 Login
               </span>
-              <span @click="handleRegister" class="register blue--text pointer">
+              <span
+                class="register blue--text pointer"
+                @click="handleRegister"
+              >
                 (register)
               </span>
               <span>to download and charge wallet.</span>
@@ -65,11 +81,10 @@
             <span v-else>
               Your wallet charge is ${{ credit }}
               <nuxt-link
-                class="blue--text"
                 v-if="isLoggedIn"
+                class="blue--text"
                 to="/user/charge-wallet"
-                >(Top Up Wallet)</nuxt-link
-              >
+              >(Top Up Wallet)</nuxt-link>
             </span>
           </div>
         </v-col>
@@ -104,35 +119,35 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-});
+})
 
-const emit = defineEmits(["download", "login", "register"]);
+const emit = defineEmits(['download', 'login', 'register'])
 
 // Computed properties
 const isFree = computed(() => {
-  if (!props.examPrices) return true;
+  if (!props.examPrices) return true
 
-  const participation = props.examPrices.participation;
-  const pdf = props.examPrices.pdf;
+  const participation = props.examPrices.participation
+  const pdf = props.examPrices.pdf
 
   if (participation?.price > 0 && pdf?.price > 0) {
-    return false;
+    return false
   }
 
-  return true;
-});
+  return true
+})
 
 // Methods
 function handleDownload(type) {
-  emit("download", type);
+  emit('download', type)
 }
 
 function handleLogin() {
-  emit("login");
+  emit('login')
 }
 
 function handleRegister() {
-  emit("register");
+  emit('register')
 }
 </script>
 

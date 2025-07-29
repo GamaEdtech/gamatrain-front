@@ -1,15 +1,24 @@
 <template>
-    <v-card rounded="0"
-    flat  id="search-top-filter">
-    <v-window class=" tab-header" >
-      <v-window-item 
+  <v-card
+    id="search-top-filter"
+    rounded="0"
+    flat
+  >
+    <v-window class="tab-header">
+      <v-window-item
         v-model="active_tab"
         background-color="#F5F5F5"
         align-tabs="start"
         slider-color="transparent"
         class="pa-2"
       >
-        <v-tab   @click="openLink('test')" rounded color="rgba(0, 0, 0, .87)" class="tab-item" :class="{ 'tab-active': $route.query.type === 'test' }">
+        <v-tab
+          rounded
+          color="rgba(0, 0, 0, .87)"
+          class="tab-item"
+          :class="{ 'tab-active': $route.query.type === 'test' }"
+          @click="openLink('test')"
+        >
           <v-badge
             class="py-1 mx-1 badge-sample"
             color="#2962FF"
@@ -18,26 +27,38 @@
             offset-y="5"
           >
             <div class="nav-link sample-q-icon">
-              <span class="icon icon-paper"></span>
+              <span class="icon icon-paper" />
               Past Papers
             </div>
           </v-badge>
         </v-tab>
-        <v-tab @click="openLink('learnfiles')" rounded color="rgba(0, 0, 0, .87)" class="tab-item" :class="{ 'tab-active': $route.query.type === 'learnfiles' }">
+        <v-tab
+          rounded
+          color="rgba(0, 0, 0, .87)"
+          class="tab-item"
+          :class="{ 'tab-active': $route.query.type === 'learnfiles' }"
+          @click="openLink('learnfiles')"
+        >
           <v-badge
             bordered
             class="pa-1 mx-1 badge-training"
             :content="content_statistics.learnfiles"
             color="#2E7D32"
-            offset-y="5"  
+            offset-y="5"
           >
             <div class="nav-link training-content-icon">
-              <span class="icon icon-multimedia"></span>
+              <span class="icon icon-multimedia" />
               Multimedia
             </div>
           </v-badge>
         </v-tab>
-        <v-tab @click="openLink('question')" rounded color="rgba(0, 0, 0, .87)" class="tab-item" :class="{ 'tab-active': $route.query.type === 'question' }">
+        <v-tab
+          rounded
+          color="rgba(0, 0, 0, .87)"
+          class="tab-item"
+          :class="{ 'tab-active': $route.query.type === 'question' }"
+          @click="openLink('question')"
+        >
           <v-badge
             bordered
             class="pa-1 mx-1 badge-q"
@@ -46,12 +67,18 @@
             offset-y="5"
           >
             <div class="nav-link q-a-icon">
-              <span class="icon icon-q-a"></span>
+              <span class="icon icon-q-a" />
               Forum
             </div>
           </v-badge>
         </v-tab>
-        <v-tab @click="openLink('azmoon')" rounded color="rgba(0, 0, 0, .87)" class="tab-item" :class="{ 'tab-active': $route.query.type === 'azmoon' }">
+        <v-tab
+          rounded
+          color="rgba(0, 0, 0, .87)"
+          class="tab-item"
+          :class="{ 'tab-active': $route.query.type === 'azmoon' }"
+          @click="openLink('azmoon')"
+        >
           <v-badge
             bordered
             class="pa-1 mx-1 badge-online"
@@ -60,12 +87,18 @@
             offset-y="5"
           >
             <div class="nav-link exam-icon">
-              <span class="icon icon-exam"></span>
+              <span class="icon icon-exam" />
               QuizHub
             </div>
           </v-badge>
         </v-tab>
-        <v-tab @click="openLink('dars')" rounded color="rgba(0, 0, 0, .87)" class="tab-item" :class="{ 'tab-active': $route.query.type === 'dars' }">
+        <v-tab
+          rounded
+          color="rgba(0, 0, 0, .87)"
+          class="tab-item"
+          :class="{ 'tab-active': $route.query.type === 'dars' }"
+          @click="openLink('dars')"
+        >
           <v-badge
             bordered
             class="pa-1 mx-1 badge-tutorial"
@@ -74,105 +107,109 @@
             offset-y="5"
           >
             <div class="nav-link tutorial-icon">
-              <span class="icon icon-tutorial"></span>
+              <span class="icon icon-tutorial" />
               Tutorial
             </div>
           </v-badge>
         </v-tab>
       </v-window-item>
     </v-window>
-    </v-card>
+  </v-card>
 </template>
 
 <script setup>
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const active_tab = ref(0);
+const active_tab = ref(0)
 const content_statistics = ref({
-  azmoon: "--",
-  dars: "--",
-  learnfiles: "--",
-  question: "--",
-  test: "--",
-  tutor: "--",
-  tutorial: "--",
-});
+  azmoon: '--',
+  dars: '--',
+  learnfiles: '--',
+  question: '--',
+  test: '--',
+  tutor: '--',
+  tutorial: '--',
+})
 
 // Get title for the current section
-const getCurrentSectionTitle = () => {
-  const type = route.query.type;
-  if (type === "test") return "Past Papers";
-  if (type === "learnfiles") return "Multimedia";
-  if (type === "question") return "Forum";
-  if (type === "azmoon") return "QuizHub";
-  if (type === "dars") return "Tutorial";
-  if (type === "tutor") return "Tutor";
-  return "Past Papers"; // Default
-};
+const _getCurrentSectionTitle = () => {
+  const type = route.query.type
+  if (type === 'test') return 'Past Papers'
+  if (type === 'learnfiles') return 'Multimedia'
+  if (type === 'question') return 'Forum'
+  if (type === 'azmoon') return 'QuizHub'
+  if (type === 'dars') return 'Tutorial'
+  if (type === 'tutor') return 'Tutor'
+  return 'Past Papers' // Default
+}
 
 // Set the active tab based on the route
 onBeforeMount(() => {
-  setActiveTabFromRoute(route.query.type);
-});
+  setActiveTabFromRoute(route.query.type)
+})
 
 // Watch for route changes
-watch(() => route.query.type, (newVal) => {
-  setActiveTabFromRoute(newVal);
-});
+watch(
+  () => route.query.type,
+  (newVal) => {
+    setActiveTabFromRoute(newVal)
+  },
+)
 
 // Helper function to set the active tab
 const setActiveTabFromRoute = (routeType) => {
-  if (routeType === "test") active_tab.value = 0;
-  else if (routeType === "learnfiles") active_tab.value = 1;
-  else if (routeType === "question") active_tab.value = 2;
-  else if (routeType === "azmoon") active_tab.value = 3;
-  else if (routeType === "dars") active_tab.value = 4;
-  else if (routeType === "tutor") active_tab.value = 5;
-};
+  if (routeType === 'test') active_tab.value = 0
+  else if (routeType === 'learnfiles') active_tab.value = 1
+  else if (routeType === 'question') active_tab.value = 2
+  else if (routeType === 'azmoon') active_tab.value = 3
+  else if (routeType === 'dars') active_tab.value = 4
+  else if (routeType === 'tutor') active_tab.value = 5
+}
 
 // Function to open a link
 const openLink = (val) => {
-  const query = { type: val };
+  const query = { type: val }
   if (route.query.section) {
-    query.section = route.query.section;
+    query.section = route.query.section
   }
   if (route.query.base) {
-    query.base = route.query.base;
+    query.base = route.query.base
   }
   if (route.query.lesson) {
-    query.lesson = route.query.lesson;
+    query.lesson = route.query.lesson
   }
   if (route.query.topic) {
-    query.topic = route.query.topic;
+    query.topic = route.query.topic
   }
-  if (route.query.test_type !== 0 && query.type === "test") {
-    query.test_type = route.query.test_type;
+  if (route.query.test_type !== 0 && query.type === 'test') {
+    query.test_type = route.query.test_type
   }
-  if (route.query.level !== 0 && query.type === "test") {
-    query.level = route.query.level;
+  if (route.query.level !== 0 && query.type === 'test') {
+    query.level = route.query.level
   }
-  if (route.query.word === 1 && query.type === "test") {
-    query.word = 1;
+  if (route.query.word === 1 && query.type === 'test') {
+    query.word = 1
   }
-  if (route.query.pdf === 1 && query.type === "test") {
-    query.pdf = 1;
+  if (route.query.pdf === 1 && query.type === 'test') {
+    query.pdf = 1
   }
-  if (route.query.free === 1 && query.type === "test") {
-    query.free = 1;
+  if (route.query.free === 1 && query.type === 'test') {
+    query.free = 1
   }
-  if (route.query.a_file === 1 && query.type === "test") {
-    query.a_file = 1;
+  if (route.query.a_file === 1 && query.type === 'test') {
+    query.a_file = 1
   }
 
-  router.replace({ query: query });
-};
+  router.replace({ query: query })
+}
 
 // Expose content_statistics for parent components to set
 defineExpose({
-  content_statistics
-});
+  content_statistics,
+})
 </script>
+
 <style lang="scss" scoped>
 #search-top-filter {
   position: sticky;
@@ -197,7 +234,7 @@ defineExpose({
 
 /* Tab container */
 :deep(.v-tabs) {
-  background-color: #F5F5F5 !important;
+  background-color: #f5f5f5 !important;
   border-radius: 1.2rem !important;
 }
 
@@ -217,12 +254,12 @@ defineExpose({
   position: relative;
   z-index: 1;
   .nav-link {
-    border: 1px solid rgba(0,0,0,0.12) !important;
+    border: 1px solid rgba(0, 0, 0, 0.12) !important;
     border-radius: 1.4rem !important;
-    color: rgba(0,0,0,0.9) !important;
+    color: rgba(0, 0, 0, 0.9) !important;
     font-weight: 500;
   }
-  
+
   span.icon {
     opacity: 1;
     transform: scale(1.05);
@@ -233,32 +270,32 @@ defineExpose({
 .tab-item.tab-active {
   /* Past Papers active tab */
   .badge-sample .nav-link {
-    background: rgba(41,98,255,0.08) !important;
-    border-color: rgba(41,98,255,0.3) !important;
+    background: rgba(41, 98, 255, 0.08) !important;
+    border-color: rgba(41, 98, 255, 0.3) !important;
   }
-  
+
   /* Multimedia active tab */
   .badge-training .nav-link {
-    background: rgba(46,125,50,0.08) !important;
-    border-color: rgba(46,125,50,0.3) !important;
+    background: rgba(46, 125, 50, 0.08) !important;
+    border-color: rgba(46, 125, 50, 0.3) !important;
   }
-  
+
   /* Forum active tab */
   .badge-q .nav-link {
-    background: rgba(191,54,12,0.08) !important;
-    border-color: rgba(191,54,12,0.3) !important;
+    background: rgba(191, 54, 12, 0.08) !important;
+    border-color: rgba(191, 54, 12, 0.3) !important;
   }
-  
+
   /* QuizHub active tab */
   .badge-online .nav-link {
-    background: rgba(86,0,232,0.08) !important;
-    border-color: rgba(86,0,232,0.3) !important;
+    background: rgba(86, 0, 232, 0.08) !important;
+    border-color: rgba(86, 0, 232, 0.3) !important;
   }
-  
+
   /* Tutorial active tab */
   .badge-tutorial .nav-link {
-    background: rgba(189,8,28,0.08) !important;
-    border-color: rgba(189,8,28,0.3) !important;
+    background: rgba(189, 8, 28, 0.08) !important;
+    border-color: rgba(189, 8, 28, 0.3) !important;
   }
 }
 
@@ -273,7 +310,7 @@ defineExpose({
     min-width: min-content !important;
     min-height: 22px !important;
     border-radius: 11px !important;
-    background: #2962FF !important;
+    background: #2962ff !important;
     color: #fff !important;
   }
 }
@@ -285,27 +322,27 @@ defineExpose({
 
 /* Badge colors for each type */
 :deep(.badge-sample .v-badge__badge) {
-  background-color: #2962FF !important;
+  background-color: #2962ff !important;
   color: white !important;
 }
 
 :deep(.badge-training .v-badge__badge) {
-  background-color: #2E7D32 !important;
+  background-color: #2e7d32 !important;
   color: white !important;
 }
 
 :deep(.badge-q .v-badge__badge) {
-  background-color: #BF360C !important;
+  background-color: #bf360c !important;
   color: white !important;
 }
 
 :deep(.badge-online .v-badge__badge) {
-  background-color: #5600E8 !important;
+  background-color: #5600e8 !important;
   color: white !important;
 }
 
 :deep(.badge-tutorial .v-badge__badge) {
-  background-color: #BD081C !important;
+  background-color: #bd081c !important;
   color: white !important;
 }
 
@@ -321,41 +358,41 @@ defineExpose({
   font-size: 3rem !important;
   padding-left: 1rem;
   padding-right: 0.4rem;
-  color: #2E7D32;
+  color: #2e7d32;
 }
 
 .q-a-icon span {
   font-size: 3rem !important;
   padding-left: 1rem;
   padding-right: 0.4rem;
-  color: #BF360C;
+  color: #bf360c;
 }
 
 .exam-icon span {
   font-size: 3rem !important;
   padding-left: 1rem;
   padding-right: 0.4rem;
-  color: #5600E8;
+  color: #5600e8;
 }
 
 .tutorial-icon span {
   font-size: 3rem !important;
   padding-left: 1rem;
   padding-right: 0.4rem;
-  color: #BD081C;
+  color: #bd081c;
 }
 
 .teacher-icon span {
   font-size: 3rem !important;
   padding-left: 1rem;
   padding-right: 0.4rem;
-  color: #8E24AA;
+  color: #8e24aa;
 }
 
 .tab-header {
   margin: 1rem 0 !important;
   border-radius: 1.2rem !important;
-  background-color: #F5F5F5 !important;
+  background-color: #f5f5f5 !important;
   padding: 0rem !important;
   border: none !important;
   min-width: max-content;
@@ -380,25 +417,37 @@ defineExpose({
 /* Make non-active tabs more subtle */
 .tab-item:not(.tab-active) .nav-link {
   color: rgba(0, 0, 0, 0.6);
-  
+
   span.icon {
     opacity: 0.7;
   }
 }
 
-:deep(.badge-sample .v-badge__badge) { background-color: #2962FF !important; }
-:deep(.badge-training .v-badge__badge) { background-color: #2E7D32 !important; }
-:deep(.badge-q .v-badge__badge) { background-color: #BF360C !important; }
-:deep(.badge-online .v-badge__badge) { background-color: #5600E8 !important; }
-:deep(.badge-tutorial .v-badge__badge) { background-color: #BD081C !important; }
-:deep(.v-tabs__prev) { display: none !important; }
+:deep(.badge-sample .v-badge__badge) {
+  background-color: #2962ff !important;
+}
+:deep(.badge-training .v-badge__badge) {
+  background-color: #2e7d32 !important;
+}
+:deep(.badge-q .v-badge__badge) {
+  background-color: #bf360c !important;
+}
+:deep(.badge-online .v-badge__badge) {
+  background-color: #5600e8 !important;
+}
+:deep(.badge-tutorial .v-badge__badge) {
+  background-color: #bd081c !important;
+}
+:deep(.v-tabs__prev) {
+  display: none !important;
+}
 :deep(.v-tabs__next) {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   background: #fff;
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   width: 36px;
   height: 36px;
   display: flex;
@@ -407,7 +456,10 @@ defineExpose({
   right: 8px;
   z-index: 10;
 }
-:deep(.v-tabs__wrapper) { padding-left: 0 !important; padding-right: 48px !important; }
+:deep(.v-tabs__wrapper) {
+  padding-left: 0 !important;
+  padding-right: 48px !important;
+}
 
 .selected-tab .nav-link {
   display: none !important;

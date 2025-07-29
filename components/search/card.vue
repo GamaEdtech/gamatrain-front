@@ -7,8 +7,8 @@
         class="img-div rounded-ts-lg rounded-bs-lg d-flex align-center justify-center ga-3 flex-column"
       >
         <NuxtImg
-          :alt="information?.title"
           v-if="information.lesson_pic"
+          :alt="information?.title"
           width="100px"
           :src="information.lesson_pic"
           placeholder
@@ -18,9 +18,10 @@
           <p class="text-subtitle-1 font-weight-bold text-center">
             {{ information.lesson_title }}
           </p>
-          <a class="text-subtitle-2" href="https://gamatrain.com text-center"
-            >Gamatrain.com</a
-          >
+          <a
+            class="text-subtitle-2"
+            href="https://gamatrain.com text-center"
+          >Gamatrain.com</a>
         </template>
       </div>
       <div
@@ -29,30 +30,32 @@
         <NuxtLink
           :to="createLinkCard(information)"
           class="text-h5 text-sm-h4 text-black font-weight-medium"
-          >{{ information?.title }}</NuxtLink
-        >
+        >{{ information?.title }}</NuxtLink>
         <div class="d-flex align-center justify-start flex-wrap ga-3">
           <v-chip
+            v-if="information.section_title"
             variant="flat"
             class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
             color="#F2F4F7"
             :to="`/search?type=${
               route.query.type ? route.query.type : `test`
             }&section=${information.section}`"
-            v-if="information.section_title"
-            >{{ information?.section_title }}</v-chip
           >
+            {{ information?.section_title }}
+          </v-chip>
           <v-chip
+            v-if="information.base_title"
             variant="flat"
             class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
             color="#F2F4F7"
             :to="`/search?type=${
               route.query.type ? route.query.type : `test`
             }&section=${information.section}&base=${information.base}`"
-            v-if="information.base_title"
-            >{{ information?.base_title }}</v-chip
           >
+            {{ information?.base_title }}
+          </v-chip>
           <v-chip
+            v-if="information.lesson_title"
             variant="flat"
             class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
             color="#F2F4F7"
@@ -61,7 +64,6 @@
             }&section=${information.section}&base=${information.base}&lesson=${
               information.lesson
             }`"
-            v-if="information.lesson_title"
           >
             {{ information.lesson_title }}
           </v-chip>
@@ -84,24 +86,24 @@
             {{ information.test_type_title }}
           </span>
           <span
-            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
             v-if="information.tests_num && route.query.type == `azmoon`"
+            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
           >
             <v-icon color="#667085">mdi-format-list-bulleted</v-icon>
             {{ information.tests_num }}
           </span>
 
           <span
-            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
             v-if="information.views"
+            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
           >
             <v-icon color="#667085">mdi-eye</v-icon>
             {{ information.views }}
           </span>
 
           <span
-            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
             v-if="information.reply_num && route.query.type == `question`"
+            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
           >
             <v-icon color="#667085">mdi-reply-outline</v-icon>
             {{ information.reply_num }}
@@ -119,14 +121,16 @@
               v-if="information.q_file"
               color="#F04438"
               :to="`/paper/${information.id}/${information.title_url}`"
-              >mdi-file-pdf-box</v-icon
             >
+              mdi-file-pdf-box
+            </v-icon>
             <v-icon
               v-if="information.q_file_word"
               color="#2B579A"
               :to="createLinkCard(information)"
-              >mdi-file-word</v-icon
             >
+              mdi-file-word
+            </v-icon>
           </div>
         </div>
       </div>
@@ -140,30 +144,30 @@
         {{ information.ext }}
       </span>
       <span
-        class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
         v-if="information.test_type_title"
+        class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
       >
         <v-icon color="#667085">mdi-folder-outline</v-icon>
         {{ information.test_type_title }}
       </span>
 
       <span
-        class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
         v-if="information.tests_num && route.query.type == `azmoon`"
+        class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
       >
         <v-icon color="#667085">mdi-format-list-bulleted</v-icon>
         {{ information.tests_num }}
       </span>
       <span
-        class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
         v-if="information.views"
+        class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
       >
         <v-icon color="#667085">mdi-eye</v-icon>
         {{ information.views }}
       </span>
       <span
-        class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
         v-if="information.reply_num && route.query.type == `question`"
+        class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
       >
         <v-icon color="#667085">mdi-reply-outline</v-icon>
         {{ information.reply_num }}
@@ -178,55 +182,57 @@
           v-if="information.q_file"
           color="#F04438"
           :to="createLinkCard(information)"
-          >mdi-file-pdf-box</v-icon
         >
+          mdi-file-pdf-box
+        </v-icon>
         <v-icon
           v-if="information.q_file_word"
           color="#2B579A"
           :to="createLinkCard(information)"
-          >mdi-file-word</v-icon
         >
+          mdi-file-word
+        </v-icon>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { useRoute } from "vue-router";
+import { useRoute } from 'vue-router'
 
-const route = useRoute();
+const route = useRoute()
 
-const props = defineProps({
+defineProps({
   information: {
     type: Object,
   },
-});
+})
 
 const createLinkCard = (information) => {
-  let idType = "";
+  let idType = ''
   switch (route.query.type) {
-    case "test":
-      idType = "paper";
-      break;
-    case "question":
-      idType = "qa";
-      break;
-    case "dars":
-      idType = "tutorial";
-      break;
+    case 'test':
+      idType = 'paper'
+      break
+    case 'question':
+      idType = 'qa'
+      break
+    case 'dars':
+      idType = 'tutorial'
+      break
 
-    case "azmoon":
-      idType = "exam";
-      break;
-    case "learnfiles":
-      idType = "multimedia";
-      break;
+    case 'azmoon':
+      idType = 'exam'
+      break
+    case 'learnfiles':
+      idType = 'multimedia'
+      break
     default:
-      idType = "paper";
-      break;
+      idType = 'paper'
+      break
   }
-  return `/${idType}/${information.id}/${information.title_url}`;
-};
+  return `/${idType}/${information.id}/${information.title_url}`
+}
 </script>
 
 <style scoped>

@@ -1,21 +1,32 @@
 <template>
   <div class="w-100 d-flex flex-column align-center justify-start mt-4 ga-4">
     <template v-if="isInitialLoading">
-      <search-card-skeleton v-for="item in 4" />
+      <search-card-skeleton
+        v-for="(item, index) in 4"
+        :key="index"
+      />
     </template>
 
-    <template v-for="(item, index) in dataList" v-if="!isInitialLoading">
-      <search-card :information="item" />
+    <template v-if="!isInitialLoading">
+      <template
+        v-for="(item, index) in dataList"
+        :key="item.id || index"
+      >
+        <search-card :information="item" />
+      </template>
     </template>
 
-    <div class="line-specifier-load-more" ref="lineSpecifierLoadMoreRef"></div>
+    <div
+      ref="lineSpecifierLoadMoreRef"
+      class="line-specifier-load-more"
+    />
     <template v-if="isPaginationLoading">
       <search-card-skeleton />
     </template>
 
     <div
-      class="w-100 text-h4 text-center"
       v-if="!isInitialLoading && dataList.length == 0"
+      class="w-100 text-h4 text-center"
     >
       Opps! no data found
     </div>
@@ -40,37 +51,37 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-});
-const emit = defineEmits(["loadNextPage"]);
+})
+const emit = defineEmits(['loadNextPage'])
 
-const lineSpecifierLoadMoreRef = ref(null);
+const lineSpecifierLoadMoreRef = ref(null)
 
 onMounted(() => {
-  setupScrollListener();
-});
+  setupScrollListener()
+})
 
 onUnmounted(() => {
-  window.removeEventListener("scroll", handleScrollListener);
-});
+  window.removeEventListener('scroll', handleScrollListener)
+})
 
 const setupScrollListener = () => {
-  window.addEventListener("scroll", handleScrollListener);
-};
+  window.addEventListener('scroll', handleScrollListener)
+}
 
 const handleScrollListener = () => {
-  const targetDiv = lineSpecifierLoadMoreRef.value;
-  const rect = targetDiv.getBoundingClientRect();
-  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight;
+  const targetDiv = lineSpecifierLoadMoreRef.value
+  const rect = targetDiv.getBoundingClientRect()
+  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight
 
   if (
-    isDivInView &&
-    !props.isInitialLoading &&
-    !props.isPaginationLoading &&
-    !props.isAllDataLoaded
+    isDivInView
+    && !props.isInitialLoading
+    && !props.isPaginationLoading
+    && !props.isAllDataLoaded
   ) {
-    emit("loadNextPage");
+    emit('loadNextPage')
   }
-};
+}
 </script>
 
 <style scoped>

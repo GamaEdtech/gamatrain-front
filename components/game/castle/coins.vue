@@ -1,34 +1,41 @@
 <template>
-    <div class="coins">
-        <div class="main">
-            <img ref=coin src="../../../assets/icons/coin.svg" alt="coin"/>
-            <h2>{{coins}}</h2>
-        </div>
-        <Transition name="slide-fade">
-            <div v-if="notificationShow" class="counter">
-                <h2>+{{reward}}</h2>
-            </div>
-        </Transition>
+  <div class="coins">
+    <div class="main">
+      <img
+        ref="coin"
+        src="../../../assets/icons/coin.svg"
+        alt="coin"
+      >
+      <h2>{{ coins }}</h2>
     </div>
+    <Transition name="slide-fade">
+      <div
+        v-if="notificationShow"
+        class="counter"
+      >
+        <h2>+{{ reward }}</h2>
+      </div>
+    </Transition>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps<{
-    coins: number,
-    reward: number | undefined,
-    isChestOpen: boolean
+  coins: number
+  reward: number | undefined
+  isChestOpen: boolean
 }>()
 
 const isChestOpen = computed<boolean>(() => props.isChestOpen)
 const notificationShow = ref<boolean>(false)
 watch(isChestOpen, () => {
-    notificationShow.value = true
+  notificationShow.value = true
 
-    setTimeout(() => {
-        notificationShow.value = false
-    }, 3000)
+  setTimeout(() => {
+    notificationShow.value = false
+  }, 3000)
 })
 </script>
 

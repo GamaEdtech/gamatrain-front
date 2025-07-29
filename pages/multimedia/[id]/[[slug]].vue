@@ -11,9 +11,12 @@
               v-if="pending"
               class="mx-auto"
               height="60"
-            ></v-skeleton-loader>
+            />
             <!-- Actual breadcrumb when loaded -->
-            <widgets-breadcrumb v-else :breads="breads" />
+            <widgets-breadcrumb
+              v-else
+              :breads="breads"
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -21,45 +24,60 @@
 
     <section>
       <v-container class="py-0">
-        <div v-if="pending" class="detail mt-md-8">
+        <div
+          v-if="pending"
+          class="detail mt-md-8"
+        >
           <v-row>
-            <v-col cols="12" md="4">
+            <v-col
+              cols="12"
+              md="4"
+            >
               <v-skeleton-loader
                 class="mx-auto"
                 height="300"
-              ></v-skeleton-loader>
+              />
             </v-col>
 
-            <v-col cols="12" md="5">
+            <v-col
+              cols="12"
+              md="5"
+            >
               <v-skeleton-loader
                 class="mx-auto"
                 height="300"
-              ></v-skeleton-loader>
+              />
             </v-col>
 
             <v-col md="3">
               <v-skeleton-loader
                 class="mx-auto"
                 type="list-item-avatar"
-              ></v-skeleton-loader>
+              />
 
               <v-skeleton-loader
                 class="mx-auto mt-2"
                 type="list-item-three-line"
                 repeat="4"
-              ></v-skeleton-loader>
+              />
 
               <v-skeleton-loader
                 class="mx-auto mt-4"
                 type="button"
-              ></v-skeleton-loader>
+              />
             </v-col>
           </v-row>
         </div>
 
-        <div v-else class="detail mt-md-8">
+        <div
+          v-else
+          class="detail mt-md-8"
+        >
           <v-row>
-            <v-col cols="12" md="4">
+            <v-col
+              cols="12"
+              md="4"
+            >
               <details-multimedia-preview-gallery
                 ref="preview_gallery"
                 :gallery-images="previewImages"
@@ -67,20 +85,23 @@
                 :initial-slide="0"
               />
             </v-col>
-            <v-col cols="12" md="5">
+            <v-col
+              cols="12"
+              md="5"
+            >
               <div class="d-flex mb-4">
                 <div class="w-100">
                   <div class="d-flex align-center justify-space-between header">
                     <h1
-                      class="gama-text-h5 font-weight-bold"
                       v-show="!editMode.title"
+                      class="gama-text-h5 font-weight-bold"
                     >
                       {{ contentData?.title }}
                       <v-btn
-                        @click="editMode.title = true"
-                        icon
                         v-if="user?.id == contentData?.user_"
+                        icon
                         size="x-small"
+                        @click="editMode.title = true"
                       >
                         <v-icon> mdi-pencil </v-icon>
                       </v-btn>
@@ -90,18 +111,18 @@
                   <div class="w-100">
                     <v-textarea
                       v-if="editMode.title"
+                      v-model="contentData.title"
                       width="100%"
                       rows="3"
                       placeholder="Title"
-                      v-model="contentData.title"
                     >
-                      <template v-slot:append-inner>
+                      <template #append-inner>
                         <v-btn
                           color="success"
-                          @click="updateDetails()"
                           icon
                           :loading="editMode.title_loading"
                           size="x-small"
+                          @click="updateDetails()"
                         >
                           <v-icon> mdi-check </v-icon>
                         </v-btn>
@@ -173,124 +194,134 @@
 
     <v-container>
       <v-row v-if="pending">
-        <v-col cols="12" md="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <v-skeleton-loader
             class="mx-auto mb-4"
             type="card"
             height="200"
-          ></v-skeleton-loader>
+          />
         </v-col>
-        <v-col cols="12" md="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <v-skeleton-loader
             class="mx-auto mb-4"
             type="card"
             height="200"
-          ></v-skeleton-loader>
+          />
         </v-col>
       </v-row>
 
       <v-row v-else>
-        <v-col cols="12" md="6"> </v-col>
-        <v-col cols="12" md="6"> </v-col>
+        <v-col
+          cols="12"
+          md="6"
+        />
+        <v-col
+          cols="12"
+          md="6"
+        />
       </v-row>
       <common-related-portrait-content
-        pageType="multimedia"
-        pageName="Multimedia"
+        page-type="multimedia"
+        page-name="Multimedia"
         source="file"
         request="file"
       />
     </v-container>
-    <section class="feed"></section>
+    <section class="feed" />
   </div>
 </template>
 
 <script setup>
-import { useFetch, useAsyncData } from "#app";
-const auth = useAuth();
-const { user } = useUser();
+import { useFetch, useAsyncData } from '#app'
+
+const auth = useAuth()
+const { user } = useUser()
 
 definePageMeta({
   auth: false,
-});
+})
 
-const preview_gallery = ref(null);
-const route = useRoute();
-const router = useRouter();
-const { $toast } = useNuxtApp();
-const contentData = ref({});
+const preview_gallery = ref(null)
+const route = useRoute()
+const router = useRouter()
+const { $toast } = useNuxtApp()
+const contentData = ref({})
 const editMode = reactive({
   title: false,
   title_loading: false,
-});
-const requestURL = ref(useRequestURL().host);
-const breads = ref([]);
+})
+const requestURL = ref(useRequestURL().host)
+const breads = ref([])
 
-const download_loading = ref(false);
+const download_loading = ref(false)
 
 const previewImages = computed(() => {
-  return contentData.value?.previewData?.preview || [];
-});
+  return contentData.value?.previewData?.preview || []
+})
 
 const previewLinkData = computed(() => {
   return {
-    state: contentData.value?.state || "",
-    section: contentData.value?.section || "",
-    base: contentData.value?.base || "",
-    course: contentData.value?.course || "",
-    lesson: contentData.value?.lesson || "",
-  };
-});
+    state: contentData.value?.state || '',
+    section: contentData.value?.section || '',
+    base: contentData.value?.base || '',
+    course: contentData.value?.course || '',
+    lesson: contentData.value?.lesson || '',
+  }
+})
 
 const isLoggedIn = computed(() => {
-  return auth.isAuthenticated.value ?? false;
-});
+  return auth.isAuthenticated.value ?? false
+})
 
 useHead(() => ({
-  title: contentData.value?.title || "Multimedia Details",
+  title: contentData.value?.title || 'Multimedia Details',
   link: [
     {
-      rel: "canonical",
+      rel: 'canonical',
       href: `https://${requestURL.value}/multimedia/${contentData.value.id}/${contentData.value.title_url}`,
     },
   ],
-}));
+}))
 
 async function fetchContentData() {
-  try {
-    const { id } = route.params;
+  const { id } = route.params
 
-    // Use key to ensure proper caching and refresh behavior
-    const { data: content } = await useFetch(`/api/v1/files/${id}`, {
-      key: `file-${id}`,
-      dedupe: "cancel", // Cancel previous identical requests
-      server: true, // Ensure it runs on server
-      immediate: true, // Start fetching immediately
-    });
+  // Use key to ensure proper caching and refresh behavior
+  const { data: content } = await useFetch(`/api/v1/files/${id}`, {
+    key: `file-${id}`,
+    dedupe: 'cancel', // Cancel previous identical requests
+    server: true, // Ensure it runs on server
+    immediate: true, // Start fetching immediately
+  })
 
-    if (!content.value) {
-      throw new Error("Content not found - No data returned");
-    }
+  if (!content.value) {
+    throw new Error('Content not found - No data returned')
+  }
 
-    if (content.value?.status === 1 && content.value?.data) {
-      // Create a proper slug from the title
-      const correctSlug =
-        content.value.data.title_url ||
-        content.value.data.title
+  if (content.value?.status === 1 && content.value?.data) {
+    // Create a proper slug from the title
+    const correctSlug
+      = content.value.data.title_url
+        || content.value.data.title
           .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/-$/, "");
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/-$/, '')
 
-      // Verify the URL slug matches the content
-      if (route.params.slug !== correctSlug) {
-        // If slugs don't match, continue with correct data
-      }
-
-      return content.value.data;
-    } else {
-      throw new Error("Content not found");
+    // Verify the URL slug matches the content
+    if (route.params.slug !== correctSlug) {
+      // If slugs don't match, continue with correct data
     }
-  } catch (err) {
-    throw err;
+
+    return content.value.data
+  }
+  else {
+    throw new Error('Content not found')
   }
 }
 
@@ -328,23 +359,23 @@ async function fetchContentData() {
 //     watch: [() => route.params.id],
 //   }
 // );
-const { data, pending, error } = await useAsyncData(
+const { data, pending, _error } = await useAsyncData(
   `multimedia-details-${route.params.id}`,
   async () => {
-    const data = await fetchContentData();
-    return data;
-  }
-);
+    const data = await fetchContentData()
+    return data
+  },
+)
 watchEffect(async () => {
   if (data.value) {
-    contentData.value = data.value;
-    await initBreadCrumb();
+    contentData.value = data.value
+    await initBreadCrumb()
   }
-});
+})
 
 // onMounted(async () => {
 //   if (pending.value) {
-//     await waitForAsyncData();
+//     await _waitForAsyncData();
 //   }
 
 //   if (!contentData.value || Object.keys(contentData.value).length === 0) {
@@ -355,55 +386,55 @@ watchEffect(async () => {
 //   }
 // });
 
-function waitForAsyncData() {
+function _waitForAsyncData() {
   return new Promise((resolve) => {
     if (!pending.value) {
-      resolve();
-      return;
+      resolve()
+      return
     }
 
     const checkInterval = setInterval(() => {
       if (!pending.value) {
-        clearInterval(checkInterval);
-        resolve();
+        clearInterval(checkInterval)
+        resolve()
       }
-    }, 100);
+    }, 100)
 
     // Add a safety timeout after 5 seconds
     setTimeout(() => {
-      clearInterval(checkInterval);
-      resolve();
-    }, 5000);
-  });
+      clearInterval(checkInterval)
+      resolve()
+    }, 5000)
+  })
 }
 
 watch(
   contentData,
   (newData) => {
     if (newData) {
-      initBreadCrumb();
+      initBreadCrumb()
     }
   },
-  { deep: true }
-);
+  { deep: true },
+)
 
 async function initBreadCrumb() {
   if (!contentData.value || !contentData.value.section_title) {
-    return;
+    return
   }
 
   breads.value.push({
-    text: "Multimedia",
+    text: 'Multimedia',
     disabled: false,
-    href: "/search?type=learnfiles",
-  });
+    href: '/search?type=learnfiles',
+  })
 
   if (contentData.value.section_title) {
     breads.value.push({
       text: contentData.value.section_title,
       disabled: false,
       href: `/search?type=learnfiles&section=${contentData.value.section}`,
-    });
+    })
   }
 
   if (contentData.value.base_title) {
@@ -411,7 +442,7 @@ async function initBreadCrumb() {
       text: contentData.value.base_title,
       disabled: false,
       href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}`,
-    });
+    })
   }
 
   if (contentData.value.lesson_title) {
@@ -419,59 +450,61 @@ async function initBreadCrumb() {
       text: contentData.value.lesson_title,
       disabled: false,
       href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
-    });
+    })
   }
 }
 
 function openAuthDialog(val) {
-  router.push({ query: { auth_form: val } });
+  router.push({ query: { auth_form: val } })
 }
 
-async function startDownload(type) {
-  download_loading.value = true;
-  const apiUrl = `/api/v1/files/download/${route.params.id}`;
+async function startDownload(_type) {
+  download_loading.value = true
+  const apiUrl = `/api/v1/files/download/${route.params.id}`
   try {
-    const response = await useApiService.get(apiUrl);
-    const FileSaver = await import("file-saver");
-    await FileSaver.saveAs(response.data.url, response.data.name);
-    download_loading.value = false;
-  } catch (err) {
+    const response = await useApiService.get(apiUrl)
+    const FileSaver = await import('file-saver')
+    await FileSaver.saveAs(response.data.url, response.data.name)
+  }
+  catch (err) {
     if (err.response?.status == 400) {
       if (
-        err.response.data.status == 0 &&
-        err.response.data.error == "creditNotEnough"
+        err.response.data.status == 0
+        && err.response.data.error == 'creditNotEnough'
       ) {
-        $toast.info("No enough credit");
+        $toast.info('No enough credit')
       }
     }
-  } finally {
+  }
+  finally {
+    download_loading.value = false
   }
 }
 
 function urlencodeFormData(fd) {
-  let s = "";
-  for (var pair of fd.entries()) {
-    if (typeof pair[1] == "string") {
-      s += (s ? "&" : "") + encode(pair[0]) + "=" + encode(pair[1]);
+  let s = ''
+  for (const pair of fd.entries()) {
+    if (typeof pair[1] == 'string') {
+      s += (s ? '&' : '') + encode(pair[0]) + '=' + encode(pair[1])
     }
   }
-  return s;
+  return s
 }
 
 function encode(s) {
-  return encodeURIComponent(s).replace(/%20/g, "+");
+  return encodeURIComponent(s).replace(/%20/g, '+')
 }
 
 async function updateDetails() {
-  //Arrange to form data
-  const isEditingTitle = editMode.title;
+  // Arrange to form data
+  const isEditingTitle = editMode.title
   if (isEditingTitle) {
-    editMode.title_loading = true;
+    editMode.title_loading = true
   }
 
-  let formData = new FormData();
-  formData.append("title", contentData.value?.title);
-  formData.append("description", contentData.value?.description);
+  const formData = new FormData()
+  formData.append('title', contentData.value?.title)
+  formData.append('description', contentData.value?.description)
 
   try {
     const { data } = await useApiService.put(
@@ -479,24 +512,29 @@ async function updateDetails() {
       urlencodeFormData(formData),
       {
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
-      }
-    );
+      },
+    )
 
     if (data.value?.id == 0 && data.value?.repeated) {
-      $toast.info("The multimedia is duplicated");
-    } else {
-      $toast.success("Updated successfully");
+      $toast.info('The multimedia is duplicated')
     }
-  } catch (err) {
+    else {
+      $toast.success('Updated successfully')
+    }
+  }
+  catch (err) {
     if (err.response?.status == 403) {
-    } else if (err.response?.status == 400) {
-      $toast.error(err.response.data.message);
+      $toast.error('You do not have permission to update this content')
     }
-  } finally {
-    editMode.title = false;
-    editMode.title_loading = false;
+    else if (err.response?.status == 400) {
+      $toast.error(err.response.data.message)
+    }
+  }
+  finally {
+    editMode.title = false
+    editMode.title_loading = false
   }
 }
 </script>

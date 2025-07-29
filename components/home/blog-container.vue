@@ -3,10 +3,21 @@
     <v-card flat>
       <div class="main-card">
         <v-row>
-          <v-col cols="6" class="px-md-0">
-            <h2 class="gama-text-h4" id="main-title ">Blog</h2>
+          <v-col
+            cols="6"
+            class="px-md-0"
+          >
+            <h2
+              id="main-title "
+              class="gama-text-h4"
+            >
+              Blog
+            </h2>
           </v-col>
-          <v-col cols="6" class="text-right">
+          <v-col
+            cols="6"
+            class="text-right"
+          >
             <div class="d-none d-md-inline">
               <v-btn
                 variant="outlined"
@@ -15,28 +26,44 @@
                 size="large"
                 to="/blog"
                 class="gama-btn"
-                >Go to blog</v-btn
               >
+                Go to blog
+              </v-btn>
             </div>
-            <router-link to="/blog" class="d-inline d-md-none seeAllBtn">
+            <router-link
+              to="/blog"
+              class="d-inline d-md-none seeAllBtn"
+            >
               <span class="content"> See all</span>
               <v-icon>mdi-chevron-right</v-icon>
             </router-link>
           </v-col>
-          <v-col cols="12" class="px-md-0">
+          <v-col
+            cols="12"
+            class="px-md-0"
+          >
             <template v-if="isLoading">
-              <v-slide-group :mobile="false" class="slider py-sm-4">
-                <v-slide-group-item v-for="i in 10">
+              <v-slide-group
+                :mobile="false"
+                class="slider py-sm-4"
+              >
+                <v-slide-group-item
+                  v-for="(i, index) in 10"
+                  :key="index"
+                >
                   <v-skeleton-loader
                     class="mx-auto slide-loading"
                     type="card"
-                  ></v-skeleton-loader>
+                  />
                 </v-slide-group-item>
               </v-slide-group>
             </template>
             <template v-else>
               <v-slide-group class="slider py-sm-4">
-                <v-slide-group-item v-for="(item, n) in slideItems" :key="n">
+                <v-slide-group-item
+                  v-for="(item, n) in slideItems"
+                  :key="item.id || n"
+                >
                   <v-card
                     flat
                     :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
@@ -44,22 +71,31 @@
                     <v-card flat>
                       <v-img :src="item.pic" />
                       <v-card-title>
-                        <span class="gama-text-button" v-if="!isHovered[n]">
+                        <span
+                          v-if="!isHovered[n]"
+                          class="gama-text-button"
+                        >
                           {{ item.title }}
                         </span>
-                        <div v-else class="text-center">
-                          <v-btn text size="small" color="primary">
+                        <div
+                          v-else
+                          class="text-center"
+                        >
+                          <v-btn
+                            text
+                            size="small"
+                            color="primary"
+                          >
                             read more
                           </v-btn>
                         </div>
                       </v-card-title>
                     </v-card>
                     <div class="gama-text-subtitle2">
-                      <span v-html="truncateBody(item.body)"></span>
+                      <span v-html="truncateBody(item.body)" />
                       <nuxt-link
                         :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
-                        >Read more</nuxt-link
-                      >
+                      >Read more</nuxt-link>
                     </div>
                   </v-card>
                 </v-slide-group-item>
@@ -73,47 +109,45 @@
 </template>
 
 <script setup>
-import { useDisplay } from "vuetify";
+import { useDisplay } from 'vuetify'
 
 // Using Vuetify's breakpoint system
-const { lgAndUp, sm, xs } = useDisplay();
-const { $slugGenerator } = useNuxtApp();
+const { sm, xs } = useDisplay()
+const { $slugGenerator } = useNuxtApp()
 
 // Reactive properties
-const model = ref(null);
-const isHovered = ref([]);
-const slideItems = ref([]);
-const isLoading = ref(true);
-const isDragging = ref(false);
-const startX = ref(0);
-const currentX = ref(0);
+const isHovered = ref([])
+const slideItems = ref([])
+const isLoading = ref(true)
 
 // Methods
-const toggleHover = (action, n) => {
-  if (action === "enter") isHovered.value[n] = true;
-  if (action === "leave") isHovered.value[n] = false;
-};
+const _toggleHover = (action, n) => {
+  if (action === 'enter') isHovered.value[n] = true
+  if (action === 'leave') isHovered.value[n] = false
+}
 
 const loadBlog = async () => {
-  isLoading.value = true;
+  isLoading.value = true
   try {
-    const response = await useApiService.get("/api/v1/home/news");
-    slideItems.value = response.data;
-  } catch (err) {
-    console.error(err);
-  } finally {
-    isLoading.value = false;
+    const response = await useApiService.get('/api/v1/home/news')
+    slideItems.value = response.data
   }
-};
+  catch (err) {
+    console.error(err)
+  }
+  finally {
+    isLoading.value = false
+  }
+}
 
 const truncateBody = (text) => {
-  let cutLength = 40;
-  if (sm.value) cutLength = 42;
-  else if (xs.value) cutLength = 38;
-  return text.length > cutLength ? text.slice(0, cutLength) + "..." : text;
-};
+  let cutLength = 40
+  if (sm.value) cutLength = 42
+  else if (xs.value) cutLength = 38
+  return text.length > cutLength ? text.slice(0, cutLength) + '...' : text
+}
 
-loadBlog();
+loadBlog()
 </script>
 
 <style scoped>

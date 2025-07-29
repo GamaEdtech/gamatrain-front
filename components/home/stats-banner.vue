@@ -1,21 +1,29 @@
 <template>
-  <v-container fluid id="stats-container">
+  <v-container
+    id="stats-container"
+    fluid
+  >
     <v-container>
       <v-row>
         <v-col cols="12">
-          <h2 class="gama-text-h4">Millions Trust Us</h2>
+          <h2 class="gama-text-h4">
+            Millions Trust Us
+          </h2>
           <div id="stats-section">
             <v-row>
               <v-col
+                v-for="(item, index) in stats"
+                :key="index"
                 cols="6"
                 sm="4"
                 md="2"
-                v-for="(item, index) in stats"
-                :key="index"
                 class="text-center"
               >
                 <div class="stat-container">
-                  <span :class="item.icon" class="item-icon"></span>
+                  <span
+                    :class="item.icon"
+                    class="item-icon"
+                  />
                   <ClientOnly>
                     <div class="item-stat gama-text-h6">
                       +{{ $numberFormat(item.stat) }}
@@ -41,36 +49,36 @@
 <script setup>
 const stats = ref([
   {
-    icon: "icon-school",
-    stat: "130000",
-    title: "Schools",
+    icon: 'icon-school',
+    stat: '130000',
+    title: 'Schools',
   },
   {
-    icon: "icon-teacher",
-    stat: "500000",
-    title: "Teacher",
+    icon: 'icon-teacher',
+    stat: '500000',
+    title: 'Teacher',
   },
   {
-    icon: "icon-student",
-    stat: "3000000",
-    title: "Student",
+    icon: 'icon-student',
+    stat: '3000000',
+    title: 'Student',
   },
   {
-    icon: "icon-exam",
-    stat: "7000",
-    title: "QuizHub",
+    icon: 'icon-exam',
+    stat: '7000',
+    title: 'QuizHub',
   },
   {
-    icon: "icon-q-a",
-    stat: "60000",
-    title: "Forum",
+    icon: 'icon-q-a',
+    stat: '60000',
+    title: 'Forum',
   },
   {
-    icon: "icon-multimedia",
-    stat: "37000",
-    title: "Multimedia",
+    icon: 'icon-multimedia',
+    stat: '37000',
+    title: 'Multimedia',
   },
-]);
+])
 </script>
 
 <style>

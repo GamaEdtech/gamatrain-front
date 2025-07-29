@@ -1,5 +1,8 @@
 <template>
-  <v-card flat class="content_main_info">
+  <v-card
+    flat
+    class="content_main_info"
+  >
     <v-row class="align-center">
       <v-col cols="3">
         <v-img
@@ -11,7 +14,10 @@
           width="48"
         />
       </v-col>
-      <v-col cols="9" class="pl-0">
+      <v-col
+        cols="9"
+        class="pl-0"
+      >
         <p class="creator_title">
           {{ contentData?.first_name }} {{ contentData?.last_name }}
         </p>
@@ -19,30 +25,51 @@
     </v-row>
     <v-divider class="my-2" />
     <v-row>
-      <v-col cols="12" class="pb-0">
-        <i class="fa-solid fa-folder mr-1 icon"></i>
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <i class="fa-solid fa-folder mr-1 icon" />
         Classification: {{ contentData?.test_type_title }}
       </v-col>
-      <v-col cols="12" class="pb-0">
-        <i class="fa-solid fa-book-open-reader mr-1 icon"></i>
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <i class="fa-solid fa-book-open-reader mr-1 icon" />
         Page count: {{ contentData?.q_file_pages }}
       </v-col>
-      <v-col cols="12" class="pb-0">
-        <i class="fa-solid fa-eye mr-1 icon"></i>
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <i class="fa-solid fa-eye mr-1 icon" />
         Viewed: {{ contentData?.views }}
       </v-col>
-      <v-col cols="12" class="pb-0">
-        <i class="fa-solid fa-calendar-alt mr-1 icon"></i>
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <i class="fa-solid fa-calendar-alt mr-1 icon" />
         Last update: {{ $dayjs(contentData?.up_date).fromNow() }}
       </v-col>
-      <v-col cols="12" class="pb-0">
-        <div @click="openCrashReport" class="pointer">
-          <i class="fa-solid fa-bug mr-1 icon"></i>
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <div
+          class="pointer"
+          @click="openCrashReport"
+        >
+          <i class="fa-solid fa-bug mr-1 icon" />
           Crash report
         </div>
       </v-col>
-      <v-col cols="12" class="pb-0">
-        <slot name="share-dialog"></slot>
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
+        <slot name="share-dialog" />
       </v-col>
     </v-row>
 
@@ -54,19 +81,22 @@
         color="yellow-darken-3"
         size="35"
         half-increments
-      ></v-rating>
+      />
     </div>
     <v-divider class="d-none d-md-block" />
 
     <v-row class="mt-1 d-none d-md-block">
-      <v-col cols="12" class="pb-0">
+      <v-col
+        cols="12"
+        class="pb-0"
+      >
         <div v-if="contentData?.files?.word.exist">
           <v-btn
-            @click="startDownload('q_word')"
             block
             color="primary"
             class="mb-2"
             :loading="qWordFileDownloadLoading"
+            @click="startDownload('q_word')"
           >
             Download Question Doc
             {{
@@ -78,11 +108,11 @@
         </div>
         <div v-if="contentData?.files.pdf.exist">
           <v-btn
-            @click="startDownload('q_pdf')"
             class="mb-2 text-white font-weight-bold"
             block
             color="#E60012"
             :loading="qPdfFileDownloadLoading"
+            @click="startDownload('q_pdf')"
           >
             {{ contentData?.test_type_title }}
             {{
@@ -96,10 +126,10 @@
           <v-btn
             v-show="contentData?.files.answer.ext == 'pdf'"
             class="mb-2 font-weight-bold"
-            @click="startDownload('a_file')"
             block
             color="teal accent-3"
             :loading="answerFileDownloadLoading"
+            @click="startDownload('a_file')"
           >
             Mark Scheme
             {{
@@ -110,11 +140,11 @@
           </v-btn>
           <v-btn
             v-show="contentData?.files.answer.ext == 'word'"
-            @click="startDownload('a_file')"
             block
             color="primary"
             class="mb-2"
             :loading="answerFileDownloadLoading"
+            @click="startDownload('a_file')"
           >
             Download Answer Doc
             {{
@@ -130,11 +160,11 @@
           <v-btn
             v-for="(extra, index) in contentData.files.extra"
             :key="index"
-            @click="startDownload('extra', extra.id)"
             block
             color="blue"
             class="mb-2 font-weight-bold"
             :loading="extraFileDownloadLoading"
+            @click="startDownload('extra', extra.id)"
           >
             {{ extra.type_title ? extra.type_title : "Extra" }}
             {{ extra.price > 0 ? "| $" + extra.price : "" }}
@@ -163,19 +193,19 @@
     </v-row>
     <common-crash-report ref="crash_report" />
   </v-card>
-  <!--Mobile order section-->
+  <!-- Mobile order section -->
   <paper-detail-mobile-order
-    :contentData="contentData"
+    :content-data="contentData"
     :is-logged-in="auth.isAuthenticated.value"
     :user-credit="user?.user.value && user?.user.value?.credit"
     :is-free="isFree"
-    :qWordFileDownloadLoading="qWordFileDownloadLoading"
-    :qPdfFileDownloadLoading="qPdfFileDownloadLoading"
-    :answerFileDownloadLoading="answerFileDownloadLoading"
-    :extraFileDownloadLoading="extraFileDownloadLoading"
+    :q-word-file-download-loading="qWordFileDownloadLoading"
+    :q-pdf-file-download-loading="qPdfFileDownloadLoading"
+    :answer-file-download-loading="answerFileDownloadLoading"
+    :extra-file-download-loading="extraFileDownloadLoading"
     @download="startDownload"
   />
-  <!--End mobile order section-->
+  <!-- End mobile order section -->
 </template>
 
 <script setup>
@@ -184,75 +214,77 @@ const props = defineProps({
     type: Object,
     required: true,
   },
-});
-const { $toast } = useNuxtApp();
-const auth = useAuth();
-const user = useUser();
-const rating = ref(4.5);
-const crash_report = ref(null);
-const emits = defineEmits(["crash-report"]);
+})
+const { $toast } = useNuxtApp()
+const auth = useAuth()
+const user = useUser()
+const rating = ref(4.5)
+const crash_report = ref(null)
+const _emits = defineEmits(['crash-report'])
 
-const qPdfFileDownloadLoading = ref(false);
-const qWordFileDownloadLoading = ref(false);
-const answerFileDownloadLoading = ref(false);
-const extraFileDownloadLoading = ref(false);
+const qPdfFileDownloadLoading = ref(false)
+const qWordFileDownloadLoading = ref(false)
+const answerFileDownloadLoading = ref(false)
+const extraFileDownloadLoading = ref(false)
 
 const isFree = computed(() => {
-  if (!props.contentData) return true;
+  if (!props.contentData) return true
   if (
-    props.contentData.files.answer.price > 0 &&
-    props.contentData.files.pdf.price > 0 &&
-    props.contentData.files.word.price > 0
+    props.contentData.files.answer.price > 0
+    && props.contentData.files.pdf.price > 0
+    && props.contentData.files.word.price > 0
   )
-    return false;
-  else return true;
-});
+    return false
+  else return true
+})
 
 const openCrashReport = () => {
-  crash_report.value.dialog = true;
-  crash_report.value.form.type = "test";
-};
+  crash_report.value.dialog = true
+  crash_report.value.form.type = 'test'
+}
 const startDownload = async (type, extraId) => {
-  let apiUrl = "";
-  if (type === "q_word") {
-    qWordFileDownloadLoading.value = true;
-    apiUrl = `/api/v1/tests/download/${props.contentData?.id}/word`;
+  let apiUrl = ''
+  if (type === 'q_word') {
+    qWordFileDownloadLoading.value = true
+    apiUrl = `/api/v1/tests/download/${props.contentData?.id}/word`
   }
-  if (type === "q_pdf") {
-    qPdfFileDownloadLoading.value = true;
-    apiUrl = `/api/v1/tests/download/${props.contentData?.id}/pdf`;
+  if (type === 'q_pdf') {
+    qPdfFileDownloadLoading.value = true
+    apiUrl = `/api/v1/tests/download/${props.contentData?.id}/pdf`
   }
-  if (type === "a_file") {
-    answerFileDownloadLoading.value = true;
-    apiUrl = `/api/v1/tests/download/${props.contentData?.id}/answer`;
+  if (type === 'a_file') {
+    answerFileDownloadLoading.value = true
+    apiUrl = `/api/v1/tests/download/${props.contentData?.id}/answer`
   }
-  if (type === "extra") {
-    extraFileDownloadLoading.value = true;
-    apiUrl = `/api/v1/tests/download/${props.contentData?.id}/extra/${extraId}`;
+  if (type === 'extra') {
+    extraFileDownloadLoading.value = true
+    apiUrl = `/api/v1/tests/download/${props.contentData?.id}/extra/${extraId}`
   }
   try {
-    const response = await useApiService.get(apiUrl);
-    const FileSaver = await import("file-saver");
-    await FileSaver.saveAs(response.data.url, response.data.name);
-  } catch (err) {
+    const response = await useApiService.get(apiUrl)
+    const FileSaver = await import('file-saver')
+    await FileSaver.saveAs(response.data.url, response.data.name)
+  }
+  catch (err) {
     if (err.response?.status == 400) {
       if (
-        err.response.data.status == 0 &&
-        err.response.data.error == "creditNotEnough"
+        err.response.data.status == 0
+        && err.response.data.error == 'creditNotEnough'
       ) {
-        $toast.info("No enough credit");
+        $toast.info('No enough credit')
       }
     }
-  } finally {
-    qWordFileDownloadLoading.value = false;
-    qPdfFileDownloadLoading.value = false;
-    answerFileDownloadLoading.value = false;
-    extraFileDownloadLoading.value = false;
   }
-};
+  finally {
+    qWordFileDownloadLoading.value = false
+    qPdfFileDownloadLoading.value = false
+    answerFileDownloadLoading.value = false
+    extraFileDownloadLoading.value = false
+  }
+}
 defineExpose({
   crash_report,
-});
+})
 </script>
 
 <style scoped>

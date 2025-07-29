@@ -1,9 +1,14 @@
 <template>
   <v-row v-show="commentList.length">
     <v-col cols="12">
-      <h3 class="gtext-h5 primary-gray-600">Comments</h3>
+      <h3 class="gtext-h5 primary-gray-600">
+        Comments
+      </h3>
     </v-col>
-    <v-col cols="12" md="12">
+    <v-col
+      cols="12"
+      md="12"
+    >
       <v-card
         v-for="comment in displayedComments"
         :key="comment.id"
@@ -14,7 +19,10 @@
           <div class="comment-card-header">
             <div class="d-flex float-left">
               <v-avatar size="60">
-                <img class="profile-avatar" :src="comment.creationUserAvatar" />
+                <img
+                  class="profile-avatar"
+                  :src="comment.creationUserAvatar"
+                >
               </v-avatar>
               <div class="ml-2">
                 <div class="gtext-t2 primary-gray-900">
@@ -31,7 +39,7 @@
                 hover
                 size="24"
                 readonly
-              ></v-rating>
+              />
             </div>
           </div>
           <v-divider class="mb-5" />
@@ -46,7 +54,12 @@
                 size="x-small"
                 icon
               >
-                <v-icon size="14" color="white"> mdi-thumb-down </v-icon>
+                <v-icon
+                  size="14"
+                  color="white"
+                >
+                  mdi-thumb-down
+                </v-icon>
               </v-btn>
               <v-btn
                 class="bg-primary-gray-700 text-white mr-6"
@@ -54,7 +67,12 @@
                 size="x-small"
                 icon
               >
-                <v-icon size="14" color="white"> mdi-thumb-up </v-icon>
+                <v-icon
+                  size="14"
+                  color="white"
+                >
+                  mdi-thumb-up
+                </v-icon>
               </v-btn>
               <v-btn
                 class="bg-primary-blue-500 text-white"
@@ -62,7 +80,12 @@
                 size="x-small"
                 icon
               >
-                <v-icon size="14" color="white"> mdi-forum </v-icon>
+                <v-icon
+                  size="14"
+                  color="white"
+                >
+                  mdi-forum
+                </v-icon>
               </v-btn>
             </div>
             <div class="float-right gtext-t5">
@@ -73,55 +96,56 @@
       </v-card>
       <div class="text-center mt-14">
         <v-btn
+          v-if="showLoadMoreButton"
           rounded
           class="text-transform-none gtext-t4 font-weight-medium"
           color="white"
           size="x-large"
-          v-if="showLoadMoreButton"
           @click="loadMoreComments"
-          >Load more</v-btn
         >
+          Load more
+        </v-btn>
       </div>
     </v-col>
   </v-row>
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   commentList: {
     type: Array,
     required: true,
   },
-});
+})
 
 // State for pagination
-const displayedCount = ref(10);
-const commentsPerPage = 10;
+const displayedCount = ref(10)
+const commentsPerPage = 10
 
 // Computed properties
 const displayedComments = computed(() => {
-  return props.commentList.slice(0, displayedCount.value);
-});
+  return props.commentList.slice(0, displayedCount.value)
+})
 
 const showLoadMoreButton = computed(() => {
-  return props.commentList.length > displayedCount.value;
-});
+  return props.commentList.length > displayedCount.value
+})
 
 // Methods
 const loadMoreComments = () => {
-  displayedCount.value += commentsPerPage;
-};
+  displayedCount.value += commentsPerPage
+}
 
 // Reset displayed count when commentList changes
 watch(
   () => props.commentList,
   () => {
-    displayedCount.value = 10;
+    displayedCount.value = 10
   },
-  { deep: true }
-);
+  { deep: true },
+)
 </script>
 
 <style scoped>

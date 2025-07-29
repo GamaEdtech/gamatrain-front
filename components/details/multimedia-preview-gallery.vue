@@ -1,22 +1,25 @@
 <template>
   <v-row>
     <v-col
-      cols="12"
       id="details-gallery-landscape"
+      cols="12"
       class="product-gallery rounded-lg"
     >
       <div class="card-carousel">
         <v-row justify="center">
-          <!--Side section-->
-          <v-col cols="12" class="d-flex overflow-x-auto pb-2">
+          <!-- Side section -->
+          <v-col
+            cols="12"
+            class="d-flex overflow-x-auto pb-2"
+          >
             <v-btn
+              v-for="(item, index) in items"
+              :key="index"
               icon
               large
               :small="display.xs.value"
               :to="`${item.link}&state=${help_link_data.state}&section=${help_link_data.section}&base=${help_link_data.base}&course=${help_link_data.course}
                   &lesson=${help_link_data.lesson}`"
-              v-for="(item, index) in items"
-              :key="index"
               class="bg-blue-grey-darken-2 mx-3"
             >
               <span
@@ -26,11 +29,15 @@
               />
             </v-btn>
           </v-col>
-          <!--End side section-->
+          <!-- End side section -->
 
           <v-col cols="12">
             <div>
-              <v-carousel height="296" hide-delimiters v-model="carouselVal">
+              <v-carousel
+                v-model="carouselVal"
+                height="296"
+                hide-delimiters
+              >
                 <v-carousel-item
                   v-for="(image, index) in images"
                   :key="index"
@@ -38,7 +45,10 @@
                   cover
                 />
               </v-carousel>
-              <div class="thumbnails" v-if="images.length > 1">
+              <div
+                v-if="images.length > 1"
+                class="thumbnails"
+              >
                 <v-slide-group
                   center-active
                   class="pa-4"
@@ -48,18 +58,17 @@
                   <v-slide-group-item
                     v-for="(image, index) in images"
                     :key="index"
-                    v-slot="{ isSelected, toggle }"
                   >
                     <v-img
                       :class="{
                         'mx-2 thumbnail_itm': true,
-                        active_slide: carouselVal === index,
+                        'active_slide': carouselVal === index,
                       }"
-                      @click="changeSlide(index)"
                       :src="image"
                       height="60"
                       width="80"
                       cover
+                      @click="changeSlide(index)"
                     />
                   </v-slide-group-item>
                 </v-slide-group>
@@ -73,8 +82,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, watch } from "vue";
-import { useDisplay } from "vuetify";
+import { ref, reactive, watch } from 'vue'
+import { useDisplay } from 'vuetify'
 
 // Define props
 const props = defineProps({
@@ -85,97 +94,97 @@ const props = defineProps({
   linkData: {
     type: Object,
     default: () => ({
-      state: "",
-      section: "",
-      base: "",
-      course: "",
-      lesson: "",
+      state: '',
+      section: '',
+      base: '',
+      course: '',
+      lesson: '',
     }),
   },
   initialSlide: {
     type: Number,
     default: 0,
   },
-});
+})
 
 // Setup Vuetify display composable
-const display = useDisplay();
+const display = useDisplay()
 
 // Define refs and reactive state
-const carouselVal = ref(props.initialSlide);
-const images = ref(props.galleryImages || []);
-const help_link_data = reactive({ ...props.linkData });
+const carouselVal = ref(props.initialSlide)
+const images = ref(props.galleryImages || [])
+const help_link_data = reactive({ ...props.linkData })
 
 // Watch for prop changes
 watch(
   () => props.galleryImages,
   (newImages) => {
     if (newImages && newImages.length) {
-      images.value = newImages;
+      images.value = newImages
     }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 watch(
   () => props.linkData,
   (newData) => {
     if (newData) {
-      Object.assign(help_link_data, newData);
+      Object.assign(help_link_data, newData)
     }
   },
-  { immediate: true, deep: true }
-);
+  { immediate: true, deep: true },
+)
 
 watch(
   () => props.initialSlide,
   (newSlide) => {
     if (newSlide !== undefined) {
-      carouselVal.value = newSlide;
+      carouselVal.value = newSlide
     }
-  }
-);
+  },
+)
 
-const active_img = ref(1);
+const _active_img = ref(1)
 
 const items = [
   {
-    class: "exam",
-    text: "Related exam",
-    icon: "exam",
-    link: "/search?type=azmoon",
+    class: 'exam',
+    text: 'Related exam',
+    icon: 'exam',
+    link: '/search?type=azmoon',
   },
   {
-    class: "paper",
-    text: "Related paper",
-    icon: "paper",
-    link: "/search?type=test",
+    class: 'paper',
+    text: 'Related paper',
+    icon: 'paper',
+    link: '/search?type=test',
   },
   {
-    class: "content",
-    text: "Related multimedia",
-    icon: "multimedia",
-    link: "/search?type=learnfiles",
+    class: 'content',
+    text: 'Related multimedia',
+    icon: 'multimedia',
+    link: '/search?type=learnfiles',
   },
   {
-    class: "faq",
-    text: "Related Q & A",
-    icon: "q-a",
-    link: "/search?type=question",
+    class: 'faq',
+    text: 'Related Q & A',
+    icon: 'q-a',
+    link: '/search?type=question',
   },
   {
-    class: "textbook ",
-    text: "Related tutorial",
-    icon: "tutorial",
-    link: "/search?type=dars",
+    class: 'textbook ',
+    text: 'Related tutorial',
+    icon: 'tutorial',
+    link: '/search?type=dars',
   },
   // { class: "school", text: "School", icon: "school" ,link:"/search?type=school" },
   // { class: "tutor", text: "Tutor", icon: "teacher" ,link:"/search?type=tutor" },
-];
+]
 
 // Methods
 function changeSlide(index) {
-  carouselVal.value = index;
+  carouselVal.value = index
 }
 
 // Still expose refs for backward compatibility
@@ -184,7 +193,7 @@ defineExpose({
   images,
   help_link_data,
   changeSlide,
-});
+})
 </script>
 
 <style lang="scss" scoped>

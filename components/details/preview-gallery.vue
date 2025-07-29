@@ -1,6 +1,9 @@
 <template>
   <div>
-    <section id="details-gallery-portrate" class="rounded-lg">
+    <section
+      id="details-gallery-portrate"
+      class="rounded-lg"
+    >
       <div class="card-carousel">
         <v-row justify="center">
           <v-col
@@ -8,12 +11,12 @@
             class="pr-0 d-flex d-md-none overflow-x-auto mt-3 mt-md-0"
           >
             <v-btn
+              v-for="(item, index) in items"
+              :key="index"
               icon
               large
               :to="`${item.link}&state=${help_link_data.state}&section=${help_link_data.section}&base=${help_link_data.base}&course=${help_link_data.course}
                   &lesson=${help_link_data.lesson}`"
-              v-for="(item, index) in items"
-              :key="index"
               class="bg-blue-grey-darken-2 mx-3"
             >
               <span
@@ -30,12 +33,12 @@
             class="pr-0 pl-0 d-none d-md-flex flex-column align-center"
           >
             <v-btn
+              v-for="(item, index) in items"
+              :key="index"
               icon
               large
               :to="`${item.link}&state=${help_link_data.state}&section=${help_link_data.section}&base=${help_link_data.base}&course=${help_link_data.course}
                   &lesson=${help_link_data.lesson}`"
-              v-for="(item, index) in items"
-              :key="index"
               class="mb-3 bg-blue-grey-darken-2 flex-shrink-0"
             >
               <span
@@ -46,13 +49,18 @@
             </v-btn>
           </v-col>
 
-          <v-col cols="12" md="9" xl="10" class="pl-2">
+          <v-col
+            cols="12"
+            md="9"
+            xl="10"
+            class="pl-2"
+          >
             <div class="mx-8 mx-md-0">
               <v-carousel
                 id="product-carousel"
+                v-model="carouselVal"
                 :show-arrows="false"
                 :hide-delimiters="images.length <= 1"
-                v-model="carouselVal"
                 class="product-carousel"
                 cycle
                 :show-arrows-on="images.length > 1 ? 'hover' : 'never'"
@@ -63,19 +71,28 @@
                   :key="index"
                   cover
                 >
-                  <v-img :src="image" class="carousel-img fill-height" />
+                  <v-img
+                    :src="image"
+                    class="carousel-img fill-height"
+                  />
                 </v-carousel-item>
               </v-carousel>
 
-              <div class="main-thumbnails" v-if="images.length > 1">
+              <div
+                v-if="images.length > 1"
+                class="main-thumbnails"
+              >
                 <div
                   v-for="(image, index) in images"
                   :key="index"
-                  @click="changeSlide(index)"
                   class="thumbnail-box"
                   :class="{ 'active-box': carouselVal === index }"
+                  @click="changeSlide(index)"
                 >
-                  <img :src="image" class="thumbnail-preview" />
+                  <img
+                    :src="image"
+                    class="thumbnail-preview"
+                  >
                 </div>
               </div>
             </div>
@@ -96,68 +113,68 @@ const props = defineProps({
   helpLinkData: {
     type: Object,
     default: () => ({
-      state: "",
-      section: "",
-      base: "",
-      course: "",
-      lesson: "",
+      state: '',
+      section: '',
+      base: '',
+      course: '',
+      lesson: '',
     }),
   },
   initialSlide: {
     type: Number,
     default: 0,
   },
-});
+})
 
 // Reactive state
-const carouselVal = ref(0);
-const images = ref([]);
+const carouselVal = ref(0)
+const images = ref([])
 const help_link_data = reactive({
-  state: "",
-  section: "",
-  base: "",
-  course: "",
-  lesson: "",
-});
+  state: '',
+  section: '',
+  base: '',
+  course: '',
+  lesson: '',
+})
 
-const active_img = ref(1);
+const _active_img = ref(1)
 
 const items = reactive([
   {
-    class: "exam",
-    text: "Related exam",
-    icon: "exam",
-    link: "/search?type=azmoon",
+    class: 'exam',
+    text: 'Related exam',
+    icon: 'exam',
+    link: '/search?type=azmoon',
   },
   {
-    class: "test",
-    text: "Related paper",
-    icon: "paper",
-    link: "/search?type=test",
+    class: 'test',
+    text: 'Related paper',
+    icon: 'paper',
+    link: '/search?type=test',
   },
   {
-    class: "content",
-    text: "Related multimedia",
-    icon: "multimedia",
-    link: "/search?type=learnfiles",
+    class: 'content',
+    text: 'Related multimedia',
+    icon: 'multimedia',
+    link: '/search?type=learnfiles',
   },
   {
-    class: "faq",
-    text: "Related Q & A",
-    icon: "q-a",
-    link: "/search?type=question",
+    class: 'faq',
+    text: 'Related Q & A',
+    icon: 'q-a',
+    link: '/search?type=question',
   },
   {
-    class: "textbook ",
-    text: "Related tutorial",
-    icon: "tutorial",
-    link: "/search?type=dars",
+    class: 'textbook ',
+    text: 'Related tutorial',
+    icon: 'tutorial',
+    link: '/search?type=dars',
   },
-]);
+])
 
 // Methods
 function changeSlide(index) {
-  carouselVal.value = index;
+  carouselVal.value = index
 }
 
 // Watch effects
@@ -165,21 +182,21 @@ watch(
   () => props.imageUrls,
   (newVal) => {
     if (newVal && newVal.length > 0) {
-      images.value = [...newVal];
+      images.value = [...newVal]
     }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 watch(
   () => props.helpLinkData,
   (newVal) => {
     if (newVal) {
-      Object.assign(help_link_data, newVal);
+      Object.assign(help_link_data, newVal)
     }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 watch(
   () => props.initialSlide,
@@ -188,8 +205,8 @@ watch(
       // carouselVal.value = newVal;
     }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 </script>
 
 <style lang="scss" scoped>

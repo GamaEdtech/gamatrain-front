@@ -1,5 +1,8 @@
 <template>
-  <v-card min-height="680" :class="'feed-card ' + feed.class">
+  <v-card
+    min-height="680"
+    :class="'feed-card ' + feed.class"
+  >
     <v-list style="width: 100% !important">
       <nuxt-link :to="feed.more_link">
         <v-subheader
@@ -8,12 +11,12 @@
         >
           <span
             :class="
-              'd-flex align-center me-2 icon icong-' +
-              feed.icon +
-              ' icon' +
-              feed.class
+              'd-flex align-center me-2 icon icong-'
+                + feed.icon
+                + ' icon'
+                + feed.class
             "
-          ></span>
+          />
           {{ feed.header }}
         </v-subheader>
       </nuxt-link>
@@ -22,23 +25,24 @@
         :key="index"
         class="feed_item align-self-start"
       >
-        <v-card width="100%" flat class="d-inline-block">
+        <v-card
+          width="100%"
+          flat
+          class="d-inline-block"
+        >
           <v-list-item-content class="pt-0 pr-1">
             <nuxt-link
-              v-html="item.title"
               :to="`${feed.main_link}/${item.id}`"
               class="pb-2 feed-title"
-            />
+            >{{ item.title }}</nuxt-link>
             <v-list-item-subtitle
               class="feed-subtitle d-flex justify-space-between"
             >
               <div class="d-flex align-center">
                 <v-list-item-avatar class="ma-0 ms-1 mr-3 avatar-parent">
-                  <v-img :src="item.avatar"></v-img>
+                  <v-img :src="item.avatar" />
                 </v-list-item-avatar>
-                <span v-if="feed.main_link == 'qa'"
-                  >{{ item.first_name }} {{ item.last_name }}</span
-                >
+                <span v-if="feed.main_link == 'qa'">{{ item.first_name }} {{ item.last_name }}</span>
                 <nuxt-link
                   v-if="
                     feed.main_link == 'multimedia' || feed.main_link == 'papers'
@@ -49,14 +53,14 @@
                 </nuxt-link>
               </div>
               <div class="d-flex align-center">
-                <i class="fa-solid fa-calendar-days mx-3"></i>
+                <i class="fa-solid fa-calendar-days mx-3" />
                 <span class="d-flex align-center">
                   {{ $dayjs(item.subdate).format("MMM DD") }}
                 </span>
               </div>
             </v-list-item-subtitle>
           </v-list-item-content>
-          <v-divider></v-divider>
+          <v-divider />
         </v-card>
       </v-list-item>
       <!-- <v-divider></v-divider> -->
@@ -69,23 +73,23 @@
           </v-list-item>
         </nuxt-link>
         <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
+          <template #activator="{ props }">
             <v-btn
+              v-if="
+                feed.class == 'learning'
+                  || feed.class == 'question'
+                  || feed.class == 'news'
+                  || feed.class == 'test'
+              "
               rounded
               v-bind="props"
               :color="feed.add_link_color"
               dark
-              v-if="
-                feed.class == 'learning' ||
-                feed.class == 'question' ||
-                feed.class == 'news' ||
-                feed.class == 'test'
-              "
               min-width="20"
               :to="feed.add_link"
               class="add-file"
             >
-              <i class="fa-solid fa-plus"></i>
+              <i class="fa-solid fa-plus" />
             </v-btn>
           </template>
           <span>{{ feed.add_link_title }}</span>
@@ -101,10 +105,11 @@ export default {
     feed: Object,
   },
   data() {
-    return {};
+    return {}
   },
-};
+}
 </script>
+
 <style>
 .avatar-parent {
   border-radius: 0.8rem;

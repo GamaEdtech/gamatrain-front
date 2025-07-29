@@ -1,43 +1,64 @@
 <template>
   <v-list density="compact">
-    <div v-for="(item, index) in items" :key="item.title">
-      <v-list-item v-show="!item.subMenuList" link :to="item.link" class="py-2">
+    <div
+      v-for="(item, index) in items"
+      :key="item.title"
+    >
+      <v-list-item
+        v-show="!item.subMenuList"
+        link
+        :to="item.link"
+        class="py-2"
+      >
         <!-- <template v-slot:prepend>
           <v-icon size="20" class="mr-2">{{ item.icon }}</v-icon>
         </template> -->
         <div class="d-flex align-center">
-          <v-icon size="20" class="mr-2">{{ item.icon }}</v-icon>
-          <v-list-item-title v-text="item.title"></v-list-item-title>
+          <v-icon
+            size="20"
+            class="mr-2"
+          >
+            {{ item.icon }}
+          </v-icon>
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </div>
       </v-list-item>
       <v-list-group
         v-show="item.subMenuList"
-        active-class="menu_group_active"
         :key="item.title"
+        active-class="menu_group_active"
         :value="openGroups[index]"
         @click="toggleGroup(index)"
       >
-        <template v-slot:activator="{ props }">
-          <v-list-item v-bind="props" class="py-2">
+        <template #activator="{ props }">
+          <v-list-item
+            v-bind="props"
+            class="py-2"
+          >
             <!-- <template v-slot:prepend>
               <v-icon size="20" class="mr-2">{{ item.icon }}</v-icon>
             </template> -->
             <div class="d-flex align-center">
-              <v-icon size="20" class="mr-2">{{ item.icon }}</v-icon>
-              <v-list-item-title v-text="item.title"></v-list-item-title>
+              <v-icon
+                size="20"
+                class="mr-2"
+              >
+                {{ item.icon }}
+              </v-icon>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
             </div>
           </v-list-item>
         </template>
 
         <v-list-item
+          v-for="(subMenuItem, side) in item.subMenuList"
+          :key="side.title"
           class="pl-7 py-2"
           active-class="menu_active"
-          v-for="(subMenuItem, side) in item.subMenuList"
           :to="subMenuItem.link"
           :disabled="subMenuItem.status"
-          :key="side.title"
         >
-          <v-list-item-title v-text="subMenuItem.title"></v-list-item-title>
+          <v-list-item-title>{{ subMenuItem.title }}</v-list-item-title>
         </v-list-item>
       </v-list-group>
     </div>
@@ -45,92 +66,92 @@
 </template>
 
 <script setup>
-import { ref, reactive } from "vue";
-import { useNuxtApp } from "#app";
-import { useUser } from "~/composables/useUser";
-const { user, setUser, cleanUser } = useUser();
-const openGroups = ref({});
+import { ref } from 'vue'
+import { useUser } from '~/composables/useUser'
+
+const { user } = useUser()
+const openGroups = ref({})
 
 const toggleGroup = (index) => {
-  openGroups.value[index] = !openGroups.value[index];
-};
+  openGroups.value[index] = !openGroups.value[index]
+}
 
 const items = ref([
   {
-    title: "Contents",
-    icon: "mdi-plus-circle-outline",
-    machine_name: "add_content",
+    title: 'Contents',
+    icon: 'mdi-plus-circle-outline',
+    machine_name: 'add_content',
     subMenuList: [
       {
-        title: "Paper",
-        link: "/user/paper",
-        icon: "icong-test",
-        icon_type: "custom",
+        title: 'Paper',
+        link: '/user/paper',
+        icon: 'icong-test',
+        icon_type: 'custom',
         status: user.value.group_id == 5 ? false : true,
       },
       {
-        title: "Multimedia",
-        link: "/user/multimedia",
-        icon: "icong-test",
-        icon_type: "custom",
+        title: 'Multimedia',
+        link: '/user/multimedia',
+        icon: 'icong-test',
+        icon_type: 'custom',
         status: user.value.group_id == 5 ? false : true,
       },
       {
-        title: "Q & A",
-        link: "/user/question",
-        icon: "icong-test",
-        icon_type: "custom",
+        title: 'Q & A',
+        link: '/user/question',
+        icon: 'icong-test',
+        icon_type: 'custom',
       },
       {
-        title: "Blogs",
-        link: "/user/blogs",
-        icon: "mdi-newspaper",
-        icon_type: "custom",
+        title: 'Blogs',
+        link: '/user/blogs',
+        icon: 'mdi-newspaper',
+        icon_type: 'custom',
       },
     ],
   },
   {
-    title: "Online Exam",
-    icon: "mdi-laptop",
+    title: 'Online Exam',
+    icon: 'mdi-laptop',
     subMenuList: [
       {
-        title: "Results",
-        link: "/exam/results",
-        icon: "icong-test",
-        icon_type: "custom",
+        title: 'Results',
+        link: '/exam/results',
+        icon: 'icong-test',
+        icon_type: 'custom',
       },
       {
-        title: "Exam maker",
-        link: "/user/exam",
-        icon: "icong-test",
-        icon_type: "custom",
+        title: 'Exam maker',
+        link: '/user/exam',
+        icon: 'icong-test',
+        icon_type: 'custom',
       },
     ],
   },
   {
-    title: "Financial",
-    icon: "mdi-credit-card-outline",
+    title: 'Financial',
+    icon: 'mdi-credit-card-outline',
     subMenuList: [
-      { title: "Wallet", link: "/user/wallet" },
-      { title: "Top Up Wallet", link: "/user/charge-wallet" },
-      { title: "Payments", link: "/user/payments" },
-      { title: "Sell Report", link: "/user/sell-report" },
+      { title: 'Wallet', link: '/user/wallet' },
+      { title: 'Top Up Wallet', link: '/user/charge-wallet' },
+      { title: 'Payments', link: '/user/payments' },
+      { title: 'Sell Report', link: '/user/sell-report' },
       // { title: "Withdrawal", link: "/user/withdrawal" },
     ],
   },
-  { title: "Messages", icon: "mdi-email-outline", link: "/user/ticket" },
+  { title: 'Messages', icon: 'mdi-email-outline', link: '/user/ticket' },
   {
-    title: "Profile",
-    icon: "mdi-account-outline",
-    link: "",
+    title: 'Profile',
+    icon: 'mdi-account-outline',
+    link: '',
     subMenuList: [
-      { title: "Edit Profile", link: "/user/profile" },
-      { title: "Confirm Identity", link: "/user/identity-confirmation" },
-      { title: "Change Password", link: "/user/edit-pass" },
-      { title: "Settings", link: "/user/setting" },
+      { title: 'Edit Profile', link: '/user/profile' },
+      { title: 'Confirm Identity', link: '/user/identity-confirmation' },
+      { title: 'Change Password', link: '/user/edit-pass' },
+      { title: 'Settings', link: '/user/setting' },
     ],
   },
-]);
+])
 </script>
 
 <style scoped>
