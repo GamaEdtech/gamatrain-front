@@ -14,8 +14,7 @@
           placeholder="Stage"
           variant="outlined"
           hide-details
-          autocomplete="new-password"
-          role="presentation"
+          autocomplete="off"
           clearable
           persistent-clear
           base-color="#E4E7EC"
@@ -204,7 +203,7 @@
       </div>
     </div>
 
-    <div class="w-100 d-flex align-center justify-center ga-3">
+    <div class="w-100 d-flex align-center justify-center ga-3 mt-2">
       <v-btn @click="cancel" size="x-small" variant="text" class="text-h5">
         Cancel
       </v-btn>

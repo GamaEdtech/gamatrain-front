@@ -25,18 +25,24 @@
         <school-add-step-category @next-step="nextStep" @prev-step="backStep" />
       </div>
       <div class="display-set" v-show="currentStep == STEP_INDEX.Contact">
-        <school-add-step-contact @next-step="nextStep" @prev-step="backStep" />
+        <school-add-step-contact
+          @next-step="nextStep"
+          @prev-step="backStep"
+          :school-information="schoolFindedInSearch"
+        />
       </div>
       <div class="display-set" v-show="currentStep == STEP_INDEX.Facilities">
         <school-add-step-facility
           @next-step="submitSchool"
           @prev-step="backStep"
+          :loading-send-data="loadingSubmitSchool"
         />
       </div>
-      <div class="display-set" v-if="currentStep == STEP_INDEX.Score">
+      <div class="display-set" v-show="currentStep == STEP_INDEX.Score">
         <school-add-step-score
           @next-step="sendCommentOnSchool"
           @prev-step="backStep"
+          :loading="loadingSendComment"
         />
       </div>
     </v-container>
@@ -49,6 +55,8 @@ const nuxtApp = useNuxtApp();
 const schoolFindedInSearch = ref();
 const showModalDetailSchool = ref(false);
 const loadingSubmitSchool = ref(false);
+const loadingSendComment = ref(false);
+const schoolIdCreated = ref();
 const schoolInformation = ref({
   name: "",
   latitude: 0,
@@ -56,16 +64,10 @@ const schoolInformation = ref({
   stateId: null,
   cityId: null,
   countryId: null,
-  // localName: "",
-  // "schoolType": "Public",
-  // zipCode: "",
   address: "",
   webSite: "",
-  // localAddress: "",
   email: "",
-  // faxNumber: "",
   phoneNumber: "",
-  // quarter: "",
   tags: [],
   tuition: 0,
 });
@@ -113,6 +115,8 @@ const changeStep = (step) => {
 // end section step
 
 const schoolFindInSearch = (school, data) => {
+  console.log("School finded", school);
+
   schoolInformation.value = {
     ...schoolInformation.value,
     ...data,
@@ -155,9 +159,11 @@ const submitSchool = (data) => {
       console.log("final response", response);
 
       if (response.succeeded) {
+        schoolIdCreated.value = response.data.id;
         nuxtApp.$toast?.success(
           "Thank you! Your contribution has been successfully submitted."
         );
+        currentStep.value = STEP_INDEX.Score;
       } else {
         nuxtApp.$toast?.error(response?.errors[0]?.message);
       }
@@ -173,7 +179,34 @@ const submitSchool = (data) => {
     });
 };
 
-const sendCommentOnSchool = () => {};
+const sendCommentOnSchool = (informationScoreComment) => {
+  console.log("informationScoreComment", informationScoreComment);
+  loadingSendComment.value = true;
+  useApiService
+    .post(
+      `/api/v2/schools/${schoolIdCreated.value}/comments`,
+      informationScoreComment
+    )
+    .then(async (response) => {
+      console.log("response score", response);
+      if (response.succeeded) {
+        nuxtApp.$toast?.success(
+          "Thank you! Your Score And Comment has been successfully submitted."
+        );
+      } else {
+        nuxtApp.$toast?.error(response?.errors[0]?.message);
+      }
+    })
+    .catch((err) => {
+      console.log("err", err);
+
+      if (err?.response?.status == 401 || err?.response?.status == 403) {
+      } else nuxtApp.$toast?.error(err?.response?.data?.message);
+    })
+    .finally(() => {
+      loadingSendComment.value = false;
+    });
+};
 </script>
 
 <style scoped>

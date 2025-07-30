@@ -25,8 +25,7 @@
           placeholder="Title"
           variant="outlined"
           hide-details
-          autocomplete="new-password"
-          role="presentation"
+          autocomplete="off"
           clearable
           persistent-clear
           base-color="#E4E7EC"
@@ -52,8 +51,7 @@
           :placeholder="location.lable"
           variant="outlined"
           hide-details
-          autocomplete="new-password"
-          role="presentation"
+          autocomplete="off"
           clearable
           persistent-clear
           base-color="#E4E7EC"
@@ -79,7 +77,7 @@
       </div>
     </div>
 
-    <div class="w-100 d-flex align-center justify-center ga-3">
+    <div class="w-100 d-flex align-center justify-center ga-3 mt-2">
       <v-btn @click="cancel" variant="text" class="text-h5"> Cancel </v-btn>
       <v-btn
         color="#ffb600"

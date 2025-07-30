@@ -15,8 +15,7 @@
           density="compact"
           placeholder="Web site"
           variant="outlined"
-          autocomplete="new-password"
-          role="presentation"
+          autocomplete="off"
           clearable
           persistent-clear
           base-color="#E4E7EC"
@@ -36,8 +35,7 @@
           density="compact"
           placeholder="Email"
           variant="outlined"
-          autocomplete="new-password"
-          role="presentation"
+          autocomplete="off"
           clearable
           persistent-clear
           base-color="#E4E7EC"
@@ -57,8 +55,7 @@
           density="compact"
           placeholder="Phone"
           variant="outlined"
-          autocomplete="new-password"
-          role="presentation"
+          autocomplete="off"
           clearable
           persistent-clear
           base-color="#E4E7EC"
@@ -80,8 +77,7 @@
           density="compact"
           placeholder="Location"
           variant="outlined"
-          autocomplete="new-password"
-          role="presentation"
+          autocomplete="off"
           clearable
           persistent-clear
           base-color="#E4E7EC"
@@ -94,7 +90,7 @@
       </div>
     </div>
 
-    <div class="w-100 d-flex align-center justify-center ga-3">
+    <div class="w-100 d-flex align-center justify-center ga-3 mt-2">
       <v-btn @click="cancel" size="x-small" variant="text" class="text-h5">
         Cancel
       </v-btn>
@@ -119,12 +115,28 @@
 
 <script setup>
 const router = useRouter();
+
+const props = defineProps({
+  schoolInformation: {
+    type: Object,
+  },
+});
+
 const emit = defineEmits(["nextStep", "prevStep"]);
 
 const website = ref("");
 const email = ref("");
 const phone = ref("");
 const location = ref("");
+
+watch(
+  () => props.schoolInformation,
+  () => {
+    console.log("change scholl info", props.schoolInformation);
+    if (props.schoolInformation) {
+    }
+  }
+);
 
 const requiredRule = (value) => !!value || "This field is required";
 const emailRule = (value) => {

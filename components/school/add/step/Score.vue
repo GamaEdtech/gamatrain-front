@@ -28,6 +28,7 @@
           empty-icon="md:star_outline"
           half-icon="md:star_half"
           full-icon="md:star"
+          @update:model-value="updateRating($event, index)"
         />
       </div>
 
@@ -37,8 +38,7 @@
         density="compact"
         placeholder="Type your comment"
         variant="outlined"
-        autocomplete="new-password"
-        role="presentation"
+        autocomplete="off"
         persistent-clear
         no-resize
         base-color="#E4E7EC"
@@ -49,13 +49,11 @@
       ></v-textarea>
     </div>
 
-    <div class="w-100 d-flex align-center justify-center ga-3">
+    <div class="w-100 d-flex align-center justify-center ga-3 mt-2">
       <v-btn @click="cancel" size="x-small" variant="text" class="text-h5">
         Cancel
       </v-btn>
-      <v-btn @click="preStep" icon color="#1D2939" height="40" width="40" flat>
-        <v-icon size="x-large">md:arrow_back</v-icon>
-      </v-btn>
+
       <v-btn
         color="#ffb600"
         flat
@@ -63,6 +61,7 @@
         height="40"
         max-width="180"
         class="w-100 text-h5"
+        :loading="loading"
         @click="submitForm"
       >
         Confirm
@@ -73,58 +72,80 @@
 
 <script setup>
 const router = useRouter();
+
+const props = defineProps({
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+});
 const emit = defineEmits(["nextStep", "prevStep"]);
 
 const itemsScore = ref([
   {
     title: "Classes quality",
     id: 1,
-    score: 2,
+    key: "classesQualityRate",
+    score: 0,
   },
   {
     title: "Education",
     id: 2,
+    key: "educationRate",
     score: 0,
   },
   {
     title: "IT training",
     id: 3,
+    key: "itTrainingRate",
     score: 0,
   },
   {
     title: "Safe and happy",
     id: 4,
+    key: "safetyAndHappinessRate",
     score: 0,
   },
   {
     title: "Behavior",
     id: 5,
+    key: "behaviorRate",
     score: 0,
   },
   {
     title: "Tuition ratio",
     id: 6,
+    key: "tuitionRatioRate",
     score: 0,
   },
   {
     title: "Facilities",
     id: 7,
+    key: "facilitiesRate",
     score: 0,
   },
   {
     title: "Artistic activities",
     id: 8,
+    key: "artisticActivitiesRate",
     score: 0,
   },
 ]);
+
+const updateRating = (rate, index) => {
+  itemsScore.value[index].score = rate;
+};
 const comment = ref("");
 
 const submitForm = () => {
-  emit("nextStep");
-};
+  const informationSumbitComment = {
+    comment: comment.value,
+  };
+  itemsScore.value.forEach((item, index) => {
+    informationSumbitComment[item.key] = item.score;
+  });
 
-const preStep = () => {
-  emit("prevStep");
+  emit("nextStep", informationSumbitComment);
 };
 
 const cancel = () => {

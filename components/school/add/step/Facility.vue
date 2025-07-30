@@ -49,11 +49,19 @@
       </div>
     </div>
 
-    <div class="w-100 d-flex align-center justify-center ga-3">
+    <div class="w-100 d-flex align-center justify-center ga-3 mt-2">
       <v-btn @click="cancel" size="x-small" variant="text" class="text-h5">
         Cancel
       </v-btn>
-      <v-btn @click="preStep" icon color="#1D2939" height="40" width="40" flat>
+      <v-btn
+        :loading="loadingSendData"
+        @click="preStep"
+        icon
+        color="#1D2939"
+        height="40"
+        width="40"
+        flat
+      >
         <v-icon size="x-large">md:arrow_back</v-icon>
       </v-btn>
       <v-btn
@@ -64,6 +72,7 @@
         max-width="180"
         class="w-100 text-h5"
         @click="submitForm"
+        :loading="loadingSendData"
       >
         Confirm
       </v-btn>
@@ -73,6 +82,13 @@
 
 <script setup>
 const router = useRouter();
+
+const props = defineProps({
+  loadingSendData: {
+    tpye: Boolean,
+    default: false,
+  },
+});
 const emit = defineEmits(["nextStep", "prevStep"]);
 
 onMounted(async () => {
