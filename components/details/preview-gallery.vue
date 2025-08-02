@@ -50,9 +50,14 @@
                   :key="index"
                   cover
                 >
-                  <v-img
+                  <NuxtImg
+                    width="170px"
+                    height="300px"
                     :src="image"
+                    placeholder
                     class="carousel-img fill-height"
+                    preload
+                    fetchpriority="high"
                   />
                 </v-carousel-item>
               </v-carousel>
@@ -68,10 +73,13 @@
                   :class="{ 'active-box': carouselVal === index }"
                   @click="changeSlide(index)"
                 >
-                  <img
+                  <NuxtImg
+                    width="70px"
+                    height="70px"
                     :src="image"
+                    placeholder
                     class="thumbnail-preview"
-                  >
+                  />
                 </div>
               </div>
             </div>
@@ -198,6 +206,7 @@ watch(
     border-radius: 1.2rem;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
 
     .v-window {
       height: 100%;
