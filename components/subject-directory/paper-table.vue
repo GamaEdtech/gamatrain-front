@@ -20,11 +20,14 @@
       </template>
       <!-- Column Classification -->
       <template #[`item.name`]="{ item }">
-        <span class="font-weight-medium text-grey-darken-2">{{
+        <NuxtLink
+          :to="`/paper/${item.id}/${item.title_url}`"
+          class="font-weight-medium text-grey-darken-2"
+        >{{
           item.variant && item.variant != "0"
-            ? item.test_type_title + item.variant
+            ? item.test_type_title + item.variant_title
             : item.test_type_title
-        }}</span>
+        }}</NuxtLink>
       </template>
 
       <!-- Column Year -->
@@ -96,7 +99,6 @@
               color="#7F56D9"
               link
               :to="`/exam/${exam}`"
-              :disabled="!item.exam_id"
             >
               <v-icon
                 size="x-large"
@@ -121,41 +123,6 @@
           </v-chip>
         </div>
       </template>
-
-      <!-- ExamHub Chip -->
-      <template v-if="item.exam_id">
-        <v-chip
-          v-for="(exam, index) in safeParseArray(item.exam_id)"
-          :key="index"
-          class="exam-hub-chip"
-          color="#7F56D9"
-          link
-          x-small
-          :to="`/exam/${exam}`"
-          :disabled="!item.exam_id"
-        >
-          <v-icon
-            size="large"
-            color="#7F56D9"
-          >
-            mdi-clipboard-text-outline
-          </v-icon>
-        </v-chip>
-      </template>
-      <v-chip
-        v-if="!item.exam_id"
-        class="exam-hub-chip"
-        color="#7F56D9"
-        x-small
-        :disabled="true"
-      >
-        <v-icon
-          size="large"
-          color="#7F56D9"
-        >
-          mdi-clipboard-text-outline
-        </v-icon>
-      </v-chip>
     </v-data-table>
     <!-- Start Desktop View  -->
 
@@ -192,11 +159,14 @@
           <template #item="{ item, index }">
             <div class="mobile-card">
               <div class="paper-info">
-                <span class="paper-info-part">{{
+                <NuxtLink
+                  :to="`/paper/${item.id}/${item.title_url}`"
+                  class="paper-info-part"
+                >{{
                   item.variant && item.variant != "0"
-                    ? item.test_type_title + item.variant
+                    ? item.test_type_title + item.variant_title
                     : item.test_type_title
-                }}</span>
+                }}</NuxtLink>
               </div>
               <div class="paper-info">
                 <span class="paper-info-part">{{ item.edu_year }}</span>
@@ -259,7 +229,6 @@
                     link
                     x-small
                     :to="`/exam/${exam}`"
-                    :disabled="!item.exam_id"
                   >
                     <v-icon
                       size="large"

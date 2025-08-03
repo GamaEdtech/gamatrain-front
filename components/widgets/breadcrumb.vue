@@ -7,7 +7,7 @@
   >
     <v-breadcrumbs
       v-if="breadItems.length"
-      class="flex-wrap"
+      class="overflow-x-auto"
       :items="breadItems"
     >
       <template #divider>

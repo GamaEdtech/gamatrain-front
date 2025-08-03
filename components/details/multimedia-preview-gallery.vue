@@ -9,8 +9,8 @@
         <v-row justify="center">
           <!-- Side section -->
           <v-col
-            cols="12"
-            class="d-flex overflow-x-auto pb-2"
+            cols="2"
+            class="pr-0 pl-0 d-flex flex-column align-center"
           >
             <v-btn
               v-for="(item, index) in items"
@@ -20,7 +20,7 @@
               :small="display.xs.value"
               :to="`${item.link}&state=${help_link_data.state}&section=${help_link_data.section}&base=${help_link_data.base}&course=${help_link_data.course}
                   &lesson=${help_link_data.lesson}`"
-              class="bg-blue-grey-darken-2 mx-3"
+              class="mb-3 bg-blue-grey-darken-2 flex-shrink-0"
             >
               <span
                 v-tooltip="item.text"
@@ -31,7 +31,7 @@
           </v-col>
           <!-- End side section -->
 
-          <v-col cols="12">
+          <v-col cols="10">
             <div>
               <v-carousel
                 v-model="carouselVal"

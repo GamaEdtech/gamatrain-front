@@ -2,55 +2,25 @@
   <div>
     <div class="d-flex mb-4">
       <div class="w-100">
-        <div class="d-flex align-center justify-space-between header">
-          <h1
-            v-show="!editMode.title"
-            class="gama-text-h5"
-          >
-            {{ title }}
-            <v-btn
-              v-if="isOwner"
-              fab
-              depressed
-              x-small
-              @click="editMode.title = true"
-            >
-              <v-icon> mdi-pencil </v-icon>
-            </v-btn>
-          </h1>
-        </div>
-        <div class="w-100">
-          <v-textarea
-            v-if="editMode.title"
-            v-model="titleModel"
-            placeholder="Title"
-            rows="3"
-          >
-            <template #append-outer>
-              <v-btn
-                color="success"
-                fab
-                depressed
-                :loading="editMode.title_loading"
-                x-small
-                @click="updateDetails"
-              >
-                <v-icon> mdi-check </v-icon>
-              </v-btn>
-            </template>
-          </v-textarea>
+        <div class="d-none d-lg-block">
+          <paper-detail-title :title="props.title" />
         </div>
         <div class="description-holder my-4">
           <!-- Description -->
-          <span
+          <div
             v-show="!editMode.describe"
-            class="break-word"
+            class="description-content"
             :class="{
               'gama-text-body1': isMobile,
               'gama-text-body2': !isMobile,
             }"
-            v-html="formattedDescription"
-          />
+          >
+            <common-show-more-text
+              :content="props.description"
+              max-height="150px"
+              :preserve-line-breaks="true"
+            />
+          </div>
           <v-btn
             v-if="isOwner"
             v-show="!editMode.describe"
@@ -85,7 +55,6 @@
           </div>
           <!-- End description -->
         </div>
-
         <div class="label-holder">
           <slot name="labels" />
         </div>
@@ -129,10 +98,6 @@ const editMode = ref({
 })
 const titleModel = ref(props.title)
 const descriptionModel = ref(props.description)
-
-const formattedDescription = computed(() => {
-  return props.description ? props.description.replace(/\n/g, '<br />') : ''
-})
 
 watch(
   () => props.title,
@@ -214,5 +179,9 @@ const updateDetails = () => {
 
 .break-word {
   word-break: break-word;
+}
+
+.description-content {
+  position: relative;
 }
 </style>

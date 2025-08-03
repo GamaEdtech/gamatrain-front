@@ -7,30 +7,9 @@
       <div class="card-carousel">
         <v-row justify="center">
           <v-col
-            cols="12"
-            class="pr-0 d-flex d-md-none overflow-x-auto mt-3 mt-md-0"
-          >
-            <v-btn
-              v-for="(item, index) in items"
-              :key="index"
-              icon
-              large
-              :to="`${item.link}&state=${help_link_data.state}&section=${help_link_data.section}&base=${help_link_data.base}&course=${help_link_data.course}
-                  &lesson=${help_link_data.lesson}`"
-              class="bg-blue-grey-darken-2 mx-3"
-            >
-              <span
-                v-tooltip="item.text"
-                style="font-size: 26px"
-                :class="'text-white text--lighten-1 icon icon-' + item.icon"
-              />
-            </v-btn>
-          </v-col>
-
-          <v-col
             cols="2"
             xl="2"
-            class="pr-0 pl-0 d-none d-md-flex flex-column align-center"
+            class="pr-0 pl-0 d-flex flex-column align-center"
           >
             <v-btn
               v-for="(item, index) in items"
@@ -50,12 +29,12 @@
           </v-col>
 
           <v-col
-            cols="12"
+            cols="10"
             md="9"
             xl="10"
             class="pl-2"
           >
-            <div class="mx-8 mx-md-0">
+            <div class="mx-4 mx-md-0">
               <v-carousel
                 id="product-carousel"
                 v-model="carouselVal"

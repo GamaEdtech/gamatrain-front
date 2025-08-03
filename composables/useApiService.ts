@@ -44,10 +44,10 @@ export const useApiService = <T = unknown>(
       response: _response,
       options: _options,
     }) {
-      // if (response?.status == 401 || response?.status == 403) {
-      //   const router = useRouter()
-      //   router.push({ query: { auth_form: 'login' } })
-      // }
+      if (_response?.status == 401 || _response?.status == 403) {
+        const router = useRouter()
+        router.push({ query: { auth_form: 'login' } })
+      }
     },
     onRequest({ request: _request, options: _options }) {
       // Set the request headers

@@ -144,12 +144,20 @@
               </div>
 
               <!-- Debug Info (temporary) -->
-              <div class="debug-info mb-4 pa-3" style="background: #f5f5f5; border-radius: 8px; font-size: 12px;">
+              <div
+                class="debug-info mb-4 pa-3"
+                style="background: #f5f5f5; border-radius: 8px; font-size: 12px;"
+              >
                 <div><strong>Debug Info:</strong></div>
                 <div>isWalletConnected: {{ isWalletConnected }}</div>
                 <div>wallet.connected: {{ wallet?.connected }}</div>
                 <div>wallet object exists: {{ !!wallet }}</div>
-                <v-btn size="small" @click="checkWalletState">Refresh Wallet State</v-btn>
+                <v-btn
+                  size="small"
+                  @click="checkWalletState"
+                >
+                  Refresh Wallet State
+                </v-btn>
               </div>
 
               <!-- Swap Button -->
@@ -290,10 +298,10 @@ import { TOKEN_MINTS, formatDisplayAmount } from '~/composables/useJupiterSwap'
 const GET_TOKEN_MINT = TOKEN_MINTS.GET
 const SOL_MINT = TOKEN_MINTS.SOL
 const USDC_MINT = TOKEN_MINTS.USDC
-const USDT_MINT = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB' // USDT Mainnet mint
+const _USDT_MINT = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB' // USDT Mainnet mint
 
 // RPC Configuration - using custom QuickNode endpoint
-const RPC_ENDPOINTS = [
+const _RPC_ENDPOINTS = [
   'https://hidden-bold-road.solana-mainnet.quiknode.pro/d83cca6a22c6e04d9fab113e56ca82bbb9c87a23', // Custom QuickNode RPC
   'https://api.mainnet-beta.solana.com', // Official Solana RPC (fallback)
 ]
@@ -305,7 +313,7 @@ const wallet = ref<SolanaWallet | null>(null)
 const payAmount = ref('')
 const receiveAmount = ref('')
 const selectedPayToken = ref(SOL_MINT)
-const selectedReceiveToken = ref(GET_TOKEN_MINT)
+const _selectedReceiveToken = ref(GET_TOKEN_MINT)
 const swapping = ref(false)
 const currentPrice = ref(0)
 const priceChange = ref<number | null>(null)
@@ -350,7 +358,7 @@ onMounted(async () => {
     try {
       const { useWallet } = await import('solana-wallets-vue')
       wallet.value = useWallet() as SolanaWallet
-      
+
       console.log('Wallet initialized:', wallet.value)
       console.log('Initial connection state:', wallet.value?.connected)
 
@@ -493,7 +501,7 @@ const calculateReceiveAmount = async () => {
     if (quoteResponse) {
       // Use the helper function to calculate display amounts
       const displayAmounts = calculateDisplayAmounts(quoteResponse)
-      
+
       receiveAmount.value = formatDisplayAmount(displayAmounts.outputAmount, 6)
 
       // Create properly typed swap quote details
@@ -503,7 +511,8 @@ const calculateReceiveAmount = async () => {
         minimumReceived: displayAmounts.minimumReceived,
         quoteResponse,
       }
-    } else {
+    }
+    else {
       receiveAmount.value = ''
       swapQuote.value = null
     }
@@ -513,7 +522,7 @@ const calculateReceiveAmount = async () => {
     receiveAmount.value = ''
     swapQuote.value = null
     errorMessage.value = 'Failed to get quote. Please try again.'
-    
+
     // Clear error message after 5 seconds
     setTimeout(() => {
       errorMessage.value = null
@@ -556,8 +565,7 @@ const handleSwap = async () => {
     errorMessage.value = null // Clear any previous errors
     successMessage.value = null // Clear any previous success messages
 
-    const { getSwapTransaction, executeSwap } = useJupiterSwap()
-    const { Connection } = await import('@solana/web3.js')
+    const { getSwapTransaction } = useJupiterSwap()
 
     // Validate wallet connection with detailed debugging
     console.log('Wallet validation debug:', {
@@ -566,16 +574,18 @@ const handleSwap = async () => {
       publicKeyExists: !!wallet.value?.publicKey,
       publicKeyValue: wallet.value?.publicKey?.value,
       publicKeyToString: wallet.value?.publicKey?.toString?.(),
-      fullWallet: wallet.value
+      fullWallet: wallet.value,
     })
 
     // Try different wallet object structures
     let publicKeyString = null
     if (wallet.value?.publicKey?.value) {
       publicKeyString = wallet.value.publicKey.value.toString()
-    } else if (wallet.value?.publicKey?.toString) {
+    }
+    else if (wallet.value?.publicKey?.toString) {
       publicKeyString = wallet.value.publicKey.toString()
-    } else if (wallet.value?.publicKey) {
+    }
+    else if (wallet.value?.publicKey) {
       publicKeyString = wallet.value.publicKey.toString()
     }
 
@@ -595,34 +605,36 @@ const handleSwap = async () => {
 
     // Execute the swap using wallet's sendTransaction method
     console.log('Executing swap transaction through wallet')
-    
+
     // Deserialize the transaction
     const { VersionedTransaction } = await import('@solana/web3.js')
     const swapTransactionBuf = Buffer.from(swapResponse.swapTransaction, 'base64')
     const transaction = VersionedTransaction.deserialize(swapTransactionBuf)
-    
+
     // Use wallet's sendTransaction method if available (bypasses RPC issues)
     let signature = null
-    
+
     if (wallet.value.sendTransaction) {
       console.log('Using wallet sendTransaction method')
       // Create a minimal connection object for the wallet
       const dummyConnection = {
         rpcEndpoint: 'https://hidden-bold-road.solana-mainnet.quiknode.pro/d83cca6a22c6e04d9fab113e56ca82bbb9c87a23',
-        commitment: 'confirmed'
+        commitment: 'confirmed',
       }
       signature = await wallet.value.sendTransaction(transaction, dummyConnection)
-    } else {
+    }
+    else {
       console.log('Using signTransaction and manual submission')
       // Sign the transaction
       const signedTransaction = await wallet.value.signTransaction(transaction)
-      
+
       // Try to submit via wallet's connection or fallback
       try {
         // If wallet has a connection, use it
         if (wallet.value.connection) {
           signature = await wallet.value.connection.sendRawTransaction(signedTransaction.serialize())
-        } else {
+        }
+        else {
           // Last resort: use our own connection with minimal config
           const { Connection } = await import('@solana/web3.js')
           const connection = new Connection('https://hidden-bold-road.solana-mainnet.quiknode.pro/d83cca6a22c6e04d9fab113e56ca82bbb9c87a23')
@@ -631,7 +643,8 @@ const handleSwap = async () => {
             maxRetries: 3,
           })
         }
-      } catch (rpcError) {
+      }
+      catch (rpcError) {
         console.error('RPC submission failed:', rpcError)
         throw new Error(`Transaction submission failed: ${rpcError.message}`)
       }
@@ -641,7 +654,7 @@ const handleSwap = async () => {
       // Show success message
       console.log('Swap successful!', signature)
       successMessage.value = `Swap successful! Transaction: ${signature.slice(0, 8)}...`
-      
+
       // Clear success message after 10 seconds
       setTimeout(() => {
         successMessage.value = null
@@ -652,16 +665,17 @@ const handleSwap = async () => {
       receiveAmount.value = ''
       swapQuote.value = null
       await fetchBalances()
-    } else {
+    }
+    else {
       throw new Error('Transaction execution failed')
     }
   }
   catch (error) {
     console.error('Swap failed:', error)
-    
+
     const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred'
     errorMessage.value = `Swap failed: ${errorMsg}`
-    
+
     // Clear error message after 10 seconds
     setTimeout(() => {
       errorMessage.value = null

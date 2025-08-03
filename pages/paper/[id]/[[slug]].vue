@@ -15,13 +15,17 @@
 
       <section>
         <v-container class="py-0">
+          <div class="d-lg-none mt-4">
+            <paper-detail-title :title="contentData?.title" />
+          </div>
           <div class="detail mt-6 mt-md-8">
             <v-row>
               <v-col
                 cols="12"
-                md="8"
+                md="12"
                 lg="6"
-                class="px-8 px-lg=0"
+                xl="6"
+                class="px-8 px-lg=0 order-3 order-md-3 order-lg-2"
               >
                 <paper-detail-description
                   :title="contentData?.title"
@@ -86,8 +90,11 @@
               <v-col
                 cols="12"
                 sm="5"
+                md="3"
                 lg="3"
+                xl="3"
                 order-lg="first"
+                class="order-2 order-sm-1 order-md-1"
               >
                 <details-preview-gallery
                   :image-urls="previewImages"
@@ -96,9 +103,11 @@
                 />
               </v-col>
               <v-col
+                class="order-1 order-md-2 order-lg-3"
                 sm="7"
-                md="4"
+                md="9"
                 lg="3"
+                xl="3"
               >
                 <paper-detail-content-info
                   :content-data="contentData"

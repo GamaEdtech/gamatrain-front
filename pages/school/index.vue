@@ -25,7 +25,10 @@
 
     <!-- Map Loading Indicator - Only show on map view -->
     <div
-      v-if="isUserMovingMap && (isExpandMapInDesktop || (!openBottomNavFilterList && isMobile))"
+      v-if="
+        isUserMovingMap
+          && (isExpandMapInDesktop || (!openBottomNavFilterList && isMobile))
+      "
       class="map-loading-overlay"
     >
       <v-progress-circular
@@ -82,20 +85,7 @@
           Map view
         </v-btn>
       </div>
-      <schoolListDesktop
-        v-if="!isMobile"
-        :school-list="schools"
-        :is-expanded="!isExpandMapInDesktop"
-        :is-initial-loading="isInitialSchoolLoading"
-        :is-pagination-loading="isPaginationSchoolLoading"
-        :is-pagination-previous-loading="isPaginationPreviousSchoolLoading"
-        :is-all-data-loaded="isAllSchoolLoaded"
-        :page-number-for-load-previous-data="pageNumberForLoadPreviousSchool"
-        @load-next-page="loadNextPageSchool"
-        @load-previous-page="loadPreviousSchool"
-      />
-      <schoolListMobile
-        v-if="isMobile"
+      <SchoolList
         :school-list="schools"
         :is-expanded="!isExpandMapInDesktop"
         :is-initial-loading="isInitialSchoolLoading"
@@ -116,8 +106,7 @@ import { useRouter, useRoute } from 'vue-router'
 import schoolFilter from '~/components/school/Filter.vue'
 import Map from '~/components/school/Map.vue'
 import SchoolDetailsModal from '~/components/school/SchoolDetailsModal.vue'
-import schoolListDesktop from '~/components/school/list/Desktop.vue'
-import schoolListMobile from '~/components/school/list/Mobile.vue'
+import SchoolList from '~/components/school/List.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -265,7 +254,10 @@ const resetParameter = () => {
   isInitialSchoolLoading.value = true
   schools.value = []
   // Show loading indicator only when in map view
-  if (isExpandMapInDesktop.value || (!openBottomNavFilterList.value && isMobile.value)) {
+  if (
+    isExpandMapInDesktop.value
+    || (!openBottomNavFilterList.value && isMobile.value)
+  ) {
     isUserMovingMap.value = true
   }
 }
@@ -485,9 +477,7 @@ const getSchoolList = async () => {
       params['sort'] = filterForm.value.sort
     }
 
-    const response = await useApiService.get('/api/v2/schools',
-      params,
-    )
+    const response = await useApiService.get('/api/v2/schools', params)
     setMetaData(response)
 
     if (response?.data?.list) {

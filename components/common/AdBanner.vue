@@ -30,7 +30,7 @@ defineProps({
   },
 })
 
-const isAdsLoad = defineModel()
+const isAdsLoad = defineModel<boolean>()
 
 const config = useRuntimeConfig()
 const adClient = config.public.GOOGLE_ADSENSE

@@ -73,8 +73,6 @@ interface TokenConfig {
   decimals: number
 }
 
-
-
 // Token decimal constants
 export const TOKEN_DECIMALS = {
   SOL: 9,
@@ -131,7 +129,7 @@ export const useJupiterSwap = () => {
     try {
       // Convert display amount to token units using proper decimals
       const amountInTokenUnits = convertToTokenUnits(amount, inputDecimals)
-      
+
       const response = await $fetch<JupiterQuoteResponse>('https://quote-api.jup.ag/v6/quote', {
         query: {
           inputMint,
@@ -251,11 +249,11 @@ export const useJupiterSwap = () => {
   const calculateDisplayAmounts = (quote: JupiterQuoteResponse) => {
     const inputDecimals = getTokenDecimals(quote.inputMint)
     const outputDecimals = getTokenDecimals(quote.outputMint)
-    
+
     const inputAmount = convertFromTokenUnits(quote.inAmount, inputDecimals)
     const outputAmount = convertFromTokenUnits(quote.outAmount, outputDecimals)
     const minimumReceived = convertFromTokenUnits(quote.otherAmountThreshold, outputDecimals)
-    
+
     return {
       inputAmount,
       outputAmount,

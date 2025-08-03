@@ -14,6 +14,12 @@
               :loading="qWordFileDownloadLoading"
               @click="$emit('download', 'q_word')"
             >
+              <v-icon
+                size="x-large"
+                class="mr-1"
+              >
+                mdi-file-pdf-box
+              </v-icon>
               Download Question Doc
               {{
                 contentData?.files?.word.price > 0
@@ -30,7 +36,13 @@
               :loading="qPdfFileDownloadLoading"
               @click="$emit('download', 'q_pdf')"
             >
-              Question Paper
+              <v-icon
+                size="x-large"
+                class="mr-1"
+              >
+                mdi-file-pdf-box
+              </v-icon>
+              Download Question Paper
               {{
                 contentData?.files?.pdf.price > 0
                   ? "| $" + contentData?.files?.pdf.price
@@ -47,7 +59,13 @@
               :loading="answerFileDownloadLoading"
               @click="$emit('download', 'a_file')"
             >
-              Mark Scheme
+              <v-icon
+                size="x-large"
+                class="mr-1"
+              >
+                mdi-file-pdf-box
+              </v-icon>
+              Download Mark Scheme
               {{
                 contentData?.files?.answer.price > 0
                   ? "| $" + contentData?.files?.answer.price
@@ -84,7 +102,15 @@
               :loading="extraFileDownloadLoading"
               @click="$emit('download', 'extra', extra.id)"
             >
-              {{ extra.type_title ? extra.type_title : "Extra" }}
+              <template v-if="extra?.ext =='mp3'">
+                <v-icon
+                  size="x-large"
+                  class="mr-1"
+                >
+                  mdi-volume-high
+                </v-icon>
+              </template>
+              Download {{ extra.type_title ? extra.type_title : "Extra" }}
               {{ extra.price > 0 ? "| $" + extra.price : "" }}
             </v-btn>
           </div>
