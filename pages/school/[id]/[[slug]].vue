@@ -477,8 +477,7 @@ function handleQueryParameters(data) {
 
 const {
   data: commentsData,
-  refresh: _refreshComments,
-  pending: _commentsPending,
+  refresh: refreshComments,
 } = await useAsyncData(
   `comments-${route.params.id}`,
   () =>

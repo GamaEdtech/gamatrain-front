@@ -39,6 +39,12 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+useSeoMeta({
+  title: `$GET Token`,
+  ogTitle: `$GET Token`,
+
+})
+</script>
 
 <style scoped></style>

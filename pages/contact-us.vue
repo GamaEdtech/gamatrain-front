@@ -167,6 +167,12 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRecaptcha } from '~/composables/useRecapcha'
 import useApiService from '~/composables/useApiService'
 
+useSeoMeta({
+  title: `Contact us`,
+  ogTitle: `Contact us`,
+
+})
+
 const zoom = ref(20)
 const rules = {
   required: (v: string) => !!v || 'This field is required.',
