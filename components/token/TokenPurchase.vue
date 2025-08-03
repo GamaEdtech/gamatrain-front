@@ -238,36 +238,38 @@
       </div>
 
       <!-- Wallet Connection Modal -->
-      <v-dialog
-        v-model="showWalletModal"
-        max-width="400"
-        persistent
-      >
-        <v-card class="wallet-modal">
-          <v-card-title class="text-center pa-6">
-            <h3>Connect Your Wallet</h3>
-            <p class="text-body-2 mt-2 mb-0">
-              Choose a wallet to connect and buy $GET tokens
-            </p>
-          </v-card-title>
+      <Teleport to="body">
+        <v-dialog
+          v-model="showWalletModal"
+          max-width="400"
+          :z-index="1000"
+        >
+          <v-card class="wallet-modal">
+            <v-card-title class="text-center pa-6">
+              <h3>Connect Your Wallet</h3>
+              <p class="text-body-2 mt-2 mb-0">
+                Choose a wallet to connect and buy $GET tokens
+              </p>
+            </v-card-title>
 
-          <v-card-text class="pa-6">
-            <ClientOnly>
-              <WalletMultiButton />
-            </ClientOnly>
-          </v-card-text>
+            <v-card-text class="pa-6">
+              <ClientOnly>
+                <WalletMultiButton />
+              </ClientOnly>
+            </v-card-text>
 
-          <v-card-actions class="pa-6 pt-0">
-            <v-spacer />
-            <v-btn
-              variant="text"
-              @click="showWalletModal = false"
-            >
-              Cancel
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+            <v-card-actions class="pa-6 pt-0">
+              <v-spacer />
+              <v-btn
+                variant="text"
+                @click="showWalletModal = false"
+              >
+                Cancel
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </Teleport>
 
       <figure>
         <img
@@ -997,5 +999,49 @@ onMounted(() => {
   .amount-input :deep(.v-field__input) {
     font-size: 20px;
   }
+}
+
+/* Wallet modal z-index fixes */
+.wallet-modal {
+  z-index: 1001 !important;
+}
+
+/* Global wallet dropdown z-index fixes */
+:global(.wallet-adapter-dropdown) {
+  z-index: 9999 !important;
+}
+
+:global(.wallet-adapter-dropdown-list) {
+  z-index: 9999 !important;
+}
+
+:global(.wallet-adapter-modal) {
+  z-index: 9999 !important;
+}
+
+/* Solana wallets vue component z-index fixes */
+:global(.swv-dropdown) {
+  z-index: 9999 !important;
+}
+
+:global(.swv-dropdown-list) {
+  z-index: 9999 !important;
+}
+
+:global(.swv-modal) {
+  z-index: 9999 !important;
+}
+
+:global(.swv-button-dropdown) {
+  z-index: 9999 !important;
+}
+
+/* Vuetify overlay fixes */
+:global(.v-overlay--active) {
+  z-index: 9998 !important;
+}
+
+:global(.v-menu__content) {
+  z-index: 9999 !important;
 }
 </style>
