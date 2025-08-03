@@ -275,6 +275,7 @@ export default defineNuxtConfig({
         '@solana/wallet-adapter-base',
         '@solana/wallet-adapter-phantom',
         '@coral-xyz/anchor',
+        '@jup-ag/api',
         'buffer',
       ],
       esbuildOptions: {
@@ -301,6 +302,7 @@ export default defineNuxtConfig({
         '@solana/web3.js',
         '@solana/wallet-adapter-base',
         '@solana/wallet-adapter-phantom',
+        '@jup-ag/api',
       ],
     },
     define: {
