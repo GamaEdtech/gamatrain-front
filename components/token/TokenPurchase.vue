@@ -394,9 +394,14 @@ const isWalletConnected = computed(() => {
 })
 
 const canSwap = computed(() => {
+  // If wallet is not connected, allow clicking to show connection modal
+  if (!isWalletConnected.value) {
+    return !swapping.value
+  }
+
+  // If wallet is connected, require valid amount
   return payAmount.value
     && parseFloat(payAmount.value) > 0
-    && isWalletConnected.value
     && !swapping.value
 })
 
