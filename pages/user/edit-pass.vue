@@ -30,7 +30,6 @@
               v-slot="{ errors }" name="oldpass" rules="required|min:4" >
               <v-text-field
                 v-model="info.oldpass"
-                type="password"
                 :append-icon="show_oldpass ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="show_oldpass ? 'text' : 'password'"
                 dense
@@ -49,7 +48,6 @@
               v-slot="{ errors }" name="newpass" rules="required|min:4" >
               <v-text-field
                 v-model="info.newpass"
-                type="password"
                 :append-icon="show_newpass ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="show_newpass ? 'text' : 'password'"
                 dense
@@ -71,7 +69,6 @@
                 > -->
               <v-text-field
                 v-model="info.repeat_newpass"
-                type="password"
                 :append-icon="show_repeat_newpass ? 'mdi-eye' : 'mdi-eye-off'"
                 :type="show_repeat_newpass ? 'text' : 'password'"
                 dense
@@ -107,6 +104,7 @@
 
 <script>
 // import { ValidationProvider, ValidationObserver } from "vee-validate";
+import querystring from 'querystring'
 
 export default {
   name: 'ChangePass',
@@ -138,11 +136,10 @@ export default {
   methods: {
     updatePass() {
       this.update_loading = true
-      const querystring = require('querystring')
 
       this.$fetch
         .$put('/api/v1/users/password', querystring.stringify(this.info))
-        .then((response) => {
+        .then((_response) => {
           this.$toast.success('Changed successfully')
           this.$router.push({
             path: '/user',

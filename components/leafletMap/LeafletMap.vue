@@ -28,6 +28,7 @@ import LocationSearch from '@/components/form/LocationSearch'
 export default {
   name: 'LeafletMap',
   components: { LocationSearch },
+  emits: ['locationSelected'],
   data() {
     return {
       map: {
@@ -42,7 +43,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       this.map.object = this.$refs.map.mapObject
-      this.map.object.on('drag', (e) => {
+      this.map.object.on('drag', (_e) => {
         const center = this.map.object.getCenter()
         this.map.markerLocation = [center.lat, center.lng]
       })

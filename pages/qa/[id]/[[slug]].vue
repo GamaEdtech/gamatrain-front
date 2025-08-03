@@ -1103,20 +1103,11 @@
 
 <script setup>
 import * as yup from 'yup'
-import querystring from 'querystring'
-import { Form, Field, ErrorMessage } from 'vee-validate'
+import { Form, Field } from 'vee-validate'
 import breadcrumb from '~/components/widgets/breadcrumb.vue'
 import 'vue3-emoji-picker/css'
 import { useNuxtApp } from '#app'
-import {
-  ref,
-  reactive,
-  watch,
-  nextTick,
-  onMounted,
-  onUpdated,
-  computed,
-} from 'vue'
+import { ref, reactive, watch, nextTick, onMounted } from 'vue'
 // import CrashReport from "~/components/common/crash-report.vue";
 const EmojiPicker = defineAsyncComponent(() =>
   import('vue3-emoji-picker').then(EmojiPicker => EmojiPicker),
@@ -1134,16 +1125,11 @@ const replySchema = yup.object({
 
 const route = useRoute()
 const router = useRouter()
-const config = useRuntimeConfig()
 const requestURL = ref(useRequestURL().host)
 
 const display = useGlobalDisplay()
 // use useAsyncData to getting Major Questions - SSR-friendly
-const {
-  data: contentData,
-  error,
-  refresh: refreshContent,
-} = await useAsyncData(
+const { data: contentData } = await useAsyncData(
   () => `question-${route.params.id}`,
   async () => {
     try {
@@ -1252,14 +1238,19 @@ const typesetMathInSpecificContainer = async (containerRef) => {
           $renderMathInElement(currentElement)
         }
         else {
+          console.warn('No element found to render MathJax content')
         }
       }
       else {
+        console.warn('MathJax not initialized')
       }
     }
-    catch (error) {}
+    catch (error) {
+      console.error('Error during MathJax rendering:', error)
+    }
   }
   else {
+    console.warn('Cannot render MathJax on server side')
   }
 }
 const crashReport = ref(null)
@@ -1306,8 +1297,8 @@ function convertSlug(text) {
     .toLowerCase()
     .trim()
     .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
 }
 
 function openQuestionForm() {
@@ -1369,12 +1360,9 @@ async function submitReply(values, { resetForm }) {
 //   }
 // }
 
-const {
-  data: repliesData,
-  refresh: refreshReplies,
-  error: repliesError,
-} = useAsyncData('questionReplies', () =>
-  $fetch(`/api/v1/questionReplies?question=${route.params.id}`),
+const { data: repliesData, refresh: refreshReplies } = useAsyncData(
+  'questionReplies',
+  () => $fetch(`/api/v1/questionReplies?question=${route.params.id}`),
 )
 
 async function reInit() {
@@ -1408,13 +1396,13 @@ function openDeleteReplyConfirmDialog(item_id) {
 //   loading.delete_reply_form = true;
 //   await $fetch
 //     .$delete(`/api/v1/questionReplies/${delete_reply_id.value}`)
-//     .then((response) => {
+//     .then((_response) => {
 //       delete_reply_id.value = null;
 //       dialog.delete_reply_form = false;
 //       $toast.success("Deleted successfully");
 //       reInit();
 //     })
-//     .catch((e) => {
+//     .catch((_err) => {
 //       delete_reply_id.value = null;
 //       dialog.delete_reply_form = false;
 //     })
@@ -1432,20 +1420,20 @@ async function submitScore(content_type, id, type) {
 
     await useApiService
       .post(api)
-      .then((response) => {
-        if (response.status === 1) {
+      .then((_response) => {
+        if (_response.status === 1) {
           if (content_type === 'question')
-            contentData.value.score = response.data.score
+            contentData.value.score = _response.data.score
           else {
             const index = answer_list.value.findIndex(x => x.id === id)
             if (index !== -1) {
-              answer_list.value[index].score = response.data.score
+              answer_list.value[index].score = _response.data.score
             }
           }
         }
       })
-      .catch((err) => {
-        console.error(err)
+      .catch((_err) => {
+        console.error(_err)
       })
   }
   else {
@@ -1456,12 +1444,12 @@ async function submitScore(content_type, id, type) {
 function selectCorrectAnswer(id) {
   useApiService
     .post(`/api/v1/questionReplies/select/${id}`)
-    .then((response) => {
+    .then((_response) => {
       $toast.success('Select successfully')
       window.scrollTo(0, 0)
       reInit()
     })
-    .catch((err) => {
+    .catch((_err) => {
       $toast.error('An error occured')
     })
 }
@@ -1483,11 +1471,11 @@ function openCrashReportDialog(id, type) {
 function getSimilarQuestions() {
   useApiService
     .get(`/api/v1/questions/related/${route.params.id}`)
-    .then((response) => {
-      similarQuestions.value = response.data.list
+    .then((_response) => {
+      similarQuestions.value = _response.data.list
     })
-    .catch((err) => {
-      console.error(err)
+    .catch((_err) => {
+      console.error(_err)
     })
     .finally(() => {
       loading.similar_questions = false

@@ -234,6 +234,22 @@
       />
     </v-container>
     <section class="feed" />
+
+    <v-row
+      justify="center"
+      class="mt-10"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        class="text-center"
+      >
+        <common-ad-banner
+          v-model="isAdsLoad"
+          adslot="7199289937"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -260,6 +276,8 @@ const requestURL = ref(useRequestURL().host)
 const breads = ref([])
 
 const download_loading = ref(false)
+
+const isAdsLoad = ref(false)
 
 const previewImages = computed(() => {
   return contentData.value?.previewData?.preview || []
@@ -290,43 +308,38 @@ useHead(() => ({
 }))
 
 async function fetchContentData() {
-  try {
-    const { id } = route.params
+  const { id } = route.params
 
-    // Use key to ensure proper caching and refresh behavior
-    const { data: content } = await useFetch(`/api/v1/files/${id}`, {
-      key: `file-${id}`,
-      dedupe: 'cancel', // Cancel previous identical requests
-      server: true, // Ensure it runs on server
-      immediate: true, // Start fetching immediately
-    })
+  // Use key to ensure proper caching and refresh behavior
+  const { data: content } = await useFetch(`/api/v1/files/${id}`, {
+    key: `file-${id}`,
+    dedupe: 'cancel', // Cancel previous identical requests
+    server: true, // Ensure it runs on server
+    immediate: true, // Start fetching immediately
+  })
 
-    if (!content.value) {
-      throw new Error('Content not found - No data returned')
-    }
-
-    if (content.value?.status === 1 && content.value?.data) {
-      // Create a proper slug from the title
-      const correctSlug
-        = content.value.data.title_url
-          || content.value.data.title
-            .toLowerCase()
-            .replace(/[^a-z0-9]+/g, '-')
-            .replace(/-$/, '')
-
-      // Verify the URL slug matches the content
-      if (route.params.slug !== correctSlug) {
-        // If slugs don't match, continue with correct data
-      }
-
-      return content.value.data
-    }
-    else {
-      throw new Error('Content not found')
-    }
+  if (!content.value) {
+    throw new Error('Content not found - No data returned')
   }
-  catch (err) {
-    throw err
+
+  if (content.value?.status === 1 && content.value?.data) {
+    // Create a proper slug from the title
+    const correctSlug
+      = content.value.data.title_url
+        || content.value.data.title
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/-$/, '')
+
+    // Verify the URL slug matches the content
+    if (route.params.slug !== correctSlug) {
+      // If slugs don't match, continue with correct data
+    }
+
+    return content.value.data
+  }
+  else {
+    throw new Error('Content not found')
   }
 }
 
@@ -364,7 +377,7 @@ async function fetchContentData() {
 //     watch: [() => route.params.id],
 //   }
 // );
-const { data, pending, error } = await useAsyncData(
+const { data, pending, _error } = await useAsyncData(
   `multimedia-details-${route.params.id}`,
   async () => {
     const data = await fetchContentData()
@@ -380,7 +393,7 @@ watchEffect(async () => {
 
 // onMounted(async () => {
 //   if (pending.value) {
-//     await waitForAsyncData();
+//     await _waitForAsyncData();
 //   }
 
 //   if (!contentData.value || Object.keys(contentData.value).length === 0) {
@@ -391,7 +404,7 @@ watchEffect(async () => {
 //   }
 // });
 
-function waitForAsyncData() {
+function _waitForAsyncData() {
   return new Promise((resolve) => {
     if (!pending.value) {
       resolve()
@@ -463,14 +476,13 @@ function openAuthDialog(val) {
   router.push({ query: { auth_form: val } })
 }
 
-async function startDownload(type) {
+async function startDownload(_type) {
   download_loading.value = true
   const apiUrl = `/api/v1/files/download/${route.params.id}`
   try {
     const response = await useApiService.get(apiUrl)
     const FileSaver = await import('file-saver')
     await FileSaver.saveAs(response.data.url, response.data.name)
-    download_loading.value = false
   }
   catch (err) {
     if (err.response?.status == 400) {
@@ -483,6 +495,7 @@ async function startDownload(type) {
     }
   }
   finally {
+    download_loading.value = false
   }
 }
 
@@ -531,6 +544,7 @@ async function updateDetails() {
   }
   catch (err) {
     if (err.response?.status == 403) {
+      $toast.error('You do not have permission to update this content')
     }
     else if (err.response?.status == 400) {
       $toast.error(err.response.data.message)

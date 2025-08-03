@@ -8,7 +8,7 @@
       >
         <template #prepend>
           <v-avatar>
-            <v-img src="@/assets/images/dashboard-icon.png" />
+            <v-img src="/images/dashboard-icon.png" />
           </v-avatar>
         </template>
 

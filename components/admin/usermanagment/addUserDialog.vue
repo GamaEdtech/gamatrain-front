@@ -71,8 +71,13 @@ const submitUser = async () => {
     @click:outside="$emit('update:modelValue', false)"
   >
     <v-card class="bg-primary-gray-200 rounded-xl">
-      <v-card-title class="d-flex justify-center pa-4 bg-white">
-        <span class="gtext-t3">Add New User</span>
+      <v-card-title class="d-flex flex-column align-center py-10 pb-6 ga-3 bg-white">
+        <div class="rounded-pill bg-primary-gray-100 pa-4">
+          <v-icon class="fontsize-80 primary-blue-500">
+            mdi mdi-account-multiple-plus
+          </v-icon>
+        </div>
+        <span class="gtext-t3 font-weight-medium">Add New User</span>
       </v-card-title>
 
       <v-card-text class="py-2">
@@ -149,7 +154,6 @@ const submitUser = async () => {
                 :append-inner-icon="passwordVisible ? 'mdi-eye' : 'mdi-eye-off' "
                 :type="passwordVisible ? 'text' : 'password'"
                 variant="solo"
-                type="email"
                 density="compact"
                 :rules="[rules.required, rules.minPassword]"
                 @click:append-inner="passwordVisible = !passwordVisible"
@@ -164,7 +168,6 @@ const submitUser = async () => {
                 :append-inner-icon="confirmPasswordVisible ? 'mdi-eye' : 'mdi-eye-off' "
                 :type="confirmPasswordVisible ? 'text' : 'password'"
                 variant="solo"
-                type="email"
                 density="compact"
                 :rules="[rules.required, rules.matchPassword]"
                 @click:append-inner="confirmPasswordVisible = !confirmPasswordVisible"
@@ -260,5 +263,8 @@ const submitUser = async () => {
 
 .v-dialog .v-card::-webkit-scrollbar-track {
   background: transparent;
+}
+.fontsize-80{
+  font-size: 80px !important;
 }
 </style>

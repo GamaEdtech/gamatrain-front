@@ -243,7 +243,7 @@ definePageMeta({
   middleware: ['auth', 'user-type'],
 })
 
-const { $toast, $store } = useNuxtApp()
+const { $toast } = useNuxtApp()
 useHead({ title: 'My Exams' })
 
 const filter = ref({

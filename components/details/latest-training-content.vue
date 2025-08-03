@@ -71,11 +71,11 @@
 </template>
 
 <script>
-import Video from '@/components/common/video.vue'
-
 export default {
   name: 'LatestTrainingContent',
-  components: { Video },
+  components: {
+    // Video component removed as it was unused
+  },
   data() {
     return {
       videos: [

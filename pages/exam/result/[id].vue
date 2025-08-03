@@ -607,14 +607,13 @@ import { ref, reactive, onMounted, computed, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useHead } from '#app'
 import PieChart from '@/components/chart/PieChart'
-import CrashReport from '~/components/common/crash-report.vue'
 import { useAuth } from '~/composables/useAuth'
 
 const route = useRoute()
-const id = route.params.id
+const _id = route.params.id
 
 const auth = useAuth()
-const authToken = auth.getUserToken()
+const _authToken = auth.getUserToken()
 
 const download_loading = ref(false)
 
@@ -671,7 +670,7 @@ const typesetDialog = async () => {
   }
 }
 
-const crash_report = ref(null)
+const _crash_report = ref(null)
 
 useHead({
   title: 'Online exam result',

@@ -1,11 +1,9 @@
 import * as THREE from 'three'
 import { shallowRef, ref, watch, computed, type Ref } from 'vue'
-// import { doorModels } from '~/store/doorModels'
 import { animate } from 'animejs'
-import createGate from './useGate'
 import useGate from './useGate'
 import type { DoorModels } from '~/interfaces/DoorModels.interface'
-import type { Doors, Level, Step } from '~/interfaces/DoorStatus'
+import type { Level, Step } from '~/interfaces/DoorStatus'
 import { useSound } from '~/composables/game/useSound'
 
 // Define types for better code organization
@@ -146,7 +144,7 @@ export function useCharacterController(
     door2: {
       leftX: -76,
       rightX: -36,
-      z: 3.10,
+      z: 3.1,
       leftWall: {
         leftX: -79,
         rightX: -72,
@@ -159,7 +157,7 @@ export function useCharacterController(
     door3: {
       leftX: 24,
       rightX: 62,
-      z: -242.20,
+      z: -242.2,
       leftWall: {
         leftX: -78,
         rightX: 30,
@@ -185,57 +183,66 @@ export function useCharacterController(
   }
 
   const stepKey = computed(() => `step${step.value}` as keyof Step)
-  const currentStep = computed(() => openedDoors[level.value - 1].steps[stepKey.value])
+  const currentStep = computed(
+    () => openedDoors[level.value - 1].steps[stepKey.value],
+  )
 
-  watch(openedDoors, (newVal) => {
-    if (currentStep.value.door001 == true) {
-      if (doorModels.door001.model) {
-        animate(doorModels.door001.model.rotation, {
-          z: -3.2,
-          duration: 1400,
-          easing: 'easeInOutSine',
-        })
+  watch(
+    openedDoors,
+    (_newVal) => {
+      if (currentStep.value.door001 == true) {
+        if (doorModels.door001.model) {
+          animate(doorModels.door001.model.rotation, {
+            z: -3.2,
+            duration: 1400,
+            easing: 'easeInOutSine',
+          })
+        }
       }
-    }
-    if (currentStep.value.door002 == true) {
-      if (doorModels.door002.model) {
-        animate(doorModels.door002.model.rotation, {
-          z: -3.2,
-          duration: 1400,
-          easing: 'easeInOutSine',
-        })
+      if (currentStep.value.door002 == true) {
+        if (doorModels.door002.model) {
+          animate(doorModels.door002.model.rotation, {
+            z: -3.2,
+            duration: 1400,
+            easing: 'easeInOutSine',
+          })
+        }
       }
-    }
-    if (currentStep.value.door003 == true) {
-      if (doorModels.door003.model) {
-        animate(doorModels.door003.model.rotation, {
-          z: -3.2,
-          duration: 1400,
-          easing: 'easeInOutSine',
-        })
+      if (currentStep.value.door003 == true) {
+        if (doorModels.door003.model) {
+          animate(doorModels.door003.model.rotation, {
+            z: -3.2,
+            duration: 1400,
+            easing: 'easeInOutSine',
+          })
+        }
       }
-    }
-    if (currentStep.value.door004 == true) {
-      if (doorModels.door004.model) {
-        animate(doorModels.door004.model.rotation, {
-          z: -3.130,
-          duration: 1400,
-          easing: 'easeInOutSine',
-        })
+      if (currentStep.value.door004 == true) {
+        if (doorModels.door004.model) {
+          animate(doorModels.door004.model.rotation, {
+            z: -3.13,
+            duration: 1400,
+            easing: 'easeInOutSine',
+          })
+        }
       }
-    }
-  }, { deep: true })
+    },
+    { deep: true },
+  )
 
   /**
-     * Detect if user is on a mobile device
-     */
+   * Detect if user is on a mobile device
+   */
   const detectMobileDevice = () => {
-    isMobile.value = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    isMobile.value
+      = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+        navigator.userAgent,
+      )
   }
 
   /**
-     * Updates interaction state based on proximity to doors
-     */
+   * Updates interaction state based on proximity to doors
+   */
   // const { gateInteractions } = useGate(scene)
   const updateInteractions = (callback: () => void) => {
     if (!character.value) return
@@ -250,7 +257,12 @@ export function useCharacterController(
       const doorPosition = doorPositions[doorKey]
       const distanceToDoor = character.value.position.distanceTo(doorPosition)
 
-      if ((distanceToDoor < INTERACTION_DISTANCE) && !openedDoors[level.value - 1].steps[stepKey.value][doorKey as 'door001' | 'door002' | 'door003']) {
+      if (
+        distanceToDoor < INTERACTION_DISTANCE
+        && !openedDoors[level.value - 1].steps[stepKey.value][
+          doorKey as 'door001' | 'door002' | 'door003'
+        ]
+      ) {
         nearAnyDoor = true
         nearDoor.value = doorKey as 'door001' | 'door002' | 'door003'
         break
@@ -262,13 +274,17 @@ export function useCharacterController(
     isNearDoor.value = nearAnyDoor
 
     if (wasNearDoor !== isNearDoor.value) {
-      console.log(`Door proximity changed: ${isNearDoor.value ? 'Near door' : 'Away from door'}`)
+      console.log(
+        `Door proximity changed: ${
+          isNearDoor.value ? 'Near door' : 'Away from door'
+        }`,
+      )
     }
   }
 
   /**
-     * Creates and sets up the character in the scene
-    */
+   * Creates and sets up the character in the scene
+   */
 
   // Create a character container
   const characterContainer = new THREE.Object3D()
@@ -303,8 +319,8 @@ export function useCharacterController(
   }
 
   /**
-     * Sets up input controls for character movement
-     */
+   * Sets up input controls for character movement
+   */
   const setupControls = () => {
     // Keyboard events
     window.addEventListener('keydown', onKeyDown)
@@ -327,8 +343,8 @@ export function useCharacterController(
   }
 
   /**
-     * Handles keydown events for movement
-     */
+   * Handles keydown events for movement
+   */
   const onKeyDown = (event: KeyboardEvent) => {
     switch (event.code) {
       case 'KeyW':
@@ -347,8 +363,8 @@ export function useCharacterController(
   }
 
   /**
-     * Handles keyup events for movement
-     */
+   * Handles keyup events for movement
+   */
   const onKeyUp = (event: KeyboardEvent) => {
     switch (event.code) {
       case 'KeyW':
@@ -367,8 +383,8 @@ export function useCharacterController(
   }
 
   /**
-     * Handles mouse movement for camera rotation
-     */
+   * Handles mouse movement for camera rotation
+   */
   const onMouseMove = (event: MouseEvent) => {
     if (document.pointerLockElement === container) {
       moveState.mouseX += event.movementX * 0.1
@@ -386,8 +402,8 @@ export function useCharacterController(
   }
 
   /**
-     * Handles touch start event for mobile rotation
-     */
+   * Handles touch start event for mobile rotation
+   */
   const onTouchStart = (event: TouchEvent) => {
     if (event.touches.length === 1) {
       event.preventDefault()
@@ -398,8 +414,8 @@ export function useCharacterController(
   }
 
   /**
-     * Handles touch move event for mobile rotation
-     */
+   * Handles touch move event for mobile rotation
+   */
   const onTouchMove = (event: TouchEvent) => {
     if (!moveState.isTouching || !character.value) return
 
@@ -431,15 +447,15 @@ export function useCharacterController(
   }
 
   /**
-     * Handles touch end event
-     */
+   * Handles touch end event
+   */
   const onTouchEnd = () => {
     moveState.isTouching = false
   }
 
   /**
-     * Calculates movement direction based on input
-     */
+   * Calculates movement direction based on input
+   */
   const calculateMovementDirection = (): THREE.Vector3 => {
     const direction = new THREE.Vector3()
 
@@ -457,38 +473,63 @@ export function useCharacterController(
   }
 
   /**
-     * Checks if a position collides with castle boundaries
-     */
+   * Checks if a position collides with castle boundaries
+   */
   const checkCollision = (position: THREE.Vector3): boolean => {
     const { x, z } = position
     const b = boundaries
 
     // Check main walls
-    if ((x < b.leftWall.x && z > b.leftWall.z)
+    if (
+      (x < b.leftWall.x && z > b.leftWall.z)
       || (x > b.rightWall.x && z > b.rightWall.z)
-      || (z > b.backWall.z)
-      || (z < b.frontWall.z)) {
+      || z > b.backWall.z
+      || z < b.frontWall.z
+    ) {
       return true
     }
 
     // Check doors
     const checkDoorWalls = (door: DoorBoundary, diagonalSize: number = 5) => {
-      return ((x < door.leftWall.rightX && x > door.leftWall.leftX)
-        && (z < door.z && z > door.z - diagonalSize))
-      || ((x < door.rightWall.rightX && x > door.rightWall.leftX)
-        && (z < door.z && z > door.z - diagonalSize))
+      return (
+        (x < door.leftWall.rightX
+          && x > door.leftWall.leftX
+          && z < door.z
+          && z > door.z - diagonalSize)
+        || (x < door.rightWall.rightX
+          && x > door.rightWall.leftX
+          && z < door.z
+          && z > door.z - diagonalSize)
+      )
     }
 
     const checkDoor = (door: DoorBoundary, doorName: string) => {
-      return ((x > door.leftX && x < door.rightX)
-        && (z > door.z && z < door.z + 5)) && !currentStep.value[doorName as 'door001' | 'door002' | 'door003' | 'door004']
+      return (
+        x > door.leftX
+        && x < door.rightX
+        && z > door.z
+        && z < door.z + 5
+        && !currentStep.value[
+          doorName as 'door001' | 'door002' | 'door003' | 'door004'
+        ]
+      )
     }
 
-    if (checkDoorWalls(b.door1) || checkDoorWalls(b.door2) || checkDoorWalls(b.door3) || checkDoorWalls(b.door4, 100)) {
+    if (
+      checkDoorWalls(b.door1)
+      || checkDoorWalls(b.door2)
+      || checkDoorWalls(b.door3)
+      || checkDoorWalls(b.door4, 100)
+    ) {
       return true
     }
 
-    if (checkDoor(b.door1, 'door001') || checkDoor(b.door2, 'door002') || checkDoor(b.door3, 'door003') || checkDoor(b.door4, 'door004')) {
+    if (
+      checkDoor(b.door1, 'door001')
+      || checkDoor(b.door2, 'door002')
+      || checkDoor(b.door3, 'door003')
+      || checkDoor(b.door4, 'door004')
+    ) {
       return true
     }
 
@@ -496,8 +537,8 @@ export function useCharacterController(
   }
 
   /**
-     * Updates character position with collision detection and wall sliding
-     */
+   * Updates character position with collision detection and wall sliding
+   */
   const updateCharacter = (): {
     updateInteractions: (callback: () => void) => void
   } | null => {
@@ -531,7 +572,10 @@ export function useCharacterController(
       isMoving.value = true
 
       if (!footstepSound.value) {
-        footstepSound.value = playSound('/assets/sounds/STREAMING-footsteps-walk-slowly-jeff-kaale-1-00-16.mp3', 1)
+        footstepSound.value = playSound(
+          '/assets/sounds/STREAMING-footsteps-walk-slowly-jeff-kaale-1-00-16.mp3',
+          1,
+        )
 
         if (footstepSound.value) {
           footstepSound.value.loop = true
@@ -588,8 +632,8 @@ export function useCharacterController(
   }
 
   /**
-     * Cleans up event listeners
-     */
+   * Cleans up event listeners
+   */
   const cleanup = () => {
     window.removeEventListener('keydown', onKeyDown)
     window.removeEventListener('keyup', onKeyUp)
@@ -597,7 +641,7 @@ export function useCharacterController(
     container.removeEventListener('touchstart', onTouchStart)
     container.removeEventListener('touchmove', onTouchMove)
     container.removeEventListener('touchend', onTouchEnd)
-    document.removeEventListener('click', () => { })
+    document.removeEventListener('click', () => {})
 
     // Stop and clean up sound
     if (footstepSound.value) {
@@ -606,7 +650,7 @@ export function useCharacterController(
     }
   }
 
-  createGate(scene)
+  useGate(scene)
 
   return {
     createCharacter,

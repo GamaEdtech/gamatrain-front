@@ -12,7 +12,8 @@
 
     <div class="d-flex flex-column pa-3">
       <div
-        v-for="item in news"
+        v-for="(item, index) in news"
+        :key="index"
         class="feed-box-item d-flex"
       >
         <div class="feedBoxImg">

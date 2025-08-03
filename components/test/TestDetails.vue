@@ -338,13 +338,13 @@ const props = defineProps({
   },
 })
 
-const emits = defineEmits(['next'])
+const _emits = defineEmits(['next'])
 
-const route = useRoute()
+const _route = useRoute()
 const nuxtApp = useNuxtApp()
 const { $renderMathInElement, $ensureMathJaxReady } = nuxtApp
 const nextTestId = ref(null)
-const router = useRouter()
+const _router = useRouter()
 const navigateToNextTest = () => {
   nextTestLoading.value = true
   navigateTo(`/test/${nextTestId.value}`)
@@ -390,7 +390,7 @@ onMounted(async () => {
 
 watch(
   () => props.contentData,
-  async (val) => {
+  async (_val) => {
     await nextTick()
     if (testDetail.value) {
       $renderMathInElement?.(testDetail.value)
@@ -575,7 +575,7 @@ function animationExplodeCoin(coinEl, centerInformation) {
     createExplosionParticles(centerX, centerY, 60)
   }, 3000)
 }
-function animationPulseHeart(startInformation, coinEl) {
+function animationPulseHeart(startInformation, _coinEl) {
   coinElement.value.style.top = `${
     startInformation.top + startInformation.height / 2 - sizeCoin.value / 2
   }px`
@@ -663,7 +663,7 @@ function loadNextTest() {
     .then((response) => {
       if (response.data.code) nextTestId.value = response.data.code
     })
-    .catch((err) => {})
+    .catch((_err) => {})
     .finally(() => {
       nextTestLoading.value = false
     })

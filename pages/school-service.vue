@@ -67,9 +67,7 @@
           <v-col
             cols="12"
             md="6"
-          >
-            <!-- <v-img src="/images/service-informed-choices.png" alt="The Power of Informed Choices" /> -->
-          </v-col>
+          />
         </v-row>
       </v-container>
     </v-container>
@@ -191,12 +189,7 @@
           <v-col
             cols="12"
             md="6"
-          >
-            <!-- <v-img
-              src="/images/service-real-reviews.png"
-              alt="Real Reviews from Real People"
-            /> -->
-          </v-col>
+          />
         </v-row>
       </v-container>
     </v-container>
@@ -254,12 +247,7 @@
           <v-col
             cols="12"
             md="6"
-          >
-            <!-- <v-img
-              src="/images/service-personalized.png"
-              alt="Personalized Recommendations"
-            /> -->
-          </v-col>
+          />
         </v-row>
       </v-container>
     </v-container>

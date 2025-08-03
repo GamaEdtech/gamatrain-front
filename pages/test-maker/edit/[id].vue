@@ -1610,7 +1610,7 @@ import CreateTestForm from '~/components/test-maker/create-test-form.vue'
 const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 
 // Get Nuxt app instance for accessing plugins like toast
-const config = useRuntimeConfig()
+const _config = useRuntimeConfig()
 const nuxtApp = useNuxtApp()
 
 // Define validation rules
@@ -1627,9 +1627,9 @@ useHead({
 })
 
 // Get services
-const auth = useAuth()
+const _auth = useAuth()
 const route = useRoute()
-const router = useRouter()
+const _router = useRouter()
 const userToken = ref('')
 
 // Core data
@@ -1646,7 +1646,7 @@ const observer = ref(null)
 const topicSelector = ref(null)
 const createForm = ref(null)
 const testList = ref(null)
-const testListContent = ref(null)
+const _testListContent = ref(null)
 const isFormValid = ref(false)
 const isExamPublished = ref(false) // Track if the exam has been published
 
@@ -1706,7 +1706,7 @@ const level_list = ref([])
 const filter_level_list = ref([])
 const grade_list = ref([])
 const filter_grade_list = ref([])
-const field_list = ref([])
+const _field_list = ref([])
 const lesson_list = ref([])
 const filter_lesson_list = ref([])
 const topic_list = ref([])
@@ -1944,7 +1944,7 @@ const getTypeList = async (type, parent = '', trigger = '') => {
       }
     }
   }
-  catch (err) {
+  catch {
     // Reset the target list to empty on error
     if (type === 'section') {
       if (trigger === 'filter') filter_level_list.value = []
@@ -1986,7 +1986,7 @@ const getTopicTitleList = () => {
   }
 }
 
-const submitQuestion = async () => {
+const _submitQuestion = async () => {
   submit_loading.value = true
 
   // Validate form fields
@@ -2074,7 +2074,7 @@ const copyUrl = () => {
   if ($toast) $toast.success('Copied')
 }
 
-const uploadFile = async (file_name) => {
+const uploadFile = async (_file_name) => {
   if (!file_original.value) return
 
   const formData = new FormData()
@@ -2091,9 +2091,9 @@ const uploadFile = async (file_name) => {
       nuxtApp.$toast.error('Invalid response from server')
     }
   }
-  catch (err) {
+  catch (_err) {
     nuxtApp.$toast.error('Failed to upload file')
-    console.error(err)
+    console.error(_err)
   }
 }
 
@@ -2190,13 +2190,13 @@ const submitTest = async () => {
     // Add retry logic for the API call
     let success = false
     let attempts = 0
-    let error
+    let _error
 
     while (!success && attempts < 3) {
       try {
         attempts++
 
-        const response = await useApiService.put(
+        const _response = await useApiService.put(
           `/api/v1/exams/tests/${exam_id.value}`,
           formData.toString(),
           {
@@ -2210,9 +2210,9 @@ const submitTest = async () => {
         success = true
         console.log(`Tests submitted successfully on attempt ${attempts}`)
       }
-      catch (err) {
-        error = err
-        console.warn(`Attempt ${attempts} failed:`, err)
+      catch (_err) {
+        _error = _err
+        console.warn(`Attempt ${attempts} failed:`, _err)
 
         // If we're going to retry, wait a bit longer each time
         if (attempts < 3) {
@@ -2223,7 +2223,7 @@ const submitTest = async () => {
 
     if (!success) {
       throw (
-        error || new Error('Failed to update tests after multiple attempts')
+        _error || new Error('Failed to update tests after multiple attempts')
       )
     }
 
@@ -2235,14 +2235,14 @@ const submitTest = async () => {
 
     nuxtApp.$toast.success('Tests updated successfully')
   }
-  catch (err) {
-    console.error('Failed to update tests:', err)
+  catch (_err) {
+    console.error('Failed to update tests:', _err)
     nuxtApp.$toast.error('Failed to update tests')
   }
 }
 
 // Helper function to fetch details for a single test by its ID
-const fetchTestDetails = async (testId) => {
+const _fetchTestDetails = async (testId) => {
   try {
     const response = await useApiService.get(`/api/v1/examTests/${testId}`)
 
@@ -2281,7 +2281,7 @@ const handleRefreshPreviewList = async () => {
     }
 
     // First try to get all tests in one API call
-    const response = await useApiService.get(`/api/v1/examTests`, {
+    const response = await useApiService.get('/api/v1/examTests', {
       exam_id: exam_id.value,
     })
 
@@ -2854,7 +2854,7 @@ watch(printPreviewDialog, async (isDialogVisible) => {
   }
 })
 
-watch(test_step, async (newStep, oldStep) => {
+watch(test_step, async (newStep, _oldStep) => {
   await nextTick()
   if (newStep === 2 && testListSwitch.value) {
     await typesetMathInSpecificContainer(mathJaxStep2ListContainerRef)
@@ -2876,8 +2876,8 @@ watch(testListSwitch, async (isSwitchedOn) => {
 // Initialize component on mount
 onMounted(async () => {
   // Get user token
-  const auth = useAuth()
-  userToken.value = auth.getUserToken()
+  const _auth = useAuth()
+  userToken.value = _auth.getUserToken()
 
   // Ensure exam published state is reset
   isExamPublished.value = false
@@ -3001,10 +3001,10 @@ const getExamTests = async () => {
     }
 
     const response = await useApiService.get('/api/v1/examTests', params)
-    test_list.value.push(...response?.data?.list)
+    test_list.value.push(...(response?.data?.list ?? []))
 
-    createForm.value.examTestListLength = response?.data?.list?.length
-    if (response.data.list.length === 0) {
+    createForm.value.examTestListLength = response?.data?.list?.length ?? 0
+    if ((response?.data?.list ?? []).length === 0) {
       all_tests_loaded.value = true
     }
     else {
@@ -3023,6 +3023,7 @@ const getExamTests = async () => {
 const openDeleteConfirmDialog = () => {
   confirmDeleteDialog.value = true
 }
+const _openDeleteConfirmDialog = openDeleteConfirmDialog
 
 const deleteOnlineExam = async () => {
   deleteLoading.value = true
@@ -3192,7 +3193,7 @@ const resetForm = () => {
 /**
  * Reset all data (used after deletion)
  */
-const resetAllData = () => {
+const _resetAllData = () => {
   // Reset form
   resetForm()
 
@@ -3214,7 +3215,7 @@ const resetAllData = () => {
 }
 
 // Add a new function to help users understand how many tests are needed
-const goToNextStep = () => {
+const _goToNextStep = () => {
   if (tests.value.length < 5) {
     nuxtApp.$toast.warning(
       `You need at least 5 tests to proceed. Currently have ${
@@ -3301,7 +3302,7 @@ const loadExamTypes = async () => {
       test_type_list.value = defaultExamTypes
     }
   }
-  catch (err) {
+  catch {
     // Use fallback in case of error
     test_type_list.value = defaultExamTypes
   }
@@ -3311,7 +3312,7 @@ const loadExamTypes = async () => {
  * Handle drag end event for reordering preview items
  * This is called when the user finishes dragging/reordering tests in the preview dialog
  */
-const previewDragEnd = async () => {
+const previewDragEnd = async (_file_name) => {
   // Extract IDs from the reordered preview list
   const new_list = []
   for (const index in previewTestList.value) {

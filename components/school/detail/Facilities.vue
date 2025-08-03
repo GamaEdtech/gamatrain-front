@@ -145,7 +145,10 @@ async function getTags() {
       .filter(tag => tag.selected)
       .map(tag => tag.id)
   }
-  catch (err) {}
+  catch (err) {
+    console.error('Error fetching school tags:', err)
+    nuxtApp.$toast?.error('Failed to load facilities')
+  }
 }
 
 function toggleTag(tag) {

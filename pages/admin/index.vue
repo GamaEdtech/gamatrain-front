@@ -1,11 +1,13 @@
 <template>
-  testtt<br>
-  testtt<br>
-  testtt<br>
-  testtt<br>
-  testtt<br>
-  testtt<br>
-  {{ name }}
+  <div class="admin-page">
+    testtt<br>
+    testtt<br>
+    testtt<br>
+    testtt<br>
+    testtt<br>
+    testtt<br>
+    {{ name }}
+  </div>
 </template>
 
 <script setup>

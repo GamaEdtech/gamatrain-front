@@ -8,7 +8,8 @@
     class="d-flex flex-column"
   >
     <v-skeleton-loader
-      v-for="item in 4"
+      v-for="(item, index) in 4"
+      :key="`desktop-${index}`"
       type="paragraph"
     />
   </v-col>
@@ -50,9 +51,7 @@
               color="#ffb600"
               size="24"
             >
-              {{
-                getMaterialIcon(resource.icon)
-              }}
+              {{ getMaterialIcon(resource.icon) }}
             </v-icon>
           </template>
 
@@ -98,9 +97,7 @@
         </template>
 
         <v-list-item-title class="text-h6 text-md-h4 font-weight-bold">
-          {{
-            topicalData.label
-          }}
+          {{ topicalData.label }}
         </v-list-item-title>
       </v-list-item>
       <div class="container-topical-chip">
@@ -128,7 +125,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   data: {
     type: Array,
   },

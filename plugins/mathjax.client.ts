@@ -3,7 +3,12 @@ import { defineNuxtPlugin, useHead } from 'nuxt/app'
 
 declare global {
   interface Window {
-    MathJax: any
+    MathJax: {
+      Hub: {
+        Config: (config: Record<string, unknown>) => void
+        Queue: (commands: unknown[]) => void
+      }
+    }
   }
 }
 
@@ -31,11 +36,24 @@ function initializeMathJax(): Promise<void> {
               if (!isMathJaxConfigured) {
                 window.MathJax.Hub.Config({
                   'tex2jax': {
-                    inlineMath: [['$', '$'], ['\\(', '\\)']],
-                    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                    inlineMath: [
+                      ['$', '$'],
+                      ['\\(', '\\)'],
+                    ],
+                    displayMath: [
+                      ['$$', '$$'],
+                      ['\\[', '\\]'],
+                    ],
                     processEscapes: true,
                     processEnvironments: true,
-                    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+                    skipTags: [
+                      'script',
+                      'noscript',
+                      'style',
+                      'textarea',
+                      'pre',
+                      'code',
+                    ],
                   },
                   'displayAlign': 'center',
                   'HTML-CSS': {
@@ -54,9 +72,13 @@ function initializeMathJax(): Promise<void> {
               reject(new Error('MathJax object on window is not loaded.'))
             }
           },
-          onerror: (errorEvent: any) => {
+          onerror: (errorEvent: Event | Error) => {
             console.error('MathJax Loading Error:', errorEvent)
-            reject(errorEvent instanceof Event ? new Error('MathJax Loading Error') : errorEvent)
+            reject(
+              errorEvent instanceof Event
+                ? new Error('MathJax Loading Error')
+                : errorEvent,
+            )
           },
         },
       ],

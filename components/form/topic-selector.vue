@@ -29,7 +29,7 @@
         This lesson hasn't any topics
       </p>
     </v-card-text>
-    <v-card-text v-else="topicList">
+    <v-card-text v-else>
       <v-row
         align="center"
         justify="center"
@@ -61,15 +61,29 @@
 <script>
 export default {
   name: 'TopicSelector',
-  props: ['topicList', 'selectedTopics'],
-  // $_veeValidate: {
-  //   value () {
-  //     return this.topic;
-  //   }
-  // },
+  props: {
+    topicList: {
+      type: Array,
+      required: false,
+      default: () => [],
+      validator(value) {
+        return value.every(item =>
+          typeof item === 'object'
+          && 'id' in item
+          && 'title' in item,
+        )
+      },
+    },
+    selectedTopics: {
+      type: Array,
+      required: false,
+      default: () => [],
+    },
+  },
+  emits: ['selectTopic'],
   data() {
     return {
-      topic: this.selectedTopics ? this.selectedTopics : [],
+      topic: this.selectedTopics || [],
       lesson_selected: false,
     }
   },

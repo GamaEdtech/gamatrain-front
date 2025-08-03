@@ -8,8 +8,8 @@
       class="total-content"
     >
       <nuxt-link
-        v-for="item in stat.lessons"
-        :key="item.id"
+        v-for="(item, index) in stat.lessons"
+        :key="item.id || index"
         :to="`/search?type=test&section=${stat.section}&base=${stat.base}&lesson=${stat.lesson}&sortby=best`"
         class="content grade-list-lessons"
       >
@@ -43,13 +43,13 @@
         </div>
         <p class="d-inline-block">
           <nuxt-link
-            v-for="(item, itm_index) in stat.lessons.slice(0, 3)"
-            :key="stat.id"
+            v-for="(item, index) in stat.lessons.slice(0, 3)"
+            :key="item.id || index"
             :to="`/search?type=test&section=${stat.section}&base=${stat.base}&lesson=${stat.lesson}&sortby=best`"
             class="content grade-list-lessons"
           >
             {{ item.title }}
-            <span v-show="itm_index < 2"> , </span>
+            <span v-show="index < 2"> , </span>
           </nuxt-link>
           <span
             v-show="stat.lessons.length > 3"
@@ -156,13 +156,13 @@
 export default {
   name: 'MobileStatsCardComponent',
   props: {
-    stat: {
-      type: Object,
-    },
-    itm_index: {
+    itmIndex: {
       type: Number,
+      required: false,
+      default: 0,
     },
   },
+  emits: ['lessonExpand'],
   methods: {
     lessonExpand(index) {
       this.$emit('lessonExpand', index)

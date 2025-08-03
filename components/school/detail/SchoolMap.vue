@@ -37,7 +37,11 @@ import { ref, reactive, onMounted, watch } from 'vue'
 import SelectLocationDialog from '@/components/common/SelectLocationDialog.vue'
 
 const props = defineProps({
-  class: {},
+  class: {
+    type: String,
+    required: false,
+    default: '',
+  },
   content: {
     type: Object,
     required: true,
@@ -47,7 +51,6 @@ const emit = defineEmits(['location-updated'])
 const schoolMap = ref(null)
 const nuxtApp = useNuxtApp()
 const route = useRoute()
-const router = useRouter()
 const contentData = ref(props.content)
 const showSelectLocationDialog = ref(false)
 const mapSubmitLoader = ref(false)
@@ -116,6 +119,7 @@ function handleUpdate() {
     })
     .catch((err) => {
       if (err?.response?.status == 401 || err?.response?.status == 403) {
+        nuxtApp.$toast?.error('Please login to update location')
       }
       else nuxtApp.$toast?.error(err?.response?.data?.message)
     })

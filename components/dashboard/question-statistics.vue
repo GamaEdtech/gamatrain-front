@@ -42,7 +42,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+const _props = defineProps({
   statistics: {
     type: Object,
     default: () => ({}),

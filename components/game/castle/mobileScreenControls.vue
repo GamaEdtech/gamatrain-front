@@ -51,21 +51,31 @@ onMounted(() => {
 onUnmounted(() => {
   // Clean up event listeners
   document.removeEventListener('fullscreenchange', updateFullscreenStatus)
-  document.removeEventListener('webkitfullscreenchange', updateFullscreenStatus)
+  document.removeEventListener(
+    'webkitfullscreenchange',
+    updateFullscreenStatus,
+  )
   document.removeEventListener('mozfullscreenchange', updateFullscreenStatus)
   document.removeEventListener('MSFullscreenChange', updateFullscreenStatus)
 })
 
 // Watch for changes in mainElement prop
-watch(() => props.mainElement, () => {
-  updateFullscreenAvailability()
-})
+watch(
+  () => props.mainElement,
+  () => {
+    updateFullscreenAvailability()
+  },
+)
 
 const updateFullscreenAvailability = () => {
-  fullscreenAvailable.value = !!mainComponent.value?.requestFullscreen
-    || !!(mainComponent.value as any)?.webkitRequestFullscreen
-    || !!(mainComponent.value as any)?.mozRequestFullScreen
-    || !!(mainComponent.value as any)?.msRequestFullscreen
+  fullscreenAvailable.value
+    = !!mainComponent.value?.requestFullscreen
+      || !!(mainComponent.value as { webkitRequestFullscreen?: () => Promise<void> })
+        ?.webkitRequestFullscreen
+        || !!(mainComponent.value as { mozRequestFullScreen?: () => Promise<void> })
+          ?.mozRequestFullScreen
+          || !!(mainComponent.value as { msRequestFullscreen?: () => Promise<void> })
+            ?.msRequestFullscreen
   console.log('Fullscreen available:', fullscreenAvailable.value)
 }
 
@@ -73,9 +83,10 @@ const updateFullscreenAvailability = () => {
 const updateFullscreenStatus = () => {
   isFullscreen.value = Boolean(
     document.fullscreenElement
-    || (document as any).webkitFullscreenElement
-    || (document as any).mozFullScreenElement
-    || (document as any).msFullscreenElement,
+    || (document as { webkitFullscreenElement?: Element })
+      .webkitFullscreenElement
+      || (document as { mozFullScreenElement?: Element }).mozFullScreenElement
+      || (document as { msFullscreenElement?: Element }).msFullscreenElement,
   )
   console.log('Fullscreen status:', isFullscreen.value)
 }
@@ -93,14 +104,34 @@ const toggleFullscreen = async () => {
       if (mainComponent.value.requestFullscreen) {
         await mainComponent.value.requestFullscreen()
       }
-      else if ((mainComponent.value as any).webkitRequestFullscreen) {
-        await (mainComponent.value as any).webkitRequestFullscreen()
+      else if (
+        (
+          mainComponent.value as {
+            webkitRequestFullscreen?: () => Promise<void>
+          }
+        ).webkitRequestFullscreen
+      ) {
+        await (
+          mainComponent.value as {
+            webkitRequestFullscreen: () => Promise<void>
+          }
+        ).webkitRequestFullscreen()
       }
-      else if ((mainComponent.value as any).mozRequestFullScreen) {
-        await (mainComponent.value as any).mozRequestFullScreen()
+      else if (
+        (mainComponent.value as { mozRequestFullScreen?: () => Promise<void> })
+          .mozRequestFullScreen
+      ) {
+        await (
+          mainComponent.value as { mozRequestFullScreen: () => Promise<void> }
+        ).mozRequestFullScreen()
       }
-      else if ((mainComponent.value as any).msRequestFullscreen) {
-        await (mainComponent.value as any).msRequestFullscreen()
+      else if (
+        (mainComponent.value as { msRequestFullscreen?: () => Promise<void> })
+          .msRequestFullscreen
+      ) {
+        await (
+          mainComponent.value as { msRequestFullscreen: () => Promise<void> }
+        ).msRequestFullscreen()
       }
     }
     else {
@@ -108,14 +139,29 @@ const toggleFullscreen = async () => {
       if (document.exitFullscreen) {
         await document.exitFullscreen()
       }
-      else if ((document as any).webkitExitFullscreen) {
-        await (document as any).webkitExitFullscreen()
+      else if (
+        (document as { webkitExitFullscreen?: () => Promise<void> })
+          .webkitExitFullscreen
+      ) {
+        await (
+          document as { webkitExitFullscreen: () => Promise<void> }
+        ).webkitExitFullscreen()
       }
-      else if ((document as any).mozCancelFullScreen) {
-        await (document as any).mozCancelFullScreen()
+      else if (
+        (document as { mozCancelFullScreen?: () => Promise<void> })
+          .mozCancelFullScreen
+      ) {
+        await (
+          document as { mozCancelFullScreen: () => Promise<void> }
+        ).mozCancelFullScreen()
       }
-      else if ((document as any).msExitFullscreen) {
-        await (document as any).msExitFullscreen()
+      else if (
+        (document as { msExitFullscreen?: () => Promise<void> })
+          .msExitFullscreen
+      ) {
+        await (
+          document as { msExitFullscreen: () => Promise<void> }
+        ).msExitFullscreen()
       }
     }
   }
@@ -128,24 +174,39 @@ const toggleFullscreen = async () => {
 const requestRotation = () => {
   try {
     // Check if the Screen Orientation API is available
-    if (screen.orientation && typeof (screen.orientation as any).lock === 'function') {
+    if (
+      screen.orientation
+      && typeof (
+        screen.orientation as { lock?: (orientation: string) => Promise<void> }
+      ).lock === 'function'
+    ) {
       if (screen.orientation.type.includes('portrait')) {
-        (screen.orientation as any).lock('landscape').catch((err: any) => {
-          console.warn('Screen orientation lock request failed:', err)
-          // alert('Screen orientation lock is not available on this device. Please rotate your device manually.');
-          alert('Screen orientation lock is not available on this device. Please rotate your device manually.')
-        })
+        (screen.orientation as { lock: (orientation: string) => Promise<void> })
+          .lock('landscape')
+          .catch((err: Error) => {
+            console.warn('Screen orientation lock request failed:', err)
+            // alert('Screen orientation lock is not available on this device. Please rotate your device manually.');
+            alert(
+              'Screen orientation lock is not available on this device. Please rotate your device manually.',
+            )
+          })
       }
       else {
-        (screen.orientation as any).lock('portrait').catch((err: any) => {
-          console.warn('Screen orientation lock request failed:', err)
-          alert('Please first go to full screan mode then touch routate device')
-        })
+        (screen.orientation as { lock: (orientation: string) => Promise<void> })
+          .lock('portrait')
+          .catch((err: Error) => {
+            console.warn('Screen orientation lock request failed:', err)
+            alert(
+              'Please first go to full screan mode then touch routate device',
+            )
+          })
       }
     }
     else {
       // Fallback - just notify user to rotate manually
-      alert('Screen orientation lock is not available on this device. Please rotate your device manually.')
+      alert(
+        'Screen orientation lock is not available on this device. Please rotate your device manually.',
+      )
     }
   }
   catch (error) {
@@ -157,21 +218,21 @@ const requestRotation = () => {
 
 <style scoped>
 .screen-controls {
-    position: absolute;
-    right: 2rem;
-    z-index: 100;
-    display: flex;
+  position: absolute;
+  right: 2rem;
+  z-index: 100;
+  display: flex;
 }
 
 .control-btn {
-    opacity: 0.8;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+  opacity: 0.8;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
 }
 
 @media (min-width: 1025px) {
-    .screen-controls {
-        top: 2rem !important;
-        right: 2rem;
-    }
+  .screen-controls {
+    top: 2rem !important;
+    right: 2rem;
+  }
 }
 </style>

@@ -25,10 +25,10 @@
       <token-purchase />
     </section>
     <section>
-      <token-how-buy-section />
+      <token-stats-section />
     </section>
     <section>
-      <token-stats-section />
+      <token-how-buy-section />
     </section>
     <section>
       <token-faq />
@@ -39,6 +39,12 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+useSeoMeta({
+  title: `$GET Token`,
+  ogTitle: `$GET Token`,
+
+})
+</script>
 
 <style scoped></style>

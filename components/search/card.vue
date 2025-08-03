@@ -202,7 +202,7 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 
-const props = defineProps({
+defineProps({
   information: {
     type: Object,
   },

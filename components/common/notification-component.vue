@@ -85,9 +85,7 @@
           </template>
 
           <v-list-item-title class="font-weight-bold">
-            {{
-              item.title
-            }}
+            {{ item.title }}
           </v-list-item-title>
           <v-list-item-subtitle>
             <div
@@ -155,16 +153,16 @@ export default {
     openNotification(id) {
       this.$fetch
         .$get(`/api/v1/notifications/read/${id}`)
-        .then((response) => {
-          if (response.status) {
+        .then((_response) => {
+          if (_response.status) {
             this.$router.push({
-              path: response.data.url.replace(/^https?:\/\/[^/]+/, '/user'),
+              path: _response.data.url.replace(/^https?:\/\/[^/]+/, '/user'),
             })
             if (this.getNoticeCalled > 0) this.getNotifications()
           }
         })
-        .catch((err) => {
-          console.log(err)
+        .catch((_err) => {
+          console.log(_err)
         })
     },
 
@@ -172,10 +170,10 @@ export default {
       this.loading.mark_read_all = true
       this.$fetch
         .$get('/api/v1/notifications/readall')
-        .then((response) => {
+        .then((_response) => {
           this.getNotifications()
         })
-        .catch((err) => {
+        .catch((_err) => {
           this.$toast.error('An error occurred')
         })
         .finally(() => {

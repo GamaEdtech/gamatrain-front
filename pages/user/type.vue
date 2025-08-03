@@ -45,7 +45,7 @@ onMounted(() => {
 })
 
 // Watch for user type changes
-watch(userType, async (newType) => {
+watch(userType, async (_newType) => {
   await setUserType()
 })
 

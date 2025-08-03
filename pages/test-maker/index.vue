@@ -303,7 +303,7 @@
 </template>
 
 <script setup>
-import FormTopicSelector from '~/components/form/topic-selector.vue'
+import _FormTopicSelector from '~/components/form/topic-selector.vue'
 
 // Define layout and page metadata
 definePageMeta({
@@ -319,7 +319,7 @@ useHead({
 const { $toast } = useNuxtApp()
 
 // Core data
-const test_step = ref(1)
+const _test_step = ref(1)
 const page_loading = ref(false)
 const page = ref(1)
 const all_files_loaded = ref(false)
@@ -333,13 +333,13 @@ const filter = reactive({
 })
 
 // UI State
-const dialog = ref(false)
+const _dialog = ref(false)
 const expandFilterMenu = ref(true)
 
 // Data lists
 const level_list = ref([])
 const grade_list = ref([])
-const field_list = ref([])
+const _field_list = ref([])
 const lesson_list = ref([])
 const album_list = ref([])
 

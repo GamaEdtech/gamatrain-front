@@ -1,3 +1,5 @@
+import { defineNuxtPlugin } from '#imports'
+
 export default defineNuxtPlugin((nuxtApp) => {
   nuxtApp.vueApp.config.globalProperties.$filters = {
     timeAgo: {

@@ -4,7 +4,7 @@
       <div class="token-market__head">
         <div class="d-flex align-center flex-column py-8">
           <h2 class="token-market__title">
-            $GET FAQ’s
+            $GET FAQ's
           </h2>
           <p class="token-market__description">
             Frequently Asked Questions
@@ -115,7 +115,7 @@ const faqs = ref([
 }
 .token-market__expansion {
   color: #24292f;
-  font-size: 18px;
+  font-size: 12px;
   font-weight: 600;
 }
 .token-market__expansion-title {
@@ -132,5 +132,13 @@ const faqs = ref([
   }
 }
 @media (min-width: 960px) {
+}
+@media (min-width: 1200px) {
+  .token-market__expansion {
+    font-size: 2rem;
+  }
+  .v-expansion-panel-text p {
+    font-size: 1.6rem;
+  }
 }
 </style>

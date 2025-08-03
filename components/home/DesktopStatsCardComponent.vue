@@ -8,8 +8,8 @@
       class="total-content"
     >
       <nuxt-link
-        v-for="item in stat.lessons"
-        :key="stat.id"
+        v-for="(item, index) in stat.lessons"
+        :key="item.id || index"
         :to="`/search?type=test&section=${stat.section}&base=${stat.base}&lesson=${stat.lesson}&sortby=best`"
         class="content grade-list-lessons"
       >
@@ -52,8 +52,8 @@
           class="d-inline-block"
         >
           <nuxt-link
-            v-for="(item, itm_index) in stat.lessons.slice(0, 3)"
-            :key="stat.id"
+            v-for="(item, index) in stat.lessons.slice(0, 3)"
+            :key="item.id || index"
             :to="`/search?type=test&section=${stat.section}&base=${stat.base}&lesson=${stat.lesson}&sortby=best`"
             class="content grade-list-lessons"
           >
@@ -61,7 +61,7 @@
               {{ item.title }}
             </span>
             <span
-              v-show="itm_index < 2"
+              v-show="index < 2"
               class="font-size-14"
             > , </span>
           </nuxt-link>
@@ -172,13 +172,13 @@
 export default {
   name: 'DesktopStatsCardComponent',
   props: {
-    stat: {
-      type: Object,
-    },
-    itm_index: {
+    itmIndex: {
       type: Number,
+      required: false,
+      default: 0,
     },
   },
+  emits: ['lessonExpand'],
   data() {
     return {}
   },

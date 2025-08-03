@@ -207,11 +207,11 @@ import { useDisplay } from 'vuetify/lib/framework.mjs'
 
 const display = useDisplay()
 // Data
-const test_schools = ref('')
-const less = ref(true)
-const showLess = ref(true)
+const _test_schools = ref('')
+const _less = ref(true)
+const _showLess = ref(true)
 
-const items = ref([
+const _items = ref([
   {
     src: 'banner_home_2.jpg',
   },
@@ -243,7 +243,7 @@ const slideArr = ref([
   },
 ])
 
-const slideColor = computed(() => {
+const _slideColor = computed(() => {
   if (colors.value && carousel_model.value) {
     return colors.value[carousel_model.value]
   }
@@ -252,38 +252,12 @@ const slideColor = computed(() => {
 
 // Lifecycle Hook (onMounted)
 
-// head() {
-//   return {
-//     titleTemplate: "%s",
-//     title:
-//       "GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education",
-//     meta: [
-//       {
-//         hid: "description",
-//         name: "description",
-//         content:
-//           "Discover GamaTrain, an innovative K12 learning platform transforming education with AI-powered instruction, a vibrant community, and personalized learning experiences.",
-//       },
-//       {
-//         hid: "apple-mobile-web-app-title",
-//         name: "apple-mobile-web-app-title",
-//         content:
-//           "GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education",
-//       },
-//       {
-//         hid: "og:title",
-//         name: "og:title",
-//         content:
-//           "GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education",
-//       },
-//       {
-//         hid: "og:site_name",
-//         name: "og:site_name",
-//         content: "GamaTrain",
-//       },
-//     ],
-//   };
-// },
+useSeoMeta({
+  title: `GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education`,
+  description: `Discover GamaTrain, an innovative K12 learning platform transforming education with AI-powered instruction, a vibrant community, and personalized learning experiences.`,
+  ogTitle: `GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education`,
+
+})
 </script>
 
 <style>

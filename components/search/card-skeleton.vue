@@ -30,7 +30,8 @@
         </div>
         <div class="d-none d-sm-flex align-center justify-space-between w-100">
           <v-skeleton-loader
-            v-for="item in 4"
+            v-for="(item, idx) in 4"
+            :key="idx"
             type="sentences"
             width="100"
             height="30"
@@ -40,7 +41,8 @@
     </div>
     <div class="d-flex d-sm-none align-center justify-space-between w-100">
       <v-skeleton-loader
-        v-for="item in 4"
+        v-for="(item, idx) in 4"
+        :key="idx"
         type="sentences"
         width="120"
         height="30"

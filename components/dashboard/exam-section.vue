@@ -100,7 +100,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+const _props = defineProps({
   examData: {
     type: Object,
     default: () => ({}),

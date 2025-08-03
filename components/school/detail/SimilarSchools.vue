@@ -74,7 +74,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   similarSchools: {
     type: Array,
     required: true,

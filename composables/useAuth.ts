@@ -25,50 +25,39 @@ export const useAuth = () => {
   }
 
   const login = async (credentials: { identity: string, pass: string }) => {
-    try {
-      const response: any = await $fetch('/api/v1/users/login', {
+    const response: { token?: string, message?: string, success?: boolean }
+      = await $fetch('/api/v1/users/login', {
         method: 'POST',
         body: {
           ...credentials,
           type: 'request',
         },
       })
-      return response
-    }
-    catch (error) {
-      throw error
-    }
+    return response
   }
 
   const register = async (formData: { identity: string, pass: string }) => {
-    try {
-      await $fetch('/api/v1/users/register', {
-        method: 'POST',
-        body: {
-          ...formData,
-          type: 'register',
-        },
-      })
-    }
-    catch (error) {
-      throw error
-    }
+    await $fetch('/api/v1/users/register', {
+      method: 'POST',
+      body: {
+        ...formData,
+        type: 'register',
+      },
+    })
   }
 
   const forgotPassword = async (passForm: { identity: string }) => {
-    try {
-      const response: any = await $fetch('/api/v1/users/recovery', {
+    const response: { message?: string, success?: boolean } = await $fetch(
+      '/api/v1/users/recovery',
+      {
         method: 'POST',
         body: {
           ...passForm,
           type: 'request',
         },
-      })
-      return response
-    }
-    catch (error) {
-      throw error
-    }
+      },
+    )
+    return response
   }
 
   const isAuthenticated = computed(() => !!cookieToken.value)

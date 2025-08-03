@@ -1,4 +1,7 @@
 <template>
+  <div class="filter-modal">
+    <!-- Filter modal content will go here -->
+  </div>
 </template>
 
 <script>

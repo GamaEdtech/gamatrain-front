@@ -153,7 +153,7 @@ export default {
     }
   },
   watch: {
-    page(val) {
+    page(_val) {
       this.school_list = []
       this.getList()
     },
@@ -189,7 +189,7 @@ export default {
         .catch((err) => {
           console.log(err)
         })
-        .finally((msg) => {
+        .finally((_msg) => {
           this.table_loading = false
         })
     },

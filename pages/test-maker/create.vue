@@ -1522,11 +1522,10 @@ import draggable from 'vuedraggable'
 import FormTopicSelector from '~/components/form/topic-selector.vue'
 import CreateTestForm from '~/components/test-maker/create-test-form.vue'
 import { definePageMeta, useHead } from '#imports'
-
 // Get Nuxt app instance for accessing plugins like toast
-const config = useRuntimeConfig()
-const nuxtApp = useNuxtApp()
-const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
+const _config = useRuntimeConfig()
+const _nuxtApp = useNuxtApp()
+const { $renderMathInElement, $ensureMathJaxReady, $toast } = _nuxtApp
 
 // Define validation rules
 defineRule('required', required)
@@ -1542,9 +1541,9 @@ useHead({
 })
 
 // Get services
-const auth = useAuth()
+const _auth = useAuth()
 const route = useRoute()
-const router = useRouter()
+const _router = useRouter()
 const userToken = ref('')
 
 // Core data
@@ -1561,7 +1560,7 @@ const observer = ref(null)
 const topicSelector = ref(null)
 const createForm = ref(null)
 const testList = ref(null)
-const testListContent = ref(null)
+const _testListContent = ref(null)
 const isFormValid = ref(false)
 const isExamPublished = ref(false) // Track if the exam has been published
 
@@ -1621,7 +1620,7 @@ const level_list = ref([])
 const filter_level_list = ref([])
 const grade_list = ref([])
 const filter_grade_list = ref([])
-const field_list = ref([])
+const _field_list = ref([])
 const lesson_list = ref([])
 const filter_lesson_list = ref([])
 const topic_list = ref([])
@@ -1679,7 +1678,7 @@ const state_list = ref([])
 const area_list = ref([])
 const school_list = ref([])
 
-const holding_level_list = [
+const _holding_level_list = [
   { id: 1, title: 'School' },
   { id: 2, title: 'District' },
   { id: 3, title: 'State' },
@@ -1696,7 +1695,7 @@ const testProgress = computed(() => {
 })
 
 // Computed property to check if we have exactly 5 tests
-const hasExactlyFiveTests = computed(() => {
+const _hasExactlyFiveTests = computed(() => {
   return tests.value.length === 5
 })
 
@@ -1874,7 +1873,7 @@ const getTypeList = async (type, parent = '', trigger = '') => {
       }
     }
   }
-  catch (err) {
+  catch {
     // Reset the target list to empty on error
     if (type === 'section') {
       if (trigger === 'filter') filter_level_list.value = []
@@ -1971,7 +1970,9 @@ const submitQuestion = async () => {
     // Move to the next step
     test_step.value = 2
   }
-  catch (error) {
+  catch (_err) {
+    console.error('Error creating test:', _err)
+    if ($toast) $toast.error('Failed to create test')
   }
   finally {
     submit_loading.value = false
@@ -1992,17 +1993,16 @@ const urlencodeFormData = (fd) => {
   return result
 }
 
-const encode = (s) => {
+const _encode = (s) => {
   return encodeURIComponent(s).replace(/%20/g, '+')
 }
 
 const copyUrl = () => {
   navigator.clipboard.writeText(test_share_link.value)
-  const { $toast } = useNuxtApp()
   if ($toast) $toast.success('Copied')
 }
 
-const uploadFile = async (file_name) => {
+const uploadFile = async (_file_name) => {
   if (!file_original.value) return
 
   const formData = new FormData()
@@ -2014,6 +2014,7 @@ const uploadFile = async (file_name) => {
       form.file_original = response.data[0].file.name
     }
     else {
+      console.warn('No file name in upload response')
     }
   }
   catch (err) {
@@ -2062,7 +2063,9 @@ const publishTest = async () => {
       test_step.value = 4
     }
   }
-  catch (err) {
+  catch (_err) {
+    console.error('Error publishing test:', _err)
+    if ($toast) $toast.error('Failed to publish test')
   }
   finally {
     publish_loading.value = false
@@ -2115,20 +2118,22 @@ const submitTest = async (skipListRefresh = false) => {
     )
     console.log('Tests:', tests.value)
 
-    await useApiService
-      .put(`/api/v1/exams/tests/${exam_id.value}`, formData.toString(), {
+    const response = await useApiService.put(
+      `/api/v1/exams/tests/${exam_id.value}`,
+      formData.toString(),
+      {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
         },
-      })
-      .then(async (res) => {
-        if (res.status === 1) {
-          await nextTick()
-          await forceUIUpdate()
-          await handleRefreshPreviewList()
-          createForm.value.examTestListLength = tests.value.length
-        }
-      })
+      },
+    )
+
+    if (response.status === 1) {
+      await nextTick()
+      await forceUIUpdate()
+      await handleRefreshPreviewList()
+      createForm.value.examTestListLength = tests.value.length
+    }
 
     // Add a small delay to ensure the backend has processed the update
     await new Promise(resolve => setTimeout(resolve, 300))
@@ -2149,8 +2154,8 @@ const submitTest = async (skipListRefresh = false) => {
       await nextTick()
     }
   }
-  catch (err) {
-    console.error('Failed to update tests:', err)
+  catch (_err) {
+    console.error('Failed to update tests:', _err)
   }
 }
 
@@ -2452,9 +2457,9 @@ const ensureBasicDataLoaded = async () => {
       await loadExamTypes()
     }
   }
-  catch (error) {
-    console.error('Error loading basic data:', error)
-    throw error
+  catch (_err) {
+    console.error('Error loading basic data:', _err)
+    throw _err
   }
 }
 
@@ -2512,24 +2517,24 @@ const createDraftExam = async () => {
       throw new Error('Invalid response from server')
     }
   }
-  catch (error) {
-    console.error('Error creating draft exam:', error)
+  catch (_err) {
+    console.error('Error creating draft exam:', _err)
 
-    let errorMessage = 'Error creating draft exam'
-    if (error.response?.data?.message) {
-      errorMessage = error.response.data.message
+    let _errorMessage = 'Error creating draft exam'
+    if (_err.response?.data?.message) {
+      _errorMessage = _err.response.data.message
 
-      if (error.response.data.data && Array.isArray(error.response.data.data)) {
-        errorMessage += ` Missing fields: ${error.response.data.data.join(
+      if (_err.response.data.data && Array.isArray(_err.response.data.data)) {
+        _errorMessage += ` Missing fields: ${_err.response.data.data.join(
           ', ',
         )}`
       }
     }
-    else if (error.message) {
-      errorMessage = error.message
+    else if (_err.message) {
+      _errorMessage = _err.message
     }
 
-    throw error
+    throw _err
   }
   finally {
     submit_loading.value = false
@@ -2562,7 +2567,7 @@ const applyTest = async (item, type = null) => {
     const testExists = tests.value.some(id => String(id) === testId)
 
     // Store the old length to check if we hit exactly 5 tests
-    const oldLength = tests.value.length
+    const _oldLength = tests.value.length
 
     if (testExists && type === 'remove') {
       const index = tests.value.findIndex(id => String(id) === testId)
@@ -2582,8 +2587,8 @@ const applyTest = async (item, type = null) => {
     // Force refresh the preview list to ensure UI consistency
     await handleRefreshPreviewList()
   }
-  catch (error) {
-    console.error('Error in applyTest:', error)
+  catch (_err) {
+    console.error('Error in applyTest:', _err)
   }
 }
 
@@ -2602,14 +2607,14 @@ const getExamTests = async () => {
     }
 
     const response = await useApiService.get('/api/v1/examTests', params)
-    test_list.value.push(...response?.data?.list)
+    test_list.value.push(...(response?.data?.list ?? []))
 
     // Update the examTestListLength with the actual tests array length, not the response length
     if (createForm.value && 'examTestListLength' in createForm.value) {
       createForm.value.examTestListLength = tests.value.length
     }
 
-    if (response.data.list.length === 0) {
+    if ((response?.data?.list ?? []).length === 0) {
       all_tests_loaded.value = true
     }
     else {
@@ -2755,11 +2760,15 @@ const handleStepChange = (newStep) => {
           setTimeout(() => {
             handleRefreshPreviewList().then(() => {
               if (previewTestList.value.length > 0) {
+                // Preview list already loaded
+                console.log('Preview list already loaded')
               }
             })
           }, 1000)
         }
         else if (previewTestList.value.length > 0) {
+          // Preview list already loaded
+          console.log('Preview list already loaded')
         }
       })
       .catch((err) => {
@@ -2773,7 +2782,7 @@ const handleStepChange = (newStep) => {
 
   // Show step change notification
   if (newStep !== test_step.value) {
-    const stepNames = {
+    const _stepNames = {
       1: 'Header',
       2: 'Tests',
       3: 'Review',
@@ -2820,7 +2829,7 @@ const resetForm = () => {
 /**
  * Reset all data (used after deletion)
  */
-const resetAllData = () => {
+const _resetAllData = () => {
   // Reset form
   resetForm()
 
@@ -2843,7 +2852,7 @@ const resetAllData = () => {
 }
 
 // Add a new function to help users understand how many tests are needed
-const goToNextStep = () => {
+const _goToNextStep = () => {
   if (tests.value.length < 5) {
     return
   }
@@ -2902,7 +2911,7 @@ const loadExamTypes = async () => {
       test_type_list.value = defaultExamTypes
     }
   }
-  catch (err) {
+  catch {
     // Use fallback in case of error
     test_type_list.value = defaultExamTypes
   }
@@ -3345,7 +3354,7 @@ watch(printPreviewDialog, async (isDialogVisible) => {
   }
 })
 
-watch(test_step, async (newStep, oldStep) => {
+watch(test_step, async (newStep, _oldStep) => {
   await nextTick()
   if (newStep === 2 && testListSwitch.value) {
     await typesetMathInSpecificContainer(mathJaxStep2ListContainerRef)

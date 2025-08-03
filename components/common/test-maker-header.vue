@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="main-header">
-      <topbar ref="header_topbar" />
+      <WidgetsTopbar ref="header_topbar" />
 
       <!--   Start: navbar   main-container -->
       <v-container class="pa-0">
@@ -95,8 +95,9 @@
                   >
                     <v-list-item-title
                       class="menu-title"
-                      v-text="item.title"
-                    />
+                    >
+                      {{ item.title }}
+                    </v-list-item-title>
                   </v-list-item>
 
                   <v-list-group
@@ -109,21 +110,20 @@
                     <template #activator>
                       <v-list-item-title
                         class="py-2"
-                        v-text="item.title"
-                      />
+                      >
+                        {{ item.title }}
+                      </v-list-item-title>
                     </template>
 
                     <v-list-item
-                      v-for="(subMenuItem, side) in item.subMenuList"
-                      :key="side.title"
+                      v-for="(subMenuItem, sideIndex) in item.subMenuList"
+                      :key="sideIndex"
                       class="pl-7"
                       active-class="menu_active"
                       :to="subMenuItem.link"
                     >
                       <v-list-item-content class="py-2">
-                        <v-list-item-title
-                          v-text="subMenuItem.title"
-                        />
+                        <v-list-item-title>{{ subMenuItem.title }}</v-list-item-title>
                       </v-list-item-content>
                     </v-list-item>
                   </v-list-group>
@@ -204,12 +204,12 @@
 </template>
 
 <script>
-import topbar from '../widgets/topbar'
+import WidgetsTopbar from '../widgets/WidgetsTopbar'
 
 export default {
   name: 'TestMakerHeader',
   components: {
-    topbar,
+    WidgetsTopbar,
   },
   data() {
     return {

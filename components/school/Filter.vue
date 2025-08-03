@@ -57,7 +57,9 @@
             @click="openFilterSection($event, item)"
           >
             {{ item.name }}
-            <v-icon :color="item.active && !isExpandMap ? `#ffffff` : `#828385`">
+            <v-icon
+              :color="item.active && !isExpandMap ? `#ffffff` : `#828385`"
+            >
               mdi-chevron-down
             </v-icon>
 
@@ -85,21 +87,29 @@
               <span class="title-Tuition">Maximum Tuition fee</span>
               <span class="subtitle-Tuition">Move the handle</span>
 
-              <input
-                v-model="filterForm.tuition_fee"
-                class="input-range"
-                type="range"
-                max="50000"
-                min="0"
-                step="1000"
-                :style="{
-                  background: `linear-gradient(to right, #ffb600 0%, #ffb600 ${
-                    filterForm.tuition_fee / 500
-                  }%, #ddd ${filterForm.tuition_fee / 500}%, #ddd 100%)`,
-                }"
-                @click.stop=""
-                @change="rangeInputChange"
+              <v-range-slider
+                v-model="valueTuition"
+                class="w-100"
+                thumb-color="#ffb600"
+                color="#ffb600"
+                track-color="#E4E7EC"
+                density="compact"
+                hide-details
+                strict
+                :max="500000"
+                :min="0"
+                :step="10000"
+                thumb-label="always"
+                :ticks="steps"
+                show-ticks="always"
+                tick-size="6"
+                @click.stop
+                @end="endTuitionMove"
               >
+                <template #thumb-label="{ modelValue }">
+                  <span class="text-h5 font-weight-black text-black">${{ modelValue }}</span>
+                </template>
+              </v-range-slider>
             </div>
 
             <div
@@ -408,35 +418,32 @@
             />
           </div>
         </div>
-        <div
-          v-if="false"
-          class="container-tuition"
-        >
+        <div class="container-tuition">
           <span class="title-group">Tition fee</span>
           <div class="container-input">
-            <div
-              class="show-number-fee"
-              :style="{
-                left: `calc(${filterForm.tuition_fee / 500}% - 40px)`,
-              }"
+            <v-range-slider
+              v-model="valueTuition"
+              class="w-100"
+              thumb-color="#ffb600"
+              color="#ffb600"
+              track-color="#E4E7EC"
+              density="compact"
+              hide-details
+              strict
+              :max="500000"
+              :min="0"
+              :step="10000"
+              thumb-label="always"
+              :ticks="steps"
+              show-ticks="always"
+              tick-size="6"
+              @click.stop
+              @end="endTuitionMove"
             >
-              ${{ filterForm.tuition_fee }}
-            </div>
-            <input
-              v-model="filterForm.tuition_fee"
-              class="input-range"
-              type="range"
-              max="50000"
-              min="0"
-              step="1000"
-              :style="{
-                background: `linear-gradient(to right, #ffb600 0%, #ffb600 ${
-                  filterForm.tuition_fee / 500
-                }%, #ddd ${filterForm.tuition_fee / 500}%, #ddd 100%)`,
-              }"
-              @click.stop=""
-              @change="rangeInputChange"
-            >
+              <template #thumb-label="{ modelValue }">
+                <span class="text-h5 font-weight-black text-black">${{ modelValue }}</span>
+              </template>
+            </v-range-slider>
           </div>
         </div>
         <div class="w-100 mt-8 d-flex align-center justify-center ga-3">
@@ -552,7 +559,7 @@ const props = defineProps({
   },
 })
 const emit = defineEmits(['update-filter'])
-const router = useRouter()
+const _router = useRouter()
 const route = useRoute()
 
 onMounted(() => {
@@ -582,7 +589,7 @@ const optionFilter = ref([
   },
   {
     name: 'Tuition fee',
-    active: false,
+    active: true,
     isShow: false,
   },
   {
@@ -609,7 +616,8 @@ const filterForm = reactive({
   state: Number(route.query.state) || '',
   city: Number(route.query.city) || '',
   stage: route.query.stage || '',
-  tuition_fee: Number(route.query.tuition_fee) || 0,
+  tuitionFeeMax: Number(route.query.tuitionFeeMax) || 0,
+  tuitionFeeMin: Number(route.query.tuitionFeeMin) || 0,
   sort: setDefaultSort(
     Array.isArray(route.query.sort)
       ? route.query.sort
@@ -698,7 +706,10 @@ const updateQueryParams = () => {
   if (filterForm.state) query.state = filterForm.state
   if (filterForm.city) query.city = filterForm.city
   if (filterForm.stage) query.stage = filterForm.stage
-  if (filterForm.tuition_fee > 0) query.tuition_fee = filterForm.tuition_fee
+  if (filterForm.tuitionFeeMin > 0)
+    query.tuitionFeeMin = filterForm.tuitionFeeMin
+  if (filterForm.tuitionFeeMax > 0)
+    query.tuitionFeeMax = filterForm.tuitionFeeMax
   if (filterForm.sort.length > 0 && filterForm.sort != undefined)
     query.sort = filterForm.sort
 
@@ -830,6 +841,15 @@ const stageChange = () => {
 
 // Start Section TuitionFee
 const boxTuitionRef = ref(null)
+const valueTuition = ref([filterForm.tuitionFeeMin, filterForm.tuitionFeeMax])
+const steps = ref({
+  0: '',
+  100000: '',
+  200000: '',
+  300000: '',
+  400000: '',
+  500000: '',
+})
 
 useClickOutside(boxTuitionRef, () => {
   optionFilter.value.filter(
@@ -837,7 +857,9 @@ useClickOutside(boxTuitionRef, () => {
   )[0].isShow = false
 })
 
-const rangeInputChange = (event) => {
+const endTuitionMove = (value) => {
+  filterForm.tuitionFeeMin = value[0]
+  filterForm.tuitionFeeMax = value[1]
   updateQueryParams()
 }
 

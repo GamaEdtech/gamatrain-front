@@ -90,7 +90,7 @@ const submit = async () => {
         >
           <div class="text-center mb-6">
             <img
-              src="/public/images/adminAuth.png"
+              src="/images/adminAuth.png"
               alt="Gama"
               class="wh-100"
             >

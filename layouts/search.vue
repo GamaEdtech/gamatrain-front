@@ -4,5 +4,6 @@
     <div>
       <slot />
     </div>
+    <AppGlobalSnackbar />
   </v-app>
 </template>

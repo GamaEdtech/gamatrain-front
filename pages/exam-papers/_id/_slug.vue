@@ -46,7 +46,10 @@
                       Topics:
                     </p>
                     <ul>
-                      <li v-for="item in contentData.topics">
+                      <li
+                        v-for="(item, index) in contentData.topics"
+                        :key="index"
+                      >
                         {{ item.title }}
                       </li>
                     </ul>
@@ -570,29 +573,13 @@
 </template>
 
 <script>
-import Breadcrumb from '../../../components/widgets/breadcrumb'
-import LastViews from '@/components/common/last-views'
-import RelatedCardBox from './components/related-card-box'
-import Category from '@/components/common/category'
-import PreviewGallery from '@/components/details/preview-gallery'
-import RelatedContent from '@/components/details/related-content'
-import LatestTrainingContent from '@/components/details/latest-training-content'
-import RelatedQa from '@/components/details/related-qa'
-import RelatedOnlineExam from '@/components/details/related-online-exam'
+// Removed unused imports
 
 export default {
-  name: 'ExamDetails',
+  name: 'ExamPaperDetails',
   auth: false,
   components: {
-    RelatedOnlineExam,
-    RelatedQa,
-    LatestTrainingContent,
-    RelatedContent,
-    PreviewGallery,
-    Category,
-    Breadcrumb,
-    LastViews,
-    RelatedCardBox,
+    // Remove unused components
   },
   async asyncData({ params, $axios }) {
     // This could also be an action dispatch

@@ -283,8 +283,8 @@ definePageMeta({
 })
 
 // Use services
-const router = useRouter()
-const auth = useAuth()
+const _router = useRouter()
+const _auth = useAuth()
 const { $auth, $toast } = useNuxtApp()
 
 // Page title
@@ -305,7 +305,7 @@ const filter = reactive({
 
 const level_list = ref([])
 const grade_list = ref([])
-const field_list = ref([])
+const _field_list = ref([])
 const lesson_list = ref([])
 
 // Paginate section

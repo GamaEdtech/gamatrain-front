@@ -270,15 +270,12 @@
 
 <script>
 // import { ValidationObserver, ValidationProvider } from "vee-validate";
-import TopicSelector from '~/components/form/topic-selector.vue'
 import ticket from '../index.vue'
 
 export default {
   name: 'TicketDetail',
   components: {
-    TopicSelector,
-    // ValidationProvider,
-    // ValidationObserver,
+    // Remove TopicSelector since it's not used
   },
   layout: 'dashboard_layout',
 
@@ -325,7 +322,7 @@ export default {
     this.getTypeList('ticket_type')
   },
   methods: {
-    getTypeList(type, parent = '') {
+    getTypeList(type, _parent = '') {
       const params = {
         type: type,
       }
@@ -356,7 +353,7 @@ export default {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
         })
-        .then((response) => {
+        .then((_response) => {
           this.$toast.success('Submit successfully')
           this.refreshTickets()
         })
@@ -391,10 +388,10 @@ export default {
               'Content-Type': 'multipart/form-data',
             },
           })
-          .then((response) => {
+          .then((_response) => {
             this.form.file = response.data[0].file.name
           })
-          .catch((err) => {
+          .catch((_err) => {
             this.$toast.error('An error occurred')
           })
           .finally(() => {
@@ -427,12 +424,12 @@ export default {
     refreshTickets() {
       this.$fetch
         .$get(`/api/v1/tickets/${this.$route.params.id}`)
-        .then((response) => {
+        .then((_response) => {
           this.ticketData = response.data
           this.form.message = ''
           this.form.file = ''
         })
-        .catch((err) => {})
+        .catch((_err) => {})
     },
   },
 }

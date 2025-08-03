@@ -20,11 +20,14 @@
       </template>
       <!-- Column Classification -->
       <template #[`item.name`]="{ item }">
-        <span class="font-weight-medium text-grey-darken-2">{{
+        <NuxtLink
+          :to="`/paper/${item.id}/${item.title_url}`"
+          class="font-weight-medium text-grey-darken-2"
+        >{{
           item.variant && item.variant != "0"
-            ? item.test_type_title + item.variant
+            ? item.test_type_title + item.variant_title
             : item.test_type_title
-        }}</span>
+        }}</NuxtLink>
       </template>
 
       <!-- Column Year -->
@@ -88,23 +91,23 @@
       <!-- Column ExamHub -->
       <template #[`item.examHubIcon`]="{ item }">
         <div class="d-flex justify-center">
-          <v-chip
-            v-for="(exam, index) in safeParseArray(item.exam_id)"
-            v-if="item.exam_id"
-            :key="index"
-            class="d-flex align-center justify-center v-chip--link"
-            color="#7F56D9"
-            link
-            :to="`/exam/${exam}`"
-            :disabled="!item.exam_id"
-          >
-            <v-icon
-              size="x-large"
+          <template v-if="item.exam_id">
+            <v-chip
+              v-for="(exam, index) in safeParseArray(item.exam_id)"
+              :key="index"
+              class="d-flex align-center justify-center v-chip--link"
               color="#7F56D9"
+              link
+              :to="`/exam/${exam}`"
             >
-              mdi-clipboard-text-outline
-            </v-icon>
-          </v-chip>
+              <v-icon
+                size="x-large"
+                color="#7F56D9"
+              >
+                mdi-clipboard-text-outline
+              </v-icon>
+            </v-chip>
+          </template>
           <v-chip
             v-if="!item.exam_id"
             class="d-flex align-center justify-center v-chip--link"
@@ -156,11 +159,14 @@
           <template #item="{ item, index }">
             <div class="mobile-card">
               <div class="paper-info">
-                <span class="paper-info-part">{{
+                <NuxtLink
+                  :to="`/paper/${item.id}/${item.title_url}`"
+                  class="paper-info-part"
+                >{{
                   item.variant && item.variant != "0"
-                    ? item.test_type_title + item.variant
+                    ? item.test_type_title + item.variant_title
                     : item.test_type_title
-                }}</span>
+                }}</NuxtLink>
               </div>
               <div class="paper-info">
                 <span class="paper-info-part">{{ item.edu_year }}</span>
@@ -214,24 +220,24 @@
                 </v-chip>
 
                 <!-- ExamHub Chip -->
-                <v-chip
-                  v-for="(exam, index) in safeParseArray(item.exam_id)"
-                  v-if="item.exam_id"
-                  :key="index"
-                  class="exam-hub-chip"
-                  color="#7F56D9"
-                  link
-                  x-small
-                  :to="`/exam/${exam}`"
-                  :disabled="!item.exam_id"
-                >
-                  <v-icon
-                    size="large"
+                <template v-if="item.exam_id">
+                  <v-chip
+                    v-for="(exam, examIndex) in safeParseArray(item.exam_id)"
+                    :key="examIndex"
+                    class="exam-hub-chip"
                     color="#7F56D9"
+                    link
+                    x-small
+                    :to="`/exam/${exam}`"
                   >
-                    mdi-clipboard-text-outline
-                  </v-icon>
-                </v-chip>
+                    <v-icon
+                      size="large"
+                      color="#7F56D9"
+                    >
+                      mdi-clipboard-text-outline
+                    </v-icon>
+                  </v-chip>
+                </template>
                 <v-chip
                   v-if="!item.exam_id"
                   class="exam-hub-chip"
@@ -276,13 +282,15 @@
         class="w-100 d-flex flex-column align-start"
       >
         <v-skeleton-loader
-          v-for="item in 3"
+          v-for="(item, index) in 3"
+          :key="index"
           class="w-50 min-width-200"
           type="subtitle"
         />
         <div class="d-flex">
           <v-skeleton-loader
-            v-for="item in 3"
+            v-for="(item, index) in 3"
+            :key="index"
             type="avatar"
           />
         </div>
@@ -293,7 +301,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const props = defineProps({
   desktopHeader: {

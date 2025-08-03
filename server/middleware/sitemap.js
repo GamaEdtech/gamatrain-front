@@ -1,4 +1,5 @@
-import { parseURL, getQuery } from 'ufo'
+import { parseURL } from 'ufo'
+import { defineEventHandler } from 'h3'
 
 export default defineEventHandler(async (event) => {
   const { req, res } = event.node

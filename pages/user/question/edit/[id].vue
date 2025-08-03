@@ -333,8 +333,8 @@ const getTypeList = async (type, parent = '') => {
       topic_list.value = response.data
     }
   }
-  catch (err) {
-    $toast.error(err.message || 'Error loading data')
+  catch {
+    $toast.error('Error loading data')
   }
   finally {
     loading.section = false
@@ -420,16 +420,8 @@ const updateContent = async () => {
       router.push('/user/question')
     }
   }
-  catch (err) {
-    console.error('Update error:', err)
-    if (err.response?.status === 403) {
-    }
-    else if (err.response?.status === 400) {
-      $toast.error(err.response.data.message || 'Error updating question')
-    }
-    else {
-      $toast.error('An error occurred while updating the question')
-    }
+  catch {
+    $toast.error('Error updating question')
   }
   finally {
     loading.form = false
@@ -464,7 +456,7 @@ const uploadFile = async (value) => {
     formData.file = response.data[0].file.name
     $toast.success('File uploaded successfully')
   }
-  catch (err) {
+  catch {
     $toast.error('An error occurred during file upload')
   }
   finally {

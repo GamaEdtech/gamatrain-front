@@ -93,7 +93,7 @@
 
                     .main-box-Tuition {
                         width: 400px;
-                        height: 200px;
+                        height: 210px;
                         background-color: white;
                         box-shadow: rgb(76 76 76 / 52%) 0px 1px 10px 3px;
                         border-radius: 0 0 10px 10px;
@@ -111,31 +111,25 @@
                             font-size: 24px;
                             font-weight: 600;
                             color: black;
+                            margin-top: 10px;
                         }
                         .subtitle-Tuition {
                             font-size: 16px;
                             font-weight: 400;
                             color: black;
                         }
-                        .input-range {
-                            width: 100%;
-                            margin-top: 20px;
-                            -webkit-appearance: none;
-                            background: #ddd;
-                            height: 15px;
-                            border-radius: 40px;
-                            transition: all 0.5s;
-                            pointer-events: none;
-                        }
-
-                        .input-range[type="range"]::-webkit-slider-thumb {
-                            -webkit-appearance: none; /* Override default look */
-                            appearance: none;
+                        :deep(.v-slider-thumb__label) {
                             background-color: #ffb600;
-                            height: 20px;
-                            width: 20px;
-                            border-radius: 50%;
-                            pointer-events: auto;
+                            height: 36px;
+                        }
+                        :deep(.v-slider-thumb__label::before) {
+                            color: #ffb600;
+                        }
+                        :deep(.v-slider-track__tick) {
+                            background-color: #d0d5dd;
+                        }
+                        :deep(.v-slider-track__tick--filled) {
+                            background-color: #ffd58d;
                         }
                     }
 
@@ -302,7 +296,7 @@
                 width: 96%;
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                justify-content: flex-start;
                 column-gap: 10px;
                 margin-top: 60px;
                 .title-group {
@@ -311,42 +305,23 @@
                     color: black;
                 }
                 .container-input {
-                    width: 80%;
+                    width: 60%;
                     display: flex;
                     align-items: center;
                     justify-content: center;
                     position: relative;
-                    .show-number-fee {
-                        font-size: 14px;
-                        font-weight: 500;
-                        color: black;
-                        padding: 4px 10px;
-                        border-radius: 6px;
+                    :deep(.v-slider-thumb__label) {
                         background-color: #ffb600;
-                        position: absolute;
-                        top: -34px;
-                        width: 80px;
-                        text-align: center;
+                        height: 36px;
                     }
-
-                    .input-range {
-                        width: 100%;
-                        -webkit-appearance: none;
-                        background: #ddd;
-                        height: 15px;
-                        border-radius: 40px;
-                        transition: all 0.5s;
-                        pointer-events: none;
+                    :deep(.v-slider-thumb__label::before) {
+                        color: #ffb600;
                     }
-
-                    .input-range[type="range"]::-webkit-slider-thumb {
-                        -webkit-appearance: none; /* Override default look */
-                        appearance: none;
-                        background-color: #ffb600;
-                        height: 20px;
-                        width: 20px;
-                        border-radius: 50%;
-                        pointer-events: auto;
+                    :deep(.v-slider-track__tick) {
+                        background-color: #d0d5dd;
+                    }
+                    :deep(.v-slider-track__tick--filled) {
+                        background-color: #ffd58d;
                     }
                 }
             }

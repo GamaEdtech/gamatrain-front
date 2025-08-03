@@ -16,7 +16,6 @@
           <v-slide-item
             v-for="(last, index) in lastviewList"
             :key="index"
-            v-slot="{ active, toggle }"
             class="mx-4"
           >
             <div class="last-view-item">

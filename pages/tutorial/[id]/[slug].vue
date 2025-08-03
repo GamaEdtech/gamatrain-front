@@ -114,8 +114,7 @@
                   class="error-report pointer"
                   @click="openCrashReportDialog"
                 >
-                  <i class="fa-solid fa-circle-exclamation mr-2" />Crash
-                  report
+                  <i class="fa-solid fa-circle-exclamation mr-2" />Crash report
                 </div>
               </v-col>
             </v-row>
@@ -174,11 +173,25 @@
     </v-container>
 
     <common-crash-report ref="crashReportRef" />
+    <v-row
+      justify="center"
+      class="mt-10"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        class="text-center"
+      >
+        <common-ad-banner
+          v-model="isAdsLoad"
+          adslot="7199289937"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script setup>
-import { useRuntimeConfig } from 'nuxt/app'
 import { useNuxtApp } from '#app'
 import {
   ref,
@@ -189,25 +202,20 @@ import {
   computed,
 } from 'vue'
 
-const config = useRuntimeConfig()
 const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 const bookContentRef = ref(null)
 
 const route = useRoute()
+const isAdsLoad = ref(false)
 
 // Fetch tutorial data
-const { data: tutorialInfo, error: tutorialError } = await useAsyncData(
+const { data: tutorialInfo, error: _tutorialError } = await useAsyncData(
   `tutorialInfo-${route.params.id}`,
   async () => {
-    try {
-      const response = await useApiService.get(
-        `/api/v1/tutorials/${route.params.id}`,
-      )
-      return response.data
-    }
-    catch (e) {
-      throw e
-    }
+    const response = await useApiService.get(
+      `/api/v1/tutorials/${route.params.id}`,
+    )
+    return response.data
   },
   {
     watch: [() => route.params.id],
@@ -215,19 +223,14 @@ const { data: tutorialInfo, error: tutorialError } = await useAsyncData(
 )
 
 // Fetch lesson tree
-const { data: lessonTree, error: lessonTreeError } = await useAsyncData(
-  'lessonTree',
+const { data: lessonTree, error: _lessonTreeError } = await useAsyncData(
+  `lessonTree-${route.params.id}`,
   async () => {
-    try {
-      if (!tutorialInfo.value?.lesson) return null
-      const response = await useApiService.get(
-        `/api/v1/tutorials/lessonTree/${tutorialInfo.value.lesson}`,
-      )
-      return response.data
-    }
-    catch (e) {
-      throw e
-    }
+    if (!tutorialInfo.value?.lesson) return null
+    const response = await useApiService.get(
+      `/api/v1/tutorials/lessonTree/${tutorialInfo.value.lesson}`,
+    )
+    return response.data
   },
 )
 

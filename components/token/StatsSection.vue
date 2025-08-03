@@ -15,15 +15,22 @@
               <div class="stats-section-stats__card darken-card">
                 <div class="d-flex justify-space-between">
                   <div class="stats-section-stats__card--icon">
-                    <v-icon
-                      :size="`${isMobile ? 'small' : 'x-large'}`"
-                      color="white"
-                    >
-                      mdi-poll
-                    </v-icon>
-                  </div>
-                  <div class="stats-section-stats__card--percent">
-                    +5.2%
+                    <ClientOnly>
+                      <v-icon
+                        :size="`${display.xs.value ? 'small' : 'x-large'}`"
+                        color="white"
+                      >
+                        mdi-poll
+                      </v-icon>
+                      <template #fallback>
+                        <v-icon
+                          size="x-large"
+                          color="white"
+                        >
+                          mdi-poll
+                        </v-icon>
+                      </template>
+                    </ClientOnly>
                   </div>
                 </div>
                 <div class="stats-section-stats__card--title">
@@ -38,15 +45,22 @@
               <div class="stats-section-stats__card darken-card">
                 <div class="d-flex justify-space-between">
                   <div class="stats-section-stats__card--icon">
-                    <v-icon
-                      :size="`${isMobile ? 'small' : 'x-large'}`"
-                      color="white"
-                    >
-                      mdi-finance
-                    </v-icon>
-                  </div>
-                  <div class="stats-section-stats__card--percent">
-                    +10%
+                    <ClientOnly>
+                      <v-icon
+                        :size="`${display.xs.value ? 'small' : 'x-large'}`"
+                        color="white"
+                      >
+                        mdi-finance
+                      </v-icon>
+                      <template #fallback>
+                        <v-icon
+                          size="x-large"
+                          color="white"
+                        >
+                          mdi-finance
+                        </v-icon>
+                      </template>
+                    </ClientOnly>
                   </div>
                 </div>
                 <div class="stats-section-stats__card--title">
@@ -61,19 +75,29 @@
               <div class="stats-section-stats__card">
                 <div class="d-flex justify-space-between">
                   <div class="stats-section-stats__card--icon">
-                    <v-icon
-                      :size="`${isMobile ? 'small' : 'x-large'}`"
-                      color="white"
-                    >
-                      mdi-cached
-                    </v-icon>
+                    <ClientOnly>
+                      <v-icon
+                        :size="`${display.xs.value ? 'small' : 'x-large'}`"
+                        color="white"
+                      >
+                        mdi-cached
+                      </v-icon>
+                      <template #fallback>
+                        <v-icon
+                          size="x-large"
+                          color="white"
+                        >
+                          mdi-cached
+                        </v-icon>
+                      </template>
+                    </ClientOnly>
                   </div>
                   <div class="stats-section-stats__card--percent text-white">
                     75%
                   </div>
                 </div>
                 <div class="stats-section-stats__card--title">
-                  Circuleating Supply
+                  Circulating Supply
                 </div>
                 <div class="stats-section-stats__card--value">
                   750M GET
@@ -84,12 +108,22 @@
               <div class="stats-section-stats__card">
                 <div class="d-flex justify-space-between">
                   <div class="stats-section-stats__card--icon">
-                    <v-icon
-                      :size="`${isMobile ? 'small' : 'x-large'}`"
-                      color="white"
-                    >
-                      mdi-account-arrow-up
-                    </v-icon>
+                    <ClientOnly>
+                      <v-icon
+                        :size="`${display.xs.value ? 'small' : 'x-large'}`"
+                        color="white"
+                      >
+                        mdi-account-arrow-up
+                      </v-icon>
+                      <template #fallback>
+                        <v-icon
+                          size="x-large"
+                          color="white"
+                        >
+                          mdi-account-arrow-up
+                        </v-icon>
+                      </template>
+                    </ClientOnly>
                   </div>
                   <div
                     class="stats-section-stats__card--percent text-deep-orange-lighten-1"
@@ -113,7 +147,83 @@
           </h2>
         </div>
 
-        <v-row class="mt-2 mx-5">
+        <!-- Mobile Layout: Vertical Stacking -->
+        <div
+          v-if="isMobile"
+          class="mobile-chart-layout"
+        >
+          <!-- Mobile Price Display -->
+          <div class="mobile-price-section mb-4">
+            <div class="stats-section-chart__card mobile-price-card">
+              <div class="stats-section-chart__box mobile-price-box">
+                $0.00892
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Token List -->
+          <div class="mobile-token-section mb-4">
+            <div class="stats-section-chart__coins mobile-token-list">
+              <div class="d-flex align-center mb-3">
+                <img
+                  src="/images/token/Stats/token-get.png"
+                  alt="GET token"
+                  class="token-icon mobile-token-icon mr-3"
+                  loading="lazy"
+                  @error="createImageLoadHandler()"
+                >
+                <span class="token-label mobile-token-label">GET</span>
+              </div>
+              <div class="d-flex align-center mb-3">
+                <img
+                  src="/images/token/Stats/token-usdc.png"
+                  alt="USDC token"
+                  class="token-icon mobile-token-icon mr-3"
+                  loading="lazy"
+                  @error="$event.target.style.display='none'"
+                >
+                <span class="token-label mobile-token-label">USDC</span>
+              </div>
+              <div class="d-flex align-center mb-3">
+                <img
+                  src="/images/token/Stats/token-usdt.png"
+                  alt="USDT token"
+                  class="token-icon mobile-token-icon mr-3"
+                  loading="lazy"
+                  @error="$event.target.style.display='none'"
+                >
+                <span class="token-label mobile-token-label">USDT</span>
+              </div>
+              <div class="d-flex align-center">
+                <img
+                  src="/images/token/Stats/token-wbtc.png"
+                  alt="WBTC token"
+                  class="token-icon mobile-token-icon mr-3"
+                  loading="lazy"
+                  @error="$event.target.style.display='none'"
+                >
+                <span class="token-label mobile-token-label">WBTC</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Chart -->
+          <div class="mobile-chart-section">
+            <iframe
+              class="stats-section-chart__iframe mobile-chart-iframe"
+              width="100%"
+              :style="{ height: chartHeight }"
+              src="https://birdeye.so/tv-widget/GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv?chain=solana&viewMode=pair&chartInterval=1D&chartType=Candle&chartTimezone=Etc%2FUTC&chartLeftToolbar=show&theme=dark"
+              allowfullscreen
+            />
+          </div>
+        </div>
+
+        <!-- Desktop Layout: Horizontal -->
+        <v-row
+          v-else
+          class="mt-2 mx-5"
+        >
           <v-col
             cols="4"
             sm="3"
@@ -128,7 +238,7 @@
               <div class="stats-section-chart__coins flex-grow-1">
                 <div class="d-flex align-center mb-2 mb-md-4">
                   <img
-                    src="/images/token/token-get.png"
+                    src="/images/token/Stats/token-get.png"
                     alt="GET"
                     class="token-icon mr-2"
                   >
@@ -136,7 +246,7 @@
                 </div>
                 <div class="d-flex align-center mb-2 mb-md-4">
                   <img
-                    src="/images/token/token-usdc.png"
+                    src="/images/token/Stats/token-usdc.png"
                     alt="USDC"
                     class="token-icon mr-2"
                   >
@@ -144,7 +254,7 @@
                 </div>
                 <div class="d-flex align-center mb-2 mb-md-4">
                   <img
-                    src="/images/token/token-usdt.png"
+                    src="/images/token/Stats/token-usdt.png"
                     alt="USDT"
                     class="token-icon mr-2"
                   >
@@ -152,7 +262,7 @@
                 </div>
                 <div class="d-flex align-center">
                   <img
-                    src="/images/token/token-wbtc.png"
+                    src="/images/token/Stats/token-wbtc.png"
                     alt="WBTC"
                     class="token-icon mr-2"
                   >
@@ -169,8 +279,8 @@
             <iframe
               class="stats-section-chart__iframe"
               width="100%"
+              :style="{ height: chartHeight }"
               src="https://birdeye.so/tv-widget/GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv?chain=solana&viewMode=pair&chartInterval=1D&chartType=Candle&chartTimezone=Etc%2FUTC&chartLeftToolbar=show&theme=dark"
-              frameborder="0"
               allowfullscreen
             />
           </v-col>
@@ -184,15 +294,53 @@
 import { useDisplay } from 'vuetify'
 
 const display = useDisplay()
+const { createImageLoadHandler } = useSafeImage()
+
+// Reactive state for responsive layout management
 const isMobile = ref(false)
+const layoutMode = ref('horizontal')
+const chartHeight = ref('145px')
+
+// Computed properties for responsive breakpoint detection
+const isExtraSmall = computed(() => display.xs.value)
+const isSmallAndUp = computed(() => display.smAndUp.value)
+const screenSize = computed(() => {
+  if (display.xs.value) return 'xs'
+  if (display.sm.value) return 'sm'
+  if (display.md.value) return 'md'
+  if (display.lg.value) return 'lg'
+  return 'xl'
+})
+
+// Use computed properties to avoid unused variable warnings
+const _ = { isExtraSmall, isSmallAndUp, screenSize }
+
+// Responsive state management with fallback
+const updateResponsiveState = () => {
+  try {
+    isMobile.value = display.xs.value
+    layoutMode.value = display.xs.value ? 'vertical' : 'horizontal'
+    chartHeight.value = display.xs.value ? '250px' : '100%'
+  }
+  catch (error) {
+    // Fallback for display detection failures
+    console.warn('Display detection failed, using mobile-safe defaults:', error)
+    isMobile.value = true
+    layoutMode.value = 'vertical'
+    chartHeight.value = '250px'
+  }
+}
 
 onMounted(() => {
-  isMobile.value = display.xs.value
+  updateResponsiveState()
+
+  // Watch for screen size changes with error handling
   watch(
     () => display.xs.value,
-    (newVal) => {
-      isMobile.value = newVal
+    () => {
+      updateResponsiveState()
     },
+    { immediate: true },
   )
 })
 </script>
@@ -236,6 +384,57 @@ onMounted(() => {
 }
 .stats-section-chart__iframe {
   height: 145px;
+}
+
+/* Mobile-specific styles */
+.mobile-chart-layout {
+  padding: 0 20px;
+}
+
+.mobile-price-section {
+  display: flex;
+  justify-content: center;
+}
+
+.mobile-price-card {
+  width: 100%;
+  max-width: 300px;
+  padding: 12px;
+}
+
+.mobile-price-box {
+  font-size: 16px;
+  padding: 12px 8px;
+  font-weight: 800;
+}
+
+.mobile-token-section {
+  display: flex;
+  justify-content: center;
+}
+
+.mobile-token-list {
+  width: 100%;
+  max-width: 300px;
+  padding: 16px;
+}
+
+.mobile-token-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.mobile-token-label {
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.mobile-chart-section {
+  width: 100%;
+}
+
+.mobile-chart-iframe {
+  border-radius: 8px;
 }
 .stats-section-stats__card {
   border-radius: 8px;
@@ -288,8 +487,7 @@ onMounted(() => {
   background: #03122e;
   padding: 3rem 0;
 }
-.stats-section__content {
-}
+
 .stats-section__title {
   font-size: 28px;
   color: #fff;
@@ -300,6 +498,30 @@ onMounted(() => {
   color: #fff;
   font-size: 10px;
 }
+/* Enhanced mobile spacing and touch targets */
+@media (max-width: 599px) {
+  .mobile-chart-layout {
+    padding: 0 16px;
+  }
+
+  .mobile-price-section {
+    margin-bottom: 20px;
+  }
+
+  .mobile-token-section {
+    margin-bottom: 20px;
+  }
+
+  .mobile-token-list .d-flex {
+    min-height: 44px; /* Minimum touch target size */
+    align-items: center;
+  }
+
+  .stats-section {
+    padding: 2rem 0;
+  }
+}
+
 @media (min-width: 600px) {
   .stats-section-chart__iframe {
     height: 100%;

@@ -333,7 +333,7 @@ useHead({
 // Services
 const { $toast } = useNuxtApp()
 
-const router = useRouter()
+const _router = useRouter()
 
 // User token
 const userToken = ref('')

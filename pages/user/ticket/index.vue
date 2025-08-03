@@ -375,7 +375,7 @@ export default {
       this.delete_loading = true
       await this.$fetch
         .$delete(`/api/v1/tickets/${this.delete_ticket_id}`)
-        .then((response) => {
+        .then((_response) => {
           this.delete_ticket_id = null
           this.deleteConfirmDialog = false
 
@@ -385,7 +385,7 @@ export default {
           this.messages = []
           this.getMsgList()
         })
-        .catch((e) => {
+        .catch((_e) => {
           this.delete_paper_id = null
           this.deleteConfirmDialog = false
         })

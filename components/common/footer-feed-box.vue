@@ -34,8 +34,7 @@
             <nuxt-link
               :to="`${feed.main_link}/${item.id}`"
               class="pb-2 feed-title"
-              v-html="item.title"
-            />
+            >{{ item.title }}</nuxt-link>
             <v-list-item-subtitle
               class="feed-subtitle d-flex justify-space-between"
             >

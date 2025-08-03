@@ -50,15 +50,11 @@
         {{ localContentData.sex_title }}
       </v-chip>
     </v-sheet>
-    <v-spacer />
-    <div class="gtext-t4 primary-blue-500 cursor-pointer">
-      Contribute
-    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { ref, watch } from 'vue'
 
 const props = defineProps({
   contentData: {
@@ -66,8 +62,6 @@ const props = defineProps({
     required: true,
   },
 })
-
-const emit = defineEmits(['onChipsClick'])
 
 const localContentData = ref(props.contentData)
 

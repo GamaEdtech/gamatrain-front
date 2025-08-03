@@ -1,5 +1,4 @@
-import { onMounted, onUnmounted, ref } from 'vue'
-import type { Ref } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 export function useClickOutside(
   elementRef: Ref<HTMLElement | HTMLElement[] | null | undefined>,
@@ -9,9 +8,7 @@ export function useClickOutside(
     const target = event.target as Node
 
     if (Array.isArray(elementRef.value)) {
-      const isInside = elementRef.value.some(el =>
-        el?.contains(target),
-      )
+      const isInside = elementRef.value.some(el => el?.contains(target))
       if (!isInside) {
         callback()
       }

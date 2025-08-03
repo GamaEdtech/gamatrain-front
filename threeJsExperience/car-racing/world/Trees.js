@@ -1,4 +1,10 @@
-import { SRGBColorSpace, MeshBasicMaterial, InstancedMesh, DynamicDrawUsage, Object3D } from 'three'
+import {
+  SRGBColorSpace,
+  MeshBasicMaterial,
+  InstancedMesh,
+  DynamicDrawUsage,
+  Object3D,
+} from 'three'
 import Experience from '../Experience.js'
 
 export default class Trees {
@@ -22,7 +28,9 @@ export default class Trees {
 
   setGeometry() {
     this.gltgModel = this.resources.items.treeGLTFModel.scene
-    this.geometry = this.gltgModel.children.find(child => child.isMesh).geometry
+    this.geometry = this.gltgModel.children.find(
+      child => child.isMesh,
+    ).geometry
   }
 
   setMaterial() {
@@ -34,7 +42,11 @@ export default class Trees {
   }
 
   setMesh() {
-    this.meshes = new InstancedMesh(this.geometry, this.material, this.treeCount)
+    this.meshes = new InstancedMesh(
+      this.geometry,
+      this.material,
+      this.treeCount,
+    )
     this.meshes.instanceMatrix.setUsage(DynamicDrawUsage)
     this.dummy = new Object3D()
 
@@ -42,7 +54,13 @@ export default class Trees {
       const x = Math.random() * this.options.roadSize
       const y = 2.5
 
-      const z = i < this.treeCount / 2 ? this.options.mountainWidth - 2 + Math.random() * 4 : this.options.mountainWidth + this.options.groundWidth - 4 + Math.random() * 4
+      const z
+        = i < this.treeCount / 2
+          ? this.options.mountainWidth - 2 + Math.random() * 4
+          : this.options.mountainWidth
+            + this.options.groundWidth
+            - 4
+            + Math.random() * 4
       const scale = 0.5 + Math.random() * 0.2
 
       this.dummy.position.set(x, y, z)
@@ -55,10 +73,7 @@ export default class Trees {
     this.scene.add(this.meshes)
   }
 
-  update() {
-  }
+  update() {}
 
-  setDebug() {
-    const TreesFolder = this.debug.ui.addFolder('TreesFolder')
-  }
+  setDebug() {}
 }

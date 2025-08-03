@@ -3,7 +3,25 @@ import { useUser } from '@/composables/useUser'
 import { useAuth } from '@/composables/useAuth'
 
 interface UserResponse {
-  data: any
+  data: {
+    id: string
+    username: string
+    first_name: string
+    last_name: string
+    avatar: string
+    sex: string | null
+    active: string
+    credit: string
+    group_id: number
+    section: string | null
+    base: string | null
+    course: string | null
+    area: string | null
+    school: string | null
+    score_check_info: string
+    state: string | null
+    city: string | null
+  }
 }
 
 interface ErrorResponse {
@@ -27,7 +45,10 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return
   }
 
-  const hasFetchedUserInfo = useState<boolean>('hasFetchedUserInfo', () => false)
+  const hasFetchedUserInfo = useState<boolean>(
+    'hasFetchedUserInfo',
+    () => false,
+  )
 
   if (!hasFetchedUserInfo.value) {
     try {

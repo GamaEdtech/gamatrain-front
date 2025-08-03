@@ -306,7 +306,7 @@ const pinQuestion = (question_id) => {
 }
 
 const eraseTest = (question_id) => {
-  delete examStats.answerData[question_id]
+  examStats.answerData[question_id] = undefined
   if (!examStats.notAnsweredArr.includes(question_id)) {
     examStats.notAnsweredArr.push(question_id)
   }

@@ -11,7 +11,8 @@ export default class Levels {
 
     this.laneCount = this.options.countLine
     this.laneWidth = this.options.roadWidth / this.laneCount
-    this.positionMiddleRoad = this.options.mountainWidth + (this.options.groundWidth / 2)
+    this.positionMiddleRoad
+      = this.options.mountainWidth + this.options.groundWidth / 2
     this.questions = this.options.questions
     this.positionYNumber = 1.2
     this.configTextGeometry = {
@@ -47,7 +48,10 @@ export default class Levels {
   }
 
   getRoadZOffset(positionX) {
-    return Math.cos(positionX * this.options.roadFrequencyX) * this.options.roadAmplitudeX
+    return (
+      Math.cos(positionX * this.options.roadFrequencyX)
+      * this.options.roadAmplitudeX
+    )
   }
 
   getFinalZ(positionX, currentLane) {
@@ -62,7 +66,7 @@ export default class Levels {
     const dz = nextZ - currentZ
     const angle = Math.atan2(dz, deltaX)
 
-    return angle + 3 * Math.PI / 2
+    return angle + (3 * Math.PI) / 2
   }
 
   getRandomColor() {
@@ -71,7 +75,9 @@ export default class Levels {
   }
 
   setMaterial() {
-    this.materials = this.predefinedColors.map(color => new MeshBasicMaterial({ color }))
+    this.materials = this.predefinedColors.map(
+      color => new MeshBasicMaterial({ color }),
+    )
   }
 
   createMeshForQuestion(index) {
@@ -83,7 +89,8 @@ export default class Levels {
       const geometry = new this.TextGeometry(text, this.configTextGeometry)
       geometry.center()
 
-      const material = this.materials[Math.floor(Math.random() * this.materials.length)]
+      const material
+        = this.materials[Math.floor(Math.random() * this.materials.length)]
       const mesh = new Mesh(geometry, material)
 
       const laneNumber = jIndex + 1
@@ -119,11 +126,12 @@ export default class Levels {
   update() {
     const time = this.time.elapsed * 0.001
     this.meshes.forEach((mesh) => {
-      mesh.position.y = this.positionYNumber + Math.sin(time * this.floatSpeed + mesh.userData.floatOffset) * this.floatAmplitude
+      mesh.position.y
+        = this.positionYNumber
+          + Math.sin(time * this.floatSpeed + mesh.userData.floatOffset)
+          * this.floatAmplitude
     })
   }
 
-  setDebug() {
-    const LevelsFolder = this.debug.ui.addFolder('Levels')
-  }
+  setDebug() {}
 }

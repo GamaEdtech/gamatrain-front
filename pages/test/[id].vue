@@ -3,7 +3,8 @@
     <template v-if="!contentData">
       <v-skeleton-loader type="subtitle" />
       <v-skeleton-loader
-        v-for="loader in 4"
+        v-for="(loader, index) in 4"
+        :key="index"
         type="paragraph"
       />
     </template>
@@ -13,19 +14,36 @@
       :content-data="contentData"
       @next="handleLoadNextTest"
     />
+
+    <v-row
+      justify="center"
+      class="mt-10"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        class="text-center"
+      >
+        <common-ad-banner
+          v-model="isAdsLoad"
+          adslot="7199289937"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script setup>
 const route = useRoute()
 const testId = ref(route.params.id)
+const isAdsLoad = ref(false)
 
 // Fetch data
 const {
   data: contentData,
-  pending,
+  pending: _pending,
   refresh,
-  execute,
+  execute: _execute,
 } = await useAsyncData(`exam-test-${route.params.id}`, async () => {
   const res = await $fetch(`/api/v1/examTests/${route.params.id}`, {
     params: { full: true },

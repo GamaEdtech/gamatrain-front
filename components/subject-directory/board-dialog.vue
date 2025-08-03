@@ -99,7 +99,7 @@ const props = defineProps({
   },
   items: {
     type: Array,
-    default: [],
+    default: () => [],
   },
 })
 const emit = defineEmits(['update:showDialog', 'changeSelectedItem'])

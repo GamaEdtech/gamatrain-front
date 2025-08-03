@@ -314,8 +314,8 @@ const getTypeList = async (type, parent = '') => {
       }
     }
   }
-  catch (err) {
-    $toast.error(err.message || 'Error loading data')
+  catch {
+    $toast.error('Error loading data')
   }
   finally {
     loading.section = false
@@ -353,12 +353,8 @@ const submitQuestion = async () => {
       router.push('/user/question')
     }
   }
-  catch (err) {
-    if (err.response?.status === 403) {
-    }
-    else if (err.response?.status === 400) {
-      $toast.error(err.response.data.message || 'Error submitting question')
-    }
+  catch {
+    $toast.error('Error submitting question')
   }
   finally {
     loading.form = false
@@ -394,7 +390,7 @@ const uploadFile = async (value) => {
     formData.file = response.data[0].file.name
     $toast.success('File uploaded successfully')
   }
-  catch (err) {
+  catch {
     $toast.error('An error occurred during file upload')
   }
   finally {

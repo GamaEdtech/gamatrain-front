@@ -1,58 +1,44 @@
 <template>
-  <header class="hero-section">
-    <div class="hero-section__content py-12">
-      <v-container class="pb-0">
-        <v-row align="center">
-          <v-col
-            cols="12"
-            md="8"
-            class="pb-0 d-flex flex-column justify-center"
-          >
-            <div class="d-flex flex-md-row flex-column mb-5 mb-md-10">
-              <div
-                class="align-self-md-end align-self-center mr-md-10 mb-2 w-full"
-              >
-                <v-btn
-                  class="live-trading-btn mr-4 d-flex align-center"
-                  rounded
-                  :size="`${isMobile ? 'large' : 'x-large'}`"
-                  elevation="0"
-                >
-                  <span class="live-trading-dot mr-2" />
-                  Live Trading
-                </v-btn>
+  <section class="hero-section">
+    <v-container class="hero-container">
+      <v-row
+        align="center"
+        justify="center"
+      >
+        <v-col
+          cols="12"
+          class="hero-content"
+        >
+          <div class="content-left">
+            <div class="content-left-top">
+              <div class="live-trading-badge">
+                <span class="live-dot" />
+                Live Trading
               </div>
-              <h1
-                class="hero-section__title font-weight-bold text-white mt-5 mt-md-0"
-              >
+
+              <h1 class="main-title">
                 $GET
               </h1>
 
-              <div class="d-md-none d-flex justify-center mt-5">
-                <img
-                  src="/images/token/token.png"
-                  alt="Token"
-                  class="hero-token__image--mobile"
-                >
-              </div>
-            </div>
-            <div class="d-flex justify-center flex-column align-center">
-              <div class="text-white mb-6 hero-token__description">
-                The future of decentralized finance. powering innovation,
+              <p class="description">
+                The future of decentralized finance, powering innovation,<br>
                 enabling growth, and creating value for the community.
+              </p>
+
+              <div class="price-section">
+                <div class="price">
+                  ${{ formattedPrice }}
+                </div>
+                <div class="change">
+                  +6.47%
+                </div>
               </div>
-              <div class="mb-1">
-                <span class="hero-token__price text-white">${{ finalPrice }}</span>
-              </div>
-              <div class="mb-6">
-                <span class="hero-token__percentage">+6.47%</span>
-              </div>
-              <div class="d-flex align-center">
+
+              <div class="action-buttons">
                 <v-btn
                   target="_blank"
                   href="https://jup.ag/swap/So11111111111111111111111111111111111111112-GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv"
-                  :size="`${isMobile ? 'large' : 'x-large'}`"
-                  class="buy-btn mr-4"
+                  class="buy-btn"
                   rounded
                   elevation="0"
                 >
@@ -62,53 +48,72 @@
                   to="/whitepaper"
                   class="whitepaper-btn"
                   rounded
-                  :size="`${isMobile ? 'large' : 'x-large'}`"
                   elevation="0"
                 >
                   View Whitepaper
                 </v-btn>
               </div>
             </div>
-          </v-col>
-          <v-col
-            cols="12"
-            md="4"
-            class="pb-0 d-flex justify-center align-center"
-          >
-            <img
-              src="/images/token/token.png"
-              alt="Token"
-              class="token-image d-none d-md-block horizontal-coin"
-            >
-          </v-col>
-        </v-row>
-      </v-container>
-    </div>
-  </header>
+          </div>
+
+          <div class="content-right">
+            <div class="token-wrapper">
+              <img
+                src="/images/token/Hero/GET-coin.svg"
+                alt="GET Token"
+              >
+            </div>
+          </div>
+        </v-col>
+      </v-row>
+    </v-container>
+  </section>
 </template>
 
 <script setup>
-import { useDisplay } from 'vuetify'
+import { ref, onMounted, computed } from 'vue'
 
-const display = useDisplay()
-const isMobile = ref(false)
 const finalPrice = ref(0)
+const animatedPrice = ref(0)
 
-onMounted(() => {
-  isMobile.value = display.xs.value
-  watch(
-    () => display.xs.value,
-    (newVal) => {
-      isMobile.value = newVal
-    },
-  )
+const formattedPrice = computed(() => {
+  // Format to show fewer decimal places
+  return animatedPrice.value.toFixed(6)
 })
 
 const fetchTokenPrice = async () => {
-  const data = await $fetch(
-    'https://lite-api.jup.ag/price/v2?ids=GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv',
-  )
-  finalPrice.value = Object.values(data.data)[0]['price']
+  try {
+    const data = await $fetch(
+      'https://lite-api.jup.ag/price/v2?ids=GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv',
+    )
+    finalPrice.value = Object.values(data.data)[0]['price']
+
+    // Start animation after fetching the price
+    animatePrice()
+  }
+  catch (error) {
+    console.error('Error fetching token price:', error)
+    finalPrice.value = 0.002546 // Fallback price
+    animatePrice()
+  }
+}
+
+const animatePrice = () => {
+  const duration = 1200
+  const frameRate = 60
+  const totalFrames = Math.round((duration / 1000) * frameRate)
+  let frame = 0
+
+  const animate = () => {
+    frame++
+    const progress = Math.min(frame / totalFrames, 1)
+    animatedPrice.value = +(finalPrice.value * progress).toFixed(6)
+    if (progress < 1) {
+      requestAnimationFrame(animate)
+    }
+  }
+
+  animate()
 }
 
 onMounted(() => {
@@ -117,146 +122,359 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* Base styles (Desktop) */
 .hero-section {
-  padding: 6rem 0 1rem 0;
-  position: relative;
-  background: #000000;
+  background: #000;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 2rem;
 }
-.hero-section__content {
+
+.hero-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
-.hero-section__title {
-  font-size: 64px;
-  font-weight: 800;
-  line-height: 0.9em;
-  text-align: center;
+
+.hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
 }
-.live-trading-btn {
+
+.content-left {
+  flex: 1;
+  max-width: 700px;
+}
+
+.content-right {
+  flex: 0 0 auto;
+}
+
+.live-trading-badge {
   background: rgba(5, 182, 231, 0.3) !important;
   border: 1px solid rgba(110, 119, 129, 1) !important;
-  color: #fff !important;
-  text-transform: none;
+  border-radius: 999px;
+  padding: 10px 12px;
+  font-size: 12px;
   font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0px;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
 }
-.buy-btn {
-  background: linear-gradient(
-    to bottom,
-    rgba(36, 170, 148, 1) 0%,
-    rgba(14, 68, 59, 1) 100%
-  ) !important;
-  color: #fff !important;
-  border-radius: 30px !important;
-  box-shadow: none !important;
-  text-transform: none;
-}
-.hero-token__price {
-  font-size: 24px;
-  font-weight: 800;
-}
-.hero-token__description {
-  font-size: 12px;
-  font-weight: 400;
-  text-align: center;
-  line-height: 20px;
-}
-.hero-token__percentage {
-  font-size: 20px;
-  font-weight: 400;
-  color: #24aa94;
-}
-.whitepaper-btn {
-  background: rgba(66, 73, 82, 1) !important;
-  border: 1.5px solid rgba(110, 119, 129, 1) !important;
-  color: #fff !important;
-  border-radius: 30px !important;
-  box-shadow: none !important;
-  text-transform: none;
-}
-.token-image {
-  display: block;
-  margin: 0 auto;
-  max-width: 420px;
-  width: 100%;
-  height: auto;
-}
-.hero-token__image--mobile {
-  width: 125px;
-  height: 125px;
-}
-.live-trading-dot {
-  width: 10px;
-  height: 10px;
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  background: #24aa94;
   border-radius: 50%;
-  background: rgba(36, 170, 148, 1);
-  display: inline-block;
-  animation: pulse 1.2s infinite;
+  animation: pulse 2s infinite;
+}
+
+.main-title {
+  font-size: 10rem;
+  color: white;
+  margin: 0 0 2rem 0;
+  line-height: 1;
+  text-align: left;
+}
+
+.description {
+  font-size: 1.5rem;
+  line-height: 1.6;
+  color: #b0b0b0;
+  margin: 0 0 2rem 0;
+  max-width: 700px;
+  text-align: left;
+}
+
+.price-section {
+  margin-bottom: 2.5rem;
+  text-align: left;
+}
+
+.price {
+  font-size: 4.5rem;
+  color: white;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.change {
+  font-size: 1.5rem;
+  color: #24aa94;
+  font-weight: 600;
+}
+
+.token-wrapper {
+  width: 400px;
+  height: 400px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.token-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  animation: slowTilt 8s ease-in-out infinite;
+}
+
+.token-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25) 50%,
+    transparent
+  );
+  animation: shimmer 4s ease-in-out infinite;
+  z-index: 1;
+  pointer-events: none;
+}
+
+@keyframes slowTilt {
+  0%, 100% {
+    transform: rotateY(-15deg);
+  }
+  50% {
+    transform: rotateY(15deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.buy-btn, .whitepaper-btn {
+  padding: 12px 24px !important;
+  font-size: 14px !important;
+  min-width: 160px !important;
+  height: 48px !important;
+  border-radius: 999px !important;
+  font-weight: 600;
+}
+
+.buy-btn {
+  background: linear-gradient(90deg, #24aa94 0%, #18806d 100%) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+.whitepaper-btn {
+  background: #484f57 !important;
+  color: #fff !important;
+  border: 1px solid #bfc5cc !important;
+}
+
+/* Mobile styles */
+@media (max-width: 480px) {
+  .hero-section {
+    margin-top: 6rem;
+    padding: 1rem;
+    min-height: auto;
+  }
+
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 2rem;
+  }
+
+  .content-left {
+    width: 100%;
+  }
+
+  .content-right {
+    width: 100%;
+  }
+
+  .live-trading-badge {
+    padding: 8px 8px;
+    font-size: 10px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .main-title {
+    font-size: 7rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .description {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .token-wrapper {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+  }
+
+  .price-section {
+    text-align: center;
+  }
+
+  .price {
+    font-size: 3rem;
+  }
+
+  .change {
+    font-size: 1.25rem;
+  }
+
+  .action-buttons {
+    justify-content: center;
+  }
+
+  .buy-btn, .whitepaper-btn {
+    padding: 8px 8px !important;
+    font-size: 9px !important;
+    min-width: 80px !important;
+    height: 40px !important;
+  }
+}
+
+/* Tablet styles */
+@media (min-width: 481px) and (max-width: 768px) {
+  .hero-section {
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .hero-content {
+    flex-direction: column;
+    text-align: center;
+    gap: 3rem;
+  }
+
+ .live-trading-badge {
+    padding: 14px 14px;
+    font-size: 16px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .content-left {
+    width: 100%;
+  }
+
+  .content-right {
+    width: 100%;
+  }
+
+  .token-wrapper {
+    width: 300px;
+    height: 300px;
+    margin: 0 auto;
+  }
+
+  .main-title {
+    font-size: 12rem;
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .description {
+    font-size: 2rem;
+    text-align: center;
+    margin: 0 auto 2rem;
+  }
+
+  .price-section {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  .price {
+    font-size: 4rem;
+  }
+
+  .change {
+    font-size: 3rem;
+  }
+
+  .action-buttons {
+    justify-content: center;
+  }
+
+  .buy-btn, .whitepaper-btn {
+    padding: 10px 12px !important;
+    font-size: 16px !important;
+    min-width: 80px !important;
+    height: 50px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-content {
+    gap: 2rem;
+  }
+  .content-left {
+    max-width: 600px;
+  }
+  .token-wrapper {
+    width: 380px;
+    height: 380px;
+  }
+  .main-title {
+    font-size: 12rem;
+    margin-bottom: 3rem;
+    margin-top: 2rem;
+  }
+  .description {
+    font-size: 2.2rem;
+    margin-bottom: 2.5rem;
+  }
+  .price-section {
+    margin-bottom: 3rem;
+  }
+  .price {
+    font-size: 6rem;
+    margin-bottom: 1rem;
+  }
+  .change {
+    font-size: 3.25rem;
+  }
+  .action-buttons {
+    margin-top: 2rem;
+  }
+  .buy-btn, .whitepaper-btn {
+    font-size: 1.5rem !important;
+    min-width: 200px !important;
+    height: 60px !important;
+    padding: 18px 36px !important;
+  }
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(36, 170, 148, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 12px rgba(36, 170, 148, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(36, 170, 148, 0);
-  }
-}
-@media (min-width: 600px) {
-  .hero-token__percentage {
-    font-size: 32px;
-  }
-  .hero-token__description {
-    font-size: 24px;
-    line-height: 36px;
-  }
-  .hero-token__price {
-    font-size: 48px;
-  }
-  .hero-section__title {
-    font-size: 156px;
-    font-weight: 800;
-    line-height: 0.9em;
-  }
-  .live-trading-dot {
-    width: 24px;
-    height: 24px;
-  }
-  .live-trading-btn {
-    font-weight: 600;
-    font-size: 24px;
-  }
-  .hero-section {
-    padding: 10rem 0 8rem 0;
-  }
-}
-@media (min-width: 960px) {
-}
-.rotating-coin {
-  animation: rotate-coin 4s linear infinite;
-  will-change: transform;
-}
-@keyframes rotate-coin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-.horizontal-coin {
-  animation: move-horizontal 4s ease-in-out infinite alternate;
-  will-change: transform;
-}
-
-@keyframes move-horizontal {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(60px); /* Adjust distance as needed */
-  }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 </style>

@@ -5,6 +5,7 @@ Thank you for contributing to GamaEdtech! We appreciate your efforts to improve 
 ## Table of Contents
 1. [Commit Message Conventions](#commit-message-conventions)
 2. [Branch Naming Conventions](#branch-naming-conventions)
+3. [Pull Request Standards](#pull-request-standards)
 
 ## Commit Message Conventions
 
@@ -53,3 +54,81 @@ Branches should be named in a way that clearly indicates the purpose of the bran
 - **fix**: Bug fixes
 - **docs**: Documentation updates
 - **chore**: Other tasks such as refactoring, configuration, or testing
+
+## Pull Request Standards
+
+All pull requests must follow these standards to maintain consistency and enable automated processes.
+
+### Pull Request Title Format
+
+PR titles **must** follow the [Conventional Commits](https://www.conventionalcommits.org/) format, similar to commit messages:
+
+```
+<type>[optional scope]: <description>
+```
+
+#### Examples:
+- `feat(auth): add JWT authentication system`
+- `fix(ui): resolve button alignment issue on mobile`
+- `docs: update API documentation`
+- `chore(deps): update dependencies to latest versions`
+
+#### Rules:
+- **Type**: Must be one of: `feat`, `fix`, `docs`, `chore`, `style`, `refactor`, `test`
+- **Scope**: Optional but recommended (e.g., component, module, or area affected)
+- **Description**: Should be clear, concise, and written in imperative mood
+- **Case**: Description should start with lowercase letter
+- **Length**: Keep title under 72 characters
+
+### Pull Request Body Requirements
+
+The PR body should provide clear context and information:
+
+#### Required Content:
+- **What**: Clear description of changes made
+- **Why**: Explanation of why these changes were necessary
+- **How**: Brief overview of the approach taken (if complex)
+- **Testing**: Information about testing performed
+
+#### Example PR Body:
+```markdown
+## What
+Add JWT authentication system to secure API endpoints.
+
+## Why
+Current authentication system is outdated and has security vulnerabilities.
+Need to implement modern token-based authentication.
+
+## How
+- Implemented JWT token generation and validation
+- Added middleware for protected routes
+- Updated user login/logout flows
+
+## Testing
+- Added unit tests for JWT utilities
+- Tested login/logout flows manually
+- Verified token expiration handling
+```
+
+#### Quality Standards:
+- Minimum 10 characters (automated check)
+- No spelling errors or typos
+- Clear and descriptive language
+- Proper grammar and formatting
+- Include relevant issue references if applicable
+
+### Automated Validation
+
+All PRs are automatically validated for:
+- ✅ Title format compliance
+- ✅ Body content quality
+- ✅ Proper spelling and grammar
+
+PRs that don't meet these standards will be **blocked** until corrected.
+
+### Tips for Success:
+- Review the [Conventional Commits specification](https://www.conventionalcommits.org/)
+- Use clear, descriptive language
+- Proofread your PR title and body before submitting
+- Reference related issues using `#issue-number`
+- Keep changes focused and atomic

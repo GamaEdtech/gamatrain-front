@@ -56,14 +56,14 @@ ChartJS.register(
 
 // Composables
 const auth = useAuth()
-const { $toast } = useNuxtApp()
+const { $toast: _toast } = useNuxtApp()
 
 // Reactive state
 const loading = ref(false)
 const selectedPeriod = ref('MonthOfYear')
 const token = ref('')
 
-const periodOptions = [
+const _periodOptions = [
   { text: 'Monthly', value: 'MonthOfYear' },
   { text: 'Weekly', value: 'DayOfWeek' },
 ]

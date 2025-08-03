@@ -207,7 +207,7 @@ export default {
       this.exam_list = []
       this.getExams()
     },
-    'filter.lesson'(val) {
+    'filter.lesson'(_val) {
       this.page = 1
       this.all_files_loaded = false
       this.exam_list = []
@@ -220,13 +220,13 @@ export default {
     this.scroll()
   },
   methods: {
-    getTypeList(type, parent = '') {
+    getTypeList(type, _val) {
       const params = {
         type: type,
       }
-      if (type === 'base') params.section_id = parent
+      if (type === 'base') params.section_id = _val
       if (type === 'lesson') {
-        params.base_id = parent
+        params.base_id = _val
       }
 
       this.$fetch
@@ -234,7 +234,7 @@ export default {
           params,
         })
         .then((res) => {
-          const data = {}
+          const _data = {}
           if (type === 'section') {
             this.level_list = res.data
           }

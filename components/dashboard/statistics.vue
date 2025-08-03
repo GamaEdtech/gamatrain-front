@@ -104,7 +104,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+const _props = defineProps({
   userInfo: {
     type: Object,
     required: true,

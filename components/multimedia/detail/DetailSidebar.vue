@@ -172,7 +172,7 @@ const emit = defineEmits(['download', 'copy-url', 'share-social'])
 
 // Reactive state
 const rating = ref(4.5)
-const copyBtnText = ref('Copy')
+const _copyBtnText = ref('Copy')
 const crash_report = ref(null)
 const copy_btn = ref('Copy')
 

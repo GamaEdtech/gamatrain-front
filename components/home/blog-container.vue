@@ -47,7 +47,10 @@
                 :mobile="false"
                 class="slider py-sm-4"
               >
-                <v-slide-group-item v-for="i in 10">
+                <v-slide-group-item
+                  v-for="(i, index) in 10"
+                  :key="index"
+                >
                   <v-skeleton-loader
                     class="mx-auto slide-loading"
                     type="card"
@@ -59,7 +62,7 @@
               <v-slide-group class="slider py-sm-4">
                 <v-slide-group-item
                   v-for="(item, n) in slideItems"
-                  :key="n"
+                  :key="item.id || n"
                 >
                   <v-card
                     flat
@@ -109,20 +112,16 @@
 import { useDisplay } from 'vuetify'
 
 // Using Vuetify's breakpoint system
-const { lgAndUp, sm, xs } = useDisplay()
+const { sm, xs } = useDisplay()
 const { $slugGenerator } = useNuxtApp()
 
 // Reactive properties
-const model = ref(null)
 const isHovered = ref([])
 const slideItems = ref([])
 const isLoading = ref(true)
-const isDragging = ref(false)
-const startX = ref(0)
-const currentX = ref(0)
 
 // Methods
-const toggleHover = (action, n) => {
+const _toggleHover = (action, n) => {
   if (action === 'enter') isHovered.value[n] = true
   if (action === 'leave') isHovered.value[n] = false
 }

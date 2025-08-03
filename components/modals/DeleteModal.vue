@@ -53,7 +53,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const props = defineProps({
+defineProps({
   isOpen: {
     type: Boolean,
     required: true,
@@ -66,7 +66,7 @@ const props = defineProps({
 
 const emit = defineEmits(['update:isOpen', 'confirm', 'close'])
 
-const newItem = ref({
+const _newItem = ref({
   title: '',
   date: new Date().toISOString().split('T')[0], // Default to today's date
 })
@@ -75,7 +75,7 @@ const closeModal = () => {
   emit('update:isOpen', false)
 }
 
-const onDialogInput = (val) => {
+const _onDialogInput = (val) => {
   if (!val) {
     emit('close')
   }

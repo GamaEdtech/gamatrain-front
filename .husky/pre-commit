@@ -2,6 +2,8 @@
 
 if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
   npm.cmd run lint
+  npm.cmd run check-paths
 else
   npm run lint
+  npm run check-paths
 fi

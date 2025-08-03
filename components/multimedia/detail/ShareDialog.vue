@@ -6,10 +6,10 @@
       class="share_dialog"
       max-width="600"
     >
-      <template #activator="{ props }">
+      <template #activator="{ props: dialogProps }">
         <span
-          v-bind="props"
-          class="pointer"
+          v-bind="dialogProps"
+          class="share-trigger pointer"
         >
           <i class="fa-solid fa-share-alt mr-1 icon" />
           Share
@@ -79,7 +79,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const props = defineProps({
+defineProps({
   title: {
     type: String,
     default: '',

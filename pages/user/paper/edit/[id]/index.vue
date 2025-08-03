@@ -26,6 +26,7 @@
             ref="form"
             v-model="isFormValid"
             lazy-validation
+            autocomplete="off"
             @submit.prevent="updateQuestion"
           >
             <v-row>
@@ -44,6 +45,7 @@
                   item-value="id"
                   label="Board"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -61,6 +63,7 @@
                   item-title="title"
                   label="Grade"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -78,6 +81,7 @@
                   item-title="title"
                   label="Subject"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -101,10 +105,14 @@
                   density="compact"
                   variant="outlined"
                   :items="test_type_list"
+                  :loading="test_type_loading"
+                  :disabled="!formData.section || test_type_loading"
                   item-value="id"
                   item-title="title"
                   label="Classification"
+                  placeholder="Select a board first"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -127,6 +135,7 @@
                   item-title="title"
                   label="Solution Availability"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -142,6 +151,7 @@
                   item-title="title"
                   label="Difficulty Level"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -157,6 +167,7 @@
                   :rules="[(v) => !!v || 'Year is required']"
                   label="Year"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -174,6 +185,7 @@
                   item-value="id"
                   label="Month"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -189,6 +201,7 @@
                   item-value="id"
                   label="Testing Scope"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
 
@@ -206,6 +219,7 @@
                   item-value="id"
                   label="State"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -222,6 +236,7 @@
                   item-value="id"
                   label="Area"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -238,6 +253,7 @@
                   item-value="id"
                   label="School"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
 
@@ -253,6 +269,7 @@
                   :rules="[(v) => !!v || 'Title is required']"
                   label="Title"
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -275,6 +292,7 @@
                   persistent-hint
                   placeholder="A brief overview of the content, outlining sections, topics, and question formats."
                   color="#FFB300"
+                  autocomplete="off"
                 />
               </v-col>
               <v-col
@@ -390,6 +408,7 @@
                       item-value="id"
                       label="Select file type"
                       color="#FFB300"
+                      autocomplete="off"
                     />
                   </v-col>
                   <v-col
@@ -534,11 +553,12 @@ const file_pdf_loading = ref(false)
 const file_word_loading = ref(false)
 const file_answer_loading = ref(false)
 const file_extra_loading = ref(false)
+const test_type_loading = ref(false)
 
 // Lists
 const section_list = ref([])
 const grade_list = ref([])
-const field_list = ref([])
+const _field_list = ref([])
 const lesson_list = ref([])
 const topic_list = ref([])
 const test_type_list = ref([])
@@ -610,7 +630,7 @@ const { data: paperData } = await useAsyncData('paper-data', async () => {
 })
 
 // Methods
-const changeOption = (optionName, optionVal) => {
+const _changeOption = (optionName, optionVal) => {
   if (optionName === 'section') {
     formData.base = ''
     formData.lesson = ''
@@ -659,6 +679,47 @@ const changeOption = (optionName, optionVal) => {
   }
   else if (optionName === 'area') {
     getTypeList('school')
+  }
+}
+
+const handleClassificationError = (error) => {
+  console.error('Classification loading error:', error)
+  $toast.error('Unable to load paper types. Please try selecting the board again.')
+  test_type_list.value = []
+  formData.test_type = ''
+}
+
+const getClassificationTypes = async (sectionId) => {
+  if (!sectionId) {
+    test_type_list.value = []
+    return
+  }
+
+  test_type_loading.value = true
+  try {
+    const params = {
+      type: 'test_type',
+      section_id: sectionId,
+    }
+    const response = await useApiService.get('/api/v1/types/list', params)
+
+    // The API should return board-specific classifications including:
+    // - General resources (Coursebook, Workbook) for all boards
+    // - CIE papers (Paper 1, Paper 2, etc.) for CIE board
+    // - Edexcel papers and Units for Edexcel board
+    // - Other board-specific classifications
+    test_type_list.value = response.data || []
+
+    // Handle empty response
+    if (!response.data || response.data.length === 0) {
+      console.warn('No classification types returned for board:', sectionId)
+    }
+  }
+  catch (err) {
+    handleClassificationError(err)
+  }
+  finally {
+    test_type_loading.value = false
   }
 }
 
@@ -782,6 +843,7 @@ const updateQuestion = async () => {
   }
   catch (err) {
     if (err.response?.status == 403) {
+      $toast.error('You do not have permission to edit this paper')
     }
     else if (err.response?.status == 400) {
       $toast.error(err.response.data.message)
@@ -942,7 +1004,7 @@ const addExtraAttr = () => {
   extraAttr.value.push({ type: '', file: null, file_extra: null })
 }
 
-const applyExtraType = (value, index) => {
+const _applyExtraType = (value, index) => {
   extraAttr.value[index].type = value
 }
 
@@ -1003,11 +1065,13 @@ watch(
     formData.base = ''
     formData.lesson = ''
     formData.topics = []
+    formData.test_type = ''
     grade_list.value = []
     lesson_list.value = []
     topic_list.value = []
 
     getTypeList('base', val)
+    getClassificationTypes(val)
     if (formData.area) getTypeList('school')
   },
 )
@@ -1075,7 +1139,6 @@ const startDownload = async (type, extra_id = '') => {
       const response = await useApiService.get(apiUrl)
       const FileSaver = await import('file-saver')
       FileSaver.saveAs(response.data.url, response.data.name)
-      download_loading.value = false
     }
     catch (err) {
       if (err.response?.status == 400) {
@@ -1088,6 +1151,7 @@ const startDownload = async (type, extra_id = '') => {
       }
     }
     finally {
+      download_loading.value = false
     }
   }
   else {
@@ -1112,6 +1176,10 @@ onMounted(async () => {
   finally {
     // Hide the loading state whether successful or not
     isLoading.value = false
+  }
+  // Load classifications if board is already selected (from user state)
+  if (formData.section) {
+    getClassificationTypes(formData.section)
   }
 })
 </script>
