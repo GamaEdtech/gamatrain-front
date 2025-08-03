@@ -11,7 +11,6 @@
       v-model:show-dialog="showModalDetailSchool"
       :school-information="schoolFindedInSearch"
       @new-school="startAddNewSchool"
-      @edit-school="editSchool"
     />
     <v-container class="w-100 mt-2 d-flex justify-center handle-height">
       <div
@@ -159,11 +158,6 @@ const startAddNewSchool = () => {
   currentStep.value = STEP_INDEX.Category
 }
 
-const editSchool = () => {
-  showModalDetailSchool.value = false
-  currentStep.value = STEP_INDEX.Category
-}
-
 const nextStep = (data) => {
   schoolInformation.value = {
     ...schoolInformation.value,
@@ -181,12 +175,6 @@ const submitSchool = (data) => {
     ...data,
   }
   const formData = buildFormDataFromObject(schoolInformation.value)
-  // const entriesIterator = formData.entries()
-  // for (const pair of entriesIterator) {
-  //   const key = pair[0];
-  //   const value = pair[1];
-  //   console.log(`${key}: ${value}`);
-  // }
   useApiService
     .post(`/api/v2/schools/contributions`, formData)
     .then(async (response) => {

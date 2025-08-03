@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="dialogModel"
-    max-width="400"
+    max-width="500"
     :fullscreen="!mdAndUp"
     @click="clickOnOverlay"
   >
@@ -20,180 +20,7 @@
         </v-icon>
       </div>
       <div class="w-100 d-flex justify-center align-center mt-4 pa-2 pa-md-4">
-        <NuxtLink
-          :to="`/school/${schoolInformation.id}/${$slugGenerator(
-            schoolInformation.name,
-          )}`"
-          class="w-100 d-flex flex-column justify-end position-relative rounded-lg card-detail-school"
-        >
-          <v-icon
-            color="#344054"
-            size="small"
-            class="position-absolute position-bookmark"
-          >md:bookmark</v-icon>
-          <NuxtImg
-            v-if="schoolInformation?.defaultImageUri"
-            :alt="schoolInformation?.name"
-            width="320px"
-            height="320px"
-            :src="
-              schoolInformation?.defaultImageUri?.replace(
-                /^http:\/\//,
-                'https://',
-              )
-            "
-            placeholder
-            class="w-100 h-100 rounded-lg position-absolute"
-          />
-          <div
-            class="w-100 d-flex flex-column justify-space-between align-center rounded-t-lg pa-4 info-top-section"
-          >
-            <span
-              class="w-100 text-h5 font-weight-bold primary-gray-700 ga-2 mb-2"
-            >
-              {{ schoolInformation?.name }}
-            </span>
-
-            <span
-              v-if="schoolInformation?.address"
-              class="w-100 text-h6 font-weight-medium primary-gray-500"
-            >
-              {{ schoolInformation?.address }}
-            </span>
-
-            <div class="w-100 d-flex justify-space-between flex-wrap mt-2">
-              <div class="d-flex ga-2">
-                <span
-                  v-if="schoolInformation?.review"
-                  class="text-h6 font-weight-medium primary-gray-500 mt-1"
-                >Reviews</span>
-                <span
-                  v-if="schoolInformation?.review"
-                  class="text-h6 font-weight-bold primary-gray-800 mt-1"
-                >
-                  {{ schoolInformation?.review }}</span>
-                <v-rating
-                  :model-value="
-                    schoolInformation.score
-                      ? Math.floor(schoolInformation.score)
-                      : 0
-                  "
-                  length="5"
-                  readonly
-                  color="primary"
-                  active-color="primary"
-                  size="16"
-                />
-              </div>
-              <div
-                v-if="schoolInformation?.tuition"
-                class="d-flex align-end ga-2"
-              >
-                <span class="text-h6 font-weight-medium primary-gray-500 mt-1">Tuition</span>
-                <v-chip
-                  class="font-weight-bold text-h6"
-                  color="red"
-                  size="x-small"
-                  variant="flat"
-                >${{ schoolInformation?.tuition }}</v-chip>
-              </div>
-            </div>
-
-            <div class="w-100 d-flex justify-space-between mt-2">
-              <div
-                v-if="schoolInformation?.teacher"
-                class="d-flex align-end ga-2"
-              >
-                <span class="text-h6 font-weight-medium primary-gray-500 mt-1">Teachers</span>
-                <span class="text-h6 font-weight-bold primary-gray-800 mt-1">{{
-                  schoolInformation?.teacher
-                }}</span>
-              </div>
-
-              <v-divider
-                v-if="schoolInformation?.teacher"
-                :thickness="2"
-                class="border-opacity-100"
-                color="#E4E7EC"
-                vertical
-              />
-              <div
-                v-if="schoolInformation?.student"
-                class="d-flex align-end ga-2"
-              >
-                <span class="text-h6 font-weight-medium primary-gray-500 mt-1">Students</span>
-                <span class="text-h6 font-weight-bold primary-gray-800 mt-1">{{
-                  schoolInformation?.student
-                }}</span>
-              </div>
-              <v-divider
-                v-if="schoolInformation?.student"
-                :thickness="2"
-                class="border-opacity-100"
-                color="#E4E7EC"
-                vertical
-              />
-              <div
-                v-if="schoolInformation?.ratio"
-                class="d-flex align-end ga-2"
-              >
-                <span class="text-h6 font-weight-medium primary-gray-500 mt-1">Ratio</span>
-                <span class="text-h6 font-weight-bold primary-gray-800 mt-1">{{
-                  schoolInformation?.ratio
-                }}</span>
-              </div>
-            </div>
-          </div>
-          <div
-            class="w-100 d-flex rounded-b-lg align-center justify-space-between info-bottom-section pr-2 pl-2"
-          >
-            <div class="d-flex align-center">
-              <v-btn
-                variant="text"
-                icon
-                width="30"
-                height="30"
-                :disabled="!schoolInformation.hasLocation"
-              >
-                <v-icon color="#344054"> md:location_on </v-icon>
-              </v-btn>
-              <v-btn
-                variant="text"
-                icon
-                width="30"
-                height="30"
-                :disabled="!schoolInformation.hasPhone"
-              >
-                <v-icon color="#344054"> md:call </v-icon>
-              </v-btn>
-              <v-btn
-                variant="text"
-                icon
-                width="30"
-                height="30"
-                :disabled="!schoolInformation.hasEmail"
-              >
-                <v-icon color="#344054"> md:email </v-icon>
-              </v-btn>
-              <v-btn
-                variant="text"
-                icon
-                width="30"
-                height="30"
-                :disabled="!schoolInformation.hasWebsite"
-              >
-                <v-icon color="#344054"> md:language </v-icon>
-              </v-btn>
-            </div>
-            <div class="d-flex align-center">
-              <span class="text-h6 font-weight-normal primary-gray-700">Details</span>
-              <v-icon
-                size="small"
-                color="#344054"
-              >mdi-chevron-right</v-icon>
-            </div>
-          </div>
-        </NuxtLink>
+        <SchoolCardSchool :school="schoolInformation" />
       </div>
 
       <v-divider
@@ -226,7 +53,9 @@
           height="40"
           max-width="180"
           class="w-50 text-h5"
-          @click="editSchool"
+          :to="`/school/${schoolInformation.id}/${$slugGenerator(
+            schoolInformation.name,
+          )}`"
         >
           Edit School
         </v-btn>
@@ -251,7 +80,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:showDialog', 'editSchool', 'newSchool'])
+const emit = defineEmits(['update:showDialog', 'newSchool'])
 
 // Start Section Handle Status Modal
 const dialogModel = computed({
@@ -277,33 +106,9 @@ const clickOnModal = (event) => {
 const newSchool = () => {
   emit('newSchool')
 }
-
-const editSchool = () => {
-  emit('editSchool')
-}
 </script>
 
 <style scoped>
-.card-detail-school {
-  min-height: 320px;
-  max-width: 360px;
-  background-color: #f2f4f7;
-  text-decoration: none;
-}
-.info-top-section {
-  background-color: #fffffff2;
-  z-index: 2;
-}
-.info-bottom-section {
-  min-height: 40px;
-  background-color: #f2f4f7;
-  z-index: 2;
-}
-.position-bookmark {
-  z-index: 2;
-  top: 10px;
-  right: 10px;
-}
 .max-width-contianer-modal {
   max-width: 360px;
 }

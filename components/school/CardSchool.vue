@@ -110,7 +110,10 @@
           icon
           :disabled="!school.hasLocation"
         >
-          <v-icon size="x-large"> mdi-map-marker </v-icon>
+          <v-icon
+            size="x-large"
+            color="#546e7a"
+          > mdi-map-marker </v-icon>
         </v-btn>
         <v-btn
           width="30"
@@ -119,7 +122,10 @@
           icon
           :disabled="!school.hasPhon"
         >
-          <v-icon size="x-large"> mdi-phone </v-icon>
+          <v-icon
+            size="x-large"
+            color="#546e7a"
+          > mdi-phone </v-icon>
         </v-btn>
         <v-btn
           width="30"
@@ -128,7 +134,10 @@
           icon
           :disabled="!school.hasEmail"
         >
-          <v-icon size="x-large"> mdi-email </v-icon>
+          <v-icon
+            size="x-large"
+            color="#546e7a"
+          > mdi-email </v-icon>
         </v-btn>
         <v-btn
           width="30"
@@ -137,7 +146,10 @@
           icon
           :disabled="!school.hasWebsite"
         >
-          <v-icon size="x-large"> mdi-web</v-icon>
+          <v-icon
+            size="x-large"
+            color="#546e7a"
+          > mdi-web</v-icon>
         </v-btn>
       </div>
       <div class="d-flex d-md-none align-center">
@@ -182,6 +194,7 @@ defineProps({
   max-width: 560px;
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14),
     0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  text-decoration: none;
 }
 .without-image {
   min-height: unset;

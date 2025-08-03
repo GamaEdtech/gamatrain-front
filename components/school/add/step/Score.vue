@@ -60,7 +60,19 @@
       >
         Cancel
       </v-btn>
-
+      <v-btn
+        :loading="loading"
+        icon
+        color="#1D2939"
+        height="40"
+        width="40"
+        flat
+        @click="preStep"
+      >
+        <v-icon size="x-large">
+          md:arrow_back
+        </v-icon>
+      </v-btn>
       <v-btn
         color="#ffb600"
         flat
@@ -160,6 +172,10 @@ const submitForm = () => {
 
 const cancel = () => {
   router.push('/school')
+}
+
+const preStep = () => {
+  emit('prevStep')
 }
 </script>
 

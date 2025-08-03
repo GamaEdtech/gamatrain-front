@@ -127,6 +127,8 @@
                     color="primary"
                     class="text-h4"
                     hide-details
+                    false-icon="md:check_box_outline_blank"
+                    true-icon="md:check_box"
                     @click.stop
                     @update:model-value="
                       (val) => handleCheckboxChange(val, sortItem)
@@ -253,6 +255,8 @@
               color="primary"
               class="text-h4"
               hide-details
+              false-icon="md:check_box_outline_blank"
+              true-icon="md:check_box"
               @click.stop
               @update:model-value="(val) => handleCheckboxChange(val, sortItem)"
             >
