@@ -99,11 +99,6 @@
 <script setup>
 const router = useRouter();
 
-const props = defineProps({
-  schoolInformation: {
-    type: Object,
-  },
-});
 const emit = defineEmits(["nextStep", "schoolFindInSearch"]);
 
 onMounted(() => {
@@ -257,7 +252,6 @@ const checkSchoolAvailable = async () => {
     } else {
       emit("schoolFindInSearch", response.data.list[0], locationStepInfo);
     }
-    // console.log("response", response);
   } catch (err) {
     console.error(err);
   } finally {

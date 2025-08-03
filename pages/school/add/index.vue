@@ -18,7 +18,6 @@
         <school-add-step-location
           @next-step="nextStep"
           @school-find-in-search="schoolFindInSearch"
-          :school-information="schoolInformation"
         />
       </div>
       <div class="display-set" v-show="currentStep == STEP_INDEX.Category">
@@ -28,21 +27,17 @@
         <school-add-step-contact
           @next-step="nextStep"
           @prev-step="backStep"
-          :school-information="schoolFindedInSearch"
+          :school-information="schoolInformation"
         />
       </div>
       <div class="display-set" v-show="currentStep == STEP_INDEX.Facilities">
-        <school-add-step-facility
-          @next-step="submitSchool"
-          @prev-step="backStep"
-          :loading-send-data="loadingSubmitSchool"
-        />
+        <school-add-step-facility @next-step="nextStep" @prev-step="backStep" />
       </div>
       <div class="display-set" v-show="currentStep == STEP_INDEX.Score">
         <school-add-step-score
-          @next-step="sendCommentOnSchool"
+          @next-step="submitSchool"
           @prev-step="backStep"
-          :loading="loadingSendComment"
+          :loading="loadingSubmitSchool"
         />
       </div>
     </v-container>
@@ -55,8 +50,6 @@ const nuxtApp = useNuxtApp();
 const schoolFindedInSearch = ref();
 const showModalDetailSchool = ref(false);
 const loadingSubmitSchool = ref(false);
-const loadingSendComment = ref(false);
-const schoolIdCreated = ref();
 const schoolInformation = ref({
   name: "",
   latitude: 0,
@@ -70,6 +63,23 @@ const schoolInformation = ref({
   phoneNumber: "",
   tags: [],
   tuition: 0,
+  localName: "",
+  zipCode: "",
+  localAddress: "",
+  faxNumber: "",
+  description: "",
+  file: null,
+  comment: {
+    comment: "",
+    classesQualityRate: 0,
+    educationRate: 0,
+    iTTrainingRate: 0,
+    safetyAndHappinessRate: 0,
+    behaviorRate: 0,
+    tuitionRatioRate: 0,
+    facilitiesRate: 0,
+    artisticActivitiesRate: 0,
+  },
 });
 
 // start section step
@@ -115,8 +125,6 @@ const changeStep = (step) => {
 // end section step
 
 const schoolFindInSearch = (school, data) => {
-  console.log("School finded", school);
-
   schoolInformation.value = {
     ...schoolInformation.value,
     ...data,
@@ -151,19 +159,22 @@ const submitSchool = (data) => {
     ...schoolInformation.value,
     ...data,
   };
-  console.log(schoolInformation.value);
-
+  const formData = buildFormDataFromObject(schoolInformation.value);
+  const entriesIterator = formData.entries();
+  // for (const pair of entriesIterator) {
+  //   const key = pair[0];
+  //   const value = pair[1];
+  //   console.log(`${key}: ${value}`);
+  // }
   useApiService
-    .post(`/api/v2/schools/contributions`, schoolInformation.value)
+    .post(`/api/v2/schools/contributions`, formData)
     .then(async (response) => {
       console.log("final response", response);
 
       if (response.succeeded) {
-        schoolIdCreated.value = response.data.id;
         nuxtApp.$toast?.success(
           "Thank you! Your contribution has been successfully submitted."
         );
-        currentStep.value = STEP_INDEX.Score;
       } else {
         nuxtApp.$toast?.error(response?.errors[0]?.message);
       }
@@ -179,33 +190,33 @@ const submitSchool = (data) => {
     });
 };
 
-const sendCommentOnSchool = (informationScoreComment) => {
-  console.log("informationScoreComment", informationScoreComment);
-  loadingSendComment.value = true;
-  useApiService
-    .post(
-      `/api/v2/schools/${schoolIdCreated.value}/comments`,
-      informationScoreComment
-    )
-    .then(async (response) => {
-      console.log("response score", response);
-      if (response.succeeded) {
-        nuxtApp.$toast?.success(
-          "Thank you! Your Score And Comment has been successfully submitted."
-        );
-      } else {
-        nuxtApp.$toast?.error(response?.errors[0]?.message);
-      }
-    })
-    .catch((err) => {
-      console.log("err", err);
+const buildFormDataFromObject = (
+  obj,
+  form = new FormData(),
+  parentKey = ""
+) => {
+  for (const key in obj) {
+    if (obj[key] === null || obj[key] === undefined) continue;
 
-      if (err?.response?.status == 401 || err?.response?.status == 403) {
-      } else nuxtApp.$toast?.error(err?.response?.data?.message);
-    })
-    .finally(() => {
-      loadingSendComment.value = false;
-    });
+    const formattedKey = key.charAt(0).toUpperCase() + key.slice(1);
+    const formKey = parentKey ? `${parentKey}.${formattedKey}` : formattedKey;
+
+    const value = obj[key];
+
+    if (value instanceof File || value instanceof Blob) {
+      form.append(formKey, value);
+    } else if (Array.isArray(value)) {
+      value.forEach((item, index) => {
+        form.append(`${formKey}[${index}]`, item);
+      });
+    } else if (typeof value === "object") {
+      buildFormDataFromObject(value, form, formKey);
+    } else {
+      form.append(formKey, value);
+    }
+  }
+
+  return form;
 };
 </script>
 

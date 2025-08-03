@@ -47,21 +47,72 @@
           }}</span>
         </div>
       </div>
+
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">Image</div>
+
+        <div
+          class="d-flex align-center justify-center w-100 container-image-school rounded-lg mt-2 ml-2"
+        >
+          <template v-if="schoolImage">
+            <div
+              class="w-100 h-100 d-flex align-center justify-center position-relative"
+            >
+              <img
+                class="w-100 h-100 rounded-lg"
+                :src="previewImageSchool"
+                alt="School image Preview"
+              />
+              <div
+                class="upload-overlay w-100 h-100 d-flex align-center justify-center rounded-lg position-absolute px-3"
+              >
+                <v-btn
+                  icon
+                  color="error"
+                  size="small"
+                  @click="clearImageSchool"
+                >
+                  <v-icon size="x-large"> md:delete_forever </v-icon>
+                </v-btn>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <div
+              class="w-100 h-100 d-flex flex-column align-center justify-center pointer"
+              @click="openSchoolImgInput"
+            >
+              <v-icon size="x-large" class="primary-blue-500 mb-4">
+                md:cloud_upload
+              </v-icon>
+              <div class="text-h5 font-weight-bold primary-blue-500">
+                Upload Image
+              </div>
+              <div
+                class="text-h6 font-weight-normal text-center mt-2 primary-gray-400"
+              >
+                Accepted formats: JPG, PNG, WebP
+              </div>
+            </div>
+          </template>
+        </div>
+
+        <v-file-input
+          ref="schoolImgRef"
+          v-model="schoolImage"
+          class="d-none"
+          accept="image/jpeg, image/png, image/jpg, image/webp"
+          hide-details
+          @update:model-value="validateAndProcessImage"
+        />
+      </div>
     </div>
 
-    <div class="w-100 d-flex align-center justify-center ga-3 mt-2">
+    <div class="w-100 d-flex align-center justify-center ga-3 mt-6">
       <v-btn @click="cancel" size="x-small" variant="text" class="text-h5">
         Cancel
       </v-btn>
-      <v-btn
-        :loading="loadingSendData"
-        @click="preStep"
-        icon
-        color="#1D2939"
-        height="40"
-        width="40"
-        flat
-      >
+      <v-btn @click="preStep" icon color="#1D2939" height="40" width="40" flat>
         <v-icon size="x-large">md:arrow_back</v-icon>
       </v-btn>
       <v-btn
@@ -71,8 +122,8 @@
         height="40"
         max-width="180"
         class="w-100 text-h5"
+        :disabled="!isFormValid"
         @click="submitForm"
-        :loading="loadingSendData"
       >
         Confirm
       </v-btn>
@@ -81,14 +132,9 @@
 </template>
 
 <script setup>
+const nuxtApp = useNuxtApp();
 const router = useRouter();
 
-const props = defineProps({
-  loadingSendData: {
-    tpye: Boolean,
-    default: false,
-  },
-});
 const emit = defineEmits(["nextStep", "prevStep"]);
 
 onMounted(async () => {
@@ -120,11 +166,51 @@ const chooseTag = (tag) => {
   }
 };
 
+const schoolImage = ref(null);
+const schoolImgRef = ref(null);
+const previewImageSchool = ref(null);
+
+const validateAndProcessImage = (file) => {
+  if (!file) return;
+  const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+
+  if (!validTypes.includes(file.type)) {
+    nuxtApp.$toast?.error(
+      "Invalid file type. Please use JPG, PNG or WebP images."
+    );
+    schoolImage.value = null;
+    return;
+  }
+  const maxSize = 5 * 1024 * 1024;
+  if (file.size > maxSize) {
+    nuxtApp.$toast?.error("File too large. Maximum size is 5MB.");
+    schoolImage.value = null;
+    return;
+  }
+  schoolImage.value = file;
+  previewImageSchool.value = URL.createObjectURL(file);
+};
+const openSchoolImgInput = () => {
+  if (schoolImgRef.value) {
+    schoolImgRef.value.click();
+  }
+};
+const clearImageSchool = () => {
+  schoolImage.value = null;
+  previewImageSchool.value = null;
+};
+
+const isFormValid = computed(() => {
+  return schoolImage.value != null;
+});
 const submitForm = () => {
-  const facilityStepInfo = {
-    tags: [...selectedTags.value],
-  };
-  emit("nextStep", facilityStepInfo);
+  if (isFormValid.value) {
+    const facilityStepInfo = {
+      tags: [...selectedTags.value],
+      file: schoolImage.value,
+    };
+    emit("nextStep", facilityStepInfo);
+  }
 };
 
 const preStep = () => {
@@ -139,5 +225,13 @@ const cancel = () => {
 <style scoped>
 .max-width-container {
   max-width: 500px;
+}
+.container-image-school {
+  max-width: 260px;
+  height: 180px;
+  background-color: #d0d5dd;
+}
+.upload-overlay {
+  background-color: rgba(0, 0, 0, 0.4);
 }
 </style>

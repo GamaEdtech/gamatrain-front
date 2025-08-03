@@ -144,8 +144,11 @@ const submitForm = () => {
   itemsScore.value.forEach((item, index) => {
     informationSumbitComment[item.key] = item.score;
   });
+  const commentObject = {
+    comment: informationSumbitComment,
+  };
 
-  emit("nextStep", informationSumbitComment);
+  emit("nextStep", commentObject);
 };
 
 const cancel = () => {
