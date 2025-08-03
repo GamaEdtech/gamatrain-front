@@ -13,7 +13,7 @@ const walletOptions = {
     new PhantomWalletAdapter(),
     new CloverWalletAdapter(),
     new Coin98WalletAdapter(),
-    new SolflareWalletAdapter({ network: WalletAdapterNetwork.Devnet }),
+    new SolflareWalletAdapter({ network: WalletAdapterNetwork.Mainnet }),
   ],
   autoConnect: true,
 }
