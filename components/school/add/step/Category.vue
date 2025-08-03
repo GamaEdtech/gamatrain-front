@@ -3,7 +3,9 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-10">
-      <div class="w-100 text-h4 primary-gray-500">School Category</div>
+      <div class="w-100 text-h4 primary-gray-500">
+        School Category
+      </div>
 
       <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-2">
         <div class="text-h6 font-weight-bold primary-gray-700 ml-2">Stage</div>
@@ -179,13 +181,13 @@
         </div>
 
         <v-slider
+          v-model="valueTuition"
           class="w-66"
           thumb-color="#ffb600"
           color="#ffb600"
           track-color="#E4E7EC"
           density="compact"
           hide-details
-          v-model="valueTuition"
           :max="500000"
           :min="0"
           :step="10000"
@@ -195,20 +197,32 @@
           tick-size="6"
         >
           <template #thumb-label="{ modelValue }">
-            <span class="text-h5 font-weight-black text-black"
-              >${{ modelValue }}</span
-            >
+            <span class="text-h5 font-weight-black text-black">${{ modelValue }}</span>
           </template>
         </v-slider>
       </div>
     </div>
 
     <div class="w-100 d-flex align-center justify-center ga-3 mt-2">
-      <v-btn @click="cancel" size="x-small" variant="text" class="text-h5">
+      <v-btn
+        size="x-small"
+        variant="text"
+        class="text-h5"
+        @click="cancel"
+      >
         Cancel
       </v-btn>
-      <v-btn @click="preStep" icon color="#1D2939" height="40" width="40" flat>
-        <v-icon size="x-large">md:arrow_back</v-icon>
+      <v-btn
+        icon
+        color="#1D2939"
+        height="40"
+        width="40"
+        flat
+        @click="preStep"
+      >
+        <v-icon size="x-large">
+          md:arrow_back
+        </v-icon>
       </v-btn>
       <v-btn
         color="#ffb600"
@@ -227,9 +241,9 @@
 </template>
 
 <script setup>
-const router = useRouter();
+const router = useRouter()
 
-const emit = defineEmits(["nextStep", "prevStep"]);
+const emit = defineEmits(['nextStep', 'prevStep'])
 
 onMounted(() => {
   // stageLoading.value = true;
@@ -242,7 +256,7 @@ onMounted(() => {
   // getInformationList({ type: "boarding_type" }, "boarding_type");
   // religionLoading.value = true;
   // getInformationList({ type: "religion" }, "religion");
-});
+})
 
 // const getInformationList = async (params, type) => {
 //   try {
@@ -279,119 +293,122 @@ onMounted(() => {
 // };
 
 // start stage section
-const stageLoading = ref(false);
-const selectedStage = ref({
-  title: "",
-  id: null,
-});
-const stages = ref([]);
-const isOpenStageModal = ref(false);
+// const stageLoading = ref(false)
+// const selectedStage = ref({
+//   title: '',
+//   id: null,
+// })
+// const stages = ref([])
+// const isOpenStageModal = ref(false)
 
-const openStageModal = () => {
-  isOpenStageModal.value = true;
-};
-const clearStageValue = () => {
-  selectedStage.value = {
-    id: null,
-    title: "",
-  };
-};
+// const openStageModal = () => {
+//   isOpenStageModal.value = true
+// }
+// const clearStageValue = () => {
+//   selectedStage.value = {
+//     id: null,
+//     title: '',
+//   }
+// }
 
-const onFilterUpdate = (selectedItem) => {
-  isOpenStageModal.value = false;
-  if (selectedItem.id && selectedItem.id != selectedStage.value.id) {
-    selectedStage.value = selectedItem;
-  }
-};
+// const onFilterUpdate = (selectedItem) => {
+//   isOpenStageModal.value = false
+//   if (selectedItem.id && selectedItem.id != selectedStage.value.id) {
+//     selectedStage.value = selectedItem
+//   }
+// }
 // end stage section
 
 // start ceod section
-const ceodLoading = ref(true);
-const selectedCeod = ref();
-const ceods = ref([]);
+// const ceodLoading = ref(true)
+// const selectedCeod = ref()
+// const ceods = ref([])
 // end ceod section
 
 // start school type section
-const schoolTypesLoading = ref(true);
-const selectedschoolTypes = ref([]);
-const schoolTypes = ref([]);
+// const schoolTypesLoading = ref(true)
+// const selectedschoolTypes = ref([])
+// const schoolTypes = ref([])
 
-const chooseSchoolType = (schoolType) => {
-  if (selectedschoolTypes.value.includes(schoolType.id)) {
-    selectedschoolTypes.value = selectedschoolTypes.value.filter(
-      (id) => id !== schoolType.id
-    );
-  } else {
-    selectedschoolTypes.value.push(schoolType.id);
-  }
-};
+// const chooseSchoolType = (schoolType) => {
+//   if (selectedschoolTypes.value.includes(schoolType.id)) {
+//     selectedschoolTypes.value = selectedschoolTypes.value.filter(
+//       id => id !== schoolType.id,
+//     )
+//   }
+//   else {
+//     selectedschoolTypes.value.push(schoolType.id)
+//   }
+// }
 // end  school type section
 
 // start boarding type section
-const boardingTypesLoading = ref(true);
-const selectedboardingTypes = ref([]);
-const boardingTypes = ref([]);
+// const boardingTypesLoading = ref(true)
+// const selectedboardingTypes = ref([])
+// const boardingTypes = ref([])
 
-const chooseBoardingType = (boardingType) => {
-  if (selectedboardingTypes.value.includes(boardingType.id)) {
-    selectedboardingTypes.value = selectedboardingTypes.value.filter(
-      (id) => id !== boardingType.id
-    );
-  } else {
-    selectedboardingTypes.value.push(boardingType.id);
-  }
-};
+// const chooseBoardingType = (boardingType) => {
+//   if (selectedboardingTypes.value.includes(boardingType.id)) {
+//     selectedboardingTypes.value = selectedboardingTypes.value.filter(
+//       id => id !== boardingType.id,
+//     )
+//   }
+//   else {
+//     selectedboardingTypes.value.push(boardingType.id)
+//   }
+// }
 // end  boarding type section
 
 // start religion section
-const religionLoading = ref(true);
-const selectedReligions = ref([]);
-const religions = ref([]);
+// const religionLoading = ref(true)
+// const selectedReligions = ref([])
+// const religions = ref([])
 
-const chooseReligion = (religion) => {
-  if (selectedReligions.value.includes(religion.id)) {
-    selectedReligions.value = selectedReligions.value.filter(
-      (id) => id !== religion.id
-    );
-  } else {
-    selectedReligions.value.push(religion.id);
-  }
-};
+// const chooseReligion = (religion) => {
+//   if (selectedReligions.value.includes(religion.id)) {
+//     selectedReligions.value = selectedReligions.value.filter(
+//       id => id !== religion.id,
+//     )
+//   }
+//   else {
+//     selectedReligions.value.push(religion.id)
+//   }
+// }
 // end  religion section
 
 // start tuituin section
-const valueTuition = ref(0);
+const valueTuition = ref(0)
 const steps = ref({
-  0: "",
-  100000: "",
-  200000: "",
-  300000: "",
-  400000: "",
-  500000: "",
-});
+  0: '',
+  100000: '',
+  200000: '',
+  300000: '',
+  400000: '',
+  500000: '',
+})
 // end tuituin section
 
 const isFormValid = computed(() => {
-  if (valueTuition.value == 0) return false;
-  return true;
-});
+  if (valueTuition.value == 0) return false
+  return true
+})
 
 const submitForm = () => {
   if (isFormValid.value) {
     const categoryStepInformation = {
       tuition: valueTuition.value,
-    };
-    emit("nextStep", categoryStepInformation);
+    }
+    emit('nextStep', categoryStepInformation)
   }
-};
+}
 
 const preStep = () => {
-  emit("prevStep");
-};
+  emit('prevStep')
+}
 
 const cancel = () => {
-  router.push("/school");
-};
+  router.push('/school')
+}
 </script>
 
 <style scoped>

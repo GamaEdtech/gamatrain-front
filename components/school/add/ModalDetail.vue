@@ -10,7 +10,12 @@
       @click="clickOnModal"
     >
       <div class="w-100 d-none d-md-flex align-center justify-end">
-        <v-icon class="ml-4" size="x-large" color="#D0D5DD" @click="closeModal">
+        <v-icon
+          class="ml-4"
+          size="x-large"
+          color="#D0D5DD"
+          @click="closeModal"
+        >
           md:cancel
         </v-icon>
       </div>
@@ -25,8 +30,7 @@
             color="#344054"
             size="small"
             class="position-absolute position-bookmark"
-            >md:bookmark</v-icon
-          >
+          >md:bookmark</v-icon>
           <NuxtImg
             v-if="schoolInformation?.defaultImageUri"
             :alt="schoolInformation?.name"
@@ -51,8 +55,8 @@
             </span>
 
             <span
-              class="w-100 text-h6 font-weight-medium primary-gray-500"
               v-if="schoolInformation?.address"
+              class="w-100 text-h6 font-weight-medium primary-gray-500"
             >
               {{ schoolInformation?.address }}
             </span>
@@ -62,14 +66,12 @@
                 <span
                   v-if="schoolInformation?.review"
                   class="text-h6 font-weight-medium primary-gray-500 mt-1"
-                  >Reviews</span
-                >
+                >Reviews</span>
                 <span
                   v-if="schoolInformation?.review"
                   class="text-h6 font-weight-bold primary-gray-800 mt-1"
                 >
-                  {{ schoolInformation?.review }}</span
-                >
+                  {{ schoolInformation?.review }}</span>
                 <v-rating
                   :model-value="
                     schoolInformation.score
@@ -84,30 +86,25 @@
                 />
               </div>
               <div
-                class="d-flex align-end ga-2"
                 v-if="schoolInformation?.tuition"
+                class="d-flex align-end ga-2"
               >
-                <span class="text-h6 font-weight-medium primary-gray-500 mt-1"
-                  >Tuition</span
-                >
+                <span class="text-h6 font-weight-medium primary-gray-500 mt-1">Tuition</span>
                 <v-chip
                   class="font-weight-bold text-h6"
                   color="red"
                   size="x-small"
                   variant="flat"
-                  >${{ schoolInformation?.tuition }}</v-chip
-                >
+                >${{ schoolInformation?.tuition }}</v-chip>
               </div>
             </div>
 
             <div class="w-100 d-flex justify-space-between mt-2">
               <div
-                class="d-flex align-end ga-2"
                 v-if="schoolInformation?.teacher"
+                class="d-flex align-end ga-2"
               >
-                <span class="text-h6 font-weight-medium primary-gray-500 mt-1"
-                  >Teachers</span
-                >
+                <span class="text-h6 font-weight-medium primary-gray-500 mt-1">Teachers</span>
                 <span class="text-h6 font-weight-bold primary-gray-800 mt-1">{{
                   schoolInformation?.teacher
                 }}</span>
@@ -119,14 +116,12 @@
                 class="border-opacity-100"
                 color="#E4E7EC"
                 vertical
-              ></v-divider>
+              />
               <div
-                class="d-flex align-end ga-2"
                 v-if="schoolInformation?.student"
+                class="d-flex align-end ga-2"
               >
-                <span class="text-h6 font-weight-medium primary-gray-500 mt-1"
-                  >Students</span
-                >
+                <span class="text-h6 font-weight-medium primary-gray-500 mt-1">Students</span>
                 <span class="text-h6 font-weight-bold primary-gray-800 mt-1">{{
                   schoolInformation?.student
                 }}</span>
@@ -137,14 +132,12 @@
                 class="border-opacity-100"
                 color="#E4E7EC"
                 vertical
-              ></v-divider>
+              />
               <div
-                class="d-flex align-end ga-2"
                 v-if="schoolInformation?.ratio"
+                class="d-flex align-end ga-2"
               >
-                <span class="text-h6 font-weight-medium primary-gray-500 mt-1"
-                  >Ratio</span
-                >
+                <span class="text-h6 font-weight-medium primary-gray-500 mt-1">Ratio</span>
                 <span class="text-h6 font-weight-bold primary-gray-800 mt-1">{{
                   schoolInformation?.ratio
                 }}</span>
@@ -193,10 +186,11 @@
               </v-btn>
             </div>
             <div class="d-flex align-center">
-              <span class="text-h6 font-weight-normal primary-gray-700"
-                >Details</span
-              >
-              <v-icon size="small" color="#344054">mdi-chevron-right</v-icon>
+              <span class="text-h6 font-weight-normal primary-gray-700">Details</span>
+              <v-icon
+                size="small"
+                color="#344054"
+              >mdi-chevron-right</v-icon>
             </div>
           </div>
         </NuxtLink>
@@ -206,13 +200,11 @@
         :thickness="2"
         class="w-100 mt-4 mb-6 border-opacity-100 max-width-contianer-modal"
         color="#E4E7EC"
-      >
-      </v-divider>
+      />
 
       <span
         class="w-100 text-h5 font-weight-bold primary-gray-700 max-width-contianer-modal"
-        >A matching school was found!</span
-      >
+      >A matching school was found!</span>
 
       <div class="w-100 d-flex justify-center align-center ga-2 mt-4">
         <v-btn
@@ -244,10 +236,10 @@
 </template>
 
 <script setup>
-import { useDisplay } from "vuetify";
+import { useDisplay } from 'vuetify'
 
-const { $slugGenerator } = useNuxtApp();
-const { mdAndUp } = useDisplay();
+const { $slugGenerator } = useNuxtApp()
+const { mdAndUp } = useDisplay()
 
 const props = defineProps({
   showDialog: {
@@ -257,38 +249,38 @@ const props = defineProps({
   schoolInformation: {
     type: Object,
   },
-});
+})
 
-const emit = defineEmits(["update:showDialog", "editSchool", "newSchool"]);
+const emit = defineEmits(['update:showDialog', 'editSchool', 'newSchool'])
 
 // Start Section Handle Status Modal
 const dialogModel = computed({
   get: () => props.showDialog,
-  set: (value) => emit("update:showDialog", value),
-});
+  set: value => emit('update:showDialog', value),
+})
 
 const closeModal = () => {
-  emit("update:showDialog", false);
-};
+  emit('update:showDialog', false)
+}
 // End Section Handle Status Modal
 
 const clickOnOverlay = () => {
   if (!mdAndUp.value) {
-    emit("update:showDialog", false);
+    emit('update:showDialog', false)
   }
-};
+}
 
 const clickOnModal = (event) => {
-  event.stopPropagation();
-};
+  event.stopPropagation()
+}
 
 const newSchool = () => {
-  emit("newSchool");
-};
+  emit('newSchool')
+}
 
 const editSchool = () => {
-  emit("editSchool");
-};
+  emit('editSchool')
+}
 </script>
 
 <style scoped>

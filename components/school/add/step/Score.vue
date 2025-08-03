@@ -3,17 +3,19 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-10">
-      <div class="w-100 text-h4 primary-gray-500">School Score</div>
+      <div class="w-100 text-h4 primary-gray-500">
+        School Score
+      </div>
 
       <div
-        class="w-100 d-flex justify-space-between align-center"
         v-for="(item, index) in itemsScore"
         :key="index"
+        class="w-100 d-flex justify-space-between align-center"
       >
         <span
           class="d-flex align-center ga-3 text-h5 font-weight-bold primary-gray-700"
         >
-          <div class="dot-div"></div>
+          <div class="dot-div" />
           {{ item.title }}
         </span>
 
@@ -46,11 +48,16 @@
         active-color="#ffb600"
         bg-color="#ffffff"
         class="w-100"
-      ></v-textarea>
+      />
     </div>
 
     <div class="w-100 d-flex align-center justify-center ga-3 mt-2">
-      <v-btn @click="cancel" size="x-small" variant="text" class="text-h5">
+      <v-btn
+        size="x-small"
+        variant="text"
+        class="text-h5"
+        @click="cancel"
+      >
         Cancel
       </v-btn>
 
@@ -71,89 +78,89 @@
 </template>
 
 <script setup>
-const router = useRouter();
+const router = useRouter()
 
-const props = defineProps({
+defineProps({
   loading: {
     type: Boolean,
     default: false,
   },
-});
-const emit = defineEmits(["nextStep", "prevStep"]);
+})
+const emit = defineEmits(['nextStep', 'prevStep'])
 
 const itemsScore = ref([
   {
-    title: "Classes quality",
+    title: 'Classes quality',
     id: 1,
-    key: "classesQualityRate",
+    key: 'classesQualityRate',
     score: 0,
   },
   {
-    title: "Education",
+    title: 'Education',
     id: 2,
-    key: "educationRate",
+    key: 'educationRate',
     score: 0,
   },
   {
-    title: "IT training",
+    title: 'IT training',
     id: 3,
-    key: "itTrainingRate",
+    key: 'itTrainingRate',
     score: 0,
   },
   {
-    title: "Safe and happy",
+    title: 'Safe and happy',
     id: 4,
-    key: "safetyAndHappinessRate",
+    key: 'safetyAndHappinessRate',
     score: 0,
   },
   {
-    title: "Behavior",
+    title: 'Behavior',
     id: 5,
-    key: "behaviorRate",
+    key: 'behaviorRate',
     score: 0,
   },
   {
-    title: "Tuition ratio",
+    title: 'Tuition ratio',
     id: 6,
-    key: "tuitionRatioRate",
+    key: 'tuitionRatioRate',
     score: 0,
   },
   {
-    title: "Facilities",
+    title: 'Facilities',
     id: 7,
-    key: "facilitiesRate",
+    key: 'facilitiesRate',
     score: 0,
   },
   {
-    title: "Artistic activities",
+    title: 'Artistic activities',
     id: 8,
-    key: "artisticActivitiesRate",
+    key: 'artisticActivitiesRate',
     score: 0,
   },
-]);
+])
 
 const updateRating = (rate, index) => {
-  itemsScore.value[index].score = rate;
-};
-const comment = ref("");
+  itemsScore.value[index].score = rate
+}
+const comment = ref('')
 
 const submitForm = () => {
   const informationSumbitComment = {
     comment: comment.value,
-  };
-  itemsScore.value.forEach((item, index) => {
-    informationSumbitComment[item.key] = item.score;
-  });
+  }
+  itemsScore.value.forEach((item) => {
+    informationSumbitComment[item.key] = item.score
+  })
   const commentObject = {
     comment: informationSumbitComment,
-  };
+  }
 
-  emit("nextStep", commentObject);
-};
+  emit('nextStep', commentObject)
+}
 
 const cancel = () => {
-  router.push("/school");
-};
+  router.push('/school')
+}
 </script>
 
 <style scoped>

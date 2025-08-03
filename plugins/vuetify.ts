@@ -37,22 +37,22 @@ export default defineNuxtPlugin(
           },
         },
       },
-    },
-      components: {
-      VStepperVertical,
-      VSlideGroup,
-    },
       icons: {
-      defaultSet: 'mdi',
-      aliases: {
-        ...mdiAliases,
-        ...mdAliases
+        defaultSet: 'mdi',
+        aliases: {
+          ...mdiAliases,
+          ...mdAliases,
+        },
+        sets: {
+          mdi,
+          md,
+        },
       },
-      sets: {
-        mdi,
-        md,
-      }
-    }
-  })
-app.vueApp.use(vuetify)
-})
+      components: {
+        VStepperVertical,
+        VSlideGroup,
+      },
+    })
+    app.vueApp.use(vuetify)
+  },
+)

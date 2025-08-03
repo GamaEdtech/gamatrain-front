@@ -13,7 +13,10 @@
         <v-col cols="6">
           <span class="text-h3">{{ titleModal }}</span>
         </v-col>
-        <v-col cols="6" class="d-flex align-center justify-end ga-2">
+        <v-col
+          cols="6"
+          class="d-flex align-center justify-end ga-2"
+        >
           <span class="text-h5 text-grey">result</span>
           <span class="text-h4 text-green font-weight-bold">{{
             filteredItems.length
@@ -53,7 +56,10 @@
           </template>
         </v-text-field>
       </v-row>
-      <v-list v-if="!isLoading" max-height="320">
+      <v-list
+        v-if="!isLoading"
+        max-height="320"
+      >
         <v-list-item
           v-for="item in filteredItems"
           :key="item.title"
@@ -63,13 +69,23 @@
           @click="changeSelectedItem(item)"
         >
           <v-list-item-title class="text-h5">
-            <HighlightedText :text="item.title" :search-text="searchText" />
+            <HighlightedText
+              :text="item.title"
+              :search-text="searchText"
+            />
           </v-list-item-title>
         </v-list-item>
       </v-list>
 
-      <div v-if="isLoading" class="text-center pt-8">
-        <v-progress-circular indeterminate :width="3" color="primary" />
+      <div
+        v-if="isLoading"
+        class="text-center pt-8"
+      >
+        <v-progress-circular
+          indeterminate
+          :width="3"
+          color="primary"
+        />
       </div>
 
       <v-alert
@@ -100,8 +116,8 @@
 </template>
 
 <script setup>
-import { useDisplay } from "vuetify";
-import { ref, computed, defineComponent, h } from "vue";
+import { useDisplay } from 'vuetify'
+import { ref, computed, defineComponent, h } from 'vue'
 
 // HighlightedText component for safe text highlighting
 const HighlightedText = defineComponent({
@@ -117,36 +133,36 @@ const HighlightedText = defineComponent({
   },
   setup(props) {
     const parts = computed(() => {
-      if (!props.searchText) return [{ text: props.text, highlight: false }];
+      if (!props.searchText) return [{ text: props.text, highlight: false }]
 
-      const regex = new RegExp(`(${props.searchText})`, "gi");
-      const segments = props.text.split(regex);
+      const regex = new RegExp(`(${props.searchText})`, 'gi')
+      const segments = props.text.split(regex)
 
-      return segments.map((segment) => ({
+      return segments.map(segment => ({
         text: segment,
         highlight: segment.toLowerCase() === props.searchText.toLowerCase(),
-      }));
-    });
+      }))
+    })
 
     return () =>
       h(
-        "span",
-        parts.value.map((part) =>
+        'span',
+        parts.value.map(part =>
           h(
-            "span",
+            'span',
             {
               style: part.highlight
-                ? "background-color: #FFB600; color: white;"
-                : "",
+                ? 'background-color: #FFB600; color: white;'
+                : '',
             },
-            part.text
-          )
-        )
-      );
+            part.text,
+          ),
+        ),
+      )
   },
-});
+})
 
-const { mdAndUp } = useDisplay();
+const { mdAndUp } = useDisplay()
 
 const props = defineProps({
   titleModal: {
@@ -168,49 +184,49 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-});
+})
 
-const emit = defineEmits(["update:showDialog", "changeSelectedItem"]);
+const emit = defineEmits(['update:showDialog', 'changeSelectedItem'])
 
 // Start Section Search Item In List
-const searchText = ref("");
+const searchText = ref('')
 const filteredItems = computed(() => {
-  if (!searchText.value) return props.items;
-  return props.items.filter((item) =>
-    item.title.toLowerCase().includes(searchText.value.toLowerCase())
-  );
-});
+  if (!searchText.value) return props.items
+  return props.items.filter(item =>
+    item.title.toLowerCase().includes(searchText.value.toLowerCase()),
+  )
+})
 const _highlightSearchText = (text) => {
-  if (!searchText.value) return text;
-  const regex = new RegExp(`(${searchText.value})`, "gi");
-  return text.replace(regex, "<mark>$1</mark>");
-};
+  if (!searchText.value) return text
+  const regex = new RegExp(`(${searchText.value})`, 'gi')
+  return text.replace(regex, '<mark>$1</mark>')
+}
 // End Section Search Item In List
 
 // Start Section Handle Status Modal
 const dialogModel = computed({
   get: () => props.showDialog,
-  set: (value) => emit("update:showDialog", value),
-});
+  set: value => emit('update:showDialog', value),
+})
 
 const closeModal = () => {
-  emit("update:showDialog", false);
-};
+  emit('update:showDialog', false)
+}
 // End Section Handle Status Modal
 
 const changeSelectedItem = (item) => {
-  emit("changeSelectedItem", item);
-};
+  emit('changeSelectedItem', item)
+}
 
 const clickOnOverlay = () => {
   if (!mdAndUp.value) {
-    emit("update:showDialog", false);
+    emit('update:showDialog', false)
   }
-};
+}
 
 const clickOnModal = (event) => {
-  event.stopPropagation();
-};
+  event.stopPropagation()
+}
 </script>
 
 <style scoped>

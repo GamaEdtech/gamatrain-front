@@ -3,53 +3,62 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-2">
-      <div class="w-100 text-h4 primary-gray-500">School Facilities</div>
+      <div class="w-100 text-h4 primary-gray-500">
+        School Facilities
+      </div>
 
       <div class="w-100 d-flex flex-wrap">
-        <div
-          v-if="isLoadingTag"
-          class="w-100 w-sm-50 d-flex align-center pt-6 pb-6 ga-2"
-          v-for="loader in 6"
-          :key="loader"
-        >
-          <v-skeleton-loader
-            width="48"
-            height="48"
-            class="bg-transparent rounded-circle"
-          ></v-skeleton-loader>
-
-          <v-skeleton-loader
-            width="90"
-            height="16"
-            class="bg-transparent rounded-lg"
-          ></v-skeleton-loader>
-        </div>
-        <div
-          v-else
-          class="w-100 w-sm-50 d-flex align-center pt-6 pb-6 ga-2"
-          v-for="(tag, index) in tags"
-          :key="index"
-          @click="chooseTag(tag)"
-        >
-          <v-btn
-            icon
-            flat
-            :color="selectedTags.includes(tag.id) ? `#344054` : `#D0D5DD`"
-            width="48"
-            height="48"
+        <template v-for="loader in 6">
+          <div
+            v-if="isLoadingTag"
+            :key="loader"
+            class="w-100 w-sm-50 d-flex align-center pt-6 pb-6 ga-2"
           >
-            <v-icon size="x-large" color="#ffffff">{{
-              "md:" + tag.icon
-            }}</v-icon>
-          </v-btn>
-          <span class="font-weight-bold text-h5 primary-gray-900">{{
-            tag.name
-          }}</span>
-        </div>
+            <v-skeleton-loader
+              width="48"
+              height="48"
+              class="bg-transparent rounded-circle"
+            />
+
+            <v-skeleton-loader
+              width="90"
+              height="16"
+              class="bg-transparent rounded-lg"
+            />
+          </div>
+        </template>
+        <template v-if="!isLoadingTag">
+          <div
+            v-for="(tag, index) in tags"
+            :key="index"
+            class="w-100 w-sm-50 d-flex align-center pt-6 pb-6 ga-2"
+            @click="chooseTag(tag)"
+          >
+            <v-btn
+              icon
+              flat
+              :color="selectedTags.includes(tag.id) ? `#344054` : `#D0D5DD`"
+              width="48"
+              height="48"
+            >
+              <v-icon
+                size="x-large"
+                color="#ffffff"
+              >
+                {{ "md:" + tag.icon }}
+              </v-icon>
+            </v-btn>
+            <span class="font-weight-bold text-h5 primary-gray-900">{{
+              tag.name
+            }}</span>
+          </div>
+        </template>
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">Image</div>
+        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+          Image
+        </div>
 
         <div
           class="d-flex align-center justify-center w-100 container-image-school rounded-lg mt-2 ml-2"
@@ -62,7 +71,7 @@
                 class="w-100 h-100 rounded-lg"
                 :src="previewImageSchool"
                 alt="School image Preview"
-              />
+              >
               <div
                 class="upload-overlay w-100 h-100 d-flex align-center justify-center rounded-lg position-absolute px-3"
               >
@@ -72,7 +81,9 @@
                   size="small"
                   @click="clearImageSchool"
                 >
-                  <v-icon size="x-large"> md:delete_forever </v-icon>
+                  <v-icon size="x-large">
+                    md:delete_forever
+                  </v-icon>
                 </v-btn>
               </div>
             </div>
@@ -82,7 +93,10 @@
               class="w-100 h-100 d-flex flex-column align-center justify-center pointer"
               @click="openSchoolImgInput"
             >
-              <v-icon size="x-large" class="primary-blue-500 mb-4">
+              <v-icon
+                size="x-large"
+                class="primary-blue-500 mb-4"
+              >
                 md:cloud_upload
               </v-icon>
               <div class="text-h5 font-weight-bold primary-blue-500">
@@ -109,11 +123,25 @@
     </div>
 
     <div class="w-100 d-flex align-center justify-center ga-3 mt-6">
-      <v-btn @click="cancel" size="x-small" variant="text" class="text-h5">
+      <v-btn
+        size="x-small"
+        variant="text"
+        class="text-h5"
+        @click="cancel"
+      >
         Cancel
       </v-btn>
-      <v-btn @click="preStep" icon color="#1D2939" height="40" width="40" flat>
-        <v-icon size="x-large">md:arrow_back</v-icon>
+      <v-btn
+        icon
+        color="#1D2939"
+        height="40"
+        width="40"
+        flat
+        @click="preStep"
+      >
+        <v-icon size="x-large">
+          md:arrow_back
+        </v-icon>
       </v-btn>
       <v-btn
         color="#ffb600"
@@ -132,94 +160,97 @@
 </template>
 
 <script setup>
-const nuxtApp = useNuxtApp();
-const router = useRouter();
+const nuxtApp = useNuxtApp()
+const router = useRouter()
 
-const emit = defineEmits(["nextStep", "prevStep"]);
+const emit = defineEmits(['nextStep', 'prevStep'])
 
 onMounted(async () => {
-  await getTags();
-});
+  await getTags()
+})
 
-const getTags = async (params, type) => {
+const getTags = async () => {
   try {
-    isLoadingTag.value = true;
-    const endpoint = "/api/v2/tags/School";
-    const response = await $fetch(endpoint);
-    tags.value = response.data;
-  } catch (err) {
-    console.error("Error fetching location data:", err);
-  } finally {
-    isLoadingTag.value = false;
+    isLoadingTag.value = true
+    const endpoint = '/api/v2/tags/School'
+    const response = await $fetch(endpoint)
+    tags.value = response.data
   }
-};
+  catch (err) {
+    console.error('Error fetching location data:', err)
+  }
+  finally {
+    isLoadingTag.value = false
+  }
+}
 
-const isLoadingTag = ref(true);
-const selectedTags = ref([]);
-const tags = ref([]);
+const isLoadingTag = ref(true)
+const selectedTags = ref([])
+const tags = ref([])
 
 const chooseTag = (tag) => {
   if (selectedTags.value.includes(tag.id)) {
-    selectedTags.value = selectedTags.value.filter((id) => id !== tag.id);
-  } else {
-    selectedTags.value.push(tag.id);
+    selectedTags.value = selectedTags.value.filter(id => id !== tag.id)
   }
-};
+  else {
+    selectedTags.value.push(tag.id)
+  }
+}
 
-const schoolImage = ref(null);
-const schoolImgRef = ref(null);
-const previewImageSchool = ref(null);
+const schoolImage = ref(null)
+const schoolImgRef = ref(null)
+const previewImageSchool = ref(null)
 
 const validateAndProcessImage = (file) => {
-  if (!file) return;
-  const validTypes = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+  if (!file) return
+  const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
 
   if (!validTypes.includes(file.type)) {
     nuxtApp.$toast?.error(
-      "Invalid file type. Please use JPG, PNG or WebP images."
-    );
-    schoolImage.value = null;
-    return;
+      'Invalid file type. Please use JPG, PNG or WebP images.',
+    )
+    schoolImage.value = null
+    return
   }
-  const maxSize = 5 * 1024 * 1024;
+  const maxSize = 5 * 1024 * 1024
   if (file.size > maxSize) {
-    nuxtApp.$toast?.error("File too large. Maximum size is 5MB.");
-    schoolImage.value = null;
-    return;
+    nuxtApp.$toast?.error('File too large. Maximum size is 5MB.')
+    schoolImage.value = null
+    return
   }
-  schoolImage.value = file;
-  previewImageSchool.value = URL.createObjectURL(file);
-};
+  schoolImage.value = file
+  previewImageSchool.value = URL.createObjectURL(file)
+}
 const openSchoolImgInput = () => {
   if (schoolImgRef.value) {
-    schoolImgRef.value.click();
+    schoolImgRef.value.click()
   }
-};
+}
 const clearImageSchool = () => {
-  schoolImage.value = null;
-  previewImageSchool.value = null;
-};
+  schoolImage.value = null
+  previewImageSchool.value = null
+}
 
 const isFormValid = computed(() => {
-  return schoolImage.value != null;
-});
+  return schoolImage.value != null
+})
 const submitForm = () => {
   if (isFormValid.value) {
     const facilityStepInfo = {
       tags: [...selectedTags.value],
       file: schoolImage.value,
-    };
-    emit("nextStep", facilityStepInfo);
+    }
+    emit('nextStep', facilityStepInfo)
   }
-};
+}
 
 const preStep = () => {
-  emit("prevStep");
-};
+  emit('prevStep')
+}
 
 const cancel = () => {
-  router.push("/school");
-};
+  router.push('/school')
+}
 </script>
 
 <style scoped>

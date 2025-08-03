@@ -9,7 +9,10 @@
         }`"
         @click="changeStep(step)"
       >
-        <div v-if="index != 0" class="my-auto flex-grow-1">
+        <div
+          v-if="index != 0"
+          class="my-auto flex-grow-1"
+        >
           <v-progress-linear
             height="3"
             bg-color="#848585"
@@ -28,11 +31,14 @@
                 stepIndex === index
                   ? `#FFDB80`
                   : stepIndex > index
-                  ? `#FFB600`
-                  : `#F2F4F7`
+                    ? `#FFB600`
+                    : `#F2F4F7`
               }`"
             >
-              <v-icon color="#475467" :icon="step.icon" />
+              <v-icon
+                color="#475467"
+                :icon="step.icon"
+              />
             </v-btn>
           </div>
           <div
@@ -54,7 +60,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   steps: {
     type: Array,
     required: true,
@@ -63,12 +69,12 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
-});
+})
 
-const emit = defineEmits(["changeStep"]);
+const emit = defineEmits(['changeStep'])
 
 function changeStep(step) {
-  emit("changeStep", step);
+  emit('changeStep', step)
 }
 </script>
 

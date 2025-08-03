@@ -14,30 +14,51 @@
       @edit-school="editSchool"
     />
     <v-container class="w-100 mt-2 d-flex justify-center handle-height">
-      <div class="display-set" v-show="currentStep == STEP_INDEX.Location">
+      <div
+        v-show="currentStep == STEP_INDEX.Location"
+        class="display-set"
+      >
         <school-add-step-location
           @next-step="nextStep"
           @school-find-in-search="schoolFindInSearch"
         />
       </div>
-      <div class="display-set" v-show="currentStep == STEP_INDEX.Category">
-        <school-add-step-category @next-step="nextStep" @prev-step="backStep" />
-      </div>
-      <div class="display-set" v-show="currentStep == STEP_INDEX.Contact">
-        <school-add-step-contact
+      <div
+        v-show="currentStep == STEP_INDEX.Category"
+        class="display-set"
+      >
+        <school-add-step-category
           @next-step="nextStep"
           @prev-step="backStep"
-          :school-information="schoolInformation"
         />
       </div>
-      <div class="display-set" v-show="currentStep == STEP_INDEX.Facilities">
-        <school-add-step-facility @next-step="nextStep" @prev-step="backStep" />
+      <div
+        v-show="currentStep == STEP_INDEX.Contact"
+        class="display-set"
+      >
+        <school-add-step-contact
+          :school-information="schoolInformation"
+          @next-step="nextStep"
+          @prev-step="backStep"
+        />
       </div>
-      <div class="display-set" v-show="currentStep == STEP_INDEX.Score">
+      <div
+        v-show="currentStep == STEP_INDEX.Facilities"
+        class="display-set"
+      >
+        <school-add-step-facility
+          @next-step="nextStep"
+          @prev-step="backStep"
+        />
+      </div>
+      <div
+        v-show="currentStep == STEP_INDEX.Score"
+        class="display-set"
+      >
         <school-add-step-score
+          :loading="loadingSubmitSchool"
           @next-step="submitSchool"
           @prev-step="backStep"
-          :loading="loadingSubmitSchool"
         />
       </div>
     </v-container>
@@ -45,32 +66,32 @@
 </template>
 
 <script setup>
-const nuxtApp = useNuxtApp();
+const nuxtApp = useNuxtApp()
 
-const schoolFindedInSearch = ref();
-const showModalDetailSchool = ref(false);
-const loadingSubmitSchool = ref(false);
+const schoolFindedInSearch = ref()
+const showModalDetailSchool = ref(false)
+const loadingSubmitSchool = ref(false)
 const schoolInformation = ref({
-  name: "",
+  name: '',
   latitude: 0,
   longitude: 0,
   stateId: null,
   cityId: null,
   countryId: null,
-  address: "",
-  webSite: "",
-  email: "",
-  phoneNumber: "",
+  address: '',
+  webSite: '',
+  email: '',
+  phoneNumber: '',
   tags: [],
   tuition: 0,
-  localName: "",
-  zipCode: "",
-  localAddress: "",
-  faxNumber: "",
-  description: "",
+  localName: '',
+  zipCode: '',
+  localAddress: '',
+  faxNumber: '',
+  description: '',
   file: null,
   comment: {
-    comment: "",
+    comment: '',
     classesQualityRate: 0,
     educationRate: 0,
     iTTrainingRate: 0,
@@ -80,7 +101,7 @@ const schoolInformation = ref({
     facilitiesRate: 0,
     artisticActivitiesRate: 0,
   },
-});
+})
 
 // start section step
 const STEP_INDEX = {
@@ -89,78 +110,78 @@ const STEP_INDEX = {
   Contact: 2,
   Facilities: 3,
   Score: 4,
-};
+}
 const steps = [
   {
-    title: "Location",
+    title: 'Location',
     value: 0,
-    icon: "md:location_on",
+    icon: 'md:location_on',
   },
   {
-    title: "Category",
+    title: 'Category',
     value: 1,
-    icon: "md:category",
+    icon: 'md:category',
   },
   {
-    title: "Contact",
+    title: 'Contact',
     value: 2,
-    icon: "md:call",
+    icon: 'md:call',
   },
   {
-    title: "Facilities",
+    title: 'Facilities',
     value: 3,
-    icon: "md:playlist_add_check",
+    icon: 'md:playlist_add_check',
   },
   {
-    title: "Score",
+    title: 'Score',
     value: 4,
-    icon: "md:star",
+    icon: 'md:star',
   },
-];
-const currentStep = ref(STEP_INDEX.Location);
+]
+const currentStep = ref(STEP_INDEX.Location)
 
 const changeStep = (step) => {
-  currentStep.value = step.value;
-};
+  currentStep.value = step.value
+}
 // end section step
 
 const schoolFindInSearch = (school, data) => {
   schoolInformation.value = {
     ...schoolInformation.value,
     ...data,
-  };
-  schoolFindedInSearch.value = school;
-  showModalDetailSchool.value = true;
-};
+  }
+  schoolFindedInSearch.value = school
+  showModalDetailSchool.value = true
+}
 
 const startAddNewSchool = () => {
-  showModalDetailSchool.value = false;
-  currentStep.value = STEP_INDEX.Category;
-};
+  showModalDetailSchool.value = false
+  currentStep.value = STEP_INDEX.Category
+}
 
 const editSchool = () => {
-  showModalDetailSchool.value = false;
-  currentStep.value = STEP_INDEX.Category;
-};
+  showModalDetailSchool.value = false
+  currentStep.value = STEP_INDEX.Category
+}
 
 const nextStep = (data) => {
   schoolInformation.value = {
     ...schoolInformation.value,
     ...data,
-  };
-  currentStep.value += 1;
-};
+  }
+  currentStep.value += 1
+}
 const backStep = () => {
-  currentStep.value -= 1;
-};
+  currentStep.value -= 1
+}
 const submitSchool = (data) => {
-  loadingSubmitSchool.value = true;
+  loadingSubmitSchool.value = true
   schoolInformation.value = {
     ...schoolInformation.value,
     ...data,
-  };
-  const formData = buildFormDataFromObject(schoolInformation.value);
-  const entriesIterator = formData.entries();
+  }
+  const formData = buildFormDataFromObject(schoolInformation.value)
+  // const entriesIterator = formData.entries()
   // for (const pair of entriesIterator) {
   //   const key = pair[0];
   //   const value = pair[1];
@@ -169,55 +190,58 @@ const submitSchool = (data) => {
   useApiService
     .post(`/api/v2/schools/contributions`, formData)
     .then(async (response) => {
-      console.log("final response", response);
+      console.log('final response', response)
 
       if (response.succeeded) {
         nuxtApp.$toast?.success(
-          "Thank you! Your contribution has been successfully submitted."
-        );
-      } else {
-        nuxtApp.$toast?.error(response?.errors[0]?.message);
+          'Thank you! Your contribution has been successfully submitted.',
+        )
+      }
+      else {
+        nuxtApp.$toast?.error(response?.errors[0]?.message)
       }
     })
     .catch((err) => {
-      console.log("err", err);
+      console.log('err', err)
 
-      if (err?.response?.status == 401 || err?.response?.status == 403) {
-      } else nuxtApp.$toast?.error(err?.response?.data?.message);
+      nuxtApp.$toast?.error(err?.response?.data?.message)
     })
     .finally(() => {
-      loadingSubmitSchool.value = false;
-    });
-};
+      loadingSubmitSchool.value = false
+    })
+}
 
 const buildFormDataFromObject = (
   obj,
   form = new FormData(),
-  parentKey = ""
+  parentKey = '',
 ) => {
   for (const key in obj) {
-    if (obj[key] === null || obj[key] === undefined) continue;
+    if (obj[key] === null || obj[key] === undefined) continue
 
-    const formattedKey = key.charAt(0).toUpperCase() + key.slice(1);
-    const formKey = parentKey ? `${parentKey}.${formattedKey}` : formattedKey;
+    const formattedKey = key.charAt(0).toUpperCase() + key.slice(1)
+    const formKey = parentKey ? `${parentKey}.${formattedKey}` : formattedKey
 
-    const value = obj[key];
+    const value = obj[key]
 
     if (value instanceof File || value instanceof Blob) {
-      form.append(formKey, value);
-    } else if (Array.isArray(value)) {
+      form.append(formKey, value)
+    }
+    else if (Array.isArray(value)) {
       value.forEach((item, index) => {
-        form.append(`${formKey}[${index}]`, item);
-      });
-    } else if (typeof value === "object") {
-      buildFormDataFromObject(value, form, formKey);
-    } else {
-      form.append(formKey, value);
+        form.append(`${formKey}[${index}]`, item)
+      })
+    }
+    else if (typeof value === 'object') {
+      buildFormDataFromObject(value, form, formKey)
+    }
+    else {
+      form.append(formKey, value)
     }
   }
 
-  return form;
-};
+  return form
+}
 </script>
 
 <style scoped>
