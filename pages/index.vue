@@ -252,38 +252,12 @@ const _slideColor = computed(() => {
 
 // Lifecycle Hook (onMounted)
 
-// head() {
-//   return {
-//     titleTemplate: "%s",
-//     title:
-//       "GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education",
-//     meta: [
-//       {
-//         hid: "description",
-//         name: "description",
-//         content:
-//           "Discover GamaTrain, an innovative K12 learning platform transforming education with AI-powered instruction, a vibrant community, and personalized learning experiences.",
-//       },
-//       {
-//         hid: "apple-mobile-web-app-title",
-//         name: "apple-mobile-web-app-title",
-//         content:
-//           "GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education",
-//       },
-//       {
-//         hid: "og:title",
-//         name: "og:title",
-//         content:
-//           "GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education",
-//       },
-//       {
-//         hid: "og:site_name",
-//         name: "og:site_name",
-//         content: "GamaTrain",
-//       },
-//     ],
-//   };
-// },
+useSeoMeta({
+  title: `GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education`,
+  description: `Discover GamaTrain, an innovative K12 learning platform transforming education with AI-powered instruction, a vibrant community, and personalized learning experiences.`,
+  ogTitle: `GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education`,
+
+})
 </script>
 
 <style>
