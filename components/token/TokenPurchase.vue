@@ -254,7 +254,9 @@
 
             <v-card-text class="pa-6">
               <ClientOnly>
-                <WalletMultiButton />
+                <div class="wallet-connection-container">
+                  <WalletMultiButton />
+                </div>
               </ClientOnly>
             </v-card-text>
 
@@ -1043,5 +1045,19 @@ onMounted(() => {
 
 :global(.v-menu__content) {
   z-index: 9999 !important;
+}
+
+.wallet-connection-container {
+  position: relative;
+  z-index: 10000;
+}
+
+.wallet-connection-container :deep(.wallet-adapter-button) {
+  z-index: 10001 !important;
+}
+
+.wallet-connection-container :deep(.wallet-adapter-dropdown) {
+  z-index: 10002 !important;
+  position: fixed !important;
 }
 </style>
