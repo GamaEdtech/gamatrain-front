@@ -29,9 +29,7 @@ defineProps({
     default: 'display:block',
   },
 })
-
-const isAdsLoad = defineModel<boolean>()
-
+const isAdsLoad = defineModel({ type: Boolean, default: false })
 const config = useRuntimeConfig()
 const adClient = config.public.GOOGLE_ADSENSE
 const isDev = import.meta.dev
