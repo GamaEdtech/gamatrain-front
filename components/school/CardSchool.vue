@@ -120,7 +120,7 @@
           height="30"
           variant="text"
           icon
-          :disabled="!school.hasPhon"
+          :disabled="!school.hasPhone"
         >
           <v-icon
             size="x-large"

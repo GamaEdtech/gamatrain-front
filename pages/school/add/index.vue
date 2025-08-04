@@ -66,6 +66,7 @@
 
 <script setup>
 const nuxtApp = useNuxtApp()
+const router = useRouter()
 
 const schoolFindedInSearch = ref()
 const showModalDetailSchool = ref(false)
@@ -139,9 +140,9 @@ const steps = [
 ]
 const currentStep = ref(STEP_INDEX.Location)
 
-const changeStep = (step) => {
+const changeStep = () => {
   // easy Change Step for developement
-  currentStep.value = step.value
+  // currentStep.value = step.value
 }
 // end section step
 
@@ -187,12 +188,11 @@ const submitSchool = (data) => {
   useApiService
     .post(`/api/v2/schools/contributions`, formData)
     .then(async (response) => {
-      console.log('final response', response)
-
       if (response.succeeded) {
         nuxtApp.$toast?.success(
           'Thank you! Your contribution has been successfully submitted.',
         )
+        router.push('/school')
       }
       else {
         nuxtApp.$toast?.error(response?.errors[0]?.message)
