@@ -143,23 +143,6 @@
                 </div>
               </div>
 
-              <!-- Debug Info (temporary) -->
-              <div
-                class="debug-info mb-4 pa-3"
-                style="background: #f5f5f5; border-radius: 8px; font-size: 12px;"
-              >
-                <div><strong>Debug Info:</strong></div>
-                <div>isWalletConnected: {{ isWalletConnected }}</div>
-                <div>wallet.connected: {{ wallet?.connected }}</div>
-                <div>wallet object exists: {{ !!wallet }}</div>
-                <v-btn
-                  size="small"
-                  @click="checkWalletState"
-                >
-                  Refresh Wallet State
-                </v-btn>
-              </div>
-
               <!-- Swap Button -->
               <v-btn
                 :disabled="!canSwap"
@@ -545,13 +528,6 @@ const calculateReceiveAmount = async () => {
 const swapTokens = () => {
   // This would swap the from/to tokens if we supported bidirectional swaps
   // For now, we only support buying GET tokens
-}
-
-const checkWalletState = () => {
-  console.log('=== Wallet State Check ===')
-  console.log('wallet.value:', wallet.value)
-  console.log('wallet.value?.connected:', wallet.value?.connected)
-  console.log('isWalletConnected.value (computed):', isWalletConnected.value)
 }
 
 const handleSwap = async () => {
