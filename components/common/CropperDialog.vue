@@ -6,8 +6,8 @@
   >
     <v-card id="img-cropper-dialog">
       <cropper
-        :src="fileUrl"
-        :stencil-props="stencilProps"
+        :src="file_url"
+        :stencil-props="stencil_props"
         image-restriction="stencil"
         @change="cropFile"
       />
@@ -18,7 +18,7 @@
         <v-btn
           class="primary black--text text-transform-none gtext-t4 font-weight-medium"
           size="x-large"
-          :loading="confirmLoading"
+          :loading="confirm_loading"
           block
           variant="flat"
           @click="emitFile()"
@@ -39,15 +39,15 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  fileUrl: {
+  file_url: {
     type: String,
     default: '',
   },
-  stencilProps: {
+  stencil_props: {
     type: Object,
     default: () => ({ width: 400, height: 150, resizable: false }),
   },
-  confirmLoading: {
+  confirm_loading: {
     type: Boolean,
     default: false,
   },
