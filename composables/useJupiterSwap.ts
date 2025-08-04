@@ -77,6 +77,7 @@ interface TokenConfig {
 export const TOKEN_DECIMALS = {
   SOL: 9,
   USDC: 6,
+  USDT: 6,
   GET: 6,
 } as const
 
@@ -84,6 +85,7 @@ export const TOKEN_DECIMALS = {
 export const TOKEN_MINTS = {
   SOL: 'So11111111111111111111111111111111111111112',
   USDC: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  USDT: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
   GET: 'GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv',
 } as const
 
@@ -111,6 +113,8 @@ export const getTokenDecimals = (mint: string): number => {
       return TOKEN_DECIMALS.SOL
     case TOKEN_MINTS.USDC:
       return TOKEN_DECIMALS.USDC
+    case TOKEN_MINTS.USDT:
+      return TOKEN_DECIMALS.USDT
     case TOKEN_MINTS.GET:
       return TOKEN_DECIMALS.GET
     default:

@@ -36,93 +36,20 @@
             elevation="8"
           >
             <v-card-text class="pa-6">
-              <!-- From Token Input -->
+              <!-- GET Token Amount Input -->
               <div class="token-input-section mb-4">
                 <div class="input-label">
-                  You Pay
+                  Amount of GET tokens to buy
                 </div>
                 <div class="token-input-container">
                   <v-text-field
-                    v-model="payAmount"
+                    v-model="getTokenAmount"
                     type="number"
-                    placeholder="0.00"
+                    placeholder="1000"
                     variant="outlined"
                     hide-details
                     class="amount-input"
-                    @input="calculateReceiveAmount"
-                  />
-                  <div class="token-selector">
-                    <v-select
-                      v-model="selectedPayToken"
-                      :items="payTokenOptions"
-                      item-title="symbol"
-                      item-value="mint"
-                      variant="outlined"
-                      hide-details
-                      class="token-select"
-                      @update:model-value="calculateReceiveAmount"
-                    >
-                      <template #selection="{ item }">
-                        <div class="token-option">
-                          <img
-                            :src="item.raw.logoURI"
-                            :alt="item.raw.symbol"
-                            class="token-logo"
-                          >
-                          {{ item.raw.symbol }}
-                        </div>
-                      </template>
-                      <template #item="{ item, props }">
-                        <v-list-item v-bind="props">
-                          <template #prepend>
-                            <img
-                              :src="item.raw.logoURI"
-                              :alt="item.raw.symbol"
-                              class="token-logo"
-                            >
-                          </template>
-                          <v-list-item-title>{{ item.raw.symbol }}</v-list-item-title>
-                          <v-list-item-subtitle>{{ item.raw.name }}</v-list-item-subtitle>
-                        </v-list-item>
-                      </template>
-                    </v-select>
-                  </div>
-                </div>
-                <div
-                  v-if="payTokenBalance !== null"
-                  class="balance-info"
-                >
-                  Balance: {{ formatBalance(payTokenBalance) }} {{ getSelectedPayToken()?.symbol }}
-                </div>
-              </div>
-
-              <!-- Swap Arrow -->
-              <div class="swap-arrow-container">
-                <v-btn
-                  icon
-                  size="small"
-                  class="swap-arrow-btn"
-                  @click="swapTokens"
-                >
-                  <v-icon>mdi-swap-vertical</v-icon>
-                </v-btn>
-              </div>
-
-              <!-- To Token Input -->
-              <div class="token-input-section mb-6">
-                <div class="input-label">
-                  You Receive
-                </div>
-                <div class="token-input-container">
-                  <v-text-field
-                    v-model="receiveAmount"
-                    type="number"
-                    :placeholder="isCalculating ? 'Calculating...' : '0.00'"
-                    variant="outlined"
-                    hide-details
-                    readonly
-                    :loading="isCalculating"
-                    class="amount-input receive-input"
+                    @input="calculateEquivalentCost"
                   />
                   <div class="token-selector">
                     <div class="token-option get-token">
@@ -140,6 +67,55 @@
                   class="balance-info"
                 >
                   Balance: {{ formatBalance(getTokenBalance) }} GET
+                </div>
+              </div>
+
+              <!-- Payment Token Selector -->
+              <div class="token-input-section mb-6">
+                <div class="input-label">
+                  Pay with
+                </div>
+                <div class="payment-token-selector">
+                  <v-select
+                    v-model="selectedPayToken"
+                    :items="payTokenOptions"
+                    item-title="symbol"
+                    item-value="mint"
+                    variant="outlined"
+                    hide-details
+                    class="token-select"
+                    @update:model-value="calculateEquivalentCost"
+                  >
+                    <template #selection="{ item }">
+                      <div class="token-option">
+                        <img
+                          :src="item.raw.logoURI"
+                          :alt="item.raw.symbol"
+                          class="token-logo"
+                        >
+                        {{ item.raw.symbol }}
+                      </div>
+                    </template>
+                    <template #item="{ item, props }">
+                      <v-list-item v-bind="props">
+                        <template #prepend>
+                          <img
+                            :src="item.raw.logoURI"
+                            :alt="item.raw.symbol"
+                            class="token-logo"
+                          >
+                        </template>
+                        <v-list-item-title>{{ item.raw.symbol }}</v-list-item-title>
+                        <v-list-item-subtitle>{{ item.raw.name }}</v-list-item-subtitle>
+                      </v-list-item>
+                    </template>
+                  </v-select>
+                </div>
+                <div
+                  v-if="payTokenBalance !== null"
+                  class="balance-info"
+                >
+                  Balance: {{ formatBalance(payTokenBalance) }} {{ getSelectedPayToken()?.symbol }}
                 </div>
               </div>
 
@@ -279,13 +255,13 @@
 
 <script setup lang="ts">
 import type { SolanaWallet, SwapQuoteDetails, TokenConfig } from '~/composables/useJupiterSwap'
-import { TOKEN_MINTS, formatDisplayAmount } from '~/composables/useJupiterSwap'
+import { TOKEN_MINTS } from '~/composables/useJupiterSwap'
 
 // Constants
 const GET_TOKEN_MINT = TOKEN_MINTS.GET
 const SOL_MINT = TOKEN_MINTS.SOL
 const USDC_MINT = TOKEN_MINTS.USDC
-const _USDT_MINT = 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB' // USDT Mainnet mint
+const USDT_MINT = TOKEN_MINTS.USDT
 
 // RPC Configuration - using custom QuickNode endpoint
 const _RPC_ENDPOINTS = [
@@ -297,10 +273,9 @@ const _RPC_ENDPOINTS = [
 const wallet = ref<SolanaWallet | null>(null)
 
 // State
-const payAmount = ref('')
-const receiveAmount = ref('')
+const getTokenAmount = ref('')
+const equivalentCost = ref('')
 const selectedPayToken = ref(SOL_MINT)
-const _selectedReceiveToken = ref(GET_TOKEN_MINT)
 const swapping = ref(false)
 const currentPrice = ref(0)
 const priceChange = ref<number | null>(null)
@@ -335,6 +310,13 @@ const payTokenOptions = ref<TokenConfig[]>([
     symbol: 'USDC',
     name: 'USD Coin',
     logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    decimals: 6,
+  },
+  {
+    mint: USDT_MINT,
+    symbol: 'USDT',
+    name: 'Tether USD',
+    logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png',
     decimals: 6,
   },
 ])
@@ -386,9 +368,9 @@ const canSwap = computed(() => {
     return !swapping.value
   }
 
-  // If wallet is connected, require valid amount
-  return payAmount.value
-    && parseFloat(payAmount.value) > 0
+  // If wallet is connected, require valid GET token amount
+  return getTokenAmount.value
+    && parseFloat(getTokenAmount.value) > 0
     && !swapping.value
 })
 
@@ -400,8 +382,11 @@ const swapButtonText = computed(() => {
   if (swapping.value) {
     return 'Swapping...'
   }
-  if (!payAmount.value || parseFloat(payAmount.value) <= 0) {
+  if (!getTokenAmount.value || parseFloat(getTokenAmount.value) <= 0) {
     return 'Enter Amount'
+  }
+  if (equivalentCost.value) {
+    return `Buy $GET Now (${equivalentCost.value})`
   }
   return `Buy $GET Now`
 })
@@ -461,9 +446,9 @@ const fetchBalances = async () => {
   }
 }
 
-const calculateReceiveAmount = async () => {
-  if (!payAmount.value || parseFloat(payAmount.value) <= 0) {
-    receiveAmount.value = ''
+const calculateEquivalentCost = async () => {
+  if (!getTokenAmount.value || parseFloat(getTokenAmount.value) <= 0) {
+    equivalentCost.value = ''
     swapQuote.value = null
     isCalculating.value = false
     errorMessage.value = null
@@ -473,7 +458,7 @@ const calculateReceiveAmount = async () => {
   try {
     isCalculating.value = true
     errorMessage.value = null // Clear any previous errors
-    const amount = parseFloat(payAmount.value)
+    const desiredGetAmount = parseFloat(getTokenAmount.value)
     const payToken = getSelectedPayToken()
     if (!payToken) {
       isCalculating.value = false
@@ -482,11 +467,23 @@ const calculateReceiveAmount = async () => {
 
     const { getQuoteWithDecimals, calculateDisplayAmounts } = useJupiterSwap()
 
-    // Get quote from Jupiter API using the new function that handles decimals automatically
+    // For reverse quote logic, we need to get the actual quote for the desired GET amount
+    // We'll use a more accurate approach by getting a quote for a reasonable input amount
+    // and then calculating the exact required input
+
+    // Start with a reasonable estimate based on typical token prices
+    let estimatedInputAmount = 1.0 // Start with 1 token as base
+
+    // If SOL is selected, use a smaller amount since SOL is more expensive
+    if (payToken.symbol === 'SOL') {
+      estimatedInputAmount = 0.1
+    }
+
+    // Get quote from Jupiter API to establish the rate
     const quoteResponse = await getQuoteWithDecimals(
       selectedPayToken.value,
       GET_TOKEN_MINT,
-      amount,
+      estimatedInputAmount,
       50, // 0.5% slippage
     )
 
@@ -494,24 +491,35 @@ const calculateReceiveAmount = async () => {
       // Use the helper function to calculate display amounts
       const displayAmounts = calculateDisplayAmounts(quoteResponse)
 
-      receiveAmount.value = formatDisplayAmount(displayAmounts.outputAmount, 6)
+      // Calculate the rate: how much input needed per GET token
+      const inputPerGetToken = estimatedInputAmount / displayAmounts.outputAmount
 
-      // Create properly typed swap quote details
+      // Calculate the required input amount for desired GET tokens
+      const requiredInputAmount = desiredGetAmount * inputPerGetToken
+
+      // Add a small buffer (1%) to account for price fluctuations
+      const bufferedAmount = requiredInputAmount * 1.01
+
+      // Format the equivalent cost for display
+      const payTokenSymbol = payToken.symbol
+      equivalentCost.value = `${bufferedAmount.toFixed(6)} ${payTokenSymbol}`
+
+      // Create properly typed swap quote details with the actual required amount
       swapQuote.value = {
-        rate: displayAmounts.rate,
+        rate: 1 / inputPerGetToken, // GET tokens per input token
         priceImpact: displayAmounts.priceImpact.toFixed(2),
-        minimumReceived: displayAmounts.minimumReceived,
+        minimumReceived: desiredGetAmount * 0.995, // Account for slippage
         quoteResponse,
       }
     }
     else {
-      receiveAmount.value = ''
+      equivalentCost.value = ''
       swapQuote.value = null
     }
   }
   catch (error) {
     console.error('Failed to get swap quote:', error)
-    receiveAmount.value = ''
+    equivalentCost.value = ''
     swapQuote.value = null
     errorMessage.value = 'Failed to get quote. Please try again.'
 
@@ -523,11 +531,6 @@ const calculateReceiveAmount = async () => {
   finally {
     isCalculating.value = false
   }
-}
-
-const swapTokens = () => {
-  // This would swap the from/to tokens if we supported bidirectional swaps
-  // For now, we only support buying GET tokens
 }
 
 const handleSwap = async () => {
@@ -578,9 +581,41 @@ const handleSwap = async () => {
       throw new Error('Wallet public key not accessible')
     }
 
-    // Get swap transaction from Jupiter
+    // We need to get a fresh quote for the actual swap amount
+    // Parse the equivalent cost to get the actual input amount needed
+    const costParts = equivalentCost.value.split(' ')
+    const actualInputAmount = parseFloat(costParts[0])
+
+    if (!actualInputAmount || actualInputAmount <= 0) {
+      throw new Error('Invalid input amount calculated')
+    }
+
+    // Check if user has enough balance (including buffer for fees)
+    const payToken = getSelectedPayToken()
+    if (payToken?.symbol === 'SOL') {
+      // For SOL, ensure user has enough for swap + network fees (at least 0.01 SOL buffer)
+      const requiredSol = actualInputAmount + 0.01
+      if (payTokenBalance.value !== null && payTokenBalance.value < requiredSol) {
+        throw new Error(`Insufficient SOL balance. Need at least ${requiredSol.toFixed(4)} SOL (including fees)`)
+      }
+    }
+
+    // Get a fresh quote for the actual input amount
+    const { getQuoteWithDecimals } = useJupiterSwap()
+    const freshQuote = await getQuoteWithDecimals(
+      selectedPayToken.value,
+      GET_TOKEN_MINT,
+      actualInputAmount,
+      50, // 0.5% slippage
+    )
+
+    if (!freshQuote) {
+      throw new Error('Failed to get fresh quote for swap')
+    }
+
+    // Get swap transaction from Jupiter using the fresh quote
     const swapResponse = await getSwapTransaction(
-      swapQuote.value.quoteResponse,
+      freshQuote,
       publicKeyString,
     )
 
@@ -646,8 +681,8 @@ const handleSwap = async () => {
       }, 10000)
 
       // Reset form and refresh balances
-      payAmount.value = ''
-      receiveAmount.value = ''
+      getTokenAmount.value = ''
+      equivalentCost.value = ''
       swapQuote.value = null
       await fetchBalances()
     }
@@ -671,13 +706,13 @@ const handleSwap = async () => {
   }
 }
 
-// Watch for pay amount changes
-watch(payAmount, () => {
-  if (payAmount.value) {
-    calculateReceiveAmount()
+// Watch for GET token amount changes
+watch(getTokenAmount, () => {
+  if (getTokenAmount.value) {
+    calculateEquivalentCost()
   }
   else {
-    receiveAmount.value = ''
+    equivalentCost.value = ''
     swapQuote.value = null
   }
 })
@@ -795,7 +830,7 @@ onMounted(() => {
 .token-input-container {
   display: flex;
   gap: 12px;
-  align-items: center;
+  align-items: stretch;
 }
 
 .amount-input {
@@ -807,10 +842,6 @@ onMounted(() => {
   font-weight: 600;
 }
 
-.receive-input :deep(.v-field__input) {
-  color: #00d4aa !important;
-}
-
 .token-selector {
   min-width: 120px;
 }
@@ -819,14 +850,24 @@ onMounted(() => {
   min-width: 120px;
 }
 
+.payment-token-selector {
+  width: 100%;
+}
+
+.payment-token-selector .token-select {
+  width: 100%;
+}
+
 .token-option {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 8px 12px;
   border-radius: 8px;
   background: #f5f5f5;
   font-weight: 600;
+  height: 100%;
 }
 
 .get-token {
