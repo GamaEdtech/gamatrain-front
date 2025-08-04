@@ -140,6 +140,7 @@ const steps = [
 const currentStep = ref(STEP_INDEX.Location)
 
 const changeStep = (step) => {
+  // easy Change Step for developement
   currentStep.value = step.value
 }
 // end section step
@@ -164,9 +165,17 @@ const nextStep = (data) => {
     ...data,
   }
   currentStep.value += 1
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
 }
 const backStep = () => {
   currentStep.value -= 1
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth',
+  })
 }
 const submitSchool = (data) => {
   loadingSubmitSchool.value = true

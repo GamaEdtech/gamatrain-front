@@ -113,11 +113,16 @@
 
         <v-file-input
           ref="schoolImgRef"
-          v-model="schoolImage"
           class="d-none"
           accept="image/jpeg, image/png, image/jpg, image/webp"
           hide-details
           @update:model-value="validateAndProcessImage"
+        />
+        <common-cropper-dialog
+          v-model="showCropperDialog"
+          :file_url="cropFileUrl"
+          :confirm_loading="cropConfirmLoading"
+          @cropped-data="croppedData"
         />
       </div>
     </div>
@@ -201,6 +206,21 @@ const schoolImage = ref(null)
 const schoolImgRef = ref(null)
 const previewImageSchool = ref(null)
 
+const showCropperDialog = ref(false)
+const cropFileUrl = ref('')
+const cropConfirmLoading = ref(false)
+
+const croppedData = (data) => {
+  const timestamp = new Date().getTime()
+  const fileType = 'image/webp'
+  const fileExt = 'webp'
+  const filename = `image_${timestamp}.${fileExt}`
+  const file = new File([data], filename, { type: fileType })
+  showCropperDialog.value = false
+  schoolImage.value = file
+  previewImageSchool.value = URL.createObjectURL(file)
+}
+
 const validateAndProcessImage = (file) => {
   if (!file) return
   const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
@@ -218,8 +238,8 @@ const validateAndProcessImage = (file) => {
     schoolImage.value = null
     return
   }
-  schoolImage.value = file
-  previewImageSchool.value = URL.createObjectURL(file)
+  cropFileUrl.value = URL.createObjectURL(file)
+  showCropperDialog.value = true
 }
 const openSchoolImgInput = () => {
   if (schoolImgRef.value) {

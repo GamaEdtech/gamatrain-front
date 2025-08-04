@@ -314,7 +314,7 @@ const latLng = ref([])
 const showSelectLocationDialog = ref(false)
 const map = reactive({
   url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  zoom: 10,
+  zoom: 2,
   minZoom: 2,
   center: [0, 0],
   latLng: [0, 0],

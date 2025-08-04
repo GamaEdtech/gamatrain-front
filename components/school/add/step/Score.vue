@@ -48,6 +48,7 @@
         active-color="#ffb600"
         bg-color="#ffffff"
         class="w-100"
+        :rules="[descriptionRule]"
       />
     </div>
 
@@ -81,6 +82,7 @@
         max-width="180"
         class="w-100 text-h5"
         :loading="loading"
+        :disabled="!isFormValid"
         @click="submitForm"
       >
         Confirm
@@ -156,18 +158,28 @@ const updateRating = (rate, index) => {
 }
 const comment = ref('')
 
-const submitForm = () => {
-  const informationSumbitComment = {
-    comment: comment.value,
-  }
-  itemsScore.value.forEach((item) => {
-    informationSumbitComment[item.key] = item.score
-  })
-  const commentObject = {
-    comment: informationSumbitComment,
-  }
+const descriptionRule = (value) => {
+  if (!value) return true
+  return value.length <= 500 || 'Maximum 500 characters allowed'
+}
+const isFormValid = computed(() => {
+  return comment.value ? descriptionRule(comment.value) === true : false
+})
 
-  emit('nextStep', commentObject)
+const submitForm = () => {
+  if (isFormValid.value) {
+    const informationSumbitComment = {
+      comment: comment.value,
+    }
+    itemsScore.value.forEach((item) => {
+      informationSumbitComment[item.key] = item.score
+    })
+    const commentObject = {
+      comment: informationSumbitComment,
+    }
+
+    emit('nextStep', commentObject)
+  }
 }
 
 const cancel = () => {
