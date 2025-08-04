@@ -30,7 +30,7 @@
                 align-items: center;
                 justify-content: center;
                 height: 100%;
-                @include style.responsive-size(width, 300px, 67%, 67%, 67%);
+                @include style.responsive-size(width, 300px, 50%, 50%, 50%);
             }
 
             .filter-options-div {

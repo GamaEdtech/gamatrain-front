@@ -25,7 +25,7 @@
           active-color="#ffb600"
           bg-color="#ffffff"
           class="w-100"
-          :rules="[urlRule, requiredRule]"
+          :rules="[urlRule]"
         />
       </div>
 
@@ -47,7 +47,7 @@
           active-color="#ffb600"
           bg-color="#ffffff"
           class="w-100"
-          :rules="[requiredRule, emailRule]"
+          :rules="[emailRule]"
         />
       </div>
 
@@ -69,13 +69,13 @@
           active-color="#ffb600"
           bg-color="#ffffff"
           class="w-100"
-          :rules="[requiredRule, phoneRule]"
+          :rules="[phoneRule]"
         />
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
-          Location
+          Address
         </div>
         <v-text-field
           v-model="location"
@@ -95,7 +95,7 @@
         />
       </div>
 
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+      <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
           Local Name
         </div>
@@ -115,7 +115,7 @@
           class="w-100"
           :rules="[requiredRule]"
         />
-      </div>
+      </div> -->
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
@@ -135,11 +135,11 @@
           active-color="#ffb600"
           bg-color="#ffffff"
           class="w-100"
-          :rules="[requiredRule, zipCodeRule]"
+          :rules="[zipCodeRule]"
         />
       </div>
 
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+      <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
           Local Address
         </div>
@@ -159,7 +159,7 @@
           class="w-100"
           :rules="[requiredRule]"
         />
-      </div>
+      </div> -->
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
@@ -304,9 +304,9 @@ const email = ref('')
 const phone = ref('')
 const location = ref('')
 
-const localName = ref('')
+// const localName = ref('')
 const zipCode = ref('')
-const localAddress = ref('')
+// const localAddress = ref('')
 const faxNumber = ref('')
 const description = ref('')
 const latLng = ref([])
@@ -341,10 +341,12 @@ const openSelectLocationDialog = () => {
 
 const requiredRule = value => !!value || 'This field is required'
 const emailRule = (value) => {
+  if (!value) return true
   const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return pattern.test(value) || 'Enter a valid email address'
 }
 const phoneRule = (value) => {
+  if (!value) return true
   const numericPattern = /^[0-9]+$/
   if (!numericPattern.test(value)) return 'Only numbers are allowed'
   if (value.length < 8) return 'At least 8 digits required'
@@ -357,6 +359,7 @@ const urlRule = (value) => {
 }
 
 const zipCodeRule = (value) => {
+  if (!value) return true
   const numericPattern = /^[0-9]+$/
   return numericPattern.test(value) || 'Only numbers are allowed'
 }
@@ -372,17 +375,16 @@ const descriptionRule = (value) => {
 
 const isFormValid = computed(() => {
   return (
-    emailRule(email.value) === true
-    && phoneRule(phone.value) === true
+    (email.value.length > 0 ? emailRule(email.value) === true : true)
+    && (phone.value.length > 0 ? phoneRule(phone.value) === true : true)
     && requiredRule(location.value) === true
-    && requiredRule(website.value) === true
-    && requiredRule(localName.value) === true
-    && requiredRule(zipCode.value) === true
-    && zipCodeRule(zipCode.value) === true
-    && requiredRule(localAddress.value) === true
+    && (website.value.length > 0 ? urlRule(website.value) === true : true)
+    // && requiredRule(localName.value) === true
+    && (zipCode.value.length > 0 ? zipCodeRule(zipCode.value) === true : true)
+    // && requiredRule(localAddress.value) === true
     && (faxNumber.value ? faxRule(faxNumber.value) === true : true)
     && (description.value ? descriptionRule(description.value) === true : true)
-    && latLng.value.length > 0
+    // && latLng.value.length > 0
   )
 })
 const submitForm = () => {
@@ -392,13 +394,13 @@ const submitForm = () => {
       email: email.value,
       phoneNumber: phone.value,
       address: location.value,
-      localName: localName.value,
+      // localName: localName.value,
       zipCode: zipCode.value,
-      localAddress: localAddress.value,
+      // localAddress: localAddress.value,
       faxNumber: faxNumber.value,
       description: description.value,
-      latitude: latLng.value[0],
-      longitude: latLng.value[1],
+      latitude: latLng.value[0] ? latLng.value[0] : 0,
+      longitude: latLng.value[1] ? latLng.value[1] : 0,
     }
     emit('nextStep', contactStepInfo)
   }

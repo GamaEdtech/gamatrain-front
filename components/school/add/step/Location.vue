@@ -248,8 +248,8 @@ const checkSchoolAvailable = async () => {
     const params = {
       Name: title.value,
       CountryId: locationData.value[0].selected.id,
-      StateId: locationData.value[1].selected.id,
-      CityId: locationData.value[2].selected.id,
+      // StateId: locationData.value[1].selected.id,
+      // CityId: locationData.value[2].selected.id,
     }
 
     const response = await useApiService.get('/api/v2/schools', params)

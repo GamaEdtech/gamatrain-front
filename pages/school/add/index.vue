@@ -22,7 +22,7 @@
           @school-find-in-search="schoolFindInSearch"
         />
       </div>
-      <div
+      <!-- <div
         v-show="currentStep == STEP_INDEX.Category"
         class="display-set"
       >
@@ -30,7 +30,7 @@
           @next-step="nextStep"
           @prev-step="backStep"
         />
-      </div>
+      </div> -->
       <div
         v-show="currentStep == STEP_INDEX.Contact"
         class="display-set"
@@ -106,10 +106,10 @@ const schoolInformation = ref({
 // start section step
 const STEP_INDEX = {
   Location: 0,
-  Category: 1,
-  Contact: 2,
-  Facilities: 3,
-  Score: 4,
+  // Category: 1,
+  Contact: 1,
+  Facilities: 2,
+  Score: 3,
 }
 const steps = [
   {
@@ -117,24 +117,24 @@ const steps = [
     value: 0,
     icon: 'md:location_on',
   },
-  {
-    title: 'Category',
-    value: 1,
-    icon: 'md:category',
-  },
+  // {
+  //   title: 'Category',
+  //   value: 1,
+  //   icon: 'md:category',
+  // },
   {
     title: 'Contact',
-    value: 2,
+    value: 1,
     icon: 'md:call',
   },
   {
     title: 'Facilities',
-    value: 3,
+    value: 2,
     icon: 'md:playlist_add_check',
   },
   {
     title: 'Score',
-    value: 4,
+    value: 3,
     icon: 'md:star',
   },
 ]
@@ -142,7 +142,7 @@ const currentStep = ref(STEP_INDEX.Location)
 
 const changeStep = () => {
   // easy Change Step for developement
-  // currentStep.value = step.value
+  // currentStep.value = step.value;
 }
 // end section step
 
@@ -157,7 +157,8 @@ const schoolFindInSearch = (school, data) => {
 
 const startAddNewSchool = () => {
   showModalDetailSchool.value = false
-  currentStep.value = STEP_INDEX.Category
+  // currentStep.value = STEP_INDEX.Category;
+  currentStep.value = STEP_INDEX.Contact
 }
 
 const nextStep = (data) => {
