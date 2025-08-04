@@ -1,13 +1,17 @@
 <template>
-  <ins
-    :data-adtest="isDev ? `on` : `off`"
-    class="adsbygoogle"
-    :style="style"
-    :data-ad-client="adClient"
-    :data-ad-slot="adslot"
-    :data-ad-format="format"
-    :data-full-width-responsive="responsive.toString()"
-  />
+  <div>
+    <ins
+      :data-adtest="isDev ? `on` : `off`"
+      class="adsbygoogle"
+      :style="style"
+      :data-ad-client="adClient"
+      :data-ad-slot="adslot"
+      :data-ad-format="format"
+      :data-full-width-responsive="responsive.toString()"
+    />
+
+    <common-random-coin v-if="isAdsLoad" />
+  </div>
 </template>
 
 <script setup>
@@ -46,11 +50,14 @@ onMounted(() => {
           mutations.forEach((mutation) => {
             if (mutation.attributeName === 'data-ad-status') {
               const status = adsElement.getAttribute('data-ad-status')
+              console.log('AdBanner: Ad status changed to:', status)
 
               if (status === 'filled') {
+                console.log('AdBanner: Ad loaded successfully')
                 isAdsLoad.value = true
               }
               else if (status === 'unfilled') {
+                console.log('AdBanner: Ad failed to load')
                 isAdsLoad.value = false
               }
               observer.disconnect()
@@ -63,6 +70,7 @@ onMounted(() => {
         })
       }
       try {
+        console.log('AdBanner: Pushing ad to Google AdSense');
         (window.adsbygoogle = window.adsbygoogle || []).push({})
       }
       catch (e) {
@@ -71,6 +79,7 @@ onMounted(() => {
       }
     }
     else {
+      console.log('AdBanner: Google AdSense not available')
       isAdsLoad.value = false
     }
   }
