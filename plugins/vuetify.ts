@@ -6,7 +6,7 @@ import { VSlideGroup } from 'vuetify/components'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import { aliases as mdiAliases, mdi } from 'vuetify/iconsets/mdi'
-import { aliases as mdAliases, md } from 'vuetify/iconsets/md'
+import { md } from 'vuetify/iconsets/md'
 import { defineNuxtPlugin } from 'nuxt/app'
 
 export default defineNuxtPlugin(
@@ -41,7 +41,6 @@ export default defineNuxtPlugin(
         defaultSet: 'mdi',
         aliases: {
           ...mdiAliases,
-          ...mdAliases,
         },
         sets: {
           mdi,
