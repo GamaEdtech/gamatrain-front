@@ -10,49 +10,47 @@
           class="hero-content"
         >
           <div class="content-left">
-            <div class="content-left-top">
-              <div class="live-trading-badge">
-                <span class="live-dot" />
-                Live Trading
-              </div>
+            <!-- Live Trading Badge -->
+            <NuxtLink
+              class="figma-live-badge"
+              to="https://jup.ag/tokens/GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv"
+              target="_blank"
+            >
+              <span class="figma-live-dot" />
+              Live Trading
+            </NuxtLink>
 
-              <h1 class="main-title">
+            <!-- Price Display -->
+            <div class="figma-price-display">
+              <!-- $GET Title -->
+              <h1 class="figma-get-title">
                 $GET
               </h1>
 
-              <p class="description">
-                The future of decentralized finance, powering innovation,<br>
-                enabling growth, and creating value for the community.
-              </p>
+              <div class="figma-price-container">
+                <span class="figma-price">${{ formattedPrice }}</span>
+                <div class="figma-price-change">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M16.6434 7.05386L18.0834 8.49386L13.2034 13.3739L9.91344 10.0839C9.52344 9.69386 8.89344 9.69386 8.50344 10.0839L2.50344 16.0939C2.11344 16.4839 2.11344 17.1139 2.50344 17.5039C2.89344 17.8939 3.52344 17.8939 3.91344 17.5039L9.20344 12.2039L12.4934 15.4939C12.8834 15.8839 13.5134 15.8839 13.9034 15.4939L19.4934 9.91386L20.9334 11.3539C21.2434 11.6639 21.7834 11.4439 21.7834 11.0039V6.70386C21.7934 6.42386 21.5734 6.20386 21.2934 6.20386H17.0034C16.5534 6.20386 16.3334 6.74386 16.6434 7.05386Z"
+                      fill="#12B76A"
+                    />
+                  </svg>
 
-              <div class="price-section">
-                <div class="price">
-                  ${{ formattedPrice }}
-                </div>
-                <div class="change">
-                  +6.47%
+                  <span class="figma-percentage">+1.65%</span>
                 </div>
               </div>
+            </div>
 
-              <div class="action-buttons">
-                <v-btn
-                  target="_blank"
-                  href="https://jup.ag/swap/So11111111111111111111111111111111111111112-GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv"
-                  class="buy-btn"
-                  rounded
-                  elevation="0"
-                >
-                  Buy $GET Now
-                </v-btn>
-                <v-btn
-                  to="/whitepaper"
-                  class="whitepaper-btn"
-                  rounded
-                  elevation="0"
-                >
-                  View Whitepaper
-                </v-btn>
-              </div>
+            <!-- Token Purchase Component -->
+            <div class="figma-purchase-wrapper">
+              <token-purchase />
             </div>
           </div>
 
@@ -123,8 +121,11 @@ onMounted(() => {
 
 <style scoped>
 /* Base styles (Desktop) */
+.v-container{
+  padding: 0px !important;
+}
 .hero-section {
-  background: #000;
+  background: #24292F;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -140,75 +141,88 @@ onMounted(() => {
 .hero-content {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 2rem;
+  justify-content: space-between;
+  gap: 4rem;
 }
 
 .content-left {
   flex: 1;
-  max-width: 700px;
+  max-width: 600px;
 }
 
 .content-right {
   flex: 0 0 auto;
 }
 
-.live-trading-badge {
-  background: rgba(5, 182, 231, 0.3) !important;
-  border: 1px solid rgba(110, 119, 129, 1) !important;
-  border-radius: 999px;
-  padding: 10px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: white;
+/* Figma-exact Live Trading Badge */
+.figma-live-badge {
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+  padding: 4px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #9CA3AF;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-top: 3rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
 }
 
-.live-dot {
+.figma-live-dot {
   width: 8px;
   height: 8px;
-  background: #24aa94;
+  background: rgba(2, 183, 25, 1);
   border-radius: 50%;
   animation: pulse 2s infinite;
 }
 
-.main-title {
-  font-size: 10rem;
-  color: white;
-  margin: 0 0 2rem 0;
+/* Figma-exact $GET Title */
+.figma-get-title {
+  font-size: 120px;
+  font-weight: 700;
+  color: #FFC107;
+  margin: 0 0 1.5rem 0;
   line-height: 1;
   text-align: left;
 }
 
-.description {
-  font-size: 1.5rem;
-  line-height: 1.6;
-  color: #b0b0b0;
-  margin: 0 0 2rem 0;
-  max-width: 700px;
-  text-align: left;
+/* Figma-exact Price Display */
+.figma-price-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 3rem;
 }
 
-.price-section {
-  margin-bottom: 2.5rem;
-  text-align: left;
+.figma-price-container{
+  display: flex;
+  gap: 10px;
 }
 
-.price {
-  font-size: 4.5rem;
-  color: white;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.change {
-  font-size: 1.5rem;
-  color: #24aa94;
+.figma-price {
+  font-size: 32px;
   font-weight: 600;
+  color: rgba(208, 213, 221, 1);
+}
+
+.figma-price-change {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.figma-percentage {
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(18, 183, 106, 1);
+}
+
+/* Purchase Component Wrapper */
+.figma-purchase-wrapper {
+  margin-top: 2rem;
 }
 
 .token-wrapper {
@@ -293,9 +307,8 @@ onMounted(() => {
 }
 
 /* Mobile styles */
-@media (max-width: 480px) {
+@media (max-width: 599px) {
   .hero-section {
-    margin-top: 6rem;
     padding: 1rem;
     min-height: auto;
   }
@@ -308,29 +321,33 @@ onMounted(() => {
 
   .content-left {
     width: 100%;
+    text-align: center;
   }
 
   .content-right {
     width: 100%;
   }
 
-  .live-trading-badge {
-    padding: 8px 8px;
-    font-size: 10px;
+  .figma-live-badge {
     margin: 0 auto 1.5rem;
   }
 
-  .main-title {
-    font-size: 7rem;
-    margin-bottom: 1.5rem;
+  .figma-get-title {
+    font-size: 64px;
     text-align: center;
   }
 
-  .description {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    padding: 0 1rem;
+  .figma-price-display {
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
+  .figma-price {
+    font-size: 24px;
+  }
+
+  .figma-percentage {
+    font-size: 14px;
   }
 
   .token-wrapper {
@@ -338,36 +355,12 @@ onMounted(() => {
     height: 200px;
     margin: 0 auto;
   }
-
-  .price-section {
-    text-align: center;
-  }
-
-  .price {
-    font-size: 3rem;
-  }
-
-  .change {
-    font-size: 1.25rem;
-  }
-
-  .action-buttons {
-    justify-content: center;
-  }
-
-  .buy-btn, .whitepaper-btn {
-    padding: 8px 8px !important;
-    font-size: 9px !important;
-    min-width: 80px !important;
-    height: 40px !important;
-  }
 }
 
 /* Tablet styles */
-@media (min-width: 481px) and (max-width: 768px) {
+@media (min-width: 600px) and (max-width: 1199px) {
   .hero-section {
     padding: 1.5rem;
-    margin-top: 2rem;
   }
 
   .hero-content {
@@ -376,18 +369,35 @@ onMounted(() => {
     gap: 3rem;
   }
 
- .live-trading-badge {
-    padding: 14px 14px;
-    font-size: 16px;
-    margin: 0 auto 1.5rem;
-  }
-
   .content-left {
     width: 100%;
+    text-align: center;
   }
 
   .content-right {
     width: 100%;
+  }
+
+  .figma-live-badge {
+    margin: 0 auto 1.5rem;
+  }
+
+  .figma-get-title {
+    font-size: 96px;
+    text-align: center;
+  }
+
+  .figma-price-display {
+    justify-content: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .figma-price {
+    font-size: 28px;
+  }
+
+  .figma-percentage {
+    font-size: 16px;
   }
 
   .token-wrapper {
@@ -395,81 +405,35 @@ onMounted(() => {
     height: 300px;
     margin: 0 auto;
   }
-
-  .main-title {
-    font-size: 12rem;
-    text-align: center;
-    margin-top: 2rem;
-  }
-
-  .description {
-    font-size: 2rem;
-    text-align: center;
-    margin: 0 auto 2rem;
-  }
-
-  .price-section {
-    text-align: center;
-    margin-bottom: 3rem;
-  }
-  .price {
-    font-size: 4rem;
-  }
-
-  .change {
-    font-size: 3rem;
-  }
-
-  .action-buttons {
-    justify-content: center;
-  }
-
-  .buy-btn, .whitepaper-btn {
-    padding: 10px 12px !important;
-    font-size: 16px !important;
-    min-width: 80px !important;
-    height: 50px !important;
-  }
 }
 
-@media (min-width: 1024px) {
+/* Desktop styles */
+@media (min-width: 1200px) {
   .hero-content {
-    gap: 2rem;
+    gap: 4rem;
+    align-items: center;
   }
+
   .content-left {
-    max-width: 600px;
+    max-width: 450px;
+    text-align: left;
   }
+
+  .figma-get-title {
+    font-size: 50px;
+  }
+
+  .figma-price {
+    font-size: 22px;
+  }
+
+  .figma-percentage {
+    font-size: 18px;
+  }
+
   .token-wrapper {
-    width: 380px;
-    height: 380px;
-  }
-  .main-title {
-    font-size: 12rem;
-    margin-bottom: 3rem;
-    margin-top: 2rem;
-  }
-  .description {
-    font-size: 2.2rem;
-    margin-bottom: 2.5rem;
-  }
-  .price-section {
-    margin-bottom: 3rem;
-  }
-  .price {
-    font-size: 6rem;
-    margin-bottom: 1rem;
-  }
-  .change {
-    font-size: 3.25rem;
-  }
-  .action-buttons {
-    margin-top: 2rem;
-  }
-  .buy-btn, .whitepaper-btn {
-    font-size: 1.5rem !important;
-    min-width: 200px !important;
-    height: 60px !important;
-    padding: 18px 36px !important;
+    width: 400px;
+    height: 400px;
   }
 }
 
