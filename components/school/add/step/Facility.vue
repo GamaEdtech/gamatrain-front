@@ -56,10 +56,6 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
-          Image
-        </div>
-
         <div
           class="d-flex align-center justify-center w-100 container-image-school rounded-lg mt-2 ml-2"
         >

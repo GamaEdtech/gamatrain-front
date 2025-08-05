@@ -34,22 +34,42 @@
         />
       </div>
 
-      <v-textarea
-        v-model="comment"
-        rounded="lg"
-        density="compact"
-        placeholder="Type your comment"
-        variant="outlined"
-        autocomplete="off"
-        persistent-clear
-        no-resize
-        base-color="#E4E7EC"
-        color="#ffb600"
-        active-color="#ffb600"
-        bg-color="#ffffff"
-        class="w-100"
-        :rules="[descriptionRule]"
-      />
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+          <v-badge
+            floating
+            location="top right"
+            color="transparent"
+            overlap
+          >
+            <template #badge>
+              <v-icon
+                size="large"
+                color="red"
+              >
+                md:star
+              </v-icon>
+            </template>
+            <span>Comment</span>
+          </v-badge>
+        </div>
+        <v-textarea
+          v-model="comment"
+          rounded="lg"
+          density="compact"
+          placeholder="Type your comment"
+          variant="outlined"
+          autocomplete="off"
+          persistent-clear
+          no-resize
+          base-color="#E4E7EC"
+          color="#ffb600"
+          active-color="#ffb600"
+          bg-color="#ffffff"
+          class="w-100"
+          :rules="[descriptionRule]"
+        />
+      </div>
     </div>
 
     <div class="w-100 d-flex align-center justify-center ga-3 mt-2">

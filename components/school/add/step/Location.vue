@@ -20,7 +20,22 @@
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
-          Title
+          <v-badge
+            floating
+            location="top right"
+            color="transparent"
+            overlap
+          >
+            <template #badge>
+              <v-icon
+                size="large"
+                color="red"
+              >
+                md:star
+              </v-icon>
+            </template>
+            <span>Title</span>
+          </v-badge>
         </div>
         <v-text-field
           v-model="title"
@@ -46,7 +61,22 @@
         class="w-100 d-flex flex-column align-start justify-start ga-1"
       >
         <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
-          {{ location.lable }}
+          <v-badge
+            floating
+            location="top right"
+            color="transparent"
+            overlap
+          >
+            <template #badge>
+              <v-icon
+                size="large"
+                color="red"
+              >
+                md:star
+              </v-icon>
+            </template>
+            <span>{{ location.lable }}</span>
+          </v-badge>
         </div>
         <v-text-field
           v-model="location.selected.title"

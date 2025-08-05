@@ -68,6 +68,40 @@
 const nuxtApp = useNuxtApp()
 const router = useRouter()
 
+useHead({
+  title: 'Add School',
+
+  meta: [
+    {
+      hid: 'apple-mobile-web-app-title',
+      name: 'apple-mobile-web-app-title',
+      content: 'Add School',
+    },
+    {
+      hid: 'og:title',
+      name: 'og:title',
+      content: 'Add School',
+    },
+    {
+      hid: 'og:site_name',
+      name: 'og:site_name',
+      content: 'GamaTrain',
+    },
+    {
+      hid: 'description',
+      name: 'description',
+      content:
+        'Explore tailored K12 schools effortlessly with GamaTrain\'s School Finder. Find the perfect school for your unique needs and set the course for academic success.',
+    },
+    {
+      hid: 'og:description',
+      name: 'og:description',
+      content:
+        'Explore tailored K12 schools effortlessly with GamaTrain\'s School Finder. Find the perfect school for your unique needs and set the course for academic success.',
+    },
+  ],
+})
+
 const schoolFindedInSearch = ref()
 const showModalDetailSchool = ref(false)
 const loadingSubmitSchool = ref(false)
