@@ -1,5 +1,5 @@
-import type { Connection, PublicKey } from '@solana/web3.js'
-import { VersionedTransaction } from '@solana/web3.js'
+import type { Connection, TransactionInstruction } from '@solana/web3.js'
+import { PublicKey, VersionedTransaction, TransactionMessage, AddressLookupTableAccount } from '@solana/web3.js'
 
 // Wallet interface for proper typing
 interface SolanaWallet {
@@ -54,6 +54,42 @@ interface JupiterQuoteResponse {
 interface JupiterSwapResponse {
   swapTransaction: string
   lastValidBlockHeight: number
+}
+
+// Jupiter Swap Instructions Response (from /swap-instructions endpoint)
+interface JupiterSwapInstructionsResponse {
+  tokenLedgerInstruction?: unknown // If using useTokenLedger = true
+  computeBudgetInstructions: unknown[] // Instructions to setup compute budget
+  setupInstructions: unknown[] // Setup missing ATA for users
+  swapInstruction: unknown // The actual swap instruction
+  cleanupInstruction?: unknown // Unwrap SOL if wrapAndUnwrapSol = true
+  addressLookupTableAddresses: string[] // Lookup table addresses for versioned transactions
+  error?: string
+}
+
+// Enhanced swap response that includes memo support
+interface JupiterSwapWithMemoResponse {
+  transaction: VersionedTransaction
+  lastValidBlockHeight: number
+  memo?: string
+  signature?: string
+}
+
+// Swap options interface for enhanced functionality
+interface SwapOptions {
+  memo?: string
+  slippageBps?: number
+  wrapAndUnwrapSol?: boolean
+  dynamicComputeUnitLimit?: boolean
+  prioritizationFeeLamports?: string | number
+  useInstructions?: boolean // Whether to use instructions endpoint instead of serialized transaction
+}
+
+// Memo configuration interface
+interface MemoConfig {
+  text: string
+  maxLength: number
+  encoding: 'utf-8'
 }
 
 // Processed swap quote for UI display
@@ -122,6 +158,53 @@ export const getTokenDecimals = (mint: string): number => {
   }
 }
 
+// Utility function to deserialize Jupiter instruction format
+const deserializeInstruction = (instruction: unknown): TransactionInstruction => {
+  return new TransactionInstruction({
+    programId: new PublicKey(instruction.programId),
+    keys: instruction.accounts.map((key: unknown) => ({
+      pubkey: new PublicKey(key.pubkey),
+      isSigner: key.isSigner,
+      isWritable: key.isWritable,
+    })),
+    data: Buffer.from(instruction.data, 'base64'),
+  })
+}
+
+// Utility function to get address lookup table accounts
+const getAddressLookupTableAccounts = async (
+  keys: string[],
+  connection: Connection,
+): Promise<AddressLookupTableAccount[]> => {
+  if (!keys || keys.length === 0) {
+    return []
+  }
+
+  try {
+    const addressLookupTableAccountInfos = await connection.getMultipleAccountsInfo(
+      keys.map(key => new PublicKey(key)),
+    )
+
+    return addressLookupTableAccountInfos.reduce((acc, accountInfo, index) => {
+      const addressLookupTableAddress = keys[index]
+      if (accountInfo) {
+        const addressLookupTableAccount = new AddressLookupTableAccount({
+          key: new PublicKey(addressLookupTableAddress),
+          state: AddressLookupTableAccount.deserialize(accountInfo.data),
+        })
+        acc.push(addressLookupTableAccount)
+      }
+      return acc
+    }, new Array<AddressLookupTableAccount>())
+  }
+  catch (error) {
+    console.warn('Failed to get address lookup table accounts, proceeding without them:', error)
+    // Return empty array to continue without lookup tables
+    // This is acceptable as the transaction can still work without them
+    return []
+  }
+}
+
 export const useJupiterSwap = () => {
   const getQuote = async (
     inputMint: string,
@@ -165,6 +248,7 @@ export const useJupiterSwap = () => {
   const getSwapTransaction = async (
     quote: JupiterQuoteResponse,
     userPublicKey: string,
+    options: SwapOptions = {},
   ): Promise<JupiterSwapResponse | null> => {
     try {
       const response = await $fetch<JupiterSwapResponse>('https://quote-api.jup.ag/v6/swap', {
@@ -175,9 +259,9 @@ export const useJupiterSwap = () => {
         body: {
           quoteResponse: quote,
           userPublicKey,
-          wrapAndUnwrapSol: true,
-          dynamicComputeUnitLimit: true,
-          prioritizationFeeLamports: 'auto',
+          wrapAndUnwrapSol: options.wrapAndUnwrapSol ?? true,
+          dynamicComputeUnitLimit: options.dynamicComputeUnitLimit ?? true,
+          prioritizationFeeLamports: options.prioritizationFeeLamports ?? 'auto',
         },
       })
 
@@ -190,6 +274,142 @@ export const useJupiterSwap = () => {
         inputMint: quote.inputMint,
         outputMint: quote.outputMint,
         inAmount: quote.inAmount,
+        error: error instanceof Error ? error.message : error,
+      })
+      return null
+    }
+  }
+
+  const getSwapInstructions = async (
+    quote: JupiterQuoteResponse,
+    userPublicKey: string,
+    options: SwapOptions = {},
+  ): Promise<JupiterSwapInstructionsResponse | null> => {
+    try {
+      const response = await $fetch<JupiterSwapInstructionsResponse>('https://quote-api.jup.ag/v6/swap-instructions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: {
+          quoteResponse: quote,
+          userPublicKey,
+          wrapAndUnwrapSol: options.wrapAndUnwrapSol ?? true,
+          dynamicComputeUnitLimit: options.dynamicComputeUnitLimit ?? true,
+          prioritizationFeeLamports: options.prioritizationFeeLamports ?? 'auto',
+        },
+      })
+
+      if (response.error) {
+        throw new Error(`Jupiter API error: ${response.error}`)
+      }
+
+      return response
+    }
+    catch (error) {
+      console.error('Failed to get swap instructions:', error)
+      console.error('Error details:', {
+        userPublicKey,
+        inputMint: quote.inputMint,
+        outputMint: quote.outputMint,
+        inAmount: quote.inAmount,
+        error: error instanceof Error ? error.message : error,
+      })
+      return null
+    }
+  }
+
+  const buildTransactionWithMemo = async (
+    quote: JupiterQuoteResponse,
+    userPublicKey: string,
+    connection: Connection,
+    options: SwapOptions = {},
+  ): Promise<JupiterSwapWithMemoResponse | null> => {
+    try {
+      const payerPublicKey = new PublicKey(userPublicKey)
+
+      // Get swap instructions from Jupiter
+      const instructionsResponse = await getSwapInstructions(quote, userPublicKey, options)
+      if (!instructionsResponse) {
+        throw new Error('Failed to get swap instructions from Jupiter')
+      }
+
+      const {
+        computeBudgetInstructions,
+        setupInstructions,
+        swapInstruction: swapInstructionPayload,
+        cleanupInstruction,
+        addressLookupTableAddresses,
+      } = instructionsResponse
+
+      // Get address lookup table accounts
+      const addressLookupTableAccounts = await getAddressLookupTableAccounts(
+        addressLookupTableAddresses,
+        connection,
+      )
+
+      // Build instructions array in proper order
+      const instructions: TransactionInstruction[] = []
+
+      // 1. Add compute budget instructions (if any)
+      if (computeBudgetInstructions && computeBudgetInstructions.length > 0) {
+        instructions.push(...computeBudgetInstructions.map(deserializeInstruction))
+      }
+
+      // 2. Add setup instructions (if any)
+      if (setupInstructions && setupInstructions.length > 0) {
+        instructions.push(...setupInstructions.map(deserializeInstruction))
+      }
+
+      // 3. Add memo instruction (if memo is provided)
+      if (options.memo && options.memo.trim().length > 0) {
+        const { createValidatedMemoInstruction } = useSolanaMemo()
+        const memoResult = createValidatedMemoInstruction(options.memo, payerPublicKey)
+
+        if (!memoResult.success) {
+          throw new Error(`Memo validation failed: ${memoResult.errorMessage}`)
+        }
+
+        if (memoResult.instruction) {
+          instructions.push(memoResult.instruction)
+        }
+      }
+
+      // 4. Add the main swap instruction
+      if (swapInstructionPayload) {
+        instructions.push(deserializeInstruction(swapInstructionPayload))
+      }
+
+      // 5. Add cleanup instructions (if any)
+      if (cleanupInstruction) {
+        instructions.push(deserializeInstruction(cleanupInstruction))
+      }
+
+      // Get recent blockhash
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
+
+      // Build the versioned transaction
+      const messageV0 = new TransactionMessage({
+        payerKey: payerPublicKey,
+        recentBlockhash: blockhash,
+        instructions,
+      }).compileToV0Message(addressLookupTableAccounts)
+
+      const transaction = new VersionedTransaction(messageV0)
+
+      return {
+        transaction,
+        lastValidBlockHeight,
+        memo: options.memo,
+      }
+    }
+    catch (error) {
+      console.error('Failed to build transaction with memo:', error)
+      console.error('Error details:', {
+        userPublicKey,
+        memo: options.memo,
+        inputMint: quote.inputMint,
+        outputMint: quote.outputMint,
         error: error instanceof Error ? error.message : error,
       })
       return null
@@ -238,6 +458,56 @@ export const useJupiterSwap = () => {
     }
   }
 
+  const executeSwapWithTransaction = async (
+    transaction: VersionedTransaction,
+    wallet: SolanaWallet,
+    connection: Connection,
+    memo?: string,
+  ): Promise<string | null> => {
+    try {
+      console.log('Executing swap with transaction', memo ? `(memo: ${memo})` : '')
+
+      // Sign and send the transaction
+      const signedTransaction = await wallet.signTransaction(transaction)
+      const signature = await connection.sendRawTransaction(signedTransaction.serialize(), {
+        skipPreflight: true,
+        maxRetries: 2,
+      })
+
+      // Confirm the transaction using the updated method
+      const confirmation = await connection.confirmTransaction({
+        signature,
+        blockhash: transaction.message.recentBlockhash,
+        lastValidBlockHeight: await connection.getLatestBlockhash().then(res => res.lastValidBlockHeight),
+      }, 'confirmed')
+
+      if (confirmation.value.err) {
+        const errorMsg = confirmation.value.err.toString()
+        if (memo && errorMsg.includes('memo')) {
+          throw new Error(`Transaction failed due to memo issue: ${errorMsg}`)
+        }
+        throw new Error(`Transaction failed: ${errorMsg}`)
+      }
+
+      console.log('Swap transaction successful:', signature)
+      if (memo) {
+        console.log('Transaction included memo:', memo)
+      }
+      return signature
+    }
+    catch (error) {
+      console.error('Failed to execute swap with transaction:', error)
+      console.error('Error details:', {
+        walletConnected: wallet.connected,
+        walletPublicKey: wallet.publicKey.value.toString(),
+        hasMemo: !!memo,
+        memo: memo,
+        error: error instanceof Error ? error.message : error,
+      })
+      throw error
+    }
+  }
+
   // Convenience function that automatically handles token decimals
   const getQuoteWithDecimals = async (
     inputMint: string,
@@ -271,7 +541,10 @@ export const useJupiterSwap = () => {
     getQuote,
     getQuoteWithDecimals,
     getSwapTransaction,
+    getSwapInstructions,
+    buildTransactionWithMemo,
     executeSwap,
+    executeSwapWithTransaction,
     calculateDisplayAmounts,
   }
 }
@@ -281,6 +554,10 @@ export type {
   SolanaWallet,
   JupiterQuoteResponse,
   JupiterSwapResponse,
+  JupiterSwapInstructionsResponse,
+  JupiterSwapWithMemoResponse,
+  SwapOptions,
+  MemoConfig,
   SwapQuoteDetails,
   TokenConfig,
   RouteInfo,
