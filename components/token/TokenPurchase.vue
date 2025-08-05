@@ -204,6 +204,7 @@
 </template>
 
 <script setup lang="ts">
+import type { VersionedTransaction } from '@solana/web3.js'
 import type { SolanaWallet, SwapQuoteDetails, TokenConfig } from '~/composables/useJupiterSwap'
 import { TOKEN_MINTS } from '~/composables/useJupiterSwap'
 
