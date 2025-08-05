@@ -19,7 +19,7 @@
             @update:model-value="changeSearchValue"
           />
         </div>
-        <div class="d-flex d-lg-none justify-end w-33 ga-2">
+        <div class="d-flex d-lg-none justify-end w-50 ga-2">
           <v-btn
             size="small"
             icon
@@ -44,6 +44,19 @@
               color="#000000"
             >
               mdi-filter-variant
+            </v-icon>
+          </v-btn>
+          <v-btn
+            size="small"
+            icon
+            color="#2E90FA"
+            to="school/add"
+          >
+            <v-icon
+              size="x-large"
+              color="#ffffff"
+            >
+              md:add
             </v-icon>
           </v-btn>
         </div>
@@ -127,6 +140,8 @@
                     color="primary"
                     class="text-h4"
                     hide-details
+                    false-icon="md:check_box_outline_blank"
+                    true-icon="md:check_box"
                     @click.stop
                     @update:model-value="
                       (val) => handleCheckboxChange(val, sortItem)
@@ -162,6 +177,22 @@
             {{ totalSchoolFind ? $numberFormat(totalSchoolFind) : "0" }}
           </span>
         </div>
+
+        <v-btn
+          class="d-none d-lg-flex font-weight-bold text-h5"
+          rounded="xl"
+          color="#2E90FA"
+          to="school/add"
+          height="46"
+        >
+          <v-icon
+            size="x-large"
+            color="#ffffff"
+          >
+            md:add
+          </v-icon>
+          Add New
+        </v-btn>
       </div>
     </div>
     <div
@@ -253,6 +284,8 @@
               color="primary"
               class="text-h4"
               hide-details
+              false-icon="md:check_box_outline_blank"
+              true-icon="md:check_box"
               @click.stop
               @update:model-value="(val) => handleCheckboxChange(val, sortItem)"
             >
