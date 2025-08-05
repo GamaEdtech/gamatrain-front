@@ -1,14 +1,17 @@
 <template>
   <div>
-    <v-container fluid id="service-page-header">
-      <div class="overlay"></div>
+    <v-container
+      id="service-page-header"
+      fluid
+    >
+      <div class="overlay" />
 
       <v-container>
         <v-row>
           <v-col cols="12">
             <div id="main-title-holder">
               <h1 class="gama-text-h2">
-                Revolutionizing<br />
+                Revolutionizing<br>
                 Education Services!
               </h1>
             </div>
@@ -22,7 +25,9 @@
         <v-col cols="12">
           <v-card flat>
             <v-card-text>
-              <h2 class="gama-text-h4">Community Focused Traning</h2>
+              <h2 class="gama-text-h4">
+                Community Focused Traning
+              </h2>
               <p class="gama-text-h6">
                 Empowering Learning Through Community Engagement
               </p>
@@ -40,10 +45,17 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-ai-learning">
+    <v-container
+      id="service-ai-learning"
+      fluid
+    >
       <v-container>
         <v-row align="center">
-          <v-col cols="12" md="6" class="order-last order-md-first">
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
             <h2 class="gama-text-h4 white--text">
               AI-Based Personalized Learning
             </h2>
@@ -59,7 +71,11 @@
               they need to excel academically.
             </p>
           </v-col>
-          <v-col cols="12" md="6" class="d-flex justify-center">
+          <v-col
+            cols="12"
+            md="6"
+            class="d-flex justify-center"
+          >
             <v-img
               src="/images/service-ai-learning.png"
               alt="AI-Based Personalized Learning"
@@ -72,14 +88,21 @@
 
     <v-container id="service-home-learning">
       <v-row align="center">
-        <v-col cols="12" md="6" class="d-flex justify-center">
+        <v-col
+          cols="12"
+          md="6"
+          class="d-flex justify-center"
+        >
           <v-img
             src="/images/service-home-learning.png"
             alt="Targeted Home Learning Tasks and Worksheets"
             class="service-image"
           />
         </v-col>
-        <v-col cols="12" md="6">
+        <v-col
+          cols="12"
+          md="6"
+        >
           <h2 class="gama-text-h4">
             Targeted Home Learning Tasks and Worksheets
           </h2>
@@ -97,12 +120,23 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-online-tests">
+    <v-container
+      id="service-online-tests"
+      fluid
+    >
       <v-container>
         <v-row align="center">
-          <v-col cols="12" md="6" class="order-last order-md-first">
-            <h2 class="gama-text-h4">Online Tests</h2>
-            <p class="gama-text-h6">Assess, Analyze, and Improve</p>
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
+            <h2 class="gama-text-h4">
+              Online Tests
+            </h2>
+            <p class="gama-text-h6">
+              Assess, Analyze, and Improve
+            </p>
             <p class="gama-text-body1">
               GamaTrain's online tests offer a comprehensive assessment tool to
               gauge students' knowledge and progress. Our platform provides
@@ -111,9 +145,13 @@
               based on data-driven insights.
             </p>
           </v-col>
-          <v-col cols="12" md="6" class="d-flex justify-center">
-            <v-img 
-              src="/images/service-online-tests.png" 
+          <v-col
+            cols="12"
+            md="6"
+            class="d-flex justify-center"
+          >
+            <v-img
+              src="/images/service-online-tests.png"
               alt="Online Tests"
               class="service-image"
             />
@@ -124,15 +162,24 @@
 
     <v-container id="service-interactive-tutorials">
       <v-row align="center">
-        <v-col cols="12" md="6" class="d-flex justify-center">
+        <v-col
+          cols="12"
+          md="6"
+          class="d-flex justify-center"
+        >
           <v-img
             src="/images/service-interactive-tutorials.png"
             alt="Interactive Tutorials"
             class="service-image"
           />
         </v-col>
-        <v-col cols="12" md="6">
-          <h2 class="gama-text-h4">Tutorials</h2>
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <h2 class="gama-text-h4">
+            Tutorials
+          </h2>
           <p class="gama-text-h6">
             Engaging and Immersive Learning Experiences
           </p>
@@ -147,12 +194,23 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-school-finder">
+    <v-container
+      id="service-school-finder"
+      fluid
+    >
       <v-container>
         <v-row align="center">
-          <v-col cols="12" md="6" class="order-last order-md-first">
-            <h2 class="gama-text-h4">School Finder</h2>
-            <p class="gama-text-h6">Find Your Ideal Educational Institution</p>
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
+            <h2 class="gama-text-h4">
+              School Finder
+            </h2>
+            <p class="gama-text-h6">
+              Find Your Ideal Educational Institution
+            </p>
             <p class="gama-text-body1">
               Choosing the right school is crucial for a student's growth. With
               GamaTrain's school finder, parents and students can explore and
@@ -162,7 +220,11 @@
               process informed and hassle-free.
             </p>
           </v-col>
-          <v-col cols="12" md="6" class="d-flex justify-center">
+          <v-col
+            cols="12"
+            md="6"
+            class="d-flex justify-center"
+          >
             <v-img
               src="/images/service-school-finder.png"
               alt="School Finder"
@@ -175,16 +237,27 @@
 
     <v-container id="service-live-streaming">
       <v-row align="center">
-        <v-col cols="12" md="6" class="d-flex justify-center">
+        <v-col
+          cols="12"
+          md="6"
+          class="d-flex justify-center"
+        >
           <v-img
             src="/images/service-live-streaming.png"
             alt="Live Streaming"
             class="service-image"
           />
         </v-col>
-        <v-col cols="12" md="6">
-          <h2 class="gama-text-h4">Live Streaming</h2>
-          <p class="gama-text-h6">Real-Time Learning, Anytime, Anywhere</p>
+        <v-col
+          cols="12"
+          md="6"
+        >
+          <h2 class="gama-text-h4">
+            Live Streaming
+          </h2>
+          <p class="gama-text-h6">
+            Real-Time Learning, Anytime, Anywhere
+          </p>
           <p class="gama-text-body1">
             Experience the flexibility of live streaming with GamaTrain. Our
             platform enables students to attend real-time virtual classes,
@@ -196,12 +269,23 @@
       </v-row>
     </v-container>
 
-    <v-container fluid id="service-content-monetization">
+    <v-container
+      id="service-content-monetization"
+      fluid
+    >
       <v-container>
         <v-row align="center">
-          <v-col cols="12" md="6" class="order-last order-md-first">
-            <h2 class="gama-text-h4">Content Monetization</h2>
-            <p class="gama-text-h6">Empower Educators, Empower Education</p>
+          <v-col
+            cols="12"
+            md="6"
+            class="order-last order-md-first"
+          >
+            <h2 class="gama-text-h4">
+              Content Monetization
+            </h2>
+            <p class="gama-text-h6">
+              Empower Educators, Empower Education
+            </p>
             <p class="gama-text-body1">
               At GamaTrain, we value educators and their expertise. Our content
               monetization program allows educators to share their knowledge and
@@ -210,7 +294,11 @@
               while getting recognized for your efforts.
             </p>
           </v-col>
-          <v-col cols="12" md="6" class="d-flex justify-center">
+          <v-col
+            cols="12"
+            md="6"
+            class="d-flex justify-center"
+          >
             <v-img
               src="/images/service-content-monetization.png"
               alt="Content Monetization"
@@ -221,56 +309,56 @@
       </v-container>
     </v-container>
 
-    <v-container fluid id="service-education-future">
+    <v-container
+      id="service-education-future"
+      fluid
+    >
       <v-row>
-        <v-col cols="12" md="12">
-          <p class="gama-text-h6">Join the Future of Education Today!</p>
-          <v-btn href="mailto:contact@gamatrain.com">Contact Us</v-btn>
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <p class="gama-text-h6">
+            Join the Future of Education Today!
+          </p>
+          <v-btn href="mailto:contact@gamatrain.com">
+            Contact Us
+          </v-btn>
         </v-col>
       </v-row>
     </v-container>
   </div>
 </template>
 
-<script>
-export default {
-  head() {
-    return {
-      title: "Comprehensive Educational Services",
+<script setup lang='ts'>
+useHead({
+  title: 'Comprehensive Educational Services',
 
-      meta: [
-        {
-          hid: "apple-mobile-web-app-title",
-          name: "apple-mobile-web-app-title",
-          content: "Comprehensive Educational Services",
-        },
-        {
-          hid: "og:title",
-          name: "og:title",
-          content: "Comprehensive Educational Services",
-        },
-        {
-          hid: "og:site_name",
-          name: "og:site_name",
-          content: "GamaTrain",
-        },
-        {
-          hid: "description",
-          name: "description",
-          content:
-            "Experience GamaTrain's diverse range of educational services, including AI-powered training, community-based learning, and engaging online classes.",
-        },
-        {
-          hid: "og:description",
-          name: "og:description",
-          content:
-            "Experience GamaTrain's diverse range of educational services, including AI-powered training, community-based learning, and engaging online classes.",
-        },
-      ],
-    };
-  },
-  auth: false,
-};
+  meta: [
+    {
+      name: 'apple-mobile-web-app-title',
+      content: 'Comprehensive Educational Services',
+    },
+    {
+      name: 'og:title',
+      content: 'Comprehensive Educational Services',
+    },
+    {
+      name: 'og:site_name',
+      content: 'GamaTrain',
+    },
+    {
+      name: 'description',
+      content:
+        'Experience GamaTrain\'s diverse range of educational services, including AI-powered training, community-based learning, and engaging online classes.',
+    },
+    {
+      name: 'og:description',
+      content:
+        'Experience GamaTrain\'s diverse range of educational services, including AI-powered training, community-based learning, and engaging online classes.',
+    },
+  ],
+})
 </script>
 
 <style scoped>
@@ -337,7 +425,7 @@ export default {
 #service-ai-learning {
   background: #24292f;
   padding:2rem;
-  
+
   .gama-text-h4 {
     color: white !important;
     margin-bottom: 2.4rem;
