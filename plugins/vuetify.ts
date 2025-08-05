@@ -1,9 +1,12 @@
+import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import '@mdi/font/css/materialdesignicons.css'
 import { VStepperVertical } from 'vuetify/labs/VStepperVertical'
 // Import from Vuetify components
 import { VSlideGroup } from 'vuetify/components'
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
+import { aliases as mdiAliases, mdi } from 'vuetify/iconsets/mdi'
+import { md } from 'vuetify/iconsets/md'
 import { defineNuxtPlugin } from 'nuxt/app'
 
 export default defineNuxtPlugin(
@@ -32,6 +35,16 @@ export default defineNuxtPlugin(
               warning: '#FB8C00',
             },
           },
+        },
+      },
+      icons: {
+        defaultSet: 'mdi',
+        aliases: {
+          ...mdiAliases,
+        },
+        sets: {
+          mdi,
+          md,
         },
       },
       components: {

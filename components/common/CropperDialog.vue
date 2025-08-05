@@ -13,14 +13,16 @@
       />
       <v-card-actions
         style="position: sticky; bottom: 0; left: 0; right: 0"
-        class="pa-0"
+        class="pa-0 d-flex align-center justify-center"
       >
         <v-btn
-          class="primary black--text text-transform-none gtext-t4 font-weight-medium"
-          size="x-large"
+          color="primary text-h5 font-weight-bold"
+          width="150"
+          rounded="xl"
+          size="large"
           :loading="confirm_loading"
-          block
           variant="flat"
+          density="compact"
           @click="emitFile()"
         >
           Confirm
