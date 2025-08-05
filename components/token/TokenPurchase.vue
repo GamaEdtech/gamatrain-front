@@ -1,256 +1,151 @@
 <template>
-  <section class="token-purchase-bg">
-    <div class="token-purchase-container">
-      <div class="token-purchase-content">
-        <h2 class="main-heading">
-          Join the Movement
-        </h2>
-        <h3 class="sub-heading">
-          Buy <span class="head-yellow">$GET</span> Today
-        </h3>
-        <p class="token-purchase__description">
-          Empower education. Power the Gama ecosystem.
-        </p>
-
-        <!-- Swap Interface -->
-        <div class="swap-container mt-8">
-          <!-- Current Price Display -->
-          <div class="price-display mb-4">
-            <div class="price-label">
-              Current $GET Price
-            </div>
-            <div class="price-value">
-              ${{ formatPrice(currentPrice) }}
-              <span
-                v-if="priceChange !== null"
-                :class="priceChangeClass"
-              >
-                {{ priceChange > 0 ? '+' : '' }}{{ priceChange.toFixed(2) }}%
-              </span>
-            </div>
-          </div>
-
-          <!-- Swap Form -->
-          <v-card
-            class="swap-card"
-            elevation="8"
-          >
-            <v-card-text class="pa-6">
-              <!-- GET Token Amount Input -->
-              <div class="token-input-section mb-4">
-                <div class="input-label">
-                  Amount of GET tokens to buy
-                </div>
-                <div class="token-input-container">
-                  <v-text-field
-                    v-model="getTokenAmount"
-                    type="number"
-                    placeholder="1000"
-                    variant="outlined"
-                    hide-details
-                    class="amount-input"
-                    @input="calculateEquivalentCost"
-                  />
-                  <div class="token-selector">
-                    <div class="token-option get-token">
-                      <img
-                        src="/images/token/Buy/token-get2.png"
-                        alt="GET"
-                        class="token-logo"
-                      >
-                      GET
-                    </div>
-                  </div>
-                </div>
-                <div
-                  v-if="getTokenBalance !== null"
-                  class="balance-info"
-                >
-                  Balance: {{ formatBalance(getTokenBalance) }} GET
-                </div>
-              </div>
-
-              <!-- Payment Token Selector -->
-              <div class="token-input-section mb-6">
-                <div class="input-label">
-                  Pay with
-                </div>
-                <div class="payment-token-selector">
-                  <v-select
-                    v-model="selectedPayToken"
-                    :items="payTokenOptions"
-                    item-title="symbol"
-                    item-value="mint"
-                    variant="outlined"
-                    hide-details
-                    class="token-select"
-                    @update:model-value="calculateEquivalentCost"
-                  >
-                    <template #selection="{ item }">
-                      <div class="token-option">
-                        <img
-                          :src="item.raw.logoURI"
-                          :alt="item.raw.symbol"
-                          class="token-logo"
-                        >
-                        {{ item.raw.symbol }}
-                      </div>
-                    </template>
-                    <template #item="{ item, props }">
-                      <v-list-item v-bind="props">
-                        <template #prepend>
-                          <img
-                            :src="item.raw.logoURI"
-                            :alt="item.raw.symbol"
-                            class="token-logo"
-                          >
-                        </template>
-                        <v-list-item-title>{{ item.raw.symbol }}</v-list-item-title>
-                        <v-list-item-subtitle>{{ item.raw.name }}</v-list-item-subtitle>
-                      </v-list-item>
-                    </template>
-                  </v-select>
-                </div>
-                <div
-                  v-if="payTokenBalance !== null"
-                  class="balance-info"
-                >
-                  Balance: {{ formatBalance(payTokenBalance) }} {{ getSelectedPayToken()?.symbol }}
-                </div>
-              </div>
-
-              <!-- Swap Button -->
-              <v-btn
-                :disabled="!canSwap"
-                :loading="swapping"
-                block
-                size="large"
-                class="swap-btn"
-                @click="handleSwap"
-              >
-                {{ swapButtonText }}
-              </v-btn>
-
-              <!-- Success Message -->
-              <v-alert
-                v-if="successMessage"
-                type="success"
-                class="mt-4"
-                closable
-                @click:close="successMessage = null"
-              >
-                {{ successMessage }}
-              </v-alert>
-
-              <!-- Error Message -->
-              <v-alert
-                v-if="errorMessage"
-                type="error"
-                class="mt-4"
-                closable
-                @click:close="errorMessage = null"
-              >
-                {{ errorMessage }}
-              </v-alert>
-
-              <!-- Transaction Details -->
-              <div
-                v-if="swapQuote"
-                class="swap-details mt-4"
-              >
-                <div class="detail-row">
-                  <span>Rate</span>
-                  <span>1 {{ getSelectedPayToken()?.symbol }} = {{ formatPrice(swapQuote.rate) }} GET</span>
-                </div>
-                <div class="detail-row">
-                  <span>Price Impact</span>
-                  <span :class="priceImpactClass">{{ swapQuote.priceImpact }}%</span>
-                </div>
-                <div class="detail-row">
-                  <span>Minimum Received</span>
-                  <span>{{ formatBalance(swapQuote.minimumReceived) }} GET</span>
-                </div>
-              </div>
-            </v-card-text>
-          </v-card>
-
-          <!-- Fallback Jupiter Link -->
-          <div class="jupiter-fallback mt-4">
-            <div class="fallback-text">
-              Or trade on Jupiter directly:
-            </div>
-            <a
-              target="_blank"
-              href="https://jup.ag/swap/So11111111111111111111111111111111111111112-GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv"
-              rel="noopener noreferrer"
-              class="jupiter-link"
-            >
-              <img
-                src="/images/token/CTA/jupiter.png"
-                alt="Jupiter exchange logo"
-                class="jupiter-logo"
-              >
-              <span>Trade on Jupiter</span>
-            </a>
-          </div>
+  <div class="figma-purchase-container">
+    <!-- Horizontal Input Container matching Figma -->
+    <div class="figma-horizontal-inputs">
+      <!-- GET Token Input -->
+      <div class="figma-input-section">
+        <input
+          :value="formattedGetTokenAmount"
+          type="text"
+          placeholder="100"
+          class="figma-dark-input"
+          @input="handleAmountInput"
+          @focus="handleInputFocus"
+          @blur="handleInputBlur"
+        >
+        <div class="figma-token-label">
+          GET
         </div>
       </div>
 
-      <!-- Wallet Connection Modal -->
-      <Teleport to="body">
-        <v-dialog
-          v-model="showWalletModal"
-          max-width="400"
-          :z-index="1000"
+      <!-- Swap Arrow -->
+      <div class="figma-swap-arrow">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
         >
-          <v-card class="wallet-modal">
-            <v-card-title class="text-center pa-6">
-              <h3>Connect Your Wallet</h3>
-              <p class="text-body-2 mt-2 mb-0">
-                Choose a wallet to connect and buy $GET tokens
-              </p>
-            </v-card-title>
+          <path
+            d="M8 2L8 14M8 14L12 10M8 14L4 10"
+            stroke="#9CA3AF"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
 
-            <v-card-text class="pa-6">
-              <ClientOnly>
-                <div class="wallet-connection-container">
-                  <WalletMultiButton />
-                </div>
-              </ClientOnly>
-            </v-card-text>
-
-            <v-card-actions class="pa-6 pt-0">
-              <v-spacer />
-              <v-btn
-                variant="text"
-                @click="showWalletModal = false"
-              >
-                Cancel
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </Teleport>
-
-      <figure>
-        <img
-          src="/images/token/CTA/CTA_People_Mobile.svg"
-          alt="People holding Gama tokens illustration"
-          class="token-purchase__illustration d-none d-md-block"
+      <!-- Payment Token Input -->
+      <div class="figma-input-section">
+        <input
+          :value="formattedEquivalentCost"
+          type="text"
+          readonly
+          class="figma-dark-input readonly"
         >
-        <img
-          src="/images/token/CTA/CTA_People_Tablet.svg"
-          alt="People holding Gama tokens illustration for tablet"
-          class="token-purchase__illustration d-none d-sm-block d-md-none"
-        >
-        <img
-          src="/images/token/CTA/CTA_People_Mobile.svg"
-          alt="People holding Gama tokens illustration for mobile"
-          class="token-purchase__illustration d-sm-none"
-        >
-      </figure>
+        <div class="figma-token-dropdown">
+          <select
+            v-model="selectedPayToken"
+            class="figma-dropdown-select"
+            @change="calculateEquivalentCost"
+          >
+            <option
+              v-for="token in payTokenOptions"
+              :key="token.mint"
+              :value="token.mint"
+            >
+              {{ token.symbol }}
+            </option>
+          </select>
+          <svg
+            width="12"
+            height="8"
+            viewBox="0 0 12 8"
+            fill="none"
+            class="figma-dropdown-arrow"
+          >
+            <path
+              d="M1 1L6 6L11 1"
+              stroke="#9CA3AF"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </div>
+      </div>
     </div>
-  </section>
+
+    <!-- Green Buy Button matching Figma -->
+    <button
+      :disabled="!canSwap"
+      :class="['figma-green-buy-btn', { loading: swapping }]"
+      @click="handleSwap"
+    >
+      {{ swapping ? 'Processing...' : 'Buy GET' }}
+    </button>
+
+    <!-- You Receive Text -->
+    <div
+      v-if="getTokenAmount && parseFloat(getTokenAmount) > 0"
+      class="figma-receive-text"
+    >
+      You receive {{ formatNumber(parseFloat(getTokenAmount)) }} GET
+    </div>
+
+    <!-- Error Message -->
+    <div
+      v-if="errorMessage"
+      class="figma-error-message"
+    >
+      {{ errorMessage }}
+    </div>
+
+    <!-- Success Message -->
+    <div
+      v-if="successMessage"
+      class="figma-success-message"
+    >
+      {{ successMessage }}
+    </div>
+
+    <!-- Wallet Connection Modal -->
+    <Teleport to="body">
+      <div
+        v-if="showWalletModal"
+        class="figma-modal-overlay"
+        @click="showWalletModal = false"
+      >
+        <div
+          class="figma-modal"
+          @click.stop
+        >
+          <div class="figma-modal-header">
+            <h3>Connect Your Wallet</h3>
+            <p>Choose a wallet to connect and buy GET tokens</p>
+          </div>
+
+          <div class="figma-modal-content">
+            <ClientOnly>
+              <div class="wallet-connection-container">
+                <WalletMultiButton />
+              </div>
+            </ClientOnly>
+          </div>
+
+          <div class="figma-modal-actions">
+            <button
+              class="figma-cancel-button"
+              @click="showWalletModal = false"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -278,7 +173,7 @@ const equivalentCost = ref('')
 const selectedPayToken = ref(SOL_MINT)
 const swapping = ref(false)
 const currentPrice = ref(0)
-const priceChange = ref<number | null>(null)
+const _priceChange = ref<number | null>(null)
 const swapQuote = ref<SwapQuoteDetails | null>(null)
 const payTokenBalance = ref<number | null>(null)
 const getTokenBalance = ref<number | null>(null)
@@ -337,6 +232,8 @@ onMounted(async () => {
         if (connected) {
           showWalletModal.value = false // Close modal when connected
           fetchBalances()
+          // Clear any previous error messages when wallet connects
+          errorMessage.value = null
         }
       }, { immediate: true })
 
@@ -363,40 +260,98 @@ const isWalletConnected = computed(() => {
 })
 
 const canSwap = computed(() => {
+  // Never allow interaction while swapping
+  if (swapping.value) {
+    return false
+  }
+
   // If wallet is not connected, allow clicking to show connection modal
   if (!isWalletConnected.value) {
-    return !swapping.value
+    return true
   }
 
   // If wallet is connected, require valid GET token amount
   return getTokenAmount.value
     && parseFloat(getTokenAmount.value) > 0
-    && !swapping.value
 })
 
-const swapButtonText = computed(() => {
-  console.log('Computing button text - isWalletConnected:', isWalletConnected.value)
-  if (!isWalletConnected.value) {
-    return 'Connect Wallet to Buy $GET'
-  }
-  if (swapping.value) {
-    return 'Swapping...'
-  }
-  if (!getTokenAmount.value || parseFloat(getTokenAmount.value) <= 0) {
-    return 'Enter Amount'
-  }
-  if (equivalentCost.value) {
-    return `Buy $GET Now (${equivalentCost.value})`
-  }
-  return `Buy $GET Now`
+// Import number formatting utility
+const { formatNumber } = useFormatNumber()
+
+// Computed for formatted GET token amount display
+const formattedGetTokenAmount = computed(() => {
+  if (!getTokenAmount.value) return ''
+  const numValue = parseFloat(getTokenAmount.value)
+  if (isNaN(numValue)) return getTokenAmount.value
+  return formatNumber(numValue)
 })
 
-const priceChangeClass = computed(() => {
-  if (priceChange.value === null) return ''
-  return priceChange.value > 0 ? 'price-up' : 'price-down'
+// Computed for formatted equivalent cost
+const formattedEquivalentCost = computed(() => {
+  if (!equivalentCost.value) return '0.1'
+  const parts = equivalentCost.value.split(' ')
+  const amount = parseFloat(parts[0])
+  if (isNaN(amount)) return '0.1'
+
+  // Format with appropriate decimal places based on amount size
+  if (amount >= 1000) {
+    return formatNumber(Math.round(amount))
+  }
+  else if (amount >= 1) {
+    return amount.toFixed(2)
+  }
+  else {
+    return amount.toFixed(6)
+  }
 })
 
-const priceImpactClass = computed(() => {
+// Handle amount input with Figma-exact formatting
+const handleAmountInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
+
+  // Remove existing commas and get raw value
+  let value = target.value.replace(/,/g, '')
+
+  // Only allow numbers and decimal points
+  value = value.replace(/[^0-9.]/g, '')
+
+  // Prevent multiple decimal points
+  const decimalCount = (value.match(/\./g) || []).length
+  if (decimalCount > 1) {
+    value = value.substring(0, value.lastIndexOf('.'))
+  }
+
+  // Limit decimal places to 6 for better precision
+  const decimalIndex = value.indexOf('.')
+  if (decimalIndex !== -1 && value.length - decimalIndex > 7) {
+    value = value.substring(0, decimalIndex + 7)
+  }
+
+  // Update the model value (store raw number without formatting)
+  getTokenAmount.value = value
+
+  // Calculate equivalent cost
+  calculateEquivalentCost()
+}
+
+// Handle input focus - show raw value for editing
+const handleInputFocus = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (getTokenAmount.value) {
+    target.value = getTokenAmount.value
+  }
+}
+
+// Handle input blur - show formatted value
+const handleInputBlur = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (getTokenAmount.value && !isNaN(parseFloat(getTokenAmount.value))) {
+    const numValue = parseFloat(getTokenAmount.value)
+    target.value = formatNumber(numValue)
+  }
+}
+
+const _priceImpactClass = computed(() => {
   if (!swapQuote.value) return ''
   const impact = parseFloat(swapQuote.value.priceImpact)
   if (impact > 5) return 'impact-high'
@@ -405,12 +360,12 @@ const priceImpactClass = computed(() => {
 })
 
 // Methods
-const formatPrice = (price: number | string | null): string => {
+const _formatPrice = (price: number | string | null): string => {
   if (!price) return '0.000000'
   return parseFloat(price.toString()).toFixed(6)
 }
 
-const formatBalance = (balance: number | null): string => {
+const _formatBalance = (balance: number | null): string => {
   if (!balance) return '0.00'
   return parseFloat(balance.toString()).toFixed(4)
 }
@@ -728,10 +683,329 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* === MOBILE (default) === */
-.token-purchase-bg { background: linear-gradient(to bottom, #999999, #f2f2f2); position: relative; overflow: hidden; padding-bottom: 3rem; }
-.token-purchase-container { display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 7rem; max-width: 1200px; margin: 0 auto; width: 100%; position: relative; }
-.token-purchase-content { position: relative; z-index: 3; max-width: 1200px; margin: 0 auto; width: 100%; padding: 0 2rem; margin-bottom: 0; }
+/* === FIGMA-EXACT DARK THEME PURCHASE STYLES === */
+
+.figma-purchase-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Horizontal Input Container matching Figma */
+.figma-horizontal-inputs {
+  display: flex;
+  align-items: center;
+  background: rgba(45, 55, 65, 0.8);
+  border-radius: 50px;
+  padding: 12px 20px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(54, 58, 63, 1);
+  outline: invert
+}
+
+/* Input Section */
+.figma-input-section {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+/* Dark Input matching Figma */
+.figma-dark-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+  font-size: 24px;
+  font-weight: 600;
+  font-family: inherit;
+  width: 100%;
+  text-align: left;
+}
+
+.figma-dark-input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 500;
+}
+
+.figma-dark-input.readonly {
+  color: rgba(255, 255, 255, 0.8);
+  cursor: not-allowed;
+}
+
+/* Token Label */
+.figma-token-label {
+  color: #FFC107;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* Token Dropdown */
+.figma-token-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.figma-dropdown-select {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #FFFFFF;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  appearance: none;
+  padding-right: 20px;
+}
+
+.figma-dropdown-select option {
+  background: #2D3741;
+  color: #FFFFFF;
+  padding: 4px 8px !important;
+}
+
+.figma-dropdown-arrow {
+  position: absolute;
+  right: 8px;
+  pointer-events: none;
+}
+
+/* Swap Arrow */
+.figma-swap-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  margin: 0 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.figma-swap-arrow:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.figma-swap-arrow:hover svg path {
+  stroke: #FFC107;
+}
+
+/* Green Buy Button matching Figma */
+.figma-green-buy-btn {
+  width: 100%;
+  height: 56px;
+  background: rgba(2, 183, 25, 1);
+  border: none;
+  border-radius: 28px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(0, 212, 170, 0.3);
+}
+
+.figma-green-buy-btn:hover:not(:disabled) {
+  background: rgba(2, 183, 25, 1);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 212, 170, 0.4);
+}
+
+.figma-green-buy-btn:disabled {
+  background: rgba(18, 183, 106, 0.4);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.figma-green-buy-btn.loading {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: wait;
+}
+
+/* You Receive Text matching Figma */
+.figma-receive-text {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 12px;
+}
+
+/* Error Message */
+.figma-error-message {
+  background: #F8D7DA;
+  color: #721C24;
+  border: 1px solid #F5C6CB;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* Success Message */
+.figma-success-message {
+  background: #D4EDDA;
+  color: #155724;
+  border: 1px solid #C3E6CB;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* Modal Styles */
+.figma-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.figma-modal {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.figma-modal-header h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #212529;
+  margin-bottom: 8px;
+}
+
+.figma-modal-header p {
+  font-size: 16px;
+  color: #6C757D;
+  margin-bottom: 24px;
+}
+
+.figma-modal-content {
+  margin-bottom: 24px;
+}
+
+.wallet-connection-container {
+  display: flex;
+  justify-content: center;
+}
+
+.figma-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.figma-cancel-button {
+  background: #6C757D;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.figma-cancel-button:hover {
+  background: #5A6268;
+}
+
+/* === RESPONSIVE DESIGN === */
+
+/* Mobile (default) */
+@media (max-width: 599px) {
+  .figma-horizontal-inputs {
+    flex-direction: column;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .figma-input-section {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .figma-swap-arrow {
+    margin: 0;
+    transform: rotate(90deg);
+  }
+
+  .figma-dark-input {
+    font-size: 20px;
+  }
+
+  .figma-green-buy-btn {
+    height: 48px;
+    font-size: 16px;
+  }
+}
+
+/* Tablet (600px - 1199px) */
+@media (min-width: 600px) and (max-width: 1199px) {
+  .figma-horizontal-inputs {
+    max-width: 600px;
+    padding: 16px 24px;
+  }
+
+  .figma-dark-input {
+    font-size: 22px;
+  }
+
+  .figma-green-buy-btn {
+    height: 52px;
+    font-size: 17px;
+  }
+}
+
+/* Desktop (1200px+) */
+@media (min-width: 1200px) {
+  .figma-horizontal-inputs {
+    max-width: 800px;
+    padding: 12px 20px;
+  }
+
+  .figma-dark-input {
+    font-size: 24px;
+  }
+
+  .figma-green-buy-btn {
+    height: 56px;
+    font-size: 18px;
+  }
+}
+
+/* Legacy styles for compatibility */
+.token-purchase-bg { position: relative; overflow: hidden }
+.token-purchase-container { display: flex; flex-direction: column; justify-content: center; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; position: relative; }
+.token-purchase-content { position: relative; z-index: 3; max-width: 1200px; margin: 0 auto; width: 100%; margin-bottom: 0; }
 .token-purchase__illustration { position: static !important; display: block; margin: 2.5rem auto 0 auto; left: unset !important; right: unset !important; bottom: unset !important; transform: none !important; width: 90%; max-width: 800px; z-index: 1; }
 .token-purchase__title { color: #000000; font-size: 18px; font-weight: 700; }
 .main-heading { font-size: 34px; font-weight: 700; color: #fff; text-align: center; }
@@ -773,15 +1047,8 @@ onMounted(() => {
   }
 }
 
-/* === Swap Interface Styles === */
-.swap-container {
-  max-width: 480px;
-  margin: 0 auto;
-}
-
 .price-display {
   text-align: center;
-  background: rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   padding: 16px;
   backdrop-filter: blur(10px);
@@ -810,16 +1077,6 @@ onMounted(() => {
   margin-left: 8px;
 }
 
-.swap-card {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-radius: 16px !important;
-  backdrop-filter: blur(10px);
-}
-
-.token-input-section {
-  position: relative;
-}
-
 .input-label {
   color: #666;
   font-size: 14px;
@@ -835,11 +1092,15 @@ onMounted(() => {
 
 .amount-input {
   flex: 1;
+  max-width: 50%;
+
 }
 
 .amount-input :deep(.v-field__input) {
+  background: rgba(54, 58, 63, 1);
   font-size: 18px;
   font-weight: 600;
+  overflow: hidden;
 }
 
 .token-selector {
@@ -1011,12 +1272,9 @@ onMounted(() => {
     font-size: 36px;
   }
 
-  .swap-container {
-    max-width: 560px;
-  }
-
   .amount-input :deep(.v-field__input) {
-    font-size: 20px;
+    font-size: 12px;
+    border-radius: 50%;
   }
 }
 
