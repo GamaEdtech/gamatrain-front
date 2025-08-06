@@ -141,6 +141,17 @@
       {{ swapping ? 'Processing...' : 'Buy GET' }}
     </button>
 
+    <!-- Disconnect Button - Only show when wallet is connected -->
+    <v-btn
+      v-if="isWalletConnected"
+      variant="outlined"
+      color="red"
+      class="disconnect-btn"
+      @click="showDisconnectModal = true"
+    >
+      Disconnect
+    </v-btn>
+
     <!-- You Receive Text -->
     <div
       v-if="getTokenAmount && parseFloat(getTokenAmount) > 0"
@@ -200,6 +211,41 @@
         </div>
       </div>
     </Teleport>
+
+    <!-- Disconnect Confirmation Modal -->
+    <Teleport to="body">
+      <div
+        v-if="showDisconnectModal"
+        class="figma-modal-overlay"
+        @click="showDisconnectModal = false"
+      >
+        <div
+          class="figma-modal"
+          @click.stop
+        >
+          <div class="figma-modal-header">
+            <h3>Disconnect Wallet</h3>
+            <p>Are you sure you want to disconnect your wallet? This will clear all your current swap data.</p>
+          </div>
+
+          <div class="figma-modal-actions">
+            <v-btn
+              @click="showDisconnectModal = false"
+              variant="tonal"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              @click="handleDisconnect"
+              variant="elevated"
+              color="error"
+            >
+              Disconnect
+            </v-btn>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -235,6 +281,7 @@ const payTokenBalance = ref<number | null>(null)
 const getTokenBalance = ref<number | null>(null)
 const isCalculating = ref(false)
 const showWalletModal = ref(false)
+const showDisconnectModal = ref(false)
 const errorMessage = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
 
@@ -855,6 +902,44 @@ const handleSwap = async () => {
   }
 }
 
+// Handle wallet disconnect
+const handleDisconnect = async () => {
+  try {
+    if (wallet.value && wallet.value.disconnect) {
+      await wallet.value.disconnect()
+      console.log('Wallet disconnected successfully')
+
+      // Reset all state
+      getTokenAmount.value = ''
+      equivalentCost.value = ''
+      swapQuote.value = null
+      memoText.value = ''
+      showMemoInput.value = false
+      memoValidationError.value = null
+      memoByteLength.value = 0
+      payTokenBalance.value = null
+      getTokenBalance.value = null
+      errorMessage.value = null
+      successMessage.value = null
+    }
+    else {
+      console.warn('Wallet does not support disconnect method')
+      // For wallets that don't have disconnect method, we can try to reset the wallet reference
+      wallet.value = null
+    }
+  }
+  catch (error) {
+    console.error('Failed to disconnect wallet:', error)
+    errorMessage.value = 'Failed to disconnect wallet. Please try again.'
+
+    // Clear error message after 5 seconds
+    setTimeout(() => {
+      errorMessage.value = null
+    }, 5000)
+  }
+  showDisconnectModal.value = false
+}
+
 // Watch for GET token amount changes
 watch(getTokenAmount, () => {
   if (getTokenAmount.value) {
@@ -1094,6 +1179,17 @@ onMounted(() => {
   color: #FFC107;
 }
 
+/* Disconnect Button */
+.disconnect-btn {
+  width: 100%;
+  margin-top: 12px;
+  margin-bottom: 16px;
+  height: 48px;
+  font-weight: 600;
+  text-transform: none;
+  border-radius: 12px;
+}
+
 /* Green Buy Button matching Figma */
 .figma-green-buy-btn {
   width: 100%;
@@ -1128,6 +1224,16 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.5);
   cursor: wait;
+}
+
+.disconnect-btn{
+  width: 100%;
+  border-radius: 28px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 /* You Receive Text matching Figma */
@@ -1212,6 +1318,7 @@ onMounted(() => {
 .figma-modal-actions {
   display: flex;
   justify-content: flex-end;
+  gap:5px;
 }
 
 .figma-cancel-button {
