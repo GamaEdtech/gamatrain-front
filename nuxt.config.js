@@ -9,6 +9,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
+      solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
+      solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
     },
   },
 

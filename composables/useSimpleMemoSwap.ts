@@ -23,8 +23,11 @@ interface JupiterInstructionsResponse {
  * Simplified memo swap functionality that works reliably with QuickNode
  */
 
-// Your custom QuickNode endpoint
-const QUICKNODE_RPC = 'https://hidden-bold-road.solana-mainnet.quiknode.pro/d83cca6a22c6e04d9fab113e56ca82bbb9c87a23'
+// Get RPC endpoint from environment configuration
+const getSolanaRpcUrl = () => {
+  const config = useRuntimeConfig()
+  return config.public.solanaRpcUrl || 'https://api.mainnet-beta.solana.com'
+}
 
 /**
  * Creates a simple swap transaction with memo using Jupiter instructions
@@ -39,9 +42,9 @@ export const createSimpleMemoSwap = async (
     console.log('🚀 Creating simple memo swap with QuickNode RPC')
     console.log('📝 Memo:', memo)
 
-    // Create connection to your QuickNode endpoint
+    // Create connection using environment configuration
     const { Connection } = await import('@solana/web3.js')
-    const connection = new Connection(QUICKNODE_RPC, 'confirmed')
+    const connection = new Connection(getSolanaRpcUrl(), 'confirmed')
 
     const payerPublicKey = new PublicKey(userPublicKey)
 
@@ -149,6 +152,6 @@ export const createSimpleMemoSwap = async (
 export const useSimpleMemoSwap = () => {
   return {
     createSimpleMemoSwap,
-    QUICKNODE_RPC,
+    getSolanaRpcUrl,
   }
 }

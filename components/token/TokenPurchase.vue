@@ -208,11 +208,11 @@ const USDT_MINT = TOKEN_MINTS.USDT
 // query parameters
 const queryRoute = useRoute().query
 
-// RPC Configuration - using custom QuickNode endpoint
-const _RPC_ENDPOINTS = [
-  'https://hidden-bold-road.solana-mainnet.quiknode.pro/d83cca6a22c6e04d9fab113e56ca82bbb9c87a23', // Custom QuickNode RPC
-  'https://api.mainnet-beta.solana.com', // Official Solana RPC (fallback)
-]
+// RPC Configuration - using environment variable
+const getSolanaRpcUrl = () => {
+  const config = useRuntimeConfig()
+  return config.public.solanaRpcUrl || 'https://api.mainnet-beta.solana.com'
+}
 
 // Wallet integration with proper typing
 const wallet = ref<SolanaWallet | null>(null)
@@ -883,7 +883,7 @@ const handleSwap = async () => {
       console.log('Using wallet sendTransaction method')
       // Create a minimal connection object for the wallet
       const dummyConnection = {
-        rpcEndpoint: 'https://hidden-bold-road.solana-mainnet.quiknode.pro/d83cca6a22c6e04d9fab113e56ca82bbb9c87a23',
+        rpcEndpoint: getSolanaRpcUrl(),
         commitment: 'confirmed',
       }
       signature = await wallet.value.sendTransaction(transaction, dummyConnection)
@@ -902,7 +902,7 @@ const handleSwap = async () => {
         else {
           // Last resort: use our own connection with minimal config
           const { Connection } = await import('@solana/web3.js')
-          const connection = new Connection('https://hidden-bold-road.solana-mainnet.quiknode.pro/d83cca6a22c6e04d9fab113e56ca82bbb9c87a23')
+          const connection = new Connection(getSolanaRpcUrl())
           signature = await connection.sendRawTransaction(signedTransaction.serialize(), {
             skipPreflight: true,
             maxRetries: 3,
@@ -932,7 +932,7 @@ const handleSwap = async () => {
         setTimeout(async () => {
           try {
             const { Connection } = await import('@solana/web3.js')
-            const connection = new Connection('https://hidden-bold-road.solana-mainnet.quiknode.pro/d83cca6a22c6e04d9fab113e56ca82bbb9c87a23')
+            const connection = new Connection(getSolanaRpcUrl())
             const { extractMemoFromTransaction } = useMemoVerification()
 
             const extractedMemo = await extractMemoFromTransaction(signature, connection)
