@@ -28,7 +28,6 @@
     "@nuxtjs/leaflet": "^1.2.6",
     "@nuxtjs/toast": "^3.3.1",
     "@solana/wallet-adapter-base": "^0.9.27",
-    "@solana/wallet-adapter-phantom": "^0.9.28",
     "@solana/wallet-adapter-wallets": "^0.19.37",
     "@solana/web3.js": "^1.98.2",
     "@types/leaflet.markercluster": "^1",

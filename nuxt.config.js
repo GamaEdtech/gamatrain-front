@@ -32,7 +32,6 @@ export default defineNuxtConfig({
     { src: 'plugins/helper.js' },
     { src: 'plugins/img-cropper', mode: 'client' },
     { src: 'plugins/vuedraggable', mode: 'client' },
-    { src: 'plugins/solana.ts', mode: 'client' },
   ],
 
   // SSR configuration
@@ -273,7 +272,6 @@ export default defineNuxtConfig({
       include: [
         '@solana/web3.js',
         '@solana/wallet-adapter-base',
-        '@solana/wallet-adapter-phantom',
         '@coral-xyz/anchor',
         '@jup-ag/api',
         'buffer',
@@ -301,7 +299,6 @@ export default defineNuxtConfig({
       transpile: [
         '@solana/web3.js',
         '@solana/wallet-adapter-base',
-        '@solana/wallet-adapter-phantom',
         '@jup-ag/api',
       ],
     },
@@ -333,7 +330,6 @@ export default defineNuxtConfig({
         'util',
         'secp256k1',
         '@solana/web3.js',
-        '@solana/wallet-adapter-phantom',
         '@solana/wallet-adapter-base',
       ],
     },
