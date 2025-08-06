@@ -949,10 +949,7 @@ const handleSwap = async () => {
         }, 5000)
       }
 
-      let message = `Swap successful! Transaction: ${signature.slice(0, 8)}...`
-      if (swapOptions.memo) {
-        message += ` | Memo: ${swapOptions.memo}`
-      }
+      const message = `Swap successful! Transaction: ${signature.slice(0, 8)}...`
       successMessage.value = message
 
       // Clear success message after 10 seconds
