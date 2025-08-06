@@ -314,7 +314,7 @@ onMounted(() => {
   }
 
   .hero-content {
-    flex-direction: column;
+    flex-direction: column-reverse;
     text-align: center;
     gap: 2rem;
   }
@@ -326,6 +326,7 @@ onMounted(() => {
 
   .content-right {
     width: 100%;
+    margin-top: 6.5rem;
   }
 
   .figma-live-badge {
@@ -333,13 +334,15 @@ onMounted(() => {
   }
 
   .figma-get-title {
-    font-size: 64px;
+    font-size: 40px;
     text-align: center;
+    width: 100%
   }
 
   .figma-price-display {
     justify-content: center;
     margin-bottom: 2rem;
+    flex-wrap: wrap;
   }
 
   .figma-price {
