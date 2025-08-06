@@ -240,7 +240,6 @@ export default defineNuxtConfig({
       'vue3-emoji-picker',
       '@solana/web3.js',
       '@solana/wallet-adapter-base',
-      '@coral-xyz/anchor',
       '@jup-ag/api',
       'buffer',
     ],
@@ -278,11 +277,12 @@ export default defineNuxtConfig({
     },
     optimizeDeps: {
       include: [
+        '@coral-xyz/anchor',
         '@solana/web3.js',
         '@solana/wallet-adapter-base',
-        '@coral-xyz/anchor',
         '@jup-ag/api',
         'buffer',
+        'process',
       ],
       esbuildOptions: {
         target: 'esnext',
@@ -290,15 +290,15 @@ export default defineNuxtConfig({
     },
     build: {
       target: 'esnext',
-      chunkSizeWarningLimit: 1000,
+      // chunkSizeWarningLimit: 1000,
       rollupOptions: {
-        external: (id) => {
-          // Don't externalize these packages - they need to be bundled
-          if (id.includes('@solana/') || id.includes('@coral-xyz/') || id.includes('@jup-ag/')) {
-            return false
-          }
-          return false
-        },
+        // external: (id) => {
+        //   // Don't externalize these packages - they need to be bundled
+        //   if (id.includes('@solana/') || id.includes('@coral-xyz/') || id.includes('@jup-ag/')) {
+        //     return false
+        //   }
+        //   return false
+        // },
         output: {
           manualChunks: {
             vendor: ['vue', 'vue-router'],
@@ -311,7 +311,6 @@ export default defineNuxtConfig({
             solana: [
               '@solana/web3.js',
               '@solana/wallet-adapter-base',
-              '@coral-xyz/anchor',
               '@jup-ag/api',
             ],
           },
@@ -320,7 +319,6 @@ export default defineNuxtConfig({
       transpile: [
         '@solana/web3.js',
         '@solana/wallet-adapter-base',
-        '@coral-xyz/anchor',
         '@jup-ag/api',
         'buffer',
       ],
@@ -328,15 +326,16 @@ export default defineNuxtConfig({
     define: {
       'global': 'globalThis',
       'process.env.BROWSER': true,
+      'Buffer': 'Buffer',
     },
     ssr: {
       noExternal: [
         '@solana/web3.js',
         '@solana/wallet-adapter-base',
-        '@coral-xyz/anchor',
         '@jup-ag/api',
       ],
     },
+
   },
 
   // toast config

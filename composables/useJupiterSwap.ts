@@ -1,5 +1,6 @@
 import type { Connection, TransactionInstruction } from '@solana/web3.js'
 import { PublicKey, VersionedTransaction, TransactionMessage, AddressLookupTableAccount } from '@solana/web3.js'
+import { Buffer } from 'buffer'
 
 // Wallet interface for proper typing
 interface SolanaWallet {

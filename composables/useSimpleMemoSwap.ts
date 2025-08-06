@@ -1,4 +1,5 @@
 import { PublicKey, VersionedTransaction, TransactionMessage, TransactionInstruction } from '@solana/web3.js'
+import { Buffer } from 'buffer'
 
 // Interfaces for Jupiter API responses
 interface JupiterInstruction {
