@@ -94,7 +94,7 @@
       class="disconnect-btn"
       @click="showDisconnectModal = true"
     >
-      Disconnect
+      Disconnect wallet
     </v-btn>
 
     <!-- You Receive Text -->
@@ -185,7 +185,7 @@
               color="error"
               @click="handleDisconnect"
             >
-              Disconnect
+              Disconnect Wallet
             </v-btn>
           </div>
         </div>
