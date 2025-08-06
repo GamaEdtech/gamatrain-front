@@ -123,6 +123,7 @@ export default defineNuxtConfig({
   experimental: {
     payloadExtraction: false,
     appManifest: false,
+    clientNodeCompat: true,
   },
 
   pwa: {
