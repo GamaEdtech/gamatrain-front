@@ -77,61 +77,6 @@
       </div>
     </div>
 
-    <!-- Optional Memo Section -->
-    <div class="figma-memo-section">
-      <div
-        class="figma-memo-toggle"
-        @click="showMemoInput = !showMemoInput"
-      >
-        <span class="figma-memo-label">Add memo/tag (optional)</span>
-        <svg
-          :class="['figma-memo-arrow', { expanded: showMemoInput }]"
-          width="12"
-          height="8"
-          viewBox="0 0 12 8"
-          fill="none"
-        >
-          <path
-            d="M1 1L6 6L11 1"
-            stroke="#9CA3AF"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </div>
-
-      <div
-        v-if="showMemoInput"
-        class="figma-memo-input-container"
-      >
-        <input
-          v-model="memoText"
-          type="text"
-          placeholder="Enter memo/tag (e.g., 5555)"
-          class="figma-memo-input"
-          maxlength="566"
-          @input="handleMemoInput"
-        >
-        <div class="figma-memo-info">
-          <span class="figma-memo-counter">{{ memoByteLength }}/566 bytes</span>
-          <span
-            v-if="memoValidationError"
-            class="figma-memo-error"
-          >{{ memoValidationError }}</span>
-        </div>
-        <div class="figma-memo-description">
-          Add a custom identifier to track this transaction on the blockchain
-        </div>
-        <div
-          v-if="memoText.trim()"
-          class="figma-memo-preview"
-        >
-          <strong>Preview:</strong> Your transaction will include memo: "{{ memoText.trim() }}"
-        </div>
-      </div>
-    </div>
-
     <!-- Green Buy Button matching Figma -->
     <button
       :disabled="!canSwap"
@@ -230,15 +175,15 @@
 
           <div class="figma-modal-actions">
             <v-btn
-              @click="showDisconnectModal = false"
               variant="tonal"
+              @click="showDisconnectModal = false"
             >
               Cancel
             </v-btn>
             <v-btn
-              @click="handleDisconnect"
               variant="elevated"
               color="error"
+              @click="handleDisconnect"
             >
               Disconnect
             </v-btn>
@@ -259,6 +204,9 @@ const GET_TOKEN_MINT = TOKEN_MINTS.GET
 const SOL_MINT = TOKEN_MINTS.SOL
 const USDC_MINT = TOKEN_MINTS.USDC
 const USDT_MINT = TOKEN_MINTS.USDT
+
+// query parameters
+const queryRoute = useRoute().query
 
 // RPC Configuration - using custom QuickNode endpoint
 const _RPC_ENDPOINTS = [
@@ -285,11 +233,8 @@ const showDisconnectModal = ref(false)
 const errorMessage = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
 
-// Memo-related state
-const showMemoInput = ref(false)
+// Memo-related state (only keeping memoText for URL parameter extraction)
 const memoText = ref('')
-const memoValidationError = ref<string | null>(null)
-const memoByteLength = ref(0)
 
 // Dynamic component import for WalletMultiButton
 const WalletMultiButton = defineAsyncComponent(async () => {
@@ -325,8 +270,77 @@ const payTokenOptions = ref<TokenConfig[]>([
   },
 ])
 
+// Enhanced memo extraction and validation function
+const extractAndValidateMemo = (refParam: string | string[] | undefined): string => {
+  try {
+    // Extract memo from URL parameter
+    let rawMemo = ''
+    if (typeof refParam === 'string') {
+      rawMemo = refParam
+    }
+    else if (Array.isArray(refParam) && refParam.length > 0) {
+      rawMemo = refParam[0]
+    }
+
+    console.log('🔍 Extracting memo from URL parameter:', { rawMemo, type: typeof refParam })
+
+    // If no memo parameter, return empty string
+    if (!rawMemo || !rawMemo.trim()) {
+      console.log('📝 No memo parameter found, proceeding without memo')
+      return ''
+    }
+
+    // Trim whitespace
+    const trimmedMemo = rawMemo.trim()
+
+    // Validate memo length (Solana memo constraint: max 566 bytes)
+    const memoBytes = new TextEncoder().encode(trimmedMemo).length
+    if (memoBytes > 566) {
+      console.warn('⚠️ Memo too long, truncating:', { originalLength: memoBytes, memo: trimmedMemo })
+      // Truncate to fit within 566 bytes
+      let truncatedMemo = trimmedMemo
+      while (new TextEncoder().encode(truncatedMemo).length > 566) {
+        truncatedMemo = truncatedMemo.slice(0, -1)
+      }
+      console.log('✂️ Memo truncated to:', { newLength: new TextEncoder().encode(truncatedMemo).length, memo: truncatedMemo })
+      return truncatedMemo
+    }
+
+    // Basic sanitization - remove potentially problematic characters
+    // eslint-disable-next-line no-control-regex
+    const sanitizedMemo = trimmedMemo.replace(/[\u0000-\u001F\u007F]/g, '') // Remove control characters
+
+    if (sanitizedMemo !== trimmedMemo) {
+      console.warn('🧹 Memo sanitized, removed control characters:', { original: trimmedMemo, sanitized: sanitizedMemo })
+    }
+
+    // Final validation
+    if (!sanitizedMemo) {
+      console.warn('⚠️ Memo became empty after sanitization, proceeding without memo')
+      return ''
+    }
+
+    console.log('✅ Memo extracted and validated successfully:', {
+      memo: sanitizedMemo,
+      byteLength: new TextEncoder().encode(sanitizedMemo).length,
+      source: 'url',
+    })
+
+    return sanitizedMemo
+  }
+  catch (error) {
+    console.error('❌ Error processing memo from URL parameter:', error)
+    console.log('🔄 Falling back to no memo due to processing error')
+    return ''
+  }
+}
+
 // Initialize wallet on client side
 onMounted(async () => {
+  // Enhanced memo extraction with validation and logging
+  const extractedMemo = extractAndValidateMemo(queryRoute?.ref)
+  memoText.value = extractedMemo
+
   if (import.meta.client) {
     try {
       const { useWallet } = await import('solana-wallets-vue')
@@ -360,6 +374,20 @@ onMounted(async () => {
     catch (error) {
       console.error('Failed to initialize wallet:', error)
     }
+  }
+
+  // Enhanced logging for memo processing
+  if (extractedMemo) {
+    console.log('📋 Memo processing summary:', {
+      extracted: extractedMemo,
+      byteLength: new TextEncoder().encode(extractedMemo).length,
+      maxBytes: 566,
+      source: 'url_parameter',
+      queryParam: queryRoute?.ref,
+    })
+  }
+  else {
+    console.log('📋 No memo will be used for transactions')
   }
 })
 
@@ -457,23 +485,6 @@ const handleInputBlur = (event: Event) => {
   if (getTokenAmount.value && !isNaN(parseFloat(getTokenAmount.value))) {
     const numValue = parseFloat(getTokenAmount.value)
     target.value = formatNumber(numValue)
-  }
-}
-
-// Handle memo input with validation
-const handleMemoInput = () => {
-  const { validateMemo, getMemoByteLength, formatMemoValidationError } = useMemoValidation()
-
-  // Update byte length
-  memoByteLength.value = getMemoByteLength(memoText.value)
-
-  // Validate memo
-  const validation = validateMemo(memoText.value)
-  if (validation.isValid) {
-    memoValidationError.value = null
-  }
-  else {
-    memoValidationError.value = formatMemoValidationError(validation)
   }
 }
 
@@ -694,24 +705,54 @@ const handleSwap = async () => {
       throw new Error('Failed to get fresh quote for swap')
     }
 
-    // Validate memo before proceeding
+    // Enhanced memo validation before proceeding
     if (memoText.value.trim()) {
-      const { validateMemoForSwap } = useMemoErrorHandling()
-      const memoValidation = validateMemoForSwap(memoText.value.trim())
+      try {
+        console.log('🔍 Validating memo before swap:', { memo: memoText.value.trim(), source: 'url_parameter' })
 
-      if (!memoValidation.isValid && memoValidation.error) {
-        errorMessage.value = memoValidation.error.userMessage
-        return
+        const { validateMemoForSwap } = useMemoErrorHandling()
+        const memoValidation = validateMemoForSwap(memoText.value.trim())
+
+        if (!memoValidation.isValid && memoValidation.error) {
+          console.warn('⚠️ Memo validation failed, proceeding without memo:', {
+            memo: memoText.value.trim(),
+            error: memoValidation.error.userMessage,
+            fallback: 'standard_swap',
+          })
+          // Don't show error to user, just proceed without memo
+          memoText.value = ''
+        }
+        else {
+          console.log('✅ Memo validation successful:', { memo: memoText.value.trim() })
+        }
+      }
+      catch (error) {
+        console.error('❌ Error during memo validation, proceeding without memo:', error)
+        memoText.value = ''
       }
     }
 
-    // Prepare swap options with memo if provided
+    // Prepare swap options with enhanced memo logging
+    const finalMemo = memoText.value.trim() || undefined
     const swapOptions = {
-      memo: memoText.value.trim() || undefined,
+      memo: finalMemo,
       slippageBps: 50,
       wrapAndUnwrapSol: true,
       dynamicComputeUnitLimit: true,
       prioritizationFeeLamports: 'auto',
+    }
+
+    // Enhanced logging for transaction preparation
+    if (finalMemo) {
+      console.log('🚀 Preparing swap transaction with memo:', {
+        memo: finalMemo,
+        byteLength: new TextEncoder().encode(finalMemo).length,
+        source: 'url_parameter',
+        swapOptions: { ...swapOptions, memo: '[REDACTED]' },
+      })
+    }
+    else {
+      console.log('🚀 Preparing standard swap transaction (no memo)')
     }
 
     let transaction: VersionedTransaction
@@ -725,43 +766,79 @@ const handleSwap = async () => {
         throw new Error('No memo provided for memo operation')
       }
 
-      console.log('🚀 Building transaction with memo using QuickNode:', swapOptions.memo)
+      console.log('🚀 Building transaction with memo using QuickNode:', {
+        memo: swapOptions.memo,
+        byteLength: new TextEncoder().encode(swapOptions.memo).length,
+        source: 'url_parameter',
+      })
 
-      // Use simplified memo swap for better reliability
-      const { createSimpleMemoSwap } = useSimpleMemoSwap()
-      const memoSwapResponse = await createSimpleMemoSwap(
-        freshQuote,
-        publicKeyString,
-        swapOptions.memo,
-      )
+      try {
+        // Use simplified memo swap for better reliability
+        const { createSimpleMemoSwap } = useSimpleMemoSwap()
+        const memoSwapResponse = await createSimpleMemoSwap(
+          freshQuote,
+          publicKeyString,
+          swapOptions.memo,
+        )
 
-      if (!memoSwapResponse?.transaction) {
-        throw new Error('Failed to build transaction with memo')
+        if (!memoSwapResponse?.transaction) {
+          throw new Error('Failed to build transaction with memo')
+        }
+
+        // Verify the transaction contains memo before returning
+        const { logTransactionMemoDetails } = useMemoVerification()
+        logTransactionMemoDetails(memoSwapResponse.transaction, swapOptions.memo)
+
+        console.log('✅ Memo transaction built successfully:', {
+          memo: swapOptions.memo,
+          transactionSize: memoSwapResponse.transaction.serialize().length,
+        })
+
+        return memoSwapResponse.transaction
       }
-
-      // Verify the transaction contains memo before returning
-      const { logTransactionMemoDetails } = useMemoVerification()
-      logTransactionMemoDetails(memoSwapResponse.transaction, swapOptions.memo)
-
-      return memoSwapResponse.transaction
+      catch (error) {
+        console.error('❌ Failed to build memo transaction:', {
+          memo: swapOptions.memo,
+          error: error.message,
+          fallback: 'will_use_standard_transaction',
+        })
+        throw error
+      }
     }
 
     const fallbackOperation = async () => {
-      console.log('Using standard swap transaction (fallback)')
-      const swapResponse = await getSwapTransaction(
-        freshQuote,
-        publicKeyString,
-        { ...swapOptions, memo: undefined }, // Remove memo for fallback
-      )
+      console.log('🔄 Using standard swap transaction (fallback):', {
+        reason: 'memo_transaction_failed_or_not_provided',
+        originalMemo: swapOptions.memo || 'none',
+      })
 
-      if (!swapResponse?.swapTransaction) {
-        throw new Error('Failed to get swap transaction from Jupiter')
+      try {
+        const swapResponse = await getSwapTransaction(
+          freshQuote,
+          publicKeyString,
+          { ...swapOptions, memo: undefined }, // Remove memo for fallback
+        )
+
+        if (!swapResponse?.swapTransaction) {
+          throw new Error('Failed to get swap transaction from Jupiter')
+        }
+
+        // Deserialize the transaction
+        const { VersionedTransaction } = await import('@solana/web3.js')
+        const swapTransactionBuf = Buffer.from(swapResponse.swapTransaction, 'base64')
+        const transaction = VersionedTransaction.deserialize(swapTransactionBuf)
+
+        console.log('✅ Standard transaction built successfully:', {
+          transactionSize: transaction.serialize().length,
+          memoIncluded: false,
+        })
+
+        return transaction
       }
-
-      // Deserialize the transaction
-      const { VersionedTransaction } = await import('@solana/web3.js')
-      const swapTransactionBuf = Buffer.from(swapResponse.swapTransaction, 'base64')
-      return VersionedTransaction.deserialize(swapTransactionBuf)
+      catch (error) {
+        console.error('❌ Failed to build standard transaction:', error)
+        throw error
+      }
     }
 
     // Execute with fallback if memo is provided, otherwise use standard flow
@@ -774,11 +851,22 @@ const handleSwap = async () => {
 
       transaction = result.result
 
-      // Notify user if fallback was used
+      // Enhanced logging for fallback scenarios
       if (result.usedFallback && result.error) {
-        console.warn('Memo transaction failed, using standard transaction:', result.error.message)
+        console.warn('⚠️ Memo transaction failed, using standard transaction:', {
+          originalMemo: swapOptions.memo,
+          error: result.error.message,
+          fallbackReason: 'memo_transaction_build_failed',
+          userImpact: 'transaction_will_proceed_without_memo',
+        })
         // Update swap options to reflect that memo was not used
         swapOptions.memo = undefined
+      }
+      else if (swapOptions.memo) {
+        console.log('✅ Memo transaction will be used:', {
+          memo: swapOptions.memo,
+          source: 'url_parameter',
+        })
       }
     }
     else {
@@ -877,9 +965,6 @@ const handleSwap = async () => {
       equivalentCost.value = ''
       swapQuote.value = null
       memoText.value = '' // Clear memo field
-      showMemoInput.value = false // Hide memo input
-      memoValidationError.value = null // Clear memo errors
-      memoByteLength.value = 0 // Reset byte counter
       await fetchBalances()
     }
     else {
@@ -914,9 +999,6 @@ const handleDisconnect = async () => {
       equivalentCost.value = ''
       swapQuote.value = null
       memoText.value = ''
-      showMemoInput.value = false
-      memoValidationError.value = null
-      memoByteLength.value = 0
       payTokenBalance.value = null
       getTokenBalance.value = null
       errorMessage.value = null
@@ -951,14 +1033,14 @@ watch(getTokenAmount, () => {
   }
 })
 
-// Refresh price every 30 seconds (client-side only)
-onMounted(() => {
-  if (import.meta.client) {
-    setInterval(() => {
-      fetchCurrentPrice()
-    }, 30000)
-  }
-})
+// // Refresh price every 30 seconds (client-side only)
+// onMounted(() => {
+//   if (import.meta.client) {
+//     setInterval(() => {
+//       fetchCurrentPrice()
+//     }, 30000)
+//   }
+// })
 </script>
 
 <style scoped>
@@ -1078,105 +1160,6 @@ onMounted(() => {
 
 .figma-swap-arrow:hover svg path {
   stroke: #FFC107;
-}
-
-/* Memo Section Styles */
-.figma-memo-section {
-  margin-bottom: 20px;
-}
-
-.figma-memo-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin-bottom: 8px;
-}
-
-.figma-memo-toggle:hover {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.figma-memo-label {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.figma-memo-arrow {
-  transition: transform 0.2s ease;
-}
-
-.figma-memo-arrow.expanded {
-  transform: rotate(180deg);
-}
-
-.figma-memo-input-container {
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.figma-memo-input {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 12px 16px;
-  color: #FFFFFF;
-  font-size: 14px;
-  font-weight: 400;
-  outline: none;
-  transition: all 0.2s ease;
-  margin-bottom: 8px;
-}
-
-.figma-memo-input:focus {
-  border-color: #FFC107;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.figma-memo-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.figma-memo-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.figma-memo-counter {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 12px;
-}
-
-.figma-memo-error {
-  color: #FF6B6B;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.figma-memo-description {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.figma-memo-preview {
-  margin-top: 8px;
-  padding: 8px 12px;
-  background: rgba(255, 193, 7, 0.1);
-  border: 1px solid rgba(255, 193, 7, 0.3);
-  border-radius: 6px;
-  font-size: 12px;
-  color: #FFC107;
 }
 
 /* Disconnect Button */
