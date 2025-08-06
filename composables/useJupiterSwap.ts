@@ -85,13 +85,6 @@ interface SwapOptions {
   useInstructions?: boolean // Whether to use instructions endpoint instead of serialized transaction
 }
 
-// Memo configuration interface
-interface MemoConfig {
-  text: string
-  maxLength: number
-  encoding: 'utf-8'
-}
-
 // Processed swap quote for UI display
 interface SwapQuoteDetails {
   rate: number
@@ -557,7 +550,6 @@ export type {
   JupiterSwapInstructionsResponse,
   JupiterSwapWithMemoResponse,
   SwapOptions,
-  MemoConfig,
   SwapQuoteDetails,
   TokenConfig,
   RouteInfo,
