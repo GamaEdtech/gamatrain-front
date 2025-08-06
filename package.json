@@ -21,11 +21,15 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^43.3.1",
     "@ckeditor/ckeditor5-vue": "^7.3.0",
+    "@jup-ag/api": "^6.0.44",
     "@nuxt/eslint": "^1.6.0",
     "@nuxt/image": "^1.10.0",
     "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/leaflet": "^1.2.6",
     "@nuxtjs/toast": "^3.3.1",
+    "@solana/wallet-adapter-base": "^0.9.27",
+    "@solana/wallet-adapter-wallets": "^0.19.37",
+    "@solana/web3.js": "^1.98.2",
     "@types/leaflet.markercluster": "^1",
     "@types/three": "^0.175.0",
     "@vee-validate/rules": "^4.15.0",
@@ -42,6 +46,7 @@
     "leaflet.markercluster": "^1.5.3",
     "nuxt": "^3.16.2",
     "nuxt-gtag": "^3.0.2",
+    "solana-wallets-vue": "^0.7.1",
     "three": "^0.175.0",
     "three-custom-shader-material": "^6.3.7",
     "vee-validate": "^4.15.0",
@@ -69,5 +74,8 @@
     "stats.js": "^0.17.0",
     "vite-plugin-vuetify": "^2.0.4",
     "vuetify": "^3.7.8"
+  },
+  "resolutions": {
+    "borsh": "0.7.0"
   }
 }

@@ -9,6 +9,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
+      solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
+      solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
     },
   },
 
@@ -265,7 +267,23 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
+    esbuild: {
+      target: 'esnext',
+    },
+    optimizeDeps: {
+      include: [
+        '@solana/web3.js',
+        '@solana/wallet-adapter-base',
+        '@coral-xyz/anchor',
+        '@jup-ag/api',
+        'buffer',
+      ],
+      esbuildOptions: {
+        target: 'esnext',
+      },
+    },
     build: {
+      target: 'esnext',
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
@@ -280,9 +298,15 @@ export default defineNuxtConfig({
           },
         },
       },
+      transpile: [
+        '@solana/web3.js',
+        '@solana/wallet-adapter-base',
+        '@jup-ag/api',
+      ],
     },
     define: {
-      global: 'globalThis',
+      'global': 'globalThis',
+      'process.env.BROWSER': true,
     },
   },
 
@@ -300,5 +324,16 @@ export default defineNuxtConfig({
         },
       },
     ],
+  },
+  nitro: {
+    rollupConfig: {
+      external: [
+        'borsh',
+        'util',
+        'secp256k1',
+        '@solana/web3.js',
+        '@solana/wallet-adapter-base',
+      ],
+    },
   },
 })
