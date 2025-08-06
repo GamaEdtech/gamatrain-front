@@ -23,7 +23,7 @@
               <v-col
                 cols="12"
                 md="12"
-                lg="6"
+                lg="5"
                 xl="6"
                 class="px-8 px-lg=0 order-3 order-md-3 order-lg-2"
               >
@@ -106,7 +106,7 @@
                 class="order-1 order-md-2 order-lg-3"
                 sm="7"
                 md="9"
-                lg="3"
+                lg="4"
                 xl="3"
               >
                 <paper-detail-content-info

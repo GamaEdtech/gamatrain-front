@@ -56,7 +56,10 @@
           </template>
         </v-text-field>
       </v-row>
-      <v-list max-height="320">
+      <v-list
+        v-if="!isLoading"
+        max-height="320"
+      >
         <v-list-item
           v-for="item in filteredItems"
           :key="item.title"
@@ -74,8 +77,19 @@
         </v-list-item>
       </v-list>
 
+      <div
+        v-if="isLoading"
+        class="text-center pt-8"
+      >
+        <v-progress-circular
+          indeterminate
+          :width="3"
+          color="primary"
+        />
+      </div>
+
       <v-alert
-        v-if="searchText && filteredItems.length === 0"
+        v-if="searchText && filteredItems.length === 0 && !isLoading"
         type="info"
         color="#FFB600"
         density="compact"
@@ -86,7 +100,9 @@
         search term.
       </v-alert>
       <v-alert
-        v-if="searchText.length == 0 && filteredItems.length === 0"
+        v-if="
+          searchText.length == 0 && filteredItems.length === 0 && !isLoading
+        "
         type="info"
         color="#FFB600"
         density="compact"
@@ -163,6 +179,10 @@ const props = defineProps({
   },
   selectedItem: {
     type: Object,
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
   },
 })
 
