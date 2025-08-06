@@ -22,6 +22,8 @@
             icon
             color="blue-grey"
             variant="text"
+            width="30"
+            height="30"
             @click="handleEdit('website')"
           >
             <v-icon size="large">
@@ -83,6 +85,8 @@
             icon
             color="blue-grey"
             variant="text"
+            width="30"
+            height="30"
             @click="handleEdit('email')"
           >
             <v-icon size="large">
@@ -123,65 +127,109 @@
         </v-text-field>
       </div>
     </div>
-    <div class="d-flex info-itm ml-md-6">
+    <div
+      v-for="(phone, index) in form.phone"
+      :key="index"
+      class="d-flex info-itm ml-md-6"
+    >
       <div class="info-sign">
         <v-icon color="primary">
           mdi-phone
         </v-icon>
       </div>
-      <div class="info-data">
-        <a
-          v-show="contentData.phoneNumber && !generalDataEditMode.phone1"
-          class="flex-grow-1"
-          :href="`tel: ${contentData.phoneNumber}`"
-        >
-          {{ contentData.phoneNumber }}
-        </a>
-        <template v-if="contentData.phoneNumber">
-          <v-btn
-            v-if="!generalDataEditMode.phone1"
-            class="ml-2"
-            icon
-            color="blue-grey"
-            variant="text"
-            @click="handleEdit('phone')"
-          >
-            <v-icon size="large">
-              mdi-pencil
-            </v-icon>
-          </v-btn>
-        </template>
-        <template v-else>
-          <span
-            v-show="!(contentData.phoneNumber || generalDataEditMode.phone1)"
-            class="gtext-t4 primary-blue-500 align-self-center pointer"
-            @click="handleEdit('phone')"
-          >
-            Contribute
-          </span>
-        </template>
-        <v-text-field
-          v-if="generalDataEditMode.phone1"
-          v-model="form.phone"
-          :rules="phoneRule"
-          placeholder="Phone"
-          variant="underlined"
-        >
-          <template #append-inner>
-            <v-btn
-              :loading="phoneSubmitLoader"
-              color="success"
-              variant="flat"
-              size="x-small"
-              icon
-              @click="handleUpdate('phone')"
+
+      <div class="info-data w-100">
+        <div class="d-flex w-100 align-center">
+          <template v-if="!editingPhones[index]">
+            <a
+              v-if="contentData.phoneNumber?.split('/')[index]?.length > 0"
+              :href="`tel:${contentData.phoneNumber?.split('/')[index]}`"
             >
-              <v-icon size="large">
-                mdi-check
-              </v-icon>
-            </v-btn>
+              {{ contentData.phoneNumber.split("/")[index] }}
+            </a>
+
+            <span
+              v-else
+              class="gtext-t4 primary-blue-500 align-self-center pointer"
+              @click="startEditPhone(index)"
+            >
+              Contribute
+            </span>
           </template>
-        </v-text-field>
+
+          <template v-else>
+            <v-text-field
+              v-model="form.phone[index]"
+              placeholder="Phone"
+              variant="underlined"
+              class="w-100 flex-grow-1"
+            >
+              <template #append-inner>
+                <v-btn
+                  :loading="phoneSubmitLoader"
+                  color="success"
+                  variant="flat"
+                  size="x-small"
+                  icon
+                  @click="saveEditPhone"
+                >
+                  <v-icon size="large">
+                    mdi-check
+                  </v-icon>
+                </v-btn>
+              </template>
+            </v-text-field>
+          </template>
+        </div>
+
+        <v-btn
+          v-if="!editingPhones[index] && phone.length > 0"
+          class="ml-2"
+          icon
+          color="blue-grey"
+          variant="text"
+          width="30"
+          height="30"
+          @click="startEditPhone(index)"
+        >
+          <v-icon size="large">
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+        <v-btn
+          v-if="index > 0 && !editingPhones[index]"
+          icon
+          color="red"
+          class="ml-1"
+          variant="text"
+          width="30"
+          height="30"
+          @click="removePhoneField(index)"
+        >
+          <v-icon size="x-large">
+            mdi-close
+          </v-icon>
+        </v-btn>
+
+        <v-btn
+          v-if="
+            index + 1 == form.phone.length
+              && index + 1 != maxPhoneCount
+              && !editingPhones[index]
+              && form.phone[form.phone.length - 1].length > 0
+          "
+          icon
+          color="success"
+          variant="text"
+          class="ml-1"
+          width="30"
+          height="30"
+          @click="addPhoneField"
+        >
+          <v-icon size="x-large">
+            mdi-plus
+          </v-icon>
+        </v-btn>
       </div>
     </div>
     <div class="d-flex info-itm ml-md-6">
@@ -205,6 +253,8 @@
             icon
             color="blue-grey"
             variant="text"
+            width="30"
+            height="30"
             @click="handleEdit('address')"
           >
             <v-icon size="large">
@@ -225,7 +275,6 @@
           v-if="generalDataEditMode.address"
           v-model="form.address"
           placeholder="Enter address"
-          :rules="addressRule"
           variant="underlined"
         >
           <template #append-inner>
@@ -259,18 +308,84 @@ const route = useRoute()
 const generalDataEditMode = reactive({
   website: false,
   email: false,
-  phone1: false,
   address: false,
 })
 const form = reactive({
   web: '',
   email: '',
-  phone: '',
+  phone: [],
   address: '',
 })
+
+const maxPhoneCount = 3
+const editingPhones = ref([])
+const phoneSubmitLoader = ref(false)
+
+function initPhoneFields() {
+  const phoneStr = contentData.value.phoneNumber || ''
+  form.phone = phoneStr.split('/')
+  editingPhones.value = form.phone.map(() => false)
+}
+
+initPhoneFields()
+
+function startEditPhone(index) {
+  const indexPhoneEditingNotFinish = editingPhones.value.findIndex(
+    item => item,
+  )
+  if (indexPhoneEditingNotFinish != -1) {
+    nuxtApp.$toast?.info(
+      'Please first confirm the previous phone number that is being edited.',
+    )
+  }
+  else {
+    const phones = contentData.value.phoneNumber?.split('/') || []
+    form.phone[index] = phones[index] || ''
+    editingPhones.value[index] = true
+  }
+}
+
+function saveEditPhone() {
+  handleUpdate('phone')
+}
+
+function addPhoneField() {
+  const currentPhones = contentData.value.phoneNumber?.split('/') || []
+
+  if (
+    currentPhones.length < maxPhoneCount
+    && currentPhones[currentPhones.length - 1]?.length > 0
+  ) {
+    currentPhones.push('')
+    contentData.value.phoneNumber = currentPhones.join('/')
+    form.phone.push('')
+    editingPhones.value.push(false)
+  }
+}
+
+function removePhoneField(index) {
+  const indexPhoneEditingNotFinish = editingPhones.value.findIndex(
+    item => item,
+  )
+  if (indexPhoneEditingNotFinish != -1) {
+    nuxtApp.$toast?.info(
+      'Please first confirm the previous phone number that is being edited.',
+    )
+  }
+  else {
+    const backupPhoneNumber = contentData.value.phoneNumber
+
+    const currentPhones = contentData.value.phoneNumber?.split('/') || []
+    currentPhones.splice(index, 1)
+    contentData.value.phoneNumber = currentPhones.join('/')
+    form.phone.splice(index, 1)
+    editingPhones.value.splice(index, 1)
+    handleUpdate('phone', backupPhoneNumber)
+  }
+}
+
 const webSubmitLoader = ref(false)
 const emailSubmitLoader = ref(false)
-const phoneSubmitLoader = ref(false)
 const addressSubmitLoader = ref(false)
 const webUrlRule = [
   v =>
@@ -282,13 +397,11 @@ const webUrlRule = [
   v => !v || v.length <= 255 || 'URL must be less than 255 characters',
 ]
 const emailRule = [
-  v => !!v || 'Email is required',
   v =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+    !v
+    || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
     || 'Please enter a valid email address',
 ]
-const phoneRule = [v => !!v || 'Phone number is required']
-const addressRule = [v => !!v || 'Address is required']
 
 function normalizeURL(url) {
   if (!url) return ''
@@ -308,7 +421,6 @@ function handleEdit(field) {
   }
   else if (field === 'phone') {
     form.phone = contentData.value.phoneNumber || ''
-    generalDataEditMode.phone1 = true
   }
   else if (field === 'address') {
     form.address = contentData.value.address || ''
@@ -318,8 +430,9 @@ function handleEdit(field) {
 }
 function isValidUrl(url) {
   try {
-    new URL(url)
-    return /^https?:\/\//.test(url)
+    const urlRegex
+      = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/
+    return urlRegex.test(url)
   }
   catch {
     return false
@@ -334,48 +447,28 @@ function isValidEmail(email) {
     return false
   }
 }
-function isRequired(value) {
-  try {
-    return !!value.trim()
-  }
-  catch {
-    return false
-  }
-}
-function handleUpdate(value) {
+
+function handleUpdate(value, backupData = '') {
   let formData = {}
   if (value == 'website') {
-    if (!isValidUrl(form.web)) {
+    if (!isValidUrl(form.web) && form.web != '') {
       nuxtApp.$toast?.error('Please enter a valid website URL')
       return
     }
-    generalDataEditMode.website = false
     formData = { webSite: form.web ?? null }
   }
   if (value == 'email') {
-    if (!isValidEmail(form.email)) {
+    if (!isValidEmail(form.email) && form.email != '') {
       nuxtApp.$toast?.error('Please enter a valid Email')
       return
     }
-    generalDataEditMode.email = false
     formData = { email: form.email ?? null }
   }
   if (value == 'phone') {
-    if (!isRequired(form.phone)) {
-      nuxtApp.$toast?.error('Please enter a valid Phone Number')
-      return
-    }
-    generalDataEditMode.phone1 = false
-    formData = { phoneNumber: form.phone ?? null }
+    const joinPhoneNumber = form.phone.filter(p => p.trim()).join('/')
+    formData = { phoneNumber: joinPhoneNumber ?? null }
   }
   if (value == 'address') {
-    if (!isRequired(form.address)) {
-      nuxtApp.$toast?.error(
-        'Please enter a valid address (minimum 10 characters)',
-      )
-      return
-    }
-    generalDataEditMode.address = false
     formData = { address: form.address ?? null }
   }
 
@@ -402,6 +495,8 @@ function handleUpdate(value) {
             break
           case 'phone':
             contentData.value.phoneNumber = form.phone
+              .filter(p => p.trim())
+              .join('/')
             break
           case 'address':
             contentData.value.address = form.address
@@ -421,6 +516,9 @@ function handleUpdate(value) {
     })
     .catch((err) => {
       console.log('err', err)
+      if (value == 'phone' && backupData.length > 0) {
+        contentData.value.phoneNumber = backupData
+      }
 
       if (err?.response?.status == 401 || err?.response?.status == 403) {
         nuxtApp.$toast?.error('Please login to contribute')
@@ -430,12 +528,17 @@ function handleUpdate(value) {
     .finally(() => {
       form.web = null
       form.email = null
-      form.phone = null
       form.address = null
       webSubmitLoader.value = false
       emailSubmitLoader.value = false
       phoneSubmitLoader.value = false
       addressSubmitLoader.value = false
+
+      generalDataEditMode.website = false
+      generalDataEditMode.email = false
+      generalDataEditMode.address = false
+
+      initPhoneFields()
     })
 }
 </script>

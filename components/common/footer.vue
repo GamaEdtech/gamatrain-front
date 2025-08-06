@@ -157,7 +157,7 @@ export default {
             },
             {
               title: 'School Finder',
-              link: '/school-service',
+              link: '/school',
             },
             {
               title: 'Exam',

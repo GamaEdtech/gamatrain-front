@@ -9,7 +9,7 @@
         v-bind="dialogProps"
         class="share-trigger pointer"
       >
-        <i class="fa-solid fa-share-alt mr-1 icon" />
+        <v-icon class="mr-1">mdi-share-variant-outline</v-icon>
         Share
       </span>
     </template>
@@ -30,7 +30,9 @@
                 block
                 @click="copyUrl"
               >
-                <i class="fa-solid fa-copy mr-1 icon" />&nbsp;
+                <v-icon class="mr-1">
+                  mdi-content-copy
+                </v-icon> &nbsp;
                 {{ copyBtnText }}
               </v-btn>
             </v-col>
@@ -42,7 +44,9 @@
                 class="text-white"
                 @click="shareSocial('whatsapp')"
               >
-                <i class="fab fa-whatsapp mr-1 icon" />
+                <v-icon class="mr-1">
+                  mdi-whatsapp
+                </v-icon>
                 WhatsApp
               </v-btn>
             </v-col>
@@ -53,7 +57,9 @@
                 class="text-white"
                 @click="shareSocial('telegram')"
               >
-                <i class="fab fa-telegram-plane mr-1 icon" />
+                <v-icon class="mr-1">
+                  mdi-near-me
+                </v-icon>
                 Telegram
               </v-btn>
             </v-col>

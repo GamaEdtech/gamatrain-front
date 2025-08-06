@@ -50,10 +50,6 @@
         {{ localContentData.sex_title }}
       </v-chip>
     </v-sheet>
-    <v-spacer />
-    <div class="gtext-t4 primary-blue-500 cursor-pointer">
-      Contribute
-    </div>
   </div>
 </template>
 

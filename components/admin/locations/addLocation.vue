@@ -1,58 +1,89 @@
 <script setup>
 import useApiService from '~/composables/useApiService'
 
-defineProps({
+const props = defineProps({
   modelValue: Boolean,
+  location: String,
+  locationType: String,
 })
 const { $toast } = useNuxtApp()
 
-const emit = defineEmits(['update:modelValue', 'fetchUser'])
+const emit = defineEmits(['update:modelValue', 'fetchLocations'])
 
 const form = ref(null)
 const formIsValid = ref(false)
 
-const newUser = reactive({
-  username: '',
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  password: '',
-  confirmPassword: '',
+const newLocation = reactive({
+  title: '',
+  localTitle: '',
+  code: '',
+  parentId: null,
+  latitude: null,
+  longitude: null,
 })
 
 const rules = {
   required: v => !!v || 'This field is required',
-  username: v => /^[a-zA-Z0-9]+$/.test(v) || 'Username must not contain special characters like ., _, @',
-  email: v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-  phone: v => /^(\+?\d{10,15})$/.test(v) || 'Phone number must be valid',
-  minPassword: v => (v && v.length >= 6) || 'Password must be at least 6 characters',
-  matchPassword: v => v === newUser.password || 'Passwords must match',
+  onlyNumbers: v => /^-?\d+(\.\d+)?$/.test(v) || 'Only numbers are allowed',
 }
 
-const passwordVisible = ref(false)
-const confirmPasswordVisible = ref(false)
+const parentCountries = ref([])
+const parentStates = ref([])
+const chosenCountry = ref(null)
 
-const submitUser = async () => {
+const fetchCountries = async () => {
+  if (parentCountries.value.length == 0) {
+    try {
+      const response = await useApiService.get(`/api/v2/admin/locations/countries`, {
+        'PagingDto.PageFilter.Size': 300,
+        'PagingDto.PageFilter.Skip': 0,
+        'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      })
+      parentCountries.value = response.data.list.slice().reverse()
+    }
+    catch (err) {
+      if (err.response?.status === 400) {
+        $toast.error(err.response.data.message)
+      }
+    }
+  }
+}
+const fetchStates = async () => {
   try {
-    const res = await useApiService.post('/api/v2/admin/identities', null, {
-      params: {
-        Username: newUser.username,
-        Password: newUser.password,
-        ConfirmPassword: newUser.confirmPassword,
-        Email: newUser.email,
-        PhoneNumber: newUser.phone,
-        FirstName: newUser.firstName,
-        LastName: newUser.lastName,
-      } })
+    const response = await useApiService.get(`/api/v2/locations/states/${chosenCountry.value}`, {
+      'PagingDto.PageFilter.Size': 1000,
+      'PagingDto.PageFilter.Skip': 0,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+    })
+    parentStates.value = response.data.list.slice().reverse()
+  }
+  catch (err) {
+    if (err.response?.status === 400) {
+      $toast.error(err.response.data.message)
+    }
+  }
+}
+
+const submitLocation = async () => {
+  if (props.locationType == 'states')
+    newLocation.parentId = chosenCountry.value
+  try {
+    const res = await useApiService.post(`/api/v2/admin/locations/${props.locationType}`, {
+      title: newLocation.title,
+      localTitle: newLocation.localTitle,
+      code: newLocation.code,
+      parentId: newLocation.parentId || null,
+      latitude: newLocation.latitude,
+      longitude: newLocation.longitude,
+    })
     if (res.succeeded) {
-      Object.keys(newUser).forEach((key) => {
-        newUser[key] = ''
+      Object.keys(newLocation).forEach((key) => {
+        newLocation[key] = ''
       })
       form.value.reset()
-      $toast.success('User Added Successfully')
+      $toast.success('Location Added Successfully')
       emit('update:modelValue', false)
-      emit('fetchUser')
+      emit('fetchLocations')
     }
     else
       $toast.error(res.errors[0].message)
@@ -62,6 +93,10 @@ const submitUser = async () => {
       $toast.error(err.response.data.message)
   }
 }
+
+watch(chosenCountry, (_newVal) => {
+  fetchStates()
+})
 </script>
 
 <template>
@@ -73,11 +108,11 @@ const submitUser = async () => {
     <v-card class="bg-primary-gray-200 rounded-xl">
       <v-card-title class="d-flex flex-column align-center py-10 pb-6 ga-3 bg-white">
         <div class="rounded-pill bg-primary-gray-100 pa-4">
-          <v-icon class="fontsize-80 primary-blue-500">
-            mdi mdi-account-multiple-plus
+          <v-icon class="fontsize-80 color-12b76a">
+            mdi mdi-plus-circle
           </v-icon>
         </div>
-        <span class="gtext-t3 font-weight-medium">Add New User</span>
+        <span class="gtext-t3 font-weight-medium">Add New {{ location }}</span>
       </v-card-title>
 
       <v-card-text class="py-2">
@@ -85,92 +120,100 @@ const submitUser = async () => {
           ref="form"
           v-model="formIsValid"
         >
+          <div class="w-100">
+            <label class="primary-gray-700 gtext-t6 font-weight-medium mt-3">
+              Title
+            </label>
+            <v-text-field
+              v-model="newLocation.title"
+              variant="solo"
+              density="compact"
+            />
+          </div>
           <div class="d-flex flex-column w-100 ga-2 flex-sm-row">
             <div class="w-100">
               <label class="primary-gray-700 gtext-t6 font-weight-medium mt-3">
-                First Name
+                Local Title
               </label>
               <v-text-field
-                v-model="newUser.firstName"
+                v-model="newLocation.localTitle"
                 variant="solo"
                 density="compact"
               />
             </div>
             <div class="w-100">
               <label class="primary-gray-700 gtext-t6 font-weight-medium mt-3">
-                Last Name
+                Code
               </label>
               <v-text-field
-                v-model="newUser.lastName"
+                v-model="newLocation.code"
                 variant="solo"
                 density="compact"
+                :rules="[rules.required]"
+              />
+            </div>
+          </div>
+          <div class="d-flex flex-column w-100 ga-2 flex-sm-row">
+            <div
+              v-if="props.locationType != 'countries'"
+              class="w-100"
+            >
+              <label class="primary-gray-700 gtext-t6 font-weight-medium mt-3">
+                Country
+              </label>
+              <v-select
+                v-model="chosenCountry"
+                variant="solo"
+                density="compact"
+                :rules="[rules.required]"
+                :items="parentCountries"
+                item-title="title"
+                item-value="id"
+                @click="fetchCountries"
+              />
+            </div>
+            <div
+              v-if="props.locationType == 'cities'"
+              class="w-100"
+            >
+              <label class="primary-gray-700 gtext-t6 font-weight-medium mt-3">
+                State
+              </label>
+              <v-select
+                v-model="newLocation.parentId"
+                :disabled="!chosenCountry"
+                variant="solo"
+                density="compact"
+                :rules="[rules.required]"
+                :items="parentStates"
+                item-title="title"
+                item-value="id"
               />
             </div>
           </div>
           <div class="d-flex flex-column w-100 ga-2 flex-sm-row">
             <div class="w-100">
               <label class="primary-gray-700 gtext-t6 font-weight-medium mt-3">
-                UserName
+                Latitude
               </label>
               <v-text-field
-                v-model="newUser.username"
+                v-model="newLocation.latitude"
                 variant="solo"
                 density="compact"
-                :rules="[rules.required, rules.username]"
+                type="number"
+                :rules="[rules.required, rules.onlyNumbers]"
               />
             </div>
             <div class="w-100">
               <label class="primary-gray-700 gtext-t6 font-weight-medium mt-3">
-                Phone Number
+                Longitude
               </label>
               <v-text-field
-                v-model="newUser.phone"
-                variant="solo"
-                type="email"
-                density="compact"
-                :rules="[rules.required, rules.phone]"
-                placeholder="+119876545678"
-              />
-            </div>
-          </div>
-          <label class="primary-gray-700 gtext-t6 font-weight-medium mt-3">
-            Email
-          </label>
-          <v-text-field
-            v-model="newUser.email"
-            variant="solo"
-            type="email"
-            density="compact"
-            :rules="[rules.required, rules.email]"
-            placeholder="example@gmail.com"
-          />
-          <div class="d-flex flex-column w-100 ga-2 flex-sm-row">
-            <div class="w-100">
-              <label class="primary-gray-700 gtext-t6 font-weight-medium mt-3">
-                Password
-              </label>
-              <v-text-field
-                v-model="newUser.password"
-                :append-inner-icon="passwordVisible ? 'mdi-eye' : 'mdi-eye-off' "
-                :type="passwordVisible ? 'text' : 'password'"
+                v-model="newLocation.longitude"
                 variant="solo"
                 density="compact"
-                :rules="[rules.required, rules.minPassword]"
-                @click:append-inner="passwordVisible = !passwordVisible"
-              />
-            </div>
-            <div class="w-100">
-              <label class="primary-gray-700 gtext-t6 font-weight-medium mt-3">
-                confirm Password
-              </label>
-              <v-text-field
-                v-model="newUser.confirmPassword"
-                :append-inner-icon="confirmPasswordVisible ? 'mdi-eye' : 'mdi-eye-off' "
-                :type="confirmPasswordVisible ? 'text' : 'password'"
-                variant="solo"
-                density="compact"
-                :rules="[rules.required, rules.matchPassword]"
-                @click:append-inner="confirmPasswordVisible = !confirmPasswordVisible"
+                type="number"
+                :rules="[rules.required, rules.onlyNumbers]"
               />
             </div>
           </div>
@@ -188,7 +231,7 @@ const submitUser = async () => {
         <v-btn
           class="rounded-pill gtext-t5 ml-4 submitBtn"
           :disabled="!formIsValid"
-          @click="submitUser"
+          @click="submitLocation"
         >
           <span>Submit</span>
         </v-btn>
@@ -264,7 +307,24 @@ const submitUser = async () => {
 .v-dialog .v-card::-webkit-scrollbar-track {
   background: transparent;
 }
+
+/* Chrome, Safari, Edge, Opera */
+:deep(input::-webkit-outer-spin-button),
+:deep(input::-webkit-inner-spin-button) {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+:deep(input[type=number]) {
+  -moz-appearance: textfield;
+}
+
 .fontsize-80{
-  font-size: 80px !important;
+    font-size: 80px !important;
+}
+
+.color-12b76a{
+    color: #12b76a !important;
 }
 </style>

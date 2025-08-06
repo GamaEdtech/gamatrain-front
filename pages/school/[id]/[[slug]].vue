@@ -215,6 +215,21 @@
 
           <!-- End general data section -->
 
+          <v-row
+            justify="center"
+            class="mt-10"
+          >
+            <v-col
+              cols="12"
+              md="8"
+              class="text-center"
+            >
+              <common-ad-banner
+                v-model="isAdsLoad"
+                adslot="9511163476"
+              />
+            </v-col>
+          </v-row>
           <school-detail-users-score
             :rating-data="ratingData"
             @leave-comment="showLeaveCommentDialog = true"
@@ -249,7 +264,8 @@
         class="text-center"
       >
         <common-ad-banner
-          addslot="7199289937"
+          v-model="isAdsLoad"
+          adslot="7199289937"
         />
       </v-col>
     </v-row>
@@ -275,6 +291,8 @@ const contentData = ref(null)
 const ratingData = ref(null)
 const similarSchools = []
 const galleryImages = ref([])
+const isAdsLoad = ref(false)
+
 const requestURL = ref(useRequestURL().host)
 const { $slugGenerator } = useNuxtApp()
 
@@ -459,8 +477,7 @@ function handleQueryParameters(data) {
 
 const {
   data: commentsData,
-  refresh: _refreshComments,
-  pending: _commentsPending,
+  refresh: refreshComments,
 } = await useAsyncData(
   `comments-${route.params.id}`,
   () =>

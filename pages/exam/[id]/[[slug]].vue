@@ -124,6 +124,22 @@
     />
 
     <common-crash-report ref="crash_report" />
+
+    <v-row
+      justify="center"
+      class="mt-10"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        class="text-center"
+      >
+        <common-ad-banner
+          v-model="isAdsLoad"
+          adslot="7199289937"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -151,6 +167,8 @@ const galleryHelpData = ref({
   course: '',
   lesson: '',
 })
+
+const isAdsLoad = ref(false)
 
 // Fetch the exam data
 async function fetchExamData() {

@@ -11,9 +11,16 @@
               block
               color="primary"
               class="mb-2"
+              variant="flat"
               :loading="qWordFileDownloadLoading"
               @click="$emit('download', 'q_word')"
             >
+              <v-icon
+                size="x-large"
+                class="btn-icon"
+              >
+                mdi-file-pdf-box
+              </v-icon>
               Download Question Doc
               {{
                 contentData?.files?.word.price > 0
@@ -26,11 +33,18 @@
             <v-btn
               class="mb-2 text-white font-weight-bold"
               block
+              variant="flat"
               color="#E60012"
               :loading="qPdfFileDownloadLoading"
               @click="$emit('download', 'q_pdf')"
             >
-              Question Paper
+              <v-icon
+                size="x-large"
+                class="btn-icon"
+              >
+                mdi-file-pdf-box
+              </v-icon>
+              Download Question Paper
               {{
                 contentData?.files?.pdf.price > 0
                   ? "| $" + contentData?.files?.pdf.price
@@ -42,12 +56,19 @@
             <v-btn
               v-show="contentData?.files.answer.ext == 'pdf'"
               class="mb-2 font-weight-bold"
+              variant="flat"
               block
               color="teal accent-3"
               :loading="answerFileDownloadLoading"
               @click="$emit('download', 'a_file')"
             >
-              Mark Scheme
+              <v-icon
+                size="x-large"
+                class="btn-icon"
+              >
+                mdi-file-pdf-box
+              </v-icon>
+              Download Mark Scheme
               {{
                 contentData?.files?.answer.price > 0
                   ? "| $" + contentData?.files?.answer.price
@@ -57,6 +78,7 @@
             <v-btn
               v-show="contentData?.files.answer.ext == 'word'"
               block
+              variant="flat"
               color="primary"
               class="mb-2"
               :loading="answerFileDownloadLoading"
@@ -81,10 +103,27 @@
               block
               color="blue"
               class="mb-2 font-weight-bold"
+              variant="flat"
               :loading="extraFileDownloadLoading"
               @click="$emit('download', 'extra', extra.id)"
             >
-              {{ extra.type_title ? extra.type_title : "Extra" }}
+              <template v-if="extra?.ext == 'mp3'">
+                <v-icon
+                  size="x-large"
+                  class="btn-icon"
+                >
+                  mdi-volume-high
+                </v-icon>
+              </template>
+              <template v-if="extra?.ext == 'pdf'">
+                <v-icon
+                  size="x-large"
+                  class="btn-icon"
+                >
+                  mdi-file-pdf-box
+                </v-icon>
+              </template>
+              Download {{ extra.type_title ? extra.type_title : "Extra" }}
               {{ extra.price > 0 ? "| $" + extra.price : "" }}
             </v-btn>
           </div>
@@ -186,5 +225,12 @@ const _emits = defineEmits(['download', 'open-auth'])
 
 p {
   font-size: 1.3rem !important;
+}
+
+.btn-icon {
+  flex-shrink: 0;
+  margin-right: 8px;
+  position: absolute;
+  left: 10px;
 }
 </style>

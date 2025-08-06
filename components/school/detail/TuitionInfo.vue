@@ -5,18 +5,37 @@
     </div>
     <v-spacer />
     <div class="gtext-t2 font-weight-heavy primary-gray-800">
-      <span v-if="contentData.tuition && !isEditMode">
-        <span class="gtext-t6">$</span>
-        {{ contentData.tuition.toLocaleString() }}
+      <span
+        v-if="
+          initialValueTuition != undefined
+            && initialValueTuition != null
+            && !isEditMode
+        "
+      >
+        {{
+          initialValueTuition == 0
+            ? "Free"
+            : "$ " + initialValueTuition.toLocaleString()
+        }}
       </span>
       <span
-        v-if="!contentData.tuition && !isEditMode"
+        v-if="
+          initialValueTuition == undefined
+            && initialValueTuition == null
+            && !isEditMode
+        "
         class="gtext-t4 primary-blue-500 align-self-center pointer"
         @click="handleEdit"
       >
         Contribute
       </span>
-      <template v-if="!isEditMode && contentData.tuition">
+      <template
+        v-if="
+          !isEditMode
+            && initialValueTuition != undefined
+            && initialValueTuition != null
+        "
+      >
         <v-btn
           class="ml-2"
           icon
@@ -68,10 +87,10 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:contentData'])
 const nuxtApp = useNuxtApp()
 const route = useRoute()
 
+const initialValueTuition = ref(props.contentData.tuition)
 const isEditMode = ref(false)
 const submitLoader = ref(false)
 const tuitionFee = ref(0)
@@ -81,7 +100,7 @@ const tuitionRule = [
 ]
 
 const handleEdit = () => {
-  tuitionFee.value = props.contentData.tuition ? props.contentData.tuition : 0
+  tuitionFee.value = initialValueTuition.value ? initialValueTuition.value : 0
   isEditMode.value = true
 }
 
@@ -95,6 +114,7 @@ const handleUpdate = () => {
     return
   }
   formData = { tuition: tuitionFee.value ?? null }
+
   submitLoader.value = true
 
   useApiService
@@ -104,7 +124,7 @@ const handleUpdate = () => {
         nuxtApp.$toast?.success(
           'Thank you! Your contribution has been successfully submitted and is pending admin approval.',
         )
-        emit('update:contentData', { ...props.contentData, tuition: Number(tuitionFee.value) })
+        initialValueTuition.value = Number(tuitionFee.value)
       }
       else {
         nuxtApp.$toast?.error(response?.errors[0]?.message)

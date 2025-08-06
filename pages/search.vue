@@ -104,7 +104,7 @@ const isAllDataLoaded = ref(false)
 const totalDataFind = ref(0)
 const pageNumber = ref(1)
 const perPage = 10
-
+const queryParams = ref({})
 const loadNextPageData = async () => {
   pageNumber.value += 1
   isPaginationDataLoading.value = true
@@ -124,6 +124,7 @@ const changeFilterQuery = async (query, skipFetch = false) => {
     isInitialDataLoading.value = true
     pageNumber.value = 1
     await getDataList()
+    queryParams.value = { ...querySearch.value }
   }
 }
 
@@ -179,6 +180,12 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
   },
 )
 
+watchEffect(() => {
+  if (initialData.value) {
+    data.value = initialData.value.data.list
+  }
+})
+
 if (initialData.value) {
   data.value = initialData.value.data.list
   totalDataFind.value = initialData.value.data.num || 0
@@ -213,12 +220,10 @@ const getDataList = async (isLoadNextPage = false) => {
   }
 }
 
-const pageTitle = ref('')
-const pageDescribe = ref('')
-
-const setMetaData = (type) => {
+// Computed metadata that updates when data changes
+const metadata = computed(() => {
   const { section, base, lesson, test_type, edu_year, edu_month } = route.query
-  const firstElement = initialData.value?.data?.list[0]
+  const firstElement = data.value[0]
 
   const titles = {
     boardTitle:
@@ -235,7 +240,9 @@ const setMetaData = (type) => {
           .month(edu_month - 1)
           .format('MMMM')
       : '',
+    is_paper: firstElement?.is_paper,
   }
+
   if (
     (route.query.type == 'test' || route.query.type == 'azmoon')
     && test_type
@@ -243,44 +250,15 @@ const setMetaData = (type) => {
     titles.classificationTitle
       = firstElement?.test_type_title || firstElement?.azmoon_type_title
   }
+
   const joinTextTitles = `${titles.monthTitle} ${titles.yearTitle} ${titles.classificationTitle} ${titles.subjectTitle} ${titles.gradeTitle} ${titles.boardTitle}`
 
-  setPageDescribe(type, titles, joinTextTitles)
-  setPageTitle(type, titles, joinTextTitles)
+  // Generate title
+  let appendText = ''
+  if (titles.is_paper) {
+    appendText = 'Past Papers'
+  }
 
-  useHead(() => ({
-    title: pageTitle.value,
-    meta: [
-      {
-        hid: 'apple-mobile-web-app-title',
-        name: 'apple-mobile-web-app-title',
-        content: pageTitle.value,
-      },
-      {
-        hid: 'og:title',
-        name: 'og:title',
-        content: pageTitle.value,
-      },
-      {
-        hid: 'og:site_name',
-        name: 'og:site_name',
-        content: 'GamaTrain',
-      },
-      {
-        hid: 'description',
-        name: 'description',
-        content: pageDescribe.value,
-      },
-      {
-        hid: 'og:description',
-        name: 'og:description',
-        content: pageDescribe.value,
-      },
-    ],
-  }))
-}
-
-const setPageTitle = (type, titles, joinTextTitles) => {
   const titleTemplates = {
     learnfiles: {
       dynamic: `${joinTextTitles} multimedia`,
@@ -288,7 +266,7 @@ const setPageTitle = (type, titles, joinTextTitles) => {
         'Multimedia Interactive Educational Content; PowerPoint, Video, Class Voice, GamaTrain',
     },
     test: {
-      dynamic: `${joinTextTitles} Past Papers`,
+      dynamic: `${joinTextTitles} ${appendText}`,
       fallback: 'Educational Resources | K12 Education Papers and Materials',
     },
     question: {
@@ -315,56 +293,93 @@ const setPageTitle = (type, titles, joinTextTitles) => {
     },
   }
 
-  const template = titleTemplates[type] || titleTemplates.default
+  const template = titleTemplates[route.query.type] || titleTemplates.default
+  const title = titles.boardTitle ? template.dynamic : template.fallback
 
-  pageTitle.value = titles.boardTitle ? template.dynamic : template.fallback
-}
+  // Generate description
+  let descAppendText = ''
+  if (titles.is_paper) {
+    descAppendText = 'Includes mark scheme for exam preparation.'
+  }
+  else {
+    descAppendText = 'Useful for study, practice, and exam preparation.'
+  }
 
-const pageDescriptions = {
-  learnfiles:
-    'Elevate your learning experience with GamaTrain\'s captivating multimedia content, including PowerPoint presentations, informative videos, and diverse educational materials.',
-  test: 'Enhance your learning with GamaTrain\'s extensive collection of online documents and texts, carefully curated to enrich your academic journey.',
-  question:
-    'Engage in active learning and gain deeper insights through GamaTrain\'s interactive Q&A platform, where you can pose questions and seek support from fellow learners and experts.',
-  azmoon:
-    'Hone your skills and assess your knowledge with GamaTrain\'s online exams, designed to enhance your exam preparation and boost your confidence.',
-  dars: 'Complement your studies with GamaTrain\'s comprehensive online tutorials, providing step-by-step guidance and practice opportunities to refine your understanding.',
-  tutor: 'Teacher',
-}
+  const pageDescriptions = {
+    learnfiles:
+      'Elevate your learning experience with GamaTrain\'s captivating multimedia content, including PowerPoint presentations, informative videos, and diverse educational materials.',
+    test: 'Enhance your learning with GamaTrain\'s extensive collection of online documents and texts, carefully curated to enrich your academic journey.',
+    question:
+      'Engage in active learning and gain deeper insights through GamaTrain\'s interactive Q&A platform, where you can pose questions and seek support from fellow learners and experts.',
+    azmoon:
+      'Hone your skills and assess your knowledge with GamaTrain\'s online exams, designed to enhance your exam preparation and boost your confidence.',
+    dars: 'Complement your studies with GamaTrain\'s comprehensive online tutorials, providing step-by-step guidance and practice opportunities to refine your understanding.',
+    tutor: 'Teacher',
+  }
 
-const setPageDescribe = (type, titles, joinTextTitles) => {
   const descriptionTemplates = {
     learnfiles: {
-      dynamic: `Free download list of ${joinTextTitles}  multimedia. Includes mark scheme for exam preparation.`,
+      dynamic: `Free download list of ${joinTextTitles}  multimedia. ${descAppendText}`,
     },
     test: {
-      dynamic: `Free download list of ${joinTextTitles} Past Papers. Includes mark scheme for exam preparation.`,
+      dynamic: `Free download list of ${joinTextTitles} ${appendText}. ${descAppendText}`,
     },
     question: {
-      dynamic: `Free download list of ${joinTextTitles} Forum. Includes mark scheme for exam preparation.`,
+      dynamic: `Free download list of ${joinTextTitles} Forum. ${descAppendText}`,
     },
     azmoon: {
-      dynamic: `Free download list of ${joinTextTitles} Online test. Includes mark scheme for exam preparation.`,
+      dynamic: `Free download list of ${joinTextTitles} Online test. ${descAppendText}`,
     },
     dars: {
-      dynamic: `Free download list of ${joinTextTitles} Textbook. Includes mark scheme for exam preparation.`,
+      dynamic: `Free download list of ${joinTextTitles} Textbook. ${descAppendText}`,
     },
     tutor: {
-      dynamic: `Free download list of ${joinTextTitles} Teacher. Includes mark scheme for exam preparation.`,
+      dynamic: `Free download list of ${joinTextTitles} Teacher. ${descAppendText}`,
     },
     default: {
-      dynamic: `Free download list of ${joinTextTitles} Past Papers. Includes mark scheme for exam preparation.`,
+      dynamic: `Free download list of ${joinTextTitles} ${appendText}. ${descAppendText}`,
     },
   }
 
-  const template = descriptionTemplates[type] || descriptionTemplates.default
+  const descTemplate = descriptionTemplates[route.query.type] || descriptionTemplates.default
+  const description = titles.boardTitle
+    ? descTemplate.dynamic
+    : pageDescriptions[route.query.type] || pageDescriptions.test
 
-  pageDescribe.value = titles.boardTitle
-    ? template.dynamic
-    : pageDescriptions[type]
-}
+  return { title, description }
+})
 
-setMetaData(route.query.type)
+// Reactive useHead that updates when metadata changes
+useHead(() => ({
+  title: metadata.value.title,
+  meta: [
+    {
+      hid: 'apple-mobile-web-app-title',
+      name: 'apple-mobile-web-app-title',
+      content: metadata.value.title,
+    },
+    {
+      hid: 'og:title',
+      name: 'og:title',
+      content: metadata.value.title,
+    },
+    {
+      hid: 'og:site_name',
+      name: 'og:site_name',
+      content: 'GamaTrain',
+    },
+    {
+      hid: 'description',
+      name: 'description',
+      content: metadata.value.description,
+    },
+    {
+      hid: 'og:description',
+      name: 'og:description',
+      content: metadata.value.description,
+    },
+  ],
+}))
 </script>
 
 <style scoped>

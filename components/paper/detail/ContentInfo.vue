@@ -29,28 +29,36 @@
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-folder mr-1 icon" />
+        <v-icon class="mr-1">
+          mdi-folder-outline
+        </v-icon>
         Classification: {{ contentData?.test_type_title }}
       </v-col>
       <v-col
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-book-open-reader mr-1 icon" />
+        <v-icon class="mr-1">
+          mdi-book-open-blank-variant
+        </v-icon>
         Page count: {{ contentData?.q_file_pages }}
       </v-col>
       <v-col
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-eye mr-1 icon" />
+        <v-icon class="mr-1">
+          mdi-eye
+        </v-icon>
         Viewed: {{ contentData?.views }}
       </v-col>
       <v-col
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-calendar-alt mr-1 icon" />
+        <v-icon class="mr-1">
+          mdi-calendar-month-outline
+        </v-icon>
         Last update: {{ $dayjs(contentData?.up_date).fromNow() }}
       </v-col>
       <v-col
@@ -61,7 +69,9 @@
           class="pointer"
           @click="openCrashReport"
         >
-          <i class="fa-solid fa-bug mr-1 icon" />
+          <v-icon class="mr-1">
+            mdi-bug-outline
+          </v-icon>
           Crash report
         </div>
       </v-col>
@@ -73,7 +83,7 @@
       </v-col>
     </v-row>
 
-    <div class="text-center mt-2">
+    <div class="text-center mt-4">
       <v-rating
         v-model="rating"
         hover
@@ -92,12 +102,20 @@
       >
         <div v-if="contentData?.files?.word.exist">
           <v-btn
-            block
-            color="primary"
             class="mb-2"
+            block
+            size="large"
+            variant="flat"
+            color="primary"
             :loading="qWordFileDownloadLoading"
             @click="startDownload('q_word')"
           >
+            <v-icon
+              size="x-large"
+              class="btn-icon"
+            >
+              mdi-file-word-box
+            </v-icon>
             Download Question Doc
             {{
               contentData?.files?.word.price > 0
@@ -110,11 +128,19 @@
           <v-btn
             class="mb-2 text-white font-weight-bold"
             block
+            variant="flat"
+            size="large"
             color="#E60012"
             :loading="qPdfFileDownloadLoading"
             @click="startDownload('q_pdf')"
           >
-            {{ contentData?.test_type_title }}
+            <v-icon
+              size="x-large"
+              class="btn-icon"
+            >
+              mdi-file-pdf-box
+            </v-icon>
+            Download Question Paper
             {{
               contentData?.files?.pdf.price > 0
                 ? "| $" + contentData?.files?.pdf.price
@@ -127,11 +153,19 @@
             v-show="contentData?.files.answer.ext == 'pdf'"
             class="mb-2 font-weight-bold"
             block
+            variant="flat"
+            size="large"
             color="teal accent-3"
             :loading="answerFileDownloadLoading"
             @click="startDownload('a_file')"
           >
-            Mark Scheme
+            <v-icon
+              size="x-large"
+              class="btn-icon"
+            >
+              mdi-file-pdf-box
+            </v-icon>
+            Download Mark Scheme
             {{
               contentData?.files?.answer.price > 0
                 ? "| $" + contentData?.files?.answer.price
@@ -140,12 +174,20 @@
           </v-btn>
           <v-btn
             v-show="contentData?.files.answer.ext == 'word'"
+            class="mb-2"
             block
             color="primary"
-            class="mb-2"
+            variant="flat"
+            size="large"
             :loading="answerFileDownloadLoading"
             @click="startDownload('a_file')"
           >
+            <v-icon
+              size="x-large"
+              class="btn-icon"
+            >
+              mdi-file-word-box
+            </v-icon>
             Download Answer Doc
             {{
               contentData?.files?.answer.price > 0
@@ -160,13 +202,31 @@
           <v-btn
             v-for="(extra, index) in contentData.files.extra"
             :key="index"
+            class="mb-2 font-weight-bold"
             block
             color="blue"
-            class="mb-2 font-weight-bold"
+            variant="flat"
+            size="large"
             :loading="extraFileDownloadLoading"
             @click="startDownload('extra', extra.id)"
           >
-            {{ extra.type_title ? extra.type_title : "Extra" }}
+            <template v-if="extra?.ext == 'mp3'">
+              <v-icon
+                size="x-large"
+                class="btn-icon"
+              >
+                mdi-volume-high
+              </v-icon>
+            </template>
+            <template v-if="extra?.ext == 'pdf'">
+              <v-icon
+                size="x-large"
+                class="btn-icon"
+              >
+                mdi-file-pdf-box
+              </v-icon>
+            </template>
+            Download {{ extra.type_title ? extra.type_title : "Extra" }}
             {{ extra.price > 0 ? "| $" + extra.price : "" }}
           </v-btn>
         </div>
@@ -175,6 +235,8 @@
           :to="`/exam/${contentData?.exams[0].id}`"
           block
           color="#5600e8"
+          size="large"
+          variant="flat"
           class="mb-2 text-white font-weight-bold"
         >
           Begin Quiz
@@ -183,7 +245,9 @@
           v-else
           :to="`/test-maker/create?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}&paperId=${contentData?.id}`"
           block
+          variant="flat"
           outlined
+          size="large"
           color="primary"
           class="mb-2 text-white font-weight-bold"
         >
@@ -285,6 +349,7 @@ const startDownload = async (type, extraId) => {
 defineExpose({
   crash_report,
 })
+console.log('contentData.files.extra', props.contentData.files.extra)
 </script>
 
 <style scoped>
@@ -300,5 +365,10 @@ defineExpose({
 
 p {
   font-size: 1.3rem !important;
+}
+
+.btn-icon {
+  position: absolute;
+  left: 10px;
 }
 </style>

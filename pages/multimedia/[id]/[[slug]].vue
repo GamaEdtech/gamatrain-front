@@ -234,6 +234,22 @@
       />
     </v-container>
     <section class="feed" />
+
+    <v-row
+      justify="center"
+      class="mt-10"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        class="text-center"
+      >
+        <common-ad-banner
+          v-model="isAdsLoad"
+          adslot="7199289937"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -260,6 +276,8 @@ const requestURL = ref(useRequestURL().host)
 const breads = ref([])
 
 const download_loading = ref(false)
+
+const isAdsLoad = ref(false)
 
 const previewImages = computed(() => {
   return contentData.value?.previewData?.preview || []
