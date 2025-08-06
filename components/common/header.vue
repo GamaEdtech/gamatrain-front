@@ -59,13 +59,6 @@ const menuItems = [
   //   icon_color: 'primary'
   // },
 ]
-const _selectedItem = 1
-const _socialList = [
-  { link: 'telegram', icon: 'fa-telegram' },
-  { link: 'twitter', icon: 'fa-twitter' },
-  { link: 'instagram', icon: 'fa-instagram' },
-  { link: 'Youtube', icon: 'fa-youtube' },
-]
 
 const menuLink = [
   {
@@ -1753,11 +1746,6 @@ watch(
     .mobile_bar .v-toolbar__content {
       background: transparent;
       padding: 0 1.4rem 0 0.5rem !important;
-    }
-
-    .mobile_bar .fa-bell {
-      line-height: 3rem !important;
-      font-size: 2.8rem !important;
     }
   }
 

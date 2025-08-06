@@ -10,7 +10,7 @@
           class="pl-5"
         >
           <p class="text-h4 teal--text">
-            <span class="fa-solid fa-envelope" />
+            <v-icon>md:mail</v-icon>
             <span>
               {{ ticketData.title }}
             </span>
@@ -196,7 +196,7 @@
                   <!-- </validation-provider> -->
                   <nuxt-link to="/formula-help">
                     <strong class="pointer teal--text text-h6">
-                      <span class="fa-solid fa-link" />
+                      <v-icon>md:link</v-icon>
                       Formula writing guide
                     </strong>
                   </nuxt-link>

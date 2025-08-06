@@ -94,7 +94,12 @@
                     block
                     @click="path_panel_expand = !path_panel_expand"
                   >
-                    <i class="fas fa-route mx-3 fa-xl" />
+                    <v-icon
+                      class="mx-3"
+                      size="x-large"
+                    >
+                      md:route
+                    </v-icon>
                   </v-btn>
                 </template>
                 <span>Change path</span>
