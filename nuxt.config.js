@@ -238,6 +238,11 @@ export default defineNuxtConfig({
       'defu',
       '@ckeditor/ckeditor5-vue',
       'vue3-emoji-picker',
+      '@solana/web3.js',
+      '@solana/wallet-adapter-base',
+      '@coral-xyz/anchor',
+      '@jup-ag/api',
+      'buffer',
     ],
   },
 
@@ -287,6 +292,13 @@ export default defineNuxtConfig({
       target: 'esnext',
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
+        external: (id) => {
+          // Don't externalize these packages - they need to be bundled
+          if (id.includes('@solana/') || id.includes('@coral-xyz/') || id.includes('@jup-ag/')) {
+            return false
+          }
+          return false
+        },
         output: {
           manualChunks: {
             vendor: ['vue', 'vue-router'],
@@ -296,18 +308,34 @@ export default defineNuxtConfig({
               '@ckeditor/ckeditor5-vue',
               '@ckeditor/ckeditor5-build-classic',
             ],
+            solana: [
+              '@solana/web3.js',
+              '@solana/wallet-adapter-base',
+              '@coral-xyz/anchor',
+              '@jup-ag/api',
+            ],
           },
         },
       },
       transpile: [
         '@solana/web3.js',
         '@solana/wallet-adapter-base',
+        '@coral-xyz/anchor',
         '@jup-ag/api',
+        'buffer',
       ],
     },
     define: {
       'global': 'globalThis',
       'process.env.BROWSER': true,
+    },
+    ssr: {
+      noExternal: [
+        '@solana/web3.js',
+        '@solana/wallet-adapter-base',
+        '@coral-xyz/anchor',
+        '@jup-ag/api',
+      ],
     },
   },
 
@@ -332,9 +360,10 @@ export default defineNuxtConfig({
         'borsh',
         'util',
         'secp256k1',
-        '@solana/web3.js',
-        '@solana/wallet-adapter-base',
       ],
+    },
+    experimental: {
+      wasm: true,
     },
   },
 })
