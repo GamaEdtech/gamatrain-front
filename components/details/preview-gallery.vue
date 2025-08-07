@@ -53,6 +53,7 @@
                   <v-img
                     :src="image"
                     class="carousel-img fill-height"
+                    cover
                   />
                 </v-carousel-item>
               </v-carousel>

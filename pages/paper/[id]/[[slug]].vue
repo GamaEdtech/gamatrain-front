@@ -25,6 +25,7 @@
                 md="12"
                 lg="5"
                 xl="6"
+                xxl="7"
                 class="px-8 px-lg=0 order-3 order-md-3 order-lg-2"
               >
                 <paper-detail-description
@@ -93,6 +94,7 @@
                 md="3"
                 lg="3"
                 xl="3"
+                xxl="2"
                 order-lg="first"
                 class="order-2 order-sm-1 order-md-1"
               >
@@ -108,6 +110,7 @@
                 md="9"
                 lg="4"
                 xl="3"
+                xxl="3"
               >
                 <paper-detail-content-info
                   :content-data="contentData"

@@ -232,5 +232,6 @@ p {
   margin-right: 8px;
   position: absolute;
   left: 10px;
+  font-size: 23px;
 }
 </style>
