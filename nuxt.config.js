@@ -356,7 +356,6 @@ export default defineNuxtConfig({
   nitro: {
     rollupConfig: {
       external: [
-        'borsh',
         'util',
         'secp256k1',
       ],
