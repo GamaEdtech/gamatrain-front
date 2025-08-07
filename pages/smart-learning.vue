@@ -21,9 +21,18 @@
     </v-container>
 
     <v-container id="service-ai-unleashing">
-      <v-row>
-        <v-col cols="12">
-          <v-card flat>
+      <v-row
+        justify="center"
+        align="center"
+      >
+        <v-col
+          cols="12"
+          md="8"
+        >
+          <v-card
+            flat
+            class="text-center"
+          >
             <v-card-text>
               <h2 class="gama-text-h4 mb-3">
                 Unleashing the Power of AI in Education
@@ -56,31 +65,35 @@
       fluid
     >
       <v-container>
-        <v-row>
+        <v-row align="center">
           <v-col
             cols="12"
             md="6"
-            class="order-last order-md-first"
+            class="order-last order-md-first d-flex flex-column justify-center"
           >
-            <h2 class="gama-text-h4 text-white">
-              Comprehensive Curriculum and Materials
-            </h2>
-            <p class="gama-text-body1 text-white">
-              GamaTrain's extensive library of educational materials covers a
-              wide range of subjects and levels. From first grade to 12th grade
-              advanced courses, we have meticulously crafted content to ensure
-              students receive the highest quality of education. Our team of
-              experts, educators, and AI specialists work together to bring you
-              engaging and enriching study materials.
-            </p>
+            <div class="text-content">
+              <h2 class="gama-text-h4 text-white mb-4">
+                Comprehensive Curriculum and Materials
+              </h2>
+              <p class="gama-text-body1 text-white">
+                GamaTrain's extensive library of educational materials covers a
+                wide range of subjects and levels. From first grade to 12th grade
+                advanced courses, we have meticulously crafted content to ensure
+                students receive the highest quality of education. Our team of
+                experts, educators, and AI specialists work together to bring you
+                engaging and enriching study materials.
+              </p>
+            </div>
           </v-col>
           <v-col
             cols="12"
             md="6"
+            class="d-flex justify-center align-center"
           >
             <v-img
               src="/images/comprehensive-curriculum.png"
               alt="Empowering Smart Learning!"
+              class="service-image"
             />
           </v-col>
         </v-row>
@@ -88,31 +101,36 @@
     </v-container>
 
     <v-container id="service-smart-assistance">
-      <v-row>
+      <v-row align="center">
         <v-col
           cols="12"
           md="6"
+          class="d-flex justify-center"
         >
           <v-img
             src="/images/smart-assistance.svg"
             alt="24/7 Smart Assistance"
+            class="service-image"
           />
         </v-col>
         <v-col
           cols="12"
           md="6"
+          class="d-flex flex-column justify-center"
         >
-          <h2 class="gama-text-h4 mb-2">
-            24/7 Smart Assistance
-          </h2>
-          <p class="gama-text-body1">
-            GamaTrain's extensive library of educational materials covers a wide
-            range of subjects and levels. From first grade to 12th grade
-            advanced courses, we have meticulously crafted content to ensure
-            students receive the highest quality of education. Our team of
-            experts, educators, and AI specialists work together to bring you
-            engaging and enriching study materials.
-          </p>
+          <div class="text-content">
+            <h2 class="gama-text-h4 mb-4">
+              24/7 Smart Assistance
+            </h2>
+            <p class="gama-text-body1">
+              GamaTrain's extensive library of educational materials covers a wide
+              range of subjects and levels. From first grade to 12th grade
+              advanced courses, we have meticulously crafted content to ensure
+              students receive the highest quality of education. Our team of
+              experts, educators, and AI specialists work together to bring you
+              engaging and enriching study materials.
+            </p>
+          </div>
         </v-col>
       </v-row>
     </v-container>
@@ -122,29 +140,33 @@
       fluid
     >
       <v-container>
-        <v-row>
+        <v-row align="center">
           <v-col
             cols="12"
             md="6"
-            class="order-last order-md-first"
+            class="order-last order-md-first d-flex flex-column justify-center"
           >
-            <h2 class="gama-text-h4">
-              Real-Time Progress Tracking
-            </h2>
-            <p class="gama-text-body1">
-              Stay on top of your academic growth with GamaTrain's real-time
-              progress tracking. Our AI algorithms analyze your performance,
-              identify areas for improvement, and celebrate your achievements.
-              Be informed, stay motivated, and excel in your studies.
-            </p>
+            <div class="text-content">
+              <h2 class="gama-text-h4 mb-4">
+                Real-Time Progress Tracking
+              </h2>
+              <p class="gama-text-body1">
+                Stay on top of your academic growth with GamaTrain's real-time
+                progress tracking. Our AI algorithms analyze your performance,
+                identify areas for improvement, and celebrate your achievements.
+                Be informed, stay motivated, and excel in your studies.
+              </p>
+            </div>
           </v-col>
           <v-col
             cols="12"
             md="6"
+            class="d-flex justify-center align-center"
           >
             <v-img
               src="/images/progress-tracking.png"
               alt="Real-Time Progress Tracking"
+              class="service-image"
             />
           </v-col>
         </v-row>
@@ -152,29 +174,34 @@
     </v-container>
 
     <v-container id="service-smart-collaboration">
-      <v-row>
+      <v-row align="center">
         <v-col
           cols="12"
           md="6"
+          class="d-flex justify-center"
         >
           <v-img
             src="/images/smart-assistance.png"
             alt="Smart Collaboration and Engagement"
+            class="service-image"
           />
         </v-col>
         <v-col
           cols="12"
           md="6"
+          class="d-flex flex-column justify-center"
         >
-          <h2 class="gama-text-h4">
-            Smart Collaboration and Engagement
-          </h2>
-          <p class="gama-text-body1">
-            Stay on top of your academic growth with GamaTrain's real-time
-            progress tracking. Our AI algorithms analyze your performance,
-            identify areas for improvement, and celebrate your achievements. Be
-            informed, stay motivated, and excel in your studies.
-          </p>
+          <div class="text-content">
+            <h2 class="gama-text-h4 mb-4">
+              Smart Collaboration and Engagement
+            </h2>
+            <p class="gama-text-body1">
+              Stay on top of your academic growth with GamaTrain's real-time
+              progress tracking. Our AI algorithms analyze your performance,
+              identify areas for improvement, and celebrate your achievements. Be
+              informed, stay motivated, and excel in your studies.
+            </p>
+          </div>
         </v-col>
       </v-row>
     </v-container>
@@ -184,31 +211,35 @@
       fluid
     >
       <v-container>
-        <v-row>
+        <v-row align="center">
           <v-col
             cols="12"
             md="6"
-            class="order-last order-md-first"
+            class="order-last order-md-first d-flex flex-column justify-center"
           >
-            <h2 class="gama-text-h4">
-              Simplify Content Sharing and Elevate Education with AI Assistance.
-            </h2>
-            <p class="gama-text-body1">
-              At GamaTrain, we understand that educators play a pivotal role in
-              shaping the future of our society. That’s why we’ve developed a
-              cutting-edge AI-powered solution to streamline content sharing and
-              provide expert review, making it easier for teachers to upload
-              their educational materials and enhance the learning experience
-              for students.
-            </p>
+            <div class="text-content">
+              <h2 class="gama-text-h4 mb-4">
+                Simplify Content Sharing and Elevate Education with AI Assistance.
+              </h2>
+              <p class="gama-text-body1">
+                At GamaTrain, we understand that educators play a pivotal role in
+                shaping the future of our society. That's why we've developed a
+                cutting-edge AI-powered solution to streamline content sharing and
+                provide expert review, making it easier for teachers to upload
+                their educational materials and enhance the learning experience
+                for students.
+              </p>
+            </div>
           </v-col>
           <v-col
             cols="12"
             md="6"
+            class="d-flex justify-center align-center"
           >
             <v-img
               src="/images/content-sharing.png"
               alt="Simplify Content Sharing and Elevate Education with AI Assistance."
+              class="service-image"
             />
           </v-col>
         </v-row>
@@ -216,31 +247,36 @@
     </v-container>
 
     <v-container id="service-content-upload">
-      <v-row>
+      <v-row align="center">
         <v-col
           cols="12"
           md="6"
+          class="d-flex justify-center"
         >
           <v-img
             src="/images/content-upload.png"
             alt="Seamless Content Upload"
+            class="service-image"
           />
         </v-col>
         <v-col
           cols="12"
           md="6"
+          class="d-flex flex-column justify-center"
         >
-          <h2 class="gama-text-h4">
-            Seamless Content Upload
-          </h2>
-          <p class="gama-text-body1">
-            With GamaTrain’s AI-enhanced content sharing platform, uploading
-            educational materials has never been easier. Teachers can
-            effortlessly upload lesson plans, presentations, worksheets, and
-            other resources with a few simple clicks. Our intuitive interface
-            ensures a seamless experience, saving valuable time for educators to
-            focus on what matters most - teaching.
-          </p>
+          <div class="text-content">
+            <h2 class="gama-text-h4 mb-4">
+              Seamless Content Upload
+            </h2>
+            <p class="gama-text-body1">
+              With GamaTrain's AI-enhanced content sharing platform, uploading
+              educational materials has never been easier. Teachers can
+              effortlessly upload lesson plans, presentations, worksheets, and
+              other resources with a few simple clicks. Our intuitive interface
+              ensures a seamless experience, saving valuable time for educators to
+              focus on what matters most - teaching.
+            </p>
+          </div>
         </v-col>
       </v-row>
     </v-container>
@@ -250,31 +286,35 @@
       fluid
     >
       <v-container>
-        <v-row>
+        <v-row align="center">
           <v-col
             cols="12"
             md="6"
-            class="order-last order-md-first"
+            class="order-last order-md-first d-flex flex-column justify-center"
           >
-            <h2 class="gama-text-h4 mb-2">
-              Intelligent Content Review
-            </h2>
-            <p class="gama-text-body1">
-              GamaTrain’s AI-driven expert review takes content evaluation to a
-              whole new level. Our advanced algorithms analyze uploaded
-              materials for accuracy, relevance, and educational effectiveness.
-              Teachers receive insightful feedback and suggestions to refine and
-              optimize their content, fostering continuous improvement in their
-              teaching practices.
-            </p>
+            <div class="text-content">
+              <h2 class="gama-text-h4 mb-4">
+                Intelligent Content Review
+              </h2>
+              <p class="gama-text-body1">
+                GamaTrain's AI-driven expert review takes content evaluation to a
+                whole new level. Our advanced algorithms analyze uploaded
+                materials for accuracy, relevance, and educational effectiveness.
+                Teachers receive insightful feedback and suggestions to refine and
+                optimize their content, fostering continuous improvement in their
+                teaching practices.
+              </p>
+            </div>
           </v-col>
           <v-col
             cols="12"
             md="6"
+            class="d-flex justify-center align-center"
           >
             <v-img
               src="/images/content-review.png"
               alt="Intelligent Content Review"
+              class="service-image"
             />
           </v-col>
         </v-row>
@@ -311,13 +351,51 @@ export default {
 </script>
 
 <style scoped>
+.service-image {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  border-radius: 1rem;
+  object-fit: cover;
+}
+
+.text-content {
+  max-width: 100%;
+  width: 100%;
+}
+
+.text-content h2 {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  line-height: 1.2;
+  margin-bottom: 1.5rem;
+}
+
+.text-content p {
+  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+#service-ai-unleashing,
+#service-comprehensive-curriculum,
+#service-smart-assistance,
+#service-progress-tracking,
+#service-smart-collaboration,
+#service-content-sharing,
+#service-content-upload,
+#service-content-review {
+  padding: 2rem;
+}
+
 #service-page-header {
-  height: 60rem;
+  min-height: 60rem;
   background: url("/images/ai-services-bg.webp");
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 250%;
+  background-size: cover;
   position: relative;
+  display: flex;
+  align-items: center;
 
   .overlay {
     position: absolute;
@@ -335,17 +413,16 @@ export default {
   }
 
   #main-title-holder {
-    position: absolute;
-    margin: auto;
-    left: 0;
-    right: 0;
-    bottom: 4.7rem;
+    position: relative;
+    margin: 0 auto;
     border-radius: 0.625rem;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(7.5px);
-    width: 31.2rem;
-    height: 19.1rem;
-    padding: 1.6rem 2.4rem 1.6rem 2.4rem;
+    max-width: 31.2rem;
+    margin-left: 1.6rem;
+    margin-right: 1.6rem;
+    padding: 1.6rem 2.4rem;
+    text-align: center;
 
     > h1 {
       color: #fff;
@@ -355,130 +432,90 @@ export default {
 }
 
 #service-ai-unleashing {
-  padding-top: 4.6rem;
-  padding-bottom: 3.2rem;
+  padding: 4rem 1rem;
+  min-height: 40rem;
+  display: flex;
+  align-items: center;
 }
 
 #service-comprehensive-curriculum {
   background: #24292f;
-  height: 66rem;
-  padding-top: 1.8rem;
-  padding-bottom: 1.8rem;
+  min-height: 60rem;
+  padding: 4rem 1rem;
+  display: flex;
+  align-items: center;
 
   .gama-text-h4 {
     margin-bottom: 2.4rem;
-  }
-
-  .v-image {
-    margin: auto auto 2.4rem auto;
-    width: 31.2rem;
-    height: 20rem;
-    border-radius: 1rem;
   }
 }
 
 #service-smart-assistance {
-  height: 54rem;
-  padding-top: 4.8rem;
-  padding-bottom: 4.8rem;
+  min-height: 50rem;
+  padding: 4rem 1rem;
+  display: flex;
+  align-items: center;
 
   .gama-text-h4 {
     margin-bottom: 1.6rem;
   }
-
-  .v-image {
-    margin: auto auto;
-    width: 18rem;
-    height: 15rem;
-  }
 }
 
 #service-progress-tracking {
-  height: 60rem;
+  min-height: 50rem;
   background: #f4f4f4;
-  padding-top: 4.8rem;
-  padding-bottom: 4.8rem;
+  padding: 4rem 1rem;
+  display: flex;
+  align-items: center;
 
   .gama-text-h4 {
     margin-bottom: 2.4rem;
-  }
-
-  .v-image {
-    margin: auto auto 2.4rem auto;
-    width: 31.2rem;
-    height: 26rem;
-    border-radius: 1rem;
   }
 }
 
 #service-smart-collaboration {
-  height: 60rem;
-  padding-top: 4.8rem;
-  padding-bottom: 4.8rem;
+  min-height: 50rem;
+  padding: 4rem 1rem;
+  display: flex;
+  align-items: center;
 
   .gama-text-h4 {
     margin-bottom: 2.4rem;
-  }
-
-  .v-image {
-    margin: auto auto 2.4rem auto;
-    width: 31.2rem;
-    height: 20rem;
-    border-radius: 1rem;
   }
 }
 
 #service-content-sharing {
-  height: 64rem;
+  min-height: 50rem;
   background: #f4f4f4;
-  padding-top: 4.8rem;
-  padding-bottom: 4.8rem;
+  padding: 4rem 1rem;
+  display: flex;
+  align-items: center;
 
   .gama-text-h4 {
     margin-bottom: 2.4rem;
-  }
-
-  .v-image {
-    margin: auto auto 2.4rem auto;
-    width: 31.2rem;
-    height: 20rem;
-    border-radius: 1rem;
   }
 }
 
 #service-content-upload {
-  height: 60rem;
-  padding-top: 4.8rem;
-  padding-bottom: 4.8rem;
+  min-height: 50rem;
+  padding: 4rem 1rem;
+  display: flex;
+  align-items: center;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
-  }
-
-  .v-image {
-    margin: auto;
-    width: 31.2rem;
-    height: 20rem;
-    border-radius: 1rem;
     margin-bottom: 2.4rem;
   }
 }
 
 #service-content-review {
-  height: 60rem;
+  min-height: 50rem;
   background: #f4f4f4;
-  padding-top: 4.8rem;
-  padding-bottom: 4.8rem;
+  padding: 4rem 1rem;
+  display: flex;
+  align-items: center;
 
   .gama-text-h4 {
     margin-bottom: 2.4rem;
-  }
-
-  .v-image {
-    margin: auto;
-    width: 31.2rem;
-    height: 20rem;
-    border-radius: 1rem;
   }
 }
 
@@ -494,24 +531,44 @@ export default {
 }
 
 @media only screen and (min-width: 600px) {
+  .service-image {
+    max-width: 40rem;
+    height: 26rem;
+  }
+
+  .text-content {
+
+  }
+
+  .text-content h2 {
+    font-size: clamp(1.8rem, 3vw, 2.2rem);
+  }
+
+  .text-content p {
+    font-size: clamp(1.1rem, 2vw, 1.2rem);
+  }
+
   #service-page-header {
-    height: 44rem;
-    background-size: 100% 100%;
+    min-height: 44rem;
+    background-size: cover;
 
     #main-title-holder {
-      bottom: 10rem;
-      border-radius: 0.625rem;
-      width: 54.4rem;
-      height: 16rem;
-      padding: 2.4rem 2.4rem 2.4rem 2.4rem;
+      max-width: 54.4rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 2.4rem;
     }
+  }
+
+  #service-ai-unleashing {
+    min-height: 35rem;
+    padding: 3rem 2rem;
   }
 
   #service-comprehensive-curriculum {
     background: #24292f;
-    height: 51.6rem;
-    padding-top: 4.8rem;
-    padding-bottom: 4.8rem;
+    min-height: 45rem;
+    padding: 3rem 2rem;
 
     .gama-text-h4 {
       margin-bottom: 1.6rem;
@@ -519,11 +576,13 @@ export default {
   }
 
   #service-smart-assistance {
-    height: 51.6rem;
+    min-height: 45rem;
+    padding: 3rem 2rem;
   }
 
   #service-progress-tracking {
-    height: 51.6rem;
+    min-height: 45rem;
+    padding: 3rem 2rem;
 
     .gama-text-h4 {
       margin-bottom: 1.6rem;
@@ -531,7 +590,8 @@ export default {
   }
 
   #service-smart-collaboration {
-    height: 51.6rem;
+    min-height: 45rem;
+    padding: 3rem 2rem;
 
     .gama-text-h4 {
       margin-bottom: 1.6rem;
@@ -539,7 +599,8 @@ export default {
   }
 
   #service-content-sharing {
-    height: 51.6rem;
+    min-height: 45rem;
+    padding: 3rem 2rem;
 
     .gama-text-h4 {
       margin-bottom: 1.6rem;
@@ -547,7 +608,8 @@ export default {
   }
 
   #service-content-upload {
-    height: 51.6rem;
+    min-height: 45rem;
+    padding: 3rem 2rem;
 
     .gama-text-h4 {
       margin-bottom: 1.6rem;
@@ -555,7 +617,8 @@ export default {
   }
 
   #service-content-review {
-    height: 51.6rem;
+    min-height: 45rem;
+    padding: 3rem 2rem;
 
     .gama-text-h4 {
       margin-bottom: 1.6rem;
@@ -575,25 +638,40 @@ export default {
 }
 
 @media only screen and (min-width: 960px) {
+  .service-image {
+    max-width: 40.6rem;
+    height: 26rem;
+  }
+
+  .text-content {
+
+  }
+
+  .text-content h2 {
+    font-size: clamp(2rem, 2.5vw, 2.5rem);
+  }
+
+  .text-content p {
+    font-size: clamp(1.2rem, 1.5vw, 1.4rem);
+  }
+
   #service-page-header {
-    height: 51.2rem;
+    min-height: 51.2rem;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 100%;
+    background-size: cover;
     position: relative;
 
     #main-title-holder {
-      position: absolute;
-      margin: auto;
-      left: 0;
-      right: 0;
-      bottom: 10rem;
+      position: relative;
+      margin: 0 auto;
       border-radius: 0.625rem;
       background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(7.5px);
-      width: 73rem;
-      height: 16.6rem;
-      padding: 2.5rem 4.8rem 2.5rem 4.8rem;
+      max-width: 73rem;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 2.5rem 4.8rem;
 
       > h1 {
         color: #fff;
@@ -603,15 +681,14 @@ export default {
   }
 
   #service-ai-unleashing {
-    height: 46rem;
-    padding-top: 10rem;
+    min-height: 40rem;
+    padding: 8rem 3rem;
   }
 
   #service-comprehensive-curriculum {
     background: #24292f;
-    height: 46rem;
-    padding-top: 10rem;
-    padding-bottom: 10rem;
+    min-height: 50rem;
+    padding: 8rem 3rem;
 
     .title {
       margin-bottom: 2.4rem;
@@ -624,93 +701,39 @@ export default {
       font-weight: 500;
       line-height: 3rem;
     }
-
-    .v-image {
-      margin: auto;
-      width: 40.56rem;
-      height: 26rem;
-      border-radius: 1rem;
-    }
   }
 
   #service-smart-assistance {
-    height: 46rem;
-    padding-top: 10rem;
-    padding-bottom: 10rem;
-
-    .v-image {
-      margin: auto auto;
-      width: 31.2rem;
-      height: 26rem;
-    }
+    min-height: 50rem;
+    padding: 8rem 3rem;
   }
 
   #service-progress-tracking {
-    height: 46rem;
+    min-height: 50rem;
     background: #f4f4f4;
-    padding-top: 10rem;
-    padding-bottom: 10rem;
-
-    .v-image {
-      margin: auto;
-      width: 40.56rem;
-      height: 26rem;
-      border-radius: 1rem;
-    }
+    padding: 8rem 3rem;
   }
 
   #service-smart-collaboration {
-    height: 46rem;
-    padding-top: 10rem;
-    padding-bottom: 10rem;
-
-    .v-image {
-      margin: auto;
-      width: 40.56rem;
-      height: 26rem;
-      border-radius: 1rem;
-    }
+    min-height: 50rem;
+    padding: 8rem 3rem;
   }
 
   #service-content-sharing {
-    height: 46rem;
+    min-height: 50rem;
     background: #f4f4f4;
-    padding-top: 10rem;
-    padding-bottom: 10rem;
-
-    .v-image {
-      margin: auto;
-      width: 40.6rem;
-      height: 26rem;
-      border-radius: 1rem;
-    }
+    padding: 8rem 3rem;
   }
 
   #service-content-upload {
-    height: 46rem;
-    padding-top: 10rem;
-    padding-bottom: 10rem;
-
-    .v-image {
-      margin: auto;
-      width: 40.56rem;
-      height: 26rem;
-      border-radius: 1rem;
-    }
+    min-height: 50rem;
+    padding: 8rem 3rem;
   }
 
   #service-content-review {
-    height: 46rem;
+    min-height: 50rem;
     background: #f4f4f4;
-    padding-top: 10rem;
-    padding-bottom: 10rem;
-
-    .v-image {
-      margin: auto;
-      width: 40.6rem;
-      height: 26rem;
-      border-radius: 1rem;
-    }
+    padding: 8rem 3rem;
   }
 
   #service-education-future {
@@ -721,6 +744,100 @@ export default {
     .col-12 {
       padding: 3.2rem 0 3.2rem 0 !important;
     }
+  }
+}
+
+@media only screen and (max-width: 599px) {
+  .service-image {
+    max-width: 31.2rem;
+    height: 20rem;
+    margin-bottom: 2.4rem;
+  }
+
+  .text-content h2 {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    line-height: 1.3;
+    margin-bottom: 1.5rem;
+  }
+
+  .text-content p {
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  #service-page-header {
+    min-height: 50rem;
+    background-size: cover;
+
+    #main-title-holder {
+      max-width: 28rem;
+      margin-left: 1rem;
+      margin-right: 1rem;
+      padding: 1.2rem 1.6rem;
+    }
+  }
+
+  #service-ai-unleashing {
+    min-height: 35rem;
+    padding: 2rem 0;
+  }
+
+  #service-comprehensive-curriculum {
+    min-height: 45rem;
+    padding: 2rem 0;
+  }
+
+  #service-smart-assistance {
+    min-height: 40rem;
+    padding: 2rem 0;
+  }
+
+  #service-progress-tracking {
+    min-height: 40rem;
+    padding: 2rem 0;
+  }
+
+  #service-smart-collaboration {
+    min-height: 40rem;
+    padding: 2rem 0;
+  }
+
+  #service-content-sharing {
+    min-height: 45rem;
+    padding: 2rem 0;
+  }
+
+  #service-content-upload {
+    min-height: 40rem;
+    padding: 2rem 0;
+  }
+
+  #service-content-review {
+    min-height: 40rem;
+    padding: 2rem 0;
+  }
+
+  #service-education-future {
+    height: 6rem;
+    padding: 0;
+
+    .col-12 {
+      padding: 1rem 2rem !important;
+    }
+  }
+}
+
+@media only screen and (min-width: 960px) {
+  #service-ai-unleashing,
+  #service-comprehensive-curriculum,
+  #service-smart-assistance,
+  #service-progress-tracking,
+  #service-smart-collaboration,
+  #service-content-sharing,
+  #service-content-upload,
+  #service-content-review {
+    padding: 10rem 0;
   }
 }
 </style>
