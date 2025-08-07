@@ -92,6 +92,7 @@ export default defineNuxtConfig({
       link: [
         { rel: 'manifest', href: '/manifest.webmanifest' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon-dark.ico' },
+        { rel: 'stylesheet', href: '/assets/css/all.min.css' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon-light.png' },
       ],
       script: [
@@ -113,7 +114,9 @@ export default defineNuxtConfig({
 
   // Global CSS
   css: [
+    'vuetify/lib/styles/main.css',
     '@/assets/scss/app.scss',
+    '@mdi/font/css/materialdesignicons.min.css',
     '@/assets/css/gama6/styles.css',
   ],
 
@@ -353,6 +356,7 @@ export default defineNuxtConfig({
   nitro: {
     rollupConfig: {
       external: [
+        'borsh',
         'util',
         'secp256k1',
       ],
