@@ -1,4 +1,5 @@
 import { PublicKey, TransactionInstruction, type AccountMeta } from '@solana/web3.js'
+import { Buffer } from 'buffer'
 
 // SPL Memo Program ID - official Solana memo program
 export const MEMO_PROGRAM_ID = new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr')

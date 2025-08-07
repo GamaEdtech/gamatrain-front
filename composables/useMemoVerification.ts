@@ -1,4 +1,5 @@
 import type { Connection, VersionedTransaction } from '@solana/web3.js'
+import { Buffer } from 'buffer'
 
 /**
  * Utility functions to verify memo submission in transactions
