@@ -54,10 +54,10 @@
                     width="170px"
                     height="300px"
                     :src="image"
-                    placeholder
                     class="carousel-img fill-height"
                     preload
                     fetchpriority="high"
+                    alt="Psat Paper Lesson"
                   />
                 </v-carousel-item>
               </v-carousel>
@@ -79,6 +79,7 @@
                     :src="image"
                     placeholder
                     class="thumbnail-preview"
+                    alt="Psat Paper Lesson"
                   />
                 </div>
               </div>

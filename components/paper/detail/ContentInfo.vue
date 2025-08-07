@@ -342,7 +342,6 @@ const startDownload = async (type, extraId) => {
 defineExpose({
   crash_report,
 })
-console.log('contentData.files.extra', props.contentData.files.extra)
 </script>
 
 <style scoped>
