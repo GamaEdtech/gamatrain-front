@@ -13,7 +13,9 @@
           v-if="contentData.topics && contentData.topics.length > 0"
           class="gama-text-body2"
         >
-          <i class="fa-solid fa-list ml-1 icon" />
+          <v-icon class="icon">
+            md:list
+          </v-icon>
           Topics:
         </p>
         <ul v-if="contentData.topics && contentData.topics.length > 0">
@@ -31,7 +33,9 @@
           v-if="contentData.tests_num"
           class="mt-1 gama-text-body2"
         >
-          <i class="fa-solid fa-question ml-1 icon" />
+          <v-icon class="icon">
+            md:question_mark
+          </v-icon>
           Questions: {{ contentData.tests_num }}
         </p>
         <!-- End question number -->
@@ -41,14 +45,16 @@
           v-if="contentData.level"
           class="mt-1 gama-text-body2"
         >
-          <i class="fa-solid fa-temperature-three-quarters ml-1 icon" />
+          <v-icon class="icon">
+            md:device_thermostat
+          </v-icon>
           Difficulty level: {{ contentData.level }}
         </p>
         <!-- End difficulty level -->
 
         <!-- Start date -->
         <p class="mt-1 gama-text-body2">
-          <i class="fa-solid fa-circle-play" />
+          <v-icon>md:play_circle</v-icon>
           Start:
           {{ contentData.start_date ? contentData.start_date : "-" }}
         </p>
@@ -56,7 +62,7 @@
 
         <!-- End date -->
         <p class="mt-1 gama-text-body2">
-          <i class="fa-solid fa-circle-stop" />
+          <v-icon>md:stop_circle</v-icon>
           End:
           {{ contentData.end_date ? contentData.end_date : "-" }}
         </p>
@@ -67,7 +73,7 @@
           v-if="contentData.azmoon_time"
           class="mt-1 gama-text-body2"
         >
-          <i class="fa-solid fa-clock" />
+          <v-icon>md:alarm</v-icon>
           Duration: {{ contentData.azmoon_time }} minutes
         </p>
         <!-- End duration -->

@@ -3,25 +3,18 @@
     flat
     class="content_main_info"
   >
-    <v-row class="align-center">
-      <v-col cols="3">
-        <v-img
-          :src="contentData?.avatar"
-          alt=""
-          class="d-inline-block"
-          cover
-          height="48"
-          width="48"
-        />
-      </v-col>
-      <v-col
-        cols="9"
-        class="pl-0"
-      >
-        <p class="creator_title">
-          {{ contentData?.first_name }} {{ contentData?.last_name }}
-        </p>
-      </v-col>
+    <v-row class="d-flex align-center mb-2 ga-1">
+      <NuxtImg
+        width="48px"
+        height="48px"
+        :src="contentData?.avatar"
+        placeholder
+        class="d-inline-block user-avatar"
+        alt="user profile"
+      />
+      <p class="creator_title">
+        {{ contentData?.first_name }} {{ contentData?.last_name }}
+      </p>
     </v-row>
     <v-divider class="my-2" />
     <v-row>
@@ -349,7 +342,6 @@ const startDownload = async (type, extraId) => {
 defineExpose({
   crash_report,
 })
-console.log('contentData.files.extra', props.contentData.files.extra)
 </script>
 
 <style scoped>
@@ -358,7 +350,10 @@ console.log('contentData.files.extra', props.contentData.files.extra)
   background: #f5f5f5 !important;
   border-radius: 6px;
 }
-
+.user-avatar {
+  width: 48px;
+  height: 48px;
+}
 .content_main_info .creator_title {
   font-size: 18px;
 }
