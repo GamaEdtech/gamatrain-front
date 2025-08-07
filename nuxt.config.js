@@ -92,7 +92,6 @@ export default defineNuxtConfig({
       link: [
         { rel: 'manifest', href: '/manifest.webmanifest' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon-dark.ico' },
-        { rel: 'stylesheet', href: '/assets/css/all.min.css' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon-light.png' },
       ],
       script: [
@@ -123,7 +122,6 @@ export default defineNuxtConfig({
   experimental: {
     payloadExtraction: false,
     appManifest: false,
-    clientNodeCompat: true,
   },
 
   pwa: {
@@ -238,10 +236,6 @@ export default defineNuxtConfig({
       'defu',
       '@ckeditor/ckeditor5-vue',
       'vue3-emoji-picker',
-      '@solana/web3.js',
-      '@solana/wallet-adapter-base',
-      '@jup-ag/api',
-      'buffer',
     ],
   },
 
@@ -272,33 +266,9 @@ export default defineNuxtConfig({
         transformAssetUrls,
       },
     },
-    esbuild: {
-      target: 'esnext',
-    },
-    optimizeDeps: {
-      include: [
-        '@coral-xyz/anchor',
-        '@solana/web3.js',
-        '@solana/wallet-adapter-base',
-        '@jup-ag/api',
-        'buffer',
-        'process',
-      ],
-      esbuildOptions: {
-        target: 'esnext',
-      },
-    },
     build: {
-      target: 'esnext',
-      // chunkSizeWarningLimit: 1000,
+      chunkSizeWarningLimit: 1000,
       rollupOptions: {
-        // external: (id) => {
-        //   // Don't externalize these packages - they need to be bundled
-        //   if (id.includes('@solana/') || id.includes('@coral-xyz/') || id.includes('@jup-ag/')) {
-        //     return false
-        //   }
-        //   return false
-        // },
         output: {
           manualChunks: {
             vendor: ['vue', 'vue-router'],
@@ -308,34 +278,13 @@ export default defineNuxtConfig({
               '@ckeditor/ckeditor5-vue',
               '@ckeditor/ckeditor5-build-classic',
             ],
-            solana: [
-              '@solana/web3.js',
-              '@solana/wallet-adapter-base',
-              '@jup-ag/api',
-            ],
           },
         },
       },
-      transpile: [
-        '@solana/web3.js',
-        '@solana/wallet-adapter-base',
-        '@jup-ag/api',
-        'buffer',
-      ],
     },
     define: {
-      'global': 'globalThis',
-      'process.env.BROWSER': true,
-      'Buffer': 'Buffer',
+      global: 'globalThis',
     },
-    ssr: {
-      noExternal: [
-        '@solana/web3.js',
-        '@solana/wallet-adapter-base',
-        '@jup-ag/api',
-      ],
-    },
-
   },
 
   // toast config
@@ -352,17 +301,5 @@ export default defineNuxtConfig({
         },
       },
     ],
-  },
-  nitro: {
-    rollupConfig: {
-      external: [
-        'borsh',
-        'util',
-        'secp256k1',
-      ],
-    },
-    experimental: {
-      wasm: true,
-    },
   },
 })
