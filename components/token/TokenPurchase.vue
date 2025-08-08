@@ -118,7 +118,27 @@
       v-if="successMessage"
       class="figma-success-message"
     >
-      {{ successMessage }}
+      <span>{{ successMessage }}</span>
+      <template v-if="lastSignature">
+        <br />
+        <a
+          :href="solscanTxUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tx-link"
+        >
+          View on Solscan
+        </a>
+        <span> | </span>
+        <a
+          :href="explorerTxUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tx-link"
+        >
+          View on Solana Explorer
+        </a>
+      </template>
     </div>
 
     <!-- Wallet Connection Modal -->
@@ -233,6 +253,7 @@ const showWalletModal = ref(false)
 const showDisconnectModal = ref(false)
 const errorMessage = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
+const lastSignature = ref<string | null>(null)
 
 // Memo-related state (only keeping memoText for URL parameter extraction)
 const memoText = ref('')
@@ -443,6 +464,27 @@ const formattedEquivalentCost = computed(() => {
   }
 })
 
+// Network cluster (used for explorer links)
+const networkCluster = computed(() => {
+  const url = getSolanaRpcUrl()
+  if (url.includes('devnet')) return 'devnet'
+  if (url.includes('testnet')) return 'testnet'
+  return 'mainnet'
+})
+
+// Explorer URLs for the last successful transaction
+const solscanTxUrl = computed(() => {
+  if (!lastSignature.value) return '#'
+  const suffix = networkCluster.value === 'mainnet' ? '' : `?cluster=${networkCluster.value}`
+  return `https://solscan.io/tx/${lastSignature.value}${suffix}`
+})
+
+const explorerTxUrl = computed(() => {
+  if (!lastSignature.value) return '#'
+  const suffix = networkCluster.value === 'mainnet' ? '' : `?cluster=${networkCluster.value}`
+  return `https://explorer.solana.com/tx/${lastSignature.value}${suffix}`
+})
+
 // Handle amount input with Figma-exact formatting
 const handleAmountInput = (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -619,7 +661,7 @@ const calculateEquivalentCost = async () => {
     // Clear error message after 5 seconds
     setTimeout(() => {
       errorMessage.value = null
-    }, 5000)
+    }, 10000)
   }
   finally {
     isCalculating.value = false
@@ -952,11 +994,14 @@ const handleSwap = async () => {
 
       const message = `Swap successful! Transaction: ${signature.slice(0, 8)}...`
       successMessage.value = message
+      lastSignature.value = signature
+      console.log('🔗 Explorer links:', { solscan: solscanTxUrl.value, explorer: explorerTxUrl.value })
 
-      // Clear success message after 10 seconds
+      // Clear success message after 20 seconds
       setTimeout(() => {
         successMessage.value = null
-      }, 10000)
+        lastSignature.value = null
+      }, 20000)
 
       // Reset form and refresh balances
       getTokenAmount.value = ''
@@ -1248,6 +1293,14 @@ watch(getTokenAmount, () => {
   font-size: 14px;
   text-align: center;
   margin-top: 12px;
+}
+.figma-success-message a.tx-link {
+  color: #0c5460;
+  font-weight: 700;
+  text-decoration: underline;
+}
+.figma-success-message a.tx-link:hover {
+  text-decoration: none;
 }
 
 /* Modal Styles */
