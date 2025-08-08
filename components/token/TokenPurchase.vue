@@ -122,21 +122,12 @@
       <template v-if="lastSignature">
         <br />
         <a
-          :href="solscanTxUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="tx-link"
-        >
-          View on Solscan
-        </a>
-        <span> | </span>
-        <a
           :href="explorerTxUrl"
           target="_blank"
           rel="noopener noreferrer"
           class="tx-link"
         >
-          View on Solana Explorer
+          View transaction on Solana Explorer
         </a>
       </template>
     </div>
@@ -473,12 +464,6 @@ const networkCluster = computed(() => {
 })
 
 // Explorer URLs for the last successful transaction
-const solscanTxUrl = computed(() => {
-  if (!lastSignature.value) return '#'
-  const suffix = networkCluster.value === 'mainnet' ? '' : `?cluster=${networkCluster.value}`
-  return `https://solscan.io/tx/${lastSignature.value}${suffix}`
-})
-
 const explorerTxUrl = computed(() => {
   if (!lastSignature.value) return '#'
   const suffix = networkCluster.value === 'mainnet' ? '' : `?cluster=${networkCluster.value}`
@@ -995,7 +980,7 @@ const handleSwap = async () => {
       const message = `Swap successful! Transaction: ${signature.slice(0, 8)}...`
       successMessage.value = message
       lastSignature.value = signature
-      console.log('🔗 Explorer links:', { solscan: solscanTxUrl.value, explorer: explorerTxUrl.value })
+      console.log('🔗 Explorer link:', explorerTxUrl.value)
 
       // Clear success message after 20 seconds
       setTimeout(() => {
