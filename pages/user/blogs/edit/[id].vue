@@ -496,15 +496,18 @@ const fetchBlogData = async () => {
           isFormValid.value = valid
         }
       })
-    } else {
+    }
+    else {
       $toast.error(response?.errors?.[0]?.message || 'Failed to fetch blog data')
       router.push('/user/blogs')
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error fetching blog:', error)
     $toast.error('Network error while fetching blog data. Please try again.')
     router.push('/user/blogs')
-  } finally {
+  }
+  finally {
     loading.value = false
   }
 }
@@ -633,15 +636,18 @@ const createCategory = async () => {
       $toast.success('Category created successfully!')
       categorySearch.value = ''
       await fetchCategories()
-    } else {
+    }
+    else {
       $toast.error(
         response?.errors?.[0]?.message || 'Failed to create category.',
       )
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error creating category:', error)
     $toast.error('Network error while creating category. Please try again.')
-  } finally {
+  }
+  finally {
     categoryLoader.value = false
   }
 }
@@ -652,13 +658,16 @@ const fetchCategories = async () => {
     const response = await useApiService.get('/api/v2/tags/Post')
     if (response && response.succeeded) {
       categoryList.value = response.data
-    } else {
+    }
+    else {
       $toast.error(response?.errors?.[0]?.message || 'Failed to load categories')
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error fetching categories:', error)
     $toast.error('Network error while loading categories. Please try again.')
-  } finally {
+  }
+  finally {
     categoriesLoading.value = false
   }
 }
@@ -691,12 +700,14 @@ const createSlug = async () => {
     if (response && response.succeeded && response.data) {
       slug.value = response.data
       return response.data
-    } else {
+    }
+    else {
       // Fallback to local slug generation
       slug.value = $slugGenerator.convert(blog.value.title || '')
       return slug.value
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Error generating slug:', error)
     // Fallback to local slug generation
     slug.value = $slugGenerator.convert(blog.value.title || '')

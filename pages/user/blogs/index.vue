@@ -220,9 +220,9 @@ const fetchBlogs = async () => {
   const skip = (page.value - 1) * pageSize.value
   try {
     const response = await useApiService.get('/api/v2/blogs/contributions', {
-    'PagingDto.PageFilter.Size': pageSize.value,
-    'PagingDto.PageFilter.Skip': skip,
-    'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      'PagingDto.PageFilter.Size': pageSize.value,
+      'PagingDto.PageFilter.Skip': skip,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
     })
 
     if (response && response.succeeded) {
@@ -264,7 +264,8 @@ const handleDelete = async () => {
         item => item.id !== itemToDelete.value.id,
       )
       totalRecords.value = Math.max(0, totalRecords.value - 1)
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Error deleting blog:', error)
       $toast.error(error?.response?.data?.errors?.[0]?.message || 'Failed to delete blog.')
     }
@@ -299,7 +300,7 @@ watch(perPage, (val) => {
 
 watch(searchQuery, () => {
   // Implement search logic here
-    fetchBlogs()
+  fetchBlogs()
 })
 
 watch(activeTab, () => {
