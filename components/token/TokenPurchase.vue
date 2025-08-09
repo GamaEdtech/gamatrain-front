@@ -14,7 +14,7 @@
           @blur="handleInputBlur"
         >
         <div class="figma-token-label">
-          GET
+          $GET
         </div>
       </div>
 
@@ -29,28 +29,12 @@
         @keydown.enter.prevent="toggleTradeMode"
         @keydown.space.prevent="toggleTradeMode"
       >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
+        <v-icon
+          size="20"
+          color="grey-lighten-1"
         >
-          <!-- Left-right (horizontal) swap arrows -->
-          <path
-            d="M2 5H10M10 5L8 3M10 5L8 7"
-            stroke="#9CA3AF"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-          <path
-            d="M14 11H6M6 11L8 9M6 11L8 13"
-            stroke="#9CA3AF"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+          md:swap_horiz
+        </v-icon>
       </div>
 
       <!-- Payment Token Input -->
@@ -94,14 +78,19 @@
       </div>
     </div>
 
-    <!-- Green Buy Button matching Figma -->
-    <button
+    <!-- Primary action button using Vuetify palette -->
+    <v-btn
       :disabled="!canSwap"
-      :class="[tradeMode === 'sell' ? 'figma-red-sell-btn' : 'figma-green-buy-btn', { loading: swapping }]"
+      :color="isSellMode ? 'error' : 'success'"
+      class="mb-4 font-semibold gama-text-button"
+      block
+      height="56"
+      rounded="xl"
+      :loading="swapping"
       @click="handleSwap"
     >
       {{ primaryButtonLabel }}
-    </button>
+    </v-btn>
 
     <!-- Disconnect Button - Only show when wallet is connected -->
     <v-btn
@@ -119,29 +108,27 @@
       v-if="getTokenAmount && parseFloat(getTokenAmount) > 0"
       class="figma-receive-text"
     >
-      {{ isSellMode ? 'You sell' : 'You receive' }} {{ formatNumber(parseFloat(getTokenAmount)) }} GET
+      {{ isSellMode ? 'You sell' : 'You receive' }} {{ formatNumber(parseFloat(getTokenAmount)) }} $GET
     </div>
 
     <!-- Error Message -->
-    <div
+    <v-alert
       v-if="errorMessage"
-      class="figma-error-message"
+      type="error"
+      variant="elevated"
+      density="comfortable"
+      class="mt-3"
     >
       {{ errorMessage }}
-    </div>
-
-    <!-- Disabled reason (shown only when button is disabled and no explicit errorMessage is set) -->
-    <div
-      v-if="!errorMessage && disabledReason"
-      class="figma-error-message"
-    >
-      {{ disabledReason }}
-    </div>
+    </v-alert>
 
     <!-- Success Message -->
-    <div
+    <v-alert
       v-if="successMessage"
-      class="figma-success-message"
+      type="success"
+      variant="tonal"
+      density="comfortable"
+      class="mt-3"
     >
       <span>{{ successMessage }}</span>
       <template v-if="lastSignature">
@@ -150,12 +137,12 @@
           :href="explorerTxUrl"
           target="_blank"
           rel="noopener noreferrer"
-          class="tx-link"
+          class="text-primary"
         >
           View transaction on Solana Explorer
         </a>
       </template>
-    </div>
+    </v-alert>
 
     <!-- Wallet Connection Modal -->
     <Teleport to="body">
@@ -170,7 +157,7 @@
         >
           <div class="figma-modal-header">
             <h3>Connect Your Wallet</h3>
-            <p>Choose a wallet to connect and buy GET tokens</p>
+            <p>Choose a wallet to connect and buy $GET tokens</p>
           </div>
 
           <div class="figma-modal-content">
@@ -287,7 +274,8 @@ const isSellMode = computed(() => tradeMode.value === 'sell')
 // Primary action button label
 const primaryButtonLabel = computed(() => {
   if (swapping.value) return 'Processing...'
-  return isSellMode.value ? 'Sell GET' : 'Buy GET'
+  if (isCalculating.value) return 'Fetching...'
+  return isSellMode.value ? 'Sell $GET' : 'Buy $GET'
 })
 
 // Memo-related state (only keeping memoText for URL parameter extraction)
@@ -489,27 +477,7 @@ const canSwap = computed(() => {
 // Import number formatting utility
 const { formatNumber } = useFormatNumber()
 
-// High-level disabled reason for primary action (for UX messaging)
-const disabledReason = computed<string | null>(() => {
-  if (swapping.value) return null
-  if (!isWalletConnected.value) return null
-
-  const amount = parseFloat(getTokenAmount.value || '0')
-  if (!getTokenAmount.value || isNaN(amount) || amount <= 0) {
-    return null
-  }
-
-  if (isSellMode.value && getTokenBalance.value !== null && getTokenBalance.value !== undefined) {
-    if (amount > (getTokenBalance.value || 0)) {
-      return 'Insufficient GET balance'
-    }
-  }
-
-  if (isCalculating.value) return 'Fetching quote...'
-  if (!swapQuote.value) return 'No route available for this trade.'
-
-  return null
-})
+// disabledReason removed; messaging moved into button label and alerts
 
 // Computed for formatted GET token amount display
 const formattedGetTokenAmount = computed(() => {
@@ -696,7 +664,7 @@ const calculateEquivalentCost = async () => {
         // Basic balance validation (if balance known)
         if (getTokenBalance.value !== null && getTokenBalance.value !== undefined) {
           if (desiredGetAmount > (getTokenBalance.value || 0)) {
-            errorMessage.value = 'Insufficient GET balance for this amount.'
+            errorMessage.value = 'Insufficient $GET balance for this amount.'
           }
         }
 
@@ -1924,5 +1892,11 @@ watch(getTokenAmount, () => {
 .wallet-connection-container :deep(.wallet-adapter-dropdown) {
   z-index: 10002 !important;
   position: fixed !important;
+}
+
+.v-btn--disabled.v-btn--variant-elevated, .v-btn--disabled.v-btn--variant-flat{
+  background-color: rgba(18, 18, 18, 0.4) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  cursor: not-allowed !important;
 }
 </style>
