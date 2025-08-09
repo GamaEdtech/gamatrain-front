@@ -145,7 +145,7 @@
     >
       <span>{{ successMessage }}</span>
       <template v-if="lastSignature">
-        <br />
+        <br>
         <a
           :href="explorerTxUrl"
           target="_blank"
