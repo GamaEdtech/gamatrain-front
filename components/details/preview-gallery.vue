@@ -19,9 +19,13 @@
               :to="`${item.link}&state=${help_link_data.state}&section=${help_link_data.section}&base=${help_link_data.base}&course=${help_link_data.course}
                   &lesson=${help_link_data.lesson}`"
               class="mb-3 bg-blue-grey-darken-2 flex-shrink-0"
+              :aria-label="item.text"
             >
               <span
-                v-tooltip="item.text"
+                v-tooltip="{
+                  text: item.text,
+                  id: `tooltip-${index}`,
+                }"
                 style="font-size: 26px"
                 :class="`icon icon-${item.icon} text-white text--darken-1`"
               />

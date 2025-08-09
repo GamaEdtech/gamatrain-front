@@ -689,14 +689,21 @@ watch(
         class="hidden-lg-and-up main-sidebar"
         :mobile="true"
       >
-        <v-list density="compact">
+        <v-list
+          density="compact"
+          aria-label="Main navigation menu"
+        >
           <!-- Profile Info -->
           <v-list-group
             v-if="auth.isAuthenticated.value"
             active-class="menu_group_active"
           >
             <template #activator="{ props }">
-              <v-list-item v-bind="props">
+              <v-list-item
+                v-bind="props"
+                role="option"
+                aria-label="َUser Information"
+              >
                 <v-icon icon="mdi-account-outline" />
                 <v-list-item-title>
                   {{ user?.first_name || user?.last_name || "No name" }}
@@ -708,6 +715,8 @@ watch(
               v-for="(item, i) in user_profile_items"
               :key="i"
               link
+              role="option"
+              :aria-label="item.title"
             >
               <template #prepend>
                 <v-icon :icon="item.icon" />
@@ -715,7 +724,10 @@ watch(
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
 
-            <v-list-item @click="logout">
+            <v-list-item
+              aria-label="Logout from account"
+              @click="logout"
+            >
               <template #prepend>
                 <v-icon icon="mdi-exit-to-app" />
               </template>
@@ -726,6 +738,7 @@ watch(
           <!-- Notifications -->
           <v-list-item
             v-if="auth.isAuthenticated.value"
+            role="option"
             @click="notificationListDialog = true"
           >
             <template #prepend>
@@ -742,6 +755,8 @@ watch(
           <!-- Login Button -->
           <v-list-item
             v-if="!auth.isAuthenticated.value"
+            role="option"
+            aria-label="Sign in or Sign up"
             @click="openLoginDialog()"
           >
             <template #prepend>
@@ -761,6 +776,8 @@ watch(
             <v-list-item
               v-if="!item.subMenuList"
               :to="item.link"
+              role="option"
+              :aria-label="item.title"
             >
               <template #prepend>
                 <v-icon
@@ -809,6 +826,8 @@ watch(
         <v-icon
           class="px-2"
           :class="menuSetting.bgColor == '#fff' ? '' : 'text-white'"
+          role="button"
+          aria-label="Open menu"
           @click="sidebar = !sidebar"
         >
           mdi-menu
@@ -817,6 +836,7 @@ watch(
         <nuxt-link to="/">
           <img
             id="main-logo"
+            alt="GamaTrain"
             :src="`/images/${menuSetting.logo}`"
           >
         </nuxt-link>
@@ -833,6 +853,8 @@ watch(
                 v-bind="props"
                 :color="menuSetting.linkColor"
                 class="pa-23"
+                role="button"
+                aria-label="Search"
               >
                 mdi-magnify
               </v-icon>
