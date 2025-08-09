@@ -256,7 +256,7 @@ const helpLoading = ref(false)
 const submitLoading = ref(false)
 
 async function sendToAI() {
- const userComment = `You are an educational review assistant. Your task is to evaluate the following school and return a structured JSON response.
+  const userComment = `You are an educational review assistant. Your task is to evaluate the following school and return a structured JSON response.
 
 ### **School Information:**
 - **Name:** ${props.contentData.name}
@@ -303,10 +303,9 @@ Return a structured JSON object like this, with exactly 8 rating fields (1 to 5)
   }
 }
 \`\`\`
-`;
+`
 
-
-if (!localStorage.getItem('v2_token')) {
+  if (!localStorage.getItem('v2_token')) {
     nuxtApp.$toast?.error('Login required to proceed.')
     router.push({ query: { auth_form: 'login' } })
     return

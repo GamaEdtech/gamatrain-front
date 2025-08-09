@@ -14,26 +14,27 @@
           @blur="handleInputBlur"
         >
         <div class="figma-token-label">
-          GET
+          $GET
         </div>
       </div>
 
       <!-- Swap Arrow -->
-      <div class="figma-swap-arrow">
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 16 16"
-          fill="none"
+      <div
+        class="figma-swap-arrow"
+        role="button"
+        tabindex="0"
+        aria-label="Toggle buy/sell"
+        title="Toggle buy/sell"
+        @click="toggleTradeMode"
+        @keydown.enter.prevent="toggleTradeMode"
+        @keydown.space.prevent="toggleTradeMode"
+      >
+        <v-icon
+          size="20"
+          color="grey-lighten-1"
         >
-          <path
-            d="M8 2L8 14M8 14L12 10M8 14L4 10"
-            stroke="#9CA3AF"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
+          md:swap_horiz
+        </v-icon>
       </div>
 
       <!-- Payment Token Input -->
@@ -77,14 +78,19 @@
       </div>
     </div>
 
-    <!-- Green Buy Button matching Figma -->
-    <button
+    <!-- Primary action button using Vuetify palette -->
+    <v-btn
       :disabled="!canSwap"
-      :class="['figma-green-buy-btn', { loading: swapping }]"
+      :color="isSellMode ? 'error' : 'success'"
+      class="mb-4 font-semibold gama-text-button"
+      block
+      height="56"
+      rounded="xl"
+      :loading="swapping"
       @click="handleSwap"
     >
-      {{ swapping ? 'Processing...' : 'Buy GET' }}
-    </button>
+      {{ primaryButtonLabel }}
+    </v-btn>
 
     <!-- Disconnect Button - Only show when wallet is connected -->
     <v-btn
@@ -97,29 +103,46 @@
       Disconnect wallet
     </v-btn>
 
-    <!-- You Receive Text -->
+    <!-- Amount Info (Buy: You receive | Sell: You sell) -->
     <div
       v-if="getTokenAmount && parseFloat(getTokenAmount) > 0"
       class="figma-receive-text"
     >
-      You receive {{ formatNumber(parseFloat(getTokenAmount)) }} GET
+      {{ isSellMode ? 'You sell' : 'You receive' }} {{ formatNumber(parseFloat(getTokenAmount)) }} $GET
     </div>
 
     <!-- Error Message -->
-    <div
+    <v-alert
       v-if="errorMessage"
-      class="figma-error-message"
+      type="error"
+      variant="elevated"
+      density="comfortable"
+      class="mt-3"
     >
       {{ errorMessage }}
-    </div>
+    </v-alert>
 
     <!-- Success Message -->
-    <div
+    <v-alert
       v-if="successMessage"
-      class="figma-success-message"
+      type="success"
+      variant="tonal"
+      density="comfortable"
+      class="mt-3"
     >
-      {{ successMessage }}
-    </div>
+      <span>{{ successMessage }}</span>
+      <template v-if="lastSignature">
+        <br>
+        <a
+          :href="explorerTxUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-primary"
+        >
+          View transaction on Solana Explorer
+        </a>
+      </template>
+    </v-alert>
 
     <!-- Wallet Connection Modal -->
     <Teleport to="body">
@@ -134,7 +157,7 @@
         >
           <div class="figma-modal-header">
             <h3>Connect Your Wallet</h3>
-            <p>Choose a wallet to connect and buy GET tokens</p>
+            <p>Choose a wallet to connect and buy $GET tokens</p>
           </div>
 
           <div class="figma-modal-content">
@@ -200,6 +223,15 @@ import type { SolanaWallet, SwapQuoteDetails, TokenConfig } from '~/composables/
 import { TOKEN_MINTS } from '~/composables/useJupiterSwap'
 import { Buffer } from 'buffer'
 
+type MaybeWallet = {
+  sendTransaction?: (tx: VersionedTransaction, connection?: unknown) => Promise<string>
+  signTransaction?: (tx: VersionedTransaction) => Promise<VersionedTransaction>
+  connection?: { sendRawTransaction: (rawTx: Uint8Array) => Promise<string> }
+  disconnect?: () => Promise<void>
+}
+
+type MaybeConnected = { connected?: boolean | { value?: boolean } }
+
 // Constants
 const GET_TOKEN_MINT = TOKEN_MINTS.GET
 const SOL_MINT = TOKEN_MINTS.SOL
@@ -233,6 +265,18 @@ const showWalletModal = ref(false)
 const showDisconnectModal = ref(false)
 const errorMessage = ref<string | null>(null)
 const successMessage = ref<string | null>(null)
+const lastSignature = ref<string | null>(null)
+
+// Trade mode: 'buy' or 'sell'
+const tradeMode = ref<'buy' | 'sell'>('buy')
+const isSellMode = computed(() => tradeMode.value === 'sell')
+
+// Primary action button label
+const primaryButtonLabel = computed(() => {
+  if (swapping.value) return 'Processing...'
+  if (isCalculating.value) return 'Fetching...'
+  return isSellMode.value ? 'Sell $GET' : 'Buy $GET'
+})
 
 // Memo-related state (only keeping memoText for URL parameter extraction)
 const memoText = ref('')
@@ -339,22 +383,22 @@ const extractAndValidateMemo = (refParam: string | string[] | undefined): string
 // Initialize wallet on client side
 onMounted(async () => {
   // Enhanced memo extraction with validation and logging
-  const extractedMemo = extractAndValidateMemo(queryRoute?.ref)
+  const extractedMemo = extractAndValidateMemo((queryRoute?.ref ?? undefined) as unknown as string | string[] | undefined)
   memoText.value = extractedMemo
 
   if (import.meta.client) {
     try {
       const { useWallet } = await import('solana-wallets-vue')
-      wallet.value = useWallet() as SolanaWallet
+      wallet.value = useWallet() as unknown as SolanaWallet
 
       console.log('Wallet initialized:', wallet.value)
       console.log('Initial connection state:', wallet.value?.connected)
 
       // Watch for wallet connection changes
-      watch(() => wallet.value?.connected, (connected) => {
+      watch(() => isWalletConnected.value, (connected) => {
         console.log('Wallet connection changed:', connected)
         if (connected) {
-          showWalletModal.value = false // Close modal when connected
+          showWalletModal.value = false
           fetchBalances()
           // Clear any previous error messages when wallet connects
           errorMessage.value = null
@@ -394,7 +438,9 @@ onMounted(async () => {
 
 // Computed properties
 const isWalletConnected = computed(() => {
-  return wallet.value?.connected || false
+  const maybe = (wallet.value as unknown as MaybeConnected)?.connected
+  if (typeof maybe === 'boolean') return maybe
+  return !!(maybe as { value?: boolean })?.value
 })
 
 const canSwap = computed(() => {
@@ -408,13 +454,30 @@ const canSwap = computed(() => {
     return true
   }
 
-  // If wallet is connected, require valid GET token amount
-  return getTokenAmount.value
-    && parseFloat(getTokenAmount.value) > 0
+  // Validate amount
+  const amount = parseFloat(getTokenAmount.value || '0')
+  if (!getTokenAmount.value || isNaN(amount) || amount <= 0) {
+    return false
+  }
+
+  // In Sell mode, if balance is known, ensure it is sufficient
+  if (isSellMode.value && getTokenBalance.value !== null && getTokenBalance.value !== undefined) {
+    if (amount > (getTokenBalance.value || 0)) {
+      return false
+    }
+  }
+
+  // While calculating or when no route/quote is available, disable the button
+  if (isCalculating.value) return false
+  if (!swapQuote.value) return false
+
+  return true
 })
 
 // Import number formatting utility
 const { formatNumber } = useFormatNumber()
+
+// disabledReason removed; messaging moved into button label and alerts
 
 // Computed for formatted GET token amount display
 const formattedGetTokenAmount = computed(() => {
@@ -441,6 +504,21 @@ const formattedEquivalentCost = computed(() => {
   else {
     return amount.toFixed(6)
   }
+})
+
+// Network cluster (used for explorer links)
+const networkCluster = computed(() => {
+  const url = getSolanaRpcUrl()
+  if (url.includes('devnet')) return 'devnet'
+  if (url.includes('testnet')) return 'testnet'
+  return 'mainnet'
+})
+
+// Explorer URLs for the last successful transaction
+const explorerTxUrl = computed(() => {
+  if (!lastSignature.value) return '#'
+  const suffix = networkCluster.value === 'mainnet' ? '' : `?cluster=${networkCluster.value}`
+  return `https://explorer.solana.com/tx/${lastSignature.value}${suffix}`
 })
 
 // Handle amount input with Figma-exact formatting
@@ -512,6 +590,13 @@ const getSelectedPayToken = () => {
   return payTokenOptions.value.find(token => token.mint === selectedPayToken.value)
 }
 
+// Toggle between Buy and Sell without clearing user input; re-quote immediately
+const toggleTradeMode = () => {
+  tradeMode.value = isSellMode.value ? 'buy' : 'sell'
+  errorMessage.value = null
+  calculateEquivalentCost()
+}
+
 const fetchCurrentPrice = async () => {
   try {
     const response = await $fetch<{ data: Record<string, { price: number }> }>(`https://lite-api.jup.ag/price/v2?ids=${GET_TOKEN_MINT}`)
@@ -530,9 +615,9 @@ const fetchBalances = async () => {
 
   try {
     // This would require implementing balance fetching logic
-    // For now, we'll set placeholder values
-    payTokenBalance.value = 0.0
-    getTokenBalance.value = 0.0
+    // Placeholder: keep as null to avoid falsely failing balance checks
+    payTokenBalance.value = null
+    getTokenBalance.value = null
   }
   catch (error) {
     console.error('Failed to fetch balances:', error)
@@ -560,54 +645,77 @@ const calculateEquivalentCost = async () => {
 
     const { getQuoteWithDecimals, calculateDisplayAmounts } = useJupiterSwap()
 
-    // For reverse quote logic, we need to get the actual quote for the desired GET amount
-    // We'll use a more accurate approach by getting a quote for a reasonable input amount
-    // and then calculating the exact required input
+    if (isSellMode.value) {
+      // SELL: source = GET, destination = selected pay token
+      const quoteResponse = await getQuoteWithDecimals(
+        GET_TOKEN_MINT,
+        selectedPayToken.value,
+        desiredGetAmount,
+        50, // 0.5% slippage
+      )
 
-    // Start with a reasonable estimate based on typical token prices
-    let estimatedInputAmount = 1.0 // Start with 1 token as base
+      if (quoteResponse) {
+        const displayAmounts = calculateDisplayAmounts(quoteResponse)
 
-    // If SOL is selected, use a smaller amount since SOL is more expensive
-    if (payToken.symbol === 'SOL') {
-      estimatedInputAmount = 0.1
-    }
+        // Output amount you will receive for selling desiredGetAmount GET
+        const outputAmount = displayAmounts.outputAmount
+        equivalentCost.value = `${outputAmount.toFixed(6)} ${payToken.symbol}`
 
-    // Get quote from Jupiter API to establish the rate
-    const quoteResponse = await getQuoteWithDecimals(
-      selectedPayToken.value,
-      GET_TOKEN_MINT,
-      estimatedInputAmount,
-      50, // 0.5% slippage
-    )
+        // Basic balance validation (if balance known)
+        if (getTokenBalance.value !== null && getTokenBalance.value !== undefined) {
+          if (desiredGetAmount > (getTokenBalance.value || 0)) {
+            errorMessage.value = 'Insufficient $GET balance for this amount.'
+          }
+        }
 
-    if (quoteResponse) {
-      // Use the helper function to calculate display amounts
-      const displayAmounts = calculateDisplayAmounts(quoteResponse)
-
-      // Calculate the rate: how much input needed per GET token
-      const inputPerGetToken = estimatedInputAmount / displayAmounts.outputAmount
-
-      // Calculate the required input amount for desired GET tokens
-      const requiredInputAmount = desiredGetAmount * inputPerGetToken
-
-      // Add a small buffer (1%) to account for price fluctuations
-      const bufferedAmount = requiredInputAmount * 1.01
-
-      // Format the equivalent cost for display
-      const payTokenSymbol = payToken.symbol
-      equivalentCost.value = `${bufferedAmount.toFixed(6)} ${payTokenSymbol}`
-
-      // Create properly typed swap quote details with the actual required amount
-      swapQuote.value = {
-        rate: 1 / inputPerGetToken, // GET tokens per input token
-        priceImpact: displayAmounts.priceImpact.toFixed(2),
-        minimumReceived: desiredGetAmount * 0.995, // Account for slippage
-        quoteResponse,
+        swapQuote.value = {
+          rate: outputAmount / (desiredGetAmount || 1), // counterparty per GET
+          priceImpact: displayAmounts.priceImpact.toFixed(2),
+          minimumReceived: outputAmount * 0.995,
+          quoteResponse,
+        }
+      }
+      else {
+        equivalentCost.value = ''
+        swapQuote.value = null
+        errorMessage.value = 'No route available for this trade.'
       }
     }
     else {
-      equivalentCost.value = ''
-      swapQuote.value = null
+      // BUY: source = selected pay token, destination = GET
+      // Use a small estimation to find input per GET and scale to the user's desired GET amount
+      let estimatedInputAmount = 1.0
+      if (payToken.symbol === 'SOL') {
+        estimatedInputAmount = 0.1
+      }
+
+      const quoteResponse = await getQuoteWithDecimals(
+        selectedPayToken.value,
+        GET_TOKEN_MINT,
+        estimatedInputAmount,
+        50, // 0.5% slippage
+      )
+
+      if (quoteResponse) {
+        const displayAmounts = calculateDisplayAmounts(quoteResponse)
+        const inputPerGetToken = estimatedInputAmount / displayAmounts.outputAmount
+        const requiredInputAmount = desiredGetAmount * inputPerGetToken
+        const bufferedAmount = requiredInputAmount * 1.01
+
+        equivalentCost.value = `${bufferedAmount.toFixed(6)} ${payToken.symbol}`
+
+        swapQuote.value = {
+          rate: 1 / inputPerGetToken, // GET per input token
+          priceImpact: displayAmounts.priceImpact.toFixed(2),
+          minimumReceived: desiredGetAmount * 0.995,
+          quoteResponse,
+        }
+      }
+      else {
+        equivalentCost.value = ''
+        swapQuote.value = null
+        errorMessage.value = 'No route available for this trade.'
+      }
     }
   }
   catch (error) {
@@ -615,11 +723,9 @@ const calculateEquivalentCost = async () => {
     equivalentCost.value = ''
     swapQuote.value = null
     errorMessage.value = 'Failed to get quote. Please try again.'
-
-    // Clear error message after 5 seconds
     setTimeout(() => {
       errorMessage.value = null
-    }, 5000)
+    }, 10000)
   }
   finally {
     isCalculating.value = false
@@ -675,29 +781,47 @@ const handleSwap = async () => {
     }
 
     // We need to get a fresh quote for the actual swap amount
-    // Parse the equivalent cost to get the actual input amount needed
-    const costParts = equivalentCost.value.split(' ')
-    const actualInputAmount = parseFloat(costParts[0])
+    let actualInputAmount: number
+    let fromMint: string
+    let toMint: string
 
-    if (!actualInputAmount || actualInputAmount <= 0) {
+    if (isSellMode.value) {
+      // In sell mode, the user inputs GET to sell
+      actualInputAmount = parseFloat(getTokenAmount.value)
+      fromMint = GET_TOKEN_MINT
+      toMint = selectedPayToken.value
+    }
+    else {
+      // In buy mode, parse the required counterparty amount from the equivalent cost
+      const costParts = equivalentCost.value.split(' ')
+      actualInputAmount = parseFloat(costParts[0])
+      fromMint = selectedPayToken.value
+      toMint = GET_TOKEN_MINT
+    }
+
+    if (!actualInputAmount || isNaN(actualInputAmount) || actualInputAmount <= 0) {
       throw new Error('Invalid input amount calculated')
     }
 
-    // Check if user has enough balance (including buffer for fees)
+    // Balance checks (only relevant when paying in SOL)
     const payToken = getSelectedPayToken()
-    if (payToken?.symbol === 'SOL') {
-      // For SOL, ensure user has enough for swap + network fees (at least 0.01 SOL buffer)
+    if (!isSellMode.value && payToken?.symbol === 'SOL') {
+      // For SOL payments in buy mode, ensure user has enough for swap + network fees (at least 0.01 SOL buffer)
       const requiredSol = actualInputAmount + 0.01
       if (payTokenBalance.value !== null && payTokenBalance.value < requiredSol) {
         throw new Error(`Insufficient SOL balance. Need at least ${requiredSol.toFixed(4)} SOL (including fees)`)
       }
     }
+    // In sell mode, optional: ensure GET balance is sufficient if known
+    if (isSellMode.value && getTokenBalance.value !== null && actualInputAmount > (getTokenBalance.value || 0)) {
+      throw new Error('Insufficient GET balance for this amount')
+    }
 
-    // Get a fresh quote for the actual input amount
+    // Get a fresh quote for the chosen direction
     const { getQuoteWithDecimals } = useJupiterSwap()
     const freshQuote = await getQuoteWithDecimals(
-      selectedPayToken.value,
-      GET_TOKEN_MINT,
+      fromMint,
+      toMint,
       actualInputAmount,
       50, // 0.5% slippage
     )
@@ -800,7 +924,7 @@ const handleSwap = async () => {
       catch (error) {
         console.error('❌ Failed to build memo transaction:', {
           memo: swapOptions.memo,
-          error: error.message,
+          error: error instanceof Error ? error.message : String(error),
           fallback: 'will_use_standard_transaction',
         })
         throw error
@@ -880,25 +1004,30 @@ const handleSwap = async () => {
     // Use wallet's sendTransaction method if available (bypasses RPC issues)
     signature = null
 
-    if (wallet.value.sendTransaction) {
+    const w = wallet.value as unknown as MaybeWallet
+
+    if (w?.sendTransaction) {
       console.log('Using wallet sendTransaction method')
       // Create a minimal connection object for the wallet
       const dummyConnection = {
         rpcEndpoint: getSolanaRpcUrl(),
         commitment: 'confirmed',
       }
-      signature = await wallet.value.sendTransaction(transaction, dummyConnection)
+      signature = await w.sendTransaction(transaction, dummyConnection)
     }
     else {
       console.log('Using signTransaction and manual submission')
       // Sign the transaction
-      const signedTransaction = await wallet.value.signTransaction(transaction)
+      if (!w?.signTransaction) {
+        throw new Error('Wallet does not support signTransaction')
+      }
+      const signedTransaction = await w.signTransaction(transaction)
 
       // Try to submit via wallet's connection or fallback
       try {
         // If wallet has a connection, use it
-        if (wallet.value.connection) {
-          signature = await wallet.value.connection.sendRawTransaction(signedTransaction.serialize())
+        if (w?.connection) {
+          signature = await w.connection.sendRawTransaction(signedTransaction.serialize())
         }
         else {
           // Last resort: use our own connection with minimal config
@@ -910,9 +1039,9 @@ const handleSwap = async () => {
           })
         }
       }
-      catch (rpcError) {
+      catch (rpcError: unknown) {
         console.error('RPC submission failed:', rpcError)
-        throw new Error(`Transaction submission failed: ${rpcError.message}`)
+        throw new Error(`Transaction submission failed: ${rpcError instanceof Error ? rpcError.message : String(rpcError)}`)
       }
     }
 
@@ -952,11 +1081,14 @@ const handleSwap = async () => {
 
       const message = `Swap successful! Transaction: ${signature.slice(0, 8)}...`
       successMessage.value = message
+      lastSignature.value = signature
+      console.log('🔗 Explorer link:', explorerTxUrl.value)
 
-      // Clear success message after 10 seconds
+      // Clear success message after 20 seconds
       setTimeout(() => {
         successMessage.value = null
-      }, 10000)
+        lastSignature.value = null
+      }, 20000)
 
       // Reset form and refresh balances
       getTokenAmount.value = ''
@@ -988,25 +1120,26 @@ const handleSwap = async () => {
 // Handle wallet disconnect
 const handleDisconnect = async () => {
   try {
-    if (wallet.value && wallet.value.disconnect) {
-      await wallet.value.disconnect()
+    const w = wallet.value as unknown as MaybeWallet
+    if (w?.disconnect) {
+      await w.disconnect()
       console.log('Wallet disconnected successfully')
-
-      // Reset all state
-      getTokenAmount.value = ''
-      equivalentCost.value = ''
-      swapQuote.value = null
-      memoText.value = ''
-      payTokenBalance.value = null
-      getTokenBalance.value = null
-      errorMessage.value = null
-      successMessage.value = null
     }
     else {
       console.warn('Wallet does not support disconnect method')
       // For wallets that don't have disconnect method, we can try to reset the wallet reference
       wallet.value = null
     }
+
+    // Reset all state
+    getTokenAmount.value = ''
+    equivalentCost.value = ''
+    swapQuote.value = null
+    memoText.value = ''
+    payTokenBalance.value = null
+    getTokenBalance.value = null
+    errorMessage.value = null
+    successMessage.value = null
   }
   catch (error) {
     console.error('Failed to disconnect wallet:', error)
@@ -1207,6 +1340,42 @@ watch(getTokenAmount, () => {
   cursor: wait;
 }
 
+/* Red Sell Button styling */
+.figma-red-sell-btn {
+  width: 100%;
+  height: 56px;
+  background: #e53935;
+  border: none;
+  border-radius: 28px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #FFFFFF;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 20px rgba(229, 57, 53, 0.3);
+}
+
+.figma-red-sell-btn:hover:not(:disabled) {
+  background: #d32f2f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(229, 57, 53, 0.4);
+}
+
+.figma-red-sell-btn:disabled {
+  background: rgba(229, 57, 53, 0.4);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.figma-red-sell-btn.loading {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: wait;
+}
+
 .disconnect-btn{
   width: 100%;
   border-radius: 28px;
@@ -1248,6 +1417,14 @@ watch(getTokenAmount, () => {
   font-size: 14px;
   text-align: center;
   margin-top: 12px;
+}
+.figma-success-message a.tx-link {
+  color: #0c5460;
+  font-weight: 700;
+  text-decoration: underline;
+}
+.figma-success-message a.tx-link:hover {
+  text-decoration: none;
 }
 
 /* Modal Styles */
@@ -1715,5 +1892,11 @@ watch(getTokenAmount, () => {
 .wallet-connection-container :deep(.wallet-adapter-dropdown) {
   z-index: 10002 !important;
   position: fixed !important;
+}
+
+.v-btn--disabled.v-btn--variant-elevated, .v-btn--disabled.v-btn--variant-flat{
+  background-color: rgba(18, 18, 18, 0.4) !important;
+  color: rgba(255, 255, 255, 0.5) !important;
+  cursor: not-allowed !important;
 }
 </style>
