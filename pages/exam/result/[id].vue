@@ -14,10 +14,7 @@
               line-height: 2.5rem;
             "
           >
-            <span
-              class="fa-solid fa-file"
-              style="font-size: 2rem !important; margin-inline: 0.5rem"
-            />
+            <v-icon style="font-size: 2rem !important; margin-inline: 0.5rem">md:file_copy</v-icon>
             {{ contentData.exam.title }} Report card
           </span>
         </v-col>
@@ -42,21 +39,21 @@
                         Participant
                       </th>
                       <th class="text-center text-h5">
-                        <span
-                          class="d-block d-md-none fa-regular fa-circle-play fa-lg"
-                        />
+                        <v-icon class="w-100 d-block d-md-none">
+                          md:play_circle
+                        </v-icon>
                         <span class="d-none d-md-block">Start time</span>
                       </th>
                       <th class="text-center text-h5">
-                        <span
-                          class="d-block d-md-none fa-regular fa-clock fa-lg"
-                        />
+                        <v-icon class="w-100 d-block d-md-none">
+                          md:alarm
+                        </v-icon>
                         <span class="d-none d-md-block">Test duration</span>
                       </th>
                       <th class="text-center text-h5">
-                        <span
-                          class="d-block d-md-none fa-regular fa-circle-stop fa-lg"
-                        />
+                        <v-icon class="w-100 d-block d-md-none">
+                          md:stop_circle
+                        </v-icon>
                         <span class="d-none d-md-block">Response time</span>
                       </th>
                     </tr>
@@ -85,23 +82,23 @@
 
           <v-row class="mt-8">
             <v-col
-              class="d-none d-md-block"
+              class="d-none d-md-flex align-center"
               md="12"
             >
               <span class="mr-2">
-                <i class="fa-solid fa-circle-check fa-lg text-green" />
+                <v-icon color="green">md:check_circle</v-icon>
                 : Correct answers
               </span>
               <span class="mr-2 my-1">
-                <i class="fa-regular fa-times-circle fa-lg text-red" />
+                <v-icon color="red">md:cancel</v-icon>
                 : Wrong answer
               </span>
               <span class="mr-2 my-1">
-                <i class="fa-regular fa-circle-check fa-lg text-green" />
+                <v-icon color="green">md:check_circle_outline</v-icon>
                 : Correct option
               </span>
-              <span class="mr-2 my-1">
-                <i class="fa-regular fa-circle fa-lg" />
+              <span class="d-flex mr-2 my-1">
+                <div class="empty-option" />
                 : No answer
               </span>
             </v-col>
@@ -110,7 +107,7 @@
               class="d-block d-md-none"
             >
               <span class="mr-2">
-                <i class="fa-solid fa-circle-check fa-lg text-green" />
+                <v-icon color="green">md:check_circle</v-icon>
                 : Correct answers
               </span>
             </v-col>
@@ -119,7 +116,7 @@
               class="d-block d-md-none"
             >
               <span class="mr-2 my-1">
-                <i class="fa-regular fa-times-circle fa-lg text-red" />
+                <v-icon color="red">md:cancel</v-icon>
                 : Wrong answer
               </span>
             </v-col>
@@ -128,7 +125,7 @@
               class="d-block d-md-none"
             >
               <span class="mr-2 my-1">
-                <i class="fa-regular fa-circle-check fa-lg text-green" />
+                <v-icon color="green">md:check_circle_outline</v-icon>
                 : Correct option
               </span>
             </v-col>
@@ -136,8 +133,8 @@
               cols="6"
               class="d-block d-md-none"
             >
-              <span class="mr-2 my-1">
-                <i class="fa-regular fa-circle fa-lg" />
+              <span class="d-flex mr-2 my-1">
+                <div class="empty-option" />
                 : No answer
               </span>
             </v-col>
@@ -181,32 +178,39 @@
                       :key="option"
                       class="text-center"
                     >
-                      <span
+                      <v-icon
                         v-if="
                           item.user_answer == option
                             && item.true_answer == option
                         "
-                        class="text-green fa-solid fa-circle-check fa-lg"
                         size="large"
-                      />
-                      <span
+                        color="green"
+                      >
+                        md:check_circle
+                      </v-icon>
+
+                      <v-icon
                         v-else-if="
                           item.user_answer == option
                             && item.true_answer != option
                         "
-                        class="text-red fa-regular fa-times-circle fa-lg"
-                        size="large"
-                      />
-                      <span
+                        color="red"
+                      >
+                        md:cancel
+                      </v-icon>
+                      <v-icon
                         v-else-if="item.true_answer == option"
-                        class="text-green fa-regular fa-circle-check fa-lg"
+                        color="green"
                         size="large"
-                      />
-                      <span
+                      >
+                        md:check_circle_outline
+                      </v-icon>
+                      <div
                         v-else
-                        class="fa-regular fa-circle fa-lg"
-                        size="large"
-                      />
+                        class="w-100 d-flex justify-center"
+                      >
+                        <div class="empty-option mr-0" />
+                      </div>
                     </td>
                   </tr>
                 </tbody>
@@ -228,17 +232,19 @@
                           Count
                         </th>
                         <th class="text-center text-h5">
-                          <span
-                            class="text-green fa-solid fa-circle-check fa-lg"
-                          />
+                          <v-icon color="green">
+                            md:check_circle
+                          </v-icon>
                         </th>
                         <th class="text-center text-h5">
-                          <span
-                            class="text-red fa-solid fa-times-circle fa-lg"
-                          />
+                          <v-icon color="red">
+                            md:cancel
+                          </v-icon>
                         </th>
                         <th class="text-center text-h5">
-                          <span class="fa-regular fa-circle fa-lg" />
+                          <div class="w-100 d-flex justify-center">
+                            <div class="empty-option mr-0" />
+                          </div>
                         </th>
                         <th class="text-center text-h5">
                           %
@@ -300,9 +306,10 @@
                     <tbody>
                       <tr>
                         <td>
-                          <span
-                            class="text-green fa-solid fa-circle-check fa-lg"
-                          />&nbsp; Correct answers:
+                          <v-icon color="green">
+                            md:check_circle
+                          </v-icon>&nbsp;
+                          Correct answers:
                         </td>
                         <td class="text-center">
                           {{ contentData.answerStats.total.true }}
@@ -310,9 +317,10 @@
                       </tr>
                       <tr>
                         <td>
-                          <span
-                            class="text-red fa-regular fa-times-circle fa-lg"
-                          />&nbsp; Wrong answers:
+                          <v-icon color="red">
+                            md:cancel
+                          </v-icon>&nbsp; Wrong
+                          answers:
                         </td>
                         <td class="text-center">
                           {{ contentData.answerStats.total.false }}
@@ -320,8 +328,10 @@
                       </tr>
                       <tr>
                         <td>
-                          <span class="fa-regular fa-circle fa-lg" />&nbsp; No
-                          answer:
+                          <div class="w-100 d-flex justify-start">
+                            <div class="empty-option mr-0" />
+                            &nbsp; No answer:
+                          </div>
                         </td>
                         <td class="text-center">
                           {{ contentData.answerStats.total.noAnswer }}
@@ -607,14 +617,13 @@ import { ref, reactive, onMounted, computed, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useHead } from '#app'
 import PieChart from '@/components/chart/PieChart'
-import CrashReport from '~/components/common/crash-report.vue'
 import { useAuth } from '~/composables/useAuth'
 
 const route = useRoute()
-const id = route.params.id
+const _id = route.params.id
 
 const auth = useAuth()
-const authToken = auth.getUserToken()
+const _authToken = auth.getUserToken()
 
 const download_loading = ref(false)
 
@@ -671,7 +680,7 @@ const typesetDialog = async () => {
   }
 }
 
-const crash_report = ref(null)
+const _crash_report = ref(null)
 
 useHead({
   title: 'Online exam result',
@@ -809,9 +818,13 @@ onMounted(() => {
 .false_answer {
   color: red;
 }
-
-.fa-lg {
-  font-size: large !important;
+.empty-option {
+  min-width: 20px;
+  max-width: 20px;
+  height: 20px;
+  margin-right: 4px;
+  border-radius: 50%;
+  border: 1px solid black;
 }
 
 @media (max-width: 960px) {

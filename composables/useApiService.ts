@@ -1,5 +1,5 @@
 export interface SearchParameters {
-  [key: string]: any
+  [key: string]: string | number | boolean | null | undefined
 }
 
 type UseFetchOptions = {
@@ -7,7 +7,7 @@ type UseFetchOptions = {
   method?: string
   query?: SearchParameters
   params?: SearchParameters
-  body?: RequestInit['body'] | Record<string, any>
+  body?: RequestInit['body'] | Record<string, unknown>
   headers?: Record<string, string> | [key: string, value: string][] | Headers
   baseURL?: string
   server?: boolean
@@ -20,13 +20,13 @@ interface AuthHeaders {
   Authorization?: string
 }
 
-interface ApiError {
+interface _ApiError {
   status: number
   message: string
-  data?: any
+  data?: unknown
 }
 
-export const useApiService = <T = any>(
+export const useApiService = <T = unknown>(
   request: string,
   opts?: UseFetchOptions,
 ): Promise<T> => {
@@ -36,19 +36,23 @@ export const useApiService = <T = any>(
   const apiFetch = $fetch.create({
     baseURL: config.public.baseURL as string,
     credentials: 'include',
-    onResponse({ request, response, options }) {
+    onResponse({ request: _request, response: _response, options: _options }) {
       // Process the response data
     },
-    onResponseError({ request, response, options }) {
-      if (response?.status == 401 || response?.status == 403) {
+    onResponseError({
+      request: _request,
+      response: _response,
+      options: _options,
+    }) {
+      if (_response?.status == 401 || _response?.status == 403) {
         const router = useRouter()
         router.push({ query: { auth_form: 'login' } })
       }
     },
-    onRequest({ request, options }) {
+    onRequest({ request: _request, options: _options }) {
       // Set the request headers
     },
-    onRequestError({ request, options, error }) {
+    onRequestError({ request: _request, options: _options, error: _error }) {
       // Handle the request errors
     },
     ...opts,
@@ -62,7 +66,9 @@ export const useApiService = <T = any>(
   return apiFetch<T>(request)
 }
 
-export const authHeader = (req: string | null = null): AuthHeaders | undefined => {
+export const authHeader = (
+  req: string | null = null,
+): AuthHeaders | undefined => {
   const auth = useAuth()
 
   if (!auth.isAuthenticated.value) return
@@ -77,7 +83,7 @@ export const authHeader = (req: string | null = null): AuthHeaders | undefined =
   }
 }
 
-export const get = <T = any>(
+export const get = <T = unknown>(
   request: string,
   params?: SearchParameters,
   opts?: UseFetchOptions,
@@ -85,7 +91,7 @@ export const get = <T = any>(
   return useApiService<T>(request, { ...opts, method: 'GET', params: params })
 }
 
-export const post = <T = any>(
+export const post = <T = unknown>(
   request: string,
   params?: SearchParameters,
   opts?: UseFetchOptions,
@@ -93,7 +99,7 @@ export const post = <T = any>(
   return useApiService<T>(request, { ...opts, method: 'POST', body: params })
 }
 
-export const put = <T = any>(
+export const put = <T = unknown>(
   request: string,
   params: SearchParameters,
   opts?: UseFetchOptions,
@@ -101,7 +107,7 @@ export const put = <T = any>(
   return useApiService<T>(request, { ...opts, method: 'PUT', body: params })
 }
 
-export const patch = <T = any>(
+export const patch = <T = unknown>(
   request: string,
   params: SearchParameters,
   opts?: UseFetchOptions,
@@ -109,7 +115,7 @@ export const patch = <T = any>(
   return useApiService<T>(request, { ...opts, method: 'PATCH', body: params })
 }
 
-export const remove = <T = any>(
+export const remove = <T = unknown>(
   request: string,
   params?: SearchParameters,
   opts?: UseFetchOptions,

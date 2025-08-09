@@ -20,7 +20,7 @@
           >
             {{ item.icon }}
           </v-icon>
-          <v-list-item-title v-text="item.title" />
+          <v-list-item-title>{{ item.title }}</v-list-item-title>
         </div>
       </v-list-item>
       <v-list-group
@@ -45,7 +45,7 @@
               >
                 {{ item.icon }}
               </v-icon>
-              <v-list-item-title v-text="item.title" />
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
             </div>
           </v-list-item>
         </template>
@@ -58,7 +58,7 @@
           :to="subMenuItem.link"
           :disabled="subMenuItem.status"
         >
-          <v-list-item-title v-text="subMenuItem.title" />
+          <v-list-item-title>{{ subMenuItem.title }}</v-list-item-title>
         </v-list-item>
       </v-list-group>
     </div>
@@ -66,11 +66,10 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { useNuxtApp } from '#app'
+import { ref } from 'vue'
 import { useUser } from '~/composables/useUser'
 
-const { user, setUser, cleanUser } = useUser()
+const { user } = useUser()
 const openGroups = ref({})
 
 const toggleGroup = (index) => {

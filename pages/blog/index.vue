@@ -331,9 +331,7 @@
                 <v-skeleton-loader type="image" />
               </div>
               <div class="text-loader-section">
-                <v-skeleton-loader
-                  type="heading,list-item-two-line"
-                />
+                <v-skeleton-loader type="heading,list-item-two-line" />
               </div>
             </div>
             <div class="d-flex d-sm-none mobile-item">
@@ -363,9 +361,7 @@
                 <v-skeleton-loader type="image" />
               </div>
               <div class="text-loader-section">
-                <v-skeleton-loader
-                  type="heading,list-item-two-line"
-                />
+                <v-skeleton-loader type="heading,list-item-two-line" />
               </div>
             </div>
             <div class="d-flex d-sm-none mobile-item">
@@ -482,7 +478,7 @@ const timer = ref(null)
 
 watch(
   () => route.query.keyword,
-  (value) => {
+  (_value) => {
     searchLoading.value = true
 
     if (timer.value) {
@@ -504,24 +500,23 @@ watch(
 
 watch(
   () => searchQuery.value,
-  (value) => {
+  (_value) => {
     updateQueryParams()
   },
 )
 // blog serch section End
 
 // category section start
-const { data: blogCategoriesResponse, pending: loadingCategories }
-  = await useAsyncData('categories', () =>
-    $fetch('/api/v1/types/list', { params: { type: 'blog_cat' } }),
-  )
+const { data: blogCategoriesResponse } = await useAsyncData('categories', () =>
+  $fetch('/api/v1/types/list', { params: { type: 'blog_cat' } }),
+)
 
 const categoryValue = ref(route.query.cat || 0)
 const blogCategories = ref(blogCategoriesResponse.value?.data || [])
 
 watch(
   () => route.query.cat,
-  (value) => {
+  (_value) => {
     allDataLoaded.value = false
     paginateStatus.value = false
     printedYearArr.value = []
@@ -533,7 +528,7 @@ watch(
 
 watch(
   () => categoryValue.value,
-  (value) => {
+  (_value) => {
     updateQueryParams()
   },
 )
@@ -650,7 +645,7 @@ const updateQueryParams = () => {
   }
 
   // Handle more query parameters here ...
-  router.replace({ query: query }).catch((err) => {
+  router.replace({ query: query }).catch((_err) => {
     // Do noting
   })
 }
@@ -686,14 +681,14 @@ const setupScrollListener = () => {
 
 watch(
   () => pageNum.value,
-  (value) => {
+  (_value) => {
     updateQueryParams()
   },
 )
 
 watch(
   () => route.query.page,
-  (value) => {
+  (_value) => {
     if (paginateStatus.value) {
       const currentScrollPosition = window.scrollY
       if (currentScrollPosition >= 10) {

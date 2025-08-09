@@ -124,6 +124,22 @@
     />
 
     <common-crash-report ref="crash_report" />
+
+    <v-row
+      justify="center"
+      class="mt-10"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        class="text-center"
+      >
+        <common-ad-banner
+          v-model="isAdsLoad"
+          adslot="7199289937"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -152,25 +168,22 @@ const galleryHelpData = ref({
   lesson: '',
 })
 
+const isAdsLoad = ref(false)
+
 // Fetch the exam data
 async function fetchExamData() {
-  try {
-    const { id } = route.params
-    const response = await useApiService.get(`/api/v1/exams/${id}`)
+  const { id } = route.params
+  const response = await useApiService.get(`/api/v1/exams/${id}`)
 
-    if (response.status === 1 && response.data) {
-      return response.data
-    }
+  if (response.status === 1 && response.data) {
+    return response.data
+  }
 
-    return response
-  }
-  catch (err) {
-    throw err
-  }
+  return response
 }
 
 // Use asyncData to fetch data
-const { data, pending, error } = await useAsyncData(
+const { data, pending, _error } = await useAsyncData(
   `exam-${route.params.id}`,
   async () => {
     const data = await fetchExamData()

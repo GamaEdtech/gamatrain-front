@@ -11,7 +11,11 @@
 
     <!-- Game UI Components -->
     <InteractionPrompt
-      v-if="(!isMathModalOpen && promptOperation === 'door') || (!isChestOpen && promptOperation === 'chest') || promptOperation === 'gate'"
+      v-if="
+        (!isMathModalOpen && promptOperation === 'door')
+          || (!isChestOpen && promptOperation === 'chest')
+          || promptOperation === 'gate'
+      "
       :opration="promptOperation"
       :is-near="isNear"
       @door-interaction="handleDoorInteraction"
@@ -63,7 +67,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch, computed, reactive, type Ref } from 'vue'
+import {
+  ref,
+  onMounted,
+  onUnmounted,
+  watch,
+  computed,
+  reactive,
+  type _Ref,
+} from 'vue'
 import { useThreeJS } from '../../composables/game/useThreejs'
 import { useCharacterController } from '../../composables/game/castle/useCharacterController'
 import MathModal from '@/components/game/castle/MathModal.vue'
@@ -133,7 +145,9 @@ const isNear = ref(false)
 const isMathModalOpen = ref(false)
 const levelUpModal = ref<boolean>(false)
 const promptOperation = ref<string>('') // Note: Named 'promptOperation' but passed as 'opration' prop due to component definition
-const nearDoor = ref<'door001' | 'door002' | 'door003' | 'door004' | null>(null)
+const nearDoor = ref<'door001' | 'door002' | 'door003' | 'door004' | null>(
+  null,
+)
 const isChestOpen = ref<boolean>(false)
 const coins = ref<number>(0)
 
@@ -143,7 +157,7 @@ const { playSound } = useSound()
 // Device detection
 const isMobile = ref(false)
 const isMobileOrTablet = computed(() => {
-  return isMobile.value || (window.innerWidth <= 1024)
+  return isMobile.value || window.innerWidth <= 1024
 })
 
 // DOM references
@@ -152,11 +166,13 @@ const container = ref<HTMLDivElement | null>(null)
 
 // 3D objects references
 const characterContainer = ref<THREE.Object3D<THREE.Object3DEventMap>>()
-let characterController: ReturnType<typeof useCharacterController> | null = null
+let characterController: ReturnType<typeof useCharacterController> | null
+  = null
 // controller for castle & chest models
 let modelsController: {
   visibleChest: (status: boolean) => void
-  chestInteractions: (character: THREE.Object3D) => boolean; chestAnimation: (() => { play: () => void, stop: () => void }) | null
+  chestInteractions: (character: THREE.Object3D) => boolean
+  chestAnimation: (() => { play: () => void, stop: () => void }) | null
   chestUpdate: (delta: number) => void
   chestPosition: (position: THREE.Vector3, rotation: THREE.Euler) => void
 } | null = null
@@ -172,8 +188,14 @@ const coinsRef = ref<InstanceType<typeof Coins> | null>(null)
 const cameraRef = ref<THREE.PerspectiveCamera | null>(null)
 
 // throw coin from them chest
-let throwCoinsMethod: ((boxSize: any, side: 'left' | 'right', count?: number) => void) | null = null
-let boxSizeRef: any = null
+let throwCoinsMethod:
+  | ((
+    boxSize: { width: number, height: number, depth: number },
+    side: 'left' | 'right',
+    count?: number
+  ) => void)
+  | null = null
+let boxSizeRef: { width: number, height: number, depth: number } | null = null
 
 let cleanupPhysics: (() => void) | null = null
 
@@ -186,7 +208,9 @@ const levelKey = computed(() => `level${level.value}` as keyof Level)
 
 const currentStepData = computed(() => {
   const levelData = levels.value[levelKey.value]
-  return levelData ? levelData[stepKey.value as 'step1' | 'step2' | 'step3' | 'step4'] : null
+  return levelData
+    ? levelData[stepKey.value as 'step1' | 'step2' | 'step3' | 'step4']
+    : null
 })
 
 const currentAnswer = computed(() => {
@@ -238,7 +262,7 @@ const openedDoors = ref<Level[]>([
 const chestPosations = {
   room1: {
     posistion1: {
-      x: 60.140,
+      x: 60.14,
       z: 432.3029,
     },
     posistion2: {
@@ -301,11 +325,11 @@ const chestPosations = {
     },
     posistion3: {
       x: 60,
-      z: -427.7530,
+      z: -427.753,
     },
     posistion4: {
       x: -72.58,
-      z: -427.7530,
+      z: -427.753,
     },
   },
 }
@@ -318,9 +342,21 @@ const modelsVisiblity = (stepData: Step) => {
 
   if (!stepData.reward) return
 
-  const roomData = chestPosations[stepData.reward.room as keyof typeof chestPosations]
-  const positionKey = `posistion${stepData.reward.position.slice(-1)}` as keyof typeof roomData
-  modelsController.chestPosition(new THREE.Vector3(roomData[positionKey].x, 0, roomData[positionKey].z), new THREE.Euler(0, ['position1', 'position3'].includes(stepData.reward.position) ? -(Math.PI / 2) : Math.PI / 2, 0))
+  const roomData
+    = chestPosations[stepData.reward.room as keyof typeof chestPosations]
+  const positionKey = `posistion${stepData.reward.position.slice(
+    -1,
+  )}` as keyof typeof roomData
+  modelsController.chestPosition(
+    new THREE.Vector3(roomData[positionKey].x, 0, roomData[positionKey].z),
+    new THREE.Euler(
+      0,
+      ['position1', 'position3'].includes(stepData.reward.position)
+        ? -(Math.PI / 2)
+        : Math.PI / 2,
+      0,
+    ),
+  )
 }
 
 watch(currentStepData, (newData) => {
@@ -337,8 +373,10 @@ watch(currentStepData, (newData) => {
  * Detects if the current device is mobile/tablet based on user agent and screen size
  */
 const detectDevice = () => {
-  const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-  isMobile.value = mobileRegex.test(navigator.userAgent) || window.innerWidth <= 1024
+  const mobileRegex
+    = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+  isMobile.value
+    = mobileRegex.test(navigator.userAgent) || window.innerWidth <= 1024
 }
 
 /**
@@ -381,7 +419,8 @@ const resetGameState = () => {
  * @param isProblemSolved Whether the math problem was correctly solved
  */
 
-const DOOR_OPEN_SOUND = '/assets/sounds/STREAMING-door-creaking-open-glitchedtones-2-2-00-01.mp3'
+const DOOR_OPEN_SOUND
+  = '/assets/sounds/STREAMING-door-creaking-open-glitchedtones-2-2-00-01.mp3'
 
 const closeMathModal = (isProblemSolved: boolean) => {
   isMathModalOpen.value = false
@@ -391,14 +430,23 @@ const closeMathModal = (isProblemSolved: boolean) => {
     const currentStep = `step${step.value}` as keyof Level[keyof Level]
     const doorKey = nearDoor.value as keyof typeof doorModels
 
-    if (openedDoors.value[level.value - 1]
-      && openedDoors.value[level.value - 1].steps[currentStep as 'step1' | 'step2' | 'step3' | 'step4']) {
-      openedDoors.value[level.value - 1].steps[currentStep as 'step1' | 'step2' | 'step3' | 'step4'][doorKey] = true
+    if (
+      openedDoors.value[level.value - 1]
+      && openedDoors.value[level.value - 1].steps[
+        currentStep as 'step1' | 'step2' | 'step3' | 'step4'
+      ]
+    ) {
+      openedDoors.value[level.value - 1].steps[
+        currentStep as 'step1' | 'step2' | 'step3' | 'step4'
+      ][doorKey] = true
       playSound(DOOR_OPEN_SOUND, 0.7)
     }
 
     // Return to pointer lock on desktop
-    if (!isMobileOrTablet.value && document.pointerLockElement !== container.value) {
+    if (
+      !isMobileOrTablet.value
+      && document.pointerLockElement !== container.value
+    ) {
       container.value?.requestPointerLock()
     }
   }
@@ -438,8 +486,10 @@ const handleGateInteraction = () => {
 }
 
 // Sound paths
-const CHEST_OPEN_SOUND = '/assets/sounds/STREAMING-opening-closing-wooden-chest-joshua-chivers-1-00-04 (mp3cut.net) (1).mp3'
-const COINS_GRAB_SOUND = '/assets/sounds/STREAMING-puff-of-magic-treasure-chest-light-smartsound-fx-1-00-04 (mp3cut.net).mp3'
+const CHEST_OPEN_SOUND
+  = '/assets/sounds/STREAMING-opening-closing-wooden-chest-joshua-chivers-1-00-04 (mp3cut.net) (1).mp3'
+const COINS_GRAB_SOUND
+  = '/assets/sounds/STREAMING-puff-of-magic-treasure-chest-light-smartsound-fx-1-00-04 (mp3cut.net).mp3'
 
 const handleChestInteraction = () => {
   modelsController?.chestAnimation?.()?.play()
@@ -525,7 +575,10 @@ const handleMoveEnd = (direction: string) => {
 /**
  * Initializes the character and interaction systems
  */
-const initializeCharacterAndInteractions = (scene: THREE.Scene, camera: THREE.PerspectiveCamera) => {
+const initializeCharacterAndInteractions = (
+  scene: THREE.Scene,
+  camera: THREE.PerspectiveCamera,
+) => {
   characterController = useCharacterController(
     scene,
     camera,
@@ -558,9 +611,15 @@ const initializeCharacterAndInteractions = (scene: THREE.Scene, camera: THREE.Pe
     if (updateInteractions) {
       updateInteractions(() => {
         if (currentStepData.value?.reward) {
-          isNearChest.value = (modelsController?.chestInteractions(characterContainer.value as THREE.Object3D) && !isChestOpen.value) || false
+          isNearChest.value
+            = (modelsController?.chestInteractions(
+              characterContainer.value as THREE.Object3D,
+            )
+            && !isChestOpen.value)
+          || false
         }
-        isNearGate.value = gateInteractions(characterContainer.value as THREE.Object3D) || false
+        isNearGate.value
+          = gateInteractions(characterContainer.value as THREE.Object3D) || false
       })
     }
     // advance chest opening animation
@@ -572,7 +631,11 @@ const initializeCharacterAndInteractions = (scene: THREE.Scene, camera: THREE.Pe
 
   // Watch for proximity to interactive objects
   watch(
-    () => [characterController?.isNearDoor.value, isNearGate.value, isNearChest.value],
+    () => [
+      characterController?.isNearDoor.value,
+      isNearGate.value,
+      isNearChest.value,
+    ],
     (newValue, oldValue) => {
       const [newDoorStatus, newGateStatus, newChestStatus] = newValue || []
       const [oldDoorStatus, oldGateStatus, oldChestStatus] = oldValue || []
@@ -602,7 +665,15 @@ const initializeCharacterAndInteractions = (scene: THREE.Scene, camera: THREE.Pe
 // lunch coins from the chest
 const launchCoins = () => {
   if (throwCoinsMethod && boxSizeRef) {
-    throwCoinsMethod(boxSizeRef, ['position1', 'position3'].includes(currentStepData.value?.reward?.position || '') ? 'right' : 'left', 80)
+    throwCoinsMethod(
+      boxSizeRef,
+      ['position1', 'position3'].includes(
+        currentStepData.value?.reward?.position || '',
+      )
+        ? 'right'
+        : 'left',
+      80,
+    )
   }
 }
 
@@ -651,12 +722,9 @@ onMounted(async () => {
   })
 
   // initialize physics
-  const {
-    initPhysics,
-    throwCoins,
-    updatePhysics,
-    cleanup,
-  } = usePhysics(scene.value)
+  const { initPhysics, throwCoins, updatePhysics, cleanup } = usePhysics(
+    scene.value,
+  )
 
   initPhysics()
 
@@ -672,10 +740,20 @@ onMounted(async () => {
   // Start the main ThreeJS rendering loop
   startAnimationLoop(() => {
     if (currentStepData.value?.reward) {
-      const roomData = chestPosations[currentStepData.value.reward.room as keyof typeof chestPosations]
-      const positionKey = `posistion${currentStepData.value.reward.position.slice(-1)}` as keyof typeof roomData
+      const roomData
+        = chestPosations[
+          currentStepData.value.reward.room as keyof typeof chestPosations
+        ]
+      const positionKey
+        = `posistion${currentStepData.value.reward.position.slice(
+          -1,
+        )}` as keyof typeof roomData
 
-      boxSizeRef = { x: roomData[positionKey].x, y: 0, z: roomData[positionKey].z }
+      boxSizeRef = {
+        x: roomData[positionKey].x,
+        y: 0,
+        z: roomData[positionKey].z,
+      }
 
       updatePhysics(boxSizeRef)
     }
@@ -695,15 +773,15 @@ onMounted(async () => {
 <style>
 /* Game container styles */
 .container {
-    width: 100%;
-    height: calc(100vh - 8rem);
-    position: relative;
+  width: 100%;
+  height: calc(100vh - 8rem);
+  position: relative;
 }
 
 /* Main wrapper styles */
 .main {
-    position: relative;
-    margin-top: 8rem;
-    /* Space for header/navigation */
+  position: relative;
+  margin-top: 8rem;
+  /* Space for header/navigation */
 }
 </style>

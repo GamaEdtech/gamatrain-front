@@ -64,7 +64,6 @@ const props = defineProps({
 })
 const nuxtApp = useNuxtApp()
 const route = useRoute()
-const router = useRouter()
 const contentData = ref(props.content)
 const nameSubmitLoader = ref(false)
 const generalDataEditMode = reactive({
@@ -81,7 +80,7 @@ function isRequired(value) {
   try {
     return !!value.trim()
   }
-  catch (e) {
+  catch {
     return false
   }
 }
@@ -110,6 +109,7 @@ function handleUpdate() {
     })
     .catch((err) => {
       if (err?.response?.status == 401 || err?.response?.status == 403) {
+        nuxtApp.$toast?.error('Please login to update school name')
       }
       else nuxtApp.$toast?.error(err?.response?.data?.message)
     })

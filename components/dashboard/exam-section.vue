@@ -8,7 +8,9 @@
         <v-card-title class="text-h4">
           <v-row>
             <v-col cols="6">
-              <i class="fa-solid fa-laptop mr-2" />
+              <v-icon class="mr-2">
+                md:laptop_mac
+              </v-icon>
               Exams
             </v-col>
             <v-col
@@ -29,13 +31,17 @@
           <v-row class="mt-5 d-flex d-md-none">
             <v-col cols="6">
               <p class="text-h5">
-                <i class="fa-regular fa-circle-check green--text" />
+                <v-icon color="green">
+                  md:check_circle
+                </v-icon>
                 Participated
               </p>
             </v-col>
             <v-col cols="6">
               <p class="text-h5">
-                <i class="fa-regular fa-times-circle red--text" />
+                <v-icon color="red">
+                  md:cancel
+                </v-icon>
                 Not Participated
               </p>
             </v-col>
@@ -52,15 +58,25 @@
                       Course name
                     </th>
                     <th class="text-center teal--text text-h5">
-                      <i
-                        class="fa-regular fa-circle-check fa-xl green--text d-block d-md-none"
-                      />
+                      <v-icon
+                        class="d-block d-md-none"
+                        size="x-large"
+                        color="green"
+                      >
+                        md:check_circle
+                      </v-icon>
+
                       <span class="d-none d-md-block"> Participated </span>
                     </th>
                     <th class="text-center orange--text text-h5">
-                      <i
-                        class="fa-regular fa-times-circle fa-xl red--text d-block d-md-none"
-                      />
+                      <v-icon
+                        class="d-block d-md-none"
+                        size="x-large"
+                        color="red"
+                      >
+                        md:cancel
+                      </v-icon>
+
                       <span class="d-none d-md-block"> Not Participated </span>
                     </th>
                   </tr>
@@ -100,7 +116,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+const _props = defineProps({
   examData: {
     type: Object,
     default: () => ({}),

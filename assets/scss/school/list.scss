@@ -22,70 +22,21 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             justify-content: flex-start;
             row-gap: 20px;
             padding: 0 20px 20px 20px;
-            @include style.responsive-size(padding,
+            @include style.responsive-size(
+                padding,
                 0 20px 20px 20px,
                 0 20px 20px 20px,
                 0 20px 20px 20px,
-                0 10px 20px 10px);
-
-            .card-school {
-                width: 100%;
-                min-height: fit-content;
-                background-color: rgba(255, 255, 255, 0.95);
-                border-radius: 10px;
-                border: 1px solid rgba(242, 244, 247, 1);
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                justify-content: space-between;
-
-                .name-address-image {
-                    padding: 16px;
-                    width: 100%;
-                    display: flex;
-                    align-items: flex-start;
-                    flex-wrap: wrap;
-                    row-gap: 20px;
-                    min-height: 130px;
-                    position: relative;
-                    @include style.responsive-size(justify-content,
-                        space-between,
-                        space-between,
-                        space-between,
-                        center);
-
-                    .name-div {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: flex-start;
-                        justify-content: flex-start;
-                        row-gap: 20px
-                    }
-
-                    .img-div {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        transform: translate(-50%, -50%);
-                        z-index: 0;
-                    }
-                }
-
-                .line-seperator {
-                    width: 100%;
-                    height: 1px;
-                    background-color: rgba(242, 244, 247, 1);
-                }
-            }
+                0 10px 20px 10px
+            );
 
             .line-specifier-load-more {
                 width: 100%;
                 height: 6px;
-                // background-color: red;
             }
 
             .not-found-div {
@@ -121,46 +72,6 @@
 
         .container-scroll {
             padding: 0 10px 20px 10px;
-
-            .card-school {
-                padding: 10px;
-            }
         }
     }
-}
-
-.school-card-bg {
-    position: relative;
-    width: 100%;
-    height: 340px;
-    background-size: cover;
-    background-position: center;
-    overflow: hidden;
-    display: flex;
-    align-items: flex-end;
-}
-
-.school-card-overlay {
-    width: inherit !important;
-    background: rgba(255, 255, 255, 0.87);
-    padding: 15px 12px;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
-    position: relative;
-}
-
-.school-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-
-.school-name {
-    font-family: Inter;
-    font-weight: 600;
-    font-style: Semi Bold;
-    font-size: 16px;
-    line-height: 26px;
-    letter-spacing: 0%;
 }

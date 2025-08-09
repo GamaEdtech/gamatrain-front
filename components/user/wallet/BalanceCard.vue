@@ -10,9 +10,7 @@
       >
         <span class="text-xl-h4 gray--text">Main balance</span>
         <v-icon class="ml-2 gray--text">
-          {{
-            showBalance ? "mdi-eye" : "mdi-eye-off"
-          }}
+          {{ showBalance ? "mdi-eye" : "mdi-eye-off" }}
         </v-icon>
       </div>
 
@@ -103,7 +101,7 @@ import { useApiService } from '~/composables/useApiService'
 
 // Composables
 const auth = useAuth()
-const { $toast } = useNuxtApp()
+const { $toast: _toast } = useNuxtApp()
 
 // Reactive state
 const balance = ref(0)

@@ -127,15 +127,31 @@
 import { useDisplay } from 'vuetify/lib/composables/display'
 
 const display = useDisplay()
-const nuxtApp = useNuxtApp()
-const route = useRoute()
-const router = useRouter()
 const imageClass = ref(null)
 const emit = defineEmits(['fetch'])
 const props = defineProps({
-  content: {},
-  class: {},
-  images: {},
+  content: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  class: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  images: {
+    type: Array,
+    required: false,
+    default: () => [],
+    validator(value) {
+      return value.every(
+        item =>
+          typeof item === 'string'
+          || (typeof item === 'object' && 'url' in item),
+      )
+    },
+  },
 })
 const contentData = ref(props.content)
 const activeGalleryIndex = ref(0)

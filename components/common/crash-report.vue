@@ -69,22 +69,10 @@
 export default {
   name: 'CrashReport',
   props: {
-    report_type_list: {
+    reportTypeList: {
       type: Array,
-      default: () => [
-        {
-          value: 1,
-          label: 'The file cannot be downloaded',
-        },
-        {
-          value: 2,
-          label: 'The file is wrong',
-        },
-        {
-          value: 3,
-          label: 'The content of the file is inappropriate or incorrect.',
-        },
-      ],
+      required: false,
+      default: () => [],
     },
   },
   data() {

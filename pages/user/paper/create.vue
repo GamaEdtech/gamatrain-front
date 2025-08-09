@@ -17,8 +17,8 @@
           ref="form"
           v-model="isFormValid"
           lazy-validation
-          @submit.prevent="onSubmit"
           autocomplete="off"
+          @submit.prevent="onSubmit"
         >
           <v-row>
             <v-col
@@ -175,7 +175,7 @@
                 item-value="id"
                 label="Month"
                 color="#FFB300"
-                autocomplete="off" 
+                autocomplete="off"
               />
             </v-col>
             <v-col
@@ -302,8 +302,8 @@
                 :loading="file_pdf_loading"
                 prepend-inner-icon="mdi-file-pdf-box"
                 append-icon="mdi-folder-open"
-                @change="uploadFile('file_pdf', $event)"
                 autocomplete="off"
+                @change="uploadFile('file_pdf', $event)"
               />
             </v-col>
             <v-col
@@ -506,7 +506,7 @@ const test_type_loading = ref(false)
 
 const section_list = ref([])
 const grade_list = ref([])
-const field_list = ref([])
+const _field_list = ref([])
 const lesson_list = ref([])
 const topic_list = ref([])
 const test_type_list = ref([])
@@ -625,26 +625,28 @@ const getClassificationTypes = async (sectionId) => {
 
   test_type_loading.value = true
   try {
-    const params = { 
+    const params = {
       type: 'test_type',
-      section_id: sectionId 
+      section_id: sectionId,
     }
     const response = await useApiService.get('/api/v1/types/list', params)
-    
+
     // The API should return board-specific classifications including:
     // - General resources (Coursebook, Workbook) for all boards
     // - CIE papers (Paper 1, Paper 2, etc.) for CIE board
     // - Edexcel papers and Units for Edexcel board
     // - Other board-specific classifications
     test_type_list.value = response.data || []
-    
+
     // Handle empty response
     if (!response.data || response.data.length === 0) {
       console.warn('No classification types returned for board:', sectionId)
     }
-  } catch (err) {
+  }
+  catch (err) {
     handleClassificationError(err)
-  } finally {
+  }
+  finally {
     test_type_loading.value = false
   }
 }
@@ -845,6 +847,7 @@ const uploadFile = async (file_name, ev, index = '') => {
         extraAttr.value[index].file = response.data[0].file.name
       }
       else {
+        console.warn('No extra attribute found at index:', index)
       }
     }
   }
@@ -868,7 +871,7 @@ const addExtraAttr = () => {
 watch(
   () => formData.section,
   (val) => {
-    userState.value.lastSelectedCurriculum = val
+    userState.value.lastSelectedCurriculum = formData.section
     formData.base = ''
     formData.lesson = ''
     formData.topics = []
@@ -885,19 +888,19 @@ watch(
 
 watch(
   () => formData.base,
-  (val) => {
-    userState.value.lastSelectedGrade = val
+  () => {
+    userState.value.lastSelectedGrade = formData.base
     formData.lesson = ''
-    if (val) getTypeList('lesson', val)
+    if (formData.base) getTypeList('lesson', formData.base)
   },
 )
 
 watch(
   () => formData.lesson,
-  (val) => {
-    userState.value.lastSelectedSubject = val
-    if (val) {
-      getTypeList('topic', val)
+  () => {
+    userState.value.lastSelectedSubject = formData.lesson
+    if (formData.lesson) {
+      getTypeList('topic', formData.lesson)
       if (topicSelectorRef.value) {
         topicSelectorRef.value.lesson_selected = true
       }
@@ -914,21 +917,21 @@ watch(
 
 watch(
   () => formData.holding_level,
-  (val) => {
-    userState.value.lastSelectedHoldingLevel = val
+  () => {
+    userState.value.lastSelectedHoldingLevel = formData.holding_level
   },
 )
 
 watch(
   () => formData.state,
-  (val) => {
-    getTypeList('area', val)
+  () => {
+    getTypeList('area', formData.state)
   },
 )
 
 watch(
   () => formData.area,
-  (val) => {
+  () => {
     getTypeList('school')
   },
 )
@@ -942,7 +945,7 @@ onMounted(() => {
   getTypeList('section')
   getTypeList('state')
   getExtraFileType()
-  
+
   // Load classifications if board is already selected (from user state)
   if (formData.section) {
     getClassificationTypes(formData.section)

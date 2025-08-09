@@ -2,7 +2,6 @@ import {
   InstancedMesh,
   Object3D,
   DynamicDrawUsage,
-  MeshStandardMaterial,
   MeshBasicMaterial,
   BufferGeometry,
   Float32BufferAttribute,
@@ -30,7 +29,8 @@ export default class Gems {
     this.gemCount = this.options.gemCount
     this.laneCount = this.options.countLine
     this.laneWidth = this.options.roadWidth / this.laneCount
-    this.positionMiddleRoad = this.options.mountainWidth + (this.options.groundWidth / 2)
+    this.positionMiddleRoad
+      = this.options.mountainWidth + this.options.groundWidth / 2
     this.gemsInformation = this.options.gemsInformation
 
     this.fireWorks = []
@@ -50,7 +50,10 @@ export default class Gems {
   }
 
   getRoadZOffset(positionX) {
-    return Math.cos(positionX * this.options.roadFrequencyX) * this.options.roadAmplitudeX
+    return (
+      Math.cos(positionX * this.options.roadFrequencyX)
+      * this.options.roadAmplitudeX
+    )
   }
 
   getFinalZ(positionX, currentLane) {
@@ -65,7 +68,10 @@ export default class Gems {
     this.instanceMesh.setMatrixAt(gemIndex, dummy.matrix)
     this.instanceMesh.instanceMatrix.needsUpdate = true
 
-    const z = this.getFinalZ(this.gemsInformation[gemIndex].x, this.gemsInformation[gemIndex].lane)
+    const z = this.getFinalZ(
+      this.gemsInformation[gemIndex].x,
+      this.gemsInformation[gemIndex].lane,
+    )
     this.createRandomFireWork(
       new Vector3(this.gemsInformation[gemIndex].x, 1, z),
     )
@@ -116,9 +122,18 @@ export default class Gems {
     }
 
     const geometryFireWork = new BufferGeometry()
-    geometryFireWork.setAttribute('position', new Float32BufferAttribute(positionArrays, 3))
-    geometryFireWork.setAttribute('aSize', new Float32BufferAttribute(sizesArray, 1))
-    geometryFireWork.setAttribute('aTimeMultiplier', new Float32BufferAttribute(timeMultipliersArray, 1))
+    geometryFireWork.setAttribute(
+      'position',
+      new Float32BufferAttribute(positionArrays, 3),
+    )
+    geometryFireWork.setAttribute(
+      'aSize',
+      new Float32BufferAttribute(sizesArray, 1),
+    )
+    geometryFireWork.setAttribute(
+      'aTimeMultiplier',
+      new Float32BufferAttribute(timeMultipliersArray, 1),
+    )
 
     this.resources.items.starParticleTexture.flipY = false
     const materialFireWork = new ShaderMaterial({
@@ -173,7 +188,11 @@ export default class Gems {
   }
 
   setMesh() {
-    this.instanceMesh = new InstancedMesh(this.gemGeometry, this.gemMaterial, this.gemCount)
+    this.instanceMesh = new InstancedMesh(
+      this.gemGeometry,
+      this.gemMaterial,
+      this.gemCount,
+    )
     this.instanceMesh.instanceMatrix.setUsage(DynamicDrawUsage)
     const dummy = new Object3D()
 
@@ -208,6 +227,5 @@ export default class Gems {
     })
   }
 
-  setDebug() {
-  }
+  setDebug() {}
 }

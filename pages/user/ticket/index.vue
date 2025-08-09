@@ -95,7 +95,7 @@
                 </p>
                 <p class="d-md-none mt-2">
                   <span>
-                    <i class="fa fa-calendar-alt" />
+                    <v-icon>md:calendar_month</v-icon>
                     {{ $dayjs(message.up_date).format("MMM,DD YYYY") }}
                   </span>
                 </p>
@@ -108,7 +108,8 @@
               >
                 <p class="mb-2">
                   <span class="d-none d-md-inline">
-                    <i class="fa fa-calendar-alt ml-2" />
+                    <v-icon class="ml-2">md:calendar_month</v-icon>
+
                     {{ $dayjs(message.up_date).format("MMM,DD YYYY") }}
                   </span>
                   <span class="d-none d-md-inline ml-2 font-weight-regular">
@@ -199,7 +200,12 @@
               color="teal"
               class="text-white"
             >
-              <i class="fa fa-comment-alt fa-2xl mr-2" />
+              <v-icon
+                class="mr-2"
+                size="x-large"
+              >
+                md:comment
+              </v-icon>
               New
             </v-btn>
           </div>
@@ -375,7 +381,7 @@ export default {
       this.delete_loading = true
       await this.$fetch
         .$delete(`/api/v1/tickets/${this.delete_ticket_id}`)
-        .then((response) => {
+        .then((_response) => {
           this.delete_ticket_id = null
           this.deleteConfirmDialog = false
 
@@ -385,7 +391,7 @@ export default {
           this.messages = []
           this.getMsgList()
         })
-        .catch((e) => {
+        .catch((_e) => {
           this.delete_paper_id = null
           this.deleteConfirmDialog = false
         })

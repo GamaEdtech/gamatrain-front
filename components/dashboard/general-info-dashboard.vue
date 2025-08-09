@@ -104,7 +104,7 @@
 </template>
 
 <script setup>
-const auth = useAuth()
+const _auth = useAuth()
 // Define props using defineProps
 const props = defineProps({
   userData: {
@@ -157,7 +157,7 @@ watch(
 const updateUsername = async () => {
   if (!username.value || username.value.length < 6) return
   try {
-    const { data } = await useApiService.put('/api/v1/users/username', {
+    const { _data } = await useApiService.put('/api/v1/users/username', {
       username: username.value,
     })
     userInfoData.value.username = username.value

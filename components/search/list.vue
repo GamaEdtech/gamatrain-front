@@ -1,14 +1,19 @@
 <template>
   <div class="w-100 d-flex flex-column align-center justify-start mt-4 ga-4">
     <template v-if="isInitialLoading">
-      <search-card-skeleton v-for="item in 4" />
+      <search-card-skeleton
+        v-for="(item, index) in 4"
+        :key="index"
+      />
     </template>
 
-    <template
-      v-for="(item, index) in dataList"
-      v-if="!isInitialLoading"
-    >
-      <search-card :information="item" />
+    <template v-if="!isInitialLoading">
+      <template
+        v-for="(item, index) in dataList"
+        :key="item.id || index"
+      >
+        <search-card :information="item" />
+      </template>
     </template>
 
     <div

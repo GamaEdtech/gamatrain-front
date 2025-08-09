@@ -92,6 +92,7 @@
 
 <script>
 // import { ValidationProvider, ValidationObserver } from "vee-validate";
+import querystring from 'querystring'
 
 export default {
   name: 'UserInfo',
@@ -118,11 +119,10 @@ export default {
   methods: {
     updateInfo() {
       this.update_loading = true
-      const querystring = require('querystring')
 
       this.$fetch
         .$post('/api/v1/users/info', querystring.stringify(this.info))
-        .then((response) => {
+        .then((_response) => {
           const updatedData = {
             avatar: this.$auth.user.avatar,
             credit: this.$auth.user.credit,

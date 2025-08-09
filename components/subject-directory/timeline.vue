@@ -1,7 +1,7 @@
 <template>
   <div
     :class="`timeline-column position-relative d-flex flex-column align-center text-center h-100 ${
-      !isLoading && timeline.length == 0 ? `hide-line` : ``
+      !isLoading && timeline.length == 0 ? 'hide-line' : ''
     }`"
   >
     <div
@@ -9,7 +9,8 @@
       class="d-flex flex-column align-center w-100"
     >
       <v-skeleton-loader
-        v-for="item in 3"
+        v-for="(item, index) in 3"
+        :key="index"
         class="time-line-box-skeleton"
         type="image"
       />
@@ -47,7 +48,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   timeline: {
     type: Array,
     required: true,

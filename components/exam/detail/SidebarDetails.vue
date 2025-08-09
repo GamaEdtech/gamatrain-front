@@ -33,21 +33,27 @@
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-folder mr-1 icon" />
+        <v-icon class="mr-1 icon">
+          md:folder
+        </v-icon>
         File type: {{ contentData.azmoon_type_title }}
       </v-col>
       <v-col
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-eye mr-1 icon" />
+        <v-icon class="mr-1 icon">
+          md:visibility
+        </v-icon>
         Viewed: {{ contentData.views || "Unknown" }}
       </v-col>
       <v-col
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-calendar-alt mr-1 icon" />
+        <v-icon class="mr-1 icon">
+          md:calendar_month
+        </v-icon>
         Last update: {{ lastUpdate }}
       </v-col>
       <v-col
@@ -58,7 +64,9 @@
           class="pointer"
           @click="onCrashReport"
         >
-          <i class="fa-solid fa-bug mr-1 icon" />
+          <v-icon class="mr-1 icon">
+            md:bug_report
+          </v-icon>
           Crash report
         </div>
       </v-col>

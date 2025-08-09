@@ -84,7 +84,6 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useNuxtApp } from '#app'
-import { useRoute } from 'vue-router'
 
 const props = defineProps({
   modelValue: {

@@ -130,7 +130,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+const _props = defineProps({
   item: { type: Object, required: true },
   index: { type: Number, required: true },
   modelValue: { type: [String, Number], default: null },

@@ -303,7 +303,12 @@ async function uploadImage() {
       dialogVisible.value = false
       emit('refresh-gallery')
     }
-    catch (error) {}
+    catch (error) {
+      console.error('Error cleaning up after upload:', error)
+      $toast.error('Error occurred while finalizing upload', {
+        containerClass: 'toast-dialog-notif',
+      })
+    }
   }
   catch (err) {
     if (err.response?.status == 401 || err.response?.status == 403) {
@@ -377,7 +382,7 @@ function openAuthDialog(val) {
 
 function croppedData(data) {
   const timestamp = new Date().getTime()
-  const originalFile = pendingUploads.value[currentCropIndex.value]
+  const _originalFile = pendingUploads.value[currentCropIndex.value]
   const fileType = 'image/webp'
   const fileExt = 'webp'
   const filename = `image_${timestamp}_${currentCropIndex.value}.${fileExt}`

@@ -533,8 +533,8 @@ const getTypeList = async (type, parent = '') => {
       content_type_list.value = response.data
     }
   }
-  catch (err) {
-    $toast.error(err.message || 'Error loading data')
+  catch {
+    $toast.error('Error loading data')
   }
   finally {
     loading.section = false
@@ -544,7 +544,7 @@ const getTypeList = async (type, parent = '') => {
   }
 }
 
-const changeOption = (type, value) => {
+const _changeOption = (type, value) => {
   // Skip if we're in initial load
   if (isInitialLoad.value) return
 
@@ -599,15 +599,8 @@ const updateContent = async () => {
       router.push('/user/multimedia')
     }
   }
-  catch (err) {
-    if (err.response?.status === 403) {
-    }
-    else if (err.response?.status === 400) {
-      $toast.error(err.response.data.message || 'Error updating multimedia')
-    }
-    else {
-      $toast.error(err.message || 'Error updating multimedia')
-    }
+  catch {
+    $toast.error('Error updating multimedia')
   }
   finally {
     loading.form = false
@@ -660,7 +653,7 @@ const uploadFile = async (value) => {
 
     $toast.success('File uploaded successfully')
   }
-  catch (err) {
+  catch {
     $toast.error('An error occurred during file upload')
   }
   finally {
@@ -758,17 +751,8 @@ const startDownload = async () => {
     const FileSaver = await import('file-saver')
     FileSaver.saveAs(response.data.url, response.data.name)
   }
-  catch (err) {
-    if (err.response?.status == 400) {
-      if (
-        err.response.data.status == 0
-        && err.response.data.error == 'creditNotEnough'
-      ) {
-        $toast.info('No enough credit')
-      }
-    }
-    else if (err.response?.status == 403) {
-    }
+  catch {
+    $toast.error('Error downloading file')
   }
   finally {
     download_loading.value = false

@@ -97,7 +97,7 @@ export default {
       this.lesson_list = []
       if (val) this.getTypeList('lesson', val)
     },
-    'form.lesson'(val) {
+    'form.lesson'(_val) {
       //
     },
   },

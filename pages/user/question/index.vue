@@ -306,7 +306,7 @@ definePageMeta({
 })
 
 // Use services
-const router = useRouter()
+const _router = useRouter()
 const { $toast } = useNuxtApp()
 
 // Page title
@@ -455,7 +455,7 @@ const scroll = () => {
   }
 }
 
-const filterChanged = (type) => {
+const _filterChanged = (type) => {
   if (type == 'level') {
     filter.grade = ''
     filter.lesson = ''

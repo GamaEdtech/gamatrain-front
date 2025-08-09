@@ -17,7 +17,8 @@
             MathJax Rendering Test Bench
           </h1>
           <p class="text-medium-emphasis mt-2">
-            A comprehensive suite to validate the rendering of various LaTeX expressions by MathJax.
+            A comprehensive suite to validate the rendering of various LaTeX
+            expressions by MathJax.
           </p>
         </div>
 
@@ -49,7 +50,9 @@
                   cols="12"
                   md="6"
                 >
-                  <v-card-title class="text-subtitle-1 font-weight-bold d-flex align-center">
+                  <v-card-title
+                    class="text-subtitle-1 font-weight-bold d-flex align-center"
+                  >
                     <v-icon
                       small
                       left
@@ -61,7 +64,9 @@
                   </v-card-title>
                   <v-divider />
                   <v-card-text>
-                    <pre class="raw-latex-code"><code>{{ testCase.rawString }}</code></pre>
+                    <pre
+                      class="raw-latex-code"
+                    ><code>{{ testCase.rawString }}</code></pre>
                   </v-card-text>
                 </v-col>
 
@@ -70,7 +75,9 @@
                   md="6"
                   class="rendered-col"
                 >
-                  <v-card-title class="text-subtitle-1 font-weight-bold d-flex align-center">
+                  <v-card-title
+                    class="text-subtitle-1 font-weight-bold d-flex align-center"
+                  >
                     <v-icon
                       small
                       left
@@ -189,7 +196,9 @@ const typesetMathInContainer = async () => {
       await $ensureMathJaxReady()
       if (!window.MathJax?.Hub) return
 
-      const elementToProcess = (mathJaxContainerRef.value as any).$el ?? mathJaxContainerRef.value
+      const elementToProcess
+        = (mathJaxContainerRef.value as { $el?: HTMLElement })?.$el
+          ?? mathJaxContainerRef.value
 
       if (elementToProcess instanceof HTMLElement) {
         await nextTick()
@@ -216,7 +225,7 @@ onMounted(() => {
   border-radius: 4px;
   white-space: pre-wrap; /* Allows wrapping of long lines */
   word-break: break-all; /* Breaks long words/strings */
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
   font-size: 0.9rem;
 }
 

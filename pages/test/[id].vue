@@ -3,7 +3,8 @@
     <template v-if="!contentData">
       <v-skeleton-loader type="subtitle" />
       <v-skeleton-loader
-        v-for="loader in 4"
+        v-for="(loader, index) in 4"
+        :key="index"
         type="paragraph"
       />
     </template>
@@ -13,19 +14,87 @@
       :content-data="contentData"
       @next="handleLoadNextTest"
     />
+    <section class="my-4">
+      <v-container>
+        <v-row justify="center">
+          <v-col
+            cols="12"
+            md="10"
+          >
+            <v-chip
+              link
+              class="mr-1 bg-blue-grey-darken-1 text-white"
+              :small="display.mdAndDown"
+            >
+              <nuxt-link
+                :to="`/search?type=test&section=${contentData?.section}`"
+              >
+                {{ contentData?.section_title }}
+              </nuxt-link>
+            </v-chip>
+            <v-chip
+              link
+              class="mr-1 bg-blue-grey-darken-1 text-white"
+              :small="display.mdAndDown"
+            >
+              <nuxt-link
+                :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
+              >
+                {{ contentData?.base_title }}
+              </nuxt-link>
+            </v-chip>
+            <v-chip
+              class="ma-1 bg-blue-grey-darken-1 text-white"
+              :small="display.mdAndDown"
+            >
+              <nuxt-link
+                :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
+              >
+                {{ contentData?.lesson_title }}
+              </nuxt-link>
+            </v-chip>
+            <v-chip
+              :small="display.mdAndDown"
+              :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
+              class="ma-1 bg-primary text-white"
+            >
+              {{ contentData?.lesson_title }} directory
+            </v-chip>
+          </v-col>
+        </v-row>
+      </v-container>
+    </section>
+
+    <v-row
+      justify="center"
+      class="mt-10"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        class="text-center"
+      >
+        <common-ad-banner
+          v-model="isAdsLoad"
+          adslot="7199289937"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script setup>
 const route = useRoute()
 const testId = ref(route.params.id)
+const isAdsLoad = ref(false)
+const display = useGlobalDisplay()
 
 // Fetch data
 const {
   data: contentData,
-  pending,
+  pending: _pending,
   refresh,
-  execute,
+  execute: _execute,
 } = await useAsyncData(`exam-test-${route.params.id}`, async () => {
   const res = await $fetch(`/api/v1/examTests/${route.params.id}`, {
     params: { full: true },

@@ -31,8 +31,7 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick, onMounted } from 'vue'
-import { useNuxtApp } from '#app'
+import { ref, watch, onMounted } from 'vue'
 
 const props = defineProps({
   label: String,

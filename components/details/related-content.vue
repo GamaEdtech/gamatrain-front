@@ -246,21 +246,10 @@
 export default {
   name: 'RelatedContent',
   props: {
-    board: {
-      type: String | null,
-      default: null,
-    },
-    grade: {
-      type: String | null,
-      default: null,
-    },
-    subject: {
-      type: String | null,
-      default: null,
-    },
-    test_type: {
-      type: String | null,
-      default: null,
+    testType: {
+      type: String,
+      required: false,
+      default: '',
     },
   },
   data() {
@@ -302,7 +291,7 @@ export default {
 
           if (type === 'test') this.relatedPapers.push(...response.data.list)
         })
-        .catch((err) => {})
+        .catch((_err) => {})
         .finally(() => {
           this.loading = false
         })

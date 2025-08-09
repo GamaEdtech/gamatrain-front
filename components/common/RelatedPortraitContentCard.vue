@@ -4,10 +4,13 @@
     width="160"
     :style="{ height: `${CardHeight}`, borderRadius: '8px' }"
   >
-    <v-img
-      class="text-white align-end"
-      :height="CardHeight"
+    <NuxtImg
+      width="130px"
+      height="200px"
       :src="cardPicture"
+      class="text-white align-end w-100 h-100"
+      loading="lazy"
+      :alt="cardTitle"
     />
     <div class="circle-container">
       <div

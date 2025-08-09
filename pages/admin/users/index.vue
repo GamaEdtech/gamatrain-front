@@ -168,7 +168,7 @@ watch(selectedPageSize, () => {
 
 <template>
   <div>
-    <div class="d-flex justify-space-between align-center mb-4 flex-row">
+    <div class="d-flex justify-space-between align-center mb-1 flex-row">
       <v-btn
         class="rounded-pill gtext-t5 bg-primary-gray-700 text-white ml-4"
         @click="showAddUserDialog= true"
@@ -176,7 +176,14 @@ watch(selectedPageSize, () => {
         <span>New User</span>
       </v-btn>
     </div>
-
+    <div class="d-flex justify-end ga-2 align-center px-2">
+      <p class="primary-gray-500 gtext-t6 font-weight-bold">
+        {{ totalCount }}
+      </p>
+      <p class="gray--text gtext-t6 font-weight-semibold">
+        User
+      </p>
+    </div>
     <div class="scrollable-table">
       <v-data-table
         v-model="selected"
@@ -188,25 +195,25 @@ watch(selectedPageSize, () => {
         hide-default-footer
         show-select
       >
-        <template #item.username="{ item }">
+        <template #[`item.username`]="{ item }">
           <div class="d-flex align-center">
             <span class="truncate-text">{{ item.username }}</span>
           </div>
         </template>
 
-        <template #item.email="{ item }">
+        <template #[`item.email`]="{ item }">
           <div class="d-flex align-center">
             <span class="truncate-text">{{ item.email }}</span>
           </div>
         </template>
 
-        <template #header.actions>
+        <template #[`header.actions`]>
           <div class="d-flex justify-end pr-6">
             Actions
           </div>
         </template>
 
-        <template #item.enabled="{ item }">
+        <template #[`item.enabled`]="{ item }">
           <span
             v-if="item.enabled == true"
             class="gtext-t5 green-12b76a"
@@ -217,7 +224,7 @@ watch(selectedPageSize, () => {
           >disable</span>
         </template>
 
-        <template #item.actions="{ item }">
+        <template #[`item.actions`]="{ item }">
           <div class="d-flex justify-end pr-2">
             <v-btn
               variant="plain"
@@ -292,7 +299,6 @@ watch(selectedPageSize, () => {
       />
       <addUserDialog
         v-model="showAddUserDialog"
-        @confirm="deleteUser"
         @fetch-user="fetchUsers"
       />
     </div>
@@ -486,6 +492,6 @@ watch(selectedPageSize, () => {
 
 .min-width-10{
   min-width: 10px !important;
-  height: 10px !important;
+  height: 20px !important;
 }
 </style>

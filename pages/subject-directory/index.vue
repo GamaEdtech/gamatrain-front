@@ -271,7 +271,7 @@ const generateTimeLine = () => {
 
 // End Section Timeline
 
-const { data: lessonData, status } = await useAsyncData(
+const { data: lessonData, status: _status } = await useAsyncData(
   'lessonData',
   async () => {
     let resourcesData
@@ -313,6 +313,9 @@ const { data: lessonData, status } = await useAsyncData(
         console.error('Error fetching data:', error)
       }
       finally {
+        // Reset loading states after initial data fetch
+        isLoadingResources.value = false
+        isLoadingPapers.value = false
       }
     }
     return { resourcesData, papersData }

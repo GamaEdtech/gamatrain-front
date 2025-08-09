@@ -32,7 +32,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { computed } from 'vue'
 
 const { isAuthenticated } = useAuth()
 const props = defineProps({

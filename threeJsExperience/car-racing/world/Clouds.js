@@ -1,4 +1,10 @@
-import { SRGBColorSpace, MeshBasicMaterial, InstancedMesh, DynamicDrawUsage, Object3D } from 'three'
+import {
+  SRGBColorSpace,
+  MeshBasicMaterial,
+  InstancedMesh,
+  DynamicDrawUsage,
+  Object3D,
+} from 'three'
 import Experience from '../Experience.js'
 
 export default class Clouds {
@@ -29,7 +35,9 @@ export default class Clouds {
 
   setGeometry() {
     this.gltgModel = this.resources.items.cloudGLTFModel.scene
-    this.geometry = this.gltgModel.children.find(child => child.isMesh).geometry
+    this.geometry = this.gltgModel.children.find(
+      child => child.isMesh,
+    ).geometry
   }
 
   setMaterial() {
@@ -41,16 +49,23 @@ export default class Clouds {
   }
 
   setMesh() {
-    this.meshes = new InstancedMesh(this.geometry, this.material, this.cloudCount)
+    this.meshes = new InstancedMesh(
+      this.geometry,
+      this.material,
+      this.cloudCount,
+    )
     this.meshes.instanceMatrix.setUsage(DynamicDrawUsage)
     this.dummy = new Object3D()
 
     for (let i = 0; i < this.cloudCount; i++) {
       const x = Math.random() * this.options.roadSize
       const y = 10 + Math.random() * 4
-      const z = i < this.cloudCount / 2
-        ? Math.random() * this.options.mountainWidth
-        : (this.options.mountainWidth + this.options.groundWidth) + Math.random() * this.options.mountainWidth
+      const z
+        = i < this.cloudCount / 2
+          ? Math.random() * this.options.mountainWidth
+          : this.options.mountainWidth
+            + this.options.groundWidth
+            + Math.random() * this.options.mountainWidth
 
       const scale = 0.02 + Math.random() * 0.1
 
@@ -59,11 +74,7 @@ export default class Clouds {
       // this.offsets.push(Math.random() * Math.PI * 2)
 
       this.dummy.position.set(x, y, z)
-      this.dummy.rotation.set(
-        0,
-        Math.random() * Math.PI * 2,
-        0,
-      )
+      this.dummy.rotation.set(0, Math.random() * Math.PI * 2, 0)
       this.dummy.scale.set(scale, scale, scale)
       this.dummy.updateMatrix()
       this.meshes.setMatrixAt(i, this.dummy.matrix)
@@ -76,23 +87,18 @@ export default class Clouds {
   update() {
     // // floating animation clouds
     // const time = this.time.elapsedTime
-
     // for (let i = 0; i < this.totalClouds; i++) {
     //     const pos = this.positions[i]
     //     const offset = this.offsets[i]
     //     const floatY = pos.y + Math.sin(time * this.floatSpeed + offset) * this.floatHeight
-
     //     this.dummy.position.set(pos.x, floatY, pos.z)
     //     this.dummy.scale.set(pos.scale, pos.scale, pos.scale)
     //     this.dummy.rotation.set(0, offset, 0)
     //     this.dummy.updateMatrix()
     //     this.meshes.setMatrixAt(i, this.dummy.matrix)
     // }
-
     // this.meshes.instanceMatrix.needsUpdate = true
   }
 
-  setDebug() {
-    const CluodFolder = this.debug.ui.addFolder('CluodFolder')
-  }
+  setDebug() {}
 }

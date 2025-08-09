@@ -29,28 +29,36 @@
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-folder mr-1 icon" />
+        <v-icon class="mr-1 icon">
+          md:folder
+        </v-icon>
         File type: {{ contentTypeTitle }}
       </v-col>
       <v-col
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-book-open-reader mr-1 icon" />
+        <v-icon class="mr-1 icon">
+          md:auto_stories
+        </v-icon>
         Page count: {{ filePages }}
       </v-col>
       <v-col
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-eye mr-1 icon" />
+        <v-icon class="mr-1 icon">
+          md:visibility
+        </v-icon>
         Viewed: {{ views }}
       </v-col>
       <v-col
         cols="12"
         class="pb-0"
       >
-        <i class="fa-solid fa-calendar-alt mr-1 icon" />
+        <v-icon class="mr-1 icon">
+          md:calendar_month
+        </v-icon>
         Last update: {{ formatDate(upDate) }}
       </v-col>
       <v-col
@@ -61,7 +69,9 @@
           class="pointer"
           @click="openCrashReport"
         >
-          <i class="fa-solid fa-bug mr-1 icon" />
+          <v-icon class="mr-1 icon">
+            md:bug_report
+          </v-icon>
           Crash report
         </div>
       </v-col>
@@ -172,7 +182,7 @@ const emit = defineEmits(['download', 'copy-url', 'share-social'])
 
 // Reactive state
 const rating = ref(4.5)
-const copyBtnText = ref('Copy')
+const _copyBtnText = ref('Copy')
 const crash_report = ref(null)
 const copy_btn = ref('Copy')
 

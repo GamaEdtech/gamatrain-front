@@ -254,17 +254,17 @@ export default {
     },
   },
   watch: {
-    searchQuery(val) {
+    searchQuery(_val) {
       this.activeFaq = null
-      this.filteredItems.forEach((panel, i) => {
+      this.filteredItems.forEach((panel, _i) => {
         panel.isExpanded = false
       })
     },
   },
   methods: {
     togglePanel(index) {
-      this.filteredItems.forEach((panel, i) => {
-        if (i === index) {
+      this.filteredItems.forEach((panel, _i) => {
+        if (_i === index) {
           panel.isExpanded = !panel.isExpanded
         }
         else {

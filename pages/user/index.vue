@@ -71,7 +71,7 @@ import { useAuth } from '@/composables/useAuth'
 
 const { $toast } = useNuxtApp()
 const auth = useAuth()
-const authToken = auth.getUserToken()
+const _authToken = auth.getUserToken()
 
 definePageMeta({
   layout: 'dashboard-layout',

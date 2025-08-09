@@ -1,4 +1,5 @@
 import { defineNuxtPlugin } from '#app'
+import { useRuntimeConfig } from '#imports'
 
 export default defineNuxtPlugin((nuxtApp) => {
   const loadImg = (img) => {

@@ -1567,8 +1567,8 @@ export default {
         .then((response) => {
           this.form = response
         })
-        .catch((err) => {
-          console.log(err)
+        .catch((_err) => {
+          console.log(_err)
         })
     },
     async updatePage() {
@@ -1581,10 +1581,10 @@ export default {
           if (response == -1) this.$router.replace(`/school-list`)
           else this.$router.replace(`/school-list/edit/${response.Id}`)
         })
-        .catch((err) => {
+        .catch((_err) => {
           this.$toast.error('An error occurred during page creation.')
         })
-        .finally((msg) => {
+        .finally((_msg) => {
           this.update_loading = false
         })
     },
@@ -1600,8 +1600,8 @@ export default {
           if (response == -1) this.$router.replace(`/school-list`)
           else this.$router.replace(`/school-list/edit/${response.Id}`)
         })
-        .catch((err) => {
-          console.log(err)
+        .catch((_err) => {
+          console.log(_err)
         })
     },
   },

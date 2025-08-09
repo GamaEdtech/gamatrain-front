@@ -55,7 +55,7 @@ export default {
     bottomOfElement: false,
   }),
   watch: {
-    bottomOfElement: function (val) {
+    bottomOfElement: function (_val) {
       this.countsInterval = setInterval(this.updated)
     },
   },

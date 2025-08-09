@@ -112,7 +112,7 @@ import {
   onMounted,
   onBeforeUnmount,
   nextTick,
-  watch,
+  watch as _watch,
 } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -849,7 +849,7 @@ const filteredItems = computed(() => {
 })
 
 // Methods
-const smoothScroll = (elementId) => {
+const _smoothScroll = (elementId) => {
   const element = document.getElementById(elementId)
   if (element) {
     element.scrollIntoView({ behavior: 'smooth' })

@@ -6,12 +6,12 @@
       class="share_dialog"
       max-width="600"
     >
-      <template #activator="{ props }">
+      <template #activator="{ props: dialogProps }">
         <span
-          v-bind="props"
-          class="pointer"
+          v-bind="dialogProps"
+          class="share-trigger pointer"
         >
-          <i class="fa-solid fa-share-alt mr-1 icon" />
+          <v-icon class="mr-1 icon">md:share</v-icon>
           Share
         </span>
       </template>
@@ -32,7 +32,9 @@
                   block
                   @click="copyUrl"
                 >
-                  <i class="fa-solid fa-copy mr-1 icon" />
+                  <v-icon class="mr-1 icon">
+                    md:content_copy
+                  </v-icon>
                   &nbsp;
                   {{ copyBtnText }}
                 </v-btn>
@@ -45,7 +47,6 @@
                   class="text-white"
                   @click="shareWhatsApp"
                 >
-                  <i class="fab fa-whatsapp mr-1 icon" />
                   WhatsApp
                 </v-btn>
               </v-col>
@@ -56,7 +57,6 @@
                   class="text-white"
                   @click="shareTelegram"
                 >
-                  <i class="fab fa-telegram-plane mr-1 icon" />
                   Telegram
                 </v-btn>
               </v-col>
@@ -79,7 +79,7 @@
 <script setup>
 import { ref } from 'vue'
 
-const props = defineProps({
+defineProps({
   title: {
     type: String,
     default: '',

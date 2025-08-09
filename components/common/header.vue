@@ -22,9 +22,9 @@ function switchTo(name) {
   currentAuthComponent.value = name
 }
 const sidebar = ref(false)
-const dialog = ref(false)
-const logo = ref('mainlogo-gamatrain.png')
-const avatar = ref('dexter-morse.png')
+const _dialog = ref(false)
+const _logo = ref('mainlogo-gamatrain.png')
+const _avatar = ref('dexter-morse.png')
 const notificationComponent = ref(null)
 const menuItems = [
   {
@@ -58,13 +58,6 @@ const menuItems = [
   //   icon: "mdi-wallet-giftcard",
   //   icon_color: 'primary'
   // },
-]
-const selectedItem = 1
-const socialList = [
-  { link: 'telegram', icon: 'fa-telegram' },
-  { link: 'twitter', icon: 'fa-twitter' },
-  { link: 'instagram', icon: 'fa-instagram' },
-  { link: 'Youtube', icon: 'fa-youtube' },
 ]
 
 const menuLink = [
@@ -137,7 +130,7 @@ const searchFilterItems = [
   },
 ]
 const mobileSearchFilter = ref('')
-const keyword = ref('')
+const _keyword = ref('')
 
 const user_profile_items = [
   {
@@ -191,7 +184,7 @@ const menuSetting = ref({
 const searchResults = ref([])
 const searchCount = ref('...')
 const searchKey = ref('')
-const searchCate = ref('')
+const _searchCate = ref('')
 const searchLoading = ref(true)
 const pageNum = ref(1)
 const timer = ref(0)
@@ -202,8 +195,8 @@ const allDataLoaded = ref(false)
 const route = useRoute()
 const router = useRouter()
 
-const cookieToken = useCookie('authToken')
-const { user, setUser, cleanUser } = useUser()
+const _cookieToken = useCookie('authToken')
+const { user, _setUser, cleanUser } = useUser()
 
 const logout = () => {
   cleanUser()
@@ -255,7 +248,7 @@ const openLoginDialog = (componentName = 'login') => {
   isAuthModalOpen.value = true
   loginDialogVisible.value = true
 }
-const openRegisterDialog = () => {
+const _openRegisterDialog = () => {
   register_modal.value.register_dialog = true
 }
 
@@ -289,7 +282,7 @@ const handleScroll = () => {
       }
     }
 }
-const setActiveFilter = (val) => {
+const _setActiveFilter = (val) => {
   mobileSearchFilter.value = val
 }
 
@@ -334,7 +327,7 @@ const search = () => {
         }
       }
       catch (error) {
-        console.log(err)
+        console.log(error)
       }
       finally {
         searchLoading.value = false
@@ -358,7 +351,7 @@ const calcPath = (type) => {
   else if (type == 'gama_schools') return 'school'
   else if (type == 'gama_live') return 'live'
   else if (type == 'gama_students') return 'student'
-  else '/'
+  else return '/'
 }
 
 const startDrag = (e) => {
@@ -383,7 +376,7 @@ const handleDrag = () => {
     mobileSearchSheetConfig.value.startDragY = currentY
   }
 }
-const endDrag = (e) => {
+const endDrag = (_e) => {
   mobileSearchSheetConfig.value.isDragging = false
   if (mobileSearchSheetConfig.value.sheetHeight < 30)
     mobileSearchSheet.value = false
@@ -1068,9 +1061,7 @@ watch(
                                 class="list-item"
                               >
                                 <v-col cols="12">
-                                  <v-skeleton-loader
-                                    type="list-item-avatar"
-                                  />
+                                  <v-skeleton-loader type="list-item-avatar" />
                                 </v-col>
                               </v-row>
                             </div>
@@ -1091,9 +1082,7 @@ watch(
                                 class="list-item"
                               >
                                 <v-col cols="12">
-                                  <v-skeleton-loader
-                                    type="list-item-avatar"
-                                  />
+                                  <v-skeleton-loader type="list-item-avatar" />
                                 </v-col>
                               </v-row>
                             </div>
@@ -1220,30 +1209,28 @@ watch(
             </v-btn>
           </v-toolbar>
           <v-list three-line>
-            <template>
-              <v-list-item
-                v-for="(item, index) in notificationItems"
-                :key="index"
-              >
-                <template #prepend>
-                  <v-icon :icon="item.icon" />
-                </template>
+            <v-list-item
+              v-for="(item, index) in notificationItems"
+              :key="index"
+            >
+              <template #prepend>
+                <v-icon :icon="item.icon" />
+              </template>
 
-                <v-list-item>
-                  <div class="date">
-                    {{ item.date }}
-                  </div>
-                  <v-list-item-title
-                    class="title"
-                    :title="item.title"
-                  />
-                  <v-list-item-subtitle
-                    class="describe"
-                    :title="item.describe"
-                  />
-                </v-list-item>
+              <v-list-item>
+                <div class="date">
+                  {{ item.date }}
+                </div>
+                <v-list-item-title
+                  class="title"
+                  :title="item.title"
+                />
+                <v-list-item-subtitle
+                  class="describe"
+                  :title="item.describe"
+                />
               </v-list-item>
-            </template>
+            </v-list-item>
           </v-list>
         </v-card-text>
       </v-card>
@@ -1759,11 +1746,6 @@ watch(
     .mobile_bar .v-toolbar__content {
       background: transparent;
       padding: 0 1.4rem 0 0.5rem !important;
-    }
-
-    .mobile_bar .fa-bell {
-      line-height: 3rem !important;
-      font-size: 2.8rem !important;
     }
   }
 

@@ -4,35 +4,37 @@
     transition="dialog-bottom-transition"
     max-width="600"
   >
-    <v-card id="img-cropper-dialog" color="light-green-darken-3">
-      <v-card-actions class="pa-0">
+    <v-card id="img-cropper-dialog">
+      <cropper
+        :src="file_url"
+        :stencil-props="stencil_props"
+        image-restriction="stencil"
+        @change="cropFile"
+      />
+      <v-card-actions
+        style="position: sticky; bottom: 0; left: 0; right: 0"
+        class="pa-0 d-flex align-center justify-center"
+      >
         <v-btn
-          color="light-green-darken-3"
-          class="black--text text-transform-none gtext-t4 font-weight-medium"
-          size="x-large"
+          color="primary text-h5 font-weight-bold"
+          width="150"
+          rounded="xl"
+          size="large"
           :loading="confirm_loading"
-          block
           variant="flat"
+          density="compact"
           @click="emitFile()"
         >
           Confirm
         </v-btn>
       </v-card-actions>
-      <ClientOnly>
-        <Cropper
-          :src="file_url"
-          :stencil-props="stencil_props"
-          image-restriction="stencil"
-          @change="cropFile"
-        />
-      </ClientOnly>
     </v-card>
   </v-dialog>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import "vue-advanced-cropper/dist/style.css";
+import { ref, computed } from 'vue'
+import 'vue-advanced-cropper/dist/style.css'
 
 const props = defineProps({
   modelValue: {
@@ -41,7 +43,7 @@ const props = defineProps({
   },
   file_url: {
     type: String,
-    default: "",
+    default: '',
   },
   stencil_props: {
     type: Object,
@@ -51,27 +53,27 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-});
-const emit = defineEmits(["update:modelValue", "croppedData"]);
+})
+const emit = defineEmits(['update:modelValue', 'croppedData'])
 
 const dialogVisible = computed({
   get: () => props.modelValue,
-  set: (value) => emit("update:modelValue", value),
-});
+  set: value => emit('update:modelValue', value),
+})
 
-const crop_file_loading = ref(false);
-const cropped_data = ref(null);
+const crop_file_loading = ref(false)
+const cropped_data = ref(null)
 
-function cropFile({ coordinates, canvas, image }) {
-  if (!canvas) return;
-  crop_file_loading.value = true;
+function cropFile({ canvas }) {
+  if (!canvas) return
+  crop_file_loading.value = true
   canvas.toBlob((blob) => {
-    cropped_data.value = blob;
-    crop_file_loading.value = false;
-  }, "image/webp");
+    cropped_data.value = blob
+    crop_file_loading.value = false
+  }, 'image/webp')
 }
 
 function emitFile() {
-  emit("croppedData", cropped_data.value);
+  emit('croppedData', cropped_data.value)
 }
 </script>

@@ -115,18 +115,13 @@
 <script setup>
 import { useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
-import dayjs from 'dayjs'
 
 const { $slugGenerator } = useNuxtApp()
 const route = useRoute()
 const blogId = route.params.id
 const { xs, sm } = useDisplay()
 const requestURL = ref(useRequestURL().href)
-const {
-  data: contentData,
-  pending,
-  error,
-} = await useAsyncData(
+const { data: contentData, error } = await useAsyncData(
   `blog-${blogId}`,
   () => $fetch(`/api/v1/blogs/${blogId}`),
   {

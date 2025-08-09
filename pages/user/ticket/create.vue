@@ -9,7 +9,7 @@
           cols="12"
           class="pl-5 text-h4 teal--text"
         >
-          <span class="fa-solid fa-envelope" />
+          <v-icon>md:mail</v-icon>
           <span> New message </span>
         </v-col>
       </v-row>
@@ -76,7 +76,7 @@
                     <!-- </validation-provider> -->
                     <nuxt-link to="/formula-help">
                       <strong class="pointer teal--text text-h6">
-                        <span class="fa-solid fa-link" />
+                        <v-icon>md:link</v-icon>
                         Formula writing guide
                       </strong>
                     </nuxt-link>
@@ -151,14 +151,12 @@
 
 <script>
 // import { ValidationObserver, ValidationProvider } from "vee-validate";
-import TopicSelector from '@/components/form/topic-selector'
+// import TopicSelector from '@/components/form/topic-selector'
 
 export default {
-  name: 'AddTicket',
+  name: 'CreateTicket',
   components: {
-    TopicSelector,
-    // ValidationProvider,
-    // ValidationObserver,
+    // Remove TopicSelector since it's not used
   },
   layout: 'dashboard_layout',
   data() {
@@ -189,7 +187,7 @@ export default {
     this.getTypeList('ticket_type')
   },
   methods: {
-    getTypeList(type, parent = '') {
+    getTypeList(type, _parent = '') {
       const params = {
         type: type,
       }
@@ -220,7 +218,7 @@ export default {
             'Content-Type': 'application/x-www-form-urlencoded',
           },
         })
-        .then((response) => {
+        .then((_response) => {
           this.$toast.success('Submit successfully')
           this.$router.push({
             path: '/user/ticket',
@@ -260,7 +258,7 @@ export default {
           .then((response) => {
             this.form.file = response.data[0].file.name
           })
-          .catch((err) => {
+          .catch((_err) => {
             this.$toast.error('An error occurred')
           })
           .finally(() => {

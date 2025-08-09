@@ -26,8 +26,8 @@
             ref="form"
             v-model="isFormValid"
             lazy-validation
-            @submit.prevent="updateQuestion"
             autocomplete="off"
+            @submit.prevent="updateQuestion"
           >
             <v-row>
               <v-col
@@ -558,7 +558,7 @@ const test_type_loading = ref(false)
 // Lists
 const section_list = ref([])
 const grade_list = ref([])
-const field_list = ref([])
+const _field_list = ref([])
 const lesson_list = ref([])
 const topic_list = ref([])
 const test_type_list = ref([])
@@ -630,7 +630,7 @@ const { data: paperData } = await useAsyncData('paper-data', async () => {
 })
 
 // Methods
-const changeOption = (optionName, optionVal) => {
+const _changeOption = (optionName, optionVal) => {
   if (optionName === 'section') {
     formData.base = ''
     formData.lesson = ''
@@ -682,14 +682,12 @@ const changeOption = (optionName, optionVal) => {
   }
 }
 
-
 const handleClassificationError = (error) => {
   console.error('Classification loading error:', error)
   $toast.error('Unable to load paper types. Please try selecting the board again.')
   test_type_list.value = []
   formData.test_type = ''
 }
-
 
 const getClassificationTypes = async (sectionId) => {
   if (!sectionId) {
@@ -699,26 +697,28 @@ const getClassificationTypes = async (sectionId) => {
 
   test_type_loading.value = true
   try {
-    const params = { 
+    const params = {
       type: 'test_type',
-      section_id: sectionId 
+      section_id: sectionId,
     }
     const response = await useApiService.get('/api/v1/types/list', params)
-    
+
     // The API should return board-specific classifications including:
     // - General resources (Coursebook, Workbook) for all boards
     // - CIE papers (Paper 1, Paper 2, etc.) for CIE board
     // - Edexcel papers and Units for Edexcel board
     // - Other board-specific classifications
     test_type_list.value = response.data || []
-    
+
     // Handle empty response
     if (!response.data || response.data.length === 0) {
       console.warn('No classification types returned for board:', sectionId)
     }
-  } catch (err) {
+  }
+  catch (err) {
     handleClassificationError(err)
-  } finally {
+  }
+  finally {
     test_type_loading.value = false
   }
 }
@@ -843,6 +843,7 @@ const updateQuestion = async () => {
   }
   catch (err) {
     if (err.response?.status == 403) {
+      $toast.error('You do not have permission to edit this paper')
     }
     else if (err.response?.status == 400) {
       $toast.error(err.response.data.message)
@@ -1003,7 +1004,7 @@ const addExtraAttr = () => {
   extraAttr.value.push({ type: '', file: null, file_extra: null })
 }
 
-const applyExtraType = (value, index) => {
+const _applyExtraType = (value, index) => {
   extraAttr.value[index].type = value
 }
 
@@ -1138,7 +1139,6 @@ const startDownload = async (type, extra_id = '') => {
       const response = await useApiService.get(apiUrl)
       const FileSaver = await import('file-saver')
       FileSaver.saveAs(response.data.url, response.data.name)
-      download_loading.value = false
     }
     catch (err) {
       if (err.response?.status == 400) {
@@ -1151,6 +1151,7 @@ const startDownload = async (type, extra_id = '') => {
       }
     }
     finally {
+      download_loading.value = false
     }
   }
   else {

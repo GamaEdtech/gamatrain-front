@@ -23,7 +23,7 @@ interface User {
 export const useUser = () => {
   const user = useState<User | null>('user', () => null)
 
-  const setUser = (data: any) => {
+  const setUser = (data: User) => {
     user.value = data
   }
 

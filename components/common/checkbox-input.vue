@@ -25,8 +25,6 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
 const props = defineProps({
   options: {
     type: Array,
@@ -38,7 +36,9 @@ const props = defineProps({
   },
   modelValue: {
     type: [Array, String, Number],
-    default: [],
+    default(rawProps) {
+      return rawProps.multiple ? [] : null
+    },
   },
 })
 

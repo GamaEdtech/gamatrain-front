@@ -283,7 +283,7 @@ import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const carousel_model = ref(0)
-const colors = ['#24292F', '#0092A9']
+const _colors = ['#24292F', '#0092A9']
 
 const slides = [
   {
@@ -341,7 +341,7 @@ watch(searchKey, (val) => {
   search()
 })
 
-const openAuthDialog = (val) => {
+const _openAuthDialog = (val) => {
   router.push({ query: { auth_form: val } })
 }
 
@@ -384,7 +384,7 @@ const search = () => {
         }
       }
       catch (error) {
-        console.log(err)
+        console.log(error)
       }
       finally {
         searchLoading.value = false

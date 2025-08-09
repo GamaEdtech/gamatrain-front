@@ -26,7 +26,7 @@ export const usePhysics = (scene: THREE.Scene) => {
 
     const wallColor = 0x00ffff
     const wallOpacity = 0.2
-    const meshMaterial = new THREE.MeshStandardMaterial({
+    const _meshMaterial = new THREE.MeshStandardMaterial({
       color: wallColor,
       transparent: true,
       opacity: wallOpacity,
@@ -40,7 +40,7 @@ export const usePhysics = (scene: THREE.Scene) => {
       },
       {
         size: [roomWidth * 2, wallHeight * 2, wallThickness * 2],
-        position: [0, -10, 248.580],
+        position: [0, -10, 248.58],
       },
       {
         size: [roomWidth * 2, wallHeight * 2, wallThickness * 2],
@@ -48,7 +48,7 @@ export const usePhysics = (scene: THREE.Scene) => {
       },
       {
         size: [roomWidth * 2, wallHeight * 2, wallThickness * 2],
-        position: [0, -10, -244.780],
+        position: [0, -10, -244.78],
       },
       {
         size: [roomWidth * 2, wallHeight * 2, wallThickness * 2],
@@ -90,7 +90,7 @@ export const usePhysics = (scene: THREE.Scene) => {
     world.defaultContactMaterial.restitution = 0.7
 
     if ('iterations' in world.solver) {
-      (world.solver as any).iterations = 5
+      (world.solver as { iterations: number }).iterations = 5
     }
     world.allowSleep = true
 
@@ -105,11 +105,15 @@ export const usePhysics = (scene: THREE.Scene) => {
     createVisibleRoom()
   }
 
-  const throwCoins = (boxSize: { x: number, y: number, z: number }, side: 'left' | 'right', count: number = 70) => {
+  const throwCoins = (
+    boxSize: { x: number, y: number, z: number },
+    side: 'left' | 'right',
+    count: number = 70,
+  ) => {
     // Create coin geometry and material (15x bigger)
     const coinGeometry = new THREE.CylinderGeometry(2.25, 2.25, 0.45, 16) // 15x bigger
     const coinMaterial = new THREE.MeshStandardMaterial({
-      color: 0xFFD700,
+      color: 0xffd700,
       metalness: 0.6,
       roughness: 0.2,
     })
@@ -129,9 +133,9 @@ export const usePhysics = (scene: THREE.Scene) => {
       })
 
       // Set initial position (15x bigger)
-      const x = ((Math.random() - 0.5) * 12) + boxSize.x // 15x bigger spread
+      const x = (Math.random() - 0.5) * 12 + boxSize.x // 15x bigger spread
       const y = boxSize.y + Math.random() * 7.5 // 15x bigger
-      const z = ((Math.random() - 0.5) * 12) + boxSize.z // 15x bigger spread
+      const z = (Math.random() - 0.5) * 12 + boxSize.z // 15x bigger spread
 
       console.log('x', x, 'y', y, 'z', z)
       body.position.set(x, y, z)
@@ -173,8 +177,8 @@ export const usePhysics = (scene: THREE.Scene) => {
       // Update coin positions
       for (let i = 0; i < coins.value.length; i++) {
         const { mesh, body } = coins.value[i]
-        mesh.position.copy(body.position as any)
-        mesh.quaternion.copy(body.quaternion as any)
+        mesh.position.copy(body.position as THREE.Vector3)
+        mesh.quaternion.copy(body.quaternion as THREE.Quaternion)
 
         // Reset coins that go too far (15x bigger bounds)
         if (body.position.y < -75 || body.position.z < -450) {
@@ -240,7 +244,7 @@ export const usePhysics = (scene: THREE.Scene) => {
 
       // Remove from physics world
       try {
-        world.removeBody(body as any)
+        world.removeBody(body)
       }
       catch (error) {
         console.warn('Error removing body from physics world:', error)
@@ -250,8 +254,10 @@ export const usePhysics = (scene: THREE.Scene) => {
     // Alternative approach: Remove all cylinder geometries from scene
     const childrenToRemove: THREE.Mesh[] = []
     scene.traverse((child) => {
-      if (child instanceof THREE.Mesh
-        && child.geometry instanceof THREE.CylinderGeometry) {
+      if (
+        child instanceof THREE.Mesh
+        && child.geometry instanceof THREE.CylinderGeometry
+      ) {
         childrenToRemove.push(child)
       }
     })
@@ -283,9 +289,10 @@ export const usePhysics = (scene: THREE.Scene) => {
     console.log('Scene children after cleanup:', scene.children.length)
 
     // Check for remaining coin-like meshes
-    const remainingMeshes = scene.children.filter(child =>
-      child instanceof THREE.Mesh
-      && child.geometry instanceof THREE.CylinderGeometry,
+    const remainingMeshes = scene.children.filter(
+      child =>
+        child instanceof THREE.Mesh
+        && child.geometry instanceof THREE.CylinderGeometry,
     )
     console.log('Remaining coin-like meshes:', remainingMeshes.length)
 

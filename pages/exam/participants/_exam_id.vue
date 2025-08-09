@@ -237,7 +237,7 @@ export default {
       this.getParticipants()
       // End reload result
     },
-    'filter.school'(val) {
+    'filter.school'(_val) {
       // Reload result
       this.page = 1
       this.all_files_loaded = false
@@ -274,7 +274,7 @@ export default {
           params,
         })
         .then((res) => {
-          const data = {}
+          const _data = {}
           if (type === 'section') {
             this.level_list = res.data
           }

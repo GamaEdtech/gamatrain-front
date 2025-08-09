@@ -157,7 +157,7 @@ watch(localSlug, async (newVal) => {
         slugValid.value = false
       }
     }
-    catch (e) {
+    catch {
       slugValid.value = false
     }
   }, 400)
@@ -196,7 +196,7 @@ const saveSlug = async () => {
       $toast.error('Failed to generate slug.')
     }
   }
-  catch (e) {
+  catch {
     $toast.error('Failed to generate slug.')
   }
   submitLoader.value = false

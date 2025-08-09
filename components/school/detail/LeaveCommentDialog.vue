@@ -254,52 +254,57 @@ const router = useRouter()
 const nuxtApp = useNuxtApp()
 const helpLoading = ref(false)
 const submitLoading = ref(false)
-function isValidUrl(url) {
-  try {
-    new URL(url)
-    return /^https?:\/\//.test(url)
-  }
-  catch (e) {
-    return false
-  }
-}
-function isValidEmail(email) {
-  try {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return emailRegex.test(email)
-  }
-  catch (e) {
-    return false
-  }
-}
-function isValidPhone(phone) {
-  try {
-    const phoneRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return phoneRegex.test(phone)
-  }
-  catch (e) {
-    return false
-  }
-}
-function isRequired(value) {
-  try {
-    return !!value.trim()
-  }
-  catch (e) {
-    return false
-  }
-}
 
 async function sendToAI() {
-  const userComment = `You are an educational review assistant. Your task is to evaluate the following school and return a structured JSON response.\n\n### **School Information:**\n- **Name:** ${
-    props.contentData.name
-  }\n- **Location:** ${props.contentData.countryTitle}, ${
-    props.contentData.stateTitle
-  }, ${props.contentData.cityTitle}\n${
-    props.contentData.webSite
-      ? `- **Website:** ${props.contentData.webSite}`
-      : ''
-  }\n\n### **Evaluation Criteria:**\nRate each of the following aspects on a scale of 1 to 5 stars (as numbers) from sources like OpenStreetMap, Google Maps, and the school's official website, then provide a brief comment base on The following aspects for school (don't repeat school name and location in comment).\n1. Quality of classrooms and educational facilities\n2. Teachers' proficiency and teaching effectiveness\n3. Access to and use of computers and technology\n4. Safety and overall atmosphere of the school\n5. Behavior of school officials towards students\n6. Affordability relative to the services provided\n7. Availability of suitable sports facilities\n8. Presence of art classes or counseling programs\n\n### **Response Format:**\nReturn a structured JSON object with:\n- Category ratings as numbers (1-5) and it 8 items.\n- A short, engaging, fact-based description including emojis (min:350 char, max 400 char), Not rely solely on the ratings but should reflect the school's actual characteristics and unique features., Highlight both strengths and weaknesses of the school, providing a balanced perspective, Use emojis to make it more appealing\n\nResponse Format: (Don't forget end of rating object close by })\n\n\u0060\u0060\u0060json\n{\n  "description": "🏫 Cornerstone Preparatory School offers a great learning environment with skilled teachers and strong safety measures. However, technology access and arts programs could be improved.",\n  "ratings": {\n    "classrooms_quality": ai_rate as number,\n    "teachers_proficiency": ai_rate as number,\n    "technology_access": ai_rate as number,\n    "school_safety": ai_rate as number,\n    "officials_behavior": ai_rate as number,\n    "affordability": ai_rate as number,\n    "sports_facilities": ai_rate as number,\n    "art_counseling": ai_rate as number\n  }\n}\n\u0060\u0060\u0060\n`
+  const userComment = `You are an educational review assistant. Your task is to evaluate the following school and return a structured JSON response.
+
+### **School Information:**
+- **Name:** ${props.contentData.name}
+- **Location:** ${props.contentData.countryTitle}, ${props.contentData.stateTitle}, ${props.contentData.cityTitle}
+${props.contentData.webSite ? `- **Website:** ${props.contentData.webSite}` : ''}
+
+### **Evaluation Criteria:**
+Rate each of the following aspects on a scale of 1 to 5 stars (as numbers) using insights from sources like OpenStreetMap, Google Maps, and the school's official website. Then write a short, bold, and slightly provocative comment about the school.
+
+1. Quality of classrooms and educational facilities  
+2. Teachers' proficiency and teaching effectiveness  
+3. Access to and use of computers and technology  
+4. Safety and overall atmosphere of the school  
+5. Behavior of school officials towards students  
+6. Affordability relative to the services provided  
+7. Availability of suitable sports facilities  
+8. Presence of art classes or counseling programs  
+
+### **Comment Rules:**
+- Write the **comment in the primary language used in** \`${props.contentData.countryTitle}\`. For example, use Persian for Iran, Italian for Italy, and French for France. **Do not use the user's IP address, browser language, or environment to determine the language.**
+- Mention at least **one clear strength and one clear weakness** of the school.
+- Use a **natural, human tone** with a **touch of challenge or controversy** to encourage discussion (e.g., “some parents might disagree…” or “not everyone would be happy with…”).
+- Keep the comment **short, engaging, and between 350 and 400 characters**.
+- The comment should **not repeat the school name or location**.
+- If it's a **kindergarten**, write like a thoughtful parent.  
+  If it's an **educational group**, use inclusive and general language.
+- Always **end the comment with at least one emoji** to feel more personal and real.
+
+### **Response Format (JSON):**
+Return a structured JSON object like this, with exactly 8 rating fields (1 to 5) and the comment:
+
+\`\`\`json
+{
+  "description": "🏫 Cornerstone Preparatory School offers a great learning environment with skilled teachers and strong safety measures. However, technology access and arts programs could be improved.",
+  "ratings": {
+    "classrooms_quality": 4,
+    "teachers_proficiency": 5,
+    "technology_access": 2,
+    "school_safety": 4,
+    "officials_behavior": 3,
+    "affordability": 4,
+    "sports_facilities": 3,
+    "art_counseling": 2
+  }
+}
+\`\`\`
+`
+
   if (!localStorage.getItem('v2_token')) {
     nuxtApp.$toast?.error('Login required to proceed.')
     router.push({ query: { auth_form: 'login' } })
@@ -311,9 +316,8 @@ async function sendToAI() {
   }
   helpLoading.value = true
   try {
-    const apiResponse = await $fetch('/api/chatgpt', {
-      method: 'POST',
-      body: { userComment },
+    const apiResponse = await useApiService.post('/api/chatgpt', {
+      userComment,
     })
     const cleanedResponse = apiResponse.response
       .replace(/^\s*```json[\s\S]*?\n/, '')

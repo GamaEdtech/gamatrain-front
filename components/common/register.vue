@@ -53,7 +53,11 @@ watch(countDown, (val) => {
   if (val === 60) countDownTimer()
 })
 
-const emit = defineEmits(['switchToRegister', 'update:dialog'])
+const emit = defineEmits([
+  'switchToLogin',
+  'switchToRegister',
+  'update:dialog',
+])
 // Switch to login page
 const switchToLogin = () => {
   emit('switchToLogin')
@@ -71,7 +75,7 @@ const recheckEnteredIdentity = () => {
   identity_holder.value = true
 }
 
-const cancelRegister = () => {
+const _cancelRegister = () => {
   register_dialog.value = false
   identity_holder.value = true
   otp_holder.value = false
@@ -134,7 +138,7 @@ const onFinish = async () => {
 
 const sendOtpCodeAgain = async () => {
   try {
-    const response = await useApiService.post(
+    const _response = await useApiService.post(
       '/api/v1/users/register',
       new URLSearchParams({
         type: 'resend_code',
@@ -232,9 +236,10 @@ async function handleCredentialResponse(value) {
 
 <template>
   <v-dialog
-    v-model="props.dialog"
+    :model-value="props.dialog"
     max-width="300px"
     style="z-index: 20001"
+    @update:model-value="(val) => emit('update:dialog', val)"
     @click:outside="closeDialog"
   >
     <v-card>
@@ -385,7 +390,6 @@ async function handleCredentialResponse(value) {
                         outlined
                         :error-messages="errors"
                         dense
-                        type="password"
                         :type="show1 ? 'text' : 'password'"
                         :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                         required

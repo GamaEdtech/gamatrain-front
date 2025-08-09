@@ -63,7 +63,9 @@ export default {
   name: 'LevelGuidBanner',
   props: {
     slideArr: {
-      default: [],
+      type: Array,
+      required: false,
+      default: () => [],
     },
   },
   data() {
@@ -74,7 +76,7 @@ export default {
     }
   },
   watch: {
-    slideIndex(val) {
+    slideIndex(_val) {
       this.expand = false
 
       setTimeout(() => {

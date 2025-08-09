@@ -56,24 +56,40 @@
           </template>
         </v-text-field>
       </v-row>
-      <v-list max-height="320">
+      <v-list
+        v-if="!isLoading"
+        max-height="320"
+      >
         <v-list-item
-          v-for="(item, i) in filteredItems"
+          v-for="item in filteredItems"
           :key="item.title"
           :value="item.title"
           :active="item.id == selectedItem?.id"
           color="#FFB600"
           @click="changeSelectedItem(item)"
         >
-          <v-list-item-title
-            class="text-h5"
-            v-html="highlightSearchText(item.title)"
-          />
+          <v-list-item-title class="text-h5">
+            <HighlightedText
+              :text="item.title"
+              :search-text="searchText"
+            />
+          </v-list-item-title>
         </v-list-item>
       </v-list>
 
+      <div
+        v-if="isLoading"
+        class="text-center pt-8"
+      >
+        <v-progress-circular
+          indeterminate
+          :width="3"
+          color="primary"
+        />
+      </div>
+
       <v-alert
-        v-if="searchText && filteredItems.length === 0"
+        v-if="searchText && filteredItems.length === 0 && !isLoading"
         type="info"
         color="#FFB600"
         density="compact"
@@ -84,7 +100,9 @@
         search term.
       </v-alert>
       <v-alert
-        v-if="searchText.length == 0 && filteredItems.length === 0"
+        v-if="
+          searchText.length == 0 && filteredItems.length === 0 && !isLoading
+        "
         type="info"
         color="#FFB600"
         density="compact"
@@ -99,6 +117,50 @@
 
 <script setup>
 import { useDisplay } from 'vuetify'
+import { ref, computed, defineComponent, h } from 'vue'
+
+// HighlightedText component for safe text highlighting
+const HighlightedText = defineComponent({
+  props: {
+    text: {
+      type: String,
+      required: true,
+    },
+    searchText: {
+      type: String,
+      required: true,
+    },
+  },
+  setup(props) {
+    const parts = computed(() => {
+      if (!props.searchText) return [{ text: props.text, highlight: false }]
+
+      const regex = new RegExp(`(${props.searchText})`, 'gi')
+      const segments = props.text.split(regex)
+
+      return segments.map(segment => ({
+        text: segment,
+        highlight: segment.toLowerCase() === props.searchText.toLowerCase(),
+      }))
+    })
+
+    return () =>
+      h(
+        'span',
+        parts.value.map(part =>
+          h(
+            'span',
+            {
+              style: part.highlight
+                ? 'background-color: #FFB600; color: white;'
+                : '',
+            },
+            part.text,
+          ),
+        ),
+      )
+  },
+})
 
 const { mdAndUp } = useDisplay()
 
@@ -109,7 +171,7 @@ const props = defineProps({
   },
   items: {
     type: Array,
-    default: {},
+    default: () => [],
   },
   showDialog: {
     type: Boolean,
@@ -117,6 +179,10 @@ const props = defineProps({
   },
   selectedItem: {
     type: Object,
+  },
+  isLoading: {
+    type: Boolean,
+    default: false,
   },
 })
 
@@ -130,7 +196,7 @@ const filteredItems = computed(() => {
     item.title.toLowerCase().includes(searchText.value.toLowerCase()),
   )
 })
-const highlightSearchText = (text) => {
+const _highlightSearchText = (text) => {
   if (!searchText.value) return text
   const regex = new RegExp(`(${searchText.value})`, 'gi')
   return text.replace(regex, '<mark>$1</mark>')

@@ -192,8 +192,16 @@ import { useDisplay } from 'vuetify/lib/composables/display'
 import { computed, ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
-  content: {},
-  class: {},
+  content: {
+    type: String,
+    required: false,
+    default: '',
+  },
+  class: {
+    type: String,
+    required: false,
+    default: '',
+  },
 })
 const emit = defineEmits(['fetch'])
 
@@ -202,7 +210,6 @@ const loading = ref(false)
 const tourClass = ref(props.class)
 const nuxtApp = useNuxtApp()
 const route = useRoute()
-const router = useRouter()
 const contentData = ref(props.content)
 const tourImgPreview = ref(null)
 const tourImg = ref(null)
@@ -266,6 +273,7 @@ function uploadTourImage() {
     })
     .catch((err) => {
       if (err?.response?.status == 401 || err?.response?.status == 403) {
+        nuxtApp.$toast?.error('Please login to update tour content')
       }
       else {
         nuxtApp.$toast?.error(err?.response?.data?.message || 'Upload failed')

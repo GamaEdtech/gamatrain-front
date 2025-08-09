@@ -198,14 +198,14 @@ watch(filter, (val) => {
 
 <template>
   <div>
-    <div class="d-flex flex-column justify-space-between align-center mb-4 flex-sm-row">
+    <div class="d-flex flex-column justify-space-between align-center mb-1 flex-sm-row">
       <div class="filterBtns mb-4 mb-sm-0">
         <v-btn
           :class="{ 'active-filter': filter === 'all', 'inactive-filter': filter !== 'all' }"
           depressed
           rounded
           variant="plain"
-          class="gtext-t4 font-weight-regular"
+          class="gtext-t4 font-weight-medium"
           @click="filter = 'all'"
         >
           All
@@ -215,7 +215,7 @@ watch(filter, (val) => {
           depressed
           rounded
           variant="plain"
-          class="gtext-t4 font-weight-regular"
+          class="gtext-t4 font-weight-medium"
           @click="filter = 'unread'"
         >
           Unread
@@ -224,7 +224,7 @@ watch(filter, (val) => {
         <v-btn
           :class="{ 'active-filter': filter === 'read', 'inactive-filter': filter !== 'read' }"
           depressed
-          class="ml-2 gtext-t4 font-weight-regular"
+          class="ml-2 gtext-t4 font-weight-medium"
           rounded
           variant="plain"
           @click="filter = 'read'"
@@ -248,7 +248,14 @@ watch(filter, (val) => {
         </template>
       </v-text-field>
     </div>
-
+    <div class="d-flex justify-end ga-2 align-center px-2">
+      <p class="primary-gray-500 gtext-t6 font-weight-bold">
+        {{ totalCount }}
+      </p>
+      <p class="gray--text gtext-t6 font-weight-semibold">
+        Messages
+      </p>
+    </div>
     <div class="scrollable-table">
       <v-data-table
         v-model="selected"
@@ -260,7 +267,7 @@ watch(filter, (val) => {
         hide-default-footer
         show-select
       >
-        <template #item.fullName="{ item }">
+        <template #[`item.fullName`]="{ item }">
           <div class="d-flex align-center">
             <v-avatar
               v-if="item.avatar"
@@ -275,13 +282,14 @@ watch(filter, (val) => {
             <span :class="item.isRead === false ? 'font-weight-bold' : ''">{{ item.fullName }}</span>
           </div>
         </template>
-        <template #item.subject="{ item }">
+
+        <template #[`item.subject`]="{ item }">
           <div class="d-flex align-center">
             <span :class="item.isRead === false ? 'font-weight-bold' : ''">{{ item.subject }}</span>
           </div>
         </template>
 
-        <template #header.attachedFile>
+        <template #[`header.attachedFile`]>
           <div class="d-flex align-center">
             <v-icon
               small
@@ -293,22 +301,44 @@ watch(filter, (val) => {
           </div>
         </template>
 
-        <template #item.actions="{ item }">
-          <div class="d-flex">
-            <v-icon
-              small
-              class="mr-2 gtext-t1"
-              @click="viewMessageDetails(item.id)"
+        <template #[`item.actions`]="{ item }">
+          <div class="d-flex ga-2">
+            <v-btn
+              variant="plain"
+              class="px-0 min-width-10"
             >
-              mdi-file-find
-            </v-icon>
-            <v-icon
-              small
-              class="gtext-t1"
-              @click="handleDelete(item.id)"
+              <v-icon
+                small
+                class="gtext-t1"
+                @click="viewMessageDetails(item.id)"
+              >
+                mdi-file-find
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                Details
+              </v-tooltip>
+            </v-btn>
+            <v-btn
+              variant="plain"
+              class="px-0 min-width-10"
             >
-              mdi-delete
-            </v-icon>
+              <v-icon
+                small
+                class="gtext-t1"
+                @click="handleDelete(item.id)"
+              >
+                mdi-delete
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                Delete
+              </v-tooltip>
+            </v-btn>
           </div>
         </template>
       </v-data-table>
@@ -486,5 +516,10 @@ watch(filter, (val) => {
 
 :deep(.v-btn--variant-plain){
   opacity: 1 !important;
+}
+
+.min-width-10{
+  min-width: 10px !important;
+  height: 20px !important;
 }
 </style>

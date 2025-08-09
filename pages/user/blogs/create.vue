@@ -246,9 +246,7 @@
                   </div>
                   <div class="category-options-list">
                     <template v-if="categoriesLoading">
-                      <v-skeleton-loader
-                        type="list-item-two-line"
-                      />
+                      <v-skeleton-loader type="list-item-two-line" />
                     </template>
                     <template v-else>
                       <v-checkbox
@@ -424,7 +422,7 @@ import RichEditorContent from '@/components/common/RichEditor.vue'
 
 const { $slugGenerator, $toast } = useNuxtApp()
 const router = useRouter()
-const { $axios } = useNuxtApp()
+const { $axios: _axios } = useNuxtApp()
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -489,12 +487,12 @@ async function validate() {
   }
 }
 
-function reset() {
+function _reset() {
   form.value.reset()
   isFormValid.value = false
 }
 
-function resetValidation() {
+function _resetValidation() {
   form.value.resetValidation()
   isFormValid.value = false
 }
@@ -624,7 +622,7 @@ const createCategory = async () => {
       )
     }
   }
-  catch (e) {
+  catch {
     $toast.error('Failed to create category.')
   }
   finally {
@@ -640,7 +638,7 @@ const fetchCategories = async () => {
       categoryList.value = response.data
     }
   }
-  catch (e) {
+  catch {
     $toast.error('Failed to load categories')
   }
   finally {
@@ -667,7 +665,7 @@ const createSlug = async () => {
       return slug.value
     }
   }
-  catch (e) {
+  catch {
     slug.value = $slugGenerator.convert(blog.value.title || '')
     return slug.value
   }
@@ -697,7 +695,7 @@ const filteredCategories = computed(() => {
 // Watch for title changes to generate slug
 watch(
   () => blog.value.title,
-  (newTitle) => {
+  () => {
     if (_slugDebounce) clearTimeout(_slugDebounce)
     _slugDebounce = setTimeout(() => {
       createSlug()

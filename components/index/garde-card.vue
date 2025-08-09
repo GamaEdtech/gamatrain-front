@@ -25,14 +25,16 @@
           <v-list-item-content class="py-1 right">
             <v-list-item-title
               class="text-right type"
-              v-text="item.title"
-            />
+            >
+              {{ item.title }}
+            </v-list-item-title>
           </v-list-item-content>
           <v-list-item-content class="py-1 left">
             <v-list-item-title
               class="text-left stat"
-              v-text="item.stat"
-            />
+            >
+              {{ item.stat }}
+            </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-list>

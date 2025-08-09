@@ -20,16 +20,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-
-const props = defineProps<{
+const _props = defineProps<{
   isMobileOrTablet: boolean
 }>()
 
 // Event emitter for movement controls
 const emit = defineEmits<{
-  (e: 'moveStart', direction: string): void
-  (e: 'moveEnd', direction: string): void
+  (e: 'moveStart' | 'moveEnd', direction: string): void
 }>()
 
 // Movement buttons configuration
@@ -73,37 +70,37 @@ const handleTouchEnd = (direction: string) => {
 
 <style scoped>
 .mobile-controls {
-    position: absolute;
-    bottom: 8rem;
-    left: 20px;
-    width: 150px;
-    height: 150px;
-    z-index: 100;
+  position: absolute;
+  bottom: 8rem;
+  left: 20px;
+  width: 150px;
+  height: 150px;
+  z-index: 100;
 }
 
 .control-btn {
-    position: absolute;
-    opacity: 0.8;
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
+  position: absolute;
+  opacity: 0.8;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
 }
 
 .top-btn {
-    top: 0;
-    left: 50px;
+  top: 0;
+  left: 50px;
 }
 
 .left-btn {
-    top: 50px;
-    left: 0;
+  top: 50px;
+  left: 0;
 }
 
 .right-btn {
-    top: 50px;
-    left: 100px;
+  top: 50px;
+  left: 100px;
 }
 
 .bottom-btn {
-    top: 100px;
-    left: 50px;
+  top: 100px;
+  left: 50px;
 }
 </style>

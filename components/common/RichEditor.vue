@@ -33,7 +33,7 @@ useHead({
   ],
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'update:value'])
 const editorInstance = ref(null)
 const internalValue = ref(props.value)
 const CustomEditor = ref(null)

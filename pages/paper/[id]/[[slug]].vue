@@ -15,13 +15,17 @@
 
       <section>
         <v-container class="py-0">
+          <div class="d-lg-none mt-4">
+            <paper-detail-title :title="contentData?.title" />
+          </div>
           <div class="detail mt-6 mt-md-8">
             <v-row>
               <v-col
                 cols="12"
-                md="8"
-                lg="6"
-                class="px-8 px-lg=0"
+                md="12"
+                lg="5"
+                xl="6"
+                class="px-8 px-lg=0 order-3 order-md-3 order-lg-2"
               >
                 <paper-detail-description
                   :title="contentData?.title"
@@ -86,8 +90,11 @@
               <v-col
                 cols="12"
                 sm="5"
+                md="3"
                 lg="3"
+                xl="3"
                 order-lg="first"
+                class="order-2 order-sm-1 order-md-1"
               >
                 <details-preview-gallery
                   :image-urls="previewImages"
@@ -96,9 +103,11 @@
                 />
               </v-col>
               <v-col
+                class="order-1 order-md-2 order-lg-3"
                 sm="7"
-                md="4"
-                lg="3"
+                md="9"
+                lg="4"
+                xl="3"
               >
                 <paper-detail-content-info
                   :content-data="contentData"
@@ -132,6 +141,21 @@
         />
       </div>
     </template>
+    <v-row
+      justify="center"
+      class="mt-10"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        class="text-center"
+      >
+        <common-ad-banner
+          v-model="isAdsLoad"
+          adslot="7199289937"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
@@ -140,14 +164,13 @@ const route = useRoute()
 const router = useRouter()
 const requestURL = ref(useRequestURL().host)
 const randomTestContent = ref(null)
+const pageDescribe = ref('')
+const pageTitle = ref('')
+const isAdsLoad = ref(false)
 
 // Track loading state
 
-const {
-  data: contentData,
-  error,
-  pending: dataFetching,
-} = await useAsyncData(
+const { data: contentData, pending: dataFetching } = await useAsyncData(
   `paper-${route.params.id}`,
   async () => {
     try {
@@ -162,6 +185,7 @@ const {
       throw e
     }
     finally {
+      // Reset loading states if needed
     }
   },
   {
@@ -193,56 +217,106 @@ const galleryHelpData = ref({
   lesson: '',
 })
 
-useHead({
-  title: contentData.value?.title,
-  script: [
-    {
-      hid: 'json-ld-schema',
-      innerHTML: JSON.stringify(schemaData.value),
-      type: 'application/ld+json',
-    },
-  ],
-  link: [
-    {
-      rel: 'canonical',
-      href: `https://${requestURL.value}/paper/${contentData.value.id}/${contentData.value.title_url}`,
-    },
-  ],
-  __dangerouslyDisableSanitizersByTagID: {
-    'json-ld-schema': ['innerHTML'],
-  },
-})
+const setMetaData = () => {
+  if (!contentData.value) return
 
-if (contentData.value) {
-  previewImages.value.push(contentData.value.thumb_pic)
-  if (contentData.value.lesson_pic) {
-    previewImages.value.push(contentData.value.lesson_pic)
+  const { section_title, base_title, title, is_paper } = contentData.value
+
+  // Build common title parts
+  const titleParts = [section_title, base_title, title].filter(Boolean)
+  const baseTitle = titleParts.join(' ')
+
+  if (is_paper) {
+    pageTitle.value = `${baseTitle} past paper`
+    pageDescribe.value = `Download ${baseTitle} past paper with mark scheme (MS). Access a full collection of past papers for study, revision, and exam practice.`
+  }
+  else {
+    pageTitle.value = baseTitle
+    pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
   }
 
-  previewImages.value.carouselVal = 0
-
-  galleryHelpData.value = {
-    state: contentData.value?.state || '',
-    section: contentData.value?.section || '',
-    base: contentData.value?.base || '',
-    course: contentData.value?.course || '',
-    lesson: contentData.value?.lesson || '',
-  }
+  useHead({
+    title: pageTitle.value,
+    meta: [
+      {
+        hid: 'apple-mobile-web-app-title',
+        name: 'apple-mobile-web-app-title',
+        content: pageTitle.value,
+      },
+      {
+        hid: 'og:title',
+        name: 'og:title',
+        content: pageTitle.value,
+      },
+      {
+        hid: 'og:site_name',
+        name: 'og:site_name',
+        content: 'GamaTrain',
+      },
+      {
+        hid: 'description',
+        name: 'description',
+        content: pageDescribe.value,
+      },
+      {
+        hid: 'og:description',
+        name: 'og:description',
+        content: pageDescribe.value,
+      },
+    ],
+    script: [
+      {
+        hid: 'json-ld-schema',
+        innerHTML: JSON.stringify(schemaData.value),
+        type: 'application/ld+json',
+      },
+    ],
+    link: [
+      {
+        rel: 'canonical',
+        href: contentData.value
+          ? `https://${requestURL.value}/paper/${contentData.value.id}/${contentData.value.title_url}`
+          : `https://${requestURL.value}/paper/${route.params.id}`,
+      },
+    ],
+    __dangerouslyDisableSanitizersByTagID: {
+      'json-ld-schema': ['innerHTML'],
+    },
+  })
 }
 
-const breads = ref([
-  {
-    text: 'Paper',
-    disabled: false,
-    href: '/search?type=test',
-  },
-])
+watchEffect(() => {
+  if (contentData.value) {
+    previewImages.value = []
+    previewImages.value.push(contentData.value.thumb_pic)
+    if (contentData.value.lesson_pic) {
+      previewImages.value.push(contentData.value.lesson_pic)
+    }
+
+    previewImages.value.carouselVal = 0
+
+    galleryHelpData.value = {
+      state: contentData.value?.state || '',
+      section: contentData.value?.section || '',
+      base: contentData.value?.base || '',
+      course: contentData.value?.course || '',
+      lesson: contentData.value?.lesson || '',
+    }
+  }
+})
+
+const breads = ref([])
 
 const display = useGlobalDisplay()
 
 const initBreadCrumb = () => {
   if (!contentData.value) return
-
+  breads.value = []
+  breads.value.push({
+    text: 'Paper',
+    disabled: false,
+    href: '/search?type=test',
+  })
   breads.value.push(
     {
       text: contentData.value.section_title,
@@ -265,6 +339,7 @@ const initBreadCrumb = () => {
 watchEffect(() => {
   if (contentData.value) {
     initBreadCrumb()
+    setMetaData()
   }
 })
 
@@ -280,7 +355,7 @@ const grabRandomTestCode = () => {
           retriveRandomTest(response.data.code)
         }
       })
-      .catch((err) => {})
+      .catch((_err) => {})
   }
 }
 const retriveRandomTest = (code) => {
@@ -288,7 +363,7 @@ const retriveRandomTest = (code) => {
     .then((response) => {
       randomTestContent.value = response.data
     })
-    .catch((err) => {})
+    .catch((_err) => {})
 }
 
 onMounted(() => {

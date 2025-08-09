@@ -244,9 +244,7 @@
                   </div>
                   <div class="category-options-list">
                     <template v-if="categoriesLoading">
-                      <v-skeleton-loader
-                        type="list-item-two-line"
-                      />
+                      <v-skeleton-loader type="list-item-two-line" />
                     </template>
                     <template v-else>
                       <v-checkbox
@@ -521,12 +519,12 @@ async function validate() {
   }
 }
 
-function reset() {
+function _reset() {
   form.value.reset()
   isFormValid.value = false
 }
 
-function resetValidation() {
+function _resetValidation() {
   form.value.resetValidation()
   isFormValid.value = false
 }
@@ -730,7 +728,7 @@ const filteredCategories = computed(() => {
 // Watch for title changes to generate slug
 watch(
   () => blog.value.title,
-  (newTitle) => {
+  () => {
     if (_slugDebounce) clearTimeout(_slugDebounce)
     _slugDebounce = setTimeout(() => {
       createSlug()

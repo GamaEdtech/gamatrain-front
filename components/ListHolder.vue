@@ -29,6 +29,7 @@ export default {
   components: {
     GamaButton,
   },
+  emits: ['updatePage'],
   data() {
     return {
       currentPage: this.$route.query.page ? Number(this.$route.query.page) : 1, // Start from page 1
