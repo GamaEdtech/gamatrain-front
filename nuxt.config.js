@@ -234,6 +234,7 @@ export default defineNuxtConfig({
       'defu',
       '@ckeditor/ckeditor5-vue',
       'vue3-emoji-picker',
+      'jayson',
     ],
   },
 
@@ -263,6 +264,19 @@ export default defineNuxtConfig({
       template: {
         transformAssetUrls,
       },
+    },
+    resolve: {
+      alias: {
+        // Fix jayson ES module import issue
+        'jayson/lib/client/browser': 'jayson/lib/client/browser/index.js',
+      },
+    },
+    optimizeDeps: {
+      include: [
+        'jayson',
+        'jayson/lib/client/browser',
+      ],
+      force: true,
     },
     build: {
       chunkSizeWarningLimit: 1000,
