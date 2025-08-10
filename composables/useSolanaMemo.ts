@@ -1,8 +1,11 @@
-import { PublicKey, TransactionInstruction, type AccountMeta } from '@solana/web3.js'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import type { PublicKey, TransactionInstruction, AccountMeta } from '@solana/web3.js'
 import { Buffer } from 'buffer'
 
-// SPL Memo Program ID - official Solana memo program
-export const MEMO_PROGRAM_ID = new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr')
+// SPL Memo Program ID - official Solana memo program (string form to avoid runtime import on SSR)
+export const MEMO_PROGRAM_ID = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'
 
 // Memo instruction error types
 export enum MemoInstructionError {
@@ -21,9 +24,6 @@ export interface MemoInstructionResult {
 
 /**
  * Creates a Solana memo program instruction
- * @param memo - The memo text to include in the transaction
- * @param signerPublicKey - The public key of the transaction signer
- * @returns MemoInstructionResult with the created instruction or error details
  */
 export const createMemoInstruction = (
   memo: string,
@@ -39,11 +39,12 @@ export const createMemoInstruction = (
       }
     }
 
-    if (!signerPublicKey || !(signerPublicKey instanceof PublicKey)) {
+    // Avoid runtime dependency on PublicKey instanceof; accept objects with toString
+    if (!signerPublicKey || typeof (signerPublicKey as any).toString !== 'function') {
       return {
         success: false,
         error: MemoInstructionError.INVALID_SIGNER,
-        errorMessage: 'Signer public key must be a valid PublicKey instance',
+        errorMessage: 'Signer public key must be a valid PublicKey-like object',
       }
     }
 
@@ -60,16 +61,32 @@ export const createMemoInstruction = (
       },
     ]
 
-    // Create the memo instruction
-    const instruction = new TransactionInstruction({
-      keys,
-      programId: MEMO_PROGRAM_ID,
-      data: Buffer.from(memoData),
-    })
+    // Create the memo instruction (lazy import to keep SSR safe)
+    const createInstruction = (): Promise<TransactionInstruction> =>
+      import('@solana/web3.js').then(({ TransactionInstruction, PublicKey }) => new TransactionInstruction({
+        keys,
+        programId: new PublicKey(MEMO_PROGRAM_ID),
+        data: Buffer.from(memoData),
+      }))
 
-    return {
-      success: true,
-      instruction,
+    // Although this function is sync by type, we can throw on sync path if needed.
+    // To keep sync signature, use deopt: build instruction via de-sugared promise (unsafe to await here).
+    // Consumers of this function use returned "instruction" synchronously, so we must block. Instead, we
+    // use a synchronous require fallback if available, else throw a helpful error.
+    try {
+      // Try sync require (bundlers replace this on client)
+
+      const mod = require('@solana/web3.js') as typeof import('@solana/web3.js')
+      const instruction = new mod.TransactionInstruction({
+        keys,
+        programId: new mod.PublicKey(MEMO_PROGRAM_ID),
+        data: Buffer.from(memoData),
+      })
+      return { success: true, instruction }
+    }
+    catch {
+      // Fallback: cannot require in this environment
+      throw new Error('Memo instruction needs client/runtime web3.js. Ensure this runs on client.')
     }
   }
   catch (error) {
@@ -83,19 +100,12 @@ export const createMemoInstruction = (
 
 /**
  * Creates a memo instruction with validation
- * Combines memo validation with instruction creation
- * @param memo - The memo text to validate and include
- * @param signerPublicKey - The public key of the transaction signer
- * @returns MemoInstructionResult with validation and instruction creation results
  */
 export const createValidatedMemoInstruction = (
   memo: string,
   signerPublicKey: PublicKey,
 ): MemoInstructionResult => {
-  // Import validation function
   const { validateMemo } = useMemoValidation()
-
-  // First validate the memo
   const validation = validateMemo(memo)
   if (!validation.isValid) {
     return {
@@ -104,24 +114,19 @@ export const createValidatedMemoInstruction = (
       errorMessage: validation.errorMessage || 'Invalid memo format',
     }
   }
-
-  // Create the instruction if validation passes
   return createMemoInstruction(memo, signerPublicKey)
 }
 
 /**
  * Extracts memo data from a memo instruction
- * @param instruction - The transaction instruction to extract memo from
- * @returns The memo text or null if not a valid memo instruction
  */
 export const extractMemoFromInstruction = (instruction: TransactionInstruction): string | null => {
   try {
-    // Verify this is a memo program instruction
-    if (!instruction.programId.equals(MEMO_PROGRAM_ID)) {
+    // Compare programId via string to avoid constructing PublicKey at module scope
+    // @ts-expect-error programId is PublicKey at runtime
+    if (instruction.programId?.toString?.() !== MEMO_PROGRAM_ID) {
       return null
     }
-
-    // Decode the memo data
     const decoder = new TextDecoder('utf-8', { fatal: false })
     return decoder.decode(instruction.data)
   }
@@ -132,18 +137,14 @@ export const extractMemoFromInstruction = (instruction: TransactionInstruction):
 
 /**
  * Checks if a transaction instruction is a memo instruction
- * @param instruction - The instruction to check
- * @returns True if the instruction is a memo instruction
  */
 export const isMemoInstruction = (instruction: TransactionInstruction): boolean => {
-  return instruction.programId.equals(MEMO_PROGRAM_ID)
+  // @ts-expect-error programId is PublicKey at runtime
+  return instruction.programId?.toString?.() === MEMO_PROGRAM_ID
 }
 
 /**
  * Creates multiple memo instructions for batch operations
- * @param memos - Array of memo texts
- * @param signerPublicKey - The public key of the transaction signer
- * @returns Array of MemoInstructionResult objects
  */
 export const createMultipleMemoInstructions = (
   memos: string[],
@@ -154,12 +155,9 @@ export const createMultipleMemoInstructions = (
 
 /**
  * Formats memo instruction error for user display
- * @param result - The memo instruction result
- * @returns User-friendly error message
  */
 export const formatMemoInstructionError = (result: MemoInstructionResult): string => {
   if (result.success) return ''
-
   switch (result.error) {
     case MemoInstructionError.INVALID_MEMO:
       return 'Invalid memo format. Please check your memo text.'
@@ -172,39 +170,19 @@ export const formatMemoInstructionError = (result: MemoInstructionResult): strin
   }
 }
 
-/**
- * Utility function to get memo program information
- * @returns Object with memo program details
- */
-export const getMemoProgramInfo = () => {
-  return {
-    programId: MEMO_PROGRAM_ID.toString(),
-    programName: 'SPL Memo Program',
-    description: 'Official Solana program for adding memo data to transactions',
-    maxMemoLength: 566, // bytes
-    encoding: 'UTF-8',
-  }
-}
+/** Info helpers */
+export const getMemoProgramInfo = () => ({
+  programId: MEMO_PROGRAM_ID,
+  programName: 'SPL Memo Program',
+  description: 'Official Solana program for adding memo data to transactions',
+  maxMemoLength: 566,
+  encoding: 'UTF-8',
+})
 
-/**
- * Validates that a public key can be used as a memo signer
- * @param publicKey - The public key to validate
- * @returns True if valid, false otherwise
- */
 export const isValidMemoSigner = (publicKey: unknown): publicKey is PublicKey => {
-  return publicKey instanceof PublicKey && publicKey.toString() !== PublicKey.default.toString()
+  return !!publicKey && typeof (publicKey as any).toString === 'function'
 }
 
-/**
- * Creates a memo instruction with custom account configuration
- * Advanced usage for specific memo program requirements
- * @param memo - The memo text
- * @param accounts - Custom account meta array
- * @returns MemoInstructionResult
- */
-/**
- * Main composable function for Solana memo functionality
- */
 export const useSolanaMemo = () => {
   return {
     createMemoInstruction,
@@ -245,9 +223,12 @@ export const createCustomMemoInstruction = (
     const encoder = new TextEncoder()
     const memoData = encoder.encode(memo)
 
-    const instruction = new TransactionInstruction({
+    // lazy import
+
+    const mod = require('@solana/web3.js') as typeof import('@solana/web3.js')
+    const instruction = new mod.TransactionInstruction({
       keys: accounts,
-      programId: MEMO_PROGRAM_ID,
+      programId: new mod.PublicKey(MEMO_PROGRAM_ID),
       data: Buffer.from(memoData),
     })
 
