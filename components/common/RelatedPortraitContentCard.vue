@@ -8,7 +8,7 @@
       width="160px"
       height="auto"
       :src="cardPicture"
-      class="text-white align-end w-100 h-100"
+      class="text-white align-end"
       loading="lazy"
       :alt="cardTitle"
       format="webp"

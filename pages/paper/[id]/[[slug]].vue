@@ -174,6 +174,7 @@ const { data: contentData, pending: dataFetching } = await useAsyncData(
   `paper-${route.params.id}`,
   async () => {
     try {
+      console.time('time req')
       const response = await $fetch(`/api/v1/tests/${route.params.id}`, {})
 
       return response.data
@@ -185,6 +186,7 @@ const { data: contentData, pending: dataFetching } = await useAsyncData(
       throw e
     }
     finally {
+      console.timeEnd('time req')
       // Reset loading states if needed
     }
   },
