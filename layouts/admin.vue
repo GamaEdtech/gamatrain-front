@@ -22,7 +22,7 @@ const captionMenuItems = [
   { title: 'Analysis', link: '/admin/analysis', icon: 'mdi-chart-line' },
   { title: 'Contact Us', link: '/admin/contact-us', icon: 'mdi-archive-arrow-down-outline' },
   { title: 'User Managment ', link: '/admin/users', icon: 'mdi-account-group-outline' },
-  { title: 'User Managment ', link: '/admin/schools/images', icon: 'mdi-account-group-outline' },
+  { title: 'School Images ', link: '/admin/schools/images', icon: 'mdi-image-outline' },
 ]
 const typeManagementMenuItems = [
   { title: 'Location', link: '/admin/Locations' },
