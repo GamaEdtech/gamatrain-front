@@ -1,4 +1,5 @@
-import { PublicKey, VersionedTransaction, TransactionMessage, TransactionInstruction } from '@solana/web3.js'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import type { PublicKey as TPublicKey, VersionedTransaction as TVersionedTransaction, TransactionMessage as TTransactionMessage, TransactionInstruction as TTransactionInstruction } from '@solana/web3.js'
 import { Buffer } from 'buffer'
 
 // Interfaces for Jupiter API responses
@@ -38,13 +39,14 @@ export const createSimpleMemoSwap = async (
   quote: unknown,
   userPublicKey: string,
   memo: string,
-): Promise<{ transaction: VersionedTransaction, memo: string } | null> => {
+): Promise<{ transaction: TVersionedTransaction, memo: string } | null> => {
   try {
     console.log('🚀 Creating simple memo swap with QuickNode RPC')
     console.log('📝 Memo:', memo)
 
+    const { Connection, PublicKey, TransactionInstruction, TransactionMessage, VersionedTransaction } = await import('@solana/web3.js')
+
     // Create connection using environment configuration
-    const { Connection } = await import('@solana/web3.js')
     const connection = new Connection(getSolanaRpcUrl(), 'confirmed')
 
     const payerPublicKey = new PublicKey(userPublicKey)
@@ -69,7 +71,7 @@ export const createSimpleMemoSwap = async (
     }
 
     // Deserialize instructions
-    const deserializeInstruction = (instruction: JupiterInstruction): TransactionInstruction => {
+    const deserializeInstruction = (instruction: JupiterInstruction): TTransactionInstruction => {
       return new TransactionInstruction({
         programId: new PublicKey(instruction.programId),
         keys: instruction.accounts.map(key => ({
@@ -82,7 +84,7 @@ export const createSimpleMemoSwap = async (
     }
 
     // Build instructions array
-    const instructions: TransactionInstruction[] = []
+    const instructions: TTransactionInstruction[] = []
 
     // 1. Add compute budget instructions
     if (instructionsResponse.computeBudgetInstructions?.length > 0) {

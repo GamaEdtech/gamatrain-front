@@ -1,12 +1,15 @@
-import type { Connection, TransactionInstruction } from '@solana/web3.js'
-import { PublicKey, VersionedTransaction, TransactionMessage, AddressLookupTableAccount } from '@solana/web3.js'
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
+import type { Connection, TransactionInstruction, PublicKey as TPublicKey, VersionedTransaction, AddressLookupTableAccount } from '@solana/web3.js'
+import { TransactionMessage } from '@solana/web3.js'
 import { Buffer } from 'buffer'
 
 // Wallet interface for proper typing
 interface SolanaWallet {
   connected: boolean
   publicKey: {
-    value: PublicKey
+    value: TPublicKey
   }
   signTransaction: (transaction: VersionedTransaction) => Promise<VersionedTransaction>
 }
@@ -154,14 +157,15 @@ export const getTokenDecimals = (mint: string): number => {
 
 // Utility function to deserialize Jupiter instruction format
 const deserializeInstruction = (instruction: unknown): TransactionInstruction => {
-  return new TransactionInstruction({
-    programId: new PublicKey(instruction.programId),
-    keys: instruction.accounts.map((key: unknown) => ({
+  const PublicKey = (require('@solana/web3.js') as typeof import('@solana/web3.js')).PublicKey
+  return new (require('@solana/web3.js') as typeof import('@solana/web3.js')).TransactionInstruction({
+    programId: new PublicKey((instruction as any).programId),
+    keys: (instruction as any).accounts.map((key: any) => ({
       pubkey: new PublicKey(key.pubkey),
       isSigner: key.isSigner,
       isWritable: key.isWritable,
     })),
-    data: Buffer.from(instruction.data, 'base64'),
+    data: Buffer.from((instruction as any).data, 'base64'),
   })
 }
 
@@ -170,6 +174,7 @@ const getAddressLookupTableAccounts = async (
   keys: string[],
   connection: Connection,
 ): Promise<AddressLookupTableAccount[]> => {
+  const { PublicKey, AddressLookupTableAccount } = await import('@solana/web3.js')
   if (!keys || keys.length === 0) {
     return []
   }
@@ -319,6 +324,7 @@ export const useJupiterSwap = () => {
     connection: Connection,
     options: SwapOptions = {},
   ): Promise<JupiterSwapWithMemoResponse | null> => {
+    const { PublicKey, TransactionMessage, VersionedTransaction } = await import('@solana/web3.js')
     try {
       const payerPublicKey = new PublicKey(userPublicKey)
 
@@ -415,6 +421,7 @@ export const useJupiterSwap = () => {
     wallet: SolanaWallet,
     connection: Connection,
   ): Promise<string | null> => {
+    const { VersionedTransaction } = await import('@solana/web3.js')
     try {
       // Deserialize the transaction
       const swapTransactionBuf = Buffer.from(swapTransactionBase64, 'base64')
