@@ -120,6 +120,7 @@ export default defineNuxtConfig({
   experimental: {
     payloadExtraction: false,
     appManifest: false,
+    inlineSSRStyles: true,
   },
 
   pwa: {
