@@ -55,13 +55,14 @@
                   cover
                 >
                   <NuxtImg
-                    width="170px"
-                    height="300px"
+                    width="170"
+                    height="auto"
                     :src="image"
                     class="carousel-img fill-height"
                     preload
                     fetchpriority="high"
                     alt="Psat Paper Lesson"
+                    format="webp"
                   />
                 </v-carousel-item>
               </v-carousel>
@@ -79,11 +80,12 @@
                 >
                   <NuxtImg
                     width="70px"
-                    height="70px"
+                    height="auto"
                     :src="image"
                     placeholder
                     class="thumbnail-preview"
                     alt="Psat Paper Lesson"
+                    format="webp"
                   />
                 </div>
               </div>
@@ -205,7 +207,6 @@ watch(
 #details-gallery-portrate {
   #product-carousel {
     width: 100%;
-    max-width: 100%;
     height: 30rem !important;
     margin: auto;
     border-radius: 1.2rem;
