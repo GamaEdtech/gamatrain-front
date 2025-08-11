@@ -150,10 +150,10 @@
         md="8"
         class="text-center"
       >
-        <!-- <common-ad-banner
+        <common-ad-banner
           v-model="isAdsLoad"
           adslot="7199289937"
-        /> -->
+        />
       </v-col>
     </v-row>
   </div>
@@ -166,7 +166,7 @@ const requestURL = ref(useRequestURL().host)
 const randomTestContent = ref(null)
 const pageDescribe = ref('')
 const pageTitle = ref('')
-// const isAdsLoad = ref(false)
+const isAdsLoad = ref(false)
 
 // Track loading state
 
@@ -174,7 +174,6 @@ const { data: contentData, pending: dataFetching } = await useAsyncData(
   `paper-${route.params.id}`,
   async () => {
     try {
-      console.time('time req')
       const response = await $fetch(`/api/v1/tests/${route.params.id}`, {})
 
       return response.data
@@ -186,7 +185,6 @@ const { data: contentData, pending: dataFetching } = await useAsyncData(
       throw e
     }
     finally {
-      console.timeEnd('time req')
       // Reset loading states if needed
     }
   },
@@ -349,27 +347,27 @@ const openCrashReportDialog = () => {
   crash_report.value.dialog = true
   crash_report.value.form.type = 'test'
 }
-// const grabRandomTestCode = () => {
-//   if (contentData.value && contentData.value.lesson) {
-//     $fetch(`/api/v1/examTests/random?lesson=${contentData.value.lesson}`)
-//       .then((response) => {
-//         if (response.data.code) {
-//           retriveRandomTest(response.data.code)
-//         }
-//       })
-//       .catch((_err) => {})
-//   }
-// }
-// const retriveRandomTest = (code) => {
-//   $fetch(`/api/v1/examTests/${code}`)
-//     .then((response) => {
-//       randomTestContent.value = response.data
-//     })
-//     .catch((_err) => {})
-// }
+const grabRandomTestCode = () => {
+  if (contentData.value && contentData.value.lesson) {
+    $fetch(`/api/v1/examTests/random?lesson=${contentData.value.lesson}`)
+      .then((response) => {
+        if (response.data.code) {
+          retriveRandomTest(response.data.code)
+        }
+      })
+      .catch((_err) => {})
+  }
+}
+const retriveRandomTest = (code) => {
+  $fetch(`/api/v1/examTests/${code}`)
+    .then((response) => {
+      randomTestContent.value = response.data
+    })
+    .catch((_err) => {})
+}
 
 onMounted(() => {
-  // grabRandomTestCode()
+  grabRandomTestCode()
 })
 </script>
 
