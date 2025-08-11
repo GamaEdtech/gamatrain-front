@@ -9,7 +9,7 @@
           cols="12"
           class="pl-5 text-h4 teal--text"
         >
-          <span class="fa-solid fa-envelope" />
+          <v-icon>md:mail</v-icon>
           <span> New message </span>
         </v-col>
       </v-row>
@@ -76,7 +76,7 @@
                     <!-- </validation-provider> -->
                     <nuxt-link to="/formula-help">
                       <strong class="pointer teal--text text-h6">
-                        <span class="fa-solid fa-link" />
+                        <v-icon>md:link</v-icon>
                         Formula writing guide
                       </strong>
                     </nuxt-link>

@@ -103,6 +103,7 @@
                         v-show="contentData.q_file && contentData.q_file != '0'"
                         class="answer-img"
                         :src="contentData.q_file"
+                        alt="Answer Image"
                       >
 
                       <v-radio-group
@@ -156,6 +157,7 @@
                                 v-show="contentData.a_file"
                                 class="answer-img"
                                 :src="contentData.a_file"
+                                alt="Answer Image"
                               >
                             </div>
                           </template>
@@ -198,6 +200,7 @@
                                 v-show="contentData.b_file"
                                 :src="contentData.b_file"
                                 class="answer-img"
+                                alt="Answer Image"
                               >
                             </div>
                           </template>
@@ -241,6 +244,7 @@
                                 v-show="contentData.c_file"
                                 class="answer-img"
                                 :src="contentData.c_file"
+                                alt="Answer Image"
                               >
                             </div>
                           </template>
@@ -285,6 +289,7 @@
                                 v-show="contentData.d_file"
                                 class="answer-img"
                                 :src="contentData.d_file"
+                                alt="Answer Image"
                               >
                             </div>
                           </template>

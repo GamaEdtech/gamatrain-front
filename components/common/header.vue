@@ -59,13 +59,6 @@ const menuItems = [
   //   icon_color: 'primary'
   // },
 ]
-const _selectedItem = 1
-const _socialList = [
-  { link: 'telegram', icon: 'fa-telegram' },
-  { link: 'twitter', icon: 'fa-twitter' },
-  { link: 'instagram', icon: 'fa-instagram' },
-  { link: 'Youtube', icon: 'fa-youtube' },
-]
 
 const menuLink = [
   {
@@ -509,7 +502,10 @@ watch(
               xl="9"
             >
               <div class="d-flex">
-                <nuxt-link to="/">
+                <nuxt-link
+                  to="/"
+                  aria-label="Home Link"
+                >
                   <img
                     id="main-logo"
                     alt="Gamatrain"
@@ -631,6 +627,7 @@ watch(
                     class="wallet-icon pt-1"
                     :color="menuSetting.linkColor"
                     size="small"
+                    aria-label="Wallet"
                   >
                     <v-icon>mdi-wallet-outline</v-icon>
                   </v-btn>
@@ -696,14 +693,21 @@ watch(
         class="hidden-lg-and-up main-sidebar"
         :mobile="true"
       >
-        <v-list density="compact">
+        <v-list
+          density="compact"
+          aria-label="Main navigation menu"
+        >
           <!-- Profile Info -->
           <v-list-group
             v-if="auth.isAuthenticated.value"
             active-class="menu_group_active"
           >
             <template #activator="{ props }">
-              <v-list-item v-bind="props">
+              <v-list-item
+                v-bind="props"
+                role="option"
+                aria-label="َUser Information"
+              >
                 <v-icon icon="mdi-account-outline" />
                 <v-list-item-title>
                   {{ user?.first_name || user?.last_name || "No name" }}
@@ -715,6 +719,8 @@ watch(
               v-for="(item, i) in user_profile_items"
               :key="i"
               link
+              role="option"
+              :aria-label="item.title"
             >
               <template #prepend>
                 <v-icon :icon="item.icon" />
@@ -722,7 +728,10 @@ watch(
               <v-list-item-title>{{ item.title }}</v-list-item-title>
             </v-list-item>
 
-            <v-list-item @click="logout">
+            <v-list-item
+              aria-label="Logout from account"
+              @click="logout"
+            >
               <template #prepend>
                 <v-icon icon="mdi-exit-to-app" />
               </template>
@@ -733,6 +742,7 @@ watch(
           <!-- Notifications -->
           <v-list-item
             v-if="auth.isAuthenticated.value"
+            role="option"
             @click="notificationListDialog = true"
           >
             <template #prepend>
@@ -749,6 +759,8 @@ watch(
           <!-- Login Button -->
           <v-list-item
             v-if="!auth.isAuthenticated.value"
+            role="option"
+            aria-label="Sign in or Sign up"
             @click="openLoginDialog()"
           >
             <template #prepend>
@@ -768,6 +780,8 @@ watch(
             <v-list-item
               v-if="!item.subMenuList"
               :to="item.link"
+              role="option"
+              :aria-label="item.title"
             >
               <template #prepend>
                 <v-icon
@@ -814,16 +828,23 @@ watch(
         :class="menuSetting.class"
       >
         <v-icon
-          class="px-2"
+          class="pa-5"
           :class="menuSetting.bgColor == '#fff' ? '' : 'text-white'"
+          role="button"
+          aria-label="Open menu"
           @click="sidebar = !sidebar"
         >
           mdi-menu
         </v-icon>
         <!-- Logo section -->
-        <nuxt-link to="/">
+        <nuxt-link
+          to="/"
+          aria-label="Home Link"
+          class="py-4"
+        >
           <img
             id="main-logo"
+            alt="GamaTrain"
             :src="`/images/${menuSetting.logo}`"
           >
         </nuxt-link>
@@ -840,6 +861,8 @@ watch(
                 v-bind="props"
                 :color="menuSetting.linkColor"
                 class="pa-23"
+                role="button"
+                aria-label="Search"
               >
                 mdi-magnify
               </v-icon>
@@ -1122,6 +1145,7 @@ watch(
         <nuxt-link
           to="/user/wallet"
           class="wallet-div wallet-mobile"
+          aria-label="Wallet"
         >
           <v-icon
             class="wallet-icon"
@@ -1284,7 +1308,7 @@ watch(
 }
 
 #main-logo {
-  margin-left: 1.6rem !important;
+  margin-left: 1rem !important;
   width: 8.0551rem !important;
   height: 2rem !important;
 }
@@ -1642,7 +1666,7 @@ watch(
   }
 
   #main-logo {
-    margin-left: 3rem !important;
+    margin-left: 2rem !important;
     width: 1.6458rem;
     height: 1.6511rem;
   }
@@ -1753,11 +1777,6 @@ watch(
     .mobile_bar .v-toolbar__content {
       background: transparent;
       padding: 0 1.4rem 0 0.5rem !important;
-    }
-
-    .mobile_bar .fa-bell {
-      line-height: 3rem !important;
-      font-size: 2.8rem !important;
     }
   }
 

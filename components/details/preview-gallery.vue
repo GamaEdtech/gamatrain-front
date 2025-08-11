@@ -19,9 +19,13 @@
               :to="`${item.link}&state=${help_link_data.state}&section=${help_link_data.section}&base=${help_link_data.base}&course=${help_link_data.course}
                   &lesson=${help_link_data.lesson}`"
               class="mb-3 bg-blue-grey-darken-2 flex-shrink-0"
+              :aria-label="item.text"
             >
               <span
-                v-tooltip="item.text"
+                v-tooltip="{
+                  text: item.text,
+                  id: `tooltip-${index}`,
+                }"
                 style="font-size: 26px"
                 :class="`icon icon-${item.icon} text-white text--darken-1`"
               />
@@ -50,9 +54,15 @@
                   :key="index"
                   cover
                 >
-                  <v-img
+                  <NuxtImg
+                    width="170"
+                    height="auto"
                     :src="image"
                     class="carousel-img fill-height"
+                    preload
+                    fetchpriority="high"
+                    alt="Psat Paper Lesson"
+                    format="webp"
                   />
                 </v-carousel-item>
               </v-carousel>
@@ -68,10 +78,15 @@
                   :class="{ 'active-box': carouselVal === index }"
                   @click="changeSlide(index)"
                 >
-                  <img
+                  <NuxtImg
+                    width="70px"
+                    height="auto"
                     :src="image"
+                    placeholder
                     class="thumbnail-preview"
-                  >
+                    alt="Psat Paper Lesson"
+                    format="webp"
+                  />
                 </div>
               </div>
             </div>
@@ -192,12 +207,12 @@ watch(
 #details-gallery-portrate {
   #product-carousel {
     width: 100%;
-    max-width: 100%;
     height: 30rem !important;
     margin: auto;
     border-radius: 1.2rem;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
 
     .v-window {
       height: 100%;
