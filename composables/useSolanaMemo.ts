@@ -1,8 +1,11 @@
-import { PublicKey, TransactionInstruction, type AccountMeta } from '@solana/web3.js'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-require-imports */
+
+import type { PublicKey, TransactionInstruction, AccountMeta } from '@solana/web3.js'
 import { Buffer } from 'buffer'
 
-// SPL Memo Program ID - official Solana memo program
-export const MEMO_PROGRAM_ID = new PublicKey('MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr')
+// SPL Memo Program ID - official Solana memo program (string form to avoid runtime import on SSR)
+export const MEMO_PROGRAM_ID = 'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr'
 
 // Memo instruction error types
 export enum MemoInstructionError {
@@ -17,33 +20,44 @@ export interface MemoInstructionResult {
   instruction?: TransactionInstruction
   error?: MemoInstructionError
   errorMessage?: string
+  isClientSide?: boolean
 }
 
 /**
- * Creates a Solana memo program instruction
- * @param memo - The memo text to include in the transaction
- * @param signerPublicKey - The public key of the transaction signer
- * @returns MemoInstructionResult with the created instruction or error details
+ * Creates a Solana memo program instruction (async version)
  */
-export const createMemoInstruction = (
+export const createMemoInstructionAsync = async (
   memo: string,
   signerPublicKey: PublicKey,
-): MemoInstructionResult => {
+): Promise<MemoInstructionResult> => {
   try {
+    // Check if we're running on the client side
+    if (!import.meta.client) {
+      return {
+        success: false,
+        error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
+        errorMessage: 'Memo instructions can only be created on the client side',
+        isClientSide: false,
+      }
+    }
+
     // Validate inputs
     if (!memo || typeof memo !== 'string') {
       return {
         success: false,
         error: MemoInstructionError.INVALID_MEMO,
         errorMessage: 'Memo must be a non-empty string',
+        isClientSide: true,
       }
     }
 
-    if (!signerPublicKey || !(signerPublicKey instanceof PublicKey)) {
+    // Avoid runtime dependency on PublicKey instanceof; accept objects with toString
+    if (!signerPublicKey || typeof (signerPublicKey as any).toString !== 'function') {
       return {
         success: false,
         error: MemoInstructionError.INVALID_SIGNER,
-        errorMessage: 'Signer public key must be a valid PublicKey instance',
+        errorMessage: 'Signer public key must be a valid PublicKey-like object',
+        isClientSide: true,
       }
     }
 
@@ -60,16 +74,104 @@ export const createMemoInstruction = (
       },
     ]
 
-    // Create the memo instruction
+    // Dynamically import Solana web3.js on client side
+    const { TransactionInstruction, PublicKey } = await import('@solana/web3.js')
+
     const instruction = new TransactionInstruction({
       keys,
-      programId: MEMO_PROGRAM_ID,
+      programId: new PublicKey(MEMO_PROGRAM_ID),
       data: Buffer.from(memoData),
     })
+
+    logMemoInstructionSuccess('creation', { memo: memo.substring(0, 20) + '...', signerKey: signerPublicKey.toString().substring(0, 8) + '...' })
 
     return {
       success: true,
       instruction,
+      isClientSide: true,
+    }
+  }
+  catch (error) {
+    logMemoInstructionError('creation', error, { memo: memo.substring(0, 20) + '...', signerKey: signerPublicKey?.toString?.()?.substring(0, 8) + '...' })
+
+    return {
+      success: false,
+      error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
+      errorMessage: error instanceof Error ? error.message : 'Failed to create memo instruction',
+      isClientSide: import.meta.client,
+    }
+  }
+}
+
+/**
+ * Creates a Solana memo program instruction (legacy sync version - deprecated)
+ * @deprecated Use createMemoInstructionAsync instead for better SSR compatibility
+ */
+export const createMemoInstruction = (
+  memo: string,
+  signerPublicKey: PublicKey,
+): MemoInstructionResult => {
+  // Check if we're running on the client side
+  if (!import.meta.client) {
+    return {
+      success: false,
+      error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
+      errorMessage: 'Memo instructions can only be created on the client side. Use createMemoInstructionAsync instead.',
+      isClientSide: false,
+    }
+  }
+
+  try {
+    // Validate inputs
+    if (!memo || typeof memo !== 'string') {
+      return {
+        success: false,
+        error: MemoInstructionError.INVALID_MEMO,
+        errorMessage: 'Memo must be a non-empty string',
+        isClientSide: true,
+      }
+    }
+
+    // Avoid runtime dependency on PublicKey instanceof; accept objects with toString
+    if (!signerPublicKey || typeof (signerPublicKey as any).toString !== 'function') {
+      return {
+        success: false,
+        error: MemoInstructionError.INVALID_SIGNER,
+        errorMessage: 'Signer public key must be a valid PublicKey-like object',
+        isClientSide: true,
+      }
+    }
+
+    // Encode memo as UTF-8 bytes
+    const encoder = new TextEncoder()
+    const memoData = encoder.encode(memo)
+
+    // Create account meta for the signer (required by memo program)
+    const keys: AccountMeta[] = [
+      {
+        pubkey: signerPublicKey,
+        isSigner: true,
+        isWritable: false,
+      },
+    ]
+
+    // Try to use require as fallback for sync operation (may fail in some environments)
+    try {
+      const mod = require('@solana/web3.js') as typeof import('@solana/web3.js')
+      const instruction = new mod.TransactionInstruction({
+        keys,
+        programId: new mod.PublicKey(MEMO_PROGRAM_ID),
+        data: Buffer.from(memoData),
+      })
+      return {
+        success: true,
+        instruction,
+        isClientSide: true,
+      }
+    }
+    catch {
+      // Fallback: cannot require in this environment
+      throw new Error('Synchronous memo instruction creation failed. Use createMemoInstructionAsync instead.')
     }
   }
   catch (error) {
@@ -77,51 +179,82 @@ export const createMemoInstruction = (
       success: false,
       error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
       errorMessage: error instanceof Error ? error.message : 'Failed to create memo instruction',
+      isClientSide: true,
     }
   }
 }
 
 /**
- * Creates a memo instruction with validation
- * Combines memo validation with instruction creation
- * @param memo - The memo text to validate and include
- * @param signerPublicKey - The public key of the transaction signer
- * @returns MemoInstructionResult with validation and instruction creation results
+ * Creates a memo instruction with validation (async version)
  */
-export const createValidatedMemoInstruction = (
+export const createValidatedMemoInstructionAsync = async (
   memo: string,
   signerPublicKey: PublicKey,
-): MemoInstructionResult => {
-  // Import validation function
-  const { validateMemo } = useMemoValidation()
+): Promise<MemoInstructionResult> => {
+  // Check if we're running on the client side
+  if (!import.meta.client) {
+    return {
+      success: false,
+      error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
+      errorMessage: 'Memo instructions can only be created on the client side',
+      isClientSide: false,
+    }
+  }
 
-  // First validate the memo
+  const { validateMemo } = useMemoValidation()
   const validation = validateMemo(memo)
   if (!validation.isValid) {
     return {
       success: false,
       error: MemoInstructionError.INVALID_MEMO,
       errorMessage: validation.errorMessage || 'Invalid memo format',
+      isClientSide: true,
+    }
+  }
+  return await createMemoInstructionAsync(memo, signerPublicKey)
+}
+
+/**
+ * Creates a memo instruction with validation (legacy sync version - deprecated)
+ * @deprecated Use createValidatedMemoInstructionAsync instead for better SSR compatibility
+ */
+export const createValidatedMemoInstruction = (
+  memo: string,
+  signerPublicKey: PublicKey,
+): MemoInstructionResult => {
+  // Check if we're running on the client side
+  if (!import.meta.client) {
+    return {
+      success: false,
+      error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
+      errorMessage: 'Memo instructions can only be created on the client side. Use createValidatedMemoInstructionAsync instead.',
+      isClientSide: false,
     }
   }
 
-  // Create the instruction if validation passes
+  const { validateMemo } = useMemoValidation()
+  const validation = validateMemo(memo)
+  if (!validation.isValid) {
+    return {
+      success: false,
+      error: MemoInstructionError.INVALID_MEMO,
+      errorMessage: validation.errorMessage || 'Invalid memo format',
+      isClientSide: true,
+    }
+  }
   return createMemoInstruction(memo, signerPublicKey)
 }
 
 /**
  * Extracts memo data from a memo instruction
- * @param instruction - The transaction instruction to extract memo from
- * @returns The memo text or null if not a valid memo instruction
  */
 export const extractMemoFromInstruction = (instruction: TransactionInstruction): string | null => {
   try {
-    // Verify this is a memo program instruction
-    if (!instruction.programId.equals(MEMO_PROGRAM_ID)) {
+    // Compare programId via string to avoid constructing PublicKey at module scope
+    // @ts-expect-error programId is PublicKey at runtime
+    if (instruction.programId?.toString?.() !== MEMO_PROGRAM_ID) {
       return null
     }
-
-    // Decode the memo data
     const decoder = new TextDecoder('utf-8', { fatal: false })
     return decoder.decode(instruction.data)
   }
@@ -132,105 +265,203 @@ export const extractMemoFromInstruction = (instruction: TransactionInstruction):
 
 /**
  * Checks if a transaction instruction is a memo instruction
- * @param instruction - The instruction to check
- * @returns True if the instruction is a memo instruction
  */
 export const isMemoInstruction = (instruction: TransactionInstruction): boolean => {
-  return instruction.programId.equals(MEMO_PROGRAM_ID)
+  // @ts-expect-error programId is PublicKey at runtime
+  return instruction.programId?.toString?.() === MEMO_PROGRAM_ID
 }
 
 /**
- * Creates multiple memo instructions for batch operations
- * @param memos - Array of memo texts
- * @param signerPublicKey - The public key of the transaction signer
- * @returns Array of MemoInstructionResult objects
+ * Creates multiple memo instructions for batch operations (async version)
+ */
+export const createMultipleMemoInstructionsAsync = async (
+  memos: string[],
+  signerPublicKey: PublicKey,
+): Promise<MemoInstructionResult[]> => {
+  // Check if we're running on the client side
+  if (!import.meta.client) {
+    return memos.map(() => ({
+      success: false,
+      error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
+      errorMessage: 'Memo instructions can only be created on the client side',
+      isClientSide: false,
+    }))
+  }
+
+  const results = await Promise.all(
+    memos.map(memo => createValidatedMemoInstructionAsync(memo, signerPublicKey)),
+  )
+  return results
+}
+
+/**
+ * Creates multiple memo instructions for batch operations (legacy sync version - deprecated)
+ * @deprecated Use createMultipleMemoInstructionsAsync instead for better SSR compatibility
  */
 export const createMultipleMemoInstructions = (
   memos: string[],
   signerPublicKey: PublicKey,
 ): MemoInstructionResult[] => {
+  // Check if we're running on the client side
+  if (!import.meta.client) {
+    return memos.map(() => ({
+      success: false,
+      error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
+      errorMessage: 'Memo instructions can only be created on the client side. Use createMultipleMemoInstructionsAsync instead.',
+      isClientSide: false,
+    }))
+  }
+
   return memos.map(memo => createValidatedMemoInstruction(memo, signerPublicKey))
 }
 
 /**
  * Formats memo instruction error for user display
- * @param result - The memo instruction result
- * @returns User-friendly error message
  */
 export const formatMemoInstructionError = (result: MemoInstructionResult): string => {
   if (result.success) return ''
 
+  // Add environment context to error messages
+  const envContext = result.isClientSide === false ? ' (Server-side environment detected)' : ''
+
   switch (result.error) {
     case MemoInstructionError.INVALID_MEMO:
-      return 'Invalid memo format. Please check your memo text.'
+      return `Invalid memo format. Please check your memo text.${envContext}`
     case MemoInstructionError.INVALID_SIGNER:
-      return 'Invalid wallet connection. Please reconnect your wallet.'
+      return `Invalid wallet connection. Please reconnect your wallet.${envContext}`
     case MemoInstructionError.INSTRUCTION_CREATION_FAILED:
-      return 'Failed to create memo instruction. Please try again.'
+      if (!result.isClientSide) {
+        return 'Memo instructions require client-side execution. Please ensure you are running in a browser environment.'
+      }
+      return `Failed to create memo instruction. Please try again.${envContext}`
     default:
-      return result.errorMessage || 'Unknown error occurred while creating memo instruction.'
+      return result.errorMessage || `Unknown error occurred while creating memo instruction.${envContext}`
   }
 }
 
 /**
- * Utility function to get memo program information
- * @returns Object with memo program details
+ * Enhanced error logging for memo instruction operations
  */
-export const getMemoProgramInfo = () => {
-  return {
-    programId: MEMO_PROGRAM_ID.toString(),
-    programName: 'SPL Memo Program',
-    description: 'Official Solana program for adding memo data to transactions',
-    maxMemoLength: 566, // bytes
-    encoding: 'UTF-8',
+export const logMemoInstructionError = (operation: string, error: any, context?: any) => {
+  const errorInfo = {
+    operation,
+    error: error instanceof Error ? error.message : String(error),
+    isClient: import.meta.client,
+    timestamp: new Date().toISOString(),
+    context,
+  }
+
+  console.error(`❌ Memo instruction ${operation} failed:`, errorInfo)
+
+  // Additional debugging information
+  if (!import.meta.client) {
+    console.warn('⚠️ Memo instruction operation attempted on server-side. Use client-side execution instead.')
   }
 }
 
 /**
- * Validates that a public key can be used as a memo signer
- * @param publicKey - The public key to validate
- * @returns True if valid, false otherwise
+ * Enhanced success logging for memo instruction operations
  */
+export const logMemoInstructionSuccess = (operation: string, details?: any) => {
+  const successInfo = {
+    operation,
+    isClient: import.meta.client,
+    timestamp: new Date().toISOString(),
+    details,
+  }
+
+  console.log(`✅ Memo instruction ${operation} successful:`, successInfo)
+}
+
+/** Info helpers */
+export const getMemoProgramInfo = () => ({
+  programId: MEMO_PROGRAM_ID,
+  programName: 'SPL Memo Program',
+  description: 'Official Solana program for adding memo data to transactions',
+  maxMemoLength: 566,
+  encoding: 'UTF-8',
+})
+
 export const isValidMemoSigner = (publicKey: unknown): publicKey is PublicKey => {
-  return publicKey instanceof PublicKey && publicKey.toString() !== PublicKey.default.toString()
+  // Only validate on client side
+  if (!import.meta.client) {
+    return false
+  }
+  return !!publicKey && typeof (publicKey as any).toString === 'function'
 }
 
 /**
- * Creates a memo instruction with custom account configuration
- * Advanced usage for specific memo program requirements
- * @param memo - The memo text
- * @param accounts - Custom account meta array
- * @returns MemoInstructionResult
+ * Checks if the current environment supports memo instruction creation
  */
+export const canCreateMemoInstructions = (): boolean => {
+  return import.meta.client
+}
+
 /**
- * Main composable function for Solana memo functionality
+ * Gets environment information for debugging
  */
+export const getMemoEnvironmentInfo = () => {
+  return {
+    isClient: import.meta.client,
+    canCreateInstructions: canCreateMemoInstructions(),
+    programId: MEMO_PROGRAM_ID,
+    timestamp: new Date().toISOString(),
+  }
+}
+
 export const useSolanaMemo = () => {
   return {
+    // Async functions (recommended)
+    createMemoInstructionAsync,
+    createValidatedMemoInstructionAsync,
+    createCustomMemoInstructionAsync,
+    createMultipleMemoInstructionsAsync,
+    // Legacy sync functions (deprecated)
     createMemoInstruction,
     createValidatedMemoInstruction,
+    createCustomMemoInstruction,
+    createMultipleMemoInstructions,
+    // Utility functions
     extractMemoFromInstruction,
     isMemoInstruction,
-    createMultipleMemoInstructions,
     formatMemoInstructionError,
     getMemoProgramInfo,
     isValidMemoSigner,
-    createCustomMemoInstruction,
+    canCreateMemoInstructions,
+    getMemoEnvironmentInfo,
+    // Logging functions
+    logMemoInstructionError,
+    logMemoInstructionSuccess,
+    // Constants
     MEMO_PROGRAM_ID,
     MemoInstructionError,
   }
 }
 
-export const createCustomMemoInstruction = (
+/**
+ * Creates a memo instruction with custom account configuration (async version)
+ */
+export const createCustomMemoInstructionAsync = async (
   memo: string,
   accounts: AccountMeta[],
-): MemoInstructionResult => {
+): Promise<MemoInstructionResult> => {
   try {
+    // Check if we're running on the client side
+    if (!import.meta.client) {
+      return {
+        success: false,
+        error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
+        errorMessage: 'Memo instructions can only be created on the client side',
+        isClientSide: false,
+      }
+    }
+
     if (!memo || typeof memo !== 'string') {
       return {
         success: false,
         error: MemoInstructionError.INVALID_MEMO,
         errorMessage: 'Memo must be a non-empty string',
+        isClientSide: true,
       }
     }
 
@@ -239,21 +470,26 @@ export const createCustomMemoInstruction = (
         success: false,
         error: MemoInstructionError.INVALID_SIGNER,
         errorMessage: 'At least one account must be provided',
+        isClientSide: true,
       }
     }
 
     const encoder = new TextEncoder()
     const memoData = encoder.encode(memo)
 
+    // Dynamically import Solana web3.js on client side
+    const { TransactionInstruction, PublicKey } = await import('@solana/web3.js')
+
     const instruction = new TransactionInstruction({
       keys: accounts,
-      programId: MEMO_PROGRAM_ID,
+      programId: new PublicKey(MEMO_PROGRAM_ID),
       data: Buffer.from(memoData),
     })
 
     return {
       success: true,
       instruction,
+      isClientSide: true,
     }
   }
   catch (error) {
@@ -261,6 +497,76 @@ export const createCustomMemoInstruction = (
       success: false,
       error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
       errorMessage: error instanceof Error ? error.message : 'Failed to create custom memo instruction',
+      isClientSide: import.meta.client,
+    }
+  }
+}
+
+/**
+ * Creates a memo instruction with custom account configuration (legacy sync version - deprecated)
+ * @deprecated Use createCustomMemoInstructionAsync instead for better SSR compatibility
+ */
+export const createCustomMemoInstruction = (
+  memo: string,
+  accounts: AccountMeta[],
+): MemoInstructionResult => {
+  try {
+    // Check if we're running on the client side
+    if (!import.meta.client) {
+      return {
+        success: false,
+        error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
+        errorMessage: 'Memo instructions can only be created on the client side. Use createCustomMemoInstructionAsync instead.',
+        isClientSide: false,
+      }
+    }
+
+    if (!memo || typeof memo !== 'string') {
+      return {
+        success: false,
+        error: MemoInstructionError.INVALID_MEMO,
+        errorMessage: 'Memo must be a non-empty string',
+        isClientSide: true,
+      }
+    }
+
+    if (!accounts || accounts.length === 0) {
+      return {
+        success: false,
+        error: MemoInstructionError.INVALID_SIGNER,
+        errorMessage: 'At least one account must be provided',
+        isClientSide: true,
+      }
+    }
+
+    const encoder = new TextEncoder()
+    const memoData = encoder.encode(memo)
+
+    // Try to use require as fallback for sync operation (may fail in some environments)
+    try {
+      const mod = require('@solana/web3.js') as typeof import('@solana/web3.js')
+      const instruction = new mod.TransactionInstruction({
+        keys: accounts,
+        programId: new mod.PublicKey(MEMO_PROGRAM_ID),
+        data: Buffer.from(memoData),
+      })
+
+      return {
+        success: true,
+        instruction,
+        isClientSide: true,
+      }
+    }
+    catch {
+      throw new Error('Synchronous custom memo instruction creation failed. Use createCustomMemoInstructionAsync instead.')
+    }
+  }
+  catch (error) {
+    return {
+      success: false,
+      error: MemoInstructionError.INSTRUCTION_CREATION_FAILED,
+      errorMessage: error instanceof Error ? error.message : 'Failed to create custom memo instruction',
+      isClientSide: true,
     }
   }
 }

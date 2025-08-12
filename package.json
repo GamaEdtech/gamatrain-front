@@ -21,7 +21,6 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-classic": "^43.3.1",
     "@ckeditor/ckeditor5-vue": "^7.3.0",
-    "@jup-ag/api": "^6.0.44",
     "@nuxt/eslint": "^1.6.0",
     "@nuxt/image": "^1.10.0",
     "@nuxtjs/dotenv": "^1.4.1",

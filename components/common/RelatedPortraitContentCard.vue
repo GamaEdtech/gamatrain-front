@@ -5,12 +5,13 @@
     :style="{ height: `${CardHeight}`, borderRadius: '8px' }"
   >
     <NuxtImg
-      width="130px"
-      height="200px"
+      width="160px"
+      height="auto"
       :src="cardPicture"
       class="text-white align-end w-100 h-100"
       loading="lazy"
       :alt="cardTitle"
+      format="webp"
     />
     <div class="circle-container">
       <div

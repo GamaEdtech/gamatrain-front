@@ -222,6 +222,7 @@ import type { VersionedTransaction } from '@solana/web3.js'
 import type { SolanaWallet, SwapQuoteDetails, TokenConfig } from '~/composables/useJupiterSwap'
 import { TOKEN_MINTS } from '~/composables/useJupiterSwap'
 import { Buffer } from 'buffer'
+import { useSolanaClient } from '~/composables/useSolanaClient'
 
 type MaybeWallet = {
   sendTransaction?: (tx: VersionedTransaction, connection?: unknown) => Promise<string>
@@ -611,16 +612,87 @@ const fetchCurrentPrice = async () => {
 }
 
 const fetchBalances = async () => {
-  if (!wallet.value?.publicKey?.value) return
+  // Ensure we only run on client and have a wallet pubkey
+  if (!import.meta.client) return
 
-  try {
-    // This would require implementing balance fetching logic
-    // Placeholder: keep as null to avoid falsely failing balance checks
+  // Try to normalize wallet public key to a string
+  const ownerPk = wallet.value?.publicKey?.value?.toString?.() ?? wallet.value?.publicKey?.toString?.() ?? null
+
+  if (!ownerPk) {
+    // No wallet connected yet
     payTokenBalance.value = null
     getTokenBalance.value = null
+    return
+  }
+
+  try {
+    const solana = useSolanaClient()
+
+    // 1) GET token balance (SPL token)
+    try {
+      const getAccounts = await solana.getTokenAccountsByOwner({
+        owner: ownerPk,
+        mint: TOKEN_MINTS.GET,
+        commitment: 'confirmed',
+      })
+      let totalGetRaw = 0n
+      let getDecimals = 0
+      for (const a of getAccounts) {
+        totalGetRaw += BigInt(a.amount)
+        getDecimals = a.decimals
+      }
+      getTokenBalance.value = getDecimals > 0
+        ? Number(totalGetRaw) / 10 ** getDecimals
+        : Number(totalGetRaw)
+    }
+    catch (e) {
+      console.warn('Failed to fetch $GET token balance:', e)
+      getTokenBalance.value = null
+    }
+
+    // 2) Pay token balance (handle SOL special-case)
+    const payMint = selectedPayToken.value
+    if (payMint === TOKEN_MINTS.SOL) {
+      // Native SOL uses getBalance (lamports)
+      try {
+        const connection = await solana.getConnection()
+        const { PublicKey } = await import('@solana/web3.js')
+        const lamports = await connection.getBalance(new PublicKey(ownerPk), 'confirmed')
+        payTokenBalance.value = lamports / 1_000_000_000
+      }
+      catch (e) {
+        console.warn('Failed to fetch SOL balance:', e)
+        payTokenBalance.value = null
+      }
+    }
+    else {
+      // SPL token balance via token accounts
+      try {
+        const payAccounts = await solana.getTokenAccountsByOwner({
+          owner: ownerPk,
+          mint: payMint,
+          commitment: 'confirmed',
+        })
+        let totalPayRaw = 0n
+        let payDecimals = 0
+        for (const a of payAccounts) {
+          totalPayRaw += BigInt(a.amount)
+          payDecimals = a.decimals
+        }
+        payTokenBalance.value = payDecimals > 0
+          ? Number(totalPayRaw) / 10 ** payDecimals
+          : Number(totalPayRaw)
+      }
+      catch (e) {
+        console.warn('Failed to fetch pay token balance:', e)
+        payTokenBalance.value = null
+      }
+    }
   }
   catch (error) {
     console.error('Failed to fetch balances:', error)
+    payTokenBalance.value = null
+    getTokenBalance.value = null
   }
 }
 
@@ -1088,7 +1160,7 @@ const handleSwap = async () => {
       setTimeout(() => {
         successMessage.value = null
         lastSignature.value = null
-      }, 20000)
+      }, 30000)
 
       // Reset form and refresh balances
       getTokenAmount.value = ''
@@ -1123,7 +1195,7 @@ const handleSwap = async () => {
     // Clear error message after 10 seconds
     setTimeout(() => {
       errorMessage.value = null
-    }, 10000)
+    }, 20000)
   }
   finally {
     swapping.value = false
@@ -1161,7 +1233,7 @@ const handleDisconnect = async () => {
     // Clear error message after 5 seconds
     setTimeout(() => {
       errorMessage.value = null
-    }, 5000)
+    }, 10000)
   }
   showDisconnectModal.value = false
 }
