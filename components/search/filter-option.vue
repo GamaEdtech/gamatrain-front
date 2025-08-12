@@ -58,7 +58,7 @@
     <div
       class="w-100 h-100 d-flex flex-column justify-space-between overflow-y-auto bg-white position-relative"
     >
-      <v-container class="flex-column">
+      <v-container class="flex-column mb-10">
         <v-col
           cols="12"
           class="d-flex justify-space-between align-center"
@@ -133,7 +133,9 @@
           </div>
         </v-col>
       </v-container>
-      <div class="w-100 d-flex align-center justify-center ga-3 box-button">
+      <div
+        class="w-100 d-flex align-center justify-center ga-3 box-button position-fixed bottom-0 bg-white"
+      >
         <v-btn
           variant="text"
           class="text-h5"
@@ -216,8 +218,7 @@ const allMonths = [
   { id: 12, title: 'December' },
 ]
 
-const specialMonths
-= {
+const specialMonths = {
   4161: [
     { id: 3, title: 'March' },
     { id: 6, title: 'May/Jun' },
@@ -305,7 +306,7 @@ const specialMonths
   ],
 }
 
-function getMonth(grade) {
+const getMonth = (grade) => {
   if (grade) {
     return specialMonths[grade]
   }
@@ -507,6 +508,7 @@ const clearFilter = (filter, index) => {
     if (index == FILTER_INDEX.Board) {
       filters[FILTER_INDEX.Classification].selectedItem = null
       filters[FILTER_INDEX.Classification].disabled = true
+      filters[FILTER_INDEX.Month].items = getMonth()
     }
   }
 
@@ -556,7 +558,8 @@ const updateClassificationFilter = async () => {
 const updateStatusMonthYearFilter = () => {
   if (
     filters[FILTER_INDEX.Type].selectedItem
-    && (filters[FILTER_INDEX.Type].selectedItem.title == 'Past Papers' || filters[FILTER_INDEX.Type].selectedItem.title == 'QuizHub')
+    && (filters[FILTER_INDEX.Type].selectedItem.title == 'Past Papers'
+      || filters[FILTER_INDEX.Type].selectedItem.title == 'QuizHub')
   ) {
     filters[FILTER_INDEX.Year].disabled = false
     filters[FILTER_INDEX.Month].disabled = false
@@ -584,10 +587,15 @@ const onFilterUpdate = async (item, filterName) => {
         await updateClassificationFilter()
       }
       updateStatusMonthYearFilter()
+      if (index == FILTER_INDEX.Board) {
+        filters[FILTER_INDEX.Month].items = getMonth()
+      }
     }
     if (index == FILTER_INDEX.Grade) {
       filters[FILTER_INDEX.Month].selectedItem = null
-      filters[FILTER_INDEX.Month].items = getMonth(filters[FILTER_INDEX.Grade].selectedItem?.id)
+      filters[FILTER_INDEX.Month].items = getMonth(
+        filters[FILTER_INDEX.Grade].selectedItem?.id,
+      )
     }
 
     if (index < FILTER_INDEX.Type) {
@@ -685,7 +693,10 @@ const updateFiltersExistInRoute = async () => {
     filters[FILTER_INDEX.Type].selectedItem
       = filters[FILTER_INDEX.Type].items[0]
   }
-  if (typeFilter.selectedItem?.title === 'Past Papers' || typeFilter.selectedItem?.title === 'QuizHub') {
+  if (
+    typeFilter.selectedItem?.title === 'Past Papers'
+    || typeFilter.selectedItem?.title === 'QuizHub'
+  ) {
     filters[FILTER_INDEX.Year].disabled = false
     filters[FILTER_INDEX.Month].disabled = false
   }
