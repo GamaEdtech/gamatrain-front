@@ -1160,7 +1160,7 @@ const handleSwap = async () => {
       setTimeout(() => {
         successMessage.value = null
         lastSignature.value = null
-      }, 20000)
+      }, 30000)
 
       // Reset form and refresh balances
       getTokenAmount.value = ''
@@ -1182,7 +1182,7 @@ const handleSwap = async () => {
     // Clear error message after 10 seconds
     setTimeout(() => {
       errorMessage.value = null
-    }, 10000)
+    }, 20000)
   }
   finally {
     swapping.value = false
@@ -1220,7 +1220,7 @@ const handleDisconnect = async () => {
     // Clear error message after 5 seconds
     setTimeout(() => {
       errorMessage.value = null
-    }, 5000)
+    }, 10000)
   }
   showDisconnectModal.value = false
 }
