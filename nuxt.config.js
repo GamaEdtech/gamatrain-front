@@ -279,7 +279,6 @@ export default defineNuxtConfig({
           },
         },
       },
-      cssCodeSplit: false,
     },
     define: {
       global: 'globalThis',
