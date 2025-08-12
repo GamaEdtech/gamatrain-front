@@ -1,61 +1,66 @@
 <template>
-  <h1 class="text-h6">
-    <div class="d-flex align-center flex-wrap">
-      <div
-        v-if="!generalDataEditMode.description"
-        class="d-flex align-center"
-      >
-        <div>
-          {{ contentData.description || defaultDescription }}
-        </div>
-        <v-btn
-          class="ml-4"
-          icon
-          color="blue-grey"
-          variant="text"
-          @click="handleEdit"
-        >
-          <v-icon size="large">
-            mdi-pencil
-          </v-icon>
-        </v-btn>
-      </div>
-      <div class="w-70 w-md-100">
-        <v-textarea
-          v-if="generalDataEditMode.description"
-          v-model="form.description"
-          variant="outlined"
-          label="Description"
-          :rules="[(v) => !!v || 'Description is required']"
-        >
-          <template #append-inner>
-            <v-btn
-              :loading="decSubmitLoader"
-              color="success"
-              variant="flat"
-              size="x-small"
-              icon
-              @click="handleUpdate"
-            >
-              <v-icon size="large">
-                mdi-check
-              </v-icon>
-            </v-btn>
-          </template>
-        </v-textarea>
-      </div>
+  <div>
+    <div class="mb-4">
+      Description
     </div>
-    <span v-show="contentData.school_type_title">
-      ,
-      {{ contentData.school_type_title }}
-    </span>
-    <span v-show="contentData.section_title">
-      , {{ contentData.section_title }}
-    </span>
-    <span v-show="contentData.area_title">
-      , {{ contentData.area_title }}
-    </span>
-  </h1>
+    <h1 class="text-h6 text-md-h5">
+      <div class="d-flex align-center flex-wrap">
+        <div
+          v-if="!generalDataEditMode.description"
+          class="d-flex align-center"
+        >
+          <div>
+            {{ contentData.description || defaultDescription }}
+          </div>
+          <v-btn
+            class="ml-4"
+            icon
+            color="blue-grey"
+            variant="text"
+            @click="handleEdit"
+          >
+            <v-icon size="large">
+              mdi-pencil
+            </v-icon>
+          </v-btn>
+        </div>
+        <div class="w-70 w-md-100">
+          <v-textarea
+            v-if="generalDataEditMode.description"
+            v-model="form.description"
+            variant="outlined"
+            label="Description"
+            :rules="[(v) => !!v || 'Description is required']"
+          >
+            <template #append-inner>
+              <v-btn
+                :loading="decSubmitLoader"
+                color="success"
+                variant="flat"
+                size="x-small"
+                icon
+                @click="handleUpdate"
+              >
+                <v-icon size="large">
+                  mdi-check
+                </v-icon>
+              </v-btn>
+            </template>
+          </v-textarea>
+        </div>
+      </div>
+      <span v-show="contentData.school_type_title">
+        ,
+        {{ contentData.school_type_title }}
+      </span>
+      <span v-show="contentData.section_title">
+        , {{ contentData.section_title }}
+      </span>
+      <span v-show="contentData.area_title">
+        , {{ contentData.area_title }}
+      </span>
+    </h1>
+  </div>
 </template>
 
 <script setup>
