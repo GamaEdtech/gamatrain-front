@@ -105,27 +105,6 @@ onMounted(async () => {
     console.error(e)
   }
 })
-// onMounted(() => {
-//   setTimeout(() => {
-//     if (window.google?.accounts?.id && googleRegisterBtn.value) {
-//       window.google.accounts.id.initialize({
-//         client_id:
-//           '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
-//         callback: handleCredentialResponse,
-//         auto_select: true,
-//       })
-
-//       window.google.accounts.id.renderButton(googleRegisterBtn.value, {
-//         text: 'Login',
-//         size: 'large',
-//         width: '252',
-//         theme: 'outline',
-//       })
-
-//       google_register_loading.value = false
-//     }
-//   }, 4000)
-// })
 
 async function handleCredentialResponse(value) {
   const auth = useAuth()

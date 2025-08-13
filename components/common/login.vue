@@ -86,55 +86,6 @@ async function handleCredentialResponse(value) {
   }
 }
 
-// watch(
-//   () => props.dialog,
-//   (isOpen) => {
-//     if (isOpen) {
-//       google_login_loading.value = true
-//       setTimeout(() => {
-//         if (window.google?.accounts?.id && googleLoginBtn.value) {
-//           window.google.accounts.id.initialize({
-//             client_id:
-//               '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
-//             callback: handleCredentialResponse,
-//             auto_select: true,
-//           })
-
-//           window.google.accounts.id.renderButton(googleLoginBtn.value, {
-//             text: 'Login',
-//             size: 'large',
-//             width: '252',
-//             theme: 'outline',
-//           })
-
-//           google_login_loading.value = false
-//         }
-//       }, 4000)
-//     }
-//   },
-// )
-
-// onMounted(() => {
-//   setTimeout(() => {
-//     if (window.google?.accounts?.id && googleLoginBtn.value) {
-//       window.google.accounts.id.initialize({
-//         client_id:
-//           '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
-//         callback: handleCredentialResponse,
-//         auto_select: true,
-//       })
-
-//       window.google.accounts.id.renderButton(googleLoginBtn.value, {
-//         text: 'Login',
-//         size: 'large',
-//         width: '252',
-//         theme: 'outline',
-//       })
-
-//       google_login_loading.value = false
-//     }
-//   }, 4000)
-// })
 const loadGoogleIdentityScript = () => {
   return new Promise((resolve, reject) => {
     if (document.getElementById('google-identity-js')) {
@@ -193,15 +144,15 @@ watch(
     }
   },
 )
-onMounted(async () => {
-  try {
-    await loadGoogleIdentityScript()
-    initGoogleLogin()
-  }
-  catch (e) {
-    console.error(e)
-  }
-})
+// onMounted(async () => {
+//   try {
+//     await loadGoogleIdentityScript()
+//     initGoogleLogin()
+//   }
+//   catch (e) {
+//     console.error(e)
+//   }
+// })
 
 // Resend OTP code
 const sendOtpCodeAgain = async () => {
