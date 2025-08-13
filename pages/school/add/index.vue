@@ -56,6 +56,7 @@
       >
         <school-add-step-score
           :loading="loadingSubmitSchool"
+          :school-ai-data="schoolAiData"
           @next-step="submitSchool"
           @prev-step="backStep"
         />
@@ -136,6 +137,13 @@ const schoolInformation = ref({
     artisticActivitiesRate: 0,
   },
 })
+const schoolAiData = ref({
+  name: '',
+  countryTitle: '',
+  stateTitle: '',
+  cityTitle: '',
+  webSite: '',
+})
 
 // start section step
 const STEP_INDEX = {
@@ -180,13 +188,19 @@ const changeStep = () => {
 }
 // end section step
 
-const schoolFindInSearch = (school, data) => {
+const schoolFindInSearch = (school, data, aiInfo = null) => {
   schoolInformation.value = {
     ...schoolInformation.value,
     ...data,
   }
   schoolFindedInSearch.value = school
   showModalDetailSchool.value = true
+  if (aiInfo) {
+    schoolAiData.value = {
+      ...schoolAiData.value,
+      ...aiInfo,
+    }
+  }
 }
 
 const startAddNewSchool = () => {
@@ -195,7 +209,7 @@ const startAddNewSchool = () => {
   currentStep.value = STEP_INDEX.Contact
 }
 
-const nextStep = (data) => {
+const nextStep = (data, aiInfo = null) => {
   schoolInformation.value = {
     ...schoolInformation.value,
     ...data,
@@ -205,6 +219,12 @@ const nextStep = (data) => {
     top: 0,
     behavior: 'smooth',
   })
+  if (aiInfo) {
+    schoolAiData.value = {
+      ...schoolAiData.value,
+      ...aiInfo,
+    }
+  }
 }
 const backStep = () => {
   currentStep.value -= 1

@@ -364,9 +364,10 @@ const emailRule = (value) => {
 }
 const phoneRule = (value) => {
   if (!value) return true
-  const numericPattern = /^[0-9]+$/
-  if (!numericPattern.test(value)) return 'Only numbers are allowed'
-  if (value.length < 8) return 'At least 8 digits required'
+  const numericPattern = /^\+?[0-9]+$/
+  if (!numericPattern.test(value))
+    return 'Only numbers or + at the start are allowed'
+  if (value.replace('+', '').length < 8) return 'At least 8 digits required'
   return true
 }
 const urlRule = (value) => {
@@ -419,7 +420,10 @@ const submitForm = () => {
       latitude: latLng.value[0] ? latLng.value[0] : 0,
       longitude: latLng.value[1] ? latLng.value[1] : 0,
     }
-    emit('nextStep', contactStepInfo)
+    const aiInfo = {
+      webSite: website.value,
+    }
+    emit('nextStep', contactStepInfo, aiInfo)
   }
 }
 
