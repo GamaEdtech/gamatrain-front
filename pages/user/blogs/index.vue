@@ -5,7 +5,7 @@
       <div class="d-flex align-center">
         <div class="toggle-container">
           <v-btn
-            v-for="tab in ['Published', 'Drafted', 'Deleted']"
+            v-for="tab in ['Draft', 'Review', 'Confirmed', 'Rejected', 'Deleted']"
             :key="tab"
             :class="{ 'active-tab': activeTab === tab }"
             class="toggle-btn"
@@ -192,7 +192,7 @@ useHead({
 // State
 const _singleSelect = ref(false)
 const selected = ref([])
-const activeTab = ref('Published')
+const activeTab = ref('Draft')
 const page = ref(1)
 const pageSize = ref(10)
 const perPage = ref('10 Row')
@@ -222,7 +222,7 @@ const fetchBlogs = async () => {
     const response = await useApiService.get('/api/v2/blogs/contributions', {
       'PagingDto.PageFilter.Size': pageSize.value,
       'PagingDto.PageFilter.Skip': skip,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      'Status': activeTab.value,
     })
 
     if (response && response.succeeded) {
@@ -278,6 +278,7 @@ const handleBulkAction = async () => {
   if (selected.value.length && bulkAction.value === 'Delete All') {
     try {
       // Implement bulk delete logic here
+      console.log(selected.value)
       $toast.success('Selected items deleted successfully!')
       selected.value = []
     }
@@ -305,6 +306,7 @@ watch(searchQuery, () => {
 
 watch(activeTab, () => {
   // Implement tab change logic here
+  console.log(`Active tab changed to: ${activeTab.value}`)
   fetchBlogs()
 })
 

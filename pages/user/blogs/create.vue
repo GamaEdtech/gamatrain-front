@@ -192,7 +192,7 @@
                         v-bind="props"
                         density="compact"
                         variant="outlined"
-                        hide-details
+                        :rules="scheduledDateRules"
                         class="rounded-select mobile-full"
                       />
                     </template>
@@ -477,6 +477,18 @@ const categoryRules = [
 
 const imageRules = [v => !!v || 'Featured image is required']
 
+const scheduledDateRules = [
+  (v) => {
+    if (blog.value.publishTime === 'Schedule') {
+      if (!v) return 'Scheduled date is required when using Schedule option'
+      const selectedDate = new Date(v)
+      const now = new Date()
+      if (selectedDate < now) return 'Scheduled date cannot be in the past'
+    }
+    return true
+  },
+]
+
 // Form methods
 async function validate() {
   const { valid } = await form.value.validate()
@@ -485,16 +497,6 @@ async function validate() {
   if (valid) {
     onSubmit()
   }
-}
-
-function _reset() {
-  form.value.reset()
-  isFormValid.value = false
-}
-
-function _resetValidation() {
-  form.value.resetValidation()
-  isFormValid.value = false
 }
 
 const createKeyword = async () => {
@@ -507,13 +509,21 @@ const createKeyword = async () => {
   keywordSearch.value = ''
 }
 
-const deleteKeyword = async (row, index) => {
+const deleteKeyword = async (kitem, index) => {
   keywords.value.splice(index, 1)
 }
 
 const onSubmit = async () => {
   try {
     loading.value = true
+
+    // Validate scheduled publishing
+    if (blog.value.publishTime === 'Schedule' && !blog.value.scheduledDate) {
+      $toast.error('Please select a scheduled date when using Schedule option')
+      loading.value = false
+      return
+    }
+
     const formData = new FormData()
 
     // Add text fields
@@ -522,16 +532,18 @@ const onSubmit = async () => {
     formData.append('Summary', blog.value.summary || '')
     formData.append('VisibilityType', blog.value.visibility.toLowerCase())
 
+    // Handle publish date logic
     let publishDate
     if (blog.value.publishTime === 'Immediately') {
+      // Always send current timestamp for immediate publishing
       publishDate = new Date().toISOString()
     }
-    else if (
-      blog.value.publishTime === 'Schedule'
-      && blog.value.scheduledDate
-    ) {
-      const date = new Date(blog.value.scheduledDate)
-      publishDate = date.toISOString()
+    else if (blog.value.publishTime === 'Schedule') {
+      // Send the selected scheduled date, preserving the selected date without timezone issues
+      const selectedDate = new Date(blog.value.scheduledDate)
+      // Set time to noon to avoid timezone conversion issues
+      selectedDate.setHours(12, 0, 0, 0)
+      publishDate = selectedDate.toISOString()
     }
 
     formData.append('PublishDate', publishDate)
@@ -710,6 +722,8 @@ watch(
     () => blog.value.content,
     () => blog.value.categories,
     () => blog.value.image,
+    () => blog.value.publishTime,
+    () => blog.value.scheduledDate,
   ],
   async () => {
     if (form.value) {
