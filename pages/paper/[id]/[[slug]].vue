@@ -120,26 +120,30 @@
               </v-col>
             </v-row>
           </div>
-          <common-related-portrait-content
-            page-type="paper"
-            page-name="Past Papers"
-            source="test"
-            request="test"
-          />
+          <ClientOnly>
+            <common-related-portrait-content
+              page-type="paper"
+              page-name="Past Papers"
+              source="test"
+              request="test"
+            />
+          </ClientOnly>
         </v-container>
       </section>
 
-      <div v-if="randomTestContent">
-        <v-divider
-          class="mt-4 mx-auto"
-          style="width: 80%"
-        />
-        <test-details :content-data="randomTestContent" />
-        <v-divider
-          class="mt-1 mx-auto"
-          style="width: 80%"
-        />
-      </div>
+      <ClientOnly>
+        <div v-if="randomTestContent">
+          <v-divider
+            class="mt-4 mx-auto"
+            style="width: 80%"
+          />
+          <test-details :content-data="randomTestContent" />
+          <v-divider
+            class="mt-1 mx-auto"
+            style="width: 80%"
+          />
+        </div>
+      </ClientOnly>
     </template>
     <v-row
       justify="center"
