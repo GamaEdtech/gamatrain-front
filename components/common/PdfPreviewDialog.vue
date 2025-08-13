@@ -115,10 +115,8 @@
             </div>
           </div>
           <embed
-            v-else
-            :src="pdfUrl"
-            type="application/pdf"
-            referrerpolicy="strict-origin-when-cross-origin"
+            v-else-if="dataUrl && !loading"
+            :src="dataUrl"
             class="pdf-embed"
             @error="handleEmbedError"
             @load="handleEmbedSuccess"
@@ -174,11 +172,30 @@ const error = ref('')
 const downloadLoading = ref(false)
 const embedBlocked = ref(false)
 
-watch(dialog, (newVal) => {
+const dataUrl = ref('')
+let currentObjectUrl = ''
+
+watch(dialog, async (newVal) => {
   if (newVal && props.pdfUrl) {
     embedBlocked.value = false
+    await convertToBase64(props.pdfUrl)
+  }
+  else {
+    dataUrl.value = ''
   }
 })
+
+watch(
+  () => props.pdfUrl,
+  async (u) => {
+    if (dialog.value && u) {
+      await convertToBase64(u)
+    }
+    else {
+      dataUrl.value = ''
+    }
+  },
+)
 
 const closeDialog = () => {
   dialog.value = false
@@ -213,8 +230,51 @@ const handleEmbedSuccess = () => {
 
 const handleEmbedError = () => {
   embedBlocked.value = true
-  console.warn('PDF embed blocked, likely due to X-Frame-Options restriction')
+  error.value = 'Unable to preview this PDF.'
 }
+
+async function convertToBase64(url) {
+  try {
+    loading.value = true
+    error.value = ''
+    embedBlocked.value = false
+
+    if (currentObjectUrl) {
+      URL.revokeObjectURL(currentObjectUrl)
+      currentObjectUrl = ''
+    }
+
+    const resp = await fetch(url, { mode: 'cors', credentials: 'omit' })
+    if (!resp.ok) throw new Error('HTTP ' + resp.status)
+    const blob = await resp.blob()
+    const pdfBlob
+      = blob.type && blob.type.includes('pdf')
+        ? blob
+        : new Blob([blob], { type: 'application/pdf' })
+    const objectUrl = URL.createObjectURL(pdfBlob)
+    currentObjectUrl = objectUrl
+    dataUrl.value = objectUrl
+  }
+  catch (e) {
+    console.error(e)
+    if (url) {
+      dataUrl.value = url
+      return
+    }
+    error.value = 'Failed to load PDF.'
+    embedBlocked.value = true
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+onBeforeUnmount(() => {
+  if (currentObjectUrl) {
+    URL.revokeObjectURL(currentObjectUrl)
+    currentObjectUrl = ''
+  }
+})
 </script>
 
 <style scoped>
