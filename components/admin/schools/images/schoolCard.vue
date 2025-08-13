@@ -14,7 +14,7 @@ const emit = defineEmits([
 ])
 const approveImage = async () => {
   try {
-    await useApiService.patch(`/api/v1/admin/schools/images/contributions/${props.id}/confirm`)
+    await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.id}/confirm`)
     if (res.succeeded === true) {
       $toast.success('Image Approved successfully!')
       emit('update:modelValue', false)
@@ -30,7 +30,7 @@ const approveImage = async () => {
 }
 const rejectImage = async () => {
   try {
-    await useApiService.patch(`/api/v1/admin/schools/images/contributions/${props.id}/reject`)
+    await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.id}/reject`)
     if (res.succeeded === true) {
       $toast.success('Image Rejected successfully!')
       emit('update:modelValue', false)

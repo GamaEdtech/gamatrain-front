@@ -89,36 +89,13 @@ const viewMessageDetails = async (id) => {
   }
 }
 
-const toggleUserStatus = async (id) => {
-  const token = localStorage.getItem('v2_token')
+const deleteImage = async () => {
   try {
-    const res = await $fetch(`/api/v2/admin/identities/${id}/toggle`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      } })
-    if (res.succeeded) {
-      $toast.success('User Status Toggled Successfully')
-      fetchImages()
-    }
-    else
-      $toast.error(res.errors[0].message)
-  }
-  catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-}
-
-const deleteUser = async () => {
-  try {
-    const res = await useApiService.remove(`/api/v2/admin/identities/${selectedDeleteId.value}`)
-
+    const res = await useApiService.remove(`/api/v2/admin/schools/${selectedSchool.schoolId}/images/${selectedDeleteId.value}`)
     list.value = list.value.filter(i => i.id !== selectedDeleteId.value)
     filteredList.value = list.value
     if (res.succeeded === true)
-      $toast.success('User deleted successfully!')
+      $toast.success('Image deleted successfully!')
     else
       $toast.error(res.errors[0].message)
   }
@@ -143,7 +120,7 @@ const doAll = async () => {
   if (selectedAction.value === 'Delete All') {
     for (const item of selected.value) {
       selectedDeleteId.value = item
-      await deleteUser()
+      await deleteImage()
     }
 
     selected.value = []
@@ -244,24 +221,6 @@ watch(selectedPageSize, () => {
             >
               <v-icon
                 small
-                class="mr-2 gtext-t1"
-                @click="toggleUserStatus(item.id)"
-              >
-                mdi mdi-account-alert
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Toggle status
-              </v-tooltip>
-            </v-btn>
-            <v-btn
-              variant="plain"
-              class="px-0 min-width-10"
-            >
-              <v-icon
-                small
                 class="gtext-t1"
                 @click="handleDelete(item.id)"
               >
@@ -288,7 +247,7 @@ watch(selectedPageSize, () => {
 
       <DeleteItemModal
         v-model="isDeleteModalOpen"
-        @confirm="deleteUser"
+        @confirm="deleteImage"
       />
     </div>
 
