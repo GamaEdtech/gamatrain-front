@@ -86,54 +86,121 @@ async function handleCredentialResponse(value) {
   }
 }
 
+// watch(
+//   () => props.dialog,
+//   (isOpen) => {
+//     if (isOpen) {
+//       google_login_loading.value = true
+//       setTimeout(() => {
+//         if (window.google?.accounts?.id && googleLoginBtn.value) {
+//           window.google.accounts.id.initialize({
+//             client_id:
+//               '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
+//             callback: handleCredentialResponse,
+//             auto_select: true,
+//           })
+
+//           window.google.accounts.id.renderButton(googleLoginBtn.value, {
+//             text: 'Login',
+//             size: 'large',
+//             width: '252',
+//             theme: 'outline',
+//           })
+
+//           google_login_loading.value = false
+//         }
+//       }, 4000)
+//     }
+//   },
+// )
+
+// onMounted(() => {
+//   setTimeout(() => {
+//     if (window.google?.accounts?.id && googleLoginBtn.value) {
+//       window.google.accounts.id.initialize({
+//         client_id:
+//           '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
+//         callback: handleCredentialResponse,
+//         auto_select: true,
+//       })
+
+//       window.google.accounts.id.renderButton(googleLoginBtn.value, {
+//         text: 'Login',
+//         size: 'large',
+//         width: '252',
+//         theme: 'outline',
+//       })
+
+//       google_login_loading.value = false
+//     }
+//   }, 4000)
+// })
+const loadGoogleIdentityScript = () => {
+  return new Promise((resolve, reject) => {
+    if (document.getElementById('google-identity-js')) {
+      resolve(true)
+      return
+    }
+
+    const s = document.createElement('script')
+    s.id = 'google-identity-js'
+    s.src = 'https://accounts.google.com/gsi/client'
+    s.async = true
+    s.defer = true
+    s.onload = () => resolve(true)
+    s.onerror = () =>
+      reject(new Error('Google Identity script failed to load'))
+    document.head.appendChild(s)
+  })
+}
+
+const initGoogleLogin = () => {
+  if (window.google?.accounts?.id) {
+    window.google.accounts.id.initialize({
+      client_id:
+        '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
+      callback: handleCredentialResponse,
+      auto_select: true,
+    })
+
+    window.google.accounts.id.renderButton(googleLoginBtn.value, {
+      text: 'Login',
+      size: 'large',
+      width: '252',
+      theme: 'outline',
+    })
+
+    google_login_loading.value = false
+  }
+  else {
+    console.error('Google Identity not available yet.')
+  }
+}
+
 watch(
   () => props.dialog,
-  (isOpen) => {
+  async (isOpen) => {
     if (isOpen) {
       google_login_loading.value = true
-      setTimeout(() => {
-        if (window.google?.accounts?.id && googleLoginBtn.value) {
-          window.google.accounts.id.initialize({
-            client_id:
-              '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
-            callback: handleCredentialResponse,
-            auto_select: true,
-          })
-
-          window.google.accounts.id.renderButton(googleLoginBtn.value, {
-            text: 'Login',
-            size: 'large',
-            width: '252',
-            theme: 'outline',
-          })
-
-          google_login_loading.value = false
-        }
-      }, 4000)
+      try {
+        await loadGoogleIdentityScript()
+        initGoogleLogin()
+      }
+      catch (e) {
+        console.error(e)
+        google_login_loading.value = false
+      }
     }
   },
 )
-
-onMounted(() => {
-  setTimeout(() => {
-    if (window.google?.accounts?.id && googleLoginBtn.value) {
-      window.google.accounts.id.initialize({
-        client_id:
-          '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
-        callback: handleCredentialResponse,
-        auto_select: true,
-      })
-
-      window.google.accounts.id.renderButton(googleLoginBtn.value, {
-        text: 'Login',
-        size: 'large',
-        width: '252',
-        theme: 'outline',
-      })
-
-      google_login_loading.value = false
-    }
-  }, 4000)
+onMounted(async () => {
+  try {
+    await loadGoogleIdentityScript()
+    initGoogleLogin()
+  }
+  catch (e) {
+    console.error(e)
+  }
 })
 
 // Resend OTP code

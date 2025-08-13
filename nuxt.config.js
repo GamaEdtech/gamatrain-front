@@ -101,11 +101,11 @@ export default defineNuxtConfig({
         //   'crossorigin': 'anonymous',
         //   'data-ad-client': process.env.NUXT_GOOGLE_ADSENSE_ID,
         // },
-        {
-          src: 'https://accounts.google.com/gsi/client',
-          defer: true,
-          async: true,
-        },
+        // {
+        //   src: 'https://accounts.google.com/gsi/client',
+        //   defer: true,
+        //   async: true,
+        // },
 
       ],
     },
