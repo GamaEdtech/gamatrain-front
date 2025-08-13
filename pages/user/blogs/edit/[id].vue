@@ -103,16 +103,6 @@
                   >
                     Update
                   </v-btn>
-
-                  <v-btn
-                    icon
-                    color="#344054"
-                    size="small"
-                    variant="text"
-                    class="mobile-mb-2"
-                  >
-                    <v-icon>mdi-delete</v-icon>
-                  </v-btn>
                 </div>
                 <div
                   class="d-flex align-center justify-space-between mb-3 pa-4 mobile-stack"

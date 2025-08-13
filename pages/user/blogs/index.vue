@@ -105,47 +105,11 @@
             </v-icon>
           </v-btn>
         </template>
-
-        <template #[`item.delete`]="{ item }">
-          <v-btn
-            variant="text"
-            icon
-            small
-            color="error"
-            @click="openDeleteModal(item)"
-          >
-            <v-icon small>
-              mdi-delete
-            </v-icon>
-          </v-btn>
-        </template>
       </v-data-table>
     </v-card>
 
     <!-- Footer with pagination -->
     <div class="d-flex justify-space-between align-center mt-4">
-      <div class="d-flex align-center">
-        <v-select
-          v-model="bulkAction"
-          :items="['Delete All']"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          class="bulk-action-select mr-2"
-          :disabled="!selected.length"
-        />
-        <v-btn
-          :disabled="!selected.length"
-          rounded
-          color="primary"
-          class="do-btn"
-          @click="handleBulkAction"
-        >
-          Do
-        </v-btn>
-      </div>
-
       <v-pagination
         v-model="page"
         :length="Math.ceil(totalRecords / pageSize)"
@@ -201,7 +165,7 @@ const isDeleteModalOpen = ref(false)
 const itemToDelete = ref(null)
 const loading = ref(false)
 const searchQuery = ref('')
-const bulkAction = ref('Delete All')
+// const bulkAction = ref('Delete All')
 
 const headers = [
   { title: 'Name', value: 'title' },
@@ -209,7 +173,7 @@ const headers = [
   { title: 'Author', value: 'author', sortable: true },
   { title: 'Date', value: 'date', sortable: true },
   { title: 'Edit', value: 'edit', sortable: false, align: 'center' },
-  { title: 'Delete', value: 'delete', sortable: false, align: 'center' },
+  // { title: 'Delete', value: 'delete', sortable: false, align: 'center' },
 ]
 
 const tableItems = ref([])
@@ -243,10 +207,10 @@ const fetchBlogs = async () => {
   }
 }
 
-const openDeleteModal = (item) => {
-  itemToDelete.value = item
-  isDeleteModalOpen.value = true
-}
+// const openDeleteModal = (item) => {
+//   itemToDelete.value = item
+//   isDeleteModalOpen.value = true
+// }
 
 const handleDelete = async () => {
   if (itemToDelete.value) {
@@ -274,19 +238,19 @@ const handleDelete = async () => {
   isDeleteModalOpen.value = false
 }
 
-const handleBulkAction = async () => {
-  if (selected.value.length && bulkAction.value === 'Delete All') {
-    try {
-      // Implement bulk delete logic here
-      console.log(selected.value)
-      $toast.success('Selected items deleted successfully!')
-      selected.value = []
-    }
-    catch {
-      $toast.error('Failed to delete selected items.')
-    }
-  }
-}
+// const handleBulkAction = async () => {
+//   if (selected.value.length && bulkAction.value === 'Delete All') {
+//     try {
+//       // Implement bulk delete logic here
+//       console.log(selected.value)
+//       $toast.success('Selected items deleted successfully!')
+//       selected.value = []
+//     }
+//     catch {
+//       $toast.error('Failed to delete selected items.')
+//     }
+//   }
+// }
 
 // Watchers
 watch(page, () => {

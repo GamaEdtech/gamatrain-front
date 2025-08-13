@@ -103,18 +103,6 @@
                   >
                     Publish
                   </v-btn>
-
-                  <v-btn
-                    icon
-                    color="#344054"
-                    small
-                    variant="text"
-                    class="mobile-mb-2"
-                  >
-                    <v-icon size="large">
-                      mdi-delete
-                    </v-icon>
-                  </v-btn>
                 </div>
                 <div
                   class="d-flex align-center justify-space-between mb-3 pa-4 mobile-stack"
