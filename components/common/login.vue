@@ -128,31 +128,15 @@ const initGoogleLogin = () => {
   }
 }
 
-watch(
-  () => props.dialog,
-  async (isOpen) => {
-    if (isOpen) {
-      google_login_loading.value = true
-      try {
-        await loadGoogleIdentityScript()
-        initGoogleLogin()
-      }
-      catch (e) {
-        console.error(e)
-        google_login_loading.value = false
-      }
-    }
-  },
-)
-// onMounted(async () => {
-//   try {
-//     await loadGoogleIdentityScript()
-//     initGoogleLogin()
-//   }
-//   catch (e) {
-//     console.error(e)
-//   }
-// })
+onMounted(async () => {
+  try {
+    await loadGoogleIdentityScript()
+    initGoogleLogin()
+  }
+  catch (e) {
+    console.error(e)
+  }
+})
 
 // Resend OTP code
 const sendOtpCodeAgain = async () => {
