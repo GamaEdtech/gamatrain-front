@@ -96,11 +96,11 @@
                 order-lg="first"
                 class="order-2 order-sm-1 order-md-1"
               >
-                <details-preview-gallery
+                <!-- <details-preview-gallery
                   :image-urls="previewImages"
                   :help-link-data="galleryHelpData"
                   :initial-slide="1"
-                />
+                /> -->
               </v-col>
               <v-col
                 class="order-1 order-md-2 order-lg-3"
@@ -137,7 +137,7 @@
             class="mt-4 mx-auto"
             style="width: 80%"
           />
-          <!-- <test-details :content-data="randomTestContent" /> -->
+          <test-details :content-data="randomTestContent" />
           <v-divider
             class="mt-1 mx-auto"
             style="width: 80%"
@@ -154,10 +154,10 @@
         md="8"
         class="text-center"
       >
-        <!-- <common-ad-banner
+        <common-ad-banner
           v-model="isAdsLoad"
           adslot="7199289937"
-        /> -->
+        />
       </v-col>
     </v-row>
   </div>
@@ -170,7 +170,7 @@ const requestURL = ref(useRequestURL().host)
 const randomTestContent = ref(null)
 const pageDescribe = ref('')
 const pageTitle = ref('')
-// const isAdsLoad = ref(false)
+const isAdsLoad = ref(false)
 
 // Track loading state
 
