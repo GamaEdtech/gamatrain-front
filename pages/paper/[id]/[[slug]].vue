@@ -137,7 +137,7 @@
             class="mt-4 mx-auto"
             style="width: 80%"
           />
-          <test-details :content-data="randomTestContent" />
+          <!-- <test-details :content-data="randomTestContent" /> -->
           <v-divider
             class="mt-1 mx-auto"
             style="width: 80%"
@@ -154,10 +154,10 @@
         md="8"
         class="text-center"
       >
-        <common-ad-banner
+        <!-- <common-ad-banner
           v-model="isAdsLoad"
           adslot="7199289937"
-        />
+        /> -->
       </v-col>
     </v-row>
   </div>
@@ -170,7 +170,7 @@ const requestURL = ref(useRequestURL().host)
 const randomTestContent = ref(null)
 const pageDescribe = ref('')
 const pageTitle = ref('')
-const isAdsLoad = ref(false)
+// const isAdsLoad = ref(false)
 
 // Track loading state
 
