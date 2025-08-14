@@ -12,6 +12,7 @@
       loading="lazy"
       :alt="cardTitle"
       format="webp"
+      quality="50"
     />
     <div class="circle-container">
       <div

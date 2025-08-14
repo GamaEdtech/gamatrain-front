@@ -64,6 +64,7 @@
                     fetchpriority="high"
                     alt="Psat Paper Lesson"
                     format="webp"
+                    :loading="index === 0 ? 'eager' : 'lazy'"
                   />
                 </v-carousel-item>
               </v-carousel>

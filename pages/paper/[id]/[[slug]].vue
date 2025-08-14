@@ -289,25 +289,23 @@ const setMetaData = () => {
   })
 }
 
-watchEffect(() => {
-  if (contentData.value) {
-    previewImages.value = []
-    previewImages.value.push(contentData.value.thumb_pic)
-    if (contentData.value.lesson_pic) {
-      previewImages.value.push(contentData.value.lesson_pic)
-    }
-
-    previewImages.value.carouselVal = 0
-
-    galleryHelpData.value = {
-      state: contentData.value?.state || '',
-      section: contentData.value?.section || '',
-      base: contentData.value?.base || '',
-      course: contentData.value?.course || '',
-      lesson: contentData.value?.lesson || '',
-    }
+if (contentData.value) {
+  previewImages.value = []
+  previewImages.value.push(contentData.value.thumb_pic)
+  if (contentData.value.lesson_pic) {
+    previewImages.value.push(contentData.value.lesson_pic)
   }
-})
+
+  previewImages.value.carouselVal = 0
+
+  galleryHelpData.value = {
+    state: contentData.value?.state || '',
+    section: contentData.value?.section || '',
+    base: contentData.value?.base || '',
+    course: contentData.value?.course || '',
+    lesson: contentData.value?.lesson || '',
+  }
+}
 
 const breads = ref([])
 
