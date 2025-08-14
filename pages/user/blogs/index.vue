@@ -176,7 +176,7 @@ const isSearching = ref(false)
 // const bulkAction = ref('Delete All')
 
 const headers = [
-  { title: 'Name', value: 'title' },
+  { title: 'Name', value: 'title', sortable: true },
   { title: 'Category', value: 'category', sortable: true },
   { title: 'Author', value: 'author', sortable: true },
   { title: 'Date', value: 'date', sortable: true },
@@ -206,8 +206,8 @@ const fetchBlogs = async () => {
         id: item.id,
         title: item.title,
         category: item.category || '',
-        author: item.author || '',
-        date: item.date || '',
+        author: item.creationUser || '',
+        date: item.creationDate || '',
         avatar: item.imageUri || '',
         summary: item.summary || '',
       }))
