@@ -1,6 +1,7 @@
 <template>
   <div class="test-details-content">
-    <common-category />
+    test core web vital
+    <!-- <common-category />
 
     <section>
       <v-container class="py-0">
@@ -158,218 +159,218 @@
           />
         </v-col>
       </v-row>
-    </ClientOnly>
+    </ClientOnly> -->
   </div>
 </template>
 
 <script setup>
-const route = useRoute()
-const router = useRouter()
-const requestURL = ref(useRequestURL().host)
-const randomTestContent = ref(null)
-const pageDescribe = ref('')
-const pageTitle = ref('')
-const isAdsLoad = ref(false)
+// const route = useRoute()
+// const router = useRouter()
+// const requestURL = ref(useRequestURL().host)
+// const randomTestContent = ref(null)
+// const pageDescribe = ref('')
+// const pageTitle = ref('')
+// const isAdsLoad = ref(false)
 
-// Track loading state
+// // Track loading state
 
-const { data: contentData } = await useAsyncData(
-  `paper-${route.params.id}`,
-  async () => {
-    try {
-      const response = await $fetch(`/api/v1/tests/${route.params.id}`, {})
+// const { data: contentData } = await useAsyncData(
+//   `paper-${route.params.id}`,
+//   async () => {
+//     try {
+//       const response = await $fetch(`/api/v1/tests/${route.params.id}`, {})
 
-      return response.data
-    }
-    catch (e) {
-      if (e?.status === 404) {
-        router.push('/search?type=test')
-      }
-      throw e
-    }
-    finally {
-      // Reset loading states if needed
-    }
-  },
-  {
-    server: true,
-    lazy: false,
-    immediate: true,
-    watch: [() => route.params.id],
-  },
-)
+//       return response.data
+//     }
+//     catch (e) {
+//       if (e?.status === 404) {
+//         router.push('/search?type=test')
+//       }
+//       throw e
+//     }
+//     finally {
+//       // Reset loading states if needed
+//     }
+//   },
+//   {
+//     server: true,
+//     lazy: false,
+//     immediate: true,
+//     watch: [() => route.params.id],
+//   },
+// )
 
-const schemaData = computed(() => ({
-  '@context': 'https://schema.org',
-  '@type': 'LearningResource',
-  'name': contentData.value?.title || 'GamaEdtech',
-  'image':
-    contentData.value?.thumb_pic
-    || contentData.value?.lesson_pic
-    || 'https://gamatrain.com/images/gamatrain-logo.svg',
-  'url': route.fullPath || '',
-  'description': contentData.value?.description || 'GamaEdtech',
-}))
+// const schemaData = computed(() => ({
+//   '@context': 'https://schema.org',
+//   '@type': 'LearningResource',
+//   'name': contentData.value?.title || 'GamaEdtech',
+//   'image':
+//     contentData.value?.thumb_pic
+//     || contentData.value?.lesson_pic
+//     || 'https://gamatrain.com/images/gamatrain-logo.svg',
+//   'url': route.fullPath || '',
+//   'description': contentData.value?.description || 'GamaEdtech',
+// }))
 
-const previewImages = ref([])
-const galleryHelpData = ref({
-  state: '',
-  section: '',
-  base: '',
-  course: '',
-  lesson: '',
-})
+// const previewImages = ref([])
+// const galleryHelpData = ref({
+//   state: '',
+//   section: '',
+//   base: '',
+//   course: '',
+//   lesson: '',
+// })
 
-const setMetaData = () => {
-  if (!contentData.value) return
+// const setMetaData = () => {
+//   if (!contentData.value) return
 
-  const { section_title, base_title, title, is_paper } = contentData.value
+//   const { section_title, base_title, title, is_paper } = contentData.value
 
-  // Build common title parts
-  const titleParts = [section_title, base_title, title].filter(Boolean)
-  const baseTitle = titleParts.join(' ')
+//   // Build common title parts
+//   const titleParts = [section_title, base_title, title].filter(Boolean)
+//   const baseTitle = titleParts.join(' ')
 
-  if (is_paper) {
-    pageTitle.value = `${baseTitle} past paper`
-    pageDescribe.value = `Download ${baseTitle} past paper with mark scheme (MS). Access a full collection of past papers for study, revision, and exam practice.`
-  }
-  else {
-    pageTitle.value = baseTitle
-    pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
-  }
+//   if (is_paper) {
+//     pageTitle.value = `${baseTitle} past paper`
+//     pageDescribe.value = `Download ${baseTitle} past paper with mark scheme (MS). Access a full collection of past papers for study, revision, and exam practice.`
+//   }
+//   else {
+//     pageTitle.value = baseTitle
+//     pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
+//   }
 
-  useHead({
-    title: pageTitle.value,
-    meta: [
-      {
-        hid: 'apple-mobile-web-app-title',
-        name: 'apple-mobile-web-app-title',
-        content: pageTitle.value,
-      },
-      {
-        hid: 'og:title',
-        name: 'og:title',
-        content: pageTitle.value,
-      },
-      {
-        hid: 'og:site_name',
-        name: 'og:site_name',
-        content: 'GamaTrain',
-      },
-      {
-        hid: 'description',
-        name: 'description',
-        content: pageDescribe.value,
-      },
-      {
-        hid: 'og:description',
-        name: 'og:description',
-        content: pageDescribe.value,
-      },
-    ],
-    script: [
-      {
-        hid: 'json-ld-schema',
-        innerHTML: JSON.stringify(schemaData.value),
-        type: 'application/ld+json',
-      },
-    ],
-    link: [
-      {
-        rel: 'canonical',
-        href: contentData.value
-          ? `https://${requestURL.value}/paper/${contentData.value.id}/${contentData.value.title_url}`
-          : `https://${requestURL.value}/paper/${route.params.id}`,
-      },
-    ],
-    __dangerouslyDisableSanitizersByTagID: {
-      'json-ld-schema': ['innerHTML'],
-    },
-  })
-}
+//   useHead({
+//     title: pageTitle.value,
+//     meta: [
+//       {
+//         hid: 'apple-mobile-web-app-title',
+//         name: 'apple-mobile-web-app-title',
+//         content: pageTitle.value,
+//       },
+//       {
+//         hid: 'og:title',
+//         name: 'og:title',
+//         content: pageTitle.value,
+//       },
+//       {
+//         hid: 'og:site_name',
+//         name: 'og:site_name',
+//         content: 'GamaTrain',
+//       },
+//       {
+//         hid: 'description',
+//         name: 'description',
+//         content: pageDescribe.value,
+//       },
+//       {
+//         hid: 'og:description',
+//         name: 'og:description',
+//         content: pageDescribe.value,
+//       },
+//     ],
+//     script: [
+//       {
+//         hid: 'json-ld-schema',
+//         innerHTML: JSON.stringify(schemaData.value),
+//         type: 'application/ld+json',
+//       },
+//     ],
+//     link: [
+//       {
+//         rel: 'canonical',
+//         href: contentData.value
+//           ? `https://${requestURL.value}/paper/${contentData.value.id}/${contentData.value.title_url}`
+//           : `https://${requestURL.value}/paper/${route.params.id}`,
+//       },
+//     ],
+//     __dangerouslyDisableSanitizersByTagID: {
+//       'json-ld-schema': ['innerHTML'],
+//     },
+//   })
+// }
 
-if (contentData.value) {
-  previewImages.value = []
-  previewImages.value.push(contentData.value.thumb_pic)
-  if (contentData.value.lesson_pic) {
-    previewImages.value.push(contentData.value.lesson_pic)
-  }
+// if (contentData.value) {
+//   previewImages.value = []
+//   previewImages.value.push(contentData.value.thumb_pic)
+//   if (contentData.value.lesson_pic) {
+//     previewImages.value.push(contentData.value.lesson_pic)
+//   }
 
-  previewImages.value.carouselVal = 0
+//   previewImages.value.carouselVal = 0
 
-  galleryHelpData.value = {
-    state: contentData.value?.state || '',
-    section: contentData.value?.section || '',
-    base: contentData.value?.base || '',
-    course: contentData.value?.course || '',
-    lesson: contentData.value?.lesson || '',
-  }
-}
+//   galleryHelpData.value = {
+//     state: contentData.value?.state || '',
+//     section: contentData.value?.section || '',
+//     base: contentData.value?.base || '',
+//     course: contentData.value?.course || '',
+//     lesson: contentData.value?.lesson || '',
+//   }
+// }
 
-const breads = ref([])
+// const breads = ref([])
 
-const display = useGlobalDisplay()
+// const display = useGlobalDisplay()
 
-const initBreadCrumb = () => {
-  if (!contentData.value) return
-  breads.value = []
-  breads.value.push({
-    text: 'Paper',
-    disabled: false,
-    href: '/search?type=test',
-  })
-  breads.value.push(
-    {
-      text: contentData.value.section_title,
-      disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}`,
-    },
-    {
-      text: contentData.value.base_title,
-      disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}`,
-    },
-    {
-      text: contentData.value.lesson_title,
-      disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
-    },
-  )
-}
+// const initBreadCrumb = () => {
+//   if (!contentData.value) return
+//   breads.value = []
+//   breads.value.push({
+//     text: 'Paper',
+//     disabled: false,
+//     href: '/search?type=test',
+//   })
+//   breads.value.push(
+//     {
+//       text: contentData.value.section_title,
+//       disabled: false,
+//       href: `/search?type=test&section=${contentData.value.section}`,
+//     },
+//     {
+//       text: contentData.value.base_title,
+//       disabled: false,
+//       href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}`,
+//     },
+//     {
+//       text: contentData.value.lesson_title,
+//       disabled: false,
+//       href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
+//     },
+//   )
+// }
 
-watchEffect(() => {
-  if (contentData.value) {
-    initBreadCrumb()
-    setMetaData()
-  }
-})
+// watchEffect(() => {
+//   if (contentData.value) {
+//     initBreadCrumb()
+//     setMetaData()
+//   }
+// })
 
-const openCrashReportDialog = () => {
-  crash_report.value.dialog = true
-  crash_report.value.form.type = 'test'
-}
-const grabRandomTestCode = () => {
-  if (contentData.value && contentData.value.lesson) {
-    $fetch(`/api/v1/examTests/random?lesson=${contentData.value.lesson}`)
-      .then((response) => {
-        if (response.data.code) {
-          retriveRandomTest(response.data.code)
-        }
-      })
-      .catch((_err) => {})
-  }
-}
-const retriveRandomTest = (code) => {
-  $fetch(`/api/v1/examTests/${code}`)
-    .then((response) => {
-      randomTestContent.value = response.data
-    })
-    .catch((_err) => {})
-}
+// const openCrashReportDialog = () => {
+//   crash_report.value.dialog = true
+//   crash_report.value.form.type = 'test'
+// }
+// const grabRandomTestCode = () => {
+//   if (contentData.value && contentData.value.lesson) {
+//     $fetch(`/api/v1/examTests/random?lesson=${contentData.value.lesson}`)
+//       .then((response) => {
+//         if (response.data.code) {
+//           retriveRandomTest(response.data.code)
+//         }
+//       })
+//       .catch((_err) => {})
+//   }
+// }
+// const retriveRandomTest = (code) => {
+//   $fetch(`/api/v1/examTests/${code}`)
+//     .then((response) => {
+//       randomTestContent.value = response.data
+//     })
+//     .catch((_err) => {})
+// }
 
-onMounted(() => {
-  grabRandomTestCode()
-})
+// onMounted(() => {
+//   grabRandomTestCode()
+// })
 </script>
 
 <style></style>
