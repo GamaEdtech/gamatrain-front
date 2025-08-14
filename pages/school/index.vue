@@ -332,8 +332,8 @@ const debouncedGetSchoolList = async () => {
 const metaTitle = ref(
   'School Finder: Your Path to Ideal Education - Find Schools Near You',
 )
+const metaDescription = ref('')
 const setMetaData = (informationResponse) => {
-  let metaDescription = ''
   if (informationResponse.filters && informationResponse.filters.length > 0) {
     const titles = {}
     titles['country-title'] = ''
@@ -360,21 +360,21 @@ const setMetaData = (informationResponse) => {
         .filter(Boolean)
         .join(', ')
 
-      metaDescription = location
+      metaDescription.value = location
         ? `Looking for schools in ${location}? Browse top-rated options and find the perfect match for your child's education.`
         : 'Looking for schools? Browse top-rated options and find the perfect match for your child\'s education.'
     }
     else {
       metaTitle.value
         = 'School Finder: Your Path to Ideal Education - Find Schools Near You'
-      metaDescription
+      metaDescription.value
         = 'Looking for schools? Browse top-rated options and find the perfect match for your child\'s education.'
     }
   }
   else {
     metaTitle.value
       = 'School Finder: Your Path to Ideal Education - Find Schools Near You'
-    metaDescription
+    metaDescription.value
       = 'Looking for schools? Browse top-rated options and find the perfect match for your child\'s education.'
   }
 
@@ -400,12 +400,12 @@ const setMetaData = (informationResponse) => {
       {
         hid: 'description',
         name: 'description',
-        content: metaDescription,
+        content: metaDescription.value,
       },
       {
         hid: 'og:description',
         name: 'og:description',
-        content: metaDescription,
+        content: metaDescription.value,
       },
     ],
   })
