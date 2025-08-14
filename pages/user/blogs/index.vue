@@ -69,50 +69,51 @@
         item-key="id"
         :loading="loading"
         :no-data-text="searchQuery ? `No blogs found for '${searchQuery}'` : 'No blogs available'"
-      />
-      <!-- Title column with avatar -->
-      <template #[`item.title`]="{ item }">
-        <div class="d-flex align-center py-2">
-          <v-avatar
-            size="40"
-            class="mr-3"
-          >
-            <v-img
-              :src="item.avatar"
-              :alt="item.title"
-            />
-          </v-avatar>
-          <span class="font-weight-medium">{{ item.title }}</span>
-        </div>
-      </template>
+      >
+        <!-- Title column with avatar -->
+        <template #[`item.title`]="{ item }">
+          <div class="d-flex align-center py-2">
+            <v-avatar
+              size="40"
+              class="mr-3"
+            >
+              <v-img
+                :src="item.avatar"
+                :alt="item.title"
+              />
+            </v-avatar>
+            <span class="font-weight-medium">{{ item.title }}</span>
+          </div>
+        </template>
 
-      <!-- Category column with icon -->
-      <template #[`item.category`]="{ item }">
-        <div class="d-flex align-center">
-          <v-icon
+        <!-- Category column with icon -->
+        <template #[`item.category`]="{ item }">
+          <div class="d-flex align-center">
+            <v-icon
+              small
+              class="mr-1"
+              color="grey darken-1"
+            >
+              {{ item.category === "News" ? "mdi-newspaper" : "mdi-bullhorn" }}
+            </v-icon>
+            <span>{{ item.category }}</span>
+          </div>
+        </template>
+
+        <template #[`item.edit`]="{ item }">
+          <v-btn
+            variant="text"
+            :to="`/user/blogs/edit/${item.id}`"
+            icon
             small
-            class="mr-1"
-            color="grey darken-1"
+            color="warning"
           >
-            {{ item.category === "News" ? "mdi-newspaper" : "mdi-bullhorn" }}
-          </v-icon>
-          <span>{{ item.category }}</span>
-        </div>
-      </template>
-
-      <template #[`item.edit`]="{ item }">
-        <v-btn
-          variant="text"
-          :to="`/user/blogs/edit/${item.id}`"
-          icon
-          small
-          color="warning"
-        >
-          <v-icon small>
-            mdi-pencil
-          </v-icon>
-        </v-btn>
-      </template>
+            <v-icon small>
+              mdi-pencil
+            </v-icon>
+          </v-btn>
+        </template>
+      </v-data-table>
     </v-card>
 
     <!-- Footer with pagination -->
