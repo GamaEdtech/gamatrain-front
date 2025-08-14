@@ -73,15 +73,16 @@
         <!-- Title column with avatar -->
         <template #[`item.title`]="{ item }">
           <div class="d-flex align-center py-2">
-            <v-avatar
+            <!-- <v-avatar
               size="40"
               class="mr-3"
             >
               <v-img
+                v-if="item.avatar"
                 :src="item.avatar"
                 :alt="item.title"
               />
-            </v-avatar>
+            </v-avatar> -->
             <span class="font-weight-medium">{{ item.title }}</span>
           </div>
         </template>
