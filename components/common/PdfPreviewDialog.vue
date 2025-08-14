@@ -6,6 +6,7 @@
     transition="dialog-bottom-transition"
   >
     <v-card>
+      <!-- Toolbar -->
       <v-toolbar
         color="primary"
         dark
@@ -18,8 +19,34 @@
         >
           <v-icon>mdi-close</v-icon>
         </v-btn>
+
         <v-toolbar-title>{{ title || "PDF Preview" }}</v-toolbar-title>
         <v-spacer />
+
+        <!-- Zoom / Rotate -->
+        <v-btn
+          icon
+          :disabled="!numPages"
+          @click="zoomOut"
+        >
+          <v-icon>mdi-magnify-minus-outline</v-icon>
+        </v-btn>
+        <v-btn
+          icon
+          :disabled="!numPages"
+          @click="zoomIn"
+        >
+          <v-icon>mdi-magnify-plus-outline</v-icon>
+        </v-btn>
+        <v-btn
+          icon
+          :disabled="!numPages"
+          @click="rotate"
+        >
+          <v-icon>mdi-rotate-right</v-icon>
+        </v-btn>
+
+        <!-- External actions -->
         <v-btn
           v-if="pdfUrl"
           v-tooltip="'Open in new tab'"
@@ -30,7 +57,7 @@
           <v-icon>mdi-open-in-new</v-icon>
         </v-btn>
 
-        <v-btn
+        <!-- <v-btn
           v-if="pdfUrl"
           v-tooltip="'Download PDF'"
           icon
@@ -39,10 +66,11 @@
           @click="downloadPdf"
         >
           <v-icon>mdi-download</v-icon>
-        </v-btn>
+        </v-btn> -->
       </v-toolbar>
 
       <v-card-text class="pa-0">
+        <!-- Loading -->
         <div
           v-if="loading"
           class="d-flex justify-center align-center"
@@ -55,6 +83,7 @@
           />
         </div>
 
+        <!-- Error -->
         <div
           v-else-if="error"
           class="d-flex flex-column justify-center align-center"
@@ -73,54 +102,47 @@
           <p class="text-body-1 text-center mb-4">
             {{ error }}
           </p>
+          <div
+            v-if="pdfUrl"
+            class="d-flex gap-3 justify-center"
+          >
+            <v-btn
+              color="primary"
+              prepend-icon="mdi-open-in-new"
+              @click="openInNewTab"
+            >
+              Open PDF
+            </v-btn>
+            <v-btn
+              color="success"
+              :loading="downloadLoading"
+              prepend-icon="mdi-download"
+              @click="downloadPdf"
+            >
+              Download PDF
+            </v-btn>
+          </div>
         </div>
 
+        <!-- PDF pages -->
         <div
-          v-else-if="pdfUrl"
-          class="pdf-container"
+          v-else-if="numPages"
+          class="pdf-scroll"
         >
           <div
-            v-if="embedBlocked"
-            class="pdf-blocked-container"
+            class="pdf-pages"
+            :style="pagesStyle"
           >
-            <v-icon
-              size="64"
-              color="warning"
-              class="mb-4"
-            >
-              mdi-shield-alert
-            </v-icon>
-            <h3 class="text-h6 mb-3">
-              PDF Preview Restricted
-            </h3>
-            <p class="text-body-1 text-center mb-4">
-              This PDF cannot be previewed due to security restrictions.
-            </p>
-            <div class="d-flex gap-3 justify-center">
-              <v-btn
-                color="primary"
-                prepend-icon="mdi-open-in-new"
-                @click="openInNewTab"
-              >
-                Open PDF
-              </v-btn>
-              <v-btn
-                color="success"
-                :loading="downloadLoading"
-                prepend-icon="mdi-download"
-                @click="downloadPdf"
-              >
-                Download PDF
-              </v-btn>
-            </div>
+            <!-- Render all pages -->
+            <VuePdf
+              v-for="p in numPages"
+              :key="p"
+              :src="pdfSrc"
+              :page="p"
+              :rotation="rotation"
+              class="pdf-page"
+            />
           </div>
-          <embed
-            v-else-if="dataUrl && !loading"
-            :src="dataUrl"
-            class="pdf-embed"
-            @error="handleEmbedError"
-            @load="handleEmbedSuccess"
-          >
         </div>
 
         <div
@@ -140,76 +162,110 @@
   </v-dialog>
 </template>
 
-<script setup>
-const props = defineProps({
-  modelValue: {
-    type: Boolean,
-    default: false,
-  },
-  title: {
-    type: String,
-    default: '',
-  },
-  pdfUrl: {
-    type: String,
-    default: '',
-  },
-  fileName: {
-    type: String,
-    default: '',
-  },
-})
+<script setup lang="ts">
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
+import { VuePdf, createLoadingTask } from 'vue3-pdfjs/esm'
+import type { PDFDocumentProxy } from 'pdfjs-dist/types/src/display/api'
 
-const emit = defineEmits(['update:modelValue'])
+const props = defineProps<{
+  modelValue: boolean
+  title?: string
+  pdfUrl?: string
+  fileName?: string
+}>()
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', v: boolean): void
+}>()
 
 const dialog = computed({
   get: () => props.modelValue,
-  set: value => emit('update:modelValue', value),
+  set: v => emit('update:modelValue', v),
 })
 
 const loading = ref(false)
 const error = ref('')
 const downloadLoading = ref(false)
-const embedBlocked = ref(false)
 
-const dataUrl = ref('')
-let currentObjectUrl = ''
+const pdfSrc = ref<string | Uint8Array | Record<string, unknown>>('')
+const numPages = ref(0)
 
-watch(dialog, async (newVal) => {
-  if (newVal && props.pdfUrl) {
-    embedBlocked.value = false
-    await convertToBase64(props.pdfUrl)
-  }
-  else {
-    dataUrl.value = ''
-  }
-})
+const zoom = ref(1)
+const rotation = ref(0)
+
+const pagesStyle = computed(() => ({
+  transform: `scale(${zoom.value})`,
+  transformOrigin: 'top left',
+}))
+
+watch(
+  () => dialog.value,
+  async (open) => {
+    if (open && props.pdfUrl) await loadPdf(props.pdfUrl)
+  },
+  { immediate: true },
+)
 
 watch(
   () => props.pdfUrl,
   async (u) => {
-    if (dialog.value && u) {
-      await convertToBase64(u)
-    }
+    if (dialog.value && u) await loadPdf(u)
     else {
-      dataUrl.value = ''
+      clearState()
     }
   },
 )
 
-const closeDialog = () => {
-  dialog.value = false
+function clearState() {
+  loading.value = false
+  error.value = ''
+  numPages.value = 0
+  pdfSrc.value = ''
+  zoom.value = 1
+  rotation.value = 0
 }
 
-const openInNewTab = () => {
-  if (props.pdfUrl) {
-    window.open(props.pdfUrl, '_blank')
+async function loadPdf(url: string) {
+  clearState()
+  if (!url) return
+  try {
+    loading.value = true
+    error.value = ''
+    pdfSrc.value = url
+
+    const task = createLoadingTask(pdfSrc.value)
+    const pdf: PDFDocumentProxy = await task.promise
+    numPages.value = pdf.numPages
+  }
+  catch (_e) {
+    console.error(_e)
+    error.value = 'Failed to load PDF.'
+  }
+  finally {
+    loading.value = false
   }
 }
 
-const downloadPdf = async () => {
-  if (!props.pdfUrl) return
+function zoomIn() {
+  zoom.value = Math.min(zoom.value + 0.1, 3)
+}
+function zoomOut() {
+  zoom.value = Math.max(zoom.value - 0.1, 0.3)
+}
+function rotate() {
+  rotation.value = (rotation.value + 90) % 360
+}
 
+function closeDialog() {
+  dialog.value = false
+}
+
+function openInNewTab() {
+  if (props.pdfUrl) window.open(props.pdfUrl, '_blank', 'noopener')
+}
+
+async function downloadPdf() {
+  if (!props.pdfUrl) return
   try {
     downloadLoading.value = true
     const FileSaver = await import('file-saver')
@@ -217,97 +273,37 @@ const downloadPdf = async () => {
   }
   catch (err) {
     console.error('Download error:', err)
-    window.open(props.pdfUrl, '_blank')
+    window.open(props.pdfUrl, '_blank', 'noopener')
   }
   finally {
     downloadLoading.value = false
   }
 }
 
-const handleEmbedSuccess = () => {
-  embedBlocked.value = false
-}
-
-const handleEmbedError = () => {
-  embedBlocked.value = true
-  error.value = 'Unable to preview this PDF.'
-}
-
-async function convertToBase64(url) {
-  try {
-    loading.value = true
-    error.value = ''
-    embedBlocked.value = false
-
-    if (currentObjectUrl) {
-      URL.revokeObjectURL(currentObjectUrl)
-      currentObjectUrl = ''
-    }
-
-    const resp = await fetch(url, { mode: 'cors', credentials: 'omit' })
-    if (!resp.ok) throw new Error('HTTP ' + resp.status)
-    const blob = await resp.blob()
-    const pdfBlob
-      = blob.type && blob.type.includes('pdf')
-        ? blob
-        : new Blob([blob], { type: 'application/pdf' })
-    const objectUrl = URL.createObjectURL(pdfBlob)
-    currentObjectUrl = objectUrl
-    dataUrl.value = objectUrl
-  }
-  catch (e) {
-    console.error(e)
-    if (url) {
-      dataUrl.value = url
-      return
-    }
-    error.value = 'Failed to load PDF.'
-    embedBlocked.value = true
-  }
-  finally {
-    loading.value = false
-  }
-}
-
-onBeforeUnmount(() => {
-  if (currentObjectUrl) {
-    URL.revokeObjectURL(currentObjectUrl)
-    currentObjectUrl = ''
-  }
-})
+onBeforeUnmount(() => {})
 </script>
 
 <style scoped>
-.pdf-container {
+.pdf-scroll {
   width: 100%;
   height: calc(100vh - 64px);
-  overflow: hidden;
+  overflow: auto;
+  background: #1212120a;
 }
 
-.pdf-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
+.pdf-pages {
+  padding: 24px;
 }
 
-.pdf-embed {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
-
-.pdf-blocked-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  text-align: center;
-  padding: 2rem;
+.pdf-page {
+  display: block;
+  margin: 0 auto 24px auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  background: white;
 }
 
 @media (max-width: 768px) {
-  .pdf-container {
+  .pdf-scroll {
     height: calc(100vh - 56px);
   }
 }

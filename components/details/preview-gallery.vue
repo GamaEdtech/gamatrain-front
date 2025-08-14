@@ -113,13 +113,14 @@
         </v-row>
       </div>
     </section>
-
-    <common-pdf-preview-dialog
-      v-model="previewDialog"
-      :title="previewTitle"
-      :pdf-url="previewPdfUrl"
-      :file-name="previewFileName"
-    />
+    <client-only>
+      <common-pdf-preview-dialog
+        v-model="previewDialog"
+        :title="previewTitle"
+        :pdf-url="previewPdfUrl"
+        :file-name="previewFileName"
+      />
+    </client-only>
   </div>
 </template>
 
