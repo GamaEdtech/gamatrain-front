@@ -40,7 +40,17 @@
             class="pl-2"
           >
             <div class="mx-4 mx-md-0">
-              <v-carousel
+              <NuxtImg
+                width="170"
+                height="auto"
+                :src="images[0]"
+                class="carousel-img"
+                preload
+                fetchpriority="high"
+                alt="Psat Paper Lesson"
+                format="webp"
+              />
+              <!-- <v-carousel
                 id="product-carousel"
                 v-model="carouselVal"
                 :show-arrows="false"
@@ -66,7 +76,7 @@
                     format="webp"
                   />
                 </v-carousel-item>
-              </v-carousel>
+              </v-carousel> -->
 
               <div
                 v-if="images.length > 1"
