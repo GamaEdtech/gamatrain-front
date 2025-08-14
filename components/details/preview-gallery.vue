@@ -80,7 +80,7 @@
                   @click="changeSlide(index)"
                 >
                   <NuxtImg
-                    width="70px"
+                    width="40"
                     height="auto"
                     :src="image"
                     placeholder

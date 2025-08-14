@@ -333,8 +333,6 @@
 
 <script setup>
 import CrashReport from '~/components/common/crash-report.vue'
-import successSound from '@/assets/sounds/success.mp3'
-import failSound from '@/assets/sounds/fail.mp3'
 
 const props = defineProps({
   contentData: {
@@ -548,7 +546,7 @@ function animationFadeOutBoxBalance(
   }, 7500)
 }
 function playSound(sound) {
-  const audio = new Audio(sound)
+  const audio = new Audio(`/assets/sounds/${sound}.mp3`)
   audio.play().catch((e) => {
     console.warn('Failed to play audio:', e)
   })
@@ -608,7 +606,7 @@ function fireSelectedOption() {
     coinElement.value.classList.remove('d-none')
     coinElement.value.classList.add('d-flex')
     showingCoin.value = true
-    playSound(successSound)
+    playSound('success')
     animationPulseHeart(testDetailElementBoundingRect, coinElement.value)
     setTimeout(() => {
       coinElement.value.classList.remove('pulse')
@@ -637,7 +635,7 @@ function fireSelectedOption() {
   ) {
     coinElement.value.classList.remove('d-none')
     coinElement.value.classList.add('d-flex')
-    playSound(failSound)
+    playSound('fail')
     animationMovingCoin(
       walletElementBoundingRect,
       coinElement.value,

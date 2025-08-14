@@ -5,7 +5,7 @@
     :style="{ height: `${CardHeight}`, borderRadius: '8px' }"
   >
     <NuxtImg
-      width="160px"
+      width="160"
       height="auto"
       :src="cardPicture"
       class="text-white align-end"
