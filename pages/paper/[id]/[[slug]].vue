@@ -1,165 +1,164 @@
 <template>
   <div class="test-details-content">
-    <paper-detail-skeleton-loader v-if="dataFetching" />
+    <common-category />
 
-    <template v-else>
-      <common-category />
-
-      <section>
-        <v-container class="py-0">
-          <div class="mt-0 py-0 header-path">
-            <widgets-breadcrumb :breads="breads" />
-          </div>
-        </v-container>
-      </section>
-
-      <section>
-        <v-container class="py-0">
-          <div class="d-lg-none mt-4">
-            <paper-detail-title :title="contentData?.title" />
-          </div>
-          <div class="detail mt-6 mt-md-8">
-            <v-row>
-              <v-col
-                cols="12"
-                md="12"
-                lg="5"
-                xl="6"
-                class="px-8 px-lg=0 order-3 order-md-3 order-lg-2"
-              >
-                <paper-detail-description
-                  :title="contentData?.title"
-                  :description="contentData?.description"
-                >
-                  <template #labels>
-                    <v-chip
-                      link
-                      class="mr-1 bg-blue-grey-darken-1 text-white"
-                      :small="display.mdAndDown"
-                    >
-                      <nuxt-link
-                        :to="`/search?type=test&section=${contentData?.section}`"
-                      >
-                        {{ contentData?.section_title }}
-                      </nuxt-link>
-                    </v-chip>
-                    <v-chip
-                      link
-                      class="mr-1 bg-blue-grey-darken-1 text-white"
-                      :small="display.mdAndDown"
-                    >
-                      <nuxt-link
-                        :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
-                      >
-                        {{ contentData?.base_title }}
-                      </nuxt-link>
-                    </v-chip>
-                    <v-chip
-                      class="ma-1 bg-blue-grey-darken-1 text-white"
-                      :small="display.mdAndDown"
-                    >
-                      <nuxt-link
-                        :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
-                      >
-                        {{ contentData?.lesson_title }}
-                      </nuxt-link>
-                    </v-chip>
-                    <v-chip
-                      class="ma-1 bg-blue-grey-darken-1 text-white"
-                      :small="display.mdAndDown"
-                    >
-                      {{ contentData?.edu_month_title }}
-                    </v-chip>
-                    <v-chip
-                      :small="display.mdAndDown"
-                      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}&edu_year=${contentData?.edu_year}`"
-                      class="ma-1 bg-blue-grey-darken-1 text-white"
-                    >
-                      {{ contentData?.edu_year }}
-                    </v-chip>
-                    <v-chip
-                      :small="display.mdAndDown"
-                      :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
-                      class="ma-1 bg-primary text-white"
-                    >
-                      {{ contentData?.lesson_title }} directory
-                    </v-chip>
-                  </template>
-                </paper-detail-description>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="5"
-                md="3"
-                lg="3"
-                xl="3"
-                order-lg="first"
-                class="order-2 order-sm-1 order-md-1"
-              >
-                <!-- <details-preview-gallery
-                  :image-urls="previewImages"
-                  :help-link-data="galleryHelpData"
-                  :initial-slide="1"
-                /> -->
-              </v-col>
-              <v-col
-                class="order-1 order-md-2 order-lg-3"
-                sm="7"
-                md="9"
-                lg="4"
-                xl="3"
-              >
-                <paper-detail-content-info
-                  :content-data="contentData"
-                  @crash-report="openCrashReportDialog"
-                >
-                  <template #share-dialog>
-                    <common-detail-share-dialog :title="contentData?.title" />
-                  </template>
-                </paper-detail-content-info>
-              </v-col>
-            </v-row>
-          </div>
-          <ClientOnly>
-            <common-related-portrait-content
-              page-type="paper"
-              page-name="Past Papers"
-              source="test"
-              request="test"
-            />
-          </ClientOnly>
-        </v-container>
-      </section>
-
-      <ClientOnly>
-        <div v-if="randomTestContent">
-          <v-divider
-            class="mt-4 mx-auto"
-            style="width: 80%"
-          />
-          <test-details :content-data="randomTestContent" />
-          <v-divider
-            class="mt-1 mx-auto"
-            style="width: 80%"
-          />
+    <section>
+      <v-container class="py-0">
+        <div class="mt-0 py-0 header-path">
+          <widgets-breadcrumb :breads="breads" />
         </div>
-      </ClientOnly>
-    </template>
-    <v-row
-      justify="center"
-      class="mt-10"
-    >
-      <v-col
-        cols="12"
-        md="8"
-        class="text-center"
-      >
-        <common-ad-banner
-          v-model="isAdsLoad"
-          adslot="7199289937"
+      </v-container>
+    </section>
+
+    <section>
+      <v-container class="py-0">
+        <div class="d-lg-none mt-4">
+          <paper-detail-title :title="contentData?.title" />
+        </div>
+        <div class="detail mt-6 mt-md-8">
+          <v-row>
+            <v-col
+              cols="12"
+              md="12"
+              lg="5"
+              xl="6"
+              class="px-8 px-lg=0 order-3 order-md-3 order-lg-2"
+            >
+              <paper-detail-description
+                :title="contentData?.title"
+                :description="contentData?.description"
+              >
+                <template #labels>
+                  <v-chip
+                    link
+                    class="mr-1 bg-blue-grey-darken-1 text-white"
+                    :small="display.mdAndDown"
+                  >
+                    <nuxt-link
+                      :to="`/search?type=test&section=${contentData?.section}`"
+                    >
+                      {{ contentData?.section_title }}
+                    </nuxt-link>
+                  </v-chip>
+                  <v-chip
+                    link
+                    class="mr-1 bg-blue-grey-darken-1 text-white"
+                    :small="display.mdAndDown"
+                  >
+                    <nuxt-link
+                      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
+                    >
+                      {{ contentData?.base_title }}
+                    </nuxt-link>
+                  </v-chip>
+                  <v-chip
+                    class="ma-1 bg-blue-grey-darken-1 text-white"
+                    :small="display.mdAndDown"
+                  >
+                    <nuxt-link
+                      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
+                    >
+                      {{ contentData?.lesson_title }}
+                    </nuxt-link>
+                  </v-chip>
+                  <v-chip
+                    class="ma-1 bg-blue-grey-darken-1 text-white"
+                    :small="display.mdAndDown"
+                  >
+                    {{ contentData?.edu_month_title }}
+                  </v-chip>
+                  <v-chip
+                    :small="display.mdAndDown"
+                    :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}&edu_year=${contentData?.edu_year}`"
+                    class="ma-1 bg-blue-grey-darken-1 text-white"
+                  >
+                    {{ contentData?.edu_year }}
+                  </v-chip>
+                  <v-chip
+                    :small="display.mdAndDown"
+                    :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
+                    class="ma-1 bg-primary text-white"
+                  >
+                    {{ contentData?.lesson_title }} directory
+                  </v-chip>
+                </template>
+              </paper-detail-description>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="5"
+              md="3"
+              lg="3"
+              xl="3"
+              order-lg="first"
+              class="order-2 order-sm-1 order-md-1"
+            >
+              <details-preview-gallery
+                :image-urls="previewImages"
+                :help-link-data="galleryHelpData"
+                :initial-slide="1"
+              />
+            </v-col>
+            <v-col
+              class="order-1 order-md-2 order-lg-3"
+              sm="7"
+              md="9"
+              lg="4"
+              xl="3"
+            >
+              <paper-detail-content-info
+                :content-data="contentData"
+                @crash-report="openCrashReportDialog"
+              >
+                <template #share-dialog>
+                  <common-detail-share-dialog :title="contentData?.title" />
+                </template>
+              </paper-detail-content-info>
+            </v-col>
+          </v-row>
+        </div>
+        <ClientOnly>
+          <common-related-portrait-content
+            page-type="paper"
+            page-name="Past Papers"
+            source="test"
+            request="test"
+          />
+        </ClientOnly>
+      </v-container>
+    </section>
+
+    <ClientOnly>
+      <div v-if="randomTestContent">
+        <v-divider
+          class="mt-4 mx-auto"
+          style="width: 80%"
         />
-      </v-col>
-    </v-row>
+        <test-details :content-data="randomTestContent" />
+        <v-divider
+          class="mt-1 mx-auto"
+          style="width: 80%"
+        />
+      </div>
+    </ClientOnly>
+
+    <ClientOnly>
+      <v-row
+        justify="center"
+        class="mt-10"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          class="text-center"
+        >
+          <common-ad-banner
+            v-model="isAdsLoad"
+            adslot="7199289937"
+          />
+        </v-col>
+      </v-row>
+    </ClientOnly>
   </div>
 </template>
 
@@ -174,7 +173,7 @@ const isAdsLoad = ref(false)
 
 // Track loading state
 
-const { data: contentData, pending: dataFetching } = await useAsyncData(
+const { data: contentData } = await useAsyncData(
   `paper-${route.params.id}`,
   async () => {
     try {
