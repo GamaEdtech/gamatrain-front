@@ -45,11 +45,11 @@ export default defineNuxtConfig({
   ssr: true,
 
   // Auto import components
-  // components: true,
+  components: true,
 
-  // imports: {
-  //   autoImport: true,
-  // },
+  imports: {
+    autoImport: true,
+  },
 
   // Development modules
   devtools: { enabled: true },
