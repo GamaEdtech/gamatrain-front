@@ -254,7 +254,7 @@ const router = useRouter()
 const nuxtApp = useNuxtApp()
 const submitLoading = ref(false)
 
-const { loading: helpLoading, getDescriptionFromAi } = useSchoolAiData()
+const { loading: helpLoading, getDescriptionFromAi } = useCommentAssistant()
 
 async function sendToAI() {
   try {

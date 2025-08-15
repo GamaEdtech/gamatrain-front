@@ -201,7 +201,7 @@ const updateRating = (rate, index) => {
 }
 const comment = ref('')
 
-const { loading: loadingHelpAi, getDescriptionFromAi } = useSchoolAiData()
+const { loading: loadingHelpAi, getDescriptionFromAi } = useCommentAssistant()
 
 const sendToAI = async () => {
   try {

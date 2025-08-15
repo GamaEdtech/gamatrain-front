@@ -26,7 +26,7 @@ interface SchoolAiApiResponse {
   response: string
 }
 
-export const useSchoolAiData = () => {
+export const useCommentAssistant = () => {
   const loading = ref(false)
 
   const getDescriptionFromAi = async (schoolData: SchoolData) => {
