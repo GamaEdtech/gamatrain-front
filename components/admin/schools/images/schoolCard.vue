@@ -59,7 +59,7 @@ const rejectImage = async () => {
         >
           <div class="avatarBg">
             <img
-              :src="`https://api.gamaedtech.com/Files/School/${fileId}`"
+              :src="`${fileId}`"
               alt="avatar"
             >
           </div>
@@ -133,7 +133,7 @@ const rejectImage = async () => {
   width: 100%;
   height: 100%;
   border-radius: 8px;
-  background-color: #f2f4f7;
+  background-color: #ececed;
   align-items: center;
   justify-content: center;
   margin-bottom: 16px;
@@ -141,6 +141,7 @@ const rejectImage = async () => {
 }
 .avatarBg > img{
   width: inherit;
+  border-radius: 6px;
 }
 
 .closeBtn {
