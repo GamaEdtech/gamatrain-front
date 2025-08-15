@@ -114,7 +114,7 @@
       </div>
     </section>
     <client-only>
-      <common-pdf-preview-dialog
+      <LazyCommonPdfPreviewDialog
         v-model="previewDialog"
         :title="previewTitle"
         :pdf-url="previewPdfUrl"
