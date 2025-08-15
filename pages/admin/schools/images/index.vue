@@ -76,7 +76,7 @@ const viewMessageDetails = async (id) => {
   try {
     const response = await useApiService.get(`/api/v2/admin/schools/images/contributions/${id}`)
 
-    selectedSchool.fileId = response.data.fileId
+    selectedSchool.fileId = response.data.fileUri
     selectedSchool.id = response.data.id
     selectedSchool.name = response.data.schoolName
     selectedSchool.schoolId = response.data.schoolId
