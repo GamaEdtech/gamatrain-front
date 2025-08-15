@@ -141,17 +141,6 @@
           >
             <v-icon>mdi-rotate-right</v-icon>
           </v-btn>
-
-          <!-- External actions - Desktop -->
-          <v-btn
-            v-if="pdfUrl"
-            v-tooltip="'Open in new tab'"
-            icon
-            dark
-            @click="openInNewTab"
-          >
-            <v-icon>mdi-open-in-new</v-icon>
-          </v-btn>
         </template>
       </v-toolbar>
       <v-card-text class="pa-0">
@@ -186,26 +175,6 @@
           <p class="text-body-1 text-center mb-4">
             {{ error }}
           </p>
-          <div
-            v-if="pdfUrl"
-            class="d-flex gap-3 justify-center"
-          >
-            <v-btn
-              color="primary"
-              prepend-icon="mdi-open-in-new"
-              @click="openInNewTab"
-            >
-              Open PDF
-            </v-btn>
-            <v-btn
-              color="success"
-              :loading="downloadLoading"
-              prepend-icon="mdi-download"
-              @click="downloadPdf"
-            >
-              Download PDF
-            </v-btn>
-          </div>
         </div>
 
         <div
@@ -342,7 +311,6 @@ const dialog = computed({
 // State
 const loading = ref(false)
 const error = ref('')
-const downloadLoading = ref(false)
 const scrollContainer = ref<HTMLElement>()
 const showDebug = ref(false)
 const pdfSrc = ref<string | Uint8Array | Record<string, unknown>>('')
@@ -363,11 +331,6 @@ let navigationTimeout: ReturnType<typeof setTimeout> | null = null
 let resizeObserver: ResizeObserver | null = null
 function setInitialZoom() {
   zoom.value = isMobile.value ? 0.5 : 1
-  console.log(
-    `Initial zoom set to ${zoom.value * 100}% for ${
-      isMobile.value ? 'mobile' : 'desktop'
-    }`,
-  )
 }
 
 const estimatedPageHeight = computed(() => {
@@ -476,7 +439,6 @@ watch(currentPageFromScroll, (newPage) => {
 watch(
   renderedPages,
   (newPages) => {
-    console.log('Rendered pages changed:', newPages)
     newPages.forEach((pageNum) => {
       if (!loadedPages.value.has(pageNum) && !loadingPages.value.has(pageNum)) {
         loadPage(pageNum)
@@ -488,14 +450,6 @@ watch(
 
 watch([zoom, rotation], () => {
   renderKey.value++
-  // Reload visible pages
-  nextTick(() => {
-    renderedPages.value.forEach((pageNum) => {
-      if (loadedPages.value.has(pageNum)) {
-        // Page will re-render due to renderKey change
-      }
-    })
-  })
 })
 
 function clearTimeouts() {
@@ -559,7 +513,6 @@ async function loadPdf(url: string) {
     numPages.value = pdf.numPages
     currentPage.value = 1
     pageInput.value = 1
-    console.log(`PDF loaded with ${numPages.value} pages`)
   }
   catch (_e) {
     console.error('PDF loading error:', _e)
@@ -571,7 +524,6 @@ async function loadPdf(url: string) {
 }
 
 async function loadInitialPages() {
-  console.log('Loading initial pages...')
   await nextTick()
   if (numPages.value > 0) {
     await loadPage(1)
@@ -591,24 +543,13 @@ async function loadPage(pageNum: number): Promise<boolean> {
   }
 
   if (loadingPages.value.has(pageNum) || loadedPages.value.has(pageNum)) {
-    console.log(`Page ${pageNum} already loaded or loading`)
     return loadedPages.value.has(pageNum)
   }
-
-  console.log(`Loading page ${pageNum}...`)
   loadingPages.value.add(pageNum)
 
   try {
-    // Add a small delay to ensure the component is ready
     await new Promise(resolve => setTimeout(resolve, 10))
-
-    // Mark as loaded - the VuePdf component will handle the actual rendering
     loadedPages.value.add(pageNum)
-
-    console.log(
-      `Page ${pageNum} marked as loaded. Total loaded: ${loadedPages.value.size}`,
-    )
-
     return true
   }
   catch (error) {
@@ -626,39 +567,21 @@ async function goToPage(page: number) {
     console.warn(`Invalid navigation to page ${page}`)
     return
   }
-
-  console.log(`Navigating to page ${page}...`)
   navigating.value = true
 
   try {
-    // Clear any existing timeouts
     clearTimeouts()
-
-    // Update current page immediately
     currentPage.value = page
     resetPageInput()
-
-    // Ensure target page is loaded
     await loadPage(page)
-
-    // Force a re-render to ensure the pages are visible
     await nextTick()
-
-    // Calculate target position
     const targetPosition = Math.max(0, (page - 1) * estimatedPageHeight.value)
-
-    // Scroll to position
     scrollContainer.value.scrollTo({
       top: targetPosition,
       behavior: 'smooth',
     })
-
-    console.log(`Scrolled to position ${targetPosition} for page ${page}`)
-
-    // Reset navigating flag after scroll completes
     navigationTimeout = setTimeout(() => {
       navigating.value = false
-      console.log(`Navigation to page ${page} completed`)
     }, 700)
   }
   catch (error) {
@@ -712,7 +635,6 @@ function getPlaceholderStyle(pageNum: number) {
 }
 
 function onPageLoaded(pageNum: number, event) {
-  console.log(`VuePdf page ${pageNum} loaded successfully`, event)
   if (event && event.height) {
     pageHeights.value.set(pageNum, event.height)
   }
@@ -738,26 +660,6 @@ function rotate() {
 
 function closeDialog() {
   dialog.value = false
-}
-
-function openInNewTab() {
-  if (props.pdfUrl) window.open(props.pdfUrl, '_blank', 'noopener')
-}
-
-async function downloadPdf() {
-  if (!props.pdfUrl) return
-  try {
-    downloadLoading.value = true
-    const FileSaver = await import('file-saver')
-    await FileSaver.saveAs(props.pdfUrl, props.fileName || 'document.pdf')
-  }
-  catch (err) {
-    console.error('Download error:', err)
-    window.open(props.pdfUrl, '_blank', 'noopener')
-  }
-  finally {
-    downloadLoading.value = false
-  }
 }
 
 onMounted(async () => {
