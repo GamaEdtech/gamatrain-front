@@ -20,6 +20,7 @@
                   &lesson=${help_link_data.lesson}`"
               class="mb-3 bg-blue-grey-darken-2 flex-shrink-0"
               :aria-label="item.text"
+              :aria-describedby="`tooltip-${index}`"
             >
               <span
                 v-tooltip="{
