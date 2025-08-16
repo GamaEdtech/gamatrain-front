@@ -20,12 +20,12 @@
                   &lesson=${help_link_data.lesson}`"
               class="mb-3 bg-blue-grey-darken-2 flex-shrink-0"
               :aria-label="item.text"
-              :aria-describedby="`tooltip-${index}`"
             >
               <span
                 v-tooltip="{
                   text: item.text,
                   id: `tooltip-${index}`,
+                  ariaLabel: item.text,
                 }"
                 :aria-label="item.text"
                 style="font-size: 26px"
