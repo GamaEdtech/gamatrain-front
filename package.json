@@ -45,6 +45,7 @@
     "leaflet.markercluster": "^1.5.3",
     "nuxt": "^3.16.2",
     "nuxt-gtag": "^3.0.2",
+    "pdfjs-dist": "^5.4.54",
     "solana-wallets-vue": "^0.7.1",
     "three": "^0.175.0",
     "three-custom-shader-material": "^6.3.7",
@@ -54,6 +55,7 @@
     "vue-chartjs": "5.3.2",
     "vue-mathjax-next": "^0.0.6",
     "vue3-emoji-picker": "^1.1.8",
+    "vue3-pdfjs": "^0.1.6",
     "vuedraggable": "4.1.0",
     "yup": "^1.6.1"
   },

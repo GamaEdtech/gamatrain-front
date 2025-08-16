@@ -100,6 +100,9 @@
                   :image-urls="previewImages"
                   :help-link-data="galleryHelpData"
                   :initial-slide="1"
+                  :paper-id="contentData?.id"
+                  :paper-title="contentData?.title"
+                  :show-doc-preview="true"
                 />
               </v-col>
               <v-col
