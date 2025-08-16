@@ -16,10 +16,6 @@ const router = useRouter()
 const route = useRoute()
 
 const captionMenuItems = [
-  { title: 'Type', link: '/admin/type', icon: 'mdi-basket' },
-  { title: 'Blogs', link: '/admin/blogs', icon: 'mdi-book-open-outline' },
-  { title: 'My Stock', link: '/admin/stock', icon: 'mdi-finance' },
-  { title: 'Analysis', link: '/admin/analysis', icon: 'mdi-chart-line' },
   { title: 'Contact Us', link: '/admin/contact-us', icon: 'mdi-archive-arrow-down-outline' },
   { title: 'User Managment ', link: '/admin/users', icon: 'mdi-account-group-outline' },
   { title: 'School Images ', link: '/admin/schools/images', icon: 'mdi-image-outline' },

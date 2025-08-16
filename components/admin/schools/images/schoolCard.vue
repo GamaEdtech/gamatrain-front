@@ -9,15 +9,19 @@ const props = defineProps({
 
 const { $toast } = useNuxtApp()
 
+const comment = ref('')
 const emit = defineEmits([
   'update:modelValue',
+  'fetchImages'
 ])
+
 const approveImage = async () => {
   try {
-    await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.id}/confirm`)
+    const res = await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.id}/confirm`)
     if (res.succeeded === true) {
       $toast.success('Image Approved successfully!')
       emit('update:modelValue', false)
+      emit('fetchImages')
     }
     else
       $toast.error(res.errors[0].message)
@@ -30,10 +34,13 @@ const approveImage = async () => {
 }
 const rejectImage = async () => {
   try {
-    await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.id}/reject`)
+    const res = await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.id}/reject`,{
+      comment : comment.value
+    })
     if (res.succeeded === true) {
       $toast.success('Image Rejected successfully!')
       emit('update:modelValue', false)
+      emit('fetchImages')
     }
     else
       $toast.error(res.errors[0].message)
@@ -69,6 +76,15 @@ const rejectImage = async () => {
         </v-card-title>
 
         <div class="pa-3 bg-white">
+          <label class="primary-gray-700 gtext-t6 font-weight-medium">
+            Comment
+          </label>
+          <v-text-field
+            v-model="comment"
+            variant="solo"
+            density="comfortable"
+            class="mt-1"
+          />
           <v-card-actions class="px-0">
             <v-btn
               class="closeBtn"
@@ -86,6 +102,7 @@ const rejectImage = async () => {
                   variant="outlined"
                   class="rejectBtn"
                   @click="rejectImage"
+                  :disabled="comment == ''"
                 >
                   Reject
                 </v-btn>

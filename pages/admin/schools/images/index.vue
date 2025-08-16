@@ -143,17 +143,64 @@ watch(selectedPageSize, () => {
   page.value = 1
   fetchImages()
 })
+
+watch(filter, (val) => {
+  if (val === 'confirmed') {
+    filteredList.value = list.value.filter(item => item.status == 'Confirmed')
+  }
+  else if (val === 'pending') {
+    filteredList.value = list.value.filter(item => item.status == 'Review')
+  }
+  else {
+    filteredList.value = list.value
+  }
+}, { immediate: true })
 </script>
 
 <template>
   <div>
-    <div class="d-flex justify-end ga-2 align-center px-2">
-      <p class="primary-gray-500 gtext-t6 font-weight-bold">
-        {{ totalCount }}
-      </p>
-      <p class="gray--text gtext-t6 font-weight-semibold">
-        User
-      </p>
+    <div class="d-flex justify-end ga-2 align-center px-2 justify-space-between">
+       <div class="filterBtns mb-4">
+        <v-btn
+          :class="{ 'active-filter': filter === 'all', 'inactive-filter': filter !== 'all' }"
+          depressed
+          rounded
+          variant="plain"
+          class="gtext-t4 font-weight-medium"
+          @click="filter = 'all'"
+        >
+          All
+        </v-btn>
+        <v-btn
+          :class="{ 'active-filter': filter === 'confirmed', 'inactive-filter': filter !== 'confirmed' }"
+          depressed
+          rounded
+          variant="plain"
+          class="gtext-t4 font-weight-medium"
+          @click="filter = 'confirmed'"
+        >
+          Confirmed
+        </v-btn>
+
+        <v-btn
+          :class="{ 'active-filter': filter === 'pending', 'inactive-filter': filter !== 'pending' }"
+          depressed
+          class="ml-2 gtext-t4 font-weight-medium"
+          rounded
+          variant="plain"
+          @click="filter = 'pending'"
+        >
+          Pending
+        </v-btn>
+      </div>
+      <div class="d-flex ga-1">
+        <p class="primary-gray-500 gtext-t6 font-weight-bold">
+          {{ totalCount }}
+        </p>
+        <p class="gray--text gtext-t6 font-weight-semibold">
+          Images
+        </p>
+      </div>
     </div>
     <div class="scrollable-table">
       <v-data-table
@@ -243,6 +290,7 @@ watch(selectedPageSize, () => {
         :school-name="selectedSchool.name"
         :file-id="selectedSchool.fileId"
         :school-id="selectedSchool.schoolId"
+        @fetchImages="fetchImages"
       />
 
       <DeleteItemModal
@@ -330,7 +378,7 @@ watch(selectedPageSize, () => {
 
 <style scoped>
 .scrollable-table {
-  max-height: 76vh;
+  max-height: 70vh;
   overflow-y: auto;
   overflow-x: hidden;
   position: relative;
