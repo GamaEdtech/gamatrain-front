@@ -26,6 +26,7 @@
         :title-modal="filter.title"
         :items="filter.items"
         :selected-item="filter.selectedItem"
+        :has-search="filter.hasSearch"
         @change-selected-item="onFilterUpdate($event, filter.title)"
       />
     </template>
@@ -40,7 +41,7 @@
           variant="flat"
           class="text-h5 pl-5 pr-5"
           color="#F2F4F7"
-          :closable="index != FILTER_INDEX.Type"
+          :closable="index != FILTER_INDEX.Services"
           @click:close="clearFilter(filter, index)"
         >
           {{ filter.selectedItem?.title }}
@@ -84,7 +85,7 @@
               variant="flat"
               class="text-h5 pl-5 pr-5"
               color="#F2F4F7"
-              :closable="index != FILTER_INDEX.Type"
+              :closable="index != FILTER_INDEX.Services"
               @click:close="clearFilter(filter, index)"
             >
               {{ filter.selectedItem?.title }}
@@ -162,6 +163,13 @@
 import { computed, onMounted, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
+import cieIcon from '~/assets/images/boards/CIE.svg'
+import edexcelIcon from '~/assets/images/boards/Edexcel.svg'
+import AQAIcon from '~/assets/images/boards/AQA.svg'
+import OCRIcon from '~/assets/images/boards/OCR.svg'
+import GamaIcon from '~/assets/images/boards/Gama.svg'
+import ScientificIcon from '~/assets/images/boards/Scientific Competition.svg'
+
 const props = defineProps({
   showDialogFilterMobile: {
     type: Boolean,
@@ -197,7 +205,7 @@ const FILTER_INDEX = {
   Grade: 1,
   Subject: 2,
   Topic: 3,
-  Type: 4,
+  Services: 4,
   Classification: 5,
   Year: 6,
   Month: 7,
@@ -318,7 +326,7 @@ const FILTER_TYPE = {
   Grade: 'base',
   Subject: 'lesson',
   Topic: 'topic',
-  Type: 'type',
+  Services: 'type',
   Classification: 'classification',
   Year: 'edu_year',
   Month: 'edu_month',
@@ -331,6 +339,7 @@ const filters = reactive([
     title: 'Board',
     disabled: false,
     loading: false,
+    hasSearch: true,
   },
   {
     items: [],
@@ -339,6 +348,7 @@ const filters = reactive([
     title: 'Grade',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
   {
     items: [],
@@ -347,6 +357,7 @@ const filters = reactive([
     title: 'Subject',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
   {
     items: [],
@@ -355,6 +366,7 @@ const filters = reactive([
     title: 'Topic',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
   {
     items: [
@@ -364,6 +376,8 @@ const filters = reactive([
         hasClassification: true,
         typeForGetClassification: 'test_type',
         typeForGetContent: 'test',
+        icon: 'stat-icon icon-paper',
+        color: '#2e90fa',
       },
       {
         title: 'Multimedia',
@@ -371,6 +385,8 @@ const filters = reactive([
         hasClassification: true,
         typeForGetClassification: 'content_type',
         typeForGetContent: 'learnfiles',
+        icon: 'stat-icon icon-multimedia',
+        color: '#02b719',
       },
       {
         title: 'QuizHub',
@@ -378,6 +394,8 @@ const filters = reactive([
         hasClassification: true,
         typeForGetClassification: 'test_type',
         typeForGetContent: 'azmoon',
+        icon: 'stat-icon icon-exam',
+        color: '#7c4dff',
       },
       {
         title: 'Forum',
@@ -385,6 +403,8 @@ const filters = reactive([
         hasClassification: false,
         typeForGetClassification: null,
         typeForGetContent: 'question',
+        icon: 'stat-icon icon-q-a',
+        color: '#fdb022',
       },
       {
         title: 'Tutorial',
@@ -392,13 +412,16 @@ const filters = reactive([
         hasClassification: false,
         typeForGetClassification: null,
         typeForGetContent: 'dars',
+        icon: 'stat-icon icon-tutorial',
+        color: '#2e90fa',
       },
     ],
     selectedItem: null,
     isOpenModal: false,
-    title: 'Type',
+    title: 'Services',
     disabled: false,
     loading: false,
+    hasSearch: false,
   },
   {
     items: [],
@@ -407,6 +430,7 @@ const filters = reactive([
     title: 'Classification',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
   {
     items: [
@@ -468,6 +492,7 @@ const filters = reactive([
     title: 'Year',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
   {
     items: getMonth(route.query.base),
@@ -476,6 +501,7 @@ const filters = reactive([
     title: 'Month',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
 ])
 
@@ -487,19 +513,19 @@ const openModalSelectedFilter = (filter) => {
 
 const clearAllFilter = () => {
   filters.forEach((filter, index) => {
-    if (index != FILTER_INDEX.Type) {
+    if (index != FILTER_INDEX.Services) {
       filter.selectedItem = null
       filter.disabled = true
     }
   })
   filters[FILTER_INDEX.Board].disabled = false
-  filters[FILTER_INDEX.Type].disabled = false
+  filters[FILTER_INDEX.Services].disabled = false
   updateQueryParam()
 }
 
 const clearFilter = (filter, index) => {
-  if (index < FILTER_INDEX.Type) {
-    for (let i = index; i < FILTER_INDEX.Type; i++) {
+  if (index < FILTER_INDEX.Services) {
+    for (let i = index; i < FILTER_INDEX.Services; i++) {
       filters[i].selectedItem = null
       if (i != index) {
         filters[i].disabled = true
@@ -517,7 +543,7 @@ const clearFilter = (filter, index) => {
     filters[FILTER_INDEX.Month].selectedItem = null
   }
 
-  if (index == FILTER_INDEX.Type) {
+  if (index == FILTER_INDEX.Services) {
     filters[index].selectedItem = null
     filters[FILTER_INDEX.Classification].selectedItem = null
     filters[FILTER_INDEX.Classification].disabled = true
@@ -537,11 +563,11 @@ const clearFilter = (filter, index) => {
 
 const updateClassificationFilter = async () => {
   resetFilters(FILTER_INDEX.Classification, 6)
-  if (filters[FILTER_INDEX.Type].selectedItem.hasClassification) {
+  if (filters[FILTER_INDEX.Services].selectedItem.hasClassification) {
     filters[FILTER_INDEX.Classification].loading = true
     const response = await getInformationNextFilter(
       'Board',
-      filters[FILTER_INDEX.Type].selectedItem.typeForGetClassification,
+      filters[FILTER_INDEX.Services].selectedItem.typeForGetClassification,
     )
     filters[FILTER_INDEX.Classification].loading = false
     filters[FILTER_INDEX.Classification].disabled = false
@@ -557,9 +583,9 @@ const updateClassificationFilter = async () => {
 
 const updateStatusMonthYearFilter = () => {
   if (
-    filters[FILTER_INDEX.Type].selectedItem
-    && (filters[FILTER_INDEX.Type].selectedItem.title == 'Past Papers'
-      || filters[FILTER_INDEX.Type].selectedItem.title == 'QuizHub')
+    filters[FILTER_INDEX.Services].selectedItem
+    && (filters[FILTER_INDEX.Services].selectedItem.title == 'Past Papers'
+      || filters[FILTER_INDEX.Services].selectedItem.title == 'QuizHub')
   ) {
     filters[FILTER_INDEX.Year].disabled = false
     filters[FILTER_INDEX.Month].disabled = false
@@ -579,10 +605,10 @@ const onFilterUpdate = async (item, filterName) => {
   if (item.id && item.id != filters[index]?.selectedItem?.id) {
     filters[index].selectedItem = item
 
-    if (index == FILTER_INDEX.Board || index == FILTER_INDEX.Type) {
+    if (index == FILTER_INDEX.Board || index == FILTER_INDEX.Services) {
       if (
         filters[FILTER_INDEX.Board].selectedItem
-        && filters[FILTER_INDEX.Type].selectedItem
+        && filters[FILTER_INDEX.Services].selectedItem
       ) {
         await updateClassificationFilter()
       }
@@ -598,7 +624,7 @@ const onFilterUpdate = async (item, filterName) => {
       )
     }
 
-    if (index < FILTER_INDEX.Type) {
+    if (index < FILTER_INDEX.Services) {
       resetFilters(index + 1, 4)
     }
     if (index < FILTER_INDEX.Topic) {
@@ -650,19 +676,19 @@ const updateQueryParam = () => {
     if (filter.selectedItem && filter.selectedItem.id) {
       if (index == FILTER_INDEX.Classification) {
         if (
-          filters[FILTER_INDEX.Type].selectedItem.typeForGetClassification
-          == 'test_type'
+          filters[FILTER_INDEX.Services].selectedItem
+            .typeForGetClassification == 'test_type'
         ) {
           query['test_type'] = filter.selectedItem.id
         }
         else if (
-          filters[FILTER_INDEX.Type].selectedItem.typeForGetClassification
-          == 'content_type'
+          filters[FILTER_INDEX.Services].selectedItem
+            .typeForGetClassification == 'content_type'
         ) {
           query['content_type'] = filter.selectedItem.id
         }
       }
-      else if (index == FILTER_INDEX.Type) {
+      else if (index == FILTER_INDEX.Services) {
         query[key] = filter.selectedItem.typeForGetContent
       }
       else {
@@ -687,11 +713,11 @@ const applyRouteToFilter = (index, queryKey, customId = null) => {
 }
 
 const updateFiltersExistInRoute = async () => {
-  const typeFilter = filters[FILTER_INDEX.Type]
-  applyRouteToFilter(FILTER_INDEX.Type, FILTER_TYPE.Type)
-  if (!filters[FILTER_INDEX.Type].selectedItem) {
-    filters[FILTER_INDEX.Type].selectedItem
-      = filters[FILTER_INDEX.Type].items[0]
+  const typeFilter = filters[FILTER_INDEX.Services]
+  applyRouteToFilter(FILTER_INDEX.Services, FILTER_TYPE.Services)
+  if (!filters[FILTER_INDEX.Services].selectedItem) {
+    filters[FILTER_INDEX.Services].selectedItem
+      = filters[FILTER_INDEX.Services].items[0]
   }
   if (
     typeFilter.selectedItem?.title === 'Past Papers'
@@ -704,6 +730,12 @@ const updateFiltersExistInRoute = async () => {
   const boardResponse = await getBoardData()
   if (boardResponse.data) {
     filters[FILTER_INDEX.Board].items = boardResponse.data
+    filters[FILTER_INDEX.Board].items = boardResponse.data.map(
+      (item, index) => ({
+        ...item,
+        img: boardImgs[index % boardImgs.length],
+      }),
+    )
     filters[FILTER_INDEX.Board].disabled = false
     applyRouteToFilter(FILTER_INDEX.Board, FILTER_TYPE.Board)
   }
@@ -732,7 +764,7 @@ const updateFiltersExistInRoute = async () => {
   if (
     filters[FILTER_INDEX.Board].selectedItem
     && typeFilter.selectedItem
-    && filters[FILTER_INDEX.Type].selectedItem.typeForGetClassification
+    && filters[FILTER_INDEX.Services].selectedItem.typeForGetClassification
   ) {
     filters[FILTER_INDEX.Classification].disabled = false
     filters[FILTER_INDEX.Classification].loading = true
@@ -758,14 +790,14 @@ const updateFiltersExistInRoute = async () => {
       'changeFilterQuery',
       {
         ...route.query,
-        type: filters[FILTER_INDEX.Type].selectedItem.typeForGetContent,
+        type: filters[FILTER_INDEX.Services].selectedItem.typeForGetContent,
       },
       skipFetch,
     )
     router.replace({
       query: {
         ...route.query,
-        type: filters[FILTER_INDEX.Type].selectedItem.typeForGetContent,
+        type: filters[FILTER_INDEX.Services].selectedItem.typeForGetContent,
       },
     })
   }
@@ -774,6 +806,14 @@ const updateFiltersExistInRoute = async () => {
   }
 }
 
+const boardImgs = [
+  cieIcon,
+  edexcelIcon,
+  AQAIcon,
+  OCRIcon,
+  GamaIcon,
+  ScientificIcon,
+]
 const getBoardData = async () => {
   try {
     const params = { type: 'section' }
