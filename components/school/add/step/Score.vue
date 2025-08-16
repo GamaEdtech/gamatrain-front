@@ -82,11 +82,12 @@
           class="position-absolute position-button-ai"
           @click="sendToAI"
         >
+          <!-- <v-icon size="x-large" color="white"> md:wand_stars </v-icon> -->
           <v-icon
             size="x-large"
             color="white"
           >
-            md:edit
+            mdi-auto-fix
           </v-icon>
         </v-btn>
       </div>
