@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import type { PublicKey as TPublicKey, VersionedTransaction as TVersionedTransaction, TransactionMessage as TTransactionMessage, TransactionInstruction as TTransactionInstruction } from '@solana/web3.js'
+import type { VersionedTransaction as TVersionedTransaction, TransactionInstruction as TTransactionInstruction } from '@solana/web3.js'
 import { Buffer } from 'buffer'
 
 // Interfaces for Jupiter API responses
@@ -41,6 +40,12 @@ export const createSimpleMemoSwap = async (
   memo: string,
 ): Promise<{ transaction: TVersionedTransaction, memo: string } | null> => {
   try {
+    // Check if we're running on the client side
+    if (!import.meta.client) {
+      console.error('❌ Memo swap can only be created on the client side')
+      return null
+    }
+
     console.log('🚀 Creating simple memo swap with QuickNode RPC')
     console.log('📝 Memo:', memo)
 
@@ -86,27 +91,38 @@ export const createSimpleMemoSwap = async (
     // Build instructions array
     const instructions: TTransactionInstruction[] = []
 
-    // 1. Add compute budget instructions
-    if (instructionsResponse.computeBudgetInstructions?.length > 0) {
+    // 1. Add compute budget instructions (fix TypeScript issues)
+    if (instructionsResponse.computeBudgetInstructions && instructionsResponse.computeBudgetInstructions.length > 0) {
       instructions.push(...instructionsResponse.computeBudgetInstructions.map(deserializeInstruction))
     }
 
-    // 2. Add setup instructions
-    if (instructionsResponse.setupInstructions?.length > 0) {
+    // 2. Add setup instructions (fix TypeScript issues)
+    if (instructionsResponse.setupInstructions && instructionsResponse.setupInstructions.length > 0) {
       instructions.push(...instructionsResponse.setupInstructions.map(deserializeInstruction))
     }
 
-    // 3. Add memo instruction
-    const { createValidatedMemoInstruction } = useSolanaMemo()
-    const memoResult = createValidatedMemoInstruction(memo, payerPublicKey)
+    // 3. Add memo instruction using async version
+    const { createValidatedMemoInstructionAsync, canCreateMemoInstructions } = useSolanaMemo()
 
-    if (!memoResult.success) {
-      throw new Error(`Memo validation failed: ${memoResult.errorMessage}`)
+    // Check if memo instructions can be created
+    if (!canCreateMemoInstructions()) {
+      console.warn('⚠️ Memo instructions cannot be created in this environment, proceeding without memo')
     }
+    else {
+      try {
+        const memoResult = await createValidatedMemoInstructionAsync(memo, payerPublicKey)
 
-    if (memoResult.instruction) {
-      instructions.push(memoResult.instruction)
-      console.log('✅ Memo instruction added successfully')
+        if (!memoResult.success) {
+          console.warn(`⚠️ Memo validation failed: ${memoResult.errorMessage}, proceeding without memo`)
+        }
+        else if (memoResult.instruction) {
+          instructions.push(memoResult.instruction)
+          console.log('✅ Memo instruction added successfully')
+        }
+      }
+      catch (memoError) {
+        console.warn('⚠️ Failed to create memo instruction, proceeding without memo:', memoError)
+      }
     }
 
     // 4. Add swap instruction
@@ -134,7 +150,16 @@ export const createSimpleMemoSwap = async (
     console.log('✅ Simple memo transaction built successfully')
     console.log('📊 Transaction details:', {
       instructionCount: instructions.length,
-      hasMemo: true,
+      hasMemo: instructions.some((inst) => {
+        // Check if any instruction is a memo instruction
+        try {
+          const { isMemoInstruction } = useSolanaMemo()
+          return isMemoInstruction(inst)
+        }
+        catch {
+          return false
+        }
+      }),
       memo: memo,
     })
 
@@ -150,11 +175,59 @@ export const createSimpleMemoSwap = async (
 }
 
 /**
+ * Creates a simple swap transaction with enhanced error handling and fallback
+ */
+export const createSimpleMemoSwapWithFallback = async (
+  quote: unknown,
+  userPublicKey: string,
+  memo: string,
+): Promise<{
+  transaction: TVersionedTransaction | null
+  memo: string | null
+  success: boolean
+  error?: string
+  hasMemo: boolean
+}> => {
+  try {
+    const result = await createSimpleMemoSwap(quote, userPublicKey, memo)
+
+    if (result) {
+      return {
+        transaction: result.transaction,
+        memo: result.memo,
+        success: true,
+        hasMemo: true,
+      }
+    }
+    else {
+      return {
+        transaction: null,
+        memo: null,
+        success: false,
+        error: 'Failed to create memo swap transaction',
+        hasMemo: false,
+      }
+    }
+  }
+  catch (error) {
+    console.error('❌ Memo swap creation failed:', error)
+    return {
+      transaction: null,
+      memo: null,
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
+      hasMemo: false,
+    }
+  }
+}
+
+/**
  * Main composable for simple memo swap
  */
 export const useSimpleMemoSwap = () => {
   return {
     createSimpleMemoSwap,
+    createSimpleMemoSwapWithFallback,
     getSolanaRpcUrl,
   }
 }

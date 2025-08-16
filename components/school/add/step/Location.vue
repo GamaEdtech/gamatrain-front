@@ -289,11 +289,22 @@ const checkSchoolAvailable = async () => {
       stateId: locationData.value[1].selected.id,
       cityId: locationData.value[2].selected.id,
     }
+    const aiInfo = {
+      name: title.value,
+      countryTitle: locationData.value[0].selected.title,
+      stateTitle: locationData.value[1].selected.title,
+      cityTitle: locationData.value[2].selected.title,
+    }
     if (response.data.list == null || response.data.list.length == 0) {
-      emit('nextStep', locationStepInfo)
+      emit('nextStep', locationStepInfo, aiInfo)
     }
     else {
-      emit('schoolFindInSearch', response.data.list[0], locationStepInfo)
+      emit(
+        'schoolFindInSearch',
+        response.data.list[0],
+        locationStepInfo,
+        aiInfo,
+      )
     }
   }
   catch (err) {

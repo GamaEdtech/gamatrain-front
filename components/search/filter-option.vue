@@ -58,7 +58,7 @@
     <div
       class="w-100 h-100 d-flex flex-column justify-space-between overflow-y-auto bg-white position-relative"
     >
-      <v-container class="flex-column">
+      <v-container class="flex-column mb-10">
         <v-col
           cols="12"
           class="d-flex justify-space-between align-center"
@@ -133,7 +133,9 @@
           </div>
         </v-col>
       </v-container>
-      <div class="w-100 d-flex align-center justify-center ga-3 box-button">
+      <div
+        class="w-100 d-flex align-center justify-center ga-3 box-button position-fixed bottom-0 bg-white"
+      >
         <v-btn
           variant="text"
           class="text-h5"
@@ -200,6 +202,117 @@ const FILTER_INDEX = {
   Year: 6,
   Month: 7,
 }
+
+const allMonths = [
+  { id: 1, title: 'January' },
+  { id: 2, title: 'February' },
+  { id: 3, title: 'March' },
+  { id: 4, title: 'April' },
+  { id: 5, title: 'May' },
+  { id: 6, title: 'June' },
+  { id: 7, title: 'July' },
+  { id: 8, title: 'August' },
+  { id: 9, title: 'September' },
+  { id: 10, title: 'October' },
+  { id: 11, title: 'November' },
+  { id: 12, title: 'December' },
+]
+
+const specialMonths = {
+  4161: [
+    { id: 3, title: 'March' },
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  22: [
+    { id: 3, title: 'March' },
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  6374: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  23: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  6533: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  6635: [
+    { id: 4, title: 'April' },
+    { id: 10, title: 'October' },
+  ],
+  6639: [
+    { id: 4, title: 'April' },
+    { id: 10, title: 'October' },
+  ],
+  // AQA-GCSE
+  6672: [
+    { id: 6, title: 'June' },
+    { id: 11, title: 'November' },
+  ],
+  // AQA-AS LEVEL
+  6673: [{ id: 6, title: 'June' }],
+  // AQA-A LEVEL
+  6674: [{ id: 6, title: 'June' }],
+  // OCR GCSE
+  6676: [
+    { id: 6, title: 'June' },
+    { id: 11, title: 'November' },
+  ],
+  // OCR AS LEVEL
+  6677: [
+    { id: 6, title: 'June' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  // OCR A LEVEL
+  6678: [
+    { id: 6, title: 'June' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  // Edexcel A LEVEL
+  6671: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  // Edexcel AS LEVEL
+  6675: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  // Edexcel GCSE
+  6669: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  // Edexcel International A/AS LEVEL
+  6670: [
+    { id: 1, title: 'January' },
+    { id: 4, title: 'April' },
+    { id: 6, title: 'June' },
+    { id: 10, title: 'October' },
+    { id: 11, title: 'November' },
+  ],
+  // Edexcel International GCSE
+  6668: [
+    { id: 1, title: 'January' },
+    { id: 4, title: 'April' },
+    { id: 6, title: 'June' },
+    { id: 10, title: 'October' },
+    { id: 11, title: 'November' },
+  ],
+}
+
+const getMonth = (grade) => {
+  if (grade) {
+    return specialMonths[grade]
+  }
+  return allMonths
+}
+
 const FILTER_TYPE = {
   Board: 'section',
   Grade: 'base',
@@ -357,20 +470,7 @@ const filters = reactive([
     loading: false,
   },
   {
-    items: [
-      { id: 1, title: 'January' },
-      { id: 2, title: 'February' },
-      { id: 3, title: 'March' },
-      { id: 4, title: 'April' },
-      { id: 5, title: 'May' },
-      { id: 6, title: 'June' },
-      { id: 7, title: 'July' },
-      { id: 8, title: 'August' },
-      { id: 9, title: 'September' },
-      { id: 10, title: 'October' },
-      { id: 11, title: 'November' },
-      { id: 12, title: 'December' },
-    ],
+    items: getMonth(route.query.base),
     selectedItem: null,
     isOpenModal: false,
     title: 'Month',
@@ -408,8 +508,15 @@ const clearFilter = (filter, index) => {
     if (index == FILTER_INDEX.Board) {
       filters[FILTER_INDEX.Classification].selectedItem = null
       filters[FILTER_INDEX.Classification].disabled = true
+      filters[FILTER_INDEX.Month].items = getMonth()
     }
   }
+
+  if (index == FILTER_INDEX.Grade) {
+    filters[FILTER_INDEX.Month].items = allMonths
+    filters[FILTER_INDEX.Month].selectedItem = null
+  }
+
   if (index == FILTER_INDEX.Type) {
     filters[index].selectedItem = null
     filters[FILTER_INDEX.Classification].selectedItem = null
@@ -451,7 +558,8 @@ const updateClassificationFilter = async () => {
 const updateStatusMonthYearFilter = () => {
   if (
     filters[FILTER_INDEX.Type].selectedItem
-    && filters[FILTER_INDEX.Type].selectedItem.title == 'Past Papers'
+    && (filters[FILTER_INDEX.Type].selectedItem.title == 'Past Papers'
+      || filters[FILTER_INDEX.Type].selectedItem.title == 'QuizHub')
   ) {
     filters[FILTER_INDEX.Year].disabled = false
     filters[FILTER_INDEX.Month].disabled = false
@@ -479,6 +587,15 @@ const onFilterUpdate = async (item, filterName) => {
         await updateClassificationFilter()
       }
       updateStatusMonthYearFilter()
+      if (index == FILTER_INDEX.Board) {
+        filters[FILTER_INDEX.Month].items = getMonth()
+      }
+    }
+    if (index == FILTER_INDEX.Grade) {
+      filters[FILTER_INDEX.Month].selectedItem = null
+      filters[FILTER_INDEX.Month].items = getMonth(
+        filters[FILTER_INDEX.Grade].selectedItem?.id,
+      )
     }
 
     if (index < FILTER_INDEX.Type) {
@@ -576,7 +693,10 @@ const updateFiltersExistInRoute = async () => {
     filters[FILTER_INDEX.Type].selectedItem
       = filters[FILTER_INDEX.Type].items[0]
   }
-  if (typeFilter.selectedItem?.title === 'Past Papers') {
+  if (
+    typeFilter.selectedItem?.title === 'Past Papers'
+    || typeFilter.selectedItem?.title === 'QuizHub'
+  ) {
     filters[FILTER_INDEX.Year].disabled = false
     filters[FILTER_INDEX.Month].disabled = false
   }

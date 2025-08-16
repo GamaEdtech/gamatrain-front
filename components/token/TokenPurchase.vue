@@ -1160,13 +1160,24 @@ const handleSwap = async () => {
       setTimeout(() => {
         successMessage.value = null
         lastSignature.value = null
-      }, 20000)
+      }, 30000)
 
       // Reset form and refresh balances
       getTokenAmount.value = ''
       equivalentCost.value = ''
       swapQuote.value = null
-      memoText.value = '' // Clear memo field
+      // Preserve memo if it came from URL parameter, otherwise clear it
+      const urlMemo = extractAndValidateMemo((queryRoute?.ref ?? undefined) as unknown as string | string[] | undefined)
+      if (urlMemo) {
+        // Keep the URL memo for subsequent transactions
+        memoText.value = urlMemo
+        console.log('🔄 Preserving URL memo for next transaction:', urlMemo)
+      }
+      else {
+        // Clear manually entered memo
+        memoText.value = ''
+        console.log('🧹 Clearing manually entered memo')
+      }
       await fetchBalances()
     }
     else {
@@ -1182,7 +1193,7 @@ const handleSwap = async () => {
     // Clear error message after 10 seconds
     setTimeout(() => {
       errorMessage.value = null
-    }, 10000)
+    }, 20000)
   }
   finally {
     swapping.value = false
@@ -1220,7 +1231,7 @@ const handleDisconnect = async () => {
     // Clear error message after 5 seconds
     setTimeout(() => {
       errorMessage.value = null
-    }, 5000)
+    }, 10000)
   }
   showDisconnectModal.value = false
 }

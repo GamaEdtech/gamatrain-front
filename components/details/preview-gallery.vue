@@ -1,9 +1,6 @@
 <template>
   <div>
-    <section
-      id="details-gallery-portrate"
-      class="rounded-lg"
-    >
+    <section id="details-gallery-portrate" class="rounded-lg">
       <div class="card-carousel">
         <v-row justify="center">
           <v-col
@@ -34,12 +31,7 @@
             </v-btn>
           </v-col>
 
-          <v-col
-            cols="10"
-            md="9"
-            xl="10"
-            class="pl-2"
-          >
+          <v-col cols="10" md="9" xl="10" class="pl-2">
             <div class="mx-4 mx-md-0">
               <v-carousel
                 id="product-carousel"
@@ -55,25 +47,32 @@
                   v-for="(image, index) in images"
                   :key="index"
                   cover
+                  class="carousel-item-clickable"
+                  @click="handleImageClick(index)"
                 >
-                  <NuxtImg
-                    width="170"
-                    height="auto"
-                    :src="image"
-                    class="carousel-img"
-                    preload
-                    fetchpriority="high"
-                    alt="Psat Paper Lesson"
-                    format="webp"
-                    :loading="index === 0 ? 'eager' : 'lazy'"
-                  />
+                  <div class="carousel-item-content">
+                    <NuxtImg
+                      width="170"
+                      height="auto"
+                      :src="image"
+                      class="carousel-img"
+                      preload
+                      fetchpriority="high"
+                      alt="Psat Paper Lesson"
+                      format="webp"
+                      :loading="index === 0 ? 'eager' : 'lazy'"
+                    />
+                    <div v-if="showDocPreview" class="preview-overlay">
+                      <v-icon size="24" color="white" class="preview-icon">
+                        mdi-eye
+                      </v-icon>
+                      <span class="preview-text">Preview</span>
+                    </div>
+                  </div>
                 </v-carousel-item>
               </v-carousel>
 
-              <div
-                v-if="images.length > 1"
-                class="main-thumbnails"
-              >
+              <div v-if="images.length > 1" class="main-thumbnails">
                 <div
                   v-for="(image, index) in images"
                   :key="index"
@@ -81,15 +80,17 @@
                   :class="{ 'active-box': carouselVal === index }"
                   @click="changeSlide(index)"
                 >
-                  <NuxtImg
-                    width="40"
-                    height="auto"
-                    :src="image"
-                    placeholder
-                    class="thumbnail-preview"
-                    alt="Psat Paper Lesson"
-                    format="webp"
-                  />
+                  <div class="thumbnail-content">
+                    <NuxtImg
+                      width="40"
+                      height="auto"
+                      :src="image"
+                      placeholder
+                      class="thumbnail-preview"
+                      alt="Psat Paper Lesson"
+                      format="webp"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -97,6 +98,14 @@
         </v-row>
       </div>
     </section>
+    <client-only>
+      <LazyCommonPdfPreviewDialog
+        v-model="previewDialog"
+        :title="previewTitle"
+        :pdf-url="previewPdfUrl"
+        :file-name="previewFileName"
+      />
+    </client-only>
   </div>
 </template>
 
@@ -110,68 +119,111 @@ const props = defineProps({
   helpLinkData: {
     type: Object,
     default: () => ({
-      state: '',
-      section: '',
-      base: '',
-      course: '',
-      lesson: '',
+      state: "",
+      section: "",
+      base: "",
+      course: "",
+      lesson: "",
     }),
   },
   initialSlide: {
     type: Number,
     default: 0,
   },
-})
+  showDocPreview: {
+    type: Boolean,
+    default: false,
+  },
+  // New props for PDF preview functionality
+  paperId: {
+    type: [String, Number],
+    default: null,
+  },
+  paperTitle: {
+    type: String,
+    default: "",
+  },
+});
 
 // Reactive state
-const carouselVal = ref(0)
-const images = ref([])
+const carouselVal = ref(0);
+const images = ref([]);
 const help_link_data = reactive({
-  state: '',
-  section: '',
-  base: '',
-  course: '',
-  lesson: '',
-})
+  state: "",
+  section: "",
+  base: "",
+  course: "",
+  lesson: "",
+});
 
-const _active_img = ref(1)
+const _active_img = ref(1);
+
+// PDF Preview related
+const previewDialog = ref(false);
+const previewPdfUrl = ref("");
+const previewFileName = ref("");
+const previewTitle = ref("");
 
 const items = reactive([
   {
-    class: 'exam',
-    text: 'Related exam',
-    icon: 'exam',
-    link: '/search?type=azmoon',
+    class: "exam",
+    text: "Related exam",
+    icon: "exam",
+    link: "/search?type=azmoon",
   },
   {
-    class: 'test',
-    text: 'Related paper',
-    icon: 'paper',
-    link: '/search?type=test',
+    class: "test",
+    text: "Related paper",
+    icon: "paper",
+    link: "/search?type=test",
   },
   {
-    class: 'content',
-    text: 'Related multimedia',
-    icon: 'multimedia',
-    link: '/search?type=learnfiles',
+    class: "content",
+    text: "Related multimedia",
+    icon: "multimedia",
+    link: "/search?type=learnfiles",
   },
   {
-    class: 'faq',
-    text: 'Related Q & A',
-    icon: 'q-a',
-    link: '/search?type=question',
+    class: "faq",
+    text: "Related Q & A",
+    icon: "q-a",
+    link: "/search?type=question",
   },
   {
-    class: 'textbook ',
-    text: 'Related tutorial',
-    icon: 'tutorial',
-    link: '/search?type=dars',
+    class: "textbook ",
+    text: "Related tutorial",
+    icon: "tutorial",
+    link: "/search?type=dars",
   },
-])
+]);
 
 // Methods
 function changeSlide(index) {
-  carouselVal.value = index
+  carouselVal.value = index;
+}
+
+async function handleImageClick() {
+  if (!props.paperId) {
+    console.warn("No paper ID provided for PDF preview");
+    return;
+  }
+
+  try {
+    const response = await $fetch(
+      `/api/v1/tests/download/${props.paperId}/pdf`
+    );
+
+    if (response.status === 1 && response.data?.url) {
+      previewPdfUrl.value = response.data.url;
+      previewFileName.value = response.data.name || "document.pdf";
+      previewTitle.value = props.paperTitle || "PDF Preview";
+      previewDialog.value = true;
+    } else {
+      console.error("Unable to load PDF preview");
+    }
+  } catch (err) {
+    console.error("Error loading PDF preview:", err);
+  }
 }
 
 // Watch effects
@@ -179,21 +231,21 @@ watch(
   () => props.imageUrls,
   (newVal) => {
     if (newVal && newVal.length > 0) {
-      images.value = [...newVal]
+      images.value = [...newVal];
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 watch(
   () => props.helpLinkData,
   (newVal) => {
     if (newVal) {
-      Object.assign(help_link_data, newVal)
+      Object.assign(help_link_data, newVal);
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 watch(
   () => props.initialSlide,
@@ -202,8 +254,8 @@ watch(
       // carouselVal.value = newVal;
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 </script>
 
 <style lang="scss" scoped>
@@ -301,6 +353,75 @@ watch(
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.carousel-item-clickable {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.carousel-item-clickable:hover {
+  transform: scale(1.02);
+}
+
+.carousel-item-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.preview-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: white;
+}
+
+.carousel-item-clickable:hover .preview-overlay {
+  opacity: 1;
+}
+
+.preview-icon {
+  margin-bottom: 8px;
+}
+
+.preview-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.thumbnail-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.thumbnail-preview-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  cursor: pointer;
+}
+
+.thumbnail-box:hover .thumbnail-preview-overlay {
+  opacity: 1;
 }
 
 @media screen and (max-width: 600px) {
