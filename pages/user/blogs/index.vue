@@ -101,6 +101,21 @@
           </div>
         </template>
 
+        <template #[`item.view`]="{ item }">
+          <v-btn
+            variant="text"
+            :to="`/blogv2/${item.id}/${$slugGenerator(item.title)}`"
+            target="_blank"
+            icon
+            small
+            color="secondary"
+          >
+            <v-icon small>
+              mdi-eye
+            </v-icon>
+          </v-btn>
+        </template>
+
         <template #[`item.edit`]="{ item }">
           <v-btn
             variant="text"
@@ -151,7 +166,7 @@
 import { ref, watch, onMounted } from 'vue'
 import DeleteModal from '@/components/modals/DeleteModal.vue'
 
-const { $toast } = useNuxtApp()
+const { $toast, $slugGenerator } = useNuxtApp()
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -181,6 +196,7 @@ const headers = [
   { title: 'Category', value: 'category', sortable: true },
   { title: 'Author', value: 'author', sortable: true },
   { title: 'Date', value: 'date', sortable: true },
+  { title: 'View', value: 'view', sortable: false, align: 'center' },
   { title: 'Edit', value: 'edit', sortable: false, align: 'center' },
   // { title: 'Delete', value: 'delete', sortable: false, align: 'center' },
 ]
