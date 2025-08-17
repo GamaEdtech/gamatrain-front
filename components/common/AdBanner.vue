@@ -9,8 +9,9 @@
       :data-ad-format="format"
       :data-full-width-responsive="responsive.toString()"
     />
-
-    <common-random-coin v-if="isAdsLoad" />
+    <client-only>
+      <lazy-common-random-coin v-if="isAdsLoad" />
+    </client-only>
   </div>
 </template>
 

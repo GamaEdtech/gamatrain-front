@@ -199,7 +199,7 @@
             :loading="extraFileDownloadLoading"
             @click="startDownload('extra', extra.id)"
           >
-            <template v-if="extra?.ext =='mp3'">
+            <template v-if="extra?.ext == 'mp3'">
               <v-icon
                 size="x-large"
                 class="mr-1"
@@ -328,7 +328,6 @@ const startDownload = async (type, extraId) => {
 defineExpose({
   crash_report,
 })
-console.log('contentData.files.extra', props.contentData.files.extra)
 </script>
 
 <style scoped>

@@ -2,14 +2,13 @@
   <Transition name="coin-fade">
     <div
       v-if="showCoin"
+      ref="coinEl"
       class="random-coin"
       :class="{ 'coin-clicked': isClicked }"
       :style="{
         position: 'absolute',
         left: coinPosition.x + 'px',
         top: coinPosition.y + 'px',
-        width: isClicked ? '120px' : '40px',
-        height: isClicked ? '120px' : '40px',
         zIndex: 9999,
         pointerEvents: 'auto',
         cursor: 'pointer',
@@ -17,24 +16,64 @@
       }"
       @click="handleCoinClick"
     >
-      <img
-        src="/images/random-coin.png"
-        alt="Coin"
-        style="width: 100%; height: 100%; object-fit: contain"
-      >
+      <ClientOnly>
+        <DotLottieVue
+          ref="lottieRef"
+          loop
+          :style="{
+            width: isClicked ? '120px' : '40px',
+            height: isClicked ? '120px' : '40px',
+          }"
+          src="/static/data.json"
+        />
+      </ClientOnly>
     </div>
   </Transition>
 </template>
 
 <script setup>
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import successSound from '@/assets/sounds/success.mp3'
 
 const route = useRoute()
+
 const coinPosition = ref({ x: 0, y: 0 })
 const showCoin = ref(false)
 const isClicked = ref(false)
 
-const generateRandomPosition = () => {
+const lottieRef = ref(null)
+const coinEl = ref(null)
+
+let scrollHandler = null
+
+function setInitialFrame() {
+  const inst = lottieRef.value?.getDotLottieInstance()
+  if (inst && inst.isLoaded) {
+    inst.setFrame(19)
+    inst.pause()
+  }
+  else {
+    setTimeout(setInitialFrame, 50)
+  }
+}
+
+function checkCoinVisibility() {
+  if (!coinEl.value) return
+  const rect = coinEl.value.getBoundingClientRect()
+
+  const viewportHeight = window.innerHeight
+  const margin = 200 // distance in px before it's considered "near"
+
+  const inView = rect.top < viewportHeight + margin && rect.bottom > -margin
+
+  if (inView) {
+    lottieRef.value?.getDotLottieInstance()?.play()
+  }
+}
+
+function generateRandomPosition() {
+  if (typeof window === 'undefined') return { x: 0, y: 0 } // SSR fallback
+
   const documentWidth = document.documentElement.scrollWidth
   const documentHeight = document.documentElement.scrollHeight
   const coinSize = 40
@@ -45,16 +84,20 @@ const generateRandomPosition = () => {
   return { x, y }
 }
 
-const playSound = (sound) => {
+function playSound(sound) {
   const audio = new Audio(sound)
-  audio.play().catch((e) => {
-    console.warn('Failed to play audio:', e)
-  })
+  audio.play().catch(e => console.warn('Failed to play audio:', e))
 }
 
-const handleCoinClick = () => {
+function handleCoinClick() {
   if (isClicked.value) return
+
   isClicked.value = true
+
+  nextTick(() => {
+    lottieRef.value?.getDotLottieInstance()?.resize()
+    lottieRef.value?.getDotLottieInstance()?.play()
+  })
   playSound(successSound)
 
   const viewportWidth = window.innerWidth
@@ -70,13 +113,15 @@ const handleCoinClick = () => {
   setTimeout(() => {
     showCoin.value = false
     isClicked.value = false
-  }, 1000)
+  }, 2000)
 }
 
-const showCoinWithAnimation = () => {
-  coinPosition.value = generateRandomPosition()
-  showCoin.value = true
-  isClicked.value = false
+const showCoinWithAnimation = async () => {
+  await nextTick(() => {
+    coinPosition.value = generateRandomPosition()
+    showCoin.value = true
+    isClicked.value = false
+  })
 }
 
 watch(
@@ -89,7 +134,27 @@ watch(
   { immediate: true },
 )
 
-onMounted(() => {})
+watch(showCoin, async (visible) => {
+  if (visible) {
+    await nextTick()
+    setInitialFrame()
+    scrollHandler = () => checkCoinVisibility()
+    window.addEventListener('scroll', scrollHandler, { passive: true })
+    checkCoinVisibility()
+  }
+  else {
+    if (scrollHandler) {
+      window.removeEventListener('scroll', scrollHandler)
+      scrollHandler = null
+    }
+  }
+})
+
+onBeforeUnmount(() => {
+  if (scrollHandler) {
+    window.removeEventListener('scroll', scrollHandler)
+  }
+})
 </script>
 
 <style scoped>
