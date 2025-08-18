@@ -1,6 +1,9 @@
 <template>
   <div id="about-us-page">
-    <v-container id="about-page-header" fluid>
+    <v-container
+      id="about-page-header"
+      fluid
+    >
       <div class="overlay" />
 
       <v-container>
@@ -36,13 +39,16 @@
     </v-container>
 
     <v-container id="about-map-container">
-      <v-card id="map-card" flat>
+      <v-card
+        id="map-card"
+        flat
+      >
         <v-row>
           <v-col cols="12">
-            <!-- <LottieAnimation
+            <LottieAnimation
               id="map-holder"
               :animation-data="mapAnimation"
-            /> -->
+            />
           </v-col>
         </v-row>
       </v-card>
@@ -62,9 +68,18 @@
             the exciting new services we are working on include:
           </p>
         </v-col>
-        <v-col cols="12" class="d-none d-md-block">
-          <div id="step-container" class="d-none d-md-block">
-            <div ref="stepProgressBar" class="step-progress-bar" />
+        <v-col
+          cols="12"
+          class="d-none d-md-block"
+        >
+          <div
+            id="step-container"
+            class="d-none d-md-block"
+          >
+            <div
+              ref="stepProgressBar"
+              class="step-progress-bar"
+            />
             <!-- <LottieAnimation
               v-if="enableStep1"
               id="step1"
@@ -90,7 +105,10 @@
         </v-col>
 
         <div class="d-none d-md-flex">
-          <v-col cols="12" md="4">
+          <v-col
+            cols="12"
+            md="4"
+          >
             <v-slide-x-transition v-if="enableStep1Txt">
               <div class="vision-step">
                 <h3 class="gama-text-h5">
@@ -107,7 +125,10 @@
               </div>
             </v-slide-x-transition>
           </v-col>
-          <v-col cols="12" md="4">
+          <v-col
+            cols="12"
+            md="4"
+          >
             <v-slide-x-transition v-if="enableStep2Txt">
               <div class="vision-step">
                 <h3 class="gama-text-h5">
@@ -125,7 +146,10 @@
               </div>
             </v-slide-x-transition>
           </v-col>
-          <v-col cols="12" md="4">
+          <v-col
+            cols="12"
+            md="4"
+          >
             <v-slide-x-transition v-if="enableStep3Txt">
               <div class="vision-step">
                 <h3 class="gama-text-h5">
@@ -146,9 +170,15 @@
           </v-col>
         </div>
 
-        <v-col cols="2" class="d-md-none px-0">
+        <v-col
+          cols="2"
+          class="d-md-none px-0"
+        >
           <div id="step-container-mobile">
-            <div ref="mobileStepProgressBar" class="step-progress-bar" />
+            <div
+              ref="mobileStepProgressBar"
+              class="step-progress-bar"
+            />
             <!-- <LottieAnimation
               v-if="enableStep1"
               id="step1"
@@ -172,8 +202,15 @@
             /> -->
           </div>
         </v-col>
-        <v-col cols="10" class="pa-0 d-md-none">
-          <v-col cols="12" md="4" class="step-holder">
+        <v-col
+          cols="10"
+          class="pa-0 d-md-none"
+        >
+          <v-col
+            cols="12"
+            md="4"
+            class="step-holder"
+          >
             <v-slide-x-transition v-if="enableStep1Txt">
               <div>
                 <h3 class="gama-text-h5">
@@ -190,7 +227,11 @@
               </div>
             </v-slide-x-transition>
           </v-col>
-          <v-col cols="12" md="4" class="step-holder">
+          <v-col
+            cols="12"
+            md="4"
+            class="step-holder"
+          >
             <v-slide-x-transition v-if="enableStep2Txt">
               <div>
                 <h3 class="gama-text-h5">
@@ -208,7 +249,11 @@
               </div>
             </v-slide-x-transition>
           </v-col>
-          <v-col cols="12" md="4" class="step-holder">
+          <v-col
+            cols="12"
+            md="4"
+            class="step-holder"
+          >
             <v-slide-x-transition v-if="enableStep3Txt">
               <div>
                 <h3 class="gama-text-h5">
@@ -231,7 +276,10 @@
       </v-row>
     </v-container>
 
-    <v-container id="about-commitment-container" fluid>
+    <v-container
+      id="about-commitment-container"
+      fluid
+    >
       <v-container>
         <h2 class="gama-text-h4">
           Our Commitment
@@ -239,14 +287,23 @@
 
         <v-card flat>
           <v-window v-model="activeCommitment">
-            <v-window-item v-for="(item, index) in commitmentList" :key="index" :value="'tab-' + index">
-              <v-card flat id="commitment-card">
+            <v-window-item
+              v-for="(item, index) in commitmentList"
+              :key="index"
+              :value="'tab-' + index"
+            >
+              <v-card
+                id="commitment-card"
+                flat
+              >
                 <v-card-text>
                   <v-icon :icon="`mdi-${item.icon}`" />
                   <h3 class="gama-text-h5">
                     {{ item.title }}
                   </h3>
-                  <p class="gama-text-subtitle2">{{ item.describe }}</p>
+                  <p class="gama-text-subtitle2">
+                    {{ item.describe }}
+                  </p>
                 </v-card-text>
               </v-card>
             </v-window-item>
@@ -254,13 +311,24 @@
         </v-card>
 
         <div style="display: flex; justify-content: center; margin-top: 2rem;">
-          <v-tabs v-model="activeCommitment" background-color="transparent" centered icons-and-text
-            style="max-width: fit-content !important;">
-            <v-tab :value="`tab-${index}`" v-for="(item, index) in commitmentList" :key="index"
+          <v-tabs
+            v-model="activeCommitment"
+            background-color="transparent"
+            centered
+            icons-and-text
+            style="max-width: fit-content !important;"
+          >
+            <v-tab
+              v-for="(item, index) in commitmentList"
+              :key="index"
+              :value="`tab-${index}`"
               :class="activeCommitment === `tab-${index}` ? 'active-tab' : ''"
-              :style="activeCommitment === `tab-${index}` ? 'min-width: 5.6rem !important; min-height: 5.6rem !important; width: 5.6rem !important; height: 5.6rem !important; background-color: #ffb600 !important; border: none !important; padding: 0 !important; margin: 0 0.4rem !important; border-radius: 0.8rem !important; border-top-left-radius: 0.8rem !important; border-top-right-radius: 0.8rem !important; border-bottom-left-radius: 0.8rem !important; border-bottom-right-radius: 0.8rem !important; display: flex !important; justify-content: center !important; align-items: center !important; position: relative !important;' : 'min-width: 5.6rem !important; min-height: 5.6rem !important; width: 5.6rem !important; height: 5.6rem !important; background-color: transparent !important; border: none !important; padding: 0 !important; margin: 0 0.4rem !important; border-radius: 0.8rem !important; border-top-left-radius: 0.8rem !important; border-top-right-radius: 0.8rem !important; border-bottom-left-radius: 0.8rem !important; border-bottom-right-radius: 0.8rem !important; display: flex !important; justify-content: center !important; align-items: center !important; position: relative !important;'">
-              <v-icon :icon="`mdi-${item.icon}`"
-                :style="activeCommitment === `tab-${index}` ? 'font-size: 4.8rem !important; color: #24292f !important; position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;' : 'font-size: 3.2rem !important; color: #ffb600 !important; position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;'" />
+              :style="activeCommitment === `tab-${index}` ? 'min-width: 5.6rem !important; min-height: 5.6rem !important; width: 5.6rem !important; height: 5.6rem !important; background-color: #ffb600 !important; border: none !important; padding: 0 !important; margin: 0 0.4rem !important; border-radius: 0.8rem !important; border-top-left-radius: 0.8rem !important; border-top-right-radius: 0.8rem !important; border-bottom-left-radius: 0.8rem !important; border-bottom-right-radius: 0.8rem !important; display: flex !important; justify-content: center !important; align-items: center !important; position: relative !important;' : 'min-width: 5.6rem !important; min-height: 5.6rem !important; width: 5.6rem !important; height: 5.6rem !important; background-color: transparent !important; border: none !important; padding: 0 !important; margin: 0 0.4rem !important; border-radius: 0.8rem !important; border-top-left-radius: 0.8rem !important; border-top-right-radius: 0.8rem !important; border-bottom-left-radius: 0.8rem !important; border-bottom-right-radius: 0.8rem !important; display: flex !important; justify-content: center !important; align-items: center !important; position: relative !important;'"
+            >
+              <v-icon
+                :icon="`mdi-${item.icon}`"
+                :style="activeCommitment === `tab-${index}` ? 'font-size: 4.8rem !important; color: #24292f !important; position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;' : 'font-size: 3.2rem !important; color: #ffb600 !important; position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;'"
+              />
             </v-tab>
           </v-tabs>
         </div>
@@ -274,8 +342,17 @@
             Our Services
           </h2>
         </v-col>
-        <v-col v-for="(item, index) in serviceList" :key="index" cols="12" sm="6" md="4">
-          <nuxt-link :to="`${item.link}`" class="gama-text-h6">
+        <v-col
+          v-for="(item, index) in serviceList"
+          :key="index"
+          cols="12"
+          sm="6"
+          md="4"
+        >
+          <nuxt-link
+            :to="`${item.link}`"
+            class="gama-text-h6"
+          >
             <span :class="`service-icon ${item.icon}`" />
             {{ item.title }}
           </nuxt-link>
@@ -296,7 +373,7 @@
       </v-row>
     </v-container>
 
-    <v-container id="about-our-team-container">
+    <!-- <v-container id="about-our-team-container">
       <v-row>
         <v-col cols="12">
           <h2 class="gama-text-h4">
@@ -311,10 +388,20 @@
 
           <v-sheet class="mx-auto">
             <div class="d-flex memberSliderContainer">
-              <div v-for="(member, index) in sliceTeamMember" :key="index" @click="slideClicked(index)">
-                <v-card flat class="ma-2 pointer">
-                  <v-img :class="memberSlideClass(index)" :alt="member.fullName"
-                    :src="`/images/member/${member.avatar}`" />
+              <div
+                v-for="(member, index) in sliceTeamMember"
+                :key="index"
+                @click="slideClicked(index)"
+              >
+                <v-card
+                  flat
+                  class="ma-2 pointer"
+                >
+                  <v-img
+                    :class="memberSlideClass(index)"
+                    :alt="member.fullName"
+                    :src="`/images/member/${member.avatar}`"
+                  />
                 </v-card>
               </div>
             </div>
@@ -334,7 +421,7 @@
           </v-sheet>
         </v-col>
       </v-row>
-    </v-container>
+    </v-container> -->
 
     <v-container id="about-join-us">
       <v-row>
@@ -351,7 +438,10 @@
       </v-row>
     </v-container>
 
-    <v-container id="about-find-job" fluid>
+    <v-container
+      id="about-find-job"
+      fluid
+    >
       <v-container>
         <v-row>
           <v-col cols="12">
@@ -592,6 +682,19 @@ export default {
     // Initialize the Intersection Observer
     this.initIntersectionObserver()
     this.screenWidth = window.innerWidth
+
+    // Add window resize listener to handle responsive changes
+    window.addEventListener('resize', this.handleResize)
+  },
+
+  beforeUnmount() {
+    // Clean up the resize listener
+    window.removeEventListener('resize', this.handleResize)
+
+    // Clean up the observer
+    if (this.observer) {
+      this.observer.disconnect()
+    }
   },
   methods: {
     startAnimation(step) {
@@ -626,13 +729,52 @@ export default {
         threshold: 0.5, // Trigger when 50% of the element is visible
       }
 
-      const observer = new IntersectionObserver(
+      this.observer = new IntersectionObserver(
         this.handleIntersection,
         options,
       )
 
-      if (window.innerWidth > 960) observer.observe(this.$refs.stepProgressBar)
-      else observer.observe(this.$refs.mobileStepProgressBar)
+      this.updateObserver()
+    },
+
+    updateObserver() {
+      // Disconnect any existing observer
+      if (this.observer) {
+        this.observer.disconnect()
+      }
+
+      // Observe the appropriate progress bar based on screen width
+      if (window.innerWidth > 960) {
+        if (this.$refs.stepProgressBar) {
+          this.observer.observe(this.$refs.stepProgressBar)
+        }
+      }
+      else {
+        if (this.$refs.mobileStepProgressBar) {
+          this.observer.observe(this.$refs.mobileStepProgressBar)
+        }
+      }
+    },
+
+    handleResize() {
+      this.screenWidth = window.innerWidth
+      this.updateObserver()
+
+      // Reset animation state when switching between mobile and desktop
+      if (this.$refs.stepProgressBar) {
+        this.$refs.stepProgressBar.classList.remove('animateStep1', 'animateStep2')
+      }
+      if (this.$refs.mobileStepProgressBar) {
+        this.$refs.mobileStepProgressBar.classList.remove('animateStep1', 'animateStep2')
+      }
+
+      // Reset step visibility states to allow re-triggering
+      this.enableStep1 = false
+      this.enableStep1Txt = false
+      this.enableStep2 = false
+      this.enableStep2Txt = false
+      this.enableStep3 = false
+      this.enableStep3Txt = false
     },
     handleIntersection(entries) {
       entries.forEach((entry) => {
@@ -1685,8 +1827,6 @@ export default {
           }
         }
 
-
-
         .v-tab:hover {
           background-color: rgba(255, 182, 0, 0.1) !important;
         }
@@ -2062,10 +2202,12 @@ export default {
     }
 
     .animateStep1 {
+      height: 2rem;
       animation: step1ProgressAnimation 3s linear forwards;
     }
 
     .animateStep2 {
+      height: 2rem;
       animation: step2ProgressAnimation 3s linear forwards;
     }
 
@@ -2151,8 +2293,6 @@ export default {
             color: #24292f !important;
           }
         }
-
-
 
         .v-tab:hover {
           background-color: rgba(255, 182, 0, 0.1) !important;
@@ -3396,8 +3536,6 @@ export default {
           }
         }
 
-
-
         .v-tab:hover {
           background-color: rgba(255, 182, 0, 0.1) !important;
         }
@@ -3862,8 +4000,6 @@ export default {
             color: #24292f !important;
           }
         }
-
-
 
         .v-tab:hover {
           background-color: rgba(255, 182, 0, 0.1) !important;
@@ -5107,8 +5243,6 @@ export default {
           }
         }
 
-
-
         .v-tab:hover {
           background-color: rgba(255, 182, 0, 0.1) !important;
         }
@@ -5573,8 +5707,6 @@ export default {
             color: #24292f !important;
           }
         }
-
-
 
         .v-tab:hover {
           background-color: rgba(255, 182, 0, 0.1) !important;
@@ -6818,8 +6950,6 @@ export default {
           }
         }
 
-
-
         .v-tab:hover {
           background-color: rgba(255, 182, 0, 0.1) !important;
         }
@@ -7284,8 +7414,6 @@ export default {
             color: #24292f !important;
           }
         }
-
-
 
         .v-tab:hover {
           background-color: rgba(255, 182, 0, 0.1) !important;
@@ -8529,8 +8657,6 @@ export default {
           }
         }
 
-
-
         .v-tab:hover {
           background-color: rgba(255, 182, 0, 0.1) !important;
         }
@@ -8863,6 +8989,7 @@ export default {
     }
 
     #step-container {
+      /* background-color: #ffb600; */
       height: 0.5rem;
       width: 75%;
       margin: auto auto 2.4rem auto;
@@ -8995,8 +9122,6 @@ export default {
             color: #24292f !important;
           }
         }
-
-
 
         .v-tab:hover {
           background-color: rgba(255, 182, 0, 0.1) !important;
@@ -10014,7 +10139,7 @@ export default {
 
 @media only screen and (min-width: 600px) {
   #about-page-header {
-    height: 20rem;
+    height: 29rem;
     background-image: url("/images/about-header-xs.svg");
     background-repeat: no-repeat;
     background-position: center center;
@@ -10149,11 +10274,11 @@ export default {
     }
 
     .animateStep1 {
-      animation: step1MobileProgressAnimation 3s linear forwards;
+      animation: step1ProgressAnimation 3s linear forwards;
     }
 
     .animateStep2 {
-      animation: step2MobileProgressAnimation 3s linear forwards;
+      animation: step2ProgressAnimation 3s linear forwards;
     }
 
     .gama-text-h5 {
@@ -10220,5 +10345,5 @@ export default {
       }
     }
   }
-} 
+}
 </style>
