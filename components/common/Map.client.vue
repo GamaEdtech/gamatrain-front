@@ -123,11 +123,11 @@ onBeforeUnmount(() => {
 
 const loadLeaflet = async () => {
   if (!L) {
-    const leaflet = await import('leaflet')
+    const leafletModule = await import('leaflet')
+    const leaflet = leafletModule.default || leafletModule
     await import('leaflet/dist/leaflet.css')
 
     delete leaflet.Icon.Default.prototype._getIconUrl
-    globalThis.L = leaflet
 
     if (props.useCluster) {
       await import('leaflet.markercluster')
