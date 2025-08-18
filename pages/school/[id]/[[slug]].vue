@@ -6,13 +6,11 @@
     >
       <v-row class="d-flex d-md-none">
         <div class="top-slide-container">
-          <client-only>
-            <school-detail-school-map
-              :content="contentData"
-              :class="topSlideClass.map"
-              @location-updated="handleLocationUpdate"
-            />
-          </client-only>
+          <school-detail-school-map
+            :content="contentData"
+            :class="topSlideClass.map"
+            @location-updated="handleLocationUpdate"
+          />
           <school-detail-school-tour
             :class="topSlideClass.tour"
             :content="contentData"
@@ -42,12 +40,10 @@
           cols="12"
           md="4"
         >
-          <client-only>
-            <school-detail-school-map
-              :content="contentData"
-              @location-updated="handleLocationUpdate"
-            />
-          </client-only>
+          <school-detail-school-map
+            :content="contentData"
+            @location-updated="handleLocationUpdate"
+          />
         </v-col>
         <v-col
           cols="12"
@@ -526,6 +522,8 @@ function handleLocationUpdate(locationData) {
   if (contentData.value) {
     contentData.value = {
       ...contentData.value,
+      latitude: locationData.latitude,
+      longitude: locationData.longitude,
       countryId: locationData.countryId,
       stateId: locationData.stateId,
       cityId: locationData.cityId,
