@@ -1166,6 +1166,7 @@ const handleSwap = async () => {
       getTokenAmount.value = ''
       equivalentCost.value = ''
       swapQuote.value = null
+
       // Preserve memo if it came from URL parameter, otherwise clear it
       const urlMemo = extractAndValidateMemo((queryRoute?.ref ?? undefined) as unknown as string | string[] | undefined)
       if (urlMemo) {
@@ -1178,6 +1179,7 @@ const handleSwap = async () => {
         memoText.value = ''
         console.log('🧹 Clearing manually entered memo')
       }
+
       await fetchBalances()
     }
     else {
