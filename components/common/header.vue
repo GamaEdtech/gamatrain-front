@@ -8,7 +8,7 @@ import { useCookie } from 'nuxt/app'
 
 const auth = useAuth()
 const isAuthModalOpen = ref(false)
-const currentAuthComponent = ref('login')
+const currentAuthComponent = ref('')
 
 const loginDialogVisible = ref(false)
 
@@ -657,7 +657,7 @@ watch(
         </v-container>
       </v-app-bar>
 
-      <div>
+      <div v-if="currentAuthComponent.length > 0 && loginDialogVisible">
         <!-- Login component -->
         <component
           :is="currentAuthComponentMap[currentAuthComponent]"
