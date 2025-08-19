@@ -25,7 +25,9 @@
                 v-tooltip="{
                   text: item.text,
                   id: `tooltip-${index}`,
+                  ariaLabel: item.text,
                 }"
+                :aria-label="item.text"
                 style="font-size: 26px"
                 :class="`icon icon-${item.icon} text-white text--darken-1`"
               />
@@ -61,11 +63,12 @@
                       width="170"
                       height="auto"
                       :src="image"
-                      class="carousel-img fill-height"
+                      class="carousel-img"
                       preload
                       fetchpriority="high"
                       alt="Psat Paper Lesson"
                       format="webp"
+                      :loading="index === 0 ? 'eager' : 'lazy'"
                     />
                     <div
                       v-if="showDocPreview"
@@ -97,7 +100,7 @@
                 >
                   <div class="thumbnail-content">
                     <NuxtImg
-                      width="70px"
+                      width="40"
                       height="auto"
                       :src="image"
                       placeholder
@@ -306,6 +309,7 @@ watch(
     .carousel-img {
       height: 100%;
       width: 100%;
+      object-fit: cover;
       border-radius: inherit;
     }
 

@@ -97,7 +97,6 @@ const getRelatedContent = async () => {
 }
 
 onMounted(() => {
-  console.log(relatedId)
   getRelatedContent()
 })
 
