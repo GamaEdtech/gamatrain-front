@@ -50,6 +50,24 @@
     </v-col>
   </div>
 
+  <div
+    v-if="filters[FILTER_INDEX.Subject].selectedItem"
+    class="w-100 d-flex max-width-container"
+  >
+    <nuxt-link
+      :to="`/subject-directory?board=${
+        filters[FILTER_INDEX.Board].selectedItem.id
+      }&grade=${filters[FILTER_INDEX.Grade].selectedItem.id}&subject=${
+        filters[FILTER_INDEX.Subject].selectedItem.id
+      }`"
+      class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
+    >
+      <div class="d-flex flex-column align-start justify-start ga-1">
+        <span class="text-h5 text-sm-h4 font-weight-bold text-white">Go to {{ filters[FILTER_INDEX.Subject].selectedItem.title }}</span>
+        <span class="text-subtitle-2 text-sm-subtitle-1 text-white">All books, past papers & resources in one place</span>
+      </div>
+    </nuxt-link>
+  </div>
   <v-dialog
     v-model="dialogModel"
     transition="dialog-bottom-transition"
@@ -846,5 +864,10 @@ onMounted(async () => {
 }
 .max-width-container {
   max-width: 1200px;
+}
+.subject-directory-alert {
+  height: 70px;
+  max-width: 400px;
+  background-color: #f59e0b;
 }
 </style>

@@ -29,6 +29,59 @@
                 :description="contentData?.description"
               >
                 <template #labels>
+                  <nuxt-link
+                    :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
+                    class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
+                  >
+                    <div class="h-100 d-flex align-start justify-start pt-1">
+                      <v-icon
+                        v-if="
+                          contentData?.files?.pdf?.exist
+                            || (contentData?.files?.answer?.exist
+                              && contentData?.files?.answer?.ext == 'pdf')
+                        "
+                        size="large"
+                        color="red"
+                      >
+                        md:picture_as_pdf
+                      </v-icon>
+
+                      <v-icon
+                        v-else-if="
+                          contentData?.files?.word?.exist
+                            || (contentData?.files?.answer?.exist
+                              && contentData?.files?.answer?.ext == 'word')
+                        "
+                        size="large"
+                        color="blue"
+                      >
+                        md:description
+                      </v-icon>
+
+                      <v-icon
+                        v-else-if="
+                          contentData?.files?.extra?.length > 0
+                            && contentData.files.extra.some(
+                              (item) => item.ext === 'mp3',
+                            )
+                        "
+                        size="large"
+                        color="purple"
+                      >
+                        md:audio_file
+                      </v-icon>
+                    </div>
+                    <div
+                      class="d-flex flex-column align-start justify-start ga-1"
+                    >
+                      <span
+                        class="text-h5 text-sm-h4 font-weight-bold text-white"
+                      >Go to {{ contentData?.lesson_title }}</span>
+                      <span
+                        class="text-subtitle-2 text-sm-subtitle-1 text-white"
+                      >All books, past papers & resources in one place</span>
+                    </div>
+                  </nuxt-link>
                   <v-chip
                     link
                     class="mr-1 bg-blue-grey-darken-1 text-white"
@@ -73,13 +126,6 @@
                     class="ma-1 bg-blue-grey-darken-1 text-white"
                   >
                     {{ contentData?.edu_year }}
-                  </v-chip>
-                  <v-chip
-                    :small="display.mdAndDown"
-                    :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
-                    class="ma-1 bg-primary text-white"
-                  >
-                    {{ contentData?.lesson_title }} directory
                   </v-chip>
                 </template>
               </paper-detail-description>
@@ -375,4 +421,10 @@ onMounted(() => {
 })
 </script>
 
-<style></style>
+<style>
+.subject-directory-alert {
+  height: 70px;
+  max-width: 400px;
+  background-color: #f59e0b;
+}
+</style>
