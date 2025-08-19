@@ -187,7 +187,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useAuth } from '~/composables/useAuth'
-import { get, post } from '~/composables/useApiService'
 
 // Reactive state
 const loading = ref(true)
@@ -212,7 +211,7 @@ const checkExistingReferral = async () => {
       return
     }
 
-    const response = await get('/api/v2/identities/profiles')
+    const response = await useApiService.get('/api/v2/identities/profiles')
     console.log('Profile response:', response) // Debug log
 
     // Check multiple possible locations for referral_id
@@ -281,7 +280,7 @@ const generateReferralLink = async () => {
       return
     }
 
-    const response = await post('/api/v2/referral/generate')
+    const response = await useApiService.post('/api/v2/referral/generate')
 
     if (response?.status === 1 && response.data?.referral_id) {
       referralLink.value = `https://gamatrain.com/get-token?ref=${response.data.referral_id}`
