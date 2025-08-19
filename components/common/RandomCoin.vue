@@ -1,34 +1,38 @@
 <template>
-  <Transition name="coin-fade">
+  <TransitionGroup
+    name="coin-fade"
+    tag="div"
+  >
     <div
-      v-if="showCoin"
-      ref="coinEl"
+      v-for="coin in coins"
+      :key="coin.id"
+      :data-coin-id="coin.id"
       class="random-coin"
-      :class="{ 'coin-clicked': isClicked }"
+      :class="{ 'coin-clicked': coin.isClicked }"
       :style="{
         position: 'absolute',
-        left: coinPosition.x + 'px',
-        top: coinPosition.y + 'px',
+        left: coin.position.x + 'px',
+        top: coin.position.y + 'px',
         zIndex: 9999,
         pointerEvents: 'auto',
         cursor: 'pointer',
-        transition: isClicked ? 'all 0.5s ease' : 'none',
+        transition: coin.isClicked ? 'all 0.5s ease' : 'none',
       }"
-      @click="handleCoinClick"
+      @click="handleCoinClick(coin)"
     >
       <ClientOnly>
         <DotLottieVue
-          ref="lottieRef"
+          :ref="(el) => setLottieRef(coin.id, el)"
           loop
           :style="{
-            width: isClicked ? '120px' : '40px',
-            height: isClicked ? '120px' : '40px',
+            width: coin.isClicked ? '120px' : '40px',
+            height: coin.isClicked ? '120px' : '40px',
           }"
-          src="/static/data.json"
+          :src="coin.src"
         />
       </ClientOnly>
     </div>
-  </Transition>
+  </TransitionGroup>
 </template>
 
 <script setup>
@@ -37,42 +41,49 @@ import successSound from '@/assets/sounds/success.mp3'
 
 const route = useRoute()
 
-const coinPosition = ref({ x: 0, y: 0 })
-const showCoin = ref(false)
-const isClicked = ref(false)
-
-const lottieRef = ref(null)
-const coinEl = ref(null)
+const coins = ref([])
+const lottieRefs = new Map()
 
 let scrollHandler = null
 
-function setInitialFrame() {
-  const inst = lottieRef.value?.getDotLottieInstance()
+function setLottieRef(id, el) {
+  if (el) {
+    lottieRefs.set(id, el)
+  }
+  else {
+    lottieRefs.delete(id)
+  }
+}
+
+function setInitialFrame(inst) {
   if (inst && inst.isLoaded) {
     inst.setFrame(19)
     inst.pause()
   }
   else {
-    setTimeout(setInitialFrame, 50)
+    setTimeout(() => setInitialFrame(inst), 50)
   }
 }
 
 function checkCoinVisibility() {
-  if (!coinEl.value) return
-  const rect = coinEl.value.getBoundingClientRect()
+  coins.value.forEach((coin) => {
+    const el = document.querySelector(`[data-coin-id="${coin.id}"]`)
+    if (!el) return
 
-  const viewportHeight = window.innerHeight
-  const margin = 200 // distance in px before it's considered "near"
+    const rect = el.getBoundingClientRect()
+    const viewportHeight = window.innerHeight
+    const margin = 200
 
-  const inView = rect.top < viewportHeight + margin && rect.bottom > -margin
-
-  if (inView) {
-    lottieRef.value?.getDotLottieInstance()?.play()
-  }
+    const inView = rect.top < viewportHeight + margin && rect.bottom > -margin
+    if (inView) {
+      const inst = lottieRefs.get(coin.id)?.getDotLottieInstance()
+      inst?.play()
+    }
+  })
 }
 
 function generateRandomPosition() {
-  if (typeof window === 'undefined') return { x: 0, y: 0 } // SSR fallback
+  if (typeof window === 'undefined') return { x: 0, y: 0 }
 
   const documentWidth = document.documentElement.scrollWidth
   const documentHeight = document.documentElement.scrollHeight
@@ -89,14 +100,15 @@ function playSound(sound) {
   audio.play().catch(e => console.warn('Failed to play audio:', e))
 }
 
-function handleCoinClick() {
-  if (isClicked.value) return
+function handleCoinClick(coin) {
+  if (coin.isClicked) return
 
-  isClicked.value = true
+  coin.isClicked = true
 
   nextTick(() => {
-    lottieRef.value?.getDotLottieInstance()?.resize()
-    lottieRef.value?.getDotLottieInstance()?.play()
+    const inst = lottieRefs.get(coin.id)?.getDotLottieInstance()
+    inst?.resize()
+    inst?.play()
   })
   playSound(successSound)
 
@@ -105,22 +117,39 @@ function handleCoinClick() {
   const scrollX = window.pageXOffset || document.documentElement.scrollLeft
   const scrollY = window.pageYOffset || document.documentElement.scrollTop
 
-  coinPosition.value = {
+  coin.position = {
     x: scrollX + (viewportWidth - 120) / 2,
     y: scrollY + (viewportHeight - 120) / 2,
   }
 
   setTimeout(() => {
-    showCoin.value = false
-    isClicked.value = false
+    coins.value = coins.value.filter(c => c.id !== coin.id)
   }, 2000)
 }
 
-const showCoinWithAnimation = async () => {
-  await nextTick(() => {
-    coinPosition.value = generateRandomPosition()
-    showCoin.value = true
-    isClicked.value = false
+function getRandomCoinSrc() {
+  const rand = 0.1
+  if (rand < 0.1) return '/static/coins/gold.json'
+  else if (rand < 0.4) return '/static/coins/silver.json'
+  else return '/static/coins/bronze.json'
+}
+
+function showCoinsWithAnimation() {
+  const coinCount = Math.floor(Math.random() * 3) + 1
+  const newCoins = Array.from({ length: coinCount }, (_, i) => ({
+    id: Date.now() + '-' + i,
+    src: getRandomCoinSrc(),
+    position: generateRandomPosition(),
+    isClicked: false,
+  }))
+  coins.value = newCoins
+
+  nextTick(() => {
+    coins.value.forEach((coin) => {
+      const inst = lottieRefs.get(coin.id)?.getDotLottieInstance()
+      if (inst) setInitialFrame(inst)
+    })
+    checkCoinVisibility() // check immediately once rendered
   })
 }
 
@@ -128,19 +157,17 @@ watch(
   () => route.path,
   () => {
     setTimeout(() => {
-      showCoinWithAnimation()
+      showCoinsWithAnimation()
     }, 1000)
   },
   { immediate: true },
 )
 
-watch(showCoin, async (visible) => {
-  if (visible) {
+watch(coins, async (list) => {
+  if (list.length > 0) {
     await nextTick()
-    setInitialFrame()
     scrollHandler = () => checkCoinVisibility()
     window.addEventListener('scroll', scrollHandler, { passive: true })
-    checkCoinVisibility()
   }
   else {
     if (scrollHandler) {
@@ -156,31 +183,3 @@ onBeforeUnmount(() => {
   }
 })
 </script>
-
-<style scoped>
-.coin-fade-enter-active,
-.coin-fade-leave-active {
-  transition: all 0.5s ease;
-}
-
-.coin-fade-enter-from {
-  opacity: 0;
-  transform: scale(0.5) rotate(-180deg);
-}
-
-.coin-fade-leave-to {
-  opacity: 0;
-  transform: scale(0.5) rotate(180deg);
-}
-
-.coin-fade-enter-to,
-.coin-fade-leave-from {
-  opacity: 1;
-  transform: scale(1) rotate(0deg);
-}
-
-.coin-clicked {
-  transform: scale(3) !important;
-  transition: all 0.5s ease !important;
-}
-</style>

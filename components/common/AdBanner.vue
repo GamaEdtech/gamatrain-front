@@ -10,7 +10,7 @@
       :data-full-width-responsive="responsive.toString()"
     />
     <client-only>
-      <lazy-common-random-coin v-if="isAdsLoad" />
+      <lazy-common-random-coin />
     </client-only>
   </div>
 </template>
