@@ -162,6 +162,50 @@
                       required
                     />
                   </ClientOnly>
+                  <div
+                    style="
+                    position: absolute;
+                    right: 3rem;
+                    bottom: 3rem;
+                    "
+                  >
+                    <v-btn
+                      v-if="!form.q_file_base64"
+                      variant="text"
+                      icon="mdi-camera"
+                      color="#A11333"
+                      size="x-large"
+                      @click="selectFile('q_file')"
+                    >
+                      <v-icon
+                        size="80"
+                        color="#A11333"
+                      >
+                        mdi-camera
+                      </v-icon>
+                    </v-btn>
+                    <v-btn
+                      v-if="form.q_file_base64"
+                      variant="text"
+                      color="#F44336"
+                      icon="mdi-delete"
+                      @click="deleteFile('q_file')"
+                    />
+                    <img
+                      v-if="form.q_file_base64"
+                      width="72"
+                      height="72"
+                      class="pointer"
+                      :src="form.q_file_base64"
+                      style="
+                          border-radius: 5px;
+                          height: 7rem;
+                          width: 7rem;
+                          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
+                        "
+                      @click="selectFile('q_file')"
+                    >
+                  </div>
                   <p
                     v-if="questionError"
                     class="text-error text-caption mt-1"
