@@ -212,7 +212,7 @@ export default {
   }
 
   .link-title {
-    color: #424a53;
+    color: #1b1d20;
     margin-bottom: 1rem;
   }
 
@@ -220,7 +220,7 @@ export default {
     display: block;
     text-decoration: none;
     margin-bottom: 1rem;
-    color: #6e7781;
+    color: #1b1d20;
   }
 }
 
