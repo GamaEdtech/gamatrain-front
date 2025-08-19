@@ -232,7 +232,6 @@ export default defineNuxtConfig({
       'vuetify',
       'vue-chartjs',
       'defu',
-      '@ckeditor/ckeditor5-vue',
       'vue3-emoji-picker',
     ],
   },
