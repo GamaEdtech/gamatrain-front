@@ -184,8 +184,7 @@
     </v-dialog>
     <cropper-dialog
       v-model="showCropperDialog"
-      :file_url="crop_file_url"
-      :confirm_loading="crop_confirm_loading"
+      :file-url="cropFileUrl"
       @cropped-data="croppedData"
     />
   </div>
@@ -219,8 +218,7 @@ const dialogVisible = computed({
   set: value => emit('update:modelValue', value),
 })
 const imgInput = ref(null)
-const crop_confirm_loading = ref(false)
-const crop_file_url = ref('')
+const cropFileUrl = ref('')
 const showCropperDialog = ref(false)
 const mainImage = ref(null)
 const selectedImageIndex = ref(0)
@@ -372,8 +370,8 @@ function validateAndOpenCropper(files) {
 }
 
 function openCropper(file) {
-  crop_file_url.value = URL.createObjectURL(file)
-  if (crop_file_url.value) showCropperDialog.value = true
+  cropFileUrl.value = URL.createObjectURL(file)
+  if (cropFileUrl.value) showCropperDialog.value = true
 }
 
 function openAuthDialog(val) {

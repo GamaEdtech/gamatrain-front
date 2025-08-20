@@ -383,8 +383,8 @@
     <!-- Avatar Cropper Dialog -->
     <CommonCropperDialog
       v-model="cropperDialog"
-      :file_url="cropAvatarUrl"
-      :stencil_props="stencilProps"
+      :file-url="cropAvatarUrl"
+      :stencil-props="stencilProps"
       image-restriction="stencil"
       @cropped-data="confirmCrop"
     />
