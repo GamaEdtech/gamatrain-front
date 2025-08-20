@@ -12,7 +12,7 @@ const { $toast } = useNuxtApp()
 const comment = ref('')
 const emit = defineEmits([
   'update:modelValue',
-  'fetchImages'
+  'fetchImages',
 ])
 
 const approveImage = async () => {
@@ -34,8 +34,8 @@ const approveImage = async () => {
 }
 const rejectImage = async () => {
   try {
-    const res = await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.id}/reject`,{
-      comment : comment.value
+    const res = await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.id}/reject`, {
+      comment: comment.value,
     })
     if (res.succeeded === true) {
       $toast.success('Image Rejected successfully!')
@@ -101,8 +101,8 @@ const rejectImage = async () => {
                 <v-btn
                   variant="outlined"
                   class="rejectBtn"
-                  @click="rejectImage"
                   :disabled="comment == ''"
+                  @click="rejectImage"
                 >
                   Reject
                 </v-btn>

@@ -9,6 +9,7 @@ definePageMeta({
 })
 
 const { $toast } = useNuxtApp()
+const router = useRouter()
 
 const list = ref([])
 const headers = [
@@ -151,16 +152,23 @@ watch(filter, (val) => {
   else if (val === 'pending') {
     filteredList.value = list.value.filter(item => item.status == 'Review')
   }
+  else if (val === 'deleted') {
+    filteredList.value = list.value.filter(item => item.status == 'Deleted')
+  }
   else {
     filteredList.value = list.value
   }
 }, { immediate: true })
+
+const goToSchool = (schoolId) => {
+  router.push(`/school/${schoolId}`)
+}
 </script>
 
 <template>
   <div>
     <div class="d-flex justify-end ga-2 align-center px-2 justify-space-between">
-       <div class="filterBtns mb-4">
+      <div class="filterBtns mb-4">
         <v-btn
           :class="{ 'active-filter': filter === 'all', 'inactive-filter': filter !== 'all' }"
           depressed
@@ -191,6 +199,16 @@ watch(filter, (val) => {
           @click="filter = 'pending'"
         >
           Pending
+        </v-btn>
+        <v-btn
+          :class="{ 'active-filter': filter === 'deleted', 'inactive-filter': filter !== 'deleted' }"
+          depressed
+          class="ml-2 gtext-t4 font-weight-medium"
+          rounded
+          variant="plain"
+          @click="filter = 'deleted'"
+        >
+          Deleted
         </v-btn>
       </div>
       <div class="d-flex ga-1">
@@ -268,6 +286,24 @@ watch(filter, (val) => {
             >
               <v-icon
                 small
+                class="mr-2 gtext-t1"
+                @click="goToSchool(item.id)"
+              >
+                mdi-arrow-right-circle
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                School Page
+              </v-tooltip>
+            </v-btn>
+            <v-btn
+              variant="plain"
+              class="px-0 min-width-10"
+            >
+              <v-icon
+                small
                 class="gtext-t1"
                 @click="handleDelete(item.id)"
               >
@@ -290,7 +326,7 @@ watch(filter, (val) => {
         :school-name="selectedSchool.name"
         :file-id="selectedSchool.fileId"
         :school-id="selectedSchool.schoolId"
-        @fetchImages="fetchImages"
+        @fetch-images="fetchImages"
       />
 
       <DeleteItemModal
