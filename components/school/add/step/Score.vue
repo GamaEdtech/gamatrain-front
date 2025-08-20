@@ -34,7 +34,9 @@
         />
       </div>
 
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+      <div
+        class="w-100 d-flex flex-column align-start justify-start ga-1 position-relative"
+      >
         <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
           <v-badge
             floating
@@ -67,8 +69,27 @@
           active-color="#ffb600"
           bg-color="#ffffff"
           class="w-100"
+          rows="7"
           :rules="[descriptionRule]"
         />
+        <v-btn
+          size="x-small"
+          height="40"
+          width="40"
+          icon
+          color="primary"
+          :loading="loadingHelpAi"
+          class="position-absolute position-button-ai"
+          @click="sendToAI"
+        >
+          <!-- <v-icon size="x-large" color="white"> md:wand_stars </v-icon> -->
+          <v-icon
+            size="x-large"
+            color="white"
+          >
+            mdi-auto-fix
+          </v-icon>
+        </v-btn>
       </div>
     </div>
 
@@ -114,10 +135,13 @@
 <script setup>
 const router = useRouter()
 
-defineProps({
+const props = defineProps({
   loading: {
     type: Boolean,
     default: false,
+  },
+  schoolAiData: {
+    type: Object,
   },
 })
 const emit = defineEmits(['nextStep', 'prevStep'])
@@ -178,6 +202,20 @@ const updateRating = (rate, index) => {
 }
 const comment = ref('')
 
+const { loading: loadingHelpAi, getDescriptionFromAi } = useCommentAssistant()
+
+const sendToAI = async () => {
+  try {
+    const result = await getDescriptionFromAi(props.schoolAiData)
+    if (result) {
+      comment.value = result.description
+    }
+  }
+  catch (err) {
+    console.error('AI Error:', err)
+  }
+}
+
 const descriptionRule = (value) => {
   if (!value) return true
   return value.length <= 500 || 'Maximum 500 characters allowed'
@@ -221,5 +259,9 @@ const preStep = () => {
   height: 8px;
   border-radius: 50%;
   background-color: #ffb600;
+}
+.position-button-ai {
+  right: 20px;
+  bottom: 30px;
 }
 </style>

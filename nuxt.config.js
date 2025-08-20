@@ -17,14 +17,18 @@ export default defineNuxtConfig({
   // Modules
   modules: [
     'dayjs-nuxt',
-    '@nuxtjs/leaflet',
     '@nuxt/eslint',
     'nuxt-gtag',
     '@nuxt/image',
     '@vite-pwa/nuxt',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
-        config.plugins.push(vuetify({ autoImport: true }))
+        config.plugins.push(vuetify({
+          autoImport: true, defaultAssets: {
+            font: false,
+            icons: false,
+          },
+        }))
       })
     },
   ],
@@ -93,20 +97,6 @@ export default defineNuxtConfig({
         { rel: 'manifest', href: '/manifest.webmanifest' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon-dark.ico' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon-light.png' },
-      ],
-      script: [
-        {
-          'src': 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
-          'async': true,
-          'crossorigin': 'anonymous',
-          'data-ad-client': process.env.NUXT_GOOGLE_ADSENSE_ID,
-        },
-        {
-          src: 'https://accounts.google.com/gsi/client',
-          defer: true,
-          async: true,
-        },
-
       ],
     },
   },
@@ -211,11 +201,6 @@ export default defineNuxtConfig({
       enabled: false,
       type: 'module',
     },
-  },
-
-  // Module configurations
-  leaflet: {
-    markerCluster: true,
   },
 
   image: {

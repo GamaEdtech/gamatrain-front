@@ -248,7 +248,8 @@ const clearImageSchool = () => {
 }
 
 const isFormValid = computed(() => {
-  return schoolImage.value != null
+  return true
+  // return schoolImage.value != null
 })
 const submitForm = () => {
   if (isFormValid.value) {
