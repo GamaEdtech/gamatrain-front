@@ -16,6 +16,7 @@
           :src="fileUrl"
           :stencil-props="stencilProps"
           image-restriction="stencil"
+          :aspect-ratio="aspectRatio"
           @change="cropFile"
           @ready="imageLoad"
         />
@@ -29,7 +30,7 @@
           width="150"
           rounded="xl"
           size="large"
-          :loading="cropFileLoading"
+          :loading="cropFileLoading || uploadLoading"
           variant="flat"
           density="compact"
           @click="emitFile()"
@@ -57,9 +58,13 @@ const props = defineProps({
     type: Object,
     default: () => ({ width: 400, height: 150, resizable: false }),
   },
-  confirmLoading: {
+  uploadLoading: {
     type: Boolean,
     default: false,
+  },
+  aspectRatio: {
+    type: Number,
+    default: null,
   },
 })
 const emit = defineEmits(['update:modelValue', 'croppedData'])
@@ -103,7 +108,7 @@ const emitFile = () => {
   if (!croppedCanvas.value) return
   cropFileLoading.value = true
   croppedCanvas.value.toBlob((blob) => {
-    emit('croppedData', blob)
+    emit('croppedData', blob, croppedCanvas.value)
     cropFileLoading.value = false
   }, 'image/webp')
 }

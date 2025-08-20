@@ -385,7 +385,6 @@
       v-model="cropperDialog"
       :file-url="cropAvatarUrl"
       :stencil-props="stencilProps"
-      image-restriction="stencil"
       @cropped-data="confirmCrop"
     />
   </div>
@@ -473,7 +472,7 @@ const cropAvatarUrl = ref('')
 const cropAvatarLoading = ref(false)
 const cropperDialog = ref(false)
 const isSubmitting = ref(false)
-const stencilProps = ref(() => ({ width: 180, height: 180 }))
+const stencilProps = { width: 180, height: 180, resizable: true }
 const isFormValid = ref(true)
 const genderList = ref<ListItem[]>([
   { id: 1, title: 'Male' },
