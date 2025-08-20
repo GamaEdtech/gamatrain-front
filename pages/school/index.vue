@@ -15,6 +15,8 @@
 
       <Map
         :items="newSchoolForMarkersOnMap"
+        :use-cluster="true"
+        :enable-user-location="true"
         @map-moved="changeFilterWithMapMoved"
         @map-move-start="handleMapMoveStart"
         @user-location-found="userLocationFound"
@@ -104,7 +106,7 @@
 import { onUnmounted, onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import schoolFilter from '~/components/school/Filter.vue'
-import Map from '~/components/school/Map.vue'
+import Map from '~/components/common/Map.client.vue'
 import SchoolDetailsModal from '~/components/school/SchoolDetailsModal.vue'
 import SchoolList from '~/components/school/List.vue'
 
