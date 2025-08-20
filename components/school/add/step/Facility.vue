@@ -116,8 +116,7 @@
         />
         <common-cropper-dialog
           v-model="showCropperDialog"
-          :file_url="cropFileUrl"
-          :confirm_loading="cropConfirmLoading"
+          :file-url="cropFileUrl"
           @cropped-data="croppedData"
         />
       </div>
@@ -204,15 +203,14 @@ const previewImageSchool = ref(null)
 
 const showCropperDialog = ref(false)
 const cropFileUrl = ref('')
-const cropConfirmLoading = ref(false)
 
 const croppedData = (data) => {
+  showCropperDialog.value = false
   const timestamp = new Date().getTime()
   const fileType = 'image/webp'
   const fileExt = 'webp'
   const filename = `image_${timestamp}.${fileExt}`
   const file = new File([data], filename, { type: fileType })
-  showCropperDialog.value = false
   schoolImage.value = file
   previewImageSchool.value = URL.createObjectURL(file)
 }
