@@ -17,7 +17,6 @@ export default defineNuxtConfig({
   // Modules
   modules: [
     'dayjs-nuxt',
-    '@nuxtjs/leaflet',
     '@nuxt/eslint',
     'nuxt-gtag',
     '@nuxt/image',
@@ -202,11 +201,6 @@ export default defineNuxtConfig({
       enabled: false,
       type: 'module',
     },
-  },
-
-  // Module configurations
-  leaflet: {
-    markerCluster: true,
   },
 
   image: {
