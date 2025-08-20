@@ -9,7 +9,6 @@ definePageMeta({
 })
 
 const { $toast } = useNuxtApp()
-const router = useRouter()
 
 const list = ref([])
 const headers = [
@@ -161,7 +160,7 @@ watch(filter, (val) => {
 }, { immediate: true })
 
 const goToSchool = (schoolId) => {
-  router.push(`/school/${schoolId}`)
+  window.open(`/school/${schoolId}`, '_blank')
 }
 </script>
 
