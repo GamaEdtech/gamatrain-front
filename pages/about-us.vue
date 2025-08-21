@@ -849,169 +849,171 @@ export default {
 <style>
 /* Global styles to hide tab slider and fix active tab */
 
-.v-tab--selected .v-tab__slider {
-  opacity: 0 !important;
-}
+#about-commitment-container {
+  .v-tab--selected .v-tab__slider {
+    opacity: 0 !important;
+  }
 
-.v-tabs--density-default {
-  --v-tabs-height: inherit !important;
-}
+  .v-tabs--density-default {
+    --v-tabs-height: inherit !important;
+  }
 
-.v-tabs .v-tabs-slider-wrapper {
-  display: none !important;
-}
+  .v-tabs .v-tabs-slider-wrapper {
+    display: none !important;
+  }
 
-.v-tabs .v-tab--active::before,
-.v-tabs .v-tab--active::after {
-  display: none !important;
-}
+  .v-tabs .v-tab--active::before,
+  .v-tabs .v-tab--active::after {
+    display: none !important;
+  }
 
-/* Hide all tab indicators */
-.v-tabs .v-tab::before,
-.v-tabs .v-tab::after {
-  display: none !important;
-}
+  /* Hide all tab indicators */
+  .v-tabs .v-tab::before,
+  .v-tabs .v-tab::after {
+    display: none !important;
+  }
 
-/* Hide slider completely */
-.v-tabs .v-tabs-slider {
-  display: none !important;
-}
+  /* Hide slider completely */
+  .v-tabs .v-tabs-slider {
+    display: none !important;
+  }
 
-/* Additional slider hiding with maximum specificity */
-.v-tabs .v-tabs-slider-wrapper,
-.v-tabs .v-tabs-slider,
-.v-tabs .v-tabs-slider__background {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-}
+  /* Additional slider hiding with maximum specificity */
+  .v-tabs .v-tabs-slider-wrapper,
+  .v-tabs .v-tabs-slider,
+  .v-tabs .v-tabs-slider__background {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
 
-/* Hide any tab indicators with maximum specificity */
-.v-tabs .v-tab::before,
-.v-tabs .v-tab::after,
-.v-tabs .v-tab--active::before,
-.v-tabs .v-tab--active::after {
-  display: none !important;
-}
+  /* Hide any tab indicators with maximum specificity */
+  .v-tabs .v-tab::before,
+  .v-tabs .v-tab::after,
+  .v-tabs .v-tab--active::before,
+  .v-tabs .v-tab--active::after {
+    display: none !important;
+  }
 
-/* Force hide slider with maximum specificity */
-#about-commitment-container .v-tabs .v-tabs-slider-wrapper,
-#about-commitment-container .v-tabs .v-tabs-slider,
-#about-commitment-container .v-tabs .v-tabs-slider__background {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-}
+  /* Force hide slider with maximum specificity */
+  .v-tabs .v-tabs-slider-wrapper,
+  .v-tabs .v-tabs-slider,
+  .v-tabs .v-tabs-slider__background {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
 
-/* Hide any tab indicators with maximum specificity */
-#about-commitment-container .v-tabs .v-tab::before,
-#about-commitment-container .v-tabs .v-tab::after,
-#about-commitment-container .v-tabs .v-tab--active::before,
-#about-commitment-container .v-tabs .v-tab--active::after {
-  display: none !important;
-}
+  /* Hide any tab indicators with maximum specificity */
+  .v-tabs .v-tab::before,
+  .v-tabs .v-tab::after,
+  .v-tabs .v-tab--active::before,
+  .v-tabs .v-tab--active::after {
+    display: none !important;
+  }
 
-/* Ultra aggressive slider hiding */
-.v-tabs .v-tabs-slider-wrapper,
-.v-tabs .v-tabs-slider,
-.v-tabs .v-tabs-slider__background,
-.v-tabs .v-tabs-slider::before,
-.v-tabs .v-tabs-slider::after,
-.v-tabs .v-tabs-slider-wrapper::before,
-.v-tabs .v-tabs-slider-wrapper::after {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  height: 0 !important;
-  width: 0 !important;
-  max-height: 0 !important;
-  max-width: 0 !important;
-  overflow: hidden !important;
-  position: absolute !important;
-  left: -9999px !important;
-  top: -9999px !important;
-}
+  /* Ultra aggressive slider hiding */
+  .v-tabs .v-tabs-slider-wrapper,
+  .v-tabs .v-tabs-slider,
+  .v-tabs .v-tabs-slider__background,
+  .v-tabs .v-tabs-slider::before,
+  .v-tabs .v-tabs-slider::after,
+  .v-tabs .v-tabs-slider-wrapper::before,
+  .v-tabs .v-tabs-slider-wrapper::after {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    max-height: 0 !important;
+    max-width: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+  }
 
-/* Hide all possible tab indicators */
-.v-tabs .v-tab::before,
-.v-tabs .v-tab::after,
-.v-tabs .v-tab--active::before,
-.v-tabs .v-tab--active::after,
-.v-tabs .v-tab:hover::before,
-.v-tabs .v-tab:hover::after,
-.v-tabs .v-tab--active:hover::before,
-.v-tabs .v-tab--active:hover::after {
-  display: none !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  height: 0 !important;
-  width: 0 !important;
-  max-height: 0 !important;
-  max-width: 0 !important;
-  overflow: hidden !important;
-}
+  /* Hide all possible tab indicators */
+  .v-tabs .v-tab::before,
+  .v-tabs .v-tab::after,
+  .v-tabs .v-tab--active::before,
+  .v-tabs .v-tab--active::after,
+  .v-tabs .v-tab:hover::before,
+  .v-tabs .v-tab:hover::after,
+  .v-tabs .v-tab--active:hover::before,
+  .v-tabs .v-tab--active:hover::after {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    max-height: 0 !important;
+    max-width: 0 !important;
+    overflow: hidden !important;
+  }
 
-.active-tab {
-  background-color: #ffb600 !important;
-  border-radius: 0.4rem !important;
-  border-top-left-radius: 0.4rem !important;
-  border-top-right-radius: 0.4rem !important;
-  border-bottom-left-radius: 0.4rem !important;
-  border-bottom-right-radius: 0.4rem !important;
-}
+  .active-tab {
+    background-color: #ffb600 !important;
+    border-radius: 0.4rem !important;
+    border-top-left-radius: 0.4rem !important;
+    border-top-right-radius: 0.4rem !important;
+    border-bottom-left-radius: 0.4rem !important;
+    border-bottom-right-radius: 0.4rem !important;
+  }
 
-/* Force border radius for all tabs */
-.v-tabs .v-tab {
-  border-radius: 0.4rem !important;
-  border-top-left-radius: 0.4rem !important;
-  border-top-right-radius: 0.4rem !important;
-  border-bottom-left-radius: 0.4rem !important;
-  border-bottom-right-radius: 0.4rem !important;
-}
+  /* Force border radius for all tabs */
+  .v-tabs .v-tab {
+    border-radius: 0.4rem !important;
+    border-top-left-radius: 0.4rem !important;
+    border-top-right-radius: 0.4rem !important;
+    border-bottom-left-radius: 0.4rem !important;
+    border-bottom-right-radius: 0.4rem !important;
+  }
 
-/* Override Vuetify's default tab styles */
-.v-tabs .v-tab--active {
-  border-radius: 0.4rem !important;
-  border-top-left-radius: 0.4rem !important;
-  border-top-right-radius: 0.4rem !important;
-  border-bottom-left-radius: 0.4rem !important;
-  border-bottom-right-radius: 0.4rem !important;
-}
+  /* Override Vuetify's default tab styles */
+  .v-tabs .v-tab--active {
+    border-radius: 0.4rem !important;
+    border-top-left-radius: 0.4rem !important;
+    border-top-right-radius: 0.4rem !important;
+    border-bottom-left-radius: 0.4rem !important;
+    border-bottom-right-radius: 0.4rem !important;
+  }
 
-/* Force remove any Vuetify border radius overrides */
-.v-tabs .v-tab,
-.v-tabs .v-tab--active,
-.v-tabs .v-tab.v-btn {
-  border-radius: 0.4rem !important;
-  border-top-left-radius: 0.4rem !important;
-  border-top-right-radius: 0.4rem !important;
-  border-bottom-left-radius: 0.4rem !important;
-  border-bottom-right-radius: 0.4rem !important;
-}
+  /* Force remove any Vuetify border radius overrides */
+  .v-tabs .v-tab,
+  .v-tabs .v-tab--active,
+  .v-tabs .v-tab.v-btn {
+    border-radius: 0.4rem !important;
+    border-top-left-radius: 0.4rem !important;
+    border-top-right-radius: 0.4rem !important;
+    border-bottom-left-radius: 0.4rem !important;
+    border-bottom-right-radius: 0.4rem !important;
+  }
 
-/* Maximum specificity to override Vuetify */
-#about-commitment-container .v-tabs .v-tab,
-#about-commitment-container .v-tabs .v-tab--active,
-#about-commitment-container .v-tabs .v-tab.v-btn,
-#about-commitment-container .v-tabs .v-tab[aria-selected="true"] {
-  border-radius: 0.4rem !important;
-  border-top-left-radius: 0.4rem !important;
-  border-top-right-radius: 0.4rem !important;
-  border-bottom-left-radius: 0.4rem !important;
-  border-bottom-right-radius: 0.4rem !important;
-}
+  /* Maximum specificity to override Vuetify */
+  .v-tabs .v-tab,
+  .v-tabs .v-tab--active,
+  .v-tabs .v-tab.v-btn,
+  .v-tabs .v-tab[aria-selected="true"] {
+    border-radius: 0.4rem !important;
+    border-top-left-radius: 0.4rem !important;
+    border-top-right-radius: 0.4rem !important;
+    border-bottom-left-radius: 0.4rem !important;
+    border-bottom-right-radius: 0.4rem !important;
+  }
 
-/* Global override with maximum specificity */
-.v-tabs .v-tab,
-.v-tabs .v-tab--active,
-.v-tabs .v-tab.v-btn,
-.v-tabs .v-tab[aria-selected="true"],
-.v-tabs .v-tab[aria-selected="false"] {
-  border-radius: 0.4rem !important;
-  border-top-left-radius: 0.4rem !important;
-  border-top-right-radius: 0.4rem !important;
-  border-bottom-left-radius: 0.4rem !important;
-  border-bottom-right-radius: 0.4rem !important;
+  /* Global override with maximum specificity */
+  .v-tabs .v-tab,
+  .v-tabs .v-tab--active,
+  .v-tabs .v-tab.v-btn,
+  .v-tabs .v-tab[aria-selected="true"],
+  .v-tabs .v-tab[aria-selected="false"] {
+    border-radius: 0.4rem !important;
+    border-top-left-radius: 0.4rem !important;
+    border-top-right-radius: 0.4rem !important;
+    border-bottom-left-radius: 0.4rem !important;
+    border-bottom-right-radius: 0.4rem !important;
+  }
 }
 
 @keyframes step1ProgressAnimation {
