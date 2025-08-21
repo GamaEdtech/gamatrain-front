@@ -29,20 +29,30 @@
             </v-chip>
 
             <figure>
-              <NuxtImg
+              <!-- <NuxtImg
                 id="blog-img"
                 :src="contentData.pic"
                 :alt="contentData.title"
                 sizes="xs:300,sm:300px,md:600px, 730px"
                 placeholder
+              /> -->
+              <v-img
+                id="blog-img"
+                cover
+                :src="contentData.pic"
+                :alt="contentData.title"
               />
               <figcaption id="general-data-footer">
-                <div id="autor-holder">
-                  <NuxtImg
-                    width="30px"
+                <div
+                  id="autor-holder"
+                  class="d-flex align-center"
+                >
+                  <v-img
                     :src="contentData.avatar"
-                    placeholder
+                    width="30px"
+                    height="30px"
                   />
+                  <!-- <NuxtImg width="30px" :src="contentData.avatar" placeholder /> -->
                   <span class="gama-text-overline">{{ contentData.first_name }}
                     {{ contentData.last_name }}</span>
                 </div>
@@ -643,7 +653,7 @@ const share = async () => {
         #blog-img {
           width: 100%;
           height: auto;
-          bottom: -23rem;
+          /* bottom: -23rem; */
         }
       }
     }

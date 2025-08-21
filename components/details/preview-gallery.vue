@@ -59,7 +59,17 @@
                   @click="handleImageClick(index)"
                 >
                   <div class="carousel-item-content">
-                    <NuxtImg
+                    <v-img
+                      width="170"
+                      :src="image"
+                      cover
+                      class="carousel-img w-100 h-100"
+                      preload
+                      fetchpriority="high"
+                      alt="Psat Paper Lesson"
+                      :loading="index === 0 ? 'eager' : 'lazy'"
+                    />
+                    <!-- <NuxtImg
                       width="170"
                       height="auto"
                       :src="image"
@@ -69,7 +79,7 @@
                       alt="Psat Paper Lesson"
                       format="webp"
                       :loading="index === 0 ? 'eager' : 'lazy'"
-                    />
+                    /> -->
                     <div
                       v-if="showDocPreview"
                       class="preview-overlay"
@@ -99,7 +109,14 @@
                   @click="changeSlide(index)"
                 >
                   <div class="thumbnail-content">
-                    <NuxtImg
+                    <v-img
+                      width="40"
+                      :src="image"
+                      cover
+                      class="thumbnail-preview w-100 h-100"
+                      alt="Psat Paper Lesson"
+                    />
+                    <!-- <NuxtImg
                       width="40"
                       height="auto"
                       :src="image"
@@ -107,7 +124,7 @@
                       class="thumbnail-preview"
                       alt="Psat Paper Lesson"
                       format="webp"
-                    />
+                    /> -->
                   </div>
                 </div>
               </div>
