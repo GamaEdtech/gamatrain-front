@@ -36,7 +36,6 @@ export default defineNuxtConfig({
   // Plugins
   plugins: [
     { src: 'plugins/helper.js' },
-    { src: 'plugins/img-cropper', mode: 'client' },
     { src: 'plugins/vuedraggable', mode: 'client' },
   ],
 

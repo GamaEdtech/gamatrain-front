@@ -245,7 +245,7 @@ const pageNumberForLoadPreviousSchool = ref(
 const pageNumberForLoadNextSchool = ref(
   route.query.page ? Number(route.query.page) : 1,
 )
-const perPage = 20
+const perPage = ref(20)
 const totalSchoolFind = ref(0)
 
 const resetParameter = () => {
@@ -397,8 +397,8 @@ const setMetaData = (informationResponse) => {
 const { data: initialSchools, pending: _loadingSchoolsServer }
   = await useAsyncData('schoolListSSR', () => {
     const params = {
-      'PagingDto.PageFilter.Skip': (filterForm.value.page - 1) * perPage,
-      'PagingDto.PageFilter.Size': perPage,
+      'PagingDto.PageFilter.Skip': (filterForm.value.page - 1) * perPage.value,
+      'PagingDto.PageFilter.Size': perPage.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
       'Name': filterForm.value.keyword,
       'section': filterForm.value.stage,
@@ -443,8 +443,8 @@ const getSchoolList = async () => {
   if (isAllSchoolLoaded.value) return
   try {
     const params = {
-      'PagingDto.PageFilter.Skip': (filterForm.value.page - 1) * perPage,
-      'PagingDto.PageFilter.Size': perPage,
+      'PagingDto.PageFilter.Skip': (filterForm.value.page - 1) * perPage.value,
+      'PagingDto.PageFilter.Size': perPage.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
     }
     if (filterForm.value.sort && filterForm.value.sort.length > 0) {
@@ -483,7 +483,7 @@ const getSchoolList = async () => {
     setMetaData(response)
 
     if (response?.data?.list) {
-      if (response?.data?.list.length < perPage) {
+      if (response?.data?.list.length < perPage.value) {
         isAllSchoolLoaded.value = true
       }
       totalSchoolFind.value = response.data.totalRecordsCount
@@ -545,6 +545,7 @@ const isExpandMapInDesktop = ref(false)
 const changeStatusExpandMap = () => {
   isExpandMapInDesktop.value = !isExpandMapInDesktop.value
   if (isExpandMapInDesktop.value) {
+    perPage.value = 500
     filterForm.value.lat = defaultLatLongDistance.lat
     filterForm.value.lng = defaultLatLongDistance.lng
     filterForm.value.distance = defaultLatLongDistance.distance
@@ -553,6 +554,7 @@ const changeStatusExpandMap = () => {
     schools.value = []
   }
   else {
+    perPage.value = 20
     filterForm.value.lat = null
     filterForm.value.lng = null
     filterForm.value.distance = null
@@ -614,11 +616,13 @@ const endDrag = () => {
     ? OPEN_BOTTOM
     : CLOSED_BOTTOM
   if (openBottomNavFilterList.value) {
+    perPage.value = 20
     filterForm.value.lat = null
     filterForm.value.lng = null
     filterForm.value.distance = null
   }
   else {
+    perPage.value = 500
     filterForm.value.lat = defaultLatLongDistance.lat
     filterForm.value.lng = defaultLatLongDistance.lng
     filterForm.value.distance = defaultLatLongDistance.distance

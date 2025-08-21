@@ -803,52 +803,14 @@
     </div>
 
     <!-- Cropper Dialog -->
-    <v-dialog
+    <common-cropper-dialog
       v-model="cropper_dialog"
-      max-width="600"
-      transition="dialog-bottom-transition"
-    >
-      <v-card id="img-cropper-dialog">
-        <v-card-text class="pa-0">
-          <v-col
-            v-if="crop_file_loading"
-            cols="12"
-            class="text-center"
-          >
-            <v-progress-circular
-              :size="40"
-              :width="4"
-              class="mt-12 mb-12"
-              color="orange"
-              indeterminate
-            />
-          </v-col>
-          <div v-else>
-            <Cropper
-              :src="crop_file_url"
-              :stencil-props="stencil_props"
-              image-restriction="stencil"
-              @change="cropFile"
-            />
-          </div>
-        </v-card-text>
-        <v-card-actions
-          style="position: sticky; bottom: 0; left: 0; right: 0"
-          class="pa-0"
-        >
-          <v-btn
-            color="teal"
-            variant="flat"
-            size="x-large"
-            :loading="crop_confirm_loading"
-            block
-            @click="submitCrop"
-          >
-            Confirm
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      :file-url="crop_file_url"
+      :aspect-ratio="1"
+      :stencil-props="stencilProps"
+      :upload-loading="crop_confirm_loading"
+      @cropped-data="submitCrop"
+    />
     <!-- End cropper Dialog -->
 
     <!-- Delete Confirmation Dialog -->
@@ -893,9 +855,6 @@ import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '~/composables/useAuth'
 import { Form as VeeForm, useForm, Field } from 'vee-validate'
 import _TopicSelector from '~/components/form/topic-selector.vue'
-import { Cropper } from 'vue-advanced-cropper'
-import 'vue-advanced-cropper/dist/style.css'
-import RichEditorContent from '@/components/common/RichEditor.vue'
 
 // Define layout and page metadata
 definePageMeta({
@@ -934,16 +893,11 @@ const file_original_path = ref('')
 
 // Cropper related state
 const crop_file_url = ref('')
-const crop_file_loading = ref(false)
 const crop_confirm_loading = ref(false)
 const cropper_dialog = ref(false)
 const current_crop_file = ref('')
 const cropped_image = ref(null)
-const stencil_props = reactive({
-  width: 180,
-  height: 180,
-  aspectRatio: 1,
-})
+const stencilProps = { width: 180, height: 180, resizable: true }
 
 // User token
 const userToken = ref('')
@@ -1406,8 +1360,7 @@ const uploadFile = (file_name, fileEvent) => {
   cropper_dialog.value = true
 }
 
-const cropFile = ({ _coordinates, canvas }) => {
-  // Store the cropped image data
+const submitCrop = async (blobData, canvas) => {
   const croppedBase64 = canvas.toDataURL()
 
   // Update the corresponding form field
@@ -1430,11 +1383,8 @@ const cropFile = ({ _coordinates, canvas }) => {
     form.d_file_base64 = croppedBase64
   }
 
-  // Store for later use
   cropped_image.value = { canvas }
-}
 
-const submitCrop = async () => {
   crop_confirm_loading.value = true
 
   try {
