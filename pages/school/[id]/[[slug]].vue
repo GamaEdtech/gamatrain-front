@@ -59,13 +59,55 @@
       <!-- Data container -->
       <v-row class="data-container">
         <v-col cols="12">
-          <v-row class="mt-6 d-flex d-md-none">
+          <v-row class="mt-6 d-flex d-md-none justify-center">
+            <v-btn-toggle
+              v-model="slideToggler"
+              style="order: 2"
+              size="x-small"
+              rounded="xl"
+              color="white"
+              base-color="grey-lighten-3"
+              selected-class="bg-white"
+              active-class="bg-white"
+              class="school-head-toggle"
+              border
+              @update:model-value="changeSlide"
+            >
+              <v-btn
+                color="white"
+                size="x-small"
+                class="text-transform-none gtext-t5 text-white"
+                value="image"
+              >
+                <span class="text-black"> Image</span>
+              </v-btn>
+              <v-btn
+                color="white"
+                size="x-small"
+                class="text-transform-none gtext-t5 text-white"
+                value="map"
+              >
+                <span class="text-black"> Map</span>
+              </v-btn>
+              <v-btn
+                color="white"
+                size="x-small"
+                class="text-transform-none gtext-t5 text-white"
+                value="tour"
+              >
+                <span class="text-black"> Tour</span>
+              </v-btn>
+            </v-btn-toggle>
+          </v-row>
+          <v-row class="d-flex d-md-none">
             <v-col
-              cols="3"
+              cols="6"
               class="text-left d-block d-md-none"
             >
-              <div class="text-center">
-                <div class="gama-text-body2 primary-gray-500 pt-1">
+              <div class="text-start">
+                <div
+                  class="d-flex align-center ga-1 gama-text-body2 primary-gray-500 pt-1"
+                >
                   <v-icon small>
                     mdi-update
                   </v-icon>
@@ -75,52 +117,11 @@
             </v-col>
             <v-col
               cols="6"
-              class="text-center d-block d-md-none"
+              class="d-block d-md-none"
             >
-              <v-btn-toggle
-                v-model="slideToggler"
-                style="order: 2"
-                size="x-small"
-                rounded="xl"
-                color="white"
-                base-color="grey-lighten-3"
-                selected-class="bg-white"
-                active-class="bg-white"
-                class="school-head-toggle"
-                border
-                @update:model-value="changeSlide"
+              <div
+                class="d-flex justify-end align-center ga-1 rate-section gtext-t4 font-weight-semibold"
               >
-                <v-btn
-                  color="white"
-                  size="x-small"
-                  class="text-transform-none gtext-t5 text-white"
-                  value="image"
-                >
-                  <span class="text-black"> Image</span>
-                </v-btn>
-                <v-btn
-                  color="white"
-                  size="x-small"
-                  class="text-transform-none gtext-t5 text-white"
-                  value="map"
-                >
-                  <span class="text-black"> Map</span>
-                </v-btn>
-                <v-btn
-                  color="white"
-                  size="x-small"
-                  class="text-transform-none gtext-t5 text-white"
-                  value="tour"
-                >
-                  <span class="text-black"> Tour</span>
-                </v-btn>
-              </v-btn-toggle>
-            </v-col>
-            <v-col
-              cols="3"
-              class="text-right d-block d-md-none"
-            >
-              <div class="rate-section gtext-t4 font-weight-semibold ml-1">
                 {{
                   ratingData.averageRate
                     ? ratingData.averageRate.toFixed(1)
