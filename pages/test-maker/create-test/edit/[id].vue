@@ -161,35 +161,11 @@
                   name="question"
                   :validate="validateQuestionField"
                 >
-                  <RickEditor
-                    v-model:model-value="form.question"
-                    min-height="200px"
-                    :features="['bold', 'italic', 'underline', 'alignment']"
-                  >
-                    <template #content>
-                      <v-btn
-                        variant="text"
-                        icon="mdi-camera"
-                        size="x-large"
-                        @click="selectFile('q_file')"
-                      >
-                        <v-icon
-                          size="80"
-                          color="#A11333"
-                        >
-                          mdi-camera
-                        </v-icon>
-                      </v-btn>
-                      <v-btn
-                        v-if="form.q_file_base64"
-                        variant="text"
-                        size="small"
-                        color="error"
-                        icon="mdi-delete"
-                        @click="deleteFile('q_file')"
-                      />
-                    </template>
-                  </RickEditor>
+                  <rich-editor-content
+                    v-model="form.question"
+                    :rules="contentRules"
+                    required
+                  />
                   <p
                     v-if="questionError"
                     class="text-error text-caption mt-1"
@@ -294,16 +270,10 @@
                           fallback-tag="span"
                           fallback="Loading..."
                         >
-                          <RickEditor
-                            v-model:model-value="form.answer_a"
-                            min-height="90px"
-                            :features="[
-                              'bold',
-                              'italic',
-                              'underline',
-                              'alignment',
-                            ]"
-                            :additional-styles="{ marginInlineStart: '10px' }"
+                          <rich-editor-content
+                            v-model="form.answer_a"
+                            :rules="contentRules"
+                            required
                           />
                           <p
                             v-if="answerAError"
@@ -388,16 +358,10 @@
                           fallback-tag="span"
                           fallback="Loading..."
                         >
-                          <RickEditor
-                            v-model:model-value="form.answer_b"
-                            min-height="90px"
-                            :features="[
-                              'bold',
-                              'italic',
-                              'underline',
-                              'alignment',
-                            ]"
-                            :additional-styles="{ marginInlineStart: '10px' }"
+                          <rich-editor-content
+                            v-model="form.answer_b"
+                            :rules="contentRules"
+                            required
                           />
                           <p
                             v-if="answerBError"
@@ -479,16 +443,10 @@
                           fallback-tag="span"
                           fallback="Loading..."
                         >
-                          <RickEditor
-                            v-model:model-value="form.answer_c"
-                            min-height="90px"
-                            :features="[
-                              'bold',
-                              'italic',
-                              'underline',
-                              'alignment',
-                            ]"
-                            :additional-styles="{ marginInlineStart: '10px' }"
+                          <rich-editor-content
+                            v-model="form.answer_c"
+                            :rules="contentRules"
+                            required
                           />
                           <p
                             v-if="answerCError"
@@ -570,16 +528,10 @@
                           fallback-tag="span"
                           fallback="Loading..."
                         >
-                          <RickEditor
-                            v-model:model-value="form.answer_d"
-                            min-height="90px"
-                            :features="[
-                              'bold',
-                              'italic',
-                              'underline',
-                              'alignment',
-                            ]"
-                            :additional-styles="{ marginInlineStart: '10px' }"
+                          <rich-editor-content
+                            v-model="form.answer_d"
+                            :rules="contentRules"
+                            required
                           />
                           <p
                             v-if="answerDError"
@@ -654,10 +606,9 @@
                 fallback-tag="span"
                 fallback="Loading..."
               >
-                <RickEditor
-                  v-model:model-value="form.answer_full"
-                  min-height="90px"
-                  :features="['bold', 'italic', 'underline', 'alignment']"
+                <rich-editor-content
+                  v-model="form.answer_full"
+                  :rules="contentRules"
                 />
               </ClientOnly>
               <img
