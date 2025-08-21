@@ -335,9 +335,6 @@ const map = reactive({
   minZoom: 2,
   center: [0, 0],
   latLng: [0, 0],
-  object: null,
-  boundingBox: {},
-  schoolIcon: '/images/school-marker.png',
 })
 const mapData = ref({
   latitude: 0,

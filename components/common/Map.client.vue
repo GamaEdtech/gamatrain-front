@@ -52,7 +52,7 @@ const props = defineProps({
   },
   iconUrl: {
     type: String,
-    default: '/images/school-marker.png',
+    default: '/images/gama-location.svg',
   },
   useForSelectLocation: {
     type: Boolean,
