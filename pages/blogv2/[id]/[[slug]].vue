@@ -24,30 +24,43 @@
               v-if="contentData.visibilityType"
               class="my-4"
             >
-              {{ contentData.visibilityType || 'General' }}
+              {{ contentData.visibilityType || "General" }}
             </v-chip>
 
             <figure>
-              <NuxtImg
+              <!-- <NuxtImg
                 v-if="contentData.imageUri"
                 id="blog-img"
                 :src="contentData.imageUri || '/default-blog-image.jpg'"
                 :alt="contentData.title"
                 sizes="xs:300,sm:300px,md:600px, 730px"
                 placeholder
+              /> -->
+              <v-img
+                v-if="contentData.imageUri"
+                id="blog-img"
+                cover
+                :src="contentData.imageUri || '/default-blog-image.jpg'"
+                :alt="contentData.title"
               />
               <figcaption id="general-data-footer">
                 <div id="autor-holder">
-                  <NuxtImg
+                  <!-- <NuxtImg
                     v-if="contentData.authorAvatar"
                     width="30px"
                     :src="contentData.authorAvatar || '/default-avatar.jpg'"
                     placeholder
+                  /> -->
+                  <v-img
+                    v-if="contentData.authorAvatar"
+                    :src="contentData.authorAvatar || '/default-avatar.jpg'"
+                    width="30px"
+                    height="30px"
                   />
                   <span
                     v-if="contentData.author || contentData.creatorUser"
                     class="gama-text-overline"
-                  >{{ contentData.author || 'Unknown Author' }}</span>
+                  >{{ contentData.author || "Unknown Author" }}</span>
                 </div>
                 <div id="date-holder">
                   <v-icon
@@ -104,9 +117,7 @@
             </v-btn>
           </div>
 
-          <div
-            id="blog-tags"
-          >
+          <div id="blog-tags">
             Tags:
             <v-chip
               v-for="(tag, index) in categoryList"
@@ -114,7 +125,8 @@
               color="green"
               class="mx-1 font-weight-bold font-size-12"
             >
-              {{ tag.name }}<span v-if="index < categoryList.length - 1">, </span>
+              {{ tag.name
+              }}<span v-if="index < categoryList.length - 1">, </span>
             </v-chip>
           </div>
 
@@ -152,7 +164,9 @@ const categoryList = ref([])
 
 const getUserBlogDetail = async () => {
   try {
-    const res = await useApiService.get(`/api/v2/blogs/contributions/${blogId}`)
+    const res = await useApiService.get(
+      `/api/v2/blogs/contributions/${blogId}`,
+    )
     contentData.value = res.data
   }
   catch (error) {
@@ -166,7 +180,9 @@ const fetchCategoriesById = async () => {
   try {
     const response = await useApiService.get('/api/v2/tags/Post')
     if (response && response.succeeded) {
-      categoryList.value = response.data.filter(tag => contentData.value.tags.includes(tag.id))
+      categoryList.value = response.data.filter(tag =>
+        contentData.value.tags.includes(tag.id),
+      )
     }
   }
   catch {
@@ -177,7 +193,10 @@ const fetchCategoriesById = async () => {
 // Computed properties
 const keywordsList = computed(() => {
   if (!contentData.value?.keywords) return []
-  return contentData.value.keywords.split(',').map(k => k.trim()).filter(k => k.length > 0)
+  return contentData.value.keywords
+    .split(',')
+    .map(k => k.trim())
+    .filter(k => k.length > 0)
 })
 
 // Format date function
@@ -242,7 +261,10 @@ const share = async () => {
       $toast.success('Link copied to clipboard!')
     }
     catch (error) {
-      console.warn('Share API and clipboard API are not supported in this browser', error)
+      console.warn(
+        'Share API and clipboard API are not supported in this browser',
+        error,
+      )
       $toast.info('Share feature is not supported in this browser')
     }
   }

@@ -11,13 +11,22 @@
       size="small"
       class="d-flex d-md-none position-absolute position-bookmark"
     >md:bookmark</v-icon>
-    <NuxtImg
+    <!-- <NuxtImg
       v-if="school?.defaultImageUri"
       :alt="school?.name"
       width="320px"
       height="320px"
       :src="school?.defaultImageUri?.replace(/^http:\/\//, 'https://')"
       placeholder
+      class="d-flex d-md-none w-100 h-100 rounded-lg position-absolute"
+    /> -->
+    <v-img
+      v-if="school?.defaultImageUri"
+      :alt="school?.name"
+      width="320px"
+      height="320px"
+      cover
+      :src="school.defaultImageUri?.replace(/^http:\/\//, 'https://')"
       class="d-flex d-md-none w-100 h-100 rounded-lg position-absolute"
     />
     <div
@@ -84,13 +93,22 @@
         v-if="school.defaultImageUri"
         class="d-none d-md-block image-school"
       >
-        <NuxtImg
+        <!-- <NuxtImg
           v-show="school.defaultImageUri"
           alt="school.name"
           width="180px"
           height="130px"
           :src="school.defaultImageUri?.replace(/^http:\/\//, 'https://')"
           placeholder
+          class="h-100 rounded-lg"
+        /> -->
+        <v-img
+          v-show="school.defaultImageUri"
+          :alt="school.name"
+          width="180px"
+          height="130px"
+          cover
+          :src="school.defaultImageUri?.replace(/^http:\/\//, 'https://')"
           class="h-100 rounded-lg"
         />
       </div>

@@ -6,12 +6,20 @@
       <div
         class="img-div rounded-ts-lg rounded-bs-lg d-flex align-center justify-center ga-3 flex-column"
       >
-        <NuxtImg
+        <!-- <NuxtImg
           v-if="information.lesson_pic"
           :alt="information?.title"
           width="100px"
           :src="information.lesson_pic"
           placeholder
+          class="w-100 h-100 rounded-ts-lg rounded-bs-lg"
+        /> -->
+        <v-img
+          v-if="information.lesson_pic"
+          :alt="information?.title"
+          width="100px"
+          cover
+          :src="information.lesson_pic"
           class="w-100 h-100 rounded-ts-lg rounded-bs-lg"
         />
         <template v-else>

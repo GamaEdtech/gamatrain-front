@@ -4,12 +4,19 @@
     class="content_main_info"
   >
     <v-row class="d-flex align-center mb-2 ga-1">
-      <NuxtImg
+      <!-- <NuxtImg
         width="48px"
         height="48px"
         :src="contentData?.avatar"
         placeholder
         class="d-inline-block user-avatar"
+        alt="user profile"
+      /> -->
+      <v-img
+        width="48"
+        height="48"
+        :src="contentData?.avatar"
+        class="user-avatar"
         alt="user profile"
       />
       <p class="creator_title">
@@ -353,6 +360,7 @@ defineExpose({
 .user-avatar {
   width: 48px;
   height: 48px;
+  flex: 0 0 auto;
 }
 .content_main_info .creator_title {
   font-size: 18px;

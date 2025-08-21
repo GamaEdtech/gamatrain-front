@@ -4,8 +4,14 @@
     width="160"
     :style="{ height: `${CardHeight}`, borderRadius: '8px' }"
   >
-    <NuxtImg
+    <v-img
+      :src="cardPicture"
+      class="text-white align-end"
+      :alt="cardTitle"
       width="160"
+    />
+    <!-- <NuxtImg
+      width="160"""
       height="auto"
       :src="cardPicture"
       class="text-white align-end"
@@ -13,7 +19,7 @@
       :alt="cardTitle"
       format="webp"
       quality="50"
-    />
+    /> -->
     <div class="circle-container">
       <div
         v-if="showScoreLabel"
