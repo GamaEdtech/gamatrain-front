@@ -164,7 +164,7 @@
                   class="paper-info-part"
                 >{{
                   item.variant && item.variant != "0"
-                    ? item.test_type_title + item.variant_title
+                    ? item.test_type_title + (item.variant_title=="nv" ? "" : item.variant_title)
                     : item.test_type_title
                 }}</NuxtLink>
               </div>
