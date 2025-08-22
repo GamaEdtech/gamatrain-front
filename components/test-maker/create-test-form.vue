@@ -155,13 +155,11 @@
                   name="question"
                   :validate="validateQuestionField"
                 >
-                  <ClientOnly>
-                    <rich-editor-content
-                      v-model="form.question"
-                      :rules="contentRules"
-                      required
-                    />
-                  </ClientOnly>
+                  <rich-editor-content
+                    v-model="form.question"
+                    :rules="contentRules"
+                    required
+                  />
                   <div style="position: absolute; right: 3rem; bottom: 3rem">
                     <v-btn
                       v-if="!form.q_file_base64"
@@ -293,22 +291,17 @@
                         :name="'answer_a'"
                         :validate="validateAnswerField"
                       >
-                        <ClientOnly
-                          fallback-tag="span"
-                          fallback="Loading..."
+                        <rich-editor-content
+                          v-model="form.answer_a"
+                          :rules="contentRules"
+                          required
+                        />
+                        <p
+                          v-if="answerAError"
+                          class="text-error text-caption mt-1"
                         >
-                          <rich-editor-content
-                            v-model="form.answer_a"
-                            :rules="contentRules"
-                            required
-                          />
-                          <p
-                            v-if="answerAError"
-                            class="text-error text-caption mt-1"
-                          >
-                            {{ answerAError }}
-                          </p>
-                        </ClientOnly>
+                          {{ answerAError }}
+                        </p>
                       </Field>
                     </v-col>
                     <v-col
@@ -378,22 +371,17 @@
                         :name="'answer_b'"
                         :validate="validateAnswerField"
                       >
-                        <ClientOnly
-                          fallback-tag="span"
-                          fallback="Loading..."
+                        <rich-editor-content
+                          v-model="form.answer_b"
+                          :rules="contentRules"
+                          required
+                        />
+                        <p
+                          v-if="answerBError"
+                          class="text-error text-caption mt-1"
                         >
-                          <rich-editor-content
-                            v-model="form.answer_b"
-                            :rules="contentRules"
-                            required
-                          />
-                          <p
-                            v-if="answerBError"
-                            class="text-error text-caption mt-1"
-                          >
-                            {{ answerBError }}
-                          </p>
-                        </ClientOnly>
+                          {{ answerBError }}
+                        </p>
                       </Field>
                     </v-col>
                     <v-col
@@ -461,22 +449,17 @@
                         :name="'answer_c'"
                         :validate="validateAnswerField"
                       >
-                        <ClientOnly
-                          fallback-tag="span"
-                          fallback="Loading..."
+                        <rich-editor-content
+                          v-model="form.answer_c"
+                          :rules="contentRules"
+                          required
+                        />
+                        <p
+                          v-if="answerCError"
+                          class="text-error text-caption mt-1"
                         >
-                          <rich-editor-content
-                            v-model="form.answer_c"
-                            :rules="contentRules"
-                            required
-                          />
-                          <p
-                            v-if="answerCError"
-                            class="text-error text-caption mt-1"
-                          >
-                            {{ answerCError }}
-                          </p>
-                        </ClientOnly>
+                          {{ answerCError }}
+                        </p>
                       </Field>
                     </v-col>
                     <v-col
@@ -544,22 +527,17 @@
                         :name="'answer_d'"
                         :validate="validateAnswerField"
                       >
-                        <ClientOnly
-                          fallback-tag="span"
-                          fallback="Loading..."
+                        <rich-editor-content
+                          v-model="form.answer_d"
+                          :rules="contentRules"
+                          required
+                        />
+                        <p
+                          v-if="answerDError"
+                          class="text-error text-caption mt-1"
                         >
-                          <rich-editor-content
-                            v-model="form.answer_d"
-                            :rules="contentRules"
-                            required
-                          />
-                          <p
-                            v-if="answerDError"
-                            class="text-error text-caption mt-1"
-                          >
-                            {{ answerDError }}
-                          </p>
-                        </ClientOnly>
+                          {{ answerDError }}
+                        </p>
                       </Field>
                     </v-col>
                     <v-col
@@ -622,15 +600,10 @@
             >
               <p>Solution:</p>
 
-              <ClientOnly
-                fallback-tag="span"
-                fallback="Loading..."
-              >
-                <rich-editor-content
-                  v-model="form.answer_full"
-                  :rules="contentRules"
-                />
-              </ClientOnly>
+              <rich-editor-content
+                v-model="form.answer_full"
+                :rules="contentRules"
+              />
               <img
                 v-if="form.answer_full_file_base64"
                 width="72"
@@ -844,6 +817,7 @@ import { Form as VeeForm, Field, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useState } from '#app'
 import { useAuth } from '~/composables/useAuth'
+import RichEditorContent from '@/components/common/RichEditor.vue'
 
 const auth = useAuth()
 
