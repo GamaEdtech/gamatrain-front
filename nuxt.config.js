@@ -257,7 +257,6 @@ export default defineNuxtConfig({
             charts: ['vue-chartjs', 'chart.js'],
             ckeditor: [
               '@ckeditor/ckeditor5-vue',
-              '@ckeditor/ckeditor5-build-classic',
             ],
           },
         },

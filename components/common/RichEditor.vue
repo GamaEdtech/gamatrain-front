@@ -34,6 +34,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  enableExtraPlugins: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -41,20 +45,152 @@ const emit = defineEmits(['update:modelValue'])
 const internalValue = ref(props.modelValue)
 const CustomEditor = ref(null)
 const loading = ref(true)
-const editorConfig = {
-  title: false,
-  removePlugins: ['ImageCaption'],
-}
+const editorConfig = ref({
+  licenseKey: 'GPL',
+})
 
 const LazyCkeditor = defineAsyncComponent({
   loader: async () => {
-    const { default: ClassicEditor } = await import(
-      '@ckeditor/ckeditor5-build-classic'
-    )
+    const {
+      ClassicEditor,
+      Essentials,
+      Paragraph,
+      Heading,
+      Link,
+      List,
+      Indent,
+      Table,
+      TableToolbar,
+      Image,
+      ImageStyle,
+      ImageResize,
+      ImageInsert,
+      MediaEmbed,
+      Bold,
+      Italic,
+      Base64UploadAdapter,
+    } = await import('ckeditor5')
+
     const { Ckeditor } = await import('@ckeditor/ckeditor5-vue')
+    await import('ckeditor5/ckeditor5.css')
+
+    if (props.enableExtraPlugins) {
+      const {
+        Code,
+        Strikethrough,
+        Subscript,
+        Superscript,
+        SpecialCharacters,
+        SpecialCharactersEssentials,
+        HtmlEmbed,
+        Highlight,
+        BlockQuote,
+      } = await import('ckeditor5')
+
+      editorConfig.value = {
+        licenseKey: 'GPL',
+        plugins: [
+          Essentials,
+          Paragraph,
+          Heading,
+          Bold,
+          Italic,
+          Strikethrough,
+          Subscript,
+          Superscript,
+          Code,
+          SpecialCharacters,
+          SpecialCharactersEssentials,
+          Link,
+          List,
+          Indent,
+          BlockQuote,
+          Highlight,
+          HtmlEmbed,
+          Table,
+          TableToolbar,
+          Image,
+          ImageStyle,
+          ImageResize,
+          ImageInsert,
+          MediaEmbed,
+          Base64UploadAdapter,
+        ],
+        toolbar: [
+          'heading',
+          '|',
+          'bold',
+          'italic',
+          'strikethrough',
+          'code',
+          'subscript',
+          'superscript',
+          'specialCharacters',
+          'link',
+          'bulletedList',
+          'numberedList',
+          '|',
+          'outdent',
+          'indent',
+          '|',
+          'insertImage',
+          'undo',
+          'redo',
+          'insertTable',
+          'mediaEmbed',
+          'htmlEmbed',
+          '|',
+          'blockQuote',
+          'highlight',
+        ],
+      }
+    }
+    else {
+      editorConfig.value = {
+        licenseKey: 'GPL',
+        plugins: [
+          Essentials,
+          Paragraph,
+          Heading,
+          Bold,
+          Italic,
+          Link,
+          List,
+          Indent,
+          Table,
+          TableToolbar,
+          Image,
+          ImageStyle,
+          ImageResize,
+          ImageInsert,
+          MediaEmbed,
+          Base64UploadAdapter,
+        ],
+        toolbar: [
+          'heading',
+          '|',
+          'bold',
+          'italic',
+          'link',
+          'bulletedList',
+          'numberedList',
+          '|',
+          'outdent',
+          'indent',
+          '|',
+          'insertImage',
+          'undo',
+          'redo',
+          'insertTable',
+          'mediaEmbed',
+        ],
+      }
+    }
+
     CustomEditor.value = ClassicEditor
-    loading.value = false
+
     internalValue.value = props.modelValue
+    loading.value = false
 
     return Ckeditor
   },

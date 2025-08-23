@@ -53,6 +53,7 @@
                 <div class="w-100 overflow-hidden relative">
                   <rich-editor-content
                     v-model="blog.content"
+                    :enable-extra-plugins="true"
                     :rules="contentRules"
                     required
                   />
