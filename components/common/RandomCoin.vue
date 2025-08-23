@@ -37,7 +37,7 @@
 
 <script setup>
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
-import successSound from '@/assets/sounds/success.mp3'
+import successSound from '/assets/sounds/success.mp3'
 
 const route = useRoute()
 
