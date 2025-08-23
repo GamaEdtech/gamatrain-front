@@ -5,7 +5,6 @@ import { defineNuxtConfig } from 'nuxt/config'
 import glsl from 'vite-plugin-glsl'
 
 export default defineNuxtConfig({
-
   runtimeConfig: {
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
@@ -101,10 +100,7 @@ export default defineNuxtConfig({
   },
 
   // Global CSS
-  css: [
-    '@/assets/scss/app.scss',
-    '@/assets/css/gama6/styles.css',
-  ],
+  css: ['@/assets/scss/app.scss', '@/assets/css/gama6/styles.css'],
 
   experimental: {
     payloadExtraction: false,
@@ -163,12 +159,7 @@ export default defineNuxtConfig({
       },
       lang: 'en',
       orientation: 'any',
-      categories: [
-        'books',
-        'education',
-        'games',
-        'productivity',
-      ],
+      categories: ['books', 'education', 'games', 'productivity'],
       dir: 'ltr',
       prefer_related_applications: false,
       // related_applications: [
@@ -227,9 +218,6 @@ export default defineNuxtConfig({
     },
     '/api/v2/**': {
       proxy: process.env.NUXT_PROXY_API2_BASE_URL,
-    },
-    '/uploads/**': {
-      proxy: process.env.NUXT_PROXY_UPLOAD_URL,
     },
   },
 

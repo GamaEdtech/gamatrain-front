@@ -30,118 +30,81 @@
 
         <v-spacer v-if="!isMobile" />
 
-        <!-- Mobile Layout -->
-        <template v-if="isMobile">
-          <!-- Page Navigation - Mobile -->
+        <div class="ml-auto">
           <div
             v-if="numPages > 0"
             class="mobile-nav-group"
           >
-            <v-btn
-              icon
-              size="small"
-              :disabled="currentPage <= 1 || navigating"
-              @click="goToPreviousPage"
-            >
-              <v-icon size="20">
-                mdi-chevron-up
-              </v-icon>
-            </v-btn>
-
-            <div class="mobile-page-info">
-              <input
-                v-model.number="pageInput"
-                class="mobile-page-input"
-                density="compact"
-                variant="outlined"
-                hide-details
-                single-line
-                @keyup.enter="goToPageInput"
-                @blur="resetPageInput"
+            <div class="mobile-nav-group">
+              <v-btn
+                icon
+                size="small"
+                :disabled="currentPage <= 1 || navigating"
+                @click="goToPreviousPage"
               >
-              <span class="mobile-page-total">/ {{ numPages }}</span>
+                <v-icon size="20">
+                  mdi-chevron-up
+                </v-icon>
+              </v-btn>
+
+              <div class="mobile-page-info">
+                <input
+                  v-model.number="pageInput"
+                  class="mobile-page-input"
+                  density="compact"
+                  variant="outlined"
+                  hide-details
+                  single-line
+                  @keyup.enter="goToPageInput"
+                  @blur="resetPageInput"
+                >
+                <span class="mobile-page-total">/ {{ numPages }}</span>
+              </div>
+
+              <v-btn
+                icon
+                size="small"
+                :disabled="currentPage >= numPages || navigating"
+                @click="goToNextPage"
+              >
+                <v-icon size="20">
+                  mdi-chevron-down
+                </v-icon>
+              </v-btn>
             </div>
 
-            <v-btn
-              icon
-              size="small"
-              :disabled="currentPage >= numPages || navigating"
-              @click="goToNextPage"
-            >
-              <v-icon size="20">
-                mdi-chevron-down
-              </v-icon>
-            </v-btn>
+            <!-- Zoom Controls - Mobile -->
+            <div>
+              <v-btn
+                icon
+                :disabled="!numPages"
+                @click="zoomOut"
+              >
+                <v-icon size="20">
+                  mdi-magnify-minus-outline
+                </v-icon>
+              </v-btn>
+
+              <v-chip
+                v-if="numPages"
+                small
+                outlined
+              >
+                {{ Math.round(zoom * 100) }}%
+              </v-chip>
+
+              <v-btn
+                icon
+                :disabled="!numPages"
+                @click="zoomIn"
+              >
+                <v-icon size="20">
+                  mdi-magnify-plus-outline
+                </v-icon>
+              </v-btn>
+            </div>
           </div>
-        </template>
-
-        <!-- Desktop Layout -->
-        <template v-else>
-          <!-- Page Navigation - Desktop -->
-          <template v-if="numPages > 0">
-            <v-btn
-              icon
-              :disabled="currentPage <= 1 || navigating"
-              @click="goToPreviousPage"
-            >
-              <v-icon>mdi-chevron-up</v-icon>
-            </v-btn>
-
-            <v-text-field
-              v-model.number="pageInput"
-              class="mx-2 page-input"
-              style="max-width: 80px"
-              density="compact"
-              variant="outlined"
-              hide-details
-              @keyup.enter="goToPageInput"
-              @blur="resetPageInput"
-            />
-
-            <span class="text-body-2 mx-2">/ {{ numPages }}</span>
-
-            <v-btn
-              icon
-              :disabled="currentPage >= numPages || navigating"
-              @click="goToNextPage"
-            >
-              <v-icon>mdi-chevron-down</v-icon>
-            </v-btn>
-          </template>
-
-          <!-- Zoom / Rotate - Desktop -->
-          <v-btn
-            icon
-            :disabled="!numPages"
-            @click="zoomOut"
-          >
-            <v-icon>mdi-magnify-minus-outline</v-icon>
-          </v-btn>
-
-          <v-chip
-            v-if="numPages"
-            class="mx-2"
-            small
-            outlined
-          >
-            {{ Math.round(zoom * 100) }}%
-          </v-chip>
-
-          <v-btn
-            icon
-            :disabled="!numPages"
-            @click="zoomIn"
-          >
-            <v-icon>mdi-magnify-plus-outline</v-icon>
-          </v-btn>
-          <v-btn
-            icon
-            :disabled="!numPages"
-            @click="rotate"
-          >
-            <v-icon>mdi-rotate-right</v-icon>
-          </v-btn>
-        </template>
+        </div>
       </v-toolbar>
       <v-card-text class="pa-0">
         <!-- Loading -->
@@ -505,7 +468,14 @@ async function loadPdf(url: string) {
   try {
     loading.value = true
     error.value = ''
-    pdfSrc.value = url
+
+    const response = await fetch(
+      `/api/pdf-proxy?url=${encodeURIComponent(url)}`,
+    )
+    if (!response.ok) throw new Error('Failed to fetch PDF')
+
+    const arrayBuffer = await response.arrayBuffer()
+    pdfSrc.value = new Uint8Array(arrayBuffer)
 
     const task = createLoadingTask(pdfSrc.value)
     const pdf: PDFDocumentProxy = await task.promise
@@ -514,8 +484,8 @@ async function loadPdf(url: string) {
     currentPage.value = 1
     pageInput.value = 1
   }
-  catch (_e) {
-    console.error('PDF loading error:', _e)
+  catch (err) {
+    console.error('PDF loading error:', err)
     error.value = 'Failed to load PDF.'
   }
   finally {
@@ -654,10 +624,6 @@ function zoomOut() {
   zoom.value = Math.max(zoom.value - 0.25, 0.25)
 }
 
-function rotate() {
-  rotation.value = (rotation.value + 90) % 360
-}
-
 function closeDialog() {
   dialog.value = false
 }
@@ -736,69 +702,66 @@ onBeforeUnmount(() => {
   min-width: 200px;
 }
 
-/* Mobile specific styles */
-@media (max-width: 960px) {
-  .pdf-scroll {
-    height: calc(100vh - 56px);
-  }
+.pdf-scroll {
+  height: calc(100vh - 56px);
+}
 
-  .toolbar-title {
-    font-size: 1rem;
-  }
+.toolbar-title {
+  font-size: 1rem;
+}
 
-  .mobile-title {
-    max-width: 120px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+.mobile-title {
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
-  .mobile-nav-group {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-left: auto;
-    margin-right: 8px;
-  }
+.mobile-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  margin-right: 8px;
+}
 
-  .mobile-page-info {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    font-size: 0.75rem;
-  }
+.mobile-page-info {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 0.75rem;
+}
 
-  .mobile-page-input {
-    width: 45px !important;
-    max-width: 45px !important;
-  }
+.mobile-page-input {
+  width: 15px !important;
+  max-width: 15px !important;
+}
 
-  .mobile-page-input :deep(.v-field) {
-    font-size: 0.75rem !important;
-    min-height: 32px !important;
-  }
+.mobile-page-input :deep(.v-field) {
+  font-size: 0.75rem !important;
+  min-height: 32px !important;
+}
 
-  .mobile-page-input :deep(.v-field__input) {
-    padding: 4px 6px !important;
-    min-height: 24px !important;
-    text-align: center;
-  }
+.mobile-page-input :deep(.v-field__input) {
+  padding: 4px 6px !important;
+  min-height: 24px !important;
+  text-align: center;
+}
 
-  .mobile-page-total {
-    font-size: 0.75rem;
-    white-space: nowrap;
-    color: rgba(255, 255, 255, 0.87);
-  }
+.mobile-page-total {
+  font-size: 0.75rem;
+  white-space: nowrap;
+  color: rgba(255, 255, 255, 0.87);
+}
 
-  .mobile-control-group {
-    margin-bottom: 24px;
-  }
+.mobile-control-group {
+  margin-bottom: 24px;
+}
 
-  .mobile-control-group h4 {
-    text-align: center;
-    color: rgba(0, 0, 0, 0.87);
-    font-weight: 500;
-  }
+.mobile-control-group h4 {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 500;
 }
 
 /* Extra small screens */
