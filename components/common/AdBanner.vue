@@ -10,7 +10,7 @@
       :data-full-width-responsive="responsive.toString()"
     />
     <client-only>
-      <lazy-common-random-coin />
+      <lazy-common-random-coin v-once />
     </client-only>
   </div>
 </template>
