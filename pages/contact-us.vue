@@ -133,7 +133,6 @@
             :initial-zoom="zoom"
             :border-radius="20"
             :zoom-enabled="false"
-            icon-url="/images/foundation--marker.svg"
           />
         </v-col>
       </v-row>
