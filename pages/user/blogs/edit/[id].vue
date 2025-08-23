@@ -5,7 +5,7 @@
       @submit.prevent="validate"
     >
       <div class="d-flex flex-wrap flex-mobile">
-        <v-row>
+        <v-row class="w-100">
           <v-col
             cols="12"
             md="7"
@@ -51,13 +51,12 @@
               <div class="editor-container">
                 <label class="mb-2 d-block form-label-title">Main</label>
                 <div class="w-100 overflow-hidden relative">
-                  <ClientOnly>
-                    <rich-editor-content
-                      v-model="blog.content"
-                      :rules="contentRules"
-                      required
-                    />
-                  </ClientOnly>
+                  <rich-editor-content
+                    v-model="blog.content"
+                    :enable-extra-plugins="true"
+                    :rules="contentRules"
+                    required
+                  />
                 </div>
               </div>
 
@@ -471,7 +470,9 @@ const fetchBlogData = async () => {
     if (response && response.succeeded) {
       const blogData = response.data
       // Determine if this is a scheduled post by checking if publishDate is in the future
-      const publishDate = blogData.publishDate ? new Date(blogData.publishDate) : null
+      const publishDate = blogData.publishDate
+        ? new Date(blogData.publishDate)
+        : null
       const isScheduled = publishDate && publishDate > new Date()
 
       blog.value = {
@@ -505,7 +506,9 @@ const fetchBlogData = async () => {
       })
     }
     else {
-      $toast.error(response?.errors?.[0]?.message || 'Failed to fetch blog data')
+      $toast.error(
+        response?.errors?.[0]?.message || 'Failed to fetch blog data',
+      )
       router.push('/user/blogs')
     }
   }
@@ -579,9 +582,7 @@ const onSubmit = async () => {
     }
     Object.values(blog.value.categories).forEach((categoryId) => {
       if (!categoryId) return
-      formData.append('Tags[]',
-        categoryId,
-      )
+      formData.append('Tags[]', categoryId)
     })
     // Add keywords
     if (keywords.value.length >= 1) {
@@ -690,7 +691,9 @@ const fetchCategories = async () => {
       categoryList.value = response.data
     }
     else {
-      $toast.error(response?.errors?.[0]?.message || 'Failed to load categories')
+      $toast.error(
+        response?.errors?.[0]?.message || 'Failed to load categories',
+      )
     }
   }
   catch (error) {

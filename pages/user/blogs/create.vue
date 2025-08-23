@@ -5,7 +5,7 @@
       @submit.prevent="validate"
     >
       <div class="d-flex flex-wrap flex-mobile">
-        <v-row>
+        <v-row class="w-100">
           <v-col
             cols="12"
             md="7"
@@ -50,14 +50,13 @@
               <!-- Rich text editor -->
               <div class="editor-container">
                 <label class="mb-2 d-block form-label-title">Main</label>
-                <div class="w-100 overflow-hidden relative">
-                  <ClientOnly>
-                    <rich-editor-content
-                      v-model="blog.content"
-                      :rules="contentRules"
-                      required
-                    />
-                  </ClientOnly>
+                <div class="w-100 relative">
+                  <rich-editor-content
+                    v-model="blog.content"
+                    :enable-extra-plugins="true"
+                    :rules="contentRules"
+                    required
+                  />
                 </div>
               </div>
 
