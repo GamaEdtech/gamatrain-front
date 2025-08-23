@@ -51,31 +51,27 @@ const editorConfig = ref({
 
 const LazyCkeditor = defineAsyncComponent({
   loader: async () => {
-    const {
-      ClassicEditor,
-      Essentials,
-      Paragraph,
-      Heading,
-      Link,
-      List,
-      Indent,
-      Table,
-      TableToolbar,
-      Image,
-      ImageStyle,
-      ImageResize,
-      ImageInsert,
-      MediaEmbed,
-      Bold,
-      Italic,
-      Base64UploadAdapter,
-    } = await import('ckeditor5')
+    const { ClassicEditor, Essentials, Paragraph, Bold, Italic } = await import(
+      'ckeditor5'
+    )
 
     const { Ckeditor } = await import('@ckeditor/ckeditor5-vue')
     await import('ckeditor5/ckeditor5.css')
 
     if (props.enableExtraPlugins) {
       const {
+        Heading,
+        Link,
+        List,
+        Indent,
+        Table,
+        TableToolbar,
+        Image,
+        ImageStyle,
+        ImageResize,
+        ImageInsert,
+        MediaEmbed,
+        Base64UploadAdapter,
         Code,
         Strikethrough,
         Subscript,
@@ -148,42 +144,8 @@ const LazyCkeditor = defineAsyncComponent({
     else {
       editorConfig.value = {
         licenseKey: 'GPL',
-        plugins: [
-          Essentials,
-          Paragraph,
-          Heading,
-          Bold,
-          Italic,
-          Link,
-          List,
-          Indent,
-          Table,
-          TableToolbar,
-          Image,
-          ImageStyle,
-          ImageResize,
-          ImageInsert,
-          MediaEmbed,
-          Base64UploadAdapter,
-        ],
-        toolbar: [
-          'heading',
-          '|',
-          'bold',
-          'italic',
-          'link',
-          'bulletedList',
-          'numberedList',
-          '|',
-          'outdent',
-          'indent',
-          '|',
-          'insertImage',
-          'undo',
-          'redo',
-          'insertTable',
-          'mediaEmbed',
-        ],
+        plugins: [Essentials, Paragraph, Bold, Italic],
+        toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
       }
     }
 
