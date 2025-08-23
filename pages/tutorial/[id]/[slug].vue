@@ -41,18 +41,26 @@
           >
             <div class="d-flex flex-column details-content">
               <div class="last-update mb-3">
-                <i class="fa-solid fa-calendar-days mr-2" />Last update:
+                <v-icon class="mr-2">
+                  md:calendar_month
+                </v-icon>
+                Last update:
                 {{ tutorialInfo.up_date.split(" ")[0] }}
               </div>
               <div class="visit mb-3">
-                <i class="fa-solid fa-eye mr-2" />Viewed:
+                <v-icon class="mr-2">
+                  md:visibility
+                </v-icon>Viewed:
                 {{ tutorialInfo.views }}
               </div>
               <div
                 class="error-report pointer"
                 @click="openCrashReportDialog"
               >
-                <i class="fa-solid fa-circle-exclamation mr-2" />Crash report
+                <v-icon class="mr-2">
+                  md:bug_report
+                </v-icon>
+                Crash report
               </div>
             </div>
           </v-col>
@@ -97,14 +105,19 @@
                 cols="5"
                 class="last-update"
               >
-                <i class="fa-solid fa-calendar-days mr-2" />
+                <v-icon class="mr-2">
+                  md:calendar_month
+                </v-icon>
                 {{ tutorialInfo.up_date.split(" ")[0] }}
               </v-col>
               <v-col
                 cols="3"
                 class="visit"
               >
-                <i class="fa-solid fa-eye mr-2" />{{ tutorialInfo.views }}
+                <v-icon class="mr-2">
+                  md:visibility
+                </v-icon>
+                {{ tutorialInfo.views }}
               </v-col>
               <v-col
                 cols="4"
@@ -114,7 +127,10 @@
                   class="error-report pointer"
                   @click="openCrashReportDialog"
                 >
-                  <i class="fa-solid fa-circle-exclamation mr-2" />Crash report
+                  <v-icon class="mr-2">
+                    md:bug_report
+                  </v-icon>
+                  Crash report
                 </div>
               </v-col>
             </v-row>

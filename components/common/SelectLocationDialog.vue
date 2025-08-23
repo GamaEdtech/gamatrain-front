@@ -25,28 +25,15 @@
       </v-card-text>
 
       <div class="locationPickerMapContainer">
-        <client-only>
-          <l-map
-            id="mapSection"
-            ref="editSchoolMap"
-            :zoom="map.zoom"
-            :center="map.center"
-            :use-global-leaflet="false"
-            @move="updateMarkerPosition"
-          >
-            <l-tile-layer :url="map.url" />
-            <l-marker
-              ref="editMapMarker"
-              :lat-lng="map.center"
-            >
-              <LIcon
-                icon-url="/images/school-marker.png"
-                :icon-size="[64, 64]"
-                :icon-anchor="[16, 32]"
-              />
-            </l-marker>
-          </l-map>
-        </client-only>
+        <Map
+          ref="mapRef"
+          :initial-center="map.center"
+          :highlight-location="map.center"
+          :show-highlight-location="true"
+          :initial-zoom="map.zoom"
+          :use-for-select-location="true"
+          @location-selected-update="updateMarkerPosition"
+        />
         <locationSearch
           rounded
           label="Search anything"
@@ -256,7 +243,8 @@
 
 <script setup>
 import locationSearch from '@/components/form/LocationSearch.vue'
-import { ref, computed, watch, onMounted } from 'vue'
+import Map from '@/components/common/Map.client.vue'
+import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
   modelValue: {
@@ -283,25 +271,14 @@ const dialogVisible = computed({
   set: value => emit('update:modelValue', value),
 })
 
-const editSchoolMap = ref(null)
-const editMapMarker = ref(null)
 const newCenterData = ref(null)
+const mapRef = ref(null)
 
-function updateMarkerPosition() {
-  const mapInstance = editSchoolMap.value?.leafletObject
-  const markerInstance = editMapMarker.value?.leafletObject
-  if (!mapInstance || !markerInstance) return
-  const newCenter = mapInstance.getCenter()
-  markerInstance.setLatLng(newCenter)
+function updateMarkerPosition(newCenter) {
   newCenterData.value = newCenter
 }
 function goToSearchLocation(val) {
-  const mapInstance = editSchoolMap.value?.leafletObject
-  if (!mapInstance) return
-  mapInstance.setView([val[0], val[1]], 12)
-  setTimeout(() => {
-    window.dispatchEvent(new Event('resize'))
-  }, 100)
+  mapRef.value.setView(val[0], val[1], 12)
 }
 
 // Location data
@@ -422,6 +399,7 @@ function emitUpdate() {
     cityTitle:
       cities.value.find(c => c.id === selectedCity.value)?.title || '',
   }
+
   emit('update', locationData)
 }
 
@@ -465,18 +443,12 @@ const showLocationDialog = ref(false)
 function handleLocationSubmit() {
   showLocationDialog.value = false
 }
-
-onMounted(() => {})
 </script>
 
 <style>
 .locationPickerMapContainer {
   position: relative;
   overflow-x: hidden;
-
-  #mapSection {
-    width: 100%;
-    height: 80vh !important;
-  }
+  height: 100%;
 }
 </style>

@@ -1,26 +1,38 @@
 <template>
   <v-dialog
     v-model="dialogVisible"
-    transition="dialog-bottom-transition"
     max-width="600"
   >
     <v-card id="img-cropper-dialog">
-      <cropper
-        :src="file_url"
-        :stencil-props="stencil_props"
-        image-restriction="stencil"
-        @change="cropFile"
-      />
+      <ClientOnly>
+        <v-skeleton-loader
+          v-if="loading"
+          class="w-100"
+          height="320"
+        />
+
+        <LazyCropper
+          v-show="dialogVisible"
+          :src="fileUrl"
+          :stencil-props="stencilProps"
+          image-restriction="stencil"
+          :aspect-ratio="aspectRatio"
+          @change="cropFile"
+          @ready="imageLoad"
+        />
+      </ClientOnly>
       <v-card-actions
         style="position: sticky; bottom: 0; left: 0; right: 0"
-        class="pa-0"
+        class="pa-0 d-flex align-center justify-center"
       >
         <v-btn
-          class="primary black--text text-transform-none gtext-t4 font-weight-medium"
-          size="x-large"
-          :loading="confirm_loading"
-          block
+          color="primary text-h5 font-weight-bold"
+          width="150"
+          rounded="xl"
+          size="large"
+          :loading="cropFileLoading || uploadLoading"
           variant="flat"
+          density="compact"
           @click="emitFile()"
         >
           Confirm
@@ -32,46 +44,74 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import 'vue-advanced-cropper/dist/style.css'
 
 const props = defineProps({
   modelValue: {
     type: Boolean,
     default: false,
   },
-  file_url: {
+  fileUrl: {
     type: String,
     default: '',
   },
-  stencil_props: {
+  stencilProps: {
     type: Object,
     default: () => ({ width: 400, height: 150, resizable: false }),
   },
-  confirm_loading: {
+  uploadLoading: {
     type: Boolean,
     default: false,
   },
+  aspectRatio: {
+    type: Number,
+    default: null,
+  },
 })
 const emit = defineEmits(['update:modelValue', 'croppedData'])
+
+const LazyCropper = defineAsyncComponent({
+  loader: async () => {
+    await import('vue-advanced-cropper/dist/style.css')
+    const m = await import('vue-advanced-cropper')
+    return m.Cropper
+  },
+  suspensible: false,
+})
 
 const dialogVisible = computed({
   get: () => props.modelValue,
   set: value => emit('update:modelValue', value),
 })
 
-const crop_file_loading = ref(false)
-const cropped_data = ref(null)
+const cropFileLoading = ref(false)
+const loading = ref(true)
 
-function cropFile({ canvas }) {
+const imageLoad = () => {
+  loading.value = false
+}
+
+watch(
+  () => props.fileUrl,
+  () => {
+    if (props.fileUrl) {
+      loading.value = true
+    }
+  },
+)
+const croppedCanvas = ref(null)
+const cropFile = ({ canvas }) => {
   if (!canvas) return
-  crop_file_loading.value = true
-  canvas.toBlob((blob) => {
-    cropped_data.value = blob
-    crop_file_loading.value = false
+  croppedCanvas.value = canvas
+}
+
+const emitFile = () => {
+  if (!croppedCanvas.value) return
+  cropFileLoading.value = true
+  croppedCanvas.value.toBlob((blob) => {
+    emit('croppedData', blob, croppedCanvas.value)
+    cropFileLoading.value = false
   }, 'image/webp')
 }
-
-function emitFile() {
-  emit('croppedData', cropped_data.value)
-}
 </script>
+
+<style scoped></style>

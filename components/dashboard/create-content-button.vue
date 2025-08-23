@@ -57,7 +57,13 @@
                 block
                 :to="`${item.link}`"
               >
-                <i class="fa-solid fa-plus-circle px-1 icon fa-xl" /> New
+                <v-icon
+                  class="px-1 icon"
+                  size="x-large"
+                >
+                  md:add_circle
+                </v-icon>
+                New
               </v-btn>
             </v-col>
           </v-row>

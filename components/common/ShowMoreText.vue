@@ -15,13 +15,22 @@
       class="button-container"
     >
       <v-btn
-        variant="flat"
+        variant="text"
         color="blue-grey-lighten-3"
         size="small"
         class="show-more-btn"
         @click="toggleCollapsed"
       >
-        {{ isCollapsed ? 'More' : 'Less' }}
+        <div class="button-content">
+          <span class="button-text">{{
+            isCollapsed ? "See More" : "See Less"
+          }}</span>
+          <v-icon
+            class="button-icon"
+            size="x-large"
+            :icon="isCollapsed ? 'mdi-chevron-down' : 'mdi-chevron-up'"
+          />
+        </div>
       </v-btn>
     </div>
   </div>
@@ -110,7 +119,7 @@ const formattedContent = computed(() => {
 }
 
 .text-collapsed::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: 0;
   left: 0;
@@ -134,5 +143,21 @@ const formattedContent = computed(() => {
 
 .show-more-btn {
   display: inline-block;
+}
+
+.button-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.button-text {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.button-icon {
+  font-size: 20px;
 }
 </style>

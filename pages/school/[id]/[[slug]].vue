@@ -6,13 +6,11 @@
     >
       <v-row class="d-flex d-md-none">
         <div class="top-slide-container">
-          <client-only>
-            <school-detail-school-map
-              :content="contentData"
-              :class="topSlideClass.map"
-              @location-updated="handleLocationUpdate"
-            />
-          </client-only>
+          <school-detail-school-map
+            :content="contentData"
+            :class="topSlideClass.map"
+            @location-updated="handleLocationUpdate"
+          />
           <school-detail-school-tour
             :class="topSlideClass.tour"
             :content="contentData"
@@ -42,12 +40,10 @@
           cols="12"
           md="4"
         >
-          <client-only>
-            <school-detail-school-map
-              :content="contentData"
-              @location-updated="handleLocationUpdate"
-            />
-          </client-only>
+          <school-detail-school-map
+            :content="contentData"
+            @location-updated="handleLocationUpdate"
+          />
         </v-col>
         <v-col
           cols="12"
@@ -214,7 +210,15 @@
           </v-row>
 
           <!-- End general data section -->
-
+          <v-row class="mt-10">
+            <v-col cols="12">
+              <school-detail-school-description
+                :content="contentData"
+                @edit="handleDescriptionEdit"
+                @update="handleDescriptionUpdate"
+              />
+            </v-col>
+          </v-row>
           <v-row
             justify="center"
             class="mt-10"
@@ -230,6 +234,7 @@
               />
             </v-col>
           </v-row>
+
           <school-detail-users-score
             :rating-data="ratingData"
             @leave-comment="showLeaveCommentDialog = true"
@@ -295,6 +300,73 @@ const isAdsLoad = ref(false)
 
 const requestURL = ref(useRequestURL().host)
 const { $slugGenerator } = useNuxtApp()
+
+// --- Description meta generation ---
+function generateDefaultDescription(data) {
+  try {
+    const name = data?.name || ''
+    const city = data?.cityTitle || ''
+    const state = data?.stateTitle || ''
+    const country = data?.countryTitle || ''
+    const location = [city, state, country].filter(Boolean).join(', ')
+
+    const facilities = Array.isArray(data?.tags)
+      ? data.tags
+          .map(t => (typeof t === 'string' ? t : t?.title || t?.name))
+          .filter(t => typeof t === 'string' && t.trim().length > 0)
+          .join(', ')
+      : ''
+
+    const phone = data?.phoneNumber || ''
+    const site = data?.webSite || ''
+
+    const parts = []
+    if (name) {
+      parts.push(`Discover ${name}${location ? ` in ${location}` : ''}`)
+    }
+    else if (location) {
+      parts.push(`Discover schools in ${location}`)
+    }
+    else {
+      parts.push('Discover this school')
+    }
+    if (facilities) parts.push(` — offering ${facilities} for students`)
+
+    const contactBits = []
+    if (phone) contactBits.push(`Call ${phone}`)
+    if (site) contactBits.push(`visit ${site}`)
+    if (contactBits.length > 0) parts.push(`. ${contactBits.join(' or ')}`)
+
+    let sentence = parts.join('')
+    if (!sentence.endsWith('.')) sentence = `${sentence}.`
+    return sentence
+  }
+  catch {
+    return 'Discover this school.'
+  }
+}
+
+const editingDescription = ref('')
+const defaultDescription = computed(() =>
+  contentData.value ? generateDefaultDescription(contentData.value) : '',
+)
+const metaDescription = computed(() => {
+  const live = editingDescription.value?.trim()
+  if (live) return live
+  const saved = contentData.value?.description
+  if (typeof saved === 'string' && saved.trim().length > 0) return saved.trim()
+  return defaultDescription.value
+})
+
+function handleDescriptionEdit(val) {
+  editingDescription.value = typeof val === 'string' ? val : ''
+}
+
+function handleDescriptionUpdate(val) {
+  const value = typeof val === 'string' ? val : ''
+  if (contentData.value) contentData.value.description = value
+  editingDescription.value = ''
+}
 
 const fetchSchoolData = async () => {
   try {
@@ -372,17 +444,19 @@ useHead(() => ({
 }))
 
 useSeoMeta({
-  title: `${contentData.value?.name} | GamaTrain Schools`,
-  description: `Discover ${contentData.value?.name} in ${contentData.value?.cityTitle}, ${contentData.value?.countryTitle}. Explore ratings, facilities, and more on GamaTrain.`,
-  ogTitle: `${contentData.value?.name} | GamaTrain Schools`,
-  ogDescription: `Learn more about ${contentData.value?.name} located in ${contentData.value?.cityTitle}, ${contentData.value?.countryTitle}. See ratings, facilities, and more.`,
-  ogImage: contentData.value?.defaultImageUri || '/images/gamatrain-logo.png',
-  ogUrl: `${requestURL.value}/school/${contentData.value?.id}/${$slugGenerator(
-    contentData?.value?.name,
-  )}`,
-  twitterTitle: `${contentData.value?.name} | GamaTrain Schools`,
-  twitterDescription: `Discover ${contentData.value?.name} in ${contentData.value?.cityTitle}, ${contentData.value?.countryTitle} on GamaTrain.`,
-  twitterImage:
+  title: () => `${contentData.value?.name} | GamaTrain Schools`,
+  description: () => metaDescription.value,
+  ogTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
+  ogDescription: () => metaDescription.value,
+  ogImage: () =>
+    contentData.value?.defaultImageUri || '/images/gamatrain-logo.png',
+  ogUrl: () =>
+    `${requestURL.value}/school/${contentData.value?.id}/${$slugGenerator(
+      contentData?.value?.name,
+    )}`,
+  twitterTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
+  twitterDescription: () => metaDescription.value,
+  twitterImage: () =>
     contentData.value?.defaultImageUri || '/images/gamatrain-logo.png',
   twitterCard: 'summary_large_image',
 })
@@ -448,6 +522,8 @@ function handleLocationUpdate(locationData) {
   if (contentData.value) {
     contentData.value = {
       ...contentData.value,
+      latitude: locationData.latitude,
+      longitude: locationData.longitude,
       countryId: locationData.countryId,
       stateId: locationData.stateId,
       cityId: locationData.cityId,
@@ -475,10 +551,7 @@ function handleQueryParameters(data) {
   router.push({ path: '/school', query: _query })
 }
 
-const {
-  data: commentsData,
-  refresh: refreshComments,
-} = await useAsyncData(
+const { data: commentsData, refresh: refreshComments } = await useAsyncData(
   `comments-${route.params.id}`,
   () =>
     useApiService.get(`/api/v2/schools/${route.params.id}/comments`, {

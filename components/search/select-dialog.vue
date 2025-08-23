@@ -17,8 +17,14 @@
           cols="6"
           class="d-flex align-center justify-end ga-2"
         >
-          <span class="text-h5 text-grey">result</span>
-          <span class="text-h4 text-green font-weight-bold">{{
+          <span
+            v-if="hasSearch"
+            class="text-h5 text-grey"
+          >result</span>
+          <span
+            v-if="hasSearch"
+            class="text-h4 text-green font-weight-bold"
+          >{{
             filteredItems.length
           }}</span>
           <v-icon
@@ -31,7 +37,10 @@
           </v-icon>
         </v-col>
       </v-row>
-      <v-row class="pl-2 pr-2 mt-6">
+      <v-row
+        v-if="hasSearch"
+        class="pl-2 pr-2 mt-6"
+      >
         <v-text-field
           v-model="searchText"
           :label="`Search ${titleModal}`"
@@ -56,7 +65,10 @@
           </template>
         </v-text-field>
       </v-row>
-      <v-list max-height="320">
+      <v-list
+        v-if="!isLoading"
+        max-height="320"
+      >
         <v-list-item
           v-for="item in filteredItems"
           :key="item.title"
@@ -65,6 +77,19 @@
           color="#FFB600"
           @click="changeSelectedItem(item)"
         >
+          <template #prepend>
+            <v-avatar
+              v-if="item.img"
+              size="34"
+            >
+              <v-img :src="item.img" />
+            </v-avatar>
+            <span
+              v-if="item.icon"
+              :class="`${item.icon} size-icon`"
+              :style="{ color: item.color }"
+            />
+          </template>
           <v-list-item-title class="text-h5">
             <HighlightedText
               :text="item.title"
@@ -74,8 +99,19 @@
         </v-list-item>
       </v-list>
 
+      <div
+        v-if="isLoading"
+        class="text-center pt-8"
+      >
+        <v-progress-circular
+          indeterminate
+          :width="3"
+          color="primary"
+        />
+      </div>
+
       <v-alert
-        v-if="searchText && filteredItems.length === 0"
+        v-if="searchText && filteredItems.length === 0 && !isLoading"
         type="info"
         color="#FFB600"
         density="compact"
@@ -86,7 +122,9 @@
         search term.
       </v-alert>
       <v-alert
-        v-if="searchText.length == 0 && filteredItems.length === 0"
+        v-if="
+          searchText.length == 0 && filteredItems.length === 0 && !isLoading
+        "
         type="info"
         color="#FFB600"
         density="compact"
@@ -164,6 +202,14 @@ const props = defineProps({
   selectedItem: {
     type: Object,
   },
+  isLoading: {
+    type: Boolean,
+    default: false,
+  },
+  hasSearch: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const emit = defineEmits(['update:showDialog', 'changeSelectedItem'])
@@ -210,6 +256,10 @@ const clickOnModal = (event) => {
 </script>
 
 <style scoped>
+.size-icon {
+  font-size: 24px;
+  margin-right: 12px;
+}
 @media only screen and (max-width: 960px) {
   .mobile-style {
     position: absolute;

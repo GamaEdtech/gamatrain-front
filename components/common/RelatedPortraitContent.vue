@@ -21,7 +21,9 @@
           icon
           size="sm"
         >
-          <v-icon>mdi-chevron-left</v-icon>
+          <v-icon color="#000000">
+            mdi-chevron-left
+          </v-icon>
         </v-btn>
       </template>
 
@@ -30,7 +32,9 @@
           icon
           size="sm"
         >
-          <v-icon>mdi-chevron-right</v-icon>
+          <v-icon color="#000000">
+            mdi-chevron-right
+          </v-icon>
         </v-btn>
       </template>
 
@@ -93,7 +97,6 @@ const getRelatedContent = async () => {
 }
 
 onMounted(() => {
-  console.log(relatedId)
   getRelatedContent()
 })
 

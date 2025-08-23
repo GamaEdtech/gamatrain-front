@@ -91,7 +91,12 @@
                     block
                     @click="path_panel_expand = !path_panel_expand"
                   >
-                    <i class="fas fa-route mx-3 fa-2xl" />
+                    <v-icon
+                      class="mx-3"
+                      size="x-large"
+                    >
+                      md:route
+                    </v-icon>
                   </v-btn>
                 </template>
                 <span> Change path </span>
@@ -843,51 +848,14 @@
     </v-card>
 
     <!-- Cropper Dialog -->
-    <v-dialog
+    <common-cropper-dialog
       v-model="cropper_dialog"
-      max-width="600"
-      transition="dialog-bottom-transition"
-    >
-      <v-card id="img-cropper-dialog">
-        <v-card-text class="pa-0">
-          <v-col
-            v-if="crop_file_loading"
-            cols="12"
-            class="text-center"
-          >
-            <v-progress-circular
-              :size="40"
-              :width="4"
-              class="mt-12 mb-12"
-              color="orange"
-              indeterminate
-            />
-          </v-col>
-          <div v-else>
-            <Cropper
-              :src="crop_file_url"
-              :aspect-ratio="1"
-              @change="cropFile"
-            />
-          </div>
-        </v-card-text>
-        <v-card-actions
-          style="position: sticky; bottom: 0; left: 0; right: 0"
-          class="pa-0"
-        >
-          <v-btn
-            color="teal"
-            variant="flat"
-            size="x-large"
-            :loading="crop_confirm_loading"
-            block
-            @click="submitCrop"
-          >
-            Confirm
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      :file-url="crop_file_url"
+      :aspect-ratio="1"
+      :stencil-props="stencilProps"
+      :upload-loading="crop_confirm_loading"
+      @cropped-data="submitCrop"
+    />
     <!-- End cropper Dialog -->
   </div>
 </template>
@@ -899,8 +867,6 @@ import { Form as VeeForm, Field, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useState } from '#app'
 import { useAuth } from '~/composables/useAuth'
-import { Cropper } from 'vue-advanced-cropper'
-import 'vue-advanced-cropper/dist/style.css' // Import cropper styles
 
 const auth = useAuth()
 
@@ -996,11 +962,10 @@ const file_original_path = ref('')
  * Cropper related state
  */
 const crop_file_url = ref('')
-const crop_file_loading = ref(false)
 const crop_confirm_loading = ref(false)
 const cropper_dialog = ref(false)
 const current_crop_file = ref('')
-
+const stencilProps = { width: 180, height: 180, resizable: true }
 /**
  * Form data and hidden fields
  */
@@ -1610,35 +1575,6 @@ const uploadFile = (file_name, fileEvent) => {
 }
 
 /**
- * Handle image cropping
- * @param {Object} param0 - Cropper data
- */
-const cropFile = ({ coordinates: _coordinates, canvas }) => {
-  // Store the cropped image data as base64
-  const croppedBase64 = canvas.toDataURL()
-
-  // Update the corresponding form field
-  if (current_crop_file.value === 'q_file') {
-    form.q_file_base64 = croppedBase64
-  }
-  else if (current_crop_file.value === 'answer_full_file') {
-    form.answer_full_file_base64 = croppedBase64
-  }
-  else if (current_crop_file.value === 'a_file') {
-    form.a_file_base64 = croppedBase64
-  }
-  else if (current_crop_file.value === 'b_file') {
-    form.b_file_base64 = croppedBase64
-  }
-  else if (current_crop_file.value === 'c_file') {
-    form.c_file_base64 = croppedBase64
-  }
-  else if (current_crop_file.value === 'd_file') {
-    form.d_file_base64 = croppedBase64
-  }
-}
-
-/**
  * Delete file
  * @param {string} file_name - Name of the file field
  */
@@ -2065,7 +2001,29 @@ onMounted(async () => {
 /**
  * Submit cropped image for upload
  */
-const submitCrop = async () => {
+const submitCrop = async (blobData, canvas) => {
+  const croppedBase64 = canvas.toDataURL()
+
+  // Update the corresponding form field
+  if (current_crop_file.value === 'q_file') {
+    form.q_file_base64 = croppedBase64
+  }
+  else if (current_crop_file.value === 'answer_full_file') {
+    form.answer_full_file_base64 = croppedBase64
+  }
+  else if (current_crop_file.value === 'a_file') {
+    form.a_file_base64 = croppedBase64
+  }
+  else if (current_crop_file.value === 'b_file') {
+    form.b_file_base64 = croppedBase64
+  }
+  else if (current_crop_file.value === 'c_file') {
+    form.c_file_base64 = croppedBase64
+  }
+  else if (current_crop_file.value === 'd_file') {
+    form.d_file_base64 = croppedBase64
+  }
+
   crop_confirm_loading.value = true
 
   try {

@@ -14,6 +14,56 @@
       :content-data="contentData"
       @next="handleLoadNextTest"
     />
+    <section class="my-4">
+      <v-container>
+        <v-row justify="center">
+          <v-col
+            cols="12"
+            md="10"
+          >
+            <v-chip
+              link
+              class="mr-1 bg-blue-grey-darken-1 text-white"
+              :small="display.mdAndDown"
+            >
+              <nuxt-link
+                :to="`/search?type=test&section=${contentData?.section}`"
+              >
+                {{ contentData?.section_title }}
+              </nuxt-link>
+            </v-chip>
+            <v-chip
+              link
+              class="mr-1 bg-blue-grey-darken-1 text-white"
+              :small="display.mdAndDown"
+            >
+              <nuxt-link
+                :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
+              >
+                {{ contentData?.base_title }}
+              </nuxt-link>
+            </v-chip>
+            <v-chip
+              class="ma-1 bg-blue-grey-darken-1 text-white"
+              :small="display.mdAndDown"
+            >
+              <nuxt-link
+                :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
+              >
+                {{ contentData?.lesson_title }}
+              </nuxt-link>
+            </v-chip>
+            <v-chip
+              :small="display.mdAndDown"
+              :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
+              class="ma-1 bg-primary text-white"
+            >
+              {{ contentData?.lesson_title }} directory
+            </v-chip>
+          </v-col>
+        </v-row>
+      </v-container>
+    </section>
 
     <v-row
       justify="center"
@@ -37,6 +87,7 @@
 const route = useRoute()
 const testId = ref(route.params.id)
 const isAdsLoad = ref(false)
+const display = useGlobalDisplay()
 
 // Fetch data
 const {

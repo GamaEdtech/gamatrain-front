@@ -22,6 +22,7 @@
                     :to="item.link"
                     :color="item.color"
                     depressed
+                    :aria-label="item.text"
                   >
                     <span
                       :class="item.icon"

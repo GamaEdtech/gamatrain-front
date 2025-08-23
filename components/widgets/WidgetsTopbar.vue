@@ -98,7 +98,9 @@
                 plain
                 @click="openLoginDialog"
               >
-                <i class="fa-solid fa-sign-in mr-1" />
+                <v-icon class="mr-1">
+                  md:login
+                </v-icon>
                 Login
               </v-btn>
 
@@ -106,7 +108,9 @@
                 plain
                 @click="openRegisterDialog"
               >
-                <i class="fa-solid fa-user-plus mr-1" />
+                <v-icon class="mr-1">
+                  md:person_add
+                </v-icon>
                 Register
               </v-btn>
             </div>

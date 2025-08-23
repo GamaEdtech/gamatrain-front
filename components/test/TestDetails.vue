@@ -103,6 +103,7 @@
                         v-show="contentData.q_file && contentData.q_file != '0'"
                         class="answer-img"
                         :src="contentData.q_file"
+                        alt="Answer Image"
                       >
 
                       <v-radio-group
@@ -156,6 +157,7 @@
                                 v-show="contentData.a_file"
                                 class="answer-img"
                                 :src="contentData.a_file"
+                                alt="Answer Image"
                               >
                             </div>
                           </template>
@@ -198,6 +200,7 @@
                                 v-show="contentData.b_file"
                                 :src="contentData.b_file"
                                 class="answer-img"
+                                alt="Answer Image"
                               >
                             </div>
                           </template>
@@ -241,6 +244,7 @@
                                 v-show="contentData.c_file"
                                 class="answer-img"
                                 :src="contentData.c_file"
+                                alt="Answer Image"
                               >
                             </div>
                           </template>
@@ -285,6 +289,7 @@
                                 v-show="contentData.d_file"
                                 class="answer-img"
                                 :src="contentData.d_file"
+                                alt="Answer Image"
                               >
                             </div>
                           </template>
@@ -328,8 +333,6 @@
 
 <script setup>
 import CrashReport from '~/components/common/crash-report.vue'
-import successSound from '@/assets/sounds/success.mp3'
-import failSound from '@/assets/sounds/fail.mp3'
 
 const props = defineProps({
   contentData: {
@@ -543,7 +546,7 @@ function animationFadeOutBoxBalance(
   }, 7500)
 }
 function playSound(sound) {
-  const audio = new Audio(sound)
+  const audio = new Audio(`/assets/sounds/${sound}.mp3`)
   audio.play().catch((e) => {
     console.warn('Failed to play audio:', e)
   })
@@ -603,7 +606,7 @@ function fireSelectedOption() {
     coinElement.value.classList.remove('d-none')
     coinElement.value.classList.add('d-flex')
     showingCoin.value = true
-    playSound(successSound)
+    playSound('success')
     animationPulseHeart(testDetailElementBoundingRect, coinElement.value)
     setTimeout(() => {
       coinElement.value.classList.remove('pulse')
@@ -632,7 +635,7 @@ function fireSelectedOption() {
   ) {
     coinElement.value.classList.remove('d-none')
     coinElement.value.classList.add('d-flex')
-    playSound(failSound)
+    playSound('fail')
     animationMovingCoin(
       walletElementBoundingRect,
       coinElement.value,

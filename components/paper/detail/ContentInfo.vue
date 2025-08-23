@@ -3,25 +3,18 @@
     flat
     class="content_main_info"
   >
-    <v-row class="align-center">
-      <v-col cols="3">
-        <v-img
-          :src="contentData?.avatar"
-          alt=""
-          class="d-inline-block"
-          cover
-          height="48"
-          width="48"
-        />
-      </v-col>
-      <v-col
-        cols="9"
-        class="pl-0"
-      >
-        <p class="creator_title">
-          {{ contentData?.first_name }} {{ contentData?.last_name }}
-        </p>
-      </v-col>
+    <v-row class="d-flex align-center mb-2 ga-1">
+      <NuxtImg
+        width="48px"
+        height="48px"
+        :src="contentData?.avatar"
+        placeholder
+        class="d-inline-block user-avatar"
+        alt="user profile"
+      />
+      <p class="creator_title">
+        {{ contentData?.first_name }} {{ contentData?.last_name }}
+      </p>
     </v-row>
     <v-divider class="my-2" />
     <v-row>
@@ -102,13 +95,20 @@
       >
         <div v-if="contentData?.files?.word.exist">
           <v-btn
+            class="mb-2"
             block
             size="large"
+            variant="flat"
             color="primary"
-            class="mb-2"
             :loading="qWordFileDownloadLoading"
             @click="startDownload('q_word')"
           >
+            <v-icon
+              size="x-large"
+              class="btn-icon"
+            >
+              mdi-file-word-box
+            </v-icon>
             Download Question Doc
             {{
               contentData?.files?.word.price > 0
@@ -121,6 +121,7 @@
           <v-btn
             class="mb-2 text-white font-weight-bold"
             block
+            variant="flat"
             size="large"
             color="#E60012"
             :loading="qPdfFileDownloadLoading"
@@ -128,7 +129,7 @@
           >
             <v-icon
               size="x-large"
-              class="mr-1"
+              class="btn-icon"
             >
               mdi-file-pdf-box
             </v-icon>
@@ -145,6 +146,7 @@
             v-show="contentData?.files.answer.ext == 'pdf'"
             class="mb-2 font-weight-bold"
             block
+            variant="flat"
             size="large"
             color="teal accent-3"
             :loading="answerFileDownloadLoading"
@@ -152,7 +154,7 @@
           >
             <v-icon
               size="x-large"
-              class="mr-1"
+              class="btn-icon"
             >
               mdi-file-pdf-box
             </v-icon>
@@ -165,18 +167,19 @@
           </v-btn>
           <v-btn
             v-show="contentData?.files.answer.ext == 'word'"
+            class="mb-2"
             block
             color="primary"
+            variant="flat"
             size="large"
-            class="mb-2"
             :loading="answerFileDownloadLoading"
             @click="startDownload('a_file')"
           >
             <v-icon
               size="x-large"
-              class="mr-1"
+              class="btn-icon"
             >
-              mdi-file-pdf-box
+              mdi-file-word-box
             </v-icon>
             Download Answer Doc
             {{
@@ -192,19 +195,28 @@
           <v-btn
             v-for="(extra, index) in contentData.files.extra"
             :key="index"
+            class="mb-2 font-weight-bold"
             block
             color="blue"
+            variant="flat"
             size="large"
-            class="mb-2 font-weight-bold"
             :loading="extraFileDownloadLoading"
             @click="startDownload('extra', extra.id)"
           >
             <template v-if="extra?.ext == 'mp3'">
               <v-icon
                 size="x-large"
-                class="mr-1"
+                class="btn-icon"
               >
                 mdi-volume-high
+              </v-icon>
+            </template>
+            <template v-if="extra?.ext == 'pdf'">
+              <v-icon
+                size="x-large"
+                class="btn-icon"
+              >
+                mdi-file-pdf-box
               </v-icon>
             </template>
             Download {{ extra.type_title ? extra.type_title : "Extra" }}
@@ -217,6 +229,7 @@
           block
           color="#5600e8"
           size="large"
+          variant="flat"
           class="mb-2 text-white font-weight-bold"
         >
           Begin Quiz
@@ -225,6 +238,7 @@
           v-else
           :to="`/test-maker/create?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}&paperId=${contentData?.id}`"
           block
+          variant="flat"
           outlined
           size="large"
           color="primary"
@@ -336,12 +350,20 @@ defineExpose({
   background: #f5f5f5 !important;
   border-radius: 6px;
 }
-
+.user-avatar {
+  width: 48px;
+  height: 48px;
+}
 .content_main_info .creator_title {
   font-size: 18px;
 }
 
 p {
   font-size: 1.3rem !important;
+}
+
+.btn-icon {
+  position: absolute;
+  left: 10px;
 }
 </style>

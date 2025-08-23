@@ -15,7 +15,10 @@
             md="6"
             class="text-center text-sm-left"
           >
-            <nuxt-link to="/">
+            <nuxt-link
+              to="/"
+              aria-label="Home Link"
+            >
               <img
                 id="logo"
                 alt="gamatrain"
@@ -29,18 +32,22 @@
               Our mission is to provide all training services to anyone and
               anywhere.
             </div>
-            <div class="mt-4">
+            <div
+              class="mt-4 d-flex justify-center justify-sm-start align-center ga-3"
+            >
               <a
                 href="https://x.com/GamaEdtech"
                 target="_blank"
-                class="v-btn"
+                class="v-btn pa-5 d-flex align-center justify-center"
+                aria-label="x Account GamaEdtech"
               >
                 <v-icon>mdi-twitter</v-icon>
               </a>
               <a
                 href="https://youtube.com/@GamaEdtech"
                 target="_blank"
-                class="v-btn"
+                class="v-btn pa-5 d-flex align-center justify-center"
+                aria-label="youtube channel GamaEdtech"
               >
                 <v-icon> mdi-youtube </v-icon>
               </a>
@@ -187,7 +194,7 @@ export default {
   }
 
   #short-describe {
-    color: #6e7781;
+    color: #1b1d20;
     margin-bottom: 1.2rem;
   }
 
@@ -205,7 +212,7 @@ export default {
   }
 
   .link-title {
-    color: #424a53;
+    color: #1b1d20;
     margin-bottom: 1rem;
   }
 
@@ -213,7 +220,7 @@ export default {
     display: block;
     text-decoration: none;
     margin-bottom: 1rem;
-    color: #6e7781;
+    color: #1b1d20;
   }
 }
 
