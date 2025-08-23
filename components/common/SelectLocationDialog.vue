@@ -6,8 +6,8 @@
     z-index="2000"
   >
     <v-card>
-      <v-card-text class="pt-6 pt-md-8 px-6 px-md-8 rounded-t-xl">
-        <div class="d-flex">
+      <v-card-text class="pa-2 rounded-t-xl">
+        <div class="d-flex align-center">
           <div class="gtext-h5 priamry-gray-700">
             Location
           </div>
@@ -39,6 +39,25 @@
           label="Search anything"
           @location-selected="goToSearchLocation"
         />
+        <v-btn
+          icon
+          size="small"
+          class="position-absolute button-latlng"
+          color="primary"
+          @click="openLatLngSearch"
+        >
+          <v-icon
+            color="white"
+            size="x-large"
+          >
+            md:my_location
+          </v-icon>
+        </v-btn>
+
+        <LatLngSearchModal
+          v-model:show-dialog="showModalLatLngSearch"
+          @send-lat-lgn="searchLatLgn"
+        />
       </div>
       <a
         :href="`https://www.google.com/maps?q=${contentData.latitude},${contentData.longitude}`"
@@ -47,7 +66,7 @@
       >
         See on Google Map
       </a>
-      <v-card-actions class="pb-13">
+      <v-card-actions class="pb-4">
         <v-container>
           <v-row>
             <!-- Desktop view -->
@@ -244,6 +263,7 @@
 <script setup>
 import locationSearch from '@/components/form/LocationSearch.vue'
 import Map from '@/components/common/Map.client.vue'
+import LatLngSearchModal from '@/components/common/LatLngSearchModal.vue'
 import { ref, computed, watch } from 'vue'
 
 const props = defineProps({
@@ -443,6 +463,19 @@ const showLocationDialog = ref(false)
 function handleLocationSubmit() {
   showLocationDialog.value = false
 }
+
+const showModalLatLngSearch = ref(false)
+
+const openLatLngSearch = () => {
+  showModalLatLngSearch.value = true
+}
+
+const searchLatLgn = (lat, lng) => {
+  showModalLatLngSearch.value = false
+  if (mapRef.value) {
+    mapRef.value.setView(lat, lng, 12)
+  }
+}
 </script>
 
 <style>
@@ -450,5 +483,15 @@ function handleLocationSubmit() {
   position: relative;
   overflow-x: hidden;
   height: 100%;
+}
+.button-latlng {
+  top: 20px;
+  right: 20px;
+  z-index: 401;
+}
+@media (max-width: 960px) {
+  .button-latlng {
+    top: 70px;
+  }
 }
 </style>
