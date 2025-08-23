@@ -1,81 +1,173 @@
 <template>
-  <client-only>
-    <div>
-      <Ckeditor
-        v-if="CustomEditor"
-        v-model="internalValue"
-        :editor="CustomEditor"
-        :value="modelValue"
-        :config="editorConfig"
-        @ready="onEditorReady"
-        @input="(event) => $emit('update:modelValue', event)"
+  <div class="w-100">
+    <div
+      v-if="loading"
+      class="d-flex flex-column align-center justify-center ga-2 pa-2 border rounded-lg border-md"
+    >
+      <v-skeleton-loader
+        class="w-100 rounded-lg"
+        height="30"
+      />
+
+      <v-skeleton-loader
+        class="w-100 rounded-lg"
+        height="300"
       />
     </div>
-  </client-only>
+    <client-only>
+      <LazyCkeditor
+        v-show="!loading"
+        v-model="internalValue"
+        :editor="CustomEditor"
+        :config="editorConfig"
+        @input="changeEditor"
+      />
+    </client-only>
+  </div>
 </template>
 
 <script setup>
-import { Ckeditor } from '@ckeditor/ckeditor5-vue'
+import { ref, defineAsyncComponent } from 'vue'
 
 const props = defineProps({
   modelValue: {
     type: String,
     default: '',
   },
+  enableExtraPlugins: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-useHead({
-  script: [
-    {
-      src: '/ckeditor/ckeditor.js',
-      defer: true,
-    },
-  ],
-})
+const emit = defineEmits(['update:modelValue'])
 
-const emit = defineEmits(['update:modelValue', 'update:value'])
-const editorInstance = ref(null)
-const internalValue = ref(props.value)
+const internalValue = ref(props.modelValue)
 const CustomEditor = ref(null)
-const editorConfig = {
-  width: 'auto',
-  title: false,
-  removePlugins: ['ImageCaption'],
-}
+const loading = ref(true)
+const editorConfig = ref({
+  licenseKey: 'GPL',
+})
 
-function onEditorReady(editor) {
-  editorInstance.value = editor
-  if (props.modelValue) {
-    editor.setData(props.modelValue)
-  }
-}
+const LazyCkeditor = defineAsyncComponent({
+  loader: async () => {
+    const { ClassicEditor, Essentials, Paragraph, Bold, Italic } = await import(
+      'ckeditor5'
+    )
+
+    const { Ckeditor } = await import('@ckeditor/ckeditor5-vue')
+    await import('ckeditor5/ckeditor5.css')
+
+    if (props.enableExtraPlugins) {
+      const {
+        Heading,
+        Link,
+        List,
+        Indent,
+        Table,
+        TableToolbar,
+        Image,
+        ImageStyle,
+        ImageResize,
+        ImageInsert,
+        MediaEmbed,
+        Base64UploadAdapter,
+        Code,
+        Strikethrough,
+        Subscript,
+        Superscript,
+        SpecialCharacters,
+        SpecialCharactersEssentials,
+        HtmlEmbed,
+        Highlight,
+        BlockQuote,
+      } = await import('ckeditor5')
+
+      editorConfig.value = {
+        licenseKey: 'GPL',
+        plugins: [
+          Essentials,
+          Paragraph,
+          Heading,
+          Bold,
+          Italic,
+          Strikethrough,
+          Subscript,
+          Superscript,
+          Code,
+          SpecialCharacters,
+          SpecialCharactersEssentials,
+          Link,
+          List,
+          Indent,
+          BlockQuote,
+          Highlight,
+          HtmlEmbed,
+          Table,
+          TableToolbar,
+          Image,
+          ImageStyle,
+          ImageResize,
+          ImageInsert,
+          MediaEmbed,
+          Base64UploadAdapter,
+        ],
+        toolbar: [
+          'heading',
+          '|',
+          'bold',
+          'italic',
+          'strikethrough',
+          'code',
+          'subscript',
+          'superscript',
+          'specialCharacters',
+          'link',
+          'bulletedList',
+          'numberedList',
+          '|',
+          'outdent',
+          'indent',
+          '|',
+          'insertImage',
+          'undo',
+          'redo',
+          'insertTable',
+          'mediaEmbed',
+          'htmlEmbed',
+          '|',
+          'blockQuote',
+          'highlight',
+        ],
+      }
+    }
+    else {
+      editorConfig.value = {
+        licenseKey: 'GPL',
+        plugins: [Essentials, Paragraph, Bold, Italic],
+        toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
+      }
+    }
+
+    CustomEditor.value = ClassicEditor
+
+    internalValue.value = props.modelValue
+    loading.value = false
+
+    return Ckeditor
+  },
+  suspensible: false,
+  delay: 100,
+})
+
 watch(
   () => props.modelValue,
-  (newValue) => {
-    if (editorInstance.value && newValue !== editorInstance.value.getData()) {
-      editorInstance.value.setData(newValue)
-    }
-  },
-  {
-    immediate: true,
+  () => {
+    internalValue.value = props.modelValue
   },
 )
 
-watch(internalValue, (newVal) => {
-  emit('update:value', newVal)
-})
-
-onMounted(() => {
-  const checkEditor = () => {
-    if (window.ClassicEditor) {
-      CustomEditor.value = window.ClassicEditor
-    }
-    else {
-      setTimeout(checkEditor, 100)
-    }
-  }
-  checkEditor()
-})
+const changeEditor = (event) => {
+  emit('update:modelValue', event)
+}
 </script>
-
-<style></style>

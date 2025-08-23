@@ -25,7 +25,9 @@
                 v-tooltip="{
                   text: item.text,
                   id: `tooltip-${index}`,
+                  ariaLabel: item.text,
                 }"
+                :aria-label="item.text"
                 style="font-size: 26px"
                 :class="`icon icon-${item.icon} text-white text--darken-1`"
               />
@@ -57,16 +59,27 @@
                   @click="handleImageClick(index)"
                 >
                   <div class="carousel-item-content">
-                    <NuxtImg
+                    <v-img
+                      width="170"
+                      :src="image"
+                      cover
+                      class="carousel-img w-100 h-100"
+                      preload
+                      fetchpriority="high"
+                      alt="Psat Paper Lesson"
+                      :loading="index === 0 ? 'eager' : 'lazy'"
+                    />
+                    <!-- <NuxtImg
                       width="170"
                       height="auto"
                       :src="image"
-                      class="carousel-img fill-height"
+                      class="carousel-img"
                       preload
                       fetchpriority="high"
                       alt="Psat Paper Lesson"
                       format="webp"
-                    />
+                      :loading="index === 0 ? 'eager' : 'lazy'"
+                    /> -->
                     <div
                       v-if="showDocPreview"
                       class="preview-overlay"
@@ -96,15 +109,22 @@
                   @click="changeSlide(index)"
                 >
                   <div class="thumbnail-content">
-                    <NuxtImg
-                      width="70px"
+                    <v-img
+                      width="40"
+                      :src="image"
+                      cover
+                      class="thumbnail-preview w-100 h-100"
+                      alt="Psat Paper Lesson"
+                    />
+                    <!-- <NuxtImg
+                      width="40"
                       height="auto"
                       :src="image"
                       placeholder
                       class="thumbnail-preview"
                       alt="Psat Paper Lesson"
                       format="webp"
-                    />
+                    /> -->
                   </div>
                 </div>
               </div>
@@ -306,6 +326,7 @@ watch(
     .carousel-img {
       height: 100%;
       width: 100%;
+      object-fit: cover;
       border-radius: inherit;
     }
 

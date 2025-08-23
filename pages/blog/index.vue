@@ -23,11 +23,19 @@
           class="ma-1"
         >
           <v-card>
-            <NuxtImg
+            <!-- <NuxtImg
               width="880px"
               height="500px"
               :src="featuredItems[slideIndex].pic"
               placeholder
+              :class="activeSlide ? 'active-img' : ''"
+            /> -->
+            <v-img
+              width="880px"
+              height="500px"
+              :src="featuredItems[slideIndex].pic"
+              :alt="featuredItems[slideIndex].title"
+              cover
               :class="activeSlide ? 'active-img' : ''"
             />
             <v-card-title>
@@ -69,11 +77,19 @@
         >
           <nuxt-link :to="`/blog/${item.id}/${$slugGenerator(item.title)}`">
             <div class="v-responsive v-img">
-              <NuxtImg
+              <!-- <NuxtImg
                 width="100px"
                 height="100px"
                 :src="item.pic"
                 placeholder
+                class="mobile-image-feature nuxt-image"
+              /> -->
+              <v-img
+                width="100px"
+                height="100px"
+                cover
+                :alt="item.title"
+                :src="item.pic"
                 class="mobile-image-feature nuxt-image"
               />
             </div>
@@ -124,14 +140,21 @@
                 class="ma-1"
               >
                 <v-card>
-                  <NuxtImg
+                  <!-- <NuxtImg
                     width="350px"
                     height="350px"
                     :src="item.pic"
                     placeholder
                     class="mobile-image-feature"
+                  /> -->
+                  <v-img
+                    :alt="item.title"
+                    width="350px"
+                    height="350px"
+                    cover
+                    :src="item.pic"
+                    class="mobile-image-feature"
                   />
-                  <!-- <v-img cover :src="item.pic" /> -->
                   <v-card-title>
                     <span class="gama-text-h6">
                       {{ item.title }}
@@ -232,11 +255,19 @@
               :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
             >
               <v-card class="ma-1">
-                <NuxtImg
+                <!-- <NuxtImg
                   width="180px"
                   height="135px"
                   :src="item.pic"
                   placeholder
+                  class="nuxt-image"
+                /> -->
+                <v-img
+                  width="180px"
+                  height="160px"
+                  cover
+                  :alt="item.title"
+                  :src="item.pic"
                   class="nuxt-image"
                 />
                 <v-card-title>
@@ -258,11 +289,19 @@
           >
             <div class="d-flex">
               <nuxt-link :to="`/blog/${item.id}/${$slugGenerator(item.title)}`">
-                <NuxtImg
+                <!-- <NuxtImg
                   width="180px"
                   height="135px"
                   :src="item.pic"
                   placeholder
+                  class="nuxt-image"
+                /> -->
+                <v-img
+                  width="180px"
+                  height="135px"
+                  cover
+                  :alt="item.title"
+                  :src="item.pic"
                   class="nuxt-image"
                 />
               </nuxt-link>

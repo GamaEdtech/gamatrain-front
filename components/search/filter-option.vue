@@ -26,6 +26,7 @@
         :title-modal="filter.title"
         :items="filter.items"
         :selected-item="filter.selectedItem"
+        :has-search="filter.hasSearch"
         @change-selected-item="onFilterUpdate($event, filter.title)"
       />
     </template>
@@ -40,7 +41,7 @@
           variant="flat"
           class="text-h5 pl-5 pr-5"
           color="#F2F4F7"
-          :closable="index != FILTER_INDEX.Type"
+          :closable="index != FILTER_INDEX.Services"
           @click:close="clearFilter(filter, index)"
         >
           {{ filter.selectedItem?.title }}
@@ -49,6 +50,24 @@
     </v-col>
   </div>
 
+  <div
+    v-if="filters[FILTER_INDEX.Subject].selectedItem"
+    class="w-100 d-flex max-width-container"
+  >
+    <nuxt-link
+      :to="`/subject-directory?board=${
+        filters[FILTER_INDEX.Board].selectedItem.id
+      }&grade=${filters[FILTER_INDEX.Grade].selectedItem.id}&subject=${
+        filters[FILTER_INDEX.Subject].selectedItem.id
+      }`"
+      class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
+    >
+      <div class="d-flex flex-column align-start justify-start ga-1">
+        <span class="text-h5 text-sm-h4 font-weight-bold text-white">Go to {{ filters[FILTER_INDEX.Subject].selectedItem.title }}</span>
+        <span class="text-subtitle-2 text-sm-subtitle-1 text-white">All books, past papers & resources in one place</span>
+      </div>
+    </nuxt-link>
+  </div>
   <v-dialog
     v-model="dialogModel"
     transition="dialog-bottom-transition"
@@ -58,7 +77,7 @@
     <div
       class="w-100 h-100 d-flex flex-column justify-space-between overflow-y-auto bg-white position-relative"
     >
-      <v-container class="flex-column">
+      <v-container class="flex-column mb-10">
         <v-col
           cols="12"
           class="d-flex justify-space-between align-center"
@@ -84,7 +103,7 @@
               variant="flat"
               class="text-h5 pl-5 pr-5"
               color="#F2F4F7"
-              :closable="index != FILTER_INDEX.Type"
+              :closable="index != FILTER_INDEX.Services"
               @click:close="clearFilter(filter, index)"
             >
               {{ filter.selectedItem?.title }}
@@ -133,7 +152,9 @@
           </div>
         </v-col>
       </v-container>
-      <div class="w-100 d-flex align-center justify-center ga-3 box-button">
+      <div
+        class="w-100 d-flex align-center justify-center ga-3 box-button position-fixed bottom-0 bg-white"
+      >
         <v-btn
           variant="text"
           class="text-h5"
@@ -159,6 +180,13 @@
 <script setup>
 import { computed, onMounted, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+
+import cieIcon from '~/assets/images/boards/CIE.svg'
+import edexcelIcon from '~/assets/images/boards/Edexcel.svg'
+import AQAIcon from '~/assets/images/boards/AQA.svg'
+import OCRIcon from '~/assets/images/boards/OCR.svg'
+import GamaIcon from '~/assets/images/boards/Gama.svg'
+import ScientificIcon from '~/assets/images/boards/Scientific Competition.svg'
 
 const props = defineProps({
   showDialogFilterMobile: {
@@ -195,7 +223,7 @@ const FILTER_INDEX = {
   Grade: 1,
   Subject: 2,
   Topic: 3,
-  Type: 4,
+  Services: 4,
   Classification: 5,
   Year: 6,
   Month: 7,
@@ -216,8 +244,7 @@ const allMonths = [
   { id: 12, title: 'December' },
 ]
 
-const specialMonths
-= {
+const specialMonths = {
   4161: [
     { id: 3, title: 'March' },
     { id: 6, title: 'May/Jun' },
@@ -305,7 +332,7 @@ const specialMonths
   ],
 }
 
-function getMonth(grade) {
+const getMonth = (grade) => {
   if (grade) {
     return specialMonths[grade]
   }
@@ -317,7 +344,7 @@ const FILTER_TYPE = {
   Grade: 'base',
   Subject: 'lesson',
   Topic: 'topic',
-  Type: 'type',
+  Services: 'type',
   Classification: 'classification',
   Year: 'edu_year',
   Month: 'edu_month',
@@ -330,6 +357,7 @@ const filters = reactive([
     title: 'Board',
     disabled: false,
     loading: false,
+    hasSearch: true,
   },
   {
     items: [],
@@ -338,6 +366,7 @@ const filters = reactive([
     title: 'Grade',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
   {
     items: [],
@@ -346,6 +375,7 @@ const filters = reactive([
     title: 'Subject',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
   {
     items: [],
@@ -354,6 +384,7 @@ const filters = reactive([
     title: 'Topic',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
   {
     items: [
@@ -363,6 +394,8 @@ const filters = reactive([
         hasClassification: true,
         typeForGetClassification: 'test_type',
         typeForGetContent: 'test',
+        icon: 'stat-icon icon-paper',
+        color: '#2e90fa',
       },
       {
         title: 'Multimedia',
@@ -370,6 +403,8 @@ const filters = reactive([
         hasClassification: true,
         typeForGetClassification: 'content_type',
         typeForGetContent: 'learnfiles',
+        icon: 'stat-icon icon-multimedia',
+        color: '#02b719',
       },
       {
         title: 'QuizHub',
@@ -377,6 +412,8 @@ const filters = reactive([
         hasClassification: true,
         typeForGetClassification: 'test_type',
         typeForGetContent: 'azmoon',
+        icon: 'stat-icon icon-exam',
+        color: '#7c4dff',
       },
       {
         title: 'Forum',
@@ -384,6 +421,8 @@ const filters = reactive([
         hasClassification: false,
         typeForGetClassification: null,
         typeForGetContent: 'question',
+        icon: 'stat-icon icon-q-a',
+        color: '#fdb022',
       },
       {
         title: 'Tutorial',
@@ -391,13 +430,16 @@ const filters = reactive([
         hasClassification: false,
         typeForGetClassification: null,
         typeForGetContent: 'dars',
+        icon: 'stat-icon icon-tutorial',
+        color: '#2e90fa',
       },
     ],
     selectedItem: null,
     isOpenModal: false,
-    title: 'Type',
+    title: 'Services',
     disabled: false,
     loading: false,
+    hasSearch: false,
   },
   {
     items: [],
@@ -406,6 +448,7 @@ const filters = reactive([
     title: 'Classification',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
   {
     items: [
@@ -467,6 +510,7 @@ const filters = reactive([
     title: 'Year',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
   {
     items: getMonth(route.query.base),
@@ -475,6 +519,7 @@ const filters = reactive([
     title: 'Month',
     disabled: true,
     loading: false,
+    hasSearch: true,
   },
 ])
 
@@ -486,19 +531,19 @@ const openModalSelectedFilter = (filter) => {
 
 const clearAllFilter = () => {
   filters.forEach((filter, index) => {
-    if (index != FILTER_INDEX.Type) {
+    if (index != FILTER_INDEX.Services) {
       filter.selectedItem = null
       filter.disabled = true
     }
   })
   filters[FILTER_INDEX.Board].disabled = false
-  filters[FILTER_INDEX.Type].disabled = false
+  filters[FILTER_INDEX.Services].disabled = false
   updateQueryParam()
 }
 
 const clearFilter = (filter, index) => {
-  if (index < FILTER_INDEX.Type) {
-    for (let i = index; i < FILTER_INDEX.Type; i++) {
+  if (index < FILTER_INDEX.Services) {
+    for (let i = index; i < FILTER_INDEX.Services; i++) {
       filters[i].selectedItem = null
       if (i != index) {
         filters[i].disabled = true
@@ -507,6 +552,7 @@ const clearFilter = (filter, index) => {
     if (index == FILTER_INDEX.Board) {
       filters[FILTER_INDEX.Classification].selectedItem = null
       filters[FILTER_INDEX.Classification].disabled = true
+      filters[FILTER_INDEX.Month].items = getMonth()
     }
   }
 
@@ -515,7 +561,7 @@ const clearFilter = (filter, index) => {
     filters[FILTER_INDEX.Month].selectedItem = null
   }
 
-  if (index == FILTER_INDEX.Type) {
+  if (index == FILTER_INDEX.Services) {
     filters[index].selectedItem = null
     filters[FILTER_INDEX.Classification].selectedItem = null
     filters[FILTER_INDEX.Classification].disabled = true
@@ -535,11 +581,11 @@ const clearFilter = (filter, index) => {
 
 const updateClassificationFilter = async () => {
   resetFilters(FILTER_INDEX.Classification, 6)
-  if (filters[FILTER_INDEX.Type].selectedItem.hasClassification) {
+  if (filters[FILTER_INDEX.Services].selectedItem.hasClassification) {
     filters[FILTER_INDEX.Classification].loading = true
     const response = await getInformationNextFilter(
       'Board',
-      filters[FILTER_INDEX.Type].selectedItem.typeForGetClassification,
+      filters[FILTER_INDEX.Services].selectedItem.typeForGetClassification,
     )
     filters[FILTER_INDEX.Classification].loading = false
     filters[FILTER_INDEX.Classification].disabled = false
@@ -555,8 +601,9 @@ const updateClassificationFilter = async () => {
 
 const updateStatusMonthYearFilter = () => {
   if (
-    filters[FILTER_INDEX.Type].selectedItem
-    && (filters[FILTER_INDEX.Type].selectedItem.title == 'Past Papers' || filters[FILTER_INDEX.Type].selectedItem.title == 'QuizHub')
+    filters[FILTER_INDEX.Services].selectedItem
+    && (filters[FILTER_INDEX.Services].selectedItem.title == 'Past Papers'
+      || filters[FILTER_INDEX.Services].selectedItem.title == 'QuizHub')
   ) {
     filters[FILTER_INDEX.Year].disabled = false
     filters[FILTER_INDEX.Month].disabled = false
@@ -576,21 +623,26 @@ const onFilterUpdate = async (item, filterName) => {
   if (item.id && item.id != filters[index]?.selectedItem?.id) {
     filters[index].selectedItem = item
 
-    if (index == FILTER_INDEX.Board || index == FILTER_INDEX.Type) {
+    if (index == FILTER_INDEX.Board || index == FILTER_INDEX.Services) {
       if (
         filters[FILTER_INDEX.Board].selectedItem
-        && filters[FILTER_INDEX.Type].selectedItem
+        && filters[FILTER_INDEX.Services].selectedItem
       ) {
         await updateClassificationFilter()
       }
       updateStatusMonthYearFilter()
+      if (index == FILTER_INDEX.Board) {
+        filters[FILTER_INDEX.Month].items = getMonth()
+      }
     }
     if (index == FILTER_INDEX.Grade) {
       filters[FILTER_INDEX.Month].selectedItem = null
-      filters[FILTER_INDEX.Month].items = getMonth(filters[FILTER_INDEX.Grade].selectedItem?.id)
+      filters[FILTER_INDEX.Month].items = getMonth(
+        filters[FILTER_INDEX.Grade].selectedItem?.id,
+      )
     }
 
-    if (index < FILTER_INDEX.Type) {
+    if (index < FILTER_INDEX.Services) {
       resetFilters(index + 1, 4)
     }
     if (index < FILTER_INDEX.Topic) {
@@ -642,19 +694,19 @@ const updateQueryParam = () => {
     if (filter.selectedItem && filter.selectedItem.id) {
       if (index == FILTER_INDEX.Classification) {
         if (
-          filters[FILTER_INDEX.Type].selectedItem.typeForGetClassification
-          == 'test_type'
+          filters[FILTER_INDEX.Services].selectedItem
+            .typeForGetClassification == 'test_type'
         ) {
           query['test_type'] = filter.selectedItem.id
         }
         else if (
-          filters[FILTER_INDEX.Type].selectedItem.typeForGetClassification
-          == 'content_type'
+          filters[FILTER_INDEX.Services].selectedItem
+            .typeForGetClassification == 'content_type'
         ) {
           query['content_type'] = filter.selectedItem.id
         }
       }
-      else if (index == FILTER_INDEX.Type) {
+      else if (index == FILTER_INDEX.Services) {
         query[key] = filter.selectedItem.typeForGetContent
       }
       else {
@@ -679,13 +731,16 @@ const applyRouteToFilter = (index, queryKey, customId = null) => {
 }
 
 const updateFiltersExistInRoute = async () => {
-  const typeFilter = filters[FILTER_INDEX.Type]
-  applyRouteToFilter(FILTER_INDEX.Type, FILTER_TYPE.Type)
-  if (!filters[FILTER_INDEX.Type].selectedItem) {
-    filters[FILTER_INDEX.Type].selectedItem
-      = filters[FILTER_INDEX.Type].items[0]
+  const typeFilter = filters[FILTER_INDEX.Services]
+  applyRouteToFilter(FILTER_INDEX.Services, FILTER_TYPE.Services)
+  if (!filters[FILTER_INDEX.Services].selectedItem) {
+    filters[FILTER_INDEX.Services].selectedItem
+      = filters[FILTER_INDEX.Services].items[0]
   }
-  if (typeFilter.selectedItem?.title === 'Past Papers' || typeFilter.selectedItem?.title === 'QuizHub') {
+  if (
+    typeFilter.selectedItem?.title === 'Past Papers'
+    || typeFilter.selectedItem?.title === 'QuizHub'
+  ) {
     filters[FILTER_INDEX.Year].disabled = false
     filters[FILTER_INDEX.Month].disabled = false
   }
@@ -693,6 +748,12 @@ const updateFiltersExistInRoute = async () => {
   const boardResponse = await getBoardData()
   if (boardResponse.data) {
     filters[FILTER_INDEX.Board].items = boardResponse.data
+    filters[FILTER_INDEX.Board].items = boardResponse.data.map(
+      (item, index) => ({
+        ...item,
+        img: boardImgs[index % boardImgs.length],
+      }),
+    )
     filters[FILTER_INDEX.Board].disabled = false
     applyRouteToFilter(FILTER_INDEX.Board, FILTER_TYPE.Board)
   }
@@ -721,7 +782,7 @@ const updateFiltersExistInRoute = async () => {
   if (
     filters[FILTER_INDEX.Board].selectedItem
     && typeFilter.selectedItem
-    && filters[FILTER_INDEX.Type].selectedItem.typeForGetClassification
+    && filters[FILTER_INDEX.Services].selectedItem.typeForGetClassification
   ) {
     filters[FILTER_INDEX.Classification].disabled = false
     filters[FILTER_INDEX.Classification].loading = true
@@ -747,14 +808,14 @@ const updateFiltersExistInRoute = async () => {
       'changeFilterQuery',
       {
         ...route.query,
-        type: filters[FILTER_INDEX.Type].selectedItem.typeForGetContent,
+        type: filters[FILTER_INDEX.Services].selectedItem.typeForGetContent,
       },
       skipFetch,
     )
     router.replace({
       query: {
         ...route.query,
-        type: filters[FILTER_INDEX.Type].selectedItem.typeForGetContent,
+        type: filters[FILTER_INDEX.Services].selectedItem.typeForGetContent,
       },
     })
   }
@@ -763,6 +824,14 @@ const updateFiltersExistInRoute = async () => {
   }
 }
 
+const boardImgs = [
+  cieIcon,
+  edexcelIcon,
+  AQAIcon,
+  OCRIcon,
+  GamaIcon,
+  ScientificIcon,
+]
 const getBoardData = async () => {
   try {
     const params = { type: 'section' }
@@ -795,5 +864,10 @@ onMounted(async () => {
 }
 .max-width-container {
   max-width: 1200px;
+}
+.subject-directory-alert {
+  height: 70px;
+  max-width: 400px;
+  background-color: #f59e0b;
 }
 </style>

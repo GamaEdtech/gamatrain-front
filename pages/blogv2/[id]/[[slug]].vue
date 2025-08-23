@@ -1,11 +1,11 @@
 <template>
   <v-container
-    v-if="error"
+    v-if="!contentData"
     id="blog"
   >
     <v-row>
       <h1 class="gama-text-h3 font-weight-bold">
-        Pleas Try Again Later.
+        Please Try Again Later.
       </h1>
     </v-row>
   </v-container>
@@ -21,40 +21,46 @@
               {{ contentData.title }}
             </h1>
             <v-chip
-              :x-small="xs"
-              :small="sm"
-              :to="`/blog?cat=${contentData.cat}`"
+              v-if="contentData.visibilityType"
+              class="my-4"
             >
-              {{ contentData.cat_title }}
+              {{ contentData.visibilityType || "General" }}
             </v-chip>
 
             <figure>
               <!-- <NuxtImg
+                v-if="contentData.imageUri"
                 id="blog-img"
-                :src="contentData.pic"
+                :src="contentData.imageUri || '/default-blog-image.jpg'"
                 :alt="contentData.title"
                 sizes="xs:300,sm:300px,md:600px, 730px"
                 placeholder
               /> -->
               <v-img
+                v-if="contentData.imageUri"
                 id="blog-img"
                 cover
-                :src="contentData.pic"
+                :src="contentData.imageUri || '/default-blog-image.jpg'"
                 :alt="contentData.title"
               />
               <figcaption id="general-data-footer">
-                <div
-                  id="autor-holder"
-                  class="d-flex align-center"
-                >
+                <div id="autor-holder">
+                  <!-- <NuxtImg
+                    v-if="contentData.authorAvatar"
+                    width="30px"
+                    :src="contentData.authorAvatar || '/default-avatar.jpg'"
+                    placeholder
+                  /> -->
                   <v-img
-                    :src="contentData.avatar"
+                    v-if="contentData.authorAvatar"
+                    :src="contentData.authorAvatar || '/default-avatar.jpg'"
                     width="30px"
                     height="30px"
                   />
-                  <!-- <NuxtImg width="30px" :src="contentData.avatar" placeholder /> -->
-                  <span class="gama-text-overline">{{ contentData.first_name }}
-                    {{ contentData.last_name }}</span>
+                  <span
+                    v-if="contentData.author || contentData.creatorUser"
+                    class="gama-text-overline"
+                  >{{ contentData.author || "Unknown Author" }}</span>
                 </div>
                 <div id="date-holder">
                   <v-icon
@@ -65,11 +71,11 @@
                   </v-icon>
                   <v-icon> mdi-eye </v-icon>
                   <span class="gama-text-overline pr-6">
-                    {{ contentData.views }}
+                    {{ contentData.views || 0 }}
                   </span>
                   <v-icon> mdi-calendar-blank-outline </v-icon>
                   <span class="gama-text-overline">
-                    {{ $dayjs(contentData.subdate).format("YYYY-MM-DD") }}
+                    {{ formatDate(contentData.publishDate) }}
                   </span>
                 </div>
               </figcaption>
@@ -82,20 +88,27 @@
       <v-col cols="12">
         <div id="blog-body">
           <div
+            v-if="contentData.summary"
+            id="blog-summary"
+            class="mb-4"
+          >
+            <h3>Summary</h3>
+            <p>{{ contentData.summary }}</p>
+          </div>
+
+          <div
             id="blog-describe"
             v-html="contentData.body"
           />
 
           <div
-            v-if="contentData.tags"
-            id="blog-tags"
+            v-if="contentData.keywords"
+            id="blog-keywords"
           >
+            Keywords:
             <v-btn
-              v-for="(item, index) in contentData.tags"
+              v-for="(item, index) in keywordsList"
               :key="index"
-              :to="`/blog/${contentData.id}/${$slugGenerator(
-                contentData.title,
-              )}`"
               plain
               :x-small="xs"
               :small="sm"
@@ -103,6 +116,20 @@
               #{{ item }}
             </v-btn>
           </div>
+
+          <div id="blog-tags">
+            Tags:
+            <v-chip
+              v-for="(tag, index) in categoryList"
+              :key="tag.id"
+              color="green"
+              class="mx-1 font-weight-bold font-size-12"
+            >
+              {{ tag.name
+              }}<span v-if="index < categoryList.length - 1">, </span>
+            </v-chip>
+          </div>
+
           <div id="blog-like-section">
             <p class="gama-text-h6">
               Did you like this article?
@@ -123,55 +150,132 @@
 </template>
 
 <script setup>
-import { useRoute } from 'vue-router'
+import useApiService from '~/composables/useApiService'
 import { useDisplay } from 'vuetify'
 
-const { $slugGenerator } = useNuxtApp()
+const { $toast } = useNuxtApp()
 const route = useRoute()
 const blogId = route.params.id
 const { xs, sm } = useDisplay()
 const requestURL = ref(useRequestURL().href)
-const { data: contentData, error } = await useAsyncData(
-  `blog-${blogId}`,
-  () => $fetch(`/api/v1/blogs/${blogId}`),
-  {
-    transform: (response) => {
-      return response.status === 1 ? response.data : []
-    },
-  },
-)
 
-// SEO
-useHead({
-  title: contentData.value?.title,
-  link: [
+const contentData = ref({})
+const categoryList = ref([])
+
+const getUserBlogDetail = async () => {
+  try {
+    const res = await useApiService.get(
+      `/api/v2/blogs/contributions/${blogId}`,
+    )
+    contentData.value = res.data
+  }
+  catch (error) {
+    $toast.error('Failed to fetch blog details', error)
+    return
+  }
+  fetchCategoriesById()
+}
+
+const fetchCategoriesById = async () => {
+  try {
+    const response = await useApiService.get('/api/v2/tags/Post')
+    if (response && response.succeeded) {
+      categoryList.value = response.data.filter(tag =>
+        contentData.value.tags.includes(tag.id),
+      )
+    }
+  }
+  catch {
+    $toast.error('Failed to load categories')
+  }
+}
+
+// Computed properties
+const keywordsList = computed(() => {
+  if (!contentData.value?.keywords) return []
+  return contentData.value.keywords
+    .split(',')
+    .map(k => k.trim())
+    .filter(k => k.length > 0)
+})
+
+// Format date function
+const formatDate = (dateString) => {
+  if (!dateString) return 'Unknown Date'
+  try {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
+  catch (error) {
+    return error + 'Invalid Date'
+  }
+}
+
+// SEO - Dynamic meta tags based on content
+useHead(() => ({
+  title: contentData.value?.title || 'Blog Post',
+  meta: [
     {
-      rel: 'canonical',
-      href: requestURL.value,
+      name: 'description',
+      content: contentData.value?.summary || 'Read this blog post on Gamatrain',
+    },
+    {
+      property: 'og:title',
+      content: contentData.value?.title || 'Blog Post',
+    },
+    {
+      property: 'og:description',
+      content: contentData.value?.summary || 'Read this blog post on Gamatrain',
+    },
+    {
+      property: 'og:image',
+      content: contentData.value?.imageUri || '/default-blog-image.jpg',
+    },
+    {
+      property: 'og:type',
     },
   ],
-})
+}))
 
 const share = async () => {
   if (navigator.share) {
     try {
       await navigator.share({
         title: contentData.value.title,
-        text: contentData.value.body,
-        url: `https://gamatrain.com/blog/${contentData.value.id}`,
+        text: contentData.value.summary || contentData.value.body,
+        url: requestURL.value,
       })
     }
     catch (error) {
       console.error('Error sharing:', error)
+      $toast.error('Failed to share the blog post')
     }
   }
   else {
-    console.warn('Share API is not supported in this browser')
+    // Fallback for browsers that don't support Web Share API
+    try {
+      await navigator.clipboard.writeText(requestURL.value)
+      $toast.success('Link copied to clipboard!')
+    }
+    catch (error) {
+      console.warn(
+        'Share API and clipboard API are not supported in this browser',
+        error,
+      )
+      $toast.info('Share feature is not supported in this browser')
+    }
   }
 }
+
+onMounted(() => {
+  getUserBlogDetail()
+})
 </script>
 
-<style>
+<style lang="scss">
 #blog {
   margin-top: 64px;
   max-width: 79.4rem !important;
@@ -227,6 +331,8 @@ const share = async () => {
       #blog-img {
         height: auto;
         width: 100%;
+        max-height: 500px;
+        object-fit: cover;
         left: 0;
         right: 0;
         margin: auto;
@@ -353,7 +459,24 @@ const share = async () => {
   }
 
   #blog-tags {
-    text-align: center;
+    text-align: left;
+    margin-bottom: 4.8rem;
+    .v-btn {
+      color: white;
+      box-shadow: none;
+      .v-btn__content {
+        color: #7f8a9c;
+        font-family: Inter;
+        font-size: 1.2rem;
+        font-style: normal;
+        font-weight: 800;
+        line-height: normal;
+        text-transform: none !important;
+      }
+    }
+  }
+  #blog-keywords {
+    text-align: left;
     margin-bottom: 4.8rem;
     .v-btn {
       color: white;
@@ -653,7 +776,7 @@ const share = async () => {
         #blog-img {
           width: 100%;
           height: auto;
-          /* bottom: -23rem; */
+          bottom: -23rem;
         }
       }
     }

@@ -16,14 +16,18 @@ export default defineNuxtConfig({
   // Modules
   modules: [
     'dayjs-nuxt',
-    '@nuxtjs/leaflet',
     '@nuxt/eslint',
     'nuxt-gtag',
     '@nuxt/image',
     '@vite-pwa/nuxt',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
-        config.plugins.push(vuetify({ autoImport: true }))
+        config.plugins.push(vuetify({
+          autoImport: true, defaultAssets: {
+            font: false,
+            icons: false,
+          },
+        }))
       })
     },
   ],
@@ -31,7 +35,6 @@ export default defineNuxtConfig({
   // Plugins
   plugins: [
     { src: 'plugins/helper.js' },
-    { src: 'plugins/img-cropper', mode: 'client' },
     { src: 'plugins/vuedraggable', mode: 'client' },
   ],
 
@@ -92,19 +95,6 @@ export default defineNuxtConfig({
         { rel: 'manifest', href: '/manifest.webmanifest' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon-dark.ico' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon-light.png' },
-      ],
-      script: [
-        {
-          'src': 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
-          'async': true,
-          'crossorigin': 'anonymous',
-          'data-ad-client': process.env.NUXT_GOOGLE_ADSENSE_ID,
-        },
-        {
-          src: 'https://accounts.google.com/gsi/client',
-          defer: true,
-          async: true,
-        },
       ],
     },
   },
@@ -203,11 +193,6 @@ export default defineNuxtConfig({
     },
   },
 
-  // Module configurations
-  leaflet: {
-    markerCluster: true,
-  },
-
   image: {
     domains: ['core.gamatrain.com'],
   },
@@ -222,7 +207,6 @@ export default defineNuxtConfig({
       'vuetify',
       'vue-chartjs',
       'defu',
-      '@ckeditor/ckeditor5-vue',
       'vue3-emoji-picker',
     ],
   },
@@ -261,7 +245,6 @@ export default defineNuxtConfig({
             charts: ['vue-chartjs', 'chart.js'],
             ckeditor: [
               '@ckeditor/ckeditor5-vue',
-              '@ckeditor/ckeditor5-build-classic',
             ],
           },
         },

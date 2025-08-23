@@ -5,7 +5,7 @@
       <div class="d-flex align-center">
         <div class="toggle-container">
           <v-btn
-            v-for="tab in ['Published', 'Drafted', 'Deleted']"
+            v-for="tab in ['Draft', 'Review', 'Confirmed', 'Rejected', 'Deleted']"
             :key="tab"
             :class="{ 'active-tab': activeTab === tab }"
             class="toggle-btn"
@@ -32,8 +32,10 @@
         </v-btn>
         <v-text-field
           v-model="searchQuery"
-          placeholder="Search anything..."
+          placeholder="Search blogs by title..."
           prepend-inner-icon="mdi-magnify"
+          :append-inner-icon="searchQuery ? 'mdi-close' : undefined"
+          :loading="isSearching"
           variant="outlined"
           rounded
           density="compact"
@@ -41,8 +43,13 @@
           single-line
           class="search-input mr-4"
           style="max-width: 300px; width: 300px"
+          autocomplete="off"
+          @click:append-inner="clearSearch"
+          @keydown.enter="handleSearchQuery"
         />
-        <span class="item-count grey--text">{{ totalRecords }} Item</span>
+        <span class="item-count grey--text">
+          {{ searchQuery ? `${tableItems.length} of ${totalRecords}` : totalRecords }} Item{{ (searchQuery ? tableItems.length : totalRecords) !== 1 ? 's' : '' }}
+        </span>
       </div>
     </div>
 
@@ -61,19 +68,21 @@
         class="blog-table"
         item-key="id"
         :loading="loading"
+        :no-data-text="searchQuery ? `No blogs found for '${searchQuery}'` : 'No blogs available'"
       >
         <!-- Title column with avatar -->
         <template #[`item.title`]="{ item }">
           <div class="d-flex align-center py-2">
-            <v-avatar
+            <!-- <v-avatar
               size="40"
               class="mr-3"
             >
               <v-img
+                v-if="item.avatar"
                 :src="item.avatar"
                 :alt="item.title"
               />
-            </v-avatar>
+            </v-avatar> -->
             <span class="font-weight-medium">{{ item.title }}</span>
           </div>
         </template>
@@ -92,6 +101,21 @@
           </div>
         </template>
 
+        <template #[`item.view`]="{ item }">
+          <v-btn
+            variant="text"
+            :to="`/blogv2/${item.id}/${$slugGenerator(item.title)}`"
+            target="_blank"
+            icon
+            small
+            color="secondary"
+          >
+            <v-icon small>
+              mdi-eye
+            </v-icon>
+          </v-btn>
+        </template>
+
         <template #[`item.edit`]="{ item }">
           <v-btn
             variant="text"
@@ -105,47 +129,11 @@
             </v-icon>
           </v-btn>
         </template>
-
-        <template #[`item.delete`]="{ item }">
-          <v-btn
-            variant="text"
-            icon
-            small
-            color="error"
-            @click="openDeleteModal(item)"
-          >
-            <v-icon small>
-              mdi-delete
-            </v-icon>
-          </v-btn>
-        </template>
       </v-data-table>
     </v-card>
 
     <!-- Footer with pagination -->
     <div class="d-flex justify-space-between align-center mt-4">
-      <div class="d-flex align-center">
-        <v-select
-          v-model="bulkAction"
-          :items="['Delete All']"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          class="bulk-action-select mr-2"
-          :disabled="!selected.length"
-        />
-        <v-btn
-          :disabled="!selected.length"
-          rounded
-          color="primary"
-          class="do-btn"
-          @click="handleBulkAction"
-        >
-          Do
-        </v-btn>
-      </div>
-
       <v-pagination
         v-model="page"
         :length="Math.ceil(totalRecords / pageSize)"
@@ -178,7 +166,7 @@
 import { ref, watch, onMounted } from 'vue'
 import DeleteModal from '@/components/modals/DeleteModal.vue'
 
-const { $toast } = useNuxtApp()
+const { $toast, $slugGenerator } = useNuxtApp()
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -190,9 +178,8 @@ useHead({
 })
 
 // State
-const _singleSelect = ref(false)
 const selected = ref([])
-const activeTab = ref('Published')
+const activeTab = ref('Draft')
 const page = ref(1)
 const pageSize = ref(10)
 const perPage = ref('10 Row')
@@ -201,41 +188,51 @@ const isDeleteModalOpen = ref(false)
 const itemToDelete = ref(null)
 const loading = ref(false)
 const searchQuery = ref('')
-const bulkAction = ref('Delete All')
+const isSearching = ref(false)
+// const bulkAction = ref('Delete All')
 
 const headers = [
-  { title: 'Name', value: 'title' },
+  { title: 'Name', value: 'title', sortable: true },
   { title: 'Category', value: 'category', sortable: true },
   { title: 'Author', value: 'author', sortable: true },
   { title: 'Date', value: 'date', sortable: true },
+  { title: 'View', value: 'view', sortable: false, align: 'center' },
   { title: 'Edit', value: 'edit', sortable: false, align: 'center' },
-  { title: 'Delete', value: 'delete', sortable: false, align: 'center' },
+  // { title: 'Delete', value: 'delete', sortable: false, align: 'center' },
 ]
 
 const tableItems = ref([])
+const allItems = ref([]) // Store all items from API
+const filteredItems = ref([]) // Store filtered items for display
 
 // Methods
 const fetchBlogs = async () => {
   loading.value = true
   const skip = (page.value - 1) * pageSize.value
+
   try {
-    const response = await useApiService.get('/api/v2/blogs/posts', {
+    const response = await useApiService.get('/api/v2/blogs/contributions', {
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
       'PagingDto.PageFilter.Size': pageSize.value,
       'PagingDto.PageFilter.Skip': skip,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      'Status': activeTab.value,
     })
 
     if (response && response.succeeded) {
-      tableItems.value = (response.data.list || []).map(item => ({
+      const mappedItems = (response.data.list || []).map(item => ({
         id: item.id,
         title: item.title,
         category: item.category || '',
-        author: item.author || '',
-        date: item.date || '',
+        author: item.creationUser || '',
+        date: item.creationDate || '',
         avatar: item.imageUri || '',
         summary: item.summary || '',
       }))
-      totalRecords.value = response.data.totalRecordsCount || 0
+
+      // Store all items and apply current search filter
+      allItems.value = mappedItems
+      applySearchFilter()
+      totalRecords.value = response?.data?.totalRecordsCount
     }
   }
   finally {
@@ -243,16 +240,16 @@ const fetchBlogs = async () => {
   }
 }
 
-const openDeleteModal = (item) => {
-  itemToDelete.value = item
-  isDeleteModalOpen.value = true
-}
+// const openDeleteModal = (item) => {
+//   itemToDelete.value = item
+//   isDeleteModalOpen.value = true
+// }
 
 const handleDelete = async () => {
   if (itemToDelete.value) {
     try {
       await useApiService.remove(
-        `/api/v2/blogs/posts/${itemToDelete.value.id}`,
+        `/api/v2/blogs/contributions/${itemToDelete.value.id}`,
         {
           postId: itemToDelete.value.id,
         },
@@ -263,27 +260,65 @@ const handleDelete = async () => {
       tableItems.value = tableItems.value.filter(
         item => item.id !== itemToDelete.value.id,
       )
+      totalRecords.value = Math.max(0, totalRecords.value - 1)
     }
-    catch {
-      $toast.error('Failed to delete blog.')
+    catch (error) {
+      console.error('Error deleting blog:', error)
+      $toast.error(error?.response?.data?.errors?.[0]?.message || 'Failed to delete blog.')
     }
   }
   itemToDelete.value = null
   isDeleteModalOpen.value = false
 }
 
-const handleBulkAction = async () => {
-  if (selected.value.length && bulkAction.value === 'Delete All') {
-    try {
-      // Implement bulk delete logic here
-      $toast.success('Selected items deleted successfully!')
-      selected.value = []
-    }
-    catch {
-      $toast.error('Failed to delete selected items.')
-    }
+const applySearchFilter = () => {
+  if (!searchQuery.value || !searchQuery.value.trim()) {
+    // No search query, show all items
+    filteredItems.value = [...allItems.value]
+  }
+  else {
+    // Apply search filter - search in title, category, author, and summary
+    const query = searchQuery.value.toLowerCase().trim()
+    filteredItems.value = allItems.value.filter((item) => {
+      return (
+        (item.title && item.title.toLowerCase().includes(query))
+        || (item.category && item.category.toLowerCase().includes(query))
+        || (item.author && item.author.toLowerCase().includes(query))
+        || (item.summary && item.summary.toLowerCase().includes(query))
+      )
+    })
+  }
+  tableItems.value = filteredItems.value
+}
+
+const handleSearchQuery = () => {
+  isSearching.value = true
+  try {
+    applySearchFilter()
+  }
+  finally {
+    isSearching.value = false
   }
 }
+
+const clearSearch = () => {
+  searchQuery.value = ''
+  applySearchFilter()
+}
+
+// const handleBulkAction = async () => {
+//   if (selected.value.length && bulkAction.value === 'Delete All') {
+//     try {
+//       // Implement bulk delete logic here
+//       console.log(selected.value)
+//       $toast.success('Selected items deleted successfully!')
+//       selected.value = []
+//     }
+//     catch {
+//       $toast.error('Failed to delete selected items.')
+//     }
+//   }
+// }
 
 // Watchers
 watch(page, () => {
@@ -296,13 +331,23 @@ watch(perPage, (val) => {
   fetchBlogs()
 })
 
+// Debounced search to avoid too many API calls
+// Debounced search for better UX
+let searchTimeout = null
 watch(searchQuery, () => {
-  // Implement search logic here
-  fetchBlogs()
+  if (searchTimeout) {
+    clearTimeout(searchTimeout)
+  }
+
+  searchTimeout = setTimeout(() => {
+    handleSearchQuery()
+  }, 150) // Wait 150ms after user stops typing
 })
 
 watch(activeTab, () => {
-  // Implement tab change logic here
+  // Clear search when switching tabs and fetch new data
+  console.log(`Active tab changed to: ${activeTab.value}`)
+  searchQuery.value = '' // Clear search when switching tabs
   fetchBlogs()
 })
 

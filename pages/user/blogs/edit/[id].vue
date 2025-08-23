@@ -5,7 +5,7 @@
       @submit.prevent="validate"
     >
       <div class="d-flex flex-wrap flex-mobile">
-        <v-row>
+        <v-row class="w-100">
           <v-col
             cols="12"
             md="7"
@@ -51,13 +51,12 @@
               <div class="editor-container">
                 <label class="mb-2 d-block form-label-title">Main</label>
                 <div class="w-100 overflow-hidden relative">
-                  <ClientOnly>
-                    <rich-editor-content
-                      v-model="blog.content"
-                      :rules="contentRules"
-                      required
-                    />
-                  </ClientOnly>
+                  <rich-editor-content
+                    v-model="blog.content"
+                    :enable-extra-plugins="true"
+                    :rules="contentRules"
+                    required
+                  />
                 </div>
               </div>
 
@@ -102,16 +101,6 @@
                     @click="validate"
                   >
                     Update
-                  </v-btn>
-
-                  <v-btn
-                    icon
-                    color="#344054"
-                    size="small"
-                    variant="text"
-                    class="mobile-mb-2"
-                  >
-                    <v-icon>mdi-delete</v-icon>
                   </v-btn>
                 </div>
                 <div
@@ -190,7 +179,7 @@
                         v-bind="props"
                         density="compact"
                         variant="outlined"
-                        hide-details
+                        :rules="scheduledDateRules"
                         class="rounded-select mobile-full"
                       />
                     </template>
@@ -454,6 +443,18 @@ const contentRules = [
   v => (v && v.trim() !== '' && v !== '<p></p>') || 'Content cannot be empty',
 ]
 
+const scheduledDateRules = [
+  (v) => {
+    if (blog.value.publishTime === 'Schedule') {
+      if (!v) return 'Scheduled date is required when using Schedule option'
+      const selectedDate = new Date(v)
+      const now = new Date()
+      if (selectedDate < now) return 'Scheduled date cannot be in the past'
+    }
+    return true
+  },
+]
+
 // Remove category rules since they're not required
 // const categoryRules = [
 //   (v) => (v && v.length > 0) || "Select at least one category",
@@ -464,20 +465,27 @@ const fetchBlogData = async () => {
   try {
     loading.value = true
     const response = await useApiService.get(
-      `/api/v2/blogs/posts/${route.params.id}`,
+      `/api/v2/blogs/contributions/${route.params.id}`,
     )
     if (response && response.succeeded) {
       const blogData = response.data
+      // Determine if this is a scheduled post by checking if publishDate is in the future
+      const publishDate = blogData.publishDate
+        ? new Date(blogData.publishDate)
+        : null
+      const isScheduled = publishDate && publishDate > new Date()
+
       blog.value = {
         title: blogData.title,
         content: blogData.body,
         summary: blogData.summary,
         status: blogData.status,
         visibility: blogData.visibilityType,
-        publishTime: blogData.scheduledDate ? 'Schedule' : 'Immediately',
-        categories: blogData.tags?.map(k => k.id) || [],
-        scheduledDate: blogData.scheduledDate,
+        publishTime: isScheduled ? 'Schedule' : 'Immediately',
+        categories: blogData.tags,
+        scheduledDate: isScheduled ? blogData.publishDate : null,
       }
+      console.log(blog.value)
       slug.value = blogData.slug
 
       if (blogData.imageUri) {
@@ -498,13 +506,15 @@ const fetchBlogData = async () => {
       })
     }
     else {
-      $toast.error('Failed to fetch blog data')
+      $toast.error(
+        response?.errors?.[0]?.message || 'Failed to fetch blog data',
+      )
       router.push('/user/blogs')
     }
   }
   catch (error) {
     console.error('Error fetching blog:', error)
-    $toast.error('Failed to fetch blog data')
+    $toast.error('Network error while fetching blog data. Please try again.')
     router.push('/user/blogs')
   }
   finally {
@@ -515,6 +525,7 @@ const fetchBlogData = async () => {
 // Form methods
 async function validate() {
   const { valid } = await form.value.validate()
+  console.log('Form valid:', valid)
   isFormValid.value = valid
 
   if (valid) {
@@ -522,19 +533,17 @@ async function validate() {
   }
 }
 
-function _reset() {
-  form.value.reset()
-  isFormValid.value = false
-}
-
-function _resetValidation() {
-  form.value.resetValidation()
-  isFormValid.value = false
-}
-
 const onSubmit = async () => {
   try {
     loading.value = true
+
+    // Validate scheduled publishing
+    if (blog.value.publishTime === 'Schedule' && !blog.value.scheduledDate) {
+      $toast.error('Please select a scheduled date when using Schedule option')
+      loading.value = false
+      return
+    }
+
     const formData = new FormData()
 
     // Add text fields
@@ -543,26 +552,38 @@ const onSubmit = async () => {
     formData.append('Summary', blog.value.summary || '')
     formData.append('VisibilityType', blog.value.visibility.toLowerCase())
 
+    // Handle publish date logic
     let publishDate
     if (blog.value.publishTime === 'Immediately') {
+      // Always send current timestamp for immediate publishing
       publishDate = new Date().toISOString()
     }
-    else if (
-      blog.value.publishTime === 'Schedule'
-      && blog.value.scheduledDate
-    ) {
-      const date = new Date(blog.value.scheduledDate)
-      publishDate = date.toISOString()
+    else if (blog.value.publishTime === 'Schedule') {
+      // Send the selected scheduled date, preserving the selected date without timezone issues
+      const selectedDate = new Date(blog.value.scheduledDate)
+      // Set time to noon to avoid timezone conversion issues
+      selectedDate.setHours(12, 0, 0, 0)
+      publishDate = selectedDate.toISOString()
     }
 
     formData.append('PublishDate', publishDate)
     formData.append('Slug', slug.value)
 
     // Add categories
-    blog.value.categories.forEach((categoryId) => {
+    // blog.value.categories.forEach((categoryId) => {
+    //   if (!categoryId) return
+    //   formData.append('Tags[]', categoryId)
+    // })
+
+    // console.log([...blog.value?.categories])
+    if (blog.value.categories?.length < 1) {
+      $toast.error('Please select at least one category.')
+      return
+    }
+    Object.values(blog.value.categories).forEach((categoryId) => {
+      if (!categoryId) return
       formData.append('Tags[]', categoryId)
     })
-
     // Add keywords
     if (keywords.value.length >= 1) {
       formData.append('Keywords', keywords.value.join(','))
@@ -572,7 +593,17 @@ const onSubmit = async () => {
     if (blog.value.image) {
       formData.append('image', blog.value.image)
     }
-
+    console.log('Submitting blog data:', {
+      title: blog.value.title,
+      content: blog.value.content,
+      summary: blog.value.summary,
+      status: blog.value.status,
+      visibility: blog.value.visibility,
+      publishTime: blog.value.publishTime,
+      categories: blog.value.categories,
+      image: blog.value.image,
+      scheduledDate: blog.value.scheduledDate,
+    })
     const response = await useApiService.put(
       `/api/v2/blogs/contributions/${route.params.id}`,
       formData,
@@ -643,8 +674,9 @@ const createCategory = async () => {
       )
     }
   }
-  catch {
-    $toast.error('Failed to create category.')
+  catch (error) {
+    console.error('Error creating category:', error)
+    $toast.error('Network error while creating category. Please try again.')
   }
   finally {
     categoryLoader.value = false
@@ -658,9 +690,15 @@ const fetchCategories = async () => {
     if (response && response.succeeded) {
       categoryList.value = response.data
     }
+    else {
+      $toast.error(
+        response?.errors?.[0]?.message || 'Failed to load categories',
+      )
+    }
   }
-  catch {
-    $toast.error('Failed to load categories')
+  catch (error) {
+    console.error('Error fetching categories:', error)
+    $toast.error('Network error while loading categories. Please try again.')
   }
   finally {
     categoriesLoading.value = false
@@ -678,7 +716,7 @@ const createKeyword = async () => {
   keywordSearch.value = ''
 }
 
-const deleteKeyword = async (row, index) => {
+const deleteKeyword = async (kitem, index) => {
   keywords.value.splice(index, 1)
 }
 
@@ -697,11 +735,14 @@ const createSlug = async () => {
       return response.data
     }
     else {
+      // Fallback to local slug generation
       slug.value = $slugGenerator.convert(blog.value.title || '')
       return slug.value
     }
   }
-  catch {
+  catch (error) {
+    console.error('Error generating slug:', error)
+    // Fallback to local slug generation
     slug.value = $slugGenerator.convert(blog.value.title || '')
     return slug.value
   }
@@ -741,8 +782,26 @@ watch(
 
 // Watch for changes in required fields to validate form
 watch(
-  [() => blog.value.title, () => blog.value.content],
+  [
+    () => blog.value.title,
+    () => blog.value.content,
+    () => blog.value.publishTime,
+    () => blog.value.scheduledDate,
+  ],
   async () => {
+    if (form.value) {
+      const { valid } = await form.value.validate()
+      isFormValid.value = valid
+    }
+  },
+  { deep: true },
+)
+
+// Watch for changes tags(catergories) to validate form
+watch(
+  () => blog.value.categories,
+  async () => {
+    console.log('Categories changed:', blog.value.categories)
     if (form.value) {
       const { valid } = await form.value.validate()
       isFormValid.value = valid

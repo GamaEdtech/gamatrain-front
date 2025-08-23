@@ -1,26 +1,14 @@
 <template>
-  <div :class="mapClass">
-    <client-only>
-      <l-map
-        id="schoolDetailsMap"
-        ref="schoolMap"
-        :zoom="map.zoom"
-        :min-zoom="map.minZoom"
-        :center="map.center"
-        :use-global-leaflet="false"
-        @click="openLocationDialog"
-      >
-        <l-tile-layer :url="map.url" />
-        <l-marker :lat-lng="map.latLng">
-          <LIcon
-            :icon-url="map.schoolIcon"
-            :icon-size="[64, 64]"
-            :icon-anchor="[16, 32]"
-          />
-        </l-marker>
-      </l-map>
-      <div>{{ mapClass }}</div>
-    </client-only>
+  <div :class="`w-100 h-100 set-background ${props.class}`">
+    <Map
+      ref="mapRef"
+      :initial-center="map.center"
+      :highlight-location="map.latLng"
+      :show-highlight-location="true"
+      :initial-zoom="map.zoom"
+      :border-radius="6"
+      @click-on-map="openLocationDialog"
+    />
   </div>
 
   <SelectLocationDialog
@@ -35,6 +23,7 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from 'vue'
 import SelectLocationDialog from '@/components/common/SelectLocationDialog.vue'
+import Map from '@/components/common/Map.client.vue'
 
 const props = defineProps({
   class: {
@@ -48,7 +37,6 @@ const props = defineProps({
   },
 })
 const emit = defineEmits(['location-updated'])
-const schoolMap = ref(null)
 const nuxtApp = useNuxtApp()
 const route = useRoute()
 const contentData = ref(props.content)
@@ -57,15 +45,12 @@ const mapSubmitLoader = ref(false)
 const mapMarkerData = ref({})
 const map = reactive({
   url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-  zoom: 10,
+  zoom: 6,
   minZoom: 2,
   center: [0, 0],
   latLng: [0, 0],
-  object: null,
-  boundingBox: {},
-  schoolIcon: '/images/school-marker.png',
 })
-const mapClass = ref(props.class)
+const mapRef = ref(null)
 
 function openLocationDialog() {
   showSelectLocationDialog.value = true
@@ -103,8 +88,17 @@ function handleUpdate() {
         nuxtApp.$toast?.success(
           'Your contribution has been successfully submitted',
         )
+        map.center = [mapMarkerData.value.lat, mapMarkerData.value.lng]
+        map.latLng = [mapMarkerData.value.lat, mapMarkerData.value.lng]
+        mapRef.value.setView(
+          mapMarkerData.value.lat,
+          mapMarkerData.value.lng,
+          map.zoom,
+        )
         // Emit the updated location data
         emit('location-updated', {
+          latitude: mapMarkerData.value.lat,
+          longitude: mapMarkerData.value.lng,
           countryId: mapMarkerData.value?.countryId,
           stateId: mapMarkerData.value?.stateId,
           cityId: mapMarkerData.value?.cityId,
@@ -129,13 +123,6 @@ function handleUpdate() {
 }
 
 watch(
-  () => props.class,
-  (val) => {
-    mapClass.value = val
-  },
-)
-
-watch(
   () => props.content,
   (newContent) => {
     contentData.value = newContent
@@ -156,6 +143,10 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.set-background {
+  background-color: #f2f4f7;
+  border-radius: 6px;
+}
 #schoolDetailsMap {
   border-radius: 0.6rem;
   height: 28.1rem !important;
