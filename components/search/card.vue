@@ -1,7 +1,11 @@
 <template>
   <div
-    class="w-100 card-search rounded-lg px-2 py-4 d-flex flex-wrap ga-3 align-center justify-start"
+    class="w-100 card-search rounded-lg px-2 py-4 d-flex flex-wrap ga-3 align-center justify-start position-relative"
   >
+    <Nuxt-link
+      :to="createLinkCard(information)"
+      class="w-100 h-100 position-absolute"
+    />
     <div class="d-flex ga-3 align-stretch justify-start">
       <div
         class="img-div rounded-ts-lg rounded-bs-lg d-flex align-center justify-center ga-3 flex-column"
@@ -35,10 +39,10 @@
       <div
         class="content-card d-flex flex-column ga-2 align-start justify-center justify-sm-space-between"
       >
-        <NuxtLink
+        <span
           :to="createLinkCard(information)"
           class="text-h5 text-sm-h4 text-black font-weight-medium"
-        >{{ information?.title }}</NuxtLink>
+        >{{ information?.title }}</span>
         <div class="d-flex align-center justify-start flex-wrap ga-3">
           <v-chip
             v-if="information.section_title"
