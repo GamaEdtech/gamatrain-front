@@ -529,6 +529,9 @@ const enableStep2Txt = ref(false)
 const enableStep3 = ref(false)
 const enableStep3Txt = ref(false)
 
+const activeMember = ref(2)
+const tmpShowMemeber = ref(1)
+
 const teamMembers = ref<TeamMember[]>([
   {
     id: 1,
@@ -536,9 +539,9 @@ const teamMembers = ref<TeamMember[]>([
     avatar: 'mohammad-salehi.jpeg',
     role: 'DevOps Engineer',
     bio:
-      'Sadegh Salehi is a dedicated and passionate DevOps engineer at GamaTrain startup. With over ten years of experience in system administration and DevOps engineering he joined the team and immediately set to work optimizing performance by setting up a robust Database Cluster. His commitment to finding the best solutions, rather than the easiest ones, shines through in his work.'
-      + 'One notable achievement was overcoming the challenge of handling millions of records and aggregating them for every student\'s new exam. Through efficient communication and teamwork, Sadegh and his colleagues implemented a groundbreaking solution: a privately implemented binary tree database.'
-      + 'As a valuable member of the company, Sadegh continues to contribute during peak times, such as student exam periods, where the team handles millions of requests. His dedication and problem-solving skills make him an integral part of the GamaTrain startup\'s success.',
+            'Sadegh Salehi is a dedicated and passionate DevOps engineer at GamaTrain startup. With over ten years of experience in system administration and DevOps engineering he joined the team and immediately set to work optimizing performance by setting up a robust Database Cluster. His commitment to finding the best solutions, rather than the easiest ones, shines through in his work.'
+            + 'One notable achievement was overcoming the challenge of handling millions of records and aggregating them for every student\'s new exam. Through efficient communication and teamwork, Sadegh and his colleagues implemented a groundbreaking solution: a privately implemented binary tree database.'
+            + 'As a valuable member of the company, Sadegh continues to contribute during peak times, such as student exam periods, where the team handles millions of requests. His dedication and problem-solving skills make him an integral part of the GamaTrain startup\'s success.',
   },
   {
     id: 2,
@@ -546,8 +549,8 @@ const teamMembers = ref<TeamMember[]>([
     avatar: 'fahim-kavian.jpeg',
     role: 'UI/UX Director',
     bio:
-      'Fahim Kavian, as the UI/UX Director at GamaTrain, brings a wealth of valuable experience to the team. Her diverse background in UI, Motion, Visual, 3D, and Logo Design from freelancing and past roles enables her to tackle design challenges from multiple angles. Fahim\'s track record of enhancing user experiences and increasing user satisfaction, as seen in her work at Wallebi and Kartak, demonstrates her ability to drive results.'
-      + 'Additionally, Fahim\'s proficiency in simplifying complex registration processes and implementing gamification strategies that boost user engagement make her an asset in optimizing GamaTrain\'s user interfaces. Her history of effectively improving speed and reliability in digital processes, as evidenced by her contributions to the crypto wallet industry, aligns perfectly with GamaTrain\'s goals of providing efficient and user-friendly solutions. Fahim Kavian\'s past experiences make her a key player in elevating GamaTrain\'s UI/UX to new heights.',
+            'Fahim Kavian, as the UI/UX Director at GamaTrain, brings a wealth of valuable experience to the team. Her diverse background in UI, Motion, Visual, 3D, and Logo Design from freelancing and past roles enables her to tackle design challenges from multiple angles. Fahim\'s track record of enhancing user experiences and increasing user satisfaction, as seen in her work at Wallebi and Kartak, demonstrates her ability to drive results.'
+            + 'Additionally, Fahim\'s proficiency in simplifying complex registration processes and implementing gamification strategies that boost user engagement make her an asset in optimizing GamaTrain\'s user interfaces. Her history of effectively improving speed and reliability in digital processes, as evidenced by her contributions to the crypto wallet industry, aligns perfectly with GamaTrain\'s goals of providing efficient and user-friendly solutions. Fahim Kavian\'s past experiences make her a key player in elevating GamaTrain\'s UI/UX to new heights.',
   },
   {
     id: 3,
@@ -585,9 +588,6 @@ const teamMembers = ref<TeamMember[]>([
     bio: '',
   },
 ])
-const activeMember = ref(2)
-const tmpShowMemeber = ref(1)
-const _intervalId = ref<null | number>(null)
 
 const activeCommitment = ref('tab-2')
 const commitmentList = ref<Commitment[]>([
@@ -595,37 +595,37 @@ const commitmentList = ref<Commitment[]>([
     icon: 'white-balance-incandescent',
     title: 'Innovation',
     describe:
-      'We are dedicated to innovation and are constantly exploring new ways to enhance the learning experience. We use the latest technology and teaching methods to create engaging and interactive content that keeps our users motivated and excited about learning.',
+            'We are dedicated to innovation and are constantly exploring new ways to enhance the learning experience. We use the latest technology and teaching methods to create engaging and interactive content that keeps our users motivated and excited about learning.',
   },
   {
     icon: 'umbrella-beach',
     title: 'Accessibility',
     describe:
-      'We are committed to providing our services to as many people as possible, regardless of their location, financial situation, or background. Our platform is designed to be accessible and affordable, allowing anyone to access high-quality education.',
+            'We are committed to providing our services to as many people as possible, regardless of their location, financial situation, or background. Our platform is designed to be accessible and affordable, allowing anyone to access high-quality education.',
   },
   {
     icon: 'star',
     title: 'Quality',
     describe:
-      'We strive to provide the highest quality of education to our users by working with experienced educators and experts to create our content. We constantly review and update our content to ensure that it is accurate, relevant, and up-to-date.',
+            'We strive to provide the highest quality of education to our users by working with experienced educators and experts to create our content. We constantly review and update our content to ensure that it is accurate, relevant, and up-to-date.',
   },
   {
     icon: 'headset',
     title: 'Support',
     describe:
-      'We are committed to providing our users with the support they need to succeed in their education. Our customer support team is available 24/7 to answer any questions or concerns that our users may have.',
+            'We are committed to providing our users with the support they need to succeed in their education. Our customer support team is available 24/7 to answer any questions or concerns that our users may have.',
   },
   {
     icon: 'account-multiple',
     title: 'Community',
     describe:
-      'We believe that education is a collaborative process and that learning is enhanced when students and educators work together. We are committed to creating a supportive and inclusive community that encourages collaboration and communication between our users.',
+            'We believe that education is a collaborative process and that learning is enhanced when students and educators work together. We are committed to creating a supportive and inclusive community that encourages collaboration and communication between our users.',
   },
   {
     icon: 'memory',
     title: 'Digital Transformation',
     describe:
-      'In today\'s digital age, traditional learning falls short. At GamaTrain, we\'re dedicated to enhancing education through technology. Our intuitive platform is accessible on various devices, providing a flexible and dynamic learning experience that adapts to individual preferences.',
+            'In today\'s digital age, traditional learning falls short. At GamaTrain, we\'re dedicated to enhancing education through technology. Our intuitive platform is accessible on various devices, providing a flexible and dynamic learning experience that adapts to individual preferences.',
   },
 ])
 
@@ -642,7 +642,7 @@ const serviceList = ref<Service[]>([
   },
   {
     icon: 'icon-school',
-    link: '/school',
+    link: '/school-service',
     title: 'School finder',
   },
   {
@@ -661,98 +661,79 @@ const serviceList = ref<Service[]>([
     title: 'Exam',
   },
 ])
-const screenWidth = ref(600)
 
-// Refs for DOM elements
-const stepProgressBar = ref<HTMLElement | null>(null)
-const mobileStepProgressBar = ref<HTMLElement | null>(null)
-let observer: IntersectionObserver | null = null
+const screenWidth = ref(600)
 
 // --------------------
 // Computed
 // --------------------
-const _sliceTeamMember = computed(() =>
-  screenWidth.value < 960
+const _sliceTeamMember = computed(() => {
+  return screenWidth.value < 960
     ? teamMembers.value.slice(2, 5)
-    : teamMembers.value.slice(1, 6),
-)
+    : teamMembers.value.slice(1, 6)
+})
 
 // --------------------
-// Watch
+// Watchers
 // --------------------
-watch(
-  screenWidth,
-  (width) => {
-    if (width < 960) {
-      activeMember.value = 1
-      tmpShowMemeber.value = 2
-    }
-    else {
-      activeMember.value = 2
-      tmpShowMemeber.value = 1
-    }
-  },
-  { immediate: true },
-)
-
-// auth: false,
-// head() {
-//   return {
-//     titleTemplate: "%s",
-//     title:
-//       "About GamaTrain | Meet the Team Dedicated to Transforming K12 Education",
-//     meta: [ ... ]
-//   };
-// },
+watch(screenWidth, (width) => {
+  if (width < 960) {
+    activeMember.value = 1
+    tmpShowMemeber.value = 2
+  }
+  else {
+    activeMember.value = 2
+    tmpShowMemeber.value = 1
+  }
+}, { immediate: true })
 
 // --------------------
 // Methods
 // --------------------
-function startAnimation(step: number) {
+const stepProgressBar = ref<HTMLElement>()
+const mobileStepProgressBar = ref<HTMLElement>()
+let observer: IntersectionObserver | null = null
+
+const startAnimation = (step: number) => {
   // Toggle a class on the element to trigger the CSS animation
   if (step === 1) {
-    if (stepProgressBar.value && !stepProgressBar.value.classList.contains('animateStep1')) {
-      stepProgressBar.value.classList.add('animateStep1')
+    if (!stepProgressBar.value?.classList.contains('animateStep1')) {
+      stepProgressBar.value?.classList.add('animateStep1')
     }
-    if (mobileStepProgressBar.value && !mobileStepProgressBar.value.classList.contains('animateStep1')) {
-      mobileStepProgressBar.value.classList.add('animateStep1')
+    if (!mobileStepProgressBar.value?.classList.contains('animateStep1')) {
+      mobileStepProgressBar.value?.classList.add('animateStep1')
     }
   }
   else {
-    if (stepProgressBar.value && !stepProgressBar.value.classList.contains('animateStep2')) {
-      stepProgressBar.value.classList.add('animateStep2')
+    if (!stepProgressBar.value?.classList.contains('animateStep2')) {
+      stepProgressBar.value?.classList.add('animateStep2')
     }
-    if (mobileStepProgressBar.value && !mobileStepProgressBar.value.classList.contains('animateStep2')) {
-      mobileStepProgressBar.value.classList.add('animateStep2')
+    if (!mobileStepProgressBar.value?.classList.contains('animateStep2')) {
+      mobileStepProgressBar.value?.classList.add('animateStep2')
     }
   }
 }
 
-function initIntersectionObserver() {
-  const options = {
-    root: null, // Use the viewport as the root
-    rootMargin: '0px', // No margin
-    threshold: 0.5, // Trigger when 50% of the element is visible
-  }
-
-  observer = new IntersectionObserver(handleIntersection, options)
-  updateObserver()
-}
-
-function updateObserver() {
+const updateObserver = () => {
   // Disconnect any existing observer
-  observer?.disconnect()
+  if (observer) {
+    observer.disconnect()
+  }
 
   // Observe the appropriate progress bar based on screen width
   if (window.innerWidth > 960) {
-    if (stepProgressBar.value) observer?.observe(stepProgressBar.value)
+    if (stepProgressBar.value) {
+      observer?.observe(stepProgressBar.value)
+    }
   }
   else {
-    if (mobileStepProgressBar.value) observer?.observe(mobileStepProgressBar.value)
+    if (mobileStepProgressBar.value) {
+      observer?.observe(mobileStepProgressBar.value)
+    }
   }
 }
 
-function handleResize() {
+const handleResize = () => {
   screenWidth.value = window.innerWidth
   updateObserver()
 
@@ -769,18 +750,22 @@ function handleResize() {
   enableStep3Txt.value = false
 }
 
-function handleIntersection(entries: IntersectionObserverEntry[]) {
+const handleIntersection = (entries: IntersectionObserverEntry[]) => {
   entries.forEach((entry) => {
     if (entry.isIntersecting) {
       // Display the alert message when the div is in view
       enableStep1.value = true
       enableStep1Txt.value = true
-      setTimeout(() => startAnimation(1), 1000)
+      setTimeout(() => {
+        startAnimation(1)
+      }, 1000)
       setTimeout(() => {
         enableStep2.value = true
         enableStep2Txt.value = true
       }, 4000)
-      setTimeout(() => startAnimation(2), 5000)
+      setTimeout(() => {
+        startAnimation(2)
+      }, 5000)
       setTimeout(() => {
         enableStep3.value = true
         enableStep3Txt.value = true
@@ -789,15 +774,42 @@ function handleIntersection(entries: IntersectionObserverEntry[]) {
   })
 }
 
-function _memberSlideClass(index: number) {
-  if (index === activeMember.value) return 'active-slide'
-  else if (index === activeMember.value - 1 || index === activeMember.value + 1) return 'adjacent-slide'
-  else if (index === activeMember.value - 2 || index === activeMember.value + 2) return 'subsequent-slide'
-  else if (index === activeMember.value - 3 || index === activeMember.value + 3) return 'after-subsequent-slide'
-  else if (index === activeMember.value - 4 || index === activeMember.value + 4) return 'after-after-subsequent-slide'
+const initIntersectionObserver = () => {
+  const options = {
+    root: null, // Use the viewport as the root
+    rootMargin: '0px', // No margin
+    threshold: 0.5, // Trigger when 50% of the element is visible
+  }
+
+  observer = new IntersectionObserver(handleIntersection, options)
+  updateObserver()
 }
 
-function _slideClicked(index: number) {
+const _memberSlideClass = (index: number) => {
+  if (index === activeMember.value) return 'active-slide'
+  else if (
+    index === activeMember.value - 1
+    || index === parseInt(String(activeMember.value)) + parseInt('1')
+  )
+    return 'adjacent-slide'
+  else if (
+    index === activeMember.value - 2
+    || index === parseInt(String(activeMember.value)) + parseInt('2')
+  )
+    return 'subsequent-slide'
+  else if (
+    index === activeMember.value - 3
+    || index === parseInt(String(activeMember.value)) + parseInt('3')
+  )
+    return 'after-subsequent-slide'
+  else if (
+    index === activeMember.value - 4
+    || index === parseInt(String(activeMember.value)) + parseInt('4')
+  )
+    return 'after-after-subsequent-slide'
+}
+
+const _slideClicked = (index: number) => {
   const deltaIndex = activeMember.value - index
   if (deltaIndex > 0) {
     for (let i = 0; i < deltaIndex; i++) {
@@ -834,380 +846,13 @@ onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
 
   // Clean up the observer
-  observer?.disconnect()
+  if (observer) {
+    observer.disconnect()
+  }
 })
 </script>
 
 <style>
-/* Global styles to hide tab slider and fix active tab */
-
-#about-commitment-container {
-  .v-tab--selected .v-tab__slider {
-    opacity: 0 !important;
-  }
-
-  .v-tabs--density-default {
-    --v-tabs-height: inherit !important;
-  }
-
-  .v-tabs .v-tabs-slider-wrapper {
-    display: none !important;
-  }
-
-  .v-tabs .v-tab--active::before,
-  .v-tabs .v-tab--active::after {
-    display: none !important;
-  }
-
-  /* Hide all tab indicators */
-  .v-tabs .v-tab::before,
-  .v-tabs .v-tab::after {
-    display: none !important;
-  }
-
-  /* Hide slider completely */
-  .v-tabs .v-tabs-slider {
-    display: none !important;
-  }
-
-  /* Additional slider hiding with maximum specificity */
-  .v-tabs .v-tabs-slider-wrapper,
-  .v-tabs .v-tabs-slider,
-  .v-tabs .v-tabs-slider__background {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-  }
-
-  /* Hide any tab indicators with maximum specificity */
-  .v-tabs .v-tab::before,
-  .v-tabs .v-tab::after,
-  .v-tabs .v-tab--active::before,
-  .v-tabs .v-tab--active::after {
-    display: none !important;
-  }
-
-  /* Force hide slider with maximum specificity */
-  .v-tabs .v-tabs-slider-wrapper,
-  .v-tabs .v-tabs-slider,
-  .v-tabs .v-tabs-slider__background {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-  }
-
-  /* Hide any tab indicators with maximum specificity */
-  .v-tabs .v-tab::before,
-  .v-tabs .v-tab::after,
-  .v-tabs .v-tab--active::before,
-  .v-tabs .v-tab--active::after {
-    display: none !important;
-  }
-
-  /* Ultra aggressive slider hiding */
-  .v-tabs .v-tabs-slider-wrapper,
-  .v-tabs .v-tabs-slider,
-  .v-tabs .v-tabs-slider__background,
-  .v-tabs .v-tabs-slider::before,
-  .v-tabs .v-tabs-slider::after,
-  .v-tabs .v-tabs-slider-wrapper::before,
-  .v-tabs .v-tabs-slider-wrapper::after {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    width: 0 !important;
-    max-height: 0 !important;
-    max-width: 0 !important;
-    overflow: hidden !important;
-    position: absolute !important;
-    left: -9999px !important;
-    top: -9999px !important;
-  }
-
-  /* Hide all possible tab indicators */
-  .v-tabs .v-tab::before,
-  .v-tabs .v-tab::after,
-  .v-tabs .v-tab--active::before,
-  .v-tabs .v-tab--active::after,
-  .v-tabs .v-tab:hover::before,
-  .v-tabs .v-tab:hover::after,
-  .v-tabs .v-tab--active:hover::before,
-  .v-tabs .v-tab--active:hover::after {
-    display: none !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    height: 0 !important;
-    width: 0 !important;
-    max-height: 0 !important;
-    max-width: 0 !important;
-    overflow: hidden !important;
-  }
-
-  .active-tab {
-    background-color: #ffb600 !important;
-    border-radius: 0.4rem !important;
-    border-top-left-radius: 0.4rem !important;
-    border-top-right-radius: 0.4rem !important;
-    border-bottom-left-radius: 0.4rem !important;
-    border-bottom-right-radius: 0.4rem !important;
-  }
-
-  /* Force border radius for all tabs */
-  .v-tabs .v-tab {
-    border-radius: 0.4rem !important;
-    border-top-left-radius: 0.4rem !important;
-    border-top-right-radius: 0.4rem !important;
-    border-bottom-left-radius: 0.4rem !important;
-    border-bottom-right-radius: 0.4rem !important;
-  }
-
-  /* Override Vuetify's default tab styles */
-  .v-tabs .v-tab--active {
-    border-radius: 0.4rem !important;
-    border-top-left-radius: 0.4rem !important;
-    border-top-right-radius: 0.4rem !important;
-    border-bottom-left-radius: 0.4rem !important;
-    border-bottom-right-radius: 0.4rem !important;
-  }
-
-  /* Force remove any Vuetify border radius overrides */
-  .v-tabs .v-tab,
-  .v-tabs .v-tab--active,
-  .v-tabs .v-tab.v-btn {
-    border-radius: 0.4rem !important;
-    border-top-left-radius: 0.4rem !important;
-    border-top-right-radius: 0.4rem !important;
-    border-bottom-left-radius: 0.4rem !important;
-    border-bottom-right-radius: 0.4rem !important;
-  }
-
-  /* Maximum specificity to override Vuetify */
-  .v-tabs .v-tab,
-  .v-tabs .v-tab--active,
-  .v-tabs .v-tab.v-btn,
-  .v-tabs .v-tab[aria-selected="true"] {
-    border-radius: 0.4rem !important;
-    border-top-left-radius: 0.4rem !important;
-    border-top-right-radius: 0.4rem !important;
-    border-bottom-left-radius: 0.4rem !important;
-    border-bottom-right-radius: 0.4rem !important;
-  }
-
-  /* Global override with maximum specificity */
-  .v-tabs .v-tab,
-  .v-tabs .v-tab--active,
-  .v-tabs .v-tab.v-btn,
-  .v-tabs .v-tab[aria-selected="true"],
-  .v-tabs .v-tab[aria-selected="false"] {
-    border-radius: 0.4rem !important;
-    border-top-left-radius: 0.4rem !important;
-    border-top-right-radius: 0.4rem !important;
-    border-bottom-left-radius: 0.4rem !important;
-    border-bottom-right-radius: 0.4rem !important;
-  }
-}
-
-@keyframes step1ProgressAnimation {
-  0% {
-    width: 0;
-  }
-
-  100% {
-    width: 50%;
-    background-color: #000;
-  }
-}
-
-@keyframes step2ProgressAnimation {
-  0% {
-    width: 50%;
-    background-color: #ffb600;
-  }
-
-  100% {
-    width: 100%;
-    background-color: #000;
-  }
-}
-
-@keyframes step1MobileProgressAnimation {
-  0% {
-    height: 0;
-  }
-
-  100% {
-    height: 50%;
-    background-color: #000;
-  }
-}
-
-@keyframes step2MobileProgressAnimation {
-  0% {
-    height: 50%;
-    background-color: #ffb600;
-  }
-
-  100% {
-    height: 100%;
-    background-color: #000;
-  }
-}
-
-#about-page-header {
-  height: 20rem;
-  background-image: url("/images/about-header-xs.svg");
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 100vw 100vh;
-  position: relative;
-
-  .overlay {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 100%;
-    background: rgba(36, 41, 47, 0.4);
-    backdrop-filter: blur(7.5px);
-  }
-
-  #main-title-holder {
-    position: absolute;
-    margin: auto;
-    left: 0;
-    right: 0;
-    top: 9.7rem;
-    text-align: center;
-
-    .gama-text-h1 {
-      color: #ffb600;
-      margin-bottom: 0.8rem;
-    }
-
-    .gama-text-subtitle2 {
-      width: 80%;
-      margin: auto auto;
-      color: #ffb600 !important;
-    }
-  }
-}
-
-#about-introduce-container {
-  text-align: center;
-  padding-top: 6.4rem;
-  padding-bottom: 2.7rem;
-
-  .gama-text-h4 {
-    color: #24292f;
-    margin-bottom: 2.4rem;
-  }
-
-  .gama-text-body1 {
-    color: rgba(36, 41, 47, 0.8);
-    text-align: left;
-  }
-}
-
-#about-map-container {
-  #map-card {
-    background-color: transparent;
-    background-image: url("/images/about-us-header.svg");
-    background-repeat: no-repeat;
-    background-position: center center;
-    background-size: 27.6rem 15.8rem;
-    height: 20rem;
-    position: relative;
-    display: grid;
-    place-items: center;
-
-    .lottie-container {
-      width: 30rem !important;
-      height: 20.8rem !important;
-    }
-  }
-}
-
-#about-vision-container {
-  text-align: center;
-  padding-top: 6.2rem;
-  padding-bottom: 3.1rem;
-
-  .gama-text-h4 {
-    color: #24292f;
-    margin-bottom: 2.4rem;
-  }
-
-  .gama-text-body1 {
-    color: rgba(36, 41, 47, 0.8);
-    text-align: left;
-    margin-bottom: 4.8rem;
-  }
-
-  .step-holder {
-    height: 21rem !important;
-    padding: 0 0 6rem 0;
-  }
-
-  #step-container-mobile {
-    height: 42rem;
-    width: 0.2rem;
-    position: relative;
-    margin: auto auto;
-
-    .step-progress-bar {
-      width: 100%;
-      height: 0;
-      background-color: #ffb600;
-    }
-
-    .lottie-container {
-      width: 8.8rem !important;
-      height: 8.8rem !important;
-    }
-
-    #step1 {
-      position: absolute;
-      top: -3rem;
-      left: -4rem;
-      margin: auto auto;
-    }
-
-    #step2 {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: -4rem;
-      margin: auto;
-    }
-
-    #step3 {
-      position: absolute;
-      left: -4rem;
-      bottom: -3rem;
-      margin: auto;
-    }
-  }
-
-  .animateStep1 {
-    animation: step1MobileProgressAnimation 3s linear forwards;
-  }
-
-  .animateStep2 {
-    animation: step2MobileProgressAnimation 3s linear forwards;
-  }
-
-  .gama-text-h5 {
-    font-size: 2rem !important;
-    margin-bottom: 1.6rem;
-  }
-
-  .gama-text-body2 {
-    text-align: left;
-    color: #24292f !important;
-  }
-}
-
 #about-commitment-container {
   background: #24292f;
   min-height: 44.1rem;
