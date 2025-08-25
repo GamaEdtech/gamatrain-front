@@ -1603,7 +1603,6 @@ import { useAuth } from '~/composables/useAuth'
 import { useState, useNuxtApp } from '#app'
 import { defineRule } from 'vee-validate'
 import { required } from '@vee-validate/rules'
-import draggable from 'vuedraggable'
 import FormTopicSelector from '~/components/form/topic-selector.vue'
 import CreateTestForm from '~/components/test-maker/create-test-form.vue'
 
@@ -1626,6 +1625,7 @@ useHead({
   title: 'Update Exam',
 })
 
+const draggable = defineAsyncComponent(() => import('vuedraggable'))
 // Get services
 const _auth = useAuth()
 const route = useRoute()
