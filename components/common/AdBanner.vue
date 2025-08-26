@@ -1,13 +1,15 @@
 <template>
-  <ins
-    :data-adtest="isDev ? `on` : `off`"
-    class="adsbygoogle"
-    :style="style"
-    :data-ad-client="adClient"
-    :data-ad-slot="adslot"
-    :data-ad-format="format"
-    :data-full-width-responsive="responsive.toString()"
-  />
+  <div>
+    <ins
+      :data-adtest="isDev ? `on` : `off`"
+      class="adsbygoogle"
+      :style="style"
+      :data-ad-client="adClient"
+      :data-ad-slot="adslot"
+      :data-ad-format="format"
+      :data-full-width-responsive="responsive.toString()"
+    />
+  </div>
 </template>
 
 <script setup>
