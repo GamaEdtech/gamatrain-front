@@ -20,6 +20,9 @@
     </div>
     <common-footer />
     <AppGlobalSnackbar />
+    <client-only>
+      <lazy-common-random-coin v-once />
+    </client-only>
   </v-app>
 </template>
 

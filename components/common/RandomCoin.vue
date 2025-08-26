@@ -46,6 +46,13 @@ const lottieRefs = new Map()
 
 let scrollHandler = null
 
+const { data: coinsResponse, refresh: refreshCoins } = await useAsyncData(
+  'game-coins',
+  () => useApiService.get('/api/v2/game/coins').then(r => r?.data),
+)
+
+let hasInitialized = false
+
 function setLottieRef(id, el) {
   if (el) {
     lottieRefs.set(id, el)
@@ -100,6 +107,13 @@ function playSound(sound) {
   audio.play().catch(e => console.warn('Failed to play audio:', e))
 }
 
+function getPointsForCoin(type) {
+  const t = String(type || '').toLowerCase()
+  if (t === 'gold') return 900
+  if (t === 'silver') return 600
+  return 100
+}
+
 function handleCoinClick(coin) {
   if (coin.isClicked) return
 
@@ -111,6 +125,14 @@ function handleCoinClick(coin) {
     inst?.play()
   })
   playSound(successSound)
+
+  try {
+    const points = getPointsForCoin(coin.type)
+    useApiService.post('/api/v2/game/easter-egg', { points }).catch(() => {})
+  }
+  catch {
+    console.error('Failed')
+  }
 
   const viewportWidth = window.innerWidth
   const viewportHeight = window.innerHeight
@@ -127,37 +149,61 @@ function handleCoinClick(coin) {
   }, 2000)
 }
 
-function getRandomCoinSrc() {
-  const rand = 0.1
-  if (rand < 0.1) return '/static/coins/gold.json'
-  else if (rand < 0.4) return '/static/coins/silver.json'
-  else return '/static/coins/bronze.json'
+function mapCoinTypeToSrc(type) {
+  if (!type) return '/static/coins/bronze.json'
+  const t = String(type).toLowerCase()
+  if (t === 'gold') return '/static/coins/gold.json'
+  if (t === 'silver') return '/static/coins/silver.json'
+  return '/static/coins/bronze.json'
 }
 
-function showCoinsWithAnimation() {
-  const coinCount = Math.floor(Math.random() * 3) + 1
-  const newCoins = Array.from({ length: coinCount }, (_, i) => ({
-    id: Date.now() + '-' + i,
-    src: getRandomCoinSrc(),
-    position: generateRandomPosition(),
-    isClicked: false,
-  }))
-  coins.value = newCoins
+async function showCoinsWithAnimation() {
+  try {
+    const responseData = coinsResponse?.value
+    const coinTypes = Array.isArray(responseData?.coins)
+      ? responseData.coins
+      : []
+    const newCoins = coinTypes.map((type, i) => ({
+      id: Date.now() + '-' + i,
+      type,
+      src: mapCoinTypeToSrc(type),
+      position: generateRandomPosition(),
+      isClicked: false,
+    }))
+    coins.value = newCoins
 
-  nextTick(() => {
-    coins.value.forEach((coin) => {
-      const inst = lottieRefs.get(coin.id)?.getDotLottieInstance()
-      if (inst) setInitialFrame(inst)
+    nextTick(() => {
+      coins.value.forEach((coin) => {
+        const inst = lottieRefs.get(coin.id)?.getDotLottieInstance()
+        if (inst) setInitialFrame(inst)
+      })
+      checkCoinVisibility()
     })
-    checkCoinVisibility() // check immediately once rendered
-  })
+  }
+  catch (e) {
+    console.warn('Failed', e)
+    coins.value = []
+  }
 }
 
 watch(
   () => route.path,
-  () => {
-    setTimeout(() => {
-      showCoinsWithAnimation()
+  async () => {
+    setTimeout(async () => {
+      try {
+        if (hasInitialized) {
+          await refreshCoins()
+        }
+        else {
+          hasInitialized = true
+        }
+      }
+      catch (e) {
+        console.warn('Failed to refresh coins:', e)
+      }
+      finally {
+        showCoinsWithAnimation()
+      }
     }, 1000)
   },
   { immediate: true },
