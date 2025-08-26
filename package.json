@@ -28,7 +28,7 @@
     "@solana/spl-token": "^0.4.13",
     "@solana/wallet-adapter-base": "^0.9.27",
     "@solana/wallet-adapter-wallets": "^0.19.37",
-    "@solana/web3.js": "^1.98.2",
+    "@solana/web3.js": "^1.73.2",
     "@types/leaflet.markercluster": "^1",
     "@types/three": "^0.175.0",
     "@vee-validate/rules": "^4.15.0",
@@ -76,8 +76,5 @@
     "stats.js": "^0.17.0",
     "vite-plugin-vuetify": "^2.0.4",
     "vuetify": "^3.7.8"
-  },
-  "overrides": {
-    "jayson/lib/client/browser": "jayson/lib/client/browser/index.js"
   }
 }
