@@ -294,6 +294,16 @@ const buildFormDataFromObject = (
 
   return form
 }
+
+onMounted(async () => {
+  try {
+    const data = await $fetch('/api/get-token-holders')
+    console.log('data', data)
+  }
+  catch (error) {
+    console.log('error', error)
+  }
+})
 </script>
 
 <style scoped>
