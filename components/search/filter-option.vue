@@ -52,7 +52,7 @@
 
   <div
     v-if="filters[FILTER_INDEX.Subject].selectedItem"
-    class="w-100 d-flex max-width-container"
+    class="w-100 d-flex px-2 max-width-container"
   >
     <nuxt-link
       :to="`/subject-directory?board=${
