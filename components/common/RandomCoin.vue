@@ -48,7 +48,7 @@ let scrollHandler = null
 
 const { data: coinsResponse, refresh: refreshCoins } = await useAsyncData(
   'game-coins',
-  () => useApiService.get('/api/v2/game/coins').then(r => r?.data),
+  () => useApiService.get('/api/coins').then(r => r?.data),
 )
 
 let hasInitialized = false

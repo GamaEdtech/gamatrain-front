@@ -6,6 +6,7 @@ import glsl from 'vite-plugin-glsl'
 
 export default defineNuxtConfig({
   runtimeConfig: {
+    coinGameSecretKey: process.env.COIN_GAME_SECRET_KEY,
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
@@ -22,20 +23,21 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
-        config.plugins.push(vuetify({
-          autoImport: true, defaultAssets: {
-            font: false,
-            icons: false,
-          },
-        }))
+        config.plugins.push(
+          vuetify({
+            autoImport: true,
+            defaultAssets: {
+              font: false,
+              icons: false,
+            },
+          }),
+        )
       })
     },
   ],
 
   // Plugins
-  plugins: [
-    { src: 'plugins/helper.js' },
-  ],
+  plugins: [{ src: 'plugins/helper.js' }],
 
   // SSR configuration
   ssr: true,
@@ -202,12 +204,7 @@ export default defineNuxtConfig({
 
   // Build configuration
   build: {
-    transpile: [
-      'vuetify',
-      'vue-chartjs',
-      'defu',
-      'vue3-emoji-picker',
-    ],
+    transpile: ['vuetify', 'vue-chartjs', 'defu', 'vue3-emoji-picker'],
   },
 
   routeRules: {
@@ -242,9 +239,7 @@ export default defineNuxtConfig({
             vendor: ['vue', 'vue-router'],
             vuetify: ['vuetify'],
             charts: ['vue-chartjs', 'chart.js'],
-            ckeditor: [
-              '@ckeditor/ckeditor5-vue',
-            ],
+            ckeditor: ['@ckeditor/ckeditor5-vue'],
           },
         },
       },
@@ -271,9 +266,7 @@ export default defineNuxtConfig({
   },
   nitro: {
     rollupConfig: {
-      external: [
-        '@solana/web3.js',
-      ],
+      external: ['@solana/web3.js'],
     },
   },
 })
