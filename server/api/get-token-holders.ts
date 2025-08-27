@@ -6,17 +6,17 @@ interface TokenHolder {
 }
 
 export default defineEventHandler(async (event) => {
-  // const { Connection, PublicKey } = await import('@solana/web3.js').catch(() => {
-  //   throw new Error('Failed to load @solana/web3.js')
+  const { Connection, PublicKey } = await import('@solana/web3.js').catch(() => {
+    throw new Error('Failed to load @solana/web3.js')
+  })
+
+  // const { PublicKey } = await import('@solana/web3.js/lib/index.esm').catch(() => {
+  //   throw new Error('Failed to load PublicKey @solana/web3.js')
   // })
 
-  const { PublicKey } = await import('@solana/web3.js/lib/index.esm').catch(() => {
-    throw new Error('Failed to load PublicKey @solana/web3.js')
-  })
-
-  const { Connection } = await import('@solana/web3.js').catch(() => {
-    throw new Error('Failed to load Connection @solana/web3.js')
-  })
+  // const { Connection } = await import('@solana/web3.js').catch(() => {
+  //   throw new Error('Failed to load Connection @solana/web3.js')
+  // })
 
   const { AccountLayout } = await import('@solana/spl-token').catch(() => {
     throw new Error('Failed to load @solana/spl-token')
