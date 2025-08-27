@@ -1,3 +1,5 @@
+import { Connection, PublicKey } from '@solana/web3.js'
+import { AccountLayout } from '@solana/spl-token'
 // import type { Connection } from '@solana/web3.js'
 
 // interface TokenHolder {
@@ -18,19 +20,21 @@ export default defineEventHandler(async (event) => {
   //   throw new Error('Failed to load Connection @solana/web3.js')
   // })
 
-  const b = await import('@solana/web3.js').catch(() => {
-    throw new Error('Failed to load @solana/web3.js')
-  })
-  const { AccountLayout } = await import('@solana/spl-token').catch(() => {
-    throw new Error('Failed to load @solana/spl-token')
-  })
-  if (b) {
-    console.log('bbb')
-  }
+  // const b = await import('@solana/web3.js').catch(() => {
+  //   throw new Error('Failed to load @solana/web3.js')
+  // })
+  // const { AccountLayout } = await import('@solana/spl-token').catch(() => {
+  //   throw new Error('Failed to load @solana/spl-token')
+  // })
+  // if (b) {
+  console.log('bbb', Connection)
+  console.log('ccc', PublicKey)
+  console.log('ddd', AccountLayout)
+  // }
 
-  if (AccountLayout) {
-    console.log('cccc')
-  }
+  // if (AccountLayout) {
+  //   console.log('cccc')
+  // }
   // Set CORS headers for browser requests
   setHeader(event, 'Access-Control-Allow-Origin', '*')
   setHeader(event, 'Access-Control-Allow-Methods', 'GET, OPTIONS')
