@@ -253,11 +253,6 @@ export default defineNuxtConfig({
     define: {
       global: 'globalThis',
     },
-    resolve: {
-      alias: {
-        'jayson/lib/client/browser': 'jayson/lib/client/browser/index.js',
-      },
-    },
   },
 
   // toast config
