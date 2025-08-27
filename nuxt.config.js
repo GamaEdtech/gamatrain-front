@@ -35,7 +35,6 @@ export default defineNuxtConfig({
   // Plugins
   plugins: [
     { src: 'plugins/helper.js' },
-    { src: 'plugins/vuedraggable', mode: 'client' },
   ],
 
   // SSR configuration
