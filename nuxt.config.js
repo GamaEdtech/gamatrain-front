@@ -275,6 +275,6 @@ export default defineNuxtConfig({
       external: [
         '@solana/web3.js',
       ],
-    }
-  }
+    },
+  },
 })
