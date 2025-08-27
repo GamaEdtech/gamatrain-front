@@ -255,11 +255,6 @@ export default defineNuxtConfig({
     },
   },
 
-  nitro: {
-    alias: {
-      'jayson/lib/client/browser': 'jayson/lib/client/browser/index.js',
-    },
-  },
   // toast config
   toast: {
     position: 'top-center',
