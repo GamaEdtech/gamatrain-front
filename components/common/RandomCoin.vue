@@ -109,9 +109,9 @@ function playSound(sound) {
 
 function getPointsForCoin(type) {
   const t = String(type || '').toLowerCase()
-  if (t === 'gold') return 900
-  if (t === 'silver') return 600
-  return 100
+  if (t === 'gold') return 9
+  if (t === 'silver') return 6
+  return 1
 }
 
 function handleCoinClick(coin) {
