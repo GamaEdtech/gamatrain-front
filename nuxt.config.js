@@ -270,4 +270,11 @@ export default defineNuxtConfig({
       },
     ],
   },
+  nitro: {
+    rollupConfig: {
+      external: [
+        '@solana/web3.js',
+      ],
+    }
+  }
 })
