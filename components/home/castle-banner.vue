@@ -2,8 +2,6 @@
   <div class="gama-body pa-4">
     <v-container>
       <v-row>
-        <!-- ستون تصویر -->
-
         <v-col
           cols="12"
           sm="6"
@@ -14,8 +12,6 @@
             alt=""
           >
         </v-col>
-
-        <!-- ستون متن -->
 
         <v-col
           cols="12"

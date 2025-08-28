@@ -2,10 +2,11 @@
   <div class="bg-grey-lighten-4 pa-4">
     <v-container>
       <v-row>
-        <!-- ستون متن -->
         <v-col
           cols="12"
-          sm="6"
+          sm="5"
+          md="8"
+          lg="9"
           class="order-2"
         >
           <h2 class="gama-text-h4">
@@ -26,10 +27,11 @@
           </v-btn>
         </v-col>
 
-        <!-- ستون تصویر -->
         <v-col
           cols="12"
-          sm="6"
+          sm="7"
+          md="4"
+          lg="3"
           class="d-flex justify-sm-start justify-center order-1"
         >
           <img
