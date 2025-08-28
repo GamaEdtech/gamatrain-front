@@ -8,8 +8,8 @@
           class="d-flex justify-sm-end justify-center order-1 order-sm-2"
         >
           <img
-            src="/assets/images/group-svg.svg"
-            alt=""
+            src="/game/castle/castle-game.svg"
+            alt="Gamatrain Castle of Numbers "
           >
         </v-col>
 
