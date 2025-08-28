@@ -2,23 +2,11 @@
   <div class="bg-grey-lighten-4 pa-4">
     <v-container>
       <v-row>
-        <!-- ستون تصویر -->
-        <v-col
-          cols="12"
-          sm="6"
-          class="d-flex justify-center order-1 order-sm-2"
-        >
-          <img
-            src="/images/car-racing-banner.webp"
-            alt=""
-          >
-        </v-col>
-
         <!-- ستون متن -->
         <v-col
           cols="12"
           sm="6"
-          class="order-2 order-sm-1"
+          class="order-2"
         >
           <h2 class="gama-text-h4">
             Ready to Race?
@@ -36,6 +24,18 @@
             Let's
             Go!
           </v-btn>
+        </v-col>
+
+        <!-- ستون تصویر -->
+        <v-col
+          cols="12"
+          sm="6"
+          class="d-flex justify-sm-start justify-center order-1"
+        >
+          <img
+            src="/images/car-racing-banner.webp"
+            alt=""
+          >
         </v-col>
       </v-row>
     </v-container>
