@@ -35,7 +35,6 @@ export default defineNuxtConfig({
   // Plugins
   plugins: [
     { src: 'plugins/helper.js' },
-    { src: 'plugins/vuedraggable', mode: 'client' },
   ],
 
   // SSR configuration
@@ -269,5 +268,12 @@ export default defineNuxtConfig({
         },
       },
     ],
+  },
+  nitro: {
+    rollupConfig: {
+      external: [
+        '@solana/web3.js',
+      ],
+    },
   },
 })

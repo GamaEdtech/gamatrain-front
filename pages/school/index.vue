@@ -334,6 +334,7 @@ const debouncedGetSchoolList = async () => {
 const metaTitle = ref(
   'School Finder: Your Path to Ideal Education - Find Schools Near You',
 )
+const metaDescription = ref('')
 const setMetaData = (informationResponse) => {
   if (informationResponse.filters && informationResponse.filters.length > 0) {
     const titles = {}
@@ -352,11 +353,31 @@ const setMetaData = (informationResponse) => {
           + ' '
           + titles['country-title']
           + ' Schools'
+      // Build meta description from location filters
+      const location = [
+        titles['city-title'],
+        titles['state-title'],
+        titles['country-title'],
+      ]
+        .filter(Boolean)
+        .join(', ')
+
+      metaDescription.value = location
+        ? `Looking for schools in ${location}? Browse top-rated options and find the perfect match for your child's education.`
+        : 'Looking for schools? Browse top-rated options and find the perfect match for your child\'s education.'
     }
     else {
       metaTitle.value
         = 'School Finder: Your Path to Ideal Education - Find Schools Near You'
+      metaDescription.value
+        = 'Looking for schools? Browse top-rated options and find the perfect match for your child\'s education.'
     }
+  }
+  else {
+    metaTitle.value
+      = 'School Finder: Your Path to Ideal Education - Find Schools Near You'
+    metaDescription.value
+      = 'Looking for schools? Browse top-rated options and find the perfect match for your child\'s education.'
   }
 
   useHead({
@@ -381,14 +402,12 @@ const setMetaData = (informationResponse) => {
       {
         hid: 'description',
         name: 'description',
-        content:
-          'Explore tailored K12 schools effortlessly with GamaTrain\'s School Finder. Find the perfect school for your unique needs and set the course for academic success.',
+        content: metaDescription.value,
       },
       {
         hid: 'og:description',
         name: 'og:description',
-        content:
-          'Explore tailored K12 schools effortlessly with GamaTrain\'s School Finder. Find the perfect school for your unique needs and set the course for academic success.',
+        content: metaDescription.value,
       },
     ],
   })

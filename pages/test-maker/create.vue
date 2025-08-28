@@ -923,144 +923,146 @@
                 v-show="previewTestList.length"
                 cols="12"
               >
-                <draggable
-                  v-model="previewTestList"
-                  item-key="id"
-                  handle=".drag-handle"
-                  @end="previewDragEnd"
-                >
-                  <template #item="{ element: item }">
-                    <v-row :key="item.id">
-                      <v-col cols="12">
-                        <div
-                          id="test-question"
-                          v-html="item.question"
-                        />
-                        <img :src="item.q_file">
+                <client-only>
+                  <LazyDraggable
+                    v-model="previewTestList"
+                    item-key="id"
+                    handle=".drag-handle"
+                    @end="previewDragEnd"
+                  >
+                    <template #item="{ element: item }">
+                      <v-row :key="item.id">
+                        <v-col cols="12">
+                          <div
+                            id="test-question"
+                            v-html="item.question"
+                          />
+                          <img :src="item.q_file">
 
-                        <div
-                          v-if="
-                            item.type == 'blank'
-                              || item.type == 'shortanswer'
-                              || item.type == 'descriptive'
-                          "
-                        >
-                          <div v-html="item.answer_full" />
-                          <img
-                            v-show="item.answer_full_file"
-                            :src="item.answer_full_file"
+                          <div
+                            v-if="
+                              item.type == 'blank'
+                                || item.type == 'shortanswer'
+                                || item.type == 'descriptive'
+                            "
                           >
-                        </div>
-                        <div v-else>
-                          <div class="answer">
-                            <span>1)</span>
-                            <span
-                              v-show="item.answer_a"
-                              v-html="item.answer_a"
-                            />
+                            <div v-html="item.answer_full" />
                             <img
-                              v-show="item.a_file"
-                              :src="item.a_file"
+                              v-show="item.answer_full_file"
+                              :src="item.answer_full_file"
                             >
                           </div>
-                          <div class="answer">
-                            <span>2)</span>
-                            <span
-                              v-show="item.answer_b"
-                              v-html="item.answer_b"
-                            />
-                            <img
-                              v-show="item.b_file"
-                              :src="item.b_file"
-                            >
+                          <div v-else>
+                            <div class="answer">
+                              <span>1)</span>
+                              <span
+                                v-show="item.answer_a"
+                                v-html="item.answer_a"
+                              />
+                              <img
+                                v-show="item.a_file"
+                                :src="item.a_file"
+                              >
+                            </div>
+                            <div class="answer">
+                              <span>2)</span>
+                              <span
+                                v-show="item.answer_b"
+                                v-html="item.answer_b"
+                              />
+                              <img
+                                v-show="item.b_file"
+                                :src="item.b_file"
+                              >
+                            </div>
+                            <div class="answer">
+                              <span>3)</span>
+                              <span
+                                v-show="item.answer_c"
+                                v-html="item.answer_c"
+                              />
+                              <img
+                                v-show="item.c_file"
+                                :src="item.c_file"
+                              >
+                            </div>
+                            <p class="answer">
+                              <span>4)</span>
+                              <span
+                                v-show="item.answer_d"
+                                v-html="item.answer_d"
+                              />
+                              <img
+                                v-show="item.d_file"
+                                :src="item.d_file"
+                              >
+                            </p>
                           </div>
-                          <div class="answer">
-                            <span>3)</span>
-                            <span
-                              v-show="item.answer_c"
-                              v-html="item.answer_c"
-                            />
-                            <img
-                              v-show="item.c_file"
-                              :src="item.c_file"
+                          <v-row>
+                            <v-col cols="6">
+                              <v-btn
+                                icon
+                                color="blue"
+                                class="drag-handle"
+                              >
+                                <v-icon> mdi-cursor-move </v-icon>
+                              </v-btn>
+                            </v-col>
+                            <v-col
+                              cols="6"
+                              class="text-right"
                             >
-                          </div>
-                          <p class="answer">
-                            <span>4)</span>
-                            <span
-                              v-show="item.answer_d"
-                              v-html="item.answer_d"
-                            />
-                            <img
-                              v-show="item.d_file"
-                              :src="item.d_file"
-                            >
-                          </p>
-                        </div>
-                        <v-row>
-                          <v-col cols="6">
-                            <v-btn
-                              icon
-                              color="blue"
-                              class="drag-handle"
-                            >
-                              <v-icon> mdi-cursor-move </v-icon>
-                            </v-btn>
-                          </v-col>
-                          <v-col
-                            cols="6"
-                            class="text-right"
-                          >
-                            <v-btn
-                              v-show="item.owner == true"
-                              color="blue"
-                              density="compact"
-                              size="large"
-                              :to="`/test-maker/create-test/edit/${item.id}`"
-                              style="text-transform: none; font-size: 13px"
-                            >
-                              <v-icon size="small">
-                                mdi-pencil
-                              </v-icon>
-                              Edit
-                            </v-btn>
-                            <v-btn
-                              v-if="!tests.find((x) => x == item.id)"
-                              color="blue"
-                              density="compact"
-                              size="large"
-                              style="text-transform: none; font-size: 13px"
-                              @click="applyTest(item, 'add')"
-                            >
-                              <v-icon size="large">
-                                mdi-plus
-                              </v-icon>
-                              Add
-                            </v-btn>
-                            <v-btn
-                              v-if="tests.find((x) => x == item.id)"
-                              color="red"
-                              density="compact"
-                              size="large"
-                              style="
-                                text-transform: none;
-                                font-size: 13px;
-                                margin-inline: 5px;
-                              "
-                              @click="applyTest(item, 'remove')"
-                            >
-                              <v-icon size="large">
-                                mdi-minus
-                              </v-icon>
-                              Delete
-                            </v-btn>
-                          </v-col>
-                        </v-row>
-                        <v-divider class="mt-3" />
-                      </v-col>
-                    </v-row>
-                  </template>
-                </draggable>
+                              <v-btn
+                                v-show="item.owner == true"
+                                color="blue"
+                                density="compact"
+                                size="large"
+                                :to="`/test-maker/create-test/edit/${item.id}`"
+                                style="text-transform: none; font-size: 13px"
+                              >
+                                <v-icon size="small">
+                                  mdi-pencil
+                                </v-icon>
+                                Edit
+                              </v-btn>
+                              <v-btn
+                                v-if="!tests.find((x) => x == item.id)"
+                                color="blue"
+                                density="compact"
+                                size="large"
+                                style="text-transform: none; font-size: 13px"
+                                @click="applyTest(item, 'add')"
+                              >
+                                <v-icon size="large">
+                                  mdi-plus
+                                </v-icon>
+                                Add
+                              </v-btn>
+                              <v-btn
+                                v-if="tests.find((x) => x == item.id)"
+                                color="red"
+                                density="compact"
+                                size="large"
+                                style="
+                                  text-transform: none;
+                                  font-size: 13px;
+                                  margin-inline: 5px;
+                                "
+                                @click="applyTest(item, 'remove')"
+                              >
+                                <v-icon size="large">
+                                  mdi-minus
+                                </v-icon>
+                                Delete
+                              </v-btn>
+                            </v-col>
+                          </v-row>
+                          <v-divider class="mt-3" />
+                        </v-col>
+                      </v-row>
+                    </template>
+                  </LazyDraggable>
+                </client-only>
               </v-col>
               <v-col
                 v-show="!previewTestList.length"
@@ -1257,143 +1259,145 @@
                 v-if="previewTestList.length"
                 cols="12"
               >
-                <draggable
-                  v-model="previewTestList"
-                  item-key="id"
-                  handle=".drag-handle"
-                  @end="previewDragEnd"
-                >
-                  <template #item="{ element: item }">
-                    <v-row :key="item.id">
-                      <v-col cols="12">
-                        <div
-                          id="test-question"
-                          v-html="item.question"
-                        />
-                        <img :src="item.q_file">
+                <client-only>
+                  <LazyDraggable
+                    v-model="previewTestList"
+                    item-key="id"
+                    handle=".drag-handle"
+                    @end="previewDragEnd"
+                  >
+                    <template #item="{ element: item }">
+                      <v-row :key="item.id">
+                        <v-col cols="12">
+                          <div
+                            id="test-question"
+                            v-html="item.question"
+                          />
+                          <img :src="item.q_file">
 
-                        <div
-                          v-if="
-                            item.type == 'blank'
-                              || item.type == 'shortanswer'
-                              || item.type == 'descriptive'
-                          "
-                        >
-                          <div v-html="item.answer_full" />
-                          <img
-                            v-show="item.answer_full_file"
-                            :src="item.answer_full_file"
+                          <div
+                            v-if="
+                              item.type == 'blank'
+                                || item.type == 'shortanswer'
+                                || item.type == 'descriptive'
+                            "
                           >
-                        </div>
-                        <div v-else>
-                          <div class="answer">
-                            <span>1)</span>
-                            <span
-                              v-show="item.answer_a"
-                              v-html="item.answer_a"
-                            />
+                            <div v-html="item.answer_full" />
                             <img
-                              v-show="item.a_file"
-                              :src="item.a_file"
+                              v-show="item.answer_full_file"
+                              :src="item.answer_full_file"
                             >
                           </div>
-                          <div class="answer">
-                            <span>2)</span>
-                            <span
-                              v-show="item.answer_b"
-                              v-html="item.answer_b"
-                            />
-                            <img
-                              v-show="item.b_file"
-                              :src="item.b_file"
-                            >
+                          <div v-else>
+                            <div class="answer">
+                              <span>1)</span>
+                              <span
+                                v-show="item.answer_a"
+                                v-html="item.answer_a"
+                              />
+                              <img
+                                v-show="item.a_file"
+                                :src="item.a_file"
+                              >
+                            </div>
+                            <div class="answer">
+                              <span>2)</span>
+                              <span
+                                v-show="item.answer_b"
+                                v-html="item.answer_b"
+                              />
+                              <img
+                                v-show="item.b_file"
+                                :src="item.b_file"
+                              >
+                            </div>
+                            <div class="answer">
+                              <span>3)</span>
+                              <span
+                                v-show="item.answer_c"
+                                v-html="item.answer_c"
+                              />
+                              <img
+                                v-show="item.c_file"
+                                :src="item.c_file"
+                              >
+                            </div>
+                            <p class="answer">
+                              <span>4)</span>
+                              <span
+                                v-show="item.answer_d"
+                                v-html="item.answer_d"
+                              />
+                              <img
+                                v-show="item.d_file"
+                                :src="item.d_file"
+                              >
+                            </p>
                           </div>
-                          <div class="answer">
-                            <span>3)</span>
-                            <span
-                              v-show="item.answer_c"
-                              v-html="item.answer_c"
-                            />
-                            <img
-                              v-show="item.c_file"
-                              :src="item.c_file"
+                          <v-row>
+                            <v-col cols="6">
+                              <v-btn
+                                icon
+                                color="blue"
+                                class="drag-handle"
+                              >
+                                <v-icon> mdi-cursor-move </v-icon>
+                              </v-btn>
+                            </v-col>
+                            <v-col
+                              cols="6"
+                              class="text-right"
                             >
-                          </div>
-                          <p class="answer">
-                            <span>4)</span>
-                            <span
-                              v-show="item.answer_d"
-                              v-html="item.answer_d"
-                            />
-                            <img
-                              v-show="item.d_file"
-                              :src="item.d_file"
-                            >
-                          </p>
-                        </div>
-                        <v-row>
-                          <v-col cols="6">
-                            <v-btn
-                              icon
-                              color="blue"
-                              class="drag-handle"
-                            >
-                              <v-icon> mdi-cursor-move </v-icon>
-                            </v-btn>
-                          </v-col>
-                          <v-col
-                            cols="6"
-                            class="text-right"
-                          >
-                            <v-btn
-                              v-show="item.owner == true"
-                              color="blue"
-                              density="compact"
-                              size="large"
-                              :to="`/test-maker/create-test/edit/${item.id}`"
-                              style="text-transform: none; font-size: 13px"
-                            >
-                              <v-icon size="large">
-                                mdi-pencil
-                              </v-icon>
-                              Edit
-                            </v-btn>
-                            <v-btn
-                              v-if="!tests.find((x) => x == item.id)"
-                              color="blue"
-                              density="compact"
-                              size="large"
-                              @click="applyTest(item, 'add')"
-                            >
-                              <v-icon size="large">
-                                mdi-plus
-                              </v-icon>
-                              Add
-                            </v-btn>
-                            <v-btn
-                              v-if="tests.find((x) => x == item.id)"
-                              color="red"
-                              density="compact"
-                              size="large"
-                              style="
-                                text-transform: none;
-                                font-size: 13px;
-                                margin-inline: 5px;
-                              "
-                              @click="applyTest(item, 'remove')"
-                            >
-                              <v-icon size="large">
-                                mdi-minus
-                              </v-icon>
-                              Delete
-                            </v-btn>
-                          </v-col>
-                        </v-row>
-                        <v-divider class="mt-3" />
-                      </v-col>
-                    </v-row>
-                  </template>
-                </draggable>
+                              <v-btn
+                                v-show="item.owner == true"
+                                color="blue"
+                                density="compact"
+                                size="large"
+                                :to="`/test-maker/create-test/edit/${item.id}`"
+                                style="text-transform: none; font-size: 13px"
+                              >
+                                <v-icon size="large">
+                                  mdi-pencil
+                                </v-icon>
+                                Edit
+                              </v-btn>
+                              <v-btn
+                                v-if="!tests.find((x) => x == item.id)"
+                                color="blue"
+                                density="compact"
+                                size="large"
+                                @click="applyTest(item, 'add')"
+                              >
+                                <v-icon size="large">
+                                  mdi-plus
+                                </v-icon>
+                                Add
+                              </v-btn>
+                              <v-btn
+                                v-if="tests.find((x) => x == item.id)"
+                                color="red"
+                                density="compact"
+                                size="large"
+                                style="
+                                  text-transform: none;
+                                  font-size: 13px;
+                                  margin-inline: 5px;
+                                "
+                                @click="applyTest(item, 'remove')"
+                              >
+                                <v-icon size="large">
+                                  mdi-minus
+                                </v-icon>
+                                Delete
+                              </v-btn>
+                            </v-col>
+                          </v-row>
+                          <v-divider class="mt-3" />
+                        </v-col>
+                      </v-row>
+                    </template>
+                  </LazyDraggable>
+                </client-only>
               </v-col>
               <v-col
                 v-show="!previewTestList.length"
@@ -1518,7 +1522,6 @@ import { useAuth } from '~/composables/useAuth'
 import { useState, useNuxtApp } from '#app'
 import { defineRule } from 'vee-validate'
 import { required } from '@vee-validate/rules'
-import draggable from 'vuedraggable'
 import FormTopicSelector from '~/components/form/topic-selector.vue'
 import CreateTestForm from '~/components/test-maker/create-test-form.vue'
 import { definePageMeta, useHead } from '#imports'
@@ -1540,6 +1543,20 @@ useHead({
   title: 'New Exam',
 })
 
+const LazyDraggable = defineAsyncComponent({
+  loader: async () => {
+    const module = await import('vuedraggable')
+
+    await nextTick()
+    if (typeof window !== 'undefined' && window.MathJax) {
+      await typesetMathInSpecificContainer(mathJaxPrintDialogContainerRef)
+      await typesetMathInSpecificContainer(mathJaxStep3ReviewContainerRef)
+    }
+
+    return module
+  },
+  suspensible: false,
+})
 // Get services
 const _auth = useAuth()
 const route = useRoute()
