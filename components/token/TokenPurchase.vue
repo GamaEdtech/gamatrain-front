@@ -79,28 +79,154 @@
     </div>
 
     <!-- Primary action button using Vuetify palette -->
-    <v-btn
-      :disabled="!canSwap"
-      :color="isSellMode ? 'error' : 'success'"
-      class="mb-4 font-semibold gama-text-button"
-      block
-      height="56"
-      rounded="xl"
-      :loading="swapping"
-      @click="handleSwap"
-    >
-      {{ primaryButtonLabel }}
-    </v-btn>
+    <div class="position-relative">
+      <v-btn
+        :disabled="!canSwap"
+        :color="isSellMode ? 'error' : 'success'"
+        class="mb-4 font-semibold gama-text-button"
+        block
+        height="56"
+        rounded="xl"
+        :loading="swapping"
+        @click="handleSwap"
+      >
+        {{ primaryButtonLabel }}
+      </v-btn>
+
+      <!-- Menu Button For Disconnect And Change Wallet - Only show when wallet is connected -->
+      <v-menu
+        id="menu-disconnet-id"
+        width="200"
+        close-on-content-click
+      >
+        <template #activator="{ props: menu }">
+          <v-dialog
+            max-width="400"
+            fullscreen
+            class="d-block d-sm-none"
+            close-on-content-click
+          >
+            <template #activator="{ props: activatorProps }">
+              <v-btn
+                v-if="isWalletConnected"
+                v-bind="mergeProps(menu, activatorProps)"
+                icon
+                color="transparent"
+                variant="flat"
+                :ripple="false"
+                class="d-flex align-center justify-center ga-2 position-absolute h-100 button-open-extra"
+              >
+                <div
+                  :class="`line-devider ${!canSwap ? `disable-devider` : ``}`"
+                />
+                <v-icon
+                  color="#039855"
+                  size="x-large"
+                >
+                  md:keyboard_arrow_down
+                </v-icon>
+              </v-btn>
+            </template>
+
+            <template #default="{ isActive }">
+              <div
+                class="w-100 d-flex flex-wrap flex-column bg-white pa-6 position-absolute bottom-0 rounded-t-xl"
+              >
+                <v-row>
+                  <v-col
+                    cols="12"
+                    class="d-flex align-center justify-end ga-2"
+                  >
+                    <v-icon
+                      class="ml-4"
+                      size="x-large"
+                      color="#D0D5DD"
+                      @click="isActive.value = false"
+                    >
+                      md:cancel
+                    </v-icon>
+                  </v-col>
+                </v-row>
+                <v-list selectable>
+                  <v-list-item
+                    class="cursor-pointer"
+                    @click="handleDisconnect"
+                  >
+                    <v-list-item-title
+                      class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
+                    >
+                      <v-icon color="#667085">
+                        md:sensors_off
+                      </v-icon>
+                      Disconnect
+                    </v-list-item-title>
+                  </v-list-item>
+                  <v-list-item
+                    class="cursor-pointer"
+                    @click="changeWallet"
+                  >
+                    <v-list-item-title
+                      class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
+                    >
+                      <v-icon color="#667085">
+                        md:change_circle
+                      </v-icon>
+                      Change Wallet
+                    </v-list-item-title>
+                  </v-list-item>
+                </v-list>
+              </div>
+            </template>
+          </v-dialog>
+        </template>
+
+        <v-list
+          class="d-none d-sm-block rounded-ts-sm rounded-te-xl rounded-b-xl"
+          selectable
+        >
+          <v-list-item
+            class="cursor-pointer"
+            @click="handleDisconnect"
+          >
+            <v-list-item-title
+              class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
+            >
+              <v-icon color="#667085">
+                md:sensors_off
+              </v-icon>
+              Disconnect
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item
+            class="cursor-pointer"
+            @click="changeWallet"
+          >
+            <v-list-item-title
+              class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
+            >
+              <v-icon color="#667085">
+                md:change_circle
+              </v-icon>
+              Change Wallet
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </div>
 
     <!-- Disconnect Button - Only show when wallet is connected -->
     <v-btn
-      v-if="isWalletConnected"
-      variant="outlined"
-      color="red"
-      class="disconnect-btn"
-      @click="showDisconnectModal = true"
+      variant="text"
+      color="#98A2B3"
+      height="56"
+      rounded="xl"
+      class="w-100 font-weight-bold text-h5"
+      to="/whitepaper"
     >
-      Disconnect wallet
+      <v-icon class="mr-2">
+        md:article
+      </v-icon>
+      View white paper
     </v-btn>
 
     <!-- Amount Info (Buy: You receive | Sell: You sell) -->
@@ -108,7 +234,8 @@
       v-if="getTokenAmount && parseFloat(getTokenAmount) > 0"
       class="figma-receive-text"
     >
-      {{ isSellMode ? 'You sell' : 'You receive' }} {{ formatNumber(parseFloat(getTokenAmount)) }} $GET
+      {{ isSellMode ? "You sell" : "You receive" }}
+      {{ formatNumber(parseFloat(getTokenAmount)) }} $GET
     </div>
 
     <!-- Error Message -->
@@ -193,7 +320,10 @@
         >
           <div class="figma-modal-header">
             <h3>Disconnect Wallet</h3>
-            <p>Are you sure you want to disconnect your wallet? This will clear all your current swap data.</p>
+            <p>
+              Are you sure you want to disconnect your wallet? This will clear
+              all your current swap data.
+            </p>
           </div>
 
           <div class="figma-modal-actions">
@@ -218,17 +348,26 @@
 </template>
 
 <script setup lang="ts">
+import { mergeProps } from 'vue'
 import type { VersionedTransaction } from '@solana/web3.js'
-import type { SolanaWallet, SwapQuoteDetails, TokenConfig } from '~/composables/useJupiterSwap'
+import type {
+  SolanaWallet,
+  SwapQuoteDetails,
+  TokenConfig,
+} from '~/composables/useJupiterSwap'
 import { TOKEN_MINTS } from '~/composables/useJupiterSwap'
 import { Buffer } from 'buffer'
 import { useSolanaClient } from '~/composables/useSolanaClient'
 
 type MaybeWallet = {
-  sendTransaction?: (tx: VersionedTransaction, connection?: unknown) => Promise<string>
+  sendTransaction?: (
+    tx: VersionedTransaction,
+    connection?: unknown
+  ) => Promise<string>
   signTransaction?: (tx: VersionedTransaction) => Promise<VersionedTransaction>
   connection?: { sendRawTransaction: (rawTx: Uint8Array) => Promise<string> }
   disconnect?: () => Promise<void>
+  select?: (walletName?: string) => void
 }
 
 type MaybeConnected = { connected?: boolean | { value?: boolean } }
@@ -297,27 +436,32 @@ const payTokenOptions = ref<TokenConfig[]>([
     mint: SOL_MINT,
     symbol: 'SOL',
     name: 'Solana',
-    logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+    logoURI:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
     decimals: 9,
   },
   {
     mint: USDC_MINT,
     symbol: 'USDC',
     name: 'USD Coin',
-    logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    logoURI:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
     decimals: 6,
   },
   {
     mint: USDT_MINT,
     symbol: 'USDT',
     name: 'Tether USD',
-    logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png',
+    logoURI:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png',
     decimals: 6,
   },
 ])
 
 // Enhanced memo extraction and validation function
-const extractAndValidateMemo = (refParam: string | string[] | undefined): string => {
+const extractAndValidateMemo = (
+  refParam: string | string[] | undefined,
+): string => {
   try {
     // Extract memo from URL parameter
     let rawMemo = ''
@@ -328,7 +472,10 @@ const extractAndValidateMemo = (refParam: string | string[] | undefined): string
       rawMemo = refParam[0]
     }
 
-    console.log('🔍 Extracting memo from URL parameter:', { rawMemo, type: typeof refParam })
+    console.log('🔍 Extracting memo from URL parameter:', {
+      rawMemo,
+      type: typeof refParam,
+    })
 
     // If no memo parameter, return empty string
     if (!rawMemo || !rawMemo.trim()) {
@@ -342,13 +489,19 @@ const extractAndValidateMemo = (refParam: string | string[] | undefined): string
     // Validate memo length (Solana memo constraint: max 566 bytes)
     const memoBytes = new TextEncoder().encode(trimmedMemo).length
     if (memoBytes > 566) {
-      console.warn('⚠️ Memo too long, truncating:', { originalLength: memoBytes, memo: trimmedMemo })
+      console.warn('⚠️ Memo too long, truncating:', {
+        originalLength: memoBytes,
+        memo: trimmedMemo,
+      })
       // Truncate to fit within 566 bytes
       let truncatedMemo = trimmedMemo
       while (new TextEncoder().encode(truncatedMemo).length > 566) {
         truncatedMemo = truncatedMemo.slice(0, -1)
       }
-      console.log('✂️ Memo truncated to:', { newLength: new TextEncoder().encode(truncatedMemo).length, memo: truncatedMemo })
+      console.log('✂️ Memo truncated to:', {
+        newLength: new TextEncoder().encode(truncatedMemo).length,
+        memo: truncatedMemo,
+      })
       return truncatedMemo
     }
 
@@ -357,12 +510,17 @@ const extractAndValidateMemo = (refParam: string | string[] | undefined): string
     const sanitizedMemo = trimmedMemo.replace(/[\u0000-\u001F\u007F]/g, '') // Remove control characters
 
     if (sanitizedMemo !== trimmedMemo) {
-      console.warn('🧹 Memo sanitized, removed control characters:', { original: trimmedMemo, sanitized: sanitizedMemo })
+      console.warn('🧹 Memo sanitized, removed control characters:', {
+        original: trimmedMemo,
+        sanitized: sanitizedMemo,
+      })
     }
 
     // Final validation
     if (!sanitizedMemo) {
-      console.warn('⚠️ Memo became empty after sanitization, proceeding without memo')
+      console.warn(
+        '⚠️ Memo became empty after sanitization, proceeding without memo',
+      )
       return ''
     }
 
@@ -384,7 +542,9 @@ const extractAndValidateMemo = (refParam: string | string[] | undefined): string
 // Initialize wallet on client side
 onMounted(async () => {
   // Enhanced memo extraction with validation and logging
-  const extractedMemo = extractAndValidateMemo((queryRoute?.ref ?? undefined) as unknown as string | string[] | undefined)
+  const extractedMemo = extractAndValidateMemo(
+    (queryRoute?.ref ?? undefined) as unknown as string | string[] | undefined,
+  )
   memoText.value = extractedMemo
 
   if (import.meta.client) {
@@ -396,15 +556,19 @@ onMounted(async () => {
       console.log('Initial connection state:', wallet.value?.connected)
 
       // Watch for wallet connection changes
-      watch(() => isWalletConnected.value, (connected) => {
-        console.log('Wallet connection changed:', connected)
-        if (connected) {
-          showWalletModal.value = false
-          fetchBalances()
-          // Clear any previous error messages when wallet connects
-          errorMessage.value = null
-        }
-      }, { immediate: true })
+      watch(
+        () => isWalletConnected.value,
+        (connected) => {
+          console.log('Wallet connection changed:', connected)
+          if (connected) {
+            showWalletModal.value = false
+            fetchBalances()
+            // Clear any previous error messages when wallet connects
+            errorMessage.value = null
+          }
+        },
+        { immediate: true },
+      )
 
       // Fetch initial data
       await fetchCurrentPrice()
@@ -462,7 +626,11 @@ const canSwap = computed(() => {
   }
 
   // In Sell mode, if balance is known, ensure it is sufficient
-  if (isSellMode.value && getTokenBalance.value !== null && getTokenBalance.value !== undefined) {
+  if (
+    isSellMode.value
+    && getTokenBalance.value !== null
+    && getTokenBalance.value !== undefined
+  ) {
     if (amount > (getTokenBalance.value || 0)) {
       return false
     }
@@ -518,7 +686,10 @@ const networkCluster = computed(() => {
 // Explorer URLs for the last successful transaction
 const explorerTxUrl = computed(() => {
   if (!lastSignature.value) return '#'
-  const suffix = networkCluster.value === 'mainnet' ? '' : `?cluster=${networkCluster.value}`
+  const suffix
+    = networkCluster.value === 'mainnet'
+      ? ''
+      : `?cluster=${networkCluster.value}`
   return `https://explorer.solana.com/tx/${lastSignature.value}${suffix}`
 })
 
@@ -588,7 +759,9 @@ const _formatBalance = (balance: number | null): string => {
 }
 
 const getSelectedPayToken = () => {
-  return payTokenOptions.value.find(token => token.mint === selectedPayToken.value)
+  return payTokenOptions.value.find(
+    token => token.mint === selectedPayToken.value,
+  )
 }
 
 // Toggle between Buy and Sell without clearing user input; re-quote immediately
@@ -600,7 +773,9 @@ const toggleTradeMode = () => {
 
 const fetchCurrentPrice = async () => {
   try {
-    const response = await $fetch<{ data: Record<string, { price: number }> }>(`https://lite-api.jup.ag/price/v2?ids=${GET_TOKEN_MINT}`)
+    const response = await $fetch<{ data: Record<string, { price: number }> }>(
+      `https://lite-api.jup.ag/price/v2?ids=${GET_TOKEN_MINT}`,
+    )
     if (response?.data && response.data[GET_TOKEN_MINT]) {
       currentPrice.value = response.data[GET_TOKEN_MINT].price
       // You can also fetch 24h change if available in the API
@@ -616,7 +791,10 @@ const fetchBalances = async () => {
   if (!import.meta.client) return
 
   // Try to normalize wallet public key to a string
-  const ownerPk = wallet.value?.publicKey?.value?.toString?.() ?? wallet.value?.publicKey?.toString?.() ?? null
+  const ownerPk
+    = wallet.value?.publicKey?.value?.toString?.()
+      ?? wallet.value?.publicKey?.toString?.()
+      ?? null
 
   if (!ownerPk) {
     // No wallet connected yet
@@ -641,9 +819,10 @@ const fetchBalances = async () => {
         totalGetRaw += BigInt(a.amount)
         getDecimals = a.decimals
       }
-      getTokenBalance.value = getDecimals > 0
-        ? Number(totalGetRaw) / 10 ** getDecimals
-        : Number(totalGetRaw)
+      getTokenBalance.value
+        = getDecimals > 0
+          ? Number(totalGetRaw) / 10 ** getDecimals
+          : Number(totalGetRaw)
     }
     catch (e) {
       console.warn('Failed to fetch $GET token balance:', e)
@@ -657,7 +836,10 @@ const fetchBalances = async () => {
       try {
         const connection = await solana.getConnection()
         const { PublicKey } = await import('@solana/web3.js')
-        const lamports = await connection.getBalance(new PublicKey(ownerPk), 'confirmed')
+        const lamports = await connection.getBalance(
+          new PublicKey(ownerPk),
+          'confirmed',
+        )
         payTokenBalance.value = lamports / 1_000_000_000
       }
       catch (e) {
@@ -679,9 +861,10 @@ const fetchBalances = async () => {
           totalPayRaw += BigInt(a.amount)
           payDecimals = a.decimals
         }
-        payTokenBalance.value = payDecimals > 0
-          ? Number(totalPayRaw) / 10 ** payDecimals
-          : Number(totalPayRaw)
+        payTokenBalance.value
+          = payDecimals > 0
+            ? Number(totalPayRaw) / 10 ** payDecimals
+            : Number(totalPayRaw)
       }
       catch (e) {
         console.warn('Failed to fetch pay token balance:', e)
@@ -734,7 +917,10 @@ const calculateEquivalentCost = async () => {
         equivalentCost.value = `${outputAmount.toFixed(6)} ${payToken.symbol}`
 
         // Basic balance validation (if balance known)
-        if (getTokenBalance.value !== null && getTokenBalance.value !== undefined) {
+        if (
+          getTokenBalance.value !== null
+          && getTokenBalance.value !== undefined
+        ) {
           if (desiredGetAmount > (getTokenBalance.value || 0)) {
             errorMessage.value = 'Insufficient $GET balance for this amount.'
           }
@@ -770,11 +956,14 @@ const calculateEquivalentCost = async () => {
 
       if (quoteResponse) {
         const displayAmounts = calculateDisplayAmounts(quoteResponse)
-        const inputPerGetToken = estimatedInputAmount / displayAmounts.outputAmount
+        const inputPerGetToken
+          = estimatedInputAmount / displayAmounts.outputAmount
         const requiredInputAmount = desiredGetAmount * inputPerGetToken
         const bufferedAmount = requiredInputAmount * 1.01
 
-        equivalentCost.value = `${bufferedAmount.toFixed(6)} ${payToken.symbol}`
+        equivalentCost.value = `${bufferedAmount.toFixed(6)} ${
+          payToken.symbol
+        }`
 
         swapQuote.value = {
           rate: 1 / inputPerGetToken, // GET per input token
@@ -871,7 +1060,11 @@ const handleSwap = async () => {
       toMint = GET_TOKEN_MINT
     }
 
-    if (!actualInputAmount || isNaN(actualInputAmount) || actualInputAmount <= 0) {
+    if (
+      !actualInputAmount
+      || isNaN(actualInputAmount)
+      || actualInputAmount <= 0
+    ) {
       throw new Error('Invalid input amount calculated')
     }
 
@@ -880,12 +1073,23 @@ const handleSwap = async () => {
     if (!isSellMode.value && payToken?.symbol === 'SOL') {
       // For SOL payments in buy mode, ensure user has enough for swap + network fees (at least 0.01 SOL buffer)
       const requiredSol = actualInputAmount + 0.01
-      if (payTokenBalance.value !== null && payTokenBalance.value < requiredSol) {
-        throw new Error(`Insufficient SOL balance. Need at least ${requiredSol.toFixed(4)} SOL (including fees)`)
+      if (
+        payTokenBalance.value !== null
+        && payTokenBalance.value < requiredSol
+      ) {
+        throw new Error(
+          `Insufficient SOL balance. Need at least ${requiredSol.toFixed(
+            4,
+          )} SOL (including fees)`,
+        )
       }
     }
     // In sell mode, optional: ensure GET balance is sufficient if known
-    if (isSellMode.value && getTokenBalance.value !== null && actualInputAmount > (getTokenBalance.value || 0)) {
+    if (
+      isSellMode.value
+      && getTokenBalance.value !== null
+      && actualInputAmount > (getTokenBalance.value || 0)
+    ) {
       throw new Error('Insufficient GET balance for this amount')
     }
 
@@ -905,7 +1109,10 @@ const handleSwap = async () => {
     // Enhanced memo validation before proceeding
     if (memoText.value.trim()) {
       try {
-        console.log('🔍 Validating memo before swap:', { memo: memoText.value.trim(), source: 'url_parameter' })
+        console.log('🔍 Validating memo before swap:', {
+          memo: memoText.value.trim(),
+          source: 'url_parameter',
+        })
 
         const { validateMemoForSwap } = useMemoErrorHandling()
         const memoValidation = validateMemoForSwap(memoText.value.trim())
@@ -920,11 +1127,16 @@ const handleSwap = async () => {
           memoText.value = ''
         }
         else {
-          console.log('✅ Memo validation successful:', { memo: memoText.value.trim() })
+          console.log('✅ Memo validation successful:', {
+            memo: memoText.value.trim(),
+          })
         }
       }
       catch (error) {
-        console.error('❌ Error during memo validation, proceeding without memo:', error)
+        console.error(
+          '❌ Error during memo validation, proceeding without memo:',
+          error,
+        )
         memoText.value = ''
       }
     }
@@ -984,7 +1196,10 @@ const handleSwap = async () => {
 
         // Verify the transaction contains memo before returning
         const { logTransactionMemoDetails } = useMemoVerification()
-        logTransactionMemoDetails(memoSwapResponse.transaction, swapOptions.memo)
+        logTransactionMemoDetails(
+          memoSwapResponse.transaction,
+          swapOptions.memo,
+        )
 
         console.log('✅ Memo transaction built successfully:', {
           memo: swapOptions.memo,
@@ -1022,8 +1237,12 @@ const handleSwap = async () => {
 
         // Deserialize the transaction
         const { VersionedTransaction } = await import('@solana/web3.js')
-        const swapTransactionBuf = Buffer.from(swapResponse.swapTransaction, 'base64')
-        const transaction = VersionedTransaction.deserialize(swapTransactionBuf)
+        const swapTransactionBuf = Buffer.from(
+          swapResponse.swapTransaction,
+          'base64',
+        )
+        const transaction
+          = VersionedTransaction.deserialize(swapTransactionBuf)
 
         console.log('✅ Standard transaction built successfully:', {
           transactionSize: transaction.serialize().length,
@@ -1050,12 +1269,15 @@ const handleSwap = async () => {
 
       // Enhanced logging for fallback scenarios
       if (result.usedFallback && result.error) {
-        console.warn('⚠️ Memo transaction failed, using standard transaction:', {
-          originalMemo: swapOptions.memo,
-          error: result.error.message,
-          fallbackReason: 'memo_transaction_build_failed',
-          userImpact: 'transaction_will_proceed_without_memo',
-        })
+        console.warn(
+          '⚠️ Memo transaction failed, using standard transaction:',
+          {
+            originalMemo: swapOptions.memo,
+            error: result.error.message,
+            fallbackReason: 'memo_transaction_build_failed',
+            userImpact: 'transaction_will_proceed_without_memo',
+          },
+        )
         // Update swap options to reflect that memo was not used
         swapOptions.memo = undefined
       }
@@ -1099,21 +1321,30 @@ const handleSwap = async () => {
       try {
         // If wallet has a connection, use it
         if (w?.connection) {
-          signature = await w.connection.sendRawTransaction(signedTransaction.serialize())
+          signature = await w.connection.sendRawTransaction(
+            signedTransaction.serialize(),
+          )
         }
         else {
           // Last resort: use our own connection with minimal config
           const { Connection } = await import('@solana/web3.js')
           const connection = new Connection(getSolanaRpcUrl())
-          signature = await connection.sendRawTransaction(signedTransaction.serialize(), {
-            skipPreflight: true,
-            maxRetries: 3,
-          })
+          signature = await connection.sendRawTransaction(
+            signedTransaction.serialize(),
+            {
+              skipPreflight: true,
+              maxRetries: 3,
+            },
+          )
         }
       }
       catch (rpcError: unknown) {
         console.error('RPC submission failed:', rpcError)
-        throw new Error(`Transaction submission failed: ${rpcError instanceof Error ? rpcError.message : String(rpcError)}`)
+        throw new Error(
+          `Transaction submission failed: ${
+            rpcError instanceof Error ? rpcError.message : String(rpcError)
+          }`,
+        )
       }
     }
 
@@ -1137,12 +1368,20 @@ const handleSwap = async () => {
             const connection = new Connection(getSolanaRpcUrl())
             const { extractMemoFromTransaction } = useMemoVerification()
 
-            const extractedMemo = await extractMemoFromTransaction(signature, connection)
+            const extractedMemo = await extractMemoFromTransaction(
+              signature,
+              connection,
+            )
             if (extractedMemo === swapOptions.memo) {
               console.log('✅ Memo verified on-chain:', extractedMemo)
             }
             else {
-              console.warn('⚠️ Memo verification failed. Expected:', swapOptions.memo, 'Found:', extractedMemo)
+              console.warn(
+                '⚠️ Memo verification failed. Expected:',
+                swapOptions.memo,
+                'Found:',
+                extractedMemo,
+              )
             }
           }
           catch (error) {
@@ -1151,7 +1390,10 @@ const handleSwap = async () => {
         }, 5000)
       }
 
-      const message = `Swap successful! Transaction: ${signature.slice(0, 8)}...`
+      const message = `Swap successful! Transaction: ${signature.slice(
+        0,
+        8,
+      )}...`
       successMessage.value = message
       lastSignature.value = signature
       console.log('🔗 Explorer link:', explorerTxUrl.value)
@@ -1168,7 +1410,12 @@ const handleSwap = async () => {
       swapQuote.value = null
 
       // Preserve memo if it came from URL parameter, otherwise clear it
-      const urlMemo = extractAndValidateMemo((queryRoute?.ref ?? undefined) as unknown as string | string[] | undefined)
+      const urlMemo = extractAndValidateMemo(
+        (queryRoute?.ref ?? undefined) as unknown as
+        | string
+        | string[]
+        | undefined,
+      )
       if (urlMemo) {
         // Keep the URL memo for subsequent transactions
         memoText.value = urlMemo
@@ -1189,7 +1436,8 @@ const handleSwap = async () => {
   catch (error) {
     console.error('Swap failed:', error)
 
-    const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred'
+    const errorMsg
+      = error instanceof Error ? error.message : 'Unknown error occurred'
     errorMessage.value = `Swap failed: ${errorMsg}`
 
     // Clear error message after 10 seconds
@@ -1238,6 +1486,19 @@ const handleDisconnect = async () => {
   showDisconnectModal.value = false
 }
 
+// open list wallet modal
+const changeWallet = () => {
+  showWalletModal.value = true
+  setTimeout(() => {
+    const items = document.querySelectorAll('.swv-dropdown-list-item')
+    items.forEach((item) => {
+      if (item.innerHTML == ' Change wallet ') {
+        (item as HTMLElement).click()
+      }
+    })
+  }, 100)
+}
+
 // Watch for GET token amount changes
 watch(getTokenAmount, () => {
   if (getTokenAmount.value) {
@@ -1278,7 +1539,7 @@ watch(getTokenAmount, () => {
   margin-bottom: 24px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(54, 58, 63, 1);
-  outline: invert
+  outline: invert;
 }
 
 /* Input Section */
@@ -1293,7 +1554,7 @@ watch(getTokenAmount, () => {
   background: transparent;
   border: none;
   outline: none;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 24px;
   font-weight: 600;
   font-family: inherit;
@@ -1313,7 +1574,7 @@ watch(getTokenAmount, () => {
 
 /* Token Label */
 .figma-token-label {
-  color: #FFC107;
+  color: #ffc107;
   border-radius: 20px;
   font-size: 14px;
   font-weight: 700;
@@ -1336,7 +1597,7 @@ watch(getTokenAmount, () => {
   background: transparent;
   border: none;
   outline: none;
-  color: #FFFFFF;
+  color: #ffffff;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -1345,8 +1606,8 @@ watch(getTokenAmount, () => {
 }
 
 .figma-dropdown-select option {
-  background: #2D3741;
-  color: #FFFFFF;
+  background: #2d3741;
+  color: #ffffff;
   padding: 4px 8px !important;
 }
 
@@ -1375,7 +1636,7 @@ watch(getTokenAmount, () => {
 }
 
 .figma-swap-arrow:hover svg path {
-  stroke: #FFC107;
+  stroke: #ffc107;
 }
 
 /* Disconnect Button */
@@ -1388,7 +1649,21 @@ watch(getTokenAmount, () => {
   text-transform: none;
   border-radius: 12px;
 }
-
+.button-open-extra {
+  width: 60px;
+  right: 0;
+  top: 0;
+  z-index: 3;
+}
+.line-devider {
+  width: 2px;
+  height: 30px;
+  margin-right: 10px;
+  background-color: #039855;
+}
+.disable-devider {
+  background-color: #a8a9aa;
+}
 /* Green Buy Button matching Figma */
 .figma-green-buy-btn {
   width: 100%;
@@ -1398,7 +1673,7 @@ watch(getTokenAmount, () => {
   border-radius: 28px;
   font-size: 18px;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 16px;
@@ -1434,7 +1709,7 @@ watch(getTokenAmount, () => {
   border-radius: 28px;
   font-size: 18px;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-bottom: 16px;
@@ -1461,12 +1736,12 @@ watch(getTokenAmount, () => {
   cursor: wait;
 }
 
-.disconnect-btn{
+.disconnect-btn {
   width: 100%;
   border-radius: 28px;
   font-size: 15px;
   font-weight: 700;
-  color: #FFFFFF;
+  color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -1482,9 +1757,9 @@ watch(getTokenAmount, () => {
 
 /* Error Message */
 .figma-error-message {
-  background: #F8D7DA;
-  color: #721C24;
-  border: 1px solid #F5C6CB;
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
   border-radius: 8px;
   padding: 12px;
   font-size: 14px;
@@ -1494,9 +1769,9 @@ watch(getTokenAmount, () => {
 
 /* Success Message */
 .figma-success-message {
-  background: #D4EDDA;
+  background: #d4edda;
   color: #155724;
-  border: 1px solid #C3E6CB;
+  border: 1px solid #c3e6cb;
   border-radius: 8px;
   padding: 12px;
   font-size: 14px;
@@ -1527,7 +1802,7 @@ watch(getTokenAmount, () => {
 }
 
 .figma-modal {
-  background: #FFFFFF;
+  background: #ffffff;
   border-radius: 16px;
   padding: 32px;
   max-width: 400px;
@@ -1545,7 +1820,7 @@ watch(getTokenAmount, () => {
 
 .figma-modal-header p {
   font-size: 16px;
-  color: #6C757D;
+  color: #6c757d;
   margin-bottom: 24px;
 }
 
@@ -1561,12 +1836,12 @@ watch(getTokenAmount, () => {
 .figma-modal-actions {
   display: flex;
   justify-content: flex-end;
-  gap:5px;
+  gap: 5px;
 }
 
 .figma-cancel-button {
-  background: #6C757D;
-  color: #FFFFFF;
+  background: #6c757d;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   padding: 12px 24px;
@@ -1577,7 +1852,7 @@ watch(getTokenAmount, () => {
 }
 
 .figma-cancel-button:hover {
-  background: #5A6268;
+  background: #5a6268;
 }
 
 /* === RESPONSIVE DESIGN === */
@@ -1646,40 +1921,160 @@ watch(getTokenAmount, () => {
 }
 
 /* Legacy styles for compatibility */
-.token-purchase-bg { position: relative; overflow: hidden }
-.token-purchase-container { display: flex; flex-direction: column; justify-content: center; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; position: relative; }
-.token-purchase-content { position: relative; z-index: 3; max-width: 1200px; margin: 0 auto; width: 100%; margin-bottom: 0; }
-.token-purchase__illustration { position: static !important; display: block; margin: 2.5rem auto 0 auto; left: unset !important; right: unset !important; bottom: unset !important; transform: none !important; width: 90%; max-width: 800px; z-index: 1; }
-.token-purchase__title { color: #000000; font-size: 18px; font-weight: 700; }
-.main-heading { font-size: 34px; font-weight: 700; color: #fff; text-align: center; }
-.sub-heading { font-size: 34px; font-weight: 700; color: #4e545b; text-align: center; }
-.sub-heading .head-yellow { color: #fecd1c; }
-.token-purchase__description { color: #6e7781; font-size: 14px; font-weight: 500; text-align: center; }
-.token-purchase__btn { background: #000000; display: flex; align-items: center; justify-content: center; height: 48px; width: 160px; border-radius: 6px; font-size: 24px; font-weight: 600; color: #ffffff; }
-.token-purchase__btn img { width: 27px; height: 27px; }
+.token-purchase-bg {
+  position: relative;
+  overflow: hidden;
+}
+.token-purchase-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  position: relative;
+}
+.token-purchase-content {
+  position: relative;
+  z-index: 3;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  margin-bottom: 0;
+}
+.token-purchase__illustration {
+  position: static !important;
+  display: block;
+  margin: 2.5rem auto 0 auto;
+  left: unset !important;
+  right: unset !important;
+  bottom: unset !important;
+  transform: none !important;
+  width: 90%;
+  max-width: 800px;
+  z-index: 1;
+}
+.token-purchase__title {
+  color: #000000;
+  font-size: 18px;
+  font-weight: 700;
+}
+.main-heading {
+  font-size: 34px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+}
+.sub-heading {
+  font-size: 34px;
+  font-weight: 700;
+  color: #4e545b;
+  text-align: center;
+}
+.sub-heading .head-yellow {
+  color: #fecd1c;
+}
+.token-purchase__description {
+  color: #6e7781;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+.token-purchase__btn {
+  background: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  width: 160px;
+  border-radius: 6px;
+  font-size: 24px;
+  font-weight: 600;
+  color: #ffffff;
+}
+.token-purchase__btn img {
+  width: 27px;
+  height: 27px;
+}
 
 /* === TABLET (min-width: 600px and max-width: 1199px) === */
 @media (min-width: 600px) and (max-width: 1199px) {
-  .token-purchase-bg { padding-bottom: 4rem; }
-  .token-purchase-content { margin-bottom: 0; }
-  .token-purchase__illustration { max-width: 900px; margin-top: 3rem; }
-  .token-purchase__title { color: #161716; font-size: 24px; font-weight: 500; }
-  .token-purchase__description { font-size: 20px; padding-top: 2rem; }
-  .main-heading { font-size: 56px; font-weight: 700; }
-  .sub-heading { font-size: 56px; font-weight: 700; }
+  .token-purchase-bg {
+    padding-bottom: 4rem;
+  }
+  .token-purchase-content {
+    margin-bottom: 0;
+  }
+  .token-purchase__illustration {
+    max-width: 900px;
+    margin-top: 3rem;
+  }
+  .token-purchase__title {
+    color: #161716;
+    font-size: 24px;
+    font-weight: 500;
+  }
+  .token-purchase__description {
+    font-size: 20px;
+    padding-top: 2rem;
+  }
+  .main-heading {
+    font-size: 56px;
+    font-weight: 700;
+  }
+  .sub-heading {
+    font-size: 56px;
+    font-weight: 700;
+  }
 }
 
 /* === DESKTOP (min-width: 1200px) === */
 @media (min-width: 1200px) {
-  .token-purchase-bg { padding-bottom: 5rem; }
-  .token-purchase-content { margin-bottom: 0; }
-  .token-purchase__illustration { width: 900px; max-width: 100%; margin-top: 1rem; }
-  .token-purchase__title { color: #313231; font-size: 24px; font-weight: 600; }
-  .main-heading { font-size: 76px; font-weight: 700; margin-bottom: 2rem; }
-  .sub-heading { font-size: 64px; font-weight: 700; margin-bottom: 1.5rem; }
-  .token-purchase__description { color: #24292f; font-size: 24px; font-weight: 400; text-align: center; margin-bottom: 2rem; }
-  .token-purchase__btn { height: 68px; width: 215px; font-size: 32px; font-weight: 600; margin-bottom: 1rem; }
-  .token-purchase__btn img { width: 40px; height: 40px; }
+  .token-purchase-bg {
+    padding-bottom: 5rem;
+  }
+  .token-purchase-content {
+    margin-bottom: 0;
+  }
+  .token-purchase__illustration {
+    width: 900px;
+    max-width: 100%;
+    margin-top: 1rem;
+  }
+  .token-purchase__title {
+    color: #313231;
+    font-size: 24px;
+    font-weight: 600;
+  }
+  .main-heading {
+    font-size: 76px;
+    font-weight: 700;
+    margin-bottom: 2rem;
+  }
+  .sub-heading {
+    font-size: 64px;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+  .token-purchase__description {
+    color: #24292f;
+    font-size: 24px;
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .token-purchase__btn {
+    height: 68px;
+    width: 215px;
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  .token-purchase__btn img {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 /* === XL Illustration (min-width: 1100px) === */
@@ -1736,7 +2131,6 @@ watch(getTokenAmount, () => {
 .amount-input {
   flex: 1;
   max-width: 50%;
-
 }
 
 .amount-input :deep(.v-field__input) {
@@ -1979,7 +2373,8 @@ watch(getTokenAmount, () => {
   position: fixed !important;
 }
 
-.v-btn--disabled.v-btn--variant-elevated, .v-btn--disabled.v-btn--variant-flat{
+.v-btn--disabled.v-btn--variant-elevated,
+.v-btn--disabled.v-btn--variant-flat {
   background-color: rgba(18, 18, 18, 0.4) !important;
   color: rgba(255, 255, 255, 0.5) !important;
   cursor: not-allowed !important;
