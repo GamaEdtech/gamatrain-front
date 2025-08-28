@@ -151,6 +151,10 @@
     </v-container>
     <!-- End school service banner -->
 
+    <!-- Castel container -->
+    <home-castle-banner />
+    <!-- End Castel container -->
+
     <!-- Car Race container -->
     <home-car-race-banner />
     <!-- End Car Race container -->
