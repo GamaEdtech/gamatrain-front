@@ -1,5 +1,6 @@
 <template>
   <TransitionGroup
+    v-if="shouldRenderRandomCoin"
     name="coin-fade"
     tag="div"
   >
@@ -40,6 +41,15 @@ import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import successSound from '/assets/sounds/success.mp3'
 
 const route = useRoute()
+
+// Add exact names or name prefixes (prefix- matches prefix-*)
+const excludedRouteNames = ['search', 'school']
+const shouldRenderRandomCoin = computed(() => {
+  const name = route.name ? String(route.name) : ''
+  return !excludedRouteNames.some(
+    n => name === n || name.startsWith(`${n}-`),
+  )
+})
 
 const coins = ref([])
 const lottieRefs = new Map()
