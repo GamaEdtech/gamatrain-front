@@ -9,13 +9,14 @@ definePageMeta({
 
 const { $toast } = useNuxtApp()
 
-const list = ref([])
 const headers = [
   { title: 'Contributer', key: 'creationUser', sortable: false, width: '15vw' },
   { title: 'Date', key: 'creationDate', sortable: false, width: '15vw' },
   { title: 'Status', key: 'confirmed', sortable: false, width: '10vw' },
   { title: 'Actions', key: 'actions', sortable: false, width: '5vw' },
 ]
+
+const cache = reactive({})
 
 const selectedComment = reactive({
   id: null,
@@ -33,20 +34,15 @@ const selectedComment = reactive({
   averageRate: null,
 })
 
+const list = ref([])
 const tableLoading = ref(true)
 const dialogVisible = ref(false)
-const filter = ref('all')
-const filteredList = ref([])
-const selectedAction = ref(null)
+const filter = ref('')
 const selectedPageSize = ref(10)
 const page = ref(1)
 const pageCount = ref(0)
 const totalCount = ref(0)
 const selected = ref([])
-
-const allActions = [
-  { label: 'Delete All', value: 'deleteAll' },
-]
 
 const allPageSize = [
   { label: '10 Rows', value: 10 },
@@ -55,17 +51,35 @@ const allPageSize = [
 ]
 
 const fetchComments = async () => {
+  const cacheKey = `${filter.value}-${page.value}-${selectedPageSize.value}`
+
+  if (cache[cacheKey]) {
+    const cached = cache[cacheKey]
+    list.value = cached.list
+    totalCount.value = cached.totalCount
+    pageCount.value = cached.pageCount
+    tableLoading.value = false
+    return
+  }
+
   tableLoading.value = true
   try {
     const response = await useApiService.get('/api/v2/admin/schools/comments/contributions', {
       'PagingDto.PageFilter.Size': selectedPageSize.value,
       'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      'Status': filter.value,
     })
+
     list.value = response.data.list
-    filteredList.value = list.value
     totalCount.value = response.data.totalRecordsCount
     pageCount.value = Math.ceil(totalCount.value / selectedPageSize.value)
+
+    cache[cacheKey] = {
+      list: response.data.list,
+      totalCount: response.data.totalRecordsCount,
+      pageCount: Math.ceil(response.data.totalRecordsCount / selectedPageSize.value),
+    }
   }
   catch (err) {
     if (err.response?.status === 400) {
@@ -77,7 +91,7 @@ const fetchComments = async () => {
   }
 }
 
-const viewMessageDetails = async (id) => {
+const viewCommentDetails = async (id) => {
   try {
     const response = await useApiService.get(`/api/v2/admin/schools/comments/contributions/${id}`)
 
@@ -104,14 +118,11 @@ const viewMessageDetails = async (id) => {
   }
 }
 
-onMounted(() => {
-  selectedAction.value = allActions[0].label
-  selectedPageSize.value = allPageSize[0].value
-  fetchComments()
-})
+const goToSchool = (schoolId) => {
+  window.open(`/school/${schoolId}`, '_blank')
+}
 
 watch(page, () => {
-  filter.value = 'all'
   fetchComments()
 })
 
@@ -120,19 +131,9 @@ watch(selectedPageSize, () => {
   fetchComments()
 })
 
-watch(filter, (val) => {
-  if (val === 'confirmed') {
-    filteredList.value = list.value.filter(item => item.status == 'Confirmed')
-  }
-  else if (val === 'pending') {
-    filteredList.value = list.value.filter(item => item.status == 'Review')
-  }
-  else if (val === 'deleted') {
-    filteredList.value = list.value.filter(item => item.status == 'Deleted')
-  }
-  else {
-    filteredList.value = list.value
-  }
+watch(filter, (_val) => {
+  page.value = 1
+  fetchComments()
 }, { immediate: true })
 </script>
 
@@ -141,45 +142,55 @@ watch(filter, (val) => {
     <div class="d-flex justify-end ga-2 align-center px-2 justify-space-between">
       <div class="filterBtns mb-4">
         <v-btn
-          :class="{ 'active-filter': filter === 'all', 'inactive-filter': filter !== 'all' }"
+          :class="{ 'active-filter': filter === '', 'inactive-filter': filter !== '' }"
           depressed
           rounded
           variant="plain"
           class="gtext-t4 font-weight-medium"
-          @click="filter = 'all'"
+          @click="filter = ''"
         >
           All
         </v-btn>
         <v-btn
-          :class="{ 'active-filter': filter === 'confirmed', 'inactive-filter': filter !== 'confirmed' }"
+          :class="{ 'active-filter': filter === 'Confirmed', 'inactive-filter': filter !== 'Confirmed' }"
           depressed
           rounded
           variant="plain"
           class="gtext-t4 font-weight-medium"
-          @click="filter = 'confirmed'"
+          @click="filter = 'Confirmed'"
         >
           Confirmed
         </v-btn>
 
         <v-btn
-          :class="{ 'active-filter': filter === 'pending', 'inactive-filter': filter !== 'pending' }"
+          :class="{ 'active-filter': filter === 'Review', 'inactive-filter': filter !== 'Review' }"
           depressed
           class="ml-2 gtext-t4 font-weight-medium"
           rounded
           variant="plain"
-          @click="filter = 'pending'"
+          @click="filter = 'Review'"
         >
           Pending
         </v-btn>
         <v-btn
-          :class="{ 'active-filter': filter === 'deleted', 'inactive-filter': filter !== 'deleted' }"
+          :class="{ 'active-filter': filter === 'Rejected', 'inactive-filter': filter !== 'Rejected' }"
           depressed
           class="ml-2 gtext-t4 font-weight-medium"
           rounded
           variant="plain"
-          @click="filter = 'deleted'"
+          @click="filter = 'Rejected'"
         >
           Rejected
+        </v-btn>
+        <v-btn
+          :class="{ 'active-filter': filter === 'Deleted', 'inactive-filter': filter !== 'Deleted' }"
+          depressed
+          class="ml-2 gtext-t4 font-weight-medium"
+          rounded
+          variant="plain"
+          @click="filter = 'Deleted'"
+        >
+          Deleted
         </v-btn>
       </div>
       <div class="d-flex ga-1">
@@ -195,7 +206,7 @@ watch(filter, (val) => {
       <v-data-table
         v-model="selected"
         :headers="headers"
-        :items="filteredList"
+        :items="list"
         :items-per-page="selectedPageSize"
         class="elevation-1"
         :loading="tableLoading"
@@ -225,7 +236,15 @@ watch(filter, (val) => {
             class="gtext-t5 green-12b76a"
           >Confirmed</span>
           <span
-            v-else
+            v-if="item.status == 'Review'"
+            class="gtext-t5 pending-status"
+          >Pending</span>
+          <span
+            v-if="item.status == 'Deleted'"
+            class="gtext-t5 red-F04438"
+          >Deleted</span>
+          <span
+            v-if="item.status == 'Rejected'"
             class="gtext-t5 red-F04438"
           >Rejected</span>
         </template>
@@ -239,7 +258,7 @@ watch(filter, (val) => {
               <v-icon
                 small
                 class="mr-2 gtext-t1"
-                @click="viewMessageDetails(item.id)"
+                @click="viewCommentDetails(item.id)"
               >
                 mdi-file-find
               </v-icon>
@@ -248,6 +267,24 @@ watch(filter, (val) => {
                 location="top"
               >
                 Details
+              </v-tooltip>
+            </v-btn>
+            <v-btn
+              variant="plain"
+              class="px-0 min-width-10"
+            >
+              <v-icon
+                small
+                class="mr-2 gtext-t1"
+                @click="goToSchool(item.schoolId)"
+              >
+                mdi-arrow-right-circle
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                School Page
               </v-tooltip>
             </v-btn>
           </div>
@@ -271,7 +308,6 @@ watch(filter, (val) => {
         cols="12"
         class="d-flex align-center position-relative"
       >
-        <!-- Pagination (centered) -->
         <div class="d-none d-sm-flex pagination-center">
           <v-pagination
             v-model="page"
@@ -283,7 +319,6 @@ watch(filter, (val) => {
           />
         </div>
 
-        <!-- Select (right aligned) -->
         <div class="ml-auto">
           <v-select
             v-model="selectedPageSize"
@@ -401,15 +436,13 @@ watch(filter, (val) => {
   text-overflow: ellipsis;
 }
 
-/* Vuetify 3 uses a wrapper div inside the table */
 :deep(.v-data-table thead) {
   position: sticky;
   top: 0;
   z-index: 20;
-  background-color: #F2F4F7 !important; /* Your desired header color */
+  background-color: #F2F4F7 !important;
 }
 
-/* Optional: give each header cell a background too */
 :deep(.v-data-table thead th) {
   background-color: #F2F4F7 !important;
 }
@@ -418,13 +451,23 @@ watch(filter, (val) => {
   color: #F04438;
   border-radius: 4px;
   padding: 4px 8px;
-  border: 1px solid #F04438;
+  border: 1.5px solid #F04438;
+  font-weight: 600 !important;
 }
 .green-12b76a{
   color: #12b76a;
   border-radius: 4px;
   padding: 4px 8px;
-  border: 1px solid #12b76a;
+  border: 1.5px solid #12b76a;
+  font-weight: 600 !important;
+}
+
+.pending-status{
+  color: #6c6c6c;
+  border-radius: 4px;
+  padding: 4px 8px;
+  border: 1.5px solid #6c6c6c;
+  font-weight: 600 !important;
 }
 
 .min-width-10{

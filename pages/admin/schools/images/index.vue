@@ -10,7 +10,6 @@ definePageMeta({
 
 const { $toast } = useNuxtApp()
 
-const list = ref([])
 const headers = [
   { title: 'contributer', key: 'creationUser', sortable: false, width: '15vw' },
   { title: 'Date', key: 'creationDate', sortable: false, width: '15vw' },
@@ -20,18 +19,20 @@ const headers = [
 
 const selectedSchool = reactive({
   id: null,
-  name: null,
+  schoolName: null,
   schoolId: null,
   fileId: null,
 
 })
 
+const cache = reactive({})
+
+const list = ref([])
 const tableLoading = ref(true)
 const dialogVisible = ref(false)
 const isDeleteModalOpen = ref(false)
 const selectedDeleteId = ref(null)
-const filter = ref('all')
-const filteredList = ref([])
+const filter = ref('')
 const selectedAction = ref(null)
 const selectedPageSize = ref(10)
 const page = ref(1)
@@ -50,17 +51,33 @@ const allPageSize = [
 ]
 
 const fetchImages = async () => {
+  const cacheKey = `${filter.value}-${page.value}-${selectedPageSize.value}`
+
+  if (cache[cacheKey]) {
+    const cached = cache[cacheKey]
+    list.value = cached.list
+    totalCount.value = cached.totalCount
+    pageCount.value = cached.pageCount
+    tableLoading.value = false
+    return
+  }
   tableLoading.value = true
   try {
     const response = await useApiService.get('/api/v2/admin/schools/images/contributions', {
       'PagingDto.PageFilter.Size': selectedPageSize.value,
       'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      'Status': filter.value,
     })
     list.value = response.data.list
-    filteredList.value = list.value
     totalCount.value = response.data.totalRecordsCount
     pageCount.value = Math.ceil(totalCount.value / selectedPageSize.value)
+
+    cache[cacheKey] = {
+      list: response.data.list,
+      totalCount: response.data.totalRecordsCount,
+      pageCount: Math.ceil(response.data.totalRecordsCount / selectedPageSize.value),
+    }
   }
   catch (err) {
     if (err.response?.status === 400) {
@@ -72,13 +89,13 @@ const fetchImages = async () => {
   }
 }
 
-const viewMessageDetails = async (id) => {
+const viewImageDetails = async (id) => {
   try {
     const response = await useApiService.get(`/api/v2/admin/schools/images/contributions/${id}`)
 
     selectedSchool.fileId = response.data.fileUri
     selectedSchool.id = response.data.id
-    selectedSchool.name = response.data.schoolName
+    selectedSchool.schoolName = response.data.schoolName
     selectedSchool.schoolId = response.data.schoolId
     dialogVisible.value = true
   }
@@ -93,7 +110,6 @@ const deleteImage = async () => {
   try {
     const res = await useApiService.remove(`/api/v2/admin/schools/${selectedSchool.schoolId}/images/${selectedDeleteId.value}`)
     list.value = list.value.filter(i => i.id !== selectedDeleteId.value)
-    filteredList.value = list.value
     if (res.succeeded === true)
       $toast.success('Image deleted successfully!')
     else
@@ -131,11 +147,13 @@ const doAll = async () => {
 onMounted(() => {
   selectedAction.value = allActions[0].label
   selectedPageSize.value = allPageSize[0].value
-  fetchImages()
 })
 
+const goToSchool = (schoolId) => {
+  window.open(`/school/${schoolId}`, '_blank')
+}
+
 watch(page, () => {
-  filter.value = 'all'
   fetchImages()
 })
 
@@ -144,24 +162,10 @@ watch(selectedPageSize, () => {
   fetchImages()
 })
 
-watch(filter, (val) => {
-  if (val === 'confirmed') {
-    filteredList.value = list.value.filter(item => item.status == 'Confirmed')
-  }
-  else if (val === 'pending') {
-    filteredList.value = list.value.filter(item => item.status == 'Review')
-  }
-  else if (val === 'deleted') {
-    filteredList.value = list.value.filter(item => item.status == 'Deleted')
-  }
-  else {
-    filteredList.value = list.value
-  }
+watch(filter, (_val) => {
+  page.value = 1
+  fetchImages()
 }, { immediate: true })
-
-const goToSchool = (schoolId) => {
-  window.open(`/school/${schoolId}`, '_blank')
-}
 </script>
 
 <template>
@@ -169,43 +173,53 @@ const goToSchool = (schoolId) => {
     <div class="d-flex justify-end ga-2 align-center px-2 justify-space-between">
       <div class="filterBtns mb-4">
         <v-btn
-          :class="{ 'active-filter': filter === 'all', 'inactive-filter': filter !== 'all' }"
+          :class="{ 'active-filter': filter === '', 'inactive-filter': filter !== '' }"
           depressed
           rounded
           variant="plain"
           class="gtext-t4 font-weight-medium"
-          @click="filter = 'all'"
+          @click="filter = ''"
         >
           All
         </v-btn>
         <v-btn
-          :class="{ 'active-filter': filter === 'confirmed', 'inactive-filter': filter !== 'confirmed' }"
+          :class="{ 'active-filter': filter === 'Confirmed', 'inactive-filter': filter !== 'Confirmed' }"
           depressed
           rounded
           variant="plain"
           class="gtext-t4 font-weight-medium"
-          @click="filter = 'confirmed'"
+          @click="filter = 'Confirmed'"
         >
           Confirmed
         </v-btn>
 
         <v-btn
-          :class="{ 'active-filter': filter === 'pending', 'inactive-filter': filter !== 'pending' }"
+          :class="{ 'active-filter': filter === 'Review', 'inactive-filter': filter !== 'Review' }"
           depressed
           class="ml-2 gtext-t4 font-weight-medium"
           rounded
           variant="plain"
-          @click="filter = 'pending'"
+          @click="filter = 'Review'"
         >
           Pending
         </v-btn>
         <v-btn
-          :class="{ 'active-filter': filter === 'deleted', 'inactive-filter': filter !== 'deleted' }"
+          :class="{ 'active-filter': filter === 'Rejected', 'inactive-filter': filter !== 'Rejected' }"
           depressed
           class="ml-2 gtext-t4 font-weight-medium"
           rounded
           variant="plain"
-          @click="filter = 'deleted'"
+          @click="filter = 'Rejected'"
+        >
+          Rejected
+        </v-btn>
+        <v-btn
+          :class="{ 'active-filter': filter === 'Deleted', 'inactive-filter': filter !== 'Deleted' }"
+          depressed
+          class="ml-2 gtext-t4 font-weight-medium"
+          rounded
+          variant="plain"
+          @click="filter = 'Deleted'"
         >
           Deleted
         </v-btn>
@@ -223,7 +237,7 @@ const goToSchool = (schoolId) => {
       <v-data-table
         v-model="selected"
         :headers="headers"
-        :items="filteredList"
+        :items="list"
         :items-per-page="selectedPageSize"
         class="elevation-1"
         :loading="tableLoading"
@@ -268,7 +282,7 @@ const goToSchool = (schoolId) => {
               <v-icon
                 small
                 class="mr-2 gtext-t1"
-                @click="viewMessageDetails(item.id)"
+                @click="viewImageDetails(item.id)"
               >
                 mdi-file-find
               </v-icon>
@@ -320,11 +334,8 @@ const goToSchool = (schoolId) => {
       </v-data-table>
 
       <schoolCard
-        :id="selectedSchool.id"
         v-model="dialogVisible"
-        :school-name="selectedSchool.name"
-        :file-id="selectedSchool.fileId"
-        :school-id="selectedSchool.schoolId"
+        :selected-school="selectedSchool"
         @fetch-images="fetchImages"
       />
 
@@ -495,15 +506,13 @@ const goToSchool = (schoolId) => {
   text-overflow: ellipsis;
 }
 
-/* Vuetify 3 uses a wrapper div inside the table */
 :deep(.v-data-table thead) {
   position: sticky;
   top: 0;
   z-index: 20;
-  background-color: #F2F4F7 !important; /* Your desired header color */
+  background-color: #F2F4F7 !important;
 }
 
-/* Optional: give each header cell a background too */
 :deep(.v-data-table thead th) {
   background-color: #F2F4F7 !important;
 }
@@ -512,13 +521,16 @@ const goToSchool = (schoolId) => {
   color: #F04438;
   border-radius: 4px;
   padding: 4px 8px;
-  border: 1px solid #F04438;
+  border: 1.5px solid #F04438;
+  font-weight: 600 !important;
 }
 .green-12b76a{
   color: #12b76a;
   border-radius: 4px;
   padding: 4px 8px;
   border: 1px solid #12b76a;
+  border: 1.5px solid #12b76a;
+  font-weight: 600 !important;
 }
 
 .min-width-10{

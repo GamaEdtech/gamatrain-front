@@ -1,15 +1,15 @@
 <script setup>
+import rejectDialog from '~/components/admin/schools/rejectDialog.vue'
+
 const props = defineProps({
   modelValue: Boolean,
-  id: String,
-  fileId: String,
-  schoolName: String,
-  schoolId: String,
+  selectedSchool: Object,
 })
 
 const { $toast } = useNuxtApp()
 
-const comment = ref('')
+const dialogVisible = ref(false)
+
 const emit = defineEmits([
   'update:modelValue',
   'fetchImages',
@@ -17,28 +17,9 @@ const emit = defineEmits([
 
 const approveImage = async () => {
   try {
-    const res = await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.id}/confirm`)
+    const res = await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.selectedSchool.id}/confirm`)
     if (res.succeeded === true) {
       $toast.success('Image Approved successfully!')
-      emit('update:modelValue', false)
-      emit('fetchImages')
-    }
-    else
-      $toast.error(res.errors[0].message)
-  }
-  catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-}
-const rejectImage = async () => {
-  try {
-    const res = await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.id}/reject`, {
-      comment: comment.value,
-    })
-    if (res.succeeded === true) {
-      $toast.success('Image Rejected successfully!')
       emit('update:modelValue', false)
       emit('fetchImages')
     }
@@ -66,25 +47,16 @@ const rejectImage = async () => {
         >
           <div class="avatarBg">
             <img
-              :src="`${fileId}`"
+              :src="`${selectedSchool.fileId}`"
               alt="avatar"
             >
           </div>
           <p class="primary-gray-700 gtext-t3 font-weight-semibold mb-2">
-            {{ schoolName }}
+            {{ selectedSchool.schoolName }}
           </p>
         </v-card-title>
 
         <div class="pa-3 bg-white">
-          <label class="primary-gray-700 gtext-t6 font-weight-medium">
-            Comment
-          </label>
-          <v-text-field
-            v-model="comment"
-            variant="solo"
-            density="comfortable"
-            class="mt-1"
-          />
           <v-card-actions class="px-0">
             <v-btn
               class="closeBtn"
@@ -101,8 +73,7 @@ const rejectImage = async () => {
                 <v-btn
                   variant="outlined"
                   class="rejectBtn"
-                  :disabled="comment == ''"
-                  @click="rejectImage"
+                  @click="dialogVisible = !dialogVisible"
                 >
                   Reject
                 </v-btn>
@@ -121,6 +92,13 @@ const rejectImage = async () => {
               </v-col>
             </v-row>
           </v-card-actions>
+          <reject-dialog
+            :id="selectedSchool.id"
+            v-model="dialogVisible"
+            :type="'images'"
+            @fetch-items="emit('fetchImages')"
+            @close-card="$emit('update:modelValue', false)"
+          />
         </div>
       </v-card>
     </v-dialog>

@@ -2,26 +2,27 @@
 const props = defineProps({
   modelValue: Boolean,
   id: Number,
+  type: String,
 })
 const { $toast } = useNuxtApp()
 
 const comment = ref('')
 const emit = defineEmits([
   'update:modelValue',
-  'fetchComments',
-  'closeCommentCard',
+  'fetchItems',
+  'closeCard',
 ])
 
-const rejectComment = async () => {
+const rejectItem = async () => {
   try {
-    const res = await useApiService.patch(`/api/v2/admin/schools/comments/contributions/${props.id}/reject`, {
+    const res = await useApiService.patch(`/api/v2/admin/schools/${props.type}/contributions/${props.id}/reject`, {
       comment: comment.value,
     })
     if (res.succeeded === true) {
       $toast.success('Comment Rejected successfully!')
       emit('update:modelValue', false)
-      emit('closeCommentCard')
-      emit('fetchComments')
+      emit('closeCard')
+      emit('fetchItems')
     }
     else
       $toast.error(res.errors[0].message)
@@ -71,7 +72,7 @@ const rejectComment = async () => {
           <v-btn
             variant="outlined"
             class="rejectBtn"
-            @click="rejectComment"
+            @click="rejectItem"
           >
             Reject
           </v-btn>

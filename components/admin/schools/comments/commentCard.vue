@@ -1,5 +1,5 @@
 <script setup>
-import rejectDialog from '~/components/admin/schools/comments/rejectDialog.vue'
+import rejectDialog from '~/components/admin/schools/rejectDialog.vue'
 
 const props = defineProps({
   modelValue: Boolean,
@@ -24,9 +24,9 @@ const rateKeys = [
 // optional: make labels nicer
 const formatLabel = (key) => {
   return key
-    .replace(/Rate$/, '') // remove trailing "Rate"
-    .replace(/([A-Z])/g, ' $1') // split camelCase
-    .replace(/^./, str => str.toUpperCase()) // capitalize first
+    .replace(/Rate$/, '')
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, str => str.toUpperCase())
 }
 const emit = defineEmits([
   'update:modelValue',
@@ -75,12 +75,10 @@ const approveComment = async () => {
             :key="index"
             class="d-flex align-center mb-2 justify-space-between"
           >
-            <!-- Label (turn key into readable text) -->
             <span class="mr-4 primary-gray-600 gtext-t5">
               {{ formatLabel(key) }}
             </span>
 
-            <!-- Rating bar -->
             <div class="d-flex align-center">
               <div
                 v-for="n in 5"
@@ -134,8 +132,9 @@ const approveComment = async () => {
           <reject-dialog
             :id="selectedComment.id"
             v-model="dialogVisible"
-            @fetch-comments="emit('fetchComments')"
-            @close-comment-card="$emit('update:modelValue', false)"
+            :type="'comments'"
+            @fetch-items="emit('fetchComments')"
+            @close-card="$emit('update:modelValue', false)"
           />
         </div>
       </v-card>
@@ -231,9 +230,9 @@ const approveComment = async () => {
   height: 16px;
   margin-right: 4px;
   border-radius: 4px;
-  background-color: #e0e0e0; /* unfilled */
+  background-color: #e0e0e0;
 }
 .rating-block.filled {
-  background-color: #ffb600; /* filled color */
+  background-color: #ffb600;
 }
 </style>
