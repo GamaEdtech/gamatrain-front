@@ -44,7 +44,7 @@ generate().catch((err) => {
 
 // ------------------ HELPERS ------------------
 
-async function generateSitemapIndex(contentType: string) {
+async function generateSitemapIndex(contentType) {
   const totalPages = await getTotalPages(contentType)
   let indexXml = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`
 
@@ -60,10 +60,10 @@ async function generateSitemapIndex(contentType: string) {
   return indexXml
 }
 
-async function getTotalPages(contentType: string) {
+async function getTotalPages(contentType) {
   const itemsPerPage = 1000
   const baseUrl = 'https://core.gamatrain.com/api/v1/'
-  let apiUrl: string
+  let apiUrl
 
   switch (contentType) {
     case 'paper':
@@ -102,11 +102,11 @@ async function getTotalPages(contentType: string) {
   return Math.ceil(totalItems / itemsPerPage)
 }
 
-async function fetchPaginatedData(contentType: string, page: number) {
+async function fetchPaginatedData(contentType, page) {
   const itemsPerPage = 1000
   const oldBaseUrl = 'https://core.gamatrain.com/api/v1/'
   const baseUrl = 'https://api.gamaedtech.com/api/v1/'
-  let apiUrl: string
+  let apiUrl
 
   switch (contentType) {
     case 'paper':
@@ -149,18 +149,9 @@ async function fetchPaginatedData(contentType: string, page: number) {
   return json.data.list || []
 }
 
-// ------------------ TYPES ------------------
+// ------------------ CONVERTER ------------------
 
-type SitemapItem = {
-  id: string | number
-  title_url?: string
-  up_date?: string
-  title?: string
-  slug?: string
-  lastModifyDate?: string
-}
-
-function convertDataToXML(data: SitemapItem[], contentType: string) {
+function convertDataToXML(data, contentType) {
   let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`
 
   data.forEach((item) => {
@@ -222,7 +213,7 @@ function generateDefaultSitemap() {
   return xml
 }
 
-function formatDate(dateString: string) {
+function formatDate(dateString) {
   const date = new Date(dateString)
   const year = date.getFullYear()
   const month = String(date.getMonth() + 1).padStart(2, '0')
