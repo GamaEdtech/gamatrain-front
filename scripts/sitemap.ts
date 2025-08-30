@@ -1,8 +1,9 @@
 import { writeFile, mkdir } from 'fs/promises'
 import { join } from 'path'
-import axios from 'axios'
 
-export default defineEventHandler(async () => {
+// ------------------ SCRIPT ------------------
+
+async function generate() {
   const contentTypes = [
     'paper',
     'qa',
@@ -16,11 +17,11 @@ export default defineEventHandler(async () => {
   const publicPath = join(process.cwd(), 'public/sitemap')
   await mkdir(publicPath, { recursive: true })
 
-  // Generate default sitemap
+  // Default sitemap
   const defaultXml = generateDefaultSitemap()
   await writeFile(join(publicPath, `sitemap.xml`), defaultXml, 'utf8')
 
-  // Generate sitemaps for each content type
+  // Sitemaps for each content type
   for (const type of contentTypes) {
     const indexXml = await generateSitemapIndex(type)
     await writeFile(join(publicPath, `${type}-index.xml`), indexXml, 'utf8')
@@ -29,18 +30,19 @@ export default defineEventHandler(async () => {
     for (let page = 1; page <= totalPages; page++) {
       const data = await fetchPaginatedData(type, page)
       const xml = convertDataToXML(data, type)
-      await writeFile(
-        join(publicPath, `${type}-${page}.xml`),
-        xml,
-        'utf8',
-      )
+      await writeFile(join(publicPath, `${type}-${page}.xml`), xml, 'utf8')
     }
   }
 
-  return { success: true, message: 'Sitemaps generated successfully' }
+  console.log('✅ Sitemaps generated successfully.')
+}
+
+generate().catch((err) => {
+  console.error('❌ Failed to generate sitemap:', err)
+  process.exit(1)
 })
 
-/* ---------------- UTILITIES ---------------- */
+// ------------------ HELPERS ------------------
 
 async function generateSitemapIndex(contentType: string) {
   const totalPages = await getTotalPages(contentType)
@@ -61,7 +63,7 @@ async function generateSitemapIndex(contentType: string) {
 async function getTotalPages(contentType: string) {
   const itemsPerPage = 1000
   const baseUrl = 'https://core.gamatrain.com/api/v1/'
-  let apiUrl
+  let apiUrl: string
 
   switch (contentType) {
     case 'paper':
@@ -89,21 +91,23 @@ async function getTotalPages(contentType: string) {
       return 0
   }
 
-  const response = await axios.get(apiUrl)
+  const response = await fetch(apiUrl)
+  const json = await response.json()
+
   const totalItems
-    = contentType == 'school'
-      ? parseInt(response.data.data.totalRecordsCount)
-      : parseInt(response.data.data.num)
+    = contentType === 'school'
+      ? parseInt(json.data.totalRecordsCount)
+      : parseInt(json.data.num)
 
   return Math.ceil(totalItems / itemsPerPage)
 }
 
 async function fetchPaginatedData(contentType: string, page: number) {
   const itemsPerPage = 1000
-  let apiUrl
-
   const oldBaseUrl = 'https://core.gamatrain.com/api/v1/'
   const baseUrl = 'https://api.gamaedtech.com/api/v1/'
+  let apiUrl: string
+
   switch (contentType) {
     case 'paper':
       apiUrl = `${oldBaseUrl}search?type=test`
@@ -131,18 +135,21 @@ async function fetchPaginatedData(contentType: string, page: number) {
   }
 
   let finalUrl = `${apiUrl}&page=${page}&perpage=${itemsPerPage}&ineedmore=1`
-  if (contentType == 'blog')
+  if (contentType === 'blog')
     finalUrl = `${apiUrl}?page=${page}&perpage=${itemsPerPage}&ineedmore=1`
 
   const pageNum = page > 0 ? page - 1 : 0
-  if (contentType == 'school')
+  if (contentType === 'school')
     finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${
       pageNum * itemsPerPage
     }&PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
 
-  const response = await axios.get(finalUrl)
-  return response.data.data.list || []
+  const response = await fetch(finalUrl)
+  const json = await response.json()
+  return json.data.list || []
 }
+
+// ------------------ TYPES ------------------
 
 type SitemapItem = {
   id: string | number
@@ -166,7 +173,7 @@ function convertDataToXML(data: SitemapItem[], contentType: string) {
         .toLowerCase()
         .replace(/\s+/g, '-')
         .replace(/\//g, '-')
-        .replace(/[^a-z0-9-]/g, '') // fixed here
+        .replace(/[^a-z0-9-]/g, '')
         .replace(/-+/g, '-')
         .replace(/^-+|-+$/g, '')
     }
@@ -176,10 +183,10 @@ function convertDataToXML(data: SitemapItem[], contentType: string) {
     }
 
     xml += `<url>
-        <loc>https://gamatrain.com/${contentType}/${item.id}/${title}</loc>
-        <lastmod>${formatDate(modifyDate ?? new Date().toISOString())}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
+      <loc>https://gamatrain.com/${contentType}/${item.id}/${title}</loc>
+      <lastmod>${formatDate(modifyDate ?? new Date().toISOString())}</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.8</priority>
     </url>`
   })
 
