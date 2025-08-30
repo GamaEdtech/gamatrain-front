@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--unhandled-rejections=warn nuxt dev",
     "generate-sitemap": "node scripts/generate-sitemap.js",
-    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 nuxt build && npm run generate-sitemap",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=8192 npm run generate-sitemap && nuxt build",
     "generate": "cross-env NODE_OPTIONS=--max-old-space-size=8192 nuxt generate",
     "start": "nuxt start",
     "lint": "eslint .",
