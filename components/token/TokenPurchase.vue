@@ -94,92 +94,86 @@
       </v-btn>
 
       <!-- Menu Button For Disconnect And Change Wallet - Only show when wallet is connected -->
-      <v-menu
-        id="menu-disconnet-id"
-        width="200"
+      <v-dialog
+        v-if="xs"
+        v-model="modalOption"
+        max-width="400"
+        fullscreen
         close-on-content-click
       >
-        <template #activator="{ props: menu }">
-          <v-dialog
-            max-width="400"
-            fullscreen
-            class="d-block d-sm-none"
-            close-on-content-click
-          >
-            <template #activator="{ props: activatorProps }">
-              <v-btn
-                v-if="isWalletConnected"
-                v-bind="mergeProps(menu, activatorProps)"
-                icon
-                color="transparent"
-                variant="flat"
-                :ripple="false"
-                class="d-flex align-center justify-center ga-2 position-absolute h-100 button-open-extra"
+        <div
+          class="w-100 d-flex flex-wrap flex-column bg-white pa-6 position-absolute bottom-0 rounded-t-xl"
+        >
+          <v-row>
+            <v-col
+              cols="12"
+              class="d-flex align-center justify-end ga-2"
+            >
+              <v-icon
+                class="ml-4"
+                size="x-large"
+                color="#D0D5DD"
+                @click="closeModalOptionChangeDisconnect"
               >
-                <div
-                  :class="`line-devider ${!canSwap ? `disable-devider` : ``}`"
-                />
-                <v-icon
-                  color="#039855"
-                  size="x-large"
-                >
-                  md:keyboard_arrow_down
+                md:cancel
+              </v-icon>
+            </v-col>
+          </v-row>
+          <v-list selectable>
+            <v-list-item
+              class="cursor-pointer"
+              @click="handleDisconnect"
+            >
+              <v-list-item-title
+                class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
+              >
+                <v-icon color="#667085">
+                  md:sensors_off
                 </v-icon>
-              </v-btn>
-            </template>
-
-            <template #default="{ isActive }">
-              <div
-                class="w-100 d-flex flex-wrap flex-column bg-white pa-6 position-absolute bottom-0 rounded-t-xl"
+                Disconnect
+              </v-list-item-title>
+            </v-list-item>
+            <v-list-item
+              class="cursor-pointer"
+              @click="changeWallet"
+            >
+              <v-list-item-title
+                class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
               >
-                <v-row>
-                  <v-col
-                    cols="12"
-                    class="d-flex align-center justify-end ga-2"
-                  >
-                    <v-icon
-                      class="ml-4"
-                      size="x-large"
-                      color="#D0D5DD"
-                      @click="isActive.value = false"
-                    >
-                      md:cancel
-                    </v-icon>
-                  </v-col>
-                </v-row>
-                <v-list selectable>
-                  <v-list-item
-                    class="cursor-pointer"
-                    @click="handleDisconnect"
-                  >
-                    <v-list-item-title
-                      class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
-                    >
-                      <v-icon color="#667085">
-                        md:sensors_off
-                      </v-icon>
-                      Disconnect
-                    </v-list-item-title>
-                  </v-list-item>
-                  <v-list-item
-                    class="cursor-pointer"
-                    @click="changeWallet"
-                  >
-                    <v-list-item-title
-                      class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
-                    >
-                      <v-icon color="#667085">
-                        md:change_circle
-                      </v-icon>
-                      Change Wallet
-                    </v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </div>
-            </template>
-          </v-dialog>
+                <v-icon color="#667085">
+                  md:change_circle
+                </v-icon>
+                Change Wallet
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </div>
+      </v-dialog>
+      <v-menu
+        width="200"
+        close-on-content-click
+        scroll-strategy="close"
+      >
+        <template #activator="{ props: menu }">
+          <v-btn
+            v-if="isWalletConnected"
+            v-bind="menu"
+            icon
+            color="transparent"
+            variant="flat"
+            :ripple="false"
+            class="d-flex align-center justify-center ga-2 position-absolute h-100 button-open-extra"
+            @click="openModalAndMenuOption"
+          >
+            <div :class="`line-devider ${!canSwap ? `disable-devider` : ``}`" />
+            <v-icon
+              color="#039855"
+              size="x-large"
+            >
+              md:keyboard_arrow_down
+            </v-icon>
+          </v-btn>
         </template>
-
         <v-list
           class="d-none d-sm-block rounded-ts-sm rounded-te-xl rounded-b-xl"
           selectable
@@ -214,7 +208,7 @@
       </v-menu>
     </div>
 
-    <!-- Disconnect Button - Only show when wallet is connected -->
+    <!-- White Paper Link  -->
     <v-btn
       variant="text"
       color="#98A2B3"
@@ -348,7 +342,6 @@
 </template>
 
 <script setup lang="ts">
-import { mergeProps } from 'vue'
 import type { VersionedTransaction } from '@solana/web3.js'
 import type {
   SolanaWallet,
@@ -358,6 +351,9 @@ import type {
 import { TOKEN_MINTS } from '~/composables/useJupiterSwap'
 import { Buffer } from 'buffer'
 import { useSolanaClient } from '~/composables/useSolanaClient'
+import { useDisplay } from 'vuetify'
+
+const { xs } = useDisplay()
 
 type MaybeWallet = {
   sendTransaction?: (
@@ -1497,6 +1493,18 @@ const changeWallet = () => {
       }
     })
   }, 100)
+}
+
+const modalOption = ref(false)
+
+const openModalAndMenuOption = () => {
+  if (xs.value) {
+    modalOption.value = true
+  }
+}
+
+const closeModalOptionChangeDisconnect = () => {
+  modalOption.value = false
 }
 
 // Watch for GET token amount changes
