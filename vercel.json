@@ -8,5 +8,11 @@
       "source": "/uploads/:path*",
       "destination": "https://core.gamatrain.com/uploads/:path*"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/sitemap",
+      "schedule": "0 0 * * 0"
+    }
   ]
 }
