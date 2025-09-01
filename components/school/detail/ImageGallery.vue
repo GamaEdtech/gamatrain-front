@@ -117,8 +117,8 @@
 
   <school-detail-gallery-dialog
     v-model="showGalleryDialog"
+    v-model:images="galleryImages"
     :content-data="contentData"
-    :images="galleryImages"
     @refresh-gallery="loadGalleryImages"
   />
 </template>
@@ -131,9 +131,8 @@ const imageClass = ref(null)
 const emit = defineEmits(['fetch'])
 const props = defineProps({
   content: {
-    type: String,
+    type: Object,
     required: false,
-    default: '',
   },
   class: {
     type: String,
@@ -148,15 +147,18 @@ const props = defineProps({
       return value.every(
         item =>
           typeof item === 'string'
-          || (typeof item === 'object' && 'url' in item),
+          || (typeof item === 'object' && 'fileUri' in item),
       )
     },
   },
 })
+
 const contentData = ref(props.content)
 const activeGalleryIndex = ref(0)
 const showGalleryDialog = ref(false)
-const galleryImages = ref(props.images)
+const galleryImages = ref(
+  props.images.map(img => ({ ...img, loading: false })),
+)
 
 watch(
   () => props.class,
@@ -167,7 +169,7 @@ watch(
 watch(
   () => props.images,
   (val) => {
-    galleryImages.value = val
+    galleryImages.value = val.map(img => ({ ...img, loading: false }))
   },
 )
 

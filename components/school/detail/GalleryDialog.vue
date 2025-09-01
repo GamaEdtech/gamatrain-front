@@ -4,48 +4,53 @@
       v-model="dialogVisible"
       transition="dialog-bottom-transition"
       :fullscreen="display.xs.value"
-      max-width="720"
+      max-width="820"
     >
-      <v-card>
+      <v-card class="rounded-lg">
         <v-card-text class="py-6 py-md-8 px-6 px-md-8">
-          <div class="d-flex">
-            <div class="gtext-h5 priamry-gray-700">
+          <div class="d-flex align-center justify-space-between">
+            <div class="text-h3 font-weight-bold priamry-gray-700">
               School images
             </div>
-            <v-spacer />
             <v-btn
               icon
               variant="text"
               @click="dialogVisible = false"
             >
-              <v-icon size="20">
-                mdi-close
+              <v-icon
+                size="26"
+                color="#475467"
+              >
+                md:close
               </v-icon>
             </v-btn>
           </div>
-          <v-divider class="mb-12 mt-4" />
-          <v-row>
+          <v-row class="mt-3">
             <v-col
               cols="12"
               md="7"
+              class="d-flex flex-column align-center"
             >
-              <img
-                v-if="mainImage"
-                class="schoolDetailsImg"
-                :src="mainImage"
-                alt="School image"
+              <div
+                v-if="mainImageInformation && mainImageInformation.src"
+                class="w-100 d-flex align-center justify-center main-image-div"
               >
+                <img
+                  class="w-100 h-100 rounded-lg image-main"
+                  :src="mainImageInformation.src"
+                  alt="School image"
+                >
+              </div>
               <div
                 v-else
-                class="enter-img-holder pointer"
-                @click="galleryDialog = true"
+                class="w-100 rounded-lg d-flex align-center justify-center enter-img-holder cursor-pointer"
               >
                 <div class="text-center">
                   <v-icon
                     size="48"
                     class="primary-gray-300 mb-10"
                   >
-                    mdi-panorama-outline
+                    md:panorama
                   </v-icon>
                   <p class="gtext-t4 primary-blue-500">
                     No image
@@ -55,125 +60,210 @@
                   </div>
                 </div>
               </div>
-              <div class="text-center gtext-t5 font-weight-heavy mt-6">
-                {{ selectedImageIndex }}/<span class="gray--text">{{
-                  images.length
-                }}</span>
-                <v-chip
-                  v-if="pendingUpload"
-                  small
-                  color="orange"
-                  class="ml-2"
+              <div
+                v-if="mainImageInformation"
+                class="w-100 d-flex align-center"
+              >
+                <div
+                  v-if="!mainImageInformation.isPendingUpload"
+                  class="w-50 mt-6"
                 >
-                  Pending upload
-                </v-chip>
+                  <v-progress-circular
+                    v-show="!isDefaultImage && loadingSetDefaultImage"
+                    color="primary"
+                    indeterminate
+                  />
+                  <v-checkbox
+                    v-show="!isDefaultImage && !loadingSetDefaultImage"
+                    :model-value="isDefaultImage"
+                    color="primary"
+                    class="text-h4"
+                    hide-details
+                    false-icon="md:check_box_outline_blank"
+                    true-icon="md:check_box"
+                    @update:model-value="(val) => changeStatusDefaultImage(val)"
+                  >
+                    <template #label>
+                      <span class="text-h5 font-weight-bold text-no-wrap ml-1">Set as main Image</span>
+                    </template>
+                  </v-checkbox>
+
+                  <v-chip
+                    v-show="isDefaultImage"
+                    class="text-h6 font-weight-bold"
+                    color="success"
+                  >
+                    Default image
+                  </v-chip>
+                </div>
+                <div
+                  class="w-100 d-flex align-center justify-end ga-2 text-center gtext-t5 font-weight-heavy mt-6"
+                >
+                  <span>
+                    {{ mainImageInformation.index
+                    }}<span class="primary-gray-400">/{{
+                      images.length
+                        + (croppedUploads ? croppedUploads.length : 0)
+                    }}</span></span>
+                  <v-chip
+                    v-if="mainImageInformation.isPendingUpload"
+                    class="text-h6 font-weight-bold"
+                    color="orange"
+                  >
+                    Pending upload
+                  </v-chip>
+                </div>
               </div>
             </v-col>
             <v-col
               cols="12"
               md="5"
+              class="d-flex flex-wrap"
             >
-              <v-row>
-                <!-- Pending upload previews -->
-                <v-col
-                  v-for="(preview, index) in pendingPreviews"
-                  :key="`pending-${index}`"
-                  cols="3"
-                  class="pa-1"
-                  @click="handlePreviewSelected(preview, index)"
-                >
-                  <div class="position-relative">
-                    <v-img
-                      :src="preview"
-                      aspect-ratio="1"
-                      class="position-relative rounded pending-thumb"
-                      :class="mainImage === preview ? 'primary--border' : ''"
-                      cover
-                    />
-                    <div class="pending-badge">
+              <!-- Pending upload previews -->
+              <v-col
+                v-for="(preview, index) in pendingPreviews"
+                :key="`pending-${index}`"
+                cols="4"
+                sm="3"
+                md="4"
+                lg="6"
+                class="pa-1"
+              >
+                <div class="position-relative">
+                  <v-img
+                    :src="preview"
+                    aspect-ratio="1"
+                    class="position-relative rounded height-images pending-thumb"
+                    cover
+                    @click="handlePreviewSelected(preview, index)"
+                  />
+                  <div class="pending-badge">
+                    <v-btn
+                      icon
+                      flat
+                      width="20"
+                      height="20"
+                      color="#00000080"
+                    >
                       <v-icon
                         size="small"
                         color="white"
                       >
-                        mdi-cloud-upload-outline
+                        md:cloud_upload
                       </v-icon>
-                    </div>
+                    </v-btn>
+                    <v-btn
+                      icon
+                      flat
+                      width="20"
+                      height="20"
+                      color="#F04438"
+                      @click="deletePreviewImage(index)"
+                    >
+                      <v-icon
+                        size="small"
+                        color="white"
+                      >
+                        md:close
+                      </v-icon>
+                    </v-btn>
                   </div>
-                </v-col>
-                <v-col
-                  v-for="(item, index) in images"
-                  :key="`gallery-${index}`"
-                  cols="3"
-                  class="pa-1 cursor-pointer"
-                  @click="handleSelectedImage(item, index)"
-                >
-                  <div class="position-relative">
-                    <v-img
-                      :src="item.fileUri?.replace(/^http:\/\//, 'https://')"
-                      aspect-ratio="1"
-                      class="position-relative rounded"
-                      :class="mainImage === item ? 'primary--border' : ''"
-                      cover
-                    />
-                  </div>
-                </v-col>
+                </div>
+              </v-col>
+              <v-col
+                v-for="(item, index) in images"
+                :key="`gallery-${index}`"
+                cols="4"
+                sm="3"
+                md="4"
+                lg="6"
+                class="pa-1 cursor-pointer"
+              >
+                <div class="position-relative">
+                  <v-img
+                    :src="item.fileUri?.replace(/^http:\/\//, 'https://')"
+                    aspect-ratio="1"
+                    class="position-relative rounded height-images"
+                    cover
+                    @click="handleSelectedImage(item, index)"
+                  />
 
-                <v-col
-                  cols="4"
-                  align="center"
-                  justify="center"
-                  class="fill-height pl-0"
-                >
                   <v-btn
-                    color="primary"
-                    depressed
-                    :class="{ 'pulse-animation': images.length === 0 }"
                     icon
-                    size="large"
-                    @click="openImgInput"
+                    flat
+                    width="20"
+                    height="20"
+                    class="position-absolute position-delete"
+                    color="#F04438"
+                    :loading="item.loading"
+                    @click="deleteImage(item)"
                   >
                     <v-icon
-                      size="48"
+                      size="small"
                       color="white"
                     >
-                      mdi-plus
+                      md:close
                     </v-icon>
                   </v-btn>
-                  <div class="mt-2 gtext-t6 primary-gray-400 text-center">
-                    JPG, PNG, WebP
-                  </div>
-                  <v-file-input
-                    ref="imgInputRef"
-                    v-model="imgInput"
-                    class="d-none"
-                    accept="image/jpeg, image/png, image/jpg, image/webp"
-                    hide-details
-                    multiple
-                    @update:model-value="validateAndOpenCropper"
-                  />
-                </v-col>
-              </v-row>
+                </div>
+              </v-col>
+
+              <v-col
+                cols="4"
+                sm="3"
+                md="4"
+                lg="6"
+                align="center"
+                justify="center"
+                class="fill-height"
+              >
+                <v-btn
+                  color="primary"
+                  icon
+                  @click="openImgInput"
+                >
+                  <v-icon
+                    size="36"
+                    color="white"
+                  >
+                    md:add
+                  </v-icon>
+                </v-btn>
+                <div class="mt-2 text-caption primary-gray-400 text-center">
+                  JPG, PNG, WebP
+                </div>
+                <v-file-input
+                  ref="imgInputRef"
+                  v-model="imgInput"
+                  class="d-none"
+                  accept="image/jpeg, image/png, image/jpg, image/webp"
+                  hide-details
+                  multiple
+                  @update:model-value="validateAndOpenCropper"
+                />
+              </v-col>
             </v-col>
           </v-row>
         </v-card-text>
-        <v-card-actions class="justify-center pb-13">
+        <v-card-actions class="justify-center pb-6 mt-10">
           <div class="d-flex flex-column align-center w-100">
             <v-btn
               class="primary black--text text-transform-none gtext-t4 font-weight-medium"
               rounded
               variant="flat"
               width="100%"
-              max-width="400"
+              max-width="300"
               size="x-large"
               color="primary"
               :loading="saveLoading"
-              :disabled="!pendingUpload"
+              :disabled="!croppedUploads"
               @click="handleCloseDialog"
             >
               {{
-                pendingUpload
-                  ? Array.isArray(pendingUpload)
-                    ? `Upload ${pendingUpload.length} Images & Save`
+                croppedUploads
+                  ? Array.isArray(croppedUploads)
+                    ? `Upload ${croppedUploads.length} Images & Save`
                     : "Upload & Save"
                   : "Save"
               }}
@@ -217,39 +307,89 @@ const dialogVisible = computed({
   get: () => props.modelValue,
   set: value => emit('update:modelValue', value),
 })
+
 const imgInput = ref(null)
 const cropFileUrl = ref('')
 const showCropperDialog = ref(false)
-const mainImage = ref(null)
-const selectedImageIndex = ref(0)
-const pendingUpload = ref(null)
-const pendingUploads = ref([])
+const mainImageInformation = ref(null)
+const croppedUploads = ref(null)
+const selectedFiles = ref([])
 const pendingPreviews = ref([])
 const currentCropIndex = ref(0)
 const saveLoading = ref(false)
 const imgInputRef = ref(null)
-const galleryDialog = ref(false)
+const isDefaultImage = ref(true)
+const loadingSetDefaultImage = ref(false)
 
 const router = useRouter()
 const route = useRoute()
 const display = useDisplay()
 const { $toast } = useNuxtApp()
 
-function handleSelectedImage(row, index) {
-  mainImage.value = row.fileUri
-  selectedImageIndex.value = index + 1
+const handleSelectedImage = (image, index) => {
+  mainImageInformation.value = {
+    id: image.id,
+    src: image.fileUri,
+    isPendingUpload: false,
+    index: croppedUploads.value
+      ? croppedUploads.value.length + index + 1
+      : index + 1,
+  }
+  isDefaultImage.value = image.isDefault
 }
 
-function handlePreviewSelected(preview, index) {
-  mainImage.value = preview
-  selectedImageIndex.value = props.images.length + index + 1
+const handlePreviewSelected = (preview, index) => {
+  mainImageInformation.value = {
+    id: 'preview',
+    src: preview,
+    isPendingUpload: true,
+    index: index + 1,
+  }
 }
 
-function handleCloseDialog() {
-  if (!pendingUpload.value && props.images.length === 0) {
+const changeStatusDefaultImage = async (valueCheckBox) => {
+  if (valueCheckBox) {
+    loadingSetDefaultImage.value = true
+    const formData = { defaultImageId: mainImageInformation.value.id ?? null }
+    useApiService
+      .post(`/api/v2/schools/${route.params.id}/contributions`, formData)
+      .then(async (response) => {
+        if (response.succeeded) {
+          $toast?.success('Your contribution has been successfully submitted')
+          isDefaultImage.value = true
+          const previousDefault = props.images.filter(item => item.isDefault)
+          if (previousDefault.length > 0) {
+            previousDefault[0].isDefault = false
+          }
+
+          const newDefault = props.images.filter(
+            item => item.id == mainImageInformation.value.id,
+          )
+          if (newDefault.length > 0) {
+            newDefault[0].isDefault = true
+          }
+        }
+        else {
+          $toast?.error(response?.errors[0]?.message)
+        }
+      })
+      .catch((err) => {
+        if (err?.response?.status == 401 || err?.response?.status == 403) {
+          $toast?.error('Please login to update school Default Image')
+        }
+        else $toast?.error(err?.response?.data?.message)
+      })
+      .finally(() => {
+        loadingSetDefaultImage.value = false
+      })
+  }
+}
+
+const handleCloseDialog = () => {
+  if (!croppedUploads.value && props.images.length === 0) {
     return
   }
-  if (pendingUpload.value) {
+  if (croppedUploads.value) {
     uploadImage()
   }
   else {
@@ -257,11 +397,11 @@ function handleCloseDialog() {
   }
 }
 
-async function uploadImage() {
+const uploadImage = async () => {
   saveLoading.value = true
-  const filesToUpload = Array.isArray(pendingUpload.value)
-    ? pendingUpload.value
-    : [pendingUpload.value]
+  const filesToUpload = Array.isArray(croppedUploads.value)
+    ? croppedUploads.value
+    : [croppedUploads.value]
 
   try {
     const uploadPromises = filesToUpload.map((file) => {
@@ -282,20 +422,13 @@ async function uploadImage() {
     })
 
     try {
-      const responses = await Promise.all(uploadPromises)
-      const newImageUrls = responses
-        .filter(response => response && response.url)
-        .map(response => response.url)
-      if (newImageUrls.length > 0) {
-        const updatedImages = [...newImageUrls, ...props.images]
-        emit('update:images', updatedImages)
-      }
+      await Promise.all(uploadPromises)
       $toast.success(
         `Your images have been submitted but need to be reviewed by the community before being shown`,
         { containerClass: 'toast-dialog-notif' },
       )
-      pendingUpload.value = null
-      pendingUploads.value = []
+      croppedUploads.value = null
+      selectedFiles.value = []
       pendingPreviews.value = []
       currentCropIndex.value = 0
       dialogVisible.value = false
@@ -323,7 +456,7 @@ async function uploadImage() {
   }
 }
 
-function openImgInput() {
+const openImgInput = () => {
   if (imgInputRef.value) {
     const input
       = imgInputRef.value.$el?.querySelector('input') || imgInputRef.value.input
@@ -331,12 +464,25 @@ function openImgInput() {
   }
 }
 
-function validateAndOpenCropper(files) {
+const validateAndOpenCropper = (files) => {
   if (!files || files.length === 0) return
-  pendingUploads.value = []
-  pendingPreviews.value = []
-  currentCropIndex.value = 0
   const filesArray = Array.isArray(files) ? files : [files]
+
+  if (filesArray.length >= 7) {
+    $toast.error('You can only select up to 7 images at once.', {
+      containerClass: 'toast-dialog-notif',
+    })
+    return
+  }
+
+  if (croppedUploads.value && croppedUploads.value.length >= 5) {
+    $toast.error(
+      'You can only keep up to 5 cropped images before uploading. Please upload them first.',
+      { containerClass: 'toast-dialog-notif' },
+    )
+    return
+  }
+
   for (let i = 0; i < filesArray.length; i++) {
     const file = filesArray[i]
     const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp']
@@ -354,51 +500,52 @@ function validateAndOpenCropper(files) {
       })
       continue
     }
-    pendingUploads.value.unshift(file)
-    const previewUrl = URL.createObjectURL(file)
-    pendingPreviews.value.unshift(previewUrl)
+    selectedFiles.value.unshift(file)
   }
-  if (pendingPreviews.value.length > 0) {
-    mainImage.value = pendingPreviews.value[0]
-  }
-  if (pendingUploads.value.length > 0) {
-    openCropper(pendingUploads.value[0])
+  if (selectedFiles.value.length > 0) {
+    openCropper(selectedFiles.value[0])
   }
   else {
     imgInput.value = null
   }
 }
 
-function openCropper(file) {
+const openCropper = (file) => {
   cropFileUrl.value = URL.createObjectURL(file)
   if (cropFileUrl.value) showCropperDialog.value = true
 }
 
-function openAuthDialog(val) {
+const openAuthDialog = (val) => {
   router.push({ query: { auth_form: val } })
 }
 
-function croppedData(data) {
+const croppedData = (data) => {
   const timestamp = new Date().getTime()
-  const _originalFile = pendingUploads.value[currentCropIndex.value]
   const fileType = 'image/webp'
   const fileExt = 'webp'
   const filename = `image_${timestamp}_${currentCropIndex.value}.${fileExt}`
   const file = new File([data], filename, { type: fileType })
-  if (!pendingUpload.value) {
-    pendingUpload.value = []
+  if (!croppedUploads.value) {
+    croppedUploads.value = []
   }
-  else if (!Array.isArray(pendingUpload.value)) {
-    pendingUpload.value = [pendingUpload.value]
+  else if (!Array.isArray(croppedUploads.value)) {
+    croppedUploads.value = [croppedUploads.value]
   }
-  pendingUpload.value.unshift(file)
+
   currentCropIndex.value++
-  if (currentCropIndex.value < pendingUploads.value.length) {
-    openCropper(pendingUploads.value[currentCropIndex.value])
+  croppedUploads.value.push(file)
+
+  const previewUrl = URL.createObjectURL(file)
+  pendingPreviews.value.push(previewUrl)
+
+  selectedFiles.value.shift()
+
+  if (selectedFiles.value.length > 0) {
+    openCropper(selectedFiles.value[0])
   }
   else {
     showCropperDialog.value = false
-    const fileCount = pendingUpload.value.length
+    const fileCount = croppedUploads.value.length
     $toast.info(
       `${fileCount} ${
         fileCount === 1 ? 'image' : 'images'
@@ -408,12 +555,37 @@ function croppedData(data) {
   }
 }
 
+// When the modal is closed, intentionally or unintentionally, by clicking outside the modal, the selected file is deleted.
+watch(
+  () => showCropperDialog.value,
+  () => {
+    if (!showCropperDialog.value) {
+      selectedFiles.value = []
+    }
+  },
+)
+
 watch(
   () => props.images,
-  (newValue) => {
-    if (newValue.length >= 1) {
-      mainImage.value = newValue[0].fileUri
-      selectedImageIndex.value = 1
+  () => {
+    const defalutImage = props.images.filter(item => item.isDefault)
+    if (defalutImage.length > 0) {
+      mainImageInformation.value = {
+        id: defalutImage[0].id,
+        src: defalutImage[0].fileUri,
+        isPendingUpload: false,
+        index: 1,
+      }
+    }
+    else {
+      if (props.images.length > 0) {
+        mainImageInformation.value = {
+          id: props.images[0].id,
+          src: props.images[0].fileUri,
+          isPendingUpload: false,
+          index: 1,
+        }
+      }
     }
   },
   { immediate: true },
@@ -421,39 +593,106 @@ watch(
 
 onMounted(() => {
   if (props.images && props.images.length > 0) {
-    mainImage.value = props.images[0].fileUri
-    selectedImageIndex.value = 1
+    const defalutImage = props.images.filter(item => item.isDefault)
+    if (defalutImage.length > 0) {
+      mainImageInformation.value = {
+        src: defalutImage[0].fileUri,
+        isPendingUpload: false,
+        index: 1,
+      }
+    }
+    else {
+      mainImageInformation.value = {
+        id: props.images[0].id,
+        src: props.images[0].fileUri,
+        isPendingUpload: false,
+        index: 1,
+      }
+    }
   }
 })
+
+const deletePreviewImage = (index) => {
+  pendingPreviews.value.splice(index, 1)
+
+  if (Array.isArray(croppedUploads.value)) {
+    croppedUploads.value.splice(index, 1)
+  }
+  else {
+    croppedUploads.value = []
+  }
+}
+
+const deleteImage = async (image) => {
+  image.loading = true
+  const bodyRequest = {
+    description: 'incorrect',
+  }
+  try {
+    const response = await useApiService.post(
+      `/api/v2/schools/${route.params.id}/images/${image.id}/contributions`,
+      bodyRequest,
+    )
+    if (response.succeeded) {
+      const updatedImages = props.images.filter(item => item.id != image.id)
+      emit('update:images', updatedImages)
+      $toast.success(
+        `Your images have been deleted but need to be reviewed by the community before being shown`,
+        { containerClass: 'toast-dialog-notif' },
+      )
+    }
+    else {
+      $toast.error('Error occurred while deleting', {
+        containerClass: 'toast-dialog-notif',
+      })
+    }
+  }
+  catch (error) {
+    $toast.error(error.response?.data?.message || 'Delete failed', {
+      containerClass: 'toast-dialog-notif',
+    })
+  }
+  finally {
+    image.loading = false
+  }
+}
 </script>
 
 <style scoped>
-.schoolDetailsImg {
-  height: 28.1rem;
-  max-height: 28.1rem;
-  width: 100%;
-  border-radius: 0.6rem;
-}
-
-.schoolThumbImg {
-  width: 100%;
-  height: 6.4247rem;
-  max-height: 6.4247rem;
-  border-radius: 0.4rem;
-}
-
 .enter-img-holder {
   background: #f2f4f7;
-  height: 28.1rem;
-  width: 100%;
-  border-radius: 0.6rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 300px;
 }
 
-.pulse-animation {
-  animation: pulse 1.5s infinite;
+.main-image-div {
+  height: 300px;
+  max-height: 300px;
+}
+.image-main {
+  object-fit: fill;
+}
+.height-images {
+  max-height: 80px;
+}
+@media only screen and (max-width: 960px) {
+  .height-images {
+    max-height: 100px;
+  }
+}
+@media only screen and (max-width: 600px) {
+  .height-images {
+    max-height: 120px;
+  }
+
+  .main-image-div {
+    height: 240px;
+    max-height: 240px;
+  }
+}
+
+.position-delete {
+  top: 4px;
+  right: 4px;
 }
 
 .pending-thumb {
@@ -469,25 +708,11 @@ onMounted(() => {
 
 .pending-badge {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: rgba(0, 0, 0, 0.5);
-  border-radius: 50%;
-  padding: 4px;
+  top: 4px;
+  right: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(var(--v-primary-base), 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(var(--v-primary-base), 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(var(--v-primary-base), 0);
-  }
+  column-gap: 4px;
 }
 </style>
