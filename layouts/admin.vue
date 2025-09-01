@@ -14,14 +14,18 @@ const isTemporary = computed(() => mobile.value)
 
 const router = useRouter()
 const route = useRoute()
-
-const captionMenuItems = [
-  { title: 'Contact Us', link: '/admin/contact-us', icon: 'mdi-archive-arrow-down-outline' },
-  { title: 'User Managment ', link: '/admin/users', icon: 'mdi-account-group-outline' },
-  { title: 'School Images ', link: '/admin/schools/images', icon: 'mdi-image-outline' },
-]
-const typeManagementMenuItems = [
-  { title: 'Location', link: '/admin/Locations' },
+const menuItems = [
+  { Caption: [
+    { title: 'Contact Us', link: '/admin/contact-us', icon: 'mdi-archive-arrow-down-outline' },
+    { title: 'User Managment ', link: '/admin/users', icon: 'mdi-account-group-outline' },
+  ] },
+  { 'Type Managment': [
+    { title: 'Location', link: '/admin/Locations' },
+  ] },
+  { School: [
+    { title: 'Images ', link: '/admin/schools/images', icon: 'mdi-image-outline' },
+    { title: 'Comments ', link: '/admin/schools/comments', icon: 'mdi-comment-text-outline' },
+  ] },
 ]
 
 const navigate = (link) => {
@@ -55,12 +59,15 @@ function isActive(link) {
         >
         Admin Panel
       </div>
-      <v-list>
+      <v-list
+        v-for="(group, index) in menuItems"
+        :key="group.id || index"
+      >
         <h4 class="px-5 primary-gray-400 gtext-t5 font-weight-semibold mt-2">
-          Caption
+          {{ Object.keys(group)[0] }}
         </h4>
         <v-list-item
-          v-for="item in captionMenuItems"
+          v-for="item in Object.values(group)[0]"
           :key="item.link"
           link
           class="px-6 py-0"
@@ -71,33 +78,16 @@ function isActive(link) {
             :class="{ 'active-tab': isActive(item.link) }"
           >
             <v-list-item-icon>
-              <v-icon class="primary-gray-400">
+              <v-icon
+                v-if="item.icon != null"
+                class="primary-gray-400"
+              >
                 {{ item.icon }}
               </v-icon>
-            </v-list-item-icon>
-            <v-list-item-title class="primary-gray-400 gtext-t5">
-              {{ item.title }}
-            </v-list-item-title>
-          </div>
-        </v-list-item>
-      </v-list>
-      <v-list>
-        <h4 class="px-5 primary-gray-400 gtext-t5 font-weight-semibold">
-          Type Managment
-        </h4>
-        <v-list-item
-          v-for="item in typeManagementMenuItems"
-          :key="item.link"
-          link
-          class="px-6 py-0"
-          @click="navigate(item.link)"
-        >
-          <div
-            class="d-flex align-center ga-3 py-2 px-5"
-            :class="{ 'active-tab': isActive(item.link) }"
-          >
-            <v-list-item-icon>
-              <v-icon class="primary-gray-400 mdi mdi-circle text-button" />
+              <v-icon
+                v-else
+                class="primary-gray-400 mdi - mdi-circle text-button"
+              />
             </v-list-item-icon>
             <v-list-item-title class="primary-gray-400 gtext-t5">
               {{ item.title }}

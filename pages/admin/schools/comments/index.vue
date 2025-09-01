@@ -1,6 +1,5 @@
 <script setup>
-import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
-import schoolCard from '~/components/admin/schools/images/schoolCard.vue'
+import commentCard from '~/components/admin/schools/comments/commentCard.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
@@ -11,38 +10,39 @@ definePageMeta({
 const { $toast } = useNuxtApp()
 
 const headers = [
-  { title: 'contributer', key: 'creationUser', sortable: false, width: '15vw' },
+  { title: 'Contributer', key: 'creationUser', sortable: false, width: '15vw' },
   { title: 'Date', key: 'creationDate', sortable: false, width: '15vw' },
-  { title: 'Is Default', key: 'false', sortable: false, width: '10vw' },
+  { title: 'Status', key: 'confirmed', sortable: false, width: '10vw' },
   { title: 'Actions', key: 'actions', sortable: false, width: '5vw' },
 ]
 
-const selectedSchool = reactive({
+const cache = reactive({})
+
+const selectedComment = reactive({
   id: null,
   schoolName: null,
   schoolId: null,
-  fileId: null,
-
+  comment: null,
+  artisticActivitiesRate: null,
+  behaviorRate: null,
+  classesQualityRate: null,
+  educationRate: null,
+  facilitiesRate: null,
+  itTrainingRate: null,
+  safetyAndHappinessRate: null,
+  tuitionRatioRate: null,
+  averageRate: null,
 })
-
-const cache = reactive({})
 
 const list = ref([])
 const tableLoading = ref(true)
 const dialogVisible = ref(false)
-const isDeleteModalOpen = ref(false)
-const selectedDeleteId = ref(null)
 const filter = ref('')
-const selectedAction = ref(null)
 const selectedPageSize = ref(10)
 const page = ref(1)
 const pageCount = ref(0)
 const totalCount = ref(0)
 const selected = ref([])
-
-const allActions = [
-  { label: 'Delete All', value: 'deleteAll' },
-]
 
 const allPageSize = [
   { label: '10 Rows', value: 10 },
@@ -50,7 +50,7 @@ const allPageSize = [
   { label: '50 Rows', value: 50 },
 ]
 
-const fetchImages = async () => {
+const fetchComments = async () => {
   const cacheKey = `${filter.value}-${page.value}-${selectedPageSize.value}`
 
   if (cache[cacheKey]) {
@@ -61,14 +61,16 @@ const fetchImages = async () => {
     tableLoading.value = false
     return
   }
+
   tableLoading.value = true
   try {
-    const response = await useApiService.get('/api/v2/admin/schools/images/contributions', {
+    const response = await useApiService.get('/api/v2/admin/schools/comments/contributions', {
       'PagingDto.PageFilter.Size': selectedPageSize.value,
       'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
       'Status': filter.value,
     })
+
     list.value = response.data.list
     totalCount.value = response.data.totalRecordsCount
     pageCount.value = Math.ceil(totalCount.value / selectedPageSize.value)
@@ -89,14 +91,24 @@ const fetchImages = async () => {
   }
 }
 
-const viewImageDetails = async (id) => {
+const viewCommentDetails = async (id) => {
   try {
-    const response = await useApiService.get(`/api/v2/admin/schools/images/contributions/${id}`)
+    const response = await useApiService.get(`/api/v2/admin/schools/comments/contributions/${id}`)
 
-    selectedSchool.fileId = response.data.fileUri
-    selectedSchool.id = response.data.id
-    selectedSchool.schoolName = response.data.schoolName
-    selectedSchool.schoolId = response.data.schoolId
+    selectedComment.id = response.data.id
+    selectedComment.schoolName = response.data.schoolName
+    selectedComment.schoolId = response.data.schoolId
+    selectedComment.comment = response.data.comment
+    selectedComment.artisticActivitiesRate = response.data.artisticActivitiesRate
+    selectedComment.behaviorRate = response.data.behaviorRate
+    selectedComment.classesQualityRate = response.data.classesQualityRate
+    selectedComment.educationRate = response.data.educationRate
+    selectedComment.facilitiesRate = response.data.facilitiesRate
+    selectedComment.itTrainingRate = response.data.itTrainingRate
+    selectedComment.safetyAndHappinessRate = response.data.safetyAndHappinessRate
+    selectedComment.tuitionRatioRate = response.data.tuitionRatioRate
+    selectedComment.averageRate = response.data.averageRate
+
     dialogVisible.value = true
   }
   catch (err) {
@@ -106,65 +118,22 @@ const viewImageDetails = async (id) => {
   }
 }
 
-const deleteImage = async () => {
-  try {
-    const res = await useApiService.remove(`/api/v2/admin/schools/${selectedSchool.schoolId}/images/${selectedDeleteId.value}`)
-    list.value = list.value.filter(i => i.id !== selectedDeleteId.value)
-    if (res.succeeded === true)
-      $toast.success('Image deleted successfully!')
-    else
-      $toast.error(res.errors[0].message)
-  }
-  catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-  finally {
-    isDeleteModalOpen.value = false
-    dialogVisible.value = false
-    fetchImages()
-  }
-}
-
-const handleDelete = (id) => {
-  isDeleteModalOpen.value = true
-  selectedDeleteId.value = id
-}
-
-const doAll = async () => {
-  if (selectedAction.value === 'Delete All') {
-    for (const item of selected.value) {
-      selectedDeleteId.value = item
-      await deleteImage()
-    }
-
-    selected.value = []
-    $toast.success('All selected Users deleted!')
-  }
-}
-
-onMounted(() => {
-  selectedAction.value = allActions[0].label
-  selectedPageSize.value = allPageSize[0].value
-})
-
 const goToSchool = (schoolId) => {
   window.open(`/school/${schoolId}`, '_blank')
 }
 
 watch(page, () => {
-  fetchImages()
+  fetchComments()
 })
 
 watch(selectedPageSize, () => {
   page.value = 1
-  fetchImages()
+  fetchComments()
 })
 
 watch(filter, (_val) => {
   page.value = 1
-  fetchImages()
+  fetchComments()
 }, { immediate: true })
 </script>
 
@@ -229,7 +198,7 @@ watch(filter, (_val) => {
           {{ totalCount }}
         </p>
         <p class="gray--text gtext-t6 font-weight-semibold">
-          Images
+          Comments
         </p>
       </div>
     </div>
@@ -242,7 +211,6 @@ watch(filter, (_val) => {
         class="elevation-1"
         :loading="tableLoading"
         hide-default-footer
-        show-select
       >
         <template #[`item.creationUser`]="{ item }">
           <div class="d-flex align-center">
@@ -262,15 +230,23 @@ watch(filter, (_val) => {
           </div>
         </template>
 
-        <template #[`item.false`]="{ item }">
+        <template #[`item.confirmed`]="{ item }">
           <span
-            v-if="item.isDefault == true"
+            v-if="item.status == 'Confirmed'"
             class="gtext-t5 green-12b76a"
-          >True</span>
+          >Confirmed</span>
           <span
-            v-else
+            v-if="item.status == 'Review'"
+            class="gtext-t5 pending-status"
+          >Pending</span>
+          <span
+            v-if="item.status == 'Deleted'"
             class="gtext-t5 red-F04438"
-          >False</span>
+          >Deleted</span>
+          <span
+            v-if="item.status == 'Rejected'"
+            class="gtext-t5 red-F04438"
+          >Rejected</span>
         </template>
 
         <template #[`item.actions`]="{ item }">
@@ -282,7 +258,7 @@ watch(filter, (_val) => {
               <v-icon
                 small
                 class="mr-2 gtext-t1"
-                @click="viewImageDetails(item.id)"
+                @click="viewCommentDetails(item.id)"
               >
                 mdi-file-find
               </v-icon>
@@ -300,7 +276,7 @@ watch(filter, (_val) => {
               <v-icon
                 small
                 class="mr-2 gtext-t1"
-                @click="goToSchool(item.id)"
+                @click="goToSchool(item.schoolId)"
               >
                 mdi-arrow-right-circle
               </v-icon>
@@ -311,37 +287,14 @@ watch(filter, (_val) => {
                 School Page
               </v-tooltip>
             </v-btn>
-            <v-btn
-              variant="plain"
-              class="px-0 min-width-10"
-            >
-              <v-icon
-                small
-                class="gtext-t1"
-                @click="handleDelete(item.id)"
-              >
-                mdi-delete
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Delete
-              </v-tooltip>
-            </v-btn>
           </div>
         </template>
       </v-data-table>
 
-      <schoolCard
+      <commentCard
         v-model="dialogVisible"
-        :selected-school="selectedSchool"
-        @fetch-images="fetchImages"
-      />
-
-      <DeleteItemModal
-        v-model="isDeleteModalOpen"
-        @confirm="deleteImage"
+        :selected-comment="selectedComment"
+        @fetch-comments="fetchComments"
       />
     </div>
 
@@ -353,32 +306,9 @@ watch(filter, (_val) => {
     >
       <v-col
         cols="12"
-        class="d-flex flex-wrap flex-sm-nowrap align-center justify-space-between"
+        class="d-flex align-center position-relative"
       >
-        <div class="d-flex align-center mb-2 mb-sm-0">
-          <v-select
-            v-model="selectedAction"
-            :items="allActions"
-            item-title="label"
-            item-value="value"
-            variant="outlined"
-            density="compact"
-            rounded
-            hide-details
-            class="rounded-pill footerBtns"
-            :disabled="selected.length === 0"
-          />
-          <v-btn
-            class="rounded-pill gtext-t5 bg-primary-gray-700 text-white ml-4"
-            :disabled="selected.length === 0"
-            @click="doAll"
-          >
-            <span>Do</span>
-          </v-btn>
-        </div>
-
-        <!-- Pagination (hidden on mobile) -->
-        <div class="d-none d-sm-flex">
+        <div class="d-none d-sm-flex pagination-center">
           <v-pagination
             v-model="page"
             :length="pageCount"
@@ -389,7 +319,7 @@ watch(filter, (_val) => {
           />
         </div>
 
-        <div class="mb-2 mb-sm-0">
+        <div class="ml-auto">
           <v-select
             v-model="selectedPageSize"
             :items="allPageSize"
@@ -528,13 +458,25 @@ watch(filter, (_val) => {
   color: #12b76a;
   border-radius: 4px;
   padding: 4px 8px;
-  border: 1px solid #12b76a;
   border: 1.5px solid #12b76a;
+  font-weight: 600 !important;
+}
+
+.pending-status{
+  color: #6c6c6c;
+  border-radius: 4px;
+  padding: 4px 8px;
+  border: 1.5px solid #6c6c6c;
   font-weight: 600 !important;
 }
 
 .min-width-10{
   min-width: 10px !important;
   height: 20px !important;
+}
+.pagination-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>
