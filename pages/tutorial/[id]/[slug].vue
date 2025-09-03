@@ -336,6 +336,33 @@ const openCrashReportDialog = () => {
 
 useHead({
   title: tutorialInfo.value?.title || '',
+  meta: [
+    {
+      hid: 'apple-mobile-web-app-title',
+      name: 'apple-mobile-web-app-title',
+      content: tutorialInfo.value?.title || '',
+    },
+    {
+      hid: 'og:title',
+      name: 'og:title',
+      content: tutorialInfo.value?.title || '',
+    },
+    {
+      hid: 'og:site_name',
+      name: 'og:site_name',
+      content: 'GamaTrain',
+    },
+    {
+      hid: 'description',
+      name: 'description',
+      content: tutorialInfo.value?.content.slice(0, 300) || '',
+    },
+    {
+      hid: 'og:description',
+      name: 'og:description',
+      content: tutorialInfo.value?.content.slice(0, 300) || '',
+    },
+  ],
   link: [
     {
       rel: 'canonical',
