@@ -102,7 +102,7 @@
       >
         <div v-if="contentData?.files?.word.exist">
           <v-btn
-            class="mb-2"
+            class="mb-2 text-h5"
             block
             size="large"
             variant="flat"
@@ -126,7 +126,7 @@
         </div>
         <div v-if="contentData?.files.pdf.exist">
           <v-btn
-            class="mb-2 text-white font-weight-bold"
+            class="mb-2 text-h5 text-white font-weight-bold"
             block
             variant="flat"
             size="large"
@@ -151,7 +151,7 @@
         <div v-if="contentData?.files.answer.exist">
           <v-btn
             v-show="contentData?.files.answer.ext == 'pdf'"
-            class="mb-2 font-weight-bold"
+            class="mb-2 text-h5 font-weight-bold"
             block
             variant="flat"
             size="large"
@@ -174,7 +174,7 @@
           </v-btn>
           <v-btn
             v-show="contentData?.files.answer.ext == 'word'"
-            class="mb-2"
+            class="mb-2 text-h5"
             block
             color="primary"
             variant="flat"
@@ -202,7 +202,7 @@
           <v-btn
             v-for="(extra, index) in contentData.files.extra"
             :key="index"
-            class="mb-2 font-weight-bold"
+            class="mb-2 text-h5 font-weight-bold"
             block
             color="blue"
             variant="flat"
@@ -237,7 +237,7 @@
           color="#5600e8"
           size="large"
           variant="flat"
-          class="mb-2 text-white font-weight-bold"
+          class="mb-2 text-h5 text-white font-weight-bold"
         >
           Begin Quiz
         </v-btn>
@@ -249,7 +249,7 @@
           outlined
           size="large"
           color="primary"
-          class="mb-2 text-white font-weight-bold"
+          class="mb-2 text-h5 text-white font-weight-bold"
         >
           Create Quiz
         </v-btn>

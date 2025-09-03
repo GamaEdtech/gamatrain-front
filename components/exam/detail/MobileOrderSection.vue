@@ -4,7 +4,7 @@
     width="100%"
   >
     <v-card-text class="pb-0">
-      <v-row class="px-10 text-center">
+      <v-row class="px-10 text-center mt-1">
         <v-col
           v-for="(item, key) in examPrices"
           :key="key"
@@ -17,6 +17,7 @@
             v-if="key === 'participation'"
             block
             color="success"
+            class="text-h6"
             @click="handleLogin"
           >
             Start Exam{{ item.price > 0 ? " | $" + item.price : "" }}
@@ -28,6 +29,7 @@
             v-if="key === 'participation'"
             :to="`/exam/start/${examId}`"
             block
+            class="text-h6"
             color="success"
           >
             <span v-if="userExamStatus === 1"> Show result </span>
@@ -40,6 +42,7 @@
           <v-btn
             v-else-if="key === 'word'"
             block
+            class="text-h6"
             color="primary"
           >
             Download WORD{{ item.price > 0 ? " | $" + item.price : "" }}
@@ -51,6 +54,7 @@
             :loading="downloadLoading"
             block
             color="error"
+            class="text-h6"
             @click="handleDownload('pdf')"
           >
             Download PDF{{ item.price > 0 ? " | $" + item.price : "" }}
