@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <main_header />
-    <div class="mt-16 mt-md-0 position-relative">
+    <div class="mt-16 mt-md-0 position-relative h-screen">
       <!-- Desktop dashboard menu -->
       <div class="d-none d-md-flex">
         <dashboard-desktop-menu />
@@ -32,7 +32,6 @@
         </div>
       </v-container>
     </div>
-    <main_footer />
     <AppGlobalSnackbar />
   </v-app>
 </template>
@@ -40,7 +39,6 @@
 <script setup>
 import main_header from '../components/common/header.vue'
 import category from '../components/common/category'
-import main_footer from '../components/common/footer'
 import DashboardDesktopMenu from '@/components/dashboard/desktop-menu'
 import DashboardMobileMenu from '@/components/dashboard/mobile-menu'
 </script>

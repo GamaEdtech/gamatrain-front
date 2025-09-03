@@ -58,9 +58,7 @@
               class="primary-gray-600"
               size="24"
             >
-              {{
-                subMenuItem.icon
-              }}
+              {{ subMenuItem.icon }}
             </v-icon>
           </template>
           <v-list-item-title
@@ -125,9 +123,7 @@
               class="primary-gray-600"
               size="24"
             >
-              {{
-                item.icon
-              }}
+              {{ item.icon }}
             </v-icon>
           </template>
 
@@ -157,9 +153,7 @@
                   class="primary-gray-600"
                   size="24"
                 >
-                  {{
-                    item.icon
-                  }}
+                  {{ item.icon }}
                 </v-icon>
               </template>
 
@@ -190,9 +184,7 @@
                 class="primary-gray-600"
                 size="24"
               >
-                {{
-                  subMenuItem.icon
-                }}
+                {{ subMenuItem.icon }}
               </v-icon>
             </template>
             <v-list-item-title
@@ -204,7 +196,7 @@
         </v-list-group>
       </div>
 
-      <div
+      <!-- <div
         v-if="!drawerRail"
         class="w-100 buy-more-div d-flex flex-column justify-center align-center rounded-lg mt-10 ga-2"
       >
@@ -225,7 +217,7 @@
         >
           Upgrade Pro
         </v-btn>
-      </div>
+      </div> -->
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -342,6 +334,7 @@ const railchange = () => {
 
 onMounted(() => {
   drawerRail.value = true
+  openedGroups.value = []
 })
 </script>
 
@@ -354,13 +347,12 @@ onMounted(() => {
 
 .navigation-height-top {
   top: 64px !important;
-  height: calc(100% - 64px) !important;
-  position: absolute !important;
+  height: 100% !important;
 }
 @media (min-width: 960px) {
   .navigation-height-top {
     top: 6.4rem !important;
-    height: calc(100% - 6.4rem) !important;
+    height: 100% !important;
   }
 }
 
