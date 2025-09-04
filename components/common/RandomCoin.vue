@@ -43,6 +43,7 @@ import { useAuth } from '~/composables/useAuth'
 
 const auth = useAuth()
 const route = useRoute()
+const config = useRuntimeConfig()
 
 // Add exact names or name prefixes (prefix- matches prefix-*)
 const excludedRouteNames = ['search', 'school']
@@ -58,20 +59,18 @@ let scrollHandler = null
 
 const coinsResponse = ref(null)
 let refreshCoins = async () => {}
-if (shouldRenderRandomCoin.value) {
-  const asyncData = await useAsyncData('game-coins', () =>
-    useApiService
-      .get('/api/v2/game/coins', undefined, {
-        headers: {
-          Authorization:
-            'ApiKey kqR2GtIrpUrDZduvNwPTpQ8acHJQsQ2X0vK0e8GNkC9PFTv7EtWCaP0j0p2Y59lepGkik06cIbqB8W68KYolHaCuTIqCKD4ZokIURuH0hVCuyLQxtqZZwgwvusKdr1sQ',
-        },
-      })
-      .then(r => r?.data),
-  )
-  coinsResponse.value = asyncData.data
-  refreshCoins = asyncData.refresh
-}
+
+const asyncData = await useAsyncData('game-coins', () =>
+  useApiService
+    .get('/api/v2/game/coins', undefined, {
+      headers: {
+        Authorization: `ApiKey ${config.public.randomCoinApiKey}`,
+      },
+    })
+    .then(r => r?.data),
+)
+coinsResponse.value = asyncData.data.value
+refreshCoins = asyncData.refresh
 
 let hasInitialized = false
 
@@ -86,13 +85,12 @@ async function initCoinsAsyncDataIfNeeded() {
       useApiService
         .get('/api/v2/game/coins', undefined, {
           headers: {
-            Authorization:
-              'ApiKey kqR2GtIrpUrDZduvNwPTpQ8acHJQsQ2X0vK0e8GNkC9PFTv7EtWCaP0j0p2Y59lepGkik06cIbqB8W68KYolHaCuTIqCKD4ZokIURuH0hVCuyLQxtqZZwgwvusKdr1sQ',
+            Authorization: `ApiKey ${config.public.randomCoinApiKey}`,
           },
         })
         .then(r => r?.data),
     )
-    coinsResponse.value = asyncData.data
+    coinsResponse.value = asyncData.data.value
     refreshCoins = asyncData.refresh
   }
 }

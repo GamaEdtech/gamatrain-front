@@ -6,11 +6,11 @@ import glsl from 'vite-plugin-glsl'
 
 export default defineNuxtConfig({
   runtimeConfig: {
-    coinGameSecretKey: process.env.COIN_GAME_SECRET_KEY,
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
       solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
+      randomCoinApiKey: process.env.NUXT_PUBLIC_RANDOM_COIN_API_KEY,
     },
   },
 
