@@ -27,8 +27,8 @@
           :model-value="item.score"
           color="primary"
           active-color="primary"
-          empty-icon="md:star_outline"
-          half-icon="md:star_half"
+          empty-icon="md:star_outlined"
+          half-icon="md:star_half_outlined"
           full-icon="md:star"
           @update:model-value="updateRating($event, index)"
         />
@@ -82,12 +82,11 @@
           class="position-absolute position-button-ai"
           @click="sendToAI"
         >
-          <!-- <v-icon size="x-large" color="white"> md:wand_stars </v-icon> -->
           <v-icon
             size="x-large"
             color="white"
           >
-            mdi-auto-fix
+            md:wand_stars
           </v-icon>
         </v-btn>
       </div>
