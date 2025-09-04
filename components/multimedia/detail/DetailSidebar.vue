@@ -109,7 +109,7 @@
             block
             dark
             color="#bf360c"
-            class="mb-2"
+            class="mb-2 text-h5"
             :loading="downloadLoading"
             @click="startDownload"
           >
