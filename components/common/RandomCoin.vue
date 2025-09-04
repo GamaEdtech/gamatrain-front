@@ -48,9 +48,7 @@ const route = useRoute()
 const excludedRouteNames = ['search', 'school']
 const shouldRenderRandomCoin = computed(() => {
   const name = route.name ? String(route.name) : ''
-  return !excludedRouteNames.some(
-    n => name === n || name.startsWith(`${n}-`),
-  )
+  return !excludedRouteNames.some(n => name == n)
 })
 
 const coins = ref([])
@@ -58,9 +56,10 @@ const lottieRefs = new Map()
 
 let scrollHandler = null
 
-const { data: coinsResponse, refresh: refreshCoins } = await useAsyncData(
-  'game-coins',
-  () =>
+const coinsResponse = ref(null)
+let refreshCoins = async () => {}
+if (shouldRenderRandomCoin.value) {
+  const asyncData = await useAsyncData('game-coins', () =>
     useApiService
       .get('/api/v2/game/coins', undefined, {
         headers: {
@@ -69,9 +68,34 @@ const { data: coinsResponse, refresh: refreshCoins } = await useAsyncData(
         },
       })
       .then(r => r?.data),
-)
+  )
+  coinsResponse.value = asyncData.data
+  refreshCoins = asyncData.refresh
+}
 
 let hasInitialized = false
+
+async function initCoinsAsyncDataIfNeeded() {
+  if (!shouldRenderRandomCoin.value) return
+  const isUninitialized
+    = !coinsResponse.value
+      || typeof refreshCoins !== 'function'
+      || (coinsResponse.value && coinsResponse.value == null)
+  if (isUninitialized) {
+    const asyncData = await useAsyncData('game-coins', () =>
+      useApiService
+        .get('/api/v2/game/coins', undefined, {
+          headers: {
+            Authorization:
+              'ApiKey kqR2GtIrpUrDZduvNwPTpQ8acHJQsQ2X0vK0e8GNkC9PFTv7EtWCaP0j0p2Y59lepGkik06cIbqB8W68KYolHaCuTIqCKD4ZokIURuH0hVCuyLQxtqZZwgwvusKdr1sQ',
+          },
+        })
+        .then(r => r?.data),
+    )
+    coinsResponse.value = asyncData.data
+    refreshCoins = asyncData.refresh
+  }
+}
 
 function setLottieRef(id, el) {
   if (el) {
@@ -178,6 +202,10 @@ function mapCoinTypeToSrc(type) {
 }
 
 async function showCoinsWithAnimation() {
+  if (!shouldRenderRandomCoin.value) {
+    coins.value = []
+    return
+  }
   try {
     const responseData = coinsResponse?.value
     const serverCoins = Array.isArray(responseData?.coins)
@@ -214,6 +242,11 @@ watch(
   async () => {
     setTimeout(async () => {
       try {
+        if (!shouldRenderRandomCoin.value) {
+          coins.value = []
+          return
+        }
+        await initCoinsAsyncDataIfNeeded()
         if (hasInitialized) {
           await refreshCoins()
         }
