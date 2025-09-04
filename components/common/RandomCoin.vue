@@ -14,7 +14,7 @@
         position: 'absolute',
         left: coin.position.x + 'px',
         top: coin.position.y + 'px',
-        zIndex: 9999,
+        zIndex: 999,
         pointerEvents: 'auto',
         cursor: 'pointer',
         transition: coin.isClicked ? 'all 0.5s ease' : 'none',
@@ -39,7 +39,9 @@
 <script setup>
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import successSound from '/assets/sounds/success.mp3'
+import { useAuth } from '~/composables/useAuth'
 
+const auth = useAuth()
 const route = useRoute()
 
 // Add exact names or name prefixes (prefix- matches prefix-*)
@@ -58,7 +60,15 @@ let scrollHandler = null
 
 const { data: coinsResponse, refresh: refreshCoins } = await useAsyncData(
   'game-coins',
-  () => useApiService.get('/api/coins').then(r => r?.data),
+  () =>
+    useApiService
+      .get('/api/v2/game/coins', undefined, {
+        headers: {
+          Authorization:
+            'ApiKey kqR2GtIrpUrDZduvNwPTpQ8acHJQsQ2X0vK0e8GNkC9PFTv7EtWCaP0j0p2Y59lepGkik06cIbqB8W68KYolHaCuTIqCKD4ZokIURuH0hVCuyLQxtqZZwgwvusKdr1sQ',
+        },
+      })
+      .then(r => r?.data),
 )
 
 let hasInitialized = false
@@ -117,14 +127,13 @@ function playSound(sound) {
   audio.play().catch(e => console.warn('Failed to play audio:', e))
 }
 
-function getPointsForCoin(type) {
-  const t = String(type || '').toLowerCase()
-  if (t === 'gold') return 9
-  if (t === 'silver') return 6
-  return 1
-}
+const router = useRouter()
 
 function handleCoinClick(coin) {
+  if (!auth?.isAuthenticated?.value) {
+    router.push({ query: { auth_form: 'login', auth_noredirect: true } })
+    return
+  }
   if (coin.isClicked) return
 
   coin.isClicked = true
@@ -137,8 +146,9 @@ function handleCoinClick(coin) {
   playSound(successSound)
 
   try {
-    const points = getPointsForCoin(coin.type)
-    useApiService.post('/api/v2/game/easter-egg', { points }).catch(() => {})
+    useApiService
+      .post('/api/v2/game/easter-egg', { id: coin.id })
+      .catch(() => {})
   }
   catch {
     console.error('Failed')
@@ -170,16 +180,19 @@ function mapCoinTypeToSrc(type) {
 async function showCoinsWithAnimation() {
   try {
     const responseData = coinsResponse?.value
-    const coinTypes = Array.isArray(responseData?.coins)
+    const serverCoins = Array.isArray(responseData?.coins)
       ? responseData.coins
       : []
-    const newCoins = coinTypes.map((type, i) => ({
-      id: Date.now() + '-' + i,
-      type,
-      src: mapCoinTypeToSrc(type),
-      position: generateRandomPosition(),
-      isClicked: false,
-    }))
+    const newCoins = serverCoins.map((item) => {
+      const type = (item?.coinType || '').toLowerCase()
+      return {
+        id: item?.id,
+        type,
+        src: mapCoinTypeToSrc(type),
+        position: generateRandomPosition(),
+        isClicked: false,
+      }
+    })
     coins.value = newCoins
 
     nextTick(() => {
