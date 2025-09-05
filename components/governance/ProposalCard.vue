@@ -1,6 +1,9 @@
 <template>
-  <div class="proposal-card">
-    <div class="governance-proposals__badge">
+  <div
+    class="proposal-card"
+    @click="handleClick()"
+  >
+    <div class="governance-proposals__badge active">
       Active
     </div>
 
@@ -35,7 +38,12 @@
 
     <div class="governance-proposals__footer mt-3">
       <div class="time primary-gray-500">
-        ⏱ 2 Days Remaining
+        <span>
+          <v-icon
+            size="small"
+            color="#98A2B3"
+          >mdi-timer-outline</v-icon></span>
+        <span class="pl-1">2 Days Remaining</span>
       </div>
       <div class="buttons">
         <v-btn
@@ -59,7 +67,13 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+const emits = defineEmits(['select'])
+
+const handleClick = () => {
+  emits('select', {})
+}
+</script>
 
 <style lang="scss" scoped>
 .proposal-card {
@@ -67,17 +81,33 @@
   padding: 12px;
   position: relative;
   border: 2px solid #f2f4f7;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #f79009;
+  }
 
   .governance-proposals__badge {
     position: absolute;
     top: -9px;
     right: 12px;
-    background: #27ae60;
     color: white;
     font-size: 12px;
     font-weight: 600;
     padding: 2px 10px;
     border-radius: 12px;
+  }
+  .governance-proposals__badge.active {
+    background: #27ae60;
+  }
+  .governance-proposals__badge.pending {
+    background: #f79009;
+  }
+  .governance-proposals__badge.rejected {
+    background: #f04438;
+  }
+  .governance-proposals__badge.passed {
+    background: #2e90fa;
   }
 
   .governance-proposals__title {
@@ -132,7 +162,7 @@
 
     .buttons {
       display: flex;
-      gap: 8px;
+      gap: 4px;
 
       .v-btn {
         border-radius: 20px;

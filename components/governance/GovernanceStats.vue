@@ -41,7 +41,7 @@ const stats = ref([
 
 <style scoped>
 .governance-stats {
-  margin-top: -5rem;
+  margin-top: -7rem;
   margin-bottom: 2rem;
 }
 

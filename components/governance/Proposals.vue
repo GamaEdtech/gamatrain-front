@@ -22,7 +22,7 @@
               elevation="0"
               class="my-5 mx-1 proposal-slide__card"
             >
-              <governance-proposal-card />
+              <governance-proposal-card @select="handleProposalClick" />
             </div>
           </v-slide-group-item>
         </v-slide-group>
@@ -34,7 +34,10 @@
           :key="index"
           class="mb-4"
         >
-          <governance-proposal-card :item="item" />
+          <governance-proposal-card
+            :item="item"
+            @select="handleProposalClick"
+          />
         </div>
       </div>
     </div>
@@ -54,10 +57,13 @@
         variant="flat"
         rounded
         class="ml-3"
+        @click="visibleCreateProposal = true"
       >
         Create Proposal
       </v-btn>
     </div>
+    <governance-creat-proposal v-model="visibleCreateProposal" />
+    <governance-proposal-detail v-model="visibleProposalDetail" />
   </div>
 </template>
 
@@ -66,6 +72,12 @@ import { useDisplay } from 'vuetify/lib/composables/display'
 
 const display = useDisplay()
 const selected = ref(null)
+const visibleCreateProposal = ref(false)
+const visibleProposalDetail = ref(false)
+
+const handleProposalClick = () => {
+  visibleProposalDetail.value = true
+}
 </script>
 
 <style scoped>
