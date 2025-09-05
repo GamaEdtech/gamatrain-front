@@ -180,14 +180,10 @@ const fetchChartData = async () => {
   loading.value = true
 
   try {
-    const response = await useApiService('/api/v2/transactions/statistics', {
-      method: 'GET',
+    const response = await useApiService.get('/api/v2/transactions/statistics', {
       params: {
         Period: selectedPeriod.value,
-      },
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-      },
+      }
     })
 
     if (response.succeeded && response.data) {
