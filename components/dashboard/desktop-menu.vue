@@ -200,12 +200,6 @@
         v-if="!drawerRail"
         class="w-100 buy-more-div d-flex flex-column justify-center align-center rounded-lg mt-10 ga-2"
       >
-        <v-img
-          src="@/assets/images/menu-upgrade-pro.png"
-          width="74"
-          height="74"
-          max-height="74"
-        />
         <span class="text-h5 font-weight-bold primary-gray-500">Buy More Storage</span>
         <v-btn
           color="#2E90FA"
