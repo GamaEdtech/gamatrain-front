@@ -21,7 +21,7 @@
     <common-footer />
     <AppGlobalSnackbar />
     <client-only>
-      <lazy-common-random-coin v-once />
+      <lazy-common-random-coin />
     </client-only>
   </v-app>
 </template>

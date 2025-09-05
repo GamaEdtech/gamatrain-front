@@ -45,8 +45,12 @@ const auth = useAuth()
 const route = useRoute()
 const config = useRuntimeConfig()
 
-// Add exact names or name prefixes (prefix- matches prefix-*)
-const excludedRouteNames = ['search', 'school']
+const excludedRouteNames = [
+  'search',
+  'school',
+  'game-castle',
+  'game-car-racing',
+]
 const shouldRenderRandomCoin = computed(() => {
   const name = route.name ? String(route.name) : ''
   return !excludedRouteNames.some(n => name == n)
@@ -58,41 +62,13 @@ const lottieRefs = new Map()
 let scrollHandler = null
 
 const coinsResponse = ref(null)
-let refreshCoins = async () => {}
-
-const asyncData = await useAsyncData('game-coins', () =>
-  useApiService
-    .get('/api/v2/game/coins', undefined, {
-      headers: {
-        Authorization: `ApiKey ${config.public.randomCoinApiKey}`,
-      },
-    })
-    .then(r => r?.data),
-)
-coinsResponse.value = asyncData.data.value
-refreshCoins = asyncData.refresh
-
-let hasInitialized = false
-
-async function initCoinsAsyncDataIfNeeded() {
-  if (!shouldRenderRandomCoin.value) return
-  const isUninitialized
-    = !coinsResponse.value
-      || typeof refreshCoins !== 'function'
-      || (coinsResponse.value && coinsResponse.value == null)
-  if (isUninitialized) {
-    const asyncData = await useAsyncData('game-coins', () =>
-      useApiService
-        .get('/api/v2/game/coins', undefined, {
-          headers: {
-            Authorization: `ApiKey ${config.public.randomCoinApiKey}`,
-          },
-        })
-        .then(r => r?.data),
-    )
-    coinsResponse.value = asyncData.data.value
-    refreshCoins = asyncData.refresh
-  }
+const fetchCoins = async () => {
+  const response = await useApiService.get('/api/v2/game/coins', undefined, {
+    headers: {
+      Authorization: `ApiKey ${config.public.randomCoinApiKey}`,
+    },
+  })
+  coinsResponse.value = response.data
 }
 
 function setLottieRef(id, el) {
@@ -209,6 +185,7 @@ async function showCoinsWithAnimation() {
     const serverCoins = Array.isArray(responseData?.coins)
       ? responseData.coins
       : []
+
     const newCoins = serverCoins.map((item) => {
       const type = (item?.coinType || '').toLowerCase()
       return {
@@ -219,6 +196,7 @@ async function showCoinsWithAnimation() {
         isClicked: false,
       }
     })
+
     coins.value = newCoins
 
     nextTick(() => {
@@ -238,27 +216,17 @@ async function showCoinsWithAnimation() {
 watch(
   () => route.path,
   async () => {
-    setTimeout(async () => {
-      try {
-        if (!shouldRenderRandomCoin.value) {
-          coins.value = []
-          return
-        }
-        await initCoinsAsyncDataIfNeeded()
-        if (hasInitialized) {
-          await refreshCoins()
-        }
-        else {
-          hasInitialized = true
-        }
+    coins.value = []
+    try {
+      if (!shouldRenderRandomCoin.value) {
+        return
       }
-      catch (e) {
-        console.warn('Failed to refresh coins:', e)
-      }
-      finally {
-        showCoinsWithAnimation()
-      }
-    }, 1000)
+      await fetchCoins()
+      showCoinsWithAnimation()
+    }
+    catch (e) {
+      console.warn('Failed to refresh coins:', e)
+    }
   },
   { immediate: true },
 )
