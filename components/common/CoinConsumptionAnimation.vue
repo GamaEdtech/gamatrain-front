@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isVisible"
+    v-if="isVisible && internalVisible"
     class="coin-consumption-overlay"
   >
     <div class="coin-consumption-container">
@@ -18,7 +18,10 @@
             @complete="onAnimationComplete"
           />
         </ClientOnly>
-        <div class="coin-multiplier">
+        <div
+          v-if="showMultiplier"
+          class="coin-multiplier"
+        >
           -{{ coinCount }}
         </div>
       </div>
@@ -43,9 +46,15 @@ const props = defineProps({
 const emit = defineEmits(['animation-complete'])
 
 const centerLottieRef = ref(null)
+const internalVisible = ref(true)
+const showMultiplier = ref(true)
 
 function startAnimation() {
   if (!props.isVisible) return
+
+  // Reset internal state
+  internalVisible.value = true
+  showMultiplier.value = true
 
   // Start animation after DOM update
   nextTick(() => {
@@ -57,21 +66,31 @@ function startAnimation() {
 
   // Fallback timeout in case animation doesn't complete properly
   setTimeout(() => {
+    hideAnimation()
     emit('animation-complete')
-  }, 1000) // 3 second fallback
+  }, 3000) // 3 second fallback
 }
 
 function onAnimationComplete() {
-  // Small delay before hiding
-  setTimeout(() => {
-    emit('animation-complete')
-  }, 500)
+  // Hide everything immediately when animation completes
+  hideAnimation()
+  emit('animation-complete')
+}
+
+function hideAnimation() {
+  showMultiplier.value = false
+  internalVisible.value = false
 }
 
 // Watch for visibility changes to start animation
 watch(() => props.isVisible, (newValue) => {
   if (newValue) {
     startAnimation()
+  }
+  else {
+    // Reset state when becoming invisible
+    internalVisible.value = false
+    showMultiplier.value = false
   }
 })
 
@@ -122,26 +141,29 @@ onMounted(() => {
   font-weight: bold;
   color: #ffd700;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-  animation: fadeInScale 0.8s ease-out;
+  animation: fadeInScale 1.5s ease-out forwards;
   z-index: 10002;
 }
 
 @keyframes fadeInScale {
   0% {
-    opacity: 100%;
+    opacity: 1;
     padding: 1rem;
     transform: translateY(-50%) scale(1);
     background-color: #5c4f04;
     border-radius: 50%;
-    display: block;
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+    background-color: #5c4f04;
   }
   100% {
-    opacity: 0%;
+    opacity: 0;
     padding: auto;
     transform: translateY(-50%) scale(0.1);
     background-color: #998304;
     border-radius: 50%;
-    display: none;
   }
 }
 </style>
