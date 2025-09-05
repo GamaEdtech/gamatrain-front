@@ -516,20 +516,8 @@ const startDownload = async (type, extraId) => {
     const response = await useApiService.get(apiUrl)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const FileSaver = await import('file-saver')
-
-    // Create a temporary anchor element to force download in same tab
-    const link = document.createElement('a')
-    link.href = response.data.url
-    link.download = response.data.name
-    link.target = '_self' // Ensure it doesn't open in new tab
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-
-    // Show success message for coin payments
-    if (requiresCoinPayment.value && !checkFileHasPrice(type, extraId)) {
-      $toast.success('Download started! 5 coins deducted from your balance.')
-    }
+    const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
+    await FileSaver.saveAs(proxyUrl, response.data.name)
   }
   catch (err) {
     if (err.response?.status == 400) {
