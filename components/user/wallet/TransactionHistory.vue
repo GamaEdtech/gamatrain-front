@@ -387,10 +387,8 @@ const resetAndFetchInitialData = async () => {
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService('/api/v2/transactions', {
-      method: 'GET',
-      params,
-      headers: { Authorization: `Bearer ${token.value}` },
+    const response = await useApiService.get('/api/v2/transactions', {
+      params
     })
 
     if (response.succeeded && response.data) {
@@ -431,10 +429,8 @@ const loadDesktopTransactions = async ({
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService('/api/v2/transactions', {
-      method: 'GET',
-      params,
-      headers: { Authorization: `Bearer ${token.value}` },
+    const response = await useApiService.get('/api/v2/transactions', {
+      params
     })
 
     if (response.succeeded && response.data) {
@@ -470,10 +466,8 @@ const fetchMoreMobileTransactions = async () => {
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService('/api/v2/transactions', {
-      method: 'GET',
-      params,
-      headers: { Authorization: `Bearer ${token.value}` },
+    const response = await useApiService.get('/api/v2/transactions', {
+      params
     })
 
     if (response.succeeded && response.data) {
