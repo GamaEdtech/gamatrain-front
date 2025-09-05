@@ -287,7 +287,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useAuth } from '~/composables/useAuth'
-import { useApiService } from '~/composables/useApiService'
 
 // Props
 defineProps({
@@ -387,9 +386,9 @@ const resetAndFetchInitialData = async () => {
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService.get('/api/v2/transactions', {
-      params
-    })
+    const response = await useApiService.get('/api/v2/transactions',
+      params,
+    )
 
     if (response.succeeded && response.data) {
       // Populate both lists with the same initial data
@@ -429,9 +428,9 @@ const loadDesktopTransactions = async ({
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService.get('/api/v2/transactions', {
-      params
-    })
+    const response = await useApiService.get('/api/v2/transactions',
+      params,
+    )
 
     if (response.succeeded && response.data) {
       transactions.value = response.data.list
@@ -466,9 +465,9 @@ const fetchMoreMobileTransactions = async () => {
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService.get('/api/v2/transactions', {
-      params
-    })
+    const response = await useApiService.get('/api/v2/transactions',
+      params,
+    )
 
     if (response.succeeded && response.data) {
       mobileTransactions.value.push(...response.data.list)

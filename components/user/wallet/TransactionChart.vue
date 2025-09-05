@@ -30,7 +30,6 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { useAuth } from '~/composables/useAuth'
-import { useApiService } from '~/composables/useApiService'
 import {
   Chart as ChartJS,
   Title,
@@ -181,9 +180,7 @@ const fetchChartData = async () => {
 
   try {
     const response = await useApiService.get('/api/v2/transactions/statistics', {
-      params: {
-        Period: selectedPeriod.value,
-      }
+      Period: selectedPeriod.value,
     })
 
     if (response.succeeded && response.data) {
