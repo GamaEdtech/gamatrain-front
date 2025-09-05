@@ -558,7 +558,7 @@ onMounted(async () => {
           console.log('Wallet connection changed:', connected)
           if (connected) {
             showWalletModal.value = false
-            //fetchBalances()
+            // fetchBalances()
             // Clear any previous error messages when wallet connects
             errorMessage.value = null
           }
@@ -568,14 +568,14 @@ onMounted(async () => {
 
       // Fetch initial data
       await fetchCurrentPrice()
-      //if (isWalletConnected.value) {
-        //await fetchBalances()
-      //}
+      // if (isWalletConnected.value) {
+      // await fetchBalances()
+      // }
 
       // Set up price refresh interval
-      //setInterval(() => {
+      // setInterval(() => {
       //  fetchCurrentPrice()
-      //}, 30000)
+      // }, 30000)
     }
     catch (error) {
       console.error('Failed to initialize wallet:', error)

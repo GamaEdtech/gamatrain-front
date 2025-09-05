@@ -97,7 +97,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuth } from '~/composables/useAuth'
-import { useApiService } from '~/composables/useApiService'
 
 // Composables
 const auth = useAuth()
