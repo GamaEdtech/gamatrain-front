@@ -410,9 +410,9 @@ watch(
   () => route.query.auth_form,
   (val) => {
     if (val === 'login') {
-      // login_modal.value.login_dialog = true;
+      const noRedirect = !!route.query.auth_noredirect
       openLoginDialog()
-      router.push({ query: {} })
+      if (!noRedirect) router.push({ query: {} })
     }
     else if (val == 'register') {
       register_modal.value.register_dialog = true

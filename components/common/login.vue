@@ -71,7 +71,8 @@ async function handleCredentialResponse(value) {
       submitLoginV2(response.data.jwtToken)
       closeDialog()
 
-      if (route.path === '/') navigateTo('/user')
+      if (!route.query?.auth_noredirect && route.path === '/')
+        navigateTo('/user')
     }
   }
   catch (err) {
@@ -189,7 +190,8 @@ const submit = handleSubmit(async () => {
       $toast.success('Logged in successfully')
 
       closeDialog()
-      if (route.path === '/') navigateTo('/user')
+      if (!route.query?.auth_noredirect && route.path === '/')
+        navigateTo('/user')
     }
   }
   catch (error) {
@@ -222,7 +224,8 @@ const onFinish = async () => {
       await submitLoginV2(response.data.jwtToken)
       $toast.success('Logged in successfully')
       closeDialog()
-      if (route.path === '/') navigateTo('/user')
+      if (!route.query?.auth_noredirect && route.path === '/')
+        navigateTo('/user')
     }
   }
   catch (error) {
