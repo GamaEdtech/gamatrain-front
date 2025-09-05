@@ -8,7 +8,7 @@
         <v-row class="w-100">
           <v-col
             cols="12"
-            md="7"
+            md="8"
           >
             <!-- Left side - Content Editor -->
             <div class="content-editor">
@@ -80,7 +80,7 @@
 
           <v-col
             cols="12"
-            md="5"
+            md="4"
           >
             <!-- Right side - Publishing Options -->
             <div class="publishing-options mobile-full">

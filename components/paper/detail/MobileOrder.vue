@@ -1,7 +1,7 @@
 <template>
   <v-card class="order-btn-holder d-block d-md-none">
     <v-card-text class="pb-0">
-      <v-row class="px-10 text-center">
+      <v-row class="px-4 text-center">
         <v-col
           cols="12"
           class="pb-1 pt-0"
@@ -10,7 +10,7 @@
             <v-btn
               block
               color="primary"
-              class="mb-2"
+              class="mb-2 text-h6"
               variant="flat"
               :loading="qWordFileDownloadLoading"
               @click="$emit('download', 'q_word')"
@@ -31,7 +31,7 @@
           </div>
           <div v-if="contentData?.files.pdf.exist">
             <v-btn
-              class="mb-2 text-white font-weight-bold"
+              class="mb-2 text-h6 text-white font-weight-bold"
               block
               variant="flat"
               color="#E60012"
@@ -55,7 +55,7 @@
           <div v-if="contentData?.files.answer.exist">
             <v-btn
               v-show="contentData?.files.answer.ext == 'pdf'"
-              class="mb-2 font-weight-bold"
+              class="mb-2 text-h6 font-weight-bold"
               variant="flat"
               block
               color="teal accent-3"
@@ -80,7 +80,7 @@
               block
               variant="flat"
               color="primary"
-              class="mb-2"
+              class="mb-2 text-h6"
               :loading="answerFileDownloadLoading"
               @click="$emit('download', 'a_file')"
             >
@@ -102,7 +102,7 @@
               :key="index"
               block
               color="blue"
-              class="mb-2 font-weight-bold"
+              class="mb-2 text-h6 font-weight-bold"
               variant="flat"
               :loading="extraFileDownloadLoading"
               @click="$emit('download', 'extra', extra.id)"

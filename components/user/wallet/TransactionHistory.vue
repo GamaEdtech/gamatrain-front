@@ -287,7 +287,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useAuth } from '~/composables/useAuth'
-import { useApiService } from '~/composables/useApiService'
 
 // Props
 defineProps({
@@ -387,11 +386,9 @@ const resetAndFetchInitialData = async () => {
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService('/api/v2/transactions', {
-      method: 'GET',
+    const response = await useApiService.get('/api/v2/transactions',
       params,
-      headers: { Authorization: `Bearer ${token.value}` },
-    })
+    )
 
     if (response.succeeded && response.data) {
       // Populate both lists with the same initial data
@@ -431,11 +428,9 @@ const loadDesktopTransactions = async ({
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService('/api/v2/transactions', {
-      method: 'GET',
+    const response = await useApiService.get('/api/v2/transactions',
       params,
-      headers: { Authorization: `Bearer ${token.value}` },
-    })
+    )
 
     if (response.succeeded && response.data) {
       transactions.value = response.data.list
@@ -470,11 +465,9 @@ const fetchMoreMobileTransactions = async () => {
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService('/api/v2/transactions', {
-      method: 'GET',
+    const response = await useApiService.get('/api/v2/transactions',
       params,
-      headers: { Authorization: `Bearer ${token.value}` },
-    })
+    )
 
     if (response.succeeded && response.data) {
       mobileTransactions.value.push(...response.data.list)

@@ -111,6 +111,7 @@
           v-if="key === 'participation'"
           block
           color="success"
+          class="text-h5"
           @click="onLogin"
         >
           Start Exam{{ item.price > 0 ? " | $" + item.price : "" }}
@@ -123,6 +124,7 @@
           :to="`/exam/start/${contentData.id}`"
           block
           color="success"
+          class="text-h5"
         >
           <span v-if="contentData.examUserData?.status === 1">
             Show result
@@ -136,6 +138,7 @@
           v-else-if="key === 'word'"
           block
           color="primary"
+          class="text-h5"
         >
           Download WORD{{ item.price > 0 ? " | $" + item.price : "" }}
         </v-btn>
@@ -145,6 +148,7 @@
           :loading="downloadLoading"
           block
           color="error"
+          class="text-h5"
           @click="onDownload('pdf')"
         >
           Download PDF{{ item.price > 0 ? " | $" + item.price : "" }}
