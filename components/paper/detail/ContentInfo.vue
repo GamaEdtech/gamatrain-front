@@ -148,16 +148,16 @@
             </v-icon>
             Download Question Paper
             <template v-if="requiresCoinPayment && contentData?.files?.pdf.price === 0">
-              | 5 <v-icon
+              <v-icon
                 size="small"
                 color="orange"
               >
                 mdi-coin
               </v-icon>
             </template>
-            <template v-else-if="contentData?.files?.pdf.price > 0">
+            <!-- <template v-else-if="contentData?.files?.pdf.price > 0">
               | ${{ contentData?.files?.pdf.price }}
-            </template>
+            </template> -->
           </v-btn>
         </div>
         <div v-if="contentData?.files.answer.exist">
