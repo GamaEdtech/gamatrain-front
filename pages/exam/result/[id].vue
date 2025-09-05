@@ -720,7 +720,8 @@ const startDownload = async () => {
     )
     // Use dynamic import for file-saver
     const FileSaver = await import('file-saver')
-    FileSaver.saveAs(response.data.url, response.data.name)
+    const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
+    FileSaver.saveAs(proxyUrl, response.data.name)
   }
   catch (err) {
     if (
