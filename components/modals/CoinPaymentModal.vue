@@ -23,13 +23,13 @@
       <div class="text-box">
         <v-card-text class="d-flex flex-column align-center justify-center">
           <span class="text-center mb-3">
-            To download this 2025 past paper, you need to pay <strong>5 points</strong>
+            Grab this 2025 past paper for just 5 $GET! Earn tokens by exploring Gamatrain or claim instantly via our Web3 gateway.
           </span>
           <div class="balance-info d-flex align-center justify-center ga-2 mb-3">
             <v-icon color="orange">
               mdi-wallet
             </v-icon>
-            <span>Your current balance: <strong>{{ userBalance }} points</strong></span>
+            <span>Your current balance: <strong>{{ formatNumber(userBalance) }} points</strong></span>
           </div>
           <span
             v-if="userBalance < 5"
@@ -89,6 +89,9 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['update:isOpen', 'confirm', 'close'])
+
+// Use the existing formatNumber composable
+const { formatNumber } = useFormatNumber()
 
 const confirmPayment = () => {
   if (props.userBalance >= 5) {
