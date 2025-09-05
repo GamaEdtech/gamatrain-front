@@ -449,8 +449,8 @@ const handleCoinPaymentConfirm = async () => {
     console.log('Coin deduction result:', success)
 
     if (success) {
-      showCoinPaymentModal.value = false
-      console.log('Modal closed, showing animation...')
+      // Don't close modal immediately, wait for animation to complete
+      console.log('Payment successful, showing animation...')
 
       // Show coin consumption animation
       showCoinAnimation.value = true
@@ -485,7 +485,10 @@ const handleCoinPaymentClose = () => {
 
 const handleAnimationComplete = async () => {
   console.log('Animation completed!')
+
+  // Close everything immediately when animation completes
   showCoinAnimation.value = false
+  showCoinPaymentModal.value = false
 
   if (pendingDownload.value) {
     console.log('Starting download for:', pendingDownload.value)
@@ -511,8 +514,17 @@ const startDownload = async (type, extraId) => {
   }
   try {
     const response = await useApiService.get(apiUrl)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const FileSaver = await import('file-saver')
-    await FileSaver.saveAs(response.data.url, response.data.name)
+
+    // Create a temporary anchor element to force download in same tab
+    const link = document.createElement('a')
+    link.href = response.data.url
+    link.download = response.data.name
+    link.target = '_self' // Ensure it doesn't open in new tab
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
 
     // Show success message for coin payments
     if (requiresCoinPayment.value && !checkFileHasPrice(type, extraId)) {
