@@ -22,8 +22,8 @@
                 mdi-file-word-box
               </v-icon>
               Download Question Doc
-              <template v-if="requiresCoinPayment && contentData?.files?.word.price === 0">
-                | 5 <v-icon
+              <template v-if="requiresCoinPaymentForFile('q_word') && contentData?.files?.word.price === 0">
+                <v-icon
                   size="small"
                   color="orange"
                 >
@@ -51,8 +51,8 @@
                 mdi-file-pdf-box
               </v-icon>
               Download Question Paper
-              <template v-if="requiresCoinPayment && contentData?.files?.pdf.price === 0">
-                | 5 <v-icon
+              <template v-if="requiresCoinPaymentForFile('q_pdf') && contentData?.files?.pdf.price === 0">
+                <v-icon
                   size="small"
                   color="orange"
                 >
@@ -81,8 +81,8 @@
                 mdi-file-pdf-box
               </v-icon>
               Download Mark Scheme
-              <template v-if="requiresCoinPayment && contentData?.files?.answer.price === 0">
-                | 5 <v-icon
+              <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+                <v-icon
                   size="small"
                   color="orange"
                 >
@@ -109,8 +109,8 @@
                 mdi-file-word-box
               </v-icon>
               Download Answer Doc
-              <template v-if="requiresCoinPayment && contentData?.files?.answer.price === 0">
-                | 5 <v-icon
+              <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+                <v-icon
                   size="small"
                   color="orange"
                 >
@@ -154,8 +154,8 @@
                 </v-icon>
               </template>
               Download {{ extra.type_title ? extra.type_title : "Extra" }}
-              <template v-if="requiresCoinPayment && extra.price === 0">
-                | 5 <v-icon
+              <template v-if="requiresCoinPaymentForFile('extra', extra.id) && extra.price === 0">
+                <v-icon
                   size="small"
                   color="orange"
                 >
@@ -237,9 +237,9 @@ defineProps({
     type: Boolean,
     default: false,
   },
-  requiresCoinPayment: {
-    type: Boolean,
-    default: false,
+  requiresCoinPaymentForFile: {
+    type: Function,
+    default: () => false,
   },
 })
 
