@@ -117,8 +117,8 @@
               mdi-file-word-box
             </v-icon>
             Download Question Doc
-            <template v-if="requiresCoinPayment && contentData?.files?.word.price === 0">
-              | 5 <v-icon
+            <template v-if="requiresCoinPaymentForFile('q_word') && contentData?.files?.word.price === 0">
+              <v-icon
                 size="small"
                 color="orange"
               >
@@ -147,7 +147,7 @@
               mdi-file-pdf-box
             </v-icon>
             Download Question Paper
-            <template v-if="requiresCoinPayment && contentData?.files?.pdf.price === 0">
+            <template v-if="requiresCoinPaymentForFile('q_pdf') && contentData?.files?.pdf.price === 0">
               <v-icon
                 size="small"
                 color="orange"
@@ -178,8 +178,8 @@
               mdi-file-pdf-box
             </v-icon>
             Download Mark Scheme
-            <template v-if="requiresCoinPayment && contentData?.files?.answer.price === 0">
-              | 5 <v-icon
+            <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+              <v-icon
                 size="small"
                 color="orange"
               >
@@ -207,8 +207,8 @@
               mdi-file-word-box
             </v-icon>
             Download Answer Doc
-            <template v-if="requiresCoinPayment && contentData?.files?.answer.price === 0">
-              | 5 <v-icon
+            <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+              <v-icon
                 size="small"
                 color="orange"
               >
@@ -251,8 +251,8 @@
               </v-icon>
             </template>
             Download {{ extra.type_title ? extra.type_title : "Extra" }}
-            <template v-if="requiresCoinPayment && extra.price === 0">
-              | 5 <v-icon
+            <template v-if="requiresCoinPaymentForFile('extra', extra.id) && extra.price === 0">
+              <v-icon
                 size="small"
                 color="orange"
               >
@@ -301,7 +301,7 @@
     :q-pdf-file-download-loading="qPdfFileDownloadLoading"
     :answer-file-download-loading="answerFileDownloadLoading"
     :extra-file-download-loading="extraFileDownloadLoading"
-    :requires-coin-payment="requiresCoinPayment"
+    :requires-coin-payment-for-file="requiresCoinPaymentForFile"
     @download="handleDownloadClick"
   />
   <!-- End mobile order section -->
@@ -383,11 +383,13 @@ const handleDownloadClick = async (type, extraId) => {
   setLoadingState(type, true)
 
   try {
-    // Check if this is a 2025 file that requires coin payment
-    if (requiresCoinPayment.value) {
+    // Check if this specific file type requires coin payment
+    const fileRequiresCoins = requiresCoinPaymentForFile(type, extraId)
+
+    if (fileRequiresCoins) {
       // Check if user is authenticated
       if (!auth.isAuthenticated.value) {
-        $toast.info('Please login to download 2025 files')
+        $toast.info('Please login to download 2025 premium files')
         return
       }
 
@@ -417,6 +419,32 @@ const handleDownloadClick = async (type, extraId) => {
       setLoadingState(type, false)
     }
   }
+}
+
+const requiresCoinPaymentForFile = (type, extraId) => {
+  // Only apply coin payment to 2025 files
+  if (!coinBalance.requiresCoinPayment(props.contentData)) {
+    return false
+  }
+
+  // For 2025 files, only these file types require coins:
+  // - Mark schemes/answer files (a_file)
+  // - Extra files (audio, additional resources)
+  // - Question papers (q_word, q_pdf) remain FREE
+
+  if (type === 'a_file') {
+    // Mark schemes require coins for 2025
+    return props.contentData?.files?.answer.price === 0
+  }
+
+  if (type === 'extra') {
+    // Extra files (audio, etc.) require coins for 2025
+    const extra = props.contentData?.files?.extra?.find(e => e.id === extraId)
+    return extra?.price === 0
+  }
+
+  // Question papers (q_word, q_pdf) are FREE for 2025
+  return false
 }
 
 const checkFileHasPrice = (type, extraId) => {
@@ -514,10 +542,18 @@ const startDownload = async (type, extraId) => {
   }
   try {
     const response = await useApiService.get(apiUrl)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    console.log('Download response:', response.data)
+
     const FileSaver = await import('file-saver')
-    const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
-    await FileSaver.saveAs(proxyUrl, response.data.name)
+
+    // Use FileSaver.js the same way as other parts of the codebase
+    console.log('Starting download with FileSaver:', response.data.url, response.data.name)
+    FileSaver.saveAs(response.data.url, response.data.name)
+
+    // Show success message for coin payments
+    if (requiresCoinPaymentForFile(type, extraId) && !checkFileHasPrice(type, extraId)) {
+      $toast.success('Download started! 5 coins deducted from your balance.')
+    }
   }
   catch (err) {
     if (err.response?.status == 400) {
