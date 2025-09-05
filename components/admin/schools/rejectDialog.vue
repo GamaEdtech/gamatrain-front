@@ -15,7 +15,7 @@ const emit = defineEmits([
 
 const rejectItem = async () => {
   try {
-    const res = await useApiService.patch(`/api/v2/admin/schools/${props.type}/contributions/${props.id}/reject`, {
+    const res = await useApiService.patch(`/api/v2/admin/${props.type}/contributions/${props.id}/reject`, {
       comment: comment.value,
     })
     if (res.succeeded === true) {

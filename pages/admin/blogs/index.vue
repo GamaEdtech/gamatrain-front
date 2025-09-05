@@ -1,5 +1,6 @@
 <script setup>
-import commentCard from '~/components/admin/schools/comments/commentCard.vue'
+import blogCard from '~/components/admin/blogs/blogCard.vue'
+import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
@@ -10,37 +11,36 @@ definePageMeta({
 const { $toast } = useNuxtApp()
 
 const headers = [
+  { title: 'Title', key: 'title', sortable: false, width: '20vw' },
   { title: 'Contributer', key: 'creationUser', sortable: false, width: '15vw' },
-  { title: 'Date', key: 'creationDate', sortable: false, width: '15vw' },
   { title: 'Status', key: 'confirmed', sortable: false, width: '10vw' },
   { title: 'Actions', key: 'actions', sortable: false, width: '5vw' },
 ]
 
-const selectedComment = reactive({
-  id: null,
-  schoolName: null,
-  schoolId: null,
-  comment: null,
-  artisticActivitiesRate: null,
-  behaviorRate: null,
-  classesQualityRate: null,
-  educationRate: null,
-  facilitiesRate: null,
-  itTrainingRate: null,
-  safetyAndHappinessRate: null,
-  tuitionRatioRate: null,
-  averageRate: null,
+const selectedBlog = reactive({
+  title: null,
+  slug: null,
+  summary: null,
+  body: null,
+  imageUri: null,
+  keywords: null,
+  postId: null,
+  visibilityType: null,
+  publishDate: null,
+  tags: [],
 })
 
 const list = ref([])
 const tableLoading = ref(true)
 const dialogVisible = ref(false)
-const filter = ref('')
+const filter = ref('Confirmed')
 const selectedPageSize = ref(10)
 const page = ref(1)
 const pageCount = ref(0)
 const totalCount = ref(0)
 const selected = ref([])
+const isDeleteModalOpen = ref(false)
+const selectedDeleteId = ref(null)
 
 const allPageSize = [
   { label: '10 Rows', value: 10 },
@@ -48,10 +48,10 @@ const allPageSize = [
   { label: '50 Rows', value: 50 },
 ]
 
-const fetchComments = async () => {
+const fetchBlogs = async () => {
   tableLoading.value = true
   try {
-    const response = await useApiService.get('/api/v2/admin/schools/comments/contributions', {
+    const response = await useApiService.get('/api/v2/admin/blogs/contributions', {
       'PagingDto.PageFilter.Size': selectedPageSize.value,
       'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
@@ -72,23 +72,20 @@ const fetchComments = async () => {
   }
 }
 
-const viewCommentDetails = async (id) => {
+const viewBlogDetails = async (id) => {
   try {
-    const response = await useApiService.get(`/api/v2/admin/schools/comments/contributions/${id}`)
+    const response = await useApiService.get(`/api/v2/admin/blogs/contributions/${id}`)
 
-    selectedComment.id = response.data.id
-    selectedComment.schoolName = response.data.schoolName
-    selectedComment.schoolId = response.data.schoolId
-    selectedComment.comment = response.data.comment
-    selectedComment.artisticActivitiesRate = response.data.artisticActivitiesRate
-    selectedComment.behaviorRate = response.data.behaviorRate
-    selectedComment.classesQualityRate = response.data.classesQualityRate
-    selectedComment.educationRate = response.data.educationRate
-    selectedComment.facilitiesRate = response.data.facilitiesRate
-    selectedComment.itTrainingRate = response.data.itTrainingRate
-    selectedComment.safetyAndHappinessRate = response.data.safetyAndHappinessRate
-    selectedComment.tuitionRatioRate = response.data.tuitionRatioRate
-    selectedComment.averageRate = response.data.averageRate
+    selectedBlog.title = response.data.title
+    selectedBlog.slug = response.data.slug
+    selectedBlog.summary = response.data.summary
+    selectedBlog.body = response.data.body
+    selectedBlog.imageUri = response.data.imageUri
+    selectedBlog.keywords = response.data.keywords
+    selectedBlog.postId = response.data.postId
+    selectedBlog.visibilityType = response.data.visibilityType
+    selectedBlog.publishDate = response.data.publishDate
+    selectedBlog.tags = response.data.tags
 
     dialogVisible.value = true
   }
@@ -99,22 +96,46 @@ const viewCommentDetails = async (id) => {
   }
 }
 
-const goToSchool = (schoolId) => {
-  window.open(`/school/${schoolId}`, '_blank')
+const handleDelete = (id) => {
+  isDeleteModalOpen.value = true
+  selectedDeleteId.value = id
+}
+
+const deleteBlog = async () => {
+  try {
+    const res = await useApiService.remove(`/api/v2/admin/blogs/posts/${selectedDeleteId.value}`)
+    if (res.succeeded === true)
+      $toast.success('Blog deleted successfully!')
+    else
+      $toast.error(res.errors[0].message)
+  }
+  catch (err) {
+    if (err.response?.status === 400) {
+      $toast.error(err.response.data.message)
+    }
+  }
+  finally {
+    isDeleteModalOpen.value = false
+    fetchBlogs()
+  }
+}
+
+const goToBlog = (postId) => {
+  window.open(`/posts/${postId}`, '_blank')
 }
 
 watch(page, () => {
-  fetchComments()
+  fetchBlogs()
 })
 
 watch(selectedPageSize, () => {
   page.value = 1
-  fetchComments()
+  fetchBlogs()
 })
 
 watch(filter, (_val) => {
   page.value = 1
-  fetchComments()
+  fetchBlogs()
 }, { immediate: true })
 </script>
 
@@ -122,16 +143,6 @@ watch(filter, (_val) => {
   <div>
     <div class="d-flex justify-end ga-2 align-center px-2 justify-space-between">
       <div class="filterBtns mb-4">
-        <v-btn
-          :class="{ 'active-filter': filter === '', 'inactive-filter': filter !== '' }"
-          depressed
-          rounded
-          variant="plain"
-          class="gtext-t4 font-weight-medium"
-          @click="filter = ''"
-        >
-          All
-        </v-btn>
         <v-btn
           :class="{ 'active-filter': filter === 'Confirmed', 'inactive-filter': filter !== 'Confirmed' }"
           depressed
@@ -179,7 +190,7 @@ watch(filter, (_val) => {
           {{ totalCount }}
         </p>
         <p class="gray--text gtext-t6 font-weight-semibold">
-          Comments
+          Blogs
         </p>
       </div>
     </div>
@@ -193,15 +204,15 @@ watch(filter, (_val) => {
         :loading="tableLoading"
         hide-default-footer
       >
-        <template #[`item.creationUser`]="{ item }">
+        <template #[`item.title`]="{ item }">
           <div class="d-flex align-center">
-            <span class="truncate-text">{{ item.creationUser }}</span>
+            <span class="truncate-text">{{ item.title }}</span>
           </div>
         </template>
 
-        <template #[`item.creationDate`]="{ item }">
+        <template #[`item.creationUser`]="{ item }">
           <div class="d-flex align-center">
-            <span class="truncate-text">{{ item.creationDate }}</span>
+            <span class="truncate-text">{{ item.creationUser }}</span>
           </div>
         </template>
 
@@ -239,7 +250,7 @@ watch(filter, (_val) => {
               <v-icon
                 small
                 class="mr-2 gtext-t1"
-                @click="viewCommentDetails(item.id)"
+                @click="viewBlogDetails(item.id)"
               >
                 mdi-file-find
               </v-icon>
@@ -257,7 +268,7 @@ watch(filter, (_val) => {
               <v-icon
                 small
                 class="mr-2 gtext-t1"
-                @click="goToSchool(item.schoolId)"
+                @click="goToBlog(item.postId)"
               >
                 mdi-arrow-right-circle
               </v-icon>
@@ -265,17 +276,39 @@ watch(filter, (_val) => {
                 activator="parent"
                 location="top"
               >
-                School Page
+                Blog Page
+              </v-tooltip>
+            </v-btn>
+            <v-btn
+              variant="plain"
+              class="px-0 min-width-10"
+            >
+              <v-icon
+                small
+                class="gtext-t1"
+                @click="handleDelete(item.postId)"
+              >
+                mdi-delete
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                Delete
               </v-tooltip>
             </v-btn>
           </div>
         </template>
       </v-data-table>
 
-      <commentCard
+      <blogCard
         v-model="dialogVisible"
-        :selected-comment="selectedComment"
-        @fetch-comments="fetchComments"
+        :selected-blog="selectedBlog"
+        @fetch-blogs="fetchBlogs"
+      />
+      <DeleteItemModal
+        v-model="isDeleteModalOpen"
+        @confirm="deleteBlog"
       />
     </div>
 
