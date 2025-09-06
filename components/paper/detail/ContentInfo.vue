@@ -108,6 +108,7 @@
             variant="flat"
             color="primary"
             :loading="qWordFileDownloadLoading"
+            :disabled="isDownloadDisabled && requiresCoinPaymentForFile('q_word')"
             @click="handleDownloadClick('q_word')"
           >
             <v-icon
@@ -116,7 +117,7 @@
             >
               mdi-file-word-box
             </v-icon>
-            Download Question Doc
+            {{ getButtonText('Download Question Doc', 'q_word') }}
             <template v-if="requiresCoinPaymentForFile('q_word') && contentData?.files?.word.price === 0">
               <v-icon
                 size="small"
@@ -138,6 +139,7 @@
             size="large"
             color="#E60012"
             :loading="qPdfFileDownloadLoading"
+            :disabled="isDownloadDisabled && requiresCoinPaymentForFile('q_pdf')"
             @click="handleDownloadClick('q_pdf')"
           >
             <v-icon
@@ -146,7 +148,7 @@
             >
               mdi-file-pdf-box
             </v-icon>
-            Download Question Paper
+            {{ getButtonText('Download Question Paper', 'q_pdf') }}
             <template v-if="requiresCoinPaymentForFile('q_pdf') && contentData?.files?.pdf.price === 0">
               <v-icon
                 size="small"
@@ -169,6 +171,7 @@
             size="large"
             color="teal accent-3"
             :loading="answerFileDownloadLoading"
+            :disabled="isDownloadDisabled && requiresCoinPaymentForFile('a_file')"
             @click="handleDownloadClick('a_file')"
           >
             <v-icon
@@ -177,7 +180,7 @@
             >
               mdi-file-pdf-box
             </v-icon>
-            Download Mark Scheme
+            {{ getButtonText('Download Mark Scheme', 'a_file') }}
             <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
               <v-icon
                 size="small"
@@ -198,6 +201,7 @@
             variant="flat"
             size="large"
             :loading="answerFileDownloadLoading"
+            :disabled="isDownloadDisabled && requiresCoinPaymentForFile('a_file')"
             @click="handleDownloadClick('a_file')"
           >
             <v-icon
@@ -206,7 +210,7 @@
             >
               mdi-file-word-box
             </v-icon>
-            Download Answer Doc
+            {{ getButtonText('Download Answer Doc', 'a_file') }}
             <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
               <v-icon
                 size="small"
@@ -232,6 +236,7 @@
             variant="flat"
             size="large"
             :loading="extraFileDownloadLoading"
+            :disabled="isDownloadDisabled && requiresCoinPaymentForFile('extra', extra.id)"
             @click="handleDownloadClick('extra', extra.id)"
           >
             <template v-if="extra?.ext == 'mp3'">
@@ -250,7 +255,7 @@
                 mdi-file-pdf-box
               </v-icon>
             </template>
-            Download {{ extra.type_title ? extra.type_title : "Extra" }}
+            {{ getButtonText(`Download ${extra.type_title ? extra.type_title : "Extra"}`, 'extra', extra.id) }}
             <template v-if="requiresCoinPaymentForFile('extra', extra.id) && extra.price === 0">
               <v-icon
                 size="small"
@@ -335,7 +340,6 @@ const auth = useAuth()
 const user = useUser()
 const rating = ref(4.5)
 const crash_report = ref(null)
-const _emits = defineEmits(['crash-report'])
 
 // Coin system
 const coinBalance = useCoinBalance()
@@ -343,6 +347,9 @@ const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
 const pendingDownload = ref(null)
+
+// Router for auth dialog
+const router = useRouter()
 
 const qPdfFileDownloadLoading = ref(false)
 const qWordFileDownloadLoading = ref(false)
@@ -365,11 +372,42 @@ const isFree = computed(() => {
   else return true
 })
 
+// Check if download should be disabled based on authentication
+const isDownloadDisabled = computed(() => {
+  return requiresCoinPayment.value && !auth.isAuthenticated.value
+})
+
+// Get button text based on authentication status
+const getButtonText = (originalText, type, extraId = null) => {
+  if (requiresCoinPaymentForFile(type, extraId) && !auth.isAuthenticated.value) {
+    return 'Login to Download'
+  }
+  return originalText
+}
+
 // Fetch coin balance on component mount
 onMounted(async () => {
   if (auth.isAuthenticated.value && requiresCoinPayment.value) {
-    await coinBalance.fetchBalance()
-    console.log('user balance:', coinBalance)
+    try {
+      await coinBalance.fetchBalance()
+      console.log('user balance:', coinBalance.balance.value)
+    }
+    catch (error) {
+      console.error('Failed to fetch coin balance on mount:', error)
+    }
+  }
+})
+
+// Watch for authentication changes to refresh coin balance
+watch(() => auth.isAuthenticated.value, async (isAuthenticated) => {
+  if (isAuthenticated && requiresCoinPayment.value) {
+    try {
+      await coinBalance.fetchBalance()
+      console.log('user balance refreshed after login:', coinBalance.balance.value)
+    }
+    catch (error) {
+      console.error('Failed to fetch balance after login:', error)
+    }
   }
 })
 
@@ -389,7 +427,8 @@ const handleDownloadClick = async (type, extraId) => {
     if (fileRequiresCoins) {
       // Check if user is authenticated
       if (!auth.isAuthenticated.value) {
-        $toast.info('Please login to download 2025 premium files')
+        openAuthDialog('login')
+        setLoadingState(type, false)
         return
       }
 
@@ -400,10 +439,23 @@ const handleDownloadClick = async (type, extraId) => {
         pendingDownload.value = { type, extraId }
 
         // Fetch latest balance and show payment modal
-        await coinBalance.fetchBalance()
+        const balanceResult = await coinBalance.fetchBalance()
+        if (balanceResult === 0 && coinBalance.error.value) {
+          $toast.error('Failed to fetch balance. Please try again.')
+          setLoadingState(type, false)
+          return
+        }
+
         showCoinPaymentModal.value = true
         return
       }
+    }
+
+    // For non-coin files, still check authentication for premium content
+    if (requiresCoinPayment.value && !auth.isAuthenticated.value) {
+      openAuthDialog('login')
+      setLoadingState(type, false)
+      return
     }
 
     // Proceed with normal download
@@ -526,7 +578,18 @@ const handleAnimationComplete = async () => {
   }
 }
 
+// Open authentication dialog
+const openAuthDialog = (val) => {
+  router.push({ query: { auth_form: val } })
+}
+
 const startDownload = async (type, extraId) => {
+  // Additional authentication check before API call
+  if (requiresCoinPayment.value && !auth.isAuthenticated.value) {
+    openAuthDialog('login')
+    return
+  }
+
   let apiUrl = ''
   if (type === 'q_word') {
     apiUrl = `/api/v1/tests/download/${props.contentData?.id}/word`
@@ -540,6 +603,7 @@ const startDownload = async (type, extraId) => {
   if (type === 'extra') {
     apiUrl = `/api/v1/tests/download/${props.contentData?.id}/extra/${extraId}`
   }
+
   try {
     const response = await useApiService.get(apiUrl)
     console.log('Download response:', response.data)
@@ -556,12 +620,21 @@ const startDownload = async (type, extraId) => {
     }
   }
   catch (err) {
-    if (err.response?.status == 400) {
+    if (err.response?.status === 401) {
+      openAuthDialog('login')
+    }
+    else if (err.response?.status === 403) {
+      $toast.error('Access denied. Insufficient permissions.')
+    }
+    else if (err.response?.status === 400) {
       if (
-        err.response.data.status == 0
-        && err.response.data.error == 'creditNotEnough'
+        err.response.data.status === 0
+        && err.response.data.error === 'creditNotEnough'
       ) {
         $toast.info('No enough credit')
+      }
+      else {
+        $toast.error('Invalid request. Please try again.')
       }
     }
     else {
