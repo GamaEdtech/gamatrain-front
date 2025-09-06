@@ -93,6 +93,9 @@ html {
 .w-50 {
   width: 50% !important;
 }
+.w-30 {
+  width: 30% !important;
+}
 
 .w-60 {
   width: 60% !important;
@@ -4646,4 +4649,17 @@ body {
 }
 .overflow-x-auto {
   overflow-x: auto;
+}
+.center-slide-group .v-slide-group__content {
+  justify-content: center;
+}
+.min-h-full {
+  min-height: 100% !important;
+}
+
+.line-clamp-1{
+  overflow: hidden;
+display: -webkit-box;
+-webkit-box-orient: vertical;
+-webkit-line-clamp: 1;
 }
