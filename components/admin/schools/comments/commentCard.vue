@@ -132,7 +132,7 @@ const approveComment = async () => {
           <reject-dialog
             :id="selectedComment.id"
             v-model="dialogVisible"
-            :type="'comments'"
+            :type="'schools/comments'"
             @fetch-items="emit('fetchComments')"
             @close-card="$emit('update:modelValue', false)"
           />

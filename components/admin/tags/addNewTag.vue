@@ -1,27 +1,47 @@
 <script setup>
-import rejectDialog from '~/components/admin/schools/rejectDialog.vue'
-
-const props = defineProps({
+const _props = defineProps({
   modelValue: Boolean,
-  selectedSchool: Object,
 })
 
 const { $toast } = useNuxtApp()
 
-const dialogVisible = ref(false)
-
 const emit = defineEmits([
   'update:modelValue',
-  'fetchImages',
+  'fetchTags',
 ])
 
-const approveImage = async () => {
+const newTag = reactive({
+  name: '',
+  icon: '',
+  tagType: '',
+})
+
+const rules = {
+  required: v => !!v || 'Field is required',
+}
+
+const isValid = computed(() => {
+  return (
+    !!newTag.name
+    && !!newTag.tagType
+    && !!newTag.icon
+  )
+})
+
+const createNewTag = async () => {
+  if (!isValid.value) {
+    return
+  }
   try {
-    const res = await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.selectedSchool.id}/confirm`)
+    const res = await useApiService.post(`/api/v2/admin/tags`, {
+      name: newTag.name,
+      icon: newTag.icon,
+      tagType: newTag.tagType,
+    })
     if (res.succeeded === true) {
-      $toast.success('Image Approved successfully!')
+      $toast.success('Tag created successfully!')
       emit('update:modelValue', false)
-      emit('fetchImages')
+      emit('fetchTags')
     }
     else
       $toast.error(res.errors[0].message)
@@ -45,19 +65,53 @@ const approveImage = async () => {
         <v-card-title
           class="gtext-t4 bg-white flex-column d-flex align-center pt-12"
         >
-          <div class="avatarBg">
-            <img
-              :src="`${selectedSchool.fileId}`"
-              alt="avatar"
-            >
-          </div>
           <p class="primary-gray-700 gtext-t3 font-weight-semibold mb-2">
-            {{ selectedSchool.schoolName }}
+            Add New Tag
           </p>
         </v-card-title>
+        <div class="pa-3">
+          <div class="d-flex flex-column w-100 ga-2 flex-sm-row">
+            <div class="w-100">
+              <label class="primary-gray-700 gtext-t6 font-weight-medium">
+                Name
+              </label>
+              <v-text-field
+                v-model="newTag.name"
+                variant="solo"
+                density="comfortable"
+                class="mt-1"
+                :rules="[rules.required]"
+              />
+            </div>
+            <div class="w-100">
+              <label class="primary-gray-700 gtext-t6 font-weight-medium">
+                Tag Type
+              </label>
+              <v-select
+                v-model="newTag.tagType"
+                variant="solo"
+                density="comfortable"
+                class="mt-1"
+                :items="['Post', 'School', 'Feature']"
+                :rules="[rules.required]"
+              />
+            </div>
+          </div>
+
+          <label class="primary-gray-700 gtext-t6 font-weight-medium">
+            Icon
+          </label>
+          <v-text-field
+            v-model="newTag.icon"
+            variant="solo"
+            density="comfortable"
+            class="mt-1"
+            :rules="[rules.required]"
+          />
+        </div>
 
         <div class="pa-3 bg-white">
-          <v-card-actions class="px-0">
+          <v-card-actions class="px-0 justify-center">
             <v-btn
               class="closeBtn"
               variant="plain"
@@ -65,40 +119,16 @@ const approveImage = async () => {
             >
               <span class="mdi mdi-close gtext-t1" />
             </v-btn>
-            <v-row>
-              <v-col
-                align="center"
-                class="pr-0"
-              >
-                <v-btn
-                  variant="outlined"
-                  class="rejectBtn"
-                  @click="dialogVisible = !dialogVisible"
-                >
-                  Reject
-                </v-btn>
-              </v-col>
-              <v-col
-                align="center"
-                class="pl-0"
-              >
-                <v-btn
-                  variant="outlined"
-                  class="approveBtn"
-                  @click="approveImage"
-                >
-                  Approve
-                </v-btn>
-              </v-col>
-            </v-row>
+            <v-btn
+              variant="plain"
+              class="createBtn"
+              rounded
+              :disabled="!isValid"
+              @click="createNewTag()"
+            >
+              Create New Tag
+            </v-btn>
           </v-card-actions>
-          <reject-dialog
-            :id="selectedSchool.id"
-            v-model="dialogVisible"
-            :type="'schools/images'"
-            @fetch-items="emit('fetchImages')"
-            @close-card="$emit('update:modelValue', false)"
-          />
         </div>
       </v-card>
     </v-dialog>
@@ -123,21 +153,6 @@ const approveImage = async () => {
   line-height: 1.8rem !important;
   font-weight: 400 !important;
 }
-.avatarBg {
-  display: flex;
-  width: 100%;
-  height: 100%;
-  border-radius: 8px;
-  background-color: #ececed;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-  padding: 8px;
-}
-.avatarBg > img{
-  width: inherit;
-  border-radius: 6px;
-}
 
 .closeBtn {
   width: 24px !important;
@@ -154,17 +169,18 @@ const approveImage = async () => {
   }
 }
 
-.rejectBtn{
-  width: 200px;
-  border-color: #f04438;
-  border-width: 2px;
-  color: #f04438;
-}
-.approveBtn{
-  width: 200px;
-  border-color: #12b76a;
-  border-width: 2px;
-  color: #12b76a;
+.createBtn{
+    opacity: 1 !important;
+    background-color: #12b76a;
+    color: white;
+    padding: 8px !important;
+    &:hover {
+        background-color: #0c9253;
+        transition: 300ms;
+    }
+    &:disabled{
+        opacity: 0.5 !important;
+    }
 }
 
 :deep(.v-btn__content) {
