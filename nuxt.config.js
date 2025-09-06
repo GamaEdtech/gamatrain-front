@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     'nuxt-gtag',
     '@nuxt/image',
     '@vite-pwa/nuxt',
+    'nuxt-og-image',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         config.plugins.push(vuetify({
@@ -31,6 +32,11 @@ export default defineNuxtConfig({
       })
     },
   ],
+
+  site: {
+    url: 'https://gamatrain.com/',
+    name: 'Gamatrain',
+  },
 
   // Plugins
   plugins: [

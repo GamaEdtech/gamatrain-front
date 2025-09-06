@@ -334,6 +334,17 @@ const openCrashReportDialog = () => {
   crashReportRef.value.form.type = 'tutorial'
 }
 
+const stripHtmlTags = (input, length = 400) => {
+  if (!input) return ''
+  const sliced = input.slice(0, length)
+  return sliced.replace(/<[^>]*>/g, '').trim()
+}
+
+defineOgImageComponent('tutorialDetail', {
+  title: 'title12311',
+  topic_title: 'topic_title9778',
+  views: '565655',
+})
 useHead({
   title: tutorialInfo.value?.title || '',
   meta: [
@@ -355,12 +366,12 @@ useHead({
     {
       hid: 'description',
       name: 'description',
-      content: tutorialInfo.value?.content.slice(0, 300) || '',
+      content: stripHtmlTags(tutorialInfo.value?.content),
     },
     {
       hid: 'og:description',
       name: 'og:description',
-      content: tutorialInfo.value?.content.slice(0, 300) || '',
+      content: stripHtmlTags(tutorialInfo.value?.content),
     },
   ],
   link: [
