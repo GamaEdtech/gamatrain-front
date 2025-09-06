@@ -340,10 +340,10 @@ const stripHtmlTags = (input, length = 400) => {
   return sliced.replace(/<[^>]*>/g, '').trim()
 }
 
-defineOgImageComponent('tutorialDetail', {
-  title: 'title12311',
-  topic_title: 'topic_title9778',
-  views: '565655',
+defineOgImageComponent('TutorialDetail', {
+  title: tutorialInfo.value?.title,
+  views: tutorialInfo.value?.views,
+  up_date: tutorialInfo.value?.up_date,
 })
 useHead({
   title: tutorialInfo.value?.title || '',
