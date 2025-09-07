@@ -289,6 +289,7 @@ watch(filter, (_val) => {
         cols="12"
         class="d-flex align-center position-relative"
       >
+        <!-- Pagination (hidden on mobile) -->
         <div class="d-none d-sm-flex pagination-center">
           <v-pagination
             v-model="page"

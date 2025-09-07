@@ -26,6 +26,7 @@ const menuItems = [
   ] },
   { School: [
     { title: 'Images ', link: '/admin/schools/images', icon: 'mdi-image-outline' },
+    { title: 'Image Issues', link: '/admin/schools/image-issues', icon: 'mdi-image-remove-outline' },
     { title: 'Comments ', link: '/admin/schools/comments', icon: 'mdi-comment-text-outline' },
   ] },
 ]
@@ -61,42 +62,47 @@ function isActive(link) {
         >
         Admin Panel
       </div>
-      <v-list
-        v-for="(group, index) in menuItems"
-        :key="group.id || index"
+      <div
+        class="sideBar"
       >
-        <h4 class="px-5 primary-gray-400 gtext-t5 font-weight-semibold mt-2">
-          {{ Object.keys(group)[0] }}
-        </h4>
-        <v-list-item
-          v-for="item in Object.values(group)[0]"
-          :key="item.link"
-          link
-          class="px-6 py-0"
-          @click="navigate(item.link)"
+        <v-list
+          v-for="(group, index) in menuItems"
+          :key="group.id || index"
         >
-          <div
-            class="d-flex align-center ga-3 py-2 px-5"
-            :class="{ 'active-tab': isActive(item.link) }"
+          <h4 class="px-5 primary-gray-400 gtext-t5 font-weight-semibold">
+            {{ Object.keys(group)[0] }}
+          </h4>
+          <v-list-item
+            v-for="item in Object.values(group)[0]"
+            :key="item.link"
+            link
+            class="px-6 py-0"
+            @click="navigate(item.link)"
           >
-            <v-list-item-icon>
-              <v-icon
-                v-if="item.icon != null"
-                class="primary-gray-400"
-              >
-                {{ item.icon }}
-              </v-icon>
-              <v-icon
-                v-else
-                class="primary-gray-400 mdi - mdi-circle text-button"
-              />
-            </v-list-item-icon>
-            <v-list-item-title class="primary-gray-400 gtext-t5">
-              {{ item.title }}
-            </v-list-item-title>
-          </div>
-        </v-list-item>
-      </v-list>
+            <div
+              class="d-flex align-center ga-3 py-2 px-5"
+              :class="{ 'active-tab': isActive(item.link) }"
+            >
+              <v-list-item-icon>
+                <v-icon
+                  v-if="item.icon != null"
+                  class="primary-gray-400"
+                >
+                  {{ item.icon }}
+                </v-icon>
+                <v-icon
+                  v-else
+                  class="primary-gray-400 mdi - mdi-circle text-button"
+                />
+              </v-list-item-icon>
+              <v-list-item-title class="primary-gray-400 gtext-t5">
+                {{ item.title }}
+              </v-list-item-title>
+            </div>
+          </v-list-item>
+        </v-list>
+      </div>
+
       <div
         class="d-flex align-center ga-2"
         style="position: absolute;bottom: 20px; left: 20px;"
@@ -177,5 +183,26 @@ function isActive(link) {
   border-radius: 30px;
   opacity: 1 !important;
   color: #2E90FA !important;
+}
+:deep(.sideBar){
+  max-height: 450px !important;
+  padding-top: 14px !important;
+  overflow-y: scroll;
+}
+/* Scrollbar width */
+:deep(.sideBar::-webkit-scrollbar) {
+  width: 6px;
+}
+
+/* Scrollbar track (background) */
+:deep(.sideBar::-webkit-scrollbar-track) {
+  background: #1d2939;
+  border-radius: 8px;
+}
+
+/* Scrollbar thumb (the draggable part) */
+:deep(.sideBar::-webkit-scrollbar-thumb) {
+  background: #dedede;
+  border-radius: 8px;
 }
 </style>
