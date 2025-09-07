@@ -18,6 +18,8 @@ const menuItems = [
   { Caption: [
     { title: 'Contact Us', link: '/admin/contact-us', icon: 'mdi-archive-arrow-down-outline' },
     { title: 'User Managment ', link: '/admin/users', icon: 'mdi-account-group-outline' },
+    { title: 'Blogs ', link: '/admin/blogs', icon: 'mdi-post-outline' },
+    { title: 'Tags ', link: '/admin/tags', icon: 'mdi-tag-multiple' },
   ] },
   { 'Type Managment': [
     { title: 'Location', link: '/admin/Locations' },
