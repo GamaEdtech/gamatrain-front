@@ -334,10 +334,25 @@ const openCrashReportDialog = () => {
   crashReportRef.value.form.type = 'tutorial'
 }
 
-const stripHtmlTags = (input, length = 400) => {
+const stripHtmlTags = (input, length = 1200) => {
   if (!input) return ''
+
   const sliced = input.slice(0, length)
-  return sliced.replace(/<[^>]*>/g, '').trim()
+
+  const lastClosingTag = sliced.lastIndexOf('>')
+
+  const safeSlice
+    = lastClosingTag !== -1 ? sliced.slice(0, lastClosingTag + 1) : sliced
+
+  const text = safeSlice
+    .replace(/<!--[\s\S]*?-->/g, '') // remove comments
+    .replace(/<\/?[^>]+(>|$)/g, '') // remove tags
+    .replace(/&#\d+;/g, '') // remove emojies and icons
+    .replace(/&[a-zA-Z]+;/g, '') // remove entity like &nbsp;
+    .replace(/\s+/g, ' ') // add spaces for better result
+    .trim()
+
+  return text + '...'
 }
 
 defineOgImageComponent('TutorialDetail', {
