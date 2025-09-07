@@ -450,7 +450,9 @@ useSeoMeta({
   ogTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
   ogDescription: () => metaDescription.value,
   ogImage: () =>
-    contentData.value?.defaultImageUri || '/images/gamatrain-logo.png',
+    contentData.value?.defaultImageUri
+      ? contentData.value?.defaultImageUri.replace(/^http:\/\//, 'https://')
+      : '/images/gamatrain-logo.png',
   ogUrl: () =>
     `${requestURL.value}/school/${contentData.value?.id}/${$slugGenerator(
       contentData?.value?.name,
@@ -458,7 +460,9 @@ useSeoMeta({
   twitterTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
   twitterDescription: () => metaDescription.value,
   twitterImage: () =>
-    contentData.value?.defaultImageUri || '/images/gamatrain-logo.png',
+    contentData.value?.defaultImageUri
+      ? contentData.value?.defaultImageUri.replace(/^http:\/\//, 'https://')
+      : '/images/gamatrain-logo.png',
   twitterCard: 'summary_large_image',
 })
 
