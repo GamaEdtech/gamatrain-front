@@ -15,14 +15,14 @@
           height="100"
         >
         <v-card-title class="font-size-18 primary-gray-700 font-bold text-center">
-          Premium Download
+          🎮 Game On!
         </v-card-title>
       </div>
 
       <div class="text-box">
         <v-card-text class="d-flex flex-column align-center justify-center">
           <span class="text-center">
-            Grab this 2025 past paper for just 5 $GET! Earn tokens by exploring Gamatrain or claim instantly via our Web3 gateway.
+            Unlock this file by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!
           </span>
           <div class="balance-info d-flex align-center justify-center ga-2">
             <v-icon color="orange">
