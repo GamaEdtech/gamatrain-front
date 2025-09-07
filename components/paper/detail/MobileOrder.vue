@@ -19,14 +19,20 @@
                 size="x-large"
                 class="btn-icon"
               >
-                mdi-file-pdf-box
+                mdi-file-word-box
               </v-icon>
               Download Question Doc
-              {{
-                contentData?.files?.word.price > 0
-                  ? "| $" + contentData?.files?.word.price
-                  : ""
-              }}
+              <template v-if="requiresCoinPaymentForFile('q_word') && contentData?.files?.word.price === 0">
+                <v-icon
+                  size="small"
+                  color="orange"
+                >
+                  mdi-coin
+                </v-icon>
+              </template>
+              <template v-else-if="contentData?.files?.word.price > 0">
+                | ${{ contentData?.files?.word.price }}
+              </template>
             </v-btn>
           </div>
           <div v-if="contentData?.files.pdf.exist">
@@ -45,11 +51,17 @@
                 mdi-file-pdf-box
               </v-icon>
               Download Question Paper
-              {{
-                contentData?.files?.pdf.price > 0
-                  ? "| $" + contentData?.files?.pdf.price
-                  : ""
-              }}
+              <template v-if="requiresCoinPaymentForFile('q_pdf') && contentData?.files?.pdf.price === 0">
+                <v-icon
+                  size="small"
+                  color="orange"
+                >
+                  mdi-coin
+                </v-icon>
+              </template>
+              <template v-else-if="contentData?.files?.pdf.price > 0">
+                | ${{ contentData?.files?.pdf.price }}
+              </template>
             </v-btn>
           </div>
           <div v-if="contentData?.files.answer.exist">
@@ -69,11 +81,17 @@
                 mdi-file-pdf-box
               </v-icon>
               Download Mark Scheme
-              {{
-                contentData?.files?.answer.price > 0
-                  ? "| $" + contentData?.files?.answer.price
-                  : ""
-              }}
+              <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+                <v-icon
+                  size="small"
+                  color="orange"
+                >
+                  mdi-coin
+                </v-icon>
+              </template>
+              <template v-else-if="contentData?.files?.answer.price > 0">
+                | ${{ contentData?.files?.answer.price }}
+              </template>
             </v-btn>
             <v-btn
               v-show="contentData?.files.answer.ext == 'word'"
@@ -84,12 +102,24 @@
               :loading="answerFileDownloadLoading"
               @click="$emit('download', 'a_file')"
             >
+              <v-icon
+                size="x-large"
+                class="btn-icon"
+              >
+                mdi-file-word-box
+              </v-icon>
               Download Answer Doc
-              {{
-                contentData?.files?.answer.price > 0
-                  ? "| $" + contentData?.files?.answer.price
-                  : ""
-              }}
+              <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+                <v-icon
+                  size="small"
+                  color="orange"
+                >
+                  mdi-coin
+                </v-icon>
+              </template>
+              <template v-else-if="contentData?.files?.answer.price > 0">
+                | ${{ contentData?.files?.answer.price }}
+              </template>
             </v-btn>
           </div>
           <div
@@ -124,7 +154,17 @@
                 </v-icon>
               </template>
               Download {{ extra.type_title ? extra.type_title : "Extra" }}
-              {{ extra.price > 0 ? "| $" + extra.price : "" }}
+              <template v-if="requiresCoinPaymentForFile('extra', extra.id) && extra.price === 0">
+                <v-icon
+                  size="small"
+                  color="orange"
+                >
+                  mdi-coin
+                </v-icon>
+              </template>
+              <template v-else-if="extra.price > 0">
+                | ${{ extra.price }}
+              </template>
             </v-btn>
           </div>
         </v-col>
@@ -196,6 +236,10 @@ defineProps({
   extraFileDownloadLoading: {
     type: Boolean,
     default: false,
+  },
+  requiresCoinPaymentForFile: {
+    type: Function,
+    default: () => false,
   },
 })
 
