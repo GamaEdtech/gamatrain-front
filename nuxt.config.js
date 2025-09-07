@@ -102,6 +102,15 @@ export default defineNuxtConfig({
         { rel: 'manifest', href: '/manifest.webmanifest' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon-dark.ico' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon-light.png' },
+        {
+          rel: 'preload',
+          as: 'style',
+          href: '/assets/css/material-symbols.css',
+        },
+        {
+          rel: 'stylesheet',
+          href: '/assets/css/material-symbols.css',
+        },
       ],
     },
   },
