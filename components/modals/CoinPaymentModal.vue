@@ -7,14 +7,13 @@
   >
     <v-card class="coin-payment-modal">
       <div class="d-flex flex-column align-center justify-center pt-6">
-        <div class="icon-container">
-          <v-icon
-            color="orange"
-            size="60"
-          >
-            mdi-coin
-          </v-icon>
-        </div>
+        <img
+          class="icon-container"
+          src="/images/token/Hero/GET-coin.svg"
+          alt="GET Coin"
+          width="100"
+          height="100"
+        >
         <v-card-title class="font-size-18 primary-gray-700 font-bold text-center">
           Premium Download
         </v-card-title>
@@ -22,10 +21,10 @@
 
       <div class="text-box">
         <v-card-text class="d-flex flex-column align-center justify-center">
-          <span class="text-center mb-3">
+          <span class="text-center">
             Grab this 2025 past paper for just 5 $GET! Earn tokens by exploring Gamatrain or claim instantly via our Web3 gateway.
           </span>
-          <div class="balance-info d-flex align-center justify-center ga-2 mb-3">
+          <div class="balance-info d-flex align-center justify-center ga-2">
             <v-icon color="orange">
               mdi-wallet
             </v-icon>
@@ -115,12 +114,11 @@ const closeModal = () => {
 
 .icon-container {
   background-color: #fff3e0;
-  width: 100px;
-  height: 100px;
   border-radius: 50%;
   margin-top: 15px;
   display: flex;
   justify-content: center;
+  margin: 10px 5px;
   align-items: center;
 }
 
@@ -128,14 +126,14 @@ const closeModal = () => {
   background-color: #f2f4f7;
   width: 100%;
   margin: 0;
-  padding: 30px 60px;
+  padding: 15px 50px;
 }
 
 .text-box span {
   font-size: 16px;
   color: #101828;
   font-weight: 500;
-  margin: 10px 0;
+  margin: 10px 20px;
 }
 
 .balance-info {
