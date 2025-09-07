@@ -1,5 +1,7 @@
 <script setup>
-import commentCard from '~/components/admin/schools/comments/commentCard.vue'
+import tagCard from '~/components/admin/tags/tagCard.vue'
+import addNewTag from '~/components/admin/tags/addNewTag.vue'
+import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
@@ -10,28 +12,20 @@ definePageMeta({
 const { $toast } = useNuxtApp()
 
 const headers = [
-  { title: 'Contributer', key: 'creationUser', sortable: false, width: '15vw' },
-  { title: 'Date', key: 'creationDate', sortable: false, width: '15vw' },
-  { title: 'Status', key: 'confirmed', sortable: false, width: '10vw' },
+  { title: 'Name', key: 'name', sortable: false, width: '20vw' },
+  { title: 'Tag-Type', key: 'tagType', sortable: false, width: '15vw' },
+  { title: 'Icon', key: 'icon', sortable: false, width: '15vw' },
   { title: 'Actions', key: 'actions', sortable: false, width: '5vw' },
 ]
 
-const selectedComment = reactive({
+const selectedTag = reactive({
   id: null,
-  schoolName: null,
-  schoolId: null,
-  comment: null,
-  artisticActivitiesRate: null,
-  behaviorRate: null,
-  classesQualityRate: null,
-  educationRate: null,
-  facilitiesRate: null,
-  itTrainingRate: null,
-  safetyAndHappinessRate: null,
-  tuitionRatioRate: null,
-  averageRate: null,
+  name: null,
+  icon: null,
+  tagType: null,
 })
 
+const showAddTagDialog = ref(false)
 const list = ref([])
 const tableLoading = ref(true)
 const dialogVisible = ref(false)
@@ -41,6 +35,8 @@ const page = ref(1)
 const pageCount = ref(0)
 const totalCount = ref(0)
 const selected = ref([])
+const isDeleteModalOpen = ref(false)
+const selectedDeleteId = ref(null)
 
 const allPageSize = [
   { label: '10 Rows', value: 10 },
@@ -48,14 +44,14 @@ const allPageSize = [
   { label: '50 Rows', value: 50 },
 ]
 
-const fetchComments = async () => {
+const fetchTags = async () => {
   tableLoading.value = true
   try {
-    const response = await useApiService.get('/api/v2/admin/schools/comments/contributions', {
+    const response = await useApiService.get('/api/v2/admin/tags', {
       'PagingDto.PageFilter.Size': selectedPageSize.value,
       'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-      'Status': filter.value,
+      'TagType': filter.value,
     })
 
     list.value = response.data.list
@@ -72,23 +68,14 @@ const fetchComments = async () => {
   }
 }
 
-const viewCommentDetails = async (id) => {
+const viewTagDetails = async (id) => {
   try {
-    const response = await useApiService.get(`/api/v2/admin/schools/comments/contributions/${id}`)
+    const response = await useApiService.get(`/api/v2/admin/tags/${id}`)
 
-    selectedComment.id = response.data.id
-    selectedComment.schoolName = response.data.schoolName
-    selectedComment.schoolId = response.data.schoolId
-    selectedComment.comment = response.data.comment
-    selectedComment.artisticActivitiesRate = response.data.artisticActivitiesRate
-    selectedComment.behaviorRate = response.data.behaviorRate
-    selectedComment.classesQualityRate = response.data.classesQualityRate
-    selectedComment.educationRate = response.data.educationRate
-    selectedComment.facilitiesRate = response.data.facilitiesRate
-    selectedComment.itTrainingRate = response.data.itTrainingRate
-    selectedComment.safetyAndHappinessRate = response.data.safetyAndHappinessRate
-    selectedComment.tuitionRatioRate = response.data.tuitionRatioRate
-    selectedComment.averageRate = response.data.averageRate
+    selectedTag.id = response.data.id
+    selectedTag.name = response.data.name
+    selectedTag.icon = response.data.icon
+    selectedTag.tagType = response.data.tagType
 
     dialogVisible.value = true
   }
@@ -99,87 +86,112 @@ const viewCommentDetails = async (id) => {
   }
 }
 
-const goToSchool = (schoolId) => {
-  window.open(`/school/${schoolId}`, '_blank')
+const handleDelete = (id) => {
+  isDeleteModalOpen.value = true
+  selectedDeleteId.value = id
+}
+
+const deleteTag = async () => {
+  try {
+    const res = await useApiService.remove(`/api/v2/admin/tags/${selectedDeleteId.value}`)
+    if (res.succeeded === true)
+      $toast.success('Tag deleted successfully!')
+    else
+      $toast.error(res.errors[0].message)
+  }
+  catch (err) {
+    if (err.response?.status === 400) {
+      $toast.error(err.response.data.message)
+    }
+  }
+  finally {
+    isDeleteModalOpen.value = false
+    fetchTags()
+  }
 }
 
 watch(page, () => {
-  fetchComments()
+  fetchTags()
 })
 
 watch(selectedPageSize, () => {
   page.value = 1
-  fetchComments()
+  fetchTags()
 })
 
 watch(filter, (_val) => {
   page.value = 1
-  fetchComments()
+  fetchTags()
 }, { immediate: true })
 </script>
 
 <template>
   <div>
     <div class="d-flex justify-end ga-2 align-center px-2 justify-space-between">
-      <div class="filterBtns mb-4">
-        <v-btn
-          :class="{ 'active-filter': filter === '', 'inactive-filter': filter !== '' }"
-          depressed
-          rounded
-          variant="plain"
-          class="gtext-t4 font-weight-medium"
-          @click="filter = ''"
-        >
-          All
-        </v-btn>
-        <v-btn
-          :class="{ 'active-filter': filter === 'Confirmed', 'inactive-filter': filter !== 'Confirmed' }"
-          depressed
-          rounded
-          variant="plain"
-          class="gtext-t4 font-weight-medium"
-          @click="filter = 'Confirmed'"
-        >
-          Confirmed
-        </v-btn>
+      <div class="d-flex mb-4 align-center ga-3">
+        <div class="filterBtns">
+          <v-btn
+            :class="{ 'active-filter': filter === '', 'inactive-filter': filter !== '' }"
+            depressed
+            rounded
+            variant="plain"
+            class="gtext-t4 font-weight-medium"
+            @click="filter = ''"
+          >
+            All
+          </v-btn>
 
+          <v-btn
+            :class="{ 'active-filter': filter === 'School', 'inactive-filter': filter !== 'School' }"
+            depressed
+            class="ml-2 gtext-t4 font-weight-medium"
+            rounded
+            variant="plain"
+            @click="filter = 'School'"
+          >
+            School
+          </v-btn>
+          <v-btn
+            :class="{ 'active-filter': filter === 'Post', 'inactive-filter': filter !== 'Post' }"
+            depressed
+            class="ml-2 gtext-t4 font-weight-medium"
+            rounded
+            variant="plain"
+            @click="filter = 'Post'"
+          >
+            Post
+          </v-btn>
+          <v-btn
+            :class="{ 'active-filter': filter === 'Feature', 'inactive-filter': filter !== 'Feature' }"
+            depressed
+            class="ml-2 gtext-t4 font-weight-medium"
+            rounded
+            variant="plain"
+            @click="filter = 'Feature'"
+          >
+            Feature
+          </v-btn>
+        </div>
         <v-btn
-          :class="{ 'active-filter': filter === 'Review', 'inactive-filter': filter !== 'Review' }"
           depressed
-          class="ml-2 gtext-t4 font-weight-medium"
           rounded
           variant="plain"
-          @click="filter = 'Review'"
+          class="gtext-t4 font-weight-medium bg-primary-success-500 text-white"
+          @click="showAddTagDialog = true"
         >
-          Pending
-        </v-btn>
-        <v-btn
-          :class="{ 'active-filter': filter === 'Rejected', 'inactive-filter': filter !== 'Rejected' }"
-          depressed
-          class="ml-2 gtext-t4 font-weight-medium"
-          rounded
-          variant="plain"
-          @click="filter = 'Rejected'"
-        >
-          Rejected
-        </v-btn>
-        <v-btn
-          :class="{ 'active-filter': filter === 'Deleted', 'inactive-filter': filter !== 'Deleted' }"
-          depressed
-          class="ml-2 gtext-t4 font-weight-medium"
-          rounded
-          variant="plain"
-          @click="filter = 'Deleted'"
-        >
-          Deleted
+          <v-icon class="mr-1">
+            mdi mdi-plus-circle
+          </v-icon>
+          New Tag
         </v-btn>
       </div>
+
       <div class="d-flex ga-1">
         <p class="primary-gray-500 gtext-t6 font-weight-bold">
           {{ totalCount }}
         </p>
         <p class="gray--text gtext-t6 font-weight-semibold">
-          Comments
+          Tags
         </p>
       </div>
     </div>
@@ -193,15 +205,15 @@ watch(filter, (_val) => {
         :loading="tableLoading"
         hide-default-footer
       >
-        <template #[`item.creationUser`]="{ item }">
+        <template #[`item.name`]="{ item }">
           <div class="d-flex align-center">
-            <span class="truncate-text">{{ item.creationUser }}</span>
+            <span class="truncate-text">{{ item.name }}</span>
           </div>
         </template>
 
-        <template #[`item.creationDate`]="{ item }">
+        <template #[`item.tagType`]="{ item }">
           <div class="d-flex align-center">
-            <span class="truncate-text">{{ item.creationDate }}</span>
+            <span class="truncate-text">{{ item.tagType }}</span>
           </div>
         </template>
 
@@ -209,25 +221,6 @@ watch(filter, (_val) => {
           <div class="d-flex justify-end pr-6">
             Actions
           </div>
-        </template>
-
-        <template #[`item.confirmed`]="{ item }">
-          <span
-            v-if="item.status == 'Confirmed'"
-            class="gtext-t5 green-12b76a"
-          >Confirmed</span>
-          <span
-            v-if="item.status == 'Review'"
-            class="gtext-t5 pending-status"
-          >Pending</span>
-          <span
-            v-if="item.status == 'Deleted'"
-            class="gtext-t5 red-F04438"
-          >Deleted</span>
-          <span
-            v-if="item.status == 'Rejected'"
-            class="gtext-t5 red-F04438"
-          >Rejected</span>
         </template>
 
         <template #[`item.actions`]="{ item }">
@@ -239,7 +232,7 @@ watch(filter, (_val) => {
               <v-icon
                 small
                 class="mr-2 gtext-t1"
-                @click="viewCommentDetails(item.id)"
+                @click="viewTagDetails(item.id)"
               >
                 mdi-file-find
               </v-icon>
@@ -256,26 +249,34 @@ watch(filter, (_val) => {
             >
               <v-icon
                 small
-                class="mr-2 gtext-t1"
-                @click="goToSchool(item.schoolId)"
+                class="gtext-t1"
+                @click="handleDelete(item.id)"
               >
-                mdi-arrow-right-circle
+                mdi-delete
               </v-icon>
               <v-tooltip
                 activator="parent"
                 location="top"
               >
-                School Page
+                Delete
               </v-tooltip>
             </v-btn>
           </div>
         </template>
       </v-data-table>
 
-      <commentCard
+      <tagCard
         v-model="dialogVisible"
-        :selected-comment="selectedComment"
-        @fetch-comments="fetchComments"
+        :selected-tag="selectedTag"
+        @fetch-tags="fetchTags"
+      />
+      <addNewTag
+        v-model="showAddTagDialog"
+        @fetch-tags="fetchTags"
+      />
+      <DeleteItemModal
+        v-model="isDeleteModalOpen"
+        @confirm="deleteTag"
       />
     </div>
 

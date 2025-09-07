@@ -57,8 +57,8 @@ export const useApiService = <T = unknown>(
     },
     ...opts,
     headers: {
-      ...(opts?.headers || {}),
       ...headers,
+      ...(opts?.headers || {}),
       Accept: 'application/json',
     },
   })

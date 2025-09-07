@@ -1,5 +1,6 @@
 <template>
   <TransitionGroup
+    v-if="shouldRenderRandomCoin"
     name="coin-fade"
     tag="div"
   >
@@ -13,7 +14,7 @@
         position: 'absolute',
         left: coin.position.x + 'px',
         top: coin.position.y + 'px',
-        zIndex: 9999,
+        zIndex: 999,
         pointerEvents: 'auto',
         cursor: 'pointer',
         transition: coin.isClicked ? 'all 0.5s ease' : 'none',
@@ -38,20 +39,37 @@
 <script setup>
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import successSound from '/assets/sounds/success.mp3'
+import { useAuth } from '~/composables/useAuth'
 
+const auth = useAuth()
 const route = useRoute()
+const config = useRuntimeConfig()
+
+const excludedRouteNames = [
+  'search',
+  'school',
+  'game-castle',
+  'game-car-racing',
+]
+const shouldRenderRandomCoin = computed(() => {
+  const name = route.name ? String(route.name) : ''
+  return !excludedRouteNames.some(n => name == n)
+})
 
 const coins = ref([])
 const lottieRefs = new Map()
 
 let scrollHandler = null
 
-const { data: coinsResponse, refresh: refreshCoins } = await useAsyncData(
-  'game-coins',
-  () => useApiService.get('/api/v2/game/coins').then(r => r?.data),
-)
-
-let hasInitialized = false
+const coinsResponse = ref(null)
+const fetchCoins = async () => {
+  const response = await useApiService.get('/api/v2/game/coins', undefined, {
+    headers: {
+      Authorization: `ApiKey ${config.public.randomCoinApiKey}`,
+    },
+  })
+  coinsResponse.value = response.data
+}
 
 function setLottieRef(id, el) {
   if (el) {
@@ -107,14 +125,13 @@ function playSound(sound) {
   audio.play().catch(e => console.warn('Failed to play audio:', e))
 }
 
-function getPointsForCoin(type) {
-  const t = String(type || '').toLowerCase()
-  if (t === 'gold') return 9
-  if (t === 'silver') return 6
-  return 1
-}
+const router = useRouter()
 
 function handleCoinClick(coin) {
+  if (!auth?.isAuthenticated?.value) {
+    router.push({ query: { auth_form: 'login', auth_noredirect: true } })
+    return
+  }
   if (coin.isClicked) return
 
   coin.isClicked = true
@@ -127,8 +144,9 @@ function handleCoinClick(coin) {
   playSound(successSound)
 
   try {
-    const points = getPointsForCoin(coin.type)
-    useApiService.post('/api/v2/game/easter-egg', { points }).catch(() => {})
+    useApiService
+      .post('/api/v2/game/easter-egg', { id: coin.id })
+      .catch(() => {})
   }
   catch {
     console.error('Failed')
@@ -158,18 +176,27 @@ function mapCoinTypeToSrc(type) {
 }
 
 async function showCoinsWithAnimation() {
+  if (!shouldRenderRandomCoin.value) {
+    coins.value = []
+    return
+  }
   try {
     const responseData = coinsResponse?.value
-    const coinTypes = Array.isArray(responseData?.coins)
+    const serverCoins = Array.isArray(responseData?.coins)
       ? responseData.coins
       : []
-    const newCoins = coinTypes.map((type, i) => ({
-      id: Date.now() + '-' + i,
-      type,
-      src: mapCoinTypeToSrc(type),
-      position: generateRandomPosition(),
-      isClicked: false,
-    }))
+
+    const newCoins = serverCoins.map((item) => {
+      const type = (item?.coinType || '').toLowerCase()
+      return {
+        id: item?.id,
+        type,
+        src: mapCoinTypeToSrc(type),
+        position: generateRandomPosition(),
+        isClicked: false,
+      }
+    })
+
     coins.value = newCoins
 
     nextTick(() => {
@@ -189,22 +216,17 @@ async function showCoinsWithAnimation() {
 watch(
   () => route.path,
   async () => {
-    setTimeout(async () => {
-      try {
-        if (hasInitialized) {
-          await refreshCoins()
-        }
-        else {
-          hasInitialized = true
-        }
+    coins.value = []
+    try {
+      if (!shouldRenderRandomCoin.value) {
+        return
       }
-      catch (e) {
-        console.warn('Failed to refresh coins:', e)
-      }
-      finally {
-        showCoinsWithAnimation()
-      }
-    }, 1000)
+      await fetchCoins()
+      showCoinsWithAnimation()
+    }
+    catch (e) {
+      console.warn('Failed to refresh coins:', e)
+    }
   },
   { immediate: true },
 )

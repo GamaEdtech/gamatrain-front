@@ -213,6 +213,7 @@ onMounted(async () => {
     || route.name == 'services'
     || route.name == 'school-service'
     || route.name == 'faq'
+    || route.name == 'governance'
     || route.name == 'terms'
     || route.name == 'about-us'
     || route.name == 'earn-money'
@@ -259,6 +260,7 @@ const handleScroll = () => {
     || route.name == 'services'
     || route.name == 'school-service'
     || route.name == 'faq'
+    || route.name == 'governance'
     || route.name == 'terms'
     || route.name == 'about-us'
     || route.name == 'earn-money'
@@ -410,9 +412,9 @@ watch(
   () => route.query.auth_form,
   (val) => {
     if (val === 'login') {
-      // login_modal.value.login_dialog = true;
+      const noRedirect = !!route.query.auth_noredirect
       openLoginDialog()
-      router.push({ query: {} })
+      if (!noRedirect) router.push({ query: {} })
     }
     else if (val == 'register') {
       register_modal.value.register_dialog = true
@@ -432,6 +434,7 @@ watch(
       || val == 'services'
       || val == 'school-service'
       || val == 'faq'
+      || val == 'governance'
       || val == 'terms'
       || val == 'about-us'
       || val == 'earn-money'
@@ -1269,7 +1272,7 @@ watch(
   </div>
 </template>
 
-<style>
+<style scoped>
 .line-specifier-load-more {
   width: 100%;
   height: 4px;

@@ -381,8 +381,10 @@ const startDownload = async (type, item) => {
   try {
     const response = await $fetch(apiUrl)
 
+    const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
+
     const { saveAs } = await import('file-saver')
-    saveAs(response.data.url, response.data.name)
+    saveAs(proxyUrl, response.data.name)
   }
   catch (err) {
     if (err.response?.status === 400) {

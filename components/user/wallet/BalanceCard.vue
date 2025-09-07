@@ -97,7 +97,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuth } from '~/composables/useAuth'
-import { useApiService } from '~/composables/useApiService'
 
 // Composables
 const auth = useAuth()
@@ -119,12 +118,7 @@ const getToken = () => {
 const fetchBalance = async () => {
   loading.value = true
   try {
-    const response = await useApiService('/api/v2/transactions/balance', {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token.value}`,
-      },
-    })
+    const response = await useApiService.get('/api/v2/transactions/balance')
 
     if (response.succeeded) {
       balance.value = response.data

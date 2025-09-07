@@ -749,7 +749,8 @@ const startDownload = async () => {
       `/api/v1/files/download/${route.params.id}`,
     )
     const FileSaver = await import('file-saver')
-    FileSaver.saveAs(response.data.url, response.data.name)
+    const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
+    FileSaver.saveAs(proxyUrl, response.data.name)
   }
   catch {
     $toast.error('Error downloading file')

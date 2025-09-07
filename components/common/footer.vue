@@ -38,7 +38,12 @@
                 class="v-btn pa-5 d-flex align-center justify-center"
                 aria-label="x Account GamaEdtech"
               >
-                <v-icon>mdi-twitter</v-icon>
+                <img
+                  src="@/assets/images/x-icon.svg"
+                  alt="x Account GamaEdtech"
+                  width="16"
+                  height="16"
+                >
               </a>
               <a
                 href="https://youtube.com/@GamaEdtech"
@@ -46,7 +51,38 @@
                 class="v-btn pa-5 d-flex align-center justify-center"
                 aria-label="youtube channel GamaEdtech"
               >
-                <v-icon> mdi-youtube </v-icon>
+                <img
+                  src="@/assets/images/youtube-icon.svg"
+                  alt="youtube channel GamaEdtech"
+                  width="16"
+                  height="16"
+                >
+              </a>
+              <a
+                href="https://discord.gg/MwsHPu7yJx"
+                target="_blank"
+                class="v-btn pa-5 d-flex align-center justify-center"
+                aria-label="discord channel GamaEdtech"
+              >
+                <img
+                  src="@/assets/images/discord-icon.svg"
+                  alt="discord channel GamaEdtech"
+                  width="16"
+                  height="16"
+                >
+              </a>
+              <a
+                href="https://t.me/gamaedtech"
+                target="_blank"
+                class="v-btn pa-5 d-flex align-center justify-center"
+                aria-label="telegram channel GamaEdtech"
+              >
+                <img
+                  src="@/assets/images/telegram-icon.svg"
+                  alt="telegram channel GamaEdtech"
+                  width="16"
+                  height="16"
+                >
               </a>
             </div>
           </v-col>
