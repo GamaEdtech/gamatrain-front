@@ -108,7 +108,8 @@
             variant="flat"
             color="primary"
             :loading="qWordFileDownloadLoading"
-            @click="startDownload('q_word')"
+
+            @click="handleDownloadClick('q_word')"
           >
             <v-icon
               size="x-large"
@@ -116,12 +117,18 @@
             >
               mdi-file-word-box
             </v-icon>
-            Download Question Doc
-            {{
-              contentData?.files?.word.price > 0
-                ? "| $" + contentData?.files?.word.price
-                : ""
-            }}
+            {{ getButtonText('Download Question Doc') }}
+            <template v-if="requiresCoinPaymentForFile('q_word') && contentData?.files?.word.price === 0">
+              <v-icon
+                size="small"
+                color="orange"
+              >
+                mdi-coin
+              </v-icon>
+            </template>
+            <template v-else-if="contentData?.files?.word.price > 0">
+              | ${{ contentData?.files?.word.price }}
+            </template>
           </v-btn>
         </div>
         <div v-if="contentData?.files.pdf.exist">
@@ -132,7 +139,8 @@
             size="large"
             color="#E60012"
             :loading="qPdfFileDownloadLoading"
-            @click="startDownload('q_pdf')"
+
+            @click="handleDownloadClick('q_pdf')"
           >
             <v-icon
               size="x-large"
@@ -140,12 +148,18 @@
             >
               mdi-file-pdf-box
             </v-icon>
-            Download Question Paper
-            {{
-              contentData?.files?.pdf.price > 0
-                ? "| $" + contentData?.files?.pdf.price
-                : ""
-            }}
+            {{ getButtonText('Download Question Paper') }}
+            <template v-if="requiresCoinPaymentForFile('q_pdf') && contentData?.files?.pdf.price === 0">
+              <v-icon
+                size="small"
+                color="orange"
+              >
+                mdi-coin
+              </v-icon>
+            </template>
+            <!-- <template v-else-if="contentData?.files?.pdf.price > 0">
+              | ${{ contentData?.files?.pdf.price }}
+            </template> -->
           </v-btn>
         </div>
         <div v-if="contentData?.files.answer.exist">
@@ -157,7 +171,7 @@
             size="large"
             color="teal accent-3"
             :loading="answerFileDownloadLoading"
-            @click="startDownload('a_file')"
+            @click="handleDownloadClick('a_file')"
           >
             <v-icon
               size="x-large"
@@ -165,12 +179,18 @@
             >
               mdi-file-pdf-box
             </v-icon>
-            Download Mark Scheme
-            {{
-              contentData?.files?.answer.price > 0
-                ? "| $" + contentData?.files?.answer.price
-                : ""
-            }}
+            {{ getButtonText('Download Mark Scheme') }}
+            <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+              <v-icon
+                size="small"
+                color="orange"
+              >
+                mdi-coin
+              </v-icon>
+            </template>
+            <template v-else-if="contentData?.files?.answer.price > 0">
+              | ${{ contentData?.files?.answer.price }}
+            </template>
           </v-btn>
           <v-btn
             v-show="contentData?.files.answer.ext == 'word'"
@@ -180,7 +200,7 @@
             variant="flat"
             size="large"
             :loading="answerFileDownloadLoading"
-            @click="startDownload('a_file')"
+            @click="handleDownloadClick('a_file')"
           >
             <v-icon
               size="x-large"
@@ -188,12 +208,18 @@
             >
               mdi-file-word-box
             </v-icon>
-            Download Answer Doc
-            {{
-              contentData?.files?.answer.price > 0
-                ? "| $" + contentData?.files?.answer.price
-                : ""
-            }}
+            {{ getButtonText('Download Answer Doc') }}
+            <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+              <v-icon
+                size="small"
+                color="orange"
+              >
+                mdi-coin
+              </v-icon>
+            </template>
+            <template v-else-if="contentData?.files?.answer.price > 0">
+              | ${{ contentData?.files?.answer.price }}
+            </template>
           </v-btn>
         </div>
         <div
@@ -208,7 +234,7 @@
             variant="flat"
             size="large"
             :loading="extraFileDownloadLoading"
-            @click="startDownload('extra', extra.id)"
+            @click="handleDownloadClick('extra', extra.id)"
           >
             <template v-if="extra?.ext == 'mp3'">
               <v-icon
@@ -226,8 +252,18 @@
                 mdi-file-pdf-box
               </v-icon>
             </template>
-            Download {{ extra.type_title ? extra.type_title : "Extra" }}
-            {{ extra.price > 0 ? "| $" + extra.price : "" }}
+            {{ getButtonText(`Download ${extra.type_title ? extra.type_title : "Extra"}`) }}
+            <template v-if="requiresCoinPaymentForFile('extra', extra.id) && extra.price === 0">
+              <v-icon
+                size="small"
+                color="orange"
+              >
+                mdi-coin
+              </v-icon>
+            </template>
+            <template v-else-if="extra.price > 0">
+              | ${{ extra.price }}
+            </template>
           </v-btn>
         </div>
         <v-btn
@@ -267,9 +303,26 @@
     :q-pdf-file-download-loading="qPdfFileDownloadLoading"
     :answer-file-download-loading="answerFileDownloadLoading"
     :extra-file-download-loading="extraFileDownloadLoading"
-    @download="startDownload"
+    :requires-coin-payment-for-file="requiresCoinPaymentForFile"
+    @download="handleDownloadClick"
   />
   <!-- End mobile order section -->
+
+  <!-- Coin Payment Modal -->
+  <modals-coin-payment-modal
+    v-model:is-open="showCoinPaymentModal"
+    :user-balance="coinBalance.balance.value"
+    :is-processing="coinBalance.isLoading.value || isProcessingPayment"
+    @confirm="handleCoinPaymentConfirm"
+    @close="handleCoinPaymentClose"
+  />
+
+  <!-- Coin Consumption Animation -->
+  <common-coin-consumption-animation
+    :is-visible="showCoinAnimation"
+    :coin-count="5"
+    @animation-complete="handleAnimationComplete"
+  />
 </template>
 
 <script setup>
@@ -284,12 +337,27 @@ const auth = useAuth()
 const user = useUser()
 const rating = ref(4.5)
 const crash_report = ref(null)
-const _emits = defineEmits(['crash-report'])
+
+// Coin system
+const coinBalance = useCoinBalance()
+const showCoinPaymentModal = ref(false)
+const showCoinAnimation = ref(false)
+const isProcessingPayment = ref(false)
+const pendingDownload = ref(null)
+
+// Router for auth dialog
+const router = useRouter()
 
 const qPdfFileDownloadLoading = ref(false)
 const qWordFileDownloadLoading = ref(false)
 const answerFileDownloadLoading = ref(false)
 const extraFileDownloadLoading = ref(false)
+
+// Check if this content requires coin payment (2025 files)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const requiresCoinPayment = computed(() => {
+  return coinBalance.requiresCoinPayment(props.contentData)
+})
 
 const isFree = computed(() => {
   if (!props.contentData) return true
@@ -302,51 +370,236 @@ const isFree = computed(() => {
   else return true
 })
 
+// All buttons should be enabled - authentication check happens on click
+
+// Get button text - always show original text since buttons are always enabled
+const getButtonText = (originalText) => {
+  return originalText
+}
+
 const openCrashReport = () => {
   crash_report.value.dialog = true
   crash_report.value.form.type = 'test'
 }
+
+const handleDownloadClick = async (type, extraId) => {
+  // Set loading state immediately
+  setLoadingState(type, true)
+
+  try {
+    // Always check authentication first - show login if not authenticated
+    if (!auth.isAuthenticated.value) {
+      openAuthDialog('login')
+      setLoadingState(type, false)
+      return
+    }
+
+    // Check if this specific file type requires coin payment
+    const fileRequiresCoins = requiresCoinPaymentForFile(type, extraId)
+
+    if (fileRequiresCoins) {
+      // Check if file has a price (paid files don't require coins)
+      const fileHasPrice = checkFileHasPrice(type, extraId)
+      if (!fileHasPrice) {
+        // Store the download request for later
+        pendingDownload.value = { type, extraId }
+
+        // Fetch latest balance and show payment modal
+        const balanceResult = await coinBalance.fetchBalance()
+        if (balanceResult === 0 && coinBalance.error.value) {
+          $toast.error('Failed to fetch balance. Please try again.')
+          setLoadingState(type, false)
+          return
+        }
+
+        showCoinPaymentModal.value = true
+        return
+      }
+    }
+
+    // Proceed with normal download
+    await startDownload(type, extraId)
+  }
+  catch (error) {
+    console.error('Error in handleDownloadClick:', error)
+    $toast.error('An error occurred. Please try again.')
+  }
+  finally {
+    // Reset loading state if not going through coin payment flow
+    if (!showCoinPaymentModal.value) {
+      setLoadingState(type, false)
+    }
+  }
+}
+
+const requiresCoinPaymentForFile = (type, extraId) => {
+  // Only apply coin payment to 2025 files
+  if (!coinBalance.requiresCoinPayment(props.contentData)) {
+    return false
+  }
+
+  // For 2025 files, only these file types require coins:
+  // - Mark schemes/answer files (a_file)
+  // - Extra files (audio, additional resources)
+  // - Question papers (q_word, q_pdf) remain FREE
+
+  if (type === 'a_file') {
+    // Mark schemes require coins for 2025
+    return props.contentData?.files?.answer.price === 0
+  }
+
+  if (type === 'extra') {
+    // Extra files (audio, etc.) require coins for 2025
+    const extra = props.contentData?.files?.extra?.find(e => e.id === extraId)
+    return extra?.price === 0
+  }
+
+  // Question papers (q_word, q_pdf) are FREE for 2025
+  return false
+}
+
+const checkFileHasPrice = (type, extraId) => {
+  if (type === 'q_word') return props.contentData?.files?.word.price > 0
+  if (type === 'q_pdf') return props.contentData?.files?.pdf.price > 0
+  if (type === 'a_file') return props.contentData?.files?.answer.price > 0
+  if (type === 'extra') {
+    const extra = props.contentData?.files?.extra?.find(e => e.id === extraId)
+    return extra?.price > 0
+  }
+  return false
+}
+
+const setLoadingState = (type, loading) => {
+  if (type === 'q_word') qWordFileDownloadLoading.value = loading
+  if (type === 'q_pdf') qPdfFileDownloadLoading.value = loading
+  if (type === 'a_file') answerFileDownloadLoading.value = loading
+  if (type === 'extra') extraFileDownloadLoading.value = loading
+}
+
+const handleCoinPaymentConfirm = async () => {
+  if (!pendingDownload.value) return
+
+  console.log('Coin payment confirmed, processing...')
+  isProcessingPayment.value = true
+
+  try {
+    // Deduct coins
+    const success = await coinBalance.deductCoins(5, 'Past paper download')
+    console.log('Coin deduction result:', success)
+
+    if (success) {
+      // Don't close modal immediately, wait for animation to complete
+      console.log('Payment successful, showing animation...')
+
+      // Show coin consumption animation
+      showCoinAnimation.value = true
+      console.log('showCoinAnimation set to:', showCoinAnimation.value)
+
+      // Wait for animation to complete before starting download
+      // The download will be triggered in handleAnimationComplete
+    }
+    else {
+      $toast.error('Failed to process payment. Please try again.')
+    }
+  }
+  catch (error) {
+    console.error('Error processing coin payment:', error)
+    $toast.error('Payment failed. Please try again.')
+  }
+  finally {
+    isProcessingPayment.value = false
+  }
+}
+
+const handleCoinPaymentClose = () => {
+  showCoinPaymentModal.value = false
+
+  // Reset loading state for the pending download
+  if (pendingDownload.value) {
+    setLoadingState(pendingDownload.value.type, false)
+  }
+
+  pendingDownload.value = null
+}
+
+const handleAnimationComplete = async () => {
+  console.log('Animation completed!')
+
+  // Close everything immediately when animation completes
+  showCoinAnimation.value = false
+  showCoinPaymentModal.value = false
+
+  if (pendingDownload.value) {
+    console.log('Starting download for:', pendingDownload.value)
+    // Start the actual download
+    await startDownload(pendingDownload.value.type, pendingDownload.value.extraId)
+    pendingDownload.value = null
+  }
+}
+
+// Open authentication dialog
+const openAuthDialog = (val) => {
+  router.push({ query: { auth_form: val } })
+}
+
 const startDownload = async (type, extraId) => {
   let apiUrl = ''
   if (type === 'q_word') {
-    qWordFileDownloadLoading.value = true
     apiUrl = `/api/v1/tests/download/${props.contentData?.id}/word`
   }
   if (type === 'q_pdf') {
-    qPdfFileDownloadLoading.value = true
     apiUrl = `/api/v1/tests/download/${props.contentData?.id}/pdf`
   }
   if (type === 'a_file') {
-    answerFileDownloadLoading.value = true
     apiUrl = `/api/v1/tests/download/${props.contentData?.id}/answer`
   }
   if (type === 'extra') {
-    extraFileDownloadLoading.value = true
     apiUrl = `/api/v1/tests/download/${props.contentData?.id}/extra/${extraId}`
   }
+
   try {
     const response = await useApiService.get(apiUrl)
+    console.log('Download response:', response.data)
+
     const FileSaver = await import('file-saver')
-    const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
-    await FileSaver.saveAs(proxyUrl, response.data.name)
+
+    // Use FileSaver.js the same way as other parts of the codebase
+    console.log('Starting download with FileSaver:', response.data.url, response.data.name)
+    FileSaver.saveAs(response.data.url, response.data.name)
+
+    // Show success message for coin payments
+    if (requiresCoinPaymentForFile(type, extraId) && !checkFileHasPrice(type, extraId)) {
+      $toast.success('Download started! 5 coins deducted from your balance.')
+    }
   }
   catch (err) {
-    if (err.response?.status == 400) {
+    if (err.response?.status === 401) {
+      openAuthDialog('login')
+    }
+    else if (err.response?.status === 403) {
+      $toast.error('Access denied. Insufficient permissions.')
+    }
+    else if (err.response?.status === 400) {
       if (
-        err.response.data.status == 0
-        && err.response.data.error == 'creditNotEnough'
+        err.response.data.status === 0
+        && err.response.data.error === 'creditNotEnough'
       ) {
         $toast.info('No enough credit')
       }
+      else {
+        $toast.error('Invalid request. Please try again.')
+      }
+    }
+    else {
+      $toast.error('Download failed. Please try again.')
     }
   }
   finally {
-    qWordFileDownloadLoading.value = false
-    qPdfFileDownloadLoading.value = false
-    answerFileDownloadLoading.value = false
-    extraFileDownloadLoading.value = false
+    // Reset loading state
+    setLoadingState(type, false)
   }
 }
+
 defineExpose({
   crash_report,
 })
