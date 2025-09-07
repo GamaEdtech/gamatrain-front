@@ -4,6 +4,7 @@ import rejectDialog from '~/components/admin/schools/rejectDialog.vue'
 const props = defineProps({
   modelValue: Boolean,
   selectedSchool: Object,
+  fetchType: String,
 })
 
 const { $toast } = useNuxtApp()
@@ -17,7 +18,7 @@ const emit = defineEmits([
 
 const approveImage = async () => {
   try {
-    const res = await useApiService.patch(`/api/v2/admin/schools/images/contributions/${props.selectedSchool.id}/confirm`)
+    const res = await useApiService.patch(`/api/v2/admin/${props.fetchType}/contributions/${props.selectedSchool.id}/confirm`)
     if (res.succeeded === true) {
       $toast.success('Image Approved successfully!')
       emit('update:modelValue', false)
@@ -95,7 +96,7 @@ const approveImage = async () => {
           <reject-dialog
             :id="selectedSchool.id"
             v-model="dialogVisible"
-            :type="'schools/images'"
+            :type="fetchType"
             @fetch-items="emit('fetchImages')"
             @close-card="$emit('update:modelValue', false)"
           />

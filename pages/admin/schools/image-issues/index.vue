@@ -1,5 +1,4 @@
 <script setup>
-import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
 import schoolCard from '~/components/admin/schools/images/schoolCard.vue'
 import useApiService from '~/composables/useApiService'
 
@@ -13,34 +12,43 @@ const { $toast } = useNuxtApp()
 const headers = [
   { title: 'contributer', key: 'creationUser', sortable: false, width: '15vw' },
   { title: 'Date', key: 'creationDate', sortable: false, width: '15vw' },
-  { title: 'Is Default', key: 'false', sortable: false, width: '10vw' },
+  { title: 'Status', key: 'Review', sortable: false, width: '10vw' },
   { title: 'Actions', key: 'actions', sortable: false, width: '5vw' },
 ]
 
-const selectedSchool = reactive({
+const computedHeaders = computed(() => {
+  if (filter.value === '') {
+    return headers
+  }
+  else {
+    return headers.filter(h => h.key !== 'Review')
+  }
+})
+
+const statusConfig = {
+  Confirmed: { text: 'Confirmed', class: 'gtext-t5 green-12b76a' },
+  Rejected: { text: 'Rejected', class: 'gtext-t5 red-F04438' },
+  Deleted: { text: 'Deleted', class: 'gtext-t5 red-F04438' },
+  Review: { text: 'Review', class: 'gtext-t5 gray-7b7878' },
+}
+
+const selectedImageIssue = reactive({
   id: null,
   schoolName: null,
   schoolId: null,
-  fileId: null,
+  fileUri: null,
 
 })
 
 const list = ref([])
 const tableLoading = ref(true)
 const dialogVisible = ref(false)
-const isDeleteModalOpen = ref(false)
-const selectedDeleteId = ref(null)
 const filter = ref('')
-const selectedAction = ref(null)
 const selectedPageSize = ref(10)
 const page = ref(1)
 const pageCount = ref(0)
 const totalCount = ref(0)
 const selected = ref([])
-
-const allActions = [
-  { label: 'Delete All', value: 'deleteAll' },
-]
 
 const allPageSize = [
   { label: '10 Rows', value: 10 },
@@ -48,10 +56,10 @@ const allPageSize = [
   { label: '50 Rows', value: 50 },
 ]
 
-const fetchImages = async () => {
+const fetchImageIssues = async () => {
   tableLoading.value = true
   try {
-    const response = await useApiService.get('/api/v2/admin/schools/images/contributions', {
+    const response = await useApiService.get('/api/v2/admin/schools/images/issues/contributions', {
       'PagingDto.PageFilter.Size': selectedPageSize.value,
       'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
@@ -71,14 +79,14 @@ const fetchImages = async () => {
   }
 }
 
-const viewImageDetails = async (id) => {
+const viewImageIssueDetails = async (id) => {
   try {
-    const response = await useApiService.get(`/api/v2/admin/schools/images/contributions/${id}`)
+    const response = await useApiService.get(`/api/v2/admin/schools/images/issues/contributions/${id}`)
 
-    selectedSchool.fileId = response.data.fileUri
-    selectedSchool.id = response.data.id
-    selectedSchool.schoolName = response.data.schoolName
-    selectedSchool.schoolId = response.data.schoolId
+    selectedImageIssue.fileUri = response.data.fileUri
+    selectedImageIssue.id = response.data.id
+    selectedImageIssue.schoolName = response.data.schoolName
+    selectedImageIssue.schoolId = response.data.schoolId
     dialogVisible.value = true
   }
   catch (err) {
@@ -88,65 +96,22 @@ const viewImageDetails = async (id) => {
   }
 }
 
-const deleteImage = async () => {
-  try {
-    const res = await useApiService.remove(`/api/v2/admin/schools/${selectedSchool.schoolId}/images/${selectedDeleteId.value}`)
-    list.value = list.value.filter(i => i.id !== selectedDeleteId.value)
-    if (res.succeeded === true)
-      $toast.success('Image deleted successfully!')
-    else
-      $toast.error(res.errors[0].message)
-  }
-  catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-  finally {
-    isDeleteModalOpen.value = false
-    dialogVisible.value = false
-    fetchImages()
-  }
-}
-
-const handleDelete = (id) => {
-  isDeleteModalOpen.value = true
-  selectedDeleteId.value = id
-}
-
-const doAll = async () => {
-  if (selectedAction.value === 'Delete All') {
-    for (const item of selected.value) {
-      selectedDeleteId.value = item
-      await deleteImage()
-    }
-
-    selected.value = []
-    $toast.success('All selected Users deleted!')
-  }
-}
-
 onMounted(() => {
-  selectedAction.value = allActions[0].label
   selectedPageSize.value = allPageSize[0].value
 })
 
-const goToSchool = (schoolId) => {
-  window.open(`/school/${schoolId}`, '_blank')
-}
-
 watch(page, () => {
-  fetchImages()
+  fetchImageIssues()
 })
 
 watch(selectedPageSize, () => {
   page.value = 1
-  fetchImages()
+  fetchImageIssues()
 })
 
 watch(filter, (_val) => {
   page.value = 1
-  fetchImages()
+  fetchImageIssues()
 }, { immediate: true })
 </script>
 
@@ -211,14 +176,14 @@ watch(filter, (_val) => {
           {{ totalCount }}
         </p>
         <p class="gray--text gtext-t6 font-weight-semibold">
-          Images
+          Image Issues
         </p>
       </div>
     </div>
     <div class="scrollable-table">
       <v-data-table
         v-model="selected"
-        :headers="headers"
+        :headers="computedHeaders"
         :items="list"
         :items-per-page="selectedPageSize"
         class="elevation-1"
@@ -244,15 +209,15 @@ watch(filter, (_val) => {
           </div>
         </template>
 
-        <template #[`item.false`]="{ item }">
+        <template
+          v-if="filter === ''"
+          #[`item.Review`]="{ item }"
+        >
           <span
-            v-if="item.isDefault == true"
-            class="gtext-t5 green-12b76a"
-          >True</span>
-          <span
-            v-else
-            class="gtext-t5 red-F04438"
-          >False</span>
+            :class="statusConfig[item.status]?.class"
+          >
+            {{ statusConfig[item.status]?.text }}
+          </span>
         </template>
 
         <template #[`item.actions`]="{ item }">
@@ -264,7 +229,7 @@ watch(filter, (_val) => {
               <v-icon
                 small
                 class="mr-2 gtext-t1"
-                @click="viewImageDetails(item.id)"
+                @click="viewImageIssueDetails(item.id)"
               >
                 mdi-file-find
               </v-icon>
@@ -275,56 +240,15 @@ watch(filter, (_val) => {
                 Details
               </v-tooltip>
             </v-btn>
-            <v-btn
-              variant="plain"
-              class="px-0 min-width-10"
-            >
-              <v-icon
-                small
-                class="mr-2 gtext-t1"
-                @click="goToSchool(item.id)"
-              >
-                mdi-arrow-right-circle
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                School Page
-              </v-tooltip>
-            </v-btn>
-            <v-btn
-              variant="plain"
-              class="px-0 min-width-10"
-            >
-              <v-icon
-                small
-                class="gtext-t1"
-                @click="handleDelete(item.id)"
-              >
-                mdi-delete
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Delete
-              </v-tooltip>
-            </v-btn>
           </div>
         </template>
       </v-data-table>
 
       <schoolCard
         v-model="dialogVisible"
-        :selected-school="selectedSchool"
-        :fetch-type="'schools/images'"
-        @fetch-images="fetchImages"
-      />
-
-      <DeleteItemModal
-        v-model="isDeleteModalOpen"
-        @confirm="deleteImage"
+        :selected-school="selectedImageIssue"
+        :fetch-type="'schools/images/issues'"
+        @fetch-images="fetchImageIssues"
       />
     </div>
 
@@ -336,32 +260,10 @@ watch(filter, (_val) => {
     >
       <v-col
         cols="12"
-        class="d-flex flex-wrap flex-sm-nowrap align-center justify-space-between"
+        class="d-flex align-center position-relative"
       >
-        <div class="d-flex align-center mb-2 mb-sm-0">
-          <v-select
-            v-model="selectedAction"
-            :items="allActions"
-            item-title="label"
-            item-value="value"
-            variant="outlined"
-            density="compact"
-            rounded
-            hide-details
-            class="rounded-pill footerBtns"
-            :disabled="selected.length === 0"
-          />
-          <v-btn
-            class="rounded-pill gtext-t5 bg-primary-gray-700 text-white ml-4"
-            :disabled="selected.length === 0"
-            @click="doAll"
-          >
-            <span>Do</span>
-          </v-btn>
-        </div>
-
         <!-- Pagination (hidden on mobile) -->
-        <div class="d-none d-sm-flex">
+        <div class="d-none d-sm-flex pagination-center">
           <v-pagination
             v-model="page"
             :length="pageCount"
@@ -372,7 +274,7 @@ watch(filter, (_val) => {
           />
         </div>
 
-        <div class="mb-2 mb-sm-0">
+        <div class="ml-auto">
           <v-select
             v-model="selectedPageSize"
             :items="allPageSize"
@@ -507,6 +409,13 @@ watch(filter, (_val) => {
   border: 1.5px solid #F04438;
   font-weight: 600 !important;
 }
+.gray-7b7878{
+  color: #7b7878;
+  border-radius: 4px;
+  padding: 4px 8px;
+  border: 1.5px solid #7b7878;
+  font-weight: 600 !important;
+}
 .green-12b76a{
   color: #12b76a;
   border-radius: 4px;
@@ -519,5 +428,11 @@ watch(filter, (_val) => {
 .min-width-10{
   min-width: 10px !important;
   height: 20px !important;
+}
+
+.pagination-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>
