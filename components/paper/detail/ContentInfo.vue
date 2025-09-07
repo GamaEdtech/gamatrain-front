@@ -108,7 +108,7 @@
             variant="flat"
             color="primary"
             :loading="qWordFileDownloadLoading"
-            :disabled="isDownloadDisabled && requiresCoinPaymentForFile('q_word')"
+
             @click="handleDownloadClick('q_word')"
           >
             <v-icon
@@ -117,7 +117,7 @@
             >
               mdi-file-word-box
             </v-icon>
-            {{ getButtonText('Download Question Doc', 'q_word') }}
+            {{ getButtonText('Download Question Doc') }}
             <template v-if="requiresCoinPaymentForFile('q_word') && contentData?.files?.word.price === 0">
               <v-icon
                 size="small"
@@ -139,7 +139,7 @@
             size="large"
             color="#E60012"
             :loading="qPdfFileDownloadLoading"
-            :disabled="isDownloadDisabled && requiresCoinPaymentForFile('q_pdf')"
+
             @click="handleDownloadClick('q_pdf')"
           >
             <v-icon
@@ -148,7 +148,7 @@
             >
               mdi-file-pdf-box
             </v-icon>
-            {{ getButtonText('Download Question Paper', 'q_pdf') }}
+            {{ getButtonText('Download Question Paper') }}
             <template v-if="requiresCoinPaymentForFile('q_pdf') && contentData?.files?.pdf.price === 0">
               <v-icon
                 size="small"
@@ -171,7 +171,6 @@
             size="large"
             color="teal accent-3"
             :loading="answerFileDownloadLoading"
-            :disabled="isDownloadDisabled && requiresCoinPaymentForFile('a_file')"
             @click="handleDownloadClick('a_file')"
           >
             <v-icon
@@ -180,7 +179,7 @@
             >
               mdi-file-pdf-box
             </v-icon>
-            {{ getButtonText('Download Mark Scheme', 'a_file') }}
+            {{ getButtonText('Download Mark Scheme') }}
             <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
               <v-icon
                 size="small"
@@ -201,7 +200,6 @@
             variant="flat"
             size="large"
             :loading="answerFileDownloadLoading"
-            :disabled="isDownloadDisabled && requiresCoinPaymentForFile('a_file')"
             @click="handleDownloadClick('a_file')"
           >
             <v-icon
@@ -210,7 +208,7 @@
             >
               mdi-file-word-box
             </v-icon>
-            {{ getButtonText('Download Answer Doc', 'a_file') }}
+            {{ getButtonText('Download Answer Doc') }}
             <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
               <v-icon
                 size="small"
@@ -236,7 +234,6 @@
             variant="flat"
             size="large"
             :loading="extraFileDownloadLoading"
-            :disabled="isDownloadDisabled && requiresCoinPaymentForFile('extra', extra.id)"
             @click="handleDownloadClick('extra', extra.id)"
           >
             <template v-if="extra?.ext == 'mp3'">
@@ -255,7 +252,7 @@
                 mdi-file-pdf-box
               </v-icon>
             </template>
-            {{ getButtonText(`Download ${extra.type_title ? extra.type_title : "Extra"}`, 'extra', extra.id) }}
+            {{ getButtonText(`Download ${extra.type_title ? extra.type_title : "Extra"}`) }}
             <template v-if="requiresCoinPaymentForFile('extra', extra.id) && extra.price === 0">
               <v-icon
                 size="small"
@@ -357,6 +354,7 @@ const answerFileDownloadLoading = ref(false)
 const extraFileDownloadLoading = ref(false)
 
 // Check if this content requires coin payment (2025 files)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const requiresCoinPayment = computed(() => {
   return coinBalance.requiresCoinPayment(props.contentData)
 })
@@ -372,16 +370,10 @@ const isFree = computed(() => {
   else return true
 })
 
-// Check if download should be disabled based on authentication
-const isDownloadDisabled = computed(() => {
-  return requiresCoinPayment.value && !auth.isAuthenticated.value
-})
+// All buttons should be enabled - authentication check happens on click
 
-// Get button text based on authentication status
-const getButtonText = (originalText, type, extraId = null) => {
-  if (requiresCoinPaymentForFile(type, extraId) && !auth.isAuthenticated.value) {
-    return 'Login to Download'
-  }
+// Get button text - always show original text since buttons are always enabled
+const getButtonText = (originalText) => {
   return originalText
 }
 
@@ -395,17 +387,17 @@ const handleDownloadClick = async (type, extraId) => {
   setLoadingState(type, true)
 
   try {
+    // Always check authentication first - show login if not authenticated
+    if (!auth.isAuthenticated.value) {
+      openAuthDialog('login')
+      setLoadingState(type, false)
+      return
+    }
+
     // Check if this specific file type requires coin payment
     const fileRequiresCoins = requiresCoinPaymentForFile(type, extraId)
 
     if (fileRequiresCoins) {
-      // Check if user is authenticated
-      if (!auth.isAuthenticated.value) {
-        openAuthDialog('login')
-        setLoadingState(type, false)
-        return
-      }
-
       // Check if file has a price (paid files don't require coins)
       const fileHasPrice = checkFileHasPrice(type, extraId)
       if (!fileHasPrice) {
@@ -423,13 +415,6 @@ const handleDownloadClick = async (type, extraId) => {
         showCoinPaymentModal.value = true
         return
       }
-    }
-
-    // For non-coin files, still check authentication for premium content
-    if (requiresCoinPayment.value && !auth.isAuthenticated.value) {
-      openAuthDialog('login')
-      setLoadingState(type, false)
-      return
     }
 
     // Proceed with normal download
@@ -558,12 +543,6 @@ const openAuthDialog = (val) => {
 }
 
 const startDownload = async (type, extraId) => {
-  // Additional authentication check before API call
-  if (requiresCoinPayment.value && !auth.isAuthenticated.value) {
-    openAuthDialog('login')
-    return
-  }
-
   let apiUrl = ''
   if (type === 'q_word') {
     apiUrl = `/api/v1/tests/download/${props.contentData?.id}/word`
