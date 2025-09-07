@@ -6,15 +6,16 @@
           cols="12"
           sm="5"
           md="8"
-          lg="9"
+          lg="8"
           class="order-2"
         >
           <h2 class="gama-text-h4">
             Ready to Race?
           </h2>
           <p class="gama-text-body1 describe mt-8">
-            Learning has never been this exciting! Get behind the wheel, think fast, choose the right path,
-            and speed ahead. Play, learn, and become a champion!
+            Learning has never been this exciting! Get behind the wheel, think
+            fast, choose the right path, and speed ahead. Play, learn, and
+            become a champion!
           </p>
           <v-btn
             size="large"
@@ -22,8 +23,7 @@
             class="primary gama-btn mt-8 font-xl"
             to="/game/car-racing"
           >
-            Let's
-            Go!
+            Let's Go!
           </v-btn>
         </v-col>
 
@@ -31,7 +31,7 @@
           cols="12"
           sm="7"
           md="4"
-          lg="3"
+          lg="4"
           class="d-flex justify-sm-start justify-center order-1"
         >
           <img
@@ -46,12 +46,12 @@
 
 <style>
 .gama-text-body1 {
-    color: #6e7781;
-    text-align: left;
+  color: #6e7781;
+  text-align: left;
 }
 
 .gama-btn {
-    font-size: large !important;
-    font-weight: 500;
+  font-size: large !important;
+  font-weight: 500;
 }
 </style>

@@ -6,7 +6,14 @@ html {
 }
 
 //‌Base style
+.v-application .primary {
+  background-color: #ffb300 !important;
+  border-color: #ffb300 !important;
+}
 
+.v-application .primary--text {
+  color: #ffb300 !important;
+}
 //Colors class
 .gray--text {
   color: #98a2b3 !important;
@@ -674,10 +681,7 @@ body {
 
       //navbar
       .navbar-items {
-        .v-list-group--active
-          > .v-list-group__header
-          > .v-list-group__header__append-icon
-          .v-icon {
+        .v-list-group--active > .v-list-group__header > .v-list-group__header__append-icon .v-icon {
           transform: rotate(-90deg);
         }
 
@@ -993,7 +997,9 @@ body {
 
     .grade-card {
       padding: 20px 20px 20px 20px !important;
-      box-shadow: 0 1px 3px 0 #d4d4d5, 0 0 0 1px #d4d4d5 !important;
+      box-shadow:
+        0 1px 3px 0 #d4d4d5,
+        0 0 0 1px #d4d4d5 !important;
       position: relative;
       margin-left: 1.5rem;
       margin-bottom: 3rem;
@@ -1115,7 +1121,8 @@ body {
       }
 
       &.grade-card1 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(39, 174, 96, 0.02);
@@ -1130,7 +1137,8 @@ body {
       }
 
       &.grade-card2 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(192, 57, 43, 0.02);
@@ -1145,7 +1153,8 @@ body {
       }
 
       &.grade-card3 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(1, 87, 155, 0.02);
@@ -1160,7 +1169,8 @@ body {
       }
 
       &.grade-card4 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(86, 0, 232, 0.02);
@@ -1175,7 +1185,8 @@ body {
       }
 
       &.grade-card5 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(51, 105, 30, 0.02);
@@ -1190,7 +1201,8 @@ body {
       }
 
       &.grade-card6 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(191, 54, 12, 0.02);
@@ -1205,7 +1217,8 @@ body {
       }
 
       &.grade-card7 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(46, 125, 50, 0.02);
@@ -1220,7 +1233,8 @@ body {
       }
 
       &.grade-card8 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(249, 168, 37, 0.02);
@@ -1235,7 +1249,8 @@ body {
       }
 
       &.grade-card9 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(86, 0, 232, 0.02);
@@ -1250,7 +1265,8 @@ body {
       }
 
       &.grade-card10 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(39, 174, 96, 0.02);
@@ -1265,7 +1281,8 @@ body {
       }
 
       &.grade-card11 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(81, 45, 168, 0.02);
@@ -1280,7 +1297,8 @@ body {
       }
 
       &.grade-card12 {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
         border-radius: 10px;
         background: rgba(3, 169, 244, 0.02);
@@ -1341,7 +1359,8 @@ body {
 
     // footer feed card
     .feed-card {
-      box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+      box-shadow:
+        rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
         rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
       border-radius: 4px;
       border: 1px solid $border;
@@ -1403,7 +1422,8 @@ body {
     .third-feed-box {
       max-width: 30.5%;
       margin-right: 1rem;
-      box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+      box-shadow:
+        rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
         rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
       border: 1px solid $border;
 
@@ -1494,7 +1514,8 @@ body {
       }
 
       &.learning {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
 
         .feed-header {
@@ -1522,7 +1543,8 @@ body {
       }
 
       &.question {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
 
         .feed-header {
@@ -1550,7 +1572,8 @@ body {
       }
 
       &.test {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
 
         .feed-header {
@@ -1578,7 +1601,8 @@ body {
       }
 
       &.news {
-        box-shadow: rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
+        box-shadow:
+          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
           rgba(0, 0, 0, 0.05) 0px 1px 1px 0px;
 
         .feed-header {
@@ -1693,7 +1717,10 @@ body {
 
           &.active {
             color: $yellow2;
-            text-shadow: 0 -1px 0 #ddc507, -1px 0 0 #ddc507, 0 1px 0 #ddc507,
+            text-shadow:
+              0 -1px 0 #ddc507,
+              -1px 0 0 #ddc507,
+              0 1px 0 #ddc507,
               1px 0 0 #ddc507 !important;
           }
         }
@@ -2043,19 +2070,31 @@ body {
     //related-card
     .related-card {
       &.learning {
-        box-shadow: 0 0 0 1px #d4d4d5, 0 2px 0 0 #21ba45, 0 1px 3px 0 #d4d4d5;
+        box-shadow:
+          0 0 0 1px #d4d4d5,
+          0 2px 0 0 #21ba45,
+          0 1px 3px 0 #d4d4d5;
       }
 
       &.question {
-        box-shadow: 0 0 0 1px #d4d4d5, 0 2px 0 0 #f2711c, 0 1px 3px 0 #d4d4d5;
+        box-shadow:
+          0 0 0 1px #d4d4d5,
+          0 2px 0 0 #f2711c,
+          0 1px 3px 0 #d4d4d5;
       }
 
       &.blog {
-        box-shadow: 0 0 0 1px #d4d4d5, 0 2px 0 0 #2185d0, 0 1px 3px 0 #d4d4d5;
+        box-shadow:
+          0 0 0 1px #d4d4d5,
+          0 2px 0 0 #2185d0,
+          0 1px 3px 0 #d4d4d5;
       }
 
       &.azmoon {
-        box-shadow: 0 0 0 1px #d4d4d5, 0 2px 0 0 #6435c9, 0 1px 3px 0 #d4d4d5;
+        box-shadow:
+          0 0 0 1px #d4d4d5,
+          0 2px 0 0 #6435c9,
+          0 1px 3px 0 #d4d4d5;
       }
 
       .iconlearning {
@@ -2108,9 +2147,7 @@ body {
         }
 
         .add-file {
-          .theme--light.v-list-item:not(.v-list-item--active):not(
-              .v-list-item--disabled
-            ) {
+          .theme--light.v-list-item:not(.v-list-item--active):not(.v-list-item--disabled) {
             color: $white;
           }
 
@@ -2812,8 +2849,10 @@ body {
 
   .card {
     outline: 1px solid $green11;
-    box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
-      0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow:
+      0px 4px 5px rgba(0, 0, 0, 0.14),
+      0px 1px 10px rgba(0, 0, 0, 0.12),
+      0px 2px 4px rgba(0, 0, 0, 0.2);
   }
 
   .card-title {
@@ -2893,9 +2932,7 @@ body {
     }
 
     .theme--light.v-stepper
-      .v-stepper__step:not(.v-stepper__step--active):not(
-        .v-stepper__step--complete
-      ):not(.v-stepper__step--error)
+      .v-stepper__step:not(.v-stepper__step--active):not(.v-stepper__step--complete):not(.v-stepper__step--error)
       .v-stepper__step__step {
       background: rgba(196, 196, 196, 0.2);
       color: $gray4;
@@ -2940,9 +2977,7 @@ body {
       }
 
       .theme--light.v-stepper
-        .v-stepper__step:not(.v-stepper__step--active):not(
-          .v-stepper__step--complete
-        ):not(.v-stepper__step--error)
+        .v-stepper__step:not(.v-stepper__step--active):not(.v-stepper__step--complete):not(.v-stepper__step--error)
         .v-stepper__step__step {
         background: rgba(196, 196, 196, 0.2);
         color: $gray4;
@@ -2998,8 +3033,10 @@ body {
       font-size: 1.4rem;
       font-weight: 500;
       border-radius: 1.8rem;
-      box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
-        0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+      box-shadow:
+        0px 4px 5px rgba(0, 0, 0, 0.14),
+        0px 1px 10px rgba(0, 0, 0, 0.12),
+        0px 2px 4px rgba(0, 0, 0, 0.2);
     }
   }
 }
@@ -3061,8 +3098,10 @@ body {
         border-radius: 50%;
         min-width: 4rem;
         background-color: $white;
-        box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14),
-          0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+        box-shadow:
+          0px 3px 4px rgba(0, 0, 0, 0.14),
+          0px 3px 3px rgba(0, 0, 0, 0.12),
+          0px 1px 8px rgba(0, 0, 0, 0.2);
       }
 
       .v-slide-group__prev {
@@ -3073,16 +3112,20 @@ body {
         border-radius: 50%;
         min-width: 4rem;
         background-color: $white;
-        box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.14),
-          0px 3px 3px rgba(0, 0, 0, 0.12), 0px 1px 8px rgba(0, 0, 0, 0.2);
+        box-shadow:
+          0px 3px 4px rgba(0, 0, 0, 0.14),
+          0px 3px 3px rgba(0, 0, 0, 0.12),
+          0px 1px 8px rgba(0, 0, 0, 0.2);
       }
     }
 
     .book-sample {
       border-radius: 0.8rem;
       background-color: $white;
-      box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
-        0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
+      box-shadow:
+        0px 4px 5px rgba(0, 0, 0, 0.14),
+        0px 1px 10px rgba(0, 0, 0, 0.12),
+        0px 2px 4px rgba(0, 0, 0, 0.2);
 
       .sample-img {
         position: relative;
@@ -3128,7 +3171,8 @@ body {
 
   .last-files {
     border: 1px solid $border;
-    box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1),
+    box-shadow:
+      0px 2px 4px -2px rgba(0, 0, 0, 0.1),
       0px 4px 6px -1px rgba(0, 0, 0, 0.1);
     border-radius: 0.4rem;
 
@@ -3330,7 +3374,8 @@ body {
   .online-exam-card,
   .test-card {
     border: 1px solid $border;
-    box-shadow: 0px 2px 4px -2px rgba(0, 0, 0, 0.1),
+    box-shadow:
+      0px 2px 4px -2px rgba(0, 0, 0, 0.1),
       0px 4px 6px -1px rgba(0, 0, 0, 0.1);
     border-radius: 0.6rem;
   }
@@ -4092,7 +4137,8 @@ body {
     .teachers-pagination {
       .v-pagination__item {
         font-size: 1.5rem;
-        box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+        box-shadow:
+          rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
           rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
       }
 
@@ -4657,9 +4703,9 @@ body {
   min-height: 100% !important;
 }
 
-.line-clamp-1{
+.line-clamp-1 {
   overflow: hidden;
-display: -webkit-box;
--webkit-box-orient: vertical;
--webkit-line-clamp: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
 }
