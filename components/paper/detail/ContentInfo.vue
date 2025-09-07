@@ -385,32 +385,6 @@ const getButtonText = (originalText, type, extraId = null) => {
   return originalText
 }
 
-// Fetch coin balance on component mount
-onMounted(async () => {
-  if (auth.isAuthenticated.value && requiresCoinPayment.value) {
-    try {
-      await coinBalance.fetchBalance()
-      console.log('user balance:', coinBalance.balance.value)
-    }
-    catch (error) {
-      console.error('Failed to fetch coin balance on mount:', error)
-    }
-  }
-})
-
-// Watch for authentication changes to refresh coin balance
-watch(() => auth.isAuthenticated.value, async (isAuthenticated) => {
-  if (isAuthenticated && requiresCoinPayment.value) {
-    try {
-      await coinBalance.fetchBalance()
-      console.log('user balance refreshed after login:', coinBalance.balance.value)
-    }
-    catch (error) {
-      console.error('Failed to fetch balance after login:', error)
-    }
-  }
-})
-
 const openCrashReport = () => {
   crash_report.value.dialog = true
   crash_report.value.form.type = 'test'
