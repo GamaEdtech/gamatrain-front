@@ -34,7 +34,7 @@ export default defineNuxtConfig({
   ],
 
   site: {
-    url: 'https://gamatrain.com/',
+    url: 'https://front-git-fix-seo-toturial-detail-alirezas-projects-44596e2b.vercel.app/',
     name: 'Gamatrain',
   },
 
