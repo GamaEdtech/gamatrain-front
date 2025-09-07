@@ -334,6 +334,32 @@ const openCrashReportDialog = () => {
   crashReportRef.value.form.type = 'tutorial'
 }
 
+const stripHtmlTags = (input, length = 1200) => {
+  if (!input) return ''
+
+  const sliced = input.slice(0, length)
+
+  const lastClosingTag = sliced.lastIndexOf('>')
+
+  const safeSlice
+    = lastClosingTag !== -1 ? sliced.slice(0, lastClosingTag + 1) : sliced
+
+  const text = safeSlice
+    .replace(/<!--[\s\S]*?-->/g, '') // remove comments
+    .replace(/<\/?[^>]+(>|$)/g, '') // remove tags
+    .replace(/&#\d+;/g, '') // remove emojies and icons
+    .replace(/&[a-zA-Z]+;/g, '') // remove entity like &nbsp;
+    .replace(/\s+/g, ' ') // add spaces for better result
+    .trim()
+
+  return text + '...'
+}
+
+defineOgImageComponent('TutorialDetail', {
+  title: tutorialInfo.value?.title,
+  views: tutorialInfo.value?.views,
+  up_date: tutorialInfo.value?.up_date,
+})
 useHead({
   title: tutorialInfo.value?.title || '',
   meta: [
@@ -355,12 +381,12 @@ useHead({
     {
       hid: 'description',
       name: 'description',
-      content: tutorialInfo.value?.content.slice(0, 300) || '',
+      content: stripHtmlTags(tutorialInfo.value?.content),
     },
     {
       hid: 'og:description',
       name: 'og:description',
-      content: tutorialInfo.value?.content.slice(0, 300) || '',
+      content: stripHtmlTags(tutorialInfo.value?.content),
     },
   ],
   link: [
