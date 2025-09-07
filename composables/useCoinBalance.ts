@@ -9,18 +9,11 @@ export const useCoinBalance = () => {
   const balance = ref<number>(0)
   const isLoading = ref<boolean>(false)
   const error = ref<string | null>(null)
-  const auth = useAuth()
 
   /**
    * Fetch user's current coin balance
    */
   const fetchBalance = async (): Promise<number> => {
-    // Check authentication first
-    if (!auth.isAuthenticated.value) {
-      error.value = 'User not authenticated'
-      return 0
-    }
-
     isLoading.value = true
     error.value = null
 
@@ -43,12 +36,6 @@ export const useCoinBalance = () => {
    * Consume coins via API call
    */
   const consumeCoins = async (points: number): Promise<boolean> => {
-    // Check authentication first
-    if (!auth.isAuthenticated.value) {
-      error.value = 'User not authenticated'
-      return false
-    }
-
     isLoading.value = true
     error.value = null
 
@@ -77,12 +64,6 @@ export const useCoinBalance = () => {
    * Deduct coins using the consume API
    */
   const deductCoins = async (amount: number, description: string = 'File download'): Promise<boolean> => {
-    // Check authentication first
-    if (!auth.isAuthenticated.value) {
-      error.value = 'User not authenticated'
-      return false
-    }
-
     isLoading.value = true
     error.value = null
 
