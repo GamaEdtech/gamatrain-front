@@ -102,57 +102,85 @@
       >
         <div v-if="contentData?.files?.word.exist">
           <v-btn
-            class="mb-2 text-h5"
+            class="mb-2 text-h5 position-relative"
             block
             size="large"
             variant="flat"
             color="primary"
-            :loading="qWordFileDownloadLoading"
-
+            :loading="qWordFileDownloadLoading && !isDownloading('q_word')"
             @click="handleDownloadClick('q_word')"
           >
+            <template v-if="isDownloading('q_word')">
+              <v-progress-circular
+                :model-value="getDownloadProgress('q_word')"
+                size="24"
+                width="3"
+                color="white"
+                class="position-absolute"
+                style="z-index: 2;"
+              />
+            </template>
             <v-icon
               size="x-large"
               class="btn-icon"
+              :class="{ 'text-transparent': isDownloading('q_word') }"
             >
               mdi-file-word-box
             </v-icon>
-            {{ getButtonText('Download Question Doc') }}
+            <span :class="{ 'text-transparent': isDownloading('q_word') }">
+              {{ getButtonText('Download Question Doc') }}
+            </span>
             <template v-if="requiresCoinPaymentForFile('q_word') && contentData?.files?.word.price === 0">
               <v-icon
                 size="small"
                 color="orange"
+                :class="{ 'text-transparent': isDownloading('q_word') }"
               >
                 mdi-coin
               </v-icon>
             </template>
             <template v-else-if="contentData?.files?.word.price > 0">
-              | ${{ contentData?.files?.word.price }}
+              <span :class="{ 'text-transparent': isDownloading('q_word') }">
+                | ${{ contentData?.files?.word.price }}
+              </span>
             </template>
           </v-btn>
         </div>
         <div v-if="contentData?.files.pdf.exist">
           <v-btn
-            class="mb-2 text-h5 text-white font-weight-bold"
+            class="mb-2 text-h5 text-white font-weight-bold position-relative"
             block
             variant="flat"
             size="large"
             color="#E60012"
-            :loading="qPdfFileDownloadLoading"
-
+            :loading="qPdfFileDownloadLoading && !isDownloading('q_pdf')"
             @click="handleDownloadClick('q_pdf')"
           >
+            <template v-if="isDownloading('q_pdf')">
+              <v-progress-circular
+                :model-value="getDownloadProgress('q_pdf')"
+                size="24"
+                width="3"
+                color="white"
+                class="position-absolute"
+                style="z-index: 2;"
+              />
+            </template>
             <v-icon
               size="x-large"
               class="btn-icon"
+              :class="{ 'text-transparent': isDownloading('q_pdf') }"
             >
               mdi-file-pdf-box
             </v-icon>
-            {{ getButtonText('Download Question Paper') }}
+            <span :class="{ 'text-transparent': isDownloading('q_pdf') }">
+              {{ getButtonText('Download Question Paper') }}
+            </span>
             <template v-if="requiresCoinPaymentForFile('q_pdf') && contentData?.files?.pdf.price === 0">
               <v-icon
                 size="small"
                 color="orange"
+                :class="{ 'text-transparent': isDownloading('q_pdf') }"
               >
                 mdi-coin
               </v-icon>
@@ -165,60 +193,92 @@
         <div v-if="contentData?.files.answer.exist">
           <v-btn
             v-show="contentData?.files.answer.ext == 'pdf'"
-            class="mb-2 text-h5 font-weight-bold"
+            class="mb-2 text-h5 font-weight-bold position-relative"
             block
             variant="flat"
             size="large"
             color="teal accent-3"
-            :loading="answerFileDownloadLoading"
+            :loading="answerFileDownloadLoading && !isDownloading('a_file')"
             @click="handleDownloadClick('a_file')"
           >
+            <template v-if="isDownloading('a_file')">
+              <v-progress-circular
+                :model-value="getDownloadProgress('a_file')"
+                size="24"
+                width="3"
+                color="white"
+                class="position-absolute"
+                style="z-index: 2;"
+              />
+            </template>
             <v-icon
               size="x-large"
               class="btn-icon"
+              :class="{ 'text-transparent': isDownloading('a_file') }"
             >
               mdi-file-pdf-box
             </v-icon>
-            {{ getButtonText('Download Mark Scheme') }}
+            <span :class="{ 'text-transparent': isDownloading('a_file') }">
+              {{ getButtonText('Download Mark Scheme') }}
+            </span>
             <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
               <v-icon
                 size="small"
                 color="orange"
+                :class="{ 'text-transparent': isDownloading('a_file') }"
               >
                 mdi-coin
               </v-icon>
             </template>
             <template v-else-if="contentData?.files?.answer.price > 0">
-              | ${{ contentData?.files?.answer.price }}
+              <span :class="{ 'text-transparent': isDownloading('a_file') }">
+                | ${{ contentData?.files?.answer.price }}
+              </span>
             </template>
           </v-btn>
           <v-btn
             v-show="contentData?.files.answer.ext == 'word'"
-            class="mb-2 text-h5"
+            class="mb-2 text-h5 position-relative"
             block
             color="primary"
             variant="flat"
             size="large"
-            :loading="answerFileDownloadLoading"
+            :loading="answerFileDownloadLoading && !isDownloading('a_file')"
             @click="handleDownloadClick('a_file')"
           >
+            <template v-if="isDownloading('a_file')">
+              <v-progress-circular
+                :model-value="getDownloadProgress('a_file')"
+                size="24"
+                width="3"
+                color="white"
+                class="position-absolute"
+                style="z-index: 2;"
+              />
+            </template>
             <v-icon
               size="x-large"
               class="btn-icon"
+              :class="{ 'text-transparent': isDownloading('a_file') }"
             >
               mdi-file-word-box
             </v-icon>
-            {{ getButtonText('Download Answer Doc') }}
+            <span :class="{ 'text-transparent': isDownloading('a_file') }">
+              {{ getButtonText('Download Answer Doc') }}
+            </span>
             <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
               <v-icon
                 size="small"
                 color="orange"
+                :class="{ 'text-transparent': isDownloading('a_file') }"
               >
                 mdi-coin
               </v-icon>
             </template>
             <template v-else-if="contentData?.files?.answer.price > 0">
-              | ${{ contentData?.files?.answer.price }}
+              <span :class="{ 'text-transparent': isDownloading('a_file') }">
+                | ${{ contentData?.files?.answer.price }}
+              </span>
             </template>
           </v-btn>
         </div>
@@ -228,18 +288,29 @@
           <v-btn
             v-for="(extra, index) in contentData.files.extra"
             :key="index"
-            class="mb-2 text-h5 font-weight-bold"
+            class="mb-2 text-h5 font-weight-bold position-relative"
             block
             color="blue"
             variant="flat"
             size="large"
-            :loading="extraFileDownloadLoading"
+            :loading="extraFileDownloadLoading && !isDownloading('extra', extra.id)"
             @click="handleDownloadClick('extra', extra.id)"
           >
+            <template v-if="isDownloading('extra', extra.id)">
+              <v-progress-circular
+                :model-value="getDownloadProgress('extra', extra.id)"
+                size="24"
+                width="3"
+                color="white"
+                class="position-absolute"
+                style="z-index: 2;"
+              />
+            </template>
             <template v-if="extra?.ext == 'mp3'">
               <v-icon
                 size="x-large"
                 class="btn-icon"
+                :class="{ 'text-transparent': isDownloading('extra', extra.id) }"
               >
                 mdi-volume-high
               </v-icon>
@@ -248,21 +319,27 @@
               <v-icon
                 size="x-large"
                 class="btn-icon"
+                :class="{ 'text-transparent': isDownloading('extra', extra.id) }"
               >
                 mdi-file-pdf-box
               </v-icon>
             </template>
-            {{ getButtonText(`Download ${extra.type_title ? extra.type_title : "Extra"}`) }}
+            <span :class="{ 'text-transparent': isDownloading('extra', extra.id) }">
+              {{ getButtonText(`Download ${extra.type_title ? extra.type_title : "Extra"}`) }}
+            </span>
             <template v-if="requiresCoinPaymentForFile('extra', extra.id) && extra.price === 0">
               <v-icon
                 size="small"
                 color="orange"
+                :class="{ 'text-transparent': isDownloading('extra', extra.id) }"
               >
                 mdi-coin
               </v-icon>
             </template>
             <template v-else-if="extra.price > 0">
-              | ${{ extra.price }}
+              <span :class="{ 'text-transparent': isDownloading('extra', extra.id) }">
+                | ${{ extra.price }}
+              </span>
             </template>
           </v-btn>
         </div>
@@ -304,6 +381,8 @@
     :answer-file-download-loading="answerFileDownloadLoading"
     :extra-file-download-loading="extraFileDownloadLoading"
     :requires-coin-payment-for-file="requiresCoinPaymentForFile"
+    :is-downloading="isDownloading"
+    :get-download-progress="getDownloadProgress"
     @download="handleDownloadClick"
   />
   <!-- End mobile order section -->
@@ -542,7 +621,27 @@ const openAuthDialog = (val) => {
   router.push({ query: { auth_form: val } })
 }
 
+// Track download progress for each button
+const downloadProgress = ref({})
+const downloadingItems = ref(new Set())
+
+const getDownloadProgress = (type, extraId) => {
+  const downloadKey = extraId ? `${type}-${extraId}` : type
+  return downloadProgress.value[downloadKey] || 0
+}
+
+const isDownloading = (type, extraId) => {
+  const downloadKey = extraId ? `${type}-${extraId}` : type
+  return downloadingItems.value.has(downloadKey)
+}
+
 const startDownload = async (type, extraId) => {
+  const downloadKey = extraId ? `${type}-${extraId}` : type
+
+  // Set loading state and progress tracking
+  downloadingItems.value.add(downloadKey)
+  downloadProgress.value[downloadKey] = 0
+
   let apiUrl = ''
   if (type === 'q_word') {
     apiUrl = `/api/v1/tests/download/${props.contentData?.id}/word`
@@ -558,21 +657,70 @@ const startDownload = async (type, extraId) => {
   }
 
   try {
+    // Simulate progressive loading for API call
+    const progressInterval = setInterval(() => {
+      if (downloadProgress.value[downloadKey] < 50) {
+        downloadProgress.value[downloadKey] += Math.random() * 15
+      }
+    }, 100)
+
     const response = await useApiService.get(apiUrl)
     console.log('Download response:', response.data)
 
-    const FileSaver = await import('file-saver')
+    // Update progress to 60% after API response
+    downloadProgress.value[downloadKey] = 60
+    clearInterval(progressInterval)
 
-    // Use FileSaver.js the same way as other parts of the codebase
-    console.log('Starting download with FileSaver:', response.data.url, response.data.name)
-    FileSaver.saveAs(response.data.url, response.data.name)
+    // Create a custom fetch with progress tracking
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', response.data.url, true)
+    xhr.responseType = 'blob'
 
-    // Show success message for coin payments
-    if (requiresCoinPaymentForFile(type, extraId) && !checkFileHasPrice(type, extraId)) {
-      $toast.success('Download started! 5 coins deducted from your balance.')
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = 60 + (event.loaded / event.total) * 40
+        downloadProgress.value[downloadKey] = Math.min(percentComplete, 100)
+      }
     }
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        downloadProgress.value[downloadKey] = 100
+
+        // Use file-saver to save the blob
+        import('file-saver').then(({ saveAs }) => {
+          saveAs(xhr.response, response.data.name)
+        })
+
+        // Show success message for coin payments
+        if (requiresCoinPaymentForFile(type, extraId) && !checkFileHasPrice(type, extraId)) {
+          $toast.success('Download started! 5 coins deducted from your balance.')
+        }
+
+        // Clean up after a short delay
+        setTimeout(() => {
+          downloadingItems.value.delete(downloadKey)
+          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+          delete downloadProgress.value[downloadKey]
+        }, 1000)
+      }
+    }
+
+    xhr.onerror = () => {
+      downloadingItems.value.delete(downloadKey)
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete downloadProgress.value[downloadKey]
+      $toast.error('Download failed. Please try again.')
+    }
+
+    xhr.send()
   }
   catch (err) {
+    // Clean up on error
+    downloadingItems.value.delete(downloadKey)
+    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+    delete downloadProgress.value[downloadKey]
+
     if (err.response?.status === 401) {
       openAuthDialog('login')
     }
@@ -627,5 +775,20 @@ p {
 .btn-icon {
   position: absolute;
   left: 10px;
+}
+
+.text-transparent {
+  color: transparent !important;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
