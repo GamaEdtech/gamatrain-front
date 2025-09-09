@@ -469,9 +469,7 @@ async function loadPdf(url: string) {
     loading.value = true
     error.value = ''
 
-    const response = await fetch(
-      `/api/file-proxy?url=${encodeURIComponent(url)}`,
-    )
+    const response = await fetch(url)
     if (!response.ok) throw new Error('Failed to fetch PDF')
 
     const arrayBuffer = await response.arrayBuffer()
