@@ -143,6 +143,8 @@ const schoolAiData = ref({
   stateTitle: '',
   cityTitle: '',
   webSite: '',
+  latitude: null,
+  longitude: null,
 })
 
 // start section step

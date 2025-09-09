@@ -178,9 +178,9 @@
                 size="x-small"
                 height="40"
                 width="40"
+                icon
+                color="primary"
                 :loading="helpLoading"
-                class="text-white"
-                color="teal lighten-2"
                 style="position: absolute; right: 10px; bottom: 40px"
                 @click="sendToAI()"
               >
@@ -188,7 +188,7 @@
                   size="x-large"
                   color="white"
                 >
-                  mdi-auto-fix
+                  md:wand_stars
                 </v-icon>
               </v-btn>
             </div>
@@ -264,6 +264,8 @@ async function sendToAI() {
       stateTitle: props.contentData.stateTitle,
       cityTitle: props.contentData.cityTitle,
       webSite: props.contentData.webSite ? props.contentData.webSite : '',
+      latitude: props.contentData.latitude,
+      longitude: props.contentData.longitude,
     }
     const result = await getDescriptionFromAi(schoolAiData)
     if (result) {
