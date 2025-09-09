@@ -22,7 +22,7 @@
                   width="2"
                   color="white"
                   class="position-absolute"
-                  style="z-index: 2;"
+                  style="z-index: 2"
                 />
               </template>
               <v-icon
@@ -35,7 +35,12 @@
               <span :class="{ 'text-transparent': isDownloading('q_word') }">
                 Download Question Doc
               </span>
-              <template v-if="requiresCoinPaymentForFile('q_word') && contentData?.files?.word.price === 0">
+              <template
+                v-if="
+                  requiresCoinPaymentForFile('q_word')
+                    && contentData?.files?.word.price === 0
+                "
+              >
                 <v-icon
                   size="small"
                   color="orange"
@@ -67,7 +72,7 @@
                   width="2"
                   color="white"
                   class="position-absolute"
-                  style="z-index: 2;"
+                  style="z-index: 2"
                 />
               </template>
               <v-icon
@@ -80,7 +85,12 @@
               <span :class="{ 'text-transparent': isDownloading('q_pdf') }">
                 Download Question Paper
               </span>
-              <template v-if="requiresCoinPaymentForFile('q_pdf') && contentData?.files?.pdf.price === 0">
+              <template
+                v-if="
+                  requiresCoinPaymentForFile('q_pdf')
+                    && contentData?.files?.pdf.price === 0
+                "
+              >
                 <v-icon
                   size="small"
                   color="orange"
@@ -113,7 +123,7 @@
                   width="2"
                   color="white"
                   class="position-absolute"
-                  style="z-index: 2;"
+                  style="z-index: 2"
                 />
               </template>
               <v-icon
@@ -126,7 +136,12 @@
               <span :class="{ 'text-transparent': isDownloading('a_file') }">
                 Download Mark Scheme
               </span>
-              <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+              <template
+                v-if="
+                  requiresCoinPaymentForFile('a_file')
+                    && contentData?.files?.answer.price === 0
+                "
+              >
                 <v-icon
                   size="small"
                   color="orange"
@@ -157,7 +172,7 @@
                   width="2"
                   color="white"
                   class="position-absolute"
-                  style="z-index: 2;"
+                  style="z-index: 2"
                 />
               </template>
               <v-icon
@@ -170,7 +185,12 @@
               <span :class="{ 'text-transparent': isDownloading('a_file') }">
                 Download Answer Doc
               </span>
-              <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+              <template
+                v-if="
+                  requiresCoinPaymentForFile('a_file')
+                    && contentData?.files?.answer.price === 0
+                "
+              >
                 <v-icon
                   size="small"
                   color="orange"
@@ -198,7 +218,9 @@
               color="blue"
               class="mb-2 text-h6 font-weight-bold position-relative"
               variant="flat"
-              :loading="extraFileDownloadLoading && !isDownloading('extra', extra.id)"
+              :loading="
+                extraFileDownloadLoading && !isDownloading('extra', extra.id)
+              "
               @click="$emit('download', 'extra', extra.id)"
             >
               <template v-if="isDownloading('extra', extra.id)">
@@ -208,14 +230,16 @@
                   width="2"
                   color="white"
                   class="position-absolute"
-                  style="z-index: 2;"
+                  style="z-index: 2"
                 />
               </template>
               <template v-if="extra?.ext == 'mp3'">
                 <v-icon
                   size="x-large"
                   class="btn-icon"
-                  :class="{ 'text-transparent': isDownloading('extra', extra.id) }"
+                  :class="{
+                    'text-transparent': isDownloading('extra', extra.id),
+                  }"
                 >
                   mdi-volume-high
                 </v-icon>
@@ -224,28 +248,69 @@
                 <v-icon
                   size="x-large"
                   class="btn-icon"
-                  :class="{ 'text-transparent': isDownloading('extra', extra.id) }"
+                  :class="{
+                    'text-transparent': isDownloading('extra', extra.id),
+                  }"
                 >
                   mdi-file-pdf-box
                 </v-icon>
               </template>
-              <span :class="{ 'text-transparent': isDownloading('extra', extra.id) }">
+              <span
+                :class="{
+                  'text-transparent': isDownloading('extra', extra.id),
+                }"
+              >
                 Download {{ extra.type_title ? extra.type_title : "Extra" }}
               </span>
-              <template v-if="requiresCoinPaymentForFile('extra', extra.id) && extra.price === 0">
+              <template
+                v-if="
+                  requiresCoinPaymentForFile('extra', extra.id)
+                    && extra.price === 0
+                "
+              >
                 <v-icon
                   size="small"
                   color="orange"
-                  :class="{ 'text-transparent': isDownloading('extra', extra.id) }"
+                  :class="{
+                    'text-transparent': isDownloading('extra', extra.id),
+                  }"
                 >
                   mdi-coin
                 </v-icon>
               </template>
               <template v-else-if="extra.price > 0">
-                <span :class="{ 'text-transparent': isDownloading('extra', extra.id) }">
+                <span
+                  :class="{
+                    'text-transparent': isDownloading('extra', extra.id),
+                  }"
+                >
                   | ${{ extra.price }}
                 </span>
               </template>
+            </v-btn>
+          </div>
+
+          <div v-if="contentData?.exams && contentData?.exams[0]?.status != 7">
+            <v-btn
+              :to="`/exam/${contentData?.exams[0].id}`"
+              block
+              color="#5600e8"
+              variant="flat"
+              class="mb-2 text-h6 font-weight-bold position-relative"
+            >
+              Begin Quiz
+            </v-btn>
+          </div>
+          <div v-else>
+            <v-btn
+              :to="`/test-maker/create?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}&paperId=${contentData?.id}`"
+              block
+              variant="flat"
+              outlined
+              color="primary"
+              class="mb-2 text-h6 font-weight-bold position-relative"
+            >
+              Create Quiz
             </v-btn>
           </div>
         </v-col>
