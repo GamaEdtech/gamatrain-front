@@ -172,6 +172,8 @@
                 :price="contentData?.files?.price || 0"
                 :title="contentData?.title"
                 :download-loading="download_loading"
+                :is-downloading="isDownloading"
+                :download-progress="downloadProgress"
                 @download="startDownload"
               />
             </v-col>
@@ -187,6 +189,8 @@
       :credit="user?.credit || 0"
       :is-logged-in="isLoggedIn"
       :download-loading="download_loading"
+      :is-downloading="isDownloading"
+      :download-progress="downloadProgress"
       @download="startDownload"
       @login="openAuthDialog('login')"
       @register="openAuthDialog('register')"
@@ -276,6 +280,10 @@ const requestURL = ref(useRequestURL().host)
 const breads = ref([])
 
 const download_loading = ref(false)
+
+// Track download progress
+const downloadProgress = ref(0)
+const isDownloading = ref(false)
 
 const isAdsLoad = ref(false)
 
@@ -478,14 +486,68 @@ function openAuthDialog(val) {
 
 async function startDownload(_type) {
   download_loading.value = true
+  isDownloading.value = true
+  downloadProgress.value = 0
+
   const apiUrl = `/api/v1/files/download/${route.params.id}`
+
   try {
+    // Simulate progressive loading for API call
+    const progressInterval = setInterval(() => {
+      if (downloadProgress.value < 50) {
+        downloadProgress.value += Math.random() * 15
+      }
+    }, 100)
+
     const response = await useApiService.get(apiUrl)
-    const FileSaver = await import('file-saver')
+
+    // Update progress to 60% after API response
+    downloadProgress.value = 60
+    clearInterval(progressInterval)
+
     const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
-    await FileSaver.saveAs(proxyUrl, response.data.name)
+
+    // Create a custom fetch with progress tracking
+    const xhr = new XMLHttpRequest()
+    xhr.open('GET', proxyUrl, true)
+    xhr.responseType = 'blob'
+
+    xhr.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = 60 + (event.loaded / event.total) * 40
+        downloadProgress.value = Math.min(percentComplete, 100)
+      }
+    }
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        downloadProgress.value = 100
+
+        // Use file-saver to save the blob
+        import('file-saver').then(({ saveAs }) => {
+          saveAs(xhr.response, response.data.name)
+        })
+
+        // Clean up after a short delay
+        setTimeout(() => {
+          isDownloading.value = false
+          downloadProgress.value = 0
+        }, 1000)
+      }
+    }
+
+    xhr.onerror = () => {
+      isDownloading.value = false
+      downloadProgress.value = 0
+    }
+
+    xhr.send()
   }
   catch (err) {
+    // Clean up on error
+    isDownloading.value = false
+    downloadProgress.value = 0
+
     if (err.response?.status == 400) {
       if (
         err.response.data.status == 0
