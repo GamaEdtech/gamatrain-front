@@ -107,14 +107,33 @@
         <div>
           <v-btn
             block
-            dark
-            color="#bf360c"
-            class="mb-2 text-h5"
-            :loading="downloadLoading"
+            variant="flat"
+            color="#E60012"
+            class="mb-2 text-h5 text-white font-weight-bold position-relative"
+            size="large"
+            :loading="downloadLoading && !isDownloading"
             @click="startDownload"
           >
-            Download {{ fileExt.toUpperCase()
-            }}{{ showPrice ? " | $" + price : "" }}
+            <template v-if="isDownloading">
+              <v-progress-circular
+                :model-value="downloadProgress"
+                size="24"
+                width="3"
+                color="white"
+                class="position-absolute"
+                style="z-index: 2;"
+              />
+            </template>
+            <v-icon
+              size="x-large"
+              class="btn-icon"
+              :class="{ 'text-transparent': isDownloading }"
+            >
+              mdi-file-pdf-box
+            </v-icon>
+            <span :class="{ 'text-transparent': isDownloading }">
+              Download {{ fileExt.toUpperCase() }}{{ showPrice ? " | $" + price : "" }}
+            </span>
           </v-btn>
         </div>
       </v-col>
@@ -175,6 +194,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isDownloading: {
+    type: Boolean,
+    default: false,
+  },
+  downloadProgress: {
+    type: Number,
+    default: 0,
+  },
 })
 
 // Emits
@@ -220,4 +247,24 @@ function startDownload() {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.text-transparent {
+  color: transparent !important;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-icon {
+  position: absolute;
+  left: 10px;
+}
+</style>

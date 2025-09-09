@@ -145,13 +145,34 @@
 
         <v-btn
           v-else-if="key === 'pdf'"
-          :loading="downloadLoading"
+          :loading="downloadLoading && !isDownloading"
           block
-          color="error"
-          class="text-h5"
+          color="#E60012"
+          variant="flat"
+          size="large"
+          class="mb-2 text-h5 text-white font-weight-bold position-relative"
           @click="onDownload('pdf')"
         >
-          Download PDF{{ item.price > 0 ? " | $" + item.price : "" }}
+          <template v-if="isDownloading">
+            <v-progress-circular
+              :model-value="downloadProgress"
+              size="24"
+              width="3"
+              color="white"
+              class="position-absolute"
+              style="z-index: 2;"
+            />
+          </template>
+          <v-icon
+            size="x-large"
+            class="btn-icon"
+            :class="{ 'text-transparent': isDownloading }"
+          >
+            mdi-file-pdf-box
+          </v-icon>
+          <span :class="{ 'text-transparent': isDownloading }">
+            Download PDF{{ item.price > 0 ? " | $" + item.price : "" }}
+          </span>
         </v-btn>
       </v-col>
     </v-row>
@@ -178,6 +199,14 @@ const props = defineProps({
   downloadLoading: {
     type: Boolean,
     default: false,
+  },
+  isDownloading: {
+    type: Boolean,
+    default: false,
+  },
+  downloadProgress: {
+    type: Number,
+    default: 0,
   },
 })
 
@@ -243,5 +272,25 @@ function onCrashReport() {
 
 .pointer {
   cursor: pointer;
+}
+
+.text-transparent {
+  color: transparent !important;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-icon {
+  position: absolute;
+  left: 10px;
 }
 </style>

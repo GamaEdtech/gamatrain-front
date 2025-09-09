@@ -12,14 +12,32 @@
           <div v-if="fileExt">
             <v-btn
               block
-              color="#bf360c"
-              dark
-              class="mb-2 text-h6"
-              :loading="downloadLoading"
+              color="#E60012"
+              variant="flat"
+              class="mb-2 text-h6 text-white font-weight-bold position-relative"
+              :loading="downloadLoading && !isDownloading"
               @click="startDownload"
             >
-              Download {{ fileExt.toUpperCase()
-              }}{{ showPrice ? " | $" + price : "" }}
+              <template v-if="isDownloading">
+                <v-progress-circular
+                  :model-value="downloadProgress"
+                  size="20"
+                  width="2"
+                  color="white"
+                  class="position-absolute"
+                  style="z-index: 2;"
+                />
+              </template>
+              <v-icon
+                size="x-large"
+                class="btn-icon"
+                :class="{ 'text-transparent': isDownloading }"
+              >
+                mdi-file-pdf-box
+              </v-icon>
+              <span :class="{ 'text-transparent': isDownloading }">
+                Download {{ fileExt.toUpperCase() }}{{ showPrice ? " | $" + price : "" }}
+              </span>
             </v-btn>
           </div>
         </v-col>
@@ -82,6 +100,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isDownloading: {
+    type: Boolean,
+    default: false,
+  },
+  downloadProgress: {
+    type: Number,
+    default: 0,
+  },
 })
 
 const emit = defineEmits(['download', 'login', 'register'])
@@ -127,5 +153,27 @@ function handleRegister() {
 
 .pointer {
   cursor: pointer;
+}
+
+.text-transparent {
+  color: transparent !important;
+}
+
+.position-relative {
+  position: relative;
+}
+
+.position-absolute {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-icon {
+  flex-shrink: 0;
+  margin-right: 8px;
+  position: absolute;
+  left: 10px;
 }
 </style>
