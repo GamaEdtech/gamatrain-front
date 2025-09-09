@@ -444,26 +444,27 @@ useHead(() => ({
   ],
 }))
 
-if (contentData.value?.defaultImageUri) {
-  useSeoMeta({
-    title: () => `${contentData.value?.name} | GamaTrain Schools`,
-    description: () => metaDescription.value,
-    ogTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
-    ogDescription: () => metaDescription.value,
-    ogImage: () =>
-      contentData.value?.defaultImageUri.replace(/^http:\/\//, 'https://'),
-    ogUrl: () =>
-      `${requestURL.value}/school/${contentData.value?.id}/${$slugGenerator(
-        contentData?.value?.name,
-      )}`,
-    twitterTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
-    twitterDescription: () => metaDescription.value,
-    twitterImage: () =>
-      contentData.value?.defaultImageUri.replace(/^http:\/\//, 'https://'),
-    twitterCard: 'summary_large_image',
-  })
-}
-else {
+const ogImage = contentData.value?.defaultImageUri
+  ? contentData.value?.defaultImageUri.replace(/^http:\/\//, 'https://')
+  : null
+
+useSeoMeta({
+  title: () => `${contentData.value?.name} | GamaTrain Schools`,
+  description: () => metaDescription.value,
+  ogTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
+  ogDescription: () => metaDescription.value,
+  ogUrl: () =>
+    `${requestURL.value}/school/${contentData.value?.id}/${$slugGenerator(
+      contentData?.value?.name,
+    )}`,
+  twitterTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
+  twitterDescription: () => metaDescription.value,
+  twitterCard: 'summary_large_image',
+  ogImage: () => ogImage,
+  twitterImage: () => ogImage,
+})
+
+if (!ogImage) {
   defineOgImageComponent('SchoolDetail', {
     title: contentData.value?.name,
     address:
@@ -474,19 +475,6 @@ else {
       + contentData.value?.cityTitle,
     phone: contentData.value?.phoneNumber,
     email: contentData.value?.email,
-  })
-  useSeoMeta({
-    title: () => `${contentData.value?.name} | GamaTrain Schools`,
-    description: () => metaDescription.value,
-    ogTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
-    ogDescription: () => metaDescription.value,
-    ogUrl: () =>
-      `${requestURL.value}/school/${contentData.value?.id}/${$slugGenerator(
-        contentData?.value?.name,
-      )}`,
-    twitterTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
-    twitterDescription: () => metaDescription.value,
-    twitterCard: 'summary_large_image',
   })
 }
 
