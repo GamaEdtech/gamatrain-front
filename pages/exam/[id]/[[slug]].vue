@@ -276,8 +276,7 @@ const startDownload = async () => {
       `/api/v1/exams/download/${route.params.id}`,
     )
     const FileSaver = await import('file-saver')
-    const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
-    FileSaver.saveAs(proxyUrl, response.data.name)
+    FileSaver.saveAs(response.data.url, response.data.name)
   }
   catch (err) {
     if (err.response?.status == 400) {

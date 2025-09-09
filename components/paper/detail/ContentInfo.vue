@@ -424,9 +424,6 @@ const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
 const pendingDownload = ref(null)
 
-// Router for auth dialog
-const router = useRouter()
-
 const qPdfFileDownloadLoading = ref(false)
 const qWordFileDownloadLoading = ref(false)
 const answerFileDownloadLoading = ref(false)
@@ -466,13 +463,6 @@ const handleDownloadClick = async (type, extraId) => {
   setLoadingState(type, true)
 
   try {
-    // Always check authentication first - show login if not authenticated
-    if (!auth.isAuthenticated.value) {
-      openAuthDialog('login')
-      setLoadingState(type, false)
-      return
-    }
-
     // Check if this specific file type requires coin payment
     const fileRequiresCoins = requiresCoinPaymentForFile(type, extraId)
 
@@ -616,11 +606,6 @@ const handleAnimationComplete = async () => {
   }
 }
 
-// Open authentication dialog
-const openAuthDialog = (val) => {
-  router.push({ query: { auth_form: val } })
-}
-
 // Track download progress for each button
 const downloadProgress = ref({})
 const downloadingItems = ref(new Set())
@@ -721,10 +706,7 @@ const startDownload = async (type, extraId) => {
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     delete downloadProgress.value[downloadKey]
 
-    if (err.response?.status === 401) {
-      openAuthDialog('login')
-    }
-    else if (err.response?.status === 403) {
+    if (err.response?.status === 403) {
       $toast.error('Access denied. Insufficient permissions.')
     }
     else if (err.response?.status === 400) {

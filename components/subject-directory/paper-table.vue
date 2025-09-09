@@ -474,11 +474,9 @@ const startDownload = async (type, item) => {
     downloadProgress.value[downloadKey] = 60
     clearInterval(progressInterval)
 
-    const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
-
     // Create a custom fetch with progress tracking
     const xhr = new XMLHttpRequest()
-    xhr.open('GET', proxyUrl, true)
+    xhr.open('GET', response.data.url, true)
     xhr.responseType = 'blob'
 
     xhr.onprogress = (event) => {

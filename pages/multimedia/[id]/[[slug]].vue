@@ -482,8 +482,7 @@ async function startDownload(_type) {
   try {
     const response = await useApiService.get(apiUrl)
     const FileSaver = await import('file-saver')
-    const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
-    await FileSaver.saveAs(proxyUrl, response.data.name)
+    await FileSaver.saveAs(response.data.url, response.data.name)
   }
   catch (err) {
     if (err.response?.status == 400) {

@@ -1118,45 +1118,38 @@ watch(
 )
 
 const startDownload = async (type, extra_id = '') => {
-  const auth = useAuth()
-  if (auth.isAuthenticated.value) {
-    download_loading.value = true
-    let apiUrl = ''
+  download_loading.value = true
+  let apiUrl = ''
 
-    if (type === 'q_word') {
-      apiUrl = `/api/v1/tests/download/${route.params.id}/word`
-    }
-    else if (type === 'q_pdf') {
-      apiUrl = `/api/v1/tests/download/${route.params.id}/pdf`
-    }
-    else if (type === 'a_file') {
-      apiUrl = `/api/v1/tests/download/${route.params.id}/answer`
-    }
-    else if (type === 'extra') {
-      apiUrl = `/api/v1/tests/download/${route.params.id}/extra/${extra_id}`
-    }
-    try {
-      const response = await useApiService.get(apiUrl)
-      const FileSaver = await import('file-saver')
-      const proxyUrl = `/api/file-proxy?url=${encodeURIComponent(response.data.url)}`
-      FileSaver.saveAs(proxyUrl, response.data.name)
-    }
-    catch (err) {
-      if (err.response?.status == 400) {
-        if (
-          err.response.data.status == 0
-          && err.response.data.error == 'creditNotEnough'
-        ) {
-          $toast.info('No enough credit')
-        }
+  if (type === 'q_word') {
+    apiUrl = `/api/v1/tests/download/${route.params.id}/word`
+  }
+  else if (type === 'q_pdf') {
+    apiUrl = `/api/v1/tests/download/${route.params.id}/pdf`
+  }
+  else if (type === 'a_file') {
+    apiUrl = `/api/v1/tests/download/${route.params.id}/answer`
+  }
+  else if (type === 'extra') {
+    apiUrl = `/api/v1/tests/download/${route.params.id}/extra/${extra_id}`
+  }
+  try {
+    const response = await useApiService.get(apiUrl)
+    const FileSaver = await import('file-saver')
+    FileSaver.saveAs(response.data.url, response.data.name)
+  }
+  catch (err) {
+    if (err.response?.status == 400) {
+      if (
+        err.response.data.status == 0
+        && err.response.data.error == 'creditNotEnough'
+      ) {
+        $toast.info('No enough credit')
       }
     }
-    finally {
-      download_loading.value = false
-    }
   }
-  else {
-    router.push({ query: { auth_form: 'login' } })
+  finally {
+    download_loading.value = false
   }
 }
 
