@@ -4,7 +4,7 @@ import CommonRegister from '~/components/common/register.vue'
 import CommonRecover from '~/components/common/pass-recover.vue'
 import { useAuth } from '~/composables/useAuth'
 import { useUser } from '~/composables/useUser'
-import { useCookie } from 'nuxt/app'
+import { useCookie, navigateTo } from 'nuxt/app'
 
 const auth = useAuth()
 const isAuthModalOpen = ref(false)
@@ -198,9 +198,16 @@ const router = useRouter()
 const _cookieToken = useCookie('authToken')
 const { user, _setUser, cleanUser } = useUser()
 
-const logout = () => {
-  cleanUser()
-  auth.logout()
+const logout = async () => {
+  try {
+    await auth.logout()
+  }
+  catch (error) {
+    console.error('Logout failed:', error)
+    // Force logout even if there's an error
+    cleanUser()
+    await navigateTo('/')
+  }
 }
 
 onMounted(async () => {

@@ -19,9 +19,36 @@ export const useAuth = () => {
     cookieToken.value = null
   }
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      // Call the logout API endpoint
+      await $fetch('/api/v1/identities/logout', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${cookieToken.value}`,
+        },
+      })
+    }
+    catch (error) {
+      console.warn('Logout API call failed:', error)
+      // Continue with logout even if API call fails
+    }
+
+    // Clear authentication token
     clearAuth()
-    navigateTo('/')
+
+    // Clear user data from store
+    const { cleanUser } = useUser()
+    cleanUser()
+
+    // Clear all local storage data
+    if (import.meta.client) {
+      localStorage.clear()
+      sessionStorage.clear()
+    }
+
+    // Navigate to home page
+    await navigateTo('/')
   }
 
   const login = async (credentials: { identity: string, pass: string }) => {
