@@ -4,6 +4,8 @@ interface SchoolData {
   stateTitle: string
   cityTitle: string
   webSite?: string
+  latitude?: number
+  longitude?: number
 }
 
 interface SchoolRatings {
@@ -33,54 +35,72 @@ export const useCommentAssistant = () => {
     const nuxtApp = useNuxtApp()
     const router = useRouter()
 
-    const userComment = `You are an educational review assistant. Your task is to evaluate the following school and return a structured JSON response.
+    const userComment = `You are an expert educational research analyst with deep knowledge of international school systems. Your task is to conduct thorough research on the following school and provide a comprehensive evaluation.
 
-        ### **School Information:**
-        - **Name:** ${schoolData.name}
-        - **Location:** ${schoolData.countryTitle}, ${schoolData.stateTitle}, ${schoolData.cityTitle}
-        ${schoolData.webSite ? `- **Website:** ${schoolData.webSite}` : ''}
-        
-        ### **Evaluation Criteria:**
-        Rate each of the following aspects on a scale of 1 to 5 stars (as numbers) using insights from sources like OpenStreetMap, Google Maps, and the school's official website. Then write a short, bold, and slightly provocative comment about the school.
-        
-        1. Quality of classrooms and educational facilities  
-        2. Teachers' proficiency and teaching effectiveness  
-        3. Access to and use of computers and technology  
-        4. Safety and overall atmosphere of the school  
-        5. Behavior of school officials towards students  
-        6. Affordability relative to the services provided  
-        7. Availability of suitable sports facilities  
-        8. Presence of art classes or counseling programs  
-        
-        ### **Comment Rules:**
-        - Write the **comment in the primary language used in** \`${schoolData.countryTitle}\`. For example, use Persian for Iran, Italian for Italy, and French for France. **Do not use the user's IP address, browser language, or environment to determine the language.**
-        - Mention at least **one clear strength and one clear weakness** of the school.
-        - Use a **natural, human tone** with a **touch of challenge or controversy** to encourage discussion (e.g., “some parents might disagree…” or “not everyone would be happy with…”).
-        - Keep the comment **short, engaging, and between 350 and 400 characters**.
-        - The comment should **not repeat the school name or location**.
-        - If it's a **kindergarten**, write like a thoughtful parent.  
-          If it's an **educational group**, use inclusive and general language.
-        - Always **end the comment with at least one emoji** to feel more personal and real.
-        
-        ### **Response Format (JSON):**
-        Return a structured JSON object like this, with exactly 8 rating fields (1 to 5) and the comment:
-        
-        \`\`\`json
-        {
-          "description": "🏫 Cornerstone Preparatory School offers a great learning environment with skilled teachers and strong safety measures. However, technology access and arts programs could be improved.",
-          "ratings": {
-            "classrooms_quality": 4,
-            "teachers_proficiency": 5,
-            "technology_access": 2,
-            "school_safety": 4,
-            "officials_behavior": 3,
-            "affordability": 4,
-            "sports_facilities": 3,
-            "art_counseling": 2
-          }
-        }
-        \`\`\`
-        `
+## RESEARCH MANDATE:
+You MUST conduct DEEP research on this school by examining multiple data sources:
+
+1. Search Google Maps for "${schoolData.name} ${schoolData.cityTitle} ${schoolData.countryTitle}" and analyze ALL available reviews, ratings, and photos
+2. Examine OpenStreetMap data and associated geolocation information
+3. Research local education forums, parent groups, and review sites specific to ${schoolData.countryTitle}
+4. Analyze the school's official website (if available) and social media presence
+5. Search for news articles, educational reports, or government evaluations
+
+## SCHOOL INFORMATION:
+- *Name:* ${schoolData.name}
+- *Location:* ${schoolData.countryTitle}, ${schoolData.stateTitle}, ${schoolData.cityTitle}
+${(schoolData.latitude && schoolData.longitude) ? '- Coordinates' + schoolData.latitude + ',' + schoolData.longitude : ''}
+  }
+${schoolData.webSite ? 'Website ' + schoolData.webSite : ''}
+
+## RESEARCH INSTRUCTIONS:
+You MUST perform ACTUAL research by:
+  1. Searching for this specific school across multiple platforms
+  2. Reading through at least 10 - 15 reviews from different sources
+  3. Identifying patterns in feedback(both positive and negative)
+  4. Analyzing visual evidence from photos when available
+  5. Cross - referencing information between different sources
+  6. Considering cultural and regional educational context of ${schoolData.countryTitle}
+
+## EVALUATION CRITERIA:
+Based on your research, rate each aspect(1 - 5 stars):
+
+  1. Classrooms & Facilities Quality
+  2. Teaching Proficiency & Effectiveness
+  3. Technology Access & Integration
+  4. Safety & School Atmosphere
+  5. Officials' Behavior & Administration
+  6. Affordability & Value
+  7. Sports Facilities & Programs
+  8. Arts & Counseling Programs
+
+## COMMENT REQUIREMENTS:
+  - Write in the primary language of ${schoolData.countryTitle}
+  - Base your analysis SPECIFICALLY on patterns found in actual reviews
+    - Reference at least 2 - 3 specific points mentioned in reviews
+      - Use a natural, human tone - avoid robotic language
+        - Include both strengths and weaknesses mentioned by multiple reviewers
+          - Keep the comment between 400 - 500 characters
+            - DO NOT use emojis
+              - DO NOT make generic statements without research backing
+
+## RESPONSE FORMAT:
+Return ONLY valid JSON without any additional text:
+
+  {
+    "description": "Research-based analysis here...",
+      "ratings": {
+      "classrooms_quality": 4,
+        "teachers_proficiency": 4,
+          "technology_access": 3,
+            "school_safety": 5,
+              "officials_behavior": 4,
+                "affordability": 3,
+                  "sports_facilities": 2,
+                    "art_counseling": 4
+    }
+  }
+`
 
     if (!localStorage.getItem('v2_token')) {
       nuxtApp.$toast?.error('Login required to proceed.')
