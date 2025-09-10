@@ -10,7 +10,7 @@
       density="compact"
       nav
     >
-      <v-list-group :value="itemsProfile.value">
+      <!-- <v-list-group :value="itemsProfile.value">
         <template #activator="{ props }">
           <v-list-item
             v-bind="props"
@@ -67,9 +67,9 @@
             {{ subMenuItem.title }}
           </v-list-item-title>
         </v-list-item>
-      </v-list-group>
+      </v-list-group> -->
 
-      <div class="w-100 d-flex justify-center align-center mt-3 mb-10">
+      <!-- <div class="w-100 d-flex justify-center align-center mt-3 mb-10">
         <v-icon
           v-if="drawerRail"
           class="primary-gray-600"
@@ -101,7 +101,7 @@
             </v-icon>
           </template>
         </v-text-field>
-      </div>
+      </div> -->
 
       <div
         v-for="item in items"
@@ -224,6 +224,12 @@ const { user } = useUser()
 
 const items = ref([
   {
+    title: 'Dashboard',
+    icon: 'md:dashboard',
+    link: '/user',
+    value: 'dashboard',
+  },
+  {
     title: 'Contents',
     icon: 'md:ballot',
     machine_name: 'add_content',
@@ -299,26 +305,40 @@ const items = ref([
     link: '/user/ticket',
     value: 'messages',
   },
+  {
+    title: 'Settings',
+    icon: 'md:settings',
+    value: 'settings',
+    subMenuList: [
+      { title: 'Edit Profile', link: '/user/profile', icon: 'md:edit' },
+      {
+        title: 'Confirm Identity',
+        link: '/user/identity-confirmation',
+        icon: 'md:fingerprint',
+      },
+      { title: 'Security', link: '/user/edit-pass', icon: 'md:password' },
+    ],
+  },
 ])
 
-const itemsProfile = ref({
-  title: 'Profile',
-  value: 'profile',
-  subMenuList: [
-    { title: 'Edit Profile', link: '/user/profile', icon: 'md:edit' },
-    {
-      title: 'Confirm Identity',
-      link: '/user/identity-confirmation',
-      icon: 'md:fingerprint',
-    },
-    { title: 'Security', link: '/user/edit-pass', icon: 'md:password' },
-    { title: 'Settings', link: '/user/setting', icon: 'md:settings' },
-  ],
-})
+// const itemsProfile = ref({
+//   title: "Profile",
+//   value: "profile",
+//   subMenuList: [
+//     { title: "Edit Profile", link: "/user/profile", icon: "md:edit" },
+//     {
+//       title: "Confirm Identity",
+//       link: "/user/identity-confirmation",
+//       icon: "md:fingerprint",
+//     },
+//     { title: "Security", link: "/user/edit-pass", icon: "md:password" },
+//     { title: "Settings", link: "/user/setting", icon: "md:settings" },
+//   ],
+// });
 
 const openedGroups = ref([])
 const drawerRail = ref(false)
-const searchText = ref('')
+// const searchText = ref('')
 
 const railchange = () => {
   if (drawerRail.value) {
