@@ -1,5 +1,7 @@
 import { useCookie, navigateTo } from 'nuxt/app'
 import { computed } from 'vue'
+import useApiService from '~/composables/useApiService'
+import { useUser } from '~/composables/useUser'
 
 export const useAuth = () => {
   const cookieToken = useCookie<string | null>('authToken', {
@@ -21,20 +23,23 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
-      // Call the logout API endpoint
-      await $fetch('/api/v1/identities/logout', {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${cookieToken.value}`,
-        },
+      // Call old backend logout
+      await useApiService.get('/api/v1/users/logout', {
+        headers: `Bearer ${cookieToken.value}`,
       })
     }
     catch (error) {
-      console.warn('Logout API call failed:', error)
-      // Continue with logout even if API call fails
+      console.warn('Old backend logout API call failed:', error)
     }
-
-    // Clear authentication token
+    try {
+      // Call new backend logout
+      await useApiService.get('/api/v2/identities/logout', {
+        headers: `Bearer ${cookieToken.value}`,
+      })
+    }
+    catch (error) {
+      console.warn('New backend logout API call failed:', error)
+    }
     clearAuth()
 
     // Clear user data from store
@@ -43,10 +48,10 @@ export const useAuth = () => {
 
     // Clear all local storage data
     if (import.meta.client) {
+      localStorage.removeItem('v2_token') // Remove v2 token specifically
       localStorage.clear()
       sessionStorage.clear()
     }
-
     // Navigate to home page
     await navigateTo('/')
   }
