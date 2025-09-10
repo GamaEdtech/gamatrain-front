@@ -36,7 +36,7 @@ const selectedImageIssue = reactive({
   id: null,
   schoolName: null,
   schoolId: null,
-  fileUri: null,
+  fileId: null,
 
 })
 
@@ -83,7 +83,7 @@ const viewImageIssueDetails = async (id) => {
   try {
     const response = await useApiService.get(`/api/v2/admin/schools/images/issues/contributions/${id}`)
 
-    selectedImageIssue.fileUri = response.data.fileUri
+    selectedImageIssue.fileId = response.data.fileUri
     selectedImageIssue.id = response.data.id
     selectedImageIssue.schoolName = response.data.schoolName
     selectedImageIssue.schoolId = response.data.schoolId
@@ -99,6 +99,10 @@ const viewImageIssueDetails = async (id) => {
 onMounted(() => {
   selectedPageSize.value = allPageSize[0].value
 })
+
+const goToSchool = (schoolId) => {
+  window.open(`/school/${schoolId}`, '_blank')
+}
 
 watch(page, () => {
   fetchImageIssues()
@@ -238,6 +242,24 @@ watch(filter, (_val) => {
                 location="top"
               >
                 Details
+              </v-tooltip>
+            </v-btn>
+            <v-btn
+              variant="plain"
+              class="px-0 min-width-10"
+            >
+              <v-icon
+                small
+                class="mr-2 gtext-t1"
+                @click="goToSchool(item.schoolId)"
+              >
+                mdi-arrow-right-circle
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                School Page
               </v-tooltip>
             </v-btn>
           </div>
