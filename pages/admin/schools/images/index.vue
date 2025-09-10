@@ -282,7 +282,7 @@ watch(filter, (_val) => {
               <v-icon
                 small
                 class="mr-2 gtext-t1"
-                @click="goToSchool(item.id)"
+                @click="goToSchool(item.schoolId)"
               >
                 mdi-arrow-right-circle
               </v-icon>
