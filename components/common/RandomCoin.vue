@@ -228,7 +228,7 @@ watch(
       console.warn('Failed to refresh coins:', e)
     }
   },
-  { immediate: false },
+  { immediate: true },
 )
 
 watch(coins, async (list) => {
