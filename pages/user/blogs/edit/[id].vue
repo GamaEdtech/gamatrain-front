@@ -240,12 +240,20 @@
                         v-for="cat in filteredCategories"
                         :key="cat.id"
                         v-model="blog.categories"
-                        :label="cat.name"
                         :value="cat.id"
                         hide-details
-                        class="category-checkbox"
+                        color="primary"
+                        false-icon="md:check_box_outline_blank"
+                        true-icon="md:check_box"
                         dense
-                      />
+                        class="text-h5"
+                      >
+                        <template #label>
+                          <span class="text-h5 font-weight-medium">{{
+                            cat.name
+                          }}</span>
+                        </template>
+                      </v-checkbox>
                     </template>
                   </div>
                 </v-card-text>
@@ -485,7 +493,6 @@ const fetchBlogData = async () => {
         categories: blogData.tags,
         scheduledDate: isScheduled ? blogData.publishDate : null,
       }
-      console.log(blog.value)
       slug.value = blogData.slug
 
       if (blogData.imageUri) {
@@ -493,6 +500,7 @@ const fetchBlogData = async () => {
         imageValidation.value = 'valid'
       }
       // Split the keywords string into array
+
       keywords.value = blogData.keywords
         ? blogData.keywords.split(',').map(k => k.trim())
         : []
@@ -525,7 +533,6 @@ const fetchBlogData = async () => {
 // Form methods
 async function validate() {
   const { valid } = await form.value.validate()
-  console.log('Form valid:', valid)
   isFormValid.value = valid
 
   if (valid) {
@@ -570,20 +577,16 @@ const onSubmit = async () => {
     formData.append('Slug', slug.value)
 
     // Add categories
-    // blog.value.categories.forEach((categoryId) => {
-    //   if (!categoryId) return
-    //   formData.append('Tags[]', categoryId)
-    // })
+    blog.value.categories.forEach((categoryId) => {
+      if (!categoryId) return
+      formData.append('Tags[]', categoryId)
+    })
 
-    // console.log([...blog.value?.categories])
     if (blog.value.categories?.length < 1) {
       $toast.error('Please select at least one category.')
       return
     }
-    Object.values(blog.value.categories).forEach((categoryId) => {
-      if (!categoryId) return
-      formData.append('Tags[]', categoryId)
-    })
+
     // Add keywords
     if (keywords.value.length >= 1) {
       formData.append('Keywords', keywords.value.join(','))
@@ -593,17 +596,7 @@ const onSubmit = async () => {
     if (blog.value.image) {
       formData.append('image', blog.value.image)
     }
-    console.log('Submitting blog data:', {
-      title: blog.value.title,
-      content: blog.value.content,
-      summary: blog.value.summary,
-      status: blog.value.status,
-      visibility: blog.value.visibility,
-      publishTime: blog.value.publishTime,
-      categories: blog.value.categories,
-      image: blog.value.image,
-      scheduledDate: blog.value.scheduledDate,
-    })
+
     const response = await useApiService.put(
       `/api/v2/blogs/contributions/${route.params.id}`,
       formData,
@@ -687,6 +680,7 @@ const fetchCategories = async () => {
   try {
     categoriesLoading.value = true
     const response = await useApiService.get('/api/v2/tags/Post')
+
     if (response && response.succeeded) {
       categoryList.value = response.data
     }
@@ -801,7 +795,6 @@ watch(
 watch(
   () => blog.value.categories,
   async () => {
-    console.log('Categories changed:', blog.value.categories)
     if (form.value) {
       const { valid } = await form.value.validate()
       isFormValid.value = valid
@@ -997,15 +990,6 @@ onMounted(() => {
   max-height: 180px;
   overflow-y: auto;
   margin-bottom: 8px;
-}
-.category-checkbox {
-  padding-left: 16px;
-  margin-bottom: 2px !important;
-}
-
-.category-checkbox :deep(.v-selection-control) {
-  margin-bottom: 0;
-  min-height: 32px;
 }
 
 .preview-image {

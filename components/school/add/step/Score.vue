@@ -208,6 +208,15 @@ const sendToAI = async () => {
     const result = await getDescriptionFromAi(props.schoolAiData)
     if (result) {
       comment.value = result.description
+      const ratings = result.ratings
+      itemsScore.value[0].score = ratings.classrooms_quality
+      itemsScore.value[1].score = ratings.teachers_proficiency
+      itemsScore.value[2].score = ratings.technology_access
+      itemsScore.value[3].score = ratings.school_safety
+      itemsScore.value[4].score = ratings.officials_behavior
+      itemsScore.value[5].score = ratings.affordability
+      itemsScore.value[6].score = ratings.sports_facilities
+      itemsScore.value[7].score = ratings.art_counseling
     }
   }
   catch (err) {
