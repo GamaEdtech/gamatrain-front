@@ -6,6 +6,7 @@ import glsl from 'vite-plugin-glsl'
 
 export default defineNuxtConfig({
   runtimeConfig: {
+    serverApiKey: process.env.SERVER_API_KEY,
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
