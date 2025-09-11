@@ -28,6 +28,18 @@ export default defineEventHandler(async (event) => {
     )
     const memo = memoInstruction?.parsed || null
 
+    // Known token symbols (expand as needed)
+    const TOKEN_SYMBOLS = {
+      So11111111111111111111111111111111111111112: 'SOL', // Wrapped SOL
+      EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v: 'USDC',
+      Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB: 'USDT',
+      GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv: 'GET',
+      // Add more tokens here...
+    }
+
+    // Helper to resolve symbol
+    const getSymbolFromMint = mint => TOKEN_SYMBOLS[mint] || 'UNKNOWN'
+
     // Helper function to get wallet from token account
     const getWalletFromTokenAccount = async (tokenAccount) => {
       try {
@@ -53,7 +65,8 @@ export default defineEventHandler(async (event) => {
           sourceWallet,
           destinationWallet,
           amount: info.tokenAmount?.uiAmountString || String(info.amount),
-          currency: info.mint,
+          mint: info.mint, // Mint address
+          symbol: getSymbolFromMint(info.mint), // Human-friendly symbol
         }
         break
       }
@@ -65,7 +78,8 @@ export default defineEventHandler(async (event) => {
           sourceWallet: info.source,
           destinationWallet: info.destination,
           amount: Number(info.lamports) / 1e9, // convert lamports to SOL
-          currency: 'SOL',
+          mint: 'So11111111111111111111111111111111111111112', // Wrapped SOL mint
+          symbol: 'SOL',
         }
         break // exit loop, only first transfer
       }
