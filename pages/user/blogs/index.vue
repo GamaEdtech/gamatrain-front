@@ -5,7 +5,13 @@
       <div class="d-flex align-center">
         <div class="toggle-container">
           <v-btn
-            v-for="tab in ['Draft', 'Review', 'Confirmed', 'Rejected', 'Deleted']"
+            v-for="tab in [
+              'Draft',
+              'Review',
+              'Confirmed',
+              'Rejected',
+              'Deleted',
+            ]"
             :key="tab"
             :class="{ 'active-tab': activeTab === tab }"
             class="toggle-btn"
@@ -48,7 +54,14 @@
           @keydown.enter="handleSearchQuery"
         />
         <span class="item-count grey--text">
-          {{ searchQuery ? `${tableItems.length} of ${totalRecords}` : totalRecords }} Item{{ (searchQuery ? tableItems.length : totalRecords) !== 1 ? 's' : '' }}
+          {{
+            searchQuery
+              ? `${tableItems.length} of ${totalRecords}`
+              : totalRecords
+          }}
+          Item{{
+            (searchQuery ? tableItems.length : totalRecords) !== 1 ? "s" : ""
+          }}
         </span>
       </div>
     </div>
@@ -68,7 +81,11 @@
         class="blog-table"
         item-key="id"
         :loading="loading"
-        :no-data-text="searchQuery ? `No blogs found for '${searchQuery}'` : 'No blogs available'"
+        :no-data-text="
+          searchQuery
+            ? `No blogs found for '${searchQuery}'`
+            : 'No blogs available'
+        "
       >
         <!-- Title column with avatar -->
         <template #[`item.title`]="{ item }">
@@ -104,7 +121,7 @@
         <template #[`item.view`]="{ item }">
           <v-btn
             variant="text"
-            :to="`/blogv2/${item.id}/${$slugGenerator(item.title)}`"
+            :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
             target="_blank"
             icon
             small
@@ -264,7 +281,9 @@ const handleDelete = async () => {
     }
     catch (error) {
       console.error('Error deleting blog:', error)
-      $toast.error(error?.response?.data?.errors?.[0]?.message || 'Failed to delete blog.')
+      $toast.error(
+        error?.response?.data?.errors?.[0]?.message || 'Failed to delete blog.',
+      )
     }
   }
   itemToDelete.value = null

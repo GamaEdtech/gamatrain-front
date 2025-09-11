@@ -1,121 +1,150 @@
 <template>
-  <v-container
-    v-if="error"
-    id="blog"
-  >
-    <v-row>
-      <h1 class="gama-text-h3 font-weight-bold">
+  <v-container class="main-blog-div">
+    <v-row v-if="error">
+      <h1 class="text-h3 font-weight-bold">
         Pleas Try Again Later.
       </h1>
     </v-row>
-  </v-container>
-  <v-container
-    v-else
-    id="blog"
-  >
-    <v-row>
-      <v-col cols="12">
-        <div id="general-data-holder">
-          <div id="general-data">
-            <h1 class="gama-text-h3 font-weight-bold">
-              {{ contentData.title }}
-            </h1>
+    <v-row v-else>
+      <v-col
+        cols="12"
+        class="d-flex flex-column bg-primary-gray-100 pa-6 rounded-lg mt-4"
+      >
+        <div class="w-100 d-flex flex-column align-center">
+          <h1 class="w-100 text-h4 text-sm-h3 text-md-h2 font-weight-bold">
+            {{ contentData.title }}
+          </h1>
+          <div
+            v-if="contentData.tags && contentData.tags.length > 0"
+            class="w-100 d-flex flex-wrap align-center ga-2 mt-4"
+          >
             <v-chip
-              :x-small="xs"
-              :small="sm"
-              :to="`/blog?cat=${contentData.cat}`"
+              v-for="(tag, index) in contentData.tags"
+              :key="index"
+              :to="`/blog?page=1&cat=${tag.id}`"
+              class="text-h5 font-weight-bold pa-3"
             >
-              {{ contentData.cat_title }}
+              {{ tag.name }}
             </v-chip>
-
-            <figure>
-              <!-- <NuxtImg
-                id="blog-img"
-                :src="contentData.pic"
-                :alt="contentData.title"
-                sizes="xs:300,sm:300px,md:600px, 730px"
-                placeholder
-              /> -->
-              <v-img
-                id="blog-img"
-                cover
-                :src="contentData.pic"
-                :alt="contentData.title"
-              />
-              <figcaption id="general-data-footer">
-                <div
-                  id="autor-holder"
-                  class="d-flex align-center"
-                >
-                  <v-img
-                    :src="contentData.avatar"
-                    width="30px"
-                    height="30px"
-                  />
-                  <!-- <NuxtImg width="30px" :src="contentData.avatar" placeholder /> -->
-                  <span class="gama-text-overline">{{ contentData.first_name }}
-                    {{ contentData.last_name }}</span>
-                </div>
-                <div id="date-holder">
-                  <v-icon
-                    class="pr-6"
-                    @click="share"
-                  >
-                    mdi-share-variant
-                  </v-icon>
-                  <v-icon> mdi-eye </v-icon>
-                  <span class="gama-text-overline pr-6">
-                    {{ contentData.views }}
-                  </span>
-                  <v-icon> mdi-calendar-blank-outline </v-icon>
-                  <span class="gama-text-overline">
-                    {{ $dayjs(contentData.subdate).format("YYYY-MM-DD") }}
-                  </span>
-                </div>
-              </figcaption>
-            </figure>
+          </div>
+        </div>
+        <div class="w-100 main-image-blog-div mt-4">
+          <img
+            v-if="contentData.imageUri"
+            class="w-100 h-100 rounded-lg main-blog-img"
+            :src="
+              contentData.imageUri
+                ? contentData.imageUri.replace(/^http:\/\//, 'https://')
+                : '/default-blog-image.jpg'
+            "
+            :alt="contentData.title"
+          >
+        </div>
+        <div
+          class="w-100 d-flex flex-wrap align-center justify-space-between mt-2 ga-3 ga-sm-0"
+        >
+          <div class="w-100 w-sm-50 d-flex align-center ga-2">
+            <v-img
+              :src="
+                contentData.authorAvatar
+                  ? contentData.authorAvatar
+                  : '/images/member/avatar.svg'
+              "
+              width="30"
+              max-width="30"
+              height="30"
+              rounded="circle"
+            />
+            <span class="text-subtitle-1 font-weight-bold">{{
+              contentData.creationUser
+                ? contentData.creationUser
+                : "Unknown Author"
+            }}</span>
+          </div>
+          <div
+            class="w-100 w-sm-50 d-flex align-center justify-start justify-sm-end ga-3"
+          >
+            <v-icon
+              color="#667085"
+              @click="share"
+            >
+              md:share
+            </v-icon>
+            <div class="d-flex align-center ga-1">
+              <v-icon color="#667085">
+                md:visibility
+              </v-icon>
+              <span class="gama-text-overline">
+                {{ contentData.views || 0 }}
+              </span>
+            </div>
+            <div class="d-flex align-center ga-1">
+              <v-icon color="#667085">
+                md:calendar_month
+              </v-icon>
+              <span class="gama-text-overline">
+                {{ $dayjs(contentData.publishDate).format("YYYY-MM-DD") }}
+              </span>
+            </div>
           </div>
         </div>
       </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <div id="blog-body">
-          <div
-            id="blog-describe"
-            v-html="contentData.body"
-          />
-
-          <div
-            v-if="contentData.tags"
-            id="blog-tags"
+      <v-col
+        cols="12"
+        class="d-flex flex-column mt-6"
+      >
+        <div
+          id="blog-describe"
+          v-html="contentData.body"
+        />
+      </v-col>
+      <v-col
+        v-if="contentData.keywords"
+        cols="12"
+        class="d-flex justify-center ga-1 flex-wrap"
+      >
+        <v-btn
+          v-for="(item, index) in contentData.keywords.split(',')"
+          :key="index"
+          :to="`/blog/${blogId}/${contentData.slug}`"
+          variant="plain"
+          class="text-h5 font-weight-bold"
+          :x-small="xs"
+          :small="sm"
+        >
+          #{{ item }}
+        </v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        class="d-flex flex-column ga-3 align-center justify-center"
+      >
+        <p class="text-h4 mb-4">
+          Did you like this article?
+        </p>
+        <div class="d-flex align-center ga-2">
+          <v-btn
+            icon
+            width="40"
+            height="40"
+            flat
+            color="#919491"
           >
-            <v-btn
-              v-for="(item, index) in contentData.tags"
-              :key="index"
-              :to="`/blog/${contentData.id}/${$slugGenerator(
-                contentData.title,
-              )}`"
-              plain
-              :x-small="xs"
-              :small="sm"
-            >
-              #{{ item }}
-            </v-btn>
-          </div>
-          <div id="blog-like-section">
-            <p class="gama-text-h6">
-              Did you like this article?
-            </p>
-            <div id="like-area">
-              <div class="btn dislike-btn">
-                <v-icon> mdi-thumb-down </v-icon>
-              </div>
-              <div class="btn like-btn">
-                <v-icon> mdi-thumb-up </v-icon>
-              </div>
-            </div>
-          </div>
+            <v-icon color="white">
+              md:thumb_down
+            </v-icon>
+          </v-btn>
+          <v-btn
+            icon
+            width="40"
+            height="40"
+            flat
+            color="primary"
+          >
+            <v-icon color="white">
+              md:thumb_up
+            </v-icon>
+          </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -126,28 +155,82 @@
 import { useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 
-const { $slugGenerator } = useNuxtApp()
+const { $toast } = useNuxtApp()
 const route = useRoute()
 const blogId = route.params.id
 const { xs, sm } = useDisplay()
-const requestURL = ref(useRequestURL().href)
+const requestURL = ref(useRequestURL().host)
 const { data: contentData, error } = await useAsyncData(
   `blog-${blogId}`,
-  () => $fetch(`/api/v1/blogs/${blogId}`),
+  () => $fetch(`/api/v2/blogs/posts/${blogId}`),
   {
-    transform: (response) => {
-      return response.status === 1 ? response.data : []
-    },
+    transform: response => response.data,
   },
 )
 
 // SEO
 useHead({
-  title: contentData.value?.title,
+  title: contentData.value?.title || 'Blog Post',
+  meta: [
+    {
+      hid: 'apple-mobile-web-app-title',
+      name: 'apple-mobile-web-app-title',
+      content: contentData.value?.title || 'Blog Post',
+    },
+    {
+      hid: 'og:title',
+      name: 'og:title',
+      content: contentData.value?.title || 'Blog Post',
+    },
+    {
+      hid: 'og:site_name',
+      name: 'og:site_name',
+      content: 'GamaTrain',
+    },
+    {
+      hid: 'description',
+      name: 'description',
+      content: contentData.value?.summary || 'Read this blog post on Gamatrain',
+    },
+    {
+      hid: 'og:description',
+      name: 'og:description',
+      content: contentData.value?.summary || 'Read this blog post on Gamatrain',
+    },
+    {
+      property: 'og:image',
+      content: contentData.value?.imageUri.replace(/^http:\/\//, 'https://'),
+    },
+    {
+      hid: 'twitter:card',
+      name: 'twitter:card',
+      content: 'summary_large_image',
+    },
+    {
+      hid: 'twitter:title',
+      name: 'twitter:title',
+      content: contentData.value?.title || 'Blog Post',
+    },
+    {
+      hid: 'twitter:description',
+      name: 'twitter:description',
+      content: contentData.value?.summary || 'Read this blog post on Gamatrain',
+    },
+    {
+      hid: 'twitter:image',
+      name: 'twitter:image',
+      content: contentData.value?.imageUri?.replace(/^http:\/\//, 'https://'),
+    },
+    {
+      hid: 'keywords',
+      name: 'keywords',
+      content: contentData.value?.keywords || '',
+    },
+  ],
   link: [
     {
       rel: 'canonical',
-      href: requestURL.value,
+      href: `${requestURL.value}/blog/${blogId}/${contentData.value.slug}`,
     },
   ],
 })
@@ -158,7 +241,7 @@ const share = async () => {
       await navigator.share({
         title: contentData.value.title,
         text: contentData.value.body,
-        url: `https://gamatrain.com/blog/${contentData.value.id}`,
+        url: `https://gamatrain.com/blog/${blogId}`,
       })
     }
     catch (error) {
@@ -166,643 +249,135 @@ const share = async () => {
     }
   }
   else {
-    console.warn('Share API is not supported in this browser')
+    try {
+      await navigator.clipboard.writeText(requestURL.value)
+      $toast.success('Link copied to clipboard!')
+    }
+    catch (error) {
+      console.warn(
+        'Share API and clipboard API are not supported in this browser',
+        error,
+      )
+      $toast.info('Share feature is not supported in this browser')
+    }
   }
 }
 </script>
 
 <style>
-#blog {
+.main-blog-div {
   margin-top: 64px;
-  max-width: 79.4rem !important;
+  min-height: 100vh;
+  max-width: 800px !important;
+}
+.main-image-blog-div {
+  min-height: 300px;
+  max-height: 600px;
+}
+.main-blog-img {
+  object-fit: fill;
+}
+@media (min-width: 960px) {
+  .main-blog-div {
+    margin-top: 6.4rem;
+  }
+}
+
+#blog-describe {
+  margin-bottom: 4.8rem !important;
+  width: 98%;
+  margin: auto auto 8.8rem auto;
 
   h2 {
-    font-size: 2rem !important;
+    font-family: Inter;
+    font-size: 3rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    margin-top: 2.4rem;
+    margin-bottom: 2.4rem;
   }
+
   h3 {
-    font-size: 1.8rem !important;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e1e2e3;
+    font-family: Inter;
+    font-size: 2.8rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
   }
+
   h4 {
-    font-size: 1.5rem !important;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    font-family: Inter;
+    font-size: 2.4rem;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+  }
+
+  h5 {
+    font-family: Inter;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+
+  h6 {
+    font-family: Inter;
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
   }
 
   p {
+    color: rgba(36, 41, 47, 0.8);
+    font-family: Inter;
     font-size: 1.4rem !important;
-    line-height: 2.5rem !important;
-  }
-  #general-data-holder {
-    padding-bottom: 8.7rem;
-
-    #general-data {
-      min-height: 25rem;
-      max-height: 25rem;
-      flex-shrink: 0;
-      padding: 3.2rem 1.2rem 4.2rem 1.2rem;
-      border-radius: 1rem;
-      background: rgba(167, 177, 194, 0.1);
-      position: relative;
-
-      .gama-text-h1 {
-        margin-bottom: 0.4rem;
-        color: #24292f;
-      }
-
-      .v-chip {
-        color: #fff;
-        float: right;
-        margin-bottom: 1rem;
-        background: #a7b1c2;
-        padding: 0.4rem 1.2rem;
-      }
-      .v-chip.v-chip--size-default {
-        font-size: 14px;
-      }
-
-      #blog-img {
-        height: auto;
-        width: 100%;
-        left: 0;
-        right: 0;
-        margin: auto;
-        border-radius: 1rem;
-      }
-    }
+    font-style: normal;
+    font-weight: 400 !important;
+    line-height: 2.4rem;
+    margin-bottom: 1rem;
   }
 
-  #general-data-footer {
-    padding: 0.8rem 0.2rem 2.9rem 0.2rem;
-    width: 100%;
-    height: 4.4rem;
-    margin-bottom: 3.4rem;
-
-    #autor-holder {
-      float: left;
-      position: relative;
-
-      .gama-text-overline {
-        color: #24292f;
-        padding-left: 2.4rem;
-      }
-
-      > img {
-        position: absolute;
-        height: 2rem;
-        width: 2rem;
-        top: 0.2rem;
-        border-radius: 50%;
-      }
-    }
-
-    #date-holder {
-      float: right;
-      display: flex;
-      align-items: center;
-
-      .v-icon {
-        font-size: 1.8rem;
-        color: #a7b1c2;
-        margin-right: 6px;
-        margin-top: 2px;
-      }
-
-      .gama-text-overline {
-        color: #a7b1c2;
-      }
-    }
+  ul {
+    color: rgba(36, 41, 47, 0.8);
+    font-family: Inter;
+    font-size: 1.4rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 2.4rem;
   }
-
-  #blog-describe {
-    margin-bottom: 4.8rem !important;
-    width: 98%;
-    margin: auto auto 8.8rem auto;
-
-    > h2 {
-      font-family: Inter;
-      font-size: 3rem;
-      font-style: normal;
-      font-weight: 700;
-      line-height: normal;
-      margin-top: 2.4rem;
-      margin-bottom: 2.4rem;
-    }
-
-    > h3 {
-      font-family: Inter;
-      font-size: 2.8rem;
-      font-style: normal;
-      font-weight: 500;
-      line-height: normal;
-    }
-
-    > h4 {
-      font-family: Inter;
-      font-size: 2.4rem;
-      font-style: normal;
-      font-weight: 800;
-      line-height: normal;
-    }
-
-    > h5 {
-      font-family: Inter;
-      font-size: 2rem;
-      font-style: normal;
-      font-weight: 500;
-      line-height: normal;
-    }
-
-    > h6 {
-      font-family: Inter;
-      font-size: 1.6rem;
-      font-style: normal;
-      font-weight: 500;
-      line-height: normal;
-    }
-
-    > p {
-      color: rgba(36, 41, 47, 0.8);
-      font-family: Inter;
-      font-size: 1.4rem !important;
-      font-style: normal;
-      font-weight: 400 !important;
-      line-height: 2.4rem;
-      margin-bottom: 1rem;
-    }
-
-    > ul {
-      color: rgba(36, 41, 47, 0.8);
-      font-family: Inter;
-      font-size: 1.4rem;
-      font-style: normal;
-      font-weight: 400;
-      line-height: 2.4rem;
-    }
-  }
-
-  #blog-describe img {
+  img {
     border-radius: 2rem;
     margin-top: 2rem;
     margin-bottom: 1rem;
     height: auto;
     max-width: 100%;
   }
-
-  #blog-tags {
-    text-align: center;
-    margin-bottom: 4.8rem;
-    .v-btn {
-      color: white;
-      box-shadow: none;
-      .v-btn__content {
-        color: #7f8a9c;
-        font-family: Inter;
-        font-size: 1.2rem;
-        font-style: normal;
-        font-weight: 800;
-        line-height: normal;
-        text-transform: none !important;
-      }
-    }
-  }
-
-  #blog-like-section {
-    text-align: center;
-    margin-bottom: 4.8rem;
-
-    .gama-text-h6 {
-      margin-bottom: 2.4rem;
-    }
-
-    #like-area {
-      width: 7.2rem;
-      margin: auto;
-      display: flex;
-
-      .btn {
-        height: 2.4rem;
-        width: 2.4rem;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-
-        .v-icon {
-          color: white;
-          font-size: 1.2rem;
-        }
-      }
-
-      .dislike-btn {
-        background: #919491;
-        margin-right: 1.2rem;
-      }
-
-      .like-btn {
-        background: #ffb600;
-      }
-    }
-  }
 }
 
 @media (min-width: 600px) {
-  #blog {
-    margin-top: 64px;
-
-    h2 {
-      font-size: 3rem !important;
-    }
-    h3 {
-      font-size: 2.5rem !important;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
-    h4 {
-      font-size: 2rem !important;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-    }
+  #blog-describe {
+    margin-bottom: 6.4rem;
+    width: 98%;
+    display: block;
+    margin: auto auto 6.8rem auto;
 
     p {
-      font-size: 1.7rem !important;
-      line-height: 2.5rem !important;
-    }
-    #general-data-holder {
-      padding-bottom: 16rem;
-
-      #general-data {
-        min-height: 34rem;
-        max-height: 34rem;
-        flex-shrink: 0;
-        padding: 2.4rem 1.2rem 17.4rem 1.2rem;
-        border-radius: 1rem;
-        background: rgba(167, 177, 194, 0.1);
-        position: relative;
-
-        .gama-text-h1 {
-          margin-bottom: 0.4rem;
-          color: #24292f;
-        }
-
-        .v-chip {
-          margin-bottom: 0.8rem;
-          padding: 0.8rem 1.6rem;
-        }
-
-        #blog-img {
-          height: auto;
-          width: 100%;
-          margin: auto;
-          border-radius: 1rem;
-        }
-      }
-    }
-
-    #general-data-footer {
-      padding: 0.8rem 0.2rem 2.9rem 0.2rem;
-
-      width: 100%;
-      height: 4.4rem;
-      margin: auto auto 4.8rem auto;
-
-      #autor-holder {
-        float: left;
-        position: relative;
-
-        .gama-text-overline {
-          color: #24292f;
-          padding-left: 2.4rem;
-        }
-
-        > img {
-          position: absolute;
-          height: 2rem;
-          width: 2rem;
-          top: 0.2rem;
-          border-radius: 50%;
-        }
-      }
-
-      #date-holder {
-        float: right;
-
-        .v-icon {
-          font-size: 1.8rem;
-          color: #a7b1c2;
-        }
-      }
-    }
-
-    #blog-describe {
-      margin-bottom: 6.4rem;
-      width: 98%;
-      display: block;
-      margin: auto auto 6.8rem auto;
-
-      > h2 {
-        font-family: Inter;
-        font-size: 3rem;
-        font-style: normal;
-        font-weight: 700;
-        line-height: normal;
-        margin-top: 2.4rem;
-        margin-bottom: 2.4rem;
-      }
-
-      > h3 {
-        font-family: Inter;
-        font-size: 2.8rem;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
-      }
-
-      > h4 {
-        font-size: 2.6rem;
-        font-style: normal;
-        font-weight: 800;
-        line-height: normal;
-      }
-
-      > h5 {
-        font-size: 2rem;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
-      }
-
-      > h6 {
-        font-size: 1.6rem;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
-      }
-
-      > p {
-        font-size: 1.6rem !important;
-        font-style: normal;
-        font-weight: 400 !important;
-        line-height: 2.4rem;
-        margin-bottom: 1rem;
-      }
-
-      > ul {
-        font-size: 1.6rem;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 2.4rem;
-      }
-    }
-
-    #blog-describe img {
-      border-radius: 2rem;
-      margin-top: 2rem;
+      font-size: 1.6rem !important;
+      font-style: normal;
+      font-weight: 400 !important;
+      line-height: 2.4rem;
       margin-bottom: 1rem;
-      height: auto;
-      max-width: 100%;
     }
 
-    #blog-tags {
-      margin-bottom: 6.4rem;
-      .v-btn {
-        color: white;
-        .v-btn__content {
-          font-size: 1.6rem;
-        }
-      }
+    ul {
+      font-size: 1.6rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 2.4rem;
     }
-
-    #blog-like-section {
-      text-align: center;
-      margin-bottom: 6.4rem;
-
-      .gama-text-h6 {
-        margin-bottom: 2.4rem;
-      }
-
-      #like-area {
-        width: 8.8rem;
-        margin: auto;
-        display: flex;
-
-        .btn {
-          height: 3.2rem;
-          width: 3.2rem;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-
-          .v-icon {
-            color: white;
-            font-size: 1.6rem;
-          }
-        }
-
-        .dislike-btn {
-          background: #919491;
-          margin-right: 1.2rem;
-        }
-
-        .like-btn {
-          background: #ffb600;
-        }
-      }
-    }
-  }
-}
-
-@media (min-width: 960px) {
-  #blog {
-    margin-top: 6.4rem;
-    #general-data-holder {
-      padding-bottom: 18rem;
-
-      #general-data {
-        min-height: 44rem;
-        max-height: 44rem;
-        padding: 4.8rem 1.6rem 4.8rem 1.6rem;
-
-        .gama-text-h1 {
-          color: #24292f;
-        }
-
-        .v-chip {
-          margin-bottom: 0.8rem;
-          padding: 0.8rem 1.8rem;
-        }
-
-        .gama-text-body1 {
-          margin: 2.4rem auto 2.4rem auto;
-        }
-
-        .gama-text-subtitle1 {
-          color: #a7b1c2;
-          width: 100%;
-          text-align: right;
-          margin-bottom: 1.8rem;
-          padding-right: 1.6rem;
-        }
-
-        #blog-img {
-          width: 100%;
-          height: auto;
-          /* bottom: -23rem; */
-        }
-      }
-    }
-
-    #general-data-footer {
-      padding: 0.8rem 0 2.9rem 0;
-
-      width: 97%;
-      margin: auto auto 6.4rem auto;
-      height: 4.4rem;
-
-      #autor-holder {
-        float: left;
-
-        .gama-text-overline {
-          padding-left: 2.8rem;
-        }
-
-        > img {
-          position: absolute;
-          height: 2.4rem;
-          width: 2.4rem;
-          top: -0.2rem;
-          border-radius: 50%;
-        }
-      }
-
-      #date-holder {
-        float: right;
-      }
-    }
-
-    #blog-describe {
-      margin-bottom: 10rem !important;
-
-      > h2 {
-        font-size: 4.4rem;
-        font-style: normal;
-        font-weight: 700;
-        line-height: normal;
-        margin-top: 2.4rem;
-        margin-bottom: 2.4rem;
-      }
-
-      > h3 {
-        font-size: 3.6rem;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
-      }
-
-      > h4 {
-        font-size: 3rem;
-        font-style: normal;
-        font-weight: 800;
-        line-height: normal;
-      }
-
-      > h5 {
-        font-size: 2.4rem;
-        font-style: normal;
-        font-weight: 500;
-        line-height: normal;
-      }
-
-      > h6 {
-        font-size: 2rem;
-        font-style: normal;
-        font-weight: 600;
-        line-height: normal;
-      }
-
-      > p {
-        font-size: 2rem !important;
-        font-style: normal;
-        font-weight: 400 !important;
-        line-height: 3.2rem;
-        margin-bottom: 1rem;
-      }
-
-      > ul {
-        font-family: Inter;
-        font-size: 2rem;
-        font-style: normal;
-        font-weight: 400;
-        line-height: 3.2rem;
-      }
-    }
-
-    #blog-describe img {
-      border-radius: 2rem;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
-      height: auto;
-      max-width: 100%;
-    }
-
-    #blog-tags {
-      margin-bottom: 10rem;
-      .v-btn {
-        .v-btn__content {
-          font-size: 1.8rem;
-        }
-      }
-    }
-
-    #blog-like-section {
-      text-align: center;
-      margin-bottom: 10rem;
-
-      .gama-text-h6 {
-        margin-bottom: 4.8rem;
-      }
-
-      #like-area {
-        width: 12rem;
-        margin: auto;
-        display: flex;
-
-        .btn {
-          height: 4.8rem;
-          width: 4.8rem;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-
-          .v-icon {
-            color: white;
-          }
-        }
-
-        .dislike-btn {
-          background: #919491;
-          margin-right: 1.2rem;
-        }
-
-        .like-btn {
-          background: #ffb600;
-        }
-      }
-    }
-  }
-}
-
-@media (min-width: 1264px) {
-  #blog {
-    margin-top: 6.4rem;
   }
 }
 </style>

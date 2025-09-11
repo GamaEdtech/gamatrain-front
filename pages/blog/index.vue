@@ -17,9 +17,7 @@
         <v-card
           v-else-if="featuredItems[0]"
           flat
-          :to="`/blog/${featuredItems[slideIndex].id}/${$slugGenerator(
-            featuredItems[0].title,
-          )}`"
+          :to="`/blog/${featuredItems[slideIndex].id}/${featuredItems[0].slug}`"
           class="ma-1"
         >
           <v-card>
@@ -33,7 +31,12 @@
             <v-img
               width="880px"
               height="500px"
-              :src="featuredItems[slideIndex].pic"
+              :src="
+                featuredItems[slideIndex].imageUri.replace(
+                  /^http:\/\//,
+                  'https://',
+                )
+              "
               :alt="featuredItems[slideIndex].title"
               cover
               :class="activeSlide ? 'active-img' : ''"
@@ -75,7 +78,7 @@
           :key="n"
           class="featured-item"
         >
-          <nuxt-link :to="`/blog/${item.id}/${$slugGenerator(item.title)}`">
+          <nuxt-link :to="`/blog/${item.id}/${item.slug}`">
             <div class="v-responsive v-img">
               <!-- <NuxtImg
                 width="100px"
@@ -89,14 +92,14 @@
                 height="100px"
                 cover
                 :alt="item.title"
-                :src="item.pic"
+                :src="item.imageUri.replace(/^http:\/\//, 'https://')"
                 class="mobile-image-feature nuxt-image"
               />
             </div>
           </nuxt-link>
 
           <div class="item-text">
-            <nuxt-link :to="`/blog/${item.id}/${$slugGenerator(item.title)}`">
+            <nuxt-link :to="`/blog/${item.id}/${item.slug}`">
               <h2 class="gama-text-caption">{{ item.title }}</h2>
             </nuxt-link>
           </div>
@@ -136,7 +139,7 @@
             >
               <v-card
                 flat
-                :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
+                :to="`/blog/${item.id}/${item.slug}`"
                 class="ma-1"
               >
                 <v-card>
@@ -152,7 +155,7 @@
                     width="350px"
                     height="350px"
                     cover
-                    :src="item.pic"
+                    :src="item.imageUri.replace(/^http:\/\//, 'https://')"
                     class="mobile-image-feature"
                   />
                   <v-card-title>
@@ -230,7 +233,7 @@
               :value="cat.id"
               @click="categoryValue = cat.id"
             >
-              {{ cat.title }}
+              {{ cat.name }}
             </v-chip>
           </v-chip-group>
         </v-card>
@@ -252,7 +255,7 @@
           >
             <v-card
               flat
-              :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
+              :to="`/blog/${item.id}/${item.slug}`"
             >
               <v-card class="ma-1">
                 <!-- <NuxtImg
@@ -267,7 +270,7 @@
                   height="160px"
                   cover
                   :alt="item.title"
-                  :src="item.pic"
+                  :src="item.imageUri.replace(/^http:\/\//, 'https://')"
                   class="nuxt-image"
                 />
                 <v-card-title>
@@ -277,7 +280,7 @@
                 </v-card-title>
               </v-card>
               <div class="gama-text-subtitle2">
-                <span v-html="truncateBody(item.body, 32)" />
+                <span v-html="truncateBody(item.summary, 32)" />
                 <span class="read-more">Read more</span>
               </div>
             </v-card>
@@ -288,7 +291,7 @@
             class="d-none d-sm-block"
           >
             <div class="d-flex">
-              <nuxt-link :to="`/blog/${item.id}/${$slugGenerator(item.title)}`">
+              <nuxt-link :to="`/blog/${item.id}/${item.slug}`">
                 <!-- <NuxtImg
                   width="180px"
                   height="135px"
@@ -301,19 +304,17 @@
                   height="135px"
                   cover
                   :alt="item.title"
-                  :src="item.pic"
+                  :src="item.imageUri.replace(/^http:\/\//, 'https://')"
                   class="nuxt-image"
                 />
               </nuxt-link>
 
               <div class="item-text">
-                <nuxt-link
-                  :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
-                >
+                <nuxt-link :to="`/blog/${item.id}/${item.slug}`">
                   <h2 class="gama-text-button">{{ item.title }}</h2>
                   <span
                     class="gama-text-subtitle2"
-                    v-html="truncateBody(item.body, 142)"
+                    v-html="truncateBody(item.summary, 142)"
                   />
                   <span class="gama-text-subtitle2 read-more">Read more</span>
                 </nuxt-link>
@@ -328,10 +329,10 @@
               <div class="date-holder">
                 <div>
                   <div class="gama-text-button d-block">
-                    {{ $dayjs(item.subdate).format("DD") }}
+                    {{ $dayjs(item.publishDate).format("DD") }}
                   </div>
                   <div class="gama-text-overline d-block">
-                    {{ $dayjs(item.subdate).format("MMM") }}
+                    {{ $dayjs(item.publishDate).format("MMM") }}
                   </div>
                 </div>
               </div>
@@ -349,7 +350,7 @@
                   class="top-sign"
                 />
                 <div class="gama-text-overline">
-                  {{ $dayjs(item.subdate).format("YYYY") }}
+                  {{ $dayjs(item.publishDate).format("YYYY") }}
                 </div>
                 <div class="bottom-sign" />
               </div>
@@ -438,7 +439,6 @@ const route = useRoute()
 const router = useRouter()
 
 const { lgAndUp, mdAndUp, xs, sm } = useDisplay()
-const { $slugGenerator } = useNuxtApp()
 
 // SEO
 useHead({
@@ -482,34 +482,6 @@ onBeforeUnmount(() => {
   window.removeEventListener('scroll', setupScrollListener)
 })
 
-// Featued blog section Start
-const { data: featuredItemsResponse, pending: loadingFeatured }
-  = await useAsyncData('featured', () =>
-    $fetch('/api/v1/blogs/search', { params: { featured: 1 } }),
-  )
-const featuredItems = ref(featuredItemsResponse.value?.data.list || [])
-const isLoading = ref(loadingFeatured.value)
-const featureVal = ref(0)
-const intervalId = ref(null)
-const slideIndex = ref(0)
-const activeSlide = ref(true)
-
-const handleAutoCycle = () => {
-  intervalId.value = setInterval(() => {
-    activeSlide.value = false
-    if (slideIndex.value == featuredItems.value.length - 1)
-      slideIndex.value = 0
-    else slideIndex.value += 1
-    setTimeout(() => {
-      activeSlide.value = true
-    }, 300)
-  }, 5000)
-}
-const stopInterval = () => {
-  clearInterval(intervalId.value) // Clear the interval using the interval ID
-}
-// Featued blog section End
-
 // blog serch section Start
 const searchLoading = ref(false)
 const searchQuery = ref(route.query.keyword || '')
@@ -547,10 +519,10 @@ watch(
 
 // category section start
 const { data: blogCategoriesResponse } = await useAsyncData('categories', () =>
-  $fetch('/api/v1/types/list', { params: { type: 'blog_cat' } }),
+  $fetch('/api/v2/tags/Post'),
 )
 
-const categoryValue = ref(route.query.cat || 0)
+const categoryValue = ref(route.query.cat ? Number(route.query.cat) : 0)
 const blogCategories = ref(blogCategoriesResponse.value?.data || [])
 
 watch(
@@ -588,13 +560,13 @@ const { data: initialBlogs, pending: loadingBlogsServer } = await useAsyncData(
   'blogListSSR',
   () => {
     const params = {
-      title: route.query.keyword || '',
-      cat: route.query.cat || 0,
-      page: 1,
-      perpage: pageSize.value,
+      'PagingDto.PageFilter.Size': pageSize.value,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      'PagingDto.PageFilter.Skip': 0,
+      'TagId': route.query.cat ? route.query.cat : null,
+      'Keyword': route.query.keyword || '',
     }
-
-    return $fetch('/api/v1/blogs/search', { params })
+    return $fetch('/api/v2/blogs/posts', { params })
   },
 )
 
@@ -616,25 +588,28 @@ const processBlogs = (list) => {
 
 if (initialBlogs.value?.data?.list) {
   blogList.value = processBlogs(initialBlogs.value.data.list)
-  pageCount.value = Math.ceil(initialBlogs.value.data.num / pageSize.value)
+  pageCount.value = Math.ceil(
+    initialBlogs.value.data.totalRecordsCount / pageSize.value,
+  )
 }
 
 const getBlogList = async () => {
-  const params = {}
+  const params = {
+    'PagingDto.PageFilter.Size': pageSize.value,
+    'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+    'PagingDto.PageFilter.Skip': (pageNum.value - 1) * pageSize.value,
+  }
   blogLoading.value = true
-  params.title = searchQuery.value
+  params.Keyword = searchQuery.value
 
   if (categoryValue.value != 0) {
-    params.cat = categoryValue.value
+    params.TagId = categoryValue.value
   }
 
-  params.page = pageNum.value
-  params.perpage = pageSize.value
-
   try {
-    const response = await $fetch('/api/v1/blogs/search', { params })
+    const response = await $fetch('/api/v2/blogs/posts', { params })
     const data = response.data
-    pageCount.value = Math.ceil(data.num / pageSize.value)
+    pageCount.value = Math.ceil(data.totalRecordsCount / pageSize.value)
 
     if (data.list.length === 0 && paginateStatus.value == false) {
       allDataLoaded.value = true // To end loop
@@ -690,13 +665,45 @@ const updateQueryParams = () => {
 }
 // Blog List Section End
 
+// Featued blog section Start
+// const { data: featuredItemsResponse, pending: loadingFeatured } =
+//   await useAsyncData("featured", () =>
+//     $fetch("/api/v1/blogs/search", { params: { featured: 1 } })
+//   );
+// const featuredItems = ref(featuredItemsResponse.value?.data.list || []);
+// const isLoading = ref(loadingFeatured.value);
+const featuredItems = ref(blogList.value.slice(0, 6))
+const isLoading = ref(blogLoading.value)
+const featureVal = ref(0)
+const intervalId = ref(null)
+const slideIndex = ref(0)
+const activeSlide = ref(true)
+
+const handleAutoCycle = () => {
+  intervalId.value = setInterval(() => {
+    activeSlide.value = false
+    if (slideIndex.value == featuredItems.value.length - 1)
+      slideIndex.value = 0
+    else slideIndex.value += 1
+    setTimeout(() => {
+      activeSlide.value = true
+    }, 300)
+  }, 5000)
+}
+const stopInterval = () => {
+  clearInterval(intervalId.value) // Clear the interval using the interval ID
+}
+// Featued blog section End
+
 const truncateBody = (text, fixedLength = null) => {
   let cutLength = fixedLength ?? 200
   if (!fixedLength) {
     if (sm.value) cutLength = 142
     else if (xs.value) cutLength = 38
   }
-  return text.length > cutLength ? text.slice(0, cutLength) + '...' : text
+  return text.length > cutLength
+    ? text.slice(0, cutLength) + '...'
+    : text + '...'
 }
 
 // Start Infinit Scroll Section
