@@ -1,136 +1,85 @@
 import { Connection, PublicKey } from '@solana/web3.js'
-import { AccountLayout } from '@solana/spl-token'
-
-interface TokenHolder {
-  wallet: string
-  amount: number
-}
+import { getAccount, getMint } from '@solana/spl-token'
 
 export default defineEventHandler(async (event) => {
-  // Set CORS headers for browser requests
-  setHeader(event, 'Access-Control-Allow-Origin', '*')
-  setHeader(event, 'Access-Control-Allow-Methods', 'GET, OPTIONS')
-  setHeader(event, 'Access-Control-Allow-Headers', 'Content-Type')
+  const body = await readBody(event)
+  const txid = body?.txid
+  if (!txid) return { error: 'Transaction ID (txid) is required' }
 
-  // Handle preflight requests
-  if (event.method === 'OPTIONS') {
-    return ''
-  }
+  const config = useRuntimeConfig()
+  const configuredRpcUrl
+    = config.public?.solanaRpcUrl || 'https://api.mainnet-beta.solana.com'
+
+  const connection = new Connection(configuredRpcUrl)
 
   try {
-    // GET token mint address from the existing configuration
-    const GET_TOKEN_MINT = 'GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv'
+    const parsed = await connection.getParsedTransaction(txid, 'confirmed')
+    if (!parsed) return { error: 'Transaction not found' }
 
-    // Get Solana RPC URL from runtime config or use default
-    const config = useRuntimeConfig()
-    const configuredRpcUrl = config.public?.solanaRpcUrl || 'https://api.mainnet-beta.solana.com'
+    const status = parsed.meta?.err ? 'Failed' : 'Success'
 
-    // Try multiple RPC endpoints if the first one fails
-    const rpcEndpoints = [
-      configuredRpcUrl,
-      'https://api.mainnet-beta.solana.com',
-      'https://solana-api.projectserum.com',
-      'https://rpc.ankr.com/solana',
-    ]
-
-    console.log('Fetching holders for token:', GET_TOKEN_MINT)
-
-    let connection: Connection | null = null
-    let workingRpc = ''
-
-    // Try each RPC endpoint until one works
-    for (const endpoint of rpcEndpoints) {
-      try {
-        console.log('Testing connection to:', endpoint)
-        const testConnection = new Connection(endpoint, {
-          commitment: 'confirmed',
-          confirmTransactionInitialTimeout: 30000,
-        })
-        await testConnection.getVersion()
-
-        connection = testConnection
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        workingRpc = endpoint
-        console.log('Successfully connected to:', endpoint)
+    // --- Memo ---
+    let memo: string | null = null
+    for (const ix of parsed.transaction.message.instructions) {
+      if (ix.parsed?.type === 'memo') {
+        memo = ix.parsed.info?.memo || null
         break
       }
-      catch (rpcError) {
-        console.log('Failed to connect to:', endpoint, rpcError)
-        continue
+    }
+
+    let SourceWallet: string | null = null
+    let DestinationWallet: string | null = null
+    let Amount = 0
+    let Currency = 'SOL'
+
+    // Look for SPL token transfer
+    const tokenInstr = parsed.transaction.message.instructions.find(
+      (ix: any) =>
+        ix.program === 'spl-token'
+        && ix.parsed
+        && (ix.parsed.type === 'transfer' || ix.parsed.type === 'transferChecked'),
+    )
+
+    if (tokenInstr) {
+      const info = tokenInstr.parsed.info
+      const sourceTokenAccount = new PublicKey(info.source)
+      const destTokenAccount = new PublicKey(info.destination)
+      const mintPubkey = new PublicKey(info.mint)
+
+      // Resolve source and destination owners using spl-token
+      const sourceAcc = await getAccount(connection, sourceTokenAccount)
+      const destAcc = await getAccount(connection, destTokenAccount)
+      const mintAcc = await getMint(connection, mintPubkey)
+
+      SourceWallet = sourceAcc.owner.toBase58()
+      DestinationWallet = destAcc.owner.toBase58()
+      Amount = Number(info.amount) / 10 ** mintAcc.decimals
+      Currency = mintPubkey.toBase58() // you can later map this to "USDC" etc.
+    }
+    else {
+      // Otherwise treat as SOL transfer
+      const sysInstr = parsed.transaction.message.instructions.find(
+        (ix: any) => ix.program === 'system' && ix.parsed?.type === 'transfer',
+      )
+      if (sysInstr) {
+        const info = sysInstr.parsed.info
+        SourceWallet = info.source
+        DestinationWallet = info.destination
+        Amount = Number(info.lamports) / 1e9
+        Currency = 'SOL'
       }
     }
 
-    if (!connection) {
-      throw new Error('Could not connect to any Solana RPC endpoint')
+    return {
+      Status: status,
+      Memo: memo,
+      SourceWallet,
+      DestinationWallet,
+      Amount,
+      Currency,
     }
-
-    // Convert mint address to PublicKey
-    const mintPublicKey = new PublicKey(GET_TOKEN_MINT)
-
-    // Get token supply and decimals
-    let tokenDecimals = 6 // Default based on our test, but we'll verify
-    try {
-      const supply = await connection.getTokenSupply(mintPublicKey)
-      tokenDecimals = supply.value.decimals
-      console.log(`Token supply: ${supply.value.uiAmount}, decimals: ${tokenDecimals}`)
-    }
-    catch (supplyError) {
-      console.error('Error getting token supply:', supplyError)
-      console.log('Continuing with default decimals...')
-    }
-
-    const holders: TokenHolder[] = []
-
-    // Get the largest token accounts (most reliable method)
-    try {
-      console.log('Getting largest token accounts...')
-      const largestAccounts = await connection.getTokenLargestAccounts(mintPublicKey)
-      console.log(`Found ${largestAccounts.value.length} largest accounts`)
-
-      for (const account of largestAccounts.value) {
-        if (account.uiAmount && account.uiAmount > 0) {
-          // We need to get the owner of this token account
-          try {
-            const accountInfo = await connection.getAccountInfo(new PublicKey(account.address))
-            if (accountInfo) {
-              const accountData = AccountLayout.decode(accountInfo.data)
-              const owner = accountData.owner.toBase58()
-
-              holders.push({
-                wallet: owner,
-                amount: Math.floor(account.uiAmount),
-              })
-            }
-          }
-          catch {
-            console.log('Error getting account info for:', account.address)
-          }
-        }
-      }
-    }
-    catch (largestError) {
-      console.error('Error getting largest accounts:', largestError)
-      throw largestError
-    }
-
-    // Sort by amount descending
-    holders.sort((a, b) => b.amount - a.amount)
-
-    console.log(`Returning ${holders.length} token holders`)
-
-    // Return the holders array as requested in the requirements
-    return holders
   }
-  catch (error) {
-    console.error('Error fetching token holders:', error)
-
-    // Return appropriate error response
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to fetch token holders',
-      data: {
-        error: error instanceof Error ? error.message : 'Unknown error',
-      },
-    })
+  catch (err: any) {
+    return { error: err?.message ?? String(err) }
   }
 })
