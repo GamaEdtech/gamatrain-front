@@ -129,6 +129,20 @@
 
     <common-crash-report ref="crash_report" />
 
+    <ClientOnly>
+      <v-container
+        v-if="relatedHasPapers"
+        class="py-0"
+      >
+        <common-related-portrait-content
+          page-type="paper"
+          page-name="Past Papers"
+          source="exam"
+          request="test"
+        />
+      </v-container>
+    </ClientOnly>
+
     <v-row
       justify="center"
       class="mt-10"
@@ -177,6 +191,7 @@ const galleryHelpData = ref({
 })
 
 const isAdsLoad = ref(false)
+const relatedHasPapers = ref(false)
 
 // Fetch the exam data
 async function fetchExamData() {
@@ -254,6 +269,28 @@ function updateGalleryData() {
     base: contentData.value?.base || '',
     course: contentData.value?.course || '',
     lesson: contentData.value?.lesson || '',
+  }
+}
+
+// Check for related pastpapers to decide whether to render the section
+async function checkRelatedPastPapers() {
+  try {
+    const res = await $fetch('/api/v1/recommendations/related', {
+      method: 'GET',
+      params: { source: 'exam', request: 'test', id: route.params.id },
+    })
+    const arrays = res?.data || {}
+    let found = false
+    for (const key in arrays) {
+      if (Array.isArray(arrays[key]) && arrays[key].length > 0) {
+        found = true
+        break
+      }
+    }
+    relatedHasPapers.value = found
+  }
+  catch (_err) {
+    relatedHasPapers.value = false
   }
 }
 
@@ -357,6 +394,10 @@ const openCrashReportDialog = () => {
   crash_report.value.dialog = true
   crash_report.value.form.type = 'test'
 }
+
+onMounted(() => {
+  checkRelatedPastPapers()
+})
 </script>
 
 <script>
