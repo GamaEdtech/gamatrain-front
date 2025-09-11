@@ -193,7 +193,7 @@
               color="#FFB300"
               class="text-white"
             >
-              <v-icon>mdi-magnify</v-icon>
+              <v-icon>md:search</v-icon>
             </v-btn>
           </template>
         </v-text-field>
