@@ -121,7 +121,7 @@
         <template #[`item.view`]="{ item }">
           <v-btn
             variant="text"
-            :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
+            :to="`/blog/${item.postId}/${$slugGenerator(item.title)}`"
             target="_blank"
             icon
             small
@@ -244,6 +244,7 @@ const fetchBlogs = async () => {
         date: item.creationDate || '',
         avatar: item.imageUri || '',
         summary: item.summary || '',
+        postId: item.postId || '',
       }))
 
       // Store all items and apply current search filter

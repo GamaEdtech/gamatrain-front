@@ -28,9 +28,7 @@
               placeholder
               :class="activeSlide ? 'active-img' : ''"
             /> -->
-            <v-img
-              width="880px"
-              height="500px"
+            <img
               :src="
                 featuredItems[slideIndex].imageUri.replace(
                   /^http:\/\//,
@@ -38,9 +36,8 @@
                 )
               "
               :alt="featuredItems[slideIndex].title"
-              cover
               :class="activeSlide ? 'active-img' : ''"
-            />
+            >
             <v-card-title>
               <span class="gama-text-h6">
                 {{ featuredItems[slideIndex].title }}
@@ -1531,7 +1528,7 @@ watch(
               transition: opacity 1s ease;
               width: 100%;
               height: 100%;
-              object-fit: cover;
+              object-fit: fill;
             }
           }
         }

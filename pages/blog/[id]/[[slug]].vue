@@ -16,13 +16,15 @@
           </h1>
           <div
             v-if="contentData.tags && contentData.tags.length > 0"
-            class="w-100 d-flex flex-wrap align-center ga-2 mt-4"
+            class="w-100 d-flex flex-wrap align-center justify-end ga-2 mt-4"
           >
             <v-chip
               v-for="(tag, index) in contentData.tags"
               :key="index"
               :to="`/blog?page=1&cat=${tag.id}`"
-              class="text-h5 font-weight-bold pa-3"
+              class="text-h5 text-white font-weight-bold pa-3"
+              color="#a7b1c2"
+              variant="flat"
             >
               {{ tag.name }}
             </v-chip>
