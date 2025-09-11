@@ -111,7 +111,7 @@
           v-show="!item.subMenuList"
           link
           :to="item.link"
-          class="custom-list-item rounded-lg mt-3"
+          class="rounded-lg mt-3"
         >
           <template #prepend>
             <span
@@ -141,7 +141,7 @@
           <template #activator="{ props }">
             <v-list-item
               v-bind="props"
-              class="custom-list-item rounded-lg mt-3"
+              :class="`${drawerRail ? `` : `custom-list-item`} rounded-lg mt-3`"
             >
               <template #prepend>
                 <span
@@ -195,6 +195,26 @@
           </v-list-item>
         </v-list-group>
       </div>
+
+      <v-list-item
+        link
+        class="rounded-lg mt-3"
+      >
+        <template #prepend>
+          <v-icon
+            class="primary-gray-600"
+            size="24"
+          >
+            md:exit_to_app
+          </v-icon>
+        </template>
+
+        <v-list-item-title
+          class="text-h5 font-medium primary-gray-500 line-height"
+        >
+          Logout
+        </v-list-item-title>
+      </v-list-item>
 
       <!-- <div
         v-if="!drawerRail"
