@@ -112,6 +112,7 @@
           block
           color="success"
           class="text-h5"
+          data-action-id="exam_start_login_required"
           @click="onLogin"
         >
           Start Exam{{ item.price > 0 ? " | $" + item.price : "" }}
@@ -125,6 +126,7 @@
           block
           color="success"
           class="text-h5"
+          data-action-id="exam_start_authenticated"
         >
           <span v-if="contentData.examUserData?.status === 1">
             Show result
@@ -139,18 +141,20 @@
           block
           color="primary"
           class="text-h5"
+          data-action-id="exam_download_word"
         >
           Download WORD{{ item.price > 0 ? " | $" + item.price : "" }}
         </v-btn>
 
         <v-btn
           v-else-if="key === 'pdf'"
-          :loading="downloadLoading && !isDownloading"
+          :loading="downloadLoading && !isDowsnloading"
           block
           color="#E60012"
           variant="flat"
           size="large"
           class="mb-2 text-h5 text-white font-weight-bold position-relative"
+          data-action-id="exam_download_pdf"
           @click="onDownload('pdf')"
         >
           <template v-if="isDownloading">
@@ -232,10 +236,25 @@ const lastUpdate = computed(() => {
 
 // Methods
 function onDownload(type) {
+  // Track the action click
+  const { trackDownloadClick } = useGtmTracking()
+  const route = useRoute()
+
+  trackDownloadClick(type, `Download ${type.toUpperCase()}`, route.path)
+
   emit('download', type)
 }
 
 function onLogin() {
+  // Track the action click
+  const { trackActionClick } = useGtmTracking()
+  const route = useRoute()
+
+  trackActionClick('exam_start_login_required', 'Start Exam (Login Required)', route.path, {
+    action_type: 'login_required',
+    exam_id: contentData.value.id,
+  })
+
   emit('login')
 }
 
