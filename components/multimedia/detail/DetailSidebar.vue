@@ -112,6 +112,7 @@
             class="mb-2 text-h5 text-white font-weight-bold position-relative"
             size="large"
             :loading="downloadLoading && !isDownloading"
+            data-action-id="multimedia_download"
             @click="startDownload"
           >
             <template v-if="isDownloading">
@@ -243,6 +244,12 @@ function handleShareSocial(platform) {
 }
 
 function startDownload() {
+  // Track the action click
+  const { trackDownloadClick } = useGtmTracking()
+  const route = useRoute()
+
+  trackDownloadClick(props.fileExt, `Download ${props.fileExt.toUpperCase()}`, route.path)
+
   emit('download', props.fileExt)
 }
 </script>
