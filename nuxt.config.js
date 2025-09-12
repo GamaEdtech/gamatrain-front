@@ -12,6 +12,8 @@ export default defineNuxtConfig({
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
       solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
       randomCoinApiKey: process.env.NUXT_PUBLIC_RANDOM_COIN_API_KEY,
+      // Google Tag Manager container ID (e.g., GTM-XXXXXXX)
+      gtmId: process.env.NUXT_PUBLIC_GTM_ID || '',
     },
   },
 
