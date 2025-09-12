@@ -17,7 +17,10 @@ export default defineEventHandler(async (event) => {
     const rpcUrl = useRuntimeConfig().public?.solanaRpcUrl || 'https://api.mainnet-beta.solana.com'
     const connection = new Connection(rpcUrl, 'confirmed')
 
-    const tx = await connection.getParsedTransaction(txid, 'confirmed')
+    const tx = await connection.getParsedTransaction(txid, {
+      commitment: 'confirmed',
+      maxSupportedTransactionVersion: 0, // allow version 0 transactions
+    })
     if (!tx) return { error: true, message: 'Transaction not found' }
 
     const status = tx.meta?.err ? 'Failed' : 'Success'
