@@ -1,12 +1,24 @@
 <script setup>
-const props = defineProps({
+const _props = defineProps({
   modelValue: Boolean,
-  searchType: String,
 })
 
-const searchVar = ref('')
-const searchStartDate = ref('')
-const searchEndDate = ref('')
+const searchParams = reactive({
+  name: null,
+  email: null,
+  startDate: null,
+  endDate: null,
+})
+
+const isSearchDisabled = computed(() => {
+  return !(
+    searchParams.name
+    || searchParams.email
+    || searchParams.startDate
+    || searchParams.endDate
+  )
+})
+
 const emit = defineEmits([
   'update:modelValue',
   'search',
@@ -16,21 +28,29 @@ const startMenu = ref(false)
 const endMenu = ref(false)
 
 const handleSearch = () => {
-  if (props.searchType === 'Name' || props.searchType === 'Email') {
-    emit('search', { type: props.searchType, value: searchVar.value })
-    searchVar.value = ''
-  }
-  else {
-    // convert to ISO before emitting
-    const startISO = searchStartDate.value ? new Date(searchStartDate.value).setHours(0, 0, 0, 0) : null
-    const endISO = searchEndDate.value ? new Date(searchEndDate.value).setHours(23, 59, 59, 999) : null
+  // Convert dates to ISO (or keep null if not selected)
+  const startISO = searchParams.startDate
+    ? new Date(searchParams.startDate).setHours(0, 0, 0, 0)
+    : null
+  const endISO = searchParams.endDate
+    ? new Date(searchParams.endDate).setHours(23, 59, 59, 999)
+    : null
 
-    emit('search', { type: props.searchType, start: startISO ? new Date(startISO).toISOString() : null,
-      end: endISO ? new Date(endISO).toISOString() : null })
-    searchStartDate.value = ''
-    searchEndDate.value = ''
+  const payload = {
+    name: searchParams.name || null,
+    email: searchParams.email || null,
+    startDate: startISO ? new Date(startISO).toISOString() : null,
+    endDate: endISO ? new Date(endISO).toISOString() : null,
   }
-  emit('update:modelValue', false) // close dialog after search
+
+  emit('search', payload)
+
+  searchParams.name = null
+  searchParams.email = null
+  searchParams.startDate = null
+  searchParams.endDate = null
+
+  emit('update:modelValue', false)
 }
 </script>
 
@@ -46,21 +66,28 @@ const handleSearch = () => {
           class="gtext-t4 bg-white flex-column d-flex align-center pt-12"
         >
           <p class="primary-gray-700 gtext-t3 font-weight-semibold mb-2">
-            Search by {{ props.searchType }}
+            Search
           </p>
         </v-card-title>
-        <v-card-text v-if="searchType == 'Name' || searchType == 'Email'">
+        <v-card-text>
           <label class="primary-gray-700 gtext-t6 font-weight-medium">
-            {{ type }}
+            Name
           </label>
           <v-text-field
-            v-model="searchVar"
+            v-model="searchParams.name"
             variant="solo"
             density="comfortable"
             class="mt-1"
           />
-        </v-card-text>
-        <v-card-text v-else>
+          <label class="primary-gray-700 gtext-t6 font-weight-medium">
+            Email
+          </label>
+          <v-text-field
+            v-model="searchParams.email"
+            variant="solo"
+            density="comfortable"
+            class="mt-1"
+          />
           <label class="primary-gray-700 gtext-t6 font-weight-medium">
             Start Date
           </label>
@@ -72,7 +99,7 @@ const handleSearch = () => {
           >
             <template #activator="{ props }">
               <v-text-field
-                v-model="searchStartDate"
+                v-model="searchParams.startDate"
                 readonly
                 variant="solo"
                 density="comfortable"
@@ -81,7 +108,7 @@ const handleSearch = () => {
               />
             </template>
             <v-date-picker
-              v-model="searchStartDate"
+              v-model="searchParams.startDate"
               color="primary"
               @update:model-value="() => startMenu = false"
             />
@@ -97,7 +124,7 @@ const handleSearch = () => {
           >
             <template #activator="{ props }">
               <v-text-field
-                v-model="searchEndDate"
+                v-model="searchParams.endDate"
                 readonly
                 variant="solo"
                 density="comfortable"
@@ -106,7 +133,7 @@ const handleSearch = () => {
               />
             </template>
             <v-date-picker
-              v-model="searchEndDate"
+              v-model="searchParams.endDate"
               color="primary"
               @update:model-value="() => endMenu = false"
             />
@@ -123,10 +150,7 @@ const handleSearch = () => {
           <v-btn
             variant="outlined"
             class="searchBtn"
-            :disabled="
-              (searchType === 'Name' || searchType === 'Email') && !searchVar
-                || searchType === 'Date' && (!searchStartDate || !searchEndDate)
-            "
+            :disabled="isSearchDisabled"
             @click="handleSearch"
           >
             Search

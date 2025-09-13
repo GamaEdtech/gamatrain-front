@@ -42,16 +42,8 @@ const page = ref(1)
 const pageCount = ref(0)
 const totalCount = ref(0)
 const selected = ref([])
-const searchMenu = ref(false)
-const searchType = ref(null)
 const searchFilterCard = ref(false)
 
-const showSearchdialog = (val) => {
-  searchMenu.value = false
-  searchType.value = val
-  searchFilterCard.value = true
-}
-// store search params in one place
 const searchParams = ref({
   commenterEmail: '',
   commenterName: '',
@@ -59,30 +51,17 @@ const searchParams = ref({
   endDate: '',
 })
 
-// call this from child emit
 const applySearch = (payload) => {
-  // reset all first
   searchParams.value = {
     commenterEmail: '',
     commenterName: '',
     startDate: '',
     endDate: '',
   }
-
-  // set only the one we need
-  if (payload.type === 'Email') {
-    searchParams.value.commenterEmail = payload.value
-  }
-
-  if (payload.type === 'Name') {
-    searchParams.value.commenterName = payload.value
-  }
-
-  if (payload.type === 'Date') {
-    searchParams.value.startDate = payload.start
-    searchParams.value.endDate = payload.end
-  }
-
+  searchParams.value.commenterEmail = payload.email
+  searchParams.value.commenterName = payload.name
+  searchParams.value.startDate = payload.startDate
+  searchParams.value.endDate = payload.endDate
   fetchComments()
 }
 
@@ -230,39 +209,13 @@ watch(filter, (_val) => {
           <v-icon
             small
             class="mr-2 gtext-t1"
-            @click="searchMenu = !searchMenu"
+            @click="searchFilterCard = !searchFilterCard"
           >
-            mdi-menu
+            mdi-magnify
           </v-icon>
         </v-btn>
-        <div
-          v-show="searchMenu"
-          class="actionMenuContainer"
-        >
-          <div class="py-1 actionMenuItems">
-            <button
-              class="w-full text-left px-4 py-2"
-              @click="showSearchdialog('Name')"
-            >
-              Search by Name
-            </button>
-            <button
-              class="w-full text-left px-4 py-2"
-              @click="selectAction(showSearchdialog('Email'))"
-            >
-              Search by Email
-            </button>
-            <button
-              class="w-full text-left px-4 py-2"
-              @click="selectAction(showSearchdialog('Date'))"
-            >
-              Search by Date
-            </button>
-          </div>
-        </div>
         <commentSearch
           v-model="searchFilterCard"
-          :search-type="searchType"
           @search="applySearch"
         />
 
