@@ -82,10 +82,9 @@ const formattedPrice = computed(() => {
 const fetchTokenPrice = async () => {
   try {
     const data = await $fetch(
-      'https://lite-api.jup.ag/price/v2?ids=GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv',
+      'https://lite-api.jup.ag/price/v3?ids=GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv',
     )
-    finalPrice.value = Object.values(data.data)[0]['price']
-
+    finalPrice.value = Object.values(data)?.[0]?.usdPrice ?? 0
     // Start animation after fetching the price
     animatePrice()
   }
