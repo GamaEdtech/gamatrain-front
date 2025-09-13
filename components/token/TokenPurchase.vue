@@ -391,7 +391,6 @@ const getTokenAmount = ref('')
 const equivalentCost = ref('')
 const selectedPayToken = ref(SOL_MINT)
 const swapping = ref(false)
-const currentPrice = ref(0)
 const _priceChange = ref<number | null>(null)
 const swapQuote = ref<SwapQuoteDetails | null>(null)
 const payTokenBalance = ref<number | null>(null)
@@ -567,7 +566,6 @@ onMounted(async () => {
       )
 
       // Fetch initial data
-      await fetchCurrentPrice()
       // if (isWalletConnected.value) {
       // await fetchBalances()
       // }
@@ -765,21 +763,6 @@ const toggleTradeMode = () => {
   tradeMode.value = isSellMode.value ? 'buy' : 'sell'
   errorMessage.value = null
   calculateEquivalentCost()
-}
-
-const fetchCurrentPrice = async () => {
-  try {
-    const response = await $fetch<{ data: Record<string, { price: number }> }>(
-      `https://lite-api.jup.ag/price/v2?ids=${GET_TOKEN_MINT}`,
-    )
-    if (response?.data && response.data[GET_TOKEN_MINT]) {
-      currentPrice.value = response.data[GET_TOKEN_MINT].price
-      // You can also fetch 24h change if available in the API
-    }
-  }
-  catch (error) {
-    console.error('Failed to fetch GET token price:', error)
-  }
 }
 
 const fetchBalances = async () => {
