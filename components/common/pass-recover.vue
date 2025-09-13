@@ -294,7 +294,7 @@ function closeDialog() {
   >
     <v-card>
       <v-card-title>
-        <span class="text-h5">Password recovery</span>
+        <span class="gtext-t3 d-flex justify-center pt-3">Password recovery</span>
       </v-card-title>
       <v-card-text>
         <v-row>
@@ -330,12 +330,14 @@ function closeDialog() {
                         name="request_identity"
                         rules="required"
                       > -->
+                    <label class="primary-gray-700 gtext-t6 font-weight-medium">
+                      Email
+                    </label>
                     <v-text-field
                       v-model="identity"
-                      dense
-                      label="Email"
+                      variant="outlined"
+                      density="comfortable"
                       :error-messages="errors"
-                      outlined
                     />
                     <!-- </validation-provider> -->
                   </v-col>
@@ -357,7 +359,8 @@ function closeDialog() {
                     lg="6"
                   >
                     <v-btn
-                      outlined
+                      class="gtext-t5"
+                      block
                       @click="closeDialog"
                     >
                       Cancel
@@ -372,6 +375,8 @@ function closeDialog() {
                       type="submit"
                       :loading="passRecoverLoading"
                       :disabled="invalid"
+                      class="gtext-t5"
+                      block
                     >
                       Recover
                     </v-btn>
@@ -393,7 +398,10 @@ function closeDialog() {
                   @finish="onFinish"
                 />
               </v-col>
-              <v-col cols="12">
+              <v-col
+                cols="12"
+                class="d-flex flex-column"
+              >
                 <v-divider class="my-3 text-center" />
                 <v-btn
                   plain
