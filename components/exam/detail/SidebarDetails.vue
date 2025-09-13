@@ -236,25 +236,10 @@ const lastUpdate = computed(() => {
 
 // Methods
 function onDownload(type) {
-  // Track the action click
-  const { trackDownloadClick } = useGtmTracking()
-  const route = useRoute()
-
-  trackDownloadClick(type, `Download ${type.toUpperCase()}`, route.path)
-
   emit('download', type)
 }
 
 function onLogin() {
-  // Track the action click
-  const { trackActionClick } = useGtmTracking()
-  const route = useRoute()
-
-  trackActionClick('exam_start_login_required', 'Start Exam (Login Required)', route.path, {
-    action_type: 'login_required',
-    exam_id: contentData.value.id,
-  })
-
   emit('login')
 }
 

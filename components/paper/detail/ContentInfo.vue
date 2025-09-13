@@ -466,25 +466,6 @@ const openCrashReport = () => {
 }
 
 const handleDownloadClick = async (type, extraId) => {
-  // Track the action click
-  const { trackDownloadClick } = useGtmTracking()
-  const route = useRoute()
-
-  // Get button text based on type
-  let buttonText = ''
-  if (type === 'q_word') buttonText = 'Download Question Doc'
-  else if (type === 'q_pdf') buttonText = 'Download Question Paper'
-  else if (type === 'a_file') {
-    const ext = props.contentData?.files?.answer?.ext
-    buttonText = ext === 'pdf' ? 'Download Mark Scheme' : 'Download Answer Doc'
-  }
-  else if (type === 'extra') {
-    const extra = props.contentData?.files?.extra?.find(e => e.id === extraId)
-    buttonText = `Download ${extra?.type_title || 'Extra'}`
-  }
-
-  trackDownloadClick(type, buttonText, route.path)
-
   // Set loading state immediately
   setLoadingState(type, true)
 

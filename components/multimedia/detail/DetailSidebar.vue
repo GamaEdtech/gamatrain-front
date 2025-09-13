@@ -244,12 +244,6 @@ function handleShareSocial(platform) {
 }
 
 function startDownload() {
-  // Track the action click
-  const { trackDownloadClick } = useGtmTracking()
-  const route = useRoute()
-
-  trackDownloadClick(props.fileExt, `Download ${props.fileExt.toUpperCase()}`, route.path)
-
   emit('download', props.fileExt)
 }
 </script>

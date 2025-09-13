@@ -12,8 +12,6 @@ export default defineNuxtConfig({
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
       solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
       randomCoinApiKey: process.env.NUXT_PUBLIC_RANDOM_COIN_API_KEY,
-      // Google Tag Manager container ID (e.g., GTM-XXXXXXX)
-      gtmId: process.env.NUXT_PUBLIC_GTM_ID || '',
     },
   },
 
@@ -21,7 +19,6 @@ export default defineNuxtConfig({
   modules: [
     'dayjs-nuxt',
     '@nuxt/eslint',
-    'nuxt-gtag',
     '@nuxt/image',
     '@vite-pwa/nuxt',
     'nuxt-og-image',
@@ -214,10 +211,6 @@ export default defineNuxtConfig({
 
   image: {
     domains: ['core.gamatrain.com'],
-  },
-
-  gtag: {
-    id: 'G-VLSLZJR0WK',
   },
 
   // Build configuration
