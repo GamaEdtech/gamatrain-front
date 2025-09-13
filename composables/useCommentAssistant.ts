@@ -4,6 +4,8 @@ interface SchoolData {
   stateTitle: string
   cityTitle: string
   webSite?: string
+  latitude?: number
+  longitude?: number
 }
 
 interface SchoolRatings {

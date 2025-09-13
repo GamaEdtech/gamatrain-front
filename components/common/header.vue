@@ -196,11 +196,15 @@ const route = useRoute()
 const router = useRouter()
 
 const _cookieToken = useCookie('authToken')
-const { user, _setUser, cleanUser } = useUser()
+const { user, _setUser } = useUser()
 
-const logout = () => {
-  cleanUser()
-  auth.logout()
+const logout = async () => {
+  try {
+    await auth.logout()
+  }
+  catch (error) {
+    console.error('Logout failed:', error)
+  }
 }
 
 onMounted(async () => {

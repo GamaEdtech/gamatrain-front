@@ -444,23 +444,39 @@ useHead(() => ({
   ],
 }))
 
+const ogImage = contentData.value?.defaultImageUri
+  ? contentData.value?.defaultImageUri.replace(/^http:\/\//, 'https://')
+  : null
+
 useSeoMeta({
   title: () => `${contentData.value?.name} | GamaTrain Schools`,
   description: () => metaDescription.value,
   ogTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
   ogDescription: () => metaDescription.value,
-  ogImage: () =>
-    contentData.value?.defaultImageUri || '/images/gamatrain-logo.png',
   ogUrl: () =>
     `${requestURL.value}/school/${contentData.value?.id}/${$slugGenerator(
       contentData?.value?.name,
     )}`,
   twitterTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
   twitterDescription: () => metaDescription.value,
-  twitterImage: () =>
-    contentData.value?.defaultImageUri || '/images/gamatrain-logo.png',
   twitterCard: 'summary_large_image',
+  ogImage: () => ogImage,
+  twitterImage: () => ogImage,
 })
+
+if (!ogImage) {
+  defineOgImageComponent('SchoolDetail', {
+    title: contentData.value?.name,
+    address:
+      contentData.value?.countryTitle
+      + ', '
+      + contentData.value?.stateTitle
+      + ', '
+      + contentData.value?.cityTitle,
+    phone: contentData.value?.phoneNumber,
+    email: contentData.value?.email,
+  })
+}
 
 watch(
   () => ratingDataRaw.value,

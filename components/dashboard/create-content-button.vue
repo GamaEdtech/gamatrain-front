@@ -13,7 +13,7 @@
         outlined
         class="px-2"
         :disabled="
-          user.group_id == 6 && button_list[index].class !== 'question_answer'
+          (user && user.group_id == 6) && button_list[index].class !== 'question_answer'
         "
       >
         <v-card-text class="px-0 px-md-4">

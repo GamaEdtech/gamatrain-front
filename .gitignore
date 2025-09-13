@@ -89,6 +89,7 @@ dist
 
 # IDE / Editor
 .idea
+.vscode/
 
 
 # macOS
@@ -101,5 +102,4 @@ OneSignalSDK*
 .vercel
 
 
-#Sitemap directory
-public/sitemap/
+

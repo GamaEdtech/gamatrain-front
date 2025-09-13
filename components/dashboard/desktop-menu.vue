@@ -27,7 +27,7 @@
                 color="#667085"
               >
                 <span class="text-h5">{{
-                  user.first_name[0].toUpperCase()
+                  (user?.first_name ? user.first_name[0].toUpperCase() : 'U')
                 }}</span>
               </v-avatar>
             </template>
@@ -35,7 +35,7 @@
             <v-list-item-title
               class="text-h5 font-weight-bold primary-gray-500 line-height"
             >
-              {{ user.first_name + " " + user.last_name }}
+              {{ user ? (user.first_name + ' ' + user.last_name) : 'User' }}
             </v-list-item-title>
           </v-list-item>
         </template>
@@ -234,14 +234,14 @@ const items = ref([
         link: '/user/paper',
         icon: 'icon-paper',
         icon_type: 'custom',
-        status: user.value.group_id == 5 ? false : true,
+        status: (user.value && user.value.group_id == 5) ? false : true,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icon-multimedia',
         icon_type: 'custom',
-        status: user.value.group_id == 5 ? false : true,
+        status: (user.value && user.value.group_id == 5) ? false : true,
       },
       {
         title: 'Q & A',

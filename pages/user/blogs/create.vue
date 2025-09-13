@@ -243,10 +243,19 @@
                         :label="cat.name"
                         :value="cat.id"
                         hide-details
-                        class="category-checkbox"
                         dense
                         :rules="categoryRules"
-                      />
+                        color="primary"
+                        false-icon="md:check_box_outline_blank"
+                        true-icon="md:check_box"
+                        class="text-h5"
+                      >
+                        <template #label>
+                          <span class="text-h5 font-weight-medium">{{
+                            cat.name
+                          }}</span>
+                        </template>
+                      </v-checkbox>
                     </template>
                   </div>
                 </v-card-text>
@@ -916,15 +925,6 @@ onMounted(() => {
   max-height: 180px;
   overflow-y: auto;
   margin-bottom: 8px;
-}
-.category-checkbox {
-  padding-left: 16px;
-  margin-bottom: 2px !important;
-}
-
-.category-checkbox :deep(.v-selection-control) {
-  margin-bottom: 0;
-  min-height: 32px;
 }
 
 .preview-image {
