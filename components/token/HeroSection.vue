@@ -28,9 +28,21 @@
               </h1>
 
               <div class="figma-price-container">
-                <span class="figma-price">${{ formattedPrice }}</span>
-                <div class="figma-price-change">
+                <span class="figma-price">
+                  <v-skeleton-loader
+                    v-if="isLoading"
+                    type="ossein"
+                    color="#75757522"
+                    style="width: 180px; height: 32px;"
+                  />
+                  <span v-else>${{ formattedPrice }}</span>
+                </span>
+                <div
+                  v-if="!isLoading"
+                  class="figma-price-change"
+                >
                   <svg
+                    v-if="isPositiveChange"
                     width="24"
                     height="24"
                     viewBox="0 0 24 24"
@@ -43,7 +55,26 @@
                     />
                   </svg>
 
-                  <span class="figma-percentage">+1.65%</span>
+                  <svg
+                    v-else
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7.3566 16.9461L5.9166 15.5061L10.7966 10.6261L14.0866 13.9161C14.4766 14.3061 15.1066 14.3061 15.4966 13.9161L21.4966 7.9061C21.8866 7.5161 21.8866 6.8861 21.4966 6.4961C21.1066 6.1061 20.4766 6.1061 20.0866 6.4961L14.7966 11.7961L11.5066 8.5061C11.1166 8.1161 10.4866 8.1161 10.0966 8.5061L4.5066 14.0861L3.0666 12.6461C2.7566 12.3361 2.2166 12.5561 2.2166 12.9961V17.2961C2.2066 17.5761 2.4266 17.7961 2.7066 17.7961H6.9966C7.4466 17.7961 7.6666 17.2561 7.3566 16.9461Z"
+                      fill="#EF4444"
+                    />
+                  </svg>
+
+                  <span
+                    class="figma-percentage"
+                    :class="{ positive: isPositiveChange, negative: !isPositiveChange }"
+                  >
+                    {{ formattedPriceChange }}
+                  </span>
                 </div>
               </div>
             </div>
@@ -73,25 +104,55 @@ import { ref, onMounted, computed } from 'vue'
 
 const finalPrice = ref(0)
 const animatedPrice = ref(0)
+const priceChange24h = ref(0)
+const isLoading = ref(true)
 
 const formattedPrice = computed(() => {
   // Format to show fewer decimal places
   return animatedPrice.value.toFixed(6)
 })
 
-const fetchTokenPrice = async () => {
+const formattedPriceChange = computed(() => {
+  const change = priceChange24h.value
+  const sign = change >= 0 ? '+' : ''
+  return `${sign}${change.toFixed(2)}%`
+})
+
+const isPositiveChange = computed(() => {
+  return priceChange24h.value >= 0
+})
+
+const fetchTokenData = async () => {
   try {
-    const data = await $fetch(
+    isLoading.value = true
+
+    // Using Jupiter Lite API - this is the working endpoint
+    const response = await $fetch(
       'https://lite-api.jup.ag/price/v3?ids=GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv',
     )
-    finalPrice.value = Object.values(data)?.[0]?.usdPrice ?? 0
-    // Start animation after fetching the price
+
+    if (response && response['GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv']) {
+      const tokenData = response['GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv']
+      finalPrice.value = tokenData.usdPrice || 0
+      priceChange24h.value = tokenData.priceChange24h || 1.65
+    }
+    else {
+      throw new Error('Invalid response from Jupiter API')
+    }
+
+    // Start animation after fetching the data
     animatePrice()
   }
   catch (error) {
-    console.error('Error fetching token price:', error)
-    finalPrice.value = 0.002546 // Fallback price
+    console.error('Error fetching token data from Jupiter:', error)
+
+    // Final fallback values
+    finalPrice.value = 0.002546
+    priceChange24h.value = 1.65
     animatePrice()
+  }
+  finally {
+    isLoading.value = false
   }
 }
 
@@ -114,7 +175,7 @@ const animatePrice = () => {
 }
 
 onMounted(() => {
-  fetchTokenPrice()
+  fetchTokenData()
 })
 </script>
 
@@ -216,7 +277,14 @@ onMounted(() => {
 .figma-percentage {
   font-size: 18px;
   font-weight: 600;
+}
+
+.figma-percentage.positive {
   color: rgba(18, 183, 106, 1);
+}
+
+.figma-percentage.negative {
+  color: rgba(239, 68, 68, 1);
 }
 
 /* Purchase Component Wrapper */
