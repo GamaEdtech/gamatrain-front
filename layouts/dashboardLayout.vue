@@ -3,9 +3,7 @@
     <main_header />
     <div class="mt-16 mt-md-0 position-relative h-screen">
       <!-- Desktop dashboard menu -->
-      <div class="d-none d-md-flex">
-        <dashboard-desktop-menu />
-      </div>
+      <drawer-menu />
       <!-- End desktop dashboard menu -->
       <v-container class="dashboard">
         <!-- Start : Category -->
@@ -13,8 +11,6 @@
         <!-- End:Category -->
 
         <v-divider class="d-block d-md-none" />
-        <dashboard-mobile-menu />
-
         <div
           flat
           class="mt-0"
@@ -39,8 +35,7 @@
 <script setup>
 import main_header from '../components/common/header.vue'
 import category from '../components/common/category'
-import DashboardDesktopMenu from '@/components/dashboard/desktop-menu'
-import DashboardMobileMenu from '@/components/dashboard/mobile-menu'
+import DrawerMenu from '@/components/dashboard/drawer-menu'
 </script>
 
 <style scoped></style>

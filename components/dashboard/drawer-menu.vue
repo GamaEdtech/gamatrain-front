@@ -1,6 +1,8 @@
 <template>
   <v-navigation-drawer
-    v-model:rail="drawerRail"
+    v-model="drawer"
+    :rail="!mdAndDown ? drawerRail : false"
+    :temporary="mdAndDown"
     expand-on-hover
     class="bg-primary-gray-200 navigation-height-top"
     @update:rail="railchange"
@@ -10,98 +12,29 @@
       density="compact"
       nav
     >
-      <!-- <v-list-group :value="itemsProfile.value">
-        <template #activator="{ props }">
-          <v-list-item
-            v-bind="props"
-            class="custom-list-item rounded-lg mt-3 py-2"
+      <v-list-item class="rounded-lg mt-3 py-2">
+        <template #prepend>
+          <v-avatar
+            v-if="user && user.avatar"
+            :image="user.avatar"
+            class="border-image"
+          />
+          <v-avatar
+            v-else
+            color="#667085"
           >
-            <template #prepend>
-              <v-avatar
-                v-if="user && user.avatar"
-                :image="user.avatar"
-                class="border-image"
-              />
-              <v-avatar
-                v-else
-                color="#667085"
-              >
-                <span class="text-h5">{{
-                  (user?.first_name ? user.first_name[0].toUpperCase() : 'U')
-                }}</span>
-              </v-avatar>
-            </template>
-
-            <v-list-item-title
-              class="text-h5 font-weight-bold primary-gray-500 line-height"
-            >
-              {{ user ? (user.first_name + ' ' + user.last_name) : 'User' }}
-            </v-list-item-title>
-          </v-list-item>
+            <span class="text-h5">{{
+              user?.first_name ? user.first_name[0].toUpperCase() : "U"
+            }}</span>
+          </v-avatar>
         </template>
 
-        <v-list-item
-          v-for="(subMenuItem, side) in itemsProfile.subMenuList"
-          :key="side.title"
-          class="pl-1 py-2 item-list-profile rounded-lg"
-          active-class="menu_active"
-          :to="subMenuItem.link"
-          :disabled="subMenuItem.status"
+        <v-list-item-title
+          class="text-h5 font-weight-bold primary-gray-500 line-height"
         >
-          <template #prepend>
-            <span
-              v-if="subMenuItem.icon_type && subMenuItem.icon_type == `custom`"
-              :class="`primary-gray-500 size-custom-icon ${subMenuItem.icon}`"
-            />
-            <v-icon
-              v-else
-              class="primary-gray-600"
-              size="24"
-            >
-              {{ subMenuItem.icon }}
-            </v-icon>
-          </template>
-          <v-list-item-title
-            class="text-h5 font-medium primary-gray-600 line-height"
-          >
-            {{ subMenuItem.title }}
-          </v-list-item-title>
-        </v-list-item>
-      </v-list-group> -->
-
-      <!-- <div class="w-100 d-flex justify-center align-center mt-3 mb-10">
-        <v-icon
-          v-if="drawerRail"
-          class="primary-gray-600"
-          size="24"
-        >
-          md:search
-        </v-icon>
-
-        <v-text-field
-          v-if="!drawerRail"
-          v-model="searchText"
-          placeholder="Search..."
-          variant="outlined"
-          density="compact"
-          hide-details
-          rounded="lg"
-          class="w-100"
-          base-color="#475467"
-          color="#475467"
-          active-color="#475467"
-          autocomplete="off"
-        >
-          <template #prepend-inner>
-            <v-icon
-              class="primary-gray-600"
-              size="24"
-            >
-              md:search
-            </v-icon>
-          </template>
-        </v-text-field>
-      </div> -->
+          {{ user ? user.first_name + " " + user.last_name : "User" }}
+        </v-list-item-title>
+      </v-list-item>
 
       <div
         v-for="item in items"
@@ -216,6 +149,32 @@
         </v-list-item-title>
       </v-list-item>
 
+      <div
+        v-for="item in mobileItems"
+        :key="item.title"
+        class="d-flex d-lg-none"
+      >
+        <v-list-item
+          link
+          :to="item.link"
+          class="rounded-lg mt-3"
+        >
+          <template #prepend>
+            <v-icon
+              class="primary-gray-600"
+              size="24"
+            >
+              {{ item.icon }}
+            </v-icon>
+          </template>
+
+          <v-list-item-title
+            class="text-h5 font-medium primary-gray-500 line-height"
+          >
+            {{ item.title }}
+          </v-list-item-title>
+        </v-list-item>
+      </div>
       <!-- <div
         v-if="!drawerRail"
         class="w-100 buy-more-div d-flex flex-column justify-center align-center rounded-lg mt-10 ga-2"
@@ -239,8 +198,10 @@
 <script setup>
 import { ref } from 'vue'
 import { useUser } from '~/composables/useUser'
+import { useDisplay } from 'vuetify'
 
 const { user } = useUser()
+const { mdAndDown } = useDisplay()
 
 const items = ref([
   {
@@ -260,14 +221,14 @@ const items = ref([
         link: '/user/paper',
         icon: 'icon-paper',
         icon_type: 'custom',
-        status: (user.value && user.value.group_id == 5) ? false : true,
+        status: user.value && user.value.group_id == 5 ? false : true,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icon-multimedia',
         icon_type: 'custom',
-        status: (user.value && user.value.group_id == 5) ? false : true,
+        status: user.value && user.value.group_id == 5 ? false : true,
       },
       {
         title: 'Q & A',
@@ -341,24 +302,44 @@ const items = ref([
   },
 ])
 
-// const itemsProfile = ref({
-//   title: "Profile",
-//   value: "profile",
-//   subMenuList: [
-//     { title: "Edit Profile", link: "/user/profile", icon: "md:edit" },
-//     {
-//       title: "Confirm Identity",
-//       link: "/user/identity-confirmation",
-//       icon: "md:fingerprint",
-//     },
-//     { title: "Security", link: "/user/edit-pass", icon: "md:password" },
-//     { title: "Settings", link: "/user/setting", icon: "md:settings" },
-//   ],
-// });
+const mobileItems = ref([
+  {
+    title: 'Home Page',
+    icon: 'md:home',
+    link: '/',
+    value: 'HomePage',
+  },
+  {
+    title: 'About us',
+    icon: 'md:supervisor_account',
+    link: '/about-us',
+    value: 'aboutUs',
+  },
+  {
+    title: 'Services',
+    icon: 'md:apps',
+    link: '/services',
+    value: 'services',
+  },
+  {
+    title: 'Faq',
+    icon: 'md:quiz',
+    link: '/faq',
+    value: 'faq',
+  },
+  {
+    title: '$GET Token',
+    icon: 'md:attach_money',
+    link: '/get-token',
+    value: 'getToken',
+  },
+])
 
 const openedGroups = ref([])
-const drawerRail = ref(false)
-// const searchText = ref('')
+const drawer = ref(true)
+const drawerRail = ref(true)
+// const drawerRail = ref(false);
+// const isOpenNavigation = ref(false);
 
 const railchange = () => {
   if (drawerRail.value) {
@@ -369,6 +350,15 @@ const railchange = () => {
 onMounted(() => {
   drawerRail.value = true
   openedGroups.value = []
+
+  if (mdAndDown.value) {
+    console.log('inaj')
+
+    drawer.value = true
+  }
+  else {
+    drawer.value = true
+  }
 })
 </script>
 
@@ -383,7 +373,7 @@ onMounted(() => {
   top: 64px !important;
   height: 100% !important;
 }
-@media (min-width: 960px) {
+@media (min-width: 1260px) {
   .navigation-height-top {
     top: 6.4rem !important;
     height: 100% !important;
