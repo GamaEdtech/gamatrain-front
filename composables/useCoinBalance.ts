@@ -40,10 +40,9 @@ export const useCoinBalance = () => {
     error.value = null
 
     try {
-      await useApiService.post('/api/v2/game/coins/consume', {
+      await useApiService.post('/api/v2/games/spends', {
         points,
       })
-
       // If successful, refresh the balance
       await fetchBalance()
 

@@ -40,7 +40,13 @@
     key="box-showing-balance"
     class="box-showing-balance"
   >
-    <span class="amount-balance pulsing">+{{ increaseAmountbalance }} $GET</span>
+    <span class="amount-balance pulsing">+</span>
+    <span
+      ref="amountBalanceRef"
+      class="amount-balance"
+    >{{
+      Number(balance).toFixed(7)
+    }}</span>
   </div>
   <!-- End : Box Showing Balance -->
 </template>
@@ -68,8 +74,12 @@ const shouldRenderRandomCoin = computed(() => {
 const coins = ref([])
 const lottieRefs = new Map()
 const increaseAmountbalance = ref(0)
+const BASE_AMOUNT_COIN = 0.000001
+const balance = ref(0.0)
 const showBoxBalance = ref(true)
 const boxShowingBalance = ref(null)
+const amountBalanceRef = ref(null)
+
 let scrollHandler = null
 const coinsResponse = ref(null)
 
@@ -78,29 +88,78 @@ const animationFadeInBoxBalance = (boxShowingBalanceElement, nameAnimation) => {
   boxShowingBalanceElement.classList.add(nameAnimation)
 }
 
-const animationFadeOutBoxBalance = (boxShowingBalanceElement) => {
+const animationFadeOutBoxBalance = (
+  amountBalanceElement,
+  boxShowingBalanceElement,
+) => {
   setTimeout(() => {
+    amountBalanceElement.classList.remove(
+      'pulsing',
+      'decreasing',
+      'increasing',
+    )
     boxShowingBalanceElement.classList.remove('animate-in', 'animate-in-error')
     boxShowingBalanceElement.classList.add('animate-out')
-  }, 3400)
+  }, 4400)
   setTimeout(() => {
     boxShowingBalanceElement.classList.remove('animate-out')
     showBoxBalance.value = false
-  }, 4400)
+  }, 5400)
+}
+
+const animationCountingBalance = (
+  amountBalanceElement,
+  balanceChangeDirection,
+) => {
+  setTimeout(() => {
+    const startValue = Number(balance.value)
+    const displacementAmount = BASE_AMOUNT_COIN * increaseAmountbalance.value
+    const endValue = parseFloat(
+      (startValue + displacementAmount * balanceChangeDirection).toFixed(7),
+    )
+    const duration = 1000
+    const stepTime = 30
+    let current = startValue
+    const steps = Math.ceil(duration / stepTime)
+    const amountStep = Math.abs(endValue - startValue) / steps
+    amountBalanceElement.classList.add(
+      'pulsing',
+      balanceChangeDirection == 1 ? 'increasing' : 'decreasing',
+    )
+    const counter = setInterval(() => {
+      current = current + balanceChangeDirection * amountStep
+      if (current >= endValue && balanceChangeDirection == 1) {
+        current = endValue
+        clearInterval(counter)
+      }
+      if (current <= endValue && balanceChangeDirection == -1) {
+        current = endValue
+        clearInterval(counter)
+      }
+      balance.value = parseFloat(current.toFixed(7))
+    }, stepTime)
+  }, 800)
 }
 
 const startAnimationCacheInWallet = () => {
   const boxShowingBalanceElement = boxShowingBalance.value
+  const amountBalanceElement = amountBalanceRef.value
   animationFadeInBoxBalance(boxShowingBalanceElement, 'animate-in')
-  animationFadeOutBoxBalance(boxShowingBalanceElement)
+  animationCountingBalance(amountBalanceElement, 1)
+  animationFadeOutBoxBalance(amountBalanceElement, boxShowingBalanceElement)
+  balance.value = 0.0
 }
 
 const fetchCoins = async () => {
-  const response = await useApiService.get('/api/v2/game/coins', undefined, {
-    headers: {
-      Authorization: `ApiKey ${config.public.randomCoinApiKey}`,
+  const response = await useApiService.get(
+    '/api/v2/games/easter-egg/fortune-wheel',
+    undefined,
+    {
+      headers: {
+        Authorization: `ApiKey ${config.public.randomCoinApiKey}`,
+      },
     },
-  })
+  )
   coinsResponse.value = response.data
 }
 
@@ -177,9 +236,12 @@ async function handleCoinClick(coin) {
   playSound(successSound)
 
   try {
-    const response = await useApiService.post('/api/v2/game/easter-egg', {
-      id: coin.id,
-    })
+    const response = await useApiService.post(
+      '/api/v2/games/easter-egg/points',
+      {
+        id: coin.id,
+      },
+    )
     if (response.data) {
       increaseAmountbalance.value = response.data.points
     }
