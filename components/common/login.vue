@@ -325,7 +325,7 @@ async function registerV2(identity, pass) {
   >
     <v-card>
       <v-card-title>
-        <span class="text-h5">Login</span>
+        <span class="gtext-t3 d-flex justify-center pt-3">Login</span>
       </v-card-title>
       <v-card-text>
         <v-row>
@@ -353,31 +353,41 @@ async function registerV2(identity, pass) {
             <div v-show="identity_holder">
               <form @submit.prevent="submit">
                 <v-row>
-                  <v-col cols="12">
+                  <v-col
+                    cols="12"
+                    class="pb-0"
+                  >
+                    <label class="primary-gray-700 gtext-t6 font-weight-medium">
+                      Email
+                    </label>
                     <v-text-field
                       v-model="identity.value.value"
-                      dense
-                      label="Email"
-                      outlined
+                      variant="outlined"
+                      density="comfortable"
                       required
                       autocomplete="off"
                       :error-messages="identity.errorMessage.value"
                     />
                   </v-col>
-                  <v-col cols="12">
+                  <v-col
+                    cols="12"
+                    class="pt-0"
+                  >
+                    <label class="primary-gray-700 gtext-t6 font-weight-medium">
+                      Password
+                    </label>
                     <v-text-field
                       v-model="password.value.value"
-                      label="Password"
-                      outlined
-                      dense
+                      variant="outlined"
+                      density="comfortable"
                       :type="passVisible ? 'text' : 'password'"
-                      :append-icon="passVisible ? 'mdi-eye' : 'mdi-eye-off'"
+                      :append-inner-icon="passVisible ? 'mdi-eye' : 'mdi-eye-off'"
                       required
                       :error-messages="password.errorMessage.value"
-                      @click:append="passVisible = !passVisible"
+                      @click:append-inner="passVisible = !passVisible"
                     />
                     <p
-                      class="pointer"
+                      class="pointer gtext-t6"
                       @click="goToRecover"
                     >
                       Forget password
@@ -397,6 +407,7 @@ async function registerV2(identity, pass) {
                     <v-btn
                       outlined
                       block
+                      class="gtext-t5"
                       @click="closeDialog"
                     >
                       Cancel
@@ -408,6 +419,7 @@ async function registerV2(identity, pass) {
                       type="submit"
                       :loading="login_loading"
                       block
+                      class="gtext-t5"
                     >
                       Login
                     </v-btn>
@@ -429,7 +441,10 @@ async function registerV2(identity, pass) {
                   @finish="onFinish"
                 />
               </v-col>
-              <v-col cols="12">
+              <v-col
+                cols="12"
+                class="d-felx flex-column"
+              >
                 <v-divider class="mb-3" />
                 <p
                   class="text-h6 text-center pointer"
