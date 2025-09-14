@@ -1,64 +1,67 @@
 <template>
   <div class="main">
-    <v-row>
-      <v-col
-        cols="12"
-        md="8"
-      >
-        <div class="d-flex pb-0">
-          <img
-            v-if="avatarUrl"
-            width="72"
-            height="72"
-            class="pointer"
-            style="border-radius: 5px !important"
-            :src="avatarUrl"
-            @click="selectAvatar"
-          >
-          <v-btn
-            v-else
-            class="d-flex pointer rounded-pill"
-            variant="outlined"
-            size="x-large"
-            icon
-            density="default"
-            @click="selectAvatar"
-          >
-            <v-icon size="large">
-              mdi-account-outline
-            </v-icon>
-          </v-btn>
-          <div class="pa-3">
-            <p
-              class="text-h5 pointer"
+    <v-form
+      ref="formRef"
+      @submit.prevent="submitProfile"
+    >
+      <v-row>
+        <v-col
+          cols="12"
+          md="8"
+        >
+          <div class="d-flex pb-0">
+            <img
+              v-if="avatarUrl"
+              width="72"
+              height="72"
+              class="pointer"
+              style="border-radius: 5px !important"
+              :src="avatarUrl"
               @click="selectAvatar"
             >
-              <v-icon size="small">
-                mdi-pencil
-              </v-icon>
-              Edit
-            </p>
-            <NuxtLink
-              to="/"
-              class="text-h5"
+            <v-btn
+              v-else
+              class="d-flex pointer rounded-pill"
+              variant="outlined"
+              size="x-large"
+              icon
+              density="default"
+              @click="selectAvatar"
             >
-              Help to pick profile pic
-            </NuxtLink>
+              <v-icon size="large">
+                mdi-account-outline
+              </v-icon>
+            </v-btn>
+            <div class="pa-3">
+              <p
+                class="text-h5 pointer"
+                @click="selectAvatar"
+              >
+                <v-icon size="small">
+                  mdi-pencil
+                </v-icon>
+                Edit
+              </p>
+              <NuxtLink
+                to="/"
+                class="text-h5"
+              >
+                Help to pick profile pic
+              </NuxtLink>
+            </div>
           </div>
-        </div>
-      </v-col>
+        </v-col>
 
-      <v-col
-        cols="12"
-        md="4"
-        class="text-right pb-8"
-      >
-        <v-row>
-          <v-col
-            cols="12"
-            md="12"
-          >
-            <form>
+        <v-col
+          cols="12"
+          md="4"
+          class="text-right pb-8"
+        >
+          <v-row>
+            <v-col
+              cols="12"
+              md="12"
+            >
               <v-row>
                 <v-col
                   md="10"
@@ -74,7 +77,7 @@
                   />
 
                   <v-text-field
-                    v-model="username"
+                    v-model="form.userName"
                     variant="outlined"
                     density="compact"
                     filled
@@ -102,15 +105,11 @@
                   </v-text-field>
                 </v-col>
               </v-row>
-            </form>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-    <v-form
-      ref="formRef"
-      @submit.prevent="submitProfile"
-    >
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+
       <!-- Personal Information -->
       <v-row>
         <v-col
@@ -270,12 +269,12 @@
           cols="12"
           md="4"
         >
+          <!-- :rules="levelRules" -->
           <v-autocomplete
             v-model="form.level"
             dense
             density="compact"
             :items="levelList"
-            :rules="levelRules"
             :error-messages="levelErrors"
             item-text="title"
             item-value="id"
@@ -288,6 +287,7 @@
           cols="12"
           md="4"
         >
+          <!-- :rules="gradeRules" -->
           <v-autocomplete
             v-model="form.grade"
             dense
@@ -295,7 +295,6 @@
             :items="gradeList"
             item-value="id"
             item-text="title"
-            :rules="gradeRules"
             :error-messages="gradeErrors"
             label="Grade"
             variant="outlined"
@@ -400,6 +399,7 @@ interface ListItem {
 interface UserForm {
   first_name: string
   last_name: string
+  userName: string
   gender: number | null
   state: number | null
   city: number | null
@@ -447,11 +447,7 @@ useHead({
 })
 
 // Reactive data
-const userData = useUser()
 const { $toast } = useNuxtApp()
-const userType = computed(() =>
-  userData.user.value ? userData.user.value.group_id : null,
-)
 
 const form = reactive<UserForm>({
   first_name: '',
@@ -464,9 +460,9 @@ const form = reactive<UserForm>({
   grade: null,
   school: null,
   avatar: null,
+  userName: '',
 })
 const formRef = ref()
-const username = ref('')
 const avatarUrl = ref('')
 const cropAvatarUrl = ref('')
 const cropAvatarLoading = ref(false)
@@ -520,7 +516,7 @@ watch(
     () => form.level,
     () => form.grade,
     () => form.school,
-    () => username.value,
+    () => form.userName,
   ],
   async () => {
     if (formRef.value) {
@@ -571,21 +567,6 @@ const cityRules = [
     (v !== null && v !== undefined && v !== '') || 'City is required',
 ]
 
-const levelRules = [
-  (v: string | number | null) =>
-    (v !== null && v !== undefined && v !== '') || 'Board is required',
-]
-
-const gradeRules = [
-  (v: string | number | null) =>
-    (v !== null && v !== undefined && v !== '') || 'Grade is required',
-]
-
-const _schoolRules = [
-  (v: string | number | null) =>
-    (v !== null && v !== undefined && v !== '') || 'School is required',
-]
-
 const countryRules = [
   (v: string | number | null) =>
     (v !== null && v !== undefined && v !== '') || 'Country is required',
@@ -596,37 +577,27 @@ const schoolSearchInput = ref<HTMLInputElement>()
 
 const getUserInfo = async () => {
   try {
-    const apiUrl
-      = userType.value === 5
-        ? '/api/v1/teachers/dashboard'
-        : '/api/v1/students/dashboard'
-    const response = await useApiService.get(apiUrl)
-
     const profileRes = await useApiService.get('/api/v2/identities/profiles')
-    console.log('profileRes', profileRes.data)
 
-    const userData = response.data.user
-    avatarUrl.value = userData.avatar
-    username.value = userData.username
-
-    // Populate form with existing data
-    if (userData.first_name) form.first_name = userData.first_name
-    if (userData.last_name) form.last_name = userData.last_name
-    if (userData.sex) form.gender = Number(userData.sex)
+    if (profileRes.data.gender)
+      form.gender = profileRes.data.gender == 'Male' ? 1 : 2
+    if (profileRes.data.firstName) form.first_name = profileRes.data.firstName
+    if (profileRes.data.lastName) form.last_name = profileRes.data.lastName
+    if (profileRes.data.userName) form.userName = profileRes.data.userName
     if (profileRes.data.countryId) form.country = profileRes.data.countryId
     if (profileRes.data.stateId) form.state = profileRes.data.stateId
     if (profileRes.data.cityId) form.city = profileRes.data.cityId
-    if (profileRes.data.schoolId) form.school = profileRes.data.schoolId
-
-    if (userData.section) form.level = userData.section
-    if (userData.grade) form.grade = userData.grade
-
-    // Fetch dependent location data if we have country/state/city IDs
+    if (profileRes.data.section) form.level = String(profileRes.data.section)
+    if (profileRes.data.grade) form.grade = String(profileRes.data.grade)
+    if (profileRes.data.avatar) avatarUrl.value = profileRes.data.avatar
     if (profileRes.data.countryId) {
       await fetchStates(profileRes.data.countryId)
       if (profileRes.data.stateId) {
         await fetchCities(profileRes.data.stateId)
       }
+    }
+    if (profileRes.data.schoolId) {
+      form.school = profileRes.data.schoolId
     }
   }
   catch (err: unknown) {
@@ -644,23 +615,22 @@ const submitProfile = async () => {
   if (valid) {
     isSubmitting.value = true
     try {
-      const profilePayload = {
-        countryId: form.country,
-        stateId: form.state,
-        cityId: form.city,
-        schoolId: form.school,
-        username: username.value,
-        first_name: form.first_name,
-        last_name: form.last_name,
-        gender: form.gender,
-        section: form.level,
-        grade: form.grade,
-        avatar: form.avatar,
-      }
+      const profilePayload = new FormData()
+      profilePayload.append('CityId', form.city)
+      profilePayload.append('SchoolId', form.school)
+      profilePayload.append('UserName', form.userName)
+      profilePayload.append('FirstName', form.first_name)
+      profilePayload.append('LastName', form.last_name)
+      profilePayload.append('Gender', form.gender == 1 ? 'Male' : 'Female')
+      profilePayload.append('Section', form.level)
+      profilePayload.append('Grade', form.grade)
+      profilePayload.append('Avatar', form.avatar)
+
       const profileResponse = await useApiService.put(
         '/api/v2/identities/profiles',
         profilePayload,
       )
+
       if (profileResponse.succeeded) {
         $toast.success('Profile updated successfully')
       }
@@ -689,8 +659,6 @@ const getTypeList = async (type: string, parent: string | number = '') => {
     }
 
     const res = await useApiService.get('/api/v1/types/list', params)
-    console.log('res.data')
-    console.log(res.data)
 
     switch (type) {
       case 'country':
@@ -745,11 +713,13 @@ const confirmCrop = (url: Blob) => {
 
 watch(
   () => form.level,
-  (val) => {
-    if (val) {
+  (val, oldVal) => {
+    if (val && val !== oldVal) {
       getTypeList('base', val)
-      form.grade = null // Reset grade when level changes
-      form.school = null // Reset school when level changes
+      if (oldVal !== null) {
+        form.grade = null
+        form.school = null
+      }
       if (form.city) {
         fetchSchools(true)
       }
@@ -759,11 +729,13 @@ watch(
 
 watch(
   () => form.city,
-  (val) => {
+  (val, oldVal) => {
     if (val && form.level) {
       fetchSchools(true)
     }
-    form.school = null // Reset school when city changes
+    if (oldVal !== null) {
+      form.school = null
+    }
   },
 )
 
@@ -930,7 +902,7 @@ watch(
   () => [form.city, form.level],
   ([city, level]) => {
     if (city && level && schoolList.value.length === 0) {
-      fetchSchools(true)
+      // fetchSchools(true);
     }
   },
   { immediate: true },
@@ -940,12 +912,12 @@ function focusSchoolSearch() {
   schoolSearchInput.value?.focus()
 }
 
-onMounted(() => {
-  fetchCountries()
+onMounted(async () => {
+  await fetchCountries()
   // getTypeList('country');
-  getTypeList('section')
+  await getTypeList('section')
   // getTypeList('state');
-  getUserInfo()
+  await getUserInfo()
 })
 
 onUnmounted(() => {
