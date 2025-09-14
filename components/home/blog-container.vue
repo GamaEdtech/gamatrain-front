@@ -1,5 +1,8 @@
 <template>
-  <v-container id="blog-list-container">
+  <v-container
+    v-if="isLoading || slideItems.length > 5"
+    id="blog-list-container"
+  >
     <v-card flat>
       <div class="main-card">
         <v-row>

@@ -92,6 +92,7 @@
         </div>
       </v-col>
       <v-col
+        ref="blogContentRef"
         cols="12"
         class="d-flex flex-column mt-6"
       >
@@ -157,11 +158,12 @@
 import { useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 
-const { $toast } = useNuxtApp()
+const { $toast, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 const route = useRoute()
 const blogId = route.params.id
 const { xs, sm } = useDisplay()
 const requestURL = ref(useRequestURL().host)
+const blogContentRef = ref(null)
 const { data: contentData, error } = await useAsyncData(
   `blog-${blogId}`,
   () => $fetch(`/api/v2/blogs/posts/${blogId}`),
@@ -264,6 +266,40 @@ const share = async () => {
     }
   }
 }
+
+const typesetMathInSpecificContainer = async (containerRef) => {
+  if (import.meta.client && containerRef.value) {
+    try {
+      await $ensureMathJaxReady()
+
+      if (!window.MathJax || !window.MathJax.Hub) {
+        return
+      }
+
+      let elementToProcess = null
+      if (
+        containerRef.value.$el
+        && containerRef.value.$el instanceof HTMLElement
+      ) {
+        elementToProcess = containerRef.value.$el
+      }
+      else if (containerRef.value instanceof HTMLElement) {
+        elementToProcess = containerRef.value
+      }
+
+      if (elementToProcess) {
+        await nextTick()
+        $renderMathInElement(elementToProcess)
+      }
+    }
+    catch (error) {
+      console.error('Error during MathJax typesetting:', error)
+    }
+  }
+}
+onMounted(() => {
+  typesetMathInSpecificContainer(blogContentRef)
+})
 </script>
 
 <style>
