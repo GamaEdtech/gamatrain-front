@@ -10,15 +10,6 @@ const searchParams = reactive({
   endDate: null,
 })
 
-const isSearchDisabled = computed(() => {
-  return !(
-    searchParams.name
-    || searchParams.email
-    || searchParams.startDate
-    || searchParams.endDate
-  )
-})
-
 const emit = defineEmits([
   'update:modelValue',
   'search',
@@ -150,7 +141,6 @@ const handleSearch = () => {
           <v-btn
             variant="outlined"
             class="searchBtn"
-            :disabled="isSearchDisabled"
             @click="handleSearch"
           >
             Search

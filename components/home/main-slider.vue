@@ -309,6 +309,14 @@ const slides = [
     id: 'aq-slide',
     link: '/search?type=question',
   },
+  {
+    title:
+      '<span class="gama-text-h1 font-weight-bold">Learn<span class="d-sm-none"><br>&nbsp&nbsp</span> & Earn</span>',
+    text: 'Where education meets Web3 — empowering students to learn,<br> earn, and thrive in a decentralized future.',
+    img: 'learn&earn.png',
+    id: 'le-slide',
+    link: '/earn-money',
+  },
 ]
 
 // Search section
@@ -521,6 +529,24 @@ const calcPath = (type) => {
   background-position: 95% top;
 }
 
+#main-slider #le-slide {
+  padding-top: 6rem;
+  height: 21.5rem;
+  background: #293056 !important;
+  background-repeat: no-repeat;
+}
+
+#main-slider #le-slide .v-card {
+  height: 21.5rem;
+  background-size: 25.4rem 13.36rem;
+  background-color: transparent;
+  background-image: url("/images/learn&earn.png");
+  background-position: right 2.2rem !important;
+  background-repeat: no-repeat;
+  background-position: 95% top;
+  margin-right: -16px;
+}
+
 #main-slider .section2 {
   height: 10%;
 }
@@ -616,6 +642,15 @@ const calcPath = (type) => {
   #main-slider #aq-slide .v-card {
     height: 34rem;
     background-size: 18.4rem 16.36rem;
+  }
+
+  #main-slider #le-slide {
+    height: 27rem;
+  }
+
+  #main-slider #le-slide .v-card {
+    height: 34rem;
+    background-size: 38.4rem 16.36rem;
   }
 
   #main-slider .v-carousel__controls {
@@ -995,6 +1030,25 @@ const calcPath = (type) => {
     background-repeat: no-repeat;
     background-position: right top;
     background-size: 32.4rem 30.36rem;
+  }
+
+  #main-slider #le-slide {
+    padding-top: 6rem;
+    background: #293056 !important;
+    background-repeat: no-repeat;
+    height: 44rem;
+  }
+
+  #main-slider #le-slide .v-card {
+    height: 42rem;
+    background-color: transparent;
+    background-image: url("/images/learn&earn.png");
+    background-repeat: no-repeat;
+    background-size: 62.4rem 30.36rem;
+    background-position: right 2.4rem !important;
+    background-position: 95% top;
+    margin-right: -2.4rem !important;
+    margin-top: 22px !important;
   }
 
   #main-slider .section2 {
