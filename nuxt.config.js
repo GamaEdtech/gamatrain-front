@@ -112,6 +112,20 @@ export default defineNuxtConfig({
           href: '/assets/css/material-symbols.css',
         },
       ],
+      script: [
+        {
+          src: 'https://www.googletagmanager.com/gtag/js?id=G-F4X87M3W8P',
+          async: true,
+        },
+        {
+          innerHTML: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-F4X87M3W8P');
+          `,
+        },
+      ],
     },
   },
 
