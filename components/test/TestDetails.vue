@@ -25,7 +25,6 @@
     <!-- Coin Consumption Animation -->
     <common-coin-consumption-animation
       :is-visible="showCoinFailAnimation"
-      :coin-count="5"
       @animation-complete="handleAnimationCoinFailComplete"
     />
 
@@ -529,7 +528,6 @@ function handleAnimationCoinFailComplete() {
   const boxShowingBalanceElement = boxShowingBalanceRef.value
   const amountBalanceElement = amountBalanceRef.value
   showCoinFailAnimation.value = false
-  playSound('fail')
   animationFadeInBoxBalance(boxShowingBalanceElement, 'animate-in-error')
   animationCountingBalance(amountBalanceElement, -1)
   animationFadeOutBoxBalance(amountBalanceElement, boxShowingBalanceElement)
@@ -550,6 +548,7 @@ function selectCorrectAnswer() {
 }
 
 function selectWrongAnswer() {
+  playSound('fail')
   showCoinFailAnimation.value = true
 }
 
