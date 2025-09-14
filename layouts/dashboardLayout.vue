@@ -1,10 +1,7 @@
 <template>
   <v-app>
-    <main_header />
+    <main_header :is-user-dashboard="true" />
     <div class="mt-16 mt-md-0 position-relative h-screen">
-      <!-- Desktop dashboard menu -->
-      <drawer-menu />
-      <!-- End desktop dashboard menu -->
       <v-container class="dashboard">
         <!-- Start : Category -->
         <category />
@@ -35,7 +32,6 @@
 <script setup>
 import main_header from '../components/common/header.vue'
 import category from '../components/common/category'
-import DrawerMenu from '@/components/dashboard/drawer-menu'
 </script>
 
 <style scoped></style>

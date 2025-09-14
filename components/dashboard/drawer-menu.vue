@@ -1,18 +1,34 @@
 <template>
   <v-navigation-drawer
-    v-model="drawer"
-    :rail="!mdAndDown ? drawerRail : false"
+    v-model="drawerModel"
+    v-model:rail="drawerRail"
     :temporary="mdAndDown"
     expand-on-hover
-    class="bg-primary-gray-200 navigation-height-top"
+    :class="`bg-primary-gray-200 navigation-height-top ${
+      isUserDashboard ? `` : `d-block d-lg-none`
+    }`"
     @update:rail="railchange"
   >
     <v-list
       v-model:opened="openedGroups"
       density="compact"
       nav
+      class="main-list"
     >
-      <v-list-item class="rounded-lg mt-3 py-2">
+      <div class="w-100 d-flex d-lg-none justify-end align-center mt-2 px-2">
+        <v-icon
+          class="cursor-pointer primary-gray-600"
+          size="24"
+          @click="closeNavigation"
+        >
+          md:close
+        </v-icon>
+      </div>
+
+      <v-list-item
+        v-if="auth.isAuthenticated.value"
+        class="rounded-lg mt-3 py-2"
+      >
         <template #prepend>
           <v-avatar
             v-if="user && user.avatar"
@@ -36,23 +52,123 @@
         </v-list-item-title>
       </v-list-item>
 
+      <template v-if="auth.isAuthenticated.value">
+        <div
+          v-for="item in items"
+          :key="item.title"
+        >
+          <v-list-item
+            v-show="!item.subMenuList"
+            link
+            :to="item.link"
+            class="rounded-lg mt-3"
+          >
+            <template #prepend>
+              <span
+                v-if="item.icon_type && item.icon_type == `custom`"
+                :class="`primary-gray-500 size-custom-icon ${item.icon}`"
+              />
+              <v-icon
+                v-else
+                class="primary-gray-600"
+                size="24"
+              >
+                {{ item.icon }}
+              </v-icon>
+            </template>
+
+            <v-list-item-title
+              class="text-h5 font-medium primary-gray-500 line-height"
+            >
+              {{ item.title }}
+              <!-- <div
+              v-if="item.value == `messages`"
+              class="badge-messages d-flex align-center justify-center rounded-circle text-white text-h5 font-weight-bold position-absolute"
+            >
+              4
+            </div> -->
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-group
+            v-show="item.subMenuList"
+            :key="item.title"
+            :value="item.value"
+          >
+            <template #activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                :class="`${
+                  !drawerRail && isParentActive(item) ? 'custom-list-item' : ''
+                }
+                ${drawerRail && isParentActive(item) ? 'custom-list-item' : ''}
+               rounded-lg mt-3`"
+              >
+                <template #prepend>
+                  <span
+                    v-if="item.icon_type && item.icon_type == `custom`"
+                    :class="`primary-gray-500 size-custom-icon ${item.icon}`"
+                  />
+                  <v-icon
+                    v-else
+                    class="primary-gray-600"
+                    size="24"
+                  >
+                    {{ item.icon }}
+                  </v-icon>
+                </template>
+
+                <v-list-item-title
+                  class="text-h5 font-medium primary-gray-500 line-height"
+                >
+                  {{ item.title }}
+                </v-list-item-title>
+              </v-list-item>
+            </template>
+
+            <v-list-item
+              v-for="(subMenuItem, side) in item.subMenuList"
+              :key="side.title"
+              class="pl-1 py-2"
+              :to="subMenuItem.link"
+              :disabled="subMenuItem.status"
+            >
+              <template #prepend>
+                <span
+                  v-if="
+                    subMenuItem.icon_type && subMenuItem.icon_type == `custom`
+                  "
+                  :class="`primary-gray-500 size-custom-icon ${subMenuItem.icon}`"
+                />
+                <v-icon
+                  v-else
+                  class="primary-gray-600"
+                  size="24"
+                >
+                  {{ subMenuItem.icon }}
+                </v-icon>
+              </template>
+              <v-list-item-title
+                class="text-h5 font-medium primary-gray-600 line-height"
+              >
+                {{ subMenuItem.title }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list-group>
+        </div>
+      </template>
+
       <div
-        v-for="item in items"
+        v-for="item in mobileItems"
         :key="item.title"
+        class="d-block d-lg-none"
       >
         <v-list-item
-          v-show="!item.subMenuList"
           link
           :to="item.link"
           class="rounded-lg mt-3"
         >
           <template #prepend>
-            <span
-              v-if="item.icon_type && item.icon_type == `custom`"
-              :class="`primary-gray-500 size-custom-icon ${item.icon}`"
-            />
             <v-icon
-              v-else
               class="primary-gray-600"
               size="24"
             >
@@ -66,72 +182,13 @@
             {{ item.title }}
           </v-list-item-title>
         </v-list-item>
-        <v-list-group
-          v-show="item.subMenuList"
-          :key="item.title"
-          :value="item.value"
-        >
-          <template #activator="{ props }">
-            <v-list-item
-              v-bind="props"
-              :class="`${drawerRail ? `` : `custom-list-item`} rounded-lg mt-3`"
-            >
-              <template #prepend>
-                <span
-                  v-if="item.icon_type && item.icon_type == `custom`"
-                  :class="`primary-gray-500 size-custom-icon ${item.icon}`"
-                />
-                <v-icon
-                  v-else
-                  class="primary-gray-600"
-                  size="24"
-                >
-                  {{ item.icon }}
-                </v-icon>
-              </template>
-
-              <v-list-item-title
-                class="text-h5 font-medium primary-gray-500 line-height"
-              >
-                {{ item.title }}
-              </v-list-item-title>
-            </v-list-item>
-          </template>
-
-          <v-list-item
-            v-for="(subMenuItem, side) in item.subMenuList"
-            :key="side.title"
-            class="pl-1 py-2"
-            :to="subMenuItem.link"
-            :disabled="subMenuItem.status"
-          >
-            <template #prepend>
-              <span
-                v-if="
-                  subMenuItem.icon_type && subMenuItem.icon_type == `custom`
-                "
-                :class="`primary-gray-500 size-custom-icon ${subMenuItem.icon}`"
-              />
-              <v-icon
-                v-else
-                class="primary-gray-600"
-                size="24"
-              >
-                {{ subMenuItem.icon }}
-              </v-icon>
-            </template>
-            <v-list-item-title
-              class="text-h5 font-medium primary-gray-600 line-height"
-            >
-              {{ subMenuItem.title }}
-            </v-list-item-title>
-          </v-list-item>
-        </v-list-group>
       </div>
 
       <v-list-item
+        v-if="auth.isAuthenticated.value"
         link
-        class="rounded-lg mt-3"
+        class="rounded-lg mt-3 mb-14"
+        @click="logout"
       >
         <template #prepend>
           <v-icon
@@ -149,32 +206,23 @@
         </v-list-item-title>
       </v-list-item>
 
-      <div
-        v-for="item in mobileItems"
-        :key="item.title"
-        class="d-flex d-lg-none"
+      <!-- <div
+        class="w-100 d-flex d-lg-none align-center justify-start position-extra-link pa-2"
       >
-        <v-list-item
-          link
+        <v-btn
+          v-for="item in extraLink"
+          icon
           :to="item.link"
-          class="rounded-lg mt-3"
+          :key="item.value"
+          class="bg-transparent"
+          flat
         >
-          <template #prepend>
-            <v-icon
-              class="primary-gray-600"
-              size="24"
-            >
-              {{ item.icon }}
-            </v-icon>
-          </template>
+          <v-icon class="primary-gray-500" size="34">
+            {{ item.icon }}
+          </v-icon>
+        </v-btn>
+      </div> -->
 
-          <v-list-item-title
-            class="text-h5 font-medium primary-gray-500 line-height"
-          >
-            {{ item.title }}
-          </v-list-item-title>
-        </v-list-item>
-      </div>
       <!-- <div
         v-if="!drawerRail"
         class="w-100 buy-more-div d-flex flex-column justify-center align-center rounded-lg mt-10 ga-2"
@@ -199,11 +247,26 @@
 import { ref } from 'vue'
 import { useUser } from '~/composables/useUser'
 import { useDisplay } from 'vuetify'
+import { useRoute } from 'vue-router'
+import { useAuth } from '~/composables/useAuth'
+
+const props = defineProps({
+  showDrawer: { type: Boolean, default: true },
+  isUserDashboard: { type: Boolean, default: false },
+})
+const emit = defineEmits(['update:showDrawer'])
+
+const drawerModel = computed({
+  get: () => props.showDrawer,
+  set: value => emit('update:showDrawer', value),
+})
 
 const { user } = useUser()
 const { mdAndDown } = useDisplay()
+const route = useRoute()
+const auth = useAuth()
 
-const items = ref([
+const items = [
   {
     title: 'Dashboard',
     icon: 'md:dashboard',
@@ -300,9 +363,9 @@ const items = ref([
       { title: 'Security', link: '/user/edit-pass', icon: 'md:password' },
     ],
   },
-])
+]
 
-const mobileItems = ref([
+const mobileItems = [
   {
     title: 'Home Page',
     icon: 'md:home',
@@ -333,33 +396,54 @@ const mobileItems = ref([
     link: '/get-token',
     value: 'getToken',
   },
-])
+]
+
+// const extraLink = [
+//   {
+//     icon: 'md:gavel',
+//     link: '/terms',
+//     value: 'Terms',
+//   },
+// ]
 
 const openedGroups = ref([])
-const drawer = ref(true)
-const drawerRail = ref(true)
-// const drawerRail = ref(false);
-// const isOpenNavigation = ref(false);
+const internalRail = ref(true)
+const drawerRail = computed({
+  get() {
+    return mdAndDown.value ? false : internalRail.value
+  },
+  set(val) {
+    internalRail.value = val
+  },
+})
 
+onMounted(() => {
+  openedGroups.value = []
+})
+watch(
+  () => route.fullPath,
+  () => {
+    openedGroups.value = []
+  },
+)
 const railchange = () => {
   if (drawerRail.value) {
     openedGroups.value = []
   }
 }
 
-onMounted(() => {
-  drawerRail.value = true
-  openedGroups.value = []
+const isParentActive = (item) => {
+  if (!item.subMenuList) return false
+  return item.subMenuList.some(sub => route.path.startsWith(sub.link))
+}
 
-  if (mdAndDown.value) {
-    console.log('inaj')
+const logout = () => {
+  auth.logout()
+}
 
-    drawer.value = true
-  }
-  else {
-    drawer.value = true
-  }
-})
+const closeNavigation = () => {
+  emit('update:showDrawer', false)
+}
 </script>
 
 <style scoped>
@@ -370,7 +454,7 @@ onMounted(() => {
 }
 
 .navigation-height-top {
-  top: 64px !important;
+  top: 0px !important;
   height: 100% !important;
 }
 @media (min-width: 1260px) {
@@ -389,6 +473,7 @@ onMounted(() => {
 .custom-list-item {
   background-color: #d0d5dd;
 }
+
 .size-custom-icon {
   font-size: 24px;
   width: 24px;
@@ -405,5 +490,20 @@ onMounted(() => {
 .buy-more-div {
   height: 200px;
   border: 2px solid #d0d5dd;
+}
+.main-list {
+  min-height: 100%;
+}
+.position-extra-link {
+  height: 20px;
+  position: absolute;
+  bottom: 20px;
+}
+.badge-messages {
+  width: 24px;
+  height: 24px;
+  background-color: #f50e0e;
+  top: 10px;
+  right: 6px;
 }
 </style>
