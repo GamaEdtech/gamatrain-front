@@ -1,5 +1,6 @@
 <script setup>
 import commentCard from '~/components/admin/schools/comments/commentCard.vue'
+import commentSearch from '~/components/admin/schools/comments/commentSearch.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
@@ -41,6 +42,49 @@ const page = ref(1)
 const pageCount = ref(0)
 const totalCount = ref(0)
 const selected = ref([])
+const searchMenu = ref(false)
+const searchType = ref(null)
+const searchFilterCard = ref(false)
+
+const showSearchdialog = (val) => {
+  searchMenu.value = false
+  searchType.value = val
+  searchFilterCard.value = true
+}
+// store search params in one place
+const searchParams = ref({
+  commenterEmail: '',
+  commenterName: '',
+  startDate: '',
+  endDate: '',
+})
+
+// call this from child emit
+const applySearch = (payload) => {
+  // reset all first
+  searchParams.value = {
+    commenterEmail: '',
+    commenterName: '',
+    startDate: '',
+    endDate: '',
+  }
+
+  // set only the one we need
+  if (payload.type === 'Email') {
+    searchParams.value.commenterEmail = payload.value
+  }
+
+  if (payload.type === 'Name') {
+    searchParams.value.commenterName = payload.value
+  }
+
+  if (payload.type === 'Date') {
+    searchParams.value.startDate = payload.start
+    searchParams.value.endDate = payload.end
+  }
+
+  fetchComments()
+}
 
 const allPageSize = [
   { label: '10 Rows', value: 10 },
@@ -56,6 +100,10 @@ const fetchComments = async () => {
       'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
       'Status': filter.value,
+      'CommenterEmail': searchParams.value.commenterEmail,
+      'CommenterName': searchParams.value.commenterName,
+      'StartDate': searchParams.value.startDate,
+      'EndDate': searchParams.value.endDate,
     })
 
     list.value = response.data.list
@@ -175,6 +223,49 @@ watch(filter, (_val) => {
         </v-btn>
       </div>
       <div class="d-flex ga-1">
+        <v-btn
+          variant="plain"
+          class="px-0 min-width-10"
+        >
+          <v-icon
+            small
+            class="mr-2 gtext-t1"
+            @click="searchMenu = !searchMenu"
+          >
+            mdi-menu
+          </v-icon>
+        </v-btn>
+        <div
+          v-show="searchMenu"
+          class="actionMenuContainer"
+        >
+          <div class="py-1 actionMenuItems">
+            <button
+              class="w-full text-left px-4 py-2"
+              @click="showSearchdialog('Name')"
+            >
+              Search by Name
+            </button>
+            <button
+              class="w-full text-left px-4 py-2"
+              @click="selectAction(showSearchdialog('Email'))"
+            >
+              Search by Email
+            </button>
+            <button
+              class="w-full text-left px-4 py-2"
+              @click="selectAction(showSearchdialog('Date'))"
+            >
+              Search by Date
+            </button>
+          </div>
+        </div>
+        <commentSearch
+          v-model="searchFilterCard"
+          :search-type="searchType"
+          @search="applySearch"
+        />
+
         <p class="primary-gray-500 gtext-t6 font-weight-bold">
           {{ totalCount }}
         </p>
@@ -366,6 +457,7 @@ watch(filter, (_val) => {
     background-color: #0000001A;
     border-radius: 28px;
     align-items: center;
+    flex-wrap: wrap;
 }
 
 .footerBtns{
@@ -460,5 +552,26 @@ watch(filter, (_val) => {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+}
+.actionMenuContainer {
+  position: absolute;
+  top: 100px;
+  right: 150px;
+  background-color: white;
+  border-radius: 14px;
+  box-shadow: 0px 0px 1px black;
+  padding: 4px 4px;
+  z-index: 1000;
+}
+.actionMenuItems {
+  display: flex;
+  flex-direction: column;
+}
+.actionMenuItems button {
+  border-radius: 10px;
+  &:hover {
+    background-color: rgb(161, 161, 161);
+    transition: 300ms;
+  }
 }
 </style>

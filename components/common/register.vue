@@ -274,7 +274,7 @@ async function handleCredentialResponse(value) {
   >
     <v-card>
       <v-card-title>
-        <span class="text-h5">Register</span>
+        <span class="gtext-t3 d-flex justify-center pt-3">Register</span>
       </v-card-title>
       <v-card-text>
         <v-row>
@@ -309,11 +309,13 @@ async function handleCredentialResponse(value) {
                         name="request_identity"
                         rules="required"
                       >
+                        <label class="primary-gray-700 gtext-t6 font-weight-medium">
+                          Email
+                        </label>
                         <v-text-field
                           v-model="identity"
-                          dense
-                          label="Email"
-                          outlined
+                          variant="outlined"
+                          density="comfortable"
                         />
                       </validation-provider>
                       <p class="text-h6">
@@ -333,14 +335,12 @@ async function handleCredentialResponse(value) {
 
                       <v-divider class="mt-3" />
                     </v-col>
-                  </v-row>
-                  <v-row>
                     <v-col
                       cols="6"
-                      lg="6"
                     >
                       <v-btn
-                        outlined
+                        block
+                        class="gtext-t5"
                         @click="closeDialog"
                       >
                         Cancel
@@ -348,12 +348,13 @@ async function handleCredentialResponse(value) {
                     </v-col>
                     <v-col
                       cols="6"
-                      lg="6"
                     >
                       <v-btn
                         color="primary"
                         type="submit"
                         :loading="register_loading"
+                        class="gtext-t5"
+                        block
                       >
                         Register
                       </v-btn>
@@ -376,7 +377,10 @@ async function handleCredentialResponse(value) {
                 />
               </v-col>
 
-              <v-col cols="12">
+              <v-col
+                cols="12"
+                class="d-flex flex-column"
+              >
                 <v-divider class="mb-3" />
                 <p
                   class="text-h6 text-center pointer"
@@ -410,35 +414,46 @@ async function handleCredentialResponse(value) {
                 <!-- <validation-observer -->
                 <form @submit.prevent="finalRegister()">
                   <v-row>
-                    <v-col cols="12">
+                    <v-col
+                      cols="12"
+                      class="pb-0"
+                    >
                       <!-- <validation-provider -->
                       <!-- v-slot="{ errors }" name="password" rules="required|min:8"
                       > -->
+                      <label class="primary-gray-700 gtext-t6 font-weight-medium">
+                        Password
+                      </label>
                       <v-text-field
                         v-model="password"
-                        label="Password"
-                        outlined
+
                         :error-messages="errors"
-                        dense
+                        variant="outlined"
+                        density="comfortable"
                         :type="show1 ? 'text' : 'password'"
-                        :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                        :append-inner-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                         required
-                        @click:append="show1 = !show1"
+                        @click:append-inner="show1 = !show1"
                       />
                       <!-- </validation-provider> -->
                     </v-col>
                     <!--     Confirm Password       -->
-                    <v-col cols="12">
+                    <v-col
+                      cols="12"
+                      class="pt-0"
+                    >
                       <!-- <validation-provider -->
                       <!-- name="confirmPassword" v-slot="{ errors }"
                       rules="required|min:8|confirmed:password" > -->
+                      <label class="primary-gray-700 gtext-t6 font-weight-medium">
+                        Confirm Password
+                      </label>
                       <v-text-field
                         v-model="confirmPassword"
                         type="password"
                         :error-messages="errors"
-                        label="Confirm password"
-                        dense
-                        outlined
+                        variant="outlined"
+                        density="comfortable"
                       />
                       <!-- </validation-provider> -->
                     </v-col>
@@ -451,6 +466,8 @@ async function handleCredentialResponse(value) {
                     >
                       <v-btn
                         outlined
+                        block
+                        class="gtext-t5"
                         @click="closeDialog"
                       >
                         Cancel
@@ -465,6 +482,8 @@ async function handleCredentialResponse(value) {
                         type="submit"
                         :loading="register_loading"
                         :disabled="invalid"
+                        class="gtext-t5"
+                        block
                       >
                         Register
                       </v-btn>

@@ -17,7 +17,11 @@ export default defineEventHandler(async (event) => {
     const rpcUrl = useRuntimeConfig().public?.solanaRpcUrl || 'https://api.mainnet-beta.solana.com'
     const connection = new Connection(rpcUrl, 'confirmed')
 
-    const tx = await connection.getParsedTransaction(txid, 'confirmed')
+    const tx = await connection.getParsedTransaction(txid, {
+      commitment: 'confirmed',
+      maxSupportedTransactionVersion: 0, // legacy + v0
+    })
+
     if (!tx) return { error: true, message: 'Transaction not found' }
 
     const status = tx.meta?.err ? 'Failed' : 'Success'
@@ -37,10 +41,9 @@ export default defineEventHandler(async (event) => {
       // Add more tokens here...
     }
 
-    // Helper to resolve symbol
     const getSymbolFromMint = mint => TOKEN_SYMBOLS[mint] || 'UNKNOWN'
 
-    // Helper function to get wallet from token account
+    // Helper function to get wallet owner from token account
     const getWalletFromTokenAccount = async (tokenAccount) => {
       try {
         const accountInfo = await connection.getParsedAccountInfo(new PublicKey(tokenAccount))
@@ -57,16 +60,16 @@ export default defineEventHandler(async (event) => {
       if ((inst.parsed?.type === 'transfer' || inst.parsed?.type === 'transferChecked') && inst.parsed.info?.tokenAmount) {
         const info = inst.parsed.info
 
-        // Convert token accounts to wallet addresses
         const sourceWallet = await getWalletFromTokenAccount(info.source)
         const destinationWallet = await getWalletFromTokenAccount(info.destination)
 
         transfer = {
           sourceWallet,
           destinationWallet,
-          amount: info.tokenAmount?.uiAmountString || String(info.amount),
-          mint: info.mint, // Mint address
-          symbol: getSymbolFromMint(info.mint), // Human-friendly symbol
+          amount: info.tokenAmount?.amount || info.amount, // base units (string, no decimals applied)
+          uiAmount: info.tokenAmount?.uiAmountString || String(info.amount), // human-readable
+          mint: info.mint,
+          symbol: getSymbolFromMint(info.mint),
         }
         break
       }
@@ -74,14 +77,16 @@ export default defineEventHandler(async (event) => {
       // Native SOL transfer
       if (inst.programId.equals(SystemProgram.programId) && inst.parsed?.type === 'transfer') {
         const info = inst.parsed.info
+
         transfer = {
           sourceWallet: info.source,
           destinationWallet: info.destination,
-          amount: Number(info.lamports) / 1e9, // convert lamports to SOL
-          mint: 'So11111111111111111111111111111111111111112', // Wrapped SOL mint
+          amount: String(info.lamports), // lamports
+          uiAmount: (Number(info.lamports) / 1e9).toString(), // SOL
+          mint: 'So11111111111111111111111111111111111111112',
           symbol: 'SOL',
         }
-        break // exit loop, only first transfer
+        break
       }
     }
 
