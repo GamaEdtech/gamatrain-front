@@ -139,6 +139,7 @@
           page-name="Past Papers"
           source="exam"
           request="test"
+          :related-data="relatedData"
         />
       </v-container>
     </ClientOnly>
@@ -192,6 +193,7 @@ const galleryHelpData = ref({
 
 const isAdsLoad = ref(false)
 const relatedHasPapers = ref(false)
+const relatedData = ref([])
 
 // Fetch the exam data
 async function fetchExamData() {
@@ -281,16 +283,22 @@ async function checkRelatedPastPapers() {
     })
     const arrays = res?.data || {}
     let found = false
+    let relatedItems = []
+
     for (const key in arrays) {
       if (Array.isArray(arrays[key]) && arrays[key].length > 0) {
         found = true
+        relatedItems = arrays[key]
         break
       }
     }
+
     relatedHasPapers.value = found
+    relatedData.value = relatedItems
   }
   catch (_err) {
     relatedHasPapers.value = false
+    relatedData.value = []
   }
 }
 

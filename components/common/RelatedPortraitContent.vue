@@ -61,6 +61,10 @@ const props = defineProps({
   pageName: String,
   source: String,
   request: String,
+  relatedData: {
+    type: Array,
+    default: null,
+  },
 })
 
 const route = useRoute()
@@ -96,8 +100,14 @@ const getRelatedContent = async () => {
   }
 }
 
+// Use provided data if available, otherwise fetch it
 onMounted(() => {
-  getRelatedContent()
+  if (props.relatedData && props.relatedData.length > 0) {
+    data.value = props.relatedData
+  }
+  else {
+    getRelatedContent()
+  }
 })
 
 const CardHeight = computed(() => {
