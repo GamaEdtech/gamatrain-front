@@ -5,14 +5,28 @@
   >
     <!-- Start : Flying Coin -->
     <div
-      ref="coinElement"
-      class="flying-coin-div d-none"
+      class="random-coin"
+      :style="coinStyles"
     >
-      <div class="inner-coin-div">
-        <span class="text-coin">$GET</span>
-      </div>
+      <ClientOnly>
+        <DotLottieVue
+          :style="{
+            width: `120px`,
+            height: `120px`,
+          }"
+          autoplay
+          loop
+          src="/static/coins/gold.json"
+        />
+      </ClientOnly>
     </div>
     <!-- End : Flying Coin -->
+
+    <!-- Coin Consumption Animation -->
+    <common-coin-consumption-animation
+      :is-visible="showCoinFailAnimation"
+      @animation-complete="handleAnimationCoinFailComplete"
+    />
 
     <!--  Start: detail  -->
     <section>
@@ -20,15 +34,14 @@
         <!-- Start : Box Showing Balance -->
         <div
           v-show="showBoxBalance"
-          ref="boxShowingBalance"
+          ref="boxShowingBalanceRef"
           class="box-showing-balance"
         >
-          <span class="title-balance">$GET: </span>
           <span
-            ref="amountBalance"
+            ref="amountBalanceRef"
             class="amount-balance"
           >{{
-            Number(balance).toFixed(8)
+            formattedBalance
           }}</span>
         </div>
         <!-- End : Box Showing Balance -->
@@ -114,7 +127,7 @@
                         "
                         v-model="selectedOption"
                         hide-details
-                        @change="fireSelectedOption"
+                        @update:model-value="fireSelectedOption"
                       >
                         <v-radio
                           value="1"
@@ -129,7 +142,7 @@
                               ref="choise1"
                               class="answer"
                             >
-                              <div>
+                              <div class="d-flex">
                                 <v-icon
                                   v-show="isCorrectAnswer(1)"
                                   color="success"
@@ -137,16 +150,12 @@
                                 >
                                   mdi-check-circle
                                 </v-icon>
-                                <v-btn
+                                <div
                                   v-show="!isCorrectAnswer(1)"
-                                  variant="flat"
-                                  icon
-                                  class="option-icon subtitle-1 mr-2"
-                                  size="small"
-                                  @click.stop="selectedOption = 1"
+                                  class="option-icon text-subtitle-1 mr-2"
                                 >
                                   A
-                                </v-btn>
+                                </div>
                                 <div
                                   ref="mathJaxEl"
                                   class="d-inline"
@@ -173,7 +182,7 @@
                           <template #label>
                             <div
                               ref="choise2"
-                              class="answer"
+                              class="answer d-flex"
                             >
                               <v-icon
                                 v-show="isCorrectAnswer(2)"
@@ -182,16 +191,12 @@
                               >
                                 mdi-check-circle
                               </v-icon>
-                              <v-btn
+                              <div
                                 v-show="!isCorrectAnswer(2)"
-                                variant="flat"
-                                icon
-                                class="option-icon subtitle-1 mr-2"
-                                size="small"
-                                @click.stop="selectedOption = 2"
+                                class="option-icon text-subtitle-1 mr-2"
                               >
                                 B
-                              </v-btn>
+                              </div>
                               <span
                                 ref="mathJaxEl"
                                 v-html="contentData.answer_b"
@@ -217,7 +222,7 @@
                           <template #label>
                             <div
                               ref="choise3"
-                              class="answer"
+                              class="answer d-flex"
                             >
                               <v-icon
                                 v-show="isCorrectAnswer(3)"
@@ -226,16 +231,12 @@
                               >
                                 mdi-check-circle
                               </v-icon>
-                              <v-btn
+                              <div
                                 v-show="!isCorrectAnswer(3)"
-                                variant="flat"
-                                icon
-                                class="option-icon subtitle-1 mr-2"
-                                size="small"
-                                @click.stop="selectedOption = 3"
+                                class="option-icon text-subtitle-1 mr-2"
                               >
                                 C
-                              </v-btn>
+                              </div>
                               <span
                                 ref="mathJaxEl"
                                 v-html="contentData.answer_c"
@@ -261,7 +262,7 @@
                           <template #label>
                             <div
                               ref="choise4"
-                              class="answer"
+                              class="answer d-flex"
                             >
                               <v-icon
                                 v-show="isCorrectAnswer(4)"
@@ -270,16 +271,12 @@
                               >
                                 mdi-check-circle
                               </v-icon>
-                              <v-btn
+                              <div
                                 v-show="!isCorrectAnswer(4)"
-                                variant="flat"
-                                icon
-                                class="option-icon subtitle-1 mr-2"
-                                size="small"
-                                @click.stop="selectedOption = 4"
+                                class="option-icon text-subtitle-1 mr-2"
                               >
                                 D
-                              </v-btn>
+                              </div>
                               <span
                                 ref="mathJaxEl"
                                 v-html="contentData.answer_d"
@@ -332,6 +329,7 @@
 </template>
 
 <script setup>
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import CrashReport from '~/components/common/crash-report.vue'
 
 const props = defineProps({
@@ -368,15 +366,28 @@ const report_type_list = [
   { value: 8, label: 'Other cases' },
 ]
 const nextTestLoading = ref(false)
-const showingCoin = ref(false)
-const balance = ref(0.0000001)
+
+const balance = ref(0.0)
 const showBoxBalance = ref(true)
 const isAnswerToQuestion = ref(false)
-const sizeCoin = ref(120)
+const SMALL_SIZE_COIN = 40
+const BIG_SIZE_COIN = 120
 const testDetail = ref(null)
-const coinElement = ref(null)
-const boxShowingBalance = ref(null)
-const amountBalance = ref(null)
+const coinStyles = ref({
+  position: 'absolute',
+  left: '100px',
+  top: '100px',
+  zIndex: 999,
+  pointerEvents: 'auto',
+  cursor: 'pointer',
+  transition: 'none',
+  opacity: 0,
+  scale: 1,
+})
+const boxShowingBalanceRef = ref(null)
+const amountBalanceRef = ref(null)
+const showCoinFailAnimation = ref(false)
+
 const mathJaxEl = ref(null)
 const crash_report = ref(null)
 
@@ -389,6 +400,7 @@ onMounted(async () => {
   if (testDetail.value) {
     $renderMathInElement?.(testDetail.value)
   }
+  setInitialPositionCoin()
 })
 
 watch(
@@ -422,77 +434,38 @@ function renderMathJax() {
     $renderMathInElement(testDetail.value)
   }
 }
-function animationMovingCoin(
-  startInformation,
-  coinEl,
-  endInformation,
-  balanceChangeDirection,
-) {
-  coinElement.value.style.top = `${
-    startInformation.top + startInformation.height / 2 - sizeCoin.value / 2
+function setInitialPositionCoin() {
+  const testDetailElement = testDetail.value
+  const testDetailElementBoundingRect
+    = testDetailElement.getBoundingClientRect()
+  coinStyles.value.top = `${
+    testDetailElementBoundingRect.top
+    + testDetailElementBoundingRect.height / 2
+    - BIG_SIZE_COIN / 2
   }px`
-  coinElement.value.style.left = `${
-    startInformation.left + startInformation.width / 2 - sizeCoin.value / 2
+  coinStyles.value.left = `${
+    testDetailElementBoundingRect.left
+    + testDetailElementBoundingRect.width / 2
+    - BIG_SIZE_COIN / 2
   }px`
-  let dx, dy
-  if (balanceChangeDirection == 1) {
-    dx
-      = endInformation.left
-        - startInformation.width / 2
-        + endInformation.width / 2
-    dy
-      = endInformation.top
-        - startInformation.height / 2
-        + endInformation.height / 2
-        - startInformation.top
-  }
-  else {
-    dx
-      = endInformation.width / 2
-        - startInformation.left
-        - startInformation.width / 2
-    dy
-      = endInformation.height / 2
-        - startInformation.height / 2
-        + endInformation.top / 2
-        - startInformation.top
-  }
-  coinElement.value.style.setProperty('--dx', `${dx}px`)
-  coinElement.value.style.setProperty('--dy', `${dy}px`)
-  coinElement.value.classList.remove('animate', 'fade-out', 'error-animate')
-  if (balanceChangeDirection == 1) {
-    coinElement.value.classList.add('animate')
-  }
-  else {
-    coinElement.value.classList.add('error-animate')
-  }
 }
-function animationFadeOutCoin(coinEl, endInformation) {
+function animationSuccessCoin() {
+  coinStyles.value.scale = SMALL_SIZE_COIN / BIG_SIZE_COIN
+  coinStyles.value.opacity = 1
+
   setTimeout(() => {
-    coinEl.style.top = `${
-      endInformation.top + endInformation.height / 2 - sizeCoin.value / 2
-    }px`
-    coinEl.style.left = `${
-      endInformation.left + endInformation.width / 2 - sizeCoin.value / 2
-    }px`
-    coinEl.classList.remove('animate')
-    coinEl.classList.add('fade-out')
-  }, 3000)
+    coinStyles.value.transition = 'all 1s ease'
+    coinStyles.value.scale = 1
+  }, 500)
 }
-function animationFadeInBoxBalance(
-  coinEl,
-  boxShowingBalanceElement,
-  nameAnimation,
-) {
-  setTimeout(() => {
-    if (coinElement.value) {
-      coinElement.value.classList.add('d-none')
-      coinElement.value.classList.remove('d-flex')
-      coinElement.value.classList.remove('fade-out')
-    }
-    showBoxBalance.value = true
-    boxShowingBalanceElement.classList.add(nameAnimation)
-  }, 4000)
+function animationFadeOutCoin() {
+  coinStyles.value.transition = 'none'
+  coinStyles.value.opacity = 0
+  coinStyles.value.scale = SMALL_SIZE_COIN / BIG_SIZE_COIN
+}
+function animationFadeInBoxBalance(boxShowingBalanceElement, nameAnimation) {
+  showBoxBalance.value = true
+  boxShowingBalanceElement.classList.add(nameAnimation)
 }
 function animationCountingBalance(
   amountBalanceElement,
@@ -500,9 +473,9 @@ function animationCountingBalance(
 ) {
   setTimeout(() => {
     const startValue = Number(balance.value)
-    const displacementAmount = 0.0000004
+    const displacementAmount = 0.005
     const endValue = parseFloat(
-      (startValue + displacementAmount * balanceChangeDirection).toFixed(8),
+      (startValue + displacementAmount * balanceChangeDirection).toFixed(7),
     )
     const duration = 1000
     const stepTime = 30
@@ -523,27 +496,27 @@ function animationCountingBalance(
         current = endValue
         clearInterval(counter)
       }
-      balance.value = parseFloat(current.toFixed(8))
+      balance.value = parseFloat(current.toFixed(7))
     }, stepTime)
-  }, 4600)
+  }, 600)
 }
 function animationFadeOutBoxBalance(
   amountBalanceElement,
   boxShowingBalanceElement,
 ) {
   setTimeout(() => {
+    boxShowingBalanceElement.classList.remove('animate-in', 'animate-in-error')
+    boxShowingBalanceElement.classList.add('animate-out')
+  }, 3000)
+  setTimeout(() => {
     amountBalanceElement.classList.remove(
       'pulsing',
       'decreasing',
       'increasing',
     )
-    boxShowingBalanceElement.classList.remove('animate-in', 'animate-in-error')
-    boxShowingBalanceElement.classList.add('animate-out')
-  }, 7000)
-  setTimeout(() => {
     boxShowingBalanceElement.classList.remove('animate-out')
     showBoxBalance.value = false
-  }, 7500)
+  }, 3500)
 }
 function playSound(sound) {
   const audio = new Audio(`/assets/sounds/${sound}.mp3`)
@@ -551,113 +524,59 @@ function playSound(sound) {
     console.warn('Failed to play audio:', e)
   })
 }
-function createExplosionParticles(x, y, count = 30) {
-  for (let i = 0; i < count; i++) {
-    const particle = document.createElement('div')
-    particle.classList.add('particle')
-    particle.style.left = `${x}px`
-    particle.style.top = `${y}px`
-    const angle = Math.random() * 2 * Math.PI
-    const radius = Math.random() * 150
-    const dx = Math.cos(angle) * radius
-    const dy = Math.sin(angle) * radius
-    particle.style.setProperty('--x', `${dx}px`)
-    particle.style.setProperty('--y', `${dy}px`)
-    document.body.appendChild(particle)
-    particle.addEventListener('animationend', () => {
-      particle.remove()
-    })
-  }
+function handleAnimationCoinFailComplete() {
+  const boxShowingBalanceElement = boxShowingBalanceRef.value
+  const amountBalanceElement = amountBalanceRef.value
+  showCoinFailAnimation.value = false
+  animationFadeInBoxBalance(boxShowingBalanceElement, 'animate-in-error')
+  animationCountingBalance(amountBalanceElement, -1)
+  animationFadeOutBoxBalance(amountBalanceElement, boxShowingBalanceElement)
 }
-function animationExplodeCoin(coinEl, centerInformation) {
-  setTimeout(() => {
-    coinEl.classList.remove('error-animate')
-    coinEl.style.opacity = 0
-    const centerX = centerInformation.width / 2
-    const centerY = centerInformation.height / 2 + sizeCoin.value / 2 - 20
-    createExplosionParticles(centerX, centerY, 60)
-  }, 3000)
-}
-function animationPulseHeart(startInformation, _coinEl) {
-  coinElement.value.style.top = `${
-    startInformation.top + startInformation.height / 2 - sizeCoin.value / 2
-  }px`
-  coinElement.value.style.left = `${
-    startInformation.left + startInformation.width / 2 - sizeCoin.value / 2
-  }px`
-  coinElement.value.classList.remove('animate', 'fade-out', 'pulse')
-  coinElement.value.classList.add('pulse')
-}
-function fireSelectedOption() {
-  const walletElement = document.querySelector(
-    window.innerWidth < 1264 ? '.wallet-mobile' : '.wallet-div',
-  )
-  const walletElementBoundingRect = walletElement.getBoundingClientRect()
-  const boxShowingBalanceElement = boxShowingBalance.value
-  const amountBalanceElement = amountBalance.value
-  const testDetailElement = testDetail.value
 
-  const testDetailElementBoundingRect
-    = testDetailElement.getBoundingClientRect()
+function selectCorrectAnswer() {
+  const boxShowingBalanceElement = boxShowingBalanceRef.value
+  const amountBalanceElement = amountBalanceRef.value
+
+  animationSuccessCoin()
+  playSound('success')
+  setTimeout(() => {
+    animationFadeOutCoin()
+    animationFadeInBoxBalance(boxShowingBalanceElement, 'animate-in')
+    animationCountingBalance(amountBalanceElement, 1)
+    animationFadeOutBoxBalance(amountBalanceElement, boxShowingBalanceElement)
+  }, 2500)
+}
+
+function selectWrongAnswer() {
+  playSound('fail')
+  showCoinFailAnimation.value = true
+}
+
+const formattedBalance = computed(() => {
+  const value = Number(balance.value).toFixed(7)
+  return balance.value > 0 ? `+${value}` : value
+})
+
+function fireSelectedOption() {
   if (
     selectedOption.value === props.contentData.true_answer
     && !isAnswerToQuestion.value
   ) {
-    coinElement.value.classList.remove('d-none')
-    coinElement.value.classList.add('d-flex')
-    showingCoin.value = true
-    playSound('success')
-    animationPulseHeart(testDetailElementBoundingRect, coinElement.value)
-    setTimeout(() => {
-      coinElement.value.classList.remove('pulse')
-      animationMovingCoin(
-        testDetailElementBoundingRect,
-        coinElement.value,
-        walletElementBoundingRect,
-        1,
-      )
-      animationFadeOutCoin(coinElement.value, walletElementBoundingRect)
-      animationFadeInBoxBalance(
-        coinElement.value,
-        boxShowingBalanceElement,
-        'animate-in',
-      )
-      animationCountingBalance(amountBalanceElement, 1)
-      animationFadeOutBoxBalance(
-        amountBalanceElement,
-        boxShowingBalanceElement,
-      )
-    }, 1000)
+    selectCorrectAnswer()
   }
   if (
     selectedOption.value !== props.contentData.true_answer
     && !isAnswerToQuestion.value
   ) {
-    coinElement.value.classList.remove('d-none')
-    coinElement.value.classList.add('d-flex')
-    playSound('fail')
-    animationMovingCoin(
-      walletElementBoundingRect,
-      coinElement.value,
-      testDetailElementBoundingRect,
-      -1,
-    )
-    animationExplodeCoin(coinElement.value, testDetailElementBoundingRect)
-    animationFadeInBoxBalance(
-      coinElement.value,
-      boxShowingBalanceElement,
-      'animate-in-error',
-    )
-    animationCountingBalance(amountBalanceElement, -1)
-    animationFadeOutBoxBalance(amountBalanceElement, boxShowingBalanceElement)
+    selectWrongAnswer()
   }
   isAnswerToQuestion.value = true
   fullAnswer.value = 0
+  balance.value = 0.0
 }
 function loadNextTest() {
   nextTestLoading.value = true
   selectedOption.value = ''
-  coinElement.value.removeAttribute('style')
   isAnswerToQuestion.value = false
   fullAnswer.value = ''
   $fetch(
@@ -678,6 +597,16 @@ function loadNextTest() {
   padding: 27px;
   background: #f5f5f5 !important;
   border-radius: 6px;
+}
+.option-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid black;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .content_main_info .creator_title {
@@ -738,141 +667,6 @@ p {
   max-height: 15rem;
 }
 
-/* flying coin */
-.flying-coin-div {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 4px solid #c99001;
-  background-color: #fede2f;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1005;
-}
-
-.inner-coin-div {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  border: 4px solid #c48e00;
-  background-color: #e2a900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.text-coin {
-  font-size: 24px;
-  font-weight: bold;
-  color: #fede2f;
-  text-shadow: 3px 2px 0px #c99001;
-}
-
-@keyframes fly-to-wallet {
-  0% {
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-
-  100% {
-    transform: translate(var(--dx), var(--dy)) scale(0.3) rotate(720deg);
-  }
-}
-
-@keyframes fly-to-wallet-reverse {
-  0% {
-    transform: translate(0, 0) scale(0) rotate(0deg);
-  }
-
-  100% {
-    transform: translate(var(--dx), var(--dy)) scale(1) rotate(720deg);
-  }
-}
-
-@keyframes coin-glow {
-  0%,
-  100% {
-    box-shadow: 0 0 0px #fede2f;
-  }
-
-  50% {
-    box-shadow: 0 0 20px #fff94a, 0 0 30px #ffd700;
-  }
-}
-
-@keyframes coin-pulse {
-  0%,
-  100% {
-    opacity: 0.5;
-  }
-
-  50% {
-    opacity: 1;
-  }
-}
-
-@keyframes scale-and-fade-out {
-  0% {
-    transform: scale(0.3);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(0);
-    opacity: 0;
-  }
-}
-
-@keyframes coin-pulse-center {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(0.7);
-  }
-}
-
-.flying-coin-div.pulse {
-  animation: coin-pulse-center 0.5s ease-in-out 2;
-}
-
-.flying-coin-div.fade-out {
-  animation: scale-and-fade-out 1s ease-out forwards;
-}
-
-.flying-coin-div.animate {
-  animation: fly-to-wallet 3s ease-in-out forwards,
-    coin-glow 0.5s ease-in-out infinite, coin-pulse 0.5s ease-in-out infinite;
-}
-
-.flying-coin-div.error-animate {
-  animation: fly-to-wallet-reverse 3s ease-in-out forwards,
-    coin-glow 0.5s ease-in-out infinite, coin-pulse 0.5s ease-in-out infinite;
-}
-
-/* particle explode */
-.particle {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  background-color: #fede2f;
-  border-radius: 50%;
-  opacity: 1;
-  pointer-events: none;
-  z-index: 1006;
-  animation: particle-fly 1.5s forwards ease-out;
-}
-
-@keyframes particle-fly {
-  to {
-    transform: translate(var(--x), var(--y)) scale(0.5);
-    opacity: 0;
-  }
-}
-
 /* Box Showing Balance */
 @keyframes show-balance-box {
   0% {
@@ -881,14 +675,14 @@ p {
   }
 
   100% {
-    transform: translateY(0);
+    transform: translateY(76px);
     opacity: 1;
   }
 }
 
 @keyframes animateOut {
   0% {
-    transform: translateY(0);
+    transform: translateY(76px);
     opacity: 1;
   }
 
@@ -902,8 +696,8 @@ p {
   padding: 10px 20px;
   border: 2px solid #ffb600;
   border-radius: 10px;
-  position: absolute;
-  right: 60px;
+  position: fixed;
+  right: 80px;
   top: -10px;
   display: flex;
   align-items: center;
@@ -930,12 +724,6 @@ p {
   animation: show-balance-box 0.6s ease-out forwards;
   border: 2px solid red;
   background-color: rgba(255, 199, 199, 0.76);
-}
-
-.title-balance {
-  font-size: 18px;
-  font-weight: bold;
-  color: black;
 }
 
 .amount-balance {
@@ -974,12 +762,34 @@ p {
   position: relative;
 }
 .success-answer-icon {
-  font-size: 40px;
+  font-size: 30px;
 }
 @media (max-width: 1264px) {
   .box-showing-balance {
     right: 20px;
     top: 20px;
+  }
+  @keyframes show-balance-box {
+    0% {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateY(50px);
+      opacity: 1;
+    }
+  }
+  @keyframes animateOut {
+    0% {
+      transform: translateY(50px);
+      opacity: 1;
+    }
+
+    100% {
+      transform: translateY(-50px);
+      opacity: 0;
+    }
   }
 }
 </style>
