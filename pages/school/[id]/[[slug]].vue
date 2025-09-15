@@ -240,7 +240,10 @@
             :rating-data="ratingData"
             @leave-comment="showLeaveCommentDialog = true"
           />
-          <school-detail-recent-comments :comment-list="commentList" />
+          <school-detail-recent-comments
+            :comment-list="commentList"
+            @reaction-updated="refreshComments()"
+          />
           <school-detail-similar-schools :similar-schools="similarSchools" />
         </v-col>
       </v-row>

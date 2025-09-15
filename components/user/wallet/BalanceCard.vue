@@ -45,8 +45,9 @@
         class="balance-amount d-flex align-center mb-8"
       >
         <span class="currency mr-2 mt-3 yellow--text-darken">$GET</span>
-        <span class="amount text-white">{{ Math.floor(balance) }}</span>
-        <span class="decimal text-white">.{{ getDecimal(balance) }}</span>
+        <span class="amount text-white">{{
+          Math.floor(balance) / 1000000
+        }}</span>
         <img
           class="mr-4 mb-4"
           src="/images/wallet/wallet-amount.png"
@@ -135,11 +136,11 @@ const fetchBalance = async () => {
   }
 }
 
-const getDecimal = (num) => {
-  return Math.floor((num % 1) * 100)
-    .toString()
-    .padStart(2, '0')
-}
+// const getDecimal = (num) => {
+//   return Math.floor((num % 1) * 100)
+//     .toString()
+//     .padStart(2, '0')
+// }
 
 const toggleBalanceVisibility = () => {
   showBalance.value = !showBalance.value
