@@ -288,6 +288,14 @@ const _colors = ['#24292F', '#0092A9']
 const slides = [
   {
     title:
+      '<span class="gama-text-h1 font-weight-bold">Learn<span class="d-sm-none"><br>&nbsp&nbsp</span> & Earn</span>',
+    text: 'Where education meets Web3 — empowering students to learn,<br> earn, and thrive in a decentralized future.',
+    img: 'learn&earn.png',
+    id: 'le-slide',
+    link: '/earn-money',
+  },
+  {
+    title:
       '<span class="gama-text-h1">AI</span> <span class="gama-text-h4 text-white">&nbspSystem <span class="d-sm-none"><br>&nbsp&nbsp</span>in Education</span>',
     img: 'ai-robot.png',
     text: 'Discover the future of education with our AI-powered learning platform,<br> revolutionizing the way you acquire knowledge and skills.',
@@ -308,14 +316,6 @@ const slides = [
     img: 'a-q.png',
     id: 'aq-slide',
     link: '/search?type=question',
-  },
-  {
-    title:
-      '<span class="gama-text-h1 font-weight-bold">Learn<span class="d-sm-none"><br>&nbsp&nbsp</span> & Earn</span>',
-    text: 'Where education meets Web3 — empowering students to learn,<br> earn, and thrive in a decentralized future.',
-    img: 'learn&earn.png',
-    id: 'le-slide',
-    link: '/earn-money',
   },
 ]
 
@@ -532,19 +532,18 @@ const calcPath = (type) => {
 #main-slider #le-slide {
   padding-top: 6rem;
   height: 21.5rem;
-  background: #293056 !important;
+  background: linear-gradient(45deg, #24292F 0%, #091B30 100%);
   background-repeat: no-repeat;
 }
 
 #main-slider #le-slide .v-card {
   height: 21.5rem;
-  background-size: 25.4rem 13.36rem;
+  background-size: 15.4rem 13.36rem;
   background-color: transparent;
   background-image: url("/images/learn&earn.png");
   background-position: right 2.2rem !important;
   background-repeat: no-repeat;
   background-position: 95% top;
-  margin-right: -16px;
 }
 
 #main-slider .section2 {
@@ -650,7 +649,7 @@ const calcPath = (type) => {
 
   #main-slider #le-slide .v-card {
     height: 34rem;
-    background-size: 38.4rem 16.36rem;
+    background-size: 18.4rem 16.36rem;
   }
 
   #main-slider .v-carousel__controls {
@@ -1034,7 +1033,7 @@ const calcPath = (type) => {
 
   #main-slider #le-slide {
     padding-top: 6rem;
-    background: #293056 !important;
+      background: linear-gradient(45deg, #24292F 0%, #091B30 100%);
     background-repeat: no-repeat;
     height: 44rem;
   }
@@ -1044,11 +1043,7 @@ const calcPath = (type) => {
     background-color: transparent;
     background-image: url("/images/learn&earn.png");
     background-repeat: no-repeat;
-    background-size: 62.4rem 30.36rem;
-    background-position: right 2.4rem !important;
-    background-position: 95% top;
-    margin-right: -2.4rem !important;
-    margin-top: 22px !important;
+    background-size: 32.4rem 30.36rem;
   }
 
   #main-slider .section2 {
