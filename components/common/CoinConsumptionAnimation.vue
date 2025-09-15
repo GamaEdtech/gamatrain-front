@@ -18,12 +18,6 @@
             @complete="onAnimationComplete"
           />
         </ClientOnly>
-        <div
-          v-if="showMultiplier"
-          class="coin-multiplier"
-        >
-          -{{ coinCount }}
-        </div>
       </div>
     </div>
   </div>
@@ -37,24 +31,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  coinCount: {
-    type: Number,
-    default: 5,
-  },
 })
 
 const emit = defineEmits(['animation-complete'])
 
 const centerLottieRef = ref(null)
 const internalVisible = ref(true)
-const showMultiplier = ref(true)
 
 function startAnimation() {
   if (!props.isVisible) return
 
   // Reset internal state
   internalVisible.value = true
-  showMultiplier.value = true
 
   // Start animation after DOM update
   nextTick(() => {
@@ -78,21 +66,22 @@ function onAnimationComplete() {
 }
 
 function hideAnimation() {
-  showMultiplier.value = false
   internalVisible.value = false
 }
 
 // Watch for visibility changes to start animation
-watch(() => props.isVisible, (newValue) => {
-  if (newValue) {
-    startAnimation()
-  }
-  else {
-    // Reset state when becoming invisible
-    internalVisible.value = false
-    showMultiplier.value = false
-  }
-})
+watch(
+  () => props.isVisible,
+  (newValue) => {
+    if (newValue) {
+      startAnimation()
+    }
+    else {
+      // Reset state when becoming invisible
+      internalVisible.value = false
+    }
+  },
+)
 
 // Start animation if already visible on mount
 onMounted(() => {
@@ -130,40 +119,5 @@ onMounted(() => {
   transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 10001;
-}
-
-.coin-multiplier {
-  position: absolute;
-  top: 50%;
-  left: 100%;
-  transform: translateY(-50%);
-  font-size: 38px;
-  font-weight: bold;
-  color: #ffd700;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-  animation: fadeInScale 1.5s ease-out forwards;
-  z-index: 10002;
-}
-
-@keyframes fadeInScale {
-  0% {
-    opacity: 1;
-    padding: 1rem;
-    transform: translateY(-50%) scale(1);
-    background-color: #5c4f04;
-    border-radius: 50%;
-  }
-  70% {
-    opacity: 1;
-    transform: translateY(-50%) scale(1.1);
-    background-color: #5c4f04;
-  }
-  100% {
-    opacity: 0;
-    padding: auto;
-    transform: translateY(-50%) scale(0.1);
-    background-color: #998304;
-    border-radius: 50%;
-  }
 }
 </style>

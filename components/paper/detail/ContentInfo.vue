@@ -118,7 +118,7 @@
                 width="3"
                 color="white"
                 class="position-absolute"
-                style="z-index: 2;"
+                style="z-index: 2"
               />
             </template>
             <v-icon
@@ -129,9 +129,14 @@
               mdi-file-word-box
             </v-icon>
             <span :class="{ 'text-transparent': isDownloading('q_word') }">
-              {{ getButtonText('Download Question Doc') }}
+              {{ getButtonText("Download Question Doc") }}
             </span>
-            <template v-if="requiresCoinPaymentForFile('q_word') && contentData?.files?.word.price === 0">
+            <template
+              v-if="
+                requiresCoinPaymentForFile('q_word')
+                  && contentData?.files?.word.price === 0
+              "
+            >
               <v-icon
                 size="small"
                 color="orange"
@@ -165,7 +170,7 @@
                 width="3"
                 color="white"
                 class="position-absolute"
-                style="z-index: 2;"
+                style="z-index: 2"
               />
             </template>
             <v-icon
@@ -176,9 +181,14 @@
               mdi-file-pdf-box
             </v-icon>
             <span :class="{ 'text-transparent': isDownloading('q_pdf') }">
-              {{ getButtonText('Download Question Paper') }}
+              {{ getButtonText("Download Question Paper") }}
             </span>
-            <template v-if="requiresCoinPaymentForFile('q_pdf') && contentData?.files?.pdf.price === 0">
+            <template
+              v-if="
+                requiresCoinPaymentForFile('q_pdf')
+                  && contentData?.files?.pdf.price === 0
+              "
+            >
               <v-icon
                 size="small"
                 color="orange"
@@ -211,7 +221,7 @@
                 width="3"
                 color="white"
                 class="position-absolute"
-                style="z-index: 2;"
+                style="z-index: 2"
               />
             </template>
             <v-icon
@@ -222,9 +232,14 @@
               mdi-file-pdf-box
             </v-icon>
             <span :class="{ 'text-transparent': isDownloading('a_file') }">
-              {{ getButtonText('Download Mark Scheme') }}
+              {{ getButtonText("Download Mark Scheme") }}
             </span>
-            <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+            <template
+              v-if="
+                requiresCoinPaymentForFile('a_file')
+                  && contentData?.files?.answer.price === 0
+              "
+            >
               <v-icon
                 size="small"
                 color="orange"
@@ -257,7 +272,7 @@
                 width="3"
                 color="white"
                 class="position-absolute"
-                style="z-index: 2;"
+                style="z-index: 2"
               />
             </template>
             <v-icon
@@ -268,9 +283,14 @@
               mdi-file-word-box
             </v-icon>
             <span :class="{ 'text-transparent': isDownloading('a_file') }">
-              {{ getButtonText('Download Answer Doc') }}
+              {{ getButtonText("Download Answer Doc") }}
             </span>
-            <template v-if="requiresCoinPaymentForFile('a_file') && contentData?.files?.answer.price === 0">
+            <template
+              v-if="
+                requiresCoinPaymentForFile('a_file')
+                  && contentData?.files?.answer.price === 0
+              "
+            >
               <v-icon
                 size="small"
                 color="orange"
@@ -308,14 +328,16 @@
                 width="3"
                 color="white"
                 class="position-absolute"
-                style="z-index: 2;"
+                style="z-index: 2"
               />
             </template>
             <template v-if="extra?.ext == 'mp3'">
               <v-icon
                 size="x-large"
                 class="btn-icon"
-                :class="{ 'text-transparent': isDownloading('extra', extra.id) }"
+                :class="{
+                  'text-transparent': isDownloading('extra', extra.id),
+                }"
               >
                 mdi-volume-high
               </v-icon>
@@ -324,25 +346,44 @@
               <v-icon
                 size="x-large"
                 class="btn-icon"
-                :class="{ 'text-transparent': isDownloading('extra', extra.id) }"
+                :class="{
+                  'text-transparent': isDownloading('extra', extra.id),
+                }"
               >
                 mdi-file-pdf-box
               </v-icon>
             </template>
-            <span :class="{ 'text-transparent': isDownloading('extra', extra.id) }">
-              {{ getButtonText(`Download ${extra.type_title ? extra.type_title : "Extra"}`) }}
+            <span
+              :class="{ 'text-transparent': isDownloading('extra', extra.id) }"
+            >
+              {{
+                getButtonText(
+                  `Download ${extra.type_title ? extra.type_title : "Extra"}`,
+                )
+              }}
             </span>
-            <template v-if="requiresCoinPaymentForFile('extra', extra.id) && extra.price === 0">
+            <template
+              v-if="
+                requiresCoinPaymentForFile('extra', extra.id)
+                  && extra.price === 0
+              "
+            >
               <v-icon
                 size="small"
                 color="orange"
-                :class="{ 'text-transparent': isDownloading('extra', extra.id) }"
+                :class="{
+                  'text-transparent': isDownloading('extra', extra.id),
+                }"
               >
                 mdi-coin
               </v-icon>
             </template>
             <template v-else-if="extra.price > 0">
-              <span :class="{ 'text-transparent': isDownloading('extra', extra.id) }">
+              <span
+                :class="{
+                  'text-transparent': isDownloading('extra', extra.id),
+                }"
+              >
                 | ${{ extra.price }}
               </span>
             </template>
@@ -406,7 +447,6 @@
   <!-- Coin Consumption Animation -->
   <common-coin-consumption-animation
     :is-visible="showCoinAnimation"
-    :coin-count="5"
     @animation-complete="handleAnimationComplete"
   />
 </template>
@@ -526,7 +566,9 @@ const requiresCoinPaymentForFile = (type, extraId) => {
 
   if (type === 'extra') {
     // Extra files (audio, etc.) require coins for 2025
-    const extra = props.contentData?.files?.extra?.find(e => e.id === extraId)
+    const extra = props.contentData?.files?.extra?.find(
+      e => e.id === extraId,
+    )
     return extra?.price === 0
   }
 
@@ -539,7 +581,9 @@ const checkFileHasPrice = (type, extraId) => {
   if (type === 'q_pdf') return props.contentData?.files?.pdf.price > 0
   if (type === 'a_file') return props.contentData?.files?.answer.price > 0
   if (type === 'extra') {
-    const extra = props.contentData?.files?.extra?.find(e => e.id === extraId)
+    const extra = props.contentData?.files?.extra?.find(
+      e => e.id === extraId,
+    )
     return extra?.price > 0
   }
   return false
@@ -608,7 +652,10 @@ const handleAnimationComplete = async () => {
   if (pendingDownload.value) {
     console.log('Starting download for:', pendingDownload.value)
     // Start the actual download
-    await startDownload(pendingDownload.value.type, pendingDownload.value.extraId)
+    await startDownload(
+      pendingDownload.value.type,
+      pendingDownload.value.extraId,
+    )
     pendingDownload.value = null
   }
 }
@@ -685,8 +732,13 @@ const startDownload = async (type, extraId) => {
         })
 
         // Show success message for coin payments
-        if (requiresCoinPaymentForFile(type, extraId) && !checkFileHasPrice(type, extraId)) {
-          $toast.success('Download started! 5 coins deducted from your balance.')
+        if (
+          requiresCoinPaymentForFile(type, extraId)
+          && !checkFileHasPrice(type, extraId)
+        ) {
+          $toast.success(
+            'Download started! 5 coins deducted from your balance.',
+          )
         }
 
         // Clean up after a short delay
