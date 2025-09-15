@@ -12,6 +12,8 @@ export default defineNuxtConfig({
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
       solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
       randomCoinApiKey: process.env.NUXT_PUBLIC_RANDOM_COIN_API_KEY,
+      gtmId: process.env.NUXT_PUBLIC_GTM_ID,
+      gtagId: process.env.NUXT_PUBLIC_GTAG_ID,
     },
   },
 
@@ -22,6 +24,8 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@vite-pwa/nuxt',
     'nuxt-og-image',
+    'nuxt-gtag',
+    '@zadigetvoltaire/nuxt-gtm',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         config.plugins.push(
@@ -110,29 +114,6 @@ export default defineNuxtConfig({
         {
           rel: 'stylesheet',
           href: '/assets/css/material-symbols.css',
-        },
-      ],
-      script: [
-        {
-          src: 'https://www.googletagmanager.com/gtag/js?id=G-F4X87M3W8P',
-          async: true,
-        },
-        {
-          innerHTML: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-F4X87M3W8P');
-          `,
-        },
-        {
-          innerHTML: `
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','GTM-NDGP2TTT');
-          `,
         },
       ],
     },
@@ -234,6 +215,18 @@ export default defineNuxtConfig({
 
   image: {
     domains: ['core.gamatrain.com'],
+  },
+
+  gtag: {
+    id: process.env.NUXT_PUBLIC_GTAG_ID || process.env.NUXT_PUBLIC_GTM_ID,
+    pageviewOnLoad: false,
+  },
+
+  // Google Tag Manager configuration
+  gtm: {
+    id: process.env.NUXT_PUBLIC_GTM_ID,
+    defer: true,
+    enabled: true,
   },
 
   // Build configuration
