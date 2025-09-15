@@ -1,78 +1,80 @@
 <template>
   <v-container class="flex-column margin-top-handle">
     <v-row class="justify-center">
-      <v-col
-        cols="4"
-        md="12"
-        class="d-flex d-md-none justify-start"
-      >
-        <v-badge
-          class="mt-1 height-badge"
-          offset-x="5"
-          offset-y="-5"
-          :color="countFilterSelect == 0 ? `transparent` : `#F04438`"
-          :content="countFilterSelect == 0 ? `` : countFilterSelect"
+      <div class="w-100 d-flex justify-center flex-wrap top-info-div">
+        <v-col
+          cols="4"
+          md="12"
+          class="d-flex d-md-none justify-start"
         >
-          <v-btn
-            rounded="xl"
-            prepend-icon="mdi-tune-vertical"
-            variant="outlined"
-            class="primary-gray-700"
-            density="comfortable"
-            @click="openFilterMobileModal = !openFilterMobileModal"
+          <v-badge
+            class="mt-1 height-badge"
+            offset-x="5"
+            offset-y="-5"
+            :color="countFilterSelect == 0 ? `transparent` : `#F04438`"
+            :content="countFilterSelect == 0 ? `` : countFilterSelect"
           >
-            Filter
-          </v-btn>
-        </v-badge>
-      </v-col>
-      <v-col
-        cols="8"
-        md="12"
-        class="d-flex justify-end justify-md-center"
-      >
-        <v-text-field
-          v-model="textSearch"
-          label="Search anything...."
-          variant="outlined"
-          color="#FFB600"
-          max-width="330"
-          density="compact"
-          hide-details
-          class="custom-search-text-field"
-          @update:model-value="changeTextSearch"
-        >
-          <template #append>
             <v-btn
-              icon
-              varient="text"
-              color="#FFB600"
-              width="50"
-              class="rounded-ts rounded-te-xl rounded-be-xl rounded-bs h-100 ml-n2"
-              flat
+              rounded="xl"
+              prepend-icon="mdi-tune-vertical"
+              variant="outlined"
+              class="primary-gray-700"
+              density="comfortable"
+              @click="openFilterMobileModal = !openFilterMobileModal"
             >
-              <v-icon
-                size="x-large"
-                icon="mdi-magnify"
-                color="#000000"
-              />
+              Filter
             </v-btn>
-          </template>
-        </v-text-field>
-      </v-col>
-      <search-filter-option
-        v-model:show-dialog-filter-mobile="openFilterMobileModal"
-        :count-data-found="totalDataFind"
-        @change-filter-query="changeFilterQuery"
-      />
-      <v-col
-        cols="12"
-        class="d-flex align-end justify-end ga-2 max-width-container"
-      >
-        <span class="text-h5 primary-gray-400">Result</span>
-        <span class="text-h4 primary-gray-700 font-weight-bold">{{
-          $numberFormat(totalDataFind)
-        }}</span>
-      </v-col>
+          </v-badge>
+        </v-col>
+        <v-col
+          cols="8"
+          md="12"
+          class="d-flex justify-end justify-md-center"
+        >
+          <v-text-field
+            v-model="textSearch"
+            label="Search anything...."
+            variant="outlined"
+            color="#FFB600"
+            max-width="330"
+            density="compact"
+            hide-details
+            class="custom-search-text-field"
+            @update:model-value="changeTextSearch"
+          >
+            <template #append>
+              <v-btn
+                icon
+                varient="text"
+                color="#FFB600"
+                width="50"
+                class="rounded-ts rounded-te-xl rounded-be-xl rounded-bs h-100 ml-n2"
+                flat
+              >
+                <v-icon
+                  size="x-large"
+                  icon="mdi-magnify"
+                  color="#000000"
+                />
+              </v-btn>
+            </template>
+          </v-text-field>
+        </v-col>
+        <search-filter-option
+          v-model:show-dialog-filter-mobile="openFilterMobileModal"
+          :count-data-found="totalDataFind"
+          @change-filter-query="changeFilterQuery"
+        />
+        <v-col
+          cols="12"
+          class="d-flex align-end justify-end ga-2 max-width-container"
+        >
+          <span class="text-h5 primary-gray-400">Result</span>
+          <span class="text-h4 primary-gray-700 font-weight-bold">{{
+            $numberFormat(totalDataFind)
+          }}</span>
+        </v-col>
+      </div>
       <search-list
         :data-list="data"
         :is-initial-loading="isInitialDataLoading"
@@ -341,7 +343,8 @@ const metadata = computed(() => {
     },
   }
 
-  const descTemplate = descriptionTemplates[route.query.type] || descriptionTemplates.default
+  const descTemplate
+    = descriptionTemplates[route.query.type] || descriptionTemplates.default
   const description = titles.boardTitle
     ? descTemplate.dynamic
     : pageDescriptions[route.query.type] || pageDescriptions.test
@@ -383,6 +386,9 @@ useHead(() => ({
 </script>
 
 <style scoped>
+.top-info-div {
+  position: relative;
+}
 .margin-top-handle {
   margin-top: 64px;
   min-height: calc(100vh - 64px);
@@ -406,6 +412,12 @@ useHead(() => ({
   .margin-top-handle {
     margin-top: 6.4rem;
     min-height: calc(100vh - 6.4rem);
+  }
+  .top-info-div {
+    position: sticky;
+    top: 64px;
+    background-color: white;
+    z-index: 2;
   }
 }
 </style>
