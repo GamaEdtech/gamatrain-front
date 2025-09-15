@@ -288,6 +288,14 @@ const _colors = ['#24292F', '#0092A9']
 const slides = [
   {
     title:
+      '<span class="gama-text-h1 font-weight-bold">Learn<span class="d-sm-none"><br>&nbsp&nbsp</span> & Earn</span>',
+    text: 'Where education meets Web3 — empowering students to learn,<br> earn, and thrive in a decentralized future.',
+    img: 'learn&earn.png',
+    id: 'le-slide',
+    link: '/earn-money',
+  },
+  {
+    title:
       '<span class="gama-text-h1">AI</span> <span class="gama-text-h4 text-white">&nbspSystem <span class="d-sm-none"><br>&nbsp&nbsp</span>in Education</span>',
     img: 'ai-robot.png',
     text: 'Discover the future of education with our AI-powered learning platform,<br> revolutionizing the way you acquire knowledge and skills.',
@@ -521,6 +529,23 @@ const calcPath = (type) => {
   background-position: 95% top;
 }
 
+#main-slider #le-slide {
+  padding-top: 6rem;
+  height: 21.5rem;
+  background: linear-gradient(45deg, #24292F 0%, #091B30 100%);
+  background-repeat: no-repeat;
+}
+
+#main-slider #le-slide .v-card {
+  height: 21.5rem;
+  background-size: 15.4rem 13.36rem;
+  background-color: transparent;
+  background-image: url("/images/learn&earn.png");
+  background-position: right 2.2rem !important;
+  background-repeat: no-repeat;
+  background-position: 95% top;
+}
+
 #main-slider .section2 {
   height: 10%;
 }
@@ -614,6 +639,15 @@ const calcPath = (type) => {
   }
 
   #main-slider #aq-slide .v-card {
+    height: 34rem;
+    background-size: 18.4rem 16.36rem;
+  }
+
+  #main-slider #le-slide {
+    height: 27rem;
+  }
+
+  #main-slider #le-slide .v-card {
     height: 34rem;
     background-size: 18.4rem 16.36rem;
   }
@@ -994,6 +1028,21 @@ const calcPath = (type) => {
     background-image: url("/images/a-q.png");
     background-repeat: no-repeat;
     background-position: right top;
+    background-size: 32.4rem 30.36rem;
+  }
+
+  #main-slider #le-slide {
+    padding-top: 6rem;
+      background: linear-gradient(45deg, #24292F 0%, #091B30 100%);
+    background-repeat: no-repeat;
+    height: 44rem;
+  }
+
+  #main-slider #le-slide .v-card {
+    height: 42rem;
+    background-color: transparent;
+    background-image: url("/images/learn&earn.png");
+    background-repeat: no-repeat;
     background-size: 32.4rem 30.36rem;
   }
 
