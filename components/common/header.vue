@@ -3,8 +3,8 @@ import CommonLogin from '~/components/common/login.vue'
 import CommonRegister from '~/components/common/register.vue'
 import CommonRecover from '~/components/common/pass-recover.vue'
 import DrawerMenu from '~/components/dashboard/drawer-menu'
+import dropdownMenu from '~/components/common/dropdownMenu.vue'
 import { useAuth } from '~/composables/useAuth'
-import { useUser } from '~/composables/useUser'
 import { useCookie } from 'nuxt/app'
 import { useDisplay } from 'vuetify'
 
@@ -108,28 +108,6 @@ const searchFilterItems = [
 const mobileSearchFilter = ref('')
 const _keyword = ref('')
 
-const user_profile_items = [
-  {
-    title: 'Dashboard',
-    icon: 'mdi-view-dashboard',
-    link: '/user',
-  },
-  {
-    title: 'Messages',
-    icon: 'mdi-email-outline',
-    link: '/user/ticket',
-  },
-  {
-    title: 'Edit Profile',
-    icon: 'mdi-account-outline',
-    link: '/user/profile',
-  },
-  {
-    title: 'Change Password',
-    icon: 'mdi-key',
-    link: '/user/edit-pass',
-  },
-]
 const notificationListDialog = ref(false)
 const notificationItems = [
   {
@@ -172,16 +150,6 @@ const route = useRoute()
 const router = useRouter()
 
 const _cookieToken = useCookie('authToken')
-const { user, _setUser } = useUser()
-
-const logout = async () => {
-  try {
-    await auth.logout()
-  }
-  catch (error) {
-    console.error('Logout failed:', error)
-  }
-}
 
 onMounted(async () => {
   // if (window.innerWidth <= 960 && this.$auth.loggedIn) {
@@ -543,77 +511,7 @@ const openNavigationMenu = () => {
                 class="d-flex text-right align-md-center"
               >
                 <v-spacer />
-                <v-menu
-                  transition="slide-x-transition"
-                  offset-y
-                  min-width="150"
-                >
-                  <template #activator="{ props }">
-                    <div
-                      v-bind="props"
-                      class="d-flex"
-                    >
-                      <div
-                        :id="
-                          menuSetting.bgColor == '#fff'
-                            ? 'header-username-dark'
-                            : 'header-username-light'
-                        "
-                        class="gama-text-subtitle1"
-                      >
-                        {{ user?.first_name || user?.last_name || "NO NAME" }}
-                      </div>
-                      <v-avatar
-                        v-if="user?.avatar"
-                        size="32"
-                      >
-                        <v-img
-                          :src="user?.avatar"
-                          alt="user avatar"
-                        />
-                      </v-avatar>
-                      <v-icon
-                        v-else
-                        :color="menuSetting.linkColor"
-                      >
-                        mdi-account
-                      </v-icon>
-                    </div>
-                  </template>
-                  <v-list>
-                    <v-list-item
-                      v-for="(item, i) in user_profile_items"
-                      :key="i"
-                      :to="item.link"
-                    >
-                      <template #prepend>
-                        <v-icon
-                          size="small"
-                          class="mr-0 nt"
-                        >
-                          {{ item.icon }}
-                        </v-icon>
-                      </template>
-                      <v-list-item-title>
-                        {{ item.title }}
-                      </v-list-item-title>
-                    </v-list-item>
-                    <v-list-item
-                      class="pointer"
-                      @click="logout"
-                    >
-                      <template #prepend>
-                        <v-icon
-                          size="small"
-                          class="mr-0"
-                        >
-                          mdi-logout
-                        </v-icon>
-                      </template>
-                      <v-list-item-title> Logout </v-list-item-title>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
+                <dropdown-menu :menu-setting="menuSetting" />
 
                 <div class="wallet-div">
                   <v-btn
@@ -1022,66 +920,10 @@ const openNavigationMenu = () => {
             :color="menuSetting.linkColor"
           >mdi-wallet-outline</v-icon>
         </nuxt-link>
-        <v-menu
+        <dropdown-menu
           v-if="auth.isAuthenticated.value"
-          transition="slide-x-transition"
-          offset-y
-          min-width="150"
-        >
-          <template #activator="{ props }">
-            <div v-bind="props">
-              <v-avatar
-                v-if="auth?.user?.avatar"
-                class="ml-2"
-              >
-                <v-img
-                  :src="auth?.user?.avatar"
-                  alt="user avatar"
-                />
-              </v-avatar>
-              <v-icon
-                v-else
-                class="ml-2"
-                :color="menuSetting.linkColor"
-              >
-                mdi-account
-              </v-icon>
-            </div>
-          </template>
-          <v-list>
-            <v-list-item
-              v-for="(item, i) in user_profile_items"
-              :key="i"
-              :to="item.link"
-            >
-              <template #prepend>
-                <v-icon
-                  class="mr-0 nt"
-                  :icon="item.icon"
-                  size="small"
-                />
-              </template>
-
-              <v-list-item-title>
-                {{ item.title }}
-              </v-list-item-title>
-            </v-list-item>
-            <v-list-item
-              class="pointer"
-              @click="logout"
-            >
-              <template #prepend>
-                <v-icon
-                  small
-                  class="mr-0"
-                >
-                  mdi-logout
-                </v-icon>
-              </template>
-              <v-list-item-title> Logout </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+          :menu-setting="menuSetting"
+        />
       </v-app-bar>
       <!-- End mobile nav -->
 
@@ -1589,20 +1431,6 @@ const openNavigationMenu = () => {
       min-width: 2.8rem;
       width: 2.8rem;
       height: 2.8rem;
-    }
-
-    #header-username-light {
-      color: #fff;
-      margin-top: 0.2rem;
-      min-width: 6.2rem;
-      margin-right: 1rem;
-    }
-
-    #header-username-dark {
-      color: #000;
-      margin-top: 0.2rem;
-      min-width: 6.2rem;
-      margin-right: 1rem;
     }
 
     #main-menu {

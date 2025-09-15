@@ -94,9 +94,9 @@
             :key="item.title"
             :value="item.value"
           >
-            <template #activator="{ props }">
+            <template #activator="{ props: activeMenuItem }">
               <v-list-item
-                v-bind="props"
+                v-bind="activeMenuItem"
                 :class="`${
                   !drawerRail && isParentActive(item) ? 'custom-list-item' : ''
                 }
@@ -417,15 +417,15 @@ const drawerRail = computed({
   },
 })
 
-onMounted(() => {
-  openedGroups.value = []
-})
 watch(
-  () => route.fullPath,
+  () => openedGroups.value,
   () => {
-    openedGroups.value = []
+    if (drawerRail.value && openedGroups.value.length > 0) {
+      openedGroups.value = []
+    }
   },
 )
+
 const railchange = () => {
   if (drawerRail.value) {
     openedGroups.value = []
