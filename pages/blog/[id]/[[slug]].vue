@@ -8,9 +8,12 @@
     <v-row v-else>
       <v-col
         cols="12"
-        class="d-flex flex-column bg-primary-gray-100 pa-6 rounded-lg mt-4"
+        class="d-flex flex-column pa-6 mt-4 position-relative"
       >
-        <div class="w-100 d-flex flex-column align-center">
+        <div
+          class="bg-primary-gray-100 rounded-lg left-0 top-0 gray-background-div w-100 position-absolute"
+        />
+        <div class="w-100 d-flex flex-column align-center set-z-index">
           <h1 class="w-100 text-h4 text-sm-h3 text-md-h2 font-weight-bold">
             {{ contentData.title }}
           </h1>
@@ -22,28 +25,27 @@
               v-for="(tag, index) in contentData.tags"
               :key="index"
               :to="`/blog?page=1&cat=${tag.id}`"
-              class="text-h5 text-white font-weight-bold pa-3"
+              class="text-subtitle-1 text-sm-h5 text-white font-weight-bold pa-3"
               color="#a7b1c2"
               variant="flat"
+              :size="xs ? `x-small` : `default`"
             >
               {{ tag.name }}
             </v-chip>
           </div>
         </div>
-        <div class="w-100 main-image-blog-div mt-4">
-          <img
-            v-if="contentData.imageUri"
-            class="w-100 h-100 rounded-lg main-blog-img"
-            :src="
-              contentData.imageUri
-                ? contentData.imageUri.replace(/^http:\/\//, 'https://')
-                : '/default-blog-image.jpg'
-            "
-            :alt="contentData.title"
-          >
-        </div>
+        <img
+          v-if="contentData.imageUri"
+          class="w-100 rounded-lg main-blog-img set-z-index mt-4"
+          :src="
+            contentData.imageUri
+              ? contentData.imageUri.replace(/^http:\/\//, 'https://')
+              : '/default-blog-image.jpg'
+          "
+          :alt="contentData.title"
+        >
         <div
-          class="w-100 d-flex flex-wrap align-center justify-space-between mt-2 ga-3 ga-sm-0"
+          class="w-100 d-flex flex-wrap align-center justify-space-between mt-2 ga-3 ga-sm-0 set-z-index"
         >
           <div class="w-100 w-sm-50 d-flex align-center ga-2">
             <v-img
@@ -308,12 +310,16 @@ onMounted(() => {
   min-height: 100vh;
   max-width: 800px !important;
 }
-.main-image-blog-div {
-  min-height: 300px;
-  max-height: 600px;
-}
+
 .main-blog-img {
-  object-fit: fill;
+  height: auto;
+  object-fit: cover;
+}
+.gray-background-div {
+  height: calc(100% - 140px);
+}
+.set-z-index {
+  z-index: 2;
 }
 
 #blog-describe {
@@ -460,6 +466,9 @@ onMounted(() => {
 }
 
 @media (min-width: 600px) {
+  .gray-background-div {
+    height: calc(100% - 140px);
+  }
   #blog-describe {
     margin-bottom: 6.4rem;
     width: 98%;
