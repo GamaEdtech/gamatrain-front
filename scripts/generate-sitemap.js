@@ -82,7 +82,7 @@ async function getTotalPages(contentType) {
       apiUrl = `${baseUrl}search?type=dars&page=1&perpage=${itemsPerPage}`
       break
     case 'blog':
-      apiUrl = `${baseUrl}blogs/search?page=1&perpage=${itemsPerPage}`
+      apiUrl = `https://api.gamaedtech.com/api/v1/blogs/posts?PagingDto.PageFilter.ReturnTotalRecordsCount=true`
       break
     case 'school':
       apiUrl = `https://api.gamaedtech.com/api/v1/schools?PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
@@ -95,7 +95,7 @@ async function getTotalPages(contentType) {
   const json = await response.json()
 
   const totalItems
-    = contentType === 'school'
+    = (contentType === 'school' || contentType === 'blog')
       ? parseInt(json.data.totalRecordsCount)
       : parseInt(json.data.num)
 
@@ -125,7 +125,7 @@ async function fetchPaginatedData(contentType, page) {
       apiUrl = `${oldBaseUrl}search?type=dars`
       break
     case 'blog':
-      apiUrl = `${oldBaseUrl}blogs/search`
+      apiUrl = `${baseUrl}blogs/posts`
       break
     case 'school':
       apiUrl = `${baseUrl}schools`
@@ -135,13 +135,14 @@ async function fetchPaginatedData(contentType, page) {
   }
 
   let finalUrl = `${apiUrl}&page=${page}&perpage=${itemsPerPage}&ineedmore=1`
-  if (contentType === 'blog')
-    finalUrl = `${apiUrl}?page=${page}&perpage=${itemsPerPage}&ineedmore=1`
 
   const pageNum = page > 0 ? page - 1 : 0
+  if (contentType === 'blog')
+    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage
+    }&PagingDto.PageFilter.ReturnTotalRecordsCount=true`
+
   if (contentType === 'school')
-    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${
-      pageNum * itemsPerPage
+    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage
     }&PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
 
   const response = await fetch(finalUrl)
@@ -158,17 +159,7 @@ function convertDataToXML(data, contentType) {
     let title = item.title_url
     let modifyDate = item.up_date
 
-    if (contentType === 'blog') {
-      title = item.title
-        ?.trim()
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/\//g, '-')
-        .replace(/[^a-z0-9-]/g, '')
-        .replace(/-+/g, '-')
-        .replace(/^-+|-+$/g, '')
-    }
-    else if (contentType === 'school') {
+    if (contentType === 'school' || contentType === 'blog') {
       title = item.slug
       modifyDate = item.lastModifyDate
     }

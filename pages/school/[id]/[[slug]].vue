@@ -240,7 +240,10 @@
             :rating-data="ratingData"
             @leave-comment="showLeaveCommentDialog = true"
           />
-          <school-detail-recent-comments :comment-list="commentList" />
+          <school-detail-recent-comments
+            :comment-list="commentList"
+            @reaction-updated="refreshComments()"
+          />
           <school-detail-similar-schools :similar-schools="similarSchools" />
         </v-col>
       </v-row>
@@ -300,7 +303,6 @@ const galleryImages = ref([])
 const isAdsLoad = ref(false)
 
 const requestURL = ref(useRequestURL().host)
-const { $slugGenerator } = useNuxtApp()
 
 // --- Description meta generation ---
 function generateDefaultDescription(data) {
@@ -432,9 +434,7 @@ useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: `${requestURL.value}/school/${
-        contentData.value?.id
-      }/${$slugGenerator(contentData?.value?.name)}`,
+      href: `${requestURL.value}/school/${contentData.value?.id}/${contentData?.value?.slug}`,
     },
     {
       rel: 'icon',
@@ -443,7 +443,7 @@ useHead(() => ({
     },
   ],
 }))
-
+console.log('contentData.value', contentData.value)
 const ogImage = contentData.value?.defaultImageUri
   ? contentData.value?.defaultImageUri.replace(/^http:\/\//, 'https://')
   : null
@@ -454,9 +454,7 @@ useSeoMeta({
   ogTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
   ogDescription: () => metaDescription.value,
   ogUrl: () =>
-    `${requestURL.value}/school/${contentData.value?.id}/${$slugGenerator(
-      contentData?.value?.name,
-    )}`,
+    `${requestURL.value}/school/${contentData.value?.id}/${contentData?.value?.slug}`,
   twitterTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
   twitterDescription: () => metaDescription.value,
   twitterCard: 'summary_large_image',

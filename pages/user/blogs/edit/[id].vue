@@ -892,7 +892,7 @@ onMounted(() => {
 }
 
 .editor-container :deep(.ck-editor__editable) {
-  min-height: 250px !important;
+  min-height: 750px !important;
 }
 
 .editor-container :deep(.ck-toolbar) {

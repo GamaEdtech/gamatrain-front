@@ -49,10 +49,12 @@
           <div class="pb-8">
             <div class="float-left">
               <v-btn
-                class="bg-primary-gray-700 text-white mr-6"
+                class="bg-primary-gray-700 text-white mr-2"
                 variant="flat"
                 size="x-small"
                 icon
+                :loading="isLoading(comment.id)"
+                @click="handleDislike(comment)"
               >
                 <v-icon
                   size="14"
@@ -61,11 +63,14 @@
                   mdi-thumb-down
                 </v-icon>
               </v-btn>
+              <span class="gtext-t5 primary-gray-700 mr-10">{{ comment.dislikeCount ?? 0 }}</span>
               <v-btn
-                class="bg-primary-gray-700 text-white mr-6"
+                class="bg-primary-gray-700 text-white mr-2"
                 variant="flat"
                 size="x-small"
                 icon
+                :loading="isLoading(comment.id)"
+                @click="handleLike(comment)"
               >
                 <v-icon
                   size="14"
@@ -74,6 +79,7 @@
                   mdi-thumb-up
                 </v-icon>
               </v-btn>
+              <span class="gtext-t5 primary-gray-700 mr-10">{{ comment.likeCount ?? 0 }}</span>
               <v-btn
                 class="bg-primary-blue-500 text-white"
                 variant="flat"
@@ -112,6 +118,7 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useRoute } from 'nuxt/app'
 
 const props = defineProps({
   commentList: {
@@ -136,6 +143,85 @@ const showLoadMoreButton = computed(() => {
 // Methods
 const loadMoreComments = () => {
   displayedCount.value += commentsPerPage
+}
+
+// --- Like / Dislike handlers ---
+const route = useRoute()
+const { $toast } = useNuxtApp()
+const loadingSet = ref(new Set())
+
+const setLoading = (id, value) => {
+  const set = loadingSet.value
+  if (value) set.add(id)
+  else set.delete(id)
+  // force reactivity by creating a new Set reference
+  loadingSet.value = new Set(set)
+}
+
+const isLoading = id => loadingSet.value.has(id)
+
+const emit = defineEmits(['reaction-updated'])
+
+const handleLike = async (comment) => {
+  if (!comment?.id) return
+  try {
+    setLoading(comment.id, true)
+    await useApiService.patch(
+      `/api/v2/schools/${route.params.id}/comments/${comment.id}/like`,
+      { schoolId: Number(route.params.id), commentId: comment.id },
+    )
+    // optimistic UI update - enforce single active reaction
+    if (comment._reaction === 'like') {
+      comment.likeCount = Math.max(0, (comment.likeCount ?? 0) - 1)
+      comment._reaction = 'none'
+    }
+    else {
+      if (comment._reaction === 'dislike') {
+        comment.dislikeCount = Math.max(0, (comment.dislikeCount ?? 0) - 1)
+      }
+      comment.likeCount = (comment.likeCount ?? 0) + 1
+      comment._reaction = 'like'
+    }
+    emit('reaction-updated')
+  }
+  catch (err) {
+    const message = err?.response?.data?.message || 'Failed to like the comment.'
+    $toast?.error?.(message)
+  }
+  finally {
+    setLoading(comment.id, false)
+  }
+}
+
+const handleDislike = async (comment) => {
+  if (!comment?.id) return
+  try {
+    setLoading(comment.id, true)
+    await useApiService.patch(
+      `/api/v2/schools/${route.params.id}/comments/${comment.id}/dislike`,
+      { schoolId: Number(route.params.id), commentId: comment.id },
+    )
+    // optimistic UI update - enforce single active reaction
+    if (comment._reaction === 'dislike') {
+      comment.dislikeCount = Math.max(0, (comment.dislikeCount ?? 0) - 1)
+      comment._reaction = 'none'
+    }
+    else {
+      if (comment._reaction === 'like') {
+        comment.likeCount = Math.max(0, (comment.likeCount ?? 0) - 1)
+      }
+      comment.dislikeCount = (comment.dislikeCount ?? 0) + 1
+      comment._reaction = 'dislike'
+    }
+    emit('reaction-updated')
+  }
+  catch (err) {
+    const message = err?.response?.data?.message || 'Failed to dislike the comment.'
+    $toast?.error?.(message)
+  }
+  finally {
+    setLoading(comment.id, false)
+  }
 }
 
 // Reset displayed count when commentList changes
