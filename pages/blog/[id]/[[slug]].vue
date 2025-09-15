@@ -315,11 +315,6 @@ onMounted(() => {
 .main-blog-img {
   object-fit: fill;
 }
-@media (min-width: 960px) {
-  .main-blog-div {
-    margin-top: 6.4rem;
-  }
-}
 
 #blog-describe {
   margin-bottom: 4.8rem !important;
@@ -395,12 +390,120 @@ onMounted(() => {
   }
 }
 
+@media (min-width: 960px) {
+  .main-blog-div {
+    margin-top: 6.4rem;
+  }
+  #blog-describe {
+    margin-bottom: 10rem !important;
+
+    h2 {
+      font-size: 4.4rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      margin-top: 2.4rem;
+      margin-bottom: 2.4rem;
+    }
+
+    h3 {
+      font-size: 3.6rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
+
+    h4 {
+      font-size: 3rem;
+      font-style: normal;
+      font-weight: 800;
+      line-height: normal;
+    }
+
+    h5 {
+      font-size: 2.4rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
+
+    h6 {
+      font-size: 2rem;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+    }
+
+    p {
+      font-size: 2rem !important;
+      font-style: normal;
+      font-weight: 400 !important;
+      line-height: 3.2rem;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      font-family: Inter;
+      font-size: 2rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 3.2rem;
+    }
+    img {
+      border-radius: 2rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      height: auto;
+      max-width: 100%;
+    }
+  }
+}
+
 @media (min-width: 600px) {
   #blog-describe {
     margin-bottom: 6.4rem;
     width: 98%;
     display: block;
     margin: auto auto 6.8rem auto;
+
+    h2 {
+      font-family: Inter;
+      font-size: 3rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      margin-top: 2.4rem;
+      margin-bottom: 2.4rem;
+    }
+
+    h3 {
+      font-family: Inter;
+      font-size: 2.8rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
+
+    h4 {
+      font-size: 2.6rem;
+      font-style: normal;
+      font-weight: 800;
+      line-height: normal;
+    }
+
+    h5 {
+      font-size: 2rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
+
+    h6 {
+      font-size: 1.6rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
 
     p {
       font-size: 1.6rem !important;
@@ -415,6 +518,13 @@ onMounted(() => {
       font-style: normal;
       font-weight: 400;
       line-height: 2.4rem;
+    }
+    img {
+      border-radius: 2rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      height: auto;
+      max-width: 100%;
     }
   }
 }
