@@ -108,7 +108,6 @@
             variant="flat"
             color="primary"
             :loading="qWordFileDownloadLoading && !isDownloading('q_word')"
-            data-action-id="paper_download_word"
             @click="handleDownloadClick('q_word')"
           >
             <template v-if="isDownloading('q_word')">
@@ -160,7 +159,6 @@
             size="large"
             color="#E60012"
             :loading="qPdfFileDownloadLoading && !isDownloading('q_pdf')"
-            data-action-id="paper_download_pdf"
             @click="handleDownloadClick('q_pdf')"
           >
             <template v-if="isDownloading('q_pdf')">
@@ -211,7 +209,6 @@
             size="large"
             color="teal accent-3"
             :loading="answerFileDownloadLoading && !isDownloading('a_file')"
-            data-action-id="paper_download_answer_pdf"
             @click="handleDownloadClick('a_file')"
           >
             <template v-if="isDownloading('a_file')">
@@ -262,7 +259,6 @@
             variant="flat"
             size="large"
             :loading="answerFileDownloadLoading && !isDownloading('a_file')"
-            data-action-id="paper_download_answer_word"
             @click="handleDownloadClick('a_file')"
           >
             <template v-if="isDownloading('a_file')">
@@ -318,7 +314,6 @@
             variant="flat"
             size="large"
             :loading="extraFileDownloadLoading && !isDownloading('extra', extra.id)"
-            :data-action-id="`paper_download_extra_${extra.id}`"
             @click="handleDownloadClick('extra', extra.id)"
           >
             <template v-if="isDownloading('extra', extra.id)">
@@ -397,7 +392,6 @@
           size="large"
           variant="flat"
           class="mb-2 text-h5 text-white font-weight-bold"
-          data-action-id="paper_start_quiz"
         >
           Begin Quiz
         </v-btn>
@@ -410,7 +404,6 @@
           size="large"
           color="primary"
           class="mb-2 text-h5 text-white font-weight-bold"
-          data-action-id="paper_create_quiz"
         >
           Create Quiz
         </v-btn>
@@ -452,6 +445,10 @@
 </template>
 
 <script setup>
+import { useGtmEvents } from '~/composables/useGtmEvents'
+
+const { trackFileDownload } = useGtmEvents()
+
 const props = defineProps({
   contentData: {
     type: Object,
@@ -532,7 +529,12 @@ const handleDownloadClick = async (type, extraId) => {
         return
       }
     }
-
+    trackFileDownload({
+      file_type: 'past_paper',
+      file_name: props.contentData?.title,
+      file_url: props.contentData?.title_url,
+    })
+    // console.log(props?.contentData)
     // Proceed with normal download
     await startDownload(type, extraId)
   }

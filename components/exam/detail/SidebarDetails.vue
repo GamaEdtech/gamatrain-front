@@ -112,7 +112,6 @@
           block
           color="success"
           class="text-h5"
-          data-action-id="exam_start_login_required"
           @click="onLogin"
         >
           Start Exam{{ item.price > 0 ? " | $" + item.price : "" }}
@@ -126,7 +125,6 @@
           block
           color="success"
           class="text-h5"
-          data-action-id="exam_start_authenticated"
         >
           <span v-if="contentData.examUserData?.status === 1">
             Show result
@@ -141,7 +139,6 @@
           block
           color="primary"
           class="text-h5"
-          data-action-id="exam_download_word"
         >
           Download WORD{{ item.price > 0 ? " | $" + item.price : "" }}
         </v-btn>
@@ -154,7 +151,6 @@
           variant="flat"
           size="large"
           class="mb-2 text-h5 text-white font-weight-bold position-relative"
-          data-action-id="exam_download_pdf"
           @click="onDownload('pdf')"
         >
           <template v-if="isDownloading">
@@ -186,6 +182,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import ExamDetailShareDialog from './ShareDialog.vue'
+import { useGtmEvents } from '~/composables/useGtmEvents'
 
 const props = defineProps({
   contentData: {
@@ -214,6 +211,8 @@ const props = defineProps({
   },
 })
 
+const { trackFileDownload } = useGtmEvents()
+
 // Add a shortcut computed property for better readability in the code
 const contentData = computed(() => props.contentData)
 
@@ -236,6 +235,11 @@ const lastUpdate = computed(() => {
 
 // Methods
 function onDownload(type) {
+  trackFileDownload({
+    file_type: 'exam',
+    file_name: contentData.value.title,
+    file_url: contentData.value.title_url,
+  })
   emit('download', type)
 }
 

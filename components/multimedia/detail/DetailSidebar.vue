@@ -112,7 +112,6 @@
             class="mb-2 text-h5 text-white font-weight-bold position-relative"
             size="large"
             :loading="downloadLoading && !isDownloading"
-            data-action-id="multimedia_download"
             @click="startDownload"
           >
             <template v-if="isDownloading">
@@ -148,6 +147,7 @@ import { ref, computed } from 'vue'
 import dayjs from 'dayjs'
 import ShareDialog from './ShareDialog.vue'
 import CrashReport from '~/components/common/crash-report.vue'
+import { useGtmEvents } from '~/composables/useGtmEvents'
 
 // Props
 const props = defineProps({
@@ -205,6 +205,8 @@ const props = defineProps({
   },
 })
 
+const { trackFileDownload } = useGtmEvents()
+
 // Emits
 const emit = defineEmits(['download', 'copy-url', 'share-social'])
 
@@ -244,6 +246,12 @@ function handleShareSocial(platform) {
 }
 
 function startDownload() {
+  trackFileDownload({
+    file_type: props.fileExt,
+    file_name: props.title,
+    file_url: window.location.href,
+    subject_name: props.contentTypeTitle,
+  })
   emit('download', props.fileExt)
 }
 </script>

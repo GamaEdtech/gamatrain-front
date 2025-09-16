@@ -217,17 +217,12 @@ export default defineNuxtConfig({
     domains: ['core.gamatrain.com'],
   },
 
-  gtag: {
-    enabled: process.env.NODE_ENV === 'production',
-    id: process.env.NUXT_PUBLIC_GTAG_ID || process.env.NUXT_PUBLIC_GTM_ID,
-    pageviewOnLoad: false,
-  },
-
   // Google Tag Manager configuration
   gtm: {
     id: process.env.NUXT_PUBLIC_GTM_ID,
-    defer: true,
     enabled: true,
+    debug: true,
+    loadScript: true,
   },
 
   // Build configuration
