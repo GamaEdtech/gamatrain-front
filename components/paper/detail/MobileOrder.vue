@@ -292,7 +292,7 @@
 
           <div v-if="contentData?.exams && contentData?.exams[0]?.status != 7">
             <v-btn
-              :to="`/exam/${contentData?.exams[0].id}`"
+              :to="`/exam/start/${contentData?.exams[0].id}`"
               block
               color="#5600e8"
               variant="flat"
