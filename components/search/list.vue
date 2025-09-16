@@ -26,7 +26,7 @@
 
     <div
       v-if="!isInitialLoading && dataList.length == 0"
-      class="w-100 text-h4 text-center"
+      class="w-100 text-h4 text-center mt-4"
     >
       Opps! no data found
     </div>
