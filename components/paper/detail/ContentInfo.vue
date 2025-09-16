@@ -388,12 +388,12 @@
         </div>
         <v-btn
           v-if="contentData?.exams && contentData?.exams[0]?.status != 7"
-          :to="`/exam/start/${contentData?.exams[0].id}`"
           block
           color="#5600e8"
           size="large"
           variant="flat"
           class="mb-2 text-h5 text-white font-weight-bold"
+          @click="startExam"
         >
           Begin Quiz
         </v-btn>
@@ -427,6 +427,7 @@
     :is-downloading="isDownloading"
     :get-download-progress="getDownloadProgress"
     @download="handleDownloadClick"
+    @start-exam-mobile="startExam"
   />
   <!-- End mobile order section -->
 
@@ -456,6 +457,7 @@ const props = defineProps({
 const { $toast } = useNuxtApp()
 const auth = useAuth()
 const user = useUser()
+const router = useRouter()
 const rating = ref(4.5)
 const crash_report = ref(null)
 
@@ -491,6 +493,19 @@ const isFree = computed(() => {
 // All buttons should be enabled - authentication check happens on click
 
 // Get button text - always show original text since buttons are always enabled
+
+const startExam = () => {
+  if (auth.isAuthenticated.value) {
+    router.push(`/exam/start/${props.contentData?.exams[0].id}`)
+  }
+  else {
+    router.push({ query: null })
+    setTimeout(() => {
+      router.push({ query: { auth_form: 'login', auth_noredirect: true } })
+    }, 100)
+  }
+}
+
 const getButtonText = (originalText) => {
   return originalText
 }
