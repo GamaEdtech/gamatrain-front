@@ -46,7 +46,7 @@
         </template>
 
         <v-list-item-title
-          class="text-h5 font-weight-bold primary-gray-500 line-height"
+          class="text-h5 font-weight-bold primary-gray-500 text-item-height"
         >
           {{ user ? user.first_name + " " + user.last_name : "User" }}
         </v-list-item-title>
@@ -78,7 +78,7 @@
             </template>
 
             <v-list-item-title
-              class="text-h5 font-medium primary-gray-500 line-height"
+              class="text-h5 font-medium primary-gray-500 text-item-height"
             >
               {{ item.title }}
               <!-- <div
@@ -118,7 +118,7 @@
                 </template>
 
                 <v-list-item-title
-                  class="text-h5 font-medium primary-gray-500 line-height"
+                  class="text-h5 font-medium primary-gray-500 text-item-height"
                 >
                   {{ item.title }}
                 </v-list-item-title>
@@ -148,7 +148,7 @@
                 </v-icon>
               </template>
               <v-list-item-title
-                class="text-h5 font-medium primary-gray-600 line-height"
+                class="text-h5 font-medium primary-gray-600 text-item-height"
               >
                 {{ subMenuItem.title }}
               </v-list-item-title>
@@ -177,7 +177,7 @@
           </template>
 
           <v-list-item-title
-            class="text-h5 font-medium primary-gray-500 line-height"
+            class="text-h5 font-medium primary-gray-500 text-item-height"
           >
             {{ item.title }}
           </v-list-item-title>
@@ -200,7 +200,7 @@
         </template>
 
         <v-list-item-title
-          class="text-h5 font-medium primary-gray-500 line-height"
+          class="text-h5 font-medium primary-gray-500 text-item-height"
         >
           Logout
         </v-list-item-title>
@@ -467,8 +467,8 @@ const closeNavigation = () => {
 :deep(.v-list-item__prepend .v-list-item__spacer) {
   width: 16px !important;
 }
-.line-height {
-  line-height: 26px;
+.text-item-height {
+  line-height: 26px !important;
 }
 .custom-list-item {
   background-color: #d0d5dd;

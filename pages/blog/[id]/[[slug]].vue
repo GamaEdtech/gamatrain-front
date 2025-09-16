@@ -251,7 +251,7 @@ const share = async () => {
     try {
       await navigator.share({
         title: contentData.value.title,
-        text: contentData.value.body,
+        text: contentData.value.summary,
         url: `https://gamatrain.com/blog/${blogId}`,
       })
     }
