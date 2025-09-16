@@ -292,11 +292,11 @@
 
           <div v-if="contentData?.exams && contentData?.exams[0]?.status != 7">
             <v-btn
-              :to="`/exam/start/${contentData?.exams[0].id}`"
               block
               color="#5600e8"
               variant="flat"
               class="mb-2 text-h6 font-weight-bold position-relative"
+              @click="startExam"
             >
               Begin Quiz
             </v-btn>
@@ -397,7 +397,11 @@ defineProps({
   },
 })
 
-const _emits = defineEmits(['download', 'open-auth'])
+const _emits = defineEmits(['download', 'open-auth', 'startExamMobile'])
+
+const startExam = () => {
+  _emits('startExamMobile')
+}
 </script>
 
 <style scoped>
