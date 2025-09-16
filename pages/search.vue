@@ -387,7 +387,10 @@ useHead(() => ({
 
 <style scoped>
 .top-info-div {
-  position: relative;
+  position: sticky;
+  top: 64px;
+  background-color: white;
+  z-index: 2;
 }
 .margin-top-handle {
   margin-top: 64px;
@@ -412,12 +415,6 @@ useHead(() => ({
   .margin-top-handle {
     margin-top: 6.4rem;
     min-height: calc(100vh - 6.4rem);
-  }
-  .top-info-div {
-    position: sticky;
-    top: 64px;
-    background-color: white;
-    z-index: 2;
   }
 }
 </style>
