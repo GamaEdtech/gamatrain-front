@@ -45,13 +45,13 @@
           :alt="contentData.title"
         >
         <div
-          class="w-100 d-flex flex-wrap align-center justify-space-between mt-2 ga-3 ga-sm-0 set-z-index"
+          class="w-100 d-flex flex-wrap align-center justify-space-between mt-2 set-z-index"
         >
-          <div class="w-100 w-sm-50 d-flex align-center ga-2">
+          <div class="w-50 d-flex align-center ga-2">
             <v-img
               :src="
-                contentData.authorAvatar
-                  ? contentData.authorAvatar
+                contentData.creationUserAvatar
+                  ? contentData.creationUserAvatar
                   : '/images/member/avatar.svg'
               "
               width="30"
@@ -65,17 +65,19 @@
                 : "Unknown Author"
             }}</span>
           </div>
-          <div
-            class="w-100 w-sm-50 d-flex align-center justify-start justify-sm-end ga-3"
-          >
+          <div class="w-50 d-flex align-center justify-end ga-1 ga-sm-3">
             <v-icon
               color="#667085"
+              :size="xs ? 14 : 20"
               @click="share"
             >
               md:share
             </v-icon>
             <div class="d-flex align-center ga-1">
-              <v-icon color="#667085">
+              <v-icon
+                color="#667085"
+                :size="xs ? 14 : 20"
+              >
                 md:visibility
               </v-icon>
               <span class="gama-text-overline">
@@ -83,7 +85,10 @@
               </span>
             </div>
             <div class="d-flex align-center ga-1">
-              <v-icon color="#667085">
+              <v-icon
+                color="#667085"
+                :size="xs ? 14 : 20"
+              >
                 md:calendar_month
               </v-icon>
               <span class="gama-text-overline">
