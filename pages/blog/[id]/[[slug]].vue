@@ -8,9 +8,12 @@
     <v-row v-else>
       <v-col
         cols="12"
-        class="d-flex flex-column bg-primary-gray-100 pa-6 rounded-lg mt-4"
+        class="d-flex flex-column pa-6 mt-4 position-relative"
       >
-        <div class="w-100 d-flex flex-column align-center">
+        <div
+          class="bg-primary-gray-100 rounded-lg left-0 top-0 gray-background-div w-100 position-absolute"
+        />
+        <div class="w-100 d-flex flex-column align-center set-z-index">
           <h1 class="w-100 text-h4 text-sm-h3 text-md-h2 font-weight-bold">
             {{ contentData.title }}
           </h1>
@@ -22,34 +25,33 @@
               v-for="(tag, index) in contentData.tags"
               :key="index"
               :to="`/blog?page=1&cat=${tag.id}`"
-              class="text-h5 text-white font-weight-bold pa-3"
+              class="text-subtitle-1 text-sm-h5 text-white font-weight-bold pa-3"
               color="#a7b1c2"
               variant="flat"
+              :size="xs ? `x-small` : `default`"
             >
               {{ tag.name }}
             </v-chip>
           </div>
         </div>
-        <div class="w-100 main-image-blog-div mt-4">
-          <img
-            v-if="contentData.imageUri"
-            class="w-100 h-100 rounded-lg main-blog-img"
-            :src="
-              contentData.imageUri
-                ? contentData.imageUri.replace(/^http:\/\//, 'https://')
-                : '/default-blog-image.jpg'
-            "
-            :alt="contentData.title"
-          >
-        </div>
-        <div
-          class="w-100 d-flex flex-wrap align-center justify-space-between mt-2 ga-3 ga-sm-0"
+        <img
+          v-if="contentData.imageUri"
+          class="w-100 rounded-lg main-blog-img set-z-index mt-4"
+          :src="
+            contentData.imageUri
+              ? contentData.imageUri.replace(/^http:\/\//, 'https://')
+              : '/default-blog-image.jpg'
+          "
+          :alt="contentData.title"
         >
-          <div class="w-100 w-sm-50 d-flex align-center ga-2">
+        <div
+          class="w-100 d-flex flex-wrap align-center justify-space-between mt-2 set-z-index"
+        >
+          <div class="w-50 d-flex align-center ga-2">
             <v-img
               :src="
-                contentData.authorAvatar
-                  ? contentData.authorAvatar
+                contentData.creationUserAvatar
+                  ? contentData.creationUserAvatar
                   : '/images/member/avatar.svg'
               "
               width="30"
@@ -63,17 +65,19 @@
                 : "Unknown Author"
             }}</span>
           </div>
-          <div
-            class="w-100 w-sm-50 d-flex align-center justify-start justify-sm-end ga-3"
-          >
+          <div class="w-50 d-flex align-center justify-end ga-1 ga-sm-3">
             <v-icon
               color="#667085"
+              :size="xs ? 14 : 20"
               @click="share"
             >
               md:share
             </v-icon>
             <div class="d-flex align-center ga-1">
-              <v-icon color="#667085">
+              <v-icon
+                color="#667085"
+                :size="xs ? 14 : 20"
+              >
                 md:visibility
               </v-icon>
               <span class="gama-text-overline">
@@ -81,7 +85,10 @@
               </span>
             </div>
             <div class="d-flex align-center ga-1">
-              <v-icon color="#667085">
+              <v-icon
+                color="#667085"
+                :size="xs ? 14 : 20"
+              >
                 md:calendar_month
               </v-icon>
               <span class="gama-text-overline">
@@ -244,7 +251,7 @@ const share = async () => {
     try {
       await navigator.share({
         title: contentData.value.title,
-        text: contentData.value.body,
+        text: contentData.value.summary,
         url: `https://gamatrain.com/blog/${blogId}`,
       })
     }
@@ -308,17 +315,16 @@ onMounted(() => {
   min-height: 100vh;
   max-width: 800px !important;
 }
-.main-image-blog-div {
-  min-height: 300px;
-  max-height: 600px;
-}
+
 .main-blog-img {
-  object-fit: fill;
+  height: auto;
+  object-fit: cover;
 }
-@media (min-width: 960px) {
-  .main-blog-div {
-    margin-top: 6.4rem;
-  }
+.gray-background-div {
+  height: calc(100% - 140px);
+}
+.set-z-index {
+  z-index: 2;
 }
 
 #blog-describe {
@@ -395,12 +401,123 @@ onMounted(() => {
   }
 }
 
+@media (min-width: 960px) {
+  .main-blog-div {
+    margin-top: 6.4rem;
+  }
+  #blog-describe {
+    margin-bottom: 10rem !important;
+
+    h2 {
+      font-size: 4.4rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      margin-top: 2.4rem;
+      margin-bottom: 2.4rem;
+    }
+
+    h3 {
+      font-size: 3.6rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
+
+    h4 {
+      font-size: 3rem;
+      font-style: normal;
+      font-weight: 800;
+      line-height: normal;
+    }
+
+    h5 {
+      font-size: 2.4rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
+
+    h6 {
+      font-size: 2rem;
+      font-style: normal;
+      font-weight: 600;
+      line-height: normal;
+    }
+
+    p {
+      font-size: 2rem !important;
+      font-style: normal;
+      font-weight: 400 !important;
+      line-height: 3.2rem;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      font-family: Inter;
+      font-size: 2rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 3.2rem;
+    }
+    img {
+      border-radius: 2rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      height: auto;
+      max-width: 100%;
+    }
+  }
+}
+
 @media (min-width: 600px) {
+  .gray-background-div {
+    height: calc(100% - 140px);
+  }
   #blog-describe {
     margin-bottom: 6.4rem;
     width: 98%;
     display: block;
     margin: auto auto 6.8rem auto;
+
+    h2 {
+      font-family: Inter;
+      font-size: 3rem;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      margin-top: 2.4rem;
+      margin-bottom: 2.4rem;
+    }
+
+    h3 {
+      font-family: Inter;
+      font-size: 2.8rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
+
+    h4 {
+      font-size: 2.6rem;
+      font-style: normal;
+      font-weight: 800;
+      line-height: normal;
+    }
+
+    h5 {
+      font-size: 2rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
+
+    h6 {
+      font-size: 1.6rem;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
 
     p {
       font-size: 1.6rem !important;
@@ -415,6 +532,13 @@ onMounted(() => {
       font-style: normal;
       font-weight: 400;
       line-height: 2.4rem;
+    }
+    img {
+      border-radius: 2rem;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      height: auto;
+      max-width: 100%;
     }
   }
 }

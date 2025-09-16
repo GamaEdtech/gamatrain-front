@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <main_header />
+    <main_header :is-user-dashboard="true" />
     <div class="mt-16 mt-md-0">
       <test-maker-menu />
       <NuxtPage />
