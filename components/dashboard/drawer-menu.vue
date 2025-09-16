@@ -457,7 +457,7 @@ const closeNavigation = () => {
   top: 0px !important;
   height: 100% !important;
 }
-@media (min-width: 1260px) {
+@media (min-width: 1280px) {
   .navigation-height-top {
     top: 6.4rem !important;
     height: 100% !important;
