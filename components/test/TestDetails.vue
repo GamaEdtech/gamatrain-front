@@ -133,8 +133,10 @@
                           value="1"
                           class="answer"
                           :class="{
-                            'true-answer': isCorrectAnswer(1),
-                            'false-answer': isIncorrectAnswer(1),
+                            'true-answer':
+                              isCorrectAnswer(1) && !isLoadingCoinPoint,
+                            'false-answer':
+                              isIncorrectAnswer(1) && !isLoadingCoinPoint,
                           }"
                         >
                           <template #label>
@@ -144,18 +146,29 @@
                             >
                               <div class="d-flex">
                                 <v-icon
-                                  v-show="isCorrectAnswer(1)"
+                                  v-show="
+                                    isCorrectAnswer(1) && !isLoadingCoinPoint
+                                  "
                                   color="success"
                                   class="mr-2 success-answer-icon"
                                 >
                                   mdi-check-circle
                                 </v-icon>
                                 <div
-                                  v-show="!isCorrectAnswer(1)"
+                                  v-show="
+                                    !isCorrectAnswer(1) && !isLoadingCoinPoint
+                                  "
                                   class="option-icon text-subtitle-1 mr-2"
                                 >
                                   A
                                 </div>
+                                <v-progress-circular
+                                  v-show="isLoadingCoinPoint"
+                                  color="primary"
+                                  indeterminate
+                                  :size="30"
+                                  class="mr-2"
+                                />
                                 <div
                                   ref="mathJaxEl"
                                   class="d-inline"
@@ -175,8 +188,10 @@
                           value="2"
                           class="answer"
                           :class="{
-                            'true-answer': isCorrectAnswer(2),
-                            'false-answer': isIncorrectAnswer(2),
+                            'true-answer':
+                              isCorrectAnswer(2) && !isLoadingCoinPoint,
+                            'false-answer':
+                              isIncorrectAnswer(2) && !isLoadingCoinPoint,
                           }"
                         >
                           <template #label>
@@ -185,18 +200,29 @@
                               class="answer d-flex"
                             >
                               <v-icon
-                                v-show="isCorrectAnswer(2)"
+                                v-show="
+                                  isCorrectAnswer(2) && !isLoadingCoinPoint
+                                "
                                 color="success"
                                 class="mr-2 success-answer-icon"
                               >
                                 mdi-check-circle
                               </v-icon>
                               <div
-                                v-show="!isCorrectAnswer(2)"
+                                v-show="
+                                  !isCorrectAnswer(2) && !isLoadingCoinPoint
+                                "
                                 class="option-icon text-subtitle-1 mr-2"
                               >
                                 B
                               </div>
+                              <v-progress-circular
+                                v-show="isLoadingCoinPoint"
+                                color="primary"
+                                indeterminate
+                                :size="30"
+                                class="mr-2"
+                              />
                               <span
                                 ref="mathJaxEl"
                                 v-html="contentData.answer_b"
@@ -215,8 +241,10 @@
                           value="3"
                           class="answer"
                           :class="{
-                            'true-answer': isCorrectAnswer(3),
-                            'false-answer': isIncorrectAnswer(3),
+                            'true-answer':
+                              isCorrectAnswer(3) && !isLoadingCoinPoint,
+                            'false-answer':
+                              isIncorrectAnswer(3) && !isLoadingCoinPoint,
                           }"
                         >
                           <template #label>
@@ -225,18 +253,29 @@
                               class="answer d-flex"
                             >
                               <v-icon
-                                v-show="isCorrectAnswer(3)"
+                                v-show="
+                                  isCorrectAnswer(3) && !isLoadingCoinPoint
+                                "
                                 color="success"
                                 class="mr-2 success-answer-icon"
                               >
                                 mdi-check-circle
                               </v-icon>
                               <div
-                                v-show="!isCorrectAnswer(3)"
+                                v-show="
+                                  !isCorrectAnswer(3) && !isLoadingCoinPoint
+                                "
                                 class="option-icon text-subtitle-1 mr-2"
                               >
                                 C
                               </div>
+                              <v-progress-circular
+                                v-show="isLoadingCoinPoint"
+                                color="primary"
+                                indeterminate
+                                :size="30"
+                                class="mr-2"
+                              />
                               <span
                                 ref="mathJaxEl"
                                 v-html="contentData.answer_c"
@@ -255,8 +294,10 @@
                           value="4"
                           class="answer"
                           :class="{
-                            'true-answer': isCorrectAnswer(4),
-                            'false-answer': isIncorrectAnswer(4),
+                            'true-answer':
+                              isCorrectAnswer(4) && !isLoadingCoinPoint,
+                            'false-answer':
+                              isIncorrectAnswer(4) && !isLoadingCoinPoint,
                           }"
                         >
                           <template #label>
@@ -265,18 +306,29 @@
                               class="answer d-flex"
                             >
                               <v-icon
-                                v-show="isCorrectAnswer(4)"
+                                v-show="
+                                  isCorrectAnswer(4) && !isLoadingCoinPoint
+                                "
                                 color="success"
                                 class="mr-2 success-answer-icon"
                               >
                                 mdi-check-circle
                               </v-icon>
                               <div
-                                v-show="!isCorrectAnswer(4)"
+                                v-show="
+                                  !isCorrectAnswer(4) && !isLoadingCoinPoint
+                                "
                                 class="option-icon text-subtitle-1 mr-2"
                               >
                                 D
                               </div>
+                              <v-progress-circular
+                                v-show="isLoadingCoinPoint"
+                                color="primary"
+                                indeterminate
+                                :size="30"
+                                class="mr-2"
+                              />
                               <span
                                 ref="mathJaxEl"
                                 v-html="contentData.answer_d"
@@ -343,7 +395,8 @@ const _emits = defineEmits(['next'])
 
 const _route = useRoute()
 const nuxtApp = useNuxtApp()
-const { $renderMathInElement, $ensureMathJaxReady } = nuxtApp
+
+const { $renderMathInElement, $ensureMathJaxReady, $toast } = nuxtApp
 const nextTestId = ref(null)
 const _router = useRouter()
 const navigateToNextTest = () => {
@@ -368,6 +421,7 @@ const report_type_list = [
 const nextTestLoading = ref(false)
 
 const balance = ref(0.0)
+const pointPriceQuestion = ref(0)
 const showBoxBalance = ref(true)
 const isAnswerToQuestion = ref(false)
 const SMALL_SIZE_COIN = 40
@@ -384,6 +438,7 @@ const coinStyles = ref({
   opacity: 0,
   scale: 1,
 })
+const isLoadingCoinPoint = ref(false)
 const boxShowingBalanceRef = ref(null)
 const amountBalanceRef = ref(null)
 const showCoinFailAnimation = ref(false)
@@ -473,7 +528,7 @@ function animationCountingBalance(
 ) {
   setTimeout(() => {
     const startValue = Number(balance.value)
-    const displacementAmount = 0.005
+    const displacementAmount = pointPriceQuestion.value
     const endValue = parseFloat(
       (startValue + displacementAmount * balanceChangeDirection).toFixed(7),
     )
@@ -557,18 +612,35 @@ const formattedBalance = computed(() => {
   return balance.value > 0 ? `+${value}` : value
 })
 
-function fireSelectedOption() {
-  if (
-    selectedOption.value === props.contentData.true_answer
-    && !isAnswerToQuestion.value
-  ) {
-    selectCorrectAnswer()
-  }
-  if (
-    selectedOption.value !== props.contentData.true_answer
-    && !isAnswerToQuestion.value
-  ) {
-    selectWrongAnswer()
+async function fireSelectedOption() {
+  pointPriceQuestion.value = 0
+  if (!isAnswerToQuestion.value) {
+    try {
+      isLoadingCoinPoint.value = true
+      const response = await useApiService.post(`/api/v2/games/test-time`, {
+        testId: props.contentData.id,
+        submissionId: Number(selectedOption.value),
+      })
+      if (response.succeeded) {
+        if (response.data.isCorrect) {
+          pointPriceQuestion.value = Math.abs(response.data.points)
+          selectCorrectAnswer()
+        }
+        else {
+          pointPriceQuestion.value = Math.abs(response.data.points)
+          selectWrongAnswer()
+        }
+      }
+      else {
+        $toast.error(response.errors[0].message)
+      }
+    }
+    catch (error) {
+      $toast.error(error)
+    }
+    finally {
+      isLoadingCoinPoint.value = false
+    }
   }
   isAnswerToQuestion.value = true
   fullAnswer.value = 0
