@@ -396,6 +396,12 @@ const mobileItems = [
     link: '/get-token',
     value: 'getToken',
   },
+  {
+    title: 'Leader Board',
+    icon: 'md:poll',
+    link: '/leader-board',
+    value: 'getToken',
+  },
 ]
 
 // const extraLink = [
