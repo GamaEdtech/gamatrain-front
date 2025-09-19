@@ -281,7 +281,7 @@ onMounted(() => {
             <div id="submain-title-holder">
               <v-img
                 class="leader-board-second-third"
-                src="/images/leaderBoard-Second.png"
+                src="/images/leader-board-second.png"
               >
                 <v-img
                   v-if="winners.second"
@@ -296,7 +296,7 @@ onMounted(() => {
               </v-img>
               <v-img
                 class="leader-board-first"
-                src="/images/leaderBoard-First.png"
+                src="/images/leader-board-first.png"
               >
                 <v-img
                   v-if="winners.first"
@@ -311,7 +311,7 @@ onMounted(() => {
               </v-img>
               <v-img
                 class="leader-board-second-third"
-                src="/images/leaderBoard-Third.png"
+                src="/images/leader-board-third.png"
               >
                 <v-img
                   v-if="winners.third"
