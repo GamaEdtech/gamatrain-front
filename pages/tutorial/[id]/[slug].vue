@@ -164,7 +164,7 @@
             <div class="book-contents pa-3 pa-md-6">
               <v-navigation-drawer
                 v-model="drawer"
-                class="sidebar-nav pa-5"
+                class="sidebar-nav pa-5 d-flex d-md-none"
                 width="320"
               >
                 <common-TutorialTree
@@ -539,7 +539,10 @@ useHead({
 }
 
 /*End tutorial details image caption*/
-
+.sidebar-nav {
+  height: 100vh !important;
+  top: 6.4rem !important;
+}
 @media screen and (max-width: 600px) {
   .tables {
     display: inline;

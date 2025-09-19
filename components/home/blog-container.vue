@@ -1,5 +1,8 @@
 <template>
-  <v-container id="blog-list-container">
+  <v-container
+    v-if="isLoading || slideItems.length > 5"
+    id="blog-list-container"
+  >
     <v-card flat>
       <div class="main-card">
         <v-row>
@@ -32,10 +35,10 @@
             </div>
             <router-link
               to="/blog"
-              class="d-inline d-md-none seeAllBtn"
+              class="d-flex align-center d-md-none seeAllBtn"
             >
               <span class="content"> See all</span>
-              <v-icon>mdi-chevron-right</v-icon>
+              <v-icon>md:chevron_forward</v-icon>
             </router-link>
           </v-col>
           <v-col
@@ -66,10 +69,12 @@
                 >
                   <v-card
                     flat
-                    :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
+                    :to="`/blog/${item.id}/${item.slug}`"
                   >
                     <v-card flat>
-                      <v-img :src="item.pic" />
+                      <v-img
+                        :src="item.imageUri.replace(/^http:\/\//, 'https://')"
+                      />
                       <v-card-title>
                         <span
                           v-if="!isHovered[n]"
@@ -92,10 +97,8 @@
                       </v-card-title>
                     </v-card>
                     <div class="gama-text-subtitle2">
-                      <span v-html="truncateBody(item.body)" />
-                      <nuxt-link
-                        :to="`/blog/${item.id}/${$slugGenerator(item.title)}`"
-                      >Read more</nuxt-link>
+                      {{ truncateBody(item.summary) }}
+                      <nuxt-link :to="`/blog/${item.id}/${item.slug}`">Read more</nuxt-link>
                     </div>
                   </v-card>
                 </v-slide-group-item>
@@ -113,7 +116,6 @@ import { useDisplay } from 'vuetify'
 
 // Using Vuetify's breakpoint system
 const { sm, xs } = useDisplay()
-const { $slugGenerator } = useNuxtApp()
 
 // Reactive properties
 const isHovered = ref([])
@@ -121,16 +123,16 @@ const slideItems = ref([])
 const isLoading = ref(true)
 
 // Methods
-const _toggleHover = (action, n) => {
-  if (action === 'enter') isHovered.value[n] = true
-  if (action === 'leave') isHovered.value[n] = false
-}
-
 const loadBlog = async () => {
   isLoading.value = true
   try {
-    const response = await useApiService.get('/api/v1/home/news')
-    slideItems.value = response.data
+    const response = await useApiService.get('/api/v2/blogs/posts', {
+      'PagingDto.PageFilter.Size': 10,
+    })
+
+    if (response.data && response.succeeded) {
+      slideItems.value = response.data.list
+    }
   }
   catch (err) {
     console.error(err)
@@ -144,7 +146,9 @@ const truncateBody = (text) => {
   let cutLength = 40
   if (sm.value) cutLength = 42
   else if (xs.value) cutLength = 38
-  return text.length > cutLength ? text.slice(0, cutLength) + '...' : text
+  return text.length > cutLength
+    ? text.slice(0, cutLength) + '...'
+    : text + '...'
 }
 
 loadBlog()
@@ -277,7 +281,7 @@ loadBlog()
     }
 
     .gama-text-subtitle2 {
-      margin: auto auto;
+      margin-top: 4px;
       max-width: 18.2rem;
       text-align: left;
       color: #6e7781;

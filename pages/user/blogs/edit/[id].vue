@@ -385,6 +385,12 @@
         </v-row>
       </div>
     </v-form>
+    <common-cropper-dialog
+      v-model="showCropperDialog"
+      :file-url="cropFileUrl"
+      :stencil-props="{ width: 740, height: 555, resizable: false }"
+      @cropped-data="croppedData"
+    />
 
     <BlogSlugDialog
       v-model="slugDialog"
@@ -622,6 +628,21 @@ const onSubmit = async () => {
 }
 
 // Image handling functions
+const showCropperDialog = ref(false)
+const cropFileUrl = ref('')
+
+const croppedData = (data) => {
+  showCropperDialog.value = false
+  const timestamp = new Date().getTime()
+  const fileType = 'image/webp'
+  const fileExt = 'webp'
+  const filename = `image_${timestamp}.${fileExt}`
+  const file = new File([data], filename, { type: fileType })
+
+  blog.value.image = file
+  imagePreview.value = URL.createObjectURL(file)
+  imageValidation.value = 'valid' // Set validation when image is selected
+}
 const triggerImageUpload = () => {
   imageInput.value.click()
 }
@@ -629,15 +650,15 @@ const triggerImageUpload = () => {
 const onImageSelected = (event) => {
   const file = event.target.files[0]
   if (file) {
-    blog.value.image = file
-    imagePreview.value = URL.createObjectURL(file)
-    imageValidation.value = 'valid'
+    cropFileUrl.value = URL.createObjectURL(file)
+    showCropperDialog.value = true
   }
 }
 
 const deleteImage = () => {
   blog.value.image = null
   imagePreview.value = null
+  cropFileUrl.value = ''
   imageInput.value.value = ''
   imageValidation.value = ''
 }
@@ -870,9 +891,6 @@ onMounted(() => {
   .mobile-mb-2 {
     margin-bottom: 12px !important;
   }
-  .preview-image {
-    height: 90px !important;
-  }
 }
 
 .card-select-item {
@@ -892,7 +910,7 @@ onMounted(() => {
 }
 
 .editor-container :deep(.ck-editor__editable) {
-  min-height: 250px !important;
+  min-height: 750px !important;
 }
 
 .editor-container :deep(.ck-toolbar) {
@@ -994,7 +1012,8 @@ onMounted(() => {
 
 .preview-image {
   width: 100%;
-  height: 120px;
+  height: 100%;
+  max-height: 550px;
   object-fit: cover;
   border-radius: 4px;
 }
