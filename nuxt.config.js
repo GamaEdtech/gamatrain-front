@@ -24,7 +24,6 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@vite-pwa/nuxt',
     'nuxt-og-image',
-    'nuxt-gtag',
     '@zadigetvoltaire/nuxt-gtm',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
