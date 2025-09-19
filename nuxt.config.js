@@ -12,8 +12,6 @@ export default defineNuxtConfig({
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
       solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
       randomCoinApiKey: process.env.NUXT_PUBLIC_RANDOM_COIN_API_KEY,
-      gtmId: process.env.NUXT_PUBLIC_GTM_ID,
-      gtagId: process.env.NUXT_PUBLIC_GTAG_ID,
     },
   },
 
