@@ -145,7 +145,7 @@
 
         <v-btn
           v-else-if="key === 'pdf'"
-          :loading="downloadLoading && !isDownloading"
+          :loading="downloadLoading && !isDowsnloading"
           block
           color="#E60012"
           variant="flat"
@@ -182,6 +182,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import ExamDetailShareDialog from './ShareDialog.vue'
+import { useGtmEvents } from '~/composables/useGtmEvents'
 
 const props = defineProps({
   contentData: {
@@ -210,6 +211,8 @@ const props = defineProps({
   },
 })
 
+const { trackFileDownload } = useGtmEvents()
+
 // Add a shortcut computed property for better readability in the code
 const contentData = computed(() => props.contentData)
 
@@ -232,6 +235,11 @@ const lastUpdate = computed(() => {
 
 // Methods
 function onDownload(type) {
+  trackFileDownload({
+    file_type: 'exam',
+    file_name: contentData.value.title,
+    file_url: contentData.value.title_url,
+  })
   emit('download', type)
 }
 

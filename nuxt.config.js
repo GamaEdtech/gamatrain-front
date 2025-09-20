@@ -19,10 +19,10 @@ export default defineNuxtConfig({
   modules: [
     'dayjs-nuxt',
     '@nuxt/eslint',
-    'nuxt-gtag',
     '@nuxt/image',
     '@vite-pwa/nuxt',
     'nuxt-og-image',
+    '@zadigetvoltaire/nuxt-gtm',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         config.plugins.push(
@@ -214,8 +214,12 @@ export default defineNuxtConfig({
     domains: ['core.gamatrain.com'],
   },
 
-  gtag: {
-    id: 'G-VLSLZJR0WK',
+  // Google Tag Manager configuration
+  gtm: {
+    id: process.env.NUXT_PUBLIC_GTM_ID,
+    enabled: true,
+    debug: true,
+    loadScript: true,
   },
 
   // Build configuration

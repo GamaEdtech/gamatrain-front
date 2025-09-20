@@ -313,9 +313,7 @@
             color="blue"
             variant="flat"
             size="large"
-            :loading="
-              extraFileDownloadLoading && !isDownloading('extra', extra.id)
-            "
+            :loading="extraFileDownloadLoading && !isDownloading('extra', extra.id)"
             @click="handleDownloadClick('extra', extra.id)"
           >
             <template v-if="isDownloading('extra', extra.id)">
@@ -448,6 +446,10 @@
 </template>
 
 <script setup>
+import { useGtmEvents } from '~/composables/useGtmEvents'
+
+const { trackFileDownload } = useGtmEvents()
+
 const props = defineProps({
   contentData: {
     type: Object,
@@ -542,7 +544,12 @@ const handleDownloadClick = async (type, extraId) => {
         return
       }
     }
-
+    trackFileDownload({
+      file_type: 'past_paper',
+      file_name: props.contentData?.title,
+      file_url: props.contentData?.title_url,
+    })
+    // console.log(props?.contentData)
     // Proceed with normal download
     await startDownload(type, extraId)
   }
