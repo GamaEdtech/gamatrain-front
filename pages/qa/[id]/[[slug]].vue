@@ -1148,16 +1148,6 @@ const { data: contentData } = await useAsyncData(
   },
 )
 
-useHead({
-  title: contentData.value?.title || 'Gama Train',
-  link: [
-    {
-      rel: 'canonical',
-      href: `https://${requestURL.value}/qa/${contentData.value.id}/${contentData.value.title_url}`,
-    },
-  ],
-})
-
 // Reactive States
 const textAreaHeight = ref(10)
 const emoji_box = ref(false)
@@ -1360,11 +1350,27 @@ async function submitReply(values, { resetForm }) {
 //   }
 // }
 
-const { data: repliesData, refresh: refreshReplies } = useAsyncData(
+const { data: repliesData, refresh: refreshReplies } = await useAsyncData(
   'questionReplies',
   () => $fetch(`/api/v1/questionReplies?question=${route.params.id}`),
 )
-
+// const { data: contentData } = await useAsyncData(
+//   () => `question-${route.params.id}`,
+//   async () => {
+//     try {
+//       const content = await $fetch(`/api/v1/questions/${route.params.id}`);
+//       return content.status === 1 ? content.data : {};
+//     } catch (e) {
+//       if (e?.status === 404) {
+//         // router.push("/search?type=question");
+//       }
+//       throw e;
+//     }
+//   },
+//   {
+//     watch: [() => route.params.id],
+//   }
+// );
 async function reInit() {
   try {
     await refreshReplies()
@@ -1380,6 +1386,71 @@ async function reInit() {
     answer_list.value = []
   }
 }
+
+await reInit()
+
+useHead({
+  title: contentData.value?.title || 'Gama Train',
+  link: [
+    {
+      rel: 'canonical',
+      href: `https://${requestURL.value}/qa/${contentData.value.id}/${contentData.value.title_url}`,
+    },
+  ],
+  script: [
+    {
+      type: 'application/ld+json',
+      json: {
+        '@context': 'https://schema.org',
+        '@type': 'QAPage',
+        'mainEntity': {
+          '@type': 'Question',
+          'name': contentData.value?.title,
+          'text': contentData.value?.question,
+          'dateCreated': new Date(contentData.value?.subdate).toISOString(),
+          'author': {
+            '@type': 'Person',
+            'name': contentData.value?.name,
+            // url: this.contentData.userLink,
+          },
+          'upvoteCount': parseInt(contentData.value?.score) || 0,
+          'answerCount': parseInt(repliesData.value?.data.num) || 0,
+          'url': `https://gamatrain.com/qa/${contentData.value?.id}/${contentData.value?.title_url}`,
+          'acceptedAnswer': repliesData.value?.data.list
+            ?.sort((a, b) => parseInt(b.score) - parseInt(a.score))
+            .slice(0, 5)
+            .map(a => ({
+              '@type': 'Answer',
+              'text': a.answer,
+              'dateCreated': new Date(a.subdate).toISOString(),
+              'upvoteCount': parseInt(a.score) || 0,
+              'url': `https://gamatrain.com/qa/${contentData.value?.id}/${contentData.value?.title_url}#answer-${a.id}`,
+              'author': {
+                '@type': 'Person',
+                'name': a.name,
+                // url: a.userLink,
+              },
+            })),
+          'suggestedAnswer': repliesData.value?.data.list
+            ?.sort((a, b) => parseInt(b.score) - parseInt(a.score))
+            .slice(0, 5)
+            .map(a => ({
+              '@type': 'Answer',
+              'text': a.answer,
+              'dateCreated': new Date(a.subdate).toISOString(),
+              'upvoteCount': parseInt(a.score) || 0,
+              'url': `https://gamatrain.com/qa/${contentData.value?.id}/${contentData.value?.title_url}#answer-${a.id}`,
+              'author': {
+                '@type': 'Person',
+                'name': a.name,
+                // url: a.userLink,
+              },
+            })),
+        },
+      },
+    },
+  ],
+})
 
 function openEditReplyDialog(item_id, answer) {
   edit_reply_id.value = item_id
@@ -1484,7 +1555,6 @@ function getSimilarQuestions() {
 
 onMounted(async () => {
   initBreadCrumb()
-  await reInit()
   getSimilarQuestions()
 
   await typesetMathInSpecificContainer(questionMathJaxContainerRef)
