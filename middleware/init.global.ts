@@ -1,6 +1,7 @@
 import { defineNuxtRouteMiddleware, navigateTo, useState } from 'nuxt/app'
 import { useUser } from '@/composables/useUser'
 import { useAuth } from '@/composables/useAuth'
+import { get } from '@/composables/useApiService'
 
 interface UserResponse {
   data: {
@@ -52,12 +53,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   if (!hasFetchedUserInfo.value) {
     try {
-      const response = await $fetch<UserResponse>(`/api/v1/users/info`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      })
+      const response = await get<UserResponse>('/api/v1/users/info')
 
       if (response && response.data) {
         const { setUser } = useUser()

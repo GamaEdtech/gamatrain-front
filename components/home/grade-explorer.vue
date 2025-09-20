@@ -188,7 +188,7 @@ const showBoardHint = ref(false)
 
 const fetchInitialData = async () => {
   const params = { type: 'section' }
-  const response = await $fetch(`/api/v1/types/list`, { params })
+  const response = await useApiService.get(`/api/v1/types/list`, params)
   boardList.value = response.data.map((item, index) => ({
     ...item,
     img: boardImgs.value[index % boardImgs.value.length],
@@ -221,7 +221,7 @@ const fetchGradeList = async () => {
     gradeLoader.value = true
     const params = { type: 'base' }
     params.section_id = selectedBoard.value.id
-    const response = await $fetch(`/api/v1/types/list`, { params })
+    const response = await useApiService.get(`/api/v1/types/list`, params)
     gradeList.value = response.data
     selectedGrade.value = response.data[0].id
   }
@@ -244,7 +244,7 @@ const fetchCategoryCounts = async () => {
     params.append('section', selectedBoard.value.id)
     params.append('base', selectedGrade.value)
     const requestUrl = `/api/v1/search?${params.toString()}`
-    const response = await $fetch(requestUrl)
+    const response = await useApiService.get(requestUrl)
     if (
       response
       && response.status === 1

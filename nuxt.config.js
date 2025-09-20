@@ -12,6 +12,9 @@ export default defineNuxtConfig({
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
       solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
       randomCoinApiKey: process.env.NUXT_PUBLIC_RANDOM_COIN_API_KEY,
+      baseUrl: process.env.NUXT_PROXY_BASE_URL,
+      apiV1BaseUrl: process.env.NUXT_PROXY_API_BASE_URL,
+      apiV2BaseUrl: process.env.NUXT_PROXY_API2_BASE_URL,
     },
   },
 
@@ -227,9 +230,6 @@ export default defineNuxtConfig({
     '/test-maker/**': { ssr: false, prerender: true },
     '/api/v1/**': {
       proxy: process.env.NUXT_PROXY_API_BASE_URL,
-    },
-    '/api/v2/**': {
-      proxy: process.env.NUXT_PROXY_API2_BASE_URL,
     },
   },
 

@@ -37,9 +37,7 @@ const pageCount = ref(0)
 const totalCount = ref(0)
 const selected = ref([])
 
-const allActions = [
-  { label: 'Delete All', value: 'deleteAll' },
-]
+const allActions = [{ label: 'Delete All', value: 'deleteAll' }]
 
 const allPageSize = [
   { label: '10 Rows', value: 10 },
@@ -88,19 +86,15 @@ const viewMessageDetails = async (id) => {
 }
 
 const toggleUserStatus = async (id) => {
-  const token = localStorage.getItem('v2_token')
   try {
-    const res = await $fetch(`/api/v2/admin/identities/${id}/toggle`, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      } })
+    const res = await useApiService.patch(
+      `/api/v2/admin/identities/${id}/toggle`,
+    )
     if (res.succeeded) {
       $toast.success('User Status Toggled Successfully')
       fetchUsers()
     }
-    else
-      $toast.error(res.errors[0].message)
+    else $toast.error(res.errors[0].message)
   }
   catch (err) {
     if (err.response?.status === 400) {
@@ -111,14 +105,14 @@ const toggleUserStatus = async (id) => {
 
 const deleteUser = async () => {
   try {
-    const res = await useApiService.remove(`/api/v2/admin/identities/${selectedDeleteId.value}`)
+    const res = await useApiService.remove(
+      `/api/v2/admin/identities/${selectedDeleteId.value}`,
+    )
 
     list.value = list.value.filter(i => i.id !== selectedDeleteId.value)
     filteredList.value = list.value
-    if (res.succeeded === true)
-      $toast.success('User deleted successfully!')
-    else
-      $toast.error(res.errors[0].message)
+    if (res.succeeded === true) $toast.success('User deleted successfully!')
+    else $toast.error(res.errors[0].message)
   }
   catch (err) {
     if (err.response?.status === 400) {
@@ -171,7 +165,7 @@ watch(selectedPageSize, () => {
     <div class="d-flex justify-space-between align-center mb-1 flex-row">
       <v-btn
         class="rounded-pill gtext-t5 bg-primary-gray-700 text-white ml-4"
-        @click="showAddUserDialog= true"
+        @click="showAddUserDialog = true"
       >
         <span>New User</span>
       </v-btn>
@@ -388,33 +382,33 @@ watch(selectedPageSize, () => {
   position: relative;
 }
 
-:deep(.v-field__outline){
-    --v-field-border-width: 1px !important;
-    --v-field-border-opacity: 0.38 !important;
+:deep(.v-field__outline) {
+  --v-field-border-width: 1px !important;
+  --v-field-border-opacity: 0.38 !important;
 }
 
-:deep(.v-data-table__th){
-    color: #344054 !important;
-    font-family: Inter, sans-serif !important;
-    font-size: 1.4rem !important;
-    line-height: 2.4rem !important;
-    font-weight: 500;
-    white-space: nowrap;
+:deep(.v-data-table__th) {
+  color: #344054 !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 1.4rem !important;
+  line-height: 2.4rem !important;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-:deep(.v-table__wrapper > table > thead > tr){
-  background-color: #F2F4F7 !important;
+:deep(.v-table__wrapper > table > thead > tr) {
+  background-color: #f2f4f7 !important;
 }
 
-.filterBtns{
-    display: flex;
-    padding: 4px;
-    background-color: #0000001A;
-    border-radius: 28px;
-    align-items: center;
+.filterBtns {
+  display: flex;
+  padding: 4px;
+  background-color: #0000001a;
+  border-radius: 28px;
+  align-items: center;
 }
 
-.footerBtns{
+.footerBtns {
   width: 150px !important;
   max-width: 150px !important;
 }
@@ -427,12 +421,13 @@ watch(selectedPageSize, () => {
   width: 100% !important;
   justify-content: center !important;
 }
-:deep(.custom-pagination li),:deep(.custom-pagination li button){
+:deep(.custom-pagination li),
+:deep(.custom-pagination li button) {
   min-width: 36px !important;
   width: 36px !important;
   height: 36px !important;
 }
-:deep(.custom-pagination li button:hover){
+:deep(.custom-pagination li button:hover) {
   background-color: #ffb300;
   opacity: 0.7;
 }
@@ -445,7 +440,7 @@ watch(selectedPageSize, () => {
 }
 
 .active-filter {
-  background-color: #FFB600 !important;
+  background-color: #ffb600 !important;
   color: #101828 !important;
 }
 
@@ -453,7 +448,7 @@ watch(selectedPageSize, () => {
   color: #667085 !important;
 }
 
-:deep(.v-btn--variant-plain){
+:deep(.v-btn--variant-plain) {
   opacity: 1 !important;
 }
 
@@ -469,28 +464,28 @@ watch(selectedPageSize, () => {
   position: sticky;
   top: 0;
   z-index: 20;
-  background-color: #F2F4F7 !important; /* Your desired header color */
+  background-color: #f2f4f7 !important; /* Your desired header color */
 }
 
 /* Optional: give each header cell a background too */
 :deep(.v-data-table thead th) {
-  background-color: #F2F4F7 !important;
+  background-color: #f2f4f7 !important;
 }
 
-.red-F04438{
-  color: #F04438;
+.red-F04438 {
+  color: #f04438;
   border-radius: 4px;
   padding: 4px 8px;
-  border: 1px solid #F04438;
+  border: 1px solid #f04438;
 }
-.green-12b76a{
+.green-12b76a {
   color: #12b76a;
   border-radius: 4px;
   padding: 4px 8px;
   border: 1px solid #12b76a;
 }
 
-.min-width-10{
+.min-width-10 {
   min-width: 10px !important;
   height: 20px !important;
 }
