@@ -313,7 +313,9 @@
             color="blue"
             variant="flat"
             size="large"
-            :loading="extraFileDownloadLoading && !isDownloading('extra', extra.id)"
+            :loading="
+              extraFileDownloadLoading && !isDownloading('extra', extra.id)
+            "
             @click="handleDownloadClick('extra', extra.id)"
           >
             <template v-if="isDownloading('extra', extra.id)">
@@ -739,15 +741,22 @@ const startDownload = async (type, extraId) => {
       }
     }
 
+    console.log(1)
     xhr.onload = () => {
+      console.log(2)
       if (xhr.status === 200) {
+        console.log(3)
         downloadProgress.value[downloadKey] = 100
 
+        console.log(4)
         // Use file-saver to save the blob
         import('file-saver').then(({ saveAs }) => {
+          console.log(5)
           saveAs(xhr.response, response.data.name)
+          console.log(6)
         })
 
+        console.log(7)
         // Show success message for coin payments
         if (
           requiresCoinPaymentForFile(type, extraId)
@@ -757,9 +766,10 @@ const startDownload = async (type, extraId) => {
             'Download started! 5 coins deducted from your balance.',
           )
         }
-
+        console.log(8)
         // Clean up after a short delay
         setTimeout(() => {
+          console.log(9)
           downloadingItems.value.delete(downloadKey)
           // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
           delete downloadProgress.value[downloadKey]
@@ -768,6 +778,7 @@ const startDownload = async (type, extraId) => {
     }
 
     xhr.onerror = () => {
+      console.log(10)
       downloadingItems.value.delete(downloadKey)
       // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
       delete downloadProgress.value[downloadKey]
@@ -777,6 +788,7 @@ const startDownload = async (type, extraId) => {
     xhr.send()
   }
   catch (err) {
+    console.log(11)
     // Clean up on error
     downloadingItems.value.delete(downloadKey)
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
