@@ -19,7 +19,7 @@
             required
           >
             <v-radio
-              v-for="(type, index) in report_type_list"
+              v-for="(type, index) in reportTypeList"
               :key="index"
               :label="type.label"
               :value="type.value"
@@ -72,7 +72,20 @@ export default {
     reportTypeList: {
       type: Array,
       required: false,
-      default: () => [],
+      default: () => [
+        {
+          value: 1,
+          label: 'The file cannot be downloaded',
+        },
+        {
+          value: 2,
+          label: 'The file is wrong',
+        },
+        {
+          value: 3,
+          label: 'The content of the file is inappropriate or incorrect.',
+        },
+      ],
     },
   },
   data() {
