@@ -186,6 +186,10 @@ export default {
               title: 'FAQ',
               link: '/faq',
             },
+            {
+              title: 'Leader Board',
+              link: '/leader-board',
+            },
           ],
         },
         {

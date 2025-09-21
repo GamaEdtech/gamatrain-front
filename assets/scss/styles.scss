@@ -232,6 +232,14 @@ html {
   line-height: 4rem !important;
   letter-spacing: 0.025rem;
 }
+.gtext-h3 {
+  font-family: Inter, sans-serif !important;
+  font-size: 3.6rem !important;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 4rem !important;
+  letter-spacing: 0.025rem;
+}
 
 .gtext-h5 {
   font-family: Inter, sans-serif !important;
@@ -246,6 +254,10 @@ html {
 
 .font-weight-semibold {
   font-weight: 600 !important;
+}
+
+.font-weight-bold {
+  font-weight: 700 !important;
 }
 
 .font-weight-heavy {
