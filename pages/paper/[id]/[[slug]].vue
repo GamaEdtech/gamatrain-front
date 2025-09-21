@@ -36,9 +36,9 @@
                     <div class="h-100 d-flex align-start justify-start pt-1">
                       <v-icon
                         v-if="
-                          contentData?.files?.pdf?.exist ||
-                          (contentData?.files?.answer?.exist &&
-                            contentData?.files?.answer?.ext == 'pdf')
+                          contentData?.files?.pdf?.exist
+                            || (contentData?.files?.answer?.exist
+                              && contentData?.files?.answer?.ext == 'pdf')
                         "
                         size="large"
                         color="red"
@@ -48,9 +48,9 @@
 
                       <v-icon
                         v-else-if="
-                          contentData?.files?.word?.exist ||
-                          (contentData?.files?.answer?.exist &&
-                            contentData?.files?.answer?.ext == 'word')
+                          contentData?.files?.word?.exist
+                            || (contentData?.files?.answer?.exist
+                              && contentData?.files?.answer?.ext == 'word')
                         "
                         size="large"
                         color="blue"
@@ -60,10 +60,10 @@
 
                       <v-icon
                         v-else-if="
-                          contentData?.files?.extra?.length > 0 &&
-                          contentData.files.extra.some(
-                            (item) => item.ext === 'mp3'
-                          )
+                          contentData?.files?.extra?.length > 0
+                            && contentData.files.extra.some(
+                              (item) => item.ext === 'mp3',
+                            )
                         "
                         size="large"
                         color="purple"
@@ -76,12 +76,10 @@
                     >
                       <span
                         class="text-h5 text-sm-h4 font-weight-bold text-white"
-                        >Go to {{ contentData?.lesson_title }}</span
-                      >
+                      >Go to {{ contentData?.lesson_title }}</span>
                       <span
                         class="text-subtitle-2 text-sm-subtitle-1 text-white"
-                        >All books, past papers & resources in one place</span
-                      >
+                      >All books, past papers & resources in one place</span>
                     </div>
                   </nuxt-link>
                   <v-chip
@@ -181,16 +179,32 @@
 
     <ClientOnly>
       <div v-if="randomTestContent">
-        <v-divider class="mt-4 mx-auto" style="width: 80%" />
+        <v-divider
+          class="mt-4 mx-auto"
+          style="width: 80%"
+        />
         <test-details :content-data="randomTestContent" />
-        <v-divider class="mt-1 mx-auto" style="width: 80%" />
+        <v-divider
+          class="mt-1 mx-auto"
+          style="width: 80%"
+        />
       </div>
     </ClientOnly>
 
     <ClientOnly>
-      <v-row justify="center" class="mt-10">
-        <v-col cols="12" md="8" class="text-center">
-          <common-ad-banner v-model="isAdsLoad" adslot="7199289937" />
+      <v-row
+        justify="center"
+        class="mt-10"
+      >
+        <v-col
+          cols="12"
+          md="8"
+          class="text-center"
+        >
+          <common-ad-banner
+            v-model="isAdsLoad"
+            adslot="7199289937"
+          />
         </v-col>
       </v-row>
     </ClientOnly>
@@ -198,13 +212,13 @@
 </template>
 
 <script setup>
-const route = useRoute();
-const router = useRouter();
-const requestURL = ref(useRequestURL().host);
-const randomTestContent = ref(null);
-const pageDescribe = ref("");
-const pageTitle = ref("");
-const isAdsLoad = ref(false);
+const route = useRoute()
+const router = useRouter()
+const requestURL = ref(useRequestURL().host)
+const randomTestContent = ref(null)
+const pageDescribe = ref('')
+const pageTitle = ref('')
+const isAdsLoad = ref(false)
 
 // Track loading state
 
@@ -212,15 +226,17 @@ const { data: contentData } = await useAsyncData(
   `paper-${route.params.id}`,
   async () => {
     try {
-      const response = await $fetch(`/api/v1/tests/${route.params.id}`, {});
+      const response = await $fetch(`/api/v1/tests/${route.params.id}`, {})
 
-      return response.data;
-    } catch (e) {
+      return response.data
+    }
+    catch (e) {
       if (e?.status === 404) {
-        router.push("/search?type=test");
+        router.push('/search?type=test')
       }
-      throw e;
-    } finally {
+      throw e
+    }
+    finally {
       // Reset loading states if needed
     }
   },
@@ -229,127 +245,128 @@ const { data: contentData } = await useAsyncData(
     lazy: false,
     immediate: true,
     watch: [() => route.params.id],
-  }
-);
+  },
+)
 
 const schemaData = computed(() => ({
-  "@context": "https://schema.org",
-  "@type": "LearningResource",
-  name: contentData.value?.title || "GamaEdtech",
-  image:
-    contentData.value?.thumb_pic ||
-    contentData.value?.lesson_pic ||
-    "https://gamatrain.com/images/gamatrain-logo.svg",
-  url: route.fullPath || "",
-  description: contentData.value?.description || "GamaEdtech",
-}));
+  '@context': 'https://schema.org',
+  '@type': 'LearningResource',
+  'name': contentData.value?.title || 'GamaEdtech',
+  'image':
+    contentData.value?.thumb_pic
+    || contentData.value?.lesson_pic
+    || 'https://gamatrain.com/images/gamatrain-logo.svg',
+  'url': route.fullPath || '',
+  'description': contentData.value?.description || 'GamaEdtech',
+}))
 
-const previewImages = ref([]);
+const previewImages = ref([])
 const galleryHelpData = ref({
-  state: "",
-  section: "",
-  base: "",
-  course: "",
-  lesson: "",
-});
+  state: '',
+  section: '',
+  base: '',
+  course: '',
+  lesson: '',
+})
 
 const setMetaData = () => {
-  if (!contentData.value) return;
+  if (!contentData.value) return
 
-  const { section_title, base_title, title, is_paper } = contentData.value;
+  const { section_title, base_title, title, is_paper } = contentData.value
 
   // Build common title parts
-  const titleParts = [section_title, base_title, title].filter(Boolean);
-  const baseTitle = titleParts.join(" ");
+  const titleParts = [section_title, base_title, title].filter(Boolean)
+  const baseTitle = titleParts.join(' ')
 
   if (is_paper) {
-    pageTitle.value = `${baseTitle} past paper`;
-    pageDescribe.value = `Download ${baseTitle} past paper with mark scheme (MS). Access a full collection of past papers for study, revision, and exam practice.`;
-  } else {
-    pageTitle.value = baseTitle;
-    pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`;
+    pageTitle.value = `${baseTitle} past paper`
+    pageDescribe.value = `Download ${baseTitle} past paper with mark scheme (MS). Access a full collection of past papers for study, revision, and exam practice.`
+  }
+  else {
+    pageTitle.value = baseTitle
+    pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
   }
 
   useHead({
     title: pageTitle.value,
     meta: [
       {
-        hid: "apple-mobile-web-app-title",
-        name: "apple-mobile-web-app-title",
+        hid: 'apple-mobile-web-app-title',
+        name: 'apple-mobile-web-app-title',
         content: pageTitle.value,
       },
       {
-        hid: "og:title",
-        name: "og:title",
+        hid: 'og:title',
+        name: 'og:title',
         content: pageTitle.value,
       },
       {
-        hid: "og:site_name",
-        name: "og:site_name",
-        content: "GamaTrain",
+        hid: 'og:site_name',
+        name: 'og:site_name',
+        content: 'GamaTrain',
       },
       {
-        hid: "description",
-        name: "description",
+        hid: 'description',
+        name: 'description',
         content: pageDescribe.value,
       },
       {
-        hid: "og:description",
-        name: "og:description",
+        hid: 'og:description',
+        name: 'og:description',
         content: pageDescribe.value,
       },
     ],
     script: [
       {
-        hid: "json-ld-schema",
+        hid: 'json-ld-schema',
         innerHTML: JSON.stringify(schemaData.value),
-        type: "application/ld+json",
+        type: 'application/ld+json',
       },
     ],
     link: [
       {
-        rel: "canonical",
+        rel: 'canonical',
         href: contentData.value
           ? `https://${requestURL.value}/paper/${contentData.value.id}/${contentData.value.title_url}`
           : `https://${requestURL.value}/paper/${route.params.id}`,
       },
     ],
     __dangerouslyDisableSanitizersByTagID: {
-      "json-ld-schema": ["innerHTML"],
+      'json-ld-schema': ['innerHTML'],
     },
-  });
-};
-
-if (contentData.value) {
-  previewImages.value = [];
-  previewImages.value.push(contentData.value.thumb_pic);
-  if (contentData.value.lesson_pic) {
-    previewImages.value.push(contentData.value.lesson_pic);
-  }
-
-  previewImages.value.carouselVal = 0;
-
-  galleryHelpData.value = {
-    state: contentData.value?.state || "",
-    section: contentData.value?.section || "",
-    base: contentData.value?.base || "",
-    course: contentData.value?.course || "",
-    lesson: contentData.value?.lesson || "",
-  };
+  })
 }
 
-const breads = ref([]);
+if (contentData.value) {
+  previewImages.value = []
+  previewImages.value.push(contentData.value.thumb_pic)
+  if (contentData.value.lesson_pic) {
+    previewImages.value.push(contentData.value.lesson_pic)
+  }
 
-const display = useGlobalDisplay();
+  previewImages.value.carouselVal = 0
+
+  galleryHelpData.value = {
+    state: contentData.value?.state || '',
+    section: contentData.value?.section || '',
+    base: contentData.value?.base || '',
+    course: contentData.value?.course || '',
+    lesson: contentData.value?.lesson || '',
+  }
+}
+
+const breads = ref([])
+
+const display = useGlobalDisplay()
 
 const initBreadCrumb = () => {
-  if (!contentData.value) return;
-  breads.value = [];
+  if (!contentData.value) return
+  breads.value = []
   breads.value.push({
-    text: "Paper",
+    text: 'Paper',
     disabled: false,
-    href: "/search?type=test",
-  });
+    href: '/search?type=test',
+  })
   breads.value.push(
     {
       text: contentData.value.section_title,
@@ -365,43 +382,43 @@ const initBreadCrumb = () => {
       text: contentData.value.lesson_title,
       disabled: false,
       href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
-    }
-  );
-};
+    },
+  )
+}
 
 watchEffect(() => {
   if (contentData.value) {
-    initBreadCrumb();
-    setMetaData();
+    initBreadCrumb()
+    setMetaData()
   }
-});
+})
 
 const openCrashReportDialog = () => {
-  crash_report.value.dialog = true;
-  crash_report.value.form.type = "test";
-};
+  crash_report.value.dialog = true
+  crash_report.value.form.type = 'test'
+}
 const grabRandomTestCode = () => {
   if (contentData.value && contentData.value.lesson) {
     $fetch(`/api/v1/examTests/random?lesson=${contentData.value.lesson}`)
       .then((response) => {
         if (response.data.code) {
-          retriveRandomTest(response.data.code);
+          retriveRandomTest(response.data.code)
         }
       })
-      .catch((_err) => {});
+      .catch((_err) => {})
   }
-};
+}
 const retriveRandomTest = (code) => {
   $fetch(`/api/v1/examTests/${code}`)
     .then((response) => {
-      randomTestContent.value = response.data;
+      randomTestContent.value = response.data
     })
-    .catch((_err) => {});
-};
+    .catch((_err) => {})
+}
 
 onMounted(() => {
-  grabRandomTestCode();
-});
+  grabRandomTestCode()
+})
 </script>
 
 <style>
