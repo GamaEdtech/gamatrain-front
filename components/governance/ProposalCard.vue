@@ -1,56 +1,108 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
   <div
     class="proposal-card"
     @click="handleClick()"
   >
-    <div class="governance-proposals__badge active">
-      Active
+    <!-- Status Badge -->
+    <div
+      class="governance-proposals__badge"
+      :class="proposalStatus"
+    >
+      {{ proposalStatusText }}
     </div>
 
+    <!-- Delete Button (only for owner) -->
+    <div
+      v-if="isOwner && !isExpired"
+      class="delete-button"
+    >
+      <v-btn
+        icon
+        variant="text"
+        color="error"
+        @click.stop="handleDelete"
+      >
+        <v-icon>mdi-delete</v-icon>
+      </v-btn>
+    </div>
+
+    <!-- Proposal Content -->
     <div class="governance-proposals__title primary-gray-700">
-      Increase Block Rewards by 15%
+      {{ proposal.account.title }}
     </div>
 
     <div class="governance-proposals__subtitle primary-gray-500 mt-2">
-      Proposal to increase mining rewards to improve network security and
-      incentivize more validators.
+      {{ proposal.account.brief }}
     </div>
 
-    <div>
+    <!-- Category and Amount -->
+    <div class="proposal-meta mt-2">
+      <v-chip
+        color="primary"
+        variant="outlined"
+        density="comfortable"
+        style="font-size: 10px;"
+      >
+        {{ proposal.account.cate }}
+      </v-chip>
+      <span
+        v-if="proposal.account.amount && proposal.account.amount > 0"
+        class="amount primary-gray-600"
+      >
+        {{ formatAmount(proposal.account.amount) }} GET
+      </span>
+    </div>
+
+    <!-- Voting Results -->
+    <div v-if="!isExpired">
       <div class="vote-row">
-        <span class="for">⬆ For: 2,847 (70.3%)</span>
-        <span class="against">⬇ Against: 1,203 (29.7%)</span>
+        <span class="for">
+          ⬆ For: {{ formatVotes(proposal.account.agreeVotes) }} ({{ forPercentage }}%)
+        </span>
+        <span class="against">
+          ⬇ Against: {{ formatVotes(proposal.account.disagreeVotes) }} ({{ againstPercentage }}%)
+        </span>
       </div>
 
       <v-progress-linear
-        model-value="70.3"
-        color="#667085"
+        :model-value="forPercentage"
+        color="#27ae60"
+        bg-color="#e74c3c"
         height="8"
         class="vote-progress"
         rounded
       />
 
       <div class="governance-proposals__stats primary-gray-500">
-        <span>Quorum: 75%</span>
-        <span>4,050 Total Votes</span>
+        <span>Total Votes: {{ totalVotes }}</span>
+        <span v-if="userVoteStatus">You voted: {{ userVoteStatus }}</span>
       </div>
     </div>
 
+    <!-- Footer with Time and Actions -->
     <div class="governance-proposals__footer mt-3">
       <div class="time primary-gray-500">
-        <span>
-          <v-icon
-            size="small"
-            color="#98A2B3"
-          >mdi-timer-outline</v-icon></span>
-        <span class="pl-1">2 Days Remaining</span>
+        <v-icon
+          size="small"
+          color="#98A2B3"
+        >
+          mdi-timer-outline
+        </v-icon>
+        <span class="pl-1">{{ timeRemaining }}</span>
       </div>
-      <div class="buttons">
+
+      <div
+        v-if="!isExpired && !hasVoted"
+        class="buttons"
+      >
         <v-btn
           size="small"
           prepend-icon="mdi-arrow-up-thin"
           color="green"
-          variant="outlined primary-gray-500"
+          variant="outlined"
+          :disabled="!canVote"
+          @click.stop="handleVote(true)"
         >
           Vote For
         </v-btn>
@@ -58,21 +110,240 @@
           size="small"
           prepend-icon="mdi-arrow-down-thin"
           color="red"
-          variant="outlined primary-gray-500"
+          variant="outlined"
+          :disabled="!canVote"
+          @click.stop="handleVote(false)"
         >
           Vote Against
         </v-btn>
       </div>
+
+      <div
+        v-else-if="hasVoted"
+        class="voted-indicator"
+      >
+        <v-chip
+          :color="userVoteStatus === 'For' ? 'green' : '#f04438'"
+          variant="flat"
+          density="comfortable"
+          style="font-size: 10px;"
+        >
+          Voted {{ userVoteStatus }}
+        </v-chip>
+      </div>
     </div>
+
+    <!-- Delete Confirmation Dialog -->
+    <v-dialog
+      v-model="deleteDialog"
+      max-width="400"
+    >
+      <v-card>
+        <v-card-title>Delete Proposal</v-card-title>
+        <v-card-text>
+          Are you sure you want to delete this proposal? This action cannot be undone.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            text
+            @click="deleteDialog = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="error"
+            variant="flat"
+            :loading="deleteLoading"
+            @click="confirmDelete"
+          >
+            Delete
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
-<script setup>
-const emits = defineEmits(['select'])
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { BN } from '@coral-xyz/anchor'
+import { governance, useGovernance } from '~/composables/useGovernance'
+import { useWorkspace } from '~/composables/useWorkspace'
+
+const props = defineProps<{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  proposal: any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  userPublicKey?: any
+}>()
+
+const emits = defineEmits(['select', 'vote', 'delete'])
+
+// State
+const deleteDialog = ref(false)
+const deleteLoading = ref(false)
+const hasVoted = ref(false)
+const userVoteStatus = ref<string | null>(null)
+const { isProposalExpired } = useGovernance()
+
+// Computed properties
+const isExpired = computed(() => {
+  if (!props.proposal?.account?.expiresAt) return false
+  return isProposalExpired(props.proposal.account)
+})
+
+const isOwner = computed(() => {
+  if (!props.userPublicKey || !props.proposal?.account?.owner) return false
+  return props.proposal.account.owner.equals(props.userPublicKey)
+})
+
+const totalVotes = computed(() => {
+  const agreeVotes = props.proposal?.account?.agreeVotes || new BN(0)
+  const disagreeVotes = props.proposal?.account?.disagreeVotes || new BN(0)
+  return agreeVotes.add(disagreeVotes).toNumber()
+})
+
+const forPercentage = computed(() => {
+  if (totalVotes.value === 0) return 0
+  const agreeVotes = props.proposal?.account?.agreeVotes || new BN(0)
+  return Math.round((agreeVotes.toNumber() / totalVotes.value) * 100)
+})
+
+const againstPercentage = computed(() => {
+  if (totalVotes.value === 0) return 0
+  return 100 - forPercentage.value
+})
+
+const proposalStatus = computed(() => {
+  if (isExpired.value) {
+    return forPercentage.value > 50 ? 'passed' : 'rejected'
+  }
+  return 'active'
+})
+
+const proposalStatusText = computed(() => {
+  if (isExpired.value) {
+    return forPercentage.value > 50 ? 'Passed' : 'Rejected'
+  }
+  return 'Active'
+})
+
+const timeRemaining = computed(() => {
+  if (!props.proposal?.account?.expiresAt) return 'No expiry set'
+
+  const expiryTime = props.proposal.account.expiresAt.toNumber() * 1000
+  const now = Date.now()
+  const diff = expiryTime - now
+
+  if (diff <= 0) return 'Expired'
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+
+  if (days > 0) return `${days} day${days > 1 ? 's' : ''} remaining`
+  if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} remaining`
+  return 'Less than 1 hour remaining'
+})
+
+const canVote = computed(() => {
+  return props.userPublicKey && !isExpired.value && !hasVoted.value
+})
+
+// Methods
+const formatVotes = (votes: BN) => {
+  if (!votes) return '0'
+  const num = votes.toNumber()
+  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
+  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
+  return num.toString()
+}
+
+const formatAmount = (amount: BN) => {
+  if (!amount) return '0'
+  const num = amount.toNumber()
+  return num.toLocaleString()
+}
 
 const handleClick = () => {
-  emits('select', {})
+  emits('select', props.proposal)
 }
+
+const handleVote = async (agree: boolean) => {
+  if (!canVote.value) return
+
+  try {
+    emits('vote', { proposal: props.proposal, agree })
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  catch (error: any) {
+    console.error('Vote failed:', error)
+  }
+}
+
+const handleDelete = () => {
+  deleteDialog.value = true
+}
+
+const confirmDelete = async () => {
+  if (!isOwner.value) return
+
+  deleteLoading.value = true
+  try {
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+    const userPk = props.userPublicKey
+
+    if (!program || !userPk) {
+      throw new Error('Wallet or program not ready')
+    }
+
+    await governance.deleteProposal(program, userPk, props.proposal.publicKey)
+
+    // Show success message
+    const { $toast } = useNuxtApp()
+    $toast.success('Proposal deleted successfully')
+
+    deleteDialog.value = false
+    emits('delete', props.proposal)
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  catch (error: any) {
+    console.error('Delete failed:', error)
+    const { $toast } = useNuxtApp()
+    $toast.error(error.message || 'Failed to delete proposal')
+  }
+  finally {
+    deleteLoading.value = false
+  }
+}
+
+// Check vote status on mount
+onMounted(async () => {
+  if (!props.userPublicKey || !props.proposal) return
+
+  try {
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+
+    if (program) {
+      const voteRecord = await governance.getVoteRecord(
+        program,
+        props.proposal.publicKey,
+        props.userPublicKey,
+      )
+
+      hasVoted.value = voteRecord.hasVoted
+      if (voteRecord.voteRecord) {
+        userVoteStatus.value = voteRecord.voteRecord.vote === 'true' ? 'For' : 'Against'
+      }
+    }
+  }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  catch (error: any) {
+    console.warn('Failed to check vote status:', error)
+  }
+})
 </script>
 
 <style lang="scss" scoped>
@@ -80,11 +351,14 @@ const handleClick = () => {
   border-radius: 16px;
   padding: 12px;
   position: relative;
-  border: 2px solid #f2f4f7;
+  border: 1px solid #ced0d25a;
   cursor: pointer;
+  transition: all 0.2s ease;
 
   &:hover {
-    border-color: #f79009;
+    transform: scale(1.01);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    border-color: #f7900967;
   }
 
   .governance-proposals__badge {
@@ -110,10 +384,34 @@ const handleClick = () => {
     background: #2e90fa;
   }
 
+  .delete-button {
+    position: absolute;
+    top: 18px;
+    right: 8px;
+    z-index: 1;
+  }
+
   .governance-proposals__title {
     font-size: 16px;
     font-weight: 699;
     margin-top: 8px;
+  }
+
+  .proposal-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 22px;
+
+    .amount {
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+
+  .voted-indicator {
+    display: flex;
+    align-items: center;
   }
 
   .governance-proposals__subtitle {
