@@ -42,7 +42,7 @@
 
       <!-- Loading State for Mobile -->
       <div
-        v-if="loading && mobileTransactions.length === 0"
+        v-if="loading && transactions.length === 0"
         class="py-4"
       >
         <v-skeleton-loader
@@ -65,7 +65,7 @@
           @scroll="handleScroll"
         >
           <v-list-item
-            v-for="(transaction, i) in mobileTransactions"
+            v-for="(transaction, i) in transactions"
             :key="i"
             class="transaction-item py-3"
           >
@@ -113,7 +113,7 @@
                   <span class="font-weight-medium">{{
                     transaction.points
                   }}</span>
-                  <span class="ml-1 caption grey--text">$GET</span>
+                  <span class="ml-1 caption grey--text">ponits</span>
                 </div>
                 <div class="d-flex align-center">
                   <v-icon
@@ -144,7 +144,7 @@
 
           <!-- End of List Message -->
           <div
-            v-if="!hasMoreItems && mobileTransactions.length > 0"
+            v-if="!hasMoreItems && transactions.length > 0"
             class="pa-4 text-center"
           >
             <span class="caption grey--text">No more transactions</span>
@@ -152,7 +152,7 @@
 
           <!-- Empty States for Different Tabs -->
           <div
-            v-if="mobileTransactions.length === 0 && !loading"
+            v-if="transactions.length === 0 && !loading"
             class="text-center py-8"
           >
             <template v-if="activeTab === 0">
@@ -236,7 +236,7 @@
           <template #[`item.points`]="{ item }">
             <div class="d-flex align-center">
               <span class="font-weight-bold">{{ item.points }}</span>
-              <span class="ml-1 caption grey--text">$GET</span>
+              <span class="ml-1 caption grey--text">ponits</span>
             </div>
           </template>
 
@@ -307,8 +307,7 @@ const loading = ref(false) // Unified loading state for initial load
 const loadingMore = ref(false) // Specific loading state for mobile infinite scroll
 
 // Data states
-const transactions = ref([]) // For Desktop Table
-const mobileTransactions = ref([]) // For Mobile List
+const transactions = ref([]) // Unified transactions array for both desktop and mobile
 
 // Pagination & Infinite Scroll states
 const totalRecords = ref(0)
@@ -369,7 +368,6 @@ const resetAndFetchInitialData = async () => {
 
   // Reset states
   transactions.value = []
-  mobileTransactions.value = []
   totalRecords.value = 0
   hasMoreItems.value = true
   if (infiniteContainer.value) {
@@ -386,16 +384,13 @@ const resetAndFetchInitialData = async () => {
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService.get('/api/v2/transactions',
-      params,
-    )
+    const response = await useApiService.get('/api/v2/transactions', params)
 
     if (response.succeeded && response.data) {
-      // Populate both lists with the same initial data
+      // Populate unified transactions array
       transactions.value = response.data.list
-      mobileTransactions.value = response.data.list
       totalRecords.value = response.data.totalRecordsCount
-      hasMoreItems.value = mobileTransactions.value.length < totalRecords.value
+      hasMoreItems.value = transactions.value.length < totalRecords.value
     }
   }
   catch (err) {
@@ -428,9 +423,7 @@ const loadDesktopTransactions = async ({
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService.get('/api/v2/transactions',
-      params,
-    )
+    const response = await useApiService.get('/api/v2/transactions', params)
 
     if (response.succeeded && response.data) {
       transactions.value = response.data.list
@@ -453,7 +446,7 @@ const fetchMoreMobileTransactions = async () => {
   if (loadingMore.value || !hasMoreItems.value) return
   loadingMore.value = true
 
-  const skip = mobileTransactions.value.length
+  const skip = transactions.value.length
 
   try {
     const params = {
@@ -465,13 +458,11 @@ const fetchMoreMobileTransactions = async () => {
       params['IsDebit'] = transactionType.value
     }
 
-    const response = await useApiService.get('/api/v2/transactions',
-      params,
-    )
+    const response = await useApiService.get('/api/v2/transactions', params)
 
     if (response.succeeded && response.data) {
-      mobileTransactions.value.push(...response.data.list)
-      hasMoreItems.value = mobileTransactions.value.length < totalRecords.value
+      transactions.value.push(...response.data.list)
+      hasMoreItems.value = transactions.value.length < totalRecords.value
     }
   }
   catch (err) {
