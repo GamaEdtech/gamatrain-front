@@ -449,7 +449,7 @@
 
 <script setup>
 import { useGtmEvents } from '~/composables/useGtmEvents'
-import { saveAs } from 'file-saver'
+import FileSaver from 'file-saver'
 
 const { trackFileDownload } = useGtmEvents()
 
@@ -762,7 +762,7 @@ const startDownload = async (type, extraId) => {
         //   console.log(6)
         //   alert(6)
         // })
-        saveAs(xhr.response, response.data.name)
+        FileSaver.saveAs(xhr.response, response.data.name)
 
         console.log(7)
         alert(7)
