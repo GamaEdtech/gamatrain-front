@@ -36,6 +36,9 @@
     <section>
       <token-economy-section />
     </section>
+    <section>
+      <token-referral-section />
+    </section>
   </div>
 </template>
 

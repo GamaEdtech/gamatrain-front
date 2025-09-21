@@ -91,7 +91,12 @@
                     block
                     @click="path_panel_expand = !path_panel_expand"
                   >
-                    <i class="fas fa-route mx-3 fa-2xl" />
+                    <v-icon
+                      class="mx-3"
+                      size="x-large"
+                    >
+                      md:route
+                    </v-icon>
                   </v-btn>
                 </template>
                 <span> Change path </span>
@@ -150,50 +155,49 @@
                   name="question"
                   :validate="validateQuestionField"
                 >
-                  <RickEditor
-                    v-model:model-value="form.question"
-                    min-height="200px"
-                    :features="['bold', 'italic', 'underline', 'alignment']"
-                  >
-                    <template #content>
-                      <v-btn
-                        v-if="!form.q_file_base64"
-                        variant="text"
-                        icon="mdi-camera"
+                  <rich-editor-content
+                    v-model="form.question"
+                    :rules="contentRules"
+                    required
+                  />
+                  <div style="position: absolute; right: 3rem; bottom: 3rem">
+                    <v-btn
+                      v-if="!form.q_file_base64"
+                      variant="text"
+                      icon="mdi-camera"
+                      color="#A11333"
+                      size="x-large"
+                      @click="selectFile('q_file')"
+                    >
+                      <v-icon
+                        size="80"
                         color="#A11333"
-                        size="x-large"
-                        @click="selectFile('q_file')"
                       >
-                        <v-icon
-                          size="80"
-                          color="#A11333"
-                        >
-                          mdi-camera
-                        </v-icon>
-                      </v-btn>
-                      <v-btn
-                        v-if="form.q_file_base64"
-                        variant="text"
-                        color="#F44336"
-                        icon="mdi-delete"
-                        @click="deleteFile('q_file')"
-                      />
-                      <img
-                        v-if="form.q_file_base64"
-                        width="72"
-                        height="72"
-                        class="pointer"
-                        :src="form.q_file_base64"
-                        style="
-                          border-radius: 5px;
-                          height: 7rem;
-                          width: 7rem;
-                          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
-                        "
-                        @click="selectFile('q_file')"
-                      >
-                    </template>
-                  </RickEditor>
+                        mdi-camera
+                      </v-icon>
+                    </v-btn>
+                    <v-btn
+                      v-if="form.q_file_base64"
+                      variant="text"
+                      color="#F44336"
+                      icon="mdi-delete"
+                      @click="deleteFile('q_file')"
+                    />
+                    <img
+                      v-if="form.q_file_base64"
+                      width="72"
+                      height="72"
+                      class="pointer"
+                      :src="form.q_file_base64"
+                      style="
+                        border-radius: 5px;
+                        height: 7rem;
+                        width: 7rem;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
+                      "
+                      @click="selectFile('q_file')"
+                    >
+                  </div>
                   <p
                     v-if="questionError"
                     class="text-error text-caption mt-1"
@@ -260,6 +264,7 @@
                   v-model="form.true_answer"
                   v-bind="field"
                   :error-messages="trueAnswerError"
+                  class="h-100"
                 >
                   <v-row
                     v-if="['fourchoice', 'twochoice', 'tf'].includes(form.type)"
@@ -286,28 +291,17 @@
                         :name="'answer_a'"
                         :validate="validateAnswerField"
                       >
-                        <ClientOnly
-                          fallback-tag="span"
-                          fallback="Loading..."
+                        <rich-editor-content
+                          v-model="form.answer_a"
+                          :rules="contentRules"
+                          required
+                        />
+                        <p
+                          v-if="answerAError"
+                          class="text-error text-caption mt-1"
                         >
-                          <RickEditor
-                            v-model:model-value="form.answer_a"
-                            min-height="90px"
-                            :features="[
-                              'bold',
-                              'italic',
-                              'underline',
-                              'alignment',
-                            ]"
-                            :additional-styles="{ marginInlineStart: '10px' }"
-                          />
-                          <p
-                            v-if="answerAError"
-                            class="text-error text-caption mt-1"
-                          >
-                            {{ answerAError }}
-                          </p>
-                        </ClientOnly>
+                          {{ answerAError }}
+                        </p>
                       </Field>
                     </v-col>
                     <v-col
@@ -377,28 +371,17 @@
                         :name="'answer_b'"
                         :validate="validateAnswerField"
                       >
-                        <ClientOnly
-                          fallback-tag="span"
-                          fallback="Loading..."
+                        <rich-editor-content
+                          v-model="form.answer_b"
+                          :rules="contentRules"
+                          required
+                        />
+                        <p
+                          v-if="answerBError"
+                          class="text-error text-caption mt-1"
                         >
-                          <RickEditor
-                            v-model:model-value="form.answer_b"
-                            min-height="90px"
-                            :features="[
-                              'bold',
-                              'italic',
-                              'underline',
-                              'alignment',
-                            ]"
-                            :additional-styles="{ marginInlineStart: '10px' }"
-                          />
-                          <p
-                            v-if="answerBError"
-                            class="text-error text-caption mt-1"
-                          >
-                            {{ answerBError }}
-                          </p>
-                        </ClientOnly>
+                          {{ answerBError }}
+                        </p>
                       </Field>
                     </v-col>
                     <v-col
@@ -466,28 +449,17 @@
                         :name="'answer_c'"
                         :validate="validateAnswerField"
                       >
-                        <ClientOnly
-                          fallback-tag="span"
-                          fallback="Loading..."
+                        <rich-editor-content
+                          v-model="form.answer_c"
+                          :rules="contentRules"
+                          required
+                        />
+                        <p
+                          v-if="answerCError"
+                          class="text-error text-caption mt-1"
                         >
-                          <RickEditor
-                            v-model:model-value="form.answer_c"
-                            min-height="90px"
-                            :features="[
-                              'bold',
-                              'italic',
-                              'underline',
-                              'alignment',
-                            ]"
-                            :additional-styles="{ marginInlineStart: '10px' }"
-                          />
-                          <p
-                            v-if="answerCError"
-                            class="text-error text-caption mt-1"
-                          >
-                            {{ answerCError }}
-                          </p>
-                        </ClientOnly>
+                          {{ answerCError }}
+                        </p>
                       </Field>
                     </v-col>
                     <v-col
@@ -555,28 +527,17 @@
                         :name="'answer_d'"
                         :validate="validateAnswerField"
                       >
-                        <ClientOnly
-                          fallback-tag="span"
-                          fallback="Loading..."
+                        <rich-editor-content
+                          v-model="form.answer_d"
+                          :rules="contentRules"
+                          required
+                        />
+                        <p
+                          v-if="answerDError"
+                          class="text-error text-caption mt-1"
                         >
-                          <RickEditor
-                            v-model:model-value="form.answer_d"
-                            min-height="90px"
-                            :features="[
-                              'bold',
-                              'italic',
-                              'underline',
-                              'alignment',
-                            ]"
-                            :additional-styles="{ marginInlineStart: '10px' }"
-                          />
-                          <p
-                            v-if="answerDError"
-                            class="text-error text-caption mt-1"
-                          >
-                            {{ answerDError }}
-                          </p>
-                        </ClientOnly>
+                          {{ answerDError }}
+                        </p>
                       </Field>
                     </v-col>
                     <v-col
@@ -639,16 +600,10 @@
             >
               <p>Solution:</p>
 
-              <ClientOnly
-                fallback-tag="span"
-                fallback="Loading..."
-              >
-                <RickEditor
-                  v-model:model-value="form.answer_full"
-                  min-height="90px"
-                  :features="['bold', 'italic', 'underline', 'alignment']"
-                />
-              </ClientOnly>
+              <rich-editor-content
+                v-model="form.answer_full"
+                :rules="contentRules"
+              />
               <img
                 v-if="form.answer_full_file_base64"
                 width="72"
@@ -843,51 +798,14 @@
     </v-card>
 
     <!-- Cropper Dialog -->
-    <v-dialog
+    <common-cropper-dialog
       v-model="cropper_dialog"
-      max-width="600"
-      transition="dialog-bottom-transition"
-    >
-      <v-card id="img-cropper-dialog">
-        <v-card-text class="pa-0">
-          <v-col
-            v-if="crop_file_loading"
-            cols="12"
-            class="text-center"
-          >
-            <v-progress-circular
-              :size="40"
-              :width="4"
-              class="mt-12 mb-12"
-              color="orange"
-              indeterminate
-            />
-          </v-col>
-          <div v-else>
-            <Cropper
-              :src="crop_file_url"
-              :aspect-ratio="1"
-              @change="cropFile"
-            />
-          </div>
-        </v-card-text>
-        <v-card-actions
-          style="position: sticky; bottom: 0; left: 0; right: 0"
-          class="pa-0"
-        >
-          <v-btn
-            color="teal"
-            variant="flat"
-            size="x-large"
-            :loading="crop_confirm_loading"
-            block
-            @click="submitCrop"
-          >
-            Confirm
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      :file-url="crop_file_url"
+      :aspect-ratio="1"
+      :stencil-props="stencilProps"
+      :upload-loading="crop_confirm_loading"
+      @cropped-data="submitCrop"
+    />
     <!-- End cropper Dialog -->
   </div>
 </template>
@@ -899,8 +817,7 @@ import { Form as VeeForm, Field, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useState } from '#app'
 import { useAuth } from '~/composables/useAuth'
-import { Cropper } from 'vue-advanced-cropper'
-import 'vue-advanced-cropper/dist/style.css' // Import cropper styles
+import RichEditorContent from '@/components/common/RichEditor.vue'
 
 const auth = useAuth()
 
@@ -996,11 +913,10 @@ const file_original_path = ref('')
  * Cropper related state
  */
 const crop_file_url = ref('')
-const crop_file_loading = ref(false)
 const crop_confirm_loading = ref(false)
 const cropper_dialog = ref(false)
 const current_crop_file = ref('')
-
+const stencilProps = { width: 180, height: 180, resizable: true }
 /**
  * Form data and hidden fields
  */
@@ -1182,6 +1098,11 @@ const validationSchema = yup.object({
         ),
   }),
 })
+
+const contentRules = [
+  v => !!v || 'Content is required',
+  v => (v && v.trim() !== '' && v !== '<p></p>') || 'Content cannot be empty',
+]
 
 /**
  * Initialize VeeValidate form
@@ -1607,35 +1528,6 @@ const uploadFile = (file_name, fileEvent) => {
 
   // Show the cropper dialog
   cropper_dialog.value = true
-}
-
-/**
- * Handle image cropping
- * @param {Object} param0 - Cropper data
- */
-const cropFile = ({ coordinates: _coordinates, canvas }) => {
-  // Store the cropped image data as base64
-  const croppedBase64 = canvas.toDataURL()
-
-  // Update the corresponding form field
-  if (current_crop_file.value === 'q_file') {
-    form.q_file_base64 = croppedBase64
-  }
-  else if (current_crop_file.value === 'answer_full_file') {
-    form.answer_full_file_base64 = croppedBase64
-  }
-  else if (current_crop_file.value === 'a_file') {
-    form.a_file_base64 = croppedBase64
-  }
-  else if (current_crop_file.value === 'b_file') {
-    form.b_file_base64 = croppedBase64
-  }
-  else if (current_crop_file.value === 'c_file') {
-    form.c_file_base64 = croppedBase64
-  }
-  else if (current_crop_file.value === 'd_file') {
-    form.d_file_base64 = croppedBase64
-  }
 }
 
 /**
@@ -2065,7 +1957,29 @@ onMounted(async () => {
 /**
  * Submit cropped image for upload
  */
-const submitCrop = async () => {
+const submitCrop = async (blobData, canvas) => {
+  const croppedBase64 = canvas.toDataURL()
+
+  // Update the corresponding form field
+  if (current_crop_file.value === 'q_file') {
+    form.q_file_base64 = croppedBase64
+  }
+  else if (current_crop_file.value === 'answer_full_file') {
+    form.answer_full_file_base64 = croppedBase64
+  }
+  else if (current_crop_file.value === 'a_file') {
+    form.a_file_base64 = croppedBase64
+  }
+  else if (current_crop_file.value === 'b_file') {
+    form.b_file_base64 = croppedBase64
+  }
+  else if (current_crop_file.value === 'c_file') {
+    form.c_file_base64 = croppedBase64
+  }
+  else if (current_crop_file.value === 'd_file') {
+    form.d_file_base64 = croppedBase64
+  }
+
   crop_confirm_loading.value = true
 
   try {
@@ -2498,6 +2412,9 @@ defineExpose({
 
 #img-cropper-dialog .v-card-text {
   padding: 0;
+}
+.v-selection-control-group {
+  height: 100% !important;
 }
 
 .cropper-container {

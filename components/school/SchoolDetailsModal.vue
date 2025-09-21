@@ -114,7 +114,7 @@
               v-if="school?.defaultImageUri"
               class="img-div"
             >
-              <NuxtImg
+              <!-- <NuxtImg
                 v-show="school?.defaultImageUri"
                 :alt="school?.name"
                 width="180px"
@@ -123,6 +123,16 @@
                 "
                 placeholder
                 class="h-100"
+              /> -->
+              <v-img
+                v-show="school?.defaultImageUri"
+                :alt="school?.name"
+                width="180px"
+                :src="
+                  school?.defaultImageUri?.replace(/^http:\/\//, 'https://')
+                "
+                cover
+                class="h-100 rounded-lg"
               />
             </div>
           </div>

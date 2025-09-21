@@ -25,10 +25,9 @@
                 fab
                 x-large
               >
-                <i
-                  class="fa-solid fa-wallet"
-                  style="color: #00d2ae"
-                />
+                <v-icon color="#00d2ae">
+                  md:account_balance_wallet
+                </v-icon>
               </div>
               <div class="pa-3">
                 <p class="text-h6">
@@ -49,10 +48,9 @@
                 fab
                 x-large
               >
-                <i
-                  class="fa-regular fa-envelope"
-                  style="color: #8e0be4"
-                />
+                <v-icon color="#8e0be4">
+                  md:mail
+                </v-icon>
               </div>
               <NuxtLink
                 to="/user/ticket"
@@ -76,10 +74,9 @@
                 fab
                 x-large
               >
-                <i
-                  class="fa-regular fa-star"
-                  style="color: #0b62e4"
-                />
+                <v-icon color="#0b62e4">
+                  md:star
+                </v-icon>
               </div>
               <div class="pa-3">
                 <p class="text-h6">

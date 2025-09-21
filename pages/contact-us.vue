@@ -126,35 +126,14 @@
             />
             <span> 2419 West 53rd Street, Apt 5B, New York, NY 10019 </span>
           </div>
-          <LMap
-            ref="map"
-            class="map"
-            :options="{ zoomControl: false }"
-            :zoom="zoom"
-            :center="[41.050652, 28.894283]"
-            :use-global-leaflet="false"
-          >
-            <LTileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution="&copy; <a href=&quot;https://www.openstreetmap.org/&quot;>OpenStreetMap</a> contributors"
-              layer-type="base"
-              name="OpenStreetMap"
-            />
-            <!-- Custom SVG marker -->
-            <LMarker :lat-lng="[41.050652, 28.894283]">
-              <LIcon
-                :icon-size="[50, 50]"
-                :icon-anchor="[50, 50]"
-                class-name="custom-svg-marker"
-              >
-                <img
-                  src="/images/foundation--marker.svg"
-                  alt="Location marker"
-                  class="marker-image"
-                >
-              </LIcon>
-            </LMarker>
-          </LMap>
+          <Map
+            :initial-center="[41.050652, 28.894283]"
+            :highlight-location="[41.050652, 28.894283]"
+            :show-highlight-location="true"
+            :initial-zoom="zoom"
+            :border-radius="20"
+            :zoom-enabled="false"
+          />
         </v-col>
       </v-row>
       <div />
@@ -166,11 +145,11 @@
 import { ref, reactive, onMounted } from 'vue'
 import { useRecaptcha } from '~/composables/useRecapcha'
 import useApiService from '~/composables/useApiService'
+import Map from '@/components/common/Map.client.vue'
 
 useSeoMeta({
   title: `Contact us`,
   ogTitle: `Contact us`,
-
 })
 
 const zoom = ref(20)
@@ -306,24 +285,5 @@ onMounted(() => {
   font-size: 2rem;
   font-weight: 600;
   color: #334053;
-}
-
-.map {
-  border-radius: 2rem;
-  -webkit-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 0.08);
-  -moz-box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 0.08);
-  box-shadow: 8px 8px 24px 0px rgba(66, 68, 90, 0.08);
-}
-
-.marker-image {
-  width: 50px;
-  height: 50px;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-}
-
-@media (max-width: 599px) {
-  .map {
-    height: 40rem !important;
-  }
 }
 </style>

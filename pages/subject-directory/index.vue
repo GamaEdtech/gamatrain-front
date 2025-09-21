@@ -47,10 +47,16 @@
             <div
               :class="`d-flex justify-center w-100 h-100 mx-auto max-height-image`"
             >
-              <NuxtImg
+              <!-- <NuxtImg
                 width="300px"
                 :src="imageLesson"
                 placeholder
+                class="rounded-lg w-100 h-100"
+              /> -->
+              <v-img
+                width="300px"
+                :src="imageLesson"
+                cover
                 class="rounded-lg w-100 h-100"
               />
             </div>

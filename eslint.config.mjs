@@ -27,3 +27,11 @@ export default createConfigForNuxt({
       // as ESLint doesn't have built-in file path validation
     },
   })
+  .append({
+    name: 'vue-prop-naming',
+    files: ['**/*.vue'],
+    rules: {
+      'vue/prop-name-casing': ['off', 'camelCase'],
+    },
+  },
+  )

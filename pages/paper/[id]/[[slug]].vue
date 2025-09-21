@@ -1,193 +1,226 @@
 <template>
   <div class="test-details-content">
-    <paper-detail-skeleton-loader v-if="dataFetching" />
+    <common-category />
 
-    <template v-else>
-      <common-category />
+    <section>
+      <v-container class="py-0">
+        <div class="mt-0 py-0 header-path">
+          <widgets-breadcrumb :breads="breads" />
+        </div>
+      </v-container>
+    </section>
 
-      <section>
-        <v-container class="py-0">
-          <div class="mt-0 py-0 header-path">
-            <widgets-breadcrumb :breads="breads" />
-          </div>
-        </v-container>
-      </section>
+    <section>
+      <v-container class="py-0">
+        <div class="d-lg-none mt-4">
+          <paper-detail-title :title="contentData?.title" />
+        </div>
+        <div class="detail mt-6 mt-md-8">
+          <v-row>
+            <v-col
+              cols="12"
+              md="12"
+              lg="5"
+              xl="6"
+              class="px-8 px-lg=0 order-3 order-md-3 order-lg-2"
+            >
+              <paper-detail-description
+                :title="contentData?.title"
+                :description="contentData?.description"
+              >
+                <template #labels>
+                  <nuxt-link
+                    :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
+                    class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
+                  >
+                    <div class="h-100 d-flex align-start justify-start pt-1">
+                      <v-icon
+                        v-if="
+                          contentData?.files?.pdf?.exist ||
+                          (contentData?.files?.answer?.exist &&
+                            contentData?.files?.answer?.ext == 'pdf')
+                        "
+                        size="large"
+                        color="red"
+                      >
+                        md:picture_as_pdf
+                      </v-icon>
 
-      <section>
-        <v-container class="py-0">
-          <div class="d-lg-none mt-4">
-            <paper-detail-title :title="contentData?.title" />
-          </div>
-          <div class="detail mt-6 mt-md-8">
-            <v-row>
-              <v-col
-                cols="12"
-                md="12"
-                lg="5"
-                xl="6"
-                xxl="7"
-                class="px-8 px-lg=0 order-3 order-md-3 order-lg-2"
-              >
-                <paper-detail-description
-                  :title="contentData?.title"
-                  :description="contentData?.description"
-                >
-                  <template #labels>
-                    <v-chip
-                      link
-                      class="mr-1 bg-blue-grey-darken-1 text-white"
-                      :small="display.mdAndDown"
-                    >
-                      <nuxt-link
-                        :to="`/search?type=test&section=${contentData?.section}`"
+                      <v-icon
+                        v-else-if="
+                          contentData?.files?.word?.exist ||
+                          (contentData?.files?.answer?.exist &&
+                            contentData?.files?.answer?.ext == 'word')
+                        "
+                        size="large"
+                        color="blue"
                       >
-                        {{ contentData?.section_title }}
-                      </nuxt-link>
-                    </v-chip>
-                    <v-chip
-                      link
-                      class="mr-1 bg-blue-grey-darken-1 text-white"
-                      :small="display.mdAndDown"
-                    >
-                      <nuxt-link
-                        :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
+                        md:description
+                      </v-icon>
+
+                      <v-icon
+                        v-else-if="
+                          contentData?.files?.extra?.length > 0 &&
+                          contentData.files.extra.some(
+                            (item) => item.ext === 'mp3'
+                          )
+                        "
+                        size="large"
+                        color="purple"
                       >
-                        {{ contentData?.base_title }}
-                      </nuxt-link>
-                    </v-chip>
-                    <v-chip
-                      class="ma-1 bg-blue-grey-darken-1 text-white"
-                      :small="display.mdAndDown"
+                        md:audio_file
+                      </v-icon>
+                    </div>
+                    <div
+                      class="d-flex flex-column align-start justify-start ga-1"
                     >
-                      <nuxt-link
-                        :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
+                      <span
+                        class="text-h5 text-sm-h4 font-weight-bold text-white"
+                        >Go to {{ contentData?.lesson_title }}</span
                       >
-                        {{ contentData?.lesson_title }}
-                      </nuxt-link>
-                    </v-chip>
-                    <v-chip
-                      class="ma-1 bg-blue-grey-darken-1 text-white"
-                      :small="display.mdAndDown"
+                      <span
+                        class="text-subtitle-2 text-sm-subtitle-1 text-white"
+                        >All books, past papers & resources in one place</span
+                      >
+                    </div>
+                  </nuxt-link>
+                  <v-chip
+                    link
+                    class="mr-1 bg-blue-grey-darken-1 text-white"
+                    :small="display.mdAndDown"
+                  >
+                    <nuxt-link
+                      :to="`/search?type=test&section=${contentData?.section}`"
                     >
-                      {{ contentData?.edu_month_title }}
-                    </v-chip>
-                    <v-chip
-                      :small="display.mdAndDown"
-                      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}&edu_year=${contentData?.edu_year}`"
-                      class="ma-1 bg-blue-grey-darken-1 text-white"
+                      {{ contentData?.section_title }}
+                    </nuxt-link>
+                  </v-chip>
+                  <v-chip
+                    link
+                    class="mr-1 bg-blue-grey-darken-1 text-white"
+                    :small="display.mdAndDown"
+                  >
+                    <nuxt-link
+                      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
                     >
-                      {{ contentData?.edu_year }}
-                    </v-chip>
-                    <v-chip
-                      :small="display.mdAndDown"
-                      :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
-                      class="ma-1 bg-primary text-white"
+                      {{ contentData?.base_title }}
+                    </nuxt-link>
+                  </v-chip>
+                  <v-chip
+                    class="ma-1 bg-blue-grey-darken-1 text-white"
+                    :small="display.mdAndDown"
+                  >
+                    <nuxt-link
+                      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
                     >
-                      {{ contentData?.lesson_title }} directory
-                    </v-chip>
-                  </template>
-                </paper-detail-description>
-              </v-col>
-              <v-col
-                cols="12"
-                sm="5"
-                md="3"
-                lg="3"
-                xl="3"
-                xxl="2"
-                order-lg="first"
-                class="order-2 order-sm-1 order-md-1"
+                      {{ contentData?.lesson_title }}
+                    </nuxt-link>
+                  </v-chip>
+                  <v-chip
+                    class="ma-1 bg-blue-grey-darken-1 text-white"
+                    :small="display.mdAndDown"
+                  >
+                    {{ contentData?.edu_month_title }}
+                  </v-chip>
+                  <v-chip
+                    :small="display.mdAndDown"
+                    :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}&edu_year=${contentData?.edu_year}`"
+                    class="ma-1 bg-blue-grey-darken-1 text-white"
+                  >
+                    {{ contentData?.edu_year }}
+                  </v-chip>
+                </template>
+              </paper-detail-description>
+            </v-col>
+            <v-col
+              cols="12"
+              sm="5"
+              md="3"
+              lg="3"
+              xl="3"
+              order-lg="first"
+              class="order-2 order-sm-1 order-md-1"
+            >
+              <details-preview-gallery
+                :image-urls="previewImages"
+                :help-link-data="galleryHelpData"
+                :initial-slide="1"
+                :paper-id="contentData?.id"
+                :paper-title="contentData?.title"
+                :show-doc-preview="true"
+              />
+            </v-col>
+            <v-col
+              class="order-1 order-md-2 order-lg-3"
+              sm="7"
+              md="9"
+              lg="4"
+              xl="3"
+            >
+              <paper-detail-content-info
+                :content-data="contentData"
+                @crash-report="openCrashReportDialog"
               >
-                <details-preview-gallery
-                  :image-urls="previewImages"
-                  :help-link-data="galleryHelpData"
-                  :initial-slide="1"
-                />
-              </v-col>
-              <v-col
-                class="order-1 order-md-2 order-lg-3"
-                sm="7"
-                md="9"
-                lg="4"
-                xl="3"
-                xxl="3"
-              >
-                <paper-detail-content-info
-                  :content-data="contentData"
-                  @crash-report="openCrashReportDialog"
-                >
-                  <template #share-dialog>
-                    <common-detail-share-dialog :title="contentData?.title" />
-                  </template>
-                </paper-detail-content-info>
-              </v-col>
-            </v-row>
-          </div>
+                <template #share-dialog>
+                  <common-detail-share-dialog :title="contentData?.title" />
+                </template>
+              </paper-detail-content-info>
+            </v-col>
+          </v-row>
+        </div>
+        <ClientOnly>
           <common-related-portrait-content
             page-type="paper"
             page-name="Past Papers"
             source="test"
             request="test"
           />
-        </v-container>
-      </section>
+        </ClientOnly>
+      </v-container>
+    </section>
 
+    <ClientOnly>
       <div v-if="randomTestContent">
-        <v-divider
-          class="mt-4 mx-auto"
-          style="width: 80%"
-        />
+        <v-divider class="mt-4 mx-auto" style="width: 80%" />
         <test-details :content-data="randomTestContent" />
-        <v-divider
-          class="mt-1 mx-auto"
-          style="width: 80%"
-        />
+        <v-divider class="mt-1 mx-auto" style="width: 80%" />
       </div>
-    </template>
-    <v-row
-      justify="center"
-      class="mt-10"
-    >
-      <v-col
-        cols="12"
-        md="8"
-        class="text-center"
-      >
-        <common-ad-banner
-          v-model="isAdsLoad"
-          adslot="7199289937"
-        />
-      </v-col>
-    </v-row>
+    </ClientOnly>
+
+    <ClientOnly>
+      <v-row justify="center" class="mt-10">
+        <v-col cols="12" md="8" class="text-center">
+          <common-ad-banner v-model="isAdsLoad" adslot="7199289937" />
+        </v-col>
+      </v-row>
+    </ClientOnly>
   </div>
 </template>
 
 <script setup>
-const route = useRoute()
-const router = useRouter()
-const requestURL = ref(useRequestURL().host)
-const randomTestContent = ref(null)
-const pageDescribe = ref('')
-const pageTitle = ref('')
-const isAdsLoad = ref(false)
+const route = useRoute();
+const router = useRouter();
+const requestURL = ref(useRequestURL().host);
+const randomTestContent = ref(null);
+const pageDescribe = ref("");
+const pageTitle = ref("");
+const isAdsLoad = ref(false);
 
 // Track loading state
 
-const { data: contentData, pending: dataFetching } = await useAsyncData(
+const { data: contentData } = await useAsyncData(
   `paper-${route.params.id}`,
   async () => {
     try {
-      const response = await $fetch(`/api/v1/tests/${route.params.id}`, {})
+      const response = await $fetch(`/api/v1/tests/${route.params.id}`, {});
 
-      return response.data
-    }
-    catch (e) {
+      return response.data;
+    } catch (e) {
       if (e?.status === 404) {
-        router.push('/search?type=test')
+        router.push("/search?type=test");
       }
-      throw e
-    }
-    finally {
+      throw e;
+    } finally {
       // Reset loading states if needed
     }
   },
@@ -196,130 +229,127 @@ const { data: contentData, pending: dataFetching } = await useAsyncData(
     lazy: false,
     immediate: true,
     watch: [() => route.params.id],
-  },
-)
+  }
+);
 
 const schemaData = computed(() => ({
-  '@context': 'https://schema.org',
-  '@type': 'LearningResource',
-  'name': contentData.value?.title || 'GamaEdtech',
-  'image':
-    contentData.value?.thumb_pic
-    || contentData.value?.lesson_pic
-    || 'https://gamatrain.com/images/gamatrain-logo.svg',
-  'url': route.fullPath || '',
-  'description': contentData.value?.description || 'GamaEdtech',
-}))
+  "@context": "https://schema.org",
+  "@type": "LearningResource",
+  name: contentData.value?.title || "GamaEdtech",
+  image:
+    contentData.value?.thumb_pic ||
+    contentData.value?.lesson_pic ||
+    "https://gamatrain.com/images/gamatrain-logo.svg",
+  url: route.fullPath || "",
+  description: contentData.value?.description || "GamaEdtech",
+}));
 
-const previewImages = ref([])
+const previewImages = ref([]);
 const galleryHelpData = ref({
-  state: '',
-  section: '',
-  base: '',
-  course: '',
-  lesson: '',
-})
+  state: "",
+  section: "",
+  base: "",
+  course: "",
+  lesson: "",
+});
 
 const setMetaData = () => {
-  if (!contentData.value) return
+  if (!contentData.value) return;
 
-  const { section_title, base_title, title, is_paper } = contentData.value
+  const { section_title, base_title, title, is_paper } = contentData.value;
 
   // Build common title parts
-  const titleParts = [section_title, base_title, title].filter(Boolean)
-  const baseTitle = titleParts.join(' ')
+  const titleParts = [section_title, base_title, title].filter(Boolean);
+  const baseTitle = titleParts.join(" ");
 
   if (is_paper) {
-    pageTitle.value = `${baseTitle} past paper`
-    pageDescribe.value = `Download ${baseTitle} past paper with mark scheme (MS). Access a full collection of past papers for study, revision, and exam practice.`
-  }
-  else {
-    pageTitle.value = baseTitle
-    pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
+    pageTitle.value = `${baseTitle} past paper`;
+    pageDescribe.value = `Download ${baseTitle} past paper with mark scheme (MS). Access a full collection of past papers for study, revision, and exam practice.`;
+  } else {
+    pageTitle.value = baseTitle;
+    pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`;
   }
 
   useHead({
     title: pageTitle.value,
     meta: [
       {
-        hid: 'apple-mobile-web-app-title',
-        name: 'apple-mobile-web-app-title',
+        hid: "apple-mobile-web-app-title",
+        name: "apple-mobile-web-app-title",
         content: pageTitle.value,
       },
       {
-        hid: 'og:title',
-        name: 'og:title',
+        hid: "og:title",
+        name: "og:title",
         content: pageTitle.value,
       },
       {
-        hid: 'og:site_name',
-        name: 'og:site_name',
-        content: 'GamaTrain',
+        hid: "og:site_name",
+        name: "og:site_name",
+        content: "GamaTrain",
       },
       {
-        hid: 'description',
-        name: 'description',
+        hid: "description",
+        name: "description",
         content: pageDescribe.value,
       },
       {
-        hid: 'og:description',
-        name: 'og:description',
+        hid: "og:description",
+        name: "og:description",
         content: pageDescribe.value,
       },
     ],
     script: [
       {
-        hid: 'json-ld-schema',
+        hid: "json-ld-schema",
         innerHTML: JSON.stringify(schemaData.value),
-        type: 'application/ld+json',
+        type: "application/ld+json",
       },
     ],
     link: [
       {
-        rel: 'canonical',
+        rel: "canonical",
         href: contentData.value
           ? `https://${requestURL.value}/paper/${contentData.value.id}/${contentData.value.title_url}`
           : `https://${requestURL.value}/paper/${route.params.id}`,
       },
     ],
     __dangerouslyDisableSanitizersByTagID: {
-      'json-ld-schema': ['innerHTML'],
+      "json-ld-schema": ["innerHTML"],
     },
-  })
+  });
+};
+
+if (contentData.value) {
+  previewImages.value = [];
+  previewImages.value.push(contentData.value.thumb_pic);
+  if (contentData.value.lesson_pic) {
+    previewImages.value.push(contentData.value.lesson_pic);
+  }
+
+  previewImages.value.carouselVal = 0;
+
+  galleryHelpData.value = {
+    state: contentData.value?.state || "",
+    section: contentData.value?.section || "",
+    base: contentData.value?.base || "",
+    course: contentData.value?.course || "",
+    lesson: contentData.value?.lesson || "",
+  };
 }
 
-watchEffect(() => {
-  if (contentData.value) {
-    previewImages.value = []
-    previewImages.value.push(contentData.value.thumb_pic)
-    if (contentData.value.lesson_pic) {
-      previewImages.value.push(contentData.value.lesson_pic)
-    }
+const breads = ref([]);
 
-    previewImages.value.carouselVal = 0
-
-    galleryHelpData.value = {
-      state: contentData.value?.state || '',
-      section: contentData.value?.section || '',
-      base: contentData.value?.base || '',
-      course: contentData.value?.course || '',
-      lesson: contentData.value?.lesson || '',
-    }
-  }
-})
-
-const breads = ref([])
-
-const display = useGlobalDisplay()
+const display = useGlobalDisplay();
 
 const initBreadCrumb = () => {
-  if (!contentData.value) return
-  breads.value = []
+  if (!contentData.value) return;
+  breads.value = [];
   breads.value.push({
-    text: 'Paper',
+    text: "Paper",
     disabled: false,
-    href: '/search?type=test',
-  })
+    href: "/search?type=test",
+  });
   breads.value.push(
     {
       text: contentData.value.section_title,
@@ -335,43 +365,49 @@ const initBreadCrumb = () => {
       text: contentData.value.lesson_title,
       disabled: false,
       href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
-    },
-  )
-}
+    }
+  );
+};
 
 watchEffect(() => {
   if (contentData.value) {
-    initBreadCrumb()
-    setMetaData()
+    initBreadCrumb();
+    setMetaData();
   }
-})
+});
 
 const openCrashReportDialog = () => {
-  crash_report.value.dialog = true
-  crash_report.value.form.type = 'test'
-}
+  crash_report.value.dialog = true;
+  crash_report.value.form.type = "test";
+};
 const grabRandomTestCode = () => {
   if (contentData.value && contentData.value.lesson) {
     $fetch(`/api/v1/examTests/random?lesson=${contentData.value.lesson}`)
       .then((response) => {
         if (response.data.code) {
-          retriveRandomTest(response.data.code)
+          retriveRandomTest(response.data.code);
         }
       })
-      .catch((_err) => {})
+      .catch((_err) => {});
   }
-}
+};
 const retriveRandomTest = (code) => {
   $fetch(`/api/v1/examTests/${code}`)
     .then((response) => {
-      randomTestContent.value = response.data
+      randomTestContent.value = response.data;
     })
-    .catch((_err) => {})
-}
+    .catch((_err) => {});
+};
 
 onMounted(() => {
-  grabRandomTestCode()
-})
+  grabRandomTestCode();
+});
 </script>
 
-<style></style>
+<style>
+.subject-directory-alert {
+  height: 70px;
+  max-width: 400px;
+  background-color: #f59e0b;
+}
+</style>

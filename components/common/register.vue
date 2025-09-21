@@ -24,26 +24,56 @@ const identity_holder = ref(true)
 const otp_holder = ref(false)
 const select_pass_holder = ref(false)
 
-onMounted(() => {
-  setTimeout(() => {
-    if (window.google?.accounts?.id && googleRegisterBtn.value) {
-      window.google.accounts.id.initialize({
-        client_id:
-          '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
-        callback: handleCredentialResponse,
-        auto_select: true,
-      })
-
-      window.google.accounts.id.renderButton(googleRegisterBtn.value, {
-        text: 'Login',
-        size: 'large',
-        width: '252',
-        theme: 'outline',
-      })
-
-      google_register_loading.value = false
+const loadGoogleIdentityScript = () => {
+  return new Promise((resolve, reject) => {
+    if (document.getElementById('google-identity-js')) {
+      resolve(true)
+      return
     }
-  }, 4000)
+
+    const s = document.createElement('script')
+    s.id = 'google-identity-js'
+    s.src = 'https://accounts.google.com/gsi/client'
+    s.async = true
+    s.defer = true
+    s.onload = () => resolve(true)
+    s.onerror = () =>
+      reject(new Error('Google Identity script failed to load'))
+    document.head.appendChild(s)
+  })
+}
+
+const initGoogleLogin = () => {
+  if (window.google?.accounts?.id) {
+    window.google.accounts.id.initialize({
+      client_id:
+        '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
+      callback: handleCredentialResponse,
+      auto_select: true,
+    })
+
+    window.google.accounts.id.renderButton(googleRegisterBtn.value, {
+      text: 'Login',
+      size: 'large',
+      width: '252',
+      theme: 'outline',
+    })
+
+    google_register_loading.value = false
+  }
+  else {
+    console.error('Google Identity not available yet.')
+  }
+}
+
+onMounted(async () => {
+  try {
+    await loadGoogleIdentityScript()
+    initGoogleLogin()
+  }
+  catch (e) {
+    console.error(e)
+  }
 })
 
 watch(countDown, (val) => {

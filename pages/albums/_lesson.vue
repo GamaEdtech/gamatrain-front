@@ -42,7 +42,9 @@
                   <div class="description-holder my-4">
                     <!-- Topics -->
                     <p>
-                      <i class="fa-solid fa-list ml-1 icon" />
+                      <v-icon class="ml-1 icon">
+                        md:list
+                      </v-icon>
                       Topics:
                     </p>
                     <ul>
@@ -57,23 +59,27 @@
 
                     <!-- Question number -->
                     <p class="mt-1">
-                      <i class="fa-solid fa-question ml-1 icon" />
+                      <v-icon class="ml-1 icon">
+                        md:question_mark
+                      </v-icon>
                       Questions: {{ contentData.tests_num }}
                     </p>
                     <!-- End question number -->
 
                     <!-- Difficulty level -->
                     <p class="mt-1">
-                      <i
-                        class="fa-solid fa-temperature-three-quarters ml-1 icon"
-                      />
+                      <v-icon class="ml-1 icon">
+                        md:device_thermostat
+                      </v-icon>
                       Difficulty level: {{ contentData.level }}
                     </p>
                     <!-- End difficulty level -->
 
                     <!-- Start date -->
                     <p class="mt-1">
-                      <i class="fa-solid fa-circle-play" />
+                      <v-icon class="ml-1 icon">
+                        md:play_circle
+                      </v-icon>
                       Start:
                       {{
                         contentData.start_date ? contentData.start_date : "-"
@@ -83,7 +89,8 @@
 
                     <!-- End date -->
                     <p class="mt-1">
-                      <i class="fa-solid fa-circle-stop" />
+                      <v-icon>md:stop_circle</v-icon>
+
                       End:
                       {{ contentData.end_date ? contentData.end_date : "-" }}
                     </p>
@@ -91,7 +98,7 @@
 
                     <!-- Duration -->
                     <p class="mt-1">
-                      <i class="fa-solid fa-clock" />
+                      <v-icon>md:alarm</v-icon>
                       End: {{ contentData.azmoon_time }} minutes
                     </p>
                     <!-- End duration -->
@@ -204,28 +211,36 @@
                     cols="12"
                     class="pb-0"
                   >
-                    <i class="fa-solid fa-folder mr-1 icon" />
+                    <v-icon class="ml-1 icon">
+                      md:file_copy
+                    </v-icon>
                     File type: {{ contentData.azmoon_type_title }}
                   </v-col>
                   <v-col
                     cols="12"
                     class="pb-0"
                   >
-                    <i class="fa-solid fa-eye mr-1 icon" />
+                    <v-icon class="ml-1 icon">
+                      md:visibility
+                    </v-icon>
                     Viewed: Unknown
                   </v-col>
                   <v-col
                     cols="12"
                     class="pb-0"
                   >
-                    <i class="fa-solid fa-calendar-alt mr-1 icon" />
+                    <v-icon class="ml-1 icon">
+                      md:calendar_month
+                    </v-icon>
                     Last update: {{ $timeAgo.calc(contentData.up_date) }}
                   </v-col>
                   <v-col
                     cols="12"
                     class="pb-0"
                   >
-                    <i class="fa-solid fa-bug mr-1 icon" />
+                    <v-icon class="ml-1 icon">
+                      md:bug_report
+                    </v-icon>
                     Crash report
                   </v-col>
                   <v-col
@@ -243,7 +258,7 @@
                           v-bind="attrs"
                           v-on="on"
                         >
-                          <i class="fa-solid fa-share-alt mr-1 icon" />
+                          <v-icon class="ml-1 icon">md:share</v-icon>
                           Share
                         </span>
                       </template>
@@ -263,7 +278,9 @@
                                   block
                                   @click="copyUrl"
                                 >
-                                  <i class="fa-solid fa-copy mr-1 icon" />
+                                  <v-icon class="ml-1 icon">
+                                    md:content_copy
+                                  </v-icon>
                                   &nbsp;
                                   {{ copy_btn }}
                                 </v-btn>
@@ -276,7 +293,6 @@
                                   class="text-white"
                                   @click="shareSocial('whatsapp')"
                                 >
-                                  <i class="fab fa-whatsapp mr-1 icon" />
                                   WhatsApp
                                 </v-btn>
                               </v-col>
@@ -287,7 +303,6 @@
                                   class="text-white"
                                   @click="shareSocial('telegram')"
                                 >
-                                  <i class="fab fa-telegram-plane mr-1 icon" />
                                   Telegram
                                 </v-btn>
                               </v-col>
@@ -358,7 +373,10 @@
                   class="text-center"
                 >
                   <p class="mt-2">
-                    <i class="fa-solid fa-exclamation-circle mr-1 icon" />
+                    <v-icon class="ml-1 icon">
+                      md:exclamation
+                    </v-icon>
+
                     Republishing is prohibited in cyber space.
                   </p>
                 </v-col>
@@ -465,13 +483,11 @@
           <!--                        <v-col cols="10"> -->
           <!--                          <div> -->
           <!--                            <nuxt-link to="" class="teacher"> -->
-          <!--                              <i class="fa-solid fa-user icon"></i> -->
           <!--                              <span>Lecturer: Shamsi Shabani</span> -->
           <!--                            </nuxt-link> -->
           <!--                          </div> -->
           <!--                          <div> -->
           <!--                            <p class="duration"> -->
-          <!--                              <i class="fa-solid fa-clock icon"></i> -->
           <!--                              <span>Course duration: 942 slides (13 files)</span> -->
           <!--                            </p> -->
           <!--                          </div> -->
@@ -518,11 +534,9 @@
           <!--                      <v-row> -->
           <!--                        <v-col cols="10"> -->
           <!--                          <div class="num"> -->
-          <!--                            <i class="fa-solid fa-list-ol icon"></i> -->
           <!--                            <span>Number of tests: 1399</span> -->
           <!--                          </div> -->
           <!--                          <div class="level"> -->
-          <!--                            <i class="fa-solid fa-superscript icon"></i> -->
           <!--                            <span>Difficulty: Easy</span> -->
           <!--                          </div> -->
           <!--                        </v-col> -->
