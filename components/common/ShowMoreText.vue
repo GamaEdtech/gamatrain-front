@@ -136,7 +136,7 @@ const formattedContent = computed(() => {
 
 .button-container {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   margin-top: 12px;
 }
@@ -147,7 +147,6 @@ const formattedContent = computed(() => {
 
 .button-content {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 2px;
 }

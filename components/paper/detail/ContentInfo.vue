@@ -835,6 +835,7 @@ p {
 .btn-icon {
   position: absolute;
   left: 10px;
+  font-size: 23px;
 }
 
 .text-transparent {
