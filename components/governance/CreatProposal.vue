@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <template>
   <div>
     <v-dialog
@@ -17,9 +18,10 @@
             <div class="px-4 py-4 d-none d-sm-block">
               <div
                 class="d-flex justify-end cursor-pointer"
+                style="justify-self: end;"
                 @click="isActive.value = false"
               >
-                <v-icon color="#D0D5DD">
+                <v-icon color="#bb6b62">
                   mdi-close
                 </v-icon>
               </div>
@@ -54,35 +56,105 @@
               <div class="text-h6 text-md-button mt-4 mt-sm-4">
                 <span>
                   <v-icon
-                    size="large"
-                    color="#98A2B3"
+                    size="x-large"
+                    :color="isWalletReady ? '#4CAF50' : '#98A2B3'"
                   >mdi-wallet</v-icon></span>
-                <span class="pl-1 primary-gray-400">Wallet </span><span class="pl-1 primary-blue-500">0X12...9F</span>
+                <span
+                  class="pl-2 primary-gray-400"
+                  style="display: inline-block;"
+                >Wallet </span>
+                <span
+                  v-if="isWalletReady"
+                  class="pl-1 primary-blue-500"
+                  style="display: inline-block;"
+                >
+                  {{ workspace?.publicKey?.value?.toBase58?.()?.slice(0, 4) }}...{{ workspace?.publicKey?.value?.toBase58?.()?.slice(-4) }}
+                </span>
+                <span
+                  v-else
+                  class="pl-1 text-error"
+                >
+                  Not Connected
+                </span>
               </div>
 
               <div class="mt-10">
-                <div>
+                <div class="mb-4">
                   <div class="mb-1 primary-gray-700 text-h6">
-                    Title
+                    Title *
                   </div>
                   <v-text-field
                     v-model="form.title"
-                    :rules="[rules.required]"
+                    :rules="[rules.required, rules.maxLength(100)]"
                     density="compact"
                     variant="outlined"
                     rounded
+                    placeholder="Enter proposal title"
+                    counter="100"
                   />
                 </div>
-                <div>
+
+                <div class="mb-4">
                   <div class="mb-1 primary-gray-700 text-h6">
-                    Description
+                    Description *
                   </div>
                   <v-textarea
-                    v-model="form.description"
+                    v-model="form.brief"
+                    :rules="[rules.required, rules.maxLength(500)]"
+                    density="compact"
+                    variant="outlined"
+                    rounded
+                    placeholder="Describe your proposal in detail"
+                    counter="500"
+                    rows="4"
+                  />
+                </div>
+
+                <div class="mb-4">
+                  <div class="mb-1 primary-gray-700 text-h6">
+                    Category *
+                  </div>
+                  <v-select
+                    v-model="form.cate"
+                    :items="categoryOptions"
                     :rules="[rules.required]"
                     density="compact"
                     variant="outlined"
                     rounded
+                    placeholder="Select category"
+                  />
+                </div>
+
+                <div class="mb-4">
+                  <div class="mb-1 primary-gray-700 text-h6">
+                    Reference URL
+                  </div>
+                  <v-text-field
+                    v-model="form.reference"
+                    :rules="[rules.url]"
+                    density="compact"
+                    variant="outlined"
+                    rounded
+                    placeholder="https://example.com/proposal-details"
+                    hint="Optional: Link to detailed proposal documentation"
+                  />
+                </div>
+
+                <div class="mb-4">
+                  <div class="mb-1 primary-gray-700 text-h6">
+                    Requested Amount (GET tokens)
+                  </div>
+                  <v-text-field
+                    v-model.number="form.amount"
+                    :rules="[rules.positiveNumber]"
+                    type="number"
+                    density="compact"
+                    variant="outlined"
+                    rounded
+                    placeholder="0"
+                    hint="Amount of GET tokens requested for this proposal"
+                    step="1"
+                    min="0"
                   />
                 </div>
               </div>
@@ -105,8 +177,10 @@
                 color="#FFB600"
                 rounded
                 class="flex-1 w-70"
+                :loading="isSubmitting"
+                :disabled="isSubmitting || !isWalletReady"
               >
-                Submit
+                {{ !isWalletReady ? 'Connect Wallet' : 'Submit' }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -118,6 +192,9 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
+import { governance } from '~/composables/useGovernance'
+import { useWorkspace } from '~/composables/useWorkspace'
+import { ref, watch, computed } from 'vue'
 
 const { smAndUp } = useDisplay()
 const props = defineProps({
@@ -126,18 +203,46 @@ const props = defineProps({
     required: true,
   },
 })
-const emits = defineEmits(['update:modelValue'])
+const emits = defineEmits<{
+  (e: 'update:modelValue', value: boolean): void
+  (e: 'created'): void
+}>()
 const rules = {
-  required: v => !!v || 'This field is required',
+  required: (v: unknown) => !!v || 'This field is required',
+  maxLength: (max: number) => (v: string) => !v || v.length <= max || `Maximum ${max} characters allowed`,
+  url: (v: string) => !v || /^https?:\/\/.+/.test(v) || 'Must be a valid URL starting with http:// or https://',
+  positiveNumber: (v: number) => v === null || v === undefined || v >= 0 || 'Must be a positive number',
 }
+
+const categoryOptions = [
+  { title: 'General', value: 'general' },
+  { title: 'Development', value: 'development' },
+  { title: 'Marketing', value: 'marketing' },
+  { title: 'Community', value: 'community' },
+  { title: 'Finance', value: 'finance' },
+  { title: 'Education', value: 'education' },
+  { title: 'Infrastructure', value: 'infrastructure' },
+]
+
 const formIsValid = ref(false)
-const formRef = ref(null)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const formRef = ref<any | null>(null)
+const isSubmitting = ref(false)
 
 const form = ref({
-  title: null,
-  description: null,
+  title: '',
+  brief: '',
+  cate: 'general',
+  reference: '',
+  amount: 0,
 })
 const visible = ref(props.modelValue)
+
+// Wallet connection state
+const workspace = useWorkspace()
+const isWalletReady = computed(() => {
+  return workspace?.connected?.value && workspace?.publicKey?.value && workspace?.program?.value
+})
 
 watch(
   () => props.modelValue,
@@ -147,10 +252,63 @@ watch(
 )
 
 async function onSubmit() {
-  const { valid } = await formRef.value.validate()
+  const { valid } = await formRef.value!.validate()
 
   if (valid) {
-    console.log('Form Valid!')
+    try {
+      isSubmitting.value = true
+      const workspace = useWorkspace()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const program = workspace?.program?.value as any
+      const userPk = workspace?.publicKey?.value
+
+      // Check if wallet is connected first
+      if (!workspace?.connected?.value) {
+        throw new Error('Please connect your wallet first.')
+      }
+
+      if (!program) {
+        throw new Error('Blockchain program not ready. Please try refreshing the page.')
+      }
+
+      if (!userPk) {
+        throw new Error('Wallet address not available. Please reconnect your wallet.')
+      }
+      await governance.createProposal(program, userPk, {
+        title: String(form.value.title || ''),
+        brief: String(form.value.brief || ''),
+        cate: String(form.value.cate || 'general'),
+        reference: String(form.value.reference || ''),
+        amount: Number(form.value.amount || 0),
+      })
+
+      // Show success message
+      const { $toast } = useNuxtApp()
+      $toast.success('Proposal created successfully!')
+
+      emits('created')
+      emits('update:modelValue', false)
+
+      // Reset form
+      form.value = {
+        title: '',
+        brief: '',
+        cate: 'general',
+        reference: '',
+        amount: 0,
+      }
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    catch (e: any) {
+      console.error('Failed to create proposal:', e)
+
+      // Show error message
+      const { $toast } = useNuxtApp()
+      $toast.error(e.message || 'Failed to create proposal')
+    }
+    finally {
+      isSubmitting.value = false
+    }
   }
 }
 
