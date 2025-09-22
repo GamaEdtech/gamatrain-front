@@ -247,6 +247,7 @@ const props = defineProps({
 const emits = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
   (e: 'vote', payload: { agree: boolean }): void
+  (e: 'walletRequired'): void
 }>()
 
 const visible = ref(false)
@@ -262,7 +263,9 @@ const isExpired = computed(() => {
 })
 
 const canVote = computed(() => {
-  return props.userPublicKey && !isExpired.value && !hasVoted.value
+  // Allow voting buttons to be clickable even without wallet connection
+  // The actual wallet check happens in handleVote function
+  return !isExpired.value && !hasVoted.value
 })
 
 const totalVotes = computed(() => {
@@ -332,6 +335,12 @@ const formatOwner = (owner: any) => {
 const handleVote = async (agree: boolean) => {
   if (!canVote.value) return
 
+  // Check if user has wallet connected
+  if (!props.userPublicKey) {
+    emits('walletRequired')
+    return
+  }
+
   voteLoading.value = agree ? 'for' : 'against'
   try {
     // Emit the vote event to parent component
@@ -384,9 +393,13 @@ const handleAfterLeave = () => {
   emits('update:modelValue', false)
 }
 
-// Check vote status on mount
-onMounted(async () => {
-  if (!props.userPublicKey || !props.proposal) return
+// Function to check vote status
+const checkVoteStatus = async () => {
+  if (!props.userPublicKey || !props.proposal) {
+    hasVoted.value = false
+    userVoteStatus.value = null
+    return
+  }
 
   try {
     const workspace = useWorkspace()
@@ -407,7 +420,23 @@ onMounted(async () => {
   }
   catch (error) {
     console.warn('Failed to check vote status:', error)
+    hasVoted.value = false
+    userVoteStatus.value = null
   }
+}
+
+// Check vote status on mount
+onMounted(async () => {
+  await checkVoteStatus()
+})
+
+// Watch for changes in proposal or userPublicKey
+watch(() => props.proposal, async () => {
+  await checkVoteStatus()
+})
+
+watch(() => props.userPublicKey, async () => {
+  await checkVoteStatus()
 })
 </script>
 

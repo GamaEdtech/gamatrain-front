@@ -247,7 +247,9 @@ const timeRemaining = computed(() => {
 })
 
 const canVote = computed(() => {
-  return props.userPublicKey && !isExpired.value && !hasVoted.value
+  // Allow voting buttons to be clickable even without wallet connection
+  // The actual wallet check happens in handleVote function
+  return !isExpired.value && !hasVoted.value
 })
 
 // Methods

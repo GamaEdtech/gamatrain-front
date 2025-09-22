@@ -113,6 +113,7 @@
       :proposal="selectedProposal"
       :user-public-key="publicKey"
       @vote="({ agree }) => handleVote({ proposal: selectedProposal, agree })"
+      @wallet-required="handleWalletRequired"
     />
 
     <!-- Wallet Connection Modal -->
