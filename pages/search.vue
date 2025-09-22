@@ -31,7 +31,7 @@
           md="12"
           class="d-flex justify-end justify-md-center"
         >
-          <v-text-field
+          <!-- <v-text-field
             v-model="textSearch"
             label="Search anything...."
             variant="outlined"
@@ -58,7 +58,7 @@
                 />
               </v-btn>
             </template>
-          </v-text-field>
+          </v-text-field> -->
         </v-col>
         <search-filter-option
           v-model:show-dialog-filter-mobile="openFilterMobileModal"
@@ -130,6 +130,7 @@ const changeFilterQuery = async (query, skipFetch = false) => {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const changeTextSearch = () => {
   isInitialDataLoading.value = true
 
