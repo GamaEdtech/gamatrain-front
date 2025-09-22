@@ -53,8 +53,8 @@ const menuLink = [
     icon: '',
   },
   {
-    title: 'FAQ',
-    link: '/faq',
+    title: 'Leader Board',
+    link: '/leader-board',
     icon: '',
   },
   {
@@ -165,6 +165,7 @@ onMounted(async () => {
     || route.name == 'terms'
     || route.name == 'about-us'
     || route.name == 'earn-money'
+    || route.name == 'leader-board'
   ) {
     if (window.scrollY > 60) {
       menuSetting.value = {
@@ -219,6 +220,7 @@ const handleScroll = () => {
     || route.name == 'terms'
     || route.name == 'about-us'
     || route.name == 'earn-money'
+    || route.name == 'leader-board'
   )
     if (window.scrollY > 60) {
       menuSetting.value = {
