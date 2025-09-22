@@ -25,7 +25,8 @@
         </div>
       </v-container>
       <div>
-        <governance-overview />
+        <!-- currently commented out -->
+        <!-- <governance-overview /> -->
       </div>
     </div>
   </div>
@@ -36,7 +37,7 @@
 // All logic is correctly encapsulated in the child components.
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 #governance-page-header {
   height: 20rem;
   background: #24292f;
