@@ -1,26 +1,13 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
   <div class="mt-10">
-    <ClientOnly>
-      <div class="wallet-connection-container">
-        <AsyncWalletMultiButton />
-      </div>
-    </ClientOnly>
     <h1 class="text-h4 text-md-h3 mb-md-4 font-weight-bold primary-gray-700 text-center">
       Active Proposals
     </h1>
 
-    <!-- 1. State: Wallet not connected -->
+    <!-- 1. State: Loading proposals -->
     <div
-      v-if="!connected"
-      class="text-center my-10"
-    >
-      <p>Please connect your wallet to see active proposals.</p>
-    </div>
-
-    <!-- 2. State: Loading proposals -->
-    <div
-      v-else-if="isLoading"
+      v-if="isLoading"
       class="text-center my-10"
     >
       <v-progress-circular
@@ -33,7 +20,7 @@
       </p>
     </div>
 
-    <!-- 3. State: No proposals found -->
+    <!-- 2. State: No proposals found -->
     <div
       v-else-if="proposals.length === 0"
       class="text-center my-10"
@@ -41,7 +28,7 @@
       <p>No active proposals found. Be the first to create one!</p>
     </div>
 
-    <!-- 4. State: Display proposals -->
+    <!-- 3. State: Display proposals -->
     <div
       v-else
       class="mt-6 mt-sm-1"
@@ -64,6 +51,7 @@
                 @select="handleProposalClick"
                 @vote="handleVote"
                 @delete="handleProposalDeleted"
+                @wallet-required="handleWalletRequired"
               />
             </div>
           </v-slide-group-item>
@@ -81,6 +69,7 @@
             @select="handleProposalClick"
             @vote="handleVote"
             @delete="handleProposalDeleted"
+            @wallet-required="handleWalletRequired"
           />
         </div>
       </div>
@@ -105,8 +94,7 @@
           variant="flat"
           rounded
           class="ml-3"
-          :disabled="!canCreateProposal"
-          @click="visibleCreateProposal = true"
+          @click="connected ? (visibleCreateProposal = true) : (showWalletModal = true)"
         >
           Create Proposal
         </v-btn>
@@ -117,6 +105,7 @@
     <governance-creat-proposal
       v-model="visibleCreateProposal"
       @created="handleProposalCreated"
+      @wallet-required="handleWalletRequired"
     />
     <governance-proposal-detail
       v-if="selectedProposal"
@@ -125,6 +114,42 @@
       :user-public-key="publicKey"
       @vote="({ agree }) => handleVote({ proposal: selectedProposal, agree })"
     />
+
+    <!-- Wallet Connection Modal -->
+    <Teleport to="body">
+      <div
+        v-if="showWalletModal"
+        class="figma-modal-overlay"
+        @click="showWalletModal = false"
+      >
+        <div
+          class="figma-modal"
+          @click.stop
+        >
+          <div class="figma-modal-header">
+            <h3>Connect Your Wallet</h3>
+            <p>Choose a wallet to connect and participate in governance</p>
+          </div>
+
+          <div class="figma-modal-content">
+            <ClientOnly>
+              <div class="wallet-connection-container">
+                <AsyncWalletMultiButton />
+              </div>
+            </ClientOnly>
+          </div>
+
+          <div class="figma-modal-actions">
+            <button
+              class="figma-cancel-button"
+              @click="showWalletModal = false"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -159,6 +184,7 @@ const selected = ref(null)
 const selectedProposal = ref<any | null>(null)
 const visibleCreateProposal = ref(false)
 const visibleProposalDetail = ref(false)
+const showWalletModal = ref(false)
 
 // --- LIFECYCLE HOOK ---
 onMounted(async () => {
@@ -209,21 +235,25 @@ const fetchProposalsData = async () => {
   }
 }
 
-// --- COMPUTED ---
-const canCreateProposal = computed(() => {
-  return connected.value && publicKey.value && program.value
-})
+// --- WALLET MODAL HANDLERS ---
+const handleWalletRequired = () => {
+  showWalletModal.value = true
+}
 
 // --- WATCHER ---
-watch(() => publicKey.value, (newPublicKey) => {
-  if (newPublicKey) {
+// Always fetch proposals when program is available, regardless of wallet connection
+watch(() => program.value, (prog) => {
+  if (prog) {
     fetchProposalsData()
   }
-  else {
-    proposals.value = [] // Clear proposals on disconnect
-    isLoading.value = false // Stop loading when disconnected
+}, { immediate: true })
+
+// Watch wallet connection changes
+watch(() => connected.value, (isConnected) => {
+  if (isConnected) {
+    showWalletModal.value = false
   }
-}, { deep: true })
+}, { immediate: true })
 
 // --- HANDLERS ---
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -240,6 +270,12 @@ const handleProposalCreated = () => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleVote = async ({ proposal, agree }: { proposal: any, agree: boolean }) => {
+  // Show wallet modal if not connected
+  if (!connected.value) {
+    showWalletModal.value = true
+    return
+  }
+
   try {
     if (!program.value || !publicKey.value) {
       const { $toast } = useNuxtApp()
@@ -284,5 +320,78 @@ const handleProposalDeleted = () => {
 <style scoped>
 .proposal-slide__card {
   width: 310px;
+}
+
+/* Wallet Modal Styles */
+.figma-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.figma-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 400px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.figma-modal-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.figma-modal-header h3 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+}
+
+.figma-modal-header p {
+  font-size: 14px;
+  color: #666666;
+  margin: 0;
+}
+
+.figma-modal-content {
+  margin-bottom: 24px;
+}
+
+.figma-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.figma-cancel-button {
+  background: #f5f5f5;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #666666;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.figma-cancel-button:hover {
+  background: #e5e5e5;
+}
+
+.wallet-connection-container {
+  display: flex;
+  justify-content: center;
 }
 </style>

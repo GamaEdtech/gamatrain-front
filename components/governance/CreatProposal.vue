@@ -178,7 +178,6 @@
                 rounded
                 class="flex-1 w-70"
                 :loading="isSubmitting"
-                :disabled="isSubmitting || !isWalletReady"
               >
                 {{ !isWalletReady ? 'Connect Wallet' : 'Submit' }}
               </v-btn>
@@ -206,6 +205,8 @@ const props = defineProps({
 const emits = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
   (e: 'created'): void
+  // eslint-disable-next-line @typescript-eslint/unified-signatures
+  (e: 'walletRequired'): void
 }>()
 const rules = {
   required: (v: unknown) => !!v || 'This field is required',
@@ -255,17 +256,18 @@ async function onSubmit() {
   const { valid } = await formRef.value!.validate()
 
   if (valid) {
+    // Check if wallet is connected first
+    if (!isWalletReady.value) {
+      emits('walletRequired')
+      return
+    }
+
     try {
       isSubmitting.value = true
       const workspace = useWorkspace()
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const program = workspace?.program?.value as any
       const userPk = workspace?.publicKey?.value
-
-      // Check if wallet is connected first
-      if (!workspace?.connected?.value) {
-        throw new Error('Please connect your wallet first.')
-      }
 
       if (!program) {
         throw new Error('Blockchain program not ready. Please try refreshing the page.')
