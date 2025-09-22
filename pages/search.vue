@@ -96,7 +96,7 @@ const route = useRoute()
 const openFilterMobileModal = ref(false)
 const countFilterSelect = ref(0)
 const querySearch = ref()
-const textSearch = ref(route.query.keyword ? route.query.keyword : '')
+const textSearch = ref(route.query.title ? route.query.title : '')
 const timer = ref(null)
 
 const isInitialDataLoading = ref(false)
@@ -119,7 +119,7 @@ const changeFilterQuery = async (query, skipFetch = false) => {
     ...query,
   }
   if (textSearch.value.length > 0) {
-    querySearch.value.keyword = textSearch.value
+    querySearch.value.title = textSearch.value
   }
   if (!skipFetch) {
     isAllDataLoaded.value = false
@@ -135,10 +135,10 @@ const changeTextSearch = () => {
 
   const query = querySearch.value
   if (textSearch.value.length == 0) {
-    delete query.keyword
+    delete query.title
   }
   else {
-    query.keyword = textSearch.value
+    query.title = textSearch.value
   }
   router.replace({ query })
   debouncedSearchText()
@@ -161,7 +161,7 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
   () => {
     const params = {
       page: pageNumber.value,
-      keyword: route.query.keyword,
+      title: route.query.title,
       section: route.query.section,
       base: route.query.base,
       lesson: route.query.lesson,

@@ -18,21 +18,26 @@
     </v-container>
     <div class="governance-top py-5">
       <v-container>
+        <!-- The child components will now handle their own state -->
         <governance-stats />
         <div>
           <governance-proposals />
         </div>
       </v-container>
       <div>
-        <governance-overview />
+        <!-- currently commented out -->
+        <!-- <governance-overview /> -->
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+// This parent component is now clean and only serves as a layout container.
+// All logic is correctly encapsulated in the child components.
+</script>
 
-<style scoped>
+<style scoped lang="scss">
 #governance-page-header {
   height: 20rem;
   background: #24292f;
