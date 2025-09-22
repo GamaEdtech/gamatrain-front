@@ -35,6 +35,17 @@
 <script setup lang="ts">
 // This parent component is now clean and only serves as a layout container.
 // All logic is correctly encapsulated in the child components.
+
+// SEO Meta data
+useHead({
+  title: 'Governance | Community-Driven Decisions & DAO Voting',
+  meta: [
+    {
+      name: 'description',
+      content: 'Shape the future of Gamatrain through decentralized governance. Join our DAO, propose ideas, vote on key decisions, and help build an open-source EdTech ecosystem powered by the community.',
+    },
+  ],
+})
 </script>
 
 <style scoped lang="scss">
