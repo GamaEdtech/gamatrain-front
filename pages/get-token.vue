@@ -46,7 +46,10 @@
 useSeoMeta({
   title: `$GET Token`,
   ogTitle: `$GET Token`,
-
+  twitterTitle: `$GET Token`,
+  twitterCard: `summary_large_image`,
+  ogImage: `/images/og-image-token.webp`,
+  twitterImage: `/images/og-image-token.webp`,
 })
 </script>
 
