@@ -12,16 +12,28 @@
           elevation="0"
         >
           <div
-            class="governance-stat-value primary-gray-700 text-h6 text-md-h5"
+            v-if="isLoading && stat.dynamic"
+            class="d-flex justify-center align-center"
+            style="height: 100%;"
           >
-            {{ stat.title }}
-            <span class="unit primary-gray-500 text-subtitle-1">
-              {{ stat.subtitle }}</span>
+            <v-progress-circular
+              indeterminate
+              color="primary"
+            />
           </div>
-          <div
-            class="governance-stat-label primary-gray-500 text-subtitle-2 text-md-h6"
-          >
-            {{ stat.value }}
+          <div v-else>
+            <div
+              class="governance-stat-value primary-gray-700 text-h6 text-md-h5"
+            >
+              {{ stat.title }}
+              <span class="unit primary-gray-500 text-subtitle-1">
+                {{ stat.subtitle }}</span>
+            </div>
+            <div
+              class="governance-stat-label primary-gray-500 text-subtitle-2 text-md-h6"
+            >
+              {{ stat.value }}
+            </div>
           </div>
         </v-card>
       </div>
@@ -30,12 +42,83 @@
 </template>
 
 <script setup lang="ts">
-const stats = ref([
-  { title: '2.1M', subtitle: '$GET', value: 'Treasury Balance', class: 'tl' },
-  { title: '98.5%', subtitle: '', value: '$GET Staked', class: 'tr' },
-  { title: '8,948', subtitle: '', value: 'Total Participants', class: 'bl' },
-  { title: '98.5%', subtitle: '', value: 'Active Voters', class: 'br' },
-  { title: '98.5%', subtitle: '', value: 'Proposals Passed', class: 'last' },
+import { ref, onMounted, watch, computed } from 'vue'
+import { useWorkspace } from '~/composables/useWorkspace'
+import { governance } from '~/composables/useGovernance'
+import type { Program } from '@coral-xyz/anchor'
+import type { Ref } from 'vue'
+
+// --- STATE ---
+const program: Ref<Program | null> = ref(null)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const wallet: Ref<any | null> = ref(null)
+const isLoading = ref(true)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const allProposals = ref<any[]>([])
+
+// --- LIFECYCLE HOOK ---
+onMounted(() => {
+  // Only call useWorkspace when the component is mounted in the browser.
+  const workspace = useWorkspace()
+
+  // Watch workspace changes
+  watch(() => workspace.program.value, (prog) => {
+    program.value = prog
+  }, { immediate: true })
+
+  watch(() => workspace.wallet.value, (w) => {
+    wallet.value = w
+  }, { immediate: true })
+})
+
+// --- DATA FETCHING ---
+const fetchStatsData = async () => {
+  if (!program.value) return
+  isLoading.value = true
+  try {
+    allProposals.value = await governance.fetchProposals(program.value)
+  }
+  finally {
+    isLoading.value = false
+  }
+}
+
+// --- WATCHER ---
+// Trigger data fetching when the user connects their wallet.
+watch(() => wallet.value?.publicKey, (newPublicKey) => {
+  if (newPublicKey) {
+    fetchStatsData()
+  }
+  else {
+    // Clear data and stop loading when wallet disconnects
+    allProposals.value = []
+    isLoading.value = false
+  }
+}, { deep: true })
+
+// Also watch for program changes
+watch(() => program.value, (prog) => {
+  if (prog && wallet.value?.publicKey) {
+    fetchStatsData()
+  }
+  else if (!prog) {
+    allProposals.value = []
+    isLoading.value = false
+  }
+})
+
+// --- COMPUTED PROPERTIES ---
+const totalProposals = computed(() => allProposals.value.length)
+const proposalsPassed = computed(() =>
+  allProposals.value.filter(p => p.account.agreeVotes > p.account.disagreeVotes).length,
+)
+
+const stats = computed(() => [
+  { title: '2.1M', subtitle: '$GET', value: 'Treasury Balance', class: 'tl', dynamic: false },
+  { title: '98.5%', subtitle: '', value: '$GET Staked', class: 'tr', dynamic: false },
+  { title: totalProposals.value, subtitle: '', value: 'Total Proposals', class: 'bl', dynamic: true },
+  { title: 'N/A', subtitle: '', value: 'Active Voters', class: 'br', dynamic: false },
+  { title: proposalsPassed.value, subtitle: '', value: 'Proposals Passed', class: 'last', dynamic: true },
 ])
 </script>
 
@@ -83,15 +166,19 @@ const stats = ref([
 .stat-card.tl {
   border-radius: 34px 0 0 0;
 }
+
 .stat-card.tr {
   border-radius: 0 34px 0 0;
 }
+
 .stat-card.bl {
   border-radius: 0 0 0 34px;
 }
+
 .stat-card.br {
   border-radius: 0 0 34px 0;
 }
+
 .stat-card.last {
   border-radius: 34px;
   width: 50%;
@@ -132,11 +219,13 @@ const stats = ref([
   .stat-card.tl {
     border-radius: 44px 0 0 44px;
   }
+
   .stat-card.tr,
   .stat-card.bl,
   .stat-card.br {
     border-radius: 0;
   }
+
   .stat-card.last {
     border-radius: 0 44px 44px 0;
     width: 100%;
@@ -149,20 +238,25 @@ const stats = ref([
     margin-top: -7rem;
     margin-bottom: 2rem;
   }
+
   .stat-card {
     padding: 25px 24px;
   }
+
   .stat-card .governance-stat-value {
     font-size: 30px;
   }
+
   .stat-card.tl {
     border-radius: 44px 0 0 44px;
   }
+
   .stat-card.tr,
   .stat-card.bl,
   .stat-card.br {
     border-radius: 0;
   }
+
   .stat-card.last {
     border-radius: 0 44px 44px 0;
   }

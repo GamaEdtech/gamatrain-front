@@ -129,6 +129,19 @@
 
     <common-crash-report ref="crash_report" />
 
+    <ClientOnly>
+      <v-container
+        class="py-0"
+      >
+        <common-related-portrait-content
+          page-type="paper"
+          page-name="Past Papers"
+          source="exam"
+          request="test"
+        />
+      </v-container>
+    </ClientOnly>
+
     <v-row
       justify="center"
       class="mt-10"

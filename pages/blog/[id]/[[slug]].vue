@@ -81,7 +81,7 @@
                 md:visibility
               </v-icon>
               <span class="gama-text-overline">
-                {{ contentData.views || 0 }}
+                {{ contentData.viewCount || 0 }}
               </span>
             </div>
             <div class="d-flex align-center ga-1">
@@ -251,7 +251,7 @@ const share = async () => {
     try {
       await navigator.share({
         title: contentData.value.title,
-        text: contentData.value.body,
+        text: contentData.value.summary,
         url: `https://gamatrain.com/blog/${blogId}`,
       })
     }
