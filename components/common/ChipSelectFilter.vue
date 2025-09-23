@@ -98,13 +98,16 @@ const getItems = async (extraIdParam = '') => {
           props.returnTotalRecordsCount,
         ...props.extraApiParams,
       })
+
       if (response.succeeded || response.status == 1) {
         const list = response.data.list || response.data
         if (props.title == 'School') {
-          items.value = list.map(s => ({
-            title: s.name,
-            id: s.id,
-          }))
+          if (list && list.length > 0) {
+            items.value = list.map(s => ({
+              title: s.name,
+              id: s.id,
+            }))
+          }
         }
         else {
           items.value = list
@@ -121,15 +124,21 @@ const getItems = async (extraIdParam = '') => {
 }
 
 const getItemById = async (id) => {
-  if (!items.value.length) {
-    await getItems()
-  }
-  return items.value.find(x => x.id == id) || null
+  if (!id) return
+
+  const item = items.value.find(x => x.id.toString() == id.toString())
+
+  if (item) return item
+}
+
+const openSelectModal = () => {
+  isShowSelectModal.value = true
 }
 
 defineExpose({
   getItems,
   getItemById,
+  openSelectModal,
 })
 </script>
 

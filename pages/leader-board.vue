@@ -25,6 +25,11 @@
                   class="leader-board-second-third-avatar"
                   :src="winners.second"
                 />
+                <v-img
+                  v-else
+                  class="leader-board-second-third-avatar"
+                  src="/images/member/avatar.svg"
+                />
               </v-img>
               <v-img
                 class="leader-board-first"
@@ -34,6 +39,11 @@
                   v-if="winners.first"
                   class="leader-board-first-avatar"
                   :src="winners.first"
+                />
+                <v-img
+                  v-else
+                  class="leader-board-first-avatar"
+                  src="/images/member/avatar.svg"
                 />
               </v-img>
               <v-img
@@ -45,6 +55,11 @@
                   class="leader-board-second-third-avatar"
                   :src="winners.third"
                 />
+                <v-img
+                  v-else
+                  class="leader-board-second-third-avatar"
+                  src="/images/member/avatar.svg"
+                />
               </v-img>
             </div>
           </v-col>
@@ -52,40 +67,10 @@
       </v-container>
     </v-container>
     <div class="filter-container">
-      <div class="d-flex w-100 justify-start justify-md-center ga-2">
-        <template
-          v-for="(filter, index) in filters"
-          :key="filter.title || index"
-        >
-          <CommonChipSelectFilter
-            :ref="(el) => (filters[index].refElement = el)"
-            :title="filter.title"
-            :api="filter.api"
-            :selected-item="filter.selectedItem"
-            :extra-api-params="filter.extraApiParams"
-            :static-list="filter.staticList"
-            :disabled="filter.disabled"
-            @update-selected-item="updateSelectedItem($event, index)"
-          />
-        </template>
-      </div>
-      <div class="justify-space-between d-flex w-100 mt-4">
-        <div class="d-flex ga-2">
-          <template v-for="(filter, index) in filters">
-            <v-chip
-              v-if="filter.selectedItem"
-              :key="filter.title"
-              variant="flat"
-              class="text-h5 pl-5 pr-5"
-              color="#F2F4F7"
-              :closable="index != FILTER_INDEX.Services"
-              @click:close="clearFilter(filter, index)"
-            >
-              {{ filter.selectedItem?.title }}
-            </v-chip>
-          </template>
-        </div>
-      </div>
+      <CommonFilterList
+        :filter-list="filters"
+        @change-filter="fetchLeaderBoard"
+      />
     </div>
     <div class="scrollable-table">
       <v-data-table
@@ -110,16 +95,21 @@
               :src="item.avatar"
               alt=""
             >
+            <img
+              v-else
+              class="user-avatar mr-2"
+              src="/images/member/avatar.svg"
+            >
 
             <span class="truncate-text">{{ item.name }}</span>
           </div>
         </template>
 
-        <template #[`item.address`]="{ item }">
+        <!-- <template #[`item.address`]="{ item }">
           <div class="d-flex align-center">
             <span class="truncate-text">{{ item.address }}</span>
           </div>
-        </template>
+        </template> -->
         <template #[`item.points`]="{ item }">
           <div class="d-flex align-center ml-1">
             <span class="truncate-text">{{ item.points }}</span>
@@ -144,7 +134,6 @@
               variant="solo"
               density="comfortable"
               hide-details
-              @click:append-inner="toggleMarker"
             >
               <template #prepend-inner>
                 <span class="primary-gray-300 gtext-t6"><v-icon>mdi-email-outline </v-icon></span>
@@ -180,31 +169,18 @@
 <script setup>
 import useApiService from '~/composables/useApiService'
 
-const router = useRouter()
 const route = useRoute()
 
 const headers = [
   { title: 'Rank', key: 'index', sortable: false, width: '10vw' },
   { title: 'Name', key: 'name', sortable: false, width: '25vw' },
-  { title: 'Address', key: 'address', sortable: false, width: '40vw' },
+  // { title: "Address", key: "address", sortable: false, width: "40vw" },
   { title: 'Points', key: 'points', sortable: false, width: '20vw' },
 ]
 
 const emailAddress = ref('')
 const tableLoading = ref(false)
 const list = ref([])
-const suspendLeaderboardWatch = false
-
-const filtersList = reactive({
-  country: { id: null, title: null },
-  state: { id: null, title: null },
-  city: { id: null, title: null },
-  board: { id: null, title: null },
-  grade: { id: null, title: null },
-  schoolId: { id: null, title: null },
-  year: { id: null, title: null },
-  month: { id: null, title: null },
-})
 
 const winners = reactive({
   first: null,
@@ -230,8 +206,8 @@ function formatForApi(date) {
 }
 
 const registrationDateRange = computed(() => {
-  const year = filtersList.year.id
-  const month = filtersList.month.id
+  const year = Number(route.query?.year)
+  const month = Number(route.query?.month)
   if (!year) return { RegistrationDateStart: null, RegistrationDateEnd: null }
 
   let range
@@ -254,18 +230,32 @@ const fetchLeaderBoard = async () => {
     const response = await useApiService.get(
       '/api/v2/identities/leader-board',
       {
-        Board: filtersList.board?.id || '',
-        Grade: filtersList.grade?.id || '',
-        CountryId: filtersList.country?.id || '',
-        StateId: filtersList.state?.id || '',
-        CityId: filtersList.city?.id || '',
-        SchoolId: filtersList.schoolId?.id || '',
+        Board: route.query?.section || '',
+        Grade: route.query?.base || '',
+        CountryId: route.query?.country || '',
+        StateId: route.query?.state || '',
+        CityId: route.query?.city || '',
+        SchoolId: route.query?.school || '',
         RegistrationDateStart:
           registrationDateRange.value.RegistrationDateStart || '',
         RegistrationDateEnd:
           registrationDateRange.value.RegistrationDateEnd || '',
       },
     )
+    console.log('made', {
+      Board: route.query?.section || '',
+      Grade: route.query?.base || '',
+      CountryId: route.query?.country || '',
+      StateId: route.query?.state || '',
+      CityId: route.query?.city || '',
+      SchoolId: route.query?.school || '',
+      RegistrationDateStart:
+        registrationDateRange.value.RegistrationDateStart || '',
+      RegistrationDateEnd:
+        registrationDateRange.value.RegistrationDateEnd || '',
+    })
+    console.log('response leader board', response)
+
     list.value = response.data
     winners.first = list.value[0]?.avatar
     winners.second = list.value[1]?.avatar || ''
@@ -281,15 +271,6 @@ const fetchLeaderBoard = async () => {
   }
 }
 
-watch(
-  filtersList,
-  () => {
-    if (suspendLeaderboardWatch) return
-    fetchLeaderBoard()
-  },
-  { deep: true },
-)
-
 const FILTER_INDEX = {
   Country: 0,
   State: 1,
@@ -300,7 +281,7 @@ const FILTER_INDEX = {
   Year: 6,
   Month: 7,
 }
-const filters = ref([
+const filters = [
   {
     selectedItem: null,
     title: 'Country',
@@ -309,8 +290,8 @@ const filters = ref([
     refElement: null,
     api: '/api/v2/locations/countries',
     idInParams: true,
-    filtersDependInxe: [FILTER_INDEX.State],
     queryKey: 'country',
+    children: [FILTER_INDEX.State],
   },
   {
     selectedItem: null,
@@ -328,6 +309,7 @@ const filters = ref([
       },
     ],
     queryKey: 'state',
+    children: [FILTER_INDEX.City],
   },
   {
     selectedItem: null,
@@ -341,6 +323,7 @@ const filters = ref([
       { parent: FILTER_INDEX.State, targetKey: 'state_id', sourceKey: 'id' },
     ],
     queryKey: 'city',
+    children: [FILTER_INDEX.School],
   },
   {
     selectedItem: null,
@@ -354,6 +337,7 @@ const filters = ref([
       type: `section`,
     },
     queryKey: 'section',
+    children: [FILTER_INDEX.Grade, FILTER_INDEX.School],
   },
   {
     selectedItem: null,
@@ -370,6 +354,7 @@ const filters = ref([
       { parent: FILTER_INDEX.Board, targetKey: 'section_id', sourceKey: 'id' },
     ],
     queryKey: 'base',
+    children: [],
   },
   {
     selectedItem: null,
@@ -385,6 +370,7 @@ const filters = ref([
       { parent: FILTER_INDEX.Board, targetKey: 'section', sourceKey: 'id' },
     ],
     queryKey: 'school',
+    children: [],
   },
   {
     selectedItem: null,
@@ -403,6 +389,7 @@ const filters = ref([
         id: year,
       })),
     queryKey: 'year',
+    children: [FILTER_INDEX.Month],
   },
   {
     selectedItem: null,
@@ -434,114 +421,12 @@ const filters = ref([
       id: index + 1,
     })),
     queryKey: 'month',
+    children: [],
   },
-])
-
-const isBatchUpdating = ref(false)
-const updateSelectedItem = (itemSelected, index, isRoot = true) => {
-  if (isRoot) isBatchUpdating.value = true
-  console.log('parrent', index, itemSelected)
-  filters.value[index].selectedItem = itemSelected
-
-  filters.value.forEach((child, childIndex) => {
-    if (!child.dependencies) return
-
-    const relevantDeps = child.dependencies.filter(
-      dep => dep.parent === index,
-    )
-    if (relevantDeps.length === 0) return
-
-    child.selectedItem = null
-
-    if (!child.idInParams) {
-      relevantDeps.forEach((dep) => {
-        const parentItem = filters.value[dep.parent].selectedItem
-        child.extraApiParams[dep.targetKey]
-          = parentItem?.[dep.sourceKey] ?? null
-      })
-    }
-    const allReady = child.dependencies.every((dep) => {
-      const parentItem = filters.value[dep.parent].selectedItem
-      return parentItem && parentItem[dep.sourceKey] !== undefined
-    })
-    console.log('child', child)
-
-    if (allReady) {
-      child.disabled = false
-      child.refElement.getItems(child.idInParams ? itemSelected.id : '')
-    }
-    else {
-      child.disabled = true
-    }
-    updateSelectedItem(null, childIndex, false)
-  })
-
-  if (isRoot) {
-    isBatchUpdating.value = false
-    updateQueryFromFilters()
-  }
-}
-
-const clearFilter = (filter, index, isRoot = true) => {
-  if (isRoot) isBatchUpdating.value = true
-  console.log('remove filter', filter, index)
-
-  filters.value[index].selectedItem = null
-
-  filters.value.forEach((child, childIndex) => {
-    if (!child.dependencies?.length) return
-
-    const isChild = child.dependencies.some(dep => dep.parent === index)
-    if (isChild) {
-      child.disabled = true
-      clearFilter(child, childIndex, false)
-    }
-  })
-
-  if (isRoot) {
-    isBatchUpdating.value = false
-    updateQueryFromFilters()
-  }
-}
-
-function updateQueryFromFilters() {
-  const query = { ...route.query }
-
-  filters.value.forEach((f) => {
-    if (!f.queryKey) return
-    if (f.selectedItem?.id) {
-      query[f.queryKey] = f.selectedItem.id
-    }
-    // else {
-    //   delete query[f.queryKey]
-    // }
-  })
-  console.log('query create', query)
-
-  router.replace({ query })
-}
+]
 
 onMounted(async () => {
   fetchLeaderBoard()
-
-  // filters.value[FILTER_INDEX.Country].refElement.getItems();
-  // filters.value[FILTER_INDEX.Board].refElement.getItems();
-  for (let i = 0; i < filters.value.length; i++) {
-    const f = filters.value[i]
-    if (!f.queryKey) continue
-
-    const idFromQuery = route.query[f.queryKey]
-    if (!idFromQuery) continue
-
-    const component = f.refElement
-    if (!component || typeof component.getItemById !== 'function') continue
-
-    const selected = await component.getItemById(idFromQuery)
-
-    if (selected) {
-      updateSelectedItem(selected, i)
-    }
-  }
 })
 </script>
 
