@@ -63,7 +63,7 @@
     <div
       class="w-100 d-none d-md-flex justify-center align-center flex-wrap ga-4 mt-2"
     >
-      <div class="d-flex w-100 justify-start justify-md-center ga-2">
+      <div class="d-flex flex-wrap w-100 justify-start justify-md-center ga-2">
         <template
           v-for="(filter, index) in filters"
           :key="filter.title || index"
@@ -82,7 +82,7 @@
         </template>
       </div>
       <div class="justify-space-between d-flex w-100 mt-4">
-        <div class="d-flex ga-2">
+        <div class="d-flex flex-wrap ga-2">
           <template v-for="(filter, index) in filters">
             <v-chip
               v-if="filter.selectedItem"

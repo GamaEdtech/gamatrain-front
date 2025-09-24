@@ -66,7 +66,7 @@
         </v-row>
       </v-container>
     </v-container>
-    <div class="filter-container">
+    <div class="d-flex flex-column align-center ga-2 pa-4">
       <CommonFilterList
         :filter-list="filters"
         :count-data-found="list.length"
@@ -76,10 +76,11 @@
     </div>
     <div class="scrollable-table">
       <v-data-table
+        v-model:page="page"
         :headers="headers"
         :items="list"
         class="elevation-1 mb-10"
-        items-per-page="100"
+        :items-per-page="itemPerPage"
         :loading="tableLoading"
         hide-default-footer
       >
@@ -114,11 +115,18 @@
         </template> -->
         <template #[`item.points`]="{ item }">
           <div class="d-flex align-center ml-1">
-            <span class="truncate-text">{{ item.points }}</span>
+            <span class="truncate-text">{{ $numberFormat(item.points) }}</span>
           </div>
         </template>
       </v-data-table>
     </div>
+
+    <v-pagination
+      v-if="!tableLoading && Math.ceil(list.length / itemPerPage) > 1"
+      v-model="page"
+      :length="Math.ceil(list.length / itemPerPage)"
+      rounded="circle"
+    />
 
     <v-row
       align="center"
@@ -129,33 +137,36 @@
           <p class="gtext-t1 font-weight-heavy text-white mt-15 mb-12">
             Stay in the loop with updates
           </p>
-          <div class="email-subscription-container">
+          <div class="w-100 px-2 d-flex align-center justify-center">
             <v-text-field
               v-model="emailAddress"
-              type="text"
+              label="Enter your email"
+              prepend-inner-icon="md:mail"
+              glow
+              color="#FFB600"
+              icon-color="#FFB600"
+              density="compact"
+              rounded="xl"
+              max-width="400"
               variant="solo"
-              density="comfortable"
-              hide-details
+              single-line
+              bg-color="white"
+              class="w-100"
             >
-              <template #prepend-inner>
-                <span class="primary-gray-300 gtext-t6"><v-icon>mdi-email-outline </v-icon></span>
-                <span class="primary-gray-300 gtext-t6 ml-2">|</span>
-                <span
-                  v-if="emailAddress == ''"
-                  class="primary-gray-300 gtext-t6 ml-2 w-max-content"
-                >Enter your Email</span>
+              <template #append-inner>
+                <v-btn
+                  class="mr-n3"
+                  color="#FFB600"
+                  width="70"
+                  height="30"
+                  rounded="xl"
+                >
+                  Subscribe
+                </v-btn>
               </template>
             </v-text-field>
-
-            <v-btn
-              density="default"
-              color="primary"
-              class="subscribe-button"
-            >
-              Subscribe
-            </v-btn>
           </div>
-          <div class="gtext-t5 text-white mt-4">
+          <div class="gtext-t5 text-white mt-1">
             We care about your data in our
             <NuxtLink
               to="/"
@@ -169,8 +180,6 @@
 </template>
 
 <script setup>
-import useApiService from '~/composables/useApiService'
-
 const route = useRoute()
 
 const headers = [
@@ -183,6 +192,8 @@ const headers = [
 const emailAddress = ref('')
 const tableLoading = ref(false)
 const list = ref([])
+const itemPerPage = 100
+const page = ref(1)
 
 const winners = reactive({
   first: null,
@@ -243,17 +254,6 @@ const fetchLeaderBoard = async (query) => {
         RegistrationDateEnd: dateQuery.RegistrationDateEnd || '',
       },
     )
-    console.log('made', {
-      Board: query?.section || '',
-      Grade: query?.base || '',
-      CountryId: query?.country || '',
-      StateId: query?.state || '',
-      CityId: query?.city || '',
-      SchoolId: query?.school || '',
-      RegistrationDateStart: dateQuery.RegistrationDateStart || '',
-      RegistrationDateEnd: dateQuery.RegistrationDateEnd || '',
-    })
-    console.log('response leader board', response)
 
     list.value = response.data
     winners.first = list.value[0]?.avatar
@@ -428,9 +428,28 @@ const changeFilter = (query) => {
   fetchLeaderBoard(query)
 }
 
-onMounted(async () => {
-  fetchLeaderBoard(route.query)
+const { data: initialData } = await useAsyncData('dataSearchSSR', () => {
+  const query = route.query
+  const dateQuery = registrationDateRange(query.year, query.month)
+  const params = {
+    Board: query?.section || '',
+    Grade: query?.base || '',
+    CountryId: query?.country || '',
+    StateId: query?.state || '',
+    CityId: query?.city || '',
+    SchoolId: query?.school || '',
+    RegistrationDateStart: dateQuery.RegistrationDateStart || '',
+    RegistrationDateEnd: dateQuery.RegistrationDateEnd || '',
+  }
+  return $fetch('/api/v2/identities/leader-board', { params })
 })
+
+if (initialData.value && initialData.value.succeeded) {
+  list.value = initialData.value.data
+  winners.first = list.value[0]?.avatar
+  winners.second = list.value[1]?.avatar || ''
+  winners.third = list.value[2]?.avatar || ''
+}
 </script>
 
 <style scoped>
@@ -509,33 +528,6 @@ onMounted(async () => {
   }
 }
 
-.filter-container {
-  padding: 16px 20px 8px 20px;
-  overflow-x: auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Chrome, Safari, Edge */
-.filter-container::-webkit-scrollbar {
-  height: 6px;
-}
-
-.filter-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.filter-container::-webkit-scrollbar-thumb {
-  background-color: #bbb;
-  border-radius: 10px;
-}
-
-.filter-container::-webkit-scrollbar-thumb:hover {
-  background-color: #888;
-}
-
 .scrollable-table {
   max-height: 100%;
   overflow-x: auto;
@@ -563,15 +555,6 @@ onMounted(async () => {
   border-radius: 50%;
 }
 
-/* :deep(.pagination-buttons) {
-  border-radius: 4px;
-  border: 1px solid #f2f4f7;
-}
-
-:deep(.v-btn__content) {
-  gap: 8px;
-} */
-
 .stay-update {
   background-color: #24292f;
   min-height: 300px;
@@ -579,54 +562,6 @@ onMounted(async () => {
   flex-direction: column;
   align-items: center;
 }
-
-.email-subscription-container {
-  display: flex;
-  position: relative;
-  align-items: center;
-  /* button {
-    position: absolute;
-    border-radius: 48px;
-    right: 6px;
-  } */
-}
-
-/* :deep(.v-field) {
-  border-radius: 48px;
-  min-width: 330px;
-  border: 1px solid #f2f4f7;
-  padding-right: 120px;
-} */
-/*
-:deep(.v-field-label) {
-  color: #d0d5dd;
-  font-family: Inter, sans-serif;
-  font-size: 1.2rem;
-  line-height: 1.8rem;
-  font-weight: 400;
-}
-
-:deep(.v-field__input) {
-  font-family: Inter, sans-serif;
-  font-size: 1.4rem;
-  line-height: 1.8rem;
-  font-weight: 500;
-  color: #475467;
-} */
-
-.w-max-content {
-  width: max-content !important;
-  position: absolute;
-  left: 40px;
-}
-
-/* :deep(.v-btn__content) {
-  color: #1d2939;
-  font-family: Inter, sans-serif;
-  font-size: 1.6rem !important;
-  line-height: 3rem;
-  font-weight: 500;
-} */
 
 .privacy-policy-link {
   color: #2e90fa !important;
