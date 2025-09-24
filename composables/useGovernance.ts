@@ -3,6 +3,7 @@
 import { ref, computed } from 'vue'
 import { web3, BN, type Program } from '@coral-xyz/anchor'
 import type { PublicKey } from '@solana/web3.js'
+import { Buffer } from 'buffer'
 
 // --- Types ---
 interface CreateProposalForm {

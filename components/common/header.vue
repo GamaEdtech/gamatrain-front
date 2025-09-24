@@ -166,6 +166,7 @@ onMounted(async () => {
     || route.name == 'about-us'
     || route.name == 'earn-money'
     || route.name == 'leader-board'
+    || route.name == 'get-token'
   ) {
     if (window.scrollY > 60) {
       menuSetting.value = {
@@ -221,6 +222,7 @@ const handleScroll = () => {
     || route.name == 'about-us'
     || route.name == 'earn-money'
     || route.name == 'leader-board'
+    || route.name == 'get-token'
   )
     if (window.scrollY > 60) {
       menuSetting.value = {
