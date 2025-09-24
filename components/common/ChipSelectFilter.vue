@@ -26,6 +26,12 @@
 
 <script setup>
 import { ref } from 'vue'
+import cieIcon from '~/assets/images/boards/CIE.svg'
+import edexcelIcon from '~/assets/images/boards/Edexcel.svg'
+import AQAIcon from '~/assets/images/boards/AQA.svg'
+import OCRIcon from '~/assets/images/boards/OCR.svg'
+import GamaIcon from '~/assets/images/boards/Gama.svg'
+import ScientificIcon from '~/assets/images/boards/Scientific Competition.svg'
 
 const props = defineProps({
   title: {
@@ -75,6 +81,14 @@ const emit = defineEmits(['UpdateSelectedItem'])
 const items = ref([...props.staticList])
 const isShowSelectModal = ref(false)
 const loading = ref(false)
+const boardImgs = [
+  cieIcon,
+  edexcelIcon,
+  AQAIcon,
+  OCRIcon,
+  GamaIcon,
+  ScientificIcon,
+]
 
 const onFilterUpdate = (itemSelected) => {
   isShowSelectModal.value = false
@@ -108,6 +122,12 @@ const getItems = async (extraIdParam = '') => {
               id: s.id,
             }))
           }
+        }
+        else if (props.title == 'Board') {
+          items.value = list.map((item, index) => ({
+            ...item,
+            img: boardImgs[index % boardImgs.length],
+          }))
         }
         else {
           items.value = list

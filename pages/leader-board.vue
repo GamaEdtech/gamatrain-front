@@ -69,7 +69,9 @@
     <div class="filter-container">
       <CommonFilterList
         :filter-list="filters"
-        @change-filter="fetchLeaderBoard"
+        :count-data-found="list.length"
+        :loading="tableLoading"
+        @change-filter="changeFilter"
       />
     </div>
     <div class="scrollable-table">
@@ -189,25 +191,25 @@ const winners = reactive({
 })
 
 // start date and end date generation based on year and month
-function getYearRange(year) {
+const getYearRange = (year) => {
   const start = new Date(year, 0, 1)
   const end = new Date(year + 1, 0, 0)
   return { start, end }
 }
 
-function getMonthRange(year, month) {
+const getMonthRange = (year, month) => {
   const start = new Date(year, month - 1, 1)
   const end = new Date(year, month, 0)
   return { start, end }
 }
 
-function formatForApi(date) {
+const formatForApi = (date) => {
   return date.toISOString()
 }
 
-const registrationDateRange = computed(() => {
-  const year = Number(route.query?.year)
-  const month = Number(route.query?.month)
+const registrationDateRange = (yearQuery, monthQuery) => {
+  const year = Number(yearQuery)
+  const month = Number(monthQuery)
   if (!year) return { RegistrationDateStart: null, RegistrationDateEnd: null }
 
   let range
@@ -222,37 +224,34 @@ const registrationDateRange = computed(() => {
     RegistrationDateStart: formatForApi(range.start),
     RegistrationDateEnd: formatForApi(range.end),
   }
-})
+}
 
-const fetchLeaderBoard = async () => {
+const fetchLeaderBoard = async (query) => {
   tableLoading.value = true
   try {
+    const dateQuery = registrationDateRange(query.year, query.month)
     const response = await useApiService.get(
       '/api/v2/identities/leader-board',
       {
-        Board: route.query?.section || '',
-        Grade: route.query?.base || '',
-        CountryId: route.query?.country || '',
-        StateId: route.query?.state || '',
-        CityId: route.query?.city || '',
-        SchoolId: route.query?.school || '',
-        RegistrationDateStart:
-          registrationDateRange.value.RegistrationDateStart || '',
-        RegistrationDateEnd:
-          registrationDateRange.value.RegistrationDateEnd || '',
+        Board: query?.section || '',
+        Grade: query?.base || '',
+        CountryId: query?.country || '',
+        StateId: query?.state || '',
+        CityId: query?.city || '',
+        SchoolId: query?.school || '',
+        RegistrationDateStart: dateQuery.RegistrationDateStart || '',
+        RegistrationDateEnd: dateQuery.RegistrationDateEnd || '',
       },
     )
     console.log('made', {
-      Board: route.query?.section || '',
-      Grade: route.query?.base || '',
-      CountryId: route.query?.country || '',
-      StateId: route.query?.state || '',
-      CityId: route.query?.city || '',
-      SchoolId: route.query?.school || '',
-      RegistrationDateStart:
-        registrationDateRange.value.RegistrationDateStart || '',
-      RegistrationDateEnd:
-        registrationDateRange.value.RegistrationDateEnd || '',
+      Board: query?.section || '',
+      Grade: query?.base || '',
+      CountryId: query?.country || '',
+      StateId: query?.state || '',
+      CityId: query?.city || '',
+      SchoolId: query?.school || '',
+      RegistrationDateStart: dateQuery.RegistrationDateStart || '',
+      RegistrationDateEnd: dateQuery.RegistrationDateEnd || '',
     })
     console.log('response leader board', response)
 
@@ -329,7 +328,7 @@ const filters = [
     selectedItem: null,
     title: 'Board',
     disabled: false,
-    hasSearch: false,
+    hasSearch: true,
     refElement: null,
     api: '/api/v1/types/list',
     idInParams: false,
@@ -425,8 +424,12 @@ const filters = [
   },
 ]
 
+const changeFilter = (query) => {
+  fetchLeaderBoard(query)
+}
+
 onMounted(async () => {
-  fetchLeaderBoard()
+  fetchLeaderBoard(route.query)
 })
 </script>
 
@@ -560,14 +563,14 @@ onMounted(async () => {
   border-radius: 50%;
 }
 
-:deep(.pagination-buttons) {
+/* :deep(.pagination-buttons) {
   border-radius: 4px;
   border: 1px solid #f2f4f7;
 }
 
 :deep(.v-btn__content) {
   gap: 8px;
-}
+} */
 
 .stay-update {
   background-color: #24292f;
@@ -581,20 +584,20 @@ onMounted(async () => {
   display: flex;
   position: relative;
   align-items: center;
-  button {
+  /* button {
     position: absolute;
     border-radius: 48px;
     right: 6px;
-  }
+  } */
 }
 
-:deep(.v-field) {
+/* :deep(.v-field) {
   border-radius: 48px;
   min-width: 330px;
   border: 1px solid #f2f4f7;
   padding-right: 120px;
-}
-
+} */
+/*
 :deep(.v-field-label) {
   color: #d0d5dd;
   font-family: Inter, sans-serif;
@@ -609,7 +612,7 @@ onMounted(async () => {
   line-height: 1.8rem;
   font-weight: 500;
   color: #475467;
-}
+} */
 
 .w-max-content {
   width: max-content !important;
@@ -617,13 +620,13 @@ onMounted(async () => {
   left: 40px;
 }
 
-:deep(.v-btn__content) {
+/* :deep(.v-btn__content) {
   color: #1d2939;
   font-family: Inter, sans-serif;
   font-size: 1.6rem !important;
   line-height: 3rem;
   font-weight: 500;
-}
+} */
 
 .privacy-policy-link {
   color: #2e90fa !important;

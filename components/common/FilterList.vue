@@ -1,7 +1,8 @@
 <template>
   <div class="w-100 d-flex justify-center flex-wrap">
     <v-col
-      cols="12"
+      :cols="hasKeywordSearch ? `4` : `12`"
+      md="12"
       class="d-flex d-md-none justify-start"
     >
       <v-badge
@@ -22,6 +23,41 @@
           Filter
         </v-btn>
       </v-badge>
+    </v-col>
+    <v-col
+      v-if="hasKeywordSearch"
+      cols="8"
+      md="12"
+      class="d-flex justify-end justify-md-center"
+    >
+      <v-text-field
+        v-model="textSearch"
+        label="Search anything...."
+        variant="outlined"
+        color="#FFB600"
+        max-width="330"
+        density="compact"
+        hide-details
+        class="custom-search-text-field"
+        @update:model-value="changeTextSearch"
+      >
+        <template #append>
+          <v-btn
+            icon
+            varient="text"
+            color="#FFB600"
+            width="50"
+            class="rounded-ts rounded-te-xl rounded-be-xl rounded-bs h-100 ml-n2"
+            flat
+          >
+            <v-icon
+              size="x-large"
+              icon="mdi-magnify"
+              color="#000000"
+            />
+          </v-btn>
+        </template>
+      </v-text-field>
     </v-col>
 
     <div
@@ -149,11 +185,12 @@
           </v-col>
         </v-container>
         <div
-          class="w-100 d-flex align-center justify-center ga-3 box-button position-fixed bottom-0 bg-white"
+          class="w-100 d-flex align-center justify-center ga-3 pb-2 box-button position-fixed bottom-0 bg-white"
         >
           <v-btn
             variant="text"
             class="text-h5"
+            @click="clearAllFilter"
           >
             Clear All
           </v-btn>
@@ -163,6 +200,7 @@
             height="40"
             width="200"
             class="text-h5"
+            :loading="loading"
             @click="dialogFilterMobileModel = false"
           >
             Show {{ $numberFormat(countDataFound) }} Results
@@ -175,8 +213,17 @@
       class="d-flex align-end justify-end ga-2 max-width-container"
     >
       <span class="text-h5 primary-gray-400">Result</span>
-      <span class="text-h4 primary-gray-700 font-weight-bold">{{
-        $numberFormat(totalDataFind)
+      <v-skeleton-loader
+        v-if="loading"
+        width="100"
+        height="20"
+        class="rounded-lg"
+      />
+      <span
+        v-else
+        class="text-h4 primary-gray-700 font-weight-bold"
+      >{{
+        $numberFormat(countDataFound)
       }}</span>
     </v-col>
   </div>
@@ -192,14 +239,26 @@ const props = defineProps({
     default: () => [],
   },
   countDataFound: {
-    type: String,
-    default: () => '0',
+    type: Number,
+    default: () => 0,
+  },
+  hasKeywordSearch: {
+    type: Boolean,
+    default: false,
+  },
+  loading: {
+    type: Boolean,
+    default: false,
   },
 })
 
 const emits = defineEmits(['changeFilter'])
 
 const filters = ref([...props.filterList])
+const dialogFilterMobileModel = ref(false)
+const countFilterSelect = ref(Object.keys(route.query).length)
+const textSearch = ref(route.query.keyword ? route.query.keyword : '')
+const timer = ref(null)
 
 onMounted(async () => {
   await fetchDataRequireFilter()
@@ -267,19 +326,17 @@ const clearFilter = (index) => {
 }
 
 const updateQueryFromFilters = async () => {
-  const query = { ...route.query }
+  const query = {}
 
   filters.value.forEach((f) => {
-    if (!f.queryKey) return
-    if (f.selectedItem?.id) {
+    if (f.queryKey && f.selectedItem?.id) {
       query[f.queryKey] = f.selectedItem.id
     }
-    else {
-      //   delete query[f.queryKey]
-    }
   })
+
+  countFilterSelect.value = Object.keys(query).length
   router.replace({ query })
-  emits('changeFilter')
+  emits('changeFilter', query)
 }
 
 const fetchDataRequireFilter = async () => {
@@ -322,16 +379,56 @@ const fetchFilterAvailableInQuery = async () => {
   }
 }
 
-const dialogFilterMobileModel = ref(false)
-const countFilterSelect = ref(0)
-
 const openFilterSelectModal = (filter) => {
   filter.refElement.openSelectModal()
 }
+
+const changeTextSearch = () => {
+  if (props.hasKeywordSearch) {
+    const query = { ...route.query }
+    if (textSearch.value.length == 0) {
+      delete query.keyword
+    }
+    else {
+      query.keyword = textSearch.value
+    }
+    router.replace({ query })
+    debouncedSearchText()
+  }
+}
+
+const debouncedSearchText = () => {
+  if (timer.value) {
+    clearTimeout(timer.value)
+    timer.value = null
+  }
+  timer.value = setTimeout(() => {
+    //  emits("changeFilter", query);
+  }, 800)
+}
+
+const clearAllFilter = async () => {
+  for (let i = 0; i < filters.value.length; i++) {
+    const filter = filters.value[i]
+    if (!filter.dependencies?.length && filter.selectedItem) {
+      filter.selectedItem = null
+      resetDescendants(i)
+    }
+  }
+  updateQueryFromFilters()
+}
 </script>
 
-<style>
+<style scoped>
 :deep(.height-badge .v-badge__wrapper .v-badge__badge) {
   height: 20px !important;
+}
+
+:deep(.custom-search-text-field .v-field__outline__start) {
+  border-radius: 24px 0 0 24px !important;
+  flex: 0 0 30px !important;
+}
+:deep(.custom-search-text-field .v-field__outline__end) {
+  border-radius: 0 4px 4px 0 !important;
 }
 </style>
