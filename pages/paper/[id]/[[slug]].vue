@@ -249,6 +249,10 @@ const setMetaData = () => {
     pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
   }
 
+  const ogImage = contentData.value?.thumb_pic
+    ? contentData.value?.thumb_pic
+    : null
+
   useHead({
     title: pageTitle.value,
     meta: [
@@ -276,6 +280,31 @@ const setMetaData = () => {
         hid: 'og:description',
         name: 'og:description',
         content: pageDescribe.value,
+      },
+      {
+        hid: 'og:image',
+        property: 'og:image',
+        content: ogImage,
+      },
+      {
+        hid: 'twitter:card',
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        hid: 'twitter:title',
+        name: 'twitter:title',
+        content: pageTitle.value,
+      },
+      {
+        hid: 'twitter:description',
+        name: 'twitter:description',
+        content: pageDescribe.value,
+      },
+      {
+        hid: 'twitter:image',
+        name: 'twitter:image',
+        content: ogImage,
       },
     ],
     script: [

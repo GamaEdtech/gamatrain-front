@@ -13,7 +13,10 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
   const shouldUseWallets = (path: string) => {
     // Adjust this predicate if you add more routes that need wallets
-    return path.startsWith('/get-token')
+    return (
+      path.startsWith('/get-token')
+      || path.startsWith('/governance')
+    )
   }
 
   async function installWallets() {

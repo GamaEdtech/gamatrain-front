@@ -2,7 +2,7 @@
   <div
     v-if="pending && !contentData"
     class="d-flex justify-center align-center"
-    style="height: 80vh;"
+    style="height: 80vh"
   >
     <v-progress-circular
       indeterminate
@@ -11,7 +11,7 @@
     />
   </div>
   <div
-    v-else-if="fetchError && !pending "
+    v-else-if="fetchError && !pending"
     class="text-center mt-20"
   >
     <p class="text-h5">
@@ -53,7 +53,11 @@
             </v-col>
             <v-col cols="4">
               <a
-                :href="examStats.nextNotAnswer ? `#item-${examStats.nextNotAnswer}`: ''"
+                :href="
+                  examStats.nextNotAnswer
+                    ? `#item-${examStats.nextNotAnswer}`
+                    : ''
+                "
                 @click="updateNextNotAnswer()"
               >
                 Unanswered questions:
@@ -63,7 +67,10 @@
                     color="teal"
                     variant="tonal"
                   >
-                    {{ contentData.tests.length - Object.keys(examStats.answerData).length }}
+                    {{
+                      contentData.tests.length
+                        - Object.keys(examStats.answerData).length
+                    }}
                   </v-chip>
                 </ClientOnly>
               </a>
@@ -136,7 +143,7 @@
                 color="teal"
                 class="text-white"
                 block
-                style="text-transform: none;"
+                style="text-transform: none"
                 @click="endExam()"
               >
                 Send answers
@@ -152,7 +159,7 @@
                 color="error"
                 to="/search?type=azmoon"
                 block
-                style="text-transform: none;"
+                style="text-transform: none"
               >
                 Discard
               </v-btn>
@@ -191,7 +198,10 @@ const { data, error, pending } = await useAsyncData(
   `exam-start-${route.params.id}`,
   () => {
     if (!authToken) {
-      throw createError({ statusCode: 401, statusMessage: 'You must be logged in to start an exam.' })
+      throw createError({
+        statusCode: 401,
+        statusMessage: 'You must be logged in to start an exam.',
+      })
     }
     return $fetch(`/api/v1/exams/start/${route.params.id}`, {
       headers: {
@@ -208,17 +218,33 @@ if (error.value) {
     }
   }
   else {
-    fetchError.value = { message: error.value.data?.message || error.value.statusMessage || 'Could not load the exam.' }
+    fetchError.value = {
+      message:
+        error.value.data?.message
+        || error.value.statusMessage
+        || 'Could not load the exam.',
+    }
     console.error('Failed to load exam data:', error.value)
   }
 }
 else if (data.value?.status !== 1) {
-  fetchError.value = { message: data.value.message || 'The exam data is invalid.' }
+  fetchError.value = {
+    message: data.value.message || 'The exam data is invalid.',
+  }
   console.error('API returned a non-success status:', data.value)
 }
 else {
   contentData.value = data.value.data
 }
+
+const examTitle = contentData.value.exam.title
+  ? contentData.value.exam.title
+  : 'Exam'
+useSeoMeta({
+  title: examTitle,
+  ogTitle: examTitle,
+  twitterTitle: examTitle,
+})
 
 const updateLocalStorage = () => {
   if (import.meta.server) return
@@ -300,7 +326,8 @@ const pinQuestion = (question_id) => {
   }
   else {
     examStats.pinQuestionsArr.splice(index, 1)
-    if (examStats.nextPin === question_id) examStats.nextPin = examStats.pinQuestionsArr[0] || ''
+    if (examStats.nextPin === question_id)
+      examStats.nextPin = examStats.pinQuestionsArr[0] || ''
   }
   updateLocalStorage()
 }
@@ -322,7 +349,9 @@ const updateNextPin = () => {
 
 const updateNextNotAnswer = () => {
   if (!examStats.notAnsweredArr.length) return
-  const currentIndex = examStats.notAnsweredArr.indexOf(examStats.nextNotAnswer)
+  const currentIndex = examStats.notAnsweredArr.indexOf(
+    examStats.nextNotAnswer,
+  )
   const nextIndex = (currentIndex + 1) % examStats.notAnsweredArr.length
   examStats.nextNotAnswer = examStats.notAnsweredArr[nextIndex]
 }
@@ -340,16 +369,19 @@ const endExam = async () => {
   }
 
   try {
-    const response = await $fetch(`/api/v1/exams/end/${contentData.value.exam.id}`, {
-      method: 'POST',
-      body: {
-        startID: contentData.value.startID,
-        answers: examStats.answerData,
+    const response = await $fetch(
+      `/api/v1/exams/end/${contentData.value.exam.id}`,
+      {
+        method: 'POST',
+        body: {
+          startID: contentData.value.startID,
+          answers: examStats.answerData,
+        },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
       },
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    })
+    )
     await router.push(`/exam/result/${response.data.id}`)
   }
   catch (err) {

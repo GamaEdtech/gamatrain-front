@@ -18,21 +18,37 @@
     </v-container>
     <div class="governance-top py-5">
       <v-container>
+        <!-- The child components will now handle their own state -->
         <governance-stats />
         <div>
           <governance-proposals />
         </div>
       </v-container>
       <div>
-        <governance-overview />
+        <!-- currently commented out -->
+        <!-- <governance-overview /> -->
       </div>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+// This parent component is now clean and only serves as a layout container.
+// All logic is correctly encapsulated in the child components.
 
-<style scoped>
+// SEO Meta data
+useHead({
+  title: 'Governance | Community-Driven Decisions & DAO Voting',
+  meta: [
+    {
+      name: 'description',
+      content: 'Shape the future of Gamatrain through decentralized governance. Join our DAO, propose ideas, vote on key decisions, and help build an open-source EdTech ecosystem powered by the community.',
+    },
+  ],
+})
+</script>
+
+<style scoped lang="scss">
 #governance-page-header {
   height: 20rem;
   background: #24292f;
