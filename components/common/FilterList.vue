@@ -14,7 +14,7 @@
       >
         <v-btn
           rounded="xl"
-          prepend-icon="mdi-tune-vertical"
+          prepend-icon="md:tune"
           variant="outlined"
           class="primary-gray-700"
           density="comfortable"
@@ -52,7 +52,7 @@
           >
             <v-icon
               size="x-large"
-              icon="mdi-magnify"
+              icon="md:search"
               color="#000000"
             />
           </v-btn>
@@ -121,7 +121,7 @@
               color="#D0D5DD"
               @click="dialogFilterMobileModel = false"
             >
-              mdi-close-circle
+              md:cancel
             </v-icon>
           </v-col>
           <v-col
@@ -171,8 +171,11 @@
                   {{ filter.selectedItem.title }}
                 </v-chip>
 
-                <v-icon color="#667085">
-                  mdi-chevron-down
+                <v-icon
+                  color="#667085"
+                  size="34"
+                >
+                  md:keyboard_arrow_down
                 </v-icon>
               </div>
 

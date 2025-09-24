@@ -1,6 +1,5 @@
 <template>
   <v-btn
-    append-icon="mdi-chevron-down"
     :class="`text-h5 primary-gray-700 ${
       isShowSelectModal || selectedItem ? `open-style-btn` : ``
     }`"
@@ -12,6 +11,11 @@
     @click="isShowSelectModal = !isShowSelectModal"
   >
     {{ selectedItem ? selectedItem.title : title }}
+    <template #append>
+      <v-icon class="primary-gray-700 mt-1">
+        md:keyboard_arrow_down
+      </v-icon>
+    </template>
   </v-btn>
 
   <search-select-dialog

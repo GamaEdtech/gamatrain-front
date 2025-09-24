@@ -141,7 +141,7 @@
             <v-text-field
               v-model="emailAddress"
               label="Enter your email"
-              prepend-inner-icon="md:mail"
+              prepend-inner-icon="md:mail_outlined"
               glow
               color="#FFB600"
               icon-color="#FFB600"
