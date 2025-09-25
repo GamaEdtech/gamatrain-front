@@ -2,78 +2,29 @@
   <v-container class="flex-column margin-top-handle">
     <v-row class="justify-center">
       <div class="w-100 d-flex justify-center flex-wrap top-info-div">
-        <v-col
-          cols="4"
-          md="12"
-          class="d-flex d-md-none justify-start"
-        >
-          <v-badge
-            class="mt-1 height-badge"
-            offset-x="5"
-            offset-y="-5"
-            :color="countFilterSelect == 0 ? `transparent` : `#F04438`"
-            :content="countFilterSelect == 0 ? `` : countFilterSelect"
-          >
-            <v-btn
-              rounded="xl"
-              prepend-icon="mdi-tune-vertical"
-              variant="outlined"
-              class="primary-gray-700"
-              density="comfortable"
-              @click="openFilterMobileModal = !openFilterMobileModal"
-            >
-              Filter
-            </v-btn>
-          </v-badge>
-        </v-col>
-        <v-col
-          cols="8"
-          md="12"
-          class="d-flex justify-end justify-md-center"
-        >
-          <v-text-field
-            v-model="textSearch"
-            label="Search anything...."
-            variant="outlined"
-            color="#FFB600"
-            max-width="330"
-            density="compact"
-            hide-details
-            class="custom-search-text-field"
-            @update:model-value="changeTextSearch"
-          >
-            <template #append>
-              <v-btn
-                icon
-                varient="text"
-                color="#FFB600"
-                width="50"
-                class="rounded-ts rounded-te-xl rounded-be-xl rounded-bs h-100 ml-n2"
-                flat
-              >
-                <v-icon
-                  size="x-large"
-                  icon="mdi-magnify"
-                  color="#000000"
-                />
-              </v-btn>
-            </template>
-          </v-text-field>
-        </v-col>
-        <search-filter-option
-          v-model:show-dialog-filter-mobile="openFilterMobileModal"
+        <CommonFilterList
+          :filter-list="filters"
           :count-data-found="totalDataFind"
-          @change-filter-query="changeFilterQuery"
+          :loading="isInitialDataLoading"
+          has-keyword-search
+          @change-filter="changeFilter"
         />
-        <v-col
-          cols="12"
-          class="d-flex align-end justify-end ga-2 max-width-container"
+      </div>
+      <div
+        v-if="route.query.base && data.length > 0"
+        class="w-100 d-flex px-2 max-width-container"
+      >
+        <nuxt-link
+          :to="`/subject-directory?board=${route.query.section}&grade=${route.query.base}&subject=${route.query.lesson}`"
+          class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
         >
-          <span class="text-h5 primary-gray-400">Result</span>
-          <span class="text-h4 primary-gray-700 font-weight-bold">{{
-            $numberFormat(totalDataFind)
-          }}</span>
-        </v-col>
+          <div class="d-flex flex-column align-start justify-start ga-1">
+            <span class="text-h5 text-sm-h4 font-weight-bold text-white">Go to
+              {{ data[0].lesson_title }}
+            </span>
+            <span class="text-subtitle-2 text-sm-subtitle-1 text-white">All books, past papers & resources in one place</span>
+          </div>
+        </nuxt-link>
       </div>
       <search-list
         :data-list="data"
@@ -88,17 +39,11 @@
 
 <script setup>
 import dayjs from 'dayjs'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 
-const router = useRouter()
 const route = useRoute()
 
-const openFilterMobileModal = ref(false)
-const countFilterSelect = ref(0)
 const querySearch = ref()
-const textSearch = ref(route.query.title ? route.query.title : '')
-const timer = ref(null)
-
 const isInitialDataLoading = ref(false)
 const isPaginationDataLoading = ref(false)
 const data = ref([])
@@ -106,54 +51,11 @@ const isAllDataLoaded = ref(false)
 const totalDataFind = ref(0)
 const pageNumber = ref(1)
 const perPage = 10
-const queryParams = ref({})
+
 const loadNextPageData = async () => {
   pageNumber.value += 1
   isPaginationDataLoading.value = true
   await getDataList(true)
-}
-
-const changeFilterQuery = async (query, skipFetch = false) => {
-  countFilterSelect.value = Object.keys(query).length
-  querySearch.value = {
-    ...query,
-  }
-  if (textSearch.value.length > 0) {
-    querySearch.value.title = textSearch.value
-  }
-  if (!skipFetch) {
-    isAllDataLoaded.value = false
-    isInitialDataLoading.value = true
-    pageNumber.value = 1
-    await getDataList()
-    queryParams.value = { ...querySearch.value }
-  }
-}
-
-const changeTextSearch = () => {
-  isInitialDataLoading.value = true
-
-  const query = querySearch.value
-  if (textSearch.value.length == 0) {
-    delete query.title
-  }
-  else {
-    query.title = textSearch.value
-  }
-  router.replace({ query })
-  debouncedSearchText()
-}
-
-const debouncedSearchText = () => {
-  if (timer.value) {
-    clearTimeout(timer.value)
-    timer.value = null
-  }
-  timer.value = setTimeout(() => {
-    isAllDataLoaded.value = false
-    pageNumber.value = 1
-    getDataList()
-  }, 800)
 }
 
 const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
@@ -383,6 +285,345 @@ useHead(() => ({
     },
   ],
 }))
+
+const allMonths = [
+  { id: 1, title: 'January' },
+  { id: 2, title: 'February' },
+  { id: 3, title: 'March' },
+  { id: 4, title: 'April' },
+  { id: 5, title: 'May' },
+  { id: 6, title: 'June' },
+  { id: 7, title: 'July' },
+  { id: 8, title: 'August' },
+  { id: 9, title: 'September' },
+  { id: 10, title: 'October' },
+  { id: 11, title: 'November' },
+  { id: 12, title: 'December' },
+]
+
+const specialMonths = {
+  4161: [
+    { id: 3, title: 'March' },
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  22: [
+    { id: 3, title: 'March' },
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  6374: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  23: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  6533: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  6635: [
+    { id: 4, title: 'April' },
+    { id: 10, title: 'October' },
+  ],
+  6639: [
+    { id: 4, title: 'April' },
+    { id: 10, title: 'October' },
+  ],
+  // AQA-GCSE
+  6672: [
+    { id: 6, title: 'June' },
+    { id: 11, title: 'November' },
+  ],
+  // AQA-AS LEVEL
+  6673: [{ id: 6, title: 'June' }],
+  // AQA-A LEVEL
+  6674: [{ id: 6, title: 'June' }],
+  // OCR GCSE
+  6676: [
+    { id: 6, title: 'June' },
+    { id: 11, title: 'November' },
+  ],
+  // OCR AS LEVEL
+  6677: [
+    { id: 6, title: 'June' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  // OCR A LEVEL
+  6678: [
+    { id: 6, title: 'June' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  // Edexcel A LEVEL
+  6671: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  // Edexcel AS LEVEL
+  6675: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  // Edexcel GCSE
+  6669: [
+    { id: 6, title: 'May/Jun' },
+    { id: 11, title: 'Oct/Nov' },
+  ],
+  // Edexcel International A/AS LEVEL
+  6670: [
+    { id: 1, title: 'January' },
+    { id: 4, title: 'April' },
+    { id: 6, title: 'June' },
+    { id: 10, title: 'October' },
+    { id: 11, title: 'November' },
+  ],
+  // Edexcel International GCSE
+  6668: [
+    { id: 1, title: 'January' },
+    { id: 4, title: 'April' },
+    { id: 6, title: 'June' },
+    { id: 10, title: 'October' },
+    { id: 11, title: 'November' },
+  ],
+}
+const FILTER_INDEX = {
+  Board: 0,
+  Grade: 1,
+  Subject: 2,
+  Topic: 3,
+  Services: 4,
+  Classification: 5,
+  Year: 6,
+  Month: 7,
+}
+const filters = [
+  {
+    selectedItem: null,
+    title: 'Board',
+    disabled: false,
+    hasSearch: true,
+    refElement: null,
+    api: '/api/v1/types/list',
+    idInParams: false,
+    extraApiParams: {
+      type: `section`,
+    },
+    queryKey: 'section',
+    children: [FILTER_INDEX.Grade, FILTER_INDEX.Classification],
+    closable: true,
+  },
+  {
+    selectedItem: null,
+    title: 'Grade',
+    disabled: true,
+    hasSearch: true,
+    refElement: null,
+    api: '/api/v1/types/list',
+    idInParams: false,
+    extraApiParams: {
+      type: `base`,
+    },
+    dependencies: [
+      { parent: FILTER_INDEX.Board, targetKey: 'section_id', sourceKey: 'id' },
+    ],
+    queryKey: 'base',
+    children: [FILTER_INDEX.Subject],
+    childrenForGetStaticData: [FILTER_INDEX.Month],
+    closable: true,
+  },
+  {
+    selectedItem: null,
+    title: 'Subject',
+    disabled: true,
+    hasSearch: true,
+    refElement: null,
+    api: '/api/v1/types/list',
+    idInParams: false,
+    extraApiParams: {
+      type: `lesson`,
+    },
+    dependencies: [
+      { parent: FILTER_INDEX.Grade, targetKey: 'base_id', sourceKey: 'id' },
+    ],
+    queryKey: 'lesson',
+    children: [FILTER_INDEX.Topic],
+    closable: true,
+  },
+  {
+    selectedItem: null,
+    title: 'Topic',
+    disabled: true,
+    hasSearch: true,
+    refElement: null,
+    api: '/api/v1/types/list',
+    idInParams: false,
+    extraApiParams: {
+      type: `topic`,
+    },
+    dependencies: [
+      { parent: FILTER_INDEX.Subject, targetKey: 'lesson_id', sourceKey: 'id' },
+    ],
+    queryKey: 'topic',
+    children: [],
+    closable: true,
+  },
+  {
+    selectedItem: null,
+    title: 'Services',
+    disabled: false,
+    hasSearch: false,
+    refElement: null,
+    api: null,
+    idInParams: false,
+    extraApiParams: {},
+    dependencies: [],
+    staticList: [
+      {
+        title: 'Past Papers',
+        id: 'test',
+        icon: 'stat-icon icon-paper',
+        color: '#2e90fa',
+        idClassification: 'test_type',
+      },
+      {
+        title: 'Multimedia',
+        id: 'learnfiles',
+        icon: 'stat-icon icon-multimedia',
+        color: '#02b719',
+        idClassification: 'content_type',
+      },
+      {
+        title: 'QuizHub',
+        id: 'azmoon',
+        icon: 'stat-icon icon-exam',
+        color: '#7c4dff',
+        idClassification: 'test_type',
+      },
+      {
+        title: 'Forum',
+        id: 'question',
+        icon: 'stat-icon icon-q-a',
+        color: '#fdb022',
+        idClassification: null,
+      },
+      {
+        title: 'Tutorial',
+        id: 'dars',
+        icon: 'stat-icon icon-tutorial',
+        color: '#2e90fa',
+        idClassification: null,
+      },
+    ],
+    queryKey: 'type',
+    children: [
+      FILTER_INDEX.Classification,
+      FILTER_INDEX.Year,
+      FILTER_INDEX.Month,
+    ],
+    closable: false,
+    defaultValue: {
+      title: 'Past Papers',
+      id: 'test',
+      icon: 'stat-icon icon-paper',
+      color: '#2e90fa',
+      idClassification: 'test_type',
+    },
+  },
+  {
+    selectedItem: null,
+    title: 'Classification',
+    disabled: true,
+    hasSearch: true,
+    refElement: null,
+    api: '/api/v1/types/list',
+    idInParams: false,
+    extraApiParams: {},
+    dependencies: [
+      { parent: FILTER_INDEX.Board, targetKey: 'section_id', sourceKey: 'id' },
+      {
+        parent: FILTER_INDEX.Services,
+        targetKey: 'type',
+        sourceKey: 'idClassification',
+        disableIds: ['dars', 'question'],
+      },
+    ],
+    queryMap: {
+      test: 'test_type',
+      azmoon: 'test_type',
+      learnfiles: 'content_type',
+    },
+    parentIndexChangeQueryKey: FILTER_INDEX.Services,
+    queryKey: 'test_type',
+    children: [],
+    closable: true,
+  },
+  {
+    selectedItem: null,
+    title: 'Year',
+    disabled: true,
+    hasSearch: true,
+    refElement: null,
+    api: null,
+    idInParams: false,
+    extraApiParams: {},
+    dependencies: [
+      {
+        parent: FILTER_INDEX.Services,
+        targetKey: 'type',
+        sourceKey: 'id',
+        disableIds: ['learnfiles', 'dars', 'question'],
+      },
+    ],
+    staticList: Array.from({ length: 13 }, (_, i) => 2013 + i)
+      .reverse()
+      .map(year => ({
+        title: `${year}`,
+        id: year,
+      })),
+    queryKey: 'edu_year',
+    closable: true,
+    children: [],
+  },
+  {
+    selectedItem: null,
+    title: 'Month',
+    disabled: true,
+    hasSearch: true,
+    refElement: null,
+    api: null,
+    idInParams: false,
+    extraApiParams: {},
+    dependencies: [
+      {
+        parent: FILTER_INDEX.Services,
+        targetKey: 'type',
+        sourceKey: 'id',
+        disableIds: ['learnfiles', 'dars', 'question'],
+      },
+    ],
+    staticList: [],
+    dependenciesForGetStaticData: [FILTER_INDEX.Grade],
+    getStaticList: (id = route.query.base) => {
+      const gradeId = id ? id : route.query.base
+      return gradeId && specialMonths[gradeId]
+        ? specialMonths[gradeId]
+        : allMonths
+    },
+    queryKey: 'edu_month',
+    closable: true,
+    children: [],
+  },
+]
+
+const changeFilter = async (query) => {
+  isAllDataLoaded.value = false
+  isInitialDataLoading.value = true
+  pageNumber.value = 1
+  querySearch.value = query
+  await getDataList()
+}
 </script>
 
 <style scoped>
@@ -410,6 +651,12 @@ useHead(() => ({
 }
 .max-width-container {
   max-width: 1200px;
+}
+
+.subject-directory-alert {
+  height: 70px;
+  max-width: 400px;
+  background-color: #f59e0b;
 }
 @media (min-width: 960px) {
   .margin-top-handle {
