@@ -37,6 +37,7 @@
       <template v-for="(filter, index) in filters">
         <v-chip
           v-if="filter.selectedItem"
+          v-show="index != FILTER_INDEX.Services"
           :key="filter.title"
           variant="flat"
           class="text-h5 pl-5 pr-5"
@@ -99,6 +100,7 @@
           <template v-for="(filter, index) in filters">
             <v-chip
               v-if="filter.selectedItem"
+              v-show="index != FILTER_INDEX.Services"
               :key="filter.title"
               variant="flat"
               class="text-h5 pl-5 pr-5"

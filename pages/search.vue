@@ -67,12 +67,23 @@
         />
         <v-col
           cols="12"
-          class="d-flex align-end justify-end ga-2 max-width-container"
+          class="ga-2 max-width-container"
         >
-          <span class="text-h5 primary-gray-400">Result</span>
-          <span class="text-h4 primary-gray-700 font-weight-bold">{{
-            $numberFormat(totalDataFind)
-          }}</span>
+          <div class="d-flex justify-space-between">
+            <h1 class="text-h6 pt-2">
+              {{ metadata.title }}
+            </h1>
+            <div class="d-flex">
+              <div class="text-h5 primary-gray-400 pr-1 pt-1">
+                Result
+              </div>
+              <div class="text-h4 primary-gray-700 font-weight-bold">
+                {{
+                  $numberFormat(totalDataFind)
+                }}
+              </div>
+            </div>
+          </div>
         </v-col>
       </div>
       <search-list
