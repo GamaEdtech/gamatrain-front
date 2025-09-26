@@ -150,7 +150,7 @@ const categories = ref([
   },
   {
     type: 'test',
-    key: 'tests',
+    key: 'papers',
     stat: '34,519',
     title: 'Past Paper',
     icon: 'icon-paper',
@@ -251,20 +251,20 @@ const fetchCategoryCounts = async () => {
       && response.data
       && response.data.types_stats
     ) {
-      categories.value.find((cat, _i) => cat.key == 'tests').stat
-        = parseInt(response.data.types_stats.test) || 0
+      categories.value.find((cat, _i) => cat.key == 'papers').stat
+        = parseInt(response.data.types_stats.papers) || 0
 
       categories.value.find((cat, _i) => cat.key == 'files').stat
         = parseInt(response.data.types_stats.learnfiles) || 0
 
       categories.value.find((cat, _i) => cat.key == 'exams').stat
-        = parseInt(response.data.types_stats.azmoon) || 0
+        = parseInt(response.data.types_stats.exams) || 0
 
       categories.value.find((cat, _i) => cat.key == 'questions').stat
         = parseInt(response.data.types_stats.question) || 0
 
       categories.value.find((cat, _i) => cat.key == 'tutorial').stat
-        = parseInt(response.data.types_stats.tutorial) || 0
+        = parseInt(response.data.types_stats.tutorials) || 0
     }
   }
   catch (error) {
