@@ -70,12 +70,9 @@
             class="lessons-title"
           >
             <div class="d-flex flex-column text-center lesson-content">
-              <p class="lesson-title gama-text-h5 mb-4">
-                {{ lesson.title }}
-              </p>
-              <p class="lesson-subtitle gama-text-h6">
-                {{ lesson.topic_title }}
-              </p>
+              <h1 class="lesson-subtitle gama-text-h6">
+                {{ tutorialInfo.title }} booklet
+              </h1>
             </div>
           </v-col>
         </v-row>
@@ -87,12 +84,9 @@
         <v-row>
           <v-col cols="12">
             <div class="d-flex flex-column text-center lesson-content">
-              <p class="lesson-title gama-text-h5 mb-4">
-                {{ lesson.title }}
-              </p>
-              <p class="lesson-subtitle gama-text-6">
-                {{ lesson.topic_title }}
-              </p>
+              <h1 class="lesson-subtitle gama-text-h6">
+                {{ tutorialInfo.topic_title }} booklet
+              </h1>
             </div>
           </v-col>
           <v-col
@@ -257,12 +251,6 @@ const filteredTree = computed(
     ) || [],
 )
 
-const lessonInfo = tutorialInfo.value?.title?.split('|') || []
-const lesson = {
-  title: lessonInfo[0] || '',
-  topic_title: lessonInfo[1] || '',
-}
-
 const typesetMathInSpecificContainer = async (containerRef) => {
   if (import.meta.client && containerRef.value) {
     try {
@@ -361,7 +349,7 @@ defineOgImageComponent('TutorialDetail', {
   up_date: tutorialInfo.value?.up_date,
 })
 useHead({
-  title: tutorialInfo.value?.title || '',
+  title: `${tutorialInfo.value?.title} booklet`,
   meta: [
     {
       hid: 'apple-mobile-web-app-title',
@@ -388,6 +376,20 @@ useHead({
       name: 'og:description',
       content: stripHtmlTags(tutorialInfo.value?.content),
     },
+    {
+      hid: 'keywords',
+      name: 'keywords',
+      content: [
+        `${tutorialInfo.value?.title} study guide`,
+        `${tutorialInfo.value?.title} easy tutorial`,
+        `${tutorialInfo.value?.title} tutorial`,
+        `${tutorialInfo.value?.title} for students`,
+        `${tutorialInfo.value?.title} note`,
+        `${tutorialInfo.value?.title} revision note`,
+        `${tutorialInfo.value?.title} simple guide`,
+        `${tutorialInfo.value?.title} cheatsheet`,
+        `${tutorialInfo.value?.title} definition`,
+      ].join(', ') },
   ],
   link: [
     {
