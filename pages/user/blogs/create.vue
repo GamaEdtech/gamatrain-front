@@ -90,20 +90,6 @@
                 flat
               >
                 <div
-                  class="d-flex justify-space-between align-center pa-4 mobile-stack"
-                >
-                  <v-btn
-                    color="#FFC107"
-                    class="px-6 mobile-full d-none d-md-block flex-grow-1 mr-6"
-                    rounded
-                    :loading="loading"
-                    :disabled="!isFormValid"
-                    @click="validate"
-                  >
-                    Publish
-                  </v-btn>
-                </div>
-                <div
                   class="d-flex align-center justify-space-between mb-3 pa-4 mobile-stack"
                 >
                   <div class="primary-gray-700 font-size-16">
