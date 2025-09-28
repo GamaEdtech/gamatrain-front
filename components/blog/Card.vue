@@ -8,7 +8,7 @@
       flat
       :to="`/blog/${blog.id}/${blog.slug}`"
     >
-      <div class="ma-1 image-blog-div">
+      <div class="image-blog-div position-relative">
         <!-- <NuxtImg
                   width="180px"
                   height="135px"
@@ -30,7 +30,7 @@
           </span>
         </v-card-title>
       </div>
-      <div class="gama-text-subtitle2">
+      <div class="gama-text-subtitle2 w-100 ml-1">
         <span v-html="truncateBody(blog.summary, 32)" />
         <span class="read-more">Read more</span>
       </div>
@@ -103,17 +103,6 @@ const truncateBody = (text, fixedLength = null) => {
   color: #ffb600;
 }
 
-/* .mobile-item {
-  .slide-loading {
-    .v-skeleton-loader__image {
-      min-width: 24rem;
-      height: 18rem;
-      position: relative;
-      border-radius: 0.6rem;
-    }
-  }
-}
-
 .card-blog {
   width: 24rem;
   height: 18rem;
@@ -172,7 +161,6 @@ const truncateBody = (text, fixedLength = null) => {
 }
 
 .gama-text-subtitle2 {
-  margin: auto auto;
   max-width: 18.2rem;
   text-align: left;
   color: #6e7781;
@@ -183,5 +171,5 @@ const truncateBody = (text, fixedLength = null) => {
   .read-more {
     color: #ffb600;
   }
-} */
+}
 </style>

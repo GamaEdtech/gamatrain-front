@@ -21,10 +21,16 @@
         />
       </div>
     </div>
-    <div class="d-flex d-sm-none mobile-item">
+    <div class="d-flex d-sm-none flex-column align-center ga-2">
       <v-skeleton-loader
-        class="mx-auto slide-loading"
-        type="image"
+        width="200"
+        height="200"
+        class="rounded-lg"
+      />
+      <v-skeleton-loader
+        width="100"
+        height="20"
+        class="rounded-lg"
       />
     </div>
   </v-col>
