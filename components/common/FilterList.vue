@@ -85,7 +85,7 @@
         <div class="d-flex flex-wrap ga-2 px-2">
           <template v-for="(filter, index) in filters">
             <v-chip
-              v-if="filter.selectedItem"
+              v-if="filter.selectedItem && !filter.defaultValue"
               :key="filter.title"
               variant="flat"
               class="text-h5 pl-5 pr-5"
@@ -130,7 +130,7 @@
           >
             <template v-for="(filter, index) in filters">
               <v-chip
-                v-if="filter.selectedItem"
+                v-if="filter.selectedItem && !filter.defaultValue"
                 :key="filter.title"
                 variant="flat"
                 class="text-h5 pl-5 pr-5"
@@ -229,6 +229,8 @@
         $numberFormat(countDataFound)
       }}</span>
     </v-col>
+
+    <slot />
   </div>
 </template>
 

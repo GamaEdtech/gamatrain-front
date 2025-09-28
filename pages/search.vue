@@ -8,24 +8,30 @@
           :loading="isInitialDataLoading"
           has-keyword-search
           @change-filter="changeFilter"
-        />
-      </div>
-      <div
-        v-if="route.query.base && data.length > 0"
-        class="w-100 d-flex px-2 max-width-container"
-      >
-        <nuxt-link
-          :to="`/subject-directory?board=${route.query.section}&grade=${route.query.base}&subject=${route.query.lesson}`"
-          class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
         >
-          <div class="d-flex flex-column align-start justify-start ga-1">
-            <span class="text-h5 text-sm-h4 font-weight-bold text-white">Go to
-              {{ data[0].lesson_title }}
-            </span>
-            <span class="text-subtitle-2 text-sm-subtitle-1 text-white">All books, past papers & resources in one place</span>
+          <div
+            class="w-100 d-flex flex-column align-start ga-2 px-2 max-width-container"
+          >
+            <h1 class="text-h6 pt-2">
+              {{ metadata.title }}
+            </h1>
+
+            <nuxt-link
+              v-if="route.query.base && data.length > 0"
+              :to="`/subject-directory?board=${route.query.section}&grade=${route.query.base}&subject=${route.query.lesson}`"
+              class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
+            >
+              <div class="d-flex flex-column align-start justify-start ga-1">
+                <span class="text-h5 text-sm-h4 font-weight-bold text-white">Go to
+                  {{ data[0].lesson_title }}
+                </span>
+                <span class="text-subtitle-2 text-sm-subtitle-1 text-white">All books, past papers & resources in one place</span>
+              </div>
+            </nuxt-link>
           </div>
-        </nuxt-link>
+        </CommonFilterList>
       </div>
+
       <search-list
         :data-list="data"
         :is-initial-loading="isInitialDataLoading"
