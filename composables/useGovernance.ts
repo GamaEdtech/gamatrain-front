@@ -1,9 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ref, computed } from 'vue'
-import { web3, BN, type Program } from '@coral-xyz/anchor'
+import * as anchor from '@coral-xyz/anchor'
+import { ref } from 'vue'
 import type { PublicKey } from '@solana/web3.js'
+import { Buffer } from 'buffer'
 
+// Type alias (keep it only for typing)
+type Program<T extends anchor.Idl = anchor.Idl> = anchor.Program<T>
+
+// Runtime values (don’t destructure Program here)
+const { web3, BN } = anchor
 // --- Types ---
 interface CreateProposalForm {
   title: string
@@ -24,7 +30,7 @@ interface VoteRecordData {
   voter: PublicKey
   hasVoted: boolean
   vote: string
-  votePower: BN
+  votePower: anchor.BN
 }
 
 interface ProposalData {
@@ -33,11 +39,11 @@ interface ProposalData {
   brief: string
   cate: string
   reference: string
-  amount: BN
-  agreeVotes: BN
-  disagreeVotes: BN
-  createdAt: BN
-  expiresAt: BN
+  amount: anchor.BN
+  agreeVotes: anchor.BN
+  disagreeVotes: anchor.BN
+  createdAt: anchor.BN
+  expiresAt: anchor.BN
 }
 
 /**

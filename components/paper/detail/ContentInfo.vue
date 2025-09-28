@@ -449,7 +449,6 @@
 
 <script setup>
 import { useGtmEvents } from '~/composables/useGtmEvents'
-import FileSaver from 'file-saver'
 
 const { trackFileDownload } = useGtmEvents()
 
@@ -747,10 +746,9 @@ const startDownload = async (type, extraId) => {
         downloadProgress.value[downloadKey] = 100
 
         // Use file-saver to save the blob
-        // import('file-saver').then(({ saveAs }) => {
-        //   saveAs(xhr.response, response.data.name)
-        // })
-        FileSaver.saveAs(xhr.response, response.data.name)
+        import('file-saver').then(({ saveAs }) => {
+          saveAs(xhr.response, response.data.name)
+        })
         // Show success message for coin payments
         if (
           requiresCoinPaymentForFile(type, extraId)

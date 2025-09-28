@@ -66,11 +66,12 @@
         </v-row>
       </v-container>
     </v-container>
-    <div class="d-flex flex-column align-center ga-2 pa-4">
+    <div class="d-flex flex-column align-center ga-2">
       <CommonFilterList
         :filter-list="filters"
         :count-data-found="list.length"
         :loading="tableLoading"
+        has-keyword-search
         @change-filter="changeFilter"
       />
     </div>
@@ -336,7 +337,7 @@ const filters = [
       type: `section`,
     },
     queryKey: 'section',
-    children: [FILTER_INDEX.Grade, FILTER_INDEX.School],
+    children: [FILTER_INDEX.Grade],
   },
   {
     selectedItem: null,
@@ -366,7 +367,6 @@ const filters = [
     extraApiParams: {},
     dependencies: [
       { parent: FILTER_INDEX.City, targetKey: 'CityId', sourceKey: 'id' },
-      { parent: FILTER_INDEX.Board, targetKey: 'section', sourceKey: 'id' },
     ],
     queryKey: 'school',
     children: [],

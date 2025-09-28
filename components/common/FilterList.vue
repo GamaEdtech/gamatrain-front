@@ -81,8 +81,8 @@
           />
         </template>
       </div>
-      <div class="justify-space-between d-flex w-100 mt-4 max-width-container">
-        <div class="d-flex flex-wrap ga-2">
+      <div class="justify-center d-flex w-100 max-width-container">
+        <div class="d-flex flex-wrap ga-2 px-2">
           <template v-for="(filter, index) in filters">
             <v-chip
               v-if="filter.selectedItem"
@@ -213,7 +213,7 @@
     </v-dialog>
     <v-col
       cols="12"
-      class="d-flex align-end justify-end ga-2 max-width-container"
+      class="d-flex align-end justify-end ga-2 mt-1 py-0 px-2 max-width-container"
     >
       <span class="text-h5 primary-gray-400">Result</span>
       <v-skeleton-loader
@@ -510,7 +510,6 @@ const clearAllFilter = async () => {
 :deep(.custom-search-text-field .v-field__outline__end) {
   border-radius: 0 4px 4px 0 !important;
 }
-
 .max-width-container {
   max-width: 1200px;
 }
