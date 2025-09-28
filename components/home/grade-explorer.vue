@@ -473,7 +473,7 @@ onMounted(() => {
   border-radius: 16px;
 }
 .ex-board-select {
-  width: 120px;
+  width: fit-content;
   min-width: 130px;
   position: relative;
 }
@@ -489,7 +489,8 @@ onMounted(() => {
 }
 .ex-grade-select {
   padding-left: 10px;
-  max-width: 450px;
+  width: fit-content;
+  min-width: max-content;
   flex-grow: 1;
 }
 
@@ -509,7 +510,8 @@ onMounted(() => {
     border-radius: 24px;
   }
   .ex-board-select {
-    width: 200px;
+    width: max-content;
+    min-width: max-content;
     position: relative;
   }
   .ex-board-select::after {

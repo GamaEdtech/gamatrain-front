@@ -78,9 +78,9 @@ const LazyCkeditor = defineAsyncComponent({
         Superscript,
         SpecialCharacters,
         SpecialCharactersEssentials,
-        HtmlEmbed,
         Highlight,
         BlockQuote,
+        SourceEditing,
       } = await import('ckeditor5')
 
       editorConfig.value = {
@@ -102,7 +102,6 @@ const LazyCkeditor = defineAsyncComponent({
           Indent,
           BlockQuote,
           Highlight,
-          HtmlEmbed,
           Table,
           TableToolbar,
           Image,
@@ -111,6 +110,7 @@ const LazyCkeditor = defineAsyncComponent({
           ImageInsert,
           MediaEmbed,
           Base64UploadAdapter,
+          SourceEditing,
         ],
         toolbar: [
           'heading',
@@ -134,7 +134,7 @@ const LazyCkeditor = defineAsyncComponent({
           'redo',
           'insertTable',
           'mediaEmbed',
-          'htmlEmbed',
+          'sourceEditing',
           '|',
           'blockQuote',
           'highlight',
