@@ -85,7 +85,7 @@
           <v-col cols="12">
             <div class="d-flex flex-column text-center lesson-content">
               <h1 class="lesson-subtitle gama-text-h6">
-                {{ tutorialInfo.topic_title }} booklet
+                {{ tutorialInfo.title }} booklet
               </h1>
             </div>
           </v-col>
