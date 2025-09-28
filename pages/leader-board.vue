@@ -292,6 +292,7 @@ const filters = [
     idInParams: true,
     queryKey: 'country',
     children: [FILTER_INDEX.State],
+    closable: true,
   },
   {
     selectedItem: null,
@@ -310,6 +311,7 @@ const filters = [
     ],
     queryKey: 'state',
     children: [FILTER_INDEX.City],
+    closable: true,
   },
   {
     selectedItem: null,
@@ -324,6 +326,7 @@ const filters = [
     ],
     queryKey: 'city',
     children: [FILTER_INDEX.School],
+    closable: true,
   },
   {
     selectedItem: null,
@@ -338,6 +341,7 @@ const filters = [
     },
     queryKey: 'section',
     children: [FILTER_INDEX.Grade],
+    closable: true,
   },
   {
     selectedItem: null,
@@ -355,6 +359,7 @@ const filters = [
     ],
     queryKey: 'base',
     children: [],
+    closable: true,
   },
   {
     selectedItem: null,
@@ -370,6 +375,7 @@ const filters = [
     ],
     queryKey: 'school',
     children: [],
+    closable: true,
   },
   {
     selectedItem: null,
@@ -389,6 +395,7 @@ const filters = [
       })),
     queryKey: 'year',
     children: [FILTER_INDEX.Month],
+    closable: true,
   },
   {
     selectedItem: null,
@@ -421,6 +428,7 @@ const filters = [
     })),
     queryKey: 'month',
     children: [],
+    closable: true,
   },
 ]
 
