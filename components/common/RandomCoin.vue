@@ -60,15 +60,17 @@ const auth = useAuth()
 const route = useRoute()
 const config = useRuntimeConfig()
 
-const excludedRouteNames = [
-  'search',
-  'school',
-  'game-castle',
-  'game-car-racing',
+const includedRouteNames = [
+  'blog-id-slug',
+  'tutorial-id-slug',
+  'qa-id-slug',
+  'paper-id-slug',
+  'multimedia-id-slug',
+
 ]
+
 const shouldRenderRandomCoin = computed(() => {
-  const name = route.name ? String(route.name) : ''
-  return !excludedRouteNames.some(n => name == n)
+  return includedRouteNames.includes(String(route.name))
 })
 
 const coins = ref([])

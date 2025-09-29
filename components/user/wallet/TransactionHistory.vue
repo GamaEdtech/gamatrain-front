@@ -235,8 +235,8 @@
 
           <template #[`item.points`]="{ item }">
             <div class="d-flex align-center">
-              <span class="font-weight-bold">{{ item.points }}</span>
-              <span class="ml-1 caption grey--text">$GET</span>
+              <span class="font-weight-bold">{{ $numberFormat(item.points) }}</span>
+              <span class="ml-1 caption grey--text">Points</span>
             </div>
           </template>
 

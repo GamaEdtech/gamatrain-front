@@ -183,6 +183,16 @@
 <script setup>
 const route = useRoute()
 
+useHead({
+  title: 'Leaderboard | Track Your Rank & Achievements',
+  meta: [
+    {
+      name: 'description',
+      content: 'See where you stand on the leaderboard! Compare your achievements, climb the ranks, and challenge others to reach the top.',
+    },
+  ],
+})
+
 const headers = [
   { title: 'Rank', key: 'index', sortable: false, width: '10vw' },
   { title: 'Name', key: 'name', sortable: false, width: '25vw' },
