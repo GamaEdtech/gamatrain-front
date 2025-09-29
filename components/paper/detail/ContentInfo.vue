@@ -623,7 +623,7 @@ const handleCoinPaymentConfirm = async () => {
 
   try {
     // Deduct coins
-    const success = await coinBalance.deductCoins(5, 'Past paper download')
+    const success = await coinBalance.deductCoins(5000000, 'Past paper download')
     console.log('Coin deduction result:', success)
 
     if (success) {

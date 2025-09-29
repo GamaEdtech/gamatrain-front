@@ -115,7 +115,6 @@ const LazyCkeditor = defineAsyncComponent({
           GeneralHtmlSupport,
           SourceEditing,
           PasteFromOffice,
-
         ],
         toolbar: [
           'heading',
@@ -151,6 +150,20 @@ const LazyCkeditor = defineAsyncComponent({
               attributes: true, // keep all attributes
               classes: true, // keep CSS classes
               styles: true, // keep inline styles
+            },
+          ],
+          disallow: [
+            {
+              name: 'script', // block <script>
+              attributes: true,
+              classes: true,
+              styles: true,
+            },
+            {
+              name: 'iframe', // optionally block <iframe>
+              attributes: true,
+              classes: true,
+              styles: true,
             },
           ],
         },
