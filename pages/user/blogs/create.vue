@@ -761,6 +761,16 @@ onMounted(() => {
 
 .editor-container :deep(.ck-editor__editable) {
   min-height: 750px !important;
+  max-height: 750px !important;
+}
+
+.editor-container :deep(.ck-source-editing-area) {
+  min-height: 750px !important;
+}
+.editor-container :deep(.ck-source-editing-area textarea) {
+  max-height: 750px !important;
+  height: 750px;
+  overflow: scroll; /* hide scrollbars */
 }
 
 .editor-container :deep(.ck-toolbar) {
