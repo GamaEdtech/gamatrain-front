@@ -86,8 +86,8 @@
                 @scroll="checkSearchScroll"
               >
                 <div class="result-stat">
-                  <span class="gama-text-overline"> Search result </span>
-                  <span class="gama-text-button">
+                  <span class="gama-text-overline-search"> Search result </span>
+                  <span class="gama-text-button-search">
                     {{
                       searchCount != "..."
                         ? $numberFormat(searchCount)
@@ -99,19 +99,12 @@
                   <v-row
                     v-for="(item, index) in searchResults"
                     :key="index"
-                    class="py-3 px-6 d-flex justify-center list-item"
+                    class="w-100 ma-0 d-flex justify-center list-item"
                   >
-                    <search-card
-                      v-if="selectedCategory.type == `paper`"
+                    <common-general-search-card
                       :information="item"
-                    />
-                    <school-card-school
-                      v-if="selectedCategory.type == `school`"
-                      :school="item"
-                    />
-                    <blog-card
-                      v-if="selectedCategory.type == `blog`"
-                      :blog="item"
+                      :category="selectedCategory"
+                      :class="index % 2 == 1 ? `background-odd` : ``"
                     />
                   </v-row>
                   <div
@@ -120,39 +113,27 @@
                   />
                   <v-row
                     v-if="allDataLoaded == false"
-                    class="d-flex justify-center py-4 px-6 mt-1"
+                    class="w-100 ma-0 d-flex justify-center"
                   >
-                    <search-card-skeleton
-                      v-if="selectedCategory.type == `paper`"
-                    />
-                    <school-card-school-skeleton
-                      v-if="selectedCategory.type == `school`"
-                    />
-                    <blog-card-skeleton
-                      v-if="selectedCategory.type == `blog`"
-                    />
+                    <common-general-search-card-skeleton />
                   </v-row>
                 </div>
                 <div
                   v-else-if="searchCount == 0 && searchLoading == false"
                   class="text-center"
                 >
-                  <span class="gama-text-button"> Opps! no data found </span>
+                  <span class="gama-text-button-search">
+                    Opps! no data found
+                  </span>
                 </div>
                 <div v-else>
                   <v-row
                     v-for="i in 3"
                     :key="i"
-                    class="d-flex justify-center py-4 px-6"
+                    class="w-100 ma-0 d-flex justify-center"
                   >
-                    <search-card-skeleton
-                      v-if="selectedCategory.type == `paper`"
-                    />
-                    <school-card-school-skeleton
-                      v-if="selectedCategory.type == `school`"
-                    />
-                    <blog-card-skeleton
-                      v-if="selectedCategory.type == `blog`"
+                    <common-general-search-card-skeleton
+                      :class="i % 2 == 1 ? `background-odd` : ``"
                     />
                   </v-row>
                 </div>
@@ -166,6 +147,7 @@
 </template>
 
 <script setup>
+const route = useRoute()
 const props = defineProps({
   showSearchBottomSheet: {
     type: Boolean,
@@ -189,6 +171,7 @@ const categories = [
     value: 'Past Papers',
     api: '/api/v1/search?type=test',
     type: 'paper',
+    typePaper: 'paper',
     isOldApi: true,
     keywordSearch: 'title',
     iconName: 'icon-paper',
@@ -200,6 +183,7 @@ const categories = [
     value: 'Multimedia',
     api: '/api/v1/search?type=learnfiles',
     type: 'paper',
+    typePaper: 'multimedia',
     isOldApi: true,
     keywordSearch: 'title',
     iconName: 'icon-multimedia',
@@ -211,6 +195,7 @@ const categories = [
     value: 'QuizHub',
     api: '/api/v1/search?type=azmoon',
     type: 'paper',
+    typePaper: 'exam',
     isOldApi: true,
     keywordSearch: 'title',
     iconName: 'icon-exam',
@@ -222,6 +207,7 @@ const categories = [
     value: 'Forum',
     api: '/api/v1/search?type=question',
     type: 'paper',
+    typePaper: 'qa',
     isOldApi: true,
     keywordSearch: 'title',
     iconName: 'icon-q-a',
@@ -233,6 +219,7 @@ const categories = [
     value: 'Tutorial',
     api: '/api/v1/search?type=dars',
     type: 'paper',
+    typePaper: 'tutorial',
     isOldApi: true,
     keywordSearch: 'title',
     iconName: 'icon-tutorial',
@@ -283,6 +270,14 @@ watch(searchKey, (val) => {
   }
   debouncedSearchText()
 })
+
+watch(
+  () => route.name,
+  () => {
+    emit('update:showSearchBottomSheet', false)
+    searchKey.value = ''
+  },
+)
 
 const debouncedSearchText = () => {
   if (timer.value) {
@@ -450,12 +445,12 @@ watch(
   z-index: 100;
   background-color: #f6f8fa;
 }
-.gama-text-button {
+.gama-text-button-search {
   color: #57b947;
   text-align: right;
 }
 
-.gama-text-overline {
+.gama-text-overline-search {
   color: rgba(36, 41, 47, 0.3);
   margin-right: 0.22rem;
 }
@@ -515,6 +510,9 @@ watch(
 }
 .v-skeleton-loader {
   background-color: transparent;
+}
+.background-odd {
+  background-color: #ebebeb;
 }
 @media (min-width: 600px) {
   .mobile-search-sheet {
