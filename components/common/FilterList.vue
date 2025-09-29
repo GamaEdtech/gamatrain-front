@@ -81,7 +81,7 @@
           />
         </template>
       </div>
-      <div class="justify-center d-flex w-100 max-width-container">
+      <div class="justify-start d-flex w-100 max-width-container">
         <div class="d-flex flex-wrap ga-2 px-2">
           <template v-for="(filter, index) in filters">
             <v-chip
@@ -262,7 +262,7 @@ const emits = defineEmits(['changeFilter'])
 const filters = ref([...props.filterList])
 const dialogFilterMobileModel = ref(false)
 const countFilterSelect = ref(Object.keys(route.query).length)
-const textSearch = ref(route.query.keyword ? route.query.keyword : '')
+const textSearch = ref(route.query.title ? route.query.title : '')
 const timer = ref(null)
 
 onMounted(async () => {
@@ -464,10 +464,10 @@ const changeTextSearch = () => {
   if (props.hasKeywordSearch) {
     const query = { ...route.query }
     if (textSearch.value.length == 0) {
-      delete query.keyword
+      delete query.title
     }
     else {
-      query.keyword = textSearch.value
+      query.title = textSearch.value
     }
     router.replace({ query })
     debouncedSearchText()

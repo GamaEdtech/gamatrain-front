@@ -436,7 +436,7 @@ const changeFilter = (query) => {
   fetchLeaderBoard(query)
 }
 
-const { data: initialData } = await useAsyncData('dataSearchSSR', () => {
+const { data: initialData } = await useAsyncData('dataLeaderBoard', () => {
   const query = route.query
   const dateQuery = registrationDateRange(query.year, query.month)
   const params = {
