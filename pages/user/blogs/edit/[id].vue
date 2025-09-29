@@ -51,7 +51,7 @@
               <div class="editor-container">
                 <label class="mb-2 d-block form-label-title">Main</label>
                 <div class="w-100 overflow-hidden relative">
-                  <rich-editor-content
+                  <common-rich-editor
                     v-model="blog.content"
                     :enable-extra-plugins="true"
                     :rules="contentRules"
@@ -89,20 +89,6 @@
                 color="#F9FAFB"
                 flat
               >
-                <div
-                  class="d-flex justify-space-between align-center pa-4 mobile-stack"
-                >
-                  <v-btn
-                    color="#FFC107"
-                    class="px-6 mobile-full d-none d-md-block flex-grow-1 mr-6"
-                    rounded
-                    :loading="loading"
-                    :disabled="!isFormValid"
-                    @click="validate"
-                  >
-                    Update
-                  </v-btn>
-                </div>
                 <div
                   class="d-flex align-center justify-space-between mb-3 pa-4 mobile-stack"
                 >
@@ -204,32 +190,12 @@
                     <v-text-field
                       v-model="categorySearch"
                       class="category-search-input w-100"
-                      placeholder="Search or add category"
+                      placeholder="Search"
                       hide-details
                       variant="outlined"
                       rounded
                       density="compact"
-                      @keydown.enter.prevent="createCategory"
-                    >
-                      <template #append-inner>
-                        <v-btn
-                          class="input-enter-button"
-                          size="small"
-                          icon
-                          variant="flat"
-                          color="#FFB600"
-                          :loading="categoryLoader"
-                          @click.prevent="createCategory"
-                        >
-                          <v-icon
-                            size="small"
-                            color="#1D2939"
-                          >
-                            mdi-subdirectory-arrow-left
-                          </v-icon>
-                        </v-btn>
-                      </template>
-                    </v-text-field>
+                    />
                   </div>
                   <div class="category-options-list">
                     <template v-if="categoriesLoading">
@@ -307,22 +273,15 @@
                     <div
                       v-for="(kitem, index) in keywords"
                       :key="index"
-                      class="keyword-item mr-1 mb-2"
+                      class="mr-1 mb-2"
                     >
-                      <div class="keyword-item__title">
-                        {{ kitem }}
-                      </div>
-                      <div
-                        class="keyword-item__icon cursor-pointer"
-                        @click="deleteKeyword(kitem, index)"
+                      <v-chip
+                        closable
+                        color="#01579B"
+                        @click:close="deleteKeyword(kitem, index)"
                       >
-                        <v-icon
-                          small
-                          color="#98A2B3"
-                        >
-                          mdi-close-circle
-                        </v-icon>
-                      </div>
+                        {{ kitem }}
+                      </v-chip>
                     </div>
                   </div>
                 </v-card-text>
@@ -392,7 +351,7 @@
       @cropped-data="croppedData"
     />
 
-    <BlogSlugDialog
+    <admin-blogs-slug-dialog
       v-model="slugDialog"
       :slug="slug"
       @save="onSlugSave"
@@ -402,10 +361,6 @@
 </template>
 
 <script setup>
-import { ref, computed, nextTick } from 'vue'
-import BlogSlugDialog from '@/components/admin/blogs/BlogSlugDialog.vue'
-import RichEditorContent from '@/components/common/RichEditor.vue'
-
 const { $slugGenerator, $toast } = useNuxtApp()
 const router = useRouter()
 const route = useRoute()
@@ -413,6 +368,10 @@ const route = useRoute()
 definePageMeta({
   layout: 'dashboard-layout',
   middleware: ['auth', 'user-type'],
+})
+
+useHead({
+  title: 'Edit blog',
 })
 
 // Form refs
@@ -663,40 +622,6 @@ const deleteImage = () => {
   imageValidation.value = ''
 }
 
-// Category handling
-const createCategory = async () => {
-  const name = categorySearch.value && categorySearch.value.trim()
-  if (!name) {
-    $toast.error('Please enter a category name.')
-    return
-  }
-  try {
-    categoryLoader.value = true
-    const response = await useApiService.post('/api/v2/admin/tags', {
-      name,
-      icon: 'shape-outline',
-      tagType: 'Post',
-    })
-    if (response && response.succeeded) {
-      $toast.success('Category created successfully!')
-      categorySearch.value = ''
-      await fetchCategories()
-    }
-    else {
-      $toast.error(
-        response?.errors?.[0]?.message || 'Failed to create category.',
-      )
-    }
-  }
-  catch (error) {
-    console.error('Error creating category:', error)
-    $toast.error('Network error while creating category. Please try again.')
-  }
-  finally {
-    categoryLoader.value = false
-  }
-}
-
 const fetchCategories = async () => {
   try {
     categoriesLoading.value = true
@@ -835,19 +760,7 @@ onMounted(() => {
 .upload-btn {
   border: 1px solid #e4e7ec !important;
 }
-.keyword-item {
-  background: #1d2939;
-  color: #fcfcfd;
-  font-size: 12px;
-  font-weight: 400;
-  width: 73px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 10px;
-  padding: 11px 9px;
-}
+
 .search-hint-label {
   color: #98a2b3;
   font-size: 14px;
@@ -909,8 +822,20 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
+.editor-container :deep(.ck-source-editing-area) {
+  min-height: 750px !important;
+}
 .editor-container :deep(.ck-editor__editable) {
   min-height: 750px !important;
+  max-height: 750px !important;
+}
+.editor-container :deep(.ck-source-editing-area) {
+  min-height: 750px !important;
+}
+.editor-container :deep(.ck-source-editing-area textarea) {
+  max-height: 750px !important;
+  height: 750px;
+  overflow: scroll; /* hide scrollbars */
 }
 
 .editor-container :deep(.ck-toolbar) {

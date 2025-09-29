@@ -72,15 +72,17 @@ const LazyCkeditor = defineAsyncComponent({
         ImageInsert,
         MediaEmbed,
         Base64UploadAdapter,
+        GeneralHtmlSupport,
+        SourceEditing,
         Code,
         Strikethrough,
         Subscript,
         Superscript,
         SpecialCharacters,
         SpecialCharactersEssentials,
-        HtmlEmbed,
         Highlight,
         BlockQuote,
+        PasteFromOffice,
       } = await import('ckeditor5')
 
       editorConfig.value = {
@@ -102,7 +104,6 @@ const LazyCkeditor = defineAsyncComponent({
           Indent,
           BlockQuote,
           Highlight,
-          HtmlEmbed,
           Table,
           TableToolbar,
           Image,
@@ -111,6 +112,9 @@ const LazyCkeditor = defineAsyncComponent({
           ImageInsert,
           MediaEmbed,
           Base64UploadAdapter,
+          GeneralHtmlSupport,
+          SourceEditing,
+          PasteFromOffice,
         ],
         toolbar: [
           'heading',
@@ -134,11 +138,35 @@ const LazyCkeditor = defineAsyncComponent({
           'redo',
           'insertTable',
           'mediaEmbed',
-          'htmlEmbed',
+          'sourceEditing',
           '|',
           'blockQuote',
           'highlight',
         ],
+        htmlSupport: {
+          allow: [
+            {
+              name: /.*/, // allow all elements
+              attributes: true, // keep all attributes
+              classes: true, // keep CSS classes
+              styles: true, // keep inline styles
+            },
+          ],
+          disallow: [
+            {
+              name: 'script', // block <script>
+              attributes: true,
+              classes: true,
+              styles: true,
+            },
+            {
+              name: 'iframe', // optionally block <iframe>
+              attributes: true,
+              classes: true,
+              styles: true,
+            },
+          ],
+        },
       }
     }
     else {

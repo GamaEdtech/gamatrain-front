@@ -305,16 +305,6 @@ const isLoggedIn = computed(() => {
   return auth.isAuthenticated.value ?? false
 })
 
-useHead(() => ({
-  title: contentData.value?.title || 'Multimedia Details',
-  link: [
-    {
-      rel: 'canonical',
-      href: `https://${requestURL.value}/multimedia/${contentData.value.id}/${contentData.value.title_url}`,
-    },
-  ],
-}))
-
 async function fetchContentData() {
   const { id } = route.params
 
@@ -398,6 +388,74 @@ watchEffect(async () => {
     await initBreadCrumb()
   }
 })
+
+const ogImage
+  = contentData.value?.previewData
+    && contentData.value?.previewData.preview
+    && contentData.value?.previewData.preview.length > 0
+    ? contentData.value?.previewData.preview[0]
+    : null
+useHead(() => ({
+  title: contentData.value?.title || 'Multimedia Details',
+  meta: [
+    {
+      hid: 'apple-mobile-web-app-title',
+      name: 'apple-mobile-web-app-title',
+      content: contentData.value?.title,
+    },
+    {
+      hid: 'og:title',
+      name: 'og:title',
+      content: contentData.value?.title,
+    },
+    {
+      hid: 'og:site_name',
+      name: 'og:site_name',
+      content: 'GamaTrain',
+    },
+    {
+      hid: 'description',
+      name: 'description',
+      content: contentData.value?.description,
+    },
+    {
+      hid: 'og:description',
+      name: 'og:description',
+      content: contentData.value?.description,
+    },
+    {
+      hid: 'og:image',
+      property: 'og:image',
+      content: ogImage,
+    },
+    {
+      hid: 'twitter:card',
+      name: 'twitter:card',
+      content: 'summary_large_image',
+    },
+    {
+      hid: 'twitter:title',
+      name: 'twitter:title',
+      content: contentData.value?.title,
+    },
+    {
+      hid: 'twitter:description',
+      name: 'twitter:description',
+      content: contentData.value?.description,
+    },
+    {
+      hid: 'twitter:image',
+      name: 'twitter:image',
+      content: ogImage,
+    },
+  ],
+  link: [
+    {
+      rel: 'canonical',
+      href: `https://${requestURL.value}/multimedia/${contentData.value.id}/${contentData.value.title_url}`,
+    },
+  ],
+}))
 
 // onMounted(async () => {
 //   if (pending.value) {

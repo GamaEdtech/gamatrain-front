@@ -186,6 +186,10 @@ export default {
               title: 'FAQ',
               link: '/faq',
             },
+            {
+              title: 'Leader Board',
+              link: '/leader-board',
+            },
           ],
         },
         {
@@ -206,6 +210,10 @@ export default {
             {
               title: '$GET Token',
               link: '/get-token',
+            },
+            {
+              title: 'Governance',
+              link: '/governance',
             },
           ],
         },

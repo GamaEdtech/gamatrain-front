@@ -7,15 +7,10 @@
   >
     <v-card class="coin-payment-modal">
       <div class="d-flex flex-column align-center justify-center pt-6">
-        <img
-          class="icon-container"
-          src="/images/token/Hero/GET-coin.svg"
-          alt="GET Coin"
-          width="100"
-          height="100"
-        >
+        <span style="font-size:80px">🎮</span>
+
         <v-card-title class="font-size-18 primary-gray-700 font-bold text-center">
-          🎮 Game On!
+          Game On!
         </v-card-title>
       </div>
 
@@ -34,7 +29,7 @@
             v-if="userBalance < 5"
             class="text-error text-center"
           >
-            Insufficient balance! You need {{ 5 - userBalance }} more points.
+            Insufficient balance! You need {{ formatNumber(5000000 - userBalance) }} more points.
           </span>
         </v-card-text>
 
@@ -43,7 +38,7 @@
             variant="flat"
             color="success"
             class="w-50 rounded-pill white--text"
-            :disabled="userBalance < 5 || isProcessing"
+            :disabled="userBalance < 5000000 || isProcessing"
             :loading="isProcessing"
             @click="confirmPayment"
           >
@@ -93,7 +88,7 @@ const emit = defineEmits(['update:isOpen', 'confirm', 'close'])
 const { formatNumber } = useFormatNumber()
 
 const confirmPayment = () => {
-  if (props.userBalance >= 5) {
+  if (props.userBalance >= 5000000) {
     emit('confirm')
   }
 }

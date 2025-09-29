@@ -313,7 +313,9 @@
             color="blue"
             variant="flat"
             size="large"
-            :loading="extraFileDownloadLoading && !isDownloading('extra', extra.id)"
+            :loading="
+              extraFileDownloadLoading && !isDownloading('extra', extra.id)
+            "
             @click="handleDownloadClick('extra', extra.id)"
           >
             <template v-if="isDownloading('extra', extra.id)">
@@ -621,7 +623,7 @@ const handleCoinPaymentConfirm = async () => {
 
   try {
     // Deduct coins
-    const success = await coinBalance.deductCoins(5, 'Past paper download')
+    const success = await coinBalance.deductCoins(5000000, 'Past paper download')
     console.log('Coin deduction result:', success)
 
     if (success) {
@@ -747,7 +749,6 @@ const startDownload = async (type, extraId) => {
         import('file-saver').then(({ saveAs }) => {
           saveAs(xhr.response, response.data.name)
         })
-
         // Show success message for coin payments
         if (
           requiresCoinPaymentForFile(type, extraId)
@@ -757,7 +758,6 @@ const startDownload = async (type, extraId) => {
             'Download started! 5 coins deducted from your balance.',
           )
         }
-
         // Clean up after a short delay
         setTimeout(() => {
           downloadingItems.value.delete(downloadKey)
@@ -833,6 +833,7 @@ p {
 .btn-icon {
   position: absolute;
   left: 10px;
+  font-size: 23px;
 }
 
 .text-transparent {

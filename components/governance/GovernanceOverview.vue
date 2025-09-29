@@ -2,64 +2,73 @@
   <div class="governance-overview__section mt-10 py-7">
     <div class="governance-overview__shape">
       <v-container>
-        <h1
-          class="text-h4 text-md-h3 font-weight-bold text-white text-center mb-5"
-        >
+        <h1 class="text-h4 text-md-h3 font-weight-bold text-white text-center mb-5">
           Your Governance Overview
         </h1>
 
-        <div class="governance-overview__cover">
-          <img
-            class="governance-overview__image"
-            src="/static/governance/governance-overview.webp"
-            alt=""
-          >
+        <!-- Show connect message if wallet is not ready -->
+        <div
+          v-if="!connected"
+          class="text-center text-white py-10"
+        >
+          Connect your wallet to see your overview.
         </div>
 
-        <div class="governance-overview__staking-dashboard">
-          <div class="governance-overview__stat-item">
-            <span class="governance-overview__label">Staked $GET</span>
-            <span class="governance-overview__value">15,000</span>
+        <!-- Show overview when connected -->
+        <div v-else>
+          <div class="governance-overview__cover">
+            <img
+              class="governance-overview__image"
+              src="/static/governance/governance-overview.webp"
+              alt=""
+            >
           </div>
-          <div class="governance-overview__divider" />
-          <div class="governance-overview__stat-item">
-            <span class="governance-overview__label">Reward Earned</span>
-            <span class="governance-overview__value">84.333</span>
-          </div>
-          <div class="governance-overview__divider" />
-          <div class="governance-overview__stat-item">
-            <span class="governance-overview__label">Proposals Voted</span>
-            <span class="governance-overview__value">3</span>
-          </div>
-          <div class="governance-overview__divider" />
-          <div class="governance-overview__stat-item">
-            <span class="governance-overview__label">Days Staked</span>
-            <span class="governance-overview__value">45</span>
-          </div>
-        </div>
 
-        <div class="mt-6 d-flex justify-center">
-          <v-btn
-            color="#FFB600"
-            variant="flat"
-            rounded
-            :size="display.mdAndUp.value ? 'large' : 'default'"
-          >
-            Vote Now
-          </v-btn>
-          <v-btn
-            color="#98A2B3"
-            variant="outlined"
-            rounded
-            class="ml-3"
-            :size="display.mdAndUp.value ? 'large' : 'default'"
-          >
-            Claim Reward
-          </v-btn>
-        </div>
+          <div class="governance-overview__staking-dashboard">
+            <div class="governance-overview__stat-item">
+              <span class="governance-overview__label">Staked $GET</span>
+              <span class="governance-overview__value">15,000</span>
+            </div>
+            <div class="governance-overview__divider" />
+            <div class="governance-overview__stat-item">
+              <span class="governance-overview__label">Reward Earned</span>
+              <span class="governance-overview__value">84.333</span>
+            </div>
+            <div class="governance-overview__divider" />
+            <div class="governance-overview__stat-item">
+              <span class="governance-overview__label">Proposals Voted</span>
+              <span class="governance-overview__value">3</span>
+            </div>
+            <div class="governance-overview__divider" />
+            <div class="governance-overview__stat-item">
+              <span class="governance-overview__label">Days Staked</span>
+              <span class="governance-overview__value">45</span>
+            </div>
+          </div>
 
-        <div class="text-caption text-md-button text-center mt-2 mt-sm-4">
-          <span class="text-white">Available Balance From Wallet </span><span class="pl-1 primary-blue-500">0X12...9F</span><span class="pl-1 text-white">1,250 $GET</span>
+          <div class="mt-6 d-flex justify-center">
+            <v-btn
+              color="#FFB600"
+              variant="flat"
+              rounded
+              :size="isMdAndUp ? 'large' : 'default'"
+            >
+              Vote Now
+            </v-btn>
+            <v-btn
+              color="#98A2B3"
+              variant="outlined"
+              rounded
+              class="ml-3"
+              :size="isMdAndUp ? 'large' : 'default'"
+            >
+              Claim Reward
+            </v-btn>
+          </div>
+
+          <div class="text-caption text-md-button text-center mt-2 mt-sm-4">
+            <span class="text-white">Available Balance From Wallet </span><span class="pl-1 primary-blue-500">{{ shortAddress }}</span><span class="pl-1 text-white">1,250 $GET</span>
+          </div>
         </div>
       </v-container>
     </div>
@@ -67,9 +76,40 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, computed, watch } from 'vue'
 import { useDisplay } from 'vuetify/lib/composables/display'
+import { useWorkspace } from '~/composables/useWorkspace'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { Ref } from 'vue'
 
 const display = useDisplay()
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const isMdAndUp = computed(() => (display as any)?.mdAndUp?.value ?? false)
+
+// --- STATE ---
+const connected = ref(false)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const publicKey = ref<any | null>(null)
+
+// --- LIFECYCLE HOOK ---
+onMounted(async () => {
+  const workspace = useWorkspace()
+  // Use workspace state directly
+  watch(() => workspace.connected.value, (val) => {
+    connected.value = val
+  }, { immediate: true })
+  watch(() => workspace.publicKey.value, (pk) => {
+    publicKey.value = pk
+  }, { immediate: true })
+})
+
+// --- COMPUTED PROPERTIES ---
+const shortAddress = computed(() => {
+  const pk = publicKey.value
+  if (!pk) return ''
+  const base58 = pk.toBase58()
+  return `${base58.slice(0, 4)}...${base58.slice(-4)}`
+})
 </script>
 
 <style scoped>
@@ -78,9 +118,11 @@ const display = useDisplay()
   margin: 0 auto;
   margin-bottom: -10px;
 }
+
 .governance-overview__image {
   width: 100%;
 }
+
 .governance-overview__section {
   background: #24292f;
 }
@@ -103,6 +145,7 @@ const display = useDisplay()
   width: 100%;
   flex-wrap: wrap;
 }
+
 .governance-overview__staking-dashboard::before {
   content: "";
   position: absolute;
@@ -113,6 +156,7 @@ const display = useDisplay()
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 .governance-overview__staking-dashboard::after {
   content: "";
   position: absolute;
@@ -123,6 +167,7 @@ const display = useDisplay()
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 .governance-overview__stat-item {
   display: flex;
   justify-content: space-between;
@@ -154,6 +199,7 @@ const display = useDisplay()
   .governance-overview__staking-dashboard::after {
     content: unset;
   }
+
   .governance-overview__section {
     background: #24292f;
   }
@@ -209,10 +255,12 @@ const display = useDisplay()
   .governance-overview__cover {
     width: 45%;
   }
+
   .governance-overview__image {
     width: 100%;
     max-height: 260px;
   }
+
   .governance-overview__staking-dashboard {
     max-width: 770px;
   }
