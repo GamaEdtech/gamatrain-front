@@ -9,6 +9,14 @@ export const useAuth = () => {
     maxAge: 60 * 60 * 24 * 7, // 1 week
   })
 
+  // -------------------------
+  // Token v2
+  // -------------------------
+  const cookieTokenV2 = useCookie<string | null>('tokenV2', {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 7, // 1 week
+  })
+
   const setUserToken = (newToken: string) => {
     cookieToken.value = newToken
   }
@@ -19,6 +27,21 @@ export const useAuth = () => {
 
   const clearAuth = () => {
     cookieToken.value = null
+  }
+
+  // -------------------------
+  // Token v2 helpers
+  // -------------------------
+  const setUserTokenV2 = (newToken: string) => {
+    cookieTokenV2.value = newToken
+  }
+
+  const getUserTokenV2 = () => {
+    return cookieTokenV2?.value
+  }
+
+  const clearTokenV2 = () => {
+    cookieTokenV2.value = null
   }
 
   const logout = async () => {
@@ -97,12 +120,15 @@ export const useAuth = () => {
   return {
     cookieToken,
     setUserToken,
+    setUserTokenV2,
     clearAuth,
+    clearTokenV2,
     logout,
     login,
     register,
     isAuthenticated,
     forgotPassword,
     getUserToken,
+    getUserTokenV2,
   }
 }

@@ -75,7 +75,7 @@ export const authHeader = (
 
   if (import.meta.client) {
     if (req?.includes('v2')) {
-      return { Authorization: `Bearer ${localStorage.getItem('v2_token')}` }
+      return { Authorization: `Bearer ${auth.getUserTokenV2()}` }
     }
     else {
       return { Authorization: `Bearer ${auth.getUserToken()}` }

@@ -690,6 +690,7 @@ const { data: contentData } = await useAsyncData(
   `exam-result-${route.params.id}`,
   async () => {
     const authToken = auth.getUserToken()
+    const authTokenV2 = auth.getUserTokenV2()
     if (!authToken) {
       throw createError({
         statusCode: 403,
@@ -701,6 +702,15 @@ const { data: contentData } = await useAsyncData(
         headers: { Authorization: `Bearer ${authToken}` },
       })
       if (response?.status === 1 && response.data) {
+        const reward = await $fetch('/api/v2/games/exams/points', {
+          method: 'POST',
+          body: { id: route.params.id },
+          headers: {
+            Authorization: `Bearer ${authTokenV2}`,
+            SecretKey: authToken,
+          },
+        })
+        console.log(reward)
         return response.data
       }
       return null
