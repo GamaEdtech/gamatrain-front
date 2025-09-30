@@ -145,7 +145,14 @@
 <script setup>
 import { ref } from 'vue'
 import { useSolanaClient } from '~/composables/useSolanaClient'
+// import { Buffer } from "buffer";
+import { SystemProgram, Transaction, PublicKey } from '@solana/web3.js'
+// import {
+//   getAssociatedTokenAddress,
+//   createTransferInstruction,
+// } from "@solana/spl-token";
 
+const splTokenLib = ref(null)
 const selectToken = ref(null)
 const payTokenOptions = ref([
   {
@@ -203,6 +210,28 @@ onMounted(async () => {
     catch (error) {
       console.error('Failed to initialize wallet:', error)
     }
+
+    try {
+      if (!window.Buffer) {
+        const { Buffer } = await import('buffer')
+        window.Buffer = Buffer
+      }
+
+      const {
+        getAssociatedTokenAddress,
+        createTransferInstruction,
+        createAssociatedTokenAccountInstruction,
+      } = await import('@solana/spl-token')
+
+      splTokenLib.value = {
+        getAssociatedTokenAddress,
+        createTransferInstruction,
+        createAssociatedTokenAccountInstruction,
+      }
+    }
+    catch (err) {
+      console.error('Failed to spl token:', err)
+    }
   }
 })
 
@@ -245,7 +274,8 @@ const startPaymentProccess = async () => {
       return
     }
 
-    const { getConnection, getTokenAccountsByOwner } = useSolanaClient()
+    // const { getConnection, getTokenAccountsByOwner } = useSolanaClient()
+    const { getConnection } = useSolanaClient()
     const connection = await getConnection()
     const owner = wallet.value.publicKey
 
@@ -265,39 +295,128 @@ const startPaymentProccess = async () => {
     }
 
     console.log('selectToken.value', selectToken.value)
-    if (selectToken.value.symbol === 'SOL') {
-      if (solBalance < payAmount + networkFeeReserve) {
-        console.warn(`your sol balance is not enough: ${solBalance} SOL`)
-        return
-      }
-      console.log('your sol balance is okay✅')
-    }
-    else {
-      const tokenAccounts = await getTokenAccountsByOwner({
-        owner: owner.toBase58(),
-        mint: selectToken.value.mint,
-      })
+    // if (selectToken.value.symbol === 'SOL') {
+    //   if (solBalance < payAmount + networkFeeReserve) {
+    //     console.warn(`your sol balance is not enough: ${solBalance} SOL`)
+    //     return
+    //   }
+    //   console.log('your sol balance is okay✅')
+    // }
+    // else {
+    //   const tokenAccounts = await getTokenAccountsByOwner({
+    //     owner: owner.toBase58(),
+    //     mint: selectToken.value.mint,
+    //   })
 
-      let tokenBalance = 0
-      if (tokenAccounts.length > 0) {
-        const acc = tokenAccounts[0]
-        tokenBalance = Number(acc.amount) / 10 ** acc.decimals
-      }
+    //   let tokenBalance = 0
+    //   if (tokenAccounts.length > 0) {
+    //     const acc = tokenAccounts[0]
+    //     tokenBalance = Number(acc.amount) / 10 ** acc.decimals
+    //   }
 
-      if (tokenBalance < payAmount) {
-        console.warn(
-          `your balance ${selectToken.value.symbol} is not eough: ${tokenBalance}`,
-        )
-        return
-      }
+    //   if (tokenBalance < payAmount) {
+    //     console.warn(
+    //       `your balance ${selectToken.value.symbol} is not eough: ${tokenBalance}`,
+    //     )
+    //     return
+    //   }
 
-      console.log(`${selectToken.value.symbol} balance is okay✅`)
-    }
+    //   console.log(`${selectToken.value.symbol} balance is okay✅`)
+    // }
 
+    sendTransaction()
     console.log('✅ ready for payment...')
   }
   catch (err) {
     console.error('error in check balance:', err)
+  }
+}
+
+const sendTransaction = async () => {
+  try {
+    if (!wallet.value?.connected || !wallet.value.publicKey) {
+      throw new Error('Wallet is not connected')
+    }
+
+    const { getConnection } = useSolanaClient()
+    const connection = await getConnection()
+
+    const destination = new PublicKey(
+      '8nsSJjDKxNcxrDkvkR7BPsRiSsTzd7y9mhtQy6ZRuvsh',
+    )
+    const sender = wallet.value.publicKey
+
+    console.log(
+      'amount * 10 ** selectToken.value.decimals',
+      amount.value * 10 ** selectToken.value.decimals,
+    )
+
+    const rawAmount = BigInt(
+      Math.round(amount.value * 10 ** selectToken.value.decimals),
+    )
+
+    const transaction = new Transaction()
+
+    if (selectToken.value.symbol === 'SOL') {
+      transaction.add(
+        SystemProgram.transfer({
+          fromPubkey: sender,
+          toPubkey: destination,
+          lamports: rawAmount,
+        }),
+      )
+    }
+    else {
+      const mintPubkey = new PublicKey(selectToken.value.mint)
+
+      console.log('splTokenLib.value', splTokenLib.value)
+
+      const fromTokenAccount
+        = await splTokenLib.value.getAssociatedTokenAddress(mintPubkey, sender)
+      const toTokenAccount = await splTokenLib.value.getAssociatedTokenAddress(
+        mintPubkey,
+        destination,
+      )
+      console.log('fromTokenAccount', fromTokenAccount)
+      console.log('toTokenAccount', toTokenAccount)
+
+      const toTokenAccountInfo = await connection.getAccountInfo(
+        toTokenAccount,
+      )
+      console.log('toTokenAccountInfo', toTokenAccountInfo)
+
+      if (!toTokenAccountInfo) {
+        transaction.add(
+          splTokenLib.value.createAssociatedTokenAccountInstruction(
+            sender,
+            toTokenAccount,
+            destination,
+            mintPubkey,
+          ),
+        )
+      }
+
+      transaction.add(
+        splTokenLib.value.createTransferInstruction(
+          fromTokenAccount,
+          toTokenAccount,
+          sender,
+          rawAmount,
+        ),
+      )
+    }
+
+    const signature = await wallet.value.sendTransaction(
+      transaction,
+      connection,
+    )
+
+    await connection.confirmTransaction(signature, 'confirmed')
+
+    console.log('✅ Transaction sent:', signature)
+  }
+  catch (error) {
+    console.error('❌ Payment failed:', error)
   }
 }
 
