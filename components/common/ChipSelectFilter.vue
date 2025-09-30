@@ -159,10 +159,15 @@ const openSelectModal = () => {
   isShowSelectModal.value = true
 }
 
+const setStaticItem = (staticItem) => {
+  items.value = staticItem
+}
+
 defineExpose({
   getItems,
   getItemById,
   openSelectModal,
+  setStaticItem,
 })
 </script>
 

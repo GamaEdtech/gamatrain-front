@@ -81,16 +81,16 @@
           />
         </template>
       </div>
-      <div class="justify-center d-flex w-100 max-width-container">
+      <div class="justify-start d-flex w-100 max-width-container">
         <div class="d-flex flex-wrap ga-2 px-2">
           <template v-for="(filter, index) in filters">
             <v-chip
-              v-if="filter.selectedItem"
+              v-if="filter.selectedItem && !filter.defaultValue"
               :key="filter.title"
               variant="flat"
               class="text-h5 pl-5 pr-5"
               color="#F2F4F7"
-              closable
+              :closable="filter.closable"
               @click:close="clearFilter(index)"
             >
               {{ filter.selectedItem?.title }}
@@ -130,12 +130,12 @@
           >
             <template v-for="(filter, index) in filters">
               <v-chip
-                v-if="filter.selectedItem"
+                v-if="filter.selectedItem && !filter.defaultValue"
                 :key="filter.title"
                 variant="flat"
                 class="text-h5 pl-5 pr-5"
                 color="#F2F4F7"
-                closable
+                :closable="filter.closable"
                 @click:close="clearFilter(index)"
               >
                 {{ filter.selectedItem?.title }}
@@ -229,6 +229,8 @@
         $numberFormat(countDataFound)
       }}</span>
     </v-col>
+
+    <slot />
   </div>
 </template>
 
@@ -242,7 +244,7 @@ const props = defineProps({
     default: () => [],
   },
   countDataFound: {
-    type: Number,
+    type: [Number, String],
     default: () => 0,
   },
   hasKeywordSearch: {
@@ -260,7 +262,7 @@ const emits = defineEmits(['changeFilter'])
 const filters = ref([...props.filterList])
 const dialogFilterMobileModel = ref(false)
 const countFilterSelect = ref(Object.keys(route.query).length)
-const textSearch = ref(route.query.keyword ? route.query.keyword : '')
+const textSearch = ref(route.query.title ? route.query.title : '')
 const timer = ref(null)
 
 onMounted(async () => {
@@ -280,10 +282,28 @@ const updateSelectedItem = (itemSelected, index) => {
 
 const resetDescendants = (indexFilter) => {
   const filterParent = filters.value[indexFilter]
+
+  if (filterParent.childrenForGetStaticData) {
+    for (const childIndex of filterParent.childrenForGetStaticData) {
+      const child = filters.value[childIndex]
+      const readyForGetStatic
+        = child.dependenciesForGetStaticData?.includes(indexFilter)
+
+      if (readyForGetStatic) {
+        if (child.getStaticList) {
+          const staticList = child.getStaticList('reset')
+          child.refElement.setStaticItem(staticList)
+          child.selectedItem = null
+        }
+      }
+    }
+  }
+
   if (!filterParent.children || filterParent.children.length == 0) return
 
   for (const childIndex of filterParent.children) {
     const child = filters.value[childIndex]
+
     child.selectedItem = null
     child.disabled = true
     resetDescendants(childIndex)
@@ -292,6 +312,26 @@ const resetDescendants = (indexFilter) => {
 
 const enableReadyChildren = async (indexFilter) => {
   const filterParent = filters.value[indexFilter]
+
+  if (filterParent.childrenForGetStaticData) {
+    for (const childIndex of filterParent.childrenForGetStaticData) {
+      const child = filters.value[childIndex]
+      const readyForGetStatic
+        = child.dependenciesForGetStaticData?.includes(indexFilter)
+
+      if (readyForGetStatic) {
+        if (
+          child.getStaticList
+          && filterParent.selectedItem
+          && filterParent.selectedItem.id
+        ) {
+          const staticList = child.getStaticList(filterParent.selectedItem.id)
+          child.refElement.setStaticItem(staticList)
+        }
+      }
+    }
+  }
+
   if (!filterParent.children || filterParent.children.length == 0) return
 
   for (const childIndex of filterParent.children) {
@@ -302,6 +342,25 @@ const enableReadyChildren = async (indexFilter) => {
     )
 
     if (ready) {
+      const disableValue = child.dependencies.some(dep =>
+        dep.disableIds?.includes(filters.value[dep.parent].selectedItem.id),
+      )
+
+      if (disableValue) {
+        child.disabled = true
+        continue
+      }
+
+      if (
+        child.queryMap
+        && child.parentIndexChangeQueryKey
+        && filters.value[child.parentIndexChangeQueryKey].selectedItem
+      ) {
+        const id
+          = filters.value[child.parentIndexChangeQueryKey].selectedItem.id
+        child.queryKey = child.queryMap[id] ?? child.queryKey
+      }
+
       child.disabled = false
       if (child.api && !child.staticList?.length) {
         if (!child.idInParams) {
@@ -330,16 +389,18 @@ const clearFilter = (index) => {
 
 const updateQueryFromFilters = async () => {
   const query = {}
+  const titles = {}
 
   filters.value.forEach((f) => {
     if (f.queryKey && f.selectedItem?.id) {
       query[f.queryKey] = f.selectedItem.id
+      titles[f.queryKey] = f.selectedItem.title
     }
   })
 
   countFilterSelect.value = Object.keys(query).length
   router.replace({ query })
-  emits('changeFilter', query)
+  emits('changeFilter', query, titles)
 }
 
 const fetchDataRequireFilter = async () => {
@@ -350,6 +411,10 @@ const fetchDataRequireFilter = async () => {
         await filter.refElement.getItems()
       }
     }
+    if (filter.getStaticList) {
+      const staticList = filter.getStaticList()
+      filter.refElement.setStaticItem(staticList)
+    }
   }
 }
 
@@ -357,6 +422,15 @@ const fetchFilterAvailableInQuery = async () => {
   for (let index = 0; index < filters.value.length; index++) {
     const filter = filters.value[index]
     const qVal = route.query[filter.queryKey]
+
+    if (filter.defaultValue && !qVal) {
+      filters.value[index].selectedItem = filter.defaultValue
+      await enableReadyChildren(index)
+
+      const query = { ...route.query }
+      query[filter.queryKey] = filter.defaultValue.id
+      router.replace({ query })
+    }
     if (!qVal) continue
 
     const ready = filter.dependencies?.every(
@@ -390,10 +464,10 @@ const changeTextSearch = () => {
   if (props.hasKeywordSearch) {
     const query = { ...route.query }
     if (textSearch.value.length == 0) {
-      delete query.keyword
+      delete query.title
     }
     else {
-      query.keyword = textSearch.value
+      query.title = textSearch.value
     }
     router.replace({ query })
     debouncedSearchText()
@@ -413,7 +487,11 @@ const debouncedSearchText = () => {
 const clearAllFilter = async () => {
   for (let i = 0; i < filters.value.length; i++) {
     const filter = filters.value[i]
-    if (!filter.dependencies?.length && filter.selectedItem) {
+    if (
+      !filter.dependencies?.length
+      && filter.selectedItem
+      && !filter.defaultValue
+    ) {
       filter.selectedItem = null
       resetDescendants(i)
     }
