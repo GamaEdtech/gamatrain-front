@@ -702,14 +702,21 @@ const { data: contentData } = await useAsyncData(
         headers: { Authorization: `Bearer ${authToken}` },
       })
       if (response?.status === 1 && response.data) {
-        const reward = await $fetch('/api/v2/games/exams/points', {
-          method: 'POST',
-          body: { id: route.params.id },
-          headers: {
-            Authorization: `Bearer ${authTokenV2}`,
-            SecretKey: authToken,
-          },
-        })
+        let reward = null
+        try {
+          reward = await $fetch('/api/v2/games/exams/points', {
+            method: 'POST',
+            body: { id: route.params.id },
+            headers: {
+              Authorization: `Bearer ${authTokenV2}`,
+              SecretKey: authToken,
+            },
+          })
+        }
+        catch (error) {
+          console.warn('Fetch failed but continuing...', error)
+          reward = null // fallback value
+        }
         console.log(reward)
         return response.data
       }
