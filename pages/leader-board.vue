@@ -266,6 +266,8 @@ const fetchLeaderBoard = async (query) => {
       },
     )
 
+    console.log(response.data)
+
     list.value = response.data
     winners.first = list.value[0]?.avatar
     winners.second = list.value[1]?.avatar || ''
