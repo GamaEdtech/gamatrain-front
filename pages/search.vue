@@ -17,7 +17,7 @@
             </h1>
 
             <nuxt-link
-              v-if="route.query.base && data.length > 0"
+              v-if="route.query.lesson && data.length > 0"
               :to="`/subject-directory?board=${route.query.section}&grade=${route.query.base}&subject=${route.query.lesson}`"
               class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
             >
