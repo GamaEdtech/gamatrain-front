@@ -278,6 +278,7 @@ const recheckEnteredIdentity = () => {
 }
 
 async function submitLoginV2(old_token) {
+  const auth = useAuth()
   const { user } = useUser()
   const pass = password.value.value ? password.value.value : generatePassword()
   const identityVal = identity.value.value
@@ -289,6 +290,7 @@ async function submitLoginV2(old_token) {
   })
   if (result.succeeded) {
     localStorage.setItem('v2_token', result.data.token)
+    auth.setUserTokenV2(result.data.token)
   }
   else if (
     result.errors.length

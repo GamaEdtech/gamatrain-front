@@ -78,6 +78,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 
+const auth = useAuth()
+
 const props = defineProps({
   value: {
     type: Boolean,
@@ -139,7 +141,7 @@ watch(localSlug, async (newVal) => {
         {
           params: { slug: newVal },
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('v2_token')}`,
+            Authorization: `Bearer ${auth.getUserTokenV2()}`,
           },
         },
       )
