@@ -163,6 +163,10 @@ export const governance = {
   async fetchProposals(program: Program) {
     try {
       const proposals = await (program.account as any).proposal.all()
+      console.log('proposals', proposals.map((proposal: any) => ({
+        title: proposal.account.title || '',
+      })))
+
       return proposals.map((proposal: any) => ({
         ...proposal,
         account: {
@@ -218,8 +222,17 @@ export const governance = {
           systemProgram: web3.SystemProgram.programId,
         })
         .signers([proposalKeypair])
-        .rpc()
+        .rpc({ skipPreflight: true })
 
+      console.log('📌 sent tx:', tx)
+
+      const latestBlockhash = await program.provider.connection.getLatestBlockhash()
+      await program.provider.connection.confirmTransaction({
+        signature: tx,
+        ...latestBlockhash,
+      })
+
+      console.log('✅ confirmed:', tx)
       return {
         signature: tx,
         proposalPublicKey: proposalKeypair.publicKey,
