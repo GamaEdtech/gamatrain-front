@@ -336,20 +336,6 @@ async function onSubmit() {
 const handleAfterLeave = () => {
   emits('update:modelValue', false)
 }
-
-onMounted(async () => {
-  if (import.meta.client) {
-    try {
-      if (!window.Buffer) {
-        const { Buffer } = await import('buffer')
-        window.Buffer = Buffer
-      }
-    }
-    catch (err) {
-      console.error('Failed to spl token:', err)
-    }
-  }
-})
 </script>
 
 <style scoped>

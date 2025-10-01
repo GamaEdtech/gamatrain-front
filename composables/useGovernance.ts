@@ -3,7 +3,6 @@
 import * as anchor from '@coral-xyz/anchor'
 import { ref } from 'vue'
 import type { PublicKey } from '@solana/web3.js'
-import { Buffer } from 'buffer'
 
 // Type alias (keep it only for typing)
 type Program<T extends anchor.Idl = anchor.Idl> = anchor.Program<T>
@@ -46,13 +45,20 @@ interface ProposalData {
   expiresAt: anchor.BN
 }
 
+export const ensureBuffer = async () => {
+  if (typeof window !== 'undefined' && !(window as any).Buffer) {
+    const { Buffer } = await import('buffer');
+    (window as any).Buffer = Buffer
+  }
+  return typeof window !== 'undefined' ? (window as any).Buffer : (globalThis as any).Buffer
+}
+
 /**
  * Enhanced governance composable with proper error handling and vote power calculation
  */
 export const useGovernance = () => {
   const isLoading = ref(false)
   const error = ref<string | null>(null)
-
   /**
    * Calculate vote power based on user's GET token balance
    * @param userPublicKey - The user's wallet public key
@@ -142,6 +148,9 @@ export const useGovernance = () => {
     return error.message || 'An unexpected error occurred'
   }
 
+  // auto-ensure Buffer on composable usage
+  if (typeof window !== 'undefined') ensureBuffer().catch(console.error)
+
   return {
     isLoading,
     error,
@@ -161,6 +170,7 @@ export const governance = {
    * @param program - The initialized Anchor Program instance.
    */
   async fetchProposals(program: Program) {
+    await ensureBuffer()
     try {
       const proposals = await (program.account as any).proposal.all()
       console.log('proposals', proposals.map((proposal: any) => ({
@@ -197,6 +207,7 @@ export const governance = {
     user: PublicKey,
     formData: CreateProposalForm,
   ) {
+    await ensureBuffer()
     try {
       // Validate form data
       if (!formData.title?.trim()) {
@@ -260,6 +271,7 @@ export const governance = {
     agree: boolean,
     votePower?: number,
   ) {
+    await ensureBuffer()
     try {
       const { checkVoteRecord, calculateVotePower, isProposalExpired } = useGovernance()
 
@@ -318,6 +330,7 @@ export const governance = {
     user: PublicKey,
     proposalPublicKey: PublicKey,
   ) {
+    await ensureBuffer()
     try {
       // Check if user owns the proposal
       // @ts-expect-error: proposal account type may not be inferred
@@ -354,6 +367,7 @@ export const governance = {
     proposalPublicKey: PublicKey,
     voterPublicKey: PublicKey,
   ) {
+    await ensureBuffer()
     try {
       const { checkVoteRecord } = useGovernance()
       return await checkVoteRecord(program, proposalPublicKey, voterPublicKey)
