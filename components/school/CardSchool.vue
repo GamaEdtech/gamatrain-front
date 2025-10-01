@@ -3,7 +3,7 @@
     :class="`w-100 pa-0 pa-md-4 rounded-lg d-flex flex-column align-start justify-md-space-between card-school justify-end position-relative ${
       school?.defaultImageUri ? `` : `without-image`
     }`"
-    :to="`/school/${school.id}/${$slugGenerator(school.name)}`"
+    :to="`/school/${school.id}/${school.slug}`"
   >
     <v-icon
       v-if="school?.defaultImageUri"
@@ -37,7 +37,7 @@
       <div
         class="w-100 d-flex flex-column align-start justify-start ga-2 ga-md-5"
       >
-        <span class="gtext-t4 font-weight-semibold">{{ school.name }}</span>
+        <h2 class="gtext-t4 font-weight-semibold">{{ school.name }}</h2>
         <div class="d-flex align-center justify-start flex-wrap ga-2">
           <v-chip
             v-if="school.countryTitle && school.countryTitle.length > 0"

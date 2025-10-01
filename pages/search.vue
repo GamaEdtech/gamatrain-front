@@ -12,7 +12,7 @@
           <div
             class="w-100 d-flex flex-column align-start ga-2 px-2 max-width-container"
           >
-            <h1 class="text-h6 pt-2">
+            <h1 class="text-h6 text-md-h5 pt-2">
               {{ metadata.title }}
             </h1>
 
