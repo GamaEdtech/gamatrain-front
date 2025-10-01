@@ -1,5 +1,8 @@
 <template>
   <div class="main-school-list-div">
+    <h1 class="d-none">
+      {{ metaTitle }}
+    </h1>
     <div class="map-div">
       <v-btn
         class="list-view-button mt-16 ml-12 position-absolute d-none d-lg-flex pa-6 text-h4"
@@ -72,7 +75,7 @@
         @update-filter="updateFilter"
       />
       <div
-        v-if="!isExpandMapInDesktop"
+        v-show="!isExpandMapInDesktop"
         class="container-div-button"
       >
         <v-btn
