@@ -275,9 +275,9 @@ const startPaymentProccess = async () => {
     }
 
     // const { getConnection, getTokenAccountsByOwner } = useSolanaClient()
-    const { getConnection } = useSolanaClient()
-    const connection = await getConnection()
-    const owner = wallet.value.publicKey
+    // const { getConnection } = useSolanaClient()
+    // const connection = await getConnection()
+    // const owner = wallet.value.publicKey
 
     const payAmount = parseFloat(amount.value)
     if (isNaN(payAmount) || payAmount <= 0) {
@@ -285,14 +285,14 @@ const startPaymentProccess = async () => {
       return
     }
 
-    const lamports = await connection.getBalance(owner)
-    const solBalance = lamports / 1e9
-    const networkFeeReserve = 0.001
+    // const lamports = await connection.getBalance(owner)
+    // const solBalance = lamports / 1e9
+    // const networkFeeReserve = 0.001
 
-    if (solBalance < networkFeeReserve) {
-      console.warn('for transaction fee your balance is not enough')
-      return
-    }
+    // if (solBalance < networkFeeReserve) {
+    //   console.warn("for transaction fee your balance is not enough");
+    //   return;
+    // }
 
     console.log('selectToken.value', selectToken.value)
     // if (selectToken.value.symbol === 'SOL') {
