@@ -16,6 +16,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     return (
       path.startsWith('/get-token')
       || path.startsWith('/governance')
+      || path.startsWith('/payment')
     )
   }
 

@@ -18,7 +18,7 @@
             <div class="px-4 py-4 d-none d-sm-block">
               <div
                 class="d-flex justify-end cursor-pointer"
-                style="justify-self: end;"
+                style="justify-self: end"
                 @click="isActive.value = false"
               >
                 <v-icon color="#bb6b62">
@@ -61,21 +61,24 @@
                   >mdi-wallet</v-icon></span>
                 <span
                   class="pl-2 primary-gray-400"
-                  style="display: inline-block;"
-                >Wallet </span>
+                  style="display: inline-block"
+                >Wallet
+                </span>
                 <span
                   v-if="isWalletReady"
                   class="pl-1 primary-blue-500"
-                  style="display: inline-block;"
+                  style="display: inline-block"
                 >
-                  {{ workspace?.publicKey?.value?.toBase58?.()?.slice(0, 4) }}...{{ workspace?.publicKey?.value?.toBase58?.()?.slice(-4) }}
+                  {{
+                    workspace?.publicKey?.value?.toBase58?.()?.slice(0, 4)
+                  }}...{{
+                    workspace?.publicKey?.value?.toBase58?.()?.slice(-4)
+                  }}
                 </span>
                 <span
                   v-else
                   class="pl-1 text-error"
-                >
-                  Not Connected
-                </span>
+                > Not Connected </span>
               </div>
 
               <div class="mt-10">
@@ -179,7 +182,7 @@
                 class="flex-1 w-70"
                 :loading="isSubmitting"
               >
-                {{ !isWalletReady ? 'Connect Wallet' : 'Submit' }}
+                {{ !isWalletReady ? "Connect Wallet" : "Submit" }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -210,9 +213,14 @@ const emits = defineEmits<{
 }>()
 const rules = {
   required: (v: unknown) => !!v || 'This field is required',
-  maxLength: (max: number) => (v: string) => !v || v.length <= max || `Maximum ${max} characters allowed`,
-  url: (v: string) => !v || /^https?:\/\/.+/.test(v) || 'Must be a valid URL starting with http:// or https://',
-  positiveNumber: (v: number) => v === null || v === undefined || v >= 0 || 'Must be a positive number',
+  maxLength: (max: number) => (v: string) =>
+    !v || v.length <= max || `Maximum ${max} characters allowed`,
+  url: (v: string) =>
+    !v
+    || /^https?:\/\/.+/.test(v)
+    || 'Must be a valid URL starting with http:// or https://',
+  positiveNumber: (v: number) =>
+    v === null || v === undefined || v >= 0 || 'Must be a positive number',
 }
 
 const categoryOptions = [
@@ -226,8 +234,8 @@ const categoryOptions = [
 ]
 
 const formIsValid = ref(false)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const formRef = ref<any | null>(null)
+
+const formRef = ref(null)
 const isSubmitting = ref(false)
 
 const form = ref({
@@ -242,7 +250,11 @@ const visible = ref(props.modelValue)
 // Wallet connection state
 const workspace = useWorkspace()
 const isWalletReady = computed(() => {
-  return workspace?.connected?.value && workspace?.publicKey?.value && workspace?.program?.value
+  return (
+    workspace?.connected?.value
+    && workspace?.publicKey?.value
+    && workspace?.program?.value
+  )
 })
 
 watch(
@@ -253,7 +265,10 @@ watch(
 )
 
 async function onSubmit() {
-  const { valid } = await formRef.value!.validate()
+  console.log('omad ke anjam bede')
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { valid } = await (formRef.value as any).validate()
 
   if (valid) {
     // Check if wallet is connected first
@@ -270,11 +285,15 @@ async function onSubmit() {
       const userPk = workspace?.publicKey?.value
 
       if (!program) {
-        throw new Error('Blockchain program not ready. Please try refreshing the page.')
+        throw new Error(
+          'Blockchain program not ready. Please try refreshing the page.',
+        )
       }
 
       if (!userPk) {
-        throw new Error('Wallet address not available. Please reconnect your wallet.')
+        throw new Error(
+          'Wallet address not available. Please reconnect your wallet.',
+        )
       }
       await governance.createProposal(program, userPk, {
         title: String(form.value.title || ''),
@@ -300,13 +319,13 @@ async function onSubmit() {
         amount: 0,
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    catch (e: any) {
+    catch (e) {
       console.error('Failed to create proposal:', e)
 
       // Show error message
       const { $toast } = useNuxtApp()
-      $toast.error(e.message || 'Failed to create proposal')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      $toast.error((e as any).message || 'Failed to create proposal')
     }
     finally {
       isSubmitting.value = false
