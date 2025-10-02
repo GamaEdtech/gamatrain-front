@@ -106,7 +106,6 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 import boardDialog from '~/components/subject-directory/board-dialog.vue'
@@ -119,6 +118,7 @@ import AQAIcon from '~/assets/images/boards/AQA.svg'
 import OCRIcon from '~/assets/images/boards/OCR.svg'
 import GamaIcon from '~/assets/images/boards/Gama.svg'
 import ScientificIcon from '~/assets/images/boards/Scientific Competition.svg'
+import cxcIcon from '~/assets/images/boards/CXC.svg'
 
 const emit = defineEmits([
   'changeSubject',
@@ -169,6 +169,7 @@ const boardImgs = [
   OCRIcon,
   GamaIcon,
   ScientificIcon,
+  cxcIcon,
 ]
 
 const fetchBoards = async () => {

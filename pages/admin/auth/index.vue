@@ -40,7 +40,7 @@ const submit = async () => {
 
     if (result.succeeded == true) {
       localStorage.setItem('v2_token', result.data.token)
-      auth.setUserToken(result.data.token)
+      auth.setUserTokenV2(result.data.token)
       router.push('/admin/contact-us')
     }
     else {

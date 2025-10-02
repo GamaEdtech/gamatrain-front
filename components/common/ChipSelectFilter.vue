@@ -36,6 +36,7 @@ import AQAIcon from '~/assets/images/boards/AQA.svg'
 import OCRIcon from '~/assets/images/boards/OCR.svg'
 import GamaIcon from '~/assets/images/boards/Gama.svg'
 import ScientificIcon from '~/assets/images/boards/Scientific Competition.svg'
+import cxcIcon from '~/assets/images/boards/CXC.svg'
 
 const props = defineProps({
   title: {
@@ -92,6 +93,7 @@ const boardImgs = [
   OCRIcon,
   GamaIcon,
   ScientificIcon,
+  cxcIcon,
 ]
 
 const onFilterUpdate = (itemSelected) => {
@@ -159,10 +161,15 @@ const openSelectModal = () => {
   isShowSelectModal.value = true
 }
 
+const setStaticItem = (staticItem) => {
+  items.value = staticItem
+}
+
 defineExpose({
   getItems,
   getItemById,
   openSelectModal,
+  setStaticItem,
 })
 </script>
 
