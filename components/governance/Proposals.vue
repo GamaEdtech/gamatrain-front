@@ -1,7 +1,9 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
   <div class="mt-10">
-    <h1 class="text-h4 text-md-h3 mb-md-4 font-weight-bold primary-gray-700 text-center">
+    <h1
+      class="text-h4 text-md-h3 mb-md-4 font-weight-bold primary-gray-700 text-center"
+    >
       Active Proposals
     </h1>
 
@@ -94,7 +96,11 @@
           variant="flat"
           rounded
           class="ml-3"
-          @click="connected ? (visibleCreateProposal = true) : (showWalletModal = true)"
+          @click="
+            connected
+              ? (visibleCreateProposal = true)
+              : (showWalletModal = true)
+          "
         >
           Create Proposal
         </v-btn>
@@ -202,7 +208,9 @@ onMounted(async () => {
       try {
         // Manually import and initialize wallet
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { useAnchorWallet, useWallet } = await import('solana-wallets-vue')
+        const { useAnchorWallet, useWallet } = await import(
+          'solana-wallets-vue'
+        )
       }
       catch (error) {
         console.error('❌ Manual initialization failed:', error)
@@ -211,17 +219,29 @@ onMounted(async () => {
   }
 
   // Watch workspace state changes and update local state
-  watch(() => workspace.connected.value, (val) => {
-    connected.value = val
-  }, { immediate: true })
+  watch(
+    () => workspace.connected.value,
+    (val) => {
+      connected.value = val
+    },
+    { immediate: true },
+  )
 
-  watch(() => workspace.publicKey.value, (pk) => {
-    publicKey.value = pk
-  }, { immediate: true })
+  watch(
+    () => workspace.publicKey.value,
+    (pk) => {
+      publicKey.value = pk
+    },
+    { immediate: true },
+  )
 
-  watch(() => workspace.program.value, (prog) => {
-    program.value = prog as unknown as Program
-  }, { immediate: true })
+  watch(
+    () => workspace.program.value,
+    (prog) => {
+      program.value = prog as unknown as Program
+    },
+    { immediate: true },
+  )
 })
 
 // --- DATA FETCHING ---
@@ -229,7 +249,7 @@ const fetchProposalsData = async () => {
   if (!program.value) return
   isLoading.value = true
   try {
-    proposals.value = await governance.fetchProposals(program.value)
+    proposals.value = await governance.fetchLatestProposals(program.value)
   }
   finally {
     isLoading.value = false
@@ -243,18 +263,26 @@ const handleWalletRequired = () => {
 
 // --- WATCHER ---
 // Always fetch proposals when program is available, regardless of wallet connection
-watch(() => program.value, (prog) => {
-  if (prog) {
-    fetchProposalsData()
-  }
-}, { immediate: true })
+watch(
+  () => program.value,
+  (prog) => {
+    if (prog) {
+      fetchProposalsData()
+    }
+  },
+  { immediate: true },
+)
 
 // Watch wallet connection changes
-watch(() => connected.value, (isConnected) => {
-  if (isConnected) {
-    showWalletModal.value = false
-  }
-}, { immediate: true })
+watch(
+  () => connected.value,
+  (isConnected) => {
+    if (isConnected) {
+      showWalletModal.value = false
+    }
+  },
+  { immediate: true },
+)
 
 // --- HANDLERS ---
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -269,8 +297,14 @@ const handleProposalCreated = () => {
   fetchProposalsData()
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const handleVote = async ({ proposal, agree }: { proposal: any, agree: boolean }) => {
+const handleVote = async ({
+  proposal,
+  agree,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  proposal: any
+  agree: boolean
+}) => {
   // Show wallet modal if not connected
   if (!connected.value) {
     showWalletModal.value = true
@@ -286,8 +320,14 @@ const handleVote = async ({ proposal, agree }: { proposal: any, agree: boolean }
 
     const { PublicKey } = await import('@solana/web3.js')
     const proposalPubkey = new PublicKey(proposal.publicKey)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await governance.vote(program.value as any, publicKey.value, proposalPubkey, agree)
+
+    await governance.vote(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      program.value as any,
+      publicKey.value,
+      proposalPubkey,
+      agree,
+    )
 
     // Show success message
     const { $toast } = useNuxtApp()
@@ -300,11 +340,11 @@ const handleVote = async ({ proposal, agree }: { proposal: any, agree: boolean }
     // Refresh proposals to show updated vote counts
     await fetchProposalsData()
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  catch (e: any) {
+  catch (e) {
     console.error('Vote failed:', e)
     const { $toast } = useNuxtApp()
-    $toast.error(e.message || 'Failed to submit vote')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $toast.error((e as any).message || 'Failed to submit vote')
   }
 }
 

@@ -173,9 +173,6 @@ export const governance = {
     await ensureBuffer()
     try {
       const proposals = await (program.account as any).proposal.all()
-      console.log('proposals', proposals.map((proposal: any) => ({
-        title: proposal.account.title || '',
-      })))
 
       return proposals.map((proposal: any) => ({
         ...proposal,
@@ -192,6 +189,42 @@ export const governance = {
     }
     catch (error) {
       console.error('Error fetching proposals:', error)
+      throw new Error('Failed to fetch proposals from blockchain')
+    }
+  },
+
+  /**
+ * Fetches the latest 10 proposals sorted by creation date (descending).
+ * @param program - The initialized Anchor Program instance.
+ */
+  async fetchLatestProposals(program: Program) {
+    await ensureBuffer()
+    try {
+      const proposals = await (program.account as any).proposal.all()
+
+      const mapped = proposals.map((proposal: any) => ({
+        ...proposal,
+        account: {
+          ...proposal.account,
+          // Ensure proper data types
+          agreeVotes: proposal.account.agreeVotes || new BN(0),
+          disagreeVotes: proposal.account.disagreeVotes || new BN(0),
+          amount: proposal.account.amount || new BN(0),
+          createdAt: proposal.account.createdAt || new BN(0),
+          expiresAt: proposal.account.expiresAt || new BN(0),
+        },
+      }))
+
+      mapped.sort((a: any, b: any) => {
+        const aCreated = a.account.createdAt.toNumber ? a.account.createdAt.toNumber() : Number(a.account.createdAt)
+        const bCreated = b.account.createdAt.toNumber ? b.account.createdAt.toNumber() : Number(b.account.createdAt)
+        return bCreated - aCreated
+      })
+
+      return mapped.slice(0, 10)
+    }
+    catch (error) {
+      console.error('Error fetching latest proposals:', error)
       throw new Error('Failed to fetch proposals from blockchain')
     }
   },
@@ -235,15 +268,12 @@ export const governance = {
         .signers([proposalKeypair])
         .rpc({ skipPreflight: true })
 
-      console.log('📌 sent tx:', tx)
-
       const latestBlockhash = await program.provider.connection.getLatestBlockhash()
       await program.provider.connection.confirmTransaction({
         signature: tx,
         ...latestBlockhash,
       })
 
-      console.log('✅ confirmed:', tx)
       return {
         signature: tx,
         proposalPublicKey: proposalKeypair.publicKey,
