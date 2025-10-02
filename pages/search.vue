@@ -49,7 +49,22 @@ import { useRoute } from 'vue-router'
 
 const route = useRoute()
 
-const querySearch = ref()
+const querySearch = ref({
+  title: route.query.title,
+  section: route.query.section,
+  base: route.query.base,
+  lesson: route.query.lesson,
+  topic: route.query.topic,
+  type: route.query.type ? route.query.type : 'test',
+  edu_year: route.query.edu_year,
+  edu_month: route.query.edu_month,
+})
+if (route.query.type && route.query.type == 'learnfiles') {
+  querySearch.value.content_type = route.query.content_type
+}
+if (route.query.type && route.query.type == 'test') {
+  querySearch.value.test_type = route.query.test_type
+}
 const isInitialDataLoading = ref(false)
 const isPaginationDataLoading = ref(false)
 const data = ref([])
