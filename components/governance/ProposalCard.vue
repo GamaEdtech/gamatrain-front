@@ -42,7 +42,7 @@
         color="primary"
         variant="outlined"
         density="comfortable"
-        style="font-size: 10px;"
+        style="font-size: 10px"
       >
         {{ proposal.account.cate }}
       </v-chip>
@@ -58,10 +58,14 @@
     <div v-if="!isExpired">
       <div class="vote-row">
         <span class="for">
-          ⬆ For: {{ formatVotes(proposal.account.agreeVotes) }} ({{ forPercentage }}%)
+          ⬆ For: {{ formatVotes(proposal.account.agreeVotes) }} ({{
+            forPercentage
+          }}%)
         </span>
         <span class="against">
-          ⬇ Against: {{ formatVotes(proposal.account.disagreeVotes) }} ({{ againstPercentage }}%)
+          ⬇ Against: {{ formatVotes(proposal.account.disagreeVotes) }} ({{
+            againstPercentage
+          }}%)
         </span>
       </div>
 
@@ -126,7 +130,7 @@
           :color="userVoteStatus === 'For' ? 'green' : '#f04438'"
           variant="flat"
           density="comfortable"
-          style="font-size: 10px;"
+          style="font-size: 10px"
         >
           Voted {{ userVoteStatus }}
         </v-chip>
@@ -141,7 +145,8 @@
       <v-card>
         <v-card-title>Delete Proposal</v-card-title>
         <v-card-text>
-          Are you sure you want to delete this proposal? This action cannot be undone.
+          Are you sure you want to delete this proposal? This action cannot be
+          undone.
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -167,9 +172,12 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { BN } from '@coral-xyz/anchor'
+import * as anchor from '@coral-xyz/anchor'
+import type { BN as BNType } from '@coral-xyz/anchor'
 import { governance, useGovernance } from '~/composables/useGovernance'
 import { useWorkspace } from '~/composables/useWorkspace'
+
+const { BN } = anchor
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -253,7 +261,7 @@ const canVote = computed(() => {
 })
 
 // Methods
-const formatVotes = (votes: BN) => {
+const formatVotes = (votes: BNType) => {
   if (!votes) return '0'
   const num = votes.toNumber()
   if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
@@ -261,7 +269,7 @@ const formatVotes = (votes: BN) => {
   return num.toString()
 }
 
-const formatAmount = (amount: BN) => {
+const formatAmount = (amount: BNType) => {
   if (!amount) return '0'
   const num = amount.toNumber()
   return num.toLocaleString()
@@ -283,8 +291,7 @@ const handleVote = async (agree: boolean) => {
   try {
     emits('vote', { proposal: props.proposal, agree })
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  catch (error: any) {
+  catch (error) {
     console.error('Vote failed:', error)
   }
 }
@@ -315,11 +322,11 @@ const confirmDelete = async () => {
     deleteDialog.value = false
     emits('delete', props.proposal)
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  catch (error: any) {
+  catch (error) {
     console.error('Delete failed:', error)
     const { $toast } = useNuxtApp()
-    $toast.error(error.message || 'Failed to delete proposal')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $toast.error((error as any).message || 'Failed to delete proposal')
   }
   finally {
     deleteLoading.value = false
@@ -343,12 +350,12 @@ onMounted(async () => {
 
       hasVoted.value = voteRecord.hasVoted
       if (voteRecord.voteRecord) {
-        userVoteStatus.value = voteRecord.voteRecord.vote === 'true' ? 'For' : 'Against'
+        userVoteStatus.value
+          = voteRecord.voteRecord.vote === 'true' ? 'For' : 'Against'
       }
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  catch (error: any) {
+  catch (error) {
     console.warn('Failed to check vote status:', error)
   }
 })

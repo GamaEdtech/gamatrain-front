@@ -22,17 +22,25 @@
 
           <v-card-text>
             <div :class="`governance-proposals__badge ${proposalStatusText}`">
-              {{ proposalStatusText === 'active' ? 'Active' : proposalStatusText === 'passed' ? 'Passed' : 'Rejected' }}
+              {{
+                proposalStatusText === "active"
+                  ? "Active"
+                  : proposalStatusText === "passed"
+                    ? "Passed"
+                    : "Rejected"
+              }}
             </div>
 
             <div class="governance-proposals__title primary-gray-700">
-              {{ proposal?.account?.title || 'Loading...' }}
+              {{ proposal?.account?.title || "Loading..." }}
             </div>
 
             <div
               class="governance-proposals__subtitle primary-gray-500 mt-2 mb-10"
             >
-              {{ proposal?.account?.brief || 'Loading proposal description...' }}
+              {{
+                proposal?.account?.brief || "Loading proposal description..."
+              }}
             </div>
 
             <v-progress-linear
@@ -44,11 +52,14 @@
             />
 
             <div class="governance-proposals__stats primary-gray-500">
-              <span><span class="font-weight-bold text-black">{{ forPercentage }}%</span> Quorum
+              <span><span class="font-weight-bold text-black">{{ forPercentage }}%</span>
+                Quorum
               </span>
               <span>
-                <span class="font-weight-bold text-black">{{ formatVotes(totalVotes) }}</span> Total
-                Votes</span>
+                <span class="font-weight-bold text-black">{{
+                  formatVotes(totalVotes)
+                }}</span>
+                Total Votes</span>
             </div>
 
             <div
@@ -58,21 +69,27 @@
                 <v-icon color="#98A2B3">
                   mdi-account
                 </v-icon>
-                <span class="font-weight-bold text-black pl-1">{{ formatOwner(proposal?.account?.owner) }}</span>
+                <span class="font-weight-bold text-black pl-1">{{
+                  formatOwner(proposal?.account?.owner)
+                }}</span>
                 Proposal Creator
               </div>
               <div class="time primary-gray-500 w-50 mb-3">
                 <v-icon color="#98A2B3">
                   mdi-calendar-minus-outline
                 </v-icon>
-                <span class="font-weight-bold text-black pl-1">{{ formatDate(proposal?.account?.createdAt) }}</span>
+                <span class="font-weight-bold text-black pl-1">{{
+                  formatDate(proposal?.account?.createdAt)
+                }}</span>
                 Created on
               </div>
               <div class="time primary-gray-500 w-50 mb-3">
                 <v-icon color="#98A2B3">
                   mdi-timer-outline
                 </v-icon>
-                <span class="font-weight-bold text-black pl-1">{{ timeRemaining }}</span>
+                <span class="font-weight-bold text-black pl-1">{{
+                  timeRemaining
+                }}</span>
                 Remaining
               </div>
             </div>
@@ -118,7 +135,13 @@
         <v-card-text>
           <div class="d-flex justify-space-between align-center py-2">
             <div :class="`governance-proposals__badge ${proposalStatusText}`">
-              {{ proposalStatusText === 'active' ? 'Active' : proposalStatusText === 'passed' ? 'Passed' : 'Rejected' }}
+              {{
+                proposalStatusText === "active"
+                  ? "Active"
+                  : proposalStatusText === "passed"
+                    ? "Passed"
+                    : "Rejected"
+              }}
             </div>
             <div class="">
               <div
@@ -133,13 +156,13 @@
           </div>
 
           <div class="governance-proposals__title primary-gray-700">
-            {{ proposal?.account?.title || 'Loading...' }}
+            {{ proposal?.account?.title || "Loading..." }}
           </div>
 
           <div
             class="governance-proposals__subtitle primary-gray-500 mt-2 mb-10"
           >
-            {{ proposal?.account?.brief || 'Loading proposal description...' }}
+            {{ proposal?.account?.brief || "Loading proposal description..." }}
           </div>
 
           <v-progress-linear
@@ -151,11 +174,14 @@
           />
 
           <div class="governance-proposals__stats primary-gray-500">
-            <span><span class="font-weight-bold text-black">{{ forPercentage }}%</span> Quorum
+            <span><span class="font-weight-bold text-black">{{ forPercentage }}%</span>
+              Quorum
             </span>
             <span>
-              <span class="font-weight-bold text-black">{{ formatVotes(totalVotes) }}</span> Total
-              Votes</span>
+              <span class="font-weight-bold text-black">{{
+                formatVotes(totalVotes)
+              }}</span>
+              Total Votes</span>
           </div>
 
           <div
@@ -165,21 +191,27 @@
               <v-icon color="#98A2B3">
                 mdi-account
               </v-icon>
-              <span class="font-weight-bold text-black pl-1">{{ formatOwner(proposal?.account?.owner) }}</span>
+              <span class="font-weight-bold text-black pl-1">{{
+                formatOwner(proposal?.account?.owner)
+              }}</span>
               Proposal Creator
             </div>
             <div class="time primary-gray-500 w-50 mb-3 line-clamp-1">
               <v-icon color="#98A2B3">
                 mdi-calendar-minus-outline
               </v-icon>
-              <span class="font-weight-bold text-black pl-1">{{ formatDate(proposal?.account?.createdAt) }}</span>
+              <span class="font-weight-bold text-black pl-1">{{
+                formatDate(proposal?.account?.createdAt)
+              }}</span>
               Created on
             </div>
             <div class="time primary-gray-500 w-50 mb-3 line-clamp-1">
               <v-icon color="#98A2B3">
                 mdi-timer-outline
               </v-icon>
-              <span class="font-weight-bold text-black pl-1">{{ timeRemaining }}</span>
+              <span class="font-weight-bold text-black pl-1">{{
+                timeRemaining
+              }}</span>
               Remaining
             </div>
           </div>
@@ -221,11 +253,13 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from 'vue'
 import { useDisplay } from 'vuetify'
-import { BN } from '@coral-xyz/anchor'
+import * as anchor from '@coral-xyz/anchor'
+import type { BN as BNType } from '@coral-xyz/anchor'
 import { governance, useGovernance } from '~/composables/useGovernance'
 import { useWorkspace } from '~/composables/useWorkspace'
 import { PublicKey } from '@solana/web3.js'
 
+const { BN } = anchor
 const { smAndUp } = useDisplay()
 const { isProposalExpired } = useGovernance()
 
@@ -307,7 +341,7 @@ const timeRemaining = computed(() => {
 })
 
 // Methods
-const formatVotes = (votes: BN | number) => {
+const formatVotes = (votes: BNType | number) => {
   if (!votes) return '0'
   const num = typeof votes === 'number' ? votes : votes.toNumber()
   if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
@@ -315,7 +349,7 @@ const formatVotes = (votes: BN | number) => {
   return num.toString()
 }
 
-const formatDate = (timestamp: BN) => {
+const formatDate = (timestamp: BNType) => {
   if (!timestamp) return '00/00/0000'
   const date = new Date(timestamp.toNumber() * 1000)
   return date.toLocaleDateString('en-US', {
@@ -414,7 +448,8 @@ const checkVoteStatus = async () => {
 
       hasVoted.value = voteRecord.hasVoted
       if (voteRecord.voteRecord) {
-        userVoteStatus.value = voteRecord.voteRecord.vote === 'true' ? 'For' : 'Against'
+        userVoteStatus.value
+          = voteRecord.voteRecord.vote === 'true' ? 'For' : 'Against'
       }
     }
   }
@@ -431,13 +466,19 @@ onMounted(async () => {
 })
 
 // Watch for changes in proposal or userPublicKey
-watch(() => props.proposal, async () => {
-  await checkVoteStatus()
-})
+watch(
+  () => props.proposal,
+  async () => {
+    await checkVoteStatus()
+  },
+)
 
-watch(() => props.userPublicKey, async () => {
-  await checkVoteStatus()
-})
+watch(
+  () => props.userPublicKey,
+  async () => {
+    await checkVoteStatus()
+  },
+)
 </script>
 
 <style scoped>
