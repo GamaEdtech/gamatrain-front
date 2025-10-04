@@ -50,7 +50,7 @@
         v-if="proposal.account.amount && proposal.account.amount > 0"
         class="amount primary-gray-600"
       >
-        {{ formatAmount(proposal.account.amount) }} GET
+        {{ formatAmount(proposal.account.amount) }} $GET
       </span>
     </div>
 
@@ -351,7 +351,7 @@ onMounted(async () => {
       hasVoted.value = voteRecord.hasVoted
       if (voteRecord.voteRecord) {
         userVoteStatus.value
-          = voteRecord.voteRecord.vote === 'true' ? 'For' : 'Against'
+          = voteRecord.voteRecord.vote === 'agree' ? 'For' : 'Against'
       }
     }
   }

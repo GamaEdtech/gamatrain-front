@@ -265,8 +265,6 @@ watch(
 )
 
 async function onSubmit() {
-  console.log('omad ke anjam bede')
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { valid } = await (formRef.value as any).validate()
 

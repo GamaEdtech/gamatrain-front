@@ -141,6 +141,8 @@ export const useGovernance = () => {
           return 'You have already voted on this proposal.'
         case 6002:
           return 'This proposal has expired and can no longer be voted on.'
+        case 6003:
+          return 'Holders of $GET tokens can participate in voting—grab some $GET to have your say!'
         default:
           return `Governance error: ${error.message || 'Unknown error occurred'}`
       }
@@ -173,7 +175,6 @@ export const governance = {
     await ensureBuffer()
     try {
       const proposals = await (program.account as any).proposal.all()
-
       return proposals.map((proposal: any) => ({
         ...proposal,
         account: {
@@ -321,25 +322,34 @@ export const governance = {
       // Calculate vote power if not provided
       const finalVotePower = votePower || await calculateVotePower(voter, program.provider.connection)
 
-      const [voteRecordPDA] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from('vote-record'), proposalPublicKey.toBuffer(), voter.toBuffer()],
-        program.programId,
-      )
+      if (finalVotePower === 1) {
+        const error = {
+          code: 6003,
+        }
+        const { handleGovernanceError } = useGovernance()
+        throw new Error(handleGovernanceError(error))
+      }
+      else {
+        const [voteRecordPDA] = web3.PublicKey.findProgramAddressSync(
+          [Buffer.from('vote-record'), proposalPublicKey.toBuffer(), voter.toBuffer()],
+          program.programId,
+        )
 
-      const tx = await program.methods
-        .vote(agree, new BN(finalVotePower))
-        .accounts({
-          proposal: proposalPublicKey,
-          voter: voter,
-          voteRecord: voteRecordPDA,
-          systemProgram: web3.SystemProgram.programId,
-        })
-        .rpc()
+        const tx = await program.methods
+          .vote(agree, new BN(finalVotePower))
+          .accounts({
+            proposal: proposalPublicKey,
+            voter: voter,
+            voteRecord: voteRecordPDA,
+            systemProgram: web3.SystemProgram.programId,
+          })
+          .rpc()
 
-      return {
-        signature: tx,
-        votePower: finalVotePower,
-        vote: agree ? 'agree' : 'disagree',
+        return {
+          signature: tx,
+          votePower: finalVotePower,
+          vote: agree ? 'agree' : 'disagree',
+        }
       }
     }
     catch (error: any) {
