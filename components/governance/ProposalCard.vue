@@ -432,6 +432,7 @@ onMounted(async () => {
   .governance-proposals__subtitle {
     font-size: 12px;
     margin-bottom: 12px;
+    word-break: break-all;
   }
 
   .vote-row {
