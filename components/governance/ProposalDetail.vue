@@ -41,6 +41,21 @@
               {{
                 proposal?.account?.brief || "Loading proposal description..."
               }}
+              <a
+                v-if="proposal?.account?.reference"
+                class="text-decoration-none font-weight-bold text-h5 color-link"
+                target="_blank"
+                :href="proposal?.account?.reference"
+              >
+                See More
+              </a>
+            </div>
+
+            <div
+              v-if="proposal.account.amount && proposal.account.amount > 0"
+              class="governance-proposals__title primary-gray-700 mb-2"
+            >
+              {{ formatAmount(proposal.account.amount) }} $GET
             </div>
 
             <v-progress-linear
@@ -163,6 +178,22 @@
             class="governance-proposals__subtitle primary-gray-500 mt-2 mb-10"
           >
             {{ proposal?.account?.brief || "Loading proposal description..." }}
+
+            <a
+              v-if="proposal?.account?.reference"
+              class="text-decoration-none font-weight-bold text-h5 color-link"
+              target="_blank"
+              :href="proposal?.account?.reference"
+            >
+              See More
+            </a>
+          </div>
+
+          <div
+            v-if="proposal.account.amount && proposal.account.amount > 0"
+            class="governance-proposals__title primary-gray-700 mb-2"
+          >
+            {{ formatAmount(proposal.account.amount) }} $GET
           </div>
 
           <v-progress-linear
@@ -366,6 +397,12 @@ const formatOwner = (owner: any) => {
   return `${address.slice(0, 4)}...${address.slice(-2)}`
 }
 
+const formatAmount = (amount: BNType) => {
+  if (!amount) return '0'
+  const num = amount.toNumber()
+  return num.toLocaleString()
+}
+
 const handleVote = async (agree: boolean) => {
   if (!canVote.value) return
 
@@ -482,6 +519,9 @@ watch(
 </script>
 
 <style scoped>
+.color-link {
+  color: #ffb300;
+}
 .detail-bottom-sheet {
   height: 600px;
   max-height: 600px;

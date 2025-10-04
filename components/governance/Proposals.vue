@@ -35,12 +35,12 @@
       v-else
       class="mt-6 mt-sm-1"
     >
-      <div class="d-none d-sm-block">
+      <div class="d-block">
         <v-slide-group
           v-model="selected"
           class="center-slide-group"
-          :show-arrows="false"
           center-active
+          show-arrows
         >
           <v-slide-group-item
             v-for="proposal in proposals"
@@ -59,29 +59,13 @@
           </v-slide-group-item>
         </v-slide-group>
       </div>
-      <div class="d-block d-sm-none">
-        <div
-          v-for="proposal in proposals"
-          :key="proposal.publicKey.toBase58()"
-          class="mb-4"
-        >
-          <governance-proposal-card
-            :proposal="proposal"
-            :user-public-key="publicKey"
-            @select="handleProposalClick"
-            @vote="handleVote"
-            @delete="handleProposalDeleted"
-            @wallet-required="handleWalletRequired"
-          />
-        </div>
-      </div>
     </div>
 
     <!-- Buttons -->
     <div class="mt-10 d-flex justify-center">
       <ClientOnly>
         <v-btn
-          :size="isMdAndUp ? 'large' : 'default'"
+          :size="mdAndUp ? 'large' : 'default'"
           color="#344054"
           variant="text"
           rounded
@@ -91,7 +75,7 @@
       </ClientOnly>
       <ClientOnly>
         <v-btn
-          :size="isMdAndUp ? 'large' : 'default'"
+          :size="mdAndUp ? 'large' : 'default'"
           color="#1D2939"
           variant="flat"
           rounded
@@ -161,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, defineAsyncComponent } from 'vue'
+import { ref, onMounted, watch, defineAsyncComponent } from 'vue'
 import { useDisplay } from 'vuetify/lib/composables/display'
 import { useWorkspace } from '~/composables/useWorkspace'
 import { governance } from '~/composables/useGovernance'
@@ -169,9 +153,7 @@ import type { Program } from '@coral-xyz/anchor'
 import type { Ref } from 'vue'
 // Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
 
-const display = useDisplay()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isMdAndUp = computed(() => (display as any)?.mdAndUp?.value ?? false)
+const { mdAndUp } = useDisplay()
 const AsyncWalletMultiButton = defineAsyncComponent(async () => {
   const mod = await import('solana-wallets-vue')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
