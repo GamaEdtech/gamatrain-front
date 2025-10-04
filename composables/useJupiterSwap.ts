@@ -216,7 +216,7 @@ export const useJupiterSwap = () => {
       // Convert display amount to token units using proper decimals
       const amountInTokenUnits = convertToTokenUnits(amount, inputDecimals)
 
-      const response = await $fetch<JupiterQuoteResponse>('https://quote-api.jup.ag/v6/quote', {
+      const response = await $fetch<JupiterQuoteResponse>('https://lite-api.jup.ag/swap/v1/quote', {
         query: {
           inputMint,
           outputMint,
@@ -250,7 +250,7 @@ export const useJupiterSwap = () => {
     options: SwapOptions = {},
   ): Promise<JupiterSwapResponse | null> => {
     try {
-      const response = await $fetch<JupiterSwapResponse>('https://quote-api.jup.ag/v6/swap', {
+      const response = await $fetch<JupiterSwapResponse>('https://lite-api.jup.ag/swap/v1/swap', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -285,7 +285,7 @@ export const useJupiterSwap = () => {
     options: SwapOptions = {},
   ): Promise<JupiterSwapInstructionsResponse | null> => {
     try {
-      const response = await $fetch<JupiterSwapInstructionsResponse>('https://quote-api.jup.ag/v6/swap-instructions', {
+      const response = await $fetch<JupiterSwapInstructionsResponse>('https://lite-api.jup.ag/swap/v1/swap-instructions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
