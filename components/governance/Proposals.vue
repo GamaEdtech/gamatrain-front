@@ -340,11 +340,13 @@ const handleProposalDeleted = () => {
 }
 </script>
 
-<style scoped>
+<style>
 .proposal-slide__card {
   width: 310px;
 }
-
+.swv-modal {
+  z-index: 10000 !important;
+}
 /* Wallet Modal Styles */
 .figma-modal-overlay {
   position: fixed;
