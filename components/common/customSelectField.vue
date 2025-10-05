@@ -1,16 +1,14 @@
 <template>
-  <div
-    id="gombo-box"
-    class="gombo-box"
-  >
+  <div>
     <v-text-field
-      v-model="inputText"
+      ref="textFieldRef"
+      :model-value="selectedItem?.title || ''"
       rounded="lg"
       readonly
       variant="outlined"
-      hide-details
-      append-inner-icon="mdi-chevron-down"
+      append-inner-icon="md:keyboard_arrow_down"
       :disabled="disabled"
+      :rules="rules"
       clearable
       color="#ffb300"
       density="compact"
@@ -21,6 +19,15 @@
         <span class="primary-gray-700 font-weight-medium size-lable">{{
           label
         }}</span>
+      </template>
+      <template #prepend-inner>
+        <v-progress-circular
+          v-if="loading"
+          indeterminate
+          size="20"
+          color="#ffb300"
+          class="mr-2"
+        />
       </template>
     </v-text-field>
 
@@ -38,7 +45,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-defineProps({
+const props = defineProps({
   label: {
     type: String,
     default: '',
@@ -54,99 +61,73 @@ defineProps({
     type: Boolean,
     default: false,
   },
-  searchLoading: {
+  loading: {
     type: Boolean,
     default: false,
-  },
-  dataLoading: {
-    type: Boolean,
-    default: true,
   },
   hasSearch: {
     type: Boolean,
     default: true,
   },
+  rules: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const emit = defineEmits(['changeSelectedItem'])
 
+const textFieldRef = ref()
 const isShowSelectModal = ref(false)
-const inputText = ref('')
 
 const openSelectModal = () => {
   isShowSelectModal.value = true
 }
 
 const clearValue = () => {
-  emit('changeSelectedItem', null)
-  inputText.value = ''
+  emit('changeSelectedItem', null, false)
+  if (textFieldRef.value) {
+    textFieldRef.value.blur()
+  }
 }
 
 const onFilterUpdate = (itemSelected) => {
-  emit('changeSelectedItem', itemSelected)
-  inputText.value = itemSelected.title
+  emit('changeSelectedItem', itemSelected, false)
   isShowSelectModal.value = false
 }
 
+watch(
+  () => props.items,
+  (newValue) => {
+    if (newValue.length > 0 && props.selectedItem) {
+      const foundObj = props.items.find(
+        x => x.id.toString() == props.selectedItem.id.toString(),
+      )
+      emit('changeSelectedItem', foundObj, true)
+    }
+  },
+)
+
+watch(
+  () => props.selectedItem,
+  (newValue) => {
+    if (newValue && props.items.length > 0) {
+      const foundObj = props.items.find(
+        x => x.id.toString() == props.selectedItem.id.toString(),
+      )
+      emit('changeSelectedItem', foundObj, true)
+    }
+  },
+)
+
 onMounted(() => {
-  //   if (props.items.length > 0) {
-  //     const foundObj = props.items.find(
-  //       x => x[props.itemValue] == Number(props.modelValue),
-  //     )
-  //     inputText.value = foundObj ? foundObj[props.itemTitle] : ''
-  //   }
+  if (props.items.length > 0 && props.selectedItem) {
+    const foundObj = props.items.find(
+      x => x.id.toString() == props.selectedItem.id.toString(),
+    )
+    emit('changeSelectedItem', foundObj, true)
+  }
 })
 </script>
 
-<style>
-.gombo-box-list {
-  border-radius: 24px 24px 0 0 !important;
-  height: 400px !important;
-  position: fixed !important;
-  z-index: 1800;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  box-shadow: 2px -6px 24px 0px rgba(16, 24, 40, 0.05);
-  overflow-y: hidden !important;
-}
-
-.data-list {
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin-top: 20px;
-  height: 240px;
-  text-align: left;
-}
-
-.gombo-box .v-field--variant-outlined {
-  background: var(--White, #fff) !important;
-}
-
-.gombo-box .v-input__append-inner {
-  margin: auto !important;
-  padding-right: 1rem;
-}
-
-#search-btn {
-  height: 36px !important;
-}
-
-#search-btn .v-btn__content {
-  color: black;
-  text-transform: none;
-  font-family: Inter;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 22px;
-}
-
-.size-lable {
-  font-size: 16px;
-}
-.v-field-label {
-  font-size: 16px !important;
-}
-</style>
+<style></style>
