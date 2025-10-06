@@ -104,7 +104,6 @@
           v-model="userInformation.lastName"
           density="compact"
           variant="outlined"
-          :rules="lastNameRules"
           label="Last name"
           outlined
           rounded="lg"
@@ -132,10 +131,7 @@
           :selected-item="userInformation.gender"
           :has-search="false"
           :loading="userDataLoading"
-          :rules="[
-            (v : string) => (!!v && v.trim().length > 0) || 'This field is required',
-          ]"
-          @change-selected-item="(item : ListItem) => userInformation.gender = item"
+          @change-selected-item="(item : SelectOption) => userInformation.gender = item"
         />
       </v-col>
     </v-row>
@@ -164,9 +160,6 @@
           :items="countries"
           :selected-item="userInformation.country"
           :loading="countryLoading || userDataLoading"
-          :rules="[
-            (v : string) => (!!v && v.trim().length > 0) || 'This field is required',
-          ]"
           @change-selected-item="countyChange"
         />
       </v-col>
@@ -181,9 +174,6 @@
           :selected-item="userInformation.state"
           :loading="stateLoading || userDataLoading"
           :disabled="!userInformation.country"
-          :rules="[
-            (v : string) => (!!v && v.trim().length > 0) || 'This field is required',
-          ]"
           @change-selected-item="stateChange"
         />
       </v-col>
@@ -198,9 +188,6 @@
           :selected-item="userInformation.city"
           :loading="cityLoading || userDataLoading"
           :disabled="!userInformation.state"
-          :rules="[
-            (v : string) => (!!v && v.trim().length > 0) || 'This field is required',
-          ]"
           @change-selected-item="cityChange"
         />
       </v-col>
@@ -230,9 +217,6 @@
           :items="boards"
           :selected-item="userInformation.board"
           :loading="boardLoading || userDataLoading"
-          :rules="[
-            (v : string) => (!!v && v.trim().length > 0) || 'This field is required',
-          ]"
           @change-selected-item="boardChange"
         />
       </v-col>
@@ -247,10 +231,7 @@
           :selected-item="userInformation.grade"
           :loading="gradeLoading || userDataLoading"
           :disabled="!userInformation.board"
-          :rules="[
-            (v : string) => (!!v && v.trim().length > 0) || 'This field is required',
-          ]"
-          @change-selected-item="(item : ListItem) => userInformation.grade = item"
+          @change-selected-item="(item : SelectOption) => userInformation.grade = item"
         />
       </v-col>
 
@@ -264,7 +245,7 @@
           :selected-item="userInformation.school"
           :loading="schoolLoading || userDataLoading"
           :disabled="!userInformation.city"
-          @change-selected-item="(item : ListItem) => userInformation.school = item"
+          @change-selected-item="(item : SelectOption) => userInformation.school = item"
         />
       </v-col>
     </v-row>
@@ -317,25 +298,25 @@
 </template>
 
 <script setup lang="ts">
-interface ListItem {
+interface SelectOption {
   id: number | string
   title?: string
   name?: string
 }
-interface UserInfo {
+interface UserProfileUI {
   avatarFile: File | null
   avatarUrl: string | null
   firstName: string
   lastName: string
-  gender: ListItem | null
-  country: ListItem | null
-  state: ListItem | null
-  city: ListItem | null
-  board: ListItem | null
-  grade: ListItem | null
-  school: ListItem | null
+  gender: SelectOption | null
+  country: SelectOption | null
+  state: SelectOption | null
+  city: SelectOption | null
+  board: SelectOption | null
+  grade: SelectOption | null
+  school: SelectOption | null
 }
-interface ProfileData {
+interface UserProfileDTO {
   userName: string
   firstName: string
   lastName: string
@@ -361,6 +342,14 @@ interface ApiResponse<T> {
     value: string
   }[]
 }
+type ListFields
+  = | 'gender'
+    | 'country'
+    | 'state'
+    | 'city'
+    | 'board'
+    | 'grade'
+    | 'school'
 
 // Define page meta
 definePageMeta({
@@ -368,12 +357,13 @@ definePageMeta({
   title: 'Edit Profile',
 })
 
-useHead({
+useSeoMeta({
   title: 'Edit Profile',
 })
+
 const { $toast } = useNuxtApp()
 
-const userInformation = ref<UserInfo>({
+const userInformation = ref<UserProfileUI>({
   avatarFile: null,
   avatarUrl: null,
   firstName: '',
@@ -395,83 +385,84 @@ const firstNameRules = [
   (v: string) =>
     /^[a-zA-Z\s]+$/.test(v) || 'First name can only contain letters and spaces',
 ]
-const lastNameRules = [
-  (v: string) => !!v || 'Last name is required',
-  (v: string) => v.length >= 2 || 'Last name must be at least 2 characters',
-  (v: string) => v.length <= 50 || 'Last name must be less than 50 characters',
-  (v: string) =>
-    /^[a-zA-Z\s]+$/.test(v) || 'Last name can only contain letters and spaces',
-]
+// const lastNameRules = [
+//   (v: string) => !!v || "Last name is required",
+//   (v: string) => v.length >= 2 || "Last name must be at least 2 characters",
+//   (v: string) => v.length <= 50 || "Last name must be less than 50 characters",
+//   (v: string) =>
+//     /^[a-zA-Z\s]+$/.test(v) || "Last name can only contain letters and spaces",
+// ];
 
-const genderList = ref<ListItem[]>([
+const genderList = ref<SelectOption[]>([
   { id: 'Male', title: 'Male' },
   { id: 'Female', title: 'Female' },
 ])
 
 // Location Info
-const countries = ref<ListItem[]>([])
+const countries = ref<SelectOption[]>([])
 const countryLoading = ref(true)
-const states = ref<ListItem[]>([])
+const states = ref<SelectOption[]>([])
 const stateLoading = ref(true)
-const cities = ref<ListItem[]>([])
+const cities = ref<SelectOption[]>([])
 const cityLoading = ref(true)
 
-const countyChange = async (item: ListItem, firstInitilize: boolean) => {
-  userInformation.value.country = item
-  if (!firstInitilize) {
-    userInformation.value.state = null
-    states.value = []
-    if (item) {
-      await getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'states')
+const handleChange = async (
+  field: ListFields,
+  value: SelectOption | null,
+  firstInitialize: boolean,
+  resetFields: ListFields[],
+  fetchType?: keyof typeof locationConfig,
+) => {
+  userInformation.value[field] = value
+
+  if (!firstInitialize) {
+    resetFields.forEach((f) => {
+      userInformation.value[f] = null
+      if (f === 'state') states.value = []
+      if (f === 'city') cities.value = []
+      if (f === 'school') schools.value = []
+      if (f === 'grade') grades.value = []
+    })
+    if (value && fetchType) {
+      await getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, fetchType)
     }
-    userInformation.value.city = null
-    cities.value = []
-    userInformation.value.school = null
-    schools.value = []
   }
 }
 
-const stateChange = async (item: ListItem, firstInitilize: boolean) => {
-  userInformation.value.state = item
-  if (!firstInitilize) {
-    userInformation.value.city = null
-    cities.value = []
-    if (item) {
-      await getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'cities')
-    }
-    userInformation.value.school = null
-    schools.value = []
-  }
+const countyChange = async (item: SelectOption, firstInitilize: boolean) => {
+  await handleChange(
+    'country',
+    item,
+    firstInitilize,
+    ['state', 'city', 'school'],
+    'states',
+  )
 }
 
-const cityChange = async (item: ListItem, firstInitilize: boolean) => {
-  userInformation.value.city = item
-  if (!firstInitilize) {
-    userInformation.value.school = null
-    schools.value = []
-    if (item) {
-      await getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'school')
-    }
-  }
+const stateChange = async (item: SelectOption, firstInitilize: boolean) => {
+  await handleChange(
+    'state',
+    item,
+    firstInitilize,
+    ['city', 'school'],
+    'cities',
+  )
+}
+
+const cityChange = async (item: SelectOption, firstInitilize: boolean) => {
+  await handleChange('city', item, firstInitilize, ['school'], 'school')
 }
 
 // School Info
-const boards = ref<ListItem[]>([])
+const boards = ref<SelectOption[]>([])
 const boardLoading = ref(true)
-const grades = ref<ListItem[]>([])
+const grades = ref<SelectOption[]>([])
 const gradeLoading = ref(true)
-const schools = ref<ListItem[]>([])
+const schools = ref<SelectOption[]>([])
 const schoolLoading = ref(true)
 
-const boardChange = async (item: ListItem, firstInitilize: boolean) => {
-  userInformation.value.board = item
-  if (!firstInitilize) {
-    userInformation.value.grade = null
-    grades.value = []
-    if (item) {
-      await getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'grade')
-    }
-  }
+const boardChange = async (item: SelectOption, firstInitilize: boolean) => {
+  await handleChange('board', item, firstInitilize, ['grade'], 'grade')
 }
 
 const avatarInputRef = ref<HTMLInputElement | null>(null)
@@ -507,59 +498,55 @@ const confirmCrop = (dataCroped: Blob) => {
 const getUserInfo = async () => {
   try {
     userDataLoading.value = true
-    const profileResponse = await useApiService.get<ApiResponse<ProfileData>>(
+    const { data } = await useApiService.get<ApiResponse<UserProfileDTO>>(
       '/api/v2/identities/profiles',
     )
     userDataLoading.value = false
-    console.log('profileResponse', profileResponse)
+    const {
+      gender,
+      firstName,
+      lastName,
+      avatar,
+      countryId,
+      stateId,
+      cityId,
+      board,
+      grade,
+      schoolId,
+    } = data
+    userInformation.value = {
+      ...userInformation.value,
+      gender: gender ? { id: gender, title: gender } : null,
+      firstName,
+      lastName,
+      avatarUrl: avatar || null,
+      country: countryId ? { id: countryId } : null,
+      state: stateId ? { id: stateId } : null,
+      city: cityId ? { id: cityId } : null,
+      board: board ? { id: board } : null,
+      grade: grade ? { id: grade } : null,
+      school: schoolId ? { id: schoolId } : null,
+    }
 
-    if (profileResponse.data.gender)
-      userInformation.value.gender = {
-        id: profileResponse.data.gender,
-        title: profileResponse.data.gender,
-      }
-    userInformation.value.firstName = profileResponse.data.firstName
-    userInformation.value.lastName = profileResponse.data.lastName
-    if (profileResponse.data.avatar)
-      userInformation.value.avatarUrl = profileResponse.data.avatar
+    const filterPromises: Promise<void>[] = []
+    if (countryId)
+      filterPromises.push(
+        getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'states'),
+      )
+    if (stateId)
+      filterPromises.push(
+        getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'cities'),
+      )
+    if (cityId)
+      filterPromises.push(
+        getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'school'),
+      )
+    if (board)
+      filterPromises.push(
+        getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'grade'),
+      )
 
-    if (profileResponse.data.countryId)
-      userInformation.value.country = {
-        id: profileResponse.data.countryId,
-      }
-    if (profileResponse.data.stateId) {
-      userInformation.value.state = {
-        id: profileResponse.data.stateId,
-      }
-    }
-    if (profileResponse.data.cityId) {
-      userInformation.value.city = {
-        id: profileResponse.data.cityId,
-      }
-      await getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'school')
-    }
-    if (profileResponse.data.board) {
-      userInformation.value.board = {
-        id: profileResponse.data.board,
-      }
-      await getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'grade')
-    }
-    if (profileResponse.data.grade)
-      userInformation.value.grade = {
-        id: profileResponse.data.grade,
-      }
-
-    if (profileResponse.data.countryId) {
-      await getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'states')
-      if (profileResponse.data.stateId) {
-        await getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'cities')
-      }
-    }
-    if (profileResponse.data.schoolId) {
-      userInformation.value.school = {
-        id: profileResponse.data.schoolId,
-      }
-    }
+    await Promise.allSettled(filterPromises)
   }
   catch (err: unknown) {
     const error = err as { response?: { data?: { message?: string } } }
@@ -578,95 +565,76 @@ const getUserInfo = async () => {
   }
 }
 
+const locationConfig = {
+  countries: {
+    endpoint: () => '/api/v2/locations/countries',
+    loading: countryLoading,
+    valueRef: countries,
+  },
+  states: {
+    endpoint: () =>
+      `/api/v2/locations/states/${userInformation.value.country?.id}`,
+    loading: stateLoading,
+    valueRef: states,
+  },
+  cities: {
+    endpoint: () =>
+      `/api/v2/locations/cities/${userInformation.value.state?.id}`,
+    loading: cityLoading,
+    valueRef: cities,
+  },
+  board: {
+    endpoint: () => '/api/v1/types/list',
+    loading: boardLoading,
+    valueRef: boards,
+  },
+  grade: {
+    endpoint: () =>
+      `/api/v1/types/list/?type=base&section_id=${userInformation.value.board?.id}`,
+    loading: gradeLoading,
+    valueRef: grades,
+  },
+  school: {
+    endpoint: () => '/api/v2/schools',
+    loading: schoolLoading,
+    valueRef: schools,
+  },
+}
+
 const getFilterList = async (
   params: Record<string, string | number>,
-  type: string,
+  type: keyof typeof locationConfig,
 ) => {
   try {
-    let endpoint = '/api/v1/types/list'
-    if (type === 'countries') {
-      countryLoading.value = true
-      endpoint = '/api/v2/locations/countries'
-    }
-    if (type === 'states') {
-      stateLoading.value = true
-      endpoint = `/api/v2/locations/states/${userInformation.value.country?.id}`
-    }
-    if (type === 'cities') {
-      cityLoading.value = true
-      endpoint = `/api/v2/locations/cities/${userInformation.value.state?.id}`
-    }
-    if (type === 'board') {
-      boardLoading.value = true
-    }
-    if (type === 'grade') {
-      gradeLoading.value = true
-      endpoint = `/api/v1/types/list/?type=base&section_id=${userInformation.value.board?.id}`
-    }
+    const config = locationConfig[type]
+    if (!config) return
+
+    config.loading.value = true
     if (type === 'school') {
-      schoolLoading.value = true
       params.CityId = userInformation.value.city?.id as string
-      endpoint = `/api/v2/schools`
     }
-
     const response = await useApiService.get<
-      ApiResponse<
-        | ListItem[]
-        | {
-          list: ListItem[]
-        }
-      >
-    >(endpoint, params)
+      ApiResponse<SelectOption[] | { list: SelectOption[] }>
+    >(config.endpoint(), params)
 
-    if (type === 'countries') {
-      countryLoading.value = false
-      countries.value = (
-        response.data as {
-          list: ListItem[]
-        }
-      ).list
-    }
-    if (type === 'states') {
-      stateLoading.value = false
-      states.value = (
-        response.data as {
-          list: ListItem[]
-        }
-      ).list
-    }
-    if (type === 'cities') {
-      cityLoading.value = false
-      cities.value = (
-        response.data as {
-          list: ListItem[]
-        }
-      ).list
-    }
-    if (type === 'board') {
-      boardLoading.value = false
-      boards.value = response.data as ListItem[]
-    }
-    if (type === 'grade') {
-      gradeLoading.value = false
-      grades.value = response.data as ListItem[]
-    }
+    config.loading.value = false
     if (type === 'school') {
-      schoolLoading.value = false
-      const resposneSchool = (
-        response.data as {
-          list: ListItem[]
-        }
-      ).list
-      if (resposneSchool && resposneSchool.length > 0) {
-        schools.value = resposneSchool.map((item: ListItem) => ({
-          id: item.id,
-          title: item.name,
-        }))
-      }
+      const list = (response.data as { list: SelectOption[] }).list || []
+      config.valueRef.value = list.map((item: SelectOption) => ({
+        id: item.id,
+        title: item.name,
+      }))
+    }
+    else if ((response.data as { list: SelectOption[] }).list) {
+      config.valueRef.value = (response.data as { list: SelectOption[] }).list
+    }
+    else {
+      config.valueRef.value = response.data as SelectOption[]
     }
   }
   catch (err) {
     console.error('Error fetching location data:', err)
+    locationConfig[type].loading.value = false
   }
 }
 
@@ -682,24 +650,10 @@ const isFormValid = computed(() => {
   const info = userInformation.value
 
   const firstName = info.firstName?.trim() || ''
-  const lastName = info.lastName?.trim() || ''
-
   const isFirstNameValid = firstNameRules.every(
     rule => rule(firstName) === true,
   )
-  const isLastNameValid = lastNameRules.every(
-    rule => rule(lastName) === true,
-  )
-  return (
-    isFirstNameValid
-    && isLastNameValid
-    && !!info.gender
-    && !!info.country
-    && !!info.state
-    && !!info.city
-    && !!info.board
-    && !!info.grade
-  )
+  return isFirstNameValid
 })
 
 const submitData = async () => {
