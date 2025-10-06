@@ -347,36 +347,36 @@ export const governance = {
       // Calculate vote power if not provided
       const finalVotePower = votePower || await calculateVotePower(voter, program.provider.connection)
 
-      if (finalVotePower === 1) {
-        const error = {
-          code: 6003,
-        }
-        const { handleGovernanceError } = useGovernance()
-        throw new Error(handleGovernanceError(error))
-      }
-      else {
-        const [voteRecordPDA] = web3.PublicKey.findProgramAddressSync(
-          [Buffer.from('vote-record'), proposalPublicKey.toBuffer(), voter.toBuffer()],
-          program.programId,
-        )
+      // if (finalVotePower === 1) {
+      //   const error = {
+      //     code: 6003,
+      //   }
+      //   const { handleGovernanceError } = useGovernance()
+      //   throw new Error(handleGovernanceError(error))
+      // }
+      // else {
+      const [voteRecordPDA] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('vote-record'), proposalPublicKey.toBuffer(), voter.toBuffer()],
+        program.programId,
+      )
 
-        const tx = await program.methods
-          .vote(agree, new BN(finalVotePower))
-          .accounts({
-            proposal: proposalPublicKey,
-            voter: voter,
-            voteRecord: voteRecordPDA,
-            systemProgram: web3.SystemProgram.programId,
-          })
-          .rpc()
+      const tx = await program.methods
+        .vote(agree, new BN(finalVotePower))
+        .accounts({
+          proposal: proposalPublicKey,
+          voter: voter,
+          voteRecord: voteRecordPDA,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc({ skipPreflight: true })
 
-        return {
-          signature: tx,
-          votePower: finalVotePower,
-          vote: agree ? 'agree' : 'disagree',
-        }
+      return {
+        signature: tx,
+        votePower: finalVotePower,
+        vote: agree ? 'agree' : 'disagree',
       }
     }
+    // }
     catch (error: any) {
       console.error('Error voting on proposal:', error)
       const { handleGovernanceError } = useGovernance()
@@ -410,7 +410,7 @@ export const governance = {
           proposal: proposalPublicKey,
           user: user,
         })
-        .rpc()
+        .rpc({ skipPreflight: true })
 
       return { signature: tx }
     }
