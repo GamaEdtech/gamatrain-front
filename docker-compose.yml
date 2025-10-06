@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  nuxt-dev:
+    image: gamatrain-nuxt-dev
+    build:
+      context: .
+      target: builder
+      args:
+        NODE_VERSION: "20.17.0"
+    working_dir: /app
+    command: npm run dev
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+      - /app/node_modules
+    ports:
+      - "3002:3002"
