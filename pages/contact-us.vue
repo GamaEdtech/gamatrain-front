@@ -1,22 +1,5 @@
 <template>
   <div class="contact-us-page">
-    <v-snackbar
-      v-model="snankebar.isShow"
-      class="snackbar"
-      :timeout="4000"
-      :color="snankebar.status === 'error' ? 'red' : 'green'"
-      location="top left"
-    >
-      <span
-        class="snakebar-icon mdi"
-        :class="
-          snankebar.status === 'error' ? 'mdi-close-circle' : 'mdi-check-circle'
-        "
-      />
-      <span class="snackbar-text">
-        {{ snankebar.text }}
-      </span>
-    </v-snackbar>
     <v-container class="mt-16 main">
       <v-row>
         <v-col
@@ -152,6 +135,8 @@ useSeoMeta({
   ogTitle: `Contact us`,
 })
 
+const { $toast } = useNuxtApp()
+
 const zoom = ref(20)
 const rules = {
   required: (v: string) => !!v || 'This field is required.',
@@ -167,16 +152,7 @@ const formsData = reactive({
 })
 const isFormValid = ref<boolean>(false)
 const formLoading = ref<boolean>(false)
-const snankebar = reactive({
-  isShow: false,
-  text: '',
-  status: '',
-})
-const showSnackebar = (status: 'success' | 'error', message: string) => {
-  snankebar.isShow = true
-  snankebar.status = status
-  snankebar.text = message
-}
+
 const form = ref<HTMLFormElement | null>(null)
 const { getToken, initCaptcha, isLoaded } = useRecaptcha()
 
@@ -201,11 +177,11 @@ const submitForm = async () => {
         })
 
       if (res.succeeded) {
-        showSnackebar('success', 'Your message has been sent successfully.')
+        $toast.success('Your message has been sent successfully.')
       }
       else {
         res.errors?.forEach((error: { message: string }) => {
-          showSnackebar('error', error.message)
+          $toast.error(error.message)
         })
       }
 
@@ -217,7 +193,7 @@ const submitForm = async () => {
     catch (error: unknown) {
       console.log(error)
       formLoading.value = false
-      showSnackebar('error', 'An error occurred. Please try again.')
+      $toast.error('An error occurred. Please try again.')
     }
     finally {
       formLoading.value = false
@@ -234,22 +210,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.snackbar {
-  /* transform: translate(-50%, 0); */
-  --v-layout-top: 0 !important;
-  --v-layout-left: 0 !important;
-}
-
-.snakebar-icon {
-  font-size: 1.8rem !important;
-}
-
-.snackbar-text {
-  font-size: 1.8rem !important;
-  font-weight: 600;
-  margin-left: 1rem;
-}
-
 .form {
   display: flex;
   justify-content: space-between;
@@ -265,6 +225,7 @@ onMounted(() => {
 
 .map-container {
   position: relative;
+  min-height: 400px;
 }
 
 .address {
