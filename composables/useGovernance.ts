@@ -251,7 +251,32 @@ export const governance = {
         throw new Error('Proposal description is required')
       }
 
-      const proposalKeypair = web3.Keypair.generate()
+      // Fetch user_state PDA first
+      const [userStatePda] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('user_state'), user.toBuffer()],
+        program.programId,
+      )
+
+      // 2️⃣ Fetch user_state (if exists) to get proposal_count
+      let proposalCount = 0
+      try {
+        const userStateAccount = await program.account.userState.fetch(userStatePda)
+        proposalCount = userStateAccount.proposalCount
+      }
+      catch (err) {
+        // If account doesn't exist, first proposal -> count = 0
+        proposalCount = 0
+      }
+
+      // Derive proposal PDA
+      const [proposalPda] = await web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from('proposal'),
+          user.toBuffer(),
+          new BN(proposalCount).toArrayLike(Buffer, 'le', 8),
+        ],
+        program.programId,
+      )
 
       const tx = await program.methods
         .createProposal(
@@ -262,11 +287,11 @@ export const governance = {
           new BN(formData.amount || 0),
         )
         .accounts({
-          proposal: proposalKeypair.publicKey,
+          proposal: proposalPda,
+          userState: userStatePda,
           user: user,
           systemProgram: web3.SystemProgram.programId,
         })
-        .signers([proposalKeypair])
         .rpc({ skipPreflight: true })
 
       const latestBlockhash = await program.provider.connection.getLatestBlockhash()
@@ -277,7 +302,7 @@ export const governance = {
 
       return {
         signature: tx,
-        proposalPublicKey: proposalKeypair.publicKey,
+        proposalPublicKey: proposalPda,
       }
     }
     catch (error: any) {
@@ -343,7 +368,7 @@ export const governance = {
             voteRecord: voteRecordPDA,
             systemProgram: web3.SystemProgram.programId,
           })
-          .rpc()
+          .rpc({ skipPreflight: true })
 
         return {
           signature: tx,
@@ -385,7 +410,7 @@ export const governance = {
           proposal: proposalPublicKey,
           user: user,
         })
-        .rpc()
+        .rpc({ skipPreflight: true })
 
       return { signature: tx }
     }

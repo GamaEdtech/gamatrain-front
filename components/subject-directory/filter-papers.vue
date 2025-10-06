@@ -112,13 +112,7 @@ import boardDialog from '~/components/subject-directory/board-dialog.vue'
 import GradeDialog from '~/components/subject-directory/grade-dialog.vue'
 import subjectDialog from '~/components/subject-directory/subject-dialog.vue'
 
-import cieIcon from '~/assets/images/boards/CIE.svg'
-import edexcelIcon from '~/assets/images/boards/Edexcel.svg'
-import AQAIcon from '~/assets/images/boards/AQA.svg'
-import OCRIcon from '~/assets/images/boards/OCR.svg'
-import GamaIcon from '~/assets/images/boards/Gama.svg'
-import ScientificIcon from '~/assets/images/boards/Scientific Competition.svg'
-import cxcIcon from '~/assets/images/boards/CXC.svg'
+const { boardImgs } = useBoard()
 
 const emit = defineEmits([
   'changeSubject',
@@ -161,16 +155,6 @@ const selectedBoard = ref(null)
 const boards = ref([])
 const isLoadingBoard = ref(true)
 const showBoardDialog = ref(false)
-
-const boardImgs = [
-  cieIcon,
-  edexcelIcon,
-  AQAIcon,
-  OCRIcon,
-  GamaIcon,
-  ScientificIcon,
-  cxcIcon,
-]
 
 const fetchBoards = async () => {
   try {

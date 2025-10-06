@@ -57,7 +57,7 @@ export const createSimpleMemoSwap = async (
     const payerPublicKey = new PublicKey(userPublicKey)
 
     // Get Jupiter swap instructions
-    const instructionsResponse = await $fetch<JupiterInstructionsResponse>('https://quote-api.jup.ag/v6/swap-instructions', {
+    const instructionsResponse = await $fetch<JupiterInstructionsResponse>('https://lite-api.jup.ag/swap/v1/swap-instructions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

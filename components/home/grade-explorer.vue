@@ -125,14 +125,7 @@
 </template>
 
 <script setup>
-import cieIcon from '~/assets/images/boards/CIE.svg'
-import edexcelIcon from '~/assets/images/boards/Edexcel.svg'
-import AQAIcon from '~/assets/images/boards/AQA.svg'
-import OCRIcon from '~/assets/images/boards/OCR.svg'
-import GamaIcon from '~/assets/images/boards/Gama.svg'
-import ScientificIcon from '~/assets/images/boards/Scientific Competition.svg'
-import cxcIcon from '~/assets/images/boards/CXC.svg'
-import { ref, watch, onMounted } from 'vue'
+const { boardImgs } = useBoard()
 
 const categories = ref([
   {
@@ -177,16 +170,6 @@ const gradeList = ref([])
 const gradeLoader = ref(false)
 const selectedBoard = ref(null)
 const selectedGrade = ref(null)
-const boardImgs = ref([
-  cieIcon,
-  edexcelIcon,
-  AQAIcon,
-  OCRIcon,
-  GamaIcon,
-  ScientificIcon,
-  cxcIcon,
-
-])
 const showBoardHint = ref(false)
 
 const fetchInitialData = async () => {
@@ -194,7 +177,7 @@ const fetchInitialData = async () => {
   const response = await $fetch(`/api/v1/types/list`, { params })
   boardList.value = response.data.map((item, index) => ({
     ...item,
-    img: boardImgs.value[index % boardImgs.value.length],
+    img: boardImgs[index % boardImgs.length],
   }))
 
   // Try to restore selectedBoard from localStorage
