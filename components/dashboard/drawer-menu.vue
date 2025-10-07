@@ -355,11 +355,11 @@ const items = [
     value: 'settings',
     subMenuList: [
       { title: 'Edit Profile', link: '/user/profile', icon: 'md:edit' },
-      {
-        title: 'Confirm Identity',
-        link: '/user/identity-confirmation',
-        icon: 'md:fingerprint',
-      },
+      // {
+      //   title: 'Confirm Identity',
+      //   link: '/user/identity-confirmation',
+      //   icon: 'md:fingerprint',
+      // },
       { title: 'Security', link: '/user/edit-pass', icon: 'md:password' },
     ],
   },
