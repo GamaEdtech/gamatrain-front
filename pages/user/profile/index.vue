@@ -1,440 +1,355 @@
 <template>
-  <div class="main">
-    <v-form
-      ref="formRef"
-      @submit.prevent="submitProfile"
-    >
-      <v-row>
-        <v-col
-          cols="12"
-          md="8"
-        >
-          <div class="d-flex pb-0">
-            <img
-              v-if="avatarUrl"
-              width="72"
-              height="72"
-              class="pointer"
-              style="border-radius: 5px !important"
-              :src="avatarUrl"
-              @click="selectAvatar"
-            >
-            <v-btn
-              v-else
-              class="d-flex pointer rounded-pill"
-              variant="outlined"
-              size="x-large"
-              icon
-              density="default"
-              @click="selectAvatar"
-            >
-              <v-icon size="large">
-                mdi-account-outline
-              </v-icon>
-            </v-btn>
-            <div class="pa-3">
-              <p
-                class="text-h5 pointer"
-                @click="selectAvatar"
-              >
-                <v-icon size="small">
-                  mdi-pencil
-                </v-icon>
-                Edit
-              </p>
-              <NuxtLink
-                to="/"
-                class="text-h5"
-              >
-                Help to pick profile pic
-              </NuxtLink>
-            </div>
-          </div>
-        </v-col>
+  <v-container class="w-100 d-flex flex-column">
+    <v-row>
+      <v-col
+        cols="12"
+        class="d-flex"
+      >
+        <v-file-input
+          ref="avatarInputRef"
+          v-model="userInformation.avatarFile"
+          class="d-none"
+          accept="image/png,image/webp,image/jpeg"
+          @change="uploadAvatar"
+        />
 
-        <v-col
-          cols="12"
-          md="4"
-          class="text-right pb-8"
+        <v-skeleton-loader
+          v-if="userDataLoading"
+          width="72"
+          height="72"
+          class="rounded-circle"
+        />
+        <img
+          v-if="userInformation.avatarUrl && !userDataLoading"
+          width="72"
+          height="72"
+          class="pointer rounded-pill"
+          :src="userInformation.avatarUrl"
+          @click="changeUserAvatar"
         >
-          <v-row>
-            <v-col
-              cols="12"
-              md="12"
-            >
-              <v-row>
-                <v-col
-                  md="10"
-                  sm="9"
-                  cols="8"
-                >
-                  <v-file-input
-                    ref="avatarInput"
-                    v-model="form.avatar"
-                    class="d-none"
-                    accept="image/png,image/webp,image/jpeg"
-                    @change="uploadAvatar"
-                  />
-
-                  <v-text-field
-                    v-model="form.userName"
-                    variant="outlined"
-                    density="compact"
-                    filled
-                    dense
-                    :rules="usernameRules"
-                    :error-messages="usernameErrors"
-                    class="mt-4 mb-0"
-                    placeholder="Choose username"
-                    type="text"
-                  >
-                    <template #prepend-inner>
-                      <span class="d-flex align-center">@</span>
-                    </template>
-                    <template #append-inner>
-                      <v-btn
-                        color="primary"
-                        size="small"
-                        class="default"
-                        type="submit"
-                        variant="flat"
-                      >
-                        Choose
-                      </v-btn>
-                    </template>
-                  </v-text-field>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-
-      <!-- Personal Information -->
-      <v-row>
-        <v-col
-          cols="12"
-          class="pl-5 text-h4 teal--text"
+        <v-btn
+          v-if="!userInformation.avatarUrl && !userDataLoading"
+          class="d-flex pointer rounded-pill"
+          variant="outlined"
+          size="x-large"
+          icon
+          density="default"
+          @click="changeUserAvatar"
         >
-          <v-icon
-            large
-            color="teal"
-          >
-            mdi-account-outline
+          <v-icon size="36">
+            md:person
           </v-icon>
-          <span> Your personal information </span>
-        </v-col>
-
-        <v-col
-          cols="12"
-          md="4"
-        >
-          <v-text-field
-            v-model="form.first_name"
-            density="compact"
-            variant="outlined"
-            dense
-            :rules="firstNameRules"
-            :error-messages="firstNameErrors"
-            label="First name"
-            outlined
-          />
-        </v-col>
-
-        <v-col
-          cols="12"
-          md="4"
-        >
-          <v-text-field
-            v-model="form.last_name"
-            density="compact"
-            variant="outlined"
-            dense
-            :rules="lastNameRules"
-            :error-messages="lastNameErrors"
-            label="Last name"
-            outlined
-          />
-        </v-col>
-
-        <v-col
-          cols="12"
-          md="4"
-        >
-          <v-select
-            v-model="form.gender"
-            dense
-            density="compact"
-            :rules="genderRules"
-            :error-messages="genderErrors"
-            :items="genderList"
-            item-value="id"
-            item-title="title"
-            label="Gender"
-            variant="outlined"
-          />
-        </v-col>
-      </v-row>
-
-      <!-- Location Details -->
-      <v-row>
-        <v-col
-          cols="12"
-          class="pl-5 text-h4 teal--text"
-        >
-          <v-icon
-            large
-            color="teal"
+        </v-btn>
+        <div class="pa-3">
+          <p
+            class="text-h5 pointer"
+            @click="changeUserAvatar"
           >
-            mdi-map-marker-outline
-          </v-icon>
-          <span> Location details </span>
-        </v-col>
+            <v-icon size="small">
+              md:edit
+            </v-icon>
+            Edit
+          </p>
+          <span class="text-h5"> Help to pick profile pic </span>
+        </div>
+      </v-col>
+    </v-row>
 
-        <v-col
-          cols="12"
-          md="4"
+    <!-- Personal Information -->
+    <v-row>
+      <v-col
+        cols="12"
+        class="pl-5 text-h4 teal--text"
+      >
+        <v-icon
+          large
+          color="primary"
         >
-          <v-autocomplete
-            v-model="form.country"
-            dense
-            density="compact"
-            :items="countries"
-            item-text="title"
-            item-value="id"
-            :rules="countryRules"
-            :error-messages="countryErrors"
-            label="Country"
-            variant="outlined"
-            @update:model-value="handleCountryChange"
-          />
-        </v-col>
+          md:person_outlined
+        </v-icon>
+        <span class="font-weight-bold"> Your personal information </span>
+      </v-col>
 
-        <v-col
-          cols="12"
-          md="4"
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <v-text-field
+          v-model="userInformation.firstName"
+          density="compact"
+          variant="outlined"
+          :rules="firstNameRules"
+          label="First name"
+          outlined
+          rounded="lg"
+          color="#FFB600"
         >
-          <v-autocomplete
-            v-model="form.state"
-            dense
-            density="compact"
-            :items="states"
-            item-text="title"
-            item-value="id"
-            :rules="stateRules"
-            :error-messages="stateErrors"
-            :disabled="!form.country"
-            label="State"
-            variant="outlined"
-            @update:model-value="handleStateChange"
-          />
-        </v-col>
+          <template #prepend-inner>
+            <v-progress-circular
+              v-if="userDataLoading"
+              indeterminate
+              size="20"
+              color="#ffb300"
+              class="mr-2"
+            />
+          </template>
+        </v-text-field>
+      </v-col>
 
-        <v-col
-          cols="12"
-          md="4"
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <v-text-field
+          v-model="userInformation.lastName"
+          density="compact"
+          variant="outlined"
+          label="Last name"
+          outlined
+          rounded="lg"
+          color="#FFB600"
         >
-          <v-autocomplete
-            v-model="form.city"
-            dense
-            density="compact"
-            :items="cities"
-            item-text="title"
-            item-value="id"
-            :rules="cityRules"
-            :error-messages="cityErrors"
-            label="City"
-            variant="outlined"
-            :disabled="!form.state"
-          />
-        </v-col>
-      </v-row>
+          <template #prepend-inner>
+            <v-progress-circular
+              v-if="userDataLoading"
+              indeterminate
+              size="20"
+              color="#ffb300"
+              class="mr-2"
+            />
+          </template>
+        </v-text-field>
+      </v-col>
 
-      <!-- School Profile -->
-      <v-row>
-        <v-col
-          cols="12"
-          class="pl-5 text-h4 teal--text"
-        >
-          <v-icon
-            large
-            color="teal"
-          >
-            mdi-account-school-outline
-          </v-icon>
-          <span> School Profile </span>
-        </v-col>
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <CommonCustomSelectField
+          label="Gender"
+          :items="genderList"
+          :selected-item="userInformation.gender"
+          :has-search="false"
+          :loading="userDataLoading"
+          @change-selected-item="(item : SelectOption) => userInformation.gender = item"
+        />
+      </v-col>
+    </v-row>
 
-        <v-col
-          cols="12"
-          md="4"
+    <!-- Location Details -->
+    <v-row>
+      <v-col
+        cols="12"
+        class="pl-5 text-h4 teal--text"
+      >
+        <v-icon
+          large
+          color="primary"
         >
-          <!-- :rules="levelRules" -->
-          <v-autocomplete
-            v-model="form.level"
-            dense
-            density="compact"
-            :items="levelList"
-            :error-messages="levelErrors"
-            item-text="title"
-            item-value="id"
-            label="Board"
-            variant="outlined"
-          />
-        </v-col>
+          md:location_on_outlined
+        </v-icon>
+        <span class="font-weight-bold"> Location details </span>
+      </v-col>
 
-        <v-col
-          cols="12"
-          md="4"
-        >
-          <!-- :rules="gradeRules" -->
-          <v-autocomplete
-            v-model="form.grade"
-            dense
-            density="compact"
-            :items="gradeList"
-            item-value="id"
-            item-text="title"
-            :error-messages="gradeErrors"
-            label="Grade"
-            variant="outlined"
-            :disabled="!form.level"
-          />
-        </v-col>
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <CommonCustomSelectField
+          label="Country"
+          :items="countries"
+          :selected-item="userInformation.country"
+          :loading="countryLoading || userDataLoading"
+          @change-selected-item="countyChange"
+        />
+      </v-col>
 
-        <v-col
-          cols="12"
-          md="4"
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <CommonCustomSelectField
+          label="State"
+          :items="states"
+          :selected-item="userInformation.state"
+          :loading="stateLoading || userDataLoading"
+          :disabled="!userInformation.country"
+          @change-selected-item="stateChange"
+        />
+      </v-col>
+
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <CommonCustomSelectField
+          label="City"
+          :items="cities"
+          :selected-item="userInformation.city"
+          :loading="cityLoading || userDataLoading"
+          :disabled="!userInformation.state"
+          @change-selected-item="cityChange"
+        />
+      </v-col>
+    </v-row>
+
+    <!-- School Profile -->
+    <v-row>
+      <v-col
+        cols="12"
+        class="pl-5 text-h4 teal--text"
+      >
+        <v-icon
+          large
+          color="primary"
         >
-          <v-select
-            v-model="form.school"
-            dense
-            density="compact"
-            :items="filteredSchoolList"
-            item-value="id"
-            item-title="name"
-            :error-messages="schoolErrors"
-            label="School"
-            variant="outlined"
-            :disabled="!form.city || !form.level"
-            :loading="loadingSchools"
-            clearable
-            :no-data-text="loadingSchools ? 'Loading...' : 'No schools found'"
-          >
-            <template #prepend-item>
-              <v-list-item>
-                <v-text-field
-                  ref="schoolSearchInput"
-                  v-model="schoolSearchQuery"
-                  density="compact"
-                  variant="outlined"
-                  placeholder="Search schools..."
-                  hide-details
-                  class="mb-2"
-                  @click.stop="focusSchoolSearch"
-                >
-                  <template #prepend-inner>
-                    <v-icon class="pointer">
-                      mdi-magnify
-                    </v-icon>
-                  </template>
-                </v-text-field>
-              </v-list-item>
-              <v-divider />
-            </template>
-          </v-select>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-divider class="my-3" />
-        <v-col
-          cols="12"
-          md="6"
-          class="pb-0"
+          md:school_outlined
+        </v-icon>
+        <span class="font-weight-bold"> School Profile </span>
+      </v-col>
+
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <CommonCustomSelectField
+          label="Board"
+          :items="boards"
+          :selected-item="userInformation.board"
+          :loading="boardLoading || userDataLoading"
+          @change-selected-item="boardChange"
+        />
+      </v-col>
+
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <CommonCustomSelectField
+          label="Grade"
+          :items="grades"
+          :selected-item="userInformation.grade"
+          :loading="gradeLoading || userDataLoading"
+          :disabled="!userInformation.board"
+          @change-selected-item="(item : SelectOption) => userInformation.grade = item"
+        />
+      </v-col>
+
+      <v-col
+        cols="12"
+        md="4"
+      >
+        <CommonCustomSelectField
+          label="School"
+          :items="schools"
+          :selected-item="userInformation.school"
+          :loading="schoolLoading || userDataLoading"
+          :disabled="!userInformation.city"
+          @change-selected-item="(item : SelectOption) => userInformation.school = item"
+        />
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-divider class="my-3" />
+      <v-col
+        cols="12"
+        md="6"
+        class="pb-0 d-flex justify-center justify-md-end"
+      >
+        <v-btn
+          flat
+          rounded="lg"
+          width="250"
+          class="text-h5 font-weight-bold"
+          color="success"
+          :loading="submitLoading"
+          :disabled="!isFormValid"
+          @click="submitData"
         >
-          <v-btn
-            type="submit"
-            lg
-            color="success"
-            block
-            :disabled="!isFormValid"
-            :loading="isSubmitting"
-          >
-            Submit
-          </v-btn>
-        </v-col>
-        <v-col
-          cols="12"
-          md="6"
+          Submit
+        </v-btn>
+      </v-col>
+      <v-col
+        cols="12"
+        md="6"
+        class="d-flex justify-center justify-md-start"
+      >
+        <v-btn
+          flat
+          rounded="lg"
+          width="250"
+          class="text-h5 font-weight-bold"
+          color="error"
+          to="/user"
         >
-          <v-btn
-            lg
-            outlined
-            color="error"
-            disabled
-            block
-          >
-            Discard
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-form>
-    <!-- Avatar Cropper Dialog -->
+          Discard
+        </v-btn>
+      </v-col>
+    </v-row>
+
     <CommonCropperDialog
-      v-model="cropperDialog"
+      v-model="showCropperDialog"
       :file-url="cropAvatarUrl"
       :stencil-props="stencilProps"
       @cropped-data="confirmCrop"
     />
-  </div>
+  </v-container>
 </template>
 
 <script setup lang="ts">
-// Types
-interface ListItem {
-  id: number
-  title: string
+interface SelectOption {
+  id: number | string
+  title?: string
+  name?: string
 }
-
-interface UserForm {
-  first_name: string
-  last_name: string
+interface UserProfileUI {
+  avatarFile: File | null
+  avatarUrl: string | null
+  firstName: string
+  lastName: string
+  gender: SelectOption | null
+  country: SelectOption | null
+  state: SelectOption | null
+  city: SelectOption | null
+  board: SelectOption | null
+  grade: SelectOption | null
+  school: SelectOption | null
+}
+interface UserProfileDTO {
   userName: string
-  gender: number | null
-  state: number | null
-  city: number | null
-  level: number | null
+  firstName: string
+  lastName: string
+  countryId: number | null
+  stateId: number | null
+  cityId: number | null
+  schoolId: number | null
+  referralId: string | null
+  gender: string | null
+  board: number | null
   grade: number | null
-  school: number | null
-  avatar: File | null
-  country: number | null
+  avatar: string | null
 }
 
-// Type for autocomplete items
-interface AutocompleteItem {
-  id: number
-  title: string
+interface ApiResponse<T> {
+  data: T
+  succeeded: boolean
+  errors: {
+    message: string
+    code: string
+    reference: string
+    info: string
+    value: string
+  }[]
 }
-
-// Type for school items (different structure from other autocomplete items)
-interface SchoolItem {
-  id: number
-  name: string
-  slug: string
-  lat: number
-  long: number
-  cityTitle: string
-  countryTitle: string
-  stateTitle: string
-  hasWebsite: boolean
-  hasPhone: boolean
-  hasEmail: boolean
-  hasLocation: boolean
-  lastModifyDate: string
-  score: number | null
-  defaultImageUri: string | null
-  distance: number | null
-}
+type ListFields
+  = | 'gender'
+    | 'country'
+    | 'state'
+    | 'city'
+    | 'board'
+    | 'grade'
+    | 'school'
 
 // Define page meta
 definePageMeta({
@@ -442,100 +357,26 @@ definePageMeta({
   title: 'Edit Profile',
 })
 
-useHead({
+useSeoMeta({
   title: 'Edit Profile',
 })
 
-// Reactive data
 const { $toast } = useNuxtApp()
 
-const form = reactive<UserForm>({
-  first_name: '',
-  last_name: '',
+const userInformation = ref<UserProfileUI>({
+  avatarFile: null,
+  avatarUrl: null,
+  firstName: '',
+  lastName: '',
   gender: null,
   country: null,
   state: null,
   city: null,
-  level: null,
+  board: null,
   grade: null,
   school: null,
-  avatar: null,
-  userName: '',
 })
-const formRef = ref()
-const avatarUrl = ref('')
-const cropAvatarUrl = ref('')
-const cropAvatarLoading = ref(false)
-const cropperDialog = ref(false)
-const isSubmitting = ref(false)
-const stencilProps = { width: 180, height: 180, resizable: true }
-const isFormValid = ref(true)
-const genderList = ref<ListItem[]>([
-  { id: 1, title: 'Male' },
-  { id: 2, title: 'Female' },
-])
-const levelList = ref<ListItem[]>([])
-const gradeList = ref<ListItem[]>([])
-const schoolList = ref<SchoolItem[]>([])
-const stateList = ref<ListItem[]>([])
-const countryList = ref<ListItem[]>([])
-const usernameErrors = ref<string[]>([])
-const firstNameErrors = ref<string[]>([])
-const lastNameErrors = ref<string[]>([])
-const genderErrors = ref<string[]>([])
-const stateErrors = ref<string[]>([])
-const cityErrors = ref<string[]>([])
-const levelErrors = ref<string[]>([])
-const gradeErrors = ref<string[]>([])
-const schoolErrors = ref<string[]>([])
-const countryErrors = ref<string[]>([])
-const loadingCountries = ref(false)
-const loadingStates = ref(false)
-const loadingCities = ref(false)
-const loadingSchools = ref(false)
-const countries = ref<AutocompleteItem[]>([])
-const states = ref<AutocompleteItem[]>([])
-const cities = ref<AutocompleteItem[]>([])
-const schoolPage = ref(1)
-const schoolPerPage = ref(20)
-const schoolTotalCount = ref(0)
-const schoolHasMore = ref(true)
-const schoolSearchQuery = ref('')
-const searchTimeout = ref<NodeJS.Timeout | null>(null)
-const filteredSchoolList = computed(() => {
-  return schoolList.value
-})
-
-watch(
-  [
-    () => form.first_name,
-    () => form.last_name,
-    () => form.gender,
-    () => form.state,
-    () => form.city,
-    () => form.level,
-    () => form.grade,
-    () => form.school,
-    () => form.userName,
-  ],
-  async () => {
-    if (formRef.value) {
-      const { valid } = await formRef.value.validate()
-      isFormValid.value = valid
-    }
-  },
-  { deep: true },
-)
-
-// Validation rules
-const usernameRules = [
-  (v: string) => !!v || 'Username is required',
-  (v: string) => v.length >= 3 || 'Username must be at least 3 characters',
-  (v: string) => v.length <= 20 || 'Username must be less than 20 characters',
-  (v: string) =>
-    /^[a-zA-Z0-9_]+$/.test(v)
-    || 'Username can only contain letters, numbers, and underscores',
-]
+const userDataLoading = ref(true)
 
 const firstNameRules = [
   (v: string) => !!v || 'First name is required',
@@ -544,61 +385,168 @@ const firstNameRules = [
   (v: string) =>
     /^[a-zA-Z\s]+$/.test(v) || 'First name can only contain letters and spaces',
 ]
+// const lastNameRules = [
+//   (v: string) => !!v || "Last name is required",
+//   (v: string) => v.length >= 2 || "Last name must be at least 2 characters",
+//   (v: string) => v.length <= 50 || "Last name must be less than 50 characters",
+//   (v: string) =>
+//     /^[a-zA-Z\s]+$/.test(v) || "Last name can only contain letters and spaces",
+// ];
 
-const lastNameRules = [
-  (v: string) => !!v || 'Last name is required',
-  (v: string) => v.length >= 2 || 'Last name must be at least 2 characters',
-  (v: string) => v.length <= 50 || 'Last name must be less than 50 characters',
-  (v: string) =>
-    /^[a-zA-Z\s]+$/.test(v) || 'Last name can only contain letters and spaces',
-]
+const genderList = ref<SelectOption[]>([
+  { id: 'Male', title: 'Male' },
+  { id: 'Female', title: 'Female' },
+])
 
-const genderRules = [
-  (v: number) => (v !== null && v !== undefined) || 'Gender is required',
-]
+// Location Info
+const countries = ref<SelectOption[]>([])
+const countryLoading = ref(true)
+const states = ref<SelectOption[]>([])
+const stateLoading = ref(true)
+const cities = ref<SelectOption[]>([])
+const cityLoading = ref(true)
 
-const stateRules = [
-  (v: string | number | null) =>
-    (v !== null && v !== undefined && v !== '') || 'State is required',
-]
+const handleChange = async (
+  field: ListFields,
+  value: SelectOption | null,
+  firstInitialize: boolean,
+  resetFields: ListFields[],
+  fetchType?: keyof typeof locationConfig,
+) => {
+  userInformation.value[field] = value
 
-const cityRules = [
-  (v: string | number | null) =>
-    (v !== null && v !== undefined && v !== '') || 'City is required',
-]
+  if (!firstInitialize) {
+    resetFields.forEach((f) => {
+      userInformation.value[f] = null
+      if (f === 'state') states.value = []
+      if (f === 'city') cities.value = []
+      if (f === 'school') schools.value = []
+      if (f === 'grade') grades.value = []
+    })
+    if (value && fetchType) {
+      await getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, fetchType)
+    }
+  }
+}
 
-const countryRules = [
-  (v: string | number | null) =>
-    (v !== null && v !== undefined && v !== '') || 'Country is required',
-]
+const countyChange = async (item: SelectOption, firstInitilize: boolean) => {
+  await handleChange(
+    'country',
+    item,
+    firstInitilize,
+    ['state', 'city', 'school'],
+    'states',
+  )
+}
 
-const avatarInput = ref<HTMLInputElement>()
-const schoolSearchInput = ref<HTMLInputElement>()
+const stateChange = async (item: SelectOption, firstInitilize: boolean) => {
+  await handleChange(
+    'state',
+    item,
+    firstInitilize,
+    ['city', 'school'],
+    'cities',
+  )
+}
+
+const cityChange = async (item: SelectOption, firstInitilize: boolean) => {
+  await handleChange('city', item, firstInitilize, ['school'], 'school')
+}
+
+// School Info
+const boards = ref<SelectOption[]>([])
+const boardLoading = ref(true)
+const grades = ref<SelectOption[]>([])
+const gradeLoading = ref(true)
+const schools = ref<SelectOption[]>([])
+const schoolLoading = ref(true)
+
+const boardChange = async (item: SelectOption, firstInitilize: boolean) => {
+  await handleChange('board', item, firstInitilize, ['grade'], 'grade')
+}
+
+const avatarInputRef = ref<HTMLInputElement | null>(null)
+const cropAvatarUrl = ref('')
+const showCropperDialog = ref(false)
+const stencilProps = { width: 100, height: 100, resizable: true }
+const changeUserAvatar = () => {
+  avatarInputRef.value?.click()
+}
+const uploadAvatar = () => {
+  const file = userInformation.value.avatarFile
+  if (file) {
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    if (file.size > maxSize) {
+      $toast.error('File size must be less than 5MB')
+      return
+    }
+    cropAvatarUrl.value = URL.createObjectURL(file)
+    showCropperDialog.value = true
+  }
+}
+const confirmCrop = (dataCroped: Blob) => {
+  userInformation.value.avatarUrl = URL.createObjectURL(dataCroped)
+  showCropperDialog.value = false
+  const timestamp = new Date().getTime()
+  const fileType = 'image/webp'
+  const fileExt = 'webp'
+  const filename = `image_${timestamp}.${fileExt}`
+  const file = new File([dataCroped], filename, { type: fileType })
+  userInformation.value.avatarFile = file
+}
 
 const getUserInfo = async () => {
   try {
-    const profileRes = await useApiService.get('/api/v2/identities/profiles')
+    userDataLoading.value = true
+    const { data } = await useApiService.get<ApiResponse<UserProfileDTO>>(
+      '/api/v2/identities/profiles',
+    )
+    userDataLoading.value = false
+    const {
+      gender,
+      firstName,
+      lastName,
+      avatar,
+      countryId,
+      stateId,
+      cityId,
+      board,
+      grade,
+      schoolId,
+    } = data
+    userInformation.value = {
+      ...userInformation.value,
+      gender: gender ? { id: gender, title: gender } : null,
+      firstName,
+      lastName,
+      avatarUrl: avatar || null,
+      country: countryId ? { id: countryId } : null,
+      state: stateId ? { id: stateId } : null,
+      city: cityId ? { id: cityId } : null,
+      board: board ? { id: board } : null,
+      grade: grade ? { id: grade } : null,
+      school: schoolId ? { id: schoolId } : null,
+    }
 
-    if (profileRes.data.gender)
-      form.gender = profileRes.data.gender == 'Male' ? 1 : 2
-    if (profileRes.data.firstName) form.first_name = profileRes.data.firstName
-    if (profileRes.data.lastName) form.last_name = profileRes.data.lastName
-    if (profileRes.data.userName) form.userName = profileRes.data.userName
-    if (profileRes.data.countryId) form.country = profileRes.data.countryId
-    if (profileRes.data.stateId) form.state = profileRes.data.stateId
-    if (profileRes.data.cityId) form.city = profileRes.data.cityId
-    if (profileRes.data.section) form.level = String(profileRes.data.section)
-    if (profileRes.data.grade) form.grade = String(profileRes.data.grade)
-    if (profileRes.data.avatar) avatarUrl.value = profileRes.data.avatar
-    if (profileRes.data.countryId) {
-      await fetchStates(profileRes.data.countryId)
-      if (profileRes.data.stateId) {
-        await fetchCities(profileRes.data.stateId)
-      }
-    }
-    if (profileRes.data.schoolId) {
-      form.school = profileRes.data.schoolId
-    }
+    const filterPromises: Promise<void>[] = []
+    if (countryId)
+      filterPromises.push(
+        getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'states'),
+      )
+    if (stateId)
+      filterPromises.push(
+        getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'cities'),
+      )
+    if (cityId)
+      filterPromises.push(
+        getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'school'),
+      )
+    if (board)
+      filterPromises.push(
+        getFilterList({ 'PagingDto.PageFilter.Size': 10000 }, 'grade'),
+      )
+
+    await Promise.allSettled(filterPromises)
   }
   catch (err: unknown) {
     const error = err as { response?: { data?: { message?: string } } }
@@ -606,32 +554,149 @@ const getUserInfo = async () => {
       error.response?.data?.message || 'Failed to load user information',
     )
   }
+  finally {
+    userDataLoading.value = false
+    countryLoading.value = false
+    stateLoading.value = false
+    cityLoading.value = false
+    boardLoading.value = false
+    gradeLoading.value = false
+    schoolLoading.value = false
+  }
 }
 
-const submitProfile = async () => {
-  const { valid } = await formRef.value.validate()
-  isFormValid.value = valid
+const locationConfig = {
+  countries: {
+    endpoint: () => '/api/v2/locations/countries',
+    loading: countryLoading,
+    valueRef: countries,
+  },
+  states: {
+    endpoint: () =>
+      `/api/v2/locations/states/${userInformation.value.country?.id}`,
+    loading: stateLoading,
+    valueRef: states,
+  },
+  cities: {
+    endpoint: () =>
+      `/api/v2/locations/cities/${userInformation.value.state?.id}`,
+    loading: cityLoading,
+    valueRef: cities,
+  },
+  board: {
+    endpoint: () => '/api/v1/types/list',
+    loading: boardLoading,
+    valueRef: boards,
+  },
+  grade: {
+    endpoint: () =>
+      `/api/v1/types/list/?type=base&section_id=${userInformation.value.board?.id}`,
+    loading: gradeLoading,
+    valueRef: grades,
+  },
+  school: {
+    endpoint: () => '/api/v2/schools',
+    loading: schoolLoading,
+    valueRef: schools,
+  },
+}
 
-  if (valid) {
-    isSubmitting.value = true
+const getFilterList = async (
+  params: Record<string, string | number>,
+  type: keyof typeof locationConfig,
+) => {
+  try {
+    const config = locationConfig[type]
+    if (!config) return
+
+    config.loading.value = true
+    if (type === 'school') {
+      params.CityId = userInformation.value.city?.id as string
+    }
+    const response = await useApiService.get<
+      ApiResponse<SelectOption[] | { list: SelectOption[] }>
+    >(config.endpoint(), params)
+
+    config.loading.value = false
+    if (type === 'school') {
+      const list = (response.data as { list: SelectOption[] }).list || []
+      config.valueRef.value = list.map((item: SelectOption) => ({
+        id: item.id,
+        title: item.name,
+      }))
+    }
+    else if ((response.data as { list: SelectOption[] }).list) {
+      config.valueRef.value = (response.data as { list: SelectOption[] }).list
+    }
+    else {
+      config.valueRef.value = response.data as SelectOption[]
+    }
+  }
+  catch (err) {
+    console.error('Error fetching location data:', err)
+    locationConfig[type].loading.value = false
+  }
+}
+
+onMounted(async () => {
+  await getFilterList({ 'PagingDto.PageFilter.Size': 250 }, 'countries')
+  await getFilterList({ type: 'section' }, 'board')
+  await getUserInfo()
+})
+
+const submitLoading = ref(false)
+
+const isFormValid = computed(() => {
+  const info = userInformation.value
+
+  const firstName = info.firstName?.trim() || ''
+  const isFirstNameValid = firstNameRules.every(
+    rule => rule(firstName) === true,
+  )
+  return isFirstNameValid
+})
+
+const submitData = async () => {
+  if (isFormValid.value) {
+    submitLoading.value = true
     try {
       const profilePayload = new FormData()
-      profilePayload.append('CityId', form.city)
-      profilePayload.append('SchoolId', form.school)
-      profilePayload.append('UserName', form.userName)
-      profilePayload.append('FirstName', form.first_name)
-      profilePayload.append('LastName', form.last_name)
-      profilePayload.append('Gender', form.gender == 1 ? 'Male' : 'Female')
-      profilePayload.append('Section', form.level)
-      profilePayload.append('Grade', form.grade)
-      profilePayload.append('Avatar', form.avatar)
 
-      const profileResponse = await useApiService.put(
+      if (userInformation.value.city?.id)
+        profilePayload.append('CityId', String(userInformation.value.city.id))
+
+      if (userInformation.value.school?.id)
+        profilePayload.append(
+          'SchoolId',
+          String(userInformation.value.school.id),
+        )
+
+      if (userInformation.value.firstName)
+        profilePayload.append('FirstName', userInformation.value.firstName)
+
+      if (userInformation.value.lastName)
+        profilePayload.append('LastName', userInformation.value.lastName)
+
+      if (userInformation.value.gender?.id)
+        profilePayload.append(
+          'Gender',
+          String(userInformation.value.gender.id),
+        )
+
+      if (userInformation.value.board?.id)
+        profilePayload.append('Board', String(userInformation.value.board.id))
+
+      if (userInformation.value.grade?.id)
+        profilePayload.append('Grade', String(userInformation.value.grade.id))
+
+      if (userInformation.value.avatarFile)
+        profilePayload.append('Avatar', userInformation.value.avatarFile)
+
+      const profileResponse = await useApiService.put<ApiResponse<unknown>>(
         '/api/v2/identities/profiles',
         profilePayload,
       )
-
-      if (profileResponse.succeeded) {
+      if (profileResponse?.succeeded) {
         $toast.success('Profile updated successfully')
       }
       else {
@@ -643,318 +708,8 @@ const submitProfile = async () => {
       $toast.error(error.response?.data?.message || 'Failed to update profile')
     }
     finally {
-      isSubmitting.value = false
+      submitLoading.value = false
     }
   }
 }
-
-const getTypeList = async (type: string, parent: string | number = '') => {
-  try {
-    const params: Record<string, string | number> = { type }
-
-    if (type === 'base') params.section_id = parent
-    if (type === 'school') {
-      params.section_id = form.level
-      // params.area_id = form.area // Removed as area doesn't exist in UserForm
-    }
-
-    const res = await useApiService.get('/api/v1/types/list', params)
-
-    switch (type) {
-      case 'country':
-        countryList.value = res.data
-        break
-      case 'section':
-        levelList.value = res.data
-        break
-      case 'base':
-        gradeList.value = res.data
-        break
-      case 'state':
-        stateList.value = res.data
-        break
-      case 'school':
-        schoolList.value = res.data
-        break
-    }
-  }
-  catch (err: unknown) {
-    const error = err as { response?: { data?: { message?: string } } }
-    $toast.error(
-      error.response?.data?.message || `Failed to load ${type} list`,
-    )
-  }
-}
-
-const selectAvatar = () => {
-  avatarInput.value?.click()
-}
-
-const uploadAvatar = () => {
-  const file = form.avatar
-  if (file) {
-    const maxSize = 5 * 1024 * 1024 // 5MB
-    if (file.size > maxSize) {
-      $toast.error('File size must be less than 5MB')
-      return
-    }
-
-    cropAvatarLoading.value = true
-    cropAvatarUrl.value = URL.createObjectURL(file)
-    cropperDialog.value = true
-  }
-}
-
-const confirmCrop = (url: Blob) => {
-  avatarUrl.value = URL.createObjectURL(url)
-  cropAvatarLoading.value = false
-  cropperDialog.value = false
-}
-
-watch(
-  () => form.level,
-  (val, oldVal) => {
-    if (val && val !== oldVal) {
-      getTypeList('base', val)
-      if (oldVal !== null) {
-        form.grade = null
-        form.school = null
-      }
-      if (form.city) {
-        fetchSchools(true)
-      }
-    }
-  },
-)
-
-watch(
-  () => form.city,
-  (val, oldVal) => {
-    if (val && form.level) {
-      fetchSchools(true)
-    }
-    if (oldVal !== null) {
-      form.school = null
-    }
-  },
-)
-
-watch(
-  () => schoolList.value,
-  () => {
-    if (schoolList.value.length === 0) {
-      // Reset search query when school list is empty
-      schoolSearchQuery.value = ''
-    }
-  },
-)
-
-async function handleCountryChange(countryId: number) {
-  form.state = null
-  form.city = null
-  states.value = []
-  cities.value = []
-  if (countryId) {
-    await fetchStates(countryId)
-  }
-}
-
-async function handleStateChange(stateId: number) {
-  form.city = null
-  cities.value = []
-  if (stateId) {
-    await fetchCities(stateId)
-  }
-}
-
-async function fetchCountries() {
-  loadingCountries.value = true
-  try {
-    const response = await useApiService.get('/api/v2/locations/countries', {
-      'PagingDto.PageFilter.Skip': 0,
-      'PagingDto.PageFilter.Size': 1000,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-    })
-    if (response.succeeded) {
-      countries.value = response.data.list
-    }
-  }
-  catch (error) {
-    console.error('Failed to fetch countries:', error)
-  }
-  finally {
-    loadingCountries.value = false
-  }
-}
-
-async function fetchStates(countryId: number) {
-  if (!countryId) return
-  loadingStates.value = true
-  try {
-    const response = await useApiService.get(
-      `/api/v2/locations/states/${countryId}`,
-      {
-        'PagingDto.PageFilter.Skip': 0,
-        'PagingDto.PageFilter.Size': 1000,
-        'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-      },
-    )
-    if (response.succeeded) {
-      states.value = response.data.list
-    }
-  }
-  catch (error) {
-    console.error('Failed to fetch states:', error)
-  }
-  finally {
-    loadingStates.value = false
-  }
-}
-
-async function fetchCities(stateId: number) {
-  if (!stateId) return
-  loadingCities.value = true
-  try {
-    const response = await useApiService.get(
-      `/api/v2/locations/cities/${stateId}`,
-      {
-        'PagingDto.PageFilter.Skip': 0,
-        'PagingDto.PageFilter.Size': 1000,
-        'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-      },
-    )
-    if (response.succeeded) {
-      cities.value = response.data.list
-    }
-  }
-  catch (error) {
-    console.error('Failed to fetch cities:', error)
-  }
-  finally {
-    loadingCities.value = false
-  }
-}
-
-async function fetchSchools(reset = false) {
-  if (!form.city || !form.level) return
-
-  if (reset) {
-    schoolPage.value = 1
-    schoolList.value = []
-    schoolHasMore.value = true
-  }
-
-  if (!schoolHasMore.value || loadingSchools.value) return
-
-  loadingSchools.value = true
-  try {
-    const params = {
-      'PagingDto.PageFilter.Skip': (schoolPage.value - 1) * schoolPerPage.value,
-      'PagingDto.PageFilter.Size': schoolPerPage.value,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-      'CityId': form.city,
-      'section': form.level,
-    }
-
-    // Add search parameter if search query exists
-    if (schoolSearchQuery.value.trim()) {
-      params.Name = schoolSearchQuery.value.trim()
-    }
-
-    const response = await useApiService.get('/api/v2/schools', params)
-
-    if (response.succeeded) {
-      const newSchools = response.data.list || []
-      if (reset) {
-        schoolList.value = newSchools
-      }
-      else {
-        schoolList.value = [...schoolList.value, ...newSchools]
-      }
-
-      schoolTotalCount.value = response.data.totalCount || 0
-      schoolHasMore.value = newSchools.length === schoolPerPage.value
-    }
-  }
-  catch (error) {
-    console.error('Failed to fetch schools:', error)
-  }
-  finally {
-    loadingSchools.value = false
-  }
-}
-
-watch(schoolSearchQuery, async (_newQuery) => {
-  if (!form.city || !form.level) return
-
-  if (searchTimeout.value) {
-    clearTimeout(searchTimeout.value)
-  }
-
-  searchTimeout.value = setTimeout(async () => {
-    schoolPage.value = 1
-    schoolList.value = []
-    schoolHasMore.value = true
-    await fetchSchools(true)
-  }, 300)
-})
-watch(
-  () => [form.city, form.level],
-  ([city, level]) => {
-    if (city && level && schoolList.value.length === 0) {
-      // fetchSchools(true);
-    }
-  },
-  { immediate: true },
-)
-
-function focusSchoolSearch() {
-  schoolSearchInput.value?.focus()
-}
-
-onMounted(async () => {
-  await fetchCountries()
-  // getTypeList('country');
-  await getTypeList('section')
-  // getTypeList('state');
-  await getUserInfo()
-})
-
-onUnmounted(() => {
-  if (searchTimeout.value) {
-    clearTimeout(searchTimeout.value)
-  }
-})
 </script>
-
-<style scoped>
-.pointer {
-  cursor: pointer;
-}
-
-.v-text-field :deep(.v-field--error) {
-  --v-field-border-color: rgb(var(--v-theme-error));
-}
-
-.v-autocomplete :deep(.v-field--error) {
-  --v-field-border-color: rgb(var(--v-theme-error));
-}
-
-/* Fix alignment for prepend and append elements */
-.v-text-field :deep(.v-field__prepend-inner) {
-  align-items: center;
-  display: flex;
-}
-
-.v-text-field :deep(.v-field__append-inner) {
-  align-items: center;
-  display: flex;
-}
-
-/* Ensure consistent height for prepend/append elements */
-.v-text-field :deep(.v-field__prepend-inner),
-.v-text-field :deep(.v-field__append-inner) {
-  height: 100%;
-  min-height: 40px;
-}
-</style>

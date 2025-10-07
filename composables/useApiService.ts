@@ -101,7 +101,7 @@ export const post = <T = unknown>(
 
 export const put = <T = unknown>(
   request: string,
-  params: SearchParameters,
+  params: SearchParameters | FormData,
   opts?: UseFetchOptions,
 ): Promise<T> => {
   return useApiService<T>(request, { ...opts, method: 'PUT', body: params })
