@@ -295,7 +295,7 @@ async function submitLoginV2(old_token) {
   else if (
     result.errors.length
     && (result.errors[0].message === 'UserNotFound'
-      || result.errors[0].message === 'Invalid Token')
+      || result.errors[0].message === 'InvalidToken')
   ) {
     await registerV2(identityVal, pass)
   }
