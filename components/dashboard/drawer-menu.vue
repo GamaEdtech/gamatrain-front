@@ -40,7 +40,7 @@
             color="#667085"
           >
             <span class="text-h5">{{
-              user?.first_name ? user.first_name[0].toUpperCase() : "U"
+              user?.firstName ? user.firstName[0].toUpperCase() : "U"
             }}</span>
           </v-avatar>
         </template>
@@ -48,7 +48,7 @@
         <v-list-item-title
           class="text-h5 font-weight-bold primary-gray-500 text-item-height"
         >
-          {{ user ? user.first_name + " " + user.last_name : "User" }}
+          {{ user ? user.firstName + " " + user.lastName : "User" }}
         </v-list-item-title>
       </v-list-item>
 

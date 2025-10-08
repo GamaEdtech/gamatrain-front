@@ -32,6 +32,7 @@ const { handleSubmit, handleReset } = useForm({
 })
 const identity = useField('identity')
 const password = useField('password')
+const googleId = ref(null)
 
 const otp = ref('')
 const otp_loading = ref(false)
@@ -54,7 +55,6 @@ watch(countDown, (val) => {
 
 async function handleCredentialResponse(value) {
   const auth = useAuth()
-  const { setUser } = useUser()
   try {
     const response = await useApiService.post(
       '/api/v1/users/googleAuth',
@@ -65,9 +65,8 @@ async function handleCredentialResponse(value) {
 
     if (response.status === 1) {
       $toast.success('Logged in successfully')
-
+      googleId.value = response?.data?.info?.email
       auth.setUserToken(response.data.jwtToken)
-      setUser(response.data.info)
       submitLoginV2(response.data.jwtToken)
       closeDialog()
 
@@ -163,7 +162,6 @@ const sendOtpCodeAgain = async () => {
 
 const submit = handleSubmit(async () => {
   const auth = useAuth()
-  const { setUser } = useUser()
 
   login_loading.value = true
   try {
@@ -185,7 +183,6 @@ const submit = handleSubmit(async () => {
     }
     else {
       auth.setUserToken(response.data.jwtToken)
-      setUser(response.data.info)
       submitLoginV2(response.data.jwtToken)
       $toast.success('Logged in successfully')
 
@@ -207,7 +204,6 @@ const submit = handleSubmit(async () => {
 
 const onFinish = async () => {
   const auth = useAuth()
-  const { setUser } = useUser()
   try {
     const response = await useApiService.post(
       '/api/v1/users/login',
@@ -220,7 +216,6 @@ const onFinish = async () => {
     )
     if (response.status === 1) {
       auth.setUserToken(response.data.jwtToken)
-      setUser(response.data.info)
       await submitLoginV2(response.data.jwtToken)
       $toast.success('Logged in successfully')
       closeDialog()
@@ -279,11 +274,11 @@ const recheckEnteredIdentity = () => {
 
 async function submitLoginV2(old_token) {
   const auth = useAuth()
-  const { user } = useUser()
+  const { getProfile, setUser } = useUser()
   const pass = password.value.value ? password.value.value : generatePassword()
   const identityVal = identity.value.value
     ? identity.value.value
-    : user.value.email || ''
+    : googleId.value || ''
 
   const result = await useApiService.post('/api/v2/identities/tokens/old', {
     token: old_token,
@@ -291,11 +286,22 @@ async function submitLoginV2(old_token) {
   if (result.succeeded) {
     localStorage.setItem('v2_token', result.data.token)
     auth.setUserTokenV2(result.data.token)
+    const profileData = await getProfile(result.data.token)
+    if (profileData.data) {
+      const profile = profileData.data.data
+      setUser({
+        avatar: profile.avatar ?? '',
+        userName: profile.userName ?? '',
+        firstName: profile.firstName ?? '',
+        lastName: profile.lastName ?? '',
+        profileUpdated: profile.profileUpdated ?? false,
+      })
+    }
   }
   else if (
     result.errors.length
     && (result.errors[0].message === 'UserNotFound'
-      || result.errors[0].message === 'Invalid Token')
+      || result.errors[0].message === 'InvalidToken')
   ) {
     await registerV2(identityVal, pass)
   }

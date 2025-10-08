@@ -105,9 +105,9 @@ const getUserInfo = async () => {
     loader.value = false
   }
   catch (error) {
-    if (error.response?.status === 403) {
-      useAuth().logout()
-    }
+    // if (error.response?.status === 403) {
+    //   useAuth().logout()
+    // }
     $toast.error(error.response.data.message)
   }
 }

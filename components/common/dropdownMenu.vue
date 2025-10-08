@@ -16,7 +16,7 @@
               : 'header-username-light'
           }`"
         >
-          {{ user?.first_name || user?.last_name || "NO NAME" }}
+          {{ user?.firstName || user?.lastName || "NO NAME" }}
         </div>
         <v-avatar
           v-if="user?.avatar"
