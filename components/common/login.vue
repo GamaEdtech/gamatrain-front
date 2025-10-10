@@ -68,7 +68,7 @@ async function handleCredentialResponse(value) {
       googleId.value = response?.data?.info?.email
       auth.setUserToken(response.data.jwtToken)
       submitLoginV2(response.data.jwtToken)
-      closeDialog()
+      // closeDialog()
 
       if (!route.query?.auth_noredirect && route.path === '/')
         navigateTo('/user')
@@ -184,9 +184,7 @@ const submit = handleSubmit(async () => {
     else {
       auth.setUserToken(response.data.jwtToken)
       submitLoginV2(response.data.jwtToken)
-      $toast.success('Logged in successfully')
 
-      closeDialog()
       if (!route.query?.auth_noredirect && route.path === '/')
         navigateTo('/user')
     }
@@ -196,9 +194,6 @@ const submit = handleSubmit(async () => {
 
     if (error?.response?.status === 400) $toast.error(errorData.message)
     else $toast.error('Something went wrong.')
-  }
-  finally {
-    login_loading.value = false
   }
 })
 
@@ -217,8 +212,8 @@ const onFinish = async () => {
     if (response.status === 1) {
       auth.setUserToken(response.data.jwtToken)
       await submitLoginV2(response.data.jwtToken)
-      $toast.success('Logged in successfully')
-      closeDialog()
+      // $toast.success('Logged in successfully')
+      // closeDialog()
       if (!route.query?.auth_noredirect && route.path === '/')
         navigateTo('/user')
     }
@@ -290,12 +285,15 @@ async function submitLoginV2(old_token) {
     if (profileData.data) {
       const profile = profileData.data.data
       setUser({
-        avatar: profile.avatar ?? '',
-        userName: profile.userName ?? '',
-        firstName: profile.firstName ?? '',
-        lastName: profile.lastName ?? '',
+        avatar: profile.avatar ?? null,
+        userName: profile.userName ?? null,
+        firstName: profile.firstName ?? null,
+        lastName: profile.lastName ?? null,
         profileUpdated: profile.profileUpdated ?? false,
       })
+
+      $toast.success('Logged in successfully')
+      closeDialog()
     }
   }
   else if (
