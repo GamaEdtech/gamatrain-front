@@ -39,7 +39,7 @@
                 aria-label="x Account GamaEdtech"
               >
                 <img
-                  src="@/assets/images/x-icon.svg"
+                  :src="xIcon"
                   alt="x Account GamaEdtech"
                   width="16"
                   height="16"
@@ -52,7 +52,7 @@
                 aria-label="youtube channel GamaEdtech"
               >
                 <img
-                  src="@/assets/images/youtube-icon.svg"
+                  :src="youtubeIcon"
                   alt="youtube channel GamaEdtech"
                   width="16"
                   height="16"
@@ -65,7 +65,7 @@
                 aria-label="discord channel GamaEdtech"
               >
                 <img
-                  src="@/assets/images/discord-icon.svg"
+                  :src="discordIcon"
                   alt="discord channel GamaEdtech"
                   width="16"
                   height="16"
@@ -78,7 +78,7 @@
                 aria-label="telegram channel GamaEdtech"
               >
                 <img
-                  src="@/assets/images/telegram-icon.svg"
+                  :src="tlgIcon"
                   alt="telegram channel GamaEdtech"
                   width="16"
                   height="16"
@@ -162,65 +162,64 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      footerLinks: [
-        {
-          mainTitle: 'We',
-          subMenu: [
-            {
-              title: 'About us',
-              link: '/about-us',
-            },
-            {
-              title: 'Contact us',
-              link: '/contact-us',
-            },
-            {
-              title: 'Terms',
-              link: '/terms',
-            },
-            {
-              title: 'FAQ',
-              link: '/faq',
-            },
-            {
-              title: 'Leader Board',
-              link: '/leader-board',
-            },
-          ],
-        },
-        {
-          mainTitle: 'Services',
-          subMenu: [
-            {
-              title: 'Paper',
-              link: '/search?type=test',
-            },
-            {
-              title: 'School Finder',
-              link: '/school',
-            },
-            {
-              title: 'Exam',
-              link: '/search?type=azmoon',
-            },
-            {
-              title: '$GET Token',
-              link: '/get-token',
-            },
-            {
-              title: 'Governance',
-              link: '/governance',
-            },
-          ],
-        },
-      ],
-    }
+<script setup>
+import xIcon from '@/assets/images/x-icon.svg'
+import youtubeIcon from '@/assets/images/youtube-icon.svg'
+import discordIcon from '@/assets/images/discord-icon.svg'
+import tlgIcon from '@/assets/images/telegram-icon.svg'
+
+const footerLinks = [
+  {
+    mainTitle: 'We',
+    subMenu: [
+      {
+        title: 'About us',
+        link: '/about-us',
+      },
+      {
+        title: 'Contact us',
+        link: '/contact-us',
+      },
+      {
+        title: 'Terms',
+        link: '/terms',
+      },
+      {
+        title: 'FAQ',
+        link: '/faq',
+      },
+      {
+        title: 'Leader Board',
+        link: '/leader-board',
+      },
+    ],
   },
-}
+  {
+    mainTitle: 'Services',
+    subMenu: [
+      {
+        title: 'Paper',
+        link: '/search?type=test',
+      },
+      {
+        title: 'School Finder',
+        link: '/school',
+      },
+      {
+        title: 'Exam',
+        link: '/search?type=azmoon',
+      },
+      {
+        title: '$GET Token',
+        link: '/get-token',
+      },
+      {
+        title: 'Governance',
+        link: '/governance',
+      },
+    ],
+  },
+]
 </script>
 
 <style>
