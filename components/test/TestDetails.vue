@@ -30,7 +30,10 @@
 
     <!--  Start: detail  -->
     <section>
-      <v-container class="py-0 relation-position">
+      <v-container
+        fluid
+        class="py-0 relation-position"
+      >
         <!-- Start : Box Showing Balance -->
         <div
           v-show="showBoxBalance"
