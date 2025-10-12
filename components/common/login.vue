@@ -1,10 +1,7 @@
 <script setup>
-import { navigateTo } from 'nuxt/app'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useUser } from '@/composables/useUser'
-
-const route = useRoute()
 
 const { $toast } = useNuxtApp()
 
@@ -32,6 +29,7 @@ const { handleSubmit, handleReset } = useForm({
 })
 const identity = useField('identity')
 const password = useField('password')
+const googleId = ref(null)
 
 const otp = ref('')
 const otp_loading = ref(false)
@@ -54,7 +52,6 @@ watch(countDown, (val) => {
 
 async function handleCredentialResponse(value) {
   const auth = useAuth()
-  const { setUser } = useUser()
   try {
     const response = await useApiService.post(
       '/api/v1/users/googleAuth',
@@ -65,14 +62,13 @@ async function handleCredentialResponse(value) {
 
     if (response.status === 1) {
       $toast.success('Logged in successfully')
-
+      googleId.value = response?.data?.info?.email
       auth.setUserToken(response.data.jwtToken)
-      setUser(response.data.info)
       submitLoginV2(response.data.jwtToken)
-      closeDialog()
+      // closeDialog()
 
-      if (!route.query?.auth_noredirect && route.path === '/')
-        navigateTo('/user')
+      // if (!route.query?.auth_noredirect && route.path === '/')
+      //   navigateTo('/user')
     }
   }
   catch (err) {
@@ -163,7 +159,6 @@ const sendOtpCodeAgain = async () => {
 
 const submit = handleSubmit(async () => {
   const auth = useAuth()
-  const { setUser } = useUser()
 
   login_loading.value = true
   try {
@@ -185,13 +180,10 @@ const submit = handleSubmit(async () => {
     }
     else {
       auth.setUserToken(response.data.jwtToken)
-      setUser(response.data.info)
       submitLoginV2(response.data.jwtToken)
-      $toast.success('Logged in successfully')
 
-      closeDialog()
-      if (!route.query?.auth_noredirect && route.path === '/')
-        navigateTo('/user')
+      // if (!route.query?.auth_noredirect && route.path === '/')
+      //   navigateTo('/user')
     }
   }
   catch (error) {
@@ -199,15 +191,12 @@ const submit = handleSubmit(async () => {
 
     if (error?.response?.status === 400) $toast.error(errorData.message)
     else $toast.error('Something went wrong.')
-  }
-  finally {
     login_loading.value = false
   }
 })
 
 const onFinish = async () => {
   const auth = useAuth()
-  const { setUser } = useUser()
   try {
     const response = await useApiService.post(
       '/api/v1/users/login',
@@ -220,12 +209,11 @@ const onFinish = async () => {
     )
     if (response.status === 1) {
       auth.setUserToken(response.data.jwtToken)
-      setUser(response.data.info)
       await submitLoginV2(response.data.jwtToken)
-      $toast.success('Logged in successfully')
-      closeDialog()
-      if (!route.query?.auth_noredirect && route.path === '/')
-        navigateTo('/user')
+      // $toast.success('Logged in successfully')
+      // closeDialog()
+      // if (!route.query?.auth_noredirect && route.path === '/')
+      //   navigateTo('/user')
     }
   }
   catch (error) {
@@ -279,11 +267,11 @@ const recheckEnteredIdentity = () => {
 
 async function submitLoginV2(old_token) {
   const auth = useAuth()
-  const { user } = useUser()
+  const { getProfile, setUser } = useUser()
   const pass = password.value.value ? password.value.value : generatePassword()
   const identityVal = identity.value.value
     ? identity.value.value
-    : user.value.email || ''
+    : googleId.value || ''
 
   const result = await useApiService.post('/api/v2/identities/tokens/old', {
     token: old_token,
@@ -291,6 +279,21 @@ async function submitLoginV2(old_token) {
   if (result.succeeded) {
     localStorage.setItem('v2_token', result.data.token)
     auth.setUserTokenV2(result.data.token)
+    const profileData = await getProfile(result.data.token)
+    if (profileData.data) {
+      const profile = profileData.data.data
+      setUser({
+        avatar: profile.avatar ?? null,
+        userName: profile.userName ?? null,
+        firstName: profile.firstName ?? null,
+        lastName: profile.lastName ?? null,
+        group: profile.group ?? null,
+        profileUpdated: profile.profileUpdated ?? false,
+      })
+
+      $toast.success('Logged in successfully')
+      closeDialog()
+    }
   }
   else if (
     result.errors.length

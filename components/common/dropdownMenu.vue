@@ -16,7 +16,7 @@
               : 'header-username-light'
           }`"
         >
-          {{ user?.first_name || user?.last_name || "NO NAME" }}
+          {{ user?.firstName || user?.lastName }}
         </div>
         <v-avatar
           v-if="user?.avatar"
@@ -187,9 +187,6 @@
 </template>
 
 <script setup>
-import { useUser } from '~/composables/useUser'
-import { useAuth } from '~/composables/useAuth'
-
 defineProps({
   menuSetting: {
     type: Object,

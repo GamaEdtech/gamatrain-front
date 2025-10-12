@@ -1,41 +1,18 @@
 import { defineNuxtRouteMiddleware, navigateTo, useState } from 'nuxt/app'
-import { useUser } from '@/composables/useUser'
-import { useAuth } from '@/composables/useAuth'
 
-interface UserResponse {
-  data: {
-    id: string
-    username: string
-    first_name: string
-    last_name: string
-    avatar: string
-    sex: string | null
-    active: string
-    credit: string
-    group_id: number
-    section: string | null
-    base: string | null
-    course: string | null
-    area: string | null
-    school: string | null
-    score_check_info: string
-    state: string | null
-    city: string | null
-  }
-}
-
-interface ErrorResponse {
-  response?: {
-    status: number
-    data?: {
-      message: string
-    }
-  }
+interface User {
+  avatar: string
+  userName: string
+  firstName: string
+  lastName: string
+  group: string
+  profileUpdated: boolean
 }
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const auth = useAuth()
-  const authToken = auth.getUserToken()
+  const authToken = auth.getUserTokenV2()
+  const { getProfile, setUser } = useUser()
 
   // Skip if no token
   if (!authToken) {
@@ -51,28 +28,22 @@ export default defineNuxtRouteMiddleware(async (to) => {
   )
 
   if (!hasFetchedUserInfo.value) {
-    try {
-      const response = await $fetch<UserResponse>(`/api/v1/users/info`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+    const result = await getProfile()
+    if (result.data) {
+      const data = result.data.data as Partial<User>
+      setUser({
+        avatar: data.avatar ?? '',
+        userName: data.userName ?? '',
+        firstName: data.firstName ?? '',
+        lastName: data.lastName ?? '',
+        group: data.group ?? '',
+        profileUpdated: data.profileUpdated ?? false,
       })
-
-      if (response && response.data) {
-        const { setUser } = useUser()
-        setUser(response.data)
-        hasFetchedUserInfo.value = true // Mark as fetched
-      }
-      else if (to.path.startsWith('/user')) {
-        return navigateTo('/')
-      }
+      hasFetchedUserInfo.value = true
     }
-    catch (error) {
-      const status = (error as ErrorResponse)?.response?.status
-      if ((status === 401 || status === 403) && to.path.startsWith('/user')) {
-        return navigateTo('/')
-      }
+
+    if ((result.status === 401 || result.status === 403) && to.path.startsWith('/user')) {
+      return navigateTo('/')
     }
   }
 })

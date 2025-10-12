@@ -27,7 +27,7 @@
         </NuxtLink>
         <div class="pa-3">
           <p class="text-h4">
-            <strong v-if="user?.first_name || user?.last_name">
+            <strong v-if="user?.firstName || user?.last_name">
               {{ user?.first_name }} {{ user?.last_name }}
             </strong>
             <strong v-else> No name </strong>

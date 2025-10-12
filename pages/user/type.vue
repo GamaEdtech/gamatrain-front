@@ -34,14 +34,14 @@
 
 <script setup>
 const { $toast } = useNuxtApp()
-const router = useRouter()
-const { user, setUser } = useUser()
+const { user } = useUser()
 
-const userType = ref('2')
+const userType = ref(2)
 
 // Redirect to user page on mount
 onMounted(() => {
-  router.push('/user')
+  if (user.value.group === 6 || user.value.group === 5)
+    navigateTo('/user')
 })
 
 // Watch for user type changes
@@ -56,28 +56,22 @@ async function setUserType() {
       group: userType.value,
     })
     const data = response
-    console.log('data', data)
     if (data?.status === 1) {
-      // Update user data
-      const updatedData = {
-        avatar: user.value?.avatar,
-        credit: user.value?.credit,
-        email: user.value?.email,
-        first_name: user.value?.first_name,
-        group_id: userType.value.toString(),
-        last_name: user.value?.last_name,
-        phone: user.value?.phone,
-        sex: user.value?.sex,
-      }
+      user.value.group = Number(userType.value)
 
-      console.log('updatedData', updatedData)
+      // update bk v2
+      const profilePayload = new FormData()
+      profilePayload.append(
+        'Group',
+        Number(userType.value),
+      )
 
-      // Update user state
-      await setUser(updatedData)
-      user.value.group_id = userType.value.toString()
-
+      useApiService.put(
+        '/api/v2/identities/profiles',
+        profilePayload,
+      )
       // Navigate to user page
-      router.push('/user')
+      navigateTo('/user')
     }
   }
   catch (err) {

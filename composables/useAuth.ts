@@ -1,8 +1,3 @@
-import { useCookie, navigateTo } from 'nuxt/app'
-import { computed } from 'vue'
-import useApiService from '~/composables/useApiService'
-import { useUser } from '~/composables/useUser'
-
 export const useAuth = () => {
   const cookieToken = useCookie<string | null>('authToken', {
     path: '/',
@@ -27,6 +22,7 @@ export const useAuth = () => {
 
   const clearAuth = () => {
     cookieToken.value = null
+    cookieTokenV2.value = null
   }
 
   // -------------------------
@@ -115,7 +111,7 @@ export const useAuth = () => {
     return response
   }
 
-  const isAuthenticated = computed(() => !!cookieToken.value)
+  const isAuthenticated = computed(() => !!cookieTokenV2.value && !!cookieTokenV2.value)
 
   return {
     cookieToken,
