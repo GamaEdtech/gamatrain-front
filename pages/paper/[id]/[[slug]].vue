@@ -65,7 +65,7 @@
         </nuxt-link>
       </v-col>
 
-      <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
+      <!-- <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
 
       <v-col cols="12">
         <CommonDetailRelatedContent
@@ -74,6 +74,13 @@
           source="test"
           request="test"
         />
+      </v-col> -->
+
+      <v-col
+        cols="12"
+        class="mb-6"
+      >
+        <CommonComments />
       </v-col>
     </v-row>
   </v-container>
