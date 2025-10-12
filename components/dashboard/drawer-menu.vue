@@ -284,14 +284,14 @@ const items = [
         link: '/user/paper',
         icon: 'icon-paper',
         icon_type: 'custom',
-        status: user.value && user.value.group_id == 5 ? false : true,
+        status: user.value && user.value.group == 5 ? false : true,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icon-multimedia',
         icon_type: 'custom',
-        status: user.value && user.value.group_id == 5 ? false : true,
+        status: user.value && user.value.group == 5 ? false : true,
       },
       {
         title: 'Q & A',
