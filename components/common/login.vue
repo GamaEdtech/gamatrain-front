@@ -1,10 +1,7 @@
 <script setup>
-import { navigateTo } from 'nuxt/app'
 import { useField, useForm } from 'vee-validate'
 import * as yup from 'yup'
 import { useUser } from '@/composables/useUser'
-
-const route = useRoute()
 
 const { $toast } = useNuxtApp()
 
@@ -70,8 +67,8 @@ async function handleCredentialResponse(value) {
       submitLoginV2(response.data.jwtToken)
       // closeDialog()
 
-      if (!route.query?.auth_noredirect && route.path === '/')
-        navigateTo('/user')
+      // if (!route.query?.auth_noredirect && route.path === '/')
+      //   navigateTo('/user')
     }
   }
   catch (err) {
@@ -185,8 +182,8 @@ const submit = handleSubmit(async () => {
       auth.setUserToken(response.data.jwtToken)
       submitLoginV2(response.data.jwtToken)
 
-      if (!route.query?.auth_noredirect && route.path === '/')
-        navigateTo('/user')
+      // if (!route.query?.auth_noredirect && route.path === '/')
+      //   navigateTo('/user')
     }
   }
   catch (error) {
@@ -194,6 +191,7 @@ const submit = handleSubmit(async () => {
 
     if (error?.response?.status === 400) $toast.error(errorData.message)
     else $toast.error('Something went wrong.')
+    login_loading.value = false
   }
 })
 
@@ -214,8 +212,8 @@ const onFinish = async () => {
       await submitLoginV2(response.data.jwtToken)
       // $toast.success('Logged in successfully')
       // closeDialog()
-      if (!route.query?.auth_noredirect && route.path === '/')
-        navigateTo('/user')
+      // if (!route.query?.auth_noredirect && route.path === '/')
+      //   navigateTo('/user')
     }
   }
   catch (error) {
@@ -289,6 +287,7 @@ async function submitLoginV2(old_token) {
         userName: profile.userName ?? null,
         firstName: profile.firstName ?? null,
         lastName: profile.lastName ?? null,
+        group: profile.group ?? null,
         profileUpdated: profile.profileUpdated ?? false,
       })
 

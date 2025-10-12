@@ -6,6 +6,7 @@ interface User {
   userName: string
   firstName: string
   lastName: string
+  group: number
   profileUpdated: boolean
 }
 

@@ -5,6 +5,7 @@ interface User {
   userName: string
   firstName: string
   lastName: string
+  group: string
   profileUpdated: boolean
 }
 
@@ -35,6 +36,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
         userName: data.userName ?? '',
         firstName: data.firstName ?? '',
         lastName: data.lastName ?? '',
+        group: data.group ?? '',
         profileUpdated: data.profileUpdated ?? false,
       })
       hasFetchedUserInfo.value = true

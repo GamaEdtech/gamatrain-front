@@ -87,13 +87,13 @@ const generalInfoRef = ref(null)
 const createContentRef = ref(null)
 const loader = ref(true)
 const userInfo = ref({})
-const userType = computed(() => user.value?.group_id)
+const userType = computed(() => user.value?.group)
 const display = useDisplay()
 const getUserInfo = async () => {
   try {
     loader.value = true
     const apiUrl
-      = userType.value == '5'
+      = userType.value === 5
         ? '/api/v1/teachers/dashboard'
         : '/api/v1/students/dashboard'
 
