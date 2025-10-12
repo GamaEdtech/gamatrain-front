@@ -144,9 +144,9 @@ const openWebPDF = async () => {
   background-color: #fcfcfd;
   border: 1px solid #f2f4f7;
   max-width: 360px;
-  min-height: 100%;
+  height: 100%;
   /* min-height: 400px; */
-  /* max-height: 400px; */
+  max-height: 500px;
 }
 .button-div {
   min-width: 60px;

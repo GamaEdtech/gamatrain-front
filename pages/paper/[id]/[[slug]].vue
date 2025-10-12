@@ -66,13 +66,20 @@
       </v-col>
 
       <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
+
+      <v-col cols="12">
+        <CommonDetailRelatedContent
+          type="paper"
+          title="Past Papers"
+          source="test"
+          request="test"
+        />
+      </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script setup>
-import { CommonDetailDownloadAndPurchaseButtons } from '#components'
-
 const route = useRoute()
 const router = useRouter()
 
