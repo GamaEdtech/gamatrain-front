@@ -129,7 +129,7 @@ export default {
             email: this.$auth.user.email,
             first_name: this.info.first_name,
             last_name: this.info.last_name,
-            group_id: this.$auth.user.group_id,
+            group: this.$auth.user.group,
             phone: this.$auth.user.phone,
             sex: this.info.sex.toString(),
           }
