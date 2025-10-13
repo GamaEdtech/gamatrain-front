@@ -65,7 +65,7 @@
         </nuxt-link>
       </v-col>
 
-      <!-- <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
+      <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
 
       <v-col cols="12">
         <CommonDetailRelatedContent
@@ -74,7 +74,7 @@
           source="test"
           request="test"
         />
-      </v-col> -->
+      </v-col>
 
       <v-col
         cols="12"
@@ -82,7 +82,25 @@
       >
         <CommonComments />
       </v-col>
+
+      <v-col cols="12">
+        <span
+          class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
+          @click="openCrashReport = true"
+        >
+          <v-icon
+            color="#F04438"
+            class="mb-1"
+          >md:warning_outlined</v-icon>
+          Crash report
+        </span>
+      </v-col>
     </v-row>
+    <CommonCrashReportModal
+      :id="contentData.id"
+      v-model:show-dialog="openCrashReport"
+      type-crash-report="test"
+    />
   </v-container>
 </template>
 
@@ -94,6 +112,7 @@ const requestURL = ref(useRequestURL().host)
 const pageDescribe = ref('')
 const pageTitle = ref('')
 const breads = ref([])
+const openCrashReport = ref(false)
 
 // Track loading state
 
@@ -276,7 +295,9 @@ if (contentData.value) {
   height: 64px;
   background-color: #efffe5;
 }
-
+.text-crash-report {
+  color: #f04438;
+}
 @media (min-width: 960px) {
   .margin-top-handle {
     margin-top: 6.4rem;

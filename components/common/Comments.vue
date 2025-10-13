@@ -265,7 +265,7 @@ interface Comment {
 
 const { user } = useUser()
 const { xs } = useDisplay()
-const isShowAllComments = ref(true)
+const isShowAllComments = ref(false)
 
 const comments: Comment[] = [
   {
