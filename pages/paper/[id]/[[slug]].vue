@@ -32,6 +32,7 @@
           :title="contentData.title"
           :views="contentData.views"
           :score="contentData.ref_score"
+          @share="openShare = true"
         />
       </v-col>
 
@@ -69,10 +70,9 @@
 
       <v-col cols="12">
         <CommonDetailRelatedContent
-          type="paper"
-          title="Past Papers"
+          :id="contentData.id"
           source="test"
-          request="test"
+          :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
         />
       </v-col>
 
@@ -101,6 +101,10 @@
       v-model:show-dialog="openCrashReport"
       type-crash-report="test"
     />
+    <CommonShareModal
+      v-model:show-dialog="openShare"
+      :title="contentData.title"
+    />
   </v-container>
 </template>
 
@@ -113,6 +117,7 @@ const pageDescribe = ref('')
 const pageTitle = ref('')
 const breads = ref([])
 const openCrashReport = ref(false)
+const openShare = ref(false)
 
 // Track loading state
 

@@ -33,6 +33,7 @@
       <div
         v-if="hasShare"
         class="d-flex flex-column align-center justify-center ga-1 primary-gray-700 cursor-pointer text-no-wrap"
+        @click="shareContent"
       >
         <v-icon color="primary-gray-700">
           md:share
@@ -106,6 +107,7 @@ const props = withDefaults(defineProps<IPreviewActionCard>(), {
   hasShare: true,
   hasSave: true,
 })
+const emit = defineEmits(['share'])
 
 const previewDialog = ref(false)
 const previewPdfUrl = ref('')
@@ -136,6 +138,10 @@ const openWebPDF = async () => {
   catch (err) {
     console.error('Error loading PDF preview:', err)
   }
+}
+
+const shareContent = () => {
+  emit('share')
 }
 </script>
 

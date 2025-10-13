@@ -26,7 +26,7 @@
             color="#D0D5DD"
             @click="closeModal"
           >
-            mdi-close-circle
+            md:cancel
           </v-icon>
         </v-col>
         <v-col cols="12">

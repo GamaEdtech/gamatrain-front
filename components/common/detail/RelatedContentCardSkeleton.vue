@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-type content = 'paper'
+type content = 'paper' | 'exam' | 'question' | 'tutorial'
 
 defineProps<{
   type: content

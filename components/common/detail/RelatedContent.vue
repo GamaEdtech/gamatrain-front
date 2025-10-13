@@ -1,14 +1,17 @@
 <template>
-  <div class="mx-4">
+  <div
+    v-if="loading || pastpaper.length > 0"
+    class="mx-4"
+  >
     <div class="d-flex align-center mb-6 ga-2">
       <div
         class="d-flex align-center justify-center rounded-circle pa-2"
-        :style="`background-color : ${infoMap[type].color}`"
+        :style="`background-color : ${infoMap[`paper`].color}`"
       >
-        <span :class="`icon-title ${infoMap[type].icon}`" />
+        <span :class="`icon-title ${infoMap[`paper`].icon}`" />
       </div>
       <h1 class="text-h4 font-weight-semibold primary-gray-700">
-        Related {{ title }}
+        Related Past Papers
       </h1>
     </div>
     <v-slide-group v-if="loading">
@@ -16,7 +19,7 @@
         v-for="item in 10"
         :key="item"
       >
-        <CommonDetailRelatedContentCardSkeleton :type="type" />
+        <CommonDetailRelatedContentCardSkeleton type="paper" />
       </v-slide-group-item>
     </v-slide-group>
     <v-slide-group
@@ -31,7 +34,7 @@
           size="sm"
         >
           <v-icon color="#000000">
-            mdi-chevron-left
+            md:chevron_backward
           </v-icon>
         </v-btn>
       </template>
@@ -42,16 +45,16 @@
           size="sm"
         >
           <v-icon color="#000000">
-            mdi-chevron-right
+            md:chevron_forward
           </v-icon>
         </v-btn>
       </template>
 
       <v-slide-group-item
-        v-for="item in data"
+        v-for="item in pastpaper"
         :key="item.id"
       >
-        <nuxt-link :to="`/${type}/${item.id}/${item.title_url}`">
+        <nuxt-link :to="`/paper/${item.id}/${item.title_url}`">
           <common-detail-related-content-card
             :picture="item.thumb_pic || fallbackImage"
             :title="item.title"
@@ -59,11 +62,65 @@
             :avatar="item.avatar"
             :first-name="item.first_name"
             :last-name="item.last_name"
-            :type="type"
+            type="paper"
           />
         </nuxt-link>
       </v-slide-group-item>
     </v-slide-group>
+  </div>
+
+  <div
+    v-if="loading || tutorials.length > 0"
+    class="mx-4 my-8"
+  >
+    <div class="d-flex align-center mb-6 ga-2">
+      <div
+        class="d-flex align-center justify-center rounded-circle pa-2"
+        :style="`background-color : ${infoMap[`tutorial`].color}`"
+      >
+        <span :class="`icon-title ${infoMap[`tutorial`].icon}`" />
+      </div>
+      <h1 class="text-h4 font-weight-semibold primary-gray-700">
+        Related Tutorials
+      </h1>
+    </div>
+    <div
+      v-if="loading"
+      class="w-100 d-flex flex-column justify-start ga-8 pl-4"
+    >
+      <div
+        v-for="i in 5"
+        :key="i"
+        class="d-flex align-center ga-2"
+      >
+        <v-skeleton-loader
+          class="rounded-lg"
+          width="20"
+          height="20"
+        />
+        <v-skeleton-loader
+          class="rounded-lg"
+          width="200"
+          height="20"
+        />
+      </div>
+    </div>
+    <div
+      v-else
+      class="w-100 d-flex flex-column justify-start ga-8 pl-4"
+    >
+      <nuxt-link
+        v-for="(tutorial, index) in tutorials"
+        :key="index"
+        :to="`/tutorial/${tutorial.id}/${tutorial.title_url}`"
+        class="d-flex align-center ga-2"
+      >
+        <div class="square-div" />
+        <span class="text-h5 primary-gray-500">{{
+          tutorial.title.slice(0, 50) + "..."
+        }}</span>
+      </nuxt-link>
+    </div>
   </div>
 </template>
 
@@ -104,19 +161,23 @@ interface RelatedContentDTO {
   tutorials: ContentItemDTO[]
 }
 
-type sourceType = 'test'
-type requestType = 'test'
-type content = 'paper'
+type sourceType
+  = | 'test'
+    | 'file'
+    | 'question'
+    | 'exam'
+    | 'examTest'
+    | 'tutorial'
+type requestType = 'test' | 'file' | 'exam' | 'question' | 'tutorial'
+// type content = 'paper' | 'exam' | 'question' | 'tutorial'
 
 interface IRelatedPortraitContent {
-  type: content
-  title: string
   source: sourceType
-  request: requestType
+  request: requestType[]
+  id: string
 }
 
 const props = defineProps<IRelatedPortraitContent>()
-const route = useRoute()
 
 const infoMap = {
   paper: {
@@ -124,10 +185,26 @@ const infoMap = {
     color: '#2e90fa',
     keyResponse: 'tests',
   },
+  exam: {
+    icon: 'icon-paper',
+    color: '#2e90fa',
+    keyResponse: 'tests',
+  },
+  question: {
+    icon: 'icon-paper',
+    color: '#2e90fa',
+    keyResponse: 'tests',
+  },
+  tutorial: {
+    icon: 'icon-tutorial',
+    color: '#2e90fa',
+    keyResponse: 'tutorials',
+  },
 }
-const data = ref<ContentItemDTO[]>([])
+const pastpaper = ref<ContentItemDTO[]>([])
+const tutorials = ref<ContentItemDTO[]>([])
+
 const loading = ref(true)
-const relatedId = route.params.id ? route.params.id : route.params.slug[0]
 const fallbackImage = '/images/GamaBag.webp'
 
 const getRelatedContent = async () => {
@@ -135,8 +212,8 @@ const getRelatedContent = async () => {
     loading.value = true
     const params = {
       source: props.source,
-      request: props.request,
-      id: relatedId as string,
+      request: props.request.join(','),
+      id: props.id,
     }
     const response = await useApiService.get<ApiResponse<RelatedContentDTO>>(
       '/api/v1/recommendations/related',
@@ -144,8 +221,10 @@ const getRelatedContent = async () => {
     )
     const related = response.data
 
-    data.value
-      = related[infoMap[props.type].keyResponse as keyof RelatedContentDTO]
+    pastpaper.value
+      = related[infoMap['paper'].keyResponse as keyof RelatedContentDTO]
+    tutorials.value
+      = related[infoMap['tutorial'].keyResponse as keyof RelatedContentDTO]
   }
   catch (error) {
     console.error('Search error:', error)
@@ -160,12 +239,12 @@ onMounted(async () => {
 })
 
 const CardHeight = computed(() => {
-  if (props.type === 'paper') {
-    return '243px'
-  }
-  else if (props.type === 'multimedia') {
-    return '120px'
-  }
+  // if (props.type === "paper") {
+  //   return "243px";
+  // }
+  // else if (props.type === "multimedia") {
+  //   return "120px";
+  // }
   return 'auto'
 })
 </script>
@@ -243,5 +322,12 @@ const CardHeight = computed(() => {
   margin-top: 90px;
   right: 20px;
   z-index: 10;
+}
+
+.square-div {
+  min-width: 20px;
+  min-height: 20px;
+  background-color: #b2ddff;
+  border-radius: 8px;
 }
 </style>
