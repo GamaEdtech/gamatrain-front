@@ -40,7 +40,7 @@
             color="#667085"
           >
             <span class="text-h5">{{
-              user?.first_name ? user.first_name[0].toUpperCase() : "U"
+              user?.firstName ? user.firstName[0].toUpperCase() : "U"
             }}</span>
           </v-avatar>
         </template>
@@ -48,7 +48,7 @@
         <v-list-item-title
           class="text-h5 font-weight-bold primary-gray-500 text-item-height"
         >
-          {{ user ? user.first_name + " " + user.last_name : "User" }}
+          {{ user ? user.firstName + " " + user.lastName : "User" }}
         </v-list-item-title>
       </v-list-item>
 
@@ -284,14 +284,14 @@ const items = [
         link: '/user/paper',
         icon: 'icon-paper',
         icon_type: 'custom',
-        status: user.value && user.value.group_id == 5 ? false : true,
+        status: user.value && user.value.group == 5 ? false : true,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icon-multimedia',
         icon_type: 'custom',
-        status: user.value && user.value.group_id == 5 ? false : true,
+        status: user.value && user.value.group == 5 ? false : true,
       },
       {
         title: 'Q & A',
@@ -355,11 +355,11 @@ const items = [
     value: 'settings',
     subMenuList: [
       { title: 'Edit Profile', link: '/user/profile', icon: 'md:edit' },
-      {
-        title: 'Confirm Identity',
-        link: '/user/identity-confirmation',
-        icon: 'md:fingerprint',
-      },
+      // {
+      //   title: 'Confirm Identity',
+      //   link: '/user/identity-confirmation',
+      //   icon: 'md:fingerprint',
+      // },
       { title: 'Security', link: '/user/edit-pass', icon: 'md:password' },
     ],
   },

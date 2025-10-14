@@ -120,7 +120,7 @@ async function handleCredentialResponse(value) {
       $toast.success('Logged in successfully')
       auth.setUserToken(response.data.jwtToken)
       closeDialog()
-      navigateTo('/user')
+      // navigateTo('/user')
     }
   }
   catch (err) {

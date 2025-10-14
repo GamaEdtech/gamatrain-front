@@ -80,14 +80,14 @@ const items = reactive([
         link: '/user/paper',
         icon: 'icong-test',
         icon_type: 'custom',
-        status: auth.user?.group_id == '5' ? false : true,
+        status: auth.user?.group === 5 ? false : true,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icong-learnfiles',
         icon_type: 'custom',
-        status: auth.user?.group_id == '5' ? false : true,
+        status: auth.user?.group === 5 ? false : true,
       },
       {
         title: 'Q & A',

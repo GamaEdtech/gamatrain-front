@@ -561,7 +561,7 @@ const { data: initialBlogs, pending: loadingBlogsServer } = await useAsyncData(
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
       'PagingDto.PageFilter.Skip': 0,
       'TagId': route.query.cat ? route.query.cat : null,
-      'Keyword': route.query.keyword || '',
+      'Title': route.query.keyword || '',
     }
     return $fetch('/api/v2/blogs/posts', { params })
   },
@@ -597,7 +597,7 @@ const getBlogList = async () => {
     'PagingDto.PageFilter.Skip': (pageNum.value - 1) * pageSize.value,
   }
   blogLoading.value = true
-  params.Keyword = searchQuery.value
+  params.Title = searchQuery.value
 
   if (categoryValue.value != 0) {
     params.TagId = categoryValue.value

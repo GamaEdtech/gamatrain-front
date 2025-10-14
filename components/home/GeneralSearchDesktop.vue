@@ -198,7 +198,7 @@ const categories = [
     api: '/api/v2/blogs/posts',
     type: 'blog',
     isOldApi: false,
-    keywordSearch: 'Keyword',
+    keywordSearch: 'Title',
     iconName: 'icon-student',
     backgroundColor: '#ff9400',
     activeColor: '#ffdfb3',
