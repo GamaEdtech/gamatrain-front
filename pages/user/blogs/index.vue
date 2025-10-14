@@ -32,15 +32,15 @@
           variant="flat"
         >
           <v-icon left>
-            mdi-plus
+            md:add
           </v-icon>
           New blog
         </v-btn>
         <v-text-field
           v-model="searchQuery"
           placeholder="Search blogs by title..."
-          prepend-inner-icon="mdi-magnify"
-          :append-inner-icon="searchQuery ? 'mdi-close' : undefined"
+          prepend-inner-icon="md:search"
+          :append-inner-icon="searchQuery ? 'md:close' : undefined"
           :loading="isSearching"
           variant="outlined"
           rounded
@@ -112,7 +112,7 @@
               class="mr-1"
               color="grey darken-1"
             >
-              {{ item.category === "News" ? "mdi-newspaper" : "mdi-bullhorn" }}
+              {{ item.category === "News" ? "md:newspaper" : "md:campaign" }}
             </v-icon>
             <span>{{ item.category }}</span>
           </div>
@@ -128,7 +128,7 @@
             color="secondary"
           >
             <v-icon small>
-              mdi-eye
+              md:visibility
             </v-icon>
           </v-btn>
         </template>
@@ -136,13 +136,13 @@
         <template #[`item.edit`]="{ item }">
           <v-btn
             variant="text"
-            :to="`/user/blogs/edit/${item.id}`"
+            :to="`/user/blogs/edit/${item.id}?fromPage=${page}`"
             icon
             small
             color="warning"
           >
             <v-icon small>
-              mdi-pencil
+              md:edit
             </v-icon>
           </v-btn>
         </template>
@@ -184,6 +184,8 @@ import { ref, watch, onMounted } from 'vue'
 import DeleteModal from '@/components/modals/DeleteModal.vue'
 
 const { $toast, $slugGenerator } = useNuxtApp()
+const router = useRouter()
+const route = useRoute()
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -197,7 +199,7 @@ useHead({
 // State
 const selected = ref([])
 const activeTab = ref('Draft')
-const page = ref(1)
+const page = ref(route.query.page ? Number(route.query.page) : 1)
 const pageSize = ref(10)
 const perPage = ref('10 Row')
 const totalRecords = ref(0)
@@ -342,6 +344,10 @@ const clearSearch = () => {
 
 // Watchers
 watch(page, () => {
+  const query = {
+    page: page.value,
+  }
+  router.replace({ query })
   fetchBlogs()
 })
 
@@ -374,6 +380,13 @@ watch(activeTab, () => {
 // Lifecycle
 onMounted(() => {
   fetchBlogs()
+
+  if (!route.query.page) {
+    const query = {
+      page: 1,
+    }
+    router.replace({ query })
+  }
 })
 </script>
 
