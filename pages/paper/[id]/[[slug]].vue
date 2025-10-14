@@ -1,7 +1,7 @@
 <template>
   <v-container
     v-if="contentData"
-    class="d-flex flex-column margin-top-handle"
+    class="d-flex flex-column mt-16"
   >
     <v-row>
       <widgets-breadcrumb
@@ -101,6 +101,18 @@
           Crash report
         </span>
       </v-col>
+
+      <ClientOnly>
+        <v-col
+          cols="12"
+          class="text-center mt-10"
+        >
+          <common-ad-banner
+            v-model="isAdsLoad"
+            adslot="7199289937"
+          />
+        </v-col>
+      </ClientOnly>
     </v-row>
     <CommonCrashReportModal
       :id="contentData.id"
@@ -115,80 +127,12 @@
 </template>
 
 <script setup lang="ts">
+import type { ApiResult, PastPaperDTO, AppError } from '~/interfaces/api'
+
 interface BreadCrumb {
   text: string
   disabled: boolean
   href: string
-}
-interface ApiErrorResponse {
-  status?: number
-  data?: {
-    error?: string
-    status?: number
-  }
-}
-
-interface AppError {
-  response?: ApiErrorResponse
-  message?: string
-  status?: number
-}
-interface IFileInfo {
-  exist: boolean
-  size: string | number
-  ext: string | false
-  price: number
-  type_title?: string
-  id?: string
-}
-
-interface IContentFiles {
-  word: IFileInfo
-  pdf: IFileInfo
-  answer: IFileInfo
-  extra?: IFileInfo[]
-}
-interface ContentData {
-  id: string
-  title: string
-  title_url: string
-  thumb_pic: string
-  lesson_pic: string | null
-  description: string
-  views: number
-  ref_score: number
-  edu_year: string
-  section: string
-  base: string
-  lesson: string
-  exams: {
-    id: string
-    status: string
-  }[]
-  files: IContentFiles
-  lesson_title: string
-  base_title: string
-  section_title: string
-  is_paper: boolean
-  avatar: string
-  first_name: string
-  last_name: string
-  test_type_title?: string
-  up_date: string
-  edu_month_title: string
-}
-
-interface ApiResponse<T> {
-  data: T
-  succeeded: boolean
-  status: number
-  errors: {
-    message: string
-    code: string
-    reference: string
-    info: string
-    value: string
-  }[]
 }
 
 const route = useRoute()
@@ -200,6 +144,7 @@ const pageTitle = ref('')
 const breads = ref<BreadCrumb[]>([])
 const openCrashReport = ref(false)
 const openShare = ref(false)
+const isAdsLoad = ref(false)
 
 // Track loading state
 
@@ -210,7 +155,7 @@ const { data: contentData } = await useAsyncData(
       const response = (await $fetch(
         `/api/v1/tests/${route.params.id}`,
         {},
-      )) as ApiResponse<ContentData>
+      )) as ApiResult<PastPaperDTO>
 
       return response.data
     }
@@ -357,20 +302,11 @@ if (contentData.value) {
 </script>
 
 <style scoped>
-.margin-top-handle {
-  margin-top: 64px;
-}
-
 .subject-directory-alert {
   height: 64px;
   background-color: #efffe5;
 }
 .text-crash-report {
   color: #f04438;
-}
-@media (min-width: 960px) {
-  .margin-top-handle {
-    margin-top: 6.4rem;
-  }
 }
 </style>

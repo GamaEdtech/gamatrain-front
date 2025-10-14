@@ -77,22 +77,8 @@
 </template>
 
 <script setup lang="ts">
-interface ApiResponse<T> {
-  data: T
-  succeeded: boolean
-  status: number
-  errors: {
-    message: string
-    code: string
-    reference: string
-    info: string
-    value: string
-  }[]
-}
-interface PDFResponseDTO {
-  url?: string
-  name?: string
-}
+import type { ApiResult, PDFResponseDTO } from '~/interfaces/api'
+
 interface IPreviewActionCard {
   thumbPic: string
   id: string
@@ -121,7 +107,7 @@ const openWebPDF = async () => {
   }
 
   try {
-    const response = await useApiService.get<ApiResponse<PDFResponseDTO>>(
+    const response = await useApiService.get<ApiResult<PDFResponseDTO>>(
       `/api/v1/tests/download/${props.id}/pdf`,
     )
 

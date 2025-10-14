@@ -42,17 +42,8 @@
 </template>
 
 <script setup lang="ts">
-interface ApiResponse<T> {
-  data: T
-  succeeded: boolean
-  errors: {
-    message: string
-    code: string
-    reference: string
-    info: string
-    value: string
-  }[]
-}
+import type { ApiResult } from '~/interfaces/api'
+
 interface RandomTestCodeDTO {
   code: string
 }
@@ -68,10 +59,10 @@ const loadingRandomTest = ref(true)
 const getRandomTestCode = async () => {
   if (props.lesson) {
     try {
-      const response = await useApiService.get<ApiResponse<RandomTestCodeDTO>>(
+      const response = await useApiService.get<ApiResult<RandomTestCodeDTO>>(
         `/api/v1/examTests/random?lesson=${props.lesson}`,
       )
-      if (response.data.code) {
+      if (response.data?.code) {
         await getRandomTest(response.data.code)
       }
     }
@@ -85,10 +76,12 @@ const getRandomTestCode = async () => {
 }
 const getRandomTest = async (code: string) => {
   try {
-    const response = await useApiService.get<
-      ApiResponse<Record<string, string>>
-    >(`/api/v1/examTests/${code}`)
-    randomTestContent.value = response.data
+    const response = await useApiService.get<ApiResult<Record<string, string>>>(
+      `/api/v1/examTests/${code}`,
+    )
+    if (response.data) {
+      randomTestContent.value = response.data
+    }
   }
   catch (error: unknown) {
     console.log('error', error)
