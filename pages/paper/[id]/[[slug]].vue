@@ -1,186 +1,205 @@
 <template>
-  <div class="test-details-content">
-    <common-category />
-
-    <section>
-      <v-container class="py-0">
-        <div class="mt-0 py-0 header-path">
-          <widgets-breadcrumb :breads="breads" />
-        </div>
-      </v-container>
-    </section>
-
-    <section>
-      <v-container class="py-0">
-        <div class="d-lg-none mt-4">
-          <paper-detail-title :title="contentData?.title" />
-        </div>
-        <div class="detail mt-6 mt-md-8">
-          <v-row>
-            <v-col
-              cols="12"
-              md="12"
-              lg="5"
-              xl="6"
-              class="px-8 px-lg=0 order-3 order-md-3 order-lg-2"
-            >
-              <paper-detail-description
-                :title="contentData?.title"
-                :description="contentData?.description"
-              >
-                <template #labels>
-                  <nuxt-link
-                    :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
-                    class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
-                  >
-                    <div
-                      class="d-flex flex-column align-start justify-start ga-1"
-                    >
-                      <span
-                        class="text-h5 text-sm-h4 font-weight-bold text-white"
-                      >Go to {{ contentData?.lesson_title }}</span>
-                      <span
-                        class="text-subtitle-2 text-sm-subtitle-1 text-white"
-                      >All books, past papers & resources in one place</span>
-                    </div>
-                  </nuxt-link>
-                  <v-chip
-                    link
-                    class="mr-1 bg-blue-grey-darken-1 text-white"
-                    :small="display.mdAndDown"
-                  >
-                    <nuxt-link
-                      :to="`/search?type=test&section=${contentData?.section}`"
-                    >
-                      {{ contentData?.section_title }}
-                    </nuxt-link>
-                  </v-chip>
-                  <v-chip
-                    link
-                    class="mr-1 bg-blue-grey-darken-1 text-white"
-                    :small="display.mdAndDown"
-                  >
-                    <nuxt-link
-                      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
-                    >
-                      {{ contentData?.base_title }}
-                    </nuxt-link>
-                  </v-chip>
-                  <v-chip
-                    class="ma-1 bg-blue-grey-darken-1 text-white"
-                    :small="display.mdAndDown"
-                  >
-                    <nuxt-link
-                      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
-                    >
-                      {{ contentData?.lesson_title }}
-                    </nuxt-link>
-                  </v-chip>
-                  <v-chip
-                    class="ma-1 bg-blue-grey-darken-1 text-white"
-                    :small="display.mdAndDown"
-                  >
-                    {{ contentData?.edu_month_title }}
-                  </v-chip>
-                  <v-chip
-                    :small="display.mdAndDown"
-                    :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}&edu_year=${contentData?.edu_year}`"
-                    class="ma-1 bg-blue-grey-darken-1 text-white"
-                  >
-                    {{ contentData?.edu_year }}
-                  </v-chip>
-                </template>
-              </paper-detail-description>
-            </v-col>
-            <v-col
-              cols="12"
-              sm="5"
-              md="3"
-              lg="3"
-              xl="3"
-              order-lg="first"
-              class="order-2 order-sm-1 order-md-1"
-            >
-              <details-preview-gallery
-                :image-urls="previewImages"
-                :help-link-data="galleryHelpData"
-                :initial-slide="1"
-                :paper-id="contentData?.id"
-                :paper-title="contentData?.title"
-                :show-doc-preview="true"
-              />
-            </v-col>
-            <v-col
-              class="order-1 order-md-2 order-lg-3"
-              sm="7"
-              md="9"
-              lg="4"
-              xl="3"
-            >
-              <paper-detail-content-info
-                :content-data="contentData"
-                @crash-report="openCrashReportDialog"
-              >
-                <template #share-dialog>
-                  <common-detail-share-dialog :title="contentData?.title" />
-                </template>
-              </paper-detail-content-info>
-            </v-col>
-          </v-row>
-        </div>
-        <ClientOnly>
-          <common-related-portrait-content
-            page-type="paper"
-            page-name="Past Papers"
-            source="test"
-            request="test"
-          />
-        </ClientOnly>
-      </v-container>
-    </section>
-
-    <ClientOnly>
-      <div v-if="randomTestContent">
-        <v-divider
-          class="mt-4 mx-auto"
-          style="width: 80%"
-        />
-        <test-details :content-data="randomTestContent" />
-        <v-divider
-          class="mt-1 mx-auto"
-          style="width: 80%"
-        />
-      </div>
-    </ClientOnly>
-
-    <ClientOnly>
-      <v-row
-        justify="center"
-        class="mt-10"
+  <v-container
+    v-if="contentData"
+    class="d-flex flex-column margin-top-handle"
+  >
+    <v-row>
+      <widgets-breadcrumb
+        background-color="white"
+        :breads="breads"
+      />
+    </v-row>
+    <v-row>
+      <v-col
+        cols="12"
+        class="d-flex align-center ga-1"
       >
-        <v-col
-          cols="12"
-          md="8"
-          class="text-center"
+        <v-icon color="primary">
+          md:chevron_backward
+        </v-icon>
+        <h1 class="text-h4 font-weight-bold">
+          {{ contentData.title }}
+        </h1>
+        <v-icon color="primary">
+          md:chevron_forward
+        </v-icon>
+      </v-col>
+      <v-col
+        cols="12"
+        md="4"
+        class="d-flex justify-center justify-md-start"
+      >
+        <CommonDetailPreviewActionCard
+          :id="contentData.id"
+          :thumb-pic="contentData.thumb_pic"
+          :title="contentData.title"
+          :views="contentData.views"
+          :score="contentData.ref_score"
+          @share="openShare = true"
+        />
+      </v-col>
+
+      <v-col
+        cols="12"
+        md="8"
+        class="d-flex h-100 align-start flex-wrap"
+      >
+        <CommonDetailContentDetailsSection :content-data="contentData" />
+
+        <CommonDetailDownloadAndPurchaseButtons
+          :id="contentData.id"
+          :files="contentData.files"
+          :year="contentData.edu_year"
+          :title="contentData.title"
+          :title-url="contentData.title_url"
+          :section="contentData.section"
+          :base="contentData.base"
+          :lesson="contentData.lesson"
+          :exams="contentData.exams"
+        />
+        <nuxt-link
+          :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
+          class="w-100 rounded-lg d-flex align-center justify-start pa-1 pa-sm-3 ga-2 mt-2 subject-directory-alert"
         >
-          <common-ad-banner
-            v-model="isAdsLoad"
-            adslot="7199289937"
-          />
-        </v-col>
-      </v-row>
-    </ClientOnly>
-  </div>
+          <v-icon color="primary">md:files_outlined</v-icon>
+          <span class="text-h6 text-sm-h5 font-weight-bold">+ 8000
+            <span class="font-weight-medium">{{ contentData?.lesson_title }} resources in one place</span>
+          </span>
+          <v-icon color="primary">md:chevron_forward</v-icon>
+        </nuxt-link>
+      </v-col>
+
+      <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
+
+      <v-col cols="12">
+        <CommonDetailRelatedContent
+          :id="contentData.id"
+          source="test"
+          :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+        />
+      </v-col>
+
+      <!-- <v-col
+        cols="12"
+        class="mb-6"
+      >
+        <CommonComments />
+      </v-col> -->
+
+      <v-col
+        cols="12"
+        class="mt-6"
+      >
+        <span
+          class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
+          @click="openCrashReport = true"
+        >
+          <v-icon
+            color="#F04438"
+            class="mb-1"
+          >md:warning_outlined</v-icon>
+          Crash report
+        </span>
+      </v-col>
+    </v-row>
+    <CommonCrashReportModal
+      :id="contentData.id"
+      v-model:show-dialog="openCrashReport"
+      type-crash-report="test"
+    />
+    <CommonShareModal
+      v-model:show-dialog="openShare"
+      :title="contentData.title"
+    />
+  </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
+interface BreadCrumb {
+  text: string
+  disabled: boolean
+  href: string
+}
+interface ApiErrorResponse {
+  status?: number
+  data?: {
+    error?: string
+    status?: number
+  }
+}
+
+interface AppError {
+  response?: ApiErrorResponse
+  message?: string
+  status?: number
+}
+interface IFileInfo {
+  exist: boolean
+  size: string | number
+  ext: string | false
+  price: number
+  type_title?: string
+  id?: string
+}
+
+interface IContentFiles {
+  word: IFileInfo
+  pdf: IFileInfo
+  answer: IFileInfo
+  extra?: IFileInfo[]
+}
+interface ContentData {
+  id: string
+  title: string
+  title_url: string
+  thumb_pic: string
+  lesson_pic: string | null
+  description: string
+  views: number
+  ref_score: number
+  edu_year: string
+  section: string
+  base: string
+  lesson: string
+  exams: {
+    id: string
+    status: string
+  }[]
+  files: IContentFiles
+  lesson_title: string
+  base_title: string
+  section_title: string
+  is_paper: boolean
+  avatar: string
+  first_name: string
+  last_name: string
+  test_type_title?: string
+  up_date: string
+  edu_month_title: string
+}
+
+interface ApiResponse<T> {
+  data: T
+  succeeded: boolean
+  status: number
+  errors: {
+    message: string
+    code: string
+    reference: string
+    info: string
+    value: string
+  }[]
+}
+
 const route = useRoute()
 const router = useRouter()
+
 const requestURL = ref(useRequestURL().host)
-const randomTestContent = ref(null)
 const pageDescribe = ref('')
 const pageTitle = ref('')
-const isAdsLoad = ref(false)
+const breads = ref<BreadCrumb[]>([])
+const openCrashReport = ref(false)
+const openShare = ref(false)
 
 // Track loading state
 
@@ -188,25 +207,23 @@ const { data: contentData } = await useAsyncData(
   `paper-${route.params.id}`,
   async () => {
     try {
-      const response = await $fetch(`/api/v1/tests/${route.params.id}`, {})
+      const response = (await $fetch(
+        `/api/v1/tests/${route.params.id}`,
+        {},
+      )) as ApiResponse<ContentData>
 
       return response.data
     }
-    catch (e) {
-      if (e?.status === 404) {
+    catch (e: unknown) {
+      const error = e as AppError
+      if (error?.status === 404) {
         router.push('/search?type=test')
       }
-      throw e
+      throw error
     }
     finally {
       // Reset loading states if needed
     }
-  },
-  {
-    server: true,
-    lazy: false,
-    immediate: true,
-    watch: [() => route.params.id],
   },
 )
 
@@ -221,15 +238,6 @@ const schemaData = computed(() => ({
   'url': route.fullPath || '',
   'description': contentData.value?.description || 'GamaEdtech',
 }))
-
-const previewImages = ref([])
-const galleryHelpData = ref({
-  state: '',
-  section: '',
-  base: '',
-  course: '',
-  lesson: '',
-})
 
 const setMetaData = () => {
   if (!contentData.value) return
@@ -257,59 +265,49 @@ const setMetaData = () => {
     title: pageTitle.value,
     meta: [
       {
-        hid: 'apple-mobile-web-app-title',
         name: 'apple-mobile-web-app-title',
         content: pageTitle.value,
       },
       {
-        hid: 'og:title',
         name: 'og:title',
         content: pageTitle.value,
       },
       {
-        hid: 'og:site_name',
         name: 'og:site_name',
         content: 'GamaTrain',
       },
       {
-        hid: 'description',
         name: 'description',
         content: pageDescribe.value,
       },
       {
-        hid: 'og:description',
         name: 'og:description',
         content: pageDescribe.value,
       },
       {
-        hid: 'og:image',
         property: 'og:image',
         content: ogImage,
       },
       {
-        hid: 'twitter:card',
         name: 'twitter:card',
         content: 'summary_large_image',
       },
       {
-        hid: 'twitter:title',
         name: 'twitter:title',
         content: pageTitle.value,
       },
       {
-        hid: 'twitter:description',
         name: 'twitter:description',
         content: pageDescribe.value,
       },
       {
-        hid: 'twitter:image',
         name: 'twitter:image',
         content: ogImage,
       },
     ],
     script: [
       {
-        hid: 'json-ld-schema',
+        key: 'json-ld-schema',
         innerHTML: JSON.stringify(schemaData.value),
         type: 'application/ld+json',
       },
@@ -322,33 +320,8 @@ const setMetaData = () => {
           : `https://${requestURL.value}/paper/${route.params.id}`,
       },
     ],
-    __dangerouslyDisableSanitizersByTagID: {
-      'json-ld-schema': ['innerHTML'],
-    },
   })
 }
-
-if (contentData.value) {
-  previewImages.value = []
-  previewImages.value.push(contentData.value.thumb_pic)
-  if (contentData.value.lesson_pic) {
-    previewImages.value.push(contentData.value.lesson_pic)
-  }
-
-  previewImages.value.carouselVal = 0
-
-  galleryHelpData.value = {
-    state: contentData.value?.state || '',
-    section: contentData.value?.section || '',
-    base: contentData.value?.base || '',
-    course: contentData.value?.course || '',
-    lesson: contentData.value?.lesson || '',
-  }
-}
-
-const breads = ref([])
-
-const display = useGlobalDisplay()
 
 const initBreadCrumb = () => {
   if (!contentData.value) return
@@ -377,45 +350,27 @@ const initBreadCrumb = () => {
   )
 }
 
-watchEffect(() => {
-  if (contentData.value) {
-    initBreadCrumb()
-    setMetaData()
-  }
-})
-
-const openCrashReportDialog = () => {
-  crash_report.value.dialog = true
-  crash_report.value.form.type = 'test'
+if (contentData.value) {
+  initBreadCrumb()
+  setMetaData()
 }
-const grabRandomTestCode = () => {
-  if (contentData.value && contentData.value.lesson) {
-    $fetch(`/api/v1/examTests/random?lesson=${contentData.value.lesson}`)
-      .then((response) => {
-        if (response.data.code) {
-          retriveRandomTest(response.data.code)
-        }
-      })
-      .catch((_err) => {})
-  }
-}
-const retriveRandomTest = (code) => {
-  $fetch(`/api/v1/examTests/${code}`)
-    .then((response) => {
-      randomTestContent.value = response.data
-    })
-    .catch((_err) => {})
-}
-
-onMounted(() => {
-  grabRandomTestCode()
-})
 </script>
 
-<style>
+<style scoped>
+.margin-top-handle {
+  margin-top: 64px;
+}
+
 .subject-directory-alert {
-  height: 70px;
-  max-width: 400px;
-  background-color: #f59e0b;
+  height: 64px;
+  background-color: #efffe5;
+}
+.text-crash-report {
+  color: #f04438;
+}
+@media (min-width: 960px) {
+  .margin-top-handle {
+    margin-top: 6.4rem;
+  }
 }
 </style>
