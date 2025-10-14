@@ -1,5 +1,8 @@
 <template>
-  <v-container class="d-flex flex-column margin-top-handle">
+  <v-container
+    v-if="contentData"
+    class="d-flex flex-column margin-top-handle"
+  >
     <v-row>
       <widgets-breadcrumb
         background-color="white"
@@ -108,14 +111,90 @@
   </v-container>
 </template>
 
-<script setup>
+<script setup lang="ts">
+interface BreadCrumb {
+  text: string
+  disabled: boolean
+  href: string
+}
+interface ApiErrorResponse {
+  status?: number
+  data?: {
+    error?: string
+    status?: number
+  }
+}
+
+interface AppError {
+  response?: ApiErrorResponse
+  message?: string
+  status?: number
+}
+interface IFileInfo {
+  exist: boolean
+  size: string | number
+  ext: string | false
+  price: number
+  type_title?: string
+  id?: string
+}
+
+interface IContentFiles {
+  word: IFileInfo
+  pdf: IFileInfo
+  answer: IFileInfo
+  extra?: IFileInfo[]
+}
+interface ContentData {
+  id: string
+  title: string
+  title_url: string
+  thumb_pic: string
+  lesson_pic: string | null
+  description: string
+  views: number
+  ref_score: number
+  edu_year: string
+  section: string
+  base: string
+  lesson: string
+  exams: {
+    id: string
+    status: string
+  }[]
+  files: IContentFiles
+  lesson_title: string
+  base_title: string
+  section_title: string
+  is_paper: boolean
+  avatar: string
+  first_name: string
+  last_name: string
+  test_type_title?: string
+  up_date: string
+  edu_month_title: string
+}
+
+interface ApiResponse<T> {
+  data: T
+  succeeded: boolean
+  status: number
+  errors: {
+    message: string
+    code: string
+    reference: string
+    info: string
+    value: string
+  }[]
+}
+
 const route = useRoute()
 const router = useRouter()
 
 const requestURL = ref(useRequestURL().host)
 const pageDescribe = ref('')
 const pageTitle = ref('')
-const breads = ref([])
+const breads = ref<BreadCrumb[]>([])
 const openCrashReport = ref(false)
 const openShare = ref(false)
 
@@ -125,25 +204,23 @@ const { data: contentData } = await useAsyncData(
   `paper-${route.params.id}`,
   async () => {
     try {
-      const response = await $fetch(`/api/v1/tests/${route.params.id}`, {})
+      const response = (await $fetch(
+        `/api/v1/tests/${route.params.id}`,
+        {},
+      )) as ApiResponse<ContentData>
 
       return response.data
     }
-    catch (e) {
-      if (e?.status === 404) {
+    catch (e: unknown) {
+      const error = e as AppError
+      if (error?.status === 404) {
         router.push('/search?type=test')
       }
-      throw e
+      throw error
     }
     finally {
       // Reset loading states if needed
     }
-  },
-  {
-    server: true,
-    lazy: false,
-    immediate: true,
-    watch: [() => route.params.id],
   },
 )
 
@@ -185,59 +262,49 @@ const setMetaData = () => {
     title: pageTitle.value,
     meta: [
       {
-        hid: 'apple-mobile-web-app-title',
         name: 'apple-mobile-web-app-title',
         content: pageTitle.value,
       },
       {
-        hid: 'og:title',
         name: 'og:title',
         content: pageTitle.value,
       },
       {
-        hid: 'og:site_name',
         name: 'og:site_name',
         content: 'GamaTrain',
       },
       {
-        hid: 'description',
         name: 'description',
         content: pageDescribe.value,
       },
       {
-        hid: 'og:description',
         name: 'og:description',
         content: pageDescribe.value,
       },
       {
-        hid: 'og:image',
         property: 'og:image',
         content: ogImage,
       },
       {
-        hid: 'twitter:card',
         name: 'twitter:card',
         content: 'summary_large_image',
       },
       {
-        hid: 'twitter:title',
         name: 'twitter:title',
         content: pageTitle.value,
       },
       {
-        hid: 'twitter:description',
         name: 'twitter:description',
         content: pageDescribe.value,
       },
       {
-        hid: 'twitter:image',
         name: 'twitter:image',
         content: ogImage,
       },
     ],
     script: [
       {
-        hid: 'json-ld-schema',
+        key: 'json-ld-schema',
         innerHTML: JSON.stringify(schemaData.value),
         type: 'application/ld+json',
       },
@@ -250,9 +317,6 @@ const setMetaData = () => {
           : `https://${requestURL.value}/paper/${route.params.id}`,
       },
     ],
-    __dangerouslyDisableSanitizersByTagID: {
-      'json-ld-schema': ['innerHTML'],
-    },
   })
 }
 
@@ -284,8 +348,6 @@ const initBreadCrumb = () => {
 }
 
 if (contentData.value) {
-  console.log('contentData.value', contentData.value)
-
   initBreadCrumb()
   setMetaData()
 }

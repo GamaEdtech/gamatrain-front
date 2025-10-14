@@ -611,6 +611,7 @@ const startExam = () => {
     background-color: white;
     border-radius: 24px 24px 0 0;
     z-index: 1006;
+    transition: all 0.5s;
   }
   .set-bottom {
     bottom: 0;

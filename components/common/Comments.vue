@@ -86,18 +86,26 @@
         <div
           v-for="(comment, index) in comments"
           :key="index"
-          class="main-comment w-100 d-flex flex-column ga-4 pb-4"
+          class="main-comment w-100 d-flex flex-column ga-4 pb-4 position-relative"
         >
           <div class="w-100 d-flex align-center justify-space-between">
             <div class="img-name d-flex ga-2 align-center">
               <img
                 width="40"
                 height="40"
-                class="rounded-circle"
+                class="rounded-circle image-user"
                 :src="
                   comment.avatar ? comment.avatar : `/images/member/avatar.svg`
                 "
               >
+              <div
+                v-if="comment.replies.length > 0"
+                class="circle-div"
+              />
+              <div
+                v-if="comment.replies.length > 0"
+                class="main-line-comment"
+              />
               <div class="d-flex flex-column align-start">
                 <span class="text-h5 primary-gray-700">{{ comment.fistName }} {{ comment.lastName }}</span>
                 <span class="text-h6 primary-gray-500">{{ comment.role }}</span>
@@ -111,11 +119,11 @@
               Score
             </span>
           </div>
-          <span class="w-100 pl-4 pl-sm-8 text-h5 primary-gray-700">{{
+          <span class="w-100 pl-6 pl-sm-8 text-h5 primary-gray-700">{{
             comment.text
           }}</span>
           <div
-            class="w-100 pl-4 pl-sm-8 d-flex align-center justify-space-between"
+            class="w-100 pl-6 pl-sm-8 d-flex align-center justify-space-between"
           >
             <div class="d-flex ga-4 option-div">
               <span
@@ -146,7 +154,7 @@
 
           <div
             v-if="comment.replies.length > 0"
-            class="replies-div pl-4 pl-sm-8 d-flex flex-column ga-8 mt-4"
+            class="replies-div pl-8 d-flex flex-column ga-8 mt-4"
           >
             <div
               v-for="(reply, i) in comment.replies"
@@ -154,15 +162,21 @@
               class="w-100 d-flex flex-column ga-4"
             >
               <div class="w-100 d-flex align-center justify-space-between">
-                <div class="img-name d-flex ga-2 align-center">
+                <div
+                  class="img-name d-flex ga-2 align-center position-relative"
+                >
                   <img
                     width="40"
                     height="40"
-                    class="rounded-circle"
+                    class="rounded-circle image-user"
                     :src="
                       reply.avatar ? reply.avatar : `/images/member/avatar.svg`
                     "
                   >
+                  <div class="arc-wrap">
+                    <div class="arc" />
+                  </div>
+                  <div class="circle-reply-div" />
                   <div class="d-flex flex-column align-start">
                     <span class="text-h5 primary-gray-700">{{ reply.fistName }} {{ reply.lastName }}</span>
                     <span class="text-h6 primary-gray-500">{{
@@ -419,7 +433,7 @@ const openComments = () => {
   border: 1px solid white !important;
 }
 .open {
-  height: 400px;
+  height: 500px;
 }
 .all-comment-div {
   transition: all 0.5s;
@@ -456,6 +470,58 @@ const openComments = () => {
 .set-position-close-button {
   right: 20px;
 }
+.image-user {
+  z-index: 4;
+}
+.circle-div {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: absolute;
+  background-color: #e4e7ec;
+  top: 34px;
+  left: 12px;
+  z-index: 3;
+}
+.main-line-comment {
+  width: 2px;
+  height: calc(100% - 156px);
+  position: absolute;
+  background-color: #e4e7ec;
+  top: 40px;
+  left: 17px;
+}
+.circle-reply-div {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  position: absolute;
+  background-color: #e4e7ec;
+  top: 12px;
+  left: -6px;
+  z-index: 3;
+}
+.arc-wrap {
+  width: 24px;
+  height: 24px;
+  display: inline-block;
+  transform: rotate(180deg);
+  position: absolute;
+  top: -4px;
+  left: -15px;
+  z-index: 3;
+}
+
+.arc {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #e4e7ec;
+  box-sizing: border-box;
+  clip-path: polygon(50% 50%, 100% 50%, 100% 0, 50% 0);
+  -webkit-mask-clip: padding-box;
+}
+
 @media only screen and (max-width: 600px) {
   .overlay-div {
     position: fixed;
