@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-16 pt-md-14 pt-lg-4">
+  <v-container class="d-flex flex-column margin-top-handle">
     <template v-if="!contentData">
       <v-skeleton-loader type="subtitle" />
       <v-skeleton-loader
@@ -80,7 +80,7 @@
         />
       </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 
 <script setup>
@@ -160,3 +160,15 @@ useHead({
   ],
 })
 </script>
+
+<style scoped>
+.margin-top-handle {
+  margin-top: 64px;
+}
+
+@media (min-width: 960px) {
+  .margin-top-handle {
+    margin-top: 6.4rem;
+  }
+}
+</style>
