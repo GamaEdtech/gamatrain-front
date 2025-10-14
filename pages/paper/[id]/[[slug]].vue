@@ -27,7 +27,7 @@
       <v-col
         cols="12"
         md="4"
-        class="d-flex justify-center"
+        class="d-flex justify-center justify-md-start"
       >
         <CommonDetailPreviewActionCard
           :id="contentData.id"
@@ -79,14 +79,17 @@
         />
       </v-col>
 
-      <v-col
+      <!-- <v-col
         cols="12"
         class="mb-6"
       >
         <CommonComments />
-      </v-col>
+      </v-col> -->
 
-      <v-col cols="12">
+      <v-col
+        cols="12"
+        class="mt-6"
+      >
         <span
           class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
           @click="openCrashReport = true"

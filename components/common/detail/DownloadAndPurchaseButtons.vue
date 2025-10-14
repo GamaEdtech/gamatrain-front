@@ -51,10 +51,10 @@
         </v-icon>
         <span class="text-word text-h5 font-weight-bold mt-1 mx-2">Download Question Doc</span>
 
-        <span
+        <!-- <span
           v-if="requiresCoinPaymentForFile(`q_word`)"
           class="text-word text-h5 font-weight-bold mt-1"
-        >5 <span class="text-h6 font-weight-normal">$GET</span></span>
+        >5 <span class="text-h6 font-weight-normal">$GET</span></span> -->
       </v-btn>
 
       <v-btn
@@ -83,10 +83,10 @@
         </v-icon>
         <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download Question Paper</span>
 
-        <span
+        <!-- <span
           v-if="requiresCoinPaymentForFile(`q_pdf`)"
           class="text-pdf text-h4 font-weight-bold mt-1"
-        >5 <span class="text-h5 font-weight-normal">$GET</span></span>
+        >5 <span class="text-h5 font-weight-normal">$GET</span></span> -->
       </v-btn>
 
       <v-btn
@@ -114,10 +114,10 @@
             : `Download Mark Scheme`
         }}</span>
 
-        <span
+        <!-- <span
           v-if="requiresCoinPaymentForFile(`a_file`)"
           class="text-answer text-h5 font-weight-bold mt-1"
-        >5 <span class="text-h6 font-weight-normal">$GET</span></span>
+        >5 <span class="text-h6 font-weight-normal">$GET</span></span> -->
       </v-btn>
 
       <template v-if="files.extra && files.extra.length > 0">
@@ -150,10 +150,10 @@
 
           <span class="text-extra text-h5 font-weight-bold mt-1 mx-2">Download {{ extra.type_title ? extra.type_title : "Extra" }}</span>
 
-          <span
+          <!-- <span
             v-if="requiresCoinPaymentForFile(`extra`)"
             class="text-extra text-h5 font-weight-bold mt-1"
-          >5 <span class="text-h6 font-weight-normal">$GET</span></span>
+          >5 <span class="text-h6 font-weight-normal">$GET</span></span> -->
         </v-btn>
       </template>
 
