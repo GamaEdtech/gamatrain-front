@@ -96,25 +96,13 @@
 </template>
 
 <script setup lang="ts">
+import type { AppError } from '~/interfaces/api'
 import { useDisplay } from 'vuetify'
 
 interface ICrashReportModal {
   showDialog?: boolean
   typeCrashReport: string
   id: string
-}
-interface ApiErrorResponse {
-  status?: number
-  data?: {
-    error?: string
-    status?: number
-    message?: string
-  }
-}
-
-interface AppError {
-  response?: ApiErrorResponse
-  message?: string
 }
 
 const { mdAndUp } = useDisplay()

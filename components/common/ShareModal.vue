@@ -40,7 +40,7 @@
         >
           <v-btn
             rounded="xl"
-            color="primary"
+            color="primary text-white"
             class="w-100 text-h5"
             flat
             @click="copyUrl"

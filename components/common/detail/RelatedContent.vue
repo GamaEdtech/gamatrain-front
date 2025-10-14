@@ -125,41 +125,11 @@
 </template>
 
 <script setup lang="ts">
-interface ApiResponse<T> {
-  data: T
-  succeeded: boolean
-  status: number
-  errors: {
-    message: string
-    code: string
-    reference: string
-    info: string
-    value: string
-  }[]
-}
-interface ContentItemDTO {
-  id: string
-  title: string
-  title_url: string
-  thumb_pic?: string
-  avatar: string
-  edu_month: string
-  first_name: string
-  last_name: string
-  q_file_pages?: string
-  referee_score: string
-  smart: boolean
-  test_type: string
-  type_title?: string
-}
-
-interface RelatedContentDTO {
-  exams: ContentItemDTO[]
-  files: ContentItemDTO[]
-  questions: ContentItemDTO[]
-  tests: ContentItemDTO[]
-  tutorials: ContentItemDTO[]
-}
+import type {
+  ApiResult,
+  RelatedContentDTO,
+  ContentItemDTO,
+} from '~/interfaces/api'
 
 type sourceType
   = | 'test'
@@ -215,16 +185,17 @@ const getRelatedContent = async () => {
       request: props.request.join(','),
       id: props.id,
     }
-    const response = await useApiService.get<ApiResponse<RelatedContentDTO>>(
+    const response = await useApiService.get<ApiResult<RelatedContentDTO>>(
       '/api/v1/recommendations/related',
       params,
     )
     const related = response.data
-
-    pastpaper.value
-      = related[infoMap['paper'].keyResponse as keyof RelatedContentDTO]
-    tutorials.value
-      = related[infoMap['tutorial'].keyResponse as keyof RelatedContentDTO]
+    if (related) {
+      pastpaper.value
+        = related[infoMap['paper'].keyResponse as keyof RelatedContentDTO]
+      tutorials.value
+        = related[infoMap['tutorial'].keyResponse as keyof RelatedContentDTO]
+    }
   }
   catch (error) {
     console.error('Search error:', error)

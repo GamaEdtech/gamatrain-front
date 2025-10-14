@@ -218,27 +218,17 @@
 </template>
 
 <script setup lang="ts">
+import type {
+  ApiResult,
+  PDFResponseDTO,
+  AppError,
+  FilesDTO,
+} from '~/interfaces/api'
 import { useGtmEvents } from '~/composables/useGtmEvents'
 import { useDisplay } from 'vuetify'
 
-interface IFileInfo {
-  exist: boolean
-  size: string | number
-  ext: string | false
-  price: number
-  type_title?: string
-  id?: string
-}
-
-interface IContentFiles {
-  word: IFileInfo
-  pdf: IFileInfo
-  answer: IFileInfo
-  extra?: IFileInfo[]
-}
-
 interface IDownloadAndPurchaseButtons {
-  files: IContentFiles
+  files: FilesDTO
   id: string
   year: string | number
   title: string
@@ -250,35 +240,6 @@ interface IDownloadAndPurchaseButtons {
   section: string
   base: string
   lesson: string
-}
-interface ApiErrorResponse {
-  status?: number
-  data?: {
-    error?: string
-    status?: number
-  }
-}
-
-interface AppError {
-  response?: ApiErrorResponse
-  message?: string
-}
-
-interface ApiResponse<T> {
-  data: T
-  succeeded: boolean
-  status: number
-  errors: {
-    message: string
-    code: string
-    reference: string
-    info: string
-    value: string
-  }[]
-}
-interface PDFResponseDTO {
-  url?: string
-  name?: string
 }
 
 type TypeFile = 'q_word' | 'q_pdf' | 'a_file' | 'extra'
@@ -378,9 +339,7 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
       }
     }, 100)
 
-    const response = await useApiService.get<ApiResponse<PDFResponseDTO>>(
-      apiUrl,
-    )
+    const response = await useApiService.get<ApiResult<PDFResponseDTO>>(apiUrl)
 
     // Update progress to 60% after API response
     downloadProgress.value[downloadKey] = 60
@@ -388,7 +347,7 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
 
     // Create a custom fetch with progress tracking
     const xhr = new XMLHttpRequest()
-    xhr.open('GET', response.data.url!, true)
+    xhr.open('GET', response.data!.url!, true)
     xhr.responseType = 'blob'
 
     xhr.onprogress = (event) => {
@@ -405,7 +364,7 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
         // Use file-saver to save the blob
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         import('file-saver' as any).then(({ saveAs }) => {
-          saveAs(xhr.response, response.data.name)
+          saveAs(xhr.response, response.data?.name)
         })
         // Show success message for coin payments
         if (requiresCoinPaymentForFile(type)) {
