@@ -276,9 +276,12 @@
                   </span>
                 </v-card-title>
               </v-card>
-              <div class="gama-text-subtitle2">
-                <span v-html="truncateBody(item.summary, 32)" />
-                <span class="read-more">Read more</span>
+              <div class="subtitle-card-blog text-h6 pl-2 font-weight-bold">
+                <span
+                  class="primary-gray-500"
+                  v-html="truncateBody(item.summary, 64)"
+                />
+                <span class="read-more text-primary">Read more</span>
               </div>
             </v-card>
           </v-col>
@@ -749,6 +752,9 @@ watch(
 </script>
 
 <style scope>
+.subtitle-card-blog {
+  font-family: "Inter";
+}
 #blog-list-page {
   .text-loader-section {
     min-width: 80%;
