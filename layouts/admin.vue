@@ -5,9 +5,13 @@ const { mobile } = useDisplay()
 const drawer = ref(true)
 
 // Automatically open drawer on desktop, close on mobile
-watch(mobile, (isMobile) => {
-  drawer.value = !isMobile
-}, { immediate: true })
+watch(
+  mobile,
+  (isMobile) => {
+    drawer.value = !isMobile
+  },
+  { immediate: true },
+)
 
 const isPermanent = computed(() => !mobile.value)
 const isTemporary = computed(() => mobile.value)
@@ -15,20 +19,47 @@ const isTemporary = computed(() => mobile.value)
 const router = useRouter()
 const route = useRoute()
 const menuItems = [
-  { Caption: [
-    { title: 'Contact Us', link: '/admin/contact-us', icon: 'mdi-archive-arrow-down-outline' },
-    { title: 'User Managment ', link: '/admin/users', icon: 'mdi-account-group-outline' },
-    { title: 'Blogs ', link: '/admin/blogs', icon: 'mdi-post-outline' },
-    { title: 'Tags ', link: '/admin/tags', icon: 'mdi-tag-multiple' },
-  ] },
-  { 'Type Managment': [
-    { title: 'Location', link: '/admin/Locations' },
-  ] },
-  { School: [
-    { title: 'Images ', link: '/admin/schools/images', icon: 'mdi-image-outline' },
-    { title: 'Image Issues', link: '/admin/schools/image-issues', icon: 'mdi-image-remove-outline' },
-    { title: 'Comments ', link: '/admin/schools/comments', icon: 'mdi-comment-text-outline' },
-  ] },
+  {
+    Caption: [
+      {
+        title: 'Contact Us',
+        link: '/admin/contact-us',
+        icon: 'mdi-archive-arrow-down-outline',
+      },
+      {
+        title: 'User Managment ',
+        link: '/admin/users',
+        icon: 'mdi-account-group-outline',
+      },
+      { title: 'Blogs ', link: '/admin/blogs', icon: 'mdi-post-outline' },
+      { title: 'Tags ', link: '/admin/tags', icon: 'mdi-tag-multiple' },
+      {
+        title: 'Transactions ',
+        link: '/admin/transactions',
+        icon: 'md:price_change_outlined',
+      },
+    ],
+  },
+  { 'Type Managment': [{ title: 'Location', link: '/admin/Locations' }] },
+  {
+    School: [
+      {
+        title: 'Images ',
+        link: '/admin/schools/images',
+        icon: 'mdi-image-outline',
+      },
+      {
+        title: 'Image Issues',
+        link: '/admin/schools/image-issues',
+        icon: 'mdi-image-remove-outline',
+      },
+      {
+        title: 'Comments ',
+        link: '/admin/schools/comments',
+        icon: 'mdi-comment-text-outline',
+      },
+    ],
+  },
 ]
 
 const navigate = (link) => {
@@ -53,18 +84,18 @@ function isActive(link) {
       <div class="text--white font-weight-semibold pa-4 gtext-t2 mb-6">
         Dashboard
       </div>
-      <div class="d-flex ga-3 py-1 px-4 w-100 align-center gtext-t3 font-weight-medium primary-gray-300 mb-2">
+      <div
+        class="d-flex ga-3 py-1 px-4 w-100 align-center gtext-t3 font-weight-medium primary-gray-300 mb-2"
+      >
         <img
           class="rounded-pill"
-          style="width: 36px; height: 36px;"
+          style="width: 36px; height: 36px"
           src="/images/adminAuth.png"
           alt=""
         >
         Admin Panel
       </div>
-      <div
-        class="sideBar"
-      >
+      <div class="sideBar">
         <v-list
           v-for="(group, index) in menuItems"
           :key="group.id || index"
@@ -105,11 +136,11 @@ function isActive(link) {
 
       <div
         class="d-flex align-center ga-2"
-        style="position: absolute;bottom: 20px; left: 20px;"
+        style="position: absolute; bottom: 20px; left: 20px"
       >
         <img
           class="rounded-pill"
-          style="width: 36px; height: 36px;border: 1px solid white;"
+          style="width: 36px; height: 36px; border: 1px solid white"
           src="/images/adminAuth.png"
           alt=""
         >
@@ -159,32 +190,34 @@ function isActive(link) {
   min-height: 0;
   overflow-y: auto;
 }
-:deep(.v-navigation-drawer--left){
+:deep(.v-navigation-drawer--left) {
   border-width: 0px !important;
 }
 
-.active-tab > .v-list-item-title, .active-tab > v-list-item-icon > i{
-  color:#2E90FA ;
+.active-tab > .v-list-item-title,
+.active-tab > v-list-item-icon > i {
+  color: #2e90fa;
 }
-:deep(.v-list-item:hover > .v-list-item__overlay){
+:deep(.v-list-item:hover > .v-list-item__overlay) {
   opacity: 0;
 }
-:deep(.v-list-item:hover > .v-list-item__content > div){
-  background-color: #EFF8FF;
+:deep(.v-list-item:hover > .v-list-item__content > div) {
+  background-color: #eff8ff;
   border-radius: 30px;
   opacity: 0.6;
 }
 :deep(.v-list-item:hover > .v-list-item__content > div > div),
-:deep(.v-list-item:hover > .v-list-item__content > div > v-list-item-icon > i){
-  color: #2E90FA;
+:deep(.v-list-item:hover > .v-list-item__content > div > v-list-item-icon > i) {
+  color: #2e90fa;
 }
-:deep(.v-list-item:hover > .v-list-item__content > .active-tab), .active-tab{
-  background-color: #EFF8FF !important;
+:deep(.v-list-item:hover > .v-list-item__content > .active-tab),
+.active-tab {
+  background-color: #eff8ff !important;
   border-radius: 30px;
   opacity: 1 !important;
-  color: #2E90FA !important;
+  color: #2e90fa !important;
 }
-:deep(.sideBar){
+:deep(.sideBar) {
   max-height: 450px !important;
   padding-top: 14px !important;
   overflow-y: scroll;
