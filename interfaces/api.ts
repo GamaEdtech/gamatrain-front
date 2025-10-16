@@ -18,6 +18,11 @@ export interface AppError {
   status?: number
 }
 
+export interface ResponseListDTO<T> {
+  list: T[]
+  totalRecordsCount: number
+}
+
 export interface FileInfo {
   exist: boolean
   size: string | number
@@ -91,4 +96,14 @@ export interface RelatedContentDTO {
 export interface PDFResponseDTO {
   url?: string
   name?: string
+}
+
+export interface AdminTransactionDTO {
+  id: number
+  userId: number
+  points: number
+  description: string
+  creationDate: string
+  currentBalance: number
+  isDebit: boolean
 }
