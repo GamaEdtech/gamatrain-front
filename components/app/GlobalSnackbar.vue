@@ -5,11 +5,12 @@
     :timeout="$snackbar.timeout"
     location="top"
   >
-    {{ $snackbar.text }}
+    <span class="text-h6 text-sm-h5 font-weight-bold">
+      {{ $snackbar.text }}</span>
     <template #actions>
       <v-btn
         variant="text"
-        icon="mdi-close"
+        icon="md:close"
         @click="isVisible = false"
       />
     </template>
