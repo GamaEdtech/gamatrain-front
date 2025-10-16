@@ -10,7 +10,7 @@
     <template #actions>
       <v-btn
         variant="text"
-        icon="mdi-close"
+        icon="md:close"
         @click="isVisible = false"
       />
     </template>
