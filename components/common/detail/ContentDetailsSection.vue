@@ -33,7 +33,7 @@
     class="w-100 cursor-pointer text-h5 d-flex align-center color-link ga-1 mt-1"
     @click="seeCompleteDescription = !seeCompleteDescription"
   >
-    SeeMore
+    {{ seeCompleteDescription ? `See Less` : `See More` }}
     <v-icon color="#2E90FA">md:chevron_forward</v-icon>
   </span>
 
