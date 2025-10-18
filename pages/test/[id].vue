@@ -8,6 +8,21 @@
         type="paragraph"
       />
     </template>
+    <div
+      v-if="contentData.answer_full.length > 0"
+      class="w-100 d-flex align-center justify-end px-8"
+    >
+      <v-btn
+        variant="tonal"
+        color="info"
+        flat
+        width="50"
+        height="50"
+        icon="md:question_mark"
+        :disabled="isPaymentComplete"
+        @click="showCoinPaymentModal = true"
+      />
+    </div>
 
     <test-details
       v-if="contentData"
@@ -20,18 +35,6 @@
       ref="fullAnswerRef"
       class="w-100 mt-4 d-flex flex-column align-start justify-start px-8"
     >
-      <v-btn
-        variant="tonal"
-        color="info"
-        flat
-        width="250"
-        class="rounded-pill text-h5 font-weight-bold"
-        :disabled="isPaymentComplete"
-        @click="showCoinPaymentModal = true"
-      >
-        Show Full Answer
-      </v-btn>
-
       <div
         v-show="isPaymentComplete"
         class="text-h4 mt-4"
@@ -111,6 +114,7 @@
       v-model:is-open="showCoinPaymentModal"
       :user-balance="coinBalance.balance.value"
       :is-processing="coinBalance.isLoading.value || isProcessingPayment"
+      text-modal="Unlock the answer by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!"
       @confirm="handleCoinPaymentConfirm"
       @close="handleCoinPaymentClose"
     />
@@ -214,7 +218,7 @@ const handleCoinPaymentConfirm = async () => {
 
   try {
     const success = await coinBalance.deductCoins(
-      1000,
+      5,
       'See Full Answer Question',
     )
     if (success) {
