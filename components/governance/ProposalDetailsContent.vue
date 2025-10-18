@@ -106,27 +106,54 @@
 </template>
 
 <script setup lang="ts">
-// import * as anchor from '@coral-xyz/anchor'
-import type { BN as BNType } from '@coral-xyz/anchor'
+import { governance } from '~/composables/useGovernance'
+import { PublicKey } from '@solana/web3.js'
 
-// const { BN } = anchor
+interface Props {
+  proposal?: Record<string, unknown> | null
+  userPublicKey?: Record<string, unknown> | null
+  forPercentage?: number
+  isExpired?: boolean
+  totalVotes?: number
+}
 
-const props = defineProps({
-  proposal: {
-    type: Object,
-    default: null,
-  },
-  userPublicKey: {
-    type: Object,
-    default: null,
-  },
-  forPercentage: {
-    type: Number,
-    default: 0,
-  },
+const props = withDefaults(defineProps<Props>(), {
+  proposal: null,
+  userPublicKey: null,
+  forPercentage: 0,
+  isExpired: false,
+  totalVotes: 0,
 })
+
+const voteLoading = ref<'for' | 'against' | null>(null)
+const hasVoted = ref(false)
+const userVoteStatus = ref<string | null>(null)
+
+const timeRemaining = computed(() => {
+  if (!props.proposal?.account?.expiresAt) return '0 Days'
+  const now = Math.floor(Date.now() / 1000)
+  const expiresAt = props.proposal.account.expiresAt.toNumber()
+  const diffSeconds = expiresAt - now
+
+  if (diffSeconds <= 0) return '0 Days'
+
+  const days = Math.floor(diffSeconds / (24 * 60 * 60))
+  const hours = Math.floor((diffSeconds % (24 * 60 * 60)) / (60 * 60))
+
+  if (days > 0) {
+    return `${days} Day${days > 1 ? 's' : ''}`
+  }
+  return `${hours} Hour${hours > 1 ? 's' : ''}`
+})
+
+const canVote = computed(() => {
+// Allow voting buttons to be clickable even without wallet connection
+// The actual wallet check happens in handleVote function
+  return !props.isExpired && !hasVoted.value
+})
+
 // Methods
-const formatVotes = (votes: BNType | number) => {
+const formatVotes = (votes: number) => {
   if (!votes) return '0'
   const num = typeof votes === 'number' ? votes : votes.toNumber()
   if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
@@ -151,11 +178,15 @@ const formatOwner = (owner: any) => {
   return `${address.slice(0, 4)}...${address.slice(-2)}`
 }
 
-const formatAmount = (amount: BNType) => {
+const formatAmount = (amount: number) => {
   if (!amount) return '0'
-  const num = amount.toNumber()
-  return num.toLocaleString()
+  return amount.toLocaleString()
 }
+
+const emits = defineEmits<{
+  (e: 'vote', payload: { agree: boolean }): void
+  (e: 'walletRequired'): void
+}>()
 
 const handleVote = async (agree: boolean) => {
   if (!canVote.value) return
@@ -185,6 +216,59 @@ const handleVote = async (agree: boolean) => {
     }, 1000)
   }
 }
+
+// Function to check vote status
+const checkVoteStatus = async () => {
+  if (!props.userPublicKey || !props.proposal) {
+    hasVoted.value = false
+    userVoteStatus.value = null
+    return
+  }
+
+  try {
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+
+    if (program) {
+      const voteRecord = await governance.getVoteRecord(
+        program,
+        new PublicKey(props.proposal.publicKey),
+        new PublicKey(props.userPublicKey),
+      )
+
+      hasVoted.value = voteRecord.hasVoted
+      if (voteRecord.voteRecord) {
+        userVoteStatus.value
+          = voteRecord.voteRecord.vote === 'true' ? 'For' : 'Against'
+      }
+    }
+  }
+  catch (error) {
+    console.warn('Failed to check vote status:', error)
+    hasVoted.value = false
+    userVoteStatus.value = null
+  }
+}
+
+// Check vote status on mount
+onMounted(async () => {
+  await checkVoteStatus()
+})
+
+// Watch for changes in proposal or userPublicKey
+watch(
+  () => props.proposal,
+  async () => {
+    await checkVoteStatus()
+  },
+)
+
+watch(
+  () => props.userPublicKey,
+  async () => {
+    await checkVoteStatus()
+  },
+)
 </script>
 
 <style scoped>

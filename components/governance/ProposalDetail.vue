@@ -32,6 +32,8 @@
             <governance-proposal-details-content
               :proposal="proposal"
               :for-percentage="forPercentage"
+              :is-expired="isExpired"
+              :total-votes="totalVotes"
             />
           </v-card-text>
         </v-card>
@@ -71,6 +73,8 @@
           <governance-proposal-details-content
             :proposal="proposal"
             :for-percentage="forPercentage"
+            :is-expired="isExpired"
+            :total-votes="totalVotes"
           />
         </v-card-text>
       </v-card>
@@ -80,9 +84,9 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import { governance, useGovernance } from '~/composables/useGovernance'
-import { useWorkspace } from '~/composables/useWorkspace'
-import { PublicKey } from '@solana/web3.js'
+import * as anchor from '@coral-xyz/anchor'
+
+const { BN } = anchor
 
 const { smAndUp } = useDisplay()
 const { isProposalExpired } = useGovernance()
@@ -102,29 +106,11 @@ const props = defineProps({
   },
 })
 
-const emits = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-  (e: 'vote', payload: { agree: boolean }): void
-  (e: 'walletRequired'): void
-}>()
-
-const visible = ref(false)
-const visibleBottomSheet = ref(false)
-// const voteLoading = ref<'for' | 'against' | null>(null)
-const hasVoted = ref(false)
-const userVoteStatus = ref<string | null>(null)
-
 // Computed properties
 const isExpired = computed(() => {
   if (!props.proposal?.account?.expiresAt) return false
   return isProposalExpired(props.proposal.account)
 })
-
-// const canVote = computed(() => {
-// Allow voting buttons to be clickable even without wallet connection
-// The actual wallet check happens in handleVote function
-// return !isExpired.value && !hasVoted.value
-// })
 
 const totalVotes = computed(() => {
   if (!props.proposal?.account) return new BN(0)
@@ -132,6 +118,13 @@ const totalVotes = computed(() => {
   const disagreeVotes = props.proposal.account.disagreeVotes || new BN(0)
   return agreeVotes.add(disagreeVotes)
 })
+
+const emits = defineEmits<{
+  (e: 'update:modelValue', value: boolean): void
+}>()
+
+const visible = ref(false)
+const visibleBottomSheet = ref(false)
 
 const forPercentage = computed(() => {
   const totalVotesNum = totalVotes.value.toNumber()
@@ -157,23 +150,6 @@ const proposalStatus = computed(() => {
     color: '#27ae60',
   }
 })
-
-// const timeRemaining = computed(() => {
-//   if (!props.proposal?.account?.expiresAt) return '0 Days'
-//   const now = Math.floor(Date.now() / 1000)
-//   const expiresAt = props.proposal.account.expiresAt.toNumber()
-//   const diffSeconds = expiresAt - now
-
-//   if (diffSeconds <= 0) return '0 Days'
-
-//   const days = Math.floor(diffSeconds / (24 * 60 * 60))
-//   const hours = Math.floor((diffSeconds % (24 * 60 * 60)) / (60 * 60))
-
-//   if (days > 0) {
-//     return `${days} Day${days > 1 ? 's' : ''}`
-//   }
-//   return `${hours} Hour${hours > 1 ? 's' : ''}`
-// })
 
 // Watchers - simplified approach
 watch(
@@ -206,57 +182,4 @@ const handleAfterLeave = () => {
   visibleBottomSheet.value = false
   emits('update:modelValue', false)
 }
-
-// Function to check vote status
-const checkVoteStatus = async () => {
-  if (!props.userPublicKey || !props.proposal) {
-    hasVoted.value = false
-    userVoteStatus.value = null
-    return
-  }
-
-  try {
-    const workspace = useWorkspace()
-    const program = workspace.program?.value
-
-    if (program) {
-      const voteRecord = await governance.getVoteRecord(
-        program,
-        new PublicKey(props.proposal.publicKey),
-        new PublicKey(props.userPublicKey),
-      )
-
-      hasVoted.value = voteRecord.hasVoted
-      if (voteRecord.voteRecord) {
-        userVoteStatus.value
-          = voteRecord.voteRecord.vote === 'true' ? 'For' : 'Against'
-      }
-    }
-  }
-  catch (error) {
-    console.warn('Failed to check vote status:', error)
-    hasVoted.value = false
-    userVoteStatus.value = null
-  }
-}
-
-// Check vote status on mount
-onMounted(async () => {
-  await checkVoteStatus()
-})
-
-// Watch for changes in proposal or userPublicKey
-watch(
-  () => props.proposal,
-  async () => {
-    await checkVoteStatus()
-  },
-)
-
-watch(
-  () => props.userPublicKey,
-  async () => {
-    await checkVoteStatus()
-  },
-)
 </script>
