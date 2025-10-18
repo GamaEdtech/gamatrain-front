@@ -347,7 +347,7 @@ export const governance = {
       // Calculate vote power if not provided
       const finalVotePower = votePower || await calculateVotePower(voter, program.provider.connection)
 
-      if (finalVotePower === 1) {
+      if (finalVotePower === 0) {
         const error = {
           code: 6003,
         }

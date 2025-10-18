@@ -75,7 +75,10 @@
     </div>
   </div>
 
-  <div class="d-flex mt-7">
+  <div
+    v-if="!isExpired && !hasVoted"
+    class="d-flex mt-7"
+  >
     <v-btn
       size="large"
       prepend-icon="mdi-arrow-up-thin"
@@ -101,6 +104,20 @@
       @click="handleVote(false)"
     >
       Vote Against
+    </v-btn>
+  </div>
+  <div
+    v-else-if="isOwner && isExpired && forPercentage > 50 "
+    class="float-right"
+  >
+    <v-btn
+      size="large"
+      color="green"
+      variant="flat"
+      rounded
+      @click.stop="requestFund()"
+    >
+      Request to fund
     </v-btn>
   </div>
 </template>
@@ -152,6 +169,11 @@ const canVote = computed(() => {
   return !props.isExpired && !hasVoted.value
 })
 
+const isOwner = computed(() => {
+  if (!props.userPublicKey || !props.proposal?.account?.owner) return false
+  return props.proposal.account.owner.equals(props.userPublicKey)
+})
+
 // Methods
 const formatVotes = (votes: number) => {
   if (!votes) return '0'
@@ -169,6 +191,10 @@ const formatDate = (timestamp: BNType) => {
     month: '2-digit',
     day: '2-digit',
   })
+}
+
+const requestFund = async () => {
+  alert('ok')
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -5,7 +5,7 @@
       v-model="visible"
       max-width="480"
       :fullscreen="!smAndUp"
-      @after-leave="handleAfterLeave"
+      @after-leave="handleClose"
     >
       <template #default="{ isActive }">
         <v-card>
@@ -18,14 +18,12 @@
             >
               {{ proposalStatus.title }}
             </v-chip>
-            <div
-              class="d-flex justify-end cursor-pointer"
+            <v-btn
+              class="d-flex justify-end"
+              variant="plain"
+              icon="md:close"
               @click="isActive.value = false"
-            >
-              <v-icon color="#D0D5DD">
-                mdi-close
-              </v-icon>
-            </div>
+            />
           </div>
 
           <v-card-text>
@@ -34,6 +32,9 @@
               :for-percentage="forPercentage"
               :is-expired="isExpired"
               :total-votes="totalVotes"
+              :user-public-key="userPublicKey"
+              @vote="(payload) => emits('vote', payload)"
+              @wallet-required="() => emits('walletRequired')"
             />
           </v-card-text>
         </v-card>
@@ -59,14 +60,12 @@
               {{ proposalStatus.title }}
             </v-chip>
             <div class="">
-              <div
-                class="d-flex justify-end cursor-pointer"
+              <v-btn
+                class="d-flex justify-end "
+                variant="plain"
+                icon="md:close"
                 @click="handleClose"
-              >
-                <v-icon color="#98A2B3">
-                  mdi-close
-                </v-icon>
-              </div>
+              />
             </div>
           </div>
 
@@ -75,6 +74,9 @@
             :for-percentage="forPercentage"
             :is-expired="isExpired"
             :total-votes="totalVotes"
+            :user-public-key="userPublicKey"
+            @vote="(payload) => emits('vote', payload)"
+            @wallet-required="() => emits('walletRequired')"
           />
         </v-card-text>
       </v-card>
@@ -121,6 +123,8 @@ const totalVotes = computed(() => {
 
 const emits = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
+  (e: 'vote', payload: { agree: boolean }): void
+  (e: 'walletRequired'): void
 }>()
 
 const visible = ref(false)
@@ -172,12 +176,6 @@ watch([visible, visibleBottomSheet], ([dialogVisible, sheetVisible]) => {
 })
 
 const handleClose = () => {
-  visible.value = false
-  visibleBottomSheet.value = false
-  emits('update:modelValue', false)
-}
-
-const handleAfterLeave = () => {
   visible.value = false
   visibleBottomSheet.value = false
   emits('update:modelValue', false)
