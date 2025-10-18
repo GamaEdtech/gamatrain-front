@@ -1,5 +1,6 @@
 User-agent: *
 Disallow: /admin
+Disallow: /random-trader
 Allow: /
 
 Sitemap: https://gamatrain.com/sitemap
