@@ -42,7 +42,7 @@
         color="primary"
         variant="outlined"
         density="comfortable"
-        style="font-size: 10px"
+        class="text-subtitle-1 font-weight-bold"
       >
         {{ proposal.account.cate }}
       </v-chip>
@@ -96,44 +96,63 @@
         <span class="pl-1">{{ timeRemaining }}</span>
       </div>
 
-      <div
-        v-if="!isExpired && !hasVoted"
-        class="buttons"
-      >
-        <v-btn
-          size="small"
-          prepend-icon="mdi-arrow-up-thin"
-          color="green"
-          variant="outlined"
-          :disabled="!canVote"
-          @click.stop="handleVote(true)"
+      <div>
+        <div
+          v-if="!isExpired && !hasVoted"
         >
-          Vote For
-        </v-btn>
-        <v-btn
-          size="small"
-          prepend-icon="mdi-arrow-down-thin"
-          color="red"
-          variant="outlined"
-          :disabled="!canVote"
-          @click.stop="handleVote(false)"
+          <v-btn
+            size="small"
+            prepend-icon="mdi-arrow-up-thin"
+            color="green"
+            variant="outlined"
+            rounded="xl"
+            class="mr-1 text-subtitle-2"
+            :disabled="!canVote"
+            @click.stop="handleVote(true)"
+          >
+            Vote For
+          </v-btn>
+          <v-btn
+            size="small"
+            prepend-icon="mdi-arrow-down-thin"
+            color="red"
+            variant="outlined"
+            rounded="xl"
+            class="text-subtitle-2"
+            :disabled="!canVote"
+            @click.stop="handleVote(false)"
+          >
+            Vote Against
+          </v-btn>
+        </div>
+        <div
+          v-else-if="isOwner && isExpired && forPercentage > 50 "
         >
-          Vote Against
-        </v-btn>
-      </div>
+          <v-btn
+            size="small"
+            color="green"
+            variant="outlined"
+            rounded="xl"
+            style="font-size: 10px"
+            @click.stop="requestFund()"
+          >
+            Request to fund
+          </v-btn>
+        </div>
 
-      <div
-        v-else-if="hasVoted"
-        class="voted-indicator"
-      >
-        <v-chip
-          :color="userVoteStatus === 'For' ? 'green' : '#f04438'"
-          variant="flat"
-          density="comfortable"
-          style="font-size: 10px"
+        <div
+          v-else-if="hasVoted "
+          class="voted-indicator"
         >
-          Voted {{ userVoteStatus }}
-        </v-chip>
+          <v-chip
+            :color="userVoteStatus === 'For' ? 'green' : '#f04438'"
+            variant="flat"
+            density="comfortable"
+            style="font-size: 10px"
+          >
+            Voted {{ userVoteStatus }}
+          </v-chip>
+        </div>
       </div>
     </div>
 
@@ -171,7 +190,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
 import * as anchor from '@coral-xyz/anchor'
 import type { BN as BNType } from '@coral-xyz/anchor'
 import { governance, useGovernance } from '~/composables/useGovernance'
@@ -294,6 +312,10 @@ const handleVote = async (agree: boolean) => {
   catch (error) {
     console.error('Vote failed:', error)
   }
+}
+
+const requestFund = async () => {
+  alert('ok')
 }
 
 const handleDelete = () => {
@@ -474,16 +496,6 @@ onMounted(async () => {
       align-items: center;
     }
 
-    .buttons {
-      display: flex;
-      gap: 4px;
-
-      .v-btn {
-        border-radius: 20px;
-        font-weight: 600;
-        text-transform: none;
-      }
-    }
   }
 }
 </style>
