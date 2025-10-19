@@ -740,8 +740,7 @@ p {
 
 .answer-img {
   max-height: 15rem;
-  width: 100%;
-  max-width: 600px;
+  width: auto;
 }
 
 /* Box Showing Balance */
