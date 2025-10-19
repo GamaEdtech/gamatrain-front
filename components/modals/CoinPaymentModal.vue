@@ -7,9 +7,11 @@
   >
     <v-card class="coin-payment-modal">
       <div class="d-flex flex-column align-center justify-center pt-6">
-        <span style="font-size:80px">🎮</span>
+        <span style="font-size: 80px">🎮</span>
 
-        <v-card-title class="font-size-18 primary-gray-700 font-bold text-center">
+        <v-card-title
+          class="font-size-18 primary-gray-700 font-bold text-center"
+        >
           Game On!
         </v-card-title>
       </div>
@@ -17,19 +19,21 @@
       <div class="text-box">
         <v-card-text class="d-flex flex-column align-center justify-center">
           <span class="text-center">
-            Unlock this file by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!
+            {{ textModal }}
           </span>
           <div class="balance-info d-flex align-center justify-center ga-2">
             <v-icon color="orange">
               mdi-wallet
             </v-icon>
-            <span>Your current balance: <strong>{{ formatNumber(userBalance) }} points</strong></span>
+            <span>Your current balance:
+              <strong>{{ formatNumber(userBalance) }} points</strong></span>
           </div>
           <span
             v-if="userBalance < 5"
             class="text-error text-center"
           >
-            Insufficient balance! You need {{ formatNumber(5000000 - userBalance) }} more points.
+            Insufficient balance! You need
+            {{ formatNumber(5000000 - userBalance) }} more points.
           </span>
         </v-card-text>
 
@@ -79,6 +83,11 @@ const props = defineProps({
   isProcessing: {
     type: Boolean,
     default: false,
+  },
+  textModal: {
+    type: String,
+    default:
+      'Unlock this file by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!',
   },
 })
 
