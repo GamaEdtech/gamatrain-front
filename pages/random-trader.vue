@@ -189,8 +189,6 @@ const getWinner = async () => {
       startRolling()
     }
     else {
-      console.log('injaa')
-
       $toast.error(response.message)
     }
   }
