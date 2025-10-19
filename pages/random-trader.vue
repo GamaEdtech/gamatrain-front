@@ -22,23 +22,10 @@
       <h1 class="text-h2 text-white font-weight-bold mt-4">
         Win 10$ of $GET Every Day
       </h1>
-
-      <v-btn
-        flat
-        color="primary"
-        width="200"
-        rounded="pill"
-        variant="outlined"
-        class="text-white text-h5 font-weight-bold mt-8"
-        :disabled="loading"
-        @click="startRolling"
-      >
-        Start
-      </v-btn>
     </div>
 
     <div class="d-flex justify-center w-100 flex-wrap ga-1 z-index-class">
-      <template v-if="!loading">
+      <template v-if="!loadingWinner">
         <div
           v-for="(slot, idx) in slots"
           :key="idx"
@@ -66,14 +53,14 @@
       flat
       variant="outlined"
       class="text-white text-h5 font-weight-bold my-6 z-index-class"
-      :disabled="loading"
-      @click="showTransactions = !showTransactions"
+      :loading="loadingTraders"
+      @click="getTraders"
     >
       {{ showTransactions ? "Hide Traders" : "Show Today Traders" }}
     </v-btn>
 
     <div
-      v-if="showTransactions"
+      v-if="dataTable.length > 0 && showTransactions"
       class="w-100 mt-4 d-flex justify-center z-index-class"
     >
       <v-data-table
@@ -125,16 +112,20 @@
 </template>
 
 <script setup>
-definePageMeta({
-  layout: false,
-})
-
+const { $toast } = useNuxtApp()
 const winnerWallet = ref('')
 const randomCharacters
   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
 
 const slots = ref()
-
+const headers = [
+  { title: 'Date', key: 'date', sortable: false, width: '5vw' },
+  { title: 'Wallet', key: 'wallet', sortable: false, width: '45vw' },
+  { title: 'Signature', key: 'signature', sortable: false, width: '50vw' },
+]
+const dataTable = ref([])
+const loadingTraders = ref(false)
+const loadingWinner = ref(true)
 let intervalId = null
 const showTransactions = ref(false)
 
@@ -163,36 +154,53 @@ const stopRolling = () => {
   }
 }
 
-const headers = [
-  { title: 'Date', key: 'date', sortable: false, width: '5vw' },
-  { title: 'Wallet', key: 'wallet', sortable: false, width: '45vw' },
-  { title: 'Signature', key: 'signature', sortable: false, width: '50vw' },
-]
-const dataTable = ref()
-const loading = ref(true)
+const getTraders = async () => {
+  if (showTransactions.value) {
+    showTransactions.value = false
+  }
+  else {
+    try {
+      loadingTraders.value = true
+      const response = await useApiService.get('/api/get-traders')
+      if (response.randomWallet) {
+        dataTable.value = response.transactions
+      }
+    }
+    catch (error) {
+      console.log(error)
+    }
+    finally {
+      loadingTraders.value = false
+      showTransactions.value = true
+    }
+  }
+}
 
-const getData = async () => {
+const getWinner = async () => {
   try {
-    const response = await useApiService.get('/api/get-traders')
-    if (response.randomWallet) {
-      dataTable.value = response.transactions
-      winnerWallet.value = response.randomWallet
+    const response = await useApiService.get('/api/daily-winner?action=get')
+    if (response.success) {
+      loadingWinner.value = false
+      winnerWallet.value = response.data.wallet
       slots.value = winnerWallet.value.split('').map(ch => ({
         targetChar: ch,
         currentChar: '*',
       }))
-      loading.value = false
+      startRolling()
+    }
+    else {
+      console.log('injaa')
+
+      $toast.error(response.message)
     }
   }
   catch (error) {
     console.log(error)
-
-    loading.value = true
   }
 }
 
 onMounted(async () => {
-  await getData()
+  await getWinner()
 })
 
 onBeforeUnmount(stopRolling)

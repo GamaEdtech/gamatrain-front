@@ -13,6 +13,7 @@ export default defineNuxtConfig({
       solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
       randomCoinApiKey: process.env.NUXT_PUBLIC_RANDOM_COIN_API_KEY,
       recapchaSiteKey: process.env.NUXT_RECAPTCHA_SITE_KEY,
+      connectionStringMongoDB: process.env.CONNECTION_STRING_MONGODB,
     },
   },
 
