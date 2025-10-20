@@ -183,18 +183,14 @@ const formatVotes = (votes: number) => {
   return num.toString()
 }
 
-const formatDate = (timestamp: BNType) => {
+const formatDate = (timestamp: number) => {
   if (!timestamp) return '00/00/0000'
-  const date = new Date(timestamp.toNumber() * 1000)
+  const date = new Date(timestamp * 1000)
   return date.toLocaleDateString('en-US', {
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
   })
-}
-
-const requestFund = async () => {
-  alert('ok')
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -211,7 +207,7 @@ const formatAmount = (amount: number) => {
 
 const emits = defineEmits<{
   (e: 'vote', payload: { agree: boolean }): void
-  (e: 'walletRequired'): void
+  (e: 'walletRequired' | 'requestFund'): void
 }>()
 
 const handleVote = async (agree: boolean) => {
@@ -240,6 +236,25 @@ const handleVote = async (agree: boolean) => {
     setTimeout(() => {
       voteLoading.value = null
     }, 1000)
+  }
+}
+
+const requestFund = async () => {
+  // Check if user has wallet connected
+  if (!props.userPublicKey) {
+    emits('walletRequired')
+    return
+  }
+
+  try {
+    // Emit the request fund to parent component
+    emits('requestFund')
+
+    // Note: The parent component will handle closing the modal after successful vote
+    // and refreshing the data, so we don't need to do anything else here
+  }
+  catch (error) {
+    console.error('request funding error:', error)
   }
 }
 

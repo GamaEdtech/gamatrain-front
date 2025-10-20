@@ -35,6 +35,7 @@
               :user-public-key="userPublicKey"
               @vote="(payload) => emits('vote', payload)"
               @wallet-required="() => emits('walletRequired')"
+              @request-fund="() => emits('requestFund')"
             />
           </v-card-text>
         </v-card>
@@ -77,6 +78,7 @@
             :user-public-key="userPublicKey"
             @vote="(payload) => emits('vote', payload)"
             @wallet-required="() => emits('walletRequired')"
+            @request-fund="() => emits('requestFund')"
           />
         </v-card-text>
       </v-card>
@@ -124,7 +126,7 @@ const totalVotes = computed(() => {
 const emits = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
   (e: 'vote', payload: { agree: boolean }): void
-  (e: 'walletRequired'): void
+  (e: 'walletRequired' | 'requestFund'): void
 }>()
 
 const visible = ref(false)

@@ -204,7 +204,7 @@ const props = defineProps<{
   userPublicKey?: any
 }>()
 
-const emits = defineEmits(['select', 'vote', 'delete', 'walletRequired'])
+const emits = defineEmits(['select', 'vote', 'delete', 'walletRequired', 'requestFund'])
 
 // State
 const deleteDialog = ref(false)
@@ -315,7 +315,18 @@ const handleVote = async (agree: boolean) => {
 }
 
 const requestFund = async () => {
-  alert('ok')
+  // Check if user has wallet connected
+  if (!props.userPublicKey) {
+    emits('walletRequired')
+    return
+  }
+
+  try {
+    emits('requestFund')
+  }
+  catch (error) {
+    console.error('Request fund failed:', error)
+  }
 }
 
 const handleDelete = () => {
