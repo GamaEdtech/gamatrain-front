@@ -5,7 +5,7 @@
   >
     <div class="shadow-div" />
     <div
-      class="d-flex flex-column align-center justify-center mb-6 z-index-class"
+      class="d-flex flex-column align-center justify-center mb-6 z-index-class mt-16"
     >
       <h1 class="text-h1 text-white font-weight-bold d-flex align-center ga-2">
         <v-img
@@ -67,6 +67,7 @@
         :headers="headers"
         :items="dataTable"
         class="elevation-1 set-height-table bg-primary-gray-700"
+        :items-per-page="-1"
         fixed-header
         hide-default-footer
       >
@@ -264,7 +265,7 @@ onBeforeUnmount(stopRolling)
   color: #ffb300;
 }
 .set-height-table {
-  max-height: 70vh;
+  max-height: 50vh;
   max-width: 1400px;
   border: 1px solid #344054;
   border-radius: 8px;

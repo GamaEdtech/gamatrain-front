@@ -2,9 +2,8 @@ import { defineEventHandler, getQuery } from 'h3'
 import mongoose from 'mongoose'
 
 const config = useRuntimeConfig()
-
 if (mongoose.connection.readyState === 0) {
-  mongoose.connect(config.public?.connectionStringMongoDB as string)
+  mongoose.connect(config.connectionStringMongoDB as string)
 }
 
 const winnerSchema = new mongoose.Schema({

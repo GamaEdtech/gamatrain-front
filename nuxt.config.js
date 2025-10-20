@@ -7,13 +7,13 @@ import glsl from 'vite-plugin-glsl'
 export default defineNuxtConfig({
   runtimeConfig: {
     serverApiKey: process.env.SERVER_API_KEY,
+    connectionStringMongoDB: process.env.CONNECTION_STRING_MONGODB,
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
       solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
       randomCoinApiKey: process.env.NUXT_PUBLIC_RANDOM_COIN_API_KEY,
       recapchaSiteKey: process.env.NUXT_RECAPTCHA_SITE_KEY,
-      connectionStringMongoDB: process.env.CONNECTION_STRING_MONGODB,
     },
   },
 
