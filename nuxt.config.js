@@ -7,6 +7,10 @@ import glsl from 'vite-plugin-glsl'
 export default defineNuxtConfig({
   runtimeConfig: {
     serverApiKey: process.env.SERVER_API_KEY,
+    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
+    telegramGroupChatId: process.env.TELEGRAM_GROUP_ID,
+    telegramChannelId: process.env.TELEGRAM_CHANNEL_ID,
+    telegramApiSecret: process.env.TELEGRAM_API_SECRET,
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
