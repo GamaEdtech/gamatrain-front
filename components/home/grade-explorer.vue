@@ -129,11 +129,11 @@ const { boardImgs } = useBoard()
 
 const categories = ref([
   {
-    type: 'learnfiles',
-    key: 'files',
-    stat: '220',
-    title: 'Multimedia',
-    icon: 'icon-multimedia',
+    type: 'test',
+    key: 'papers',
+    stat: '34,519',
+    title: 'Past Paper',
+    icon: 'icon-paper',
   },
   {
     type: 'azmoon',
@@ -143,11 +143,11 @@ const categories = ref([
     icon: 'icon-exam',
   },
   {
-    type: 'test',
-    key: 'papers',
-    stat: '34,519',
-    title: 'Past Paper',
-    icon: 'icon-paper',
+    type: 'dars',
+    key: 'tutorial',
+    stat: '50',
+    title: 'Tutorial',
+    icon: 'icon-tutorial',
   },
   {
     type: 'question',
@@ -157,12 +157,13 @@ const categories = ref([
     icon: 'icon-q-a',
   },
   {
-    type: 'dars',
-    key: 'tutorial',
-    stat: '50',
-    title: 'Tutorial',
-    icon: 'icon-tutorial',
+    type: 'learnfiles',
+    key: 'files',
+    stat: '220',
+    title: 'Multimedia',
+    icon: 'icon-multimedia',
   },
+
 ])
 const _selectLoader = ref(true)
 const boardList = ref([])

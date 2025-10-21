@@ -45,6 +45,7 @@
     "eslint": "^9.31.0",
     "file-saver": "^2.0.5",
     "leaflet.markercluster": "^1.5.3",
+    "mongoose": "^7.8.7",
     "nuxt": "^3.16.2",
     "nuxt-og-image": "^5.1.9",
     "pdfjs-dist": "^5.4.54",
