@@ -177,32 +177,40 @@ const getTraders = async () => {
   }
 }
 
-const getWinner = async () => {
-  try {
-    const response = await useApiService.get('/api/daily-winner?action=get')
-    if (response.success) {
-      loadingWinner.value = false
-      winnerWallet.value = response.data.wallet
-      slots.value = winnerWallet.value.split('').map(ch => ({
-        targetChar: ch,
-        currentChar: '*',
-      }))
-      startRolling()
-    }
-    else {
-      $toast.error(response.message)
-    }
-  }
-  catch (error) {
-    console.log(error)
-  }
-}
-
 onMounted(async () => {
-  await getWinner()
+  setTimeout(() => {
+    loadingWinner.value = false
+    startRolling()
+  }, 2000)
 })
 
 onBeforeUnmount(stopRolling)
+
+const { data: winnerData, error } = await useAsyncData(
+  'dailyWinner',
+  async () => {
+    const res = await $fetch('/api/daily-winner?action=get')
+    return res
+  },
+)
+
+if (winnerData.value?.success && winnerData.value?.data) {
+  winnerWallet.value = winnerData.value.data.wallet
+  slots.value = winnerWallet.value.split('').map(ch => ({
+    targetChar: ch,
+    currentChar: '*',
+  }))
+}
+else if (error.value) {
+  console.error(error.value)
+}
+else {
+  $toast.error(winnerData.value?.message || 'Failed to load daily winner')
+}
+
+defineOgImageComponent('RandomTrader', {
+  walletAddress: winnerWallet.value,
+})
 </script>
 
 <style scoped>
