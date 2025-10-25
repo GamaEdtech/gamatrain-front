@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # install all deps (devDeps required for building vuetify / sass / vite plugins)
-RUN npm ci
+RUN npm install
 
 # copy rest of sources
 COPY . .
@@ -21,7 +21,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
-ENV PORT=3000
+ENV PORT=3002
 
 # copy built output from builder
 COPY --from=builder /app/.output ./.output
@@ -30,9 +30,9 @@ COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/package*.json ./
 
 # install only production dependencies to keep image small
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
-EXPOSE 3000
+EXPOSE 3002
 
 # Start the Nuxt server produced in .output
 CMD ["node", ".output/server/index.mjs"]
