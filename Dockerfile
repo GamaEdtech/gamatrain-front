@@ -30,7 +30,7 @@ COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/package*.json ./
 
 # install only production dependencies to keep image small
-RUN npm install --omit=dev
+RUN npm install
 
 EXPOSE 3002
 
