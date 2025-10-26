@@ -22,6 +22,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV HOST=0.0.0.0
 ENV PORT=3002
+ENV HUSKY=0 
 
 # copy built output from builder
 COPY --from=builder /app/.output ./.output
@@ -30,7 +31,7 @@ COPY --from=builder /app/.output ./.output
 COPY --from=builder /app/package*.json ./
 
 # install only production dependencies to keep image small
-RUN npm install
+RUN npm install --omit=dev
 
 EXPOSE 3002
 
