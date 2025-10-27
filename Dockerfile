@@ -12,6 +12,10 @@ RUN npm install
 # copy rest of sources
 COPY . .
 
+# make sure .env is included
+COPY .env .env
+
+
 # build the nuxt app (this will produce .output)
 RUN npm run build
 
