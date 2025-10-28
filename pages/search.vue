@@ -33,12 +33,34 @@
       </div>
 
       <search-list
+        v-if="data.length > 0"
         :data-list="data"
         :is-initial-loading="isInitialDataLoading"
         :is-pagination-loading="isPaginationDataLoading"
         :is-all-data-loaded="isAllDataLoaded"
         @load-next-page="loadNextPageData"
       />
+
+      <div
+        v-else
+        class="w-100 d-flex flex-column align-center justify-center ga-4 mt-16"
+      >
+        <span class="text-h4 font-weight-bold">Be the first to add content to this category.</span>
+        <v-btn
+          class="text-h5 font-weight-bold"
+          width="250"
+          color="info"
+          rounded="pill"
+          flat
+          variant="tonal"
+          :to="createLinkAddConent()"
+        >
+          <v-icon color="info">
+            md:add
+          </v-icon>
+          Add
+        </v-btn>
+      </div>
     </v-row>
   </v-container>
 </template>
@@ -656,6 +678,33 @@ useHead(() => ({
     },
   ],
 }))
+
+const createLinkAddConent = () => {
+  const type = route.query.type
+  let link = ''
+  switch (type) {
+    case 'test':
+      link = '/user/paper'
+      break
+    case 'learnfiles':
+      link = '/user/multimedia'
+      break
+    case 'azmoon':
+      link = '/user/exam'
+      break
+    case 'question':
+      link = '/user/question'
+      break
+    case 'dars':
+      link = '/user/paper'
+      break
+
+    default:
+      link = '/user/paper'
+      break
+  }
+  return link
+}
 </script>
 
 <style scoped>
