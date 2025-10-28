@@ -12,7 +12,7 @@
   "crons": [
     {
       "path": "/api/daily-winner?action=save",
-      "schedule": "1 0 * * *"
+      "schedule": "30 5 * * *"
     }
   ]
 }
