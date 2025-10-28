@@ -66,8 +66,8 @@
           >
             <img
               class="icon-image"
-              src="@/assets/images/whatsapp.svg"
-              alt="whatsup"
+              :src="whatsAppIcon"
+              alt="share on whatsup "
             >
             &nbsp; WhatsApp
           </v-btn>
@@ -93,6 +93,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
+import whatsAppIcon from '~/assets/images/whatsapp.svg'
 
 interface IShareModal {
   showDialog?: boolean

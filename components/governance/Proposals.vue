@@ -54,6 +54,7 @@
                 @vote="handleVote"
                 @delete="handleProposalDeleted"
                 @wallet-required="handleWalletRequired"
+                @request-fund="handleRequestFund(proposal)"
               />
             </div>
           </v-slide-group-item>
@@ -104,6 +105,7 @@
       :user-public-key="publicKey"
       @vote="({ agree }) => handleVote({ proposal: selectedProposal, agree })"
       @wallet-required="handleWalletRequired"
+      @request-fund="handleRequestFund(selectedProposal)"
     />
 
     <!-- Wallet Connection Modal -->
@@ -150,7 +152,6 @@ import { useDisplay } from 'vuetify/lib/composables/display'
 import { useWorkspace } from '~/composables/useWorkspace'
 import { governance } from '~/composables/useGovernance'
 import type { Program } from '@coral-xyz/anchor'
-import type { Ref } from 'vue'
 // Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
 
 const { mdAndUp } = useDisplay()
@@ -159,6 +160,8 @@ const AsyncWalletMultiButton = defineAsyncComponent(async () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (mod as any).WalletMultiButton
 })
+
+const { $toast } = useNuxtApp()
 
 // --- STATE ---
 const program: Ref<Program | null> = ref(null)
@@ -239,8 +242,46 @@ const fetchProposalsData = async () => {
 }
 
 // --- WALLET MODAL HANDLERS ---
-const handleWalletRequired = () => {
+const handleWalletRequired = async () => {
   showWalletModal.value = true
+}
+
+// ---Request to release fund after proposal passed ---
+const handleRequestFund = async (proposal: unknown) => {
+// Show wallet modal if not connected
+  if (!connected.value) {
+    showWalletModal.value = true
+    return
+  }
+
+  try {
+    if (!program.value || !publicKey.value) {
+      $toast.error('Please connect your wallet to request')
+      return
+    }
+
+    const { PublicKey } = await import('@solana/web3.js')
+    const proposalPubkey = new PublicKey(proposal.publicKey)
+
+    await governance.requestFund(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      program.value as any,
+      publicKey.value,
+      proposalPubkey,
+    )
+
+    // Show success message
+    $toast.success(`Request submitted successfully!`)
+
+    // Close the proposal detail modal
+    visibleProposalDetail.value = false
+    selectedProposal.value = null
+  }
+  catch (e) {
+    console.error('Request failed:', e)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $toast.error((e as any).message || 'Failed to submit request')
+  }
 }
 
 // --- WATCHER ---
@@ -295,7 +336,6 @@ const handleVote = async ({
 
   try {
     if (!program.value || !publicKey.value) {
-      const { $toast } = useNuxtApp()
       $toast.error('Please connect your wallet to vote')
       return
     }
@@ -312,7 +352,6 @@ const handleVote = async ({
     )
 
     // Show success message
-    const { $toast } = useNuxtApp()
     $toast.success(`Vote ${agree ? 'for' : 'against'} submitted successfully!`)
 
     // Close the proposal detail modal
@@ -324,7 +363,6 @@ const handleVote = async ({
   }
   catch (e) {
     console.error('Vote failed:', e)
-    const { $toast } = useNuxtApp()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     $toast.error((e as any).message || 'Failed to submit vote')
   }
