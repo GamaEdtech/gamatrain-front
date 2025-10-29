@@ -1,5 +1,8 @@
 <template>
-  <div class="w-100 pa-4 rounded-lg mt-12 box-question position-relative">
+  <div
+    v-show="visible"
+    class="w-100 pa-4 rounded-lg mt-12 box-question position-relative"
+  >
     <div class="lable-div position-absolute text-white text-h4 pa-2">
       Time To Test
     </div>
@@ -53,6 +56,8 @@ interface IBoxRandomQuestion {
 }
 const props = defineProps<IBoxRandomQuestion>()
 
+const visible = ref(false)
+
 const randomTestContent = ref<Record<string, string> | undefined>(undefined)
 const loadingRandomTest = ref(true)
 
@@ -87,6 +92,8 @@ const getRandomTest = async (code: string) => {
     console.log('error', error)
   }
   finally {
+    if (randomTestContent.value)
+      visible.value = true
     loadingRandomTest.value = false
   }
 }
