@@ -356,14 +356,13 @@
                       :disabled="!nextTestId"
                       :loading="nextTestLoading"
                       class="next-test mx-auto text-transform-none"
-                      @click="navigateToNextTest"
+                      :to="`/test/${nextTestId}`"
                     >
                       {{
                         $route.name == "test-id"
                           ? "Try the Next One"
                           : "Time to Test!"
                       }}
-                      <v-icon>mdi-skip-next-outline</v-icon>
                     </v-btn>
                   </div>
                 </div>
@@ -401,11 +400,7 @@ const nuxtApp = useNuxtApp()
 
 const { $renderMathInElement, $ensureMathJaxReady, $toast } = nuxtApp
 const nextTestId = ref(null)
-const _router = useRouter()
-const navigateToNextTest = () => {
-  nextTestLoading.value = true
-  navigateTo(`/test/${nextTestId.value}`)
-}
+
 const fullAnswer = ref('')
 const selectedOption = ref('')
 const report_type_list = [
@@ -460,18 +455,6 @@ onMounted(async () => {
   }
   setInitialPositionCoin()
 })
-
-watch(
-  () => props.contentData,
-  async (_val) => {
-    await nextTick()
-    if (testDetail.value) {
-      $renderMathInElement?.(testDetail.value)
-      loadNextTest()
-    }
-  },
-  { immediate: true },
-)
 
 function isCorrectAnswer(option) {
   return selectedOption.value && option == props.contentData.true_answer
