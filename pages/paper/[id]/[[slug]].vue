@@ -57,16 +57,7 @@
           :lesson="contentData.lesson"
           :exams="contentData.exams"
         />
-        <nuxt-link
-          :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
-          class="w-100 rounded-lg d-flex align-center justify-start pa-1 pa-sm-3 ga-2 mt-2 subject-directory-alert"
-        >
-          <v-icon color="primary">md:files_outlined</v-icon>
-          <span class="text-h6 text-sm-h5 font-weight-bold">+ 8000
-            <span class="font-weight-medium">{{ contentData?.lesson_title }} resources in one place</span>
-          </span>
-          <v-icon color="primary">md:chevron_forward</v-icon>
-        </nuxt-link>
+        <CommonDetailSubjectDirectoryNav :content-data="contentData" />
       </v-col>
 
       <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
@@ -302,10 +293,6 @@ if (contentData.value) {
 </script>
 
 <style scoped>
-.subject-directory-alert {
-  height: 64px;
-  background-color: #efffe5;
-}
 .text-crash-report {
   color: #f04438;
 }
