@@ -18,6 +18,9 @@
     <div>
       <slot />
     </div>
+    <!-- Blog container -->
+    <home-blog-container v-if="!(route.path==='/' || route.path==='/search' || route.path==='/school')" />
+    <!-- End blog container -->
     <common-footer />
     <AppGlobalSnackbar />
     <client-only>
@@ -32,6 +35,7 @@ const progress = ref(0)
 let animationFrame = null
 let startTime = null
 const duration = 10000
+const route = useRoute()
 
 onMounted(() => {
   setFavicon()

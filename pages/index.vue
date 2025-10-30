@@ -7,49 +7,11 @@
 
     <lazy-home-grade-explorer />
 
-    <home-level-guid-banner :slide-arr="slideArr" />
+    <!-- Blog container -->
+    <home-blog-container />
+    <!-- End blog container -->
 
-    <!-- Ai learn banner -->
-    <v-container>
-      <v-row>
-        <v-col
-          id="ai-learn-banner"
-          cols="12"
-        >
-          <img
-            id="img-top"
-            alt="AI Learn"
-            src="/images/ai-learn-bg1.png"
-          >
-          <v-card
-            flat
-            class="overflow-unset"
-          >
-            <h2 class="gama-text-h2">
-              AI Learn
-            </h2>
-            <p class="gama-text-subtitle1">
-              Discover Your Full Potential with AI-based Education
-            </p>
-            <v-btn
-              :large="display.mdAndUp"
-              :small="display.xs"
-              to="/smart-learning"
-              rounded
-              class="primary gama-btn"
-            >
-              Read about it
-            </v-btn>
-            <img
-              id="img-bottom"
-              alt="AI Learn"
-              src="/images/ai-learn-bg2.png"
-            >
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-    <!-- End ai learn banner -->
+    <home-level-guid-banner :slide-arr="slideArr" />
 
     <!-- Sudent help banner -->
     <v-container
@@ -163,9 +125,47 @@
     <home-stats-banner />
     <!-- End stats container -->
 
-    <!-- Blog container -->
-    <home-blog-container />
-    <!-- End blog container -->
+    <!-- Ai learn banner -->
+    <v-container>
+      <v-row>
+        <v-col
+          id="ai-learn-banner"
+          cols="12"
+        >
+          <img
+            id="img-top"
+            alt="AI Learn"
+            src="/images/ai-learn-bg1.png"
+          >
+          <v-card
+            flat
+            class="overflow-unset"
+          >
+            <h2 class="gama-text-h2">
+              AI Learn
+            </h2>
+            <p class="gama-text-subtitle1">
+              Discover Your Full Potential with AI-based Education
+            </p>
+            <v-btn
+              :large="display.mdAndUp"
+              :small="display.xs"
+              to="/smart-learning"
+              rounded
+              class="primary gama-btn"
+            >
+              Read about it
+            </v-btn>
+            <img
+              id="img-bottom"
+              alt="AI Learn"
+              src="/images/ai-learn-bg2.png"
+            >
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
+    <!-- End ai learn banner -->
 
     <!-- Earn money banner -->
     <v-container

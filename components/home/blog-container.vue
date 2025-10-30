@@ -2,112 +2,119 @@
   <v-container
     v-if="isLoading || slideItems.length > 5"
     id="blog-list-container"
+    fluid
+    :class="route.path === '/' ? 'bg-blue-grey-lighten-5' : '' "
   >
-    <v-card flat>
-      <div class="main-card">
-        <v-row>
-          <v-col
-            cols="6"
-            class="px-md-0"
-          >
-            <h2
-              id="main-title "
-              class="gama-text-h4"
+    <v-container>
+      <v-card
+        flat
+        class="bg-transparent py-4"
+      >
+        <div class="main-card">
+          <v-row>
+            <v-col
+              cols="6"
+              class="px-md-0"
             >
-              Blog
-            </h2>
-          </v-col>
-          <v-col
-            cols="6"
-            class="text-right"
-          >
-            <div class="d-none d-md-inline">
-              <v-btn
-                variant="outlined"
-                rounded
-                outlined
-                size="large"
+              <h2
+                id="main-title "
+                class="gama-text-h4"
+              >
+                Blog
+              </h2>
+            </v-col>
+            <v-col
+              cols="6"
+              class="text-right"
+            >
+              <div class="d-none d-md-inline">
+                <v-btn
+                  variant="outlined"
+                  rounded
+                  outlined
+                  size="large"
+                  to="/blog"
+                  class="gama-btn"
+                >
+                  Go to blog
+                </v-btn>
+              </div>
+              <router-link
                 to="/blog"
-                class="gama-btn"
+                class="d-flex align-center d-md-none seeAllBtn"
               >
-                Go to blog
-              </v-btn>
-            </div>
-            <router-link
-              to="/blog"
-              class="d-flex align-center d-md-none seeAllBtn"
+                <span class="content"> See all</span>
+                <v-icon>md:chevron_forward</v-icon>
+              </router-link>
+            </v-col>
+            <v-col
+              cols="12"
+              class="px-md-0"
             >
-              <span class="content"> See all</span>
-              <v-icon>md:chevron_forward</v-icon>
-            </router-link>
-          </v-col>
-          <v-col
-            cols="12"
-            class="px-md-0"
-          >
-            <template v-if="isLoading">
-              <v-slide-group
-                :mobile="false"
-                class="slider py-sm-4"
-              >
-                <v-slide-group-item
-                  v-for="(i, index) in 10"
-                  :key="index"
+              <template v-if="isLoading">
+                <v-slide-group
+                  :mobile="false"
+                  class="slider py-sm-4"
                 >
-                  <v-skeleton-loader
-                    class="mx-auto slide-loading"
-                    type="card"
-                  />
-                </v-slide-group-item>
-              </v-slide-group>
-            </template>
-            <template v-else>
-              <v-slide-group class="slider py-sm-4">
-                <v-slide-group-item
-                  v-for="(item, n) in slideItems"
-                  :key="item.id || n"
-                >
-                  <v-card
-                    flat
-                    :to="`/blog/${item.id}/${item.slug}`"
+                  <v-slide-group-item
+                    v-for="(i, index) in 10"
+                    :key="index"
                   >
-                    <v-card flat>
-                      <v-img
-                        :src="item.imageUri.replace(/^http:\/\//, 'https://')"
-                      />
-                      <v-card-title>
-                        <span
-                          v-if="!isHovered[n]"
-                          class="gama-text-button"
-                        >
-                          {{ item.title }}
-                        </span>
-                        <div
-                          v-else
-                          class="text-center"
-                        >
-                          <v-btn
-                            text
-                            size="small"
-                            color="primary"
+                    <v-skeleton-loader
+                      class="mx-auto slide-loading"
+                      type="card"
+                    />
+                  </v-slide-group-item>
+                </v-slide-group>
+              </template>
+              <template v-else>
+                <v-slide-group class="slider py-sm-4">
+                  <v-slide-group-item
+                    v-for="(item, n) in slideItems"
+                    :key="item.id || n"
+                  >
+                    <v-card
+                      flat
+                      :to="`/blog/${item.id}/${item.slug}`"
+                    >
+                      <v-card flat>
+                        <v-img
+                          :src="item.imageUri.replace(/^http:\/\//, 'https://')"
+                        />
+                        <v-card-title>
+                          <span
+                            v-if="!isHovered[n]"
+                            class="gama-text-button"
                           >
-                            read more
-                          </v-btn>
-                        </div>
-                      </v-card-title>
+                            {{ item.title }}
+                          </span>
+                          <div
+                            v-else
+                            class="text-center"
+                          >
+                            <v-btn
+                              text
+                              size="small"
+                              color="primary"
+                            >
+                              read more
+                            </v-btn>
+                          </div>
+                        </v-card-title>
+                      </v-card>
+                      <div class="gama-text-subtitle2">
+                        {{ truncateBody(item.summary) }}
+                        <nuxt-link :to="`/blog/${item.id}/${item.slug}`">Read more</nuxt-link>
+                      </div>
                     </v-card>
-                    <div class="gama-text-subtitle2">
-                      {{ truncateBody(item.summary) }}
-                      <nuxt-link :to="`/blog/${item.id}/${item.slug}`">Read more</nuxt-link>
-                    </div>
-                  </v-card>
-                </v-slide-group-item>
-              </v-slide-group>
-            </template>
-          </v-col>
-        </v-row>
-      </div>
-    </v-card>
+                  </v-slide-group-item>
+                </v-slide-group>
+              </template>
+            </v-col>
+          </v-row>
+        </div>
+      </v-card>
+    </v-container>
   </v-container>
 </template>
 
@@ -121,6 +128,7 @@ const { sm, xs } = useDisplay()
 const isHovered = ref([])
 const slideItems = ref([])
 const isLoading = ref(true)
+const route = useRoute()
 
 // Methods
 const loadBlog = async () => {
@@ -156,8 +164,8 @@ loadBlog()
 
 <style scoped>
 #blog-list-container {
-  margin: 2.4rem auto 2.4rem auto;
-  height: 33rem;
+  margin: 2.4rem auto 0 auto;
+  height: 38rem;
 
   :deep(.v-card-title) {
     -webkit-backdrop-filter: blur(7.5px);
@@ -334,8 +342,8 @@ loadBlog()
 
 @media screen and (min-width: 960px) {
   #blog-list-container {
-    margin: 7.8rem auto 8rem auto;
-    height: 35.6rem;
+    margin: 7.8rem auto 0 auto;
+    height: 40.6rem;
 
     .main-card {
       padding-left: 1.2rem !important;
