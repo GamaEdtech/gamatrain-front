@@ -105,12 +105,12 @@ onMounted(async () => {
 
 <style scoped>
 .box-question {
-  border: 1px solid #f2f4f7;
+  border: 1px solid #e1e2e3;
   min-height: 250px;
 }
 .lable-div {
-  background-color: #ee46bc;
-  top: -44px;
+  background-color: #000;
+  top: -25px;
   border-radius: 8px 8px 0 0;
 }
 </style>

@@ -101,6 +101,12 @@
                   Tutorial
                 </v-chip>
               </div>
+              <div
+                v-show="route.name==='test-id'"
+                class="text-h4 font-weight-bold text-blue-grey-lighten-1"
+              >
+                Question:
+              </div>
               <!--  Description   -->
               <div class="d-flex mb-4">
                 <div class="w-100">
@@ -351,18 +357,21 @@
                   </div>
 
                   <!-- Helpful link -->
-                  <div class="justify-center text-center">
+                  <div>
                     <v-btn
                       :disabled="!nextTestId"
                       :loading="nextTestLoading"
-                      class="next-test mx-auto text-transform-none"
+                      color="info"
+                      class=" next-test   text-transform-none"
                       :to="`/test/${nextTestId}`"
                     >
-                      {{
-                        $route.name == "test-id"
-                          ? "Try the Next One"
-                          : "Time to Test!"
-                      }}
+                      <span class="text-white">
+                        {{
+                          $route.name == "test-id"
+                            ? "Next One"
+                            : "Time to Test!"
+                        }}
+                      </span>
                     </v-btn>
                   </div>
                 </div>
@@ -386,6 +395,7 @@
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import CrashReport from '~/components/common/crash-report.vue'
 
+const route = useRoute()
 const props = defineProps({
   contentData: {
     type: Object,

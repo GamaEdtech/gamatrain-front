@@ -16,18 +16,7 @@
               {{ metadata.title }}
             </h1>
 
-            <nuxt-link
-              v-if="route.query.lesson && data.length > 0"
-              :to="`/subject-directory?board=${route.query.section}&grade=${route.query.base}&subject=${route.query.lesson}`"
-              class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
-            >
-              <div class="d-flex flex-column align-start justify-start ga-1">
-                <span class="text-h5 text-sm-h4 font-weight-bold text-white">Go to
-                  {{ data[0].lesson_title }}
-                </span>
-                <span class="text-subtitle-2 text-sm-subtitle-1 text-white">All books, past papers & resources in one place</span>
-              </div>
-            </nuxt-link>
+            <CommonDetailSubjectDirectoryNav :content-data="data[0]" />
           </div>
         </CommonFilterList>
       </div>
@@ -734,11 +723,6 @@ const createLinkAddConent = () => {
   max-width: 1200px;
 }
 
-.subject-directory-alert {
-  height: 70px;
-  max-width: 400px;
-  background-color: #f59e0b;
-}
 @media (min-width: 960px) {
   .margin-top-handle {
     margin-top: 6.4rem;

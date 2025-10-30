@@ -36,63 +36,57 @@
       ref="fullAnswerRef"
       class="w-100 mt-4 d-flex flex-column align-start justify-start px-8"
     >
-      <div
-        v-show="isPaymentComplete"
-        class="text-h4 mt-4"
-        v-html="contentData.answer_full"
-      />
+      <div v-show="isPaymentComplete">
+        <div
+          class="text-h4 font-weight-bold text-blue-grey-lighten-1"
+        >
+          Solution:
+        </div>
+        <div
+          class="text-h4 mt-4"
+          v-html="contentData.answer_full"
+        />
+      </div>
     </div>
 
-    <section class="my-4">
-      <v-container>
-        <v-row justify="center">
-          <v-col
-            cols="12"
-            md="10"
-          >
-            <v-chip
-              link
-              class="mr-1 bg-blue-grey-darken-1 text-white"
-              :small="display.mdAndDown"
-            >
-              <nuxt-link
-                :to="`/search?type=test&section=${contentData?.section}`"
-              >
-                {{ contentData?.section_title }}
-              </nuxt-link>
-            </v-chip>
-            <v-chip
-              link
-              class="mr-1 bg-blue-grey-darken-1 text-white"
-              :small="display.mdAndDown"
-            >
-              <nuxt-link
-                :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
-              >
-                {{ contentData?.base_title }}
-              </nuxt-link>
-            </v-chip>
-            <v-chip
-              class="ma-1 bg-blue-grey-darken-1 text-white"
-              :small="display.mdAndDown"
-            >
-              <nuxt-link
-                :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
-              >
-                {{ contentData?.lesson_title }}
-              </nuxt-link>
-            </v-chip>
-            <v-chip
-              :small="display.mdAndDown"
-              :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
-              class="ma-1 bg-primary text-white"
-            >
-              {{ contentData?.lesson_title }} directory
-            </v-chip>
-          </v-col>
-        </v-row>
-      </v-container>
-    </section>
+    <v-row>
+      <v-col
+        cols="12"
+        class="px-7"
+      >
+        <v-chip
+          link
+          class="mr-1 bg-blue-grey-darken-1 text-white"
+          :small="display.mdAndDown"
+          :to="`/search?type=test&section=${contentData?.section}`"
+        >
+          {{ contentData?.section_title }}
+        </v-chip>
+        <v-chip
+          link
+          class="mr-1 bg-blue-grey-darken-1 text-white"
+          :small="display.mdAndDown"
+          :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
+        >
+          {{ contentData?.base_title }}
+        </v-chip>
+        <v-chip
+          class="ma-1 bg-blue-grey-darken-1 text-white"
+          :small="display.mdAndDown"
+          :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
+        >
+          {{ contentData?.lesson_title }}
+        </v-chip>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col
+        cols="12"
+        class="px-6"
+      >
+        <CommonDetailSubjectDirectoryNav :content-data="contentData" />
+      </v-col>
+    </v-row>
 
     <v-row
       justify="center"
