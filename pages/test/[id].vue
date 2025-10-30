@@ -16,8 +16,9 @@
         variant="tonal"
         color="info"
         flat
-        width="50"
-        height="50"
+        width="40"
+        height="40"
+        class="text-h6"
         icon="md:question_mark"
         :disabled="isPaymentComplete"
         @click="showCoinPaymentModal = true"
