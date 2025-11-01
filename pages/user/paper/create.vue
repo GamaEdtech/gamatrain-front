@@ -478,8 +478,6 @@ const formData = reactive({
   test_type: '',
   answer_type: 0,
   level: 2,
-  year: '',
-  month: '',
   holding_level: userState.value.lastSelectedHoldingLevel
     ? userState.value.lastSelectedHoldingLevel
     : 4,
@@ -665,71 +663,40 @@ const getExtraFileType = async () => {
 
 const submitQuestion = async () => {
   loading.form = true
-  const formSubmitData = new FormData()
-  for (const key in formData) {
-    if (!(key == 'topics' || key == 'file_extra'))
-      formSubmitData.append(key, formData[key])
-  }
-
-  if (
-    formData.topics
-    && Array.isArray(formData.topics)
-    && formData.topics.length
-  )
-    for (const key in formData.topics)
-      formSubmitData.append('topics[]', formData.topics[key])
-
-  if (extraAttr.value.length)
-    for (const key in extraAttr.value)
-      formSubmitData.append(
-        'file_extra[]',
-        JSON.stringify(extraAttr.value[key]),
-      )
-
-  // End arrange to form data
 
   try {
-    const response = await useApiService.post(
-      '/api/v1/tests',
-      urlencodeFormData(formSubmitData),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      },
-    )
+    // Prepare payload
+    const payload = {
+      ...formData,
+      topics: Array.isArray(formData.topics) ? formData.topics.map(Number) : [],
+      file_extra: extraAttr.value.length
+        ? extraAttr.value.map(item => ({
+            type: Number(item.type),
+            file: item.file,
+          }))
+        : [],
+    }
 
-    if (response.data.id == 0 && response.data.repeated)
+    const response = await useApiService.post('/api/v1/tests', payload)
+
+    if (response.data.id === 0 && response.data.repeated) {
       $toast.info('The paper is duplicated')
+    }
     else {
       $toast.success('Submit successfully')
-      router.push({
-        path: '/user/paper',
-      })
+      router.push({ path: '/user/paper' })
     }
   }
   catch (err) {
-    if (err.response?.status == 403) $auth.logout()
-    else if (err.response?.status == 400)
+    if (err.response?.status === 403) $auth.logout()
+    else if (err.response?.status === 400)
       $toast.error(err.response.data.message)
+    else
+      $toast.error('Something went wrong')
   }
   finally {
     loading.form = false
   }
-}
-
-const urlencodeFormData = (fd) => {
-  let s = ''
-  for (const pair of fd.entries()) {
-    if (typeof pair[1] == 'string') {
-      s += (s ? '&' : '') + encode(pair[0]) + '=' + encode(pair[1])
-    }
-  }
-  return s
-}
-
-const encode = (s) => {
-  return encodeURIComponent(s).replace(/%20/g, '+')
 }
 
 const selectTopic = (event) => {
