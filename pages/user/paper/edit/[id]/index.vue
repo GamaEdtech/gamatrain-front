@@ -431,7 +431,7 @@
                     >
                       <template #append>
                         <v-icon
-                          v-show="item.id && item.file"
+                          v-show="item.id"
                           size="x-large"
                           @click="startDownload('extra', item.id)"
                         >
@@ -449,7 +449,7 @@
                   @click="addExtraAttr"
                 >
                   <v-icon> mdi-plus </v-icon>
-                  Add Solution video
+                  Add Extra file
                 </v-btn>
               </v-col>
               <!-- <v-col cols="12" md="12">
@@ -795,45 +795,25 @@ const getExtraFileType = async () => {
 const updateQuestion = async () => {
   loading.form = true
 
-  // Arrange to form data
-  const formSubmitData = new FormData()
-  for (const key in formData) {
-    if (!(key === 'topics' || key === 'file_extra')) {
-      formSubmitData.append(key, formData[key])
-    }
-  }
-
-  if (
-    formData.topics
-    && Array.isArray(formData.topics)
-    && formData.topics.length
-  ) {
-    for (const key in formData.topics) {
-      formSubmitData.append('topics[]', formData.topics[key])
-    }
-  }
-
-  if (extraAttr.value.length) {
-    for (const key in extraAttr.value) {
-      formSubmitData.append(
-        'file_extra[]',
-        JSON.stringify(extraAttr.value[key]),
-      )
-    }
-  }
-
   try {
+    // Prepare payload
+    const payload = {
+      ...formData,
+      topics: Array.isArray(formData.topics) ? formData.topics.map(Number) : [],
+      file_extra: extraAttr.value.length
+        ? extraAttr.value.map(item => ({
+            type: Number(item.type),
+            file: item.file,
+          }))
+        : [],
+    }
+
     const response = await useApiService.put(
       `/api/v1/tests/${route.params.id}`,
-      urlencodeFormData(formSubmitData),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      },
+      payload,
     )
 
-    if (response.data.id == 0 && response.data.repeated) {
+    if (response.data.id === 0 && response.data.repeated) {
       $toast.info('The paper is duplicated')
     }
     else {
@@ -842,31 +822,19 @@ const updateQuestion = async () => {
     }
   }
   catch (err) {
-    if (err.response?.status == 403) {
+    if (err.response?.status === 403) {
       $toast.error('You do not have permission to edit this paper')
     }
-    else if (err.response?.status == 400) {
+    else if (err.response?.status === 400) {
       $toast.error(err.response.data.message)
+    }
+    else {
+      $toast.error('Something went wrong')
     }
   }
   finally {
     loading.form = false
   }
-}
-
-// Convert form data from multipart to urlencode
-const urlencodeFormData = (fd) => {
-  let s = ''
-  for (const pair of fd.entries()) {
-    if (typeof pair[1] == 'string') {
-      s += (s ? '&' : '') + encode(pair[0]) + '=' + encode(pair[1])
-    }
-  }
-  return s
-}
-
-const encode = (s) => {
-  return encodeURIComponent(s).replace(/%20/g, '+')
 }
 
 const selectTopic = (event) => {
