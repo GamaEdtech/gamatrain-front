@@ -21,7 +21,7 @@
     v-if="proposal.account.amount && proposal.account.amount > 0"
     class="governance-proposals__title primary-gray-700 mb-2"
   >
-    {{ formatAmount(proposal.account.amount) }} $GET
+    {{ $numberFormat(proposal.account.amount) }} $GET
   </div>
 
   <v-progress-linear
@@ -198,11 +198,6 @@ const formatOwner = (owner: any) => {
   if (!owner) return '0X00...00'
   const address = owner.toBase58()
   return `${address.slice(0, 4)}...${address.slice(-2)}`
-}
-
-const formatAmount = (amount: number) => {
-  if (!amount) return '0'
-  return amount.toLocaleString()
 }
 
 const emits = defineEmits<{
