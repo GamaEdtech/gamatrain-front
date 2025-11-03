@@ -77,23 +77,17 @@ export const useAuth = () => {
 
   const login = async (credentials: { identity: string, pass: string }) => {
     const response: { token?: string, message?: string, success?: boolean }
-      = await $fetch('/api/v1/users/login', {
-        method: 'POST',
-        body: {
-          ...credentials,
-          type: 'request',
-        },
+      = await useApiService.post('/api/v1/users/login', {
+        ...credentials,
+        type: 'request',
       })
     return response
   }
 
   const register = async (formData: { identity: string, pass: string }) => {
-    await $fetch('/api/v1/users/register', {
-      method: 'POST',
-      body: {
-        ...formData,
-        type: 'register',
-      },
+    await useApiService.post('/api/v1/users/register', {
+      ...formData,
+      type: 'register',
     })
   }
 

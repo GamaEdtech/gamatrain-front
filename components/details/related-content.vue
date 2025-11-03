@@ -277,10 +277,10 @@ export default {
         test_type: this.test_type,
       }
 
-      await this.$fetch
-        .$get('/api/v1/search', {
-          params: params,
-        })
+      await useApiService
+        .get('/api/v1/search',
+          params,
+        )
         .then((response) => {
           const findIndex = response.data.list.findIndex(
             x => x.id == this.$route.params.id,

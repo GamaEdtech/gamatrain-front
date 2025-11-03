@@ -99,6 +99,7 @@ import resources from '~/components/subject-directory/resources.vue'
 import paperTable from '~/components/subject-directory/paper-table.vue'
 import timeline from '~/components/subject-directory/timeline.vue'
 import filterPapers from '~/components/subject-directory/filter-papers.vue'
+import { useAspectStyles } from 'vuetify/lib/components/VResponsive/VResponsive.mjs'
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
@@ -214,7 +215,7 @@ const fetchNextPagePapers = async () => {
       isLoadingInfiniteScroll.value = true
       pageNumber.value += 1
       const endpointPapers = `api/v1/tests/search?lesson=${selectedSubjectId.value}&page=${pageNumber.value}&perpage=20&is_paper=true&directory=true`
-      const responsePapers = await $fetch(endpointPapers)
+      const responsePapers = await useApiService.get(endpointPapers)
       if (responsePapers) {
         if (responsePapers.data.list.length < perPage) {
           isAllPapersLoaded.value = true
@@ -288,12 +289,12 @@ const { data: lessonData, status: _status } = await useAsyncData(
         const baseURL = `/api/v1/`
         const endpointResources = `${baseURL}tests/search?is_paper=false&directory=true&lesson=${subjectId}`
 
-        const responseResource = await $fetch(endpointResources)
+        const responseResource = await useApiService.get(endpointResources)
         if (responseResource.data) {
           resourcesData = responseResource.data
         }
         const endpointPapers = `${baseURL}tests/search?lesson=${subjectId}&page=1&perpage=20&is_paper=true&directory=true`
-        const responsePapers = await $fetch(endpointPapers)
+        const responsePapers = await useAspectStyles.get(endpointPapers)
         if (responsePapers.data) {
           papersData = responsePapers.data.list
         }
@@ -383,8 +384,8 @@ const fetchDataForNewSubject = async (subject) => {
     const endpointPapers = `/api/v1/tests/search?lesson=${subject.id}&page=1&perpage=20&is_paper=true&directory=true`
 
     const [responseResource, responsePapers] = await Promise.all([
-      $fetch(endpointResources),
-      $fetch(endpointPapers),
+      useApiService.get(endpointResources),
+      useApiService.get(endpointPapers),
     ])
 
     if (responseResource.data) {

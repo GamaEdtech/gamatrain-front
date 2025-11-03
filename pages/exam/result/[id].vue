@@ -690,7 +690,6 @@ const { data: contentData } = await useAsyncData(
   `exam-result-${route.params.id}`,
   async () => {
     const authToken = auth.getUserToken()
-    const authTokenV2 = auth.getUserTokenV2()
     if (!authToken) {
       throw createError({
         statusCode: 403,
@@ -698,20 +697,18 @@ const { data: contentData } = await useAsyncData(
       })
     }
     try {
-      const response = await $fetch(`/api/v1/exams/result/${route.params.id}`, {
-        headers: { Authorization: `Bearer ${authToken}` },
-      })
+      const response = await useApiService.get(`/api/v1/exams/result/${route.params.id}`)
       if (response?.status === 1 && response.data) {
         let reward = null
         try {
-          reward = await $fetch('/api/v2/games/exams/points', {
-            method: 'POST',
-            body: { id: route.params.id },
-            headers: {
-              Authorization: `Bearer ${authTokenV2}`,
-              SecretKey: authToken,
+          reward = await useApiService.post('/api/v2/games/exams/points',
+            { id: route.params.id },
+            {
+              headers: {
+                SecretKey: authToken,
+              },
             },
-          })
+          )
         }
         catch (error) {
           console.warn('Fetch failed but continuing...', error)

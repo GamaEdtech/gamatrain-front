@@ -173,7 +173,7 @@ const requestURL = ref(useRequestURL().host)
 const blogContentRef = ref(null)
 const { data: contentData, error } = await useAsyncData(
   `blog-${blogId}`,
-  () => $fetch(`/api/v2/blogs/posts/${blogId}`),
+  () => useApiService.get(`/api/v2/blogs/posts/${blogId}`),
   {
     transform: response => response.data,
   },

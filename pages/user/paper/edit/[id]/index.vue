@@ -512,7 +512,6 @@ useHead({
 })
 
 // Get services
-const router = useRouter()
 const route = useRoute()
 
 // Form validation
@@ -617,9 +616,9 @@ const loading = reactive({
 // Fetch paper data
 const { data: paperData } = await useAsyncData('paper-data', async () => {
   try {
-    const content = await useFetch(`/api/v1/tests/${route.params.id}`, {})
-    if (content.data.value.status === 1) {
-      return content.data.value.data
+    const content = await useApiService.get(`/api/v1/tests/${route.params.id}`)
+    if (content.status === 1) {
+      return content.data
     }
     return null
   }
@@ -737,37 +736,34 @@ const getTypeList = async (type, parent = '') => {
   }
 
   try {
-    const response = await useFetch('/api/v1/types/list', {
-      method: 'GET',
-      params,
-    })
+    const response = await useApiService.get('/api/v1/types/list', params)
 
     if (type === 'section') {
-      section_list.value = response.data.value.data
+      section_list.value = response.data
     }
     else if (type === 'base') {
-      grade_list.value = response.data.value.data
+      grade_list.value = response.data
     }
     else if (type === 'lesson') {
-      lesson_list.value = response.data.value.data
+      lesson_list.value = response.data
     }
     else if (type === 'topic') {
-      topic_list.value = response.data.value.data
+      topic_list.value = response.data
     }
     else if (type === 'test_type') {
-      test_type_list.value = response.data.value.data
+      test_type_list.value = response.data
     }
     else if (type === 'state') {
-      state_list.value = response.data.value.data
+      state_list.value = response.data
     }
     else if (type === 'area') {
-      area_list.value = response.data.value.data
+      area_list.value = response.data
     }
     else if (type === 'school') {
-      school_list.value = response.data.value.data
+      school_list.value = response.data
     }
 
-    return response.data.value.data
+    return response.data
   }
   catch (err) {
     $toast.error(err)
@@ -777,14 +773,12 @@ const getTypeList = async (type, parent = '') => {
 
 const getExtraFileType = async () => {
   try {
-    const response = await useFetch('/api/v1/types/list', {
-      method: 'GET',
-      params: {
-        type: 'test_extra_file',
-      },
-    })
-    extra_type_list.value = response.data.value.data
-    return response.data.value.data
+    const response = await useApiService.get('/api/v1/types/list', {
+      type: 'test_extra_file',
+    },
+    )
+    extra_type_list.value = response.data
+    return response.data
   }
   catch (error) {
     console.error('Error fetching extra file types:', error)
@@ -818,7 +812,7 @@ const updateQuestion = async () => {
     }
     else {
       $toast.success('Updated successfully')
-      router.push('/user/paper')
+      navigateTo('/user/paper')
     }
   }
   catch (err) {
@@ -935,20 +929,19 @@ const uploadFile = async (file_name, ev, index = '') => {
       fileFormData.append('file', value)
     }
 
-    const response = await useFetch('/api/v1/upload', {
-      method: 'POST',
-      body: fileFormData,
-    })
+    const response = await useApiService.post('/api/v1/upload',
+      fileFormData,
+    )
 
     if (file_name == 'file_pdf')
-      formData.file_pdf = response.data.value.data[0].file.name
+      formData.file_pdf = response.data[0].file.name
     else if (file_name == 'file_word')
-      formData.file_word = response.data.value.data[0].file.name
+      formData.file_word = response.data[0].file.name
     else if (file_name == 'file_answer')
-      formData.file_answer = response.data.value.data[0].file.name
+      formData.file_answer = response.data[0].file.name
     else if (file_name == 'file_extra') {
       if (extraAttr.value[index]) {
-        extraAttr.value[index].file = response.data.value.data[0].file.name
+        extraAttr.value[index].file = response.data[0].file.name
       }
     }
   }

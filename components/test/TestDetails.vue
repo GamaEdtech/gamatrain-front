@@ -647,7 +647,7 @@ function loadNextTest() {
   selectedOption.value = ''
   isAnswerToQuestion.value = false
   fullAnswer.value = ''
-  $fetch(
+  useApiService.get(
     `/api/v1/examTests/random?lesson=${props.contentData.lesson}&topic=${props.contentData.topic}`,
   )
     .then((response) => {

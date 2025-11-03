@@ -92,7 +92,7 @@
 
 <script>
 // import { ValidationProvider, ValidationObserver } from "vee-validate";
-import querystring from 'querystring'
+import { post } from '@/composables/useApiService'
 
 export default {
   name: 'UserInfo',
@@ -117,35 +117,35 @@ export default {
     }
   },
   methods: {
-    updateInfo() {
+    async updateInfo() {
       this.update_loading = true
 
-      this.$fetch
-        .$post('/api/v1/users/info', querystring.stringify(this.info))
-        .then((_response) => {
-          const updatedData = {
-            avatar: this.$auth.user.avatar,
-            credit: this.$auth.user.credit,
-            email: this.$auth.user.email,
-            first_name: this.info.first_name,
-            last_name: this.info.last_name,
-            group: this.$auth.user.group,
-            phone: this.$auth.user.phone,
-            sex: this.info.sex.toString(),
-          }
-          // Update current user data
-          this.$auth.setUser(updatedData)
+      try {
+        await post('/api/v1/users/info', this.info)
 
-          this.$router.push({
-            path: '/user',
-          })
+        const updatedData = {
+          avatar: this.$auth.user.avatar,
+          credit: this.$auth.user.credit,
+          email: this.$auth.user.email,
+          first_name: this.info.first_name,
+          last_name: this.info.last_name,
+          group_id: this.$auth.user.group_id,
+          phone: this.$auth.user.phone,
+          sex: this.info.sex.toString(),
+        }
+        // Update current user data
+        this.$auth.setUser(updatedData)
+
+        this.$router.push({
+          path: '/user',
         })
-        .catch((err) => {
-          this.$toast.error(err.response.data.message)
-        })
-        .finally(() => {
-          this.update_loading = false
-        })
+      }
+      catch (err) {
+        this.$toast.error(err.response?.data?.message || 'An error occurred')
+      }
+      finally {
+        this.update_loading = false
+      }
     },
   },
 }

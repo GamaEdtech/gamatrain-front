@@ -89,7 +89,6 @@ const loadNextPageData = async () => {
   isPaginationDataLoading.value = true
   await getDataList(true)
 }
-
 const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
   'dataSearchSSR',
   () => {
@@ -112,7 +111,7 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
       params.test_type = route.query.test_type
     }
 
-    return $fetch('/api/v1/search', { params })
+    return useApiService.get('/api/v1/search', params)
   },
 )
 
@@ -134,7 +133,7 @@ const getDataList = async (isLoadNextPage = false) => {
   try {
     const params = { ...querySearch.value }
     params.page = pageNumber.value
-    const response = await $fetch('/api/v1/search', { params })
+    const response = await useApiService.get('/api/v1/search', params)
 
     if (response.data.list.length < perPage) {
       isAllDataLoaded.value = true

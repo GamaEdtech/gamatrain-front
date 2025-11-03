@@ -1,5 +1,6 @@
 import { useState } from 'nuxt/app'
 import type { ApiResult } from '~/interfaces/api'
+import { get } from '@/composables/useApiService'
 
 interface User {
   avatar: string
@@ -34,12 +35,9 @@ export const useUser = () => {
   const auth = useAuth()
   const getProfile = async (token?: null): Promise<ApiResult<UserResponse>> => {
     try {
-      const response = await $fetch<UserResponse>(`/api/v2/identities/profiles`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token || auth.getUserTokenV2()}`,
-        },
-      })
+      const response = await get<UserResponse>(`/api/v2/identities/profiles`, {}, { headers: {
+        Authorization: `Bearer ${token || auth.getUserTokenV2()}`,
+      } })
 
       return { data: response, status: 200 }
     }
