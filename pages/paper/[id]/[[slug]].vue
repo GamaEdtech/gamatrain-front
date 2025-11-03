@@ -143,9 +143,8 @@ const { data: contentData } = await useAsyncData(
   `paper-${route.params.id}`,
   async () => {
     try {
-      const response = (await $fetch(
+      const response = (await useApiService.get(
         `/api/v1/tests/${route.params.id}`,
-        {},
       )) as ApiResult<PastPaperDTO>
 
       return response.data

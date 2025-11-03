@@ -244,7 +244,7 @@ async function handleImageClick() {
   }
 
   try {
-    const response = await $fetch(
+    const response = await useApiService.get(
       `/api/v1/tests/download/${props.paperId}/pdf`,
     )
 

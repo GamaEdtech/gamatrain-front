@@ -269,8 +269,8 @@ export default {
         params.area_id = this.filter.area
       }
 
-      this.$fetch
-        .$get('/api/v1/types/list', {
+      useApiService
+        .get('/api/v1/types/list', {
           params,
         })
         .then((res) => {

@@ -185,7 +185,7 @@ const categoryLink = (category) => {
 }
 const fetchInitialData = async () => {
   const params = { type: 'section' }
-  const response = await $fetch(`/api/v1/types/list`, { params })
+  const response = await useApiService.get(`/api/v1/types/list`, params)
   boardList.value = response.data.map((item, index) => ({
     ...item,
     img: boardImgs[index % boardImgs.length],
@@ -218,7 +218,7 @@ const fetchGradeList = async () => {
     gradeLoader.value = true
     const params = { type: 'base' }
     params.section_id = selectedBoard.value.id
-    const response = await $fetch(`/api/v1/types/list`, { params })
+    const response = await useApiService.get(`/api/v1/types/list`, params)
 
     gradeList.value = [
       { id: null, title: 'All', master_: null, list_order: '0', parent: null },
@@ -248,7 +248,7 @@ const fetchCategoryCounts = async () => {
     params.append('section', selectedBoard.value.id)
     params.append('base', selectedGrade.value)
     const requestUrl = `/api/v1/search?${params.toString()}`
-    const response = await $fetch(requestUrl)
+    const response = await useApiService.get(requestUrl)
     if (
       response
       && response.status === 1

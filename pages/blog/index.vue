@@ -519,7 +519,7 @@ watch(
 
 // category section start
 const { data: blogCategoriesResponse } = await useAsyncData('categories', () =>
-  $fetch('/api/v2/tags/Post'),
+  useApiService.get('/api/v2/tags/Post'),
 )
 
 const categoryValue = ref(route.query.cat ? Number(route.query.cat) : 0)
@@ -566,7 +566,7 @@ const { data: initialBlogs, pending: loadingBlogsServer } = await useAsyncData(
       'TagId': route.query.cat ? route.query.cat : null,
       'Title': route.query.keyword || '',
     }
-    return $fetch('/api/v2/blogs/posts', { params })
+    return useApiService.get('/api/v2/blogs/posts', params)
   },
 )
 
@@ -607,7 +607,7 @@ const getBlogList = async () => {
   }
 
   try {
-    const response = await $fetch('/api/v2/blogs/posts', { params })
+    const response = await useApiService.get('/api/v2/blogs/posts', params)
     const data = response.data
     pageCount.value = Math.ceil(data.totalRecordsCount / pageSize.value)
 

@@ -124,8 +124,7 @@ export default {
       }
 
       try {
-        await $fetch('/api/v1/reports', {
-          method: 'POST',
+        await useApiService.post('/api/v1/reports', {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
           },

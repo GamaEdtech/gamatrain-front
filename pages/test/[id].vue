@@ -137,9 +137,9 @@ const {
   refresh,
   execute: _execute,
 } = await useAsyncData(`exam-test-${route.params.id}`, async () => {
-  const res = await $fetch(`/api/v1/examTests/${route.params.id}`, {
-    params: { full: true },
-  })
+  const res = await useApiService.get(`/api/v1/examTests/${route.params.id}`,
+    { full: true },
+  )
   if (res.status === 1) {
     return res.data
   }
