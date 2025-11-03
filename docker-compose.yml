@@ -1,18 +1,20 @@
-version: "3.8"
 services:
   nuxt-dev:
-    image: gamatrain-nuxt-dev
+    container_name: nuxt-dev
     build:
       context: .
+      dockerfile: Dockerfile
       target: builder
       args:
         NODE_VERSION: "20.17.0"
-    working_dir: /app
     command: npm run dev
+    working_dir: /app
+    ports:
+      - "3002:3002"
     env_file:
       - .env
     volumes:
       - ./:/app
       - /app/node_modules
-    ports:
-      - "3002:3002"
+    environment:
+      - HOST=0.0.0.0
