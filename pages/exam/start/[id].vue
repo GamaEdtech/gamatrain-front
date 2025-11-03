@@ -176,6 +176,7 @@ import QuestionItem from '~/components/exam/QuestionItem.vue'
 import { useAuth } from '~/composables/useAuth'
 
 const route = useRoute()
+
 const router = useRouter()
 const auth = useAuth()
 const authToken = auth.getUserToken()
@@ -203,11 +204,7 @@ const { data, error, pending } = await useAsyncData(
         statusMessage: 'You must be logged in to start an exam.',
       })
     }
-    return $fetch(`/api/v1/exams/start/${route.params.id}`, {
-      headers: {
-        Authorization: `Bearer ${authToken}`,
-      },
-    })
+    return useApiService.get(`/api/v1/exams/start/${route.params.id}`)
   },
 )
 
@@ -369,18 +366,13 @@ const endExam = async () => {
   }
 
   try {
-    const response = await $fetch(
+    const response = await useApiService.post(
       `/api/v1/exams/end/${contentData.value.exam.id}`,
       {
-        method: 'POST',
-        body: {
-          startID: contentData.value.startID,
-          answers: examStats.answerData,
-        },
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
+        startID: contentData.value.startID,
+        answers: examStats.answerData,
       },
+
     )
     await router.push(`/exam/result/${response.data.id}`)
   }
