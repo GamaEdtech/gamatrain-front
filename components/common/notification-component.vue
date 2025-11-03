@@ -134,8 +134,8 @@ export default {
     async getNotifications() {
       // Get notifications
       if (this.$auth.loggedIn)
-        await this.$fetch
-          .$get('/api/v1/notifications/unreads')
+        await useApiService
+          .get('/api/v1/notifications/unreads')
           .then((response) => {
             this.notifications = response.data.list
           })

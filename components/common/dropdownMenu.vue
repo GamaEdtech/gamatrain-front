@@ -16,7 +16,7 @@
               : 'header-username-light'
           }`"
         >
-          {{ user?.first_name || user?.last_name || "NO NAME" }}
+          {{ user?.firstName || user?.lastName }}
         </div>
         <v-avatar
           v-if="user?.avatar"
@@ -187,9 +187,6 @@
 </template>
 
 <script setup>
-import { useUser } from '~/composables/useUser'
-import { useAuth } from '~/composables/useAuth'
-
 defineProps({
   menuSetting: {
     type: Object,
@@ -219,14 +216,14 @@ const items = [
         link: '/user/paper',
         icon: 'icon-paper',
         icon_type: 'custom',
-        status: user.value && user.value.group_id == 5 ? false : true,
+        status: user.value && user.value.group === 5 ? false : true,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icon-multimedia',
         icon_type: 'custom',
-        status: user.value && user.value.group_id == 5 ? false : true,
+        status: user.value && user.value.group == 5 ? false : true,
       },
       {
         title: 'Q & A',
@@ -290,11 +287,11 @@ const items = [
     value: 'settings',
     subMenuList: [
       { title: 'Edit Profile', link: '/user/profile', icon: 'md:edit' },
-      {
-        title: 'Confirm Identity',
-        link: '/user/identity-confirmation',
-        icon: 'md:fingerprint',
-      },
+      // {
+      //   title: 'Confirm Identity',
+      //   link: '/user/identity-confirmation',
+      //   icon: 'md:fingerprint',
+      // },
       { title: 'Security', link: '/user/edit-pass', icon: 'md:password' },
     ],
   },

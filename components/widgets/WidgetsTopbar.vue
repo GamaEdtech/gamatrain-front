@@ -53,7 +53,7 @@
                       />
                     </v-avatar>
                     <span class="pointer pa-2">{{
-                      $auth.user?.first_name
+                      $auth.user?.firstName
                     }}</span>
                   </div>
                 </template>

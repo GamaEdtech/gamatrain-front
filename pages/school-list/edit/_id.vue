@@ -1562,8 +1562,8 @@ export default {
   },
   methods: {
     getInfo() {
-      this.$fetch
-        .$get(`/test_api/school_info/${this.$route.params.id}`)
+      useApiService
+        .get(`/test_api/school_info/${this.$route.params.id}`)
         .then((response) => {
           this.form = response
         })

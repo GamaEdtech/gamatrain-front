@@ -1133,7 +1133,7 @@ const { data: contentData } = await useAsyncData(
   () => `question-${route.params.id}`,
   async () => {
     try {
-      const content = await $fetch(`/api/v1/questions/${route.params.id}`)
+      const content = await useApiService.get(`/api/v1/questions/${route.params.id}`)
       return content.status === 1 ? content.data : {}
     }
     catch (e) {
@@ -1352,25 +1352,9 @@ async function submitReply(values, { resetForm }) {
 
 const { data: repliesData, refresh: refreshReplies } = await useAsyncData(
   'questionReplies',
-  () => $fetch(`/api/v1/questionReplies?question=${route.params.id}`),
+  () => useApiService.get(`/api/v1/questionReplies?question=${route.params.id}`),
 )
-// const { data: contentData } = await useAsyncData(
-//   () => `question-${route.params.id}`,
-//   async () => {
-//     try {
-//       const content = await $fetch(`/api/v1/questions/${route.params.id}`);
-//       return content.status === 1 ? content.data : {};
-//     } catch (e) {
-//       if (e?.status === 404) {
-//         // router.push("/search?type=question");
-//       }
-//       throw e;
-//     }
-//   },
-//   {
-//     watch: [() => route.params.id],
-//   }
-// );
+
 async function reInit() {
   try {
     await refreshReplies()

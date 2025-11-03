@@ -33,8 +33,19 @@ export const useApiService = <T = unknown>(
   const config = useRuntimeConfig()
   const headers = authHeader(request)
 
-  const apiFetch = $fetch.create({
-    baseURL: config.public.baseURL as string,
+  let baseURL = ''
+  let cleanRequest = request
+
+  if (request.includes('/api/v2/')) {
+    baseURL = config.public.apiV2BaseUrl as string
+    cleanRequest = request.replace(/^\/api\/v2\//, '/')
+  }
+  else if (request.includes('/api/v1/')) {
+    baseURL = config.public.apiV1BaseUrl as string
+    cleanRequest = request.replace(/^\/api\/v1\//, '/')
+  }
+
+  const fetchOpts = {
     credentials: 'include',
     onResponse({ request: _request, response: _response, options: _options }) {
       // Process the response data
@@ -49,21 +60,22 @@ export const useApiService = <T = unknown>(
         router.push({ query: { auth_form: 'login' } })
       }
     },
-    onRequest({ request: _request, options: _options }) {
-      // Set the request headers
-    },
-    onRequestError({ request: _request, options: _options, error: _error }) {
-      // Handle the request errors
-    },
+    onRequest({ request: _request, options: _options }) {},
+    onRequestError({ request: _request, options: _options, error: _error }) {},
     ...opts,
     headers: {
       ...headers,
       ...(opts?.headers || {}),
       Accept: 'application/json',
     },
-  })
+  }
+  if (baseURL && baseURL !== '') {
+    fetchOpts.baseURL = baseURL
+  }
 
-  return apiFetch<T>(request)
+  const apiFetch = $fetch.create(fetchOpts)
+
+  return apiFetch<T>(cleanRequest)
 }
 
 export const authHeader = (
@@ -101,7 +113,7 @@ export const post = <T = unknown>(
 
 export const put = <T = unknown>(
   request: string,
-  params: SearchParameters,
+  params: SearchParameters | FormData,
   opts?: UseFetchOptions,
 ): Promise<T> => {
   return useApiService<T>(request, { ...opts, method: 'PUT', body: params })

@@ -81,7 +81,7 @@
             lg="2"
           >
             <nuxt-link
-              :to="`/search?type=${category.type}&section=${selectedBoard?.id}&base=${selectedGrade}`"
+              :to="categoryLink(category)"
             >
               <div class="ex-category__card">
                 <div class="d-flex align-center">
@@ -129,11 +129,11 @@ const { boardImgs } = useBoard()
 
 const categories = ref([
   {
-    type: 'learnfiles',
-    key: 'files',
-    stat: '220',
-    title: 'Multimedia',
-    icon: 'icon-multimedia',
+    type: 'test',
+    key: 'papers',
+    stat: '34,519',
+    title: 'Past Paper',
+    icon: 'icon-paper',
   },
   {
     type: 'azmoon',
@@ -143,11 +143,11 @@ const categories = ref([
     icon: 'icon-exam',
   },
   {
-    type: 'test',
-    key: 'papers',
-    stat: '34,519',
-    title: 'Past Paper',
-    icon: 'icon-paper',
+    type: 'dars',
+    key: 'tutorial',
+    stat: '50',
+    title: 'Tutorial',
+    icon: 'icon-tutorial',
   },
   {
     type: 'question',
@@ -157,12 +157,20 @@ const categories = ref([
     icon: 'icon-q-a',
   },
   {
-    type: 'dars',
-    key: 'tutorial',
-    stat: '50',
-    title: 'Tutorial',
-    icon: 'icon-tutorial',
+    type: 'learnfiles',
+    key: 'files',
+    stat: '220',
+    title: 'Multimedia',
+    icon: 'icon-multimedia',
   },
+  {
+    type: 'school',
+    key: 'schools',
+    stat: '+600K',
+    title: 'Schools',
+    icon: 'icon-school',
+  },
+
 ])
 const _selectLoader = ref(true)
 const boardList = ref([])
@@ -172,9 +180,12 @@ const selectedBoard = ref(null)
 const selectedGrade = ref(null)
 const showBoardHint = ref(false)
 
+const categoryLink = (category) => {
+  return category.type === 'school' ? `/school` : `/search?type=${category.type}&section=${selectedBoard.value?.id}&base=${selectedGrade.value}`
+}
 const fetchInitialData = async () => {
   const params = { type: 'section' }
-  const response = await $fetch(`/api/v1/types/list`, { params })
+  const response = await useApiService.get(`/api/v1/types/list`, params)
   boardList.value = response.data.map((item, index) => ({
     ...item,
     img: boardImgs[index % boardImgs.length],
@@ -207,9 +218,16 @@ const fetchGradeList = async () => {
     gradeLoader.value = true
     const params = { type: 'base' }
     params.section_id = selectedBoard.value.id
-    const response = await $fetch(`/api/v1/types/list`, { params })
-    gradeList.value = response.data
-    selectedGrade.value = response.data[0].id
+    const response = await useApiService.get(`/api/v1/types/list`, params)
+
+    gradeList.value = [
+      { id: null, title: 'All', master_: null, list_order: '0', parent: null },
+      ...response.data,
+    ]
+    if (selectedGrade.value === gradeList.value[0].id)
+      fetchCategoryCounts()
+    else
+      selectedGrade.value = gradeList.value[0].id
   }
   catch (error) {
     console.error('Error fetching grade list:', error)
@@ -220,7 +238,7 @@ const fetchGradeList = async () => {
 }
 const fetchCategoryCounts = async () => {
   try {
-    if (!selectedBoard.value || !selectedGrade.value) {
+    if (!selectedBoard.value) {
       return
     }
 
@@ -230,7 +248,7 @@ const fetchCategoryCounts = async () => {
     params.append('section', selectedBoard.value.id)
     params.append('base', selectedGrade.value)
     const requestUrl = `/api/v1/search?${params.toString()}`
-    const response = await $fetch(requestUrl)
+    const response = await useApiService.get(requestUrl)
     if (
       response
       && response.status === 1
@@ -265,7 +283,7 @@ const handleBoardFocused = () => {
 }
 watch(
   () => selectedGrade.value,
-  (_val) => {
+  () => {
     fetchCategoryCounts()
   },
   {
@@ -392,6 +410,9 @@ onMounted(() => {
 }
 .icon-tutorial {
   color: #2e90fa;
+}
+.icon-school {
+  color: #a5673f;
 }
 .ex-category__card--title {
   color: #344054;

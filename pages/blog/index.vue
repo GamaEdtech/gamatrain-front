@@ -276,9 +276,12 @@
                   </span>
                 </v-card-title>
               </v-card>
-              <div class="gama-text-subtitle2">
-                <span v-html="truncateBody(item.summary, 32)" />
-                <span class="read-more">Read more</span>
+              <div class="subtitle-card-blog text-h6 pl-2 font-weight-bold">
+                <span
+                  class="primary-gray-500"
+                  v-html="truncateBody(item.summary, 64)"
+                />
+                <span class="read-more text-primary">Read more</span>
               </div>
             </v-card>
           </v-col>
@@ -516,7 +519,7 @@ watch(
 
 // category section start
 const { data: blogCategoriesResponse } = await useAsyncData('categories', () =>
-  $fetch('/api/v2/tags/Post'),
+  useApiService.get('/api/v2/tags/Post'),
 )
 
 const categoryValue = ref(route.query.cat ? Number(route.query.cat) : 0)
@@ -561,9 +564,9 @@ const { data: initialBlogs, pending: loadingBlogsServer } = await useAsyncData(
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
       'PagingDto.PageFilter.Skip': 0,
       'TagId': route.query.cat ? route.query.cat : null,
-      'Keyword': route.query.keyword || '',
+      'Title': route.query.keyword || '',
     }
-    return $fetch('/api/v2/blogs/posts', { params })
+    return useApiService.get('/api/v2/blogs/posts', params)
   },
 )
 
@@ -597,14 +600,14 @@ const getBlogList = async () => {
     'PagingDto.PageFilter.Skip': (pageNum.value - 1) * pageSize.value,
   }
   blogLoading.value = true
-  params.Keyword = searchQuery.value
+  params.Title = searchQuery.value
 
   if (categoryValue.value != 0) {
     params.TagId = categoryValue.value
   }
 
   try {
-    const response = await $fetch('/api/v2/blogs/posts', { params })
+    const response = await useApiService.get('/api/v2/blogs/posts', params)
     const data = response.data
     pageCount.value = Math.ceil(data.totalRecordsCount / pageSize.value)
 
@@ -749,6 +752,9 @@ watch(
 </script>
 
 <style scope>
+.subtitle-card-blog {
+  font-family: "Inter";
+}
 #blog-list-page {
   .text-loader-section {
     min-width: 80%;

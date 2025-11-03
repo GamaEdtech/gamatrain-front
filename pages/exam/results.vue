@@ -229,8 +229,8 @@ export default {
         params.base_id = _val
       }
 
-      this.$fetch
-        .$get('/api/v1/types/list', {
+      useApiService
+        .get('/api/v1/types/list', {
           params,
         })
         .then((res) => {
@@ -252,15 +252,13 @@ export default {
     getExams() {
       if (!this.all_files_loaded) {
         this.page_loading = true
-        this.$fetch
-          .$get('/api/v1/exams/results', {
-            params: {
-              perpage: 20,
-              page: this.page,
-              section: this.filter.level,
-              base: this.filter.grade,
-              lesson: this.filter.lesson,
-            },
+        useApiService
+          .get('/api/v1/exams/results', {
+            perpage: 20,
+            page: this.page,
+            section: this.filter.level,
+            base: this.filter.grade,
+            lesson: this.filter.lesson,
           })
           .then((response) => {
             this.exam_list.push(...response.data.list)

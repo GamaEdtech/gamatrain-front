@@ -30,7 +30,10 @@
 
     <!--  Start: detail  -->
     <section>
-      <v-container class="py-0 relation-position">
+      <v-container
+        fluid
+        class="py-0 relation-position"
+      >
         <!-- Start : Box Showing Balance -->
         <div
           v-show="showBoxBalance"
@@ -97,6 +100,12 @@
                 >
                   Tutorial
                 </v-chip>
+              </div>
+              <div
+                v-show="route.name==='test-id'"
+                class="text-h4 font-weight-bold text-blue-grey-lighten-1"
+              >
+                Question:
               </div>
               <!--  Description   -->
               <div class="d-flex mb-4">
@@ -348,19 +357,21 @@
                   </div>
 
                   <!-- Helpful link -->
-                  <div class="justify-center text-center">
+                  <div>
                     <v-btn
                       :disabled="!nextTestId"
                       :loading="nextTestLoading"
-                      class="next-test mx-auto text-transform-none"
-                      @click="navigateToNextTest"
+                      color="info"
+                      class=" next-test   text-transform-none"
+                      :to="`/test/${nextTestId}`"
                     >
-                      {{
-                        $route.name == "test-id"
-                          ? "Try the Next One"
-                          : "Time to Test!"
-                      }}
-                      <v-icon>mdi-skip-next-outline</v-icon>
+                      <span class="text-white">
+                        {{
+                          $route.name == "test-id"
+                            ? "Next One"
+                            : "Time to Test!"
+                        }}
+                      </span>
                     </v-btn>
                   </div>
                 </div>
@@ -384,6 +395,7 @@
 import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import CrashReport from '~/components/common/crash-report.vue'
 
+const route = useRoute()
 const props = defineProps({
   contentData: {
     type: Object,
@@ -398,11 +410,7 @@ const nuxtApp = useNuxtApp()
 
 const { $renderMathInElement, $ensureMathJaxReady, $toast } = nuxtApp
 const nextTestId = ref(null)
-const _router = useRouter()
-const navigateToNextTest = () => {
-  nextTestLoading.value = true
-  navigateTo(`/test/${nextTestId.value}`)
-}
+
 const fullAnswer = ref('')
 const selectedOption = ref('')
 const report_type_list = [
@@ -457,18 +465,6 @@ onMounted(async () => {
   }
   setInitialPositionCoin()
 })
-
-watch(
-  () => props.contentData,
-  async (_val) => {
-    await nextTick()
-    if (testDetail.value) {
-      $renderMathInElement?.(testDetail.value)
-      loadNextTest()
-    }
-  },
-  { immediate: true },
-)
 
 function isCorrectAnswer(option) {
   return selectedOption.value && option == props.contentData.true_answer
@@ -651,7 +647,7 @@ function loadNextTest() {
   selectedOption.value = ''
   isAnswerToQuestion.value = false
   fullAnswer.value = ''
-  $fetch(
+  useApiService.get(
     `/api/v1/examTests/random?lesson=${props.contentData.lesson}&topic=${props.contentData.topic}`,
   )
     .then((response) => {
@@ -737,6 +733,7 @@ p {
 
 .answer-img {
   max-height: 15rem;
+  width: auto;
 }
 
 /* Box Showing Balance */

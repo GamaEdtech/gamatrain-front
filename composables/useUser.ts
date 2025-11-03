@@ -1,23 +1,14 @@
 import { useState } from 'nuxt/app'
+import type { ApiResult } from '~/interfaces/api'
+import { get } from '@/composables/useApiService'
 
 interface User {
-  id: string
-  username: string
-  first_name: string
-  last_name: string
   avatar: string
-  sex: string | null
-  active: string
-  credit: string
-  group_id: number
-  section: string | null
-  base: string | null
-  course: string | null
-  area: string | null
-  school: string | null
-  score_check_info: string
-  state: string | null
-  city: string | null
+  userName: string
+  firstName: string
+  lastName: string
+  group: number
+  profileUpdated: boolean
 }
 
 export const useUser = () => {
@@ -31,9 +22,43 @@ export const useUser = () => {
     user.value = null
   }
 
+  interface UserResponse {
+    data: {
+      avatar: string
+      userName: string
+      firstName: string
+      lastName: string
+      profileUpdated: boolean
+    }
+  }
+
+  const auth = useAuth()
+  const getProfile = async (token?: null): Promise<ApiResult<UserResponse>> => {
+    try {
+      const response = await get<UserResponse>(`/api/v2/identities/profiles`, {}, { headers: {
+        Authorization: `Bearer ${token || auth.getUserTokenV2()}`,
+      } })
+
+      return { data: response, status: 200 }
+    }
+    catch (error: unknown) {
+      if (error && typeof error === 'object' && 'status' in error) {
+        return {
+          data: null,
+          status: (error as { status: number }).status,
+          error,
+        }
+      }
+
+      // fallback
+      return { data: null, status: 0, error }
+    }
+  }
+
   return {
     user,
     setUser,
+    getProfile,
     cleanUser,
   }
 }

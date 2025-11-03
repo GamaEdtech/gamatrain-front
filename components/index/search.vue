@@ -114,10 +114,9 @@ export default {
         params.base_id = parent
       }
 
-      this.$fetch
-        .$get('/api/v1/types/list', {
-          params,
-        })
+      useApiService.get('/api/v1/types/list', {
+        params,
+      })
         .then((res) => {
           if (type === 'section') {
             this.section_list = res.data

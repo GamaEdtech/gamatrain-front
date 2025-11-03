@@ -116,7 +116,9 @@ const goToPreviousMessage = (id) => {
 
 const deleteMessage = async () => {
   try {
-    await useApiService.remove(`/api/v2/admin/contacts/${selectedDeleteId.value}`)
+    await useApiService.remove(
+      `/api/v2/admin/contacts/${selectedDeleteId.value}`,
+    )
 
     list.value = list.value.filter(i => i.id !== selectedDeleteId.value)
     filteredList.value = list.value
@@ -152,9 +154,7 @@ const doAll = async () => {
     for (const id of selected.value) {
       const index = list.value.findIndex(msg => msg.id === id)
       try {
-        await $fetch(`/api/v2/admin/contacts/${id}/toggle`, {
-          method: 'PATCH',
-        })
+        await useApiService.patch(`/api/v2/admin/contacts/${id}/toggle`)
 
         list.value[index] = { ...list.value[index], isRead: true }
         selected.value = []
@@ -183,25 +183,34 @@ watch(selectedPageSize, () => {
   fetchContactUs()
 })
 
-watch(filter, (val) => {
-  if (val === 'read') {
-    filteredList.value = list.value.filter(item => item.isRead)
-  }
-  else if (val === 'unread') {
-    filteredList.value = list.value.filter(item => !item.isRead)
-  }
-  else {
-    filteredList.value = list.value
-  }
-}, { immediate: true })
+watch(
+  filter,
+  (val) => {
+    if (val === 'read') {
+      filteredList.value = list.value.filter(item => item.isRead)
+    }
+    else if (val === 'unread') {
+      filteredList.value = list.value.filter(item => !item.isRead)
+    }
+    else {
+      filteredList.value = list.value
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
   <div>
-    <div class="d-flex flex-column justify-space-between align-center mb-1 flex-sm-row">
+    <div
+      class="d-flex flex-column justify-space-between align-center mb-1 flex-sm-row"
+    >
       <div class="filterBtns mb-4 mb-sm-0">
         <v-btn
-          :class="{ 'active-filter': filter === 'all', 'inactive-filter': filter !== 'all' }"
+          :class="{
+            'active-filter': filter === 'all',
+            'inactive-filter': filter !== 'all',
+          }"
           depressed
           rounded
           variant="plain"
@@ -211,7 +220,10 @@ watch(filter, (val) => {
           All
         </v-btn>
         <v-btn
-          :class="{ 'active-filter': filter === 'unread', 'inactive-filter': filter !== 'unread' }"
+          :class="{
+            'active-filter': filter === 'unread',
+            'inactive-filter': filter !== 'unread',
+          }"
           depressed
           rounded
           variant="plain"
@@ -222,7 +234,10 @@ watch(filter, (val) => {
         </v-btn>
 
         <v-btn
-          :class="{ 'active-filter': filter === 'read', 'inactive-filter': filter !== 'read' }"
+          :class="{
+            'active-filter': filter === 'read',
+            'inactive-filter': filter !== 'read',
+          }"
           depressed
           class="ml-2 gtext-t4 font-weight-medium"
           rounded
@@ -244,7 +259,7 @@ watch(filter, (val) => {
       >
         <template #prepend-inner>
           <span class="primary-gray-300"><v-icon>mdi-magnify </v-icon></span>
-          <span class="primary-gray-300 ">|</span>
+          <span class="primary-gray-300">|</span>
         </template>
       </v-text-field>
     </div>
@@ -279,13 +294,17 @@ watch(filter, (val) => {
                 alt="Avatar"
               >
             </v-avatar>
-            <span :class="item.isRead === false ? 'font-weight-bold' : ''">{{ item.fullName }}</span>
+            <span :class="item.isRead === false ? 'font-weight-bold' : ''">{{
+              item.fullName
+            }}</span>
           </div>
         </template>
 
         <template #[`item.subject`]="{ item }">
           <div class="d-flex align-center">
-            <span :class="item.isRead === false ? 'font-weight-bold' : ''">{{ item.subject }}</span>
+            <span :class="item.isRead === false ? 'font-weight-bold' : ''">{{
+              item.subject
+            }}</span>
           </div>
         </template>
 
@@ -444,38 +463,38 @@ watch(filter, (val) => {
   overflow-x: hidden;
 }
 
-.searchInput{
+.searchInput {
   width: 360px !important;
   max-width: 360px;
 }
 
-:deep(.v-field__outline){
-    --v-field-border-width: 1px !important;
-    --v-field-border-opacity: 0.38 !important;
+:deep(.v-field__outline) {
+  --v-field-border-width: 1px !important;
+  --v-field-border-opacity: 0.38 !important;
 }
 
-:deep(.v-data-table__th){
-    color: #344054 !important;
-    font-family: Inter, sans-serif !important;
-    font-size: 1.4rem !important;
-    line-height: 2.4rem !important;
-    font-weight: 500;
-    white-space: nowrap;
+:deep(.v-data-table__th) {
+  color: #344054 !important;
+  font-family: Inter, sans-serif !important;
+  font-size: 1.4rem !important;
+  line-height: 2.4rem !important;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-:deep(.v-table__wrapper > table > thead > tr){
-  background-color: #F2F4F7 !important;
+:deep(.v-table__wrapper > table > thead > tr) {
+  background-color: #f2f4f7 !important;
 }
 
-.filterBtns{
-    display: flex;
-    padding: 4px;
-    background-color: #0000001A;
-    border-radius: 28px;
-    align-items: center;
+.filterBtns {
+  display: flex;
+  padding: 4px;
+  background-color: #0000001a;
+  border-radius: 28px;
+  align-items: center;
 }
 
-.footerBtns{
+.footerBtns {
   width: 150px !important;
   max-width: 150px !important;
 }
@@ -488,12 +507,13 @@ watch(filter, (val) => {
   width: 100% !important;
   justify-content: center !important;
 }
-:deep(.custom-pagination li),:deep(.custom-pagination li button){
+:deep(.custom-pagination li),
+:deep(.custom-pagination li button) {
   min-width: 36px !important;
   width: 36px !important;
   height: 36px !important;
 }
-:deep(.custom-pagination li button:hover){
+:deep(.custom-pagination li button:hover) {
   background-color: #ffb300;
   opacity: 0.7;
 }
@@ -506,7 +526,7 @@ watch(filter, (val) => {
 }
 
 .active-filter {
-  background-color: #FFB600 !important;
+  background-color: #ffb600 !important;
   color: #101828 !important;
 }
 
@@ -514,11 +534,11 @@ watch(filter, (val) => {
   color: #667085 !important;
 }
 
-:deep(.v-btn--variant-plain){
+:deep(.v-btn--variant-plain) {
   opacity: 1 !important;
 }
 
-.min-width-10{
+.min-width-10 {
   min-width: 10px !important;
   height: 20px !important;
 }

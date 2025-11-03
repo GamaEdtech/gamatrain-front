@@ -173,7 +173,7 @@ const getTags = async () => {
   try {
     isLoadingTag.value = true
     const endpoint = '/api/v2/tags/School'
-    const response = await $fetch(endpoint)
+    const response = await useApiService.get(endpoint)
     tags.value = response.data
   }
   catch (err) {

@@ -124,7 +124,7 @@ const _props = defineProps({
 })
 
 const { user } = useUser()
-const userType = computed(() => user.value?.group_id)
+const userType = computed(() => user.value?.group)
 </script>
 
 <style scoped>

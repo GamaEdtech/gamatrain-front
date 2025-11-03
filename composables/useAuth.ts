@@ -1,8 +1,3 @@
-import { useCookie, navigateTo } from 'nuxt/app'
-import { computed } from 'vue'
-import useApiService from '~/composables/useApiService'
-import { useUser } from '~/composables/useUser'
-
 export const useAuth = () => {
   const cookieToken = useCookie<string | null>('authToken', {
     path: '/',
@@ -27,6 +22,7 @@ export const useAuth = () => {
 
   const clearAuth = () => {
     cookieToken.value = null
+    cookieTokenV2.value = null
   }
 
   // -------------------------
@@ -81,23 +77,17 @@ export const useAuth = () => {
 
   const login = async (credentials: { identity: string, pass: string }) => {
     const response: { token?: string, message?: string, success?: boolean }
-      = await $fetch('/api/v1/users/login', {
-        method: 'POST',
-        body: {
-          ...credentials,
-          type: 'request',
-        },
+      = await useApiService.post('/api/v1/users/login', {
+        ...credentials,
+        type: 'request',
       })
     return response
   }
 
   const register = async (formData: { identity: string, pass: string }) => {
-    await $fetch('/api/v1/users/register', {
-      method: 'POST',
-      body: {
-        ...formData,
-        type: 'register',
-      },
+    await useApiService.post('/api/v1/users/register', {
+      ...formData,
+      type: 'register',
     })
   }
 
@@ -115,7 +105,7 @@ export const useAuth = () => {
     return response
   }
 
-  const isAuthenticated = computed(() => !!cookieToken.value)
+  const isAuthenticated = computed(() => !!cookieTokenV2.value && !!cookieTokenV2.value)
 
   return {
     cookieToken,

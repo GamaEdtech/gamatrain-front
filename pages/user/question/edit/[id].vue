@@ -257,17 +257,19 @@ const onSubmit = () => {
   updateContent()
 }
 
-const { data: questionData } = await useFetch(
-  `/api/v1/questions/${route.params.id}`,
-  {
-    headers: {
-      Authorization: `Bearer ${userToken.value}`,
-    },
-    transform: (response) => {
-      return response.status === 1 ? response.data : {}
-    },
-  },
-)
+const { data: questionData } = await useAsyncData('question-data', async () => {
+  try {
+    const content = await useApiService.get(`/api/v1/questions/${route.params.id}`)
+    if (content.status === 1) {
+      return content.data
+    }
+    return null
+  }
+  catch (error) {
+    console.error('Error fetching paper data:', error)
+    return null
+  }
+})
 
 // Form data
 const formData = reactive({

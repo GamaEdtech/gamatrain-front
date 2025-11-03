@@ -569,7 +569,8 @@ const onSubmit = async () => {
 
     if (response && response.succeeded) {
       $toast.success('Blog post updated successfully!')
-      router.push('/user/blogs')
+      const fromPage = route.query.fromPage ? route.query.fromPage : '1'
+      router.push(`/user/blogs?page=${fromPage}`)
     }
     else {
       $toast.error(

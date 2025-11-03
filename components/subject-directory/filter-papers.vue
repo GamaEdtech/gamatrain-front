@@ -159,7 +159,7 @@ const showBoardDialog = ref(false)
 const fetchBoards = async () => {
   try {
     isLoadingBoard.value = true
-    const responseBoard = await $fetch('api/v1/types/list/?type=section')
+    const responseBoard = await useApiService.get('/api/v1/types/list/?type=section')
     if (responseBoard.data) {
       boards.value = responseBoard.data.map((item, index) => ({
         ...item,
@@ -248,8 +248,8 @@ const showGradeDialog = ref(false)
 const fetchGrade = async () => {
   try {
     isLoadingGrades.value = true
-    const responseGrade = await $fetch(
-      `api/v1/types/list/?type=base&section_id=${selectedBoard.value.id}`,
+    const responseGrade = await useApiService.get(
+      `/api/v1/types/list/?type=base&section_id=${selectedBoard.value.id}`,
     )
     if (responseGrade.data) {
       grades.value = responseGrade.data
@@ -316,8 +316,8 @@ const showSubjectDialog = ref(false)
 const fetchSubject = async () => {
   try {
     isLoadingSubjects.value = true
-    const responseSubject = await $fetch(
-      `api/v1/types/list/?type=lesson&base_id=${selectedGrade.value.id}`,
+    const responseSubject = await useApiService.get(
+      `/api/v1/types/list/?type=lesson&base_id=${selectedGrade.value.id}`,
     )
     if (responseSubject.data) {
       subjects.value = responseSubject.data

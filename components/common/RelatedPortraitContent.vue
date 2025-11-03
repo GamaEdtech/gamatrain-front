@@ -71,14 +71,11 @@ const fallbackImage = '/images/GamaBag.webp'
 
 const getRelatedContent = async () => {
   try {
-    const response = await $fetch('/api/v1/recommendations/related', {
-      method: 'GET',
-      params: {
-        source: props.source,
-        request: props.request,
-        id: relatedId,
-      },
-    })
+    const response = await useApiService.get('/api/v1/recommendations/related', {
+      source: props.source,
+      request: props.request,
+      id: relatedId },
+    )
     const arrays = response.data
     for (const key in arrays) {
       if (Array.isArray(arrays[key]) && arrays[key].length > 0) {

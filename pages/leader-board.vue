@@ -459,7 +459,7 @@ const { data: initialData } = await useAsyncData('dataLeaderBoard', () => {
     RegistrationDateStart: dateQuery.RegistrationDateStart || '',
     RegistrationDateEnd: dateQuery.RegistrationDateEnd || '',
   }
-  return $fetch('/api/v2/identities/leader-board', { params })
+  return useApiService.get('/api/v2/identities/leader-board', params)
 })
 
 if (initialData.value && initialData.value.succeeded) {

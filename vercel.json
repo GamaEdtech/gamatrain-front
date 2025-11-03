@@ -8,5 +8,11 @@
       "source": "/uploads/:path*",
       "destination": "https://core.gamatrain.com/uploads/:path*"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/daily-winner?action=save",
+      "schedule": "30 5 * * *"
+    }
   ]
 }

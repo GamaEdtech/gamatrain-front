@@ -16,29 +16,40 @@
               {{ metadata.title }}
             </h1>
 
-            <nuxt-link
-              v-if="route.query.lesson && data.length > 0"
-              :to="`/subject-directory?board=${route.query.section}&grade=${route.query.base}&subject=${route.query.lesson}`"
-              class="w-100 rounded-lg d-flex align-center justify-start mb-2 pa-3 ga-2 elevation-4 subject-directory-alert"
-            >
-              <div class="d-flex flex-column align-start justify-start ga-1">
-                <span class="text-h5 text-sm-h4 font-weight-bold text-white">Go to
-                  {{ data[0].lesson_title }}
-                </span>
-                <span class="text-subtitle-2 text-sm-subtitle-1 text-white">All books, past papers & resources in one place</span>
-              </div>
-            </nuxt-link>
+            <CommonDetailSubjectDirectoryNav :content-data="data[0]" />
           </div>
         </CommonFilterList>
       </div>
 
       <search-list
+        v-if="data.length > 0"
         :data-list="data"
         :is-initial-loading="isInitialDataLoading"
         :is-pagination-loading="isPaginationDataLoading"
         :is-all-data-loaded="isAllDataLoaded"
         @load-next-page="loadNextPageData"
       />
+
+      <div
+        v-else
+        class="w-100 d-flex flex-column align-center justify-center ga-4 mt-16"
+      >
+        <span class="text-h4 font-weight-bold">Be the first to add content to this category.</span>
+        <v-btn
+          class="text-h5 font-weight-bold"
+          width="250"
+          color="info"
+          rounded="pill"
+          flat
+          variant="tonal"
+          :to="createLinkAddConent()"
+        >
+          <v-icon color="info">
+            md:add
+          </v-icon>
+          Add
+        </v-btn>
+      </div>
     </v-row>
   </v-container>
 </template>
@@ -78,7 +89,6 @@ const loadNextPageData = async () => {
   isPaginationDataLoading.value = true
   await getDataList(true)
 }
-
 const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
   'dataSearchSSR',
   () => {
@@ -101,7 +111,7 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
       params.test_type = route.query.test_type
     }
 
-    return $fetch('/api/v1/search', { params })
+    return useApiService.get('/api/v1/search', params)
   },
 )
 
@@ -123,7 +133,7 @@ const getDataList = async (isLoadNextPage = false) => {
   try {
     const params = { ...querySearch.value }
     params.page = pageNumber.value
-    const response = await $fetch('/api/v1/search', { params })
+    const response = await useApiService.get('/api/v1/search', params)
 
     if (response.data.list.length < perPage) {
       isAllDataLoaded.value = true
@@ -656,6 +666,33 @@ useHead(() => ({
     },
   ],
 }))
+
+const createLinkAddConent = () => {
+  const type = route.query.type
+  let link = ''
+  switch (type) {
+    case 'test':
+      link = '/user/paper'
+      break
+    case 'learnfiles':
+      link = '/user/multimedia'
+      break
+    case 'azmoon':
+      link = '/user/exam'
+      break
+    case 'question':
+      link = '/user/question'
+      break
+    case 'dars':
+      link = '/user/paper'
+      break
+
+    default:
+      link = '/user/paper'
+      break
+  }
+  return link
+}
 </script>
 
 <style scoped>
@@ -685,11 +722,6 @@ useHead(() => ({
   max-width: 1200px;
 }
 
-.subject-directory-alert {
-  height: 70px;
-  max-width: 400px;
-  background-color: #f59e0b;
-}
 @media (min-width: 960px) {
   .margin-top-handle {
     margin-top: 6.4rem;
