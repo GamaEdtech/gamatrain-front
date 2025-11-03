@@ -372,7 +372,6 @@ const endExam = async () => {
         startID: contentData.value.startID,
         answers: examStats.answerData,
       },
-
     )
     await router.push(`/exam/result/${response.data.id}`)
   }

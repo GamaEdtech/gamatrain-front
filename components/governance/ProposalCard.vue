@@ -50,7 +50,7 @@
         v-if="proposal.account.amount && proposal.account.amount > 0"
         class="amount primary-gray-600"
       >
-        {{ formatAmount(proposal.account.amount) }} $GET
+        {{ $numberFormat(proposal.account.amount) }} $GET
       </span>
     </div>
 
@@ -285,12 +285,6 @@ const formatVotes = (votes: BNType) => {
   if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
   if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
   return num.toString()
-}
-
-const formatAmount = (amount: BNType) => {
-  if (!amount) return '0'
-  const num = amount.toNumber()
-  return num.toLocaleString()
 }
 
 const handleClick = () => {
