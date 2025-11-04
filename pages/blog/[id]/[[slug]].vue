@@ -1,5 +1,5 @@
 <template>
-  <v-container class="main-blog-div">
+  <v-container id="main-blog-div">
     <v-row v-if="error">
       <h1 class="text-h3 font-weight-bold">
         Pleas Try Again Later.
@@ -310,10 +310,14 @@ onMounted(() => {
 </script>
 
 <style>
-.main-blog-div {
+#main-blog-div {
   margin-top: 64px;
   min-height: 100vh;
   max-width: 800px !important;
+}
+
+#main-blog-div table{
+  width: 100%;
 }
 
 .main-blog-img {
@@ -402,7 +406,7 @@ onMounted(() => {
 }
 
 @media (min-width: 960px) {
-  .main-blog-div {
+  #main-blog-div {
     margin-top: 6.4rem;
   }
   #blog-describe {
