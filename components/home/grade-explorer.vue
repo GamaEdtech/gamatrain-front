@@ -159,8 +159,8 @@ const categories = ref([
   {
     type: 'learnfiles',
     key: 'files',
-    stat: '220',
-    title: '--',
+    stat: '--',
+    title: 'Multimedia',
     icon: 'icon-multimedia',
   },
   {
