@@ -21,6 +21,7 @@ export default defineNuxtConfig({
       baseUrl: process.env.NUXT_PROXY_BASE_URL,
       apiV1BaseUrl: process.env.NUXT_PROXY_API_BASE_URL,
       apiV2BaseUrl: process.env.NUXT_PROXY_API2_BASE_URL,
+      gamaedtechWalletAddress: process.env.NUXT_GAMAEDTECH_WALLET_ADDRESS,
     },
   },
 

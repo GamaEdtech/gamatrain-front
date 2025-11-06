@@ -2,7 +2,7 @@
   <div
     class="w-100 h-100 mt-16 d-flex flex-column ga-4 align-center justify-center set-height"
   >
-    <!-- <v-text-field
+    <v-text-field
       v-model="amount"
       label="Label"
       class="height-input"
@@ -137,325 +137,326 @@
           </v-btn>
         </div>
       </div>
-    </v-dialog> -->
+    </v-dialog>
   </div>
 </template>
 
 <script setup>
-// import { ref } from 'vue'
-// import { useSolanaClient } from '~/composables/useSolanaClient'
-// // import { Buffer } from "buffer";
-// import { SystemProgram, Transaction, PublicKey } from '@solana/web3.js'
-// // import {
-// //   getAssociatedTokenAddress,
-// //   createTransferInstruction,
-// // } from "@solana/spl-token";
+import { ref } from 'vue'
+import { useSolanaClient } from '~/composables/useSolanaClient'
+// import { Buffer } from "buffer";
+import { SystemProgram, Transaction, PublicKey } from '@solana/web3.js'
+// import {
+//   getAssociatedTokenAddress,
+//   createTransferInstruction,
+// } from "@solana/spl-token";
 
-// const splTokenLib = ref(null)
-// const selectToken = ref(null)
-// const payTokenOptions = ref([
-//   {
-//     mint: 'So11111111111111111111111111111111111111112',
-//     symbol: 'SOL',
-//     name: 'Solana',
-//     logoURI:
-//       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
-//     decimals: 9,
-//   },
-//   {
-//     // mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-//     mint: '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU', // mint in devnet
-//     symbol: 'USDC',
-//     name: 'USD Coin',
-//     logoURI:
-//       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-//     decimals: 6,
-//   },
-//   {
-//     // mint: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
-//     mint: 'HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr', // mint in devnet
-//     symbol: 'USDT',
-//     name: 'Tether USD',
-//     logoURI:
-//       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png',
-//     decimals: 6,
-//   },
-// ])
+const splTokenLib = ref(null)
+const selectToken = ref(null)
+const payTokenOptions = ref([
+  {
+    mint: 'So11111111111111111111111111111111111111112',
+    symbol: 'SOL',
+    name: 'Solana',
+    logoURI:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+    decimals: 9,
+  },
+  {
+    // mint: "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
+    mint: '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU', // mint in devnet
+    symbol: 'USDC',
+    name: 'USD Coin',
+    logoURI:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    decimals: 6,
+  },
+  {
+    // mint: "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
+    mint: 'HzwqbKZw8HxMN6bF2yFZNrht3c2iXXzpKcFu7uBEDKtr', // mint in devnet
+    symbol: 'USDT',
+    name: 'Tether USD',
+    logoURI:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.png',
+    decimals: 6,
+  },
+])
 
-// const amount = ref('0.01')
-// const lastSig = ref(null)
+const amount = ref('0.01')
+const lastSig = ref(null)
 
-// const wallet = ref(null)
-// const showWalletModal = ref(false)
-// const showDisconnectModal = ref(false)
-// // Dynamic component import for WalletMultiButton
-// const WalletMultiButton = defineAsyncComponent(async () => {
-//   if (import.meta.client) {
-//     const { WalletMultiButton } = await import('solana-wallets-vue')
-//     return WalletMultiButton
-//   }
-//   return { template: '<div>Loading...</div>' }
-// })
+const wallet = ref(null)
+const showWalletModal = ref(false)
+const showDisconnectModal = ref(false)
+// Dynamic component import for WalletMultiButton
+const WalletMultiButton = defineAsyncComponent(async () => {
+  if (import.meta.client) {
+    const { WalletMultiButton } = await import('solana-wallets-vue')
+    return WalletMultiButton
+  }
+  return { template: '<div>Loading...</div>' }
+})
 
-// // Initialize wallet on client side
-// onMounted(async () => {
-//   if (import.meta.client) {
-//     try {
-//       const { useWallet } = await import('solana-wallets-vue')
-//       wallet.value = useWallet()
-//       console.log('Wallet initialized:', wallet.value)
-//       console.log('Initial connection state:', wallet.value?.connected)
-//     }
-//     catch (error) {
-//       console.error('Failed to initialize wallet:', error)
-//     }
+// Initialize wallet on client side
+onMounted(async () => {
+  if (import.meta.client) {
+    try {
+      const { useWallet } = await import('solana-wallets-vue')
+      wallet.value = useWallet()
+      console.log('Wallet initialized:', wallet.value)
+      console.log('Initial connection state:', wallet.value?.connected)
+    }
+    catch (error) {
+      console.error('Failed to initialize wallet:', error)
+    }
 
-//     try {
-//       if (!window.Buffer) {
-//         const { Buffer } = await import('buffer')
-//         window.Buffer = Buffer
-//       }
+    try {
+      if (!window.Buffer) {
+        const { Buffer } = await import('buffer')
+        window.Buffer = Buffer
+      }
 
-//       const {
-//         getAssociatedTokenAddress,
-//         createTransferInstruction,
-//         createAssociatedTokenAccountInstruction,
-//       } = await import('@solana/spl-token')
+      const {
+        getAssociatedTokenAddress,
+        createTransferInstruction,
+        createAssociatedTokenAccountInstruction,
+      } = await import('@solana/spl-token')
 
-//       splTokenLib.value = {
-//         getAssociatedTokenAddress,
-//         createTransferInstruction,
-//         createAssociatedTokenAccountInstruction,
-//       }
-//     }
-//     catch (err) {
-//       console.error('Failed to spl token:', err)
-//     }
-//   }
-// })
+      splTokenLib.value = {
+        getAssociatedTokenAddress,
+        createTransferInstruction,
+        createAssociatedTokenAccountInstruction,
+      }
+    }
+    catch (err) {
+      console.error('Failed to spl token:', err)
+    }
+  }
+})
 
-// // Handle wallet disconnect
-// const handleDisconnect = async () => {
-//   try {
-//     const w = wallet.value
-//     if (w?.disconnect) {
-//       await w.disconnect()
-//       console.log('Wallet disconnected successfully')
-//     }
-//     else {
-//       console.warn('Wallet does not support disconnect method')
-//       // For wallets that don't have disconnect method, we can try to reset the wallet reference
-//       wallet.value = null
-//     }
+// Handle wallet disconnect
+const handleDisconnect = async () => {
+  try {
+    const w = wallet.value
+    if (w?.disconnect) {
+      await w.disconnect()
+      console.log('Wallet disconnected successfully')
+    }
+    else {
+      console.warn('Wallet does not support disconnect method')
+      // For wallets that don't have disconnect method, we can try to reset the wallet reference
+      wallet.value = null
+    }
 
-//     // Reset all state
-//   }
-//   catch (error) {
-//     console.error('Failed to disconnect wallet:', error)
-//     errorMessage.value = 'Failed to disconnect wallet. Please try again.'
-//     // Clear error message after 5 seconds
-//     setTimeout(() => {
-//       errorMessage.value = null
-//     }, 10000)
-//   }
-//   showDisconnectModal.value = false
-// }
+    // Reset all state
+  }
+  catch (error) {
+    console.error('Failed to disconnect wallet:', error)
+    errorMessage.value = 'Failed to disconnect wallet. Please try again.'
+    // Clear error message after 5 seconds
+    setTimeout(() => {
+      errorMessage.value = null
+    }, 10000)
+  }
+  showDisconnectModal.value = false
+}
 
-// const startPaymentProccess = async () => {
-//   try {
-//     if (!wallet.value?.connected || !wallet.value.publicKey) {
-//       showWalletModal.value = true
-//       return
-//     }
+const startPaymentProccess = async () => {
+  try {
+    if (!wallet.value?.connected || !wallet.value.publicKey) {
+      showWalletModal.value = true
+      return
+    }
 
-//     if (!selectToken.value) {
-//       console.warn('token must be selected')
-//       return
-//     }
+    if (!selectToken.value) {
+      console.warn('token must be selected')
+      return
+    }
 
-//     // const { getConnection, getTokenAccountsByOwner } = useSolanaClient()
-//     // const { getConnection } = useSolanaClient()
-//     // const connection = await getConnection()
-//     // const owner = wallet.value.publicKey
+    // const { getConnection, getTokenAccountsByOwner } = useSolanaClient()
+    // const { getConnection } = useSolanaClient()
+    // const connection = await getConnection()
+    // const owner = wallet.value.publicKey
 
-//     const payAmount = parseFloat(amount.value)
-//     if (isNaN(payAmount) || payAmount <= 0) {
-//       console.warn('your input is not valid')
-//       return
-//     }
+    const payAmount = parseFloat(amount.value)
+    if (isNaN(payAmount) || payAmount <= 0) {
+      console.warn('your input is not valid')
+      return
+    }
 
-//     // const lamports = await connection.getBalance(owner)
-//     // const solBalance = lamports / 1e9
-//     // const networkFeeReserve = 0.001
+    // const lamports = await connection.getBalance(owner)
+    // const solBalance = lamports / 1e9
+    // const networkFeeReserve = 0.001
 
-//     // if (solBalance < networkFeeReserve) {
-//     //   console.warn("for transaction fee your balance is not enough");
-//     //   return;
-//     // }
+    // if (solBalance < networkFeeReserve) {
+    //   console.warn("for transaction fee your balance is not enough");
+    //   return;
+    // }
 
-//     console.log('selectToken.value', selectToken.value)
-//     // if (selectToken.value.symbol === 'SOL') {
-//     //   if (solBalance < payAmount + networkFeeReserve) {
-//     //     console.warn(`your sol balance is not enough: ${solBalance} SOL`)
-//     //     return
-//     //   }
-//     //   console.log('your sol balance is okay✅')
-//     // }
-//     // else {
-//     //   const tokenAccounts = await getTokenAccountsByOwner({
-//     //     owner: owner.toBase58(),
-//     //     mint: selectToken.value.mint,
-//     //   })
+    console.log('selectToken.value', selectToken.value)
+    // if (selectToken.value.symbol === 'SOL') {
+    //   if (solBalance < payAmount + networkFeeReserve) {
+    //     console.warn(`your sol balance is not enough: ${solBalance} SOL`)
+    //     return
+    //   }
+    //   console.log('your sol balance is okay✅')
+    // }
+    // else {
+    //   const tokenAccounts = await getTokenAccountsByOwner({
+    //     owner: owner.toBase58(),
+    //     mint: selectToken.value.mint,
+    //   })
 
-//     //   let tokenBalance = 0
-//     //   if (tokenAccounts.length > 0) {
-//     //     const acc = tokenAccounts[0]
-//     //     tokenBalance = Number(acc.amount) / 10 ** acc.decimals
-//     //   }
+    //   let tokenBalance = 0
+    //   if (tokenAccounts.length > 0) {
+    //     const acc = tokenAccounts[0]
+    //     tokenBalance = Number(acc.amount) / 10 ** acc.decimals
+    //   }
 
-//     //   if (tokenBalance < payAmount) {
-//     //     console.warn(
-//     //       `your balance ${selectToken.value.symbol} is not eough: ${tokenBalance}`,
-//     //     )
-//     //     return
-//     //   }
+    //   if (tokenBalance < payAmount) {
+    //     console.warn(
+    //       `your balance ${selectToken.value.symbol} is not eough: ${tokenBalance}`,
+    //     )
+    //     return
+    //   }
 
-//     //   console.log(`${selectToken.value.symbol} balance is okay✅`)
-//     // }
+    //   console.log(`${selectToken.value.symbol} balance is okay✅`)
+    // }
 
-//     sendTransaction()
-//     console.log('✅ ready for payment...')
-//   }
-//   catch (err) {
-//     console.error('error in check balance:', err)
-//   }
-// }
+    sendTransaction()
+    console.log('✅ ready for payment...')
+  }
+  catch (err) {
+    console.error('error in check balance:', err)
+  }
+}
+const config = useRuntimeConfig()
 
-// const sendTransaction = async () => {
-//   try {
-//     if (!wallet.value?.connected || !wallet.value.publicKey) {
-//       throw new Error('Wallet is not connected')
-//     }
+const sendTransaction = async () => {
+  try {
+    if (!wallet.value?.connected || !wallet.value.publicKey) {
+      throw new Error('Wallet is not connected')
+    }
 
-//     const { getConnection } = useSolanaClient()
-//     const connection = await getConnection()
+    const { getConnection } = useSolanaClient()
+    const connection = await getConnection()
 
-//     const destination = new PublicKey(
-//       '8nsSJjDKxNcxrDkvkR7BPsRiSsTzd7y9mhtQy6ZRuvsh',
-//     )
-//     const sender = wallet.value.publicKey
+    const destination = new PublicKey(
+      config.public.gamaedtechWalletAddress,
+    )
+    const sender = wallet.value.publicKey
 
-//     console.log(
-//       'amount * 10 ** selectToken.value.decimals',
-//       amount.value * 10 ** selectToken.value.decimals,
-//     )
+    console.log(
+      'amount * 10 ** selectToken.value.decimals',
+      amount.value * 10 ** selectToken.value.decimals,
+    )
 
-//     const rawAmount = BigInt(
-//       Math.round(amount.value * 10 ** selectToken.value.decimals),
-//     )
+    const rawAmount = BigInt(
+      Math.round(amount.value * 10 ** selectToken.value.decimals),
+    )
 
-//     const transaction = new Transaction()
+    const transaction = new Transaction()
 
-//     if (selectToken.value.symbol === 'SOL') {
-//       transaction.add(
-//         SystemProgram.transfer({
-//           fromPubkey: sender,
-//           toPubkey: destination,
-//           lamports: rawAmount,
-//         }),
-//       )
-//     }
-//     else {
-//       const mintPubkey = new PublicKey(selectToken.value.mint)
+    if (selectToken.value.symbol === 'SOL') {
+      transaction.add(
+        SystemProgram.transfer({
+          fromPubkey: sender,
+          toPubkey: destination,
+          lamports: rawAmount,
+        }),
+      )
+    }
+    else {
+      const mintPubkey = new PublicKey(selectToken.value.mint)
 
-//       console.log('splTokenLib.value', splTokenLib.value)
+      console.log('splTokenLib.value', splTokenLib.value)
 
-//       const fromTokenAccount
-//         = await splTokenLib.value.getAssociatedTokenAddress(mintPubkey, sender)
-//       const toTokenAccount = await splTokenLib.value.getAssociatedTokenAddress(
-//         mintPubkey,
-//         destination,
-//       )
-//       console.log('fromTokenAccount', fromTokenAccount)
-//       console.log('toTokenAccount', toTokenAccount)
+      const fromTokenAccount
+        = await splTokenLib.value.getAssociatedTokenAddress(mintPubkey, sender)
+      const toTokenAccount = await splTokenLib.value.getAssociatedTokenAddress(
+        mintPubkey,
+        destination,
+      )
+      console.log('fromTokenAccount', fromTokenAccount)
+      console.log('toTokenAccount', toTokenAccount)
 
-//       const toTokenAccountInfo = await connection.getAccountInfo(
-//         toTokenAccount,
-//       )
-//       console.log('toTokenAccountInfo', toTokenAccountInfo)
+      const toTokenAccountInfo = await connection.getAccountInfo(
+        toTokenAccount,
+      )
+      console.log('toTokenAccountInfo', toTokenAccountInfo)
 
-//       if (!toTokenAccountInfo) {
-//         transaction.add(
-//           splTokenLib.value.createAssociatedTokenAccountInstruction(
-//             sender,
-//             toTokenAccount,
-//             destination,
-//             mintPubkey,
-//           ),
-//         )
-//       }
+      if (!toTokenAccountInfo) {
+        transaction.add(
+          splTokenLib.value.createAssociatedTokenAccountInstruction(
+            sender,
+            toTokenAccount,
+            destination,
+            mintPubkey,
+          ),
+        )
+      }
 
-//       transaction.add(
-//         splTokenLib.value.createTransferInstruction(
-//           fromTokenAccount,
-//           toTokenAccount,
-//           sender,
-//           rawAmount,
-//         ),
-//       )
-//     }
+      transaction.add(
+        splTokenLib.value.createTransferInstruction(
+          fromTokenAccount,
+          toTokenAccount,
+          sender,
+          rawAmount,
+        ),
+      )
+    }
 
-//     const signature = await wallet.value.sendTransaction(
-//       transaction,
-//       connection,
-//     )
+    const signature = await wallet.value.sendTransaction(
+      transaction,
+      connection,
+    )
 
-//     await connection.confirmTransaction(signature, 'confirmed')
+    await connection.confirmTransaction(signature, 'confirmed')
 
-//     console.log('✅ Transaction sent:', signature)
-//   }
-//   catch (error) {
-//     console.error('❌ Payment failed:', error)
-//   }
-// }
+    console.log('✅ Transaction sent:', signature)
+  }
+  catch (error) {
+    console.error('❌ Payment failed:', error)
+  }
+}
 
-// const showWalletBalance = async () => {
-//   try {
-//     if (!wallet.value?.connected || !wallet.value.publicKey) {
-//       console.warn('Wallet is not connected')
-//       return
-//     }
+const showWalletBalance = async () => {
+  try {
+    if (!wallet.value?.connected || !wallet.value.publicKey) {
+      console.warn('Wallet is not connected')
+      return
+    }
 
-//     const owner = wallet.value.publicKey
-//     const { getConnection, getTokenAccountsByOwner } = useSolanaClient()
-//     const connection = await getConnection()
+    const owner = wallet.value.publicKey
+    const { getConnection, getTokenAccountsByOwner } = useSolanaClient()
+    const connection = await getConnection()
 
-//     const lamports = await connection.getBalance(owner)
-//     const sol = lamports / 1e9
-//     console.log(`SOL balance: ${sol} SOL`)
+    const lamports = await connection.getBalance(owner)
+    const sol = lamports / 1e9
+    console.log(`SOL balance: ${sol} SOL`)
 
-//     const tokenAccounts = await getTokenAccountsByOwner({
-//       owner: owner.toBase58(),
-//     })
+    const tokenAccounts = await getTokenAccountsByOwner({
+      owner: owner.toBase58(),
+    })
 
-//     if (tokenAccounts.length === 0) {
-//       console.log('No SPL tokens found')
-//     }
-//     else {
-//       tokenAccounts.forEach((acc) => {
-//         const uiAmount = Number(acc.amount) / 10 ** acc.decimals
-//         console.log(`Token account: ${acc.pubkey} | amount: ${uiAmount}`)
-//       })
-//     }
-//   }
-//   catch (err) {
-//     console.error('Failed to fetch balances:', err)
-//   }
-// }
+    if (tokenAccounts.length === 0) {
+      console.log('No SPL tokens found')
+    }
+    else {
+      tokenAccounts.forEach((acc) => {
+        const uiAmount = Number(acc.amount) / 10 ** acc.decimals
+        console.log(`Token account: ${acc.pubkey} | amount: ${uiAmount}`)
+      })
+    }
+  }
+  catch (err) {
+    console.error('Failed to fetch balances:', err)
+  }
+}
 </script>
 
 <style>
-/* .set-height {
+ .set-height {
   min-height: 100vh;
 }
 .height-input {
@@ -463,5 +464,5 @@
 }
 .swv-modal {
   z-index: 2401 !important;
-} */
+}
 </style>
