@@ -86,7 +86,7 @@
               <div class="ex-category__card">
                 <div class="d-flex align-center">
                   <div class="ex-category__card--title mb-sm-4 pr-6 pr-md-0">
-                    {{ category.stat }}
+                    {{ typeof category.stat === 'number' ? $numberFormat(category.stat) : category.stat }}
                   </div>
                   <span class="d-sm-none">
                     <v-icon
@@ -131,28 +131,28 @@ const categories = ref([
   {
     type: 'test',
     key: 'papers',
-    stat: '34,519',
+    stat: '--',
     title: 'Past Paper',
     icon: 'icon-paper',
   },
   {
     type: 'azmoon',
     key: 'exams',
-    stat: '410',
+    stat: '--',
     title: 'QuizHub',
     icon: 'icon-exam',
   },
   {
     type: 'dars',
     key: 'tutorial',
-    stat: '50',
+    stat: '--',
     title: 'Tutorial',
     icon: 'icon-tutorial',
   },
   {
     type: 'question',
     key: 'questions',
-    stat: '+1,000',
+    stat: '--',
     title: 'Forum',
     icon: 'icon-q-a',
   },
@@ -160,7 +160,7 @@ const categories = ref([
     type: 'learnfiles',
     key: 'files',
     stat: '220',
-    title: 'Multimedia',
+    title: '--',
     icon: 'icon-multimedia',
   },
   {
