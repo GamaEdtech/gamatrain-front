@@ -7,21 +7,16 @@ interface FileDownloadEvent {
 }
 
 export const useGtmEvents = () => {
-  const gtm = useGtm()
+  const { $gtm } = useNuxtApp()
 
   const trackFileDownload = (payload: FileDownloadEvent) => {
-    if (!gtm) {
-      console.warn('GTM is not available.')
+    if (!$gtm) {
+      console.warn('[GTM] Not initialized')
       return
     }
 
-    // Send a custom event to DataLayer
-    gtm.push({
-      event: 'file_download_click', // Custom event name
-      ...payload,
-    })
-
-    console.log('GTM Event Sent: file_download_click', payload)
+    $gtm.push('file_download_click', payload)
+    console.log('[GTM] file_download_click', payload)
   }
 
   return {

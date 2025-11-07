@@ -448,9 +448,7 @@
 </template>
 
 <script setup>
-import { useGtmEvents } from '~/composables/useGtmEvents'
-
-const { trackFileDownload } = useGtmEvents()
+// const { trackFileDownload } = useGtmEvents()
 
 const props = defineProps({
   contentData: {
@@ -546,11 +544,11 @@ const handleDownloadClick = async (type, extraId) => {
         return
       }
     }
-    trackFileDownload({
-      file_type: 'past_paper',
-      file_name: props.contentData?.title,
-      file_url: props.contentData?.title_url,
-    })
+    // trackFileDownload({
+    //   file_type: 'past_paper',
+    //   file_name: props.contentData?.title,
+    //   file_url: props.contentData?.title_url,
+    // })
     // console.log(props?.contentData)
     // Proceed with normal download
     await startDownload(type, extraId)

@@ -45,7 +45,7 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { useWorkspace } from '~/composables/useWorkspace'
 import { governance } from '~/composables/useGovernance'
-import type { Program } from '@coral-xyz/anchor'
+// import type { Program } from '@coral-xyz/anchor'
 import type { Ref } from 'vue'
 
 // --- STATE ---

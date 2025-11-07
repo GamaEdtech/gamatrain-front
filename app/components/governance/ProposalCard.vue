@@ -190,12 +190,20 @@
 </template>
 
 <script setup lang="ts">
-import * as anchor from '@coral-xyz/anchor'
-import type { BN as BNType } from '@coral-xyz/anchor'
+import { onMounted, ref } from 'vue'
 import { governance, useGovernance } from '~/composables/useGovernance'
 import { useWorkspace } from '~/composables/useWorkspace'
 
-const { BN } = anchor
+let BN: any
+type BNType = any // optional, you can refine later with typeof import
+
+onMounted(async () => {
+  // Dynamically import Anchor only on client side (Nuxt 4 SSR-safe)
+  if (import.meta.client) {
+    const anchor = await import('@coral-xyz/anchor')
+    BN = anchor.BN
+  }
+})
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

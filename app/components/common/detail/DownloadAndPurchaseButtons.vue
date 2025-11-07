@@ -224,7 +224,6 @@ import type {
   AppError,
   FilesDTO,
 } from '~/interfaces/api'
-import { useGtmEvents } from '~/composables/useGtmEvents'
 import { useDisplay } from 'vuetify'
 
 interface IDownloadAndPurchaseButtons {
@@ -247,7 +246,7 @@ type TypeFile = 'q_word' | 'q_pdf' | 'a_file' | 'extra'
 const props = defineProps<IDownloadAndPurchaseButtons>()
 
 const { $toast } = useNuxtApp()
-const { trackFileDownload } = useGtmEvents()
+// const { trackFileDownload } = useGtmEvents()
 const auth = useAuth()
 const router = useRouter()
 const { xs } = useDisplay()
@@ -310,11 +309,11 @@ const isDownloading = (type: TypeFile, extraId?: string) => {
 }
 
 const startDownload = async (type: TypeFile, extraId?: string) => {
-  trackFileDownload({
-    file_type: 'past_paper',
-    file_name: props.title,
-    file_url: props.titleUrl,
-  })
+  // trackFileDownload({
+  //   file_type: 'past_paper',
+  //   file_name: props.title,
+  //   file_url: props.titleUrl,
+  // })
   const downloadKey = extraId ? `${type}-${extraId}` : type
 
   let apiUrl = ''

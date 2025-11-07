@@ -73,8 +73,18 @@
         >
           See more
         </v-btn>
-      </ClientOnly>
-      <ClientOnly>
+
+        <v-btn
+          :size="mdAndUp ? 'large' : 'default'"
+          color="primary"
+          variant="flat"
+          rounded
+          class="ml-3"
+          @click="visibleStake=true"
+        >
+          Stake
+        </v-btn>
+
         <v-btn
           :size="mdAndUp ? 'large' : 'default'"
           color="#1D2939"
@@ -93,10 +103,13 @@
     </div>
 
     <!-- Dialogs -->
-    <governance-creat-proposal
+    <governance-create-proposal
       v-model="visibleCreateProposal"
       @created="handleProposalCreated"
       @wallet-required="handleWalletRequired"
+    />
+    <governance-stake
+      v-model="visibleStake"
     />
     <governance-proposal-detail
       v-if="selectedProposal"
@@ -151,7 +164,7 @@ import { ref, onMounted, watch, defineAsyncComponent } from 'vue'
 import { useDisplay } from 'vuetify/lib/composables/display'
 import { useWorkspace } from '~/composables/useWorkspace'
 import { governance } from '~/composables/useGovernance'
-import type { Program } from '@coral-xyz/anchor'
+// import type { Program } from '@coral-xyz/anchor'
 // Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
 
 const { mdAndUp } = useDisplay()
@@ -175,6 +188,7 @@ const selected = ref(null)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const selectedProposal = ref<any | null>(null)
 const visibleCreateProposal = ref(false)
+const visibleStake = ref(false)
 const visibleProposalDetail = ref(false)
 const showWalletModal = ref(false)
 

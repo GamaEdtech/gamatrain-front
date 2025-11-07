@@ -1,16 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import type { Ref } from 'vue'
-import { Connection, PublicKey, Keypair } from '@solana/web3.js'
-import type { Transaction, VersionedTransaction } from '@solana/web3.js'
-import { AnchorProvider, Program, type Idl, type Wallet } from '@coral-xyz/anchor'
+import { Connection, PublicKey, type Transaction, type VersionedTransaction } from '@solana/web3.js'
+import type { Idl, Wallet } from '@coral-xyz/anchor'
 import idl from '~/idl/gamaedtech_program.json'
 
 // --- Constants ---
 const preflightCommitment = 'processed'
 const commitment = 'confirmed'
-const PROGRAM_ID_STRING = idl.address
 
 // --- Types ---
 interface WorkspaceState {
@@ -22,20 +20,15 @@ interface WorkspaceState {
   publicKey: Ref<any | null>
 }
 
-// Global workspace state (singleton)
+// Global workspace (singleton)
 let globalWorkspace: WorkspaceState | null = null
 
 /**
- * SSR-friendly workspace composable for Solana interaction
- * This replaces the plugin approach with a proper composable pattern
+ * SSR-friendly Solana workspace composable
  */
 export const useWorkspace = (): WorkspaceState => {
-  // Return existing instance if available
-  if (globalWorkspace) {
-    return globalWorkspace
-  }
+  if (globalWorkspace) return globalWorkspace
 
-  // Client-only refs to avoid SSR issues
   const wallet = ref<any>(null)
   const connected = ref(false)
   const publicKey = ref<any | null>(null)
@@ -43,19 +36,10 @@ export const useWorkspace = (): WorkspaceState => {
   const provider = ref<any>(null)
   const program = ref<any>(null)
 
-  // Create the workspace state
-  globalWorkspace = {
-    wallet,
-    connection,
-    provider,
-    program,
-    connected,
-    publicKey,
-  }
+  globalWorkspace = { wallet, connection, provider, program, connected, publicKey }
 
-  // Initialize only on client side and only once
+  // Initialize only on client side
   if (import.meta.client) {
-    // Use nextTick to ensure DOM is ready
     nextTick(() => {
       initializeWorkspace()
     })
@@ -65,32 +49,36 @@ export const useWorkspace = (): WorkspaceState => {
 }
 
 /**
- * Initialize the workspace - called only once
+ * Initialize workspace once on client
  */
 async function initializeWorkspace() {
-  if (!globalWorkspace) return
-  if (!import.meta.client) return
+  if (!globalWorkspace || !import.meta.client) return
 
   const { wallet, connection, provider, program, connected, publicKey } = globalWorkspace
 
   try {
-    // Initialize connection first
+    // Load runtime config (RPC URL)
     const config = useRuntimeConfig()
     const rpcUrl = config.public?.solanaRpcUrl || 'https://api.devnet.solana.com'
+
+    // Connect to Solana RPC
     connection.value = new Connection(rpcUrl, commitment)
 
-    // Dynamic import of wallet functionality
-    const { useAnchorWallet, useWallet } = await import('solana-wallets-vue')
+    // --- Dynamic imports ---
+    const [{ AnchorProvider, Program }, wallets] = await Promise.all([
+      import('@coral-xyz/anchor').then(m => ({ AnchorProvider: m.AnchorProvider, Program: m.Program })),
+      import('solana-wallets-vue'),
+    ])
+
+    const { useAnchorWallet, useWallet } = wallets
     const anchorWallet = useAnchorWallet()
     const walletStore = useWallet()
 
     wallet.value = anchorWallet
-
-    // Set initial values
     connected.value = walletStore.connected?.value || false
     publicKey.value = walletStore.publicKey?.value || null
 
-    // Watch wallet connection state
+    // Reactively update wallet info
     if (walletStore.connected) {
       watch(() => walletStore.connected.value, (isConnected) => {
         connected.value = isConnected
@@ -103,13 +91,13 @@ async function initializeWorkspace() {
       })
     }
 
-    // Setup provider reactively
+    // --- Provider setup ---
     const setupProvider = () => {
       if (!connection.value) return null
 
       if (!wallet.value?.value) {
-        // Return dummy provider for when wallet is not connected
-        const dummyWallet: any = {
+        // Dummy wallet for disconnected state
+        const dummyWallet: Wallet = {
           publicKey: new PublicKey('11111111111111111111111111111111'),
           async signTransaction<T extends Transaction | VersionedTransaction>(): Promise<never> {
             throw new Error('Wallet not connected')
@@ -121,19 +109,14 @@ async function initializeWorkspace() {
         return new AnchorProvider(connection.value, dummyWallet, { preflightCommitment, commitment })
       }
 
-      return new AnchorProvider(connection.value, wallet.value.value, {
-        preflightCommitment,
-        commitment,
-      })
+      return new AnchorProvider(connection.value, wallet.value.value, { preflightCommitment, commitment })
     }
 
-    // Setup program reactively
+    // --- Program setup ---
     const setupProgram = () => {
-      const currentProvider = provider.value
-      if (!currentProvider) return null
-
+      if (!provider.value) return null
       try {
-        return new Program(idl as any, currentProvider) as any
+        return new Program(idl as Idl, idl.address, provider.value)
       }
       catch (error) {
         console.error('Failed to create program:', error)
@@ -141,12 +124,11 @@ async function initializeWorkspace() {
       }
     }
 
-    // Update provider when wallet changes
+    // Update functions
     const updateProvider = () => {
       provider.value = setupProvider()
     }
 
-    // Update program when provider changes
     const updateProgram = () => {
       program.value = setupProgram()
     }
@@ -155,7 +137,7 @@ async function initializeWorkspace() {
     updateProvider()
     updateProgram()
 
-    // Watch for changes
+    // Reactivity: wallet → provider → program
     watch(() => wallet.value?.value, () => {
       updateProvider()
       updateProgram()
