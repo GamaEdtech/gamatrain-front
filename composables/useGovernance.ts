@@ -257,7 +257,7 @@ export const governance = {
         program.programId,
       )
 
-      // 2️⃣ Fetch user_state (if exists) to get proposal_count
+      // Fetch user_state (if exists) to get proposal_count
       let proposalCount = 0
       try {
         const userStateAccount = await program.account.userState.fetch(userStatePda)
@@ -269,7 +269,7 @@ export const governance = {
       }
 
       // Derive proposal PDA
-      const [proposalPda] = await web3.PublicKey.findProgramAddressSync(
+      const [proposalPda] = web3.PublicKey.findProgramAddressSync(
         [
           Buffer.from('proposal'),
           user.toBuffer(),
@@ -277,19 +277,29 @@ export const governance = {
         ],
         program.programId,
       )
+      // Derive stackAccount PDA
+      const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
+        [
+          Buffer.from('stake_account'),
+          user.toBuffer(),
+        ],
+        program.programId,
+      )
 
+      const { title, brief, cate, reference, amount } = formData
       const tx = await program.methods
         .createProposal(
-          formData.title.trim(),
-          formData.brief.trim(),
-          formData.cate || 'general',
-          formData.reference || '',
-          new BN(formData.amount || 0),
+          title.trim(),
+          brief.trim(),
+          cate || 'general',
+          reference || '',
+          new BN(amount || 0),
         )
         .accounts({
-          proposal: proposalPda,
           userState: userStatePda,
+          proposal: proposalPda,
           user: user,
+          stakeAccount: stakeAccountPda,
           systemProgram: web3.SystemProgram.programId,
         })
         .rpc({ skipPreflight: true })
@@ -308,7 +318,8 @@ export const governance = {
     catch (error: any) {
       console.error('Error creating proposal:', error)
       const { handleGovernanceError } = useGovernance()
-      throw new Error(handleGovernanceError(error))
+      const msg = handleGovernanceError(error) || 'Unknown action'
+      throw new Error(msg)
     }
   },
 
