@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     connectionStringMongoDB: process.env.CONNECTION_STRING_MONGODB,
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
+      gtmId: process.env.NUXT_PUBLIC_GTM_ID,
       solanaRpcUrl: process.env.NUXT_SOLANA_RPC_URL,
       solanaNetwork: process.env.NUXT_SOLANA_NETWORK,
       randomCoinApiKey: process.env.NUXT_PUBLIC_RANDOM_COIN_API_KEY,
@@ -32,7 +33,6 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@vite-pwa/nuxt',
     'nuxt-og-image',
-    '@zadigetvoltaire/nuxt-gtm',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         config.plugins.push(
@@ -52,9 +52,6 @@ export default defineNuxtConfig({
     url: 'https://gamatrain.com/',
     name: 'Gamatrain',
   },
-
-  // Plugins
-  plugins: [{ src: 'plugins/helper.js' }],
 
   // SSR configuration
   ssr: true,
@@ -222,14 +219,6 @@ export default defineNuxtConfig({
 
   image: {
     domains: ['core.gamatrain.com'],
-  },
-
-  // Google Tag Manager configuration
-  gtm: {
-    id: process.env.NUXT_PUBLIC_GTM_ID,
-    enabled: true,
-    debug: true,
-    loadScript: true,
   },
 
   // Build configuration

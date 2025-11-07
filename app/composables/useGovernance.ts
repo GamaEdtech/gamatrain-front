@@ -1,8 +1,18 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import * as anchor from '@coral-xyz/anchor'
 import { ref } from 'vue'
 import type { PublicKey } from '@solana/web3.js'
+
+let anchor: typeof import('@coral-xyz/anchor')
+
+// Load dynamically only on client
+if (import.meta.client) {
+  const mod = await import('@coral-xyz/anchor')
+  anchor = mod
+}
+else {
+  // optional: fallback to CJS build for SSR if needed
+  const mod = await import('@coral-xyz/anchor/dist/cjs')
+  anchor = mod
+}
 
 // Type alias (keep it only for typing)
 type Program<T extends anchor.Idl = anchor.Idl> = anchor.Program<T>

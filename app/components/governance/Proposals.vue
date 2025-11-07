@@ -80,11 +80,7 @@
           variant="flat"
           rounded
           class="ml-3"
-          @click="
-            connected
-              ? (visibleStake = true)
-              : (showWalletModal = true)
-          "
+          @click="visibleStake=true"
         >
           Stake
         </v-btn>
@@ -168,7 +164,7 @@ import { ref, onMounted, watch, defineAsyncComponent } from 'vue'
 import { useDisplay } from 'vuetify/lib/composables/display'
 import { useWorkspace } from '~/composables/useWorkspace'
 import { governance } from '~/composables/useGovernance'
-import type { Program } from '@coral-xyz/anchor'
+// import type { Program } from '@coral-xyz/anchor'
 // Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
 
 const { mdAndUp } = useDisplay()

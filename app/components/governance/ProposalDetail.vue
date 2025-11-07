@@ -88,10 +88,15 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import * as anchor from '@coral-xyz/anchor'
 
-const { BN } = anchor
+const BN = ref<any>(null)
 
+onMounted(async () => {
+  if (import.meta.client) {
+    const anchor = await import('@coral-xyz/anchor')
+    BN.value = anchor.BN
+  }
+})
 const { smAndUp } = useDisplay()
 const { isProposalExpired } = useGovernance()
 
