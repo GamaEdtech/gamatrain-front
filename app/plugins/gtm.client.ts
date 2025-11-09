@@ -28,7 +28,7 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   // Provide non-reactive GTM helper
   const gtm = {
-    push(event: string, data: Record<string, any> = {}) {
+    push(event: string, data: Record<string, unknown> = {}) {
       if (typeof window === 'undefined' || !window.dataLayer) return
       window.dataLayer.push({ event, ...data })
     },

@@ -358,7 +358,7 @@ const { xs } = useDisplay()
 type MaybeWallet = {
   sendTransaction?: (
     tx: VersionedTransaction,
-    connection?: unknown
+    connection?: unknown,
   ) => Promise<string>
   signTransaction?: (tx: VersionedTransaction) => Promise<VersionedTransaction>
   connection?: { sendRawTransaction: (rawTx: Uint8Array) => Promise<string> }

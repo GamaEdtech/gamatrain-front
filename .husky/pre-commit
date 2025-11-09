@@ -1,9 +1,45 @@
 #!/usr/bin/env bash
 
-if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
-  npm.cmd run lint
-  npm.cmd run check-paths
-else
+# Try to find npm/node in current environment first
+if command -v npm &> /dev/null; then
   npm run lint
   npm run check-paths
+elif command -v node &> /dev/null; then
+  if [ -f "node_modules/.bin/eslint" ]; then
+    node node_modules/.bin/eslint .
+  elif [ -f "node_modules/eslint/bin/eslint.js" ]; then
+    node node_modules/eslint/bin/eslint.js .
+  else
+    echo "Warning: eslint not found, skipping lint check"
+  fi
+  node scripts/check-file-paths.js
+# If not found, try using WSL (Windows Subsystem for Linux)
+elif command -v wsl &> /dev/null; then
+  # Get the current directory and convert to WSL path format
+  CURRENT_DIR="$PWD"
+  WSL_PATH=""
+  
+  # Handle different path formats:
+  # 1. Git Bash format: /d/work/gamatrain-front -> /mnt/d/work/gamatrain-front
+  if [[ "$CURRENT_DIR" =~ ^/([a-z])/ ]]; then
+    DRIVE_LETTER="${BASH_REMATCH[1]}"
+    WSL_PATH="/mnt/${DRIVE_LETTER}${CURRENT_DIR#/${DRIVE_LETTER}}"
+  # 2. Windows format: D:\work\gamatrain-front -> /mnt/d/work/gamatrain-front
+  elif [[ "$CURRENT_DIR" =~ ^([A-Za-z]): ]]; then
+    DRIVE_LETTER=$(echo "${BASH_REMATCH[1]}" | tr '[:upper:]' '[:lower:]')
+    WSL_PATH="/mnt/${DRIVE_LETTER}${CURRENT_DIR#*:}"
+    # Replace backslashes with forward slashes
+    WSL_PATH="${WSL_PATH//\\//}"
+  # 3. Already in WSL format or Unix format
+  else
+    WSL_PATH="$CURRENT_DIR"
+  fi
+  
+  # Run commands in WSL
+  wsl bash -c "cd '$WSL_PATH' && npm run lint"
+  wsl bash -c "cd '$WSL_PATH' && npm run check-paths"
+else
+  echo "Error: npm, npx, or node not found in PATH."
+  echo "Please ensure Node.js is installed and in your PATH, or WSL is available."
+  exit 1
 fi
