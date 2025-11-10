@@ -70,10 +70,10 @@ import { useWorkspace } from '~/composables/useWorkspace'
 
 // --- Props & Emits (instead of defineModel) ---
 const props = defineProps<{ modelValue: boolean }>()
+
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
-  (e: 'created'): void
-  (e: 'walletRequired'): void
+  (e: 'created' | 'walletRequired'): void
 }>()
 
 // two-way binding for v-model
@@ -107,7 +107,14 @@ const isWalletReady = computed(() =>
 
 // --- Submit handler ---
 async function onSubmit() {
-  const { valid } = await (formRef.value as any)?.validate()
+  if (!formRef.value) {
+    console.warn('Form reference is not ready')
+    return
+  }
+
+  // Type assertion to any because v-form might not be typed
+  const { valid } = await (formRef.value as unknown).validate()
+
   if (!valid) return
 
   if (!isWalletReady.value) {
@@ -138,7 +145,7 @@ async function onSubmit() {
 
     form.value = { title: '', brief: '', cate: 'general', reference: '', amount: 0 }
   }
-  catch (e: any) {
+  catch (e: unknown) {
     console.error('Failed to create proposal:', e)
     useNuxtApp().$toast.error(e.message || 'Failed to create proposal')
   }

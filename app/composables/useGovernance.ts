@@ -28,12 +28,6 @@ interface CreateProposalForm {
   amount: number
 }
 
-interface GovernanceError {
-  code: number
-  name: string
-  message: string
-}
-
 interface VoteRecordData {
   proposalId: PublicKey
   voter: PublicKey
@@ -56,11 +50,11 @@ interface ProposalData {
 }
 
 export const ensureBuffer = async () => {
-  if (typeof window !== 'undefined' && !(window as any).Buffer) {
+  if (typeof window !== 'undefined' && !(window as unknown).Buffer) {
     const { Buffer } = await import('buffer');
-    (window as any).Buffer = Buffer
+    (window as unknown).Buffer = Buffer
   }
-  return typeof window !== 'undefined' ? (window as any).Buffer : (globalThis as any).Buffer
+  return typeof window !== 'undefined' ? (window as unknown).Buffer : (globalThis as unknown).Buffer
 }
 
 /**
@@ -75,7 +69,7 @@ export const useGovernance = () => {
    * @param connection - Solana connection instance
    * @returns Vote power as a number
    */
-  const calculateVotePower = async (userPublicKey: PublicKey, connection: any): Promise<number> => {
+  const calculateVotePower = async (userPublicKey: PublicKey): Promise<number> => {
     try {
       // Get user's GET token balance
       const { fetchTokenBalance } = await import('~/composables/useSolanaClient')
@@ -121,7 +115,7 @@ export const useGovernance = () => {
         voteRecord: voteRecord as VoteRecordData,
       }
     }
-    catch (error) {
+    catch {
       // Vote record doesn't exist, user hasn't voted
       return { hasVoted: false, voteRecord: null }
     }
@@ -142,7 +136,7 @@ export const useGovernance = () => {
    * @param error - The error object
    * @returns User-friendly error message
    */
-  const handleGovernanceError = (error: any): string => {
+  const handleGovernanceError = (error: unknown): string => {
     if (error.code) {
       switch (error.code) {
         case 6000:
@@ -184,8 +178,8 @@ export const governance = {
   async fetchProposals(program: Program) {
     await ensureBuffer()
     try {
-      const proposals = await (program.account as any).proposal.all()
-      return proposals.map((proposal: any) => ({
+      const proposals = await (program.account as unknown).proposal.all()
+      return proposals.map((proposal: unknown) => ({
         ...proposal,
         account: {
           ...proposal.account,
@@ -211,9 +205,9 @@ export const governance = {
   async fetchLatestProposals(program: Program) {
     await ensureBuffer()
     try {
-      const proposals = await (program.account as any).proposal.all()
+      const proposals = await (program.account as unknown).proposal.all()
 
-      const mapped = proposals.map((proposal: any) => ({
+      const mapped = proposals.map((proposal: unknown) => ({
         ...proposal,
         account: {
           ...proposal.account,
@@ -226,7 +220,7 @@ export const governance = {
         },
       }))
 
-      mapped.sort((a: any, b: any) => {
+      mapped.sort((a: unknown, b: unknown) => {
         const aCreated = a.account.createdAt.toNumber ? a.account.createdAt.toNumber() : Number(a.account.createdAt)
         const bCreated = b.account.createdAt.toNumber ? b.account.createdAt.toNumber() : Number(b.account.createdAt)
         return bCreated - aCreated
@@ -273,7 +267,7 @@ export const governance = {
         const userStateAccount = await program.account.userState.fetch(userStatePda)
         proposalCount = userStateAccount.proposalCount
       }
-      catch (err) {
+      catch {
         // If account doesn't exist, first proposal -> count = 0
         proposalCount = 0
       }
@@ -325,7 +319,7 @@ export const governance = {
         proposalPublicKey: proposalPda,
       }
     }
-    catch (error: any) {
+    catch (error: unknown) {
       console.error('Error creating proposal:', error)
       const { handleGovernanceError } = useGovernance()
       const msg = handleGovernanceError(error) || 'Unknown action'
@@ -398,7 +392,7 @@ export const governance = {
         }
       }
     }
-    catch (error: any) {
+    catch (error: unknown) {
       console.error('Error voting on proposal:', error)
       const { handleGovernanceError } = useGovernance()
       throw new Error(handleGovernanceError(error))
@@ -435,7 +429,7 @@ export const governance = {
 
       return { signature: tx }
     }
-    catch (error: any) {
+    catch (error: unknown) {
       console.error('Error deleting proposal:', error)
       const { handleGovernanceError } = useGovernance()
       throw new Error(handleGovernanceError(error))

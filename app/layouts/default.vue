@@ -19,7 +19,7 @@
       <slot />
     </div>
     <!-- Blog container -->
-    <home-blog-container v-if="!(route.path==='/' || route.path==='/search' || route.path==='/school' || route.name==='exam-start-id' || route.name==='school-add')" />
+    <home-blog-container v-if="!(route.path==='/' || route.path==='/search' || route.path==='/school' || route.name==='exam-start-id' || route.name==='school-add' || route.name==='subject-directory')" />
     <!-- End blog container -->
     <common-footer />
     <AppGlobalSnackbar />
