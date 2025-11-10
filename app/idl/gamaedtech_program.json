@@ -2,7 +2,7 @@
   "address": "9F77hJsRRXs7vF9UDncZKth2r5wEPgcRkEfyoZDNQ3eK",
   "metadata": {
     "name": "gamaedtech_program",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "spec": "0.1.0",
     "description": "Created with Anchor"
   },
@@ -61,6 +61,13 @@
           }
         },
         {
+          "name": "mint",
+          "docs": [
+            "Mint account of the Token-2022 token"
+          ],
+          "writable": true
+        },
+        {
           "name": "stake_account",
           "writable": true,
           "pda": {
@@ -73,7 +80,7 @@
                   97,
                   107,
                   101,
-                  45,
+                  95,
                   97,
                   99,
                   99,
@@ -92,7 +99,7 @@
         },
         {
           "name": "token_program",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         }
       ],
       "args": []
@@ -185,7 +192,7 @@
                   97,
                   107,
                   101,
-                  45,
+                  95,
                   97,
                   99,
                   99,
@@ -331,6 +338,10 @@
           "writable": true
         },
         {
+          "name": "mint",
+          "writable": true
+        },
+        {
           "name": "stake_account",
           "writable": true,
           "pda": {
@@ -343,7 +354,7 @@
                   97,
                   107,
                   101,
-                  45,
+                  95,
                   97,
                   99,
                   99,
@@ -362,7 +373,7 @@
         },
         {
           "name": "token_program",
-          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
         },
         {
           "name": "system_program",
@@ -402,7 +413,7 @@
                   97,
                   107,
                   101,
-                  45,
+                  95,
                   97,
                   99,
                   99,
@@ -498,7 +509,7 @@
                   97,
                   107,
                   101,
-                  45,
+                  95,
                   97,
                   99,
                   99,

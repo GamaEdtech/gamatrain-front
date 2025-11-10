@@ -28,8 +28,6 @@ interface CreateProposalForm {
   amount: number
 }
 
-// Removed unused interface
-
 interface VoteRecordData {
   proposalId: PublicKey
   voter: PublicKey
@@ -52,20 +50,11 @@ interface ProposalData {
 }
 
 export const ensureBuffer = async () => {
-  interface WindowWithBuffer extends Window {
-    Buffer?: typeof import('buffer').Buffer
-  }
-  interface GlobalWithBuffer {
-    Buffer?: typeof import('buffer').Buffer
-  }
-
-  if (typeof window !== 'undefined' && !(window as WindowWithBuffer).Buffer) {
+  if (typeof window !== 'undefined' && !(window as unknown).Buffer) {
     const { Buffer } = await import('buffer');
-    (window as WindowWithBuffer).Buffer = Buffer
+    (window as unknown).Buffer = Buffer
   }
-  return typeof window !== 'undefined'
-    ? (window as WindowWithBuffer).Buffer
-    : (globalThis as GlobalWithBuffer).Buffer
+  return typeof window !== 'undefined' ? (window as unknown).Buffer : (globalThis as unknown).Buffer
 }
 
 /**
@@ -80,7 +69,7 @@ export const useGovernance = () => {
    * @param connection - Solana connection instance
    * @returns Vote power as a number
    */
-  const calculateVotePower = async (userPublicKey: PublicKey, _connection: unknown): Promise<number> => {
+  const calculateVotePower = async (userPublicKey: PublicKey): Promise<number> => {
     try {
       // Get user's GET token balance
       const { fetchTokenBalance } = await import('~/composables/useSolanaClient')
@@ -147,7 +136,7 @@ export const useGovernance = () => {
    * @param error - The error object
    * @returns User-friendly error message
    */
-  const handleGovernanceError = (error: { code?: number, message?: string }): string => {
+  const handleGovernanceError = (error: unknown): string => {
     if (error.code) {
       switch (error.code) {
         case 6000:
@@ -189,8 +178,8 @@ export const governance = {
   async fetchProposals(program: Program) {
     await ensureBuffer()
     try {
-      const proposals = await (program.account as { proposal: { all: () => Promise<Array<{ account: ProposalData, publicKey: PublicKey }>> } }).proposal.all()
-      return proposals.map(proposal => ({
+      const proposals = await (program.account as unknown).proposal.all()
+      return proposals.map((proposal: unknown) => ({
         ...proposal,
         account: {
           ...proposal.account,
@@ -216,9 +205,9 @@ export const governance = {
   async fetchLatestProposals(program: Program) {
     await ensureBuffer()
     try {
-      const proposals = await (program.account as { proposal: { all: () => Promise<Array<{ account: ProposalData, publicKey: PublicKey }>> } }).proposal.all()
+      const proposals = await (program.account as unknown).proposal.all()
 
-      const mapped = proposals.map(proposal => ({
+      const mapped = proposals.map((proposal: unknown) => ({
         ...proposal,
         account: {
           ...proposal.account,
@@ -231,7 +220,7 @@ export const governance = {
         },
       }))
 
-      mapped.sort((a, b) => {
+      mapped.sort((a: unknown, b: unknown) => {
         const aCreated = a.account.createdAt.toNumber ? a.account.createdAt.toNumber() : Number(a.account.createdAt)
         const bCreated = b.account.createdAt.toNumber ? b.account.createdAt.toNumber() : Number(b.account.createdAt)
         return bCreated - aCreated

@@ -70,6 +70,7 @@ import { useWorkspace } from '~/composables/useWorkspace'
 
 // --- Props & Emits (instead of defineModel) ---
 const props = defineProps<{ modelValue: boolean }>()
+
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
   (e: 'created' | 'walletRequired'): void
@@ -106,8 +107,14 @@ const isWalletReady = computed(() =>
 
 // --- Submit handler ---
 async function onSubmit() {
-  const formRefValue = formRef.value as { validate?: () => Promise<{ valid: boolean }> } | null
-  const { valid } = await formRefValue?.validate?.() ?? { valid: false }
+  if (!formRef.value) {
+    console.warn('Form reference is not ready')
+    return
+  }
+
+  // Type assertion to any because v-form might not be typed
+  const { valid } = await (formRef.value as unknown).validate()
+
   if (!valid) return
 
   if (!isWalletReady.value) {

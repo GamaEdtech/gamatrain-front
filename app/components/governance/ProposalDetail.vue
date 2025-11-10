@@ -89,7 +89,7 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 
-const BN = ref<typeof import('@coral-xyz/anchor').BN | null>(null)
+const BN = ref<unknown>(null)
 
 onMounted(async () => {
   if (import.meta.client) {

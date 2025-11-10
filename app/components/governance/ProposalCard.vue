@@ -194,8 +194,8 @@ import { onMounted, ref } from 'vue'
 import { governance, useGovernance } from '~/composables/useGovernance'
 import { useWorkspace } from '~/composables/useWorkspace'
 
-let BN: typeof import('@coral-xyz/anchor').BN | undefined
-type BNType = typeof import('@coral-xyz/anchor').BN
+let BN: unknown
+type BNType = unknown // optional, you can refine later with typeof import
 
 onMounted(async () => {
   // Dynamically import Anchor only on client side (Nuxt 4 SSR-safe)
