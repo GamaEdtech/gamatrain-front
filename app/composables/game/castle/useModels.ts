@@ -16,7 +16,7 @@ const useModels = async (
   let chestUpdate: (delta: number) => void = () => {}
   let chestPosition: (
     position: THREE.Vector3,
-    rotation: THREE.Euler
+    rotation: THREE.Euler,
   ) => void = () => {}
 
   await Promise.all([useCastleModel(doorModels), useChestModel()]).then(

@@ -192,7 +192,7 @@ let throwCoinsMethod:
   | ((
     boxSize: { width: number, height: number, depth: number },
     side: 'left' | 'right',
-    count?: number
+    count?: number,
   ) => void)
   | null = null
 let boxSizeRef: { width: number, height: number, depth: number } | null = null
