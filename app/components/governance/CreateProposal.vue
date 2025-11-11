@@ -21,19 +21,14 @@
                 style="justify-self: end"
                 @click="isActive.value = false"
               >
-                <v-icon color="#bb6b62">
-                  mdi-close
-                </v-icon>
+                <v-icon color="#bb6b62"> mdi-close </v-icon>
               </div>
             </div>
             <div
               class="d-flex align-center create-proposal__head py-5 px-4 d-sm-none"
             >
               <div @click="isActive.value = false">
-                <v-icon
-                  size="large"
-                  color="#344054"
-                >
+                <v-icon size="large" color="#344054">
                   mdi-chevron-right
                 </v-icon>
               </div>
@@ -58,11 +53,13 @@
                   <v-icon
                     size="x-large"
                     :color="isWalletReady ? '#4CAF50' : '#98A2B3'"
-                  >mdi-wallet</v-icon></span>
+                    >mdi-wallet</v-icon
+                  ></span
+                >
                 <span
                   class="pl-2 primary-gray-400"
                   style="display: inline-block"
-                >Wallet
+                  >Wallet
                 </span>
                 <span
                   v-if="isWalletReady"
@@ -75,17 +72,39 @@
                     workspace?.publicKey?.value?.toBase58?.()?.slice(-4)
                   }}
                 </span>
-                <span
-                  v-else
-                  class="pl-1 text-error"
-                > Not Connected </span>
+                <span v-else class="pl-1 text-error"> Not Connected </span>
               </div>
+
+              <!-- Staking Status (v2.0) -->
+              <v-alert
+                v-if="isWalletReady && !hasStakedTokens"
+                type="warning"
+                variant="tonal"
+                class="mt-4"
+              >
+                <div class="text-body-2">
+                  <v-icon icon="mdi-alert" size="small" class="mr-2" />
+                  You must stake $GET tokens to create proposals. Please stake
+                  tokens first.
+                </div>
+              </v-alert>
+
+              <v-alert
+                v-else-if="isWalletReady && hasStakedTokens"
+                type="success"
+                variant="tonal"
+                class="mt-4"
+              >
+                <div class="text-body-2">
+                  <v-icon icon="mdi-check-circle" size="small" class="mr-2" />
+                  Staked:
+                  {{ $numberFormat(userStakeInfo?.stakedAmount || 0) }} $GET
+                </div>
+              </v-alert>
 
               <div class="mt-10">
                 <div class="mb-4">
-                  <div class="mb-1 primary-gray-700 text-h6">
-                    Title *
-                  </div>
+                  <div class="mb-1 primary-gray-700 text-h6">Title *</div>
                   <v-text-field
                     v-model="form.title"
                     :rules="[rules.required, rules.maxLength(100)]"
@@ -98,9 +117,7 @@
                 </div>
 
                 <div class="mb-4">
-                  <div class="mb-1 primary-gray-700 text-h6">
-                    Description *
-                  </div>
+                  <div class="mb-1 primary-gray-700 text-h6">Description *</div>
                   <v-textarea
                     v-model="form.brief"
                     :rules="[rules.required, rules.maxLength(500)]"
@@ -114,9 +131,7 @@
                 </div>
 
                 <div class="mb-4">
-                  <div class="mb-1 primary-gray-700 text-h6">
-                    Category *
-                  </div>
+                  <div class="mb-1 primary-gray-700 text-h6">Category *</div>
                   <v-select
                     v-model="form.cate"
                     :items="categoryOptions"
@@ -129,9 +144,7 @@
                 </div>
 
                 <div class="mb-4">
-                  <div class="mb-1 primary-gray-700 text-h6">
-                    Reference URL
-                  </div>
+                  <div class="mb-1 primary-gray-700 text-h6">Reference URL</div>
                   <v-text-field
                     v-model="form.reference"
                     :rules="[rules.url]"
@@ -181,8 +194,15 @@
                 rounded
                 class="flex-1 w-70"
                 :loading="isSubmitting"
+                :disabled="isWalletReady && !hasStakedTokens"
               >
-                {{ !isWalletReady ? "Connect Wallet" : "Submit" }}
+                {{
+                  !isWalletReady
+                    ? "Connect Wallet"
+                    : !hasStakedTokens
+                    ? "Stake Tokens Required"
+                    : "Submit"
+                }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -193,147 +213,187 @@
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from 'vuetify'
-import { governance } from '~/composables/useGovernance'
-import { useWorkspace } from '~/composables/useWorkspace'
-import { ref, watch, computed } from 'vue'
+import { useDisplay } from "vuetify";
+import { governance } from "~/composables/useGovernance";
+import { useWorkspace } from "~/composables/useWorkspace";
+import { ref, watch, computed } from "vue";
 
-const { smAndUp } = useDisplay()
+const { smAndUp } = useDisplay();
 const props = defineProps({
   modelValue: {
     type: Boolean,
     required: true,
   },
-})
+});
 const emits = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-  (e: 'created'): void
+  (e: "update:modelValue", value: boolean): void;
+  (e: "created"): void;
   // eslint-disable-next-line @typescript-eslint/unified-signatures
-  (e: 'walletRequired'): void
-}>()
+  (e: "walletRequired"): void;
+}>();
 const rules = {
-  required: (v: unknown) => !!v || 'This field is required',
+  required: (v: unknown) => !!v || "This field is required",
   maxLength: (max: number) => (v: string) =>
     !v || v.length <= max || `Maximum ${max} characters allowed`,
   url: (v: string) =>
-    !v
-    || /^https?:\/\/.+/.test(v)
-    || 'Must be a valid URL starting with http:// or https://',
+    !v ||
+    /^https?:\/\/.+/.test(v) ||
+    "Must be a valid URL starting with http:// or https://",
   positiveNumber: (v: number) =>
-    v === null || v === undefined || v >= 0 || 'Must be a positive number',
-}
+    v === null || v === undefined || v >= 0 || "Must be a positive number",
+};
 
 const categoryOptions = [
-  { title: 'General', value: 'general' },
-  { title: 'Development', value: 'development' },
-  { title: 'Marketing', value: 'marketing' },
-  { title: 'Community', value: 'community' },
-  { title: 'Finance', value: 'finance' },
-  { title: 'Education', value: 'education' },
-  { title: 'Infrastructure', value: 'infrastructure' },
-]
+  { title: "General", value: "general" },
+  { title: "Development", value: "development" },
+  { title: "Marketing", value: "marketing" },
+  { title: "Community", value: "community" },
+  { title: "Finance", value: "finance" },
+  { title: "Education", value: "education" },
+  { title: "Infrastructure", value: "infrastructure" },
+];
 
-const formIsValid = ref(false)
+const formIsValid = ref(false);
 
-const formRef = ref(null)
-const isSubmitting = ref(false)
+const formRef = ref(null);
+const isSubmitting = ref(false);
 
 const form = ref({
-  title: '',
-  brief: '',
-  cate: 'general',
-  reference: '',
+  title: "",
+  brief: "",
+  cate: "general",
+  reference: "",
   amount: 0,
-})
-const visible = ref(props.modelValue)
+});
+const visible = ref(props.modelValue);
 
 // Wallet connection state
-const workspace = useWorkspace()
+const workspace = useWorkspace();
 const isWalletReady = computed(() => {
   return (
-    workspace?.connected?.value
-    && workspace?.publicKey?.value
-    && workspace?.program?.value
-  )
-})
+    workspace?.connected?.value &&
+    workspace?.publicKey?.value &&
+    workspace?.program?.value
+  );
+});
+
+// Check if user has staked tokens (v2.0 requirement)
+const userStakeInfo = ref<{ stakedAmount: number } | null>(null);
+const hasStakedTokens = computed(() => {
+  return userStakeInfo.value && userStakeInfo.value.stakedAmount > 0;
+});
+
+// Fetch user stake info
+const fetchUserStakeInfo = async () => {
+  if (!isWalletReady.value) return;
+
+  try {
+    const { getStakeAccount } = useGovernance();
+    const program = workspace?.program?.value;
+    const userPk = workspace?.publicKey?.value;
+
+    if (!program || !userPk) return;
+
+    const info = await getStakeAccount(program, userPk);
+    userStakeInfo.value = info;
+  } catch (error) {
+    console.error("Failed to fetch user stake info:", error);
+  }
+};
+
+// Watch for wallet changes
+watch(
+  () => isWalletReady.value,
+  (ready) => {
+    if (ready) {
+      fetchUserStakeInfo();
+    }
+  },
+  { immediate: true }
+);
 
 watch(
   () => props.modelValue,
   (val) => {
-    visible.value = val
-  },
-)
+    visible.value = val;
+  }
+);
 
 async function onSubmit() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { valid } = await (formRef.value as any).validate()
+  const { valid } = await (formRef.value as any).validate();
 
   if (valid) {
     // Check if wallet is connected first
     if (!isWalletReady.value) {
-      emits('walletRequired')
-      return
+      emits("walletRequired");
+      return;
+    }
+
+    // Check if user has staked tokens (v2.0 requirement)
+    if (!hasStakedTokens.value) {
+      const { $toast } = useNuxtApp();
+      $toast.error("You must stake $GET tokens to create proposals");
+      return;
     }
 
     try {
-      isSubmitting.value = true
-      const workspace = useWorkspace()
+      isSubmitting.value = true;
+      const workspace = useWorkspace();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const program = workspace?.program?.value as any
-      const userPk = workspace?.publicKey?.value
+      const program = workspace?.program?.value as any;
+      const userPk = workspace?.publicKey?.value;
 
       if (!program) {
         throw new Error(
-          'Blockchain program not ready. Please try refreshing the page.',
-        )
+          "Blockchain program not ready. Please try refreshing the page."
+        );
       }
 
       if (!userPk) {
         throw new Error(
-          'Wallet address not available. Please reconnect your wallet.',
-        )
+          "Wallet address not available. Please reconnect your wallet."
+        );
       }
       await governance.createProposal(program, userPk, {
-        title: String(form.value.title || ''),
-        brief: String(form.value.brief || ''),
-        cate: String(form.value.cate || 'general'),
-        reference: String(form.value.reference || ''),
+        title: String(form.value.title || ""),
+        brief: String(form.value.brief || ""),
+        cate: String(form.value.cate || "general"),
+        reference: String(form.value.reference || ""),
         amount: Number(form.value.amount || 0),
-      })
+      });
 
       // Show success message
-      const { $toast } = useNuxtApp()
-      $toast.success('Proposal created successfully!')
+      const { $toast } = useNuxtApp();
+      $toast.success("Proposal created successfully!");
 
-      emits('created')
-      emits('update:modelValue', false)
+      emits("created");
+      emits("update:modelValue", false);
 
       // Reset form
       form.value = {
-        title: '',
-        brief: '',
-        cate: 'general',
-        reference: '',
+        title: "",
+        brief: "",
+        cate: "general",
+        reference: "",
         amount: 0,
-      }
-    }
-    catch (e) {
-      console.error('Failed to create proposal:', e)
+      };
+    } catch (e) {
+      console.error("Failed to create proposal:", e);
 
       // Show error message
-      const { $toast } = useNuxtApp()
+      const { $toast } = useNuxtApp();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      $toast.error((e as any).message || 'Failed to create proposal')
-    }
-    finally {
-      isSubmitting.value = false
+      $toast.error((e as any).message || "Failed to create proposal");
+    } finally {
+      isSubmitting.value = false;
     }
   }
 }
 
 const handleAfterLeave = () => {
-  emits('update:modelValue', false)
-}
+  emits("update:modelValue", false);
+};
 </script>
 
 <style scoped>

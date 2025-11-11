@@ -6,20 +6,13 @@
         :key="index"
         class="governance-stat-item"
       >
-        <v-card
-          class="stat-card"
-          :class="stat.class"
-          elevation="0"
-        >
+        <v-card class="stat-card" :class="stat.class" elevation="0">
           <div
             v-if="isLoading && stat.dynamic"
             class="d-flex justify-center align-center"
-            style="height: 100%;"
+            style="height: 100%"
           >
-            <v-progress-circular
-              indeterminate
-              color="primary"
-            />
+            <v-progress-circular indeterminate color="primary" />
           </div>
           <div v-else>
             <div
@@ -27,7 +20,8 @@
             >
               {{ stat.title }}
               <span class="unit primary-gray-500 text-subtitle-1">
-                {{ stat.subtitle }}</span>
+                {{ stat.subtitle }}</span
+              >
             </div>
             <div
               class="governance-stat-label primary-gray-500 text-subtitle-2 text-md-h6"
@@ -42,84 +36,158 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue'
-import { useWorkspace } from '~/composables/useWorkspace'
-import { governance } from '~/composables/useGovernance'
+import { ref, onMounted, watch, computed } from "vue";
+import { useWorkspace } from "~/composables/useWorkspace";
+import { governance } from "~/composables/useGovernance";
 // import type { Program } from '@coral-xyz/anchor'
-import type { Ref } from 'vue'
+import type { Ref } from "vue";
 
 // --- STATE ---
-const program: Ref<Program | null> = ref(null)
+const program: Ref<Program | null> = ref(null);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const wallet: Ref<any | null> = ref(null)
-const isLoading = ref(true)
+const wallet: Ref<any | null> = ref(null);
+const isLoading = ref(true);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const allProposals = ref<any[]>([])
+const allProposals = ref<any[]>([]);
 
 // --- LIFECYCLE HOOK ---
 onMounted(() => {
   // Only call useWorkspace when the component is mounted in the browser.
-  const workspace = useWorkspace()
+  const workspace = useWorkspace();
 
   // Watch workspace changes
-  watch(() => workspace.program.value, (prog) => {
-    program.value = prog
-  }, { immediate: true })
+  watch(
+    () => workspace.program.value,
+    (prog) => {
+      program.value = prog;
+    },
+    { immediate: true }
+  );
 
-  watch(() => workspace.wallet.value, (w) => {
-    wallet.value = w
-  }, { immediate: true })
-})
+  watch(
+    () => workspace.wallet.value,
+    (w) => {
+      wallet.value = w;
+    },
+    { immediate: true }
+  );
+});
 
 // --- DATA FETCHING ---
 const fetchStatsData = async () => {
-  if (!program.value) return
-  isLoading.value = true
+  if (!program.value) return;
+  isLoading.value = true;
   try {
-    allProposals.value = await governance.fetchProposals(program.value)
+    allProposals.value = await governance.fetchProposals(program.value);
+  } finally {
+    isLoading.value = false;
   }
-  finally {
-    isLoading.value = false
-  }
-}
+};
 
 // --- WATCHER ---
 // Trigger data fetching when the user connects their wallet.
-watch(() => wallet.value?.publicKey, (newPublicKey) => {
-  if (newPublicKey) {
-    fetchStatsData()
-  }
-  else {
-    // Clear data and stop loading when wallet disconnects
-    allProposals.value = []
-    isLoading.value = false
-  }
-}, { deep: true })
+watch(
+  () => wallet.value?.publicKey,
+  (newPublicKey) => {
+    if (newPublicKey) {
+      fetchStatsData();
+    } else {
+      // Clear data and stop loading when wallet disconnects
+      allProposals.value = [];
+      isLoading.value = false;
+    }
+  },
+  { deep: true }
+);
 
 // Also watch for program changes
-watch(() => program.value, (prog) => {
-  if (prog && wallet.value?.publicKey) {
-    fetchStatsData()
+watch(
+  () => program.value,
+  (prog) => {
+    if (prog && wallet.value?.publicKey) {
+      fetchStatsData();
+    } else if (!prog) {
+      allProposals.value = [];
+      isLoading.value = false;
+    }
   }
-  else if (!prog) {
-    allProposals.value = []
-    isLoading.value = false
-  }
-})
+);
 
 // --- COMPUTED PROPERTIES ---
-const totalProposals = computed(() => allProposals.value.length)
-const proposalsPassed = computed(() =>
-  allProposals.value.filter(p => p.account.agreeVotes > p.account.disagreeVotes).length,
-)
+const totalProposals = computed(() => allProposals.value.length);
+const proposalsPassed = computed(
+  () =>
+    allProposals.value.filter(
+      (p) => p.account.agreeVotes > p.account.disagreeVotes
+    ).length
+);
+
+// User stake info
+const userStakeInfo = ref<{ stakedAmount: number } | null>(null);
+
+// Fetch user stake info
+const fetchUserStakeInfo = async () => {
+  if (!program.value || !wallet.value?.publicKey) return;
+
+  try {
+    const { getStakeAccount } = useGovernance();
+    const info = await getStakeAccount(program.value, wallet.value.publicKey);
+    userStakeInfo.value = info;
+  } catch (error) {
+    console.error("Failed to fetch user stake info:", error);
+  }
+};
+
+// Watch for wallet changes to fetch stake info
+watch(
+  () => wallet.value?.publicKey,
+  (newPublicKey) => {
+    if (newPublicKey && program.value) {
+      fetchUserStakeInfo();
+    }
+  },
+  { deep: true }
+);
 
 const stats = computed(() => [
-  { title: '2.1M', subtitle: '$GET', value: 'Treasury Balance', class: 'tl', dynamic: false },
-  { title: '98.5%', subtitle: '', value: '$GET Staked', class: 'tr', dynamic: false },
-  { title: totalProposals.value, subtitle: '', value: 'Total Proposals', class: 'bl', dynamic: true },
-  { title: 'N/A', subtitle: '', value: 'Active Voters', class: 'br', dynamic: false },
-  { title: proposalsPassed.value, subtitle: '', value: 'Proposals Passed', class: 'last', dynamic: true },
-])
+  {
+    title: "2.1M",
+    subtitle: "$GET",
+    value: "Treasury Balance",
+    class: "tl",
+    dynamic: false,
+  },
+  {
+    title: userStakeInfo.value
+      ? userStakeInfo.value.stakedAmount.toLocaleString()
+      : "0",
+    subtitle: "$GET",
+    value: "Your Staked",
+    class: "tr",
+    dynamic: true,
+  },
+  {
+    title: totalProposals.value,
+    subtitle: "",
+    value: "Total Proposals",
+    class: "bl",
+    dynamic: true,
+  },
+  {
+    title: "N/A",
+    subtitle: "",
+    value: "Active Voters",
+    class: "br",
+    dynamic: false,
+  },
+  {
+    title: proposalsPassed.value,
+    subtitle: "",
+    value: "Proposals Passed",
+    class: "last",
+    dynamic: true,
+  },
+]);
 </script>
 
 <style scoped>
