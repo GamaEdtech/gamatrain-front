@@ -515,7 +515,7 @@ const resetWholeGame = () => {
   experience.value.destroy()
   experience.value = null
 
-  import('@/threeJsExperience/car-racing/Experience.js')
+  import('@/../threeJsExperience/car-racing/Experience.js')
     .then((module) => {
       ExperienceModule.value = module.default
       experience.value = new ExperienceModule.value(
@@ -560,7 +560,7 @@ const loadNextLevel = () => {
     experience.value.destroy()
     experience.value = null
 
-    import('@/threeJsExperience/car-racing/Experience.js')
+    import('@/../threeJsExperience/car-racing/Experience.js')
       .then((module) => {
         ExperienceModule.value = module.default
         experience.value = new ExperienceModule.value(
@@ -672,7 +672,7 @@ onMounted(() => {
     localStorage.setItem('hasSeenGuideMenu', 'true')
   }
 
-  import('@/threeJsExperience/car-racing/Experience.js')
+  import('@/../threeJsExperience/car-racing/Experience.js')
     .then((module) => {
       ExperienceModule.value = module.default
       experience.value = new ExperienceModule.value(
