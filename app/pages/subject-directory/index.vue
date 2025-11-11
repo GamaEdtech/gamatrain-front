@@ -99,7 +99,6 @@ import resources from '~/components/subject-directory/resources.vue'
 import paperTable from '~/components/subject-directory/paper-table.vue'
 import timeline from '~/components/subject-directory/timeline.vue'
 import filterPapers from '~/components/subject-directory/filter-papers.vue'
-import { useAspectStyles } from 'vuetify/lib/components/VResponsive/VResponsive.mjs'
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
@@ -278,61 +277,32 @@ const generateTimeLine = () => {
 
 // End Section Timeline
 
-const { data: lessonData, status: _status } = await useAsyncData(
-  'lessonData',
-  async () => {
-    let resourcesData
-    let papersData
-    const subjectId = route.params.subject || route.query.subject
-    if (subjectId) {
-      try {
-        const baseURL = `/api/v1/`
-        const endpointResources = `${baseURL}tests/search?is_paper=false&directory=true&lesson=${subjectId}`
+const subjectId = route.params.subject || route.query.subject
 
-        const responseResource = await useApiService.get(endpointResources)
-        if (responseResource.data) {
-          resourcesData = responseResource.data
-        }
-        const endpointPapers = `${baseURL}tests/search?lesson=${subjectId}&page=1&perpage=20&is_paper=true&directory=true`
-        const responsePapers = await useAspectStyles.get(endpointPapers)
-        if (responsePapers.data) {
-          papersData = responsePapers.data.list
-        }
-      }
-      catch (error) {
-        if (error.response) {
-          console.error('🔴 Response status:', error.response.status)
-          console.error(
-            '📄 Response data:',
-            JSON.stringify(error.response.data, null, 2),
-          )
-          console.error('📋 Response headers:', error.response.headers)
-        }
-        else if (error.request) {
-          console.error(
-            '📡 No response received. Request object:',
-            error.request,
-          )
-        }
-        else {
-          console.error('⚠️ Setup error:', error.message)
-        }
-        console.error('Error fetching data:', error)
-      }
-      finally {
-        // Reset loading states after initial data fetch
-        isLoadingResources.value = false
-        isLoadingPapers.value = false
-      }
-    }
-    return { resourcesData, papersData }
+const { data: resourcesResponse } = await useAsyncData(
+  `resourcesData-${subjectId}`,
+  async () => {
+    if (!subjectId) return null
+    const baseURL = `/api/v1/`
+    const endpointResources = `${baseURL}tests/search?is_paper=false&directory=true&lesson=${subjectId}`
+    return await useApiService.get(endpointResources)
   },
 )
 
-if (lessonData.value?.resourcesData) {
-  titleLesson.value = lessonData.value.resourcesData.lesson_title
-  imageLesson.value = lessonData.value.resourcesData.lesson_pic
-  resourcesData.value = lessonData.value.resourcesData.list
+const { data: papersResponse } = await useAsyncData(
+  `papersData-${subjectId}`,
+  async () => {
+    if (!subjectId) return null
+    const baseURL = `/api/v1/`
+    const endpointPapers = `${baseURL}tests/search?lesson=${subjectId}&page=1&perpage=20&is_paper=true&directory=true`
+    return await useApiService.get(endpointPapers)
+  },
+)
+
+if (resourcesResponse.value?.data) {
+  titleLesson.value = resourcesResponse.value.data.lesson_title
+  imageLesson.value = resourcesResponse.value.data.lesson_pic
+  resourcesData.value = resourcesResponse.value.data.list
   const filterTopical = resourcesData.value.filter(
     item => item.title === 'Topical',
   )
@@ -342,8 +312,8 @@ if (lessonData.value?.resourcesData) {
   isLoadingResources.value = false
 }
 
-if (lessonData.value?.papersData) {
-  papers.value = lessonData.value.papersData
+if (papersResponse.value?.data) {
+  papers.value = papersResponse.value.data.list
   isLoadingPapers.value = false
 }
 

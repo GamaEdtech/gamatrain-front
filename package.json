@@ -24,7 +24,7 @@
     "@coral-xyz/anchor": "^0.32.1",
     "@lottiefiles/dotlottie-vue": "^0.9.0",
     "@nuxt/eslint": "^1.6.0",
-    "@nuxt/image": "^1.10.0",
+    "@nuxt/image": "^1.11.0",
     "@nuxtjs/dotenv": "^1.4.1",
     "@nuxtjs/leaflet": "^1.2.6",
     "@nuxtjs/toast": "^3.3.1",
