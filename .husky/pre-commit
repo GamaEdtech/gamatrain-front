@@ -1,10 +1,64 @@
 #!/usr/bin/env sh
 
-# Check if npm is available
-if command -v npm >/dev/null 2>&1; then
-  npm run lint || exit 1
-  npm run check-paths || exit 1
+# Husky pre-commit hook
+# Runs linting and path checks before allowing commits
+# Compatible with: Windows (Git Bash/WSL), macOS, Linux
+
+echo "🔍 Running pre-commit checks..."
+
+# Function to check if command exists
+command_exists() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+# Try to find npm in different locations
+find_npm() {
+  if command_exists npm; then
+    return 0
+  elif command_exists npx; then
+    return 0
+  elif [ -f "node_modules/.bin/npm" ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+# Run the checks
+if find_npm; then
+  echo "✓ npm found, running checks..."
+  
+  # Run ESLint
+  echo "  → Running ESLint..."
+  if ! npm run lint:check; then
+    echo ""
+    echo "❌ ESLint found issues!"
+    echo "💡 Run 'npm run lint:fix' to auto-fix issues"
+    exit 1
+  fi
+  
+  # Run path checks
+  echo "  → Checking file paths..."
+  if ! npm run check-paths; then
+    echo ""
+    echo "❌ File path issues found!"
+    echo "💡 Check case sensitivity of file paths"
+    exit 1
+  fi
+  
+  echo ""
+  echo "✅ All pre-commit checks passed!"
+  exit 0
 else
-  echo "npm not found, skipping pre-commit checks"
-  echo "Please run 'npm run lint && npm run check-paths' manually"
+  echo ""
+  echo "⚠️  npm not found in PATH"
+  echo "⚠️  Skipping pre-commit checks"
+  echo ""
+  echo "💡 Please run manually before pushing:"
+  echo "   npm run lint:check"
+  echo "   npm run check-paths"
+  echo ""
+  
+  # Allow commit but warn user
+  exit 0
 fi
