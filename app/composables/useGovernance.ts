@@ -1,69 +1,70 @@
-import { ref } from "vue";
-import type { PublicKey } from "@solana/web3.js";
+import { ref } from 'vue'
+import type { PublicKey } from '@solana/web3.js'
 
-let anchor: typeof import("@coral-xyz/anchor");
+let anchor: typeof import('@coral-xyz/anchor')
 
 // Load dynamically only on client
 if (import.meta.client) {
-  const mod = await import("@coral-xyz/anchor");
-  anchor = mod;
-} else {
+  const mod = await import('@coral-xyz/anchor')
+  anchor = mod
+}
+else {
   // optional: fallback to CJS build for SSR if needed
-  const mod = await import("@coral-xyz/anchor/dist/cjs");
-  anchor = mod;
+  const mod = await import('@coral-xyz/anchor/dist/cjs')
+  anchor = mod
 }
 
 // Type alias (keep it only for typing)
-type Program<T extends anchor.Idl = anchor.Idl> = anchor.Program<T>;
+type Program<T extends anchor.Idl = anchor.Idl> = anchor.Program<T>
 
 // Runtime values (don’t destructure Program here)
-const { web3, BN } = anchor;
+const { web3, BN } = anchor
 // --- Types ---
 interface CreateProposalForm {
-  title: string;
-  brief: string;
-  cate: string;
-  reference: string;
-  amount: number;
+  title: string
+  brief: string
+  cate: string
+  reference: string
+  amount: number
 }
 
 interface VoteRecordData {
-  proposalId: PublicKey;
-  voter: PublicKey;
-  hasVoted: boolean;
-  vote: string;
-  votePower: anchor.BN;
+  proposalId: PublicKey
+  voter: PublicKey
+  hasVoted: boolean
+  vote: string
+  votePower: anchor.BN
 }
 
 interface ProposalData {
-  owner: PublicKey;
-  title: string;
-  brief: string;
-  cate: string;
-  reference: string;
-  amount: anchor.BN;
-  agreeVotes: anchor.BN;
-  disagreeVotes: anchor.BN;
-  createdAt: anchor.BN;
-  expiresAt: anchor.BN;
+  owner: PublicKey
+  title: string
+  brief: string
+  cate: string
+  reference: string
+  amount: anchor.BN
+  agreeVotes: anchor.BN
+  disagreeVotes: anchor.BN
+  createdAt: anchor.BN
+  expiresAt: anchor.BN
 }
 
 export const ensureBuffer = async () => {
-  if (typeof window !== "undefined" && !(window as unknown).Buffer) {
-    const { Buffer } = await import("buffer");
-    (window as unknown).Buffer = Buffer;
+  if (typeof window !== 'undefined' && !(window as unknown).Buffer) {
+    const { Buffer } = await import('buffer');
+    (window as unknown).Buffer = Buffer
   }
-  return typeof window !== "undefined"
+  return typeof window !== 'undefined'
     ? (window as unknown).Buffer
-    : (globalThis as unknown).Buffer;
-};
+    : (globalThis as unknown).Buffer
+}
 
 /**
  * Enhanced governance composable with proper error handling and vote power calculation
  */
 export const useGovernance = () => {
-  const isLoading = ref(false);
-  const error = ref<string | null>(null);
+  const isLoading = ref(false)
+  const error = ref<string | null>(null)
   /**
    * Calculate vote power based on user's staked tokens (v2.0)
    * @param program - Anchor program instance
@@ -72,33 +73,35 @@ export const useGovernance = () => {
    */
   const calculateVotePower = async (
     program: Program,
-    userPublicKey: PublicKey
+    userPublicKey: PublicKey,
   ): Promise<number> => {
     try {
       // Get user's stake account
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("stake_account"), userPublicKey.toBuffer()],
-        program.programId
-      );
+        [Buffer.from('stake_account'), userPublicKey.toBuffer()],
+        program.programId,
+      )
 
       try {
         // @ts-expect-error: stakeAccount type may not be inferred
-        const stakeAccount = await program.account["stakeAccount"].fetch(
-          stakeAccountPda
-        );
+        const stakeAccount = await program.account['stakeAccount'].fetch(
+          stakeAccountPda,
+        )
 
         // Vote power is based on staked amount only
-        const stakedAmount = stakeAccount.stakedAmount?.toNumber() || 0;
-        return stakedAmount;
-      } catch {
-        // Stake account doesn't exist, no vote power
-        return 0;
+        const stakedAmount = stakeAccount.stakedAmount?.toNumber() || 0
+        return stakedAmount
       }
-    } catch (error) {
-      console.warn("Failed to calculate vote power:", error);
-      return 0;
+      catch {
+        // Stake account doesn't exist, no vote power
+        return 0
+      }
     }
-  };
+    catch (error) {
+      console.warn('Failed to calculate vote power:', error)
+      return 0
+    }
+  }
 
   /**
    * Get user's stake account information
@@ -108,18 +111,18 @@ export const useGovernance = () => {
    */
   const getStakeAccount = async (
     program: Program,
-    userPublicKey: PublicKey
+    userPublicKey: PublicKey,
   ) => {
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("stake_account"), userPublicKey.toBuffer()],
-        program.programId
-      );
+        [Buffer.from('stake_account'), userPublicKey.toBuffer()],
+        program.programId,
+      )
 
       // @ts-expect-error: stakeAccount type may not be inferred
-      const stakeAccount = await program.account["stakeAccount"].fetch(
-        stakeAccountPda
-      );
+      const stakeAccount = await program.account['stakeAccount'].fetch(
+        stakeAccountPda,
+      )
 
       return {
         owner: stakeAccount.owner,
@@ -127,12 +130,13 @@ export const useGovernance = () => {
         lastStakeTime: stakeAccount.lastStakeTime?.toNumber() || 0,
         pendingUnstake: stakeAccount.pendingUnstake?.toNumber() || 0,
         unstakeRequestedAt: stakeAccount.unstakeRequestedAt?.toNumber() || 0,
-      };
-    } catch {
-      // Stake account doesn't exist
-      return null;
+      }
     }
-  };
+    catch {
+      // Stake account doesn't exist
+      return null
+    }
+  }
 
   /**
    * Check if cooldown period has passed (1 hour for testing)
@@ -140,11 +144,11 @@ export const useGovernance = () => {
    * @returns Whether cooldown has passed
    */
   const isCooldownComplete = (unstakeRequestedAt: number): boolean => {
-    if (unstakeRequestedAt === 0) return false;
-    const now = Math.floor(Date.now() / 1000);
-    const cooldownPeriod = 60 * 60; // 1 hour in seconds
-    return now >= unstakeRequestedAt + cooldownPeriod;
-  };
+    if (unstakeRequestedAt === 0) return false
+    const now = Math.floor(Date.now() / 1000)
+    const cooldownPeriod = 60 * 60 // 1 hour in seconds
+    return now >= unstakeRequestedAt + cooldownPeriod
+  }
 
   /**
    * Get remaining cooldown time in human-readable format
@@ -152,22 +156,22 @@ export const useGovernance = () => {
    * @returns Remaining time string
    */
   const getRemainingCooldown = (unstakeRequestedAt: number): string => {
-    if (unstakeRequestedAt === 0) return "No cooldown";
-    const now = Math.floor(Date.now() / 1000);
-    const cooldownPeriod = 60 * 60; // 1 hour in seconds
-    const cooldownEnd = unstakeRequestedAt + cooldownPeriod;
-    const remaining = cooldownEnd - now;
+    if (unstakeRequestedAt === 0) return 'No cooldown'
+    const now = Math.floor(Date.now() / 1000)
+    const cooldownPeriod = 60 * 60 // 1 hour in seconds
+    const cooldownEnd = unstakeRequestedAt + cooldownPeriod
+    const remaining = cooldownEnd - now
 
-    if (remaining <= 0) return "Cooldown complete";
+    if (remaining <= 0) return 'Cooldown complete'
 
-    const hours = Math.floor(remaining / (60 * 60));
-    const minutes = Math.floor((remaining % (60 * 60)) / 60);
-    const seconds = remaining % 60;
+    const hours = Math.floor(remaining / (60 * 60))
+    const minutes = Math.floor((remaining % (60 * 60)) / 60)
+    const seconds = remaining % 60
 
-    if (hours > 0) return `${hours}h ${minutes}m remaining`;
-    if (minutes > 0) return `${minutes}m ${seconds}s remaining`;
-    return `${seconds}s remaining`;
-  };
+    if (hours > 0) return `${hours}h ${minutes}m remaining`
+    if (minutes > 0) return `${minutes}m ${seconds}s remaining`
+    return `${seconds}s remaining`
+  }
 
   /**
    * Check if user has already voted on a proposal
@@ -179,31 +183,32 @@ export const useGovernance = () => {
   const checkVoteRecord = async (
     program: Program,
     proposalPublicKey: PublicKey,
-    voterPublicKey: PublicKey
-  ): Promise<{ hasVoted: boolean; voteRecord: VoteRecordData | null }> => {
+    voterPublicKey: PublicKey,
+  ): Promise<{ hasVoted: boolean, voteRecord: VoteRecordData | null }> => {
     try {
       const [voteRecordPDA] = web3.PublicKey.findProgramAddressSync(
         [
-          Buffer.from("vote-record"),
+          Buffer.from('vote-record'),
           proposalPublicKey.toBuffer(),
           voterPublicKey.toBuffer(),
         ],
-        program.programId
-      );
+        program.programId,
+      )
 
       // @ts-expect-error: voteRecord account type may not be typed in IDL
-      const voteRecord = await program.account["voteRecord"].fetch(
-        voteRecordPDA
-      );
+      const voteRecord = await program.account['voteRecord'].fetch(
+        voteRecordPDA,
+      )
       return {
         hasVoted: voteRecord.hasVoted,
         voteRecord: voteRecord as VoteRecordData,
-      };
-    } catch {
-      // Vote record doesn't exist, user hasn't voted
-      return { hasVoted: false, voteRecord: null };
+      }
     }
-  };
+    catch {
+      // Vote record doesn't exist, user hasn't voted
+      return { hasVoted: false, voteRecord: null }
+    }
+  }
 
   /**
    * Check if proposal has expired
@@ -211,9 +216,9 @@ export const useGovernance = () => {
    * @returns Whether proposal has expired
    */
   const isProposalExpired = (proposal: ProposalData): boolean => {
-    const now = Math.floor(Date.now() / 1000);
-    return proposal.expiresAt.toNumber() < now;
-  };
+    const now = Math.floor(Date.now() / 1000)
+    return proposal.expiresAt.toNumber() < now
+  }
 
   /**
    * Handle governance errors with user-friendly messages
@@ -224,32 +229,32 @@ export const useGovernance = () => {
     if (error.code) {
       switch (error.code) {
         case 6000:
-          return "You are not authorized to perform this action.";
+          return 'You are not authorized to perform this action.'
         case 6001:
-          return "You have already voted on this proposal.";
+          return 'You have already voted on this proposal.'
         case 6002:
-          return "This proposal has expired and can no longer be voted on.";
+          return 'This proposal has expired and can no longer be voted on.'
         case 6003:
-          return "Holders of $GET tokens can participate in voting—grab some $GET to have your say!";
+          return 'Holders of $GET tokens can participate in voting—grab some $GET to have your say!'
         case 6007:
-          return "Insufficient staked tokens. Please stake more tokens to perform this action.";
+          return 'Insufficient staked tokens. Please stake more tokens to perform this action.'
         case 6008:
-          return "You must stake tokens to participate in governance. Please stake some $GET tokens first.";
+          return 'You must stake tokens to participate in governance. Please stake some $GET tokens first.'
         case 6010:
-          return "Cooldown period is still active. Please wait before claiming your unstaked tokens.";
+          return 'Cooldown period is still active. Please wait before claiming your unstaked tokens.'
         case 6011:
-          return "Nothing to claim. No pending unstake found.";
+          return 'Nothing to claim. No pending unstake found.'
         default:
           return `Governance error: ${
-            error.message || "Unknown error occurred"
-          }`;
+            error.message || 'Unknown error occurred'
+          }`
       }
     }
-    return error.message || "An unexpected error occurred";
-  };
+    return error.message || 'An unexpected error occurred'
+  }
 
   // auto-ensure Buffer on composable usage
-  if (typeof window !== "undefined") ensureBuffer().catch(console.error);
+  if (typeof window !== 'undefined') ensureBuffer().catch(console.error)
 
   return {
     isLoading,
@@ -261,8 +266,8 @@ export const useGovernance = () => {
     checkVoteRecord,
     isProposalExpired,
     handleGovernanceError,
-  };
-};
+  }
+}
 
 /**
  * Enhanced stateless governance functions with better error handling
@@ -273,9 +278,9 @@ export const governance = {
    * @param program - The initialized Anchor Program instance.
    */
   async fetchProposals(program: Program) {
-    await ensureBuffer();
+    await ensureBuffer()
     try {
-      const proposals = await (program.account as unknown).proposal.all();
+      const proposals = await (program.account as unknown).proposal.all()
       return proposals.map((proposal: unknown) => ({
         ...proposal,
         account: {
@@ -287,10 +292,11 @@ export const governance = {
           createdAt: proposal.account.createdAt || new BN(0),
           expiresAt: proposal.account.expiresAt || new BN(0),
         },
-      }));
-    } catch (error) {
-      console.error("Error fetching proposals:", error);
-      throw new Error("Failed to fetch proposals from blockchain");
+      }))
+    }
+    catch (error) {
+      console.error('Error fetching proposals:', error)
+      throw new Error('Failed to fetch proposals from blockchain')
     }
   },
 
@@ -299,9 +305,9 @@ export const governance = {
    * @param program - The initialized Anchor Program instance.
    */
   async fetchLatestProposals(program: Program) {
-    await ensureBuffer();
+    await ensureBuffer()
     try {
-      const proposals = await (program.account as unknown).proposal.all();
+      const proposals = await (program.account as unknown).proposal.all()
 
       const mapped = proposals.map((proposal: unknown) => ({
         ...proposal,
@@ -314,22 +320,23 @@ export const governance = {
           createdAt: proposal.account.createdAt || new BN(0),
           expiresAt: proposal.account.expiresAt || new BN(0),
         },
-      }));
+      }))
 
       mapped.sort((a: unknown, b: unknown) => {
         const aCreated = a.account.createdAt.toNumber
           ? a.account.createdAt.toNumber()
-          : Number(a.account.createdAt);
+          : Number(a.account.createdAt)
         const bCreated = b.account.createdAt.toNumber
           ? b.account.createdAt.toNumber()
-          : Number(b.account.createdAt);
-        return bCreated - aCreated;
-      });
+          : Number(b.account.createdAt)
+        return bCreated - aCreated
+      })
 
-      return mapped.slice(0, 10);
-    } catch (error) {
-      console.error("Error fetching latest proposals:", error);
-      throw new Error("Failed to fetch proposals from blockchain");
+      return mapped.slice(0, 10)
+    }
+    catch (error) {
+      console.error('Error fetching latest proposals:', error)
+      throw new Error('Failed to fetch proposals from blockchain')
     }
   },
 
@@ -342,59 +349,60 @@ export const governance = {
   async createProposal(
     program: Program,
     user: PublicKey,
-    formData: CreateProposalForm
+    formData: CreateProposalForm,
   ) {
-    await ensureBuffer();
+    await ensureBuffer()
     try {
       // Validate form data
       if (!formData.title?.trim()) {
-        throw new Error("Proposal title is required");
+        throw new Error('Proposal title is required')
       }
       if (!formData.brief?.trim()) {
-        throw new Error("Proposal description is required");
+        throw new Error('Proposal description is required')
       }
 
       // Fetch user_state PDA first
       const [userStatePda] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("user_state"), user.toBuffer()],
-        program.programId
-      );
+        [Buffer.from('user_state'), user.toBuffer()],
+        program.programId,
+      )
 
       // Fetch user_state (if exists) to get proposal_count
-      let proposalCount = 0;
+      let proposalCount = 0
       try {
         const userStateAccount = await program.account.userState.fetch(
-          userStatePda
-        );
-        proposalCount = userStateAccount.proposalCount;
-      } catch {
+          userStatePda,
+        )
+        proposalCount = userStateAccount.proposalCount
+      }
+      catch {
         // If account doesn't exist, first proposal -> count = 0
-        proposalCount = 0;
+        proposalCount = 0
       }
 
       // Derive proposal PDA
       const [proposalPda] = web3.PublicKey.findProgramAddressSync(
         [
-          Buffer.from("proposal"),
+          Buffer.from('proposal'),
           user.toBuffer(),
-          new BN(proposalCount).toArrayLike(Buffer, "le", 8),
+          new BN(proposalCount).toArrayLike(Buffer, 'le', 8),
         ],
-        program.programId
-      );
+        program.programId,
+      )
       // Derive stackAccount PDA
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("stake_account"), user.toBuffer()],
-        program.programId
-      );
+        [Buffer.from('stake_account'), user.toBuffer()],
+        program.programId,
+      )
 
-      const { title, brief, cate, reference, amount } = formData;
+      const { title, brief, cate, reference, amount } = formData
       const tx = await program.methods
         .createProposal(
           title.trim(),
           brief.trim(),
-          cate || "general",
-          reference || "",
-          new BN(amount || 0)
+          cate || 'general',
+          reference || '',
+          new BN(amount || 0),
         )
         .accounts({
           userState: userStatePda,
@@ -403,31 +411,32 @@ export const governance = {
           stakeAccount: stakeAccountPda,
           systemProgram: web3.SystemProgram.programId,
         })
-        .rpc({ skipPreflight: true });
+        .rpc({ skipPreflight: true })
 
-      const latestBlockhash =
-        await program.provider.connection.getLatestBlockhash();
+      const latestBlockhash
+        = await program.provider.connection.getLatestBlockhash()
       await program.provider.connection.confirmTransaction({
         signature: tx,
         ...latestBlockhash,
-      });
+      })
 
       return {
         signature: tx,
         proposalPublicKey: proposalPda,
-      };
-    } catch (error: unknown) {
-      console.error("Error creating proposal:", error);
-      const { handleGovernanceError } = useGovernance();
-      const errorObj =
-        error && typeof error === "object" && "code" in error
-          ? (error as { code?: number; message?: string })
+      }
+    }
+    catch (error: unknown) {
+      console.error('Error creating proposal:', error)
+      const { handleGovernanceError } = useGovernance()
+      const errorObj
+        = error && typeof error === 'object' && 'code' in error
+          ? (error as { code?: number, message?: string })
           : {
               message:
-                error instanceof Error ? error.message : "Unknown action",
-            };
-      const msg = handleGovernanceError(errorObj) || "Unknown action";
-      throw new Error(msg);
+                error instanceof Error ? error.message : 'Unknown action',
+            }
+      const msg = handleGovernanceError(errorObj) || 'Unknown action'
+      throw new Error(msg)
     }
   },
 
@@ -444,57 +453,58 @@ export const governance = {
     voter: PublicKey,
     proposalPublicKey: PublicKey,
     agree: boolean,
-    votePower?: number
+    votePower?: number,
   ) {
-    await ensureBuffer();
+    await ensureBuffer()
     try {
-      const { checkVoteRecord, calculateVotePower, isProposalExpired } =
-        useGovernance();
+      const { checkVoteRecord, calculateVotePower, isProposalExpired }
+        = useGovernance()
 
       // Check if proposal exists and is not expired
       // @ts-expect-error: proposal account type may not be inferred
-      const proposal = await program.account["proposal"].fetch(
-        proposalPublicKey
-      );
+      const proposal = await program.account['proposal'].fetch(
+        proposalPublicKey,
+      )
       if (isProposalExpired(proposal as ProposalData)) {
-        throw { code: 6002, message: "Proposal has expired" };
+        throw { code: 6002, message: 'Proposal has expired' }
       }
 
       // Check if user has already voted
       const { hasVoted } = await checkVoteRecord(
         program,
         proposalPublicKey,
-        voter
-      );
+        voter,
+      )
       if (hasVoted) {
-        throw { code: 6001, message: "User has already voted" };
+        throw { code: 6001, message: 'User has already voted' }
       }
 
       // Calculate vote power based on staked tokens (v2.0)
-      const finalVotePower =
-        votePower || (await calculateVotePower(program, voter));
+      const finalVotePower
+        = votePower || (await calculateVotePower(program, voter))
 
       if (finalVotePower === 0) {
         const error = {
           code: 6008, // NoStakePower error
-        };
-        const { handleGovernanceError } = useGovernance();
-        throw new Error(handleGovernanceError(error));
-      } else {
+        }
+        const { handleGovernanceError } = useGovernance()
+        throw new Error(handleGovernanceError(error))
+      }
+      else {
         const [voteRecordPDA] = web3.PublicKey.findProgramAddressSync(
           [
-            Buffer.from("vote-record"),
+            Buffer.from('vote-record'),
             proposalPublicKey.toBuffer(),
             voter.toBuffer(),
           ],
-          program.programId
-        );
+          program.programId,
+        )
 
         // Get stake account PDA
         const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
-          [Buffer.from("stake_account"), voter.toBuffer()],
-          program.programId
-        );
+          [Buffer.from('stake_account'), voter.toBuffer()],
+          program.programId,
+        )
 
         const tx = await program.methods
           .vote(agree)
@@ -505,24 +515,25 @@ export const governance = {
             stakeAccount: stakeAccountPda,
             systemProgram: web3.SystemProgram.programId,
           })
-          .rpc({ skipPreflight: true });
+          .rpc({ skipPreflight: true })
 
         return {
           signature: tx,
           votePower: finalVotePower,
-          vote: agree ? "agree" : "disagree",
-        };
+          vote: agree ? 'agree' : 'disagree',
+        }
       }
-    } catch (error: unknown) {
-      console.error("Error voting on proposal:", error);
-      const { handleGovernanceError } = useGovernance();
-      const errorObj =
-        error && typeof error === "object" && "code" in error
-          ? (error as { code?: number; message?: string })
+    }
+    catch (error: unknown) {
+      console.error('Error voting on proposal:', error)
+      const { handleGovernanceError } = useGovernance()
+      const errorObj
+        = error && typeof error === 'object' && 'code' in error
+          ? (error as { code?: number, message?: string })
           : {
-              message: error instanceof Error ? error.message : "Unknown error",
-            };
-      throw new Error(handleGovernanceError(errorObj));
+              message: error instanceof Error ? error.message : 'Unknown error',
+            }
+      throw new Error(handleGovernanceError(errorObj))
     }
   },
 
@@ -535,17 +546,17 @@ export const governance = {
   async deleteProposal(
     program: Program,
     user: PublicKey,
-    proposalPublicKey: PublicKey
+    proposalPublicKey: PublicKey,
   ) {
-    await ensureBuffer();
+    await ensureBuffer()
     try {
       // Check if user owns the proposal
       // @ts-expect-error: proposal account type may not be inferred
-      const proposal = await program.account["proposal"].fetch(
-        proposalPublicKey
-      );
+      const proposal = await program.account['proposal'].fetch(
+        proposalPublicKey,
+      )
       if (!proposal.owner.equals(user)) {
-        throw { code: 6000, message: "Only proposal owner can delete" };
+        throw { code: 6000, message: 'Only proposal owner can delete' }
       }
 
       const tx = await program.methods
@@ -554,19 +565,20 @@ export const governance = {
           proposal: proposalPublicKey,
           user: user,
         })
-        .rpc({ skipPreflight: true });
+        .rpc({ skipPreflight: true })
 
-      return { signature: tx };
-    } catch (error: unknown) {
-      console.error("Error deleting proposal:", error);
-      const { handleGovernanceError } = useGovernance();
-      const errorObj =
-        error && typeof error === "object" && "code" in error
-          ? (error as { code?: number; message?: string })
+      return { signature: tx }
+    }
+    catch (error: unknown) {
+      console.error('Error deleting proposal:', error)
+      const { handleGovernanceError } = useGovernance()
+      const errorObj
+        = error && typeof error === 'object' && 'code' in error
+          ? (error as { code?: number, message?: string })
           : {
-              message: error instanceof Error ? error.message : "Unknown error",
-            };
-      throw new Error(handleGovernanceError(errorObj));
+              message: error instanceof Error ? error.message : 'Unknown error',
+            }
+      throw new Error(handleGovernanceError(errorObj))
     }
   },
 
@@ -579,15 +591,16 @@ export const governance = {
   async getVoteRecord(
     program: Program,
     proposalPublicKey: PublicKey,
-    voterPublicKey: PublicKey
+    voterPublicKey: PublicKey,
   ) {
-    await ensureBuffer();
+    await ensureBuffer()
     try {
-      const { checkVoteRecord } = useGovernance();
-      return await checkVoteRecord(program, proposalPublicKey, voterPublicKey);
-    } catch (error) {
-      console.error("Error fetching vote record:", error);
-      return { hasVoted: false, voteRecord: null };
+      const { checkVoteRecord } = useGovernance()
+      return await checkVoteRecord(program, proposalPublicKey, voterPublicKey)
+    }
+    catch (error) {
+      console.error('Error fetching vote record:', error)
+      return { hasVoted: false, voteRecord: null }
     }
   },
 
@@ -606,28 +619,28 @@ export const governance = {
     amount: number,
     userTokenAccount: PublicKey,
     vaultTokenAccount: PublicKey,
-    mint: PublicKey
+    mint: PublicKey,
   ) {
-    await ensureBuffer();
+    await ensureBuffer()
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("stake_account"), user.toBuffer()],
-        program.programId
-      );
+        [Buffer.from('stake_account'), user.toBuffer()],
+        program.programId,
+      )
 
       // Use Token-2022 program
       const TOKEN_2022_PROGRAM_ID = new web3.PublicKey(
-        "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
-      );
+        'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
+      )
 
-      console.log("🔍 Staking details:", {
+      console.log('🔍 Staking details:', {
         amount,
         user: user.toBase58(),
         userTokenAccount: userTokenAccount.toBase58(),
         vaultTokenAccount: vaultTokenAccount.toBase58(),
         mint: mint.toBase58(),
         stakeAccount: stakeAccountPda.toBase58(),
-      });
+      })
 
       const tx = await program.methods
         .stack(new BN(amount))
@@ -640,26 +653,27 @@ export const governance = {
           tokenProgram: TOKEN_2022_PROGRAM_ID,
           systemProgram: web3.SystemProgram.programId,
         })
-        .rpc({ skipPreflight: false, commitment: "confirmed" });
+        .rpc({ skipPreflight: false, commitment: 'confirmed' })
 
-      const latestBlockhash =
-        await program.provider.connection.getLatestBlockhash();
+      const latestBlockhash
+        = await program.provider.connection.getLatestBlockhash()
       await program.provider.connection.confirmTransaction({
         signature: tx,
         ...latestBlockhash,
-      });
+      })
 
-      return { signature: tx };
-    } catch (error: unknown) {
-      console.error("Error staking tokens:", error);
-      const { handleGovernanceError } = useGovernance();
-      const errorObj =
-        error && typeof error === "object" && "code" in error
-          ? (error as { code?: number; message?: string })
+      return { signature: tx }
+    }
+    catch (error: unknown) {
+      console.error('Error staking tokens:', error)
+      const { handleGovernanceError } = useGovernance()
+      const errorObj
+        = error && typeof error === 'object' && 'code' in error
+          ? (error as { code?: number, message?: string })
           : {
-              message: error instanceof Error ? error.message : "Unknown error",
-            };
-      throw new Error(handleGovernanceError(errorObj));
+              message: error instanceof Error ? error.message : 'Unknown error',
+            }
+      throw new Error(handleGovernanceError(errorObj))
     }
   },
 
@@ -670,12 +684,12 @@ export const governance = {
    * @param amount - Amount of tokens to unstake.
    */
   async unstake(program: Program, user: PublicKey, amount: number) {
-    await ensureBuffer();
+    await ensureBuffer()
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("stake_account"), user.toBuffer()],
-        program.programId
-      );
+        [Buffer.from('stake_account'), user.toBuffer()],
+        program.programId,
+      )
 
       const tx = await program.methods
         .unstack(new BN(amount))
@@ -683,26 +697,27 @@ export const governance = {
           stakeAccount: stakeAccountPda,
           user: user,
         })
-        .rpc({ skipPreflight: true });
+        .rpc({ skipPreflight: true })
 
-      const latestBlockhash =
-        await program.provider.connection.getLatestBlockhash();
+      const latestBlockhash
+        = await program.provider.connection.getLatestBlockhash()
       await program.provider.connection.confirmTransaction({
         signature: tx,
         ...latestBlockhash,
-      });
+      })
 
-      return { signature: tx };
-    } catch (error: unknown) {
-      console.error("Error unstaking tokens:", error);
-      const { handleGovernanceError } = useGovernance();
-      const errorObj =
-        error && typeof error === "object" && "code" in error
-          ? (error as { code?: number; message?: string })
+      return { signature: tx }
+    }
+    catch (error: unknown) {
+      console.error('Error unstaking tokens:', error)
+      const { handleGovernanceError } = useGovernance()
+      const errorObj
+        = error && typeof error === 'object' && 'code' in error
+          ? (error as { code?: number, message?: string })
           : {
-              message: error instanceof Error ? error.message : "Unknown error",
-            };
-      throw new Error(handleGovernanceError(errorObj));
+              message: error instanceof Error ? error.message : 'Unknown error',
+            }
+      throw new Error(handleGovernanceError(errorObj))
     }
   },
 
@@ -719,24 +734,24 @@ export const governance = {
     user: PublicKey,
     userTokenAccount: PublicKey,
     vaultTokenAccount: PublicKey,
-    mint: PublicKey
+    mint: PublicKey,
   ) {
-    await ensureBuffer();
+    await ensureBuffer()
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("stake_account"), user.toBuffer()],
-        program.programId
-      );
+        [Buffer.from('stake_account'), user.toBuffer()],
+        program.programId,
+      )
 
       const [vaultAuthority] = web3.PublicKey.findProgramAddressSync(
-        [Buffer.from("vault-authority")],
-        program.programId
-      );
+        [Buffer.from('vault-authority')],
+        program.programId,
+      )
 
       // Use Token-2022 program
       const TOKEN_2022_PROGRAM_ID = new web3.PublicKey(
-        "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
-      );
+        'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
+      )
 
       const tx = await program.methods
         .calimUnstack()
@@ -749,26 +764,27 @@ export const governance = {
           stakeAccount: stakeAccountPda,
           tokenProgram: TOKEN_2022_PROGRAM_ID,
         })
-        .rpc({ skipPreflight: true });
+        .rpc({ skipPreflight: true })
 
-      const latestBlockhash =
-        await program.provider.connection.getLatestBlockhash();
+      const latestBlockhash
+        = await program.provider.connection.getLatestBlockhash()
       await program.provider.connection.confirmTransaction({
         signature: tx,
         ...latestBlockhash,
-      });
+      })
 
-      return { signature: tx };
-    } catch (error: unknown) {
-      console.error("Error claiming unstaked tokens:", error);
-      const { handleGovernanceError } = useGovernance();
-      const errorObj =
-        error && typeof error === "object" && "code" in error
-          ? (error as { code?: number; message?: string })
+      return { signature: tx }
+    }
+    catch (error: unknown) {
+      console.error('Error claiming unstaked tokens:', error)
+      const { handleGovernanceError } = useGovernance()
+      const errorObj
+        = error && typeof error === 'object' && 'code' in error
+          ? (error as { code?: number, message?: string })
           : {
-              message: error instanceof Error ? error.message : "Unknown error",
-            };
-      throw new Error(handleGovernanceError(errorObj));
+              message: error instanceof Error ? error.message : 'Unknown error',
+            }
+      throw new Error(handleGovernanceError(errorObj))
     }
   },
-};
+}

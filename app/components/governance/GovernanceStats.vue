@@ -1,18 +1,28 @@
 <template>
-  <div class="governance-stats" :key="statsKey">
+  <div
+    :key="statsKey"
+    class="governance-stats"
+  >
     <div class="stats-flex">
       <div
         v-for="(stat, index) in stats"
         :key="index"
         class="governance-stat-item"
       >
-        <v-card class="stat-card" :class="stat.class" elevation="0">
+        <v-card
+          class="stat-card"
+          :class="stat.class"
+          elevation="0"
+        >
           <div
             v-if="isLoading && stat.dynamic"
             class="d-flex justify-center align-center"
             style="height: 100%"
           >
-            <v-progress-circular indeterminate color="primary" />
+            <v-progress-circular
+              indeterminate
+              color="primary"
+            />
           </div>
           <div v-else>
             <div
@@ -20,8 +30,7 @@
             >
               {{ stat.title }}
               <span class="unit primary-gray-500 text-subtitle-1">
-                {{ stat.subtitle }}</span
-              >
+                {{ stat.subtitle }}</span>
             </div>
             <div
               class="governance-stat-label primary-gray-500 text-subtitle-2 text-md-h6"
@@ -36,54 +45,55 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, nextTick, triggerRef } from "vue";
-import { useWorkspace } from "~/composables/useWorkspace";
-import { governance } from "~/composables/useGovernance";
-import type { Ref } from "vue";
+import { ref, onMounted, watch, computed, nextTick, triggerRef } from 'vue'
+import { useWorkspace } from '~/composables/useWorkspace'
+import { governance } from '~/composables/useGovernance'
+import type { Ref } from 'vue'
 
 // --- STATE ---
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const program: Ref<any | null> = ref(null);
+const program: Ref<any | null> = ref(null)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const wallet: Ref<any | null> = ref(null);
-const isLoading = ref(true);
+const wallet: Ref<any | null> = ref(null)
+const isLoading = ref(true)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const allProposals = ref<any[]>([]);
-const userStakeInfo = ref<{ stakedAmount: number } | null>(null);
-const userStakedAmount = ref<number>(0);
+const allProposals = ref<any[]>([])
+const userStakeInfo = ref<{ stakedAmount: number } | null>(null)
+const userStakedAmount = ref<number>(0)
 
 // Create a reactive key to force re-render
-const statsKey = ref(0);
+const statsKey = ref(0)
 const forceRefresh = () => {
-  statsKey.value++;
-};
-const treasuryBalance = ref<number>(0);
+  statsKey.value++
+}
+const treasuryBalance = ref<number>(0)
 
 // Get workspace
-const workspace = useWorkspace();
+const workspace = useWorkspace()
 
 // Expose refresh method for external use
 const refreshStats = async () => {
-  console.log("🔄 Refreshing governance stats...");
-  await fetchStatsData();
+  console.log('🔄 Refreshing governance stats...')
+  await fetchStatsData()
   console.log(
-    "✅ Stats refreshed. New stake:",
-    userStakeInfo.value?.stakedAmount
-  );
-};
+    '✅ Stats refreshed. New stake:',
+    userStakeInfo.value?.stakedAmount,
+  )
+}
 
 // Make it available globally via provide/inject or window
 if (import.meta.client) {
-  (window as any).__refreshGovernanceStats = refreshStats;
+  const win = window as Window & { __refreshGovernanceStats?: () => Promise<void> }
+  win.__refreshGovernanceStats = refreshStats
 
   // Also listen to custom event
-  const nuxtApp = useNuxtApp();
-  nuxtApp.hook("governance:refresh", refreshStats);
+  const nuxtApp = useNuxtApp()
+  nuxtApp.hook('governance:refresh', refreshStats)
 }
 
 defineExpose({
   refreshStats,
-});
+})
 
 // --- LIFECYCLE HOOK ---
 onMounted(() => {
@@ -91,36 +101,37 @@ onMounted(() => {
   watch(
     () => workspace.program.value,
     (prog) => {
-      program.value = prog;
+      program.value = prog
     },
-    { immediate: true }
-  );
+    { immediate: true },
+  )
 
   watch(
     () => workspace.wallet.value,
     (w) => {
-      wallet.value = w;
+      wallet.value = w
     },
-    { immediate: true }
-  );
-});
+    { immediate: true },
+  )
+})
 
 // --- DATA FETCHING ---
 const fetchStatsData = async () => {
-  if (!program.value) return;
-  isLoading.value = true;
+  if (!program.value) return
+  isLoading.value = true
   try {
-    allProposals.value = await governance.fetchProposals(program.value);
-    await fetchTreasuryBalance();
+    allProposals.value = await governance.fetchProposals(program.value)
+    await fetchTreasuryBalance()
     // Also fetch user stake if wallet is connected
-    const userPk = workspace.publicKey?.value;
+    const userPk = workspace.publicKey?.value
     if (userPk) {
-      await fetchUserStakeInfo();
+      await fetchUserStakeInfo()
     }
-  } finally {
-    isLoading.value = false;
   }
-};
+  finally {
+    isLoading.value = false
+  }
+}
 
 // --- WATCHER ---
 // Fetch public data when program is ready (no wallet needed)
@@ -128,148 +139,152 @@ watch(
   () => program.value,
   (prog) => {
     if (prog) {
-      fetchStatsData();
-    } else {
-      allProposals.value = [];
-      treasuryBalance.value = 0;
-      isLoading.value = false;
+      fetchStatsData()
+    }
+    else {
+      allProposals.value = []
+      treasuryBalance.value = 0
+      isLoading.value = false
     }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 // Fetch user-specific data when wallet connects
 watch(
   () => workspace.publicKey?.value,
   (newPublicKey) => {
     if (newPublicKey && workspace.program?.value) {
-      fetchUserStakeInfo();
-    } else {
-      userStakeInfo.value = null;
+      fetchUserStakeInfo()
+    }
+    else {
+      userStakeInfo.value = null
     }
   },
-  { deep: true, immediate: true }
-);
+  { deep: true, immediate: true },
+)
 
 // --- COMPUTED PROPERTIES ---
-const totalProposals = computed(() => allProposals.value.length);
+const totalProposals = computed(() => allProposals.value.length)
 const proposalsPassed = computed(
   () =>
     allProposals.value.filter(
-      (p) => p.account.agreeVotes > p.account.disagreeVotes
-    ).length
-);
+      p => p.account.agreeVotes > p.account.disagreeVotes,
+    ).length,
+)
 
 // Fetch treasury balance (vault balance)
 const fetchTreasuryBalance = async () => {
-  if (!program.value) return;
+  if (!program.value) return
 
   try {
-    const { getVaultAddress } = await import("~/config/solana");
-    const { PublicKey } = await import("@solana/web3.js");
-    const { getAssociatedTokenAddress } = await import("@solana/spl-token");
-    const { getTokenMint, getTokenProgramId } = await import("~/config/solana");
+    const { getVaultAddress } = await import('~/config/solana')
+    const { PublicKey } = await import('@solana/web3.js')
+    const { getAssociatedTokenAddress } = await import('@solana/spl-token')
+    const { getTokenMint, getTokenProgramId } = await import('~/config/solana')
 
-    const vaultAddressStr = await getVaultAddress();
-    const vaultAddress = new PublicKey(vaultAddressStr);
-    const tokenMint = new PublicKey(getTokenMint());
-    const TOKEN_2022_PROGRAM_ID = new PublicKey(getTokenProgramId());
+    const vaultAddressStr = await getVaultAddress()
+    const vaultAddress = new PublicKey(vaultAddressStr)
+    const tokenMint = new PublicKey(getTokenMint())
+    const TOKEN_2022_PROGRAM_ID = new PublicKey(getTokenProgramId())
 
     const vaultTokenAccount = await getAssociatedTokenAddress(
       tokenMint,
       vaultAddress,
       true,
-      TOKEN_2022_PROGRAM_ID
-    );
+      TOKEN_2022_PROGRAM_ID,
+    )
 
-    const connection = program.value.provider.connection;
+    const connection = program.value.provider.connection
     const accountInfo = await connection.getTokenAccountBalance(
-      vaultTokenAccount
-    );
+      vaultTokenAccount,
+    )
 
-    treasuryBalance.value = accountInfo.value.uiAmount || 0;
-  } catch (error) {
-    console.error("Failed to fetch treasury balance:", error);
-    treasuryBalance.value = 0;
+    treasuryBalance.value = accountInfo.value.uiAmount || 0
   }
-};
+  catch (error) {
+    console.error('Failed to fetch treasury balance:', error)
+    treasuryBalance.value = 0
+  }
+}
 
 // Fetch user stake info
 const fetchUserStakeInfo = async () => {
-  const userPk = workspace.publicKey?.value;
-  const prog = workspace.program?.value;
+  const userPk = workspace.publicKey?.value
+  const prog = workspace.program?.value
 
-  if (!prog || !userPk) return;
+  if (!prog || !userPk) return
 
   try {
-    const { getStakeAccount } = useGovernance();
-    const info = await getStakeAccount(prog, userPk);
-    console.log("📊 Fetched stake info:", {
+    const { getStakeAccount } = useGovernance()
+    const info = await getStakeAccount(prog, userPk)
+    console.log('📊 Fetched stake info:', {
       stakedAmount: info?.stakedAmount,
       pendingUnstake: info?.pendingUnstake,
-    });
+    })
 
     // Force reactivity by creating a new object
-    userStakeInfo.value = info ? { ...info } : null;
-    userStakedAmount.value = info?.stakedAmount || 0;
+    userStakeInfo.value = info ? { ...info } : null
+    userStakedAmount.value = info?.stakedAmount || 0
 
     // Force Vue to detect the change
-    triggerRef(userStakedAmount);
-    forceRefresh();
+    triggerRef(userStakedAmount)
+    forceRefresh()
 
     // Force Vue to update
-    await nextTick();
+    await nextTick()
 
-    console.log("💡 userStakedAmount updated to:", userStakedAmount.value);
-  } catch (error) {
-    console.error("Failed to fetch user stake info:", error);
+    console.log('💡 userStakedAmount updated to:', userStakedAmount.value)
   }
-};
+  catch (error) {
+    console.error('Failed to fetch user stake info:', error)
+  }
+}
 
 const stats = computed(() => {
   // Force re-computation by accessing statsKey
-  const _ = statsKey.value;
+  const _ = statsKey.value
 
   return [
     {
       title: treasuryBalance.value
         ? treasuryBalance.value.toLocaleString()
-        : "0",
-      subtitle: "$GET",
-      value: "Treasury Balance",
-      class: "tl",
+        : '0',
+      subtitle: '$GET',
+      value: 'Treasury Balance',
+      class: 'tl',
       dynamic: true,
     },
     {
       title: userStakedAmount.value.toLocaleString(),
-      subtitle: "$GET",
-      value: "Your Staked",
-      class: "tr",
+      subtitle: '$GET',
+      value: 'Your Staked',
+      class: 'tr',
       dynamic: true,
     },
     {
       title: totalProposals.value,
-      subtitle: "",
-      value: "Total Proposals",
-      class: "bl",
+      subtitle: '',
+      value: 'Total Proposals',
+      class: 'bl',
       dynamic: true,
     },
     {
-      title: "N/A",
-      subtitle: "",
-      value: "Active Voters",
-      class: "br",
+      title: 'N/A',
+      subtitle: '',
+      value: 'Active Voters',
+      class: 'br',
       dynamic: false,
     },
     {
       title: proposalsPassed.value,
-      subtitle: "",
-      value: "Proposals Passed",
-      class: "last",
+      subtitle: '',
+      value: 'Proposals Passed',
+      class: 'last',
       dynamic: true,
     },
-  ];
-});
+  ]
+})
 </script>
 
 <style scoped>
