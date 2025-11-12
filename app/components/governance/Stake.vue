@@ -96,7 +96,7 @@
                 </h3>
                 <p class="text-body-2 text-grey-darken-1">
                   Initiate unstaking process. Tokens will be available to claim
-                  after a 1-hour cooldown period.
+                  after a 3-day cooldown period.
                 </p>
               </div>
 
@@ -129,8 +129,8 @@
               <v-alert type="info" variant="tonal" class="mb-4">
                 <div class="text-body-2">
                   <v-icon icon="mdi-information" size="small" class="mr-2" />
-                  During the 1-hour cooldown, unstaked tokens cannot be used for
-                  voting or creating proposals.
+                  During the 1-second cooldown (testing), unstaked tokens cannot
+                  be used for voting or creating proposals.
                 </div>
               </v-alert>
 
@@ -452,6 +452,11 @@ const handleStake = async () => {
     await fetchStakeInfo();
     await fetchTokenBalance();
 
+    // Refresh governance stats
+    if (import.meta.client && (window as any).__refreshGovernanceStats) {
+      await (window as any).__refreshGovernanceStats();
+    }
+
     stakeAmount.value = 0;
   } catch (e: unknown) {
     console.error("Failed to stake:", e);
@@ -515,6 +520,19 @@ const handleUnstake = async () => {
 
     // Refresh data
     await fetchStakeInfo();
+
+    // Refresh governance stats with a small delay to ensure blockchain state is updated
+    setTimeout(async () => {
+      if (import.meta.client) {
+        // Try window method
+        if ((window as any).__refreshGovernanceStats) {
+          await (window as any).__refreshGovernanceStats();
+        }
+        // Also emit event
+        const nuxtApp = useNuxtApp();
+        await nuxtApp.callHook("governance:refresh");
+      }
+    }, 1000);
 
     unstakeAmount.value = 0;
     tab.value = "claim"; // Switch to claim tab
@@ -580,6 +598,11 @@ const handleClaim = async () => {
     // Refresh data
     await fetchStakeInfo();
     await fetchTokenBalance();
+
+    // Refresh governance stats
+    if (import.meta.client && (window as any).__refreshGovernanceStats) {
+      await (window as any).__refreshGovernanceStats();
+    }
   } catch (e: unknown) {
     console.error("Failed to claim:", e);
     const errorMessage =
