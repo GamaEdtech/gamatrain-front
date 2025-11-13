@@ -15,18 +15,33 @@
     </div>
 
     <!-- 1. State: Loading proposals -->
-    <div v-if="isLoading" class="text-center my-10">
-      <v-progress-circular indeterminate size="64" color="primary" />
-      <p class="mt-4">Loading proposals from the blockchain...</p>
+    <div
+      v-if="isLoading"
+      class="text-center my-10"
+    >
+      <v-progress-circular
+        indeterminate
+        size="64"
+        color="primary"
+      />
+      <p class="mt-4">
+        Loading proposals from the blockchain...
+      </p>
     </div>
 
     <!-- 2. State: No proposals found -->
-    <div v-else-if="proposals.length === 0" class="text-center my-10">
+    <div
+      v-else-if="proposals.length === 0"
+      class="text-center my-10"
+    >
       <p>No active proposals found. Be the first to create one!</p>
     </div>
 
     <!-- 3. State: Display proposals -->
-    <div v-else class="mt-6 mt-sm-1">
+    <div
+      v-else
+      class="mt-6 mt-sm-1"
+    >
       <div class="d-block">
         <v-slide-group
           v-model="selected"
@@ -118,7 +133,10 @@
         class="figma-modal-overlay"
         @click="showWalletModal = false"
       >
-        <div class="figma-modal" @click.stop>
+        <div
+          class="figma-modal"
+          @click.stop
+        >
           <div class="figma-modal-header">
             <h3>Connect Your Wallet</h3>
             <p>Choose a wallet to connect and participate in governance</p>
@@ -147,44 +165,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, defineAsyncComponent } from "vue";
-import { useDisplay } from "vuetify";
-import { useWorkspace } from "~/composables/useWorkspace";
-import { governance } from "~/composables/useGovernance";
-import type { Program } from "@coral-xyz/anchor";
+import { useDisplay } from 'vuetify'
+import { useWorkspace } from '~/composables/useWorkspace'
+import { governance } from '~/composables/useGovernance'
+import type { Program } from '@coral-xyz/anchor'
 // Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
 
-const { mdAndUp } = useDisplay();
+const { mdAndUp } = useDisplay()
 const AsyncWalletMultiButton = defineAsyncComponent(async () => {
-  const mod = await import("solana-wallets-vue");
+  const mod = await import('solana-wallets-vue')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (mod as any).WalletMultiButton;
-});
+  return (mod as any).WalletMultiButton
+})
 
-const { $toast } = useNuxtApp();
+const { $toast } = useNuxtApp()
 
 // --- STATE ---
-const program: Ref<Program | null> = ref(null);
-const connected = ref(false);
+const program: Ref<Program | null> = ref(null)
+const connected = ref(false)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const publicKey = ref<any | null>(null);
+const publicKey = ref<any | null>(null)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const proposals = ref<any[]>([]);
-const isLoading = ref(true);
-const selected = ref(null);
+const proposals = ref<any[]>([])
+const isLoading = ref(true)
+const selected = ref(null)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const selectedProposal = ref<any | null>(null);
-const visibleCreateProposal = ref(false);
-const visibleStake = ref(false);
-const visibleProposalDetail = ref(false);
-const showWalletModal = ref(false);
+const selectedProposal = ref<any | null>(null)
+const visibleCreateProposal = ref(false)
+const visibleStake = ref(false)
+const visibleProposalDetail = ref(false)
+const showWalletModal = ref(false)
 
 // --- LIFECYCLE HOOK ---
 onMounted(async () => {
-  const workspace = useWorkspace();
+  const workspace = useWorkspace()
   if (!workspace) {
-    console.error("❌ Workspace not available");
-    return;
+    console.error('❌ Workspace not available')
+    return
   }
 
   // Force workspace initialization if not already done
@@ -195,92 +212,95 @@ onMounted(async () => {
         // Manually import and initialize wallet
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { useAnchorWallet, useWallet } = await import(
-          "solana-wallets-vue"
-        );
-      } catch (error) {
-        console.error("❌ Manual initialization failed:", error);
+          'solana-wallets-vue'
+        )
       }
-    }, 500);
+      catch (error) {
+        console.error('❌ Manual initialization failed:', error)
+      }
+    }, 500)
   }
 
   // Watch workspace state changes and update local state
   watch(
     () => workspace.connected.value,
     (val) => {
-      connected.value = val;
+      connected.value = val
     },
-    { immediate: true }
-  );
+    { immediate: true },
+  )
 
   watch(
     () => workspace.publicKey.value,
     (pk) => {
-      publicKey.value = pk;
+      publicKey.value = pk
     },
-    { immediate: true }
-  );
+    { immediate: true },
+  )
 
   watch(
     () => workspace.program.value,
     (prog) => {
-      program.value = prog as unknown as Program;
+      program.value = prog as unknown as Program
     },
-    { immediate: true }
-  );
-});
+    { immediate: true },
+  )
+})
 
 // --- DATA FETCHING ---
 const fetchProposalsData = async () => {
-  if (!program.value) return;
-  isLoading.value = true;
+  if (!program.value) return
+  isLoading.value = true
   try {
-    proposals.value = await governance.fetchLatestProposals(program.value);
-  } finally {
-    isLoading.value = false;
+    proposals.value = await governance.fetchLatestProposals(program.value)
   }
-};
+  finally {
+    isLoading.value = false
+  }
+}
 
 // --- WALLET MODAL HANDLERS ---
 const handleWalletRequired = async () => {
-  showWalletModal.value = true;
-};
+  showWalletModal.value = true
+}
 
 // ---Request to release fund after proposal passed ---
 const handleRequestFund = async (proposal: unknown) => {
   // Show wallet modal if not connected
   if (!connected.value) {
-    showWalletModal.value = true;
-    return;
+    showWalletModal.value = true
+    return
   }
 
   try {
     if (!program.value || !publicKey.value) {
-      $toast.error("Please connect your wallet to request");
-      return;
+      $toast.error('Please connect your wallet to request')
+      return
     }
 
-    const { PublicKey } = await import("@solana/web3.js");
-    const proposalPubkey = new PublicKey(proposal.publicKey);
+    const { PublicKey } = await import('@solana/web3.js')
+    const proposalPubkey = new PublicKey(proposal.publicKey)
 
     await governance.requestFund(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       program.value as any,
       publicKey.value,
-      proposalPubkey
-    );
+      proposalPubkey,
+    )
 
     // Show success message
-    $toast.success(`Request submitted successfully!`);
+    $toast.success(`Request submitted successfully!`)
 
     // Close the proposal detail modal
-    visibleProposalDetail.value = false;
-    selectedProposal.value = null;
-  } catch (e) {
-    console.error("Request failed:", e);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $toast.error((e as any).message || "Failed to submit request");
+    visibleProposalDetail.value = false
+    selectedProposal.value = null
   }
-};
+  catch (e) {
+    console.error('Request failed:', e)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $toast.error((e as any).message || 'Failed to submit request')
+  }
+}
 
 // --- WATCHER ---
 // Always fetch proposals when program is available, regardless of wallet connection
@@ -288,91 +308,92 @@ watch(
   () => program.value,
   (prog) => {
     if (prog) {
-      fetchProposalsData();
+      fetchProposalsData()
     }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 // Watch wallet connection changes
 watch(
   () => connected.value,
   (isConnected) => {
     if (isConnected) {
-      showWalletModal.value = false;
+      showWalletModal.value = false
     }
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 // --- HANDLERS ---
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleProposalClick = (proposal: any) => {
-  selectedProposal.value = proposal;
-  visibleProposalDetail.value = true;
-};
+  selectedProposal.value = proposal
+  visibleProposalDetail.value = true
+}
 
 const handleProposalCreated = () => {
-  visibleCreateProposal.value = false;
+  visibleCreateProposal.value = false
   // Refresh the list to show the new proposal
-  fetchProposalsData();
-};
+  fetchProposalsData()
+}
 
 const handleVote = async ({
   proposal,
   agree,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  proposal: any;
-  agree: boolean;
+  proposal: any
+  agree: boolean
 }) => {
   // Show wallet modal if not connected
   if (!connected.value) {
-    showWalletModal.value = true;
-    return;
+    showWalletModal.value = true
+    return
   }
 
   try {
     if (!program.value || !publicKey.value) {
-      $toast.error("Please connect your wallet to vote");
-      return;
+      $toast.error('Please connect your wallet to vote')
+      return
     }
 
-    const { PublicKey } = await import("@solana/web3.js");
-    const proposalPubkey = new PublicKey(proposal.publicKey);
+    const { PublicKey } = await import('@solana/web3.js')
+    const proposalPubkey = new PublicKey(proposal.publicKey)
 
     await governance.vote(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       program.value as any,
       publicKey.value,
       proposalPubkey,
-      agree
-    );
+      agree,
+    )
 
     // Show success message
-    $toast.success(`Vote ${agree ? "for" : "against"} submitted successfully!`);
+    $toast.success(`Vote ${agree ? 'for' : 'against'} submitted successfully!`)
 
     // Close the proposal detail modal
-    visibleProposalDetail.value = false;
-    selectedProposal.value = null;
+    visibleProposalDetail.value = false
+    selectedProposal.value = null
 
     // Refresh proposals to show updated vote counts
-    await fetchProposalsData();
-  } catch (e) {
-    console.error("Vote failed:", e);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $toast.error((e as any).message || "Failed to submit vote");
+    await fetchProposalsData()
   }
-};
+  catch (e) {
+    console.error('Vote failed:', e)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $toast.error((e as any).message || 'Failed to submit vote')
+  }
+}
 
 const handleProposalDeleted = () => {
   // Close the proposal detail modal
-  visibleProposalDetail.value = false;
-  selectedProposal.value = null;
+  visibleProposalDetail.value = false
+  selectedProposal.value = null
 
   // Refresh the proposals list when a proposal is deleted
-  fetchProposalsData();
-};
+  fetchProposalsData()
+}
 </script>
 
 <style>
