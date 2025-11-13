@@ -1,16 +1,11 @@
 <template>
   <div>
-    <v-container
-      id="governance-page-header"
-      fluid
-    >
+    <v-container id="governance-page-header" fluid>
       <v-container>
         <v-row>
           <v-col cols="12">
             <div id="main-title-holder">
-              <h1 class="gama-text-h3 font-weight-bold">
-                Governance Portal
-              </h1>
+              <h1 class="gama-text-h3 font-weight-bold">Governance Portal</h1>
             </div>
           </v-col>
         </v-row>
@@ -36,16 +31,24 @@
 // This parent component is now clean and only serves as a layout container.
 // All logic is correctly encapsulated in the child components.
 
+// Wallet button component
+const AsyncWalletMultiButton = defineAsyncComponent(async () => {
+  const mod = await import("solana-wallets-vue");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return (mod as any).WalletMultiButton;
+});
+
 // SEO Meta data
 useHead({
-  title: 'Governance | Community-Driven Decisions & DAO Voting',
+  title: "Governance | Community-Driven Decisions & DAO Voting",
   meta: [
     {
-      name: 'description',
-      content: 'Shape the future of Gamatrain through decentralized governance. Join our DAO, propose ideas, vote on key decisions, and help build an open-source EdTech ecosystem powered by the community.',
+      name: "description",
+      content:
+        "Shape the future of Gamatrain through decentralized governance. Join our DAO, propose ideas, vote on key decisions, and help build an open-source EdTech ecosystem powered by the community.",
     },
   ],
-})
+});
 </script>
 
 <style scoped lang="scss">
