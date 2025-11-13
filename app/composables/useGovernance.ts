@@ -89,8 +89,9 @@ export const useGovernance = () => {
         )
 
         // Vote power is based on staked amount only
-        const stakedAmount = stakeAccount.stakedAmount?.toNumber() || 0
-        return stakedAmount
+        // Convert from smallest unit to UI amount (divide by 10^6 for 6 decimals)
+        const stakedAmountRaw = stakeAccount.stakedAmount?.toNumber() || 0
+        return stakedAmountRaw / 1_000_000
       }
       catch {
         // Stake account doesn't exist, no vote power
@@ -124,11 +125,15 @@ export const useGovernance = () => {
         stakeAccountPda,
       )
 
+      // Convert from smallest unit to UI amount (divide by 10^6 for 6 decimals)
+      const stakedAmountRaw = stakeAccount.stakedAmount?.toNumber() || 0
+      const pendingUnstakeRaw = stakeAccount.pendingUnstake?.toNumber() || 0
+
       return {
         owner: stakeAccount.owner,
-        stakedAmount: stakeAccount.stakedAmount?.toNumber() || 0,
+        stakedAmount: stakedAmountRaw / 1_000_000,
         lastStakeTime: stakeAccount.lastStakeTime?.toNumber() || 0,
-        pendingUnstake: stakeAccount.pendingUnstake?.toNumber() || 0,
+        pendingUnstake: pendingUnstakeRaw / 1_000_000,
         unstakeRequestedAt: stakeAccount.unstakeRequestedAt?.toNumber() || 0,
       }
     }
@@ -633,8 +638,12 @@ export const governance = {
         'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
       )
 
+      // Convert UI amount to smallest unit (multiply by 10^6 for 6 decimals)
+      const amountInSmallestUnit = Math.floor(amount * 1_000_000)
+
       console.log('🔍 Staking details:', {
         amount,
+        amountInSmallestUnit,
         user: user.toBase58(),
         userTokenAccount: userTokenAccount.toBase58(),
         vaultTokenAccount: vaultTokenAccount.toBase58(),
@@ -643,7 +652,7 @@ export const governance = {
       })
 
       const tx = await program.methods
-        .stack(new BN(amount))
+        .stack(new BN(amountInSmallestUnit))
         .accounts({
           user: user,
           userTokenAccount: userTokenAccount,
@@ -691,8 +700,11 @@ export const governance = {
         program.programId,
       )
 
+      // Convert UI amount to smallest unit (multiply by 10^6 for 6 decimals)
+      const amountInSmallestUnit = Math.floor(amount * 1_000_000)
+
       const tx = await program.methods
-        .unstack(new BN(amount))
+        .unstack(new BN(amountInSmallestUnit))
         .accounts({
           stakeAccount: stakeAccountPda,
           user: user,

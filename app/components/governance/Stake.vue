@@ -1,24 +1,10 @@
 <template>
-  <v-dialog
-    v-model="visible"
-    max-width="600"
-    @after-leave="handleAfterLeave"
-  >
+  <v-dialog v-model="visible" max-width="600" @after-leave="handleAfterLeave">
     <v-sheet class="rounded-lg">
-      <v-tabs
-        v-model="tab"
-        fixed-tabs
-        bg-color="grey-lighten-4"
-      >
-        <v-tab value="stake">
-          Stake
-        </v-tab>
-        <v-tab value="unstake">
-          Unstake
-        </v-tab>
-        <v-tab value="claim">
-          Claim
-        </v-tab>
+      <v-tabs v-model="tab" fixed-tabs bg-color="grey-lighten-4">
+        <v-tab value="stake"> Stake </v-tab>
+        <v-tab value="unstake"> Unstake </v-tab>
+        <v-tab value="claim"> Claim </v-tab>
       </v-tabs>
 
       <v-divider />
@@ -29,10 +15,8 @@
           <v-card flat>
             <v-card-text class="pa-6">
               <div class="mb-4">
-                <h3 class="text-h6 font-weight-bold mb-2">
-                  Stake $GET Tokens
-                </h3>
-                <p class="text-body-2 text-grey-darken-1">
+                <h3 class="text-h5 font-weight-bold mb-2">Stake $GET Tokens</h3>
+                <p class="font-size-12 text-grey-darken-1 font-weight-medium ">
                   Stake your $GET tokens to participate in governance voting and
                   proposal creation.
                 </p>
@@ -45,14 +29,16 @@
                 variant="tonal"
                 class="mb-4"
               >
-                <div class="text-body-2">
-                  <div class="d-flex justify-space-between mb-1">
-                    <span>Currently Staked:</span>
-                    <span class="font-weight-bold">{{ $numberFormat(stakeInfo.stakedAmount) }} $GET</span>
+                <div class="gama-text-body2">
+                  <div class="d-flex justify-space-between mb-2">
+                    <span class="font-size-12">Currently Staked:</span>
+                    <span class="font-weight-bold font-size-12"
+                      >{{ $numberFormat(stakeInfo.stakedAmount) }} $GET</span
+                    >
                   </div>
                   <div class="d-flex justify-space-between">
-                    <span>Your Vote Power:</span>
-                    <span class="font-weight-bold">{{
+                    <span class="font-size-12">Your Vote Power:</span>
+                    <span class="font-weight-bold font-size-14">{{
                       $numberFormat(stakeInfo.stakedAmount)
                     }}</span>
                   </div>
@@ -105,10 +91,12 @@
           <v-card flat>
             <v-card-text class="pa-6">
               <div class="mb-4">
-                <h3 class="text-h6 font-weight-bold mb-2">
+                <h3 class="text-h5 font-weight-bold mb-2">
                   Unstake $GET Tokens
                 </h3>
-                <p class="text-body-2 text-grey-darken-1">
+                <p
+                  class="font-size-12 text-grey-darken-1 font-weight-medium"
+                >
                   Initiate unstaking process. Tokens will be available to claim
                   after a 3-day cooldown period.
                 </p>
@@ -121,37 +109,24 @@
                 variant="tonal"
                 class="mb-4"
               >
-                <div class="text-body-2">
-                  <div class="d-flex justify-space-between mb-1">
-                    <span>Currently Staked:</span>
-                    <span class="font-weight-bold">{{ $numberFormat(stakeInfo.stakedAmount) }} $GET</span>
+                <div class="gama-text-body2">
+                  <div class="d-flex justify-space-between mb-2">
+                    <span class="font-size-12">Currently Staked:</span>
+                    <span class="font-weight-bold font-size-12"
+                      >{{ $numberFormat(stakeInfo.stakedAmount) }} $GET</span
+                    >
                   </div>
                   <div
                     v-if="stakeInfo.pendingUnstake > 0"
                     class="d-flex justify-space-between"
                   >
-                    <span>Pending Unstake:</span>
-                    <span class="font-weight-bold">{{ $numberFormat(stakeInfo.pendingUnstake) }} $GET</span>
+                    <span class="font-size-12">Pending Unstake:</span>
+                    <span class="font-weight-bold font-size-12"
+                      >{{ $numberFormat(stakeInfo.pendingUnstake) }} $GET</span
+                    >
                   </div>
                 </div>
               </v-alert>
-
-              <v-alert
-                type="info"
-                variant="tonal"
-                class="mb-4"
-              >
-                <div class="text-body-2">
-                  <v-icon
-                    icon="mdi-information"
-                    size="small"
-                    class="mr-2"
-                  />
-                  During the 1-second cooldown (testing), unstaked tokens cannot
-                  be used for voting or creating proposals.
-                </div>
-              </v-alert>
-
               <v-form
                 ref="unstakeFormRef"
                 v-model="unstakeFormValid"
@@ -164,7 +139,7 @@
                   type="number"
                   :rules="[rules.required, rules.positive, rules.maxStaked]"
                   :hint="`Staked: ${$numberFormat(
-                    stakeInfo?.stakedAmount || 0,
+                    stakeInfo?.stakedAmount || 0
                   )} $GET`"
                   persistent-hint
                 >
@@ -186,10 +161,10 @@
                   block
                   :loading="isUnstaking"
                   :disabled="
-                    !isWalletReady
-                      || !unstakeFormValid
-                      || !stakeInfo
-                      || stakeInfo.stakedAmount === 0
+                    !isWalletReady ||
+                    !unstakeFormValid ||
+                    !stakeInfo ||
+                    stakeInfo.stakedAmount === 0
                   "
                   class="mt-4"
                 >
@@ -205,10 +180,10 @@
           <v-card flat>
             <v-card-text class="pa-6">
               <div class="mb-4">
-                <h3 class="text-h6 font-weight-bold mb-2">
+                <h3 class="text-h5 font-weight-bold mb-2">
                   Claim Unstaked Tokens
                 </h3>
-                <p class="text-body-2 text-grey-darken-1">
+                <p class="font-size-12 text-grey-darken-2">
                   Claim your unstaked tokens after the cooldown period has
                   completed.
                 </p>
@@ -221,15 +196,17 @@
                 variant="tonal"
                 class="mb-4"
               >
-                <div class="text-body-2">
+                <div class="gama-text-body2">
                   <div class="d-flex justify-space-between mb-2">
-                    <span>Pending Unstake:</span>
-                    <span class="font-weight-bold">{{ $numberFormat(stakeInfo.pendingUnstake) }} $GET</span>
+                    <span class="font-size-12">Pending Unstake:</span>
+                    <span class="font-weight-bold font-size-12"
+                      >{{ $numberFormat(stakeInfo.pendingUnstake) }} $GET</span
+                    >
                   </div>
                   <div class="d-flex justify-space-between">
-                    <span>Cooldown Status:</span>
+                    <span class="font-size-12">Cooldown Status:</span>
                     <span
-                      class="font-weight-bold"
+                      class="font-weight-bold font-size-12"
                       :class="
                         cooldownComplete ? 'text-success' : 'text-warning'
                       "
@@ -240,15 +217,12 @@
                 </div>
               </v-alert>
 
-              <v-alert
-                v-else
-                type="info"
-                variant="tonal"
-                class="mb-4"
-              >
-                <div class="text-body-2">
-                  No pending unstake found. Unstake tokens first to claim them
-                  later.
+              <v-alert v-else type="info" variant="tonal" class="mb-4">
+                <div class="gama-text-body2">
+                  <span class="font-size-14"
+                    >No pending unstake found. Unstake tokens first to claim
+                    them later.</span
+                  >
                 </div>
               </v-alert>
 
@@ -258,10 +232,10 @@
                 block
                 :loading="isClaiming"
                 :disabled="
-                  !isWalletReady
-                    || !cooldownComplete
-                    || !stakeInfo
-                    || stakeInfo.pendingUnstake === 0
+                  !isWalletReady ||
+                  !cooldownComplete ||
+                  !stakeInfo ||
+                  stakeInfo.pendingUnstake === 0
                 "
                 @click="handleClaim"
               >
@@ -276,187 +250,184 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
-import { governance, useGovernance } from '~/composables/useGovernance'
-import { useWorkspace } from '~/composables/useWorkspace'
+import { ref, computed, watch, onMounted } from "vue";
+import { governance, useGovernance } from "~/composables/useGovernance";
+import { useWorkspace } from "~/composables/useWorkspace";
 
 // Props & Emits
-const props = defineProps<{ modelValue: boolean }>()
+const props = defineProps<{ modelValue: boolean }>();
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-  (e: 'staked' | 'unstaked' | 'claimed'): void
-}>()
+  (e: "update:modelValue", value: boolean): void;
+  (e: "staked" | "unstaked" | "claimed"): void;
+}>();
 
 // Two-way binding for v-model
 const visible = computed({
   get: () => props.modelValue,
-  set: (val: boolean) => emit('update:modelValue', val),
-})
+  set: (val: boolean) => emit("update:modelValue", val),
+});
 
 // Local state
-const tab = ref('stake')
-const stakeAmount = ref<number>(0)
-const unstakeAmount = ref<number>(0)
-const stakeFormValid = ref(false)
-const unstakeFormValid = ref(false)
-const stakeFormRef = ref()
-const unstakeFormRef = ref()
-const isStaking = ref(false)
-const isUnstaking = ref(false)
-const isClaiming = ref(false)
+const tab = ref("stake");
+const stakeAmount = ref<number>(0);
+const unstakeAmount = ref<number>(0);
+const stakeFormValid = ref(false);
+const unstakeFormValid = ref(false);
+const stakeFormRef = ref();
+const unstakeFormRef = ref();
+const isStaking = ref(false);
+const isUnstaking = ref(false);
+const isClaiming = ref(false);
 const stakeInfo = ref<{
-  owner: unknown
-  stakedAmount: number
-  lastStakeTime: number
-  pendingUnstake: number
-  unstakeRequestedAt: number
-} | null>(null)
-const tokenBalance = ref(0)
+  owner: unknown;
+  stakedAmount: number;
+  lastStakeTime: number;
+  pendingUnstake: number;
+  unstakeRequestedAt: number;
+} | null>(null);
+const tokenBalance = ref(0);
 
 // Wallet state
-const workspace = useWorkspace()
+const workspace = useWorkspace();
 const isWalletReady = computed(
   () =>
-    workspace?.connected?.value
-    && workspace?.publicKey?.value
-    && workspace?.program?.value,
-)
+    workspace?.connected?.value &&
+    workspace?.publicKey?.value &&
+    workspace?.program?.value
+);
 
 // Governance composable
-const { getStakeAccount, isCooldownComplete, getRemainingCooldown }
-  = useGovernance()
+const { getStakeAccount, isCooldownComplete, getRemainingCooldown } =
+  useGovernance();
 
 // Computed
 const cooldownComplete = computed(() => {
-  if (!stakeInfo.value || stakeInfo.value.pendingUnstake === 0) return false
-  return isCooldownComplete(stakeInfo.value.unstakeRequestedAt)
-})
+  if (!stakeInfo.value || stakeInfo.value.pendingUnstake === 0) return false;
+  return isCooldownComplete(stakeInfo.value.unstakeRequestedAt);
+});
 
 const cooldownStatus = computed(() => {
   if (!stakeInfo.value || stakeInfo.value.pendingUnstake === 0)
-    return 'No cooldown'
-  return getRemainingCooldown(stakeInfo.value.unstakeRequestedAt)
-})
+    return "No cooldown";
+  return getRemainingCooldown(stakeInfo.value.unstakeRequestedAt);
+});
 
 // Validation rules
 const rules = {
-  required: (v: unknown) => !!v || 'This field is required',
-  positive: (v: number) => v > 0 || 'Amount must be greater than 0',
+  required: (v: unknown) => !!v || "This field is required",
+  positive: (v: number) => v > 0 || "Amount must be greater than 0",
   maxBalance: (v: number) =>
-    v <= tokenBalance.value
-    || `Insufficient balance (${tokenBalance.value} $GET available)`,
+    v <= tokenBalance.value ||
+    `Insufficient balance (${tokenBalance.value} $GET available)`,
   maxStaked: (v: number) =>
-    v <= (stakeInfo.value?.stakedAmount || 0)
-    || `Cannot unstake more than staked amount`,
-}
+    v <= (stakeInfo.value?.stakedAmount || 0) ||
+    `Cannot unstake more than staked amount`,
+};
 
 // Methods
 const fetchStakeInfo = async () => {
-  if (!isWalletReady.value) return
+  if (!isWalletReady.value) return;
 
   try {
-    const program = workspace.program?.value
-    const userPk = workspace.publicKey?.value
-    if (!program || !userPk) return
+    const program = workspace.program?.value;
+    const userPk = workspace.publicKey?.value;
+    if (!program || !userPk) return;
 
-    const info = await getStakeAccount(program, userPk)
-    stakeInfo.value = info
+    const info = await getStakeAccount(program, userPk);
+    stakeInfo.value = info;
+  } catch (error) {
+    console.error("Failed to fetch stake info:", error);
   }
-  catch (error) {
-    console.error('Failed to fetch stake info:', error)
-  }
-}
+};
 
 const fetchTokenBalance = async () => {
-  if (!isWalletReady.value) return
+  if (!isWalletReady.value) return;
 
   try {
-    const { fetchTokenBalance } = await import('~/composables/useSolanaClient')
-    const { getTokenMint } = await import('~/config/solana')
-    const tokenMint = getTokenMint()
-    const userPk = workspace.publicKey?.value
+    const { fetchTokenBalance } = await import("~/composables/useSolanaClient");
+    const { getTokenMint } = await import("~/config/solana");
+    const tokenMint = getTokenMint();
+    const userPk = workspace.publicKey?.value;
 
-    if (!userPk) return
+    if (!userPk) return;
 
     const balance = await fetchTokenBalance({
       owner: userPk.toBase58(),
       mint: tokenMint,
-      commitment: 'confirmed',
-    })
+      commitment: "confirmed",
+    });
 
-    tokenBalance.value = balance.uiAmount || 0
+    tokenBalance.value = balance.uiAmount || 0;
+  } catch (error) {
+    console.error("Failed to fetch token balance:", error);
   }
-  catch (error) {
-    console.error('Failed to fetch token balance:', error)
-  }
-}
+};
 
 const handleStake = async () => {
-  if (!stakeFormRef.value) return
+  if (!stakeFormRef.value) return;
 
-  const { valid } = await (stakeFormRef.value as unknown).validate()
-  if (!valid) return
+  const { valid } = await (stakeFormRef.value as unknown).validate();
+  if (!valid) return;
 
   if (!isWalletReady.value) {
-    useNuxtApp().$toast.error('Please connect your wallet')
-    return
+    useNuxtApp().$toast.error("Please connect your wallet");
+    return;
   }
 
   try {
-    isStaking.value = true
-    const program = workspace.program?.value
-    const userPk = workspace.publicKey?.value
-    if (!program || !userPk) throw new Error('Wallet not connected')
+    isStaking.value = true;
+    const program = workspace.program?.value;
+    const userPk = workspace.publicKey?.value;
+    if (!program || !userPk) throw new Error("Wallet not connected");
 
     // Get token accounts
-    const { PublicKey } = await import('@solana/web3.js')
-    const { getAssociatedTokenAddress } = await import('@solana/spl-token')
+    const { PublicKey } = await import("@solana/web3.js");
+    const { getAssociatedTokenAddress } = await import("@solana/spl-token");
     const { getTokenMint, getVaultAddress, getTokenProgramId } = await import(
-      '~/config/solana'
-    )
+      "~/config/solana"
+    );
 
-    const tokenMint = new PublicKey(getTokenMint())
-    const vaultAddressStr = await getVaultAddress() // Async PDA calculation
-    const vaultAddress = new PublicKey(vaultAddressStr)
-    const TOKEN_2022_PROGRAM_ID = new PublicKey(getTokenProgramId())
+    const tokenMint = new PublicKey(getTokenMint());
+    const vaultAddressStr = await getVaultAddress(); // Async PDA calculation
+    const vaultAddress = new PublicKey(vaultAddressStr);
+    const TOKEN_2022_PROGRAM_ID = new PublicKey(getTokenProgramId());
 
     const userTokenAccount = await getAssociatedTokenAddress(
       tokenMint,
       userPk,
       false,
-      TOKEN_2022_PROGRAM_ID,
-    )
+      TOKEN_2022_PROGRAM_ID
+    );
 
     const vaultTokenAccount = await getAssociatedTokenAddress(
       tokenMint,
       vaultAddress,
       true,
-      TOKEN_2022_PROGRAM_ID,
-    )
+      TOKEN_2022_PROGRAM_ID
+    );
 
     // Check if vault token account exists
-    const connection = workspace.connection?.value
+    const connection = workspace.connection?.value;
     if (connection) {
       const vaultAccountInfo = await connection.getAccountInfo(
-        vaultTokenAccount,
-      )
+        vaultTokenAccount
+      );
 
       if (!vaultAccountInfo) {
-        console.error('❌ Vault token account does not exist!')
-        console.log('Vault Token Account:', vaultTokenAccount.toBase58())
-        console.log('Vault Authority:', vaultAddress.toBase58())
-        console.log('\n📋 To initialize the vault, the team needs to run:')
+        console.error("❌ Vault token account does not exist!");
+        console.log("Vault Token Account:", vaultTokenAccount.toBase58());
+        console.log("Vault Authority:", vaultAddress.toBase58());
+        console.log("\n📋 To initialize the vault, the team needs to run:");
         console.log(
-          '   node scripts/initialize-vault.mjs /path/to/keypair.json',
-        )
-        console.log('\nSee VAULT_INITIALIZATION_REQUIRED.md for details.\n')
+          "   node scripts/initialize-vault.mjs /path/to/keypair.json"
+        );
+        console.log("\nSee VAULT_INITIALIZATION_REQUIRED.md for details.\n");
 
         throw new Error(
-          'Staking is not yet available on devnet. The vault needs to be initialized by the team first. Please contact support.',
-        )
-      }
-      else {
-        console.log('✅ Vault token account exists')
+          "Staking is not yet available on devnet. The vault needs to be initialized by the team first. Please contact support."
+        );
+      } else {
+        console.log("✅ Vault token account exists");
       }
     }
 
@@ -466,214 +437,211 @@ const handleStake = async () => {
       stakeAmount.value,
       userTokenAccount,
       vaultTokenAccount,
-      tokenMint,
-    )
+      tokenMint
+    );
 
-    useNuxtApp().$toast.success('Tokens staked successfully!')
-    emit('staked')
+    useNuxtApp().$toast.success("Tokens staked successfully!");
+    emit("staked");
 
     // Refresh data
-    await fetchStakeInfo()
-    await fetchTokenBalance()
+    await fetchStakeInfo();
+    await fetchTokenBalance();
 
     // Refresh governance stats
     if (import.meta.client) {
-      const win = window as Window & { __refreshGovernanceStats?: () => Promise<void> }
+      const win = window as Window & {
+        __refreshGovernanceStats?: () => Promise<void>;
+      };
       if (win.__refreshGovernanceStats) {
-        await win.__refreshGovernanceStats()
+        await win.__refreshGovernanceStats();
       }
     }
 
-    stakeAmount.value = 0
-  }
-  catch (e: unknown) {
-    console.error('Failed to stake:', e)
+    stakeAmount.value = 0;
+  } catch (e: unknown) {
+    console.error("Failed to stake:", e);
 
     // Better error handling
-    let errorMessage = 'Failed to stake tokens'
+    let errorMessage = "Failed to stake tokens";
 
     if (e instanceof Error) {
-      errorMessage = e.message
+      errorMessage = e.message;
 
       // Check for specific errors
       if (
-        errorMessage.includes('AccountOwnedByWrongProgram')
-        || errorMessage.includes('3007')
+        errorMessage.includes("AccountOwnedByWrongProgram") ||
+        errorMessage.includes("3007")
       ) {
-        errorMessage
-          = '⚠️ Token Program Mismatch: Your token uses Token-2022, but the smart contract expects regular SPL Token. The smart contract needs to be redeployed to support Token-2022. Please contact the blockchain team. See TOKEN_PROGRAM_MISMATCH.md for details.'
-      }
-      else if (
-        errorMessage.includes('InstructionError')
-        || errorMessage.includes('Unknown error')
+        errorMessage =
+          "⚠️ Token Program Mismatch: Your token uses Token-2022, but the smart contract expects regular SPL Token. The smart contract needs to be redeployed to support Token-2022. Please contact the blockchain team. See TOKEN_PROGRAM_MISMATCH.md for details.";
+      } else if (
+        errorMessage.includes("InstructionError") ||
+        errorMessage.includes("Unknown error")
       ) {
-        errorMessage
-          = 'Transaction failed. The vault token account may need to be initialized. This is normal for the first stake. Please try again.'
-      }
-      else if (errorMessage.includes('insufficient')) {
-        errorMessage
-          = 'Insufficient balance. Make sure you have enough tokens and SOL for transaction fees.'
-      }
-      else if (errorMessage.includes('vault')) {
-        errorMessage = 'Vault account error. Please contact support.'
+        errorMessage =
+          "Transaction failed. The vault token account may need to be initialized. This is normal for the first stake. Please try again.";
+      } else if (errorMessage.includes("insufficient")) {
+        errorMessage =
+          "Insufficient balance. Make sure you have enough tokens and SOL for transaction fees.";
+      } else if (errorMessage.includes("vault")) {
+        errorMessage = "Vault account error. Please contact support.";
       }
     }
 
-    useNuxtApp().$toast.error(errorMessage)
+    useNuxtApp().$toast.error(errorMessage);
+  } finally {
+    isStaking.value = false;
   }
-  finally {
-    isStaking.value = false
-  }
-}
+};
 
 const handleUnstake = async () => {
-  if (!unstakeFormRef.value) return
+  if (!unstakeFormRef.value) return;
 
-  const { valid } = await (unstakeFormRef.value as unknown).validate()
-  if (!valid) return
+  const { valid } = await (unstakeFormRef.value as unknown).validate();
+  if (!valid) return;
 
   if (!isWalletReady.value) {
-    useNuxtApp().$toast.error('Please connect your wallet')
-    return
+    useNuxtApp().$toast.error("Please connect your wallet");
+    return;
   }
 
   try {
-    isUnstaking.value = true
-    const program = workspace.program?.value
-    const userPk = workspace.publicKey?.value
-    if (!program || !userPk) throw new Error('Wallet not connected')
+    isUnstaking.value = true;
+    const program = workspace.program?.value;
+    const userPk = workspace.publicKey?.value;
+    if (!program || !userPk) throw new Error("Wallet not connected");
 
-    await governance.unstake(program, userPk, unstakeAmount.value)
+    await governance.unstake(program, userPk, unstakeAmount.value);
 
     useNuxtApp().$toast.success(
-      'Unstake initiated! Tokens will be available to claim after 3 days.',
-    )
-    emit('unstaked')
+      "Unstake initiated! Tokens will be available to claim after 3 days."
+    );
+    emit("unstaked");
 
     // Refresh data
-    await fetchStakeInfo()
+    await fetchStakeInfo();
 
     // Refresh governance stats with a small delay to ensure blockchain state is updated
     setTimeout(async () => {
       if (import.meta.client) {
         // Try window method
-        const win = window as Window & { __refreshGovernanceStats?: () => Promise<void> }
+        const win = window as Window & {
+          __refreshGovernanceStats?: () => Promise<void>;
+        };
         if (win.__refreshGovernanceStats) {
-          await win.__refreshGovernanceStats()
+          await win.__refreshGovernanceStats();
         }
         // Also emit event
-        const nuxtApp = useNuxtApp()
-        await nuxtApp.callHook('governance:refresh')
+        const nuxtApp = useNuxtApp();
+        await nuxtApp.callHook("governance:refresh");
       }
-    }, 1000)
+    }, 1000);
 
-    unstakeAmount.value = 0
-    tab.value = 'claim' // Switch to claim tab
+    unstakeAmount.value = 0;
+    tab.value = "claim"; // Switch to claim tab
+  } catch (e: unknown) {
+    console.error("Failed to unstake:", e);
+    const errorMessage =
+      e instanceof Error ? e.message : "Failed to unstake tokens";
+    useNuxtApp().$toast.error(errorMessage);
+  } finally {
+    isUnstaking.value = false;
   }
-  catch (e: unknown) {
-    console.error('Failed to unstake:', e)
-    const errorMessage
-      = e instanceof Error ? e.message : 'Failed to unstake tokens'
-    useNuxtApp().$toast.error(errorMessage)
-  }
-  finally {
-    isUnstaking.value = false
-  }
-}
+};
 
 const handleClaim = async () => {
   if (!isWalletReady.value) {
-    useNuxtApp().$toast.error('Please connect your wallet')
-    return
+    useNuxtApp().$toast.error("Please connect your wallet");
+    return;
   }
 
   try {
-    isClaiming.value = true
-    const program = workspace.program?.value
-    const userPk = workspace.publicKey?.value
-    if (!program || !userPk) throw new Error('Wallet not connected')
+    isClaiming.value = true;
+    const program = workspace.program?.value;
+    const userPk = workspace.publicKey?.value;
+    if (!program || !userPk) throw new Error("Wallet not connected");
 
     // Get token accounts
-    const { PublicKey } = await import('@solana/web3.js')
-    const { getAssociatedTokenAddress } = await import('@solana/spl-token')
+    const { PublicKey } = await import("@solana/web3.js");
+    const { getAssociatedTokenAddress } = await import("@solana/spl-token");
     const { getTokenMint, getVaultAddress, getTokenProgramId } = await import(
-      '~/config/solana'
-    )
+      "~/config/solana"
+    );
 
-    const tokenMint = new PublicKey(getTokenMint())
-    const vaultAddressStr = await getVaultAddress() // Async PDA calculation
-    const vaultAddress = new PublicKey(vaultAddressStr)
-    const TOKEN_2022_PROGRAM_ID = new PublicKey(getTokenProgramId())
+    const tokenMint = new PublicKey(getTokenMint());
+    const vaultAddressStr = await getVaultAddress(); // Async PDA calculation
+    const vaultAddress = new PublicKey(vaultAddressStr);
+    const TOKEN_2022_PROGRAM_ID = new PublicKey(getTokenProgramId());
 
     const userTokenAccount = await getAssociatedTokenAddress(
       tokenMint,
       userPk,
       false,
-      TOKEN_2022_PROGRAM_ID,
-    )
+      TOKEN_2022_PROGRAM_ID
+    );
 
     const vaultTokenAccount = await getAssociatedTokenAddress(
       tokenMint,
       vaultAddress,
       true,
-      TOKEN_2022_PROGRAM_ID,
-    )
+      TOKEN_2022_PROGRAM_ID
+    );
 
     await governance.claimUnstake(
       program,
       userPk,
       userTokenAccount,
       vaultTokenAccount,
-      tokenMint,
-    )
+      tokenMint
+    );
 
-    useNuxtApp().$toast.success('Tokens claimed successfully!')
-    emit('claimed')
+    useNuxtApp().$toast.success("Tokens claimed successfully!");
+    emit("claimed");
 
     // Refresh data
-    await fetchStakeInfo()
-    await fetchTokenBalance()
+    await fetchStakeInfo();
+    await fetchTokenBalance();
 
     // Refresh governance stats
     if (import.meta.client) {
-      const win = window as Window & { __refreshGovernanceStats?: () => Promise<void> }
+      const win = window as Window & {
+        __refreshGovernanceStats?: () => Promise<void>;
+      };
       if (win.__refreshGovernanceStats) {
-        await win.__refreshGovernanceStats()
+        await win.__refreshGovernanceStats();
       }
     }
+  } catch (e: unknown) {
+    console.error("Failed to claim:", e);
+    const errorMessage =
+      e instanceof Error ? e.message : "Failed to claim tokens";
+    useNuxtApp().$toast.error(errorMessage);
+  } finally {
+    isClaiming.value = false;
   }
-  catch (e: unknown) {
-    console.error('Failed to claim:', e)
-    const errorMessage
-      = e instanceof Error ? e.message : 'Failed to claim tokens'
-    useNuxtApp().$toast.error(errorMessage)
-  }
-  finally {
-    isClaiming.value = false
-  }
-}
+};
 
-const handleAfterLeave = () => emit('update:modelValue', false)
+const handleAfterLeave = () => emit("update:modelValue", false);
 
 // Watchers
 watch(
   () => isWalletReady.value,
   (ready) => {
     if (ready) {
-      fetchStakeInfo()
-      fetchTokenBalance()
+      fetchStakeInfo();
+      fetchTokenBalance();
     }
   },
-  { immediate: true },
-)
+  { immediate: true }
+);
 
 // Lifecycle
 onMounted(() => {
   if (isWalletReady.value) {
-    fetchStakeInfo()
-    fetchTokenBalance()
+    fetchStakeInfo();
+    fetchTokenBalance();
   }
-})
+});
 </script>
 
 <style scoped>
