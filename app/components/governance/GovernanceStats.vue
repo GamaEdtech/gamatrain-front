@@ -177,7 +177,7 @@ const proposalsPassed = computed(
 
 // Fetch treasury balance (vault balance)
 const fetchTreasuryBalance = async () => {
-  if (!program.value) return;
+  if (!program.value) return
 
   try {
     const { getVaultAddress } = await import('~/config/solana')
