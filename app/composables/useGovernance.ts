@@ -275,6 +275,61 @@ export const useGovernance = () => {
 }
 
 /**
+ * Get program ID from IDL
+ */
+export async function getProgramId(): Promise<string> {
+  // Dynamic import for IDL
+  const idl = await import('~/idl/gamaedtech_program.json')
+  return idl.default?.address || idl.address
+}
+
+/**
+ * Get token mint address from runtime config
+ */
+export function getTokenMint(): string {
+  const config = useRuntimeConfig()
+  const tokenMint = config.public.solanaTokenMint as string
+
+  // Fallback based on network if not configured
+  if (!tokenMint) {
+    const network = config.public.solanaNetwork as string
+    if (network === 'devnet') {
+      return 'HyXdVykYjcgJwgBmeMmy59QHF4HncsH1TScdH97nqJYW' // Devnet token
+    }
+    return 'GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv' // Mainnet token
+  }
+
+  return tokenMint
+}
+
+/**
+ * Get vault authority PDA address
+ */
+export async function getVaultAddress(): Promise<string> {
+  if (!import.meta.client) {
+    throw new Error('getVaultAddress can only be called on client side')
+  }
+
+  const { PublicKey } = await import('@solana/web3.js')
+  const programIdStr = await getProgramId()
+  const programId = new PublicKey(programIdStr)
+
+  const [vaultAuthority] = PublicKey.findProgramAddressSync(
+    [Buffer.from('vault-authority')],
+    programId,
+  )
+
+  return vaultAuthority.toBase58()
+}
+
+/**
+ * Get Token-2022 program ID
+ */
+export function getTokenProgramId(): string {
+  return 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
+}
+
+/**
  * Enhanced stateless governance functions with better error handling
  */
 export const governance = {

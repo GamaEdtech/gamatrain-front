@@ -357,7 +357,7 @@ const fetchTokenBalance = async () => {
 
   try {
     const { fetchTokenBalance } = await import('~/composables/useSolanaClient')
-    const { getTokenMint } = await import('~/config/solana')
+    const { getTokenMint } = await import('~/composables/useGovernance')
     const tokenMint = getTokenMint()
     const userPk = workspace.publicKey?.value
 
@@ -397,7 +397,7 @@ const handleStake = async () => {
     const { PublicKey } = await import('@solana/web3.js')
     const { getAssociatedTokenAddress } = await import('@solana/spl-token')
     const { getTokenMint, getVaultAddress, getTokenProgramId } = await import(
-      '~/config/solana'
+      '~/composables/useGovernance'
     )
 
     const tokenMint = new PublicKey(getTokenMint())
@@ -586,7 +586,7 @@ const handleClaim = async () => {
     const { PublicKey } = await import('@solana/web3.js')
     const { getAssociatedTokenAddress } = await import('@solana/spl-token')
     const { getTokenMint, getVaultAddress, getTokenProgramId } = await import(
-      '~/config/solana'
+      '~/composables/useGovernance'
     )
 
     const tokenMint = new PublicKey(getTokenMint())

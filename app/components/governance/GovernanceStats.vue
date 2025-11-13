@@ -180,10 +180,10 @@ const fetchTreasuryBalance = async () => {
   if (!program.value) return
 
   try {
-    const { getVaultAddress } = await import('~/config/solana')
+    const { getVaultAddress } = await import('~/composables/useGovernance')
     const { PublicKey } = await import('@solana/web3.js')
     const { getAssociatedTokenAddress } = await import('@solana/spl-token')
-    const { getTokenMint, getTokenProgramId } = await import('~/config/solana')
+    const { getTokenMint, getTokenProgramId } = await import('~/composables/useGovernance')
 
     const vaultAddressStr = await getVaultAddress()
     const vaultAddress = new PublicKey(vaultAddressStr)
