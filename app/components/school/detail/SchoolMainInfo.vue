@@ -387,21 +387,9 @@ function removePhoneField(index) {
 const webSubmitLoader = ref(false)
 const emailSubmitLoader = ref(false)
 const addressSubmitLoader = ref(false)
-const webUrlRule = [
-  v =>
-    !v
-    || /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/.test(
-      v,
-    )
-    || 'Please enter a valid URL',
-  v => !v || v.length <= 255 || 'URL must be less than 255 characters',
-]
-const emailRule = [
-  v =>
-    !v
-    || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
-    || 'Please enter a valid email address',
-]
+const rules = useRules()
+const webUrlRule = [rules.urlStrict, rules.maxLength(255)]
+const emailRule = [rules.email]
 
 function normalizeURL(url) {
   if (!url) return ''

@@ -69,7 +69,7 @@
                   label="Amount to Stake"
                   variant="outlined"
                   type="number"
-                  :rules="[rules.required, rules.positive, rules.maxBalance]"
+                  :rules="[rules.required, rules.positive, customRules.maxBalance]"
                   :hint="`Available: ${$numberFormat(tokenBalance)} $GET`"
                   persistent-hint
                 >
@@ -147,7 +147,7 @@
                   label="Amount to Unstake"
                   variant="outlined"
                   type="number"
-                  :rules="[rules.required, rules.positive, rules.maxStaked]"
+                  :rules="[rules.required, rules.positive, customRules.maxStaked]"
                   :hint="`Staked: ${$numberFormat(
                     stakeInfo?.stakedAmount || 0,
                   )} $GET`"
@@ -320,15 +320,10 @@ const cooldownStatus = computed(() => {
 })
 
 // Validation rules
-const rules = {
-  required: (v: unknown) => !!v || 'This field is required',
-  positive: (v: number) => v > 0 || 'Amount must be greater than 0',
-  maxBalance: (v: number) =>
-    v <= tokenBalance.value
-    || `Insufficient balance (${tokenBalance.value} $GET available)`,
-  maxStaked: (v: number) =>
-    v <= (stakeInfo.value?.stakedAmount || 0)
-    || `Cannot unstake more than staked amount`,
+const rules = useRules()
+const customRules = {
+  maxBalance: rules.maxBalance(tokenBalance),
+  maxStaked: computed(() => rules.maxStaked(stakeInfo.value?.stakedAmount || 0)),
 }
 
 // Methods

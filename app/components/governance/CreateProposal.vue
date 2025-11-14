@@ -250,17 +250,7 @@ const emits = defineEmits<{
   // eslint-disable-next-line @typescript-eslint/unified-signatures
   (e: 'walletRequired'): void
 }>()
-const rules = {
-  required: (v: unknown) => !!v || 'This field is required',
-  maxLength: (max: number) => (v: string) =>
-    !v || v.length <= max || `Maximum ${max} characters allowed`,
-  url: (v: string) =>
-    !v
-    || /^https?:\/\/.+/.test(v)
-    || 'Must be a valid URL starting with http:// or https://',
-  positiveNumber: (v: number) =>
-    v === null || v === undefined || v >= 0 || 'Must be a positive number',
-}
+const rules = useRules()
 
 const categoryOptions = [
   { title: 'General', value: 'general' },
