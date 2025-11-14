@@ -190,10 +190,6 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { governance, useGovernance } from '~/composables/useGovernance'
-import { useWorkspace } from '~/composables/useWorkspace'
-
 let BN: unknown
 type BNType = unknown // optional, you can refine later with typeof import
 

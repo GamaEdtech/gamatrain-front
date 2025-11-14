@@ -166,8 +166,6 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import { useWorkspace } from '~/composables/useWorkspace'
-import { governance } from '~/composables/useGovernance'
 import type { Program } from '@coral-xyz/anchor'
 // Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
 

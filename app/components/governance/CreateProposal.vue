@@ -236,9 +236,6 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import { governance } from '~/composables/useGovernance'
-import { useWorkspace } from '~/composables/useWorkspace'
-import { ref, watch, computed } from 'vue'
 
 const { smAndUp } = useDisplay()
 const props = defineProps({

@@ -123,7 +123,6 @@
 </template>
 
 <script setup lang="ts">
-import { governance } from '~/composables/useGovernance'
 import { PublicKey } from '@solana/web3.js'
 
 interface Props {

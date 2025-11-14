@@ -261,10 +261,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
-import { governance, useGovernance } from '~/composables/useGovernance'
-import { useWorkspace } from '~/composables/useWorkspace'
-
 // Props & Emits
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{

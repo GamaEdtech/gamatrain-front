@@ -76,12 +76,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
-import { useDisplay } from 'vuetify/lib/composables/display'
-import { useWorkspace } from '~/composables/useWorkspace'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { Ref } from 'vue'
-
 const display = useDisplay()
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isMdAndUp = computed(() => (display as any)?.mdAndUp?.value ?? false)

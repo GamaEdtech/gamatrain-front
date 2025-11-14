@@ -45,9 +45,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, computed, nextTick, triggerRef } from 'vue'
-import { useWorkspace } from '~/composables/useWorkspace'
-import { governance } from '~/composables/useGovernance'
 import type { Ref } from 'vue'
 
 // --- STATE ---
