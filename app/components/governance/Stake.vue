@@ -261,6 +261,8 @@
 </template>
 
 <script setup lang="ts">
+import { useValidationRules } from '~/composables/useValidationRules'
+
 // Props & Emits
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{
@@ -294,18 +296,17 @@ const stakeInfo = ref<{
 } | null>(null)
 const tokenBalance = ref(0)
 
+// Governance composable (includes workspace internally)
+const { workspace, getStakeAccount, isCooldownComplete, getRemainingCooldown }
+  = useGovernance()
+
 // Wallet state
-const workspace = useWorkspace()
 const isWalletReady = computed(
   () =>
     workspace?.connected?.value
     && workspace?.publicKey?.value
     && workspace?.program?.value,
 )
-
-// Governance composable
-const { getStakeAccount, isCooldownComplete, getRemainingCooldown }
-  = useGovernance()
 
 // Computed
 const cooldownComplete = computed(() => {
@@ -320,10 +321,13 @@ const cooldownStatus = computed(() => {
 })
 
 // Validation rules
-const rules = useRules()
+const rules = useValidationRules()
 const customRules = {
   maxBalance: rules.maxBalance(tokenBalance),
-  maxStaked: computed(() => rules.maxStaked(stakeInfo.value?.stakedAmount || 0)),
+  maxStaked: (v: number) => {
+    const maxValue = stakeInfo.value?.stakedAmount || 0
+    return v <= maxValue || `Cannot unstake more than staked amount`
+  },
 }
 
 // Methods
@@ -331,11 +335,7 @@ const fetchStakeInfo = async () => {
   if (!isWalletReady.value) return
 
   try {
-    const program = workspace.program?.value
-    const userPk = workspace.publicKey?.value
-    if (!program || !userPk) return
-
-    const info = await getStakeAccount(program, userPk)
+    const info = await getStakeAccount()
     stakeInfo.value = info
   }
   catch (error) {

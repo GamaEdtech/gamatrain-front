@@ -129,6 +129,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRecaptcha } from '~/composables/useRecapcha'
 import useApiService from '~/composables/useApiService'
 import Map from '@/components/common/Map.client.vue'
+import { useValidationRules } from '~/composables/useValidationRules'
 
 useSeoMeta({
   title: `Contact us`,
@@ -138,7 +139,7 @@ useSeoMeta({
 const { $toast } = useNuxtApp()
 
 const zoom = ref(20)
-const rules = useRules()
+const rules = useValidationRules()
 const customRules = {
   min25: rules.minLength(25),
 }

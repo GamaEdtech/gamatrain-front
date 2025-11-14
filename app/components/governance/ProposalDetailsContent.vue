@@ -261,7 +261,7 @@ const checkVoteStatus = async () => {
   }
 
   try {
-    const workspace = useWorkspace()
+    const { workspace } = useGovernance()
     const program = workspace.program?.value
 
     if (program) {

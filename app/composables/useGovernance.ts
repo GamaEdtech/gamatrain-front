@@ -63,18 +63,20 @@ export const ensureBuffer = async () => {
  * Enhanced governance composable with proper error handling and vote power calculation
  */
 export const useGovernance = () => {
+  const workspace = useWorkspace()
   const isLoading = ref(false)
   const error = ref<string | null>(null)
+
   /**
    * Calculate vote power based on user's staked tokens (v2.0)
-   * @param program - Anchor program instance
-   * @param userPublicKey - The user's wallet public key
+   * Uses workspace internally - no need to pass program/publicKey
    * @returns Vote power as a number (based on staked amount)
    */
-  const calculateVotePower = async (
-    program: Program,
-    userPublicKey: PublicKey,
-  ): Promise<number> => {
+  const calculateVotePower = async (): Promise<number> => {
+    const program = workspace.program?.value
+    const userPublicKey = workspace.publicKey?.value
+
+    if (!program || !userPublicKey) return 0
     try {
       // Get user's stake account
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
@@ -106,14 +108,14 @@ export const useGovernance = () => {
 
   /**
    * Get user's stake account information
-   * @param program - Anchor program instance
-   * @param userPublicKey - The user's wallet public key
+   * Uses workspace internally - no need to pass program/publicKey
    * @returns Stake account data or null
    */
-  const getStakeAccount = async (
-    program: Program,
-    userPublicKey: PublicKey,
-  ) => {
+  const getStakeAccount = async () => {
+    const program = workspace.program?.value
+    const userPublicKey = workspace.publicKey?.value
+
+    if (!program || !userPublicKey) return null
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from('stake_account'), userPublicKey.toBuffer()],
@@ -180,16 +182,19 @@ export const useGovernance = () => {
 
   /**
    * Check if user has already voted on a proposal
-   * @param program - Anchor program instance
+   * Uses workspace internally - no need to pass program/voterPublicKey
    * @param proposalPublicKey - Proposal public key
-   * @param voterPublicKey - Voter public key
    * @returns Whether user has voted and vote record data
    */
   const checkVoteRecord = async (
-    program: Program,
     proposalPublicKey: PublicKey,
-    voterPublicKey: PublicKey,
   ): Promise<{ hasVoted: boolean, voteRecord: VoteRecordData | null }> => {
+    const program = workspace.program?.value
+    const voterPublicKey = workspace.publicKey?.value
+
+    if (!program || !voterPublicKey) {
+      return { hasVoted: false, voteRecord: null }
+    }
     try {
       const [voteRecordPDA] = web3.PublicKey.findProgramAddressSync(
         [
@@ -262,6 +267,7 @@ export const useGovernance = () => {
   if (typeof window !== 'undefined') ensureBuffer().catch(console.error)
 
   return {
+    workspace,
     isLoading,
     error,
     calculateVotePower,

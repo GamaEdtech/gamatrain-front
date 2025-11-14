@@ -45,13 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue'
-
 // --- STATE ---
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const program: Ref<any | null> = ref(null)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const wallet: Ref<any | null> = ref(null)
 const isLoading = ref(true)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const allProposals = ref<any[]>([])
@@ -65,8 +59,8 @@ const forceRefresh = () => {
 }
 const treasuryBalance = ref<number>(0)
 
-// Get workspace
-const workspace = useWorkspace()
+// Get governance composable (includes workspace internally)
+const { workspace, getStakeAccount } = useGovernance()
 
 // Expose refresh method for external use
 const refreshStats = async () => {
@@ -96,34 +90,19 @@ defineExpose({
 
 // --- LIFECYCLE HOOK ---
 onMounted(() => {
-  // Watch workspace changes
-  watch(
-    () => workspace.program.value,
-    (prog) => {
-      program.value = prog
-    },
-    { immediate: true },
-  )
-
-  watch(
-    () => workspace.wallet.value,
-    (w) => {
-      wallet.value = w
-    },
-    { immediate: true },
-  )
+  // Workspace is now handled internally by useGovernance
 })
 
 // --- DATA FETCHING ---
 const fetchStatsData = async () => {
-  if (!program.value) return
+  const program = workspace.program?.value
+  if (!program) return
   isLoading.value = true
   try {
-    allProposals.value = await governance.fetchProposals(program.value)
+    allProposals.value = await governance.fetchProposals(program)
     await fetchTreasuryBalance()
     // Also fetch user stake if wallet is connected
-    const userPk = workspace.publicKey?.value
-    if (userPk) {
+    if (workspace.publicKey?.value) {
       await fetchUserStakeInfo()
     }
   }
@@ -135,7 +114,7 @@ const fetchStatsData = async () => {
 // --- WATCHER ---
 // Fetch public data when program is ready (no wallet needed)
 watch(
-  () => program.value,
+  () => workspace.program?.value,
   (prog) => {
     if (prog) {
       fetchStatsData()
@@ -174,7 +153,8 @@ const proposalsPassed = computed(
 
 // Fetch treasury balance (vault balance)
 const fetchTreasuryBalance = async () => {
-  if (!program.value) return
+  const program = workspace.program?.value
+  if (!program) return
 
   try {
     const { getVaultAddress } = await import('~/composables/useGovernance')
@@ -194,7 +174,7 @@ const fetchTreasuryBalance = async () => {
       TOKEN_2022_PROGRAM_ID,
     )
 
-    const connection = program.value.provider.connection
+    const connection = program.provider.connection
     const accountInfo = await connection.getTokenAccountBalance(
       vaultTokenAccount,
     )
@@ -209,14 +189,10 @@ const fetchTreasuryBalance = async () => {
 
 // Fetch user stake info
 const fetchUserStakeInfo = async () => {
-  const userPk = workspace.publicKey?.value
-  const prog = workspace.program?.value
-
-  if (!prog || !userPk) return
+  if (!workspace.program?.value || !workspace.publicKey?.value) return
 
   try {
-    const { getStakeAccount } = useGovernance()
-    const info = await getStakeAccount(prog, userPk)
+    const info = await getStakeAccount()
     console.log('📊 Fetched stake info:', {
       stakedAmount: info?.stakedAmount,
       pendingUnstake: info?.pendingUnstake,

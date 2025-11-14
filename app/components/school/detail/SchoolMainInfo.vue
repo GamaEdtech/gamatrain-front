@@ -387,7 +387,7 @@ function removePhoneField(index) {
 const webSubmitLoader = ref(false)
 const emailSubmitLoader = ref(false)
 const addressSubmitLoader = ref(false)
-const rules = useRules()
+const rules = useValidationRules()
 const webUrlRule = [rules.urlStrict, rules.maxLength(255)]
 const emailRule = [rules.email]
 

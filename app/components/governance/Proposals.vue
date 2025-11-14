@@ -194,9 +194,11 @@ const visibleStake = ref(false)
 const visibleProposalDetail = ref(false)
 const showWalletModal = ref(false)
 
+// Get governance composable (includes workspace internally)
+const { workspace } = useGovernance()
+
 // --- LIFECYCLE HOOK ---
 onMounted(async () => {
-  const workspace = useWorkspace()
   if (!workspace) {
     console.error('❌ Workspace not available')
     return

@@ -336,7 +336,7 @@ const confirmDelete = async () => {
 
   deleteLoading.value = true
   try {
-    const workspace = useWorkspace()
+    const { workspace } = useGovernance()
     const program = workspace.program?.value
     const userPk = props.userPublicKey
 
@@ -369,7 +369,7 @@ onMounted(async () => {
   if (!props.userPublicKey || !props.proposal) return
 
   try {
-    const workspace = useWorkspace()
+    const { workspace } = useGovernance()
     const program = workspace.program?.value
 
     if (program) {

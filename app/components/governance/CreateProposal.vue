@@ -236,6 +236,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
+import { useValidationRules } from '~/composables/useValidationRules'
 
 const { smAndUp } = useDisplay()
 const props = defineProps({
@@ -250,7 +251,7 @@ const emits = defineEmits<{
   // eslint-disable-next-line @typescript-eslint/unified-signatures
   (e: 'walletRequired'): void
 }>()
-const rules = useRules()
+const rules = useValidationRules()
 
 const categoryOptions = [
   { title: 'General', value: 'general' },
@@ -277,7 +278,7 @@ const form = ref({
 const visible = ref(props.modelValue)
 
 // Wallet connection state
-const workspace = useWorkspace()
+const { workspace } = useGovernance()
 const isWalletReady = computed(() => {
   return (
     workspace?.connected?.value
@@ -298,12 +299,10 @@ const fetchUserStakeInfo = async () => {
 
   try {
     const { getStakeAccount } = useGovernance()
-    const program = workspace?.program?.value
-    const userPk = workspace?.publicKey?.value
 
-    if (!program || !userPk) return
+    if (!workspace?.program?.value || !workspace?.publicKey?.value) return
 
-    const info = await getStakeAccount(program, userPk)
+    const info = await getStakeAccount()
     userStakeInfo.value = info
   }
   catch (error) {
@@ -349,7 +348,6 @@ async function onSubmit() {
 
     try {
       isSubmitting.value = true
-      const workspace = useWorkspace()
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const program = workspace?.program?.value as any
       const userPk = workspace?.publicKey?.value

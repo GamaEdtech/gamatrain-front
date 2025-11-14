@@ -76,6 +76,8 @@
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify'
+
 const display = useDisplay()
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isMdAndUp = computed(() => (display as any)?.mdAndUp?.value ?? false)
@@ -87,7 +89,7 @@ const publicKey = ref<any | null>(null)
 
 // --- LIFECYCLE HOOK ---
 onMounted(async () => {
-  const workspace = useWorkspace()
+  const { workspace } = useGovernance()
   // Use workspace state directly
   watch(() => workspace.connected.value, (val) => {
     connected.value = val

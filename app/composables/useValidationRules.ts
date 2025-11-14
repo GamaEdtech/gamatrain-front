@@ -3,7 +3,7 @@
  * Provides reusable validation functions for forms across the application
  */
 
-export const useRules = () => {
+export const useValidationRules = () => {
   // Basic validation rules
   const required = (v: unknown) => !!v || 'This field is required'
 
