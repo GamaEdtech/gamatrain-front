@@ -61,6 +61,14 @@
           @prev-step="backStep"
         />
       </div>
+
+      <v-btn @click="showWallet = true">
+        test
+      </v-btn>
+      <ModalsShargeWallet
+        v-model:show-dialog="showWallet"
+        title-modal="Sharge Wallet"
+      />
     </v-container>
   </div>
 </template>
@@ -68,6 +76,8 @@
 <script setup>
 const nuxtApp = useNuxtApp()
 const router = useRouter()
+
+const showWallet = ref(false)
 
 useHead({
   title: 'Add School',
