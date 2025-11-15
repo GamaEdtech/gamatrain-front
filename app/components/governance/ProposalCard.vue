@@ -190,8 +190,12 @@
 </template>
 
 <script setup lang="ts">
+import { useErrorHandler } from '~/composables/useErrorHandler'
 // Toast notification
 const { $toast } = useNuxtApp()
+
+// Error handler
+const { handleError } = useErrorHandler()
 
 let BN: unknown
 type BNType = unknown // optional, you can refine later with typeof import
@@ -311,7 +315,7 @@ const handleVote = async (agree: boolean) => {
     emits('vote', { proposal: props.proposal, agree })
   }
   catch (error) {
-    console.error('Vote failed:', error)
+    handleError(error, 'Failed to vote', false)
   }
 }
 
@@ -326,7 +330,7 @@ const requestFund = async () => {
     emits('requestFund')
   }
   catch (error) {
-    console.error('Request fund failed:', error)
+    handleError(error, 'Failed to request fund', false)
   }
 }
 
@@ -356,9 +360,7 @@ const confirmDelete = async () => {
     emits('delete', props.proposal)
   }
   catch (error) {
-    console.error('Delete failed:', error)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $toast.error((error as any).message || 'Failed to delete proposal')
+    handleError(error, 'Failed to delete proposal')
   }
   finally {
     deleteLoading.value = false

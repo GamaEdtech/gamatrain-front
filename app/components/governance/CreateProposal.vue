@@ -236,10 +236,15 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
+import { useErrorHandler } from '~/composables/useErrorHandler'
 import { useValidationRules } from '~/composables/useValidationRules'
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '~/constants/governance'
 
 // Toast notification
 const { $toast } = useNuxtApp()
+
+// Error handler
+const { handleError, handleSuccess } = useErrorHandler()
 
 const { smAndUp } = useDisplay()
 const props = defineProps({
@@ -309,7 +314,7 @@ const fetchUserStakeInfo = async () => {
     userStakeInfo.value = info
   }
   catch (error) {
-    console.error('Failed to fetch user stake info:', error)
+    handleError(error, 'Failed to fetch user stake info', false)
   }
 }
 
@@ -344,7 +349,7 @@ async function onSubmit() {
 
     // Check if user has staked tokens (v2.0 requirement)
     if (!hasStakedTokens.value) {
-      $toast.error('You must stake $GET tokens to create proposals')
+      $toast.error(ERROR_MESSAGES.STAKE_REQUIRED)
       return
     }
 
@@ -373,7 +378,7 @@ async function onSubmit() {
         amount: Number(form.value.amount || 0),
       })
 
-      $toast.success('Proposal created successfully!')
+      handleSuccess(SUCCESS_MESSAGES.PROPOSAL_CREATED)
 
       emits('created')
       emits('update:modelValue', false)
@@ -388,9 +393,7 @@ async function onSubmit() {
       }
     }
     catch (e) {
-      console.error('Failed to create proposal:', e)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      $toast.error((e as any).message || 'Failed to create proposal')
+      handleError(e, 'Failed to create proposal')
     }
     finally {
       isSubmitting.value = false

@@ -261,10 +261,16 @@
 </template>
 
 <script setup lang="ts">
+import { useErrorHandler } from '~/composables/useErrorHandler'
 import { useValidationRules } from '~/composables/useValidationRules'
+import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '~/constants/governance'
+import type { StakeAccount } from '~/types/governance'
 
 // Toast notification
 const { $toast } = useNuxtApp()
+
+// Error handler
+const { handleError, handleSuccess } = useErrorHandler()
 
 // Props & Emits
 const props = defineProps<{ modelValue: boolean }>()
@@ -290,13 +296,7 @@ const unstakeFormRef = ref()
 const isStaking = ref(false)
 const isUnstaking = ref(false)
 const isClaiming = ref(false)
-const stakeInfo = ref<{
-  owner: unknown
-  stakedAmount: number
-  lastStakeTime: number
-  pendingUnstake: number
-  unstakeRequestedAt: number
-} | null>(null)
+const stakeInfo = ref<StakeAccount | null>(null)
 const tokenBalance = ref(0)
 
 // Governance composable (includes workspace internally)
@@ -342,7 +342,7 @@ const fetchStakeInfo = async () => {
     stakeInfo.value = info
   }
   catch (error) {
-    console.error('Failed to fetch stake info:', error)
+    handleError(error, 'Failed to fetch stake info', false)
   }
 }
 
@@ -366,7 +366,7 @@ const fetchTokenBalance = async () => {
     tokenBalance.value = balance.uiAmount || 0
   }
   catch (error) {
-    console.error('Failed to fetch token balance:', error)
+    handleError(error, 'Failed to fetch token balance', false)
   }
 }
 
@@ -377,7 +377,7 @@ const handleStake = async () => {
   if (!valid) return
 
   if (!isWalletReady.value) {
-    $toast.error('Please connect your wallet')
+    $toast.error(ERROR_MESSAGES.WALLET_NOT_CONNECTED)
     return
   }
 
@@ -448,7 +448,7 @@ const handleStake = async () => {
       tokenMint,
     )
 
-    $toast.success('Tokens staked successfully!')
+    handleSuccess(SUCCESS_MESSAGES.TOKENS_STAKED)
     emit('staked')
 
     // Refresh data
@@ -468,39 +468,7 @@ const handleStake = async () => {
     stakeAmount.value = 0
   }
   catch (e: unknown) {
-    console.error('Failed to stake:', e)
-
-    // Better error handling
-    let errorMessage = 'Failed to stake tokens'
-
-    if (e instanceof Error) {
-      errorMessage = e.message
-
-      // Check for specific errors
-      if (
-        errorMessage.includes('AccountOwnedByWrongProgram')
-        || errorMessage.includes('3007')
-      ) {
-        errorMessage
-          = '⚠️ Token Program Mismatch: Your token uses Token-2022, but the smart contract expects regular SPL Token. The smart contract needs to be redeployed to support Token-2022. Please contact the blockchain team. See TOKEN_PROGRAM_MISMATCH.md for details.'
-      }
-      else if (
-        errorMessage.includes('InstructionError')
-        || errorMessage.includes('Unknown error')
-      ) {
-        errorMessage
-          = 'Transaction failed. The vault token account may need to be initialized. This is normal for the first stake. Please try again.'
-      }
-      else if (errorMessage.includes('insufficient')) {
-        errorMessage
-          = 'Insufficient balance. Make sure you have enough tokens and SOL for transaction fees.'
-      }
-      else if (errorMessage.includes('vault')) {
-        errorMessage = 'Vault account error. Please contact support.'
-      }
-    }
-
-    $toast.error(errorMessage)
+    handleError(e, 'Failed to stake tokens')
   }
   finally {
     isStaking.value = false
@@ -514,7 +482,7 @@ const handleUnstake = async () => {
   if (!valid) return
 
   if (!isWalletReady.value) {
-    $toast.error('Please connect your wallet')
+    $toast.error(ERROR_MESSAGES.WALLET_NOT_CONNECTED)
     return
   }
 
@@ -526,9 +494,7 @@ const handleUnstake = async () => {
 
     await governance.unstake(program, userPk, unstakeAmount.value)
 
-    $toast.success(
-      'Unstake initiated! Tokens will be available to claim after 3 days.',
-    )
+    handleSuccess(SUCCESS_MESSAGES.UNSTAKE_INITIATED)
     emit('unstaked')
 
     // Refresh data
@@ -554,10 +520,7 @@ const handleUnstake = async () => {
     tab.value = 'claim' // Switch to claim tab
   }
   catch (e: unknown) {
-    console.error('Failed to unstake:', e)
-    const errorMessage
-      = e instanceof Error ? e.message : 'Failed to unstake tokens'
-    $toast.error(errorMessage)
+    handleError(e, 'Failed to unstake tokens')
   }
   finally {
     isUnstaking.value = false
@@ -566,7 +529,7 @@ const handleUnstake = async () => {
 
 const handleClaim = async () => {
   if (!isWalletReady.value) {
-    $toast.error('Please connect your wallet')
+    $toast.error(ERROR_MESSAGES.WALLET_NOT_CONNECTED)
     return
   }
 
@@ -610,7 +573,7 @@ const handleClaim = async () => {
       tokenMint,
     )
 
-    $toast.success('Tokens claimed successfully!')
+    handleSuccess(SUCCESS_MESSAGES.TOKENS_CLAIMED)
     emit('claimed')
 
     // Refresh data
@@ -628,10 +591,7 @@ const handleClaim = async () => {
     }
   }
   catch (e: unknown) {
-    console.error('Failed to claim:', e)
-    const errorMessage
-      = e instanceof Error ? e.message : 'Failed to claim tokens'
-    $toast.error(errorMessage)
+    handleError(e, 'Failed to claim tokens')
   }
   finally {
     isClaiming.value = false
