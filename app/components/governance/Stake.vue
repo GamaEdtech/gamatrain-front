@@ -263,6 +263,9 @@
 <script setup lang="ts">
 import { useValidationRules } from '~/composables/useValidationRules'
 
+// Toast notification
+const { $toast } = useNuxtApp()
+
 // Props & Emits
 const props = defineProps<{ modelValue: boolean }>()
 const emit = defineEmits<{
@@ -374,7 +377,7 @@ const handleStake = async () => {
   if (!valid) return
 
   if (!isWalletReady.value) {
-    useNuxtApp().$toast.error('Please connect your wallet')
+    $toast.error('Please connect your wallet')
     return
   }
 
@@ -445,7 +448,7 @@ const handleStake = async () => {
       tokenMint,
     )
 
-    useNuxtApp().$toast.success('Tokens staked successfully!')
+    $toast.success('Tokens staked successfully!')
     emit('staked')
 
     // Refresh data
@@ -497,7 +500,7 @@ const handleStake = async () => {
       }
     }
 
-    useNuxtApp().$toast.error(errorMessage)
+    $toast.error(errorMessage)
   }
   finally {
     isStaking.value = false
@@ -511,7 +514,7 @@ const handleUnstake = async () => {
   if (!valid) return
 
   if (!isWalletReady.value) {
-    useNuxtApp().$toast.error('Please connect your wallet')
+    $toast.error('Please connect your wallet')
     return
   }
 
@@ -523,7 +526,7 @@ const handleUnstake = async () => {
 
     await governance.unstake(program, userPk, unstakeAmount.value)
 
-    useNuxtApp().$toast.success(
+    $toast.success(
       'Unstake initiated! Tokens will be available to claim after 3 days.',
     )
     emit('unstaked')
@@ -554,7 +557,7 @@ const handleUnstake = async () => {
     console.error('Failed to unstake:', e)
     const errorMessage
       = e instanceof Error ? e.message : 'Failed to unstake tokens'
-    useNuxtApp().$toast.error(errorMessage)
+    $toast.error(errorMessage)
   }
   finally {
     isUnstaking.value = false
@@ -563,7 +566,7 @@ const handleUnstake = async () => {
 
 const handleClaim = async () => {
   if (!isWalletReady.value) {
-    useNuxtApp().$toast.error('Please connect your wallet')
+    $toast.error('Please connect your wallet')
     return
   }
 
@@ -607,7 +610,7 @@ const handleClaim = async () => {
       tokenMint,
     )
 
-    useNuxtApp().$toast.success('Tokens claimed successfully!')
+    $toast.success('Tokens claimed successfully!')
     emit('claimed')
 
     // Refresh data
@@ -628,7 +631,7 @@ const handleClaim = async () => {
     console.error('Failed to claim:', e)
     const errorMessage
       = e instanceof Error ? e.message : 'Failed to claim tokens'
-    useNuxtApp().$toast.error(errorMessage)
+    $toast.error(errorMessage)
   }
   finally {
     isClaiming.value = false

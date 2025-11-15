@@ -238,6 +238,9 @@
 import { useDisplay } from 'vuetify'
 import { useValidationRules } from '~/composables/useValidationRules'
 
+// Toast notification
+const { $toast } = useNuxtApp()
+
 const { smAndUp } = useDisplay()
 const props = defineProps({
   modelValue: {
@@ -341,7 +344,6 @@ async function onSubmit() {
 
     // Check if user has staked tokens (v2.0 requirement)
     if (!hasStakedTokens.value) {
-      const { $toast } = useNuxtApp()
       $toast.error('You must stake $GET tokens to create proposals')
       return
     }
@@ -371,8 +373,6 @@ async function onSubmit() {
         amount: Number(form.value.amount || 0),
       })
 
-      // Show success message
-      const { $toast } = useNuxtApp()
       $toast.success('Proposal created successfully!')
 
       emits('created')
@@ -389,9 +389,6 @@ async function onSubmit() {
     }
     catch (e) {
       console.error('Failed to create proposal:', e)
-
-      // Show error message
-      const { $toast } = useNuxtApp()
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       $toast.error((e as any).message || 'Failed to create proposal')
     }

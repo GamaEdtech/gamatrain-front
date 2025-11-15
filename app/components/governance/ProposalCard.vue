@@ -190,6 +190,9 @@
 </template>
 
 <script setup lang="ts">
+// Toast notification
+const { $toast } = useNuxtApp()
+
 let BN: unknown
 type BNType = unknown // optional, you can refine later with typeof import
 
@@ -335,6 +338,7 @@ const confirmDelete = async () => {
   if (!isOwner.value) return
 
   deleteLoading.value = true
+
   try {
     const { workspace } = useGovernance()
     const program = workspace.program?.value
@@ -346,8 +350,6 @@ const confirmDelete = async () => {
 
     await governance.deleteProposal(program, userPk, props.proposal.publicKey)
 
-    // Show success message
-    const { $toast } = useNuxtApp()
     $toast.success('Proposal deleted successfully')
 
     deleteDialog.value = false
@@ -355,7 +357,6 @@ const confirmDelete = async () => {
   }
   catch (error) {
     console.error('Delete failed:', error)
-    const { $toast } = useNuxtApp()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     $toast.error((error as any).message || 'Failed to delete proposal')
   }
