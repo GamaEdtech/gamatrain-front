@@ -295,16 +295,6 @@ export async function getProgramId(): Promise<string> {
 export function getTokenMint(): string {
   const config = useRuntimeConfig()
   const tokenMint = config.public.solanaTokenMint as string
-
-  // Fallback based on network if not configured
-  if (!tokenMint) {
-    const network = config.public.solanaNetwork as string
-    if (network === 'devnet') {
-      return 'HyXdVykYjcgJwgBmeMmy59QHF4HncsH1TScdH97nqJYW' // Devnet token
-    }
-    return 'GeutGuhcTYRf4rkbZmWDMEgjt5jHyJN4nHko38GJjQhv' // Mainnet token
-  }
-
   return tokenMint
 }
 
