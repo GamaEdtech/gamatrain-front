@@ -326,23 +326,38 @@
       "accounts": [
         {
           "name": "user",
+          "docs": [
+            "The user performing the stake"
+          ],
           "writable": true,
           "signer": true
         },
         {
           "name": "user_token_account",
+          "docs": [
+            "User's Token-2022 or legacy SPL token account"
+          ],
           "writable": true
         },
         {
           "name": "vault_token_account",
+          "docs": [
+            "Vault Token-2022 or legacy SPL token account (where tokens are staked)"
+          ],
           "writable": true
         },
         {
           "name": "mint",
+          "docs": [
+            "Token mint (Token-2022 or legacy SPL)"
+          ],
           "writable": true
         },
         {
           "name": "stake_account",
+          "docs": [
+            "Custom stake account to track user's stake"
+          ],
           "writable": true,
           "pda": {
             "seeds": [
@@ -373,10 +388,15 @@
         },
         {
           "name": "token_program",
-          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+          "docs": [
+            "The token program (can be Token-2022 or legacy SPL)"
+          ]
         },
         {
           "name": "system_program",
+          "docs": [
+            "System program (for paying rent, etc.)"
+          ],
           "address": "11111111111111111111111111111111"
         }
       ],

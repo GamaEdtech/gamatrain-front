@@ -76,11 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
-import { useDisplay } from 'vuetify/lib/composables/display'
-import { useWorkspace } from '~/composables/useWorkspace'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import type { Ref } from 'vue'
+import { useDisplay } from 'vuetify'
 
 const display = useDisplay()
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -93,7 +89,7 @@ const publicKey = ref<any | null>(null)
 
 // --- LIFECYCLE HOOK ---
 onMounted(async () => {
-  const workspace = useWorkspace()
+  const { workspace } = useGovernance()
   // Use workspace state directly
   watch(() => workspace.connected.value, (val) => {
     connected.value = val

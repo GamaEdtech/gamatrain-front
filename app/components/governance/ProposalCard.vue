@@ -190,12 +190,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { governance, useGovernance } from '~/composables/useGovernance'
-import { useWorkspace } from '~/composables/useWorkspace'
+import { useErrorHandler } from '~/composables/useErrorHandler'
+// Toast notification
+const { $toast } = useNuxtApp()
+
+// Error handler
+const { handleError } = useErrorHandler()
 
 let BN: unknown
-type BNType = unknown // optional, you can refine later with typeof import
 
 onMounted(async () => {
   // Dynamically import Anchor only on client side (Nuxt 4 SSR-safe)
@@ -280,20 +282,11 @@ const timeRemaining = computed(() => {
   return 'Less than 1 hour remaining'
 })
 
-const canVote = computed(() => {
-  // Allow voting buttons to be clickable even without wallet connection
-  // The actual wallet check happens in handleVote function
-  return !isExpired.value && !hasVoted.value
-})
+const { canVote: checkCanVote, formatVotes } = useGovernance()
 
-// Methods
-const formatVotes = (votes: BNType) => {
-  if (!votes) return '0'
-  const num = votes.toNumber()
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
-  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
-  return num.toString()
-}
+const canVote = computed(() => {
+  return checkCanVote(isExpired.value, hasVoted.value)
+})
 
 const handleClick = () => {
   emits('select', props.proposal)
@@ -312,7 +305,7 @@ const handleVote = async (agree: boolean) => {
     emits('vote', { proposal: props.proposal, agree })
   }
   catch (error) {
-    console.error('Vote failed:', error)
+    handleError(error, 'Failed to vote', false)
   }
 }
 
@@ -327,7 +320,7 @@ const requestFund = async () => {
     emits('requestFund')
   }
   catch (error) {
-    console.error('Request fund failed:', error)
+    handleError(error, 'Failed to request fund', false)
   }
 }
 
@@ -339,8 +332,9 @@ const confirmDelete = async () => {
   if (!isOwner.value) return
 
   deleteLoading.value = true
+
   try {
-    const workspace = useWorkspace()
+    const { workspace } = useGovernance()
     const program = workspace.program?.value
     const userPk = props.userPublicKey
 
@@ -348,20 +342,15 @@ const confirmDelete = async () => {
       throw new Error('Wallet or program not ready')
     }
 
-    await governance.deleteProposal(program, userPk, props.proposal.publicKey)
+    await governance.deleteProposal(props.proposal.publicKey)
 
-    // Show success message
-    const { $toast } = useNuxtApp()
     $toast.success('Proposal deleted successfully')
 
     deleteDialog.value = false
     emits('delete', props.proposal)
   }
   catch (error) {
-    console.error('Delete failed:', error)
-    const { $toast } = useNuxtApp()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $toast.error((error as any).message || 'Failed to delete proposal')
+    handleError(error, 'Failed to delete proposal')
   }
   finally {
     deleteLoading.value = false
@@ -373,7 +362,7 @@ onMounted(async () => {
   if (!props.userPublicKey || !props.proposal) return
 
   try {
-    const workspace = useWorkspace()
+    const { workspace } = useGovernance()
     const program = workspace.program?.value
 
     if (program) {
