@@ -238,10 +238,7 @@
 import { useDisplay } from 'vuetify'
 import { useErrorHandler } from '~/composables/useErrorHandler'
 import { useValidationRules } from '~/composables/useValidationRules'
-import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '~/constants/governance'
-
-// Toast notification
-const { $toast } = useNuxtApp()
+import { SUCCESS_MESSAGES } from '~/constants/governance'
 
 // Error handler
 const { handleError, handleSuccess } = useErrorHandler()
@@ -347,12 +344,6 @@ async function onSubmit() {
       return
     }
 
-    // Check if user has staked tokens (v2.0 requirement)
-    if (!hasStakedTokens.value) {
-      $toast.error(ERROR_MESSAGES.STAKE_REQUIRED)
-      return
-    }
-
     try {
       isSubmitting.value = true
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -370,6 +361,12 @@ async function onSubmit() {
           'Wallet address not available. Please reconnect your wallet.',
         )
       }
+
+      // Check if user has staked tokens (v2.0 requirement)
+      if (!hasStakedTokens.value) {
+        throw new Error('Failed to fetch user stake info')
+      }
+
       await governance.createProposal(program, userPk, {
         title: String(form.value.title || ''),
         brief: String(form.value.brief || ''),
