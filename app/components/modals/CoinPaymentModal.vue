@@ -35,6 +35,18 @@
             Insufficient balance! You need
             {{ formatNumber(5000000 - userBalance) }} more points.
           </span>
+
+          <span class="text-center">
+            Do you want to recharge your wallet?
+            <v-btn
+              color="success"
+              variant="text"
+              class="font-weight-bold text-h5"
+              @click="openPaymentModal"
+            >
+              Recharge Now
+            </v-btn>
+          </span>
         </v-card-text>
 
         <v-card-actions class="action-buttons">
@@ -91,7 +103,12 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:isOpen', 'confirm', 'close'])
+const emit = defineEmits([
+  'update:isOpen',
+  'confirm',
+  'close',
+  'openPaymentModal',
+])
 
 // Use the existing formatNumber composable
 const { formatNumber } = useFormatNumber()
@@ -105,6 +122,11 @@ const confirmPayment = () => {
 const closeModal = () => {
   emit('update:isOpen', false)
   emit('close')
+}
+
+const openPaymentModal = () => {
+  emit('update:isOpen', false)
+  emit('openPaymentModal')
 }
 </script>
 

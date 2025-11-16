@@ -396,9 +396,9 @@ const currencies = ref([
     decimals: TOKEN_DECIMALS.GET,
     logoURI: '/images/gama-coin.svg',
     // devnet mint
-    mint: 'test',
+    // mint: "test",
     // mainnet mint
-    // mint : TOKEN_MINTS.GET
+    mint: TOKEN_MINTS.GET,
   },
   {
     name: 'SOL',
@@ -406,9 +406,9 @@ const currencies = ref([
     decimals: TOKEN_DECIMALS.SOL,
     logoURI: '/images/solana-coin.png',
     // devnet mint
-    mint: 'So11111111111111111111111111111111111111112',
+    // mint: "So11111111111111111111111111111111111111112",
     // mainnet mint
-    // mint : TOKEN_MINTS.SOL
+    mint: TOKEN_MINTS.SOL,
   },
   {
     name: 'USDC',
@@ -416,9 +416,9 @@ const currencies = ref([
     decimals: TOKEN_DECIMALS.USDC,
     logoURI: '/images/usdc-coin.png',
     // devnet mint
-    mint: '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU',
+    // mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
     // mainnet mint
-    // mint : TOKEN_MINTS.USDC
+    mint: TOKEN_MINTS.USDC,
   },
 ])
 const selectedCurrency = ref(currencies.value[0])
@@ -447,8 +447,6 @@ onMounted(async () => {
     try {
       const { useWallet } = await import('solana-wallets-vue')
       wallet.value = useWallet()
-      console.log('Wallet initialized:', wallet.value)
-      console.log('Initial connection state:', wallet.value?.connected)
     }
     catch (error) {
       console.error('Failed to initialize wallet:', error)
@@ -489,7 +487,6 @@ const handleDisconnect = async () => {
     const w = wallet.value
     if (w?.disconnect) {
       await w.disconnect()
-      console.log('Wallet disconnected successfully')
     }
     else {
       console.warn('Wallet does not support disconnect method')
@@ -535,12 +532,10 @@ const startProccessPayment = async () => {
         amount: amount.value,
         currency: selectedCurrency.value.name,
       }
-      console.log('params', params)
       const responsePayment = await useApiService.post(
         '/api/v2/payments',
         params,
       )
-      console.log('responsePayment', responsePayment)
       if (responsePayment.succeeded) {
         paymentId.value = responsePayment.data
         await sendTransactionInChain()
@@ -582,10 +577,7 @@ const sendTransactionInChain = async () => {
 
     const destination = new PublicKey(config.public.gamaedtechWalletAddress)
     const sender = wallet.value.publicKey
-    console.log(
-      'amount * 10 ** selectToken.value.decimals',
-      amount.value * 10 ** selectedCurrency.value.decimals,
-    )
+
     const rawAmount = BigInt(
       Math.round(amount.value * 10 ** selectedCurrency.value.decimals),
     )
@@ -641,7 +633,6 @@ const sendTransactionInChain = async () => {
 
     await connection.confirmTransaction(signature, 'confirmed')
 
-    console.log('✅ Transaction sent:', signature)
     transactionId.value = signature
     await sendConfirmPaymentRequest()
   }
@@ -664,33 +655,40 @@ const sendConfirmPaymentRequest = async () => {
       transactionId: transactionId.value,
       currency: selectedCurrency.value.name,
     }
-    console.log('params', params)
     const responsePaymentConfirmed = await useApiService.post(
       '/api/v2/payments/verify',
       params,
     )
-    console.log('responsePaymentConfirmed', responsePaymentConfirmed)
     if (responsePaymentConfirmed.succeeded) {
       loadingPayment.value = false
+      emit('update:showDialog', false)
+      $toast.success(`Your Wallet Sharge Successfully.`)
+      loadingPayment.value = false
+      paymentId.value = null
+      transactionId.value = null
     }
     else {
-      // disablePayment.value = true;
-      // loadingPayment.value = false;
-      // paymentId.value = null;
-      // $toast.error(
-      //   "We’re unable to process your payment at the moment. Please try again in a few minutes"
-      // );
+      disablePayment.value = false
+      loadingPayment.value = false
+      paymentId.value = null
+      const id = transactionId.value
+      $toast.error(
+        `We couldn’t process your payment. Please try again later.Transaction ID: ${id}`,
+      )
+      transactionId.value = null
     }
   }
   catch (error) {
     console.log(error)
 
-    // disablePayment.value = true;
-    // loadingPayment.value = false;
-    // paymentId.value = null;
-    // $toast.error(
-    //   "We’re unable to process your payment at the moment. Please try again in a few minutes"
-    // );
+    disablePayment.value = false
+    loadingPayment.value = false
+    paymentId.value = null
+    const id = transactionId.value
+    $toast.error(
+      `We couldn’t process your payment. Please try again later.Transaction ID: ${id}`,
+    )
+    transactionId.value = null
   }
 }
 </script>

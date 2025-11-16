@@ -207,6 +207,13 @@
       :is-processing="coinBalance.isLoading.value || isProcessingPayment"
       @confirm="handleCoinPaymentConfirm"
       @close="handleCoinPaymentClose"
+      @open-payment-modal="showWalletShargeModal = true"
+    />
+
+    <!-- Sharge Wallet Modal -->
+    <ModalsShargeWallet
+      v-model:show-dialog="showWalletShargeModal"
+      title-modal="Sharge Wallet"
     />
 
     <!-- Coin Consumption Animation -->
@@ -260,6 +267,7 @@ const pendingDownload = ref<{
   extraId?: string
 } | null>(null)
 const openModalDownloadMobile = ref(false)
+const showWalletShargeModal = ref(false)
 
 const handleDownloadClick = async (type: TypeFile, extraId?: string) => {
   const downloadKey = extraId ? `${type}-${extraId}` : type
