@@ -92,8 +92,7 @@ const getRandomTest = async (code: string) => {
     console.log('error', error)
   }
   finally {
-    if (randomTestContent.value)
-      visible.value = true
+    if (randomTestContent.value) visible.value = true
     loadingRandomTest.value = false
   }
 }
@@ -110,7 +109,7 @@ onMounted(async () => {
 }
 .lable-div {
   background-color: #000;
-  top: -25px;
+  top: -42px;
   border-radius: 8px 8px 0 0;
 }
 </style>

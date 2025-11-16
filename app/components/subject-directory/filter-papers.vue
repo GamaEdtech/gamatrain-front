@@ -87,19 +87,30 @@
       </template>
     </div>
 
-    <boardDialog
+    <search-select-dialog
       v-model:show-dialog="showBoardDialog"
+      title-modal="Board"
       :items="boards"
+      :selected-item="selectedBoard"
+      :has-search="true"
       @change-selected-item="boardChange"
     />
-    <GradeDialog
+
+    <search-select-dialog
       v-model:show-dialog="showGradeDialog"
+      title-modal="Grade"
       :items="grades"
+      :selected-item="selectedGrade"
+      :has-search="true"
       @change-selected-item="gradeChange"
     />
-    <subjectDialog
+
+    <search-select-dialog
       v-model:show-dialog="showSubjectDialog"
+      title-modal="Subject"
       :items="subjects"
+      :selected-item="selectedSubject"
+      :has-search="true"
       @change-selected-item="subjectChange"
     />
   </div>
@@ -107,10 +118,6 @@
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
-
-import boardDialog from '~/components/subject-directory/board-dialog.vue'
-import GradeDialog from '~/components/subject-directory/grade-dialog.vue'
-import subjectDialog from '~/components/subject-directory/subject-dialog.vue'
 
 const { boardImgs } = useBoard()
 
@@ -159,7 +166,9 @@ const showBoardDialog = ref(false)
 const fetchBoards = async () => {
   try {
     isLoadingBoard.value = true
-    const responseBoard = await useApiService.get('/api/v1/types/list/?type=section')
+    const responseBoard = await useApiService.get(
+      '/api/v1/types/list/?type=section',
+    )
     if (responseBoard.data) {
       boards.value = responseBoard.data.map((item, index) => ({
         ...item,
@@ -213,6 +222,7 @@ const setDefaltBoard = () => {
 const boardChange = async (board) => {
   if (board.id != selectedBoard.value) {
     emit('changeStatusLoading')
+    showBoardDialog.value = false
     selectedBoard.value = board
     selectedGrade.value = null
     selectedSubject.value = null
@@ -285,6 +295,7 @@ const setDefaltGrade = () => {
 const gradeChange = async (grade) => {
   if (grade.id != selectedGrade.value.id) {
     emit('changeStatusLoading')
+    showGradeDialog.value = false
     selectedGrade.value = grade
     selectedSubject.value = null
     await fetchSubject()
@@ -355,6 +366,7 @@ const setDefaltSubject = () => {
 const subjectChange = (subject) => {
   if (subject.id != selectedSubject.value.id) {
     emit('changeStatusLoading')
+    showSubjectDialog.value = false
     selectedSubject.value = subject
     emit(
       'changeFilterForBreadCrumb',
