@@ -162,42 +162,23 @@ const timeRemaining = computed(() => {
   return `${hours} Hour${hours > 1 ? 's' : ''}`
 })
 
+const {
+  canVote: checkCanVote,
+  formatVotes,
+  formatDate,
+  formatAddress,
+  isProposalOwner,
+} = useGovernance()
+
 const canVote = computed(() => {
-// Allow voting buttons to be clickable even without wallet connection
-// The actual wallet check happens in handleVote function
-  return !props.isExpired && !hasVoted.value
+  return checkCanVote(props.isExpired || false, hasVoted.value)
 })
 
 const isOwner = computed(() => {
-  if (!props.userPublicKey || !props.proposal?.account?.owner) return false
-  return props.proposal.account.owner.equals(props.userPublicKey)
+  return isProposalOwner(props.proposal?.account?.owner, props.userPublicKey)
 })
 
-// Methods
-const formatVotes = (votes: number) => {
-  if (!votes) return '0'
-  const num = typeof votes === 'number' ? votes : votes.toNumber()
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
-  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
-  return num.toString()
-}
-
-const formatDate = (timestamp: number) => {
-  if (!timestamp) return '00/00/0000'
-  const date = new Date(timestamp * 1000)
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  })
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const formatOwner = (owner: any) => {
-  if (!owner) return '0X00...00'
-  const address = owner.toBase58()
-  return `${address.slice(0, 4)}...${address.slice(-2)}`
-}
+const formatOwner = formatAddress
 
 const emits = defineEmits<{
   (e: 'vote', payload: { agree: boolean }): void
@@ -218,18 +199,15 @@ const handleVote = async (agree: boolean) => {
     // Emit the vote event to parent component
     emits('vote', { agree })
 
-    // Note: The parent component will handle closing the modal after successful vote
-    // and refreshing the data, so we don't need to do anything else here
+    // Wait a bit for blockchain to update, then check vote status
+    setTimeout(async () => {
+      await checkVoteStatus()
+      voteLoading.value = null
+    }, 2000)
   }
   catch (error) {
     console.error('Vote handling error:', error)
     voteLoading.value = null
-  }
-  finally {
-    // Reset loading state after a short delay to allow for parent processing
-    setTimeout(() => {
-      voteLoading.value = null
-    }, 1000)
   }
 }
 

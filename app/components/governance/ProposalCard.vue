@@ -198,7 +198,6 @@ const { $toast } = useNuxtApp()
 const { handleError } = useErrorHandler()
 
 let BN: unknown
-type BNType = unknown // optional, you can refine later with typeof import
 
 onMounted(async () => {
   // Dynamically import Anchor only on client side (Nuxt 4 SSR-safe)
@@ -283,20 +282,11 @@ const timeRemaining = computed(() => {
   return 'Less than 1 hour remaining'
 })
 
-const canVote = computed(() => {
-  // Allow voting buttons to be clickable even without wallet connection
-  // The actual wallet check happens in handleVote function
-  return !isExpired.value && !hasVoted.value
-})
+const { canVote: checkCanVote, formatVotes } = useGovernance()
 
-// Methods
-const formatVotes = (votes: BNType) => {
-  if (!votes) return '0'
-  const num = votes.toNumber()
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`
-  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`
-  return num.toString()
-}
+const canVote = computed(() => {
+  return checkCanVote(isExpired.value, hasVoted.value)
+})
 
 const handleClick = () => {
   emits('select', props.proposal)

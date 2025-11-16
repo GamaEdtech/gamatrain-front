@@ -122,10 +122,10 @@ const isExpired = computed(() => {
 })
 
 const totalVotes = computed(() => {
-  if (!props.proposal?.account) return new BN(0)
+  if (!props.proposal?.account) return 0
   const agreeVotes = props.proposal.account.agreeVotes || new BN(0)
   const disagreeVotes = props.proposal.account.disagreeVotes || new BN(0)
-  return agreeVotes.add(disagreeVotes)
+  return agreeVotes.add(disagreeVotes).toNumber()
 })
 
 const emits = defineEmits<{
@@ -138,7 +138,7 @@ const visible = ref(false)
 const visibleBottomSheet = ref(false)
 
 const forPercentage = computed(() => {
-  const totalVotesNum = totalVotes.value.toNumber()
+  const totalVotesNum = totalVotes.value
   if (totalVotesNum === 0) return 0
   const agreeVotes = props.proposal?.account?.agreeVotes || new BN(0)
   return Math.round((agreeVotes.toNumber() / totalVotesNum) * 100)

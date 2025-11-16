@@ -128,15 +128,16 @@ export const useGovernance = () => {
       )
 
       // Convert from smallest unit to UI amount (divide by 10^6 for 6 decimals)
-      const stakedAmountRaw = stakeAccount.stakedAmount?.toNumber() || 0
-      const pendingUnstakeRaw = stakeAccount.pendingUnstake?.toNumber() || 0
+      // Note: IDL uses snake_case field names
+      const stakedAmountRaw = stakeAccount.staked_amount?.toNumber() || stakeAccount.stakedAmount?.toNumber() || 0
+      const pendingUnstakeRaw = stakeAccount.pending_unstake?.toNumber() || stakeAccount.pendingUnstake?.toNumber() || 0
 
       return {
         owner: stakeAccount.owner,
         stakedAmount: stakedAmountRaw / 1_000_000,
-        lastStakeTime: stakeAccount.lastStakeTime?.toNumber() || 0,
+        lastStakeTime: stakeAccount.last_stake_time?.toNumber() || stakeAccount.lastStakeTime?.toNumber() || 0,
         pendingUnstake: pendingUnstakeRaw / 1_000_000,
-        unstakeRequestedAt: stakeAccount.unstakeRequestedAt?.toNumber() || 0,
+        unstakeRequestedAt: stakeAccount.unstake_requested_at?.toNumber() || stakeAccount.unstakeRequestedAt?.toNumber() || 0,
       }
     }
     catch {
@@ -263,6 +264,158 @@ export const useGovernance = () => {
     return error.message || 'An unexpected error occurred'
   }
 
+  /**
+   * Check if user can vote on a proposal
+   */
+  const canVote = (isExpired: boolean, hasVoted: boolean): boolean => {
+    return !isExpired && !hasVoted
+  }
+
+  /**
+   * Check if user can request funds for a proposal
+   */
+  const canRequestFund = (proposal: ProposalData, userPublicKey: PublicKey): boolean => {
+    if (!proposal || !userPublicKey) return false
+
+    const agreeVotes = proposal.agreeVotes?.toNumber() || 0
+    const disagreeVotes = proposal.disagreeVotes?.toNumber() || 0
+
+    return agreeVotes > disagreeVotes
+  }
+
+  /**
+   * Handle voting on a proposal
+   */
+  const handleVote = async (
+    proposalPublicKey: string,
+    agree: boolean,
+    onSuccess?: () => void,
+  ): Promise<boolean> => {
+    const program = workspace.program?.value
+    const userPublicKey = workspace.publicKey?.value
+
+    if (!program || !userPublicKey) {
+      return false
+    }
+
+    try {
+      const { PublicKey } = await import('@solana/web3.js')
+      const proposalPk = new PublicKey(proposalPublicKey)
+
+      await governance.vote(program, userPublicKey, proposalPk, agree)
+
+      if (onSuccess) {
+        onSuccess()
+      }
+
+      return true
+    }
+    catch (error) {
+      console.error('Vote failed:', error)
+      return false
+    }
+  }
+
+  /**
+   * Handle requesting funds for a passed proposal
+   */
+  const handleRequestFund = async (
+    proposalPublicKey: string,
+    onSuccess?: () => void,
+  ): Promise<boolean> => {
+    const program = workspace.program?.value
+    const userPublicKey = workspace.publicKey?.value
+
+    if (!program || !userPublicKey) {
+      return false
+    }
+
+    try {
+      const { PublicKey } = await import('@solana/web3.js')
+      const proposalPk = new PublicKey(proposalPublicKey)
+
+      await governance.requestFund(program, userPublicKey, proposalPk)
+
+      if (onSuccess) {
+        onSuccess()
+      }
+
+      return true
+    }
+    catch (error) {
+      console.error('Request fund failed:', error)
+      return false
+    }
+  }
+
+  /**
+   * Format vote numbers for display
+   */
+  const formatVotes = (votes: unknown): string => {
+    if (!votes) return '0'
+
+    let num: number
+    if (typeof votes === 'number') {
+      num = votes
+    }
+    else if (votes && typeof votes === 'object' && 'toNumber' in votes) {
+      num = (votes as { toNumber: () => number }).toNumber()
+    }
+    else {
+      return '0'
+    }
+
+    if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`
+    if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`
+    return num.toString()
+  }
+
+  /**
+   * Format timestamp to date string
+   */
+  const formatDate = (timestamp: number): string => {
+    if (!timestamp) return '00/00/0000'
+    const date = new Date(timestamp * 1000)
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    })
+  }
+
+  /**
+   * Format public key address for display
+   */
+  const formatAddress = (publicKey: unknown): string => {
+    if (!publicKey) return '0X00...00'
+
+    let address: string
+    if (typeof publicKey === 'string') {
+      address = publicKey
+    }
+    else if (publicKey && typeof publicKey === 'object' && 'toBase58' in publicKey) {
+      address = (publicKey as { toBase58: () => string }).toBase58()
+    }
+    else {
+      return '0X00...00'
+    }
+
+    return `${address.slice(0, 4)}...${address.slice(-4)}`
+  }
+
+  /**
+   * Check if user is the owner of a proposal
+   */
+  const isProposalOwner = (proposalOwner: unknown, userPublicKey: unknown): boolean => {
+    if (!proposalOwner || !userPublicKey) return false
+
+    if (typeof proposalOwner === 'object' && 'equals' in proposalOwner) {
+      return (proposalOwner as { equals: (key: unknown) => boolean }).equals(userPublicKey)
+    }
+
+    return false
+  }
+
   // auto-ensure Buffer on composable usage
   if (typeof window !== 'undefined') ensureBuffer().catch(console.error)
 
@@ -277,6 +430,16 @@ export const useGovernance = () => {
     checkVoteRecord,
     isProposalExpired,
     handleGovernanceError,
+    // Actions
+    canVote,
+    canRequestFund,
+    handleVote,
+    handleRequestFund,
+    isProposalOwner,
+    // Formatters
+    formatVotes,
+    formatDate,
+    formatAddress,
   }
 }
 
@@ -513,11 +676,10 @@ export const governance = {
   ) {
     await ensureBuffer()
     try {
-      const { checkVoteRecord, calculateVotePower, isProposalExpired }
+      const { checkVoteRecord, isProposalExpired }
         = useGovernance()
 
       // Check if proposal exists and is not expired
-      // @ts-expect-error: proposal account type may not be inferred
       const proposal = await program.account['proposal'].fetch(
         proposalPublicKey,
       )
@@ -526,18 +688,30 @@ export const governance = {
       }
 
       // Check if user has already voted
-      const { hasVoted } = await checkVoteRecord(
-        program,
-        proposalPublicKey,
-        voter,
-      )
+      const { hasVoted } = await checkVoteRecord(proposalPublicKey)
       if (hasVoted) {
         throw { code: 6001, message: 'User has already voted' }
       }
 
       // Calculate vote power based on staked tokens (v2.0)
-      const finalVotePower
-        = votePower || (await calculateVotePower(program, voter))
+      // Note: We can't use the composable's calculateVotePower here since this is a stateless function
+      // So we calculate it directly
+      let finalVotePower = votePower || 0
+
+      if (!votePower) {
+        try {
+          const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
+            [Buffer.from('stake_account'), voter.toBuffer()],
+            program.programId,
+          )
+          const stakeAccount = await program.account['stakeAccount'].fetch(stakeAccountPda)
+          const stakedAmountRaw = stakeAccount.staked_amount?.toNumber() || stakeAccount.stakedAmount?.toNumber() || 0
+          finalVotePower = stakedAmountRaw / 1_000_000
+        }
+        catch {
+          finalVotePower = 0
+        }
+      }
 
       if (finalVotePower === 0) {
         const error = {
