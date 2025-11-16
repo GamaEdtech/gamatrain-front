@@ -252,7 +252,7 @@ const fetchProposalsData = async () => {
   if (!program.value) return
   isLoading.value = true
   try {
-    proposals.value = await governance.fetchLatestProposals(program.value)
+    proposals.value = await governance.fetchLatestProposals()
   }
   finally {
     isLoading.value = false
@@ -273,20 +273,10 @@ const handleRequestFund = async (proposal: unknown) => {
   }
 
   try {
-    if (!program.value || !publicKey.value) {
-      $toast.error('Please connect your wallet to request')
-      return
-    }
-
     const { PublicKey } = await import('@solana/web3.js')
     const proposalPubkey = new PublicKey(proposal.publicKey)
 
-    await governance.requestFund(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      program.value as any,
-      publicKey.value,
-      proposalPubkey,
-    )
+    await governance.requestFund(proposalPubkey)
 
     // Show success message
     $toast.success(`Request submitted successfully!`)
@@ -362,9 +352,6 @@ const handleVote = async ({
     const proposalPubkey = new PublicKey(proposal.publicKey)
 
     await governance.vote(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      program.value as any,
-      publicKey.value,
       proposalPubkey,
       agree,
     )

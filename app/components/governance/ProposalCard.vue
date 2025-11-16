@@ -342,7 +342,7 @@ const confirmDelete = async () => {
       throw new Error('Wallet or program not ready')
     }
 
-    await governance.deleteProposal(program, userPk, props.proposal.publicKey)
+    await governance.deleteProposal(props.proposal.publicKey)
 
     $toast.success('Proposal deleted successfully')
 

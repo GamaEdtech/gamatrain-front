@@ -367,7 +367,7 @@ async function onSubmit() {
         throw new Error('Failed to fetch user stake info')
       }
 
-      await governance.createProposal(program, userPk, {
+      await governance.createProposal({
         title: String(form.value.title || ''),
         brief: String(form.value.brief || ''),
         cate: String(form.value.cate || 'general'),

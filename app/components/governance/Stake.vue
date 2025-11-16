@@ -440,8 +440,6 @@ const handleStake = async () => {
     }
 
     await governance.stake(
-      program,
-      userPk,
       stakeAmount.value,
       userTokenAccount,
       vaultTokenAccount,
@@ -488,11 +486,7 @@ const handleUnstake = async () => {
 
   try {
     isUnstaking.value = true
-    const program = workspace.program?.value
-    const userPk = workspace.publicKey?.value
-    if (!program || !userPk) throw new Error('Wallet not connected')
-
-    await governance.unstake(program, userPk, unstakeAmount.value)
+    await governance.unstake(unstakeAmount.value)
 
     handleSuccess(SUCCESS_MESSAGES.UNSTAKE_INITIATED)
     emit('unstaked')
@@ -566,8 +560,6 @@ const handleClaim = async () => {
     )
 
     await governance.claimUnstake(
-      program,
-      userPk,
       userTokenAccount,
       vaultTokenAccount,
       tokenMint,

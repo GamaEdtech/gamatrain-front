@@ -99,7 +99,7 @@ const fetchStatsData = async () => {
   if (!program) return
   isLoading.value = true
   try {
-    allProposals.value = await governance.fetchProposals(program)
+    allProposals.value = await governance.fetchProposals()
     await fetchTreasuryBalance()
     // Also fetch user stake if wallet is connected
     if (workspace.publicKey?.value) {

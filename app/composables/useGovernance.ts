@@ -15,7 +15,7 @@ else {
 }
 
 // Type alias (keep it only for typing)
-type Program<T extends anchor.Idl = anchor.Idl> = anchor.Program<T>
+// type Program<T extends anchor.Idl = anchor.Idl> = anchor.Program<T>
 
 // Runtime values (don’t destructure Program here)
 const { web3, BN } = anchor
@@ -291,18 +291,11 @@ export const useGovernance = () => {
     agree: boolean,
     onSuccess?: () => void,
   ): Promise<boolean> => {
-    const program = workspace.program?.value
-    const userPublicKey = workspace.publicKey?.value
-
-    if (!program || !userPublicKey) {
-      return false
-    }
-
     try {
       const { PublicKey } = await import('@solana/web3.js')
       const proposalPk = new PublicKey(proposalPublicKey)
 
-      await governance.vote(program, userPublicKey, proposalPk, agree)
+      await governance.vote(proposalPk, agree)
 
       if (onSuccess) {
         onSuccess()
@@ -323,18 +316,11 @@ export const useGovernance = () => {
     proposalPublicKey: string,
     onSuccess?: () => void,
   ): Promise<boolean> => {
-    const program = workspace.program?.value
-    const userPublicKey = workspace.publicKey?.value
-
-    if (!program || !userPublicKey) {
-      return false
-    }
-
     try {
       const { PublicKey } = await import('@solana/web3.js')
       const proposalPk = new PublicKey(proposalPublicKey)
 
-      await governance.requestFund(program, userPublicKey, proposalPk)
+      await governance.requestFund(proposalPk)
 
       if (onSuccess) {
         onSuccess()
@@ -494,10 +480,17 @@ export function getTokenProgramId(): string {
 export const governance = {
   /**
    * Fetches all proposal accounts from the blockchain.
-   * @param program - The initialized Anchor Program instance.
+   * Uses workspace internally - no need to pass program
    */
-  async fetchProposals(program: Program) {
+  async fetchProposals() {
     await ensureBuffer()
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+
+    if (!program) {
+      throw new Error('Program not initialized')
+    }
+
     try {
       const proposals = await (program.account as unknown).proposal.all()
       return proposals.map((proposal: unknown) => ({
@@ -521,10 +514,17 @@ export const governance = {
 
   /**
    * Fetches the latest 10 proposals sorted by creation date (descending).
-   * @param program - The initialized Anchor Program instance.
+   * Uses workspace internally - no need to pass program
    */
-  async fetchLatestProposals(program: Program) {
+  async fetchLatestProposals() {
     await ensureBuffer()
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+
+    if (!program) {
+      throw new Error('Program not initialized')
+    }
+
     try {
       const proposals = await (program.account as unknown).proposal.all()
 
@@ -561,16 +561,19 @@ export const governance = {
 
   /**
    * Creates a new proposal with enhanced validation.
-   * @param program - The initialized Anchor Program instance.
-   * @param user - The PublicKey of the proposal creator.
+   * Uses workspace internally - no need to pass program/user
    * @param formData - The data for the new proposal.
    */
-  async createProposal(
-    program: Program,
-    user: PublicKey,
-    formData: CreateProposalForm,
-  ) {
+  async createProposal(formData: CreateProposalForm) {
     await ensureBuffer()
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+    const user = workspace.publicKey?.value
+
+    if (!program || !user) {
+      throw new Error('Wallet not connected or program not initialized')
+    }
+
     try {
       // Validate form data
       if (!formData.title?.trim()) {
@@ -661,20 +664,25 @@ export const governance = {
 
   /**
    * Submits a vote on a proposal with enhanced validation.
-   * @param program - The initialized Anchor Program instance.
-   * @param voter - The PublicKey of the voter.
+   * Uses workspace internally - no need to pass program/voter
    * @param proposalPublicKey - The PublicKey of the proposal being voted on.
    * @param agree - Boolean vote (true for 'Yes', false for 'No').
    * @param votePower - Optional vote power (will be calculated if not provided).
    */
   async vote(
-    program: Program,
-    voter: PublicKey,
     proposalPublicKey: PublicKey,
     agree: boolean,
     votePower?: number,
   ) {
     await ensureBuffer()
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+    const voter = workspace.publicKey?.value
+
+    if (!program || !voter) {
+      throw new Error('Wallet not connected or program not initialized')
+    }
+
     try {
       const { checkVoteRecord, isProposalExpired }
         = useGovernance()
@@ -694,8 +702,6 @@ export const governance = {
       }
 
       // Calculate vote power based on staked tokens (v2.0)
-      // Note: We can't use the composable's calculateVotePower here since this is a stateless function
-      // So we calculate it directly
       let finalVotePower = votePower || 0
 
       if (!votePower) {
@@ -769,16 +775,19 @@ export const governance = {
 
   /**
    * Deletes a proposal with ownership validation.
-   * @param program - The initialized Anchor Program instance.
-   * @param user - The PublicKey of the user attempting to delete (must be the owner).
+   * Uses workspace internally - no need to pass program/user
    * @param proposalPublicKey - The PublicKey of the proposal to delete.
    */
-  async deleteProposal(
-    program: Program,
-    user: PublicKey,
-    proposalPublicKey: PublicKey,
-  ) {
+  async deleteProposal(proposalPublicKey: PublicKey) {
     await ensureBuffer()
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+    const user = workspace.publicKey?.value
+
+    if (!program || !user) {
+      throw new Error('Wallet not connected or program not initialized')
+    }
+
     try {
       // Check if user owns the proposal
       // @ts-expect-error: proposal account type may not be inferred
@@ -814,19 +823,14 @@ export const governance = {
 
   /**
    * Get vote record for a specific user and proposal
-   * @param program - The initialized Anchor Program instance.
+   * Uses workspace internally - no need to pass program/publicKey
    * @param proposalPublicKey - The PublicKey of the proposal.
-   * @param voterPublicKey - The PublicKey of the voter.
    */
-  async getVoteRecord(
-    program: Program,
-    proposalPublicKey: PublicKey,
-    voterPublicKey: PublicKey,
-  ) {
+  async getVoteRecord(proposalPublicKey: PublicKey) {
     await ensureBuffer()
     try {
       const { checkVoteRecord } = useGovernance()
-      return await checkVoteRecord(program, proposalPublicKey, voterPublicKey)
+      return await checkVoteRecord(proposalPublicKey)
     }
     catch (error) {
       console.error('Error fetching vote record:', error)
@@ -836,22 +840,27 @@ export const governance = {
 
   /**
    * Stake tokens for governance participation (v2.0)
-   * @param program - The initialized Anchor Program instance.
-   * @param user - The PublicKey of the user staking tokens.
+   * Uses workspace internally - no need to pass program/user
    * @param amount - Amount of tokens to stake.
    * @param userTokenAccount - User's token account.
    * @param vaultTokenAccount - Vault token account.
    * @param mint - Token mint address.
    */
   async stake(
-    program: Program,
-    user: PublicKey,
     amount: number,
     userTokenAccount: PublicKey,
     vaultTokenAccount: PublicKey,
     mint: PublicKey,
   ) {
     await ensureBuffer()
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+    const user = workspace.publicKey?.value
+
+    if (!program || !user) {
+      throw new Error('Wallet not connected or program not initialized')
+    }
+
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from('stake_account'), user.toBuffer()],
@@ -912,13 +921,20 @@ export const governance = {
   },
 
   /**
-   * Unstake tokens (initiates 3-day cooldown) (v2.0)
-   * @param program - The initialized Anchor Program instance.
-   * @param user - The PublicKey of the user unstaking tokens.
+   * Unstake tokens (initiates 1-hour cooldown) (v2.0)
+   * Uses workspace internally - no need to pass program/user
    * @param amount - Amount of tokens to unstake.
    */
-  async unstake(program: Program, user: PublicKey, amount: number) {
+  async unstake(amount: number) {
     await ensureBuffer()
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+    const user = workspace.publicKey?.value
+
+    if (!program || !user) {
+      throw new Error('Wallet not connected or program not initialized')
+    }
+
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from('stake_account'), user.toBuffer()],
@@ -960,20 +976,25 @@ export const governance = {
 
   /**
    * Claim unstaked tokens after cooldown period (v2.0)
-   * @param program - The initialized Anchor Program instance.
-   * @param user - The PublicKey of the user claiming tokens.
+   * Uses workspace internally - no need to pass program/user
    * @param userTokenAccount - User's token account.
    * @param vaultTokenAccount - Vault token account.
    * @param mint - Token mint address.
    */
   async claimUnstake(
-    program: Program,
-    user: PublicKey,
     userTokenAccount: PublicKey,
     vaultTokenAccount: PublicKey,
     mint: PublicKey,
   ) {
     await ensureBuffer()
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+    const user = workspace.publicKey?.value
+
+    if (!program || !user) {
+      throw new Error('Wallet not connected or program not initialized')
+    }
+
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from('stake_account'), user.toBuffer()],
@@ -1014,6 +1035,72 @@ export const governance = {
     }
     catch (error: unknown) {
       console.error('Error claiming unstaked tokens:', error)
+      const { handleGovernanceError } = useGovernance()
+      const errorObj
+        = error && typeof error === 'object' && 'code' in error
+          ? (error as { code?: number, message?: string })
+          : {
+              message: error instanceof Error ? error.message : 'Unknown error',
+            }
+      throw new Error(handleGovernanceError(errorObj))
+    }
+  },
+
+  /**
+   * Request fund for a passed proposal
+   * Uses workspace internally - no need to pass program/user
+   * @param proposalPublicKey - The PublicKey of the proposal.
+   */
+  async requestFund(proposalPublicKey: PublicKey) {
+    await ensureBuffer()
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+    const user = workspace.publicKey?.value
+
+    if (!program || !user) {
+      throw new Error('Wallet not connected or program not initialized')
+    }
+
+    try {
+      // Get runtime config for multisig address
+      const config = useRuntimeConfig()
+      const multisigAddress = config.public?.solanaMultisigAddress
+
+      if (!multisigAddress) {
+        throw new Error('Multisig address not configured')
+      }
+
+      const multisig = new web3.PublicKey(multisigAddress)
+
+      // Derive transaction PDA (you may need to adjust seeds based on your program)
+      const [transactionPda] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('transaction'), proposalPublicKey.toBuffer()],
+        program.programId,
+      )
+
+      const tx = await program.methods
+        .requestFund()
+        .accounts({
+          proposal: proposalPublicKey,
+          multisig: multisig,
+          transaction: transactionPda,
+          creator: user,
+          rentPayer: user,
+          systemProgram: web3.SystemProgram.programId,
+        })
+        .rpc({ skipPreflight: true })
+
+      const latestBlockhash
+        = await program.provider.connection.getLatestBlockhash()
+      await program.provider.connection.confirmTransaction({
+        signature: tx,
+        ...latestBlockhash,
+      })
+
+      return { signature: tx }
+    }
+    catch (error: unknown) {
+      console.error('Error requesting fund:', error)
       const { handleGovernanceError } = useGovernance()
       const errorObj
         = error && typeof error === 'object' && 'code' in error
