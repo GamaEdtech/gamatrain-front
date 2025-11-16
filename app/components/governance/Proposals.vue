@@ -1,11 +1,18 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
   <div class="mt-10">
-    <h1
-      class="text-h4 text-md-h3 mb-md-4 font-weight-bold primary-gray-700 text-center"
-    >
-      Active Proposals
-    </h1>
+    <div class="proposals-header mb-md-4">
+      <div
+        class="proposals-title text-h4 text-md-h3 font-weight-bold primary-gray-700"
+      >
+        Active Proposals
+      </div>
+      <div class="wallet-button-container">
+        <ClientOnly>
+          <AsyncWalletMultiButton />
+        </ClientOnly>
+      </div>
+    </div>
 
     <!-- 1. State: Loading proposals -->
     <div
@@ -80,7 +87,7 @@
           variant="flat"
           rounded
           class="ml-3"
-          @click="visibleStake=true"
+          @click="visibleStake = true"
         >
           Stake
         </v-btn>
@@ -108,9 +115,7 @@
       @created="handleProposalCreated"
       @wallet-required="handleWalletRequired"
     />
-    <governance-stake
-      v-model="visibleStake"
-    />
+    <governance-stake v-model="visibleStake" />
     <governance-proposal-detail
       v-if="selectedProposal"
       v-model="visibleProposalDetail"
@@ -160,11 +165,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, defineAsyncComponent } from 'vue'
-import { useDisplay } from 'vuetify/lib/composables/display'
-import { useWorkspace } from '~/composables/useWorkspace'
-import { governance } from '~/composables/useGovernance'
-// import type { Program } from '@coral-xyz/anchor'
+import { useDisplay } from 'vuetify'
+import type { Program } from '@coral-xyz/anchor'
 // Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
 
 const { mdAndUp } = useDisplay()
@@ -192,9 +194,11 @@ const visibleStake = ref(false)
 const visibleProposalDetail = ref(false)
 const showWalletModal = ref(false)
 
+// Get governance composable (includes workspace internally)
+const { workspace } = useGovernance()
+
 // --- LIFECYCLE HOOK ---
 onMounted(async () => {
-  const workspace = useWorkspace()
   if (!workspace) {
     console.error('❌ Workspace not available')
     return
@@ -248,7 +252,7 @@ const fetchProposalsData = async () => {
   if (!program.value) return
   isLoading.value = true
   try {
-    proposals.value = await governance.fetchLatestProposals(program.value)
+    proposals.value = await governance.fetchLatestProposals()
   }
   finally {
     isLoading.value = false
@@ -262,27 +266,17 @@ const handleWalletRequired = async () => {
 
 // ---Request to release fund after proposal passed ---
 const handleRequestFund = async (proposal: unknown) => {
-// Show wallet modal if not connected
+  // Show wallet modal if not connected
   if (!connected.value) {
     showWalletModal.value = true
     return
   }
 
   try {
-    if (!program.value || !publicKey.value) {
-      $toast.error('Please connect your wallet to request')
-      return
-    }
-
     const { PublicKey } = await import('@solana/web3.js')
     const proposalPubkey = new PublicKey(proposal.publicKey)
 
-    await governance.requestFund(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      program.value as any,
-      publicKey.value,
-      proposalPubkey,
-    )
+    await governance.requestFund(proposalPubkey)
 
     // Show success message
     $toast.success(`Request submitted successfully!`)
@@ -358,9 +352,6 @@ const handleVote = async ({
     const proposalPubkey = new PublicKey(proposal.publicKey)
 
     await governance.vote(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      program.value as any,
-      publicKey.value,
       proposalPubkey,
       agree,
     )
@@ -393,6 +384,35 @@ const handleProposalDeleted = () => {
 </script>
 
 <style>
+.proposals-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+.proposals-title {
+  text-align: center;
+  flex: 1;
+}
+
+.wallet-button-container {
+  position: absolute;
+  right: 0;
+}
+
+@media only screen and (max-width: 600px) {
+  .proposals-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .wallet-button-container {
+    position: static;
+  }
+}
+
 .proposal-slide__card {
   width: 310px;
 }

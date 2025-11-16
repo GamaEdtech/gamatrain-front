@@ -42,7 +42,8 @@ useHead({
   meta: [
     {
       name: 'description',
-      content: 'Shape the future of Gamatrain through decentralized governance. Join our DAO, propose ideas, vote on key decisions, and help build an open-source EdTech ecosystem powered by the community.',
+      content:
+        'Shape the future of Gamatrain through decentralized governance. Join our DAO, propose ideas, vote on key decisions, and help build an open-source EdTech ecosystem powered by the community.',
     },
   ],
 })

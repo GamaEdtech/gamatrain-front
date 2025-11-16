@@ -81,6 +81,41 @@
                 > Not Connected </span>
               </div>
 
+              <!-- Staking Status (v2.0) -->
+              <v-alert
+                v-if="isWalletReady && !hasStakedTokens"
+                type="warning"
+                variant="tonal"
+                class="mt-4"
+              >
+                <div class="text-body-2">
+                  <v-icon
+                    icon="mdi-alert"
+                    size="small"
+                    class="mr-2"
+                  />
+                  You must stake $GET tokens to create proposals. Please stake
+                  tokens first.
+                </div>
+              </v-alert>
+
+              <v-alert
+                v-else-if="isWalletReady && hasStakedTokens"
+                type="success"
+                variant="tonal"
+                class="mt-4"
+              >
+                <div class="text-body-2">
+                  <v-icon
+                    icon="mdi-check-circle"
+                    size="small"
+                    class="mr-2"
+                  />
+                  Staked:
+                  {{ $numberFormat(userStakeInfo?.stakedAmount || 0) }} $GET
+                </div>
+              </v-alert>
+
               <div class="mt-10">
                 <div class="mb-4">
                   <div class="mb-1 primary-gray-700 text-h6">
@@ -181,8 +216,15 @@
                 rounded
                 class="flex-1 w-70"
                 :loading="isSubmitting"
+                :disabled="isWalletReady && !hasStakedTokens"
               >
-                {{ !isWalletReady ? "Connect Wallet" : "Submit" }}
+                {{
+                  !isWalletReady
+                    ? "Connect Wallet"
+                    : !hasStakedTokens
+                      ? "Stake Tokens Required"
+                      : "Submit"
+                }}
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -194,9 +236,12 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import { governance } from '~/composables/useGovernance'
-import { useWorkspace } from '~/composables/useWorkspace'
-import { ref, watch, computed } from 'vue'
+import { useErrorHandler } from '~/composables/useErrorHandler'
+import { useValidationRules } from '~/composables/useValidationRules'
+import { SUCCESS_MESSAGES } from '~/constants/governance'
+
+// Error handler
+const { handleError, handleSuccess } = useErrorHandler()
 
 const { smAndUp } = useDisplay()
 const props = defineProps({
@@ -211,17 +256,7 @@ const emits = defineEmits<{
   // eslint-disable-next-line @typescript-eslint/unified-signatures
   (e: 'walletRequired'): void
 }>()
-const rules = {
-  required: (v: unknown) => !!v || 'This field is required',
-  maxLength: (max: number) => (v: string) =>
-    !v || v.length <= max || `Maximum ${max} characters allowed`,
-  url: (v: string) =>
-    !v
-    || /^https?:\/\/.+/.test(v)
-    || 'Must be a valid URL starting with http:// or https://',
-  positiveNumber: (v: number) =>
-    v === null || v === undefined || v >= 0 || 'Must be a positive number',
-}
+const rules = useValidationRules()
 
 const categoryOptions = [
   { title: 'General', value: 'general' },
@@ -248,7 +283,7 @@ const form = ref({
 const visible = ref(props.modelValue)
 
 // Wallet connection state
-const workspace = useWorkspace()
+const { workspace } = useGovernance()
 const isWalletReady = computed(() => {
   return (
     workspace?.connected?.value
@@ -256,6 +291,40 @@ const isWalletReady = computed(() => {
     && workspace?.program?.value
   )
 })
+
+// Check if user has staked tokens (v2.0 requirement)
+const userStakeInfo = ref<{ stakedAmount: number } | null>(null)
+const hasStakedTokens = computed(() => {
+  return userStakeInfo.value && userStakeInfo.value.stakedAmount > 0
+})
+
+// Fetch user stake info
+const fetchUserStakeInfo = async () => {
+  if (!isWalletReady.value) return
+
+  try {
+    const { getStakeAccount } = useGovernance()
+
+    if (!workspace?.program?.value || !workspace?.publicKey?.value) return
+
+    const info = await getStakeAccount()
+    userStakeInfo.value = info
+  }
+  catch (error) {
+    handleError(error, 'Failed to fetch user stake info', false)
+  }
+}
+
+// Watch for wallet changes
+watch(
+  () => isWalletReady.value,
+  (ready) => {
+    if (ready) {
+      fetchUserStakeInfo()
+    }
+  },
+  { immediate: true },
+)
 
 watch(
   () => props.modelValue,
@@ -277,7 +346,6 @@ async function onSubmit() {
 
     try {
       isSubmitting.value = true
-      const workspace = useWorkspace()
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const program = workspace?.program?.value as any
       const userPk = workspace?.publicKey?.value
@@ -293,7 +361,13 @@ async function onSubmit() {
           'Wallet address not available. Please reconnect your wallet.',
         )
       }
-      await governance.createProposal(program, userPk, {
+
+      // Check if user has staked tokens (v2.0 requirement)
+      if (!hasStakedTokens.value) {
+        throw new Error('Failed to fetch user stake info')
+      }
+
+      await governance.createProposal({
         title: String(form.value.title || ''),
         brief: String(form.value.brief || ''),
         cate: String(form.value.cate || 'general'),
@@ -301,9 +375,7 @@ async function onSubmit() {
         amount: Number(form.value.amount || 0),
       })
 
-      // Show success message
-      const { $toast } = useNuxtApp()
-      $toast.success('Proposal created successfully!')
+      handleSuccess(SUCCESS_MESSAGES.PROPOSAL_CREATED)
 
       emits('created')
       emits('update:modelValue', false)
@@ -318,12 +390,7 @@ async function onSubmit() {
       }
     }
     catch (e) {
-      console.error('Failed to create proposal:', e)
-
-      // Show error message
-      const { $toast } = useNuxtApp()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      $toast.error((e as any).message || 'Failed to create proposal')
+      handleError(e, 'Failed to create proposal')
     }
     finally {
       isSubmitting.value = false

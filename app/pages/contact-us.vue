@@ -38,7 +38,7 @@
                   placeholder="Enter your email address"
                   outlined
                   height="48"
-                  :rules="[rules.required, rules.email]"
+                  :rules="[rules.required, rules.emailStrict]"
                 />
               </div>
 
@@ -72,7 +72,7 @@
                   placeholder="Write something..."
                   no-resize
                   height="155"
-                  :rules="[rules.required, rules.min25]"
+                  :rules="[rules.required, customRules.min25]"
                 />
               </div>
 
@@ -129,6 +129,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { useRecaptcha } from '~/composables/useRecapcha'
 import useApiService from '~/composables/useApiService'
 import Map from '@/components/common/Map.client.vue'
+import { useValidationRules } from '~/composables/useValidationRules'
 
 useSeoMeta({
   title: `Contact us`,
@@ -138,11 +139,9 @@ useSeoMeta({
 const { $toast } = useNuxtApp()
 
 const zoom = ref(20)
-const rules = {
-  required: (v: string) => !!v || 'This field is required.',
-  email: (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid.',
-  min25: (v: string) =>
-    (v && v.length >= 25) || 'Minimum 25 characters required.',
+const rules = useValidationRules()
+const customRules = {
+  min25: rules.minLength(25),
 }
 const formsData = reactive({
   name: '',
