@@ -166,7 +166,6 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import type { Program } from '@coral-xyz/anchor'
 // Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
 
 const { mdAndUp } = useDisplay()
@@ -179,10 +178,6 @@ const AsyncWalletMultiButton = defineAsyncComponent(async () => {
 const { $toast } = useNuxtApp()
 
 // --- STATE ---
-const program: Ref<Program | null> = ref(null)
-const connected = ref(false)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const publicKey = ref<any | null>(null)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const proposals = ref<any[]>([])
 const isLoading = ref(true)
@@ -197,55 +192,30 @@ const showWalletModal = ref(false)
 // Get governance composable (includes workspace internally)
 const { workspace } = useGovernance()
 
+// Reactive refs from workspace
+const connected = computed(() => workspace?.connected?.value || false)
+const publicKey = computed(() => workspace?.publicKey?.value)
+const program = computed(() => workspace?.program?.value)
+
 // --- LIFECYCLE HOOK ---
 onMounted(async () => {
-  if (!workspace) {
-    console.error('❌ Workspace not available')
-    return
+  // Workspace is now handled internally by useGovernance
+  // Fetch proposals when program is ready
+  if (program.value) {
+    await fetchProposalsData()
   }
-
-  // Force workspace initialization if not already done
-  if (!workspace.connection.value && import.meta.client) {
-    // Wait a bit for the DOM to be ready
-    setTimeout(async () => {
-      try {
-        // Manually import and initialize wallet
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { useAnchorWallet, useWallet } = await import(
-          'solana-wallets-vue'
-        )
-      }
-      catch (error) {
-        console.error('❌ Manual initialization failed:', error)
-      }
-    }, 500)
-  }
-
-  // Watch workspace state changes and update local state
-  watch(
-    () => workspace.connected.value,
-    (val) => {
-      connected.value = val
-    },
-    { immediate: true },
-  )
-
-  watch(
-    () => workspace.publicKey.value,
-    (pk) => {
-      publicKey.value = pk
-    },
-    { immediate: true },
-  )
-
-  watch(
-    () => workspace.program.value,
-    (prog) => {
-      program.value = prog as unknown as Program
-    },
-    { immediate: true },
-  )
 })
+
+// Watch for program changes
+watch(
+  () => program.value,
+  (prog) => {
+    if (prog) {
+      fetchProposalsData()
+    }
+  },
+  { immediate: true },
+)
 
 // --- DATA FETCHING ---
 const fetchProposalsData = async () => {

@@ -300,16 +300,15 @@ const stakeInfo = ref<StakeAccount | null>(null)
 const tokenBalance = ref(0)
 
 // Governance composable (includes workspace internally)
-const { workspace, getStakeAccount, isCooldownComplete, getRemainingCooldown }
-  = useGovernance()
-
-// Wallet state
-const isWalletReady = computed(
-  () =>
-    workspace?.connected?.value
-    && workspace?.publicKey?.value
-    && workspace?.program?.value,
-)
+const {
+  isWalletReady,
+  getStakeAccount,
+  isCooldownComplete,
+  getRemainingCooldown,
+  getProgram,
+  getPublicKey,
+  getConnection,
+} = useGovernance()
 
 // Computed
 const cooldownComplete = computed(() => {
@@ -353,7 +352,7 @@ const fetchTokenBalance = async () => {
     const { fetchTokenBalance } = await import('~/composables/useSolanaClient')
     const { getTokenMint } = await import('~/composables/useGovernance')
     const tokenMint = getTokenMint()
-    const userPk = workspace.publicKey?.value
+    const userPk = getPublicKey()
 
     if (!userPk) return
 
@@ -383,8 +382,8 @@ const handleStake = async () => {
 
   try {
     isStaking.value = true
-    const program = workspace.program?.value
-    const userPk = workspace.publicKey?.value
+    const program = getProgram()
+    const userPk = getPublicKey()
     if (!program || !userPk) throw new Error('Wallet not connected')
 
     // Get token accounts
@@ -414,7 +413,7 @@ const handleStake = async () => {
     )
 
     // Check if vault token account exists
-    const connection = workspace.connection?.value
+    const connection = getConnection()
     if (connection) {
       const vaultAccountInfo = await connection.getAccountInfo(
         vaultTokenAccount,
@@ -529,8 +528,8 @@ const handleClaim = async () => {
 
   try {
     isClaiming.value = true
-    const program = workspace.program?.value
-    const userPk = workspace.publicKey?.value
+    const program = getProgram()
+    const userPk = getPublicKey()
     if (!program || !userPk) throw new Error('Wallet not connected')
 
     // Get token accounts

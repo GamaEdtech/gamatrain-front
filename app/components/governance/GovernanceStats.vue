@@ -47,20 +47,33 @@
 <script setup lang="ts">
 // --- STATE ---
 const isLoading = ref(true)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const allProposals = ref<any[]>([])
-const userStakeInfo = ref<{ stakedAmount: number } | null>(null)
-const userStakedAmount = ref<number>(0)
 
 // Create a reactive key to force re-render
 const statsKey = ref(0)
 const forceRefresh = () => {
   statsKey.value++
 }
-const treasuryBalance = ref<number>(0)
+
+// Stats from blockchain
+const blockchainStats = ref<{
+  totalProposals: number
+  activeVoters: number
+  proposalsPassed: number
+  treasuryBalance: number
+  totalStaked: number
+} | null>(null)
 
 // Get governance composable (includes workspace internally)
-const { workspace, getStakeAccount } = useGovernance()
+const {
+  isWalletReady,
+  userStakeInfo,
+  fetchUserStakeInfo,
+  fetchStats,
+  getProgram,
+} = useGovernance()
+
+// Computed for backward compatibility
+const userStakedAmount = computed(() => userStakeInfo.value?.stakedAmount || 0)
 
 // Expose refresh method for external use
 const refreshStats = async () => {
@@ -81,6 +94,7 @@ if (import.meta.client) {
 
   // Also listen to custom event
   const nuxtApp = useNuxtApp()
+  // @ts-expect-error - Custom hook not in type definitions
   nuxtApp.hook('governance:refresh', refreshStats)
 }
 
@@ -95,16 +109,19 @@ onMounted(() => {
 
 // --- DATA FETCHING ---
 const fetchStatsData = async () => {
-  const program = workspace.program?.value
+  const program = getProgram()
   if (!program) return
   isLoading.value = true
   try {
-    allProposals.value = await governance.fetchProposals()
-    await fetchTreasuryBalance()
+    // Fetch stats from blockchain
+    blockchainStats.value = await fetchStats()
+
     // Also fetch user stake if wallet is connected
-    if (workspace.publicKey?.value) {
+    if (isWalletReady.value) {
       await fetchUserStakeInfo()
     }
+
+    forceRefresh()
   }
   finally {
     isLoading.value = false
@@ -114,14 +131,13 @@ const fetchStatsData = async () => {
 // --- WATCHER ---
 // Fetch public data when program is ready (no wallet needed)
 watch(
-  () => workspace.program?.value,
+  () => getProgram(),
   (prog) => {
     if (prog) {
       fetchStatsData()
     }
     else {
-      allProposals.value = []
-      treasuryBalance.value = 0
+      blockchainStats.value = null
       isLoading.value = false
     }
   },
@@ -130,91 +146,17 @@ watch(
 
 // Fetch user-specific data when wallet connects
 watch(
-  () => workspace.publicKey?.value,
-  (newPublicKey) => {
-    if (newPublicKey && workspace.program?.value) {
+  () => isWalletReady.value,
+  (ready) => {
+    if (ready) {
       fetchUserStakeInfo()
     }
-    else {
-      userStakeInfo.value = null
-    }
   },
-  { deep: true, immediate: true },
+  { immediate: true },
 )
 
-// --- COMPUTED PROPERTIES ---
-const totalProposals = computed(() => allProposals.value.length)
-const proposalsPassed = computed(
-  () =>
-    allProposals.value.filter(
-      p => p.account.agreeVotes > p.account.disagreeVotes,
-    ).length,
-)
-
-// Fetch treasury balance (vault balance)
-const fetchTreasuryBalance = async () => {
-  const program = workspace.program?.value
-  if (!program) return
-
-  try {
-    const { getVaultAddress } = await import('~/composables/useGovernance')
-    const { PublicKey } = await import('@solana/web3.js')
-    const { getAssociatedTokenAddress } = await import('@solana/spl-token')
-    const { getTokenMint, getTokenProgramId } = await import('~/composables/useGovernance')
-
-    const vaultAddressStr = await getVaultAddress()
-    const vaultAddress = new PublicKey(vaultAddressStr)
-    const tokenMint = new PublicKey(getTokenMint())
-    const TOKEN_2022_PROGRAM_ID = new PublicKey(getTokenProgramId())
-
-    const vaultTokenAccount = await getAssociatedTokenAddress(
-      tokenMint,
-      vaultAddress,
-      true,
-      TOKEN_2022_PROGRAM_ID,
-    )
-
-    const connection = program.provider.connection
-    const accountInfo = await connection.getTokenAccountBalance(
-      vaultTokenAccount,
-    )
-
-    treasuryBalance.value = accountInfo.value.uiAmount || 0
-  }
-  catch (error) {
-    console.error('Failed to fetch treasury balance:', error)
-    treasuryBalance.value = 0
-  }
-}
-
-// Fetch user stake info
-const fetchUserStakeInfo = async () => {
-  if (!workspace.program?.value || !workspace.publicKey?.value) return
-
-  try {
-    const info = await getStakeAccount()
-    console.log('📊 Fetched stake info:', {
-      stakedAmount: info?.stakedAmount,
-      pendingUnstake: info?.pendingUnstake,
-    })
-
-    // Force reactivity by creating a new object
-    userStakeInfo.value = info ? { ...info } : null
-    userStakedAmount.value = info?.stakedAmount || 0
-
-    // Force Vue to detect the change
-    triggerRef(userStakedAmount)
-    forceRefresh()
-
-    // Force Vue to update
-    await nextTick()
-
-    console.log('💡 userStakedAmount updated to:', userStakedAmount.value)
-  }
-  catch (error) {
-    console.error('Failed to fetch user stake info:', error)
-  }
-}
+// Note: All stats are now fetched from blockchain Stats PDA
+// No need for manual calculation
 
 const stats = computed(() => {
   // Force re-computation by accessing statsKey
@@ -222,9 +164,7 @@ const stats = computed(() => {
 
   return [
     {
-      title: treasuryBalance.value
-        ? treasuryBalance.value.toLocaleString()
-        : '0',
+      title: blockchainStats.value?.treasuryBalance?.toLocaleString() || '0',
       subtitle: '$GET',
       value: 'Treasury Balance',
       class: 'tl',
@@ -238,21 +178,21 @@ const stats = computed(() => {
       dynamic: true,
     },
     {
-      title: totalProposals.value,
+      title: blockchainStats.value?.totalProposals || 0,
       subtitle: '',
       value: 'Total Proposals',
       class: 'bl',
       dynamic: true,
     },
     {
-      title: 'N/A',
+      title: blockchainStats.value?.activeVoters || 'N/A',
       subtitle: '',
       value: 'Active Voters',
       class: 'br',
-      dynamic: false,
+      dynamic: true,
     },
     {
-      title: proposalsPassed.value,
+      title: blockchainStats.value?.proposalsPassed || 0,
       subtitle: '',
       value: 'Proposals Passed',
       class: 'last',
