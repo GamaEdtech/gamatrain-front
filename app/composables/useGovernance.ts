@@ -60,6 +60,68 @@ export const ensureBuffer = async () => {
 }
 
 /**
+ * Parse Anchor/Solana error to extract error code
+ */
+const parseAnchorError = (error: unknown): { code?: number, message: string } => {
+  let errorCode: number | undefined
+  let errorMessage = 'Unknown error'
+
+  console.log('🔍 Parsing error:', error)
+
+  if (error && typeof error === 'object') {
+    // Check for Anchor error format
+    if ('code' in error) {
+      errorCode = error.code as number
+      console.log('✅ Found error code (direct):', errorCode)
+    }
+    // Check for InstructionError format [index, {Custom: code}]
+    else if ('InstructionError' in error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const instructionError = (error as any).InstructionError
+      console.log('📦 InstructionError:', instructionError)
+
+      if (Array.isArray(instructionError) && instructionError.length > 1) {
+        const customError = instructionError[1]
+        console.log('🔧 Custom error:', customError)
+
+        if (customError && typeof customError === 'object' && 'Custom' in customError) {
+          errorCode = customError.Custom
+          console.log('✅ Found error code (Custom):', errorCode)
+        }
+      }
+    }
+    // Check for logs in error
+    else if ('logs' in error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const logs = (error as any).logs
+      console.log('📝 Error logs:', logs)
+
+      // Try to extract error code from logs
+      if (Array.isArray(logs)) {
+        for (const log of logs) {
+          const match = log.match(/Error Code: (\d+)/)
+          if (match) {
+            errorCode = parseInt(match[1])
+            console.log('✅ Found error code (logs):', errorCode)
+            break
+          }
+        }
+      }
+    }
+
+    if ('message' in error) {
+      errorMessage = String(error.message)
+    }
+  }
+  else if (error instanceof Error) {
+    errorMessage = error.message
+  }
+
+  console.log('🎯 Final parsed error:', { code: errorCode, message: errorMessage })
+  return errorCode ? { code: errorCode, message: errorMessage } : { message: errorMessage }
+}
+
+/**
  * Enhanced governance composable with proper error handling and vote power calculation
  */
 export const useGovernance = () => {
@@ -237,8 +299,12 @@ export const useGovernance = () => {
    * @returns User-friendly error message
    */
   const handleGovernanceError = (error: unknown): string => {
-    if (error.code) {
-      switch (error.code) {
+    const errorObj = error && typeof error === 'object' && 'code' in error
+      ? error as { code?: number, message?: string }
+      : null
+
+    if (errorObj?.code) {
+      switch (errorObj.code) {
         case 6000:
           return 'You are not authorized to perform this action.'
         case 6001:
@@ -256,12 +322,18 @@ export const useGovernance = () => {
         case 6011:
           return 'Nothing to claim. No pending unstake found.'
         default:
-          return `Governance error: ${
-            error.message || 'Unknown error occurred'
+          return `Governance error (${errorObj.code}): ${
+            errorObj.message || 'Unknown error occurred'
           }`
       }
     }
-    return error.message || 'An unexpected error occurred'
+
+    const message = errorObj?.message
+      || (error && typeof error === 'object' && 'message' in error ? String(error.message) : null)
+      || (error instanceof Error ? error.message : null)
+      || 'An unexpected error occurred'
+
+    return message
   }
 
   /**
@@ -402,17 +474,126 @@ export const useGovernance = () => {
     return false
   }
 
+  /**
+   * Check if wallet is connected and ready
+   */
+  const isWalletReady = computed(() => {
+    return (
+      workspace?.connected?.value
+      && workspace?.publicKey?.value
+      && workspace?.program?.value
+    )
+  })
+
+  /**
+   * User stake information (reactive)
+   */
+  const userStakeInfo = ref<{ stakedAmount: number, pendingUnstake: number, unstakeRequestedAt: number } | null>(null)
+
+  /**
+   * Check if user has staked tokens
+   */
+  const hasStakedTokens = computed(() => {
+    return userStakeInfo.value && userStakeInfo.value.stakedAmount > 0
+  })
+
+  /**
+   * Fetch user stake info
+   * Automatically uses workspace internally
+   */
+  const fetchUserStakeInfo = async () => {
+    if (!isWalletReady.value) {
+      userStakeInfo.value = null
+      return
+    }
+
+    try {
+      const info = await getStakeAccount()
+      userStakeInfo.value = info
+    }
+    catch (error) {
+      console.warn('Failed to fetch user stake info:', error)
+      userStakeInfo.value = null
+    }
+  }
+
+  /**
+   * Get program from workspace
+   */
+  const getProgram = () => workspace?.program?.value
+
+  /**
+   * Get public key from workspace
+   */
+  const getPublicKey = () => workspace?.publicKey?.value
+
+  /**
+   * Get connection from workspace
+   */
+  const getConnection = () => workspace?.connection?.value
+
+  /**
+   * Get connection status
+   */
+  const isConnected = computed(() => workspace?.connected?.value || false)
+
+  /**
+   * Fetch stats from blockchain
+   */
+  const fetchStats = async () => {
+    const program = workspace?.program?.value
+    if (!program) return null
+
+    try {
+      const [statsPda] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('stats')],
+        program.programId,
+      )
+
+      // @ts-expect-error: stats account type may not be typed in IDL
+      const stats = await program.account['stats'].fetch(statsPda)
+
+      return {
+        totalProposals: stats.totalProposals?.toNumber?.() || stats.totalProposals || 0,
+        activeVoters: stats.activeVoters?.toNumber?.() || stats.activeVoters || 0,
+        proposalsPassed: stats.proposalsPassed?.toNumber?.() || stats.proposalsPassed || 0,
+        treasuryBalance: (stats.treasuryBalance?.toNumber?.() || stats.treasuryBalance || 0) / 1_000_000,
+        totalStaked: (stats.totalStaked?.toNumber?.() || stats.totalStaked || 0) / 1_000_000,
+      }
+    }
+    catch (error) {
+      console.warn('Failed to fetch stats:', error)
+      return null
+    }
+  }
+
   // auto-ensure Buffer on composable usage
   if (typeof window !== 'undefined') ensureBuffer().catch(console.error)
 
   return {
+    // Workspace (for backward compatibility - prefer using helpers instead)
     workspace,
+    // Workspace helpers
+    isWalletReady,
+    isConnected,
+    getProgram,
+    getPublicKey,
+    getConnection,
+    // Stake info
+    userStakeInfo,
+    hasStakedTokens,
+    fetchUserStakeInfo,
+    // Stats
+    fetchStats,
+    // State
     isLoading,
     error,
+    // Vote power & stake
     calculateVotePower,
     getStakeAccount,
     isCooldownComplete,
     getRemainingCooldown,
+    // Voting
     checkVoteRecord,
     isProposalExpired,
     handleGovernanceError,
@@ -618,6 +799,12 @@ export const governance = {
       )
 
       const { title, brief, cate, reference, amount } = formData
+      // Derive stats PDA
+      const [statsPda] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('stats')],
+        program.programId,
+      )
+
       const tx = await program.methods
         .createProposal(
           title.trim(),
@@ -631,6 +818,7 @@ export const governance = {
           proposal: proposalPda,
           user: user,
           stakeAccount: stakeAccountPda,
+          stats: statsPda,
           systemProgram: web3.SystemProgram.programId,
         })
         .rpc({ skipPreflight: true })
@@ -875,6 +1063,12 @@ export const governance = {
       // Convert UI amount to smallest unit (multiply by 10^6 for 6 decimals)
       const amountInSmallestUnit = Math.floor(amount * 1_000_000)
 
+      // Derive stats PDA
+      const [statsPda] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('stats')],
+        program.programId,
+      )
+
       console.log('🔍 Staking details:', {
         amount,
         amountInSmallestUnit,
@@ -883,6 +1077,7 @@ export const governance = {
         vaultTokenAccount: vaultTokenAccount.toBase58(),
         mint: mint.toBase58(),
         stakeAccount: stakeAccountPda.toBase58(),
+        stats: statsPda.toBase58(),
       })
 
       const tx = await program.methods
@@ -893,6 +1088,7 @@ export const governance = {
           vaultTokenAccount: vaultTokenAccount,
           mint: mint,
           stakeAccount: stakeAccountPda,
+          stats: statsPda,
           tokenProgram: TOKEN_2022_PROGRAM_ID,
           systemProgram: web3.SystemProgram.programId,
         })
@@ -944,10 +1140,17 @@ export const governance = {
       // Convert UI amount to smallest unit (multiply by 10^6 for 6 decimals)
       const amountInSmallestUnit = Math.floor(amount * 1_000_000)
 
+      // Derive stats PDA
+      const [statsPda] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('stats')],
+        program.programId,
+      )
+
       const tx = await program.methods
         .unstack(new BN(amountInSmallestUnit))
         .accounts({
           stakeAccount: stakeAccountPda,
+          stats: statsPda,
           user: user,
         })
         .rpc({ skipPreflight: true })
@@ -1011,6 +1214,12 @@ export const governance = {
         'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
       )
 
+      // Derive stats PDA
+      const [statsPda] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('stats')],
+        program.programId,
+      )
+
       const tx = await program.methods
         .calimUnstack()
         .accounts({
@@ -1020,6 +1229,7 @@ export const governance = {
           vaultAuthority: vaultAuthority,
           mint: mint,
           stakeAccount: stakeAccountPda,
+          stats: statsPda,
           tokenProgram: TOKEN_2022_PROGRAM_ID,
         })
         .rpc({ skipPreflight: true })
@@ -1035,13 +1245,15 @@ export const governance = {
     }
     catch (error: unknown) {
       console.error('Error claiming unstaked tokens:', error)
+
+      // Log full error for debugging
+      if (error && typeof error === 'object') {
+        console.error('Error details:', JSON.stringify(error, null, 2))
+      }
+
       const { handleGovernanceError } = useGovernance()
-      const errorObj
-        = error && typeof error === 'object' && 'code' in error
-          ? (error as { code?: number, message?: string })
-          : {
-              message: error instanceof Error ? error.message : 'Unknown error',
-            }
+      const errorObj = parseAnchorError(error)
+
       throw new Error(handleGovernanceError(errorObj))
     }
   },
