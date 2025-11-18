@@ -353,7 +353,7 @@ const currencies = ref([
     // devnet mint
     // mint: "test",
     // mainnet mint
-    // mint: TOKEN_MINTS.GET,
+    mint: TOKEN_MINTS.GET,
   },
   {
     name: 'SOL',
