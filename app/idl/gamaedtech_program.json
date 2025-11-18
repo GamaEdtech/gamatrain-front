@@ -2,22 +2,22 @@
   "address": "9F77hJsRRXs7vF9UDncZKth2r5wEPgcRkEfyoZDNQ3eK",
   "metadata": {
     "name": "gamaedtech_program",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "spec": "0.1.0",
     "description": "Created with Anchor"
   },
   "instructions": [
     {
-      "name": "calim_unstack",
+      "name": "calim_unstake",
       "discriminator": [
-        44,
-        224,
-        60,
-        155,
-        188,
-        78,
-        162,
-        222
+        119,
+        201,
+        236,
+        230,
+        172,
+        152,
+        34,
+        179
       ],
       "accounts": [
         {
@@ -337,6 +337,49 @@
       "args": []
     },
     {
+      "name": "realloc_stats",
+      "discriminator": [
+        49,
+        153,
+        71,
+        94,
+        57,
+        94,
+        13,
+        255
+      ],
+      "accounts": [
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "request_fund",
       "discriminator": [
         129,
@@ -387,16 +430,16 @@
       "args": []
     },
     {
-      "name": "stack",
+      "name": "stake",
       "discriminator": [
-        251,
-        29,
-        17,
-        7,
-        249,
-        153,
-        78,
-        255
+        206,
+        176,
+        202,
+        18,
+        200,
+        209,
+        179,
+        108
       ],
       "accounts": [
         {
@@ -501,16 +544,16 @@
       ]
     },
     {
-      "name": "unstack",
+      "name": "unstake",
       "discriminator": [
-        224,
-        133,
-        160,
-        144,
-        1,
-        187,
-        195,
-        130
+        90,
+        95,
+        107,
+        42,
+        205,
+        124,
+        50,
+        225
       ],
       "accounts": [
         {
@@ -658,6 +701,24 @@
           }
         },
         {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -797,6 +858,11 @@
       "code": 6011,
       "name": "NothingToClaim",
       "msg": "Nothing to claim."
+    },
+    {
+      "code": 6012,
+      "name": "AlreadyUnstaking",
+      "msg": "Already Unstaking"
     }
   ],
   "types": [
@@ -866,6 +932,10 @@
             "type": "u64"
           },
           {
+            "name": "pending_rewards",
+            "type": "u64"
+          },
+          {
             "name": "last_stake_time",
             "type": "i64"
           },
@@ -903,6 +973,14 @@
           },
           {
             "name": "total_staked",
+            "type": "u64"
+          },
+          {
+            "name": "total_rewards",
+            "type": "u64"
+          },
+          {
+            "name": "total_claimed_rewards",
             "type": "u64"
           },
           {
