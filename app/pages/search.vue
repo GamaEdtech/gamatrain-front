@@ -42,7 +42,7 @@
           rounded="pill"
           flat
           variant="tonal"
-          :to="createLinkAddConent()"
+          @click="createLinkAddConent()"
         >
           <v-icon color="info">
             md:add
@@ -668,30 +668,37 @@ useHead(() => ({
 }))
 
 const createLinkAddConent = () => {
-  const type = route.query.type
-  let link = ''
-  switch (type) {
-    case 'test':
-      link = '/user/paper'
-      break
-    case 'learnfiles':
-      link = '/user/multimedia'
-      break
-    case 'azmoon':
-      link = '/user/exam'
-      break
-    case 'question':
-      link = '/user/question'
-      break
-    case 'dars':
-      link = '/user/paper'
-      break
+  const auth = useAuth()
+  const router = useRouter()
+  if (!auth.isAuthenticated.value)
 
-    default:
-      link = '/user/paper'
-      break
+    router.push({ query: { auth_form: 'login' } })
+  else {
+    const type = route.query.type
+    let link = ''
+    switch (type) {
+      case 'test':
+        link = '/user/paper/create'
+        break
+      case 'learnfiles':
+        link = '/user/multimedia/create'
+        break
+      case 'azmoon':
+        link = '/test-maker/create'
+        break
+      case 'question':
+        link = '/user/question/create'
+        break
+      case 'dars':
+        link = '/user/paper/create'
+        break
+
+      default:
+        link = '/user/paper/create'
+        break
+    }
+    navigateTo(link)
   }
-  return link
 }
 </script>
 
