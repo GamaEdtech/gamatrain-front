@@ -108,7 +108,7 @@ export default {
 #level-guid-banner {
   padding-top: 2.4rem;
   padding-bottom: 2.4rem;
-  height: 46.3rem;
+  height: 54rem;
   background: #f6f8fa;
 
   .black--text {

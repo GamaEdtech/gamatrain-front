@@ -292,8 +292,8 @@ const openNavigationMenu = () => {
             <v-col
               cols="6"
               md="9"
-              lg="9"
-              xl="9"
+              lg="10"
+              xl="10"
             >
               <div class="d-flex">
                 <nuxt-link
@@ -307,7 +307,7 @@ const openNavigationMenu = () => {
                   >
                 </nuxt-link>
 
-                <div class="pt-2">
+                <div class="pt-2 d-flex">
                   <v-btn
                     v-for="(link, i) in menuLink"
                     :key="i"
@@ -332,8 +332,8 @@ const openNavigationMenu = () => {
             <v-col
               cols="4"
               md="3"
-              lg="3"
-              xl="3"
+              lg="2"
+              xl="2"
               class="text-right mt-md-1"
             >
               <div

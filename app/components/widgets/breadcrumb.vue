@@ -49,6 +49,7 @@ const breadItems = computed(() => {
 .breadcrumbs-container {
   border-radius: 8px;
   padding: 8px;
+  overflow-x: auto;
 }
 
 .disabled {

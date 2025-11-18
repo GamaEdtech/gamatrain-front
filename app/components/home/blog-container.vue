@@ -3,7 +3,7 @@
     v-if="isLoading || slideItems.length > 5"
     id="blog-list-container"
     fluid
-    :class="route.path === '/' ? 'bg-blue-grey-lighten-5' : '' "
+    :class="route.path === '/' ? 'bg-blue-grey-lighten-5' : ''"
   >
     <v-container>
       <v-card
@@ -102,7 +102,7 @@
                           </div>
                         </v-card-title>
                       </v-card>
-                      <div class="gama-text-subtitle2">
+                      <div class="gama-text-subtitle2 pl-2">
                         {{ truncateBody(item.summary) }}
                         <nuxt-link :to="`/blog/${item.id}/${item.slug}`">Read more</nuxt-link>
                       </div>

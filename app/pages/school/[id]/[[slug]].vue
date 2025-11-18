@@ -602,7 +602,7 @@ onMounted(() => {
 }
 
 .top-slide-container {
-  position: fixed;
+  position: absolute;
   margin-top: 5.4rem;
   margin-bottom: 2rem;
   width: 100vw;

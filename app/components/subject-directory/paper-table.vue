@@ -25,7 +25,8 @@
           class="font-weight-medium text-grey-darken-2"
         >{{
           item.variant && item.variant != "0"
-            ? item.test_type_title + (item.variant_title=="nv" ? "" : item.variant_title)
+            ? item.test_type_title
+              + (item.variant_title == "nv" ? "" : item.variant_title)
             : item.test_type_title
         }}</NuxtLink>
       </template>
@@ -100,7 +101,9 @@
                 class="position-absolute"
               />
             </template>
-            <span :class="{ 'text-transparent': isDownloading(item, 'sf_file') }">sf</span>
+            <span
+              :class="{ 'text-transparent': isDownloading(item, 'sf_file') }"
+            >sf</span>
           </v-chip>
 
           <v-chip
@@ -119,7 +122,9 @@
                 class="position-absolute"
               />
             </template>
-            <span :class="{ 'text-transparent': isDownloading(item, 'in_file') }">in</span>
+            <span
+              :class="{ 'text-transparent': isDownloading(item, 'in_file') }"
+            >in</span>
           </v-chip>
         </div>
       </template>
@@ -200,7 +205,8 @@
                   class="paper-info-part"
                 >{{
                   item.variant && item.variant != "0"
-                    ? item.test_type_title + (item.variant_title=="nv" ? "" : item.variant_title)
+                    ? item.test_type_title
+                      + (item.variant_title == "nv" ? "" : item.variant_title)
                     : item.test_type_title
                 }}</NuxtLink>
               </div>
@@ -230,7 +236,11 @@
                       class="position-absolute"
                     />
                   </template>
-                  <span :class="{ 'text-transparent': isDownloading(item, 'q_pdf') }">qp</span>
+                  <span
+                    :class="{
+                      'text-transparent': isDownloading(item, 'q_pdf'),
+                    }"
+                  >qp</span>
                 </v-chip>
                 <!-- MS Chip -->
                 <v-chip
@@ -249,7 +259,11 @@
                       class="position-absolute"
                     />
                   </template>
-                  <span :class="{ 'text-transparent': isDownloading(item, 'a_file') }">ms</span>
+                  <span
+                    :class="{
+                      'text-transparent': isDownloading(item, 'a_file'),
+                    }"
+                  >ms</span>
                 </v-chip>
                 <!-- SF Chip -->
                 <v-chip
@@ -268,7 +282,11 @@
                       class="position-absolute"
                     />
                   </template>
-                  <span :class="{ 'text-transparent': isDownloading(item, 'sf_file') }">sf</span>
+                  <span
+                    :class="{
+                      'text-transparent': isDownloading(item, 'sf_file'),
+                    }"
+                  >sf</span>
                 </v-chip>
 
                 <!-- IN Chip -->
@@ -288,7 +306,11 @@
                       class="position-absolute"
                     />
                   </template>
-                  <span :class="{ 'text-transparent': isDownloading(item, 'in_file') }">in</span>
+                  <span
+                    :class="{
+                      'text-transparent': isDownloading(item, 'in_file'),
+                    }"
+                  >in</span>
                 </v-chip>
 
                 <!-- ExamHub Chip -->
@@ -596,6 +618,8 @@ function getMonthName(monthNumber) {
 }
 
 .chip-pill {
+  width: 30px !important;
+  height: 30px !important;
   border-radius: 16px;
   font-size: 12px !important;
   font-weight: 500;
@@ -698,12 +722,12 @@ function getMonthName(monthNumber) {
 
 .exam-hub-chip {
   padding: 0;
-  min-width: 24px !important;
-  min-height: 24px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
   border-radius: 50%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: center !important;
 }
 
 .exam-hub-chip:last-child {

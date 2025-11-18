@@ -32,7 +32,7 @@
       <div
         v-for="(month, monthIndex) in yearData.months"
         :key="monthIndex"
-        class="timeline-box"
+        :class="`timeline-box ${monthIndex == 0 ? `first-box` : ``}`"
         :style="{
           top: `${getMarkerPosition(
             yearData.positions[monthIndex],
@@ -61,9 +61,14 @@ defineProps({
 
 const getMarkerPosition = (itemIndex, yearIndex, monthIndex = 0) => {
   const heightSizeTableElement
-    = window.innerWidth > 960 ? 52 : window.innerWidth > 768 ? 177.5 : 169
-  const extraSizeForHeaderTable = yearIndex == 0 && monthIndex == 0 ? 0 : 56
-  return itemIndex * heightSizeTableElement + extraSizeForHeaderTable
+    = window.innerWidth > 960 ? 52 : window.innerWidth > 768 ? 177.5 : 103
+  console.log('heightSizeTableElement', heightSizeTableElement)
+  console.log(' window.innerWidth', window.innerWidth)
+
+  const extraSizeForHeaderTable
+    = yearIndex == 0 && monthIndex == 0 ? 56 - 41 : 56
+  const distance = itemIndex * heightSizeTableElement
+  return distance + extraSizeForHeaderTable
 }
 </script>
 
@@ -105,7 +110,6 @@ const getMarkerPosition = (itemIndex, yearIndex, monthIndex = 0) => {
 .timeline-box {
   background-color: #f2f4f7;
   border-radius: 8px;
-  margin-top: 35px;
   min-width: 82px;
   min-height: 82px;
   text-align: center;
@@ -119,6 +123,10 @@ const getMarkerPosition = (itemIndex, yearIndex, monthIndex = 0) => {
   color: #101828;
   position: absolute;
 }
+.first-box {
+  margin-top: 35px;
+}
+
 .time-line-box-skeleton {
   border-radius: 8px;
   margin-top: 35px;
