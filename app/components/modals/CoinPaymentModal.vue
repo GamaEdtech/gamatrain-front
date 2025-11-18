@@ -1,92 +1,58 @@
 <template>
   <v-dialog
-    :model-value="isOpen"
-    max-width="600px"
-    persistent
-    @update:model-value="$emit('update:isOpen', $event)"
+    v-model="dialogModel"
+    max-width="500"
+    :fullscreen="!mdAndUp"
+    @click="clickOnOverlay"
   >
-    <v-card class="coin-payment-modal">
-      <div class="d-flex flex-column align-center justify-center pt-6">
-        <span style="font-size: 80px">🎮</span>
-
-        <v-card-title
-          class="font-size-18 primary-gray-700 font-bold text-center"
+    <div
+      class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
+      @click="clickOnModal"
+    >
+      <v-row class="d-flex align-center">
+        <v-col cols="10">
+          <span class="text-h4">Payment</span>
+        </v-col>
+        <v-col
+          cols="2"
+          class="d-flex align-center justify-end ga-2"
         >
-          Game On!
-        </v-card-title>
-      </div>
-
-      <div class="text-box">
-        <v-card-text class="d-flex flex-column align-center justify-center">
-          <span class="text-center">
-            {{ textModal }}
-          </span>
-          <div class="balance-info d-flex align-center justify-center ga-2">
-            <v-icon color="orange">
-              mdi-wallet
-            </v-icon>
-            <span>Your current balance:
-              <strong>{{ formatNumber(userBalance) }} points</strong></span>
-          </div>
-          <span
-            v-if="userBalance < 5"
-            class="text-error text-center"
-          >
-            Insufficient balance! You need
-            {{ formatNumber(5000000 - userBalance) }} more points.
-          </span>
-
-          <span class="text-center">
-            Do you want to recharge your wallet?
-            <v-btn
-              color="success"
-              variant="text"
-              class="font-weight-bold text-h5"
-              @click="openPaymentModal"
-            >
-              Recharge Now
-            </v-btn>
-          </span>
-        </v-card-text>
-
-        <v-card-actions class="action-buttons">
-          <v-btn
-            variant="flat"
-            color="success"
-            class="w-50 rounded-pill white--text"
-            :disabled="userBalance < 5000000 || isProcessing"
-            :loading="isProcessing"
-            @click="confirmPayment"
-          >
-            <v-icon left>
-              mdi-check
-            </v-icon>
-            Confirm Payment
-          </v-btn>
-
-          <v-btn
-            variant="flat"
-            color="bg-white"
-            class="w-50 rounded-pill black--text"
-            :disabled="isProcessing"
+          <v-icon
+            size="x-large"
+            color="#D0D5DD"
             @click="closeModal"
           >
-            <v-icon left>
-              mdi-close
-            </v-icon>
-            Cancel
-          </v-btn>
-        </v-card-actions>
-      </div>
-    </v-card>
+            md:close
+          </v-icon>
+        </v-col>
+      </v-row>
+
+      <modals-confirm-payment
+        v-if="amountToPay * 1000000 < userBalance"
+        :is-processing="isProcessing"
+        :user-balance="userBalance"
+        @confirm="confirmPayment"
+        @cancel="closeModal"
+      />
+
+      <modals-charge-wallet
+        v-if="amountToPay * 1000000 > userBalance"
+        :user-balance="userBalance"
+      />
+    </div>
   </v-dialog>
 </template>
 
 <script setup>
+import { useDisplay } from 'vuetify'
+import { computed } from 'vue'
+
+const { mdAndUp } = useDisplay()
+
 const props = defineProps({
-  isOpen: {
+  showDialog: {
     type: Boolean,
-    required: true,
+    default: false,
   },
   userBalance: {
     type: Number,
@@ -96,89 +62,47 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  textModal: {
-    type: String,
-    default:
-      'Unlock this file by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!',
+  amountToPay: {
+    type: Number,
+    default: 5,
   },
 })
 
-const emit = defineEmits([
-  'update:isOpen',
-  'confirm',
-  'close',
-  'openPaymentModal',
-])
+const emit = defineEmits(['update:showDialog', 'confirm', 'close'])
 
-// Use the existing formatNumber composable
-const { formatNumber } = useFormatNumber()
+const dialogModel = computed({
+  get: () => props.showDialog,
+  set: value => emit('update:showDialog', value),
+})
+
+const closeModal = () => {
+  emit('update:showDialog', false)
+  emit('close')
+}
+
+const clickOnOverlay = () => {
+  if (!mdAndUp.value) {
+    emit('update:showDialog', false)
+  }
+}
+
+const clickOnModal = (event) => {
+  event.stopPropagation()
+}
 
 const confirmPayment = () => {
   if (props.userBalance >= 5000000) {
     emit('confirm')
   }
 }
-
-const closeModal = () => {
-  emit('update:isOpen', false)
-  emit('close')
-}
-
-const openPaymentModal = () => {
-  emit('update:isOpen', false)
-  emit('openPaymentModal')
-}
 </script>
 
 <style scoped>
-.coin-payment-modal {
-  max-width: 600px;
-  padding: 0;
-  margin: 0;
-  overflow: hidden;
-}
-
-.icon-container {
-  background-color: #fff3e0;
-  border-radius: 50%;
-  margin-top: 15px;
-  display: flex;
-  justify-content: center;
-  margin: 10px 5px;
-  align-items: center;
-}
-
-.text-box {
-  background-color: #f2f4f7;
-  width: 100%;
-  margin: 0;
-  padding: 15px 50px;
-}
-
-.text-box span {
-  font-size: 16px;
-  color: #101828;
-  font-weight: 500;
-  margin: 10px 20px;
-}
-
-.balance-info {
-  background-color: #fff;
-  padding: 12px 16px;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 16px;
-}
-
-.font-size-18 {
-  font-size: 18px;
-}
-
-.primary-gray-700 {
-  color: #374151;
+@media only screen and (max-width: 960px) {
+  .mobile-style {
+    position: absolute;
+    bottom: 0;
+    border-radius: 24px 24px 0 0 !important;
+  }
 }
 </style>

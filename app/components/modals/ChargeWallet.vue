@@ -1,324 +1,279 @@
 <template>
-  <v-dialog
-    v-model="dialogModel"
-    max-width="500"
-    :fullscreen="!mdAndUp"
-    @click="clickOnOverlay"
-  >
-    <div
-      class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
-      @click="clickOnModal"
-    >
-      <v-row class="d-flex align-center">
-        <v-col cols="10">
-          <span class="text-h4">{{ titleModal }}</span>
-        </v-col>
-        <v-col
-          cols="2"
-          class="d-flex align-center justify-end ga-2"
+  <div class="w-100 d-flex flex-column align-center justify-center">
+    <div class="w-100 d-flex flex-column align-center justify-center mt-8">
+      <img
+        width="100"
+        height="100"
+        src="/images/gama-coin.svg"
+        alt="GAMA coin"
+      >
+      <span class="font-weight-bold text-h4 mt-4">Earn Coins for Free:</span>
+      <div class="w-100 d-flex justify-space-between mt-4">
+        <div
+          class="earn-free d-flex flex-column align-center justify-start ga-2"
         >
-          <v-icon
-            size="x-large"
-            color="#D0D5DD"
-            @click="closeModal"
-          >
-            md:close
+          <v-icon color="#98A2B3">
+            md:language
           </v-icon>
-        </v-col>
-      </v-row>
+          <span class="text-primary text-h6 font-weight-bold">Browse Website</span>
+          <span class="primary-gray-500 text-h6 text-center">Explore pages and discover content</span>
+        </div>
 
-      <div class="w-100 d-flex flex-column align-center justify-center mt-8">
-        <img
-          width="100"
-          height="100"
-          src="/images/gama-coin.svg"
-          alt="GAMA coin"
+        <div class="line-seperator" />
+
+        <div
+          class="earn-free d-flex flex-column align-center justify-start ga-2"
         >
-        <span class="font-weight-bold text-h4 mt-4">Earn Coins for Free:</span>
-        <div class="w-100 d-flex justify-space-between mt-4">
-          <div
-            class="earn-free d-flex flex-column align-center justify-start ga-2"
-          >
-            <v-icon color="#98A2B3">
-              md:language
-            </v-icon>
-            <span class="text-primary text-h6 font-weight-bold">Browse Website</span>
-            <span class="primary-gray-500 text-h6 text-center">Explore pages and discover content</span>
-          </div>
+          <v-icon color="#98A2B3">
+            md:psychology
+          </v-icon>
+          <span class="text-primary text-h6 font-weight-bold">Take Quizzes</span>
+          <span class="primary-gray-500 text-h6 text-center">Test your knowledge and learn</span>
+        </div>
 
-          <div class="line-seperator" />
+        <div class="line-seperator" />
 
-          <div
-            class="earn-free d-flex flex-column align-center justify-start ga-2"
-          >
-            <v-icon color="#98A2B3">
-              md:psychology
-            </v-icon>
-            <span class="text-primary text-h6 font-weight-bold">Take Quizzes</span>
-            <span class="primary-gray-500 text-h6 text-center">Test your knowledge and learn</span>
-          </div>
-
-          <div class="line-seperator" />
-
-          <div
-            class="earn-free d-flex flex-column align-center justify-start ga-2"
-          >
-            <v-icon color="#98A2B3">
-              md:stadia_controller
-            </v-icon>
-            <span class="text-primary text-h6 font-weight-bold">Play Games</span>
-            <span class="primary-gray-500 text-h6 text-center">Have fun while earning rewards</span>
-          </div>
+        <div
+          class="earn-free d-flex flex-column align-center justify-start ga-2"
+        >
+          <v-icon color="#98A2B3">
+            md:stadia_controller
+          </v-icon>
+          <span class="text-primary text-h6 font-weight-bold">Play Games</span>
+          <span class="primary-gray-500 text-h6 text-center">Have fun while earning rewards</span>
         </div>
       </div>
+    </div>
+
+    <div
+      class="w-100 d-flex align-center justify-center position-relative mt-8"
+    >
+      <div class="line-or" />
+      <span class="primary-gray-500 font-weight-bold text-h5 position-absolute">OR</span>
+    </div>
+
+    <div class="w-100 d-flex flex-column align-center justify-center mt-8">
+      <span class="font-weight-bold text-h4">Quick Recharge</span>
+
+      <span class="primary-gray-500 text-h6 text-center mt-4">Don't have time? Recharge your wallet instantly.Select your pack!</span>
+
+      <span class="text-h5 mt-4 text-center">
+        You need Charge Your Wallet
+      </span>
 
       <div
-        class="w-100 d-flex align-center justify-center position-relative mt-8"
+        class="balance-info pa-4 rounded-lg d-flex align-center justify-center ga-2 mt-4"
       >
-        <div class="line-or" />
-        <span
-          class="primary-gray-500 font-weight-bold text-h5 position-absolute"
-        >OR</span>
+        <v-icon color="primary">
+          md:wallet
+        </v-icon>
+        <span>Your current balance:
+          <strong>{{ formatNumber(userBalance) }} points</strong></span>
       </div>
+    </div>
 
-      <div class="w-100 d-flex flex-column align-center justify-center mt-8">
-        <span class="font-weight-bold text-h4">Quick Recharge</span>
-
-        <span class="primary-gray-500 text-h6 text-center mt-4">Don't have time? Recharge your wallet instantly.Select your
-          pack!</span>
-      </div>
-
-      <div class="w-100 d-flex align-center justify-center mt-6 recharge-input">
-        <v-btn
-          color="#344054"
-          max-width="40"
-          min-width="40"
-          height="40"
-          rounded="lg"
-          flat
-          :disabled="loadingPayment"
-          @click="decreaseAmount"
-        >
-          <div class="circle-div d-flex align-center justify-center bg-white">
-            <v-icon
-              color="#344054"
-              size="22"
-            >
-              md:remove
-            </v-icon>
-          </div>
-        </v-btn>
-
-        <v-text-field
-          v-model="formattedAmount"
-          class="w-100 mx-4 text-center"
-          variant="outlined"
-          hide-details
-          density="comfortable"
-          rounded="lg"
-          color="#ffb300"
-          :disabled="loadingPayment"
-          @input="onAmountInput"
-        >
-          <template #prepend-inner>
-            <img
-              width="20"
-              height="20"
-              :src="selectedCurrency.logoURI"
-              alt="Coin Logo"
-              class="rounded-circle"
-            >
-          </template>
-        </v-text-field>
-
-        <v-btn
-          color="#344054"
-          max-width="40"
-          min-width="40"
-          height="40"
-          rounded="lg"
-          flat
-          :disabled="loadingPayment"
-          @click="increaseAmount"
-        >
-          <div class="circle-div d-flex align-center justify-center bg-white">
-            <v-icon
-              color="#344054"
-              size="20"
-            >
-              md:add
-            </v-icon>
-          </div>
-        </v-btn>
-      </div>
-
-      <div class="w-100 d-flex justify-center align-center ga-2 mt-6">
-        <v-btn
-          v-for="currency in currencies"
-          :key="currency.name"
-          :color="selectedCurrency.name === currency.name ? 'primary' : 'white'"
-          :class="`text-h5 font-weight-bold ${
-            selectedCurrency.name === currency.name ? `` : `border-btn`
-          }`"
-          rounded="pill"
-          flat
-          width="100"
-          height="38"
-          :disabled="loadingPayment"
-          @click="selectCurrency(currency)"
-        >
-          {{ currency.name }}
-        </v-btn>
-      </div>
-
+    <div class="w-100 d-flex align-center justify-center mt-6 recharge-input">
       <v-btn
-        v-if="!isWalletConnected"
-        color="primary"
-        flat
+        color="#344054"
+        max-width="40"
+        min-width="40"
+        height="40"
         rounded="lg"
-        max-width="250"
-        min-width="250"
-        class="font-weight-bold text-h5 mt-4 mx-auto"
-        @click="showWalletModal = true"
+        flat
+        :disabled="loadingPayment"
+        @click="decreaseAmount"
       >
-        Connect Wallet
+        <div class="circle-div d-flex align-center justify-center bg-white">
+          <v-icon
+            color="#344054"
+            size="22"
+          >
+            md:remove
+          </v-icon>
+        </div>
       </v-btn>
 
-      <div class="w-100 d-flex ga-2 align-center justify-center">
+      <v-text-field
+        v-model="formattedAmount"
+        class="w-100 mx-4 text-center"
+        variant="outlined"
+        hide-details
+        density="comfortable"
+        rounded="lg"
+        color="#ffb300"
+        :disabled="loadingPayment"
+        @input="onAmountInput"
+      >
+        <template #prepend-inner>
+          <img
+            width="20"
+            height="20"
+            :src="selectedCurrency.logoURI"
+            alt="Coin Logo"
+            class="rounded-circle"
+          >
+        </template>
+      </v-text-field>
+
+      <v-btn
+        color="#344054"
+        max-width="40"
+        min-width="40"
+        height="40"
+        rounded="lg"
+        flat
+        :disabled="loadingPayment"
+        @click="increaseAmount"
+      >
+        <div class="circle-div d-flex align-center justify-center bg-white">
+          <v-icon
+            color="#344054"
+            size="20"
+          >
+            md:add
+          </v-icon>
+        </div>
+      </v-btn>
+    </div>
+
+    <div class="w-100 d-flex justify-center align-center ga-2 mt-6">
+      <v-btn
+        v-for="currency in currencies"
+        :key="currency.name"
+        :color="selectedCurrency.name === currency.name ? 'primary' : 'white'"
+        :class="`text-h5 font-weight-bold ${
+          selectedCurrency.name === currency.name ? `` : `border-btn`
+        }`"
+        rounded="pill"
+        flat
+        width="100"
+        height="38"
+        :disabled="loadingPayment"
+        @click="selectCurrency(currency)"
+      >
+        {{ currency.name }}
+      </v-btn>
+    </div>
+
+    <v-btn
+      v-if="!isWalletConnected"
+      color="primary"
+      flat
+      rounded="lg"
+      max-width="250"
+      min-width="250"
+      class="font-weight-bold text-h5 mt-4 mx-auto"
+      @click="showWalletModal = true"
+    >
+      Connect Wallet
+    </v-btn>
+
+    <div class="w-100 d-flex ga-2 align-center justify-center">
+      <v-btn
+        v-if="isWalletConnected"
+        :loading="loadingPayment"
+        :disabled="disablePayment"
+        color="success"
+        flat
+        rounded="lg"
+        max-width="200"
+        class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+        @click="startProccessPayment"
+      >
+        Charge
+      </v-btn>
+      <v-btn
+        v-if="isWalletConnected"
+        color="error"
+        flat
+        variant="outlined"
+        rounded="lg"
+        max-width="200"
+        class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+        @click="showDisconnectModal = true"
+      >
+        Disconnect
+      </v-btn>
+    </div>
+
+    <v-dialog
+      v-model="showWalletModal"
+      max-width="500"
+    >
+      <div
+        class="d-flex flex-column align-center justify-center pa-6 bg-white rounded-lg"
+      >
+        <span class="text-h4 font-weight-bold w-100 text-start">Connect Your Wallet</span>
+        <span class="text-h6 font-weight-normal w-100 text-start mt-2">Choose a wallet to connect</span>
+        <div class="d-flex w-100 align-center justify-center mt-6">
+          <ClientOnly>
+            <WalletMultiButton />
+          </ClientOnly>
+        </div>
+
         <v-btn
-          v-if="isWalletConnected"
-          color="error"
+          width="100"
+          class="mt-4 text-h5 font-weight-bold rounded-lg"
+          color="grey"
           flat
-          variant="outlined"
-          rounded="lg"
-          max-width="200"
-          class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
-          @click="showDisconnectModal = true"
+          @click="showWalletModal = false"
         >
-          Disconnect
-        </v-btn>
-        <v-btn
-          v-if="isWalletConnected"
-          :loading="loadingPayment"
-          :disabled="disablePayment"
-          color="success"
-          flat
-          rounded="lg"
-          max-width="200"
-          class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
-          @click="startProccessPayment"
-        >
-          Pay
+          Cancel
         </v-btn>
       </div>
+    </v-dialog>
 
-      <v-dialog
-        v-model="showWalletModal"
-        max-width="500"
+    <v-dialog
+      v-model="showDisconnectModal"
+      max-width="500"
+    >
+      <div
+        class="d-flex flex-column align-center justify-center pa-6 bg-white rounded-lg"
       >
-        <div
-          class="d-flex flex-column align-center justify-center pa-6 bg-white rounded-lg"
-        >
-          <span class="text-h4 font-weight-bold w-100 text-start">Connect Your Wallet</span>
-          <span class="text-h6 font-weight-normal w-100 text-start mt-2">Choose a wallet to connect</span>
-          <div class="d-flex w-100 align-center justify-center mt-6">
-            <ClientOnly>
-              <WalletMultiButton />
-            </ClientOnly>
-          </div>
-
+        <span class="text-h4 font-weight-bold w-100 text-start">Disconnect Wallet</span>
+        <span class="text-h6 font-weight-normal w-100 text-start mt-2">
+          Are you sure you want to disconnect your wallet? This will clear all
+          your current swap data.</span>
+        <div class="w-100 d-flex ga-2 align-center justify-center mt-6">
           <v-btn
-            width="100"
-            class="mt-4 text-h5 font-weight-bold rounded-lg"
-            color="grey"
+            class="text-h5 font-weight-bold"
+            variant="text"
             flat
-            @click="showWalletModal = false"
+            @click="showDisconnectModal = false"
           >
             Cancel
           </v-btn>
+          <v-btn
+            class="text-h5 font-weight-bold rounded-lg"
+            variant="elevated"
+            color="error"
+            flat
+            @click="handleDisconnect"
+          >
+            Disconnect Wallet
+          </v-btn>
         </div>
-      </v-dialog>
-
-      <v-dialog
-        v-model="showDisconnectModal"
-        max-width="500"
-      >
-        <div
-          class="d-flex flex-column align-center justify-center pa-6 bg-white rounded-lg"
-        >
-          <span class="text-h4 font-weight-bold w-100 text-start">Disconnect Wallet</span>
-          <span class="text-h6 font-weight-normal w-100 text-start mt-2">
-            Are you sure you want to disconnect your wallet? This will clear all
-            your current swap data.</span>
-          <div class="w-100 d-flex ga-2 align-center justify-center mt-6">
-            <v-btn
-              class="text-h5 font-weight-bold"
-              variant="text"
-              flat
-              @click="showDisconnectModal = false"
-            >
-              Cancel
-            </v-btn>
-            <v-btn
-              class="text-h5 font-weight-bold rounded-lg"
-              variant="elevated"
-              color="error"
-              flat
-              @click="handleDisconnect"
-            >
-              Disconnect Wallet
-            </v-btn>
-          </div>
-        </div>
-      </v-dialog>
-    </div>
-  </v-dialog>
+      </div>
+    </v-dialog>
+  </div>
 </template>
 
 <script setup>
-import { useDisplay } from 'vuetify'
 import { ref, computed } from 'vue'
-// import { TOKEN_DECIMALS, TOKEN_MINTS } from "~/composables/useJupiterSwap";
-import { TOKEN_DECIMALS } from '~/composables/useJupiterSwap'
+import { TOKEN_DECIMALS, TOKEN_MINTS } from '~/composables/useJupiterSwap'
 import { useSolanaClient } from '~/composables/useSolanaClient'
 import { SystemProgram, Transaction, PublicKey } from '@solana/web3.js'
 
 const auth = useAuth()
 const { $toast } = useNuxtApp()
 const router = useRouter()
-const { mdAndUp } = useDisplay()
 
-const props = defineProps({
-  titleModal: {
-    type: String,
-    required: true,
-  },
-  showDialog: {
-    type: Boolean,
-    default: false,
+defineProps({
+  userBalance: {
+    type: Number,
+    default: 0,
   },
 })
-
-const emit = defineEmits(['update:showDialog'])
-
-const dialogModel = computed({
-  get: () => props.showDialog,
-  set: value => emit('update:showDialog', value),
-})
-
-const closeModal = () => {
-  emit('update:showDialog', false)
-}
-
-const clickOnOverlay = () => {
-  if (!mdAndUp.value) {
-    emit('update:showDialog', false)
-  }
-}
-
-const clickOnModal = (event) => {
-  event.stopPropagation()
-}
 
 const formatNumber = (value) => {
   if (value === null || value === undefined || value === '') return ''
@@ -398,7 +353,7 @@ const currencies = ref([
     // devnet mint
     // mint: "test",
     // mainnet mint
-    mint: TOKEN_MINTS.GET,
+    // mint: TOKEN_MINTS.GET,
   },
   {
     name: 'SOL',
@@ -433,6 +388,10 @@ const splTokenLib = ref(null)
 const wallet = ref(null)
 const showWalletModal = ref(false)
 const showDisconnectModal = ref(false)
+const config = useRuntimeConfig()
+
+const isWalletLibLoaded = ref(false)
+
 // Dynamic component import for WalletMultiButton
 const WalletMultiButton = defineAsyncComponent(async () => {
   if (import.meta.client) {
@@ -444,6 +403,47 @@ const WalletMultiButton = defineAsyncComponent(async () => {
 // Initialize wallet on client side
 onMounted(async () => {
   if (import.meta.client) {
+    try {
+      // Load styles
+      await import('solana-wallets-vue/styles.css')
+
+      // Load plugin and adapters
+      const { default: SolanaWallets } = await import('solana-wallets-vue')
+      const { WalletAdapterNetwork } = await import(
+        '@solana/wallet-adapter-base'
+      )
+      const adapters = await import('@solana/wallet-adapter-wallets')
+
+      // Network setup
+      const netStr = config.public?.solanaNetwork?.toLowerCase() || 'mainnet'
+      const network
+        = netStr === 'devnet'
+          ? WalletAdapterNetwork.Devnet
+          : netStr === 'testnet'
+            ? WalletAdapterNetwork.Testnet
+            : WalletAdapterNetwork.Mainnet
+
+      // Init adapters
+      const walletOptions = {
+        wallets: [
+          new adapters.PhantomWalletAdapter(),
+          new adapters.CloverWalletAdapter(),
+          new adapters.Coin98WalletAdapter(),
+          new adapters.SolflareWalletAdapter({ network }),
+        ],
+        autoConnect: true,
+      }
+
+      // Register plugin locally to this modal only
+      const nuxtApp = useNuxtApp()
+      nuxtApp.vueApp.use(SolanaWallets, walletOptions)
+
+      isWalletLibLoaded.value = true
+    }
+    catch (err) {
+      console.error('❌ Failed to load Solana wallet libraries:', err)
+    }
+
     try {
       const { useWallet } = await import('solana-wallets-vue')
       wallet.value = useWallet()
@@ -568,8 +568,6 @@ const startProccessPayment = async () => {
   }
 }
 
-const config = useRuntimeConfig()
-
 const sendTransactionInChain = async () => {
   try {
     const { getConnection } = useSolanaClient()
@@ -661,8 +659,7 @@ const sendConfirmPaymentRequest = async () => {
     )
     if (responsePaymentConfirmed.succeeded) {
       loadingPayment.value = false
-      emit('update:showDialog', false)
-      $toast.success(`Your Wallet Sharge Successfully.`)
+      $toast.success(`Your Wallet Charge Successfully.`)
       loadingPayment.value = false
       paymentId.value = null
       transactionId.value = null
@@ -717,6 +714,10 @@ const sendConfirmPaymentRequest = async () => {
 }
 .swv-modal {
   z-index: 2410 !important;
+}
+.balance-info {
+  background-color: #ebebeb;
+  border: 1px solid #e0e0e0;
 }
 @media only screen and (max-width: 960px) {
   .mobile-style {
