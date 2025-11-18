@@ -193,6 +193,7 @@ export const useGovernance = () => {
       // Note: IDL uses snake_case field names
       const stakedAmountRaw = stakeAccount.staked_amount?.toNumber() || stakeAccount.stakedAmount?.toNumber() || 0
       const pendingUnstakeRaw = stakeAccount.pending_unstake?.toNumber() || stakeAccount.pendingUnstake?.toNumber() || 0
+      const pendingRewardsRaw = stakeAccount.pending_rewards?.toNumber() || stakeAccount.pendingRewards?.toNumber() || 0
 
       return {
         owner: stakeAccount.owner,
@@ -200,6 +201,7 @@ export const useGovernance = () => {
         lastStakeTime: stakeAccount.last_stake_time?.toNumber() || stakeAccount.lastStakeTime?.toNumber() || 0,
         pendingUnstake: pendingUnstakeRaw / 1_000_000,
         unstakeRequestedAt: stakeAccount.unstake_requested_at?.toNumber() || stakeAccount.unstakeRequestedAt?.toNumber() || 0,
+        pendingRewards: pendingRewardsRaw / 1_000_000,
       }
     }
     catch {
@@ -321,6 +323,8 @@ export const useGovernance = () => {
           return 'Cooldown period is still active. Please wait before claiming your unstaked tokens.'
         case 6011:
           return 'Nothing to claim. No pending unstake found.'
+        case 6012:
+          return 'You already have a pending unstake request. Please claim your tokens first before unstaking again.'
         default:
           return `Governance error (${errorObj.code}): ${
             errorObj.message || 'Unknown error occurred'
@@ -488,7 +492,12 @@ export const useGovernance = () => {
   /**
    * User stake information (reactive)
    */
-  const userStakeInfo = ref<{ stakedAmount: number, pendingUnstake: number, unstakeRequestedAt: number } | null>(null)
+  const userStakeInfo = ref<{
+    stakedAmount: number
+    pendingUnstake: number
+    unstakeRequestedAt: number
+    pendingRewards: number
+  } | null>(null)
 
   /**
    * Check if user has staked tokens
@@ -930,6 +939,12 @@ export const governance = {
           program.programId,
         )
 
+        // Derive stats PDA for vote
+        const [statsPda] = web3.PublicKey.findProgramAddressSync(
+          [Buffer.from('stats')],
+          program.programId,
+        )
+
         const tx = await program.methods
           .vote(agree)
           .accounts({
@@ -937,6 +952,7 @@ export const governance = {
             voter: voter,
             voteRecord: voteRecordPDA,
             stakeAccount: stakeAccountPda,
+            stats: statsPda,
             systemProgram: web3.SystemProgram.programId,
           })
           .rpc({ skipPreflight: true })
@@ -1081,7 +1097,7 @@ export const governance = {
       })
 
       const tx = await program.methods
-        .stack(new BN(amountInSmallestUnit))
+        .stake(new BN(amountInSmallestUnit))
         .accounts({
           user: user,
           userTokenAccount: userTokenAccount,
@@ -1147,7 +1163,7 @@ export const governance = {
       )
 
       const tx = await program.methods
-        .unstack(new BN(amountInSmallestUnit))
+        .unstake(new BN(amountInSmallestUnit))
         .accounts({
           stakeAccount: stakeAccountPda,
           stats: statsPda,
@@ -1221,7 +1237,7 @@ export const governance = {
       )
 
       const tx = await program.methods
-        .calimUnstack()
+        .calimUnstake()
         .accounts({
           user: user,
           userTokenAccount: userTokenAccount,
@@ -1254,6 +1270,83 @@ export const governance = {
       const { handleGovernanceError } = useGovernance()
       const errorObj = parseAnchorError(error)
 
+      throw new Error(handleGovernanceError(errorObj))
+    }
+  },
+
+  /**
+   * Initialize or reallocate Stats account (admin only)
+   * Uses workspace internally
+   */
+  async initOrReallocStats() {
+    await ensureBuffer()
+    const workspace = useWorkspace()
+    const program = workspace.program?.value
+    const user = workspace.publicKey?.value
+
+    if (!program || !user) {
+      throw new Error('Wallet not connected or program not initialized')
+    }
+
+    try {
+      const [statsPda] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('stats')],
+        program.programId,
+      )
+
+      // Try to fetch stats first
+      let statsExists = false
+      try {
+        await program.account['stats'].fetch(statsPda)
+        statsExists = true
+      }
+      catch {
+        statsExists = false
+      }
+
+      let tx
+      if (statsExists) {
+        // Realloc existing stats
+        console.log('📊 Reallocating stats account...')
+        tx = await program.methods
+          .reallocStats()
+          .accounts({
+            stats: statsPda,
+            authority: user,
+            systemProgram: web3.SystemProgram.programId,
+          })
+          .rpc({ skipPreflight: true })
+      }
+      else {
+        // Initialize new stats
+        console.log('📊 Initializing stats account...')
+        tx = await program.methods
+          .initStats()
+          .accounts({
+            stats: statsPda,
+            authority: user,
+            systemProgram: web3.SystemProgram.programId,
+          })
+          .rpc({ skipPreflight: true })
+      }
+
+      const latestBlockhash = await program.provider.connection.getLatestBlockhash()
+      await program.provider.connection.confirmTransaction({
+        signature: tx,
+        ...latestBlockhash,
+      })
+
+      return { signature: tx, action: statsExists ? 'realloc' : 'init' }
+    }
+    catch (error: unknown) {
+      console.error('Error initializing/reallocating stats:', error)
+
+      if (error && typeof error === 'object') {
+        console.error('Error details:', JSON.stringify(error, null, 2))
+      }
+
+      const { handleGovernanceError } = useGovernance()
+      const errorObj = parseAnchorError(error)
       throw new Error(handleGovernanceError(errorObj))
     }
   },

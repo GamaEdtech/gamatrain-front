@@ -50,11 +50,18 @@
                     <span class="font-size-12">Currently Staked:</span>
                     <span class="font-weight-bold font-size-12">{{ $numberFormat(stakeInfo.stakedAmount) }} $GET</span>
                   </div>
-                  <div class="d-flex justify-space-between">
+                  <div class="d-flex justify-space-between mb-2">
                     <span class="font-size-12">Your Vote Power:</span>
                     <span class="font-weight-bold font-size-14">{{
                       $numberFormat(stakeInfo.stakedAmount)
                     }}</span>
+                  </div>
+                  <div
+                    v-if="stakeInfo.pendingRewards && stakeInfo.pendingRewards > 0"
+                    class="d-flex justify-space-between"
+                  >
+                    <span class="font-size-12 text-success">Pending Rewards:</span>
+                    <span class="font-weight-bold font-size-12 text-success">{{ $numberFormat(stakeInfo.pendingRewards) }} $GET</span>
                   </div>
                 </div>
               </v-alert>
@@ -130,10 +137,17 @@
                   </div>
                   <div
                     v-if="stakeInfo.pendingUnstake > 0"
-                    class="d-flex justify-space-between"
+                    class="d-flex justify-space-between mb-2"
                   >
                     <span class="font-size-12">Pending Unstake:</span>
                     <span class="font-weight-bold font-size-12">{{ $numberFormat(stakeInfo.pendingUnstake) }} $GET</span>
+                  </div>
+                  <div
+                    v-if="stakeInfo.pendingRewards && stakeInfo.pendingRewards > 0"
+                    class="d-flex justify-space-between"
+                  >
+                    <span class="font-size-12 text-success">Pending Rewards:</span>
+                    <span class="font-weight-bold font-size-12 text-success">{{ $numberFormat(stakeInfo.pendingRewards) }} $GET</span>
                   </div>
                 </div>
               </v-alert>
