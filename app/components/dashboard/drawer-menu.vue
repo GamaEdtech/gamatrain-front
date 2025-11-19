@@ -402,6 +402,12 @@ const mobileItems = [
     link: '/leader-board',
     value: 'getToken',
   },
+  {
+    title: 'Governance',
+    icon: 'md:policy',
+    link: '/governance',
+    value: 'governance',
+  },
 ]
 
 // const extraLink = [

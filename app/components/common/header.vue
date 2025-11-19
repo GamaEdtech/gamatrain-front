@@ -48,11 +48,11 @@ const menuLink = [
     link: '/about-us',
     icon: '',
   },
-  {
-    title: 'Services',
-    link: '/services',
-    icon: '',
-  },
+  // {
+  //   title: 'Services',
+  //   link: '/services',
+  //   icon: '',
+  // },
   {
     title: 'Leader Board',
     link: '/leader-board',
@@ -63,11 +63,11 @@ const menuLink = [
     link: '/get-token',
     icon: '',
   },
-  // {
-  //   title: 'Offers',
-  //   link: '/offers',
-  //   icon: 'mdi-wallet-giftcard'
-  // },
+  {
+    title: 'Governance',
+    link: '/governance',
+    icon: '',
+  },
 ]
 const currentOpenDialog = ref('')
 
