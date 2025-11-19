@@ -8,7 +8,7 @@ export type GamaedtechProgram = {
   address: '9F77hJsRRXs7vF9UDncZKth2r5wEPgcRkEfyoZDNQ3eK'
   metadata: {
     name: 'gamaedtechProgram'
-    version: '0.1.3'
+    version: '0.1.4'
     spec: '0.1.0'
     description: 'Created with Anchor'
   }
@@ -120,6 +120,49 @@ export type GamaedtechProgram = {
         },
         {
           name: 'tokenProgram'
+        },
+      ]
+      args: []
+    },
+    {
+      name: 'closeStats'
+      discriminator: [
+        174,
+        17,
+        184,
+        167,
+        73,
+        29,
+        255,
+        61,
+      ]
+      accounts: [
+        {
+          name: 'stats'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'const'
+                value: [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115,
+                ]
+              },
+            ]
+          }
+        },
+        {
+          name: 'authority'
+          writable: true
+          signer: true
+        },
+        {
+          name: 'systemProgram'
+          address: '11111111111111111111111111111111'
         },
       ]
       args: []
@@ -293,8 +336,58 @@ export type GamaedtechProgram = {
           writable: true
         },
         {
+          name: 'stakeAccount'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'const'
+                value: [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116,
+                ]
+              },
+              {
+                kind: 'account'
+                path: 'proposal.owner'
+                account: 'proposal'
+              },
+            ]
+          }
+        },
+        {
+          name: 'stats'
+          writable: true
+          pda: {
+            seeds: [
+              {
+                kind: 'const'
+                value: [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115,
+                ]
+              },
+            ]
+          }
+        },
+        {
           name: 'user'
           writable: true
+          signer: true
         },
       ]
       args: []
@@ -869,6 +962,11 @@ export type GamaedtechProgram = {
       code: 6012
       name: 'alreadyUnstaking'
       msg: 'Already Unstaking'
+    },
+    {
+      code: 6013
+      name: 'mathOverflow'
+      msg: 'Math Overflow'
     },
   ]
   types: [
