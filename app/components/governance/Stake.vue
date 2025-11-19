@@ -60,8 +60,14 @@
                     v-if="stakeInfo.pendingRewards && stakeInfo.pendingRewards > 0"
                     class="d-flex justify-space-between"
                   >
-                    <span class="font-size-12 text-success">Pending Rewards:</span>
+                    <span class="font-size-12 text-success">🎁 Pending Rewards:</span>
                     <span class="font-weight-bold font-size-12 text-success">{{ $numberFormat(stakeInfo.pendingRewards) }} $GET</span>
+                  </div>
+                  <div
+                    v-if="!stakeInfo.pendingRewards || stakeInfo.pendingRewards === 0"
+                    class="d-flex justify-space-between"
+                  >
+                    <span class="font-size-12 text-grey">💡 Tip: Vote on proposals to earn rewards!</span>
                   </div>
                 </div>
               </v-alert>
@@ -146,7 +152,7 @@
                     v-if="stakeInfo.pendingRewards && stakeInfo.pendingRewards > 0"
                     class="d-flex justify-space-between"
                   >
-                    <span class="font-size-12 text-success">Pending Rewards:</span>
+                    <span class="font-size-12 text-success">🎁 Pending Rewards:</span>
                     <span class="font-weight-bold font-size-12 text-success">{{ $numberFormat(stakeInfo.pendingRewards) }} $GET</span>
                   </div>
                 </div>

@@ -9,6 +9,21 @@
       </div>
       <div class="wallet-button-container">
         <ClientOnly>
+          <!-- Show pending rewards badge if user is connected -->
+          <div
+            v-if="connected && userStakeInfo && userStakeInfo.pendingRewards > 0"
+            class="rewards-badge"
+          >
+            <v-chip
+              color="success"
+              variant="flat"
+              size="large"
+              prepend-icon="mdi-gift"
+              class="font-weight-light font-size-12"
+            >
+              {{ $numberFormat(userStakeInfo.pendingRewards) }} $GET Rewards
+            </v-chip>
+          </div>
           <AsyncWalletMultiButton />
         </ClientOnly>
       </div>
@@ -190,7 +205,7 @@ const visibleProposalDetail = ref(false)
 const showWalletModal = ref(false)
 
 // Get governance composable (includes workspace internally)
-const { workspace } = useGovernance()
+const { workspace, userStakeInfo, fetchUserStakeInfo } = useGovernance()
 
 // Reactive refs from workspace
 const connected = computed(() => workspace?.connected?.value || false)
@@ -280,6 +295,8 @@ watch(
   (isConnected) => {
     if (isConnected) {
       showWalletModal.value = false
+      // Fetch user stake info when wallet connects
+      fetchUserStakeInfo()
     }
   },
   { immediate: true },
@@ -321,13 +338,24 @@ const handleVote = async ({
     const { PublicKey } = await import('@solana/web3.js')
     const proposalPubkey = new PublicKey(proposal.publicKey)
 
+    // Get user's vote power before voting
+    const { calculateVotePower } = useGovernance()
+    const votePower = await calculateVotePower()
+
+    // Calculate reward (1% of vote power)
+    const reward = votePower * 0.01
+
     await governance.vote(
       proposalPubkey,
       agree,
     )
 
-    // Show success message
-    $toast.success(`Vote ${agree ? 'for' : 'against'} submitted successfully!`)
+    // Show success message with reward info
+    $toast.success(
+      `Vote ${agree ? 'for' : 'against'} submitted successfully! 🎉\n`
+      + `You earned ${reward.toFixed(2)} $GET as reward! 💰`,
+      { duration: 5000 },
+    )
 
     // Close the proposal detail modal
     visibleProposalDetail.value = false
@@ -335,6 +363,19 @@ const handleVote = async ({
 
     // Refresh proposals to show updated vote counts
     await fetchProposalsData()
+
+    // Refresh user stake info to show updated rewards
+    await fetchUserStakeInfo()
+
+    // Refresh governance stats
+    if (import.meta.client) {
+      const win = window as Window & {
+        __refreshGovernanceStats?: () => Promise<void>
+      }
+      if (win.__refreshGovernanceStats) {
+        await win.__refreshGovernanceStats()
+      }
+    }
   }
   catch (e) {
     console.error('Vote failed:', e)
@@ -370,6 +411,22 @@ const handleProposalDeleted = () => {
 .wallet-button-container {
   position: absolute;
   right: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rewards-badge {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 
 @media only screen and (max-width: 600px) {
@@ -380,6 +437,7 @@ const handleProposalDeleted = () => {
 
   .wallet-button-container {
     position: static;
+    flex-direction: column;
   }
 }
 

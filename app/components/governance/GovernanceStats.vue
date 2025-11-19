@@ -158,6 +158,9 @@ watch(
 // Note: All stats are now fetched from blockchain Stats PDA
 // No need for manual calculation
 
+// Computed for pending rewards
+const userPendingRewards = computed(() => userStakeInfo.value?.pendingRewards || 0)
+
 const stats = computed(() => {
   // Force re-computation by accessing statsKey
   const _ = statsKey.value
@@ -192,9 +195,9 @@ const stats = computed(() => {
       dynamic: true,
     },
     {
-      title: blockchainStats.value?.proposalsPassed || 0,
-      subtitle: '',
-      value: 'Proposals Passed',
+      title: userPendingRewards.value.toLocaleString(),
+      subtitle: '$GET',
+      value: 'Your Rewards',
       class: 'last',
       dynamic: true,
     },
