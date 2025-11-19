@@ -13,7 +13,7 @@
       </p>
     </div>
     <span class="text-h5 d-flex align-center color-link ga-1">
-      <v-icon color="#2E90FA">md:notifications_outlined</v-icon>
+      <v-icon color="#1a73e8">md:notifications_outlined</v-icon>
       follow
     </span>
   </div>
@@ -34,16 +34,16 @@
     @click="seeCompleteDescription = !seeCompleteDescription"
   >
     {{ seeCompleteDescription ? `See Less` : `See More` }}
-    <v-icon color="#2E90FA">md:chevron_forward</v-icon>
+    <v-icon color="#1a73e8">md:chevron_forward</v-icon>
   </span>
 
   <div class="w-100 d-flex align-center justify-space-between mt-8">
-    <span class="text-h5 d-flex align-center primary-gray-400 ga-1">
-      <v-icon color="#98A2B3">md:files_outlined</v-icon>
+    <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
+      <v-icon color="#475467">md:files_outlined</v-icon>
       {{ contentData?.test_type_title }}
     </span>
-    <span class="text-h5 d-flex align-center primary-gray-400 ga-1">
-      <v-icon color="#98A2B3">md:update</v-icon>
+    <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
+      <v-icon color="#475467">md:update</v-icon>
       {{ $dayjs(contentData?.up_date).fromNow() }}
     </span>
   </div>
@@ -128,7 +128,7 @@ const seeCompleteDescription = ref(false)
 
 <style scoped>
 .color-link {
-  color: #2e90fa;
+  color: #1a73e8;
 }
 .open-description {
   height: unset;

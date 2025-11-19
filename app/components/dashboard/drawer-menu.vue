@@ -28,6 +28,7 @@
       <v-list-item
         v-if="auth.isAuthenticated.value"
         class="rounded-lg mt-3 py-2"
+        role="listitem"
       >
         <template #prepend>
           <v-avatar
@@ -62,6 +63,7 @@
             link
             :to="item.link"
             class="rounded-lg mt-3"
+            role="listitem"
           >
             <template #prepend>
               <span
@@ -102,6 +104,7 @@
                 }
                 ${drawerRail && isParentActive(item) ? 'custom-list-item' : ''}
                rounded-lg mt-3`"
+                role="listitem"
               >
                 <template #prepend>
                   <span
@@ -131,6 +134,7 @@
               class="pl-1 py-2"
               :to="subMenuItem.link"
               :disabled="subMenuItem.status"
+              role="listitem"
             >
               <template #prepend>
                 <span
@@ -166,6 +170,7 @@
           link
           :to="item.link"
           class="rounded-lg mt-3"
+          role="listitem"
         >
           <template #prepend>
             <v-icon
@@ -188,6 +193,7 @@
         v-if="auth.isAuthenticated.value"
         link
         class="rounded-lg mt-3 mb-14"
+        role="listitem"
         @click="logout"
       >
         <template #prepend>
