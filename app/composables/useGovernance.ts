@@ -1002,10 +1002,24 @@ export const governance = {
         throw { code: 6000, message: 'Only proposal owner can delete' }
       }
 
+      // Derive stake account PDA
+      const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('stake_account'), proposal.owner.toBuffer()],
+        program.programId,
+      )
+
+      // Derive stats PDA
+      const [statsPda] = web3.PublicKey.findProgramAddressSync(
+        [Buffer.from('stats')],
+        program.programId,
+      )
+
       const tx = await program.methods
         .deleteProposal()
         .accounts({
           proposal: proposalPublicKey,
+          stakeAccount: stakeAccountPda,
+          stats: statsPda,
           user: user,
         })
         .rpc({ skipPreflight: true })

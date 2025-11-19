@@ -302,6 +302,25 @@ watch(
   { immediate: true },
 )
 
+// Auto-refresh rewards every 10 seconds when wallet is connected
+let refreshInterval: NodeJS.Timeout | null = null
+
+onMounted(() => {
+  if (import.meta.client) {
+    refreshInterval = setInterval(() => {
+      if (connected.value && publicKey.value) {
+        fetchUserStakeInfo()
+      }
+    }, 10000) // Refresh every 10 seconds
+  }
+})
+
+onUnmounted(() => {
+  if (refreshInterval) {
+    clearInterval(refreshInterval)
+  }
+})
+
 // --- HANDLERS ---
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleProposalClick = (proposal: any) => {
@@ -309,10 +328,26 @@ const handleProposalClick = (proposal: any) => {
   visibleProposalDetail.value = true
 }
 
-const handleProposalCreated = () => {
+const handleProposalCreated = async () => {
   visibleCreateProposal.value = false
   // Refresh the list to show the new proposal
-  fetchProposalsData()
+  await fetchProposalsData()
+
+  // Wait a bit for blockchain to update, then refresh rewards
+  setTimeout(async () => {
+    // Refresh user stake info to show updated rewards
+    await fetchUserStakeInfo()
+
+    // Refresh governance stats
+    if (import.meta.client) {
+      const win = window as Window & {
+        __refreshGovernanceStats?: () => Promise<void>
+      }
+      if (win.__refreshGovernanceStats) {
+        await win.__refreshGovernanceStats()
+      }
+    }
+  }, 1500)
 }
 
 const handleVote = async ({
@@ -364,6 +399,40 @@ const handleVote = async ({
     // Refresh proposals to show updated vote counts
     await fetchProposalsData()
 
+    // Wait a bit for blockchain to update, then refresh rewards
+    setTimeout(async () => {
+      // Refresh user stake info to show updated rewards
+      await fetchUserStakeInfo()
+
+      // Refresh governance stats
+      if (import.meta.client) {
+        const win = window as Window & {
+          __refreshGovernanceStats?: () => Promise<void>
+        }
+        if (win.__refreshGovernanceStats) {
+          await win.__refreshGovernanceStats()
+        }
+      }
+    }, 1500)
+  }
+  catch (e) {
+    console.error('Vote failed:', e)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $toast.error((e as any).message || 'Failed to submit vote')
+  }
+}
+
+const handleProposalDeleted = async () => {
+  // Close the proposal detail modal
+  visibleProposalDetail.value = false
+  selectedProposal.value = null
+
+  // Refresh the proposals list when a proposal is deleted
+  await fetchProposalsData()
+
+  // Wait a bit for blockchain to update, then refresh rewards
+  // (Deleting a proposal may reduce rewards if they were given for creating it)
+  setTimeout(async () => {
     // Refresh user stake info to show updated rewards
     await fetchUserStakeInfo()
 
@@ -376,21 +445,7 @@ const handleVote = async ({
         await win.__refreshGovernanceStats()
       }
     }
-  }
-  catch (e) {
-    console.error('Vote failed:', e)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $toast.error((e as any).message || 'Failed to submit vote')
-  }
-}
-
-const handleProposalDeleted = () => {
-  // Close the proposal detail modal
-  visibleProposalDetail.value = false
-  selectedProposal.value = null
-
-  // Refresh the proposals list when a proposal is deleted
-  fetchProposalsData()
+  }, 1500)
 }
 </script>
 
@@ -427,6 +482,19 @@ const handleProposalDeleted = () => {
   50% {
     transform: scale(1.05);
   }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotating {
+  animation: rotate 1s linear infinite;
 }
 
 @media only screen and (max-width: 600px) {
