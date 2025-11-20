@@ -50,11 +50,24 @@
                     <span class="font-size-12">Currently Staked:</span>
                     <span class="font-weight-bold font-size-12">{{ $numberFormat(stakeInfo.stakedAmount) }} $GET</span>
                   </div>
-                  <div class="d-flex justify-space-between">
+                  <div class="d-flex justify-space-between mb-2">
                     <span class="font-size-12">Your Vote Power:</span>
                     <span class="font-weight-bold font-size-14">{{
                       $numberFormat(stakeInfo.stakedAmount)
                     }}</span>
+                  </div>
+                  <div
+                    v-if="stakeInfo.pendingRewards && stakeInfo.pendingRewards > 0"
+                    class="d-flex justify-space-between"
+                  >
+                    <span class="font-size-12 text-success">🎁 Pending Rewards:</span>
+                    <span class="font-weight-bold font-size-12 text-success">{{ $numberFormat(stakeInfo.pendingRewards) }} $GET</span>
+                  </div>
+                  <div
+                    v-if="!stakeInfo.pendingRewards || stakeInfo.pendingRewards === 0"
+                    class="d-flex justify-space-between"
+                  >
+                    <span class="font-size-12 text-grey">💡 Tip: Vote on proposals to earn rewards!</span>
                   </div>
                 </div>
               </v-alert>
@@ -130,10 +143,17 @@
                   </div>
                   <div
                     v-if="stakeInfo.pendingUnstake > 0"
-                    class="d-flex justify-space-between"
+                    class="d-flex justify-space-between mb-2"
                   >
                     <span class="font-size-12">Pending Unstake:</span>
                     <span class="font-weight-bold font-size-12">{{ $numberFormat(stakeInfo.pendingUnstake) }} $GET</span>
+                  </div>
+                  <div
+                    v-if="stakeInfo.pendingRewards && stakeInfo.pendingRewards > 0"
+                    class="d-flex justify-space-between"
+                  >
+                    <span class="font-size-12 text-success">🎁 Pending Rewards:</span>
+                    <span class="font-weight-bold font-size-12 text-success">{{ $numberFormat(stakeInfo.pendingRewards) }} $GET</span>
                   </div>
                 </div>
               </v-alert>
@@ -300,16 +320,15 @@ const stakeInfo = ref<StakeAccount | null>(null)
 const tokenBalance = ref(0)
 
 // Governance composable (includes workspace internally)
-const { workspace, getStakeAccount, isCooldownComplete, getRemainingCooldown }
-  = useGovernance()
-
-// Wallet state
-const isWalletReady = computed(
-  () =>
-    workspace?.connected?.value
-    && workspace?.publicKey?.value
-    && workspace?.program?.value,
-)
+const {
+  isWalletReady,
+  getStakeAccount,
+  isCooldownComplete,
+  getRemainingCooldown,
+  getProgram,
+  getPublicKey,
+  getConnection,
+} = useGovernance()
 
 // Computed
 const cooldownComplete = computed(() => {
@@ -353,7 +372,7 @@ const fetchTokenBalance = async () => {
     const { fetchTokenBalance } = await import('~/composables/useSolanaClient')
     const { getTokenMint } = await import('~/composables/useGovernance')
     const tokenMint = getTokenMint()
-    const userPk = workspace.publicKey?.value
+    const userPk = getPublicKey()
 
     if (!userPk) return
 
@@ -383,8 +402,8 @@ const handleStake = async () => {
 
   try {
     isStaking.value = true
-    const program = workspace.program?.value
-    const userPk = workspace.publicKey?.value
+    const program = getProgram()
+    const userPk = getPublicKey()
     if (!program || !userPk) throw new Error('Wallet not connected')
 
     // Get token accounts
@@ -414,7 +433,7 @@ const handleStake = async () => {
     )
 
     // Check if vault token account exists
-    const connection = workspace.connection?.value
+    const connection = getConnection()
     if (connection) {
       const vaultAccountInfo = await connection.getAccountInfo(
         vaultTokenAccount,
@@ -529,8 +548,8 @@ const handleClaim = async () => {
 
   try {
     isClaiming.value = true
-    const program = workspace.program?.value
-    const userPk = workspace.publicKey?.value
+    const program = getProgram()
+    const userPk = getPublicKey()
     if (!program || !userPk) throw new Error('Wallet not connected')
 
     // Get token accounts
