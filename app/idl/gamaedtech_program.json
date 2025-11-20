@@ -2,22 +2,22 @@
   "address": "9F77hJsRRXs7vF9UDncZKth2r5wEPgcRkEfyoZDNQ3eK",
   "metadata": {
     "name": "gamaedtech_program",
-    "version": "0.1.2",
+    "version": "0.1.4",
     "spec": "0.1.0",
     "description": "Created with Anchor"
   },
   "instructions": [
     {
-      "name": "calim_unstack",
+      "name": "calim_unstake",
       "discriminator": [
-        44,
-        224,
-        60,
-        155,
-        188,
-        78,
-        162,
-        222
+        119,
+        201,
+        236,
+        230,
+        172,
+        152,
+        34,
+        179
       ],
       "accounts": [
         {
@@ -62,9 +62,6 @@
         },
         {
           "name": "mint",
-          "docs": [
-            "Mint account of the Token-2022 token"
-          ],
           "writable": true
         },
         {
@@ -98,8 +95,68 @@
           }
         },
         {
-          "name": "token_program",
-          "address": "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb"
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "close_stats",
+      "discriminator": [
+        174,
+        17,
+        184,
+        167,
+        73,
+        29,
+        255,
+        61
+      ],
+      "accounts": [
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
@@ -210,6 +267,24 @@
           }
         },
         {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -255,8 +330,144 @@
           "writable": true
         },
         {
+          "name": "stake_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "proposal.owner",
+                "account": "Proposal"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "user",
-          "writable": true
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_stats",
+      "discriminator": [
+        203,
+        189,
+        229,
+        174,
+        240,
+        190,
+        158,
+        110
+      ],
+      "accounts": [
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "realloc_stats",
+      "discriminator": [
+        49,
+        153,
+        71,
+        94,
+        57,
+        94,
+        13,
+        255
+      ],
+      "accounts": [
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
         }
       ],
       "args": []
@@ -312,16 +523,16 @@
       "args": []
     },
     {
-      "name": "stack",
+      "name": "stake",
       "discriminator": [
-        251,
-        29,
-        17,
-        7,
-        249,
-        153,
-        78,
-        255
+        206,
+        176,
+        202,
+        18,
+        200,
+        209,
+        179,
+        108
       ],
       "accounts": [
         {
@@ -387,6 +598,24 @@
           }
         },
         {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "token_program",
           "docs": [
             "The token program (can be Token-2022 or legacy SPL)"
@@ -408,16 +637,16 @@
       ]
     },
     {
-      "name": "unstack",
+      "name": "unstake",
       "discriminator": [
-        224,
-        133,
-        160,
-        144,
-        1,
-        187,
-        195,
-        130
+        90,
+        95,
+        107,
+        42,
+        205,
+        124,
+        50,
+        225
       ],
       "accounts": [
         {
@@ -446,6 +675,24 @@
               {
                 "kind": "account",
                 "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
               }
             ]
           }
@@ -547,6 +794,24 @@
           }
         },
         {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
         }
@@ -584,6 +849,19 @@
         189,
         192,
         255
+      ]
+    },
+    {
+      "name": "Stats",
+      "discriminator": [
+        190,
+        125,
+        51,
+        63,
+        169,
+        197,
+        36,
+        238
       ]
     },
     {
@@ -673,6 +951,16 @@
       "code": 6011,
       "name": "NothingToClaim",
       "msg": "Nothing to claim."
+    },
+    {
+      "code": 6012,
+      "name": "AlreadyUnstaking",
+      "msg": "Already Unstaking"
+    },
+    {
+      "code": 6013,
+      "name": "MathOverflow",
+      "msg": "Math Overflow"
     }
   ],
   "types": [
@@ -742,6 +1030,10 @@
             "type": "u64"
           },
           {
+            "name": "pending_rewards",
+            "type": "u64"
+          },
+          {
             "name": "last_stake_time",
             "type": "i64"
           },
@@ -752,6 +1044,46 @@
           {
             "name": "unstake_requested_at",
             "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Stats",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "total_proposals",
+            "type": "u64"
+          },
+          {
+            "name": "active_voters",
+            "type": "u64"
+          },
+          {
+            "name": "proposals_passed",
+            "type": "u64"
+          },
+          {
+            "name": "treasury_balance",
+            "type": "u64"
+          },
+          {
+            "name": "total_staked",
+            "type": "u64"
+          },
+          {
+            "name": "total_rewards",
+            "type": "u64"
+          },
+          {
+            "name": "total_claimed_rewards",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
           }
         ]
       }

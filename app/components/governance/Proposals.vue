@@ -166,7 +166,6 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import type { Program } from '@coral-xyz/anchor'
 // Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
 
 const { mdAndUp } = useDisplay()
@@ -179,10 +178,6 @@ const AsyncWalletMultiButton = defineAsyncComponent(async () => {
 const { $toast } = useNuxtApp()
 
 // --- STATE ---
-const program: Ref<Program | null> = ref(null)
-const connected = ref(false)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const publicKey = ref<any | null>(null)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const proposals = ref<any[]>([])
 const isLoading = ref(true)
@@ -195,57 +190,32 @@ const visibleProposalDetail = ref(false)
 const showWalletModal = ref(false)
 
 // Get governance composable (includes workspace internally)
-const { workspace } = useGovernance()
+const { workspace, fetchUserStakeInfo } = useGovernance()
+
+// Reactive refs from workspace
+const connected = computed(() => workspace?.connected?.value || false)
+const publicKey = computed(() => workspace?.publicKey?.value)
+const program = computed(() => workspace?.program?.value)
 
 // --- LIFECYCLE HOOK ---
 onMounted(async () => {
-  if (!workspace) {
-    console.error('❌ Workspace not available')
-    return
+  // Workspace is now handled internally by useGovernance
+  // Fetch proposals when program is ready
+  if (program.value) {
+    await fetchProposalsData()
   }
-
-  // Force workspace initialization if not already done
-  if (!workspace.connection.value && import.meta.client) {
-    // Wait a bit for the DOM to be ready
-    setTimeout(async () => {
-      try {
-        // Manually import and initialize wallet
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { useAnchorWallet, useWallet } = await import(
-          'solana-wallets-vue'
-        )
-      }
-      catch (error) {
-        console.error('❌ Manual initialization failed:', error)
-      }
-    }, 500)
-  }
-
-  // Watch workspace state changes and update local state
-  watch(
-    () => workspace.connected.value,
-    (val) => {
-      connected.value = val
-    },
-    { immediate: true },
-  )
-
-  watch(
-    () => workspace.publicKey.value,
-    (pk) => {
-      publicKey.value = pk
-    },
-    { immediate: true },
-  )
-
-  watch(
-    () => workspace.program.value,
-    (prog) => {
-      program.value = prog as unknown as Program
-    },
-    { immediate: true },
-  )
 })
+
+// Watch for program changes
+watch(
+  () => program.value,
+  (prog) => {
+    if (prog) {
+      fetchProposalsData()
+    }
+  },
+  { immediate: true },
+)
 
 // --- DATA FETCHING ---
 const fetchProposalsData = async () => {
@@ -310,10 +280,31 @@ watch(
   (isConnected) => {
     if (isConnected) {
       showWalletModal.value = false
+      // Fetch user stake info when wallet connects
+      fetchUserStakeInfo()
     }
   },
   { immediate: true },
 )
+
+// Auto-refresh rewards every 10 seconds when wallet is connected
+let refreshInterval: NodeJS.Timeout | null = null
+
+onMounted(() => {
+  if (import.meta.client) {
+    refreshInterval = setInterval(() => {
+      if (connected.value && publicKey.value) {
+        fetchUserStakeInfo()
+      }
+    }, 10000) // Refresh every 10 seconds
+  }
+})
+
+onUnmounted(() => {
+  if (refreshInterval) {
+    clearInterval(refreshInterval)
+  }
+})
 
 // --- HANDLERS ---
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -322,10 +313,26 @@ const handleProposalClick = (proposal: any) => {
   visibleProposalDetail.value = true
 }
 
-const handleProposalCreated = () => {
+const handleProposalCreated = async () => {
   visibleCreateProposal.value = false
   // Refresh the list to show the new proposal
-  fetchProposalsData()
+  await fetchProposalsData()
+
+  // Wait a bit for blockchain to update, then refresh rewards
+  setTimeout(async () => {
+    // Refresh user stake info to show updated rewards
+    await fetchUserStakeInfo()
+
+    // Refresh governance stats
+    if (import.meta.client) {
+      const win = window as Window & {
+        __refreshGovernanceStats?: () => Promise<void>
+      }
+      if (win.__refreshGovernanceStats) {
+        await win.__refreshGovernanceStats()
+      }
+    }
+  }, 1500)
 }
 
 const handleVote = async ({
@@ -351,13 +358,24 @@ const handleVote = async ({
     const { PublicKey } = await import('@solana/web3.js')
     const proposalPubkey = new PublicKey(proposal.publicKey)
 
+    // Get user's vote power before voting
+    const { calculateVotePower } = useGovernance()
+    const votePower = await calculateVotePower()
+
+    // Calculate reward (1% of vote power)
+    const reward = votePower * 0.01
+
     await governance.vote(
       proposalPubkey,
       agree,
     )
 
-    // Show success message
-    $toast.success(`Vote ${agree ? 'for' : 'against'} submitted successfully!`)
+    // Show success message with reward info
+    $toast.success(
+      `Vote ${agree ? 'for' : 'against'} submitted successfully! 🎉\n`
+      + `You earned ${reward.toFixed(2)} $GET as reward! 💰`,
+      { duration: 5000 },
+    )
 
     // Close the proposal detail modal
     visibleProposalDetail.value = false
@@ -365,6 +383,22 @@ const handleVote = async ({
 
     // Refresh proposals to show updated vote counts
     await fetchProposalsData()
+
+    // Wait a bit for blockchain to update, then refresh rewards
+    setTimeout(async () => {
+      // Refresh user stake info to show updated rewards
+      await fetchUserStakeInfo()
+
+      // Refresh governance stats
+      if (import.meta.client) {
+        const win = window as Window & {
+          __refreshGovernanceStats?: () => Promise<void>
+        }
+        if (win.__refreshGovernanceStats) {
+          await win.__refreshGovernanceStats()
+        }
+      }
+    }, 1500)
   }
   catch (e) {
     console.error('Vote failed:', e)
@@ -373,13 +407,30 @@ const handleVote = async ({
   }
 }
 
-const handleProposalDeleted = () => {
+const handleProposalDeleted = async () => {
   // Close the proposal detail modal
   visibleProposalDetail.value = false
   selectedProposal.value = null
 
   // Refresh the proposals list when a proposal is deleted
-  fetchProposalsData()
+  await fetchProposalsData()
+
+  // Wait a bit for blockchain to update, then refresh rewards
+  // (Deleting a proposal may reduce rewards if they were given for creating it)
+  setTimeout(async () => {
+    // Refresh user stake info to show updated rewards
+    await fetchUserStakeInfo()
+
+    // Refresh governance stats
+    if (import.meta.client) {
+      const win = window as Window & {
+        __refreshGovernanceStats?: () => Promise<void>
+      }
+      if (win.__refreshGovernanceStats) {
+        await win.__refreshGovernanceStats()
+      }
+    }
+  }, 1500)
 }
 </script>
 
@@ -400,6 +451,35 @@ const handleProposalDeleted = () => {
 .wallet-button-container {
   position: absolute;
   right: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rewards-badge {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rotating {
+  animation: rotate 1s linear infinite;
 }
 
 @media only screen and (max-width: 600px) {
@@ -410,6 +490,7 @@ const handleProposalDeleted = () => {
 
   .wallet-button-container {
     position: static;
+    flex-direction: column;
   }
 }
 

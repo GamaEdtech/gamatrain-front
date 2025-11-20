@@ -37,9 +37,8 @@
       Quorum
     </span>
     <span>
-      <span class="font-weight-bold text-black">{{
-        formatVotes(totalVotes)
-      }}</span>
+      <span class="font-weight-bold text-black">
+        {{ $numberFormat(totalVotes/1000000) }}</span>
       Total Votes</span>
   </div>
 
@@ -164,7 +163,6 @@ const timeRemaining = computed(() => {
 
 const {
   canVote: checkCanVote,
-  formatVotes,
   formatDate,
   formatAddress,
   isProposalOwner,

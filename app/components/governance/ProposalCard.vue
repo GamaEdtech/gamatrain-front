@@ -58,12 +58,12 @@
     <div v-if="!isExpired">
       <div class="vote-row">
         <span class="for">
-          ⬆ For: {{ formatVotes(proposal.account.agreeVotes) }} ({{
+          ⬆ For: {{ $numberFormat(proposal.account.agreeVotes/1000000) }} ({{
             forPercentage
           }}%)
         </span>
         <span class="against">
-          ⬇ Against: {{ formatVotes(proposal.account.disagreeVotes) }} ({{
+          ⬇ Against: {{ $numberFormat(proposal.account.disagreeVotes/1000000) }} ({{
             againstPercentage
           }}%)
         </span>
@@ -79,7 +79,7 @@
       />
 
       <div class="governance-proposals__stats primary-gray-500">
-        <span>Total Votes: {{ totalVotes }}</span>
+        <span>Total Votes: {{ $numberFormat(totalVotes/1000000) }}</span>
         <span v-if="userVoteStatus">You voted: {{ userVoteStatus }}</span>
       </div>
     </div>
@@ -282,7 +282,7 @@ const timeRemaining = computed(() => {
   return 'Less than 1 hour remaining'
 })
 
-const { canVote: checkCanVote, formatVotes } = useGovernance()
+const { canVote: checkCanVote } = useGovernance()
 
 const canVote = computed(() => {
   return checkCanVote(isExpired.value, hasVoted.value)
