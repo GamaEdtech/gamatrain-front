@@ -1,26 +1,21 @@
-import { ref } from 'vue'
 import type { PublicKey } from '@solana/web3.js'
+import type { BN } from '@coral-xyz/anchor'
 
-let anchor: typeof import('@coral-xyz/anchor')
+let anchorLib: typeof import('@coral-xyz/anchor') | undefined
+let web3: typeof import('@solana/web3.js') | undefined
+let BNClass: typeof import('@coral-xyz/anchor').BN | undefined
 
-// Load dynamically only on client
-if (import.meta.client) {
-  const mod = await import('@coral-xyz/anchor')
-  anchor = mod
+export async function loadAnchor() {
+  if (!anchorLib) {
+    anchorLib = await import('@coral-xyz/anchor')
+    web3 = anchorLib.web3
+    BNClass = anchorLib.BN
+  }
+  return { anchorLib, web3, BNClass }
 }
-else {
-  // optional: fallback to CJS build for SSR if needed
-  const mod = await import('@coral-xyz/anchor/dist/cjs')
-  anchor = mod
-}
 
-// Type alias (keep it only for typing)
-// type Program<T extends anchor.Idl = anchor.Idl> = anchor.Program<T>
-
-// Runtime values (don’t destructure Program here)
-const { web3, BN } = anchor
 // --- Types ---
-interface CreateProposalForm {
+export interface CreateProposalForm {
   title: string
   brief: string
   cate: string
@@ -28,31 +23,32 @@ interface CreateProposalForm {
   amount: number
 }
 
-interface VoteRecordData {
+export interface VoteRecordData {
   proposalId: PublicKey
   voter: PublicKey
   hasVoted: boolean
   vote: string
-  votePower: anchor.BN
+  votePower: BN
 }
 
-interface ProposalData {
+export interface ProposalData {
   owner: PublicKey
   title: string
   brief: string
   cate: string
   reference: string
-  amount: anchor.BN
-  agreeVotes: anchor.BN
-  disagreeVotes: anchor.BN
-  createdAt: anchor.BN
-  expiresAt: anchor.BN
+  amount: BN
+  agreeVotes: BN
+  disagreeVotes: BN
+  createdAt: BN
+  expiresAt: BN
 }
 
-export const ensureBuffer = async () => {
+// --- Helpers ---
+export const ensureBuffer = async (): Promise<typeof Buffer> => {
   if (typeof window !== 'undefined' && !(window as unknown).Buffer) {
-    const { Buffer } = await import('buffer');
-    (window as unknown).Buffer = Buffer
+    const { Buffer } = await import('buffer')
+    ;(window as unknown).Buffer = Buffer
   }
   return typeof window !== 'undefined'
     ? (window as unknown).Buffer
@@ -147,7 +143,6 @@ export const useGovernance = () => {
       )
 
       try {
-        // @ts-expect-error: stakeAccount type may not be inferred
         const stakeAccount = await program.account['stakeAccount'].fetch(
           stakeAccountPda,
         )
@@ -184,23 +179,22 @@ export const useGovernance = () => {
         program.programId,
       )
 
-      // @ts-expect-error: stakeAccount type may not be inferred
       const stakeAccount = await program.account['stakeAccount'].fetch(
         stakeAccountPda,
       )
 
       // Convert from smallest unit to UI amount (divide by 10^6 for 6 decimals)
       // Note: IDL uses snake_case field names
-      const stakedAmountRaw = stakeAccount.staked_amount?.toNumber() || stakeAccount.stakedAmount?.toNumber() || 0
-      const pendingUnstakeRaw = stakeAccount.pending_unstake?.toNumber() || stakeAccount.pendingUnstake?.toNumber() || 0
-      const pendingRewardsRaw = stakeAccount.pending_rewards?.toNumber() || stakeAccount.pendingRewards?.toNumber() || 0
+      const stakedAmountRaw = stakeAccount.stakedAmount?.toNumber() || 0
+      const pendingUnstakeRaw = stakeAccount.pendingUnstake?.toNumber() || 0
+      const pendingRewardsRaw = stakeAccount.pendingRewards?.toNumber() || 0
 
       return {
         owner: stakeAccount.owner,
         stakedAmount: stakedAmountRaw / 1_000_000,
-        lastStakeTime: stakeAccount.last_stake_time?.toNumber() || stakeAccount.lastStakeTime?.toNumber() || 0,
+        lastStakeTime: stakeAccount.lastStakeTime?.toNumber() || 0,
         pendingUnstake: pendingUnstakeRaw / 1_000_000,
-        unstakeRequestedAt: stakeAccount.unstake_requested_at?.toNumber() || stakeAccount.unstakeRequestedAt?.toNumber() || 0,
+        unstakeRequestedAt: stakeAccount.unstakeRequestedAt?.toNumber() || 0,
         pendingRewards: pendingRewardsRaw / 1_000_000,
       }
     }
@@ -525,6 +519,9 @@ export const useGovernance = () => {
     const program = workspace?.program?.value
     if (!program) return null
 
+    const { anchorLib, web3, BNClass } = await loadAnchor()
+    if (!anchorLib || !web3 || !BNClass) throw new Error('Failed to load Anchor')
+
     try {
       const [statsPda] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from('stats')],
@@ -652,6 +649,9 @@ export const governance = {
       throw new Error('Program not initialized')
     }
 
+    const BNClass = BNClassRef.value ?? (() => {
+      throw new Error('BN not initialized')
+    })()
     try {
       const proposals = await (program.account as unknown).proposal.all()
       return proposals.map((proposal: unknown) => ({
@@ -659,11 +659,11 @@ export const governance = {
         account: {
           ...proposal.account,
           // Ensure proper data types
-          agreeVotes: proposal.account.agreeVotes || new BN(0),
-          disagreeVotes: proposal.account.disagreeVotes || new BN(0),
-          amount: proposal.account.amount || new BN(0),
-          createdAt: proposal.account.createdAt || new BN(0),
-          expiresAt: proposal.account.expiresAt || new BN(0),
+          agreeVotes: proposal.account.agreeVotes || new BNClass(0),
+          disagreeVotes: proposal.account.disagreeVotes || new BNClass(0),
+          amount: proposal.account.amount || new BNClass(0),
+          createdAt: proposal.account.createdAt || new BNClass(0),
+          expiresAt: proposal.account.expiresAt || new BNClass(0),
         },
       }))
     }
@@ -734,6 +734,9 @@ export const governance = {
     if (!program || !user) {
       throw new Error('Wallet not connected or program not initialized')
     }
+
+    const { anchorLib, web3, BNClass } = await loadAnchor()
+    if (!anchorLib || !web3 || !BNClass) throw new Error('Failed to load Anchor')
 
     try {
       // Validate form data
@@ -851,6 +854,9 @@ export const governance = {
       throw new Error('Wallet not connected or program not initialized')
     }
 
+    const { anchorLib, web3, BNClass } = await loadAnchor()
+    if (!anchorLib || !web3 || !BNClass) throw new Error('Failed to load Anchor')
+
     try {
       const { checkVoteRecord, isProposalExpired }
         = useGovernance()
@@ -963,6 +969,9 @@ export const governance = {
       throw new Error('Wallet not connected or program not initialized')
     }
 
+    const { anchorLib, web3, BNClass } = await loadAnchor()
+    if (!anchorLib || !web3 || !BNClass) throw new Error('Failed to load Anchor')
+
     try {
       // Check if user owns the proposal
       // @ts-expect-error: proposal account type may not be inferred
@@ -1050,6 +1059,9 @@ export const governance = {
       throw new Error('Wallet not connected or program not initialized')
     }
 
+    const { anchorLib, web3, BNClass } = await loadAnchor()
+    if (!anchorLib || !web3 || !BNClass) throw new Error('Failed to load Anchor')
+
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from('stake_account'), user.toBuffer()],
@@ -1064,6 +1076,7 @@ export const governance = {
       // Convert UI amount to smallest unit (multiply by 10^6 for 6 decimals)
       const amountInSmallestUnit = Math.floor(amount * 1_000_000)
 
+      console.log('step 2')
       // Derive stats PDA
       const [statsPda] = web3.PublicKey.findProgramAddressSync(
         [Buffer.from('stats')],
@@ -1080,6 +1093,8 @@ export const governance = {
         stakeAccount: stakeAccountPda.toBase58(),
         stats: statsPda.toBase58(),
       })
+
+      console.log('step 4')
 
       const tx = await program.methods
         .stake(new BN(amountInSmallestUnit))
@@ -1131,6 +1146,8 @@ export const governance = {
     if (!program || !user) {
       throw new Error('Wallet not connected or program not initialized')
     }
+    const { anchorLib, web3, BNClass } = await loadAnchor()
+    if (!anchorLib || !web3 || !BNClass) throw new Error('Failed to load Anchor')
 
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
@@ -1198,6 +1215,8 @@ export const governance = {
     if (!program || !user) {
       throw new Error('Wallet not connected or program not initialized')
     }
+    const { anchorLib, web3, BNClass } = await loadAnchor()
+    if (!anchorLib || !web3 || !BNClass) throw new Error('Failed to load Anchor')
 
     try {
       const [stakeAccountPda] = web3.PublicKey.findProgramAddressSync(
@@ -1272,6 +1291,8 @@ export const governance = {
     if (!program || !user) {
       throw new Error('Wallet not connected or program not initialized')
     }
+    const { anchorLib, web3, BNClass } = await loadAnchor()
+    if (!anchorLib || !web3 || !BNClass) throw new Error('Failed to load Anchor')
 
     try {
       const [statsPda] = web3.PublicKey.findProgramAddressSync(
@@ -1350,6 +1371,8 @@ export const governance = {
     if (!program || !user) {
       throw new Error('Wallet not connected or program not initialized')
     }
+    const { anchorLib, web3, BNClass } = await loadAnchor()
+    if (!anchorLib || !web3 || !BNClass) throw new Error('Failed to load Anchor')
 
     try {
       // Get runtime config for multisig address
