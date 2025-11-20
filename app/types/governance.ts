@@ -115,6 +115,7 @@ export interface GovernanceStats {
   totalProposals: number
   activeVoters: number
   proposalsPassed: number
+  totalRewards: number
 }
 
 /**

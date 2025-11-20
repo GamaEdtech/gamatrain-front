@@ -228,21 +228,15 @@ export const useGovernance = () => {
    * @returns Remaining time string
    */
   const getRemainingCooldown = (unstakeRequestedAt: number): string => {
+    const dayjs = useDayjs()
     if (unstakeRequestedAt === 0) return 'No cooldown'
-    const now = Math.floor(Date.now() / 1000)
-    const cooldownPeriod = 60 * 60 // 1 hour in seconds
-    const cooldownEnd = unstakeRequestedAt + cooldownPeriod
-    const remaining = cooldownEnd - now
 
-    if (remaining <= 0) return 'Cooldown complete'
+    const cooldownEnd = dayjs.unix(unstakeRequestedAt).add(7, 'day')
+    const now = dayjs()
 
-    const hours = Math.floor(remaining / (60 * 60))
-    const minutes = Math.floor((remaining % (60 * 60)) / 60)
-    const seconds = remaining % 60
-
-    if (hours > 0) return `${hours}h ${minutes}m remaining`
-    if (minutes > 0) return `${minutes}m ${seconds}s remaining`
-    return `${seconds}s remaining`
+    return now.isAfter(cooldownEnd)
+      ? 'Cooldown complete'
+      : cooldownEnd.from(now) + ' remaining'
   }
 
   /**
@@ -411,28 +405,6 @@ export const useGovernance = () => {
   }
 
   /**
-   * Format vote numbers for display
-   */
-  const formatVotes = (votes: unknown): string => {
-    if (!votes) return '0'
-
-    let num: number
-    if (typeof votes === 'number') {
-      num = votes
-    }
-    else if (votes && typeof votes === 'object' && 'toNumber' in votes) {
-      num = (votes as { toNumber: () => number }).toNumber()
-    }
-    else {
-      return '0'
-    }
-
-    if (num >= 1_000_000) return `${(num / 1_000_000).toFixed(1)}M`
-    if (num >= 1_000) return `${(num / 1_000).toFixed(1)}K`
-    return num.toString()
-  }
-
-  /**
    * Format timestamp to date string
    */
   const formatDate = (timestamp: number): string => {
@@ -559,15 +531,15 @@ export const useGovernance = () => {
         program.programId,
       )
 
-      // @ts-expect-error: stats account type may not be typed in IDL
       const stats = await program.account['stats'].fetch(statsPda)
 
       return {
-        totalProposals: stats.totalProposals?.toNumber?.() || stats.totalProposals || 0,
-        activeVoters: stats.activeVoters?.toNumber?.() || stats.activeVoters || 0,
-        proposalsPassed: stats.proposalsPassed?.toNumber?.() || stats.proposalsPassed || 0,
-        treasuryBalance: (stats.treasuryBalance?.toNumber?.() || stats.treasuryBalance || 0) / 1_000_000,
-        totalStaked: (stats.totalStaked?.toNumber?.() || stats.totalStaked || 0) / 1_000_000,
+        totalProposals: stats.totalProposals?.toNumber?.() || 0,
+        activeVoters: stats.activeVoters?.toNumber?.() || 0,
+        proposalsPassed: stats.proposalsPassed?.toNumber?.() || 0,
+        treasuryBalance: (stats.treasuryBalance?.toNumber?.() || 0) / 1_000_000,
+        totalStaked: (stats.totalStaked?.toNumber?.() || 0) / 1_000_000,
+        totalRewards: (stats.totalRewards?.toNumber?.() || 0) / 1_000_000,
       }
     }
     catch (error) {
@@ -613,7 +585,6 @@ export const useGovernance = () => {
     handleRequestFund,
     isProposalOwner,
     // Formatters
-    formatVotes,
     formatDate,
     formatAddress,
   }
