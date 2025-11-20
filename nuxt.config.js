@@ -282,5 +282,8 @@ export default defineNuxtConfig({
     rollupConfig: {
       external: ['@solana/web3.js'],
     },
+    esbuild: {
+      target: 'node18',
+    },
   },
 })
