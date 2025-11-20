@@ -190,7 +190,7 @@ const visibleProposalDetail = ref(false)
 const showWalletModal = ref(false)
 
 // Get governance composable (includes workspace internally)
-// const { workspace, userStakeInfo, fetchUserStakeInfo } = useGovernance()
+const { workspace, fetchUserStakeInfo } = useGovernance()
 
 // Reactive refs from workspace
 const connected = computed(() => workspace?.connected?.value || false)
