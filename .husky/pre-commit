@@ -1,9 +1,20 @@
 #!/usr/bin/env bash
 
-if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+# Detect if we're in a WSL path accessed from Windows
+if [[ "$PWD" == /mnt/* ]] || [[ "$PWD" =~ ^//wsl ]]; then
+  # Running from Windows Git but repo is in WSL
+  wsl.exe npm run lint
+  wsl.exe npm run check-paths
+elif [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "win32" ]]; then
+  # Native Windows (Git Bash/MSYS)
   npm.cmd run lint
   npm.cmd run check-paths
+elif [[ -f /proc/version ]] && grep -qEi "(Microsoft|WSL)" /proc/version 2>/dev/null; then
+  # Running inside WSL
+  npm run lint
+  npm run check-paths
 else
+  # Linux/macOS
   npm run lint
   npm run check-paths
 fi

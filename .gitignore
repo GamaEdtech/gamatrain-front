@@ -90,7 +90,7 @@ dist
 # IDE / Editor
 .idea
 .vscode/
-
+.kiro/
 
 # macOS
 .DS_Store
@@ -100,6 +100,9 @@ dist
 
 OneSignalSDK*
 .vercel
+
+# Local documentation (not for git)
+docs/GOVERNANCE_V2.md
 
 
 

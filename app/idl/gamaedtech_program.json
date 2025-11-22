@@ -1,0 +1,1136 @@
+{
+  "address": "9F77hJsRRXs7vF9UDncZKth2r5wEPgcRkEfyoZDNQ3eK",
+  "metadata": {
+    "name": "gamaedtech_program",
+    "version": "0.1.4",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "calim_unstake",
+      "discriminator": [
+        119,
+        201,
+        236,
+        230,
+        172,
+        152,
+        34,
+        179
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_token_account",
+          "writable": true
+        },
+        {
+          "name": "vault_token_account",
+          "writable": true
+        },
+        {
+          "name": "vault_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  45,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "mint",
+          "writable": true
+        },
+        {
+          "name": "stake_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "close_stats",
+      "discriminator": [
+        174,
+        17,
+        184,
+        167,
+        73,
+        29,
+        255,
+        61
+      ],
+      "accounts": [
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "create_proposal",
+      "discriminator": [
+        132,
+        116,
+        68,
+        174,
+        216,
+        160,
+        198,
+        22
+      ],
+      "accounts": [
+        {
+          "name": "user_state",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  95,
+                  115,
+                  116,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "proposal",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  112,
+                  114,
+                  111,
+                  112,
+                  111,
+                  115,
+                  97,
+                  108
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "account",
+                "path": "user_state.proposal_count",
+                "account": "UserState"
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "stake_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "brief",
+          "type": "string"
+        },
+        {
+          "name": "cate",
+          "type": "string"
+        },
+        {
+          "name": "reference",
+          "type": "string"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "delete_proposal",
+      "discriminator": [
+        195,
+        115,
+        85,
+        157,
+        254,
+        15,
+        175,
+        201
+      ],
+      "accounts": [
+        {
+          "name": "proposal",
+          "writable": true
+        },
+        {
+          "name": "stake_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "proposal.owner",
+                "account": "Proposal"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "init_stats",
+      "discriminator": [
+        203,
+        189,
+        229,
+        174,
+        240,
+        190,
+        158,
+        110
+      ],
+      "accounts": [
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "realloc_stats",
+      "discriminator": [
+        49,
+        153,
+        71,
+        94,
+        57,
+        94,
+        13,
+        255
+      ],
+      "accounts": [
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "request_fund",
+      "discriminator": [
+        129,
+        55,
+        16,
+        138,
+        75,
+        141,
+        102,
+        217
+      ],
+      "accounts": [
+        {
+          "name": "proposal",
+          "writable": true
+        },
+        {
+          "name": "multisig"
+        },
+        {
+          "name": "transaction",
+          "writable": true
+        },
+        {
+          "name": "creator",
+          "docs": [
+            "The wallet (user) paying for rent and signing"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "rent_payer",
+          "docs": [
+            "The wallet (user) paying for rent"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "Squads program (generic type works for CPI)"
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "stake",
+      "discriminator": [
+        206,
+        176,
+        202,
+        18,
+        200,
+        209,
+        179,
+        108
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "docs": [
+            "The user performing the stake"
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_token_account",
+          "docs": [
+            "User's Token-2022 or legacy SPL token account"
+          ],
+          "writable": true
+        },
+        {
+          "name": "vault_token_account",
+          "docs": [
+            "Vault Token-2022 or legacy SPL token account (where tokens are staked)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "mint",
+          "docs": [
+            "Token mint (Token-2022 or legacy SPL)"
+          ],
+          "writable": true
+        },
+        {
+          "name": "stake_account",
+          "docs": [
+            "Custom stake account to track user's stake"
+          ],
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "token_program",
+          "docs": [
+            "The token program (can be Token-2022 or legacy SPL)"
+          ]
+        },
+        {
+          "name": "system_program",
+          "docs": [
+            "System program (for paying rent, etc.)"
+          ],
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "unstake",
+      "discriminator": [
+        90,
+        95,
+        107,
+        42,
+        205,
+        124,
+        50,
+        225
+      ],
+      "accounts": [
+        {
+          "name": "stake_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "user",
+          "signer": true
+        }
+      ],
+      "args": [
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "vote",
+      "discriminator": [
+        227,
+        110,
+        155,
+        23,
+        136,
+        126,
+        172,
+        25
+      ],
+      "accounts": [
+        {
+          "name": "proposal",
+          "writable": true
+        },
+        {
+          "name": "voter",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "vote_record",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  111,
+                  116,
+                  101,
+                  45,
+                  114,
+                  101,
+                  99,
+                  111,
+                  114,
+                  100
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "proposal"
+              },
+              {
+                "kind": "account",
+                "path": "voter"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stake_account",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  107,
+                  101,
+                  95,
+                  97,
+                  99,
+                  99,
+                  111,
+                  117,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "voter"
+              }
+            ]
+          }
+        },
+        {
+          "name": "stats",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  115,
+                  116,
+                  97,
+                  116,
+                  115
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "agree",
+          "type": "bool"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Proposal",
+      "discriminator": [
+        26,
+        94,
+        189,
+        187,
+        116,
+        136,
+        53,
+        33
+      ]
+    },
+    {
+      "name": "StakeAccount",
+      "discriminator": [
+        80,
+        158,
+        67,
+        124,
+        50,
+        189,
+        192,
+        255
+      ]
+    },
+    {
+      "name": "Stats",
+      "discriminator": [
+        190,
+        125,
+        51,
+        63,
+        169,
+        197,
+        36,
+        238
+      ]
+    },
+    {
+      "name": "UserState",
+      "discriminator": [
+        72,
+        177,
+        85,
+        249,
+        76,
+        167,
+        186,
+        126
+      ]
+    },
+    {
+      "name": "VoteRecord",
+      "discriminator": [
+        112,
+        9,
+        123,
+        165,
+        234,
+        9,
+        157,
+        167
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "Unauthorized",
+      "msg": "Unauthorized to Action"
+    },
+    {
+      "code": 6001,
+      "name": "AlreadyVoted",
+      "msg": "Already voted!"
+    },
+    {
+      "code": 6002,
+      "name": "ExpiredProposal",
+      "msg": "The Proposal Has Already Expired"
+    },
+    {
+      "code": 6003,
+      "name": "AlreadyRequested",
+      "msg": "Funds already requested for this proposal."
+    },
+    {
+      "code": 6004,
+      "name": "ProposalNotPassed",
+      "msg": "Proposal has not passed yet."
+    },
+    {
+      "code": 6005,
+      "name": "VotingStillActive",
+      "msg": "Proposal voting still active"
+    },
+    {
+      "code": 6006,
+      "name": "ProposalRejected",
+      "msg": "Proposal Regected"
+    },
+    {
+      "code": 6007,
+      "name": "InsufficientStake",
+      "msg": "Insufficient Stake"
+    },
+    {
+      "code": 6008,
+      "name": "NoStakePower",
+      "msg": "No Stake Power"
+    },
+    {
+      "code": 6009,
+      "name": "InvalidTokenMint",
+      "msg": "You can only stake the allowed token."
+    },
+    {
+      "code": 6010,
+      "name": "CooldownActive",
+      "msg": "Cooldown period still active."
+    },
+    {
+      "code": 6011,
+      "name": "NothingToClaim",
+      "msg": "Nothing to claim."
+    },
+    {
+      "code": 6012,
+      "name": "AlreadyUnstaking",
+      "msg": "Already Unstaking"
+    },
+    {
+      "code": 6013,
+      "name": "MathOverflow",
+      "msg": "Math Overflow"
+    }
+  ],
+  "types": [
+    {
+      "name": "Proposal",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "title",
+            "type": "string"
+          },
+          {
+            "name": "brief",
+            "type": "string"
+          },
+          {
+            "name": "cate",
+            "type": "string"
+          },
+          {
+            "name": "reference",
+            "type": "string"
+          },
+          {
+            "name": "amount",
+            "type": "u64"
+          },
+          {
+            "name": "agree_votes",
+            "type": "u64"
+          },
+          {
+            "name": "disagree_votes",
+            "type": "u64"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "expires_at",
+            "type": "i64"
+          },
+          {
+            "name": "is_fund_requested",
+            "type": "bool"
+          }
+        ]
+      }
+    },
+    {
+      "name": "StakeAccount",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "owner",
+            "type": "pubkey"
+          },
+          {
+            "name": "staked_amount",
+            "type": "u64"
+          },
+          {
+            "name": "pending_rewards",
+            "type": "u64"
+          },
+          {
+            "name": "last_stake_time",
+            "type": "i64"
+          },
+          {
+            "name": "pending_unstake",
+            "type": "u64"
+          },
+          {
+            "name": "unstake_requested_at",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Stats",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "total_proposals",
+            "type": "u64"
+          },
+          {
+            "name": "active_voters",
+            "type": "u64"
+          },
+          {
+            "name": "proposals_passed",
+            "type": "u64"
+          },
+          {
+            "name": "treasury_balance",
+            "type": "u64"
+          },
+          {
+            "name": "total_staked",
+            "type": "u64"
+          },
+          {
+            "name": "total_rewards",
+            "type": "u64"
+          },
+          {
+            "name": "total_claimed_rewards",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "UserState",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "proposal_count",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VoteRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "proposal_id",
+            "type": "pubkey"
+          },
+          {
+            "name": "voter",
+            "type": "pubkey"
+          },
+          {
+            "name": "has_voted",
+            "type": "bool"
+          },
+          {
+            "name": "vote",
+            "type": "string"
+          },
+          {
+            "name": "vote_power",
+            "type": "u64"
+          }
+        ]
+      }
+    }
+  ]
+}
