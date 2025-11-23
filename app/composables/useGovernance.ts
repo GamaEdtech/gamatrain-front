@@ -48,7 +48,7 @@ export interface ProposalData {
 export const ensureBuffer = async (): Promise<typeof Buffer> => {
   if (typeof window !== 'undefined' && !(window as unknown).Buffer) {
     const { Buffer } = await import('buffer')
-    ;(window as unknown).Buffer = Buffer
+      ; (window as unknown).Buffer = Buffer
   }
   return typeof window !== 'undefined'
     ? (window as unknown).Buffer
@@ -314,8 +314,7 @@ export const useGovernance = () => {
         case 6012:
           return 'You already have a pending unstake request. Please claim your tokens first before unstaking again.'
         default:
-          return `Governance error (${errorObj.code}): ${
-            errorObj.message || 'Unknown error occurred'
+          return `Governance error (${errorObj.code}): ${errorObj.message || 'Unknown error occurred'
           }`
       }
     }
@@ -826,7 +825,7 @@ export const governance = {
           ? (error as { code?: number, message?: string })
           : {
               message:
-                error instanceof Error ? error.message : 'Unknown action',
+              error instanceof Error ? error.message : 'Unknown action',
             }
       const msg = handleGovernanceError(errorObj) || 'Unknown action'
       throw new Error(msg)
@@ -1097,7 +1096,7 @@ export const governance = {
       console.log('step 4')
 
       const tx = await program.methods
-        .stake(new BN(amountInSmallestUnit))
+        .stake(new BNClass(amountInSmallestUnit))
         .accounts({
           user: user,
           userTokenAccount: userTokenAccount,
