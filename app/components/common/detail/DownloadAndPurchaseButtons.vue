@@ -202,9 +202,9 @@
 
     <!-- Coin Payment Modal -->
     <modals-coin-payment-modal
-      v-model:is-open="showCoinPaymentModal"
-      :user-balance="coinBalance.balance.value"
+      v-model:show-dialog="showCoinPaymentModal"
       :is-processing="coinBalance.isLoading.value || isProcessingPayment"
+      :user-balance="coinBalance.balance.value"
       @confirm="handleCoinPaymentConfirm"
       @close="handleCoinPaymentClose"
     />
