@@ -118,9 +118,9 @@ const fetchStatsData = async () => {
     blockchainStats.value = await fetchStats()
 
     // Also fetch user stake if wallet is connected
-    if (isWalletReady.value) {
-      await fetchUserStakeInfo()
-    }
+    // if (isWalletReady.value) {
+    //   await fetchUserStakeInfo();
+    // }
 
     forceRefresh()
   }
@@ -135,6 +135,7 @@ watch(
   () => getProgram(),
   (prog) => {
     if (prog) {
+      console.log('stats, watch, fetchStatsData')
       fetchStatsData()
     }
     else {
@@ -150,46 +151,20 @@ watch(
   () => isWalletReady.value,
   (ready) => {
     if (ready) {
+      console.log('stats, watch, fetchUserStakeInfo')
       fetchUserStakeInfo()
     }
   },
   { immediate: true },
 )
 
-// Auto-refresh stats every 15 seconds
-let refreshInterval: NodeJS.Timeout | null = null
-
-onMounted(() => {
-  if (import.meta.client) {
-    refreshInterval = setInterval(() => {
-      if (isWalletReady.value) {
-        fetchUserStakeInfo()
-      }
-      // Always refresh blockchain stats
-      const program = getProgram()
-      if (program) {
-        fetchStats().then((stats) => {
-          if (stats) {
-            blockchainStats.value = stats
-            forceRefresh()
-          }
-        })
-      }
-    }, 15000) // Refresh every 15 seconds
-  }
-})
-
-onUnmounted(() => {
-  if (refreshInterval) {
-    clearInterval(refreshInterval)
-  }
-})
-
 // Note: All stats are now fetched from blockchain Stats PDA
 // No need for manual calculation
 
 // Computed for pending rewards
-const userPendingRewards = computed(() => userStakeInfo.value?.pendingRewards || 0)
+const userPendingRewards = computed(
+  () => userStakeInfo.value?.pendingRewards || 0,
+)
 
 const stats = computed(() => {
   // Force re-computation by accessing statsKey

@@ -198,19 +198,21 @@ const publicKey = computed(() => workspace?.publicKey?.value)
 const program = computed(() => workspace?.program?.value)
 
 // --- LIFECYCLE HOOK ---
-onMounted(async () => {
-  // Workspace is now handled internally by useGovernance
-  // Fetch proposals when program is ready
-  if (program.value) {
-    await fetchProposalsData()
-  }
-})
+// onMounted(async () => {
+//   // Workspace is now handled internally by useGovernance
+//   // Fetch proposals when program is ready
+//   // if (program.value) {
+//   //   console.log("proposal, mounted, fetchProposalsData");
+//   //   await fetchProposalsData();
+//   // }
+// });
 
 // Watch for program changes
 watch(
   () => program.value,
   (prog) => {
     if (prog) {
+      console.log('proposal, watch, fetchProposalsData')
       fetchProposalsData()
     }
   },
@@ -222,6 +224,7 @@ const fetchProposalsData = async () => {
   if (!program.value) return
   isLoading.value = true
   try {
+    console.log('function fetchProposalsData')
     proposals.value = await governance.fetchLatestProposals()
   }
   finally {
@@ -263,16 +266,6 @@ const handleRequestFund = async (proposal: unknown) => {
 }
 
 // --- WATCHER ---
-// Always fetch proposals when program is available, regardless of wallet connection
-watch(
-  () => program.value,
-  (prog) => {
-    if (prog) {
-      fetchProposalsData()
-    }
-  },
-  { immediate: true },
-)
 
 // Watch wallet connection changes
 watch(
@@ -281,30 +274,12 @@ watch(
     if (isConnected) {
       showWalletModal.value = false
       // Fetch user stake info when wallet connects
+      console.log('proposal, watch, fetchUserStakeInfo')
       fetchUserStakeInfo()
     }
   },
   { immediate: true },
 )
-
-// Auto-refresh rewards every 10 seconds when wallet is connected
-let refreshInterval: NodeJS.Timeout | null = null
-
-onMounted(() => {
-  if (import.meta.client) {
-    refreshInterval = setInterval(() => {
-      if (connected.value && publicKey.value) {
-        fetchUserStakeInfo()
-      }
-    }, 10000) // Refresh every 10 seconds
-  }
-})
-
-onUnmounted(() => {
-  if (refreshInterval) {
-    clearInterval(refreshInterval)
-  }
-})
 
 // --- HANDLERS ---
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -365,10 +340,7 @@ const handleVote = async ({
     // Calculate reward (1% of vote power)
     const reward = votePower * 0.01
 
-    await governance.vote(
-      proposalPubkey,
-      agree,
-    )
+    await governance.vote(proposalPubkey, agree)
 
     // Show success message with reward info
     $toast.success(
@@ -461,7 +433,8 @@ const handleProposalDeleted = async () => {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
