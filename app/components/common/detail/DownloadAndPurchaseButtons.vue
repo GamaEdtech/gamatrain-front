@@ -223,7 +223,7 @@ import type {
   PDFResponseDTO,
   AppError,
   FilesDTO,
-} from '~/interfaces/api'
+} from '~/types/api'
 import { useDisplay } from 'vuetify'
 
 interface IDownloadAndPurchaseButtons {
