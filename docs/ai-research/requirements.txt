@@ -1,0 +1,35 @@
+# Requirements for Gamatrain LLM System
+
+## Python Dependencies (Server)
+
+llama-cpp-python>=0.2.0
+flask>=3.0.0
+flask-cors>=4.0.0
+python-dotenv>=1.0.0
+
+## Optional (for fine-tuning)
+
+transformers>=4.36.0
+datasets>=2.15.0
+peft>=0.7.0
+bitsandbytes>=0.41.3
+trl>=0.7.4
+accelerate>=0.25.0
+torch>=2.1.0
+
+## Installation Commands
+
+### For VPS Deployment (CPU):
+```bash
+pip install llama-cpp-python flask flask-cors python-dotenv
+```
+
+### For Fine-Tuning (GPU required):
+```bash
+pip install transformers datasets peft bitsandbytes trl accelerate torch --extra-index-url https://download.pytorch.org/whl/cu118
+```
+
+### For GPU Deployment with llama-cpp:
+```bash
+CMAKE_ARGS="-DLLAMA_CUBLAS=on" pip install llama-cpp-python
+```
