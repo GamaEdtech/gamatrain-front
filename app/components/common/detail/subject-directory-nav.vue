@@ -4,21 +4,19 @@
     class="w-100 rounded-lg d-flex align-center justify-start pa-1 pa-sm-3 ga-2 mt-2 subject-directory-alert"
   >
     <div>
-      <div class="pt-4 text-h5 font-weight-bold">
+      <div class="pt-4 pl-2 text-h5 font-weight-bold">
         {{ contentData?.lesson_title }} Subject directory
       </div>
-      <div class=" pb-4">
+      <div class="pl-2 pb-4">
         <v-icon size="25">md:files_outlined</v-icon>
 
         <span
-          class="text-h6 text-sm-h5 font-weight-medium text-light-blue-darken-2
-"
+          class="text-h6 text-sm-h5 font-weight-medium text-light-blue-darken-2"
         >
           All resources in one place
         </span>
       </div>
     </div>
-
   </nuxt-link>
 </template>
 
@@ -31,7 +29,7 @@ defineProps({
 <style scoped>
 .subject-directory-alert {
   height: 64px;
-  background-color: #E6F4FF;
-  color: #0066CC;
+  background-color: #e6f4ff;
+  color: #0066cc;
 }
 </style>

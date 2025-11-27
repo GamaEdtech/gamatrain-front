@@ -83,7 +83,7 @@ const stats = ref([
 
 <style>
 #stats-container {
-  height: 38.6rem;
+  height: 42rem;
   padding: 2.4rem 0 2.4rem 0;
   background: #24292f;
   color: #ffffff;

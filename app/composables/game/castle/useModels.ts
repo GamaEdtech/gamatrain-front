@@ -1,7 +1,7 @@
 import useCastleModel from './useCastleModel'
 import type * as THREE from 'three'
 import type { Ref } from '@vue/runtime-dom'
-import type { DoorModels } from '~/interfaces/DoorModels.interface'
+import type { DoorModels } from '~/types/DoorModels.interface'
 import useChestModel from './useChestModel'
 
 const useModels = async (
@@ -9,15 +9,15 @@ const useModels = async (
   doorModels: DoorModels,
   modelesLoaded: Ref<boolean>,
 ) => {
-  let visibleChest: (status: boolean) => void = () => {}
+  let visibleChest: (status: boolean) => void = () => { }
   let chestInteractions: (character: THREE.Object3D) => boolean = () => false
   let chestAnimation: (() => { play: () => void, stop: () => void }) | null
     = null
-  let chestUpdate: (delta: number) => void = () => {}
+  let chestUpdate: (delta: number) => void = () => { }
   let chestPosition: (
     position: THREE.Vector3,
     rotation: THREE.Euler,
-  ) => void = () => {}
+  ) => void = () => { }
 
   await Promise.all([useCastleModel(doorModels), useChestModel()]).then(
     (res) => {

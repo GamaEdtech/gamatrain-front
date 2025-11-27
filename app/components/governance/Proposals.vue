@@ -9,21 +9,6 @@
       </div>
       <div class="wallet-button-container">
         <ClientOnly>
-          <!-- Show pending rewards badge if user is connected -->
-          <div
-            v-if="connected && userStakeInfo && userStakeInfo.pendingRewards > 0"
-            class="rewards-badge"
-          >
-            <v-chip
-              color="success"
-              variant="flat"
-              size="large"
-              prepend-icon="mdi-gift"
-              class="font-weight-light font-size-12"
-            >
-              {{ $numberFormat(userStakeInfo.pendingRewards) }} $GET Rewards
-            </v-chip>
-          </div>
           <AsyncWalletMultiButton />
         </ClientOnly>
       </div>
@@ -205,7 +190,7 @@ const visibleProposalDetail = ref(false)
 const showWalletModal = ref(false)
 
 // Get governance composable (includes workspace internally)
-const { workspace, userStakeInfo, fetchUserStakeInfo } = useGovernance()
+const { workspace, fetchUserStakeInfo } = useGovernance()
 
 // Reactive refs from workspace
 const connected = computed(() => workspace?.connected?.value || false)

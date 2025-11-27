@@ -3,7 +3,7 @@
     v-if="isLoading || slideItems.length > 5"
     id="blog-list-container"
     fluid
-    :class="route.path === '/' ? 'bg-blue-grey-lighten-5' : '' "
+    :class="route.path === '/' ? 'bg-blue-grey-lighten-5' : ''"
   >
     <v-container>
       <v-card
@@ -102,7 +102,7 @@
                           </div>
                         </v-card-title>
                       </v-card>
-                      <div class="gama-text-subtitle2">
+                      <div class="gama-text-subtitle2 pl-2">
                         {{ truncateBody(item.summary) }}
                         <nuxt-link :to="`/blog/${item.id}/${item.slug}`">Read more</nuxt-link>
                       </div>
@@ -134,8 +134,8 @@ const route = useRoute()
 const loadBlog = async () => {
   isLoading.value = true
   try {
-    const response = await useApiService.get('/api/v2/blogs/posts', {
-      'PagingDto.PageFilter.Size': 10,
+    const response = await useApiService.get('/api/v2/blogs/posts/random', {
+      Size: 10,
     })
 
     if (response.data && response.succeeded) {

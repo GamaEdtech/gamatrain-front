@@ -289,7 +289,7 @@ import type {
   AppError,
   ResponseListDTO,
   AdminTransactionDTO,
-} from '~/interfaces/api'
+} from '~/types/api'
 
 definePageMeta({
   layout: 'admin',

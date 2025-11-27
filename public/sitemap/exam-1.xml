@@ -1565,6 +1565,11 @@
       <changefreq>weekly</changefreq>
       <priority>0.8</priority>
     </url><url>
+      <loc>https://gamatrain.com/exam/2161/Mathematics-2023-JAMB-Quiz</loc>
+      <lastmod>2025-10-22</lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.8</priority>
+    </url><url>
       <loc>https://gamatrain.com/exam/1359/045212-Accounting-March-2023-Online-Test-Cambridge-IGCSE-MCQ</loc>
       <lastmod>2025-04-29</lastmod>
       <changefreq>weekly</changefreq>
@@ -4992,11 +4997,6 @@
     </url><url>
       <loc>https://gamatrain.com/exam/821/Paper-3-OctoberNovember-2011-MATHEMATICS-970931-A-Levels</loc>
       <lastmod>2023-05-02</lastmod>
-      <changefreq>weekly</changefreq>
-      <priority>0.8</priority>
-    </url><url>
-      <loc>https://gamatrain.com/exam/820/Paper-2-OctoberNovember-2011-MATHEMATICS-970923-A-Levels</loc>
-      <lastmod>2023-05-01</lastmod>
       <changefreq>weekly</changefreq>
       <priority>0.8</priority>
     </url>

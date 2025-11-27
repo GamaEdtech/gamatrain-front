@@ -213,7 +213,7 @@ const fetchNextPagePapers = async () => {
     try {
       isLoadingInfiniteScroll.value = true
       pageNumber.value += 1
-      const endpointPapers = `api/v1/tests/search?lesson=${selectedSubjectId.value}&page=${pageNumber.value}&perpage=20&is_paper=true&directory=true`
+      const endpointPapers = `/api/v1/tests/search?lesson=${selectedSubjectId.value}&page=${pageNumber.value}&perpage=20&is_paper=true&directory=true`
       const responsePapers = await useApiService.get(endpointPapers)
       if (responsePapers) {
         if (responsePapers.data.list.length < perPage) {
@@ -265,6 +265,24 @@ const generateTimeLine = () => {
     timelineMap[year].months.add(month)
     positionCounter++
   })
+
+  const MIN_DIFF = 2
+
+  const years = Object.keys(timelineMap).sort((a, b) => b - a)
+
+  for (let i = 1; i < years.length; i++) {
+    const prevYear = years[i - 1]
+    const currentYear = years[i]
+
+    const prevLast = timelineMap[prevYear].positions.at(-1)
+    const currentFirst = timelineMap[currentYear].positions[0]
+
+    if (currentFirst - prevLast === 1) {
+      const offset = MIN_DIFF - 1
+
+      timelineMap[currentYear].positions[0] += offset
+    }
+  }
 
   timelineData.value = Object.keys(timelineMap)
     .sort((a, b) => b - a)

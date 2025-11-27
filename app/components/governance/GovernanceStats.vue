@@ -28,7 +28,7 @@
             <div
               class="governance-stat-value primary-gray-700 text-h6 text-md-h5"
             >
-              {{ stat.title }}
+              {{ $numberFormat(Math.ceil(stat.title)) }}
               <span class="unit primary-gray-500 text-subtitle-1">
                 {{ stat.subtitle }}</span>
             </div>
@@ -61,6 +61,7 @@ const blockchainStats = ref<{
   proposalsPassed: number
   treasuryBalance: number
   totalStaked: number
+  totalRewards: number
 } | null>(null)
 
 // Get governance composable (includes workspace internally)
@@ -196,14 +197,14 @@ const stats = computed(() => {
 
   return [
     {
-      title: blockchainStats.value?.treasuryBalance?.toLocaleString() || '0',
+      title: blockchainStats.value?.treasuryBalance || '0',
       subtitle: '$GET',
       value: 'Treasury Balance',
       class: 'tl',
       dynamic: true,
     },
     {
-      title: userStakedAmount.value.toLocaleString(),
+      title: userStakedAmount.value,
       subtitle: '$GET',
       value: 'Your Staked',
       class: 'tr',
@@ -224,7 +225,14 @@ const stats = computed(() => {
       dynamic: true,
     },
     {
-      title: userPendingRewards.value.toLocaleString(),
+      title: blockchainStats.value?.totalRewards || 'N/A',
+      subtitle: '',
+      value: 'Total Rewards',
+      class: 'br',
+      dynamic: true,
+    },
+    {
+      title: userPendingRewards.value,
       subtitle: '$GET',
       value: 'Your Rewards',
       class: 'last',

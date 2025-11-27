@@ -139,10 +139,11 @@ onMounted(async () => {
 const sendOtpCodeAgain = async () => {
   try {
     const _response = await useApiService.post(
-      '/api/v1/users/',
+      '/api/v1/users/login',
       new URLSearchParams({
         type: 'resend_code',
-        identity: identity.value,
+        identity: identity.value.value,
+        pass: password.value.value,
       }),
     )
     countDownTimer()

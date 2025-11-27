@@ -321,7 +321,14 @@
           <p class="gama-text-h6">
             Join the Future of Education Today!
           </p>
-          <v-btn href="mailto:contact@gamatrain.com">
+          <v-btn
+            href="mailto:contact@gamatrain.com"
+            width="200"
+            rounded="pill"
+            color="black"
+            flat
+            class="text-h5 mt-4 font-weight-bold text-primary"
+          >
             Contact Us
           </v-btn>
         </v-col>
@@ -330,7 +337,7 @@
   </div>
 </template>
 
-<script setup lang='ts'>
+<script setup lang="ts">
 useHead({
   title: 'Comprehensive Educational Services',
 
@@ -424,7 +431,7 @@ useHead({
 
 #service-ai-learning {
   background: #24292f;
-  padding:2rem;
+  padding: 2rem;
 
   .gama-text-h4 {
     color: white !important;
@@ -440,7 +447,7 @@ useHead({
 }
 
 #service-home-learning {
-  padding:2rem;
+  padding: 2rem;
 
   .gama-text-h4 {
     margin-bottom: 1.6rem;
@@ -449,7 +456,7 @@ useHead({
 
 #service-online-tests {
   background: #f4f4f4;
-  padding:2rem;
+  padding: 2rem;
 
   .gama-text-h4 {
     margin-bottom: 2.4rem;
@@ -457,7 +464,7 @@ useHead({
 }
 
 #service-interactive-tutorials {
-  padding:2rem;
+  padding: 2rem;
 
   .gama-text-h4 {
     margin-bottom: 2.4rem;
@@ -466,7 +473,7 @@ useHead({
 
 #service-school-finder {
   background: #f4f4f4;
-  padding:2rem;
+  padding: 2rem;
 
   .gama-text-h4 {
     margin-bottom: 2.4rem;
@@ -474,7 +481,7 @@ useHead({
 }
 
 #service-live-streaming {
-  padding:2rem;
+  padding: 2rem;
 
   .gama-text-h4 {
     margin-bottom: 2.4rem;
@@ -483,7 +490,7 @@ useHead({
 
 #service-content-monetization {
   background: #f4f4f4;
-  padding:2rem;
+  padding: 2rem;
 
   .gama-text-h4 {
     margin-bottom: 2.4rem;
@@ -496,17 +503,7 @@ useHead({
   padding: 2.4rem 0;
 
   .v-btn {
-    margin-top: 2.4rem;
-    height: 2.8rem;
-    padding: 0.8rem 2rem;
-    border-radius: 3rem;
-    background: #24292f;
-    text-transform: none;
     color: #ffb600 !important;
-    font-size: 1.8rem;
-    font-style: normal;
-    font-weight: 600;
-    line-height: normal;
   }
 }
 
@@ -568,11 +565,6 @@ useHead({
 
   #service-education-future {
     padding: 3.2rem 0;
-
-    .v-btn {
-      height: 4.4rem;
-      padding: 0.8rem 2rem;
-    }
   }
 }
 
