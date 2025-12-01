@@ -134,8 +134,8 @@ const route = useRoute()
 const loadBlog = async () => {
   isLoading.value = true
   try {
-    const response = await useApiService.get('/api/v2/blogs/posts', {
-      'PagingDto.PageFilter.Size': 10,
+    const response = await useApiService.get('/api/v2/blogs/posts/random', {
+      Size: 10,
     })
 
     if (response.data && response.succeeded) {
