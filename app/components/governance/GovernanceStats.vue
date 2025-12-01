@@ -15,7 +15,7 @@
           elevation="0"
         >
           <div
-            v-if="isLoading && stat.dynamic"
+            v-if="stat.loading && stat.dynamic"
             class="d-flex justify-center align-center"
             style="height: 100%"
           >
@@ -28,7 +28,7 @@
             <div
               class="governance-stat-value primary-gray-700 text-h6 text-md-h5"
             >
-              {{ $numberFormat(Math.ceil(stat.title)) }}
+              {{ $numberFormat(Math.ceil(stat.title ?? 0)) }}
               <span class="unit primary-gray-500 text-subtitle-1">
                 {{ stat.subtitle }}</span>
             </div>
@@ -45,173 +45,122 @@
 </template>
 
 <script setup lang="ts">
-// --- STATE ---
-const isLoading = ref(true)
+import { useGovernance } from '~/composables/governance/useGovernance'
 
-// Create a reactive key to force re-render
 const statsKey = ref(0)
-const forceRefresh = () => {
-  statsKey.value++
-}
-
 // Stats from blockchain
-const blockchainStats = ref<{
-  totalProposals: number
-  activeVoters: number
-  proposalsPassed: number
-  treasuryBalance: number
-  totalStaked: number
-  totalRewards: number
-} | null>(null)
+// const blockchainStats = ref<{
+//   totalProposals: number
+//   activeVoters: number
+//   proposalsPassed: number
+//   treasuryBalance: number
+//   totalStaked: number
+//   totalRewards: number
+// } | null>(null)
 
-// Get governance composable (includes workspace internally)
-const {
-  isWalletReady,
-  userStakeInfo,
-  fetchUserStakeInfo,
-  fetchStats,
-  getProgram,
-} = useGovernance()
+const { userStakeInformation, loadingStakeInformation } = useGovernance()
 
-// Computed for backward compatibility
-const userStakedAmount = computed(() => userStakeInfo.value?.stakedAmount || 0)
+// const stats = computed(() => {
+//   // Force re-computation by accessing statsKey
+//   const _ = statsKey.value
 
-// Expose refresh method for external use
-const refreshStats = async () => {
-  console.log('🔄 Refreshing governance stats...')
-  await fetchStatsData()
-  console.log(
-    '✅ Stats refreshed. New stake:',
-    userStakeInfo.value?.stakedAmount,
-  )
-}
-
-// Make it available globally via provide/inject or window
-if (import.meta.client) {
-  const win = window as Window & {
-    __refreshGovernanceStats?: () => Promise<void>
-  }
-  win.__refreshGovernanceStats = refreshStats
-
-  // Also listen to custom event
-  const nuxtApp = useNuxtApp()
-  // @ts-expect-error - Custom hook not in type definitions
-  nuxtApp.hook('governance:refresh', refreshStats)
-}
-
-defineExpose({
-  refreshStats,
-})
-
-// --- LIFECYCLE HOOK ---
-onMounted(() => {
-  // Workspace is now handled internally by useGovernance
-})
-
-// --- DATA FETCHING ---
-const fetchStatsData = async () => {
-  const program = getProgram()
-  if (!program) return
-  isLoading.value = true
-  try {
-    // Fetch stats from blockchain
-    blockchainStats.value = await fetchStats()
-
-    // Also fetch user stake if wallet is connected
-    // if (isWalletReady.value) {
-    //   await fetchUserStakeInfo();
-    // }
-
-    forceRefresh()
-  }
-  finally {
-    isLoading.value = false
-  }
-}
-
-// --- WATCHER ---
-// Fetch public data when program is ready (no wallet needed)
-watch(
-  () => getProgram(),
-  (prog) => {
-    if (prog) {
-      console.log('stats, watch, fetchStatsData')
-      fetchStatsData()
-    }
-    else {
-      blockchainStats.value = null
-      isLoading.value = false
-    }
-  },
-  { immediate: true },
-)
-
-// Fetch user-specific data when wallet connects
-watch(
-  () => isWalletReady.value,
-  (ready) => {
-    if (ready) {
-      console.log('stats, watch, fetchUserStakeInfo')
-      fetchUserStakeInfo()
-    }
-  },
-  { immediate: true },
-)
-
-// Note: All stats are now fetched from blockchain Stats PDA
-// No need for manual calculation
-
-// Computed for pending rewards
-const userPendingRewards = computed(
-  () => userStakeInfo.value?.pendingRewards || 0,
-)
-
+//   return [
+//     {
+//       title: blockchainStats.value?.treasuryBalance || '0',
+//       subtitle: '$GET',
+//       value: 'Treasury Balance',
+//       class: 'tl',
+//       dynamic: true,
+//     },
+//     {
+//       title: userStakedAmount.value,
+//       subtitle: '$GET',
+//       value: 'Your Staked',
+//       class: 'tr',
+//       dynamic: true,
+//     },
+//     {
+//       title: blockchainStats.value?.totalProposals || 0,
+//       subtitle: '',
+//       value: 'Total Proposals',
+//       class: 'bl',
+//       dynamic: true,
+//     },
+//     {
+//       title: blockchainStats.value?.activeVoters || 'N/A',
+//       subtitle: '',
+//       value: 'Active Voters',
+//       class: 'br',
+//       dynamic: true,
+//     },
+//     {
+//       title: blockchainStats.value?.totalRewards || 'N/A',
+//       subtitle: '',
+//       value: 'Total Rewards',
+//       class: 'br',
+//       dynamic: true,
+//     },
+//     {
+//       title: userPendingRewards.value,
+//       subtitle: '$GET',
+//       value: 'Your Rewards',
+//       class: 'last',
+//       dynamic: true,
+//     },
+//   ]
+// })
 const stats = computed(() => {
   // Force re-computation by accessing statsKey
   const _ = statsKey.value
 
   return [
     {
-      title: blockchainStats.value?.treasuryBalance || '0',
+      title: 0,
       subtitle: '$GET',
       value: 'Treasury Balance',
       class: 'tl',
       dynamic: true,
+      loading: true,
     },
     {
-      title: userStakedAmount.value,
+      title: userStakeInformation.value?.stakedAmount,
       subtitle: '$GET',
       value: 'Your Staked',
       class: 'tr',
       dynamic: true,
+      loading: loadingStakeInformation.value,
     },
     {
-      title: blockchainStats.value?.totalProposals || 0,
+      title: 0,
       subtitle: '',
       value: 'Total Proposals',
       class: 'bl',
       dynamic: true,
+      loading: true,
     },
     {
-      title: blockchainStats.value?.activeVoters || 'N/A',
+      title: 0,
       subtitle: '',
       value: 'Active Voters',
       class: 'br',
       dynamic: true,
+      loading: true,
     },
     {
-      title: blockchainStats.value?.totalRewards || 'N/A',
+      title: 0,
       subtitle: '',
       value: 'Total Rewards',
       class: 'br',
       dynamic: true,
+      loading: true,
     },
     {
-      title: userPendingRewards.value,
+      title: 0,
       subtitle: '$GET',
       value: 'Your Rewards',
       class: 'last',
       dynamic: true,
+      loading: true,
     },
   ]
 })

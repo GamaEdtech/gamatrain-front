@@ -22,10 +22,14 @@ interface WorkspaceState {
   program: Ref<Program<GamaedtechProgram> | null>
   connected: Ref<boolean>
   publicKey: Ref<PublicKey | null>
+  initPromise: Promise<void>
 }
 
 // Singleton workspace
 let globalWorkspace: WorkspaceState | null = null
+
+let initPromise: Promise<void> | null = null
+let initResolve: (() => void) | null = null
 
 export const useWorkspace = (): WorkspaceState => {
   if (globalWorkspace) return globalWorkspace
@@ -37,7 +41,13 @@ export const useWorkspace = (): WorkspaceState => {
   const provider = ref<AnchorProvider | null>(null)
   const program = ref<Program<GamaedtechProgram> | null>(null)
 
-  globalWorkspace = { wallet, connection, provider, program, connected, publicKey }
+  if (!initPromise) {
+    initPromise = new Promise((resolve) => {
+      initResolve = resolve
+    })
+  }
+
+  globalWorkspace = { wallet, connection, provider, program, connected, publicKey, initPromise }
 
   if (import.meta.client) nextTick(() => initializeWorkspace())
 
@@ -119,8 +129,11 @@ async function initializeWorkspace() {
     watch(() => provider.value, () => {
       updateProgram()
     })
+
+    if (initResolve) initResolve()
   }
   catch (err) {
     console.error('❌ Failed to initialize workspace:', err)
+    if (initResolve) initResolve()
   }
 }

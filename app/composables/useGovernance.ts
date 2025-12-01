@@ -476,6 +476,8 @@ export const useGovernance = () => {
    * Automatically uses workspace internally
    */
   const fetchUserStakeInfo = async () => {
+    console.log('fetchUserStakeInfo in composable')
+
     if (!isWalletReady.value) {
       userStakeInfo.value = null
       return
@@ -515,6 +517,7 @@ export const useGovernance = () => {
    * Fetch stats from blockchain
    */
   const fetchStats = async () => {
+    console.log('fetchStats in composable')
     const program = workspace?.program?.value
     if (!program) return null
 
@@ -640,6 +643,7 @@ export const governance = {
    * Uses workspace internally - no need to pass program
    */
   async fetchProposals() {
+    console.log('fetchProposals in composable')
     await ensureBuffer()
     const workspace = useWorkspace()
     const program = workspace.program?.value
