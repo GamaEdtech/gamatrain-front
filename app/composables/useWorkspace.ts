@@ -8,6 +8,7 @@ import type { Program, AnchorProvider, Wallet } from '@coral-xyz/anchor'
 import rawIdl from '~/idl/gamaedtech_program.json'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
 
+type Web3Type = typeof import('@solana/web3.js')
 const idlJson = (rawIdl as any).default ?? rawIdl
 
 // --- Constants ---
@@ -22,6 +23,7 @@ interface WorkspaceState {
   program: Ref<Program<GamaedtechProgram> | null>
   connected: Ref<boolean>
   publicKey: Ref<PublicKey | null>
+  web3: Ref<Web3Type>
   initPromise: Promise<void>
 }
 
@@ -40,6 +42,7 @@ export const useWorkspace = (): WorkspaceState => {
   const connection = ref<Connection | null>(null)
   const provider = ref<AnchorProvider | null>(null)
   const program = ref<Program<GamaedtechProgram> | null>(null)
+  const web3 = ref<any>(null)
 
   if (!initPromise) {
     initPromise = new Promise((resolve) => {
@@ -47,7 +50,7 @@ export const useWorkspace = (): WorkspaceState => {
     })
   }
 
-  globalWorkspace = { wallet, connection, provider, program, connected, publicKey, initPromise }
+  globalWorkspace = { wallet, connection, provider, program, connected, publicKey, web3, initPromise }
 
   if (import.meta.client) nextTick(() => initializeWorkspace())
 
@@ -57,7 +60,7 @@ export const useWorkspace = (): WorkspaceState => {
 async function initializeWorkspace() {
   if (!globalWorkspace || !import.meta.client) return
 
-  const { wallet, connection, provider, program, connected, publicKey } = globalWorkspace
+  const { wallet, connection, provider, program, connected, publicKey, web3 } = globalWorkspace
 
   try {
     const config = useRuntimeConfig()
@@ -68,6 +71,7 @@ async function initializeWorkspace() {
     const [{ Program, AnchorProvider }, wallets] = await Promise.all([
       import('@coral-xyz/anchor').then(m => ({ Program: m.Program, AnchorProvider: m.AnchorProvider })),
       import('solana-wallets-vue'),
+      import('@solana/web3.js').then(m => (web3.value = m)),
     ])
 
     const { useAnchorWallet, useWallet } = wallets

@@ -1,28 +1,36 @@
-import type { PublicKey } from '@solana/web3.js'
-
-interface StakeAccount {
-  owner: PublicKey
-  stakedAmount: number
-  lastStakeTime: number
-  pendingUnstake: number
-  unstakeRequestedAt: number
-  pendingRewards: number
-}
-
-type Web3Type = typeof import('@solana/web3.js')
+import type { StakeAccount } from '~/types/governance'
 
 export const useStake = () => {
-  const { program, publicKey, initPromise } = useWorkspace()
+  const { program, publicKey, web3, initPromise } = useWorkspace()
 
   const userStakeInformation = ref<StakeAccount | null>()
   const loadingStakeInformation = ref(true)
-  const web3 = ref<Web3Type | null>(null)
+  const error = ref<string | null>(null)
 
   const getUserStakeInformation = async () => {
+    loadingStakeInformation.value = true
+    error.value = null
     const programChain = program?.value
     const userPublicKey = publicKey?.value
 
-    if (!programChain || !userPublicKey || !web3.value) return null
+    if (!programChain) {
+      error.value = 'PROGRAM_NOT_READY'
+      console.log(error.value)
+
+      return
+    }
+
+    if (!userPublicKey) {
+      error.value = 'WALLET_NOT_CONNECTED'
+      console.log(error.value)
+      return
+    }
+
+    if (!web3.value) {
+      error.value = 'WEB3_NOT_LOADED'
+      console.log(error.value)
+      return
+    }
     try {
       const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
         [Buffer.from('stake_account'), userPublicKey.toBuffer()],
@@ -45,32 +53,20 @@ export const useStake = () => {
         unstakeRequestedAt: stakeAccount.unstakeRequestedAt?.toNumber() || 0,
         pendingRewards: pendingRewardsRaw / 1_000_000,
       }
-    }
-    catch {
-      console.log('error khord')
 
-      return null
+      console.log('userStakeInformation', userStakeInformation.value)
+    }
+    catch (err) {
+      console.log('error khord', err)
+      error.value = 'FAILED_TO_FETCH_STAKE_ACCOUNT'
     }
     finally {
       loadingStakeInformation.value = false
     }
   }
 
-  const loadWeb3 = async () => {
-    if (!import.meta.client) return null
-
-    if (!web3.value) {
-      web3.value = await import('@solana/web3.js')
-      console.log('Web3 Loaded!')
-    }
-
-    return web3.value
-  }
-
   onMounted(async () => {
-    console.log('Composable mounted! DOM is available.')
     await initPromise
-    await loadWeb3()
     await getUserStakeInformation()
   })
 

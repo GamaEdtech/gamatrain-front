@@ -1,10 +1,24 @@
-/**
- * Governance TypeScript Interfaces
- * Centralized type definitions for governance features
- */
-
 import type { PublicKey } from '@solana/web3.js'
 import type { BN } from '@coral-xyz/anchor'
+
+export interface StakeAccount {
+  owner: PublicKey
+  stakedAmount: number
+  lastStakeTime: number
+  pendingUnstake: number
+  unstakeRequestedAt: number
+  pendingRewards: number
+}
+
+export interface Stats {
+  treasuryBalance: number
+  totalStaked: number
+  totalProposals: number
+  activeVoters: number
+  proposalsPassed: number
+  totalRewards: number
+  totalClaimedRewards: number
+}
 
 /**
  * Proposal status types
@@ -57,17 +71,6 @@ export interface ProposalFormData {
 }
 
 /**
- * Stake account data from blockchain
- */
-export interface StakeAccount {
-  owner: PublicKey
-  stakedAmount: number
-  lastStakeTime: number
-  pendingUnstake: number
-  unstakeRequestedAt: number
-}
-
-/**
  * Vote record data from blockchain
  */
 export interface VoteRecord {
@@ -104,18 +107,6 @@ export interface WalletState {
   program: any | null
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   connection: any | null
-}
-
-/**
- * Governance statistics
- */
-export interface GovernanceStats {
-  treasuryBalance: number
-  userStakedAmount: number
-  totalProposals: number
-  activeVoters: number
-  proposalsPassed: number
-  totalRewards: number
 }
 
 /**

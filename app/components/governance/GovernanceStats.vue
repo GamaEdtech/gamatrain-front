@@ -1,11 +1,10 @@
 <template>
   <div
-    :key="statsKey"
     class="governance-stats"
   >
     <div class="stats-flex">
       <div
-        v-for="(stat, index) in stats"
+        v-for="(stat, index) in statsInfo"
         :key="index"
         class="governance-stat-item"
       >
@@ -15,7 +14,7 @@
           elevation="0"
         >
           <div
-            v-if="stat.loading && stat.dynamic"
+            v-if="stat.loading"
             class="d-flex justify-center align-center"
             style="height: 100%"
           >
@@ -28,14 +27,14 @@
             <div
               class="governance-stat-value primary-gray-700 text-h6 text-md-h5"
             >
-              {{ $numberFormat(Math.ceil(stat.title ?? 0)) }}
+              {{ $numberFormat(Math.ceil(stat.value ?? 0)) }}
               <span class="unit primary-gray-500 text-subtitle-1">
                 {{ stat.subtitle }}</span>
             </div>
             <div
               class="governance-stat-label primary-gray-500 text-subtitle-2 text-md-h6"
             >
-              {{ stat.value }}
+              {{ stat.title }}
             </div>
           </div>
         </v-card>
@@ -47,120 +46,51 @@
 <script setup lang="ts">
 import { useGovernance } from '~/composables/governance/useGovernance'
 
-const statsKey = ref(0)
-// Stats from blockchain
-// const blockchainStats = ref<{
-//   totalProposals: number
-//   activeVoters: number
-//   proposalsPassed: number
-//   treasuryBalance: number
-//   totalStaked: number
-//   totalRewards: number
-// } | null>(null)
+const { userStakeInformation, loadingStakeInformation, stats, loadingStats } = useGovernance()
 
-const { userStakeInformation, loadingStakeInformation } = useGovernance()
-
-// const stats = computed(() => {
-//   // Force re-computation by accessing statsKey
-//   const _ = statsKey.value
-
-//   return [
-//     {
-//       title: blockchainStats.value?.treasuryBalance || '0',
-//       subtitle: '$GET',
-//       value: 'Treasury Balance',
-//       class: 'tl',
-//       dynamic: true,
-//     },
-//     {
-//       title: userStakedAmount.value,
-//       subtitle: '$GET',
-//       value: 'Your Staked',
-//       class: 'tr',
-//       dynamic: true,
-//     },
-//     {
-//       title: blockchainStats.value?.totalProposals || 0,
-//       subtitle: '',
-//       value: 'Total Proposals',
-//       class: 'bl',
-//       dynamic: true,
-//     },
-//     {
-//       title: blockchainStats.value?.activeVoters || 'N/A',
-//       subtitle: '',
-//       value: 'Active Voters',
-//       class: 'br',
-//       dynamic: true,
-//     },
-//     {
-//       title: blockchainStats.value?.totalRewards || 'N/A',
-//       subtitle: '',
-//       value: 'Total Rewards',
-//       class: 'br',
-//       dynamic: true,
-//     },
-//     {
-//       title: userPendingRewards.value,
-//       subtitle: '$GET',
-//       value: 'Your Rewards',
-//       class: 'last',
-//       dynamic: true,
-//     },
-//   ]
-// })
-const stats = computed(() => {
-  // Force re-computation by accessing statsKey
-  const _ = statsKey.value
-
+const statsInfo = computed(() => {
   return [
     {
-      title: 0,
+      value: stats.value?.treasuryBalance,
       subtitle: '$GET',
-      value: 'Treasury Balance',
+      title: 'Treasury Balance',
       class: 'tl',
-      dynamic: true,
-      loading: true,
+      loading: loadingStats.value,
     },
     {
-      title: userStakeInformation.value?.stakedAmount,
+      value: userStakeInformation.value?.stakedAmount,
       subtitle: '$GET',
-      value: 'Your Staked',
+      title: 'Your Staked',
       class: 'tr',
-      dynamic: true,
       loading: loadingStakeInformation.value,
     },
     {
-      title: 0,
+      value: stats.value?.totalProposals,
       subtitle: '',
-      value: 'Total Proposals',
+      title: 'Total Proposals',
+      class: 'middle',
+      loading: loadingStats.value,
+    },
+    {
+      value: stats.value?.activeVoters,
+      subtitle: '',
+      title: 'Active Voters',
+      class: 'middle',
+      loading: loadingStats.value,
+    },
+    {
+      value: stats.value?.totalRewards,
+      subtitle: '',
+      title: 'Total Rewards',
       class: 'bl',
-      dynamic: true,
-      loading: true,
+      loading: loadingStats.value,
     },
     {
-      title: 0,
-      subtitle: '',
-      value: 'Active Voters',
-      class: 'br',
-      dynamic: true,
-      loading: true,
-    },
-    {
-      title: 0,
-      subtitle: '',
-      value: 'Total Rewards',
-      class: 'br',
-      dynamic: true,
-      loading: true,
-    },
-    {
-      title: 0,
+      value: stats.value?.totalStaked,
       subtitle: '$GET',
-      value: 'Your Rewards',
-      class: 'last',
-      dynamic: true,
-      loading: true,
+      title: 'Total Staked',
+      class: 'br',
+      loading: loadingStats.value,
     },
   ]
 })
@@ -223,10 +153,8 @@ const stats = computed(() => {
   border-radius: 0 0 34px 0;
 }
 
-.stat-card.last {
-  border-radius: 34px;
-  width: 50%;
-  margin: 0 auto;
+.stat-card.middle {
+  border-radius: 0;
 }
 
 .bottom-center {
@@ -244,12 +172,6 @@ const stats = computed(() => {
     width: 100%;
   }
 
-  .governance-stat-item:last-child {
-    grid-column: 1 / -1;
-    display: flex;
-    justify-content: center;
-  }
-
   .stat-card {
     padding: 10px 16px;
   }
@@ -263,17 +185,13 @@ const stats = computed(() => {
   .stat-card.tl {
     border-radius: 44px 0 0 44px;
   }
-
-  .stat-card.tr,
-  .stat-card.bl,
-  .stat-card.br {
-    border-radius: 0;
+   .stat-card.br {
+   border-radius: 0 44px   44px 0
   }
 
-  .stat-card.last {
-    border-radius: 0 44px 44px 0;
-    width: 100%;
-    margin: auto;
+  .stat-card.tr,
+  .stat-card.bl {
+    border-radius: 0;
   }
 }
 
@@ -294,15 +212,13 @@ const stats = computed(() => {
   .stat-card.tl {
     border-radius: 44px 0 0 44px;
   }
-
-  .stat-card.tr,
-  .stat-card.bl,
   .stat-card.br {
-    border-radius: 0;
+   border-radius: 0 44px   44px 0
   }
 
-  .stat-card.last {
-    border-radius: 0 44px 44px 0;
+  .stat-card.tr,
+  .stat-card.bl{
+    border-radius: 0;
   }
 }
 </style>
