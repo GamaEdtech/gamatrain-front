@@ -24,6 +24,8 @@ interface WorkspaceState {
   connected: Ref<boolean>
   publicKey: Ref<PublicKey | null>
   web3: Ref<Web3Type>
+  BN: Ref<any>
+  splToken: Ref<any>
   initPromise: Promise<void>
 }
 
@@ -43,6 +45,8 @@ export const useWorkspace = (): WorkspaceState => {
   const provider = ref<AnchorProvider | null>(null)
   const program = ref<Program<GamaedtechProgram> | null>(null)
   const web3 = ref<any>(null)
+  const BN = ref<any>(null)
+  const splToken = ref<any>(null)
 
   if (!initPromise) {
     initPromise = new Promise((resolve) => {
@@ -50,7 +54,7 @@ export const useWorkspace = (): WorkspaceState => {
     })
   }
 
-  globalWorkspace = { wallet, connection, provider, program, connected, publicKey, web3, initPromise }
+  globalWorkspace = { wallet, connection, provider, program, connected, publicKey, web3, BN, splToken, initPromise }
 
   if (import.meta.client) nextTick(() => initializeWorkspace())
 
@@ -60,7 +64,7 @@ export const useWorkspace = (): WorkspaceState => {
 async function initializeWorkspace() {
   if (!globalWorkspace || !import.meta.client) return
 
-  const { wallet, connection, provider, program, connected, publicKey, web3 } = globalWorkspace
+  const { wallet, connection, provider, program, connected, publicKey, BN, splToken, web3 } = globalWorkspace
 
   try {
     const config = useRuntimeConfig()
@@ -68,15 +72,17 @@ async function initializeWorkspace() {
     connection.value = new Connection(rpcUrl, commitment)
 
     // Dynamic imports
-    const [{ Program, AnchorProvider }, wallets] = await Promise.all([
-      import('@coral-xyz/anchor').then(m => ({ Program: m.Program, AnchorProvider: m.AnchorProvider })),
+    const [{ Program, AnchorProvider, BN }, wallets] = await Promise.all([
+      import('@coral-xyz/anchor').then(m => ({ Program: m.Program, AnchorProvider: m.AnchorProvider, BN: m.BN })),
       import('solana-wallets-vue'),
       import('@solana/web3.js').then(m => (web3.value = m)),
+      import('@solana/spl-token').then(m => splToken.value = m),
     ])
 
     const { useAnchorWallet, useWallet } = wallets
     const anchorWallet = useAnchorWallet()
     const walletStore = useWallet()
+    globalWorkspace.BN.value = BN
 
     wallet.value = anchorWallet
     connected.value = walletStore.connected?.value ?? false

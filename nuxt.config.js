@@ -229,6 +229,7 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/test-maker/**': { ssr: false, prerender: true },
+    '/governance': { ssr: false },
   },
 
   // Development server configuration

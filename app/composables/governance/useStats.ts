@@ -1,11 +1,11 @@
 import type { Stats } from '~/types/governance'
 
+const stats = ref<Stats | null>()
+const loadingStats = ref(true)
+const error = ref<string | null>(null)
+
 export const useStats = () => {
   const { program, initPromise, web3 } = useWorkspace()
-
-  const stats = ref<Stats | null>()
-  const loadingStats = ref(true)
-  const error = ref<string | null>(null)
 
   const getStatsInformation = async () => {
     loadingStats.value = true
@@ -51,9 +51,11 @@ export const useStats = () => {
   }
 
   onMounted(async () => {
-    await initPromise
-    await getStatsInformation()
+    callOnce(async () => {
+      await initPromise
+      await getStatsInformation()
+    })
   })
 
-  return { stats, loadingStats }
+  return { stats, loadingStats, getStatsInformation }
 }

@@ -20,6 +20,26 @@ export interface Stats {
   totalClaimedRewards: number
 }
 
+export interface ParsedTokenAccountData {
+  program: string
+  space: number
+  parsed: {
+    type: string
+    info: {
+      isNative?: boolean
+      mint: string
+      owner: string
+      state?: string
+      tokenAmount: {
+        amount: string
+        decimals: number
+        uiAmount: number | null
+        uiAmountString: string
+      }
+    }
+  }
+}
+
 /**
  * Proposal status types
  */
