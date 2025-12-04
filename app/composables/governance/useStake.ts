@@ -1,3 +1,4 @@
+import type { PublicKey } from '@solana/web3.js'
 import type { StakeAccount } from '~/types/governance'
 
 const userStakeInformation = ref<StakeAccount | null>()
@@ -10,6 +11,33 @@ const loadingClaimProcess = ref(false)
 
 export const useStake = () => {
   const { program, publicKey, web3, initPromise, BN, connection, splToken } = useWorkspace()
+  const TOKEN_2022_PROGRAM_ID_STRING = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
+  const config = useRuntimeConfig()
+  const tokenMintString = config.public.solanaTokenMint as string
+
+  const getVault = (programId: PublicKey) => {
+    const [vaultAuthority] = web3.value.PublicKey.findProgramAddressSync(
+      [Buffer.from('vault-authority')],
+      programId,
+    )
+    return vaultAuthority
+  }
+
+  const getStakeAccountPda = (userPublicKey: PublicKey, programId: PublicKey) => {
+    const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
+      [Buffer.from('stake_account'), userPublicKey.toBuffer()],
+      programId,
+    )
+    return stakeAccountPda
+  }
+
+  const getStatsPda = (programId: PublicKey) => {
+    const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
+      [Buffer.from('stats')],
+      programId,
+    )
+    return statsPda
+  }
 
   const getUserStakeInformation = async () => {
     loadingStakeInformation.value = true
@@ -36,11 +64,7 @@ export const useStake = () => {
       return
     }
     try {
-      const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
-        [Buffer.from('stake_account'), userPublicKey.toBuffer()],
-        programChain.programId,
-      )
-
+      const stakeAccountPda = getStakeAccountPda(userPublicKey, programChain.programId)
       const stakeAccount = await programChain.account['stakeAccount'].fetch(
         stakeAccountPda,
       )
@@ -69,17 +93,6 @@ export const useStake = () => {
     }
   }
 
-  const getVaultAddress = async () => {
-    const programId = program.value?.programId
-
-    const [vaultAuthority] = web3.value.PublicKey.findProgramAddressSync(
-      [Buffer.from('vault-authority')],
-      programId!,
-    )
-
-    return vaultAuthority.toBase58()
-  }
-
   const stakeToken = async (
     amount: number,
   ) => {
@@ -103,25 +116,15 @@ export const useStake = () => {
       const rawAmount = Math.floor(amount * 1_000_000)
       const amountBN = new BN.value(rawAmount.toString())
 
-      const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
-        [Buffer.from('stake_account'), userPublicKey.toBuffer()],
-        programChain.programId,
-      )
-
-      const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
-        [Buffer.from('stats')],
-        programChain.programId,
-      )
+      const stakeAccountPda = getStakeAccountPda(userPublicKey, programChain.programId)
+      const statsPda = getStatsPda(programChain.programId)
 
       const TOKEN_2022_PROGRAM_ID = new web3.value.PublicKey(
-        'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
+        TOKEN_2022_PROGRAM_ID_STRING,
       )
-      const config = useRuntimeConfig()
-      const tokenMintString = config.public.solanaTokenMint as string
       const tokenMint = new web3.value.PublicKey(tokenMintString)
 
-      const vaultAddressStr = await getVaultAddress()
-      const vaultAddress = new web3.value.PublicKey(vaultAddressStr)
+      const vaultAddress = getVault(programChain.programId)
 
       const userTokenAccount = await splToken.value.getAssociatedTokenAddress(
         tokenMint,
@@ -193,15 +196,9 @@ export const useStake = () => {
       const rawAmount = Math.floor(amount * 1_000_000)
       const amountBN = new BN.value(rawAmount.toString())
 
-      const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
-        [Buffer.from('stake_account'), userPublicKey.toBuffer()],
-        programChain.programId,
-      )
+      const stakeAccountPda = getStakeAccountPda(userPublicKey, programChain.programId)
 
-      const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
-        [Buffer.from('stats')],
-        programChain.programId,
-      )
+      const statsPda = getStatsPda(programChain.programId)
 
       const signature = await programChain.methods
         .unstake(amountBN)
@@ -253,30 +250,16 @@ export const useStake = () => {
     try {
       loadingClaimProcess.value = true
 
-      const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
-        [Buffer.from('stake_account'), userPublicKey.toBuffer()],
-        programChain.programId,
-      )
+      const stakeAccountPda = getStakeAccountPda(userPublicKey, programChain.programId)
 
-      const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
-        [Buffer.from('stats')],
-        programChain.programId,
-      )
+      const statsPda = getStatsPda(programChain.programId)
 
-      const [vaultAuthority] = web3.value.PublicKey.findProgramAddressSync(
-        [Buffer.from('vault-authority')],
-        programChain.programId,
-      )
+      const vaultAuthority = getVault(programChain.programId)
 
       const TOKEN_2022_PROGRAM_ID = new web3.value.PublicKey(
-        'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
+        TOKEN_2022_PROGRAM_ID_STRING,
       )
-      const config = useRuntimeConfig()
-      const tokenMintString = config.public.solanaTokenMint as string
       const tokenMint = new web3.value.PublicKey(tokenMintString)
-
-      const vaultAddressStr = await getVaultAddress()
-      const vaultAddress = new web3.value.PublicKey(vaultAddressStr)
 
       const userTokenAccount = await splToken.value.getAssociatedTokenAddress(
         tokenMint,
@@ -287,7 +270,7 @@ export const useStake = () => {
 
       const vaultTokenAccount = await splToken.value.getAssociatedTokenAddress(
         tokenMint,
-        vaultAddress,
+        vaultAuthority,
         true,
         TOKEN_2022_PROGRAM_ID,
       )

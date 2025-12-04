@@ -125,7 +125,7 @@
                   class="font-size-12 text-grey-darken-1 font-weight-medium"
                 >
                   Initiate unstaking process. Tokens will be available to claim
-                  after a 3-day cooldown period.
+                  after a 7-day cooldown period.
                 </p>
               </div>
 
