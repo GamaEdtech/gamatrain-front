@@ -5,6 +5,7 @@ const loadingStakeInformation = ref(true)
 const error = ref<string | null>(null)
 
 const loadinStakeProccess = ref(false)
+const loadingUnstakeProcess = ref(false)
 
 export const useStake = () => {
   const { program, publicKey, web3, initPromise, BN, connection, splToken } = useWorkspace()
@@ -168,6 +169,69 @@ export const useStake = () => {
       loadinStakeProccess.value = false
     }
   }
+
+  const unstakeToken = async (amount: number) => {
+    const programChain = program?.value
+    const userPublicKey = publicKey?.value
+
+    if (!programChain) {
+      return { success: false, message: 'Program is not initialized or not ready.' }
+    }
+
+    if (!userPublicKey) {
+      return { success: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
+    }
+
+    if (!connection.value) {
+      return { success: false, message: 'Unable to connect to the Solana network. Please try again.' }
+    }
+
+    try {
+      loadingUnstakeProcess.value = true
+
+      const rawAmount = Math.floor(amount * 1_000_000)
+      const amountBN = new BN.value(rawAmount.toString())
+
+      const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
+        [Buffer.from('stake_account'), userPublicKey.toBuffer()],
+        programChain.programId,
+      )
+
+      const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
+        [Buffer.from('stats')],
+        programChain.programId,
+      )
+
+      const signature = await programChain.methods
+        .unstake(amountBN)
+        .accounts({
+          user: userPublicKey,
+          stakeAccount: stakeAccountPda,
+          stats: statsPda,
+        })
+        .rpc({ commitment: 'confirmed' })
+
+      await connection.value.confirmTransaction(signature, 'confirmed')
+
+      return {
+        success: true,
+        message: 'Unstake completed successfully.',
+        signature,
+      }
+    }
+    catch (err) {
+      console.error('unstake error:', err)
+      return {
+        success: false,
+        message: 'An unexpected error occurred while processing the unstake request.',
+        raw: err,
+      }
+    }
+    finally {
+      loadingUnstakeProcess.value = false
+    }
+  }
+
   onMounted(async () => {
     callOnce(async () => {
       await initPromise
@@ -175,5 +239,5 @@ export const useStake = () => {
     })
   })
 
-  return { userStakeInformation, loadingStakeInformation, getUserStakeInformation, stakeToken, loadinStakeProccess }
+  return { userStakeInformation, loadingStakeInformation, getUserStakeInformation, stakeToken, loadinStakeProccess, unstakeToken, loadingUnstakeProcess }
 }
