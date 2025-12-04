@@ -205,7 +205,7 @@
 
         <!-- Claim Tab -->
         <v-window-item value="claim">
-          <!-- <v-card flat>
+          <v-card flat>
             <v-card-text class="pa-6">
               <div class="mb-4">
                 <h3 class="text-h5 font-weight-bold mb-2">
@@ -218,7 +218,7 @@
               </div>
 
               <v-alert
-                v-if="stakeInfo && stakeInfo.pendingUnstake > 0"
+                v-if="userStakeInformation && userStakeInformation.pendingUnstake > 0"
                 :type="cooldownComplete ? 'success' : 'warning'"
                 variant="tonal"
                 class="mb-4"
@@ -226,7 +226,7 @@
                 <div class="gama-text-body2">
                   <div class="d-flex justify-space-between mb-2">
                     <span class="font-size-12">Pending Unstake:</span>
-                    <span class="font-weight-bold font-size-12">{{ $numberFormat(stakeInfo.pendingUnstake) }} $GET</span>
+                    <span class="font-weight-bold font-size-12">{{ $numberFormat(userStakeInformation.pendingUnstake) }} $GET</span>
                   </div>
                   <div class="d-flex justify-space-between">
                     <span class="font-size-12">Cooldown Status:</span>
@@ -255,22 +255,23 @@
               </v-alert>
 
               <v-btn
+                rounded="lg"
                 color="success"
                 size="large"
                 block
-                :loading="isClaiming"
+                :loading="loadingClaimProcess"
                 :disabled="
-                  !isWalletReady
-                    || !cooldownComplete
-                    || !stakeInfo
-                    || stakeInfo.pendingUnstake === 0
+                  !cooldownComplete
+                    || !userStakeInformation
+                    || userStakeInformation.pendingUnstake === 0
                 "
+                class="mt-4 text-h5 font-weight-bold"
                 @click="handleClaim"
               >
                 Claim Tokens
               </v-btn>
             </v-card-text>
-          </v-card> -->
+          </v-card>
         </v-window-item>
       </v-window>
     </v-sheet>
@@ -281,7 +282,7 @@
 import { useValidationRules } from '~/composables/useValidationRules'
 import { useGovernance } from '~/composables/governance/useGovernance'
 
-const { userStakeInformation, tokenBalance, stakeToken, loadinStakeProccess, getUserStakeInformation, getStatsInformation, loadingUnstakeProcess, unstakeToken } = useGovernance()
+const { userStakeInformation, tokenBalance, stakeToken, loadinStakeProccess, getUserStakeInformation, getStatsInformation, loadingUnstakeProcess, unstakeToken, isCooldownComplete, getRemainingCooldown, claimToken, loadingClaimProcess } = useGovernance()
 const { $toast } = useNuxtApp()
 const tab = ref('stake')
 
@@ -340,127 +341,31 @@ const handleUnstake = async () => {
   }
 }
 
-// import { useErrorHandler } from '~/composables/useErrorHandler'
-// import { useValidationRules } from '~/composables/useValidationRules'
-// import { ERROR_MESSAGES, SUCCESS_MESSAGES } from '~/constants/governance'
-// import type { StakeAccount } from '~/types/governance'
+const cooldownComplete = computed(() => {
+  if (!userStakeInformation.value || userStakeInformation.value.pendingUnstake === 0) return false
+  return isCooldownComplete(userStakeInformation.value.unstakeRequestedAt)
+})
 
-// // Toast notification
-// const { $toast } = useNuxtApp()
+const cooldownStatus = computed(() => {
+  if (!userStakeInformation.value || userStakeInformation.value.pendingUnstake === 0)
+    return 'No cooldown'
+  return getRemainingCooldown(userStakeInformation.value.unstakeRequestedAt)
+})
 
-// // Error handler
-// const { handleError, handleSuccess } = useErrorHandler()
-
-// const emit = defineEmits<{
-//   (e: 'update:modelValue', value: boolean): void
-//   (e: 'staked' | 'unstaked' | 'claimed'): void
-// }>()
-
-// // Local state
-// const tab = ref('stake')
-// const stakeAmount = ref<number>(0)
-// const unstakeAmount = ref<number>(0)
-// const stakeFormValid = ref(false)
-// const unstakeFormValid = ref(false)
-// const stakeFormRef = ref()
-// const unstakeFormRef = ref()
-// const isStaking = ref(false)
-// const isUnstaking = ref(false)
-// const isClaiming = ref(false)
-// const stakeInfo = ref<StakeAccount | null>(null)
-// const tokenBalance = ref(0)
-
-// // Governance composable (includes workspace internally)
-// const {
-//   isWalletReady,
-//   getStakeAccount,
-//   isCooldownComplete,
-//   getRemainingCooldown,
-//   getProgram,
-//   getPublicKey,
-//   getConnection,
-// } = useGovernance()
-
-// // Computed
-// const cooldownComplete = computed(() => {
-//   if (!stakeInfo.value || stakeInfo.value.pendingUnstake === 0) return false
-//   return isCooldownComplete(stakeInfo.value.unstakeRequestedAt)
-// })
-
-// const cooldownStatus = computed(() => {
-//   if (!stakeInfo.value || stakeInfo.value.pendingUnstake === 0)
-//     return 'No cooldown'
-//   return getRemainingCooldown(stakeInfo.value.unstakeRequestedAt)
-// })
-
-// const handleClaim = async () => {
-//   if (!isWalletReady.value) {
-//     $toast.error(ERROR_MESSAGES.WALLET_NOT_CONNECTED)
-//     return
-//   }
-
-//   try {
-//     isClaiming.value = true
-//     const program = getProgram()
-//     const userPk = getPublicKey()
-//     if (!program || !userPk) throw new Error('Wallet not connected')
-
-//     // Get token accounts
-//     const { PublicKey } = await import('@solana/web3.js')
-//     const { getAssociatedTokenAddress } = await import('@solana/spl-token')
-//     const { getTokenMint, getVaultAddress, getTokenProgramId } = await import(
-//       '~/composables/useGovernance'
-//     )
-
-//     const tokenMint = new PublicKey(getTokenMint())
-//     const vaultAddressStr = await getVaultAddress() // Async PDA calculation
-//     const vaultAddress = new PublicKey(vaultAddressStr)
-//     const TOKEN_2022_PROGRAM_ID = new PublicKey(getTokenProgramId())
-
-//     const userTokenAccount = await getAssociatedTokenAddress(
-//       tokenMint,
-//       userPk,
-//       false,
-//       TOKEN_2022_PROGRAM_ID,
-//     )
-
-//     const vaultTokenAccount = await getAssociatedTokenAddress(
-//       tokenMint,
-//       vaultAddress,
-//       true,
-//       TOKEN_2022_PROGRAM_ID,
-//     )
-
-//     await governance.claimUnstake(
-//       userTokenAccount,
-//       vaultTokenAccount,
-//       tokenMint,
-//     )
-
-//     handleSuccess(SUCCESS_MESSAGES.TOKENS_CLAIMED)
-//     emit('claimed')
-
-//     // Refresh data
-//     await fetchStakeInfo()
-//     await fetchTokenBalance()
-
-//     // Refresh governance stats
-//     if (import.meta.client) {
-//       const win = window as Window & {
-//         __refreshGovernanceStats?: () => Promise<void>
-//       }
-//       if (win.__refreshGovernanceStats) {
-//         await win.__refreshGovernanceStats()
-//       }
-//     }
-//   }
-//   catch (e: unknown) {
-//     handleError(e, 'Failed to claim tokens')
-//   }
-//   finally {
-//     isClaiming.value = false
-//   }
-// }
+const handleClaim = async () => {
+  console.log('handleClaim')
+  const response = await claimToken()
+  if (response.success) {
+    console.log('claim success:', response)
+    $toast.success(response.message)
+    emit('update:showDialog', false)
+    await getUserStakeInformation()
+    await getStatsInformation()
+  }
+  else {
+    $toast.error(response.message)
+  }
+}
 </script>
 
 <style scoped>

@@ -6,6 +6,7 @@ const error = ref<string | null>(null)
 
 const loadinStakeProccess = ref(false)
 const loadingUnstakeProcess = ref(false)
+const loadingClaimProcess = ref(false)
 
 export const useStake = () => {
   const { program, publicKey, web3, initPromise, BN, connection, splToken } = useWorkspace()
@@ -232,6 +233,120 @@ export const useStake = () => {
     }
   }
 
+  const claimToken = async (
+  ) => {
+    const programChain = program?.value
+    const userPublicKey = publicKey?.value
+
+    if (!programChain) {
+      return { success: false, message: 'Program is not initialized or not ready.' }
+    }
+
+    if (!userPublicKey) {
+      return { success: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
+    }
+
+    if (!connection.value) {
+      return { success: false, message: 'Unable to connect to the Solana network. Please try again.' }
+    }
+
+    try {
+      loadingClaimProcess.value = true
+
+      const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
+        [Buffer.from('stake_account'), userPublicKey.toBuffer()],
+        programChain.programId,
+      )
+
+      const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
+        [Buffer.from('stats')],
+        programChain.programId,
+      )
+
+      const [vaultAuthority] = web3.value.PublicKey.findProgramAddressSync(
+        [Buffer.from('vault-authority')],
+        programChain.programId,
+      )
+
+      const TOKEN_2022_PROGRAM_ID = new web3.value.PublicKey(
+        'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
+      )
+      const config = useRuntimeConfig()
+      const tokenMintString = config.public.solanaTokenMint as string
+      const tokenMint = new web3.value.PublicKey(tokenMintString)
+
+      const vaultAddressStr = await getVaultAddress()
+      const vaultAddress = new web3.value.PublicKey(vaultAddressStr)
+
+      const userTokenAccount = await splToken.value.getAssociatedTokenAddress(
+        tokenMint,
+        userPublicKey,
+        false,
+        TOKEN_2022_PROGRAM_ID,
+      )
+
+      const vaultTokenAccount = await splToken.value.getAssociatedTokenAddress(
+        tokenMint,
+        vaultAddress,
+        true,
+        TOKEN_2022_PROGRAM_ID,
+      )
+
+      const signature = await programChain.methods
+        .calimUnstake()
+        .accounts({
+          user: userPublicKey,
+          userTokenAccount,
+          vaultTokenAccount,
+          vaultAuthority,
+          mint: tokenMint,
+          stakeAccount: stakeAccountPda,
+          stats: statsPda,
+          tokenProgram: TOKEN_2022_PROGRAM_ID,
+        })
+        .rpc({ commitment: 'confirmed' })
+
+      await connection.value.confirmTransaction(signature, 'confirmed')
+
+      return {
+        success: true,
+        message: 'Claim completed successfully.',
+        signature,
+      }
+    }
+    catch (err) {
+      return {
+        success: false,
+        message: 'An unexpected error occurred while processing the Claim request.',
+        raw: err,
+      }
+    }
+    finally {
+      loadingClaimProcess.value = false
+    }
+  }
+
+  const isCooldownComplete = (unstakeRequestedAt: number): boolean => {
+    if (unstakeRequestedAt === 0) return false
+    const now = Math.floor(Date.now() / 1000)
+    const cooldownPeriodInSecond = 60
+    // const cooldownPeriodInSecond = 7 * 24 * 60 * 60
+    return now >= unstakeRequestedAt + cooldownPeriodInSecond
+  }
+
+  const getRemainingCooldown = (unstakeRequestedAt: number): string => {
+    const dayjs = useDayjs()
+    if (unstakeRequestedAt === 0) return 'No cooldown'
+
+    // const cooldownEnd = dayjs.unix(unstakeRequestedAt).add(7, 'day')
+    const cooldownEnd = dayjs.unix(unstakeRequestedAt).add(1, 'minute')
+    const now = dayjs()
+
+    return now.isAfter(cooldownEnd)
+      ? 'Cooldown complete'
+      : cooldownEnd.from(now) + ' remaining'
+  }
+
   onMounted(async () => {
     callOnce(async () => {
       await initPromise
@@ -239,5 +354,5 @@ export const useStake = () => {
     })
   })
 
-  return { userStakeInformation, loadingStakeInformation, getUserStakeInformation, stakeToken, loadinStakeProccess, unstakeToken, loadingUnstakeProcess }
+  return { userStakeInformation, loadingStakeInformation, getUserStakeInformation, stakeToken, loadinStakeProccess, unstakeToken, loadingUnstakeProcess, isCooldownComplete, getRemainingCooldown, claimToken, loadingClaimProcess }
 }
