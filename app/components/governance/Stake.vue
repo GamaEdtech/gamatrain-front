@@ -313,7 +313,6 @@ const customRules = {
 const handleStake = async () => {
   const response = await stakeToken(stakeAmount.value)
   if (response.success) {
-    console.log('Stake success:', response.signature)
     $toast.success(response.message)
     emit('update:showDialog', false)
     await getUserStakeInformation()
@@ -328,10 +327,8 @@ const unstakeAmount = ref<number>(0)
 const unstakeFormValid = ref(false)
 
 const handleUnstake = async () => {
-  console.log('handleUnstake')
   const response = await unstakeToken(unstakeAmount.value)
   if (response.success) {
-    console.log('unStake success:', response)
     $toast.success(response.message)
     emit('update:showDialog', false)
     await getUserStakeInformation()
@@ -353,10 +350,8 @@ const cooldownStatus = computed(() => {
 })
 
 const handleClaim = async () => {
-  console.log('handleClaim')
   const response = await claimToken()
   if (response.success) {
-    console.log('claim success:', response)
     $toast.success(response.message)
     emit('update:showDialog', false)
     await getUserStakeInformation()

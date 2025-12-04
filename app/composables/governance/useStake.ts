@@ -1,9 +1,20 @@
-import type { PublicKey } from '@solana/web3.js'
+import type { Program } from '@coral-xyz/anchor'
+import type { Connection, PublicKey } from '@solana/web3.js'
 import type { StakeAccount } from '~/types/governance'
+import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
+
+type CheckRequirementResult
+  = | { ok: false, message: string }
+    | {
+      ok: true
+      programChain: Program<GamaedtechProgram>
+      userPublicKey: PublicKey
+      connection: Connection
+      message: string
+    }
 
 const userStakeInformation = ref<StakeAccount | null>()
 const loadingStakeInformation = ref(true)
-const error = ref<string | null>(null)
 
 const loadinStakeProccess = ref(false)
 const loadingUnstakeProcess = ref(false)
@@ -14,6 +25,7 @@ export const useStake = () => {
   const TOKEN_2022_PROGRAM_ID_STRING = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
   const config = useRuntimeConfig()
   const tokenMintString = config.public.solanaTokenMint as string
+  const dayjs = useDayjs()
 
   const getVault = (programId: PublicKey) => {
     const [vaultAuthority] = web3.value.PublicKey.findProgramAddressSync(
@@ -39,30 +51,43 @@ export const useStake = () => {
     return statsPda
   }
 
-  const getUserStakeInformation = async () => {
-    loadingStakeInformation.value = true
-    error.value = null
+  const checkReqiureMent = (): CheckRequirementResult => {
     const programChain = program?.value
     const userPublicKey = publicKey?.value
+    const conn = connection.value
 
     if (!programChain) {
-      error.value = 'PROGRAM_NOT_READY'
-      console.log(error.value)
-
-      return
+      return { ok: false, message: 'Program is not initialized or not ready.' }
     }
 
     if (!userPublicKey) {
-      error.value = 'WALLET_NOT_CONNECTED'
-      console.log(error.value)
-      return
+      return { ok: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
+    }
+
+    if (!conn) {
+      return { ok: false, message: 'Unable to connect to the Solana network. Please try again.' }
     }
 
     if (!web3.value) {
-      error.value = 'WEB3_NOT_LOADED'
-      console.log(error.value)
-      return
+      return { ok: false, message: 'Unable to load Web3 to Connect Solana network. Check your internet and refresh page.' }
     }
+
+    return {
+      ok: true,
+      programChain,
+      userPublicKey,
+      connection: conn,
+      message: 'All requirement is ready.',
+    }
+  }
+
+  const getUserStakeInformation = async () => {
+    const check = checkReqiureMent()
+    if (!check.ok) return { success: false, message: check.message }
+
+    const { programChain, userPublicKey } = check
+
+    loadingStakeInformation.value = true
     try {
       const stakeAccountPda = getStakeAccountPda(userPublicKey, programChain.programId)
       const stakeAccount = await programChain.account['stakeAccount'].fetch(
@@ -81,12 +106,9 @@ export const useStake = () => {
         unstakeRequestedAt: stakeAccount.unstakeRequestedAt?.toNumber() || 0,
         pendingRewards: pendingRewardsRaw / 1_000_000,
       }
-
-      console.log('userStakeInformation', userStakeInformation.value)
     }
     catch (err) {
-      console.log('error khord', err)
-      error.value = 'FAILED_TO_FETCH_STAKE_ACCOUNT'
+      console.log('error', err)
     }
     finally {
       loadingStakeInformation.value = false
@@ -96,20 +118,10 @@ export const useStake = () => {
   const stakeToken = async (
     amount: number,
   ) => {
-    const programChain = program?.value
-    const userPublicKey = publicKey?.value
+    const check = checkReqiureMent()
+    if (!check.ok) return { success: false, message: check.message }
 
-    if (!programChain) {
-      return { success: false, message: 'Program is not initialized or not ready.' }
-    }
-
-    if (!userPublicKey) {
-      return { success: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
-    }
-
-    if (!connection.value) {
-      return { success: false, message: 'Unable to connect to the Solana network. Please try again.' }
-    }
+    const { programChain, userPublicKey, connection } = check
 
     try {
       loadinStakeProccess.value = true
@@ -154,7 +166,7 @@ export const useStake = () => {
         })
         .rpc({ commitment: 'confirmed' })
 
-      await connection.value.confirmTransaction(signature, 'confirmed')
+      await connection.confirmTransaction(signature, 'confirmed')
 
       return {
         success: true,
@@ -175,20 +187,10 @@ export const useStake = () => {
   }
 
   const unstakeToken = async (amount: number) => {
-    const programChain = program?.value
-    const userPublicKey = publicKey?.value
+    const check = checkReqiureMent()
+    if (!check.ok) return { success: false, message: check.message }
 
-    if (!programChain) {
-      return { success: false, message: 'Program is not initialized or not ready.' }
-    }
-
-    if (!userPublicKey) {
-      return { success: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
-    }
-
-    if (!connection.value) {
-      return { success: false, message: 'Unable to connect to the Solana network. Please try again.' }
-    }
+    const { programChain, userPublicKey, connection } = check
 
     try {
       loadingUnstakeProcess.value = true
@@ -209,7 +211,7 @@ export const useStake = () => {
         })
         .rpc({ commitment: 'confirmed' })
 
-      await connection.value.confirmTransaction(signature, 'confirmed')
+      await connection.confirmTransaction(signature, 'confirmed')
 
       return {
         success: true,
@@ -232,20 +234,10 @@ export const useStake = () => {
 
   const claimToken = async (
   ) => {
-    const programChain = program?.value
-    const userPublicKey = publicKey?.value
+    const check = checkReqiureMent()
+    if (!check.ok) return { success: false, message: check.message }
 
-    if (!programChain) {
-      return { success: false, message: 'Program is not initialized or not ready.' }
-    }
-
-    if (!userPublicKey) {
-      return { success: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
-    }
-
-    if (!connection.value) {
-      return { success: false, message: 'Unable to connect to the Solana network. Please try again.' }
-    }
+    const { programChain, userPublicKey, connection } = check
 
     try {
       loadingClaimProcess.value = true
@@ -289,7 +281,7 @@ export const useStake = () => {
         })
         .rpc({ commitment: 'confirmed' })
 
-      await connection.value.confirmTransaction(signature, 'confirmed')
+      await connection.confirmTransaction(signature, 'confirmed')
 
       return {
         success: true,
@@ -318,7 +310,6 @@ export const useStake = () => {
   }
 
   const getRemainingCooldown = (unstakeRequestedAt: number): string => {
-    const dayjs = useDayjs()
     if (unstakeRequestedAt === 0) return 'No cooldown'
 
     // const cooldownEnd = dayjs.unix(unstakeRequestedAt).add(7, 'day')
