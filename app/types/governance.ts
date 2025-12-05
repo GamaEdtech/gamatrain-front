@@ -40,6 +40,25 @@ export interface ParsedTokenAccountData {
   }
 }
 
+export interface ProposalAccount {
+  owner: PublicKey
+  title: string
+  brief: string
+  cate: string
+  reference: string
+  amount: BN
+  agreeVotes: BN
+  disagreeVotes: BN
+  createdAt: BN
+  expiresAt: BN
+  isFundRequested: boolean
+}
+
+export interface Proposal {
+  publicKey: PublicKey
+  account: ProposalAccount
+}
+
 /**
  * Proposal status types
  */
@@ -54,30 +73,6 @@ export type ProposalCategory = 'general' | 'development' | 'marketing' | 'commun
  * Vote type
  */
 export type VoteType = 'agree' | 'disagree'
-
-/**
- * Proposal account data from blockchain
- */
-export interface ProposalAccount {
-  owner: PublicKey
-  title: string
-  brief: string
-  cate: string
-  reference: string
-  amount: BN
-  agreeVotes: BN
-  disagreeVotes: BN
-  createdAt: BN
-  expiresAt: BN
-}
-
-/**
- * Proposal with public key
- */
-export interface Proposal {
-  publicKey: PublicKey
-  account: ProposalAccount
-}
 
 /**
  * Proposal form data for creation

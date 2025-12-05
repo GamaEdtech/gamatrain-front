@@ -16,7 +16,7 @@
 
     <!-- 1. State: Loading proposals -->
     <div
-      v-if="isLoading"
+      v-if="loadingGetProposal"
       class="text-center my-10"
     >
       <v-progress-circular
@@ -31,7 +31,7 @@
 
     <!-- 2. State: No proposals found -->
     <div
-      v-else-if="proposals.length === 0"
+      v-else-if="latestProposals?.length === 0"
       class="text-center my-10"
     >
       <p>No active proposals found. Be the first to create one!</p>
@@ -43,18 +43,18 @@
       class="mt-6 mt-sm-1"
     >
       <div class="d-block">
-        <!-- <v-slide-group
+        <v-slide-group
           v-model="selected"
           class="center-slide-group"
           center-active
           show-arrows
         >
           <v-slide-group-item
-            v-for="proposal in proposals"
+            v-for="proposal in latestProposals"
             :key="proposal.publicKey.toBase58()"
           >
             <div class="my-5 mx-1 proposal-slide__card">
-              <governance-proposal-card
+              <!-- <governance-proposal-card
                 :proposal="proposal"
                 :user-public-key="publicKey"
                 @select="handleProposalClick"
@@ -62,10 +62,14 @@
                 @delete="handleProposalDeleted"
                 @wallet-required="handleWalletRequired"
                 @request-fund="handleRequestFund(proposal)"
+              /> -->
+              <governance-proposal-card
+                :proposal="proposal"
+                :user-public-key="publicKey"
               />
             </div>
           </v-slide-group-item>
-        </v-slide-group> -->
+        </v-slide-group>
       </div>
     </div>
 
@@ -119,7 +123,7 @@
       @created="handleProposalCreated"
       @wallet-required="handleWalletRequired"
     /> -->
-    <governance-stake v-model:show-dialog="visibleStake" />
+    <governance-stake v-model:show-dialog="showModalStake" />
     <!-- <governance-proposal-detail
       v-if="selectedProposal"
       v-model="visibleProposalDetail"
@@ -171,40 +175,41 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 import { useGovernance } from '~/composables/governance/useGovernance'
-// Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
 
-const { mdAndUp } = useDisplay()
 const AsyncWalletMultiButton = defineAsyncComponent(async () => {
   const mod = await import('solana-wallets-vue')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (mod as any).WalletMultiButton
 })
 
-const { fetchTokenBalance, connected, userStakeInformation, getUserStakeInformation } = useGovernance()
+const { mdAndUp } = useDisplay()
+const { fetchTokenBalance, connected, userStakeInformation, getUserStakeInformation, latestProposals, loadingGetProposal, publicKey } = useGovernance()
 
-const visibleStake = ref(false)
+const showModalStake = ref(false)
+const showWalletModal = ref(false)
 
 const openStakeModal = () => {
-  visibleStake.value = true
+  showModalStake.value = true
   fetchTokenBalance()
   if (userStakeInformation.value == null) {
     getUserStakeInformation()
   }
 }
 
+const selected = ref(null)
+
 // const { $toast } = useNuxtApp()
 
 // --- STATE ---
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const proposals = ref<any[]>([])
-const isLoading = ref(true)
+
+// const proposals = ref<any[]>([])
+// const isLoading = ref(true)
 // const selected = ref(null)
 
 // const selectedProposal = ref<any | null>(null)
 // const visibleCreateProposal = ref(false)
 
 // const visibleProposalDetail = ref(false)
-const showWalletModal = ref(false)
 
 // Get governance composable (includes workspace internally)
 // const { workspace, fetchUserStakeInfo } = useGovernance()
