@@ -1,14 +1,14 @@
 import type { Program } from '@coral-xyz/anchor'
-import type { Connection } from '@solana/web3.js'
+import type { Connection, PublicKey } from '@solana/web3.js'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
-import type { Proposal } from '~/types/governance'
+import type { Proposal, ProposalFormData } from '~/types/governance'
 
 type CheckRequirementResult
   = | { ok: false, message: string }
     | {
       ok: true
       programChain: Program<GamaedtechProgram>
-      // userPublicKey: PublicKey
+      userPublicKey: PublicKey
       connection: Connection
       message: string
     }
@@ -16,45 +16,23 @@ type CheckRequirementResult
 const latestProposals = ref<Proposal[]>()
 const loadingGetProposal = ref(true)
 
+const loadingCreateProposal = ref(false)
+
 export const useProposal = () => {
-  const { program, web3, initPromise, connection } = useWorkspace()
-
-  // const getVault = (programId: PublicKey) => {
-  //   const [vaultAuthority] = web3.value.PublicKey.findProgramAddressSync(
-  //     [Buffer.from('vault-authority')],
-  //     programId,
-  //   )
-  //   return vaultAuthority
-  // }
-
-  // const getStakeAccountPda = (userPublicKey: PublicKey, programId: PublicKey) => {
-  //   const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
-  //     [Buffer.from('stake_account'), userPublicKey.toBuffer()],
-  //     programId,
-  //   )
-  //   return stakeAccountPda
-  // }
-
-  // const getStatsPda = (programId: PublicKey) => {
-  //   const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
-  //     [Buffer.from('stats')],
-  //     programId,
-  //   )
-  //   return statsPda
-  // }
+  const { program, web3, initPromise, connection, publicKey, BN } = useWorkspace()
 
   const checkReqiureMent = (): CheckRequirementResult => {
     const programChain = program?.value
-    // const userPublicKey = publicKey?.value
+    const userPublicKey = publicKey?.value
     const conn = connection.value
 
     if (!programChain) {
       return { ok: false, message: 'Program is not initialized or not ready.' }
     }
 
-    // if (!userPublicKey) {
-    //   return { ok: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
-    // }
+    if (!userPublicKey) {
+      return { ok: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
+    }
 
     if (!conn) {
       return { ok: false, message: 'Unable to connect to the Solana network. Please try again.' }
@@ -67,10 +45,47 @@ export const useProposal = () => {
     return {
       ok: true,
       programChain,
-      // userPublicKey,
+      userPublicKey,
       connection: conn,
       message: 'All requirement is ready.',
     }
+  }
+
+  const getUserStatePda = (userPublicKey: PublicKey, programId: PublicKey) => {
+    const [userStatePda] = web3.value.PublicKey.findProgramAddressSync(
+      [Buffer.from('user_state'), userPublicKey.toBuffer()],
+      programId,
+    )
+    return userStatePda
+  }
+
+  const getStakeAccountPda = (userPublicKey: PublicKey, programId: PublicKey) => {
+    const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
+      [Buffer.from('stake_account'), userPublicKey.toBuffer()],
+      programId,
+    )
+    return stakeAccountPda
+  }
+
+  const getStatsPda = (programId: PublicKey) => {
+    const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
+      [Buffer.from('stats')],
+      programId,
+    )
+    return statsPda
+  }
+
+  const getProposalPda = (userPublicKey: PublicKey, programId: PublicKey, proposalCount: number) => {
+    const [proposalPda] = web3.value.PublicKey.findProgramAddressSync(
+      [
+        Buffer.from('proposal'),
+        userPublicKey.toBuffer(),
+        new BN.value(proposalCount).toArrayLike(Buffer, 'le', 8),
+      ],
+      programId,
+    )
+
+    return proposalPda
   }
 
   const getProposal = async () => {
@@ -103,6 +118,74 @@ export const useProposal = () => {
     }
   }
 
+  const create = async (
+    data: ProposalFormData,
+  ) => {
+    const check = checkReqiureMent()
+    if (!check.ok) return { success: false, message: check.message }
+
+    const { programChain, userPublicKey, connection } = check
+
+    try {
+      loadingCreateProposal.value = true
+
+      const userStatePda = getUserStatePda(userPublicKey, programChain.programId)
+
+      let proposalCount = 0
+      try {
+        const userStateAccount = await programChain.account.userState.fetch(
+          userStatePda,
+        )
+        proposalCount = userStateAccount.proposalCount
+      }
+      catch {
+        proposalCount = 0
+      }
+
+      const proposalPda = getProposalPda(userPublicKey, programChain.programId, proposalCount)
+
+      const stakeAccountPda = getStakeAccountPda(userPublicKey, programChain.programId)
+
+      const statsPda = getStatsPda(programChain.programId)
+
+      const signature = await programChain.methods
+        .createProposal(
+          data.title.trim(),
+          data.brief.trim(),
+          data.cate || 'general',
+          data.reference || '',
+          new BN.value(data.amount || 0),
+        )
+        .accounts({
+          userState: userStatePda,
+          proposal: proposalPda,
+          user: userPublicKey,
+          stakeAccount: stakeAccountPda,
+          stats: statsPda,
+          systemProgram: web3.value.SystemProgram.programId,
+        })
+        .rpc({ commitment: 'confirmed' })
+
+      await connection.confirmTransaction(signature, 'confirmed')
+
+      return {
+        success: true,
+        message: 'Create proposal completed successfully.',
+        signature,
+      }
+    }
+    catch (err) {
+      return {
+        success: false,
+        message: 'An unexpected error occurred while processing the Create proposal request.',
+        raw: err,
+      }
+    }
+    finally {
+      loadingCreateProposal.value = false
+    }
+  }
+
   onMounted(async () => {
     callOnce(async () => {
       await initPromise
@@ -110,5 +193,5 @@ export const useProposal = () => {
     })
   })
 
-  return { latestProposals, loadingGetProposal }
+  return { latestProposals, getProposal, loadingGetProposal, create, loadingCreateProposal }
 }

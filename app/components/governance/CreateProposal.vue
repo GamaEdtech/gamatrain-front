@@ -1,261 +1,238 @@
-<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <template>
-  <div>
-    <v-dialog
-      v-model="visible"
-      max-width="500"
-      :fullscreen="!smAndUp"
-      @after-leave="handleAfterLeave"
-    >
-      <template #default="{ isActive }">
-        <v-form
-          ref="formRef"
-          v-model="formIsValid"
-          class="min-h-full"
-          @submit.prevent="onSubmit"
-        >
-          <v-card>
-            <div class="px-4 py-4 d-none d-sm-block">
-              <div
-                class="d-flex justify-end cursor-pointer"
-                style="justify-self: end"
-                @click="isActive.value = false"
-              >
-                <v-icon color="#bb6b62">
-                  mdi-close
-                </v-icon>
-              </div>
-            </div>
-            <div
-              class="d-flex align-center create-proposal__head py-5 px-4 d-sm-none"
+  <v-dialog
+    v-model="dialogModel"
+    max-width="500"
+    :fullscreen="!smAndUp"
+  >
+    <template #default="{ isActive }">
+      <v-form
+        ref="formRef"
+        v-model="formIsValid"
+        class="min-h-full"
+        @submit.prevent="onSubmit"
+      >
+        <v-card>
+          <div class="px-4 py-4 d-flex justify-space-between align-center">
+            <span
+              class="text-h4 font-weight-bold"
             >
-              <div @click="isActive.value = false">
-                <v-icon
-                  size="large"
-                  color="#344054"
-                >
-                  mdi-chevron-right
-                </v-icon>
-              </div>
-              <div class="pl-2 text-h5 primary-gray-700 font-weight-regular">
-                Creat Proposal
-              </div>
+              Creat Proposal
+            </span>
+            <div
+              class="d-flex justify-end cursor-pointer"
+              style="justify-self: end"
+              @click="isActive.value = false"
+            >
+              <v-icon
+                size="x-large"
+                color="#D0D5DD"
+              >
+                md:close
+              </v-icon>
             </div>
-            <div>
-              <div
-                class="text-h5 primary-gray-500 font-weight-bold pb-4 pl-6 d-none d-sm-block"
+          </div>
+          <v-card-text>
+            <div class="text-h6 text-md-button">
+              <v-icon
+                size="x-large"
+                :color="publicKey ? '#4CAF50' : '#98A2B3'"
               >
-                Creat Proposal
-              </div>
-            </div>
-            <v-card-text>
-              <h6 class="text-h4 font-weight-bold">
-                You are creating a proposal
-              </h6>
-
-              <div class="text-h6 text-md-button mt-4 mt-sm-4">
-                <span>
-                  <v-icon
-                    size="x-large"
-                    :color="isWalletReady ? '#4CAF50' : '#98A2B3'"
-                  >mdi-wallet</v-icon></span>
-                <span
-                  class="pl-2 primary-gray-400"
-                  style="display: inline-block"
-                >Wallet
-                </span>
-                <span
-                  v-if="isWalletReady"
-                  class="pl-1 primary-blue-500"
-                  style="display: inline-block"
-                >
-                  {{
-                    getPublicKey()?.toBase58?.()?.slice(0, 4)
-                  }}...{{
-                    getPublicKey()?.toBase58?.()?.slice(-4)
-                  }}
-                </span>
-                <span
-                  v-else
-                  class="pl-1 text-error"
-                > Not Connected </span>
-              </div>
-
-              <!-- Staking Status (v2.0) -->
-              <v-alert
-                v-if="isWalletReady && !hasStakedTokens"
-                type="warning"
-                variant="tonal"
-                class="mt-4"
-              >
-                <div class="text-body-2">
-                  <v-icon
-                    icon="mdi-alert"
-                    size="small"
-                    class="mr-2"
-                  />
-                  You must stake $GET tokens to create proposals. Please stake
-                  tokens first.
-                </div>
-              </v-alert>
-
-              <v-alert
-                v-else-if="isWalletReady && hasStakedTokens"
-                type="success"
-                variant="tonal"
-                class="mt-4"
-              >
-                <div class="text-body-2">
-                  <v-icon
-                    icon="mdi-check-circle"
-                    size="small"
-                    class="mr-2"
-                  />
-                  Staked:
-                  {{ $numberFormat(userStakeInfo?.stakedAmount || 0) }} $GET
-                </div>
-              </v-alert>
-
-              <div class="mt-10">
-                <div class="mb-4">
-                  <div class="mb-1 primary-gray-700 text-h6">
-                    Title *
-                  </div>
-                  <v-text-field
-                    v-model="form.title"
-                    :rules="[rules.required, rules.maxLength(100)]"
-                    density="compact"
-                    variant="outlined"
-                    rounded
-                    placeholder="Enter proposal title"
-                    counter="100"
-                  />
-                </div>
-
-                <div class="mb-4">
-                  <div class="mb-1 primary-gray-700 text-h6">
-                    Description *
-                  </div>
-                  <v-textarea
-                    v-model="form.brief"
-                    :rules="[rules.required, rules.maxLength(500)]"
-                    density="compact"
-                    variant="outlined"
-                    rounded
-                    placeholder="Describe your proposal in detail"
-                    counter="500"
-                    rows="4"
-                  />
-                </div>
-
-                <div class="mb-4">
-                  <div class="mb-1 primary-gray-700 text-h6">
-                    Category *
-                  </div>
-                  <v-select
-                    v-model="form.cate"
-                    :items="categoryOptions"
-                    :rules="[rules.required]"
-                    density="compact"
-                    variant="outlined"
-                    rounded
-                    placeholder="Select category"
-                  />
-                </div>
-
-                <div class="mb-4">
-                  <div class="mb-1 primary-gray-700 text-h6">
-                    Reference URL
-                  </div>
-                  <v-text-field
-                    v-model="form.reference"
-                    :rules="[rules.url]"
-                    density="compact"
-                    variant="outlined"
-                    rounded
-                    placeholder="https://example.com/proposal-details"
-                    hint="Optional: Link to detailed proposal documentation"
-                  />
-                </div>
-
-                <div class="mb-4">
-                  <div class="mb-1 primary-gray-700 text-h6">
-                    Requested Amount (GET tokens)
-                  </div>
-                  <v-text-field
-                    v-model.number="form.amount"
-                    :rules="[rules.positiveNumber]"
-                    type="number"
-                    density="compact"
-                    variant="outlined"
-                    rounded
-                    placeholder="0"
-                    hint="Amount of GET tokens requested for this proposal"
-                    step="1"
-                    min="0"
-                  />
-                </div>
-              </div>
-            </v-card-text>
-
-            <v-card-actions class="mb-5 mx-5">
-              <v-btn
-                variant="text"
-                size="large"
-                class="w-30"
-                rounded
-                @click="isActive.value = false"
-              >
-                Cancel
-              </v-btn>
-              <v-btn
-                type="submit"
-                variant="flat"
-                size="large"
-                color="#FFB600"
-                rounded
-                class="flex-1 w-70"
-                :loading="isSubmitting"
-                :disabled="isWalletReady && !hasStakedTokens"
+                md:account_balance_wallet
+              </v-icon>
+              <span
+                class="text-h6 pl-2 primary-gray-400"
+                style="display: inline-block"
+              >Wallet
+              </span>
+              <span
+                v-if="publicKey"
+                class="text-h6 pl-1 primary-blue-500"
+                style="display: inline-block"
               >
                 {{
-                  !isWalletReady
-                    ? "Connect Wallet"
-                    : !hasStakedTokens
-                      ? "Stake Tokens Required"
-                      : "Submit"
+                  publicKey.toBase58?.()?.slice(0, 4)
+                }}...{{
+                  publicKey.toBase58?.()?.slice(-4)
                 }}
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-form>
-      </template>
-    </v-dialog>
-  </div>
+              </span>
+              <span
+                v-else
+                class="text-h6 pl-1 text-error"
+              > Not Connected </span>
+            </div>
+
+            <v-alert
+              v-if="userStakeInformation && userStakeInformation.stakedAmount"
+              type="success"
+              variant="tonal"
+              class="mt-4"
+            >
+              <div class="text-h6 font-weight-bold">
+                Staked:
+                {{ $numberFormat(userStakeInformation.stakedAmount || 0) }} $GET
+              </div>
+            </v-alert>
+            <v-alert
+              v-else
+              type="warning"
+              variant="tonal"
+              class="mt-4"
+            >
+              <div class="text-h6 font-weight-bold">
+                You must stake $GET tokens to create proposals. Please stake
+                tokens first.
+              </div>
+            </v-alert>
+
+            <v-alert
+              type="info"
+              variant="tonal"
+              class="mt-4"
+            >
+              <div class="text-h6 font-weight-bold">
+                To create a proposal, you must have staked 50M $GET.
+              </div>
+            </v-alert>
+
+            <div class="mt-10">
+              <div class="mb-4">
+                <div class="mb-1 primary-gray-700 text-h6">
+                  Title *
+                </div>
+                <v-text-field
+                  v-model="form.title"
+                  :rules="[rules.required, rules.maxLength(100)]"
+                  density="compact"
+                  variant="outlined"
+                  rounded
+                  placeholder="Enter proposal title"
+                  counter="100"
+                />
+              </div>
+
+              <div class="mb-4">
+                <div class="mb-1 primary-gray-700 text-h6">
+                  Description *
+                </div>
+                <v-textarea
+                  v-model="form.brief"
+                  :rules="[rules.required, rules.maxLength(500)]"
+                  density="compact"
+                  variant="outlined"
+                  rounded
+                  placeholder="Describe your proposal in detail"
+                  counter="500"
+                  rows="4"
+                />
+              </div>
+
+              <div class="mb-4">
+                <div class="mb-1 primary-gray-700 text-h6">
+                  Category *
+                </div>
+                <v-select
+                  v-model="form.cate"
+                  :items="categoryOptions"
+                  :rules="[rules.required]"
+                  density="compact"
+                  variant="outlined"
+                  rounded
+                  placeholder="Select category"
+                />
+              </div>
+
+              <div class="mb-4">
+                <div class="mb-1 primary-gray-700 text-h6">
+                  Reference URL
+                </div>
+                <v-text-field
+                  v-model="form.reference"
+                  :rules="[rules.url]"
+                  density="compact"
+                  variant="outlined"
+                  rounded
+                  placeholder="https://example.com/proposal-details"
+                  hint="Optional: Link to detailed proposal documentation"
+                />
+              </div>
+
+              <div class="mb-4">
+                <div class="mb-1 primary-gray-700 text-h6">
+                  Requested Amount (GET tokens)
+                </div>
+                <v-text-field
+                  v-model.number="form.amount"
+                  :rules="[rules.positiveNumber]"
+                  type="number"
+                  density="compact"
+                  variant="outlined"
+                  rounded
+                  placeholder="0"
+                  hint="Amount of GET tokens requested for this proposal"
+                  step="1"
+                  min="0"
+                />
+              </div>
+            </div>
+          </v-card-text>
+
+          <v-card-actions class="mb-5 mx-5">
+            <v-btn
+              variant="text"
+              size="large"
+              class="text-h5 font-weight-bold w-30"
+              rounded
+              @click="isActive.value = false"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              type="submit"
+              variant="flat"
+              size="large"
+              color="#FFB600"
+              rounded
+              class="text-h5 font-weight-bold flex-1 w-70"
+              :loading="loadingCreateProposal"
+              :disabled="(!userStakeInformation || userStakeInformation.stakedAmount == 0)"
+            >
+              {{
+                (!userStakeInformation || userStakeInformation.stakedAmount == 0)
+                  ? "Stake Tokens Required"
+                  : "Submit"
+              }}
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
+    </template>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
+import type { VForm } from 'vuetify/components'
 import { useDisplay } from 'vuetify'
-import { useErrorHandler } from '~/composables/useErrorHandler'
+import type { ProposalFormData } from '~/types/governance'
+import { useGovernance } from '~/composables/governance/useGovernance'
 import { useValidationRules } from '~/composables/useValidationRules'
-import { SUCCESS_MESSAGES } from '~/constants/governance'
 
-// Error handler
-const { handleError, handleSuccess } = useErrorHandler()
-
-const { smAndUp } = useDisplay()
 const props = defineProps({
-  modelValue: {
+  showDialog: {
     type: Boolean,
-    required: true,
+    default: false,
   },
 })
-const emits = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void
-  (e: 'created'): void
-  // eslint-disable-next-line @typescript-eslint/unified-signatures
-  (e: 'walletRequired'): void
-}>()
+
+const emit = defineEmits(['update:showDialog'])
+const dialogModel = computed({
+  get: () => props.showDialog,
+  set: value => emit('update:showDialog', value),
+})
+
+const { smAndUp } = useDisplay()
+const { $toast } = useNuxtApp()
+const { userStakeInformation, publicKey, create, loadingCreateProposal, getProposal } = useGovernance()
+
 const rules = useValidationRules()
 
 const categoryOptions = [
@@ -270,8 +247,7 @@ const categoryOptions = [
 
 const formIsValid = ref(false)
 
-const formRef = ref(null)
-const isSubmitting = ref(false)
+const formRef = ref<VForm | null>(null)
 
 const form = ref({
   title: '',
@@ -280,87 +256,37 @@ const form = ref({
   reference: '',
   amount: 0,
 })
-const visible = ref(props.modelValue)
 
-// Use governance composable with all helpers
-const {
-  isWalletReady,
-  hasStakedTokens,
-  userStakeInfo,
-  fetchUserStakeInfo,
-  getPublicKey,
-} = useGovernance()
-
-// Watch for wallet changes
-watch(
-  () => isWalletReady.value,
-  (ready) => {
-    if (ready) {
-      fetchUserStakeInfo()
-    }
-  },
-  { immediate: true },
-)
-
-watch(
-  () => props.modelValue,
-  (val) => {
-    visible.value = val
-  },
-)
-
-async function onSubmit() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { valid } = await (formRef.value as any).validate()
-
-  if (valid) {
-    // Check if wallet is connected first
-    if (!isWalletReady.value) {
-      emits('walletRequired')
-      return
-    }
-
-    try {
-      isSubmitting.value = true
-
-      // Check if user has staked tokens (v2.0 requirement)
-      if (!hasStakedTokens.value) {
-        throw new Error('You must stake $GET tokens to create proposals')
-      }
-
-      await governance.createProposal({
-        title: String(form.value.title || ''),
-        brief: String(form.value.brief || ''),
-        cate: String(form.value.cate || 'general'),
-        reference: String(form.value.reference || ''),
-        amount: Number(form.value.amount || 0),
-      })
-
-      handleSuccess(SUCCESS_MESSAGES.PROPOSAL_CREATED)
-
-      emits('created')
-      emits('update:modelValue', false)
-
-      // Reset form
-      form.value = {
-        title: '',
-        brief: '',
-        cate: 'general',
-        reference: '',
-        amount: 0,
-      }
-    }
-    catch (e) {
-      handleError(e, 'Failed to create proposal')
-    }
-    finally {
-      isSubmitting.value = false
-    }
+const onSubmit = async () => {
+  const formValidation = await formRef.value?.validate()
+  if (!formValidation?.valid) {
+    return
   }
-}
 
-const handleAfterLeave = () => {
-  emits('update:modelValue', false)
+  const data: ProposalFormData = {
+    title: form.value.title || '',
+    brief: form.value.brief || '',
+    cate: form.value.cate || 'general',
+    reference: form.value.reference || '',
+    amount: form.value.amount || 0,
+  }
+
+  const response = await create(data)
+  emit('update:showDialog', false)
+  form.value = {
+    title: '',
+    brief: '',
+    cate: 'general',
+    reference: '',
+    amount: 0,
+  }
+  if (response.success) {
+    $toast.success(response.message)
+    await getProposal()
+  }
+  else {
+    $toast.error(response.message)
+  }
 }
 </script>
 

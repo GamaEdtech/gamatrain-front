@@ -59,24 +59,8 @@ export interface Proposal {
   account: ProposalAccount
 }
 
-/**
- * Proposal status types
- */
-export type ProposalStatus = 'Passed' | 'Rejected' | 'Expired' | 'Active'
-
-/**
- * Proposal category types
- */
 export type ProposalCategory = 'general' | 'development' | 'marketing' | 'community' | 'finance'
 
-/**
- * Vote type
- */
-export type VoteType = 'agree' | 'disagree'
-
-/**
- * Proposal form data for creation
- */
 export interface ProposalFormData {
   title: string
   brief: string
@@ -84,6 +68,16 @@ export interface ProposalFormData {
   reference: string
   amount: number
 }
+
+/**
+ * Proposal status types
+ */
+export type ProposalStatus = 'Passed' | 'Rejected' | 'Expired' | 'Active'
+
+/**
+ * Vote type
+ */
+export type VoteType = 'agree' | 'disagree'
 
 /**
  * Vote record data from blockchain

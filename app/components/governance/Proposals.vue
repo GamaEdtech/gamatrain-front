@@ -65,7 +65,7 @@
               /> -->
               <governance-proposal-card
                 :proposal="proposal"
-                :user-public-key="publicKey"
+                :user-public-key="publicKey!"
               />
             </div>
           </v-slide-group-item>
@@ -100,7 +100,7 @@
           Stake
         </v-btn>
 
-        <!-- <v-btn
+        <v-btn
           :size="mdAndUp ? 'large' : 'default'"
           color="#1D2939"
           variant="flat"
@@ -108,21 +108,19 @@
           class="ml-3"
           @click="
             connected
-              ? (visibleCreateProposal = true)
+              ? openCreateProposalModal()
               : (showWalletModal = true)
           "
         >
           Create Proposal
-        </v-btn> -->
+        </v-btn>
       </ClientOnly>
     </div>
 
     <!-- Dialogs -->
-    <!-- <governance-create-proposal
-      v-model="visibleCreateProposal"
-      @created="handleProposalCreated"
-      @wallet-required="handleWalletRequired"
-    /> -->
+    <governance-create-proposal
+      v-model:show-dialog="showModalCreateProposal"
+    />
     <governance-stake v-model:show-dialog="showModalStake" />
     <!-- <governance-proposal-detail
       v-if="selectedProposal"
@@ -197,6 +195,12 @@ const openStakeModal = () => {
 }
 
 const selected = ref(null)
+
+const showModalCreateProposal = ref(false)
+
+const openCreateProposalModal = () => {
+  showModalCreateProposal.value = true
+}
 
 // const { $toast } = useNuxtApp()
 
@@ -443,6 +447,7 @@ const selected = ref(null)
 }
 
 .wallet-button-container {
+  z-index: 2;
   position: absolute;
   right: 0;
   display: flex;
