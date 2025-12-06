@@ -20,7 +20,7 @@
         color="error"
         @click.stop="handleDelete"
       >
-        <v-icon>mdi-delete</v-icon>
+        <v-icon>md:delete_outlined</v-icon>
       </v-btn>
     </div>
 
@@ -83,7 +83,7 @@
           size="small"
           color="#98A2B3"
         >
-          mdi-timer-outline
+          md:timer_outlined
         </v-icon>
         <span class="pl-1">{{ timeRemaining }}</span>
       </div>
@@ -106,50 +106,77 @@
 
     <v-dialog
       v-model="deleteDialog"
-      max-width="400"
+      max-width="500"
+      :fullscreen="!mdAndUp"
+      @click="clickOnOverlay"
     >
-      <v-card>
-        <v-card-title>Delete Proposal</v-card-title>
-        <v-card-text>
-          Are you sure you want to delete this proposal? This action cannot be
-          undone.
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
+      <div
+        class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
+        @click="clickOnModal"
+      >
+        <v-row class="d-flex align-center">
+          <v-col cols="10">
+            <span class="text-h4">Delete Proposal</span>
+          </v-col>
+          <v-col
+            cols="2"
+            class="d-flex align-center justify-end ga-2"
+          >
+            <v-icon
+              size="x-large"
+              color="#D0D5DD"
+              @click="closeModal"
+            >
+              md:close
+            </v-icon>
+          </v-col>
+        </v-row>
+        <span class="text-h5 mt-6">Are you sure you want to delete this proposal? This action cannot be
+          undone.</span>
+        <div class="w-100 mt-4 d-flex ga-2 align-center justify-center">
           <v-btn
-            text
-            @click="deleteDialog = false"
+            color="black"
+            flat
+            variant="text"
+            rounded="lg"
+            max-width="200"
+            class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+            @click="closeModal"
           >
             Cancel
           </v-btn>
           <v-btn
             color="error"
-            variant="flat"
-            :loading="deleteLoading"
+            flat
+            rounded="lg"
+            max-width="200"
+            class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+            :loading="loadingDeleteProposal"
             @click="confirmDelete"
           >
             Delete
           </v-btn>
-        </v-card-actions>
-      </v-card>
+        </div>
+      </div>
     </v-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { PublicKey } from '@solana/web3.js'
 import type { Proposal } from '~/types/governance'
 import type { BN as BigNumber } from '@coral-xyz/anchor'
 import { useGovernance } from '~/composables/governance/useGovernance'
+import { useDisplay } from 'vuetify'
 
 const props = defineProps<{
   proposal: Proposal
-  userPublicKey?: PublicKey
 }>()
 
 const emits = defineEmits(['select'])
 
-const { BN } = useGovernance()
+const { $toast } = useNuxtApp()
+const { mdAndUp } = useDisplay()
+const { BN, publicKey, loadingDeleteProposal, deleteProposal, getProposal } = useGovernance()
 
 const isProposalExpired = (expiresAt: BigNumber): boolean => {
   const now = Math.floor(Date.now() / 1000)
@@ -162,8 +189,8 @@ const isExpired = computed(() => {
 })
 
 const isOwner = computed(() => {
-  if (!props.userPublicKey || !props.proposal?.account?.owner) return false
-  return props.proposal.account.owner.equals(props.userPublicKey)
+  if (!publicKey.value || !props.proposal?.account?.owner) return false
+  return props.proposal.account.owner.equals(publicKey.value)
 })
 
 const totalVotes = computed(() => {
@@ -235,42 +262,48 @@ const requestFund = async () => {
 }
 
 const deleteDialog = ref(false)
-const deleteLoading = ref(false)
+
+const closeModal = () => {
+  deleteDialog.value = false
+}
+
+const clickOnOverlay = () => {
+  deleteDialog.value = false
+}
+
+const clickOnModal = (event: Event) => {
+  event.stopPropagation()
+}
+
 const handleDelete = () => {
-  // deleteDialog.value = true
+  deleteDialog.value = true
 }
 
 const confirmDelete = async () => {
-  // if (!isOwner.value) return
+  if (!isOwner.value) {
+    $toast.error('Only owner has permission delete proposal.')
+  }
 
-  // deleteLoading.value = true
-
-  // try {
-  //   const { workspace } = useGovernance()
-  //   const program = workspace.program?.value
-  //   const userPk = props.userPublicKey
-
-  //   if (!program || !userPk) {
-  //     throw new Error('Wallet or program not ready')
-  //   }
-
-  //   await governance.deleteProposal(props.proposal.publicKey)
-
-  //   $toast.success('Proposal deleted successfully')
-
-  //   deleteDialog.value = false
-  //   emits('delete', props.proposal)
-  // }
-  // catch (error) {
-  //   handleError(error, 'Failed to delete proposal')
-  // }
-  // finally {
-  //   deleteLoading.value = false
-  // }
+  const response = await deleteProposal(props.proposal.publicKey)
+  deleteDialog.value = false
+  if (response.success) {
+    $toast.success(response.message)
+    await getProposal()
+  }
+  else {
+    $toast.error(response.message)
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+@media only screen and (max-width: 960px) {
+  .mobile-style {
+    position: absolute;
+    bottom: 0;
+    border-radius: 24px 24px 0 0 !important;
+  }
+}
 .proposal-card {
   border-radius: 16px;
   padding: 12px;

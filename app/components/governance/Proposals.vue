@@ -65,7 +65,6 @@
               /> -->
               <governance-proposal-card
                 :proposal="proposal"
-                :user-public-key="publicKey!"
               />
             </div>
           </v-slide-group-item>
@@ -181,7 +180,7 @@ const AsyncWalletMultiButton = defineAsyncComponent(async () => {
 })
 
 const { mdAndUp } = useDisplay()
-const { fetchTokenBalance, connected, userStakeInformation, getUserStakeInformation, latestProposals, loadingGetProposal, publicKey } = useGovernance()
+const { fetchTokenBalance, connected, userStakeInformation, getUserStakeInformation, latestProposals, loadingGetProposal } = useGovernance()
 
 const showModalStake = ref(false)
 const showWalletModal = ref(false)

@@ -17,6 +17,7 @@ const latestProposals = ref<Proposal[]>()
 const loadingGetProposal = ref(true)
 
 const loadingCreateProposal = ref(false)
+const loadingDeleteProposal = ref(false)
 
 export const useProposal = () => {
   const { program, web3, initPromise, connection, publicKey, BN } = useWorkspace()
@@ -89,14 +90,15 @@ export const useProposal = () => {
   }
 
   const getProposal = async () => {
-    const check = checkReqiureMent()
-    if (!check.ok) return { success: false, message: check.message }
+    // const check = checkReqiureMent()
+    // if (!check.ok) return { success: false, message: check.message }
 
-    const { programChain } = check
+    // const { programChain } = check
+    const programChain = program.value
 
     loadingGetProposal.value = true
     try {
-      const proposalsData: Proposal[] = await programChain.account.proposal.all()
+      const proposalsData: Proposal[] = await programChain!.account.proposal.all()
       console.log('proposalsData', proposalsData)
 
       proposalsData.sort((a: Proposal, b: Proposal) => {
@@ -186,6 +188,48 @@ export const useProposal = () => {
     }
   }
 
+  const deleteProposal = async (proposalPublicKey: PublicKey) => {
+    const check = checkReqiureMent()
+    if (!check.ok) return { success: false, message: check.message }
+
+    const { programChain, userPublicKey, connection } = check
+
+    try {
+      loadingDeleteProposal.value = true
+      const stakeAccountPda = getStakeAccountPda(userPublicKey, programChain.programId)
+
+      const statsPda = getStatsPda(programChain.programId)
+
+      const signature = await programChain.methods
+        .deleteProposal()
+        .accounts({
+          proposal: proposalPublicKey,
+          user: userPublicKey,
+          stakeAccount: stakeAccountPda,
+          stats: statsPda,
+        })
+        .rpc({ commitment: 'confirmed' })
+
+      await connection.confirmTransaction(signature, 'confirmed')
+
+      return {
+        success: true,
+        message: 'Delete proposal completed successfully.',
+        signature,
+      }
+    }
+    catch (err) {
+      return {
+        success: false,
+        message: 'An unexpected error occurred while processing the delete proposal request.',
+        raw: err,
+      }
+    }
+    finally {
+      loadingDeleteProposal.value = false
+    }
+  }
+
   onMounted(async () => {
     callOnce(async () => {
       await initPromise
@@ -193,5 +237,5 @@ export const useProposal = () => {
     })
   })
 
-  return { latestProposals, getProposal, loadingGetProposal, create, loadingCreateProposal }
+  return { latestProposals, getProposal, loadingGetProposal, create, loadingCreateProposal, deleteProposal, loadingDeleteProposal }
 }
