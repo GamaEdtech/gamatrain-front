@@ -27,8 +27,18 @@
         </v-col>
       </v-row>
 
+      <div class="w-100 d-flex flex-column align-center justify-center mt-8">
+        <img
+          width="100"
+          height="100"
+          src="/images/gama-coin.svg"
+          alt="GAMA coin"
+        >
+        <span class="font-weight-bold text-h4 mt-4">Game On!</span>
+      </div>
+
       <modals-confirm-payment
-        v-if="amountToPay * 1000000 < userBalance"
+        v-if="amountToPay < userBalance"
         :is-processing="isProcessing"
         :user-balance="userBalance"
         @confirm="confirmPayment"
@@ -36,7 +46,7 @@
       />
 
       <modals-charge-wallet
-        v-if="amountToPay * 1000000 > userBalance"
+        v-if="amountToPay > userBalance"
         :user-balance="userBalance"
       />
     </div>
@@ -64,7 +74,7 @@ const props = defineProps({
   },
   amountToPay: {
     type: Number,
-    default: 5,
+    default: 5000000,
   },
 })
 
