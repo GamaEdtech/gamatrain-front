@@ -11,7 +11,7 @@
       class="w-100 d-flex align-center justify-center position-relative mt-8"
     >
       <div class="line-or" />
-      <span class="primary-gray-500 font-weight-bold text-h5 position-absolute">First Easy way</span>
+      <span class="primary-gray-500 font-weight-bold text-h5 position-absolute">First, an easy way</span>
     </div>
     <div class="w-100 d-flex justify-space-between mt-8">
       <div
@@ -552,6 +552,9 @@ const startProccessPayment = async () => {
       $toast.error(
         'We’re unable to process your payment at the moment. Please try again in a few minutes',
       )
+    }
+    finally {
+      disablePayment.value = false
     }
   }
   else {
