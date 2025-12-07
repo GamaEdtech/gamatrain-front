@@ -185,7 +185,6 @@ const selectedProposal = ref<Proposal | null>(null)
 const showModalProposalDetail = ref(false)
 
 const openProposalDetail = (proposal: Proposal) => {
-  console.log('proposal', proposal)
   selectedProposal.value = proposal
   showModalProposalDetail.value = true
 }

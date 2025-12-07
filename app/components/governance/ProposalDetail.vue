@@ -302,8 +302,6 @@ const handleVote = async (agree: boolean) => {
   if (userStakeInformation.value && userStakeInformation.value.stakedAmount > 0) {
     disableVoteButton.value = agree ? `for` : `againt`
     const response = await voteProppsal(props.proposal.publicKey, agree)
-    console.log('resposne vote', response)
-
     if (response.success) {
       $toast.success(response.message)
       emit('close')
@@ -321,10 +319,8 @@ const handleVote = async (agree: boolean) => {
 }
 
 onMounted(async () => {
-  console.log('mount component')
   if (!isExpired.value) {
     const dataVote = await getVoteInformationProposal(props.proposal.publicKey)
-    console.log('dataVote', dataVote)
     if (dataVote) {
       hasVoted.value = dataVote.hasVoted
     }

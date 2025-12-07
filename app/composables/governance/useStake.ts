@@ -3,6 +3,9 @@ import type { Connection, PublicKey } from '@solana/web3.js'
 import type { StakeAccount } from '~/types/governance'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
 
+type Web3LibraryType = typeof import('@solana/web3.js')
+type splTokenLibraryType = typeof import('@solana/spl-token')
+
 type CheckRequirementResult
   = | { ok: false, message: string }
     | {
@@ -10,8 +13,11 @@ type CheckRequirementResult
       programChain: Program<GamaedtechProgram>
       userPublicKey: PublicKey
       connection: Connection
+      web3: Ref<Web3LibraryType>
+      spl: Ref<splTokenLibraryType>
       message: string
     }
+type RequirementKey = 'program' | 'publicKey' | 'connection' | 'web3' | 'spl'
 
 const userStakeInformation = ref<StakeAccount | null>()
 const loadingStakeInformation = ref(true)
@@ -28,7 +34,7 @@ export const useStake = () => {
   const dayjs = useDayjs()
 
   const getVault = (programId: PublicKey) => {
-    const [vaultAuthority] = web3.value.PublicKey.findProgramAddressSync(
+    const [vaultAuthority] = web3.value!.PublicKey.findProgramAddressSync(
       [Buffer.from('vault-authority')],
       programId,
     )
@@ -36,7 +42,7 @@ export const useStake = () => {
   }
 
   const getStakeAccountPda = (userPublicKey: PublicKey, programId: PublicKey) => {
-    const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
+    const [stakeAccountPda] = web3.value!.PublicKey.findProgramAddressSync(
       [Buffer.from('stake_account'), userPublicKey.toBuffer()],
       programId,
     )
@@ -44,32 +50,36 @@ export const useStake = () => {
   }
 
   const getStatsPda = (programId: PublicKey) => {
-    const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
+    const [statsPda] = web3.value!.PublicKey.findProgramAddressSync(
       [Buffer.from('stats')],
       programId,
     )
     return statsPda
   }
 
-  const checkReqiureMent = (): CheckRequirementResult => {
+  const checkReqiureMent = (required: RequirementKey[] = ['program', 'publicKey', 'connection', 'web3']): CheckRequirementResult => {
     const programChain = program?.value
     const userPublicKey = publicKey?.value
     const conn = connection.value
 
-    if (!programChain) {
+    if (!programChain && required.includes('program')) {
       return { ok: false, message: 'Program is not initialized or not ready.' }
     }
 
-    if (!userPublicKey) {
+    if (!userPublicKey && required.includes('publicKey')) {
       return { ok: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
     }
 
-    if (!conn) {
+    if (!conn && required.includes('connection')) {
       return { ok: false, message: 'Unable to connect to the Solana network. Please try again.' }
     }
 
-    if (!web3.value) {
+    if (!web3.value && required.includes('web3')) {
       return { ok: false, message: 'Unable to load Web3 to Connect Solana network. Check your internet and refresh page.' }
+    }
+
+    if (!splToken.value && required.includes('spl')) {
+      return { ok: false, message: 'Unable to load Spl to Connect Solana network. Check your internet and refresh page.' }
     }
 
     return {
@@ -77,8 +87,10 @@ export const useStake = () => {
       programChain,
       userPublicKey,
       connection: conn,
+      web3: web3,
+      spl: splToken,
       message: 'All requirement is ready.',
-    }
+    } as CheckRequirementResult
   }
 
   const getUserStakeInformation = async () => {
@@ -118,10 +130,10 @@ export const useStake = () => {
   const stakeToken = async (
     amount: number,
   ) => {
-    const check = checkReqiureMent()
+    const check = checkReqiureMent(['connection', 'program', 'publicKey', 'spl', 'web3'])
     if (!check.ok) return { success: false, message: check.message }
 
-    const { programChain, userPublicKey, connection } = check
+    const { programChain, userPublicKey, connection, web3, spl } = check
 
     try {
       loadinStakeProccess.value = true
@@ -138,14 +150,14 @@ export const useStake = () => {
 
       const vaultAddress = getVault(programChain.programId)
 
-      const userTokenAccount = await splToken.value.getAssociatedTokenAddress(
+      const userTokenAccount = await spl.value.getAssociatedTokenAddress(
         tokenMint,
         userPublicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
       )
 
-      const vaultTokenAccount = await splToken.value.getAssociatedTokenAddress(
+      const vaultTokenAccount = await spl.value.getAssociatedTokenAddress(
         tokenMint,
         vaultAddress,
         true,
@@ -234,10 +246,10 @@ export const useStake = () => {
 
   const claimToken = async (
   ) => {
-    const check = checkReqiureMent()
+    const check = checkReqiureMent(['connection', 'program', 'publicKey', 'spl', 'web3'])
     if (!check.ok) return { success: false, message: check.message }
 
-    const { programChain, userPublicKey, connection } = check
+    const { programChain, userPublicKey, connection, web3, spl } = check
 
     try {
       loadingClaimProcess.value = true
@@ -253,14 +265,14 @@ export const useStake = () => {
       )
       const tokenMint = new web3.value.PublicKey(tokenMintString)
 
-      const userTokenAccount = await splToken.value.getAssociatedTokenAddress(
+      const userTokenAccount = await spl.value.getAssociatedTokenAddress(
         tokenMint,
         userPublicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
       )
 
-      const vaultTokenAccount = await splToken.value.getAssociatedTokenAddress(
+      const vaultTokenAccount = await spl.value.getAssociatedTokenAddress(
         tokenMint,
         vaultAuthority,
         true,

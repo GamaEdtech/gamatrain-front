@@ -3,6 +3,8 @@ import type { Connection, PublicKey } from '@solana/web3.js'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
 import type { VoteRecord } from '~/types/governance'
 
+type Web3LibraryType = typeof import('@solana/web3.js')
+
 type CheckRequirementResult
   = | { ok: false, message: string }
     | {
@@ -10,32 +12,34 @@ type CheckRequirementResult
       programChain: Program<GamaedtechProgram>
       userPublicKey: PublicKey
       connection: Connection
+      web3: Ref<Web3LibraryType>
       message: string
     }
+type RequirementKey = 'program' | 'publicKey' | 'connection' | 'web3' | 'spl'
 
 const laodingVoteProcess = ref(false)
 
 export const useVote = () => {
   const { program, web3, initPromise, connection, publicKey } = useWorkspace()
 
-  const checkReqiureMent = (): CheckRequirementResult => {
+  const checkReqiureMent = (required: RequirementKey[] = ['program', 'publicKey', 'connection', 'web3']): CheckRequirementResult => {
     const programChain = program?.value
     const userPublicKey = publicKey?.value
     const conn = connection.value
 
-    if (!programChain) {
+    if (!programChain && required.includes('program')) {
       return { ok: false, message: 'Program is not initialized or not ready.' }
     }
 
-    if (!userPublicKey) {
+    if (!userPublicKey && required.includes('publicKey')) {
       return { ok: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
     }
 
-    if (!conn) {
+    if (!conn && required.includes('connection')) {
       return { ok: false, message: 'Unable to connect to the Solana network. Please try again.' }
     }
 
-    if (!web3.value) {
+    if (!web3.value && required.includes('web3')) {
       return { ok: false, message: 'Unable to load Web3 to Connect Solana network. Check your internet and refresh page.' }
     }
 
@@ -44,12 +48,13 @@ export const useVote = () => {
       programChain,
       userPublicKey,
       connection: conn,
+      web3: web3,
       message: 'All requirement is ready.',
-    }
+    } as CheckRequirementResult
   }
 
   const getStakeAccountPda = (userPublicKey: PublicKey, programId: PublicKey) => {
-    const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
+    const [stakeAccountPda] = web3.value!.PublicKey.findProgramAddressSync(
       [Buffer.from('stake_account'), userPublicKey.toBuffer()],
       programId,
     )
@@ -57,7 +62,7 @@ export const useVote = () => {
   }
 
   const getStatsPda = (programId: PublicKey) => {
-    const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
+    const [statsPda] = web3.value!.PublicKey.findProgramAddressSync(
       [Buffer.from('stats')],
       programId,
     )
@@ -65,7 +70,7 @@ export const useVote = () => {
   }
 
   const getVoteRecordPda = (userPublicKey: PublicKey, programId: PublicKey, proposalPublicKey: PublicKey) => {
-    const [voteRecordPDA] = web3.value.PublicKey.findProgramAddressSync(
+    const [voteRecordPDA] = web3.value!.PublicKey.findProgramAddressSync(
       [
         Buffer.from('vote-record'),
         proposalPublicKey.toBuffer(),
@@ -78,7 +83,7 @@ export const useVote = () => {
   }
 
   const getVoteInformationProposal = async (proposalPublicKey: PublicKey): Promise<VoteRecord | null> => {
-    const check = checkReqiureMent()
+    const check = checkReqiureMent(['program', 'publicKey', 'web3'])
     if (!check.ok) return null
 
     await initPromise
@@ -109,7 +114,7 @@ export const useVote = () => {
     const check = checkReqiureMent()
     if (!check.ok) return { success: false, message: check.message }
 
-    const { programChain, userPublicKey, connection } = check
+    const { programChain, userPublicKey, connection, web3 } = check
 
     try {
       laodingVoteProcess.value = true

@@ -3,6 +3,8 @@ import type { Connection, PublicKey } from '@solana/web3.js'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
 import type { Proposal, ProposalFormData } from '~/types/governance'
 
+type Web3LibraryType = typeof import('@solana/web3.js')
+
 type CheckRequirementResult
   = | { ok: false, message: string }
     | {
@@ -10,8 +12,10 @@ type CheckRequirementResult
       programChain: Program<GamaedtechProgram>
       userPublicKey: PublicKey
       connection: Connection
+      web3: Ref<Web3LibraryType>
       message: string
     }
+type RequirementKey = 'program' | 'publicKey' | 'connection' | 'web3'
 
 const latestProposals = ref<Proposal[]>()
 const loadingGetProposal = ref(true)
@@ -22,24 +26,24 @@ const loadingDeleteProposal = ref(false)
 export const useProposal = () => {
   const { program, web3, initPromise, connection, publicKey, BN } = useWorkspace()
 
-  const checkReqiureMent = (): CheckRequirementResult => {
+  const checkReqiureMent = (required: RequirementKey[] = ['program', 'publicKey', 'connection', 'web3']): CheckRequirementResult => {
     const programChain = program?.value
     const userPublicKey = publicKey?.value
     const conn = connection.value
 
-    if (!programChain) {
+    if (!programChain && required.includes('program')) {
       return { ok: false, message: 'Program is not initialized or not ready.' }
     }
 
-    if (!userPublicKey) {
+    if (!userPublicKey && required.includes('publicKey')) {
       return { ok: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
     }
 
-    if (!conn) {
+    if (!conn && required.includes('connection')) {
       return { ok: false, message: 'Unable to connect to the Solana network. Please try again.' }
     }
 
-    if (!web3.value) {
+    if (!web3.value && required.includes('web3')) {
       return { ok: false, message: 'Unable to load Web3 to Connect Solana network. Check your internet and refresh page.' }
     }
 
@@ -48,12 +52,13 @@ export const useProposal = () => {
       programChain,
       userPublicKey,
       connection: conn,
+      web3: web3,
       message: 'All requirement is ready.',
-    }
+    } as CheckRequirementResult
   }
 
   const getUserStatePda = (userPublicKey: PublicKey, programId: PublicKey) => {
-    const [userStatePda] = web3.value.PublicKey.findProgramAddressSync(
+    const [userStatePda] = web3.value!.PublicKey.findProgramAddressSync(
       [Buffer.from('user_state'), userPublicKey.toBuffer()],
       programId,
     )
@@ -61,7 +66,7 @@ export const useProposal = () => {
   }
 
   const getStakeAccountPda = (userPublicKey: PublicKey, programId: PublicKey) => {
-    const [stakeAccountPda] = web3.value.PublicKey.findProgramAddressSync(
+    const [stakeAccountPda] = web3.value!.PublicKey.findProgramAddressSync(
       [Buffer.from('stake_account'), userPublicKey.toBuffer()],
       programId,
     )
@@ -69,7 +74,7 @@ export const useProposal = () => {
   }
 
   const getStatsPda = (programId: PublicKey) => {
-    const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
+    const [statsPda] = web3.value!.PublicKey.findProgramAddressSync(
       [Buffer.from('stats')],
       programId,
     )
@@ -77,7 +82,7 @@ export const useProposal = () => {
   }
 
   const getProposalPda = (userPublicKey: PublicKey, programId: PublicKey, proposalCount: number) => {
-    const [proposalPda] = web3.value.PublicKey.findProgramAddressSync(
+    const [proposalPda] = web3.value!.PublicKey.findProgramAddressSync(
       [
         Buffer.from('proposal'),
         userPublicKey.toBuffer(),
@@ -90,17 +95,14 @@ export const useProposal = () => {
   }
 
   const getProposal = async () => {
-    // const check = checkReqiureMent()
-    // if (!check.ok) return { success: false, message: check.message }
+    const check = checkReqiureMent(['program'])
+    if (!check.ok) return { success: false, message: check.message }
 
-    // const { programChain } = check
-    const programChain = program.value
+    const { programChain } = check
 
     loadingGetProposal.value = true
     try {
-      const proposalsData: Proposal[] = await programChain!.account.proposal.all()
-      console.log('proposalsData', proposalsData)
-
+      const proposalsData: Proposal[] = await programChain.account.proposal.all()
       proposalsData.sort((a: Proposal, b: Proposal) => {
         const aCreated = a.account.createdAt.toNumber
           ? a.account.createdAt.toNumber()
@@ -126,7 +128,7 @@ export const useProposal = () => {
     const check = checkReqiureMent()
     if (!check.ok) return { success: false, message: check.message }
 
-    const { programChain, userPublicKey, connection } = check
+    const { programChain, userPublicKey, connection, web3 } = check
 
     try {
       loadingCreateProposal.value = true

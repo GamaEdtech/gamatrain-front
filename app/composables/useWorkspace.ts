@@ -65,27 +65,18 @@ export const useWorkspace = () => {
 
 async function initialize(ws: WorkspaceState) {
   try {
-    console.log(1)
-
     await initLibraries(ws)
-    console.log(10)
     await initConnection(ws)
-    console.log(20)
     await initWalletAndSync(ws)
-    console.log(30)
     await initProvider(ws)
-    console.log(40)
     await initProgram(ws)
-    console.log(50)
   }
   catch (err) {
     console.error('[workspace] initialize error:', err)
   }
   finally {
     if (initResolve) {
-      console.log(60)
       initResolve()
-      console.log(70)
     }
   }
 }
@@ -104,7 +95,6 @@ async function initLibraries(ws: WorkspaceState) {
   ws.web3.value = web3Lib
   ws.splToken.value = splLib
   ws.BN.value = anchorLib.BN ?? null
-  console.log(2, ws)
   if (typeof window !== 'undefined' && !window.Buffer) {
     window.Buffer = buffer.Buffer
   }
@@ -115,7 +105,6 @@ async function initConnection(ws: WorkspaceState) {
   const rpcUrl = config.public?.solanaRpcUrl ?? 'https://api.devnet.solana.com'
   if (ws.web3.value) {
     ws.connection.value = new ws.web3.value.Connection(rpcUrl, COMMITMENT)
-    console.log(3, ws)
   }
 }
 
@@ -131,13 +120,10 @@ async function initWalletAndSync(ws: WorkspaceState) {
     ws.publicKey.value = walletStore.publicKey?.value ?? null
 
     watch(() => walletStore.connected.value, (v) => {
-      console.log('connected change', walletStore.connected.value)
-
       ws.connected.value = v
     })
 
     watch(() => walletStore.publicKey.value, (v) => {
-      console.log('publicKey change', walletStore.publicKey.value)
       ws.publicKey.value = v
     })
   }

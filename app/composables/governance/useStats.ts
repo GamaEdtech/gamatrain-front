@@ -1,30 +1,67 @@
 import type { Stats } from '~/types/governance'
+import type { Program } from '@coral-xyz/anchor'
+import type { Connection, PublicKey } from '@solana/web3.js'
+import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
+
+type Web3LibraryType = typeof import('@solana/web3.js')
 
 const stats = ref<Stats | null>()
 const loadingStats = ref(true)
-const error = ref<string | null>(null)
+
+type CheckRequirementResult
+  = | { ok: false, message: string }
+    | {
+      ok: true
+      programChain: Program<GamaedtechProgram>
+      userPublicKey: PublicKey
+      connection: Connection
+      web3: Ref<Web3LibraryType>
+      message: string
+    }
+type RequirementKey = 'program' | 'publicKey' | 'connection' | 'web3'
 
 export const useStats = () => {
-  const { program, initPromise, web3 } = useWorkspace()
+  const { program, initPromise, web3, connection, publicKey } = useWorkspace()
+
+  const checkReqiureMent = (required: RequirementKey[] = ['program', 'publicKey', 'connection', 'web3']): CheckRequirementResult => {
+    const programChain = program?.value
+    const userPublicKey = publicKey?.value
+    const conn = connection.value
+
+    if (!programChain && required.includes('program')) {
+      return { ok: false, message: 'Program is not initialized or not ready.' }
+    }
+
+    if (!userPublicKey && required.includes('publicKey')) {
+      return { ok: false, message: 'Wallet is not connected. Please connect your wallet and try again.' }
+    }
+
+    if (!conn && required.includes('connection')) {
+      return { ok: false, message: 'Unable to connect to the Solana network. Please try again.' }
+    }
+
+    if (!web3.value && required.includes('web3')) {
+      return { ok: false, message: 'Unable to load Web3 to Connect Solana network. Check your internet and refresh page.' }
+    }
+
+    return {
+      ok: true,
+      programChain,
+      userPublicKey,
+      connection: conn,
+      web3: web3,
+      message: 'All requirement is ready.',
+    } as CheckRequirementResult
+  }
 
   const getStatsInformation = async () => {
-    loadingStats.value = true
-    error.value = null
-    const programChain = program?.value
+    const check = checkReqiureMent(['program', 'web3'])
+    if (!check.ok) return { success: false, message: check.message }
 
-    if (!programChain) {
-      error.value = 'PROGRAM_NOT_READY'
-      console.log('PROGRAM_NOT_READY')
+    const { programChain, web3 } = check
 
-      return
-    }
-
-    if (!web3.value) {
-      error.value = 'WEB3_NOT_LOADED'
-      console.log('WEB3_NOT_LOADED')
-      return
-    }
     try {
+      loadingStats.value = true
       const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
         [Buffer.from('stats')],
         programChain.programId,
@@ -42,11 +79,9 @@ export const useStats = () => {
         totalClaimedRewards: (statsInfo.totalClaimedRewards
           ?.toNumber?.() || 0) / 1_000_000,
       }
-      console.log('statsInfo', stats.value)
     }
     catch (err) {
       console.log('error khord', err)
-      error.value = 'FAILED_TO_FETCH_STATS'
     }
     finally {
       loadingStats.value = false
@@ -55,10 +90,7 @@ export const useStats = () => {
 
   onMounted(async () => {
     callOnce(async () => {
-      console.log(100, initPromise)
-
       await initPromise
-      console.log(101)
       await getStatsInformation()
     })
   })
