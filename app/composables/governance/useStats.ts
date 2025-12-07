@@ -14,11 +14,14 @@ export const useStats = () => {
 
     if (!programChain) {
       error.value = 'PROGRAM_NOT_READY'
+      console.log('PROGRAM_NOT_READY')
+
       return
     }
 
     if (!web3.value) {
       error.value = 'WEB3_NOT_LOADED'
+      console.log('WEB3_NOT_LOADED')
       return
     }
     try {
@@ -52,7 +55,10 @@ export const useStats = () => {
 
   onMounted(async () => {
     callOnce(async () => {
+      console.log(100, initPromise)
+
       await initPromise
+      console.log(101)
       await getStatsInformation()
     })
   })

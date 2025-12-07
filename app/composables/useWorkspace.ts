@@ -1,149 +1,187 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { ref, watch, nextTick } from 'vue'
+import { watch } from 'vue'
 import type { Ref } from 'vue'
-import { Connection, PublicKey, type Transaction, type VersionedTransaction } from '@solana/web3.js'
-import type { Program, AnchorProvider, Wallet } from '@coral-xyz/anchor'
-
-import rawIdl from '~/idl/gamaedtech_program.json'
+import type { Connection, PublicKey } from '@solana/web3.js'
+import type { Program, AnchorProvider, BN as BNClass, Wallet } from '@coral-xyz/anchor'
+import type { AnchorWallet } from 'solana-wallets-vue'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
 
-type Web3Type = typeof import('@solana/web3.js')
-const idlJson = (rawIdl as any).default ?? rawIdl
+type Web3LibraryType = typeof import('@solana/web3.js')
+type splTokenLibraryType = typeof import('@solana/spl-token')
+type anchorLibraryType = typeof import('@coral-xyz/anchor')
+type walletVueLibraryType = typeof import('solana-wallets-vue')
 
-// --- Constants ---
-const preflightCommitment = 'processed'
-const commitment = 'confirmed'
-
-// --- Workspace State ---
 interface WorkspaceState {
-  wallet: Ref<any>
+  wallet: Ref<AnchorWallet | null | undefined>
   connection: Ref<Connection | null>
   provider: Ref<AnchorProvider | null>
   program: Ref<Program<GamaedtechProgram> | null>
   connected: Ref<boolean>
   publicKey: Ref<PublicKey | null>
-  web3: Ref<Web3Type>
-  BN: Ref<any>
-  splToken: Ref<any>
-  initPromise: Promise<void>
+  web3: Ref<Web3LibraryType | null>
+  BN: Ref<BNClass | null>
+  splToken: Ref<splTokenLibraryType | null>
+  anchor: Ref<anchorLibraryType | null>
+  walletLibrary: Ref<walletVueLibraryType | null>
+  initPromise: Promise<void> | null
 }
 
-// Singleton workspace
-let globalWorkspace: WorkspaceState | null = null
+let workspace: WorkspaceState | null = null
 
 let initPromise: Promise<void> | null = null
 let initResolve: (() => void) | null = null
 
-export const useWorkspace = (): WorkspaceState => {
-  if (globalWorkspace) return globalWorkspace
+const PREFLIGHT = 'processed'
+const COMMITMENT = 'confirmed'
 
-  const wallet = ref<any>(null)
-  const connected = ref(false)
-  const publicKey = ref<PublicKey | null>(null)
-  const connection = ref<Connection | null>(null)
-  const provider = ref<AnchorProvider | null>(null)
-  const program = ref<Program<GamaedtechProgram> | null>(null)
-  const web3 = ref<any>(null)
-  const BN = ref<any>(null)
-  const splToken = ref<any>(null)
+export const useWorkspace = () => {
+  if (workspace) return workspace
+
+  const state: WorkspaceState = {
+    wallet: ref(null),
+    connected: ref(false),
+    publicKey: ref(null),
+    connection: ref(null),
+    provider: ref(null),
+    program: ref(null),
+    web3: ref(null),
+    BN: ref(null),
+    splToken: ref(null),
+    anchor: ref(null),
+    walletLibrary: ref(null),
+    initPromise: null,
+  }
 
   if (!initPromise) {
     initPromise = new Promise((resolve) => {
       initResolve = resolve
     })
   }
+  state.initPromise = initPromise
+  workspace = state
+  if (import.meta.client) nextTick(() => initialize(state))
 
-  globalWorkspace = { wallet, connection, provider, program, connected, publicKey, web3, BN, splToken, initPromise }
-
-  if (import.meta.client) nextTick(() => initializeWorkspace())
-
-  return globalWorkspace
+  return state
 }
 
-async function initializeWorkspace() {
-  if (!globalWorkspace || !import.meta.client) return
-
-  const { wallet, connection, provider, program, connected, publicKey, BN, splToken, web3 } = globalWorkspace
-
+async function initialize(ws: WorkspaceState) {
   try {
-    const config = useRuntimeConfig()
-    const rpcUrl = config.public?.solanaRpcUrl || 'https://api.devnet.solana.com'
-    connection.value = new Connection(rpcUrl, commitment)
+    console.log(1)
 
-    // Dynamic imports
-    const [{ Program, AnchorProvider, BN }, wallets] = await Promise.all([
-      import('@coral-xyz/anchor').then(m => ({ Program: m.Program, AnchorProvider: m.AnchorProvider, BN: m.BN })),
-      import('solana-wallets-vue'),
-      import('@solana/web3.js').then(m => (web3.value = m)),
-      import('@solana/spl-token').then(m => splToken.value = m),
-    ])
-
-    const { useAnchorWallet, useWallet } = wallets
-    const anchorWallet = useAnchorWallet()
-    const walletStore = useWallet()
-    globalWorkspace.BN.value = BN
-
-    wallet.value = anchorWallet
-    connected.value = walletStore.connected?.value ?? false
-    publicKey.value = walletStore.publicKey?.value ?? null
-
-    // Reactivity
-    if (walletStore.connected) watch(() => walletStore.connected.value, (val) => {
-      connected.value = val
-    })
-    if (walletStore.publicKey) watch(() => walletStore.publicKey.value, (val) => {
-      publicKey.value = val
-    })
-
-    const setupProvider = (): AnchorProvider => {
-      if (!connection.value) throw new Error('Connection not initialized')
-
-      if (!wallet.value?.value) {
-        const dummyWallet: Wallet = {
-          publicKey: new PublicKey('11111111111111111111111111111111'),
-          async signTransaction<T extends Transaction | VersionedTransaction>() { throw new Error('Wallet not connected') },
-          async signAllTransactions<T extends Transaction | VersionedTransaction>() { throw new Error('Wallet not connected') },
-        }
-        return new AnchorProvider(connection.value, dummyWallet, { preflightCommitment, commitment })
-      }
-
-      return new AnchorProvider(connection.value, wallet.value.value, { preflightCommitment, commitment })
-    }
-
-    const setupProgram = (provider: AnchorProvider | null): Program<GamaedtechProgram> | null => {
-      if (!provider) return null
-      try {
-        return new Program<GamaedtechProgram>(idlJson as GamaedtechProgram, provider)
-      }
-      catch (err) {
-        console.error('Failed to create program:', err)
-        return null
-      }
-    }
-
-    const updateProvider = () => {
-      provider.value = setupProvider()
-    }
-    const updateProgram = () => {
-      program.value = setupProgram(provider.value)
-    }
-
-    updateProvider()
-    updateProgram()
-
-    watch(() => wallet.value?.value, () => {
-      updateProvider()
-      updateProgram()
-    })
-    watch(() => provider.value, () => {
-      updateProgram()
-    })
-
-    if (initResolve) initResolve()
+    await initLibraries(ws)
+    console.log(10)
+    await initConnection(ws)
+    console.log(20)
+    await initWalletAndSync(ws)
+    console.log(30)
+    await initProvider(ws)
+    console.log(40)
+    await initProgram(ws)
+    console.log(50)
   }
   catch (err) {
-    console.error('❌ Failed to initialize workspace:', err)
-    if (initResolve) initResolve()
+    console.error('[workspace] initialize error:', err)
+  }
+  finally {
+    if (initResolve) {
+      console.log(60)
+      initResolve()
+      console.log(70)
+    }
+  }
+}
+
+async function initLibraries(ws: WorkspaceState) {
+  const [buffer, anchorLib, wallets, web3Lib, splLib] = await Promise.all([
+    import('buffer'),
+    import('@coral-xyz/anchor'),
+    import('solana-wallets-vue'),
+    import('@solana/web3.js'),
+    import('@solana/spl-token'),
+  ])
+
+  ws.anchor.value = anchorLib
+  ws.walletLibrary.value = wallets
+  ws.web3.value = web3Lib
+  ws.splToken.value = splLib
+  ws.BN.value = anchorLib.BN ?? null
+  console.log(2, ws)
+  if (typeof window !== 'undefined' && !window.Buffer) {
+    window.Buffer = buffer.Buffer
+  }
+}
+
+async function initConnection(ws: WorkspaceState) {
+  const config = useRuntimeConfig()
+  const rpcUrl = config.public?.solanaRpcUrl ?? 'https://api.devnet.solana.com'
+  if (ws.web3.value) {
+    ws.connection.value = new ws.web3.value.Connection(rpcUrl, COMMITMENT)
+    console.log(3, ws)
+  }
+}
+
+async function initWalletAndSync(ws: WorkspaceState) {
+  if (ws.walletLibrary.value) {
+    const { useAnchorWallet, useWallet } = ws.walletLibrary.value
+    const anchorWallet = useAnchorWallet()
+    const walletStore = useWallet()
+
+    ws.wallet.value = anchorWallet.value
+
+    ws.connected.value = walletStore.connected?.value ?? false
+    ws.publicKey.value = walletStore.publicKey?.value ?? null
+
+    watch(() => walletStore.connected.value, (v) => {
+      console.log('connected change', walletStore.connected.value)
+
+      ws.connected.value = v
+    })
+
+    watch(() => walletStore.publicKey.value, (v) => {
+      console.log('publicKey change', walletStore.publicKey.value)
+      ws.publicKey.value = v
+    })
+  }
+}
+
+async function initProvider(ws: WorkspaceState) {
+  if (ws.anchor.value) {
+    const AnchorProvider = ws.anchor.value.AnchorProvider
+
+    const connection = ws.connection.value
+    if (!connection) throw new Error('Connection not initialized for provider')
+
+    const walletInstance = ws.wallet.value
+
+    if (!walletInstance && ws.web3.value) {
+      const dummyKeypair = ws.anchor.value.web3.Keypair.generate()
+      const dummy: Wallet = {
+        publicKey: new ws.web3.value.PublicKey('11111111111111111111111111111111'),
+        payer: dummyKeypair,
+        async signTransaction() { throw new Error('Wallet not connected') },
+        async signAllTransactions() { throw new Error('Wallet not connected') },
+      }
+      ws.provider.value = new AnchorProvider(connection, dummy, { preflightCommitment: PREFLIGHT, commitment: COMMITMENT })
+      return
+    }
+
+    ws.provider.value = new AnchorProvider(connection, walletInstance as Wallet, { preflightCommitment: PREFLIGHT, commitment: COMMITMENT })
+  }
+}
+
+async function initProgram(ws: WorkspaceState) {
+  if (!ws.provider.value) {
+    ws.program.value = null
+    return
+  }
+  if (ws.anchor.value) {
+    try {
+      const rawIdl = await import('~/idl/gamaedtech_program.json')
+      const idlJson = rawIdl.default ?? rawIdl
+      ws.program.value = new ws.anchor.value.Program<GamaedtechProgram>(idlJson as GamaedtechProgram, ws.provider.value)
+    }
+    catch (err) {
+      console.error('[workspace] failed to create program', err)
+      ws.program.value = null
+    }
   }
 }
