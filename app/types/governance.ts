@@ -69,19 +69,8 @@ export interface ProposalFormData {
   amount: number
 }
 
-/**
- * Proposal status types
- */
-export type ProposalStatus = 'Passed' | 'Rejected' | 'Expired' | 'Active'
-
-/**
- * Vote type
- */
 export type VoteType = 'agree' | 'disagree'
 
-/**
- * Vote record data from blockchain
- */
 export interface VoteRecord {
   proposalId: PublicKey
   voter: PublicKey
@@ -89,6 +78,11 @@ export interface VoteRecord {
   vote: VoteType
   votePower: BN
 }
+
+/**
+ * Proposal status types
+ */
+export type ProposalStatus = 'Passed' | 'Rejected' | 'Expired' | 'Active'
 
 /**
  * Vote record response

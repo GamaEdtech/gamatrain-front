@@ -2,6 +2,7 @@ import type { ParsedTokenAccountData } from '~/types/governance'
 import { useStake } from './useStake'
 import { useStats } from './useStats'
 import { useProposal } from './useProposal'
+import { useVote } from './useVote'
 
 const tokenBalance = ref<number | null>(null)
 const loadingTokenBalance = ref(false)
@@ -13,6 +14,7 @@ export const useGovernance = () => {
   const stake = useStake()
   const stats = useStats()
   const proposal = useProposal()
+  const vote = useVote()
 
   const fetchTokenBalance = async () => {
     loadingTokenBalance.value = true
@@ -70,5 +72,5 @@ export const useGovernance = () => {
     }
   }
 
-  return { ...stake, ...stats, ...proposal, tokenBalance, fetchTokenBalance, connected, publicKey, BN }
+  return { ...stake, ...stats, ...proposal, ...vote, tokenBalance, fetchTokenBalance, connected, publicKey, BN }
 }

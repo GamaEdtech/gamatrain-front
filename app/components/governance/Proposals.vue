@@ -44,7 +44,6 @@
     >
       <div class="d-block">
         <v-slide-group
-          v-model="selected"
           class="center-slide-group"
           center-active
           show-arrows
@@ -54,17 +53,9 @@
             :key="proposal.publicKey.toBase58()"
           >
             <div class="my-5 mx-1 proposal-slide__card">
-              <!-- <governance-proposal-card
-                :proposal="proposal"
-                :user-public-key="publicKey"
-                @select="handleProposalClick"
-                @vote="handleVote"
-                @delete="handleProposalDeleted"
-                @wallet-required="handleWalletRequired"
-                @request-fund="handleRequestFund(proposal)"
-              /> -->
               <governance-proposal-card
                 :proposal="proposal"
+                @click="openProposalDetail(proposal)"
               />
             </div>
           </v-slide-group-item>
@@ -121,6 +112,12 @@
       v-model:show-dialog="showModalCreateProposal"
     />
     <governance-stake v-model:show-dialog="showModalStake" />
+    <governance-proposal-detail
+      v-if="selectedProposal"
+      v-model:show-dialog="showModalProposalDetail"
+      :proposal="selectedProposal"
+      @close="closeDetail"
+    />
     <!-- <governance-proposal-detail
       v-if="selectedProposal"
       v-model="visibleProposalDetail"
@@ -172,6 +169,7 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 import { useGovernance } from '~/composables/governance/useGovernance'
+import type { Proposal } from '~/types/governance'
 
 const AsyncWalletMultiButton = defineAsyncComponent(async () => {
   const mod = await import('solana-wallets-vue')
@@ -193,12 +191,23 @@ const openStakeModal = () => {
   }
 }
 
-const selected = ref(null)
-
 const showModalCreateProposal = ref(false)
 
 const openCreateProposalModal = () => {
   showModalCreateProposal.value = true
+}
+
+const selectedProposal = ref<Proposal | null>(null)
+const showModalProposalDetail = ref(false)
+
+const openProposalDetail = (proposal: Proposal) => {
+  console.log('proposal', proposal)
+  selectedProposal.value = proposal
+  showModalProposalDetail.value = true
+}
+
+const closeDetail = () => {
+  selectedProposal.value = null
 }
 
 // const { $toast } = useNuxtApp()

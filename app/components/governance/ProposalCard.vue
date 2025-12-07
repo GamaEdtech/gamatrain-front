@@ -1,7 +1,6 @@
 <template>
   <div
     class="proposal-card"
-    @click="handleClick"
   >
     <div
       class="governance-proposals__badge"
@@ -172,8 +171,6 @@ const props = defineProps<{
   proposal: Proposal
 }>()
 
-const emits = defineEmits(['select'])
-
 const { $toast } = useNuxtApp()
 const { mdAndUp } = useDisplay()
 const { BN, publicKey, loadingDeleteProposal, deleteProposal, getProposal } = useGovernance()
@@ -240,10 +237,6 @@ const timeRemaining = computed(() => {
   if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} remaining`
   return 'Less than 1 hour remaining'
 })
-
-const handleClick = () => {
-  emits('select', props.proposal)
-}
 
 const requestFund = async () => {
   // Check if user has wallet connected
