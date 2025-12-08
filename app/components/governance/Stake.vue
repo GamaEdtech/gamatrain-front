@@ -328,6 +328,8 @@ const customRules = {
 
 const handleStake = async () => {
   const response = await stakeToken(stakeAmount.value)
+  console.log('reposne', response)
+
   if (response.success) {
     $toast.success(response.message)
     emit('update:showDialog', false)

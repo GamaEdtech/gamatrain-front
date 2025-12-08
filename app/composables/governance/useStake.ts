@@ -113,31 +113,38 @@ export const useStake = () => {
     amount: number,
   ) => {
     const check = checkReqiureMent(['connection', 'program', 'publicKey', 'spl', 'web3'])
+    console.log(1)
+    console.log('check', check)
     if (!check.ok) return { success: false, message: check.message }
 
     const { programChain, userPublicKey, connection, web3, spl } = check
 
     try {
+      console.log(2)
       loadinStakeProccess.value = true
       const rawAmount = Math.floor(amount * 1_000_000)
+      console.log(3)
       const amountBN = new BN.value(rawAmount.toString())
-
+      console.log(4)
       const stakeAccountPda = getStakeAccountPda(userPublicKey, programChain.programId)
+      console.log(5)
       const statsPda = getStatsPda(programChain.programId)
-
+      console.log(6)
       const TOKEN_2022_PROGRAM_ID = new web3.value.PublicKey(
         TOKEN_2022_PROGRAM_ID_STRING,
       )
+      console.log(7)
       const tokenMint = new web3.value.PublicKey(tokenMintString)
-
+      console.log(8)
       const vaultAddress = getVault(programChain.programId)
-
+      console.log(9)
       const userTokenAccount = await spl.value.getAssociatedTokenAddress(
         tokenMint,
         userPublicKey,
         false,
         TOKEN_2022_PROGRAM_ID,
       )
+      console.log(10)
 
       const vaultTokenAccount = await spl.value.getAssociatedTokenAddress(
         tokenMint,
@@ -145,6 +152,7 @@ export const useStake = () => {
         true,
         TOKEN_2022_PROGRAM_ID,
       )
+      console.log(11)
 
       const signature = await programChain.methods
         .stake(amountBN)
@@ -159,8 +167,10 @@ export const useStake = () => {
           systemProgram: web3.value.SystemProgram.programId,
         })
         .rpc({ commitment: 'confirmed' })
+      console.log(12)
 
       await connection.confirmTransaction(signature, 'confirmed')
+      console.log(13)
 
       return {
         success: true,
@@ -169,6 +179,8 @@ export const useStake = () => {
       }
     }
     catch (err) {
+      console.log(14)
+      console.log('error', err)
       return {
         success: false,
         message: 'An unexpected error occurred while processing the staking request.',
