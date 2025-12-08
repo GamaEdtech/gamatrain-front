@@ -163,20 +163,19 @@
             Vote Against
           </v-btn>
         </div>
-        <!-- <div
-    v-else-if="isOwner && isExpired && forPercentage > 50 "
-    class="float-right"
-  >
-    <v-btn
-      size="large"
-      color="green"
-      variant="flat"
-      rounded
-      @click.stop="requestFund()"
-    >
-      Request to fund
-    </v-btn>
-  </div> -->
+        <div
+          v-else-if="isOwner && isExpired && forPercentage > 50 "
+          class="float-right"
+        >
+          <v-btn
+            color="green"
+            variant="outlined"
+            rounded="xl"
+            class="mt-2 text-h5 font-weight-bold"
+          >
+            Request to fund
+          </v-btn>
+        </div>
       </div>
     </div>
   </v-dialog>

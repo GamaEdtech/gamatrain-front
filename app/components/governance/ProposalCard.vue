@@ -101,63 +101,63 @@
           Request to fund
         </v-btn>
       </div>
-    </div>
 
-    <v-dialog
-      v-model="deleteDialog"
-      max-width="500"
-      :fullscreen="!mdAndUp"
-      @click="clickOnOverlay"
-    >
-      <div
-        class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
-        @click="clickOnModal"
+      <v-dialog
+        v-model="deleteDialog"
+        max-width="500"
+        :fullscreen="!mdAndUp"
+        @click="clickOnOverlay"
       >
-        <v-row class="d-flex align-center">
-          <v-col cols="10">
-            <span class="text-h4">Delete Proposal</span>
-          </v-col>
-          <v-col
-            cols="2"
-            class="d-flex align-center justify-end ga-2"
-          >
-            <v-icon
-              size="x-large"
-              color="#D0D5DD"
+        <div
+          class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
+          @click="clickOnModal"
+        >
+          <v-row class="d-flex align-center">
+            <v-col cols="10">
+              <span class="text-h4">Delete Proposal</span>
+            </v-col>
+            <v-col
+              cols="2"
+              class="d-flex align-center justify-end ga-2"
+            >
+              <v-icon
+                size="x-large"
+                color="#D0D5DD"
+                @click="closeModal"
+              >
+                md:close
+              </v-icon>
+            </v-col>
+          </v-row>
+          <span class="text-h5 mt-6">Are you sure you want to delete this proposal? This action cannot be
+            undone.</span>
+          <div class="w-100 mt-4 d-flex ga-2 align-center justify-center">
+            <v-btn
+              color="black"
+              flat
+              variant="text"
+              rounded="lg"
+              max-width="200"
+              class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
               @click="closeModal"
             >
-              md:close
-            </v-icon>
-          </v-col>
-        </v-row>
-        <span class="text-h5 mt-6">Are you sure you want to delete this proposal? This action cannot be
-          undone.</span>
-        <div class="w-100 mt-4 d-flex ga-2 align-center justify-center">
-          <v-btn
-            color="black"
-            flat
-            variant="text"
-            rounded="lg"
-            max-width="200"
-            class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
-            @click="closeModal"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            color="error"
-            flat
-            rounded="lg"
-            max-width="200"
-            class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
-            :loading="loadingDeleteProposal"
-            @click="confirmDelete"
-          >
-            Delete
-          </v-btn>
+              Cancel
+            </v-btn>
+            <v-btn
+              color="error"
+              flat
+              rounded="lg"
+              max-width="200"
+              class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+              :loading="loadingDeleteProposal"
+              @click="confirmDelete"
+            >
+              Delete
+            </v-btn>
+          </div>
         </div>
-      </div>
-    </v-dialog>
+      </v-dialog>
+    </div>
   </div>
 </template>
 
@@ -239,19 +239,6 @@ const timeRemaining = computed(() => {
 })
 
 const requestFund = async () => {
-  // Check if user has wallet connected
-//   if (!props.userPublicKey) {
-//     emits('walletRequired')
-//     return
-//   }
-
-  //   try {
-  //     emits('requestFund')
-  //   }
-  //   catch (error) {
-  //     handleError(error, 'Failed to request fund', false)
-  //   }
-  // }
 }
 
 const deleteDialog = ref(false)
