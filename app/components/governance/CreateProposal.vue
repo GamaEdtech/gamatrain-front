@@ -11,7 +11,7 @@
         class="min-h-full"
         @submit.prevent="onSubmit"
       >
-        <v-card>
+        <v-card :class="`${smAndUp ? `rounded-xl`:`rounded-0`}`">
           <div class="px-4 py-4 d-flex justify-space-between align-center">
             <span
               class="text-h4 font-weight-bold"

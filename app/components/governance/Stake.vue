@@ -2,8 +2,13 @@
   <v-dialog
     v-model="dialogModel"
     max-width="600"
+    :fullscreen="!mdAndUp"
+    @click="clickOnOverlay"
   >
-    <v-sheet class="rounded-lg">
+    <v-sheet
+      class="rounded-lg mobile-style"
+      @click="clickOnModal"
+    >
       <v-tabs
         v-model="tab"
         fixed-tabs
@@ -26,7 +31,7 @@
         <!-- Stake Tab -->
         <v-window-item value="stake">
           <v-card flat>
-            <v-card-text class="pa-6">
+            <v-card-text class="pa-3 pa-sm-6">
               <div class="mb-4">
                 <h3 class="text-h5 font-weight-bold mb-2">
                   Stake $GET Tokens
@@ -59,14 +64,14 @@
                     v-if="userStakeInformation.pendingRewards && userStakeInformation.pendingRewards > 0"
                     class="d-flex justify-space-between"
                   >
-                    <span class="font-size-12 text-success">🎁 Pending Rewards:</span>
+                    <span class="font-size-12 text-success d-flex align-center ga-1"><v-icon>md:featured_seasonal_and_gifts</v-icon> Pending Rewards:</span>
                     <span class="font-weight-bold font-size-12 text-success">{{ $numberFormat(userStakeInformation.pendingRewards) }} $GET</span>
                   </div>
                   <div
                     v-if="!userStakeInformation.pendingRewards || userStakeInformation.pendingRewards === 0"
                     class="d-flex justify-space-between"
                   >
-                    <span class="font-size-12 text-grey">💡 Tip: Vote on proposals to earn rewards!</span>
+                    <span class="font-size-12 text-grey">Tip: Vote on proposals to earn rewards!</span>
                   </div>
                 </div>
               </v-alert>
@@ -116,7 +121,7 @@
         <!-- Unstake Tab -->
         <v-window-item value="unstake">
           <v-card flat>
-            <v-card-text class="pa-6">
+            <v-card-text class="pa-3 pa-sm-6">
               <div class="mb-4">
                 <h3 class="text-h5 font-weight-bold mb-2">
                   Unstake $GET Tokens
@@ -151,7 +156,7 @@
                     v-if="userStakeInformation.pendingRewards && userStakeInformation.pendingRewards > 0"
                     class="d-flex justify-space-between"
                   >
-                    <span class="font-size-12 text-success">🎁 Pending Rewards:</span>
+                    <span class="font-size-12 text-success d-flex align-center ga-1"><v-icon>md:featured_seasonal_and_gifts</v-icon> Pending Rewards:</span>
                     <span class="font-weight-bold font-size-12 text-success">{{ $numberFormat(userStakeInformation.pendingRewards) }} $GET</span>
                   </div>
                 </div>
@@ -206,7 +211,7 @@
         <!-- Claim Tab -->
         <v-window-item value="claim">
           <v-card flat>
-            <v-card-text class="pa-6">
+            <v-card-text class="pa-3 pa-sm-6">
               <div class="mb-4">
                 <h3 class="text-h5 font-weight-bold mb-2">
                   Claim Unstaked Tokens
@@ -281,9 +286,11 @@
 <script setup lang="ts">
 import { useValidationRules } from '~/composables/useValidationRules'
 import { useGovernance } from '~/composables/governance/useGovernance'
+import { useDisplay } from 'vuetify'
 
 const { userStakeInformation, tokenBalance, stakeToken, loadinStakeProccess, getUserStakeInformation, getStatsInformation, loadingUnstakeProcess, unstakeToken, isCooldownComplete, getRemainingCooldown, claimToken, loadingClaimProcess } = useGovernance()
 const { $toast } = useNuxtApp()
+const { mdAndUp } = useDisplay()
 const tab = ref('stake')
 
 const props = defineProps({
@@ -298,6 +305,15 @@ const dialogModel = computed({
   get: () => props.showDialog,
   set: value => emit('update:showDialog', value),
 })
+
+const clickOnOverlay = () => {
+  if (!mdAndUp.value) {
+    emit('update:showDialog', false)
+  }
+}
+const clickOnModal = (event: Event) => {
+  event.stopPropagation()
+}
 
 const stakeAmount = ref<number>(0)
 const stakeFormValid = ref(false)
@@ -321,6 +337,7 @@ const handleStake = async () => {
   else {
     $toast.error(response.message)
   }
+  stakeAmount.value = 0
 }
 
 const unstakeAmount = ref<number>(0)
@@ -336,6 +353,7 @@ const handleUnstake = async () => {
   else {
     $toast.error(response.message)
   }
+  unstakeAmount.value = 0
 }
 
 const cooldownComplete = computed(() => {
@@ -366,5 +384,15 @@ const handleClaim = async () => {
 <style scoped>
 .v-window-item {
   min-height: 400px;
+}
+
+@media only screen and (max-width: 960px) {
+  .mobile-style {
+    position: absolute;
+    bottom: 0;
+    border-radius: 24px 24px 0 0 !important;
+     height: 60% !important;
+    min-height: 60% !important;
+  }
 }
 </style>
