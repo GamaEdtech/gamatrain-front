@@ -230,6 +230,11 @@ const isExpired = computed(() => {
   return isProposalExpired(props.proposal.account.expiresAt)
 })
 
+const isOwner = computed(() => {
+  if (!publicKey.value || !props.proposal?.account?.owner) return false
+  return props.proposal.account.owner.equals(publicKey.value)
+})
+
 const totalVotes = computed(() => {
   if (!props.proposal?.account) return 0
   const agreeVotes = props.proposal.account.agreeVotes || new BN.value(0)

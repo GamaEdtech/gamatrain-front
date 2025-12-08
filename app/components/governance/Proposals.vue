@@ -195,6 +195,9 @@ const closeDetail = () => {
 </script>
 
 <style>
+.swv-button{
+  column-gap: 8px;
+}
 .proposals-header {
   display: flex;
   align-items: center;
