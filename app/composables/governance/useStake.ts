@@ -153,6 +153,9 @@ export const useStake = () => {
         TOKEN_2022_PROGRAM_ID,
       )
       console.log(11)
+      console.log('phantom public key', window.solana?.publicKey?.toBase58())
+      console.log('workspace public key 1', userPublicKey)
+      console.log('workspace public key 2', publicKey.value?.toBase58())
 
       const signature = await programChain.methods
         .stake(amountBN)
