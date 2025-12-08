@@ -123,11 +123,30 @@ async function initWalletAndSync(ws: WorkspaceState) {
     ws.connected.value = walletStore.connected?.value ?? false
     ws.publicKey.value = walletStore.publicKey?.value ?? null
 
+    watch(
+      () => ws.wallet.value,
+      () => {
+        console.log('watch in wallet', ws.wallet.value)
+        initProvider(ws)
+        initProgram(ws)
+      },
+    )
+    watch(
+      () => ws.provider.value,
+      () => {
+        console.log('watch in provider', ws.provider.value)
+        initProgram(ws)
+      },
+    )
+
     watch(() => walletStore.connected.value, (v) => {
+      console.log('watch in connected wallet', v)
+
       ws.connected.value = v
     })
 
     watch(() => walletStore.publicKey.value, (v) => {
+      console.log('watch in public key wallet', v)
       ws.publicKey.value = v
     })
   }
