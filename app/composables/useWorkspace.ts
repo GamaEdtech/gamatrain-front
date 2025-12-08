@@ -84,6 +84,11 @@ async function initialize(ws: WorkspaceState) {
 }
 
 async function initLibraries(ws: WorkspaceState) {
+  const buffer = await import('buffer')
+  if (typeof window !== 'undefined' && !window.Buffer) {
+    window.Buffer = buffer.Buffer
+  }
+
   const [anchorLib, wallets, web3Lib, splLib] = await Promise.all([
     import('@coral-xyz/anchor'),
     import('solana-wallets-vue'),
@@ -91,8 +96,7 @@ async function initLibraries(ws: WorkspaceState) {
     import('@solana/spl-token'),
   ])
 
-  // ws.Buffer.value = buffer.Buffer
-
+  ws.Buffer.value = buffer.Buffer
   ws.anchor.value = anchorLib
   ws.walletLibrary.value = wallets
   ws.web3.value = web3Lib
