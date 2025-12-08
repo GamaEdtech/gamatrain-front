@@ -1,18 +1,19 @@
 import type { PublicKey } from '@solana/web3.js'
+import { Buffer } from 'buffer'
 
 export const usePDA = () => {
-  const { web3, BN, Buffer } = useWorkspace()
+  const { web3, BN } = useWorkspace()
 
   const getVault = (programId: PublicKey) => {
     const [vaultAuthority] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.value!.from('vault-authority')],
+      [Buffer.from('vault-authority')],
       programId,
     )
     return vaultAuthority
   }
   const getStakeAccountPda = (userPublicKey: PublicKey, programId: PublicKey) => {
     const [stakeAccountPda] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.value!.from('stake_account'), userPublicKey.toBuffer()],
+      [Buffer.from('stake_account'), userPublicKey.toBuffer()],
       programId,
     )
     return stakeAccountPda
@@ -20,7 +21,7 @@ export const usePDA = () => {
 
   const getStatsPda = (programId: PublicKey) => {
     const [statsPda] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.value!.from('stats')],
+      [Buffer.from('stats')],
       programId,
     )
     return statsPda
@@ -29,7 +30,7 @@ export const usePDA = () => {
   const getVoteRecordPda = (userPublicKey: PublicKey, programId: PublicKey, proposalPublicKey: PublicKey) => {
     const [voteRecordPDA] = web3.value!.PublicKey.findProgramAddressSync(
       [
-        Buffer.value!.from('vote-record'),
+        Buffer.from('vote-record'),
         proposalPublicKey.toBuffer(),
         userPublicKey.toBuffer(),
       ],
@@ -41,7 +42,7 @@ export const usePDA = () => {
 
   const getUserStatePda = (userPublicKey: PublicKey, programId: PublicKey) => {
     const [userStatePda] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.value!.from('user_state'), userPublicKey.toBuffer()],
+      [Buffer.from('user_state'), userPublicKey.toBuffer()],
       programId,
     )
     return userStatePda
@@ -50,9 +51,9 @@ export const usePDA = () => {
   const getProposalPda = (userPublicKey: PublicKey, programId: PublicKey, proposalCount: number) => {
     const [proposalPda] = web3.value!.PublicKey.findProgramAddressSync(
       [
-        Buffer.value!.from('proposal'),
+        Buffer.from('proposal'),
         userPublicKey.toBuffer(),
-        new BN.value(proposalCount).toArrayLike(Buffer.value, 'le', 8),
+        new BN.value(proposalCount).toArrayLike(Buffer, 'le', 8),
       ],
       programId,
     )
