@@ -27,7 +27,7 @@ const loadingUnstakeProcess = ref(false)
 const loadingClaimProcess = ref(false)
 
 export const useStake = () => {
-  const { program, publicKey, web3, initPromise, BN, connection, splToken } = useWorkspace()
+  const { program, publicKey, web3, initPromise, BN, connection, splToken, connected } = useWorkspace()
   const TOKEN_2022_PROGRAM_ID_STRING = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
   const config = useRuntimeConfig()
   const tokenMintString = config.public.solanaTokenMint as string
@@ -333,11 +333,17 @@ export const useStake = () => {
       : cooldownEnd.from(now) + ' remaining'
   }
 
-  onMounted(async () => {
-    callOnce(async () => {
-      await initPromise
-      await getUserStakeInformation()
-    })
+  callOnce(() => {
+    watch(connected, async (newVal, oldVal) => {
+      if (newVal === oldVal) return
+      if (newVal === true) {
+        await initPromise
+        await getUserStakeInformation()
+      }
+      else {
+        userStakeInformation.value = null
+      }
+    }, { immediate: false })
   })
 
   return { userStakeInformation, loadingStakeInformation, getUserStakeInformation, stakeToken, loadinStakeProccess, unstakeToken, loadingUnstakeProcess, isCooldownComplete, getRemainingCooldown, claimToken, loadingClaimProcess }

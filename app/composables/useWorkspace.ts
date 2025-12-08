@@ -90,14 +90,15 @@ async function initLibraries(ws: WorkspaceState) {
     import('@solana/spl-token'),
   ])
 
+  if (typeof window !== 'undefined' && !window.Buffer) {
+    window.Buffer = buffer.Buffer
+  }
+
   ws.anchor.value = anchorLib
   ws.walletLibrary.value = wallets
   ws.web3.value = web3Lib
   ws.splToken.value = splLib
   ws.BN.value = anchorLib.BN ?? null
-  if (typeof window !== 'undefined' && !window.Buffer) {
-    window.Buffer = buffer.Buffer
-  }
 }
 
 async function initConnection(ws: WorkspaceState) {
