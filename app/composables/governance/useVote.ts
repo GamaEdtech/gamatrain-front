@@ -2,6 +2,7 @@ import type { Program } from '@coral-xyz/anchor'
 import type { Connection, PublicKey } from '@solana/web3.js'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
 import type { VoteRecord } from '~/types/governance'
+import { usePDA } from './usePDA'
 
 type Web3LibraryType = typeof import('@solana/web3.js')
 
@@ -21,6 +22,7 @@ const laodingVoteProcess = ref(false)
 
 export const useVote = () => {
   const { program, web3, initPromise, connection, publicKey } = useWorkspace()
+  const { getVoteRecordPda, getStakeAccountPda, getStatsPda } = usePDA()
 
   const checkReqiureMent = (required: RequirementKey[] = ['program', 'publicKey', 'connection', 'web3']): CheckRequirementResult => {
     const programChain = program?.value
@@ -51,35 +53,6 @@ export const useVote = () => {
       web3: web3,
       message: 'All requirement is ready.',
     } as CheckRequirementResult
-  }
-
-  const getStakeAccountPda = (userPublicKey: PublicKey, programId: PublicKey) => {
-    const [stakeAccountPda] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.from('stake_account'), userPublicKey.toBuffer()],
-      programId,
-    )
-    return stakeAccountPda
-  }
-
-  const getStatsPda = (programId: PublicKey) => {
-    const [statsPda] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.from('stats')],
-      programId,
-    )
-    return statsPda
-  }
-
-  const getVoteRecordPda = (userPublicKey: PublicKey, programId: PublicKey, proposalPublicKey: PublicKey) => {
-    const [voteRecordPDA] = web3.value!.PublicKey.findProgramAddressSync(
-      [
-        Buffer.from('vote-record'),
-        proposalPublicKey.toBuffer(),
-        userPublicKey.toBuffer(),
-      ],
-      programId,
-    )
-
-    return voteRecordPDA
   }
 
   const getVoteInformationProposal = async (proposalPublicKey: PublicKey): Promise<VoteRecord | null> => {

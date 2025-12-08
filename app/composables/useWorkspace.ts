@@ -22,6 +22,7 @@ interface WorkspaceState {
   splToken: Ref<splTokenLibraryType | null>
   anchor: Ref<anchorLibraryType | null>
   walletLibrary: Ref<walletVueLibraryType | null>
+  Buffer: Ref<typeof Buffer | null>
   initPromise: Promise<void> | null
 }
 
@@ -48,6 +49,7 @@ export const useWorkspace = () => {
     splToken: ref(null),
     anchor: ref(null),
     walletLibrary: ref(null),
+    Buffer: ref(null),
     initPromise: null,
   }
 
@@ -90,10 +92,7 @@ async function initLibraries(ws: WorkspaceState) {
     import('@solana/spl-token'),
   ])
 
-  if (typeof window !== 'undefined' && !window.Buffer) {
-    window.Buffer = buffer.Buffer
-  }
-
+  ws.Buffer.value = buffer.Buffer
   ws.anchor.value = anchorLib
   ws.walletLibrary.value = wallets
   ws.web3.value = web3Lib

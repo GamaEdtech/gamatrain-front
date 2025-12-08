@@ -2,6 +2,7 @@ import type { Program } from '@coral-xyz/anchor'
 import type { Connection, PublicKey } from '@solana/web3.js'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
 import type { Proposal, ProposalFormData } from '~/types/governance'
+import { usePDA } from './usePDA'
 
 type Web3LibraryType = typeof import('@solana/web3.js')
 
@@ -25,6 +26,7 @@ const loadingDeleteProposal = ref(false)
 
 export const useProposal = () => {
   const { program, web3, initPromise, connection, publicKey, BN } = useWorkspace()
+  const { getUserStatePda, getProposalPda, getStakeAccountPda, getStatsPda } = usePDA()
 
   const checkReqiureMent = (required: RequirementKey[] = ['program', 'publicKey', 'connection', 'web3']): CheckRequirementResult => {
     const programChain = program?.value
@@ -55,43 +57,6 @@ export const useProposal = () => {
       web3: web3,
       message: 'All requirement is ready.',
     } as CheckRequirementResult
-  }
-
-  const getUserStatePda = (userPublicKey: PublicKey, programId: PublicKey) => {
-    const [userStatePda] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.from('user_state'), userPublicKey.toBuffer()],
-      programId,
-    )
-    return userStatePda
-  }
-
-  const getStakeAccountPda = (userPublicKey: PublicKey, programId: PublicKey) => {
-    const [stakeAccountPda] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.from('stake_account'), userPublicKey.toBuffer()],
-      programId,
-    )
-    return stakeAccountPda
-  }
-
-  const getStatsPda = (programId: PublicKey) => {
-    const [statsPda] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.from('stats')],
-      programId,
-    )
-    return statsPda
-  }
-
-  const getProposalPda = (userPublicKey: PublicKey, programId: PublicKey, proposalCount: number) => {
-    const [proposalPda] = web3.value!.PublicKey.findProgramAddressSync(
-      [
-        Buffer.from('proposal'),
-        userPublicKey.toBuffer(),
-        new BN.value(proposalCount).toArrayLike(Buffer, 'le', 8),
-      ],
-      programId,
-    )
-
-    return proposalPda
   }
 
   const getProposal = async () => {

@@ -2,6 +2,7 @@ import type { Stats } from '~/types/governance'
 import type { Program } from '@coral-xyz/anchor'
 import type { Connection, PublicKey } from '@solana/web3.js'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
+import { usePDA } from './usePDA'
 
 type Web3LibraryType = typeof import('@solana/web3.js')
 
@@ -22,6 +23,7 @@ type RequirementKey = 'program' | 'publicKey' | 'connection' | 'web3'
 
 export const useStats = () => {
   const { program, initPromise, web3, connection, publicKey } = useWorkspace()
+  const { getStatsPda } = usePDA()
 
   const checkReqiureMent = (required: RequirementKey[] = ['program', 'publicKey', 'connection', 'web3']): CheckRequirementResult => {
     const programChain = program?.value
@@ -58,14 +60,11 @@ export const useStats = () => {
     const check = checkReqiureMent(['program', 'web3'])
     if (!check.ok) return { success: false, message: check.message }
 
-    const { programChain, web3 } = check
+    const { programChain } = check
 
     try {
       loadingStats.value = true
-      const [statsPda] = web3.value.PublicKey.findProgramAddressSync(
-        [Buffer.from('stats')],
-        programChain.programId,
-      )
+      const statsPda = getStatsPda(programChain.programId)
 
       const statsInfo = await programChain.account['stats'].fetch(statsPda)
 

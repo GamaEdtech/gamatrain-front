@@ -2,6 +2,7 @@ import type { Program } from '@coral-xyz/anchor'
 import type { Connection, PublicKey } from '@solana/web3.js'
 import type { StakeAccount } from '~/types/governance'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
+import { usePDA } from './usePDA'
 
 type Web3LibraryType = typeof import('@solana/web3.js')
 type splTokenLibraryType = typeof import('@solana/spl-token')
@@ -28,34 +29,11 @@ const loadingClaimProcess = ref(false)
 
 export const useStake = () => {
   const { program, publicKey, web3, initPromise, BN, connection, splToken, connected } = useWorkspace()
+  const { getVault, getStakeAccountPda, getStatsPda } = usePDA()
   const TOKEN_2022_PROGRAM_ID_STRING = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
   const config = useRuntimeConfig()
   const tokenMintString = config.public.solanaTokenMint as string
   const dayjs = useDayjs()
-
-  const getVault = (programId: PublicKey) => {
-    const [vaultAuthority] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.from('vault-authority')],
-      programId,
-    )
-    return vaultAuthority
-  }
-
-  const getStakeAccountPda = (userPublicKey: PublicKey, programId: PublicKey) => {
-    const [stakeAccountPda] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.from('stake_account'), userPublicKey.toBuffer()],
-      programId,
-    )
-    return stakeAccountPda
-  }
-
-  const getStatsPda = (programId: PublicKey) => {
-    const [statsPda] = web3.value!.PublicKey.findProgramAddressSync(
-      [Buffer.from('stats')],
-      programId,
-    )
-    return statsPda
-  }
 
   const checkReqiureMent = (required: RequirementKey[] = ['program', 'publicKey', 'connection', 'web3']): CheckRequirementResult => {
     const programChain = program?.value
