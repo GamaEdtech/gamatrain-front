@@ -95,7 +95,11 @@ export const useStake = () => {
 
   const getUserStakeInformation = async () => {
     const check = checkReqiureMent()
-    if (!check.ok) return { success: false, message: check.message }
+    if (!check.ok) {
+      console.log(3)
+      loadingStakeInformation.value = false
+      return { success: false, message: check.message }
+    }
 
     const { programChain, userPublicKey } = check
 
@@ -342,8 +346,9 @@ export const useStake = () => {
       }
       else {
         userStakeInformation.value = null
+        loadingStakeInformation.value = false
       }
-    }, { immediate: false })
+    }, { immediate: true })
   })
 
   return { userStakeInformation, loadingStakeInformation, getUserStakeInformation, stakeToken, loadinStakeProccess, unstakeToken, loadingUnstakeProcess, isCooldownComplete, getRemainingCooldown, claimToken, loadingClaimProcess }

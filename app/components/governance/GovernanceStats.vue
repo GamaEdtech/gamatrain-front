@@ -25,11 +25,25 @@
           </div>
           <div v-else>
             <div
+              v-if="stat.title != `Your Staked`"
               class="governance-stat-value primary-gray-700 text-h6 text-md-h5"
             >
               {{ $numberFormat(Math.ceil(stat.value ?? 0)) }}
               <span class="unit primary-gray-500 text-subtitle-1">
                 {{ stat.subtitle }}</span>
+            </div>
+            <div
+              v-else
+              class="governance-stat-value primary-gray-700 text-h6 text-md-h5"
+            >
+              <template v-if="stat.value != null">
+                {{ $numberFormat(Math.ceil(stat.value ?? 0)) }}
+                <span class="unit primary-gray-500 text-subtitle-1">
+                  {{ stat.subtitle }}</span>
+              </template>
+              <template v-else>
+                Connect Wallet
+              </template>
             </div>
             <div
               class="governance-stat-label primary-gray-500 text-subtitle-2 text-md-h6"
