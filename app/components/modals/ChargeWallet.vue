@@ -1,51 +1,47 @@
 <template>
   <div class="w-100 d-flex flex-column align-center justify-center">
-    <div
-      class="balance-info pa-4 rounded-lg d-flex align-center justify-center ga-2 mt-4"
-    >
-      <span>
-        It’s part of the game. You need <strong>5</strong> $GET to download this file, but your current balance is  <strong>{{ formatNumber(userBalance/1000000) }} $GET</strong>, which isn’t enough. You have two options:
-      </span>
-    </div>
-    <div
-      class="w-100 d-flex align-center justify-center position-relative mt-8"
-    >
-      <div class="line-or" />
-      <span class="primary-gray-500 font-weight-bold text-h5 position-absolute">First, an easy way</span>
-    </div>
-    <div class="w-100 d-flex justify-space-between mt-8">
-      <div
-        class="earn-free d-flex flex-column align-center justify-start ga-2"
+    <div class="w-100 d-flex flex-column align-center justify-center mt-8">
+      <img
+        width="100"
+        height="100"
+        src="/images/gama-coin.svg"
+        alt="GAMA coin"
       >
-        <v-icon color="#98A2B3">
-          md:language
-        </v-icon>
-        <span class="text-primary text-h6 font-weight-bold">Browse Website</span>
-        <span class="primary-gray-500 text-h6 text-center">Explore pages and discover content</span>
-      </div>
+      <span class="font-weight-bold text-h4 mt-4">Earn Coins for Free:</span>
+      <div class="w-100 d-flex justify-space-between mt-4">
+        <div
+          class="earn-free d-flex flex-column align-center justify-start ga-2"
+        >
+          <v-icon color="#98A2B3">
+            md:language
+          </v-icon>
+          <span class="text-primary text-h6 font-weight-bold">Browse Website</span>
+          <span class="primary-gray-500 text-h6 text-center">Explore pages and discover content</span>
+        </div>
 
-      <div class="line-seperator" />
+        <div class="line-seperator" />
 
-      <div
-        class="earn-free d-flex flex-column align-center justify-start ga-2"
-      >
-        <v-icon color="#98A2B3">
-          md:psychology
-        </v-icon>
-        <span class="text-primary text-h6 font-weight-bold">Take Quizzes</span>
-        <span class="primary-gray-500 text-h6 text-center">Test your knowledge and learn</span>
-      </div>
+        <div
+          class="earn-free d-flex flex-column align-center justify-start ga-2"
+        >
+          <v-icon color="#98A2B3">
+            md:psychology
+          </v-icon>
+          <span class="text-primary text-h6 font-weight-bold">Take Quizzes</span>
+          <span class="primary-gray-500 text-h6 text-center">Test your knowledge and learn</span>
+        </div>
 
-      <div class="line-seperator" />
+        <div class="line-seperator" />
 
-      <div
-        class="earn-free d-flex flex-column align-center justify-start ga-2"
-      >
-        <v-icon color="#98A2B3">
-          md:stadia_controller
-        </v-icon>
-        <span class="text-primary text-h6 font-weight-bold">Play Games</span>
-        <span class="primary-gray-500 text-h6 text-center">Have fun while earning rewards</span>
+        <div
+          class="earn-free d-flex flex-column align-center justify-start ga-2"
+        >
+          <v-icon color="#98A2B3">
+            md:stadia_controller
+          </v-icon>
+          <span class="text-primary text-h6 font-weight-bold">Play Games</span>
+          <span class="primary-gray-500 text-h6 text-center">Have fun while earning rewards</span>
+        </div>
       </div>
     </div>
 
@@ -64,6 +60,16 @@
       <span class="text-h5 mt-4 text-center">
         You need Charge Your Wallet
       </span>
+
+      <div
+        class="balance-info pa-4 rounded-lg d-flex align-center justify-center ga-2 mt-4"
+      >
+        <v-icon color="primary">
+          md:wallet
+        </v-icon>
+        <span>Your current balance:
+          <strong>{{ formatNumber(userBalance) }} points</strong></span>
+      </div>
     </div>
 
     <div class="w-100 d-flex align-center justify-center mt-6 recharge-input">
@@ -523,7 +529,7 @@ const startProccessPayment = async () => {
     try {
       loadingPayment.value = true
       const params = {
-        amount: amount.value * 10 ** selectedCurrency.value.decimals,
+        amount: amount.value,
         currency: selectedCurrency.value.name,
       }
       const responsePayment = await useApiService.post(
@@ -552,9 +558,6 @@ const startProccessPayment = async () => {
       $toast.error(
         'We’re unable to process your payment at the moment. Please try again in a few minutes',
       )
-    }
-    finally {
-      disablePayment.value = false
     }
   }
   else {
