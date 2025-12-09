@@ -105,20 +105,25 @@ async function initLibraries(ws: WorkspaceState) {
 }
 
 async function initConnection(ws: WorkspaceState) {
+  console.log('initConnection')
+
   const config = useRuntimeConfig()
   const rpcUrl = config.public?.solanaRpcUrl ?? 'https://api.devnet.solana.com'
   if (ws.web3.value) {
     ws.connection.value = new ws.web3.value.Connection(rpcUrl, COMMITMENT)
+    console.log('connection', ws.connection.value)
   }
 }
 
 async function initWalletAndSync(ws: WorkspaceState) {
   if (ws.walletLibrary.value) {
+    console.log('initWalletAndSync')
     const { useAnchorWallet, useWallet } = ws.walletLibrary.value
     const anchorWallet = useAnchorWallet()
     const walletStore = useWallet()
 
     ws.wallet.value = anchorWallet.value
+    console.log('in initWalletAndSync', ws.wallet.value)
 
     ws.connected.value = walletStore.connected?.value ?? false
     ws.publicKey.value = walletStore.publicKey?.value ?? null
@@ -154,12 +159,14 @@ async function initWalletAndSync(ws: WorkspaceState) {
 
 async function initProvider(ws: WorkspaceState) {
   if (ws.anchor.value) {
+    console.log('initProvider')
     const AnchorProvider = ws.anchor.value.AnchorProvider
 
     const connection = ws.connection.value
     if (!connection) throw new Error('Connection not initialized for provider')
 
     const walletInstance = ws.wallet.value
+    console.log('initProvider 2 ', walletInstance)
 
     if (!walletInstance && ws.web3.value) {
       const dummyKeypair = ws.anchor.value.web3.Keypair.generate()
@@ -170,15 +177,18 @@ async function initProvider(ws: WorkspaceState) {
         async signAllTransactions() { throw new Error('Wallet not connected') },
       }
       ws.provider.value = new AnchorProvider(connection, dummy, { preflightCommitment: PREFLIGHT, commitment: COMMITMENT })
+      console.log('dummy wallet', ws.provider.value)
       return
     }
 
     ws.provider.value = new AnchorProvider(connection, walletInstance as Wallet, { preflightCommitment: PREFLIGHT, commitment: COMMITMENT })
+    console.log('real wallet', ws.provider.value)
   }
 }
 
 async function initProgram(ws: WorkspaceState) {
   if (!ws.provider.value) {
+    console.log('not find provider')
     ws.program.value = null
     return
   }
@@ -187,6 +197,7 @@ async function initProgram(ws: WorkspaceState) {
       const rawIdl = await import('~/idl/gamaedtech_program.json')
       const idlJson = rawIdl.default ?? rawIdl
       ws.program.value = new ws.anchor.value.Program<GamaedtechProgram>(idlJson as GamaedtechProgram, ws.provider.value)
+      console.log('program', ws.program.value)
     }
     catch (err) {
       console.error('[workspace] failed to create program', err)
