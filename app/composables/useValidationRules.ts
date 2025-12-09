@@ -135,6 +135,12 @@ export const useValidationRules = () => {
     || allowedTypes.includes(v.type)
     || `File type must be one of: ${allowedTypes.join(', ')}`
 
+  // Solana wallet address validation
+  const solanaWalletAddress = (v: string) =>
+    !v
+    || /^[1-9A-HJ-NP-Za-km-z]{32,44}$/.test(v)
+    || 'Invalid Solana wallet address'
+
   // Combine multiple rules
   const combine = (...rules: Array<(v: unknown) => boolean | string>) =>
     (v: unknown) => {
@@ -200,5 +206,8 @@ export const useValidationRules = () => {
 
     // Utility
     combine,
+
+    // Solana Wallet Address
+    solanaWalletAddress,
   }
 }
