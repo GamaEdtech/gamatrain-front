@@ -70,8 +70,8 @@ async function initialize(ws: WorkspaceState) {
     await initLibraries(ws)
     await initConnection(ws)
     await initWalletAndSync(ws)
-    await initProvider(ws)
-    await initProgram(ws)
+    // await initProvider(ws)
+    // await initProgram(ws)
   }
   catch (err) {
     console.error('[workspace] initialize error:', err)
@@ -130,17 +130,19 @@ async function initWalletAndSync(ws: WorkspaceState) {
 
     watch(
       () => ws.wallet.value,
-      () => {
-        console.log('watch in wallet', ws.wallet.value)
+      (newWallet) => {
+        console.log('watch in wallet', ws.wallet.value, newWallet)
+        // initProvider(ws)
+        // initProgram(ws)
         initProvider(ws)
-        initProgram(ws)
       },
     )
     watch(
       () => ws.provider.value,
-      () => {
+      (provider) => {
         console.log('watch in provider', ws.provider.value)
-        initProgram(ws)
+        // initProgram(ws)
+        if (provider) initProgram(ws)
       },
     )
 
