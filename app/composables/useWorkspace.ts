@@ -151,6 +151,10 @@ async function initWalletAndSync(ws: WorkspaceState) {
 
       ws.connected.value = v
       if (v) {
+        const anchorWallet = useAnchorWallet()
+        ws.wallet.value = anchorWallet.value
+        console.log('in connected watch check wallet', ws.wallet.value)
+
         await initProvider(ws)
         await initProgram(ws)
       }
