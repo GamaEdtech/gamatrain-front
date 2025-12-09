@@ -48,6 +48,7 @@
     "nuxt": "^4.2.1",
     "nuxt-og-image": "^5.1.9",
     "pdfjs-dist": "^5.4.54",
+    "qrcode.vue": "^3.6.0",
     "solana-wallets-vue": "^0.7.1",
     "three": "^0.175.0",
     "three-custom-shader-material": "^6.3.7",
