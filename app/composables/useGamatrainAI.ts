@@ -234,34 +234,9 @@ export const useGamatrainAI = () => {
     }
   }
 
-  /**
-   * Check if AI service is healthy
-   */
-  const checkHealth = async () => {
-    try {
-      if (aiMode.value === 'vps') {
-        // VPS: Just try the base URL
-        await $fetch(`${apiBaseUrl.value}`, {
-          method: 'GET',
-        })
-      }
-      else {
-        // Local: Use /api/tags
-        await $fetch(`${apiBaseUrl.value}/api/tags`, {
-          method: 'GET',
-        })
-      }
-      return true
-    }
-    catch {
-      return false
-    }
-  }
-
   return {
     generate,
     chat,
-    checkHealth,
     loading: readonly(loading),
     error: readonly(error),
     apiBaseUrl,
