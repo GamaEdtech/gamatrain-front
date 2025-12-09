@@ -70,8 +70,8 @@ async function initialize(ws: WorkspaceState) {
     await initLibraries(ws)
     await initConnection(ws)
     await initWalletAndSync(ws)
-    // await initProvider(ws)
-    // await initProgram(ws)
+    await initProvider(ws)
+    await initProgram(ws)
   }
   catch (err) {
     console.error('[workspace] initialize error:', err)
@@ -128,28 +128,32 @@ async function initWalletAndSync(ws: WorkspaceState) {
     ws.connected.value = walletStore.connected?.value ?? false
     ws.publicKey.value = walletStore.publicKey?.value ?? null
 
-    watch(
-      () => ws.wallet.value,
-      (newWallet) => {
-        console.log('watch in wallet', ws.wallet.value, newWallet)
-        // initProvider(ws)
-        // initProgram(ws)
-        initProvider(ws)
-      },
-    )
-    watch(
-      () => ws.provider.value,
-      (provider) => {
-        console.log('watch in provider', ws.provider.value)
-        // initProgram(ws)
-        if (provider) initProgram(ws)
-      },
-    )
+    // watch(
+    //   () => ws.wallet.value,
+    //   (newWallet) => {
+    //     console.log('watch in wallet', ws.wallet.value, newWallet)
+    //     // initProvider(ws)
+    //     // initProgram(ws)
+    //     initProvider(ws)
+    //   },
+    // )
+    // watch(
+    //   () => ws.provider.value,
+    //   (provider) => {
+    //     console.log('watch in provider', ws.provider.value)
+    //     // initProgram(ws)
+    //     if (provider) initProgram(ws)
+    //   },
+    // )
 
-    watch(() => walletStore.connected.value, (v) => {
+    watch(() => walletStore.connected.value, async (v) => {
       console.log('watch in connected wallet', v)
 
       ws.connected.value = v
+      if (v) {
+        await initProvider(ws)
+        await initProgram(ws)
+      }
     })
 
     watch(() => walletStore.publicKey.value, (v) => {
