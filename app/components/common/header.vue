@@ -44,9 +44,10 @@ const menuLink = [
     icon: '',
   },
   {
-    title: 'About us',
-    link: '/about-us',
-    icon: '',
+    title: 'AI Assistant',
+    link: '/ai',
+    icon: 'mdi-robot-happy-outline',
+    badge: 'Beta',
   },
   // {
   //   title: 'Services',
@@ -319,12 +320,21 @@ const openNavigationMenu = () => {
                   >
                     <v-icon
                       v-if="link.icon"
-                      class="mb-2 mr-1"
+                      class="mr-1"
+                      size="20"
                       color="#FFB300"
                     >
                       {{ link.icon }}
                     </v-icon>
                     {{ link.title }}
+                    <v-chip
+                      v-if="link.badge"
+                      color="primary"
+                      class="ml-1"
+                      density="compact"
+                    >
+                      {{ link.badge }}
+                    </v-chip>
                   </v-btn>
                 </div>
               </div>
