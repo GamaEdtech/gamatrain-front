@@ -25,7 +25,7 @@ const tokenBalance = ref<number | null>(null)
 const loadingTokenBalance = ref(false)
 
 export const useGovernance = () => {
-  const { publicKey, web3, initPromise, connection, connected, BN, program } = useWorkspace()
+  const { publicKey, web3, initPromise, connection, connected, BN, program, manualDisconnectWallet } = useWorkspace()
 
   const stake = useStake()
   const stats = useStats()
@@ -113,5 +113,5 @@ export const useGovernance = () => {
     }
   }
 
-  return { ...stake, ...stats, ...proposal, ...vote, tokenBalance, fetchTokenBalance, connected, publicKey, BN }
+  return { ...stake, ...stats, ...proposal, ...vote, tokenBalance, fetchTokenBalance, connected, publicKey, BN, manualDisconnectWallet }
 }
