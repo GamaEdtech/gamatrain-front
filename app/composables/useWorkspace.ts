@@ -138,27 +138,6 @@ async function initConnection(ws: WorkspaceState) {
   }
 }
 
-// function createAnchorWallet(walletStore: WalletStore): Ref<AnchorWalletCustom | null> {
-//   console.log('createAnchorWallet', walletStore)
-//   console.log('createAnchorWallet fun', walletStore.signTransaction?.value)
-//   console.log('createAnchorWallet adapet', walletStore.wallet.value?.adapter)
-
-//   if (!walletStore) return ref(null)
-
-//   const publicKey = walletStore.publicKey?.value
-//   const signTransaction = walletStore.signTransaction?.value
-//   const signAllTransactions = walletStore.signAllTransactions?.value
-
-//   console.log('createAnchorWallet', publicKey, signTransaction, signAllTransactions)
-
-//   if (!publicKey || !signTransaction || !signAllTransactions) return ref(null)
-
-//   return ref({
-//     publicKey,
-//     signTransaction,
-//     signAllTransactions,
-//   })
-// }
 function createAnchorWallet(walletStore: WalletStore): Ref<AnchorWalletCustom | null> {
   if (!walletStore) return ref(null)
 
@@ -185,14 +164,12 @@ async function initWalletAndSync(ws: WorkspaceState) {
   if (ws.walletLibrary.value) {
     const { useWallet } = ws.walletLibrary.value
     const walletStore = useWallet()
-    console.log('initWalletAndSync walletStore', walletStore)
 
     const anchorWallet = createAnchorWallet(walletStore)
 
     watch(() => anchorWallet.value, async (v) => {
       if (v) {
         ws.wallet.value = v
-        console.log('Anchor wallet ready', v)
         await initProvider(ws)
         await initProgram(ws)
       }
@@ -209,21 +186,7 @@ async function initWalletAndSync(ws: WorkspaceState) {
     })
 
     watch(() => walletStore.publicKey.value, async (v) => {
-      console.log('watch public kety', walletStore.publicKey.value)
       ws.publicKey.value = v
-
-      // if (v) {
-      //   const walletStore = useWallet()
-      //   console.log('watch wallet connect wallet store', walletStore)
-      //   const anchorWallet = createAnchorWallet(walletStore)
-      //   console.log('watch wallet connect anchorWallet', anchorWallet)
-      //   if (anchorWallet.value) {
-      //     ws.wallet.value = anchorWallet.value
-      //   }
-
-      //   await initProvider(ws)
-      //   await initProgram(ws)
-      // }
     })
   }
 }
