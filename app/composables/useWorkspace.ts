@@ -138,42 +138,68 @@ async function initConnection(ws: WorkspaceState) {
   }
 }
 
-function createAnchorWallet(walletStore: WalletStore): Ref<AnchorWalletCustom | null> {
-  console.log('createAnchorWallet', walletStore)
+// function createAnchorWallet(walletStore: WalletStore): Ref<AnchorWalletCustom | null> {
+//   console.log('createAnchorWallet', walletStore)
+//   console.log('createAnchorWallet fun', walletStore.signTransaction?.value)
+//   console.log('createAnchorWallet adapet', walletStore.wallet.value?.adapter)
 
+//   if (!walletStore) return ref(null)
+
+//   const publicKey = walletStore.publicKey?.value
+//   const signTransaction = walletStore.signTransaction?.value
+//   const signAllTransactions = walletStore.signAllTransactions?.value
+
+//   console.log('createAnchorWallet', publicKey, signTransaction, signAllTransactions)
+
+//   if (!publicKey || !signTransaction || !signAllTransactions) return ref(null)
+
+//   return ref({
+//     publicKey,
+//     signTransaction,
+//     signAllTransactions,
+//   })
+// }
+function createAnchorWallet(walletStore: WalletStore): Ref<AnchorWalletCustom | null> {
   if (!walletStore) return ref(null)
 
-  const publicKey = walletStore.publicKey?.value
-  const signTransaction = walletStore.signTransaction?.value
-  const signAllTransactions = walletStore.signAllTransactions?.value
+  const publicKey = walletStore.publicKey
+  const signTransaction = walletStore.signTransaction
+  const signAllTransactions = walletStore.signAllTransactions
 
-  console.log('createAnchorWallet', publicKey, signTransaction, signAllTransactions)
+  return computed(() => {
+    if (
+      !publicKey.value
+      || !signTransaction.value
+      || !signAllTransactions.value
+    ) return null
 
-  if (!publicKey || !signTransaction || !signAllTransactions) return ref(null)
-
-  return ref({
-    publicKey,
-    signTransaction,
-    signAllTransactions,
+    return {
+      publicKey: publicKey.value,
+      signTransaction: signTransaction.value,
+      signAllTransactions: signAllTransactions.value,
+    }
   })
 }
 
 async function initWalletAndSync(ws: WorkspaceState) {
   if (ws.walletLibrary.value) {
-    // const { useAnchorWallet, useWallet } = ws.walletLibrary.value
     const { useWallet } = ws.walletLibrary.value
-    // const anchorWallet = useAnchorWallet()
     const walletStore = useWallet()
     console.log('initWalletAndSync walletStore', walletStore)
 
     const anchorWallet = createAnchorWallet(walletStore)
-    if (anchorWallet.value) {
-      console.log('in if')
 
+    watch(() => anchorWallet.value, async (v) => {
+      if (v) {
+        ws.wallet.value = v
+        console.log('Anchor wallet ready', v)
+        await initProvider(ws)
+        await initProgram(ws)
+      }
+    })
+    if (anchorWallet.value) {
       ws.wallet.value = anchorWallet.value
     }
-
-    console.log('initWalletAndSync walletAnchore', ws.wallet.value)
 
     ws.connected.value = walletStore.connected?.value ?? false
     ws.publicKey.value = walletStore.publicKey?.value ?? null
@@ -183,24 +209,21 @@ async function initWalletAndSync(ws: WorkspaceState) {
     })
 
     watch(() => walletStore.publicKey.value, async (v) => {
+      console.log('watch public kety', walletStore.publicKey.value)
       ws.publicKey.value = v
 
-      console.log('watch wallet connect')
-      if (v) {
-        const walletStore = useWallet()
-        console.log('watch wallet connect wallet store', walletStore)
+      // if (v) {
+      //   const walletStore = useWallet()
+      //   console.log('watch wallet connect wallet store', walletStore)
+      //   const anchorWallet = createAnchorWallet(walletStore)
+      //   console.log('watch wallet connect anchorWallet', anchorWallet)
+      //   if (anchorWallet.value) {
+      //     ws.wallet.value = anchorWallet.value
+      //   }
 
-        const anchorWallet = createAnchorWallet(walletStore)
-        console.log('watch wallet connect anchorWallet', anchorWallet)
-        if (anchorWallet.value) {
-          console.log('in if watch')
-
-          ws.wallet.value = anchorWallet.value
-        }
-
-        await initProvider(ws)
-        await initProgram(ws)
-      }
+      //   await initProvider(ws)
+      //   await initProgram(ws)
+      // }
     })
   }
 }
