@@ -15,6 +15,7 @@ const list = ref([])
 const headers = [
   { title: 'Username', key: 'username', sortable: false, width: '15vw' },
   { title: 'Email', key: 'email', sortable: false, width: '15vw' },
+  { title: 'Register At', key: 'registrationDate', sortable: false, width: '15vw' },
   { title: 'Status', key: 'enabled', sortable: false, width: '10vw' },
   { title: 'Actions', key: 'actions', sortable: false, width: '5vw' },
 ]
@@ -198,6 +199,11 @@ watch(selectedPageSize, () => {
         <template #[`item.email`]="{ item }">
           <div class="d-flex align-center">
             <span class="truncate-text">{{ item.email }}</span>
+          </div>
+        </template>
+        <template #[`item.registrationDate`]="{ item }">
+          <div class="d-flex align-center">
+            <span class="truncate-text">{{ item.registrationDate }}</span>
           </div>
         </template>
 
