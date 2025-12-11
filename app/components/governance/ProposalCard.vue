@@ -173,7 +173,7 @@ const props = defineProps<{
 
 const { $toast } = useNuxtApp()
 const { mdAndUp } = useDisplay()
-const { BN, publicKey, loadingDeleteProposal, deleteProposal, getProposal } = useGovernance()
+const { BN, publicKey, loadingDeleteProposal, deleteProposal, getProposal, getStatsInformation } = useGovernance()
 
 const isProposalExpired = (expiresAt: BigNumber): boolean => {
   const now = Math.floor(Date.now() / 1000)
@@ -268,7 +268,8 @@ const confirmDelete = async () => {
   deleteDialog.value = false
   if (response.success) {
     $toast.success(response.message)
-    await getProposal()
+    getProposal()
+    getStatsInformation()
   }
   else {
     $toast.error(response.message)

@@ -190,7 +190,7 @@ import { computed } from 'vue'
 
 const { $numberFormat, $toast } = useNuxtApp()
 const { mdAndUp } = useDisplay()
-const { BN, getVoteInformationProposal, publicKey, userStakeInformation, voteProppsal, laodingVoteProcess, getProposal, loadingGetVoteInformation } = useGovernance()
+const { BN, getVoteInformationProposal, publicKey, userStakeInformation, voteProppsal, laodingVoteProcess, getProposal, loadingGetVoteInformation, getStatsInformation } = useGovernance()
 
 const props = defineProps<{
   proposal: Proposal
@@ -310,7 +310,8 @@ const handleVote = async (agree: boolean) => {
       $toast.success(response.message)
       emit('close')
       emit('update:showDialog', false)
-      await getProposal()
+      getProposal()
+      getStatsInformation()
     }
     else {
       $toast.error(response.message)

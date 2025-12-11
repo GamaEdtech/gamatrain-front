@@ -231,7 +231,7 @@ const dialogModel = computed({
 
 const { smAndUp } = useDisplay()
 const { $toast } = useNuxtApp()
-const { userStakeInformation, publicKey, create, loadingCreateProposal, getProposal } = useGovernance()
+const { userStakeInformation, publicKey, create, loadingCreateProposal, getProposal, getStatsInformation } = useGovernance()
 
 const rules = useValidationRules()
 
@@ -283,6 +283,7 @@ const onSubmit = async () => {
   if (response.success) {
     $toast.success(response.message)
     await getProposal()
+    await getStatsInformation()
   }
   else {
     $toast.error(response.message)
