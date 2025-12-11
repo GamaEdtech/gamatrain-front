@@ -144,7 +144,7 @@
             class="w-50 text-h5 font-weight-bold"
             :disabled="hasVoted || publicKey == null || (laodingVoteProcess && disableVoteButton ==`againt`)"
             variant="flat"
-            :loading="laodingVoteProcess && disableVoteButton ==`for`"
+            :loading="(laodingVoteProcess && disableVoteButton ==`for`) || loadingGetVoteInformation"
             @click="handleVote(true)"
           >
             Vote For
@@ -157,7 +157,7 @@
             class="w-50 text-h5 font-weight-bold"
             :disabled="hasVoted || publicKey == null || (laodingVoteProcess && disableVoteButton ==`for`)"
             variant="flat"
-            :loading="laodingVoteProcess && disableVoteButton ==`againt`"
+            :loading="(laodingVoteProcess && disableVoteButton ==`againt`) || loadingGetVoteInformation"
             @click="handleVote(false)"
           >
             Vote Against
@@ -190,7 +190,7 @@ import { computed } from 'vue'
 
 const { $numberFormat, $toast } = useNuxtApp()
 const { mdAndUp } = useDisplay()
-const { BN, getVoteInformationProposal, publicKey, userStakeInformation, voteProppsal, laodingVoteProcess, getProposal } = useGovernance()
+const { BN, getVoteInformationProposal, publicKey, userStakeInformation, voteProppsal, laodingVoteProcess, getProposal, loadingGetVoteInformation } = useGovernance()
 
 const props = defineProps<{
   proposal: Proposal

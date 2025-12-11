@@ -19,6 +19,7 @@ type CheckRequirementResult
 type RequirementKey = 'program' | 'publicKey' | 'connection' | 'web3' | 'spl'
 
 const laodingVoteProcess = ref(false)
+const loadingGetVoteInformation = ref(false)
 
 export const useVote = () => {
   const { program, web3, initPromise, connection, publicKey } = useWorkspace()
@@ -59,6 +60,7 @@ export const useVote = () => {
     const check = checkReqiureMent(['program', 'publicKey', 'web3'])
     if (!check.ok) return null
 
+    loadingGetVoteInformation.value = true
     await initPromise
     const { programChain, userPublicKey } = check
 
@@ -77,6 +79,9 @@ export const useVote = () => {
     catch (err) {
       console.log('error', err)
       return null
+    }
+    finally {
+      loadingGetVoteInformation.value = false
     }
   }
 
@@ -130,5 +135,5 @@ export const useVote = () => {
     }
   }
 
-  return { getVoteInformationProposal, laodingVoteProcess, voteProppsal }
+  return { getVoteInformationProposal, laodingVoteProcess, voteProppsal, loadingGetVoteInformation }
 }
