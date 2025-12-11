@@ -294,16 +294,16 @@ export const useStake = () => {
   const isCooldownComplete = (unstakeRequestedAt: number): boolean => {
     if (unstakeRequestedAt === 0) return false
     const now = Math.floor(Date.now() / 1000)
-    const cooldownPeriodInSecond = 60
-    // const cooldownPeriodInSecond = 7 * 24 * 60 * 60
+    // const cooldownPeriodInSecond = 60
+    const cooldownPeriodInSecond = 7 * 24 * 60 * 60
     return now >= unstakeRequestedAt + cooldownPeriodInSecond
   }
 
   const getRemainingCooldown = (unstakeRequestedAt: number): string => {
     if (unstakeRequestedAt === 0) return 'No cooldown'
 
-    // const cooldownEnd = dayjs.unix(unstakeRequestedAt).add(7, 'day')
-    const cooldownEnd = dayjs.unix(unstakeRequestedAt).add(1, 'minute')
+    const cooldownEnd = dayjs.unix(unstakeRequestedAt).add(7, 'day')
+    // const cooldownEnd = dayjs.unix(unstakeRequestedAt).add(1, 'minute')
     const now = dayjs()
 
     return now.isAfter(cooldownEnd)
