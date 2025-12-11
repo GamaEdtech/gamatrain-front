@@ -11,6 +11,21 @@
           <AsyncWalletMultiButton />
         </ClientOnly>
       </div>
+
+      <v-btn
+        v-if="connected"
+        width="181"
+        height="48"
+        variant="outlined"
+        color="error"
+        class="text-h5 font-weight-bold rounded-lg d-block d-sm-none"
+        @click="manualDisconnectWallet"
+      >
+        <v-icon class="mr-2">
+          md:signal_disconnected
+        </v-icon>
+        Disconnect
+      </v-btn>
     </div>
 
     <div
@@ -162,7 +177,7 @@ const AsyncWalletMultiButton = defineAsyncComponent(async () => {
 })
 
 const { mdAndUp } = useDisplay()
-const { fetchTokenBalance, connected, userStakeInformation, getUserStakeInformation, latestProposals, loadingGetProposal } = useGovernance()
+const { fetchTokenBalance, connected, userStakeInformation, getUserStakeInformation, latestProposals, loadingGetProposal, manualDisconnectWallet } = useGovernance()
 
 const showModalStake = ref(false)
 const showWalletModal = ref(false)

@@ -99,14 +99,13 @@ async function initialize(ws: WorkspaceState) {
 }
 
 async function manualDisconnectWallet() {
-  // console.log('manualDisconnectWallet')
-  // workspace?.walletHelper.value.disconnect()
-  // workspace!.wallet.value = null
-  // workspace!.connected.value = false
-  // workspace!.publicKey.value = null
-
-  // workspace!.provider.value = null
-  // workspace!.program.value = null
+  if (workspace && workspace.walletLibrary.value) {
+    const { useWallet } = workspace.walletLibrary.value
+    const walletStore = useWallet()
+    await walletStore.disconnect()
+    walletStore.connected.value = false
+    walletStore.publicKey.value = null
+  }
 }
 
 async function initLibraries(ws: WorkspaceState) {
@@ -201,7 +200,6 @@ async function initProvider(ws: WorkspaceState) {
     const walletInstance = ws.wallet.value
 
     if (!walletInstance && ws.web3.value) {
-      console.log('dummy wallet')
       const dummyKeypair = ws.anchor.value.web3.Keypair.generate()
       const dummy: Wallet = {
         publicKey: new ws.web3.value.PublicKey('11111111111111111111111111111111'),
@@ -213,7 +211,6 @@ async function initProvider(ws: WorkspaceState) {
       return
     }
 
-    console.log('real wallet')
     ws.provider.value = new AnchorProvider(connection, walletInstance as Wallet, { preflightCommitment: PREFLIGHT, commitment: COMMITMENT })
   }
 }
