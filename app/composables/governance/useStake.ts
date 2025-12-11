@@ -311,18 +311,23 @@ export const useStake = () => {
       : cooldownEnd.from(now) + ' remaining'
   }
 
-  callOnce(() => {
-    watch(connected, async (newVal, oldVal) => {
-      if (newVal === oldVal) return
-      if (newVal === true) {
-        await initPromise
-        await getUserStakeInformation()
-      }
-      else {
-        userStakeInformation.value = null
-        loadingStakeInformation.value = false
-      }
-    }, { immediate: true })
+  onMounted(() => {
+    callOnce(() => {
+      watch(connected, async (newVal, oldVal) => {
+        if (newVal === oldVal) {
+          return
+        }
+
+        if (newVal === true) {
+          await initPromise
+          await getUserStakeInformation()
+        }
+        else {
+          userStakeInformation.value = null
+          loadingStakeInformation.value = false
+        }
+      }, { immediate: true })
+    })
   })
 
   return { userStakeInformation, loadingStakeInformation, getUserStakeInformation, stakeToken, loadinStakeProccess, unstakeToken, loadingUnstakeProcess, isCooldownComplete, getRemainingCooldown, claimToken, loadingClaimProcess }
