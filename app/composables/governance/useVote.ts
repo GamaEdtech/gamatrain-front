@@ -3,6 +3,7 @@ import type { Connection, PublicKey } from '@solana/web3.js'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
 import type { VoteRecord } from '~/types/governance'
 import { usePDA } from './usePDA'
+import { useAnchorErrorHandler } from './useAnchorErrorHandler'
 
 type Web3LibraryType = typeof import('@solana/web3.js')
 
@@ -24,6 +25,7 @@ const loadingGetVoteInformation = ref(false)
 export const useVote = () => {
   const { program, web3, initPromise, connection, publicKey } = useWorkspace()
   const { getVoteRecordPda, getStakeAccountPda, getStatsPda } = usePDA()
+  const { handleAnchorError } = useAnchorErrorHandler()
 
   const checkReqiureMent = (required: RequirementKey[] = ['program', 'publicKey', 'connection', 'web3']): CheckRequirementResult => {
     const programChain = program?.value
@@ -126,7 +128,7 @@ export const useVote = () => {
     catch (err) {
       return {
         success: false,
-        message: 'An unexpected error occurred while processing the Vote proposal request.',
+        message: handleAnchorError(err),
         raw: err,
       }
     }

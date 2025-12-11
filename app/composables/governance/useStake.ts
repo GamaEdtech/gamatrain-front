@@ -3,6 +3,7 @@ import type { Connection, PublicKey } from '@solana/web3.js'
 import type { StakeAccount } from '~/types/governance'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
 import { usePDA } from './usePDA'
+import { useAnchorErrorHandler } from './useAnchorErrorHandler'
 
 type Web3LibraryType = typeof import('@solana/web3.js')
 type splTokenLibraryType = typeof import('@solana/spl-token')
@@ -30,6 +31,7 @@ const loadingClaimProcess = ref(false)
 export const useStake = () => {
   const { program, publicKey, web3, initPromise, BN, connection, splToken, connected } = useWorkspace()
   const { getVault, getStakeAccountPda, getStatsPda } = usePDA()
+  const { handleAnchorError } = useAnchorErrorHandler()
   const TOKEN_2022_PROGRAM_ID_STRING = 'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb'
   const config = useRuntimeConfig()
   const tokenMintString = config.public.solanaTokenMint as string
@@ -164,10 +166,9 @@ export const useStake = () => {
       }
     }
     catch (err) {
-      console.log('error', err)
       return {
         success: false,
-        message: 'An unexpected error occurred while processing the staking request.',
+        message: handleAnchorError(err),
         raw: err,
       }
     }
@@ -210,10 +211,9 @@ export const useStake = () => {
       }
     }
     catch (err) {
-      console.error('unstake error:', err)
       return {
         success: false,
-        message: 'An unexpected error occurred while processing the unstake request.',
+        message: handleAnchorError(err),
         raw: err,
       }
     }
@@ -282,7 +282,7 @@ export const useStake = () => {
     catch (err) {
       return {
         success: false,
-        message: 'An unexpected error occurred while processing the Claim request.',
+        message: handleAnchorError(err),
         raw: err,
       }
     }

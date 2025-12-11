@@ -3,6 +3,7 @@ import type { Connection, PublicKey } from '@solana/web3.js'
 import type { GamaedtechProgram } from '~/idl/type/gamaedtech_program'
 import type { Proposal, ProposalFormData } from '~/types/governance'
 import { usePDA } from './usePDA'
+import { useAnchorErrorHandler } from './useAnchorErrorHandler'
 
 type Web3LibraryType = typeof import('@solana/web3.js')
 
@@ -27,6 +28,7 @@ const loadingDeleteProposal = ref(false)
 export const useProposal = () => {
   const { program, web3, initPromise, connection, publicKey, BN } = useWorkspace()
   const { getUserStatePda, getProposalPda, getStakeAccountPda, getStatsPda } = usePDA()
+  const { handleAnchorError } = useAnchorErrorHandler()
 
   const checkReqiureMent = (required: RequirementKey[] = ['program', 'publicKey', 'connection', 'web3']): CheckRequirementResult => {
     const programChain = program?.value
@@ -146,7 +148,7 @@ export const useProposal = () => {
     catch (err) {
       return {
         success: false,
-        message: 'An unexpected error occurred while processing the Create proposal request.',
+        message: handleAnchorError(err),
         raw: err,
       }
     }
@@ -188,7 +190,7 @@ export const useProposal = () => {
     catch (err) {
       return {
         success: false,
-        message: 'An unexpected error occurred while processing the delete proposal request.',
+        message: handleAnchorError(err),
         raw: err,
       }
     }
