@@ -1,7 +1,7 @@
 import { useThreeJS } from '../useThreejs'
 // import { doorModels } from '~/store/doorModels'
 import * as THREE from 'three'
-import type { DoorModels } from '~/interfaces/DoorModels.interface'
+import type { DoorModels } from '~/types/DoorModels.interface'
 
 const useCastleModel = async (
   doorModels: DoorModels,

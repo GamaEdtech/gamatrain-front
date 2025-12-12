@@ -125,11 +125,7 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  ApiResult,
-  RelatedContentDTO,
-  ContentItemDTO,
-} from '~/interfaces/api'
+import type { ApiResult, RelatedContentDTO, ContentItemDTO } from '~/types/api'
 
 type sourceType
   = | 'test'

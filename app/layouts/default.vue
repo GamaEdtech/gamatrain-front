@@ -19,7 +19,7 @@
       <slot />
     </div>
     <!-- Blog container -->
-    <home-blog-container v-if="!(route.path==='/' || route.path==='/search' || route.path==='/school' || route.name==='exam-start-id' || route.name==='school-add' || route.name==='subject-directory')" />
+    <home-blog-container v-if="showBlogSlider" />
     <!-- End blog container -->
     <common-footer />
     <AppGlobalSnackbar />
@@ -36,6 +36,13 @@ let animationFrame = null
 let startTime = null
 const duration = 10000
 const route = useRoute()
+
+const excludedPaths = ['/', '/search', '/school']
+const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance']
+
+const showBlogSlider = computed(() => {
+  return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)
+})
 
 onMounted(() => {
   setFavicon()

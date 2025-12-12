@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, PDFResponseDTO } from '~/interfaces/api'
+import type { ApiResult, PDFResponseDTO } from '~/types/api'
 
 interface IPreviewActionCard {
   thumbPic: string

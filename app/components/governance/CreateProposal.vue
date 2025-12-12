@@ -70,9 +70,9 @@
                   style="display: inline-block"
                 >
                   {{
-                    workspace?.publicKey?.value?.toBase58?.()?.slice(0, 4)
+                    getPublicKey()?.toBase58?.()?.slice(0, 4)
                   }}...{{
-                    workspace?.publicKey?.value?.toBase58?.()?.slice(-4)
+                    getPublicKey()?.toBase58?.()?.slice(-4)
                   }}
                 </span>
                 <span
@@ -282,38 +282,14 @@ const form = ref({
 })
 const visible = ref(props.modelValue)
 
-// Wallet connection state
-const { workspace } = useGovernance()
-const isWalletReady = computed(() => {
-  return (
-    workspace?.connected?.value
-    && workspace?.publicKey?.value
-    && workspace?.program?.value
-  )
-})
-
-// Check if user has staked tokens (v2.0 requirement)
-const userStakeInfo = ref<{ stakedAmount: number } | null>(null)
-const hasStakedTokens = computed(() => {
-  return userStakeInfo.value && userStakeInfo.value.stakedAmount > 0
-})
-
-// Fetch user stake info
-const fetchUserStakeInfo = async () => {
-  if (!isWalletReady.value) return
-
-  try {
-    const { getStakeAccount } = useGovernance()
-
-    if (!workspace?.program?.value || !workspace?.publicKey?.value) return
-
-    const info = await getStakeAccount()
-    userStakeInfo.value = info
-  }
-  catch (error) {
-    handleError(error, 'Failed to fetch user stake info', false)
-  }
-}
+// Use governance composable with all helpers
+const {
+  isWalletReady,
+  hasStakedTokens,
+  userStakeInfo,
+  fetchUserStakeInfo,
+  getPublicKey,
+} = useGovernance()
 
 // Watch for wallet changes
 watch(
@@ -346,25 +322,10 @@ async function onSubmit() {
 
     try {
       isSubmitting.value = true
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const program = workspace?.program?.value as any
-      const userPk = workspace?.publicKey?.value
-
-      if (!program) {
-        throw new Error(
-          'Blockchain program not ready. Please try refreshing the page.',
-        )
-      }
-
-      if (!userPk) {
-        throw new Error(
-          'Wallet address not available. Please reconnect your wallet.',
-        )
-      }
 
       // Check if user has staked tokens (v2.0 requirement)
       if (!hasStakedTokens.value) {
-        throw new Error('Failed to fetch user stake info')
+        throw new Error('You must stake $GET tokens to create proposals')
       }
 
       await governance.createProposal({

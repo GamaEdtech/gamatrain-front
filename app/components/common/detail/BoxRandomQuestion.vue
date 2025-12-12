@@ -102,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult } from '~/interfaces/api'
+import type { ApiResult } from '~/types/api'
 
 interface RandomTestCodeDTO {
   code: string
