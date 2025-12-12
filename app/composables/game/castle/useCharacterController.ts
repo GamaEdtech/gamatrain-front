@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import { shallowRef, ref, watch, computed, type Ref } from 'vue'
 import { animate } from 'animejs'
 import useGate from './useGate'
-import type { DoorModels } from '~/interfaces/DoorModels.interface'
-import type { Level, Step } from '~/interfaces/DoorStatus'
+import type { DoorModels } from '~/types/DoorModels.interface'
+import type { Level, Step } from '~/types/DoorStatus'
 import { useSound } from '~/composables/game/useSound'
 
 // Define types for better code organization
@@ -275,8 +275,7 @@ export function useCharacterController(
 
     if (wasNearDoor !== isNearDoor.value) {
       console.log(
-        `Door proximity changed: ${
-          isNearDoor.value ? 'Near door' : 'Away from door'
+        `Door proximity changed: ${isNearDoor.value ? 'Near door' : 'Away from door'
         }`,
       )
     }
@@ -641,7 +640,7 @@ export function useCharacterController(
     container.removeEventListener('touchstart', onTouchStart)
     container.removeEventListener('touchmove', onTouchMove)
     container.removeEventListener('touchend', onTouchEnd)
-    document.removeEventListener('click', () => {})
+    document.removeEventListener('click', () => { })
 
     // Stop and clean up sound
     if (footstepSound.value) {
