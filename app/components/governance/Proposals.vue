@@ -1,4 +1,3 @@
-<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
   <div class="mt-10">
     <div class="proposals-header mb-md-4">
@@ -12,11 +11,25 @@
           <AsyncWalletMultiButton />
         </ClientOnly>
       </div>
+
+      <v-btn
+        v-if="connected"
+        width="181"
+        height="48"
+        variant="outlined"
+        color="error"
+        class="text-h5 font-weight-bold rounded-lg d-block d-sm-none"
+        @click="manualDisconnectWallet"
+      >
+        <v-icon class="mr-2">
+          md:signal_disconnected
+        </v-icon>
+        Disconnect
+      </v-btn>
     </div>
 
-    <!-- 1. State: Loading proposals -->
     <div
-      v-if="isLoading"
+      v-if="loadingGetProposal"
       class="text-center my-10"
     >
       <v-progress-circular
@@ -29,39 +42,31 @@
       </p>
     </div>
 
-    <!-- 2. State: No proposals found -->
     <div
-      v-else-if="proposals.length === 0"
+      v-else-if="latestProposals?.length === 0"
       class="text-center my-10"
     >
       <p>No active proposals found. Be the first to create one!</p>
     </div>
 
-    <!-- 3. State: Display proposals -->
     <div
       v-else
       class="mt-6 mt-sm-1"
     >
       <div class="d-block">
         <v-slide-group
-          v-model="selected"
           class="center-slide-group"
           center-active
           show-arrows
         >
           <v-slide-group-item
-            v-for="proposal in proposals"
+            v-for="proposal in latestProposals"
             :key="proposal.publicKey.toBase58()"
           >
             <div class="my-5 mx-1 proposal-slide__card">
               <governance-proposal-card
                 :proposal="proposal"
-                :user-public-key="publicKey"
-                @select="handleProposalClick"
-                @vote="handleVote"
-                @delete="handleProposalDeleted"
-                @wallet-required="handleWalletRequired"
-                @request-fund="handleRequestFund(proposal)"
+                @click="openProposalDetail(proposal)"
               />
             </div>
           </v-slide-group-item>
@@ -69,7 +74,6 @@
       </div>
     </div>
 
-    <!-- Buttons -->
     <div class="mt-10 d-flex justify-center">
       <ClientOnly>
         <v-btn
@@ -87,7 +91,11 @@
           variant="flat"
           rounded
           class="ml-3"
-          @click="visibleStake = true"
+          @click="
+            connected
+              ? openStakeModal()
+              : (showWalletModal = true)
+          "
         >
           Stake
         </v-btn>
@@ -100,7 +108,7 @@
           class="ml-3"
           @click="
             connected
-              ? (visibleCreateProposal = true)
+              ? openCreateProposalModal()
               : (showWalletModal = true)
           "
         >
@@ -109,24 +117,17 @@
       </ClientOnly>
     </div>
 
-    <!-- Dialogs -->
     <governance-create-proposal
-      v-model="visibleCreateProposal"
-      @created="handleProposalCreated"
-      @wallet-required="handleWalletRequired"
+      v-model:show-dialog="showModalCreateProposal"
     />
-    <governance-stake v-model="visibleStake" />
+    <governance-stake v-model:show-dialog="showModalStake" />
     <governance-proposal-detail
       v-if="selectedProposal"
-      v-model="visibleProposalDetail"
+      v-model:show-dialog="showModalProposalDetail"
       :proposal="selectedProposal"
-      :user-public-key="publicKey"
-      @vote="({ agree }) => handleVote({ proposal: selectedProposal, agree })"
-      @wallet-required="handleWalletRequired"
-      @request-fund="handleRequestFund(selectedProposal)"
+      @close="closeDetail"
     />
 
-    <!-- Wallet Connection Modal -->
     <Teleport to="body">
       <div
         v-if="showWalletModal"
@@ -166,275 +167,52 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-// Intentionally avoid calling useWallet() during SSR; we'll access it in onMounted
+import { useGovernance } from '~/composables/governance/useGovernance'
+import type { Proposal } from '~/types/governance'
 
-const { mdAndUp } = useDisplay()
 const AsyncWalletMultiButton = defineAsyncComponent(async () => {
   const mod = await import('solana-wallets-vue')
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return (mod as any).WalletMultiButton
 })
 
-const { $toast } = useNuxtApp()
+const { mdAndUp } = useDisplay()
+const { fetchTokenBalance, connected, userStakeInformation, getUserStakeInformation, latestProposals, loadingGetProposal, manualDisconnectWallet } = useGovernance()
 
-// --- STATE ---
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const proposals = ref<any[]>([])
-const isLoading = ref(true)
-const selected = ref(null)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const selectedProposal = ref<any | null>(null)
-const visibleCreateProposal = ref(false)
-const visibleStake = ref(false)
-const visibleProposalDetail = ref(false)
+const showModalStake = ref(false)
 const showWalletModal = ref(false)
 
-// Get governance composable (includes workspace internally)
-const { workspace, fetchUserStakeInfo } = useGovernance()
-
-// Reactive refs from workspace
-const connected = computed(() => workspace?.connected?.value || false)
-const publicKey = computed(() => workspace?.publicKey?.value)
-const program = computed(() => workspace?.program?.value)
-
-// --- LIFECYCLE HOOK ---
-onMounted(async () => {
-  // Workspace is now handled internally by useGovernance
-  // Fetch proposals when program is ready
-  if (program.value) {
-    await fetchProposalsData()
-  }
-})
-
-// Watch for program changes
-watch(
-  () => program.value,
-  (prog) => {
-    if (prog) {
-      fetchProposalsData()
-    }
-  },
-  { immediate: true },
-)
-
-// --- DATA FETCHING ---
-const fetchProposalsData = async () => {
-  if (!program.value) return
-  isLoading.value = true
-  try {
-    proposals.value = await governance.fetchLatestProposals()
-  }
-  finally {
-    isLoading.value = false
+const openStakeModal = () => {
+  showModalStake.value = true
+  fetchTokenBalance()
+  if (userStakeInformation.value == null) {
+    getUserStakeInformation()
   }
 }
 
-// --- WALLET MODAL HANDLERS ---
-const handleWalletRequired = async () => {
-  showWalletModal.value = true
+const showModalCreateProposal = ref(false)
+
+const openCreateProposalModal = () => {
+  showModalCreateProposal.value = true
 }
 
-// ---Request to release fund after proposal passed ---
-const handleRequestFund = async (proposal: unknown) => {
-  // Show wallet modal if not connected
-  if (!connected.value) {
-    showWalletModal.value = true
-    return
-  }
+const selectedProposal = ref<Proposal | null>(null)
+const showModalProposalDetail = ref(false)
 
-  try {
-    const { PublicKey } = await import('@solana/web3.js')
-    const proposalPubkey = new PublicKey(proposal.publicKey)
-
-    await governance.requestFund(proposalPubkey)
-
-    // Show success message
-    $toast.success(`Request submitted successfully!`)
-
-    // Close the proposal detail modal
-    visibleProposalDetail.value = false
-    selectedProposal.value = null
-  }
-  catch (e) {
-    console.error('Request failed:', e)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $toast.error((e as any).message || 'Failed to submit request')
-  }
-}
-
-// --- WATCHER ---
-// Always fetch proposals when program is available, regardless of wallet connection
-watch(
-  () => program.value,
-  (prog) => {
-    if (prog) {
-      fetchProposalsData()
-    }
-  },
-  { immediate: true },
-)
-
-// Watch wallet connection changes
-watch(
-  () => connected.value,
-  (isConnected) => {
-    if (isConnected) {
-      showWalletModal.value = false
-      // Fetch user stake info when wallet connects
-      fetchUserStakeInfo()
-    }
-  },
-  { immediate: true },
-)
-
-// Auto-refresh rewards every 10 seconds when wallet is connected
-let refreshInterval: NodeJS.Timeout | null = null
-
-onMounted(() => {
-  if (import.meta.client) {
-    refreshInterval = setInterval(() => {
-      if (connected.value && publicKey.value) {
-        fetchUserStakeInfo()
-      }
-    }, 10000) // Refresh every 10 seconds
-  }
-})
-
-onUnmounted(() => {
-  if (refreshInterval) {
-    clearInterval(refreshInterval)
-  }
-})
-
-// --- HANDLERS ---
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const handleProposalClick = (proposal: any) => {
+const openProposalDetail = (proposal: Proposal) => {
   selectedProposal.value = proposal
-  visibleProposalDetail.value = true
+  showModalProposalDetail.value = true
 }
 
-const handleProposalCreated = async () => {
-  visibleCreateProposal.value = false
-  // Refresh the list to show the new proposal
-  await fetchProposalsData()
-
-  // Wait a bit for blockchain to update, then refresh rewards
-  setTimeout(async () => {
-    // Refresh user stake info to show updated rewards
-    await fetchUserStakeInfo()
-
-    // Refresh governance stats
-    if (import.meta.client) {
-      const win = window as Window & {
-        __refreshGovernanceStats?: () => Promise<void>
-      }
-      if (win.__refreshGovernanceStats) {
-        await win.__refreshGovernanceStats()
-      }
-    }
-  }, 1500)
-}
-
-const handleVote = async ({
-  proposal,
-  agree,
-}: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  proposal: any
-  agree: boolean
-}) => {
-  // Show wallet modal if not connected
-  if (!connected.value) {
-    showWalletModal.value = true
-    return
-  }
-
-  try {
-    if (!program.value || !publicKey.value) {
-      $toast.error('Please connect your wallet to vote')
-      return
-    }
-
-    const { PublicKey } = await import('@solana/web3.js')
-    const proposalPubkey = new PublicKey(proposal.publicKey)
-
-    // Get user's vote power before voting
-    const { calculateVotePower } = useGovernance()
-    const votePower = await calculateVotePower()
-
-    // Calculate reward (1% of vote power)
-    const reward = votePower * 0.01
-
-    await governance.vote(
-      proposalPubkey,
-      agree,
-    )
-
-    // Show success message with reward info
-    $toast.success(
-      `Vote ${agree ? 'for' : 'against'} submitted successfully! 🎉\n`
-      + `You earned ${reward.toFixed(2)} $GET as reward! 💰`,
-      { duration: 5000 },
-    )
-
-    // Close the proposal detail modal
-    visibleProposalDetail.value = false
-    selectedProposal.value = null
-
-    // Refresh proposals to show updated vote counts
-    await fetchProposalsData()
-
-    // Wait a bit for blockchain to update, then refresh rewards
-    setTimeout(async () => {
-      // Refresh user stake info to show updated rewards
-      await fetchUserStakeInfo()
-
-      // Refresh governance stats
-      if (import.meta.client) {
-        const win = window as Window & {
-          __refreshGovernanceStats?: () => Promise<void>
-        }
-        if (win.__refreshGovernanceStats) {
-          await win.__refreshGovernanceStats()
-        }
-      }
-    }, 1500)
-  }
-  catch (e) {
-    console.error('Vote failed:', e)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $toast.error((e as any).message || 'Failed to submit vote')
-  }
-}
-
-const handleProposalDeleted = async () => {
-  // Close the proposal detail modal
-  visibleProposalDetail.value = false
+const closeDetail = () => {
   selectedProposal.value = null
-
-  // Refresh the proposals list when a proposal is deleted
-  await fetchProposalsData()
-
-  // Wait a bit for blockchain to update, then refresh rewards
-  // (Deleting a proposal may reduce rewards if they were given for creating it)
-  setTimeout(async () => {
-    // Refresh user stake info to show updated rewards
-    await fetchUserStakeInfo()
-
-    // Refresh governance stats
-    if (import.meta.client) {
-      const win = window as Window & {
-        __refreshGovernanceStats?: () => Promise<void>
-      }
-      if (win.__refreshGovernanceStats) {
-        await win.__refreshGovernanceStats()
-      }
-    }
-  }, 1500)
 }
 </script>
 
 <style>
+.swv-button{
+  column-gap: 8px;
+}
 .proposals-header {
   display: flex;
   align-items: center;
@@ -449,6 +227,7 @@ const handleProposalDeleted = async () => {
 }
 
 .wallet-button-container {
+  z-index: 2;
   position: absolute;
   right: 0;
   display: flex;
@@ -461,7 +240,8 @@ const handleProposalDeleted = async () => {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
