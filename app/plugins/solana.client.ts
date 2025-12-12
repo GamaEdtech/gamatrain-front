@@ -33,7 +33,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     const netStr = (config.public?.solanaNetwork as string | undefined)?.toLowerCase() || 'mainnet'
     let network: typeof WalletAdapterNetwork.Mainnet | typeof WalletAdapterNetwork.Devnet | typeof WalletAdapterNetwork.Testnet
     switch (netStr) {
-      case 'devnet':
+      case 'devnet-beta':
         network = WalletAdapterNetwork.Devnet
         break
       case 'testnet':

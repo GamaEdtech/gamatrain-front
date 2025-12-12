@@ -1,10 +1,7 @@
-<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
   <div
     class="proposal-card"
-    @click="handleClick()"
   >
-    <!-- Status Badge -->
     <div
       class="governance-proposals__badge"
       :class="proposalStatus"
@@ -12,7 +9,6 @@
       {{ proposalStatusText }}
     </div>
 
-    <!-- Delete Button (only for owner) -->
     <div
       v-if="isOwner && !isExpired"
       class="delete-button"
@@ -23,11 +19,10 @@
         color="error"
         @click.stop="handleDelete"
       >
-        <v-icon>mdi-delete</v-icon>
+        <v-icon>md:delete_outlined</v-icon>
       </v-btn>
     </div>
 
-    <!-- Proposal Content -->
     <div class="governance-proposals__title primary-gray-700">
       {{ proposal.account.title }}
     </div>
@@ -36,7 +31,6 @@
       {{ proposal.account.brief }}
     </div>
 
-    <!-- Category and Amount -->
     <div class="proposal-meta mt-2">
       <v-chip
         color="primary"
@@ -54,7 +48,6 @@
       </span>
     </div>
 
-    <!-- Voting Results -->
     <div v-if="!isExpired">
       <div class="vote-row">
         <span class="for">
@@ -80,169 +73,132 @@
 
       <div class="governance-proposals__stats primary-gray-500">
         <span>Total Votes: {{ $numberFormat(totalVotes/1000000) }}</span>
-        <span v-if="userVoteStatus">You voted: {{ userVoteStatus }}</span>
       </div>
     </div>
 
-    <!-- Footer with Time and Actions -->
     <div class="governance-proposals__footer mt-3">
       <div class="time primary-gray-500">
         <v-icon
           size="small"
           color="#98A2B3"
         >
-          mdi-timer-outline
+          md:timer_outlined
         </v-icon>
         <span class="pl-1">{{ timeRemaining }}</span>
       </div>
 
-      <div>
-        <div
-          v-if="!isExpired && !hasVoted"
+      <div
+        v-if="isOwner && isExpired && forPercentage > 50 "
+      >
+        <v-btn
+          size="small"
+          color="green"
+          variant="outlined"
+          rounded="xl"
+          style="font-size: 10px"
+          @click.stop="requestFund()"
         >
-          <v-btn
-            size="small"
-            prepend-icon="mdi-arrow-up-thin"
-            color="green"
-            variant="outlined"
-            rounded="xl"
-            class="mr-1 text-subtitle-2"
-            :disabled="!canVote"
-            @click.stop="handleVote(true)"
-          >
-            Vote For
-          </v-btn>
-          <v-btn
-            size="small"
-            prepend-icon="mdi-arrow-down-thin"
-            color="red"
-            variant="outlined"
-            rounded="xl"
-            class="text-subtitle-2"
-            :disabled="!canVote"
-            @click.stop="handleVote(false)"
-          >
-            Vote Against
-          </v-btn>
-        </div>
-        <div
-          v-else-if="isOwner && isExpired && forPercentage > 50 "
-        >
-          <v-btn
-            size="small"
-            color="green"
-            variant="outlined"
-            rounded="xl"
-            style="font-size: 10px"
-            @click.stop="requestFund()"
-          >
-            Request to fund
-          </v-btn>
-        </div>
-
-        <div
-          v-else-if="hasVoted "
-          class="voted-indicator"
-        >
-          <v-chip
-            :color="userVoteStatus === 'For' ? 'green' : '#f04438'"
-            variant="flat"
-            density="comfortable"
-            style="font-size: 10px"
-          >
-            Voted {{ userVoteStatus }}
-          </v-chip>
-        </div>
+          Request to fund
+        </v-btn>
       </div>
-    </div>
 
-    <!-- Delete Confirmation Dialog -->
-    <v-dialog
-      v-model="deleteDialog"
-      max-width="400"
-    >
-      <v-card>
-        <v-card-title>Delete Proposal</v-card-title>
-        <v-card-text>
-          Are you sure you want to delete this proposal? This action cannot be
-          undone.
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            text
-            @click="deleteDialog = false"
-          >
-            Cancel
-          </v-btn>
-          <v-btn
-            color="error"
-            variant="flat"
-            :loading="deleteLoading"
-            @click="confirmDelete"
-          >
-            Delete
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+      <v-dialog
+        v-model="deleteDialog"
+        max-width="500"
+        :fullscreen="!mdAndUp"
+        @click="clickOnOverlay"
+      >
+        <div
+          class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
+          @click="clickOnModal"
+        >
+          <v-row class="d-flex align-center">
+            <v-col cols="10">
+              <span class="text-h4">Delete Proposal</span>
+            </v-col>
+            <v-col
+              cols="2"
+              class="d-flex align-center justify-end ga-2"
+            >
+              <v-icon
+                size="x-large"
+                color="#D0D5DD"
+                @click="closeModal"
+              >
+                md:close
+              </v-icon>
+            </v-col>
+          </v-row>
+          <span class="text-h5 mt-6">Are you sure you want to delete this proposal? This action cannot be
+            undone.</span>
+          <div class="w-100 mt-4 d-flex ga-2 align-center justify-center">
+            <v-btn
+              color="black"
+              flat
+              variant="text"
+              rounded="lg"
+              max-width="200"
+              class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+              @click="closeModal"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              color="error"
+              flat
+              rounded="lg"
+              max-width="200"
+              class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+              :loading="loadingDeleteProposal"
+              @click="confirmDelete"
+            >
+              Delete
+            </v-btn>
+          </div>
+        </div>
+      </v-dialog>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useErrorHandler } from '~/composables/useErrorHandler'
-// Toast notification
-const { $toast } = useNuxtApp()
-
-// Error handler
-const { handleError } = useErrorHandler()
-
-let BN: unknown
-
-onMounted(async () => {
-  // Dynamically import Anchor only on client side (Nuxt 4 SSR-safe)
-  if (import.meta.client) {
-    const anchor = await import('@coral-xyz/anchor')
-    BN = anchor.BN
-  }
-})
+import type { Proposal } from '~/types/governance'
+import type { BN as BigNumber } from '@coral-xyz/anchor'
+import { useGovernance } from '~/composables/governance/useGovernance'
+import { useDisplay } from 'vuetify'
 
 const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  proposal: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  userPublicKey?: any
+  proposal: Proposal
 }>()
 
-const emits = defineEmits(['select', 'vote', 'delete', 'walletRequired', 'requestFund'])
+const { $toast } = useNuxtApp()
+const { mdAndUp } = useDisplay()
+const { BN, publicKey, loadingDeleteProposal, deleteProposal, getProposal, getStatsInformation } = useGovernance()
 
-// State
-const deleteDialog = ref(false)
-const deleteLoading = ref(false)
-const hasVoted = ref(false)
-const userVoteStatus = ref<string | null>(null)
-const { isProposalExpired } = useGovernance()
+const isProposalExpired = (expiresAt: BigNumber): boolean => {
+  const now = Math.floor(Date.now() / 1000)
+  return expiresAt.toNumber() < now
+}
 
-// Computed properties
 const isExpired = computed(() => {
   if (!props.proposal?.account?.expiresAt) return false
-  return isProposalExpired(props.proposal.account)
+  return isProposalExpired(props.proposal.account.expiresAt)
 })
 
 const isOwner = computed(() => {
-  if (!props.userPublicKey || !props.proposal?.account?.owner) return false
-  return props.proposal.account.owner.equals(props.userPublicKey)
+  if (!publicKey.value || !props.proposal?.account?.owner) return false
+  return props.proposal.account.owner.equals(publicKey.value)
 })
 
 const totalVotes = computed(() => {
-  const agreeVotes = props.proposal?.account?.agreeVotes || new BN(0)
-  const disagreeVotes = props.proposal?.account?.disagreeVotes || new BN(0)
+  const agreeVotes = props.proposal?.account?.agreeVotes || new BN.value(0)
+  const disagreeVotes = props.proposal?.account?.disagreeVotes || new BN.value(0)
   return agreeVotes.add(disagreeVotes).toNumber()
 })
 
 const forPercentage = computed(() => {
   if (totalVotes.value === 0) return 0
-  const agreeVotes = props.proposal?.account?.agreeVotes || new BN(0)
+  const agreeVotes = props.proposal?.account?.agreeVotes || new BN.value(0)
   return Math.round((agreeVotes.toNumber() / totalVotes.value) * 100)
 })
 
@@ -282,46 +238,21 @@ const timeRemaining = computed(() => {
   return 'Less than 1 hour remaining'
 })
 
-const { canVote: checkCanVote } = useGovernance()
-
-const canVote = computed(() => {
-  return checkCanVote(isExpired.value, hasVoted.value)
-})
-
-const handleClick = () => {
-  emits('select', props.proposal)
-}
-
-const handleVote = async (agree: boolean) => {
-  if (!canVote.value) return
-
-  // Check if user has wallet connected
-  if (!props.userPublicKey) {
-    emits('walletRequired')
-    return
-  }
-
-  try {
-    emits('vote', { proposal: props.proposal, agree })
-  }
-  catch (error) {
-    handleError(error, 'Failed to vote', false)
-  }
-}
-
 const requestFund = async () => {
-  // Check if user has wallet connected
-  if (!props.userPublicKey) {
-    emits('walletRequired')
-    return
-  }
+}
 
-  try {
-    emits('requestFund')
-  }
-  catch (error) {
-    handleError(error, 'Failed to request fund', false)
-  }
+const deleteDialog = ref(false)
+
+const closeModal = () => {
+  deleteDialog.value = false
+}
+
+const clickOnOverlay = () => {
+  deleteDialog.value = false
+}
+
+const clickOnModal = (event: Event) => {
+  event.stopPropagation()
 }
 
 const handleDelete = () => {
@@ -329,63 +260,31 @@ const handleDelete = () => {
 }
 
 const confirmDelete = async () => {
-  if (!isOwner.value) return
-
-  deleteLoading.value = true
-
-  try {
-    const { workspace } = useGovernance()
-    const program = workspace.program?.value
-    const userPk = props.userPublicKey
-
-    if (!program || !userPk) {
-      throw new Error('Wallet or program not ready')
-    }
-
-    await governance.deleteProposal(props.proposal.publicKey)
-
-    $toast.success('Proposal deleted successfully')
-
-    deleteDialog.value = false
-    emits('delete', props.proposal)
+  if (!isOwner.value) {
+    $toast.error('Only owner has permission delete proposal.')
   }
-  catch (error) {
-    handleError(error, 'Failed to delete proposal')
+
+  const response = await deleteProposal(props.proposal.publicKey)
+  deleteDialog.value = false
+  if (response.success) {
+    $toast.success(response.message)
+    getProposal()
+    getStatsInformation()
   }
-  finally {
-    deleteLoading.value = false
+  else {
+    $toast.error(response.message)
   }
 }
-
-// Check vote status on mount
-onMounted(async () => {
-  if (!props.userPublicKey || !props.proposal) return
-
-  try {
-    const { workspace } = useGovernance()
-    const program = workspace.program?.value
-
-    if (program) {
-      const voteRecord = await governance.getVoteRecord(
-        program,
-        props.proposal.publicKey,
-        props.userPublicKey,
-      )
-
-      hasVoted.value = voteRecord.hasVoted
-      if (voteRecord.voteRecord) {
-        userVoteStatus.value
-          = voteRecord.voteRecord.vote === 'agree' ? 'For' : 'Against'
-      }
-    }
-  }
-  catch (error) {
-    console.warn('Failed to check vote status:', error)
-  }
-})
 </script>
 
 <style lang="scss" scoped>
+@media only screen and (max-width: 960px) {
+  .mobile-style {
+    position: absolute;
+    bottom: 0;
+    border-radius: 24px 24px 0 0 !important;
+  }
+}
 .proposal-card {
   border-radius: 16px;
   padding: 12px;
