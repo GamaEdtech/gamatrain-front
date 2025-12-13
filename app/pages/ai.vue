@@ -229,9 +229,8 @@ function formatTime(date: Date) {
                   :class="message.role === 'user' ? 'justify-end' : 'justify-start'"
                 >
                   <div
-                    class="d-flex gap-4"
+                    class="d-flex ga-2"
                     :class="message.role === 'user' ? 'flex-row-reverse' : ''"
-                    style="max-width: 80%; gap: 1rem;"
                   >
                     <v-avatar
                       :color="message.role === 'user' ? 'primary' : 'grey-lighten-4'"
@@ -250,11 +249,11 @@ function formatTime(date: Date) {
                       :class="message.role === 'user' ? 'align-end' : ''"
                     >
                       <div
-                        class="px-4 py-3"
+                        class="px-4 py-3 text-body-2 font-weight-medium rounded-xl font-size-12"
                         :class="[
                           message.role === 'user'
-                            ? 'userMessage'
-                            : 'AiMessage',
+                            ? 'bg-primary text-grey-darken-4 rounded-be-sm'
+                            : 'bg-grey-lighten-4 text-grey-darken-3 rounded-bs-sm',
                         ]"
                       >
                         {{ message.content }}
@@ -271,10 +270,7 @@ function formatTime(date: Date) {
                   v-if="loading"
                   class="d-flex justify-start mb-6 animate-fade-in"
                 >
-                  <div
-                    class="d-flex gap-4"
-                    style="gap: 1rem;"
-                  >
+                  <div class="d-flex ga-2">
                     <v-avatar
                       color="grey-lighten-4"
                       size="36"
@@ -289,10 +285,7 @@ function formatTime(date: Date) {
                     </v-avatar>
                     <div>
                       <div class="bg-grey-lighten-4 pa-4 rounded-xl rounded-bs-2">
-                        <div
-                          class="d-flex align-center gap-1"
-                          style="gap: 0.4rem;"
-                        >
+                        <div class="d-flex align-center ga-1">
                           <span class="typing-dot" />
                           <span class="typing-dot" />
                           <span class="typing-dot" />
@@ -329,6 +322,8 @@ function formatTime(date: Date) {
                 :disabled="loading"
                 class="bg-white"
                 @keydown="handleKeydown"
+                aria-autocomplete="none"
+                autocomplete="off"
               >
                 <template #append-inner>
                   <v-btn
@@ -418,33 +413,6 @@ function formatTime(date: Date) {
 
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
-}
-
-.userMessage {
-  border-radius: 1.7rem;
-  font-weight: 500;
-  font-size: 1.5rem;
-  line-height: 1.7;
-  max-width: 100%;
-  padding: 1rem 0.5rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-  background: #ffb600;
-  border-bottom-right-radius: .4rem;
-  color: #24292f;
-}
-
-.AiMessage {
-  border-radius: 1.6rem;
-  font-size: 1.4rem;
-  line-height: 1.7;
-  max-width: 100%;
-  padding: 1.2rem 1.6rem;
-  white-space: pre-wrap;
-  word-break: break-word;
-  background: #f2f4f7;
-  border-bottom-left-radius: .4rem;
-  color: #344054;
 }
 
 @keyframes fadeIn {
