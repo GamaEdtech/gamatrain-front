@@ -1,3 +1,4 @@
+// Check a Solana transaction status and details
 import { Connection, PublicKey, SystemProgram } from '@solana/web3.js'
 
 export default defineEventHandler(async (event) => {
