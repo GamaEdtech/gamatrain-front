@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
     }
 
     /* ---------------- Transfer SPL token ---------------- */
-    const amount = 100
+    const amount = 500000
     const result = await transferSplToken({
       to: body.to,
       amount: amount * 1e6,
