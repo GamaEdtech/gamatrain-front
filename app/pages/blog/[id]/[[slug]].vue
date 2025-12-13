@@ -214,8 +214,6 @@ const { data: contentData, error } = await useAsyncData(
   },
 )
 
-console.log('content data', contentData.value)
-
 // SEO
 useHead({
   title: contentData.value?.title || 'Blog Post',
