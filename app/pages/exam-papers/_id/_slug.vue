@@ -231,7 +231,7 @@
                     <v-icon class="ml-1 icon">
                       md:calendar_month
                     </v-icon>
-                    Last update: {{ $timeAgo.calc(contentData.up_date) }}
+                    Last update: {{ $dayjs(contentData.up_date).fromNow() }}
                   </v-col>
                   <v-col
                     cols="12"
