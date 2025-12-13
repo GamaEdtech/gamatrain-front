@@ -14,8 +14,43 @@
           class="bg-primary-gray-100 rounded-lg left-0 top-0 gray-background-div w-100 position-absolute"
         />
         <div class="w-100 d-flex flex-column align-center set-z-index">
-          <h1 class="w-100 text-h4 text-sm-h3 text-md-h2 font-weight-bold">
+          <h1 class="d-flex align-center ga-2 w-100 text-h4 text-sm-h3 text-md-h2 font-weight-bold">
+            <v-btn
+              icon
+              color="primary"
+              flat
+              variant="outlined"
+              width="30"
+              height="30"
+              :disabled="!contentData.previousId"
+              :to="`/blog/${contentData.previousId}`"
+            >
+              <v-icon
+                color="primary"
+                size="24"
+              >
+                md:chevron_left
+              </v-icon>
+            </v-btn>
+
             {{ contentData.title }}
+            <v-btn
+              icon
+              color="primary"
+              flat
+              variant="outlined"
+              width="30"
+              height="30"
+              :disabled="!contentData.nextId"
+              :to="`/blog/${contentData.nextId}`"
+            >
+              <v-icon
+                color="primary"
+                size="24"
+              >
+                md:chevron_right
+              </v-icon>
+            </v-btn>
           </h1>
           <div
             v-if="contentData.tags && contentData.tags.length > 0"
