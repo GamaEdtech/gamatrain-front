@@ -1,14 +1,47 @@
 <script lang="ts" setup>
+useSeoMeta({
+  title: 'Receive your gift',
+  description: 'Redeem your gift by entering your wallet address and gift pass.',
+})
+const { $toast } = useNuxtApp()
+
 const { solanaWalletAddress, required } = useValidationRules()
 const walletAddress = ref('')
 const giftPass = ref('')
 const formIsValid = ref(false)
-
-const receiveGift = () => {
-  // Logic to redeem the gift using walletAddress and gift pass
+const route = useRoute()
+const submitLoading = ref(false)
+const receiveGift = async () => {
   if (!formIsValid.value) return
-  console.log('Redeeming gift for wallet:', walletAddress.value)
-  console.log('Gift pass:', giftPass.value)
+
+  submitLoading.value = true
+
+  try {
+    const id = Array.isArray(route.params.id)
+      ? route.params.id[0]
+      : route.params.id
+
+    const response = await useApiService.post('/api/solana/gift', {
+      to: walletAddress.value,
+      id,
+      pass: giftPass.value,
+    })
+
+    if (!response?.success) {
+      $toast.error(response.message || 'Failed to redeem gift. Please try again.')
+      console.error('Error redeeming gift:', response.error)
+    }
+    else {
+      $toast.success('Gift redeemed successfully!')
+    }
+  }
+  catch (err) {
+    console.error(err)
+    $toast.error('Unexpected error occurred')
+  }
+  finally {
+    submitLoading.value = false
+  }
 }
 </script>
 
@@ -43,7 +76,7 @@ const receiveGift = () => {
             md="4"
           >
             <v-text-field
-              v-mopdel="giftPass"
+              v-model="giftPass"
               label="Gift Pass"
               outlined
               dense
@@ -59,6 +92,7 @@ const receiveGift = () => {
               color="primary"
               size="large"
               :disabled="!formIsValid"
+              :loading="submitLoading"
               @click="receiveGift"
             >
               Redeem Gift

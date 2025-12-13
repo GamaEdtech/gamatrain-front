@@ -16,6 +16,8 @@ const giftData = async () => {
     })
 
     giftList.value = response.data
+
+    console.log(giftList.value)
   }
   catch (err) {
     $toast.error('Failed to fetch gift data. Please check the password and try again.')
@@ -64,6 +66,8 @@ const openQrModal = (url: string) => {
                 <th>URL</th>
                 <th>Pass</th>
                 <th>QR Code</th>
+                <th>Receiver</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -79,6 +83,8 @@ const openQrModal = (url: string) => {
                     @click="openQrModal(`https://gamatrain.com/airdrop/gift/${gift._id}`)"
                   />
                 </td>
+                <td>{{ gift.receiver || 'N/A' }}</td>
+                <td>{{ gift.status ? 'received' : 'N/A' }}</td>
               </tr>
             </tbody>
           </v-table>
