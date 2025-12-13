@@ -29,10 +29,10 @@ const messagesContainer = ref<HTMLElement | null>(null)
 
 // Sample quick questions
 const quickQuestions = [
-  { icon: 'mdi-head-question', text: 'What is artificial intelligence?' },
-  { icon: 'mdi-brain', text: 'Explain machine learning' },
-  { icon: 'mdi-compare', text: 'Difference between AI and ML?' },
-  { icon: 'mdi-rocket-launch', text: 'Future of AI in education?' },
+  { icon: 'md:psychology_alt', text: 'What is artificial intelligence?' },
+  { icon: 'md:psychology', text: 'Explain machine learning' },
+  { icon: 'md:compare_arrows', text: 'Difference between AI and ML?' },
+  { icon: 'md:rocket_launch', text: 'Future of AI in education?' },
 ]
 
 // Auto-scroll to bottom when new messages arrive
@@ -102,8 +102,7 @@ function formatTime(date: Date) {
     <!-- Header Section -->
     <v-container
       fluid
-      class="bg-surface-variant position-relative d-flex align-center justify-center"
-      style="height: 24rem; background-color: #24292f !important;"
+      class="bg-surface-variant position-relative d-flex align-center justify-center header-container bg-header-dark"
     >
       <div class="text-center pt-10">
         <h1 class="gama-text-h1 text-primary">
@@ -136,7 +135,7 @@ function formatTime(date: Date) {
                   class="mr-3"
                 >
                   <v-icon color="black">
-                    mdi-robot-happy
+                    md:smart_toy
                   </v-icon>
                 </v-avatar>
                 <div>
@@ -157,7 +156,7 @@ function formatTime(date: Date) {
                   start
                   size="18"
                 >
-                  mdi-refresh
+                  md:refresh
                 </v-icon>
                 New Chat
               </v-btn>
@@ -168,8 +167,7 @@ function formatTime(date: Date) {
             <!-- Messages Area -->
             <div
               ref="messagesContainer"
-              class=" pa-4 md-pa-8 d-flex flex-column overflow-y-auto bg-white"
-              style="min-height: 450px; max-height: 550px;"
+              class="pa-4 md-pa-8 d-flex flex-column overflow-y-auto bg-white chat-area"
             >
               <!-- Welcome Screen -->
               <div
@@ -181,7 +179,7 @@ function formatTime(date: Date) {
                   color="primary"
                   class="mb-4"
                 >
-                  mdi-robot-happy-outline
+                  md:smart_toy
                 </v-icon>
                 <h2 class="gama-text-h4 mb-2">
                   Hello! I'm Gamatrain AI
@@ -190,10 +188,7 @@ function formatTime(date: Date) {
                   Ask me anything about your studies. I'm here to help!
                 </p>
 
-                <div
-                  class="w-100"
-                  style="max-width: 600px;"
-                >
+                <div class="w-100 suggested-container">
                   <p class="gama-text-caption text-grey-darken-1 mb-3 text-uppercase">
                     Suggested Questions
                   </p>
@@ -209,8 +204,7 @@ function formatTime(date: Date) {
                         rounded
                         block
                         size="2x-large"
-                        class="px-4 py-3 font-size-12 justify-start hover: border-color: #E3E5EA;"
-                        style="border-color: #E3E5EA;"
+                        class="px-4 py-3 font-size-12 justify-start btn-border-custom"
                         color="grey-darken-3"
                         @click="selectQuickQuestion(q.text)"
                       >
@@ -218,7 +212,6 @@ function formatTime(date: Date) {
                           size="20"
                           :icon="q.icon"
                           class="mr-2"
-
                         />
                         {{ q.text }}
                       </v-btn>
@@ -249,7 +242,7 @@ function formatTime(date: Date) {
                         :color="message.role === 'user' ? 'black' : 'primary'"
                         size="20"
                       >
-                        {{ message.role === 'user' ? 'mdi-account' : 'mdi-robot-happy' }}
+                        {{ message.role === 'user' ? 'md:person' : 'md:smart_toy' }}
                       </v-icon>
                     </v-avatar>
                     <div
@@ -263,7 +256,6 @@ function formatTime(date: Date) {
                             ? 'userMessage'
                             : 'AiMessage',
                         ]"
-                        style="line-height: 1.7; white-space: pre-wrap; word-break: break-word;"
                       >
                         {{ message.content }}
                       </div>
@@ -292,7 +284,7 @@ function formatTime(date: Date) {
                         color="primary"
                         size="20"
                       >
-                        mdi-robot-happy
+                        md:smart_toy
                       </v-icon>
                     </v-avatar>
                     <div>
@@ -302,14 +294,8 @@ function formatTime(date: Date) {
                           style="gap: 0.4rem;"
                         >
                           <span class="typing-dot" />
-                          <span
-                            class="typing-dot"
-                            style="animation-delay: 0.2s"
-                          />
-                          <span
-                            class="typing-dot"
-                            style="animation-delay: 0.4s"
-                          />
+                          <span class="typing-dot" />
+                          <span class="typing-dot" />
                         </div>
                       </div>
                     </div>
@@ -355,7 +341,7 @@ function formatTime(date: Date) {
                     @click="sendMessage"
                   >
                     <v-icon color="black">
-                      mdi-send
+                      md:send
                     </v-icon>
                   </v-btn>
                 </template>
@@ -381,6 +367,27 @@ function formatTime(date: Date) {
   color: #ffb600 !important;
 }
 
+.header-container {
+  height: 24rem;
+}
+
+.bg-header-dark {
+  background-color: #24292f !important;
+}
+
+.chat-area {
+  min-height: 450px;
+  max-height: 550px;
+}
+
+.suggested-container {
+  max-width: 600px;
+}
+
+.btn-border-custom {
+  border-color: #E3E5EA;
+}
+
 /* Animations that are hard to do with utility classes only */
 .typing-dot {
   width: 8px;
@@ -388,6 +395,14 @@ function formatTime(date: Date) {
   border-radius: 50%;
   background: #98a2b3;
   animation: typing 1.4s ease-in-out infinite;
+}
+
+.typing-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-dot:nth-child(3) {
+  animation-delay: 0.4s;
 }
 
 @keyframes typing {
@@ -404,30 +419,32 @@ function formatTime(date: Date) {
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
 }
-.userMessage{
-    border-radius: 1.7rem;
-    font-weight: 500;
-    font-size: 1.5rem;
-    line-height: 1.7;
-    max-width: 100%;
-    padding: 1rem 0.5rem;
-    white-space: pre-wrap;
-    word-break: break-word;
-    background: #ffb600;
-    border-bottom-right-radius: .4rem;
-    color: #24292f;
+
+.userMessage {
+  border-radius: 1.7rem;
+  font-weight: 500;
+  font-size: 1.5rem;
+  line-height: 1.7;
+  max-width: 100%;
+  padding: 1rem 0.5rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #ffb600;
+  border-bottom-right-radius: .4rem;
+  color: #24292f;
 }
-.AiMessage{
+
+.AiMessage {
   border-radius: 1.6rem;
-    font-size: 1.4rem;
-    line-height: 1.7;
-    max-width: 100%;
-    padding: 1.2rem 1.6rem;
-    white-space: pre-wrap;
-    word-break: break-word;
-    background: #f2f4f7;
-    border-bottom-left-radius: .4rem;
-    color: #344054;
+  font-size: 1.4rem;
+  line-height: 1.7;
+  max-width: 100%;
+  padding: 1.2rem 1.6rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: #f2f4f7;
+  border-bottom-left-radius: .4rem;
+  color: #344054;
 }
 
 @keyframes fadeIn {
