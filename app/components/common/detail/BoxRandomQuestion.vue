@@ -23,7 +23,7 @@
         class="text-h6"
         icon="md:question_mark"
         :disabled="isPaymentComplete"
-        @click="showCoinPaymentModal = true"
+        @click="showAnswerQuestion"
       />
     </div>
     <div
@@ -85,7 +85,7 @@
 
     <!-- Coin Payment Modal -->
     <modals-coin-payment-modal
-      v-model:is-open="showCoinPaymentModal"
+      v-model:show-dialog="showCoinPaymentModal"
       :user-balance="coinBalance.balance.value"
       :is-processing="coinBalance.isLoading.value || isProcessingPayment"
       text-modal="Unlock the answer by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!"
@@ -162,6 +162,10 @@ const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
 const fullAnswerRef = ref(null)
 const isPaymentComplete = ref(false)
+
+const showAnswerQuestion = () => {
+  showCoinPaymentModal.value = true
+}
 
 const handleCoinPaymentConfirm = async () => {
   isProcessingPayment.value = true
