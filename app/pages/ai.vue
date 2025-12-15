@@ -321,9 +321,9 @@ function formatTime(date: Date) {
                 rounded
                 :disabled="loading"
                 class="bg-white"
-                @keydown="handleKeydown"
                 aria-autocomplete="none"
                 autocomplete="off"
+                @keydown="handleKeydown"
               >
                 <template #append-inner>
                   <v-btn
