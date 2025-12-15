@@ -218,7 +218,6 @@ function formatTime(date: Date) {
                           size="20"
                           :icon="q.icon"
                           class="mr-2"
-
                         />
                         {{ q.text }}
                       </v-btn>
