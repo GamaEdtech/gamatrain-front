@@ -7,10 +7,7 @@ declare module '#app' {
       warning: (message: string) => void
     }
     $numberFormat: (value: number | string) => string
-    $loadImg: (img: string) => string
     $slugGenerator: (title: string) => string
-    $testLevel: (val: number) => string
-    $timeAgo: (date: string) => string
   }
 }
 
@@ -23,10 +20,7 @@ declare module '@vue/runtime-core' {
       warning: (message: string) => void
     }
     $numberFormat: (value: number | string) => string
-    $loadImg: (img: string) => string
     $slugGenerator: (title: string) => string
-    $testLevel: (val: number) => string
-    $timeAgo: (date: string) => string
   }
 }
 
