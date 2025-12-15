@@ -1,22 +1,17 @@
-import { Connection, Keypair, PublicKey, clusterApiUrl, SystemProgram, Transaction, sendAndConfirmTransaction } from '@solana/web3.js'
+import { Connection, Keypair, PublicKey, clusterApiUrl, SystemProgram } from '@solana/web3.js'
 import * as anchor from '@coral-xyz/anchor'
 
 import {
   TOKEN_2022_PROGRAM_ID,
-  createInitializeAccountInstruction,
-  getAssociatedTokenAddress,
-  getMinimumBalanceForRentExemptAccount,
-  ACCOUNT_SIZE,
+  getAssociatedTokenAddressSync,
+  createAssociatedTokenAccountInstruction,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
 } from '@solana/spl-token'
 
 import idl from '../idl/jup-locker.json'
 
 const { Program, AnchorProvider, Wallet, BN } = anchor.default
 
-// Token-2022 program (constant)
-const TOKEN_2022_PROGRAM = new PublicKey(
-  'TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb',
-)
 export function useLocker() {
   const config = useRuntimeConfig()
   const rpcUrl = config.public?.solanaRpcUrl || clusterApiUrl('mainnet-beta')
@@ -30,89 +25,67 @@ export function useLocker() {
   const wallet = new Wallet(payer)
   const provider = new AnchorProvider(connection, wallet, { commitment: 'confirmed' })
   const program = new Program(idl, provider)
-  console.log('test')
   return { program, wallet, authority: payer.publicKey, connection }
 }
 
 export async function createLock(recipient: string, amount: number, durationMonths: number) {
-  const { program, connection, wallet, authority } = useLocker()
-
+  const { program, authority } = useLocker()
   const config = useRuntimeConfig()
+
+  /* -------------------------------------------------- */
+  /* Keys                                           */
+  /* -------------------------------------------------- */
 
   const recipientPubkey = new PublicKey(recipient)
   const mintPubkey = new PublicKey(config.public.solanaTokenMint)
 
-  /* ---------- Time params ---------- */
+  // 🔑 baseKP = throwaway signer (NOT a wallet)
+  const baseKP = Keypair.generate()
+
+  /* -------------------------------------------------- */
+  /* Time params (BN required by Anchor)             */
+  /* -------------------------------------------------- */
+
   const startTime = new BN(Math.floor(Date.now() / 1000))
   const durationSeconds = new BN(
     durationMonths * 30 * 24 * 60 * 60,
   )
 
-  /* ---------- Escrow PDA ---------- */
+  /* -------------------------------------------------- */
+  /*  Escrow PDA (derived from baseKP)                */
+  /* -------------------------------------------------- */
+
   const [escrowPda] = PublicKey.findProgramAddressSync(
-    [Buffer.from('escrow'), authority.toBuffer()],
+    [Buffer.from('escrow'), baseKP.publicKey.toBuffer()],
     program.programId,
   )
 
-  /* ---------- Escrow Token PDA (Token-2022) ---------- */
-  const [escrowToken] = PublicKey.findProgramAddressSync(
-    [
-      escrowPda.toBuffer(),
-      TOKEN_2022_PROGRAM_ID.toBuffer(),
-      mintPubkey.toBuffer(),
-    ],
-    TOKEN_2022_PROGRAM,
-  )
+  /* -------------------------------------------------- */
+  /*  Token accounts (Token-2022)                     */
+  /* -------------------------------------------------- */
 
-  /* ---------- Sender Token (Token-2022 ATA) ---------- */
-  const senderToken = await getAssociatedTokenAddress(
+  // Sender ATA (authority owns tokens now)
+  const senderToken = getAssociatedTokenAddressSync(
     mintPubkey,
     authority,
     false,
     TOKEN_2022_PROGRAM_ID,
+    ASSOCIATED_TOKEN_PROGRAM_ID,
   )
 
-  /* ---------- Event Authority PDA ---------- */
-  const [eventAuthority] = PublicKey.findProgramAddressSync(
-    [Buffer.from('__event_authority')],
-    program.programId,
+  // Escrow ATA (escrow PDA owns locked tokens)
+  const escrowToken = getAssociatedTokenAddressSync(
+    mintPubkey,
+    escrowPda,
+    true,
+    TOKEN_2022_PROGRAM_ID,
+    ASSOCIATED_TOKEN_PROGRAM_ID,
   )
 
   /* -------------------------------------------------- */
-  /* 1️⃣ Initialize escrow_token (REQUIRED)              */
+  /* Program params                                 */
   /* -------------------------------------------------- */
-  const escrowInfo = await connection.getAccountInfo(escrowToken)
 
-  if (!escrowInfo) {
-    const lamports
-      = await getMinimumBalanceForRentExemptAccount(connection)
-
-    const initTx = new Transaction().add(
-      SystemProgram.createAccount({
-        fromPubkey: authority,
-        newAccountPubkey: escrowToken,
-        space: ACCOUNT_SIZE,
-        lamports,
-        programId: TOKEN_2022_PROGRAM_ID,
-      }),
-      createInitializeAccountInstruction(
-        escrowToken,
-        mintPubkey,
-        escrowPda,
-        TOKEN_2022_PROGRAM_ID,
-      ),
-    )
-
-    await sendAndConfirmTransaction(
-      connection,
-      initTx,
-      [wallet],
-    )
-  }
-
-  /* -------------------------------------------------- */
-  /* 2️⃣ Call Anchor program                             */
-  /* -------------------------------------------------- */
   const params = {
     vestingStartTime: startTime,
     cliffTime: startTime,
@@ -120,30 +93,49 @@ export async function createLock(recipient: string, amount: number, durationMont
     cliffUnlockAmount: new BN(0),
     amountPerPeriod: new BN(amount.toString()),
     numberOfPeriod: new BN(1),
-    updateRecipientMode: 1,
-    cancelMode: 0,
+    updateRecipientMode: 0,
+    cancelMode: 1,
   }
+
+  /* -------------------------------------------------- */
+  /*  Send transaction                               */
+  /* -------------------------------------------------- */
 
   const tx = await program.methods
     .createVestingEscrowV2(params, null)
     .accounts({
-      base: authority,
+      base: baseKP.publicKey, //  base signer
       escrow: escrowPda,
-      tokenMint: mintPubkey,
       escrowToken,
-      sender: authority,
       senderToken,
-      recipient: recipientPubkey,
+      tokenMint: mintPubkey,
+      sender: authority, //  token owner
+      recipient: recipientPubkey, //  future receiver
       tokenProgram: TOKEN_2022_PROGRAM_ID,
       systemProgram: SystemProgram.programId,
-      eventAuthority,
-      program: program.programId,
     })
+    .preInstructions([
+      //  Correct way to create escrow ATA
+      createAssociatedTokenAccountInstruction(
+        authority, // payer
+        escrowToken,
+        escrowPda,
+        mintPubkey,
+        TOKEN_2022_PROGRAM_ID,
+        ASSOCIATED_TOKEN_PROGRAM_ID,
+      ),
+    ])
+    .signers([baseKP]) //  REQUIRED
     .rpc()
+
+  /* -------------------------------------------------- */
+  /*  Return useful info                              */
+  /* -------------------------------------------------- */
 
   return {
     tx,
-    escrowPda: escrowPda.toBase58(),
+    escrow: escrowPda.toBase58(),
     escrowToken: escrowToken.toBase58(),
+    base: baseKP.publicKey.toBase58(),
   }
 }

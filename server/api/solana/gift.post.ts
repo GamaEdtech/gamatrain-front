@@ -21,9 +21,14 @@ export default defineEventHandler(async (event) => {
     const amount = 100
 
     const { createLock } = await import('../../utils/token-locker')
-    const result = await createLock(body.to, amount * 10e6, 6)
+    const result = await createLock(body.to, amount * 1e6, 6)
 
-    return { success: true, tx: result.tx, escrow: result.escrowPda }
+    return {
+      success: true,
+      tx: result.tx,
+      escrow: result.escrow,
+      base: result.base,
+    }
 
     // /* ---------------- Load services ---------------- */
     // const { transferSplToken } = useSplTransfer()
