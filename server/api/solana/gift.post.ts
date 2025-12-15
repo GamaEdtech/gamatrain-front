@@ -1,11 +1,11 @@
-import { Types } from 'mongoose'
+// import { Types } from 'mongoose'
 
 // Gift SPL tokens to a specified address
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
 
-    /* ---------------- Basic validation ---------------- */
+    // /* ---------------- Basic validation ---------------- */
     if (
       !body
       || typeof body.to !== 'string'
@@ -18,73 +18,81 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    /* ---------------- Load services ---------------- */
-    const { transferSplToken } = useSplTransfer()
-    const { Gift } = await useMongoDB()
+    const amount = 100
 
-    /* ---------------- Normalize ID ---------------- */
-    const giftId = Types.ObjectId.isValid(body.id)
-      ? new Types.ObjectId(body.id)
-      : body.id
+    const { createLock } = await import('../../utils/token-locker')
+    const result = await createLock(body.to, amount * 10e6, 6)
 
-    /* ---------------- Atomic gift claim ---------------- */
-    const gift = await Gift.findOneAndUpdate(
-      {
-        _id: giftId,
-        pass: body.pass,
-        status: false,
-        receiver: { $exists: false }, // only if not claimed
-      },
-      {
-        $set: {
-          status: true,
-          receiver: body.to, // created if missing
-        },
-      },
-      { new: true },
-    )
+    return { success: true, tx: result.tx, escrow: result.escrowPda }
 
-    if (!gift) {
-      return {
-        success: false,
-        message: 'Gift not found, already claimed, or wallet already used',
-      }
-    }
+    // /* ---------------- Load services ---------------- */
+    // const { transferSplToken } = useSplTransfer()
+    // const { Gift } = await useMongoDB()
 
-    /* ---------------- Transfer SPL token ---------------- */
-    const amount = 500000
-    const result = await transferSplToken({
-      to: body.to,
-      amount: amount * 1e6,
-    })
+    // /* ---------------- Normalize ID ---------------- */
+    // const giftId = Types.ObjectId.isValid(body.id)
+    //   ? new Types.ObjectId(body.id)
+    //   : body.id
 
-    if (!result || result.err) {
-      // rollback gift claim if transfer failed
-      await Gift.updateOne(
-        { _id: giftId },
-        {
-          $set: { status: false },
-          $unset: { receiver: '' },
-        },
-      )
+    // /* ---------------- Atomic gift claim ---------------- */
+    // const gift = await Gift.findOneAndUpdate(
+    //   {
+    //     _id: giftId,
+    //     pass: body.pass,
+    //     status: false,
+    //     receiver: { $exists: false }, // only if not claimed
+    //   },
+    //   {
+    //     $set: {
+    //       status: true,
+    //       receiver: body.to, // created if missing
+    //     },
+    //   },
+    //   { new: true },
+    // )
 
-      return {
-        success: false,
-        message: 'Token transfer failed',
-      }
-    }
+    // if (!gift) {
+    //   return {
+    //     success: false,
+    //     message: 'Gift not found, already claimed, or wallet already used',
+    //   }
+    // }
 
-    /* ---------------- Success ---------------- */
-    return {
-      success: true,
-      message: 'Gift successfully claimed',
-      data: {
-        signature: result.signature,
-        confirmationStatus: result.confirmationStatus,
-      },
-    }
+    // /* ---------------- Transfer SPL token ---------------- */
+    // const amount = 500000
+    // const result = await transferSplToken({
+    //   to: body.to,
+    //   amount: amount * 1e6,
+    // })
+
+    // if (!result || result.err) {
+    //   // rollback gift claim if transfer failed
+    //   await Gift.updateOne(
+    //     { _id: giftId },
+    //     {
+    //       $set: { status: false },
+    //       $unset: { receiver: '' },
+    //     },
+    //   )
+
+    //   return {
+    //     success: false,
+    //     message: 'Token transfer failed',
+    //   }
+    // }
+
+    // /* ---------------- Success ---------------- */
+    // return {
+    //   success: true,
+    //   message: 'Gift successfully claimed',
+    //   data: {
+    //     signature: result.signature,
+    //     confirmationStatus: result.confirmationStatus,
+    //   },
+    // }
   }
   catch (error: unknown) {
+    console.error('Error in gift redeem:', error)
     return {
       success: false,
       message: error?.message || 'An error occurred',

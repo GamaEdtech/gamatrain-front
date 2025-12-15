@@ -26,6 +26,7 @@ const receiveGift = async () => {
       id,
       pass: giftPass.value,
     })
+    console.log('Gift redeem response:', response)
 
     if (!response?.success) {
       $toast.error(response.message || 'Failed to redeem gift. Please try again.')
