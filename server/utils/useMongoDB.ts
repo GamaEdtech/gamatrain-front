@@ -13,7 +13,12 @@ export const useMongoDB = async () => {
 
   const giftSchema = new mongoose.Schema({
     pass: { type: String, required: true },
-    status: { type: Boolean, default: false },
+    status: {
+      type: String,
+      enum: ['new', 'pending', 'claimed', 'failed'],
+      default: 'new',
+      index: true,
+    },
     receiver: {
       type: String,
       unique: true,

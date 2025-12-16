@@ -84,7 +84,7 @@ const openQrModal = (url: string) => {
                   />
                 </td>
                 <td>{{ gift.receiver || 'N/A' }}</td>
-                <td>{{ gift.status ? 'received' : 'N/A' }}</td>
+                <td>{{ gift.status }}</td>
               </tr>
             </tbody>
           </v-table>
