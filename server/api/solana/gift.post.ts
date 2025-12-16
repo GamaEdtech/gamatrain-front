@@ -1,11 +1,11 @@
-// import { Types } from 'mongoose'
+import { Types } from 'mongoose'
 
 // Gift SPL tokens to a specified address
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event)
 
-    // /* ---------------- Basic validation ---------------- */
+    /* ---------------- Basic validation ---------------- */
     if (
       !body
       || typeof body.to !== 'string'
@@ -18,86 +18,109 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    const amount = 100
+    /* ---------------- Load services ---------------- */
+    const { createLock } = useJupTokenLocker()
+    const { Gift } = await useMongoDB()
 
-    const { createLock } = await import('../../utils/token-locker')
-    const result = await createLock(body.to, amount * 1e6, 6)
+    /* ---------------- Normalize ID ---------------- */
+    const giftId = Types.ObjectId.isValid(body.id)
+      ? new Types.ObjectId(body.id)
+      : body.id
 
-    return {
-      success: true,
-      tx: result.tx,
-      escrow: result.escrow,
-      base: result.base,
+    /* ---------------- Step 1: move gift to PENDING ---------------- */
+    const gift = await Gift.findOneAndUpdate(
+      {
+        _id: giftId,
+        pass: body.pass,
+        status: 'new',
+        receiver: { $exists: false },
+      },
+      {
+        $set: {
+          status: 'pending',
+          receiver: body.to,
+          pendingAt: new Date(),
+        },
+      },
+      { new: true },
+    )
+
+    if (!gift) {
+      return {
+        success: false,
+        message: 'Gift not found, already claimed, or invalid pass',
+      }
     }
 
-    // /* ---------------- Load services ---------------- */
-    // const { transferSplToken } = useSplTransfer()
-    // const { Gift } = await useMongoDB()
+    /* ---------------- Step 2: create Solana lock ---------------- */
+    const amount = 400_000
 
-    // /* ---------------- Normalize ID ---------------- */
-    // const giftId = Types.ObjectId.isValid(body.id)
-    //   ? new Types.ObjectId(body.id)
-    //   : body.id
+    let result
+    try {
+      result = await createLock(body.to, amount * 1e6, 6)
+    }
+    catch (err) {
+      // Solana call failed BEFORE signature
+      await Gift.updateOne(
+        { _id: giftId },
+        { $set: { status: 'failed', error: 'lock_creation_failed' } },
+      )
 
-    // /* ---------------- Atomic gift claim ---------------- */
-    // const gift = await Gift.findOneAndUpdate(
-    //   {
-    //     _id: giftId,
-    //     pass: body.pass,
-    //     status: false,
-    //     receiver: { $exists: false }, // only if not claimed
-    //   },
-    //   {
-    //     $set: {
-    //       status: true,
-    //       receiver: body.to, // created if missing
-    //     },
-    //   },
-    //   { new: true },
-    // )
+      throw err
+    }
 
-    // if (!gift) {
-    //   return {
-    //     success: false,
-    //     message: 'Gift not found, already claimed, or wallet already used',
-    //   }
-    // }
+    /* ---------------- Step 3: handle confirmation ---------------- */
+    if (!result.confirmed) {
+      // tx exists but not finalized yet
+      // DO NOT ROLLBACK
+      await Gift.updateOne(
+        { _id: giftId },
+        {
+          $set: {
+            status: 'pending',
+            tx: result.signature,
+            escrow: result.escrow,
+          },
+        },
+      )
 
-    // /* ---------------- Transfer SPL token ---------------- */
-    // const amount = 500000
-    // const result = await transferSplToken({
-    //   to: body.to,
-    //   amount: amount * 1e6,
-    // })
+      return {
+        success: false,
+        message: 'Transaction pending, check later',
+        data: {
+          tx: result.signature,
+        },
+      }
+    }
 
-    // if (!result || result.err) {
-    //   // rollback gift claim if transfer failed
-    //   await Gift.updateOne(
-    //     { _id: giftId },
-    //     {
-    //       $set: { status: false },
-    //       $unset: { receiver: '' },
-    //     },
-    //   )
+    /* ---------------- Step 4: finalize gift ---------------- */
+    await Gift.updateOne(
+      { _id: giftId },
+      {
+        $set: {
+          status: 'claimed',
+          tx: result.signature,
+          escrow: result.escrow,
+          base: result.base,
+          claimedAt: new Date(),
+        },
+      },
+    )
 
-    //   return {
-    //     success: false,
-    //     message: 'Token transfer failed',
-    //   }
-    // }
-
-    // /* ---------------- Success ---------------- */
-    // return {
-    //   success: true,
-    //   message: 'Gift successfully claimed',
-    //   data: {
-    //     signature: result.signature,
-    //     confirmationStatus: result.confirmationStatus,
-    //   },
-    // }
+    /* ---------------- Success ---------------- */
+    return {
+      success: true,
+      message: 'Gift successfully claimed',
+      data: {
+        tx: result.signature,
+        escrow: result.escrow,
+        base: result.base,
+      },
+    }
   }
   catch (error: unknown) {
     console.error('Error in gift redeem:', error)
+
     return {
       success: false,
       message: error?.message || 'An error occurred',

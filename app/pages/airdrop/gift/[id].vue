@@ -70,6 +70,12 @@ const receiveGift = async () => {
               autocomplete="off"
               :rules="[solanaWalletAddress, required]"
             />
+            <span class="text-blue ">
+              You don't have wallet address? Create one at <a
+                href="https://jup.ag/?refId=vsw1dbdvmxkz"
+                target="_blank"
+              >https://jup.ag</a>
+            </span>
           </v-col>
           <v-col
             cols="12"

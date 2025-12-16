@@ -1,19 +1,5 @@
-import mongoose from 'mongoose'
-
-const config = useRuntimeConfig()
-
-if (mongoose.connection.readyState === 0) {
-  mongoose.connect(config.connectionStringMongoDB)
-}
-
-const giftSchema = new mongoose.Schema({
-  pass: String,
-  status: Boolean,
-})
-
-const Gift = mongoose.models.Gifts || mongoose.model('Gifts', giftSchema)
-
 export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig()
   try {
     const query = await getQuery(event)
 
@@ -24,6 +10,7 @@ export default defineEventHandler(async (event) => {
       })
     }
 
+    const { Gift } = await useMongoDB()
     const gifts = await Gift.find({})
 
     return {
