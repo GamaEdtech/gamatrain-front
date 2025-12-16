@@ -22,6 +22,7 @@
     <home-blog-container v-if="showBlogSlider" />
     <!-- End blog container -->
     <common-footer />
+    <common-bottom-nav-menu />
     <AppGlobalSnackbar />
     <client-only>
       <lazy-common-random-coin />
