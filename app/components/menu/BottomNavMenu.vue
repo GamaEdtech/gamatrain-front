@@ -4,6 +4,7 @@
       <nuxt-link
         v-if="isAuthenticated"
         to="/user"
+        class="pa-4"
       >
         <img
           width="24"
@@ -19,6 +20,7 @@
         <v-icon
           size="24"
           color="grey600"
+          class="pa-4"
           @click="openLoginModal"
         >
           md:account_circle
@@ -92,10 +94,15 @@
       >Home</span>
     </nuxt-link>
   </div>
+  <menu-search-option-bottom-menu
+    v-if="isSearchOptionOpen"
+    @close="isSearchOptionOpen = false"
+  />
 </template>
 
 <script setup lang="ts">
 const router = useRouter()
+const route = useRoute()
 const { isAuthenticated } = useAuth()
 const user = useUser()
 
@@ -106,6 +113,14 @@ const openLoginModal = () => {
 const isSearchOptionOpen = ref(false)
 
 const isAddOptionOpen = ref(false)
+
+watch(
+  () => route.fullPath,
+  () => {
+    isSearchOptionOpen.value = false
+    isAddOptionOpen.value = false
+  },
+)
 </script>
 
 <style scoped>

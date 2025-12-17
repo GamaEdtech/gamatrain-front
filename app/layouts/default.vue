@@ -22,7 +22,7 @@
     <home-blog-container v-if="showBlogSlider" />
     <!-- End blog container -->
     <common-footer />
-    <common-bottom-nav-menu />
+    <menu-bottom-nav-menu />
     <AppGlobalSnackbar />
     <client-only>
       <lazy-common-random-coin />
@@ -104,6 +104,6 @@ const easeOutQuad = (t) => {
 <style scoped>
 .custom-ovarlay {
   background-color: #00000069;
-  z-index: 1010;
+  z-index: 10001;
 }
 </style>
