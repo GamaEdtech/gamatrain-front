@@ -53,6 +53,10 @@ export default defineNuxtConfig({
     },
   ],
 
+  dayjs: {
+    plugins: ['relativeTime'],
+  },
+
   site: {
     url: 'https://gamatrain.com/',
     name: 'Gamatrain',
