@@ -4,15 +4,23 @@
       <nuxt-link
         v-if="isAuthenticated"
         to="/user"
-        class="pa-4"
+        class="pa-1"
       >
         <img
+          v-if="user.user.value?.avatar"
           width="24"
           height="24"
           class="rounded-circle"
           :src="user.user.value?.avatar"
           alt="User Profile"
         >
+        <v-icon
+          v-else
+          size="24"
+          color="grey600"
+        >
+          md:account_circle
+        </v-icon>
       </nuxt-link>
       <template
         v-else
@@ -33,14 +41,14 @@
         size="24"
         color="grey600"
         :class="`rounded-circle pa-4 ${isSearchOptionOpen ? `bg-primary50`:``}`"
-        @click="isSearchOptionOpen = !isSearchOptionOpen"
+        @click="changeModalSearchOption"
       >
         {{ isSearchOptionOpen ? `md:grid_view` :`md:grid_view_outlined` }}
       </v-icon>
       <span
         v-if="isSearchOptionOpen"
         class="text-grey500 text-subtitle-1"
-      >Search</span>
+      >Category</span>
     </div>
 
     <div class="each-menu d-flex align-center justify-start flex-column">
@@ -48,7 +56,7 @@
         size="24"
         color="grey600"
         :class="`rounded-circle pa-4 ${isAddOptionOpen ? `bg-primary50`:``}`"
-        @click="isAddOptionOpen = !isAddOptionOpen"
+        @click="changeModalAddOption"
       >
         md:add
       </v-icon>
@@ -98,6 +106,11 @@
     v-if="isSearchOptionOpen"
     @close="isSearchOptionOpen = false"
   />
+
+  <menu-add-option-bottom-menu
+    v-if="isAddOptionOpen"
+    @close="isAddOptionOpen = false"
+  />
 </template>
 
 <script setup lang="ts">
@@ -121,6 +134,16 @@ watch(
     isAddOptionOpen.value = false
   },
 )
+
+const changeModalSearchOption = () => {
+  isAddOptionOpen.value = false
+  isSearchOptionOpen.value = !isSearchOptionOpen.value
+}
+
+const changeModalAddOption = () => {
+  isSearchOptionOpen.value = false
+  isAddOptionOpen.value = !isAddOptionOpen.value
+}
 </script>
 
 <style scoped>

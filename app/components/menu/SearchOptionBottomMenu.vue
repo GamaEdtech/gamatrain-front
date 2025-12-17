@@ -16,7 +16,7 @@
           md:close
         </v-icon>
       </div>
-      <div class="w-100 d-flex flex-column ga-2 mt-4">
+      <div class="w-100 d-flex flex-column ga-2 mt-4 pa-3 overflow-y-auto overflow-x-hidden">
         <div
           v-for="category in categories"
           :key="category.key"
@@ -33,7 +33,7 @@
                   <v-icon
                     size="x-large"
                     color="#D0D5DD"
-                  >mdi-chevron-right</v-icon>
+                  >md:chevron_forward</v-icon>
                 </span>
               </div>
 
@@ -52,7 +52,7 @@
                     <v-icon
                       size="x-large"
                       color="#D0D5DD"
-                    >mdi-chevron-right</v-icon>
+                    >md:chevron_backward</v-icon>
                   </span>
                 </div>
               </div>
@@ -184,7 +184,7 @@ onMounted(async () => {
   z-index: 10000;
 }
 .search-container{
-  min-height: 60px;
+  height: 90%;
 }
 
 .stat-icon {
@@ -237,7 +237,7 @@ onMounted(async () => {
 .ex-category__card:hover {
   box-shadow: 0 8px 24px 0 rgba(76, 74, 255, 0.1),
     0 1.5px 6px 0 rgba(0, 0, 0, 0.04);
-  transform: translateY(-6px) scale(1.03);
+  transform: translateY(-6px) scale(1.01);
   border-color: #ffb600;
   background: #f8faff;
   cursor: pointer;
