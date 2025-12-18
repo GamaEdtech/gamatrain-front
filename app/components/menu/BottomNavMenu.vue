@@ -1,40 +1,22 @@
 <template>
   <div class="w-100 d-flex d-sm-none align-start justify-space-between position-sticky bottom-0 mt-2 px-3 pt-3 bottom-nav-menu bg-white">
-    <div class="each-menu d-flex align-start flex-column">
-      <nuxt-link
-        v-if="isAuthenticated"
-        to="/user"
-        class="pa-1"
+    <nuxt-link
+      v-slot="{ isActive }"
+      class="each-menu d-flex align-center justify-start flex-column"
+      to="/"
+    >
+      <v-icon
+        size="24"
+        color="grey600"
+        :class="`rounded-circle pa-4 ${isActive ? `bg-primary50`:``}`"
       >
-        <img
-          v-if="user.user.value?.avatar"
-          width="24"
-          height="24"
-          class="rounded-circle"
-          :src="user.user.value?.avatar"
-          alt="User Profile"
-        >
-        <v-icon
-          v-else
-          size="24"
-          color="grey600"
-        >
-          md:account_circle
-        </v-icon>
-      </nuxt-link>
-      <template
-        v-else
-      >
-        <v-icon
-          size="24"
-          color="grey600"
-          class="pa-4"
-          @click="openLoginModal"
-        >
-          md:account_circle
-        </v-icon>
-      </template>
-    </div>
+        {{ isActive ? `md:home`:`md:home_outlined` }}
+      </v-icon>
+      <span
+        v-if="isActive"
+        class="text-grey500 text-subtitle-1"
+      >Home</span>
+    </nuxt-link>
 
     <div class="each-menu d-flex align-center justify-start flex-column">
       <v-icon
@@ -84,23 +66,41 @@
       >blogs</span>
     </nuxt-link>
 
-    <nuxt-link
-      v-slot="{ isActive }"
-      class="each-menu d-flex align-center justify-start flex-column"
-      to="/"
-    >
-      <v-icon
-        size="24"
-        color="grey600"
-        :class="`rounded-circle pa-4 ${isActive ? `bg-primary50`:``}`"
+    <div class="each-menu d-flex align-start flex-column">
+      <nuxt-link
+        v-if="isAuthenticated"
+        to="/user"
+        class="pa-1"
       >
-        {{ isActive ? `md:home`:`md:home_outlined` }}
-      </v-icon>
-      <span
-        v-if="isActive"
-        class="text-grey500 text-subtitle-1"
-      >Home</span>
-    </nuxt-link>
+        <img
+          v-if="user.user.value?.avatar"
+          width="24"
+          height="24"
+          class="rounded-circle"
+          :src="user.user.value?.avatar"
+          alt="User Profile"
+        >
+        <v-icon
+          v-else
+          size="24"
+          color="grey600"
+        >
+          md:account_circle
+        </v-icon>
+      </nuxt-link>
+      <template
+        v-else
+      >
+        <v-icon
+          size="24"
+          color="grey600"
+          class="pa-4"
+          @click="openLoginModal"
+        >
+          md:account_circle
+        </v-icon>
+      </template>
+    </div>
   </div>
   <menu-search-option-bottom-menu
     v-if="isSearchOptionOpen"
@@ -141,8 +141,13 @@ const changeModalSearchOption = () => {
 }
 
 const changeModalAddOption = () => {
-  isSearchOptionOpen.value = false
-  isAddOptionOpen.value = !isAddOptionOpen.value
+  if (isAuthenticated.value) {
+    isSearchOptionOpen.value = false
+    isAddOptionOpen.value = !isAddOptionOpen.value
+  }
+  else {
+    router.push({ query: { auth_form: 'login' } })
+  }
 }
 </script>
 
