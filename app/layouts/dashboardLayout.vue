@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <main_header :is-user-dashboard="true" />
-    <div class="mt-16 mt-md-0 position-relative h-screen">
+    <div class="mt-16 mt-md-0 position-relative">
       <v-container class="dashboard">
         <!-- Start : Category -->
         <category />
@@ -25,6 +25,7 @@
         </div>
       </v-container>
     </div>
+    <menu-bottom-nav-menu />
     <AppGlobalSnackbar />
   </v-app>
 </template>

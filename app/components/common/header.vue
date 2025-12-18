@@ -46,14 +46,9 @@ const menuLink = [
   {
     title: 'AI Assistant',
     link: '/ai',
-    icon: 'mdi-robot-happy-outline',
+    icon: 'md:smart_toy_outlined',
     badge: 'Beta',
   },
-  // {
-  //   title: 'Services',
-  //   link: '/services',
-  //   icon: '',
-  // },
   {
     title: 'Leader Board',
     link: '/leader-board',
@@ -75,14 +70,14 @@ const currentOpenDialog = ref('')
 const notificationListDialog = ref(false)
 const notificationItems = [
   {
-    icon: 'mdi-table-furniture',
+    icon: 'md:table_restaurant',
     date: 'Today, 11:48 am',
     title: 'Sample Question uploded',
     describe:
       'Satisfied course question sample has been uploaded for your level of education.',
   },
   {
-    icon: 'mdi-map-marker-check',
+    icon: 'md:where_to_vote',
     date: 'Today, 11:48 am',
     title: 'Sample Question uploded',
     describe:
@@ -274,6 +269,17 @@ const isDrawerOpen = ref(false)
 const openNavigationMenu = () => {
   isDrawerOpen.value = true
 }
+
+const isAddOptionOpen = ref(false)
+
+const openAddOption = () => {
+  if (auth.isAuthenticated.value) {
+    isAddOptionOpen.value = true
+  }
+  else {
+    router.push({ query: { auth_form: 'login' } })
+  }
+}
 </script>
 
 <template>
@@ -286,7 +292,7 @@ const openNavigationMenu = () => {
         flat
         :fixed="menuSetting.fixedStatus"
         :class="menuSetting.class"
-        class="d-none d-lg-block"
+        class="d-none d-md-block"
       >
         <v-container class="px-0">
           <v-row>
@@ -300,9 +306,11 @@ const openNavigationMenu = () => {
                 <nuxt-link
                   to="/"
                   aria-label="Home Link"
+                  class="pt-1 pr-4 pl-4"
                 >
                   <img
-                    id="main-logo"
+                    width="120"
+                    height="32"
                     alt="Gamatrain"
                     :src="`/images/${menuSetting.logo}`"
                   >
@@ -316,7 +324,7 @@ const openNavigationMenu = () => {
                     :to="link.link"
                     :color="menuSetting.linkColor"
                     text
-                    class="mx-2 mx-md-0 mx-lg-2 text-transform-none gtext-t4"
+                    class="text-transform-none text-h5 px-3"
                   >
                     <v-icon
                       v-if="link.icon"
@@ -335,6 +343,23 @@ const openNavigationMenu = () => {
                     >
                       {{ link.badge }}
                     </v-chip>
+                  </v-btn>
+
+                  <v-btn
+                    tile
+                    :color="menuSetting.linkColor"
+                    text
+                    class="text-transform-none text-h5 px-3"
+                    @click="openAddOption"
+                  >
+                    <v-icon
+                      class="mr-1"
+                      size="20"
+                      color="#FFB300"
+                    >
+                      md:add
+                    </v-icon>
+                    Add
                   </v-btn>
                 </div>
               </div>
@@ -363,7 +388,7 @@ const openNavigationMenu = () => {
                     size="small"
                     aria-label="Wallet"
                   >
-                    <v-icon>mdi-wallet-outline</v-icon>
+                    <v-icon>md:account_balance_wallet_outlined</v-icon>
                   </v-btn>
                 </div>
 
@@ -379,7 +404,7 @@ const openNavigationMenu = () => {
                 <v-btn
                   v-if="!auth.isAuthenticated.value"
                   rounded
-                  class="primary text-transform-none black--text"
+                  class="primary text-transform-none black--text mr-2"
                   large
                   @click="openLoginDialog()"
                 >
@@ -392,7 +417,6 @@ const openNavigationMenu = () => {
       </v-app-bar>
 
       <div v-if="currentAuthComponent.length > 0 && loginDialogVisible">
-        <!-- Login component -->
         <component
           :is="currentAuthComponentMap[currentAuthComponent]"
           v-model:dialog="loginDialogVisible"
@@ -400,22 +424,6 @@ const openNavigationMenu = () => {
           @switch-to-register="switchTo('register')"
           @switch-to-recover="switchTo('recover')"
         />
-        <!-- End login component -->
-
-        <!-- Register component -->
-        <!-- <common-register
-          ref="register_modal"
-          :switchToLogin.sync="currentOpenDialog"
-        /> -->
-        <!-- End register component -->
-
-        <!-- Recover password component -->
-        <!-- <common-pass-recover
-          ref="pass_recover_modal"
-          :switchToLogin.sync="currentOpenDialog"
-          :switchToRegister.sync="currentOpenDialog"
-        /> -->
-        <!-- End recover password component -->
       </div>
       <!-- End desktop menu -->
 
@@ -430,7 +438,7 @@ const openNavigationMenu = () => {
 
       <!-- Mobile nav -->
       <v-app-bar
-        class="d-block d-lg-none mobile_bar top-0 px-5"
+        class="d-block d-md-none mobile_bar top-0 px-5"
         fixed
         flat
         :class="menuSetting.class"
@@ -442,7 +450,7 @@ const openNavigationMenu = () => {
           aria-label="Open menu"
           @click="openNavigationMenu"
         >
-          mdi-menu
+          md:menu
         </v-icon>
         <!-- Logo section -->
         <nuxt-link
@@ -451,7 +459,9 @@ const openNavigationMenu = () => {
           class="py-4"
         >
           <img
-            id="main-logo"
+            width="80"
+            height="20"
+            class="ml-2"
             alt="GamaTrain"
             :src="`/images/${menuSetting.logo}`"
           >
@@ -501,7 +511,7 @@ const openNavigationMenu = () => {
           <v-icon
             class="wallet-icon"
             :color="menuSetting.linkColor"
-          >mdi-wallet-outline</v-icon>
+          >md:account_balance_wallet_outlined</v-icon>
         </nuxt-link>
         <dropdown-menu
           v-if="auth.isAuthenticated.value"
@@ -531,7 +541,7 @@ const openNavigationMenu = () => {
               icon
               @click="notificationListDialog = false"
             >
-              <v-icon>mdi-close</v-icon>
+              <v-icon>md:close</v-icon>
             </v-btn>
           </v-toolbar>
           <v-list three-line>
@@ -561,6 +571,11 @@ const openNavigationMenu = () => {
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <menu-add-option-bottom-menu
+      v-if="isAddOptionOpen"
+      @close="isAddOptionOpen = false"
+    />
   </div>
 </template>
 
@@ -598,12 +613,6 @@ const openNavigationMenu = () => {
   z-index: 1006 !important;
 }
 
-#main-logo {
-  margin-left: 1rem !important;
-  width: 8.0551rem !important;
-  height: 2rem !important;
-}
-
 #mobile-signin-btn {
   margin-left: 1.6rem;
 }
@@ -623,12 +632,6 @@ const openNavigationMenu = () => {
 
   #mobile-signin-btn {
     margin-left: 1.6rem;
-  }
-
-  #main-logo {
-    margin-left: 2rem !important;
-    width: 1.6458rem;
-    height: 1.6511rem;
   }
 }
 
@@ -743,16 +746,9 @@ const openNavigationMenu = () => {
   justify-content: center;
 }
 
-@media (min-width: 1264px) {
-  #main-logo {
-    width: 12.0827rem !important;
-    height: 3.2rem !important;
-    margin-top: 0.6rem;
-    margin-right: 6.4rem;
-    margin-left: 0 !important;
-  }
+@media (min-width: 960px) {
   .wallet-div {
-    margin: 0 0 0 20px;
+    margin: -5px 0 0 5px;
   }
 }
 </style>
