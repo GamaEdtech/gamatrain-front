@@ -26,10 +26,10 @@
           >
             <div class="ex-category__card">
               <div class="d-flex align-center">
-                <div class="ex-category__card--title mb-sm-4 pr-6 pr-md-0">
+                <div class="ex-category__card--title pr-2">
                   {{ typeof category.stat === 'number' ? $numberFormat(category.stat) : category.stat }}
                 </div>
-                <span class="d-sm-none">
+                <span>
                   <v-icon
                     size="x-large"
                     color="#D0D5DD"
@@ -37,7 +37,7 @@
                 </span>
               </div>
 
-              <div class="d-flex align-center order-first order-sm-last">
+              <div class="d-flex align-center order-first">
                 <div class="ex-category__card--icon">
                   <span
                     class="stat-icon"
@@ -47,12 +47,6 @@
                 <div class="d-flex align-center pl-1">
                   <span class="ex-category__card--subtitle">
                     {{ category.title }}
-                  </span>
-                  <span class="pl-1 d-none d-sm-block">
-                    <v-icon
-                      size="x-large"
-                      color="#D0D5DD"
-                    >md:chevron_backward</v-icon>
                   </span>
                 </div>
               </div>
@@ -295,7 +289,7 @@ onMounted(async () => {
   flex-grow: 1;
 }
 
-@media (min-width: 600px) {
+/* @media (min-width: 600px) {
   .ex-category__card {
     background: linear-gradient(
       90deg,
@@ -339,5 +333,5 @@ onMounted(async () => {
     font-size: 14px;
     font-weight: 500;
   }
-}
+} */
 </style>

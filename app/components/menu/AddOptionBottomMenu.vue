@@ -1,10 +1,10 @@
 <template>
   <div
-    class="custom-overlay d-flex align-end position-fixed w-100"
+    class="custom-overlay d-flex justify-center align-end align-md-center position-fixed w-100"
     @click="clickOnOverlay"
   >
     <div
-      class="search-container w-100 bg-white rounded-t-xl d-flex flex-column align-center pa-4"
+      class="search-container bg-white d-flex flex-column align-center pa-4"
       @click="clickOnModal"
     >
       <div class="w-100 d-flex justify-end">
@@ -103,6 +103,8 @@ const clickOnModal = (event: Event) => {
 }
 .search-container{
   height: 70%;
+  width : 100%;
+  border-radius : 24px 24px 0 0
 }
 
 .card-option{
@@ -110,5 +112,16 @@ const clickOnModal = (event: Event) => {
 }
 .icon-add{
   font-size: 24px;
+}
+
+@media (min-width: 960px) {
+  .custom-overlay{
+  height: 100%;
+}
+.search-container{
+  height:auto;
+  width : 300px;
+    border-radius : 24px
+}
 }
 </style>

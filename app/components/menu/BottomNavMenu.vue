@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex d-sm-none align-start justify-space-between position-sticky bottom-0 mt-2 px-3 pt-3 bottom-nav-menu bg-white">
+  <div class="w-100 d-flex d-md-none align-start justify-space-between position-sticky bottom-0 mt-2 px-3 pt-3 bottom-nav-menu bg-white">
     <nuxt-link
       v-slot="{ isActive }"
       class="each-menu d-flex align-center justify-start flex-column"
