@@ -22,6 +22,7 @@
     <home-blog-container v-if="showBlogSlider" />
     <!-- End blog container -->
     <common-footer />
+    <menu-bottom-nav-menu v-if="showBottomNavSlider" />
     <AppGlobalSnackbar />
     <client-only>
       <lazy-common-random-coin />
@@ -42,6 +43,11 @@ const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'gove
 
 const showBlogSlider = computed(() => {
   return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)
+})
+
+const excludedPathsForBottomNavMenu = ['/school', '/game/car-racing', '/game/castle']
+const showBottomNavSlider = computed(() => {
+  return !excludedPathsForBottomNavMenu.includes(route.path)
 })
 
 onMounted(() => {
@@ -103,6 +109,6 @@ const easeOutQuad = (t) => {
 <style scoped>
 .custom-ovarlay {
   background-color: #00000069;
-  z-index: 1010;
+  z-index: 10001;
 }
 </style>

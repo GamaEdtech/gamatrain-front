@@ -75,7 +75,7 @@ export function useJupTokenLocker() {
       amountPerPeriod: new BN(amount.toString()),
       numberOfPeriod: new BN(1),
       updateRecipientMode: 0,
-      cancelMode: 0,
+      cancelMode: 2,
     }
 
     /* ---------------- TX ---------------- */
