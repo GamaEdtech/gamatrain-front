@@ -4,7 +4,7 @@
       class="d-block d-md-none px-5"
       style="
         z-index: 10;
-        bottom: 16px;
+        bottom: 80px;
         right: 16px;
         height: 52px;
         position: fixed;
