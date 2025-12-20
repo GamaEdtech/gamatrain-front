@@ -302,11 +302,11 @@ const openAddOption = () => {
               lg="10"
               xl="10"
             >
-              <div class="d-flex">
+              <div class="d-flex align-center">
                 <nuxt-link
                   to="/"
                   aria-label="Home Link"
-                  class="pt-1 pr-4 pl-4"
+                  class="pr-4 pl-4"
                 >
                   <img
                     width="120"
@@ -316,7 +316,7 @@ const openAddOption = () => {
                   >
                 </nuxt-link>
 
-                <div class="pt-2 d-flex">
+                <div class="d-flex align-center">
                   <v-btn
                     v-for="(link, i) in menuLink"
                     :key="i"
@@ -369,26 +369,31 @@ const openAddOption = () => {
               md="3"
               lg="2"
               xl="2"
-              class="text-right mt-md-1"
+              class="d-flex align-center justify-end text-right"
             >
               <div
                 v-if="auth.isAuthenticated.value"
-                class="d-flex text-right align-md-center"
+                class="d-flex align-center justify-end"
               >
-                <v-spacer />
                 <dropdown-menu :menu-setting="menuSetting" />
 
-                <div class="wallet-div">
+                <div class="wallet-div d-flex align-start justify-center">
                   <v-btn
                     to="/user/wallet"
-                    icon
                     variant="text"
-                    class="wallet-icon pt-1"
-                    :color="menuSetting.linkColor"
+                    color="transparent"
+                    class="wallet-icon"
                     size="small"
                     aria-label="Wallet"
+                    max-width="28"
+                    height="28"
                   >
-                    <v-icon>md:account_balance_wallet_outlined</v-icon>
+                    <v-icon
+                      :color="menuSetting.linkColor"
+                      size="24"
+                    >
+                      md:account_balance_wallet_outlined
+                    </v-icon>
                   </v-btn>
                 </div>
 
@@ -399,8 +404,7 @@ const openAddOption = () => {
                   class="d-none d-lg-block"
                 />
               </div>
-              <div v-else />
-              <div>
+              <!-- <div v-else>
                 <v-btn
                   v-if="!auth.isAuthenticated.value"
                   rounded
@@ -410,7 +414,7 @@ const openAddOption = () => {
                 >
                   Sign in
                 </v-btn>
-              </div>
+              </div> -->
             </v-col>
           </v-row>
         </v-container>
@@ -472,7 +476,7 @@ const openAddOption = () => {
 
         <!--   hamburgers-icon in mobile -->
 
-        <div class="text-center">
+        <div class="text-center mr-3">
           <v-icon
             :color="menuSetting.linkColor"
             class="pa-23"
@@ -505,7 +509,7 @@ const openAddOption = () => {
         />
         <nuxt-link
           to="/user/wallet"
-          class="wallet-div wallet-mobile"
+          class="wallet-div wallet-mobile mr-3"
           aria-label="Wallet"
         >
           <v-icon
@@ -594,9 +598,9 @@ const openAddOption = () => {
 }
 
 #main-header {
-  .v-icon {
+  /* .v-icon {
     font-size: 2rem;
-  }
+  } */
 
   .v-avatar {
     min-width: 2rem !important;
@@ -619,9 +623,9 @@ const openAddOption = () => {
 
 @media (min-width: 600px) {
   #main-header {
-    .v-icon {
+    /* .v-icon {
       font-size: 2.4rem;
-    }
+    } */
 
     .v-avatar {
       min-width: 2.4rem !important;
@@ -641,9 +645,9 @@ const openAddOption = () => {
       border-bottom: 3px solid rgb(0, 139, 139);
     }
 
-    .v-icon {
+    /* .v-icon {
       font-size: 2.8rem;
-    }
+    } */
 
     .v-avatar {
       min-width: 2.8rem;
@@ -656,14 +660,14 @@ const openAddOption = () => {
       padding-bottom: 0.4rem;
       height: 6.4rem !important;
 
-      .v-btn {
+      /* .v-btn {
         font-size: 1.8rem;
         font-style: normal;
         font-weight: 400;
         font-family: "Inter";
         line-height: normal;
         padding-bottom: 0.1rem !important;
-      }
+      } */
       .v-btn--active {
         .v-btn__overlay {
           opacity: 0;
@@ -708,10 +712,10 @@ const openAddOption = () => {
     .v-list-item__icon {
       margin-right: 1rem;
 
-      .v-icon {
+      /* .v-icon {
         font-size: 2.4rem;
         color: #ffb600 !important;
-      }
+      } */
     }
 
     .title {
@@ -738,17 +742,17 @@ const openAddOption = () => {
     }
   }
 }
-.wallet-div {
+/* .wallet-div {
   width: 50px;
   height: 50px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
+} */
 
 @media (min-width: 960px) {
-  .wallet-div {
+  /* .wallet-div {
     margin: -5px 0 0 5px;
-  }
+  } */
 }
 </style>

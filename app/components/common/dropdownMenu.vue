@@ -7,7 +7,7 @@
     <template #activator="{ props }">
       <div
         v-bind="props"
-        class="d-none d-lg-flex"
+        class="d-none d-lg-flex align-center"
       >
         <div
           :class="`gama-text-subtitle1 ${
