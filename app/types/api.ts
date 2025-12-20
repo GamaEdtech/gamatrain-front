@@ -2,6 +2,7 @@ export interface ApiResult<T> {
   data: T | null
   status: number
   error?: unknown
+  success: boolean
 }
 export interface ApiErrorResult {
   status?: number

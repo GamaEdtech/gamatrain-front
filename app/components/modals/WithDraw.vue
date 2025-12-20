@@ -3,6 +3,7 @@
     v-model="dialogModel"
     max-width="500"
     :fullscreen="!mdAndUp"
+    persistent
     @click="clickOnOverlay"
   >
     <div
@@ -105,17 +106,22 @@
 
       <template v-if="step == 2">
         <span class="text-h4 font-weight-bold w-100 text-center mt-4">Connect Your Wallet</span>
-        <span class="text-h6 font-weight-normal w-100 text-center mt-2">Choose a wallet to connect</span>
-        <span class="text-h6 font-weight-normal w-100 text-center mt-2">Amount to withdraw : {{ Number(withDrawValue) }}</span>
-        <div class="d-flex w-100 align-center justify-center mt-6">
+        <span class="text-h5 font-weight-normal w-100 text-center mt-4">Amount to withdraw : <span class="font-weight-bold">{{ Number(withDrawValue) }}</span></span>
+        <div class="wallet-button-container d-flex w-100 align-center justify-center mt-6">
           <ClientOnly>
-            <WalletMultiButton />
+            <WalletMultiButton v-if="walletInitialized" />
+            <v-skeleton-loader
+              v-else
+              width="175"
+              height="48"
+              class="rounded-lg"
+            />
           </ClientOnly>
         </div>
 
         <div class="w-100 d-flex align-center justify-center mt-4">
           <v-btn
-            :disabled="!isWalletConnected"
+            :disabled="!wallet?.connected"
             :loading="loadingWithDrawProcess"
             color="success"
             flat
@@ -133,22 +139,12 @@
 </template>
 
 <script setup lang="ts">
-import type { Ref } from 'vue'
-import type { PublicKey } from '@solana/web3.js'
-import type { SignerWalletAdapterProps } from '@solana/wallet-adapter-base'
+import type { ApiResult } from '~/types/api'
 import { useDisplay } from 'vuetify'
 import { computed } from 'vue'
 
-interface WalletStore {
-  publicKey: Ref<PublicKey | null>
-  connected: Ref<boolean>
-  signTransaction: Ref<SignerWalletAdapterProps['signTransaction'] | undefined>
-  signAllTransactions: Ref<
-    SignerWalletAdapterProps['signAllTransactions'] | undefined
-  >
-};
-
 const { mdAndUp } = useDisplay()
+const { $toast } = useNuxtApp()
 
 const props = defineProps({
   showDialog: {
@@ -161,32 +157,47 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:showDialog'])
+const emit = defineEmits(['update:showDialog', 'updateBalance'])
 
 const dialogModel = computed({
   get: () => props.showDialog,
   set: value => emit('update:showDialog', value),
 })
 
+const withDrawValue = ref()
+const loadingWithDrawProcess = ref(false)
+const wallet = ref()
+const config = useRuntimeConfig()
+const walletInitialized = ref(false)
+const step = ref(1)
+
 const closeModal = () => {
-  emit('update:showDialog', false)
-  withDrawValue.value = 0
-  step.value = 1
+  if (loadingWithDrawProcess.value) {
+    $toast.info('Please wait until the process is complete.')
+  }
+  else {
+    emit('update:showDialog', false)
+    withDrawValue.value = null
+    step.value = 1
+  }
 }
 
 const clickOnOverlay = () => {
   if (!mdAndUp.value) {
-    emit('update:showDialog', false)
-    withDrawValue.value = 0
-    step.value = 1
+    if (loadingWithDrawProcess.value) {
+      $toast.info('Please wait until the process is complete.')
+    }
+    else {
+      emit('update:showDialog', false)
+      withDrawValue.value = null
+      step.value = 1
+    }
   }
 }
 
 const clickOnModal = (event: Event) => {
   event.stopPropagation()
 }
-
-const withDrawValue = ref()
 
 const selectMaximumBalance = () => {
   withDrawValue.value = props.userBalance / 1_000_000
@@ -200,6 +211,9 @@ const userBalanceInCoin = computed(() => {
   return props.userBalance / 1_000_000
 })
 const withdrawError = computed(() => {
+  if (withDrawValue.value == null) {
+    return ''
+  }
   if (withDrawValue.value <= 0) {
     return 'Amount must be greater than zero'
   }
@@ -211,16 +225,13 @@ const withdrawError = computed(() => {
   return ''
 })
 const disableFistStep = computed(() => {
-  return withdrawError.value !== ''
+  return withdrawError.value !== '' || withDrawValue.value == null || withDrawValue.value == ''
 })
 
-const step = ref(1)
-const goToSecondStep = () => {
+const goToSecondStep = async () => {
   step.value = 2
+  await initSolanaWallet()
 }
-
-const wallet = ref<WalletStore>()
-const config = useRuntimeConfig()
 
 const WalletMultiButton = defineAsyncComponent(async () => {
   if (import.meta.client) {
@@ -229,76 +240,109 @@ const WalletMultiButton = defineAsyncComponent(async () => {
   }
   return { template: '<div>Loading...</div>' }
 })
-onMounted(async () => {
-  if (import.meta.client) {
-    try {
-      await import('solana-wallets-vue/styles.css')
 
-      const { default: SolanaWallets } = await import('solana-wallets-vue')
-      const { WalletAdapterNetwork } = await import(
-        '@solana/wallet-adapter-base'
-      )
-      const adapters = await import('@solana/wallet-adapter-wallets')
+const initSolanaWallet = async () => {
+  if (walletInitialized.value) return
 
-      const netStr = config.public?.solanaNetwork?.toLowerCase() || 'mainnet'
-      const network
-        = netStr === 'devnet'
-          ? WalletAdapterNetwork.Devnet
-          : netStr === 'testnet'
-            ? WalletAdapterNetwork.Testnet
-            : WalletAdapterNetwork.Mainnet
+  try {
+    await import('solana-wallets-vue/styles.css')
 
-      const walletOptions = {
-        wallets: [
-          new adapters.PhantomWalletAdapter(),
-          new adapters.CloverWalletAdapter(),
-          new adapters.Coin98WalletAdapter(),
-          new adapters.SolflareWalletAdapter({ network }),
-        ],
-        autoConnect: false,
-      }
+    const { initWallet, useWallet } = await import('solana-wallets-vue')
+    const { WalletAdapterNetwork } = await import('@solana/wallet-adapter-base')
+    const adapters = await import('@solana/wallet-adapter-wallets')
 
-      const nuxtApp = useNuxtApp()
-      nuxtApp.vueApp.use(SolanaWallets, walletOptions)
+    const netStr = config.public?.solanaNetwork?.toLowerCase() || 'mainnet'
+    const network
+      = netStr === 'devnet'
+        ? WalletAdapterNetwork.Devnet
+        : netStr === 'testnet'
+          ? WalletAdapterNetwork.Testnet
+          : WalletAdapterNetwork.Mainnet
+
+    initWallet({
+      wallets: [
+        new adapters.PhantomWalletAdapter(),
+        new adapters.CloverWalletAdapter(),
+        new adapters.Coin98WalletAdapter(),
+        new adapters.SolflareWalletAdapter({ network }),
+      ],
+      autoConnect: true,
+    })
+
+    wallet.value = useWallet()
+
+    if (!window.Buffer) {
+      const { Buffer } = await import('buffer')
+      window.Buffer = Buffer
     }
-    catch (err) {
-      console.error('❌ Failed to load Solana wallet libraries:', err)
-    }
+    walletInitialized.value = true
+  }
+  catch (err) {
+    console.error('❌ Solana wallet init failed:', err)
+  }
+}
 
-    try {
-      const { useWallet } = await import('solana-wallets-vue')
-      wallet.value = useWallet()
-    }
-    catch (error) {
-      console.error('Failed to initialize wallet:', error)
-    }
+const confirmWithDraw = async () => {
+  if (!wallet?.value.publicKey) {
+    $toast.error('Wallet is not connected')
+    return
+  }
 
-    try {
-      if (!window.Buffer) {
-        const { Buffer } = await import('buffer')
-        window.Buffer = Buffer
-      }
+  if (!withDrawValue.value || withDrawValue.value <= 0) {
+    $toast.error('Invalid withdraw amount')
+    return
+  }
+
+  try {
+    loadingWithDrawProcess.value = true
+
+    const response = await useApiService.post<ApiResult<unknown>>(
+      '/api/solana/transfer',
+      {
+        to: wallet.value.publicKey.toBase58(),
+        amount: withDrawValue.value * 1_000_000,
+      },
+    )
+    if (response?.success) {
+      await consumeCoins(withDrawValue.value * 1_000_000)
+      $toast.success('Withdrawal completed successfully')
+      emit('update:showDialog', false)
+      emit('updateBalance')
+      withDrawValue.value = null
+      step.value = 1
     }
-    catch (err) {
-      console.error('Failed to spl token:', err)
+    else {
+      $toast.error('Withdrawal failed')
     }
   }
-})
-
-const isWalletConnected = computed(() => {
-  const connected = wallet.value?.connected
-  return connected
-})
-
-const loadingWithDrawProcess = ref(false)
-const confirmWithDraw = () => {
-
+  catch (error) {
+    console.error('Withdraw error:', error)
+    $toast.error('Network or server error occurred')
+  }
+  finally {
+    loadingWithDrawProcess.value = false
+  }
+}
+const consumeCoins = async (points: number): Promise<boolean> => {
+  try {
+    await useApiService.post('/api/v2/games/spends', {
+      points,
+    })
+    return true
+  }
+  catch (err: unknown) {
+    console.error('Error consuming coins:', err)
+    return false
+  }
 }
 </script>
 
 <style>
 .swv-modal {
   z-index: 2410 !important;
+}
+.wallet-button-container{
+  min-height : 48px
 }
 @media only screen and (max-width: 960px) {
   .mobile-style {
