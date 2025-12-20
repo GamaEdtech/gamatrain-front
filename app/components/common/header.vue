@@ -404,17 +404,16 @@ const openAddOption = () => {
                   class="d-none d-lg-block"
                 />
               </div>
-              <!-- <div v-else>
+              <div v-else>
                 <v-btn
-                  v-if="!auth.isAuthenticated.value"
-                  rounded
-                  class="primary text-transform-none black--text mr-2"
-                  large
+                  rounded="pill"
+                  height="36"
+                  class="primary text-transform-none black--text mr-2 text-h5 font-weight-bold"
                   @click="openLoginDialog()"
                 >
                   Sign in
                 </v-btn>
-              </div> -->
+              </div>
             </v-col>
           </v-row>
         </v-container>
@@ -494,9 +493,9 @@ const openAddOption = () => {
 
         <v-btn
           v-if="!auth.isAuthenticated.value"
-          id="mobile-signin-btn"
-          rounded
-          class="primary gama-btn"
+          rounded="pill"
+          height="36"
+          class="primary text-transform-none black--text mr-2 text-h5 font-weight-bold"
           @click="openLoginDialog()"
         >
           Sign in
@@ -508,6 +507,7 @@ const openAddOption = () => {
           class="d-block d-lg-none"
         />
         <nuxt-link
+          v-if="auth.isAuthenticated.value"
           to="/user/wallet"
           class="wallet-div wallet-mobile mr-3"
           aria-label="Wallet"
@@ -598,10 +598,6 @@ const openAddOption = () => {
 }
 
 #main-header {
-  /* .v-icon {
-    font-size: 2rem;
-  } */
-
   .v-avatar {
     min-width: 2rem !important;
     width: 2rem !important;
@@ -617,25 +613,13 @@ const openAddOption = () => {
   z-index: 1006 !important;
 }
 
-#mobile-signin-btn {
-  margin-left: 1.6rem;
-}
-
 @media (min-width: 600px) {
   #main-header {
-    /* .v-icon {
-      font-size: 2.4rem;
-    } */
-
     .v-avatar {
       min-width: 2.4rem !important;
       width: 2.4rem !important;
       height: 2.4rem !important;
     }
-  }
-
-  #mobile-signin-btn {
-    margin-left: 1.6rem;
   }
 }
 
@@ -644,11 +628,6 @@ const openAddOption = () => {
     .menu-item:hover {
       border-bottom: 3px solid rgb(0, 139, 139);
     }
-
-    /* .v-icon {
-      font-size: 2.8rem;
-    } */
-
     .v-avatar {
       min-width: 2.8rem;
       width: 2.8rem;
@@ -660,14 +639,6 @@ const openAddOption = () => {
       padding-bottom: 0.4rem;
       height: 6.4rem !important;
 
-      /* .v-btn {
-        font-size: 1.8rem;
-        font-style: normal;
-        font-weight: 400;
-        font-family: "Inter";
-        line-height: normal;
-        padding-bottom: 0.1rem !important;
-      } */
       .v-btn--active {
         .v-btn__overlay {
           opacity: 0;
@@ -711,11 +682,6 @@ const openAddOption = () => {
 
     .v-list-item__icon {
       margin-right: 1rem;
-
-      /* .v-icon {
-        font-size: 2.4rem;
-        color: #ffb600 !important;
-      } */
     }
 
     .title {
@@ -741,18 +707,5 @@ const openAddOption = () => {
       font-weight: 500;
     }
   }
-}
-/* .wallet-div {
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-} */
-
-@media (min-width: 960px) {
-  /* .wallet-div {
-    margin: -5px 0 0 5px;
-  } */
 }
 </style>
