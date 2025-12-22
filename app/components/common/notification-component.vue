@@ -8,7 +8,7 @@
     <template #activator="{ props }">
       <div
         v-bind="props"
-        class="notice-btn align-center mr-3 ml-5"
+        class="notice-btn align-center mr-3"
       >
         <v-chip
           v-show="notifications.length"
