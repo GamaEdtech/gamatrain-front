@@ -15,12 +15,18 @@
         >
           <div
             v-if="stat.loading"
-            class="d-flex justify-center align-center"
+            class="d-flex flex-column justify-center align-center ga-2"
             style="height: 100%"
           >
-            <v-progress-circular
-              indeterminate
-              color="primary"
+            <v-skeleton-loader
+              width="100"
+              height="14"
+              class="rounded-pill"
+            />
+            <v-skeleton-loader
+              width="70"
+              height="20"
+              class="rounded-pill"
             />
           </div>
           <div v-else>
