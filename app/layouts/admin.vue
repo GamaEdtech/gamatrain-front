@@ -38,6 +38,11 @@ const menuItems = [
         link: '/admin/transactions',
         icon: 'md:price_change_outlined',
       },
+      {
+        title: 'Payments ',
+        link: '/admin/payments',
+        icon: 'md:payments_outlined',
+      },
     ],
   },
   { 'Type Managment': [{ title: 'Location', link: '/admin/Locations' }] },

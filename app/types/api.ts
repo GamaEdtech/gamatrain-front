@@ -108,6 +108,24 @@ export interface AdminTransactionDTO {
   isDebit: boolean
 }
 
+export type CurrencyPayment = 'SOL' | 'USDC' | 'GET' | 'USDT'
+export type StatusPayment = 'Pending' | 'Paid' | 'Failed'
+
+export interface AdminPaymentDTO {
+  id: number
+  userId: number
+  firstName?: string
+  lastName?: string
+  amount: number
+  currency: CurrencyPayment
+  status: StatusPayment
+  creationDate: string
+  verifyDate?: string
+  sourceWallet?: string
+  comment?: string
+  transactionId?: string
+}
+
 export interface SearchTypesStatsDTO {
   types_stats: TypesStatsDTO
 }
