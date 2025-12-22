@@ -29,7 +29,7 @@ export default defineEventHandler(async (event) => {
     })
 
     return {
-      success: true,
+      succeeded: true,
       ...result,
     }
   }

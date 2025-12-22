@@ -20,7 +20,7 @@
         >
           <v-icon
             size="x-large"
-            color="#D0D5DD"
+            color="grey400"
             @click="closeModal"
           >
             md:close
@@ -45,7 +45,7 @@
             variant="outlined"
             density="comfortable"
             rounded="lg"
-            color="#ffb300"
+            color="primary"
             :error="!!withdrawError"
             :error-messages="withdrawError"
             type="Number"
@@ -283,7 +283,7 @@ const initSolanaWallet = async () => {
 }
 
 const confirmWithDraw = async () => {
-  if (!wallet?.value.publicKey) {
+  if (!wallet?.value?.publicKey) {
     $toast.error('Wallet is not connected')
     return
   }
@@ -293,42 +293,58 @@ const confirmWithDraw = async () => {
     return
   }
 
+  const amount = withDrawValue.value * 1_000_000
+
   try {
     loadingWithDrawProcess.value = true
 
-    const response = await useApiService.post<ApiResult<unknown>>(
+    const consumeResult = await consumeCoins(amount)
+
+    if (!consumeResult) {
+      $toast.error('Insufficient balance or server error')
+      return
+    }
+
+    const transferResult = await useApiService.post<ApiResult<unknown>>(
       '/api/solana/transfer',
       {
         to: wallet.value.publicKey.toBase58(),
-        amount: withDrawValue.value * 1_000_000,
+        amount,
       },
     )
-    if (response?.success) {
-      await consumeCoins(withDrawValue.value * 1_000_000)
-      $toast.success('Withdrawal completed successfully')
-      emit('update:showDialog', false)
-      emit('updateBalance')
-      withDrawValue.value = null
-      step.value = 1
+
+    if (!transferResult?.succeeded) {
+      // await refundCoins(amount)
+      $toast.error('Blockchain transfer failed. Balance restored.')
+      return
     }
-    else {
-      $toast.error('Withdrawal failed')
-    }
+
+    $toast.success('Withdrawal completed successfully')
+    emit('update:showDialog', false)
+    emit('updateBalance')
+    withDrawValue.value = null
+    step.value = 1
   }
   catch (error) {
     console.error('Withdraw error:', error)
-    $toast.error('Network or server error occurred')
+    $toast.error('Unexpected error occurred')
   }
   finally {
     loadingWithDrawProcess.value = false
   }
 }
+
 const consumeCoins = async (points: number): Promise<boolean> => {
   try {
-    await useApiService.post('/api/v2/games/spends', {
+    const response = await useApiService.post<ApiResult<unknown>>('/api/v2/games/spends', {
       points,
     })
-    return true
+    if (response?.succeeded) {
+      return true
+    }
+    else {
+      return false
+    }
   }
   catch (err: unknown) {
     console.error('Error consuming coins:', err)
