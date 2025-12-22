@@ -4,7 +4,7 @@
       <div class="d-flex align-center justify-start">
         <v-btn
           v-if="isShowClearFilter"
-          color="#ffb600"
+          color="primary"
           rounded="xl"
           height="40"
           width="120"
@@ -24,16 +24,16 @@
         >
           <v-icon
             size="26"
-            class="primary-gray-500"
+            color="grey500"
           >
             md:search
           </v-icon>
         </v-btn>
 
         <span
-          class="primary-gray-400 text-no-wrap text-h5 font-weight-semibold"
+          class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
         >
-          <span class="primary-gray-500 font-weight-bold mr-1">
+          <span class="text-grey500 font-weight-bold mr-1">
             {{ totalCount }}
           </span>
           Transactions
@@ -55,7 +55,7 @@
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="`bg-primary-gray-100 primary-gray-700 text-h5 font-weight-bold pa-2 th-min-width ${
+              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 th-min-width ${
                 index == 0 || index == columns.length - 1
                   ? `text-left`
                   : `text-center`
@@ -68,7 +68,7 @@
 
         <template #[`item.userId`]="{ item }">
           <div
-            class="primary-gray-600 text-h5 d-flex justify-start align-center font-weight-bold"
+            class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
           >
             {{ item.userId }}
           </div>
@@ -76,14 +76,14 @@
 
         <template #[`item.points`]="{ item }">
           <div
-            class="primary-gray-600 text-h5 d-flex justify-center align-center font-weight-bold"
+            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
           >
             {{ $numberFormat(item.points) }}
           </div>
         </template>
         <template #[`item.currentBalance`]="{ item }">
           <div
-            class="primary-gray-600 text-h5 d-flex justify-center align-center font-weight-bold"
+            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
           >
             {{ $numberFormat(item.currentBalance) }}
           </div>
@@ -91,7 +91,7 @@
 
         <template #[`item.creationDate`]="{ item }">
           <div
-            class="primary-gray-600 text-h5 d-flex justify-center align-center font-weight-bold"
+            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
           >
             {{ $dayjs(item.creationDate).format("DD/MM/YYYY") }}
           </div>
@@ -99,7 +99,7 @@
 
         <template #[`item.isDebit`]="{ item }">
           <div
-            class="primary-gray-600 text-h5 d-flex justify-center align-end font-weight-bold ga-1"
+            class="text-grey600 text-h5 d-flex justify-center align-end font-weight-bold ga-1"
           >
             <v-icon
               :class="`${item.isDebit ? `reverse-icon` : ``}`"
@@ -116,7 +116,7 @@
 
         <template #[`item.description`]="{ item }">
           <div
-            class="primary-gray-600 text-h5 d-flex justify-start align-center font-weight-bold"
+            class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
           >
             {{ item.description }}
           </div>
@@ -167,7 +167,7 @@
           label="User ID"
           rounded="lg"
           variant="outlined"
-          color="#ffb300"
+          color="primary"
           density="compact"
           class="mt-1"
         />
@@ -176,7 +176,7 @@
           label="Name"
           rounded="lg"
           variant="outlined"
-          color="#ffb300"
+          color="primary"
           density="compact"
           class="mt-1"
         />
@@ -185,7 +185,7 @@
           label="Email"
           rounded="lg"
           variant="outlined"
-          color="#ffb300"
+          color="primary"
           density="compact"
           class="mt-1"
         />
@@ -194,7 +194,7 @@
           label="Identifier ID"
           rounded="lg"
           variant="outlined"
-          color="#ffb300"
+          color="primary"
           density="compact"
           class="mt-1"
         />
@@ -211,7 +211,7 @@
               readonly
               rounded="lg"
               variant="outlined"
-              color="#ffb300"
+              color="primary"
               density="compact"
               class="mt-1"
               v-bind="props"
@@ -238,7 +238,7 @@
               readonly
               rounded="lg"
               variant="outlined"
-              color="#ffb300"
+              color="primary"
               density="compact"
               class="mt-1"
               v-bind="props"
@@ -259,14 +259,14 @@
           label="Transaction Type"
           rounded="lg"
           variant="outlined"
-          color="#ffb300"
+          color="primary"
           density="compact"
           class="mt-1"
           clearable
         />
 
         <v-btn
-          color="#ffb600"
+          color="primary"
           rounded="xl"
           height="40"
           width="200"
@@ -447,10 +447,13 @@ const clearFilter = async () => {
 }
 
 :deep(.custom-pagination li button:hover) {
-  background-color: #ffb300;
+  background-color: rgb(var(--v-theme-primary));
   opacity: 0.6;
 }
 :deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: #ffb300 !important;
+  background: rgb(var(--v-theme-primary)) !important;
+}
+:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
+  opacity: 0 !important;
 }
 </style>
