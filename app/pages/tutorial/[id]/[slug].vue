@@ -1,257 +1,274 @@
 <template>
-  <div>
-    <v-btn
-      class="d-block d-md-none px-5"
-      style="
-        z-index: 10;
-        bottom: 80px;
-        right: 16px;
-        height: 52px;
-        position: fixed;
-        font-weight: 500;
-      "
-      min-width="40"
-      x-large
-      color="teal"
-      dark
-      rounded
-      @click.stop="drawer = !drawer"
-    >
-      <v-icon style="font-size: 24px">
-        mdi-format-list-numbered
-      </v-icon>
-      <v-slide-x-reverse-transition>
-        <span
-          v-show="expandListMenu"
-          style="font-size: 1.5rem"
-          class="text-h6"
-        >&nbsp;List</span>
-      </v-slide-x-reverse-transition>
-    </v-btn>
-
-    <common-category />
-
-    <section class="lesson d-none d-md-block">
-      <v-container class="lesson-section">
-        <v-row>
-          <v-col
-            md="3"
-            cols="12"
-            class="lesson-details"
-          >
-            <div class="d-flex flex-column details-content">
-              <div class="last-update mb-3">
-                <v-icon class="mr-2">
-                  md:calendar_month
-                </v-icon>
-                Last update:
-                {{ tutorialInfo.up_date.split(" ")[0] }}
-              </div>
-              <div class="visit mb-3">
-                <v-icon class="mr-2">
-                  md:visibility
-                </v-icon>Viewed:
-                {{ tutorialInfo.views }}
-              </div>
-              <div
-                class="error-report pointer"
-                @click="openCrashReportDialog"
-              >
-                <v-icon class="mr-2">
-                  md:bug_report
-                </v-icon>
-                Crash report
-              </div>
-            </div>
-          </v-col>
-          <v-col
-            md="9"
-            cols="12"
-            class="lessons-title"
-          >
-            <div class="d-flex flex-column text-center lesson-content">
-              <h1 class="lesson-subtitle gama-text-h6">
-                {{ tutorialInfo.title }} booklet
-              </h1>
-            </div>
-          </v-col>
-        </v-row>
-      </v-container>
-    </section>
-
-    <section class="lesson d-block d-md-none">
-      <v-container class="lesson-section">
-        <v-row>
-          <v-col cols="12">
-            <div class="d-flex flex-column text-center lesson-content">
-              <h1 class="lesson-subtitle gama-text-h6">
-                {{ tutorialInfo.title }} booklet
-              </h1>
-            </div>
-          </v-col>
-          <v-col
-            cols="12"
-            class="lesson-details"
-          >
-            <v-divider />
-            <v-row>
-              <v-col
-                cols="5"
-                class="last-update"
-              >
-                <v-icon class="mr-2">
-                  md:calendar_month
-                </v-icon>
-                {{ tutorialInfo.up_date.split(" ")[0] }}
-              </v-col>
-              <v-col
-                cols="3"
-                class="visit"
-              >
-                <v-icon class="mr-2">
-                  md:visibility
-                </v-icon>
-                {{ tutorialInfo.views }}
-              </v-col>
-              <v-col
-                cols="4"
-                class="error-report"
-              >
-                <div
-                  class="error-report pointer"
-                  @click="openCrashReportDialog"
-                >
-                  <v-icon class="mr-2">
-                    md:bug_report
-                  </v-icon>
-                  Crash report
-                </div>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
-      </v-container>
-    </section>
-
-    <v-container>
-      <section class="book">
-        <v-row>
-          <v-col
-            md="3"
-            class="d-none d-md-block"
-          >
-            <div class="cataloge pa-2">
-              <div class="cataloge-content">
-                <common-TutorialTree
-                  v-if="filteredTree.length"
-                  :items="filteredTree"
-                  :is-root-level="true"
-                />
-              </div>
-            </div>
-          </v-col>
-          <v-col
-            cols="12"
-            md="9"
-            class="pa-0 pa-md-3"
-          >
-            <div class="book-contents pa-3 pa-md-6">
-              <v-navigation-drawer
-                v-model="drawer"
-                class="sidebar-nav pa-5 d-flex d-md-none"
-                width="320"
-              >
-                <common-TutorialTree
-                  v-if="filteredTree.length"
-                  :items="filteredTree"
-                  :is-root-level="true"
-                />
-              </v-navigation-drawer>
-              <div
-                ref="bookContentRef"
-                class="book-content"
-              >
-                <div
-                  class="bookText e-mathjax"
-                  v-html="tutorialInfo.content"
-                />
-              </div>
-            </div>
-          </v-col>
-        </v-row>
-      </section>
-    </v-container>
-
-    <common-crash-report ref="crashReportRef" />
-    <v-row
-      justify="center"
-      class="mt-10"
-    >
+  <v-container
+    v-if="contentData"
+    class="d-flex flex-column mt-16"
+  >
+    <v-row>
       <v-col
-        cols="12"
-        md="8"
-        class="text-center"
+        cols="0"
+        md="3"
+        class="pa-0"
       >
-        <common-ad-banner
-          v-model="isAdsLoad"
-          adslot="7199289937"
+        <tutorial-lesson-tree
+          v-model:show-drawer="showLessonTree"
+          :units="lessonTree?.list ?? []"
         />
       </v-col>
+      <v-col
+        cols="12"
+        md="9"
+        class="d-flex flex-column"
+      >
+        <widgets-breadcrumb
+          background-color="white"
+          :breads="breads"
+        />
+        <div
+          class="w-100 d-flex align-center ga-1"
+        >
+          <v-icon color="primary">
+            md:chevron_backward
+          </v-icon>
+          <h1 class="text-h4 font-weight-bold">
+            {{ contentData.title }}
+          </h1>
+          <v-icon color="primary">
+            md:chevron_forward
+          </v-icon>
+        </div>
+        <div class="w-100 d-flex align-center ga-3 mt-8 px-4">
+          <span class="text-h5 d-flex align-end text-grey400 ga-1">
+            <v-icon>md:visibility_outlined</v-icon>
+            {{ contentData?.views }}
+          </span>
+          <span class="text-h5 d-flex align-end text-grey400 ga-1">
+            <v-icon>md:update</v-icon>
+            {{ $dayjs(contentData?.up_date).fromNow() }}
+          </span>
+
+          <v-icon color="grey400">
+            md:bookmark_outlined
+          </v-icon>
+
+          <v-icon
+            color="grey400"
+            class="cursor-pointer"
+            @click="openShare = true"
+          >
+            md:share_outlined
+          </v-icon>
+        </div>
+
+        <div class="w-100 d-flex flex-wrap ga-2 mt-3 px-4">
+          <v-chip
+            class="bg-primary-gray-100"
+            :small="mdAndDown"
+            :to="`/search?type=dars&section=${contentData?.section}`"
+            flat
+          >
+            <span class="primary-gray-500 text-h6 font-weight-bold">
+              <!-- {{ contentData?.section_title }} -->
+              Section title
+            </span>
+          </v-chip>
+          <v-chip
+            class="bg-primary-gray-100"
+            flat
+            :small="mdAndDown"
+            :to="`/search?type=dars&section=${contentData?.section}&base=${contentData?.base}`"
+          >
+            <span class="primary-gray-500 text-h6 font-weight-bold">
+              <!-- {{ contentData?.base_title }} -->
+              Base Title
+            </span>
+          </v-chip>
+          <v-chip
+            class="bg-primary-gray-100"
+            flat
+            :small="mdAndDown"
+            :to="`/search?type=dars&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
+          >
+            <span class="primary-gray-500 text-h6 font-weight-bold">
+              <!-- {{ contentData?.lesson_title }} -->
+              Lesson Title
+            </span>
+          </v-chip>
+        </div>
+
+        <div
+          ref="bookContentRef"
+          class="book-content w-100 mt-4"
+        >
+          <div
+            class="bookText e-mathjax"
+            v-html="contentData.content"
+          />
+        </div>
+      </v-col>
     </v-row>
-  </div>
+    <v-row class="mt-4">
+      <v-btn
+        class="position-fixed d-flex d-md-none button-open-tree"
+        rounded="circle"
+        color="primary"
+        width="48"
+        height="48"
+        flat
+        icon
+        @click="showLessonTree = !showLessonTree"
+      >
+        <v-icon
+          color="black"
+          size="24"
+        >
+          md:format_list_bulleted
+        </v-icon>
+      </v-btn>
+      <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
+
+      <v-col cols="12">
+        <CommonDetailRelatedContent
+          :id="contentData.id"
+          source="tutorial"
+          :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+        />
+      </v-col>
+
+      <!-- <v-col
+        cols="12"
+        class="mb-6"
+      >
+        <CommonComments />
+      </v-col> -->
+
+      <v-col
+        cols="12"
+        class="mt-6"
+      >
+        <span
+          class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
+          @click="openCrashReport = true"
+        >
+          <v-icon
+            color="#F04438"
+            class="mb-1"
+          >md:warning_outlined</v-icon>
+          Crash report
+        </span>
+      </v-col>
+
+      <ClientOnly>
+        <v-col
+          cols="12"
+          class="text-center mt-10"
+        >
+          <common-ad-banner
+            v-model="isAdsLoad"
+            adslot="7199289937"
+          />
+        </v-col>
+      </ClientOnly>
+    </v-row>
+    <CommonCrashReportModal
+      :id="contentData.id"
+      v-model:show-dialog="openCrashReport"
+      type-crash-report="tutorial"
+    />
+    <CommonShareModal
+      v-model:show-dialog="openShare"
+      :title="contentData.title"
+    />
+  </v-container>
 </template>
 
-<script setup>
-import { useNuxtApp } from '#app'
-import {
-  ref,
-  watch,
-  nextTick,
-  onMounted,
-  onBeforeUnmount,
-  computed,
-} from 'vue'
+<script setup lang="ts">
+import { useDisplay } from 'vuetify'
+import type { ApiResult, TutorialDTO, AppError, LessonTreeDTO } from '~/types/api'
 
-const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
-const bookContentRef = ref(null)
+interface BreadCrumb {
+  text: string
+  disabled: boolean
+  href: string
+}
 
+const { $dayjs, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
+const { mdAndDown, mdAndUp } = useDisplay()
 const route = useRoute()
-const isAdsLoad = ref(false)
+const router = useRouter()
 
-// Fetch tutorial data
-const { data: tutorialInfo, error: _tutorialError } = await useAsyncData(
-  `tutorialInfo-${route.params.id}`,
+const breads = ref<BreadCrumb[]>([])
+const openCrashReport = ref(false)
+const openShare = ref(false)
+const isAdsLoad = ref(false)
+const bookContentRef = ref<HTMLElement | null>(null)
+const showLessonTree = ref(false)
+
+const { data: contentData } = await useAsyncData(
+  `tutorial-${route.params.id}`,
   async () => {
-    const response = await useApiService.get(
-      `/api/v1/tutorials/${route.params.id}`,
-    )
-    return response.data
-  },
-  {
-    watch: [() => route.params.id],
+    try {
+      const response = (await useApiService.get(
+        `/api/v1/tutorials/${route.params.id}`,
+      )) as ApiResult<TutorialDTO>
+
+      return response.data
+    }
+    catch (e: unknown) {
+      const error = e as AppError
+      if (error?.status === 404) {
+        router.push('/search?type=test')
+      }
+      throw error
+    }
   },
 )
 
-// Fetch lesson tree
-const { data: lessonTree, error: _lessonTreeError } = await useAsyncData(
+const { data: lessonTree } = await useAsyncData(
   `lessonTree-${route.params.id}`,
   async () => {
-    if (!tutorialInfo.value?.lesson) return null
+    if (!contentData.value?.lesson) return null
     const response = await useApiService.get(
-      `/api/v1/tutorials/lessonTree/${tutorialInfo.value.lesson}`,
-    )
+      `/api/v1/tutorials/lessonTree/${contentData.value?.lesson}`,
+    ) as ApiResult<LessonTreeDTO>
     return response.data
   },
 )
 
-const filteredTree = computed(
-  () =>
-    lessonTree.value?.list?.filter(
-      x => x.tutorials?.length > 0 || x.chapters?.length > 0,
-    ) || [],
-)
+const initBreadCrumb = () => {
+  if (!contentData.value) return
+  breads.value = []
+  breads.value.push({
+    text: 'Tutorial',
+    disabled: false,
+    href: '/search?type=dars',
+  })
+  breads.value.push(
+    {
+      // text: contentData.value.section_title,
+      text: 'ُSection title',
+      disabled: false,
+      href: `/search?type=dars&section=${contentData.value.section}`,
+    },
+    {
+      // text: contentData.value.base_title,
+      text: 'Base title',
+      disabled: false,
+      href: `/search?type=dars&section=${contentData.value.section}&base=${contentData.value.base}`,
+    },
+    {
+      // text: contentData.value.lesson_title,
+      text: 'Lesson title',
+      disabled: false,
+      href: `/search?type=dars&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
+    },
+  )
+}
 
-const typesetMathInSpecificContainer = async (containerRef) => {
+if (contentData.value) {
+  initBreadCrumb()
+}
+
+const typesetMathInSpecificContainer = async (containerRef: Ref<HTMLElement | null>) => {
   if (import.meta.client && containerRef.value) {
     try {
       await $ensureMathJaxReady()
@@ -260,20 +277,9 @@ const typesetMathInSpecificContainer = async (containerRef) => {
         return
       }
 
-      let elementToProcess = null
-      if (
-        containerRef.value.$el
-        && containerRef.value.$el instanceof HTMLElement
-      ) {
-        elementToProcess = containerRef.value.$el
-      }
-      else if (containerRef.value instanceof HTMLElement) {
-        elementToProcess = containerRef.value
-      }
-
-      if (elementToProcess) {
+      if (containerRef.value) {
         await nextTick()
-        $renderMathInElement(elementToProcess)
+        $renderMathInElement(containerRef.value)
       }
     }
     catch (error) {
@@ -282,47 +288,16 @@ const typesetMathInSpecificContainer = async (containerRef) => {
   }
 }
 onMounted(() => {
-  typesetMathInSpecificContainer(bookContentRef)
-  activeMenu.value = route.params.id
-  if (import.meta.client) {
-    window.addEventListener('scroll', handleScroll)
+  if (mdAndUp.value) {
+    showLessonTree.value = true
+  }
+  if (bookContentRef.value) {
+    typesetMathInSpecificContainer(bookContentRef)
   }
 })
 
-watch(
-  () => tutorialInfo.value?.content,
-  (newContent, oldContent) => {
-    if (newContent && newContent !== oldContent) {
-      nextTick(() => {
-        typesetMathInSpecificContainer(bookContentRef)
-      })
-    }
-  },
-)
-
-const expandListMenu = ref(true)
-const drawer = ref(false)
-const activeMenu = ref(null)
 const requestURL = ref(useRequestURL().host)
-
-onBeforeUnmount(() => {
-  if (import.meta.client) {
-    window.removeEventListener('scroll', handleScroll)
-  }
-})
-
-const handleScroll = () => {
-  if (window.scrollY > 1000) expandListMenu.value = false
-  else expandListMenu.value = true
-}
-
-const crashReportRef = ref(null)
-const openCrashReportDialog = () => {
-  crashReportRef.value.dialog = true
-  crashReportRef.value.form.type = 'tutorial'
-}
-
-const stripHtmlTags = (input, length = 1200) => {
+const stripHtmlTags = (input: string, length = 1200) => {
   if (!input) return ''
 
   const sliced = input.slice(0, length)
@@ -344,71 +319,64 @@ const stripHtmlTags = (input, length = 1200) => {
 }
 
 defineOgImageComponent('TutorialDetail', {
-  title: tutorialInfo.value?.title,
-  views: tutorialInfo.value?.views,
-  up_date: tutorialInfo.value?.up_date,
+  title: contentData.value?.title,
+  views: contentData.value?.views,
+  up_date: contentData.value?.up_date,
 })
 useHead({
-  title: `${tutorialInfo.value?.title} booklet`,
+  title: `${contentData.value?.title} booklet`,
   meta: [
     {
-      hid: 'apple-mobile-web-app-title',
       name: 'apple-mobile-web-app-title',
-      content: tutorialInfo.value?.title || '',
+      content: contentData.value?.title || '',
     },
     {
-      hid: 'og:title',
       name: 'og:title',
-      content: tutorialInfo.value?.title || '',
+      content: contentData.value?.title || '',
     },
     {
-      hid: 'og:site_name',
       name: 'og:site_name',
       content: 'GamaTrain',
     },
     {
-      hid: 'description',
       name: 'description',
-      content: stripHtmlTags(tutorialInfo.value?.content),
+      content: stripHtmlTags(contentData.value?.content || ''),
     },
     {
-      hid: 'og:description',
       name: 'og:description',
-      content: stripHtmlTags(tutorialInfo.value?.content),
+      content: stripHtmlTags(contentData.value?.content || ''),
     },
     {
-      hid: 'keywords',
       name: 'keywords',
       content: [
-        `${tutorialInfo.value?.title} study guide`,
-        `${tutorialInfo.value?.title} easy tutorial`,
-        `${tutorialInfo.value?.title} tutorial`,
-        `${tutorialInfo.value?.title} for students`,
-        `${tutorialInfo.value?.title} note`,
-        `${tutorialInfo.value?.title} revision note`,
-        `${tutorialInfo.value?.title} simple guide`,
-        `${tutorialInfo.value?.title} cheatsheet`,
-        `${tutorialInfo.value?.title} definition`,
+        `${contentData.value?.title} study guide`,
+        `${contentData.value?.title} easy tutorial`,
+        `${contentData.value?.title} tutorial`,
+        `${contentData.value?.title} for students`,
+        `${contentData.value?.title} note`,
+        `${contentData.value?.title} revision note`,
+        `${contentData.value?.title} simple guide`,
+        `${contentData.value?.title} cheatsheet`,
+        `${contentData.value?.title} definition`,
       ].join(', ') },
   ],
   link: [
     {
       rel: 'canonical',
-      href: `https://${requestURL.value}/tutorial/${tutorialInfo.value.id}/${tutorialInfo.value.title_url}`,
+      href: `https://${requestURL.value}/tutorial/${contentData.value?.id}/${contentData.value?.title_url}`,
     },
   ],
 })
 </script>
 
 <style>
-.video-wrapper {
-  width: 100%;
-  margin: auto;
-  max-width: 700px;
+.text-crash-report {
+  color: #f04438;
 }
-
-.panel-body {
-  overflow-x: auto !important;
+.button-open-tree{
+  right: 12px;
+  bottom : 70px;
+  z-index : 3
 }
 
 .book-content {
@@ -538,17 +506,5 @@ useHead({
   padding: 5px 5px 5px 5px;
   border-radius: 5px;
   font-size: 14px;
-}
-
-/*End tutorial details image caption*/
-.sidebar-nav {
-  height: 100vh !important;
-  top: 6.4rem !important;
-}
-@media screen and (max-width: 600px) {
-  .tables {
-    display: inline;
-    flex-direction: column;
-  }
 }
 </style>
