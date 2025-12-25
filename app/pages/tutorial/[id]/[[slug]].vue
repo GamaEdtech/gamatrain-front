@@ -61,34 +61,34 @@
 
         <div class="w-100 d-flex flex-wrap ga-2 mt-3 px-4">
           <v-chip
-            class="bg-primary-gray-100"
+            class="bg-grey100"
             :small="mdAndDown"
             :to="`/search?type=dars&section=${contentData?.section}`"
             flat
           >
-            <span class="primary-gray-500 text-h6 font-weight-bold">
+            <span class="text-grey500 text-h6 font-weight-bold">
               <!-- {{ contentData?.section_title }} -->
               Section title
             </span>
           </v-chip>
           <v-chip
-            class="bg-primary-gray-100"
+            class="bg-grey100"
             flat
             :small="mdAndDown"
             :to="`/search?type=dars&section=${contentData?.section}&base=${contentData?.base}`"
           >
-            <span class="primary-gray-500 text-h6 font-weight-bold">
+            <span class="text-grey500 text-h6 font-weight-bold">
               <!-- {{ contentData?.base_title }} -->
               Base Title
             </span>
           </v-chip>
           <v-chip
-            class="bg-primary-gray-100"
+            class="bg-grey100"
             flat
             :small="mdAndDown"
             :to="`/search?type=dars&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
           >
-            <span class="primary-gray-500 text-h6 font-weight-bold">
+            <span class="text-grey500 text-h6 font-weight-bold">
               <!-- {{ contentData?.lesson_title }} -->
               Lesson Title
             </span>
@@ -222,7 +222,6 @@ const { data: contentData } = await useAsyncData(
     }
   },
 )
-console.log('contentData', contentData.value)
 
 const { data: lessonTree } = await useAsyncData(
   `lessonTree-${route.params.id}`,
@@ -234,7 +233,6 @@ const { data: lessonTree } = await useAsyncData(
     return response.data
   },
 )
-console.log('lessonTree', lessonTree.value)
 const initBreadCrumb = () => {
   if (!contentData.value) return
   breads.value = []

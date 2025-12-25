@@ -111,16 +111,6 @@ const openedGroups = ref([])
 .text-item-height {
   line-height: 26px !important;
 }
-.custom-list-item {
-  background-color: #d0d5dd;
-}
-
-.size-custom-icon {
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
-  opacity: 0.8;
-}
 
 .main-list {
   min-height: 100%;
