@@ -31,17 +31,37 @@
             </v-list-item>
           </template>
 
-          <v-list-item
+          <template
             v-for="chapter in unit.chapters"
             :key="chapter.id"
-            :class="`py-2`"
           >
-            <v-list-item-title
-              class="text-h5 font-weight-medium text-grey700 text-item-height"
+            <v-list-item
+              v-if="chapter.tutorials && chapter.tutorials.length > 0"
+              :class="`py-2 ${chapter.tutorials[0]?.id == route.params.id ? `bg-white`:``}`"
+              :to="`/tutorial/${chapter.tutorials[0]?.id}`"
             >
-              {{ chapter.title }}
-            </v-list-item-title>
-          </v-list-item>
+              <div
+                v-if="chapter.tutorials[0]?.id == route.params.id"
+                class="active-line h-100 position-absolute left-0 top-0 bg-primary"
+              />
+              <v-list-item-title
+                class="text-h5 font-weight-regular text-grey700 text-item-height"
+              >
+                {{ chapter.title }}
+              </v-list-item-title>
+            </v-list-item>
+
+            <v-list-item
+              v-else
+              class="py-2"
+            >
+              <v-list-item-title
+                class="text-h5 font-weight-regular text-grey700 text-item-height"
+              >
+                {{ chapter.title }}
+              </v-list-item-title>
+            </v-list-item>
+          </template>
         </v-list-group>
       </div>
     </v-list>
@@ -50,7 +70,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-// import { useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import type { UnitLessonDTO } from '~/types/api'
 
 interface LessonTree {
@@ -66,7 +86,7 @@ const drawerModel = computed({
   set: value => emit('update:showDrawer', value),
 })
 
-// const route = useRoute()
+const route = useRoute()
 
 const openedGroups = ref([])
 </script>
@@ -104,5 +124,8 @@ const openedGroups = ref([])
 
 .main-list {
   min-height: 100%;
+}
+.active-line{
+  width: 8px;
 }
 </style>

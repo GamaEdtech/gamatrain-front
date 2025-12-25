@@ -222,6 +222,7 @@ const { data: contentData } = await useAsyncData(
     }
   },
 )
+console.log('contentData', contentData.value)
 
 const { data: lessonTree } = await useAsyncData(
   `lessonTree-${route.params.id}`,
@@ -233,7 +234,7 @@ const { data: lessonTree } = await useAsyncData(
     return response.data
   },
 )
-
+console.log('lessonTree', lessonTree.value)
 const initBreadCrumb = () => {
   if (!contentData.value) return
   breads.value = []
