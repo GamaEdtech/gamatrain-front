@@ -7,6 +7,25 @@
       />
     </template>
 
+    <template v-if="isPreviousLoading">
+      <search-card-skeleton />
+    </template>
+    <div
+      v-if="firstLoadedPageNumber != 1 && !isInitialLoading && !isPreviousLoading"
+      class="w-100 d-flex align-center justify-center"
+    >
+      <v-btn
+        class="text-h5 font-weight-bold"
+        height="36"
+        variant="outlined"
+        color="primary"
+        rounded="xl"
+        @click="loadPreviousPage"
+      >
+        Load Previous Data
+      </v-btn>
+    </div>
+
     <template v-if="!isInitialLoading">
       <template
         v-for="(item, index) in dataList"
@@ -47,12 +66,20 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  isPreviousLoading: {
+    type: Boolean,
+    required: true,
+  },
   isAllDataLoaded: {
     type: Boolean,
     required: true,
   },
+  firstLoadedPageNumber: {
+    type: Number,
+    required: true,
+  },
 })
-const emit = defineEmits(['loadNextPage'])
+const emit = defineEmits(['loadNextPage', 'loadPreviousPage'])
 
 const lineSpecifierLoadMoreRef = ref(null)
 
@@ -80,6 +107,12 @@ const handleScrollListener = () => {
     && !props.isAllDataLoaded
   ) {
     emit('loadNextPage')
+  }
+}
+
+const loadPreviousPage = () => {
+  if (props.firstLoadedPageNumber > 1) {
+    emit('loadPreviousPage')
   }
 }
 </script>

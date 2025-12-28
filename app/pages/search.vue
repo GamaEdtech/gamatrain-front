@@ -27,7 +27,10 @@
         :is-initial-loading="isInitialDataLoading"
         :is-pagination-loading="isPaginationDataLoading"
         :is-all-data-loaded="isAllDataLoaded"
+        :is-previous-loading="isPreviousLoading"
+        :first-loaded-page-number="firstLoadedPageNumber"
         @load-next-page="loadNextPageData"
+        @load-previous-page="loadPreviousPageData"
       />
 
       <div
@@ -59,6 +62,7 @@ import dayjs from 'dayjs'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 
 const querySearch = ref({
   title: route.query.title,
@@ -69,6 +73,7 @@ const querySearch = ref({
   type: route.query.type ? route.query.type : 'test',
   edu_year: route.query.edu_year,
   edu_month: route.query.edu_month,
+  page: Number(route.query.page) || 1,
 })
 if (route.query.type && route.query.type == 'learnfiles') {
   querySearch.value.content_type = route.query.content_type
@@ -78,22 +83,45 @@ if (route.query.type && route.query.type == 'test') {
 }
 const isInitialDataLoading = ref(false)
 const isPaginationDataLoading = ref(false)
+const isPreviousLoading = ref(false)
 const data = ref([])
 const isAllDataLoaded = ref(false)
 const totalDataFind = ref(0)
-const pageNumber = ref(1)
 const perPage = 10
+const firstLoadedPageNumber = ref(Number(route.query.page) || 1)
+const latestLoadedPageNumber = ref(Number(route.query.page) || 1)
 
 const loadNextPageData = async () => {
-  pageNumber.value += 1
+  latestLoadedPageNumber.value += 1
+  querySearch.value.page = latestLoadedPageNumber.value
+  const query = { ...route.query }
+
+  query.page = querySearch.value.page
+  router.replace({ query })
   isPaginationDataLoading.value = true
-  await getDataList(true)
+  const responseList = await getDataList()
+  data.value = [...data.value, ...responseList]
 }
+
+const loadPreviousPageData = async () => {
+  firstLoadedPageNumber.value -= 1
+
+  querySearch.value.page = firstLoadedPageNumber.value
+  const query = { ...route.query }
+
+  query.page = querySearch.value.page
+  router.replace({ query })
+  isPreviousLoading.value = true
+  const responseList = await getDataList()
+  data.value = [...responseList, ...data.value]
+}
+
 const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
   'dataSearchSSR',
   () => {
     const params = {
-      page: pageNumber.value,
+      // page: pageNumber.value,
+      page: Number(route.query.page) || 1,
       title: route.query.title,
       section: route.query.section,
       base: route.query.base,
@@ -128,30 +156,27 @@ if (initialData.value) {
   isPaginationDataLoading.value = false
 }
 
-const getDataList = async (isLoadNextPage = false) => {
+const getDataList = async () => {
   if (isAllDataLoaded.value) return
   try {
     const params = { ...querySearch.value }
-    params.page = pageNumber.value
     const response = await useApiService.get('/api/v1/search', params)
 
     if (response.data.list.length < perPage) {
       isAllDataLoaded.value = true
     }
     totalDataFind.value = response.data.num ? response.data.num : 0
-    if (isLoadNextPage) {
-      data.value = [...data.value, ...response.data.list]
-    }
-    else {
-      data.value = response.data.list
-    }
+
+    return response.data.list
   }
   catch (err) {
     console.error(err)
+    return []
   }
   finally {
     isPaginationDataLoading.value = false
     isInitialDataLoading.value = false
+    isPreviousLoading.value = false
   }
 }
 
@@ -489,9 +514,11 @@ const filters = [
 const changeFilter = async (query) => {
   isAllDataLoaded.value = false
   isInitialDataLoading.value = true
-  pageNumber.value = 1
-  querySearch.value = query
-  await getDataList()
+  firstLoadedPageNumber.value = 1
+  latestLoadedPageNumber.value = 1
+  querySearch.value = { ...query, page: 1 }
+  const responseList = await getDataList()
+  data.value = responseList
 }
 
 // Computed metadata that updates when data changes
