@@ -67,7 +67,7 @@ const router = useRouter()
 const getEquivalentNewType = (type) => {
   switch (type) {
     case 'test':
-      return 'pastpaper'
+      return 'paper'
     case 'learnfiles':
       return 'multimedia'
     case 'azmoon':
@@ -76,8 +76,8 @@ const getEquivalentNewType = (type) => {
       return 'forum'
     case 'dars':
       return 'tutorial'
-    case 'pastpaper':
-      return 'pastpaper'
+    case 'paper':
+      return 'paper'
     case 'multimedia':
       return 'multimedia'
     case 'quizhub':
@@ -87,12 +87,12 @@ const getEquivalentNewType = (type) => {
     case 'tutorial':
       return 'tutorial'
     default:
-      return 'pastpaper'
+      return 'paper'
   }
 }
 const getEquivalentOldType = (type) => {
   switch (type) {
-    case 'pastpaper':
+    case 'paper':
       return 'test'
     case 'multimedia':
       return 'learnfiles'
@@ -428,7 +428,7 @@ const filters = [
     staticList: [
       {
         title: 'Past Papers',
-        id: 'pastpaper',
+        id: 'paper',
         icon: 'stat-icon icon-paper',
         color: '#2e90fa',
         idClassification: 'test_type',
@@ -471,7 +471,7 @@ const filters = [
     closable: false,
     defaultValue: {
       title: 'Past Papers',
-      id: 'pastpaper',
+      id: 'paper',
       icon: 'stat-icon icon-paper',
       color: '#2e90fa',
       idClassification: 'test_type',
@@ -499,7 +499,7 @@ const filters = [
       test: 'test_type',
       azmoon: 'test_type',
       learnfiles: 'content_type',
-      pastpaper: 'test_type',
+      paper: 'test_type',
       quizhub: 'test_type',
       multimedia: 'content_type',
     },

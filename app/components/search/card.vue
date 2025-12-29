@@ -222,7 +222,7 @@ defineProps({
 
 const getEquivalentOldType = (type) => {
   switch (type) {
-    case 'pastpaper':
+    case 'paper':
       return 'test'
     case 'multimedia':
       return 'learnfiles'
