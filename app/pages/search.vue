@@ -64,21 +64,74 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
+const getEquivalentNewType = (type) => {
+  switch (type) {
+    case 'test':
+      return 'pastpaper'
+    case 'learnfiles':
+      return 'multimedia'
+    case 'azmoon':
+      return 'quizhub'
+    case 'question':
+      return 'forum'
+    case 'dars':
+      return 'tutorial'
+    case 'pastpaper':
+      return 'pastpaper'
+    case 'multimedia':
+      return 'multimedia'
+    case 'quizhub':
+      return 'quizhub'
+    case 'forum':
+      return 'forum'
+    case 'tutorial':
+      return 'tutorial'
+    default:
+      return 'pastpaper'
+  }
+}
+const getEquivalentOldType = (type) => {
+  switch (type) {
+    case 'pastpaper':
+      return 'test'
+    case 'multimedia':
+      return 'learnfiles'
+    case 'quizhub':
+      return 'azmoon'
+    case 'forum':
+      return 'question'
+    case 'tutorial':
+      return 'dars'
+    case 'test':
+      return 'test'
+    case 'learnfiles':
+      return 'learnfiles'
+    case 'azmoon':
+      return 'azmoon'
+    case 'question':
+      return 'question'
+    case 'dars':
+      return 'dars'
+    default:
+      return 'test'
+  }
+}
+
 const querySearch = ref({
   title: route.query.title,
   section: route.query.section,
   base: route.query.base,
   lesson: route.query.lesson,
   topic: route.query.topic,
-  type: route.query.type ? route.query.type : 'test',
+  type: getEquivalentNewType(route.query.type),
   edu_year: route.query.edu_year,
   edu_month: route.query.edu_month,
   page: Number(route.query.page) || 1,
 })
-if (route.query.type && route.query.type == 'learnfiles') {
+if (route.query.type && getEquivalentOldType(route.query.type) == 'learnfiles') {
   querySearch.value.content_type = route.query.content_type
 }
-if (route.query.type && route.query.type == 'test') {
+if (route.query.type && getEquivalentOldType(route.query.type == 'test')) {
   querySearch.value.test_type = route.query.test_type
 }
 const isInitialDataLoading = ref(false)
@@ -120,22 +173,21 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
   'dataSearchSSR',
   () => {
     const params = {
-      // page: pageNumber.value,
       page: Number(route.query.page) || 1,
       title: route.query.title,
       section: route.query.section,
       base: route.query.base,
       lesson: route.query.lesson,
       topic: route.query.topic,
-      type: route.query.type ? route.query.type : 'test',
+      type: getEquivalentOldType(route.query.type),
       edu_year: route.query.edu_year,
       edu_month: route.query.edu_month,
     }
 
-    if (route.query.type && route.query.type == 'learnfiles') {
+    if (route.query.type && getEquivalentOldType(route.query.type) == 'learnfiles') {
       params.content_type = route.query.content_type
     }
-    if (route.query.type && route.query.type == 'test') {
+    if (route.query.type && getEquivalentOldType(route.query.type) == 'test') {
       params.test_type = route.query.test_type
     }
 
@@ -159,7 +211,7 @@ if (initialData.value) {
 const getDataList = async () => {
   if (isAllDataLoaded.value) return
   try {
-    const params = { ...querySearch.value }
+    const params = { ...querySearch.value, type: getEquivalentOldType(querySearch.value.type) }
     const response = await useApiService.get('/api/v1/search', params)
 
     if (response.data.list.length < perPage) {
@@ -376,35 +428,35 @@ const filters = [
     staticList: [
       {
         title: 'Past Papers',
-        id: 'test',
+        id: 'pastpaper',
         icon: 'stat-icon icon-paper',
         color: '#2e90fa',
         idClassification: 'test_type',
       },
       {
         title: 'Multimedia',
-        id: 'learnfiles',
+        id: 'multimedia',
         icon: 'stat-icon icon-multimedia',
         color: '#02b719',
         idClassification: 'content_type',
       },
       {
         title: 'QuizHub',
-        id: 'azmoon',
+        id: 'quizhub',
         icon: 'stat-icon icon-exam',
         color: '#7c4dff',
         idClassification: 'test_type',
       },
       {
         title: 'Forum',
-        id: 'question',
+        id: 'forum',
         icon: 'stat-icon icon-q-a',
         color: '#fdb022',
         idClassification: null,
       },
       {
         title: 'Tutorial',
-        id: 'dars',
+        id: 'tutorial',
         icon: 'stat-icon icon-tutorial',
         color: '#2e90fa',
         idClassification: null,
@@ -419,7 +471,7 @@ const filters = [
     closable: false,
     defaultValue: {
       title: 'Past Papers',
-      id: 'test',
+      id: 'pastpaper',
       icon: 'stat-icon icon-paper',
       color: '#2e90fa',
       idClassification: 'test_type',
@@ -440,13 +492,16 @@ const filters = [
         parent: FILTER_INDEX.Services,
         targetKey: 'type',
         sourceKey: 'idClassification',
-        disableIds: ['dars', 'question'],
+        disableIds: ['dars', 'question', 'tutorial', 'forum'],
       },
     ],
     queryMap: {
       test: 'test_type',
       azmoon: 'test_type',
       learnfiles: 'content_type',
+      pastpaper: 'test_type',
+      quizhub: 'test_type',
+      multimedia: 'content_type',
     },
     parentIndexChangeQueryKey: FILTER_INDEX.Services,
     queryKey: 'test_type',
@@ -467,7 +522,7 @@ const filters = [
         parent: FILTER_INDEX.Services,
         targetKey: 'type',
         sourceKey: 'id',
-        disableIds: ['learnfiles', 'dars', 'question'],
+        disableIds: ['learnfiles', 'dars', 'question', 'multimedia', 'tutorial', 'forum'],
       },
     ],
     staticList: Array.from({ length: 13 }, (_, i) => 2013 + i)
@@ -494,7 +549,7 @@ const filters = [
         parent: FILTER_INDEX.Services,
         targetKey: 'type',
         sourceKey: 'id',
-        disableIds: ['learnfiles', 'dars', 'question'],
+        disableIds: ['learnfiles', 'dars', 'question', 'multimedia', 'tutorial', 'forum'],
       },
     ],
     staticList: [],
@@ -556,7 +611,7 @@ const metadata = computed(() => {
   }
 
   if (
-    (route.query.type == 'test' || route.query.type == 'azmoon')
+    (getEquivalentOldType(route.query.type) == 'test' || getEquivalentOldType(route.query.type) == 'azmoon')
     && test_type
   ) {
     titles.classificationTitle
@@ -605,7 +660,7 @@ const metadata = computed(() => {
     },
   }
 
-  const template = titleTemplates[route.query.type] || titleTemplates.default
+  const template = titleTemplates[getEquivalentOldType(route.query.type)] || titleTemplates.default
   const title = titles.boardTitle ? template.dynamic : template.fallback
 
   // Generate description
@@ -654,10 +709,10 @@ const metadata = computed(() => {
   }
 
   const descTemplate
-    = descriptionTemplates[route.query.type] || descriptionTemplates.default
+    = descriptionTemplates[getEquivalentOldType(route.query.type)] || descriptionTemplates.default
   const description = titles.boardTitle
     ? descTemplate.dynamic
-    : pageDescriptions[route.query.type] || pageDescriptions.test
+    : pageDescriptions[getEquivalentOldType(route.query.type)] || pageDescriptions.test
 
   return { title, description }
 })
@@ -701,7 +756,7 @@ const createLinkAddConent = () => {
 
     router.push({ query: { auth_form: 'login' } })
   else {
-    const type = route.query.type
+    const type = getEquivalentOldType(route.query.type)
     let link = ''
     switch (type) {
       case 'test':
@@ -727,6 +782,21 @@ const createLinkAddConent = () => {
     navigateTo(link)
   }
 }
+
+onMounted(() => {
+  const oldType = ['test', 'learnfiles', 'azmoon', 'question', 'dars']
+  if (oldType.includes(route.query.type)) {
+    const newType = getEquivalentNewType(route.query.type)
+    const staticListFilterType = filters[FILTER_INDEX.Services].staticList
+    const selectedType = staticListFilterType.filter(item => item.id == newType)[0]
+    filters[FILTER_INDEX.Services].selectedItem = selectedType
+    const newQuery = {
+      ...route.query,
+      type: newType,
+    }
+    router.replace({ query: newQuery })
+  }
+})
 </script>
 
 <style scoped>

@@ -220,9 +220,36 @@ defineProps({
   },
 })
 
+const getEquivalentOldType = (type) => {
+  switch (type) {
+    case 'pastpaper':
+      return 'test'
+    case 'multimedia':
+      return 'learnfiles'
+    case 'quizhub':
+      return 'azmoon'
+    case 'forum':
+      return 'question'
+    case 'tutorial':
+      return 'dars'
+    case 'test':
+      return 'test'
+    case 'learnfiles':
+      return 'learnfiles'
+    case 'azmoon':
+      return 'azmoon'
+    case 'question':
+      return 'question'
+    case 'dars':
+      return 'dars'
+    default:
+      return 'test'
+  }
+}
+
 const createLinkCard = (information) => {
   let idType = ''
-  switch (route.query.type) {
+  switch (getEquivalentOldType(route.query.type)) {
     case 'test':
       idType = 'paper'
       break
