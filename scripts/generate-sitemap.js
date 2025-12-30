@@ -139,11 +139,11 @@ async function fetchPaginatedData(contentType, page) {
   const pageNum = page > 0 ? page - 1 : 0
   if (contentType === 'blog')
     finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage
-      }&PagingDto.PageFilter.ReturnTotalRecordsCount=true`
+    }&PagingDto.PageFilter.ReturnTotalRecordsCount=true`
 
   if (contentType === 'school')
     finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage
-      }&PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
+    }&PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
 
   const response = await fetch(finalUrl)
   const json = await response.json()
