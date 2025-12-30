@@ -51,7 +51,7 @@
                 class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
                 color="grey100"
                 :to="`/search?type=${
-                  route.query.type ? route.query.type : `test`
+                  route.query.type ? route.query.type : `paper`
                 }&section=${information.section}`"
               >
                 <span class="text-grey500">{{ information?.section_title }}</span>
@@ -62,7 +62,7 @@
                 class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
                 color="grey100"
                 :to="`/search?type=${
-                  route.query.type ? route.query.type : `test`
+                  route.query.type ? route.query.type : `paper`
                 }&section=${information.section}&base=${information.base}`"
               >
                 <span class="text-grey500">{{ information?.base_title }}</span>
@@ -73,7 +73,7 @@
                 class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
                 color="grey100"
                 :to="`/search?type=${
-                  route.query.type ? route.query.type : `test`
+                  route.query.type ? route.query.type : `paper`
                 }&section=${information.section}&base=${information.base}&lesson=${
                   information.lesson
                 }`"
