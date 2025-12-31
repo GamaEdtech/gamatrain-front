@@ -21,7 +21,7 @@
         class="text-h6"
         icon="md:question_mark"
         :disabled="isPaymentComplete"
-        @click="showCoinPaymentModal = true"
+        @click="openPaymentMdoal"
       />
     </div>
 
@@ -106,7 +106,7 @@
 
     <!-- Coin Payment Modal -->
     <modals-coin-payment-modal
-      v-model:is-open="showCoinPaymentModal"
+      v-model:show-dialog="showCoinPaymentModal"
       :user-balance="coinBalance.balance.value"
       :is-processing="coinBalance.isLoading.value || isProcessingPayment"
       text-modal="Unlock the answer by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!"
@@ -126,6 +126,7 @@
 const { $renderMathInElement, $ensureMathJaxReady, $toast } = useNuxtApp()
 const auth = useAuth()
 const route = useRoute()
+const router = useRouter()
 const testId = ref(route.params.id)
 const isAdsLoad = ref(false)
 const display = useGlobalDisplay()
@@ -268,4 +269,13 @@ onMounted(async () => {
     }
   }
 })
+
+const openPaymentMdoal = () => {
+  if (auth.isAuthenticated.value) {
+    showCoinPaymentModal.value = true
+  }
+  else {
+    router.push({ query: { auth_form: 'login' } })
+  }
+}
 </script>

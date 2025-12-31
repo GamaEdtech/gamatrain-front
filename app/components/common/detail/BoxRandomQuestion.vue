@@ -113,6 +113,7 @@ interface IBoxRandomQuestion {
 }
 const props = defineProps<IBoxRandomQuestion>()
 
+const router = useRouter()
 const { $renderMathInElement, $ensureMathJaxReady, $toast } = useNuxtApp()
 const auth = useAuth()
 const visible = ref(false)
@@ -164,7 +165,12 @@ const fullAnswerRef = ref(null)
 const isPaymentComplete = ref(false)
 
 const showAnswerQuestion = () => {
-  showCoinPaymentModal.value = true
+  if (auth.isAuthenticated.value) {
+    showCoinPaymentModal.value = true
+  }
+  else {
+    router.push({ query: { auth_form: 'login' } })
+  }
 }
 
 const handleCoinPaymentConfirm = async () => {

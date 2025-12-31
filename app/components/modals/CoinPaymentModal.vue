@@ -6,7 +6,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
+      class="w-100 d-flex flex-column overflow-y-auto bg-white pa-6 rounded-xl mobile-style"
       @click="clickOnModal"
     >
       <v-row class="d-flex align-center">
@@ -110,6 +110,7 @@ const confirmPayment = () => {
 <style scoped>
 @media only screen and (max-width: 960px) {
   .mobile-style {
+    max-height: 90%;
     position: absolute;
     bottom: 0;
     border-radius: 24px 24px 0 0 !important;
