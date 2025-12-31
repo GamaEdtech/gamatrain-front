@@ -96,7 +96,7 @@
       </div>
     </div>
 
-    <modals-with-draw
+    <modals-withdraw
       v-model:show-dialog="showWithdrawModal"
       :user-balance="balance"
       @update-balance="fetchBalance"

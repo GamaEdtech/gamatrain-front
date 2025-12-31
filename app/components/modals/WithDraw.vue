@@ -40,7 +40,7 @@
             }}</span></span>
           </div>
           <v-text-field
-            v-model="withDrawValue"
+            v-model="withdrawValue"
             class="w-100"
             variant="outlined"
             density="comfortable"
@@ -106,7 +106,7 @@
 
       <template v-if="step == 2">
         <span class="text-h4 font-weight-bold w-100 text-center mt-4">Connect Your Wallet</span>
-        <span class="text-h5 font-weight-normal w-100 text-center mt-4">Amount to withdraw : <span class="font-weight-bold">{{ Number(withDrawValue) }}</span></span>
+        <span class="text-h5 font-weight-normal w-100 text-center mt-4">Amount to withdraw : <span class="font-weight-bold">{{ Number(withdrawValue) }}</span></span>
         <div class="wallet-button-container d-flex w-100 align-center justify-center mt-6">
           <ClientOnly>
             <WalletMultiButton v-if="walletInitialized" />
@@ -122,13 +122,13 @@
         <div class="w-100 d-flex align-center justify-center mt-4">
           <v-btn
             :disabled="!wallet?.connected"
-            :loading="loadingWithDrawProcess"
+            :loading="loadingWithdrawProcess"
             color="success"
             flat
             rounded="lg"
             max-width="200"
             class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
-            @click="confirmWithDraw"
+            @click="confirmWithdraw"
           >
             Confirm
           </v-btn>
@@ -164,32 +164,32 @@ const dialogModel = computed({
   set: value => emit('update:showDialog', value),
 })
 
-const withDrawValue = ref()
-const loadingWithDrawProcess = ref(false)
+const withdrawValue = ref()
+const loadingWithdrawProcess = ref(false)
 const wallet = ref()
 const config = useRuntimeConfig()
 const walletInitialized = ref(false)
 const step = ref(1)
 
 const closeModal = () => {
-  if (loadingWithDrawProcess.value) {
+  if (loadingWithdrawProcess.value) {
     $toast.info('Please wait until the process is complete.')
   }
   else {
     emit('update:showDialog', false)
-    withDrawValue.value = null
+    withdrawValue.value = null
     step.value = 1
   }
 }
 
 const clickOnOverlay = () => {
   if (!mdAndUp.value) {
-    if (loadingWithDrawProcess.value) {
+    if (loadingWithdrawProcess.value) {
       $toast.info('Please wait until the process is complete.')
     }
     else {
       emit('update:showDialog', false)
-      withDrawValue.value = null
+      withdrawValue.value = null
       step.value = 1
     }
   }
@@ -200,32 +200,32 @@ const clickOnModal = (event: Event) => {
 }
 
 const selectMaximumBalance = () => {
-  withDrawValue.value = props.userBalance / 1_000_000
+  withdrawValue.value = props.userBalance / 1_000_000
 }
 
 const selectHalfBalance = () => {
-  withDrawValue.value = (props.userBalance / 2) / 1_000_000
+  withdrawValue.value = (props.userBalance / 2) / 1_000_000
 }
 
 const userBalanceInCoin = computed(() => {
   return props.userBalance / 1_000_000
 })
 const withdrawError = computed(() => {
-  if (withDrawValue.value == null) {
+  if (withdrawValue.value == null) {
     return ''
   }
-  if (withDrawValue.value <= 0) {
+  if (withdrawValue.value <= 0) {
     return 'Amount must be greater than zero'
   }
 
-  if (withDrawValue.value > userBalanceInCoin.value) {
+  if (withdrawValue.value > userBalanceInCoin.value) {
     return 'Amount exceeds your balance'
   }
 
   return ''
 })
 const disableFistStep = computed(() => {
-  return withdrawError.value !== '' || withDrawValue.value == null || withDrawValue.value == ''
+  return withdrawError.value !== '' || withdrawValue.value == null || withdrawValue.value == ''
 })
 
 const goToSecondStep = async () => {
@@ -282,21 +282,21 @@ const initSolanaWallet = async () => {
   }
 }
 
-const confirmWithDraw = async () => {
+const confirmWithdraw = async () => {
   if (!wallet?.value?.publicKey) {
     $toast.error('Wallet is not connected')
     return
   }
 
-  if (!withDrawValue.value || withDrawValue.value <= 0) {
+  if (!withdrawValue.value || withdrawValue.value <= 0) {
     $toast.error('Invalid withdraw amount')
     return
   }
 
-  const amount = withDrawValue.value * 1_000_000
+  const amount = withdrawValue.value * 1_000_000
 
   try {
-    loadingWithDrawProcess.value = true
+    loadingWithdrawProcess.value = true
 
     const consumeResult = await consumeCoins(amount)
 
@@ -322,7 +322,7 @@ const confirmWithDraw = async () => {
     $toast.success('Withdrawal completed successfully')
     emit('update:showDialog', false)
     emit('updateBalance')
-    withDrawValue.value = null
+    withdrawValue.value = null
     step.value = 1
   }
   catch (error) {
@@ -330,7 +330,7 @@ const confirmWithDraw = async () => {
     $toast.error('Unexpected error occurred')
   }
   finally {
-    loadingWithDrawProcess.value = false
+    loadingWithdrawProcess.value = false
   }
 }
 
