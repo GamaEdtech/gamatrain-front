@@ -61,21 +61,21 @@
               >
                 <v-chip
                   v-if="contentData.topic"
-                  :to="`/search?type=azmoon&section=${contentData.section}&base=${contentData.base}&lesson=${contentData.lesson}&topic=${contentData.topic}`"
+                  :to="`/search?type=quizhub&section=${contentData.section}&base=${contentData.base}&lesson=${contentData.lesson}&topic=${contentData.topic}`"
                   class="ma-1 blue-grey darken-1 text-white"
                   size="small"
                 >
                   {{ contentData.topic_title }}
                 </v-chip>
                 <v-chip
-                  :to="`/search?type=azmoon&section=${contentData.section}&base=${contentData.base}&lesson=${contentData.lesson}`"
+                  :to="`/search?type=quizhub&section=${contentData.section}&base=${contentData.base}&lesson=${contentData.lesson}`"
                   class="ma-1 blue-grey darken-1 text-white"
                   size="small"
                 >
                   {{ contentData.lesson_title }}
                 </v-chip>
                 <v-chip
-                  :to="`/search?type=azmoon&section=${contentData.section}&base=${contentData.base}`"
+                  :to="`/search?type=quizhub&section=${contentData.section}&base=${contentData.base}`"
                   link
                   class="mr-1 blue-grey darken-1 text-white"
                   size="small"
@@ -83,7 +83,7 @@
                   {{ contentData.base_title }}
                 </v-chip>
                 <v-chip
-                  :to="`/search?type=azmoon&section=${contentData.section}`"
+                  :to="`/search?type=quizhub&section=${contentData.section}`"
                   link
                   class="mr-1 blue-grey darken-1 text-white"
                   size="small"

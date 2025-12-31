@@ -199,7 +199,7 @@ const footerLinks = [
     subMenu: [
       {
         title: 'Paper',
-        link: '/search?type=test',
+        link: '/search?type=paper',
       },
       {
         title: 'School Finder',
@@ -207,7 +207,7 @@ const footerLinks = [
       },
       {
         title: 'Exam',
-        link: '/search?type=azmoon',
+        link: '/search?type=quizhub',
       },
       {
         title: '$GET Token',

@@ -227,14 +227,14 @@ async function initBreadCrumb() {
   breads.push({
     text: 'Online exam',
     disabled: false,
-    href: '/search?type=azmoon',
+    href: '/search?type=quizhub',
   })
 
   if (contentData.value.section_title) {
     breads.push({
       text: contentData.value.section_title,
       disabled: false,
-      href: `/search?type=azmoon&section=${contentData.value.section}`,
+      href: `/search?type=quizhub&section=${contentData.value.section}`,
     })
   }
 
@@ -242,7 +242,7 @@ async function initBreadCrumb() {
     breads.push({
       text: contentData.value.base_title,
       disabled: false,
-      href: `/search?type=azmoon&section=${contentData.value.section}&base=${contentData.value.base}`,
+      href: `/search?type=quizhub&section=${contentData.value.section}&base=${contentData.value.base}`,
     })
   }
 
@@ -250,7 +250,7 @@ async function initBreadCrumb() {
     breads.push({
       text: contentData.value.lesson_title,
       disabled: false,
-      href: `/search?type=azmoon&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
+      href: `/search?type=quizhub&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
     })
   }
 }

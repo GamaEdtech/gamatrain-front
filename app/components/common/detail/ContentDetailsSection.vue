@@ -52,7 +52,7 @@
     <v-chip
       class="bg-primary-gray-100"
       :small="mdAndDown"
-      :to="`/search?type=test&section=${contentData?.section}`"
+      :to="`/search?type=paper&section=${contentData?.section}`"
       flat
     >
       <span class="primary-gray-500 text-h6 font-weight-bold">
@@ -62,7 +62,7 @@
       class="bg-primary-gray-100"
       flat
       :small="mdAndDown"
-      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
+      :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}`"
     >
       <span class="primary-gray-500 text-h6 font-weight-bold">
         {{ contentData?.base_title }}</span>
@@ -71,7 +71,7 @@
       class="bg-primary-gray-100"
       flat
       :small="mdAndDown"
-      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
+      :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
     >
       <span class="primary-gray-500 text-h6 font-weight-bold">
         {{ contentData?.lesson_title }}</span>
@@ -86,7 +86,7 @@
     </v-chip>
     <v-chip
       :small="mdAndDown"
-      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}&edu_year=${contentData?.edu_year}`"
+      :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}&edu_year=${contentData?.edu_year}`"
       class="bg-primary-gray-100"
       flat
     >
