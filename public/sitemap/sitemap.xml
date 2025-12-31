@@ -16,23 +16,23 @@
       <changefreq>monthly</changefreq>
       <priority>0.5</priority>
     </url><url>
-      <loc>https://gamatrain.com/search?type=test</loc>
+      <loc>https://gamatrain.com/search?type=paper</loc>
       <changefreq>monthly</changefreq>
       <priority>0.5</priority>
     </url><url>
-      <loc>https://gamatrain.com/search?type=learnfiles</loc>
+      <loc>https://gamatrain.com/search?type=multimedia</loc>
       <changefreq>monthly</changefreq>
       <priority>0.5</priority>
     </url><url>
-      <loc>https://gamatrain.com/search?type=question</loc>
+      <loc>https://gamatrain.com/search?type=forum</loc>
       <changefreq>monthly</changefreq>
       <priority>0.5</priority>
     </url><url>
-      <loc>https://gamatrain.com/search?type=azmoon</loc>
+      <loc>https://gamatrain.com/search?type=quizhub</loc>
       <changefreq>monthly</changefreq>
       <priority>0.5</priority>
     </url><url>
-      <loc>https://gamatrain.com/search?type=dars</loc>
+      <loc>https://gamatrain.com/search?type=tutorial</loc>
       <changefreq>monthly</changefreq>
       <priority>0.5</priority>
     </url><url>

@@ -5,13 +5,30 @@ import { join } from 'path'
 
 async function generate() {
   const contentTypes = [
-    'paper',
-    'qa',
-    'multimedia',
-    'exam',
-    'tutorial',
     'blog',
     'school',
+  ]
+  const coreSitemaps = [
+    {
+      name: 'paper',
+      url: 'https://core.gamatrain.com/data/sitemaps/sitemap-tests.xml',
+    },
+    {
+      name: 'multimedia',
+      url: 'https://core.gamatrain.com/data/sitemaps/sitemap-learnfiles.xml',
+    },
+    {
+      name: 'qa',
+      url: 'https://core.gamatrain.com/data/sitemaps/sitemap-questions.xml',
+    },
+    {
+      name: 'exam',
+      url: 'https://core.gamatrain.com/data/sitemaps/sitemap-azmoons.xml',
+    },
+    {
+      name: 'tutorial',
+      url: 'https://core.gamatrain.com/data/sitemaps/sitemap-dars.xml',
+    },
   ]
 
   const publicPath = join(process.cwd(), 'public/sitemap')
@@ -32,6 +49,10 @@ async function generate() {
       const xml = convertDataToXML(data, type)
       await writeFile(join(publicPath, `${type}-${page}.xml`), xml, 'utf8')
     }
+  }
+
+  for (const sitemap of coreSitemaps) {
+    await fetchAndSaveCoreSitemap(sitemap)
   }
 
   console.log('✅ Sitemaps generated successfully.')
@@ -138,16 +159,35 @@ async function fetchPaginatedData(contentType, page) {
 
   const pageNum = page > 0 ? page - 1 : 0
   if (contentType === 'blog')
-    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage
-    }&PagingDto.PageFilter.ReturnTotalRecordsCount=true`
+    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage}&PagingDto.PageFilter.ReturnTotalRecordsCount=true`
 
   if (contentType === 'school')
-    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage
-    }&PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
+    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage}&PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
 
   const response = await fetch(finalUrl)
   const json = await response.json()
   return json.data.list || []
+}
+
+async function fetchAndSaveCoreSitemap({ name, url }) {
+  try {
+    const res = await fetch(url)
+
+    if (!res.ok)
+      throw new Error(`Failed to fetch ${url}`)
+
+    const xml = await res.text()
+
+    const publicPath = join(process.cwd(), 'public/sitemap')
+    await writeFile(
+      join(publicPath, `${name}.xml`),
+      xml,
+      'utf8',
+    )
+  }
+  catch (err) {
+    console.error(`❌ ${name} sitemap error`, err.message)
+  }
 }
 
 // ------------------ CONVERTER ------------------
