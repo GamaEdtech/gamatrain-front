@@ -24,39 +24,44 @@ const menuItems = [
       {
         title: 'Contact Us',
         link: '/admin/contact-us',
-        icon: 'mdi-archive-arrow-down-outline',
+        icon: 'md:archive_outlined',
       },
       {
         title: 'User Managment ',
         link: '/admin/users',
-        icon: 'mdi-account-group-outline',
+        icon: 'md:groups_3_outlined',
       },
-      { title: 'Blogs ', link: '/admin/blogs', icon: 'mdi-post-outline' },
-      { title: 'Tags ', link: '/admin/tags', icon: 'mdi-tag-multiple' },
+      { title: 'Blogs ', link: '/admin/blogs', icon: 'md:post_outlined' },
+      { title: 'Tags ', link: '/admin/tags', icon: 'md:sell_outlined' },
       {
         title: 'Transactions ',
         link: '/admin/transactions',
         icon: 'md:price_change_outlined',
       },
+      {
+        title: 'Payments ',
+        link: '/admin/payments',
+        icon: 'md:payments_outlined',
+      },
     ],
   },
-  { 'Type Managment': [{ title: 'Location', link: '/admin/Locations' }] },
+  { 'Type Managment': [{ title: 'Location', link: '/admin/Locations', icon: 'md:location_on_outlined' }] },
   {
     School: [
       {
         title: 'Images ',
         link: '/admin/schools/images',
-        icon: 'mdi-image-outline',
+        icon: 'md:image_outlined',
       },
       {
         title: 'Image Issues',
         link: '/admin/schools/image-issues',
-        icon: 'mdi-image-remove-outline',
+        icon: 'md:reset_image_outlined',
       },
       {
         title: 'Comments ',
         link: '/admin/schools/comments',
-        icon: 'mdi-comment-text-outline',
+        icon: 'md:comment_outlined',
       },
     ],
   },
@@ -116,15 +121,10 @@ function isActive(link) {
             >
               <v-list-item-icon>
                 <v-icon
-                  v-if="item.icon != null"
                   class="primary-gray-400"
                 >
                   {{ item.icon }}
                 </v-icon>
-                <v-icon
-                  v-else
-                  class="primary-gray-400 mdi - mdi-circle text-button"
-                />
               </v-list-item-icon>
               <v-list-item-title class="primary-gray-400 gtext-t5">
                 {{ item.title }}

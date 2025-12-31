@@ -55,7 +55,7 @@
 
 <style scoped>
 .card-skelton {
-  border: 1px solid #d7d7d8;
+  border: 1px solid rgb(var(--v-theme-grey200));
   min-height: 120px;
   max-width: 1200px;
 }

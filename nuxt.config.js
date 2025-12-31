@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     telegramApiSecret: process.env.TELEGRAM_API_SECRET,
     connectionStringMongoDB: process.env.CONNECTION_STRING_MONGODB,
     aiApiUrl: process.env.AI_API_URL,
+    projectPayerVaultKey: process.env.PROJECT_PAYER_VAULT_KEY,
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
       gtmId: process.env.NUXT_PUBLIC_GTM_ID,
@@ -51,6 +52,10 @@ export default defineNuxtConfig({
       })
     },
   ],
+
+  dayjs: {
+    plugins: ['relativeTime'],
+  },
 
   site: {
     url: 'https://gamatrain.com/',

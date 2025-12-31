@@ -154,7 +154,7 @@ const { data: contentData } = await useAsyncData(
     catch (e: unknown) {
       const error = e as AppError
       if (error?.status === 404) {
-        router.push('/search?type=test')
+        router.push('/search?type=paper')
       }
       throw error
     }
@@ -266,23 +266,23 @@ const initBreadCrumb = () => {
   breads.value.push({
     text: 'Paper',
     disabled: false,
-    href: '/search?type=test',
+    href: '/search?type=paper',
   })
   breads.value.push(
     {
       text: contentData.value.section_title,
       disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}`,
+      href: `/search?type=paper&section=${contentData.value.section}`,
     },
     {
       text: contentData.value.base_title,
       disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}`,
+      href: `/search?type=paper&section=${contentData.value.section}&base=${contentData.value.base}`,
     },
     {
       text: contentData.value.lesson_title,
       disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
+      href: `/search?type=paper&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
     },
   )
 }

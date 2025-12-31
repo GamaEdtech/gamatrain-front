@@ -27,19 +27,26 @@
         Disconnect
       </v-btn>
     </div>
-
     <div
       v-if="loadingGetProposal"
       class="text-center my-10"
     >
-      <v-progress-circular
-        indeterminate
-        size="64"
-        color="primary"
-      />
-      <p class="mt-4">
-        Loading proposals from the blockchain...
-      </p>
+      <div class="d-block">
+        <v-slide-group
+          class="center-slide-group"
+          center-active
+          show-arrows
+        >
+          <v-slide-group-item
+            v-for="i in 10"
+            :key="i"
+          >
+            <div class="my-5 mx-1 proposal-slide__card">
+              <governance-proposal-card-skeleton />
+            </div>
+          </v-slide-group-item>
+        </v-slide-group>
+      </div>
     </div>
 
     <div

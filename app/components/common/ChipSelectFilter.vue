@@ -1,18 +1,22 @@
 <template>
   <v-btn
-    :class="`text-h5 primary-gray-700 ${
+    :class="`text-h5 ${
       isShowSelectModal || selectedItem ? `open-style-btn` : ``
     }`"
     variant="outlined"
     rounded="xl"
     value="board"
+    color="grey200"
     :disabled="disabled"
     :loading="loading"
     @click="isShowSelectModal = !isShowSelectModal"
   >
-    {{ selectedItem ? selectedItem.title : title }}
+    <span class="text-grey700">{{ selectedItem ? selectedItem.title : title }}</span>
     <template #append>
-      <v-icon class="primary-gray-700 mt-1">
+      <v-icon
+        class="mt-1"
+        color="grey500"
+      >
         md:keyboard_arrow_down
       </v-icon>
     </template>

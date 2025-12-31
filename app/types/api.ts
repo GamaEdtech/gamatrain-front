@@ -107,3 +107,44 @@ export interface AdminTransactionDTO {
   currentBalance: number
   isDebit: boolean
 }
+
+export type CurrencyPayment = 'SOL' | 'USDC' | 'GET' | 'USDT'
+export type StatusPayment = 'Pending' | 'Paid' | 'Failed'
+
+export interface AdminPaymentDTO {
+  id: number
+  userId: number
+  firstName?: string
+  lastName?: string
+  amount: number
+  currency: CurrencyPayment
+  status: StatusPayment
+  creationDate: string
+  verifyDate?: string
+  sourceWallet?: string
+  comment?: string
+  transactionId?: string
+}
+
+export interface SearchTypesStatsDTO {
+  types_stats: TypesStatsDTO
+}
+
+export interface TypesStatsDTO {
+  albums: string
+  azmoon: string
+  courses: string
+  dars: string
+  exams: string
+  files: string
+  learnfiles: string
+  papers: string
+  question: string
+  questions: string
+  schools: string
+  teachers: string
+  tutor: string
+  tutorials: string
+  last_update: boolean
+  test: boolean
+}

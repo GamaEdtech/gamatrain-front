@@ -58,7 +58,7 @@
           link
           class="mr-1 bg-blue-grey-darken-1 text-white"
           :small="display.mdAndDown"
-          :to="`/search?type=test&section=${contentData?.section}`"
+          :to="`/search?type=paper&section=${contentData?.section}`"
         >
           {{ contentData?.section_title }}
         </v-chip>
@@ -66,14 +66,14 @@
           link
           class="mr-1 bg-blue-grey-darken-1 text-white"
           :small="display.mdAndDown"
-          :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
+          :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}`"
         >
           {{ contentData?.base_title }}
         </v-chip>
         <v-chip
           class="ma-1 bg-blue-grey-darken-1 text-white"
           :small="display.mdAndDown"
-          :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
+          :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
         >
           {{ contentData?.lesson_title }}
         </v-chip>

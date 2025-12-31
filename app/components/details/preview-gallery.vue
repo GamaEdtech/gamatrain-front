@@ -204,31 +204,31 @@ const items = reactive([
     class: 'exam',
     text: 'Related exam',
     icon: 'exam',
-    link: '/search?type=azmoon',
+    link: '/search?type=quizhub',
   },
   {
     class: 'test',
     text: 'Related paper',
     icon: 'paper',
-    link: '/search?type=test',
+    link: '/search?type=paper',
   },
   {
     class: 'content',
     text: 'Related multimedia',
     icon: 'multimedia',
-    link: '/search?type=learnfiles',
+    link: '/search?type=multimedia',
   },
   {
     class: 'faq',
     text: 'Related Q & A',
     icon: 'q-a',
-    link: '/search?type=question',
+    link: '/search?type=forum',
   },
   {
     class: 'textbook ',
     text: 'Related tutorial',
     icon: 'tutorial',
-    link: '/search?type=dars',
+    link: '/search?type=tutorial',
   },
 ])
 

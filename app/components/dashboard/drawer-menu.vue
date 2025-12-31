@@ -414,6 +414,12 @@ const mobileItems = [
     link: '/governance',
     value: 'governance',
   },
+  {
+    title: 'AI Assistant',
+    icon: 'md:smart_toy',
+    link: '/ai',
+    value: 'aiAssistant',
+  },
 ]
 
 // const extraLink = [
