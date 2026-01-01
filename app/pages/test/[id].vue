@@ -28,6 +28,8 @@
     <test-details
       v-if="contentData"
       :content-data="contentData"
+      :show-chips="true"
+      :show-title="true"
       @next="handleLoadNextTest"
     />
 
