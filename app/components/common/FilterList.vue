@@ -9,18 +9,17 @@
         class="mt-1 height-badge"
         offset-x="5"
         offset-y="-5"
-        :color="countFilterSelect == 0 ? `transparent` : `#F04438`"
+        :color="countFilterSelect == 0 ? `transparent` : `lightError`"
         :content="countFilterSelect == 0 ? `` : countFilterSelect"
       >
         <v-btn
           rounded="xl"
-          prepend-icon="md:tune"
           variant="outlined"
-          class="primary-gray-700"
+          color="grey300"
           density="comfortable"
           @click="dialogFilterMobileModel = !dialogFilterMobileModel"
         >
-          Filter
+          <span class="text-grey700 d-flex align-center ga-2 text-h6 font-weight-bold"><v-icon>md:tune</v-icon> Filter</span>
         </v-btn>
       </v-badge>
     </v-col>
@@ -34,7 +33,7 @@
         v-model="textSearch"
         label="Search anything...."
         variant="outlined"
-        color="#FFB600"
+        color="primary"
         max-width="330"
         density="compact"
         hide-details
@@ -45,7 +44,7 @@
           <v-btn
             icon
             varient="text"
-            color="#FFB600"
+            color="primary"
             width="50"
             class="rounded-ts rounded-te-xl rounded-be-xl rounded-bs h-100 ml-n2"
             flat
@@ -53,7 +52,7 @@
             <v-icon
               size="x-large"
               icon="md:search"
-              color="#000000"
+              color="grey800"
             />
           </v-btn>
         </template>
@@ -89,11 +88,18 @@
               :key="filter.title"
               variant="flat"
               class="text-h5 pl-5 pr-5"
-              color="#F2F4F7"
-              :closable="filter.closable"
-              @click:close="clearFilter(index)"
+              color="grey100"
             >
-              {{ filter.selectedItem?.title }}
+              <span class="text-grey500">{{ filter.selectedItem?.title }}</span>
+              <template #close>
+                <v-icon
+                  v-if="filter.closable"
+                  color="grey500"
+                  @click="clearFilter(index)"
+                >
+                  md:cancel
+                </v-icon>
+              </template>
             </v-chip>
           </template>
         </div>
@@ -114,11 +120,11 @@
             cols="12"
             class="d-flex justify-space-between align-center"
           >
-            <span class="text-h3">Filter</span>
+            <span class="text-h3 text-grey600">Filter</span>
 
             <v-icon
               size="x-large"
-              color="#D0D5DD"
+              color="grey300"
               @click="dialogFilterMobileModel = false"
             >
               md:cancel
@@ -134,11 +140,18 @@
                 :key="filter.title"
                 variant="flat"
                 class="text-h5 pl-5 pr-5"
-                color="#F2F4F7"
-                :closable="filter.closable"
-                @click:close="clearFilter(index)"
+                color="grey100"
               >
-                {{ filter.selectedItem?.title }}
+                <span class="text-grey500">{{ filter.selectedItem?.title }}</span>
+                <template #close>
+                  <v-icon
+                    v-if="filter.closable"
+                    color="grey500"
+                    @click="clearFilter(index)"
+                  >
+                    md:cancel
+                  </v-icon>
+                </template>
               </v-chip>
             </template>
           </v-col>
@@ -155,24 +168,24 @@
               @click="openFilterSelectModal(filter)"
             >
               <v-badge
-                :color="filter.selectedItem ? `#F04438` : `#ffffff`"
+                :color="filter.selectedItem ? `lightError` : `#ffffff`"
                 dot
                 floating
               >
-                <span class="text-h4">{{ filter.title }} </span>
+                <span class="text-h4 text-grey500 font-weight-bold">{{ filter.title }} </span>
               </v-badge>
               <div class="d-flex align-center ga-1">
                 <v-chip
                   v-if="filter.selectedItem"
                   variant="flat"
                   class="text-h5 font-weight-bold pl-5 pr-5"
-                  color="#F2F4F7"
+                  color="grey100"
                 >
-                  {{ filter.selectedItem.title }}
+                  <span class="text-grey500">{{ filter.selectedItem?.title }}</span>
                 </v-chip>
 
                 <v-icon
-                  color="#667085"
+                  color="grey500"
                   size="34"
                 >
                   md:keyboard_arrow_down
@@ -182,7 +195,7 @@
               <v-divider
                 :thickness="2"
                 class="border-opacity-100 mt-4 mb-4"
-                color="#F2F4F7"
+                color="grey100"
               />
             </div>
           </v-col>
@@ -192,17 +205,17 @@
         >
           <v-btn
             variant="text"
-            class="text-h5"
+            class="text-h5 text-grey700"
             @click="clearAllFilter"
           >
             Clear All
           </v-btn>
           <v-btn
-            color="#ffb600"
+            color="primary"
             rounded="xl"
             height="40"
             width="200"
-            class="text-h5"
+            class="text-h5 text-grey800"
             :loading="loading"
             @click="dialogFilterMobileModel = false"
           >
@@ -215,7 +228,7 @@
       cols="12"
       class="d-flex align-end justify-end ga-2 mt-1 py-0 px-2 max-width-container"
     >
-      <span class="text-h5 primary-gray-400">Result</span>
+      <span class="text-h5 text-grey400">Result</span>
       <v-skeleton-loader
         v-if="loading"
         width="100"
@@ -224,7 +237,7 @@
       />
       <span
         v-else
-        class="text-h4 primary-gray-700 font-weight-bold"
+        class="text-h4 text-grey700 font-weight-bold"
       >{{
         $numberFormat(countDataFound)
       }}</span>

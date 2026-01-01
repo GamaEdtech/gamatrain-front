@@ -108,7 +108,7 @@ const breadsCrumb = ref([
   {
     text: 'Subject Directory',
     disabled: true,
-    href: '/search?type=test',
+    href: '/search?type=paper',
     name: 'type',
   },
 ])
@@ -118,7 +118,7 @@ const changeFilterForBreadCrumb = (board, grade, subject) => {
     const newBoard = {
       text: board.title,
       disabled: true,
-      href: `/search?type=test&section=${board.id}`,
+      href: `/search?type=paper&section=${board.id}`,
       name: 'board',
     }
     breadsCrumb.value = breadsCrumb.value.filter(item => item.name == 'type')
@@ -128,7 +128,7 @@ const changeFilterForBreadCrumb = (board, grade, subject) => {
     const newGrade = {
       text: grade.title,
       disabled: true,
-      href: `/search?type=test&base=${grade.id}`,
+      href: `/search?type=paper&base=${grade.id}`,
       name: 'grade',
     }
     breadsCrumb.value = breadsCrumb.value.filter(
@@ -140,7 +140,7 @@ const changeFilterForBreadCrumb = (board, grade, subject) => {
     const newSubject = {
       text: subject.title,
       disabled: true,
-      href: `/search?type=test&lesson=${subject.id}`,
+      href: `/search?type=paper&lesson=${subject.id}`,
       name: 'subject',
     }
     breadsCrumb.value = breadsCrumb.value.filter(

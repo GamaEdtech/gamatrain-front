@@ -5,11 +5,6 @@ import { join } from 'path'
 
 async function generate() {
   const contentTypes = [
-    'paper',
-    'qa',
-    'multimedia',
-    'exam',
-    'tutorial',
     'blog',
     'school',
   ]
@@ -138,12 +133,10 @@ async function fetchPaginatedData(contentType, page) {
 
   const pageNum = page > 0 ? page - 1 : 0
   if (contentType === 'blog')
-    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage
-    }&PagingDto.PageFilter.ReturnTotalRecordsCount=true`
+    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage}&PagingDto.PageFilter.ReturnTotalRecordsCount=true`
 
   if (contentType === 'school')
-    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage
-    }&PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
+    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage}&PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
 
   const response = await fetch(finalUrl)
   const json = await response.json()
@@ -182,11 +175,11 @@ function generateDefaultSitemap() {
     'https://gamatrain.com/about-us',
     'https://gamatrain.com/services',
     'https://gamatrain.com/faq',
-    'https://gamatrain.com/search?type=test',
-    'https://gamatrain.com/search?type=learnfiles',
-    'https://gamatrain.com/search?type=question',
-    'https://gamatrain.com/search?type=azmoon',
-    'https://gamatrain.com/search?type=dars',
+    'https://gamatrain.com/search?type=paper',
+    'https://gamatrain.com/search?type=multimedia',
+    'https://gamatrain.com/search?type=forum',
+    'https://gamatrain.com/search?type=quizhub',
+    'https://gamatrain.com/search?type=tutorial',
     'https://gamatrain.com/blog',
     'https://gamatrain.com/school',
   ]

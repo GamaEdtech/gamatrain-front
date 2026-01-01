@@ -490,14 +490,14 @@ async function initBreadCrumb() {
   breads.value.push({
     text: 'Multimedia',
     disabled: false,
-    href: '/search?type=learnfiles',
+    href: '/search?type=multimedia',
   })
 
   if (contentData.value.section_title) {
     breads.value.push({
       text: contentData.value.section_title,
       disabled: false,
-      href: `/search?type=learnfiles&section=${contentData.value.section}`,
+      href: `/search?type=multimedia&section=${contentData.value.section}`,
     })
   }
 
@@ -505,7 +505,7 @@ async function initBreadCrumb() {
     breads.value.push({
       text: contentData.value.base_title,
       disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}`,
+      href: `/search?type=paper&section=${contentData.value.section}&base=${contentData.value.base}`,
     })
   }
 
@@ -513,7 +513,7 @@ async function initBreadCrumb() {
     breads.value.push({
       text: contentData.value.lesson_title,
       disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
+      href: `/search?type=paper&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
     })
   }
 }

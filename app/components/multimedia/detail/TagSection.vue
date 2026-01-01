@@ -5,7 +5,7 @@
       link
       class="mr-1 bg-blue-grey-darken-2"
     >
-      <nuxt-link :to="`/search?type=learnfiles&section=${sectionId}`">
+      <nuxt-link :to="`/search?type=multimedia&section=${sectionId}`">
         {{ sectionTitle }}
       </nuxt-link>
     </v-chip>
@@ -16,7 +16,7 @@
       class="mr-1 bg-blue-grey-darken-2"
     >
       <nuxt-link
-        :to="`/search?type=learnfiles&section=${sectionId}&base=${baseId}`"
+        :to="`/search?type=multimedia&section=${sectionId}&base=${baseId}`"
       >
         {{ baseTitle }}
       </nuxt-link>
@@ -28,7 +28,7 @@
       class="ma-1 bg-blue-grey-darken-2"
     >
       <nuxt-link
-        :to="`/search?type=learnfiles&section=${sectionId}&base=${baseId}&lesson=${lessonId}`"
+        :to="`/search?type=multimedia&section=${sectionId}&base=${baseId}&lesson=${lessonId}`"
       >
         {{ lessonTitle }}
       </nuxt-link>

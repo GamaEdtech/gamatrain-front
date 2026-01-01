@@ -129,35 +129,35 @@ const { boardImgs } = useBoard()
 
 const categories = ref([
   {
-    type: 'test',
+    type: 'paper',
     key: 'papers',
     stat: '--',
     title: 'Past Paper',
     icon: 'icon-paper',
   },
   {
-    type: 'azmoon',
+    type: 'quizhub',
     key: 'exams',
     stat: '--',
     title: 'QuizHub',
     icon: 'icon-exam',
   },
   {
-    type: 'dars',
+    type: 'tutorial',
     key: 'tutorial',
     stat: '--',
     title: 'Tutorial',
     icon: 'icon-tutorial',
   },
   {
-    type: 'question',
+    type: 'forum',
     key: 'questions',
     stat: '--',
     title: 'Forum',
     icon: 'icon-q-a',
   },
   {
-    type: 'learnfiles',
+    type: 'multimedia',
     key: 'files',
     stat: '--',
     title: 'Multimedia',

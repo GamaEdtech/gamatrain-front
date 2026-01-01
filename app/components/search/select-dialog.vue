@@ -11,7 +11,7 @@
     >
       <v-row>
         <v-col cols="6">
-          <span class="text-h3">{{ titleModal }}</span>
+          <span class="text-h3 text-grey700">{{ titleModal }}</span>
         </v-col>
         <v-col
           cols="6"
@@ -19,7 +19,7 @@
         >
           <span
             v-if="hasSearch"
-            class="text-h5 text-grey"
+            class="text-h5 text-grey400"
           >result</span>
           <span
             v-if="hasSearch"
@@ -30,10 +30,10 @@
           <v-icon
             class="ml-4"
             size="x-large"
-            color="#D0D5DD"
+            color="grey300"
             @click="closeModal"
           >
-            mdi-close-circle
+            md:cancel
           </v-icon>
         </v-col>
       </v-row>
@@ -44,18 +44,18 @@
         <v-text-field
           v-model="searchText"
           :label="`Search ${titleModal}`"
-          prepend-inner-icon="mdi-magnify"
+          prepend-inner-icon="md:search"
           glow
           variant="outlined"
-          color="#FFB600"
-          icon-color="#FFB600"
+          color="primary"
+          icon-color="primary"
           density="compact"
           rounded="xl"
         >
           <template #append-inner>
             <v-btn
               class="mr-n3"
-              color="#FFB600"
+              color="primary"
               width="70"
               height="30"
               rounded="xl"
@@ -74,7 +74,7 @@
           :key="item.title"
           :value="item.title"
           :active="item.id == selectedItem?.id"
-          color="#FFB600"
+          color="primary"
           @click="changeSelectedItem(item)"
         >
           <template #prepend>
@@ -113,7 +113,7 @@
       <v-alert
         v-if="searchText && filteredItems.length === 0 && !isLoading"
         type="info"
-        color="#FFB600"
+        color="primary"
         density="compact"
         class="mb-4"
         variant="tonal"
@@ -126,7 +126,7 @@
           searchText.length == 0 && filteredItems.length === 0 && !isLoading
         "
         type="info"
-        color="#FFB600"
+        color="primary"
         density="compact"
         class="mb-4"
         variant="tonal"

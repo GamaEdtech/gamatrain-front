@@ -434,7 +434,9 @@ useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: `${requestURL.value}/school/${contentData.value?.id}/${contentData?.value?.slug}`,
+      href: contentData.value
+        ? `https://${requestURL.value}/school/${contentData.value.id}/${contentData.value.slug}`
+        : `https://${requestURL.value}/school/${route.params.id}`,
     },
     {
       rel: 'icon',

@@ -276,7 +276,9 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: `${requestURL.value}/blog/${blogId}/${contentData.value.slug}`,
+      href: contentData.value
+        ? `https://${requestURL.value}/blog/${blogId}/${contentData.value.slug}`
+        : `https://${requestURL.value}/blog/${blogId}`,
     },
   ],
 })

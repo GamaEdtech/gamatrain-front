@@ -104,6 +104,14 @@ export const useStake = () => {
     }
     catch (err) {
       console.log('error', err)
+      userStakeInformation.value = {
+        owner: userPublicKey,
+        stakedAmount: 0,
+        lastStakeTime: 0,
+        pendingUnstake: 0,
+        unstakeRequestedAt: 0,
+        pendingRewards: 0,
+      }
     }
     finally {
       loadingStakeInformation.value = false

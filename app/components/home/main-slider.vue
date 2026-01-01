@@ -109,7 +109,7 @@ const slides = [
     text: 'Q&A made easy. Connect with classmates and<br> teachers for quick answers to your questions.',
     img: 'a-q.png',
     id: 'aq-slide',
-    link: '/search?type=question',
+    link: '/search?type=quizhub',
   },
 ]
 </script>
