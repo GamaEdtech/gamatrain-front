@@ -5,11 +5,6 @@ import { join } from 'path'
 
 async function generate() {
   const contentTypes = [
-    'paper',
-    'qa',
-    'multimedia',
-    'exam',
-    'tutorial',
     'blog',
     'school',
   ]
@@ -138,12 +133,10 @@ async function fetchPaginatedData(contentType, page) {
 
   const pageNum = page > 0 ? page - 1 : 0
   if (contentType === 'blog')
-    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage
-    }&PagingDto.PageFilter.ReturnTotalRecordsCount=true`
+    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage}&PagingDto.PageFilter.ReturnTotalRecordsCount=true`
 
   if (contentType === 'school')
-    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage
-    }&PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
+    finalUrl = `${apiUrl}?PagingDto.PageFilter.Size=${itemsPerPage}&PagingDto.PageFilter.Skip=${pageNum * itemsPerPage}&PagingDto.PageFilter.ReturnTotalRecordsCount=true&HasScore=true`
 
   const response = await fetch(finalUrl)
   const json = await response.json()
