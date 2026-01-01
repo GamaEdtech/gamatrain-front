@@ -1,62 +1,107 @@
 import { useSplTransfer } from '../../utils/useSplTransfer'
-import type { H3Error } from 'h3'
+
+export interface ApiResult<T> {
+  data: T | null
+  status: number
+  error?: unknown
+  succeeded: boolean
+}
 
 export default defineEventHandler(async (event) => {
-  try {
-    const body = await readBody(event)
+  const body = await readBody(event)
 
-    const { to, amount } = body || {}
+  const { to, amount, token } = body || {}
 
-    if (!to || !amount) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Invalid params',
-      })
-    }
-
-    if (typeof amount !== 'number' || amount <= 0) {
-      throw createError({
-        statusCode: 400,
-        statusMessage: 'Amount must be a positive number',
-      })
-    }
-
-    const { transferSplToken } = useSplTransfer()
-
-    const result = await transferSplToken({
-      to,
-      amount,
+  if (!to || !amount || !token) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Invalid params',
     })
-
-    return {
-      succeeded: true,
-      ...result,
-    }
   }
-  catch (error: unknown) {
-    if (isH3Error(error)) {
-      throw error
-    }
 
-    console.error('[SOLANA_TRANSFER_ERROR]', error)
+  if (typeof amount !== 'number' || amount <= 0) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Amount must be a positive number',
+    })
+  }
 
-    const message
-      = error instanceof Error ? error.message : 'Unknown error'
+  const userBalance = await getUserBalance(token)
+  if (userBalance == undefined || userBalance == 0 || amount > userBalance) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Requested amount exceeds your balance.',
+    })
+  }
 
+  const responseConsume = await consumeCoins(amount, token)
+
+  if (!responseConsume) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Solana transfer failed',
-      data: {
-        message,
-      },
+      statusMessage: 'Failed to deduct balance',
     })
+  }
+
+  const { transferSplToken } = useSplTransfer()
+
+  const result = await transferSplToken({
+    to,
+    amount,
+  })
+
+  if (!result.signature) {
+    throw createError({
+      statusCode: 502,
+      statusMessage: 'On-chain transfer failed',
+    })
+  }
+
+  return {
+    succeeded: true,
+    ...result,
   }
 })
 
-function isH3Error(error: unknown): error is H3Error {
-  return (
-    typeof error === 'object'
-    && error !== null
-    && 'statusCode' in error
+async function getUserBalance(token: string): Promise<number> {
+  const response = await $fetch<ApiResult<number>>(
+    'https://sandbox.gamaedtech.com/api/v1/transactions/balance',
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    },
   )
+  if (!response.succeeded || response.data == null) {
+    throw createError({
+      statusCode: 502,
+      statusMessage: 'Failed to fetch user balance',
+    })
+  }
+
+  return response.data
+}
+
+async function consumeCoins(points: number, token: string): Promise<boolean> {
+  const response = await $fetch<ApiResult<number>>(
+    'https://sandbox.gamaedtech.com/api/v1/games/spends',
+    {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: {
+        points,
+      },
+    },
+  )
+
+  if (!response.succeeded) {
+    throw createError({
+      statusCode: 502,
+      statusMessage: 'Failed to consume coins',
+    })
+  }
+
+  return true
 }

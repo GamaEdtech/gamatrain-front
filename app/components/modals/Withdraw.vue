@@ -143,8 +143,14 @@ import type { ApiResult } from '~/types/api'
 import { useDisplay } from 'vuetify'
 import { computed } from 'vue'
 
+interface ErrorWithdraw {
+  statusMessage: string
+  statusCode: number
+}
+
 const { mdAndUp } = useDisplay()
 const { $toast } = useNuxtApp()
+const auth = useAuth()
 
 const props = defineProps({
   showDialog: {
@@ -298,24 +304,17 @@ const confirmWithdraw = async () => {
   try {
     loadingWithdrawProcess.value = true
 
-    const consumeResult = await consumeCoins(amount)
-
-    if (!consumeResult) {
-      $toast.error('Insufficient balance or server error')
-      return
-    }
-
     const transferResult = await useApiService.post<ApiResult<unknown>>(
       '/api/solana/transfer',
       {
+        token: auth.getUserTokenV2(),
         to: wallet.value.publicKey.toBase58(),
         amount,
       },
     )
 
     if (!transferResult?.succeeded) {
-      // await refundCoins(amount)
-      $toast.error('Blockchain transfer failed. Balance restored.')
+      $toast.error('The operation failed. Please try again later.')
       return
     }
 
@@ -325,30 +324,17 @@ const confirmWithdraw = async () => {
     withdrawValue.value = null
     step.value = 1
   }
-  catch (error) {
-    console.error('Withdraw error:', error)
-    $toast.error('Unexpected error occurred')
+  catch (err: unknown) {
+    const error = err as ErrorWithdraw
+    if (error.statusMessage) {
+      $toast.error(error.statusMessage)
+    }
+    else {
+      $toast.error('Unexpected error occurred')
+    }
   }
   finally {
     loadingWithdrawProcess.value = false
-  }
-}
-
-const consumeCoins = async (points: number): Promise<boolean> => {
-  try {
-    const response = await useApiService.post<ApiResult<unknown>>('/api/v2/games/spends', {
-      points,
-    })
-    if (response?.succeeded) {
-      return true
-    }
-    else {
-      return false
-    }
-  }
-  catch (err: unknown) {
-    console.error('Error consuming coins:', err)
-    return false
   }
 }
 </script>
