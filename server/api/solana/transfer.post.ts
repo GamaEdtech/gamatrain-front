@@ -64,8 +64,10 @@ export default defineEventHandler(async (event) => {
 })
 
 async function getUserBalance(token: string): Promise<number> {
+  const config = useRuntimeConfig()
+  const API_V2_BASE_URL = config.public.apiV2BaseUrl
   const response = await $fetch<ApiResult<number>>(
-    'https://sandbox.gamaedtech.com/api/v1/transactions/balance',
+    `${API_V2_BASE_URL}/transactions/balance`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -83,8 +85,10 @@ async function getUserBalance(token: string): Promise<number> {
 }
 
 async function consumeCoins(points: number, token: string): Promise<boolean> {
+  const config = useRuntimeConfig()
+  const API_V2_BASE_URL = config.public.apiV2BaseUrl
   const response = await $fetch<ApiResult<number>>(
-    'https://sandbox.gamaedtech.com/api/v1/games/spends',
+    `${API_V2_BASE_URL}/games/spends`,
     {
       method: 'POST',
       headers: {
