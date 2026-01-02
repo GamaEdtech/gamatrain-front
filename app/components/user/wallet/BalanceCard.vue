@@ -67,7 +67,10 @@
           </div>
         </div>
         <div class="vertical-divider" />
-        <div class="action-btn text-center">
+        <div
+          class="action-btn text-center"
+          @click="showWithdrawModal = true"
+        >
           <v-icon
             small
             class="gray--text"
@@ -92,6 +95,12 @@
         </div>
       </div>
     </div>
+
+    <modals-withdraw
+      v-model:show-dialog="showWithdrawModal"
+      :user-balance="balance"
+      @update-balance="fetchBalance"
+    />
   </div>
 </template>
 
@@ -101,20 +110,12 @@ import { useAuth } from '~/composables/useAuth'
 
 // Composables
 const auth = useAuth()
-const { $toast: _toast } = useNuxtApp()
 
 // Reactive state
 const balance = ref(0)
 const loading = ref(true)
 const showBalance = ref(true)
-const token = ref('')
-
-// Methods
-const getToken = () => {
-  if (import.meta.client) {
-    token.value = localStorage.getItem('v2_token') || ''
-  }
-}
+const showWithdrawModal = ref(false)
 
 const fetchBalance = async () => {
   loading.value = true
@@ -136,19 +137,11 @@ const fetchBalance = async () => {
   }
 }
 
-// const getDecimal = (num) => {
-//   return Math.floor((num % 1) * 100)
-//     .toString()
-//     .padStart(2, '0')
-// }
-
 const toggleBalanceVisibility = () => {
   showBalance.value = !showBalance.value
 }
 
-// Lifecycle hooks
 onMounted(() => {
-  getToken()
   fetchBalance()
 })
 </script>
