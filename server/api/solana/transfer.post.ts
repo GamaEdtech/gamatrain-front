@@ -26,11 +26,21 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  console.log(amount)
+
+  const MIN_WITHDRAWAL_AMOUNT = 100000000000 // 100,000 $GET
+  if (amount < MIN_WITHDRAWAL_AMOUNT) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'The minimum withdrawal amount is 100,000 $GET.',
+    })
+  }
+
   const userBalance = await getUserBalance(token)
   if (userBalance == undefined || userBalance == 0 || amount > userBalance) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'Requested amount exceeds your balance.',
+      statusMessage: 'The requested amount exceeds your balance.',
     })
   }
 
@@ -39,7 +49,7 @@ export default defineEventHandler(async (event) => {
   if (!responseConsume) {
     throw createError({
       statusCode: 500,
-      statusMessage: 'Failed to deduct balance',
+      statusMessage: 'Balance deduction failed.',
     })
   }
 

@@ -37,7 +37,9 @@
           <div class="w-100 d-flex align-center justify-start mb-1">
             <span class="text-h6 text-grey400">Your Balance :<span class="text-grey600 font-weight-bold">{{
               Math.floor(userBalance) / 1000000
-            }}</span></span>
+            }}</span>
+
+            </span>
           </div>
           <v-text-field
             v-model="withdrawValue"
@@ -50,6 +52,8 @@
             :error-messages="withdrawError"
             type="Number"
             hide-spin-buttons
+            hint="The minimum withdrawal amount is 100,000 $GET."
+            persistent-hint
           >
             <template #prepend-inner>
               <img
