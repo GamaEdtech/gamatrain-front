@@ -54,36 +54,6 @@
     <v-row>
       <v-col
         cols="12"
-        class="px-7"
-      >
-        <v-chip
-          link
-          class="mr-1 bg-blue-grey-darken-1 text-white"
-          :small="display.mdAndDown"
-          :to="`/search?type=paper&section=${contentData?.section}`"
-        >
-          {{ contentData?.section_title }}
-        </v-chip>
-        <v-chip
-          link
-          class="mr-1 bg-blue-grey-darken-1 text-white"
-          :small="display.mdAndDown"
-          :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}`"
-        >
-          {{ contentData?.base_title }}
-        </v-chip>
-        <v-chip
-          class="ma-1 bg-blue-grey-darken-1 text-white"
-          :small="display.mdAndDown"
-          :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
-        >
-          {{ contentData?.lesson_title }}
-        </v-chip>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col
-        cols="12"
         class="px-6"
       >
         <CommonDetailSubjectDirectoryNav :content-data="contentData" />
@@ -131,7 +101,6 @@ const route = useRoute()
 const router = useRouter()
 const testId = ref(route.params.id)
 const isAdsLoad = ref(false)
-const display = useGlobalDisplay()
 
 // Fetch data
 const {

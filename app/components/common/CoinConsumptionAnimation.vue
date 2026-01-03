@@ -38,6 +38,13 @@ const emit = defineEmits(['animation-complete'])
 const centerLottieRef = ref(null)
 const internalVisible = ref(true)
 
+const playSound = (sound) => {
+  const audio = new Audio(`/assets/sounds/${sound}.mp3`)
+  audio.play().catch((e) => {
+    console.warn('Failed to play audio:', e)
+  })
+}
+
 function startAnimation() {
   if (!props.isVisible) return
 
@@ -74,6 +81,7 @@ watch(
   () => props.isVisible,
   (newValue) => {
     if (newValue) {
+      playSound('fail')
       startAnimation()
     }
     else {
