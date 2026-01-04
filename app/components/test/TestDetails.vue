@@ -185,7 +185,7 @@
       @complete-animation="completeWalletAnimation"
     />
     <common-coin-consumption-animation
-      :is-visible="isStartFailCoinAnimation"
+      v-model:is-visible="isStartFailCoinAnimation"
       @animation-complete="completeFailAnimation"
     />
 

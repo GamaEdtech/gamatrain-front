@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isVisible && internalVisible"
+    v-if="isVisible"
     class="coin-consumption-overlay"
   >
     <div class="coin-consumption-container">
@@ -15,7 +15,6 @@
               width: '500px',
               height: '500px',
             }"
-            @complete="onAnimationComplete"
           />
         </ClientOnly>
       </div>
@@ -33,10 +32,9 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['animation-complete'])
+const emit = defineEmits(['update:isVisible', 'animation-complete'])
 
 const centerLottieRef = ref(null)
-const internalVisible = ref(true)
 
 const playSound = (sound) => {
   const audio = new Audio(`/assets/sounds/${sound}.mp3`)
@@ -45,38 +43,18 @@ const playSound = (sound) => {
   })
 }
 
-function startAnimation() {
-  if (!props.isVisible) return
+const startAnimation = () => {
+  const lottieInstance = centerLottieRef.value?.getDotLottieInstance()
+  if (lottieInstance) {
+    lottieInstance.play()
+  }
 
-  // Reset internal state
-  internalVisible.value = true
-
-  // Start animation after DOM update
-  nextTick(() => {
-    const lottieInstance = centerLottieRef.value?.getDotLottieInstance()
-    if (lottieInstance) {
-      lottieInstance.play()
-    }
-  })
-
-  // Fallback timeout in case animation doesn't complete properly
   setTimeout(() => {
-    hideAnimation()
     emit('animation-complete')
-  }, 3000) // 3 second fallback
+    emit('update:isVisible', false)
+  }, 2000)
 }
 
-function onAnimationComplete() {
-  // Hide everything immediately when animation completes
-  hideAnimation()
-  emit('animation-complete')
-}
-
-function hideAnimation() {
-  internalVisible.value = false
-}
-
-// Watch for visibility changes to start animation
 watch(
   () => props.isVisible,
   (newValue) => {
@@ -84,19 +62,8 @@ watch(
       playSound('fail')
       startAnimation()
     }
-    else {
-      // Reset state when becoming invisible
-      internalVisible.value = false
-    }
   },
 )
-
-// Start animation if already visible on mount
-onMounted(() => {
-  if (props.isVisible) {
-    startAnimation()
-  }
-})
 </script>
 
 <style scoped>

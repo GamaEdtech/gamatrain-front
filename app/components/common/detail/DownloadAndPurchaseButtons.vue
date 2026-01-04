@@ -211,7 +211,7 @@
 
     <!-- Coin Consumption Animation -->
     <common-coin-consumption-animation
-      :is-visible="showCoinAnimation"
+      v-model:is-visible="showCoinAnimation"
       @animation-complete="handleAnimationComplete"
     />
   </div>
