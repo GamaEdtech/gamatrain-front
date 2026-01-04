@@ -14,7 +14,6 @@
       :content-data="contentData"
       :show-chips="true"
       :show-title="true"
-      @next="handleLoadNextTest"
     />
 
     <v-row>
@@ -46,14 +45,12 @@
 
 <script setup>
 const route = useRoute()
-const testId = ref(route.params.id)
 const isAdsLoad = ref(false)
 
 // Fetch data
 const {
   data: contentData,
   pending: _pending,
-  refresh,
   execute: _execute,
 } = await useAsyncData(`exam-test-${route.params.id}`, async () => {
   const res = await useApiService.get(`/api/v1/examTests/${route.params.id}`,
@@ -64,11 +61,6 @@ const {
   }
   throw createError({ statusCode: 404, statusMessage: 'Page not found' })
 })
-
-const handleLoadNextTest = (id) => {
-  testId.value = id
-  refresh()
-}
 
 // Utility functions
 const stripHtml = html => (html ? html.replace(/<[^>]+>/g, '') : '')

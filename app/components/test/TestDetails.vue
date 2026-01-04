@@ -159,6 +159,21 @@
       />
     </div>
 
+    <div class="w-100 d-flex align-center justify-start mt-6">
+      <v-btn
+        :disabled="!nextTestId"
+        :loading="nextTestLoading"
+        color="info"
+        rounded="lg"
+        flat
+        :to="`/test/${nextTestId}`"
+      >
+        <span class="text-h5 font-weight-bold text-white">
+          {{ buttonNextText }}
+        </span>
+      </v-btn>
+    </div>
+
     <test-success-coin-animation
       :is-start-animation="isStartSuccessAnimation"
       @complete-success-animation="completeSuccessCoinAnimation"
@@ -186,10 +201,11 @@
 </template>
 
 <script setup lang="ts">
-import type { QuestionDTO, ApiResult, TestTimeDTO, AppError } from '~/types/api'
+import type { QuestionDTO, NextQuestionDTO, ApiResult, TestTimeDTO, AppError } from '~/types/api'
 
 interface ITestDetail {
   contentData: QuestionDTO
+  buttonNextText?: string
   showChips?: boolean
   showTitle?: boolean
 }
@@ -197,9 +213,9 @@ interface ITestDetail {
 const { $renderMathInElement, $ensureMathJaxReady, $toast } = useNuxtApp()
 const auth = useAuth()
 const router = useRouter()
-const props = defineProps<ITestDetail>()
-
-console.log('props', props.contentData)
+const props = withDefaults(defineProps<ITestDetail>(), {
+  buttonNextText: 'Next One',
+})
 
 const isAnswerSelected = ref(false)
 const selectedAnswer = ref<string | null>(null)
@@ -223,6 +239,9 @@ const isProcessingPayment = ref(false)
 const fullAnswerRef = ref(null)
 const isPaymentComplete = ref(false)
 const isStartProcessShowAnswer = ref(false)
+
+const nextTestId = ref()
+const nextTestLoading = ref(true)
 
 const completeSuccessCoinAnimation = () => {
   isStartSuccessAnimation.value = false
@@ -315,6 +334,8 @@ onMounted(async () => {
   if (auth.isAuthenticated.value && props.contentData.answer_full.length > 0) {
     await coinBalance.fetchBalance()
   }
+
+  await loadNextTest()
 })
 
 const openPaymentMdoal = async () => {
@@ -353,6 +374,30 @@ const handleCoinPaymentConfirm = async () => {
 
 const handleCoinPaymentClose = () => {
   showCoinPaymentModal.value = false
+}
+
+const loadNextTest = async () => {
+  try {
+    nextTestLoading.value = true
+    const response = await useApiService.get<ApiResult<NextQuestionDTO>>(
+      `/api/v1/examTests/random?lesson=${props.contentData.lesson}&topic=${props.contentData.topic}`,
+    )
+    if (response.data && response.data.code) {
+      nextTestId.value = response.data.code
+    }
+  }
+  catch (err) {
+    const error = err as AppError
+    if (error.response?.status === 403) {
+      router.push({ query: { auth_form: 'login' } })
+    }
+    else if (error.response?.status === 400) {
+      $toast.error(error.response?.data?.message || '')
+    }
+  }
+  finally {
+    nextTestLoading.value = false
+  }
 }
 </script>
 

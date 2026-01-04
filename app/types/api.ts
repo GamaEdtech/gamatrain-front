@@ -220,3 +220,6 @@ export interface TestTimeDTO {
   points: number
   isCorrect: boolean
 }
+export interface NextQuestionDTO {
+  code: string
+}
