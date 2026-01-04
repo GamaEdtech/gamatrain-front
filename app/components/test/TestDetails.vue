@@ -352,7 +352,7 @@ const handleCoinPaymentConfirm = async () => {
 
   try {
     const success = await coinBalance.deductCoins(
-      5,
+      5_000_000,
       'See Full Answer Question',
     )
     if (success) {
