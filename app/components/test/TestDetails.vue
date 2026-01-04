@@ -45,11 +45,29 @@
         <span class="text-grey500">{{ contentData.topic_title }}</span>
       </v-chip>
     </div>
-    <div
-      v-if="showTitle"
-      class="text-h4 font-weight-bold text-grey600 mt-4"
-    >
-      Question:
+    <div class="w-100 d-flex align-center  mt-4">
+      <div
+        v-if="showTitle"
+        class="text-h4 font-weight-bold text-grey600"
+      >
+        Question:
+      </div>
+      <div
+        v-if="contentData.answer_full.length > 0"
+        class="w-100 d-flex align-center justify-end"
+      >
+        <v-btn
+          variant="tonal"
+          color="info"
+          flat
+          width="40"
+          height="40"
+          class="text-h6"
+          icon="md:question_mark"
+          :disabled="isPaymentComplete"
+          @click="openPaymentMdoal"
+        />
+      </div>
     </div>
 
     <div
@@ -125,6 +143,22 @@
       </div>
     </div>
 
+    <div
+      v-if="contentData.answer_full.length > 0 && isPaymentComplete"
+      ref="fullAnswerRef"
+      class="w-100 mt-4 d-flex flex-column align-start justify-start px-2 px-sm-8"
+    >
+      <div
+        class="text-h4 font-weight-bold text-grey600"
+      >
+        Solution:
+      </div>
+      <div
+        class="text-h6 text-sm-h4 text-grey800 mt-4"
+        v-html="contentData.answer_full"
+      />
+    </div>
+
     <test-success-coin-animation
       :is-start-animation="isStartSuccessAnimation"
       @complete-success-animation="completeSuccessCoinAnimation"
@@ -139,6 +173,15 @@
       :is-visible="isStartFailCoinAnimation"
       @animation-complete="completeFailAnimation"
     />
+
+    <modals-coin-payment-modal
+      v-model:show-dialog="showCoinPaymentModal"
+      :user-balance="coinBalance.balance.value"
+      :is-processing="coinBalance.isLoading.value || isProcessingPayment"
+      text-modal="Unlock the answer by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!"
+      @confirm="handleCoinPaymentConfirm"
+      @close="handleCoinPaymentClose"
+    />
   </div>
 </template>
 
@@ -152,6 +195,7 @@ interface ITestDetail {
 }
 
 const { $renderMathInElement, $ensureMathJaxReady, $toast } = useNuxtApp()
+const auth = useAuth()
 const router = useRouter()
 const props = defineProps<ITestDetail>()
 
@@ -173,6 +217,13 @@ const isStartFailCoinAnimation = ref(false)
 const directionWalletAniamtion = ref(1)
 const questionReward = ref(0)
 
+const coinBalance = useCoinBalance()
+const showCoinPaymentModal = ref(false)
+const isProcessingPayment = ref(false)
+const fullAnswerRef = ref(null)
+const isPaymentComplete = ref(false)
+const isStartProcessShowAnswer = ref(false)
+
 const completeSuccessCoinAnimation = () => {
   isStartSuccessAnimation.value = false
   isStartWalletAnimation.value = true
@@ -182,9 +233,20 @@ const completeWalletAnimation = () => {
   isStartWalletAnimation.value = false
 }
 
-const completeFailAnimation = () => {
+const completeFailAnimation = async () => {
   isStartFailCoinAnimation.value = false
-  isStartWalletAnimation.value = true
+  if (isStartProcessShowAnswer.value) {
+    showCoinPaymentModal.value = false
+    isPaymentComplete.value = true
+    isStartProcessShowAnswer.value = false
+    await nextTick()
+    if (fullAnswerRef.value) {
+      $renderMathInElement?.(fullAnswerRef.value)
+    }
+  }
+  else {
+    isStartWalletAnimation.value = true
+  }
 }
 
 const handleAnswerSelect = async (answer: string) => {
@@ -249,7 +311,49 @@ onMounted(async () => {
   if (textQuestionRef.value) {
     $renderMathInElement?.(textQuestionRef.value)
   }
+
+  if (auth.isAuthenticated.value && props.contentData.answer_full.length > 0) {
+    await coinBalance.fetchBalance()
+  }
 })
+
+const openPaymentMdoal = async () => {
+  if (auth.isAuthenticated.value) {
+    showCoinPaymentModal.value = true
+  }
+  else {
+    router.push({ query: { auth_form: 'login' } })
+  }
+}
+
+const handleCoinPaymentConfirm = async () => {
+  isProcessingPayment.value = true
+
+  try {
+    const success = await coinBalance.deductCoins(
+      5,
+      'See Full Answer Question',
+    )
+    if (success) {
+      isStartProcessShowAnswer.value = true
+      isStartFailCoinAnimation.value = true
+    }
+    else {
+      $toast.error('Failed to process payment. Please try again.')
+    }
+  }
+  catch (error) {
+    console.error('Error processing coin payment:', error)
+    $toast.error('Payment failed. Please try again.')
+  }
+  finally {
+    isProcessingPayment.value = false
+  }
+}
+
+const handleCoinPaymentClose = () => {
+  showCoinPaymentModal.value = false
+}
 </script>
 
 <style scoped>

@@ -8,22 +8,6 @@
         type="paragraph"
       />
     </template>
-    <div
-      v-if="contentData.answer_full.length > 0"
-      class="w-100 d-flex align-center justify-end px-8"
-    >
-      <v-btn
-        variant="tonal"
-        color="info"
-        flat
-        width="40"
-        height="40"
-        class="text-h6"
-        icon="md:question_mark"
-        :disabled="isPaymentComplete"
-        @click="openPaymentMdoal"
-      />
-    </div>
 
     <test-details
       v-if="contentData"
@@ -32,24 +16,6 @@
       :show-title="true"
       @next="handleLoadNextTest"
     />
-
-    <div
-      v-if="contentData.answer_full.length > 0"
-      ref="fullAnswerRef"
-      class="w-100 mt-4 d-flex flex-column align-start justify-start px-8"
-    >
-      <div v-show="isPaymentComplete">
-        <div
-          class="text-h4 font-weight-bold text-blue-grey-lighten-1"
-        >
-          Solution:
-        </div>
-        <div
-          class="text-h4 mt-4"
-          v-html="contentData.answer_full"
-        />
-      </div>
-    </div>
 
     <v-row>
       <v-col
@@ -75,30 +41,11 @@
         />
       </v-col>
     </v-row>
-
-    <!-- Coin Payment Modal -->
-    <modals-coin-payment-modal
-      v-model:show-dialog="showCoinPaymentModal"
-      :user-balance="coinBalance.balance.value"
-      :is-processing="coinBalance.isLoading.value || isProcessingPayment"
-      text-modal="Unlock the answer by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!"
-      @confirm="handleCoinPaymentConfirm"
-      @close="handleCoinPaymentClose"
-    />
-
-    <!-- Coin Consumption Animation -->
-    <common-coin-consumption-animation
-      :is-visible="showCoinAnimation"
-      @animation-complete="handleAnimationComplete"
-    />
   </v-container>
 </template>
 
 <script setup>
-const { $renderMathInElement, $ensureMathJaxReady, $toast } = useNuxtApp()
-const auth = useAuth()
 const route = useRoute()
-const router = useRouter()
 const testId = ref(route.params.id)
 const isAdsLoad = ref(false)
 
@@ -172,81 +119,4 @@ useHead({
     },
   ],
 })
-
-const coinBalance = useCoinBalance()
-const showCoinPaymentModal = ref(false)
-const showCoinAnimation = ref(false)
-const isProcessingPayment = ref(false)
-const fullAnswerRef = ref(null)
-const isPaymentComplete = ref(false)
-
-const handleCoinPaymentConfirm = async () => {
-  isProcessingPayment.value = true
-
-  try {
-    const success = await coinBalance.deductCoins(
-      5,
-      'See Full Answer Question',
-    )
-    if (success) {
-      showCoinAnimation.value = true
-      // Wait for animation to complete before starting download
-      // The download will be triggered in handleAnimationComplete
-    }
-    else {
-      $toast.error('Failed to process payment. Please try again.')
-    }
-  }
-  catch (error) {
-    console.error('Error processing coin payment:', error)
-    $toast.error('Payment failed. Please try again.')
-  }
-  finally {
-    isProcessingPayment.value = false
-  }
-}
-
-const handleCoinPaymentClose = () => {
-  showCoinPaymentModal.value = false
-}
-
-const handleAnimationComplete = async () => {
-  // Close everything immediately when animation completes
-  showCoinAnimation.value = false
-  showCoinPaymentModal.value = false
-  isPaymentComplete.value = true
-}
-
-const renderMathJax = () => {
-  if (
-    typeof window !== 'undefined'
-    && $renderMathInElement
-    && fullAnswerRef.value
-  ) {
-    $renderMathInElement(fullAnswerRef.value)
-  }
-}
-
-onMounted(async () => {
-  if (auth.isAuthenticated.value && contentData.value.answer_full.length > 0) {
-    await coinBalance.fetchBalance()
-
-    setTimeout(() => {
-      renderMathJax()
-    }, 2000)
-    await $ensureMathJaxReady?.()
-    if (fullAnswerRef.value) {
-      $renderMathInElement?.(fullAnswerRef.value)
-    }
-  }
-})
-
-const openPaymentMdoal = () => {
-  if (auth.isAuthenticated.value) {
-    showCoinPaymentModal.value = true
-  }
-  else {
-    router.push({ query: { auth_form: 'login' } })
-  }
-}
 </script>
