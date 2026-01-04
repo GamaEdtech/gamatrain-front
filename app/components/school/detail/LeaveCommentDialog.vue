@@ -285,13 +285,21 @@ async function sendToAI() {
     console.error('AI Error:', err)
   }
 }
+const { getToken, initCaptcha, isLoaded } = useRecaptcha()
+initCaptcha()
 
 async function submitComment() {
   submitLoading.value = true
   try {
+    if (!isLoaded()) {
+      throw new Error('reCAPTCHA not loaded yet. Please try again.')
+    }
+
+    const captcha = await getToken('submit')
+
     const response = await useApiService.post(
       `/api/v2/schools/${route.params.id}/comments`,
-      { ...commentForm },
+      { ...commentForm, captcha },
     )
     if (response.succeeded) {
       nuxtApp.$toast?.success('Your comment has been successfully submitted')
