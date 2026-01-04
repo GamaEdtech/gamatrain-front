@@ -2,6 +2,16 @@ export interface ApiResult<T> {
   data: T | null
   status: number
   error?: unknown
+  succeeded: boolean
+  errors: [
+    {
+      message: string
+      code: string
+      reference: string
+      info: string
+      value: string
+    },
+  ]
 }
 export interface ApiErrorResult {
   status?: number
@@ -204,4 +214,9 @@ export interface QuestionDTO {
   subdate: string
   subdate_jalali: string
   up_date: string | null
+}
+
+export interface TestTimeDTO {
+  points: number
+  isCorrect: boolean
 }

@@ -84,10 +84,18 @@
                 'border-grey200': getChoiceStatus(item.key) === 'default',
                 'border-success': getChoiceStatus(item.key) === 'success',
                 'border-lightError': getChoiceStatus(item.key) === 'error',
+                'border-primary': getChoiceStatus(item.key) === 'loading',
               },
             ]"
           >
-            <span v-if="getChoiceStatus(item.key) === 'default'">{{ item.key }}</span>
+            <v-progress-circular
+              v-if="getChoiceStatus(item.key) === 'loading'"
+              color="primary"
+              size="20"
+              indeterminate
+              :width="2"
+            />
+            <span v-else-if="getChoiceStatus(item.key) === 'default'">{{ item.key }}</span>
 
             <v-icon
               v-else-if="getChoiceStatus(item.key) === 'success'"
@@ -124,7 +132,7 @@
     <test-counting-wallet-animation
       :is-start-animation="isStartWalletAnimation"
       :direction="directionWalletAniamtion"
-      :point-price-question="pointPriceQuestion"
+      :delta-price="questionReward"
       @complete-animation="completeWalletAnimation"
     />
     <common-coin-consumption-animation
@@ -135,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import type { QuestionDTO } from '~/types/api'
+import type { QuestionDTO, ApiResult, TestTimeDTO, AppError } from '~/types/api'
 
 interface ITestDetail {
   contentData: QuestionDTO
@@ -143,7 +151,8 @@ interface ITestDetail {
   showTitle?: boolean
 }
 
-const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
+const { $renderMathInElement, $ensureMathJaxReady, $toast } = useNuxtApp()
+const router = useRouter()
 const props = defineProps<ITestDetail>()
 
 console.log('props', props.contentData)
@@ -156,12 +165,13 @@ const answers = computed(() => [
   { key: '3', text: props.contentData.answer_c, file: props.contentData.c_file },
   { key: '4', text: props.contentData.answer_d, file: props.contentData.d_file },
 ].filter(a => a.text || a.file))
+const isLoadingGetAnswerAndPoint = ref(false)
 
 const isStartSuccessAnimation = ref(false)
 const isStartWalletAnimation = ref(false)
 const isStartFailCoinAnimation = ref(false)
 const directionWalletAniamtion = ref(1)
-const pointPriceQuestion = ref(10)
+const questionReward = ref(0)
 
 const completeSuccessCoinAnimation = () => {
   isStartSuccessAnimation.value = false
@@ -177,23 +187,53 @@ const completeFailAnimation = () => {
   isStartWalletAnimation.value = true
 }
 
-const handleAnswerSelect = (answer: string) => {
-  // if (isAnswerSelected.value) return
+const handleAnswerSelect = async (answer: string) => {
+  if (isAnswerSelected.value) return
 
   selectedAnswer.value = answer
   isAnswerSelected.value = true
+  await checkAndGetPointQuestion()
+}
 
-  if (answer == props.contentData.true_answer) {
-    directionWalletAniamtion.value = 1
-    isStartSuccessAnimation.value = true
+const checkAndGetPointQuestion = async () => {
+  try {
+    isLoadingGetAnswerAndPoint.value = true
+    const response = await useApiService.post<ApiResult<TestTimeDTO>>(`/api/v2/games/test-time`, {
+      testId: props.contentData.id,
+      submissionId: Number(selectedAnswer.value),
+    })
+    if (response.succeeded && response.data) {
+      if (response.data?.isCorrect) {
+        questionReward.value = Math.abs(response.data.points) / 1_000_000
+        directionWalletAniamtion.value = 1
+        isStartSuccessAnimation.value = true
+      }
+      else {
+        questionReward.value = Math.abs(response.data.points) / 1_000_000
+        directionWalletAniamtion.value = -1
+        isStartFailCoinAnimation.value = true
+      }
+    }
+    else {
+      $toast.error(response.errors[0].message)
+    }
   }
-  else {
-    directionWalletAniamtion.value = -1
-    isStartFailCoinAnimation.value = true
+  catch (err) {
+    const error = err as AppError
+    if (error.response?.status === 403) {
+      router.push({ query: { auth_form: 'login' } })
+    }
+    else if (error.response?.status === 400) {
+      $toast.error(error.response?.data?.message || '')
+    }
+  }
+  finally {
+    isLoadingGetAnswerAndPoint.value = false
   }
 }
 
 const getChoiceStatus = (choice: string) => {
+  if (isLoadingGetAnswerAndPoint.value) return 'loading'
   if (!isAnswerSelected.value) return 'default'
 
   if (choice === props.contentData.true_answer) return 'success'

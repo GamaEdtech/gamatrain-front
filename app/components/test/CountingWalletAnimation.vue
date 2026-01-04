@@ -17,7 +17,7 @@
 interface ICountingWalletAnimation {
   isStartAnimation: boolean
   direction: number
-  pointPriceQuestion: number
+  deltaPrice: number
 }
 
 const props = defineProps<ICountingWalletAnimation>()
@@ -43,7 +43,7 @@ const animationCountingBalance = (
 ) => {
   setTimeout(() => {
     const startValue = Number(balance.value)
-    const displacementAmount = props.pointPriceQuestion
+    const displacementAmount = props.deltaPrice
     const endValue = parseFloat(
       (startValue + displacementAmount * balanceChangeDirection).toFixed(7),
     )
