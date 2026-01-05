@@ -191,8 +191,8 @@
 
     <modals-coin-payment-modal
       v-model:show-dialog="showCoinPaymentModal"
-      :user-balance="coinBalance.balance.value"
-      :is-processing="coinBalance.isLoading.value || isProcessingPayment"
+      :user-balance="balance"
+      :is-processing="isLoading || isProcessingPayment"
       text-modal="Unlock the answer by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!"
       @confirm="handleCoinPaymentConfirm"
       @close="handleCoinPaymentClose"
@@ -233,7 +233,7 @@ const isStartFailCoinAnimation = ref(false)
 const directionWalletAniamtion = ref(1)
 const questionReward = ref(0)
 
-const coinBalance = useCoinBalance()
+const { balance, fetchBalance, consumeCoins, isLoading } = useCoinBalance()
 const showCoinPaymentModal = ref(false)
 const isProcessingPayment = ref(false)
 const fullAnswerRef = ref(null)
@@ -255,7 +255,6 @@ const completeWalletAnimation = () => {
 const completeFailAnimation = async () => {
   isStartFailCoinAnimation.value = false
   if (isStartProcessShowAnswer.value) {
-    showCoinPaymentModal.value = false
     isPaymentComplete.value = true
     isStartProcessShowAnswer.value = false
     await nextTick()
@@ -332,7 +331,7 @@ onMounted(async () => {
   }
 
   if (auth.isAuthenticated.value && props.contentData.answer_full.length > 0) {
-    await coinBalance.fetchBalance()
+    await fetchBalance()
   }
 
   await loadNextTest()
@@ -351,11 +350,12 @@ const handleCoinPaymentConfirm = async () => {
   isProcessingPayment.value = true
 
   try {
-    const success = await coinBalance.deductCoins(
+    const response = await consumeCoins(
       5_000_000,
       'See Full Answer Question',
-    )
-    if (success) {
+    ) as ApiResult<unknown>
+    if (response.succeeded) {
+      showCoinPaymentModal.value = false
       isStartProcessShowAnswer.value = true
       isStartFailCoinAnimation.value = true
     }

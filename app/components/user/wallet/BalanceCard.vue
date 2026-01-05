@@ -15,7 +15,7 @@
       </div>
 
       <div
-        v-if="loading"
+        v-if="isLoading"
         class="balance-amount d-flex align-center"
       >
         <v-skeleton-loader
@@ -106,36 +106,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useAuth } from '~/composables/useAuth'
 
-// Composables
-const auth = useAuth()
-
-// Reactive state
-const balance = ref(0)
-const loading = ref(true)
+const { balance, isLoading, fetchBalance } = useCoinBalance()
 const showBalance = ref(true)
 const showWithdrawModal = ref(false)
-
-const fetchBalance = async () => {
-  loading.value = true
-  try {
-    const response = await useApiService.get('/api/v2/transactions/balance')
-
-    if (response.succeeded) {
-      balance.value = response.data
-    }
-  }
-  catch (err) {
-    if (err.response && err.response.status === 403) {
-      auth.logout()
-    }
-    console.error('Error fetching balance:', err)
-  }
-  finally {
-    loading.value = false
-  }
-}
 
 const toggleBalanceVisibility = () => {
   showBalance.value = !showBalance.value

@@ -203,8 +203,8 @@
     <!-- Coin Payment Modal -->
     <modals-coin-payment-modal
       v-model:show-dialog="showCoinPaymentModal"
-      :is-processing="coinBalance.isLoading.value || isProcessingPayment"
-      :user-balance="coinBalance.balance.value"
+      :is-processing="isLoading || isProcessingPayment"
+      :user-balance="balance"
       @confirm="handleCoinPaymentConfirm"
       @close="handleCoinPaymentClose"
     />
@@ -251,7 +251,7 @@ const auth = useAuth()
 const router = useRouter()
 const { xs } = useDisplay()
 
-const coinBalance = useCoinBalance()
+const { balance, isLoading, fetchBalance, consumeCoins } = useCoinBalance()
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
@@ -269,8 +269,8 @@ const handleDownloadClick = async (type: TypeFile, extraId?: string) => {
   downloadProgress.value[downloadKey] = 0
   if (requiresCoinPaymentForFile(type)) {
     if (auth.isAuthenticated.value) {
-      const balanceResult = await coinBalance.fetchBalance()
-      if (balanceResult === 0 && coinBalance.error.value) {
+      const balanceResult = await fetchBalance()
+      if (!balanceResult.succeeded) {
         $toast.error('Failed to fetch balance. Please try again.')
         downloadingItems.value.delete(downloadKey)
         Reflect.deleteProperty(downloadProgress.value, downloadKey)
@@ -436,11 +436,13 @@ const handleCoinPaymentConfirm = async () => {
   isProcessingPayment.value = true
 
   try {
-    const success = await coinBalance.deductCoins(
+    const response = await consumeCoins(
       5000000,
       'Past paper download',
     )
-    if (success) {
+    if (response.succeeded) {
+      showCoinPaymentModal.value = false
+
       showCoinAnimation.value = true
       // Wait for animation to complete before starting download
       // The download will be triggered in handleAnimationComplete
@@ -473,7 +475,6 @@ const handleCoinPaymentClose = () => {
 const handleAnimationComplete = async () => {
   // Close everything immediately when animation completes
   showCoinAnimation.value = false
-  showCoinPaymentModal.value = false
 
   if (pendingDownload.value) {
     await startDownload(
