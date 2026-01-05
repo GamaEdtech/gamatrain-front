@@ -1,120 +1,122 @@
 <template>
-  <v-container
-    v-if="contentData"
-    class="d-flex flex-column mt-16"
-  >
-    <v-row>
-      <widgets-breadcrumb
-        background-color="white"
-        :breads="breads"
-      />
-    </v-row>
-    <v-row>
-      <v-col
-        cols="12"
-        class="d-flex align-center ga-1"
-      >
-        <v-icon color="primary">
-          md:chevron_backward
-        </v-icon>
-        <h1 class="text-h4 font-weight-bold">
-          {{ contentData.title }}
-        </h1>
-        <v-icon color="primary">
-          md:chevron_forward
-        </v-icon>
-      </v-col>
-      <v-col
-        cols="12"
-        md="4"
-        class="d-flex justify-center justify-md-start"
-      >
-        <CommonDetailPreviewActionCard
-          :id="contentData.id"
-          :thumb-pic="contentData.thumb_pic"
-          :title="contentData.title"
-          :views="contentData.views"
-          :score="contentData.ref_score"
-          @share="openShare = true"
+  <main>
+    <v-container
+      v-if="contentData"
+      class="d-flex flex-column mt-16"
+    >
+      <v-row>
+        <widgets-breadcrumb
+          background-color="white"
+          :breads="breads"
         />
-      </v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          cols="12"
+          class="d-flex align-center ga-1"
+        >
+          <v-icon color="primary">
+            md:chevron_backward
+          </v-icon>
+          <h1 class="text-h4 font-weight-bold">
+            {{ contentData.title }}
+          </h1>
+          <v-icon color="primary">
+            md:chevron_forward
+          </v-icon>
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
+          class="d-flex justify-center justify-md-start"
+        >
+          <CommonDetailPreviewActionCard
+            :id="contentData.id"
+            :thumb-pic="contentData.thumb_pic"
+            :title="contentData.title"
+            :views="contentData.views"
+            :score="contentData.ref_score"
+            @share="openShare = true"
+          />
+        </v-col>
 
-      <v-col
-        cols="12"
-        md="8"
-        class="d-flex h-100 align-start flex-wrap"
-      >
-        <CommonDetailContentDetailsSection :content-data="contentData" />
+        <v-col
+          cols="12"
+          md="8"
+          class="d-flex h-100 align-start flex-wrap"
+        >
+          <CommonDetailContentDetailsSection :content-data="contentData" />
 
-        <CommonDetailDownloadAndPurchaseButtons
-          :id="contentData.id"
-          :files="contentData.files"
-          :year="contentData.edu_year"
-          :title="contentData.title"
-          :title-url="contentData.title_url"
-          :section="contentData.section"
-          :base="contentData.base"
-          :lesson="contentData.lesson"
-          :exams="contentData.exams"
-        />
-        <CommonDetailSubjectDirectoryNav :content-data="contentData" />
-      </v-col>
+          <CommonDetailDownloadAndPurchaseButtons
+            :id="contentData.id"
+            :files="contentData.files"
+            :year="contentData.edu_year"
+            :title="contentData.title"
+            :title-url="contentData.title_url"
+            :section="contentData.section"
+            :base="contentData.base"
+            :lesson="contentData.lesson"
+            :exams="contentData.exams"
+          />
+          <CommonDetailSubjectDirectoryNav :content-data="contentData" />
+        </v-col>
 
-      <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
+        <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
 
-      <v-col cols="12">
-        <CommonDetailRelatedContent
-          :id="contentData.id"
-          source="test"
-          :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
-        />
-      </v-col>
+        <v-col cols="12">
+          <CommonDetailRelatedContent
+            :id="contentData.id"
+            source="test"
+            :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+          />
+        </v-col>
 
-      <!-- <v-col
+        <!-- <v-col
         cols="12"
         class="mb-6"
       >
         <CommonComments />
       </v-col> -->
 
-      <v-col
-        cols="12"
-        class="mt-6"
-      >
-        <span
-          class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
-          @click="openCrashReport = true"
-        >
-          <v-icon
-            color="#F04438"
-            class="mb-1"
-          >md:warning_outlined</v-icon>
-          Crash report
-        </span>
-      </v-col>
-
-      <ClientOnly>
         <v-col
           cols="12"
-          class="text-center mt-10"
+          class="mt-6"
         >
-          <common-ad-banner
-            v-model="isAdsLoad"
-            adslot="7199289937"
-          />
+          <span
+            class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
+            @click="openCrashReport = true"
+          >
+            <v-icon
+              color="#C62828"
+              class="mb-1"
+            >md:warning_outlined</v-icon>
+            Crash report
+          </span>
         </v-col>
-      </ClientOnly>
-    </v-row>
-    <CommonCrashReportModal
-      :id="contentData.id"
-      v-model:show-dialog="openCrashReport"
-      type-crash-report="test"
-    />
-    <CommonShareModal
-      v-model:show-dialog="openShare"
-      :title="contentData.title"
-    />
-  </v-container>
+
+        <ClientOnly>
+          <v-col
+            cols="12"
+            class="text-center mt-10"
+          >
+            <common-ad-banner
+              v-model="isAdsLoad"
+              adslot="7199289937"
+            />
+          </v-col>
+        </ClientOnly>
+      </v-row>
+      <CommonCrashReportModal
+        :id="contentData.id"
+        v-model:show-dialog="openCrashReport"
+        type-crash-report="test"
+      />
+      <CommonShareModal
+        v-model:show-dialog="openShare"
+        :title="contentData.title"
+      />
+    </v-container>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -293,6 +295,6 @@ if (contentData.value) {
 
 <style scoped>
 .text-crash-report {
-  color: #f04438;
+  color: #c62828;
 }
 </style>
