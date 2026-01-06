@@ -7,7 +7,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
+      class="w-100 d-flex flex-column bg-white pa-6 rounded-xl overflow-y-auto overflow-x-hidden mobile-style"
       @click="clickOnModal"
     >
       <div class="w-100 d-flex align-center justify-space-between">
@@ -339,6 +339,7 @@ onMounted(async () => {
 <style scoped>
 @media only screen and (max-width: 960px) {
   .mobile-style {
+    max-height: 90%;
     position: absolute;
     bottom: 0;
     border-radius: 24px 24px 0 0 !important;
