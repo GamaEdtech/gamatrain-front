@@ -14,6 +14,8 @@
       :content-data="contentData"
       :show-chips="true"
       :show-title="true"
+      :ssr-next-test="true"
+      :ssr-next-test-id="nextTestId"
     />
 
     <v-row>
@@ -47,7 +49,6 @@
 const route = useRoute()
 const isAdsLoad = ref(false)
 
-// Fetch data
 const {
   data: contentData,
   pending: _pending,
@@ -61,6 +62,19 @@ const {
   }
   throw createError({ statusCode: 404, statusMessage: 'Page not found' })
 })
+
+const { data: nextTestId } = await useAsyncData(
+  'test-with-next',
+  async () => {
+    if (contentData.value) {
+      const response = await useApiService.get(
+        `/api/v1/examTests/random?lesson=${contentData.value.lesson}&topic=${contentData.value.topic}`)
+      if (response.data && response.data.code) {
+        return response.data.code
+      }
+    }
+  },
+)
 
 // Utility functions
 const stripHtml = html => (html ? html.replace(/<[^>]+>/g, '') : '')

@@ -161,12 +161,12 @@
 
     <div class="w-100 d-flex align-center justify-start mt-6">
       <v-btn
-        :disabled="!nextTestId"
+        :disabled="!nextTestId && !ssrNextTestId"
         :loading="nextTestLoading"
         color="info"
         rounded="lg"
         flat
-        :to="`/test/${nextTestId}`"
+        :to="`/test/${ssrNextTest ? ssrNextTestId : nextTestId}`"
       >
         <span class="text-h5 font-weight-bold text-white">
           {{ buttonNextText }}
@@ -208,6 +208,8 @@ interface ITestDetail {
   buttonNextText?: string
   showChips?: boolean
   showTitle?: boolean
+  ssrNextTest?: boolean
+  ssrNextTestId?: string
 }
 
 const { $renderMathInElement, $ensureMathJaxReady, $toast } = useNuxtApp()
@@ -215,6 +217,7 @@ const auth = useAuth()
 const router = useRouter()
 const props = withDefaults(defineProps<ITestDetail>(), {
   buttonNextText: 'Next One',
+  ssrNextTest: false,
 })
 
 const isAnswerSelected = ref(false)
@@ -241,7 +244,7 @@ const isPaymentComplete = ref(false)
 const isStartProcessShowAnswer = ref(false)
 
 const nextTestId = ref()
-const nextTestLoading = ref(true)
+const nextTestLoading = ref(false)
 
 const completeSuccessCoinAnimation = () => {
   isStartSuccessAnimation.value = false
@@ -334,7 +337,9 @@ onMounted(async () => {
     await fetchBalance()
   }
 
-  await loadNextTest()
+  if (!props.ssrNextTest) {
+    await loadNextTest()
+  }
 })
 
 const openPaymentMdoal = async () => {
