@@ -36,7 +36,7 @@
                 <h3 class="text-h5 font-weight-bold mb-2">
                   Stake $GET Tokens
                 </h3>
-                <p class="font-size-12 text-grey-darken-1 font-weight-medium ">
+                <p class="font-size-12 text-grey500 font-weight-medium ">
                   Stake your $GET tokens to participate in governance voting and
                   proposal creation.
                 </p>
@@ -127,7 +127,7 @@
                   Unstake $GET Tokens
                 </h3>
                 <p
-                  class="font-size-12 text-grey-darken-1 font-weight-medium"
+                  class="font-size-12 text-grey500 font-weight-medium"
                 >
                   Initiate unstaking process. Tokens will be available to claim
                   after a 7-day cooldown period.
@@ -216,7 +216,7 @@
                 <h3 class="text-h5 font-weight-bold mb-2">
                   Claim Unstaked Tokens
                 </h3>
-                <p class="font-size-12 text-grey-darken-2">
+                <p class="font-size-12 text-grey500">
                   Claim your unstaked tokens after the cooldown period has
                   completed.
                 </p>
