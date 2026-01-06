@@ -7,7 +7,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
+      class="w-100 d-flex flex-column bg-white pa-6 rounded-xl overflow-y-auto overflow-x-hidden mobile-style"
       @click="clickOnModal"
     >
       <div class="w-100 d-flex align-center justify-space-between">
@@ -21,18 +21,18 @@
         </v-chip>
         <v-icon
           size="x-large"
-          color="#D0D5DD"
+          color="grey400"
           @click="closeModal"
         >
           md:close
         </v-icon>
       </div>
       <div class="w-100 d-flex flex-column mt-2">
-        <span class="text-h4 font-weight-bold primary-gray-700">
+        <span class="text-h4 font-weight-bold text-grey700">
           {{ proposal?.account?.title || "Loading..." }}
         </span>
 
-        <span class="text-h5 primary-gray-500 mt-2 mb-10">
+        <span class="text-h5 text-grey500 mt-2 mb-10">
           {{ proposal?.account?.brief || "Loading proposal description..." }}
           <a
             v-if="proposal?.account?.reference"
@@ -46,7 +46,7 @@
 
         <span
           v-if="proposal.account.amount && proposal.account.amount > 0"
-          class="text-h4 font-weight-bold primary-gray-700 mb-4"
+          class="text-h4 font-weight-bold text-grey700 mb-4"
         >
           {{ $numberFormat(proposal.account.amount) }} $GET
         </span>
@@ -65,14 +65,14 @@
         </div>
         <v-progress-linear
           :model-value="forPercentage"
-          color="#27ae60"
+          color="success"
           bg-color="#e74c3c"
           height="8"
           class="mb-3 mt-2"
           rounded
         />
 
-        <div class="w-100 d-flex justify-space-between align-center text-h6 primary-gray-500">
+        <div class="w-100 d-flex justify-space-between align-center text-h6 text-grey500">
           <span><span class="font-weight-bold text-black">{{ forPercentage }}%</span>
             Quorum
           </span>
@@ -85,8 +85,8 @@
         <div
           class="d-flex flex-wrap align-center mt-7"
         >
-          <div class="d-flex align-center primary-gray-500 w-100 w-sm-50 mb-3">
-            <v-icon color="#98A2B3">
+          <div class="d-flex align-center text-grey500 w-100 w-sm-50 mb-3">
+            <v-icon color="grey500">
               md:person
             </v-icon>
             <span class="font-weight-bold text-black ml-2 mr-1">{{
@@ -94,8 +94,8 @@
             }}</span>
             Proposal Creator
           </div>
-          <div class="d-flex align-center primary-gray-500 w-100 w-sm-50 mb-3">
-            <v-icon color="#98A2B3">
+          <div class="d-flex align-center text-grey500 w-100 w-sm-50 mb-3">
+            <v-icon color="grey500">
               md:calendar_month_outlined
             </v-icon>
             <span class="font-weight-bold text-black ml-2 mr-1">{{
@@ -103,8 +103,8 @@
             }}</span>
             Created on
           </div>
-          <div class="d-flex align-center primary-gray-500 w-100 w-sm-50 mb-3">
-            <v-icon color="#98A2B3">
+          <div class="d-flex align-center text-grey500 w-100 w-sm-50 mb-3">
+            <v-icon color="grey500">
               md:timer_outlined
             </v-icon>
             <span class="font-weight-bold text-black ml-2 mr-1">{{
@@ -168,7 +168,7 @@
           class="float-right"
         >
           <v-btn
-            color="green"
+            color="success"
             variant="outlined"
             rounded="xl"
             class="mt-2 text-h5 font-weight-bold"
@@ -339,6 +339,7 @@ onMounted(async () => {
 <style scoped>
 @media only screen and (max-width: 960px) {
   .mobile-style {
+    max-height: 90%;
     position: absolute;
     bottom: 0;
     border-radius: 24px 24px 0 0 !important;
