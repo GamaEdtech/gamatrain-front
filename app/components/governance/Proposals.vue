@@ -21,9 +21,9 @@
             />
           </template>
           <template v-else>
-            <span class="text-h5 text-grey500">Your Reward :</span>
+            <span class="text-h5 text-grey500">Your Pending Reward :</span>
             <template v-if="userStakeInformation != null ">
-              <span class="text-h5 font-weight-bold text-success">{{ $numberFormat(Math.ceil(userStakeInformation.pendingRewards ?? 0)) }}</span>
+              <span class="text-h5 font-weight-bold text-success">{{ $numberFormat(Math.ceil(userStakeInformation.pendingRewards ?? 0)) }} $GET</span>
             </template>
             <template v-else>
               <span class="text-h5 font-weight-bold text-grey700">Connect Wallet</span>
