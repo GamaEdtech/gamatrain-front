@@ -1,31 +1,55 @@
 <template>
   <div class="mt-10">
-    <div class="proposals-header mb-md-4">
+    <div class="w-100 d-flex flex-column align-center justify-center ga-4 mb-md-4">
       <div
-        class="proposals-title text-h4 text-md-h3 font-weight-bold primary-gray-700"
+        class="text-center text-h4 text-md-h3 font-weight-bold text-grey700"
       >
         Active Proposals
       </div>
-      <div class="wallet-button-container">
-        <ClientOnly>
-          <AsyncWalletMultiButton />
-        </ClientOnly>
+      <div class="w-100 d-flex flex-column ga-4 flex-sm-row align-center  justify-center justify-sm-space-between px-4">
+        <div class="d-flex align-center justify-center justify-sm-start ga-2">
+          <template v-if="loadingStakeInformation">
+            <v-skeleton-loader
+              width="100"
+              height="14"
+              class="rounded-pill"
+            />
+            <v-skeleton-loader
+              width="70"
+              height="20"
+              class="rounded-pill"
+            />
+          </template>
+          <template v-else>
+            <span class="text-h5 text-grey500">Your Reward :</span>
+            <template v-if="userStakeInformation != null ">
+              <span class="text-h5 font-weight-bold text-success">{{ $numberFormat(Math.ceil(userStakeInformation.pendingRewards ?? 0)) }}</span>
+            </template>
+            <template v-else>
+              <span class="text-h5 font-weight-bold text-grey700">Connect Wallet</span>
+            </template>
+          </template>
+        </div>
+        <div class="d-flex flex-column ga-1 align-center align-sm-end justify-center">
+          <ClientOnly>
+            <AsyncWalletMultiButton />
+          </ClientOnly>
+          <v-btn
+            v-if="connected"
+            width="181"
+            height="48"
+            variant="outlined"
+            color="error"
+            class="text-h5 font-weight-bold rounded-lg d-block d-sm-none"
+            @click="manualDisconnectWallet"
+          >
+            <v-icon class="mr-2">
+              md:signal_disconnected
+            </v-icon>
+            Disconnect
+          </v-btn>
+        </div>
       </div>
-
-      <v-btn
-        v-if="connected"
-        width="181"
-        height="48"
-        variant="outlined"
-        color="error"
-        class="text-h5 font-weight-bold rounded-lg d-block d-sm-none"
-        @click="manualDisconnectWallet"
-      >
-        <v-icon class="mr-2">
-          md:signal_disconnected
-        </v-icon>
-        Disconnect
-      </v-btn>
     </div>
     <div
       v-if="loadingGetProposal"
@@ -152,7 +176,7 @@
 
           <div class="figma-modal-content">
             <ClientOnly>
-              <div class="wallet-connection-container">
+              <div class="d-flex justify-center">
                 <AsyncWalletMultiButton />
               </div>
             </ClientOnly>
@@ -184,7 +208,7 @@ const AsyncWalletMultiButton = defineAsyncComponent(async () => {
 })
 
 const { mdAndUp } = useDisplay()
-const { fetchTokenBalance, connected, userStakeInformation, getUserStakeInformation, latestProposals, loadingGetProposal, manualDisconnectWallet } = useGovernance()
+const { fetchTokenBalance, connected, userStakeInformation, getUserStakeInformation, latestProposals, loadingGetProposal, manualDisconnectWallet, loadingStakeInformation } = useGovernance()
 
 const showModalStake = ref(false)
 const showWalletModal = ref(false)
@@ -219,66 +243,6 @@ const closeDetail = () => {
 <style>
 .swv-button{
   column-gap: 8px;
-}
-.proposals-header {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  width: 100%;
-}
-
-.proposals-title {
-  text-align: center;
-  flex: 1;
-}
-
-.wallet-button-container {
-  z-index: 2;
-  position: absolute;
-  right: 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.rewards-badge {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.rotating {
-  animation: rotate 1s linear infinite;
-}
-
-@media only screen and (max-width: 600px) {
-  .proposals-header {
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .wallet-button-container {
-    position: static;
-    flex-direction: column;
-  }
 }
 
 .proposal-slide__card {
@@ -353,10 +317,5 @@ const closeDetail = () => {
 
 .figma-cancel-button:hover {
   background: #e5e5e5;
-}
-
-.wallet-connection-container {
-  display: flex;
-  justify-content: center;
 }
 </style>
