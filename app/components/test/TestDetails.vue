@@ -260,6 +260,9 @@ const completeFailAnimation = async () => {
   if (isStartProcessShowAnswer.value) {
     isPaymentComplete.value = true
     isStartProcessShowAnswer.value = false
+    questionReward.value = 5
+    directionWalletAniamtion.value = -1
+    isStartWalletAnimation.value = true
     await nextTick()
     if (fullAnswerRef.value) {
       $renderMathInElement?.(fullAnswerRef.value)
