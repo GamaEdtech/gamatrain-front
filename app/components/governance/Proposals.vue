@@ -30,7 +30,7 @@
             </template>
           </template>
         </div>
-        <div class="d-flex flex-column ga-1 align-center align-sm-end justify-center">
+        <div class="d-flex flex-column ga-1 align-center align-sm-end justify-center set-z-index">
           <ClientOnly>
             <AsyncWalletMultiButton />
           </ClientOnly>
@@ -107,14 +107,14 @@
 
     <div class="mt-10 d-flex justify-center">
       <ClientOnly>
-        <v-btn
+        <!-- <v-btn
           :size="mdAndUp ? 'large' : 'default'"
           color="#344054"
           variant="text"
           rounded
         >
           See more
-        </v-btn>
+        </v-btn> -->
 
         <v-btn
           :size="mdAndUp ? 'large' : 'default'"
@@ -133,7 +133,7 @@
 
         <v-btn
           :size="mdAndUp ? 'large' : 'default'"
-          color="#1D2939"
+          color="grey700"
           variant="flat"
           rounded
           class="ml-3"
@@ -159,40 +159,7 @@
       @close="closeDetail"
     />
 
-    <Teleport to="body">
-      <div
-        v-if="showWalletModal"
-        class="figma-modal-overlay"
-        @click="showWalletModal = false"
-      >
-        <div
-          class="figma-modal"
-          @click.stop
-        >
-          <div class="figma-modal-header">
-            <h3>Connect Your Wallet</h3>
-            <p>Choose a wallet to connect and participate in governance</p>
-          </div>
-
-          <div class="figma-modal-content">
-            <ClientOnly>
-              <div class="d-flex justify-center">
-                <AsyncWalletMultiButton />
-              </div>
-            </ClientOnly>
-          </div>
-
-          <div class="figma-modal-actions">
-            <button
-              class="figma-cancel-button"
-              @click="showWalletModal = false"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    </Teleport>
+    <modals-connect-wallet v-model:show-dialog="showWalletModal" />
   </div>
 </template>
 
@@ -251,71 +218,7 @@ const closeDetail = () => {
 .swv-modal {
   z-index: 10000 !important;
 }
-/* Wallet Modal Styles */
-.figma-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.figma-modal {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 24px;
-  max-width: 400px;
-  width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.figma-modal-header {
-  text-align: center;
-  margin-bottom: 24px;
-}
-
-.figma-modal-header h3 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 0 0 8px 0;
-}
-
-.figma-modal-header p {
-  font-size: 14px;
-  color: #666666;
-  margin: 0;
-}
-
-.figma-modal-content {
-  margin-bottom: 24px;
-}
-
-.figma-modal-actions {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-}
-
-.figma-cancel-button {
-  background: #f5f5f5;
-  border: none;
-  border-radius: 8px;
-  padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #666666;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.figma-cancel-button:hover {
-  background: #e5e5e5;
+.set-z-index{
+  z-index: 1;
 }
 </style>
