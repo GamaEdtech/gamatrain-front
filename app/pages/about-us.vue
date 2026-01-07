@@ -466,12 +466,12 @@ const changeSlider = (index) => {
 const services = [
   {
     icon: 'icon-multimedia',
-    link: '/search?type=learnfiles',
+    link: '/search?type=multimedia',
     title: 'Multimedia',
   },
   {
     icon: 'icon-paper',
-    link: '/search?type=test',
+    link: '/search?type=paper',
     title: 'Paper',
   },
   {
@@ -486,12 +486,12 @@ const services = [
   },
   {
     icon: 'icon-q-a',
-    link: '/search?type=question',
+    link: '/search?type=forum',
     title: 'Q&A',
   },
   {
     icon: 'icon-exam',
-    link: '/search?type=azmoon',
+    link: '/search?type=quizhub',
     title: 'Exam',
   },
 ]

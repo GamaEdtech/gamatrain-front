@@ -48,7 +48,7 @@
       <img
         width="170"
         :src="thumbPic"
-        class="w-100 h-100"
+        class="w-100 h-100 main-image-paper"
         preload
         fetchpriority="high"
         alt="Psat Paper Lesson"
@@ -154,5 +154,8 @@ const shareContent = () => {
 
 .preview-div:hover {
   opacity: 0.5;
+}
+.main-image-paper {
+  object-fit: cover;
 }
 </style>

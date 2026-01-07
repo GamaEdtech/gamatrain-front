@@ -46,7 +46,6 @@ export function useSplTransfer() {
     const ATA_PROGRAM_ID = new PublicKey(
       'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
     )
-
     // ---- Derive correct Token-2022 ATAs ----
     const fromAta = await getAssociatedTokenAddress(
       mintPk,

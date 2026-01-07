@@ -49,36 +49,36 @@
                 v-if="information.section_title"
                 variant="flat"
                 class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
-                color="#F2F4F7"
+                color="grey100"
                 :to="`/search?type=${
-                  route.query.type ? route.query.type : `test`
+                  route.query.type ? route.query.type : `paper`
                 }&section=${information.section}`"
               >
-                {{ information?.section_title }}
+                <span class="text-grey500">{{ information?.section_title }}</span>
               </v-chip>
               <v-chip
                 v-if="information.base_title"
                 variant="flat"
                 class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
-                color="#F2F4F7"
+                color="grey100"
                 :to="`/search?type=${
-                  route.query.type ? route.query.type : `test`
+                  route.query.type ? route.query.type : `paper`
                 }&section=${information.section}&base=${information.base}`"
               >
-                {{ information?.base_title }}
+                <span class="text-grey500">{{ information?.base_title }}</span>
               </v-chip>
               <v-chip
                 v-if="information.lesson_title"
                 variant="flat"
                 class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
-                color="#F2F4F7"
+                color="grey100"
                 :to="`/search?type=${
-                  route.query.type ? route.query.type : `test`
+                  route.query.type ? route.query.type : `paper`
                 }&section=${information.section}&base=${information.base}&lesson=${
                   information.lesson
                 }`"
               >
-                {{ information.lesson_title }}
+                <span class="text-grey500">{{ information.lesson_title }}</span>
               </v-chip>
             </div>
             <div
@@ -86,121 +86,121 @@
             >
               <span
                 v-if="information.ext && route.query.type == `learnfiles`"
-                class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
               >
-                <v-icon color="#667085">mdi-sticker-outline</v-icon>
+                <v-icon color="grey300">md:sticky_note_outlined</v-icon>
                 {{ information.ext }}
               </span>
               <span
                 v-if="information.test_type_title"
-                class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
               >
-                <v-icon color="#667085">mdi-folder-outline</v-icon>
+                <v-icon color="grey300">md:folder_outlined</v-icon>
                 {{ information.test_type_title }}
               </span>
               <span
                 v-if="information.tests_num && route.query.type == `azmoon`"
-                class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
               >
-                <v-icon color="#667085">mdi-format-list-bulleted</v-icon>
+                <v-icon color="grey300">md:list</v-icon>
                 {{ information.tests_num }}
               </span>
 
               <span
                 v-if="information.views"
-                class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
               >
-                <v-icon color="#667085">mdi-eye</v-icon>
+                <v-icon color="grey300">md:visibility_outlined</v-icon>
                 {{ information.views }}
               </span>
 
               <span
                 v-if="information.reply_num && route.query.type == `question`"
-                class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
               >
-                <v-icon color="#667085">mdi-reply-outline</v-icon>
+                <v-icon color="grey300">md:reply</v-icon>
                 {{ information.reply_num }}
               </span>
 
               <span
-                class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
               >
-                <v-icon color="#667085">mdi-calendar-range</v-icon>
+                <v-icon color="grey300">md:calendar_month_outlined</v-icon>
                 {{ new Date(information.subdate).toLocaleDateString() }}
               </span>
 
               <div class="d-flex align-center ga-1">
                 <v-icon
                   v-if="information.q_file"
-                  color="#F04438"
+                  color="lightError"
                   :to="`/paper/${information.id}/${information.title_url}`"
                 >
-                  mdi-file-pdf-box
+                  md:picture_as_pdf
                 </v-icon>
                 <v-icon
                   v-if="information.q_file_word"
-                  color="#2B579A"
+                  color="info"
                 >
-                  mdi-file-word
+                  md:text_snippet
                 </v-icon>
               </div>
             </div>
           </div>
         </div>
-        <div class="d-flex d-sm-none align-center justify-space-between w-100">
+        <div class="d-flex d-sm-none align-center justify-space-between w-100 mt-2">
           <span
             v-if="information.ext && route.query.type == `learnfiles`"
-            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
           >
-            <v-icon color="#667085">mdi-sticker-outline</v-icon>
+            <v-icon color="grey300">md:sticky_note_outlined</v-icon>
             {{ information.ext }}
           </span>
           <span
             v-if="information.test_type_title"
-            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
           >
-            <v-icon color="#667085">mdi-folder-outline</v-icon>
+            <v-icon color="grey300">md:folder_outlined</v-icon>
             {{ information.test_type_title }}
           </span>
 
           <span
             v-if="information.tests_num && route.query.type == `azmoon`"
-            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
           >
-            <v-icon color="#667085">mdi-format-list-bulleted</v-icon>
+            <v-icon color="grey300">md:list</v-icon>
             {{ information.tests_num }}
           </span>
           <span
             v-if="information.views"
-            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
           >
-            <v-icon color="#667085">mdi-eye</v-icon>
+            <v-icon color="grey300">md:visibility_outlined</v-icon>
             {{ information.views }}
           </span>
           <span
             v-if="information.reply_num && route.query.type == `question`"
-            class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1"
+            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
           >
-            <v-icon color="#667085">mdi-reply-outline</v-icon>
+            <v-icon color="grey300">md:reply</v-icon>
             {{ information.reply_num }}
           </span>
-          <span class="primary-gray-400 text-subtitle-1 d-flex align-start ga-1">
-            <v-icon color="#667085">mdi-calendar-range</v-icon>
+          <span class="text-grey500 text-subtitle-1 d-flex align-start ga-1">
+            <v-icon color="grey300">md:calendar_month_outlined</v-icon>
             {{ new Date(information.subdate).toLocaleDateString() }}
           </span>
 
           <div class="d-flex align-center ga-1">
             <v-icon
               v-show="information.q_file"
-              color="#F04438"
+              color="lightError"
             >
-              mdi-file-pdf-box
+              md:picture_as_pdf
             </v-icon>
             <v-icon
               v-show="information.q_file_word"
-              color="#2B579A"
+              color="info"
             >
-              mdi-file-word
+              md:text_snippet
             </v-icon>
           </div>
         </div>
@@ -220,9 +220,36 @@ defineProps({
   },
 })
 
+const getEquivalentOldType = (type) => {
+  switch (type) {
+    case 'paper':
+      return 'test'
+    case 'multimedia':
+      return 'learnfiles'
+    case 'quizhub':
+      return 'azmoon'
+    case 'forum':
+      return 'question'
+    case 'tutorial':
+      return 'dars'
+    case 'test':
+      return 'test'
+    case 'learnfiles':
+      return 'learnfiles'
+    case 'azmoon':
+      return 'azmoon'
+    case 'question':
+      return 'question'
+    case 'dars':
+      return 'dars'
+    default:
+      return 'test'
+  }
+}
+
 const createLinkCard = (information) => {
   let idType = ''
-  switch (route.query.type) {
+  switch (getEquivalentOldType(route.query.type)) {
     case 'test':
       idType = 'paper'
       break
@@ -249,7 +276,7 @@ const createLinkCard = (information) => {
 
 <style scoped>
 .card-search {
-  border: 1px solid #d7d7d8;
+  border: 1px solid rgb(var(--v-theme-grey200));
   min-height: 120px;
   max-width: 1200px;
 }
