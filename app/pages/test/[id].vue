@@ -46,6 +46,7 @@
 </template>
 
 <script setup>
+const { $stripHtmlTags, $cleanSubject } = useNuxtApp()
 const route = useRoute()
 const isAdsLoad = ref(false)
 
@@ -76,40 +77,20 @@ const { data: nextTestId } = await useAsyncData(
   },
 )
 
-// Utility functions
-const stripHtml = html => (html ? html.replace(/<[^>]+>/g, '') : '')
-const cleanSubject = name => (name ? name.replace(/\s*\(.*?\)/, '') : '')
-
-// Head/meta
 useHead({
   titleTemplate: '%s Gamatrain',
-  title: computed(
-    () =>
-      `${stripHtml(contentData.value?.question)?.substring(
-        0,
-        100,
-      )} | ${cleanSubject(contentData.value?.lesson_title)} Quiz`,
-  ),
+  title:
+      `${$stripHtmlTags(contentData.value?.question, 100)} | ${$cleanSubject(contentData.value?.lesson_title)} Quiz`,
   meta: [
     {
       name: 'apple-mobile-web-app-title',
-      content: computed(
-        () =>
-          `${stripHtml(contentData.value?.question)?.substring(
-            0,
-            100,
-          )} | ${cleanSubject(contentData.value?.lesson_title)} Quiz`,
-      ),
+      content:
+          `${$stripHtmlTags(contentData.value?.question, 100)} | ${$cleanSubject(contentData.value?.lesson_title)} Quiz`,
     },
     {
       name: 'og:title',
-      content: computed(
-        () =>
-          `${stripHtml(contentData.value?.question)?.substring(
-            0,
-            100,
-          )} | ${cleanSubject(contentData.value?.lesson_title)} Quiz`,
-      ),
+      content:
+          `${$stripHtmlTags(contentData.value?.question, 100)} | ${$cleanSubject(contentData.value?.lesson_title)} Quiz`,
     },
     {
       name: 'og:site_name',
@@ -117,11 +98,11 @@ useHead({
     },
     {
       name: 'description',
-      content: computed(() => stripHtml(contentData.value?.question)),
+      content: $stripHtmlTags(contentData.value?.question),
     },
     {
       name: 'og:description',
-      content: computed(() => stripHtml(contentData.value?.question)),
+      content: $stripHtmlTags(contentData.value?.question),
     },
   ],
 })
