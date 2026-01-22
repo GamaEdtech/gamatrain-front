@@ -307,13 +307,13 @@ const breadcrumbSchema = computed(() => {
 
   return {
     '@type': 'BreadcrumbList',
-    '@id': 'https://gamatrain.com/paper/123#breadcrumb',
+    '@id': 'https://gamatrain.com/school/123#breadcrumb',
     'itemListElement': [
       {
         '@type': 'ListItem',
         'position': 1,
         'name': 'Home',
-        'item': 'https://gamatrain.com/',
+        'item': 'https://gamatrain.com',
       },
       {
         '@type': 'ListItem',
