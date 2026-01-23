@@ -380,20 +380,8 @@ const schoolSchema = computed(() => {
   }
 })
 
-const organizationSchema = {
-  '@type': 'Organization',
-  '@id': 'https://gamatrain.com/#organization',
-  'name': 'GamaTrain',
-  'url': 'https://gamatrain.com',
-  'logo': {
-    '@type': 'ImageObject',
-    'url': 'https://gamatrain.com/android-chrome-512x512-light.png',
-  },
-}
-
 const fullSchema = computed(() => {
   const schemaList = [
-    organizationSchema,
     breadcrumbSchema.value,
     schoolSchema.value,
   ].filter(Boolean)
