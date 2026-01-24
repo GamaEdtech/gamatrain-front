@@ -8,6 +8,8 @@ declare module '#app' {
     }
     $numberFormat: (value: number | string) => string
     $slugGenerator: (title: string) => string
+    $stripHtmlTags: (input: string, length: number) => string
+    $cleanSubject: (name: string) => string
   }
 }
 
@@ -21,6 +23,8 @@ declare module '@vue/runtime-core' {
     }
     $numberFormat: (value: number | string) => string
     $slugGenerator: (title: string) => string
+    $stripHtmlTags: (input: string, length: number) => string
+    $cleanSubject: (name: string) => string
   }
 }
 

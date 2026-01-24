@@ -127,6 +127,9 @@ interface BreadCrumb {
   disabled: boolean
   href: string
 }
+interface SchemaNode {
+  [key: string]: string | object
+}
 
 const route = useRoute()
 const router = useRouter()
@@ -164,17 +167,78 @@ const { data: contentData } = await useAsyncData(
   },
 )
 
-const schemaData = computed(() => ({
-  '@context': 'https://schema.org',
-  '@type': 'LearningResource',
-  'name': contentData.value?.title || 'GamaEdtech',
-  'image':
-    contentData.value?.thumb_pic
-    || contentData.value?.lesson_pic
-    || 'https://gamatrain.com/images/gamatrain-logo.svg',
-  'url': route.fullPath || '',
-  'description': contentData.value?.description || 'GamaEdtech',
-}))
+const organizationSchema = {
+  '@type': 'Organization',
+  '@id': 'https://gamatrain.com/#organization',
+  'name': 'GamaTrain',
+  'url': 'https://gamatrain.com',
+  'logo': {
+    '@type': 'ImageObject',
+    'url': 'https://gamatrain.com/android-chrome-512x512-light.png',
+  },
+}
+const breadcrumbSchema = computed(() => {
+  if (!breads.value.length) return null
+
+  return {
+    '@type': 'BreadcrumbList',
+    'itemListElement': breads.value.map((item, index) => ({
+      '@type': 'ListItem',
+      'position': index + 1,
+      'name': item.text,
+      'item': `https://${requestURL.value}${item.href}`,
+    })),
+  }
+})
+
+const articleSchema = computed(() => {
+  if (!contentData.value) return null
+
+  const image
+    = contentData.value.thumb_pic
+      || contentData.value.lesson_pic
+      || 'https://gamatrain.com/android-chrome-512x512-light.png'
+
+  return {
+    '@type': 'Article',
+    '@id': `https://${requestURL.value}/paper/${contentData.value.id}#article`,
+    'headline': pageTitle.value,
+    'description': pageDescribe.value,
+    'image': [image],
+    'mainEntityOfPage': {
+      '@type': 'WebPage',
+      '@id': `https://${requestURL.value}/paper/${contentData.value.id}/${contentData.value.title_url}`,
+    },
+    'author': {
+      '@type': 'Person',
+      'name': `${contentData.value.first_name} ${contentData.value.last_name}`,
+    },
+    'publisher': {
+      '@type': 'Organization',
+      '@id': 'https://gamatrain.com/#organization',
+    },
+    'dateModified': new Date(contentData.value.up_date).toISOString(),
+    'datePublished': new Date(contentData.value.up_date).toISOString(),
+  }
+})
+
+const fullSchema = computed(() => {
+  if (!articleSchema.value) return null
+
+  const graph: SchemaNode[] = [
+    organizationSchema,
+    articleSchema.value,
+  ]
+
+  if (breadcrumbSchema.value) {
+    graph.push(breadcrumbSchema.value)
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': graph,
+  }
+})
 
 const setMetaData = () => {
   if (!contentData.value) return
@@ -245,8 +309,8 @@ const setMetaData = () => {
     script: [
       {
         key: 'json-ld-schema',
-        innerHTML: JSON.stringify(schemaData.value),
         type: 'application/ld+json',
+        innerHTML: JSON.stringify(fullSchema.value),
       },
     ],
     link: [
