@@ -1,5 +1,5 @@
 <template>
-  <div class="main-school-list-div">
+  <div class="main-school-list-div overflow-y-hidden">
     <h1 class="d-none">
       {{ metaTitle }}
     </h1>
@@ -32,7 +32,7 @@
     <div
       v-if="
         isUserMovingMap
-          && (isExpandMapInDesktop || (!openBottomNavFilterList && isMobile))
+          && (isExpandMapInDesktop || (!openBottomNavFilterList && lgAndDown))
       "
       class="map-loading-overlay"
     >
@@ -49,25 +49,11 @@
       @navigate-to-details="navigateToSchoolDetails"
     />
 
+    <!-- Desktop view -->
     <div
-      v-if="!isExpandMapInDesktop || isMobile"
-      :class="`filter-list-div ${
-        openBottomNavFilterList ? `open-bottom-nav` : ``
-      }`"
-      :style="{ bottom: `${currentBottom}%` }"
-      @touchmove="handleDrag"
-      @mousemove="handleDrag"
-      @touchend="endDrag"
-      @mouseup="endDrag"
-      @mouseleave="endDrag"
+      v-if="!isExpandMapInDesktop"
+      class="d-none d-lg-flex flex-column align-center justify-start w-100 h-100 bg-white"
     >
-      <div
-        class="grab-line-div"
-        @touchstart="startDrag"
-        @mousedown="startDrag"
-      >
-        <div class="grab" />
-      </div>
       <schoolFilter
         :sort-list="sortList"
         :total-school-find="totalSchoolFind"
@@ -75,14 +61,13 @@
         @update-filter="updateFilter"
       />
       <div
-        v-show="!isExpandMapInDesktop"
-        class="container-div-button"
+        class="w-100 bg-grey100 d-flex align-center justify-end pa-5 map-div-button"
       >
         <v-btn
           class="text-h4"
           elevation="4"
-          prepend-icon="mdi-map-marker"
-          color="rgb(18, 183, 106)"
+          prepend-icon="md:location_on"
+          color="success"
           rounded="xl"
           height="50"
           @click="changeStatusExpandMap"
@@ -102,6 +87,34 @@
         @load-previous-page="loadPreviousSchool"
       />
     </div>
+    <!-- Desktop view -->
+
+    <!-- Mobile View -->
+    <CommonSwipeableBottomSheet
+      v-if="lgAndDown"
+      v-model:open-sheet="openBottomNavFilterList"
+      class="d-flex d-lg-none"
+      @update:open-sheet="changeBottomSheetStatus"
+    >
+      <schoolFilter
+        :sort-list="sortList"
+        :total-school-find="totalSchoolFind"
+        :is-expand-map="isExpandMapInDesktop"
+        @update-filter="updateFilter"
+      />
+      <SchoolList
+        :school-list="schools"
+        :is-expanded="!isExpandMapInDesktop"
+        :is-initial-loading="isInitialSchoolLoading"
+        :is-pagination-loading="isPaginationSchoolLoading"
+        :is-pagination-previous-loading="isPaginationPreviousSchoolLoading"
+        :is-all-data-loaded="isAllSchoolLoaded"
+        :page-number-for-load-previous-data="pageNumberForLoadPreviousSchool"
+        @load-next-page="loadNextPageSchool"
+        @load-previous-page="loadPreviousSchool"
+      />
+    </CommonSwipeableBottomSheet>
+    <!-- Mobile View -->
   </div>
 </template>
 
@@ -112,12 +125,12 @@ import schoolFilter from '~/components/school/Filter.vue'
 import Map from '~/components/common/Map.client.vue'
 import SchoolDetailsModal from '~/components/school/SchoolDetailsModal.vue'
 import SchoolList from '~/components/school/List.vue'
+import { useDisplay } from 'vuetify'
 
 const router = useRouter()
 const route = useRoute()
 
-const display = useGlobalDisplay()
-const isMobile = ref(false)
+const { lgAndDown } = useDisplay()
 
 const isUserMovingMap = ref(true) // Start with loading indicator visible
 
@@ -163,16 +176,9 @@ const setDefaultSortToRoute = () => {
 onMounted(() => {
   setDefaultSortToRoute()
   const footer = document.getElementById('footer-container')
-  isMobile.value = display.xs.value
   if (footer) {
     footer.style.display = 'none'
   }
-  watch(
-    () => display.xs.value,
-    (newVal) => {
-      isMobile.value = newVal
-    },
-  )
 })
 
 onUnmounted(() => {
@@ -261,7 +267,7 @@ const resetParameter = () => {
   // Show loading indicator only when in map view
   if (
     isExpandMapInDesktop.value
-    || (!openBottomNavFilterList.value && isMobile.value)
+    || (!openBottomNavFilterList.value && lgAndDown.value)
   ) {
     isUserMovingMap.value = true
   }
@@ -567,12 +573,10 @@ const isExpandMapInDesktop = ref(false)
 const changeStatusExpandMap = () => {
   isExpandMapInDesktop.value = !isExpandMapInDesktop.value
   if (isExpandMapInDesktop.value) {
-    perPage.value = 500
+    perPage.value = 200
     filterForm.value.lat = defaultLatLongDistance.lat
     filterForm.value.lng = defaultLatLongDistance.lng
     filterForm.value.distance = defaultLatLongDistance.distance
-
-    // Clear school list when switching to map view for performance
     schools.value = []
   }
   else {
@@ -589,62 +593,15 @@ const changeStatusExpandMap = () => {
 // Start Handle Drag To Open/Close Bottom Nav
 const openBottomNavFilterList = ref(true)
 
-const isDragging = ref(false)
-const startY = ref(0)
-const startBottom = ref(0)
-const CLOSED_BOTTOM = -85
-const OPEN_BOTTOM = 0
-const currentBottom = ref(
-  openBottomNavFilterList.value ? OPEN_BOTTOM : CLOSED_BOTTOM,
-)
-
-const startDrag = (e) => {
-  isDragging.value = true
-  startBottom.value = openBottomNavFilterList.value
-    ? OPEN_BOTTOM
-    : CLOSED_BOTTOM
-  currentBottom.value = startBottom.value
-
-  startY.value = e.type.includes('touch') ? e.touches[0].clientY : e.clientY
-  document.body.style.overflow = 'hidden'
-}
-
-const handleDrag = (e) => {
-  if (!isDragging.value) return
-
-  e.preventDefault()
-  const currentY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY
-  const deltaY = currentY - startY.value
-
-  const newBottom
-    = (openBottomNavFilterList.value ? -1 : 1)
-      * (deltaY / window.innerHeight)
-      * 100
-
-  currentBottom.value = newBottom
-}
-
-const endDrag = () => {
-  if (!isDragging.value) return
-
-  isDragging.value = false
-  document.body.style.overflow = ''
-
-  openBottomNavFilterList.value
-    = currentBottom.value < -20
-      ? !openBottomNavFilterList.value
-      : openBottomNavFilterList.value
-  currentBottom.value = openBottomNavFilterList.value
-    ? OPEN_BOTTOM
-    : CLOSED_BOTTOM
-  if (openBottomNavFilterList.value) {
+const changeBottomSheetStatus = (value) => {
+  if (value) {
     perPage.value = 20
     filterForm.value.lat = null
     filterForm.value.lng = null
     filterForm.value.distance = null
   }
   else {
-    perPage.value = 500
+    perPage.value = 200
     filterForm.value.lat = defaultLatLongDistance.lat
     filterForm.value.lng = defaultLatLongDistance.lng
     filterForm.value.distance = defaultLatLongDistance.distance
@@ -652,6 +609,7 @@ const endDrag = () => {
   resetParameter()
   updateQueryParams()
 }
+
 // End Handle Drag To Open/Close Bottom Nav
 
 // Start School Modal Management
@@ -804,4 +762,9 @@ const handleSchoolMarkerClickError = (errorData) => {
 
 <style scoped>
 @import "../../assets/scss/school/index.scss";
+
+.map-div-button{
+  z-index : 3;
+  min-height: 70px;
+}
 </style>
