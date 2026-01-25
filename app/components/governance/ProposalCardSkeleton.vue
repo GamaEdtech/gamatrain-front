@@ -100,7 +100,7 @@
   border-radius: 16px;
   padding: 12px;
   position: relative;
-  border: 1px solid #ced0d25a;
+  border: 1px solid  rgb(var(--v-theme-grey100));
   cursor: pointer;
 
   .governance-proposals__badge {

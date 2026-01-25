@@ -32,19 +32,19 @@
           <div v-else>
             <div
               v-if="stat.title != `Your Staked`"
-              class="governance-stat-value primary-gray-700 text-h6 text-md-h5"
+              class="text-grey700 text-h6 text-md-h5 font-weight-bold"
             >
               {{ $numberFormat(Math.ceil(stat.value ?? 0)) }}
-              <span class="unit primary-gray-500 text-subtitle-1">
+              <span class="text-grey500 text-subtitle-1">
                 {{ stat.subtitle }}</span>
             </div>
             <div
               v-else
-              class="governance-stat-value primary-gray-700 text-h6 text-md-h5"
+              class="text-grey700 text-h6 text-md-h5 font-weight-bold"
             >
               <template v-if="stat.value != null">
                 {{ $numberFormat(Math.ceil(stat.value ?? 0)) }}
-                <span class="unit primary-gray-500 text-subtitle-1">
+                <span class="text-grey500 text-subtitle-1">
                   {{ stat.subtitle }}</span>
               </template>
               <template v-else>
@@ -52,7 +52,7 @@
               </template>
             </div>
             <div
-              class="governance-stat-label primary-gray-500 text-subtitle-2 text-md-h6"
+              class="text-grey500 text-subtitle-2 text-md-h6 font-weight-normal mt-2"
             >
               {{ stat.title }}
             </div>
@@ -133,28 +133,11 @@ const statsInfo = computed(() => {
 }
 
 .stat-card {
-  background: linear-gradient(113.59deg, #ffffff 0%, #f9fafb 100%);
-  border: 1px solid rgba(22, 44, 45, 0.06);
+  border: 1px solid rgb(var(--v-theme-grey100));
   box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
   padding: 15px 24px;
   text-align: center;
   height: 100%;
-}
-
-.stat-card .governance-stat-value {
-  color: #0f172a;
-  font-weight: 800;
-  font-size: 44px;
-  line-height: 1.2;
-}
-
-.stat-card .unit {
-  font-weight: 700;
-  font-size: 18px;
-}
-
-.stat-card .governance-stat-label {
-  margin-top: 6px;
 }
 
 .stat-card.tl {
@@ -195,10 +178,6 @@ const statsInfo = computed(() => {
   .stat-card {
     padding: 10px 16px;
   }
-
-  .stat-card .governance-stat-value {
-    font-size: 32px;
-  }
 }
 
 @media only screen and (min-width: 600px) {
@@ -223,10 +202,6 @@ const statsInfo = computed(() => {
 
   .stat-card {
     padding: 25px 24px;
-  }
-
-  .stat-card .governance-stat-value {
-    font-size: 30px;
   }
 
   .stat-card.tl {

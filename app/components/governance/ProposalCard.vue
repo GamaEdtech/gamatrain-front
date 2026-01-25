@@ -23,11 +23,11 @@
       </v-btn>
     </div>
 
-    <div class="governance-proposals__title primary-gray-700">
+    <div class="governance-proposals__title text-grey700">
       {{ proposal.account.title }}
     </div>
 
-    <div class="governance-proposals__subtitle primary-gray-500 mt-2">
+    <div class="governance-proposals__subtitle text-grey500 mt-2">
       {{ proposal.account.brief }}
     </div>
 
@@ -42,7 +42,7 @@
       </v-chip>
       <span
         v-if="proposal.account.amount && proposal.account.amount > 0"
-        class="amount primary-gray-600"
+        class="amount text-grey500"
       >
         {{ $numberFormat(proposal.account.amount) }} $GET
       </span>
@@ -64,23 +64,23 @@
 
       <v-progress-linear
         :model-value="forPercentage"
-        color="#27ae60"
+        color="success"
         bg-color="#e74c3c"
         height="8"
         class="vote-progress"
         rounded
       />
 
-      <div class="governance-proposals__stats primary-gray-500">
+      <div class="governance-proposals__stats text-grey500">
         <span>Total Votes: {{ $numberFormat(totalVotes/1000000) }}</span>
       </div>
     </div>
 
     <div class="governance-proposals__footer mt-3">
-      <div class="time primary-gray-500">
+      <div class="time text-grey500">
         <v-icon
           size="small"
-          color="#98A2B3"
+          color="grey500"
         >
           md:timer_outlined
         </v-icon>
@@ -92,7 +92,7 @@
       >
         <v-btn
           size="small"
-          color="green"
+          color="success"
           variant="outlined"
           rounded="xl"
           style="font-size: 10px"
@@ -122,7 +122,7 @@
             >
               <v-icon
                 size="x-large"
-                color="#D0D5DD"
+                color="grey400"
                 @click="closeModal"
               >
                 md:close
@@ -289,14 +289,14 @@ const confirmDelete = async () => {
   border-radius: 16px;
   padding: 12px;
   position: relative;
-  border: 1px solid #ced0d25a;
+  border: 1px solid  rgb(var(--v-theme-grey100));
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
     transform: scale(1.01);
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
-    border-color: #f7900967;
+    border-color: rgb(var(--v-theme-primary));
   }
 
   .governance-proposals__badge {
@@ -310,16 +310,16 @@ const confirmDelete = async () => {
     border-radius: 12px;
   }
   .governance-proposals__badge.active {
-    background: #27ae60;
+    background: rgb(var(--v-theme-success));
   }
   .governance-proposals__badge.pending {
-    background: #f79009;
+    background: rgb(var(--v-theme-warning));
   }
   .governance-proposals__badge.rejected {
-    background: #f04438;
+    background: rgb(var(--v-theme-error));
   }
   .governance-proposals__badge.passed {
-    background: #2e90fa;
+    background: rgb(var(--v-theme-info));
   }
 
   .delete-button {
@@ -365,11 +365,11 @@ const confirmDelete = async () => {
     margin-bottom: 6px;
 
     .for {
-      color: #27ae60;
+      color:  rgb(var(--v-theme-success));
       font-weight: 600;
     }
     .against {
-      color: #e74c3c;
+      color: rgb(var(--v-theme-error));
       font-weight: 600;
     }
   }

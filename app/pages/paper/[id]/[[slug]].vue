@@ -1,120 +1,122 @@
 <template>
-  <v-container
-    v-if="contentData"
-    class="d-flex flex-column mt-16"
-  >
-    <v-row>
-      <widgets-breadcrumb
-        background-color="white"
-        :breads="breads"
-      />
-    </v-row>
-    <v-row>
-      <v-col
-        cols="12"
-        class="d-flex align-center ga-1"
-      >
-        <v-icon color="primary">
-          md:chevron_backward
-        </v-icon>
-        <h1 class="text-h4 font-weight-bold">
-          {{ contentData.title }}
-        </h1>
-        <v-icon color="primary">
-          md:chevron_forward
-        </v-icon>
-      </v-col>
-      <v-col
-        cols="12"
-        md="4"
-        class="d-flex justify-center justify-md-start"
-      >
-        <CommonDetailPreviewActionCard
-          :id="contentData.id"
-          :thumb-pic="contentData.thumb_pic"
-          :title="contentData.title"
-          :views="contentData.views"
-          :score="contentData.ref_score"
-          @share="openShare = true"
+  <main>
+    <v-container
+      v-if="contentData"
+      class="d-flex flex-column mt-16"
+    >
+      <v-row>
+        <widgets-breadcrumb
+          background-color="white"
+          :breads="breads"
         />
-      </v-col>
+      </v-row>
+      <v-row>
+        <v-col
+          cols="12"
+          class="d-flex align-center ga-1"
+        >
+          <v-icon color="primary">
+            md:chevron_backward
+          </v-icon>
+          <h1 class="text-h4 font-weight-bold">
+            {{ contentData.title }}
+          </h1>
+          <v-icon color="primary">
+            md:chevron_forward
+          </v-icon>
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
+          class="d-flex justify-center justify-md-start"
+        >
+          <CommonDetailPreviewActionCard
+            :id="contentData.id"
+            :thumb-pic="contentData.thumb_pic"
+            :title="contentData.title"
+            :views="contentData.views"
+            :score="contentData.ref_score"
+            @share="openShare = true"
+          />
+        </v-col>
 
-      <v-col
-        cols="12"
-        md="8"
-        class="d-flex h-100 align-start flex-wrap"
-      >
-        <CommonDetailContentDetailsSection :content-data="contentData" />
+        <v-col
+          cols="12"
+          md="8"
+          class="d-flex h-100 align-start flex-wrap"
+        >
+          <CommonDetailContentDetailsSection :content-data="contentData" />
 
-        <CommonDetailDownloadAndPurchaseButtons
-          :id="contentData.id"
-          :files="contentData.files"
-          :year="contentData.edu_year"
-          :title="contentData.title"
-          :title-url="contentData.title_url"
-          :section="contentData.section"
-          :base="contentData.base"
-          :lesson="contentData.lesson"
-          :exams="contentData.exams"
-        />
-        <CommonDetailSubjectDirectoryNav :content-data="contentData" />
-      </v-col>
+          <CommonDetailDownloadAndPurchaseButtons
+            :id="contentData.id"
+            :files="contentData.files"
+            :year="contentData.edu_year"
+            :title="contentData.title"
+            :title-url="contentData.title_url"
+            :section="contentData.section"
+            :base="contentData.base"
+            :lesson="contentData.lesson"
+            :exams="contentData.exams"
+          />
+          <CommonDetailSubjectDirectoryNav :content-data="contentData" />
+        </v-col>
 
-      <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
+        <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
 
-      <v-col cols="12">
-        <CommonDetailRelatedContent
-          :id="contentData.id"
-          source="test"
-          :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
-        />
-      </v-col>
+        <v-col cols="12">
+          <CommonDetailRelatedContent
+            :id="contentData.id"
+            source="test"
+            :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+          />
+        </v-col>
 
-      <!-- <v-col
+        <!-- <v-col
         cols="12"
         class="mb-6"
       >
         <CommonComments />
       </v-col> -->
 
-      <v-col
-        cols="12"
-        class="mt-6"
-      >
-        <span
-          class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
-          @click="openCrashReport = true"
-        >
-          <v-icon
-            color="#F04438"
-            class="mb-1"
-          >md:warning_outlined</v-icon>
-          Crash report
-        </span>
-      </v-col>
-
-      <ClientOnly>
         <v-col
           cols="12"
-          class="text-center mt-10"
+          class="mt-6"
         >
-          <common-ad-banner
-            v-model="isAdsLoad"
-            adslot="7199289937"
-          />
+          <span
+            class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
+            @click="openCrashReport = true"
+          >
+            <v-icon
+              color="#C62828"
+              class="mb-1"
+            >md:warning_outlined</v-icon>
+            Crash report
+          </span>
         </v-col>
-      </ClientOnly>
-    </v-row>
-    <CommonCrashReportModal
-      :id="contentData.id"
-      v-model:show-dialog="openCrashReport"
-      type-crash-report="test"
-    />
-    <CommonShareModal
-      v-model:show-dialog="openShare"
-      :title="contentData.title"
-    />
-  </v-container>
+
+        <ClientOnly>
+          <v-col
+            cols="12"
+            class="text-center mt-10"
+          >
+            <common-ad-banner
+              v-model="isAdsLoad"
+              adslot="7199289937"
+            />
+          </v-col>
+        </ClientOnly>
+      </v-row>
+      <CommonCrashReportModal
+        :id="contentData.id"
+        v-model:show-dialog="openCrashReport"
+        type-crash-report="test"
+      />
+      <CommonShareModal
+        v-model:show-dialog="openShare"
+        :title="contentData.title"
+      />
+    </v-container>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -124,6 +126,9 @@ interface BreadCrumb {
   text: string
   disabled: boolean
   href: string
+}
+interface SchemaNode {
+  [key: string]: string | object
 }
 
 const route = useRoute()
@@ -152,7 +157,7 @@ const { data: contentData } = await useAsyncData(
     catch (e: unknown) {
       const error = e as AppError
       if (error?.status === 404) {
-        router.push('/search?type=test')
+        router.push('/search?type=paper')
       }
       throw error
     }
@@ -162,17 +167,78 @@ const { data: contentData } = await useAsyncData(
   },
 )
 
-const schemaData = computed(() => ({
-  '@context': 'https://schema.org',
-  '@type': 'LearningResource',
-  'name': contentData.value?.title || 'GamaEdtech',
-  'image':
-    contentData.value?.thumb_pic
-    || contentData.value?.lesson_pic
-    || 'https://gamatrain.com/images/gamatrain-logo.svg',
-  'url': route.fullPath || '',
-  'description': contentData.value?.description || 'GamaEdtech',
-}))
+const organizationSchema = {
+  '@type': 'Organization',
+  '@id': 'https://gamatrain.com/#organization',
+  'name': 'GamaTrain',
+  'url': 'https://gamatrain.com',
+  'logo': {
+    '@type': 'ImageObject',
+    'url': 'https://gamatrain.com/android-chrome-512x512-light.png',
+  },
+}
+const breadcrumbSchema = computed(() => {
+  if (!breads.value.length) return null
+
+  return {
+    '@type': 'BreadcrumbList',
+    'itemListElement': breads.value.map((item, index) => ({
+      '@type': 'ListItem',
+      'position': index + 1,
+      'name': item.text,
+      'item': `https://${requestURL.value}${item.href}`,
+    })),
+  }
+})
+
+const articleSchema = computed(() => {
+  if (!contentData.value) return null
+
+  const image
+    = contentData.value.thumb_pic
+      || contentData.value.lesson_pic
+      || 'https://gamatrain.com/android-chrome-512x512-light.png'
+
+  return {
+    '@type': 'Article',
+    '@id': `https://${requestURL.value}/paper/${contentData.value.id}#article`,
+    'headline': pageTitle.value,
+    'description': pageDescribe.value,
+    'image': [image],
+    'mainEntityOfPage': {
+      '@type': 'WebPage',
+      '@id': `https://${requestURL.value}/paper/${contentData.value.id}/${contentData.value.title_url}`,
+    },
+    'author': {
+      '@type': 'Person',
+      'name': `${contentData.value.first_name} ${contentData.value.last_name}`,
+    },
+    'publisher': {
+      '@type': 'Organization',
+      '@id': 'https://gamatrain.com/#organization',
+    },
+    'dateModified': new Date(contentData.value.up_date).toISOString(),
+    'datePublished': new Date(contentData.value.up_date).toISOString(),
+  }
+})
+
+const fullSchema = computed(() => {
+  if (!articleSchema.value) return null
+
+  const graph: SchemaNode[] = [
+    organizationSchema,
+    articleSchema.value,
+  ]
+
+  if (breadcrumbSchema.value) {
+    graph.push(breadcrumbSchema.value)
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': graph,
+  }
+})
 
 const setMetaData = () => {
   if (!contentData.value) return
@@ -243,8 +309,8 @@ const setMetaData = () => {
     script: [
       {
         key: 'json-ld-schema',
-        innerHTML: JSON.stringify(schemaData.value),
         type: 'application/ld+json',
+        innerHTML: JSON.stringify(fullSchema.value),
       },
     ],
     link: [
@@ -264,23 +330,23 @@ const initBreadCrumb = () => {
   breads.value.push({
     text: 'Paper',
     disabled: false,
-    href: '/search?type=test',
+    href: '/search?type=paper',
   })
   breads.value.push(
     {
       text: contentData.value.section_title,
       disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}`,
+      href: `/search?type=paper&section=${contentData.value.section}`,
     },
     {
       text: contentData.value.base_title,
       disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}`,
+      href: `/search?type=paper&section=${contentData.value.section}&base=${contentData.value.base}`,
     },
     {
       text: contentData.value.lesson_title,
       disabled: false,
-      href: `/search?type=test&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
+      href: `/search?type=paper&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
     },
   )
 }
@@ -293,6 +359,6 @@ if (contentData.value) {
 
 <style scoped>
 .text-crash-report {
-  color: #f04438;
+  color: #c62828;
 }
 </style>

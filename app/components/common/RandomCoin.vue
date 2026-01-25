@@ -34,21 +34,13 @@
       </ClientOnly>
     </div>
   </TransitionGroup>
-  <!-- Start : Box Showing Balance -->
-  <div
-    ref="boxShowingBalance"
-    key="box-showing-balance"
-    class="box-showing-balance"
-  >
-    <span class="amount-balance pulsing">+</span>
-    <span
-      ref="amountBalanceRef"
-      class="amount-balance"
-    >{{
-      Number(balance).toFixed(7)
-    }}</span>
-  </div>
-  <!-- End : Box Showing Balance -->
+
+  <test-counting-wallet-animation
+    :is-start-animation="isStartWalletAnimation"
+    :direction="1"
+    :delta-price="increaseAmountbalance"
+    @complete-animation="completeWalletAnimation"
+  />
 </template>
 
 <script setup>
@@ -76,80 +68,16 @@ const shouldRenderRandomCoin = computed(() => {
 const coins = ref([])
 const lottieRefs = new Map()
 const increaseAmountbalance = ref(0)
-const BASE_AMOUNT_COIN = 0.000001
-const balance = ref(0.0)
-const showBoxBalance = ref(true)
-const boxShowingBalance = ref(null)
-const amountBalanceRef = ref(null)
+const isStartWalletAnimation = ref(false)
 
 let scrollHandler = null
 const coinsResponse = ref(null)
 
-const animationFadeInBoxBalance = (boxShowingBalanceElement, nameAnimation) => {
-  showBoxBalance.value = true
-  boxShowingBalanceElement.classList.add(nameAnimation)
-}
-
-const animationFadeOutBoxBalance = (
-  amountBalanceElement,
-  boxShowingBalanceElement,
-) => {
-  setTimeout(() => {
-    amountBalanceElement.classList.remove(
-      'pulsing',
-      'decreasing',
-      'increasing',
-    )
-    boxShowingBalanceElement.classList.remove('animate-in', 'animate-in-error')
-    boxShowingBalanceElement.classList.add('animate-out')
-  }, 4400)
-  setTimeout(() => {
-    boxShowingBalanceElement.classList.remove('animate-out')
-    showBoxBalance.value = false
-  }, 5400)
-}
-
-const animationCountingBalance = (
-  amountBalanceElement,
-  balanceChangeDirection,
-) => {
-  setTimeout(() => {
-    const startValue = Number(balance.value)
-    const displacementAmount = BASE_AMOUNT_COIN * increaseAmountbalance.value
-    const endValue = parseFloat(
-      (startValue + displacementAmount * balanceChangeDirection).toFixed(7),
-    )
-    const duration = 1000
-    const stepTime = 30
-    let current = startValue
-    const steps = Math.ceil(duration / stepTime)
-    const amountStep = Math.abs(endValue - startValue) / steps
-    amountBalanceElement.classList.add(
-      'pulsing',
-      balanceChangeDirection == 1 ? 'increasing' : 'decreasing',
-    )
-    const counter = setInterval(() => {
-      current = current + balanceChangeDirection * amountStep
-      if (current >= endValue && balanceChangeDirection == 1) {
-        current = endValue
-        clearInterval(counter)
-      }
-      if (current <= endValue && balanceChangeDirection == -1) {
-        current = endValue
-        clearInterval(counter)
-      }
-      balance.value = parseFloat(current.toFixed(7))
-    }, stepTime)
-  }, 800)
-}
-
 const startAnimationCacheInWallet = () => {
-  const boxShowingBalanceElement = boxShowingBalance.value
-  const amountBalanceElement = amountBalanceRef.value
-  animationFadeInBoxBalance(boxShowingBalanceElement, 'animate-in')
-  animationCountingBalance(amountBalanceElement, 1)
-  animationFadeOutBoxBalance(amountBalanceElement, boxShowingBalanceElement)
-  balance.value = 0.0
+  isStartWalletAnimation.value = true
+}
+const completeWalletAnimation = () => {
+  isStartWalletAnimation.value = false
 }
 
 const fetchCoins = async () => {
@@ -245,7 +173,7 @@ async function handleCoinClick(coin) {
       },
     )
     if (response.data) {
-      increaseAmountbalance.value = response.data.points
+      increaseAmountbalance.value = response.data.points / 1_000_000
     }
   }
   catch {
@@ -352,115 +280,3 @@ onBeforeUnmount(() => {
   }
 })
 </script>
-
-<style scoped>
-@keyframes show-balance-box {
-  0% {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-
-  100% {
-    transform: translateY(76px);
-    opacity: 1;
-  }
-}
-
-@keyframes animateOut {
-  0% {
-    transform: translateY(76px);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateY(-50px);
-    opacity: 0;
-  }
-}
-
-.box-showing-balance {
-  padding: 10px 20px;
-  border-radius: 10px;
-  position: fixed;
-  right: 80px;
-  top: -10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  column-gap: 20px;
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: border 0.5s ease;
-  z-index: 3;
-  max-width: 300px;
-  border: 2px solid green;
-  background-color: rgb(197 248 197 / 76%);
-}
-
-.box-showing-balance.animate-in {
-  animation: show-balance-box 0.6s ease-out forwards;
-}
-
-.box-showing-balance.animate-out {
-  animation: animateOut 1s ease forwards;
-}
-
-.box-showing-balance.animate-in-error {
-  animation: show-balance-box 0.6s ease-out forwards;
-  border: 2px solid red;
-  background-color: rgba(255, 199, 199, 0.76);
-}
-
-.amount-balance {
-  font-size: 20px;
-  font-weight: 700;
-  color: green;
-}
-
-@keyframes pulse-scale {
-  0% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.1);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-.amount-balance.pulsing {
-  animation: pulse-scale 0.3s ease-in-out infinite;
-}
-
-@media (max-width: 1260px) {
-  .box-showing-balance {
-    right: 20px;
-    top: 20px;
-  }
-  @keyframes show-balance-box {
-    0% {
-      transform: translateY(-20px);
-      opacity: 0;
-    }
-
-    100% {
-      transform: translateY(50px);
-      opacity: 1;
-    }
-  }
-  @keyframes animateOut {
-    0% {
-      transform: translateY(50px);
-      opacity: 1;
-    }
-
-    100% {
-      transform: translateY(-50px);
-      opacity: 0;
-    }
-  }
-}
-</style>

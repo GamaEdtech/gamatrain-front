@@ -6,7 +6,7 @@
     <v-img
       :src="picture"
       class="rounded-lg"
-      :alt="title ? title : `user Profile`"
+      alt="user Profile"
       width="160"
       height="190"
     />

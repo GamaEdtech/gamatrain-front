@@ -31,7 +31,7 @@
           >
             <v-card
               class="fill-height float-sm-right"
-              to="/search?type=test"
+              to="/search?type=paper"
             >
               <v-card-title class="gama-text-h6 pt-4 pb-3">
                 <v-icon
@@ -54,7 +54,7 @@
           >
             <v-card
               class="fill-height float-sm-left"
-              to="/search?type=azmoon"
+              to="/search?type=quizhub"
             >
               <v-card-title class="gama-text-h6 pt-4 pb-3">
                 <v-icon

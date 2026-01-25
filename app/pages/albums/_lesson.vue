@@ -110,7 +110,7 @@
                       class="mr-1"
                     >
                       <nuxt-link
-                        :to="`/search?type=azmoon&section=${contentData.section}`"
+                        :to="`/search?type=quizhub&section=${contentData.section}`"
                       >
                         {{ contentData.section_title }}
                       </nuxt-link>
@@ -120,7 +120,7 @@
                       class="mr-1"
                     >
                       <nuxt-link
-                        :to="`/search?type=azmoon&section=${contentData.section}&base=${contentData.base}`"
+                        :to="`/search?type=quizhub&section=${contentData.section}&base=${contentData.base}`"
                       >
                         {{ contentData.base_title }}
                       </nuxt-link>
@@ -130,7 +130,7 @@
                       class="ma-1"
                     >
                       <nuxt-link
-                        :to="`/search?type=azmoon&section=${contentData.section}&base=${contentData.base}&lesson=${contentData.lesson}`"
+                        :to="`/search?type=quizhub&section=${contentData.section}&base=${contentData.base}&lesson=${contentData.lesson}`"
                       >
                         {{ contentData.lesson_title }}
                       </nuxt-link>
@@ -614,7 +614,7 @@ export default {
       {
         text: 'Online exam',
         disabled: false,
-        href: '/search?type=azmoon',
+        href: '/search?type=quizhub',
       },
     ],
     detail: {
@@ -836,17 +836,17 @@ export default {
         {
           text: this.contentData.section_title,
           disabled: false,
-          href: `/search?type=azmoon&section=${this.contentData.section}`,
+          href: `/search?type=quizhub&section=${this.contentData.section}`,
         },
         {
           text: this.contentData.base_title,
           disabled: false,
-          href: `/search?type=azmoon&section=${this.contentData.section}&base=${this.contentData.base}`,
+          href: `/search?type=quizhub&section=${this.contentData.section}&base=${this.contentData.base}`,
         },
         {
           text: this.contentData.lesson_title,
           disabled: false,
-          href: `/search?type=azmoon&section=${this.contentData.section}&base=${this.contentData.base}&lesson=${this.contentData.lesson}`,
+          href: `/search?type=quizhub&section=${this.contentData.section}&base=${this.contentData.base}&lesson=${this.contentData.lesson}`,
         },
       )
     },
