@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex flex-column align-center justify-center">
+  <div class="w-100 d-flex flex-column align-center justify-center pt-4">
     <h1 class="text-h2 text-sm-h1 text-primary font-weight-black">
       Disconnect
     </h1>
