@@ -136,6 +136,42 @@ export interface AdminPaymentDTO {
   transactionId?: string
 }
 
+export type SchoolContributionStatus = 'Draft' | 'Review' | 'Confirmed' | 'Rejected' | 'Deleted'
+
+export interface AdminSchoolContributionBriefDTO {
+  id: number
+  status: SchoolContributionStatus
+  comment: string
+  creationUser: string
+  creationDate: string
+  identifierId: number
+}
+
+export interface AdminSchoolContributionDTO {
+  newValues: {
+    name: string
+    localName: string
+    schoolType: string
+    stateId: number
+    zipCode: string
+    address: string
+    latitude: number
+    longitude: number
+    webSite: string
+    localAddress: string
+    cityId: number
+    countryId: number
+    email: string
+    faxNumber: string
+    phoneNumber: string
+    quarter: string
+    tags: number[]
+    boardCodes: number[]
+    tuition: number
+    description: string
+  }
+}
+
 export interface SearchTypesStatsDTO {
   types_stats: TypesStatsDTO
 }
