@@ -25,7 +25,7 @@
             >
               <v-icon
                 size="x-large"
-                color="#D0D5DD"
+                color="grey400"
               >
                 md:close
               </v-icon>
@@ -35,18 +35,18 @@
             <div class="text-h6 text-md-button">
               <v-icon
                 size="x-large"
-                :color="publicKey ? '#4CAF50' : '#98A2B3'"
+                :color="publicKey ? 'success' : 'grey500'"
               >
                 md:account_balance_wallet
               </v-icon>
               <span
-                class="text-h6 pl-2 primary-gray-400"
+                class="text-h6 pl-2 text-grey400"
                 style="display: inline-block"
               >Wallet
               </span>
               <span
                 v-if="publicKey"
-                class="text-h6 pl-1 primary-blue-500"
+                class="text-h6 pl-1 text-info"
                 style="display: inline-block"
               >
                 {{
@@ -96,7 +96,7 @@
 
             <div class="mt-10">
               <div class="mb-4">
-                <div class="mb-1 primary-gray-700 text-h6">
+                <div class="mb-1 text-grey700 text-h6">
                   Title *
                 </div>
                 <v-text-field
@@ -111,7 +111,7 @@
               </div>
 
               <div class="mb-4">
-                <div class="mb-1 primary-gray-700 text-h6">
+                <div class="mb-1 text-grey700 text-h6">
                   Description *
                 </div>
                 <v-textarea
@@ -127,7 +127,7 @@
               </div>
 
               <div class="mb-4">
-                <div class="mb-1 primary-gray-700 text-h6">
+                <div class="mb-1 text-grey700 text-h6">
                   Category *
                 </div>
                 <v-select
@@ -142,7 +142,7 @@
               </div>
 
               <div class="mb-4">
-                <div class="mb-1 primary-gray-700 text-h6">
+                <div class="mb-1 text-grey700 text-h6">
                   Reference URL
                 </div>
                 <v-text-field
@@ -157,7 +157,7 @@
               </div>
 
               <div class="mb-4">
-                <div class="mb-1 primary-gray-700 text-h6">
+                <div class="mb-1 text-grey700 text-h6">
                   Requested Amount (GET tokens)
                 </div>
                 <v-text-field

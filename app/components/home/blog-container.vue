@@ -104,7 +104,10 @@
                       </v-card>
                       <div class="gama-text-subtitle2 pl-2">
                         {{ truncateBody(item.summary) }}
-                        <nuxt-link :to="`/blog/${item.id}/${item.slug}`">Read more</nuxt-link>
+                        <nuxt-link
+                          :to="`/blog/${item.id}/${item.slug}`"
+                          :aria-label="item.slug"
+                        >Read more</nuxt-link>
                       </div>
                     </v-card>
                   </v-slide-group-item>
@@ -227,7 +230,7 @@ loadBlog()
 
     .content {
       text-transform: none;
-      color: #888a8b;
+      color: #475467;
       font-family: Inter;
       font-size: 1.4rem;
       font-style: normal;

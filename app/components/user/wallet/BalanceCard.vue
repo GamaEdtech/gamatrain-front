@@ -15,7 +15,7 @@
       </div>
 
       <div
-        v-if="loading"
+        v-if="isLoading"
         class="balance-amount d-flex align-center"
       >
         <v-skeleton-loader
@@ -67,7 +67,10 @@
           </div>
         </div>
         <div class="vertical-divider" />
-        <div class="action-btn text-center">
+        <div
+          class="action-btn text-center"
+          @click="showWithdrawModal = true"
+        >
           <v-icon
             small
             class="gray--text"
@@ -92,63 +95,27 @@
         </div>
       </div>
     </div>
+
+    <modals-withdraw
+      v-model:show-dialog="showWithdrawModal"
+      :user-balance="balance"
+      @update-balance="fetchBalance"
+    />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useAuth } from '~/composables/useAuth'
 
-// Composables
-const auth = useAuth()
-const { $toast: _toast } = useNuxtApp()
-
-// Reactive state
-const balance = ref(0)
-const loading = ref(true)
+const { balance, isLoading, fetchBalance } = useCoinBalance()
 const showBalance = ref(true)
-const token = ref('')
-
-// Methods
-const getToken = () => {
-  if (import.meta.client) {
-    token.value = localStorage.getItem('v2_token') || ''
-  }
-}
-
-const fetchBalance = async () => {
-  loading.value = true
-  try {
-    const response = await useApiService.get('/api/v2/transactions/balance')
-
-    if (response.succeeded) {
-      balance.value = response.data
-    }
-  }
-  catch (err) {
-    if (err.response && err.response.status === 403) {
-      auth.logout()
-    }
-    console.error('Error fetching balance:', err)
-  }
-  finally {
-    loading.value = false
-  }
-}
-
-// const getDecimal = (num) => {
-//   return Math.floor((num % 1) * 100)
-//     .toString()
-//     .padStart(2, '0')
-// }
+const showWithdrawModal = ref(false)
 
 const toggleBalanceVisibility = () => {
   showBalance.value = !showBalance.value
 }
 
-// Lifecycle hooks
 onMounted(() => {
-  getToken()
   fetchBalance()
 })
 </script>

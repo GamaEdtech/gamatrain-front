@@ -1384,7 +1384,7 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      json: {
+      innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'QAPage',
         'mainEntity': {
@@ -1431,7 +1431,7 @@ useHead({
               },
             })),
         },
-      },
+      }),
     },
   ],
 })
