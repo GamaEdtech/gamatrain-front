@@ -102,6 +102,7 @@ useHead({
     },
   ],
 })
+const { getToken, initCaptcha, isLoaded } = useRecaptcha()
 
 const schoolFindedInSearch = ref()
 const showModalDetailSchool = ref(false)
@@ -235,12 +236,21 @@ const backStep = () => {
     behavior: 'smooth',
   })
 }
-const submitSchool = (data) => {
+
+const submitSchool = async (data) => {
   loadingSubmitSchool.value = true
+  if (!isLoaded()) {
+    loadingSubmitSchool.value = false
+    throw new Error('reCAPTCHA not loaded yet. Please try again.')
+  }
+
+  const token = await getToken('submit')
+
   schoolInformation.value = {
     ...schoolInformation.value,
     ...data,
   }
+  schoolInformation.value['Comment.Captcha'] = token
   const formData = buildFormDataFromObject(schoolInformation.value)
   useApiService
     .post(`/api/v2/schools/contributions`, formData)
@@ -296,6 +306,10 @@ const buildFormDataFromObject = (
 
   return form
 }
+
+onMounted(() => {
+  initCaptcha()
+})
 </script>
 
 <style scoped>

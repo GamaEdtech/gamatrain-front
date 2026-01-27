@@ -6,7 +6,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
+      class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style overflow-y-auto"
       @click="clickOnModal"
     >
       <v-row>
@@ -73,6 +73,10 @@ const clickOnModal = (event) => {
 </script>
 
 <style scoped>
+.mobile-style{
+  max-height: 90%;
+}
+
 @media only screen and (max-width: 960px) {
   .mobile-style {
     position: absolute;

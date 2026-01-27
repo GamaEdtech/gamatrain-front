@@ -225,6 +225,13 @@
         />
       </div>
     </div>
+
+    <admin-common-modal
+      v-model:show-dialog="showDetailModal"
+      title="Detail"
+    >
+      <admin-schools-contributions-detail-modal />
+    </admin-common-modal>
   </div>
 </template>
 
@@ -234,6 +241,7 @@ import type {
   AppError,
   ResponseListDTO,
   AdminSchoolContributionBriefDTO,
+  AdminSchoolContributionDTO,
   SchoolContributionStatus,
 } from '~/types/api'
 
@@ -294,6 +302,8 @@ const sortList = [
     title: 'Creation Date',
   },
 ]
+
+const showDetailModal = ref(true)
 
 const getData = async () => {
   loading.value = true
@@ -388,8 +398,24 @@ const handleCheckboxChange = async (checked: boolean | null, item: SortOption) =
   await getData()
 }
 
-const openDetaiModal = (school: AdminSchoolContributionBriefDTO) => {
+const openDetaiModal = async (school: AdminSchoolContributionBriefDTO) => {
   console.log(school)
+  showDetailModal.value = true
+
+  try {
+    const response = await useApiService.get<
+      ApiResult<ResponseListDTO<AdminSchoolContributionDTO>>
+    >(`/api/v2/admin/schools/contributions/${school.id}`)
+    console.log('res', response)
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    if (error.response?.status === 400) {
+      $toast.error(error.response.data?.message || '')
+    }
+  }
+  // finally {
+  // }
 }
 </script>
 
