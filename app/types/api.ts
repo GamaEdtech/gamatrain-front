@@ -159,6 +159,22 @@ export interface TypesStatsDTO {
   test: boolean
 }
 
+export interface AdminContactUsDTO {
+  id: number
+  fullName: string
+  email: string
+  subject: string
+  isRead: boolean
+}
+
+export interface AdminContactUsDetailDTO {
+  id: number
+  fullName: string
+  email: string
+  subject: string
+  body: string
+}
+
 export interface QuestionDTO {
   id: string
 

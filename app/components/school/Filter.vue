@@ -482,7 +482,7 @@
         <div class="w-100 mt-8 d-flex align-center justify-center ga-3">
           <v-btn
             variant="text"
-            class="text-h4"
+            class="text-h4 text-grey700"
             @click="closeFilterMobile"
           >
             Cancel

@@ -1,5 +1,5 @@
 export interface SearchParameters {
-  [key: string]: string | number | boolean | null | undefined
+  [key: string]: string | number | boolean | null | undefined | string[] | number[]
 }
 
 type UseFetchOptions = {

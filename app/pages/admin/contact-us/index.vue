@@ -1,337 +1,125 @@
-<script setup>
-import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
-import viewMessageDetailsModal from '@/components/admin/contactus/viewMessageDetailsModal.vue'
-import useApiService from '~/composables/useApiService'
-
-definePageMeta({
-  layout: 'admin',
-  auth: true,
-})
-
-const { $toast } = useNuxtApp()
-
-const list = ref([])
-const headers = [
-  { title: 'Name', key: 'fullName', sortable: false, width: '15vw' },
-  { title: 'Subject', key: 'subject', sortable: false, width: '15vw' },
-  { key: 'attachedFile', sortable: false, width: '17vw' },
-  { title: 'Date', key: 'date', width: '10vw' },
-  { title: 'Actions', key: 'actions', sortable: false, width: '5vw' },
-]
-
-const tableLoading = ref(true)
-const dialogVisible = ref(false)
-const isDeleteModalOpen = ref(false)
-const selectedMessage = ref('')
-const selectedEmail = ref('')
-const selectedName = ref('')
-const selectedId = ref(null)
-const selectedDeleteId = ref(null)
-const search = ref(null)
-const filter = ref('all')
-const filteredList = ref([])
-const selectedAction = ref(null)
-const selectedPageSize = ref(10)
-const page = ref(1)
-const pageCount = ref(0)
-const totalCount = ref(0)
-const selected = ref([])
-const disableNextBtn = ref(false)
-const disableBackBtn = ref(false)
-
-const allActions = [
-  { label: 'Delete All', value: 'deleteAll' },
-  { label: 'Read All', value: 'readAll' },
-]
-
-const allPageSize = [
-  { label: '10 Rows', value: 10 },
-  { label: '20 Rows', value: 20 },
-  { label: '50 Rows', value: 50 },
-]
-
-const fetchContactUs = async () => {
-  tableLoading.value = true
-  try {
-    const response = await useApiService.get('/api/v2/admin/contacts', {
-      'PagingDto.PageFilter.Size': selectedPageSize.value,
-      'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-    })
-    list.value = response.data.list
-    filteredList.value = list.value
-    totalCount.value = response.data.totalRecordsCount
-    pageCount.value = Math.ceil(totalCount.value / selectedPageSize.value)
-  }
-  catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-  finally {
-    tableLoading.value = false
-  }
-}
-
-const viewMessageDetails = async (id) => {
-  try {
-    const response = await useApiService.get(`/api/v2/admin/contacts/${id}`)
-
-    selectedMessage.value = response.data.body
-    selectedEmail.value = response.data.email
-    selectedName.value = response.data.fullName
-    selectedId.value = response.data.id
-    dialogVisible.value = true
-
-    const index = list.value.findIndex(item => item.id === id)
-    setTimeout(() => {
-      if (index !== -1) {
-        list.value[index] = { ...list.value[index], isRead: true }
-      }
-    }, 1500)
-
-    disableNextBtn.value = index >= list.value.length - 1
-    disableBackBtn.value = index <= 0
-  }
-  catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-}
-
-const goToNextMessage = (id) => {
-  const index = list.value.findIndex(item => item.id === id)
-  if (index < list.value.length - 1) {
-    viewMessageDetails(list.value[index + 1].id)
-  }
-}
-
-const goToPreviousMessage = (id) => {
-  const index = list.value.findIndex(item => item.id === id)
-  if (index > 0) {
-    viewMessageDetails(list.value[index - 1].id)
-  }
-}
-
-const deleteMessage = async () => {
-  try {
-    await useApiService.remove(
-      `/api/v2/admin/contacts/${selectedDeleteId.value}`,
-    )
-
-    list.value = list.value.filter(i => i.id !== selectedDeleteId.value)
-    filteredList.value = list.value
-    $toast.success('Message deleted successfully!')
-  }
-  catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-  finally {
-    isDeleteModalOpen.value = false
-    fetchContactUs()
-  }
-}
-
-const handleDelete = (id) => {
-  isDeleteModalOpen.value = true
-  selectedDeleteId.value = id
-}
-
-const doAll = async () => {
-  if (selectedAction.value === 'Delete All') {
-    for (const item of selected.value) {
-      selectedDeleteId.value = item
-      await deleteMessage()
-    }
-
-    selected.value = []
-    $toast.success('All selected messages deleted!')
-  }
-  else {
-    for (const id of selected.value) {
-      const index = list.value.findIndex(msg => msg.id === id)
-      try {
-        await useApiService.patch(`/api/v2/admin/contacts/${id}/toggle`)
-
-        list.value[index] = { ...list.value[index], isRead: true }
-        selected.value = []
-        $toast.success('All selected messages marked as read!')
-      }
-      catch (err) {
-        console.error(`Failed to mark message ${id} as read`, err)
-      }
-    }
-  }
-}
-
-onMounted(() => {
-  selectedAction.value = allActions[0].label
-  selectedPageSize.value = allPageSize[0].value
-  fetchContactUs()
-})
-
-watch(page, () => {
-  filter.value = 'all'
-  fetchContactUs()
-})
-
-watch(selectedPageSize, () => {
-  page.value = 1
-  fetchContactUs()
-})
-
-watch(
-  filter,
-  (val) => {
-    if (val === 'read') {
-      filteredList.value = list.value.filter(item => item.isRead)
-    }
-    else if (val === 'unread') {
-      filteredList.value = list.value.filter(item => !item.isRead)
-    }
-    else {
-      filteredList.value = list.value
-    }
-  },
-  { immediate: true },
-)
-</script>
-
 <template>
-  <div>
-    <div
-      class="d-flex flex-column justify-space-between align-center mb-1 flex-sm-row"
-    >
-      <div class="filterBtns mb-4 mb-sm-0">
-        <v-btn
-          :class="{
-            'active-filter': filter === 'all',
-            'inactive-filter': filter !== 'all',
-          }"
-          depressed
-          rounded
-          variant="plain"
-          class="gtext-t4 font-weight-medium"
-          @click="filter = 'all'"
-        >
-          All
-        </v-btn>
-        <v-btn
-          :class="{
-            'active-filter': filter === 'unread',
-            'inactive-filter': filter !== 'unread',
-          }"
-          depressed
-          rounded
-          variant="plain"
-          class="gtext-t4 font-weight-medium"
-          @click="filter = 'unread'"
-        >
-          Unread
-        </v-btn>
+  <div class="w-100 h-100 d-flex flex-column align-start justify-start">
+    <div class="w-100 d-flex justify-space-between align-center">
+      <div class="d-flex align-center justify-start position-relative flex-wrap ga-2">
+        <div class="btn-filter-container d-none d-md-flex align-center justify-center ga-1 bg-grey100 pa-1 rounded-pill">
+          <v-btn
+            v-for="status in statusList"
+            :key="status"
+            rounded="pill"
+            :color="status == statusSelect ? `primary`:`transparent`"
+            flat
+            height="40"
+            @click="changeFilterStatus(status)"
+          >
+            <span :class="`${status == statusSelect ? `text-grey900`:`text-grey500`} font-weight-bold text-h5`">{{ status }}</span>
+          </v-btn>
+        </div>
 
-        <v-btn
-          :class="{
-            'active-filter': filter === 'read',
-            'inactive-filter': filter !== 'read',
-          }"
-          depressed
-          class="ml-2 gtext-t4 font-weight-medium"
-          rounded
-          variant="plain"
-          @click="filter = 'read'"
-        >
-          Read
-        </v-btn>
+        <div class="filter-mobile-container d-flex d-md-none align-center justify-center">
+          <common-gombo-box
+            v-model="statusSelect"
+            label="Status"
+            :items="statusList.map((item) => ({
+              id: item,
+              title: item,
+            }))"
+            @update:model-value="changeFilterStatus"
+          />
+        </div>
       </div>
-
-      <v-text-field
-        v-model="search"
-        label="Search anything..."
-        variant="outlined"
-        density="compact"
-        rounded
-        hide-details
-        class="searchInput"
-      >
-        <template #prepend-inner>
-          <span class="primary-gray-300"><v-icon>mdi-magnify </v-icon></span>
-          <span class="primary-gray-300">|</span>
-        </template>
-      </v-text-field>
+      <div class="d-flex align-center justify-end ga-1">
+        <span
+          class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
+        >
+          <span class="text-grey500 font-weight-bold mr-1">
+            {{ totalCount }}
+          </span>
+          Contacts
+        </span>
+      </div>
     </div>
-    <div class="d-flex justify-end ga-2 align-center px-2">
-      <p class="primary-gray-500 gtext-t6 font-weight-bold">
-        {{ totalCount }}
-      </p>
-      <p class="gray--text gtext-t6 font-weight-semibold">
-        Messages
-      </p>
-    </div>
-    <div class="scrollable-table">
+    <div class="w-100 mt-4">
       <v-data-table
-        v-model="selected"
         :headers="headers"
-        :items="filteredList"
-        :items-per-page="selectedPageSize"
-        class="elevation-1"
-        :loading="tableLoading"
+        :items="list"
+        :items-per-page="pageSize"
+        class="elevation-1 set-height-table"
+        :loading="loading"
+        fixed-header
         hide-default-footer
-        show-select
       >
-        <template #[`item.fullName`]="{ item }">
-          <div class="d-flex align-center">
-            <v-avatar
-              v-if="item.avatar"
-              size="40"
-              class="mr-2"
+        <template #headers="{ columns }">
+          <tr>
+            <th
+              v-for="(column, index) in columns"
+              :key="index"
+              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
+               ${index == 0 ? `` : `th-min-width`}`"
             >
-              <img
-                :src="item.avatar"
-                alt="Avatar"
-              >
-            </v-avatar>
-            <span :class="item.isRead === false ? 'font-weight-bold' : ''">{{
-              item.fullName
-            }}</span>
+              {{ column.title }}
+            </th>
+          </tr>
+        </template>
+
+        <template #[`item.id`]="{ item }">
+          <div
+            class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
+          >
+            {{ item.id }}
+          </div>
+        </template>
+
+        <template #[`item.fullName`]="{ item }">
+          <div
+            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center"
+          >
+            {{ !item.fullName ? `unknown` : item.fullName }}
+          </div>
+        </template>
+        <template #[`item.email`]="{ item }">
+          <div
+            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
+          >
+            {{ item.email }}
           </div>
         </template>
 
         <template #[`item.subject`]="{ item }">
-          <div class="d-flex align-center">
-            <span :class="item.isRead === false ? 'font-weight-bold' : ''">{{
-              item.subject
-            }}</span>
+          <div
+            class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
+          >
+            {{ item.subject }}
           </div>
         </template>
 
-        <template #[`header.attachedFile`]>
-          <div class="d-flex align-center">
-            <v-icon
-              small
-              class="mr-1"
+        <template #[`item.isRead`]="{ item }">
+          <div
+            class="w-100 d-flex justify-center align-center"
+          >
+            <v-chip
+              :color="item.isRead ? `success`:`warning`"
+              class="font-weight-bold text-h5"
             >
-              mdi-paperclip
-            </v-icon>
-            Attachment File
+              {{ item.isRead ? `Read`:`UnRead` }}
+            </v-chip>
           </div>
         </template>
 
-        <template #[`item.actions`]="{ item }">
-          <div class="d-flex ga-2">
+        <template #[`item.Action`]="{ item }">
+          <div
+            class="d-flex justify-center align-center"
+          >
             <v-btn
-              variant="plain"
-              class="px-0 min-width-10"
+              icon
+              flat
+              @click="viewDetail(item)"
             >
               <v-icon
-                small
-                class="gtext-t1"
-                @click="viewMessageDetails(item.id)"
+                size="20"
+                color="grey800"
               >
-                mdi-file-find
+                md:plagiarism
               </v-icon>
               <v-tooltip
                 activator="parent"
@@ -341,205 +129,246 @@ watch(
               </v-tooltip>
             </v-btn>
             <v-btn
-              variant="plain"
-              class="px-0 min-width-10"
+              icon
+              flat
+              @click="deleteContact(item)"
             >
               <v-icon
-                small
-                class="gtext-t1"
-                @click="handleDelete(item.id)"
+                size="20"
+                color="grey800"
               >
-                mdi-delete
+                md:delete
               </v-icon>
               <v-tooltip
                 activator="parent"
                 location="top"
               >
-                Delete
+                delete
               </v-tooltip>
             </v-btn>
           </div>
         </template>
       </v-data-table>
-
-      <viewMessageDetailsModal
-        v-model="dialogVisible"
-        :message="selectedMessage"
-        :email="selectedEmail"
-        :name="selectedName"
-        :disable-next="disableNextBtn"
-        :disable-back="disableBackBtn"
-        @next="goToNextMessage(selectedId)"
-        @back="goToPreviousMessage(selectedId)"
-      />
-
-      <DeleteItemModal
-        v-model="isDeleteModalOpen"
-        @confirm="deleteMessage"
-      />
     </div>
 
-    <v-row
-      class="mt-2"
-      align="center"
-      justify="space-between"
-      no-gutters
-    >
-      <v-col
-        cols="12"
-        class="d-flex flex-wrap flex-sm-nowrap align-center justify-space-between"
-      >
-        <div class="d-flex align-center mb-2 mb-sm-0">
-          <v-select
-            v-model="selectedAction"
-            :items="allActions"
-            item-title="label"
-            item-value="value"
-            variant="outlined"
-            density="compact"
-            rounded
-            hide-details
-            class="rounded-pill footerBtns"
-            :disabled="selected.length === 0"
-          />
-          <v-btn
-            class="rounded-pill gtext-t5 bg-primary-gray-700 text-white ml-4"
-            :disabled="selected.length === 0"
-            @click="doAll"
-          >
-            <span>Do</span>
-          </v-btn>
-        </div>
-
-        <!-- Pagination (hidden on mobile here) -->
-        <div class="d-none d-sm-flex">
-          <v-pagination
-            v-model="page"
-            :length="pageCount"
-            :total-visible="5"
-            class="custom-pagination"
-            next-icon="mdi-arrow-right"
-            prev-icon="mdi-arrow-left"
-          />
-        </div>
-
-        <div class="mb-2 mb-sm-0">
-          <v-select
-            v-model="selectedPageSize"
-            :items="allPageSize"
-            item-title="label"
-            item-value="value"
-            variant="outlined"
-            density="compact"
-            rounded
-            hide-details
-            class="rounded-pill footerBtns"
-          />
-        </div>
-      </v-col>
-
-      <!-- Pagination (visible only on xs, second row) -->
-      <v-col
-        cols="12"
-        class="d-flex justify-center d-sm-none mt-2"
+    <div class="w-100 d-flex mt-2 position-relative ga-6">
+      <div
+        class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4"
       >
         <v-pagination
           v-model="page"
           :length="pageCount"
-          :total-visible="5"
+          :total-visible="4"
+          next-icon="md:arrow_forward"
+          prev-icon="md:arrow_back"
+          size="40"
           class="custom-pagination"
-          next-icon="mdi-arrow-right"
-          prev-icon="mdi-arrow-left"
+          @update:model-value="changePageNumber"
         />
-      </v-col>
-    </v-row>
+      </div>
+
+      <div class="position-absolute right-0 select-size-div">
+        <v-select
+          v-model="pageSize"
+          :items="allPageSize"
+          item-title="label"
+          item-value="value"
+          variant="outlined"
+          density="compact"
+          rounded
+          hide-details
+          max-width="140"
+          class="rounded-pill"
+          @update:model-value="changePageSize"
+        />
+      </div>
+    </div>
+
+    <admin-common-modal
+      v-model:show-dialog="showDeleteModal"
+      title="Delete"
+    >
+      <admin-contactus-delete-item-modal
+        :id="selectedItemIdForDelete"
+        @delete-success-full="deleteSuccessFull"
+      />
+    </admin-common-modal>
+
+    <admin-common-modal
+      v-model:show-dialog="showDetailModal"
+      title="Detail"
+    >
+      <admin-contactus-view-message-details-modal
+        :id="selectedItemIdForDetail"
+        @reply-success-full="replySuccessFull"
+      />
+    </admin-common-modal>
   </div>
 </template>
 
+<script setup lang="ts">
+import type {
+  ApiResult,
+  AppError,
+  ResponseListDTO,
+  AdminContactUsDTO,
+} from '~/types/api'
+
+definePageMeta({
+  layout: 'admin',
+  auth: true,
+})
+
+const { $toast } = useNuxtApp()
+
+const headers = [
+  { title: 'ID', key: 'id', sortable: false, width: '5vw' },
+  { title: 'User', key: 'fullName', sortable: false, width: '15vw' },
+  {
+    title: 'Email',
+    key: 'email',
+    sortable: false,
+    width: '15vw',
+  },
+  { title: 'Subject', key: 'subject', sortable: false, width: '20vw' },
+  { title: 'Status', key: 'isRead', sortable: false, width: '10vw' },
+  {
+    title: 'Action',
+    key: 'Action',
+    sortable: false,
+    width: '20vw',
+  },
+]
+const list = ref<AdminContactUsDTO[]>([])
+const loading = ref(true)
+const totalCount = ref(0)
+const pageSize = ref(10)
+const page = ref(1)
+const pageCount = ref(0)
+const allPageSize = [
+  { label: '10 Rows', value: 10 },
+  { label: '20 Rows', value: 20 },
+  { label: '50 Rows', value: 50 },
+]
+const statusSelect = ref('All')
+const statusList = ['All', 'Read', 'UnRead']
+const showDeleteModal = ref(false)
+const selectedItemIdForDelete = ref('')
+const showDetailModal = ref(false)
+const selectedItemIdForDetail = ref()
+
+const getData = async () => {
+  loading.value = true
+  try {
+    const params: Record<string, string | number | boolean | null> = {
+      'PagingDto.PageFilter.Size': pageSize.value,
+      'PagingDto.PageFilter.Skip': (page.value - 1) * pageSize.value,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+    }
+    if (statusSelect.value != 'All') {
+      params[`PagingDto.SearchFilter.phrase`] = statusSelect.value == 'Read' ? true : false
+      params[`PagingDto.SearchFilter.column`] = 'isRead'
+    }
+    const response = await useApiService.get<
+      ApiResult<ResponseListDTO<AdminContactUsDTO>>
+    >('/api/v2/admin/contacts', params)
+    if (response.data) {
+      list.value = response.data.list
+      totalCount.value = response.data.totalRecordsCount
+      pageCount.value = Math.ceil(totalCount.value / pageSize.value)
+    }
+    else {
+      list.value = []
+    }
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    if (error.response?.status === 400) {
+      $toast.error(error.response.data?.message || '')
+    }
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+const changeFilterStatus = async (status: string) => {
+  if (status == '') {
+    statusSelect.value = 'All'
+  }
+  else {
+    statusSelect.value = status
+  }
+  page.value = 1
+  await getData()
+}
+
+const changePageNumber = async () => {
+  await getData()
+}
+
+const changePageSize = async () => {
+  page.value = 1
+  await getData()
+}
+
+onMounted(async () => {
+  await getData()
+})
+
+const viewDetail = async (contact: AdminContactUsDTO) => {
+  contact.isRead = true
+  selectedItemIdForDetail.value = contact.id
+  showDetailModal.value = true
+}
+
+const replySuccessFull = () => {
+  selectedItemIdForDetail.value = null
+  showDetailModal.value = false
+}
+
+const deleteContact = (contact: AdminContactUsDTO) => {
+  selectedItemIdForDelete.value = contact.id.toString()
+  showDeleteModal.value = true
+}
+const deleteSuccessFull = async () => {
+  selectedItemIdForDelete.value = ''
+  showDeleteModal.value = false
+  await getData()
+}
+</script>
+
 <style scoped>
-.scrollable-table {
+.set-height-table {
   max-height: 70vh;
-  overflow-y: auto;
-  overflow-x: hidden;
+}
+.th-min-width {
+  min-width: 130px;
+}
+.description-width {
+  min-width: 200px;
+}
+.reverse-icon {
+  transform: rotateZ(180deg);
+}
+.select-size-div {
+  top: 18px;
+}
+.btn-filter-container{
+  height : 48px;
+}
+.filter-mobile-container{
+  width: 170px;
 }
 
-.searchInput {
-  width: 360px !important;
-  max-width: 360px;
-}
-
-:deep(.v-field__outline) {
-  --v-field-border-width: 1px !important;
-  --v-field-border-opacity: 0.38 !important;
-}
-
-:deep(.v-data-table__th) {
-  color: #344054 !important;
-  font-family: Inter, sans-serif !important;
-  font-size: 1.4rem !important;
-  line-height: 2.4rem !important;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-:deep(.v-table__wrapper > table > thead > tr) {
-  background-color: #f2f4f7 !important;
-}
-
-.filterBtns {
-  display: flex;
-  padding: 4px;
-  background-color: #0000001a;
-  border-radius: 28px;
-  align-items: center;
-}
-
-.footerBtns {
-  width: 150px !important;
-  max-width: 150px !important;
-}
-
-.v-pagination > li > button {
-  margin: 0.1rem !important;
-}
-
-.custom-pagination {
-  width: 100% !important;
-  justify-content: center !important;
-}
-:deep(.custom-pagination li),
-:deep(.custom-pagination li button) {
-  min-width: 36px !important;
-  width: 36px !important;
-  height: 36px !important;
-}
 :deep(.custom-pagination li button:hover) {
-  background-color: #ffb300;
-  opacity: 0.7;
+  background-color: rgb(var(--v-theme-primary));
+  opacity: 0.6;
 }
 :deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: #ffb300 !important;
+  background: rgb(var(--v-theme-primary)) !important;
 }
-
-:deep(.v-data-table td) {
-  cursor: default !important;
-}
-
-.active-filter {
-  background-color: #ffb600 !important;
-  color: #101828 !important;
-}
-
-.inactive-filter {
-  color: #667085 !important;
-}
-
-:deep(.v-btn--variant-plain) {
-  opacity: 1 !important;
-}
-
-.min-width-10 {
-  min-width: 10px !important;
-  height: 20px !important;
+:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
+  opacity: 0 !important;
 }
 </style>
