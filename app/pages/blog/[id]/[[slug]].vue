@@ -134,6 +134,18 @@
         </div>
       </v-col>
       <v-col
+        v-if="contentData.podcastUri"
+        cols="12"
+        class="d-flex flex-column flex-start mt-1"
+      >
+        <common-audio-player
+          :src="contentData.podcastUri"
+          :title="contentData.title"
+          :auto-play="false"
+          :loop="false"
+        />
+      </v-col>
+      <v-col
         ref="blogContentRef"
         cols="12"
         class="d-flex flex-column mt-6"
