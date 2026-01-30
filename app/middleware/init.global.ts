@@ -7,6 +7,7 @@ interface User {
   lastName: string
   group: string
   profileUpdated: boolean
+  roles: string[]
 }
 
 export default defineNuxtRouteMiddleware(async (to) => {
@@ -38,6 +39,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
         lastName: data.lastName ?? '',
         group: data.group ?? '',
         profileUpdated: data.profileUpdated ?? false,
+        roles: data.roles ?? [],
       })
       hasFetchedUserInfo.value = true
     }
