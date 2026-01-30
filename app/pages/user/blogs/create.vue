@@ -355,6 +355,61 @@
                   </div>
                 </v-card-text>
               </v-card>
+
+              <v-card
+                class="options-card mobile-full mb-4"
+                color="#F9FAFB"
+                flat
+              >
+                <v-card-title class="options-title pb-4 mt-3 primary-gray-700">
+                  Podcast
+                </v-card-title>
+                <v-card-text class="pt-0">
+                  <div
+                    v-if="podcastPreview"
+                    class="image-preview mb-2"
+                  >
+                    <audio
+                      controls
+                      :src="podcastPreview"
+                    />
+                  </div>
+                  <div class="d-flex justify-space-between mobile-stack">
+                    <v-btn
+                      color="white"
+                      class="black--text px-6 mobile-full upload-btn"
+                      rounded
+                      variant="flat"
+                      @click="triggerPodcastUpload"
+                    >
+                      {{ podcastPreview ? "Change Podcast" : "Upload Podcast" }}
+                    </v-btn>
+                    <v-btn
+                      icon
+                      variant="text"
+                      color="error"
+                      :disabled="!podcastPreview"
+                      class="mobile-mb-2"
+                      size="large"
+                      @click="deletePodcast"
+                    >
+                      <v-icon
+                        size="large"
+                        class="primary-gray-500"
+                      >
+                        mdi-delete
+                      </v-icon>
+                    </v-btn>
+                    <input
+                      ref="podcastInput"
+                      type="file"
+                      accept="audio/*"
+                      style="display: none"
+                      @change="onPoscastSelected"
+                    >
+                  </div>
+                </v-card-text>
+              </v-card>
             </div>
           </v-col>
         </v-row>
@@ -412,6 +467,7 @@ const blog = ref({
   categories: [],
   image: null,
   scheduledDate: null,
+  podcast: null,
 })
 const slug = ref('')
 const imagePreview = ref(null)
@@ -421,6 +477,23 @@ const categoriesLoading = ref(true)
 const categorySearch = ref('')
 const keywordSearch = ref('')
 let _slugDebounce = null
+
+const podcastPreview = ref(null)
+const podcastInput = ref()
+
+const triggerPodcastUpload = () => {
+  podcastInput.value.click()
+}
+const deletePodcast = () => {
+  blog.value.podcast = null
+  podcastPreview.value = null
+  podcastInput.value.value = ''
+}
+const onPoscastSelected = (event) => {
+  const file = event.target.files[0]
+  blog.value.podcast = file
+  podcastPreview.value = URL.createObjectURL(file)
+}
 
 // Validation rules
 const titleRules = [
@@ -524,6 +597,10 @@ const onSubmit = async () => {
     // Add image if exists
     if (blog.value.image) {
       formData.append('image', blog.value.image)
+    }
+
+    if (blog.value.podcast) {
+      formData.append('Podcast', blog.value.podcast)
     }
 
     const response = await useApiService.post(
