@@ -20,7 +20,7 @@
       class="text-h5 mt-4"
       to="/"
     >
-      Try again
+      Return To Home
     </v-btn>
   </div>
 </template>

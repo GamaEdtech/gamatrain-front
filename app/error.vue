@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <common-header />
     <v-container
       class="d-flex flex-column mt-16"
     >
@@ -9,8 +8,6 @@
       <error-403 v-if="error.statusCode == 403" />
       <error-401 v-if="error.statusCode == 401" />
     </v-container>
-    <common-footer />
-    <menu-bottom-nav-menu />
   </v-app>
 </template>
 
