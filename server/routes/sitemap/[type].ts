@@ -9,15 +9,19 @@ const SITEMAP_MAP: Record<string, string> = {
 export default defineEventHandler(async (event) => {
   const { type } = event.context.params as { type: string }
 
-  if (!type || !(type in SITEMAP_MAP)) {
+  if (!type) {
     throw createError({
       statusCode: 404,
       statusMessage: 'Sitemap not found',
     })
   }
 
+  const sitemapUrl
+    = SITEMAP_MAP[type]
+      ?? `https://sandbox.gamaedtech.com/sitemap/${type}.xml`
+
   try {
-    const xml = await $fetch<string>(SITEMAP_MAP[type]!, {
+    const xml = await $fetch<string>(sitemapUrl, {
       responseType: 'text',
     })
 
@@ -28,17 +32,25 @@ export default defineEventHandler(async (event) => {
 
     event.node.res.setHeader(
       'Cache-Control',
-      'public, max-age=3600, s-maxage=3600',
+      'public, max-age=50000, s-maxage=50000',
     )
 
     return xml
   }
-  catch (error) {
-    console.error(`[SITEMAP] Failed to fetch ${type}`, error)
+  catch (err: unknown) {
+    console.error(`[SITEMAP] Failed to fetch ${type}`, err)
+
+    const error = err as { status: number }
+    if (error?.status === 404) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Sitemap not found',
+      })
+    }
 
     throw createError({
       statusCode: 502,
-      statusMessage: 'Failed to fetch sitemap from core service',
+      statusMessage: 'Failed to fetch sitemap service',
     })
   }
 })
