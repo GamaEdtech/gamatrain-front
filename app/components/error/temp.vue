@@ -1,18 +1,18 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column align-center justify-center px-2">
     <h1 class="text-h2 text-sm-h1 text-primary font-weight-black">
-      {{ getTitle(statusCode) }}
+      {{ errorInfo[statusCode].title ?? '500' }}
     </h1>
 
     <img
-      :src="getImage(statusCode)"
-      :alt="getTitle(statusCode).toString()"
+      :src="errorInfo[statusCode].image ?? error500"
+      :alt="errorInfo[statusCode].title.toString() ?? '500'"
       height="300"
       width="300"
       class="w-100 max-width-img"
     >
 
-    <span class="text-h4 font-weight-bold text-grey700 mt-8 text-center"> {{ getSubtitle(statusCode) }}</span>
+    <span class="text-h4 font-weight-bold text-grey700 mt-8 text-center"> {{ errorInfo[statusCode].subtitle ?? 'There was a problem on our side!' }}</span>
 
     <v-btn
       flat
@@ -40,61 +40,32 @@ interface IError {
 
 defineProps<IError>()
 
-const getTitle = (code: StatusErrorCodeApp) => {
-  switch (code) {
-    case 500:
-      return 500
-
-    case 404:
-      return 404
-    case 403:
-      return 403
-    case 401:
-      return 401
-    case 'disconnect':
-      return 'Disconnect'
-
-    default:
-      return 404
-  }
-}
-
-const getImage = (code: StatusErrorCodeApp) => {
-  switch (code) {
-    case 500:
-      return error500
-
-    case 404:
-      return error404
-    case 403:
-      return error403
-    case 401:
-      return error403
-    case 'disconnect':
-      return errorDisconnect
-
-    default:
-      return error404
-  }
-}
-
-const getSubtitle = (code: StatusErrorCodeApp) => {
-  switch (code) {
-    case 500:
-      return 'There was a problem on our side!'
-
-    case 404:
-      return 'Page not found!'
-    case 403:
-      return 'You do not have access to this page!'
-    case 401:
-      return 'You are not authenticated. Please log in to continue.'
-    case 'disconnect':
-      return 'First check the internet'
-
-    default:
-      return 'Page not found!'
-  }
+const errorInfo = {
+  500: {
+    title: 500,
+    image: error500,
+    subtitle: 'There was a problem on our side!',
+  },
+  404: {
+    title: 404,
+    image: error404,
+    subtitle: 'Page not found!',
+  },
+  403: {
+    title: 403,
+    image: error403,
+    subtitle: 'You do not have access to this page!',
+  },
+  401: {
+    title: 401,
+    image: error403,
+    subtitle: 'You are not authenticated. Please log in to continue.',
+  },
+  disconnect: {
+    title: 'Disconnect',
+    image: errorDisconnect,
+    subtitle: 'First check the internet',
+  },
 }
 </script>
 
