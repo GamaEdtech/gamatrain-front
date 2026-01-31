@@ -81,7 +81,10 @@ const { isOnline } = useNetwork()
 
 <template>
   <v-app>
-    <error-disconnect v-if="!isOnline" />
+    <error-temp
+      v-if="!isOnline"
+      status-code="disconnect"
+    />
     <template v-else>
       <v-navigation-drawer
         v-model="drawer"

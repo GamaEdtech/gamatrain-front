@@ -3,10 +3,7 @@
     <v-container
       class="d-flex flex-column mt-16"
     >
-      <error-500 v-if="error.statusCode == 500" />
-      <error-404 v-if="error.statusCode == 404" />
-      <error-403 v-if="error.statusCode == 403" />
-      <error-401 v-if="error.statusCode == 401" />
+      <error-temp :status-code="error.statusCode" />
     </v-container>
   </v-app>
 </template>

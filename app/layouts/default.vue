@@ -1,6 +1,9 @@
 <template>
   <v-app>
-    <error-disconnect v-if="!isOnline" />
+    <error-temp
+      v-if="!isOnline"
+      status-code="disconnect"
+    />
     <template v-else>
       <div
         v-if="isLoading"
