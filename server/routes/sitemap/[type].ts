@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
 
     event.node.res.setHeader(
       'Cache-Control',
-      'public, max-age=50000, s-maxage=50000',
+      'public, max-age=3600, s-maxage=3600',
     )
 
     return xml
