@@ -1,9 +1,9 @@
 const SITEMAP_MAP: Record<string, string> = {
-  paper: 'https://core.gamatrain.com/data/sitemaps/sitemap-tests.xml',
-  multimedia: 'https://core.gamatrain.com/data/sitemaps/sitemap-learnfiles.xml',
-  qa: 'https://core.gamatrain.com/data/sitemaps/sitemap-questions.xml',
-  exam: 'https://core.gamatrain.com/data/sitemaps/sitemap-azmoons.xml',
-  tutorial: 'https://core.gamatrain.com/data/sitemaps/sitemap-dars.xml',
+  paper: '/data/sitemaps/sitemap-tests.xml',
+  multimedia: '/data/sitemaps/sitemap-learnfiles.xml',
+  qa: '/data/sitemaps/sitemap-questions.xml',
+  exam: '/data/sitemaps/sitemap-azmoons.xml',
+  tutorial: '/data/sitemaps/sitemap-dars.xml',
 }
 
 export default defineEventHandler(async (event) => {
@@ -16,9 +16,11 @@ export default defineEventHandler(async (event) => {
     })
   }
 
+  const config = useRuntimeConfig()
   const sitemapUrl
     = SITEMAP_MAP[type]
-      ?? `https://sandbox.gamaedtech.com/sitemap/${type}.xml`
+      ? config.public.BaseUrl1 + SITEMAP_MAP[type]
+      : `${config.public.BaseUrl2}/sitemap/${type}.xml`
 
   try {
     const xml = await $fetch<string>(sitemapUrl, {
