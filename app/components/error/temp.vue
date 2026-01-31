@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex flex-column align-center justify-center">
+  <div class="w-100 h-100 d-flex flex-column align-center justify-center px-2">
     <h1 class="text-h2 text-sm-h1 text-primary font-weight-black">
       {{ getTitle(statusCode) }}
     </h1>
@@ -7,6 +7,8 @@
     <img
       :src="getImage(statusCode)"
       :alt="getTitle(statusCode).toString()"
+      height="300"
+      width="300"
       class="w-100 max-width-img"
     >
 
@@ -26,15 +28,19 @@
 </template>
 
 <script setup lang="ts">
-type StatusCode = 500 | 404 | 403 | 401 | 'disconnect'
+import type { StatusErrorCodeApp } from '@/types/api'
+import error500 from '@/assets/images/error/error-500.svg'
+import error404 from '@/assets/images/error/error-404.svg'
+import error403 from '@/assets/images/error/error-403.svg'
+import errorDisconnect from '@/assets/images/error/error-disconnect.svg'
 
 interface IError {
-  statusCode: StatusCode
+  statusCode: StatusErrorCodeApp
 }
 
 defineProps<IError>()
 
-const getTitle = (code: StatusCode) => {
+const getTitle = (code: StatusErrorCodeApp) => {
   switch (code) {
     case 500:
       return 500
@@ -53,26 +59,26 @@ const getTitle = (code: StatusCode) => {
   }
 }
 
-const getImage = (code: StatusCode) => {
+const getImage = (code: StatusErrorCodeApp) => {
   switch (code) {
     case 500:
-      return '@/assets/images/error/error-500.svg'
+      return error500
 
     case 404:
-      return '@/assets/images/error/error-404.svg'
+      return error404
     case 403:
-      return '@/assets/images/error/error-403.svg'
+      return error403
     case 401:
-      return '@/assets/images/error/error-403.svg'
+      return error403
     case 'disconnect':
-      return '@/assets/images/error/error-disconnect.svg'
+      return errorDisconnect
 
     default:
-      return '@/assets/images/error/error-404.svg'
+      return error404
   }
 }
 
-const getSubtitle = (code: StatusCode) => {
+const getSubtitle = (code: StatusErrorCodeApp) => {
   switch (code) {
     case 500:
       return 'There was a problem on our side!'

@@ -3,12 +3,14 @@
     <v-container
       class="d-flex flex-column mt-16"
     >
-      <error-temp :status-code="error.statusCode" />
+      <error-temp :status-code="error.statusCode as StatusErrorCodeApp ?? 400" />
     </v-container>
   </v-app>
 </template>
 
 <script setup lang="ts">
+import type { StatusErrorCodeApp } from '@/types/api'
+
 defineProps<{
   error: {
     statusCode?: number
