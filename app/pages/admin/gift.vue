@@ -3,6 +3,7 @@ import QrcodeVue from 'qrcode.vue'
 
 definePageMeta({
   layout: 'admin',
+  middleware: ['auth', 'admin'],
 })
 
 const pass = ref('')
