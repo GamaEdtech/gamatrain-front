@@ -340,7 +340,7 @@ interface SortOption {
 
 definePageMeta({
   layout: 'admin',
-  auth: true,
+  middleware: ['auth', 'admin'],
 })
 
 const { $dayjs, $toast } = useNuxtApp()
