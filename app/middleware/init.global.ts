@@ -11,17 +11,7 @@ interface User {
 }
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  const auth = useAuth()
-  const authToken = auth.getUserTokenV2()
   const { getProfile, setUser } = useUser()
-
-  // Skip if no token
-  if (!authToken) {
-    if (to.path.startsWith('/user')) {
-      return navigateTo('/')
-    }
-    return
-  }
 
   const hasFetchedUserInfo = useState<boolean>(
     'hasFetchedUserInfo',
