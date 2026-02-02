@@ -147,10 +147,12 @@ const props = defineProps({
   },
 })
 
+const auth = useAuth()
 const { $toast } = useNuxtApp()
 const { boardImgs } = useBoard()
 const { mdAndUp } = useDisplay()
 const route = useRoute()
+const router = useRouter()
 const isLoadingBoard = ref(true)
 const selectedBoards = ref([])
 const boards = ref([])
@@ -198,8 +200,13 @@ const clickOnModal = (event) => {
 }
 
 const openModalContribute = () => {
-  dialogModel.value = true
-  selectedBoards.value = props.schoolBoards.map(item => item.code)
+  if (!auth?.isAuthenticated?.value) {
+    router.push({ query: { auth_form: 'login', auth_noredirect: true } })
+  }
+  else {
+    dialogModel.value = true
+    selectedBoards.value = props.schoolBoards.map(item => item.code)
+  }
 }
 
 const chooseBoard = (board) => {
