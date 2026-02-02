@@ -48,25 +48,36 @@
       v-else
       class="w-100 d-flex flex-wrap align-center my-6 ga-2"
     >
-      <v-btn
+      <template
         v-for="(board, index) in boards"
         :key="index"
-        flat
-        :color="schoolBoards.some(s => s.code === Number(board.id)) ? `grey700` : `grey300`"
-        height="48"
-        rounded="lg"
       >
-        <img
-          :src="board.img"
-          :alt="board.title"
-          width="26"
-          height="26"
-          class="mr-1"
+        <v-btn
+          v-if="schoolBoards.some(s => s.code === Number(board.id))"
+          flat
+          :color="schoolBoards.some(s => s.code === Number(board.id)) ? `grey700` : `grey300`"
+          height="48"
+          rounded="lg"
         >
-        <span :class="`font-weight-bold text-h5 ${schoolBoards.some(s => s.code === Number(board.id)) ? `text-grey300`:`text-grey900`}`">{{
-          board.title
-        }}</span>
-      </v-btn>
+          <img
+            :src="board.img"
+            :alt="board.title"
+            width="26"
+            height="26"
+            class="mr-1"
+          >
+          <span :class="`font-weight-bold text-h5 ${schoolBoards.some(s => s.code === Number(board.id)) ? `text-grey300`:`text-grey900`}`">{{
+            board.title
+          }}</span>
+        </v-btn>
+      </template>
+
+      <span
+        v-if="schoolBoards.length == 0"
+        class="ml-2 text-h5 text-grey700 font-weight-bold"
+      >
+        Education board information hasn’t been added for this school yet. Know it? Contribute and help keep our data accurate.
+      </span>
     </div>
 
     <v-dialog
