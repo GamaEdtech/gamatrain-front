@@ -12,13 +12,14 @@ interface User {
 
 export default defineNuxtRouteMiddleware(async (to) => {
   const { getProfile, setUser } = useUser()
+  const { isAuthenticated } = useAuth()
 
   const hasFetchedUserInfo = useState<boolean>(
     'hasFetchedUserInfo',
     () => false,
   )
 
-  if (!hasFetchedUserInfo.value) {
+  if (!hasFetchedUserInfo.value && isAuthenticated.value) {
     const result = await getProfile()
     if (result.data) {
       const data = result.data.data as Partial<User>
