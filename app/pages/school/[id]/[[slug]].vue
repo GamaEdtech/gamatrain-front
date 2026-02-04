@@ -200,6 +200,7 @@
                 @open-auth-dialog="openAuthDialog"
                 @facilities-updated="refreshSchoolData"
               />
+              <school-detail-boards :school-boards="contentData.boards" />
             </v-col>
             <v-col
               id="main-info-section"
