@@ -247,3 +247,11 @@ export interface TransactionStatisticDTO {
   debitValue: number
   creditValue: number
 }
+export interface TransactionDTO {
+  id: number
+  points: number
+  description: string
+  currentBalance: number
+  creationDate: string
+  isDebit: boolean
+}
