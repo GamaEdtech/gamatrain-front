@@ -1,9 +1,5 @@
 <template>
-  <div class="chart-container">
-    <div class="text-h5 primary-gray-700 font-weight-bold pb-2">
-      Transaction History
-    </div>
-
+  <div class="w-100 position-relative">
     <div
       v-if="loading"
       class="chart-loading d-flex justify-center align-center"
@@ -16,20 +12,25 @@
 
     <div
       v-else
-      class="chart-wrapper"
+      class="position-relative w-100 h-100 d-flex justify-center align-center"
     >
       <LineChart
         :data="chartData"
         :options="chartOptions"
-        style="min-height: 240px"
+        :plugins="[legendMargin]"
+        class="chart-loading"
       />
     </div>
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type {
+  ApiResult,
+  TransactionStatisticDTO,
+} from '~/types/api'
+import type { ChartOptions, Chart } from 'chart.js'
 import { ref, reactive, onMounted } from 'vue'
-import { useAuth } from '~/composables/useAuth'
 import {
   Chart as ChartJS,
   Title,
@@ -41,6 +42,7 @@ import {
   PointElement,
 } from 'chart.js'
 import { Line as LineChart } from 'vue-chartjs'
+import { useTheme } from 'vuetify'
 
 // Register Chart.js components
 ChartJS.register(
@@ -53,28 +55,18 @@ ChartJS.register(
   PointElement,
 )
 
-// Composables
-const auth = useAuth()
-const { $toast: _toast } = useNuxtApp()
-
-// Reactive state
-const loading = ref(false)
+const theme = useTheme()
+const loading = ref(true)
 const selectedPeriod = ref('MonthOfYear')
-const token = ref('')
-
-const _periodOptions = [
-  { text: 'Monthly', value: 'MonthOfYear' },
-  { text: 'Weekly', value: 'DayOfWeek' },
-]
 
 const chartData = reactive({
-  labels: [],
+  labels: [] as string[],
   datasets: [
     {
       label: 'Spent',
-      data: [],
-      borderColor: 'rgb(235, 77, 75)',
-      backgroundColor: 'rgb(235, 77, 75)',
+      data: [] as number[],
+      borderColor: theme.current.value.colors['lightError'],
+      backgroundColor: theme.current.value.colors['lightError'],
       tension: 0.4,
       pointRadius: 0,
       borderWidth: 2,
@@ -82,9 +74,9 @@ const chartData = reactive({
     },
     {
       label: 'Earned',
-      data: [],
-      borderColor: 'rgb(46, 213, 115)',
-      backgroundColor: 'rgb(46, 213, 115)',
+      data: [] as number[],
+      borderColor: theme.current.value.colors['success'],
+      backgroundColor: theme.current.value.colors['success'],
       tension: 0.4,
       pointRadius: 0,
       borderWidth: 2,
@@ -92,11 +84,38 @@ const chartData = reactive({
     },
   ],
 })
+const legendMargin = {
+  id: 'legendMargin',
+  beforeInit(chart: Chart) {
+    if (chart.legend) {
+      const originalFit = chart.legend.fit
 
-const chartOptions = reactive({
+      chart.legend.fit = function fit() {
+        originalFit.bind(chart.legend)()
+
+        this.height += 20
+      }
+    }
+  },
+}
+const chartOptions = reactive<ChartOptions<'line'>>({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
+    title: {
+      display: true,
+      text: 'Transaction History',
+      align: 'start',
+      color: theme.current.value.colors['grey500'],
+      font: {
+        size: 14,
+        weight: 'bold',
+      },
+      padding: {
+        top: 6,
+        bottom: -28,
+      },
+    },
     legend: {
       display: true,
       position: 'top',
@@ -104,31 +123,12 @@ const chartOptions = reactive({
       labels: {
         usePointStyle: true,
         pointStyle: 'circle',
-        padding: 25,
+        padding: 15,
         boxWidth: 10,
         boxHeight: 10,
-        color: '#666',
+        color: theme.current.value.colors['grey500'],
         font: {
           size: 12,
-        },
-      },
-    },
-    tooltip: {
-      backgroundColor: 'white',
-      titleColor: '#333',
-      bodyColor: '#666',
-      borderColor: '#eee',
-      borderWidth: 1,
-      padding: 10,
-      displayColors: true,
-      callbacks: {
-        label: function (context) {
-          let label = context.dataset.label || ''
-          if (label) {
-            label += ': '
-          }
-          label += context.parsed.y + ' $GET'
-          return label
         },
       },
     },
@@ -139,7 +139,7 @@ const chartOptions = reactive({
         display: false,
       },
       ticks: {
-        color: '#999',
+        color: theme.current.value.colors['grey500'],
         font: {
           size: 12,
         },
@@ -148,38 +148,27 @@ const chartOptions = reactive({
     },
     y: {
       beginAtZero: true,
+      suggestedMax: undefined,
       ticks: {
         stepSize: 50,
-        callback: function (value) {
-          return value
-        },
-        color: '#999',
+        color: theme.current.value.colors['grey500'],
         font: {
           size: 12,
         },
         padding: 10,
       },
       grid: {
-        color: 'rgba(0, 0, 0, 0.05)',
-        borderDash: [3],
-        drawBorder: false,
+        color: theme.current.value.colors['grey200'],
       },
     },
   },
 })
 
-// Methods
-const getToken = () => {
-  if (import.meta.client) {
-    token.value = localStorage.getItem('v2_token') || ''
-  }
-}
-
 const fetchChartData = async () => {
   loading.value = true
 
   try {
-    const response = await useApiService.get('/api/v2/transactions/statistics', {
+    const response = await useApiService.get<ApiResult<TransactionStatisticDTO[]>>('/api/v2/transactions/statistics', {
       Period: selectedPeriod.value,
     })
 
@@ -188,9 +177,6 @@ const fetchChartData = async () => {
     }
   }
   catch (err) {
-    if (err.response && err.response.status === 403) {
-      auth.logout()
-    }
     console.error('Error fetching chart data:', err)
   }
   finally {
@@ -198,72 +184,43 @@ const fetchChartData = async () => {
   }
 }
 
-const updateChartWithData = (data) => {
+const updateChartWithData = (data: TransactionStatisticDTO[]) => {
   // Filter out the empty record
   const filteredData = data.filter(item => item.name !== '')
 
   // Extract labels and values
   const labels = filteredData.map(item => item.name)
-  const debitValues = filteredData.map(item => item.debitValue)
-  const creditValues = filteredData.map(item => item.creditValue)
+  const debitValues = filteredData.map(item => item.debitValue / 1_000_000)
+  const creditValues = filteredData.map(item => item.creditValue / 1_000_000)
 
   // Calculate max value for Y axis
   const maxValue = Math.max(
     ...debitValues,
     ...creditValues,
-    50, // Minimum value to show on the chart
+    0, // Minimum value to show on the chart
   )
 
   // Update chart data
   chartData.labels = labels
-  chartData.datasets[0].data = debitValues
-  chartData.datasets[1].data = creditValues
+  chartData.datasets[0]!.data = debitValues
+  chartData.datasets[1]!.data = creditValues
 
   // Update Y axis scale
-  chartOptions.scales.y.suggestedMax = Math.ceil(maxValue * 1.1) // Add 10% padding
+  chartOptions.scales!.y!.suggestedMax = Math.ceil(maxValue * 1.1) // Add 10% padding
 }
 
 // Lifecycle hooks
 onMounted(() => {
-  getToken()
   fetchChartData()
 })
 </script>
 
 <style scoped>
-.chart-container {
-  position: relative;
-  width: 100%;
-}
-
-.transaction-title {
-  font-size: 16px;
-}
-
-.chart-wrapper {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
 .chart-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
+  min-height: 260px;
+  max-width : 340px
 }
-
-.period-selector {
-  max-width: 150px;
-}
-
-.legend-item {
-  font-size: 12px;
-}
-.transaction-chart {
-  margin-bottom: 0 !important;
-}
-.chart-loading {
-  height: 200px;
+.title-table{
+  top : 10px
 }
 </style>

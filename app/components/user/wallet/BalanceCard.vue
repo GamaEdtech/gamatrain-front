@@ -126,6 +126,7 @@ onMounted(() => {
    background-image: url("@/assets/images/wallet/wallet-background.png");
    background-size: 100% 100%;
    height: 190px;
+   max-width : 340px;
    border-radius: 16px;
 }
 .sign-wallet-amount{

@@ -241,3 +241,9 @@ export interface TestTimeDTO {
 export interface NextQuestionDTO {
   code: string
 }
+
+export interface TransactionStatisticDTO {
+  name: string
+  debitValue: number
+  creditValue: number
+}
