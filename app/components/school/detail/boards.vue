@@ -14,32 +14,9 @@
       class="w-100 d-flex flex-wrap align-center my-6 ga-2"
     >
       <v-skeleton-loader
-        width="100"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-      <v-skeleton-loader
-        width="110"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-      <v-skeleton-loader
-        width="90"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-      <v-skeleton-loader
-        width="120"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-      <v-skeleton-loader
-        width="90"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-      <v-skeleton-loader
-        width="84"
+        v-for="size in sizeSkeletonBoard"
+        :key="size"
+        :width="size"
         height="48"
         class="bg-transparent rounded-lg"
       />
@@ -168,6 +145,7 @@ const isLoadingBoard = ref(true)
 const selectedBoards = ref([])
 const boards = ref([])
 const loadingContribute = ref(false)
+const sizeSkeletonBoard = [100, 110, 90, 120, 90, 84]
 
 onMounted(async () => {
   await getBoards()
