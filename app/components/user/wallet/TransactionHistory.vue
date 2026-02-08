@@ -35,15 +35,16 @@
         </span>
       </div>
     </div>
+    <!-- Start Desktop -->
     <div
       v-if="loading"
-      class="w-100 mt-4"
+      class="w-100 mt-4 d-none d-sm-flex"
     >
       <user-wallet-skeleton-table-desktop />
     </div>
     <div
       v-else
-      class="w-100 mt-4"
+      class="w-100 mt-4 d-none d-sm-flex"
     >
       <v-data-table
         :headers="headers"
@@ -114,7 +115,7 @@
       </v-data-table>
     </div>
 
-    <div class="w-100 d-flex mt-2 position-relative">
+    <div class="w-100 d-none d-sm-flex mt-2 position-relative">
       <div
         class="w-100 d-flex justify-center mt-4"
       >
@@ -129,6 +130,120 @@
           @update:model-value="changePageNumber"
         />
       </div>
+    </div>
+    <!-- End Desktop -->
+
+    <div class="w-100 d-flex d-sm-none flex-column aligh-start justify-start">
+      <template v-if="loading">
+        <div
+          v-for="i in 10"
+          :key="i"
+          :class="`${i%2 == 1 ? `bg-grey25 border-odd`:``} card-transaction-mobile w-100 d-flex flex-column align-start justift-start ga-3 pa-4`"
+        >
+          <v-skeleton-loader
+            width="140"
+            height="20"
+            class="rounded-lg"
+          />
+          <v-skeleton-loader
+            width="80"
+            height="20"
+            class="rounded-lg"
+          />
+          <div class="w-100 d-flex align-center justify-space-between">
+            <v-skeleton-loader
+              width="60"
+              height="20"
+              class="rounded-lg"
+            />
+
+            <v-skeleton-loader
+              width="120"
+              height="20"
+              class="rounded-lg"
+            />
+          </div>
+        </div>
+      </template>
+      <template v-else>
+        <div
+          v-for="(item, index) in list"
+          :key="index"
+          :class="`${index%2 == 0 ? `bg-grey25 border-odd`:``} card-transaction-mobile w-100 d-flex flex-column align-start justift-start ga-3 pa-4`"
+        >
+          <span
+            class="text-grey700 text-h6 font-weight-medium"
+          >
+            {{ item.description }}
+          </span>
+          <span
+            class="text-grey700 text-h6 d-flex align-center font-weight-bold text-center ga-1"
+          >
+            {{ $numberFormat(item.points) }}<span class="text-subtitle-1 text-grey500 font-weight-regular">Points</span>
+          </span>
+          <div class="w-100 d-flex align-center justify-space-between">
+            <div
+              class="text-h6 d-flex justify-center align-end font-weight-regular ga-1"
+            >
+              <v-icon
+                size="20"
+                :color="item.isDebit ? `lightError` : `success`"
+              >
+                {{ item.isDebit ? `md:upload`:`md:download` }}
+              </v-icon>
+              <span :class="`${item.isDebit ? `text-lightError` : `text-success`}`">{{
+                item.isDebit ? "Spent" : "Earned"
+              }}</span>
+            </div>
+
+            <span
+              class="text-grey500 text-h6 d-flex justify-center align-center font-weight-regular ga-1"
+            >
+              <v-icon
+                size="18"
+                color="grey300"
+              >
+                md:history
+              </v-icon>
+              {{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:MM") }}
+            </span>
+          </div>
+        </div>
+      </template>
+
+      <div
+        ref="lineSpecifierLoadMoreRef"
+        class="line-specifier-load-more"
+      />
+      <template v-if="isPaginationLoading">
+        <div
+          class=" card-transaction-mobile w-100 d-flex flex-column align-start justift-start ga-3 pa-4"
+        >
+          <v-skeleton-loader
+            width="140"
+            height="20"
+            class="rounded-lg"
+          />
+          <v-skeleton-loader
+            width="80"
+            height="20"
+            class="rounded-lg"
+          />
+          <div class="w-100 d-flex align-center justify-space-between">
+            <v-skeleton-loader
+              width="60"
+              height="20"
+              class="rounded-lg"
+            />
+
+            <v-skeleton-loader
+              width="120"
+              height="20"
+              class="rounded-lg"
+            />
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -162,9 +277,11 @@ const page = ref(1)
 const pageCount = ref(0)
 const statusOption = ['All', 'Earned', 'Spent']
 const statusSelect = ref('All')
+const isAllDataLoaded = ref(false)
+const isPaginationLoading = ref(false)
+const lineSpecifierLoadMoreRef = ref<HTMLElement>()
 
 const getData = async () => {
-  loading.value = true
   try {
     const params: Record<string, string | number | boolean | null> = {
       'PagingDto.PageFilter.Size': pageSize.value,
@@ -180,12 +297,13 @@ const getData = async () => {
     console.log('response', response)
 
     if (response.data) {
-      list.value = response.data.list
-      totalCount.value = response.data.totalRecordsCount
-      pageCount.value = Math.ceil(totalCount.value / pageSize.value)
+      return response.data
     }
     else {
-      list.value = []
+      return {
+        list: [],
+        totalRecordsCount: 0,
+      }
     }
   }
   catch (err: unknown) {
@@ -193,32 +311,96 @@ const getData = async () => {
     if (error.response?.status === 400) {
       $toast.error(error.response.data?.message || '')
     }
+    return {
+      list: [],
+      totalRecordsCount: 0,
+    }
   }
   finally {
     loading.value = false
+    isPaginationLoading.value = false
   }
+}
+
+const setData = (data: ResponseListDTO<TransactionDTO>) => {
+  list.value = data.list
+  totalCount.value = data.totalRecordsCount
+  pageCount.value = Math.ceil(totalCount.value / pageSize.value)
 }
 
 const changeFilterStatus = async (status: string) => {
   if (status != statusSelect.value) {
     statusSelect.value = status
     page.value = 1
-    await getData()
+    loading.value = true
+    isAllDataLoaded.value = false
+    const data = await getData()
+    setData(data)
   }
 }
 
 const changePageNumber = async () => {
-  await getData()
+  loading.value = true
+  const data = await getData()
+  setData(data)
 }
 
 onMounted(async () => {
-  await getData()
+  setupScrollListener()
+  loading.value = true
+  const data = await getData()
+  setData(data)
 })
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScrollListener)
+})
+
+const setupScrollListener = () => {
+  window.addEventListener('scroll', handleScrollListener)
+}
+const setDataInifiniteScroll = (data: ResponseListDTO<TransactionDTO>) => {
+  list.value = [...list.value, ...data.list]
+  totalCount.value = data.totalRecordsCount
+  pageCount.value = Math.ceil(totalCount.value / pageSize.value)
+  if (data.list.length < pageSize.value) {
+    isAllDataLoaded.value = true
+  }
+}
+const handleScrollListener = async () => {
+  const targetDiv = lineSpecifierLoadMoreRef.value
+  if (targetDiv) {
+    const rect = targetDiv.getBoundingClientRect()
+    const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight
+
+    if (
+      isDivInView
+      && !loading.value
+      && !isPaginationLoading.value
+      && !isAllDataLoaded.value
+    ) {
+      console.log('inja')
+      isPaginationLoading.value = true
+      page.value += 1
+
+      const data = await getData()
+      setDataInifiniteScroll(data)
+    }
+  }
+}
 </script>
 
 <style scoped>
 .underline{
   height: 2px;
+}
+.border-odd{
+  border-top : 2px solid rgb(var(--v-theme-grey100));
+  border-bottom : 2px solid rgb(var(--v-theme-grey100))
+}
+.line-specifier-load-more {
+  width: 100%;
+  height: 6px;
 }
 .set-height-table {
   max-height: 70vh;
