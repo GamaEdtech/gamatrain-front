@@ -1,5 +1,5 @@
 <script setup>
-import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
+import DeleteItemModal from '@/components/admin/common/DeleteModal.vue'
 import UserDetailModal from '~/components/admin/usermanagment/userDetailModal.vue'
 import addUserDialog from '~/components/admin/usermanagment/addUserDialog.vue'
 import useApiService from '~/composables/useApiService'

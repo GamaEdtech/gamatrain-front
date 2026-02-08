@@ -1,5 +1,5 @@
 <script setup>
-import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
+import DeleteItemModal from '@/components/admin/common/DeleteModal.vue'
 import addLocation from '~/components/admin/locations/addLocation.vue'
 import editLocation from '~/components/admin/locations/editLocation.vue'
 import useApiService from '~/composables/useApiService'
