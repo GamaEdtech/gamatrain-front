@@ -7,27 +7,19 @@ interface User {
   lastName: string
   group: string
   profileUpdated: boolean
+  roles: string[]
 }
 
 export default defineNuxtRouteMiddleware(async (to) => {
-  const auth = useAuth()
-  const authToken = auth.getUserTokenV2()
   const { getProfile, setUser } = useUser()
-
-  // Skip if no token
-  if (!authToken) {
-    if (to.path.startsWith('/user')) {
-      return navigateTo('/')
-    }
-    return
-  }
+  const { isAuthenticated } = useAuth()
 
   const hasFetchedUserInfo = useState<boolean>(
     'hasFetchedUserInfo',
     () => false,
   )
 
-  if (!hasFetchedUserInfo.value) {
+  if (!hasFetchedUserInfo.value && isAuthenticated.value) {
     const result = await getProfile()
     if (result.data) {
       const data = result.data.data as Partial<User>
@@ -38,6 +30,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
         lastName: data.lastName ?? '',
         group: data.group ?? '',
         profileUpdated: data.profileUpdated ?? false,
+        roles: data.roles ?? [],
       })
       hasFetchedUserInfo.value = true
     }

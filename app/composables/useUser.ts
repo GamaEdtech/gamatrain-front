@@ -9,6 +9,7 @@ interface User {
   lastName: string
   group: number
   profileUpdated: boolean
+  roles: string[]
 }
 
 export const useUser = () => {
@@ -29,6 +30,7 @@ export const useUser = () => {
       firstName: string
       lastName: string
       profileUpdated: boolean
+      roles: string[]
     }
   }
 

@@ -55,6 +55,71 @@
         </template>
       </div>
 
+      <div class="w-100 d-flex flex-wrap">
+        <span class="w-100 text-h4 text-grey500">Boards</span>
+        <div
+          v-if="isLoadingBoard"
+          class="w-100 d-flex flex-wrap align-center my-6 ga-2"
+        >
+          <v-skeleton-loader
+            width="100"
+            height="48"
+            class="bg-transparent rounded-lg"
+          />
+          <v-skeleton-loader
+            width="110"
+            height="48"
+            class="bg-transparent rounded-lg"
+          />
+          <v-skeleton-loader
+            width="90"
+            height="48"
+            class="bg-transparent rounded-lg"
+          />
+          <v-skeleton-loader
+            width="120"
+            height="48"
+            class="bg-transparent rounded-lg"
+          />
+          <v-skeleton-loader
+            width="90"
+            height="48"
+            class="bg-transparent rounded-lg"
+          />
+          <v-skeleton-loader
+            width="84"
+            height="48"
+            class="bg-transparent rounded-lg"
+          />
+        </div>
+        <template v-else>
+          <div
+            class="w-100 d-flex flex-wrap align-center my-6 ga-2"
+          >
+            <v-btn
+              v-for="(board, index) in boards"
+              :key="index"
+              flat
+              :color="selectedBoards.includes(board.id) ? `grey700` : `grey300`"
+              height="48"
+              rounded="lg"
+              @click="chooseBoard(board)"
+            >
+              <img
+                :src="board.img"
+                :alt="board.title"
+                width="26"
+                height="26"
+                class="mr-1"
+              >
+              <span :class="`font-weight-bold text-h5 ${selectedBoards.includes(board.id) ? `text-grey300`:`text-grey900`}`">{{
+                board.title
+              }}</span>
+            </v-btn>
+          </div>
+        </template>
+      </div>
+
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div
           class="d-flex align-center justify-center w-100 container-image-school rounded-lg mt-2 ml-2"
@@ -162,12 +227,20 @@
 <script setup>
 const nuxtApp = useNuxtApp()
 const router = useRouter()
+const { boardImgs } = useBoard()
 
 const emit = defineEmits(['nextStep', 'prevStep'])
 
 onMounted(async () => {
-  await getTags()
+  await Promise.allSettled([
+    getTags(),
+    getBoards(),
+  ])
 })
+
+const isLoadingTag = ref(true)
+const selectedTags = ref([])
+const tags = ref([])
 
 const getTags = async () => {
   try {
@@ -184,16 +257,46 @@ const getTags = async () => {
   }
 }
 
-const isLoadingTag = ref(true)
-const selectedTags = ref([])
-const tags = ref([])
-
 const chooseTag = (tag) => {
   if (selectedTags.value.includes(tag.id)) {
     selectedTags.value = selectedTags.value.filter(id => id !== tag.id)
   }
   else {
     selectedTags.value.push(tag.id)
+  }
+}
+
+const isLoadingBoard = ref(true)
+const selectedBoards = ref([])
+const boards = ref([])
+
+const getBoards = async () => {
+  try {
+    isLoadingBoard.value = true
+    const responseBoard = await useApiService.get(
+      '/api/v1/types/list/?type=section',
+    )
+    if (responseBoard.data) {
+      boards.value = responseBoard.data.map((item, index) => ({
+        ...item,
+        img: boardImgs[index % boardImgs.length],
+      }))
+    }
+  }
+  catch (error) {
+    console.error('error', error)
+  }
+  finally {
+    isLoadingBoard.value = false
+  }
+}
+
+const chooseBoard = (board) => {
+  if (selectedBoards.value.includes(board.id)) {
+    selectedBoards.value = selectedBoards.value.filter(id => id !== board.id)
+  }
+  else {
+    selectedBoards.value.push(board.id)
   }
 }
 
@@ -254,6 +357,7 @@ const submitForm = () => {
     const facilityStepInfo = {
       tags: [...selectedTags.value],
       file: schoolImage.value,
+      BoardCodes: [...selectedBoards.value],
     }
     emit('nextStep', facilityStepInfo)
   }
