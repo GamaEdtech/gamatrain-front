@@ -271,7 +271,7 @@ const getData = async () => {
     }
     const response = await useApiService.get<
       ApiResult<ResponseListDTO<AdminContactUsDTO>>
-    >('/api/v2/admin/contacts', params)
+    >('/api/v2/admin/tickets', params)
     if (response.data) {
       list.value = response.data.list
       totalCount.value = response.data.totalRecordsCount

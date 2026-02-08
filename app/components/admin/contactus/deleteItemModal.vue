@@ -40,7 +40,7 @@ const confirm = async () => {
     const response = await useApiService.remove<
       ApiResult<ResponseListDTO<unknown>>
     >(
-      `/api/v2/admin/contacts/${props.id}`,
+      `/api/v2/admin/tickets/${props.id}`,
     )
     if (response.succeeded) {
       $toast.success('Message deleted successfully!')
