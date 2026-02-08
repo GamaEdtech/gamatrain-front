@@ -2,11 +2,12 @@
   <div class="w-100 position-relative">
     <div
       v-if="loading"
-      class="chart-loading d-flex justify-center align-center"
+      class="w-100 d-flex justify-center align-center"
     >
-      <v-progress-circular
-        indeterminate
-        color="primary"
+      <v-skeleton-loader
+        width="340"
+        height="240"
+        class="rounded-lg"
       />
     </div>
 

@@ -11,6 +11,7 @@
           flat
           icon
           class="d-flex d-sm-none"
+          @click="emit('showChart')"
         >
           <v-icon
             color="grey500"
@@ -257,6 +258,7 @@ import type {
 } from '~/types/api'
 
 const { $dayjs, $toast, $numberFormat } = useNuxtApp()
+const emit = defineEmits(['showChart'])
 
 const headers = [
   { title: 'Description', key: 'description', sortable: false, width: '35vw' },
@@ -294,7 +296,6 @@ const getData = async () => {
     const response = await useApiService.get<
       ApiResult<ResponseListDTO<TransactionDTO>>
     >('/api/v2/transactions', params)
-    console.log('response', response)
 
     if (response.data) {
       return response.data
@@ -379,7 +380,6 @@ const handleScrollListener = async () => {
       && !isPaginationLoading.value
       && !isAllDataLoaded.value
     ) {
-      console.log('inja')
       isPaginationLoading.value = true
       page.value += 1
 
