@@ -6,16 +6,15 @@
     />
     <template v-else>
       <main_header :is-user-dashboard="true" />
-      <div class="mt-16 mt-md-0 position-relative">
+      <div class="mt-16 h-100 position-relative">
         <v-container class="dashboard">
           <!-- Start : Category -->
-          <category />
+          <!-- <category /> -->
           <!-- End:Category -->
 
-          <v-divider class="d-block d-md-none" />
+          <!-- <v-divider class="d-block d-md-none" /> -->
           <div
             flat
-            class="mt-0"
           >
             <div class="px-0 pt-0">
               <v-row>
@@ -38,7 +37,7 @@
 
 <script setup>
 import main_header from '../components/common/header.vue'
-import category from '../components/common/category'
+// import category from '../components/common/category'
 
 const { isOnline } = useNetwork()
 </script>
