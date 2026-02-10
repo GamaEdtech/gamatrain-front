@@ -64,6 +64,7 @@
             :to="item.link"
             class="rounded-lg mt-3"
             role="listitem"
+            :disabled="item.status"
           >
             <template #prepend>
               <span
@@ -340,12 +341,14 @@ const items = [
         title: 'Top Up Wallet',
         link: '/user/charge-wallet',
         icon: 'md:groups',
+        status: true,
       },
-      { title: 'Payments', link: '/user/payments', icon: 'md:shopping_bag' },
+      { title: 'Payments', link: '/user/payments', icon: 'md:shopping_bag', status: true },
       {
         title: 'Sell Report',
         link: '/user/sell-report',
         icon: 'md:account_balance',
+        status: true,
       },
     ],
   },
@@ -354,6 +357,7 @@ const items = [
     icon: 'md:mail',
     link: '/user/ticket',
     value: 'messages',
+    status: true,
   },
   {
     title: 'Settings',
