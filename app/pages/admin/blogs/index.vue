@@ -1,6 +1,5 @@
 <script setup>
 import blogCard from '~/components/admin/blogs/blogCard.vue'
-import DeleteItemModal from '@/components/admin/common/DeleteModal.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
@@ -306,7 +305,7 @@ watch(filter, (_val) => {
         :selected-blog="selectedBlog"
         @fetch-blogs="fetchBlogs"
       />
-      <DeleteItemModal
+      <admin-common-delete-modal
         v-model="isDeleteModalOpen"
         @confirm="deleteBlog"
       />

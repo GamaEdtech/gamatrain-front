@@ -1,5 +1,4 @@
 <script setup>
-import DeleteItemModal from '@/components/admin/common/DeleteModal.vue'
 import addLocation from '~/components/admin/locations/addLocation.vue'
 import editLocation from '~/components/admin/locations/editLocation.vue'
 import useApiService from '~/composables/useApiService'
@@ -310,7 +309,7 @@ watch(search, (val) => {
         </template>
       </v-data-table>
 
-      <DeleteItemModal
+      <admin-common-delete-modal
         v-model="isDeleteModalOpen"
         @confirm="deleteLocation"
       />

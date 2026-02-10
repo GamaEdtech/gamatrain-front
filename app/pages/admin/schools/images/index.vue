@@ -1,5 +1,4 @@
 <script setup>
-import DeleteItemModal from '@/components/admin/common/DeleteModal.vue'
 import schoolCard from '~/components/admin/schools/images/schoolCard.vue'
 import useApiService from '~/composables/useApiService'
 
@@ -322,7 +321,7 @@ watch(filter, (_val) => {
         @fetch-images="fetchImages"
       />
 
-      <DeleteItemModal
+      <admin-common-delete-modal
         v-model="isDeleteModalOpen"
         @confirm="deleteImage"
       />

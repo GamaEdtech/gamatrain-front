@@ -1,7 +1,6 @@
 <script setup>
 import tagCard from '~/components/admin/tags/tagCard.vue'
 import addNewTag from '~/components/admin/tags/addNewTag.vue'
-import DeleteItemModal from '@/components/admin/common/DeleteModal.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
@@ -274,7 +273,7 @@ watch(filter, (_val) => {
         v-model="showAddTagDialog"
         @fetch-tags="fetchTags"
       />
-      <DeleteItemModal
+      <admin-common-delete-modal
         v-model="isDeleteModalOpen"
         @confirm="deleteTag"
       />
