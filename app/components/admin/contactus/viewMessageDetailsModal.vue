@@ -177,7 +177,7 @@ const reply = async () => {
     try {
       loadingReply.value = true
       const params = {
-        sender: 'support@gamatrain.com',
+        senderName: 'support@gamatrain.com',
         body: bodyReply.value,
         subject: subjectReply.value,
         users: [],
