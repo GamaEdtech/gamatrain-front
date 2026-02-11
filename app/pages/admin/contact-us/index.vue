@@ -70,11 +70,11 @@
           </div>
         </template>
 
-        <template #[`item.fullName`]="{ item }">
+        <template #[`item.sender`]="{ item }">
           <div
             class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center"
           >
-            {{ !item.fullName ? `unknown` : item.fullName }}
+            {{ !item.sender ? `unknown` : item.sender }}
           </div>
         </template>
         <template #[`item.email`]="{ item }">
@@ -93,15 +93,15 @@
           </div>
         </template>
 
-        <template #[`item.isRead`]="{ item }">
+        <template #[`item.isReadByAdmin`]="{ item }">
           <div
             class="w-100 d-flex justify-center align-center"
           >
             <v-chip
-              :color="item.isRead ? `success`:`warning`"
+              :color="item.isReadByAdmin ? `success`:`warning`"
               class="font-weight-bold text-h5"
             >
-              {{ item.isRead ? `Read`:`UnRead` }}
+              {{ item.isReadByAdmin ? `Read`:`UnRead` }}
             </v-chip>
           </div>
         </template>
@@ -223,7 +223,7 @@ const { $toast } = useNuxtApp()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
-  { title: 'User', key: 'fullName', sortable: false, width: '15vw' },
+  { title: 'User', key: 'sender', sortable: false, width: '15vw' },
   {
     title: 'Email',
     key: 'email',
@@ -231,7 +231,7 @@ const headers = [
     width: '15vw',
   },
   { title: 'Subject', key: 'subject', sortable: false, width: '20vw' },
-  { title: 'Status', key: 'isRead', sortable: false, width: '10vw' },
+  { title: 'Status', key: 'isReadByAdmin', sortable: false, width: '10vw' },
   {
     title: 'Action',
     key: 'Action',
@@ -267,11 +267,11 @@ const getData = async () => {
     }
     if (statusSelect.value != 'All') {
       params[`PagingDto.SearchFilter.phrase`] = statusSelect.value == 'Read' ? true : false
-      params[`PagingDto.SearchFilter.column`] = 'isRead'
+      params[`PagingDto.SearchFilter.column`] = 'isReadByAdmin'
     }
     const response = await useApiService.get<
       ApiResult<ResponseListDTO<AdminContactUsDTO>>
-    >('/api/v2/admin/contacts', params)
+    >('/api/v2/admin/tickets', params)
     if (response.data) {
       list.value = response.data.list
       totalCount.value = response.data.totalRecordsCount
@@ -317,7 +317,7 @@ onMounted(async () => {
 })
 
 const viewDetail = async (contact: AdminContactUsDTO) => {
-  contact.isRead = true
+  contact.isReadByAdmin = true
   selectedItemIdForDetail.value = contact.id
   showDetailModal.value = true
 }

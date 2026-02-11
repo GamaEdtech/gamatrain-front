@@ -163,10 +163,11 @@ export interface TypesStatsDTO {
 
 export interface AdminContactUsDTO {
   id: number
-  fullName: string
+  sender: string
   email: string
   subject: string
-  isRead: boolean
+  isReadByAdmin: boolean
+  creationDate: string
 }
 
 export interface AdminContactUsDetailDTO {
@@ -175,6 +176,9 @@ export interface AdminContactUsDetailDTO {
   email: string
   subject: string
   body: string
+  creationUser: string
+  creationDate: string
+  fileUri: string
 }
 
 export interface QuestionDTO {
