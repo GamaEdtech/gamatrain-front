@@ -1,7 +1,7 @@
 import type { ApiResult } from '~/types/api'
 
 const balance = ref<number>(0)
-const isLoading = ref<boolean>(false)
+const isLoading = ref<boolean>(true)
 
 export const useCoinBalance = () => {
   const { isAuthenticated } = useAuth()

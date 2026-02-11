@@ -14,32 +14,9 @@
       class="w-100 d-flex flex-wrap align-center my-6 ga-2"
     >
       <v-skeleton-loader
-        width="100"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-      <v-skeleton-loader
-        width="110"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-      <v-skeleton-loader
-        width="90"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-      <v-skeleton-loader
-        width="120"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-      <v-skeleton-loader
-        width="90"
-        height="48"
-        class="bg-transparent rounded-lg"
-      />
-      <v-skeleton-loader
-        width="84"
+        v-for="size in sizeSkeletonBoard"
+        :key="size"
+        :width="size"
         height="48"
         class="bg-transparent rounded-lg"
       />
@@ -48,25 +25,36 @@
       v-else
       class="w-100 d-flex flex-wrap align-center my-6 ga-2"
     >
-      <v-btn
+      <template
         v-for="(board, index) in boards"
         :key="index"
-        flat
-        :color="schoolBoards.some(s => s.code === Number(board.id)) ? `grey700` : `grey300`"
-        height="48"
-        rounded="lg"
       >
-        <img
-          :src="board.img"
-          :alt="board.title"
-          width="26"
-          height="26"
-          class="mr-1"
+        <v-btn
+          v-if="schoolBoards.some(s => s.code === Number(board.id))"
+          flat
+          :color="schoolBoards.some(s => s.code === Number(board.id)) ? `grey700` : `grey300`"
+          height="48"
+          rounded="lg"
         >
-        <span :class="`font-weight-bold text-h5 ${schoolBoards.some(s => s.code === Number(board.id)) ? `text-grey300`:`text-grey900`}`">{{
-          board.title
-        }}</span>
-      </v-btn>
+          <img
+            :src="board.img"
+            :alt="board.title"
+            width="26"
+            height="26"
+            class="mr-1"
+          >
+          <span :class="`font-weight-bold text-h5 ${schoolBoards.some(s => s.code === Number(board.id)) ? `text-grey300`:`text-grey900`}`">{{
+            board.title
+          }}</span>
+        </v-btn>
+      </template>
+
+      <span
+        v-if="schoolBoards.length == 0"
+        class="ml-2 text-h5 text-grey700 font-weight-bold"
+      >
+        Education board information hasn’t been added for this school yet. Know it? Contribute and help keep our data accurate.
+      </span>
     </div>
 
     <v-dialog
@@ -157,6 +145,7 @@ const isLoadingBoard = ref(true)
 const selectedBoards = ref([])
 const boards = ref([])
 const loadingContribute = ref(false)
+const sizeSkeletonBoard = [100, 110, 90, 120, 90, 84]
 
 onMounted(async () => {
   await getBoards()

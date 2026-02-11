@@ -159,6 +159,7 @@ const requestPassRecover = async () => {
 // Handle OTP confirmation
 const onFinish = async () => {
   try {
+    otp_loading.value = true
     const response = await useApiService.post(
       '/api/v1/users/recovery',
       new URLSearchParams({
@@ -178,6 +179,9 @@ const onFinish = async () => {
 
     if (error?.response?.status === 400) $toast.error(errorData.message)
     else $toast.error('Something went wrong.')
+  }
+  finally {
+    otp_loading.value = false
   }
 }
 
@@ -395,6 +399,7 @@ function closeDialog() {
                   v-model="otp"
                   :disabled="otp_loading"
                   length="5"
+                  :loading="otp_loading"
                   @finish="onFinish"
                 />
               </v-col>
