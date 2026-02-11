@@ -40,55 +40,43 @@
       }`"
     >
       <div
-        class="w-100 d-flex flex-column align-start justify-start ga-2"
+        class="w-100 d-flex flex-column align-start justify-start ga-2 pa-1"
       >
-        <h2 class="gtext-t4 font-weight-semibold">{{ school.name }}</h2>
+        <h2 class="text-h5 text-grey800 font-weight-semibold">{{ school.name }}</h2>
         <div class="d-flex align-center justify-start flex-wrap ga-2">
           <v-chip
-            v-if="school.countryTitle && school.countryTitle.length > 0"
-            class="text-subtitle-2"
+            v-for="(chip, index) in locationChips"
+            :key="index"
             size="small"
-            variant="elevated"
-            color="#546e7a"
+            variant="flat"
+            color="primary50"
           >
-            {{ school.countryTitle }}
+            <span class="text-h6 font-weight-medium text-primary">
+              {{ chip.label }}
+            </span>
           </v-chip>
-          <v-chip
-            v-if="school.stateTitle && school.stateTitle.length > 0"
-            class="text-subtitle-2"
-            size="small"
-            variant="elevated"
-            color="#546e7a"
-          >{{ school.stateTitle }}</v-chip>
-          <v-chip
-            v-if="school.cityTitle && school.cityTitle.length > 0"
-            class="text-subtitle-2"
-            size="small"
-            variant="elevated"
-            color="#546e7a"
-          >United {{ school.cityTitle }}</v-chip>
         </div>
 
         <div
           class="w-100 d-flex align-strach justify-space-between pt-2"
         >
           <div
-            class="d-flex align-center w-100 gtext-t6 font-weight-semibold ga-1 primary-gray-500"
+            class="d-flex align-center w-100 text-h6 font-weight-regular ga-1 text-grey500"
           >
             Score:
             <v-icon color="primary"> md:star </v-icon>
-            {{ school.score ? school.score.toFixed(1) : "N/A" }}
+            <span class="text-grey800 font-weight-semibold">            {{ school.score ? school.score.toFixed(1) : "N/A" }}</span>
           </div>
           <v-divider
             :thickness="1"
-            class="border-opacity-100 primary-gray-300 w-100"
+            class="border-opacity-100 bg-grey300 w-100"
             vertical
           />
           <div
-            class="d-flex align-center justify-end ga-2 gtext-t6 primary-gray-300 w-100"
+            class="d-flex align-center justify-end ga-2 text-h6  w-100"
           >
-            <v-icon color="rgba(52, 64, 84, 1)">md:update</v-icon>
-            <span class="primary-gray-600">
+            <v-icon color="grey500">md:update</v-icon>
+            <span class="text-grey800 font-weight-semibold">
               {{ $dayjs(school.lastModifyDate).format("YYYY-MM-DD") }}
             </span>
           </div>
@@ -100,59 +88,27 @@
     >
       <div class="d-flex align-center ga-2">
         <v-btn
+          v-for="(btn, index) in actionButtons"
+          :key="index"
           width="30"
           height="30"
           variant="text"
           icon
-          :disabled="!school.hasLocation"
+          :disabled="btn.disabled"
         >
           <v-icon
             size="x-large"
-            color="#546e7a"
-          > md:location_on </v-icon>
-        </v-btn>
-        <v-btn
-          width="30"
-          height="30"
-          variant="text"
-          icon
-          :disabled="!school.hasPhone"
-        >
-          <v-icon
-            size="x-large"
-            color="#546e7a"
-          > md:call</v-icon>
-        </v-btn>
-        <v-btn
-          width="30"
-          height="30"
-          variant="text"
-          icon
-          :disabled="!school.hasEmail"
-        >
-          <v-icon
-            size="x-large"
-            color="#546e7a"
-          > md:mail</v-icon>
-        </v-btn>
-        <v-btn
-          width="30"
-          height="30"
-          variant="text"
-          icon
-          :disabled="!school.hasWebsite"
-        >
-          <v-icon
-            size="x-large"
-            color="#546e7a"
-          > md:language</v-icon>
+            color="grey700"
+          >
+            {{ btn.icon }}
+          </v-icon>
         </v-btn>
       </div>
       <div class="d-flex align-center">
-        <span class="text-h6 font-weight-normal primary-gray-700">Details</span>
+        <span class="text-h6 font-weight-regular text-grey700">Details</span>
         <v-icon
           size="small"
-          color="#344054"
+          color="grey700"
         >md:chevron_forward</v-icon>
       </div>
     </div>
@@ -160,16 +116,57 @@
 </template>
 
 <script setup>
-defineProps({
+const props = defineProps({
   school: {
     type: Object,
   },
+})
+
+const locationChips = computed(() => {
+  const s = props.school
+  if (!s) return []
+
+  return [
+    s.countryTitle && {
+      label: s.countryTitle,
+    },
+    s.stateTitle && {
+      label: s.stateTitle,
+    },
+    s.cityTitle && {
+      label: `United ${s.cityTitle}`,
+    },
+  ].filter(Boolean)
+})
+
+const actionButtons = computed(() => {
+  const s = props.school
+  if (!s) return []
+
+  return [
+    {
+      icon: 'md:location_on',
+      disabled: !s.hasLocation,
+    },
+    {
+      icon: 'md:call',
+      disabled: !s.hasPhone,
+    },
+    {
+      icon: 'md:mail',
+      disabled: !s.hasEmail,
+    },
+    {
+      icon: 'md:language',
+      disabled: !s.hasWebsite,
+    },
+  ]
 })
 </script>
 
 <style scoped>
 .card-school {
-  background-color: #f2f4f7;
+  background-color: rgb(var(--v-theme-grey50));
   border: none;
   min-height: 260px;
   max-width: 560px;
@@ -179,14 +176,15 @@ defineProps({
 }
 .without-image {
   min-height: unset;
+  max-height: fit-content;
 }
 .image-school {
   max-height: 130px;
 }
 .name-address-image {
-  min-height: unset;
-  background-color: #fffffff2;
+  background-color: rgba(var(--v-theme-white),0.95);
   z-index: 2;
+  border : 1px solid rgb(var(--v-theme-grey200));
 }
 .position-bookmark {
   z-index: 2;
@@ -194,7 +192,7 @@ defineProps({
   right: 10px;
 }
 .bottom-section {
-  background-color: #f2f4f7;
+  background-color: rgb(var(--v-theme-grey50));
   z-index: 2;
 }
 </style>

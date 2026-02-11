@@ -1,13 +1,30 @@
 <template>
-  <div class="w-100 d-flex flex-column mt-4">
+  <div
+    v-if="isLoading || schools.length != 0"
+    class="w-100 d-flex flex-column mt-4"
+  >
     <span class="text-h3 font-weight-bold text-grey700">
       Nearest School
     </span>
 
     <v-slide-group
+      v-if="isLoading"
       show-arrows
       class="related-content position-relative mt-8"
-      :style="{ height: `auto` }"
+    >
+      <v-slide-group-item
+        v-for="i in 10"
+        :key="i"
+      >
+        <school-card-school-mobile-skeleton
+          class="mx-4"
+        />
+      </v-slide-group-item>
+    </v-slide-group>
+    <v-slide-group
+      v-else
+      show-arrows
+      class="related-content position-relative mt-8"
     >
       <template #prev>
         <v-btn
@@ -62,8 +79,6 @@ const isLoading = ref(true)
 const schools = ref<SchoolListDTO[]>([])
 
 const getSchool = async () => {
-  console.log(props.lat)
-  console.log(props.lng)
   if (props.lat != null && props.lng != null) {
     try {
       isLoading.value = true
@@ -80,7 +95,6 @@ const getSchool = async () => {
       if (response.succeeded && response.data && response.data.list.length > 0) {
         schools.value = response.data.list
       }
-      console.log('response', response)
     }
     catch (err) {
       console.error(err)
@@ -97,6 +111,10 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+:deep(.related-content > .v-slide-group__container > .v-slide-group__content){
+  align-items: end;
+  padding: 10px 0;
+}
 :deep(.related-content:hover > .v-slide-group__prev),
 :deep(.related-content:hover > .v-slide-group__next) {
   opacity: 1;
