@@ -51,6 +51,7 @@
 </template>
 
 <script setup lang="ts">
+const route = useRoute()
 const emit = defineEmits(['close'])
 
 const addOptions = [
@@ -93,6 +94,13 @@ const clickOnOverlay = () => {
 const clickOnModal = (event: Event) => {
   event.stopPropagation()
 }
+
+watch(
+  () => route.fullPath,
+  () => {
+    emit('close')
+  },
+)
 </script>
 
 <style scoped>
