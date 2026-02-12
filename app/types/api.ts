@@ -310,3 +310,27 @@ export interface TransactionDTO {
   creationDate: string
   isDebit: boolean
 }
+export interface SchoolListDTO {
+  id: number
+  name: string
+  slug: string
+
+  cityTitle: string
+  stateTitle: string
+  countryTitle: string
+
+  defaultImageUri: string
+
+  distance: number
+  score: number
+
+  hasEmail: boolean
+  hasPhone: boolean
+  hasWebsite: boolean
+  hasLocation: boolean
+
+  lat: number
+  long: number
+
+  lastModifyDate: string
+}

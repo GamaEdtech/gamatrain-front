@@ -245,7 +245,10 @@
             :comment-list="commentList"
             @reaction-updated="refreshComments()"
           />
-          <school-detail-similar-schools :similar-schools="similarSchools" />
+          <school-detail-nearest-school
+            :lat="contentData.latitude"
+            :lng="contentData.longitude"
+          />
         </v-col>
       </v-row>
       <!-- End data container -->
@@ -297,7 +300,6 @@ const commentList = ref([])
 const reportDialog = ref(false)
 const contentData = ref(null)
 const ratingData = ref(null)
-const similarSchools = []
 const galleryImages = ref([])
 const isAdsLoad = ref(false)
 
@@ -467,9 +469,22 @@ const fetchSchoolData = async () => {
     const response = await useApiService.get(
       `/api/v2/schools/${route.params.id}`,
     )
-    return response
+    if (response.succeeded) {
+      return response
+    }
+    else {
+      showError({
+        statusCode: 404,
+        statusMessage: 'Page Not Founded!',
+      })
+      return null
+    }
   }
   catch (error) {
+    showError({
+      statusCode: 404,
+      statusMessage: 'Page Not Founded!',
+    })
     console.error('Error fetching data:', error)
     return null
   }
