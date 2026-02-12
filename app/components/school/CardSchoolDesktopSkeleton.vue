@@ -1,17 +1,12 @@
 <template>
   <div
-    class="w-100 pa-0 rounded-lg d-flex flex-column align-start card-school justify-end position-relative"
+    class="w-100 pa-4 rounded-lg d-flex flex-column align-start justify-space-between card-school position-relative"
   >
-    <v-skeleton-loader
-      width="100"
-      height="100"
-      class="d-flex w-100 h-100 rounded-lg position-absolute"
-    />
     <div
-      class="name-address-image pa-2 w-100 d-flex ga-1 position-relative justify-start rounded-t-xl"
+      class="name-address-image w-100 d-flex ga-5 position-relative justify-space-between rounded-t-xl"
     >
       <div
-        class="w-100 d-flex flex-column align-start justify-start ga-2"
+        class="w-100 d-flex flex-column align-start justify-start ga-5"
       >
         <v-skeleton-loader
           width="200"
@@ -35,31 +30,22 @@
             class="rounded-xl"
           />
         </div>
-
-        <div
-          class="w-100 d-flex align-strach justify-space-between pt-2"
-        >
-          <v-skeleton-loader
-            width="60"
-            height="20"
-            class="rounded-xl"
-          />
-          <v-divider
-            :thickness="1"
-            class="border-opacity-100 w-100"
-            vertical
-            color="grey300"
-          />
-          <v-skeleton-loader
-            width="60"
-            height="20"
-            class="rounded-xl"
-          />
-        </div>
+      </div>
+      <div class="d-block image-school">
+        <v-skeleton-loader
+          width="130"
+          height="130"
+          class="rounded-lg"
+        />
       </div>
     </div>
+    <v-divider
+      class="w-100 mt-2 d-flex border-opacity-100"
+      thickness="2"
+      color="grey100"
+    />
     <div
-      class="w-100 d-flex align-center justify-space-between rounded-b-lg mt-0 flex-wrap ga-5 bottom-section px-1 py-2"
+      class="w-100 d-flex align-center justify-space-between rounded-b-lg mt-3 flex-wrap ga-5 bottom-section"
     >
       <div class="d-flex align-center ga-2">
         <v-skeleton-loader
@@ -70,14 +56,8 @@
           class="rounded-circle"
         />
       </div>
-      <div class="d-flex align-center">
-        <v-skeleton-loader
-          width="50"
-          height="20"
-          class="rounded-xl"
-        />
-      </div>
-      <div class="d-none d-md-flex align-center ga-2">
+
+      <div class="d-flex align-center ga-2">
         <v-skeleton-loader
           width="60"
           height="20"
@@ -97,24 +77,23 @@
 
 <style scoped>
 .card-school {
-  background-color: rgb(var(--v-theme-grey50));
-  border : 1px solid rgb(var(--v-theme-grey200));
-  min-height: 260px;
-  max-width: 560px;
+  background-color: rgba(var(--v-theme-white),0.95);
+  border: 1px solid rgb(var(--v-theme-primary50));
+  min-height: unset;
+  max-width: unset;
   box-shadow: 2px 6px 24px 0px #1018280D;
   text-decoration: none;
 }
 .without-image {
   min-height: unset;
-  max-height: fit-content;
 }
 .image-school {
   max-height: 130px;
 }
 .name-address-image {
+  min-height: 130px;
   background-color: rgba(var(--v-theme-white),0.95);
   z-index: 2;
-  border : 1px solid rgb(var(--v-theme-grey200));
 }
 .position-bookmark {
   z-index: 2;
@@ -122,7 +101,7 @@
   right: 10px;
 }
 .bottom-section {
-  background-color: rgb(var(--v-theme-grey50));
+  background-color: unset;
   z-index: 2;
 }
 </style>
