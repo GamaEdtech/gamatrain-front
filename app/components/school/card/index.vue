@@ -1,9 +1,9 @@
 <template>
   <div class="w-100 d-none d-md-flex justify-center">
-    <school-card-school-desktop :school="school" />
+    <school-card-desktop :school="school" />
   </div>
   <div class="w-100 d-flex justify-center d-md-none">
-    <school-card-school-mobile :school="school" />
+    <school-card-mobile :school="school" />
   </div>
 </template>
 

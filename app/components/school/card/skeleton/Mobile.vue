@@ -100,7 +100,7 @@
   background-color: rgb(var(--v-theme-grey50));
   border : 1px solid rgb(var(--v-theme-grey200));
   min-height: 260px;
-  max-width: 560px;
+  max-width: 320px;
   box-shadow: 2px 6px 24px 0px #1018280D;
   text-decoration: none;
 }

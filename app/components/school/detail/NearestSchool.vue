@@ -16,7 +16,7 @@
         v-for="i in 10"
         :key="i"
       >
-        <school-card-school-mobile-skeleton
+        <school-card-skeleton-mobile
           class="mx-4"
         />
       </v-slide-group-item>
@@ -52,9 +52,9 @@
         v-for="school in schools"
         :key="school.id"
       >
-        <school-card-school-mobile
+        <school-card-mobile
           :school="school"
-          class="mx-4"
+          class="mx-2"
         />
       </v-slide-group-item>
     </v-slide-group>
