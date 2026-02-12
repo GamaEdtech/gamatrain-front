@@ -469,9 +469,22 @@ const fetchSchoolData = async () => {
     const response = await useApiService.get(
       `/api/v2/schools/${route.params.id}`,
     )
-    return response
+    if (response.succeeded) {
+      return response
+    }
+    else {
+      showError({
+        statusCode: 404,
+        statusMessage: 'Page Not Founded!',
+      })
+      return null
+    }
   }
   catch (error) {
+    showError({
+      statusCode: 404,
+      statusMessage: 'Page Not Founded!',
+    })
     console.error('Error fetching data:', error)
     return null
   }
@@ -499,7 +512,6 @@ const {
   lazy: false,
   immediate: true,
 })
-console.log(contentDataRaw.value)
 
 const {
   data: ratingDataRaw,
