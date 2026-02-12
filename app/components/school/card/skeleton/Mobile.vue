@@ -70,14 +70,7 @@
           class="rounded-circle"
         />
       </div>
-      <div class="d-flex align-center">
-        <v-skeleton-loader
-          width="50"
-          height="20"
-          class="rounded-xl"
-        />
-      </div>
-      <div class="d-none d-md-flex align-center ga-2">
+      <div class="d-flex align-center ga-2">
         <v-skeleton-loader
           width="60"
           height="20"

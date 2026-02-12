@@ -74,6 +74,7 @@ interface INearestSchool {
 }
 
 const props = defineProps<INearestSchool>()
+const route = useRoute()
 const SCHOOL_DISTANCE = 5000
 const isLoading = ref(true)
 const schools = ref<SchoolListDTO[]>([])
@@ -93,7 +94,8 @@ const getSchool = async () => {
 
       const response = await useApiService.get<ApiResult<ResponseListDTO<SchoolListDTO>>>('/api/v2/schools', params)
       if (response.succeeded && response.data && response.data.list.length > 0) {
-        schools.value = response.data.list
+        const id = Number(route.params.id)
+        schools.value = response.data.list.filter(school => school.id != id)
       }
     }
     catch (err) {
