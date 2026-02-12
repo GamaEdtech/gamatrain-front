@@ -6,7 +6,7 @@ type UseFetchOptions = {
   key?: string
   method?: string
   query?: SearchParameters
-  params?: SearchParameters
+  params?: SearchParameters | FormData
   body?: RequestInit['body'] | Record<string, unknown>
   headers?: Record<string, string> | [key: string, value: string][] | Headers
   baseURL?: string
@@ -105,7 +105,7 @@ export const get = <T = unknown>(
 
 export const post = <T = unknown>(
   request: string,
-  params?: SearchParameters,
+  params?: SearchParameters | FormData,
   opts?: UseFetchOptions,
 ): Promise<T> => {
   return useApiService<T>(request, { ...opts, method: 'POST', body: params })

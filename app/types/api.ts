@@ -110,6 +110,57 @@ export interface PDFResponseDTO {
   name?: string
 }
 
+export interface ProAccess {
+  status: number
+  http_code: number
+  data: {
+    limit: boolean
+    remained: number
+    usage: boolean
+  }
+}
+
+export interface TutorialDTO {
+  base: string
+  content: string
+  course: string
+  id: string
+  lesson: string
+  proAccess: ProAccess
+  section: string
+  status: string
+  title: string
+  title_url: string
+  topic: string
+  up_date: string
+  update_jalali: string
+  views: string
+}
+
+export interface ChapterDTO {
+  id: string
+  season: boolean
+  title: string
+  tutorials: {
+    id: string
+    title: string
+  }[]
+}
+
+export interface UnitLessonDTO {
+  id: string
+  season: boolean
+  title: string
+  tutorialsNum: number
+  chapters: ChapterDTO[]
+}
+
+export interface LessonTreeDTO {
+  id: string
+  title: string
+  list: UnitLessonDTO[]
+}
+
 export interface AdminTransactionDTO {
   id: number
   userId: number
@@ -163,10 +214,11 @@ export interface TypesStatsDTO {
 
 export interface AdminContactUsDTO {
   id: number
-  fullName: string
+  sender: string
   email: string
   subject: string
-  isRead: boolean
+  isReadByAdmin: boolean
+  creationDate: string
 }
 
 export interface AdminContactUsDetailDTO {
@@ -175,6 +227,9 @@ export interface AdminContactUsDetailDTO {
   email: string
   subject: string
   body: string
+  creationUser: string
+  creationDate: string
+  fileUri: string
 }
 
 export interface QuestionDTO {

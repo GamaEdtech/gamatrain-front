@@ -152,7 +152,7 @@ const getDetail = async () => {
     const response = await useApiService.get<
       ApiResult<AdminContactUsDetailDTO>
     >(
-      `/api/v2/admin/contacts/${props.id}`,
+      `/api/v2/admin/tickets/${props.id}`,
     )
     if (response.succeeded && response.data) {
       contactData.value = response.data
@@ -177,7 +177,7 @@ const reply = async () => {
     try {
       loadingReply.value = true
       const params = {
-        sender: 'support@gamatrain.com',
+        senderName: 'support@gamatrain.com',
         body: bodyReply.value,
         subject: subjectReply.value,
         users: [],
