@@ -1,21 +1,10 @@
 <template>
   <NuxtLink
-    :class="`w-100 pa-0 rounded-lg d-flex flex-column align-start card-school justify-end position-relative ${
+    :class="`w-100 pa-4 rounded-lg d-flex flex-column align-start justify-space-between card-school position-relative ${
       school?.defaultImageUri ? `` : `without-image`
     }`"
     :to="`/school/${school.id}/${school.slug}`"
   >
-    <div
-      v-if="school?.defaultImageUri"
-      class="pa-1 d-flex align-center justify-center position-absolute  position-bookmark rounded-circle bg-grey100"
-    >
-      <v-icon
-
-        color="grey700"
-        size="16"
-      >md:bookmark_outlined</v-icon>
-    </div>
-
     <!-- <NuxtImg
       v-if="school?.defaultImageUri"
       :alt="school?.name"
@@ -25,24 +14,15 @@
       placeholder
       class="d-flex d-md-none w-100 h-100 rounded-lg position-absolute"
     /> -->
-    <v-img
-      v-if="school?.defaultImageUri"
-      :alt="school?.name"
-      width="320px"
-      height="320px"
-      cover
-      :src="school.defaultImageUri?.replace(/^http:\/\//, 'https://')"
-      class="d-flex w-100 h-100 rounded-lg position-absolute"
-    />
     <div
-      :class="`name-address-image pa-2 w-100 d-flex ga-1 position-relative justify-start ${
+      :class="`name-address-image pa-0 w-100 d-flex ga-5 position-relative justify-space-between ${
         school?.defaultImageUri ? `rounded-t-xl` : `rounded-t-lg`
       }`"
     >
       <div
-        class="w-100 d-flex flex-column align-start justify-start ga-2 pa-1"
+        class="w-100 d-flex flex-column align-start justify-start ga-5"
       >
-        <h2 class="text-h5 text-grey800 font-weight-semibold">{{ school.name }}</h2>
+        <h2 class="text-h4 text-grey800 font-weight-semibold">{{ school.name }}</h2>
         <div class="d-flex align-center justify-start flex-wrap ga-2">
           <v-chip
             v-for="(chip, index) in locationChips"
@@ -56,38 +36,40 @@
             </span>
           </v-chip>
         </div>
-
-        <div
-          class="w-100 d-flex align-strach justify-space-between pt-2"
-        >
-          <div
-            class="d-flex align-center w-100 text-h6 font-weight-regular ga-1 text-grey500"
-          >
-            Score:
-            <v-icon color="primary"> md:star </v-icon>
-            <span class="text-grey800 font-weight-semibold">            {{ school.score ? school.score.toFixed(1) : "N/A" }}</span>
-          </div>
-          <v-divider
-            :thickness="1"
-            class="border-opacity-100 w-100"
-            vertical
-            color="grey300"
-          />
-          <div
-            class="d-flex align-center justify-end ga-2 text-h6  w-100"
-          >
-            <v-icon color="grey500">md:update</v-icon>
-            <span class="text-grey800 font-weight-semibold">
-              {{ $dayjs(school.lastModifyDate).format("YYYY-MM-DD") }}
-            </span>
-          </div>
-        </div>
+      </div>
+      <div
+        v-if="school.defaultImageUri"
+        class="d-block image-school"
+      >
+        <!-- <NuxtImg
+          v-show="school.defaultImageUri"
+          alt="school.name"
+          width="180px"
+          height="130px"
+          :src="school.defaultImageUri?.replace(/^http:\/\//, 'https://')"
+          placeholder
+          class="h-100 rounded-lg"
+        /> -->
+        <v-img
+          v-show="school.defaultImageUri"
+          :alt="school.name"
+          width="180px"
+          height="130px"
+          cover
+          :src="school.defaultImageUri?.replace(/^http:\/\//, 'https://')"
+          class="h-100 rounded-lg"
+        />
       </div>
     </div>
+    <v-divider
+      class="w-100 mt-2 d-flex border-opacity-100"
+      thickness="2"
+      color="grey100"
+    />
     <div
-      class="w-100 d-flex align-center justify-space-between rounded-b-lg mt-0 flex-wrap ga-5 bottom-section py-1 px-2"
+      class="w-100 d-flex align-center justify-space-between rounded-b-lg mt-3 flex-wrap ga-5 bottom-section"
     >
-      <div class="d-flex align-center ga-2">
+      <div class="d-flex align-center ga-8">
         <v-btn
           v-for="(btn, index) in actionButtons"
           :key="index"
@@ -98,19 +80,30 @@
           :disabled="btn.disabled"
         >
           <v-icon
-            size="x-large"
+            size="24"
             color="grey700"
           >
             {{ btn.icon }}
           </v-icon>
         </v-btn>
       </div>
-      <div class="d-flex align-center">
-        <span class="text-h6 font-weight-regular text-grey700">Details</span>
-        <v-icon
-          size="small"
-          color="grey700"
-        >md:chevron_forward</v-icon>
+      <div class="d-flex align-center ga-2">
+        <div class="d-flex align-center ga-2 text-grey800 font-weight-semibold text-h6">
+          <v-icon
+            size="x-large"
+            color="primary"
+          > md:star </v-icon>
+          {{ school.score ? school.score.toFixed(1) : "New" }}
+        </div>
+        <div class="d-flex align-center ga-2 text-h6">
+          <v-icon
+            size="x-large"
+            color="grey500"
+          >md:update</v-icon>
+          <span class="text-grey800 font-weight-semibold">
+            {{ $dayjs(school.lastModifyDate).format("YYYY-MM-DD") }}
+          </span>
+        </div>
       </div>
     </div>
   </NuxtLink>
@@ -167,24 +160,23 @@ const actionButtons = computed(() => {
 
 <style scoped>
 .card-school {
-  background-color: rgb(var(--v-theme-grey50));
-    border : 1px solid rgb(var(--v-theme-grey200));
-  min-height: 260px;
-  max-width: 560px;
+  background-color: rgba(var(--v-theme-white),0.95);
+  border: 1px solid rgb(var(--v-theme-primary50));
+  min-height: unset;
+  max-width: unset;
   box-shadow: 2px 6px 24px 0px #1018280D;
   text-decoration: none;
 }
 .without-image {
   min-height: unset;
-  max-height: fit-content;
 }
 .image-school {
   max-height: 130px;
 }
 .name-address-image {
+  min-height: 130px;
   background-color: rgba(var(--v-theme-white),0.95);
   z-index: 2;
-  border : 1px solid rgb(var(--v-theme-grey200));
 }
 .position-bookmark {
   z-index: 2;
@@ -192,7 +184,7 @@ const actionButtons = computed(() => {
   right: 10px;
 }
 .bottom-section {
-  background-color: rgb(var(--v-theme-grey50));
+  background-color: unset;
   z-index: 2;
 }
 </style>
