@@ -307,9 +307,22 @@ const { data: contentData } = await useAsyncData(
   async () => {
     try {
       const content = await useApiService.get(`/api/v1/files/${route.params.id}`)
-      return content.status === 1 ? content.data : {}
+      if (content.status === 1) {
+        return content.data
+      }
+      else {
+        showError({
+          statusCode: 404,
+          statusMessage: 'Page Not Founded!',
+        })
+        return {}
+      }
     }
     catch (e) {
+      showError({
+        statusCode: 404,
+        statusMessage: 'Page Not Founded!',
+      })
       if (e?.status === 404) {
         // router.push("/search?type=question");
       }
