@@ -152,9 +152,22 @@ const { data: contentData } = await useAsyncData(
         `/api/v1/tests/${route.params.id}`,
       )) as ApiResult<PastPaperDTO>
 
-      return response.data
+      if (response.data) {
+        return response.data
+      }
+      else {
+        showError({
+          statusCode: 404,
+          statusMessage: 'Page Not Founded!',
+        })
+        return null
+      }
     }
     catch (e: unknown) {
+      showError({
+        statusCode: 404,
+        statusMessage: 'Page Not Founded!',
+      })
       const error = e as AppError
       if (error?.status === 404) {
         router.push('/search?type=paper')

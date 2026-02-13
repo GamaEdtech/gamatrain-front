@@ -209,9 +209,22 @@ const { data: contentData } = await useAsyncData(
         `/api/v1/tutorials/${route.params.id}`,
       )) as ApiResult<TutorialDTO>
 
-      return response.data
+      if (response.status === 1) {
+        return response.data
+      }
+      else {
+        showError({
+          statusCode: 404,
+          statusMessage: 'Page Not Founded!',
+        })
+        return response.data
+      }
     }
     catch (e: unknown) {
+      showError({
+        statusCode: 404,
+        statusMessage: 'Page Not Founded!',
+      })
       const error = e as AppError
       if (error?.status === 404) {
         router.push('/search?type=test')
