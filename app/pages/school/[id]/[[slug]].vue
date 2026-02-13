@@ -507,7 +507,7 @@ const {
   data: contentDataRaw,
   status,
   _refresh,
-} = await useAsyncData('contentData', () => fetchSchoolData(), {
+} = await useAsyncData(() => `contentData-${route.params.id}`, () => fetchSchoolData(), {
   server: true,
   lazy: false,
   immediate: true,
