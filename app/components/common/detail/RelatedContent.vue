@@ -167,42 +167,36 @@ const infoMap = {
     keyResponse: 'tutorials',
   },
 }
-const pastpaper = ref<ContentItemDTO[]>([])
-const tutorials = ref<ContentItemDTO[]>([])
-
-const loading = ref(true)
 const fallbackImage = '/images/GamaBag.webp'
 
-const getRelatedContent = async () => {
-  try {
-    loading.value = true
-    const params = {
+const { data: relatedData, status } = await useFetch<ApiResult<RelatedContentDTO>>(
+  '/api/v1/recommendations/related',
+  {
+    params: {
       source: props.source,
       request: props.request.join(','),
       id: props.id,
-    }
-    const response = await useApiService.get<ApiResult<RelatedContentDTO>>(
-      '/api/v1/recommendations/related',
-      params,
-    )
-    const related = response.data
-    if (related) {
-      pastpaper.value
-        = related[infoMap['paper'].keyResponse as keyof RelatedContentDTO]
-      tutorials.value
-        = related[infoMap['tutorial'].keyResponse as keyof RelatedContentDTO]
-    }
-  }
-  catch (error) {
-    console.error('Search error:', error)
-  }
-  finally {
-    loading.value = false
-  }
-}
+    },
+    key: `related-content-${props.id}-${props.source}`,
+  },
+)
 
-onMounted(async () => {
-  await getRelatedContent()
+const loading = computed(() => status.value === 'pending')
+
+const pastpaper = computed(() => {
+  const related = relatedData.value?.data
+  if (related) {
+    return related[infoMap['paper'].keyResponse as keyof RelatedContentDTO] || []
+  }
+  return []
+})
+
+const tutorials = computed(() => {
+  const related = relatedData.value?.data
+  if (related) {
+    return related[infoMap['tutorial'].keyResponse as keyof RelatedContentDTO] || []
+  }
+  return []
 })
 
 const CardHeight = computed(() => {
