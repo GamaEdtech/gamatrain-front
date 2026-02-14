@@ -451,6 +451,12 @@ async function registerV2(identity, pass) {
                   :loading="otp_loading"
                   @finish="onFinish"
                 />
+                <v-progress-linear
+                  v-if="otp_loading"
+                  indeterminate
+                  color="primary"
+                  class="mt-3"
+                />
               </v-col>
               <v-col
                 cols="12"
