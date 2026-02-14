@@ -238,8 +238,10 @@ const getEmailAddresses = async () => {
 }
 
 onMounted(async () => {
-  await getDetail()
-  await getEmailAddresses()
+  await Promise.allSettled([
+    getDetail(),
+    getEmailAddresses(),
+  ])
 })
 </script>
 
