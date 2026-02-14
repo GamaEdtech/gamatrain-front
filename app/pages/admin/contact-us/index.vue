@@ -56,6 +56,7 @@
         flat
         variant="outlined"
         height="40"
+        @click="showCreateTicketModal = true"
       >
         <span class="text-primary font-weight-bold text-h5">Create Ticket</span>
       </v-btn>
@@ -231,6 +232,13 @@
     >
       <admin-contactus-compose-mail-modal @compose-mail-success-full="showComposeMailModal = false" />
     </admin-common-modal>
+
+    <admin-common-modal
+      v-model:show-dialog="showCreateTicketModal"
+      title="Ticket"
+    >
+      <admin-contactus-create-ticket-modal @create-ticket-success-full="showCreateTicketModal = false" />
+    </admin-common-modal>
   </div>
 </template>
 
@@ -285,6 +293,7 @@ const selectedItemIdForDelete = ref('')
 const showDetailModal = ref(false)
 const selectedItemIdForDetail = ref()
 const showComposeMailModal = ref(false)
+const showCreateTicketModal = ref(false)
 
 const getData = async () => {
   loading.value = true
