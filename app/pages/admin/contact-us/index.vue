@@ -16,7 +16,7 @@
           </v-btn>
         </div>
 
-        <div class="filter-mobile-container d-flex d-md-none align-center justify-center">
+        <div class="filter-mobile-container d-flex d-md-none align-center justify-start">
           <common-gombo-box
             v-model="statusSelect"
             label="Status"
@@ -38,6 +38,27 @@
           Contacts
         </span>
       </div>
+    </div>
+    <div class="w-100 d-flex align-center justify-start ga-2 mt-4">
+      <v-btn
+        rounded="pill"
+        color="primary"
+        flat
+        variant="outlined"
+        height="40"
+        @click="showComposeMailModal = true"
+      >
+        <span class="text-primary font-weight-bold text-h5">Compose Mail</span>
+      </v-btn>
+      <v-btn
+        rounded="pill"
+        color="primary"
+        flat
+        variant="outlined"
+        height="40"
+      >
+        <span class="text-primary font-weight-bold text-h5">Create Ticket</span>
+      </v-btn>
     </div>
     <div class="w-100 mt-4">
       <v-data-table
@@ -203,6 +224,13 @@
         @reply-success-full="replySuccessFull"
       />
     </admin-common-modal>
+
+    <admin-common-modal
+      v-model:show-dialog="showComposeMailModal"
+      title="Compose"
+    >
+      <admin-contactus-compose-mail-modal @compose-mail-success-full="showComposeMailModal = false" />
+    </admin-common-modal>
   </div>
 </template>
 
@@ -256,6 +284,7 @@ const showDeleteModal = ref(false)
 const selectedItemIdForDelete = ref('')
 const showDetailModal = ref(false)
 const selectedItemIdForDetail = ref()
+const showComposeMailModal = ref(false)
 
 const getData = async () => {
   loading.value = true
