@@ -57,13 +57,15 @@
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div class="text-h6 text-grey700 ml-2">
-          Subject
+          From
         </div>
-        <v-text-field
-          v-model="subjectReply"
+        <v-select
+          v-model="selectedFromEmail"
+          :items="fromEmailList"
+          :loading="loadingEmailList"
           rounded="lg"
           density="compact"
-          placeholder="Subject"
+          placeholder="From"
           variant="outlined"
           autocomplete="off"
           persistent-clear
@@ -72,7 +74,6 @@
           active-color="primary"
           bg-color="white"
           class="w-100"
-          :rules="[requiredRule]"
         />
       </div>
 
@@ -105,7 +106,7 @@
       height="40"
       width="200"
       class="text-h5 mt-8 mx-auto"
-      :disabled="!replyValid || loadingData"
+      :disabled="!replyValid || loadingData || loadingEmailList"
       :loading="loadingReply"
       flat
       @click="reply"
@@ -134,13 +135,15 @@ const contactData = ref<AdminContactUsDetailDTO>()
 const loadingReply = ref(false)
 const loadingData = ref(true)
 
-const subjectReply = ref('')
 const bodyReply = ref('')
+const selectedFromEmail = ref()
+const fromEmailList = ref<string[]>([])
+const loadingEmailList = ref(false)
 
 const requiredRule = (value: string) => !!value || 'This field is required'
 
 const replyValid = computed(() => {
-  if (subjectReply.value.length == 0 || bodyReply.value.length == 0) {
+  if (bodyReply.value.length == 0 || selectedFromEmail.value == null || selectedFromEmail.value.length == 0) {
     return false
   }
   return true
@@ -173,23 +176,17 @@ const getDetail = async () => {
 }
 
 const reply = async () => {
-  if (contactData.value && contactData.value.email) {
+  if (contactData.value) {
     try {
       loadingReply.value = true
-      const params = {
-        senderName: 'support@gamatrain.com',
-        body: bodyReply.value,
-        subject: subjectReply.value,
-        users: [],
-        emailAddresses: [
-          contactData.value?.email ?? '',
-        ],
-      }
+      const formData = new FormData()
+      formData.append('From', selectedFromEmail.value)
+      formData.append('Body', bodyReply.value)
       const response = await useApiService.post<
         ApiResult<unknown>
       >(
-        '/api/v2/admin/emails',
-        params,
+        `/api/v2/admin/tickets/${contactData.value.id}/replys`,
+        formData,
       )
       if (response.succeeded) {
         $toast.success('Reply Message Send Successfully!')
@@ -210,12 +207,39 @@ const reply = async () => {
     }
   }
   else {
-    $toast.error('User email is invalid.')
+    $toast.error('User data not founded!')
+  }
+}
+
+const getEmailAddresses = async () => {
+  try {
+    loadingEmailList.value = true
+    const response = await useApiService.get<
+      ApiResult<string[]>
+    >(
+      '/api/v2/admin/emails/addresses',
+    )
+    if (response.succeeded) {
+      fromEmailList.value = response.data ?? []
+    }
+    else {
+      $toast.error('The operation get data failed. Please try again later.')
+    }
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    if (error.response?.status === 400) {
+      $toast.error(error.response.data?.message || '')
+    }
+  }
+  finally {
+    loadingEmailList.value = false
   }
 }
 
 onMounted(async () => {
   await getDetail()
+  await getEmailAddresses()
 })
 </script>
 
