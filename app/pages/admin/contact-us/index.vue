@@ -237,7 +237,7 @@
       v-model:show-dialog="showCreateTicketModal"
       title="Ticket"
     >
-      <admin-contactus-create-ticket-modal @create-ticket-success-full="showCreateTicketModal = false" />
+      <admin-contactus-create-ticket-modal @create-ticket-success-full="createTicketSuccessfull" />
     </admin-common-modal>
   </div>
 </template>
@@ -363,6 +363,12 @@ const viewDetail = async (contact: AdminContactUsDTO) => {
 const replySuccessFull = () => {
   selectedItemIdForDetail.value = null
   showDetailModal.value = false
+}
+
+const createTicketSuccessfull = async () => {
+  showCreateTicketModal.value = false
+  page.value = 1
+  await getData()
 }
 
 const deleteContact = (contact: AdminContactUsDTO) => {

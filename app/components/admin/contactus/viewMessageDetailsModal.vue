@@ -52,6 +52,41 @@
         class="value"
       >{{ contactData?.body }}</span>
     </div>
+
+    <div
+      v-if="loadingReplyList || replyList.length > 0"
+      class="w-100 d-flex flex-column align-start justify-start mb-4 ga-2"
+    >
+      <span class="label mb-2">Conversation</span>
+      <template v-if="loadingReplyList">
+        <div
+          v-for="i in 3"
+          :key="i"
+          class="box-chat d-flex flex-column rounded-lg bg-grey100 pa-4 ga-1"
+        >
+          <v-skeleton-loader
+            width="80"
+            height="20"
+            class="rounded-lg"
+          />
+          <v-skeleton-loader
+            width="40"
+            height="10"
+            class="rounded-lg"
+          />
+        </div>
+      </template>
+      <template v-else>
+        <div
+          v-for="item in replyList"
+          :key="item.id"
+          class="box-chat d-flex flex-column rounded-lg bg-grey100 pa-4 ga-1"
+        >
+          <span class="w-100 text-start text-h5 font-weight-bold text-grey900">{{ item.body }}</span>
+          <span class="w-100 text-end text-subtitle-2 font-weight-regular text-grey700">{{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm") }}</span>
+        </div>
+      </template>
+    </div>
     <div class="w-100 d-flex flex-column align-start">
       <span class="text-h5 font-weight-bold text-grey700 mb-4">Do you Want Reply this Email?</span>
 
@@ -121,6 +156,7 @@ import type {
   ApiResult,
   AppError,
   AdminContactUsDetailDTO,
+  AdminReplyTicketListDTO,
 } from '~/types/api'
 
 interface IViewMessageDetailsModal {
@@ -129,7 +165,7 @@ interface IViewMessageDetailsModal {
 
 const props = defineProps<IViewMessageDetailsModal>()
 const emit = defineEmits(['replySuccessFull'])
-const { $toast } = useNuxtApp()
+const { $dayjs, $toast } = useNuxtApp()
 
 const contactData = ref<AdminContactUsDetailDTO>()
 const loadingReply = ref(false)
@@ -139,6 +175,8 @@ const bodyReply = ref('')
 const selectedFromEmail = ref()
 const fromEmailList = ref<string[]>([])
 const loadingEmailList = ref(false)
+const loadingReplyList = ref(true)
+const replyList = ref<AdminReplyTicketListDTO[]>([])
 
 const requiredRule = (value: string) => !!value || 'This field is required'
 
@@ -237,10 +275,37 @@ const getEmailAddresses = async () => {
   }
 }
 
+const getReplyList = async () => {
+  try {
+    loadingReplyList.value = true
+    const response = await useApiService.get<
+      ApiResult<AdminReplyTicketListDTO[]>
+    >(
+      `/api/v2/admin/tickets/${props.id}/replys`,
+    )
+    if (response.succeeded) {
+      replyList.value = response.data ?? []
+    }
+    else {
+      $toast.error('The operation get data failed. Please try again later.')
+    }
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    if (error.response?.status === 400) {
+      $toast.error(error.response.data?.message || '')
+    }
+  }
+  finally {
+    loadingReplyList.value = false
+  }
+}
+
 onMounted(async () => {
   await Promise.allSettled([
     getDetail(),
     getEmailAddresses(),
+    getReplyList(),
   ])
 })
 </script>

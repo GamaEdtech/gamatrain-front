@@ -231,6 +231,14 @@ export interface AdminContactUsDetailDTO {
   creationDate: string
   fileUri: string
 }
+export interface AdminReplyTicketListDTO {
+  id: number
+  body: string
+  creationUser: string
+  creationDate: string
+  fileUri: string
+  receivers: string[]
+}
 
 export interface QuestionDTO {
   id: string
