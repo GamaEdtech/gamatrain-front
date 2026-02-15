@@ -2,8 +2,6 @@
 import CommonLogin from '~/components/common/login.vue'
 import CommonRegister from '~/components/common/register.vue'
 import CommonRecover from '~/components/common/pass-recover.vue'
-import DrawerMenu from '~/components/dashboard/drawer-menu'
-import dropdownMenu from '~/components/common/dropdownMenu.vue'
 import { useAuth } from '~/composables/useAuth'
 import { useCookie } from 'nuxt/app'
 import { useDisplay } from 'vuetify'
@@ -375,7 +373,7 @@ const openAddOption = () => {
                 v-if="auth.isAuthenticated.value"
                 class="d-flex align-center justify-end"
               >
-                <dropdown-menu :menu-setting="menuSetting" />
+                <lazy-common-dropdown-menu :menu-setting="menuSetting" />
 
                 <div class="wallet-div d-flex align-start justify-center">
                   <v-btn
@@ -398,7 +396,7 @@ const openAddOption = () => {
                 </div>
 
                 <!-- Desktop version -->
-                <common-notification-component
+                <lazy-common-notification-component
                   ref="notificationComponent"
                   :menu-setting="menuSetting"
                   class="d-none d-lg-block"
@@ -431,7 +429,7 @@ const openAddOption = () => {
       <!-- End desktop menu -->
 
       <!-- Start:  show sidebar menu -->
-      <drawer-menu
+      <lazy-dashboard-drawer-menu
         v-model:show-drawer="isDrawerOpen"
         :is-user-dashboard="isUserDashboard"
       />
@@ -486,7 +484,7 @@ const openAddOption = () => {
             md:search
           </v-icon>
 
-          <common-general-search-mobile
+          <lazy-common-general-search-mobile
             v-model:show-search-bottom-sheet="showSearchBottomSheet"
           />
         </div>
@@ -500,7 +498,7 @@ const openAddOption = () => {
         >
           Sign in
         </v-btn>
-        <common-notification-component
+        <lazy-common-notification-component
           v-if="auth.isAuthenticated.value"
           ref="notificationComponent"
           :menu-setting="menuSetting"
@@ -517,7 +515,7 @@ const openAddOption = () => {
             :color="menuSetting.linkColor"
           >md:account_balance_wallet_outlined</v-icon>
         </nuxt-link>
-        <dropdown-menu
+        <lazy-common-dropdown-menu
           v-if="auth.isAuthenticated.value"
           :menu-setting="menuSetting"
         />
@@ -576,7 +574,7 @@ const openAddOption = () => {
       </v-card>
     </v-dialog>
 
-    <menu-add-option-bottom-menu
+    <lazy-menu-add-option-bottom-menu
       v-if="isAddOptionOpen"
       @close="isAddOptionOpen = false"
     />
