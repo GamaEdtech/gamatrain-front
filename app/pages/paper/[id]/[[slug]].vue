@@ -99,7 +99,7 @@
             cols="12"
             class="text-center mt-10"
           >
-            <common-ad-banner
+            <lazy-common-ad-banner
               v-model="isAdsLoad"
               adslot="7199289937"
             />
