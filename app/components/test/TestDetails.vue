@@ -190,6 +190,7 @@
     />
 
     <lazy-modals-coin-payment-modal
+      v-if="showCoinPaymentModal"
       v-model:show-dialog="showCoinPaymentModal"
       :user-balance="balance"
       :is-processing="isLoading || isProcessingPayment"
