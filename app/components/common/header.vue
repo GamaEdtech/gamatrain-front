@@ -485,6 +485,7 @@ const openAddOption = () => {
           </v-icon>
 
           <lazy-common-general-search-mobile
+            v-if="showSearchBottomSheet"
             v-model:show-search-bottom-sheet="showSearchBottomSheet"
           />
         </div>
