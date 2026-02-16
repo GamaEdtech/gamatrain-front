@@ -79,9 +79,20 @@ onMounted(async () => {
       return
     }
     try {
-      await loadAdsenseScript()
-      observeAdFill(adsElement);
-      (window.adsbygoogle = window.adsbygoogle || []).push({})
+      // await loadAdsenseScript()
+      // observeAdFill(adsElement);
+      // (window.adsbygoogle = window.adsbygoogle || []).push({})
+      const observer = new IntersectionObserver(async (entries) => {
+        if (entries[0].isIntersecting) {
+          observer.disconnect()
+
+          await loadAdsenseScript()
+          observeAdFill(adsElement);
+          (window.adsbygoogle = window.adsbygoogle || []).push({})
+        }
+      }, { rootMargin: '200px' })
+
+      observer.observe(el)
     }
     catch (e) {
       console.error('Error loading or running AdSense:', e)
