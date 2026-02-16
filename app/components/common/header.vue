@@ -117,10 +117,10 @@
       v-if="isAddOptionOpen"
       @close="isAddOptionOpen = false"
     />
-    <lazy-dashboard-drawer-menu
+    <!-- <lazy-dashboard-drawer-menu
       v-model:show-drawer="isDrawerOpen"
       :is-user-dashboard="isUserDashboard"
-    />
+    /> -->
     <lazy-common-general-search-mobile
       v-if="showSearchBottomSheet"
       v-model:show-search-bottom-sheet="showSearchBottomSheet"
