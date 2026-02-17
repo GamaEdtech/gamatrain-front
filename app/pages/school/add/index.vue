@@ -103,7 +103,6 @@ useHead({
     },
   ],
 })
-const { getToken, initCaptcha, isLoaded } = useRecaptcha()
 
 const schoolFindedInSearch = ref()
 const showModalDetailSchool = ref(false)
