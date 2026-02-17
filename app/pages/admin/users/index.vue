@@ -1,12 +1,11 @@
 <script setup>
-import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
 import UserDetailModal from '~/components/admin/usermanagment/userDetailModal.vue'
 import addUserDialog from '~/components/admin/usermanagment/addUserDialog.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',
-  auth: true,
+  middleware: ['auth', 'admin'],
 })
 
 const { $toast } = useNuxtApp()
@@ -293,7 +292,7 @@ watch(selectedPageSize, () => {
         @fetch-user="fetchUsers"
       />
 
-      <DeleteItemModal
+      <admin-common-delete-modal
         v-model="isDeleteModalOpen"
         @confirm="deleteUser"
       />

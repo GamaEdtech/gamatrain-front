@@ -13,7 +13,8 @@
       :dense="dense"
       :disabled="disabled"
       clearable
-      class="gombo-box-input"
+      class="gombo-box-input text-grey700"
+      base-color="grey500"
       color="#ffb300"
       @click="getList"
       @click:clear="clearValue"

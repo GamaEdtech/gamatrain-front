@@ -1,11 +1,10 @@
 <script setup>
 import blogCard from '~/components/admin/blogs/blogCard.vue'
-import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',
-  auth: true,
+  middleware: ['auth', 'admin'],
 })
 
 const { $toast } = useNuxtApp()
@@ -306,7 +305,7 @@ watch(filter, (_val) => {
         :selected-blog="selectedBlog"
         @fetch-blogs="fetchBlogs"
       />
-      <DeleteItemModal
+      <admin-common-delete-modal
         v-model="isDeleteModalOpen"
         @confirm="deleteBlog"
       />

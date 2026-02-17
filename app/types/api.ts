@@ -28,6 +28,8 @@ export interface AppError {
   status?: number
 }
 
+export type StatusErrorCodeApp = 500 | 404 | 403 | 401 | 'disconnect'
+
 export interface ResponseListDTO<T> {
   list: T[]
   totalRecordsCount: number
@@ -106,6 +108,57 @@ export interface RelatedContentDTO {
 export interface PDFResponseDTO {
   url?: string
   name?: string
+}
+
+export interface ProAccess {
+  status: number
+  http_code: number
+  data: {
+    limit: boolean
+    remained: number
+    usage: boolean
+  }
+}
+
+export interface TutorialDTO {
+  base: string
+  content: string
+  course: string
+  id: string
+  lesson: string
+  proAccess: ProAccess
+  section: string
+  status: string
+  title: string
+  title_url: string
+  topic: string
+  up_date: string
+  update_jalali: string
+  views: string
+}
+
+export interface ChapterDTO {
+  id: string
+  season: boolean
+  title: string
+  tutorials: {
+    id: string
+    title: string
+  }[]
+}
+
+export interface UnitLessonDTO {
+  id: string
+  season: boolean
+  title: string
+  tutorialsNum: number
+  chapters: ChapterDTO[]
+}
+
+export interface LessonTreeDTO {
+  id: string
+  title: string
+  list: UnitLessonDTO[]
 }
 
 export interface AdminTransactionDTO {
@@ -195,6 +248,34 @@ export interface TypesStatsDTO {
   test: boolean
 }
 
+export interface AdminContactUsDTO {
+  id: number
+  sender: string
+  email: string
+  subject: string
+  isReadByAdmin: boolean
+  creationDate: string
+}
+
+export interface AdminContactUsDetailDTO {
+  id: number
+  fullName: string
+  email: string
+  subject: string
+  body: string
+  creationUser: string
+  creationDate: string
+  fileUri: string
+}
+export interface AdminReplyTicketListDTO {
+  id: number
+  body: string
+  creationUser: string
+  creationDate: string
+  fileUri: string
+  receivers: string[]
+}
+
 export interface QuestionDTO {
   id: string
 
@@ -258,4 +339,42 @@ export interface TestTimeDTO {
 }
 export interface NextQuestionDTO {
   code: string
+}
+
+export interface TransactionStatisticDTO {
+  name: string
+  debitValue: number
+  creditValue: number
+}
+export interface TransactionDTO {
+  id: number
+  points: number
+  description: string
+  currentBalance: number
+  creationDate: string
+  isDebit: boolean
+}
+export interface SchoolListDTO {
+  id: number
+  name: string
+  slug: string
+
+  cityTitle: string
+  stateTitle: string
+  countryTitle: string
+
+  defaultImageUri: string
+
+  distance: number
+  score: number
+
+  hasEmail: boolean
+  hasPhone: boolean
+  hasWebsite: boolean
+  hasLocation: boolean
+
+  lat: number
+  long: number
+
+  lastModifyDate: string
 }

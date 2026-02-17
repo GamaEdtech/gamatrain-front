@@ -75,101 +75,109 @@ const navigate = (link) => {
 function isActive(link) {
   return route.path === link
 }
+
+const { isOnline } = useNetwork()
 </script>
 
 <template>
   <v-app>
-    <v-navigation-drawer
-      v-model="drawer"
-      :permanent="isPermanent"
-      :temporary="isTemporary"
-      app
-      color="#1d2939"
-    >
-      <div class="text--white font-weight-semibold pa-4 gtext-t2 mb-6">
-        Dashboard
-      </div>
-      <div
-        class="d-flex ga-3 py-1 px-4 w-100 align-center gtext-t3 font-weight-medium primary-gray-300 mb-2"
+    <error-temp
+      v-if="!isOnline"
+      status-code="disconnect"
+    />
+    <template v-else>
+      <v-navigation-drawer
+        v-model="drawer"
+        :permanent="isPermanent"
+        :temporary="isTemporary"
+        app
+        color="#1d2939"
       >
-        <img
-          class="rounded-pill"
-          style="width: 36px; height: 36px"
-          src="/images/adminAuth.png"
-          alt=""
-        >
-        Admin Panel
-      </div>
-      <div class="sideBar">
-        <v-list
-          v-for="(group, index) in menuItems"
-          :key="group.id || index"
-        >
-          <h4 class="px-5 primary-gray-400 gtext-t5 font-weight-semibold">
-            {{ Object.keys(group)[0] }}
-          </h4>
-          <v-list-item
-            v-for="item in Object.values(group)[0]"
-            :key="item.link"
-            link
-            class="px-6 py-0"
-            @click="navigate(item.link)"
-          >
-            <div
-              class="d-flex align-center ga-3 py-2 px-5"
-              :class="{ 'active-tab': isActive(item.link) }"
-            >
-              <v-list-item-icon>
-                <v-icon
-                  class="primary-gray-400"
-                >
-                  {{ item.icon }}
-                </v-icon>
-              </v-list-item-icon>
-              <v-list-item-title class="primary-gray-400 gtext-t5">
-                {{ item.title }}
-              </v-list-item-title>
-            </div>
-          </v-list-item>
-        </v-list>
-      </div>
-
-      <div
-        class="d-flex align-center ga-2"
-        style="position: absolute; bottom: 20px; left: 20px"
-      >
-        <img
-          class="rounded-pill"
-          style="width: 36px; height: 36px; border: 1px solid white"
-          src="/images/adminAuth.png"
-          alt=""
-        >
-        <div>
-          <p class="gtext-t5 font-weight-medium">
-            shelina Shay
-          </p>
-          <p class="gtext-t6 primary-gray-400">
-            Admin@Gama
-          </p>
+        <div class="text--white font-weight-semibold pa-4 gtext-t2 mb-6">
+          Dashboard
         </div>
-      </div>
-    </v-navigation-drawer>
+        <div
+          class="d-flex ga-3 py-1 px-4 w-100 align-center gtext-t3 font-weight-medium primary-gray-300 mb-2"
+        >
+          <img
+            class="rounded-pill"
+            style="width: 36px; height: 36px"
+            src="/images/adminAuth.png"
+            alt=""
+          >
+          Admin Panel
+        </div>
+        <div class="sideBar">
+          <v-list
+            v-for="(group, index) in menuItems"
+            :key="group.id || index"
+          >
+            <h4 class="px-5 primary-gray-400 gtext-t5 font-weight-semibold">
+              {{ Object.keys(group)[0] }}
+            </h4>
+            <v-list-item
+              v-for="item in Object.values(group)[0]"
+              :key="item.link"
+              link
+              class="px-6 py-0"
+              @click="navigate(item.link)"
+            >
+              <div
+                class="d-flex align-center ga-3 py-2 px-5"
+                :class="{ 'active-tab': isActive(item.link) }"
+              >
+                <v-list-item-icon>
+                  <v-icon
+                    class="primary-gray-400"
+                  >
+                    {{ item.icon }}
+                  </v-icon>
+                </v-list-item-icon>
+                <v-list-item-title class="primary-gray-400 gtext-t5">
+                  {{ item.title }}
+                </v-list-item-title>
+              </div>
+            </v-list-item>
+          </v-list>
+        </div>
 
-    <v-app-bar
-      app
-      color="#1d2939"
-      dark
-    >
-      <v-app-bar-nav-icon
-        v-if="mobile"
-        @click="drawer = !drawer"
-      />
-    </v-app-bar>
+        <div
+          class="d-flex align-center ga-2"
+          style="position: absolute; bottom: 20px; left: 20px"
+        >
+          <img
+            class="rounded-pill"
+            style="width: 36px; height: 36px; border: 1px solid white"
+            src="/images/adminAuth.png"
+            alt=""
+          >
+          <div>
+            <p class="gtext-t5 font-weight-medium">
+              shelina Shay
+            </p>
+            <p class="gtext-t6 primary-gray-400">
+              Admin@Gama
+            </p>
+          </div>
+        </div>
+      </v-navigation-drawer>
 
-    <v-main>
-      <NuxtPage class="pa-5" />
-    </v-main>
-    <AppGlobalSnackbar />
+      <v-app-bar
+        app
+        color="#1d2939"
+        dark
+      >
+        <v-app-bar-nav-icon
+          v-if="mobile"
+          @click="drawer = !drawer"
+        />
+      </v-app-bar>
+
+      <v-main>
+        <NuxtPage class="pa-5" />
+      </v-main>
+      <AppGlobalSnackbar />
+    </template>
   </v-app>
 </template>
 

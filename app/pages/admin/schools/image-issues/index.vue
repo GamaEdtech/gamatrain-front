@@ -4,7 +4,7 @@ import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',
-  auth: true,
+  middleware: ['auth', 'admin'],
 })
 
 const { $toast } = useNuxtApp()

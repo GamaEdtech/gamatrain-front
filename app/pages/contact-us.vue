@@ -166,14 +166,15 @@ const submitForm = async () => {
 
       const token = await getToken('submit')
 
+      const formData = new FormData()
+      formData.append('Captcha', token)
+      formData.append('FullName', formsData.name)
+      formData.append('Email', formsData.email)
+      formData.append('Subject', formsData.subject)
+      formData.append('Body', formsData.message)
+
       const res: { succeeded: boolean, errors?: Array<{ message: string }> }
-        = await useApiService.post('/api/v2/contacts', {
-          captcha: token,
-          fullName: formsData.name,
-          email: formsData.email,
-          subject: formsData.subject,
-          body: formsData.message,
-        })
+        = await useApiService.post('/api/v2/tickets', formData)
 
       if (res.succeeded) {
         $toast.success('Your message has been sent successfully.')

@@ -199,6 +199,7 @@ const submit = handleSubmit(async () => {
 const onFinish = async () => {
   const auth = useAuth()
   try {
+    otp_loading.value = true
     const response = await useApiService.post(
       '/api/v1/users/login',
       new URLSearchParams({
@@ -221,6 +222,9 @@ const onFinish = async () => {
     const errorData = error?.response?._data
     if (error?.response?.status === 400) $toast.error(errorData.message)
     else $toast.error('Something went wrong.')
+  }
+  finally {
+    otp_loading.value = false
   }
 }
 
@@ -444,6 +448,7 @@ async function registerV2(identity, pass) {
                   v-model="otp"
                   :disabled="otp_loading"
                   length="5"
+                  :loading="otp_loading"
                   @finish="onFinish"
                 />
               </v-col>

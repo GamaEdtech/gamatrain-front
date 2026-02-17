@@ -116,9 +116,9 @@
         class="d-flex align-center ga-2"
       >
         <div class="square-div" />
-        <span class="text-h5 primary-gray-500">{{
-          tutorial.title.slice(0, 50) + "..."
-        }}</span>
+        <span class="text-h5 primary-gray-500 text-truncate">
+          {{ tutorial.title }}
+        </span>
       </nuxt-link>
     </div>
   </div>

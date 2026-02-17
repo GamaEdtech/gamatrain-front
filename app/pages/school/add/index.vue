@@ -68,6 +68,7 @@
 <script setup>
 const nuxtApp = useNuxtApp()
 const router = useRouter()
+const { getToken, initCaptcha, isLoaded } = useRecaptcha()
 
 useHead({
   title: 'Add School',
@@ -236,7 +237,6 @@ const backStep = () => {
     behavior: 'smooth',
   })
 }
-
 const submitSchool = async (data) => {
   loadingSubmitSchool.value = true
   if (!isLoaded()) {

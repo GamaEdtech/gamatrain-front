@@ -6,7 +6,7 @@
       class="d-flex d-md-none justify-start"
     >
       <v-badge
-        class="mt-1 height-badge"
+        class="height-badge d-inline-flex align-center justify-center"
         offset-x="5"
         offset-y="-5"
         :color="countFilterSelect == 0 ? `transparent` : `lightError`"
