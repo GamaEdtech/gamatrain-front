@@ -199,7 +199,7 @@ const whiteMenuSetting: MenuSetting = {
   boxShadow: '0px 1px 10px 0px #424A5340',
   linkColor: theme.current.value.colors['grey800']!,
 }
-const menuSetting = ref<MenuSetting>(blackMenuSetting)
+const menuSetting = ref<MenuSetting>(whiteMenuSetting)
 
 const routeNeedChangeMenuSetting = ['index', 'smart-learning', 'services', 'school-service', 'faq', 'governance', 'terms', 'about-us', 'earn-money', 'leader-board', 'get-token']
 
