@@ -677,6 +677,7 @@ const sendTransactionInChain = async () => {
         = await splTokenLib.value.getAssociatedTokenAddress(
           mintPubkey,
           destination,
+          true,
         )
 
       // ensure sender ATA exists
