@@ -58,19 +58,37 @@ export default defineEventHandler(async (event) => {
     let transfer = null
     for (const inst of tx.transaction.message.instructions) {
       // SPL Token Transfer
-      if ((inst.parsed?.type === 'transfer' || inst.parsed?.type === 'transferChecked') && inst.parsed.info?.tokenAmount) {
+      if ((inst.parsed?.type === 'transfer' || inst.parsed?.type === 'transferChecked')) {
         const info = inst.parsed.info
-
         const sourceWallet = await getWalletFromTokenAccount(info.source)
         const destinationWallet = await getWalletFromTokenAccount(info.destination)
+        if (inst.parsed.info?.amount) {
+          const sourcePubkey = new PublicKey(info.source)
 
-        transfer = {
-          sourceWallet,
-          destinationWallet,
-          amount: info.tokenAmount?.amount || info.amount, // base units (string, no decimals applied)
-          uiAmount: info.tokenAmount?.uiAmountString || String(info.amount), // human-readable
-          mint: info.mint,
-          symbol: getSymbolFromMint(info.mint),
+          const sourceInfo = await connection.getParsedAccountInfo(sourcePubkey)
+          if (!sourceInfo.value) {
+            throw new Error(`Token account ${sourcePubkey.toBase58()} does not exist`)
+          }
+          const mint = sourceInfo.value.data.parsed.info.mint
+
+          transfer = {
+            sourceWallet,
+            destinationWallet,
+            amount: info.amount, // base units (string, no decimals applied)
+            uiAmount: (Number(info.amount) / 1e6).toString(), // human-readable
+            mint: info.mint,
+            symbol: getSymbolFromMint(mint),
+          }
+        }
+        else {
+          transfer = {
+            sourceWallet,
+            destinationWallet,
+            amount: info.amount, // base units (string, no decimals applied)
+            uiAmount: info.tokenAmount.uiAmount, // human-readable
+            mint: info.mint,
+            symbol: getSymbolFromMint(info.mint),
+          }
         }
         break
       }
