@@ -256,7 +256,8 @@
 import { ref, computed } from 'vue'
 import { TOKEN_DECIMALS, TOKEN_MINTS } from '~/composables/useJupiterSwap'
 import { useSolanaClient } from '~/composables/useSolanaClient'
-import { SystemProgram, Transaction, PublicKey } from '@solana/web3.js'
+import { SystemProgram, Transaction, PublicKey,
+  TransactionInstruction } from '@solana/web3.js'
 
 const auth = useAuth()
 const { $toast } = useNuxtApp()
@@ -456,12 +457,14 @@ onMounted(async () => {
         getAssociatedTokenAddress,
         createTransferInstruction,
         createAssociatedTokenAccountInstruction,
+        TOKEN_2022_PROGRAM_ID,
       } = await import('@solana/spl-token')
 
       splTokenLib.value = {
         getAssociatedTokenAddress,
         createTransferInstruction,
         createAssociatedTokenAccountInstruction,
+        TOKEN_2022_PROGRAM_ID,
       }
     }
     catch (err) {
@@ -565,20 +568,38 @@ const startProccessPayment = async () => {
   }
 }
 
+const MEMO_PROGRAM_ID = new PublicKey(
+  'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
+)
+
+// precise decimal → bigint (no float corruption)
+function toRawAmount(amount, decimals) {
+  const [whole, frac = ''] = amount.toString().split('.')
+  const padded = (frac + '0'.repeat(decimals)).slice(0, decimals)
+  return BigInt(whole + padded)
+}
+
 const sendTransactionInChain = async () => {
   try {
+    loadingPayment.value = true
+
+    if (!wallet.value?.publicKey)
+      throw new Error('Wallet not connected')
+
     const { getConnection } = useSolanaClient()
     const connection = await getConnection()
 
-    const destination = new PublicKey(config.public.gamaedtechWalletAddress)
     const sender = wallet.value.publicKey
+    const destination = new PublicKey(config.public.gamaedtechWalletAddress)
 
-    const rawAmount = BigInt(
-      Math.round(amount.value * 10 ** selectedCurrency.value.decimals),
+    const rawAmount = toRawAmount(
+      amount.value,
+      selectedCurrency.value.decimals,
     )
 
     const transaction = new Transaction()
 
+    // ---------------- SOL TRANSFER ----------------
     if (selectedCurrency.value.name === 'SOL') {
       transaction.add(
         SystemProgram.transfer({
@@ -588,19 +609,86 @@ const sendTransactionInChain = async () => {
         }),
       )
     }
+
+    // ---------------- SPL TOKEN TRANSFER ----------------
+    else if (selectedCurrency.value.name === 'GET') {
+      const mintPubkey = new PublicKey(selectedCurrency.value.mint)
+
+      // Token-2022 ATA Program
+      const ATA_PROGRAM_ID = new PublicKey(
+        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+      )
+      const fromTokenAccount
+        = await splTokenLib.value.getAssociatedTokenAddress(
+          mintPubkey,
+          sender,
+          false,
+          splTokenLib.value.TOKEN_2022_PROGRAM_ID,
+          ATA_PROGRAM_ID)
+
+      const toTokenAccount
+        = await splTokenLib.value.getAssociatedTokenAddress(
+          mintPubkey,
+          destination,
+          true,
+          splTokenLib.value.TOKEN_2022_PROGRAM_ID,
+          ATA_PROGRAM_ID,
+        )
+
+      // ensure sender ATA exists
+      const fromInfo = await connection.getAccountInfo(fromTokenAccount)
+      if (!fromInfo)
+        throw new Error('Sender token account does not exist')
+
+      // create receiver ATA if missing
+      const toInfo = await connection.getAccountInfo(toTokenAccount)
+
+      if (!toInfo) {
+        transaction.add(
+          splTokenLib.value.createAssociatedTokenAccountInstruction(
+            sender,
+            toTokenAccount,
+            destination,
+            mintPubkey,
+            splTokenLib.value.TOKEN_2022_PROGRAM_ID,
+            ATA_PROGRAM_ID,
+          ),
+        )
+      }
+
+      transaction.add(
+        splTokenLib.value.createTransferInstruction(
+          fromTokenAccount,
+          toTokenAccount,
+          sender,
+          rawAmount,
+          [],
+          splTokenLib.value.TOKEN_2022_PROGRAM_ID,
+        ),
+      )
+    }
     else {
       const mintPubkey = new PublicKey(selectedCurrency.value.mint)
+
       const fromTokenAccount
         = await splTokenLib.value.getAssociatedTokenAddress(mintPubkey, sender)
-      const toTokenAccount = await splTokenLib.value.getAssociatedTokenAddress(
-        mintPubkey,
-        destination,
-      )
-      const toTokenAccountInfo = await connection.getAccountInfo(
-        toTokenAccount,
-      )
 
-      if (!toTokenAccountInfo) {
+      const toTokenAccount
+        = await splTokenLib.value.getAssociatedTokenAddress(
+          mintPubkey,
+          destination,
+        )
+
+      // ensure sender ATA exists
+      const fromInfo = await connection.getAccountInfo(fromTokenAccount)
+      console.log('From Token Account Info:', fromInfo)
+      if (!fromInfo)
+        throw new Error('Sender token account does not exist')
+
+      // create receiver ATA if missing
+      const toInfo = await connection.getAccountInfo(toTokenAccount)
+
+      if (!toInfo) {
         transaction.add(
           splTokenLib.value.createAssociatedTokenAccountInstruction(
             sender,
@@ -621,25 +709,51 @@ const sendTransactionInChain = async () => {
       )
     }
 
+    // ---------------- MEMO (ALWAYS LAST) ----------------
+
+    const memo = paymentId.value.toString()
+
+    transaction.add(
+      new TransactionInstruction({
+        keys: [],
+        programId: MEMO_PROGRAM_ID,
+        data: Buffer.from(memo, 'utf8'),
+      }),
+    )
+
+    // ---------------- BLOCKHASH + FEEPAYER ----------------
+
+    transaction.feePayer = sender
+    const latest = await connection.getLatestBlockhash()
+    transaction.recentBlockhash = latest.blockhash
+
+    // ---------------- SEND ----------------
+
     const signature = await wallet.value.sendTransaction(
       transaction,
       connection,
     )
 
-    await connection.confirmTransaction(signature, 'confirmed')
+    await connection.confirmTransaction({
+      signature,
+      ...latest,
+    })
 
     transactionId.value = signature
+    loadingPayment.value = false
+    disablePayment.value = false
+
     await sendConfirmPaymentRequest()
   }
   catch (error) {
     console.error('❌ Payment failed:', error)
+
     disablePayment.value = true
     loadingPayment.value = false
     paymentId.value = null
     transactionId.value = null
-    $toast.error(
-      'The Solana network is currently experiencing an issue. Please try again later.',
-    )
+
+    $toast.error(error?.message || 'Payment failed')
   }
 }
 

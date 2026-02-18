@@ -190,7 +190,7 @@ interface BreadCrumb {
 }
 
 const { $dayjs, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
-const { mdAndDown, mdAndUp } = useDisplay()
+const { mdAndUp } = useDisplay()
 const route = useRoute()
 const router = useRouter()
 
