@@ -62,6 +62,7 @@ export default defineEventHandler(async (event) => {
         const info = inst.parsed.info
         const sourceWallet = await getWalletFromTokenAccount(info.source)
         const destinationWallet = await getWalletFromTokenAccount(info.destination)
+        // Token2022
         if (inst.parsed.info?.amount) {
           const sourcePubkey = new PublicKey(info.source)
 
@@ -80,6 +81,7 @@ export default defineEventHandler(async (event) => {
             symbol: getSymbolFromMint(mint),
           }
         }
+        // SplToken
         else {
           transfer = {
             sourceWallet,
