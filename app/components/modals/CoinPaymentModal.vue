@@ -48,6 +48,7 @@
       <modals-charge-wallet
         v-if="amountToPay > userBalance"
         :user-balance="userBalance"
+        @charge-wallet-successfull="chargeWalletSuccessfull"
       />
     </div>
   </v-dialog>
@@ -57,6 +58,7 @@
 import { useDisplay } from 'vuetify'
 import { computed } from 'vue'
 
+const { fetchBalance } = useCoinBalance()
 const { mdAndUp } = useDisplay()
 
 const props = defineProps({
@@ -101,9 +103,16 @@ const clickOnModal = (event) => {
 }
 
 const confirmPayment = () => {
-  if (props.userBalance >= 5000000) {
+  if (props.userBalance >= props.amountToPay) {
     emit('confirm')
   }
+}
+
+const chargeWalletSuccessfull = async () => {
+  console.log('inja')
+  console.log('balance', props.userBalance)
+  await fetchBalance()
+  console.log('balance again', props.userBalance)
 }
 </script>
 

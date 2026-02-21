@@ -205,6 +205,7 @@
       v-model:show-dialog="showCoinPaymentModal"
       :is-processing="isLoading || isProcessingPayment"
       :user-balance="balance"
+      :amount-to-pay="500_000_000"
       @confirm="handleCoinPaymentConfirm"
       @close="handleCoinPaymentClose"
     />
