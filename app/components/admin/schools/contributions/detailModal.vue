@@ -1,123 +1,440 @@
 <template>
   <div class="w-100 d-flex flex-wrap pa-4">
-    <!-- Name -->
-    <div class="detail-item">
-      <span class="label">Name :</span>
-      <span class="value">Oxford School</span>
+    <span class="w-100 text-h4 font-weight-bold text-grey700 mb-4">{{ oldDataFormated && oldDataFormated.length > 0 ? `New Value`:`New School` }}</span>
+
+    <template v-if="loading">
+      <div
+        v-for="i in 10"
+        :key="i"
+        class="detail-item"
+      >
+        <v-skeleton-loader
+          width="80"
+          height="16"
+          class="rounded-pill"
+        />
+        <v-skeleton-loader
+          width="60"
+          height="16"
+          class="rounded-pill"
+        />
+      </div>
+    </template>
+
+    <template v-else>
+      <div
+        v-for="field in newDataFormated"
+        :key="field.key"
+        class="detail-item"
+        :class="{ 'w-100': field.full }"
+      >
+        <span class="label">{{ field.label }}</span>
+        <span class="value">{{ field.value }}</span>
+      </div>
+    </template>
+
+    <span
+      v-if="!loading && oldDataFormated.length > 0"
+      class="w-100 text-h4 font-weight-bold text-grey700 my-4"
+    >Old Value</span>
+
+    <template v-if="loading">
+      <div
+        v-for="i in 10"
+        :key="i"
+        class="detail-item"
+      >
+        <v-skeleton-loader
+          width="80"
+          height="16"
+          class="rounded-pill"
+        />
+        <v-skeleton-loader
+          width="60"
+          height="16"
+          class="rounded-pill"
+        />
+      </div>
+    </template>
+
+    <div
+      v-if="loading"
+      class="d-flex flex-column ga-2"
+    >
+      <v-skeleton-loader
+        width="80"
+        height="16"
+        class="rounded-pill"
+      />
+      <div class="d-flex ga-2">
+        <v-skeleton-loader
+          v-for="index in 5"
+          :key="index"
+          height="36"
+          width="36"
+        />
+      </div>
     </div>
 
-    <!-- Local Name -->
-    <div class="detail-item">
-      <span class="label">Local Name :</span>
-      <span class="value">scccholl</span>
+    <div
+      v-if="loading"
+      class="d-flex flex-column ga-2 mt-2"
+    >
+      <v-skeleton-loader
+        width="80"
+        height="16"
+        class="rounded-pill"
+      />
+      <div class="d-flex ga-2 flex-wrap w-100">
+        <v-skeleton-loader
+          v-for="index in 5"
+          :key="index"
+          height="30"
+          width="80"
+          class="rounded-lg"
+        />
+      </div>
     </div>
 
-    <!-- School Type -->
-    <div class="detail-item">
-      <span class="label">Type :</span>
-      <span class="value">Public</span>
-    </div>
+    <template v-else>
+      <div
+        v-for="field in oldDataFormated"
+        :key="field.key"
+        class="detail-item"
+        :class="{ 'w-100': field.full, 'flex-column': field.type }"
+      >
+        <span class="label">{{ field.label }}</span>
 
-    <!-- State -->
-    <div class="detail-item">
-      <span class="label">State ID :</span>
-      <span class="value">12</span>
-    </div>
+        <span
+          v-if="!field.type"
+          class="value"
+        >
+          {{ field.value }}
+        </span>
 
-    <!-- Zip Code -->
-    <div class="detail-item">
-      <span class="label">Zip Code :</span>
-      <span class="value">45879</span>
-    </div>
+        <div
+          v-else-if="field.type === 'tags'"
+          class="d-flex flex-wrap ga-2 w-100"
+        >
+          <div
+            v-for="(tag, index) in field.value"
+            :key="index"
+            class="bg-primary-gray-800 text-white rounded-lg pa-3 d-flex align-center justify-center"
+          >
+            <v-icon
+              size="20"
+              color="white"
+            >
+              md:{{ tag.icon }}
+            </v-icon>
+          </div>
+        </div>
 
-    <!-- City -->
-    <div class="detail-item">
-      <span class="label">City ID :</span>
-      <span class="value">3</span>
-    </div>
+        <div
+          v-else-if="field.type === 'boards'"
+          class="d-flex flex-wrap ga-2 w-100"
+        >
+          <v-btn
+            v-for="(board, index) in field.value"
+            :key="index"
+            flat
+            color="grey700"
+            height="38"
+            rounded="lg"
+          >
+            <span class="font-weight-bold text-h5 text-grey300">{{
+              board.title
+            }}</span>
+          </v-btn>
+        </div>
 
-    <!-- Country -->
-    <div class="detail-item">
-      <span class="label">Country ID :</span>
-      <span class="value">1</span>
-    </div>
+        <div
+          v-else-if="field.type === 'image'"
+          class="d-flex w-100"
+        >
+          <img
+            :src="field.value"
+            width="100"
+            height="80"
+            class="rounded-lg"
+            alt="School Image"
+          >
+        </div>
+      </div>
 
-    <!-- Quarter -->
-    <div class="detail-item">
-      <span class="label">Quarter :</span>
-      <span class="value">Downtown</span>
-    </div>
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <div class="text-h6 text-grey700 ml-2">
+          You can write a message to reject.
+        </div>
+        <v-text-field
+          v-model="commentReject"
+          rounded="lg"
+          density="compact"
+          placeholder="Comment"
+          variant="outlined"
+          autocomplete="off"
+          persistent-clear
+          base-color="grey200"
+          color="primary"
+          active-color="primary"
+          bg-color="white"
+          class="w-100"
+        />
+      </div>
+    </template>
 
-    <!-- Phone -->
-    <div class="detail-item">
-      <span class="label">Phone :</span>
-      <span class="value">+1 212 555 1234</span>
-    </div>
-
-    <!-- Fax -->
-    <div class="detail-item">
-      <span class="label">Fax :</span>
-      <span class="value">+1 212 555 9999</span>
-    </div>
-
-    <!-- Email -->
-    <div class="detail-item w-100">
-      <span class="label">Email :</span>
-      <span class="value">info@oxfordschool.com</span>
-    </div>
-
-    <!-- Website -->
-    <div class="detail-item w-100">
-      <span class="label">Website :</span>
-      <span class="value">https://oxfordschool.com</span>
-    </div>
-
-    <!-- Address -->
-    <div class="detail-item w-100">
-      <span class="label">Address :</span>
-      <span class="value">
-        221B Baker Street, London, United Kingdom
-      </span>
-    </div>
-
-    <!-- Local Address -->
-    <div class="detail-item w-100">
-      <span class="label">Local Address :</span>
-      <span class="value">
-        221B Baker Street, London, United Kingdom
-      </span>
-    </div>
-
-    <!-- Tuition -->
-    <div class="detail-item">
-      <span class="label">Tuition :</span>
-      <span class="value">$4,500</span>
-    </div>
-
-    <!-- Tags -->
-    <div class="detail-item w-100">
-      <span class="label">Tags :</span>
-      <span class="value">Science, International, Private</span>
-    </div>
-
-    <!-- Boards -->
-    <div class="detail-item w-100">
-      <span class="label">Boards :</span>
-      <span class="value">IB, Cambridge</span>
-    </div>
-
-    <!-- Description -->
-    <div class="detail-item w-100">
-      <span class="label">Description :</span>
-      <span class="value description">
-        Oxford School is one of the leading international schools offering
-        modern education standards with highly qualified teachers and advanced facilities.
-      </span>
+    <div class="w-100 d-flex align-center ga-2 mt-8">
+      <v-btn
+        color="success"
+        rounded="xl"
+        variant="outlined"
+        height="40"
+        class="text-h5 w-50"
+        :disabled="loading"
+        :loading="loadingChangeStatus"
+        flat
+        @click="approve"
+      >
+        Approve
+      </v-btn>
+      <v-btn
+        color="error"
+        rounded="xl"
+        variant="outlined"
+        height="40"
+        class="text-h5 w-50"
+        :disabled="loading"
+        :loading="loadingChangeStatus"
+        flat
+        @click="reject"
+      >
+        Reject
+      </v-btn>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { ApiResult, AppError, AdminSchoolContributionDTO, AdminSchoolContributionNewDataDTO, AdminSchoolContributionOldDataDTO } from '@/types/api'
+
+interface IDetailModal {
+  contributionId?: number
+  identifierId?: number
+}
+type FieldConfig<T> = {
+  key: keyof T
+  label: string
+  full?: boolean
+  type?: 'text' | 'tags' | 'boards' | 'image'
+  formatter?: (val: T[keyof T]) => string
+}
+
+const { $toast } = useNuxtApp()
+const props = defineProps<IDetailModal>()
+const emit = defineEmits(['changeStatusSuccessfull'])
+
+const loading = ref(true)
+const schoolDetailData = ref()
+const newDataFormated = ref()
+const oldDataFormated = ref()
+const loadingChangeStatus = ref(false)
+const commentReject = ref('')
+
+const newDataFields: FieldConfig<AdminSchoolContributionNewDataDTO>[] = [
+  { key: 'name', label: 'Name :', full: true },
+  { key: 'localName', label: 'Local Name :', full: true },
+  { key: 'schoolType', label: 'Type :' },
+  { key: 'stateId', label: 'State ID :' },
+  { key: 'zipCode', label: 'Zip Code :' },
+  { key: 'cityId', label: 'City ID :' },
+  { key: 'countryId', label: 'Country ID :' },
+  { key: 'quarter', label: 'Quarter :' },
+  { key: 'phoneNumber', label: 'Phone :' },
+  { key: 'faxNumber', label: 'Fax :' },
+  { key: 'email', label: 'Email :', full: true },
+  { key: 'webSite', label: 'Website :', full: true },
+  { key: 'address', label: 'Address :', full: true },
+  { key: 'localAddress', label: 'Local Address :', full: true },
+  { key: 'latitude', label: 'latitude :', full: true },
+  { key: 'longitude', label: 'longitude :', full: true },
+  {
+    key: 'tuition',
+    label: 'Tuition :',
+    formatter: v => `$${v}`,
+  },
+  {
+    key: 'tags',
+    label: 'Tags :',
+    full: true,
+    formatter: v => (v as number[]).join(', '),
+  },
+  {
+    key: 'boardCodes',
+    label: 'Boards :',
+    full: true,
+    formatter: v => (v as number[]).join(', '),
+  },
+  { key: 'description', label: 'Description :', full: true },
+]
+
+const oldDataFields: FieldConfig<AdminSchoolContributionOldDataDTO>[] = [
+  { key: 'id', label: 'ID :' },
+  { key: 'name', label: 'Name :', full: true },
+  { key: 'localName', label: 'Local Name :', full: true },
+  { key: 'schoolType', label: 'Type :' },
+  { key: 'stateId', label: 'State ID :' },
+  { key: 'stateTitle', label: 'State Title :' },
+  { key: 'zipCode', label: 'Zip Code :' },
+  { key: 'cityId', label: 'City ID :' },
+  { key: 'cityTitle', label: 'City Title :' },
+  { key: 'countryId', label: 'Country ID :' },
+  { key: 'countryTitle', label: 'Country Title :' },
+  { key: 'quarter', label: 'Quarter :' },
+  { key: 'phoneNumber', label: 'Phone :' },
+  { key: 'faxNumber', label: 'Fax :' },
+  { key: 'slug', label: 'Slug :' },
+  { key: 'osmId', label: 'OSM ID :' },
+  { key: 'viewCount', label: 'View Count :' },
+  { key: 'email', label: 'Email :', full: true },
+  { key: 'webSite', label: 'Website :', full: true },
+  { key: 'address', label: 'Address :', full: true },
+  { key: 'localAddress', label: 'Local Address :', full: true },
+  { key: 'latitude', label: 'latitude :', full: true },
+  { key: 'longitude', label: 'longitude :', full: true },
+  {
+    key: 'tuition',
+    label: 'Tuition :',
+    formatter: v => `$${v}`,
+  },
+  { key: 'description', label: 'Description :', full: true },
+  {
+    key: 'tags',
+    label: 'Tags :',
+    full: true,
+    type: 'tags',
+  },
+  {
+    key: 'boards',
+    label: 'Boards :',
+    full: true,
+    type: 'boards',
+  },
+  {
+    key: 'defaultImageUri',
+    label: 'default Image :',
+    full: true,
+    type: 'image',
+  },
+]
+
+const getData = async () => {
+  try {
+    loading.value = true
+    const response = await useApiService.get<
+      ApiResult<AdminSchoolContributionDTO>
+    >(`/api/v2/admin/schools/contributions/${props.contributionId}`)
+    if (response.succeeded) {
+      schoolDetailData.value = response.data
+      newDataFormated.value = createFormatedData(schoolDetailData.value.newValues, newDataFields)
+      oldDataFormated.value = createFormatedData(schoolDetailData.value.oldValues, oldDataFields)
+    }
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    if (error.response?.status === 400) {
+      $toast.error(error.response.data?.message || '')
+    }
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+const createFormatedData = <T extends object>(data: T, fields: FieldConfig<T>[]) => {
+  if (!data) return []
+
+  return fields
+    .map((field) => {
+      const rawValue = data[field.key]
+
+      if (
+        rawValue === null
+        || rawValue === undefined
+        || rawValue === ''
+        || (Array.isArray(rawValue) && rawValue.length === 0)
+      ) {
+        return null
+      }
+
+      return {
+        ...field,
+        value: field.formatter
+          ? field.formatter(rawValue as T[keyof T])
+          : rawValue,
+      }
+    })
+    .filter(Boolean)
+}
+
+const approve = async () => {
+  try {
+    loadingChangeStatus.value = true
+    const params = props.identifierId
+      ? {
+          schoolId: props.identifierId,
+        }
+      : {}
+    const response = await useApiService.patch<
+      ApiResult<unknown>
+    >(`/api/v2/admin/schools/contributions/${props.contributionId}/confirm`, params)
+    if (response.succeeded) {
+      emit('changeStatusSuccessfull')
+    }
+    else {
+      $toast.error('The operation approve data failed. Please try again later.')
+    }
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    if (error.response?.status === 400) {
+      $toast.error(error.response.data?.message || '')
+    }
+  }
+  finally {
+    loadingChangeStatus.value = false
+  }
+}
+
+const reject = async () => {
+  try {
+    loadingChangeStatus.value = true
+    const params = {
+      comment: commentReject.value,
+    }
+    const response = await useApiService.patch<
+      ApiResult<unknown>
+    >(`/api/v2/admin/schools/contributions/${props.contributionId}/reject`, params)
+    if (response.succeeded) {
+      emit('changeStatusSuccessfull')
+    }
+    else {
+      $toast.error('The operation reject data failed. Please try again later.')
+    }
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    if (error.response?.status === 400) {
+      $toast.error(error.response.data?.message || '')
+    }
+  }
+  finally {
+    loadingChangeStatus.value = false
+  }
+}
+
+onMounted(async () => {
+  await getData()
+})
 </script>
 
 <style scoped>

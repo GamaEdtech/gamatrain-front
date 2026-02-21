@@ -230,7 +230,11 @@
       v-model:show-dialog="showDetailModal"
       title="Detail"
     >
-      <admin-schools-contributions-detail-modal />
+      <admin-schools-contributions-detail-modal
+        :contribution-id="selectedSchool?.id"
+        :identifier-id="selectedSchool?.identifierId"
+        @change-status-successfull="changeStatusSuccessfull"
+      />
     </admin-common-modal>
   </div>
 </template>
@@ -241,7 +245,6 @@ import type {
   AppError,
   ResponseListDTO,
   AdminSchoolContributionBriefDTO,
-  AdminSchoolContributionDTO,
   SchoolContributionStatus,
 } from '~/types/api'
 
@@ -303,7 +306,8 @@ const sortList = [
   },
 ]
 
-const showDetailModal = ref(true)
+const showDetailModal = ref(false)
+const selectedSchool = ref()
 
 const getData = async () => {
   loading.value = true
@@ -324,7 +328,6 @@ const getData = async () => {
       ApiResult<ResponseListDTO<AdminSchoolContributionBriefDTO>>
     >('/api/v2/admin/schools/contributions', params)
     if (response.data) {
-      console.log('res', response)
       list.value = response.data.list
       totalCount.value = response.data.totalRecordsCount
       pageCount.value = Math.ceil(totalCount.value / pageSize.value)
@@ -399,23 +402,15 @@ const handleCheckboxChange = async (checked: boolean | null, item: SortOption) =
 }
 
 const openDetaiModal = async (school: AdminSchoolContributionBriefDTO) => {
-  console.log(school)
   showDetailModal.value = true
+  selectedSchool.value = school
+}
 
-  try {
-    const response = await useApiService.get<
-      ApiResult<ResponseListDTO<AdminSchoolContributionDTO>>
-    >(`/api/v2/admin/schools/contributions/${school.id}`)
-    console.log('res', response)
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  // finally {
-  // }
+const changeStatusSuccessfull = async () => {
+  showDetailModal.value = false
+  selectedSchool.value = null
+  page.value = 1
+  await getData()
 }
 </script>
 
