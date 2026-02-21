@@ -173,6 +173,7 @@
             <v-btn
               icon
               flat
+              size="small"
               @click="openDetaiModal(item)"
             >
               <v-icon
@@ -186,6 +187,28 @@
                 location="top"
               >
                 Details
+              </v-tooltip>
+            </v-btn>
+
+            <v-btn
+              icon
+              flat
+              variant="text"
+              size="small"
+              :disabled="!item.identifierId"
+              :to="`/school/${item.identifierId}`"
+            >
+              <v-icon
+                size="20"
+                color="grey800"
+              >
+                md:arrow_circle_right
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                School Page
               </v-tooltip>
             </v-btn>
           </div>

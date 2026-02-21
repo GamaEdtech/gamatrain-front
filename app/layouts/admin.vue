@@ -49,6 +49,11 @@ const menuItems = [
   {
     School: [
       {
+        title: 'Schools ',
+        link: '/admin/schools/contributions',
+        icon: 'md:account_balance_outlined',
+      },
+      {
         title: 'Images ',
         link: '/admin/schools/images',
         icon: 'md:image_outlined',
