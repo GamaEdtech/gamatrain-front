@@ -205,7 +205,7 @@
       v-model:show-dialog="showCoinPaymentModal"
       :is-processing="isLoading || isProcessingPayment"
       :user-balance="balance"
-      :amount-to-pay="500_000_000"
+      :amount-to-pay="PRICE_FILE"
       @confirm="handleCoinPaymentConfirm"
       @close="handleCoinPaymentClose"
     />
@@ -244,6 +244,7 @@ interface IDownloadAndPurchaseButtons {
 
 type TypeFile = 'q_word' | 'q_pdf' | 'a_file' | 'extra'
 
+const PRICE_FILE = 5_000_000
 const props = defineProps<IDownloadAndPurchaseButtons>()
 
 const { $toast } = useNuxtApp()
@@ -434,16 +435,15 @@ const requiresCoinPaymentForFile = (type: TypeFile) => {
 const handleCoinPaymentConfirm = async () => {
   if (!pendingDownload.value) return
 
+  showCoinPaymentModal.value = false
   isProcessingPayment.value = true
 
   try {
     const response = await consumeCoins(
-      5000000,
+      PRICE_FILE,
       'Past paper download',
     )
     if (response.succeeded) {
-      showCoinPaymentModal.value = false
-
       showCoinAnimation.value = true
       // Wait for animation to complete before starting download
       // The download will be triggered in handleAnimationComplete

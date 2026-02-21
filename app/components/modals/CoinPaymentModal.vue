@@ -58,6 +58,7 @@
 import { useDisplay } from 'vuetify'
 import { computed } from 'vue'
 
+const { $toast } = useNuxtApp()
 const { fetchBalance } = useCoinBalance()
 const { mdAndUp } = useDisplay()
 
@@ -109,10 +110,13 @@ const confirmPayment = () => {
 }
 
 const chargeWalletSuccessfull = async () => {
-  console.log('inja')
-  console.log('balance', props.userBalance)
   await fetchBalance()
-  console.log('balance again', props.userBalance)
+  if (props.userBalance >= props.amountToPay) {
+    emit('confirm')
+  }
+  else {
+    $toast.info('The cost of the file is more than your account balance. Please recharge your account.')
+  }
 }
 </script>
 
