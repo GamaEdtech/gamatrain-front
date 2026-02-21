@@ -1,0 +1,450 @@
+<template>
+  <div class="w-100 h-100 d-flex flex-column align-start justify-start">
+    <div class="w-100 d-flex justify-space-between align-center">
+      <div class="d-flex align-center justify-start position-relative flex-wrap ga-2">
+        <div class="btn-filter-container d-none d-md-flex align-center justify-center ga-1 bg-grey100 pa-1 rounded-pill">
+          <v-btn
+            v-for="status in statusList"
+            :key="status"
+            rounded="pill"
+            :color="status == statusSelect ? `primary`:`transparent`"
+            flat
+            height="40"
+            @click="changeFilterStatus(status)"
+          >
+            <span :class="`${status == statusSelect ? `text-grey900`:`text-grey500`} font-weight-bold text-h5`">{{ status }}</span>
+          </v-btn>
+        </div>
+
+        <div class="filter-mobile-container d-flex d-md-none align-center justify-center">
+          <common-gombo-box
+            v-model="statusSelect"
+            label="Status"
+            :items="statusList.map((item) => ({
+              id: item,
+              title: item,
+            }))"
+            @update:model-value="changeFilterStatus"
+          />
+        </div>
+
+        <v-menu
+          transition="slide-x-transition"
+          offset-y
+          :close-on-content-click="false"
+        >
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              color="primary"
+              rounded="xl"
+              height="40"
+              width="120"
+              class="text-h5"
+              flat
+              variant="outlined"
+            >
+              Sort
+            </v-btn>
+          </template>
+          <v-list
+            density="compact"
+            min-width="250"
+            nav
+            bg-color="#f9fafb"
+            class="rounded-lg mt-1"
+          >
+            <v-list-item
+              v-for="sortItem in sortList"
+              :key="sortItem.value"
+            >
+              <v-checkbox
+                :model-value="sortSelected.includes(sortItem.value)"
+                color="primary"
+                class="text-h4"
+                hide-details
+                false-icon="md:check_box_outline_blank"
+                true-icon="md:check_box"
+                @click.stop
+                @update:model-value="
+                  (val) => handleCheckboxChange(val, sortItem)
+                "
+              >
+                <template #label>
+                  <span class="text-h5 font-weight-medium ml-2">{{
+                    sortItem.title
+                  }}</span>
+                </template>
+              </v-checkbox>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </div>
+      <div class="d-flex align-center justify-end ga-1">
+        <span
+          class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
+        >
+          <span class="text-grey500 font-weight-bold mr-1">
+            {{ totalCount }}
+          </span>
+          Schools
+        </span>
+      </div>
+    </div>
+    <div class="w-100 mt-4">
+      <v-data-table
+        :headers="headers"
+        :items="list"
+        :items-per-page="pageSize"
+        class="elevation-1 set-height-table"
+        :loading="loading"
+        fixed-header
+        hide-default-footer
+      >
+        <template #headers="{ columns }">
+          <tr>
+            <th
+              v-for="(column, index) in columns"
+              :key="index"
+              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
+               ${index == 0 ? `` : `th-min-width`}`"
+            >
+              {{ column.title }}
+            </th>
+          </tr>
+        </template>
+
+        <template #[`item.id`]="{ item }">
+          <div
+            class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
+          >
+            {{ item.id }}
+          </div>
+        </template>
+
+        <template #[`item.creationUser`]="{ item }">
+          <div
+            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center"
+          >
+            {{ !item.creationUser ? `unknown` : item.creationUser }}
+          </div>
+        </template>
+        <template #[`item.identifierId`]="{ item }">
+          <div
+            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
+          >
+            {{ item.identifierId }}
+          </div>
+        </template>
+
+        <template #[`item.creationDate`]="{ item }">
+          <div
+            class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
+          >
+            {{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm:ss") }}
+          </div>
+        </template>
+
+        <template #[`item.status`]="{ item }">
+          <div
+            class="w-100 d-flex justify-center align-center"
+          >
+            <v-chip
+              :color="getColorBadgeStatus(item.status)"
+              class="font-weight-bold text-h5"
+            >
+              {{ item.status }}
+            </v-chip>
+          </div>
+        </template>
+
+        <template #[`item.comment`]="{ item }">
+          <div
+            class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
+          >
+            {{ item.comment ? item.comment :'' }}
+          </div>
+        </template>
+
+        <template #[`item.Action`]="{ item }">
+          <div
+            class="d-flex justify-center align-center"
+          >
+            <v-btn
+              icon
+              flat
+              @click="openDetaiModal(item)"
+            >
+              <v-icon
+                size="20"
+                color="grey800"
+              >
+                md:plagiarism
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                Details
+              </v-tooltip>
+            </v-btn>
+          </div>
+        </template>
+      </v-data-table>
+    </div>
+
+    <div class="w-100 d-flex mt-2 position-relative ga-6">
+      <div
+        class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4"
+      >
+        <v-pagination
+          v-model="page"
+          :length="pageCount"
+          :total-visible="4"
+          next-icon="md:arrow_forward"
+          prev-icon="md:arrow_back"
+          size="40"
+          class="custom-pagination"
+          @update:model-value="changePageNumber"
+        />
+      </div>
+
+      <div class="position-absolute right-0 select-size-div">
+        <v-select
+          v-model="pageSize"
+          :items="allPageSize"
+          item-title="label"
+          item-value="value"
+          variant="outlined"
+          density="compact"
+          rounded
+          hide-details
+          max-width="140"
+          class="rounded-pill"
+          @update:model-value="changePageSize"
+        />
+      </div>
+    </div>
+
+    <admin-common-modal
+      v-model:show-dialog="showDetailModal"
+      title="Detail"
+    >
+      <admin-schools-contributions-detail-modal
+        :contribution-id="selectedSchool?.id"
+        :identifier-id="selectedSchool?.identifierId"
+        @change-status-successfull="changeStatusSuccessfull"
+      />
+    </admin-common-modal>
+  </div>
+</template>
+
+<script setup lang="ts">
+import type {
+  ApiResult,
+  AppError,
+  ResponseListDTO,
+  AdminSchoolContributionBriefDTO,
+  SchoolContributionStatus,
+} from '~/types/api'
+
+interface SortOption {
+  title: string
+  value: string
+}
+
+definePageMeta({
+  layout: 'admin',
+  auth: true,
+})
+
+const { $dayjs, $toast } = useNuxtApp()
+
+const headers = [
+  { title: 'ID', key: 'id', sortable: false, width: '5vw' },
+  { title: 'User', key: 'creationUser', sortable: false, width: '15vw' },
+  {
+    title: 'Identifier Id',
+    key: 'identifierId',
+    sortable: false,
+    width: '10vw',
+  },
+  { title: 'Created At', key: 'creationDate', sortable: false, width: '20vw' },
+  { title: 'Status', key: 'status', sortable: false, width: '10vw' },
+  {
+    title: 'Comment',
+    key: 'comment',
+    sortable: false,
+    width: '20vw',
+  },
+  {
+    title: 'Action',
+    key: 'Action',
+    sortable: false,
+    width: '20vw',
+  },
+]
+const list = ref<AdminSchoolContributionBriefDTO[]>([])
+const loading = ref(true)
+const totalCount = ref(0)
+const pageSize = ref(10)
+const page = ref(1)
+const pageCount = ref(0)
+const allPageSize = [
+  { label: '10 Rows', value: 10 },
+  { label: '20 Rows', value: 20 },
+  { label: '50 Rows', value: 50 },
+]
+const statusSelect = ref('All')
+const statusList = ['All', 'Draft', 'Review', 'Confirmed', 'Rejected', 'Deleted']
+
+const sortSelected = ref<string[]>([])
+const sortList = [
+  {
+    value: 'creationDate',
+    title: 'Creation Date',
+  },
+]
+
+const showDetailModal = ref(false)
+const selectedSchool = ref()
+
+const getData = async () => {
+  loading.value = true
+  try {
+    const params: Record<string, string | number | boolean | null> = {
+      'PagingDto.PageFilter.Size': pageSize.value,
+      'PagingDto.PageFilter.Skip': (page.value - 1) * pageSize.value,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      'Status': statusSelect.value == 'All' ? '' : statusSelect.value,
+    }
+    if (sortSelected.value && sortSelected.value.length > 0) {
+      sortSelected.value.forEach((sortOption, index) => {
+        params[`PagingDto.SortFilter[${index}].sortType`] = 'Asc'
+        params[`PagingDto.SortFilter[${index}].column`] = sortOption
+      })
+    }
+    const response = await useApiService.get<
+      ApiResult<ResponseListDTO<AdminSchoolContributionBriefDTO>>
+    >('/api/v2/admin/schools/contributions', params)
+    if (response.data) {
+      list.value = response.data.list
+      totalCount.value = response.data.totalRecordsCount
+      pageCount.value = Math.ceil(totalCount.value / pageSize.value)
+    }
+    else {
+      list.value = []
+    }
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    if (error.response?.status === 400) {
+      $toast.error(error.response.data?.message || '')
+    }
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+const changeFilterStatus = async (status: string) => {
+  if (status == '') {
+    statusSelect.value = 'All'
+  }
+  else {
+    statusSelect.value = status
+  }
+  page.value = 1
+  await getData()
+}
+
+const changePageNumber = async () => {
+  await getData()
+}
+
+const changePageSize = async () => {
+  page.value = 1
+  await getData()
+}
+
+onMounted(async () => {
+  await getData()
+})
+
+const getColorBadgeStatus = (status: SchoolContributionStatus) => {
+  switch (status) {
+    case 'Confirmed':
+      return 'success'
+    case 'Draft':
+      return 'info'
+    case 'Review':
+      return 'warning'
+    case 'Rejected':
+      return 'error'
+    case 'Deleted':
+      return 'error'
+
+    default:
+      return 'warning'
+  }
+}
+
+const handleCheckboxChange = async (checked: boolean | null, item: SortOption) => {
+  const index = sortSelected.value.indexOf(item.value)
+  if (checked && index === -1) {
+    sortSelected.value.push(item.value)
+  }
+  else if (!checked && index !== -1) {
+    sortSelected.value.splice(index, 1)
+  }
+  page.value = 1
+  await getData()
+}
+
+const openDetaiModal = async (school: AdminSchoolContributionBriefDTO) => {
+  showDetailModal.value = true
+  selectedSchool.value = school
+}
+
+const changeStatusSuccessfull = async () => {
+  showDetailModal.value = false
+  selectedSchool.value = null
+  page.value = 1
+  await getData()
+}
+</script>
+
+<style scoped>
+.set-height-table {
+  max-height: 70vh;
+}
+.th-min-width {
+  min-width: 130px;
+}
+.description-width {
+  min-width: 200px;
+}
+.reverse-icon {
+  transform: rotateZ(180deg);
+}
+.select-size-div {
+  top: 18px;
+}
+.btn-filter-container{
+  height : 48px;
+}
+.filter-mobile-container{
+  width: 170px;
+}
+
+:deep(.custom-pagination li button:hover) {
+  background-color: rgb(var(--v-theme-primary));
+  opacity: 0.6;
+}
+:deep(.custom-pagination .v-pagination__item--is-active button) {
+  background: rgb(var(--v-theme-primary)) !important;
+}
+:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
+  opacity: 0 !important;
+}
+</style>
