@@ -269,6 +269,7 @@ defineProps({
     default: 0,
   },
 })
+const emit = defineEmits(['chargeWalletSuccessfull'])
 
 const formatNumber = (value) => {
   if (value === null || value === undefined || value === '') return ''
@@ -770,6 +771,7 @@ const sendConfirmPaymentRequest = async () => {
       params,
     )
     if (responsePaymentConfirmed.succeeded) {
+      emit('chargeWalletSuccessfull')
       loadingPayment.value = false
       $toast.success(`Your Wallet Charge Successfully.`)
       loadingPayment.value = false
