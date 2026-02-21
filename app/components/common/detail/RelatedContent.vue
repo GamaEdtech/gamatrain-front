@@ -135,7 +135,6 @@ type sourceType
     | 'examTest'
     | 'tutorial'
 type requestType = 'test' | 'file' | 'exam' | 'question' | 'tutorial'
-// type content = 'paper' | 'exam' | 'question' | 'tutorial'
 
 interface IRelatedPortraitContent {
   source: sourceType
@@ -167,45 +166,29 @@ const infoMap = {
     keyResponse: 'tutorials',
   },
 }
+
 const fallbackImage = '/images/GamaBag.webp'
 
-const { data: relatedData, status } = await useFetch<ApiResult<RelatedContentDTO>>(
-  '/api/v1/recommendations/related',
-  {
-    params: {
+const { data: relatedData, pending: loading } = await useAsyncData(
+  `related-content-${props.source}-${props.id}`,
+  () => useApiService.get<ApiResult<RelatedContentDTO>>(
+    '/api/v1/recommendations/related',
+    {
       source: props.source,
       request: props.request.join(','),
       id: props.id,
     },
-    key: `related-content-${props.id}-${props.source}`,
-  },
+  ),
 )
 
-const loading = computed(() => status.value === 'pending')
-
-const pastpaper = computed(() => {
-  const related = relatedData.value?.data
-  if (related) {
-    return related[infoMap['paper'].keyResponse as keyof RelatedContentDTO] || []
-  }
-  return []
-})
-
-const tutorials = computed(() => {
-  const related = relatedData.value?.data
-  if (related) {
-    return related[infoMap['tutorial'].keyResponse as keyof RelatedContentDTO] || []
-  }
-  return []
-})
+const pastpaper = computed<ContentItemDTO[]>(() =>
+  (relatedData.value?.data?.[infoMap['paper'].keyResponse as keyof RelatedContentDTO] as ContentItemDTO[]) ?? [],
+)
+const tutorials = computed<ContentItemDTO[]>(() =>
+  (relatedData.value?.data?.[infoMap['tutorial'].keyResponse as keyof RelatedContentDTO] as ContentItemDTO[]) ?? [],
+)
 
 const CardHeight = computed(() => {
-  // if (props.type === "paper") {
-  //   return "243px";
-  // }
-  // else if (props.type === "multimedia") {
-  //   return "120px";
-  // }
   return 'auto'
 })
 </script>
