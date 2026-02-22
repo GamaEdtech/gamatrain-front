@@ -406,29 +406,34 @@ const approve = async () => {
 }
 
 const reject = async () => {
-  try {
-    loadingChangeStatus.value = true
-    const params = {
-      comment: commentReject.value,
+  if (commentReject.value && commentReject.value.length > 0) {
+    try {
+      loadingChangeStatus.value = true
+      const params = {
+        comment: commentReject.value,
+      }
+      const response = await useApiService.patch<
+        ApiResult<unknown>
+      >(`/api/v2/admin/schools/contributions/${props.contributionId}/reject`, params)
+      if (response.succeeded) {
+        emit('changeStatusSuccessfull')
+      }
+      else {
+        $toast.error('The operation reject data failed. Please try again later.')
+      }
     }
-    const response = await useApiService.patch<
-      ApiResult<unknown>
-    >(`/api/v2/admin/schools/contributions/${props.contributionId}/reject`, params)
-    if (response.succeeded) {
-      emit('changeStatusSuccessfull')
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
     }
-    else {
-      $toast.error('The operation reject data failed. Please try again later.')
+    finally {
+      loadingChangeStatus.value = false
     }
   }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loadingChangeStatus.value = false
+  else {
+    $toast.error('Please write the reason for rejection.')
   }
 }
 
