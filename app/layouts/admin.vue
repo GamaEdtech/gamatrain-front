@@ -20,6 +20,20 @@ const router = useRouter()
 const route = useRoute()
 const menuItems = [
   {
+    General: [
+      {
+        title: 'Home',
+        link: '/',
+        icon: 'md:home_outlined',
+      },
+      {
+        title: 'Settings',
+        link: '/admin/settings',
+        icon: 'md:settings_outlined',
+      },
+    ],
+  },
+  {
     Caption: [
       {
         title: 'Contact Us',
