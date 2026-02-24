@@ -270,6 +270,12 @@ onMounted(async () => {
   else {
     isDrawerOpen.value = true
   }
+
+  requestIdleCallback?.(() => {
+    import('~/components/common/login.vue')
+    import('~/components/common/register.vue')
+    import('~/components/common/pass-recover.vue')
+  })
 })
 
 onBeforeUnmount(() => {
