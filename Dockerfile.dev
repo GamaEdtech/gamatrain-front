@@ -1,0 +1,13 @@
+ARG NODE_VERSION=20.18.0
+FROM node:${NODE_VERSION}-slim
+
+ENV NODE_ENV=development
+WORKDIR /src
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "dev"]
