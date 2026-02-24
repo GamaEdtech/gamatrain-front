@@ -24,7 +24,7 @@
         <slot />
       </div>
       <!-- Blog container -->
-      <!-- <lazy-home-blog-container v-if="showBlogSlider" /> -->
+      <lazy-home-blog-container v-if="showBlogSlider" />
       <!-- End blog container -->
       <lazy-common-footer />
       <menu-bottom-nav-menu v-if="showBottomNavSlider" />
@@ -45,12 +45,12 @@ const duration = 10000
 const route = useRoute()
 const { isOnline } = useNetwork()
 
-// const excludedPaths = ['/', '/search', '/school']
-// const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance']
+const excludedPaths = ['/', '/search', '/school']
+const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance']
 
-// const showBlogSlider = computed(() => {
-//   return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)
-// })
+const showBlogSlider = computed(() => {
+  return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)
+})
 
 const excludedPathsForBottomNavMenu = ['/school', '/game/car-racing', '/game/castle']
 const showBottomNavSlider = computed(() => {
