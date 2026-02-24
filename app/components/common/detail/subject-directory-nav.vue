@@ -10,9 +10,7 @@
       <div class="pl-2 pb-4">
         <v-icon size="25">md:files_outlined</v-icon>
 
-        <span
-          class="text-h6 text-sm-h5 font-weight-medium text-light-blue-darken-2"
-        >
+        <span class="text-h6 text-sm-h5 font-weight-medium">
           All resources in one place
         </span>
       </div>

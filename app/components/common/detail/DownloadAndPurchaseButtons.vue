@@ -203,15 +203,16 @@
     <!-- Coin Payment Modal -->
     <modals-coin-payment-modal
       v-model:show-dialog="showCoinPaymentModal"
-      :is-processing="coinBalance.isLoading.value || isProcessingPayment"
-      :user-balance="coinBalance.balance.value"
+      :is-processing="isLoading || isProcessingPayment"
+      :user-balance="balance"
+      :amount-to-pay="PRICE_FILE"
       @confirm="handleCoinPaymentConfirm"
       @close="handleCoinPaymentClose"
     />
 
     <!-- Coin Consumption Animation -->
     <common-coin-consumption-animation
-      :is-visible="showCoinAnimation"
+      v-model:is-visible="showCoinAnimation"
       @animation-complete="handleAnimationComplete"
     />
   </div>
@@ -243,15 +244,16 @@ interface IDownloadAndPurchaseButtons {
 
 type TypeFile = 'q_word' | 'q_pdf' | 'a_file' | 'extra'
 
+const PRICE_FILE = 5_000_000
 const props = defineProps<IDownloadAndPurchaseButtons>()
 
 const { $toast } = useNuxtApp()
-// const { trackFileDownload } = useGtmEvents()
+const { trackFileDownload } = useGtmEvents()
 const auth = useAuth()
 const router = useRouter()
 const { xs } = useDisplay()
 
-const coinBalance = useCoinBalance()
+const { balance, isLoading, fetchBalance, consumeCoins } = useCoinBalance()
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
@@ -269,8 +271,8 @@ const handleDownloadClick = async (type: TypeFile, extraId?: string) => {
   downloadProgress.value[downloadKey] = 0
   if (requiresCoinPaymentForFile(type)) {
     if (auth.isAuthenticated.value) {
-      const balanceResult = await coinBalance.fetchBalance()
-      if (balanceResult === 0 && coinBalance.error.value) {
+      const balanceResult = await fetchBalance()
+      if (!balanceResult.succeeded) {
         $toast.error('Failed to fetch balance. Please try again.')
         downloadingItems.value.delete(downloadKey)
         Reflect.deleteProperty(downloadProgress.value, downloadKey)
@@ -309,11 +311,12 @@ const isDownloading = (type: TypeFile, extraId?: string) => {
 }
 
 const startDownload = async (type: TypeFile, extraId?: string) => {
-  // trackFileDownload({
-  //   file_type: 'past_paper',
-  //   file_name: props.title,
-  //   file_url: props.titleUrl,
-  // })
+  trackFileDownload({
+    file_type: 'past_paper',
+    file_name: props.title,
+    file_url: props.titleUrl,
+  })
+
   const downloadKey = extraId ? `${type}-${extraId}` : type
 
   let apiUrl = ''
@@ -432,14 +435,15 @@ const requiresCoinPaymentForFile = (type: TypeFile) => {
 const handleCoinPaymentConfirm = async () => {
   if (!pendingDownload.value) return
 
+  showCoinPaymentModal.value = false
   isProcessingPayment.value = true
 
   try {
-    const success = await coinBalance.deductCoins(
-      5000000,
+    const response = await consumeCoins(
+      PRICE_FILE,
       'Past paper download',
     )
-    if (success) {
+    if (response.succeeded) {
       showCoinAnimation.value = true
       // Wait for animation to complete before starting download
       // The download will be triggered in handleAnimationComplete
@@ -472,7 +476,6 @@ const handleCoinPaymentClose = () => {
 const handleAnimationComplete = async () => {
   // Close everything immediately when animation completes
   showCoinAnimation.value = false
-  showCoinPaymentModal.value = false
 
   if (pendingDownload.value) {
     await startDownload(

@@ -7,7 +7,7 @@
     <template #activator="{ props }">
       <div
         v-bind="props"
-        class="d-none d-lg-flex"
+        class="d-none d-lg-flex align-center"
       >
         <div
           :class="`gama-text-subtitle1 ${
@@ -72,6 +72,7 @@
           link
           :to="item.link"
           class="rounded-lg mt-3"
+          :disabled="item.status"
         >
           <template #prepend>
             <span
@@ -266,12 +267,14 @@ const items = [
         title: 'Top Up Wallet',
         link: '/user/charge-wallet',
         icon: 'md:groups',
+        status: true,
       },
-      { title: 'Payments', link: '/user/payments', icon: 'md:shopping_bag' },
+      { title: 'Payments', link: '/user/payments', icon: 'md:shopping_bag', status: true },
       {
         title: 'Sell Report',
         link: '/user/sell-report',
         icon: 'md:account_balance',
+        status: true,
       },
     ],
   },
@@ -280,6 +283,7 @@ const items = [
     icon: 'md:mail',
     link: '/user/ticket',
     value: 'messages',
+    status: true,
   },
   {
     title: 'Settings',

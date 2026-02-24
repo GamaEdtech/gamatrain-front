@@ -14,6 +14,7 @@ export default defineNuxtConfig({
     telegramApiSecret: process.env.TELEGRAM_API_SECRET,
     connectionStringMongoDB: process.env.CONNECTION_STRING_MONGODB,
     aiApiUrl: process.env.AI_API_URL,
+    projectPayerVaultKey: process.env.PROJECT_PAYER_VAULT_KEY,
     public: {
       GOOGLE_ADSENSE: process.env.NUXT_GOOGLE_ADSENSE_ID,
       gtmId: process.env.NUXT_PUBLIC_GTM_ID,
@@ -25,6 +26,8 @@ export default defineNuxtConfig({
       baseUrl: process.env.NUXT_PROXY_BASE_URL,
       apiV1BaseUrl: process.env.NUXT_PROXY_API_BASE_URL,
       apiV2BaseUrl: process.env.NUXT_PROXY_API2_BASE_URL,
+      BaseUrl1: process.env.NUXT_BASE_URL1,
+      BaseUrl2: process.env.NUXT_BASE_URL2,
       gamaedtechWalletAddress: process.env.NUXT_GAMAEDTECH_WALLET_ADDRESS,
       aiModelName: process.env.NUXT_PUBLIC_AI_MODEL_NAME,
     },
@@ -51,6 +54,10 @@ export default defineNuxtConfig({
       })
     },
   ],
+
+  dayjs: {
+    plugins: ['relativeTime'],
+  },
 
   site: {
     url: 'https://gamatrain.com/',
@@ -232,6 +239,8 @@ export default defineNuxtConfig({
 
   routeRules: {
     '/test-maker/**': { ssr: false, prerender: true },
+    '/user/**': { ssr: false },
+    '/admin/**': { ssr: false },
   },
   // Development server configuration
   devServer: {

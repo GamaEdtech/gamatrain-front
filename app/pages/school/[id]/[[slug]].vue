@@ -200,6 +200,7 @@
                 @open-auth-dialog="openAuthDialog"
                 @facilities-updated="refreshSchoolData"
               />
+              <school-detail-boards :school-boards="contentData.boards" />
             </v-col>
             <v-col
               id="main-info-section"
@@ -244,7 +245,10 @@
             :comment-list="commentList"
             @reaction-updated="refreshComments()"
           />
-          <school-detail-similar-schools :similar-schools="similarSchools" />
+          <school-detail-nearest-school
+            :lat="contentData.latitude"
+            :lng="contentData.longitude"
+          />
         </v-col>
       </v-row>
       <!-- End data container -->
@@ -282,8 +286,6 @@
 </template>
 
 <script setup>
-import { useRouter, useRoute } from 'nuxt/app'
-
 const route = useRoute()
 const router = useRouter()
 const tourPanoramas = ref([])
@@ -298,11 +300,102 @@ const commentList = ref([])
 const reportDialog = ref(false)
 const contentData = ref(null)
 const ratingData = ref(null)
-const similarSchools = []
 const galleryImages = ref([])
 const isAdsLoad = ref(false)
 
 const requestURL = ref(useRequestURL().host)
+
+const breadcrumbSchema = computed(() => {
+  if (!contentData.value) return null
+
+  return {
+    '@type': 'BreadcrumbList',
+    '@id': 'https://gamatrain.com/school/123#breadcrumb',
+    'itemListElement': [
+      {
+        '@type': 'ListItem',
+        'position': 1,
+        'name': 'Home',
+        'item': 'https://gamatrain.com',
+      },
+      {
+        '@type': 'ListItem',
+        'position': 2,
+        'name': 'Schools',
+        'item': 'https://gamatrain.com/schools',
+      },
+      {
+        '@type': 'ListItem',
+        'position': 3,
+        'name': contentData.value.name,
+        'item': `https://${requestURL.value}/school/${contentData.value.id}/${contentData.value.slug}`,
+      },
+    ],
+  }
+})
+
+const ratingSchema = computed(() => {
+  if (
+    !ratingData.value
+    || !ratingData.value.averageRate
+    || !ratingData.value.totalCount
+  ) {
+    return null
+  }
+
+  return {
+    '@type': 'AggregateRating',
+    'ratingValue': ratingData.value.averageRate.toFixed(1),
+    'reviewCount': ratingData.value.totalCount,
+  }
+})
+
+const schoolSchema = computed(() => {
+  if (!contentData.value) return null
+
+  const imageUrl = contentData.value.defaultImageUri
+    ? contentData.value.defaultImageUri.replace(/^http:\/\//, 'https://')
+    : 'https://gamatrain.com/android-chrome-512x512-light.png'
+
+  return {
+    '@type': 'School',
+    '@id': `https://${requestURL.value}/school/${contentData.value.id}#school`,
+    'name': contentData.value.name,
+    'description': contentData.value.description,
+    'url': `https://${requestURL.value}/school/${contentData.value.id}/${contentData.value.slug}`,
+    'mainEntityOfPage': {
+      '@type': 'WebPage',
+      '@id': `https://${requestURL.value}/school/${contentData.value.id}/${contentData.value.slug}`,
+    },
+    'image': [{
+      '@type': 'ImageObject',
+      'url': imageUrl,
+    }],
+    ...(contentData.value.phoneNumber && { telephone: contentData.value.phoneNumber }),
+    ...(contentData.value.email && { email: contentData.value.email }),
+    'address': {
+      '@type': 'PostalAddress',
+      ...(contentData.value.cityTitle && { addressLocality: contentData.value.cityTitle }),
+      ...(contentData.value.stateTitle && { addressRegion: contentData.value.stateTitle }),
+      ...(contentData.value.countryTitle && { addressCountry: contentData.value.countryTitle }),
+    },
+    ...(ratingSchema.value && { aggregateRating: ratingSchema.value }),
+  }
+})
+
+const fullSchema = computed(() => {
+  const schemaList = [
+    breadcrumbSchema.value,
+    schoolSchema.value,
+  ].filter(Boolean)
+
+  return schemaList.length
+    ? {
+        '@context': 'https://schema.org',
+        '@graph': schemaList,
+      }
+    : null
+})
 
 // --- Description meta generation ---
 function generateDefaultDescription(data) {
@@ -376,9 +469,22 @@ const fetchSchoolData = async () => {
     const response = await useApiService.get(
       `/api/v2/schools/${route.params.id}`,
     )
-    return response
+    if (response.succeeded) {
+      return response
+    }
+    else {
+      showError({
+        statusCode: 404,
+        statusMessage: 'Page Not Founded!',
+      })
+      return null
+    }
   }
   catch (error) {
+    showError({
+      statusCode: 404,
+      statusMessage: 'Page Not Founded!',
+    })
     console.error('Error fetching data:', error)
     return null
   }
@@ -401,7 +507,7 @@ const {
   data: contentDataRaw,
   status,
   _refresh,
-} = await useAsyncData('contentData', () => fetchSchoolData(), {
+} = await useAsyncData(() => `contentData-${route.params.id}`, () => fetchSchoolData(), {
   server: true,
   lazy: false,
   immediate: true,
@@ -431,10 +537,19 @@ useHead(() => ({
   htmlAttrs: {
     lang: 'en',
   },
+  script: [
+    {
+      key: 'json-ld-schema',
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(fullSchema.value),
+    },
+  ],
   link: [
     {
       rel: 'canonical',
-      href: `${requestURL.value}/school/${contentData.value?.id}/${contentData?.value?.slug}`,
+      href: contentData.value
+        ? `https://${requestURL.value}/school/${contentData.value.id}/${contentData.value.slug}`
+        : `https://${requestURL.value}/school/${route.params.id}`,
     },
     {
       rel: 'icon',
@@ -443,7 +558,6 @@ useHead(() => ({
     },
   ],
 }))
-console.log('contentData.value', contentData.value)
 const ogImage = contentData.value?.defaultImageUri
   ? contentData.value?.defaultImageUri.replace(/^http:\/\//, 'https://')
   : null

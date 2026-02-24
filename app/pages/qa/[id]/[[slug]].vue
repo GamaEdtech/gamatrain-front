@@ -288,7 +288,7 @@
                                         small
                                         density="comfortable"
                                         link
-                                        :to="`/search?type=question&section=${contentData.section}`"
+                                        :to="`/search?type=forum&section=${contentData.section}`"
                                         class="mr-1"
                                       >
                                         {{ contentData.section_title }}
@@ -297,7 +297,7 @@
                                         small
                                         density="comfortable"
                                         link
-                                        :to="`/search?type=question&section=${contentData.section}&base=${contentData.base}`"
+                                        :to="`/search?type=forum&section=${contentData.section}&base=${contentData.base}`"
                                         class="mr-1"
                                       >
                                         {{ contentData.base_title }}
@@ -307,7 +307,7 @@
                                         density="comfortable"
                                         link
                                         class="ma-1"
-                                        :to="`/search?type=question&section=${contentData.section}&base=${contentData.base}&lesson=${contentData.lesson}`"
+                                        :to="`/search?type=forum&section=${contentData.section}&base=${contentData.base}&lesson=${contentData.lesson}`"
                                       >
                                         {{ contentData.lesson_title }}
                                       </v-chip>
@@ -1134,11 +1134,24 @@ const { data: contentData } = await useAsyncData(
   async () => {
     try {
       const content = await useApiService.get(`/api/v1/questions/${route.params.id}`)
-      return content.status === 1 ? content.data : {}
+      if (content.status === 1) {
+        return content.data
+      }
+      else {
+        showError({
+          statusCode: 404,
+          statusMessage: 'Page Not Founded!',
+        })
+        return {}
+      }
     }
     catch (e) {
+      showError({
+        statusCode: 404,
+        statusMessage: 'Page Not Founded!',
+      })
       if (e?.status === 404) {
-        // router.push("/search?type=question");
+        // router.push("/search?type=forum");
       }
       throw e
     }
@@ -1155,7 +1168,7 @@ const breads = ref([
   {
     text: 'Forum',
     disabled: false,
-    href: '/search?type=question',
+    href: '/search?type=forum',
   },
 ])
 
@@ -1260,17 +1273,17 @@ function initBreadCrumb() {
       {
         text: contentData.value.section_title,
         disabled: false,
-        href: `/search?type=question&section=${contentData.value.section}`,
+        href: `/search?type=forum&section=${contentData.value.section}`,
       },
       {
         text: contentData.value.base_title,
         disabled: false,
-        href: `/search?type=question&section=${contentData.value.section}&base=${contentData.value.base}`,
+        href: `/search?type=forum&section=${contentData.value.section}&base=${contentData.value.base}`,
       },
       {
         text: contentData.value.lesson_title,
         disabled: false,
-        href: `/search?type=question&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
+        href: `/search?type=forum&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
       },
     )
   }
@@ -1384,7 +1397,7 @@ useHead({
   script: [
     {
       type: 'application/ld+json',
-      json: {
+      innerHTML: JSON.stringify({
         '@context': 'https://schema.org',
         '@type': 'QAPage',
         'mainEntity': {
@@ -1431,7 +1444,7 @@ useHead({
               },
             })),
         },
-      },
+      }),
     },
   ],
 })

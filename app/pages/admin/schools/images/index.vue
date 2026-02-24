@@ -1,11 +1,10 @@
 <script setup>
-import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
 import schoolCard from '~/components/admin/schools/images/schoolCard.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',
-  auth: true,
+  middleware: ['auth', 'admin'],
 })
 
 const { $toast } = useNuxtApp()
@@ -322,7 +321,7 @@ watch(filter, (_val) => {
         @fetch-images="fetchImages"
       />
 
-      <DeleteItemModal
+      <admin-common-delete-modal
         v-model="isDeleteModalOpen"
         @confirm="deleteImage"
       />

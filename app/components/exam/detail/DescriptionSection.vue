@@ -84,14 +84,14 @@
           v-show="contentData.section_title"
           link
           class="mr-1"
-          :to="`/search?type=azmoon&section=${contentData.section}`"
+          :to="`/search?type=quizhub&section=${contentData.section}`"
         >
           {{ contentData.section_title }}
         </v-chip>
         <v-chip
           v-show="contentData.base_title"
           link
-          :to="`/search?type=azmoon&section=${contentData.section}&base=${contentData.base}`"
+          :to="`/search?type=quizhub&section=${contentData.section}&base=${contentData.base}`"
           class="mr-1"
         >
           {{ contentData.base_title }}
@@ -99,7 +99,7 @@
         <v-chip
           v-show="contentData.lesson_title"
           link
-          :to="`/search?type=azmoon&section=${contentData.section}&base=${contentData.base}&lesson=${contentData.lesson}`"
+          :to="`/search?type=quizhub&section=${contentData.section}&base=${contentData.base}&lesson=${contentData.lesson}`"
           class="ma-1"
         >
           {{ contentData.lesson_title }}

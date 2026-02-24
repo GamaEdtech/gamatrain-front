@@ -92,16 +92,10 @@ export const useAuth = () => {
   }
 
   const forgotPassword = async (passForm: { identity: string }) => {
-    const response: { message?: string, success?: boolean } = await $fetch(
-      '/api/v1/users/recovery',
-      {
-        method: 'POST',
-        body: {
-          ...passForm,
-          type: 'request',
-        },
-      },
-    )
+    const response = await useApiService.post('/api/v1/users/recovery', {
+      ...passForm,
+      type: 'request',
+    })
     return response
   }
 

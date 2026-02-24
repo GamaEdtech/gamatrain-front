@@ -1,12 +1,11 @@
 <script setup>
-import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
 import addLocation from '~/components/admin/locations/addLocation.vue'
 import editLocation from '~/components/admin/locations/editLocation.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',
-  auth: true,
+  middleware: ['auth', 'admin'],
 })
 
 const { $toast } = useNuxtApp()
@@ -310,7 +309,7 @@ watch(search, (val) => {
         </template>
       </v-data-table>
 
-      <DeleteItemModal
+      <admin-common-delete-modal
         v-model="isDeleteModalOpen"
         @confirm="deleteLocation"
       />

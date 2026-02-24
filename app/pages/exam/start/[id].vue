@@ -157,7 +157,7 @@
                 size="large"
                 variant="outlined"
                 color="error"
-                to="/search?type=azmoon"
+                to="/search?type=quizhub"
                 block
                 style="text-transform: none"
               >

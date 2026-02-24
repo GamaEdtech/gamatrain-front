@@ -1,12 +1,11 @@
 <script setup>
 import tagCard from '~/components/admin/tags/tagCard.vue'
 import addNewTag from '~/components/admin/tags/addNewTag.vue'
-import DeleteItemModal from '@/components/admin/contactus/deleteItemModal.vue'
 import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',
-  auth: true,
+  middleware: ['auth', 'admin'],
 })
 
 const { $toast } = useNuxtApp()
@@ -274,7 +273,7 @@ watch(filter, (_val) => {
         v-model="showAddTagDialog"
         @fetch-tags="fetchTags"
       />
-      <DeleteItemModal
+      <admin-common-delete-modal
         v-model="isDeleteModalOpen"
         @confirm="deleteTag"
       />

@@ -1,7 +1,7 @@
 <template>
   <div
     id="gombo-box"
-    class="gombo-box"
+    class="gombo-box w-100"
   >
     <v-text-field
       v-model="inputText"
@@ -13,7 +13,8 @@
       :dense="dense"
       :disabled="disabled"
       clearable
-      class="gombo-box-input"
+      class="gombo-box-input text-grey700"
+      base-color="grey500"
       color="#ffb300"
       @click="getList"
       @click:clear="clearValue"
@@ -153,7 +154,7 @@ watch(
   (newValue) => {
     if (newValue.length > 0) {
       const foundObj = props.items.find(
-        x => x[props.itemValue] == Number(props.modelValue),
+        x => x[props.itemValue] == Number(props.modelValue) || x[props.itemValue] == props.modelValue,
       )
       if (foundObj) inputText.value = foundObj[props.itemTitle]
       else inputText.value = ''
@@ -169,7 +170,7 @@ watch(
   (newValue) => {
     if (props.items.length > 0) {
       const foundObj = props.items.find(
-        x => x[props.itemValue] == Number(newValue),
+        x => x[props.itemValue] == Number(newValue) || x[props.itemValue] == newValue,
       )
       inputText.value = foundObj ? foundObj[props.itemTitle] : ''
     }
@@ -197,7 +198,7 @@ const setValue = (val, title) => {
 onMounted(() => {
   if (props.items.length > 0) {
     const foundObj = props.items.find(
-      x => x[props.itemValue] == Number(props.modelValue),
+      x => x[props.itemValue] == Number(props.modelValue) || x[props.itemValue] == props.modelValue,
     )
     inputText.value = foundObj ? foundObj[props.itemTitle] : ''
   }

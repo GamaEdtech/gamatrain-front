@@ -14,8 +14,43 @@
           class="bg-primary-gray-100 rounded-lg left-0 top-0 gray-background-div w-100 position-absolute"
         />
         <div class="w-100 d-flex flex-column align-center set-z-index">
-          <h1 class="w-100 text-h4 text-sm-h3 text-md-h2 font-weight-bold">
+          <h1 class="d-flex align-center ga-2 w-100 text-h4 text-sm-h3 text-md-h2 font-weight-bold">
+            <v-btn
+              icon
+              color="primary"
+              flat
+              variant="outlined"
+              width="30"
+              height="30"
+              :disabled="!contentData.previousId"
+              :to="`/blog/${contentData.previousId}`"
+            >
+              <v-icon
+                color="primary"
+                size="24"
+              >
+                md:chevron_left
+              </v-icon>
+            </v-btn>
+
             {{ contentData.title }}
+            <v-btn
+              icon
+              color="primary"
+              flat
+              variant="outlined"
+              width="30"
+              height="30"
+              :disabled="!contentData.nextId"
+              :to="`/blog/${contentData.nextId}`"
+            >
+              <v-icon
+                color="primary"
+                size="24"
+              >
+                md:chevron_right
+              </v-icon>
+            </v-btn>
           </h1>
           <div
             v-if="contentData.tags && contentData.tags.length > 0"
@@ -99,6 +134,18 @@
         </div>
       </v-col>
       <v-col
+        v-if="contentData.podcastUri"
+        cols="12"
+        class="d-flex flex-column flex-start mt-1"
+      >
+        <common-audio-player
+          :src="contentData.podcastUri"
+          :title="contentData.title"
+          :auto-play="false"
+          :loop="false"
+        />
+      </v-col>
+      <v-col
         ref="blogContentRef"
         cols="12"
         class="d-flex flex-column mt-6"
@@ -179,6 +226,96 @@ const { data: contentData, error } = await useAsyncData(
   },
 )
 
+const organizationSchema = {
+  '@type': 'Organization',
+  '@id': 'https://gamatrain.com/#organization',
+  'name': 'GamaTrain',
+  'url': 'https://gamatrain.com',
+  'logo': {
+    '@type': 'ImageObject',
+    'url': 'https://gamatrain.com/android-chrome-512x512-light.png',
+  },
+}
+const breadcrumbSchema = computed(() => {
+  return {
+    '@type': 'BreadcrumbList',
+    'itemListElement': [
+      {
+        '@type': 'ListItem',
+        'position': 1,
+        'name': 'Home',
+        'item': 'https://gamatrain.com',
+      },
+      {
+        '@type': 'ListItem',
+        'position': 2,
+        'name': 'Blogs',
+        'item': 'https://gamatrain.com/blog',
+      },
+      {
+        '@type': 'ListItem',
+        'position': 2,
+        'name': contentData.value.title,
+        'item': `https://${requestURL.value}/blog/${blogId}/${contentData.value.slug}`,
+      },
+    ],
+  }
+})
+
+const articleSchema = computed(() => {
+  if (!contentData.value) return null
+
+  const image
+    = contentData.value?.imageUri
+      || contentData.value?.imageUri?.replace(/^http:\/\//, 'https://')
+      || 'https://gamatrain.com/android-chrome-512x512-light.png'
+
+  return {
+    '@type': 'BlogPosting',
+    'headline': contentData.value?.title || 'Blog Post',
+    'description': contentData.value?.summary || 'Read this blog post on Gamatrain',
+    'image': [image],
+    'mainEntityOfPage': {
+      '@type': 'WebPage',
+      '@id': `https://${requestURL.value}/blog/${blogId}/${contentData.value.slug}`,
+    },
+    'author': {
+      '@type': 'Person',
+      'name': `${contentData.value.creationUser}`,
+    },
+    'publisher': {
+      '@type': 'Organization',
+      '@id': 'https://gamatrain.com/#organization',
+    },
+    'dateModified': new Date(contentData.value.publishDate).toISOString(),
+    'datePublished': new Date(contentData.value.publishDate).toISOString(),
+    'keywords': contentData.value?.keywords || '',
+    'articleSection': contentData.value?.category || 'General',
+    'articleBody': contentData.value?.body
+      ? contentData.value.body.replace(/<[^>]*>/g, '').substring(0, 5000)
+      : '',
+    'wordCount': contentData.value?.content?.length || 0,
+    'url': `https://${requestURL.value}/blog/${blogId}/${contentData.value.slug}`,
+  }
+})
+
+const fullSchema = computed(() => {
+  if (!articleSchema.value) return null
+
+  const graph = [
+    organizationSchema,
+    articleSchema.value,
+  ]
+
+  if (breadcrumbSchema.value) {
+    graph.push(breadcrumbSchema.value)
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': graph,
+  }
+})
 // SEO
 useHead({
   title: contentData.value?.title || 'Blog Post',
@@ -238,10 +375,19 @@ useHead({
       content: contentData.value?.keywords || '',
     },
   ],
+  script: [
+    {
+      key: 'json-ld-schema',
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(fullSchema.value),
+    },
+  ],
   link: [
     {
       rel: 'canonical',
-      href: `${requestURL.value}/blog/${blogId}/${contentData.value.slug}`,
+      href: contentData.value
+        ? `https://${requestURL.value}/blog/${blogId}/${contentData.value.slug}`
+        : `https://${requestURL.value}/blog/${blogId}`,
     },
   ],
 })

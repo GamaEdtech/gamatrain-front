@@ -28,6 +28,7 @@
       <v-list-item
         v-if="auth.isAuthenticated.value"
         class="rounded-lg mt-3 py-2"
+        role="listitem"
       >
         <template #prepend>
           <v-avatar
@@ -62,6 +63,8 @@
             link
             :to="item.link"
             class="rounded-lg mt-3"
+            role="listitem"
+            :disabled="item.status"
           >
             <template #prepend>
               <span
@@ -102,6 +105,7 @@
                 }
                 ${drawerRail && isParentActive(item) ? 'custom-list-item' : ''}
                rounded-lg mt-3`"
+                role="listitem"
               >
                 <template #prepend>
                   <span
@@ -131,6 +135,7 @@
               class="pl-1 py-2"
               :to="subMenuItem.link"
               :disabled="subMenuItem.status"
+              role="listitem"
             >
               <template #prepend>
                 <span
@@ -166,6 +171,7 @@
           link
           :to="item.link"
           class="rounded-lg mt-3"
+          role="listitem"
         >
           <template #prepend>
             <v-icon
@@ -188,6 +194,7 @@
         v-if="auth.isAuthenticated.value"
         link
         class="rounded-lg mt-3 mb-14"
+        role="listitem"
         @click="logout"
       >
         <template #prepend>
@@ -334,12 +341,14 @@ const items = [
         title: 'Top Up Wallet',
         link: '/user/charge-wallet',
         icon: 'md:groups',
+        status: true,
       },
-      { title: 'Payments', link: '/user/payments', icon: 'md:shopping_bag' },
+      { title: 'Payments', link: '/user/payments', icon: 'md:shopping_bag', status: true },
       {
         title: 'Sell Report',
         link: '/user/sell-report',
         icon: 'md:account_balance',
+        status: true,
       },
     ],
   },
@@ -348,6 +357,7 @@ const items = [
     icon: 'md:mail',
     link: '/user/ticket',
     value: 'messages',
+    status: true,
   },
   {
     title: 'Settings',
@@ -407,6 +417,12 @@ const mobileItems = [
     icon: 'md:policy',
     link: '/governance',
     value: 'governance',
+  },
+  {
+    title: 'AI Assistant',
+    icon: 'md:smart_toy',
+    link: '/ai',
+    value: 'aiAssistant',
   },
 ]
 

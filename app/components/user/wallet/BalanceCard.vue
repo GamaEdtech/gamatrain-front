@@ -1,245 +1,145 @@
 <template>
-  <div
-    class="balance-card rounded-lg h-full"
-    dark
-  >
-    <div class="balance-card-content pb-5 pt-6">
-      <div
-        class="balance-title d-flex align-center mb-4 cursor-pointer"
-        @click="toggleBalanceVisibility"
-      >
-        <span class="text-xl-h4 gray--text">Main balance</span>
-        <v-icon class="ml-2 gray--text">
-          {{ showBalance ? "mdi-eye" : "mdi-eye-off" }}
-        </v-icon>
-      </div>
+  <div class="main-balance-card-div w-100 d-flex flex-column align-center justify-center ga-2">
+    <span
+      class="text-h5 font-weight-regular text-grey400 cursor-pointer"
+      @click="toggleBalanceVisibility"
+    >
+      Main balance
+      <v-icon
+        color="grey400"
+        size="14"
+        class="ml-1"
+      >{{ showBalance ? `md:visibility`:`md:visibility_off` }}</v-icon>
+    </span>
 
-      <div
-        v-if="loading"
-        class="balance-amount d-flex align-center"
-      >
-        <v-skeleton-loader
-          type="image"
-          width="100"
-          height="30"
-          class="my-2"
-          color="grey"
-        />
-      </div>
+    <div
+      v-if="isLoading"
+      class="d-flex align-center my-3"
+    >
+      <v-skeleton-loader
+        width="160"
+        height="30"
+        class="rounded-lg"
+        color="grey400"
+      />
+    </div>
 
-      <div
-        v-else-if="!showBalance"
-        class="balance-amount d-flex align-center"
+    <div
+      v-else-if="!showBalance"
+      class="d-flex align-center my-3 container-dot"
+    >
+      <span
+        v-for="i in 4"
+        :key="i"
+        class="dot mx-1 rounded-circle bg-grey400"
+      />
+    </div>
+    <div
+      v-else
+      class="d-flex align-end position-relative my-3"
+    >
+      <span class="text-h6 font-weight-semibold text-primary mr-1">$GET</span>
+      <span class="text-h3 font-weight-bold text-white">{{ $numberFormat((Math.floor(balance) / 1_000_000)).split('.')[0] }}</span>
+      <span
+        v-if="(Math.floor(balance) / 1_000_000).toString().split('.')[1]"
+        class="text-h5 font-weight-semibold text-white"
+      >.{{ (Math.floor(balance) / 1_000_000).toString().split('.')[1] }}</span>
+      <img
+        class="sign-wallet-amount position-absolute"
+        src="@/assets/images/wallet/wallet-amount.png"
+        alt="Wallet Amount"
       >
-        <div class="hidden-balance">
-          <span
-            v-for="n in 4"
-            :key="n"
-            class="dot mx-1"
-          />
-        </div>
-      </div>
+    </div>
 
-      <div
-        v-else
-        class="balance-amount d-flex align-center mb-8"
-      >
-        <span class="currency mr-2 mt-3 yellow--text-darken">$GET</span>
-        <span class="amount text-white">{{
-          Math.floor(balance) / 1000000
-        }}</span>
-        <img
-          class="mr-4 mb-4"
-          src="/images/wallet/wallet-amount.png"
+    <div class="d-flex align-center justify-center">
+      <div class="d-flex flex-column align-center justify-center ga-1">
+        <v-icon
+          color="grey400"
+          size="20"
         >
+          md:upload
+        </v-icon>
+        <span class="text-h6 font-weight-regular text-primary">Top up</span>
       </div>
-
-      <div class="balance-actions d-flex justify-space-between">
-        <div class="action-btn text-center">
-          <v-icon
-            small
-            class="gray--text"
-          >
-            mdi-tray-arrow-up
-          </v-icon>
-          <div class="text-lg-h6 yellow--text-darken mt-2">
-            Top up
-          </div>
-        </div>
-        <div class="vertical-divider" />
-        <div class="action-btn text-center">
-          <v-icon
-            small
-            class="gray--text"
-          >
-            mdi-tray-arrow-down
-          </v-icon>
-          <div class="text-lg-h6 yellow--text-darken mt-2">
-            Withdraw
-          </div>
-        </div>
-        <div class="vertical-divider" />
-        <div class="action-btn text-center">
-          <v-icon
-            small
-            class="gray--text"
-          >
-            mdi-swap-horizontal
-          </v-icon>
-          <div class="text-lg-h6 yellow--text-darken mt-2">
-            Transfer
-          </div>
-        </div>
+      <v-divider
+        :thickness="3"
+        color="grey900"
+        vertical
+        class="mx-3"
+      />
+      <div
+        class="d-flex flex-column align-center justify-center ga-1"
+        @click="showWithdrawModal = true"
+      >
+        <v-icon
+          color="grey400"
+          size="20"
+        >
+          md:download
+        </v-icon>
+        <span class="text-h6 font-weight-regular text-primary">Withdraw</span>
+      </div>
+      <v-divider
+        :thickness="3"
+        color="grey900"
+        vertical
+        class="mx-3"
+      />
+      <div class="d-flex flex-column align-center justify-center ga-1">
+        <v-icon
+          color="grey400"
+          size="20"
+        >
+          md:sync_alt
+        </v-icon>
+        <span class="text-h6 font-weight-regular text-primary">Transfer</span>
       </div>
     </div>
+
+    <modals-withdraw
+      v-model:show-dialog="showWithdrawModal"
+      :user-balance="balance"
+      @update-balance="fetchBalance"
+    />
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useAuth } from '~/composables/useAuth'
 
-// Composables
-const auth = useAuth()
-const { $toast: _toast } = useNuxtApp()
-
-// Reactive state
-const balance = ref(0)
-const loading = ref(true)
+const { $numberFormat } = useNuxtApp()
+const { balance, isLoading, fetchBalance } = useCoinBalance()
 const showBalance = ref(true)
-const token = ref('')
-
-// Methods
-const getToken = () => {
-  if (import.meta.client) {
-    token.value = localStorage.getItem('v2_token') || ''
-  }
-}
-
-const fetchBalance = async () => {
-  loading.value = true
-  try {
-    const response = await useApiService.get('/api/v2/transactions/balance')
-
-    if (response.succeeded) {
-      balance.value = response.data
-    }
-  }
-  catch (err) {
-    if (err.response && err.response.status === 403) {
-      auth.logout()
-    }
-    console.error('Error fetching balance:', err)
-  }
-  finally {
-    loading.value = false
-  }
-}
-
-// const getDecimal = (num) => {
-//   return Math.floor((num % 1) * 100)
-//     .toString()
-//     .padStart(2, '0')
-// }
+const showWithdrawModal = ref(false)
 
 const toggleBalanceVisibility = () => {
   showBalance.value = !showBalance.value
 }
 
-// Lifecycle hooks
 onMounted(() => {
-  getToken()
   fetchBalance()
 })
 </script>
 
 <style scoped>
-.balance-card {
-  background: url("/images/wallet/wallet-background.png"),
-    radial-gradient(circle at top left, #2a3040, #1e2631);
-  background-size: cover;
-  background-position: center;
-  color: white;
-  border-radius: 16px !important;
-  max-height: 250px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+.main-balance-card-div{
+   background-image: url("@/assets/images/wallet/wallet-background.png");
+   background-size: 100% 100%;
+   height: 190px;
+   max-width : 340px;
+   border-radius: 16px;
 }
-
-.balance-card-content {
-  width: 70%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto;
+.sign-wallet-amount{
+  width: 14px;
+  height: 14px;
+  right: -14px;
+  top: 4px;
 }
-
-.balance-title {
-  font-size: 14px;
-}
-
-.balance-amount {
-  margin-top: 10px;
-}
-
-.currency {
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.amount {
-  font-size: 4rem;
-  font-weight: bold;
-}
-
-.decimal {
-  font-size: 18px;
-  align-self: flex-start;
-  margin-top: 16px;
-}
-
-.action-btn {
-  cursor: pointer;
-}
-
-/* Hidden Balance Style */
-.hidden-balance {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 64px;
-}
-
-.hidden-balance .dot {
+.dot {
   width: 10px;
   height: 10px;
-  background-color: rgba(255, 255, 255, 0.6);
-  border-radius: 50%;
 }
-
-/* Skeleton Loading Styles */
-:deep(.v-skeleton-loader__text) {
-  background: rgba(255, 255, 255, 0.1) !important;
-  border-radius: 8px;
-}
-
-.vertical-divider {
-  width: 1px;
-  height: 40px;
-  background-color: #101828;
-  margin: 0 10px;
-}
-
-.balance-actions {
-  width: 100%;
-  align-items: center;
-}
-
-.action-btn {
-  cursor: pointer;
-  flex: 1;
+.container-dot{
+  height : 32px
 }
 </style>

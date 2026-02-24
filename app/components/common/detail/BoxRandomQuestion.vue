@@ -1,7 +1,7 @@
 <template>
   <div
     v-show="visible"
-    class="w-100 pa-4 rounded-lg mt-12 box-question position-relative"
+    class="w-100 px-8 rounded-lg mt-12 box-question position-relative"
   >
     <div class="lable-div position-absolute text-white text-h4 pa-2">
       Time To Test
@@ -37,15 +37,19 @@
         class="rounded-pill"
       />
     </div>
+
     <TestDetails
-      v-else
+      v-if="!loadingRandomTest && randomTestContent"
       :content-data="randomTestContent"
+      :show-chips="false"
+      :show-title="false"
+      button-next-text="Time to Test!"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ApiResult } from '~/types/api'
+import type { ApiResult, QuestionDTO } from '~/types/api'
 
 interface RandomTestCodeDTO {
   code: string
@@ -55,10 +59,9 @@ interface IBoxRandomQuestion {
   lesson?: string
 }
 const props = defineProps<IBoxRandomQuestion>()
-
 const visible = ref(false)
 
-const randomTestContent = ref<Record<string, string> | undefined>(undefined)
+const randomTestContent = ref<QuestionDTO>()
 const loadingRandomTest = ref(true)
 
 const getRandomTestCode = async () => {
@@ -81,7 +84,7 @@ const getRandomTestCode = async () => {
 }
 const getRandomTest = async (code: string) => {
   try {
-    const response = await useApiService.get<ApiResult<Record<string, string>>>(
+    const response = await useApiService.get<ApiResult<QuestionDTO>>(
       `/api/v1/examTests/${code}`,
     )
     if (response.data) {

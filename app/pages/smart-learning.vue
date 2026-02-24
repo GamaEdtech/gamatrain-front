@@ -118,7 +118,7 @@
           md="6"
           class="d-flex flex-column justify-center"
         >
-          <div class="text-content">
+          <div class="text-content px-4">
             <h2 class="gama-text-h4 mb-4">
               24/7 Smart Assistance
             </h2>
@@ -191,7 +191,7 @@
           md="6"
           class="d-flex flex-column justify-center"
         >
-          <div class="text-content">
+          <div class="text-content px-4">
             <h2 class="gama-text-h4 mb-4">
               Smart Collaboration and Engagement
             </h2>
@@ -240,6 +240,7 @@
               src="/images/content-sharing.png"
               alt="Simplify Content Sharing and Elevate Education with AI Assistance."
               class="service-image"
+              rounded="lg"
             />
           </v-col>
         </v-row>
@@ -264,7 +265,7 @@
           md="6"
           class="d-flex flex-column justify-center"
         >
-          <div class="text-content">
+          <div class="text-content px-4">
             <h2 class="gama-text-h4 mb-4">
               Seamless Content Upload
             </h2>
@@ -324,6 +325,7 @@
     <v-container
       id="service-education-future"
       fluid
+      class="d-flex align-center"
     >
       <v-row>
         <v-col
@@ -520,7 +522,7 @@ export default {
 }
 
 #service-education-future {
-  height: 8rem;
+  min-height: 8rem;
   background: #ffb600;
   text-align: center;
   padding: 0;
@@ -626,7 +628,7 @@ export default {
   }
 
   #service-education-future {
-    height: 8rem;
+    min-height: 8rem;
     background: #ffb600;
     text-align: center;
     padding: 0;
@@ -737,7 +739,7 @@ export default {
   }
 
   #service-education-future {
-    height: 10rem;
+    min-height: 10rem;
     background: #ffb600;
     text-align: center;
 
@@ -819,7 +821,7 @@ export default {
   }
 
   #service-education-future {
-    height: 6rem;
+    min-height: 6rem;
     padding: 0;
 
     .col-12 {

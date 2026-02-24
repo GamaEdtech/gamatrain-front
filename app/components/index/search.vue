@@ -63,7 +63,7 @@
       >
         <v-btn
           class="search-btn"
-          :to="`/search?type=test&section=${form.level}&base=${form.grade}&lesson=${form.lesson}&sortby=best`"
+          :to="`/search?type=paper&section=${form.level}&base=${form.grade}&lesson=${form.lesson}&sortby=best`"
           depressed
         >
           Search

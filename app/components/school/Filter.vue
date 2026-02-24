@@ -15,6 +15,7 @@
             label="Search anything..."
             glow
             icon-color="#ffb600"
+            :density="lgAndUp ?`default`:`compact`"
             :disabled="isExpandMap"
             @update:model-value="changeSearchValue"
           />
@@ -482,7 +483,7 @@
         <div class="w-100 mt-8 d-flex align-center justify-center ga-3">
           <v-btn
             variant="text"
-            class="text-h4"
+            class="text-h4 text-grey700"
             @click="closeFilterMobile"
           >
             Cancel
@@ -843,7 +844,7 @@ const cityChange = () => {
 // End Section Filter Location
 
 // Start Section Filter Search
-const { width } = useDisplay()
+const { width, lgAndUp } = useDisplay()
 
 const textFieldVariant = computed(() => {
   return width.value > 1280 ? 'solo' : 'outlined'

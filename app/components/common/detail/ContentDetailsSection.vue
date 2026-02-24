@@ -13,7 +13,7 @@
       </p>
     </div>
     <span class="text-h5 d-flex align-center color-link ga-1">
-      <v-icon color="#2E90FA">md:notifications_outlined</v-icon>
+      <v-icon color="#1a73e8">md:notifications_outlined</v-icon>
       follow
     </span>
   </div>
@@ -34,16 +34,16 @@
     @click="seeCompleteDescription = !seeCompleteDescription"
   >
     {{ seeCompleteDescription ? `See Less` : `See More` }}
-    <v-icon color="#2E90FA">md:chevron_forward</v-icon>
+    <v-icon color="#1a73e8">md:chevron_forward</v-icon>
   </span>
 
   <div class="w-100 d-flex align-center justify-space-between mt-8">
-    <span class="text-h5 d-flex align-center primary-gray-400 ga-1">
-      <v-icon color="#98A2B3">md:files_outlined</v-icon>
+    <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
+      <v-icon color="#475467">md:files_outlined</v-icon>
       {{ contentData?.test_type_title }}
     </span>
-    <span class="text-h5 d-flex align-center primary-gray-400 ga-1">
-      <v-icon color="#98A2B3">md:update</v-icon>
+    <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
+      <v-icon color="#475467">md:update</v-icon>
       {{ $dayjs(contentData?.up_date).fromNow() }}
     </span>
   </div>
@@ -52,7 +52,7 @@
     <v-chip
       class="bg-primary-gray-100"
       :small="mdAndDown"
-      :to="`/search?type=test&section=${contentData?.section}`"
+      :to="`/search?type=paper&section=${contentData?.section}`"
       flat
     >
       <span class="primary-gray-500 text-h6 font-weight-bold">
@@ -62,7 +62,7 @@
       class="bg-primary-gray-100"
       flat
       :small="mdAndDown"
-      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}`"
+      :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}`"
     >
       <span class="primary-gray-500 text-h6 font-weight-bold">
         {{ contentData?.base_title }}</span>
@@ -71,7 +71,7 @@
       class="bg-primary-gray-100"
       flat
       :small="mdAndDown"
-      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
+      :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
     >
       <span class="primary-gray-500 text-h6 font-weight-bold">
         {{ contentData?.lesson_title }}</span>
@@ -86,7 +86,7 @@
     </v-chip>
     <v-chip
       :small="mdAndDown"
-      :to="`/search?type=test&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}&edu_year=${contentData?.edu_year}`"
+      :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}&edu_year=${contentData?.edu_year}`"
       class="bg-primary-gray-100"
       flat
     >
@@ -128,7 +128,7 @@ const seeCompleteDescription = ref(false)
 
 <style scoped>
 .color-link {
-  color: #2e90fa;
+  color: #1a73e8;
 }
 .open-description {
   height: unset;

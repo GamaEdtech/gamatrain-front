@@ -1,31 +1,38 @@
 <template>
   <v-app>
-    <div
-      v-if="isLoading"
-      class="w-100 h-100 position-fixed left-0 top-0 d-flex justify-center align-center custom-ovarlay"
-    >
-      <v-progress-circular
-        :model-value="progress"
-        color="#ffb300"
-        :size="80"
-        :width="8"
-        class="text-h4 font-weight-black"
+    <error-temp
+      v-if="!isOnline"
+      status-code="disconnect"
+    />
+    <template v-else>
+      <div
+        v-if="isLoading"
+        class="w-100 h-100 position-fixed left-0 top-0 d-flex justify-center align-center custom-ovarlay"
       >
-        {{ progress }}%
-      </v-progress-circular>
-    </div>
-    <common-header />
-    <div>
-      <slot />
-    </div>
-    <!-- Blog container -->
-    <home-blog-container v-if="showBlogSlider" />
-    <!-- End blog container -->
-    <common-footer />
-    <AppGlobalSnackbar />
-    <client-only>
-      <lazy-common-random-coin />
-    </client-only>
+        <v-progress-circular
+          :model-value="progress"
+          color="#ffb300"
+          :size="80"
+          :width="8"
+          class="text-h4 font-weight-black"
+        >
+          {{ progress }}%
+        </v-progress-circular>
+      </div>
+      <common-header />
+      <div>
+        <slot />
+      </div>
+      <!-- Blog container -->
+      <home-blog-container v-if="showBlogSlider" />
+      <!-- End blog container -->
+      <common-footer />
+      <menu-bottom-nav-menu v-if="showBottomNavSlider" />
+      <AppGlobalSnackbar />
+      <client-only>
+        <lazy-common-random-coin />
+      </client-only>
+    </template>
   </v-app>
 </template>
 
@@ -36,12 +43,18 @@ let animationFrame = null
 let startTime = null
 const duration = 10000
 const route = useRoute()
+const { isOnline } = useNetwork()
 
 const excludedPaths = ['/', '/search', '/school']
 const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance']
 
 const showBlogSlider = computed(() => {
   return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)
+})
+
+const excludedPathsForBottomNavMenu = ['/school', '/game/car-racing', '/game/castle']
+const showBottomNavSlider = computed(() => {
+  return !excludedPathsForBottomNavMenu.includes(route.path)
 })
 
 onMounted(() => {
@@ -103,6 +116,6 @@ const easeOutQuad = (t) => {
 <style scoped>
 .custom-ovarlay {
   background-color: #00000069;
-  z-index: 1010;
+  z-index: 10001;
 }
 </style>
