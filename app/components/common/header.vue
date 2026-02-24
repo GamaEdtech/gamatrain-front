@@ -44,13 +44,12 @@
               {{ link.icon }}
             </v-icon>
             <span :style="{ color: menuSetting.linkColor }">{{ link.title }}</span>
-            <v-chip
+            <span
               v-if="link.badge"
-              color="primary"
-              density="compact"
+              class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
             >
               {{ link.badge }}
-            </v-chip>
+            </span>
           </nuxt-link>
         </div>
       </div>
@@ -117,10 +116,13 @@
       v-if="isAddOptionOpen"
       @close="isAddOptionOpen = false"
     />
-    <lazy-dashboard-drawer-menu
-      v-model:show-drawer="isDrawerOpen"
-      :is-user-dashboard="isUserDashboard"
-    />
+    <ClientOnly>
+      <lazy-dashboard-drawer-menu
+        v-if="shouldMountDrawer"
+        v-model:show-drawer="isDrawerOpen"
+        :is-user-dashboard="isUserDashboard"
+      />
+    </ClientOnly>
     <lazy-common-general-search-mobile
       v-if="showSearchBottomSheet"
       v-model:show-search-bottom-sheet="showSearchBottomSheet"
@@ -147,7 +149,7 @@ const theme = useTheme()
 const { isAuthenticated } = useAuth()
 const { mdAndDown } = useDisplay()
 
-withDefaults(defineProps<IHeader>(), {
+const props = withDefaults(defineProps<IHeader>(), {
   isUserDashboard: false,
 })
 
@@ -239,6 +241,16 @@ const isDrawerOpen = ref(false)
 const openNavigationMenu = () => {
   isDrawerOpen.value = true
 }
+const shouldMountDrawer = computed(() => {
+  if (props.isUserDashboard) {
+    if (mdAndDown.value) {
+      return isDrawerOpen.value
+    }
+    return true
+  }
+
+  return mdAndDown.value && isDrawerOpen.value
+})
 
 const showSearchBottomSheet = ref(false)
 
@@ -275,6 +287,7 @@ onMounted(async () => {
     import('~/components/common/login.vue')
     import('~/components/common/register.vue')
     import('~/components/common/pass-recover.vue')
+    import('~/components/dashboard/drawer-menu.vue')
   })
 })
 
@@ -287,6 +300,9 @@ onBeforeUnmount(() => {
 .main-header{
   height : 64px;
   z-index : 12;
+}
+.badge-header{
+  background-color : rgba(var(--v-theme-primary), 0.2)
 }
 .nav-link-active{
   background-color : rgba(var(--v-theme-grey400), 0.3)
