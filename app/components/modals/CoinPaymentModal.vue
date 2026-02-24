@@ -48,6 +48,7 @@
       <modals-charge-wallet
         v-if="amountToPay > userBalance"
         :user-balance="userBalance"
+        @charge-wallet-successfull="chargeWalletSuccessfull"
       />
     </div>
   </v-dialog>
@@ -57,6 +58,8 @@
 import { useDisplay } from 'vuetify'
 import { computed } from 'vue'
 
+const { $toast } = useNuxtApp()
+const { fetchBalance } = useCoinBalance()
 const { mdAndUp } = useDisplay()
 
 const props = defineProps({
@@ -101,8 +104,18 @@ const clickOnModal = (event) => {
 }
 
 const confirmPayment = () => {
-  if (props.userBalance >= 5000000) {
+  if (props.userBalance >= props.amountToPay) {
     emit('confirm')
+  }
+}
+
+const chargeWalletSuccessfull = async () => {
+  await fetchBalance()
+  if (props.userBalance >= props.amountToPay) {
+    emit('confirm')
+  }
+  else {
+    $toast.info('The cost of the file is more than your account balance. Please recharge your account.')
   }
 }
 </script>

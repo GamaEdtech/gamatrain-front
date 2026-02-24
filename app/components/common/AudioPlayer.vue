@@ -1,60 +1,35 @@
 <template>
-  <div class="container-player w-100 d-flex flex-column align-start justify-start bg-grey100 rounded-lg pa-2">
-    <div class="d-flex align-center ga-1">
-      <div class="avatar-div d-flex align-center justify-center bg-grey400 rounded-circle">
-        <v-icon color="primary">
-          md:podcasts
-        </v-icon>
-      </div>
-      <span class="font-weight-bold text-h6 text-grey700">{{ title }}</span>
-    </div>
-    <div class="w-100 d-flex px-2 mt-2">
+  <div class="container-player w-100 d-flex align-center justify-center bg-grey700 rounded-lg pa-2">
+    <v-icon
+      color="white"
+      size="24"
+      @click="togglePlayback"
+    >
+      {{ isPlaying ? 'md:pause' : 'md:play_arrow' }}
+    </v-icon>
+    <div class="w-75 d-flex px-2">
       <v-slider
         v-model="currentTime"
         :max="duration"
         :step="0.1"
         hide-details
-        color="primary"
-        track-color="grey400"
+        track-fill-color="primary"
+        track-color="grey200"
+        thumb-color="white"
         :thumb-size="16"
         @update:model-value="seekAudio"
         @mousedown="pauseForSeek"
         @mouseup="playAfterSeek"
       />
     </div>
-    <div class="w-100 d-flex justify-space-between align-center  px-2">
-      <span class="text-subtitle-1 font-weight-bold text-grey700">{{ formattedTime }}</span>
-
-      <v-icon
-        color="primary"
-        size="30"
-        @click="togglePlayback"
-      >
-        {{ isPlaying ? 'md:pause_circle' : 'md:play_circle' }}
-      </v-icon>
-
-      <v-menu>
-        <template #activator="{ props }">
-          <v-btn
-            v-bind="props"
-            size="small"
-            variant="text"
-            class="text-subtitle-1 font-weight-bold text-grey700"
-          >
-            {{ playbackRate }}x
-          </v-btn>
-        </template>
-        <v-list density="compact">
-          <v-list-item
-            v-for="rate in playbackRates"
-            :key="rate"
-            @click="changePlaybackRate(rate)"
-          >
-            <v-list-item-title>{{ rate }}x</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </div>
+    <span class="text-subtitle-2 text-sm-h6 font-weight-bold text-white mr-1 text-no-wrap">{{ formattedTime }}</span>
+    <v-icon
+      color="white"
+      size="20"
+      @click="toggleMute"
+    >
+      {{ isMuted ? 'md:volume_off' : 'md:volume_up' }}
+    </v-icon>
 
     <audio
       ref="audioElement"
@@ -92,10 +67,6 @@ const isMuted = ref(false)
 const currentTime = ref(0)
 const duration = ref(0)
 const volume = ref(0.7)
-const playbackRate = ref(1.0)
-
-// Constants
-const playbackRates = [0.5, 1.0, 1.5, 2.0]
 
 // Computed
 const formattedTime = computed(() => {
@@ -108,8 +79,23 @@ const formattedTime = computed(() => {
 })
 
 // Methods
+const syncMetadata = () => {
+  const audio = audioElement.value
+  if (!audio) return
+
+  if (isFinite(audio.duration) && audio.duration > 0) {
+    duration.value = audio.duration
+  }
+
+  currentTime.value = audio.currentTime || 0
+}
+
 const togglePlayback = () => {
   if (!audioElement.value) return
+
+  if (!duration.value || !isFinite(duration.value)) {
+    syncMetadata()
+  }
 
   if (isPlaying.value) {
     audioElement.value.pause()
@@ -159,13 +145,6 @@ const playAfterSeek = () => {
   if (!audioElement.value || !isPlaying.value) return
 
   audioElement.value.play()
-}
-
-const changePlaybackRate = (rate: number) => {
-  if (!audioElement.value) return
-
-  playbackRate.value = rate
-  audioElement.value.playbackRate = rate
 }
 
 const onAudioEnded = () => {
@@ -236,8 +215,7 @@ onUnmounted(() => {
 
 <style scoped>
 .container-player{
-  max-width: 300px;
-  min-height: 100px;
+  height: 64px;
 }
 .avatar-div{
   width: 30px;
