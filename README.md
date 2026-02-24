@@ -84,36 +84,6 @@ http://localhost:3002
 
 ---
 
-## 🚢 Production Mode (Docker)
-
-### 1. Build the image
-
-```bash
-docker build -t gama-edtech .
-```
-
-### 2. Run the container
-
-```bash
-docker run -d -p 3002:3002 --env-file .env gama-edtech
-```
-
----
-
-## Production with Docker Compose
-
-You can also run production mode using the main `docker-compose.yml`:
-
-```bash
-docker compose up --build -d
-```
-
-The application will be available at:
-
-```
-http://localhost:3002
-```
-
 
 ## License
 

@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: nuxt3-dev
+    container_name: gamatrain-front-dev
     command: npm run dev
     working_dir: /src
     ports:
