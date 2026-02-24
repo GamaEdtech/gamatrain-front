@@ -130,9 +130,6 @@
 
 <script setup lang="ts">
 import { useTheme, useDisplay } from 'vuetify'
-import CommonLogin from '~/components/common/login.vue'
-import CommonRegister from '~/components/common/register.vue'
-import CommonRecover from '~/components/common/pass-recover.vue'
 
 interface IHeader {
   isUserDashboard?: boolean
@@ -213,9 +210,9 @@ const handleChnageMenuSetting = () => {
 }
 
 const currentAuthComponentMap = {
-  login: CommonLogin,
-  register: CommonRegister,
-  recover: CommonRecover,
+  login: defineAsyncComponent(() => import('~/components/common/login.vue')),
+  register: defineAsyncComponent(() => import('~/components/common/register.vue')),
+  recover: defineAsyncComponent(() => import('~/components/common/pass-recover.vue')),
 }
 type AuthComponentName = keyof typeof currentAuthComponentMap
 const currentAuthComponent = ref<AuthComponentName>('login')
