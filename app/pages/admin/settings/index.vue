@@ -61,6 +61,19 @@
             color="primary"
             class="mr-2"
           />
+          <v-btn
+            v-if="!loading"
+            icon
+            flat
+            color="primary"
+            width="30"
+            height="30"
+            @click="openPreviewModal(field)"
+          >
+            <v-icon color="grey700">
+              md:preview
+            </v-icon>
+          </v-btn>
         </template>
       </v-textarea>
     </div>
@@ -80,6 +93,18 @@
         Save
       </v-btn>
     </div>
+
+    <admin-common-modal
+      v-model:show-dialog="showModalPreview"
+      title="Preview"
+    >
+      <div class="w-100 d-flex flex-column pa-4">
+        <span class="text-h5 font-weight-bold text-grey700 mb-4">You can preview the email content.</span>
+        <div class="w-100 d-flex align-start justify-start">
+          <div v-html="previewMessageHtml" />
+        </div>
+      </div>
+    </admin-common-modal>
   </div>
 </template>
 
@@ -163,6 +188,8 @@ const fields: FieldConfig[] = [
   { key: 'ticketConfirmationEmailTemplate', label: 'Ticket Email', type: 'textarea', valueType: 'string' },
 ]
 const loadingSave = ref(false)
+const showModalPreview = ref(false)
+const previewMessageHtml = ref('')
 
 const getData = async () => {
   loading.value = true
@@ -227,6 +254,11 @@ const save = async () => {
   finally {
     loadingSave.value = false
   }
+}
+
+const openPreviewModal = (field: FieldConfig) => {
+  previewMessageHtml.value = form[field.key] as string
+  showModalPreview.value = true
 }
 
 onMounted(async () => {

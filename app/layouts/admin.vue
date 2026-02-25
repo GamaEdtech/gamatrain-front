@@ -20,20 +20,6 @@ const router = useRouter()
 const route = useRoute()
 const menuItems = [
   {
-    General: [
-      {
-        title: 'Home',
-        link: '/',
-        icon: 'md:home_outlined',
-      },
-      {
-        title: 'Settings',
-        link: '/admin/settings',
-        icon: 'md:settings_outlined',
-      },
-    ],
-  },
-  {
     Caption: [
       {
         title: 'Contact Us',
@@ -63,7 +49,7 @@ const menuItems = [
   {
     School: [
       {
-        title: 'Schools ',
+        title: 'General ',
         link: '/admin/schools/contributions',
         icon: 'md:account_balance_outlined',
       },
@@ -81,6 +67,20 @@ const menuItems = [
         title: 'Comments ',
         link: '/admin/schools/comments',
         icon: 'md:comment_outlined',
+      },
+    ],
+  },
+  {
+    General: [
+      {
+        title: 'Home',
+        link: '/',
+        icon: 'md:home_outlined',
+      },
+      {
+        title: 'Settings',
+        link: '/admin/settings',
+        icon: 'md:settings_outlined',
       },
     ],
   },
