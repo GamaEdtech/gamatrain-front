@@ -38,7 +38,7 @@
       />
     </div>
 
-    <TestDetails
+    <lazy-test-details
       v-if="!loadingRandomTest && randomTestContent"
       :content-data="randomTestContent"
       :show-chips="false"

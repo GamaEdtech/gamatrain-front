@@ -201,7 +201,8 @@
     </div>
 
     <!-- Coin Payment Modal -->
-    <modals-coin-payment-modal
+    <lazy-modals-coin-payment-modal
+      v-if="showCoinPaymentModal"
       v-model:show-dialog="showCoinPaymentModal"
       :is-processing="isLoading || isProcessingPayment"
       :user-balance="balance"
@@ -211,7 +212,8 @@
     />
 
     <!-- Coin Consumption Animation -->
-    <common-coin-consumption-animation
+    <lazy-common-coin-consumption-animation
+      v-if="showCoinAnimation"
       v-model:is-visible="showCoinAnimation"
       @animation-complete="handleAnimationComplete"
     />

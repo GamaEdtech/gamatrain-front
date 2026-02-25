@@ -422,3 +422,15 @@ export interface SchoolListDTO {
 
   lastModifyDate: string
 }
+
+export interface BlogDTO {
+  id: number
+  title: string
+  slug: string
+  summary: string
+  likeCount: number
+  dislikeCount: number
+  imageUri: string
+  visibilityType: string
+  publishDate: string
+}

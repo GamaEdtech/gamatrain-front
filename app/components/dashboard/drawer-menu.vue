@@ -480,6 +480,9 @@ const closeNavigation = () => {
   border-right: 1px solid rgba(0, 0, 0, 0.12);
   height: 100%;
 }
+.v-navigation-drawer__scrim{
+  min-height: 100vh;
+}
 
 .navigation-height-top {
   top: 0px !important;

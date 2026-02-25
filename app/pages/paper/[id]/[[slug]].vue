@@ -5,7 +5,7 @@
       class="d-flex flex-column mt-16"
     >
       <v-row>
-        <widgets-breadcrumb
+        <lazy-widgets-breadcrumb
           background-color="white"
           :breads="breads"
         />
@@ -30,7 +30,7 @@
           md="4"
           class="d-flex justify-center justify-md-start"
         >
-          <CommonDetailPreviewActionCard
+          <lazy-common-detail-preview-action-card
             :id="contentData.id"
             :thumb-pic="contentData.thumb_pic"
             :title="contentData.title"
@@ -45,9 +45,9 @@
           md="8"
           class="d-flex h-100 align-start flex-wrap"
         >
-          <CommonDetailContentDetailsSection :content-data="contentData" />
+          <lazy-common-detail-content-details-section :content-data="contentData" />
 
-          <CommonDetailDownloadAndPurchaseButtons
+          <lazy-common-detail-download-and-purchase-buttons
             :id="contentData.id"
             :files="contentData.files"
             :year="contentData.edu_year"
@@ -58,25 +58,18 @@
             :lesson="contentData.lesson"
             :exams="contentData.exams"
           />
-          <CommonDetailSubjectDirectoryNav :content-data="contentData" />
+          <lazy-common-detail-subject-directory-nav :content-data="contentData" />
         </v-col>
 
-        <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
+        <lazy-common-detail-box-random-question :lesson="contentData.lesson" />
 
         <v-col cols="12">
-          <CommonDetailRelatedContent
+          <lazy-common-detail-related-content
             :id="contentData.id"
             source="test"
             :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
           />
         </v-col>
-
-        <!-- <v-col
-        cols="12"
-        class="mb-6"
-      >
-        <CommonComments />
-      </v-col> -->
 
         <v-col
           cols="12"
@@ -99,19 +92,21 @@
             cols="12"
             class="text-center mt-10"
           >
-            <common-ad-banner
+            <lazy-common-ad-banner
               v-model="isAdsLoad"
               adslot="7199289937"
             />
           </v-col>
         </ClientOnly>
       </v-row>
-      <CommonCrashReportModal
+      <lazy-common-crash-report-modal
+        v-if="openCrashReport"
         :id="contentData.id"
         v-model:show-dialog="openCrashReport"
         type-crash-report="test"
       />
-      <CommonShareModal
+      <lazy-common-share-modal
+        v-if="openShare"
         v-model:show-dialog="openShare"
         :title="contentData.title"
       />
@@ -141,8 +136,6 @@ const breads = ref<BreadCrumb[]>([])
 const openCrashReport = ref(false)
 const openShare = ref(false)
 const isAdsLoad = ref(false)
-
-// Track loading state
 
 const { data: contentData } = await useAsyncData(
   `paper-${route.params.id}`,

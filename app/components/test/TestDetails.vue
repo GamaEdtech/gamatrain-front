@@ -174,22 +174,23 @@
       </v-btn>
     </div>
 
-    <test-success-coin-animation
+    <lazy-test-success-coin-animation
       :is-start-animation="isStartSuccessAnimation"
       @complete-success-animation="completeSuccessCoinAnimation"
     />
-    <test-counting-wallet-animation
+    <lazy-test-counting-wallet-animation
       :is-start-animation="isStartWalletAnimation"
       :direction="directionWalletAniamtion"
       :delta-price="questionReward"
       @complete-animation="completeWalletAnimation"
     />
-    <common-coin-consumption-animation
+    <lazy-common-coin-consumption-animation
       v-model:is-visible="isStartFailCoinAnimation"
       @animation-complete="completeFailAnimation"
     />
 
-    <modals-coin-payment-modal
+    <lazy-modals-coin-payment-modal
+      v-if="showCoinPaymentModal"
       v-model:show-dialog="showCoinPaymentModal"
       :user-balance="balance"
       :is-processing="isLoading || isProcessingPayment"
