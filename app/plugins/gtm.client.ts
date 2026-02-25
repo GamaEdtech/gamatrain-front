@@ -7,30 +7,54 @@ export default defineNuxtPlugin((nuxtApp) => {
     return
   }
 
-  // Prevent duplicate injection
   if (document.getElementById('gtm-script')) return
 
-  // Inject GTM script safely
-  const script = document.createElement('script')
-  script.id = 'gtm-script'
-  script.async = true
-  script.src = `https://www.googletagmanager.com/gtm.js?id=${gtmId}`
-  document.head.appendChild(script)
+  let isLoaded = false
+  const queue: { event: string }[] = []
 
-  // Initialize dataLayer
-  window.dataLayer = window.dataLayer || []
-  window.dataLayer.push({
-    'gtm.start': new Date().getTime(),
-    'event': 'gtm.js',
-  })
+  const loadGTM = () => {
+    if (isLoaded) return
+    isLoaded = true
 
-  console.log(`[GTM] Loaded: ${gtmId}`)
+    const script = document.createElement('script')
+    script.id = 'gtm-script'
+    script.async = true
+    script.src = `https://www.googletagmanager.com/gtm.js?id=${gtmId}`
+    document.head.appendChild(script)
 
-  // Provide non-reactive GTM helper
+    window.dataLayer = window.dataLayer || []
+
+    window.dataLayer.push({
+      'gtm.start': new Date().getTime(),
+      'event': 'gtm.js',
+    })
+
+    queue.forEach(e => window.dataLayer.push(e))
+    queue.length = 0
+
+    console.log('[GTM] Loaded')
+  }
+
+  const trigger = () => {
+    loadGTM()
+    window.removeEventListener('scroll', trigger)
+    window.removeEventListener('click', trigger)
+  }
+
+  window.addEventListener('scroll', trigger, { once: true })
+  window.addEventListener('click', trigger, { once: true })
+
   const gtm = {
     push(event: string, data: Record<string, unknown> = {}) {
       if (typeof window === 'undefined' || !window.dataLayer) return
-      window.dataLayer.push({ event, ...data })
+      const payload = { event, ...data }
+
+      if (!isLoaded) {
+        queue.push(payload)
+        return
+      }
+
+      window.dataLayer?.push(payload)
     },
   }
 

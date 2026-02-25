@@ -101,7 +101,7 @@
                     :key="index"
                     class="w-100 ma-0 d-flex justify-center list-item"
                   >
-                    <common-general-search-card
+                    <lazy-common-general-search-card
                       :information="item"
                       :category="selectedCategory"
                       :class="index % 2 == 1 ? `background-odd` : ``"
@@ -115,7 +115,7 @@
                     v-if="allDataLoaded == false"
                     class="w-100 ma-0 d-flex justify-center"
                   >
-                    <common-general-search-card-skeleton />
+                    <lazy-common-general-search-card-skeleton />
                   </v-row>
                 </div>
                 <div
@@ -132,7 +132,7 @@
                     :key="i"
                     class="w-100 ma-0 d-flex justify-center"
                   >
-                    <common-general-search-card-skeleton
+                    <lazy-common-general-search-card-skeleton
                       :class="i % 2 == 1 ? `background-odd` : ``"
                     />
                   </v-row>

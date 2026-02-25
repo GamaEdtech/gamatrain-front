@@ -23,16 +23,66 @@ We believe in the power of collaboration and transparency. By being open-source,
 
 2. Update base information in .env file (If don't have an .env file, you can create it by copying .env.example) 
 
-    ```bash
-    # install dependencies
-    $ npm install
+## Running the Project
 
-    # build for production and launch server
-    $ npm run build
-    $ pm2 start
+You can run the project in two different ways:
 
-    ```
+1. **Without Docker (Simple Local Setup)**
+2. **With Docker (Development & Production)**
 
+---
+
+# 🚀 1. Run Without Docker (Simple Local Setup)
+
+This is the simplest way to run the project locally.
+
+### **Development**
+
+```bash
+# install dependencies
+npm install
+
+# run development server
+npm run dev
+```
+
+### **Production**
+
+```bash
+# build for production
+npm run build
+
+# start the server (using pm2 or node)
+pm2 start
+# or
+node .output/server/index.mjs
+```
+
+---
+
+# 🐳 2. Run with Docker
+
+##  Development Mode (Docker)
+
+To run the project in development mode using Docker:
+
+```bash
+docker compose -f docker-compose.dev.yml up
+```
+
+The application will be available at:
+
+```
+http://localhost:3002
+```
+
+### Dev Notes
+
+* Live reload works automatically
+* `node_modules` is managed inside the container
+* `.env` is automatically loaded
+
+---
 
 
 ## License

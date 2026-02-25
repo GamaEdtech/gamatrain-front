@@ -24,9 +24,9 @@
         <slot />
       </div>
       <!-- Blog container -->
-      <home-blog-container v-if="showBlogSlider" />
+      <lazy-home-blog-container v-if="showBlogSlider" />
       <!-- End blog container -->
-      <common-footer />
+      <lazy-common-footer />
       <menu-bottom-nav-menu v-if="showBottomNavSlider" />
       <AppGlobalSnackbar />
       <client-only>
