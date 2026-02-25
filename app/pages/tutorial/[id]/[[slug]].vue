@@ -501,6 +501,8 @@ useHead({
   color: rgba(0, 0, 0, 0.87);
   border-collapse: separate;
   border-spacing: 0;
+  overflow-x: auto;
+  display: block;
 }
 
 /*Tutorial details table style*/

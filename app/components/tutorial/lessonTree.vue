@@ -11,7 +11,7 @@
       class="main-list px-0"
     >
       <div
-        v-for="unit in units"
+        v-for="unit in filteredUnits"
         :key="unit.title"
       >
         <v-list-group
@@ -51,18 +51,6 @@
                 {{ chapter.title }}
               </v-list-item-title>
             </v-list-item>
-
-            <v-list-item
-              v-else
-              :to="`/tutorial/${chapter.id}/${$slugGenerator(chapter.title)}`"
-              class="py-2"
-            >
-              <v-list-item-title
-                class="text-h5 font-weight-regular text-grey700 text-item-height"
-              >
-                {{ chapter.title }}
-              </v-list-item-title>
-            </v-list-item>
           </template>
         </v-list-group>
       </div>
@@ -91,6 +79,11 @@ const drawerModel = computed({
 const route = useRoute()
 
 const openedGroups = ref([])
+const filteredUnits = computed(() => {
+  return props.units.filter(unit =>
+    unit.chapters?.some(chapter => chapter.tutorials && chapter.tutorials.length > 0),
+  )
+})
 </script>
 
 <style scoped>
