@@ -78,11 +78,30 @@ const drawerModel = computed({
 
 const route = useRoute()
 
-const openedGroups = ref([])
+const openedGroups = ref<string[]>([])
 const filteredUnits = computed(() => {
   return props.units.filter(unit =>
     unit.chapters?.some(chapter => chapter.tutorials && chapter.tutorials.length > 0),
   )
+})
+
+const setOpenedGroup = () => {
+  const activeUnit = props.units.find(unit =>
+    unit.chapters?.some(
+      chapter =>
+        chapter.tutorials
+        && chapter.tutorials.length > 0
+        && chapter.tutorials[0]?.id == route.params.id,
+    ),
+  )
+
+  if (activeUnit) {
+    openedGroups.value = [activeUnit.id]
+  }
+}
+
+onMounted(() => {
+  setOpenedGroup()
 })
 </script>
 

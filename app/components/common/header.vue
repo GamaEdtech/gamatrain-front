@@ -299,7 +299,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .main-header{
   height : 64px;
-  z-index : 12;
+  z-index : 1005;
 }
 .badge-header{
   background-color : rgba(var(--v-theme-primary), 0.2)
@@ -324,6 +324,9 @@ onBeforeUnmount(() => {
   .logo-image{
     width: 80px;
     height : 20px
+  }
+  .main-header{
+   z-index : 1003;
   }
 }
 </style>
