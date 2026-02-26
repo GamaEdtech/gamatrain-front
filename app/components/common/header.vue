@@ -28,29 +28,53 @@
         </nuxt-link>
 
         <div class="d-none d-md-flex align-end">
-          <nuxt-link
+          <template
             v-for="(link, i) in menuLink"
             :key="i"
-            :to="link.link || ''"
-            class="text-transform-none text-h5 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
-            active-class="nav-link-active"
-            @click.prevent="link.action && link.action()"
           >
-            <v-icon
-              v-if="link.icon"
-              size="20"
-              color="primary"
+            <nuxt-link
+              v-if="link.link"
+              :to="link.link"
+              class="text-transform-none text-h5 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
+              active-class="nav-link-active"
             >
-              {{ link.icon }}
-            </v-icon>
-            <span :style="{ color: menuSetting.linkColor }">{{ link.title }}</span>
+              <v-icon
+                v-if="link.icon"
+                size="20"
+                color="primary"
+              >
+                {{ link.icon }}
+              </v-icon>
+              <span :style="{ color: menuSetting.linkColor }">{{ link.title }}</span>
+              <span
+                v-if="link.badge"
+                class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
+              >
+                {{ link.badge }}
+              </span>
+            </nuxt-link>
+
             <span
-              v-if="link.badge"
-              class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
+              v-else
+              class="text-transform-none text-h5 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
+              @click="link.action && link.action()"
             >
-              {{ link.badge }}
+              <v-icon
+                v-if="link.icon"
+                size="20"
+                color="primary"
+              >
+                {{ link.icon }}
+              </v-icon>
+              <span :style="{ color: menuSetting.linkColor }">{{ link.title }}</span>
+              <span
+                v-if="link.badge"
+                class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
+              >
+                {{ link.badge }}
+              </span>
             </span>
-          </nuxt-link>
+          </template>
         </div>
       </div>
       <div class="d-flex align-center ga-3 action-button">
