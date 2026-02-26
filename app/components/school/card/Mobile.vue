@@ -1,12 +1,9 @@
 <template>
   <NuxtLink
-    :class="`w-100 pa-0 rounded-lg d-flex flex-column align-start card-school justify-end position-relative ${
-      school?.defaultImageUri ? `` : `without-image`
-    }`"
+    class="w-100 pa-0 rounded-lg d-flex flex-column align-start card-school justify-end position-relative"
     :to="`/school/${school.id}/${school.slug}`"
   >
     <div
-      v-if="school?.defaultImageUri"
       class="pa-1 d-flex align-center justify-center position-absolute  position-bookmark rounded-circle bg-grey100"
     >
       <v-icon
@@ -26,18 +23,15 @@
       class="d-flex d-md-none w-100 h-100 rounded-lg position-absolute"
     /> -->
     <v-img
-      v-if="school?.defaultImageUri"
       :alt="school?.name"
       width="320px"
       height="320px"
       cover
-      :src="school.defaultImageUri?.replace(/^http:\/\//, 'https://')"
+      :src="school.defaultImageUri ? school.defaultImageUri?.replace(/^http:\/\//, 'https://') : defaultImage"
       class="d-flex w-100 h-100 rounded-lg position-absolute"
     />
     <div
-      :class="`name-address-image pa-2 w-100 d-flex ga-1 position-relative justify-start ${
-        school?.defaultImageUri ? `rounded-t-xl` : `rounded-t-lg`
-      }`"
+      class="name-address-image pa-2 w-100 d-flex ga-1 position-relative justify-start rounded-t-xl"
     >
       <div
         class="w-100 d-flex flex-column align-start justify-start ga-2 pa-1"
@@ -117,6 +111,8 @@
 </template>
 
 <script setup>
+import defaultImage from '@/assets/images/default-school.png'
+
 const props = defineProps({
   school: {
     type: Object,
@@ -175,10 +171,7 @@ const actionButtons = computed(() => {
   box-shadow: 2px 6px 24px 0px #1018280D;
   text-decoration: none;
 }
-.without-image {
-  min-height: unset;
-  max-height: fit-content;
-}
+
 .image-school {
   max-height: 130px;
 }
