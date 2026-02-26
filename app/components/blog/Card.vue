@@ -2,15 +2,17 @@
   <nuxt-link
     :to="`/blog/${data.id}/${data.slug}`"
     class="d-flex flex-column align-start justify-start pa-2 card-blog"
+    :aria-label="data.slug"
   >
     <div class="d-flex position-relative">
-      <img
+      <v-img
         width="260"
         height="180"
         class="rounded-lg"
+        cover
         :src="data.imageUri.replace(/^http:\/\//, 'https://')"
         :alt="data.title"
-      >
+      />
       <div class="w-100 rounded-b-lg title-box-div position-absolute bottom-0 left-0 pa-2">
         <span class="text-white text-h4 font-weight-bold title-box">
           {{ data.title }}
@@ -19,11 +21,9 @@
     </div>
     <span class="description text-h5 font-weight-normal text-grey500 pa-2 w-100">
       {{ truncateBody(data.summary) }}
-      <nuxt-link
-        :to="`/blog/${data.id}/${data.slug}`"
-        :aria-label="data.slug"
+      <span
         class="text-primary"
-      >Read more</nuxt-link>
+      >Read more</span>
     </span>
   </nuxt-link>
 </template>
