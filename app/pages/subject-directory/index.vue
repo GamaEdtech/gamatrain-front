@@ -118,7 +118,7 @@ const changeFilterForBreadCrumb = (board, grade, subject) => {
     const newBoard = {
       text: board.title,
       disabled: true,
-      href: `/search?type=paper&section=${board.id}`,
+      href: `/search?type=paper&section=${board.code}`,
       name: 'board',
     }
     breadsCrumb.value = breadsCrumb.value.filter(item => item.name == 'type')

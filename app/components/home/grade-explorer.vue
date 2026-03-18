@@ -43,7 +43,7 @@
               <div class="d-flex align-center ex-select-board-label pr-5">
                 <div>
                   <v-avatar size="small">
-                    <v-img :src="selectedBoard?.img" />
+                    <v-img :src="`/images/boards/${selectedBoard?.icon}.svg`" />
                   </v-avatar>
                 </div>
                 <div class="pl-2 ex-select-board-label">
@@ -125,8 +125,6 @@
 </template>
 
 <script setup>
-const { boardImgs } = useBoard()
-
 const categories = ref([
   {
     type: 'paper',
@@ -181,15 +179,11 @@ const selectedGrade = ref(null)
 const showBoardHint = ref(false)
 
 const categoryLink = (category) => {
-  return category.type === 'school' ? `/school` : `/search?type=${category.type}&section=${selectedBoard.value?.id}&base=${selectedGrade.value}`
+  return category.type === 'school' ? `/school` : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
 }
 const fetchInitialData = async () => {
-  const params = { type: 'section' }
-  const response = await useApiService.get(`/api/v1/types/list`, params)
-  boardList.value = response.data.map((item, index) => ({
-    ...item,
-    img: boardImgs[index % boardImgs.length],
-  }))
+  const response = await useApiService.get(`/api/v2/boards`)
+  boardList.value = response.data
 
   // Try to restore selectedBoard from localStorage
   let storedBoard = null
@@ -217,7 +211,7 @@ const fetchGradeList = async () => {
 
     gradeLoader.value = true
     const params = { type: 'base' }
-    params.section_id = selectedBoard.value.id
+    params.section_id = selectedBoard.value.code
     const response = await useApiService.get(`/api/v1/types/list`, params)
 
     gradeList.value = [
@@ -245,7 +239,7 @@ const fetchCategoryCounts = async () => {
     const params = new URLSearchParams()
     params.append('type', 'test')
     params.append('page', '1')
-    params.append('section', selectedBoard.value.id)
+    params.append('section', selectedBoard.value.code)
     params.append('base', selectedGrade.value)
     const requestUrl = `/api/v1/search?${params.toString()}`
     const response = await useApiService.get(requestUrl)
