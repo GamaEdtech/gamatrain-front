@@ -53,7 +53,6 @@
 
         class="ml-2 text-h5 text-grey700 font-weight-bold"
       >
-        {{ schoolBoards }}
         Education board information hasn’t been added for this school yet. Know it? Contribute and help keep our data accurate.
       </span>
     </div>

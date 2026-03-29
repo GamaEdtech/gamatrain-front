@@ -1,117 +1,115 @@
 <template>
-  <main>
-    <v-container
-      v-if="contentData"
-      class="d-flex flex-column mt-16"
-    >
-      <v-row>
-        <lazy-widgets-breadcrumb
-          background-color="white"
-          :breads="breads"
+  <v-container
+    v-if="contentData"
+    class="d-flex flex-column mt-16"
+  >
+    <v-row>
+      <lazy-widgets-breadcrumb
+        background-color="white"
+        :breads="breads"
+      />
+    </v-row>
+    <v-row>
+      <v-col
+        cols="12"
+        class="d-flex align-center ga-1"
+      >
+        <v-icon color="primary">
+          md:chevron_backward
+        </v-icon>
+        <h1 class="text-h4 font-weight-bold">
+          {{ contentData.title }}
+        </h1>
+        <v-icon color="primary">
+          md:chevron_forward
+        </v-icon>
+      </v-col>
+      <v-col
+        cols="12"
+        md="4"
+        class="d-flex justify-center justify-md-start"
+      >
+        <lazy-common-detail-preview-action-card
+          :id="contentData.id"
+          :thumb-pic="contentData.thumb_pic"
+          :title="contentData.title"
+          :views="contentData.views"
+          :score="contentData.ref_score"
+          @share="openShare = true"
         />
-      </v-row>
-      <v-row>
+      </v-col>
+
+      <v-col
+        cols="12"
+        md="8"
+        class="d-flex h-100 align-start flex-wrap"
+      >
+        <lazy-common-detail-content-details-section :content-data="contentData" />
+
+        <lazy-common-detail-download-and-purchase-buttons
+          :id="contentData.id"
+          :files="contentData.files"
+          :year="contentData.edu_year"
+          :title="contentData.title"
+          :title-url="contentData.title_url"
+          :section="contentData.section"
+          :base="contentData.base"
+          :lesson="contentData.lesson"
+          :exams="contentData.exams"
+        />
+        <lazy-common-detail-subject-directory-nav :content-data="contentData" />
+      </v-col>
+
+      <lazy-common-detail-box-random-question :lesson="contentData.lesson" />
+
+      <v-col cols="12">
+        <lazy-common-detail-related-content
+          :id="contentData.id"
+          source="test"
+          :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+        />
+      </v-col>
+
+      <v-col
+        cols="12"
+        class="mt-6"
+      >
+        <span
+          class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
+          @click="openCrashReport = true"
+        >
+          <v-icon
+            color="#C62828"
+            class="mb-1"
+          >md:warning_outlined</v-icon>
+          Crash report
+        </span>
+      </v-col>
+
+      <ClientOnly>
         <v-col
           cols="12"
-          class="d-flex align-center ga-1"
+          class="text-center mt-10"
         >
-          <v-icon color="primary">
-            md:chevron_backward
-          </v-icon>
-          <h1 class="text-h4 font-weight-bold">
-            {{ contentData.title }}
-          </h1>
-          <v-icon color="primary">
-            md:chevron_forward
-          </v-icon>
-        </v-col>
-        <v-col
-          cols="12"
-          md="4"
-          class="d-flex justify-center justify-md-start"
-        >
-          <lazy-common-detail-preview-action-card
-            :id="contentData.id"
-            :thumb-pic="contentData.thumb_pic"
-            :title="contentData.title"
-            :views="contentData.views"
-            :score="contentData.ref_score"
-            @share="openShare = true"
+          <lazy-common-ad-banner
+            v-model="isAdsLoad"
+            adslot="7199289937"
           />
         </v-col>
-
-        <v-col
-          cols="12"
-          md="8"
-          class="d-flex h-100 align-start flex-wrap"
-        >
-          <lazy-common-detail-content-details-section :content-data="contentData" />
-
-          <lazy-common-detail-download-and-purchase-buttons
-            :id="contentData.id"
-            :files="contentData.files"
-            :year="contentData.edu_year"
-            :title="contentData.title"
-            :title-url="contentData.title_url"
-            :section="contentData.section"
-            :base="contentData.base"
-            :lesson="contentData.lesson"
-            :exams="contentData.exams"
-          />
-          <lazy-common-detail-subject-directory-nav :content-data="contentData" />
-        </v-col>
-
-        <lazy-common-detail-box-random-question :lesson="contentData.lesson" />
-
-        <v-col cols="12">
-          <lazy-common-detail-related-content
-            :id="contentData.id"
-            source="test"
-            :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
-          />
-        </v-col>
-
-        <v-col
-          cols="12"
-          class="mt-6"
-        >
-          <span
-            class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
-            @click="openCrashReport = true"
-          >
-            <v-icon
-              color="#C62828"
-              class="mb-1"
-            >md:warning_outlined</v-icon>
-            Crash report
-          </span>
-        </v-col>
-
-        <ClientOnly>
-          <v-col
-            cols="12"
-            class="text-center mt-10"
-          >
-            <lazy-common-ad-banner
-              v-model="isAdsLoad"
-              adslot="7199289937"
-            />
-          </v-col>
-        </ClientOnly>
-      </v-row>
-      <lazy-common-crash-report-modal
-        v-if="openCrashReport"
-        :id="contentData.id"
-        v-model:show-dialog="openCrashReport"
-        type-crash-report="test"
-      />
-      <lazy-common-share-modal
-        v-if="openShare"
-        v-model:show-dialog="openShare"
-        :title="contentData.title"
-      />
-    </v-container>
-  </main>
+      </ClientOnly>
+    </v-row>
+    <lazy-common-crash-report-modal
+      v-if="openCrashReport"
+      :id="contentData.id"
+      v-model:show-dialog="openCrashReport"
+      type-crash-report="test"
+    />
+    <lazy-common-share-modal
+      v-if="openShare"
+      v-model:show-dialog="openShare"
+      :title="contentData.title"
+    />
+  </v-container>
 </template>
 
 <script setup lang="ts">

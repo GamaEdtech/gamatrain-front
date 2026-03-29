@@ -20,12 +20,14 @@
         </v-progress-circular>
       </div>
       <common-header />
-      <div>
-        <slot />
-      </div>
-      <!-- Blog container -->
-      <lazy-home-blog-container v-if="showBlogSlider" />
+      <main>
+        <div>
+          <slot />
+        </div>
+        <!-- Blog container -->
+        <lazy-home-blog-container v-if="showBlogSlider" />
       <!-- End blog container -->
+      </main>
       <lazy-common-footer />
       <menu-bottom-nav-menu v-if="showBottomNavSlider" />
       <AppGlobalSnackbar />

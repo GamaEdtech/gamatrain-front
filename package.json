@@ -23,6 +23,7 @@
     "@ckeditor/ckeditor5-vue": "^7.3.0",
     "@coral-xyz/anchor": "^0.32.1",
     "@lottiefiles/dotlottie-vue": "^0.9.0",
+    "@maptiler/leaflet-maptilersdk": "^4.1.1",
     "@nuxt/eslint": "^1.6.0",
     "@nuxt/image": "^1.11.0",
     "@nuxtjs/dotenv": "^1.4.1",

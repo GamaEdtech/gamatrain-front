@@ -8,12 +8,15 @@
         Score
       </h3>
       <div class="d-flex">
-        <img
+        <NuxtImg
           id="score-img"
+          format="avif,webp"
           src="/images/score.png"
+          width="160"
+          height="160"
           alt="Users score"
           class="mr-8"
-        >
+        />
         <div class="mt-10">
           <div class="gtext-t6 primary-gray-400 mb-10">
             Total comments
