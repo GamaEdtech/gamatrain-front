@@ -33,8 +33,6 @@
 </template>
 
 <script setup>
-const { boardImgs } = useBoard()
-
 const props = defineProps({
   title: {
     type: String,
@@ -117,12 +115,6 @@ const getItems = async (extraIdParam = '') => {
             }))
           }
         }
-        else if (props.title == 'Board') {
-          items.value = list.map((item, index) => ({
-            ...item,
-            img: boardImgs[index % boardImgs.length],
-          }))
-        }
         else {
           items.value = list
         }
@@ -137,12 +129,14 @@ const getItems = async (extraIdParam = '') => {
   }
 }
 
-const getItemById = async (id) => {
-  if (!id) return
+const getItemById = (id, filterKey) => {
+  if (!id) return null
 
-  const item = items.value.find(x => x.id.toString() == id.toString())
+  const searchField = filterKey === 'code' ? 'code' : 'id'
 
-  if (item) return item
+  return items.value.find(item =>
+    String(item[searchField]) === String(id),
+  ) || null
 }
 
 const openSelectModal = () => {

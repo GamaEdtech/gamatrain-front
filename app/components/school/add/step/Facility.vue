@@ -204,7 +204,6 @@
 <script setup>
 const nuxtApp = useNuxtApp()
 const router = useRouter()
-const { boardImgs } = useBoard()
 
 const emit = defineEmits(['nextStep', 'prevStep'])
 
@@ -252,13 +251,10 @@ const getBoards = async () => {
   try {
     isLoadingBoard.value = true
     const responseBoard = await useApiService.get(
-      '/api/v1/types/list/?type=section',
+      '/api/v1/boards',
     )
     if (responseBoard.data) {
-      boards.value = responseBoard.data.map((item, index) => ({
-        ...item,
-        img: boardImgs[index % boardImgs.length],
-      }))
+      boards.value = responseBoard.data
     }
   }
   catch (error) {

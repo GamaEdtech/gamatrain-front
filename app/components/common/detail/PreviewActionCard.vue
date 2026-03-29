@@ -65,14 +65,14 @@
       </div>
     </div>
 
-    <client-only>
+    <!-- <client-only>
       <LazyCommonPdfPreviewDialog
         v-model="previewDialog"
         :title="previewTitle"
         :pdf-url="previewPdfUrl"
         :file-name="previewFileName"
       />
-    </client-only>
+    </client-only> -->
   </div>
 </template>
 

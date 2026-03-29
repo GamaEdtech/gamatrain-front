@@ -405,7 +405,11 @@ const updateQueryFromFilters = async () => {
   const titles = {}
 
   filters.value.forEach((f) => {
-    if (f.queryKey && f.selectedItem?.id) {
+    if (f.queryKey && f.selectedItem?.code) {
+      query[f.queryKey] = f.selectedItem.code
+      titles[f.queryKey] = f.selectedItem.title
+    }
+    else if (f.queryKey && f.selectedItem?.id) {
       query[f.queryKey] = f.selectedItem.id
       titles[f.queryKey] = f.selectedItem.title
     }
@@ -435,6 +439,7 @@ const fetchFilterAvailableInQuery = async () => {
   for (let index = 0; index < filters.value.length; index++) {
     const filter = filters.value[index]
     const qVal = route.query[filter.queryKey]
+    const filterKey = filter.queryKey == 'section' ? 'code' : 'id'
 
     if (filter.defaultValue && !qVal) {
       filters.value[index].selectedItem = filter.defaultValue
@@ -454,13 +459,17 @@ const fetchFilterAvailableInQuery = async () => {
 
     if (filter.staticList?.length) {
       const selected = filter.staticList.find(
-        x => String(x.id) === String(qVal),
+        x => String(x[filterKey]) === String(qVal),
       )
       filters.value[index].selectedItem = selected
       await enableReadyChildren(index)
     }
     else {
-      const selected = await filter.refElement?.getItemById(qVal)
+      console.log('here')
+      console.log(filter)
+      const selected = await filter.refElement?.getItemById(qVal, filterKey)
+      console.log(qVal)
+      console.log(selected)
       if (selected) {
         filters.value[index].selectedItem = selected
         await enableReadyChildren(index)

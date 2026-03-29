@@ -119,8 +119,6 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 
-const { boardImgs } = useBoard()
-
 const emit = defineEmits([
   'changeSubject',
   'changeStatusLoading',
@@ -151,7 +149,7 @@ onMounted(async () => {
 
 const updateQueryParam = () => {
   const query = {}
-  if (selectedBoard.value) query.board = selectedBoard.value.id
+  if (selectedBoard.value) query.board = selectedBoard.value.code
   if (selectedGrade.value) query.grade = selectedGrade.value.id
   if (selectedSubject.value) query.subject = selectedSubject.value.id
   router.replace({ query })
@@ -166,15 +164,8 @@ const showBoardDialog = ref(false)
 const fetchBoards = async () => {
   try {
     isLoadingBoard.value = true
-    const responseBoard = await useApiService.get(
-      '/api/v1/types/list/?type=section',
-    )
-    if (responseBoard.data) {
-      boards.value = responseBoard.data.map((item, index) => ({
-        ...item,
-        img: boardImgs[index % boardImgs.length],
-      }))
-    }
+    const responseBoard = await useApiService.get('/api/v2/boards')
+    boards.value = responseBoard.data
   }
   catch (error) {
     console.error('error', error)
@@ -184,7 +175,7 @@ const fetchBoards = async () => {
 const setBoard = () => {
   if (route.query.board) {
     const boardId = route.query.board
-    const findedBoard = boards.value.find(board => board.id == boardId)
+    const findedBoard = boards.value.find(board => board.code == boardId)
     if (findedBoard) {
       selectedBoard.value = findedBoard
     }
@@ -199,7 +190,7 @@ const setBoard = () => {
 }
 const setDefaltBoard = () => {
   const cieBoard = boards.value.find(
-    board => board.title === 'CIE' || board.id === '6659', // CIE ID
+    board => board.title === 'CIE' || board.code === '6659', // CIE ID
   )
   if (cieBoard) {
     selectedBoard.value = cieBoard
@@ -220,7 +211,7 @@ const setDefaltBoard = () => {
 }
 
 const boardChange = async (board) => {
-  if (board.id != selectedBoard.value) {
+  if (board.code != selectedBoard.value) {
     emit('changeStatusLoading')
     showBoardDialog.value = false
     selectedBoard.value = board
@@ -259,7 +250,7 @@ const fetchGrade = async () => {
   try {
     isLoadingGrades.value = true
     const responseGrade = await useApiService.get(
-      `/api/v1/types/list/?type=base&section_id=${selectedBoard.value.id}`,
+      `/api/v1/types/list/?type=base&section_id=${selectedBoard.value.code}`,
     )
     if (responseGrade.data) {
       grades.value = responseGrade.data
