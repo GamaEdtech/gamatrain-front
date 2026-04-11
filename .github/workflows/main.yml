@@ -1,90 +1,95 @@
-# Sample workflow for building and deploying a Nuxt site to GitHub Pages
-#
-# To get started with Nuxt see: https://nuxtjs.org/docs/get-started/installation
-#
-name: Deploy Nuxt site to Pages
+name: Build and Deploy Nuxt App
 
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["upgrade-v4"]
+    branches:
+      - main
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+env:
+  APP_NAME: gamafront
+  DEPLOY_PATH: /var/www/gamafront
 
 jobs:
-  # Build job
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Detect package manager
-        id: detect-package-manager
-        run: |
-          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
-            echo "manager=yarn" >> $GITHUB_OUTPUT
-            echo "command=install" >> $GITHUB_OUTPUT
-            exit 0
-          elif [ -f "${{ github.workspace }}/package.json" ]; then
-            echo "manager=npm" >> $GITHUB_OUTPUT
-            echo "command=ci" >> $GITHUB_OUTPUT
-            exit 0
-          else
-            echo "Unable to determine package manager"
-            exit 1
-          fi
-      - name: Setup Node
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: ${{ steps.detect-package-manager.outputs.manager }}
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-        with:
-          # Automatically inject router.base in your Nuxt configuration file and set
-          # target to static (https://nuxtjs.org/docs/configuration-glossary/configuration-target/).
-          #
-          # You may remove this line if you want to manage the configuration yourself.
-          static_site_generator: nuxt
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            dist
-            .nuxt
-          key: ${{ runner.os }}-nuxt-build-${{ hashFiles('dist') }}
-          restore-keys: |
-            ${{ runner.os }}-nuxt-build-
-      - name: Install dependencies
-        run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
-      - name: Static HTML export with Nuxt
-        run: ${{ steps.detect-package-manager.outputs.manager }} run generate
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
+          node-version: 20
 
-  # Deployment job
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Nuxt app
+        run: npm run build
+
+      - name: Archive build
+        run: tar -czf build.tar.gz .output
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuxt-build
+          path: build.tar.gz
+
+
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v5
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nuxt-build
+
+      - name: Upload build to VPS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          source: "build.tar.gz"
+          target: ${{ env.DEPLOY_PATH }}
+
+      - name: Deploy on VPS (zero-downtime + rollback support)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            set -e
+
+            cd ${{ env.DEPLOY_PATH }}
+
+            # current running version
+            CURRENT=$(readlink current || true)
+
+            # create new release folder
+            RELEASE_DIR=releases/$(date +%s)
+            mkdir -p $RELEASE_DIR
+
+            # extract build
+            tar -xzf build.tar.gz -C $RELEASE_DIR
+
+            # save previous release for rollback
+            if [ -n "$CURRENT" ]; then
+              echo $CURRENT > previous_release
+            fi
+
+            # switch symlink to new release
+            ln -sfn $RELEASE_DIR current
+
+            # start or reload app (zero downtime)
+            pm2 reload ${{ env.APP_NAME }} || pm2 start current/.output/server/index.mjs --name ${{ env.APP_NAME }} -i max
+
+            # cleanup old releases (keep last 3)
+            ls -dt releases/* 2>/dev/null | tail -n +4 | xargs rm -rf || true
