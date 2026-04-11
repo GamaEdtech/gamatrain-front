@@ -3,7 +3,7 @@ name: Build and Deploy Nuxt App
 on:
   push:
     branches:
-      - main
+      - upgrade-v4
 
 env:
   APP_NAME: gamafront
