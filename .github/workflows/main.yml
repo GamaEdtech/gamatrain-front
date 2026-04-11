@@ -50,7 +50,7 @@ jobs:
             ln -sfn $RELEASE_DIR current
 
             echo "Restarting app..."
-            pm2 reload ${{ env.APP_NAME }} || pm2 start current/.output/server/index.mjs --name ${{ env.APP_NAME }} -i max
-
+            pm2 reload ecosystem.config.cjs --env production || pm2 start ecosystem.config.cjs --env production
+            
             echo "Cleanup old releases..."
             ls -dt releases/* 2>/dev/null | tail -n +4 | xargs rm -rf || true
