@@ -192,6 +192,10 @@ const footerLinks = [
         title: 'Leader Board',
         link: '/leader-board',
       },
+      {
+        title: 'Donate',
+        link: '/donate',
+      },
     ],
   },
   {
