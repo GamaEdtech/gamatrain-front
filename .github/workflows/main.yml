@@ -1,0 +1,95 @@
+name: Build and Deploy Nuxt App
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  APP_NAME: gamafront
+  DEPLOY_PATH: /var/www/gamafront
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Nuxt app
+        run: npm run build
+
+      - name: Archive build
+        run: tar -czf build.tar.gz .output
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuxt-build
+          path: build.tar.gz
+
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: nuxt-build
+
+      - name: Upload build to VPS
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          source: "build.tar.gz"
+          target: ${{ env.DEPLOY_PATH }}
+
+      - name: Deploy on VPS (zero-downtime + rollback support)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            set -e
+
+            cd ${{ env.DEPLOY_PATH }}
+
+            # current running version
+            CURRENT=$(readlink current || true)
+
+            # create new release folder
+            RELEASE_DIR=releases/$(date +%s)
+            mkdir -p $RELEASE_DIR
+
+            # extract build
+            tar -xzf build.tar.gz -C $RELEASE_DIR
+
+            # save previous release for rollback
+            if [ -n "$CURRENT" ]; then
+              echo $CURRENT > previous_release
+            fi
+
+            # switch symlink to new release
+            ln -sfn $RELEASE_DIR current
+
+            # start or reload app (zero downtime)
+            pm2 reload ${{ env.APP_NAME }} || pm2 start current/.output/server/index.mjs --name ${{ env.APP_NAME }} -i max
+
+            # cleanup old releases (keep last 3)
+            ls -dt releases/* 2>/dev/null | tail -n +4 | xargs rm -rf || true
