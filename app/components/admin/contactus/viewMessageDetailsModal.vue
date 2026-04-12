@@ -47,10 +47,11 @@
         height="20"
         class="rounded-pill"
       />
-      <span
+      <div
         v-else
         class="value"
-      >{{ contactData?.body }}</span>
+        v-html="contactData?.body"
+      />
     </div>
 
     <div
@@ -80,9 +81,12 @@
         <div
           v-for="item in replyList"
           :key="item.id"
-          class="box-chat d-flex flex-column rounded-lg bg-grey100 pa-4 ga-1"
+          class="box-chat d-flex flex-column rounded-lg bg-grey100 py-4 px-6 ga-1"
         >
-          <span class="w-100 text-start text-h5 font-weight-bold text-grey900">{{ item.body }}</span>
+          <div
+            class="w-100 text-start text-h5 font-weight-bold text-grey900"
+            v-html="item.body"
+          />
           <span class="w-100 text-end text-subtitle-2 font-weight-regular text-grey700">{{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm") }}</span>
         </div>
       </template>
@@ -116,21 +120,11 @@
         <div class="text-h6 text-grey700 ml-2">
           Body
         </div>
-        <v-textarea
+        <common-rich-editor
           v-model="bodyReply"
-          rounded="lg"
-          density="compact"
-          placeholder="Body Reply"
-          variant="outlined"
-          autocomplete="off"
-          persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
-          class="w-100"
-          :rules="[requiredRule]"
-          no-resize
+          :enable-extra-plugins="false"
+          :rules="requiredRule"
+          required
         />
       </div>
     </div>
@@ -213,13 +207,25 @@ const getDetail = async () => {
   }
 }
 
+const removeScriptTags = (html: string) => {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, 'text/html')
+
+  const scripts = doc.querySelectorAll('script')
+
+  scripts.forEach((script) => {
+    script.remove()
+  })
+  return doc.body.innerHTML
+}
+
 const reply = async () => {
   if (contactData.value) {
     try {
       loadingReply.value = true
       const formData = new FormData()
       formData.append('From', selectedFromEmail.value)
-      formData.append('Body', bodyReply.value)
+      formData.append('Body', removeScriptTags(bodyReply.value))
       const response = await useApiService.post<
         ApiResult<unknown>
       >(

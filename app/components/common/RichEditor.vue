@@ -51,7 +51,7 @@ const editorConfig = ref({
 
 const LazyCkeditor = defineAsyncComponent({
   loader: async () => {
-    const { ClassicEditor, Essentials, Paragraph, Bold, Italic } = await import(
+    const { ClassicEditor, Essentials, Paragraph, Bold, Italic, List } = await import(
       'ckeditor5'
     )
 
@@ -62,7 +62,6 @@ const LazyCkeditor = defineAsyncComponent({
       const {
         Heading,
         Link,
-        List,
         Indent,
         Table,
         TableToolbar,
@@ -146,22 +145,10 @@ const LazyCkeditor = defineAsyncComponent({
         htmlSupport: {
           allow: [
             {
-              name: /.*/, // allow all elements
-              attributes: true, // keep all attributes
-              classes: true, // keep CSS classes
-              styles: true, // keep inline styles
-            },
-          ],
-          disallow: [
-            {
-              name: 'script', // block <script>
-              attributes: true,
-              classes: true,
-              styles: true,
-            },
-            {
-              name: 'iframe', // optionally block <iframe>
-              attributes: true,
+              name: /^(?!script$|iframe$).*$/,
+              attributes: {
+                key: /^(?!on).*$/,
+              },
               classes: true,
               styles: true,
             },
@@ -172,8 +159,22 @@ const LazyCkeditor = defineAsyncComponent({
     else {
       editorConfig.value = {
         licenseKey: 'GPL',
-        plugins: [Essentials, Paragraph, Bold, Italic],
-        toolbar: ['undo', 'redo', '|', 'bold', 'italic'],
+        plugins: [Essentials, Paragraph, Bold, Italic, List],
+        toolbar: ['undo', 'redo', '|', 'bold', 'italic', '|',
+          'bulletedList',
+          'numberedList'],
+        htmlSupport: {
+          allow: [
+            {
+              name: /^(?!script$|iframe$).*$/,
+              attributes: {
+                key: /^(?!on).*$/,
+              },
+              classes: true,
+              styles: true,
+            },
+          ],
+        },
       }
     }
 
@@ -199,3 +200,6 @@ const changeEditor = (event) => {
   emit('update:modelValue', event)
 }
 </script>
+
+<style scoped>
+</style>
