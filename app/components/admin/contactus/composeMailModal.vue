@@ -70,21 +70,12 @@
         <div class="text-h6 text-grey700 ml-2">
           Body
         </div>
-        <v-textarea
+
+        <common-rich-editor
           v-model="body"
-          rounded="lg"
-          density="compact"
-          placeholder="Body"
-          variant="outlined"
-          autocomplete="off"
-          persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
-          class="w-100"
-          :rules="[requiredRule]"
-          no-resize
+          :enable-extra-plugins="false"
+          :rules="requiredRule"
+          required
         />
       </div>
     </div>
@@ -139,12 +130,24 @@ const dataValid = computed(() => {
   )
 })
 
+const removeScriptTags = (html: string) => {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, 'text/html')
+
+  const scripts = doc.querySelectorAll('script')
+
+  scripts.forEach((script) => {
+    script.remove()
+  })
+  return doc.body.innerHTML
+}
+
 const send = async () => {
   try {
     loading.value = true
     const params = {
       from: selectedFromEmail.value,
-      body: body.value,
+      body: removeScriptTags(body.value),
       subject: subject.value,
       users: [],
       emailAddresses: [

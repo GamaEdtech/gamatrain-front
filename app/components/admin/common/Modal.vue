@@ -72,9 +72,12 @@ const clickOnModal = (event) => {
 }
 </script>
 
-<style scoped>
+<style>
 .mobile-style{
   max-height: 90%;
+}
+.ck ol, .ck ul{
+  padding-left : 24px !important;
 }
 @media only screen and (max-width: 960px) {
   .mobile-style {
