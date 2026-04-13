@@ -72,6 +72,7 @@ const getRandomTestCode = async () => {
         undefined,
         {
           proxy: true,
+          public: true
         },
       )
       if (response.data?.code) {
@@ -93,6 +94,7 @@ const getRandomTest = async (code: string) => {
       undefined,
       {
         proxy: true,
+        public: true
       },
     )
     if (response.data) {

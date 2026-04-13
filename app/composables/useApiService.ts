@@ -15,6 +15,7 @@ type UseFetchOptions = {
   immediate?: boolean
   pick?: string[]
   proxy?: boolean
+  public?: boolean
 }
 
 interface AuthHeaders {
@@ -32,7 +33,7 @@ export const useApiService = <T = unknown>(
   opts?: UseFetchOptions,
 ): Promise<T> => {
   const config = useRuntimeConfig()
-  const headers = authHeader(request)
+  const headers = authHeader(request, opts?.public)
 
   let baseURL = ''
   let cleanRequest = request
@@ -87,10 +88,11 @@ export const useApiService = <T = unknown>(
 
 export const authHeader = (
   req: string | null = null,
+  publicApi: boolean | null = false,
 ): AuthHeaders | undefined => {
   const auth = useAuth()
 
-  if (!auth.isAuthenticated.value) return
+  if (!auth.isAuthenticated.value || publicApi) return
 
   if (import.meta.client) {
     if (req?.includes('v2')) {

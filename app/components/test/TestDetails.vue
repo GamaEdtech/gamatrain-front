@@ -393,6 +393,7 @@ const loadNextTest = async () => {
       undefined,
       {
         proxy: true,
+        public: true
       },
     )
     if (response.data && response.data.code) {
