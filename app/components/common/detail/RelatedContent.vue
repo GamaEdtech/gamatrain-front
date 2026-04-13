@@ -184,6 +184,9 @@ const getRelatedContent = async () => {
     const response = await useApiService.get<ApiResult<RelatedContentDTO>>(
       '/api/v1/recommendations/related',
       params,
+      {
+        proxy: true,
+      },
     )
     const related = response.data
     if (related) {
