@@ -14,6 +14,7 @@ type UseFetchOptions = {
   lazy?: boolean
   immediate?: boolean
   pick?: string[]
+  proxy?: boolean
   public?: boolean
 }
 
@@ -37,13 +38,19 @@ export const useApiService = <T = unknown>(
   let baseURL = ''
   let cleanRequest = request
 
-  if (request.includes('/api/v2/')) {
-    baseURL = config.public.apiV2BaseUrl as string
-    cleanRequest = request.replace(/^\/api\/v2\//, '/')
+  if (opts?.proxy) {
+    baseURL = ''
+    cleanRequest = `/api/proxy${request}`
   }
-  else if (request.includes('/api/v1/')) {
-    baseURL = config.public.apiV1BaseUrl as string
-    cleanRequest = request.replace(/^\/api\/v1\//, '/')
+  else {
+    if (request.includes('/api/v2/')) {
+      baseURL = config.public.apiV2BaseUrl as string
+      cleanRequest = request.replace(/^\/api\/v2\//, '/')
+    }
+    else if (request.includes('/api/v1/')) {
+      baseURL = config.public.apiV1BaseUrl as string
+      cleanRequest = request.replace(/^\/api\/v1\//, '/')
+    }
   }
 
   const fetchOpts = {

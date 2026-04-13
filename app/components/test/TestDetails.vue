@@ -391,7 +391,10 @@ const loadNextTest = async () => {
     const response = await useApiService.get<ApiResult<NextQuestionDTO>>(
       `/api/v1/examTests/random?lesson=${props.contentData.lesson}&topic=${props.contentData.topic}`,
       undefined,
-      { public: true },
+      {
+        proxy: true,
+        public: true
+      },
     )
     if (response.data && response.data.code) {
       nextTestId.value = response.data.code
