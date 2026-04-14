@@ -53,7 +53,7 @@
                 <div class="w-100 relative">
                   <common-rich-editor
                     v-model="blog.content"
-                    :enable-extra-plugins="true"
+                    mode="full"
                     :rules="contentRules"
                     required
                   />
