@@ -79,6 +79,9 @@ const clickOnModal = (event) => {
 .ck ol, .ck ul{
   padding-left : 24px !important;
 }
+.ck.ck-balloon-panel{
+  z-index: 2400 !important;
+}
 @media only screen and (max-width: 960px) {
   .mobile-style {
     position: absolute;
