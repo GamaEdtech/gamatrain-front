@@ -73,9 +73,10 @@
 
         <common-rich-editor
           v-model="body"
-          :enable-extra-plugins="false"
           :rules="requiredRule"
           required
+          mode="custom"
+          :features="['bold', 'italic', 'list', 'link']"
         />
       </div>
     </div>

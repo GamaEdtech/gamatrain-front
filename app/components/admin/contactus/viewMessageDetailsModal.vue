@@ -122,7 +122,8 @@
         </div>
         <common-rich-editor
           v-model="bodyReply"
-          :enable-extra-plugins="false"
+          mode="custom"
+          :features="['bold', 'italic', 'list', 'link']"
           :rules="requiredRule"
           required
         />

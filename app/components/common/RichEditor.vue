@@ -29,14 +29,61 @@
 <script setup>
 import { ref, defineAsyncComponent } from 'vue'
 
+const ALL_FEATURES = {
+  heading: ['Heading'],
+  bold: ['Bold'],
+  italic: ['Italic'],
+  strikethrough: ['Strikethrough'],
+  subscript: ['Subscript'],
+  superscript: ['Superscript'],
+  code: ['Code'],
+  link: ['Link'],
+  list: ['List'],
+  indent: ['Indent'],
+  blockQuote: ['BlockQuote'],
+  highlight: ['Highlight'],
+  table: ['Table', 'TableToolbar'],
+  image: ['Image', 'ImageStyle', 'ImageResize', 'ImageInsert'],
+  mediaEmbed: ['MediaEmbed', 'Base64UploadAdapter'],
+  specialCharacters: ['SpecialCharacters', 'SpecialCharactersEssentials'],
+  pasteFromOffice: ['PasteFromOffice'],
+  generalHtmlSupport: ['GeneralHtmlSupport'],
+  sourceEditing: ['SourceEditing'],
+}
+const TOOLBAR_MAP = {
+  heading: 'heading',
+  bold: 'bold',
+  italic: 'italic',
+  strikethrough: 'strikethrough',
+  code: 'code',
+  subscript: 'subscript',
+  superscript: 'superscript',
+  specialCharacters: 'specialCharacters',
+  link: 'link',
+  list: ['bulletedList', 'numberedList'],
+  outdent: 'outdent',
+  indent: 'indent',
+  image: 'insertImage',
+  undo: 'undo',
+  redo: 'redo',
+  table: 'insertTable',
+  mediaEmbed: 'mediaEmbed',
+  sourceEditing: 'sourceEditing',
+  blockQuote: 'blockQuote',
+  highlight: 'highlight',
+}
 const props = defineProps({
   modelValue: {
     type: String,
     default: '',
   },
-  enableExtraPlugins: {
-    type: Boolean,
-    default: false,
+  features: {
+    type: Array,
+    default: () => [],
+  },
+  mode: {
+    type: String, // 'basic' | 'custom' | 'full'
+    default: 'basic',
   },
 })
 
@@ -51,135 +98,71 @@ const editorConfig = ref({
 
 const LazyCkeditor = defineAsyncComponent({
   loader: async () => {
-    const { ClassicEditor, Essentials, Paragraph, Bold, Italic, List } = await import(
-      'ckeditor5'
-    )
+    const ck = await import('ckeditor5')
+
+    const { ClassicEditor, Essentials, Paragraph } = ck
 
     const { Ckeditor } = await import('@ckeditor/ckeditor5-vue')
     await import('ckeditor5/ckeditor5.css')
 
-    if (props.enableExtraPlugins) {
-      const {
-        Heading,
-        Link,
-        Indent,
-        Table,
-        TableToolbar,
-        Image,
-        ImageStyle,
-        ImageResize,
-        ImageInsert,
-        MediaEmbed,
-        Base64UploadAdapter,
-        GeneralHtmlSupport,
-        SourceEditing,
-        Code,
-        Strikethrough,
-        Subscript,
-        Superscript,
-        SpecialCharacters,
-        SpecialCharactersEssentials,
-        Highlight,
-        BlockQuote,
-        PasteFromOffice,
-      } = await import('ckeditor5')
+    let selectedFeatures = []
 
-      editorConfig.value = {
-        licenseKey: 'GPL',
-        plugins: [
-          Essentials,
-          Paragraph,
-          Heading,
-          Bold,
-          Italic,
-          Strikethrough,
-          Subscript,
-          Superscript,
-          Code,
-          SpecialCharacters,
-          SpecialCharactersEssentials,
-          Link,
-          List,
-          Indent,
-          BlockQuote,
-          Highlight,
-          Table,
-          TableToolbar,
-          Image,
-          ImageStyle,
-          ImageResize,
-          ImageInsert,
-          MediaEmbed,
-          Base64UploadAdapter,
-          GeneralHtmlSupport,
-          SourceEditing,
-          PasteFromOffice,
-        ],
-        toolbar: [
-          'heading',
-          '|',
-          'bold',
-          'italic',
-          'strikethrough',
-          'code',
-          'subscript',
-          'superscript',
-          'specialCharacters',
-          'link',
-          'bulletedList',
-          'numberedList',
-          '|',
-          'outdent',
-          'indent',
-          '|',
-          'insertImage',
-          'undo',
-          'redo',
-          'insertTable',
-          'mediaEmbed',
-          'sourceEditing',
-          '|',
-          'blockQuote',
-          'highlight',
-        ],
-        htmlSupport: {
-          allow: [
-            {
-              name: /^(?!script$|iframe$).*$/,
-              attributes: {
-                key: /^(?!on).*$/,
-              },
-              classes: true,
-              styles: true,
-            },
-          ],
-        },
-      }
+    if (props.mode === 'full') {
+      selectedFeatures = Object.keys(ALL_FEATURES)
+    }
+    else if (props.mode === 'custom') {
+      selectedFeatures = props.features || []
     }
     else {
-      editorConfig.value = {
-        licenseKey: 'GPL',
-        plugins: [Essentials, Paragraph, Bold, Italic, List],
-        toolbar: ['undo', 'redo', '|', 'bold', 'italic', '|',
-          'bulletedList',
-          'numberedList'],
-        htmlSupport: {
-          allow: [
-            {
-              name: /^(?!script$|iframe$).*$/,
-              attributes: {
-                key: /^(?!on).*$/,
-              },
-              classes: true,
-              styles: true,
-            },
-          ],
-        },
+      selectedFeatures = ['bold', 'italic']
+    }
+
+    const plugins = [Essentials, Paragraph]
+    const toolbar = ['undo', 'redo', '|']
+
+    selectedFeatures.forEach((feature) => {
+      const pluginNames = ALL_FEATURES[feature] || []
+
+      pluginNames.forEach((name) => {
+        const plugin = ck[name]
+        if (plugin && !plugins.includes(plugin)) {
+          plugins.push(plugin)
+        }
+      })
+
+      const tb = TOOLBAR_MAP[feature]
+
+      if (tb) {
+        if (Array.isArray(tb)) {
+          toolbar.push(...tb)
+        }
+        else {
+          toolbar.push(tb)
+        }
       }
+    })
+
+    const finalToolbar = [...new Set(toolbar)].filter(Boolean)
+
+    editorConfig.value = {
+      licenseKey: 'GPL',
+      plugins,
+      toolbar: finalToolbar,
+      htmlSupport: {
+        allow: [
+          {
+            name: /^(?!script$|iframe$).*$/,
+            attributes: {
+              key: /^(?!on).*$/,
+            },
+            classes: true,
+            styles: true,
+          },
+        ],
+      },
     }
 
     CustomEditor.value = ClassicEditor
-
     internalValue.value = props.modelValue
     loading.value = false
 
