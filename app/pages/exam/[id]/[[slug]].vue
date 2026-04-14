@@ -193,14 +193,29 @@ const isAdsLoad = ref(false)
 
 // Fetch the exam data
 async function fetchExamData() {
-  const { id } = route.params
-  const response = await useApiService.get(`/api/v1/exams/${id}`)
+  try {
+    const { id } = route.params
 
-  if (response.status === 1 && response.data) {
-    return response.data
+    const response = await useApiService.get(`/api/v1/exams/${id}`)
+
+    if (response.status === 1 && response.data) {
+      return response.data
+    }
+
+    showError({
+      statusCode: 404,
+      statusMessage: 'Page Not Founded!',
+    })
+    return {}
   }
+  catch (err) {
+    console.error('API Error:', err)
 
-  return response
+    showError({
+      statusCode: 404,
+      statusMessage: 'Page Not Founded!',
+    })
+  }
 }
 
 // Use asyncData to fetch data

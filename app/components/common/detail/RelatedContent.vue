@@ -19,7 +19,7 @@
         v-for="item in 10"
         :key="item"
       >
-        <CommonDetailRelatedContentCardSkeleton type="paper" />
+        <lazy-common-detail-related-content-card-skeleton type="paper" />
       </v-slide-group-item>
     </v-slide-group>
     <v-slide-group
@@ -55,7 +55,7 @@
         :key="item.id"
       >
         <nuxt-link :to="`/paper/${item.id}/${item.title_url}`">
-          <common-detail-related-content-card
+          <lazy-common-detail-related-content-card
             :picture="item.thumb_pic || fallbackImage"
             :title="item.title"
             :score="item.referee_score || item.type_title"
@@ -116,9 +116,9 @@
         class="d-flex align-center ga-2"
       >
         <div class="square-div" />
-        <span class="text-h5 primary-gray-500">{{
-          tutorial.title.slice(0, 50) + "..."
-        }}</span>
+        <span class="text-h5 primary-gray-500 text-truncate">
+          {{ tutorial.title }}
+        </span>
       </nuxt-link>
     </div>
   </div>
@@ -184,6 +184,10 @@ const getRelatedContent = async () => {
     const response = await useApiService.get<ApiResult<RelatedContentDTO>>(
       '/api/v1/recommendations/related',
       params,
+      {
+        proxy: true,
+        public: true
+      },
     )
     const related = response.data
     if (related) {

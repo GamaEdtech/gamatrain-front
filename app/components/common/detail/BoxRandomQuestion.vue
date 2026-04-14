@@ -38,7 +38,7 @@
       />
     </div>
 
-    <TestDetails
+    <lazy-test-details
       v-if="!loadingRandomTest && randomTestContent"
       :content-data="randomTestContent"
       :show-chips="false"
@@ -69,6 +69,11 @@ const getRandomTestCode = async () => {
     try {
       const response = await useApiService.get<ApiResult<RandomTestCodeDTO>>(
         `/api/v1/examTests/random?lesson=${props.lesson}`,
+        undefined,
+        {
+          proxy: true,
+          public: true
+        },
       )
       if (response.data?.code) {
         await getRandomTest(response.data.code)
@@ -86,6 +91,11 @@ const getRandomTest = async (code: string) => {
   try {
     const response = await useApiService.get<ApiResult<QuestionDTO>>(
       `/api/v1/examTests/${code}`,
+      undefined,
+      {
+        proxy: true,
+        public: true
+      },
     )
     if (response.data) {
       randomTestContent.value = response.data

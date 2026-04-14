@@ -1,6 +1,6 @@
 <template>
   <div
-    class="custom-overlay d-flex justify-center align-end align-md-center position-fixed w-100"
+    class="custom-overlay d-flex justify-center align-end align-md-center position-fixed w-100 top-0 left-0"
     @click="clickOnOverlay"
   >
     <div

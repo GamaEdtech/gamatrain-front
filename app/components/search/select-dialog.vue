@@ -79,14 +79,14 @@
         >
           <template #prepend>
             <v-avatar
-              v-if="item.img"
+              v-if="item.icon"
               size="34"
             >
-              <v-img :src="item.img" />
+              <v-img :src="`/images/boards/${item.icon}.svg`" />
             </v-avatar>
             <span
-              v-if="item.icon"
-              :class="`${item.icon} size-icon`"
+              v-else-if="item.contentIcon"
+              :class="`${item.contentIcon} size-icon`"
               :style="{ color: item.color }"
             />
           </template>

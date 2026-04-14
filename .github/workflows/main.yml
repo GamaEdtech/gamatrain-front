@@ -1,0 +1,56 @@
+name: Build and Deploy Nuxt App
+
+on:
+  push:
+    branches:
+      - upgrade-v4
+
+env:
+  APP_NAME: gamafront
+  DEPLOY_PATH: /var/www/gamafront
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            set -e
+
+            cd ${{ env.DEPLOY_PATH }}
+
+            echo "Pull latest code..."
+            git fetch origin
+            git reset --hard origin/upgrade-v4
+
+            echo "Install dependencies..."
+            npm ci
+
+            echo "Build Nuxt app..."
+            npm run build
+
+            echo "Setup release..."
+            CURRENT=$(readlink current || true)
+            RELEASE_DIR=releases/$(date +%s)
+
+            mkdir -p $RELEASE_DIR
+            cp -r .output $RELEASE_DIR/
+
+            if [ -n "$CURRENT" ]; then
+              echo $CURRENT > previous_release
+            fi
+
+            ln -sfn $RELEASE_DIR current
+
+            echo "Restarting app..."
+            pm2 reload ecosystem.config.cjs --env production || pm2 start ecosystem.config.cjs --env production
+            
+            echo "Cleanup old releases..."
+            ls -dt releases/* 2>/dev/null | tail -n +4 | xargs rm -rf || true

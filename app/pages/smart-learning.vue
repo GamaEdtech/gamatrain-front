@@ -240,6 +240,7 @@
               src="/images/content-sharing.png"
               alt="Simplify Content Sharing and Elevate Education with AI Assistance."
               class="service-image"
+              rounded="lg"
             />
           </v-col>
         </v-row>

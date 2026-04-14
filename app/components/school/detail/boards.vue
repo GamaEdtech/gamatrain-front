@@ -30,9 +30,9 @@
         :key="index"
       >
         <v-btn
-          v-if="schoolBoards.some(s => s.code === Number(board.id))"
+          v-if="schoolBoards.some(s => s.id === Number(board.id))"
           flat
-          :color="schoolBoards.some(s => s.code === Number(board.id)) ? `grey700` : `grey300`"
+          :color="schoolBoards.some(s => s.id === Number(board.id)) ? `grey700` : `grey300`"
           height="48"
           rounded="lg"
         >
@@ -43,14 +43,14 @@
             height="26"
             class="mr-1"
           >
-          <span :class="`font-weight-bold text-h5 ${schoolBoards.some(s => s.code === Number(board.id)) ? `text-grey300`:`text-grey900`}`">{{
+          <span :class="`font-weight-bold text-h5 ${schoolBoards.some(s => s.id === Number(board.id)) ? `text-grey300`:`text-grey900`}`">{{
             board.title
           }}</span>
         </v-btn>
       </template>
 
       <span
-        v-if="schoolBoards.length == 0"
+
         class="ml-2 text-h5 text-grey700 font-weight-bold"
       >
         Education board information hasn’t been added for this school yet. Know it? Contribute and help keep our data accurate.
@@ -98,7 +98,8 @@
             @click="chooseBoard(board)"
           >
             <img
-              :src="board.img"
+              v-show="board.icon"
+              :src="`/images/boards/${board?.icon}.svg`"
               :alt="board.title"
               width="26"
               height="26"
@@ -106,7 +107,7 @@
             >
             <span :class="`font-weight-bold text-h5 ${selectedBoards.includes(Number(board.id)) ? `text-grey300`:`text-grey900`}`">{{
               board.title
-            }}</span>
+            }} {{ board.icon }}</span>
           </v-btn>
         </v-row>
         <v-btn
@@ -137,7 +138,6 @@ const props = defineProps({
 
 const auth = useAuth()
 const { $toast } = useNuxtApp()
-const { boardImgs } = useBoard()
 const { mdAndUp } = useDisplay()
 const route = useRoute()
 const router = useRouter()
@@ -155,13 +155,10 @@ const getBoards = async () => {
   try {
     isLoadingBoard.value = true
     const responseBoard = await useApiService.get(
-      '/api/v1/types/list/?type=section',
+      '/api/v2/boards',
     )
     if (responseBoard.data) {
-      boards.value = responseBoard.data.map((item, index) => ({
-        ...item,
-        img: boardImgs[index % boardImgs.length],
-      }))
+      boards.value = responseBoard.data
     }
   }
   catch (error) {
@@ -194,7 +191,7 @@ const openModalContribute = () => {
   }
   else {
     dialogModel.value = true
-    selectedBoards.value = props.schoolBoards.map(item => item.code)
+    selectedBoards.value = props.schoolBoards.map(item => item.id)
   }
 }
 
@@ -212,7 +209,7 @@ const saveBoards = async () => {
   try {
     const response = await useApiService.post(
       `/api/v2/schools/${route.params.id}/contributions`,
-      { BoardCodes: selectedBoards.value },
+      { boardCodes: selectedBoards.value },
     )
     if (response.succeeded) {
       $toast?.success(

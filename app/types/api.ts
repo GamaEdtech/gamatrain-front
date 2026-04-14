@@ -110,6 +110,57 @@ export interface PDFResponseDTO {
   name?: string
 }
 
+export interface ProAccess {
+  status: number
+  http_code: number
+  data: {
+    limit: boolean
+    remained: number
+    usage: boolean
+  }
+}
+
+export interface TutorialDTO {
+  base: string
+  content: string
+  course: string
+  id: string
+  lesson: string
+  proAccess: ProAccess
+  section: string
+  status: string
+  title: string
+  title_url: string
+  topic: string
+  up_date: string
+  update_jalali: string
+  views: string
+}
+
+export interface ChapterDTO {
+  id: string
+  season: boolean
+  title: string
+  tutorials: {
+    id: string
+    title: string
+  }[]
+}
+
+export interface UnitLessonDTO {
+  id: string
+  season: boolean
+  title: string
+  tutorialsNum: number
+  chapters: ChapterDTO[]
+}
+
+export interface LessonTreeDTO {
+  id: string
+  title: string
+  list: UnitLessonDTO[]
+}
+
 export interface AdminTransactionDTO {
   id: number
   userId: number
@@ -136,6 +187,86 @@ export interface AdminPaymentDTO {
   sourceWallet?: string
   comment?: string
   transactionId?: string
+}
+
+export type SchoolContributionStatus = 'Draft' | 'Review' | 'Confirmed' | 'Rejected' | 'Deleted'
+
+export interface AdminSchoolContributionBriefDTO {
+  id: number
+  status: SchoolContributionStatus
+  comment: string
+  creationUser: string
+  creationDate: string
+  identifierId: number
+}
+export interface AdminSchoolContributionNewDataDTO {
+  name: string
+  localName: string
+  schoolType: string
+  stateId: number
+  zipCode: string
+  address: string
+  latitude: number
+  longitude: number
+  webSite: string
+  localAddress: string
+  cityId: number
+  countryId: number
+  email: string
+  faxNumber: string
+  phoneNumber: string
+  quarter: string
+  tags: number[]
+  boardCodes: number[]
+  tuition: number
+  description: string
+}
+
+export interface AdminSchoolContributionOldDataDTO {
+  id: number
+  name: string
+  localName: string
+  schoolType: string
+  stateId: number
+  stateTitle: string
+  zipCode: string
+  address: string
+  localAddress: string
+  webSite: string
+  email: string
+  latitude: number
+  longitude: number
+  cityId: number
+  cityTitle: string
+  countryId: number
+  countryTitle: string
+  faxNumber: string
+  phoneNumber: string
+  quarter: string
+  slug: string
+  osmId: number
+  tags: {
+    id: number
+    name: string
+    icon: string
+    tagType: string
+  }[]
+  boards: {
+    id: number
+    code: number
+    title: string
+    icon: string
+
+  }[]
+  defaultImageUri: string
+  tuition: number
+  description: string
+  viewCount: number
+}
+
+export interface AdminSchoolContributionDTO {
+  newValues: AdminSchoolContributionNewDataDTO
+  oldValues: AdminSchoolContributionOldDataDTO
 }
 
 export interface SearchTypesStatsDTO {
@@ -179,6 +310,14 @@ export interface AdminContactUsDetailDTO {
   creationUser: string
   creationDate: string
   fileUri: string
+}
+export interface AdminReplyTicketListDTO {
+  id: number
+  body: string
+  creationUser: string
+  creationDate: string
+  fileUri: string
+  receivers: string[]
 }
 
 export interface QuestionDTO {
@@ -258,4 +397,65 @@ export interface TransactionDTO {
   currentBalance: number
   creationDate: string
   isDebit: boolean
+}
+export interface SchoolListDTO {
+  id: number
+  name: string
+  slug: string
+
+  cityTitle: string
+  stateTitle: string
+  countryTitle: string
+
+  defaultImageUri: string
+
+  distance: number
+  score: number
+
+  hasEmail: boolean
+  hasPhone: boolean
+  hasWebsite: boolean
+  hasLocation: boolean
+
+  lat: number
+  long: number
+
+  lastModifyDate: string
+}
+
+export interface AdminAppSettingsDTO {
+  gridPageSize?: number
+  defaultTimeZoneId: string
+  schoolContributionPoints?: number
+  schoolImageContributionPoints?: number
+  schoolCommentContributionPoints?: number
+  postContributionPoints?: number
+  schoolIssuesContributionPoints?: number
+  removeSchoolImageContributionPoints?: number
+  easterEggBronzePoints?: number
+  easterEggSilverPoints?: number
+  easterEggGoldPoints?: number
+  testTimeCorrectSubmissionPoints?: number
+  testTimeIncorrectSubmissionPoints?: number
+  examCorrectTestSubmissionPoints?: number
+  examIncorrectTestSubmissionPoints?: number
+  schoolCommentContributionConfirmationEmailTemplate: string
+  schoolImageContributionConfirmationEmailTemplate: string
+  removeSchoolImageContributionConfirmationEmailTemplate: string
+  schoolContributionConfirmationEmailTemplate: string
+  schoolIssuesContributionConfirmationEmailTemplate: string
+  postContributionConfirmationEmailTemplate: string
+  ticketConfirmationEmailTemplate: string
+}
+
+export interface BlogDTO {
+  id: number
+  title: string
+  slug: string
+  summary: string
+  likeCount: number
+  dislikeCount: number
+  imageUri: string
+  visibilityType: string
+  publishDate: string
 }

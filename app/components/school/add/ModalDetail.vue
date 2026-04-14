@@ -20,7 +20,7 @@
         </v-icon>
       </div>
       <div class="w-100 d-flex justify-center align-center mt-4 pa-2 pa-md-4">
-        <SchoolCardSchool :school="schoolInformation" />
+        <school-card-mobile :school="schoolInformation" />
       </div>
 
       <v-divider

@@ -14,6 +14,8 @@ type UseFetchOptions = {
   lazy?: boolean
   immediate?: boolean
   pick?: string[]
+  proxy?: boolean
+  public?: boolean
 }
 
 interface AuthHeaders {
@@ -31,18 +33,24 @@ export const useApiService = <T = unknown>(
   opts?: UseFetchOptions,
 ): Promise<T> => {
   const config = useRuntimeConfig()
-  const headers = authHeader(request)
+  const headers = authHeader(request, opts?.public)
 
   let baseURL = ''
   let cleanRequest = request
 
-  if (request.includes('/api/v2/')) {
-    baseURL = config.public.apiV2BaseUrl as string
-    cleanRequest = request.replace(/^\/api\/v2\//, '/')
+  if (opts?.proxy) {
+    baseURL = ''
+    cleanRequest = `/api/proxy${request}`
   }
-  else if (request.includes('/api/v1/')) {
-    baseURL = config.public.apiV1BaseUrl as string
-    cleanRequest = request.replace(/^\/api\/v1\//, '/')
+  else {
+    if (request.includes('/api/v2/')) {
+      baseURL = config.public.apiV2BaseUrl as string
+      cleanRequest = request.replace(/^\/api\/v2\//, '/')
+    }
+    else if (request.includes('/api/v1/')) {
+      baseURL = config.public.apiV1BaseUrl as string
+      cleanRequest = request.replace(/^\/api\/v1\//, '/')
+    }
   }
 
   const fetchOpts = {
@@ -80,10 +88,11 @@ export const useApiService = <T = unknown>(
 
 export const authHeader = (
   req: string | null = null,
+  publicApi: boolean | null = false,
 ): AuthHeaders | undefined => {
   const auth = useAuth()
 
-  if (!auth.isAuthenticated.value) return
+  if (!auth.isAuthenticated.value || publicApi) return
 
   if (import.meta.client) {
     if (req?.includes('v2')) {

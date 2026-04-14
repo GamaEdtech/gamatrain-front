@@ -5,7 +5,7 @@
     </h1>
 
     <img
-      :src="errorInfo[statusCode].image ?? error500"
+      :src="errorInfo[statusCode].image ?? `/images/error/error-500.svg`"
       :alt="errorInfo[statusCode].title.toString() ?? '500'"
       height="300"
       width="300"
@@ -29,10 +29,6 @@
 
 <script setup lang="ts">
 import type { StatusErrorCodeApp } from '@/types/api'
-import error500 from '@/assets/images/error/error-500.svg'
-import error404 from '@/assets/images/error/error-404.svg'
-import error403 from '@/assets/images/error/error-403.svg'
-import errorDisconnect from '@/assets/images/error/error-disconnect.svg'
 
 interface IError {
   statusCode: StatusErrorCodeApp
@@ -43,27 +39,27 @@ defineProps<IError>()
 const errorInfo = {
   500: {
     title: 500,
-    image: error500,
+    image: '/images/error/error-500.svg',
     subtitle: 'There was a problem on our side!',
   },
   404: {
     title: 404,
-    image: error404,
+    image: '/images/error/error-404.svg',
     subtitle: 'Page not found!',
   },
   403: {
     title: 403,
-    image: error403,
+    image: '/images/error/error-403.svg',
     subtitle: 'You do not have access to this page!',
   },
   401: {
     title: 401,
-    image: error403,
+    image: '/images/error/error-403.svg',
     subtitle: 'You are not authenticated. Please log in to continue.',
   },
   disconnect: {
     title: 'Disconnect',
-    image: errorDisconnect,
+    image: '/images/error/error-disconnect.svg',
     subtitle: 'First check the internet',
   },
 }

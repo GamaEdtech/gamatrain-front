@@ -23,16 +23,16 @@
     >
       <div class="container-scroll">
         <template v-if="isInitialLoading">
-          <CardSchoolSkeleton
+          <school-card-skeleton
             v-for="item in 4"
             :key="item"
           />
         </template>
 
-        <CardSchoolSkeleton v-if="isPaginationPreviousLoading" />
+        <school-card-skeleton v-if="isPaginationPreviousLoading" />
 
         <template v-for="school in schoolList">
-          <CardSchool
+          <school-card
             v-if="!isInitialLoading"
             :key="school"
             :school="school"
@@ -44,7 +44,7 @@
           class="line-specifier-load-more"
         />
 
-        <CardSchoolSkeleton v-if="isPaginationLoading" />
+        <school-card-skeleton v-if="isPaginationLoading" />
         <div
           v-if="!isInitialLoading && schoolList.length == 0"
           class="not-found-div"
@@ -58,8 +58,6 @@
 
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
-import CardSchool from './CardSchool.vue'
-import CardSchoolSkeleton from './CardSchoolSkeleton.vue'
 
 const props = defineProps({
   schoolList: {

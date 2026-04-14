@@ -20,13 +20,15 @@
         </v-progress-circular>
       </div>
       <common-header />
-      <div>
-        <slot />
-      </div>
-      <!-- Blog container -->
-      <home-blog-container v-if="showBlogSlider" />
+      <main>
+        <div>
+          <slot />
+        </div>
+        <!-- Blog container -->
+        <lazy-home-blog-container v-if="showBlogSlider" />
       <!-- End blog container -->
-      <common-footer />
+      </main>
+      <lazy-common-footer />
       <menu-bottom-nav-menu v-if="showBottomNavSlider" />
       <AppGlobalSnackbar />
       <client-only>
@@ -46,7 +48,7 @@ const route = useRoute()
 const { isOnline } = useNetwork()
 
 const excludedPaths = ['/', '/search', '/school']
-const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance']
+const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate']
 
 const showBlogSlider = computed(() => {
   return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)

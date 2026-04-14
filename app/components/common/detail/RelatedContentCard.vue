@@ -6,7 +6,7 @@
     <v-img
       :src="picture"
       class="rounded-lg"
-      alt="user Profile"
+      :alt="title ? title :`Related Content Picture`"
       width="160"
       height="190"
     />
@@ -63,6 +63,7 @@
         height="20"
         class="avatar-img rounded-circle"
         :src="avatar ? avatar : `/images/member/avatar.svg`"
+        :alt="lastName ? `${lastName} Avatar` : `Avatar User`"
       >
       <span class="text-subtitle-2 font-weight-bold">{{
         firstName + " " + lastName
