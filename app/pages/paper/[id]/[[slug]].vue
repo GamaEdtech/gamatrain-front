@@ -141,6 +141,10 @@ const { data: contentData } = await useAsyncData(
     try {
       const response = (await useApiService.get(
         `/api/v1/tests/${route.params.id}`,
+        undefined,
+        {
+          proxy: true,
+        },
       )) as ApiResult<PastPaperDTO>
 
       if (response.data) {
