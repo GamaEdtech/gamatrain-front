@@ -143,6 +143,7 @@ const { data: contentData } = await useAsyncData(
         `/api/v1/tests/${route.params.id}`,
         undefined,
         {
+          public: true,
           proxy: true,
         },
       )) as ApiResult<PastPaperDTO>

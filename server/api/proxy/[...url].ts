@@ -1,12 +1,3 @@
-type HttpMethod
-  = | 'GET'
-    | 'POST'
-    | 'PUT'
-    | 'DELETE'
-    | 'PATCH'
-    | 'OPTIONS'
-    | 'HEAD'
-
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig()
 
@@ -22,11 +13,6 @@ export default defineEventHandler(async (event) => {
   }
 
   const targetUrl = `${targetBase}/${url.replace(/^api\/v[12]\//, '')}`
-  const method = (event.node.req.method || 'GET').toUpperCase() as HttpMethod
-
-  const body = ['POST', 'PUT', 'PATCH'].includes(method!)
-    ? await readBody(event)
-    : undefined
 
   const query = getQuery(event)
 
@@ -34,11 +20,14 @@ export default defineEventHandler(async (event) => {
 
   try {
     const response = await $fetch(targetUrl, {
-      method,
-      body,
       headers,
       query,
     })
+
+    setResponseHeaders(event, {
+      'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=3600',
+    })
+
     return response
   }
   catch (error: unknown) {
