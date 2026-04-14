@@ -238,7 +238,7 @@ const fetchCategoryCounts = async () => {
 
     const params = new URLSearchParams()
     params.append('type', 'test')
-    params.append('page', '1')
+    params.append('perpage', '1')
     params.append('section', selectedBoard.value.code)
     params.append('base', selectedGrade.value)
     const requestUrl = `/api/v1/search?${params.toString()}`

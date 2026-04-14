@@ -182,6 +182,7 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
       type: getEquivalentOldType(route.query.type),
       edu_year: route.query.edu_year,
       edu_month: route.query.edu_month,
+      perpage: 5,
     }
 
     if (route.query.type && getEquivalentOldType(route.query.type) == 'learnfiles') {
