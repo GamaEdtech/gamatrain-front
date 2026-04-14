@@ -186,7 +186,7 @@ const getRelatedContent = async () => {
       params,
       {
         proxy: true,
-        public: true
+        public: true,
       },
     )
     const related = response.data
