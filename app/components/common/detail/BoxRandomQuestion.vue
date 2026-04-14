@@ -71,6 +71,7 @@ const getRandomTestCode = async () => {
         `/api/v1/examTests/random?lesson=${props.lesson}`,
         undefined,
         {
+          proxy: true,
           public: true,
         },
       )
@@ -92,6 +93,7 @@ const getRandomTest = async (code: string) => {
       `/api/v1/examTests/${code}`,
       undefined,
       {
+        proxy: true,
         public: true,
       },
     )
