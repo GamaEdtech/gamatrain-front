@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Email Template</title>
+    <style>
+        /* latin */
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 100;
+            font-display: swap;
+            src: url(https://gamatrain.com/assets/fonts/Inter/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2) format("woff2");
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+                U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+
+        /* latin */
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 200;
+            font-display: swap;
+            src: url(https://gamatrain.com/assets/fonts/Inter/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2) format("woff2");
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+                U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+
+        /* latin */
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 300;
+            font-display: swap;
+            src: url(https://gamatrain.com/assets/fonts/Inter/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2) format("woff2");
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+                U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+
+        /* latin */
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 400;
+            font-display: swap;
+            src: url(https://gamatrain.com/assets/fonts/Inter/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2) format("woff2");
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+                U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+        /* latin */
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 500;
+            font-display: swap;
+            src: url(https://gamatrain.com/assets/fonts/Inter/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2) format("woff2");
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+                U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+        /* latin */
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 600;
+            font-display: swap;
+            src: url(https://gamatrain.com/assets/fonts/Inter/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2) format("woff2");
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+                U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+        /* latin */
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 700;
+            font-display: swap;
+            src: url(https://gamatrain.com/assets/fonts/Inter/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2) format("woff2");
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+                U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+        /* latin */
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 800;
+            font-display: swap;
+            src: url(https://gamatrain.com/assets/fonts/Inter/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2) format("woff2");
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+                U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+
+        /* latin */
+        @font-face {
+            font-family: "Inter";
+            font-style: normal;
+            font-weight: 900;
+            font-display: swap;
+            src: url(https://gamatrain.com/assets/fonts/Inter/UcC73FwrK3iLTeHuS_fvQtMwCp50KnMa1ZL7.woff2) format("woff2");
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+                U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+    </style>
+</head>
+
+<body style="margin:0;padding:0;background-color:#ffffff;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" border="0"
+        style="background-color:#ffffff;border-color: #ffffff">
+        <tr>
+            <td align="center">
+
+                <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                    style="background-color:#ffffff;border-color: #ffffff;">
+
+                    <tr>
+                        <td>
+                            <img src="https://gamatrain.com/email-template/school-contribution/header.png"
+                                style="display:block;width:100%;height:auto;border:0;">
+                        </td>
+                    </tr>
+
+                    <tr style="background-color: #FFB300;">
+                        <td>
+                            <img src="https://gamatrain.com/email-template/school-contribution/second.png"
+                                style="display:block;width:100%;height:auto;border:0; padding-top: 20px;">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="
+                            padding: 60px 20px 10px 20px;
+          font-family:Inter, sans-serif;
+          font-size:28px;
+          font-weight:800;
+          color:#344054;
+          text-align: start;">
+                            Hi [RECEIVER_NAME]
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="padding:40px 20px 30px 20px;
+          font-family:Inter, sans-serif;
+          font-size:16px;
+          line-height:1.6;
+          font-weight: 500;
+          color:#1D2939;
+          text-align: start;">
+
+                            Thank you for your valuable contribution to
+                            <strong>[SCHOOL_NAME]</strong> !
+                            Your effort helps students, parents, and educators
+                            make better-informed decisions.
+                            See your contribution live
+                            <a href="https://gamatrain.com/school/[SCHOOL_ID]"
+                                style="color:#2196F3;text-decoration:none;">
+                                link
+                            </a>.
+
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td align="center">
+                            <img src="https://gamatrain.com/email-template/school-contribution/join-us.png"
+                                style="display:block;width:100%;height:auto;border:0;max-width: 400px;padding-top: 40px;">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="padding:40px 20px 30px 20px;
+                                      font-family:Inter, sans-serif;
+                                      font-size:16px;
+                                      line-height:1.6;
+                                      color:#1D2939;
+                                                font-weight: 500;
+                                      text-align: start;">
+
+                            Join our community in shaping a more connected and transparent school network. Contribute
+                            more and earn $GET as a
+                            community reward for your participation!
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="padding-top: 20px;">
+                            <a href="https://gamatrain.com" style="background-color:#1D2939;color:#ffffff;text-decoration:none; font-family:Inter, sans-serif;
+                                                                              font-size:20px;
+                                                                              font-weight: 700;
+                                                                              line-height:1.6;
+
+                                                                              padding: 16px 30px;
+                                                                              border-radius: 40px;
+                                                                              ">
+                                Start contributing now
+                            </a>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center" style="padding:40px 20px 30px 20px;
+                                                          font-family:Inter, sans-serif;
+                                                          font-size:16px;
+                                                          line-height:1.6;
+                                                                    font-weight: 500;
+                                                          color:#1D2939;
+                                                          text-align: center;">
+
+                            Together, we make education better.
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="center">
+                            <img src="https://gamatrain.com/email-template/school-contribution/bottom.png"
+                                style="display:block;width:100%;height:auto;border:0;max-width: 300px;padding-top: 40px;">
+                        </td>
+                    </tr>
+
+
+                </table>
+
+            </td>
+
+
+        </tr>
+    </table>
+
+</body>
+
+</html>
