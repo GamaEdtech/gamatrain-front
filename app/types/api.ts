@@ -459,3 +459,15 @@ export interface BlogDTO {
   visibilityType: string
   publishDate: string
 }
+
+export interface AdminUserDTO {
+  id: number
+  username: string
+  firstName: string
+  lastName: string
+  email: string
+  phoneNumber: string
+  enabled: boolean
+  registrationDate: string
+  referralId: string
+}
