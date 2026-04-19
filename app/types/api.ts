@@ -453,6 +453,7 @@ export interface AdminAppSettingsDTO {
   schoolIssuesContributionConfirmationEmailTemplate: string
   postContributionConfirmationEmailTemplate: string
   ticketConfirmationEmailTemplate: string
+  registrationEmailTemplate: string
 }
 
 export interface BlogDTO {
