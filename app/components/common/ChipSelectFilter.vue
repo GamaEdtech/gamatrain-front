@@ -96,14 +96,16 @@ const getItems = async (extraIdParam = '') => {
         = extraIdParam.toString().length > 0
           ? props.api + '/' + extraIdParam
           : props.api
-
-      const response = await useApiService.get(url, {
-        'PagingDto.PageFilter.Skip': props.pageFilterSkip,
-        'PagingDto.PageFilter.Size': props.pageFilterSize,
-        'PagingDto.PageFilter.ReturnTotalRecordsCount':
-          props.returnTotalRecordsCount,
+      const params = {
         ...props.extraApiParams,
-      })
+      }
+      if (props.title == 'School' || props.title == 'Country' || props.title == 'State' || props.title == 'City') {
+        params['PagingDto.PageFilter.Skip'] = props.pageFilterSkip
+        params['PagingDto.PageFilter.Size'] = props.pageFilterSize
+        params['PagingDto.PageFilter.ReturnTotalRecordsCount'] = props.returnTotalRecordsCount
+      }
+
+      const response = await useApiService.get(url, params, { public: true })
 
       if (response.succeeded || response.status == 1) {
         const list = response.data.list || response.data

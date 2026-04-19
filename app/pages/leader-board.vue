@@ -344,11 +344,8 @@ const filters = [
     disabled: false,
     hasSearch: true,
     refElement: null,
-    api: '/api/v1/types/list',
+    api: '/api/v2/boards',
     idInParams: false,
-    extraApiParams: {
-      type: `section`,
-    },
     queryKey: 'section',
     children: [FILTER_INDEX.Grade],
     closable: true,

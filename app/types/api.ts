@@ -161,6 +161,13 @@ export interface LessonTreeDTO {
   list: UnitLessonDTO[]
 }
 
+export interface BoardDTO {
+  id: number
+  code: number
+  title: string
+  icon: string
+}
+
 export interface AdminTransactionDTO {
   id: number
   userId: number

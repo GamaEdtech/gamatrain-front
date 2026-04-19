@@ -465,11 +465,7 @@ const fetchFilterAvailableInQuery = async () => {
       await enableReadyChildren(index)
     }
     else {
-      console.log('here')
-      console.log(filter)
       const selected = await filter.refElement?.getItemById(qVal, filterKey)
-      console.log(qVal)
-      console.log(selected)
       if (selected) {
         filters.value[index].selectedItem = selected
         await enableReadyChildren(index)
