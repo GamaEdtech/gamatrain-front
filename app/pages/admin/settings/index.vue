@@ -157,6 +157,7 @@ const form = reactive<AdminAppSettingsDTO>({
   schoolIssuesContributionConfirmationEmailTemplate: '',
   postContributionConfirmationEmailTemplate: '',
   ticketConfirmationEmailTemplate: '',
+  registrationEmailTemplate: '',
 })
 const loading = ref(true)
 const fields: FieldConfig[] = [
@@ -186,6 +187,7 @@ const fields: FieldConfig[] = [
   { key: 'schoolIssuesContributionConfirmationEmailTemplate', label: 'School Issues Email', type: 'textarea', valueType: 'string' },
   { key: 'postContributionConfirmationEmailTemplate', label: 'Post Contribution Email', type: 'textarea', valueType: 'string' },
   { key: 'ticketConfirmationEmailTemplate', label: 'Ticket Email', type: 'textarea', valueType: 'string' },
+  { key: 'registrationEmailTemplate', label: 'Registration Email', type: 'textarea', valueType: 'string' },
 ]
 const loadingSave = ref(false)
 const showModalPreview = ref(false)
