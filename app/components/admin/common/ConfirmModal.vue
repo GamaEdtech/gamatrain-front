@@ -1,13 +1,13 @@
 <template>
   <admin-common-modal
     v-model:show-dialog="dialogModel"
-    title="Delete"
+    title="Confirm"
   >
     <div class="w-100 d-flex flex-column pa-4">
-      <span class="text-center text-h5 font-weight-bold text-grey700">Are you sure you want to delete this item?</span>
+      <span class="text-center text-h5 font-weight-bold text-grey700">{{ text }}</span>
 
       <v-btn
-        color="error"
+        color="success"
         rounded="xl"
         variant="outlined"
         height="40"
@@ -17,7 +17,7 @@
         flat
         @click="confirm"
       >
-        Delete
+        Confirm
       </v-btn>
     </div>
   </admin-common-modal>
@@ -25,6 +25,7 @@
 
 <script setup lang="ts">
 interface IDeleteModal {
+  text: string
   modelValue: boolean
   loading?: boolean
 }

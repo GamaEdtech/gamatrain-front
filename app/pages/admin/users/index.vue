@@ -35,7 +35,7 @@
           <span class="text-grey500 font-weight-bold mr-1">
             {{ totalCount }}
           </span>
-          Contacts
+          Users
         </span>
       </div>
     </div>
@@ -46,7 +46,7 @@
         flat
         variant="outlined"
         height="40"
-        @click="showCreateTicketModal = true"
+        @click="showAddUserModal = true"
       >
         <span class="text-primary font-weight-bold text-h5">Add User</span>
       </v-btn>
@@ -93,7 +93,7 @@
           <div
             class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center"
           >
-            {{ !item.firstName && !item.lastName ? `unknown` : item.firstName + " "+ item.lastName }}
+            {{ !item.firstName && !item.lastName ? `unknown` : (item.firstName ? item.firstName : "") + " "+ (item.lastName ? item.lastName : "") }}
           </div>
         </template>
         <template #[`item.email`]="{ item }">
@@ -146,25 +146,25 @@
             <v-btn
               icon
               flat
-              @click="viewDetail(item)"
+              @click="openModalToggleStatus(item)"
             >
               <v-icon
                 size="20"
                 color="grey800"
               >
-                md:plagiarism
+                md:person
               </v-icon>
               <v-tooltip
                 activator="parent"
                 location="top"
               >
-                Details
+                Toggle status
               </v-tooltip>
             </v-btn>
             <v-btn
               icon
               flat
-              @click="deleteContact(item)"
+              @click="openModalDelete(item)"
             >
               <v-icon
                 size="20"
@@ -177,6 +177,24 @@
                 location="top"
               >
                 delete
+              </v-tooltip>
+            </v-btn>
+            <v-btn
+              icon
+              flat
+              @click="openModalMoreAction(item)"
+            >
+              <v-icon
+                size="20"
+                color="grey800"
+              >
+                md:settings
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                More
               </v-tooltip>
             </v-btn>
           </div>
@@ -217,47 +235,37 @@
       </div>
     </div>
 
-    <admin-common-modal
-      v-model:show-dialog="showDeleteModal"
-      title="Delete"
-    >
-      <admin-contactus-delete-item-modal
-        :id="selectedItemIdForDelete"
-        @delete-success-full="deleteSuccessFull"
-      />
-    </admin-common-modal>
+    <admin-common-delete-modal
+      v-model="showDeleteModal"
+      :loading="loadingDeleteItem"
+      @confirm="confirmDelete"
+    />
+
+    <admin-common-confirm-modal
+      v-model="showToggleStatusModal"
+      text="Are you sure you want to change status this user?"
+      :loading="loadingToggleStatus"
+      @confirm="confirmToggleStatus"
+    />
 
     <admin-common-modal
-      v-model:show-dialog="showDetailModal"
-      title="Detail"
+      v-model:show-dialog="showAddUserModal"
+      title="Add"
     >
-      <admin-contactus-view-message-details-modal
-        :id="selectedItemIdForDetail"
-        @reply-success-full="replySuccessFull"
-      />
+      <admin-usermanagement-add-user-modal @add-user-success-full="addUserSuccessfull" />
     </admin-common-modal>
 
-    <admin-common-modal
-      v-model:show-dialog="showComposeMailModal"
-      title="Compose"
-    >
-      <admin-contactus-compose-mail-modal @compose-mail-success-full="showComposeMailModal = false" />
-    </admin-common-modal>
-
-    <admin-common-modal
-      v-model:show-dialog="showCreateTicketModal"
-      title="Ticket"
-    >
-      <admin-contactus-create-ticket-modal @create-ticket-success-full="createTicketSuccessfull" />
-    </admin-common-modal>
+    <admin-usermanagement-more-action-modal
+      :id="selectedItemIdForMoreAction"
+      v-model:show-dialog="moreActionModal"
+      @refresh-data="refreshData"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useUserManager } from '~/composables/api/admin/useUserManager'
 import type {
-  ApiResult,
-  AppError,
-  ResponseListDTO,
   AdminUserDTO,
 } from '~/types/api'
 
@@ -266,7 +274,8 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { $dayjs, $toast } = useNuxtApp()
+const { loadingGetData: loading, data: list, getData, totalCount, pageCount, deleteItem, loadingDeleteItem, toggleStatus, loadingToggleStatus } = useUserManager()
+const { $dayjs } = useNuxtApp()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
@@ -289,59 +298,29 @@ const headers = [
     width: '20vw',
   },
 ]
-const list = ref<AdminUserDTO[]>([])
-const loading = ref(true)
-const totalCount = ref(0)
 const pageSize = ref(10)
 const page = ref(1)
-const pageCount = ref(0)
 const allPageSize = [
   { label: '10 Rows', value: 10 },
   { label: '20 Rows', value: 20 },
   { label: '50 Rows', value: 50 },
 ]
 const statusSelect = ref('All')
-const statusList = ['All', 'Read', 'UnRead']
+const statusList = ['All', 'With Referral', 'Without Referral']
 const showDeleteModal = ref(false)
 const selectedItemIdForDelete = ref('')
-const showDetailModal = ref(false)
-const selectedItemIdForDetail = ref()
-const showComposeMailModal = ref(false)
-const showCreateTicketModal = ref(false)
+const showToggleStatusModal = ref(false)
+const selectedItemIdForToggleStatus = ref('')
+const showAddUserModal = ref(false)
+const moreActionModal = ref(false)
+const selectedItemIdForMoreAction = ref('')
 
-const getData = async () => {
-  loading.value = true
-  try {
-    const params: Record<string, string | number | boolean | null> = {
-      'PagingDto.PageFilter.Size': pageSize.value,
-      'PagingDto.PageFilter.Skip': (page.value - 1) * pageSize.value,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-    }
-    //    if (statusSelect.value != 'All') {
-    // params[`PagingDto.SearchFilter.phrase`] = statusSelect.value == 'Read' ? true : false
-    // params[`PagingDto.SearchFilter.column`] = 'isReadByAdmin'
-    // }
-    const response = await useApiService.get<
-      ApiResult<ResponseListDTO<AdminUserDTO>>
-    >('/api/v2/admin/identities', params)
-    if (response.data) {
-      list.value = response.data.list
-      totalCount.value = response.data.totalRecordsCount
-      pageCount.value = Math.ceil(totalCount.value / pageSize.value)
-    }
-    else {
-      list.value = []
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loading.value = false
-  }
+const fetchUsers = async () => {
+  await getData({
+    page: page.value,
+    pageSize: pageSize.value,
+    hasReferral: statusSelect.value == 'All' ? null : statusSelect.value == 'With Referral' ? true : false,
+  })
 }
 
 const changeFilterStatus = async (status: string) => {
@@ -352,47 +331,56 @@ const changeFilterStatus = async (status: string) => {
     statusSelect.value = status
   }
   page.value = 1
-  await getData()
+  await fetchUsers()
 }
 
 const changePageNumber = async () => {
-  await getData()
+  await fetchUsers()
 }
 
 const changePageSize = async () => {
   page.value = 1
-  await getData()
+  await fetchUsers()
 }
 
 onMounted(async () => {
-  await getData()
+  await fetchUsers()
 })
 
-const viewDetail = async (contact: AdminUserDTO) => {
-  // contact.isReadByAdmin = true
-  selectedItemIdForDetail.value = contact.id
-  showDetailModal.value = true
-}
-
-const replySuccessFull = () => {
-  selectedItemIdForDetail.value = null
-  showDetailModal.value = false
-}
-
-const createTicketSuccessfull = async () => {
-  showCreateTicketModal.value = false
-  page.value = 1
-  await getData()
-}
-
-const deleteContact = (contact: AdminUserDTO) => {
-  selectedItemIdForDelete.value = contact.id.toString()
+const openModalDelete = (user: AdminUserDTO) => {
+  selectedItemIdForDelete.value = user.id.toString()
   showDeleteModal.value = true
 }
-const deleteSuccessFull = async () => {
+const confirmDelete = async () => {
+  await deleteItem(selectedItemIdForDelete.value)
   selectedItemIdForDelete.value = ''
   showDeleteModal.value = false
-  await getData()
+  await fetchUsers()
+}
+
+const openModalToggleStatus = (user: AdminUserDTO) => {
+  selectedItemIdForToggleStatus.value = user.id.toString()
+  showToggleStatusModal.value = true
+}
+const confirmToggleStatus = async () => {
+  await toggleStatus(selectedItemIdForToggleStatus.value)
+  selectedItemIdForToggleStatus.value = ''
+  showToggleStatusModal.value = false
+  await fetchUsers()
+}
+
+const addUserSuccessfull = async () => {
+  showAddUserModal.value = false
+  await fetchUsers()
+}
+
+const openModalMoreAction = (user: AdminUserDTO) => {
+  selectedItemIdForMoreAction.value = user.id.toString()
+  moreActionModal.value = true
+}
+
+const refreshData = async () => {
+  await fetchUsers()
 }
 </script>
 
