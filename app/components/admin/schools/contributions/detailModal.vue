@@ -31,6 +31,17 @@
         <span class="label">{{ field.label }}</span>
         <span class="value">{{ field.value }}</span>
       </div>
+
+      <div
+        v-if="schoolDetailData.newValues && schoolDetailData.newValues.latitude != null && schoolDetailData.newValues.longitude != null"
+        class="detail-item"
+      >
+        <a
+          class="text-h6 text-info font-weight-bold"
+          :href="`https://www.google.com/maps?q=${schoolDetailData.newValues.latitude},${schoolDetailData.newValues.longitude}`"
+          target="blank"
+        >📍 View on Google Maps</a>
+      </div>
     </template>
 
     <span
