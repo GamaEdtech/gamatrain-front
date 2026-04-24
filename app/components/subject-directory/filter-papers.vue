@@ -118,7 +118,6 @@
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
-import { useBoardsApi } from '~/composables/api/boards'
 
 const emit = defineEmits([
   'changeSubject',

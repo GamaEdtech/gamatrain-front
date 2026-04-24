@@ -129,7 +129,6 @@
 
 <script setup>
 import { useDisplay } from 'vuetify'
-import { useBoardsApi } from '~/composables/api/boards'
 
 const props = defineProps({
   schoolBoards: {

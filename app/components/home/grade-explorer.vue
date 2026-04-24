@@ -125,8 +125,6 @@
 </template>
 
 <script setup>
-import { useBoardsApi } from '~/composables/api/boards'
-
 const { data: boardList, getData: getBoards } = useBoardsApi()
 
 const categories = ref([

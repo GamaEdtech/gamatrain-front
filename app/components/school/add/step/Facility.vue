@@ -203,8 +203,6 @@
 </template>
 
 <script setup>
-import { useBoardsApi } from '~/composables/api/boards'
-
 const nuxtApp = useNuxtApp()
 const router = useRouter()
 

@@ -362,7 +362,7 @@ const filters = [
       type: `base`,
     },
     dependencies: [
-      { parent: FILTER_INDEX.Board, targetKey: 'section_id', sourceKey: 'id' },
+      { parent: FILTER_INDEX.Board, targetKey: 'section_id', sourceKey: 'code' },
     ],
     queryKey: 'base',
     children: [],

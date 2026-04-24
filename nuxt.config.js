@@ -72,6 +72,7 @@ export default defineNuxtConfig({
 
   imports: {
     autoImport: true,
+    dirs: ['composables/**'],
   },
 
   // Development modules
