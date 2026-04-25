@@ -344,11 +344,8 @@ const filters = [
     disabled: false,
     hasSearch: true,
     refElement: null,
-    api: '/api/v1/types/list',
+    api: '/api/v2/boards',
     idInParams: false,
-    extraApiParams: {
-      type: `section`,
-    },
     queryKey: 'section',
     children: [FILTER_INDEX.Grade],
     closable: true,
@@ -365,7 +362,7 @@ const filters = [
       type: `base`,
     },
     dependencies: [
-      { parent: FILTER_INDEX.Board, targetKey: 'section_id', sourceKey: 'id' },
+      { parent: FILTER_INDEX.Board, targetKey: 'section_id', sourceKey: 'code' },
     ],
     queryKey: 'base',
     children: [],

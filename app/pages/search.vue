@@ -485,7 +485,7 @@ const filters = [
     idInParams: false,
     extraApiParams: {},
     dependencies: [
-      { parent: FILTER_INDEX.Board, targetKey: 'section_id', sourceKey: 'id' },
+      { parent: FILTER_INDEX.Board, targetKey: 'section_id', sourceKey: 'code' },
       {
         parent: FILTER_INDEX.Services,
         targetKey: 'type',

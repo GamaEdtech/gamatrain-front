@@ -128,6 +128,8 @@ const emit = defineEmits([
 const router = useRouter()
 const route = useRoute()
 
+const { loadingGetData: isLoadingBoard, data: boards, getData: fetchBoards } = useBoardsApi()
+
 onMounted(async () => {
   await fetchBoards()
   setBoard()
@@ -157,20 +159,7 @@ const updateQueryParam = () => {
 
 // Start Board Section
 const selectedBoard = ref(null)
-const boards = ref([])
-const isLoadingBoard = ref(true)
 const showBoardDialog = ref(false)
-
-const fetchBoards = async () => {
-  try {
-    isLoadingBoard.value = true
-    const responseBoard = await useApiService.get('/api/v2/boards')
-    boards.value = responseBoard.data
-  }
-  catch (error) {
-    console.error('error', error)
-  }
-}
 
 const setBoard = () => {
   if (route.query.board) {

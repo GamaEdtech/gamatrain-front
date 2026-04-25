@@ -125,6 +125,8 @@
 </template>
 
 <script setup>
+const { data: boardList, getData: getBoards } = useBoardsApi()
+
 const categories = ref([
   {
     type: 'paper',
@@ -171,7 +173,6 @@ const categories = ref([
 
 ])
 const _selectLoader = ref(true)
-const boardList = ref([])
 const gradeList = ref([])
 const gradeLoader = ref(false)
 const selectedBoard = ref(null)
@@ -182,8 +183,7 @@ const categoryLink = (category) => {
   return category.type === 'school' ? `/school` : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
 }
 const fetchInitialData = async () => {
-  const response = await useApiService.get(`/api/v2/boards`)
-  boardList.value = response.data
+  await getBoards()
 
   // Try to restore selectedBoard from localStorage
   let storedBoard = null
