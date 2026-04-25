@@ -1,18 +1,13 @@
 {
-  "rewrites": [
+  "headers": [
     {
-      "source": "/api/v1/:path*",
-      "destination": "https://core.gamatrain.com/api/v1/:path*"
-    },
-    {
-      "source": "/uploads/:path*",
-      "destination": "https://core.gamatrain.com/uploads/:path*"
-    }
-  ],
-  "crons": [
-    {
-      "path": "/api/daily-winner?action=save",
-      "schedule": "30 5 * * *"
+      "source": "/images/(.*)\\.(svg|png|jpg|jpeg|webp|avif)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, immutable"
+        }
+      ]
     }
   ]
 }
