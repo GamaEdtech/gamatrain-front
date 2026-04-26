@@ -44,22 +44,22 @@ const errorInfo = {
   },
   404: {
     title: 404,
-    image: '/images/error/error-404.svg',
+    image: '/images/error/error-404.webp',
     subtitle: 'Page not found!',
   },
   403: {
     title: 403,
-    image: '/images/error/error-403.svg',
+    image: '/images/error/error-403.webp',
     subtitle: 'You do not have access to this page!',
   },
   401: {
     title: 401,
-    image: '/images/error/error-403.svg',
+    image: '/images/error/error-403.webp',
     subtitle: 'You are not authenticated. Please log in to continue.',
   },
   disconnect: {
     title: 'Disconnect',
-    image: '/images/error/error-disconnect.svg',
+    image: '/images/error/error-disconnect.webp',
     subtitle: 'First check the internet',
   },
 }
