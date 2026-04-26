@@ -11,7 +11,7 @@
     <home-blog-container />
     <!-- End blog container -->
 
-    <home-level-guid-banner :slide-arr="slideArr" />
+    <home-level-guide-banner :slide-arr="slideArr" />
 
     <!-- Sudent help banner -->
     <v-container
@@ -84,7 +84,7 @@
             width="246"
             height="184"
             class="mx-auto"
-            src="/images/school-service.png"
+            src="/images/school-service.webp"
           />
         </v-col>
         <v-col
@@ -135,7 +135,7 @@
           <img
             id="img-top"
             alt="AI Learn"
-            src="/images/ai-learn-bg1.png"
+            src="/images/ai-learn-bg1.webp"
           >
           <v-card
             flat
@@ -159,7 +159,7 @@
             <img
               id="img-bottom"
               alt="AI Learn"
-              src="/images/ai-learn-bg2.png"
+              src="/images/ai-learn-bg2.webp"
             >
           </v-card>
         </v-col>
@@ -226,22 +226,22 @@ const _items = ref([
 
 const slideArr = ref([
   {
-    img: 'guid-banner1.svg',
+    img: 'guide-banner1.webp',
     caption: 'Sign Up',
     describe: 'Register and Create Your Content Creator Profile',
   },
   {
-    img: 'guid-banner2.png',
+    img: 'guide-banner2.webp',
     caption: 'Upload Your Content',
     describe: 'Share Your Lesson Plans, Study Guides, and More.',
   },
   {
-    img: 'guid-banner3.svg',
+    img: 'guide-banner3.webp',
     caption: 'Reach Students',
     describe: 'Gain Exposure through Our Platform and Network.',
   },
   {
-    img: 'guid-banner4.svg',
+    img: 'guide-banner4.webp',
     caption: 'Earn Big',
     describe: 'Reap the Rewards as Students Purchase Your Content.',
   },

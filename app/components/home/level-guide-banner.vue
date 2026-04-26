@@ -1,6 +1,6 @@
 <template>
   <v-container
-    id="level-guid-banner"
+    id="level-guide-banner"
     fluid
   >
     <v-container>
@@ -105,7 +105,7 @@ export default {
 </script>
 
 <style>
-#level-guid-banner {
+#level-guide-banner {
   padding-top: 2.4rem;
   padding-bottom: 2.4rem;
   height: 54rem;
@@ -167,7 +167,7 @@ export default {
 }
 
 @media (min-width: 600px) {
-  #level-guid-banner {
+  #level-guide-banner {
     padding-top: 3.6rem;
     padding-bottom: 2.4rem;
     height: 51.8rem;
@@ -222,7 +222,7 @@ export default {
 }
 
 @media (min-width: 1264px) {
-  #level-guid-banner {
+  #level-guide-banner {
     height: 64.2rem;
     padding-top: 5rem;
     padding-bottom: 5rem;
