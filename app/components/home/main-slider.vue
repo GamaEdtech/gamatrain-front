@@ -84,21 +84,21 @@ const slides = [
     title:
       '<span class="gama-text-h1 font-weight-bold">Learn<span class="d-sm-none"><br>&nbsp&nbsp</span> & Earn</span>',
     text: 'Where education meets Web3 — empowering students to learn,<br> earn, and thrive in a decentralized future.',
-    img: 'learn&earn.png',
+    img: 'learn&earn.webp',
     id: 'le-slide',
     link: '/earn-money',
   },
   {
     title:
       '<span class="gama-text-h1">AI</span> <span class="gama-text-h4 text-white">&nbspSystem <span class="d-sm-none"><br>&nbsp&nbsp</span>in Education</span>',
-    img: 'ai-robot.png',
+    img: 'ai-robot.webp',
     text: 'Discover the future of education with our AI-powered learning platform,<br> revolutionizing the way you acquire knowledge and skills.',
     id: 'ai-slide',
     link: '/smart-learning',
   },
   {
     title: '<span class="gama-text-h1">School finder</span>',
-    img: 'school-finder.png',
+    img: 'school-finder.webp',
     text: 'Discover the future of education with our AI-powered learning platform,<br> revolutionizing the way you acquire knowledge and skills.',
     id: 'school-finder-slide',
     link: '/school',
@@ -107,7 +107,7 @@ const slides = [
     title:
       '<span class="gama-text-h1 font-weight-bold">Question<span class="d-sm-none"><br>&nbsp&nbsp</span> & Answer</span>',
     text: 'Q&A made easy. Connect with classmates and<br> teachers for quick answers to your questions.',
-    img: 'a-q.png',
+    img: 'a-q.webp',
     id: 'aq-slide',
     link: '/search?type=quizhub',
   },
@@ -175,7 +175,7 @@ const slides = [
 #main-slider #school-finder-slide .v-card {
   height: 21.5rem;
   background-color: transparent;
-  background-image: url("/images/school-finder.png");
+  background-image: url("/images/school-finder.webp");
   background-position: right 2.4rem;
   background-size: 15rem 18.1rem;
   background-repeat: no-repeat;
@@ -192,7 +192,7 @@ const slides = [
 #main-slider #ai-slide .v-card {
   height: 21.5rem;
   background-color: transparent;
-  background-image: url("/images/ai-robot.png");
+  background-image: url("/images/ai-robot.webp");
   background-position: right 2.4rem;
   background-size: 15rem 18.1rem;
   background-repeat: no-repeat;
@@ -209,7 +209,7 @@ const slides = [
   height: 21.5rem;
   background-size: 15.4rem 13.36rem;
   background-color: transparent;
-  background-image: url("/images/a-q.png");
+  background-image: url("/images/a-q.webp");
   background-repeat: no-repeat;
   background-position: 95% top;
 }
@@ -225,7 +225,7 @@ const slides = [
   height: 21.5rem;
   background-size: 15.4rem 13.36rem;
   background-color: transparent;
-  background-image: url("/images/learn&earn.png");
+  background-image: url("/images/learn&earn.webp");
   background-position: right 2.2rem !important;
   background-repeat: no-repeat;
   background-position: 95% top;
@@ -437,7 +437,7 @@ const slides = [
   #main-slider #ai-slide .v-card {
     height: 42rem;
     background-color: transparent;
-    background-image: url("/images/ai-robot.png");
+    background-image: url("/images/ai-robot.webp");
     background-repeat: no-repeat;
     background-position: right bottom;
     background-size: 32.4rem 40.5rem;
@@ -454,7 +454,7 @@ const slides = [
   #main-slider #aq-slide .v-card {
     height: 42rem;
     background-color: transparent;
-    background-image: url("/images/a-q.png");
+    background-image: url("/images/a-q.webp");
     background-repeat: no-repeat;
     background-position: right top;
     background-size: 32.4rem 30.36rem;
@@ -470,7 +470,7 @@ const slides = [
   #main-slider #le-slide .v-card {
     height: 42rem;
     background-color: transparent;
-    background-image: url("/images/learn&earn.png");
+    background-image: url("/images/learn&earn.webp");
     background-repeat: no-repeat;
     background-size: 32.4rem 30.36rem;
   }
