@@ -4,11 +4,14 @@
       <v-row>
         <v-col
           cols="12"
-          sm="6"
+          sm="7"
+          md="4"
+          lg="4"
           class="d-flex justify-sm-end justify-center order-1 order-sm-2"
         >
           <img
-            src="/game/castle/castle-game.svg"
+            src="/images/castle-game.webp"
+            width="288"
             alt="Gamatrain Castle of Numbers "
           >
         </v-col>
