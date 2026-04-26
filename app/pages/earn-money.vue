@@ -189,7 +189,7 @@
 </template>
 
 <script>
-import LevelGuidBanner from '~/components/home/level-guid-banner.vue'
+import LevelGuidBanner from '~/components/home/level-guide-banner.vue'
 
 export default {
   auth: false,
