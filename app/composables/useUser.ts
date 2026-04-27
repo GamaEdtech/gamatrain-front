@@ -13,6 +13,8 @@ interface User {
 }
 
 export const useUser = () => {
+  const hasFetched = useState('hasFetchedUser', () => false)
+
   const user = useState<User | null>('user', () => null)
 
   const setUser = (data: User) => {
@@ -61,6 +63,7 @@ export const useUser = () => {
 
   return {
     user,
+    hasFetched,
     setUser,
     getProfile,
     cleanUser,
