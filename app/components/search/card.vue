@@ -4,6 +4,7 @@
   >
     <Nuxt-link
       :to="createLinkCard(information)"
+      :prefetch="false"
     >
       <div class="w-100 h-100 ">
         <div class="d-flex ga-3 align-stretch justify-start">
@@ -46,7 +47,8 @@
             </h2>
             <div class="d-flex align-center justify-start flex-wrap ga-3">
               <v-chip
-                v-if="information.section_title"
+                v-show="information.section_title"
+                :prefetch="false"
                 variant="flat"
                 class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
                 color="grey100"
@@ -57,7 +59,8 @@
                 <span class="text-grey500">{{ information?.section_title }}</span>
               </v-chip>
               <v-chip
-                v-if="information.base_title"
+                v-show="information.base_title"
+                :prefetch="false"
                 variant="flat"
                 class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
                 color="grey100"
@@ -68,7 +71,8 @@
                 <span class="text-grey500">{{ information?.base_title }}</span>
               </v-chip>
               <v-chip
-                v-if="information.lesson_title"
+                v-show="information.lesson_title"
+                :prefetch="false"
                 variant="flat"
                 class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
                 color="grey100"
