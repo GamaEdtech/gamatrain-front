@@ -126,7 +126,7 @@
                 class="icon"
                 icon="md:location_on"
               />
-              <span> Head office ddress: al. Wojska polskiego 14, Piastów, Poland </span>
+              <span> Al. Wojska polskiego 14, Piastów, Poland </span>
             </div>
           </div>
 
