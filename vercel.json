@@ -8,6 +8,15 @@
           "value": "public, max-age=2592000, immutable"
         }
       ]
+    },
+    {
+      "source": "/assets/(.*)\\.(css|mp3|woff2)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=2592000, immutable"
+        }
+      ]
     }
   ]
 }
