@@ -101,17 +101,38 @@
           md="8"
         >
           <div class="address">
-            <v-icon
-              size="x-large"
-              color="#97A2B2"
-              class="icon"
-              icon="mdi-map-marker"
-            />
-            <span> 2419 West 53rd Street, Apt 5B, New York, NY 10019 </span>
+            <div>
+              <v-icon
+                size="x-large"
+                color="#97A2B2"
+                class="icon"
+                icon="md:corporate_fare"
+              />
+              <span> Gblast mobility sp. z o.o. </span>
+            </div>
+            <div>
+              <v-icon
+                size="x-large"
+                color="#97A2B2"
+                class="icon"
+                icon="md:request_quote"
+              />
+              <span> VAT: PL5342694563</span>
+            </div>
+            <div>
+              <v-icon
+                size="x-large"
+                color="#97A2B2"
+                class="icon"
+                icon="md:location_on"
+              />
+              <span> Head office ddress: al. Wojska polskiego 14, Piastów, Poland </span>
+            </div>
           </div>
+
           <Map
-            :initial-center="[41.050652, 28.894283]"
-            :highlight-location="[41.050652, 28.894283]"
+            :initial-center="[52.188344882777635, 20.84076056567204]"
+            :highlight-location="[52.188344882777635, 20.84076056567204]"
             :show-highlight-location="true"
             :initial-zoom="zoom"
             :border-radius="20"
@@ -125,7 +146,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue'
 import { useRecaptcha } from '~/composables/useRecapcha'
 import useApiService from '~/composables/useApiService'
 import Map from '@/components/common/Map.client.vue'
@@ -138,7 +158,7 @@ useSeoMeta({
 
 const { $toast } = useNuxtApp()
 
-const zoom = ref(20)
+const zoom = ref(14)
 const rules = useValidationRules()
 const customRules = {
   min25: rules.minLength(25),
