@@ -1,10 +1,11 @@
 export default defineNuxtRouteMiddleware(() => {
-  const { user } = useUser()
+  // const { user } = useUser()
 
-  if (user.value?.group === 3)
-    return navigateTo('/test-maker')
-  else if (user.value?.group === 5 || user.value?.group === 6)
-    return
-  else
-    return navigateTo('/user/type')
+  return
+  // if (user.value?.group === 3)
+  //   return navigateTo('/test-maker')
+  // else if (user.value?.group === 5 || user.value?.group === 6)
+  //   return
+  // else
+  //   return navigateTo('/user/type')
 })
