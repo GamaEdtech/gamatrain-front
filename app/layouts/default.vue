@@ -48,7 +48,7 @@ const route = useRoute()
 const { isOnline } = useNetwork()
 
 const excludedPaths = ['/', '/search', '/school']
-const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate']
+const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate', 'payments-id-verify']
 
 const showBlogSlider = computed(() => {
   return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)
