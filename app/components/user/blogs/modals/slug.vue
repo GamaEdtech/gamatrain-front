@@ -76,12 +76,15 @@ import { computed } from 'vue'
 
 interface ISlug {
   showDialog: boolean
+  slug?: string
 }
 
 const { mdAndUp } = useDisplay()
 const { validateSlug, saveSlug, loadingSaveSlug } = useBlog()
 
-const props = defineProps<ISlug>()
+const props = withDefaults(defineProps<ISlug>(), {
+  slug: '',
+})
 
 const emit = defineEmits(['update:showDialog', 'saveSlugSuccessfull'])
 
@@ -101,7 +104,7 @@ const clickOnModal = (event: Event) => {
   event.stopPropagation()
 }
 
-const slug = ref('')
+const slug = ref(props.slug)
 const isChecking = ref(false)
 const isValid = ref(false)
 
@@ -135,7 +138,6 @@ const canSubmit = computed(() => {
 
 const save = async () => {
   const response = await saveSlug(slug.value)
-  console.log('response', response)
   if (response.succeeded) {
     emit('saveSlugSuccessfull', response.data)
     emit('update:showDialog', false)

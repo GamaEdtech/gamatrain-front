@@ -2,7 +2,7 @@
   <div class="w-100">
     <div
       v-if="loading"
-      class="d-flex flex-column align-center justify-center ga-2 pa-2 border rounded-lg border-md"
+      class="d-flex flex-column align-center justify-center ga-2 pa-2 border-grey200 rounded-lg border-md"
     >
       <v-skeleton-loader
         class="w-100 rounded-lg"
@@ -23,6 +23,13 @@
         @input="changeEditor"
       />
     </client-only>
+
+    <div
+      v-if="errorMessage"
+      class="text-error text-subtitle-1 mt-1"
+    >
+      {{ errorMessage }}
+    </div>
   </div>
 </template>
 
@@ -85,6 +92,10 @@ const props = defineProps({
     type: String, // 'basic' | 'custom' | 'full'
     default: 'basic',
   },
+  rules: {
+    type: Array,
+    default: () => [],
+  },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -92,6 +103,8 @@ const emit = defineEmits(['update:modelValue'])
 const internalValue = ref(props.modelValue)
 const CustomEditor = ref(null)
 const loading = ref(true)
+const errorMessage = ref(null)
+const isTouched = ref(false)
 const editorConfig = ref({
   licenseKey: 'GPL',
 })
@@ -179,8 +192,33 @@ watch(
   },
 )
 
+const validate = (force = false) => {
+  if (!isTouched.value && !force) {
+    errorMessage.value = ''
+    return true
+  }
+
+  if (!props.rules.length) {
+    errorMessage.value = ''
+    return true
+  }
+
+  for (const rule of props.rules) {
+    const result = rule(internalValue.value)
+
+    if (result !== true) {
+      errorMessage.value = result
+      return false
+    }
+  }
+
+  errorMessage.value = ''
+  return true
+}
 const changeEditor = (event) => {
   emit('update:modelValue', event)
+  validate()
+  isTouched.value = true
 }
 </script>
 

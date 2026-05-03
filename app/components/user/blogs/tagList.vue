@@ -1,7 +1,22 @@
 <template>
   <div class="w-100 d-flex flex-column align-start justify-start">
     <span class="w-50 text-h5 font-weight-medium text-grey700 mt-1">
-      Category
+      <v-badge
+        floating
+        location="top right"
+        color="transparent"
+        overlap
+      >
+        <template #badge>
+          <v-icon
+            size="large"
+            color="error"
+          >
+            md:star
+          </v-icon>
+        </template>
+        <span>Category</span>
+      </v-badge>
     </span>
     <v-text-field
       v-model="searchText"
@@ -58,17 +73,26 @@
         </v-checkbox>
       </template>
     </div>
+    <div
+      v-if="errorMessage"
+      class="text-error text-subtitle-1 mt-1"
+    >
+      {{ errorMessage }}
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 interface ITagList {
   categories: number[]
+  rules?: ((value: number[]) => true | string)[]
 }
 
 const props = defineProps<ITagList>()
 const emit = defineEmits(['update:categories'])
 const localCategories = ref<number[]>([...props.categories])
+const errorMessage = ref('')
+const isTouched = ref(false)
 
 watch(
   () => props.categories,
@@ -77,9 +101,35 @@ watch(
   },
 )
 
+const validate = (force = false) => {
+  if (!isTouched.value && !force) {
+    errorMessage.value = ''
+    return true
+  }
+
+  if (!props.rules?.length) {
+    errorMessage.value = ''
+    return true
+  }
+
+  for (const rule of props.rules) {
+    const result = rule(localCategories.value)
+
+    if (result !== true) {
+      errorMessage.value = result
+      return false
+    }
+  }
+
+  errorMessage.value = ''
+  return true
+}
 const updateCategories = (val: number[] | null) => {
   localCategories.value = val ?? []
   emit('update:categories', val ?? [])
+
+  validate()
+  isTouched.value = true
 }
 
 const { loadingGetData, data, getData } = useTags()

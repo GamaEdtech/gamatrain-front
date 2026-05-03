@@ -10,12 +10,12 @@
       height="40"
     />
     <div
-      v-if="podcastLocal && !loading"
+      v-if="podcastPreview && !loading"
       class="mt-2 w-100"
     >
       <audio
         controls
-        :src="podcastLocal"
+        :src="podcastPreview as string"
       />
     </div>
     <div class="w-100 d-flex justify-space-between align-center mt-2">
@@ -26,13 +26,13 @@
         class="text-grey900 font-weight-medium text-h5 border-grey400 border-solid border-md"
         @click="triggerPodcastUpload"
       >
-        {{ podcastLocal ? "Change Podcast" : "Upload Podcast" }}
+        {{ podcastPreview ? "Change Podcast" : "Upload Podcast" }}
       </v-btn>
       <v-btn
         icon
         flat
         variant="text"
-        :disabled="!podcastLocal"
+        :disabled="!podcastPreview"
         @click="deletePodcast"
       >
         <v-icon
@@ -55,7 +55,7 @@
 
 <script setup lang="ts">
 interface IPodcastSelector {
-  podcast: string | null
+  podcast: string | File | null
   loading?: boolean
 }
 
@@ -64,12 +64,16 @@ const props = withDefaults(defineProps<IPodcastSelector>(), {
 })
 const emit = defineEmits(['update:podcast'])
 const podcastLocal = ref(props.podcast)
+const podcastPreview = ref(props.podcast)
 const podcastInput = ref<HTMLInputElement>()
 
 watch(
   () => props.podcast,
   (val) => {
     podcastLocal.value = val
+    if (typeof val == 'string') {
+      podcastPreview.value = val
+    }
   },
 )
 
@@ -81,12 +85,14 @@ const onPoscastSelected = (event: Event) => {
   const target = event.target as HTMLInputElement
   const file = target.files?.[0]
   if (file) {
-    podcastLocal.value = URL.createObjectURL(file)
+    podcastPreview.value = URL.createObjectURL(file)
+    podcastLocal.value = file
     emit('update:podcast', podcastLocal.value)
   }
 }
 
 const deletePodcast = () => {
+  podcastPreview.value = ''
   podcastLocal.value = ''
   emit('update:podcast', podcastLocal.value)
 }

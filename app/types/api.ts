@@ -513,3 +513,9 @@ export interface TagDTO {
   icon: string
   tagType: TagTypeDTO
 }
+export interface TranslationDTO {
+  languageId: number | string
+  title: string
+  summary: string
+  content: string
+}

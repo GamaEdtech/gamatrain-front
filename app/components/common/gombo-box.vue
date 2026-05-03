@@ -19,7 +19,7 @@
         append-inner-icon="mdi-chevron-down"
         :dense="dense"
         :disabled="disabled"
-        clearable
+        :clearable="clearable"
         class="w-100 gombo-box-input text-grey700"
         :base-color="baseColor"
         :color="color"
@@ -182,6 +182,10 @@ const props = defineProps({
   loadingValue: {
     type: Boolean,
     default: false,
+  },
+  clearable: {
+    type: Boolean,
+    default: true,
   },
 })
 
