@@ -1,7 +1,7 @@
 import type {
   ApiResult,
   AppError,
-  // ResponseListDTO,
+  BlogUserDTO,
 } from '~/types/api'
 
 interface BlogCreateDTO {
@@ -25,9 +25,33 @@ interface BlogCreateDTO {
   }[]
 }
 
+interface BlogEditDTO {
+  title: string
+  slug: string
+  summary: string
+  body: string
+  image: string
+  podcast?: string
+  removePodcast: boolean
+  visibilityType: string
+  publishDate: string
+  scheduledDate?: string
+  keywords?: string[]
+  tags: number[]
+  draft: string
+  localizedValues?: {
+    languageId: number
+    title: string
+    summary: string
+    body: string
+  }[]
+}
+
 const loadingValidateSlug = ref(false)
 const loadingSaveSlug = ref(false)
 const loadingCreateBlog = ref(false)
+const loadingGetBlog = ref(false)
+const loadingEditBlog = ref(false)
 
 export const useBlog = () => {
   const { $toast } = useNuxtApp()
@@ -163,5 +187,101 @@ export const useBlog = () => {
     }
   }
 
-  return { validateSlug, loadingValidateSlug, saveSlug, loadingSaveSlug, createBlug, loadingCreateBlog }
+  const editBlug = async (blog: BlogEditDTO, id: string) => {
+    loadingEditBlog.value = true
+    try {
+      const formData = new FormData()
+      formData.append('Title', blog.title)
+      formData.append('Body', blog.body)
+      formData.append('Summary', blog.summary || '')
+      formData.append('VisibilityType', blog.visibilityType)
+
+      let publishDate = new Date().toISOString()
+      if (blog.publishDate === 'Schedule') {
+      // Send the selected scheduled date, preserving the selected date without timezone issues
+        const selectedDate = new Date(blog.scheduledDate!)
+        // Set time to noon to avoid timezone conversion issues
+        selectedDate.setHours(12, 0, 0, 0)
+        publishDate = selectedDate.toISOString()
+      }
+      formData.append('PublishDate', publishDate)
+      formData.append('Slug', blog.slug)
+      formData.append('Draft', blog.draft ? 'true' : 'false')
+
+      blog.tags.forEach((tagId) => {
+        formData.append('Tags[]', tagId.toString())
+      })
+
+      if (blog.keywords && blog.keywords.length > 0) {
+        formData.append('Keywords', blog.keywords.join(','))
+      }
+      formData.append('Image', blog.image)
+
+      if (blog.removePodcast) {
+        formData.append('RemovePodcast', 'true')
+      }
+
+      if (blog.podcast) {
+        formData.append('Podcast', blog.podcast)
+      }
+
+      blog.localizedValues?.forEach((item, index) => {
+        formData.append(`LocalizedValues[${index}].languageId`, item.languageId.toString())
+        formData.append(`LocalizedValues[${index}].title`, item.title)
+        formData.append(`LocalizedValues[${index}].summary`, item.summary)
+        formData.append(`LocalizedValues[${index}].body`, item.body)
+      })
+
+      const response = await useApiService.put<
+        ApiResult<string>
+      >(`/api/v2/blogs/contributions/${id}`, formData)
+      if (response.succeeded) {
+        $toast.success('Blog Edited successfully!')
+      }
+      else {
+        $toast.error('The operation failed. Please try again later.')
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        data: '',
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+      }
+    }
+    finally {
+      loadingEditBlog.value = false
+    }
+  }
+
+  const getBlog = async (id: string) => {
+    loadingGetBlog.value = true
+    try {
+      const response = await useApiService.get<
+        ApiResult<BlogUserDTO>
+      >(`/api/v2/blogs/contributions/${id}`)
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        data: undefined,
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+      }
+    }
+    finally {
+      loadingGetBlog.value = false
+    }
+  }
+
+  return { validateSlug, loadingValidateSlug, saveSlug, loadingSaveSlug, createBlug, loadingCreateBlog, getBlog, loadingGetBlog, editBlug, loadingEditBlog }
 }

@@ -519,3 +519,24 @@ export interface TranslationDTO {
   summary: string
   content: string
 }
+export interface BlogUserDTO {
+  title: string
+  slug: string
+  summary: string
+  body: string
+  imageUri: string
+  podcastUri: string
+  keywords: string
+  postId: number
+  visibilityType: string
+  publishDate: string
+  tags: number[]
+  localizedValues: LocalizedValueDTO[]
+}
+
+export interface LocalizedValueDTO {
+  languageId: number
+  title: string
+  summary: string
+  body: string
+}

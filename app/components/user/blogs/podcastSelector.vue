@@ -62,7 +62,7 @@ interface IPodcastSelector {
 const props = withDefaults(defineProps<IPodcastSelector>(), {
   loading: false,
 })
-const emit = defineEmits(['update:podcast'])
+const emit = defineEmits(['update:podcast', 'removePodcast', 'changePodcast'])
 const podcastLocal = ref(props.podcast)
 const podcastPreview = ref(props.podcast)
 const podcastInput = ref<HTMLInputElement>()
@@ -88,6 +88,7 @@ const onPoscastSelected = (event: Event) => {
     podcastPreview.value = URL.createObjectURL(file)
     podcastLocal.value = file
     emit('update:podcast', podcastLocal.value)
+    emit('changePodcast')
   }
 }
 
@@ -95,6 +96,7 @@ const deletePodcast = () => {
   podcastPreview.value = ''
   podcastLocal.value = ''
   emit('update:podcast', podcastLocal.value)
+  emit('removePodcast')
 }
 </script>
 

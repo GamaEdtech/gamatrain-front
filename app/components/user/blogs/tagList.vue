@@ -33,7 +33,7 @@
       class="w-100 mt-2"
     />
     <div class="container-tag-list bg-white rounded-lg overflow-y-auto w-100 pa-2 mt-3 d-flex flex-column">
-      <template v-if="loadingGetData">
+      <template v-if="loadingGetData || loadingValue">
         <div
           v-for="i in 10"
           :key="i"
@@ -86,6 +86,7 @@
 interface ITagList {
   categories: number[]
   rules?: ((value: number[]) => true | string)[]
+  loadingValue?: boolean
 }
 
 const props = defineProps<ITagList>()

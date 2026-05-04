@@ -107,6 +107,13 @@ const clickOnModal = (event: Event) => {
 const slug = ref(props.slug)
 const isChecking = ref(false)
 const isValid = ref(false)
+watch(
+  () => props.slug,
+  (val) => {
+    slug.value = val || ''
+  },
+  { immediate: true },
+)
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 const hasMinLength = computed(() => slug.value.length >= 4)

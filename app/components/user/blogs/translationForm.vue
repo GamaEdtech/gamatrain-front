@@ -169,8 +169,11 @@ const localData = ref<TranslationDTO>({
 watch(
   () => props.modelValue,
   (val) => {
-    localData.value = { ...val }
+    if (val) {
+      localData.value = { ...val }
+    }
   },
+  { immediate: true },
 )
 
 const titleRules = [
