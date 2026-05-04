@@ -506,3 +506,18 @@ export interface AdminCultureDTO {
   code: string
   displayName: string
 }
+
+export type PaymentCurrency = 'SOL' | 'USDC'
+export type PaymentGateway = 'GamaTrain' | 'Stripe'
+
+export interface PayloadPaymentDTO {
+  amount: number
+  currency: PaymentCurrency
+  gateway: PaymentGateway
+  title: string
+  description: string
+}
+export interface PaymentDTO {
+  paymentId: number
+  url: string
+}
