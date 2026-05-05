@@ -58,6 +58,16 @@
 
     <div class="w-100 d-flex flex-column align-center justify-center mt-8">
       <span class="font-weight-bold text-h4">Quick Recharge</span>
+      <span class="font-weight-bold text-h5 text-center mt-2">
+        Paying with {{ paymentMethod === 'stripe' ? 'Stripe' : 'Crypto' }}?
+
+        <span
+          class="cursor-pointer text-primary"
+          @click="togglePayment"
+        >
+          Switch to {{ paymentMethod === 'stripe' ? 'Crypto' : 'Stripe' }}
+        </span>
+      </span>
 
       <span class="primary-gray-500 text-h6 text-center mt-4">Don't have time? Recharge your wallet instantly.Select your pack!</span>
 
@@ -66,129 +76,133 @@
       </span>
     </div>
 
-    <div class="w-100 d-flex align-center justify-center mt-6 recharge-input">
+    <modals-stripe-payment v-if="paymentMethod == 'stripe'" />
+
+    <template v-if="paymentMethod == 'crypto'">
+      <div class="w-100 d-flex align-center justify-center mt-6 recharge-input">
+        <v-btn
+          color="#344054"
+          max-width="40"
+          min-width="40"
+          height="40"
+          rounded="lg"
+          flat
+          :disabled="loadingPayment"
+          @click="decreaseAmount"
+        >
+          <div class="circle-div d-flex align-center justify-center bg-white">
+            <v-icon
+              color="#344054"
+              size="22"
+            >
+              md:remove
+            </v-icon>
+          </div>
+        </v-btn>
+
+        <v-text-field
+          v-model="formattedAmount"
+          class="w-100 mx-4 text-center"
+          variant="outlined"
+          hide-details
+          density="comfortable"
+          rounded="lg"
+          color="#ffb300"
+          :disabled="loadingPayment"
+          @input="onAmountInput"
+        >
+          <template #prepend-inner>
+            <img
+              width="20"
+              height="20"
+              :src="selectedCurrency.logoURI"
+              alt="Coin Logo"
+              class="rounded-circle"
+            >
+          </template>
+        </v-text-field>
+
+        <v-btn
+          color="#344054"
+          max-width="40"
+          min-width="40"
+          height="40"
+          rounded="lg"
+          flat
+          :disabled="loadingPayment"
+          @click="increaseAmount"
+        >
+          <div class="circle-div d-flex align-center justify-center bg-white">
+            <v-icon
+              color="#344054"
+              size="20"
+            >
+              md:add
+            </v-icon>
+          </div>
+        </v-btn>
+      </div>
+
+      <div class="w-100 d-flex justify-center align-center ga-2 mt-6">
+        <v-btn
+          v-for="currency in currencies"
+          :key="currency.name"
+          :color="selectedCurrency.name === currency.name ? 'primary' : 'white'"
+          :class="`text-h5 font-weight-bold ${
+            selectedCurrency.name === currency.name ? `` : `border-btn`
+          }`"
+          rounded="pill"
+          flat
+          width="100"
+          height="38"
+          :disabled="loadingPayment"
+          @click="selectCurrency(currency)"
+        >
+          {{ currency.name }}
+        </v-btn>
+      </div>
+
       <v-btn
-        color="#344054"
-        max-width="40"
-        min-width="40"
-        height="40"
-        rounded="lg"
-        flat
-        :disabled="loadingPayment"
-        @click="decreaseAmount"
-      >
-        <div class="circle-div d-flex align-center justify-center bg-white">
-          <v-icon
-            color="#344054"
-            size="22"
-          >
-            md:remove
-          </v-icon>
-        </div>
-      </v-btn>
-
-      <v-text-field
-        v-model="formattedAmount"
-        class="w-100 mx-4 text-center"
-        variant="outlined"
-        hide-details
-        density="comfortable"
-        rounded="lg"
-        color="#ffb300"
-        :disabled="loadingPayment"
-        @input="onAmountInput"
-      >
-        <template #prepend-inner>
-          <img
-            width="20"
-            height="20"
-            :src="selectedCurrency.logoURI"
-            alt="Coin Logo"
-            class="rounded-circle"
-          >
-        </template>
-      </v-text-field>
-
-      <v-btn
-        color="#344054"
-        max-width="40"
-        min-width="40"
-        height="40"
-        rounded="lg"
-        flat
-        :disabled="loadingPayment"
-        @click="increaseAmount"
-      >
-        <div class="circle-div d-flex align-center justify-center bg-white">
-          <v-icon
-            color="#344054"
-            size="20"
-          >
-            md:add
-          </v-icon>
-        </div>
-      </v-btn>
-    </div>
-
-    <div class="w-100 d-flex justify-center align-center ga-2 mt-6">
-      <v-btn
-        v-for="currency in currencies"
-        :key="currency.name"
-        :color="selectedCurrency.name === currency.name ? 'primary' : 'white'"
-        :class="`text-h5 font-weight-bold ${
-          selectedCurrency.name === currency.name ? `` : `border-btn`
-        }`"
-        rounded="pill"
-        flat
-        width="100"
-        height="38"
-        :disabled="loadingPayment"
-        @click="selectCurrency(currency)"
-      >
-        {{ currency.name }}
-      </v-btn>
-    </div>
-
-    <v-btn
-      v-if="!isWalletConnected"
-      color="primary"
-      flat
-      rounded="lg"
-      max-width="250"
-      min-width="250"
-      class="font-weight-bold text-h5 mt-4 mx-auto"
-      @click="showWalletModal = true"
-    >
-      Connect Wallet
-    </v-btn>
-
-    <div class="w-100 d-flex ga-2 align-center justify-center">
-      <v-btn
-        v-if="isWalletConnected"
-        :loading="loadingPayment"
-        :disabled="disablePayment"
-        color="success"
+        v-if="!isWalletConnected"
+        color="primary"
         flat
         rounded="lg"
-        max-width="200"
-        class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
-        @click="startProccessPayment"
+        max-width="250"
+        min-width="250"
+        class="font-weight-bold text-h5 mt-4 mx-auto"
+        @click="showWalletModal = true"
       >
-        Charge
+        Connect Wallet
       </v-btn>
-      <v-btn
-        v-if="isWalletConnected"
-        color="error"
-        flat
-        variant="outlined"
-        rounded="lg"
-        max-width="200"
-        class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
-        @click="showDisconnectModal = true"
-      >
-        Disconnect
-      </v-btn>
-    </div>
+
+      <div class="w-100 d-flex ga-2 align-center justify-center">
+        <v-btn
+          v-if="isWalletConnected"
+          :loading="loadingPayment"
+          :disabled="disablePayment"
+          color="success"
+          flat
+          rounded="lg"
+          max-width="200"
+          class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+          @click="startProccessPayment"
+        >
+          Charge
+        </v-btn>
+        <v-btn
+          v-if="isWalletConnected"
+          color="error"
+          flat
+          variant="outlined"
+          rounded="lg"
+          max-width="200"
+          class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+          @click="showDisconnectModal = true"
+        >
+          Disconnect
+        </v-btn>
+      </div>
+    </template>
 
     <v-dialog
       v-model="showWalletModal"
@@ -262,6 +276,7 @@ import { SystemProgram, Transaction, PublicKey,
 const auth = useAuth()
 const { $toast } = useNuxtApp()
 const router = useRouter()
+const { startPayment, verifyPayment } = usePayment()
 
 defineProps({
   userBalance: {
@@ -270,6 +285,11 @@ defineProps({
   },
 })
 const emit = defineEmits(['chargeWalletSuccessfull'])
+
+const paymentMethod = ref('stripe')
+const togglePayment = () => {
+  paymentMethod.value = paymentMethod.value === 'stripe' ? 'crypto' : 'stripe'
+}
 
 const formatNumber = (value) => {
   if (value === null || value === undefined || value === '') return ''
@@ -526,16 +546,17 @@ const startProccessPayment = async () => {
   if (auth.isAuthenticated.value) {
     try {
       loadingPayment.value = true
-      const params = {
+      const payload = {
         amount: amount.value * 10 ** selectedCurrency.value.decimals,
         currency: selectedCurrency.value.name,
+        gateway: 'GamaTrain',
+        title: 'Gamatrain Usage Invoice',
+        description: 'One-time charge for use of the Gamatrain e-learning platform. Payment grants access to platform features and learning materials.',
       }
-      const responsePayment = await useApiService.post(
-        '/api/v2/payments',
-        params,
-      )
+      const responsePayment = await startPayment(payload)
+
       if (responsePayment.succeeded) {
-        paymentId.value = responsePayment.data
+        paymentId.value = responsePayment.data.paymentId
         await sendTransactionInChain()
       }
       else {
@@ -761,15 +782,7 @@ const sendTransactionInChain = async () => {
 
 const sendConfirmPaymentRequest = async () => {
   try {
-    const params = {
-      id: paymentId.value,
-      transactionId: transactionId.value,
-      currency: selectedCurrency.value.name,
-    }
-    const responsePaymentConfirmed = await useApiService.post(
-      '/api/v2/payments/verify',
-      params,
-    )
+    const responsePaymentConfirmed = await verifyPayment(paymentId.value, transactionId.value)
     if (responsePaymentConfirmed.succeeded) {
       emit('chargeWalletSuccessfull')
       loadingPayment.value = false
@@ -827,7 +840,7 @@ const sendConfirmPaymentRequest = async () => {
   border: 1px solid #cbccce;
 }
 .swv-modal {
-  z-index: 2410 !important;
+  z-index: 10000 !important;
 }
 .balance-info {
   background-color: #ebebeb;
