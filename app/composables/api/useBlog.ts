@@ -219,6 +219,7 @@ export const useBlog = () => {
 
       if (blog.removePodcast) {
         formData.append('RemovePodcast', 'true')
+        formData.append('Podcast', '')
       }
 
       if (blog.podcast) {

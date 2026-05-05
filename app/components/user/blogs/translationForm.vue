@@ -62,7 +62,7 @@
       </div>
       <v-text-field
         v-model="localData.title"
-        :rules="titleRules"
+        :rules="[required]"
         rounded="lg"
         density="default"
         placeholder="Title"
@@ -98,7 +98,7 @@
       </div>
       <v-textarea
         v-model="localData.summary"
-        :rules="summaryRules"
+        :rules="[required]"
         rounded="lg"
         density="default"
         placeholder="Enter Here..."
@@ -138,7 +138,7 @@
       <common-rich-editor
         v-model="localData.content"
         mode="full"
-        :rules="contentRules"
+        :rules="[required]"
         @update:model-value="emitUpdate"
       />
     </div>
@@ -159,6 +159,7 @@ const emit = defineEmits<{
   (e: 'delete'): void
 }>()
 
+const { required } = useValidationRules()
 const localData = ref<TranslationDTO>({
   languageId: '',
   title: '',
@@ -175,21 +176,6 @@ watch(
   },
   { immediate: true },
 )
-
-const titleRules = [
-  (v: string) => !!v || 'Title is required',
-  (v: string) => v?.trim() !== '' || 'Title cannot be empty',
-]
-
-const summaryRules = [
-  (v: string) => !!v || 'Summary is required',
-  (v: string) => v?.trim() !== '' || 'Summary cannot be empty',
-]
-
-const contentRules = [
-  (v: string) => !!v || 'Content is required',
-  (v: string) => (v && v !== '<p></p>') || 'Content cannot be empty',
-]
 
 const emitUpdate = () => {
   emit('update:modelValue', { ...localData.value })

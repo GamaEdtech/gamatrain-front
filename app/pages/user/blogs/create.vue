@@ -27,7 +27,7 @@
           </div>
           <v-text-field
             v-model="blog.title"
-            :rules="titleRules"
+            :rules="[required]"
             rounded="lg"
             density="default"
             placeholder="Title"
@@ -73,7 +73,7 @@
           </div>
           <v-textarea
             v-model="blog.summary"
-            :rules="summaryRules"
+            :rules="[required]"
             rounded="lg"
             density="default"
             placeholder="Enter Here..."
@@ -112,7 +112,7 @@
           <common-rich-editor
             v-model="blog.content"
             mode="full"
-            :rules="contentRules"
+            :rules="[required]"
           />
         </div>
       </v-col>
@@ -231,7 +231,7 @@
               <template #activator="{ props }">
                 <v-text-field
                   v-model="blog.scheduledDate"
-                  :rules="dateRules"
+                  :rules="[required]"
                   readonly
                   v-bind="props"
                   clearable
@@ -260,7 +260,7 @@
         <div class="bg-grey50 rounded-lg pa-4 d-flex align-center justify-center">
           <user-blogs-tag-list
             v-model:categories="blog.categories"
-            :rules="categoryRules"
+            :rules="[arrayNotEmpty]"
           />
         </div>
 
@@ -271,7 +271,7 @@
         <div class="bg-grey50 rounded-lg pa-4 d-flex align-center justify-center">
           <user-blogs-image-selector
             v-model:image="blog.image"
-            :rules="imageRules"
+            :rules="[required]"
           />
         </div>
 
@@ -338,6 +338,7 @@ useHead({
   title: 'Create blog',
 })
 
+const { required, arrayNotEmpty } = useValidationRules()
 const router = useRouter()
 const { $toast, $slugGenerator } = useNuxtApp()
 const { createBlug, loadingCreateBlog } = useBlog()
@@ -368,31 +369,6 @@ const publishTimeItems = ['Immediately', 'Schedule']
 const slugSave = (slug: string) => {
   blog.value.slug = slug
 }
-
-const titleRules = [
-  (v: string) => !!v || 'Title is required',
-  (v: string) => v?.trim() !== '' || 'Title cannot be empty',
-]
-const summaryRules = [
-  (v: string) => !!v || 'Summary is required',
-  (v: string) => v?.trim() !== '' || 'Summary cannot be empty',
-]
-const contentRules = [
-  (v: string) => !!v || 'Content is required',
-  (v: string) => (v && v !== '<p></p>') || 'Content cannot be empty',
-]
-const dateRules = [
-  () =>
-    blog.value.publishTime !== 'Schedule'
-    || !!blog.value.scheduledDate
-    || 'Scheduled date is required',
-]
-const categoryRules = [
-  (v: number[]) => v.length > 0 || 'At least one category is required',
-]
-const imageRules = [
-  (v: string | null | File) => !!v || 'Image is required',
-]
 
 const isValid = () => {
   if (!blog.value.title.trim()) return false
