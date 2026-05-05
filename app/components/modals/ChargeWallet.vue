@@ -840,7 +840,7 @@ const sendConfirmPaymentRequest = async () => {
   border: 1px solid #cbccce;
 }
 .swv-modal {
-  z-index: 2410 !important;
+  z-index: 10000 !important;
 }
 .balance-info {
   background-color: #ebebeb;
