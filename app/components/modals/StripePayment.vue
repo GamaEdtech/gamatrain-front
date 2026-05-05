@@ -102,9 +102,11 @@
 import type { PaymentCurrency, PaymentGateway } from '~/types/api'
 import { usePayment } from '../../composables/api/usePayment'
 
+const { $toast } = useNuxtApp()
 const route = useRoute()
 const { startPayment, loadingPayment, savePathRedirect } = usePayment()
 
+const minAmount = 2
 const step = ref(5)
 const decimals = ref(1)
 const currency: PaymentCurrency = 'USDC'
@@ -160,6 +162,12 @@ const onAmountInput = (event: Event) => {
 
   formattedAmount.value = formatNumber(cleanVal)
   target.value = formattedAmount.value
+
+  if (amount.value < minAmount) {
+    amount.value = minAmount
+    formattedAmount.value = formatNumber(amount.value)
+    target.value = formattedAmount.value
+  }
 }
 
 const increaseAmount = () => {
@@ -171,7 +179,7 @@ const increaseAmount = () => {
 
 const decreaseAmount = () => {
   amount.value = Math.max(
-    0,
+    minAmount,
     parseFloat(
       (amount.value - step.value).toFixed(decimals.value),
     ),
@@ -187,6 +195,10 @@ const select = (multiplier: number) => {
 }
 
 const pay = async () => {
+  if (amount.value < minAmount) {
+    $toast.error(`Minimum amount is $${minAmount}`)
+    return
+  }
   const payload = {
     amount: amount.value,
     currency,
