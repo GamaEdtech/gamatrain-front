@@ -1,5 +1,17 @@
 <template>
-  <div class="w-100 d-flex flex-column align-center justify-center">
+  <div class="mx-6">
+    <v-row>
+      <v-col
+        v-for="plan in plans"
+        :key="plan.id"
+        cols="12"
+        md="4"
+      >
+        <modals-stripe-payment :plan="plan" />
+      </v-col>
+    </v-row>
+  </div>
+  <!-- <div class="w-100 d-flex flex-column align-center justify-center">
     <div
       class="balance-info pa-4 rounded-lg d-flex align-center justify-center ga-2 mt-4"
     >
@@ -20,8 +32,8 @@
         <v-icon color="#98A2B3">
           md:language
         </v-icon>
-        <span class="text-primary text-h6 font-weight-bold">Browse Website</span>
-        <span class="primary-gray-500 text-h6 text-center">Explore pages and discover content</span>
+        <span class="text-primary text-h6 font-weight-bold">Paper</span>
+        <span class="primary-gray-500 text-h6 text-center">Access to +1K primuim files</span>
       </div>
 
       <div class="line-seperator" />
@@ -32,8 +44,8 @@
         <v-icon color="#98A2B3">
           md:psychology
         </v-icon>
-        <span class="text-primary text-h6 font-weight-bold">Take Quizzes</span>
-        <span class="primary-gray-500 text-h6 text-center">Test your knowledge and learn</span>
+        <span class="text-primary text-h6 font-weight-bold">Test</span>
+        <span class="primary-gray-500 text-h6 text-center">Feel free to practice +10K test</span>
       </div>
 
       <div class="line-seperator" />
@@ -44,8 +56,8 @@
         <v-icon color="#98A2B3">
           md:stadia_controller
         </v-icon>
-        <span class="text-primary text-h6 font-weight-bold">Play Games</span>
-        <span class="primary-gray-500 text-h6 text-center">Have fun while earning rewards</span>
+        <span class="text-primary text-h6 font-weight-bold">Show quize results by details</span>
+        <span class="primary-gray-500 text-h6 text-center">+10 Exam</span>
       </div>
     </div>
 
@@ -67,18 +79,16 @@
         >
           Switch to {{ paymentMethod === 'stripe' ? 'Crypto' : 'Stripe' }}
         </span>
-      </span>
+      </span> -->
 
-      <span class="primary-gray-500 text-h6 text-center mt-4">Don't have time? Recharge your wallet instantly.Select your pack!</span>
+  <!-- <span class="primary-gray-500 text-h6 text-center mt-4">Don't have time? Recharge your wallet instantly.Select your pack!</span>
 
       <span class="text-h5 mt-4 text-center">
         You need Charge Your Wallet
       </span>
     </div>
 
-    <modals-stripe-payment v-if="paymentMethod == 'stripe'" />
-
-    <template v-if="paymentMethod == 'crypto'">
+<template v-if="paymentMethod == 'crypto'">
       <div class="w-100 d-flex align-center justify-center mt-6 recharge-input">
         <v-btn
           color="#344054"
@@ -262,595 +272,608 @@
           </v-btn>
         </div>
       </div>
-    </v-dialog>
-  </div>
+    </v-dialog> -->
+  <!-- </div> -->
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { TOKEN_DECIMALS, TOKEN_MINTS } from '~/composables/useJupiterSwap'
-import { useSolanaClient } from '~/composables/useSolanaClient'
-import { SystemProgram, Transaction, PublicKey,
-  TransactionInstruction } from '@solana/web3.js'
+// import { TOKEN_DECIMALS, TOKEN_MINTS } from '~/composables/useJupiterSwap'
+// import { useSolanaClient } from '~/composables/useSolanaClient'
+// import { SystemProgram, Transaction, PublicKey,
+//   TransactionInstruction } from '@solana/web3.js'
 
-const auth = useAuth()
-const { $toast } = useNuxtApp()
-const router = useRouter()
-const { startPayment, verifyPayment } = usePayment()
-
-defineProps({
-  userBalance: {
-    type: Number,
-    default: 0,
-  },
-})
-const emit = defineEmits(['chargeWalletSuccessfull'])
-
-const paymentMethod = ref('stripe')
-const togglePayment = () => {
-  paymentMethod.value = paymentMethod.value === 'stripe' ? 'crypto' : 'stripe'
-}
-
-const formatNumber = (value) => {
-  if (value === null || value === undefined || value === '') return ''
-  if (isNaN(value)) return value
-  const parts = value.toString().split('.')
-  const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-  const decimalPart = parts[1] ? '.' + parts[1] : ''
-  return integerPart + decimalPart
-}
-
-const onAmountInput = (event) => {
-  const val = event.target.value
-  const decimals = selectedCurrency.value.decimals
-
-  let cleanVal = val.toString().replace(/,/g, '')
-
-  if (cleanVal === '.') {
-    formattedAmount.value = '0.'
-    amount.value = 0
-    event.target.value = formattedAmount.value
-    return
-  }
-
-  if (/^\d+\.$/.test(cleanVal)) {
-    formattedAmount.value = cleanVal
-    amount.value = parseFloat(cleanVal) || 0
-    event.target.value = formattedAmount.value
-    return
-  }
-
-  if (cleanVal.includes('.')) {
-    const [intPart, decPart = ''] = cleanVal.split('.')
-    if (decPart.length > decimals) {
-      cleanVal = intPart + '.' + decPart.slice(0, decimals)
-    }
-  }
-
-  if (!/^\d*\.?\d*$/.test(cleanVal)) {
-    return
-  }
-
-  const numeric = parseFloat(cleanVal)
-  amount.value = isNaN(numeric) ? 0 : numeric
-
-  formattedAmount.value = formatNumber(cleanVal)
-  event.target.value = formattedAmount.value
-}
-
-const amount = ref(1000)
-const formattedAmount = ref('1,000')
-
-const increaseAmount = () => {
-  const step = selectedCurrency.value.step
-  amount.value = parseFloat(
-    (parseFloat(amount.value) + step).toFixed(selectedCurrency.value.decimals),
-  )
-  formattedAmount.value = formatNumber(amount.value)
-}
-
-const decreaseAmount = () => {
-  const step = selectedCurrency.value.step
-  amount.value = Math.max(
-    0,
-    parseFloat(
-      (parseFloat(amount.value) - step).toFixed(selectedCurrency.value.decimals),
-    ),
-  )
-  formattedAmount.value = formatNumber(amount.value)
-}
-
-const currencies = ref([
+const plans = [
   {
-    name: 'GET',
-    step: 1000,
-    decimals: TOKEN_DECIMALS.GET,
-    logoURI: '/images/gama-coin.svg',
-    // devnet mint
-    // mint: "test",
-    // mainnet mint
-    mint: TOKEN_MINTS.GET,
+    id: 'bronze',
+    name: 'ALPHA',
+    price: 5,
+    cta: 'Buy Basic',
+    features: [
+      'Download 20 Premium Files',
+      'View Results for 20 Quizzes',
+      'Access 100 Practice Test',
+      'Unlock 100 Test Explanations',
+    ],
   },
   {
-    name: 'SOL',
-    step: 0.001,
-    decimals: TOKEN_DECIMALS.SOL,
-    logoURI: '/images/solana-coin.png',
-    // devnet mint
-    // mint: "So11111111111111111111111111111111111111112",
-    // mainnet mint
-    mint: TOKEN_MINTS.SOL,
+    id: 'silver',
+    name: 'BETA',
+    price: 10,
+    cta: 'Buy Pro',
+    popular: true,
+    features: [
+      'Download 60 Premium Files',
+      'View Results for 60 Quizzes',
+      'Access 300 Practice Test',
+      'Unlock 300 Test Explanations',
+    ],
   },
   {
-    name: 'USDC',
-    step: 1,
-    decimals: TOKEN_DECIMALS.USDC,
-    logoURI: '/images/usdc-coin.png',
-    // devnet mint
-    // mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
-    // mainnet mint
-    mint: TOKEN_MINTS.USDC,
+    id: 'gold',
+    name: 'GAMA',
+    price: 20,
+    cta: 'Buy Enterprise',
+    features: [
+      'Download 200 Premium Files',
+      'View Results for 200 Quizzes',
+      'Access 1000 Practice Test',
+      'Unlock 1000 Test Explanations',
+    ],
   },
-])
-const selectedCurrency = ref(currencies.value[0])
+]
 
-const selectCurrency = (currency) => {
-  selectedCurrency.value = currency
-  amount.value = parseFloat(currency.step)
-  formattedAmount.value = formatNumber(amount.value)
-}
+// const auth = useAuth()
+// const { $toast } = useNuxtApp()
+// const router = useRouter()
+// const { startPayment, verifyPayment } = usePayment()
 
-const splTokenLib = ref(null)
-const wallet = ref(null)
-const showWalletModal = ref(false)
-const showDisconnectModal = ref(false)
-const config = useRuntimeConfig()
+// defineProps({
+//   userBalance: {
+//     type: Number,
+//     default: 0,
+//   },
+// })
+// const emit = defineEmits(['chargeWalletSuccessfull'])
 
-const isWalletLibLoaded = ref(false)
+// const paymentMethod = ref('stripe')
+// // const togglePayment = () => {
+//   paymentMethod.value = paymentMethod.value === 'stripe' ? 'crypto' : 'stripe'
+//
+
+// const formatNumber = (value) => {
+//   if (value === null || value === undefined || value === '') return ''
+//   if (isNaN(value)) return value
+//   const parts = value.toString().split('.')
+//   const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+//   const decimalPart = parts[1] ? '.' + parts[1] : ''
+//   return integerPart + decimalPart
+// }
+
+// const onAmountInput = (event) => {
+//   const val = event.target.value
+//   const decimals = selectedCurrency.value.decimals
+
+//   let cleanVal = val.toString().replace(/,/g, '')
+
+//   if (cleanVal === '.') {
+//     formattedAmount.value = '0.'
+//     amount.value = 0
+//     event.target.value = formattedAmount.value
+//     return
+//   }
+
+//   if (/^\d+\.$/.test(cleanVal)) {
+//     formattedAmount.value = cleanVal
+//     amount.value = parseFloat(cleanVal) || 0
+//     event.target.value = formattedAmount.value
+//     return
+//   }
+
+//   if (cleanVal.includes('.')) {
+//     const [intPart, decPart = ''] = cleanVal.split('.')
+//     if (decPart.length > decimals) {
+//       cleanVal = intPart + '.' + decPart.slice(0, decimals)
+//     }
+//   }
+
+//   if (!/^\d*\.?\d*$/.test(cleanVal)) {
+//     return
+//   }
+
+//   const numeric = parseFloat(cleanVal)
+//   amount.value = isNaN(numeric) ? 0 : numeric
+
+//   formattedAmount.value = formatNumber(cleanVal)
+//   event.target.value = formattedAmount.value
+// }
+
+// const amount = ref(1000)
+// const formattedAmount = ref('1,000')
+
+// const currencies = ref([
+//   {
+//     name: 'GET',
+//     step: 1000,
+//     decimals: TOKEN_DECIMALS.GET,
+//     logoURI: '/images/gama-coin.svg',
+//     // devnet mint
+//     // mint: "test",
+//     // mainnet mint
+//     mint: TOKEN_MINTS.GET,
+//   },
+//   {
+//     name: 'SOL',
+//     step: 0.001,
+//     decimals: TOKEN_DECIMALS.SOL,
+//     logoURI: '/images/solana-coin.png',
+//     // devnet mint
+//     // mint: "So11111111111111111111111111111111111111112",
+//     // mainnet mint
+//     mint: TOKEN_MINTS.SOL,
+//   },
+//   {
+//     name: 'USDC',
+//     step: 1,
+//     decimals: TOKEN_DECIMALS.USDC,
+//     logoURI: '/images/usdc-coin.png',
+//     // devnet mint
+//     // mint: "4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU",
+//     // mainnet mint
+//     mint: TOKEN_MINTS.USDC,
+//   },
+// ])
+// const selectedCurrency = ref(currencies.value[0])
+
+// const selectCurrency = (currency) => {
+//   selectedCurrency.value = currency
+//   amount.value = parseFloat(currency.step)
+//   formattedAmount.value = formatNumber(amount.value)
+// }
+
+// const splTokenLib = ref(null)
+// const wallet = ref(null)
+// const showWalletModal = ref(false)
+// const showDisconnectModal = ref(false)
+// const config = useRuntimeConfig()
+
+// const isWalletLibLoaded = ref(false)
 
 // Dynamic component import for WalletMultiButton
-const WalletMultiButton = defineAsyncComponent(async () => {
-  if (import.meta.client) {
-    const { WalletMultiButton } = await import('solana-wallets-vue')
-    return WalletMultiButton
-  }
-  return { template: '<div>Loading...</div>' }
-})
+// const WalletMultiButton = defineAsyncComponent(async () => {
+//   if (import.meta.client) {
+//     const { WalletMultiButton } = await import('solana-wallets-vue')
+//     return WalletMultiButton
+//   }
+//   return { template: '<div>Loading...</div>' }
+// })
 // Initialize wallet on client side
-onMounted(async () => {
-  if (import.meta.client) {
-    try {
-      // Load styles
-      await import('solana-wallets-vue/styles.css')
+// onMounted(async () => {
+//   if (import.meta.client) {
+//     try {
+//     // Load styles
+//       await import('solana-wallets-vue/styles.css')
 
-      // Load plugin and adapters
-      const { default: SolanaWallets } = await import('solana-wallets-vue')
-      const { WalletAdapterNetwork } = await import(
-        '@solana/wallet-adapter-base'
-      )
-      const adapters = await import('@solana/wallet-adapter-wallets')
+//       // Load plugin and adapters
+//       const { default: SolanaWallets } = await import('solana-wallets-vue')
+//       const { WalletAdapterNetwork } = await import(
+//         '@solana/wallet-adapter-base'
+//       )
+//       const adapters = await import('@solana/wallet-adapter-wallets')
 
-      // Network setup
-      const netStr = config.public?.solanaNetwork?.toLowerCase() || 'mainnet'
-      const network
-        = netStr === 'devnet'
-          ? WalletAdapterNetwork.Devnet
-          : netStr === 'testnet'
-            ? WalletAdapterNetwork.Testnet
-            : WalletAdapterNetwork.Mainnet
+//       // Network setup
+//       const netStr = config.public?.solanaNetwork?.toLowerCase() || 'mainnet'
+//       const network
+//         = netStr === 'devnet'
+//           ? WalletAdapterNetwork.Devnet
+//           : netStr === 'testnet'
+//             ? WalletAdapterNetwork.Testnet
+//             : WalletAdapterNetwork.Mainnet
 
-      // Init adapters
-      const walletOptions = {
-        wallets: [
-          new adapters.PhantomWalletAdapter(),
-          new adapters.CloverWalletAdapter(),
-          new adapters.Coin98WalletAdapter(),
-          new adapters.SolflareWalletAdapter({ network }),
-        ],
-        autoConnect: true,
-      }
+//       // Init adapters
+//       const walletOptions = {
+//         wallets: [
+//           new adapters.PhantomWalletAdapter(),
+//           new adapters.CloverWalletAdapter(),
+//           new adapters.Coin98WalletAdapter(),
+//           new adapters.SolflareWalletAdapter({ network }),
+//         ],
+//         autoConnect: true,
+//       }
 
-      // Register plugin locally to this modal only
-      const nuxtApp = useNuxtApp()
-      nuxtApp.vueApp.use(SolanaWallets, walletOptions)
+//       // Register plugin locally to this modal only
+//       const nuxtApp = useNuxtApp()
+//       nuxtApp.vueApp.use(SolanaWallets, walletOptions)
 
-      isWalletLibLoaded.value = true
-    }
-    catch (err) {
-      console.error('❌ Failed to load Solana wallet libraries:', err)
-    }
+//       isWalletLibLoaded.value = true
+//     }
+//     catch (err) {
+//       console.error('❌ Failed to load Solana wallet libraries:', err)
+//     }
 
-    try {
-      const { useWallet } = await import('solana-wallets-vue')
-      wallet.value = useWallet()
-    }
-    catch (error) {
-      console.error('Failed to initialize wallet:', error)
-    }
+//     try {
+//       const { useWallet } = await import('solana-wallets-vue')
+//       wallet.value = useWallet()
+//     }
+//     catch (error) {
+//       console.error('Failed to initialize wallet:', error)
+//     }
 
-    try {
-      if (!window.Buffer) {
-        const { Buffer } = await import('buffer')
-        window.Buffer = Buffer
-      }
+//     try {
+//       if (!window.Buffer) {
+//         const { Buffer } = await import('buffer')
+//         window.Buffer = Buffer
+//       }
 
-      const {
-        getAssociatedTokenAddress,
-        createTransferInstruction,
-        createAssociatedTokenAccountInstruction,
-        TOKEN_2022_PROGRAM_ID,
-      } = await import('@solana/spl-token')
+//       const {
+//         getAssociatedTokenAddress,
+//         createTransferInstruction,
+//         createAssociatedTokenAccountInstruction,
+//         TOKEN_2022_PROGRAM_ID,
+//       } = await import('@solana/spl-token')
 
-      splTokenLib.value = {
-        getAssociatedTokenAddress,
-        createTransferInstruction,
-        createAssociatedTokenAccountInstruction,
-        TOKEN_2022_PROGRAM_ID,
-      }
-    }
-    catch (err) {
-      console.error('Failed to spl token:', err)
-    }
-  }
-})
+//       splTokenLib.value = {
+//         getAssociatedTokenAddress,
+//         createTransferInstruction,
+//         createAssociatedTokenAccountInstruction,
+//         TOKEN_2022_PROGRAM_ID,
+//       }
+//     }
+//     catch (err) {
+//       console.error('Failed to spl token:', err)
+//     }
+//   }
+// })
 
-const isWalletConnected = computed(() => {
-  const connected = wallet.value?.connected
-  return connected
-})
+// const isWalletConnected = computed(() => {
+//   const connected = wallet.value?.connected
+//   return connected
+// })
 
 // Handle wallet disconnect
-const handleDisconnect = async () => {
-  try {
-    const w = wallet.value
-    if (w?.disconnect) {
-      await w.disconnect()
-    }
-    else {
-      console.warn('Wallet does not support disconnect method')
-      // For wallets that don't have disconnect method, we can try to reset the wallet reference
-      wallet.value = null
-    }
+// const handleDisconnect = async () => {
+//   try {
+//     const w = wallet.value
+//     if (w?.disconnect) {
+//       await w.disconnect()
+//     }
+//     else {
+//       console.warn('Wallet does not support disconnect method')
+//       // For wallets that don't have disconnect method, we can try to reset the wallet reference
+//       wallet.value = null
+//     }
 
-    // Reset all state
-  }
-  catch (error) {
-    console.error('Failed to disconnect wallet:', error)
-    errorMessage.value = 'Failed to disconnect wallet. Please try again.'
-    // Clear error message after 5 seconds
-    setTimeout(() => {
-      errorMessage.value = null
-    }, 10000)
-  }
-  showDisconnectModal.value = false
-}
+//     // Reset all state
+//   }
+//   catch (error) {
+//     console.error('Failed to disconnect wallet:', error)
+//     errorMessage.value = 'Failed to disconnect wallet. Please try again.'
+//     // Clear error message after 5 seconds
+//     setTimeout(() => {
+//       errorMessage.value = null
+//     }, 10000)
+//   }
+//   showDisconnectModal.value = false
+// }
 
-const loadingPayment = ref(false)
-const disablePayment = ref(false)
-const paymentId = ref(null)
-const transactionId = ref(null)
+// const loadingPayment = ref(false)
+// const disablePayment = ref(false)
+// const paymentId = ref(null)
+// const transactionId = ref(null)
 
-const startProccessPayment = async () => {
-  if (!wallet.value?.connected || !wallet.value.publicKey) {
-    $toast.info(
-      'Wallet connection required. Please connect your wallet to proceed.',
-    )
-    showWalletModal.value = true
-    return
-  }
-  const payAmount = parseFloat(amount.value)
-  if (isNaN(payAmount) || payAmount <= 0) {
-    $toast.info('The amount you entered is not valid. Please try again.')
-    return
-  }
-  if (auth.isAuthenticated.value) {
-    try {
-      loadingPayment.value = true
-      const payload = {
-        amount: amount.value * 10 ** selectedCurrency.value.decimals,
-        currency: selectedCurrency.value.name,
-        gateway: 'GamaTrain',
-        title: 'Gamatrain Usage Invoice',
-        description: 'One-time charge for use of the Gamatrain e-learning platform. Payment grants access to platform features and learning materials.',
-      }
-      const responsePayment = await startPayment(payload)
+// const startProccessPayment = async (amount) => {
+//   const payAmount = parseFloat(amount)
+//   if (isNaN(payAmount) || payAmount <= 0) {
+//     $toast.info('The amount you entered is not valid. Please try again.')
+//     return
+//   }
+//   if (auth.isAuthenticated.value) {
+//     try {
+//       loadingPayment.value = true
+//       const payload = {
+//         amount: amount.value * 10 ** selectedCurrency.value.decimals,
+//         currency: selectedCurrency.value.name,
+//         gateway: 'GamaTrain',
+//         title: 'Gamatrain Usage Invoice',
+//         description: 'One-time charge for use of the Gamatrain e-learning platform. Payment grants access to platform features and learning materials.',
+//       }
+//       const responsePayment = await startPayment(payload)
 
-      if (responsePayment.succeeded) {
-        paymentId.value = responsePayment.data.paymentId
-        await sendTransactionInChain()
-      }
-      else {
-        disablePayment.value = true
-        loadingPayment.value = false
-        paymentId.value = null
-        $toast.error(
-          'We’re unable to process your payment at the moment. Please try again in a few minutes',
-        )
-      }
-    }
-    catch (error) {
-      console.log(error)
+//       if (responsePayment.succeeded) {
+//         paymentId.value = responsePayment.data.paymentId
+//         await sendTransactionInChain()
+//       }
+//       else {
+//         disablePayment.value = true
+//         loadingPayment.value = false
+//         paymentId.value = null
+//         $toast.error(
+//           'We’re unable to process your payment at the moment. Please try again in a few minutes',
+//         )
+//       }
+//     }
+//     catch (error) {
+//       console.log(error)
 
-      disablePayment.value = true
-      loadingPayment.value = false
-      paymentId.value = null
-      $toast.error(
-        'We’re unable to process your payment at the moment. Please try again in a few minutes',
-      )
-    }
-    finally {
-      disablePayment.value = false
-    }
-  }
-  else {
-    router.push({})
-    setTimeout(() => {
-      router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
-    }, 100)
-  }
-}
+//       disablePayment.value = true
+//       loadingPayment.value = false
+//       paymentId.value = null
+//       $toast.error(
+//         'We’re unable to process your payment at the moment. Please try again in a few minutes',
+//       )
+//     }
+//     finally {
+//       disablePayment.value = false
+//     }
+//   }
+//   else {
+//     router.push({})
+//     setTimeout(() => {
+//       router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
+//     }, 100)
+//   }
+// }
 
-const MEMO_PROGRAM_ID = new PublicKey(
-  'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
-)
+// const MEMO_PROGRAM_ID = new PublicKey(
+//   'MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr',
+// )
 
-// precise decimal → bigint (no float corruption)
-function toRawAmount(amount, decimals) {
-  const [whole, frac = ''] = amount.toString().split('.')
-  const padded = (frac + '0'.repeat(decimals)).slice(0, decimals)
-  return BigInt(whole + padded)
-}
+// // precise decimal → bigint (no float corruption)
+// function toRawAmount(amount, decimals) {
+//   const [whole, frac = ''] = amount.toString().split('.')
+//   const padded = (frac + '0'.repeat(decimals)).slice(0, decimals)
+//   return BigInt(whole + padded)
+// }
 
-const sendTransactionInChain = async () => {
-  try {
-    loadingPayment.value = true
+// const sendTransactionInChain = async () => {
+//   try {
+//     loadingPayment.value = true
 
-    if (!wallet.value?.publicKey)
-      throw new Error('Wallet not connected')
+//     if (!wallet.value?.publicKey)
+//       throw new Error('Wallet not connected')
 
-    const { getConnection } = useSolanaClient()
-    const connection = await getConnection()
+//     const { getConnection } = useSolanaClient()
+//     const connection = await getConnection()
 
-    const sender = wallet.value.publicKey
-    const destination = new PublicKey(config.public.gamaedtechWalletAddress)
+//     const sender = wallet.value.publicKey
+//     const destination = new PublicKey(config.public.gamaedtechWalletAddress)
 
-    const rawAmount = toRawAmount(
-      amount.value,
-      selectedCurrency.value.decimals,
-    )
+//     const rawAmount = toRawAmount(
+//       amount.value,
+//       selectedCurrency.value.decimals,
+//     )
 
-    const transaction = new Transaction()
+//     const transaction = new Transaction()
 
-    // ---------------- SOL TRANSFER ----------------
-    if (selectedCurrency.value.name === 'SOL') {
-      transaction.add(
-        SystemProgram.transfer({
-          fromPubkey: sender,
-          toPubkey: destination,
-          lamports: rawAmount,
-        }),
-      )
-    }
+//     // ---------------- SOL TRANSFER ----------------
+//     if (selectedCurrency.value.name === 'SOL') {
+//       transaction.add(
+//         SystemProgram.transfer({
+//           fromPubkey: sender,
+//           toPubkey: destination,
+//           lamports: rawAmount,
+//         }),
+//       )
+//     }
 
-    // ---------------- SPL TOKEN TRANSFER ----------------
-    else if (selectedCurrency.value.name === 'GET') {
-      const mintPubkey = new PublicKey(selectedCurrency.value.mint)
+//     // ---------------- SPL TOKEN TRANSFER ----------------
+//     else if (selectedCurrency.value.name === 'GET') {
+//       const mintPubkey = new PublicKey(selectedCurrency.value.mint)
 
-      // Token-2022 ATA Program
-      const ATA_PROGRAM_ID = new PublicKey(
-        'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
-      )
-      const fromTokenAccount
-        = await splTokenLib.value.getAssociatedTokenAddress(
-          mintPubkey,
-          sender,
-          false,
-          splTokenLib.value.TOKEN_2022_PROGRAM_ID,
-          ATA_PROGRAM_ID)
+//       // Token-2022 ATA Program
+//       const ATA_PROGRAM_ID = new PublicKey(
+//         'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL',
+//       )
+//       const fromTokenAccount
+//         = await splTokenLib.value.getAssociatedTokenAddress(
+//           mintPubkey,
+//           sender,
+//           false,
+//           splTokenLib.value.TOKEN_2022_PROGRAM_ID,
+//           ATA_PROGRAM_ID)
 
-      const toTokenAccount
-        = await splTokenLib.value.getAssociatedTokenAddress(
-          mintPubkey,
-          destination,
-          true,
-          splTokenLib.value.TOKEN_2022_PROGRAM_ID,
-          ATA_PROGRAM_ID,
-        )
+//       const toTokenAccount
+//         = await splTokenLib.value.getAssociatedTokenAddress(
+//           mintPubkey,
+//           destination,
+//           true,
+//           splTokenLib.value.TOKEN_2022_PROGRAM_ID,
+//           ATA_PROGRAM_ID,
+//         )
 
-      // ensure sender ATA exists
-      const fromInfo = await connection.getAccountInfo(fromTokenAccount)
-      if (!fromInfo)
-        throw new Error('Sender token account does not exist')
+//       // ensure sender ATA exists
+//       const fromInfo = await connection.getAccountInfo(fromTokenAccount)
+//       if (!fromInfo)
+//         throw new Error('Sender token account does not exist')
 
-      // create receiver ATA if missing
-      const toInfo = await connection.getAccountInfo(toTokenAccount)
+//       // create receiver ATA if missing
+//       const toInfo = await connection.getAccountInfo(toTokenAccount)
 
-      if (!toInfo) {
-        transaction.add(
-          splTokenLib.value.createAssociatedTokenAccountInstruction(
-            sender,
-            toTokenAccount,
-            destination,
-            mintPubkey,
-            splTokenLib.value.TOKEN_2022_PROGRAM_ID,
-            ATA_PROGRAM_ID,
-          ),
-        )
-      }
+//       if (!toInfo) {
+//         transaction.add(
+//           splTokenLib.value.createAssociatedTokenAccountInstruction(
+//             sender,
+//             toTokenAccount,
+//             destination,
+//             mintPubkey,
+//             splTokenLib.value.TOKEN_2022_PROGRAM_ID,
+//             ATA_PROGRAM_ID,
+//           ),
+//         )
+//       }
 
-      transaction.add(
-        splTokenLib.value.createTransferInstruction(
-          fromTokenAccount,
-          toTokenAccount,
-          sender,
-          rawAmount,
-          [],
-          splTokenLib.value.TOKEN_2022_PROGRAM_ID,
-        ),
-      )
-    }
-    else {
-      const mintPubkey = new PublicKey(selectedCurrency.value.mint)
+//       transaction.add(
+//         splTokenLib.value.createTransferInstruction(
+//           fromTokenAccount,
+//           toTokenAccount,
+//           sender,
+//           rawAmount,
+//           [],
+//           splTokenLib.value.TOKEN_2022_PROGRAM_ID,
+//         ),
+//       )
+//     }
+//     else {
+//       const mintPubkey = new PublicKey(selectedCurrency.value.mint)
 
-      const fromTokenAccount
-        = await splTokenLib.value.getAssociatedTokenAddress(mintPubkey, sender)
+//       const fromTokenAccount
+//         = await splTokenLib.value.getAssociatedTokenAddress(mintPubkey, sender)
 
-      const toTokenAccount
-        = await splTokenLib.value.getAssociatedTokenAddress(
-          mintPubkey,
-          destination,
-          true,
-        )
+//       const toTokenAccount
+//         = await splTokenLib.value.getAssociatedTokenAddress(
+//           mintPubkey,
+//           destination,
+//           true,
+//         )
 
-      // ensure sender ATA exists
-      const fromInfo = await connection.getAccountInfo(fromTokenAccount)
-      console.log('From Token Account Info:', fromInfo)
-      if (!fromInfo)
-        throw new Error('Sender token account does not exist')
+//       // ensure sender ATA exists
+//       const fromInfo = await connection.getAccountInfo(fromTokenAccount)
+//       console.log('From Token Account Info:', fromInfo)
+//       if (!fromInfo)
+//         throw new Error('Sender token account does not exist')
 
-      // create receiver ATA if missing
-      const toInfo = await connection.getAccountInfo(toTokenAccount)
+//       // create receiver ATA if missing
+//       const toInfo = await connection.getAccountInfo(toTokenAccount)
 
-      if (!toInfo) {
-        transaction.add(
-          splTokenLib.value.createAssociatedTokenAccountInstruction(
-            sender,
-            toTokenAccount,
-            destination,
-            mintPubkey,
-          ),
-        )
-      }
+//       if (!toInfo) {
+//         transaction.add(
+//           splTokenLib.value.createAssociatedTokenAccountInstruction(
+//             sender,
+//             toTokenAccount,
+//             destination,
+//             mintPubkey,
+//           ),
+//         )
+//       }
 
-      transaction.add(
-        splTokenLib.value.createTransferInstruction(
-          fromTokenAccount,
-          toTokenAccount,
-          sender,
-          rawAmount,
-        ),
-      )
-    }
+//       transaction.add(
+//         splTokenLib.value.createTransferInstruction(
+//           fromTokenAccount,
+//           toTokenAccount,
+//           sender,
+//           rawAmount,
+//         ),
+//       )
+//     }
 
-    // ---------------- MEMO (ALWAYS LAST) ----------------
+//     // ---------------- MEMO (ALWAYS LAST) ----------------
 
-    const memo = paymentId.value.toString()
+//     const memo = paymentId.value.toString()
 
-    transaction.add(
-      new TransactionInstruction({
-        keys: [],
-        programId: MEMO_PROGRAM_ID,
-        data: Buffer.from(memo, 'utf8'),
-      }),
-    )
+//     transaction.add(
+//       new TransactionInstruction({
+//         keys: [],
+//         programId: MEMO_PROGRAM_ID,
+//         data: Buffer.from(memo, 'utf8'),
+//       }),
+//     )
 
-    // ---------------- BLOCKHASH + FEEPAYER ----------------
+//     // ---------------- BLOCKHASH + FEEPAYER ----------------
 
-    transaction.feePayer = sender
-    const latest = await connection.getLatestBlockhash()
-    transaction.recentBlockhash = latest.blockhash
+//     transaction.feePayer = sender
+//     const latest = await connection.getLatestBlockhash()
+//     transaction.recentBlockhash = latest.blockhash
 
-    // ---------------- SEND ----------------
+//     // ---------------- SEND ----------------
 
-    const signature = await wallet.value.sendTransaction(
-      transaction,
-      connection,
-    )
+//     const signature = await wallet.value.sendTransaction(
+//       transaction,
+//       connection,
+//     )
 
-    await connection.confirmTransaction({
-      signature,
-      ...latest,
-    })
+//     await connection.confirmTransaction({
+//       signature,
+//       ...latest,
+//     })
 
-    transactionId.value = signature
-    loadingPayment.value = false
-    disablePayment.value = false
+//     transactionId.value = signature
+//     loadingPayment.value = false
+//     disablePayment.value = false
 
-    await sendConfirmPaymentRequest()
-  }
-  catch (error) {
-    console.error('❌ Payment failed:', error)
+//     await sendConfirmPaymentRequest()
+//   }
+//   catch (error) {
+//     console.error('❌ Payment failed:', error)
 
-    disablePayment.value = true
-    loadingPayment.value = false
-    paymentId.value = null
-    transactionId.value = null
+//     disablePayment.value = true
+//     loadingPayment.value = false
+//     paymentId.value = null
+//     transactionId.value = null
 
-    $toast.error(error?.message || 'Payment failed')
-  }
-}
+//     $toast.error(error?.message || 'Payment failed')
+//   }
+// }
 
-const sendConfirmPaymentRequest = async () => {
-  try {
-    const responsePaymentConfirmed = await verifyPayment(paymentId.value, transactionId.value)
-    if (responsePaymentConfirmed.succeeded) {
-      emit('chargeWalletSuccessfull')
-      loadingPayment.value = false
-      $toast.success(`Your Wallet Charge Successfully.`)
-      loadingPayment.value = false
-      paymentId.value = null
-      transactionId.value = null
-    }
-    else {
-      disablePayment.value = false
-      loadingPayment.value = false
-      paymentId.value = null
-      const id = transactionId.value
-      $toast.error(
-        `We couldn’t process your payment. Please try again later.Transaction ID: ${id}`,
-      )
-      transactionId.value = null
-    }
-  }
-  catch (error) {
-    console.log(error)
+// const sendConfirmPaymentRequest = async () => {
+//   try {
+//     const responsePaymentConfirmed = await verifyPayment(paymentId.value, transactionId.value)
+//     if (responsePaymentConfirmed.succeeded) {
+//       emit('chargeWalletSuccessfull')
+//       loadingPayment.value = false
+//       $toast.success(`Your Wallet Charge Successfully.`)
+//       loadingPayment.value = false
+//       paymentId.value = null
+//       transactionId.value = null
+//     }
+//     else {
+//       disablePayment.value = false
+//       loadingPayment.value = false
+//       paymentId.value = null
+//       const id = transactionId.value
+//       $toast.error(
+//         `We couldn’t process your payment. Please try again later.Transaction ID: ${id}`,
+//       )
+//       transactionId.value = null
+//     }
+//   }
+//   catch (error) {
+//     console.log(error)
 
-    disablePayment.value = false
-    loadingPayment.value = false
-    paymentId.value = null
-    const id = transactionId.value
-    $toast.error(
-      `We couldn’t process your payment. Please try again later.Transaction ID: ${id}`,
-    )
-    transactionId.value = null
-  }
-}
+//     disablePayment.value = false
+//     loadingPayment.value = false
+//     paymentId.value = null
+//     const id = transactionId.value
+//     $toast.error(
+//       `We couldn’t process your payment. Please try again later.Transaction ID: ${id}`,
+//     )
+//     transactionId.value = null
+//   }
+// }
 </script>
 
-<style>
-.earn-free {
-  width: 32%;
-}
-.line-seperator {
-  width: 2px;
-  height: 100px;
-  background-color: #f2f4f7;
-}
-.line-or {
-  width: 100%;
-  height: 2px;
-  background-color: #f2f4f7;
-}
-.circle-div {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-}
-.border-btn {
-  border: 1px solid #cbccce;
-}
-.swv-modal {
-  z-index: 10000 !important;
-}
-.balance-info {
-  background-color: #ebebeb;
-  border: 1px solid #e0e0e0;
-}
-@media only screen and (max-width: 960px) {
-  .mobile-style {
+  <style>
+    .earn-free {
+    width: 32%;
+    }
+    .line-seperator {
+    width: 2px;
+    height: 100px;
+    background-color: #f2f4f7;
+    }
+    .line-or {
+    width: 100%;
+    height: 2px;
+    background-color: #f2f4f7;
+    }
+    .circle-div {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    }
+    .border-btn {
+    border: 1px solid #cbccce;
+    }
+    .swv-modal {
+    z-index: 10000 !important;
+    }
+    .balance-info {
+    background-color: #ebebeb;
+    border: 1px solid #e0e0e0;
+    }
+    @media only screen and (max-width: 960px) {
+    .mobile-style {
     position: absolute;
     bottom: 0;
     border-radius: 24px 24px 0 0 !important;
-  }
-}
-</style>
+    }
+    }
+  </style>
