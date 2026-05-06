@@ -1,8 +1,8 @@
 <template>
   <v-dialog
     v-model="dialogModel"
-    max-width="500"
     :fullscreen="!mdAndUp"
+    max-width="1000"
     @click="clickOnOverlay"
   >
     <div
@@ -11,7 +11,7 @@
     >
       <v-row class="d-flex align-center">
         <v-col cols="10">
-          <span class="text-h4">Payment</span>
+          <span class="text-h4">Upgrade securely</span>
         </v-col>
         <v-col
           cols="2"
@@ -123,7 +123,7 @@ const chargeWalletSuccessfull = async () => {
 <style scoped>
 @media only screen and (max-width: 960px) {
   .mobile-style {
-    max-height: 90%;
+    max-height: 100%;
     position: absolute;
     bottom: 0;
     border-radius: 24px 24px 0 0 !important;

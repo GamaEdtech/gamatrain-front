@@ -282,7 +282,13 @@ const handleDownloadClick = async (type: TypeFile, extraId?: string) => {
       }
 
       pendingDownload.value = { type, extraId }
-      showCoinPaymentModal.value = true
+      if ((Number(balanceResult.data) / 10 ** 6) > 5) {
+        handleCoinPaymentConfirm()
+        startDownload(type, extraId)
+      }
+      else {
+        showCoinPaymentModal.value = true
+      }
     }
     else {
       downloadingItems.value.delete(downloadKey)
@@ -446,7 +452,7 @@ const handleCoinPaymentConfirm = async () => {
       'Past paper download',
     )
     if (response.succeeded) {
-      showCoinAnimation.value = true
+      // showCoinAnimation.value = true
       // Wait for animation to complete before starting download
       // The download will be triggered in handleAnimationComplete
     }
