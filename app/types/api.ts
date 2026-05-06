@@ -188,6 +188,7 @@ export interface AdminPaymentDTO {
   lastName?: string
   amount: number
   currency: CurrencyPayment
+  gateway: PaymentGateway
   status: StatusPayment
   creationDate: string
   verifyDate?: string
