@@ -21,7 +21,7 @@
           </v-icon>
         </v-btn>
       </div>
-      <div class="w-100 d-flex align-center ga-10 mt-6 mb-4 mx-4">
+      <div class="w-100 d-flex align-center ga-10 mt-6 mb-4 px-4">
         <span
           v-for="status in statusOption"
           :key="status"

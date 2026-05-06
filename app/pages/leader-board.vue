@@ -131,9 +131,12 @@
 
     <v-row
       align="center"
-      class="mt-10"
+      class="mt-10 mx-0 w-100"
     >
-      <v-col cols="12">
+      <v-col
+        cols="12"
+        class="pa-0"
+      >
         <div class="stay-update">
           <p class="gtext-t1 font-weight-heavy text-white mt-15 mb-12">
             Stay in the loop with updates
