@@ -138,7 +138,7 @@
           <div
             class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
           >
-            {{ formatAmount(item.amount, item.currency) }}
+            {{ formatAmount(item.amount, item.currency, item.gateway) }}
           </div>
         </template>
 
@@ -146,7 +146,15 @@
           <div
             class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
           >
-            {{ item.currency }}
+            {{ item.gateway=='Stripe' ? 'USD' : item.currency }}
+          </div>
+        </template>
+
+        <template #[`item.gateway`]="{ item }">
+          <div
+            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
+          >
+            {{ item.gateway }}
           </div>
         </template>
 
@@ -330,6 +338,7 @@ import type {
   AdminPaymentDTO,
   StatusPayment,
   CurrencyPayment,
+  PaymentGateway,
 } from '~/types/api'
 import { TOKEN_DECIMALS } from '~/composables/useJupiterSwap'
 
@@ -357,6 +366,12 @@ const headers = [
   {
     title: 'Currency',
     key: 'currency',
+    sortable: false,
+    width: '5vw',
+  },
+  {
+    title: 'Gateway',
+    key: 'gateway',
     sortable: false,
     width: '5vw',
   },
@@ -502,8 +517,10 @@ const copyWalletAddress = (address: string | null | undefined) => {
   }
 }
 
-const formatAmount = (amount: number, currency: CurrencyPayment) => {
+const formatAmount = (amount: number, currency: CurrencyPayment, gateway: PaymentGateway) => {
   const decimals = TOKEN_DECIMALS[currency]
+  if (gateway === 'Stripe')
+    return amount
   const value = amount / (10 ** decimals)
   const fixValue = value
     .toFixed(decimals)
