@@ -450,6 +450,7 @@ export interface AdminAppSettingsDTO {
   schoolImageContributionConfirmationEmailTemplate: string
   removeSchoolImageContributionConfirmationEmailTemplate: string
   schoolContributionConfirmationEmailTemplate: string
+  schoolContributionRejectionEmailTemplate: string
   schoolIssuesContributionConfirmationEmailTemplate: string
   postContributionConfirmationEmailTemplate: string
   ticketConfirmationEmailTemplate: string
