@@ -72,6 +72,7 @@ export default defineNuxtConfig({
 
   imports: {
     autoImport: true,
+    dirs: ['composables/**'],
   },
 
   // Development modules
@@ -240,6 +241,7 @@ export default defineNuxtConfig({
     '/test-maker/**': { ssr: false, prerender: true },
     '/user/**': { ssr: false },
     '/admin/**': { ssr: false },
+    '/payments/**': { ssr: false },
   },
   // Development server configuration
   devServer: {

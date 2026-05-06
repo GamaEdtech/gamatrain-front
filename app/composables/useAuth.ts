@@ -99,7 +99,7 @@ export const useAuth = () => {
     return response
   }
 
-  const isAuthenticated = computed(() => !!cookieTokenV2.value && !!cookieTokenV2.value)
+  const isAuthenticated = computed(() => !!cookieToken.value && !!cookieTokenV2.value)
 
   return {
     cookieToken,

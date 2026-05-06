@@ -83,7 +83,8 @@
               @click="chooseBoard(board)"
             >
               <img
-                :src="board.img"
+                v-if="board.icon"
+                :src="`/images/boards/${board.icon}.svg`"
                 :alt="board.title"
                 width="26"
                 height="26"
@@ -207,6 +208,8 @@ const router = useRouter()
 
 const emit = defineEmits(['nextStep', 'prevStep'])
 
+const { loadingGetData: isLoadingBoard, data: boards, getData: getBoards } = useBoardsApi()
+
 onMounted(async () => {
   await Promise.allSettled([
     getTags(),
@@ -243,27 +246,7 @@ const chooseTag = (tag) => {
   }
 }
 
-const isLoadingBoard = ref(true)
 const selectedBoards = ref([])
-const boards = ref([])
-
-const getBoards = async () => {
-  try {
-    isLoadingBoard.value = true
-    const responseBoard = await useApiService.get(
-      '/api/v1/boards',
-    )
-    if (responseBoard.data) {
-      boards.value = responseBoard.data
-    }
-  }
-  catch (error) {
-    console.error('error', error)
-  }
-  finally {
-    isLoadingBoard.value = false
-  }
-}
 
 const chooseBoard = (board) => {
   if (selectedBoards.value.includes(board.id)) {

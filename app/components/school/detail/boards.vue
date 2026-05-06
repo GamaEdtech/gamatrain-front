@@ -37,7 +37,8 @@
           rounded="lg"
         >
           <img
-            :src="board.img"
+            v-if="board.icon"
+            :src="`/images/boards/${board?.icon}.svg`"
             :alt="board.title"
             width="26"
             height="26"
@@ -98,7 +99,7 @@
             @click="chooseBoard(board)"
           >
             <img
-              v-show="board.icon"
+              v-if="board.icon"
               :src="`/images/boards/${board?.icon}.svg`"
               :alt="board.title"
               width="26"
@@ -136,38 +137,20 @@ const props = defineProps({
   },
 })
 
+const { loadingGetData: isLoadingBoard, data: boards, getData: getBoards } = useBoardsApi()
 const auth = useAuth()
 const { $toast } = useNuxtApp()
 const { mdAndUp } = useDisplay()
 const route = useRoute()
 const router = useRouter()
-const isLoadingBoard = ref(true)
+
 const selectedBoards = ref([])
-const boards = ref([])
 const loadingContribute = ref(false)
 const sizeSkeletonBoard = [100, 110, 90, 120, 90, 84]
 
 onMounted(async () => {
   await getBoards()
 })
-
-const getBoards = async () => {
-  try {
-    isLoadingBoard.value = true
-    const responseBoard = await useApiService.get(
-      '/api/v2/boards',
-    )
-    if (responseBoard.data) {
-      boards.value = responseBoard.data
-    }
-  }
-  catch (error) {
-    console.error('error', error)
-  }
-  finally {
-    isLoadingBoard.value = false
-  }
-}
 
 const dialogModel = ref(false)
 

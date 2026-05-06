@@ -3,28 +3,50 @@
     id="gombo-box"
     class="gombo-box w-100"
   >
-    <v-text-field
-      v-model="inputText"
-      rounded
-      readonly
-      variant="outlined"
-      hide-details
-      append-inner-icon="mdi-chevron-down"
-      :dense="dense"
-      :disabled="disabled"
-      clearable
-      class="gombo-box-input text-grey700"
-      base-color="grey500"
-      color="#ffb300"
-      @click="getList"
-      @click:clear="clearValue"
-    >
-      <template #label>
-        <span class="primary-gray-700 font-weight-medium size-lable">{{
-          label
-        }}</span>
-      </template>
-    </v-text-field>
+    <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+      <div
+        v-if="!defalutLable"
+        class="text-h6 text-grey700 ml-2"
+      >
+        {{ label }}
+      </div>
+      <v-text-field
+        v-model="inputText"
+        :rounded="rounded"
+        readonly
+        variant="outlined"
+        hide-details
+        append-inner-icon="mdi-chevron-down"
+        :dense="dense"
+        :disabled="disabled"
+        clearable
+        class="w-100 gombo-box-input text-grey700"
+        :base-color="baseColor"
+        :color="color"
+        :density="density"
+        :rules="rules"
+        @click="getList"
+        @click:clear="clearValue"
+      >
+        <template
+          v-if="defalutLable"
+          #label
+        >
+          <span class="primary-gray-700 font-weight-medium size-lable">{{
+            label
+          }}</span>
+        </template>
+        <template #prepend-inner>
+          <v-progress-circular
+            v-if="loadingValue || !dataLoading"
+            indeterminate
+            size="20"
+            color="#ffb300"
+            class="mr-2"
+          />
+        </template>
+      </v-text-field>
+    </div>
 
     <v-bottom-sheet v-model="sheet">
       <v-card
@@ -132,6 +154,34 @@ const props = defineProps({
   dataLoading: {
     type: Boolean,
     default: true,
+  },
+  baseColor: {
+    type: String,
+    default: 'grey500',
+  },
+  color: {
+    type: String,
+    default: 'primary',
+  },
+  density: {
+    type: String,
+    default: 'default',
+  },
+  rounded: {
+    type: String,
+    default: 'xl',
+  },
+  defalutLable: {
+    type: Boolean,
+    default: true,
+  },
+  rules: {
+    type: Array,
+    default: () => [],
+  },
+  loadingValue: {
+    type: Boolean,
+    default: false,
   },
 })
 

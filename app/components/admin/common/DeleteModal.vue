@@ -26,19 +26,20 @@
 <script setup lang="ts">
 interface IDeleteModal {
   modelValue: boolean
+  loading?: boolean
 }
 
-const props = defineProps<IDeleteModal>()
+const props = withDefaults(defineProps<IDeleteModal>(), {
+  loading: false,
+})
 const emit = defineEmits(['update:modelValue', 'confirm'])
 const dialogModel = computed({
   get: () => props.modelValue,
   set: value => emit('update:modelValue', value),
 })
 
-const loading = ref(false)
 const confirm = async () => {
   emit('confirm')
-  emit('update:modelValue', false)
 }
 </script>
 

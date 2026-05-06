@@ -36,7 +36,7 @@
         >
           <img
             src="/images/car-racing-banner.webp"
-            alt=""
+            alt="Car Racing and learning"
           >
         </v-col>
       </v-row>

@@ -3,7 +3,12 @@ import { useDisplay } from 'vuetify'
 
 const { mobile } = useDisplay()
 const drawer = ref(true)
+const { user } = useUser()
+const auth = useAuth()
 
+const logout = () => {
+  auth.logout()
+}
 // Automatically open drawer on desktop, close on mobile
 watch(
   mobile,
@@ -76,6 +81,11 @@ const menuItems = [
         title: 'Home',
         link: '/',
         icon: 'md:home_outlined',
+      },
+      {
+        title: 'Languages',
+        link: '/admin/languages',
+        icon: 'md:language_outlined',
       },
       {
         title: 'Settings',
@@ -161,23 +171,47 @@ const { isOnline } = useNetwork()
         </div>
 
         <div
-          class="d-flex align-center ga-2"
-          style="position: absolute; bottom: 20px; left: 20px"
+          class="d-flex justify-space-between align-center"
+          style="position: absolute; bottom: 20px; left: 10px;width : calc(100% - 20px)"
         >
-          <img
-            class="rounded-pill"
-            style="width: 36px; height: 36px; border: 1px solid white"
-            src="/images/adminAuth.png"
-            alt=""
-          >
-          <div>
-            <p class="gtext-t5 font-weight-medium">
-              shelina Shay
-            </p>
-            <p class="gtext-t6 primary-gray-400">
-              Admin@Gama
-            </p>
+          <div class="d-flex align-center justify-start ga-1">
+            <v-avatar
+              v-if="user && user.avatar"
+              :image="user.avatar"
+              class="border-image"
+            />
+            <v-avatar
+              v-else
+              color="white"
+            >
+              <span class="text-h5 text-grey800">{{
+                user?.firstName ? user.firstName[0].toUpperCase() : "A"
+              }}</span>
+            </v-avatar>
+            <div>
+              <p class="gtext-t5 font-weight-medium">
+                {{ !user.firstName && !user.lastName ? `Admin` : (user.firstName ? user.firstName : "") + " "+ (user.lastName ? user.lastName : "") }}
+              </p>
+              <p class="gtext-t6 primary-gray-400">
+                Admin@Gamatrain
+              </p>
+            </div>
           </div>
+
+          <v-btn
+            flat
+            icon
+            color="error"
+            size="small"
+            @click="logout"
+          >
+            <v-icon
+              color="white"
+              size="24"
+            >
+              md:exit_to_app
+            </v-icon>
+          </v-btn>
         </div>
       </v-navigation-drawer>
 
@@ -201,6 +235,11 @@ const { isOnline } = useNetwork()
 </template>
 
 <style scoped>
+.border-image {
+  border: 2px solid white;
+  width : 36px;
+  height: 36px;
+}
 .user {
   display: flex;
   align-items: center;

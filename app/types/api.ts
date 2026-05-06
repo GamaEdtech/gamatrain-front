@@ -161,6 +161,13 @@ export interface LessonTreeDTO {
   list: UnitLessonDTO[]
 }
 
+export interface BoardDTO {
+  id: number
+  code: number
+  title: string
+  icon: string
+}
+
 export interface AdminTransactionDTO {
   id: number
   userId: number
@@ -459,4 +466,58 @@ export interface BlogDTO {
   imageUri: string
   visibilityType: string
   publishDate: string
+}
+
+export interface AdminUserDTO {
+  id: number
+  username: string
+  firstName: string
+  lastName: string
+  email: string
+  phoneNumber: string
+  enabled: boolean
+  registrationDate: string
+  referralId: string
+}
+export interface AdminTokenDTO {
+  token: string
+  expirationTime: string
+}
+export interface AdminPermissionDTO {
+  roles: string[]
+  systemClaims: string[]
+  permissions: {
+    value: string
+    text: string
+    items: string[]
+    hasPermission: boolean
+  }[]
+}
+
+export interface AdminLanguageDTO {
+  id: number
+  name: string
+  code: string
+  icon: string
+  isEnable: boolean
+  isDefault: boolean
+}
+export interface AdminCultureDTO {
+  code: string
+  displayName: string
+}
+
+export type PaymentCurrency = 'SOL' | 'USDC'
+export type PaymentGateway = 'GamaTrain' | 'Stripe'
+
+export interface PayloadPaymentDTO {
+  amount: number
+  currency: PaymentCurrency
+  gateway: PaymentGateway
+  title: string
+  description: string
+}
+export interface PaymentDTO {
+  paymentId: number
+  url: string
 }
