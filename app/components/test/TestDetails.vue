@@ -92,12 +92,12 @@
         <div
           v-for="item in answers"
           :key="item.key"
-          class="d-flex align-center flex-wrap ga-3 cursor-pointer w-100"
+          class="d-flex align-center flex-wrap ga-3 cursor-pointer w-100 position-relative container-choice"
           @click="handleAnswerSelect(item.key)"
         >
           <div
             :class="[
-              'choice-div text-h6 text-sm-h4 text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
+              'choice-div position-absolute left-0 top-0 text-h6 text-sm-h4 text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
               {
                 'border-grey200': getChoiceStatus(item.key) === 'default',
                 'border-success': getChoiceStatus(item.key) === 'success',
@@ -130,7 +130,7 @@
             </v-icon>
           </div>
           <div
-            class="text-h6 text-sm-h4 text-grey800 overflow-x-auto overflow-y-hidden"
+            class="text-h6 text-sm-h4 choise-text text-grey800 overflow-x-auto overflow-y-hidden"
             v-html="item.text"
           />
           <img
@@ -421,10 +421,17 @@ const loadNextTest = async () => {
   width: auto;
   max-width: 100%;
 }
+.container-choice{
+  min-height: 30px;
+}
 .choice-div{
   min-width : 30px;
   min-height: 30px;
-    max-width : 30px;
+  max-width : 30px;
   max-height: 30px;
+}
+.choise-text{
+  text-indent: 40px;
+  line-height: 34px;
 }
 </style>

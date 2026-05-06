@@ -53,7 +53,7 @@
 
     <div class="d-flex align-center justify-center">
       <div
-        class="d-flex flex-column align-center justify-center ga-1"
+        class="d-flex flex-column align-center justify-center ga-1 cursor-pointer"
         @click="showChargeWalletModal = true"
       >
         <v-icon
@@ -71,7 +71,7 @@
         class="mx-3"
       />
       <div
-        class="d-flex flex-column align-center justify-center ga-1"
+        class="d-flex flex-column align-center justify-center ga-1 cursor-pointer"
         @click="showWithdrawModal = true"
       >
         <v-icon
@@ -88,7 +88,7 @@
         vertical
         class="mx-3"
       />
-      <div class="d-flex flex-column align-center justify-center ga-1">
+      <div class="d-flex flex-column align-center justify-center ga-1 opacity-60">
         <v-icon
           color="grey400"
           size="20"
