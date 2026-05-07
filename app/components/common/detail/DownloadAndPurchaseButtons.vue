@@ -158,7 +158,7 @@
       </template>
 
       <v-btn
-        v-if="exams && exams[0]?.status != `7`"
+        v-if="exams && exams[0]?.status == `1`"
         rounded="pill"
         class="width-btn btn-begin-quiz d-flex align-center justify-center"
         color="#5500e835"
@@ -170,7 +170,7 @@
           Begin Quiz</span>
       </v-btn>
 
-      <v-btn
+      <!-- <v-btn
         v-else
         :to="`/test-maker/create?board=${section}&grade=${base}&subject=${lesson}&paperId=${id}`"
         rounded="pill"
@@ -181,7 +181,7 @@
       >
         <span class="text-primary text-h5 font-weight-bold mt-1 mx-2">
           Create Quiz</span>
-      </v-btn>
+      </v-btn> -->
     </div>
 
     <div
@@ -242,6 +242,7 @@ interface IDownloadAndPurchaseButtons {
   section: string
   base: string
   lesson: string
+  testType: string
 }
 
 type TypeFile = 'q_word' | 'q_pdf' | 'a_file' | 'extra'
@@ -432,11 +433,34 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
 // - Extra files (audio, additional resources)
 // - Question papers (q_word, q_pdf) remain FREE
 const requiresCoinPaymentForFile = (type: TypeFile) => {
-  if (props.year == '2025' || props.year == 2025) {
-    if (type === 'a_file' || type === 'extra') {
-      return true
-    }
+  const paidTestTypes = [
+    '8691', '7130', '6897', '8073', '8344',
+  ]
+
+  const paidLessons = [
+    '6649', '6527', '6650', '6526',
+    '6651', '6529', '6652', '6532',
+    '6653', '6516', '6654', '6515',
+    '6655', '6519', '6656', '6522',
+  ]
+
+  if (props.year === '2026') {
+    return true
   }
+  else if (paidTestTypes.some(id => props.testType.includes(id)))
+    return true
+  else if (type === 'extra')
+    return true
+  else if (
+    type === 'a_file'
+    && (
+      props.year === '2025'
+      || paidLessons.some(id => props.lesson.includes(id))
+    )
+  ) {
+    return true
+  }
+
   return false
 }
 
