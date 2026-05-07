@@ -6,6 +6,10 @@ interface FileDownloadEvent {
   subject_code?: string
 }
 
+interface PaymentEvent {
+  route: string
+}
+
 export const useGtmEvents = () => {
   const { $gtm } = useNuxtApp()
 
@@ -19,7 +23,18 @@ export const useGtmEvents = () => {
     console.log('[GTM] file_download_click', payload)
   }
 
+  const trackPayment = (payload: PaymentEvent) => {
+    if (!$gtm) {
+      console.warn('[GTM] Not initialized')
+      return
+    }
+
+    $gtm.push('payment', payload)
+    console.log('[GTM] payment', payload)
+  }
+
   return {
     trackFileDownload,
+    trackPayment,
   }
 }
