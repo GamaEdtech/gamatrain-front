@@ -69,6 +69,7 @@ defineProps<{
 }>()
 const { $toast } = useNuxtApp()
 const route = useRoute()
+const { trackPayment } = useGtmEvents()
 const { startPayment, loadingPayment, savePathRedirect } = usePayment()
 
 const minAmount = 2
@@ -80,6 +81,9 @@ const pay = async (amount: number) => {
     $toast.error(`Minimum amount is $${minAmount}`)
     return
   }
+  trackPayment({
+    route: route.fullPath,
+  })
   const payload = {
     amount: amount,
     currency,
