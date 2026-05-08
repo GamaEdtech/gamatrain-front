@@ -312,6 +312,34 @@
           />
         </v-menu>
 
+        <common-gombo-box
+          v-model="status"
+          label="Status"
+          :items="statusList.map((item) => ({
+            id: item,
+            title: item,
+          }))"
+          rounded="lg"
+          density="compact"
+          base-color="grey800"
+          color="primary"
+          class="mt-1"
+        />
+
+        <common-gombo-box
+          v-model="gateway"
+          label="Gateway"
+          :items="gatewayList.map((item) => ({
+            id: item,
+            title: item,
+          }))"
+          rounded="lg"
+          density="compact"
+          base-color="grey800"
+          color="primary"
+          class="mt-6"
+        />
+
         <v-btn
           color="primary"
           rounded="xl"
@@ -408,6 +436,12 @@ const sortList = [
   },
 ]
 
+const status = ref('')
+const statusList = ['Pending', 'Paid', 'Failed']
+
+const gateway = ref('')
+const gatewayList = ['GamaTrain', 'Stripe']
+
 const getData = async () => {
   loading.value = true
   try {
@@ -419,6 +453,8 @@ const getData = async () => {
       'IdentifierId': identifierId.value,
       'StartDate': startDate.value ? dayjs(startDate.value).toISOString() : null,
       'EndDate': endDate.value ? dayjs(endDate.value).toISOString() : null,
+      'Gateway': gateway.value,
+      'Status': status.value,
     }
     if (sortSelected.value && sortSelected.value.length > 0) {
       sortSelected.value.forEach((sortOption, index) => {
@@ -474,6 +510,8 @@ const isShowClearFilter = computed(() => {
     || identifierId.value.length > 0
     || startDate.value.toString().length > 0
     || endDate.value.toString().length > 0
+    || status.value.length > 0
+    || gateway.value.length > 0
   ) {
     return true
   }
@@ -485,6 +523,8 @@ const clearFilter = async () => {
   identifierId.value = ''
   startDate.value = ''
   endDate.value = ''
+  status.value = ''
+  gateway.value = ''
   page.value = 1
   await getData()
 }
