@@ -55,7 +55,6 @@
 
 <script setup lang="ts">
 import type { PaymentCurrency, PaymentGateway } from '~/types/api'
-import { usePayment } from '../../composables/api/usePayment'
 
 defineProps<{
   plan: {

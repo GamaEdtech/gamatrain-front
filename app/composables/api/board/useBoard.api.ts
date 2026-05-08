@@ -7,7 +7,7 @@ import type {
 const data = ref<BoardDTO[]>()
 const loadingGetData = ref(true)
 
-export const useBoardsApi = () => {
+export const useBoard = () => {
   const { $toast } = useNuxtApp()
 
   const getData = async () => {

@@ -178,7 +178,6 @@
 import type {
   AdminUserDTO,
 } from '~/types/api'
-import { useUserManager } from '~/composables/api/admin/useUserManager'
 
 interface IUserDetailModal {
   id: string
@@ -187,7 +186,7 @@ interface IUserDetailModal {
 const props = defineProps<IUserDetailModal>()
 const emit = defineEmits(['EditUserSuccessFull'])
 
-const { getItemById, loadingGetItemById, editItem, loadingEditItem } = useUserManager()
+const { getItemById, loadingGetItemById, editItem, loadingEditItem } = useUserManagerAdmin()
 
 const newUser = reactive({
   username: '',

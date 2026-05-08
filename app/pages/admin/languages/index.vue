@@ -214,7 +214,7 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { loadingGetData: loading, data: list, getData, totalCount, pageCount, deleteItem, loadingDeleteItem } = useLanguages()
+const { loadingGetData: loading, data: list, getData, totalCount, pageCount, deleteItem, loadingDeleteItem } = useLanguageAdmin()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '10vw' },

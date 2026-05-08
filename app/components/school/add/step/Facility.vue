@@ -208,7 +208,7 @@ const router = useRouter()
 
 const emit = defineEmits(['nextStep', 'prevStep'])
 
-const { loadingGetData: isLoadingBoard, data: boards, getData: getBoards } = useBoardsApi()
+const { loadingGetData: isLoadingBoard, data: boards, getData: getBoards } = useBoard()
 
 onMounted(async () => {
   await Promise.allSettled([

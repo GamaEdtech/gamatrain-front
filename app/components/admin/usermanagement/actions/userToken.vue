@@ -97,15 +97,13 @@
 </template>
 
 <script setup lang="ts">
-import { useUserManager } from '~/composables/api/admin/useUserManager'
-
 interface IUserToken {
   id: string
 }
 
 const props = defineProps<IUserToken>()
 
-const { loadingGetToken, loadingDeleteToken, loadingGenerateToken, getToken, deleteToken, generateToken, tokenInfo } = useUserManager()
+const { loadingGetToken, loadingDeleteToken, loadingGenerateToken, getToken, deleteToken, generateToken, tokenInfo } = useUserManagerAdmin()
 
 onMounted(async () => {
   await getToken(props.id)
