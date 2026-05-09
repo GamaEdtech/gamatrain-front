@@ -1,6 +1,6 @@
 <template>
   <div
-    class="main-teacher-header w-100 d-flex flex-column"
+    class="main-teacher-header w-100 d-flex flex-column mt-n4"
   >
     <div class="top-section-header w-100 d-flex bg-grey900 position-relative d-flex align-center justify-center">
       <img
@@ -16,98 +16,96 @@
         class="h-100 position-absolute right-0 top-0"
       >
     </div>
-    <v-container class="w-100 d-flex flex-column">
-      <div class="w-100 d-flex justify-space-between">
-        <div class="profile-div d-flex ga-1">
-          <div class="image-div rounded-circle position-relative d-flex align-center justify-center">
-            <img
-              src="/images/member/avatar.svg"
-              alt="Profile Teacher"
-              class="profile-img rounded-circle"
-              width="140"
-              height="140"
+    <div class="w-100 d-flex justify-space-between pa-4">
+      <div class="profile-div d-flex ga-1">
+        <div class="image-div rounded-circle position-relative d-flex align-center justify-center">
+          <img
+            src="/images/member/avatar.svg"
+            alt="Profile Teacher"
+            class="profile-img rounded-circle"
+            width="140"
+            height="140"
+          >
+          <div class="status-div rounded-circle position-absolute bg-success" />
+          <div class="w-100 d-flex justify-center container-badge position-absolute">
+            <div
+              v-for="i in 3"
+              :key="i"
+              class="badge-div rounded-circle bg-white d-flex align-center justify-center"
             >
-            <div class="status-div rounded-circle position-absolute bg-success" />
-            <div class="w-100 d-flex justify-center container-badge position-absolute">
-              <div
-                v-for="i in 3"
-                :key="i"
-                class="badge-div rounded-circle bg-white d-flex align-center justify-center"
-              >
-                {{ i }}
-              </div>
+              {{ i }}
             </div>
           </div>
-          <span class="text-subtitle-1 text-sm-h6 text-grey700 font-weight-regular">He's coming right now!</span>
         </div>
-        <div class="d-flex ga-2">
-          <span class="text-subtitle-1 text-grey400 font-weight-regular">
-            <v-icon
-              color="grey400"
-            >md:visibility</v-icon>
-            View
-          </span>
-          <span class="text-h6 text-grey700 font-weight-bold">
-            2.5 K
-          </span>
-        </div>
+        <span class="text-subtitle-1 text-sm-h6 text-grey700 font-weight-regular">He's coming right now!</span>
       </div>
-      <div class="w-100 d-flex align-end ga-4 mt-8">
-        <span class="text-h4 text-sm-h2 font-weight-bold text-grey900">Alireza ABdi</span>
-        <span class="text-h6 text-sm-h5 font-weight-bold text-grey700 mb-1 d-flex ga-1">
+      <div class="d-flex ga-2">
+        <span class="text-subtitle-1 text-grey400 font-weight-regular">
           <v-icon
-            color="primary"
-            size="20"
-          >md:star</v-icon>
-          2.5</span>
+            color="grey400"
+          >md:visibility</v-icon>
+          View
+        </span>
+        <span class="text-h6 text-grey700 font-weight-bold">
+          2.5 K
+        </span>
       </div>
-      <span class="w-100 text-start text-h5 font-weight-regular text-grey700 mt-6">
-        In order to maintain the rights of the GamaTrain website and ensure the comfort of all users, rules have been established that users are required to follow. If a user violates these regulations.
-      </span>
-
-      <span class="w-100 text-start text-h6 font-weight-regular text-grey700 mt-4">
+    </div>
+    <div class="w-100 d-flex align-end ga-4 mt-8 px-4">
+      <span class="text-h4 text-sm-h2 font-weight-bold text-grey900">Alireza ABdi</span>
+      <span class="text-h6 text-sm-h5 font-weight-bold text-grey700 mb-1 d-flex ga-1">
         <v-icon
-          color="grey400"
-          size="16"
-          class="mb-1"
-        >md:location_on</v-icon>
-        14 Elmwood Gardens, Islington, London N1 2AS, United Kingdom
-      </span>
-      <div class="d-flex align-center justify-start ga-4 mt-6">
-        <v-btn
-          flat
-          rounded="pill"
-          color="grey100"
-          width="130"
-          class="text-grey500 font-weight-medium text-h5"
+          color="primary"
+          size="20"
+        >md:star</v-icon>
+        2.5</span>
+    </div>
+    <span class="w-100 text-start text-h5 font-weight-regular text-grey700 mt-6 px-4">
+      In order to maintain the rights of the GamaTrain website and ensure the comfort of all users, rules have been established that users are required to follow. If a user violates these regulations.
+    </span>
+
+    <span class="w-100 text-start text-h6 font-weight-regular text-grey700 mt-4 px-4">
+      <v-icon
+        color="grey400"
+        size="16"
+        class="mb-1"
+      >md:location_on</v-icon>
+      14 Elmwood Gardens, Islington, London N1 2AS, United Kingdom
+    </span>
+    <div class="d-flex align-center justify-start ga-4 mt-6 px-4 pb-4">
+      <v-btn
+        flat
+        rounded="pill"
+        color="grey100"
+        width="130"
+        class="text-grey500 font-weight-medium text-h5"
+      >
+        <v-icon
+          color="primary"
+          size="14"
+          class="mr-1"
         >
-          <v-icon
-            color="primary"
-            size="14"
-            class="mr-1"
-          >
-            md:forum
-          </v-icon>
-          Message
-        </v-btn>
-        <v-btn
-          flat
-          rounded="pill"
-          color="grey100"
-          width="130"
-          class="text-grey500 font-weight-medium text-h5"
+          md:forum
+        </v-icon>
+        Message
+      </v-btn>
+      <v-btn
+        flat
+        rounded="pill"
+        color="grey100"
+        width="130"
+        class="text-grey500 font-weight-medium text-h5"
+      >
+        <v-icon
+          color="primary"
+          size="14"
+          class="mr-1"
         >
-          <v-icon
-            color="primary"
-            size="14"
-            class="mr-1"
-          >
-            md:notifications_active
-          </v-icon>
-          Subscribe
-        </v-btn>
-      </div>
-    </v-container>
+          md:notifications_active
+        </v-icon>
+        Subscribe
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -134,6 +132,8 @@
   linear-gradient(to right, rgb(var(--v-theme-grey700)) ,rgb(var(--v-theme-primary))) border-box
 }
 .profile-img{
+  min-width : 140px;
+  min-height : 140px;
   width : 140px;
   height : 140px;
 }
@@ -161,12 +161,16 @@
     height : 20px;
   }
   .image-div{
+    min-width : 120px;
+    min-height : 120px;
     width : 120px;
     height : 120px;
     margin-top : -76px;
     border : 2px solid transparent;
   }
   .profile-img{
+    min-width : 104px;
+    min-height : 104px;
     width : 104px;
     height : 104px;
   }
@@ -181,12 +185,16 @@
     height : 12px;
   }
   .image-div{
+    min-width : 90px;
+    min-height : 90px;
     width : 90px;
     height : 90px;
     margin-top : -61px;
     border : 2px solid transparent;
   }
   .profile-img{
+    min-width : 78px;
+    min-height : 78px;
     width : 78px;
     height : 78px;
   }

@@ -1,16 +1,17 @@
 <template>
-  <div
-    class="w-100 d-flex flex-column mt-16"
+  <v-container
+    class="d-flex flex-column ga-2 mt-16"
   >
     <teacher-header />
-    <v-container
-      class="d-flex flex-column"
-    />
-  </div>
+    <teacher-skills class="box-shadow-div" />
+  </v-container>
 </template>
 
 <script setup lang="ts">
 </script>
 
 <style scoped>
+.box-shadow-div{
+  box-shadow: 0px 12px 30px 0px #1018280D;
+}
 </style>
