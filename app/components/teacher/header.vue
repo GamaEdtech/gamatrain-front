@@ -27,6 +27,9 @@
             height="140"
           >
           <div class="status-div rounded-circle position-absolute bg-success" />
+          <div class="bio-div bg-white position-absolute text-caption text-sm-h6 font-weight-medium text-grey700 text-no-wrap rounded-lg border-solid border-sm border-grey100 pa-1">
+            This moment. Be happy.
+          </div>
           <div class="w-100 d-flex justify-center container-badge position-absolute">
             <div
               v-for="i in 3"
@@ -152,6 +155,10 @@
   border : 1px solid rgb(var(--v-theme-grey100));
   margin-right: -12px;
 }
+.bio-div{
+  top: -40px;
+  left: -10px;
+}
 @media (max-width: 960px) {
   .top-section-header {
     min-height: 140px;
@@ -211,6 +218,9 @@
     width : 20px;
     height : 20px;
     margin-right: -8px;
+  }
+  .bio-div{
+    top: -30px;
   }
 }
 </style>
