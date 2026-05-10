@@ -4,6 +4,7 @@
   >
     <teacher-header />
     <teacher-skills class="box-shadow-div" />
+    <teacher-experience class="box-shadow-div" />
   </v-container>
 </template>
 
