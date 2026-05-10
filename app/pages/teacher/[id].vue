@@ -6,6 +6,7 @@
     <teacher-skills class="box-shadow-div" />
     <teacher-experience class="box-shadow-div" />
     <teacher-register-content class="box-shadow-div" />
+    <teacher-education class="box-shadow-div" />
   </v-container>
 </template>
 
