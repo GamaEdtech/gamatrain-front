@@ -1,203 +1,164 @@
 <template>
-  <div>
-    <v-dialog
-      v-model="dialogVisible"
-      transition="dialog-bottom-transition"
-      :fullscreen="display.xs.value"
-      max-width="820"
-    >
-      <v-card class="rounded-lg">
-        <v-card-text class="py-6 py-md-8 px-6 px-md-8">
-          <div class="d-flex align-center justify-space-between">
-            <div class="text-h3 font-weight-bold priamry-gray-700">
-              School images
-            </div>
-            <v-btn
-              icon
-              variant="text"
-              @click="dialogVisible = false"
-            >
-              <v-icon
-                size="26"
-                color="#475467"
-              >
-                md:close
-              </v-icon>
-            </v-btn>
+  <v-dialog
+    v-model="dialogVisible"
+    transition="dialog-bottom-transition"
+    :fullscreen="display.xs.value"
+    max-width="820"
+  >
+    <v-card class="rounded-lg">
+      <v-card-text class="py-6 py-md-8 px-6 px-md-8">
+        <div class="d-flex align-center justify-space-between">
+          <div class="text-h3 font-weight-bold priamry-gray-700">
+            School images
           </div>
-          <v-row class="mt-3">
-            <v-col
-              cols="12"
-              md="7"
-              class="d-flex flex-column align-center"
+          <v-btn
+            icon
+            variant="text"
+            @click="dialogVisible = false"
+          >
+            <v-icon
+              size="26"
+              color="#475467"
+            >
+              md:close
+            </v-icon>
+          </v-btn>
+        </div>
+        <v-row class="mt-3">
+          <v-col
+            cols="12"
+            md="7"
+            class="d-flex flex-column align-center"
+          >
+            <div
+              v-if="mainImageInformation && mainImageInformation.src"
+              class="w-100 d-flex align-center justify-center main-image-div"
+            >
+              <img
+                class="w-100 h-100 rounded-lg image-main"
+                :src="mainImageInformation.src"
+                alt="School image"
+              >
+            </div>
+            <div
+              v-else
+              class="w-100 rounded-lg d-flex align-center justify-center enter-img-holder cursor-pointer"
+            >
+              <div class="text-center">
+                <v-icon
+                  size="48"
+                  class="primary-gray-300 mb-10"
+                >
+                  md:panorama
+                </v-icon>
+                <p class="gtext-t4 primary-blue-500">
+                  No image
+                </p>
+                <div class="mt-2 gtext-t6 primary-gray-400">
+                  Accepted formats: JPG, PNG, WebP
+                </div>
+              </div>
+            </div>
+            <div
+              v-if="mainImageInformation"
+              class="w-100 d-flex align-center"
             >
               <div
-                v-if="mainImageInformation && mainImageInformation.src"
-                class="w-100 d-flex align-center justify-center main-image-div"
+                v-if="!mainImageInformation.isPendingUpload"
+                class="w-50 mt-6"
               >
-                <img
-                  class="w-100 h-100 rounded-lg image-main"
-                  :src="mainImageInformation.src"
-                  alt="School image"
+                <v-progress-circular
+                  v-show="!isDefaultImage && loadingSetDefaultImage"
+                  color="primary"
+                  indeterminate
+                />
+                <v-checkbox
+                  v-show="!isDefaultImage && !loadingSetDefaultImage"
+                  :model-value="isDefaultImage"
+                  color="primary"
+                  class="text-h4"
+                  hide-details
+                  false-icon="md:check_box_outline_blank"
+                  true-icon="md:check_box"
+                  @update:model-value="(val) => changeStatusDefaultImage(val)"
                 >
-              </div>
-              <div
-                v-else
-                class="w-100 rounded-lg d-flex align-center justify-center enter-img-holder cursor-pointer"
-              >
-                <div class="text-center">
-                  <v-icon
-                    size="48"
-                    class="primary-gray-300 mb-10"
-                  >
-                    md:panorama
-                  </v-icon>
-                  <p class="gtext-t4 primary-blue-500">
-                    No image
-                  </p>
-                  <div class="mt-2 gtext-t6 primary-gray-400">
-                    Accepted formats: JPG, PNG, WebP
-                  </div>
-                </div>
-              </div>
-              <div
-                v-if="mainImageInformation"
-                class="w-100 d-flex align-center"
-              >
-                <div
-                  v-if="!mainImageInformation.isPendingUpload"
-                  class="w-50 mt-6"
-                >
-                  <v-progress-circular
-                    v-show="!isDefaultImage && loadingSetDefaultImage"
-                    color="primary"
-                    indeterminate
-                  />
-                  <v-checkbox
-                    v-show="!isDefaultImage && !loadingSetDefaultImage"
-                    :model-value="isDefaultImage"
-                    color="primary"
-                    class="text-h4"
-                    hide-details
-                    false-icon="md:check_box_outline_blank"
-                    true-icon="md:check_box"
-                    @update:model-value="(val) => changeStatusDefaultImage(val)"
-                  >
-                    <template #label>
-                      <span class="text-h5 font-weight-bold text-no-wrap ml-1">Set as main Image</span>
-                    </template>
-                  </v-checkbox>
+                  <template #label>
+                    <span class="text-h5 font-weight-bold text-no-wrap ml-1">Set as main Image</span>
+                  </template>
+                </v-checkbox>
 
-                  <v-chip
-                    v-show="isDefaultImage"
-                    class="text-h6 font-weight-bold"
-                    color="success"
-                  >
-                    Default image
-                  </v-chip>
-                </div>
-                <div
-                  class="w-100 d-flex align-center justify-end ga-2 text-center gtext-t5 font-weight-heavy mt-6"
+                <v-chip
+                  v-show="isDefaultImage"
+                  class="text-h6 font-weight-bold"
+                  color="success"
                 >
-                  <span>
-                    {{ mainImageInformation.index
-                    }}<span class="primary-gray-400">/{{
-                      images.length
-                        + (croppedUploads ? croppedUploads.length : 0)
-                    }}</span></span>
-                  <v-chip
-                    v-if="mainImageInformation.isPendingUpload"
-                    class="text-h6 font-weight-bold"
-                    color="orange"
-                  >
-                    Pending upload
-                  </v-chip>
-                </div>
+                  Default image
+                </v-chip>
               </div>
-            </v-col>
+              <div
+                class="w-100 d-flex align-center justify-end ga-2 text-center gtext-t5 font-weight-heavy mt-6"
+              >
+                <span>
+                  {{ mainImageInformation.index
+                  }}<span class="primary-gray-400">/{{
+                    images.length
+                      + (croppedUploads ? croppedUploads.length : 0)
+                  }}</span></span>
+                <v-chip
+                  v-if="mainImageInformation.isPendingUpload"
+                  class="text-h6 font-weight-bold"
+                  color="orange"
+                >
+                  Pending upload
+                </v-chip>
+              </div>
+            </div>
+          </v-col>
+          <v-col
+            cols="12"
+            md="5"
+            class="d-flex flex-wrap"
+          >
+            <!-- Pending upload previews -->
             <v-col
-              cols="12"
-              md="5"
-              class="d-flex flex-wrap"
+              v-for="(preview, index) in pendingPreviews"
+              :key="`pending-${index}`"
+              cols="4"
+              sm="3"
+              md="4"
+              lg="6"
+              class="pa-1"
             >
-              <!-- Pending upload previews -->
-              <v-col
-                v-for="(preview, index) in pendingPreviews"
-                :key="`pending-${index}`"
-                cols="4"
-                sm="3"
-                md="4"
-                lg="6"
-                class="pa-1"
-              >
-                <div class="position-relative">
-                  <v-img
-                    :src="preview"
-                    aspect-ratio="1"
-                    class="position-relative rounded height-images pending-thumb"
-                    cover
-                    @click="handlePreviewSelected(preview, index)"
-                  />
-                  <div class="pending-badge">
-                    <v-btn
-                      icon
-                      flat
-                      width="20"
-                      height="20"
-                      color="#00000080"
-                    >
-                      <v-icon
-                        size="small"
-                        color="white"
-                      >
-                        md:cloud_upload
-                      </v-icon>
-                    </v-btn>
-                    <v-btn
-                      icon
-                      flat
-                      width="20"
-                      height="20"
-                      color="#F04438"
-                      @click="deletePreviewImage(index)"
-                    >
-                      <v-icon
-                        size="small"
-                        color="white"
-                      >
-                        md:close
-                      </v-icon>
-                    </v-btn>
-                  </div>
-                </div>
-              </v-col>
-              <v-col
-                v-for="(item, index) in images"
-                :key="`gallery-${index}`"
-                cols="4"
-                sm="3"
-                md="4"
-                lg="6"
-                class="pa-1 cursor-pointer"
-              >
-                <div class="position-relative">
-                  <v-img
-                    :src="item.fileUri?.replace(/^http:\/\//, 'https://')"
-                    aspect-ratio="1"
-                    class="position-relative rounded height-images"
-                    cover
-                    @click="handleSelectedImage(item, index)"
-                  />
-
+              <div class="position-relative">
+                <v-img
+                  :src="preview"
+                  aspect-ratio="1"
+                  class="position-relative rounded height-images pending-thumb"
+                  cover
+                  @click="handlePreviewSelected(preview, index)"
+                />
+                <div class="pending-badge">
                   <v-btn
                     icon
                     flat
                     width="20"
                     height="20"
-                    class="position-absolute position-delete"
+                    color="#00000080"
+                  >
+                    <v-icon
+                      size="small"
+                      color="white"
+                    >
+                      md:cloud_upload
+                    </v-icon>
+                  </v-btn>
+                  <v-btn
+                    icon
+                    flat
+                    width="20"
+                    height="20"
                     color="#F04438"
-                    :loading="item.loading"
-                    @click="deleteImage(item)"
+                    @click="deletePreviewImage(index)"
                   >
                     <v-icon
                       size="small"
@@ -207,77 +168,119 @@
                     </v-icon>
                   </v-btn>
                 </div>
-              </v-col>
+              </div>
+            </v-col>
+            <v-col
+              v-for="(item, index) in images"
+              :key="`gallery-${index}`"
+              cols="4"
+              sm="3"
+              md="4"
+              lg="6"
+              class="pa-1 cursor-pointer"
+            >
+              <div class="position-relative">
+                <v-img
+                  :src="item.fileUri?.replace(/^http:\/\//, 'https://')"
+                  aspect-ratio="1"
+                  class="position-relative rounded height-images"
+                  cover
+                  @click="handleSelectedImage(item, index)"
+                />
 
-              <v-col
-                cols="4"
-                sm="3"
-                md="4"
-                lg="6"
-                align="center"
-                justify="center"
-                class="fill-height"
-              >
                 <v-btn
-                  color="primary"
                   icon
-                  @click="openImgInput"
+                  flat
+                  width="20"
+                  height="20"
+                  class="position-absolute position-delete"
+                  color="#F04438"
+                  :loading="item.loading"
+                  @click="deleteImage(item)"
                 >
                   <v-icon
-                    size="36"
+                    size="small"
                     color="white"
                   >
-                    md:add
+                    md:close
                   </v-icon>
                 </v-btn>
-                <div class="mt-2 text-caption primary-gray-400 text-center">
-                  JPG, PNG, WebP
-                </div>
-                <v-file-input
-                  ref="imgInputRef"
-                  v-model="imgInput"
-                  class="d-none"
-                  accept="image/jpeg, image/png, image/jpg, image/webp"
-                  hide-details
-                  multiple
-                  @update:model-value="validateAndOpenCropper"
-                />
-              </v-col>
+              </div>
             </v-col>
-          </v-row>
-        </v-card-text>
-        <v-card-actions class="justify-center pb-6 mt-10">
-          <div class="d-flex flex-column align-center w-100">
-            <v-btn
-              class="primary black--text text-transform-none gtext-t4 font-weight-medium"
-              rounded
-              variant="flat"
-              width="100%"
-              max-width="300"
-              size="x-large"
-              color="primary"
-              :loading="saveLoading"
-              :disabled="!croppedUploads"
-              @click="handleCloseDialog"
+
+            <v-col
+              cols="4"
+              sm="3"
+              md="4"
+              lg="6"
+              align="center"
+              justify="center"
+              class="fill-height"
             >
-              {{
-                croppedUploads
-                  ? Array.isArray(croppedUploads)
-                    ? `Upload ${croppedUploads.length} Images & Save`
-                    : "Upload & Save"
-                  : "Save"
-              }}
-            </v-btn>
-          </div>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <cropper-dialog
-      v-model="showCropperDialog"
-      :file-url="cropFileUrl"
-      @cropped-data="croppedData"
-    />
-  </div>
+              <v-btn
+                color="primary"
+                icon
+                @click="openSourceSelector"
+              >
+                <v-icon
+                  size="36"
+                  color="white"
+                >
+                  md:add
+                </v-icon>
+              </v-btn>
+              <div class="mt-2 text-caption primary-gray-400 text-center">
+                JPG, PNG, WebP
+              </div>
+              <v-file-input
+                ref="imgInputRef"
+                v-model="imgInput"
+                class="d-none"
+                accept="image/jpeg, image/png, image/jpg, image/webp"
+                hide-details
+                multiple
+                @update:model-value="validateAndOpenCropper"
+              />
+            </v-col>
+          </v-col>
+        </v-row>
+      </v-card-text>
+      <v-card-actions class="justify-center pb-6 mt-10">
+        <div class="d-flex flex-column align-center w-100">
+          <v-btn
+            class="primary black--text text-transform-none gtext-t4 font-weight-medium"
+            rounded
+            variant="flat"
+            width="100%"
+            max-width="300"
+            size="x-large"
+            color="primary"
+            :loading="saveLoading"
+            :disabled="!croppedUploads"
+            @click="handleCloseDialog"
+          >
+            {{
+              croppedUploads
+                ? Array.isArray(croppedUploads)
+                  ? `Upload ${croppedUploads.length} Images & Save`
+                  : "Upload & Save"
+                : "Save"
+            }}
+          </v-btn>
+        </div>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+  <cropper-dialog
+    v-model="showCropperDialog"
+    :file-url="cropFileUrl"
+    @cropped-data="croppedData"
+  />
+  <modals-photo-source-selector
+    v-model:show-dialog="showSourceModal"
+    @open-file-system="openImgInput"
+    @send-file-camera="recieveFileCamera"
+  />
 </template>
 
 <script setup>
@@ -320,6 +323,7 @@ const saveLoading = ref(false)
 const imgInputRef = ref(null)
 const isDefaultImage = ref(true)
 const loadingSetDefaultImage = ref(false)
+const showSourceModal = ref(false)
 
 const router = useRouter()
 const route = useRoute()
@@ -456,12 +460,19 @@ const uploadImage = async () => {
   }
 }
 
+const openSourceSelector = () => {
+  showSourceModal.value = true
+}
 const openImgInput = () => {
   if (imgInputRef.value) {
     const input
       = imgInputRef.value.$el?.querySelector('input') || imgInputRef.value.input
     if (input) input.click()
   }
+}
+
+const recieveFileCamera = (file) => {
+  validateAndOpenCropper([file])
 }
 
 const validateAndOpenCropper = (files) => {
