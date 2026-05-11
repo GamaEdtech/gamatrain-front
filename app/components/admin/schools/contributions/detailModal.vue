@@ -173,6 +173,17 @@
         </div>
       </div>
 
+      <div
+        v-if="schoolDetailData.oldValues && schoolDetailData.oldValues.latitude != null && schoolDetailData.oldValues.longitude != null"
+        class="detail-item"
+      >
+        <a
+          class="text-h6 text-info font-weight-bold"
+          :href="`https://www.google.com/maps?q=${schoolDetailData.oldValues.latitude},${schoolDetailData.oldValues.longitude}`"
+          target="blank"
+        >📍 View on Google Maps</a>
+      </div>
+
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div class="text-h6 text-grey700 ml-2">
           You can write a message to reject.
