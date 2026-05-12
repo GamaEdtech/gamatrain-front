@@ -2,11 +2,11 @@
   <v-container
     class="d-flex flex-column ga-2 mt-16"
   >
-    <teacher-header />
-    <teacher-skills class="box-shadow-div" />
-    <teacher-experience class="box-shadow-div" />
-    <teacher-register-content class="box-shadow-div" />
-    <teacher-education class="box-shadow-div" />
+    <profile-header />
+    <profile-skills class="box-shadow-div" />
+    <profile-experience class="box-shadow-div" />
+    <profile-register-content class="box-shadow-div" />
+    <profile-education class="box-shadow-div" />
   </v-container>
 </template>
 
