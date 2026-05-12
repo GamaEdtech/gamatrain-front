@@ -56,6 +56,7 @@
           :base="contentData.base"
           :lesson="contentData.lesson"
           :exams="contentData.exams"
+          :test-type="contentData.test_type"
         />
         <lazy-common-detail-subject-directory-nav :content-data="contentData" />
       </v-col>

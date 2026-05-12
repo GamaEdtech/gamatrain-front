@@ -1,39 +1,39 @@
 <template>
   <v-card
-    class="plan-card mt-4 pa-6 text-center"
-    :class="{ 'bg-grey-darken-4': plan.popular }"
+    :class="`plan-card border-solid border-sm border-grey600 mt-4 mr-2 mb-2 px-3 py-6 pa-md-6 text-center ${plan.popular ? `bg-grey900`:``}`"
   >
     <!-- Badge -->
     <v-chip
       v-if="plan.popular"
       color="primary"
-      class="mb-3 text-h5 font-weight-bold "
+      class="mb-3 text-h5 font-weight-bold"
     >
       Most Popular
     </v-chip>
 
     <!-- Name -->
-    <div class="text-h4 font-weight-bold mb-2 text-primary">
+    <div class="text-h6 text-md-h4 font-weight-bold mb-2 text-primary">
       {{ plan.name }}
     </div>
 
     <!-- Price -->
-    <div class=" mb-4">
-      <span><span class="text-h4 text-grey">$</span><sub class="text-h2 font-weight-bold">{{ plan.price }}</sub></span>
+    <div class="mb-4">
+      <span><span class="text-h6 text-md-h4 text-grey400 mt-2">$</span><sub class="text-h4 text-md-h2 font-weight-bold">{{ plan.price }}</sub></span>
     </div>
 
     <!-- Features -->
-    <ul class="features mb-6">
+    <ul class="features text-left mb-6 pa-0">
       <li
         v-for="(feature, i) in plan.features"
         :key="i"
+        class="d-flex align-center mb-2 text-h6 text-md-h5"
       >
         <v-icon
           size="18"
           class="mr-2"
           color="success"
         >
-          mdi-check
+          md:check
         </v-icon>
         {{ feature }}
       </li>
@@ -41,8 +41,8 @@
 
     <!-- Button -->
     <v-btn
-      class="text-h5 font-weight-bold"
-      :color="plan.popular ? 'primary' : 'grey-darken-1'"
+      class="text-h6 text-md-h5 font-weight-bold"
+      :color="plan.popular ? 'primary' : 'grey300'"
       block
       size="large"
       :loading="loadingPayment"
@@ -100,16 +100,11 @@ const pay = async (amount: number) => {
 </script>
 
 <style scoped>
-    .border-primary {
-    border: 2px solid #1976d2;
-    }
-
-    .plan-card {
+.plan-card {
+  height : fit-content;
   border-radius: 16px;
   transition: all 0.25s ease;
-  border: 1px solid #eee;
 }
-
 .plan-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 30px rgba(0,0,0,0.08);
@@ -117,13 +112,5 @@ const pay = async (amount: number) => {
 
 .features {
   list-style: none;
-  padding: 0;
-  text-align: left;
 }
-
-.features li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
-}
-  </style>
+</style>
