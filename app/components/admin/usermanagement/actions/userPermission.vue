@@ -57,7 +57,7 @@
 import { shallowRef } from 'vue'
 import type {
   AdminPermissionDTO,
-} from '~/types/api'
+} from '@/types'
 
 interface IUserPermission {
   id: string

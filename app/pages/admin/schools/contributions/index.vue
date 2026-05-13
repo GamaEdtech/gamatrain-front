@@ -269,7 +269,7 @@ import type {
   ResponseListDTO,
   AdminSchoolContributionBriefDTO,
   SchoolContributionStatus,
-} from '~/types/api'
+} from '@/types'
 
 interface SortOption {
   title: string

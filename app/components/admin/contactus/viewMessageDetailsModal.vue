@@ -152,7 +152,7 @@ import type {
   AppError,
   AdminContactUsDetailDTO,
   AdminReplyTicketListDTO,
-} from '~/types/api'
+} from '@/types'
 
 interface IViewMessageDetailsModal {
   id: number | null

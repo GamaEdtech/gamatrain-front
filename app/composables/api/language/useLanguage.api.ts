@@ -2,7 +2,7 @@ import type {
   ApiResult,
   AppError,
   AdminLanguageDTO,
-} from '~/types/api'
+} from '@/types'
 
 const data = ref<AdminLanguageDTO[]>([])
 const loadingGetData = ref(false)

@@ -146,7 +146,7 @@
 </template>
 
 <script setup lang="ts">
-import type { AdminLanguageDTO, TranslationDTO } from '~/types/api'
+import type { AdminLanguageDTO, TranslationDTO } from '@/types'
 
 const props = defineProps<{
   modelValue: TranslationDTO

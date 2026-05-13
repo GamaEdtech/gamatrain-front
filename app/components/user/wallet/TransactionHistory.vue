@@ -255,7 +255,7 @@ import type {
   AppError,
   ResponseListDTO,
   TransactionDTO,
-} from '~/types/api'
+} from '@/types'
 
 const { $dayjs, $toast, $numberFormat } = useNuxtApp()
 const emit = defineEmits(['showChart'])

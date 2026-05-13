@@ -135,7 +135,7 @@
 <script setup lang="ts">
 import type {
   AdminLanguageDTO,
-} from '~/types/api'
+} from '@/types'
 
 interface IDetailModal {
   id: string

@@ -248,7 +248,7 @@ import type {
   AppError,
   ResponseListDTO,
   AdminContactUsDTO,
-} from '~/types/api'
+} from '@/types'
 
 definePageMeta({
   layout: 'admin',

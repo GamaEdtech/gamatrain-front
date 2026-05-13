@@ -1,5 +1,5 @@
 import { useState } from 'nuxt/app'
-import type { ApiResult } from '~/types/api'
+import type { ApiResult } from '@/types'
 import { get } from '@/composables/useApiService'
 
 interface User {

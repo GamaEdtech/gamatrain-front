@@ -121,7 +121,7 @@
 import type {
   ApiResult,
   AppError,
-} from '~/types/api'
+} from '@/types'
 
 const emit = defineEmits(['CreateTicketSuccessFull'])
 const { $toast } = useNuxtApp()

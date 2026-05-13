@@ -113,7 +113,7 @@ import type {
   ApiResult,
   AppError,
   AdminAppSettingsDTO,
-} from '~/types/api'
+} from '@/types'
 
 type FieldType = 'text' | 'textarea'
 

@@ -2,7 +2,7 @@ import type {
   ApiResult,
   AppError,
   BoardDTO,
-} from '~/types/api'
+} from '@/types'
 
 const data = ref<BoardDTO[]>()
 const loadingGetData = ref(true)

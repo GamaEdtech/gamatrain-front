@@ -2,7 +2,7 @@ import type {
   ApiResult,
   AppError,
   BlogUserDTO,
-} from '~/types/api'
+} from '@/types'
 
 interface BlogCreateDTO {
   title: string

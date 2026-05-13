@@ -207,7 +207,7 @@
 <script setup lang="ts">
 import type {
   AdminLanguageDTO,
-} from '~/types/api'
+} from '@/types'
 
 definePageMeta({
   layout: 'admin',

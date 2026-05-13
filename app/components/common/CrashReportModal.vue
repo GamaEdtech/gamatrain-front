@@ -97,7 +97,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import type { AppError } from '~/types/api'
+import type { AppError } from '@/types'
 
 interface ICrashReportModal {
   showDialog?: boolean

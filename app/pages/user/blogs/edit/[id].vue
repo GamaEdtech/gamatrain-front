@@ -379,7 +379,7 @@
 </template>
 
 <script setup lang="ts">
-import type { TranslationDTO } from '~/types/api'
+import type { TranslationDTO } from '@/types'
 
 definePageMeta({
   layout: 'dashboard-layout',

@@ -29,7 +29,7 @@
 import type {
   ApiResult,
   TransactionStatisticDTO,
-} from '~/types/api'
+} from '@/types'
 import type { ChartOptions, Chart } from 'chart.js'
 import { ref, reactive, onMounted } from 'vue'
 import {

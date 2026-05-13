@@ -101,7 +101,7 @@
 import type {
   ApiResult,
   AppError,
-} from '~/types/api'
+} from '@/types'
 
 const emit = defineEmits(['ComposeMailSuccessFull'])
 const { $toast } = useNuxtApp()

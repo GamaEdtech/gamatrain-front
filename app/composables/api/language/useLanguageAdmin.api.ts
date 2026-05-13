@@ -4,7 +4,7 @@ import type {
   ResponseListDTO,
   AdminLanguageDTO,
   AdminCultureDTO,
-} from '~/types/api'
+} from '@/types'
 
 interface AddLanguageDTO {
   name: string
