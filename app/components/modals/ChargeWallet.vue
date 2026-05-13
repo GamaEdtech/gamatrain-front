@@ -1,6 +1,12 @@
 <template>
-  <div class="w-100 d-flex justify-center">
-    <v-slide-group
+  <div class="w-100 d-flex flex-column flex-sm-row justify-center align-center align-sm-end ga-1 ga-sm-2">
+    <template
+      v-for="plan in plans"
+      :key="plan.id"
+    >
+      <modals-stripe-payment :plan="plan" />
+    </template>
+    <!-- <v-slide-group
       v-model="planSelected"
       class="pa-0 pa-md-4 mx-auto mt-5"
       center-active
@@ -11,7 +17,7 @@
       >
         <modals-stripe-payment :plan="plan" />
       </v-slide-group-item>
-    </v-slide-group>
+    </v-slide-group> -->
   </div>
   <!-- <div class="w-100 d-flex flex-column align-center justify-center">
     <div
@@ -284,7 +290,7 @@
 // import { SystemProgram, Transaction, PublicKey,
 //   TransactionInstruction } from '@solana/web3.js'
 
-const planSelected = ref(1)
+// const planSelected = ref(1)
 const plans = [
   {
     id: 'bronze',
