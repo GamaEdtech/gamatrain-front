@@ -125,7 +125,7 @@
 </template>
 
 <script setup>
-const { data: boardList, getData: getBoards } = useBoardsApi()
+const { data: boardList, getData: getBoards } = useBoard()
 
 const categories = ref([
   {

@@ -74,8 +74,6 @@
 </template>
 
 <script setup lang="ts">
-import { useUserManager } from '~/composables/api/admin/useUserManager'
-
 interface IResetPassword {
   id: string
 }
@@ -83,7 +81,7 @@ interface IResetPassword {
 const props = defineProps<IResetPassword>()
 const emit = defineEmits(['ResetPasswordSuccessFull'])
 
-const { editPassword, loadingEditPassword } = useUserManager()
+const { editPassword, loadingEditPassword } = useUserManagerAdmin()
 
 const isFormValid = ref(false)
 const password = ref('')

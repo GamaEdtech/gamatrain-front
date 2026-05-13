@@ -128,7 +128,7 @@ const emit = defineEmits([
 const router = useRouter()
 const route = useRoute()
 
-const { loadingGetData: isLoadingBoard, data: boards, getData: fetchBoards } = useBoardsApi()
+const { loadingGetData: isLoadingBoard, data: boards, getData: fetchBoards } = useBoard()
 
 onMounted(async () => {
   await fetchBoards()

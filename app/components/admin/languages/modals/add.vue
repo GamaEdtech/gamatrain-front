@@ -114,7 +114,7 @@
 <script setup lang="ts">
 const emit = defineEmits(['AddItemSuccessFull'])
 
-const { addItem, loadingAddItem, getCultures, loadingGetCultures, cultures } = useLanguages()
+const { addItem, loadingAddItem, getCultures, loadingGetCultures, cultures } = useLanguageAdmin()
 
 onMounted(async () => {
   await getCultures()

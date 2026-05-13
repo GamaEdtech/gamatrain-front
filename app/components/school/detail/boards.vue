@@ -137,7 +137,7 @@ const props = defineProps({
   },
 })
 
-const { loadingGetData: isLoadingBoard, data: boards, getData: getBoards } = useBoardsApi()
+const { loadingGetData: isLoadingBoard, data: boards, getData: getBoards } = useBoard()
 const auth = useAuth()
 const { $toast } = useNuxtApp()
 const { mdAndUp } = useDisplay()
