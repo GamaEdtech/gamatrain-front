@@ -29,7 +29,7 @@ const loadingGetItemById = ref(false)
 const loadingEditItem = ref(false)
 const loadingGetCultures = ref(false)
 
-export const useLanguages = () => {
+export const useLanguageAdmin = () => {
   const { $toast } = useNuxtApp()
 
   const getData = async (params: GetDataParams) => {

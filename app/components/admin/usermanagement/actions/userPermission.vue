@@ -55,7 +55,6 @@
 
 <script setup lang="ts">
 import { shallowRef } from 'vue'
-import { useUserManager } from '~/composables/api/admin/useUserManager'
 import type {
   AdminPermissionDTO,
 } from '~/types/api'
@@ -67,7 +66,7 @@ interface IUserPermission {
 const props = defineProps<IUserPermission>()
 const roles = shallowRef<string[]>([])
 
-const { loadingGetPermission, getPermission, editPermission, loadingEditPermission } = useUserManager()
+const { loadingGetPermission, getPermission, editPermission, loadingEditPermission } = useUserManagerAdmin()
 
 onMounted(async () => {
   const response = await getPermission(props.id)

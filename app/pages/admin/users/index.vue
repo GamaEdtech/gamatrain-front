@@ -264,7 +264,6 @@
 </template>
 
 <script setup lang="ts">
-import { useUserManager } from '~/composables/api/admin/useUserManager'
 import type {
   AdminUserDTO,
 } from '~/types/api'
@@ -274,7 +273,7 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { loadingGetData: loading, data: list, getData, totalCount, pageCount, deleteItem, loadingDeleteItem, toggleStatus, loadingToggleStatus } = useUserManager()
+const { loadingGetData: loading, data: list, getData, totalCount, pageCount, deleteItem, loadingDeleteItem, toggleStatus, loadingToggleStatus } = useUserManagerAdmin()
 const { $dayjs } = useNuxtApp()
 
 const headers = [

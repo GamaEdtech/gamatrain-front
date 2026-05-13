@@ -146,11 +146,9 @@
 </template>
 
 <script setup lang="ts">
-import { useUserManager } from '~/composables/api/admin/useUserManager'
-
 const emit = defineEmits(['AddUserSuccessFull'])
 
-const { addItem, loadingAddItem } = useUserManager()
+const { addItem, loadingAddItem } = useUserManagerAdmin()
 
 const newUser = reactive({
   username: '',

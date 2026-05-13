@@ -53,7 +53,7 @@ const permission = ref<AdminPermissionDTO>({
   permissions: [],
 })
 
-export const useUserManager = () => {
+export const useUserManagerAdmin = () => {
   const { $toast } = useNuxtApp()
 
   const getData = async (params: GetUsersParams) => {

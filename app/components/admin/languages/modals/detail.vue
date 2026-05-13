@@ -144,7 +144,7 @@ interface IDetailModal {
 const props = defineProps<IDetailModal>()
 const emit = defineEmits(['EditItemSuccessFull'])
 
-const { getItemById, loadingGetItemById, getCultures, loadingGetCultures, cultures, editItem, loadingEditItem } = useLanguages()
+const { getItemById, loadingGetItemById, getCultures, loadingGetCultures, cultures, editItem, loadingEditItem } = useLanguageAdmin()
 
 const newItem = reactive({
   name: '',
