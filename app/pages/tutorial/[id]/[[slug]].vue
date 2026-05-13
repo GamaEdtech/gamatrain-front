@@ -181,7 +181,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import type { ApiResult, TutorialDTO, AppError, LessonTreeDTO } from '~/types/api'
+import type { ApiResult, TutorialDTO, AppError, LessonTreeDTO } from '@/types'
 
 interface BreadCrumb {
   text: string

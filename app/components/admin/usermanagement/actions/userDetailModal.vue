@@ -177,7 +177,7 @@
 <script setup lang="ts">
 import type {
   AdminUserDTO,
-} from '~/types/api'
+} from '@/types'
 
 interface IUserDetailModal {
   id: string

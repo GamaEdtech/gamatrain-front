@@ -202,7 +202,7 @@
 </template>
 
 <script setup lang="ts">
-import type { QuestionDTO, NextQuestionDTO, ApiResult, TestTimeDTO, AppError } from '~/types/api'
+import type { QuestionDTO, NextQuestionDTO, ApiResult, TestTimeDTO, AppError } from '@/types'
 
 interface ITestDetail {
   contentData: QuestionDTO

@@ -61,7 +61,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
-import type { UnitLessonDTO } from '~/types/api'
+import type { UnitLessonDTO } from '@/types'
 
 interface LessonTree {
   showDrawer: boolean

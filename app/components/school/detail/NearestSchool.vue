@@ -66,7 +66,7 @@ import type {
   ApiResult,
   ResponseListDTO,
   SchoolListDTO,
-} from '~/types/api'
+} from '@/types'
 
 interface INearestSchool {
   lat?: number

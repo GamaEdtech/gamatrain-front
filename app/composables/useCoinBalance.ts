@@ -1,4 +1,4 @@
-import type { ApiResult } from '~/types/api'
+import type { ApiResult } from '@/types'
 
 const balance = ref<number>(0)
 const isLoading = ref<boolean>(true)

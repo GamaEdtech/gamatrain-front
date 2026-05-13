@@ -65,7 +65,7 @@ import type {
   ApiResult,
   ResponseListDTO,
   BlogDTO,
-} from '~/types/api'
+} from '@/types'
 
 const slideItems = ref<BlogDTO[]>([])
 const isLoading = ref(true)

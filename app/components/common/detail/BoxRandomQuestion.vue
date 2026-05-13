@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, QuestionDTO } from '~/types/api'
+import type { ApiResult, QuestionDTO } from '@/types'
 
 interface RandomTestCodeDTO {
   code: string

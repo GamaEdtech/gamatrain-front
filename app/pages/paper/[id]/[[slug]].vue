@@ -114,7 +114,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, PastPaperDTO, AppError } from '~/types/api'
+import type { ApiResult, PastPaperDTO, AppError } from '@/types'
 
 interface BreadCrumb {
   text: string

@@ -3,7 +3,7 @@ import type {
   AppError,
   ResponseListDTO,
   ExperienceDTO,
-} from '~/types/api'
+} from '@/types'
 
 interface AddExperienceDTO {
   startDate: string

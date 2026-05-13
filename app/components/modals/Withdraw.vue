@@ -143,7 +143,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult } from '~/types/api'
+import type { ApiResult } from '@/types'
 import { useDisplay } from 'vuetify'
 import { computed } from 'vue'
 

@@ -237,7 +237,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, AppError, AdminSchoolContributionDTO, AdminSchoolContributionNewDataDTO, AdminSchoolContributionOldDataDTO } from '@/types/api'
+import type { ApiResult, AppError, AdminSchoolContributionDTO, AdminSchoolContributionNewDataDTO, AdminSchoolContributionOldDataDTO } from '@/types'
 
 interface IDetailModal {
   contributionId?: number

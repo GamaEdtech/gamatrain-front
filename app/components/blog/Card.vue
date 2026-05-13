@@ -31,7 +31,7 @@
 <script setup lang="ts">
 import type {
   BlogDTO,
-} from '~/types/api'
+} from '@/types'
 import { useDisplay } from 'vuetify'
 
 interface IBlogCard {

@@ -3,7 +3,7 @@ import type {
   AppError,
   PayloadPaymentDTO,
   PaymentDTO,
-} from '~/types/api'
+} from '@/types'
 
 const KEY = 'redirect_after_payment'
 const loadingPayment = ref(false)

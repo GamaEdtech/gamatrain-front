@@ -5,7 +5,7 @@ import type {
   AdminUserDTO,
   AdminTokenDTO,
   AdminPermissionDTO,
-} from '~/types/api'
+} from '@/types'
 
 interface AddUserDTO {
   username: string

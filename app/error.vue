@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import type { StatusErrorCodeApp } from '@/types/api'
+import type { StatusErrorCodeApp } from '@/types'
 
 defineProps<{
   error: {

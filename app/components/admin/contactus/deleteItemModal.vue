@@ -23,7 +23,7 @@ import type {
   ApiResult,
   AppError,
   ResponseListDTO,
-} from '~/types/api'
+} from '@/types'
 
 interface IDeleteItemModal {
   id: string

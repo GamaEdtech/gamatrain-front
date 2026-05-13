@@ -367,7 +367,7 @@ import type {
   StatusPayment,
   CurrencyPayment,
   PaymentGateway,
-} from '~/types/api'
+} from '@/types'
 import { TOKEN_DECIMALS } from '~/composables/useJupiterSwap'
 
 interface SortOption {

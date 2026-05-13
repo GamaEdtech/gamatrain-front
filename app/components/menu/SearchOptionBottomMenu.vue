@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, SearchTypesStatsDTO } from '~/types/api'
+import type { ApiResult, SearchTypesStatsDTO } from '@/types'
 
 interface Category {
   type: string

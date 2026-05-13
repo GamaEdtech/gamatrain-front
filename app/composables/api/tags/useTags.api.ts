@@ -3,7 +3,7 @@ import type {
   AppError,
   TagTypeDTO,
   TagDTO,
-} from '~/types/api'
+} from '@/types'
 
 const data = ref<TagDTO[]>([])
 const loadingGetData = ref(true)
