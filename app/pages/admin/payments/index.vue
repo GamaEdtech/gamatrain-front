@@ -168,6 +168,18 @@
             >
               {{ item.status }}
             </v-chip>
+
+            <v-btn
+              v-if="item.status == `Pending`"
+              flat
+              size="small"
+              class="ml-1 text-h6"
+              color="success"
+              variant="outlined"
+              @click="openVerifyPaymentModal(item)"
+            >
+              verify
+            </v-btn>
           </div>
         </template>
 
@@ -354,6 +366,13 @@
         </v-btn>
       </div>
     </AdminCommonModal>
+
+    <admin-common-confirm-modal
+      v-model="showConfirmPaymentModal"
+      text="Are you sure you want to confirm this payment?"
+      :loading="loadingVerifyPayment"
+      @confirm="confirmPayment"
+    />
   </div>
 </template>
 
@@ -381,6 +400,7 @@ definePageMeta({
 })
 
 const { $dayjs, $toast } = useNuxtApp()
+const { verifyPayment, loadingVerifyPayment } = usePayment()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
@@ -441,6 +461,9 @@ const statusList = ['Pending', 'Paid', 'Failed']
 
 const gateway = ref('')
 const gatewayList = ['GamaTrain', 'Stripe']
+
+const showConfirmPaymentModal = ref(false)
+const selectedPaymentForVerfy = ref<AdminPaymentDTO | null>(null)
 
 const getData = async () => {
   loading.value = true
@@ -578,6 +601,24 @@ const handleCheckboxChange = async (checked: boolean | null, item: SortOption) =
     sortSelected.value.splice(index, 1)
   }
   page.value = 1
+  await getData()
+}
+
+const openVerifyPaymentModal = (item: AdminPaymentDTO) => {
+  showConfirmPaymentModal.value = true
+  selectedPaymentForVerfy.value = item
+}
+
+const confirmPayment = async () => {
+  const response = await verifyPayment(selectedPaymentForVerfy.value?.id.toString() ?? '', selectedPaymentForVerfy.value?.transactionId ?? '')
+  if (response.succeeded && response.data) {
+    $toast.success('Payment successfully confirmed.')
+  }
+  else {
+    $toast.error('There was a problem verifying the payment. Please try again later.')
+  }
+  showConfirmPaymentModal.value = false
+  selectedPaymentForVerfy.value = null
   await getData()
 }
 </script>
