@@ -16,6 +16,7 @@ export interface AdminAppSettingsDTO {
   examIncorrectTestSubmissionPoints?: number
   schoolCommentContributionConfirmationEmailTemplate: string
   schoolImageContributionConfirmationEmailTemplate: string
+  schoolImageContributionRejectionEmailTemplate: string
   removeSchoolImageContributionConfirmationEmailTemplate: string
   schoolContributionConfirmationEmailTemplate: string
   schoolContributionRejectionEmailTemplate: string
