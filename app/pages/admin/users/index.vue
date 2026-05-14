@@ -29,6 +29,19 @@
         </div>
       </div>
       <div class="d-flex align-center justify-end ga-1">
+        <v-btn
+          variant="plain"
+          max-width="20"
+          @click="showSearchModal = true"
+        >
+          <v-icon
+            size="26"
+            class="grey500"
+          >
+            md:search
+          </v-icon>
+        </v-btn>
+
         <span
           class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
         >
@@ -49,6 +62,20 @@
         @click="showAddUserModal = true"
       >
         <span class="text-primary font-weight-bold text-h5">Add User</span>
+      </v-btn>
+
+      <v-btn
+        v-if="isShowClearFilter"
+        color="primary"
+        rounded="pill"
+        height="40"
+        width="120"
+        class="text-h5 font-weight-bold "
+        flat
+        variant="outlined"
+        @click="clearFilter"
+      >
+        Clear Filter
       </v-btn>
     </div>
     <div class="w-100 mt-4">
@@ -255,6 +282,16 @@
       <admin-usermanagement-add-user-modal @add-user-success-full="addUserSuccessfull" />
     </admin-common-modal>
 
+    <admin-common-modal
+      v-model:show-dialog="showSearchModal"
+      title="Search"
+    >
+      <admin-usermanagement-search-modal
+        :data="searchFilter"
+        @search="startSearch"
+      />
+    </admin-common-modal>
+
     <admin-usermanagement-more-action-modal
       :id="selectedItemIdForMoreAction"
       v-model:show-dialog="moreActionModal"
@@ -266,6 +303,7 @@
 <script setup lang="ts">
 import type {
   AdminUserDTO,
+  SearchFilterUser,
 } from '@/types'
 
 definePageMeta({
@@ -313,12 +351,20 @@ const selectedItemIdForToggleStatus = ref('')
 const showAddUserModal = ref(false)
 const moreActionModal = ref(false)
 const selectedItemIdForMoreAction = ref('')
+const showSearchModal = ref(false)
+const searchFilter = reactive<SearchFilterUser>({
+  firstName: '',
+  lastName: '',
+  email: '',
+  referralId: '',
+})
 
 const fetchUsers = async () => {
   await getData({
     page: page.value,
     pageSize: pageSize.value,
     hasReferral: statusSelect.value == 'All' ? null : statusSelect.value == 'With Referral' ? true : false,
+    ...searchFilter,
   })
 }
 
@@ -379,6 +425,37 @@ const openModalMoreAction = (user: AdminUserDTO) => {
 }
 
 const refreshData = async () => {
+  await fetchUsers()
+}
+
+const isShowClearFilter = computed(() => {
+  if (
+    searchFilter.firstName.length > 0
+    || searchFilter.lastName.length > 0
+    || searchFilter.email.length > 0
+    || searchFilter.referralId.length > 0
+  ) {
+    return true
+  }
+  return false
+})
+
+const clearFilter = async () => {
+  searchFilter.firstName = ''
+  searchFilter.lastName = ''
+  searchFilter.email = ''
+  searchFilter.referralId = ''
+  page.value = 1
+  await fetchUsers()
+}
+
+const startSearch = async (item: SearchFilterUser) => {
+  searchFilter.firstName = item.firstName
+  searchFilter.lastName = item.lastName
+  searchFilter.email = item.email
+  searchFilter.referralId = item.referralId
+  page.value = 1
+  showSearchModal.value = false
   await fetchUsers()
 }
 </script>

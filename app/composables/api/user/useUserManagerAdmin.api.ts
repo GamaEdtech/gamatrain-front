@@ -5,28 +5,10 @@ import type {
   AdminUserDTO,
   AdminTokenDTO,
   AdminPermissionDTO,
+  AddUserDTO,
+  EditUserDTO,
+  GetUsersParams,
 } from '@/types'
-
-interface AddUserDTO {
-  username: string
-  password: string
-  confirmPassword: string
-  email: string
-  firstName: string
-  lastName: string
-}
-interface EditUserDTO {
-  username: string
-  email: string
-  firstName: string
-  lastName: string
-  phoneNumber: string
-}
-interface GetUsersParams {
-  page: number
-  pageSize: number
-  hasReferral?: boolean | null
-}
 
 const data = ref<AdminUserDTO[]>()
 const loadingGetData = ref(true)
@@ -57,7 +39,7 @@ export const useUserManagerAdmin = () => {
   const { $toast } = useNuxtApp()
 
   const getData = async (params: GetUsersParams) => {
-    const { page, pageSize, hasReferral } = params
+    const { page, pageSize, hasReferral, firstName, lastName, email, referralId } = params
     loadingGetData.value = true
     try {
       const query: Record<string, string | number | boolean | null> = {
@@ -65,6 +47,10 @@ export const useUserManagerAdmin = () => {
         'PagingDto.PageFilter.Skip': (page - 1) * pageSize,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
         'HasReferral': hasReferral ?? null,
+        'FirstName': firstName,
+        'LastName': lastName,
+        'Email': email,
+        'ReferralId': referralId,
       }
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<AdminUserDTO>>
