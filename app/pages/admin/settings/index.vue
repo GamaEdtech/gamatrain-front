@@ -152,6 +152,7 @@ const form = reactive<AdminAppSettingsDTO>({
 
   schoolCommentContributionConfirmationEmailTemplate: '',
   schoolImageContributionConfirmationEmailTemplate: '',
+  schoolImageContributionRejectionEmailTemplate: '',
   removeSchoolImageContributionConfirmationEmailTemplate: '',
   schoolContributionConfirmationEmailTemplate: '',
   schoolContributionRejectionEmailTemplate: '',
@@ -182,7 +183,8 @@ const fields: FieldConfig[] = [
   { key: 'examIncorrectTestSubmissionPoints', label: 'Exam Incorrect', type: 'text', valueType: 'number' },
 
   { key: 'schoolCommentContributionConfirmationEmailTemplate', label: 'School Comment Email', type: 'textarea', valueType: 'string' },
-  { key: 'schoolImageContributionConfirmationEmailTemplate', label: 'School Image Email', type: 'textarea', valueType: 'string' },
+  { key: 'schoolImageContributionConfirmationEmailTemplate', label: 'School Image Confirmation Email', type: 'textarea', valueType: 'string' },
+  { key: 'schoolImageContributionRejectionEmailTemplate', label: 'School Image Rejection Email', type: 'textarea', valueType: 'string' },
   { key: 'removeSchoolImageContributionConfirmationEmailTemplate', label: 'Remove Image Email', type: 'textarea', valueType: 'string' },
   { key: 'schoolContributionConfirmationEmailTemplate', label: 'School Contribution Email', type: 'textarea', valueType: 'string' },
   { key: 'schoolContributionRejectionEmailTemplate', label: 'School Contribution Rejection Email', type: 'textarea', valueType: 'string' },
