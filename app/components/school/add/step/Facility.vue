@@ -314,7 +314,7 @@ const submitForm = () => {
     const facilityStepInfo = {
       tags: [...selectedTags.value],
       file: schoolImage.value,
-      BoardCodes: [...selectedBoards.value],
+      Boards: [...selectedBoards.value],
     }
     emit('nextStep', facilityStepInfo)
   }

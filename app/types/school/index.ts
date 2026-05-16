@@ -26,7 +26,7 @@ export interface AdminSchoolContributionNewDataDTO {
   phoneNumber: string
   quarter: string
   tags: number[]
-  boardCodes: number[]
+  boards: number[]
   tuition: number
   description: string
 }

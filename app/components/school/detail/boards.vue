@@ -26,7 +26,7 @@
       class="w-100 d-flex flex-wrap align-center my-6 ga-2"
     >
       <template
-        v-for="(board, index) in boards"
+        v-for="(board, index) in schoolBoards"
         :key="index"
       >
         <v-btn
@@ -192,7 +192,7 @@ const saveBoards = async () => {
   try {
     const response = await useApiService.post(
       `/api/v2/schools/${route.params.id}/contributions`,
-      { boardCodes: selectedBoards.value },
+      { boards: selectedBoards.value },
     )
     if (response.succeeded) {
       $toast?.success(
