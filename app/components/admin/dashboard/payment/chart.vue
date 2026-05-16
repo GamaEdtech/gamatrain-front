@@ -22,8 +22,10 @@
       class="w-100 container-chart"
     >
       <BarChart
+        ref="barChartRef"
         :data="chartData"
         :options="chartOptions"
+        @click="handleChartClick"
       />
     </div>
   </div>
@@ -52,9 +54,12 @@ ChartJS.register(
   CategoryScale,
 )
 
+const emit = defineEmits(['selectBar'])
+
 const theme = useTheme()
 const { paymentSummary, loadingPaymentSummary } = usePayment()
 
+const barChartRef = ref()
 const BORDERRADIUS = 10
 const OPACITYCOLOR = 0.5
 
@@ -213,6 +218,29 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
     },
   },
 }))
+
+const handleChartClick = (event: MouseEvent) => {
+  const chart = barChartRef.value?.chart
+
+  if (!chart)
+    return
+
+  const elements = chart.getElementsAtEventForMode(
+    event,
+    'nearest',
+    { intersect: true },
+    true,
+  )
+
+  if (!elements.length)
+    return
+
+  const firstElement = elements[0]
+  const dataIndex = firstElement.index
+  const item = paymentSummary.value[dataIndex]
+
+  emit('selectBar', item)
+}
 </script>
 
 <style scoped>

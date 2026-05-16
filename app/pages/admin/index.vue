@@ -32,7 +32,7 @@
         Clear Filter
       </v-btn>
     </div>
-    <admin-dashboard-payment-chart />
+    <admin-dashboard-payment-chart @select-bar="selectBar" />
     <admin-dashboard-payment-table />
 
     <admin-common-modal
@@ -51,6 +51,7 @@
 import dayjs from 'dayjs'
 import type {
   PaymentSummaryGetParams,
+  PaymentSummaryDTO,
 } from '@/types'
 
 definePageMeta({
@@ -58,7 +59,7 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { getPaymentSummary } = usePayment()
+const { paymentSummary, getPaymentSummary } = usePayment()
 
 const showSearchModal = ref(false)
 const DEFAULT_START_DATE = dayjs()
@@ -109,5 +110,11 @@ const startSearch = async (item: PaymentSummaryGetParams) => {
   paymentSummaryGetParams.currency = item.currency
   showSearchModal.value = false
   await getPaymentSummary(paymentSummaryGetParams)
+}
+
+const selectBar = (data: PaymentSummaryDTO) => {
+  paymentSummary.value = [data]
+  paymentSummaryGetParams.startDate = data.date
+  paymentSummaryGetParams.endDate = data.date
 }
 </script>
