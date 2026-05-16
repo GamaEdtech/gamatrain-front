@@ -29,3 +29,22 @@ export interface PaymentDTO {
   paymentId: number
   url: string
 }
+
+export interface PaymentSummaryDTO {
+  date: string
+  pendingAmount: number
+  paidAmount: number
+  failedAmount: number
+  failedCount: number
+  paidCount: number
+  pendingCount: number
+}
+
+export interface PaymentSummaryGetParams {
+  userId: number | null
+  startDate: string | null
+  endDate: string | null
+  gateway: PaymentGateway | null
+  status: StatusPayment | null
+  currency: CurrencyPayment | null
+}
