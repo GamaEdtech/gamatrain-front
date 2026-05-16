@@ -83,6 +83,11 @@ const menuItems = [
         icon: 'md:home_outlined',
       },
       {
+        title: 'Dashboard',
+        link: '/admin',
+        icon: 'md:dashboard_outlined',
+      },
+      {
         title: 'Languages',
         link: '/admin/languages',
         icon: 'md:language_outlined',

@@ -3,11 +3,15 @@ import type {
   AppError,
   PayloadPaymentDTO,
   PaymentDTO,
+  PaymentSummaryDTO,
+  PaymentSummaryGetParams,
 } from '@/types'
 
 const KEY = 'redirect_after_payment'
 const loadingPayment = ref(false)
 const loadingVerifyPayment = ref(false)
+const loadingPaymentSummary = ref(false)
+const paymentSummary = ref<PaymentSummaryDTO[]>([])
 
 export const usePayment = () => {
   const { $toast } = useNuxtApp()
@@ -85,5 +89,38 @@ export const usePayment = () => {
     localStorage.removeItem(KEY)
   }
 
-  return { startPayment, loadingPayment, savePathRedirect, getPathRedirect, removePathRedirect, verifyPayment, loadingVerifyPayment }
+  const getPaymentSummary = async (params?: PaymentSummaryGetParams) => {
+    loadingPaymentSummary.value = true
+    try {
+      const query: Record<string, string | number | boolean | null> = {
+        UserId: params?.userId ?? '',
+        StartDate: params?.startDate ?? '',
+        EndDate: params?.endDate ?? '',
+        Gateway: params?.gateway ?? '',
+        Status: params?.status ?? '',
+        Currency: params?.currency ?? '',
+      }
+      const response = await useApiService.get<
+        ApiResult<PaymentSummaryDTO[]>
+      >('/api/v2/finance/payments/summary', query)
+      if (response.succeeded && response.data) {
+        paymentSummary.value = response.data
+      }
+      else {
+        paymentSummary.value = []
+      }
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      paymentSummary.value = []
+    }
+    finally {
+      loadingPaymentSummary.value = false
+    }
+  }
+
+  return { startPayment, loadingPayment, savePathRedirect, getPathRedirect, removePathRedirect, verifyPayment, loadingVerifyPayment, getPaymentSummary, paymentSummary, loadingPaymentSummary }
 }
