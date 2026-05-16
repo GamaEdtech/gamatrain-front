@@ -291,7 +291,7 @@ const newDataFields: FieldConfig<AdminSchoolContributionNewDataDTO>[] = [
     formatter: v => (v as number[]).join(', '),
   },
   {
-    key: 'boardCodes',
+    key: 'boards',
     label: 'Boards :',
     full: true,
     formatter: v => (v as number[]).join(', '),
