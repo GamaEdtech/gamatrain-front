@@ -33,6 +33,7 @@
       </v-btn>
     </div>
     <admin-dashboard-payment-chart />
+    <admin-dashboard-payment-table />
 
     <admin-common-modal
       v-model:show-dialog="showSearchModal"
@@ -91,8 +92,8 @@ const isShowClearFilter = computed(() => {
 })
 const clearFilter = async () => {
   paymentSummaryGetParams.userId = null
-  paymentSummaryGetParams.startDate = ''
-  paymentSummaryGetParams.endDate = ''
+  paymentSummaryGetParams.startDate = DEFAULT_START_DATE
+  paymentSummaryGetParams.endDate = DEFAULT_END_DATE
   paymentSummaryGetParams.gateway = null
   paymentSummaryGetParams.status = null
   paymentSummaryGetParams.currency = null
