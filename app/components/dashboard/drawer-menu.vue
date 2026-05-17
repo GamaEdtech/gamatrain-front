@@ -401,12 +401,6 @@ const mobileItems = [
     value: 'faq',
   },
   {
-    title: '$GET Token',
-    icon: 'md:attach_money',
-    link: '/get-token',
-    value: 'getToken',
-  },
-  {
     title: 'Leader Board',
     icon: 'md:poll',
     link: '/leader-board',

@@ -185,6 +185,10 @@ const footerLinks = [
         link: '/terms',
       },
       {
+        title: 'GDPR',
+        link: '/gdpr',
+      },
+      {
         title: 'FAQ',
         link: '/faq',
       },
