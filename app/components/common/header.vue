@@ -195,11 +195,6 @@ const menuLink = [
     icon: '',
   },
   {
-    title: '$GET Token',
-    link: '/get-token',
-    icon: '',
-  },
-  {
     title: 'Governance',
     link: '/governance',
     icon: '',

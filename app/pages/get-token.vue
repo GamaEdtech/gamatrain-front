@@ -18,9 +18,7 @@
     <section>
       <token-tokenomics-section />
     </section>
-    <section>
-      <token-profit-buyback-section />
-    </section>
+
     <section>
       <token-purchase />
     </section>
