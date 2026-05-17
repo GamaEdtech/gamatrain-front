@@ -44,14 +44,32 @@
           class="d-flex align-center ga-2 text-subtitle-1 text-grey700 cursor-pointer"
         >
           {{ comment.likeCount }}
-          <v-icon>md:thumb_up</v-icon>
+          <v-progress-circular
+            v-if="loadingLikeItem"
+            indeterminate
+            size="16"
+            color="primary"
+          />
+          <v-icon
+            v-else
+            @click="likeComment"
+          >md:thumb_up</v-icon>
         </span>
 
         <span
           class="d-flex align-center ga-2 text-subtitle-1 text-grey700 cursor-pointer"
         >
           {{ comment.dislikeCount }}
-          <v-icon>md:thumb_down_outlined</v-icon>
+          <v-progress-circular
+            v-if="loadingDislikeItem"
+            indeterminate
+            size="16"
+            color="primary"
+          />
+          <v-icon
+            v-else
+            @click="dislikeComment"
+          >md:thumb_down_outlined</v-icon>
         </span>
 
         <!-- <span
@@ -61,7 +79,7 @@
                 Reply
               </span> -->
       </div>
-      <span class="text-grey700 font-weight-regular"> {{ comment.creationDate }} </span>
+      <span class="text-grey700 font-weight-regular"> {{ $dayjs(comment.creationDate).format("MM/DD/YYYY") }} </span>
     </div>
 
     <!-- <div
@@ -138,10 +156,47 @@
 import type { CommentBlogDTO } from '@/types'
 
 interface ICardComment {
+  id: string
   comment: CommentBlogDTO
 }
 
-defineProps<ICardComment>()
+const props = defineProps<ICardComment>()
+const emit = defineEmits(['likeSuccessfull', 'dislikeSuccessfull'])
+
+const router = useRouter()
+const { $dayjs } = useNuxtApp()
+const auth = useAuth()
+const { like, loadingLikeItem, dislike, loadingDislikeItem } = useBlogComment()
+
+const likeComment = async () => {
+  if (auth.isAuthenticated.value) {
+    const response = await like(props.id, props.comment.id.toString())
+    if (response.succeeded) {
+      emit('likeSuccessfull')
+    }
+  }
+  else {
+    router.push({})
+    setTimeout(() => {
+      router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
+    }, 100)
+  }
+}
+
+const dislikeComment = async () => {
+  if (auth.isAuthenticated.value) {
+    const response = await dislike(props.id, props.comment.id.toString())
+    if (response.succeeded) {
+      emit('dislikeSuccessfull')
+    }
+  }
+  else {
+    router.push({})
+    setTimeout(() => {
+      router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
+    }, 100)
+  }
+}
 </script>
 
 <style scoped>

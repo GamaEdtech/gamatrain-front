@@ -93,8 +93,11 @@
       >
         <common-comments-card
           v-for="(comment, index) in comments"
+          :id="id"
           :key="index"
           :comment="comment"
+          @like-successfull="likeSuccessfull(comment)"
+          @dislike-successfull="dislikeSuccessfull(comment)"
         />
       </div>
       <div
@@ -143,6 +146,14 @@ onMounted(() => {
 const sendCommentSuccessfull = (comment: CommentBlogDTO) => {
   comments.value.push(comment)
   totalCount.value += 1
+}
+
+const likeSuccessfull = (comment: CommentBlogDTO) => {
+  comment.likeCount += 1
+}
+
+const dislikeSuccessfull = (comment: CommentBlogDTO) => {
+  comment.dislikeCount += 1
 }
 </script>
 

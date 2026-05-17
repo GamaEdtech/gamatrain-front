@@ -13,12 +13,13 @@ const totalCount = ref(0)
 const pageCount = ref(0)
 const loadingGetData = ref(true)
 const loadingAddItem = ref(false)
-const loadingLikeItem = ref(false)
-const loadingDislikeItem = ref(false)
+
 const NAME = 'Comment'
 
 export const useBlogComment = () => {
   const { $toast } = useNuxtApp()
+  const loadingLikeItem = ref(false)
+  const loadingDislikeItem = ref(false)
 
   const getData = async (params: GetCommentBlogParams) => {
     const { page, pageSize, postId } = params
