@@ -77,6 +77,7 @@ export const useBlogComment = () => {
       return {
         succeeded: false,
         message: 'The operation failed. Please try again later.',
+        data: null,
       }
     }
     finally {

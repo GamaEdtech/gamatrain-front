@@ -102,7 +102,10 @@
           isShowAllComments ? `open-send-message` : ``
         }`"
       >
-        <common-comments-form />
+        <common-comments-form
+          :id="id"
+          @send-comment-successfull="sendCommentSuccessfull"
+        />
       </div>
     </div>
   </div>
@@ -110,12 +113,14 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
+import type { CommentBlogDTO } from '@/types'
 
 interface IComment {
   id: string
 }
 
 const props = defineProps<IComment>()
+const { initCaptcha } = useRecaptcha()
 const { data: comments, getData, totalCount } = useBlogComment()
 
 const { xs } = useDisplay()
@@ -130,9 +135,15 @@ const openComments = () => {
   isShowAllComments.value = !isShowAllComments.value
 }
 
-onMounted(async () => {
-  await getData(params)
+onMounted(() => {
+  getData(params)
+  initCaptcha()
 })
+
+const sendCommentSuccessfull = (comment: CommentBlogDTO) => {
+  comments.value.push(comment)
+  totalCount.value += 1
+}
 </script>
 
 <style scoped>
