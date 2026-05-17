@@ -37,3 +37,25 @@ export interface TranslationDTO {
   summary: string
   content: string
 }
+
+export interface CommentBlogDTO {
+  id: number
+  creationUser: string
+  creationUserAvatar: string
+  creationDate: string
+  comment: string
+  likeCount: number
+  dislikeCount: number
+}
+export interface AddCommentBlogResponseDTO {
+  id: number
+}
+export interface AddCommnetBlogDTO {
+  captcha: string
+  comment: string
+}
+export interface GetCommentBlogParams {
+  page: number
+  pageSize: number
+  postId: string
+}
