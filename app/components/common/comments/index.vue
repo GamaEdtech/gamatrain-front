@@ -143,9 +143,12 @@ onMounted(() => {
   initCaptcha()
 })
 
-const sendCommentSuccessfull = (comment: CommentBlogDTO) => {
-  comments.value.push(comment)
-  totalCount.value += 1
+// const sendCommentSuccessfull = (comment: CommentBlogDTO) => {
+//   comments.value.push(comment)
+//   totalCount.value += 1
+// }
+const sendCommentSuccessfull = async () => {
+  await getData(params)
 }
 
 const likeSuccessfull = (comment: CommentBlogDTO) => {

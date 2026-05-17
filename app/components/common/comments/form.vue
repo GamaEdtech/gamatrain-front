@@ -74,22 +74,23 @@ const sendComment = async () => {
     }, props.id)
     loadingToken.value = false
     if (response.succeeded && response.data) {
-      const fullName = [user.value?.firstName, user.value?.lastName]
-        .filter(Boolean)
-        .join(' ')
+      // const fullName = [user.value?.firstName, user.value?.lastName]
+      //   .filter(Boolean)
+      //   .join(' ')
 
-      const creationUser
-        = fullName || user.value?.userName || 'unknown'
-      const comment = {
-        id: response.data.id,
-        creationUser: creationUser,
-        creationUserAvatar: user.value?.avatar,
-        creationDate: new Date(),
-        comment: commentText.value,
-        likeCount: 0,
-        dislikeCount: 0,
-      }
-      emit('sendCommentSuccessfull', comment)
+      // const creationUser
+      //   = fullName || user.value?.userName || 'unknown'
+      // const comment = {
+      //   id: response.data.id,
+      //   creationUser: creationUser,
+      //   creationUserAvatar: user.value?.avatar,
+      //   creationDate: new Date(),
+      //   comment: commentText.value,
+      //   likeCount: 0,
+      //   dislikeCount: 0,
+      // }
+      // emit('sendCommentSuccessfull', comment)
+      emit('sendCommentSuccessfull')
       commentText.value = ''
     }
   }
