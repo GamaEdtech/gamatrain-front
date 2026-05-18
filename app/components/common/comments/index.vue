@@ -17,7 +17,16 @@
           Comments
         </span>
 
-        <span class="text-h6 text-grey400 font-weight-regular">
+        <v-skeleton-loader
+          v-if="loadingGetData"
+          width="60"
+          height="20"
+          class="rounded-lg"
+        />
+        <span
+          v-else
+          class="d-flex align-center ga-1 text-h6 text-grey400 font-weight-regular"
+        >
           <span class="text-grey500 font-weight-medium">{{
             totalCount
           }}</span>
@@ -75,7 +84,16 @@
           Comments
         </span>
 
-        <span class="text-h5 text-grey400 font-weight-regular">
+        <v-skeleton-loader
+          v-if="loadingGetData"
+          width="60"
+          height="20"
+          class="rounded-lg"
+        />
+        <span
+          v-else
+          class="text-h5 text-grey400 font-weight-regular"
+        >
           <span class="text-grey500 font-weight-medium">{{
             totalCount
           }}</span> Comment
@@ -91,14 +109,22 @@
           isShowAllComments ? `pa-4 pa-sm-8` : `close-container`
         }`"
       >
-        <common-comments-card
-          v-for="(comment, index) in comments"
-          :id="id"
-          :key="index"
-          :comment="comment"
-          @like-successfull="likeSuccessfull(comment)"
-          @dislike-successfull="dislikeSuccessfull(comment)"
-        />
+        <template v-if="loadingGetData">
+          <common-comments-card-skeleton
+            v-for="i in 5"
+            :key="i"
+          />
+        </template>
+        <template v-else>
+          <common-comments-card
+            v-for="(comment, index) in comments"
+            :id="id"
+            :key="index"
+            :comment="comment"
+            @like-successfull="likeSuccessfull(comment)"
+            @dislike-successfull="dislikeSuccessfull(comment)"
+          />
+        </template>
       </div>
       <div
         :class="`send-message-div d-flex w-100 left-0 bottom-0 rounded-lg bg-white ${
@@ -124,7 +150,7 @@ interface IComment {
 
 const props = defineProps<IComment>()
 const { initCaptcha } = useRecaptcha()
-const { data: comments, getData, totalCount } = useBlogComment()
+const { data: comments, getData, totalCount, loadingGetData } = useBlogComment()
 
 const { xs } = useDisplay()
 const isShowAllComments = ref(false)

@@ -5,13 +5,19 @@
     <div class="w-100 d-flex align-center justify-space-between">
       <div class="img-name d-flex ga-2 align-center">
         <img
+          v-if="comment.creationUserAvatar"
           width="40"
           height="40"
           class="rounded-circle image-user"
-          :src="
-            comment.creationUserAvatar ? comment.creationUserAvatar : `/images/member/avatar.svg`
-          "
+          :src="comment.creationUserAvatar"
         >
+        <v-icon
+          v-else
+          size="40"
+          class="image-user"
+        >
+          md:account_circle
+        </v-icon>
         <!-- <div
                 v-if="comment.replies.length > 0"
                 class="circle-div"
