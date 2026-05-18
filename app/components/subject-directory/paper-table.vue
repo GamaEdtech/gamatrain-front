@@ -490,7 +490,7 @@ const startDownload = async (type, item) => {
       }
     }, 100)
 
-    const response = await $fetch(apiUrl)
+    const response = await useApiService.get(apiUrl)
 
     // Update progress to 60% after API response
     downloadProgress.value[downloadKey] = 60
