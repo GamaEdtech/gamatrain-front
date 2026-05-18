@@ -205,7 +205,10 @@
         </div>
       </v-col>
     </v-row>
-    <v-col cols="12">
+    <v-col
+      cols="12"
+      class="mt-4"
+    >
       <common-comments :id="blogId" />
     </v-col>
   </v-container>
