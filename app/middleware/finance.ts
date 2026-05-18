@@ -9,7 +9,7 @@ export default defineNuxtRouteMiddleware(() => {
   )
 
   if (!hasFinanceRole) {
-    showError({
+    return showError({
       statusCode: 403,
       statusMessage: 'Access Denied!',
     })
