@@ -53,7 +53,7 @@
             class="ma-1 chip-pill position-relative"
             color="#F04438"
             :disabled="!item.q_file"
-            @click="startDownload('q_pdf', item)"
+            @click="handleDownload('q_pdf', item)"
           >
             <template v-if="isDownloading(item, 'q_pdf')">
               <v-progress-circular
@@ -71,7 +71,7 @@
             class="ma-1 chip-pill position-relative"
             color="#12B76A"
             :disabled="!item.a_file"
-            @click="startDownload('a_file', item)"
+            @click="handleDownload('a_file', item)"
           >
             <template v-if="isDownloading(item, 'a_file')">
               <v-progress-circular
@@ -90,7 +90,7 @@
             class="ma-1 chip-pill position-relative"
             color="#F79009"
             :disabled="!item.sf_file"
-            @click="startDownload('sf_file', item)"
+            @click="handleDownload('sf_file', item)"
           >
             <template v-if="isDownloading(item, 'sf_file')">
               <v-progress-circular
@@ -111,7 +111,7 @@
             class="ma-1 chip-pill position-relative"
             color="#8F4949"
             :disabled="!item.in_file"
-            @click="startDownload('in_file', item)"
+            @click="handleDownload('in_file', item)"
           >
             <template v-if="isDownloading(item, 'in_file')">
               <v-progress-circular
@@ -225,7 +225,7 @@
                   class="chip-pill position-relative"
                   color="#F04438"
                   :disabled="!item.q_file"
-                  @click="startDownload('q_pdf', item)"
+                  @click="handleDownload('q_pdf', item)"
                 >
                   <template v-if="isDownloading(item, 'q_pdf')">
                     <v-progress-circular
@@ -248,7 +248,7 @@
                   class="chip-pill position-relative"
                   color="#12B76A"
                   :disabled="!item.a_file"
-                  @click="startDownload('a_file', item)"
+                  @click="handleDownload('a_file', item)"
                 >
                   <template v-if="isDownloading(item, 'a_file')">
                     <v-progress-circular
@@ -271,7 +271,7 @@
                   class="chip-pill position-relative"
                   color="#F79009"
                   :disabled="!item.sf_file"
-                  @click="startDownload('sf_file', item)"
+                  @click="handleDownload('sf_file', item)"
                 >
                   <template v-if="isDownloading(item, 'sf_file')">
                     <v-progress-circular
@@ -295,7 +295,7 @@
                   class="chip-pill position-relative"
                   color="#8F4949"
                   :disabled="!item.in_file"
-                  @click="startDownload('in_file', item)"
+                  @click="handleDownload('in_file', item)"
                 >
                   <template v-if="isDownloading(item, 'in_file')">
                     <v-progress-circular
@@ -392,11 +392,36 @@
       </div>
     </div>
   </template>
+
+  <!-- Coin Payment Modal -->
+  <lazy-modals-coin-payment-modal
+    v-if="showCoinPaymentModal"
+    v-model:show-dialog="showCoinPaymentModal"
+    :is-processing="isLoading || isProcessingPayment"
+    :user-balance="balance"
+    :amount-to-pay="PRICE_FILE"
+    @confirm="handleCoinPaymentConfirm"
+    @close="handleCoinPaymentClose"
+  />
+
+  <!-- Coin Consumption Animation -->
+  <lazy-common-coin-consumption-animation
+    v-model:is-visible="showCoinAnimation"
+    @animation-complete="handleAnimationComplete"
+  />
+
+  <lazy-test-counting-wallet-animation
+    :is-start-animation="isStartWalletAnimation"
+    :direction="-1"
+    :delta-price="5"
+    @complete-animation="completeWalletAnimation"
+  />
 </template>
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
+const PRICE_FILE = 5_000_000
 const props = defineProps({
   desktopHeader: {
     type: Array,
@@ -465,14 +490,146 @@ const safeParseArray = (stringList) => {
 // Track download progress for each button
 const downloadProgress = ref({})
 const downloadingItems = ref(new Set())
+const auth = useAuth()
+const router = useRouter()
+const { balance, isLoading, fetchBalance, consumeCoins } = useCoinBalance()
+const showCoinPaymentModal = ref(false)
+const showCoinAnimation = ref(false)
+const isProcessingPayment = ref(false)
+const isStartWalletAnimation = ref(false)
 
-const startDownload = async (type, item) => {
+// For 2025 files, only these file types require coins:
+// - Mark schemes/answer files (a_file)
+// - Extra files (audio, additional resources)
+// - Question papers (q_word, q_pdf) remain FREE
+const requiresCoinPaymentForFile = (type, item) => {
+  const paidTestTypes = [
+    '8691', '7130', '6897', '8073', '8344',
+  ]
+
+  const paidLessons = [
+    '6649', '6527', '6650', '6526',
+    '6651', '6529', '6652', '6532',
+    '6653', '6516', '6654', '6515',
+    '6655', '6519', '6656', '6522',
+  ]
+
+  if (item.year === '2026') {
+    return true
+  }
+  else if (item.edu_year === '2026') {
+    return true
+  }
+  else if (paidTestTypes.some(id => item.testType?.includes(id)))
+    return true
+  else if (type === 'extra')
+    return true
+  else if (
+    type === 'a_file'
+    && (
+      item.year === '2025'
+      || paidLessons.some(id => item.lesson?.includes(id))
+    )
+  ) {
+    return true
+  }
+  else if (
+    type === 'a_file'
+    && (
+      item.edu_year === '2025'
+      || paidLessons.some(id => item.lesson?.includes(id))
+    )
+  ) {
+    return true
+  }
+
+  return false
+}
+
+const handleCoinPaymentConfirm = async () => {
+  showCoinPaymentModal.value = false
+  isProcessingPayment.value = true
+
+  try {
+    const response = await consumeCoins(
+      PRICE_FILE,
+      'Past paper download',
+    )
+    if (response.succeeded) {
+      showCoinAnimation.value = true
+      // Wait for animation to complete before starting download
+      // The download will be triggered in handleAnimationComplete
+    }
+    else {
+      $toast.error('Failed to process payment. Please try again.')
+    }
+  }
+  catch (error) {
+    console.error('Error processing coin payment:', error)
+    $toast.error('Payment failed. Please try again.')
+  }
+  finally {
+    isProcessingPayment.value = false
+  }
+}
+
+const handleCoinPaymentClose = () => {
+  showCoinPaymentModal.value = false
+}
+
+const handleAnimationComplete = async () => {
+  // Close everything immediately when animation completes
+  showCoinAnimation.value = false
+  isStartWalletAnimation.value = true
+}
+
+const completeWalletAnimation = () => {
+  isStartWalletAnimation.value = false
+}
+
+const handleDownload = async (type, item) => {
   const downloadKey = `${item.id}-${type}`
 
   // Set loading state
   downloadingItems.value.add(downloadKey)
   downloadProgress.value[downloadKey] = 0
+  if (requiresCoinPaymentForFile(type, item)) {
+    if (auth.isAuthenticated.value) {
+      const balanceResult = await fetchBalance()
+      if (!balanceResult.succeeded) {
+        downloadingItems.value.delete(downloadKey)
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete downloadProgress.value[downloadKey]
+        $toast.error('Failed to fetch balance. Please try again.')
+        return
+      }
+      if ((Number(balanceResult.data) / 10 ** 6) > 5) {
+        handleCoinPaymentConfirm()
+        startDownload(type, item, downloadKey)
+      }
+      else {
+        downloadingItems.value.delete(downloadKey)
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+        delete downloadProgress.value[downloadKey]
+        showCoinPaymentModal.value = true
+      }
+    }
+    else {
+      downloadingItems.value.delete(downloadKey)
+      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+      delete downloadProgress.value[downloadKey]
+      router.push({})
+      setTimeout(() => {
+        router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
+      }, 100)
+    }
+  }
+  else {
+    startDownload(type, item, downloadKey)
+  }
+}
 
+const startDownload = async (type, item, downloadKey) => {
   let apiUrl = ''
   if (type === 'q_word') apiUrl = `/api/v1/tests/download/${item.id}/word`
   if (type === 'q_pdf') apiUrl = `/api/v1/tests/download/${item.id}/pdf`
