@@ -31,6 +31,7 @@
         height="32"
         color="greenLight500"
         :loading="loadingAddItem || loadingToken"
+        :disabled="isDisabled"
         @click="sendComment"
       >
         <v-icon color="white">
@@ -101,6 +102,12 @@ const sendComment = async () => {
     }, 100)
   }
 }
+
+const isDisabled = computed(() => {
+  const text = commentText.value.trim()
+
+  return !text || text.length > 300
+})
 </script>
 
 <style scoped></style>

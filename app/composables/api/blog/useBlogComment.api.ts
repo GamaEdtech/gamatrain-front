@@ -66,7 +66,12 @@ export const useBlogComment = () => {
         $toast.success(`${NAME} Added successfully!`)
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        if (response.errors && response.errors.length > 0) {
+          $toast.error(response.errors[0].message || '')
+        }
+        else {
+          $toast.error('The operation failed. Please try again later.')
+        }
       }
       return response
     }
@@ -99,7 +104,12 @@ export const useBlogComment = () => {
         $toast.success(`${NAME} like successfully!`)
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        if (response.errors && response.errors.length > 0) {
+          $toast.error(response.errors[0].message || '')
+        }
+        else {
+          $toast.error('The operation failed. Please try again later.')
+        }
       }
       return response
     }
@@ -131,7 +141,12 @@ export const useBlogComment = () => {
         $toast.success(`${NAME} dislike successfully!`)
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        if (response.errors && response.errors.length > 0) {
+          $toast.error(response.errors[0].message || '')
+        }
+        else {
+          $toast.error('The operation failed. Please try again later.')
+        }
       }
       return response
     }
