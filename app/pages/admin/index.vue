@@ -56,7 +56,7 @@ import type {
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['auth', 'admin'],
+  middleware: ['auth', 'admin', 'finance'],
 })
 
 const { paymentSummary, getPaymentSummary } = usePayment()
