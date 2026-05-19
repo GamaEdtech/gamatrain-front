@@ -205,6 +205,12 @@
         </div>
       </v-col>
     </v-row>
+    <v-col
+      cols="12"
+      class="mt-4"
+    >
+      <common-comments :id="blogId" />
+    </v-col>
   </v-container>
 </template>
 
@@ -225,6 +231,7 @@ const { data: contentData, error } = await useAsyncData(
     transform: response => response.data,
   },
 )
+console.log('error', error)
 
 const organizationSchema = {
   '@type': 'Organization',

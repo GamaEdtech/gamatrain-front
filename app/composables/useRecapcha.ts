@@ -6,10 +6,11 @@ interface RecaptchaContext {
   execute: (action: string, callback: (token: string) => void) => void
 }
 
+const recaptcha = ref<RecaptchaContext>()
+
 export const useRecaptcha = () => {
   // Get site key from runtime config or environment
   const siteKey: string = useRuntimeConfig().public.recapchaSiteKey as string
-  const recaptcha = ref<RecaptchaContext>()
 
   // Function to dynamically load the reCAPTCHA script
   function loadRecaptchaScript(): Promise<RecaptchaContext> {
