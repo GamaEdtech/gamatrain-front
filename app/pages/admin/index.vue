@@ -56,7 +56,7 @@ import type {
 
 definePageMeta({
   layout: 'admin',
-  middleware: ['auth', 'admin'],
+  middleware: ['auth', 'admin', 'finance'],
 })
 
 const { paymentSummary, getPaymentSummary } = usePayment()
@@ -72,8 +72,8 @@ const paymentSummaryGetParams = reactive<PaymentSummaryGetParams>({
   userId: null,
   startDate: DEFAULT_START_DATE,
   endDate: DEFAULT_END_DATE,
-  gateway: null,
-  status: null,
+  gateway: 'Stripe',
+  status: 'Paid',
   currency: null,
 })
 
@@ -86,8 +86,8 @@ const isShowClearFilter = computed(() => {
     !!paymentSummaryGetParams.userId
     || paymentSummaryGetParams.startDate !== DEFAULT_START_DATE
     || paymentSummaryGetParams.endDate !== DEFAULT_END_DATE
-    || !!paymentSummaryGetParams.gateway
-    || !!paymentSummaryGetParams.status
+    || (!!paymentSummaryGetParams.gateway && paymentSummaryGetParams.gateway != 'Stripe')
+    || (!!paymentSummaryGetParams.status && paymentSummaryGetParams.status != 'Paid')
     || !!paymentSummaryGetParams.currency
   )
 })
@@ -95,8 +95,8 @@ const clearFilter = async () => {
   paymentSummaryGetParams.userId = null
   paymentSummaryGetParams.startDate = DEFAULT_START_DATE
   paymentSummaryGetParams.endDate = DEFAULT_END_DATE
-  paymentSummaryGetParams.gateway = null
-  paymentSummaryGetParams.status = null
+  paymentSummaryGetParams.gateway = 'Stripe'
+  paymentSummaryGetParams.status = 'Paid'
   paymentSummaryGetParams.currency = null
   await getPaymentSummary(paymentSummaryGetParams)
 }
