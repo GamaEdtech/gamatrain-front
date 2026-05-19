@@ -191,18 +191,6 @@
             >
               {{ item.status }}
             </v-chip>
-
-            <v-btn
-              v-if="item.status == `Pending`"
-              flat
-              size="small"
-              class="ml-1 text-h6"
-              color="success"
-              variant="outlined"
-              @click="openVerifyPaymentModal(item)"
-            >
-              verify
-            </v-btn>
           </div>
         </template>
 
@@ -233,6 +221,20 @@
               md:content_copy_outlined
             </v-icon>
           </div>
+        </template>
+
+        <template #[`item.action`]="{ item }">
+          <v-btn
+            v-if="canVerifyPayment(item)"
+            flat
+            size="small"
+            class="text-h6"
+            color="success"
+            variant="outlined"
+            @click="openVerifyPaymentModal(item)"
+          >
+            verify
+          </v-btn>
         </template>
       </v-data-table>
     </div>
@@ -425,6 +427,7 @@ definePageMeta({
 const { $dayjs, $toast } = useNuxtApp()
 const { verifyPayment, loadingVerifyPayment } = usePayment()
 
+const TWENTY_MINUTES = 20 * 60 * 1000
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
   { title: 'User', key: 'firstName', sortable: false, width: '15vw' },
@@ -446,10 +449,11 @@ const headers = [
     sortable: false,
     width: '5vw',
   },
-  { title: 'Status', key: 'status', sortable: false, width: '10vw' },
+  { title: 'Status', key: 'status', sortable: false, width: '5vw' },
   { title: 'Created At', key: 'creationDate', sortable: false, width: '10vw' },
   { title: 'Verify At', key: 'verifyDate', sortable: false, width: '10vw' },
-  { title: 'Source Wallet', key: 'sourceWallet', sortable: false, width: '35vw' },
+  { title: 'Source Wallet', key: 'sourceWallet', sortable: false, width: '30vw' },
+  { title: 'Action', key: 'action', sortable: false, width: '10vw' },
 ]
 const list = ref<AdminPaymentDTO[]>([])
 const loading = ref(true)
@@ -647,6 +651,12 @@ const confirmPayment = async () => {
 
 const refreshData = async () => {
   await getData()
+}
+const canVerifyPayment = (item: AdminPaymentDTO) => {
+  return (
+    item.status === 'Pending'
+    && Date.now() - new Date(item.creationDate).getTime() > TWENTY_MINUTES
+  )
 }
 </script>
 
