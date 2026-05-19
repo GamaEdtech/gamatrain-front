@@ -4,18 +4,41 @@
       <span class="text-h4 font-weight-bold text-start text-grey700">
         Payment Summary
       </span>
-      <v-btn
-        variant="plain"
-        max-width="40"
-        @click="showSearchModal = true"
-      >
-        <v-icon
-          size="36"
-          class="grey500"
+      <div class="d-flex align-center ga-2">
+        <v-btn
+          variant="plain"
+          max-width="40"
+          @click="showSearchModal = true"
         >
-          md:search
-        </v-icon>
-      </v-btn>
+          <v-icon
+            size="36"
+            class="grey500"
+          >
+            md:search
+          </v-icon>
+        </v-btn>
+        <v-btn
+          size="small"
+          flat
+          icon
+          color="info"
+          :loading="loading"
+          @click="refreshData"
+        >
+          <v-icon
+            color="white"
+            size="20"
+          >
+            md:refresh
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+          >
+            Refresh Data
+          </v-tooltip>
+        </v-btn>
+      </div>
     </div>
     <div class="w-100 d-flex align-center justify-start mb-4">
       <v-btn
@@ -59,7 +82,7 @@ definePageMeta({
   middleware: ['auth', 'admin', 'finance'],
 })
 
-const { paymentSummary, getPaymentSummary } = usePayment()
+const { paymentSummary, getPaymentSummary, loadingPaymentSummary: loading } = usePayment()
 
 const showSearchModal = ref(false)
 const DEFAULT_START_DATE = dayjs()
@@ -116,5 +139,9 @@ const selectBar = (data: PaymentSummaryDTO) => {
   paymentSummary.value = [data]
   paymentSummaryGetParams.startDate = data.date
   paymentSummaryGetParams.endDate = data.date
+}
+
+const refreshData = async () => {
+  await getPaymentSummary(paymentSummaryGetParams)
 }
 </script>

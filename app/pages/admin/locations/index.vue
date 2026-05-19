@@ -180,6 +180,10 @@ watch(search, (val) => {
     )
   }
 })
+
+const refreshData = async () => {
+  await fetchLocations()
+}
 </script>
 
 <template>
@@ -249,6 +253,27 @@ watch(search, (val) => {
     </div>
 
     <div class="d-flex justify-end ga-2 align-center pr-2">
+      <v-btn
+        size="small"
+        flat
+        icon
+        color="info"
+        :loading="tableLoading"
+        @click="refreshData"
+      >
+        <v-icon
+          color="white"
+          size="20"
+        >
+          md:refresh
+        </v-icon>
+        <v-tooltip
+          activator="parent"
+          location="top"
+        >
+          Refresh Data
+        </v-tooltip>
+      </v-btn>
       <p class="primary-gray-500 gtext-t6 font-weight-bold">
         {{ totalCount }}
       </p>

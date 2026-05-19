@@ -11,7 +11,28 @@
       >
         <span class="text-primary font-weight-bold text-h5">Add Language</span>
       </v-btn>
-      <div class="d-flex align-center justify-end ga-1">
+      <div class="d-flex align-center justify-end ga-2 flex-wrap">
+        <v-btn
+          size="small"
+          flat
+          icon
+          color="info"
+          :loading="loading"
+          @click="refreshData"
+        >
+          <v-icon
+            color="white"
+            size="20"
+          >
+            md:refresh
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+          >
+            Refresh Data
+          </v-tooltip>
+        </v-btn>
         <span
           class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
         >
@@ -292,6 +313,10 @@ const openDetailModal = (item: AdminLanguageDTO) => {
 
 const editItemSuccessFull = async () => {
   showDetailModal.value = false
+  await fetchLanguages()
+}
+
+const refreshData = async () => {
   await fetchLanguages()
 }
 </script>

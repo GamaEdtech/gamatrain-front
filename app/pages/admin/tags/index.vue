@@ -122,6 +122,10 @@ watch(filter, (_val) => {
   page.value = 1
   fetchTags()
 }, { immediate: true })
+
+const refreshData = async () => {
+  await fetchTags()
+}
 </script>
 
 <template>
@@ -185,7 +189,28 @@ watch(filter, (_val) => {
         </v-btn>
       </div>
 
-      <div class="d-flex ga-1">
+      <div class="d-flex ga-1 align-center">
+        <v-btn
+          size="small"
+          flat
+          icon
+          color="info"
+          :loading="tableLoading"
+          @click="refreshData"
+        >
+          <v-icon
+            color="white"
+            size="20"
+          >
+            md:refresh
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+          >
+            Refresh Data
+          </v-tooltip>
+        </v-btn>
         <p class="primary-gray-500 gtext-t6 font-weight-bold">
           {{ totalCount }}
         </p>

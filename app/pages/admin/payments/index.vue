@@ -68,7 +68,7 @@
           </v-list>
         </v-menu>
       </div>
-      <div class="d-flex align-center justify-end ga-1">
+      <div class="d-flex align-center justify-end ga-1 flex-wrap">
         <v-btn
           variant="plain"
           max-width="20"
@@ -80,6 +80,29 @@
           >
             md:search
           </v-icon>
+        </v-btn>
+
+        <v-btn
+          size="small"
+          flat
+          icon
+          color="info"
+          :loading="loading"
+          class="mr-1"
+          @click="refreshData"
+        >
+          <v-icon
+            color="white"
+            size="20"
+          >
+            md:refresh
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+          >
+            Refresh Data
+          </v-tooltip>
         </v-btn>
 
         <span
@@ -626,6 +649,9 @@ const confirmPayment = async () => {
   await getData()
 }
 
+const refreshData = async () => {
+  await getData()
+}
 const canVerifyPayment = (item: AdminPaymentDTO) => {
   return (
     item.status === 'Pending'
