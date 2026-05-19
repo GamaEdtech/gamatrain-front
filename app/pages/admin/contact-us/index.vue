@@ -28,7 +28,28 @@
           />
         </div>
       </div>
-      <div class="d-flex align-center justify-end ga-1">
+      <div class="d-flex align-center justify-end flex-wrap ga-1">
+        <v-btn
+          size="small"
+          flat
+          icon
+          color="info"
+          :loading="loading"
+          @click="refreshData"
+        >
+          <v-icon
+            color="white"
+            size="20"
+          >
+            md:refresh
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+          >
+            Refresh Data
+          </v-tooltip>
+        </v-btn>
         <span
           class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
         >
@@ -378,6 +399,10 @@ const deleteContact = (contact: AdminContactUsDTO) => {
 const deleteSuccessFull = async () => {
   selectedItemIdForDelete.value = ''
   showDeleteModal.value = false
+  await getData()
+}
+
+const refreshData = async () => {
   await getData()
 }
 </script>
