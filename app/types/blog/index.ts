@@ -72,6 +72,14 @@ export interface GetCommentBlogAdminParams {
   status: CommentBlogStatus
 }
 
+export interface CommentBlogAdminSearchFilter {
+  startDate: string
+  endDate: string
+  commenterEmail: string
+  commenterName: string
+  status: CommentBlogStatus | null
+}
+
 export interface CommnetBlogAdminDTO {
   id: number
   creationUser: string

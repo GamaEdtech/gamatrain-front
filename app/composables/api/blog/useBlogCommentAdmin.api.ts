@@ -17,7 +17,7 @@ const loadingReject = ref(false)
 
 const NAME = 'Comment'
 
-export const useBlogComment = () => {
+export const useBlogCommentAdmin = () => {
   const { $toast } = useNuxtApp()
 
   const getData = async (params: GetCommentBlogAdminParams) => {
