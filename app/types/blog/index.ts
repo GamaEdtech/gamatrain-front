@@ -77,7 +77,7 @@ export interface CommentBlogAdminSearchFilter {
   endDate: string
   commenterEmail: string
   commenterName: string
-  status: CommentBlogStatus | null
+  status?: CommentBlogStatus
 }
 
 export interface CommnetBlogAdminDTO {

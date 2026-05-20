@@ -190,17 +190,17 @@
       </div>
     </div>
 
-    <!-- <admin-common-modal
+    <admin-common-modal
       v-model:show-dialog="showSearchModal"
       title="Search"
     >
-      <admin-usermanagement-search-modal
+      <admin-blogs-comments-modal-search
         :data="searchFilter"
         @search="startSearch"
       />
     </admin-common-modal>
 
-    <admin-usermanagement-more-action-modal
+    <!-- <admin-usermanagement-more-action-modal
       :id="selectedItemIdForMoreAction"
       v-model:show-dialog="moreActionModal"
       @refresh-data="refreshData"
@@ -252,7 +252,7 @@ const searchFilter = reactive<CommentBlogAdminSearchFilter>({
   endDate: '',
   commenterEmail: '',
   commenterName: '',
-  status: null,
+  status: undefined,
 })
 
 const fetchData = async () => {
@@ -303,21 +303,21 @@ const clearFilter = async () => {
   searchFilter.endDate = ''
   searchFilter.commenterEmail = ''
   searchFilter.commenterName = ''
-  searchFilter.status = null
+  searchFilter.status = undefined
   page.value = 1
   await fetchData()
 }
 
-// const startSearch = async (item: CommentBlogAdminSearchFilter) => {
-//   searchFilter.startDate = item.startDate
-//   searchFilter.endDate = item.endDate
-//   searchFilter.commenterEmail = item.commenterEmail
-//   searchFilter.commenterName = item.commenterName
-//   searchFilter.status = item.status
-//   page.value = 1
-//   showSearchModal.value = false
-//   await fetchData()
-// }
+const startSearch = async (item: CommentBlogAdminSearchFilter) => {
+  searchFilter.startDate = item.startDate
+  searchFilter.endDate = item.endDate
+  searchFilter.commenterEmail = item.commenterEmail
+  searchFilter.commenterName = item.commenterName
+  searchFilter.status = item.status
+  page.value = 1
+  showSearchModal.value = false
+  await fetchData()
+}
 
 const getColorStatus = (status: CommentBlogStatus) => {
   switch (status) {
