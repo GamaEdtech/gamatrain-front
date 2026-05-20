@@ -69,7 +69,7 @@ export interface GetCommentBlogAdminParams {
   endDate: string
   commenterEmail: string
   commenterName: string
-  status: CommentBlogStatus
+  status?: CommentBlogStatus
 }
 
 export interface CommentBlogAdminSearchFilter {

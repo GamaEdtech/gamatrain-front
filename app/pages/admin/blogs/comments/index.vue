@@ -113,7 +113,7 @@
           <div
             class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
           >
-            {{ !item.referralId ? '-': item.postId }}
+            {{ !item.postId ? '-': item.postId }}
           </div>
         </template>
 
@@ -200,11 +200,15 @@
       />
     </admin-common-modal>
 
-    <!-- <admin-usermanagement-more-action-modal
-      :id="selectedItemIdForMoreAction"
+    <admin-common-modal
       v-model:show-dialog="moreActionModal"
-      @refresh-data="refreshData"
-    /> -->
+      title="Detail"
+    >
+      <admin-blogs-comments-modal-detail
+        :contribution-id="selectedItemIdForMoreAction"
+        @change-status-successfull="changeStatusSuccessfull"
+      />
+    </admin-common-modal>
   </div>
 </template>
 
@@ -281,6 +285,12 @@ const openModalMoreAction = (item: CommnetBlogAdminDTO) => {
   moreActionModal.value = true
 }
 
+const changeStatusSuccessfull = async () => {
+  moreActionModal.value = false
+  selectedItemIdForMoreAction.value = ''
+  await fetchData()
+}
+
 const refreshData = async () => {
   await fetchData()
 }
@@ -319,7 +329,7 @@ const startSearch = async (item: CommentBlogAdminSearchFilter) => {
   await fetchData()
 }
 
-const getColorStatus = (status: CommentBlogStatus) => {
+const getColorStatus = (status?: CommentBlogStatus) => {
   switch (status) {
     case 'Draft':
       return 'info'

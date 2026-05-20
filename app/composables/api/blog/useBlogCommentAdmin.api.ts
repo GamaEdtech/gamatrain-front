@@ -31,7 +31,7 @@ export const useBlogCommentAdmin = () => {
         'EndDate': params.endDate,
         'CommenterEmail': params.commenterEmail,
         'CommenterName': params.commenterName,
-        'Status': params.status,
+        'Status': params.status ?? '',
       }
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<CommnetBlogAdminDTO>>
