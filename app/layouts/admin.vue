@@ -36,7 +36,6 @@ const menuItems = [
         link: '/admin/users',
         icon: 'md:groups_3_outlined',
       },
-      { title: 'Blogs ', link: '/admin/blogs', icon: 'md:post_outlined' },
       { title: 'Tags ', link: '/admin/tags', icon: 'md:sell_outlined' },
       {
         title: 'Transactions ',
@@ -48,6 +47,12 @@ const menuItems = [
         link: '/admin/payments',
         icon: 'md:payments_outlined',
       },
+    ],
+  }, {
+    Blog: [
+
+      { title: 'Blogs ', link: '/admin/blogs', icon: 'md:post_outlined' },
+      { title: 'Comments ', link: '/admin/blogs/comments', icon: 'md:comment_outlined' },
     ],
   },
   { 'Type Managment': [{ title: 'Location', link: '/admin/Locations', icon: 'md:location_on_outlined' }] },

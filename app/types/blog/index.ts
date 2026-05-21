@@ -59,3 +59,38 @@ export interface GetCommentBlogParams {
   pageSize: number
   postId: string
 }
+
+export type CommentBlogStatus = 'Draft' | 'Review' | 'Confirmed' | 'Rejected' | 'Deleted'
+
+export interface GetCommentBlogAdminParams {
+  page: number
+  pageSize: number
+  startDate: string
+  endDate: string
+  commenterEmail: string
+  commenterName: string
+  status?: CommentBlogStatus
+}
+
+export interface CommentBlogAdminSearchFilter {
+  startDate: string
+  endDate: string
+  commenterEmail: string
+  commenterName: string
+  status?: CommentBlogStatus
+}
+
+export interface CommnetBlogAdminDTO {
+  id: number
+  creationUser: string
+  creationDate: string
+  postId: number
+  status: CommentBlogStatus
+}
+
+export interface CommnetBlogDetailAdminDTO {
+  id: number
+  postTitle: string
+  postId: number
+  comment: string
+}
