@@ -3,18 +3,9 @@ import type {
   AppError,
   ResponseListDTO,
   ExperienceDTO,
+  AddExperienceDTO,
+  GetDataParamsExperience,
 } from '@/types'
-
-interface AddExperienceDTO {
-  startDate: string
-  endDate: string
-  title: string
-  description: string
-}
-interface GetDataParams {
-  page: number
-  pageSize: number
-}
 
 const data = ref<ExperienceDTO[]>([])
 const totalCount = ref(0)
@@ -29,7 +20,7 @@ const NAME = 'Experience'
 export const useExperiences = () => {
   const { $toast } = useNuxtApp()
 
-  const getData = async (params: GetDataParams) => {
+  const getData = async (params: GetDataParamsExperience) => {
     const { page, pageSize } = params
     loadingGetData.value = true
     try {

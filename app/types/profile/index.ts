@@ -1,11 +1,4 @@
-export interface ExperienceProfileDTO {
-  id: number
-  startDate: string
-  endDate: string
-  schoolId: number
-  schoolTitle: string
-  description: string
-}
+import type { ExperienceDTO } from '@/types'
 
 export interface ProfileDTO {
   profileView: number
@@ -15,7 +8,7 @@ export interface ProfileDTO {
   biography: string
   skills: string[]
   currentStatusSentence: string
-  experiences: ExperienceProfileDTO[]
+  experiences: ExperienceDTO[]
   firstName: string
   lastName: string
   userRateLevel: string

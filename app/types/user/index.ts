@@ -1,3 +1,5 @@
+import type { ExperienceDTO, ProfileVisibility, Gender } from '@/types'
+
 export interface AdminUserDTO {
   id: number
   username: string
@@ -55,15 +57,6 @@ export interface SearchFilterUser {
   referralId: string
 }
 
-export interface ExperienceUser {
-  id: number
-  startDate: string
-  endDate: string
-  schoolId: number
-  schoolTitle: string
-  description: string
-}
-
 export interface User {
   userName: string
   firstName: string
@@ -73,7 +66,7 @@ export interface User {
   stateId: number
   schoolId: number
   referralId: string
-  gender: string
+  gender: Gender
   board: number
   grade: number
   group: number
@@ -82,11 +75,11 @@ export interface User {
   walletId: string
   profileUpdated: boolean
   roles: string[]
-  profileVisibility: string
+  profileVisibility: ProfileVisibility
   biography: string
   skills: string[]
   currentStatusSentence: string
   userRateLevel: string
-  experiences: ExperienceUser[]
+  experiences: ExperienceDTO[]
   handle: string
 }
