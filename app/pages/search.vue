@@ -523,7 +523,7 @@ const filters = [
         disableIds: ['learnfiles', 'dars', 'question', 'multimedia', 'tutorial', 'forum'],
       },
     ],
-    staticList: Array.from({ length: 13 }, (_, i) => 2013 + i)
+    staticList: Array.from({ length: 14 }, (_, i) => 2013 + i)
       .reverse()
       .map(year => ({
         title: `${year}`,

@@ -397,7 +397,7 @@ const filters = [
     idInParams: false,
     extraApiParams: {},
     dependencies: [],
-    staticList: Array.from({ length: 2 }, (_, i) => 2024 + i)
+    staticList: Array.from({ length: 3 }, (_, i) => 2024 + i)
       .reverse()
       .map(year => ({
         title: `${year}`,
