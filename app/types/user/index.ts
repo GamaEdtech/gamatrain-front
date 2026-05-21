@@ -54,3 +54,39 @@ export interface SearchFilterUser {
   email: string
   referralId: string
 }
+
+export interface ExperienceUser {
+  id: number
+  startDate: string
+  endDate: string
+  schoolId: number
+  schoolTitle: string
+  description: string
+}
+
+export interface User {
+  userName: string
+  firstName: string
+  lastName: string
+  countryId: number
+  cityId: number
+  stateId: number
+  schoolId: number
+  referralId: string
+  gender: string
+  board: number
+  grade: number
+  group: number
+  coreId: number
+  avatar: string
+  walletId: string
+  profileUpdated: boolean
+  roles: string[]
+  profileVisibility: string
+  biography: string
+  skills: string[]
+  currentStatusSentence: string
+  userRateLevel: string
+  experiences: ExperienceUser[]
+  handle: string
+}
