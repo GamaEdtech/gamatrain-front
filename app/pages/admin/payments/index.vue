@@ -427,7 +427,6 @@ definePageMeta({
 const { $dayjs, $toast } = useNuxtApp()
 const { verifyPayment, loadingVerifyPayment } = usePayment()
 
-const TWENTY_MINUTES = 20 * 60 * 1000
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
   { title: 'User', key: 'firstName', sortable: false, width: '15vw' },
@@ -653,9 +652,11 @@ const refreshData = async () => {
   await getData()
 }
 const canVerifyPayment = (item: AdminPaymentDTO) => {
+  const createdAt = dayjs.utc(item.creationDate)
+
   return (
     item.status === 'Pending'
-    && Date.now() - new Date(item.creationDate).getTime() > TWENTY_MINUTES
+    && dayjs().diff(createdAt, 'minute') > 20
   )
 }
 </script>
