@@ -19,9 +19,11 @@ export const useProfile = () => {
         ApiResult<ProfileDTO>
       >(`/api/v2/identities/profiles/${id}`)
 
+      console.log(response)
       return response
     }
     catch (err: unknown) {
+      console.log('error', err)
       const error = err as AppError
       if (error.response?.status === 400) {
         $toast.error(error.response.data?.message || '')
