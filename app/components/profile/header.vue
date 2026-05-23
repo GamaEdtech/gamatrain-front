@@ -66,6 +66,7 @@
           color="blue50"
           height="30"
           class="rounded-lg"
+          @click="emit('editPrivacy')"
         >
           <v-icon
             color="info"
@@ -81,6 +82,7 @@
           color="greenLight25"
           height="30"
           class="rounded-lg"
+          @click="emit('editPrivacy')"
         >
           <v-icon
             color="greenLight700"
@@ -96,6 +98,7 @@
           color="primary50"
           height="30"
           class="rounded-lg"
+          @click="emit('editPrivacy')"
         >
           <v-icon
             color="primary"
@@ -194,7 +197,7 @@ interface IProfileHeader {
 }
 
 defineProps<IProfileHeader>()
-const emit = defineEmits(['editBio'])
+const emit = defineEmits(['editBio', 'editPrivacy'])
 
 // const theme = useTheme()
 

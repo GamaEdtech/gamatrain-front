@@ -9,6 +9,7 @@
       :visibility="user?.profileVisibility"
       :default-bio="DEFAULT_BIO"
       @edit-bio="showBioModal = true"
+      @edit-privacy="showPrivacyModal = true"
     />
     <profile-skills class="box-shadow-div" />
     <profile-experience class="box-shadow-div" />
@@ -25,6 +26,17 @@
         @success="changeBioSuccessfully"
       />
     </lazy-modals-base>
+
+    <lazy-modals-base
+      v-model:show-dialog="showPrivacyModal"
+      title="Privacy"
+    >
+      <lazy-profile-modal-privacy
+        :privacy="user?.profileVisibility!"
+        @close="showPrivacyModal = false"
+        @success="changePrivacySuccessfully"
+      />
+    </lazy-modals-base>
   </v-container>
 </template>
 
@@ -34,12 +46,14 @@ import type {
   AppError,
   ProfileDTO,
   EditProfileDTO,
+  ProfileVisibility,
+  User,
 } from '@/types'
 
 const route = useRoute()
 const router = useRouter()
 const { getItemById } = useProfile()
-const { user } = useUser()
+const { user, setUser } = useUser()
 
 const { data: contentData } = await useAsyncData(
   `profile-${route.params.id}`,
@@ -83,6 +97,7 @@ console.log('data', contentData.value)
 
 const showBioModal = ref(false)
 const DEFAULT_BIO = 'I’m Growing with Gama 🚀'
+const showPrivacyModal = ref(false)
 
 const changeBioSuccessfully = (data: EditProfileDTO) => {
   if (!contentData.value)
@@ -92,6 +107,17 @@ const changeBioSuccessfully = (data: EditProfileDTO) => {
     ...contentData.value,
     biography: data.biography!,
   }
+}
+
+const changePrivacySuccessfully = (data: EditProfileDTO) => {
+  if (!contentData.value)
+    return
+
+  const newUser = {
+    ...user.value,
+    profileVisibility: data.profileVisibility as ProfileVisibility,
+  } as User
+  setUser(newUser)
 }
 </script>
 
