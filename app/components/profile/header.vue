@@ -128,11 +128,12 @@
         2.5</span> -->
     </div>
     <span class="w-100 text-start text-h5 font-weight-regular text-grey700 mt-6 px-4">
-      {{ data.biography ? data.biography : DEFAULT_BIO }}
+      {{ data.biography ? data.biography : defaultBio }}
 
       <span
         v-if="isEditable"
         class="text-info text-decoration-underline cursor-pointer"
+        @click="emit('editBio')"
       >Edit Bio</span>
     </span>
 
@@ -189,13 +190,14 @@ interface IProfileHeader {
   data: ProfileDTO
   isEditable: boolean
   visibility?: ProfileVisibility
+  defaultBio: string
 }
 
 defineProps<IProfileHeader>()
+const emit = defineEmits(['editBio'])
 
 // const theme = useTheme()
 
-const DEFAULT_BIO = 'I’m Growing with Gama 🚀'
 // const userOnlineStatus = {
 //   longTimeAgo: {
 //     text: 'Long time no see',

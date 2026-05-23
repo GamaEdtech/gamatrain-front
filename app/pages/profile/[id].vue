@@ -7,11 +7,24 @@
       :data="contentData"
       :is-editable="isEditable"
       :visibility="user?.profileVisibility"
+      :default-bio="DEFAULT_BIO"
+      @edit-bio="showBioModal = true"
     />
     <profile-skills class="box-shadow-div" />
     <profile-experience class="box-shadow-div" />
     <profile-register-content class="box-shadow-div" />
     <profile-education class="box-shadow-div" />
+
+    <lazy-modals-base
+      v-model:show-dialog="showBioModal"
+      title="Biography"
+    >
+      <lazy-profile-modal-biography
+        :bio="contentData.biography ? contentData.biography : DEFAULT_BIO"
+        @close="showBioModal = false"
+        @success="changeBioSuccessfully"
+      />
+    </lazy-modals-base>
   </v-container>
 </template>
 
@@ -20,6 +33,7 @@ import type {
   ApiResult,
   AppError,
   ProfileDTO,
+  EditProfileDTO,
 } from '@/types'
 
 const route = useRoute()
@@ -66,6 +80,19 @@ const isEditable = computed(() => {
   return user.value?.handle === route.params.id
 })
 console.log('data', contentData.value)
+
+const showBioModal = ref(false)
+const DEFAULT_BIO = 'I’m Growing with Gama 🚀'
+
+const changeBioSuccessfully = (data: EditProfileDTO) => {
+  if (!contentData.value)
+    return
+  // refresh data
+  contentData.value = {
+    ...contentData.value,
+    biography: data.biography!,
+  }
+}
 </script>
 
 <style scoped>
