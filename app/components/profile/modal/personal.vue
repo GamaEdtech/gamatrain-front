@@ -164,6 +164,53 @@
           @update:model-value="cityChange"
         />
       </div>
+
+      <span class="text-h5 text-grey500 font-weight-regular mt-12 d-flex align-center ga-4">
+        <v-icon size="16">md:school</v-icon>
+        School category
+      </span>
+
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
+        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+          Board
+        </div>
+        <common-gombo-box
+          v-model="user.board"
+          label=""
+          :items="boards?.map((board) => {
+            return {
+              id: board.code,
+              title: board.title,
+            }
+          })"
+          :data-loading="!loadingBoards"
+          rounded="pill"
+          height="48"
+          base-color="grey200"
+          color="primary"
+          :defalut-lable="false"
+          @update:model-value="boardChange"
+        />
+      </div>
+
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
+        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+          Grade
+        </div>
+        <common-gombo-box
+          v-model="user.grade"
+          label=""
+          :items="grades"
+          :data-loading="!loadingBoards && !loadingGrade"
+          rounded="pill"
+          height="48"
+          base-color="grey200"
+          color="primary"
+          :defalut-lable="false"
+          :disabled="!user.board"
+          @update:model-value="gradeChange"
+        />
+      </div>
     </div>
     <div class="w-100 d-flex justify-center align-center ga-2 mt-16">
       <v-btn
@@ -248,6 +295,9 @@ const { countries,
   resetStates,
   resetCities,
 } = useLocation()
+const {
+  loadingGetData: loadingBoards, data: boards, getData: getBoards, resetBoards, getGrades, grades, loadingGrade, resetGrades,
+} = useBoard()
 
 const isFormValid = ref(false)
 
@@ -336,6 +386,21 @@ const cityChange = async (cityId: number) => {
   // reset school
 }
 
+const boardChange = async (boardId: number) => {
+  console.log('board id', boardId)
+  user.value.board = boardId
+  user.value.grade = ''
+  resetGrades()
+  if (boardId) {
+    await getGrades(boardId)
+  }
+}
+
+const gradeChange = async (gradeId: number) => {
+  console.log('gradeId id', gradeId)
+  user.value.grade = gradeId
+}
+
 onMounted(async () => {
   await getCountries()
   if (user.value.country) {
@@ -344,12 +409,19 @@ onMounted(async () => {
   if (user.value.state) {
     await getCities(user.value.state)
   }
+
+  await getBoards()
+  if (user.value.board) {
+    await getGrades(user.value.board)
+  }
 })
 
 onUnmounted(() => {
   resetCountries()
   resetStates()
   resetCities()
+  resetBoards()
+  resetGrades()
 })
 
 const save = async () => {
