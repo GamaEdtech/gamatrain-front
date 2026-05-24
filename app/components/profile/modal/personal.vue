@@ -1,0 +1,384 @@
+<template>
+  <v-form
+    v-model="isFormValid"
+    class="w-100 d-flex flex-column pa-4"
+  >
+    <div class="w-100 d-flex flex-column align-start">
+      <div class="w-100 d-flex align-center justify-center">
+        <div class="image-div rounded-circle position-relative d-flex align-center justify-center">
+          <v-file-input
+            ref="avatarInputRef"
+            v-model="user.avatarFile"
+            class="d-none"
+            accept="image/png,image/webp,image/jpeg"
+            @change="uploadAvatar"
+          />
+          <img
+            :src="user.avatarUrl ? user.avatarUrl : `/images/default-user.svg`"
+            alt="Profile Avatar"
+            class="profile-img rounded-circle"
+            width="90"
+            height="90"
+          >
+
+          <v-btn
+            color="grey700"
+            flat
+            icon
+            size="32"
+            class="position-absolute camera-button"
+            @click="changeUserAvatar"
+          >
+            <v-icon
+              color="white"
+              size="14"
+            >
+              md:photo_camera
+            </v-icon>
+          </v-btn>
+        </div>
+      </div>
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6">
+        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+          First name
+        </div>
+        <v-text-field
+          v-model="user.firstName"
+          rounded="pill"
+          height="48"
+          placeholder="Enter..."
+          variant="outlined"
+          autocomplete="off"
+          persistent-clear
+          base-color="grey200"
+          color="primary"
+          active-color="primary"
+          bg-color="white"
+          class="w-100"
+          :rules="[required, minLength(2), maxLength(50), alphabetic]"
+        />
+      </div>
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+          Last name
+        </div>
+        <v-text-field
+          v-model="user.lastName"
+          rounded="pill"
+          height="48"
+          placeholder="Enter..."
+          variant="outlined"
+          autocomplete="off"
+          persistent-clear
+          base-color="grey200"
+          color="primary"
+          active-color="primary"
+          bg-color="white"
+          class="w-100"
+          :rules="[required, minLength(2), maxLength(50), alphabetic]"
+        />
+      </div>
+
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+          Gender
+        </div>
+        <div class="btn-gender-container w-100 flex align-center justify-center ga-1 bg-grey100 pa-1 rounded-pill">
+          <v-btn
+            v-for="gender in genderList"
+            :key="gender"
+            rounded="pill"
+            :color="gender == user.gender ? `white`:`transparent`"
+            flat
+            height="26"
+            class="w-50"
+            @click="changeGender(gender as Gender)"
+          >
+            <v-icon
+              size="16"
+              :color="`${gender == user.gender ? `grey700`:`grey400`}`"
+            >
+              {{ gender == 'Male' ? 'md:man':'md:woman' }}
+            </v-icon>
+          </v-btn>
+        </div>
+      </div>
+
+      <span class="text-h5 text-grey500 font-weight-regular mt-12 d-flex align-center ga-4">
+        <v-icon size="16">md:location_on</v-icon>
+        Location
+      </span>
+
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
+        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+          Country
+        </div>
+        <common-gombo-box
+          v-model="user.country"
+          label=""
+          :items="countries"
+          :data-loading="!loadingCountries"
+          rounded="pill"
+          height="48"
+          base-color="grey200"
+          color="primary"
+          :defalut-lable="false"
+          @update:model-value="countyChange"
+        />
+      </div>
+
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
+        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+          State
+        </div>
+        <common-gombo-box
+          v-model="user.state"
+          label=""
+          :items="states"
+          :data-loading="!loadingStates && !loadingCountries"
+          rounded="pill"
+          height="48"
+          base-color="grey200"
+          color="primary"
+          :defalut-lable="false"
+          :disabled="!user.country"
+          @update:model-value="stateChange"
+        />
+      </div>
+
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
+        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+          City
+        </div>
+        <common-gombo-box
+          v-model="user.city"
+          label=""
+          :items="cities"
+          :data-loading="!loadingCities && !loadingStates && !loadingCountries"
+          rounded="pill"
+          height="48"
+          base-color="grey200"
+          color="primary"
+          :defalut-lable="false"
+          :disabled="!user.state"
+          @update:model-value="cityChange"
+        />
+      </div>
+    </div>
+    <div class="w-100 d-flex justify-center align-center ga-2 mt-16">
+      <v-btn
+        color="grey200"
+        variant="outlined"
+        rounded="pill"
+        height="38"
+        width="80"
+        class="text-h5 font-weight-medium"
+        flat
+        :loading="loadingEditItem"
+        @click="closeModal"
+      >
+        <span class="text-grey800">
+          Discard
+        </span>
+      </v-btn>
+      <v-btn
+        color="primary"
+        rounded="pill"
+        height="38"
+        width="220"
+        class="text-h5 text-grey800 font-weight-medium"
+        flat
+        :loading="loadingEditItem"
+        :disabled="!isFormValid"
+        @click="save"
+      >
+        Submit
+      </v-btn>
+    </div>
+    <common-cropper-dialog
+      v-model="showCropperDialog"
+      :file-url="cropAvatarUrl"
+      :stencil-props="stencilProps"
+      @cropped-data="confirmCrop"
+    />
+  </v-form>
+</template>
+
+<script setup lang="ts">
+import type { User, Gender } from '@/types'
+
+interface IModalPersonal {
+  data: User | null
+}
+interface IPersonalData {
+  avatarFile: File | null
+  avatarUrl: string
+  firstName: string
+  lastName: string
+  gender: string
+  country: string | number
+  state: string | number
+  city: string | number
+  board: string | number
+  grade: string | number
+  school: string | number
+}
+
+const props = defineProps<IModalPersonal>()
+const emit = defineEmits(['close', 'success'])
+
+const { $toast } = useNuxtApp()
+const {
+  required,
+  minLength,
+  maxLength,
+  alphabetic,
+} = useValidationRules()
+const { loadingEditItem } = useProfile()
+const { countries,
+  states,
+  cities,
+  loadingCountries,
+  loadingStates,
+  loadingCities,
+  getCountries,
+  getStates,
+  getCities,
+  resetCountries,
+  resetStates,
+  resetCities,
+} = useLocation()
+
+const isFormValid = ref(false)
+
+const closeModal = () => {
+  emit('close')
+}
+
+const user = ref<IPersonalData>({
+  avatarFile: null,
+  avatarUrl: props.data?.avatar ?? '',
+  firstName: props.data?.firstName ?? '',
+  lastName: props.data?.lastName ?? '',
+  gender: props.data?.gender ?? 'Male',
+  country: props.data?.countryId ?? '',
+  state: props.data?.stateId ?? '',
+  city: props.data?.cityId ?? '',
+  board: props.data?.board ?? '',
+  grade: props.data?.grade ?? '',
+  school: props.data?.schoolId ?? '',
+})
+const avatarInputRef = ref<HTMLInputElement | null>(null)
+const cropAvatarUrl = ref('')
+const showCropperDialog = ref(false)
+const stencilProps = { width: 100, height: 100, resizable: true }
+const genderList = ['Male', 'Female']
+
+const changeGender = (gender: Gender) => {
+  user.value.gender = gender
+}
+
+const changeUserAvatar = () => {
+  avatarInputRef.value?.click()
+}
+const uploadAvatar = () => {
+  const file = user.value.avatarFile
+  if (file) {
+    const maxSize = 5 * 1024 * 1024 // 5MB
+    if (file.size > maxSize) {
+      $toast.error('File size must be less than 5MB')
+      return
+    }
+    cropAvatarUrl.value = URL.createObjectURL(file)
+    showCropperDialog.value = true
+  }
+}
+const confirmCrop = (dataCroped: Blob) => {
+  user.value.avatarUrl = URL.createObjectURL(dataCroped)
+  showCropperDialog.value = false
+  const timestamp = new Date().getTime()
+  const fileType = 'image/webp'
+  const fileExt = 'webp'
+  const filename = `image_${timestamp}.${fileExt}`
+  const file = new File([dataCroped], filename, { type: fileType })
+  user.value.avatarFile = file
+}
+
+// Location Info
+const countyChange = async (countryId: number) => {
+  console.log('contry id', countryId)
+  user.value.country = countryId
+  user.value.state = ''
+  user.value.city = ''
+  resetStates()
+  resetCities()
+  // reset school
+  if (countryId) {
+    await getStates(countryId)
+  }
+}
+
+const stateChange = async (stateId: number) => {
+  console.log('state id', stateId)
+
+  user.value.state = stateId
+  user.value.city = ''
+  resetCities()
+  // reset school
+  if (stateId) {
+    await getCities(stateId)
+  }
+}
+
+const cityChange = async (cityId: number) => {
+  console.log('city id', cityId)
+  user.value.city = cityId
+  // reset school
+}
+
+onMounted(async () => {
+  await getCountries()
+  if (user.value.country) {
+    await getStates(user.value.country)
+  }
+  if (user.value.state) {
+    await getCities(user.value.state)
+  }
+})
+
+onUnmounted(() => {
+  resetCountries()
+  resetStates()
+  resetCities()
+})
+
+const save = async () => {
+  // const response = await editItem({
+  //   biography: biography.value.trim(),
+  // })
+
+  // if (response?.succeeded) {
+  //   emit('success', {
+  //     biography: biography.value.trim(),
+  //   })
+  //   emit('close')
+  // }
+}
+</script>
+
+<style scoped>
+.image-div{
+  width : 100px;
+  height : 100px;
+  border : 2px solid transparent;
+  background : linear-gradient(180deg,rgb(var(--v-theme-white)) 50%, rgb(var(--v-theme-white)) 50%) padding-box,
+  linear-gradient(to right, rgb(var(--v-theme-grey700)) ,rgb(var(--v-theme-primary))) border-box
+}
+.camera-button{
+  bottom : -16px
+}
+.btn-gender-container{
+  height : 34px;
+  max-width : 420px;
+}
+</style>

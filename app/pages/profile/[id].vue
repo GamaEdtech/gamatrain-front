@@ -10,6 +10,7 @@
       :default-bio="DEFAULT_BIO"
       @edit-bio="showBioModal = true"
       @edit-privacy="showPrivacyModal = true"
+      @edit-personal="showPersonalModal = true"
     />
     <profile-skills class="box-shadow-div" />
     <profile-experience class="box-shadow-div" />
@@ -35,6 +36,16 @@
         :privacy="user?.profileVisibility!"
         @close="showPrivacyModal = false"
         @success="changePrivacySuccessfully"
+      />
+    </lazy-modals-base>
+
+    <lazy-modals-base
+      v-model:show-dialog="showPersonalModal"
+      title="Profile"
+    >
+      <lazy-profile-modal-personal
+        :data="user"
+        @close="showPersonalModal = false"
       />
     </lazy-modals-base>
   </v-container>
@@ -98,6 +109,7 @@ console.log('data', contentData.value)
 const showBioModal = ref(false)
 const DEFAULT_BIO = 'I’m Growing with Gama 🚀'
 const showPrivacyModal = ref(false)
+const showPersonalModal = ref(false)
 
 const changeBioSuccessfully = (data: EditProfileDTO) => {
   if (!contentData.value)

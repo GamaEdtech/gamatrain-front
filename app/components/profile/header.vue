@@ -116,6 +116,7 @@
           flat
           color="grey100"
           size="28"
+          @click="emit('editPersonal')"
         >
           <v-icon
             color="grey500"
@@ -200,7 +201,7 @@ interface IProfileHeader {
 }
 
 defineProps<IProfileHeader>()
-const emit = defineEmits(['editBio', 'editPrivacy'])
+const emit = defineEmits(['editBio', 'editPrivacy', 'editPersonal'])
 
 const theme = useTheme()
 const userOnlineStatus = {
