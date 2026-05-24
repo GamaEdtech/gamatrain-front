@@ -1,10 +1,12 @@
 import type { ExperienceDTO } from '@/types'
 
+export type OnlineStatus = 'Online' | 'ActiveRecently' | 'OnlineToday' | 'ActiveThisWeek' | 'ActiveThisMonth' | 'ActiveLongTimeAgo' | 'NewUser'
+
 export interface ProfileDTO {
   profileView: number
   avatar: string
   registrationDate: string
-  onlineStatus: string
+  onlineStatus: OnlineStatus
   biography: string
   skills: string[]
   currentStatusSentence: string

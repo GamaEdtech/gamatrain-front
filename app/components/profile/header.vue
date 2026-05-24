@@ -20,15 +20,18 @@
       <div class="profile-div d-flex ga-1">
         <div class="image-div rounded-circle position-relative d-flex align-center justify-center">
           <img
-            :src="data.avatar ? data.avatar : `/images/member/avatar.svg`"
+            :src="data.avatar ? data.avatar : `/images/default-user.svg`"
             alt="Profile Avatar"
             class="profile-img rounded-circle"
             width="140"
             height="140"
           >
-          <div class="status-div rounded-circle position-absolute bg-success" />
-          <div class="bio-div bg-white position-absolute text-caption text-sm-h6 font-weight-medium text-grey700 text-no-wrap rounded-lg border-solid border-sm border-grey100 pa-1">
-            This moment. Be happy.
+          <div :class="`status-div rounded-circle position-absolute bg-${userOnlineStatus[data.onlineStatus].nameColor}`" />
+          <div
+            v-if="data.currentStatusSentence"
+            class="bio-div bg-white position-absolute text-caption text-sm-h6 font-weight-medium text-grey700 rounded-lg border-solid border-sm border-grey100 pa-1"
+          >
+            {{ data.currentStatusSentence }}
           </div>
           <!-- <div class="w-100 d-flex justify-center container-badge position-absolute">
             <div
@@ -40,7 +43,7 @@
             </div>
           </div> -->
         </div>
-        <span class="text-subtitle-1 text-sm-h6 text-grey700 font-weight-regular">He's coming right now!</span>
+        <span class="text-subtitle-1 text-sm-h6 text-grey700 font-weight-regular">{{ userOnlineStatus[data.onlineStatus].text }}</span>
       </div>
       <div class="d-flex ga-2">
         <span class="text-subtitle-1 text-grey400 font-weight-regular">
@@ -187,7 +190,7 @@
 
 <script setup lang="ts">
 import type { ProfileDTO, ProfileVisibility } from '@/types'
-// import { useTheme } from 'vuetify'
+import { useTheme } from 'vuetify'
 
 interface IProfileHeader {
   data: ProfileDTO
@@ -199,34 +202,44 @@ interface IProfileHeader {
 defineProps<IProfileHeader>()
 const emit = defineEmits(['editBio', 'editPrivacy'])
 
-// const theme = useTheme()
-
-// const userOnlineStatus = {
-//   longTimeAgo: {
-//     text: 'Long time no see',
-//     color: theme.current.value.colors.grey300,
-//   },
-//   missingForDays: {
-//     text: 'Missing for days',
-//     color: theme.current.value.colors.blueGrey300,
-//   },
-//   hereToday: {
-//     text: 'Was here today',
-//     color: theme.current.value.colors.warning300,
-//   },
-//   leftMinutesAgo: {
-//     text: 'Left minutes ago',
-//     color: theme.current.value.colors.warning500,
-//   },
-//   beRightBack: {
-//     text: 'Be right back',
-//     color: theme.current.value.colors.success300,
-//   },
-//   online: {
-//     text: 'Online',
-//     color: theme.current.value.colors.success500,
-//   },
-// }
+const theme = useTheme()
+const userOnlineStatus = {
+  NewUser: {
+    text: 'New here',
+    nameColor: 'primary',
+    color: theme.current.value.colors.primary,
+  },
+  ActiveLongTimeAgo: {
+    text: 'Long time no see',
+    nameColor: 'grey300',
+    color: theme.current.value.colors.grey300,
+  },
+  ActiveThisMonth: {
+    text: 'Missing for days',
+    nameColor: 'blueGrey300',
+    color: theme.current.value.colors.blueGrey300,
+  },
+  ActiveThisWeek: {
+    text: 'Was here this week',
+    nameColor: 'warning300',
+    color: theme.current.value.colors.warning300,
+  },
+  OnlineToday: {
+    text: 'Was here today',
+    nameColor: 'warning500',
+    color: theme.current.value.colors.warning500,
+  },
+  ActiveRecently: {
+    text: 'Be right back',
+    nameColor: 'success300',
+    color: theme.current.value.colors.success300,
+  },
+  Online: {
+    text: 'Online',
+    nameColor: 'success500',
+    color: theme.current.value.colors.success500,
+  },
+}
 </script>
 
 <style scoped>
@@ -270,8 +283,9 @@ const emit = defineEmits(['editBio', 'editPrivacy'])
   margin-right: -12px;
 }
 .bio-div{
-  top: -40px;
   left: -10px;
+  max-width : 160px;
+  bottom : 105%
 }
 @media (max-width: 960px) {
   .top-section-header {
@@ -332,9 +346,6 @@ const emit = defineEmits(['editBio', 'editPrivacy'])
     width : 20px;
     height : 20px;
     margin-right: -8px;
-  }
-  .bio-div{
-    top: -30px;
   }
 }
 </style>
