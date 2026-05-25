@@ -46,6 +46,7 @@
       <lazy-profile-modal-personal
         :data="user"
         @close="showPersonalModal = false"
+        @success="changePersonalSuccessfully"
       />
     </lazy-modals-base>
   </v-container>
@@ -130,6 +131,37 @@ const changePrivacySuccessfully = (data: EditProfileDTO) => {
     profileVisibility: data.profileVisibility as ProfileVisibility,
   } as User
   setUser(newUser)
+}
+
+const changePersonalSuccessfully = (data: EditProfileDTO) => {
+  if (!contentData.value || !user.value)
+    return
+
+  const newUser: User = {
+    ...user.value,
+    firstName: data.firstName ?? user.value.firstName,
+    lastName: data.lastName ?? user.value.lastName,
+    cityId: data.cityId ?? user.value.cityId,
+    schoolId: data.schoolId ?? user.value.schoolId,
+    board: data.board ?? user.value.board,
+    grade: data.grade ?? user.value.grade,
+    gender: data.gender ?? user.value.gender,
+    avatar: data.avatar
+      ? URL.createObjectURL(data.avatar)
+      : user.value.avatar,
+  }
+  setUser(newUser)
+
+  contentData.value = {
+    ...contentData.value,
+    firstName:
+      data.firstName ?? contentData.value.firstName,
+    lastName:
+      data.lastName ?? contentData.value.lastName,
+    avatar: data.avatar
+      ? URL.createObjectURL(data.avatar)
+      : contentData.value.avatar,
+  }
 }
 </script>
 

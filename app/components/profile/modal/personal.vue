@@ -135,13 +135,13 @@
           v-model="user.state"
           label=""
           :items="states"
-          :data-loading="!loadingStates && !loadingCountries"
+          :data-loading="!loadingStates"
           rounded="pill"
           height="48"
           base-color="grey200"
           color="primary"
           :defalut-lable="false"
-          :disabled="!user.country"
+          :disabled="!user.country && !loadingCountries"
           @update:model-value="stateChange"
         />
       </div>
@@ -154,13 +154,13 @@
           v-model="user.city"
           label=""
           :items="cities"
-          :data-loading="!loadingCities && !loadingStates && !loadingCountries"
+          :data-loading="!loadingCities"
           rounded="pill"
           height="48"
           base-color="grey200"
           color="primary"
           :defalut-lable="false"
-          :disabled="!user.state"
+          :disabled="!user.state && !loadingCountries && !loadingStates"
           @update:model-value="cityChange"
         />
       </div>
@@ -201,13 +201,13 @@
           v-model="user.grade"
           label=""
           :items="grades"
-          :data-loading="!loadingBoards && !loadingGrade"
+          :data-loading="!loadingBoards"
           rounded="pill"
           height="48"
           base-color="grey200"
           color="primary"
           :defalut-lable="false"
-          :disabled="!user.board"
+          :disabled="!user.board && !loadingGrade"
           @update:model-value="gradeChange"
         />
       </div>
@@ -225,13 +225,13 @@
             title: item.name,
           }
         })"
-        :data-loading="!loadingSchools && !loadingCities"
+        :data-loading="!loadingSchools"
         rounded="pill"
         height="48"
         base-color="grey200"
         color="primary"
         :defalut-lable="false"
-        :disabled="!user.city"
+        :disabled="!user.city && !loadingCities"
       />
     </div>
     <div class="w-100 d-flex justify-center align-center ga-2 mt-16">
@@ -274,7 +274,7 @@
 </template>
 
 <script setup lang="ts">
-import type { User, Gender } from '@/types'
+import type { User, Gender, EditProfileDTO } from '@/types'
 
 interface IModalPersonal {
   data: User | null
@@ -303,7 +303,7 @@ const {
   maxLength,
   alphabetic,
 } = useValidationRules()
-const { loadingEditItem } = useProfile()
+const { editItem, loadingEditItem } = useProfile()
 const { countries,
   states,
   cities,
@@ -467,16 +467,24 @@ onUnmounted(() => {
 })
 
 const save = async () => {
-  // const response = await editItem({
-  //   biography: biography.value.trim(),
-  // })
+  const data: EditProfileDTO = {
+    cityId: user.value.city as number,
+    schoolId: user.value.school as number,
+    firstName: user.value.firstName,
+    lastName: user.value.lastName,
+    board: user.value.board as number,
+    grade: user.value.grade as number,
+    gender: user.value.gender as Gender,
+  }
+  if (user.value.avatarFile) {
+    data.avatar = user.value.avatarFile
+  }
+  const response = await editItem(data)
 
-  // if (response?.succeeded) {
-  //   emit('success', {
-  //     biography: biography.value.trim(),
-  //   })
-  //   emit('close')
-  // }
+  if (response?.succeeded) {
+    emit('success', data)
+    emit('close')
+  }
 }
 </script>
 

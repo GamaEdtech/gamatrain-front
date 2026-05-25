@@ -45,59 +45,96 @@ export const useProfile = () => {
     try {
       const formData = new FormData()
 
-      if (item.cityId)
-        formData.append('CityId', String(item.cityId))
+      if (item.cityId !== undefined) {
+        formData.append(
+          'CityId',
+          item.cityId ? String(item.cityId) : '',
+        )
+      }
 
-      if (item.schoolId)
-        formData.append('SchoolId', String(item.schoolId))
+      if (item.schoolId !== undefined) {
+        formData.append(
+          'SchoolId',
+          item.schoolId ? String(item.schoolId) : '',
+        )
+      }
 
-      if (item.firstName)
-        formData.append('FirstName', item.firstName)
+      if (item.board !== undefined) {
+        formData.append(
+          'Board',
+          item.board ? String(item.board) : '',
+        )
+      }
 
-      if (item.lastName)
-        formData.append('LastName', item.lastName)
+      if (item.grade !== undefined) {
+        formData.append(
+          'Grade',
+          item.grade ? String(item.grade) : '',
+        )
+      }
 
-      if (item.board)
-        formData.append('Board', String(item.board))
+      if (item.walletId !== undefined) {
+        formData.append(
+          'WalletId',
+          item.walletId || '',
+        )
+      }
 
-      if (item.grade)
-        formData.append('Grade', String(item.grade))
+      if (item.biography !== undefined) {
+        formData.append(
+          'Biography',
+          item.biography || '',
+        )
+      }
 
-      if (item.group)
-        formData.append('Group', String(item.group))
-
-      if (item.walletId)
-        formData.append('WalletId', item.walletId)
-
-      if (item.biography)
-        formData.append('Biography', item.biography)
-
-      if (item.currentStatusSentence)
+      if (item.currentStatusSentence !== undefined) {
         formData.append(
           'CurrentStatusSentence',
-          item.currentStatusSentence,
+          item.currentStatusSentence || '',
         )
+      }
 
-      if (item.handle)
+      if (item.skills !== undefined) {
+        if (item.skills.length) {
+          item.skills.forEach((skill) => {
+            formData.append('Skills', skill)
+          })
+        }
+        else {
+          formData.append('Skills', '')
+        }
+      }
+
+      if (item.firstName) {
+        formData.append('FirstName', item.firstName)
+      }
+
+      if (item.lastName) {
+        formData.append('LastName', item.lastName)
+      }
+
+      if (item.group) {
+        formData.append('Group', String(item.group))
+      }
+
+      if (item.handle) {
         formData.append('Handle', item.handle)
+      }
 
-      if (item.gender)
+      if (item.gender) {
         formData.append('Gender', item.gender)
+      }
 
-      if (item.profileVisibility)
+      if (item.profileVisibility) {
         formData.append(
           'ProfileVisibility',
           item.profileVisibility,
         )
-
-      if (item.skills?.length) {
-        item.skills.forEach((skill) => {
-          formData.append('Skills', skill)
-        })
       }
 
-      if (item.avatar)
+      if (item.avatar) {
         formData.append('Avatar', item.avatar)
+      }
 
       const response = await useApiService.put<
         ApiResult<boolean>
@@ -110,7 +147,9 @@ export const useProfile = () => {
         $toast.success(`${NAME} edited successfully!`)
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        $toast.error(
+          'The operation failed. Please try again later.',
+        )
       }
 
       return response
@@ -119,15 +158,20 @@ export const useProfile = () => {
       const error = err as AppError
 
       if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
+        $toast.error(
+          error.response.data?.message || '',
+        )
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        $toast.error(
+          'The operation failed. Please try again later.',
+        )
       }
 
       return {
         succeeded: false,
-        message: 'The operation failed. Please try again later.',
+        message:
+        'The operation failed. Please try again later.',
       }
     }
     finally {
