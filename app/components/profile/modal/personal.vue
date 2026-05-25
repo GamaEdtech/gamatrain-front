@@ -212,6 +212,28 @@
         />
       </div>
     </div>
+    <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
+      <div class="text-h6 text-grey700 font-weight-medium ml-2">
+        School
+      </div>
+      <common-gombo-box
+        v-model="user.school"
+        label=""
+        :items="schools.map((item) => {
+          return {
+            id: item.id,
+            title: item.name,
+          }
+        })"
+        :data-loading="!loadingSchools && !loadingCities"
+        rounded="pill"
+        height="48"
+        base-color="grey200"
+        color="primary"
+        :defalut-lable="false"
+        :disabled="!user.city"
+      />
+    </div>
     <div class="w-100 d-flex justify-center align-center ga-2 mt-16">
       <v-btn
         color="grey200"
@@ -299,6 +321,8 @@ const {
   loadingGetData: loadingBoards, data: boards, getData: getBoards, resetBoards, getGrades, grades, loadingGrade, resetGrades,
 } = useBoard()
 
+const { loadingGetData: loadingSchools, data: schools, getData: getSchools, resetData: resetSchools } = useSchool()
+
 const isFormValid = ref(false)
 
 const closeModal = () => {
@@ -356,38 +380,47 @@ const confirmCrop = (dataCroped: Blob) => {
 
 // Location Info
 const countyChange = async (countryId: number) => {
-  console.log('contry id', countryId)
   user.value.country = countryId
   user.value.state = ''
   user.value.city = ''
+  user.value.school = ''
   resetStates()
   resetCities()
-  // reset school
+  resetSchools()
+
   if (countryId) {
     await getStates(countryId)
   }
 }
 
 const stateChange = async (stateId: number) => {
-  console.log('state id', stateId)
-
   user.value.state = stateId
   user.value.city = ''
+  user.value.school = ''
   resetCities()
-  // reset school
+  resetSchools()
+
   if (stateId) {
     await getCities(stateId)
   }
 }
 
 const cityChange = async (cityId: number) => {
-  console.log('city id', cityId)
   user.value.city = cityId
-  // reset school
+  user.value.school = ''
+  resetSchools()
+  if (cityId) {
+    await getSchools({
+      page: 1,
+      pageSize: 10000,
+      countryId: user.value.country as number,
+      stateId: user.value.state as number,
+      cityId,
+    })
+  }
 }
 
 const boardChange = async (boardId: number) => {
-  console.log('board id', boardId)
   user.value.board = boardId
   user.value.grade = ''
   resetGrades()
@@ -397,7 +430,6 @@ const boardChange = async (boardId: number) => {
 }
 
 const gradeChange = async (gradeId: number) => {
-  console.log('gradeId id', gradeId)
   user.value.grade = gradeId
 }
 
@@ -414,6 +446,15 @@ onMounted(async () => {
   if (user.value.board) {
     await getGrades(user.value.board)
   }
+  if (user.value.city) {
+    await getSchools({
+      page: 1,
+      pageSize: 10000,
+      countryId: user.value.country as number,
+      stateId: user.value.state as number,
+      cityId: user.value.city as number,
+    })
+  }
 })
 
 onUnmounted(() => {
@@ -422,6 +463,7 @@ onUnmounted(() => {
   resetCities()
   resetBoards()
   resetGrades()
+  resetSchools()
 })
 
 const save = async () => {

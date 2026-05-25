@@ -100,4 +100,32 @@ export interface SchoolListDTO {
   long: number
 
   lastModifyDate: string
+
+  reviewScore: number
+  countryRank: number
+  stateRank: number
+  cityRank: number
+}
+
+export interface GetSchoolsParams {
+  page: number
+  pageSize: number
+
+  countryId?: number | null
+  stateId?: number | null
+  cityId?: number | null
+
+  latitude?: number | null
+  longitude?: number | null
+  radius?: number | null
+
+  name?: string | null
+
+  hasScore?: boolean | null
+  hasImage?: boolean | null
+
+  tuitionStart?: number | null
+  tuitionEnd?: number | null
+
+  boards?: number[] | null
 }
