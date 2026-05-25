@@ -12,7 +12,12 @@
       @edit-privacy="showPrivacyModal = true"
       @edit-personal="showPersonalModal = true"
     />
-    <profile-skills class="box-shadow-div" />
+    <profile-skills
+      class="box-shadow-div"
+      :data="contentData.skills"
+      :is-editable="isEditable"
+      @edit-skill="showSkillsModal = true"
+    />
     <profile-experience class="box-shadow-div" />
     <profile-register-content class="box-shadow-div" />
     <profile-education class="box-shadow-div" />
@@ -47,6 +52,17 @@
         :data="user"
         @close="showPersonalModal = false"
         @success="changePersonalSuccessfully"
+      />
+    </lazy-modals-base>
+
+    <lazy-modals-base
+      v-model:show-dialog="showSkillsModal"
+      title="Skill"
+    >
+      <lazy-profile-modal-skills
+        :skills="contentData.skills"
+        @close="showSkillsModal = false"
+        @success="changeSkillsSuccessfully"
       />
     </lazy-modals-base>
   </v-container>
@@ -111,6 +127,7 @@ const showBioModal = ref(false)
 const DEFAULT_BIO = 'I’m Growing with Gama 🚀'
 const showPrivacyModal = ref(false)
 const showPersonalModal = ref(false)
+const showSkillsModal = ref(false)
 
 const changeBioSuccessfully = (data: EditProfileDTO) => {
   if (!contentData.value)
@@ -161,6 +178,15 @@ const changePersonalSuccessfully = (data: EditProfileDTO) => {
     avatar: data.avatar
       ? URL.createObjectURL(data.avatar)
       : contentData.value.avatar,
+  }
+}
+
+const changeSkillsSuccessfully = (data: EditProfileDTO) => {
+  if (!contentData.value)
+    return
+  contentData.value = {
+    ...contentData.value,
+    skills: data.skills!,
   }
 }
 </script>
