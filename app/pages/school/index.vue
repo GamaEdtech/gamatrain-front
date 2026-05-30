@@ -58,12 +58,18 @@
         :sort-list="sortList"
         :total-school-find="totalSchoolFind"
         :is-expand-map="isExpandMapInDesktop"
+        v-model:user-location="userLocation"
+        @near-me="applyNearMe"
         @update-filter="updateFilter"
       />
       <div
         class="w-100 bg-grey100 d-flex align-center justify-end pa-5 map-div-button"
       >
-        <v-btn
+        <!-- Filter chips -->
+        <!-- <SchoolFilterChips :chips="chips" @remove-chip="removeChip" /> -->
+
+        <div>
+          <v-btn
           class="text-h4"
           elevation="4"
           prepend-icon="md:location_on"
@@ -74,6 +80,7 @@
         >
           Map view
         </v-btn>
+      </div>
       </div>
       <SchoolList
         :school-list="schools"
@@ -133,6 +140,7 @@ const route = useRoute()
 const { lgAndDown } = useDisplay()
 
 const isUserMovingMap = ref(true) // Start with loading indicator visible
+const userLocation = ref();
 
 const sortList = [
   {
@@ -145,9 +153,14 @@ const sortList = [
   },
 ]
 const setDefaultSort = (selectedSorts) => {
+  if (selectedSorts.includes('distance')) {
+    return ['distance']
+  }
+
   if (!selectedSorts.includes('lastModifyDate')) {
     return ['lastModifyDate', ...selectedSorts]
   }
+
   return selectedSorts
 }
 
@@ -171,6 +184,13 @@ const setDefaultSortToRoute = () => {
       },
     })
   }
+}
+
+const applyNearMe = () => {
+  filterForm.value.sort = ['distance']
+
+  resetParameter()
+  updateQueryParams()
 }
 
 onMounted(() => {
@@ -475,11 +495,24 @@ const getSchoolList = async () => {
       'PagingDto.PageFilter.Size': perPage.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
     }
-    if (filterForm.value.sort && filterForm.value.sort.length > 0) {
+    if (filterForm.value.sort && filterForm.value.sort.length > 0) {      
       filterForm.value.sort.forEach((sortOption, index) => {
-        params[`PagingDto.SortFilter[${index}].sortType`] = 'Desc'
         params[`PagingDto.SortFilter[${index}].column`] = sortOption
+
+        params[`PagingDto.SortFilter[${index}].sortType`]
+          = sortOption === 'distance'
+            ? 'Asc'
+            : 'Desc'
       })
+
+      // TODO: Need to be adjusted with api when ready
+      // if (
+      //   filterForm.value.sort?.includes('distance')
+      //   && userLocation.value
+      // ) {
+      //   params['Location.Latitude'] = userLocation.value?.lat
+      //   params['Location.Longitude'] = userLocation.value?.lng
+      // }
     }
     if (isExpandMapInDesktop.value || !openBottomNavFilterList.value) {
       params['Location.Radius'] = filterForm.value.distance
@@ -566,6 +599,31 @@ const loadPreviousSchool = () => {
 }
 
 // End Filter Section
+
+// Start filter chips section
+// const chips = ref([]);
+
+// const addChip = (chip) => {
+//   const exists = chips.value.some(
+//     item => item.name === chip.name,
+//   );
+
+//   if (exists) {
+//     return;
+//   }
+
+//   chips.value.push({
+//     name: chip.name,
+//   });
+// };
+
+// const removeChip = (chipName) => {
+//   chips.value = chips.value.filter(
+//     chip => chip.name !== chipName,
+//   );
+// };
+// End filter chips section
+
 
 // Start Open/Close bottom nav and Expand Map in Desktop
 const isExpandMapInDesktop = ref(false)

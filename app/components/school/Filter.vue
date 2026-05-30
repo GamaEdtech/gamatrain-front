@@ -62,16 +62,36 @@
           </v-btn>
         </div>
         <div class="filter-options-div">
-          <div
-            v-for="item in optionFilter"
-            :key="item.name"
-            :class="`each-item-filter ${
-              item.active && !isExpandMap ? `` : `deactive`
-            }`"
-            @click="openFilterSection($event, item)"
+          <div v-for="item in optionFilter" :key="item.name" 
+          :class="[
+            'each-item-filter',
+            {
+              deactive: !item.active || isExpandMap,
+              loading: item.name === 'Near me' && currentLocationLoading,
+              disabled:
+                item.name === 'Near me' &&
+                (
+                  currentLocationLoading ||
+                  isCooldownActive
+                ),
+            },
+          ]"
+          @click="openFilterSection($event, item)">
+          
+          <div v-if="item.name === `Near me` && item.icon" class="me-2 d-flex">
+          <v-icon
+            v-if="!currentLocationLoading"
+            color="white"
+            size="small" 
           >
+            md:my_location
+          </v-icon>
+          <v-progress-circular v-else indeterminate size="small"></v-progress-circular>
+        </div>
+
             {{ item.name }}
             <v-icon
+              v-if="item.hasDropdown"
               :color="item.active && !isExpandMap ? `#ffffff` : `#828385`"
             >
               mdi-chevron-down
@@ -170,6 +190,9 @@
         </div>
 
         <div class="result-div-mobile gama-text-overline">
+          <SchoolNearMeMobile @update-filter="fetchLocation" />
+          
+          <div>
           Results
           <span
             class="count-result gama-text-button"
@@ -177,6 +200,7 @@
           >
             {{ totalSchoolFind ? $numberFormat(totalSchoolFind) : "0" }}
           </span>
+        </div>
         </div>
 
         <v-btn
@@ -564,6 +588,14 @@
         >
           {{ findTitle("cityList", filterForm.city) }}
         </v-chip>
+        <v-chip v-if="
+          filterForm.sort
+          && filterForm.sort.length > 0
+          && filterForm.sort?.indexOf('distance') === 0
+        " class="text-h4 pa-3" size="large" variant="outlined" color="#252626" closable
+          @click:close="clearDistanceSort">
+          Near me
+        </v-chip>
       </div>
     </div>
   </div>
@@ -591,10 +623,20 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
+  activeChips: {
+    type: Array,
+    default: () => [],
+  },
 })
-const emit = defineEmits(['update-filter'])
+const emit = defineEmits(['update-filter', 'update:user-location', 'near-me'])
 const _router = useRouter()
 const route = useRoute()
+const {
+  location,
+  isCooldownActive,
+  isLoading: currentLocationLoading,
+  fetchLocation,
+  } = useCurrentLocation();
 
 onMounted(() => {
   // Initial data fetch
@@ -620,21 +662,32 @@ const optionFilter = ref([
     name: 'Board',
     active: false,
     isShow: false,
+    hasDropdown: true,
   },
   {
     name: 'Tuition fee',
     active: true,
     isShow: false,
+    hasDropdown: true,
   },
   {
     name: 'Region',
     active: true,
     isShow: false,
+    hasDropdown: true,
+  },
+  {
+    name: 'Near me',
+    active: true,
+    isShow: false,
+    hasDropdown: false,
+    icon: '/images/gps-fixed.svg'
   },
   {
     name: 'Sort',
     active: true,
     isShow: false,
+    hasDropdown: true,
   },
 ])
 
@@ -779,6 +832,14 @@ const openFilterSection = (event, filter) => {
       filter.isShow = true
     }
   }
+
+  if (filter.name === "Near me") {
+    if (currentLocationLoading.value && isCooldownActive) {
+      return;
+    }
+  
+    fetchLocation();
+  }
 }
 
 const clearFilter = (key) => {
@@ -797,6 +858,14 @@ const clearFilter = (key) => {
     filterForm.city = ''
   }
   updateQueryParams()
+}
+
+const clearDistanceSort = () => {
+  const distanceKey = 'distance';
+  
+  if (filterForm.sort?.includes(distanceKey)) filterForm.sort?.pop(distanceKey);
+
+  updateQueryParams();
 }
 
 const findTitle = (list, id) => {
@@ -906,12 +975,21 @@ const sortBottomNavRef = ref(null)
 
 const handleCheckboxChange = (checked, item) => {
   const index = filterForm.sort.indexOf(item.value)
-  if (checked && index === -1) {
-    filterForm.sort.push(item.value)
+
+  if (checked) {
+    // Selecting a normal sort removes distance mode
+    filterForm.sort = filterForm.sort.filter(
+      sort => sort !== 'distance',
+    )
+
+    if (index === -1) {
+      filterForm.sort.push(item.value)
+    }
   }
-  else if (!checked && index !== -1) {
+  else if (index !== -1) {
     filterForm.sort.splice(index, 1)
   }
+
   updateQueryParams()
 }
 
@@ -961,6 +1039,58 @@ const closeFilterMobile = () => {
   showFilterMobile.value = false
 }
 // End Section School type
+
+// Start chips mapping
+// const chipMap = {
+//   'Near me': {
+//     name: "Near me",
+//   },
+
+//   // TODO: May need to be added in the future
+//   //
+//   // Region: {
+//   //   name: "Region",
+//   // },
+
+//   // Sort: {
+//   //   name: "Sort",
+//   // },
+// };
+
+// const addChip = (chipName) => {
+//   const chipData = chipMap[chipName]
+
+//   if (!chipData) {
+//     return
+//   }
+
+//   emit('add-chip', {
+//     name: chipData.name,
+//   })
+// }
+// End chips mapping
+
+// Start user location
+watch(
+  () => location.value,
+  (newLocation) => {
+    if (!newLocation) {
+      return;
+    }     
+
+    // distance sort becomes exclusive
+    filterForm.sort = ['distance']
+
+    emit('update:user-location', {
+      lat: newLocation.lat,
+      lng: newLocation.lng,
+    })    
+
+    updateQueryParams()
+    emit('near-me')
+  },
+);
+// End user location
 
 // Add this composable for number formatting
 const $numberFormat = (number) => {

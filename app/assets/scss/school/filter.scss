@@ -14,7 +14,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    @include style.responsive-size(background-color, #1d2939, transparent, transparent, transparent);
+    @include style.responsive-size(
+      background-color,
+      #1d2939,
+      transparent,
+      transparent,
+      transparent
+    );
     .container-filter {
       max-width: 1200px;
       height: 100%;
@@ -171,11 +177,18 @@
           color: #a6bbce;
           cursor: not-allowed;
         }
+        .disabled{
+          cursor: not-allowed;
+        }
+        .loading{
+          opacity: 0.6;
+          pointer-events: none;
+        }
       }
 
       .result-div-mobile {
         width: 100%;
-        justify-content: flex-end;
+        justify-content: space-between;
         align-items: center;
         column-gap: 10px;
         @include style.responsive-size(display, none, flex, flex, flex);
@@ -253,7 +266,13 @@
       calc(100dvh - 64px),
       calc(100dvh - 64px)
     );
-    @include style.responsive-size(padding, 6.4rem 10px, 10px 10px 10px 10px, 10px 10px 10px 10px, 10px 10px 10px 10px);
+    @include style.responsive-size(
+      padding,
+      6.4rem 10px,
+      10px 10px 10px 10px,
+      10px 10px 10px 10px,
+      10px 10px 10px 10px
+    );
     .container-scroll {
       width: 100%;
       height: 100%;
@@ -336,7 +355,13 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        @include style.responsive-size(background-color, #f2f4f7, white, white, white);
+        @include style.responsive-size(
+          background-color,
+          #f2f4f7,
+          white,
+          white,
+          white
+        );
         .container-chips {
           width: 90%;
           display: flex;
@@ -353,7 +378,13 @@
     justify-content: center;
     align-items: center;
     padding-top: 20px;
-    @include style.responsive-size(background-color, #f2f4f7, white, white, white);
+    @include style.responsive-size(
+      background-color,
+      #f2f4f7,
+      white,
+      white,
+      white
+    );
     @include style.responsive-size(display, flex, none, none, none);
     .container-chips {
       width: 90%;
