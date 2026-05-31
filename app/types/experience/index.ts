@@ -12,6 +12,10 @@ export interface AddExperienceDTO {
   schoolId: number
   description: string
 }
+export interface AddExperienceResponseDTO {
+  id: number
+}
+
 export interface GetDataParamsExperience {
   page: number
   pageSize: number

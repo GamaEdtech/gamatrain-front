@@ -2,77 +2,172 @@
   <div
     class="w-100 d-flex flex-column pa-6 ga-4 bg-white"
   >
-    <span class="text-h4 text-sm-h3 font-weight-bold text-grey700">Experience</span>
-    <div class="d-flex flex-column ga-6 mt-4">
+    <div class="w-100 d-flex align-center justify-space-between">
+      <span class="text-h4 text-sm-h3 font-weight-bold text-grey700">Experience</span>
+      <v-btn
+        v-if="isEditable && data.length > 0"
+        flat
+        color="grey100"
+        size="28"
+        @click="emit('add')"
+      >
+        <v-icon
+          color="grey500"
+          size="20"
+        >
+          md:add
+        </v-icon>
+      </v-btn>
+    </div>
+
+    <div
+      v-if="data.length > 0"
+      class="d-flex flex-column ga-6 mt-4"
+    >
       <template
-        v-for="i in 3"
-        :key="i"
+        v-for="(item, index) in data"
+        :key="index"
       >
         <div
-          class="w-100 d-flex align-start justify-start ga-6 flex-column flex-sm-row"
+          class="w-100 d-flex align-start justify-start ga-1 flex-column"
         >
-          <img
-            width="86"
-            height="64"
-            class="rounded-lg"
-            src="/images/school-default.png"
-            alt="experience"
-          >
-          <div class="w-100 d-flex flex-column justify-start align-start ga-3">
-            <span class="text-h5 text-grey500 font-weight-bold">London Metropolitan English Academy</span>
-            <span class="text-h6 text-grey700 font-weight-regular">May 2023 - Present - 2 yrs 9 mos</span>
-            <span class="text-h6 text-grey700 font-weight-regular">
-              <v-icon
-                color="grey400"
-                size="12"
-                class="mb-1"
-              >md:location_on</v-icon>
-              14 Elmwood Gardens, Islington, London N1 2AS, United Kingdom</span>
-
-            <div class="d-flex flex-wrap ga-2">
-              <v-chip
-                variant="flat"
-                size="small"
+          <div class="w-100 d-flex align-center justify-space-between">
+            <span class="text-h5 text-sm-h4 text-grey700 font-weight-bold">{{ item.schoolTitle }}</span>
+            <div class="d-flex align-center ga-2">
+              <v-btn
+                v-if="isEditable"
+                flat
                 color="grey100"
+                size="20"
+                @click="deleteItem(item.id)"
               >
-                <span class="text-h6 font-weight-regular text-grey500">
-                  Nigeria
-                </span>
-              </v-chip>
-              <v-chip
-                variant="flat"
-                size="small"
+                <v-icon
+                  color="grey500"
+                  size="16"
+                >
+                  md:delete
+                </v-icon>
+              </v-btn>
+              <v-btn
+                v-if="isEditable"
+                flat
                 color="grey100"
+                size="20"
+                @click="editItem(item)"
               >
-                <span class="text-h6 font-weight-regular text-grey500">
-                  Lagos
-                </span>
-              </v-chip>
-              <v-chip
-                variant="flat"
-                size="small"
-                color="grey100"
-              >
-                <span class="text-h6 font-weight-regular text-grey500">
-                  United Abule Egba
-                </span>
-              </v-chip>
+                <v-icon
+                  color="grey500"
+                  size="16"
+                >
+                  md:edit
+                </v-icon>
+              </v-btn>
             </div>
+          </div>
+          <span class="text-h6 text-grey400 font-weight-regular"> {{ formatDateRange(item.startDate, item.endDate) }}</span>
+
+          <div class="d-flex flex-column ga-2 mt-2">
+            <span
+              v-for="(desc, descIndex) in getDescriptions(item.description)"
+              :key="descIndex"
+              class="d-flex align-center justify-start ga-3 text-grey700 font-weight-medium text-h6"
+            >
+              <div class="dot-div rounded-circle bg-grey700" />
+
+              {{ desc }}
+            </span>
           </div>
         </div>
         <v-divider
-          v-if="i != 3"
+          v-if="index != data.length - 1 "
           color="grey300"
           class="border-opacity-100"
         />
       </template>
     </div>
+
+    <div
+      v-else
+      class="w-100 d-flex align-center justify-space-between"
+    >
+      <span class="text-h6 font-weight-regular text-grey500">
+        No experience added yet!
+      </span>
+
+      <v-btn
+        flat
+        color="grey700"
+        rounded="pill"
+        class="text-h6 text-white font-weight-medium"
+        width="110"
+        height="24"
+        @click="emit('add')"
+      >
+        Add experience
+      </v-btn>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-// import defaultImage from '@/assets/images/default-school.png'
+import dayjs from 'dayjs'
+import type { ExperienceDTO } from '@/types'
+
+interface IExperience {
+  data: ExperienceDTO[]
+  isEditable: boolean
+}
+
+defineProps<IExperience>()
+const emit = defineEmits(['edit', 'add', 'delete'])
+
+const formatDateRange = (
+  startDate: string,
+  endDate: string,
+) => {
+  const start = dayjs(startDate)
+  const end = dayjs(endDate)
+
+  const formattedStart = start.format('MMM YYYY')
+  const formattedEnd = end.format('MMM YYYY')
+
+  const yearsDiff = end.diff(start, 'year')
+  const monthsDiff = end.diff(start, 'month') % 12
+
+  let duration = ''
+
+  if (yearsDiff > 0) {
+    duration += `${yearsDiff} yr${yearsDiff > 1 ? 's' : ''} `
+  }
+
+  if (monthsDiff > 0) {
+    duration += `${monthsDiff} mo${monthsDiff > 1 ? 's' : ''}`
+  }
+
+  return `${formattedStart} - ${formattedEnd} - ${duration.trim()}`
+}
+
+const getDescriptions = (
+  description: string,
+) => {
+  return description
+    .split(',')
+    .map(item => item.trim())
+    .filter(Boolean)
+}
+
+const deleteItem = (id: number) => {
+  emit('delete', id)
+}
+
+const editItem = (item: ExperienceDTO) => {
+  emit('edit', item)
+}
 </script>
 
 <style scoped>
+.dot-div{
+  min-width : 6px;
+  min-height : 6px
+}
 </style>

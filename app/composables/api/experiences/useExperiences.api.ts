@@ -5,13 +5,13 @@ import type {
   ExperienceDTO,
   AddExperienceDTO,
   GetDataParamsExperience,
+  AddExperienceResponseDTO,
 } from '@/types'
 
 const data = ref<ExperienceDTO[]>([])
 const totalCount = ref(0)
 const pageCount = ref(0)
 const loadingGetData = ref(true)
-const loadingDeleteItem = ref(false)
 const loadingAddItem = ref(false)
 const loadingGetItemById = ref(false)
 const loadingEditItem = ref(false)
@@ -19,6 +19,8 @@ const NAME = 'Experience'
 
 export const useExperiences = () => {
   const { $toast } = useNuxtApp()
+
+  const loadingDeleteItem = ref(false)
 
   const getData = async (params: GetDataParamsExperience) => {
     const { page, pageSize } = params
@@ -91,11 +93,18 @@ export const useExperiences = () => {
       else {
         $toast.error('The operation failed. Please try again later.')
       }
+
+      return response
     }
     catch (err: unknown) {
       const error = err as AppError
       if (error.response?.status === 400) {
         $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: {},
       }
     }
     finally {
@@ -107,7 +116,7 @@ export const useExperiences = () => {
     try {
       loadingAddItem.value = true
       const response = await useApiService.post<
-        ApiResult<boolean>
+        ApiResult<AddExperienceResponseDTO>
       >(
         '/api/v2/experiences',
         { ...item },
@@ -128,6 +137,9 @@ export const useExperiences = () => {
       return {
         succeeded: false,
         message: 'The operation failed. Please try again later.',
+        data: {
+          id: null,
+        },
       }
     }
     finally {

@@ -18,8 +18,15 @@
       :is-editable="isEditable"
       @edit-skill="showSkillsModal = true"
     />
-    <profile-experience class="box-shadow-div" />
-    <profile-register-content class="box-shadow-div" />
+    <profile-experience
+      :data="contentData.experiences"
+      :is-editable="isEditable"
+      class="box-shadow-div"
+      @add="showExperienceModal = true"
+      @delete="deleteExperience"
+      @edit="editExperience"
+    />
+    <!-- <profile-register-content class="box-shadow-div" /> -->
     <profile-education class="box-shadow-div" />
 
     <lazy-modals-base
@@ -65,6 +72,29 @@
         @success="changeSkillsSuccessfully"
       />
     </lazy-modals-base>
+
+    <lazy-modals-base
+      v-model:show-dialog="showExperienceModal"
+      title="Experience"
+      @update:show-dialog="closeExperienceModal"
+    >
+      <lazy-profile-modal-experience
+        :experience="selectedExperienceForEdit"
+        @close="closeExperienceModal(false)"
+        @success="changeExperienceSuccessfully"
+        @edit-success="editExperienceSuccessfully"
+      />
+    </lazy-modals-base>
+
+    <lazy-modals-base
+      v-model:show-dialog="showDeleteExperienceModal"
+      title="Delete"
+    >
+      <lazy-profile-modal-experience-delete
+        :id="selectedExperienceForDelete"
+        @success="deleteExperienceSuccessfully"
+      />
+    </lazy-modals-base>
   </v-container>
 </template>
 
@@ -76,6 +106,7 @@ import type {
   EditProfileDTO,
   ProfileVisibility,
   User,
+  ExperienceDTO,
 } from '@/types'
 
 const route = useRoute()
@@ -128,6 +159,10 @@ const DEFAULT_BIO = 'I’m Growing with Gama 🚀'
 const showPrivacyModal = ref(false)
 const showPersonalModal = ref(false)
 const showSkillsModal = ref(false)
+const showExperienceModal = ref(false)
+const showDeleteExperienceModal = ref(false)
+const selectedExperienceForDelete = ref('')
+const selectedExperienceForEdit = ref()
 
 const changeBioSuccessfully = (data: EditProfileDTO) => {
   if (!contentData.value)
@@ -187,6 +222,61 @@ const changeSkillsSuccessfully = (data: EditProfileDTO) => {
   contentData.value = {
     ...contentData.value,
     skills: data.skills!,
+  }
+}
+
+const changeExperienceSuccessfully = (data: ExperienceDTO) => {
+  if (!contentData.value)
+    return
+  contentData.value = {
+    ...contentData.value,
+    experiences: [...contentData.value.experiences, data],
+  }
+}
+
+const editExperienceSuccessfully = (data: ExperienceDTO) => {
+  if (!contentData.value)
+    return
+
+  contentData.value = {
+    ...contentData.value,
+    experiences: contentData.value.experiences.map(item =>
+      item.id === data.id
+        ? data
+        : item,
+    ),
+  }
+}
+
+const editExperience = (experience: ExperienceDTO) => {
+  selectedExperienceForEdit.value = experience
+  showExperienceModal.value = true
+}
+
+const deleteExperience = (id: number) => {
+  selectedExperienceForDelete.value = id.toString()
+  showDeleteExperienceModal.value = true
+}
+
+const deleteExperienceSuccessfully = () => {
+  if (!contentData.value)
+    return
+
+  contentData.value = {
+    ...contentData.value,
+    experiences: contentData.value.experiences.filter(
+      item => item.id.toString() !== selectedExperienceForDelete.value,
+    ),
+  }
+
+  showDeleteExperienceModal.value = false
+  selectedExperienceForDelete.value = ''
+}
+
+const closeExperienceModal = (status: boolean) => {
+  if (!status) {
+    selectedExperienceForEdit.value = null
+    showExperienceModal.value = false
   }
 }
 </script>
