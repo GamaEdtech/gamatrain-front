@@ -132,7 +132,6 @@ const { data: contentData } = await useAsyncData(
     try {
       const response = await getItemById(route.params.id as string) as ApiResult<ProfileDTO>
 
-      console.log('response', response)
       if (response.data) {
         return response.data
       }
@@ -156,15 +155,11 @@ const { data: contentData } = await useAsyncData(
       throw error
     }
   },
-  {
-    server: false,
-  },
 )
 
 const isEditable = computed(() => {
   return user.value?.handle === route.params.id
 })
-console.log('data', contentData.value)
 
 const showBioModal = ref(false)
 const DEFAULT_BIO = 'I’m Growing with Gama 🚀'
