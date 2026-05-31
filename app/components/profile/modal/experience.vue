@@ -59,7 +59,7 @@
               v-for="(school, index) in schoolItems"
               :key="index"
               class="d-flex align-center ga-3 py-4 cursor-pointer"
-              @click="selectSchool(school)"
+              @click="openSchoolConfirmModal(school)"
             >
               <v-icon
                 size="20"
@@ -213,7 +213,7 @@
           v-model="inputText"
           rounded="pill"
           height="48"
-          placeholder="Enter Skills"
+          placeholder="Enter"
           variant="outlined"
           autocomplete="off"
           persistent-clear
@@ -282,6 +282,17 @@
         Submit
       </v-btn>
     </div>
+
+    <lazy-modals-base
+      v-model:show-dialog="showSchoolConfirmModal"
+      title="School"
+    >
+      <lazy-profile-modal-school-confirm
+        v-if="schoolForConfirm"
+        :school="schoolForConfirm"
+        @confirm="confirmSchool"
+      />
+    </lazy-modals-base>
   </v-form>
 </template>
 
@@ -312,6 +323,8 @@ const {
 const textSearchSchool = ref('')
 const showBoxSearchSchool = ref(false)
 const selectedSchool = ref<SchoolListDTO | null>(null)
+const schoolForConfirm = ref<SchoolListDTO | null>(null)
+const showSchoolConfirmModal = ref(false)
 const schoolItems = ref<SchoolListDTO[]>([])
 const currentPage = ref(1)
 const isFetchingMore = ref(false)
@@ -510,6 +523,21 @@ const selectSchool = (school: SchoolListDTO) => {
   selectedSchool.value = school
   textSearchSchool.value = school.name + '-' + school.countryTitle
   showBoxSearchSchool.value = false
+}
+
+const openSchoolConfirmModal = (school: SchoolListDTO) => {
+  schoolForConfirm.value = school
+  showSchoolConfirmModal.value = true
+  showBoxSearchSchool.value = false
+}
+
+const confirmSchool = () => {
+  if (!schoolForConfirm.value)
+    return
+
+  selectSchool(schoolForConfirm.value)
+  showSchoolConfirmModal.value = false
+  schoolForConfirm.value = null
 }
 
 const isFormValid = computed(() => {
