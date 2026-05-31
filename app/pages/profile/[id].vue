@@ -11,6 +11,7 @@
       @edit-bio="showBioModal = true"
       @edit-privacy="showPrivacyModal = true"
       @edit-personal="showPersonalModal = true"
+      @edit-status="showStatusModal = true"
     />
     <profile-skills
       class="box-shadow-div"
@@ -27,7 +28,7 @@
       @edit="editExperience"
     />
     <!-- <profile-register-content class="box-shadow-div" /> -->
-    <profile-education class="box-shadow-div" />
+    <!-- <profile-education class="box-shadow-div" /> -->
 
     <lazy-modals-base
       v-model:show-dialog="showBioModal"
@@ -48,6 +49,17 @@
         :privacy="user?.profileVisibility!"
         @close="showPrivacyModal = false"
         @success="changePrivacySuccessfully"
+      />
+    </lazy-modals-base>
+
+    <lazy-modals-base
+      v-model:show-dialog="showStatusModal"
+      title="Status"
+    >
+      <lazy-profile-modal-current-status
+        :status="contentData.currentStatusSentence ?? ''"
+        @close="showStatusModal = false"
+        @success="changeCurrentStatusSuccessfully"
       />
     </lazy-modals-base>
 
@@ -157,6 +169,7 @@ console.log('data', contentData.value)
 const showBioModal = ref(false)
 const DEFAULT_BIO = 'I’m Growing with Gama 🚀'
 const showPrivacyModal = ref(false)
+const showStatusModal = ref(false)
 const showPersonalModal = ref(false)
 const showSkillsModal = ref(false)
 const showExperienceModal = ref(false)
@@ -183,6 +196,16 @@ const changePrivacySuccessfully = (data: EditProfileDTO) => {
     profileVisibility: data.profileVisibility as ProfileVisibility,
   } as User
   setUser(newUser)
+}
+
+const changeCurrentStatusSuccessfully = (data: EditProfileDTO) => {
+  if (!contentData.value)
+    return
+
+  contentData.value = {
+    ...contentData.value,
+    currentStatusSentence: data.currentStatusSentence!,
+  }
 }
 
 const changePersonalSuccessfully = (data: EditProfileDTO) => {
