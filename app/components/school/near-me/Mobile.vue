@@ -1,10 +1,15 @@
 <template>
   <div class="near-me-btn-container">
-    <Button icon aria-label="Find nearest items" :aria-busy="isLoading" :disabled="isLoading || isCooldownActive"
-      :loading="isLoading" :class="{ 'is-loading': isLoading }" class="mt-0" size="x-small"
-      @click="emit('update-filter')" @keydown.enter.prevent="emit('update-filter')"
-      @keydown.space.prevent="emit('update-filter')">
-      <v-icon size="x-small"> md:my_location </v-icon></Button>
+    <Button icon aria-label="Find nearest items" :aria-busy="isLoading" :disabled="isLoading" :loading="isLoading"
+      :class="{ 'is-loading': isLoading }" class="mt-0" size="x-small" @click="emit('update-filter')"
+      @keydown.enter.prevent="emit('update-filter')" @keydown.space.prevent="emit('update-filter')">
+
+      <!-- Lottie animation -->
+      <ClientOnly class="d-inline-flex">
+        <DotLottieVue src="/images/near-me-gps-dark.json" autoplay loop />
+      </ClientOnly>
+
+    </Button>
 
     <div class="primary-gray-500">
       <span v-if="isLoading">Finding...</span>
@@ -18,6 +23,7 @@
 
 <script setup lang="ts">
 import { watch } from 'vue'
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import { useCurrentLocation } from "@/composables/useCurrentLocation";
 import Button from "~/components/gama/Button.vue";
 
@@ -36,7 +42,7 @@ const emit = defineEmits<{
   (e: "update-filter"): void;
 }>();
 
-const { location, isLoading, isCooldownActive } = useCurrentLocation();
+const { location, isLoading } = useCurrentLocation();
 
 watch(() => location.value, async (newLocation) => {
   if (!newLocation) return;

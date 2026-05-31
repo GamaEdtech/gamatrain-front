@@ -77,17 +77,13 @@
             },
           ]"
           @click="openFilterSection($event, item)">
-          
-          <div v-if="item.name === `Near me` && item.icon" class="me-2 d-flex">
-          <v-icon
-            v-if="!currentLocationLoading"
-            color="white"
-            size="small" 
-          >
-            md:my_location
-          </v-icon>
-          <v-progress-circular v-else indeterminate size="small"></v-progress-circular>
-        </div>
+            <div v-if="item.name === `Near me` && item.icon" class="me-2 d-flex">
+              <ClientOnly>
+                <DotLottieVue src="/images/near-me-gps-white.json" v-if="!currentLocationLoading" autoplay loop
+                  style="width: 24px; height: 24px;" />
+                <v-progress-circular v-else indeterminate size="small"></v-progress-circular>
+              </ClientOnly>
+            </div>
 
             {{ item.name }}
             <v-icon
@@ -605,6 +601,7 @@
 import { ref } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useRouter, useRoute } from 'vue-router'
+import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import { useClickOutside } from '~/composables/useClickOutside'
 
 import checkboxInput from '~/components/common/checkbox-input.vue'
