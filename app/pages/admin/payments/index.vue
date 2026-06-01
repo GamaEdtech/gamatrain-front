@@ -676,6 +676,22 @@ const refreshData = async () => {
   await getData()
 }
 
+const isBlobResponse = (response: unknown): response is Blob => {
+  return response instanceof Blob
+}
+
+const getExportErrorMessage = (response: ApiResult<string>) => {
+  if (response.errors?.length && response.errors[0].message) {
+    return response.errors[0].message
+  }
+
+  if (response.data) {
+    return response.data
+  }
+
+  return 'The operation failed. Please try again later.'
+}
+
 const exportData = async () => {
   const response = await exportPayments({
     startDate: startDate.value ? dayjs(startDate.value).toISOString() : null,
@@ -688,9 +704,20 @@ const exportData = async () => {
       : null,
   })
 
+  if (!isBlobResponse(response)) {
+    const result = response as ApiResult<string>
+    if (!result.succeeded) {
+      $toast.error(getExportErrorMessage(result))
+      return
+    }
+
+    $toast.error('The operation failed. Please try again later.')
+    return
+  }
+
   const { saveAs } = await import('file-saver')
   const fileName = `payments-export-${dayjs().format('YYYY-MM-DD-HH-mm-ss')}.xlsx`
-  saveAs(response as unknown as Blob, fileName)
+  saveAs(response, fileName)
   $toast.success('Payment data export successfully!')
 }
 

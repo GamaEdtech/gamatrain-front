@@ -23,17 +23,6 @@ export const usePaymentAdmin = () => {
         '/api/v2/admin/payments/export',
         query,
       )
-      // if (response.succeeded) {
-      //   $toast.success(`Payment data export successfully!`)
-      // }
-      // else {
-      //   if (response.errors && response.errors.length > 0) {
-      //     $toast.error(response.errors[0].message || '')
-      //   }
-      //   else {
-      //     $toast.error('The operation failed. Please try again later.')
-      //   }
-      // }
       return response
     }
     catch (err: unknown) {
