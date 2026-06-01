@@ -78,10 +78,10 @@
           ]"
           @click="openFilterSection($event, item)">
             <div v-if="item.name === `Near me` && item.icon" class="me-2 d-flex">
-              <ClientOnly>
-                <DotLottieVue src="/images/near-me-gps-white.json" v-if="!currentLocationLoading" autoplay loop
+              <ClientOnly v-if="lgAndUp">
+                <DotLottieVue src="/images/near-me-gps-white.json" v-show="!currentLocationLoading" autoplay loop
                   style="width: 24px; height: 24px;" />
-                <v-progress-circular v-else indeterminate size="small"></v-progress-circular>
+                <v-progress-circular v-show="currentLocationLoading" indeterminate size="small"></v-progress-circular>
               </ClientOnly>
             </div>
 
@@ -757,7 +757,7 @@ const getFilterList = async (params, type) => {
       endpoint = `/api/v2/locations/cities/${filterForm.state}`
     }
 
-    const response = await useApiService.get(endpoint, params)
+    const response = await useApiService(endpoint, params)
 
     if (type === 'countries') {
       loadingCountry.value = false
