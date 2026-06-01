@@ -105,6 +105,29 @@
           </v-tooltip>
         </v-btn>
 
+        <v-btn
+          size="small"
+          flat
+          icon
+          color="primary"
+          :loading="loadingExportPayments ? 'white' : false"
+          class="mr-1"
+          @click="exportData"
+        >
+          <v-icon
+            color="white"
+            size="20"
+          >
+            md:file_export
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+          >
+            Export Data
+          </v-tooltip>
+        </v-btn>
+
         <span
           class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
         >
@@ -426,6 +449,7 @@ definePageMeta({
 
 const { $dayjs, $toast } = useNuxtApp()
 const { verifyPayment, loadingVerifyPayment } = usePayment()
+const { exportPayments, loadingExportPayments } = usePaymentAdmin()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
@@ -651,6 +675,25 @@ const confirmPayment = async () => {
 const refreshData = async () => {
   await getData()
 }
+
+const exportData = async () => {
+  const response = await exportPayments({
+    startDate: startDate.value ? dayjs(startDate.value).toISOString() : null,
+    endDate: endDate.value ? dayjs(endDate.value).toISOString() : null,
+    gateway: gateway.value
+      ? gateway.value as PaymentGateway
+      : null,
+    status: status.value
+      ? status.value as StatusPayment
+      : null,
+  })
+
+  const { saveAs } = await import('file-saver')
+  const fileName = `payments-export-${dayjs().format('YYYY-MM-DD-HH-mm-ss')}.xlsx`
+  saveAs(response as unknown as Blob, fileName)
+  $toast.success('Payment data export successfully!')
+}
+
 const canVerifyPayment = (item: AdminPaymentDTO) => {
   const createdAt = dayjs.utc(item.creationDate)
 
