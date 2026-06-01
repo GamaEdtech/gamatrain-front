@@ -155,6 +155,9 @@ const { data: contentData } = await useAsyncData(
       throw error
     }
   },
+  {
+    server: false,
+  },
 )
 
 const isEditable = computed(() => {

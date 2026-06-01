@@ -19,7 +19,6 @@ export const useProfile = () => {
         ApiResult<ProfileDTO>
       >(`/api/v2/identities/profiles/${id}`)
 
-      console.log(response)
       return response
     }
     catch (err: unknown) {
