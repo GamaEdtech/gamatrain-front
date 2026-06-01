@@ -155,9 +155,6 @@ const { data: contentData } = await useAsyncData(
       throw error
     }
   },
-  {
-    server: false,
-  },
 )
 
 const isEditable = computed(() => {
@@ -209,11 +206,13 @@ const changeCurrentStatusSuccessfully = (data: EditProfileDTO) => {
 const changePersonalSuccessfully = (data: EditProfileDTO) => {
   if (!contentData.value || !user.value)
     return
+  const previousHandle = user.value.handle
 
   const newUser: User = {
     ...user.value,
     firstName: data.firstName ?? user.value.firstName,
     lastName: data.lastName ?? user.value.lastName,
+    handle: data.handle ?? user.value.handle,
     cityId: data.cityId ?? user.value.cityId,
     schoolId: data.schoolId ?? user.value.schoolId,
     board: data.board ?? user.value.board,
@@ -224,6 +223,10 @@ const changePersonalSuccessfully = (data: EditProfileDTO) => {
       : user.value.avatar,
   }
   setUser(newUser)
+
+  if (data.handle && data.handle !== previousHandle) {
+    router.push(`/profile/${data.handle}`)
+  }
 
   contentData.value = {
     ...contentData.value,

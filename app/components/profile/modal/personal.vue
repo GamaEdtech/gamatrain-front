@@ -40,6 +40,26 @@
       </div>
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6">
         <div class="text-h6 text-grey700 font-weight-medium ml-2">
+          Handle
+        </div>
+        <v-text-field
+          v-model="user.handle"
+          rounded="pill"
+          height="48"
+          placeholder="Enter..."
+          variant="outlined"
+          autocomplete="off"
+          persistent-clear
+          base-color="grey200"
+          color="primary"
+          active-color="primary"
+          bg-color="white"
+          class="w-100"
+          :rules="[required, minLength(2), maxLength(50)]"
+        />
+      </div>
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6">
+        <div class="text-h6 text-grey700 font-weight-medium ml-2">
           First name
         </div>
         <v-text-field
@@ -282,6 +302,7 @@ interface IModalPersonal {
 interface IPersonalData {
   avatarFile: File | null
   avatarUrl: string
+  handle: string
   firstName: string
   lastName: string
   gender: string
@@ -332,6 +353,7 @@ const closeModal = () => {
 const user = ref<IPersonalData>({
   avatarFile: null,
   avatarUrl: props.data?.avatar ?? '',
+  handle: props.data?.handle ?? '',
   firstName: props.data?.firstName ?? '',
   lastName: props.data?.lastName ?? '',
   gender: props.data?.gender ?? 'Male',
@@ -470,6 +492,7 @@ const save = async () => {
   const data: EditProfileDTO = {
     cityId: user.value.city as number,
     schoolId: user.value.school as number,
+    handle: user.value.handle,
     firstName: user.value.firstName,
     lastName: user.value.lastName,
     board: user.value.board as number,
