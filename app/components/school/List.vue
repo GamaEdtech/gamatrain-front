@@ -21,7 +21,7 @@
         pageNumberForLoadPreviousData != 1 ? `adjust-height` : ``
       }`"
     >
-      <div class="container-scroll">
+      <div class="container-scroll pt-6">
         <template v-if="isInitialLoading">
           <school-card-skeleton
             v-for="item in 4"
@@ -31,11 +31,12 @@
 
         <school-card-skeleton v-if="isPaginationPreviousLoading" />
 
-        <template v-for="school in schoolList">
+        <template v-for="(school, index) in schoolList">
           <school-card
             v-if="!isInitialLoading"
             :key="school"
             :school="school"
+            :highlight-nearest="highlightNearest && index === 0"
           />
         </template>
 
@@ -46,7 +47,7 @@
 
         <school-card-skeleton v-if="isPaginationLoading" />
         <div
-          v-if="!isInitialLoading && schoolList.length == 0"
+          v-if="!isInitialLoading && schoolList?.length == 0"
           class="not-found-div"
         >
           Opps! no data found
@@ -87,6 +88,10 @@ const props = defineProps({
   pageNumberForLoadPreviousData: {
     type: Number,
     required: true,
+  },
+  highlightNearest: {
+    type: Boolean,
+    default: false,
   },
 })
 

@@ -15,8 +15,12 @@
       >
         List view
       </v-btn>
+      
+      <!-- Map `Near me` floating action button -->
+      <SchoolNearMeFab :is-map-mode="isMapMode" :data-loading="isFindingNearestSchool" @fetch-user-location="applyNearMe" />
 
       <Map
+        ref="mapRef"
         :items="newSchoolForMarkersOnMap"
         :use-cluster="true"
         :enable-user-location="true"
@@ -55,10 +59,10 @@
       class="d-none d-lg-flex flex-column align-center justify-start w-100 h-100 bg-white"
     >
       <schoolFilter
+        :dataLoading="isFindingNearestSchool"
         :sort-list="sortList"
         :total-school-find="totalSchoolFind"
         :is-expand-map="isExpandMapInDesktop"
-        v-model:user-location="userLocation"
         @near-me="applyNearMe"
         @update-filter="updateFilter"
       />
@@ -90,6 +94,7 @@
         :is-pagination-previous-loading="isPaginationPreviousSchoolLoading"
         :is-all-data-loaded="isAllSchoolLoaded"
         :page-number-for-load-previous-data="pageNumberForLoadPreviousSchool"
+        :highlight-nearest="isDistanceSorted"
         @load-next-page="loadNextPageSchool"
         @load-previous-page="loadPreviousSchool"
       />
@@ -104,10 +109,12 @@
       @update:open-sheet="changeBottomSheetStatus"
     >
       <schoolFilter
+        :dataLoading="isFindingNearestSchool"
         :sort-list="sortList"
         :total-school-find="totalSchoolFind"
         :is-expand-map="isExpandMapInDesktop"
         @update-filter="updateFilter"
+        @near-me="applyNearMe"
       />
       <SchoolList
         :school-list="schools"
@@ -117,6 +124,7 @@
         :is-pagination-previous-loading="isPaginationPreviousSchoolLoading"
         :is-all-data-loaded="isAllSchoolLoaded"
         :page-number-for-load-previous-data="pageNumberForLoadPreviousSchool"
+        :highlight-nearest="isDistanceSorted"
         @load-next-page="loadNextPageSchool"
         @load-previous-page="loadPreviousSchool"
       />
@@ -138,9 +146,10 @@ const router = useRouter()
 const route = useRoute()
 
 const { lgAndDown } = useDisplay()
+const { location, isLoading: locationLoading, isCooldownActive, fetchLocation } = useCurrentLocation();
 
 const isUserMovingMap = ref(true) // Start with loading indicator visible
-const userLocation = ref();
+const userLocation = ref(null);
 
 const sortList = [
   {
@@ -152,6 +161,7 @@ const sortList = [
     title: 'Highest score',
   },
 ]
+
 const setDefaultSort = (selectedSorts) => {
   if (selectedSorts.includes('distance')) {
     return ['distance']
@@ -168,9 +178,9 @@ const setDefaultSortToRoute = () => {
   const currentSort = route.query.sort
   const hasLastModify
     = currentSort
-      && (Array.isArray(currentSort)
-        ? currentSort.includes('lastModifyDate')
-        : currentSort.split(',').includes('lastModifyDate'))
+    && (Array.isArray(currentSort)
+      ? currentSort.includes('lastModifyDate')
+      : currentSort.split(',').includes('lastModifyDate'))
 
   if (!hasLastModify) {
     const newSort = currentSort
@@ -187,11 +197,38 @@ const setDefaultSortToRoute = () => {
 }
 
 const applyNearMe = () => {
-  filterForm.value.sort = ['distance']
+  if (
+    locationLoading.value ||
+    isCooldownActive.value
+  ) {
+    return
+  }
 
-  resetParameter()
-  updateQueryParams()
+  highlightNearestSchool.value = false
+  shouldFocusNearestSchool.value = true
+  isFindingNearestSchool.value = true
+
+  if (!filterForm.value.sort.includes('distance')) {
+    filterForm.value.sort.unshift('distance')
+  }
+
+  handleFetchUserLocation();
 }
+
+watch(
+  () => location.value,
+  (newLocation) => {
+    if (!newLocation) return
+
+    userLocation.value = newLocation
+
+    filterForm.value.lat = newLocation.lat
+    filterForm.value.lng = newLocation.lng
+    filterForm.value.distance = defaultLatLongDistance.distance
+
+    updateQueryParams()
+  }
+)
 
 onMounted(() => {
   setDefaultSortToRoute()
@@ -256,6 +293,19 @@ const defaultLatLongDistance = {
   distance: 5598568,
 }
 
+const handleFetchUserLocation = () => {
+
+  fetchLocation();  
+
+  if (location.value) {    
+    userLocation.value = location.value
+    userLocationFound([
+      location.value.lat,
+      location.value.lng,
+    ])
+  }
+}
+
 const userLocationFound = (data) => {
   defaultLatLongDistance.lat = data[0]
   defaultLatLongDistance.lng = data[1]
@@ -265,7 +315,12 @@ const timer = ref(null)
 const isInitialSchoolLoading = ref(false)
 const isPaginationSchoolLoading = ref(false)
 const isPaginationPreviousSchoolLoading = ref(false)
+const mapRef = ref(null)
+const shouldFocusNearestSchool = ref(false)
+const isFindingNearestSchool = ref(false)
 const schools = ref([])
+const nearestSchoolLocation = ref(null)
+const highlightNearestSchool = ref(false)
 const newSchoolForMarkersOnMap = ref([])
 const isAllSchoolLoaded = ref(false)
 const pageNumberForLoadPreviousSchool = ref(
@@ -276,6 +331,14 @@ const pageNumberForLoadNextSchool = ref(
 )
 const perPage = ref(20)
 const totalSchoolFind = ref(0)
+
+const isDistanceSorted = computed(() =>
+  filterForm.value.sort?.includes('distance')
+)
+const shouldShowOnlyNearestMarker = computed(() =>
+  isDistanceSorted.value
+  && userLocation.value
+)
 
 const resetParameter = () => {
   filterForm.value.page = 1
@@ -294,7 +357,32 @@ const resetParameter = () => {
 }
 
 const updateFilter = (query) => {
-  filterForm.value = query
+  const hadDistance =
+    filterForm.value.sort?.includes('distance')
+
+  let newSort = [...(query.sort || [])]
+
+  const hasDistance = newSort.includes('distance')
+
+  // No sort selected -> fallback to default
+  if (newSort.length === 0) {
+    newSort = ['lastModifyDate']
+  }
+
+  filterForm.value = {
+    ...filterForm.value,
+    ...query,
+    sort: newSort,
+  }
+
+  // Distance removed
+  if (hadDistance && !hasDistance) {
+    filterForm.value.lat = null
+    filterForm.value.lng = null
+    filterForm.value.distance = null
+    userLocation.value = null
+  }
+
   resetParameter()
   updateQueryParams()
 }
@@ -505,31 +593,44 @@ const getSchoolList = async () => {
             : 'Desc'
       })
 
-      // TODO: Need to be adjusted with api when ready
-      // if (
-      //   filterForm.value.sort?.includes('distance')
-      //   && userLocation.value
-      // ) {
-      //   params['Location.Latitude'] = userLocation.value?.lat
-      //   params['Location.Longitude'] = userLocation.value?.lng
-      // }
+      if (
+        filterForm.value.sort?.includes('distance')
+        && userLocation.value
+      ) {
+        params['Location.Latitude'] = userLocation.value?.lat
+        params['Location.Longitude'] = userLocation.value?.lng
+      }
     }
-    if (isExpandMapInDesktop.value || !openBottomNavFilterList.value) {
+
+    // Always send location params when `distance` exists
+    if (
+      filterForm.value.sort?.includes('distance') &&
+      filterForm.value.lat &&
+      filterForm.value.lng
+    ) {
       params['Location.Radius'] = filterForm.value.distance
       params['Location.Latitude'] = filterForm.value.lat
       params['Location.Longitude'] = filterForm.value.lng
     }
-    else {
+
+    // Always send sort when selected
+    params['sort'] = filterForm.value.sort;
+
+    // Other filters only in list mode
+    if (!isExpandMapInDesktop.value && openBottomNavFilterList.value) {
       params['Name'] = filterForm.value.keyword
       params['section'] = filterForm.value.stage
+
       params['Tuition.Start']
-        = filterForm.value.tuitionFeeMin == 0
+        = filterForm.value.tuitionFeeMin === 0
           ? undefined
           : filterForm.value.tuitionFeeMin
+
       params['Tuition.End']
-        = filterForm.value.tuitionFeeMax == 0
+        = filterForm.value.tuitionFeeMax === 0
           ? undefined
           : filterForm.value.tuitionFeeMax
+
       params['CountryId'] = filterForm.value.country
       params['StateId'] = filterForm.value.state
       params['CityId'] = filterForm.value.city
@@ -537,10 +638,9 @@ const getSchoolList = async () => {
       params['religion'] = filterForm.value.religion
       params['boarding_type'] = filterForm.value.boarding_type
       params['coed_status'] = filterForm.value.coed_status
-      params['sort'] = filterForm.value.sort
     }
 
-    const response = await useApiService.get('/api/v2/schools', params)
+    const response = await useApiService.get('/api/v2/schools', {query :params})
     setMetaData(response)
 
     if (response?.data?.list) {
@@ -556,13 +656,53 @@ const getSchoolList = async () => {
       }
       else {
         schools.value = [...schools.value, ...response.data.list]
+
+        if (
+          shouldFocusNearestSchool.value &&
+          response.data.list.length
+        ) {
+          highlightNearestSchool.value = true
+        }
       }
       if (isExpandMapInDesktop.value || !openBottomNavFilterList.value) {
-        newSchoolForMarkersOnMap.value = response.data.list
+        const schoolList = response?.data?.list || []
+
+        newSchoolForMarkersOnMap.value =
+          shouldShowOnlyNearestMarker.value
+            ? schoolList.slice(0, 1)
+            : schoolList
+        
+        if (
+          shouldFocusNearestSchool.value &&
+          schoolList.length
+        ) {
+          const nearestSchool = schoolList[0]
+
+          if (nearestSchool?.lat && nearestSchool?.long) {
+            nextTick(() => {
+              mapRef.value?.setView(
+                nearestSchool.lat,
+                nearestSchool.long,
+                15,
+              )
+            })
+          }
+
+          shouldFocusNearestSchool.value = false
+        }
       }
     }
     else {
       isAllSchoolLoaded.value = true
+    }
+
+    if (response?.data?.list?.length) {
+      const nearestSchool = response.data.list[0]
+
+      nearestSchoolLocation.value = {
+        lat: nearestSchool.lat,
+        lng: nearestSchool.long,
+      }
     }
   }
   catch (err) {
@@ -574,6 +714,8 @@ const getSchoolList = async () => {
     isPaginationPreviousSchoolLoading.value = false
     // Hide loading indicator after data is loaded
     isUserMovingMap.value = false
+    isFindingNearestSchool.value = false
+
   }
 }
 
@@ -627,6 +769,9 @@ const loadPreviousSchool = () => {
 
 // Start Open/Close bottom nav and Expand Map in Desktop
 const isExpandMapInDesktop = ref(false)
+const isMapMode = computed(() => {
+  return isExpandMapInDesktop.value || !openBottomNavFilterList.value
+})
 
 const changeStatusExpandMap = () => {
   isExpandMapInDesktop.value = !isExpandMapInDesktop.value
@@ -820,9 +965,8 @@ const handleSchoolMarkerClickError = (errorData) => {
 
 <style scoped>
 @import "../../assets/scss/school/index.scss";
-
-.map-div-button{
-  z-index : 3;
+.map-div-button {
+  z-index: 3;
   min-height: 70px;
 }
 </style>

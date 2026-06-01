@@ -168,54 +168,58 @@ async function setMarkers() {
   try {
     if (!L || !map.value) return
 
-    // Filter and validate school items before creating markers
-    const validSchools
-      = props?.items?.filter(
+    const validSchools =
+      props?.items?.filter(
         item => item.lat && item.long && validateMarkerData(item),
       ) || []
+
+    if (validSchools.length === 0) {
+      if (markerCluster.value) {
+        markerCluster.value.clearLayers()
+      }
+
+      console.warn('No valid school markers to display on map')
+      return
+    }
 
     const mapItems = validSchools.map(item => ({
       lat: item.lat,
       lng: item.long,
       name: item.name,
       id: item.id,
-      schoolData: item, // Store complete school data
+      schoolData: item,
       options: {
         icon: schoolIcon.value,
         alt: item.id,
       },
     }))
 
-    if (mapItems.length === 0) {
-      console.warn('No valid school markers to display on map')
-      return
-    }
-
-    const markers = mapItems.map((item) => {
-      return L.marker([item.lat, item.lng], {
+    const markers = mapItems.map(item =>
+      L.marker([item.lat, item.lng], {
         icon: schoolIcon.value,
         alt: item.id,
-      })
-    })
+      }),
+    )
 
-    // markerCluster.value = L.markerClusterGroup({ animate: false });
     if (!markerCluster.value) {
-      markerCluster.value = L.markerClusterGroup({ animate: false })
+      markerCluster.value = L.markerClusterGroup({
+        animate: false,
+      })
+
       map.value.addLayer(markerCluster.value)
     }
+    else {
+      markerCluster.value.clearLayers()
+    }
 
-    // Enhanced marker click handling with complete data passing
     markers.forEach((marker, index) => {
-      const exists = markerCluster.value
-        .getLayers()
-        .some(m => m.options.alt === marker.options.alt)
-      if (!exists) {
-        marker.schoolData = mapItems[index].schoolData
-        marker.on('click', (e) => {
-          handleClickMarker(e)
-        })
-        markerCluster.value.addLayer(marker)
-      }
+      marker.schoolData = mapItems[index].schoolData
+
+      marker.on('click', (e) => {
+        handleClickMarker(e)
+      })
+
+      markerCluster.value.addLayer(marker)
     })
   }
   catch (error) {
@@ -345,7 +349,11 @@ watch(
 const setView = (lat, lng, zoom = 8) => {
   if (!map.value) return
 
-  map.value.setView([lat, lng], zoom)
+  map.value.flyTo([lat, lng], zoom, {
+    animate: true,
+    duration: 1.5,
+  })
+
   if (highlightMarker.value) {
     highlightMarker.value.setLatLng([lat, lng])
     emit('locationSelectedUpdate', { lat, lng })
