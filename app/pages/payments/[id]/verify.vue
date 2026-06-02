@@ -72,6 +72,7 @@ type Status = 'loading' | 'success' | 'error'
 const route = useRoute()
 const router = useRouter()
 const { verifyPayment, getPathRedirect, removePathRedirect } = usePayment()
+const { trackVerifyPayment } = useGtmEvents()
 
 const status = ref<Status>('loading')
 
@@ -82,9 +83,15 @@ const verify = async () => {
   const response = await verifyPayment(paymentId, transactionId)
   if (response.succeeded && response.data) {
     status.value = 'success'
+    trackVerifyPayment({
+      status: 'success',
+    })
   }
   else {
     status.value = 'error'
+    trackVerifyPayment({
+      status: 'fail',
+    })
   }
 }
 

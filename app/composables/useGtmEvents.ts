@@ -10,6 +10,10 @@ interface PaymentEvent {
   route: string
 }
 
+interface PaymentVerifyEvent {
+  status: string
+}
+
 export const useGtmEvents = () => {
   const { $gtm } = useNuxtApp()
 
@@ -33,8 +37,19 @@ export const useGtmEvents = () => {
     console.log('[GTM] payment', payload)
   }
 
+  const trackVerifyPayment = (payload: PaymentVerifyEvent) => {
+    if (!$gtm) {
+      console.warn('[GTM] Not initialized')
+      return
+    }
+
+    $gtm.push('stripe_payment_complete', payload)
+    console.log('[GTM] verify payment', payload)
+  }
+
   return {
     trackFileDownload,
     trackPayment,
+    trackVerifyPayment,
   }
 }
