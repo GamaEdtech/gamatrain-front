@@ -48,3 +48,10 @@ export interface PaymentSummaryGetParams {
   status: StatusPayment | null
   currency: CurrencyPayment | null
 }
+
+export interface PaymentAdminExportParams {
+  startDate?: string | null
+  endDate?: string | null
+  gateway?: PaymentGateway | null
+  status?: StatusPayment | null
+}
