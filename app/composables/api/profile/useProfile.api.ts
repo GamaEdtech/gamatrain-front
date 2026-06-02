@@ -11,18 +11,22 @@ const NAME = 'Profile'
 
 export const useProfile = () => {
   const { $toast } = useNuxtApp()
+  const auth = useAuth()
 
   const getItemById = async (id: string) => {
     loadingGetItemById.value = true
     try {
       const response = await useApiService.get<
         ApiResult<ProfileDTO>
-      >(`/api/v2/identities/profiles/${id}`)
+      >(`/api/v2/identities/profiles/${id}`, {}, {
+        headers: {
+          Authorization: `Bearer ${auth.getUserTokenV2()}`,
+        },
+      })
 
       return response
     }
     catch (err: unknown) {
-      console.log('error', err)
       const error = err as AppError
       if (error.response?.status === 400) {
         $toast.error(error.response.data?.message || '')
