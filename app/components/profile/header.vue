@@ -26,7 +26,7 @@
             width="140"
             height="140"
           >
-          <div :class="`status-div rounded-circle position-absolute bg-${userOnlineStatus[data.onlineStatus].nameColor}`" />
+          <div :class="`status-div rounded-circle position-absolute bg-${getOnlineStatus(data.onlineStatus).nameColor}`" />
           <div
             :class="`bio-div position-absolute text-caption text-sm-subtitle-1 rounded-lg border-solid border-sm border-grey100 pa-1 ${isEditable ? 'cursor-pointer' : ''} ${data.currentStatusSentence ? `text-grey700 font-weight-medium` : `text-grey400 font-weight-regular`}`"
             @click="isEditable && emit('editStatus')"
@@ -43,7 +43,7 @@
             </div>
           </div> -->
         </div>
-        <span class="text-subtitle-1 text-sm-h6 text-grey700 font-weight-regular">{{ userOnlineStatus[data.onlineStatus].text }}</span>
+        <span class="text-subtitle-1 text-sm-h6 text-grey700 font-weight-regular">{{ getOnlineStatus(data.onlineStatus).text }}</span>
       </div>
       <div class="d-flex ga-2">
         <span class="text-subtitle-1 text-grey400 font-weight-regular">
@@ -240,6 +240,10 @@ const userOnlineStatus = {
     nameColor: 'success500',
     color: theme.current.value.colors.success500,
   },
+}
+
+const getOnlineStatus = (status: keyof typeof userOnlineStatus) => {
+  return userOnlineStatus[status] ?? userOnlineStatus.NewUser
 }
 </script>
 
