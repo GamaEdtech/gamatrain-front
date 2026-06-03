@@ -21,6 +21,7 @@ export interface BlogUserDTO {
   visibilityType: string
   publishDate: string
   tags: number[]
+  draft: boolean
   localizedValues: LocalizedValueDTO[]
 }
 
