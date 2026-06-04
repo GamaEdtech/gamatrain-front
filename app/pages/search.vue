@@ -86,6 +86,8 @@ const getEquivalentNewType = (type) => {
       return 'forum'
     case 'tutorial':
       return 'tutorial'
+    case 'teacher':
+      return 'teacher'
     default:
       return 'paper'
   }
@@ -112,6 +114,8 @@ const getEquivalentOldType = (type) => {
       return 'question'
     case 'dars':
       return 'dars'
+    case 'teacher':
+      return 'teacher'
     default:
       return 'test'
   }
@@ -459,8 +463,16 @@ const filters = [
         color: '#2e90fa',
         idClassification: null,
       },
+      {
+        title: 'Teacher',
+        id: 'teacher',
+        contentIcon: 'stat-icon icon-teacher',
+        color: '#12b76a',
+        idClassification: null,
+      },
     ],
     queryKey: 'type',
+    disableOtherFiltersOnSelectedIds: ['teacher'],
     children: [
       FILTER_INDEX.Classification,
       FILTER_INDEX.Year,
@@ -648,7 +660,7 @@ const metadata = computed(() => {
       fallback:
         'Master Concepts, Enhance Learning: GamaTrain\'s Online Tutorials',
     },
-    tutor: {
+    teacher: {
       dynamic: `${joinTextTitles} Teacher`,
       fallback: 'Teacher',
     },
@@ -679,7 +691,7 @@ const metadata = computed(() => {
     azmoon:
       'Hone your skills and assess your knowledge with GamaTrain\'s online exams, designed to enhance your exam preparation and boost your confidence.',
     dars: 'Complement your studies with GamaTrain\'s comprehensive online tutorials, providing step-by-step guidance and practice opportunities to refine your understanding.',
-    tutor: 'Teacher',
+    teacher: 'Teacher',
   }
 
   const descriptionTemplates = {
@@ -698,7 +710,7 @@ const metadata = computed(() => {
     dars: {
       dynamic: `Free download list of ${joinTextTitles} Textbook. ${descAppendText}`,
     },
-    tutor: {
+    teacher: {
       dynamic: `Free download list of ${joinTextTitles} Teacher. ${descAppendText}`,
     },
     default: {
