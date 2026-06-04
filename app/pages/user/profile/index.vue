@@ -53,6 +53,27 @@
           <span class="text-h5"> Help to pick profile pic </span>
         </div>
       </v-col>
+      <v-col cols="12">
+        <v-skeleton-loader
+          v-if="userDataLoading"
+          width="200"
+          height="20"
+          class="rounded-pill"
+        />
+        <div
+          v-else
+          class="text-h6 text-sm-h5 text-grey700"
+        >
+          Want to see your public profile?
+          <NuxtLink
+            v-if="userInformation.handle"
+            :to="`/profile/${userInformation.handle}`"
+            class="text-primary font-weight-bold text-decoration-none"
+          >
+            Open your profile page
+          </NuxtLink>
+        </div>
+      </v-col>
     </v-row>
 
     <!-- Personal Information -->
@@ -306,6 +327,7 @@ interface SelectOption {
 interface UserProfileUI {
   avatarFile: File | null
   avatarUrl: string | null
+  handle: string
   firstName: string
   lastName: string
   gender: SelectOption | null
@@ -318,6 +340,7 @@ interface UserProfileUI {
 }
 interface UserProfileDTO {
   userName: string
+  handle: string | null
   firstName: string
   lastName: string
   countryId: number | null
@@ -366,6 +389,7 @@ const { $toast } = useNuxtApp()
 const userInformation = ref<UserProfileUI>({
   avatarFile: null,
   avatarUrl: null,
+  handle: '',
   firstName: '',
   lastName: '',
   gender: null,
@@ -504,6 +528,7 @@ const getUserInfo = async () => {
     userDataLoading.value = false
     const {
       gender,
+      handle,
       firstName,
       lastName,
       avatar,
@@ -517,6 +542,7 @@ const getUserInfo = async () => {
     userInformation.value = {
       ...userInformation.value,
       gender: gender ? { id: gender, title: gender } : null,
+      handle: handle ?? '',
       firstName,
       lastName,
       avatarUrl: avatar || null,
