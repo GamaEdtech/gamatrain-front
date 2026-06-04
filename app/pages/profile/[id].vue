@@ -13,12 +13,12 @@
       @edit-personal="showPersonalModal = true"
       @edit-status="showStatusModal = true"
     />
-    <profile-skills
+    <!-- <profile-skills
       class="box-shadow-div"
       :data="contentData.skills"
       :is-editable="isEditable"
       @edit-skill="showSkillsModal = true"
-    />
+    /> -->
     <profile-experience
       :data="contentData.experiences"
       :is-editable="isEditable"
