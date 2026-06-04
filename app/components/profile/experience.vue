@@ -95,6 +95,7 @@
       </span>
 
       <v-btn
+        v-if="isEditable"
         flat
         color="grey700"
         rounded="pill"
