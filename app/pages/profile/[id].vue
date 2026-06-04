@@ -175,7 +175,6 @@ const selectedExperienceForEdit = ref()
 const changeBioSuccessfully = (data: EditProfileDTO) => {
   if (!contentData.value)
     return
-  // refresh data
   contentData.value = {
     ...contentData.value,
     biography: data.biography!,
