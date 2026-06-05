@@ -31,7 +31,14 @@
         v-for="(item, index) in dataList"
         :key="item.id || index"
       >
-        <search-card :information="item" />
+        <search-card-profile
+          v-if="isProfileMode"
+          :information="item"
+        />
+        <search-card
+          v-else
+          :information="item"
+        />
       </template>
     </template>
 
@@ -77,6 +84,9 @@ const props = defineProps({
   firstLoadedPageNumber: {
     type: Number,
     required: true,
+  },
+  isProfileMode: {
+    type: Boolean,
   },
 })
 const emit = defineEmits(['loadNextPage', 'loadPreviousPage'])
