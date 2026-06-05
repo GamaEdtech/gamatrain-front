@@ -145,6 +145,7 @@ const data = ref([])
 const isAllDataLoaded = ref(false)
 const totalDataFind = ref(0)
 const perPage = 10
+const perPageServerSide = 5
 const firstLoadedPageNumber = ref(Number(route.query.page) || 1)
 const latestLoadedPageNumber = ref(Number(route.query.page) || 1)
 
@@ -176,27 +177,38 @@ const loadPreviousPageData = async () => {
 const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
   'dataSearchSSR',
   () => {
-    const params = {
-      page: Number(route.query.page) || 1,
-      title: route.query.title,
-      section: route.query.section,
-      base: route.query.base,
-      lesson: route.query.lesson,
-      topic: route.query.topic,
-      type: getEquivalentOldType(route.query.type),
-      edu_year: route.query.edu_year,
-      edu_month: route.query.edu_month,
-      perpage: 5,
+    const pageNumber = Number(route.query.page) || 1
+    if (getEquivalentOldType(route.query.type) == 'teacher') {
+      const query = {
+        'PagingDto.PageFilter.Size': perPageServerSide,
+        'PagingDto.PageFilter.Skip': (pageNumber - 1) * perPageServerSide,
+        'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      }
+      return useApiService.get('/api/v2/identities/profiles/list', query)
     }
+    else {
+      const params = {
+        page: pageNumber,
+        title: route.query.title,
+        section: route.query.section,
+        base: route.query.base,
+        lesson: route.query.lesson,
+        topic: route.query.topic,
+        type: getEquivalentOldType(route.query.type),
+        edu_year: route.query.edu_year,
+        edu_month: route.query.edu_month,
+        perpage: perPageServerSide,
+      }
 
-    if (route.query.type && getEquivalentOldType(route.query.type) == 'learnfiles') {
-      params.content_type = route.query.content_type
-    }
-    if (route.query.type && getEquivalentOldType(route.query.type) == 'test') {
-      params.test_type = route.query.test_type
-    }
+      if (route.query.type && getEquivalentOldType(route.query.type) == 'learnfiles') {
+        params.content_type = route.query.content_type
+      }
+      if (route.query.type && getEquivalentOldType(route.query.type) == 'test') {
+        params.test_type = route.query.test_type
+      }
 
-    return useApiService.get('/api/v1/search', params)
+      return useApiService.get('/api/v1/search', params)
+    }
   },
 )
 
@@ -208,7 +220,12 @@ watchEffect(() => {
 
 if (initialData.value) {
   data.value = initialData.value.data.list
-  totalDataFind.value = initialData.value.data.num || 0
+  if (getEquivalentOldType(route.query.type) == 'teacher') {
+    totalDataFind.value = initialData.value.data.totalRecordsCount || 0
+  }
+  else {
+    totalDataFind.value = initialData.value.data.num || 0
+  }
   isInitialDataLoading.value = false
   isPaginationDataLoading.value = false
 }
@@ -216,13 +233,27 @@ if (initialData.value) {
 const getDataList = async () => {
   if (isAllDataLoaded.value) return
   try {
-    const params = { ...querySearch.value, type: getEquivalentOldType(querySearch.value.type) }
-    const response = await useApiService.get('/api/v1/search', params)
+    const typeRoute = getEquivalentOldType(querySearch.value.type)
+    let response = {}
+
+    if (typeRoute == 'teacher') {
+      const query = {
+        'PagingDto.PageFilter.Size': perPage,
+        'PagingDto.PageFilter.Skip': (querySearch.value.page - 1) * perPage,
+        'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      }
+      response = await useApiService.get('/api/v2/identities/profiles/list', query)
+      totalDataFind.value = response.data.totalRecordsCount || 0
+    }
+    else {
+      const params = { ...querySearch.value, type: typeRoute }
+      response = await useApiService.get('/api/v1/search', params)
+      totalDataFind.value = response.data.num || 0
+    }
 
     if (response.data.list.length < perPage) {
       isAllDataLoaded.value = true
     }
-    totalDataFind.value = response.data.num ? response.data.num : 0
 
     return response.data.list
   }
