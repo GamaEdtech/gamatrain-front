@@ -5,7 +5,7 @@
     <div class="w-100 d-flex align-center justify-space-between">
       <span class="text-h4 text-sm-h3 font-weight-bold text-grey700">Experience</span>
       <v-btn
-        v-if="isEditable && data.length > 0"
+        v-if="isEditable && data && data.length > 0"
         flat
         color="grey100"
         size="28"
@@ -21,7 +21,7 @@
     </div>
 
     <div
-      v-if="data.length > 0"
+      v-if="data && data.length > 0"
       class="d-flex flex-column ga-6 mt-4"
     >
       <template
@@ -79,7 +79,7 @@
           </div>
         </div>
         <v-divider
-          v-if="index != data.length - 1 "
+          v-if="data && index != data.length - 1 "
           color="grey300"
           class="border-opacity-100"
         />
@@ -95,6 +95,7 @@
       </span>
 
       <v-btn
+        v-if="isEditable"
         flat
         color="grey700"
         rounded="pill"
@@ -114,7 +115,7 @@ import dayjs from 'dayjs'
 import type { ExperienceDTO } from '@/types'
 
 interface IExperience {
-  data: ExperienceDTO[]
+  data?: ExperienceDTO[] | null
   isEditable: boolean
 }
 

@@ -5,7 +5,7 @@
     <div class="w-100 d-flex align-center justify-space-between">
       <span class="text-h4 text-sm-h3 font-weight-bold text-grey700">Skills</span>
       <v-btn
-        v-if="isEditable && data.length > 0"
+        v-if="isEditable && data && data?.length > 0"
         flat
         color="grey100"
         size="28"
@@ -21,7 +21,7 @@
     </div>
 
     <div
-      v-if="data.length > 0"
+      v-if="data && data?.length > 0"
       class="d-flex flex-wrap ga-4"
     >
       <v-chip
@@ -61,7 +61,7 @@
 
 <script setup lang="ts">
 interface ISkills {
-  data: string[]
+  data?: string[] | null
   isEditable: boolean
 }
 
