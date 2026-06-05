@@ -22,7 +22,7 @@
       </div>
 
       <search-list
-        v-if="data.length > 0"
+        v-if="data && data.length > 0"
         :data-list="data"
         :is-initial-loading="isInitialDataLoading"
         :is-pagination-loading="isPaginationDataLoading"
@@ -252,7 +252,7 @@ const getDataList = async () => {
       totalDataFind.value = response.data.num || 0
     }
 
-    if (response.data.list.length < perPage) {
+    if (response.data.list && response.data.list.length < perPage) {
       isAllDataLoaded.value = true
     }
 
