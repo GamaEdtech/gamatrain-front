@@ -661,8 +661,8 @@ const metadata = computed(() => {
         'Master Concepts, Enhance Learning: GamaTrain\'s Online Tutorials',
     },
     teacher: {
-      dynamic: `${joinTextTitles} Teacher`,
-      fallback: 'Teacher',
+      dynamic: 'Teacher directory',
+      fallback: 'Teacher directory',
     },
     default: {
       dynamic: `${joinTextTitles} Past Papers`,
@@ -691,7 +691,7 @@ const metadata = computed(() => {
     azmoon:
       'Hone your skills and assess your knowledge with GamaTrain\'s online exams, designed to enhance your exam preparation and boost your confidence.',
     dars: 'Complement your studies with GamaTrain\'s comprehensive online tutorials, providing step-by-step guidance and practice opportunities to refine your understanding.',
-    teacher: 'Teacher',
+    teacher: 'Browse qualified teachers and explore their profiles, experience, and subjects they teach.',
   }
 
   const descriptionTemplates = {
@@ -711,7 +711,7 @@ const metadata = computed(() => {
       dynamic: `Free download list of ${joinTextTitles} Textbook. ${descAppendText}`,
     },
     teacher: {
-      dynamic: `Free download list of ${joinTextTitles} Teacher. ${descAppendText}`,
+      dynamic: `Browse qualified teachers and explore their profiles, experience, and subjects they teach.`,
     },
     default: {
       dynamic: `Free download list of ${joinTextTitles} ${appendText}. ${descAppendText}`,
