@@ -29,6 +29,7 @@
         :is-all-data-loaded="isAllDataLoaded"
         :is-previous-loading="isPreviousLoading"
         :first-loaded-page-number="firstLoadedPageNumber"
+        :is-profile-mode="route.query.type == 'teacher'"
         @load-next-page="loadNextPageData"
         @load-previous-page="loadPreviousPageData"
       />
