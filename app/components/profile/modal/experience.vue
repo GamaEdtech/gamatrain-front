@@ -117,12 +117,9 @@
         <span class="text-h5 text-grey500 font-weight-regular">Start date</span>
         <div class="w-100 d-flex align-center ga-4">
           <div class="w-50 d-flex flex-column align-start justify-start ga-1">
-            <div class="text-h6 text-grey700 font-weight-medium ml-2">
-              Month
-            </div>
             <common-gombo-box
               v-model="monthStart"
-              label=""
+              label="Month"
               :items="months.map((item) => {
                 return {
                   id: item,
@@ -138,12 +135,9 @@
           </div>
 
           <div class="w-50 d-flex flex-column align-start justify-start ga-1">
-            <div class="text-h6 text-grey700 font-weight-medium ml-2">
-              Year
-            </div>
             <common-gombo-box
               v-model="yearStart"
-              label=""
+              label="Year"
               :items="years.map((item) => {
                 return {
                   id: item.toString(),
@@ -164,12 +158,9 @@
         <span class="text-h5 text-grey500 font-weight-regular">End date</span>
         <div class="w-100 d-flex align-center ga-4">
           <div class="w-50 d-flex flex-column align-start justify-start ga-1">
-            <div class="text-h6 text-grey700 font-weight-medium ml-2">
-              Month
-            </div>
             <common-gombo-box
               v-model="monthEnd"
-              label=""
+              label="Month"
               :items="months.map((item) => {
                 return {
                   id: item,
@@ -185,12 +176,9 @@
           </div>
 
           <div class="w-50 d-flex flex-column align-start justify-start ga-1">
-            <div class="text-h6 text-grey700 font-weight-medium ml-2">
-              Year
-            </div>
             <common-gombo-box
               v-model="yearEnd"
-              label=""
+              label="Year"
               :items="years.map((item) => {
                 return {
                   id: item.toString(),

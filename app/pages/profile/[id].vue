@@ -212,6 +212,8 @@ const changePersonalSuccessfully = (data: EditProfileDTO) => {
     firstName: data.firstName ?? user.value.firstName,
     lastName: data.lastName ?? user.value.lastName,
     handle: data.handle ?? user.value.handle,
+    countryId: data.countryId ?? user.value.countryId,
+    stateId: data.stateId ?? user.value.stateId,
     cityId: data.cityId ?? user.value.cityId,
     schoolId: data.schoolId ?? user.value.schoolId,
     board: data.board ?? user.value.board,
