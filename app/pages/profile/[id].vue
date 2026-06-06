@@ -123,6 +123,7 @@ import type {
 
 const route = useRoute()
 const router = useRouter()
+const requestURL = useRequestURL()
 const { getItemById } = useProfile()
 const { user, setUser } = useUser()
 
@@ -159,6 +160,102 @@ const { data: contentData } = await useAsyncData(
 
 const isEditable = computed(() => {
   return user.value?.handle === route.params.id
+})
+
+const getAbsoluteUrl = (path: string) => {
+  if (path.startsWith('http://') || path.startsWith('https://'))
+    return path
+
+  return `${requestURL.protocol}//${requestURL.host}${path}`
+}
+
+useHead(() => {
+  const profile = contentData.value
+  const handle = String(route.params.id)
+  const fullName = profile
+    ? `${profile.firstName ?? ''} ${profile.lastName ?? ''}`.trim()
+    : handle
+  const pageTitle = fullName
+    ? `${fullName} | GamaTrain Profile`
+    : 'GamaTrain Profile'
+  const pageDescribe = profile?.biography
+    || profile?.currentStatusSentence
+    || `View ${fullName || handle}'s profile, skills, and learning experience on GamaTrain.`
+  const canonical = `${requestURL.protocol}//${requestURL.host}/profile/${handle}`
+  const ogImage = getAbsoluteUrl(
+    profile?.avatar || '/images/default-user.svg',
+  )
+  const fullSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    'name': fullName || handle,
+    'url': canonical,
+    'image': ogImage,
+    'description': pageDescribe,
+    'affiliation': {
+      '@type': 'Organization',
+      'name': 'GamaTrain',
+    },
+  }
+
+  return {
+    title: pageTitle,
+    meta: [
+      {
+        name: 'apple-mobile-web-app-title',
+        content: pageTitle,
+      },
+      {
+        name: 'og:title',
+        content: pageTitle,
+      },
+      {
+        name: 'og:site_name',
+        content: 'GamaTrain',
+      },
+      {
+        name: 'description',
+        content: pageDescribe,
+      },
+      {
+        name: 'og:description',
+        content: pageDescribe,
+      },
+      {
+        property: 'og:image',
+        content: ogImage,
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        name: 'twitter:title',
+        content: pageTitle,
+      },
+      {
+        name: 'twitter:description',
+        content: pageDescribe,
+      },
+      {
+        name: 'twitter:image',
+        content: ogImage,
+      },
+    ],
+    script: [
+      {
+        key: 'json-ld-schema',
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify(fullSchema),
+      },
+    ],
+    link: [
+      {
+        rel: 'canonical',
+        href: canonical,
+      },
+    ],
+  }
 })
 
 const showBioModal = ref(false)
