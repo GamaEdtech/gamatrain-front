@@ -132,6 +132,7 @@
           width="40"
           icon
           color="primary"
+          flat
           :loading="loadingAiReply"
           :disabled="loadingData || loadingReplyList || !contactData"
           class="position-absolute position-button-ai"
@@ -142,6 +143,24 @@
             color="white"
           >
             md:wand_stars
+          </v-icon>
+        </v-btn>
+
+        <v-btn
+          color="primary"
+          variant="outlined"
+          flat
+          class="text-h5 font-weight-bold"
+          :loading="loadingPolishReply"
+          :disabled="!bodyReply.trim() || loadingPolishReply"
+          @click="polishReplyWithAi"
+        >
+          Polish with AI
+          <v-icon
+            color="primary"
+            class="ml-1"
+          >
+            md:cleaning_services
           </v-icon>
         </v-btn>
       </div>
@@ -189,6 +208,7 @@ const selectedFromEmail = ref()
 const fromEmailList = ref<string[]>([])
 const loadingEmailList = ref(false)
 const loadingAiReply = ref(false)
+const loadingPolishReply = ref(false)
 const loadingReplyList = ref(true)
 const replyList = ref<AdminReplyTicketListDTO[]>([])
 
@@ -318,6 +338,57 @@ const generateAiReply = async () => {
   }
 }
 
+const buildPolishReplyPrompt = () => {
+  return [
+    'You are a professional English writing editor for a GamaTrain admin support reply.',
+    'Polish the admin reply below.',
+    'Improve grammar, spelling, word choice, clarity, and professional tone.',
+    'Preserve the original meaning and intent exactly.',
+    'Do not add new facts, promises, prices, discounts, links, timelines, policies, or technical details.',
+    'Remove or soften any rude, offensive, aggressive, or unprofessional wording while keeping the message clear.',
+    'Return only the polished version of the same message as plain text.',
+    '',
+    'Admin reply:',
+    stripHtml(bodyReply.value),
+  ].join('\n')
+}
+
+const polishReplyWithAi = async () => {
+  if (!bodyReply.value.trim())
+    return
+
+  try {
+    loadingPolishReply.value = true
+    const response = await useApiService.post<{
+      response?: string
+    }>(
+      '/api/chatgpt',
+      {
+        userComment: buildPolishReplyPrompt(),
+      },
+    )
+
+    if (response.response) {
+      bodyReply.value = response.response.trim()
+      $toast.success('Reply polished successfully!')
+    }
+    else {
+      $toast.error('The operation failed. Please try again later.')
+    }
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    $toast.error(
+      error.response?.data?.message
+      || error.message
+      || 'The operation failed. Please try again later.',
+    )
+  }
+  finally {
+    loadingPolishReply.value = false
+  }
+}
+
 const reply = async () => {
   if (contactData.value) {
     try {
@@ -439,6 +510,6 @@ onMounted(async () => {
 }
 .position-button-ai {
   right: 10px;
-  bottom: 10px;
+  bottom: 60px;
 }
 </style>
