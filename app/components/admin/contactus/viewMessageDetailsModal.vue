@@ -116,7 +116,7 @@
         />
       </div>
 
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1 position-relative">
         <div class="text-h6 text-grey700 ml-2">
           Body
         </div>
@@ -124,9 +124,26 @@
           v-model="bodyReply"
           mode="custom"
           :features="['bold', 'italic', 'list', 'link']"
-          :rules="requiredRule"
-          required
+          :rules="[required]"
         />
+        <v-btn
+          size="x-small"
+          height="40"
+          width="40"
+          icon
+          color="primary"
+          :loading="loadingAiReply"
+          :disabled="loadingData || loadingReplyList || !contactData"
+          class="position-absolute position-button-ai"
+          @click="generateAiReply"
+        >
+          <v-icon
+            size="x-large"
+            color="white"
+          >
+            md:wand_stars
+          </v-icon>
+        </v-btn>
       </div>
     </div>
     <v-btn
@@ -161,6 +178,7 @@ interface IViewMessageDetailsModal {
 const props = defineProps<IViewMessageDetailsModal>()
 const emit = defineEmits(['replySuccessFull'])
 const { $dayjs, $toast } = useNuxtApp()
+const { required } = useValidationRules()
 
 const contactData = ref<AdminContactUsDetailDTO>()
 const loadingReply = ref(false)
@@ -170,10 +188,9 @@ const bodyReply = ref('')
 const selectedFromEmail = ref()
 const fromEmailList = ref<string[]>([])
 const loadingEmailList = ref(false)
+const loadingAiReply = ref(false)
 const loadingReplyList = ref(true)
 const replyList = ref<AdminReplyTicketListDTO[]>([])
-
-const requiredRule = (value: string) => !!value || 'This field is required'
 
 const replyValid = computed(() => {
   if (bodyReply.value.length == 0 || selectedFromEmail.value == null || selectedFromEmail.value.length == 0) {
@@ -218,6 +235,87 @@ const removeScriptTags = (html: string) => {
     script.remove()
   })
   return doc.body.innerHTML
+}
+
+const stripHtml = (html?: string | null) => {
+  if (!html)
+    return ''
+
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, 'text/html')
+
+  return doc.body.textContent?.trim() ?? ''
+}
+
+const buildAiReplyPrompt = () => {
+  const ticket = contactData.value
+  const conversation = replyList.value.length
+    ? replyList.value
+        .map((item, index) => {
+          return [
+            `Reply ${index + 1}:`,
+            `Date: ${$dayjs(item.creationDate).format('DD/MM/YYYY HH:mm')}`,
+            `Body: ${stripHtml(item.body)}`,
+          ].join('\n')
+        })
+        .join('\n\n')
+    : 'No previous replies.'
+
+  return [
+    'You are a GamaTrain admin support agent.',
+    'Write a direct reply to the customer based on the ticket information below.',
+    'Use the customer name when it is available.',
+    'Keep the tone professional, warm, clear, and concise.',
+    'Answer only based on the provided subject, original message, and previous conversation.',
+    'Do not invent facts, prices, discounts, timelines, links, policies, or technical details.',
+    'If the issue cannot be resolved with the provided information, politely ask the customer for the exact missing details.',
+    'Do not mention that you are an AI or that you received a prompt.',
+    'Return only the final reply text that the admin can send to the customer.',
+    '',
+    `Customer name: ${ticket?.fullName || 'Unknown'}`,
+    `Customer email: ${ticket?.email || 'Unknown'}`,
+    `Subject: ${ticket?.subject || 'No subject'}`,
+    `Original message: ${stripHtml(ticket?.body) || 'No body'}`,
+    '',
+    'Previous conversation:',
+    conversation,
+  ].join('\n')
+}
+
+const generateAiReply = async () => {
+  if (!contactData.value)
+    return
+
+  try {
+    loadingAiReply.value = true
+    const response = await useApiService.post<{
+      response?: string
+    }>(
+      '/api/chatgpt',
+      {
+        userComment: buildAiReplyPrompt(),
+      },
+    )
+
+    if (response.response) {
+      bodyReply.value = response.response.trim()
+      $toast.success('AI reply generated successfully!')
+    }
+    else {
+      $toast.error('The operation failed. Please try again later.')
+    }
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    $toast.error(
+      error.response?.data?.message
+      || error.message
+      || 'The operation failed. Please try again later.',
+    )
+  }
+  finally {
+    loadingAiReply.value = false
+  }
 }
 
 const reply = async () => {
@@ -338,5 +436,9 @@ onMounted(async () => {
   color: rgb(var(--v-theme-grey700));
   font-weight: 700;
   word-break: break-word;
+}
+.position-button-ai {
+  right: 10px;
+  bottom: 10px;
 }
 </style>
