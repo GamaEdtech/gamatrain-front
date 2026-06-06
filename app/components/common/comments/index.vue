@@ -178,11 +178,25 @@ const sendCommentSuccessfull = async () => {
 }
 
 const likeSuccessfull = (comment: CommentBlogDTO) => {
-  comment.likeCount += 1
+  if (!comment.likedByCurrentUser) {
+    if (comment.dislikedByCurrentUser) {
+      comment.dislikeCount -= 1
+      comment.dislikedByCurrentUser = false
+    }
+    comment.likedByCurrentUser = true
+    comment.likeCount += 1
+  }
 }
 
 const dislikeSuccessfull = (comment: CommentBlogDTO) => {
-  comment.dislikeCount += 1
+  if (!comment.dislikedByCurrentUser) {
+    if (comment.likedByCurrentUser) {
+      comment.likeCount -= 1
+      comment.likedByCurrentUser = false
+    }
+    comment.dislikedByCurrentUser = true
+    comment.dislikeCount += 1
+  }
 }
 </script>
 

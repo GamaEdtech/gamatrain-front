@@ -47,6 +47,8 @@ export interface CommentBlogDTO {
   comment: string
   likeCount: number
   dislikeCount: number
+  likedByCurrentUser: boolean
+  dislikedByCurrentUser: boolean
 }
 export interface AddCommentBlogResponseDTO {
   id: number
