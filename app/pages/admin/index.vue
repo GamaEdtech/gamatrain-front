@@ -85,12 +85,9 @@ definePageMeta({
 const { paymentSummary, getPaymentSummary, loadingPaymentSummary: loading } = usePayment()
 
 const showSearchModal = ref(false)
-const DEFAULT_START_DATE = dayjs()
-  .subtract(30, 'day')
-  .format('YYYY-MM-DD')
+const DEFAULT_START_DATE = dayjs().startOf('month').format('YYYY-MM-DD')
 
-const DEFAULT_END_DATE = dayjs()
-  .format('YYYY-MM-DD')
+const DEFAULT_END_DATE = dayjs().endOf('month').format('YYYY-MM-DD')
 const paymentSummaryGetParams = reactive<PaymentSummaryGetParams>({
   userId: null,
   startDate: DEFAULT_START_DATE,
