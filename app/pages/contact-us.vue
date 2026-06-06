@@ -108,17 +108,9 @@
                 class="icon"
                 icon="md:corporate_fare"
               />
-              <span> Gblast mobility sp. z o.o. </span>
+              <span> GAMA EDTECH LTD</span>
             </div>
-            <div>
-              <v-icon
-                size="x-large"
-                color="#97A2B2"
-                class="icon"
-                icon="md:request_quote"
-              />
-              <span> VAT: PL5342694563</span>
-            </div>
+
             <div>
               <v-icon
                 size="x-large"
@@ -126,13 +118,13 @@
                 class="icon"
                 icon="md:location_on"
               />
-              <span> Al. Wojska polskiego 14, Piastów, Poland </span>
+              <span> Office 19394, 182-184 High Street North, London, England, E6 2JA</span>
             </div>
           </div>
 
           <Map
-            :initial-center="[52.188344882777635, 20.84076056567204]"
-            :highlight-location="[52.188344882777635, 20.84076056567204]"
+            :initial-center="[51.53874094268407, 0.05177676822036673]"
+            :highlight-location="[51.53874094268407, 0.05177676822036673]"
             :show-highlight-location="true"
             :initial-zoom="zoom"
             :border-radius="20"
@@ -158,7 +150,7 @@ useSeoMeta({
 
 const { $toast } = useNuxtApp()
 
-const zoom = ref(14)
+const zoom = ref(16)
 const rules = useValidationRules()
 const customRules = {
   min25: rules.minLength(25),

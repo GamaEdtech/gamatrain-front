@@ -166,7 +166,7 @@ export default {
         {
           id: 'international-transfers',
           title: 'International Transfers',
-          describe: '<p class=\'gama-text-body1\'>GamaTrain is hosted in Poland. If you are accessing the site from outside Poland, your data will be transferred to our servers in Poland. For users within the European Economic Area (EEA), your data remains within the EEA as Poland is an EU member state. We ensure that all data transfers are governed by appropriate safeguards, including Standard Contractual Clauses (SCCs) where applicable, to provide adequate protection for your data.</p>' },
+          describe: '<p class=\'gama-text-body1\'>GamaTrain is hosted in United Kingdom. If you are accessing the site from outside United Kingdom, your data will be transferred to our servers in United Kingdom. For users within the European Economic Area (EEA), your data remains within the EEA as United Kingdom is an EU member state. We ensure that all data transfers are governed by appropriate safeguards, including Standard Contractual Clauses (SCCs) where applicable, to provide adequate protection for your data.</p>' },
         {
           id: 'childrens-privacy',
           title: 'Children\'s Privacy',
@@ -185,7 +185,7 @@ export default {
         {
           id: 'contact-us',
           title: 'Contact Us (Data Protection Officer)',
-          describe: '<p class=\'gama-text-body1\'>For any questions regarding this GDPR policy or to file a complaint with a supervisory authority, please contact us at:</p><p class=\'gama-text-body1\'><strong>GamaTrain Data Protection Team</strong><br />Email: <a href="mailto:privacy@gamatrain.com">privacy@gamatrain.com<a><br />Address: Al. Wojska polskiego 14, Piastów, Poland</p>',
+          describe: '<p class=\'gama-text-body1\'>For any questions regarding this GDPR policy or to file a complaint with a supervisory authority, please contact us at:</p><p class=\'gama-text-body1\'><strong>GamaTrain Data Protection Team</strong><br />Email: <a href="mailto:privacy@gamatrain.com">privacy@gamatrain.com<a><br />Address: Office 19394, 182-184 High Street North, London, England, E6 2JA</p>',
         },
       ],
 
