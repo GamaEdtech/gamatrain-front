@@ -334,7 +334,7 @@ defineOgImageComponent('TutorialDetail', {
   up_date: contentData.value?.up_date,
 })
 useHead({
-  title: `${contentData.value?.title} booklet`,
+  title: `${contentData.value?.title}`,
   meta: [
     {
       name: 'apple-mobile-web-app-title',
