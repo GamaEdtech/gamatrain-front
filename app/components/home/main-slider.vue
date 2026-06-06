@@ -80,14 +80,14 @@ const carousel_model = ref(0)
 const _colors = ['#24292F', '#0092A9']
 
 const slides = [
-  {
-    title:
-      '<span class="gama-text-h1 font-weight-bold">Learn<span class="d-sm-none"><br>&nbsp&nbsp</span> & Earn</span>',
-    text: 'Where education meets Web3 — empowering students to learn,<br> earn, and thrive in a decentralized future.',
-    img: 'learn&earn.webp',
-    id: 'le-slide',
-    link: '/earn-money',
-  },
+  // {
+  //   title:
+  //     '<span class="gama-text-h1 font-weight-bold">Learn<span class="d-sm-none"><br>&nbsp&nbsp</span> & Earn</span>',
+  //   text: 'Where education meets Web3 — empowering students to learn,<br> earn, and thrive in a decentralized future.',
+  //   img: 'learn&earn.webp',
+  //   id: 'le-slide',
+  //   link: '/earn-money',
+  // },
   {
     title:
       '<span class="gama-text-h1">AI</span> <span class="gama-text-h4 text-white">&nbspSystem <span class="d-sm-none"><br>&nbsp&nbsp</span>in Education</span>',
