@@ -58,7 +58,7 @@
       </div>
     </div>
     <div class="w-100 d-flex align-center justify-space-between ga-4 mt-8 px-4">
-      <span class="text-h4 text-sm-h2 font-weight-bold text-grey900">{{ data.firstName + " " + data.lastName }}</span>
+      <span class="text-h4 text-sm-h2 font-weight-bold text-grey900">{{ getDisplayName() }}</span>
       <div
         v-if="isEditable"
         class="d-flex align-center ga-2"
@@ -200,7 +200,7 @@ interface IProfileHeader {
   defaultBio: string
 }
 
-defineProps<IProfileHeader>()
+const props = defineProps<IProfileHeader>()
 const emit = defineEmits(['editBio', 'editPrivacy', 'editPersonal', 'editStatus'])
 
 const theme = useTheme()
@@ -244,6 +244,12 @@ const userOnlineStatus = {
 
 const getOnlineStatus = (status: keyof typeof userOnlineStatus) => {
   return userOnlineStatus[status] ?? userOnlineStatus.NewUser
+}
+
+const getDisplayName = () => {
+  const fullName = `${props.data.firstName ?? ''} ${props.data.lastName ?? ''}`.trim()
+
+  return fullName || 'unknown'
 }
 </script>
 
