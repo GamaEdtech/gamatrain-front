@@ -130,12 +130,9 @@
       </span>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-        <div class="text-h6 text-grey700 font-weight-medium ml-2">
-          Country
-        </div>
         <common-gombo-box
           v-model="user.country"
-          label=""
+          label="Country"
           :items="countries"
           :data-loading="!loadingCountries"
           rounded="pill"
@@ -148,14 +145,11 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-        <div class="text-h6 text-grey700 font-weight-medium ml-2">
-          State
-        </div>
         <common-gombo-box
           v-model="user.state"
-          label=""
+          label="State"
           :items="states"
-          :data-loading="!loadingStates"
+          :data-loading="!loadingStates && !loadingCountries"
           rounded="pill"
           height="48"
           base-color="grey200"
@@ -167,14 +161,11 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-        <div class="text-h6 text-grey700 font-weight-medium ml-2">
-          City
-        </div>
         <common-gombo-box
           v-model="user.city"
-          label=""
+          label="City"
           :items="cities"
-          :data-loading="!loadingCities"
+          :data-loading="!loadingCities && !loadingStates && !loadingCountries"
           rounded="pill"
           height="48"
           base-color="grey200"
@@ -191,12 +182,9 @@
       </span>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-        <div class="text-h6 text-grey700 font-weight-medium ml-2">
-          Board
-        </div>
         <common-gombo-box
           v-model="user.board"
-          label=""
+          label="Board"
           :items="boards?.map((board) => {
             return {
               id: board.code,
@@ -214,14 +202,11 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-        <div class="text-h6 text-grey700 font-weight-medium ml-2">
-          Grade
-        </div>
         <common-gombo-box
           v-model="user.grade"
-          label=""
+          label="Grade"
           :items="grades"
-          :data-loading="!loadingBoards"
+          :data-loading="!loadingBoards && !loadingGrade"
           rounded="pill"
           height="48"
           base-color="grey200"
@@ -233,19 +218,16 @@
       </div>
     </div>
     <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-      <div class="text-h6 text-grey700 font-weight-medium ml-2">
-        School
-      </div>
       <common-gombo-box
         v-model="user.school"
-        label=""
+        label="School"
         :items="schools.map((item) => {
           return {
             id: item.id,
             title: item.name,
           }
         })"
-        :data-loading="!loadingSchools"
+        :data-loading="!loadingSchools && !loadingCities && !loadingCountries && !loadingStates"
         rounded="pill"
         height="48"
         base-color="grey200"
@@ -434,7 +416,7 @@ const cityChange = async (cityId: number) => {
   if (cityId) {
     await getSchools({
       page: 1,
-      pageSize: 10000,
+      pageSize: 1000,
       countryId: user.value.country as number,
       stateId: user.value.state as number,
       cityId,
@@ -471,7 +453,7 @@ onMounted(async () => {
   if (user.value.city) {
     await getSchools({
       page: 1,
-      pageSize: 10000,
+      pageSize: 1000,
       countryId: user.value.country as number,
       stateId: user.value.state as number,
       cityId: user.value.city as number,
@@ -490,6 +472,8 @@ onUnmounted(() => {
 
 const save = async () => {
   const data: EditProfileDTO = {
+    countryId: user.value.country as number,
+    stateId: user.value.state as number,
     cityId: user.value.city as number,
     schoolId: user.value.school as number,
     handle: user.value.handle,

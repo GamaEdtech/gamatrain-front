@@ -20,6 +20,8 @@ export type Gender = 'Male' | 'Female' | 'Other'
 export type ProfileVisibility = 'Private' | 'Public' | 'ConnectionsOnly'
 
 export interface EditProfileDTO {
+  countryId?: number
+  stateId?: number
   cityId?: number
   schoolId?: number
   firstName?: string

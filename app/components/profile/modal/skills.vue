@@ -96,7 +96,7 @@
 
 <script setup lang="ts">
 interface IModalSkills {
-  skills: string[]
+  skills?: string[] | null
 }
 
 const props = defineProps<IModalSkills>()
@@ -104,7 +104,7 @@ const emit = defineEmits(['close', 'success'])
 
 const { editItem, loadingEditItem } = useProfile()
 
-const localSkills = ref<string[]>([...props.skills])
+const localSkills = ref<string[]>(props.skills ? [...props.skills] : [])
 const inputText = ref('')
 
 const addKeywords = () => {
