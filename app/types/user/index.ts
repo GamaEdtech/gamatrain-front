@@ -1,5 +1,7 @@
 import type { ExperienceDTO, ProfileVisibility, Gender } from '@/types'
 
+export type Role = 'Admin' | 'Teacher' | 'Student' | 'Advisor' | 'Finance'
+
 export interface AdminUserDTO {
   id: number
   username: string
@@ -16,7 +18,7 @@ export interface AdminTokenDTO {
   expirationTime: string
 }
 export interface AdminPermissionDTO {
-  roles: string[]
+  roles: Role[]
   systemClaims: string[]
   permissions: {
     value: string
@@ -74,7 +76,7 @@ export interface User {
   avatar: string
   walletId: string
   profileUpdated: boolean
-  roles: string[]
+  roles: Role[]
   profileVisibility: ProfileVisibility
   biography: string
   skills: string[]

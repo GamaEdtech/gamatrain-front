@@ -9,7 +9,7 @@
         </div>
         <v-select
           v-model="roles"
-          :items="['Admin']"
+          :items="roleList"
           rounded="lg"
           density="compact"
           placeholder="Role"
@@ -65,6 +65,7 @@ interface IUserPermission {
 
 const props = defineProps<IUserPermission>()
 const roles = shallowRef<string[]>([])
+const roleList = ['Admin', 'Teacher', 'Student', 'Advisor', 'Finance']
 
 const { loadingGetPermission, getPermission, editPermission, loadingEditPermission } = useUserManagerAdmin()
 
