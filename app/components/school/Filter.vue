@@ -576,7 +576,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useClickOutside } from '~/composables/useClickOutside'
 
 import checkboxInput from '~/components/common/checkbox-input.vue'
-import gomboBox from '~/components/common/gombo-box.vue'
+import gomboBox from '~/components/common/gomboBox.vue'
 
 const props = defineProps({
   sortList: {
