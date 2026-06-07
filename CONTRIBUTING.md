@@ -3,9 +3,40 @@
 Thank you for contributing to GamaEdtech! We appreciate your efforts to improve the project. Please follow the guidelines below to ensure a smooth contribution process.
 
 ## Table of Contents
-1. [Commit Message Conventions](#commit-message-conventions)
-2. [Branch Naming Conventions](#branch-naming-conventions)
-3. [Pull Request Standards](#pull-request-standards)
+1. [Project Coding Guidelines](#project-coding-guidelines)
+2. [Commit Message Conventions](#commit-message-conventions)
+3. [Branch Naming Conventions](#branch-naming-conventions)
+4. [Pull Request Standards](#pull-request-standards)
+
+## Project Coding Guidelines
+
+Please follow these coding standards to keep the project consistent and maintainable.
+
+### Naming Conventions
+
+- **Folder names** must use kebab-case. Use hyphens to separate words.
+  - Example: `profile-modal`, `school-card`, `payment-history`
+- **File names** must use camelCase. Start with a lowercase letter and capitalize each following word.
+  - Example: `userProfile.vue`, `paymentHistory.ts`, `usePaymentAdmin.api.ts`
+- **Variables** must use camelCase.
+  - Example: `selectedUser`, `paymentStatus`, `isFormValid`
+- **Functions** must use camelCase and follow ES6 standards.
+  - Prefer arrow functions where they match the surrounding code style.
+  - Example: `const getUserProfile = async () => {}`
+
+### UI and Styling
+
+- Use **Vuetify** components for UI implementation whenever possible.
+- Use the project's Vuetify theme colors instead of hard-coded colors.
+- All required colors should be defined in the Vuetify plugin configuration.
+- Prefer existing project components and design patterns before creating new UI patterns.
+
+### TypeScript and Project Structure
+
+- New code should be written with **TypeScript**.
+- Define required types and interfaces inside the appropriate folder under `types`.
+- If a feature needs communication with the backend, create or update the related API composable in the proper `composables/api` folder.
+- Keep API calls out of page/component bodies when a reusable composable is appropriate.
 
 ## Commit Message Conventions
 
