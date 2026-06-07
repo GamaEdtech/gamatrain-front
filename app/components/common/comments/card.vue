@@ -59,7 +59,7 @@
           <v-icon
             v-else
             @click="likeComment"
-          >md:thumb_up</v-icon>
+          >{{ comment.likedByCurrentUser ? `md:thumb_up`:`md:thumb_up_outlined` }}</v-icon>
         </span>
 
         <span
@@ -75,7 +75,7 @@
           <v-icon
             v-else
             @click="dislikeComment"
-          >md:thumb_down_outlined</v-icon>
+          >{{ comment.dislikedByCurrentUser ? `md:thumb_down`:`md:thumb_down_outlined` }}</v-icon>
         </span>
 
         <!-- <span
@@ -170,15 +170,20 @@ const props = defineProps<ICardComment>()
 const emit = defineEmits(['likeSuccessfull', 'dislikeSuccessfull'])
 
 const router = useRouter()
-const { $dayjs } = useNuxtApp()
+const { $toast, $dayjs } = useNuxtApp()
 const auth = useAuth()
 const { like, loadingLikeItem, dislike, loadingDislikeItem } = useBlogComment()
 
 const likeComment = async () => {
   if (auth.isAuthenticated.value) {
-    const response = await like(props.id, props.comment.id.toString())
-    if (response.succeeded) {
-      emit('likeSuccessfull')
+    if (props.comment.likedByCurrentUser) {
+      $toast.error('You have already liked this comment.')
+    }
+    else {
+      const response = await like(props.id, props.comment.id.toString())
+      if (response.succeeded) {
+        emit('likeSuccessfull')
+      }
     }
   }
   else {
@@ -191,9 +196,14 @@ const likeComment = async () => {
 
 const dislikeComment = async () => {
   if (auth.isAuthenticated.value) {
-    const response = await dislike(props.id, props.comment.id.toString())
-    if (response.succeeded) {
-      emit('dislikeSuccessfull')
+    if (props.comment.dislikedByCurrentUser) {
+      $toast.error('You have already disliked this comment.')
+    }
+    else {
+      const response = await dislike(props.id, props.comment.id.toString())
+      if (response.succeeded) {
+        emit('dislikeSuccessfull')
+      }
     }
   }
   else {
