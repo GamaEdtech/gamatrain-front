@@ -290,7 +290,14 @@ const buildAiReplyPrompt = () => {
     'Do not invent facts, prices, discounts, timelines, links, policies, or technical details.',
     'If the issue cannot be resolved with the provided information, politely ask the customer for the exact missing details.',
     'Do not mention that you are an AI or that you received a prompt.',
-    'Return only the final reply text that the admin can send to the customer.',
+    'Format the reply as clean HTML suitable for a rich text editor.',
+    'Use <p> tags for the greeting, each paragraph, and the closing.',
+    'Put the greeting in its own paragraph, for example: <p>Dear [Customer Name],</p>.',
+    'Use separate paragraphs wherever a line break is needed.',
+    'Put the closing in its own final paragraph, for example: <p>Best regards,<br>GamaTrain Support</p>.',
+    'Do not use Markdown.',
+    'Do not include scripts, styles, images, tables, or unnecessary HTML attributes.',
+    'Return only the final HTML reply body that the admin can send to the customer.',
     '',
     `Customer name: ${ticket?.fullName || 'Unknown'}`,
     `Customer email: ${ticket?.email || 'Unknown'}`,
@@ -318,7 +325,7 @@ const generateAiReply = async () => {
     )
 
     if (response.response) {
-      bodyReply.value = response.response.trim()
+      bodyReply.value = response.response
       $toast.success('AI reply generated successfully!')
     }
     else {
@@ -346,7 +353,15 @@ const buildPolishReplyPrompt = () => {
     'Preserve the original meaning and intent exactly.',
     'Do not add new facts, promises, prices, discounts, links, timelines, policies, or technical details.',
     'Remove or soften any rude, offensive, aggressive, or unprofessional wording while keeping the message clear.',
-    'Return only the polished version of the same message as plain text.',
+    'Format the polished reply as clean HTML suitable for a rich text editor.',
+    'Use <p> tags for the greeting, each paragraph, and the closing.',
+    'Put the greeting in its own paragraph when a greeting exists.',
+    'Use separate paragraphs wherever a line break is needed.',
+    'Put the closing in its own final paragraph when a closing exists, for example: <p>Best regards,<br>GamaTrain Support</p>.',
+    'Do not use Markdown.',
+    'Do not wrap the reply in a fenced code block such as ```html or ```.',
+    'Do not include scripts, styles, images, tables, or unnecessary HTML attributes.',
+    'Return only the polished HTML reply body.',
     '',
     'Admin reply:',
     stripHtml(bodyReply.value),
@@ -369,7 +384,7 @@ const polishReplyWithAi = async () => {
     )
 
     if (response.response) {
-      bodyReply.value = response.response.trim()
+      bodyReply.value = response.response
       $toast.success('Reply polished successfully!')
     }
     else {
