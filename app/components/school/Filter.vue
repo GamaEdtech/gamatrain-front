@@ -84,20 +84,17 @@
               v-if="item.name === `Near me` && item.icon"
               class="me-4 d-flex"
             >
-              <ClientOnly v-if="lgAndUp">
-                <DotLottieVue
-                  v-show="!(currentLocationLoading || props.dataLoading)"
-                  src="/images/near-me-gps-white.json"
-                  autoplay
-                  loop
-                  style="width: 24px; height: 24px;"
-                />
-                <v-progress-circular
-                  v-show="currentLocationLoading || props.dataLoading"
-                  indeterminate
-                  size="small"
-                />
-              </ClientOnly>
+              <div v-if="lgAndUp">
+                <div v-show="!(currentLocationLoading || props.dataLoading)">
+                  <SchoolNearMeLocationIcon />
+
+                  <v-progress-circular
+                    v-show="currentLocationLoading || props.dataLoading"
+                    indeterminate
+                    size="small"
+                  />
+                </div>
+              </div>
             </div>
 
             {{ item.name }}
@@ -626,7 +623,6 @@
 import { ref } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useRouter, useRoute } from 'vue-router'
-import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 import { useClickOutside } from '~/composables/useClickOutside'
 
 import checkboxInput from '~/components/common/checkbox-input.vue'

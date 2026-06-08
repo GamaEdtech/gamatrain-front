@@ -7,19 +7,11 @@
     :disabled="isLoading"
     @click="emit('updateFilter')"
   >
-    <ClientOnly>
-      <DotLottieVue
-        src="/images/near-me-gps-dark.json"
-        autoplay
-        loop
-      />
-    </ClientOnly>
+    <SchoolNearMeLocationIcon size="27" />
   </v-btn>
 </template>
 
 <script setup lang="ts">
-import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
-
 interface Props {
   isMapMode?: boolean
   dataLoading?: boolean

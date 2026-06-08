@@ -1,28 +1,21 @@
 <template>
   <div class="d-flex justify-space-between align-center ga-2">
     <v-btn
+      v-if="mdAndDown"
       icon
       aria-label="Find nearest items"
       :aria-busy="isLoading"
       :disabled="isLoading"
       :loading="isLoading || dataLoading"
       :class="{ 'is-loading': isLoading }"
-      size="x-small"
       color="primary"
       rounded=""
+      size="x-small"
       @click="emit('updateFilter')"
       @keydown.enter.prevent="emit('updateFilter')"
       @keydown.space.prevent="emit('updateFilter')"
     >
-      <!-- Lottie animation -->
-      <ClientOnly class="d-inline-flex">
-        <DotLottieVue
-          v-if="mdAndDown"
-          src="/images/near-me-gps-dark.json"
-          autoplay
-          loop
-        />
-      </ClientOnly>
+      <SchoolNearMeLocationIcon size="20" />
     </v-btn>
 
     <div class="text-grey500">
@@ -41,7 +34,6 @@
 <script setup lang="ts">
 // import { watch } from 'vue'
 import { useDisplay } from 'vuetify'
-import { DotLottieVue } from '@lottiefiles/dotlottie-vue'
 
 const { mdAndDown } = useDisplay()
 
