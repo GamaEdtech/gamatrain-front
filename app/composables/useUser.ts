@@ -1,21 +1,10 @@
 import { useState } from 'nuxt/app'
-import type { ApiResult } from '@/types'
-import { get } from '@/composables/useApiService'
-
-interface User {
-  avatar: string
-  userName: string
-  firstName: string
-  lastName: string
-  group: number
-  profileUpdated: boolean
-  roles: string[]
-}
+import type { ApiResult, User } from '@/types'
 
 export const useUser = () => {
   const hasFetched = useState('hasFetchedUser', () => false)
-
   const user = useState<User | null>('user', () => null)
+  const auth = useAuth()
 
   const setUser = (data: User) => {
     user.value = data
@@ -25,21 +14,9 @@ export const useUser = () => {
     user.value = null
   }
 
-  interface UserResponse {
-    data: {
-      avatar: string
-      userName: string
-      firstName: string
-      lastName: string
-      profileUpdated: boolean
-      roles: string[]
-    }
-  }
-
-  const auth = useAuth()
-  const getProfile = async (token?: null): Promise<ApiResult<UserResponse>> => {
+  const getProfile = async (token?: null) => {
     try {
-      const response = await get<UserResponse>(`/api/v2/identities/profiles`, {}, {
+      const response = await useApiService.get<ApiResult<User>>(`/api/v2/identities/profiles`, {}, {
         headers: {
           Authorization: `Bearer ${token || auth.getUserTokenV2()}`,
         },
@@ -56,7 +33,6 @@ export const useUser = () => {
         }
       }
 
-      // fallback
       return { data: null, status: 0, error }
     }
   }

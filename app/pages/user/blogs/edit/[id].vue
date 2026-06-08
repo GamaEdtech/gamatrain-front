@@ -141,7 +141,7 @@
         class="d-flex flex-column ga-3"
       >
         <div class="extra-data-div bg-grey50 rounded-lg pa-4 d-flex flex-column align-center justify-center ga-3">
-          <div
+          <!-- <div
             class="w-100
             d-flex
             align-center
@@ -154,8 +154,8 @@
               v-model="blog.status"
               label=""
               :items="statusItems.map((item) => ({
-                id: item,
-                title: item,
+                id: item.value,
+                title: item.title,
               }))"
               rounded="xl"
               density="compact"
@@ -165,7 +165,7 @@
               :clearable="false"
               :loading-value="loadingGetBlog"
             />
-          </div>
+          </div> -->
 
           <div
             class="w-100
@@ -390,7 +390,6 @@ useHead({
   title: 'Edit blog',
 })
 
-const { required, arrayNotEmpty } = useValidationRules()
 const router = useRouter()
 const route = useRoute()
 const { $toast, $slugGenerator } = useNuxtApp()
@@ -402,7 +401,7 @@ const blog = ref({
   content: '',
   summary: '',
   slug: '',
-  status: '',
+  draft: false,
   visibility: '',
   publishTime: '',
   categories: [] as number[],
@@ -416,7 +415,10 @@ const isRemovePodcast = ref(false)
 const showSlugModal = ref(false)
 const translations = ref<TranslationDTO[]>([])
 
-const statusItems = ['Drafted', 'Published']
+// const statusItems = [
+//   { value: false, title: 'Drafted' },
+//   { value: true, title: 'Published' },
+// ]
 const visibilityItems = ['General', 'Premium', 'Private']
 const publishTimeItems = ['Immediately', 'Schedule']
 
@@ -466,7 +468,7 @@ const mapToCreateBlogDTO = () => {
     scheduledDate: blog.value.scheduledDate || undefined,
     keywords: blog.value.keywords,
     tags: blog.value.categories,
-    draft: blog.value.status === 'Drafted' ? 'true' : 'false',
+    draft: blog.value.status,
 
     localizedValues: translations.value.map(t => ({
       languageId: Number(t.languageId),
@@ -515,7 +517,7 @@ onMounted(async () => {
       title: data.title,
       content: data.body,
       summary: data.summary,
-      status: 'Drafted',
+      draft: data.draft,
       visibility: data.visibilityType,
       publishTime: isScheduled ? 'Schedule' : 'Immediately',
       scheduledDate: isScheduled ? data.publishDate : '',

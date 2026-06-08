@@ -194,11 +194,11 @@ const menuLink = [
     link: '/leader-board',
     icon: '',
   },
-  {
-    title: 'Governance',
-    link: '/governance',
-    icon: '',
-  },
+  // {
+  // title: 'Governance',
+  // link: '/governance',
+  // icon: '',
+  // },
   {
     title: 'Add',
     icon: 'md:add',

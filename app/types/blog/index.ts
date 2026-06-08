@@ -21,6 +21,7 @@ export interface BlogUserDTO {
   visibilityType: string
   publishDate: string
   tags: number[]
+  draft: boolean
   localizedValues: LocalizedValueDTO[]
 }
 
@@ -46,6 +47,8 @@ export interface CommentBlogDTO {
   comment: string
   likeCount: number
   dislikeCount: number
+  likedByCurrentUser: boolean
+  dislikedByCurrentUser: boolean
 }
 export interface AddCommentBlogResponseDTO {
   id: number

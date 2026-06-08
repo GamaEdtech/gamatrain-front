@@ -287,14 +287,7 @@ async function submitLoginV2(old_token) {
     const profileData = await getProfile(result.data.token)
     if (profileData.data) {
       const profile = profileData.data.data
-      setUser({
-        avatar: profile.avatar ?? null,
-        userName: profile.userName ?? null,
-        firstName: profile.firstName ?? null,
-        lastName: profile.lastName ?? null,
-        group: profile.group ?? null,
-        profileUpdated: profile.profileUpdated ?? false,
-      })
+      setUser(profile)
 
       $toast.success('Logged in successfully')
       closeDialog()

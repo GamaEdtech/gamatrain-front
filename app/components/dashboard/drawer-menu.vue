@@ -406,12 +406,12 @@ const mobileItems = [
     link: '/leader-board',
     value: 'getToken',
   },
-  {
-    title: 'Governance',
-    icon: 'md:policy',
-    link: '/governance',
-    value: 'governance',
-  },
+  // {
+  //   title: 'Governance',
+  //   icon: 'md:policy',
+  //   link: '/governance',
+  //   value: 'governance',
+  // },
   {
     title: 'AI Assistant',
     icon: 'md:smart_toy',

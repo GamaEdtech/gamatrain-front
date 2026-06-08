@@ -447,6 +447,8 @@ const requiresCoinPaymentForFile = (type: TypeFile) => {
   if (props.year === '2026') {
     return true
   }
+  else if (props.section === '8674' || props.section === '9130')
+    return true
   else if (paidTestTypes.some(id => props.testType.includes(id)))
     return true
   else if (type === 'extra')

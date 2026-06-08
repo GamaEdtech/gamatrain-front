@@ -272,11 +272,17 @@ const props = defineProps({
 
 const emits = defineEmits(['changeFilter'])
 
-const filters = ref([...props.filterList])
+const filters = ref(
+  props.filterList.map(filter => ({
+    ...filter,
+    initialDisabled: filter.disabled,
+  })),
+)
 const dialogFilterMobileModel = ref(false)
 const countFilterSelect = ref(Object.keys(route.query).length)
 const textSearch = ref(route.query.title ? route.query.title : '')
 const timer = ref(null)
+const hasExclusiveDisabledState = ref(false)
 
 onMounted(async () => {
   await fetchDataRequireFilter()
@@ -286,11 +292,48 @@ onMounted(async () => {
 const updateSelectedItem = (itemSelected, index) => {
   filters.value[index].selectedItem = itemSelected
 
+  const isExclusiveSelected = isExclusiveFilterSelected(index)
+  if (hasExclusiveDisabledState.value && !isExclusiveSelected) {
+    restoreDisabledState()
+    hasExclusiveDisabledState.value = false
+  }
+
   resetDescendants(index)
 
-  enableReadyChildren(index)
+  if (isExclusiveSelected) {
+    disableOtherFilters(index)
+    updateQueryFromFilters()
+  }
+  else {
+    enableReadyChildren(index)
 
-  updateQueryFromFilters()
+    updateQueryFromFilters()
+  }
+}
+
+const isExclusiveFilterSelected = (index) => {
+  const filter = filters.value[index]
+
+  return filter?.disableOtherFiltersOnSelectedIds?.includes(
+    filter.selectedItem?.id,
+  )
+}
+
+const restoreDisabledState = () => {
+  filters.value.forEach((filter) => {
+    filter.disabled = filter.initialDisabled
+  })
+}
+
+const disableOtherFilters = (sourceIndex) => {
+  hasExclusiveDisabledState.value = true
+
+  filters.value.forEach((filter, index) => {
+    if (index === sourceIndex) return
+
+    filter.selectedItem = null
+    filter.disabled = true
+  })
 }
 
 const resetDescendants = (indexFilter) => {
@@ -395,6 +438,12 @@ const enableReadyChildren = async (indexFilter) => {
 
 const clearFilter = (index) => {
   filters.value[index].selectedItem = null
+
+  if (hasExclusiveDisabledState.value) {
+    restoreDisabledState()
+    hasExclusiveDisabledState.value = false
+  }
+
   resetDescendants(index)
 
   updateQueryFromFilters()
@@ -467,12 +516,20 @@ const fetchFilterAvailableInQuery = async () => {
         x => String(x[filterKey]) === String(qVal),
       )
       filters.value[index].selectedItem = selected
+      if (isExclusiveFilterSelected(index)) {
+        disableOtherFilters(index)
+        continue
+      }
       await enableReadyChildren(index)
     }
     else {
       const selected = await filter.refElement?.getItemById(qVal, filterKey)
       if (selected) {
         filters.value[index].selectedItem = selected
+        if (isExclusiveFilterSelected(index)) {
+          disableOtherFilters(index)
+          continue
+        }
         await enableReadyChildren(index)
       }
     }
@@ -480,6 +537,8 @@ const fetchFilterAvailableInQuery = async () => {
 }
 
 const openFilterSelectModal = (filter) => {
+  if (filter.disabled) return
+
   filter.refElement.openSelectModal()
 }
 

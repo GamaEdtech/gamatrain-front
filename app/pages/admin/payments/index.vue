@@ -105,6 +105,29 @@
           </v-tooltip>
         </v-btn>
 
+        <v-btn
+          size="small"
+          flat
+          icon
+          color="primary"
+          :loading="loadingExportPayments ? 'white' : false"
+          class="mr-1"
+          @click="exportData"
+        >
+          <v-icon
+            color="white"
+            size="20"
+          >
+            md:file_export
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
+          >
+            Export Data
+          </v-tooltip>
+        </v-btn>
+
         <span
           class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
         >
@@ -426,6 +449,7 @@ definePageMeta({
 
 const { $dayjs, $toast } = useNuxtApp()
 const { verifyPayment, loadingVerifyPayment } = usePayment()
+const { exportPayments, loadingExportPayments } = usePaymentAdmin()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
@@ -651,6 +675,52 @@ const confirmPayment = async () => {
 const refreshData = async () => {
   await getData()
 }
+
+const isBlobResponse = (response: unknown): response is Blob => {
+  return response instanceof Blob
+}
+
+const getExportErrorMessage = (response: ApiResult<string>) => {
+  if (response.errors?.length && response.errors[0].message) {
+    return response.errors[0].message
+  }
+
+  if (response.data) {
+    return response.data
+  }
+
+  return 'The operation failed. Please try again later.'
+}
+
+const exportData = async () => {
+  const response = await exportPayments({
+    startDate: startDate.value ? dayjs(startDate.value).toISOString() : null,
+    endDate: endDate.value ? dayjs(endDate.value).toISOString() : null,
+    gateway: gateway.value
+      ? gateway.value as PaymentGateway
+      : null,
+    status: status.value
+      ? status.value as StatusPayment
+      : null,
+  })
+
+  if (!isBlobResponse(response)) {
+    const result = response as ApiResult<string>
+    if (!result.succeeded) {
+      $toast.error(getExportErrorMessage(result))
+      return
+    }
+
+    $toast.error('The operation failed. Please try again later.')
+    return
+  }
+
+  const { saveAs } = await import('file-saver')
+  const fileName = `payments-export-${dayjs().format('YYYY-MM-DD-HH-mm-ss')}.xlsx`
+  saveAs(response, fileName)
+  $toast.success('Payment data export successfully!')
+}
+
 const canVerifyPayment = (item: AdminPaymentDTO) => {
   const createdAt = dayjs.utc(item.creationDate)
 

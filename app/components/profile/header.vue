@@ -20,17 +20,20 @@
       <div class="profile-div d-flex ga-1">
         <div class="image-div rounded-circle position-relative d-flex align-center justify-center">
           <img
-            src="/images/member/avatar.svg"
-            alt="Profile Teacher"
+            :src="data.avatar ? data.avatar : `/images/default-user.svg`"
+            alt="Profile Avatar"
             class="profile-img rounded-circle"
             width="140"
             height="140"
           >
-          <div class="status-div rounded-circle position-absolute bg-success" />
-          <div class="bio-div bg-white position-absolute text-caption text-sm-h6 font-weight-medium text-grey700 text-no-wrap rounded-lg border-solid border-sm border-grey100 pa-1">
-            This moment. Be happy.
+          <div :class="`status-div rounded-circle position-absolute bg-${getOnlineStatus(data.onlineStatus).nameColor}`" />
+          <div
+            :class="`bio-div position-absolute text-caption text-sm-subtitle-1 rounded-lg border-solid border-sm border-grey100 pa-1 ${isEditable ? 'cursor-pointer' : ''} ${data.currentStatusSentence ? `text-grey700 font-weight-medium` : `text-grey400 font-weight-regular`}`"
+            @click="isEditable && emit('editStatus')"
+          >
+            {{ data.currentStatusSentence ? data.currentStatusSentence : 'Add note ...' }}
           </div>
-          <div class="w-100 d-flex justify-center container-badge position-absolute">
+          <!-- <div class="w-100 d-flex justify-center container-badge position-absolute">
             <div
               v-for="i in 3"
               :key="i"
@@ -38,9 +41,9 @@
             >
               {{ i }}
             </div>
-          </div>
+          </div> -->
         </div>
-        <span class="text-subtitle-1 text-sm-h6 text-grey700 font-weight-regular">He's coming right now!</span>
+        <span class="text-subtitle-1 text-sm-h6 text-grey700 font-weight-regular">{{ getOnlineStatus(data.onlineStatus).text }}</span>
       </div>
       <div class="d-flex ga-2">
         <span class="text-subtitle-1 text-grey400 font-weight-regular">
@@ -50,31 +53,105 @@
           View
         </span>
         <span class="text-h6 text-grey700 font-weight-bold">
-          2.5 K
+          {{ data.profileView > 1000 ? (data.profileView / 1000) + " K" : data.profileView }}
         </span>
       </div>
     </div>
-    <div class="w-100 d-flex align-end ga-4 mt-8 px-4">
-      <span class="text-h4 text-sm-h2 font-weight-bold text-grey900">Alireza ABdi</span>
-      <span class="text-h6 text-sm-h5 font-weight-bold text-grey700 mb-1 d-flex ga-1">
+    <div class="w-100 d-flex align-center justify-space-between ga-4 mt-8 px-4">
+      <span class="text-h4 text-sm-h2 font-weight-bold text-grey900">{{ getDisplayName() }}</span>
+      <div
+        v-if="isEditable"
+        class="d-flex align-center ga-2"
+      >
+        <v-btn
+          v-if="visibility == 'Private'"
+          flat
+          color="blue50"
+          height="30"
+          class="rounded-lg"
+          @click="emit('editPrivacy')"
+        >
+          <v-icon
+            color="info"
+            size="14"
+          >
+            md:lock
+          </v-icon>
+          <span class="text-info text-h6 font-weight-medium ml-1">Private</span>
+        </v-btn>
+        <v-btn
+          v-if="visibility == 'Public'"
+          flat
+          color="greenLight25"
+          height="30"
+          class="rounded-lg"
+          @click="emit('editPrivacy')"
+        >
+          <v-icon
+            color="greenLight700"
+            size="14"
+          >
+            md:lock_open_right
+          </v-icon>
+          <span class="text-greenLight700 text-h6 font-weight-medium ml-1">Public</span>
+        </v-btn>
+        <v-btn
+          v-if="visibility == 'ConnectionsOnly'"
+          flat
+          color="primary50"
+          height="30"
+          class="rounded-lg"
+          @click="emit('editPrivacy')"
+        >
+          <v-icon
+            color="primary"
+            size="14"
+          >
+            md:lock_person
+          </v-icon>
+          <span class="text-primary text-h6 font-weight-medium ml-1">Connection</span>
+        </v-btn>
+
+        <v-btn
+          flat
+          color="grey100"
+          size="28"
+          @click="emit('editPersonal')"
+        >
+          <v-icon
+            color="grey500"
+            size="20"
+          >
+            md:edit
+          </v-icon>
+        </v-btn>
+      </div>
+
+      <!-- <span class="text-h6 text-sm-h5 font-weight-bold text-grey700 mb-1 d-flex ga-1">
         <v-icon
           color="primary"
           size="20"
         >md:star</v-icon>
-        2.5</span>
+        2.5</span> -->
     </div>
     <span class="w-100 text-start text-h5 font-weight-regular text-grey700 mt-6 px-4">
-      In order to maintain the rights of the GamaTrain website and ensure the comfort of all users, rules have been established that users are required to follow. If a user violates these regulations.
+      {{ data.biography ? data.biography : defaultBio }}
+
+      <span
+        v-if="isEditable"
+        class="text-info text-decoration-underline cursor-pointer"
+        @click="emit('editBio')"
+      >Edit Bio</span>
     </span>
 
-    <span class="w-100 text-start text-h6 font-weight-regular text-grey700 mt-4 px-4">
+    <!-- <span class="w-100 text-start text-h6 font-weight-regular text-grey700 mt-4 px-4">
       <v-icon
         color="grey400"
         size="16"
         class="mb-1"
       >md:location_on</v-icon>
       14 Elmwood Gardens, Islington, London N1 2AS, United Kingdom
-    </span>
+    </span> -->
     <div class="d-flex align-center justify-start ga-4 mt-6 px-4 pb-4">
       <v-btn
         flat
@@ -113,6 +190,67 @@
 </template>
 
 <script setup lang="ts">
+import type { ProfileDTO, ProfileVisibility } from '@/types'
+import { useTheme } from 'vuetify'
+
+interface IProfileHeader {
+  data: ProfileDTO
+  isEditable: boolean
+  visibility?: ProfileVisibility
+  defaultBio: string
+}
+
+const props = defineProps<IProfileHeader>()
+const emit = defineEmits(['editBio', 'editPrivacy', 'editPersonal', 'editStatus'])
+
+const theme = useTheme()
+const userOnlineStatus = {
+  NewUser: {
+    text: 'New here',
+    nameColor: 'primary',
+    color: theme.current.value.colors.primary,
+  },
+  ActiveLongTimeAgo: {
+    text: 'Long time no see',
+    nameColor: 'grey300',
+    color: theme.current.value.colors.grey300,
+  },
+  ActiveThisMonth: {
+    text: 'Missing for days',
+    nameColor: 'blueGrey300',
+    color: theme.current.value.colors.blueGrey300,
+  },
+  ActiveThisWeek: {
+    text: 'Was here this week',
+    nameColor: 'warning300',
+    color: theme.current.value.colors.warning300,
+  },
+  OnlineToday: {
+    text: 'Was here today',
+    nameColor: 'warning500',
+    color: theme.current.value.colors.warning500,
+  },
+  ActiveRecently: {
+    text: 'Be right back',
+    nameColor: 'success300',
+    color: theme.current.value.colors.success300,
+  },
+  Online: {
+    text: 'Online',
+    nameColor: 'success500',
+    color: theme.current.value.colors.success500,
+  },
+}
+
+const getOnlineStatus = (status: keyof typeof userOnlineStatus) => {
+  return userOnlineStatus[status] ?? userOnlineStatus.NewUser
+}
+
+const getDisplayName = () => {
+  const fullName = `${props.data.firstName ?? ''} ${props.data.lastName ?? ''}`.trim()
+
+  return fullName || 'unknown'
+}
 </script>
 
 <style scoped>
@@ -156,8 +294,10 @@
   margin-right: -12px;
 }
 .bio-div{
-  top: -40px;
   left: -10px;
+  max-width : 160px;
+  bottom : 105%;
+  background-color : rgb(var(--v-theme-white))
 }
 @media (max-width: 960px) {
   .top-section-header {
@@ -218,9 +358,6 @@
     width : 20px;
     height : 20px;
     margin-right: -8px;
-  }
-  .bio-div{
-    top: -30px;
   }
 }
 </style>

@@ -217,14 +217,14 @@ const footerLinks = [
         title: 'Exam',
         link: '/search?type=quizhub',
       },
-      {
-        title: '$GET Token',
-        link: '/get-token',
-      },
-      {
-        title: 'Governance',
-        link: '/governance',
-      },
+      // {
+      //   title: '$GET Token',
+      //   link: '/get-token',
+      // },
+      // {
+      //   title: 'Governance',
+      //   link: '/governance',
+      // },
       {
         title: 'AI Assistant',
         link: '/ai',
