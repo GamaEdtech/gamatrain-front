@@ -183,12 +183,12 @@ const menuLink = [
     link: '/',
     icon: '',
   },
-  {
-    title: 'AI Assistant',
-    link: '/ai',
-    icon: 'md:smart_toy_outlined',
-    badge: 'Beta',
-  },
+  // {
+  // title: 'AI Assistant',
+  // link: '/ai',
+  // icon: 'md:smart_toy_outlined',
+  // badge: 'Beta',
+  // },
   {
     title: 'Leader Board',
     link: '/leader-board',

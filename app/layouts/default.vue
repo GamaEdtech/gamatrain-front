@@ -31,9 +31,9 @@
       <lazy-common-footer />
       <menu-bottom-nav-menu v-if="showBottomNavSlider" />
       <AppGlobalSnackbar />
-      <client-only>
+      <!-- <client-only>
         <lazy-common-random-coin />
-      </client-only>
+      </client-only> -->
     </template>
   </v-app>
 </template>
