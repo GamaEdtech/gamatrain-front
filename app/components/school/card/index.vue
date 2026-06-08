@@ -1,7 +1,10 @@
 <template>
-  <div class="card-wrapper" :class="{
-    'nearest-school-highlight': highlightNearest,
-  }">
+  <div
+    class="card-wrapper"
+    :class="{
+      'nearest-school-highlight': highlightNearest,
+    }"
+  >
     <div class="w-100 d-none d-md-flex justify-center">
       <school-card-desktop :school="school" />
     </div>
@@ -12,7 +15,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   school: {
     type: Object,
   },

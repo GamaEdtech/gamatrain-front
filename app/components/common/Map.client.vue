@@ -168,8 +168,8 @@ async function setMarkers() {
   try {
     if (!L || !map.value) return
 
-    const validSchools =
-      props?.items?.filter(
+    const validSchools
+      = props?.items?.filter(
         item => item.lat && item.long && validateMarkerData(item),
       ) || []
 

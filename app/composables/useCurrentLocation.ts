@@ -1,24 +1,24 @@
-import { onUnmounted, type Ref } from "vue";
+import { onUnmounted, type Ref } from 'vue'
 
 import {
   type GeolocationErrorConfig,
   GEOLOCATION_ERRORS,
   GEOLOCATION_OPTIONS,
   LOCATION_REQUEST_COOLDOWN_MS,
-} from "~/constants/geolocation";
+} from '~/constants/geolocation'
 
 type UserLocation = {
-  lat: number;
-  lng: number;
-};
+  lat: number
+  lng: number
+}
 
 type UseCurrentLocationReturn = {
-  location: Ref<UserLocation | null>;
-  error: Ref<string | null>;
-  isLoading: Ref<boolean>;
-  isCooldownActive: Ref<boolean>;
-  fetchLocation: () => void;
-};
+  location: Ref<UserLocation | null>
+  error: Ref<string | null>
+  isLoading: Ref<boolean>
+  isCooldownActive: Ref<boolean>
+  fetchLocation: () => void
+}
 
 export const useCurrentLocation = (): UseCurrentLocationReturn => {
   /**
@@ -26,58 +26,59 @@ export const useCurrentLocation = (): UseCurrentLocationReturn => {
    * Persists and synchronizes location-related data
    * across all consumers of this composable.
    */
-  const location = useState<UserLocation | null>("user-location", () => null);
-  const error = useState<string | null>("user-location-error", () => null);
-  const isLoading = useState("user-location-loading", () => false);
-  const isCooldownActive = useState("user-location-cooldown", () => false);
+  const location = useState<UserLocation | null>('user-location', () => null)
+  const error = useState<string | null>('user-location-error', () => null)
+  const isLoading = useState('user-location-loading', () => false)
+  const isCooldownActive = useState('user-location-cooldown', () => false)
 
-  let cooldownTimeout: ReturnType<typeof setTimeout> | null = null;
+  let cooldownTimeout: ReturnType<typeof setTimeout> | null = null
 
-  const { $toast } = useNuxtApp();
+  const { $toast } = useNuxtApp()
 
   const handleLocationError = (geoError?: GeolocationPositionError) => {
-    let errorConfig: GeolocationErrorConfig = GEOLOCATION_ERRORS.DEFAULT;
+    let errorConfig: GeolocationErrorConfig = GEOLOCATION_ERRORS.DEFAULT
 
     if (!geoError) {
-      errorConfig = GEOLOCATION_ERRORS.UNSUPPORTED_BROWSER;
-    } else {
+      errorConfig = GEOLOCATION_ERRORS.UNSUPPORTED_BROWSER
+    }
+    else {
       switch (geoError.code) {
         case geoError.PERMISSION_DENIED:
-          errorConfig = GEOLOCATION_ERRORS.PERMISSION_DENIED;
-          break;
+          errorConfig = GEOLOCATION_ERRORS.PERMISSION_DENIED
+          break
 
         case geoError.POSITION_UNAVAILABLE:
-          errorConfig = GEOLOCATION_ERRORS.POSITION_UNAVAILABLE;
-          break;
+          errorConfig = GEOLOCATION_ERRORS.POSITION_UNAVAILABLE
+          break
 
         case geoError.TIMEOUT:
-          errorConfig = GEOLOCATION_ERRORS.TIMEOUT;
-          break;
+          errorConfig = GEOLOCATION_ERRORS.TIMEOUT
+          break
       }
     }
 
-    error.value = errorConfig.message;
+    error.value = errorConfig.message
 
-    $toast[errorConfig.type](errorConfig.message);
+    $toast[errorConfig.type](errorConfig.message)
 
-    location.value = null;
+    location.value = null
 
-    isLoading.value = false;
-  };
+    isLoading.value = false
+  }
 
   const startCooldown = () => {
-    isCooldownActive.value = true;
+    isCooldownActive.value = true
 
     if (cooldownTimeout) {
-      clearTimeout(cooldownTimeout);
+      clearTimeout(cooldownTimeout)
     }
 
     cooldownTimeout = setTimeout(() => {
-      isCooldownActive.value = false;
+      isCooldownActive.value = false
 
-      cooldownTimeout = null;
-    }, LOCATION_REQUEST_COOLDOWN_MS);
-  };
+      cooldownTimeout = null
+    }, LOCATION_REQUEST_COOLDOWN_MS)
+  }
 
   const fetchLocation = (): void => {
     /**
@@ -87,47 +88,47 @@ export const useCurrentLocation = (): UseCurrentLocationReturn => {
      * - requests during cooldown
      */
     if (isLoading.value || isCooldownActive.value) {
-      return;
+      return
     }
 
     /**
      * Browser does not support geolocation
      */
-    if (!("geolocation" in navigator)) {
-      handleLocationError();
+    if (!('geolocation' in navigator)) {
+      handleLocationError()
 
-      return;
+      return
     }
 
-    error.value = null;
-    isLoading.value = true;
+    error.value = null
+    isLoading.value = true
 
-    startCooldown();
+    startCooldown()
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
         location.value = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
-        };
+        }
 
-        error.value = null;
-        isLoading.value = false;
+        error.value = null
+        isLoading.value = false
       },
 
       (geoError) => {
-        handleLocationError(geoError);
+        handleLocationError(geoError)
       },
 
       GEOLOCATION_OPTIONS,
-    );
-  };
+    )
+  }
 
   onUnmounted(() => {
     if (cooldownTimeout) {
-      clearTimeout(cooldownTimeout);
+      clearTimeout(cooldownTimeout)
     }
-  });
+  })
 
   return {
     location,
@@ -135,5 +136,5 @@ export const useCurrentLocation = (): UseCurrentLocationReturn => {
     isLoading,
     isCooldownActive,
     fetchLocation,
-  };
-};
+  }
+}

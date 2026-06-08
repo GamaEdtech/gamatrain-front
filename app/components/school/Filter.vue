@@ -61,28 +61,42 @@
             </v-icon>
           </v-btn>
         </div>
-       <div class="filter-options-div">
-          <div v-for="item in optionFilter" :key="item.name" :class="[
-            'each-item-filter',
-            {
-              deactive: !item.active || isExpandMap,
-              loading: item.name === 'Near me' && (currentLocationLoading || props.dataLoading),
-              disabled:
-                item.name === 'Near me' &&
-                (
-                  currentLocationLoading ||
-                  isCooldownActive
-                ),
-            },
-          ]"
-          @click="openFilterSection($event, item)">
-            <div v-if="item.name === `Near me` && item.icon" class="me-2 d-flex">
+        <div class="filter-options-div">
+          <div
+            v-for="item in optionFilter"
+            :key="item.name"
+            :class="[
+              'each-item-filter',
+              {
+                deactive: !item.active || isExpandMap,
+                loading: item.name === 'Near me' && (currentLocationLoading || props.dataLoading),
+                disabled:
+                  item.name === 'Near me'
+                  && (
+                    currentLocationLoading
+                    || isCooldownActive
+                  ),
+              },
+            ]"
+            @click="openFilterSection($event, item)"
+          >
+            <div
+              v-if="item.name === `Near me` && item.icon"
+              class="me-2 d-flex"
+            >
               <ClientOnly v-if="lgAndUp">
-                <DotLottieVue src="/images/near-me-gps-white.json"
-                  v-show="!(currentLocationLoading || props.dataLoading)" autoplay loop
-                  style="width: 24px; height: 24px;" />
-                <v-progress-circular v-show="currentLocationLoading || props.dataLoading" indeterminate
-                  size="small"></v-progress-circular>
+                <DotLottieVue
+                  v-show="!(currentLocationLoading || props.dataLoading)"
+                  src="/images/near-me-gps-white.json"
+                  autoplay
+                  loop
+                  style="width: 24px; height: 24px;"
+                />
+                <v-progress-circular
+                  v-show="currentLocationLoading || props.dataLoading"
+                  indeterminate
+                  size="small"
+                />
               </ClientOnly>
             </div>
 
@@ -187,17 +201,21 @@
         </div>
 
         <div class="result-div-mobile gama-text-overline">
-          <SchoolNearMeBottomSheetBotton :data-loading="props.dataLoading" :enable-reverse-geocoding="!lgAndUp" @update-filter="emit('near-me')" />
-          
+          <SchoolNearMeBottomSheetButton
+            :data-loading="props.dataLoading"
+            :enable-reverse-geocoding="!lgAndUp"
+            @update-filter="emit('nearMe')"
+          />
+
           <div>
-          Results
-          <span
-            class="count-result gama-text-button"
-            data-v-45a0d8f4
-          >
-            {{ totalSchoolFind ? $numberFormat(totalSchoolFind) : "0" }}
-          </span>
-        </div>
+            Results
+            <span
+              class="count-result gama-text-button"
+              data-v-45a0d8f4
+            >
+              {{ totalSchoolFind ? $numberFormat(totalSchoolFind) : "0" }}
+            </span>
+          </div>
         </div>
 
         <v-btn
@@ -585,11 +603,18 @@
         >
           {{ findTitle("cityList", filterForm.city) }}
         </v-chip>
-       <v-chip v-if="
-          filterForm.sort &&
-          filterForm.sort.includes('distance')
-        " class="text-h4 pa-3" size="large" variant="outlined" color="#252626" closable
-          @click:close="clearFilter('distance')">
+        <v-chip
+          v-if="
+            filterForm.sort
+              && filterForm.sort.includes('distance')
+          "
+          class="text-h4 pa-3"
+          size="large"
+          variant="outlined"
+          color="#252626"
+          closable
+          @click:close="clearFilter('distance')"
+        >
           Near me
         </v-chip>
       </div>
@@ -626,15 +651,15 @@ const props = defineProps({
   },
   dataLoading: {
     type: Boolean,
-  }
+  },
 })
-const emit = defineEmits(['update-filter', 'near-me'])
+const emit = defineEmits(['updateFilter', 'nearMe'])
 const _router = useRouter()
 const route = useRoute()
 const {
   isCooldownActive,
   isLoading: currentLocationLoading,
-  } = useCurrentLocation();
+} = useCurrentLocation()
 
 onMounted(() => {
   // Initial data fetch
@@ -679,7 +704,7 @@ const optionFilter = ref([
     active: true,
     isShow: false,
     hasDropdown: false,
-    icon: '/images/gps-fixed.svg'
+    icon: '/images/gps-fixed.svg',
   },
   {
     name: 'Sort',
@@ -815,7 +840,7 @@ const updateQueryParams = () => {
     query.coed_status = filterForm.coed_status
   if (filterForm.religion.length > 0 && filterForm.religion != undefined)
     query.religion = filterForm.religion
-  emit('update-filter', query)
+  emit('updateFilter', query)
 }
 
 const openFilterSection = (event, filter) => {
@@ -836,12 +861,12 @@ const openFilterSection = (event, filter) => {
     }
   }
 
-  if (filter.name === "Near me") {
+  if (filter.name === 'Near me') {
     if (currentLocationLoading.value || isCooldownActive.value) {
-      return;
+      return
     }
-  
-    emit("near-me");
+
+    emit('nearMe')
   }
 }
 
@@ -1059,7 +1084,7 @@ const closeFilterMobile = () => {
 //     return
 //   }
 
-//   emit('add-chip', {
+//   emit('addChip', { // Needs to be defined
 //     name: chipData.name,
 //   })
 // }
@@ -1074,7 +1099,7 @@ watch(
         ? newSort.split(',')
         : []
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 // Add this composable for number formatting

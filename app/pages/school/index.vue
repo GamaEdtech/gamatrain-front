@@ -15,9 +15,13 @@
       >
         List view
       </v-btn>
-      
+
       <!-- Map `Near me` floating action button -->
-      <SchoolNearMeFab :is-map-mode="isMapMode" :data-loading="isFindingNearestSchool" @fetch-user-location="applyNearMe" />
+      <SchoolNearMeFab
+        :is-map-mode="isMapMode"
+        :data-loading="isFindingNearestSchool"
+        @update-filter="applyNearMe"
+      />
 
       <Map
         ref="mapRef"
@@ -59,7 +63,7 @@
       class="d-none d-lg-flex flex-column align-center justify-start w-100 h-100 bg-white"
     >
       <schoolFilter
-        :dataLoading="isFindingNearestSchool"
+        :data-loading="isFindingNearestSchool"
         :sort-list="sortList"
         :total-school-find="totalSchoolFind"
         :is-expand-map="isExpandMapInDesktop"
@@ -74,17 +78,17 @@
 
         <div>
           <v-btn
-          class="text-h4"
-          elevation="4"
-          prepend-icon="md:location_on"
-          color="success"
-          rounded="xl"
-          height="50"
-          @click="changeStatusExpandMap"
-        >
-          Map view
-        </v-btn>
-      </div>
+            class="text-h4"
+            elevation="4"
+            prepend-icon="md:location_on"
+            color="success"
+            rounded="xl"
+            height="50"
+            @click="changeStatusExpandMap"
+          >
+            Map view
+          </v-btn>
+        </div>
       </div>
       <SchoolList
         :school-list="schools"
@@ -109,7 +113,7 @@
       @update:open-sheet="changeBottomSheetStatus"
     >
       <schoolFilter
-        :dataLoading="isFindingNearestSchool"
+        :data-loading="isFindingNearestSchool"
         :sort-list="sortList"
         :total-school-find="totalSchoolFind"
         :is-expand-map="isExpandMapInDesktop"
@@ -146,10 +150,10 @@ const router = useRouter()
 const route = useRoute()
 
 const { lgAndDown } = useDisplay()
-const { location, isLoading: locationLoading, isCooldownActive, fetchLocation } = useCurrentLocation();
+const { location, isLoading: locationLoading, isCooldownActive, fetchLocation } = useCurrentLocation()
 
 const isUserMovingMap = ref(true) // Start with loading indicator visible
-const userLocation = ref(null);
+const userLocation = ref(null)
 
 const sortList = [
   {
@@ -178,9 +182,9 @@ const setDefaultSortToRoute = () => {
   const currentSort = route.query.sort
   const hasLastModify
     = currentSort
-    && (Array.isArray(currentSort)
-      ? currentSort.includes('lastModifyDate')
-      : currentSort.split(',').includes('lastModifyDate'))
+      && (Array.isArray(currentSort)
+        ? currentSort.includes('lastModifyDate')
+        : currentSort.split(',').includes('lastModifyDate'))
 
   if (!hasLastModify) {
     const newSort = currentSort
@@ -198,8 +202,8 @@ const setDefaultSortToRoute = () => {
 
 const applyNearMe = () => {
   if (
-    locationLoading.value ||
-    isCooldownActive.value
+    locationLoading.value
+    || isCooldownActive.value
   ) {
     return
   }
@@ -212,7 +216,7 @@ const applyNearMe = () => {
     filterForm.value.sort.unshift('distance')
   }
 
-  handleFetchUserLocation();
+  handleFetchUserLocation()
 }
 
 watch(
@@ -227,7 +231,7 @@ watch(
     filterForm.value.distance = defaultLatLongDistance.distance
 
     updateQueryParams()
-  }
+  },
 )
 
 onMounted(() => {
@@ -294,10 +298,9 @@ const defaultLatLongDistance = {
 }
 
 const handleFetchUserLocation = () => {
+  fetchLocation()
 
-  fetchLocation();  
-
-  if (location.value) {    
+  if (location.value) {
     userLocation.value = location.value
     userLocationFound([
       location.value.lat,
@@ -333,11 +336,11 @@ const perPage = ref(20)
 const totalSchoolFind = ref(0)
 
 const isDistanceSorted = computed(() =>
-  filterForm.value.sort?.includes('distance')
+  filterForm.value.sort?.includes('distance'),
 )
 const shouldShowOnlyNearestMarker = computed(() =>
   isDistanceSorted.value
-  && userLocation.value
+  && userLocation.value,
 )
 
 const resetParameter = () => {
@@ -357,8 +360,8 @@ const resetParameter = () => {
 }
 
 const updateFilter = (query) => {
-  const hadDistance =
-    filterForm.value.sort?.includes('distance')
+  const hadDistance
+    = filterForm.value.sort?.includes('distance')
 
   let newSort = [...(query.sort || [])]
 
@@ -583,7 +586,7 @@ const getSchoolList = async () => {
       'PagingDto.PageFilter.Size': perPage.value,
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
     }
-    if (filterForm.value.sort && filterForm.value.sort.length > 0) {      
+    if (filterForm.value.sort && filterForm.value.sort.length > 0) {
       filterForm.value.sort.forEach((sortOption, index) => {
         params[`PagingDto.SortFilter[${index}].column`] = sortOption
 
@@ -604,9 +607,9 @@ const getSchoolList = async () => {
 
     // Always send location params when `distance` exists
     if (
-      filterForm.value.sort?.includes('distance') &&
-      filterForm.value.lat &&
-      filterForm.value.lng
+      filterForm.value.sort?.includes('distance')
+      && filterForm.value.lat
+      && filterForm.value.lng
     ) {
       params['Location.Radius'] = filterForm.value.distance
       params['Location.Latitude'] = filterForm.value.lat
@@ -614,7 +617,7 @@ const getSchoolList = async () => {
     }
 
     // Always send sort when selected
-    params['sort'] = filterForm.value.sort;
+    params['sort'] = filterForm.value.sort
 
     // Other filters only in list mode
     if (!isExpandMapInDesktop.value && openBottomNavFilterList.value) {
@@ -640,7 +643,7 @@ const getSchoolList = async () => {
       params['coed_status'] = filterForm.value.coed_status
     }
 
-    const response = await useApiService.get('/api/v2/schools', {query :params})
+    const response = await useApiService.get('/api/v2/schools', params)
     setMetaData(response)
 
     if (response?.data?.list) {
@@ -658,8 +661,8 @@ const getSchoolList = async () => {
         schools.value = [...schools.value, ...response.data.list]
 
         if (
-          shouldFocusNearestSchool.value &&
-          response.data.list.length
+          shouldFocusNearestSchool.value
+          && response.data.list.length
         ) {
           highlightNearestSchool.value = true
         }
@@ -667,14 +670,14 @@ const getSchoolList = async () => {
       if (isExpandMapInDesktop.value || !openBottomNavFilterList.value) {
         const schoolList = response?.data?.list || []
 
-        newSchoolForMarkersOnMap.value =
-          shouldShowOnlyNearestMarker.value
+        newSchoolForMarkersOnMap.value
+          = shouldShowOnlyNearestMarker.value
             ? schoolList.slice(0, 1)
             : schoolList
-        
+
         if (
-          shouldFocusNearestSchool.value &&
-          schoolList.length
+          shouldFocusNearestSchool.value
+          && schoolList.length
         ) {
           const nearestSchool = schoolList[0]
 
@@ -715,7 +718,6 @@ const getSchoolList = async () => {
     // Hide loading indicator after data is loaded
     isUserMovingMap.value = false
     isFindingNearestSchool.value = false
-
   }
 }
 
@@ -765,7 +767,6 @@ const loadPreviousSchool = () => {
 //   );
 // };
 // End filter chips section
-
 
 // Start Open/Close bottom nav and Expand Map in Desktop
 const isExpandMapInDesktop = ref(false)

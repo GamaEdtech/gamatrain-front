@@ -79,6 +79,7 @@
     "sass": "^1.83.4",
     "sass-loader": "^16.0.4",
     "stats.js": "^0.17.0",
+    "typescript": "^5.9.3",
     "vite-plugin-vuetify": "^2.0.4",
     "vuetify": "^3.7.8"
   }
