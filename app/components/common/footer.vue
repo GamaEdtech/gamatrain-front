@@ -225,10 +225,10 @@ const footerLinks = [
       //   title: 'Governance',
       //   link: '/governance',
       // },
-      {
-        title: 'AI Assistant',
-        link: '/ai',
-      },
+      // {
+      //   title: 'AI Assistant',
+      //   link: '/ai',
+      // },
     ],
   },
 ]
