@@ -82,7 +82,7 @@
           >
             <div
               v-if="item.name === `Near me` && item.icon"
-              class="me-2 d-flex"
+              class="me-4 d-flex"
             >
               <ClientOnly v-if="lgAndUp">
                 <DotLottieVue
