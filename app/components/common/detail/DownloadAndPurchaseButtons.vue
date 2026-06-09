@@ -247,7 +247,7 @@ interface IDownloadAndPurchaseButtons {
 
 type TypeFile = 'q_word' | 'q_pdf' | 'a_file' | 'extra'
 
-const PRICE_FILE = 5_000_000
+const PRICE_FILE = 5
 const props = defineProps<IDownloadAndPurchaseButtons>()
 
 const { $toast } = useNuxtApp()

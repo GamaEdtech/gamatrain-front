@@ -421,7 +421,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const PRICE_FILE = 5_000_000
+const PRICE_FILE = 5
 const props = defineProps({
   desktopHeader: {
     type: Array,
