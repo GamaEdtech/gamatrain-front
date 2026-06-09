@@ -134,7 +134,7 @@
           v-model="user.country"
           label="Country"
           :items="countries"
-          :data-loading="!loadingCountries"
+          :data-loading="loadingCountries"
           rounded="pill"
           height="48"
           base-color="grey200"
@@ -149,13 +149,13 @@
           v-model="user.state"
           label="State"
           :items="states"
-          :data-loading="!loadingStates && !loadingCountries"
+          :data-loading="loadingStates || loadingCountries"
           rounded="pill"
           height="48"
           base-color="grey200"
           color="primary"
           :defalut-lable="false"
-          :disabled="!user.country && !loadingCountries"
+          :disabled="!user.country || loadingCountries"
           @update:model-value="stateChange"
         />
       </div>
@@ -165,13 +165,13 @@
           v-model="user.city"
           label="City"
           :items="cities"
-          :data-loading="!loadingCities && !loadingStates && !loadingCountries"
+          :data-loading="loadingCities || loadingStates || loadingCountries"
           rounded="pill"
           height="48"
           base-color="grey200"
           color="primary"
           :defalut-lable="false"
-          :disabled="!user.state && !loadingCountries && !loadingStates"
+          :disabled="!user.state || loadingCountries || loadingStates"
           @update:model-value="cityChange"
         />
       </div>
@@ -191,7 +191,7 @@
               title: board.title,
             }
           })"
-          :data-loading="!loadingBoards"
+          :data-loading="loadingBoards"
           rounded="pill"
           height="48"
           base-color="grey200"
@@ -205,14 +205,19 @@
         <common-gombo-box
           v-model="user.grade"
           label="Grade"
-          :items="grades"
-          :data-loading="!loadingBoards && !loadingGrade"
+          :items="grades?.map((item) => {
+            return {
+              id: item.id,
+              title: item.title,
+            }
+          })"
+          :data-loading="loadingBoards || loadingGrade"
           rounded="pill"
           height="48"
           base-color="grey200"
           color="primary"
           :defalut-lable="false"
-          :disabled="!user.board && !loadingGrade"
+          :disabled="!user.board || loadingGrade"
           @update:model-value="gradeChange"
         />
       </div>
@@ -227,13 +232,13 @@
             title: item.name,
           }
         })"
-        :data-loading="!loadingSchools && !loadingCities && !loadingCountries && !loadingStates"
+        :data-loading="loadingSchools || loadingCities || loadingCountries || loadingStates"
         rounded="pill"
         height="48"
         base-color="grey200"
         color="primary"
         :defalut-lable="false"
-        :disabled="!user.city && !loadingCities"
+        :disabled="!user.city || loadingCities"
       />
     </div>
     <div class="w-100 d-flex justify-center align-center ga-2 mt-16">
@@ -383,7 +388,7 @@ const confirmCrop = (dataCroped: Blob) => {
 }
 
 // Location Info
-const countyChange = async (countryId: number) => {
+const countyChange = async (countryId: number | string) => {
   user.value.country = countryId
   user.value.state = ''
   user.value.city = ''
@@ -397,7 +402,7 @@ const countyChange = async (countryId: number) => {
   }
 }
 
-const stateChange = async (stateId: number) => {
+const stateChange = async (stateId: number | string) => {
   user.value.state = stateId
   user.value.city = ''
   user.value.school = ''
@@ -409,7 +414,7 @@ const stateChange = async (stateId: number) => {
   }
 }
 
-const cityChange = async (cityId: number) => {
+const cityChange = async (cityId: number | string) => {
   user.value.city = cityId
   user.value.school = ''
   resetSchools()
@@ -419,12 +424,12 @@ const cityChange = async (cityId: number) => {
       pageSize: 1000,
       countryId: user.value.country as number,
       stateId: user.value.state as number,
-      cityId,
+      cityId: Number(cityId),
     })
   }
 }
 
-const boardChange = async (boardId: number) => {
+const boardChange = async (boardId: number | string) => {
   user.value.board = boardId
   user.value.grade = ''
   resetGrades()
@@ -433,7 +438,7 @@ const boardChange = async (boardId: number) => {
   }
 }
 
-const gradeChange = async (gradeId: number) => {
+const gradeChange = async (gradeId: number | string) => {
   user.value.grade = gradeId
 }
 

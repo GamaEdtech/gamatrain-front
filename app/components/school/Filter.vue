@@ -373,7 +373,7 @@
               v-model="filterForm.country"
               label="Country"
               :items="filter.countryList"
-              :data-loading="!loadingCountry"
+              :data-loading="loadingCountry"
               @update:model-value="countryChange"
             />
           </div>
@@ -382,7 +382,7 @@
               v-model="filterForm.state"
               label="State"
               :items="filter.stateList"
-              :data-loading="!loadingState"
+              :data-loading="loadingState"
               :disabled="!filterForm.country"
               @update:model-value="stateChange"
             />
@@ -392,7 +392,7 @@
               v-model="filterForm.city"
               label="City"
               :items="filter.cityList"
-              :data-loading="!loadingCity"
+              :data-loading="loadingCity"
               :disabled="!filterForm.state"
               @update:model-value="cityChange"
             />

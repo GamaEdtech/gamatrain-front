@@ -35,7 +35,7 @@
         rounded="lg"
         base-color="grey200"
         color="primary"
-        :data-loading="!loadingLanguages"
+        :data-loading="loadingLanguages"
         :defalut-lable="false"
         :clearable="false"
         @update:model-value="emitUpdate"

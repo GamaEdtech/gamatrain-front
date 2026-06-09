@@ -1,11 +1,11 @@
 <template>
   <div
-    class="w-100 d-flex flex-wrap flex-column bg-white pa-6"
+    class="w-100 d-flex flex-wrap flex-column bg-white pa-2"
   >
-    <div class="w-100 d-flex align-center justify-end">
+    <div class="w-100 d-flex align-center justify-end ga-1">
       <span
         v-if="hasSearch"
-        class="text-h5 text-grey400"
+        class="text-h5 text-grey400 mt-1"
       >result</span>
       <span
         v-if="hasSearch"
@@ -117,7 +117,7 @@
 import { ref, computed, defineComponent, h } from 'vue'
 
 interface IItemModalSelect {
-  id: string
+  id: string | number
   title: string
   icon?: string
   contentIcon?: string
@@ -127,7 +127,7 @@ interface IItemModalSelect {
 interface IModalSelect {
   title: string
   items: IItemModalSelect[]
-  selectedItem: IItemModalSelect
+  selectedItem: IItemModalSelect | null | undefined
   loadingItems: boolean
   loadingValue: boolean
   hasSearch: boolean

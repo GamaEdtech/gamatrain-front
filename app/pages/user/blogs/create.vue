@@ -134,6 +134,7 @@
             <common-gombo-box
               v-model="blog.status"
               label=""
+              title-modal="State"
               :items="statusItems.map((item) => ({
                 id: item,
                 title: item,
@@ -159,6 +160,7 @@
             <common-gombo-box
               v-model="blog.visibility"
               label=""
+              title-modal="Visibility"
               :items="visibilityItems.map((item) => ({
                 id: item,
                 title: item,
@@ -184,6 +186,7 @@
             <common-gombo-box
               v-model="blog.publishTime"
               label=""
+              title-modal="Publish time"
               :items="publishTimeItems.map((item) => ({
                 id: item,
                 title: item,

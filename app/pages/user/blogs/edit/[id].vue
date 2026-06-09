@@ -179,6 +179,7 @@
             <common-gombo-box
               v-model="blog.visibility"
               label=""
+              title-modal="Visibility"
               :items="visibilityItems.map((item) => ({
                 id: item,
                 title: item,
@@ -205,6 +206,7 @@
             <common-gombo-box
               v-model="blog.publishTime"
               label=""
+              title-modal="Publish time"
               :items="publishTimeItems.map((item) => ({
                 id: item,
                 title: item,
@@ -393,6 +395,7 @@ useHead({
 const router = useRouter()
 const route = useRoute()
 const { $toast, $slugGenerator } = useNuxtApp()
+const { required, arrayNotEmpty } = useValidationRules()
 const { getBlog, loadingGetBlog, editBlug, loadingEditBlog } = useBlog()
 const { data: languages, loadingGetData: loadingGetLanguages, getData: getLanguages } = useLanguage()
 

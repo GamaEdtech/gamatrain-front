@@ -351,12 +351,12 @@ const getData = async () => {
   }
 }
 
-const changeFilterStatus = async (status: string) => {
+const changeFilterStatus = async (status: string | number) => {
   if (status == '') {
     statusSelect.value = 'All'
   }
   else {
-    statusSelect.value = status
+    statusSelect.value = status as string
   }
   page.value = 1
   await getData()

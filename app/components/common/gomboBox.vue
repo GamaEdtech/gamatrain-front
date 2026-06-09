@@ -1,216 +1,149 @@
 <template>
-  <div
-    id="gombo-box"
-    class="gombo-box w-100"
-  >
-    <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-      <div
-        v-if="!defalutLable"
-        class="text-h6 text-grey700 ml-2"
-      >
-        {{ label }}
-      </div>
-      <v-text-field
-        v-model="inputText"
-        :rounded="rounded"
-        readonly
-        variant="outlined"
-        hide-details
-        append-inner-icon="mdi-chevron-down"
-        :dense="dense"
-        :disabled="disabled"
-        :clearable="clearable"
-        class="w-100 gombo-box-input text-grey700"
-        :base-color="baseColor"
-        :color="color"
-        :density="density"
-        :rules="rules"
-        @click="getList"
-        @click:clear="clearValue"
-      >
-        <template
-          v-if="defalutLable"
-          #label
-        >
-          <span class="primary-gray-700 font-weight-medium size-lable">{{
-            label
-          }}</span>
-        </template>
-        <template #prepend-inner>
-          <v-progress-circular
-            v-if="loadingValue || !dataLoading"
-            indeterminate
-            size="20"
-            color="#ffb300"
-            class="mr-2"
-          />
-        </template>
-      </v-text-field>
+  <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+    <div
+      v-if="!defalutLable"
+      class="text-h6 text-grey700 ml-2"
+    >
+      {{ label }}
     </div>
-
-    <v-bottom-sheet v-model="sheet">
-      <v-card
-        v-if="sheet"
-        class="gombo-box-list"
+    <v-text-field
+      v-model="inputText"
+      :rounded="rounded"
+      readonly
+      variant="outlined"
+      hide-details
+      append-inner-icon="md:keyboard_arrow_down"
+      :dense="dense"
+      :disabled="disabled"
+      :clearable="clearable"
+      class="w-100 text-grey700"
+      :base-color="baseColor"
+      :color="color"
+      :density="density"
+      :rules="rules"
+      @click="getList"
+      @click:clear="clearValue"
+    >
+      <template
+        v-if="defalutLable"
+        #label
       >
-        <v-row>
-          <v-col cols="12">
-            <div class="px-5 mt-4">
-              <v-list v-if="dataLoading">
-                <v-list-subheader class="gtext-h5 mb-4">
-                  {{
-                    label
-                  }}
-                </v-list-subheader>
-                <v-text-field
-                  id="search-field"
-                  v-model="keyword"
-                  prepend-inner-icon="mdi-magnify"
-                  hide-details
-                  label="Search anything..."
-                  dense
-                  variant="outlined"
-                  rounded
-                  autocomplete="off"
-                  color="#ffb300"
-                >
-                  <template #append-inner>
-                    <v-btn
-                      id="search-btn"
-                      size="large"
-                      class="primary"
-                      :loading="searchLoading"
-                      rounded
-                      color="#ffb300"
-                    >
-                      Search
-                    </v-btn>
-                  </template>
-                </v-text-field>
-                <div class="data-list">
-                  <v-list-item
-                    v-for="(item, index) in filteredItems"
-                    :key="index"
-                    class="pointer"
-                  >
-                    <v-list-item-title
-                      class="gtext-t5"
-                      @click="setValue(item[itemValue], item[itemTitle])"
-                    >
-                      {{ item[itemTitle] }}
-                    </v-list-item-title>
-                  </v-list-item>
-                </div>
-              </v-list>
-              <div
-                v-else
-                class="text-center pt-8"
-              >
-                <v-progress-circular
-                  indeterminate
-                  :width="3"
-                  color="primary"
-                />
-              </div>
-            </div>
-          </v-col>
-        </v-row>
-      </v-card>
-    </v-bottom-sheet>
+        <span class="text-grey700 font-weight-medium text-h6">{{
+          label
+        }}</span>
+      </template>
+      <template #prepend-inner>
+        <v-progress-circular
+          v-if="loadingValue || dataLoading"
+          indeterminate
+          size="20"
+          color="primary"
+          class="mr-2"
+        />
+      </template>
+    </v-text-field>
+    <common-modal-base
+      v-model:show-dialog="sheet"
+      :title="titleModal ? titleModal : label"
+    >
+      <common-modal-select
+        :title="titleModal ? titleModal : label"
+        :items="items"
+        :loading-items="dataLoading"
+        :loading-value="loadingValue"
+        :selected-item="selectedItem"
+        :has-search="hasSearch"
+        @change-selected-item="setValue"
+      />
+    </common-modal-base>
   </div>
 </template>
 
-<script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+<script setup lang="ts">
+interface IItemGomboBox {
+  [key: string]: string | number | undefined
+  id: string | number
+  title: string
+  icon?: string
+  contentIcon?: string
+  color?: string
+}
 
-const props = defineProps({
-  label: {
-    type: String,
-    default: '',
-  },
-  items: {
-    type: Array,
-    default: () => [],
-  },
-  modelValue: {
-    type: [String, Number],
-  },
-  itemTitle: {
-    type: String,
-    default: 'title',
-  },
-  itemValue: {
-    type: String,
-    default: 'id',
-  },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  searchLoading: {
-    type: Boolean,
-    default: false,
-  },
-  dataLoading: {
-    type: Boolean,
-    default: true,
-  },
-  baseColor: {
-    type: String,
-    default: 'grey500',
-  },
-  color: {
-    type: String,
-    default: 'primary',
-  },
-  density: {
-    type: String,
-    default: 'default',
-  },
-  rounded: {
-    type: String,
-    default: 'xl',
-  },
-  defalutLable: {
-    type: Boolean,
-    default: true,
-  },
-  rules: {
-    type: Array,
-    default: () => [],
-  },
-  loadingValue: {
-    type: Boolean,
-    default: false,
-  },
-  clearable: {
-    type: Boolean,
-    default: true,
-  },
+type Density = 'default' | 'comfortable' | 'compact'
+type ValidationRule = (value: string) => boolean | string
+
+interface IGomboBox {
+  label?: string
+  items?: IItemGomboBox[]
+  modelValue?: string | number
+  itemTitle?: string
+  itemValue?: string
+  disabled?: boolean
+  dataLoading?: boolean
+  baseColor?: string
+  color?: string
+  density?: Density
+  rounded?: string
+  defalutLable?: boolean
+  rules?: ValidationRule[]
+  loadingValue?: boolean
+  clearable?: boolean
+  hasSearch?: boolean
+  height?: string | number
+  titleModal?: string
+}
+
+const props = withDefaults(defineProps<IGomboBox>(), {
+  label: '',
+  items: () => [],
+  itemTitle: 'title',
+  itemValue: 'id',
+  disabled: false,
+  dataLoading: false,
+  baseColor: 'grey500',
+  color: 'primary',
+  density: 'default',
+  rounded: 'xl',
+  defalutLable: true,
+  rules: () => [],
+  loadingValue: false,
+  clearable: true,
+  hasSearch: true,
+  titleModal: '',
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits<{
+  'update:modelValue': [value: string | number]
+}>()
 
 const sheet = ref(false)
-const keyword = ref('')
 const inputText = ref('')
 const dense = ref(false)
+const selectedItem = ref<IItemGomboBox | null>(null)
 
-const filteredItems = computed(() => {
-  const filterTextLower = keyword.value.toLowerCase().trim()
-  return props.items.filter(item =>
-    item[props.itemTitle].toLowerCase().includes(filterTextLower),
-  )
-})
+const findSelectedItem = (value?: string | number) => {
+  return props.items.find((item) => {
+    const selectedValue = item[props.itemValue]
+
+    return selectedValue == Number(value) || selectedValue == value
+  })
+}
+
+const getItemText = (item: IItemGomboBox, key: string) => {
+  const value = item[key]
+
+  return value == null ? '' : String(value)
+}
 
 watch(
   () => props.items,
   (newValue) => {
     if (newValue.length > 0) {
-      const foundObj = props.items.find(
-        x => x[props.itemValue] == Number(props.modelValue) || x[props.itemValue] == props.modelValue,
-      )
-      if (foundObj) inputText.value = foundObj[props.itemTitle]
+      const foundObj = findSelectedItem(props.modelValue)
+      if (foundObj) {
+        inputText.value = getItemText(foundObj, props.itemTitle)
+        selectedItem.value = foundObj
+      }
       else inputText.value = ''
     }
     else {
@@ -223,10 +156,9 @@ watch(
   () => props.modelValue,
   (newValue) => {
     if (props.items.length > 0) {
-      const foundObj = props.items.find(
-        x => x[props.itemValue] == Number(newValue) || x[props.itemValue] == newValue,
-      )
-      inputText.value = foundObj ? foundObj[props.itemTitle] : ''
+      const foundObj = findSelectedItem(newValue)
+      selectedItem.value = foundObj ? foundObj : null
+      inputText.value = foundObj ? getItemText(foundObj, props.itemTitle) : ''
     }
     else {
       inputText.value = ''
@@ -243,71 +175,21 @@ const clearValue = () => {
   inputText.value = ''
 }
 
-const setValue = (val, title) => {
-  emit('update:modelValue', val.toString())
-  inputText.value = title
+const setValue = (item: IItemGomboBox) => {
+  emit('update:modelValue', String(item.id ?? ''))
+  inputText.value = getItemText(item, 'title')
+  selectedItem.value = item
   sheet.value = false
 }
 
 onMounted(() => {
   if (props.items.length > 0) {
-    const foundObj = props.items.find(
-      x => x[props.itemValue] == Number(props.modelValue) || x[props.itemValue] == props.modelValue,
-    )
-    inputText.value = foundObj ? foundObj[props.itemTitle] : ''
+    const foundObj = findSelectedItem(props.modelValue)
+    selectedItem.value = foundObj ? foundObj : null
+    inputText.value = foundObj ? getItemText(foundObj, props.itemTitle) : ''
   }
 })
 </script>
 
 <style>
-.gombo-box-list {
-  border-radius: 24px 24px 0 0 !important;
-  height: 400px !important;
-  position: fixed !important;
-  z-index: 1800;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  width: 100%;
-  box-shadow: 2px -6px 24px 0px rgba(16, 24, 40, 0.05);
-  overflow-y: hidden !important;
-}
-
-.data-list {
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin-top: 20px;
-  height: 240px;
-  text-align: left;
-}
-
-.gombo-box .v-field--variant-outlined {
-  background: var(--White, #fff) !important;
-}
-
-.gombo-box .v-input__append-inner {
-  margin: auto !important;
-  padding-right: 1rem;
-}
-
-#search-btn {
-  height: 36px !important;
-}
-
-#search-btn .v-btn__content {
-  color: black;
-  text-transform: none;
-  font-family: Inter;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 500;
-  line-height: 22px;
-}
-
-.size-lable {
-  font-size: 16px;
-}
-.v-field-label {
-  font-size: 16px !important;
-}
 </style>
