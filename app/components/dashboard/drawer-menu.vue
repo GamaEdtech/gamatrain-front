@@ -400,24 +400,24 @@ const mobileItems = [
     link: '/faq',
     value: 'faq',
   },
-  {
-    title: 'Leader Board',
-    icon: 'md:poll',
-    link: '/leader-board',
-    value: 'getToken',
-  },
+  // {
+  //   title: 'Leader Board',
+  //   icon: 'md:poll',
+  //   link: '/leader-board',
+  //   value: 'getToken',
+  // },
   // {
   //   title: 'Governance',
   //   icon: 'md:policy',
   //   link: '/governance',
   //   value: 'governance',
   // },
-  {
-    title: 'AI Assistant',
-    icon: 'md:smart_toy',
-    link: '/ai',
-    value: 'aiAssistant',
-  },
+  // {
+  //   title: 'AI Assistant',
+  //   icon: 'md:smart_toy',
+  //   link: '/ai',
+  //   value: 'aiAssistant',
+  // },
 ]
 
 // const extraLink = [

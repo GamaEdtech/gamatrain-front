@@ -360,7 +360,7 @@ const handleCoinPaymentConfirm = async () => {
 
   try {
     const response = await consumeCoins(
-      5_000_000,
+      5,
       'See Full Answer Question',
     ) as ApiResult<unknown>
     if (response.succeeded) {

@@ -192,10 +192,10 @@ const footerLinks = [
         title: 'FAQ',
         link: '/faq',
       },
-      {
-        title: 'Leader Board',
-        link: '/leader-board',
-      },
+      // {
+      //   title: 'Leader Board',
+      //   link: '/leader-board',
+      // },
       {
         title: 'Donate',
         link: '/donate',
@@ -225,10 +225,10 @@ const footerLinks = [
       //   title: 'Governance',
       //   link: '/governance',
       // },
-      {
-        title: 'AI Assistant',
-        link: '/ai',
-      },
+      // {
+      //   title: 'AI Assistant',
+      //   link: '/ai',
+      // },
     ],
   },
 ]

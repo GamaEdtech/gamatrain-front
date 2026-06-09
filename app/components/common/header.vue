@@ -184,16 +184,28 @@ const menuLink = [
     icon: '',
   },
   {
-    title: 'AI Assistant',
-    link: '/ai',
-    icon: 'md:smart_toy_outlined',
-    badge: 'Beta',
+    title: 'About us',
+    link: '/about-us',
   },
   {
-    title: 'Leader Board',
-    link: '/leader-board',
-    icon: '',
+    title: 'FAQ',
+    link: '/faq',
   },
+  {
+    title: 'Services',
+    link: '/services',
+  },
+  // {
+  // title: 'AI Assistant',
+  // link: '/ai',
+  // icon: 'md:smart_toy_outlined',
+  // badge: 'Beta',
+  // },
+  // {
+  //   title: 'Leader Board',
+  //   link: '/leader-board',
+  //   icon: '',
+  // },
   // {
   // title: 'Governance',
   // link: '/governance',
