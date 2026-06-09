@@ -1,5 +1,6 @@
 User-agent: *
 Disallow: /admin
+Disallow: /test-maker/create
 Allow: /
 
 Sitemap: https://gamatrain.com/sitemap

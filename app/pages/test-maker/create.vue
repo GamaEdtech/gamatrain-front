@@ -1524,7 +1524,7 @@ import { defineRule } from 'vee-validate'
 import { required } from '@vee-validate/rules'
 import FormTopicSelector from '~/components/form/topic-selector.vue'
 import CreateTestForm from '~/components/test-maker/create-test-form.vue'
-import { definePageMeta, useHead } from '#imports'
+import { definePageMeta, useHead, useSeoMeta } from '#imports'
 // Get Nuxt app instance for accessing plugins like toast
 const _config = useRuntimeConfig()
 const _nuxtApp = useNuxtApp()
@@ -1536,6 +1536,10 @@ defineRule('required', required)
 // Define layout and page metadata
 definePageMeta({
   layout: 'test-maker-layout',
+})
+
+useSeoMeta({
+  robots: 'noindex, nofollow',
 })
 
 useHead({
