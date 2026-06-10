@@ -398,9 +398,11 @@ useHead({
 }
 
 .book-content img {
-  max-width: 86vw !important;
-  margin-right: 0.1rem !important;
-  margin-left: 0.1rem !important;
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 0.5rem;
+  margin: 0.5rem 0.5rem 0.5rem 0.5rem !important;
+
 }
 
 /*Message style section*/
