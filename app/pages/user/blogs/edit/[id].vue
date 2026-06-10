@@ -141,7 +141,7 @@
         class="d-flex flex-column ga-3"
       >
         <div class="extra-data-div bg-grey50 rounded-lg pa-4 d-flex flex-column align-center justify-center ga-3">
-          <!-- <div
+          <div
             class="w-100
             d-flex
             align-center
@@ -153,9 +153,10 @@
             <common-gombo-box
               v-model="blog.status"
               label=""
+              title-modal="State"
               :items="statusItems.map((item) => ({
-                id: item.value,
-                title: item.title,
+                id: item,
+                title: item,
               }))"
               rounded="xl"
               density="compact"
@@ -165,7 +166,7 @@
               :clearable="false"
               :loading-value="loadingGetBlog"
             />
-          </div> -->
+          </div>
 
           <div
             class="w-100
@@ -179,6 +180,7 @@
             <common-gombo-box
               v-model="blog.visibility"
               label=""
+              title-modal="Visibility"
               :items="visibilityItems.map((item) => ({
                 id: item,
                 title: item,
@@ -205,6 +207,7 @@
             <common-gombo-box
               v-model="blog.publishTime"
               label=""
+              title-modal="Publish time"
               :items="publishTimeItems.map((item) => ({
                 id: item,
                 title: item,
@@ -393,6 +396,7 @@ useHead({
 const router = useRouter()
 const route = useRoute()
 const { $toast, $slugGenerator } = useNuxtApp()
+const { required, arrayNotEmpty } = useValidationRules()
 const { getBlog, loadingGetBlog, editBlug, loadingEditBlog } = useBlog()
 const { data: languages, loadingGetData: loadingGetLanguages, getData: getLanguages } = useLanguage()
 
@@ -401,7 +405,6 @@ const blog = ref({
   content: '',
   summary: '',
   slug: '',
-  draft: false,
   visibility: '',
   publishTime: '',
   categories: [] as number[],
@@ -409,16 +412,14 @@ const blog = ref({
   image: '',
   scheduledDate: '',
   podcast: '',
+  status: '',
 })
 const publishDateMenuOpen = ref(false)
 const isRemovePodcast = ref(false)
 const showSlugModal = ref(false)
 const translations = ref<TranslationDTO[]>([])
 
-// const statusItems = [
-//   { value: false, title: 'Drafted' },
-//   { value: true, title: 'Published' },
-// ]
+const statusItems = ['Drafted', 'Published']
 const visibilityItems = ['General', 'Premium', 'Private']
 const publishTimeItems = ['Immediately', 'Schedule']
 
@@ -468,7 +469,7 @@ const mapToCreateBlogDTO = () => {
     scheduledDate: blog.value.scheduledDate || undefined,
     keywords: blog.value.keywords,
     tags: blog.value.categories,
-    draft: blog.value.status,
+    draft: blog.value.status === 'Drafted' ? true : false,
 
     localizedValues: translations.value.map(t => ({
       languageId: Number(t.languageId),
@@ -517,7 +518,7 @@ onMounted(async () => {
       title: data.title,
       content: data.body,
       summary: data.summary,
-      draft: data.draft,
+      status: data.draft ? 'Drafted' : 'Published',
       visibility: data.visibilityType,
       publishTime: isScheduled ? 'Schedule' : 'Immediately',
       scheduledDate: isScheduled ? data.publishDate : '',

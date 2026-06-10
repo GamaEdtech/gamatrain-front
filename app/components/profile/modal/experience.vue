@@ -271,7 +271,7 @@
       </v-btn>
     </div>
 
-    <lazy-modals-base
+    <lazy-common-modal-base
       v-model:show-dialog="showSchoolConfirmModal"
       title="School"
     >
@@ -280,7 +280,7 @@
         :school="schoolForConfirm"
         @confirm="confirmSchool"
       />
-    </lazy-modals-base>
+    </lazy-common-modal-base>
   </v-form>
 </template>
 
