@@ -43,7 +43,7 @@
             id: item.code,
             title: item.displayName,
           }))"
-          :data-loading="!loadingGetCultures"
+          :data-loading="loadingGetCultures"
           rounded="lg"
           density="compact"
           base-color="grey200"
