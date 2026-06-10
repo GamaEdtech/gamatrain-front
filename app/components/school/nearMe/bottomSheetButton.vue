@@ -25,7 +25,7 @@
       <span>{{ country || 'Country' }}</span> - <span>{{ postcode || 'zip code' }}</span>
     </p> -->
     <v-icon color="primary">
-      mdi-chevron-right
+      md:keyboard_arrow_right
     </v-icon>
   </div>
 </template>
