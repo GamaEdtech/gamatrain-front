@@ -87,7 +87,6 @@ const schoolIcon = ref(null)
 const userLocationIcon = ref(null)
 const highlightMarker = ref(null)
 const userLocationMarker = ref(null)
-const ignoreNextMoveEnd = ref(false)
 
 onMounted(async () => {
   L = await loadLeaflet()
@@ -300,11 +299,6 @@ const onMoveStart = () => {
 }
 
 const onMoveEnd = () => {
-  if (ignoreNextMoveEnd.value) {
-    ignoreNextMoveEnd.value = false
-    return
-  }
-
   if (!map.value) return
 
   const leafletMap = map.value.leafletObject || map.value
@@ -402,8 +396,6 @@ const setView = (lat, lng, zoom = 8) => {
 }
 
 const setUserLocation = (lat, lng, zoom = 12) => {
-  ignoreNextMoveEnd.value = true
-
   if (props.showUserLocationMarker) {
     setUserLocationMarker(lat, lng)
   }

@@ -155,7 +155,6 @@ const { location, fetchLocation } = useCurrentLocation()
 
 const isUserMovingMap = ref(true) // Start with loading indicator visible
 const mapRef = ref(null)
-const shouldZoomToUserLocation = ref(false)
 
 const sortList = [
   {
@@ -284,17 +283,25 @@ const handleFetchUserLocation = async () => {
     filterForm.value.lng = loc.lng
     filterForm.value.distance = defaultLatLongDistance.distance
 
+    if (isMapMode.value) {
+      mapRef.value?.setUserLocation(
+        filterForm.value.lat,
+        filterForm.value.lng,
+        10
+      )
+    }
+
     userLocationFound([
       loc.lat,
       loc.lng,
     ])
 
-    shouldZoomToUserLocation.value = true
-    updateQueryParams()
+    if (!isMapMode.value) {
+      updateQueryParams()
+    }
   }
   catch (error) {
     console.error('Error fetching user location', error)
-    shouldZoomToUserLocation.value = false
     isFindingNearestSchool.value = false
   }
 }
@@ -395,7 +402,6 @@ const updateFilter = (query) => {
     filterForm.value.distance = null
 
     location.value = null
-    shouldZoomToUserLocation.value = false
     mapRef.value?.removeUserLocationMarker()
   }
 
@@ -418,7 +424,7 @@ const changeFilterWithMapMoved = (locationParam) => {
     (isExpandMapInDesktop.value && window.innerWidth > 1260)
     || (!openBottomNavFilterList.value && window.innerWidth < 1260)
   ) {
-    filterForm.value.distance = locationParam.distance
+    // filterForm.value.distance = locationParam.distance
     filterForm.value.lat = locationParam.center[0]
     filterForm.value.lng = locationParam.center[1]
     resetParameter()
@@ -591,7 +597,7 @@ if (initialSchools.value) {
   isUserMovingMap.value = false
 }
 
-const getSchoolList = async () => {
+const getSchoolList = async () => {  
   if (isAllSchoolLoaded.value) return
   try {
     const params = {
@@ -615,9 +621,6 @@ const getSchoolList = async () => {
       params['Location.Longitude'] = filterForm.value.lng
       params['Location.Radius'] = filterForm.value.distance
     }
-
-    // Always send sort when selected
-    params['sort'] = filterForm.value.sort
 
     // Other filters only in list mode
     if (!isExpandMapInDesktop.value && openBottomNavFilterList.value) {
@@ -665,22 +668,6 @@ const getSchoolList = async () => {
         const schoolList = response?.data?.list
 
         newSchoolForMarkersOnMap.value = schoolList
-
-        if (shouldZoomToUserLocation.value) {
-          const userLocation = location.value
-
-          if (
-            Number.isFinite(userLocation?.lat)
-            && Number.isFinite(userLocation?.lng)
-          ) {
-            mapRef.value?.setUserLocation(
-              userLocation.lat,
-              userLocation.lng,
-              10,
-            )
-            shouldZoomToUserLocation.value = false
-          }
-        }
       }
     }
     else {
@@ -770,7 +757,6 @@ const changeStatusExpandMap = () => {
   }
   else {
     perPage.value = 20
-    shouldZoomToUserLocation.value = false
     mapRef.value?.removeUserLocationMarker()
   }
   resetParameter()
@@ -784,7 +770,6 @@ const openBottomNavFilterList = ref(true)
 const changeBottomSheetStatus = (value) => {
   if (value) {
     perPage.value = 20
-    shouldZoomToUserLocation.value = false
     mapRef.value?.removeUserLocationMarker()
   }
   else {
