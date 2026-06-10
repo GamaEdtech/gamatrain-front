@@ -218,6 +218,37 @@
       @animation-complete="handleAnimationComplete"
     />
   </div>
+
+  <v-dialog
+    v-model="downloadIssue"
+    max-width="600"
+  >
+    <v-card class="pa-4">
+      <v-card-title class="text-h4">
+        Your download is ready and saved on your device!
+      </v-card-title>
+      <v-card-text>
+        <p>
+          If the file doesn't save to your device, click here to open it in a new tab and download it manually.
+        </p>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn
+          color="primary"
+          :href="downloadIssueLink"
+          target="_blank"
+        >
+          Show file in new tab
+        </v-btn>
+        <v-btn
+          text
+          @click="downloadIssue = false"
+        >
+          Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup lang="ts">
@@ -229,6 +260,8 @@ import type {
 } from '@/types'
 import { useDisplay } from 'vuetify'
 
+const downloadIssue = ref(false)
+const downloadIssueLink = ref('')
 interface IDownloadAndPurchaseButtons {
   files: FilesDTO
   id: string
@@ -372,18 +405,25 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
       if (xhr.status === 200) {
         downloadProgress.value[downloadKey] = 100
 
-        // Use file-saver to save the blob
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        import('file-saver' as any).then(({ saveAs }) => {
-          saveAs(xhr.response, response.data?.name)
-        })
-        // Show success message for coin payments
+        const blob = xhr.response
+        const url = window.URL.createObjectURL(blob)
+
+        const a = document.createElement('a')
+        a.href = url
+        a.download = response.data?.name || 'file.pdf'
+        document.body.appendChild(a)
+        a.click()
+
+        a.remove()
+        window.URL.revokeObjectURL(url)
+
         if (requiresCoinPaymentForFile(type)) {
-          $toast.success(
-            'Download started! 5 coins deducted from your balance.',
-          )
+          $toast.success('Download started! 5 coins deducted from your balance.')
         }
-        // Clean up after a short delay
+
+        downloadIssueLink.value = response.data?.url || ''
+        downloadIssue.value = true
+
         setTimeout(() => {
           downloadingItems.value.delete(downloadKey)
           Reflect.deleteProperty(downloadProgress.value, downloadKey)
