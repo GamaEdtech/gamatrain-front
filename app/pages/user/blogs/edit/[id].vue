@@ -469,7 +469,7 @@ const mapToCreateBlogDTO = () => {
     scheduledDate: blog.value.scheduledDate || undefined,
     keywords: blog.value.keywords,
     tags: blog.value.categories,
-    draft: blog.value.status === 'Drafted' ? 'true' : 'false',
+    draft: blog.value.status === 'Drafted' ? true : false,
 
     localizedValues: translations.value.map(t => ({
       languageId: Number(t.languageId),
