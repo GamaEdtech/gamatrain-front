@@ -34,6 +34,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  showUserLocationMarker: {
+    type: Boolean,
+    default: false,
+  },
   showHighlightLocation: {
     type: Boolean,
     default: false,
@@ -70,6 +74,8 @@ const emit = defineEmits([
   'locationSelectedUpdate',
 ])
 
+const { fetchLocation } = useCurrentLocation()
+
 const mapElement = ref(null)
 const markerCluster = ref(null)
 let L = null
@@ -78,7 +84,10 @@ const zoom = ref(props?.initialZoom)
 const minZoom = ref(2)
 const center = ref(props?.initialCenter)
 const schoolIcon = ref(null)
+const userLocationIcon = ref(null)
 const highlightMarker = ref(null)
+const userLocationMarker = ref(null)
+const ignoreNextMoveEnd = ref(false)
 
 onMounted(async () => {
   L = await loadLeaflet()
@@ -100,6 +109,13 @@ onMounted(async () => {
     iconSize: [40, 40],
     iconAnchor: [12, 25],
     popupAnchor: [1, -25],
+  })
+
+  userLocationIcon.value = L.icon({
+    iconUrl: '/images/foundation-marker.svg',
+    iconSize: [40, 40],
+    iconAnchor: [20, 40],
+    popupAnchor: [0, -40],
   })
 
   map.value.on('movestart', onMoveStart)
@@ -149,6 +165,28 @@ const addHighlightMarker = (location) => {
   map.value.setView([location[0], location[1]], zoom.value)
 }
 
+const setUserLocationMarker = (lat, lng) => {
+  if (!props.showUserLocationMarker || !L || !map.value) return
+
+  const latLng = [lat, lng]
+
+  if (userLocationMarker.value) {
+    userLocationMarker.value.setLatLng(latLng)
+    return
+  }
+
+  userLocationMarker.value = L.marker(latLng, {
+    icon: userLocationIcon.value,
+  }).addTo(map.value)
+}
+
+const removeUserLocationMarker = () => {
+  if (!userLocationMarker.value) return
+
+  userLocationMarker.value.remove()
+  userLocationMarker.value = null
+}
+
 // Validate marker data before creating markers
 const validateMarkerData = (schoolData) => {
   if (!schoolData) return false
@@ -168,58 +206,54 @@ async function setMarkers() {
   try {
     if (!L || !map.value) return
 
+    // Filter and validate school items before creating markers
     const validSchools
       = props?.items?.filter(
         item => item.lat && item.long && validateMarkerData(item),
       ) || []
-
-    if (validSchools.length === 0) {
-      if (markerCluster.value) {
-        markerCluster.value.clearLayers()
-      }
-
-      console.warn('No valid school markers to display on map')
-      return
-    }
 
     const mapItems = validSchools.map(item => ({
       lat: item.lat,
       lng: item.long,
       name: item.name,
       id: item.id,
-      schoolData: item,
+      schoolData: item, // Store complete school data
       options: {
         icon: schoolIcon.value,
         alt: item.id,
       },
     }))
 
-    const markers = mapItems.map(item =>
-      L.marker([item.lat, item.lng], {
+    if (mapItems.length === 0) {
+      console.warn('No valid school markers to display on map')
+      return
+    }
+
+    const markers = mapItems.map((item) => {
+      return L.marker([item.lat, item.lng], {
         icon: schoolIcon.value,
         alt: item.id,
-      }),
-    )
-
-    if (!markerCluster.value) {
-      markerCluster.value = L.markerClusterGroup({
-        animate: false,
       })
+    })
 
+    // markerCluster.value = L.markerClusterGroup({ animate: false });
+    if (!markerCluster.value) {
+      markerCluster.value = L.markerClusterGroup({ animate: false })
       map.value.addLayer(markerCluster.value)
     }
-    else {
-      markerCluster.value.clearLayers()
-    }
 
+    // Enhanced marker click handling with complete data passing
     markers.forEach((marker, index) => {
-      marker.schoolData = mapItems[index].schoolData
-
-      marker.on('click', (e) => {
-        handleClickMarker(e)
-      })
-
-      markerCluster.value.addLayer(marker)
+      const exists = markerCluster.value
+        .getLayers()
+        .some(m => m.options.alt === marker.options.alt)
+      if (!exists) {
+        marker.schoolData = mapItems[index].schoolData
+        marker.on('click', (e) => {
+          handleClickMarker(e)
+        })
+        markerCluster.value.addLayer(marker)
+      }
     })
   }
   catch (error) {
@@ -266,6 +300,11 @@ const onMoveStart = () => {
 }
 
 const onMoveEnd = () => {
+  if (ignoreNextMoveEnd.value) {
+    ignoreNextMoveEnd.value = false
+    return
+  }
+
   if (!map.value) return
 
   const leafletMap = map.value.leafletObject || map.value
@@ -321,22 +360,24 @@ const formatNumber = (number) => {
   return parseFloat(trimmedString)
 }
 
-const getUserLocation = () => {
-  if ('geolocation' in navigator) {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        center.value = [position.coords.latitude, position.coords.longitude]
-        if (map.value) {
-          map.value.setView(center.value, zoom.value)
-        }
-        emit('userLocationFound', center.value)
-      },
-      (error) => {
-        console.error('Error getting user location:', error)
-      },
-    )
+const getUserLocation = async () => {
+  try {
+    const res = await fetchLocation()
+    center.value = [res.lat, res.lng]
+
+    if (map.value) {
+      map.value.setView(center.value, zoom.value)
+      if (props.showUserLocationMarker) {
+        setUserLocationMarker(res.lat, res.lng)
+      }
+    }
+    emit('userLocationFound', center.value)
+  }
+  catch (error) {
+    console.error('Error getting user location:', error)
   }
 }
+
 watch(
   () => props.items,
   () => {
@@ -360,7 +401,20 @@ const setView = (lat, lng, zoom = 8) => {
   }
 }
 
-defineExpose({ setView })
+const setUserLocation = (lat, lng, zoom = 12) => {
+  ignoreNextMoveEnd.value = true
+
+  if (props.showUserLocationMarker) {
+    setUserLocationMarker(lat, lng)
+  }
+  setView(lat, lng, zoom)
+}
+
+defineExpose({
+  removeUserLocationMarker,
+  setUserLocation,
+  setView,
+})
 </script>
 
 <style scoped>

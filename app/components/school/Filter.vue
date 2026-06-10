@@ -84,16 +84,16 @@
               v-if="item.name === `Near me` && item.icon"
               class="me-4 d-flex"
             >
-              <div v-if="lgAndUp">
-                <div v-show="!(currentLocationLoading || props.dataLoading)">
-                  <SchoolNearMeLocationIcon />
-
-                  <v-progress-circular
-                    v-show="currentLocationLoading || props.dataLoading"
-                    indeterminate
-                    size="small"
-                  />
-                </div>
+              <div
+                v-if="lgAndUp"
+                class="d-flex align-center"
+              >
+                <SchoolNearMeLocationIcon v-if="!(currentLocationLoading || props.dataLoading)" />
+                <v-progress-circular
+                  v-else
+                  indeterminate
+                  size="small"
+                />
               </div>
             </div>
 

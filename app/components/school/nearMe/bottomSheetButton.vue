@@ -11,9 +11,8 @@
       color="primary"
       rounded=""
       size="x-small"
-      @click="emit('updateFilter')"
-      @keydown.enter.prevent="emit('updateFilter')"
-      @keydown.space.prevent="emit('updateFilter')"
+      @click="handleTrigger"
+      @keydown.enter.space.prevent="handleTrigger"
     >
       <SchoolNearMeLocationIcon size="20" />
     </v-btn>
@@ -64,6 +63,10 @@ const emit = defineEmits<{
 }>()
 
 const { isLoading } = useCurrentLocation()
+
+const handleTrigger = () => {
+  emit('updateFilter')
+}
 
 // watch(() => location.value, async (newLocation) => {
 //   if (!props.enableReverseGeocoding) return

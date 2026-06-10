@@ -19,7 +19,7 @@
       <!-- Map `Near me` floating action button -->
       <SchoolNearMeFab
         :is-map-mode="isMapMode"
-        :data-loading="isFindingNearestSchool"
+        :loading="isFindingNearestSchool"
         @update-filter="applyNearMe"
       />
 
@@ -28,6 +28,7 @@
         :items="newSchoolForMarkersOnMap"
         :use-cluster="true"
         :enable-user-location="true"
+        :show-user-location-marker="showUserLocationMarker"
         @map-moved="changeFilterWithMapMoved"
         @map-move-start="handleMapMoveStart"
         @user-location-found="userLocationFound"
@@ -94,11 +95,11 @@
         :school-list="schools"
         :is-expanded="!isExpandMapInDesktop"
         :is-initial-loading="isInitialSchoolLoading"
+        :is-near-loading="isFindingNearestSchool"
         :is-pagination-loading="isPaginationSchoolLoading"
         :is-pagination-previous-loading="isPaginationPreviousSchoolLoading"
         :is-all-data-loaded="isAllSchoolLoaded"
         :page-number-for-load-previous-data="pageNumberForLoadPreviousSchool"
-        :highlight-nearest="isDistanceSorted"
         @load-next-page="loadNextPageSchool"
         @load-previous-page="loadPreviousSchool"
       />
@@ -124,11 +125,11 @@
         :school-list="schools"
         :is-expanded="!isExpandMapInDesktop"
         :is-initial-loading="isInitialSchoolLoading"
+        :is-near-loading="isFindingNearestSchool"
         :is-pagination-loading="isPaginationSchoolLoading"
         :is-pagination-previous-loading="isPaginationPreviousSchoolLoading"
         :is-all-data-loaded="isAllSchoolLoaded"
         :page-number-for-load-previous-data="pageNumberForLoadPreviousSchool"
-        :highlight-nearest="isDistanceSorted"
         @load-next-page="loadNextPageSchool"
         @load-previous-page="loadPreviousSchool"
       />
@@ -150,10 +151,11 @@ const router = useRouter()
 const route = useRoute()
 
 const { lgAndDown } = useDisplay()
-const { location, isLoading: locationLoading, isCooldownActive, fetchLocation } = useCurrentLocation()
+const { location, fetchLocation } = useCurrentLocation()
 
 const isUserMovingMap = ref(true) // Start with loading indicator visible
-const userLocation = ref(null)
+const mapRef = ref(null)
+const shouldZoomToUserLocation = ref(false)
 
 const sortList = [
   {
@@ -200,39 +202,16 @@ const setDefaultSortToRoute = () => {
   }
 }
 
-const applyNearMe = () => {
-  if (
-    locationLoading.value
-    || isCooldownActive.value
-  ) {
-    return
-  }
-
-  highlightNearestSchool.value = false
-  shouldFocusNearestSchool.value = true
+const applyNearMe = async () => {
+  isAllSchoolLoaded.value = false
   isFindingNearestSchool.value = true
 
   if (!filterForm.value.sort.includes('distance')) {
     filterForm.value.sort.unshift('distance')
   }
 
-  handleFetchUserLocation()
+  await handleFetchUserLocation()
 }
-
-watch(
-  () => location.value,
-  (newLocation) => {
-    if (!newLocation) return
-
-    userLocation.value = newLocation
-
-    filterForm.value.lat = newLocation.lat
-    filterForm.value.lng = newLocation.lng
-    filterForm.value.distance = defaultLatLongDistance.distance
-
-    updateQueryParams()
-  },
-)
 
 onMounted(() => {
   setDefaultSortToRoute()
@@ -297,15 +276,26 @@ const defaultLatLongDistance = {
   distance: 5598568,
 }
 
-const handleFetchUserLocation = () => {
-  fetchLocation()
+const handleFetchUserLocation = async () => {
+  try {
+    const loc = await fetchLocation()
 
-  if (location.value) {
-    userLocation.value = location.value
+    filterForm.value.lat = loc.lat
+    filterForm.value.lng = loc.lng
+    filterForm.value.distance = defaultLatLongDistance.distance
+
     userLocationFound([
-      location.value.lat,
-      location.value.lng,
+      loc.lat,
+      loc.lng,
     ])
+
+    shouldZoomToUserLocation.value = true
+    updateQueryParams()
+  }
+  catch (error) {
+    console.error('Error fetching user location', error)
+    shouldZoomToUserLocation.value = false
+    isFindingNearestSchool.value = false
   }
 }
 
@@ -318,12 +308,8 @@ const timer = ref(null)
 const isInitialSchoolLoading = ref(false)
 const isPaginationSchoolLoading = ref(false)
 const isPaginationPreviousSchoolLoading = ref(false)
-const mapRef = ref(null)
-const shouldFocusNearestSchool = ref(false)
 const isFindingNearestSchool = ref(false)
 const schools = ref([])
-const nearestSchoolLocation = ref(null)
-const highlightNearestSchool = ref(false)
 const newSchoolForMarkersOnMap = ref([])
 const isAllSchoolLoaded = ref(false)
 const pageNumberForLoadPreviousSchool = ref(
@@ -334,14 +320,6 @@ const pageNumberForLoadNextSchool = ref(
 )
 const perPage = ref(20)
 const totalSchoolFind = ref(0)
-
-const isDistanceSorted = computed(() =>
-  filterForm.value.sort?.includes('distance'),
-)
-const shouldShowOnlyNearestMarker = computed(() =>
-  isDistanceSorted.value
-  && userLocation.value,
-)
 
 const resetParameter = () => {
   filterForm.value.page = 1
@@ -360,11 +338,9 @@ const resetParameter = () => {
 }
 
 const updateFilter = (query) => {
-  const hadDistance
-    = filterForm.value.sort?.includes('distance')
+  const hadDistance = filterForm.value.sort?.includes('distance')
 
   let newSort = [...(query.sort || [])]
-
   const hasDistance = newSort.includes('distance')
 
   // No sort selected -> fallback to default
@@ -372,18 +348,55 @@ const updateFilter = (query) => {
     newSort = ['lastModifyDate']
   }
 
-  filterForm.value = {
-    ...filterForm.value,
-    ...query,
-    sort: newSort,
+  // 🧠 preserve map state BEFORE mutation
+  const mapState = {
+    lat: filterForm.value.lat,
+    lng: filterForm.value.lng,
+    distance: filterForm.value.distance,
   }
 
-  // Distance removed
+  // -----------------------------
+  // 1. RESET ONLY NON-MAP FIELDS
+  // -----------------------------
+  Object.keys(filterForm.value).forEach((key) => {
+    if (['lat', 'lng', 'distance'].includes(key)) return
+    if (key === 'sort') return
+
+    filterForm.value[key] = undefined
+  })
+
+  // -----------------------------
+  // 2. APPLY INCOMING QUERY
+  // -----------------------------
+  Object.entries(query).forEach(([key, value]) => {
+    filterForm.value[key] = value
+  })
+
+  // -----------------------------
+  // 3. SORT HANDLING
+  // -----------------------------
+  filterForm.value.sort = newSort
+
+  // -----------------------------
+  // 4. RESTORE MAP STATE IF STILL IN DISTANCE MODE
+  // -----------------------------
+  if (hasDistance || hadDistance) {
+    filterForm.value.lat = mapState.lat
+    filterForm.value.lng = mapState.lng
+    filterForm.value.distance = mapState.distance
+  }
+
+  // -----------------------------
+  // 5. CLEANUP WHEN DISTANCE REMOVED
+  // -----------------------------
   if (hadDistance && !hasDistance) {
     filterForm.value.lat = null
     filterForm.value.lng = null
     filterForm.value.distance = null
-    userLocation.value = null
+
+    location.value = null
+    shouldZoomToUserLocation.value = false
+    mapRef.value?.removeUserLocationMarker()
   }
 
   resetParameter()
@@ -595,25 +608,12 @@ const getSchoolList = async () => {
             ? 'Asc'
             : 'Desc'
       })
-
-      if (
-        filterForm.value.sort?.includes('distance')
-        && userLocation.value
-      ) {
-        params['Location.Latitude'] = userLocation.value?.lat
-        params['Location.Longitude'] = userLocation.value?.lng
-      }
     }
 
-    // Always send location params when `distance` exists
-    if (
-      filterForm.value.sort?.includes('distance')
-      && filterForm.value.lat
-      && filterForm.value.lng
-    ) {
-      params['Location.Radius'] = filterForm.value.distance
+    if ((filterForm.value.lat && filterForm.value.lng) || filterForm.value.sort.includes('distance')) {
       params['Location.Latitude'] = filterForm.value.lat
       params['Location.Longitude'] = filterForm.value.lng
+      params['Location.Radius'] = filterForm.value.distance
     }
 
     // Always send sort when selected
@@ -654,58 +654,37 @@ const getSchoolList = async () => {
         ? response.data.totalRecordsCount
         : 0
 
-      if (isPaginationPreviousSchoolLoading.value) {
-        schools.value = [...response.data.list, ...schools.value]
-      }
-      else {
-        schools.value = [...schools.value, ...response.data.list]
+      schools.value
+        = isPaginationPreviousSchoolLoading.value
+          ? [...response.data.list, ...schools.value]
+          : filterForm.value.page === 1
+            ? response.data.list
+            : [...schools.value, ...response.data.list]
 
-        if (
-          shouldFocusNearestSchool.value
-          && response.data.list.length
-        ) {
-          highlightNearestSchool.value = true
-        }
-      }
       if (isExpandMapInDesktop.value || !openBottomNavFilterList.value) {
-        const schoolList = response?.data?.list || []
+        const schoolList = response?.data?.list
 
-        newSchoolForMarkersOnMap.value
-          = shouldShowOnlyNearestMarker.value
-            ? schoolList.slice(0, 1)
-            : schoolList
+        newSchoolForMarkersOnMap.value = schoolList
 
-        if (
-          shouldFocusNearestSchool.value
-          && schoolList.length
-        ) {
-          const nearestSchool = schoolList[0]
+        if (shouldZoomToUserLocation.value) {
+          const userLocation = location.value
 
-          if (nearestSchool?.lat && nearestSchool?.long) {
-            nextTick(() => {
-              mapRef.value?.setView(
-                nearestSchool.lat,
-                nearestSchool.long,
-                15,
-              )
-            })
+          if (
+            Number.isFinite(userLocation?.lat)
+            && Number.isFinite(userLocation?.lng)
+          ) {
+            mapRef.value?.setUserLocation(
+              userLocation.lat,
+              userLocation.lng,
+              10,
+            )
+            shouldZoomToUserLocation.value = false
           }
-
-          shouldFocusNearestSchool.value = false
         }
       }
     }
     else {
       isAllSchoolLoaded.value = true
-    }
-
-    if (response?.data?.list?.length) {
-      const nearestSchool = response.data.list[0]
-
-      nearestSchoolLocation.value = {
-        lat: nearestSchool.lat,
-        lng: nearestSchool.long,
-      }
     }
   }
   catch (err) {
@@ -773,6 +752,12 @@ const isExpandMapInDesktop = ref(false)
 const isMapMode = computed(() => {
   return isExpandMapInDesktop.value || !openBottomNavFilterList.value
 })
+const showUserLocationMarker = computed(() => {
+  return route.query.distance !== undefined
+    && route.query.distance !== null
+    && route.query.distance !== ''
+    && Boolean(location.value)
+})
 
 const changeStatusExpandMap = () => {
   isExpandMapInDesktop.value = !isExpandMapInDesktop.value
@@ -785,9 +770,8 @@ const changeStatusExpandMap = () => {
   }
   else {
     perPage.value = 20
-    filterForm.value.lat = null
-    filterForm.value.lng = null
-    filterForm.value.distance = null
+    shouldZoomToUserLocation.value = false
+    mapRef.value?.removeUserLocationMarker()
   }
   resetParameter()
   updateQueryParams()
@@ -800,9 +784,8 @@ const openBottomNavFilterList = ref(true)
 const changeBottomSheetStatus = (value) => {
   if (value) {
     perPage.value = 20
-    filterForm.value.lat = null
-    filterForm.value.lng = null
-    filterForm.value.distance = null
+    shouldZoomToUserLocation.value = false
+    mapRef.value?.removeUserLocationMarker()
   }
   else {
     perPage.value = 200

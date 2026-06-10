@@ -1,7 +1,7 @@
 <template>
   <div :class="`main-list-school-div ${isExpanded ? `` : `closed-list`}`">
     <div
-      v-if="pageNumberForLoadPreviousData != 1 && !isInitialLoading"
+      v-if="pageNumberForLoadPreviousData != 1 && !(isInitialLoading || isNearLoading)"
       class="container-button-load-previous-data"
     >
       <v-btn
@@ -22,7 +22,7 @@
       }`"
     >
       <div class="container-scroll pt-6">
-        <template v-if="isInitialLoading">
+        <template v-if="isInitialLoading || isNearLoading">
           <school-card-skeleton
             v-for="item in 4"
             :key="item"
@@ -31,12 +31,11 @@
 
         <school-card-skeleton v-if="isPaginationPreviousLoading" />
 
-        <template v-for="(school, index) in schoolList">
+        <template v-for="(school) in schoolList">
           <school-card
-            v-if="!isInitialLoading"
+            v-if="!(isInitialLoading || isNearLoading)"
             :key="school"
             :school="school"
-            :highlight-nearest="highlightNearest && index === 0"
           />
         </template>
 
@@ -47,7 +46,7 @@
 
         <school-card-skeleton v-if="isPaginationLoading" />
         <div
-          v-if="!isInitialLoading && schoolList?.length == 0"
+          v-if="!(isInitialLoading || isNearLoading) && schoolList?.length == 0"
           class="not-found-div"
         >
           Opps! no data found
@@ -66,6 +65,10 @@ const props = defineProps({
     required: true,
   },
   isInitialLoading: {
+    type: Boolean,
+    required: true,
+  },
+  isNearLoading: {
     type: Boolean,
     required: true,
   },
@@ -88,10 +91,6 @@ const props = defineProps({
   pageNumberForLoadPreviousData: {
     type: Number,
     required: true,
-  },
-  highlightNearest: {
-    type: Boolean,
-    default: false,
   },
 })
 
@@ -122,6 +121,7 @@ const handleScrollListener = () => {
   if (
     isDivInView
     && !props.isInitialLoading
+    && !props.isNearLoading
     && !props.isPaginationLoading
     && !props.isAllDataLoaded
   ) {

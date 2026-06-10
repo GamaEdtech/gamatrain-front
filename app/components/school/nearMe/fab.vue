@@ -3,8 +3,7 @@
     v-if="isMapMode"
     icon
     class="near-me-button position-absolute"
-    :loading="isLoading || dataLoading"
-    :disabled="isLoading"
+    :loading="loading"
     @click="emit('updateFilter')"
   >
     <SchoolNearMeLocationIcon size="27" />
@@ -12,32 +11,28 @@
 </template>
 
 <script setup lang="ts">
-interface Props {
+interface IFab {
   isMapMode?: boolean
-  dataLoading?: boolean
+  loading?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<IFab>(), {
   isMapMode: false,
-  dataLoading: false,
+  loading: false,
 })
 
 const emit = defineEmits<{
   updateFilter: []
 }>()
-
-const { isLoading } = useCurrentLocation()
 </script>
 
-<style scoped lang="scss">
-@import '../../../assets/scss/mixin.scss';
-
+<style scoped>
 .near-me-button {
     z-index: 401;
     right: 20px;
     bottom: 150px;
 
-    @include main-size-xl {
+    @media (min-width: 1280px) {
         right: 40px;
         bottom: 50px;
     }

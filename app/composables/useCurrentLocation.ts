@@ -17,7 +17,7 @@ type UseCurrentLocationReturn = {
   error: Ref<string | null>
   isLoading: Ref<boolean>
   isCooldownActive: Ref<boolean>
-  fetchLocation: () => void
+  fetchLocation: () => Promise<UserLocation>
 }
 
 export const useCurrentLocation = (): UseCurrentLocationReturn => {
@@ -80,7 +80,7 @@ export const useCurrentLocation = (): UseCurrentLocationReturn => {
     }, LOCATION_REQUEST_COOLDOWN_MS)
   }
 
-  const fetchLocation = (): void => {
+  const fetchLocation = (): Promise<UserLocation> => {
     /**
      * Prevent:
      * - repeated clicks
@@ -88,7 +88,9 @@ export const useCurrentLocation = (): UseCurrentLocationReturn => {
      * - requests during cooldown
      */
     if (isLoading.value || isCooldownActive.value) {
-      return
+      return Promise.reject(
+        new Error('Request already in progress or cooldown active'),
+      )
     }
 
     /**
@@ -96,32 +98,37 @@ export const useCurrentLocation = (): UseCurrentLocationReturn => {
      */
     if (!('geolocation' in navigator)) {
       handleLocationError()
-
-      return
+      return Promise.reject(
+        new Error(GEOLOCATION_ERRORS.UNSUPPORTED_BROWSER.message),
+      )
     }
 
     error.value = null
     isLoading.value = true
-
     startCooldown()
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        location.value = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        }
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const loc = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          }
 
-        error.value = null
-        isLoading.value = false
-      },
+          location.value = loc
+          isLoading.value = false
 
-      (geoError) => {
-        handleLocationError(geoError)
-      },
+          resolve(loc)
+        },
 
-      GEOLOCATION_OPTIONS,
-    )
+        (geoError) => {
+          handleLocationError(geoError)
+          reject(geoError)
+        },
+
+        GEOLOCATION_OPTIONS,
+      )
+    })
   }
 
   onUnmounted(() => {
