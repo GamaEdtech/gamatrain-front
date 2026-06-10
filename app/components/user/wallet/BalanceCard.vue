@@ -73,7 +73,7 @@
       <!-- Temporarily disable this area. To enable it again, add this event to the div -->
       <!-- @click="showWithdrawModal = true" -->
       <div
-        class="d-flex flex-column align-center justify-center ga-1 cursor-pointer"
+        class="d-flex flex-column align-center justify-center ga-1 opacity-60"
       >
         <v-icon
           color="grey400"

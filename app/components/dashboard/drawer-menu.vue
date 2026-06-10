@@ -337,13 +337,13 @@ const items = [
     value: 'financial',
     subMenuList: [
       { title: 'Wallet', link: '/user/wallet', icon: 'md:shopping_cart' },
-      {
-        title: 'Top Up Wallet',
-        link: '/user/charge-wallet',
-        icon: 'md:groups',
-        status: true,
-      },
-      { title: 'Payments', link: '/user/payments', icon: 'md:shopping_bag', status: true },
+      // {
+      //   title: 'Top Up Wallet',
+      //   link: '/user/charge-wallet',
+      //   icon: 'md:groups',
+      //   status: true,
+      // },
+      // { title: 'Payments', link: '/user/payments', icon: 'md:shopping_bag', status: true },
       {
         title: 'Sell Report',
         link: '/user/sell-report',
