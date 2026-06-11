@@ -206,7 +206,7 @@ export const useBlog = () => {
       }
       formData.append('PublishDate', publishDate)
       formData.append('Slug', blog.slug)
-      formData.append('Draft', blog.draft ? 'true' : 'false')
+      formData.append('Draft', blog.draft)
 
       blog.tags.forEach((tagId) => {
         formData.append('Tags[]', tagId.toString())

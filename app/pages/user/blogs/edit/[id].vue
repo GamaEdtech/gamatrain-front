@@ -469,7 +469,7 @@ const mapToCreateBlogDTO = () => {
     scheduledDate: blog.value.scheduledDate || undefined,
     keywords: blog.value.keywords,
     tags: blog.value.categories,
-    draft: blog.value.status === 'Drafted' ? true : false,
+    draft: blog.value.status === 'Drafted' ? 'true' : 'false',
 
     localizedValues: translations.value.map(t => ({
       languageId: Number(t.languageId),
@@ -530,7 +530,7 @@ onMounted(async () => {
       image: data.imageUri,
       podcast: data.podcastUri,
     }
-    translations.value = data.localizedValues.map(item => ({
+    translations.value = data.localizedValues?.map(item => ({
       languageId: item.languageId,
       title: item.title,
       summary: item.summary,
