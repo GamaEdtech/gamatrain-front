@@ -29,6 +29,7 @@ You can run the project in two different ways:
 
 1. **Without Docker (Simple Local Setup)**
 2. **With Docker (Development & Production)**
+3. **[MagicRills](https://magicrills.com) – 🎓 **110+ FREE AI tools for educators** | Lesson planner | Quiz generator | Urdu worksheets | ECCE activities | Kids games | School admin tools | No signup, no credit card required.
 
 ---
 
