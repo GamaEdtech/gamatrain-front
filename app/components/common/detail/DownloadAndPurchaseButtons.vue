@@ -316,7 +316,7 @@ const handleDownloadClick = async (type: TypeFile, extraId?: string) => {
       }
 
       pendingDownload.value = { type, extraId }
-      if ((Number(balanceResult.data) / 10 ** 6) > 5) {
+      if (Number(balanceResult.data) > 5) {
         handleCoinPaymentConfirm()
         startDownload(type, extraId)
       }
