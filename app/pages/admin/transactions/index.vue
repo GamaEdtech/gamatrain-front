@@ -116,7 +116,7 @@
           <div
             class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
           >
-            {{ $dayjs(item.creationDate).format("DD/MM/YYYY") }}
+            {{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm") }}
           </div>
         </template>
 
