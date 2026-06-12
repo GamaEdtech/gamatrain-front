@@ -209,7 +209,7 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
         params.test_type = route.query.test_type
       }
 
-      return useApiService.get('/api/v1/search', params)
+      return useApiService.get('/api/v1/search', params, { public: true })
     }
   },
 )

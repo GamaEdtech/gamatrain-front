@@ -138,7 +138,7 @@ const fetchCategoryCounts = async () => {
     params.append('type', 'test')
     params.append('page', '1')
     const requestUrl = `/api/v1/search?${params.toString()}`
-    const response = await useApiService.get<ApiResult<SearchTypesStatsDTO>>(requestUrl)
+    const response = await useApiService.get<ApiResult<SearchTypesStatsDTO>>(requestUrl, undefined, { public: true })
     if (
       response
       && response.status === 1
