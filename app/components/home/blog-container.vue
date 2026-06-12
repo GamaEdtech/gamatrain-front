@@ -76,7 +76,8 @@ const loadBlog = async () => {
   try {
     const response = await useApiService.get<ApiResult<ResponseListDTO<BlogDTO>>>('/api/v2/blogs/posts/random', {
       Size: 10,
-    })
+    },
+    { public: true })
     if (response.data && response.succeeded) {
       slideItems.value = response.data.list
     }
