@@ -226,7 +226,12 @@ const requestURL = ref(useRequestURL().host)
 const blogContentRef = ref(null)
 const { data: contentData, error } = await useAsyncData(
   `blog-${blogId}`,
-  () => useApiService.get(`/api/v2/blogs/posts/${blogId}`),
+  () => useApiService.get(`/api/v2/blogs/posts/${blogId}`,
+    undefined,
+    {
+      public: true,
+    },
+  ),
   {
     transform: response => response.data,
   },
