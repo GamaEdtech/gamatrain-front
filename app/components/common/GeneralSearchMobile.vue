@@ -312,7 +312,7 @@ const search = async () => {
 
       const response = await useApiService.get(selectedCategory.value.api, {
         ...params,
-      })
+      }, { public: true })
       if (response.data && response.data.list) {
         searchResults.value = [...searchResults.value, ...response.data.list]
         if (selectedCategory.value.isOldApi) {
