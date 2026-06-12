@@ -212,7 +212,7 @@ const fetchGradeList = async () => {
     gradeLoader.value = true
     const params = { type: 'base' }
     params.section_id = selectedBoard.value.code
-    const response = await useApiService.get(`/api/v1/types/list`, params)
+    const response = await useApiService.get(`/api/v1/types/list`, params, { public: true })
 
     gradeList.value = [
       { id: null, title: 'All', master_: null, list_order: '0', parent: null },
@@ -242,7 +242,7 @@ const fetchCategoryCounts = async () => {
     params.append('section', selectedBoard.value.code)
     params.append('base', selectedGrade.value)
     const requestUrl = `/api/v1/search?${params.toString()}`
-    const response = await useApiService.get(requestUrl)
+    const response = await useApiService.get(requestUrl, undefined, { public: true })
     if (
       response
       && response.status === 1

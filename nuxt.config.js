@@ -242,6 +242,8 @@ export default defineNuxtConfig({
     '/user/**': { ssr: false },
     '/admin/**': { ssr: false },
     '/payments/**': { ssr: false },
+    '/': { isr: 3600 },
+    '/blog/**': { isr: 3600 },
   },
   // Development server configuration
   devServer: {
