@@ -9,7 +9,7 @@ export default defineNuxtConfig({
     serverApiKey: process.env.SERVER_API_KEY, // Main Endpoint security
     ApiSecret: process.env.API_SECRET, // nuxt server side
     telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
-    telegrtraamGroupChatId: process.env.TELEGRAM_GROUP_ID,
+    telegramGroupChatId: process.env.TELEGRAM_GROUP_ID,
     telegramChannelId: process.env.TELEGRAM_CHANNEL_ID,
     telegramApiSecret: process.env.TELEGRAM_API_SECRET,
     connectionStringMongoDB: process.env.CONNECTION_STRING_MONGODB,
@@ -242,8 +242,6 @@ export default defineNuxtConfig({
     '/user/**': { ssr: false },
     '/admin/**': { ssr: false },
     '/payments/**': { ssr: false },
-    // '/blog/**': { isr: 3600 },
-    // '/paper/**': { isr: 3600 },
   },
   // Development server configuration
   devServer: {
