@@ -188,14 +188,13 @@ interface BreadCrumb {
   disabled: boolean
   href: string
 }
-interface SchemaNode {
-  [key: string]: string | object
-}
 
 const { $dayjs, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 const { mdAndUp } = useDisplay()
 const route = useRoute()
 const router = useRouter()
+
+const { buildSchema } = useSeoSchema()
 
 const breads = ref<BreadCrumb[]>([])
 const openCrashReport = ref(false)
@@ -312,26 +311,26 @@ onMounted(() => {
 })
 
 const requestURL = ref(useRequestURL().host)
-const stripHtmlTags = (input: string, length = 1200) => {
-  if (!input) return ''
+// const stripHtmlTags = (input: string, length = 1200) => {
+//   if (!input) return ''
 
-  const sliced = input.slice(0, length)
+//   const sliced = input.slice(0, length)
 
-  const lastClosingTag = sliced.lastIndexOf('>')
+//   const lastClosingTag = sliced.lastIndexOf('>')
 
-  const safeSlice
-    = lastClosingTag !== -1 ? sliced.slice(0, lastClosingTag + 1) : sliced
+//   const safeSlice
+//     = lastClosingTag !== -1 ? sliced.slice(0, lastClosingTag + 1) : sliced
 
-  const text = safeSlice
-    .replace(/<!--[\s\S]*?-->/g, '') // remove comments
-    .replace(/<\/?[^>]+(>|$)/g, '') // remove tags
-    .replace(/&#\d+;/g, '') // remove emojies and icons
-    .replace(/&[a-zA-Z]+;/g, '') // remove entity like &nbsp;
-    .replace(/\s+/g, ' ') // add spaces for better result
-    .trim()
+//   const text = safeSlice
+//     .replace(/<!--[\s\S]*?-->/g, '') // remove comments
+//     .replace(/<\/?[^>]+(>|$)/g, '') // remove tags
+//     .replace(/&#\d+;/g, '') // remove emojies and icons
+//     .replace(/&[a-zA-Z]+;/g, '') // remove entity like &nbsp;
+//     .replace(/\s+/g, ' ') // add spaces for better result
+//     .trim()
 
-  return text + '...'
-}
+//   return text + '...'
+// }
 
 defineOgImageComponent('TutorialDetail', {
   title: contentData.value?.title,
@@ -339,72 +338,26 @@ defineOgImageComponent('TutorialDetail', {
   up_date: contentData.value?.up_date,
 })
 
-const organizationSchema = {
-  '@type': 'Organization',
-  '@id': 'https://gamatrain.com/#organization',
-  name: 'GamaTrain',
-  url: 'https://gamatrain.com',
-  logo: {
-    '@type': 'ImageObject',
-    url: 'https://gamatrain.com/android-chrome-512x512-light.png',
-  },
-}
-const breadcrumbSchema = computed(() => {
-  if (!breads.value.length) return null
-
-  return {
-    '@type': 'BreadcrumbList',
-    'itemListElement': breads.value.map((item, index) => ({
-      '@type': 'ListItem',
-      'position': index + 1,
-      'name': item.text,
-      'item': `https://${requestURL.value}${item.href}`,
-    })),
-  }
-})
-const articleSchema = computed(() => {
+const schema = computed(() => {
   if (!contentData.value) return null
 
-  const {id, title_url, up_date, lesson_pic } = contentData.value
-  const pageUrl = `https://${requestURL.value}/tutorial/${id}/${title_url}`
+  const dto = contentData.value
 
-  const image = lesson_pic || 'https://gamatrain.com/android-chrome-512x512-light.png'
+  const url = `https://${requestURL.value}/tutorial/${dto.id}/${dto.title_url}`
 
-  return {
-    '@type': 'Article',
-    '@id': `${pageUrl}#article`,
-    'headline': pageTitle.value,
-    'description': pageDescribe.value,
-    'image': [image],
-    'mainEntityOfPage': {
-      '@type': 'WebPage',
-      '@id': `${pageUrl}`,
-    },
-    'publisher': {
-      '@type': 'Organization',
-      '@id': 'https://gamatrain.com/#organization',
-    },
-    'dateModified': new Date(up_date).toISOString(),
-    'datePublished': new Date(up_date).toISOString(),
-  }
+  const title = pageTitle.value
+  const description = pageDescribe.value
+
+  return buildSchema({
+    dto,
+    url,
+    title,
+    description,
+    breadcrumbs: breads.value,
+    types: ['article', 'breadcrumb'],
+  })
 })
-const fullSchema = computed(() => {
-  if (!articleSchema.value) return null
 
-  const graph: SchemaNode [] = [
-    organizationSchema,
-    articleSchema.value,
-  ]
-
-  if (breadcrumbSchema.value) {
-    graph.push(breadcrumbSchema.value)
-  }
-
-  return {
-    '@context': 'https://schema.org',
-    '@graph': graph,
-  }
-})
 const setMetaData = () => {
   if (!contentData.value) return
 
@@ -421,11 +374,11 @@ const setMetaData = () => {
 
   pageTitle.value = baseTitle
 
-  pageDescribe.value = `Learn ${ dto.title } with step-by-step explanations and examples from the ${ dto.base_title } ${ dto.section_title } curriculum.`
+  pageDescribe.value = `Learn ${dto.title} with step-by-step explanations and examples from the ${dto.base_title} ${dto.section_title} curriculum.`
 
-  const ogImage =
-    dto.lesson_pic ||
-    'https://gamatrain.com/android-chrome-512x512-light.png'
+  const ogImage
+    = dto.lesson_pic
+      || 'https://gamatrain.com/android-chrome-512x512-light.png'
 
   useHead({
     title: `${pageTitle.value}`,
@@ -462,7 +415,7 @@ const setMetaData = () => {
           `${dto.title} simple guide`,
           `${dto.title} cheatsheet`,
           `${dto.title} definition`,
-        ].join(', ')
+        ].join(', '),
       },
       {
         property: 'og:image',
@@ -495,7 +448,7 @@ const setMetaData = () => {
       {
         key: 'json-ld-schema',
         type: 'application/ld+json',
-        innerHTML: JSON.stringify(fullSchema.value),
+        innerHTML: JSON.stringify(schema.value),
       },
     ],
   })
