@@ -74,7 +74,7 @@ const getRelatedContent = async () => {
     const response = await useApiService.get('/api/v1/recommendations/related', {
       source: props.source,
       request: props.request,
-      id: relatedId },
+      id: relatedId }, { public: true },
     )
     const arrays = response.data
     for (const key in arrays) {

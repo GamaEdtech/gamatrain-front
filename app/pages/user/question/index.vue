@@ -401,7 +401,7 @@ const getTypeList = (type, parent = '') => {
   if (type === 'lesson') params.base_id = parent
 
   useApiService
-    .get('/api/v1/types/list', params)
+    .get('/api/v1/types/list', params, { public: true })
     .then((response) => {
       if (type === 'section') {
         level_list.value = response.data

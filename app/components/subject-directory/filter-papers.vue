@@ -308,7 +308,7 @@ const fetchSubject = async () => {
   try {
     isLoadingSubjects.value = true
     const responseSubject = await useApiService.get(
-      `/api/v1/types/list/?type=lesson&base_id=${selectedGrade.value.id}`,
+      `/api/v1/types/list/?type=lesson&base_id=${selectedGrade.value.id}`, undefined, { public: true },
     )
     if (responseSubject.data) {
       subjects.value = responseSubject.data

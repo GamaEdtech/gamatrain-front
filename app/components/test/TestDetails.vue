@@ -392,7 +392,6 @@ const loadNextTest = async () => {
       `/api/v1/examTests/random?lesson=${props.contentData.lesson}&topic=${props.contentData.topic}`,
       undefined,
       {
-        proxy: true,
         public: true,
       },
     )

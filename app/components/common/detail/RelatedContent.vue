@@ -185,7 +185,6 @@ const getRelatedContent = async () => {
       '/api/v1/recommendations/related',
       params,
       {
-        proxy: true,
         public: true,
       },
     )
