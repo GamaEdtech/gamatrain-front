@@ -9,20 +9,24 @@ export interface ProAccess {
 }
 
 export interface TutorialDTO {
-  base: string
-  content: string
-  course: string
-  id: string
-  lesson: string
-  proAccess: ProAccess
-  section: string
-  status: string
-  title: string
-  title_url: string
-  topic: string
-  up_date: string
-  update_jalali: string
-  views: string
+  base: string;
+  content: string;
+  course: string;
+  id: string;
+  lesson: string;
+  proAccess: ProAccess;
+  section: string;
+  status: string;
+  title: string;
+  title_url: string;
+  topic: string;
+  up_date: string;
+  update_jalali: string;
+  views: string;
+  lesson_pic?: string;
+  base_title: string;
+  section_title: string;
+  lesson_title: string;
 }
 
 export interface ChapterDTO {

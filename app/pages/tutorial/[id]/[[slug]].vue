@@ -188,6 +188,9 @@ interface BreadCrumb {
   disabled: boolean
   href: string
 }
+interface SchemaNode {
+  [key: string]: string | object
+}
 
 const { $dayjs, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 const { mdAndUp } = useDisplay()
@@ -197,6 +200,8 @@ const router = useRouter()
 const breads = ref<BreadCrumb[]>([])
 const openCrashReport = ref(false)
 const openShare = ref(false)
+const pageDescribe = ref('')
+const pageTitle = ref('')
 const isAdsLoad = ref(false)
 const bookContentRef = ref<HTMLElement | null>(null)
 const showLessonTree = ref(false)
@@ -254,20 +259,20 @@ const initBreadCrumb = () => {
   })
   breads.value.push(
     {
-      // text: contentData.value.section_title,
-      text: 'ُSection title',
+      text: contentData.value.section_title,
+      // text: 'ُSection title',
       disabled: false,
       href: `/search?type=dars&section=${contentData.value.section}`,
     },
     {
-      // text: contentData.value.base_title,
-      text: 'Base title',
+      text: contentData.value.base_title,
+      // text: 'Base title',
       disabled: false,
       href: `/search?type=dars&section=${contentData.value.section}&base=${contentData.value.base}`,
     },
     {
-      // text: contentData.value.lesson_title,
-      text: 'Lesson title',
+      text: contentData.value.lesson_title,
+      // text: 'Lesson title',
       disabled: false,
       href: `/search?type=dars&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
     },
@@ -333,50 +338,172 @@ defineOgImageComponent('TutorialDetail', {
   views: contentData.value?.views,
   up_date: contentData.value?.up_date,
 })
-useHead({
-  title: `${contentData.value?.title}`,
-  meta: [
-    {
-      name: 'apple-mobile-web-app-title',
-      content: contentData.value?.title || '',
-    },
-    {
-      name: 'og:title',
-      content: contentData.value?.title || '',
-    },
-    {
-      name: 'og:site_name',
-      content: 'GamaTrain',
-    },
-    {
-      name: 'description',
-      content: stripHtmlTags(contentData.value?.content || ''),
-    },
-    {
-      name: 'og:description',
-      content: stripHtmlTags(contentData.value?.content || ''),
-    },
-    {
-      name: 'keywords',
-      content: [
-        `${contentData.value?.title} study guide`,
-        `${contentData.value?.title} easy tutorial`,
-        `${contentData.value?.title} tutorial`,
-        `${contentData.value?.title} for students`,
-        `${contentData.value?.title} note`,
-        `${contentData.value?.title} revision note`,
-        `${contentData.value?.title} simple guide`,
-        `${contentData.value?.title} cheatsheet`,
-        `${contentData.value?.title} definition`,
-      ].join(', ') },
-  ],
-  link: [
-    {
-      rel: 'canonical',
-      href: `https://${requestURL.value}/tutorial/${contentData.value?.id}/${contentData.value?.title_url}`,
-    },
-  ],
+
+const organizationSchema = {
+  '@type': 'Organization',
+  '@id': 'https://gamatrain.com/#organization',
+  name: 'GamaTrain',
+  url: 'https://gamatrain.com',
+  logo: {
+    '@type': 'ImageObject',
+    url: 'https://gamatrain.com/android-chrome-512x512-light.png',
+  },
+}
+const breadcrumbSchema = computed(() => {
+  if (!breads.value.length) return null
+
+  return {
+    '@type': 'BreadcrumbList',
+    'itemListElement': breads.value.map((item, index) => ({
+      '@type': 'ListItem',
+      'position': index + 1,
+      'name': item.text,
+      'item': `https://${requestURL.value}${item.href}`,
+    })),
+  }
 })
+const articleSchema = computed(() => {
+  if (!contentData.value) return null
+
+  const {id, title_url, up_date, lesson_pic } = contentData.value
+  const pageUrl = `https://${requestURL.value}/tutorial/${id}/${title_url}`
+
+  const image = lesson_pic || 'https://gamatrain.com/android-chrome-512x512-light.png'
+
+  return {
+    '@type': 'Article',
+    '@id': `${pageUrl}#article`,
+    'headline': pageTitle.value,
+    'description': pageDescribe.value,
+    'image': [image],
+    'mainEntityOfPage': {
+      '@type': 'WebPage',
+      '@id': `${pageUrl}`,
+    },
+    'publisher': {
+      '@type': 'Organization',
+      '@id': 'https://gamatrain.com/#organization',
+    },
+    'dateModified': new Date(up_date).toISOString(),
+    'datePublished': new Date(up_date).toISOString(),
+  }
+})
+const fullSchema = computed(() => {
+  if (!articleSchema.value) return null
+
+  const graph: SchemaNode [] = [
+    organizationSchema,
+    articleSchema.value,
+  ]
+
+  if (breadcrumbSchema.value) {
+    graph.push(breadcrumbSchema.value)
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': graph,
+  }
+})
+const setMetaData = () => {
+  if (!contentData.value) return
+
+  const dto: TutorialDTO = contentData.value
+
+  // Build title parts safely from DTO
+  const titleParts = [
+    dto.section_title,
+    dto.base_title,
+    dto.title,
+  ].filter(Boolean)
+
+  const baseTitle = titleParts.join(' ')
+
+  pageTitle.value = baseTitle
+
+  pageDescribe.value = `Learn ${ dto.title } with step-by-step explanations and examples from the ${ dto.base_title } ${ dto.section_title } curriculum.`
+
+  const ogImage =
+    dto.lesson_pic ||
+    'https://gamatrain.com/android-chrome-512x512-light.png'
+
+  useHead({
+    title: `${pageTitle.value}`,
+    meta: [
+      {
+        name: 'apple-mobile-web-app-title',
+        content: pageTitle.value,
+      },
+      {
+        name: 'og:title',
+        content: pageTitle.value,
+      },
+      {
+        name: 'og:site_name',
+        content: 'GamaTrain',
+      },
+      {
+        name: 'description',
+        content: pageDescribe.value,
+      },
+      {
+        name: 'og:description',
+        content: pageDescribe.value,
+      },
+      {
+        name: 'keywords',
+        content: [
+          `${dto.title} study guide`,
+          `${dto.title} easy tutorial`,
+          `${dto.title} tutorial`,
+          `${dto.title} for students`,
+          `${dto.title} note`,
+          `${dto.title} revision note`,
+          `${dto.title} simple guide`,
+          `${dto.title} cheatsheet`,
+          `${dto.title} definition`,
+        ].join(', ')
+      },
+      {
+        property: 'og:image',
+        content: ogImage,
+      },
+      {
+        name: 'twitter:card',
+        content: 'summary_large_image',
+      },
+      {
+        name: 'twitter:title',
+        content: pageTitle.value,
+      },
+      {
+        name: 'twitter:description',
+        content: pageDescribe.value,
+      },
+      {
+        name: 'twitter:image',
+        content: ogImage,
+      },
+    ],
+    link: [
+      {
+        rel: 'canonical',
+        href: `https://${requestURL.value}/tutorial/${dto.id}/${dto.title_url}`,
+      },
+    ],
+    script: [
+      {
+        key: 'json-ld-schema',
+        type: 'application/ld+json',
+        innerHTML: JSON.stringify(fullSchema.value),
+      },
+    ],
+  })
+}
+if (contentData.value) {
+  initBreadCrumb()
+  setMetaData()
+}
 </script>
 
 <style>
