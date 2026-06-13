@@ -707,7 +707,7 @@ const getFilterList = async (params, type) => {
       endpoint = `/api/v2/locations/cities/${filterForm.state}`
     }
 
-    const response = await useApiService.get(endpoint, params)
+    const response = await useApiService.get(endpoint, params, { public: true })
 
     if (type === 'countries') {
       loadingCountry.value = false
