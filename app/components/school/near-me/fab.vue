@@ -6,7 +6,7 @@
     :loading="loading"
     @click="emit('updateFilter')"
   >
-    <SchoolNearMeLocationIcon size="27" />
+    <school-near-me-location-icon size="27" />
   </v-btn>
 </template>
 

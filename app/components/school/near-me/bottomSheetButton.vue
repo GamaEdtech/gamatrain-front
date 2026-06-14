@@ -14,7 +14,7 @@
       @click="handleTrigger"
       @keydown.enter.space.prevent="handleTrigger"
     >
-      <SchoolNearMeLocationIcon size="20" />
+      <school-near-me-location-icon size="20" />
     </v-btn>
 
     <span class="text-grey500 text-no-wrap">
@@ -34,6 +34,11 @@
 // import { watch } from 'vue'
 import { useDisplay } from 'vuetify'
 
+interface IBottomSheetButton {
+  enableReverseGeocoding?: boolean
+  dataLoading?: boolean
+}
+
 const { mdAndDown } = useDisplay()
 
 // interface IReverseGeocodeResponse {
@@ -48,10 +53,7 @@ const { mdAndDown } = useDisplay()
 // const postcode = ref('')
 
 withDefaults(
-  defineProps<{
-    enableReverseGeocoding?: boolean
-    dataLoading?: boolean
-  }>(),
+  defineProps<IBottomSheetButton>(),
   {
     enableReverseGeocoding: false,
     dataLoading: false,

@@ -33,10 +33,18 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  color: { type: String, default: 'currentColor' },
-  size: { type: String, default: 'large' },
-})
+interface ILocationIcon {
+  color?: string
+  size?: string
+}
+
+withDefaults(
+  defineProps<ILocationIcon>(),
+  {
+    color: 'currentColor',
+    size: 'large',
+  },
+)
 </script>
 
 <style scoped>
