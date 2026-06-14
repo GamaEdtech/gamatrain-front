@@ -453,7 +453,7 @@ const { data: initialSchools, pending: _loadingSchoolsServer }
       })
     }
 
-    return useApiService.get('/api/v2/schools', params)
+    return useApiService.get('/api/v2/schools', params, { public: true })
   })
 
 if (initialSchools.value) {
@@ -507,7 +507,7 @@ const getSchoolList = async () => {
       params['sort'] = filterForm.value.sort
     }
 
-    const response = await useApiService.get('/api/v2/schools', params)
+    const response = await useApiService.get('/api/v2/schools', params, { public: true })
     setMetaData(response)
 
     if (response?.data?.list) {
@@ -715,7 +715,7 @@ const fetchAdditionalSchoolDetails = async (schoolId) => {
       showSchoolModal.value = true
     }
 
-    const response = await useApiService.get(`/api/v2/schools/${schoolId}`)
+    const response = await useApiService.get(`/api/v2/schools/${schoolId}`, undefined, { public: true })
     if (response && response?.data) {
       selectedSchool.value = { ...selectedSchool?.value, ...response?.data }
     }

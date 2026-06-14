@@ -151,7 +151,7 @@ const display = useDisplay()
 async function getTags() {
   initialLoading.value = true
   try {
-    const res = await useApiService.get('/api/v2/tags/School')
+    const res = await useApiService.get('/api/v2/tags/School', undefined, { public: true })
     tags.value = res.data.map((tag) => {
       const isSelected
         = props.facilities
