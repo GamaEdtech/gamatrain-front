@@ -444,13 +444,15 @@ const setMetaData = () => {
         href: `https://${requestURL.value}/tutorial/${dto.id}/${dto.title_url}`,
       },
     ],
-    script: [
-      {
-        key: 'json-ld-schema',
-        type: 'application/ld+json',
-        innerHTML: JSON.stringify(schema.value),
-      },
-    ],
+    script: schema.value
+      ? [
+          {
+            key: 'json-ld-schema',
+            type: 'application/ld+json',
+            innerHTML: JSON.stringify(schema.value),
+          },
+        ]
+      : [],
   })
 }
 if (contentData.value) {
