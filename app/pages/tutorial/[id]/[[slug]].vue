@@ -206,7 +206,7 @@ const { data: contentData } = await useAsyncData(
   async () => {
     try {
       const response = (await useApiService.get(
-        `/api/v1/tutorials/${route.params.id}`,
+        `/api/v1/tutorials/${route.params.id}`, undefined, { public: true },
       )) as ApiResult<TutorialDTO>
 
       if (response.status === 1) {
@@ -239,7 +239,7 @@ const { data: lessonTree } = await useAsyncData(
   async () => {
     if (!contentData.value?.lesson) return null
     const response = await useApiService.get(
-      `/api/v1/tutorials/lessonTree/${contentData.value?.lesson}`,
+      `/api/v1/tutorials/lessonTree/${contentData.value?.lesson}`, undefined, { public: true },
     ) as ApiResult<LessonTreeDTO>
     return response.data
   },

@@ -282,7 +282,7 @@ const checkSchoolAvailable = async () => {
       // CityId: locationData.value[2].selected.id,
     }
 
-    const response = await useApiService.get('/api/v2/schools', params)
+    const response = await useApiService.get('/api/v2/schools', params, { public: true })
     const locationStepInfo = {
       name: title.value,
       countryId: locationData.value[0].selected.id,
