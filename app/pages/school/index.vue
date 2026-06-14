@@ -16,10 +16,17 @@
         List view
       </v-btn>
 
+      <school-near-me-fab
+        :is-map-mode="true"
+        :loading="isLoading"
+        @update-filter="setNearMeFilter"
+      />
+
       <Map
+        ref="mapRef"
         :items="newSchoolForMarkersOnMap"
         :use-cluster="true"
-        :enable-user-location="true"
+        :enable-user-location="false"
         @map-moved="changeFilterWithMapMoved"
         @map-move-start="handleMapMoveStart"
         @user-location-found="userLocationFound"
@@ -579,16 +586,23 @@ const changeStatusExpandMap = () => {
   isExpandMapInDesktop.value = !isExpandMapInDesktop.value
   if (isExpandMapInDesktop.value) {
     perPage.value = 200
-    filterForm.value.lat = defaultLatLongDistance.lat
-    filterForm.value.lng = defaultLatLongDistance.lng
-    filterForm.value.distance = defaultLatLongDistance.distance
+    if (!filterForm.value.sort.includes('distance')) {
+      filterForm.value.lat = defaultLatLongDistance.lat
+      filterForm.value.lng = defaultLatLongDistance.lng
+      filterForm.value.distance = defaultLatLongDistance.distance
+    }
     schools.value = []
   }
   else {
     perPage.value = 20
+
     filterForm.value.lat = null
     filterForm.value.lng = null
     filterForm.value.distance = null
+    const index = filterForm.value.sort.indexOf('distance')
+    if (index !== -1) {
+      filterForm.value.sort.splice(index, 1)
+    }
   }
   resetParameter()
   updateQueryParams()
@@ -763,6 +777,21 @@ const handleSchoolMarkerClickError = (errorData) => {
   }
 }
 // End School Modal Management
+
+const mapRef = ref()
+const { location,
+  isLoading,
+  fetchLocation } = useCurrentLocation()
+
+const setNearMeFilter = async () => {
+  await fetchLocation()
+  if (location) {
+    if (!filterForm.value.sort.includes('distance')) {
+      filterForm.value.sort.push('distance')
+    }
+    mapRef.value.setView(location.value.lat, location.value.lng, 6)
+  }
+}
 </script>
 
 <style scoped>

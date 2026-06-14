@@ -386,10 +386,10 @@
 
               <v-chip
                 v-if="
-                  filterForm.lat
-                    && filterForm.lng
-                    && filterForm.distance
-                    && filterForm.sort.includes('distance')
+                  route.query.lat
+                    && route.query.lng
+                    && route.query.distance
+                    && route.query.sort.includes('distance')
                 "
                 class="text-h4 pa-3"
                 size="large"
@@ -601,10 +601,10 @@
 
         <v-chip
           v-if="
-            filterForm.lat
-              && filterForm.lng
-              && filterForm.distance
-              && filterForm.sort.includes('distance')
+            route.query.lat
+              && route.query.lng
+              && route.query.distance
+              && route.query.sort.includes('distance')
           "
           class="text-h4 pa-3"
           size="large"
