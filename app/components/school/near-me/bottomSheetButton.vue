@@ -17,10 +17,10 @@
       <SchoolNearMeLocationIcon size="20" />
     </v-btn>
 
-    <div class="text-grey500">
+    <span class="text-grey500 text-no-wrap">
       Near me
       <!-- <sp-grey7>My Location: </sp-grey7> -->
-    </div>
+    </span>
     <!-- <p class="text-grey700">
       <span>{{ country || 'Country' }}</span> - <span>{{ postcode || 'zip code' }}</span>
     </p> -->
