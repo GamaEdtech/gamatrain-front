@@ -70,7 +70,7 @@ const {
   throw createError({ statusCode: 404, statusMessage: 'Page not found' })
 })
 
-function stripHtmlTags(html: string, length?: number) {
+const stripHtmlTags = (html: string, length?: number) => {
   const text = html
     .replace(/<[^>]*>/g, '') // remove HTML
     .replace(/\$/g, '') // remove $ (LaTeX delimiters)
