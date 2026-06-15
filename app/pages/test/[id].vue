@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import type {ApiResult, QuestionDTO } from '@/types'
+import type { ApiResult, QuestionDTO } from '@/types'
 
 const { $cleanSubject } = useNuxtApp()
 const pageDescribe = ref('')
@@ -63,7 +63,7 @@ const {
   const res = await useApiService.get(`/api/v1/examTests/${route.params.id}`,
     { full: true },
   ) as ApiResult<QuestionDTO>
-  
+
   if (res.status === 1) {
     return res.data
   }
@@ -72,8 +72,8 @@ const {
 
 function stripHtmlTags(html: string, length?: number) {
   const text = html
-    .replace(/<[^>]*>/g, '')   // remove HTML
-    .replace(/\$/g, '')        // remove $ (LaTeX delimiters)
+    .replace(/<[^>]*>/g, '') // remove HTML
+    .replace(/\$/g, '') // remove $ (LaTeX delimiters)
     .trim()
 
   if (!length) return text
@@ -119,10 +119,10 @@ const setMetaData = () => {
 
   const dto: QuestionDTO = contentData.value
 
-  const questionText = stripHtmlTags(dto.question, 30)  
+  const questionText = stripHtmlTags(dto.question, 30)
 
-  pageTitle.value =
-    `${questionText} | ${$cleanSubject(dto.lesson_title)} Quiz`
+  pageTitle.value
+    = `${questionText} | ${$cleanSubject(dto.lesson_title)} Quiz`
 
   pageDescribe.value = stripHtmlTags(dto.question, 300)
 
@@ -183,12 +183,12 @@ const setMetaData = () => {
     ],
     script: schema.value
       ? [
-        {
-          key: 'json-ld-schema',
-          type: 'application/ld+json',
-          innerHTML: JSON.stringify(schema.value),
-        },
-      ]
+          {
+            key: 'json-ld-schema',
+            type: 'application/ld+json',
+            innerHTML: JSON.stringify(schema.value),
+          },
+        ]
       : [],
   })
 }
