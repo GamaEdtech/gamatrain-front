@@ -84,7 +84,7 @@ export function useSeoSchema() {
 
       'mainEntityOfPage': {
         '@type': 'WebPage',
-        '@id': ctx.url,
+        '@id': `${ctx.url}`,
       },
 
       'publisher': {
@@ -127,7 +127,12 @@ export function useSeoSchema() {
 
       'mainEntityOfPage': {
         '@type': 'WebPage',
-        '@id': `${ctx.url}#webpage`,
+        '@id': `${ctx.url}`,
+      },
+
+      'publisher': {
+        '@type': 'Organization',
+        '@id': `${SITE_URL}/#organization`,
       },
     }
   }
@@ -156,13 +161,68 @@ export function useSeoSchema() {
 
   /**
    * ---------------------------
+   * Quiz Schema
+   * ---------------------------
+   */
+  const createQuizSchema = (dto: unknown, ctx: SchemaContext) => {
+    const data = dto as Record<string, unknown>
+
+    const question = data.question
+    if (typeof question !== 'string') {
+      return null
+    }
+
+    const answers = [data.answer_a, data.answer_b, data.answer_c, data.answer_d]
+      .filter((a): a is string => typeof a === 'string' && a.length > 0)
+      .map((text, index) => ({
+        '@type': 'Answer',
+        'position': index + 1,
+        'encodingFormat': 'text/html',
+        text,
+      }))
+
+    const correctIndex = Number(data.true_answer) - 1
+    const acceptedAnswer = answers[correctIndex]
+
+    return {
+      '@type': 'Quiz',
+      '@id': `${ctx.url}#quiz`,
+      'inLanguage': ctx.lang || 'en',
+      'learningResourceType': 'Assessment',
+
+      'mainEntityOfPage': {
+        '@type': 'WebPage',
+        '@id': `${ctx.url}`,
+      },
+
+      'publisher': {
+        '@type': 'Organization',
+        '@id': `${SITE_URL}/#organization`,
+      },
+
+      'hasPart': {
+        '@type': 'Question',
+        'eduQuestionType': 'Multiple choice',
+        'learningResourceType': 'Practice Problem',
+        'encodingFormat': 'text/html',
+
+        'image': typeof data.q_file === 'string' ? data.q_file : undefined,
+        'text': question,
+        'suggestedAnswer': answers,
+        acceptedAnswer,
+      },
+    }
+  }
+
+  /**
+   * ---------------------------
    * SAFE GRAPH BUILDER
    * ---------------------------
    */
   const buildGraph = (...schemas: SchemaNode[]) => {
     return {
       '@context': 'https://schema.org',
-      '@graph': schemas.filter(Boolean),
+      '@graph': schemas.filter((s): s is Record<string, unknown> => Boolean(s)),
     }
   }
 
@@ -177,7 +237,7 @@ export function useSeoSchema() {
     title: string
     description: string
     breadcrumbs?: BreadCrumb[]
-    types: Array<'article' | 'webpage' | 'learning' | 'breadcrumb'>
+    types: Array<'article' | 'webpage' | 'learning' | 'breadcrumb' | 'quiz'>
   }) => {
     const ctx: SchemaContext<TDto> = {
       dto: options.dto,
@@ -202,6 +262,10 @@ export function useSeoSchema() {
 
     if (options.types.includes('breadcrumb')) {
       schemas.push(createBreadcrumbSchema(options.breadcrumbs, options.url))
+    }
+
+    if (options.types.includes('quiz')) {
+      schemas.push(createQuizSchema(options.dto, ctx))
     }
 
     return buildGraph(...schemas)
