@@ -97,6 +97,7 @@ export const useSchool = () => {
       >(
         '/api/v2/schools',
         query,
+        { public: true },
       )
 
       if (response.data && response.data.list && response.data.list.length > 0) {

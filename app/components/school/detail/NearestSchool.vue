@@ -92,7 +92,7 @@ const getSchool = async () => {
         'Location.Longitude': props.lng,
       }
 
-      const response = await useApiService.get<ApiResult<ResponseListDTO<SchoolListDTO>>>('/api/v2/schools', params)
+      const response = await useApiService.get<ApiResult<ResponseListDTO<SchoolListDTO>>>('/api/v2/schools', params, { public: true })
       if (response.succeeded && response.data && response.data.list.length > 0) {
         const id = Number(route.params.id)
         schools.value = response.data.list.filter(school => school.id != id)

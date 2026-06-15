@@ -38,12 +38,8 @@
       v-else
       class="d-flex align-end position-relative my-3"
     >
-      <span class="text-h6 font-weight-semibold text-primary mr-1">$GET</span>
-      <span class="text-h3 font-weight-bold text-white">{{ $numberFormat((Math.floor(balance) / 1_000_000)).split('.')[0] }}</span>
-      <span
-        v-if="(Math.floor(balance) / 1_000_000).toString().split('.')[1]"
-        class="text-h5 font-weight-semibold text-white"
-      >.{{ (Math.floor(balance) / 1_000_000).toString().split('.')[1] }}</span>
+      <span class="text-h6 font-weight-semibold text-primary mr-1">¢</span>
+      <span class="text-h3 font-weight-bold text-white">{{ $numberFormat((Math.floor(balance))) }}</span>
       <img
         class="sign-wallet-amount position-absolute"
         src="@/assets/images/wallet/wallet-amount.png"
@@ -73,7 +69,7 @@
       <!-- Temporarily disable this area. To enable it again, add this event to the div -->
       <!-- @click="showWithdrawModal = true" -->
       <div
-        class="d-flex flex-column align-center justify-center ga-1 cursor-pointer"
+        class="d-flex flex-column align-center justify-center ga-1 opacity-60"
       >
         <v-icon
           color="grey400"

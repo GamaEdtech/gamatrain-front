@@ -110,7 +110,7 @@
             >
               md:history
             </v-icon>
-            {{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:MM") }}
+            {{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm") }}
           </div>
         </template>
       </v-data-table>

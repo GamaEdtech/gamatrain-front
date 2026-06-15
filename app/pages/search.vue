@@ -15,10 +15,11 @@
             <h1 class="text-h6 text-md-h5 pt-2">
               {{ metadata.title }}
             </h1>
-
-            <CommonDetailSubjectDirectoryNav :content-data="data[0]" />
           </div>
         </CommonFilterList>
+      </div>
+      <div class="w-100 d-flex align-start justify-start px-2 max-width-container">
+        <CommonDetailSubjectDirectoryNav :content-data="data[0]" />
       </div>
 
       <search-list
@@ -208,7 +209,7 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
         params.test_type = route.query.test_type
       }
 
-      return useApiService.get('/api/v1/search', params)
+      return useApiService.get('/api/v1/search', params, { public: true })
     }
   },
 )

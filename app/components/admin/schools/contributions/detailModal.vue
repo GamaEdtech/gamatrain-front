@@ -202,6 +202,23 @@
           bg-color="white"
           class="w-100"
         />
+        <v-btn
+          color="primary"
+          variant="outlined"
+          flat
+          class="text-h5 font-weight-bold"
+          :loading="loadingPolishComment"
+          :disabled="!commentReject.trim() || loadingPolishComment"
+          @click="polishRejectCommentWithAi"
+        >
+          Polish with AI
+          <v-icon
+            color="primary"
+            class="ml-1"
+          >
+            md:cleaning_services
+          </v-icon>
+        </v-btn>
       </div>
     </template>
 
@@ -212,7 +229,7 @@
         variant="outlined"
         height="40"
         class="text-h5 w-50"
-        :disabled="loading"
+        :disabled="loading || !!commentReject.trim()"
         :loading="loadingChangeStatus"
         flat
         @click="approve"
@@ -260,6 +277,7 @@ const schoolDetailData = ref()
 const newDataFormated = ref()
 const oldDataFormated = ref()
 const loadingChangeStatus = ref(false)
+const loadingPolishComment = ref(false)
 const commentReject = ref('')
 
 const newDataFields: FieldConfig<AdminSchoolContributionNewDataDTO>[] = [
@@ -424,6 +442,67 @@ const approve = async () => {
   }
   finally {
     loadingChangeStatus.value = false
+  }
+}
+
+const buildPolishRejectCommentPrompt = () => {
+  return [
+    'You are a professional English writing editor for a school contribution rejection comment.',
+    'Polish the admin comment below.',
+    'Improve grammar, spelling, word choice, clarity, and professional tone.',
+    'Preserve the original meaning and intent exactly.',
+    'Do not add new facts, promises, links, timelines, policies, or technical details.',
+    'Remove or soften any rude, offensive, aggressive, or unprofessional wording while keeping the message clear.',
+    'Return plain text only.',
+    'Do not use Markdown.',
+    'Do not wrap the response in a fenced code block.',
+    '',
+    'Admin comment:',
+    commentReject.value.trim(),
+  ].join('\n')
+}
+
+const normalizeAiPlainTextResponse = (text: string) => {
+  return text
+    .trim()
+    .replace(/^```(?:text|txt)?\s*/i, '')
+    .replace(/\s*```$/i, '')
+    .trim()
+}
+
+const polishRejectCommentWithAi = async () => {
+  if (!commentReject.value.trim())
+    return
+
+  try {
+    loadingPolishComment.value = true
+    const response = await useApiService.post<{
+      response?: string
+    }>(
+      '/api/chatgpt',
+      {
+        userComment: buildPolishRejectCommentPrompt(),
+      },
+    )
+
+    if (response.response) {
+      commentReject.value = normalizeAiPlainTextResponse(response.response)
+      $toast.success('Comment polished successfully!')
+    }
+    else {
+      $toast.error('The operation failed. Please try again later.')
+    }
+  }
+  catch (err: unknown) {
+    const error = err as AppError
+    $toast.error(
+      error.response?.data?.message
+      || error.message
+      || 'The operation failed. Please try again later.',
+    )
+  }
+  finally {
+    loadingPolishComment.value = false
   }
 }
 

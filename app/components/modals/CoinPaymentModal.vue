@@ -37,16 +37,15 @@
         <span class="font-weight-bold text-h4 mt-4">Game On!</span>
       </div>
 
-      <modals-confirm-payment
+      <!-- <modals-confirm-payment
         v-if="amountToPay < userBalance"
         :is-processing="isProcessing"
         :user-balance="userBalance"
         @confirm="confirmPayment"
         @cancel="closeModal"
-      />
+      /> -->
 
       <modals-charge-wallet
-        v-if="amountToPay > userBalance"
         :user-balance="userBalance"
         @charge-wallet-successfull="chargeWalletSuccessfull"
       />
@@ -103,11 +102,11 @@ const clickOnModal = (event) => {
   event.stopPropagation()
 }
 
-const confirmPayment = () => {
-  if (props.userBalance >= props.amountToPay) {
-    emit('confirm')
-  }
-}
+// const confirmPayment = () => {
+//   if (props.userBalance >= props.amountToPay) {
+//     emit('confirm')
+//   }
+// }
 
 const chargeWalletSuccessfull = async () => {
   await fetchBalance()

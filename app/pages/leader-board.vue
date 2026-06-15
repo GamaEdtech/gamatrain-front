@@ -266,7 +266,7 @@ const fetchLeaderBoard = async (query) => {
         SchoolId: query?.school || '',
         RegistrationDateStart: dateQuery.RegistrationDateStart || '',
         RegistrationDateEnd: dateQuery.RegistrationDateEnd || '',
-      },
+      }, { public: true },
     )
 
     list.value = response.data
@@ -459,7 +459,7 @@ const { data: initialData } = await useAsyncData('dataLeaderBoard', () => {
     RegistrationDateStart: dateQuery.RegistrationDateStart || '',
     RegistrationDateEnd: dateQuery.RegistrationDateEnd || '',
   }
-  return useApiService.get('/api/v2/identities/leader-board', params)
+  return useApiService.get('/api/v2/identities/leader-board', params, { public: true })
 })
 
 if (initialData.value && initialData.value.succeeded) {

@@ -226,7 +226,7 @@ const getTags = async () => {
   try {
     isLoadingTag.value = true
     const endpoint = '/api/v2/tags/School'
-    const response = await useApiService.get(endpoint)
+    const response = await useApiService.get(endpoint, undefined, { public: true })
     tags.value = response.data
   }
   catch (err) {

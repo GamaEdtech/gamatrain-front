@@ -410,7 +410,7 @@
               v-model="filterForm.country"
               label="Country"
               :items="filter.countryList"
-              :data-loading="!loadingCountry"
+              :data-loading="loadingCountry"
               @update:model-value="countryChange"
             />
           </div>
@@ -419,7 +419,7 @@
               v-model="filterForm.state"
               label="State"
               :items="filter.stateList"
-              :data-loading="!loadingState"
+              :data-loading="loadingState"
               :disabled="!filterForm.country"
               @update:model-value="stateChange"
             />
@@ -429,7 +429,7 @@
               v-model="filterForm.city"
               label="City"
               :items="filter.cityList"
-              :data-loading="!loadingCity"
+              :data-loading="loadingCity"
               :disabled="!filterForm.state"
               @update:model-value="cityChange"
             />
@@ -630,7 +630,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useClickOutside } from '~/composables/useClickOutside'
 
 import checkboxInput from '~/components/common/checkbox-input.vue'
-import gomboBox from '~/components/common/gombo-box.vue'
+import gomboBox from '~/components/common/gomboBox.vue'
 
 const props = defineProps({
   sortList: {
@@ -776,7 +776,7 @@ const getFilterList = async (params, type) => {
       endpoint = `/api/v2/locations/cities/${filterForm.state}`
     }
 
-    const response = await useApiService.get(endpoint, params)
+    const response = await useApiService.get(endpoint, params, { public: true })
 
     if (type === 'countries') {
       loadingCountry.value = false

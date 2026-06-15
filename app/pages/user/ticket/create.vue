@@ -195,7 +195,7 @@ export default {
       this.$fetch
         .$get('/api/v1/types/list', {
           params,
-        })
+        }, { public: true })
         .then((res) => {
           this.subject_list = res.data
         })

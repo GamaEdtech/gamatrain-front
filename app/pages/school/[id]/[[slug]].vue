@@ -467,7 +467,7 @@ function handleDescriptionUpdate(val) {
 const fetchSchoolData = async () => {
   try {
     const response = await useApiService.get(
-      `/api/v2/schools/${route.params.id}`,
+      `/api/v2/schools/${route.params.id}`, undefined, { public: true },
     )
     if (response.succeeded) {
       return response
@@ -493,7 +493,7 @@ const fetchSchoolData = async () => {
 const fetchRatingData = async () => {
   try {
     const response = await useApiService.get(
-      `/api/v2/schools/${route.params.id}/rate`,
+      `/api/v2/schools/${route.params.id}/rate`, undefined, { public: true },
     )
     return response
   }
@@ -623,7 +623,7 @@ function openAuthDialog(val) {
 
 function loadTourPanorama() {
   useApiService
-    .get(`/api/v2/schools/${route.params.id}/images/Tour360`)
+    .get(`/api/v2/schools/${route.params.id}/images/Tour360`, undefined, { public: true })
     .then((response) => {
       tourPanoramas.value = response.data
       if (tourPanoramas.value.length >= 1) {
@@ -640,7 +640,7 @@ function refreshSchoolData() {}
 
 function loadGalleryImages() {
   useApiService
-    .get(`/api/v2/schools/${route.params.id}/images/SimpleImage`)
+    .get(`/api/v2/schools/${route.params.id}/images/SimpleImage`, undefined, { public: true })
     .then((response) => {
       galleryImages.value = [...response.data].reverse()
     })
@@ -685,7 +685,7 @@ const { data: commentsData, refresh: refreshComments } = await useAsyncData(
   () =>
     useApiService.get(`/api/v2/schools/${route.params.id}/comments`, {
       'PagingDto.PageFilter.Size': 20,
-    }),
+    }, { public: true }),
   {
     server: true,
     lazy: false,

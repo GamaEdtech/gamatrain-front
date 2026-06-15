@@ -523,7 +523,7 @@ const getUserInfo = async () => {
   try {
     userDataLoading.value = true
     const { data } = await useApiService.get<ApiResponse<UserProfileDTO>>(
-      '/api/v2/identities/profiles',
+      '/api/v2/identities/profiles', undefined, { public: true },
     )
     userDataLoading.value = false
     const {
@@ -641,7 +641,7 @@ const getFilterList = async (
     }
     const response = await useApiService.get<
       ApiResponse<SelectOption[] | { list: SelectOption[] }>
-    >(config.endpoint(), params)
+    >(config.endpoint(), params, { public: true })
 
     config.loading.value = false
     if (type === 'school') {

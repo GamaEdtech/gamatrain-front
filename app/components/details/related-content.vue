@@ -280,6 +280,7 @@ export default {
       await useApiService
         .get('/api/v1/search',
           params,
+          { public: true },
         )
         .then((response) => {
           const findIndex = response.data.list.findIndex(

@@ -23,6 +23,10 @@ export interface TutorialDTO {
   up_date: string
   update_jalali: string
   views: string
+  lesson_pic?: string
+  base_title: string
+  section_title: string
+  lesson_title: string
 }
 
 export interface ChapterDTO {

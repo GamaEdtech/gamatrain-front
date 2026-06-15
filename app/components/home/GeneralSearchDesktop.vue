@@ -272,7 +272,7 @@ const search = async () => {
 
       const response = await useApiService.get(selectedCategory.value.api, {
         ...params,
-      })
+      }, { public: true })
       if (response.data && response.data.list) {
         searchResults.value.push(...response.data.list)
 

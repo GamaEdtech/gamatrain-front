@@ -30,7 +30,7 @@
     <!-- <profile-register-content class="box-shadow-div" /> -->
     <!-- <profile-education class="box-shadow-div" /> -->
 
-    <lazy-modals-base
+    <lazy-common-modal-base
       v-model:show-dialog="showBioModal"
       title="Biography"
     >
@@ -39,9 +39,9 @@
         @close="showBioModal = false"
         @success="changeBioSuccessfully"
       />
-    </lazy-modals-base>
+    </lazy-common-modal-base>
 
-    <lazy-modals-base
+    <lazy-common-modal-base
       v-model:show-dialog="showPrivacyModal"
       title="Privacy"
     >
@@ -50,9 +50,9 @@
         @close="showPrivacyModal = false"
         @success="changePrivacySuccessfully"
       />
-    </lazy-modals-base>
+    </lazy-common-modal-base>
 
-    <lazy-modals-base
+    <lazy-common-modal-base
       v-model:show-dialog="showStatusModal"
       title="Status"
     >
@@ -61,9 +61,9 @@
         @close="showStatusModal = false"
         @success="changeCurrentStatusSuccessfully"
       />
-    </lazy-modals-base>
+    </lazy-common-modal-base>
 
-    <lazy-modals-base
+    <lazy-common-modal-base
       v-model:show-dialog="showPersonalModal"
       title="Profile"
     >
@@ -72,9 +72,9 @@
         @close="showPersonalModal = false"
         @success="changePersonalSuccessfully"
       />
-    </lazy-modals-base>
+    </lazy-common-modal-base>
 
-    <lazy-modals-base
+    <lazy-common-modal-base
       v-model:show-dialog="showSkillsModal"
       title="Skill"
     >
@@ -83,9 +83,9 @@
         @close="showSkillsModal = false"
         @success="changeSkillsSuccessfully"
       />
-    </lazy-modals-base>
+    </lazy-common-modal-base>
 
-    <lazy-modals-base
+    <lazy-common-modal-base
       v-model:show-dialog="showExperienceModal"
       title="Experience"
       @update:show-dialog="closeExperienceModal"
@@ -96,9 +96,9 @@
         @success="changeExperienceSuccessfully"
         @edit-success="editExperienceSuccessfully"
       />
-    </lazy-modals-base>
+    </lazy-common-modal-base>
 
-    <lazy-modals-base
+    <lazy-common-modal-base
       v-model:show-dialog="showDeleteExperienceModal"
       title="Delete"
     >
@@ -106,7 +106,7 @@
         :id="selectedExperienceForDelete"
         @success="deleteExperienceSuccessfully"
       />
-    </lazy-modals-base>
+    </lazy-common-modal-base>
   </v-container>
 </template>
 
