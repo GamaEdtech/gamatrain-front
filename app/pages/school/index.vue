@@ -618,12 +618,18 @@ const changeBottomSheetStatus = (value) => {
     filterForm.value.lat = null
     filterForm.value.lng = null
     filterForm.value.distance = null
+    const index = filterForm.value.sort.indexOf('distance')
+    if (index !== -1) {
+      filterForm.value.sort.splice(index, 1)
+    }
   }
   else {
     perPage.value = 200
-    filterForm.value.lat = defaultLatLongDistance.lat
-    filterForm.value.lng = defaultLatLongDistance.lng
-    filterForm.value.distance = defaultLatLongDistance.distance
+    if (!filterForm.value.sort.includes('distance')) {
+      filterForm.value.lat = defaultLatLongDistance.lat
+      filterForm.value.lng = defaultLatLongDistance.lng
+      filterForm.value.distance = defaultLatLongDistance.distance
+    }
   }
   resetParameter()
   updateQueryParams()

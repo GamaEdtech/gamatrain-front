@@ -184,7 +184,10 @@
         </div>
 
         <div class="w-100 d-flex d-lg-none align-center justify-space-between mb-2">
-          <school-near-me-bottom-sheet-button :data-loading="isLoading" />
+          <school-near-me-bottom-sheet-button
+            :data-loading="isLoading"
+            @update-filter="nearMeFilter"
+          />
           <div class="result-div-mobile gama-text-overline">
             Results
             <span
@@ -831,7 +834,16 @@ const updateQueryParams = () => {
   if (filterForm.distance) query.distance = filterForm.distance
   emit('update-filter', query)
 }
-
+const nearMeFilter = async () => {
+  await fetchLocation()
+  if (location) {
+    filterForm.lat = location.value.lat
+    filterForm.lng = location.value.lng
+    filterForm.distance = 5598568
+    filterForm.sort.push('distance')
+    updateQueryParams()
+  }
+}
 const openFilterSection = async (event, filter) => {
   event.stopPropagation()
   if (filter.name == 'Near Me') {
