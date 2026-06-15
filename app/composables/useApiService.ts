@@ -1,3 +1,7 @@
+import type {
+  FetchOptions,
+} from 'ofetch'
+
 export interface SearchParameters {
   [key: string]: string | number | boolean | null | undefined | string[] | number[]
 }
@@ -22,13 +26,7 @@ interface AuthHeaders {
   Authorization?: string
 }
 
-interface _ApiError {
-  status: number
-  message: string
-  data?: unknown
-}
-
-export const useApiService = <T = unknown>(
+const apiRequest = <T = unknown>(
   request: string,
   opts?: UseFetchOptions,
 ): Promise<T> => {
@@ -53,7 +51,7 @@ export const useApiService = <T = unknown>(
   }
   // }
 
-  const fetchOpts = {
+  const fetchOpts: FetchOptions = {
     credentials: 'include',
     onResponse({ request: _request, response: _response, options: _options }) {
       // Process the response data
@@ -83,10 +81,10 @@ export const useApiService = <T = unknown>(
 
   const apiFetch = $fetch.create(fetchOpts)
 
-  return apiFetch<T>(cleanRequest)
+  return apiFetch<T>(cleanRequest) as Promise<T>
 }
 
-export const authHeader = (
+const authHeader = (
   req: string | null = null,
   publicApi: boolean | null = false,
 ): AuthHeaders | undefined => {
@@ -104,44 +102,50 @@ export const authHeader = (
   }
 }
 
-export const get = <T = unknown>(
+const get = <T = unknown>(
   request: string,
   params?: SearchParameters,
   opts?: UseFetchOptions,
 ): Promise<T> => {
-  return useApiService<T>(request, { ...opts, method: 'GET', params: params })
+  return apiRequest<T>(request, { ...opts, method: 'GET', params: params })
 }
 
-export const post = <T = unknown>(
+const post = <T = unknown>(
   request: string,
   params?: SearchParameters | FormData,
   opts?: UseFetchOptions,
 ): Promise<T> => {
-  return useApiService<T>(request, { ...opts, method: 'POST', body: params })
+  return apiRequest<T>(request, { ...opts, method: 'POST', body: params })
 }
 
-export const put = <T = unknown>(
+const put = <T = unknown>(
   request: string,
   params: SearchParameters | FormData,
   opts?: UseFetchOptions,
 ): Promise<T> => {
-  return useApiService<T>(request, { ...opts, method: 'PUT', body: params })
+  return apiRequest<T>(request, { ...opts, method: 'PUT', body: params })
 }
 
-export const patch = <T = unknown>(
+const patch = <T = unknown>(
   request: string,
   params: SearchParameters,
   opts?: UseFetchOptions,
 ): Promise<T> => {
-  return useApiService<T>(request, { ...opts, method: 'PATCH', body: params })
+  return apiRequest<T>(request, { ...opts, method: 'PATCH', body: params })
 }
 
-export const remove = <T = unknown>(
+const remove = <T = unknown>(
   request: string,
   params?: SearchParameters,
   opts?: UseFetchOptions,
 ): Promise<T> => {
-  return useApiService<T>(request, { ...opts, method: 'DELETE' })
+  return apiRequest<T>(request, { ...opts, method: 'DELETE' })
 }
 
-export default { get, post, put, remove, authHeader, patch }
+export const useApiService = {
+  get,
+  post,
+  put,
+  patch,
+  remove,
+}
