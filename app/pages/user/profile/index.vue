@@ -523,7 +523,7 @@ const getUserInfo = async () => {
   try {
     userDataLoading.value = true
     const { data } = await useApiService.get<ApiResponse<UserProfileDTO>>(
-      '/api/v2/identities/profiles', undefined, { public: true },
+      '/api/v2/identities/profiles',
     )
     userDataLoading.value = false
     const {
