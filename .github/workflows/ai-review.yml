@@ -1,7 +1,7 @@
 name: AI Review
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
       - synchronize
@@ -104,6 +104,11 @@ jobs:
             echo "$REVIEW"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
+
+      - name: Debug OpenAI Response
+        run: |
+          echo "======== REVIEW ========"
+          echo '${{ steps.ai_review.outputs.review }}'
 
       - name: Post AI review comment
         uses: marocchino/sticky-pull-request-comment@v2
