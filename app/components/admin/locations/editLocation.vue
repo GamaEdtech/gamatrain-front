@@ -1,6 +1,4 @@
 <script setup>
-import useApiService from '~/composables/useApiService'
-
 const props = defineProps({
   modelValue: Boolean,
   locationType: String,
