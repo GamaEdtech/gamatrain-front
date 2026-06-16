@@ -1,7 +1,6 @@
 <script setup>
 import commentCard from '~/components/admin/schools/comments/commentCard.vue'
 import commentSearch from '~/components/admin/schools/comments/commentSearch.vue'
-import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',
