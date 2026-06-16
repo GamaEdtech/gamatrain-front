@@ -1,0 +1,116 @@
+name: AI Review
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  review:
+    name: AI Pull Request Review
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Get changed files
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api \
+            repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
+            > files.json
+
+      - name: Build review prompt
+        run: |
+          jq '
+            map(
+              select(
+                (.filename | endswith(".ts")) or
+                (.filename | endswith(".js")) or
+                (.filename | endswith(".vue")) or
+                (.filename | endswith(".tsx")) or
+                (.filename | endswith(".jsx"))
+              )
+            )
+          ' files.json > filtered-files.json
+
+          cat <<'EOF' > prompt.txt
+          You are a senior software engineer performing a pull request review.
+
+          Analyze the code changes and provide feedback using the following structure:
+
+          ## Summary
+          Briefly describe the changes.
+
+          ## Potential Issues
+          List possible bugs, risks, edge cases, or maintainability concerns.
+
+          ## Suggestions
+          Provide actionable improvements.
+
+          ## Positive Feedback
+          Mention good practices or well-written code.
+
+          Rules:
+          - Be concise.
+          - Focus on meaningful feedback.
+          - Do not comment on formatting unless it affects readability.
+          - Do not invent issues.
+          - This review is advisory only.
+
+          Pull Request Changes:
+          EOF
+
+          jq -r '.[] |
+            "FILE: \(.filename)\n\n\(.patch // "No diff available")\n\n--------------------------------------\n"
+          ' filtered-files.json >> prompt.txt
+
+      - name: Generate AI review
+        id: ai_review
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          PROMPT=$(jq -Rs . < prompt.txt)
+
+          RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
+            -H "Authorization: Bearer $OPENAI_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"model\": \"gpt-4o\",
+              \"messages\": [
+                {
+                  \"role\": \"system\",
+                  \"content\": \"You are an expert code reviewer.\"
+                },
+                {
+                  \"role\": \"user\",
+                  \"content\": $PROMPT
+                }
+              ],
+              \"max_tokens\": 1000
+            }")
+
+          REVIEW=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+
+          {
+            echo "review<<EOF"
+            echo "$REVIEW"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Post AI review comment
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: ai-review
+          message: |
+            > 🤖 AI Generated Review
+            >
+            > This review is generated automatically and does not replace human review.
+
+            ${{ steps.ai_review.outputs.review }}
