@@ -70,13 +70,17 @@ const {
   throw createError({ statusCode: 404, statusMessage: 'Page not found' })
 })
 
-const stripHtmlTags = (html: string, length?: number) => {
-  const text = html
-    .replace(/<[^>]*>/g, '') // remove HTML
-    .replace(/\$/g, '') // remove $ (LaTeX delimiters)
-    .trim()
+const stripHtmlTags = (input: string, length = 1200) => {
+  if (!input) return ''
 
-  if (!length) return text
+  const text = input
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<\/?[^>]+(>|$)/g, '')
+    .replace(/&#\d+;/g, '')
+    .replace(/&[a-zA-Z]+;/g, '')
+    .replace(/\$/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
 
   return text.length > length
     ? text.slice(0, length).trim() + '...'

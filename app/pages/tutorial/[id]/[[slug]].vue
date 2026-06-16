@@ -311,26 +311,22 @@ onMounted(() => {
 })
 
 const requestURL = ref(useRequestURL().host)
-// const stripHtmlTags = (input: string, length = 1200) => {
-//   if (!input) return ''
+const stripHtmlTags = (input: string, length = 1200) => {
+  if (!input) return ''
 
-//   const sliced = input.slice(0, length)
+  const text = input
+    .replace(/<!--[\s\S]*?-->/g, '')
+    .replace(/<\/?[^>]+(>|$)/g, '')
+    .replace(/&#\d+;/g, '')
+    .replace(/&[a-zA-Z]+;/g, '')
+    .replace(/\$/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
 
-//   const lastClosingTag = sliced.lastIndexOf('>')
-
-//   const safeSlice
-//     = lastClosingTag !== -1 ? sliced.slice(0, lastClosingTag + 1) : sliced
-
-//   const text = safeSlice
-//     .replace(/<!--[\s\S]*?-->/g, '') // remove comments
-//     .replace(/<\/?[^>]+(>|$)/g, '') // remove tags
-//     .replace(/&#\d+;/g, '') // remove emojies and icons
-//     .replace(/&[a-zA-Z]+;/g, '') // remove entity like &nbsp;
-//     .replace(/\s+/g, ' ') // add spaces for better result
-//     .trim()
-
-//   return text + '...'
-// }
+  return text.length > length
+    ? text.slice(0, length).trim() + '...'
+    : text
+}
 
 defineOgImageComponent('TutorialDetail', {
   title: contentData.value?.title,
@@ -348,13 +344,16 @@ const schema = computed(() => {
   const title = pageTitle.value
   const description = pageDescribe.value
 
+  const body = stripHtmlTags(dto.content, 150)
+
   return buildSchema({
     dto,
     url,
     title,
     description,
+    body,
     breadcrumbs: breads.value,
-    types: ['article', 'breadcrumb'],
+    types: ['webpage', 'article-learning', 'breadcrumb'],
   })
 })
 
