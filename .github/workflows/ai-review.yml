@@ -1,10 +1,11 @@
 name: AI Review
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
       - synchronize
+      - reopened
 
 permissions:
   pull-requests: write
@@ -77,9 +78,14 @@ jobs:
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "OPENAI_API_KEY secret is not configured."
+            exit 1
+          fi
+
           PROMPT=$(jq -Rs . < prompt.txt)
 
-          RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
+          RESPONSE=$(curl -sS https://api.openai.com/v1/chat/completions \
             -H "Authorization: Bearer $OPENAI_API_KEY" \
             -H "Content-Type: application/json" \
             -d "{
@@ -97,12 +103,23 @@ jobs:
               \"max_tokens\": 1000
             }")
 
-          REVIEW=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+          API_ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
+          if [ -n "$API_ERROR" ]; then
+            echo "OpenAI API error: $API_ERROR"
+            exit 1
+          fi
+
+          REVIEW=$(echo "$RESPONSE" | jq -er '.choices[0].message.content // empty')
+          if [ -z "$REVIEW" ]; then
+            echo "OpenAI response did not include review content."
+            echo "$RESPONSE" | jq .
+            exit 1
+          fi
 
           {
-            echo "review<<EOF"
+            echo "review<<REVIEW_EOF"
             echo "$REVIEW"
-            echo "EOF"
+            echo "REVIEW_EOF"
           } >> "$GITHUB_OUTPUT"
 
       - name: Debug OpenAI Response
@@ -112,6 +129,8 @@ jobs:
 
       - name: Post AI review comment
         uses: marocchino/sticky-pull-request-comment@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           header: ai-review
           message: |
