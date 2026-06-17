@@ -270,7 +270,7 @@ const getTypeList = async (type, parent = '') => {
   if (type === 'lesson') params.base_id = parent
 
   try {
-    const res = await useApiService.get('/api/v1/types/list', params)
+    const res = await useApiService.get('/api/v1/types/list', params, { public: true })
 
     if (type === 'section') {
       level_list.value = res.data

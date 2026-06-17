@@ -1,7 +1,6 @@
 <script setup>
 import tagCard from '~/components/admin/tags/tagCard.vue'
 import addNewTag from '~/components/admin/tags/addNewTag.vue'
-import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',

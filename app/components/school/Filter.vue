@@ -70,11 +70,25 @@
             }`"
             @click="openFilterSection($event, item)"
           >
+            <template v-if="item.name == 'Near Me'">
+              <v-progress-circular
+                v-if="isLoading"
+                indeterminate
+                size="30"
+                color="white"
+                class="mr-2"
+              />
+              <school-near-me-location-icon
+                v-else
+                class="mr-2"
+              />
+            </template>
             {{ item.name }}
             <v-icon
+              v-if="item.hasMenu"
               :color="item.active && !isExpandMap ? `#ffffff` : `#828385`"
             >
-              mdi-chevron-down
+              md:keyboard_arrow_down
             </v-icon>
 
             <div class="line-seperator" />
@@ -169,14 +183,20 @@
           </div>
         </div>
 
-        <div class="result-div-mobile gama-text-overline">
-          Results
-          <span
-            class="count-result gama-text-button"
-            data-v-45a0d8f4
-          >
-            {{ totalSchoolFind ? $numberFormat(totalSchoolFind) : "0" }}
-          </span>
+        <div class="w-100 d-flex d-lg-none align-center justify-space-between mb-2">
+          <school-near-me-bottom-sheet-button
+            :data-loading="isLoading"
+            @update-filter="nearMeFilter"
+          />
+          <div class="result-div-mobile gama-text-overline">
+            Results
+            <span
+              class="count-result gama-text-button"
+              data-v-45a0d8f4
+            >
+              {{ totalSchoolFind ? $numberFormat(totalSchoolFind) : "0" }}
+            </span>
+          </div>
         </div>
 
         <v-btn
@@ -197,7 +217,7 @@
       </div>
     </div>
     <div
-      v-if="optionFilter[2].isShow"
+      v-if="optionFilter[1].isShow"
       ref="boxRegionRef"
       class="box-region-filter"
     >
@@ -365,6 +385,23 @@
                 @click:close="clearFilter(`city`)"
               >
                 {{ findTitle("cityList", filterForm.city) }}
+              </v-chip>
+
+              <v-chip
+                v-if="
+                  route.query.lat
+                    && route.query.lng
+                    && route.query.distance
+                    && route.query.sort.includes('distance')
+                "
+                class="text-h4 pa-3"
+                size="large"
+                variant="outlined"
+                color="#252626"
+                closable
+                @click:close="clearNearMe"
+              >
+                Near Me
               </v-chip>
             </div>
           </div>
@@ -564,6 +601,23 @@
         >
           {{ findTitle("cityList", filterForm.city) }}
         </v-chip>
+
+        <v-chip
+          v-if="
+            route.query.lat
+              && route.query.lng
+              && route.query.distance
+              && route.query.sort.includes('distance')
+          "
+          class="text-h4 pa-3"
+          size="large"
+          variant="outlined"
+          color="#252626"
+          closable
+          @click:close="clearNearMe"
+        >
+          Near Me
+        </v-chip>
       </div>
     </div>
   </div>
@@ -595,6 +649,9 @@ const props = defineProps({
 const emit = defineEmits(['update-filter'])
 const _router = useRouter()
 const route = useRoute()
+const { location,
+  isLoading,
+  fetchLocation } = useCurrentLocation()
 
 onMounted(() => {
   // Initial data fetch
@@ -616,25 +673,34 @@ onMounted(() => {
 
 // Start Global Function , Refs
 const optionFilter = ref([
-  {
-    name: 'Board',
-    active: false,
-    isShow: false,
-  },
+  // {
+  //   name: 'Board',
+  //   active: false,
+  //   isShow: false,
+  // },
   {
     name: 'Tuition fee',
     active: true,
     isShow: false,
+    hasMenu: true,
   },
   {
     name: 'Region',
     active: true,
     isShow: false,
+    hasMenu: true,
+  },
+  {
+    name: 'Near Me',
+    active: true,
+    isShow: false,
+    hasMenu: false,
   },
   {
     name: 'Sort',
     active: true,
     isShow: false,
+    hasMenu: true,
   },
 ])
 
@@ -679,6 +745,9 @@ const filterForm = reactive({
     : route.query.religion
       ? [route.query.religion]
       : [],
+  distance: Number(route.query.distance) || null,
+  lat: Number(route.query.lat) || null,
+  lng: Number(route.query.lng) || null,
 })
 const filter = reactive({
   countryList: [],
@@ -707,7 +776,7 @@ const getFilterList = async (params, type) => {
       endpoint = `/api/v2/locations/cities/${filterForm.state}`
     }
 
-    const response = await useApiService.get(endpoint, params)
+    const response = await useApiService.get(endpoint, params, { public: true })
 
     if (type === 'countries') {
       loadingCountry.value = false
@@ -759,24 +828,49 @@ const updateQueryParams = () => {
     query.coed_status = filterForm.coed_status
   if (filterForm.religion.length > 0 && filterForm.religion != undefined)
     query.religion = filterForm.religion
+
+  if (filterForm.lat) query.lat = filterForm.lat
+  if (filterForm.lng) query.lng = filterForm.lng
+  if (filterForm.distance) query.distance = filterForm.distance
   emit('update-filter', query)
 }
-
-const openFilterSection = (event, filter) => {
+const nearMeFilter = async () => {
+  await fetchLocation()
+  if (location) {
+    filterForm.lat = location.value.lat
+    filterForm.lng = location.value.lng
+    filterForm.distance = 5598568
+    filterForm.sort.push('distance')
+    updateQueryParams()
+  }
+}
+const openFilterSection = async (event, filter) => {
   event.stopPropagation()
-  if (filter.active && !props.isExpandMap) {
-    const lastShowOption = optionFilter.value.filter(item => item.isShow)
-    if (lastShowOption.length > 0) {
-      if (lastShowOption[0].name == filter.name) {
-        filter.isShow = false
+  if (filter.name == 'Near Me') {
+    await fetchLocation()
+    if (location) {
+      filterForm.lat = location.value.lat
+      filterForm.lng = location.value.lng
+      filterForm.distance = 5598568
+      filterForm.sort.push('distance')
+      updateQueryParams()
+    }
+  }
+  else {
+    if (filter.active && !props.isExpandMap) {
+      const lastShowOption = optionFilter.value.filter(item => item.isShow)
+      if (lastShowOption.length > 0) {
+        if (lastShowOption[0].name == filter.name) {
+          filter.isShow = false
+        }
+        else {
+          lastShowOption[0].isShow = false
+          filter.isShow = true
+        }
       }
       else {
-        lastShowOption[0].isShow = false
         filter.isShow = true
       }
-    }
-    else {
-      filter.isShow = true
     }
   }
 }
@@ -795,6 +889,17 @@ const clearFilter = (key) => {
   }
   if (key == 'city') {
     filterForm.city = ''
+  }
+  updateQueryParams()
+}
+
+const clearNearMe = () => {
+  filterForm.lat = null
+  filterForm.lng = null
+  filterForm.distance = null
+  const index = filterForm.sort.indexOf('distance')
+  if (index !== -1) {
+    filterForm.sort.splice(index, 1)
   }
   updateQueryParams()
 }

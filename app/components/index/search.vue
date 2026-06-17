@@ -116,7 +116,7 @@ export default {
 
       useApiService.get('/api/v1/types/list', {
         params,
-      })
+      }, { public: true })
         .then((res) => {
           if (type === 'section') {
             this.section_list = res.data

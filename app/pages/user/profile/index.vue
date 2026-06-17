@@ -641,7 +641,7 @@ const getFilterList = async (
     }
     const response = await useApiService.get<
       ApiResponse<SelectOption[] | { list: SelectOption[] }>
-    >(config.endpoint(), params)
+    >(config.endpoint(), params, { public: true })
 
     config.loading.value = false
     if (type === 'school') {

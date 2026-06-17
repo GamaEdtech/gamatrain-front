@@ -368,7 +368,7 @@ const getTypeList = async (type, parent = '') => {
   }
 
   try {
-    const response = await useApiService.get('/api/v1/types/list', params)
+    const response = await useApiService.get('/api/v1/types/list', params, { public: true })
 
     if (type === 'section') {
       section_list.value = response.data

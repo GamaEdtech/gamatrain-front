@@ -16,10 +16,17 @@
         List view
       </v-btn>
 
+      <school-near-me-fab
+        :is-map-mode="true"
+        :loading="isLoading"
+        @update-filter="setNearMeFilter"
+      />
+
       <Map
+        ref="mapRef"
         :items="newSchoolForMarkersOnMap"
         :use-cluster="true"
-        :enable-user-location="true"
+        :enable-user-location="false"
         @map-moved="changeFilterWithMapMoved"
         @map-move-start="handleMapMoveStart"
         @user-location-found="userLocationFound"
@@ -446,14 +453,19 @@ const { data: initialSchools, pending: _loadingSchoolsServer }
       'boarding_type': filterForm.value.boarding_type,
       'coed_status': filterForm.value.coed_status,
     }
+    if (filterForm.value.sort.includes('distance')) {
+      params['Location.Radius'] = filterForm.value.distance
+      params['Location.Latitude'] = filterForm.value.lat
+      params['Location.Longitude'] = filterForm.value.lng
+    }
     if (filterForm.value.sort && filterForm.value.sort.length > 0) {
       filterForm.value.sort.forEach((sortOption, index) => {
-        params[`PagingDto.SortFilter[${index}].sortType`] = 'Desc'
+        params[`PagingDto.SortFilter[${index}].sortType`] = sortOption == 'distance' ? 'Asc' : 'Desc'
         params[`PagingDto.SortFilter[${index}].column`] = sortOption
       })
     }
 
-    return useApiService.get('/api/v2/schools', params)
+    return useApiService.get('/api/v2/schools', params, { public: true })
   })
 
 if (initialSchools.value) {
@@ -477,11 +489,11 @@ const getSchoolList = async () => {
     }
     if (filterForm.value.sort && filterForm.value.sort.length > 0) {
       filterForm.value.sort.forEach((sortOption, index) => {
-        params[`PagingDto.SortFilter[${index}].sortType`] = 'Desc'
+        params[`PagingDto.SortFilter[${index}].sortType`] = sortOption == 'distance' ? 'Asc' : 'Desc'
         params[`PagingDto.SortFilter[${index}].column`] = sortOption
       })
     }
-    if (isExpandMapInDesktop.value || !openBottomNavFilterList.value) {
+    if (isExpandMapInDesktop.value || !openBottomNavFilterList.value || filterForm.value.sort.includes('distance')) {
       params['Location.Radius'] = filterForm.value.distance
       params['Location.Latitude'] = filterForm.value.lat
       params['Location.Longitude'] = filterForm.value.lng
@@ -507,7 +519,7 @@ const getSchoolList = async () => {
       params['sort'] = filterForm.value.sort
     }
 
-    const response = await useApiService.get('/api/v2/schools', params)
+    const response = await useApiService.get('/api/v2/schools', params, { public: true })
     setMetaData(response)
 
     if (response?.data?.list) {
@@ -574,16 +586,23 @@ const changeStatusExpandMap = () => {
   isExpandMapInDesktop.value = !isExpandMapInDesktop.value
   if (isExpandMapInDesktop.value) {
     perPage.value = 200
-    filterForm.value.lat = defaultLatLongDistance.lat
-    filterForm.value.lng = defaultLatLongDistance.lng
-    filterForm.value.distance = defaultLatLongDistance.distance
+    if (!filterForm.value.sort.includes('distance')) {
+      filterForm.value.lat = defaultLatLongDistance.lat
+      filterForm.value.lng = defaultLatLongDistance.lng
+      filterForm.value.distance = defaultLatLongDistance.distance
+    }
     schools.value = []
   }
   else {
     perPage.value = 20
+
     filterForm.value.lat = null
     filterForm.value.lng = null
     filterForm.value.distance = null
+    const index = filterForm.value.sort.indexOf('distance')
+    if (index !== -1) {
+      filterForm.value.sort.splice(index, 1)
+    }
   }
   resetParameter()
   updateQueryParams()
@@ -599,12 +618,18 @@ const changeBottomSheetStatus = (value) => {
     filterForm.value.lat = null
     filterForm.value.lng = null
     filterForm.value.distance = null
+    const index = filterForm.value.sort.indexOf('distance')
+    if (index !== -1) {
+      filterForm.value.sort.splice(index, 1)
+    }
   }
   else {
     perPage.value = 200
-    filterForm.value.lat = defaultLatLongDistance.lat
-    filterForm.value.lng = defaultLatLongDistance.lng
-    filterForm.value.distance = defaultLatLongDistance.distance
+    if (!filterForm.value.sort.includes('distance')) {
+      filterForm.value.lat = defaultLatLongDistance.lat
+      filterForm.value.lng = defaultLatLongDistance.lng
+      filterForm.value.distance = defaultLatLongDistance.distance
+    }
   }
   resetParameter()
   updateQueryParams()
@@ -715,7 +740,7 @@ const fetchAdditionalSchoolDetails = async (schoolId) => {
       showSchoolModal.value = true
     }
 
-    const response = await useApiService.get(`/api/v2/schools/${schoolId}`)
+    const response = await useApiService.get(`/api/v2/schools/${schoolId}`, undefined, { public: true })
     if (response && response?.data) {
       selectedSchool.value = { ...selectedSchool?.value, ...response?.data }
     }
@@ -758,6 +783,21 @@ const handleSchoolMarkerClickError = (errorData) => {
   }
 }
 // End School Modal Management
+
+const mapRef = ref()
+const { location,
+  isLoading,
+  fetchLocation } = useCurrentLocation()
+
+const setNearMeFilter = async () => {
+  await fetchLocation()
+  if (location) {
+    if (!filterForm.value.sort.includes('distance')) {
+      filterForm.value.sort.push('distance')
+    }
+    mapRef.value.setView(location.value.lat, location.value.lng, 6)
+  }
+}
 </script>
 
 <style scoped>

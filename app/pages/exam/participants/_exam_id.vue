@@ -272,7 +272,7 @@ export default {
       useApiService
         .get('/api/v1/types/list', {
           params,
-        })
+        }, { public: true })
         .then((res) => {
           const _data = {}
           if (type === 'section') {

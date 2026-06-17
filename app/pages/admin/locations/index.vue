@@ -1,7 +1,6 @@
 <script setup>
 import addLocation from '~/components/admin/locations/addLocation.vue'
 import editLocation from '~/components/admin/locations/editLocation.vue'
-import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',

@@ -139,7 +139,6 @@
 
 <script setup lang="ts">
 import { useRecaptcha } from '~/composables/useRecapcha'
-import useApiService from '~/composables/useApiService'
 import Map from '@/components/common/Map.client.vue'
 import { useValidationRules } from '~/composables/useValidationRules'
 

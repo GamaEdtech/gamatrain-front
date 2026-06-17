@@ -1,6 +1,5 @@
 <script setup>
 import schoolCard from '~/components/admin/schools/images/schoolCard.vue'
-import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',

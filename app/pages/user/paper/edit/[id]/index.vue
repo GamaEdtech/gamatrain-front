@@ -700,7 +700,7 @@ const getClassificationTypes = async (sectionId) => {
       type: 'test_type',
       section_id: sectionId,
     }
-    const response = await useApiService.get('/api/v1/types/list', params)
+    const response = await useApiService.get('/api/v1/types/list', params, { public: true })
 
     // The API should return board-specific classifications including:
     // - General resources (Coursebook, Workbook) for all boards
@@ -736,7 +736,7 @@ const getTypeList = async (type, parent = '') => {
   }
 
   try {
-    const response = await useApiService.get('/api/v1/types/list', params)
+    const response = await useApiService.get('/api/v1/types/list', params, { public: true })
 
     if (type === 'section') {
       section_list.value = response.data
@@ -776,7 +776,7 @@ const getExtraFileType = async () => {
     const response = await useApiService.get('/api/v1/types/list', {
       type: 'test_extra_file',
     },
-    )
+    { public: true })
     extra_type_list.value = response.data
     return response.data
   }

@@ -161,7 +161,7 @@ const getLocationList = async (params, type) => {
       endpoint = `/api/v2/locations/cities/${locationData.value[1].selected.id}`
     }
 
-    const response = await useApiService.get(endpoint, params)
+    const response = await useApiService.get(endpoint, params, { public: true })
 
     if (type === 'Country') {
       locationData.value[0].items = response.data.list
@@ -282,7 +282,7 @@ const checkSchoolAvailable = async () => {
       // CityId: locationData.value[2].selected.id,
     }
 
-    const response = await useApiService.get('/api/v2/schools', params)
+    const response = await useApiService.get('/api/v2/schools', params, { public: true })
     const locationStepInfo = {
       name: title.value,
       countryId: locationData.value[0].selected.id,

@@ -1,6 +1,5 @@
 <script setup>
 import blogCard from '~/components/admin/blogs/blogCard.vue'
-import useApiService from '~/composables/useApiService'
 
 definePageMeta({
   layout: 'admin',
