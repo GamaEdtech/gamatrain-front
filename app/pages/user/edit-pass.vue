@@ -104,26 +104,22 @@
         <span class="text-h5 text-md-h4 text-grey500 font-weight-bold">Request Account Deletion</span>
         <v-divider class="w-100 my-1" />
         <span
-          v-if="statusMode"
           class="text-h6 text-grey700 font-weight-regular mt-4"
         >
           Permanently delete your account and related data. You’ll have 7 days to cancel this request before your account is permanently deleted.
         </span>
-        <span
-          v-if="!statusMode"
+        <!-- <span
           class="text-h6 text-grey700 font-weight-regular mt-4"
         >
           Only <span class="text-h5 font-weight-bold text-lightError">5</span> days left before your account is permanently deleted. You can still cancel this request and keep your account.
-        </span>
+        </span> -->
         <NuxtLink
-          v-if="statusMode"
-          to="`/user/profile/delete"
+          to="/user/profile/delete"
           class="text-subtitle-1 text-md-h5 text-lightError font-weight-medium mt-6 text-decoration-none"
         >
           Delete Account
         </NuxtLink>
-        <v-btn
-          v-if="!statusMode"
+        <!-- <v-btn
           flat
           rounded="lg"
           color="grey200"
@@ -131,7 +127,7 @@
           class="text-subtitle-1 text-md-h5 text-grey700 font-weight-medium mt-6"
         >
           Cancel deletion request
-        </v-btn>
+        </v-btn> -->
       </div>
     </v-row>
   </v-container>
@@ -219,14 +215,18 @@ const updatePassword = async () => {
     loading.value = false
   }
 }
-
-const statusMode = ref(false)
 </script>
 
 <style scoped>
 .box-delete{
-  width : 320px;
+  width : 560px;
   min-height : 180px;
   border : 1px solid rgb(var(--v-theme-grey200))
+}
+
+@media (max-width: 960px) {
+  .box-delete {
+    width : 320px;
+  }
 }
 </style>
