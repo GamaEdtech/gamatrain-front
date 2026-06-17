@@ -17,49 +17,54 @@
       <v-col
         cols="12"
         md="9"
-        class="d-flex flex-column"
+        class="d-flex flex-column ga-1"
       >
-        <!-- <widgets-breadcrumb
-          background-color="white"
-          :breads="breads"
-        /> -->
-        <div
-          class="w-100 d-flex align-center ga-1"
-        >
-          <v-icon color="primary">
-            md:chevron_backward
-          </v-icon>
-          <h1 class="text-h4 font-weight-bold">
-            {{ contentData.title }}
-          </h1>
-          <v-icon color="primary">
-            md:chevron_forward
-          </v-icon>
-        </div>
-        <div class="w-100 d-flex align-center ga-3 mt-8 px-4">
-          <span class="text-h5 d-flex align-end text-grey400 ga-1">
-            <v-icon>md:visibility_outlined</v-icon>
-            {{ contentData?.views }}
-          </span>
-          <span class="text-h5 d-flex align-end text-grey400 ga-1">
-            <v-icon>md:update</v-icon>
-            {{ $dayjs(contentData?.up_date).fromNow() }}
-          </span>
+        <v-row>
+          <lazy-widgets-breadcrumb
+            background-color="white"
+            :breads="breads"
+          />
+        </v-row>
 
-          <v-icon color="grey400">
-            md:bookmark_outlined
-          </v-icon>
-
-          <v-icon
-            color="grey400"
-            class="cursor-pointer"
-            @click="openShare = true"
+        <v-row>
+          <v-col
+            cols="12"
+            class="d-flex align-center ga-1"
           >
-            md:share_outlined
-          </v-icon>
-        </div>
+            <v-icon color="primary">
+              md:chevron_backward
+            </v-icon>
+            <h1 class="text-h4 font-weight-bold">
+              {{ contentData.title }}
+            </h1>
+            <v-icon color="primary">
+              md:chevron_forward
+            </v-icon>
+          </v-col>
+          <div class="w-100 d-flex align-center ga-3 mt-8 px-4">
+            <span class="text-h5 d-flex align-end text-grey400 ga-1">
+              <v-icon>md:visibility_outlined</v-icon>
+              {{ contentData?.views }}
+            </span>
+            <span class="text-h5 d-flex align-end text-grey400 ga-1">
+              <v-icon>md:update</v-icon>
+              {{ $dayjs(contentData?.up_date).fromNow() }}
+            </span>
 
-        <!-- <div class="w-100 d-flex flex-wrap ga-2 mt-3 px-4">
+            <v-icon color="grey400">
+              md:bookmark_outlined
+            </v-icon>
+
+            <v-icon
+              color="grey400"
+              class="cursor-pointer"
+              @click="openShare = true"
+            >
+              md:share_outlined
+            </v-icon>
+          </div>
+
+          <!-- <div class="w-100 d-flex flex-wrap ga-2 mt-3 px-4">
           <v-chip
             class="bg-grey100"
             :small="mdAndDown"
@@ -93,15 +98,16 @@
           </v-chip>
         </div> -->
 
-        <div
-          ref="bookContentRef"
-          class="book-content w-100 mt-4"
-        >
           <div
-            class="bookText e-mathjax"
-            v-html="contentData.content"
-          />
-        </div>
+            ref="bookContentRef"
+            class="book-content w-100 mt-4"
+          >
+            <div
+              class="bookText e-mathjax"
+              v-html="contentData.content"
+            />
+          </div>
+        </v-row>
       </v-col>
     </v-row>
     <v-row class="mt-4">
@@ -259,19 +265,16 @@ const initBreadCrumb = () => {
   breads.value.push(
     {
       text: contentData.value.section_title,
-      // text: 'ُSection title',
       disabled: false,
       href: `/search?type=dars&section=${contentData.value.section}`,
     },
     {
       text: contentData.value.base_title,
-      // text: 'Base title',
       disabled: false,
       href: `/search?type=dars&section=${contentData.value.section}&base=${contentData.value.base}`,
     },
     {
       text: contentData.value.lesson_title,
-      // text: 'Lesson title',
       disabled: false,
       href: `/search?type=dars&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
     },
