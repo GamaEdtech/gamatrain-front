@@ -239,6 +239,10 @@
         color="primary"
         :defalut-lable="false"
         :disabled="!user.city || loadingCities"
+        :infinite-loading="true"
+        :loading-more="loadingMoreSchool"
+        :has-more-items="hasMoreItemsSchool"
+        @load-more="loadMoreSchool"
       />
     </div>
     <div class="w-100 d-flex justify-center align-center ga-2 mt-16">
@@ -329,7 +333,9 @@ const {
   loadingGetData: loadingBoards, data: boards, getData: getBoards, resetBoards, getGrades, grades, loadingGrade, resetGrades,
 } = useBoard()
 
-const { loadingGetData: loadingSchools, data: schools, getData: getSchools, resetData: resetSchools } = useSchool()
+const pageSchool = ref(1)
+const pageSizeSchool = 50
+const { loadingGetData: loadingSchools, data: schools, getData: getSchools, resetData: resetSchools, loadingMore: loadingMoreSchool, hasMoreItems: hasMoreItemsSchool } = useSchool()
 
 const isFormValid = ref(false)
 
@@ -420,8 +426,8 @@ const cityChange = async (cityId: number | string) => {
   resetSchools()
   if (cityId) {
     await getSchools({
-      page: 1,
-      pageSize: 1000,
+      page: pageSchool.value,
+      pageSize: pageSizeSchool,
       countryId: user.value.country as number,
       stateId: user.value.state as number,
       cityId: Number(cityId),
@@ -442,6 +448,17 @@ const gradeChange = async (gradeId: number | string) => {
   user.value.grade = gradeId
 }
 
+const loadMoreSchool = async () => {
+  pageSchool.value += 1
+  await getSchools({
+    page: pageSchool.value,
+    pageSize: pageSizeSchool,
+    countryId: user.value.country as number,
+    stateId: user.value.state as number,
+    cityId: user.value.city as number,
+  }, { append: true })
+}
+
 onMounted(async () => {
   await getCountries()
   if (user.value.country) {
@@ -457,8 +474,8 @@ onMounted(async () => {
   }
   if (user.value.city) {
     await getSchools({
-      page: 1,
-      pageSize: 1000,
+      page: pageSchool.value,
+      pageSize: pageSizeSchool,
       countryId: user.value.country as number,
       stateId: user.value.state as number,
       cityId: user.value.city as number,

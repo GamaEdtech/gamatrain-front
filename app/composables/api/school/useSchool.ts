@@ -8,13 +8,23 @@ import type {
 
 const data = ref<SchoolListDTO[]>([])
 const loadingGetData = ref(false)
+const loadingMore = ref(false)
 const totalCount = ref(0)
 const pageCount = ref(0)
+const hasMoreItems = computed(() => data.value.length < totalCount.value)
+
+interface GetSchoolsOptions {
+  append?: boolean
+}
 
 export const useSchool = () => {
   const { $toast } = useNuxtApp()
 
-  const getData = async (params: GetSchoolsParams) => {
+  const getData = async (
+    params: GetSchoolsParams,
+    options: GetSchoolsOptions = {},
+  ) => {
+    const { append = false } = options
     const {
       page,
       pageSize,
@@ -32,7 +42,10 @@ export const useSchool = () => {
       boards,
     } = params
 
-    loadingGetData.value = true
+    if (append)
+      loadingMore.value = true
+    else
+      loadingGetData.value = true
 
     try {
       const query: Record<
@@ -100,15 +113,22 @@ export const useSchool = () => {
         { public: true },
       )
 
-      if (response.data && response.data.list && response.data.list.length > 0) {
-        data.value = response.data.list
+      if (response.data) {
+        const newItems = response.data.list ?? []
+
+        data.value = append
+          ? [...data.value, ...newItems]
+          : newItems
+
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(
           totalCount.value / pageSize,
         )
       }
-      else {
+      else if (!append) {
         data.value = []
+        totalCount.value = 0
+        pageCount.value = 0
       }
 
       return response
@@ -122,7 +142,11 @@ export const useSchool = () => {
         )
       }
 
-      data.value = []
+      if (!append) {
+        data.value = []
+        totalCount.value = 0
+        pageCount.value = 0
+      }
 
       return {
         succeeded: false,
@@ -131,19 +155,26 @@ export const useSchool = () => {
       }
     }
     finally {
-      loadingGetData.value = false
+      if (append)
+        loadingMore.value = false
+      else
+        loadingGetData.value = false
     }
   }
 
   const resetData = () => {
     data.value = []
+    totalCount.value = 0
+    pageCount.value = 0
   }
 
   return {
     loadingGetData,
+    loadingMore,
     data,
     totalCount,
     pageCount,
+    hasMoreItems,
     getData,
     resetData,
   }
