@@ -194,7 +194,7 @@ export const useProfile = () => {
         { ...item },
       )
       if (response.succeeded) {
-        $toast.success(`${NAME} deleted successfully!`)
+        $toast.success('Permanently delete your account and related data. You’ll have 7 days to cancel this request before your account is permanently deleted.')
       }
       else {
         if (response.errors && response.errors.length > 0) {

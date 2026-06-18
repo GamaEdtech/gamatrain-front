@@ -2,86 +2,66 @@
   <v-container class="w-100 d-flex flex-column">
     <v-form
       v-model="isFormValid"
-      class="w-100 d-flex flex-wrap"
+      class="w-100 d-flex flex-column"
     >
-      <v-col
-        cols="12"
-        class="pl-5 text-h4 text-h4"
-      >
-        <v-icon
-          large
-          color="primary"
-        >
-          md:person_remove_outlined
-        </v-icon>
-        <span class="font-weight-bold"> Delete Account </span>
-      </v-col>
+      <h1 class="text-h4 text-grey700 font-weight-regular">
+        Confirm your identity
+      </h1>
 
-      <v-col
-        cols="12"
-        md="4"
+      <h4 class="text-h6 text-grey700 font-weight-regular mt-5">
+        For your security, please confirm your identity before deleting your account.
+      </h4>
+      <div
+        class="d-flex flex-column ga-1 mt-8"
       >
-        <v-text-field
-          v-model="username"
-          density="compact"
-          variant="outlined"
-          label="Username"
-          outlined
-          rounded="lg"
-          color="primary"
-          :rules="[required]"
-        />
-      </v-col>
-
-      <v-col
-        cols="12"
-        md="4"
-      >
+        <span class="text-h6 text-grey700 font-weight-medium">Password</span>
         <v-text-field
           v-model="passwordUser"
           density="compact"
           variant="outlined"
-          label="Password"
+          label=""
           outlined
-          rounded="lg"
+          rounded="pill"
           color="primary"
+          max-width="320"
           :append-inner-icon="
             showPassword ? 'md:visibility' : 'md:visibility_off'
           "
           :type="showPassword ? 'text' : 'password'"
-          :rules="[password]"
+          :rules="[password, required]"
           @click:append-inner="showPassword = !showPassword"
         />
-      </v-col>
+      </div>
     </v-form>
 
     <v-row>
-      <v-divider class="my-3" />
       <v-col
         cols="12"
-        class="pb-0 d-flex justify-center"
+        class="pb-0 d-flex justify-center mt-4"
       >
         <v-btn
           flat
-          rounded="lg"
+          rounded="pill"
           width="250"
-          class="text-h5 font-weight-bold"
-          color="error"
+          height="40"
+          class="text-h5 font-weight-medium text-grey800"
+          color="primary"
           :disabled="!isFormValid"
           @click="showConfrimDeleteModal = true"
         >
-          Delete
+          Submit
         </v-btn>
       </v-col>
     </v-row>
 
     <common-modal-base
       v-model:show-dialog="showConfrimDeleteModal"
-      title="Delete"
+      title=""
+      :max-width="600"
     >
-      <common-modal-delete
-        :loading="loadingDeleteItem"
-        @confirm="confirmDelete"
+      <user-profile-delete-modal-delete
+        :password="passwordUser"
+        @close="showConfrimDeleteModal = false"
       />
     </common-modal-base>
   </v-container>
@@ -96,34 +76,12 @@ useSeoMeta({
   title: 'Delete Account',
 })
 
-const router = useRouter()
-const { cleanUser } = useUser()
-const { clearAuth } = useAuth()
-const { required, password } = useValidationRules()
-const { deleteItem, loadingDeleteItem } = useProfile()
+const { password, required } = useValidationRules()
 
-const username = ref('')
 const showPassword = ref(false)
 const passwordUser = ref('')
 const isFormValid = ref(false)
 const showConfrimDeleteModal = ref(false)
-
-const confirmDelete = async () => {
-  const response = await deleteItem({
-    username: username.value,
-    password: passwordUser.value,
-  })
-  if (response.succeeded) {
-    cleanUser()
-    clearAuth()
-    if (import.meta.client) {
-      localStorage.removeItem('v2_token')
-      localStorage.clear()
-      sessionStorage.clear()
-    }
-    router.push('/')
-  }
-}
 </script>
 
 <style scoped></style>
