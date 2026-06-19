@@ -24,4 +24,8 @@ export interface AdminAppSettingsDTO {
   postContributionConfirmationEmailTemplate: string
   ticketConfirmationEmailTemplate: string
   registrationEmailTemplate: string
+  initializeDeletingAccountEmailTemplate: string
+  startDeletingAccountEmailTemplate: string
+  finishedDeletingAccountEmailTemplate: string
+  adminTransactionCreationEmailTemplate: string
 }
