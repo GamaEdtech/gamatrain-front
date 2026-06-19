@@ -287,6 +287,7 @@ const { $toast } = useNuxtApp()
 const { trackFileDownload } = useGtmEvents()
 const auth = useAuth()
 const router = useRouter()
+const route = useRoute()
 const { xs } = useDisplay()
 
 const { balance, isLoading, fetchBalance, consumeCoins } = useCoinBalance()
@@ -515,6 +516,8 @@ const handleCoinPaymentConfirm = async () => {
   try {
     const response = await consumeCoins(
       PRICE_FILE,
+      'PastPaper',
+      route.params.id as unknown as number,
       'Past paper download',
     )
     if (response.succeeded) {

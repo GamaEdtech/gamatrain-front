@@ -578,6 +578,7 @@ const requiresCoinPaymentForFile = (type, item) => {
   return false
 }
 
+const route = useRoute()
 const handleCoinPaymentConfirm = async () => {
   showCoinPaymentModal.value = false
   isProcessingPayment.value = true
@@ -585,6 +586,8 @@ const handleCoinPaymentConfirm = async () => {
   try {
     const response = await consumeCoins(
       PRICE_FILE,
+      'PastPaper',
+      route.params.id,
       'Past paper download',
     )
     if (response.succeeded) {
