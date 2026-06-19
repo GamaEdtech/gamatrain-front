@@ -206,7 +206,7 @@ export const useBlog = () => {
       }
       formData.append('PublishDate', publishDate)
       formData.append('Slug', blog.slug)
-      formData.append('Draft', blog.draft ? 'true' : 'false')
+      formData.append('Draft', blog.draft)
 
       blog.tags.forEach((tagId) => {
         formData.append('Tags[]', tagId.toString())
@@ -226,12 +226,17 @@ export const useBlog = () => {
         formData.append('Podcast', blog.podcast)
       }
 
-      blog.localizedValues?.forEach((item, index) => {
-        formData.append(`LocalizedValues[${index}].languageId`, item.languageId.toString())
-        formData.append(`LocalizedValues[${index}].title`, item.title)
-        formData.append(`LocalizedValues[${index}].summary`, item.summary)
-        formData.append(`LocalizedValues[${index}].body`, item.body)
-      })
+      if (blog.localizedValues?.length && blog.localizedValues?.length > 0) {
+        blog.localizedValues.forEach((item, index) => {
+          formData.append(`LocalizedValues[${index}].languageId`, item.languageId.toString())
+          formData.append(`LocalizedValues[${index}].title`, item.title)
+          formData.append(`LocalizedValues[${index}].summary`, item.summary)
+          formData.append(`LocalizedValues[${index}].body`, item.body)
+        })
+      }
+      else {
+        formData.append('LocalizedValues', '[]')
+      }
 
       const response = await useApiService.put<
         ApiResult<string>
