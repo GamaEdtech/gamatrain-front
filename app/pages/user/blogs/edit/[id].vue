@@ -445,11 +445,13 @@ const isValid = () => {
     return false
   }
 
-  for (const t of translations.value) {
-    if (!t.title?.trim()) return false
-    if (!t.summary?.trim()) return false
-    if (!t.content || t.content === '<p></p>') return false
-    if (!t.languageId) return false
+  if (translations.value) {
+    for (const t of translations.value) {
+      if (!t.title?.trim()) return false
+      if (!t.summary?.trim()) return false
+      if (!t.content || t.content === '<p></p>') return false
+      if (!t.languageId) return false
+    }
   }
 
   return true
@@ -471,12 +473,12 @@ const mapToCreateBlogDTO = () => {
     tags: blog.value.categories,
     draft: blog.value.status === 'Drafted' ? 'true' : 'false',
 
-    localizedValues: translations.value.map(t => ({
+    localizedValues: translations.value?.map(t => ({
       languageId: Number(t.languageId),
       title: t.title,
       summary: t.summary,
       body: t.content,
-    })),
+    })) ?? [],
   }
 }
 const update = async () => {
@@ -535,7 +537,7 @@ onMounted(async () => {
       title: item.title,
       summary: item.summary,
       content: item.body,
-    }))
+    })) ?? []
   }
 })
 </script>
