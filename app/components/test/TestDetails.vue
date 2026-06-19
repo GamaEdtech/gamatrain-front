@@ -361,6 +361,8 @@ const handleCoinPaymentConfirm = async () => {
   try {
     const response = await consumeCoins(
       5,
+      'Test',
+      props.contentData.id as unknown as number,
       'See Full Answer Question',
     ) as ApiResult<unknown>
     if (response.succeeded) {

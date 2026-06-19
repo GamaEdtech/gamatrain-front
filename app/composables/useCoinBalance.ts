@@ -30,7 +30,7 @@ export const useCoinBalance = () => {
     }
   }
 
-  const consumeCoins = async (points: number, description: string) => {
+  const consumeCoins = async (points: number, contentType: string = 'PastPaper', identifierId: number, description: string) => {
     console.log(description)
 
     if (balance.value < points) {
@@ -44,6 +44,8 @@ export const useCoinBalance = () => {
     try {
       await useApiService.post('/api/v2/games/spends', {
         points,
+        identifierId,
+        contentType,
       })
       await fetchBalance()
 
