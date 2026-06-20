@@ -123,7 +123,7 @@ const setMetaData = () => {
 
   const dto: QuestionDTO = contentData.value
 
-  const questionText = stripHtmlTags(dto.question, 30)
+  const questionText = stripHtmlTags(dto.question, 130)
 
   pageTitle.value
     = `${questionText} | ${$cleanSubject(dto.lesson_title)} Quiz`
