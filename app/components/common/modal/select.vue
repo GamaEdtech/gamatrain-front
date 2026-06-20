@@ -45,6 +45,8 @@
     <v-list
       v-if="!loadingItems && !loadingValue"
       max-height="320"
+      class="overflow-y-auto"
+      @scroll="handleScroll"
     >
       <v-list-item
         v-for="item in filteredItems"
@@ -74,6 +76,22 @@
           />
         </v-list-item-title>
       </v-list-item>
+
+      <div
+        v-if="infiniteLoading && hasMoreItems"
+        class="w-100 d-flex align-center ga-3 px-4 py-4"
+      >
+        <v-skeleton-loader
+          width="24"
+          height="24"
+          class="rounded-circle"
+        />
+        <v-skeleton-loader
+          width="160"
+          height="12"
+          class="rounded-lg"
+        />
+      </div>
     </v-list>
 
     <div
@@ -131,6 +149,9 @@ interface IModalSelect {
   loadingItems: boolean
   loadingValue: boolean
   hasSearch: boolean
+  infiniteLoading?: boolean
+  loadingMore?: boolean
+  hasMoreItems?: boolean
 }
 
 // HighlightedText component for safe text highlighting
@@ -176,9 +197,13 @@ const HighlightedText = defineComponent({
   },
 })
 
-const props = defineProps<IModalSelect>()
+const props = withDefaults(defineProps<IModalSelect>(), {
+  infiniteLoading: false,
+  loadingMore: false,
+  hasMoreItems: true,
+})
 
-const emit = defineEmits(['changeSelectedItem'])
+const emit = defineEmits(['changeSelectedItem', 'loadMore'])
 
 // Start Section Search Item In List
 const searchText = ref('')
@@ -197,6 +222,24 @@ const _highlightSearchText = (text: string) => {
 
 const changeSelectedItem = (item: IItemModalSelect) => {
   emit('changeSelectedItem', item)
+}
+
+const handleScroll = (event: Event) => {
+  const target = event.target as HTMLElement
+  const isBottomReached
+    = target.scrollTop + target.clientHeight
+      >= target.scrollHeight - 20
+
+  if (
+    !props.infiniteLoading
+    || !props.hasMoreItems
+    || props.loadingMore
+    || !isBottomReached
+  ) {
+    return
+  }
+
+  emit('loadMore')
 }
 </script>
 

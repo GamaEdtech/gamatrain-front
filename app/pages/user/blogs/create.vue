@@ -430,7 +430,6 @@ const publish = async () => {
     return
   }
   const payload = mapToCreateBlogDTO()
-  console.log(payload)
   const response = await createBlug(payload)
   if (response && response.succeeded) {
     router.push('/user/blogs')
