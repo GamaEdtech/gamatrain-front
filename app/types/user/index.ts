@@ -84,4 +84,5 @@ export interface User {
   userRateLevel: string
   experiences: ExperienceDTO[]
   handle: string
+  orphanDate: string | null
 }

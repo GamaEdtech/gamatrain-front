@@ -103,33 +103,45 @@
       <div class="box-delete d-flex flex-column align-start justify-start pa-4 bg-grey50 rounded-lg">
         <span class="text-h5 text-md-h4 text-grey500 font-weight-bold">Request Account Deletion</span>
         <v-divider class="w-100 my-1" />
-        <span
-          class="text-h6 text-grey700 font-weight-regular mt-4"
-        >
-          Permanently delete your account and related data. You’ll have 7 days to cancel this request before your account is permanently deleted.
-        </span>
-        <!-- <span
-          class="text-h6 text-grey700 font-weight-regular mt-4"
-        >
-          Only <span class="text-h5 font-weight-bold text-lightError">5</span> days left before your account is permanently deleted. You can still cancel this request and keep your account.
-        </span> -->
-        <NuxtLink
-          to="/user/profile/delete"
-          class="text-subtitle-1 text-md-h5 text-lightError font-weight-medium mt-6 text-decoration-none"
-        >
-          Delete Account
-        </NuxtLink>
-        <!-- <v-btn
-          flat
-          rounded="lg"
-          color="grey200"
-          height="36"
-          class="text-subtitle-1 text-md-h5 text-grey700 font-weight-medium mt-6"
-        >
-          Cancel deletion request
-        </v-btn> -->
+        <template v-if="!user?.orphanDate">
+          <span
+            class="text-h6 text-grey700 font-weight-regular mt-4"
+          >
+            Permanently delete your account and related data. You’ll have 7 days to cancel this request before your account is permanently deleted.
+          </span>
+          <NuxtLink
+            to="/user/profile/delete"
+            class="text-subtitle-1 text-md-h5 text-lightError font-weight-medium mt-6 text-decoration-none"
+          >
+            Delete Account
+          </NuxtLink>
+        </template>
+
+        <template v-else>
+          <span
+            class="text-h6 text-grey700 font-weight-regular mt-4"
+          >
+            Only <span class="text-h5 font-weight-bold text-lightError">{{ deletionTimeLeft }}</span> left before your account is permanently deleted. You can still cancel this request and keep your account.
+          </span>
+          <v-btn
+            flat
+            rounded="lg"
+            color="grey200"
+            height="36"
+            class="text-subtitle-1 text-md-h5 text-grey700 font-weight-medium mt-6"
+            @click="showCancelDeleteModal = true"
+          >
+            Cancel deletion request
+          </v-btn>
+        </template>
       </div>
     </v-row>
+    <common-modal-base
+      v-model:show-dialog="showCancelDeleteModal"
+      title=""
+    >
+      <user-profile-delete-modal-cancel @close="showCancelDeleteModal = false" />
+    </common-modal-base>
   </v-container>
 </template>
 
@@ -153,8 +165,9 @@ useSeoMeta({
   title: 'Change Password',
 })
 
-const { $toast } = useNuxtApp()
+const { $dayjs, $toast } = useNuxtApp()
 const router = useRouter()
+const { user } = useUser()
 
 const showCurrentPassword = ref(false)
 const currentPassword = ref('')
@@ -183,6 +196,34 @@ const repeatPasswordRules = [
   (v: string) => !!v || 'Repeat password is required',
   (v: string) => v === newPassword.value || 'Passwords do not match',
 ]
+
+const currentTime = ref($dayjs())
+const showCancelDeleteModal = ref(false)
+const deletionTimeLeft = computed(() => {
+  if (!user.value?.orphanDate) return ''
+
+  const deletionDate = $dayjs(user.value.orphanDate).add(7, 'day')
+  const remainingMinutes = deletionDate.diff(currentTime.value, 'minute')
+
+  if (remainingMinutes <= 0) return '0 minutes'
+
+  const remainingDays = Math.ceil(remainingMinutes / (24 * 60))
+
+  if (remainingDays >= 1 && remainingMinutes >= 24 * 60) {
+    return `${remainingDays} ${remainingDays === 1 ? 'day' : 'days'}`
+  }
+
+  const hours = Math.floor(remainingMinutes / 60)
+  const minutes = remainingMinutes % 60
+  const parts = []
+
+  if (hours) parts.push(`${hours} ${hours === 1 ? 'hour' : 'hours'}`)
+  if (minutes || !parts.length) {
+    parts.push(`${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`)
+  }
+
+  return parts.join(' and ')
+})
 
 const isFormValid = computed(() => {
   return (

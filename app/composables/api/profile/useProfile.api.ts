@@ -9,6 +9,7 @@ import type {
 const loadingGetItemById = ref(false)
 const loadingEditItem = ref(false)
 const loadingDeleteItem = ref(false)
+const loadingCancelDeleteItem = ref(false)
 const NAME = 'Profile'
 
 export const useProfile = () => {
@@ -223,7 +224,46 @@ export const useProfile = () => {
     }
   }
 
+  const cancelDeleteItem = async (item: DeleteProfileDTO) => {
+    try {
+      loadingCancelDeleteItem.value = true
+      const response = await useApiService.patch<
+        ApiResult<boolean>
+      >(
+        '/api/v2/identities/profiles/recover',
+        { ...item },
+      )
+      if (response.succeeded) {
+        $toast.success('Canceling profile deletion was successful.')
+      }
+      else {
+        if (response.errors && response.errors.length > 0) {
+          $toast.error(response.errors[0].message || '')
+        }
+        else {
+          $toast.error('The operation failed. Please try again later.')
+        }
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: {},
+      }
+    }
+    finally {
+      loadingCancelDeleteItem.value = false
+    }
+  }
+
   return {
-    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem,
+    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, cancelDeleteItem, loadingCancelDeleteItem,
   }
 }

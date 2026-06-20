@@ -59,6 +59,7 @@
 </template>
 
 <script setup lang="ts">
+import type { User } from '@/types'
 import { useDisplay } from 'vuetify'
 
 interface IDeleteModal {
@@ -70,7 +71,7 @@ const props = defineProps<IDeleteModal>()
 
 const router = useRouter()
 const { deleteItem, loadingDeleteItem } = useProfile()
-const { user } = useUser()
+const { user, setUser } = useUser()
 const { mdAndUp } = useDisplay()
 const isConfrimCheckBox = ref(false)
 
@@ -80,6 +81,10 @@ const confirmDelete = async () => {
     username: user.value?.userName ?? '',
   })
   if (response.succeeded) {
+    setUser({
+      ...user.value as User,
+      orphanDate: new Date().toString(),
+    })
     emit('close')
     router.push('/user')
   }
