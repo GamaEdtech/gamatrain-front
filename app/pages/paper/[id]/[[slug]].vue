@@ -271,12 +271,13 @@ const setMetaData = () => {
     ],
     script: schema.value
       ? [
-      {
-        key: 'json-ld-schema',
-        type: 'application/ld+json',
-        innerHTML: JSON.stringify(schema.value),
-      },
-    ]:[],
+          {
+            key: 'json-ld-schema',
+            type: 'application/ld+json',
+            innerHTML: JSON.stringify(schema.value),
+          },
+        ]
+      : [],
     link: [
       {
         rel: 'canonical',
