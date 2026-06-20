@@ -578,8 +578,7 @@ const requiresCoinPaymentForFile = (type, item) => {
   return false
 }
 
-const route = useRoute()
-const handleCoinPaymentConfirm = async () => {
+const handleCoinPaymentConfirm = async (item) => {
   showCoinPaymentModal.value = false
   isProcessingPayment.value = true
 
@@ -587,7 +586,7 @@ const handleCoinPaymentConfirm = async () => {
     const response = await consumeCoins(
       PRICE_FILE,
       'PastPaper',
-      route.params.id,
+      item.id,
       'Past paper download',
     )
     if (response.succeeded) {
@@ -639,7 +638,7 @@ const handleDownload = async (type, item) => {
         return
       }
       if ((Number(balanceResult.data) / 10 ** 6) > 5) {
-        handleCoinPaymentConfirm()
+        handleCoinPaymentConfirm(item)
         startDownload(type, item, downloadKey)
       }
       else {
