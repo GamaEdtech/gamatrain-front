@@ -95,35 +95,57 @@ export function useSeoSchema() {
    * ---------------------------
    */
   const createArticleSchema = <TDto>(dto: TDto, ctx: SchemaContext<TDto>) => {
+  const url = new URL(ctx.url);
+  const parts = url.pathname.split("/").filter(Boolean);
+  const base = parts.slice(0, 2);
+
+  const articleBasePath = url.origin + "/" + base.join("/");    
+    
     const image
-      = (dto as Record<string, unknown>)?.lesson_pic
-        || (dto as Record<string, unknown>)?.thumb_pic
+    = (dto as Record<string, unknown>)?.thumb_pic
+      || (dto as Record<string, unknown>)?.lesson_pic
         || LOGO
 
     const up_date = (dto as Record<string, unknown>)?.up_date as
       | string
       | undefined
+    
+      const first_name = (dto as Record<string, unknown>)?.first_name as
+        | string
+      | undefined;
+    
+     const last_name = (dto as Record<string, unknown>)?.last_name as
+       | string
+      | undefined;
+    
+    const authorName = [first_name, last_name].filter(Boolean).join(" ");
 
     return {
-      '@type': 'Article',
-      '@id': `${ctx.url}#article`,
-      'headline': ctx.title,
-      'description': ctx.description,
-      'image': [image],
+      "@type": "Article",
+      "@id": `${articleBasePath}#article`,
+      headline: ctx.title,
+      description: ctx.description,
+      image: [image],
 
-      'mainEntityOfPage': {
-        '@type': 'WebPage',
-        '@id': `${ctx.url}`,
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": `${ctx.url}`,
       },
 
-      'publisher': {
-        '@id': `${SITE_URL}/#organization`,
+      ...(authorName && {
+        author: {
+          "@type": "Person",
+          name: authorName,
+        },
+      }),
+
+      publisher: {
+        "@id": `${SITE_URL}/#organization`,
       },
 
-      'datePublished': up_date || undefined,
-
-      'dateModified': up_date || undefined,
-    }
+      datePublished: (up_date && new Date(up_date).toISOString()) || undefined,
+      dateModified: (up_date && new Date(up_date).toISOString()) || undefined,
+    };
   }
 
   /**
@@ -148,30 +170,30 @@ export function useSeoSchema() {
       | undefined
 
     return {
-      '@type': 'LearningResource',
-      '@id': `${ctx.url}#learning-resource`,
-      'name': ctx.title,
-      'url': ctx.url,
-      'description': ctx.description,
+      "@type": "LearningResource",
+      "@id": `${ctx.url}#learning-resource`,
+      name: ctx.title,
+      url: ctx.url,
+      description: ctx.description,
 
-      'body': ctx.body || undefined,
+      body: ctx.body || undefined,
 
-      'educationalUse': 'Instruction',
-      'learningResourceType': 'Lesson',
-      'educationalLevel': course && course !== '0' ? course : undefined,
-      'teaches': headline,
-      'datePublished': up_date || undefined,
-      'inLanguage': ctx.lang || 'en',
+      educationalUse: "Instruction",
+      learningResourceType: "Lesson",
+      educationalLevel: course && course !== "0" ? course : undefined,
+      teaches: headline,
+      datePublished: (up_date && new Date(up_date).toISOString()) || undefined,
+      inLanguage: ctx.lang || "en",
 
-      'mainEntityOfPage': {
-        '@type': 'WebPage',
-        '@id': `${ctx.url}`,
+      mainEntityOfPage: {
+        "@type": "WebPage",
+        "@id": `${ctx.url}`,
       },
 
-      'publisher': {
-        '@id': `${SITE_URL}/#organization`,
+      publisher: {
+        "@id": `${SITE_URL}/#organization`,
       },
-    }
+    };
   }
 
   /**
@@ -204,7 +226,7 @@ export function useSeoSchema() {
       '@type': ['Article', 'LearningResource'],
       '@id': `${ctx.url}#learning-resource`,
 
-      'articleBody': learning.body,
+      articleBody: learning.body,
 
       ...learningProps,
     }
@@ -217,17 +239,16 @@ export function useSeoSchema() {
    */
   const createBreadcrumbSchema = (
     items: BreadCrumb[] | undefined,
-    baseUrl: string,
   ) => {
-    if (!items?.length) return null
+    if (!items?.length) return null    
 
     return {
       '@type': 'BreadcrumbList',
-      'itemListElement': items.map((item, index) => ({
+      itemListElement: items.map((item, index) => ({
         '@type': 'ListItem',
-        'position': index + 1,
-        'name': item.text,
-        'item': `${baseUrl}${item.href}`,
+        position: index + 1,
+        name: item.text,
+        item: `${SITE_URL}${item.href}`,
       })),
     }
   }
@@ -249,8 +270,8 @@ export function useSeoSchema() {
       .filter((a): a is string => typeof a === 'string' && a.length > 0)
       .map((text, index) => ({
         '@type': 'Answer',
-        'position': index + 1,
-        'encodingFormat': 'text/html',
+        position: index + 1,
+        encodingFormat: 'text/html',
         text,
       }))
 
@@ -260,27 +281,27 @@ export function useSeoSchema() {
     return {
       '@type': 'Quiz',
       '@id': `${ctx.url}#quiz`,
-      'inLanguage': ctx.lang || 'en',
-      'learningResourceType': 'Assessment',
+      inLanguage: ctx.lang || 'en',
+      learningResourceType: 'Assessment',
 
-      'mainEntityOfPage': {
+      mainEntityOfPage: {
         '@type': 'WebPage',
         '@id': `${ctx.url}`,
       },
 
-      'publisher': {
+      publisher: {
         '@id': `${SITE_URL}/#organization`,
       },
 
-      'hasPart': {
+      hasPart: {
         '@type': 'Question',
-        'eduQuestionType': 'Multiple choice',
-        'learningResourceType': 'Practice Problem',
-        'encodingFormat': 'text/html',
+        eduQuestionType: 'Multiple choice',
+        learningResourceType: 'Practice Problem',
+        encodingFormat: 'text/html',
 
-        'image': typeof data.q_file === 'string' ? data.q_file : undefined,
-        'text': question,
-        'suggestedAnswer': answers,
+        image: typeof data.q_file === 'string' ? data.q_file : undefined,
+        text: question,
+        suggestedAnswer: answers,
         acceptedAnswer,
       },
     }
@@ -348,7 +369,7 @@ export function useSeoSchema() {
     }
 
     if (options.types.includes('breadcrumb')) {
-      schemas.push(createBreadcrumbSchema(options.breadcrumbs, options.url))
+      schemas.push(createBreadcrumbSchema(options.breadcrumbs))
     }
 
     if (options.types.includes('quiz')) {
