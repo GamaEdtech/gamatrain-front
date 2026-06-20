@@ -33,6 +33,7 @@
           :id="contentData.id"
           :thumb-pic="contentData.thumb_pic"
           :title="contentData.title"
+          :alt="pageTitle"
           :views="contentData.views"
           :score="contentData.ref_score"
           @share="openShare = true"
