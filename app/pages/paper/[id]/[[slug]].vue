@@ -33,6 +33,7 @@
           :id="contentData.id"
           :thumb-pic="contentData.thumb_pic"
           :title="contentData.title"
+          :alt="pageTitle"
           :views="contentData.views"
           :score="contentData.ref_score"
           @share="openShare = true"
@@ -121,12 +122,11 @@ interface BreadCrumb {
   disabled: boolean
   href: string
 }
-interface SchemaNode {
-  [key: string]: string | object
-}
 
 const route = useRoute()
 const router = useRouter()
+
+const { buildSchema } = useSeoSchema()
 
 const requestURL = ref(useRequestURL().host)
 const pageDescribe = ref('')
@@ -177,86 +177,39 @@ const { data: contentData } = await useAsyncData(
   },
 )
 
-const organizationSchema = {
-  '@type': 'Organization',
-  '@id': 'https://gamatrain.com/#organization',
-  'name': 'GamaTrain',
-  'url': 'https://gamatrain.com',
-  'logo': {
-    '@type': 'ImageObject',
-    'url': 'https://gamatrain.com/android-chrome-512x512-light.png',
-  },
-}
-const breadcrumbSchema = computed(() => {
-  if (!breads.value.length) return null
-
-  return {
-    '@type': 'BreadcrumbList',
-    'itemListElement': breads.value.map((item, index) => ({
-      '@type': 'ListItem',
-      'position': index + 1,
-      'name': item.text,
-      'item': `https://${requestURL.value}${item.href}`,
-    })),
-  }
-})
-
-const articleSchema = computed(() => {
+const schema = computed(() => {
   if (!contentData.value) return null
 
-  const image
-    = contentData.value.thumb_pic
-      || contentData.value.lesson_pic
-      || 'https://gamatrain.com/android-chrome-512x512-light.png'
+  const dto = contentData.value
 
-  return {
-    '@type': 'Article',
-    '@id': `https://${requestURL.value}/paper/${contentData.value.id}#article`,
-    'headline': pageTitle.value,
-    'description': pageDescribe.value,
-    'image': [image],
-    'mainEntityOfPage': {
-      '@type': 'WebPage',
-      '@id': `https://${requestURL.value}/paper/${contentData.value.id}/${contentData.value.title_url}`,
-    },
-    'author': {
-      '@type': 'Person',
-      'name': `${contentData.value.first_name} ${contentData.value.last_name}`,
-    },
-    'publisher': {
-      '@type': 'Organization',
-      '@id': 'https://gamatrain.com/#organization',
-    },
-    'dateModified': new Date(contentData.value.up_date).toISOString(),
-    'datePublished': new Date(contentData.value.up_date).toISOString(),
-  }
-})
+  const url = `https://${requestURL.value}/paper/${dto.id}/${dto.title_url}`
 
-const fullSchema = computed(() => {
-  if (!articleSchema.value) return null
+  const title = pageTitle.value
+  const description = pageDescribe.value
 
-  const graph: SchemaNode[] = [
-    organizationSchema,
-    articleSchema.value,
-  ]
-
-  if (breadcrumbSchema.value) {
-    graph.push(breadcrumbSchema.value)
-  }
-
-  return {
-    '@context': 'https://schema.org',
-    '@graph': graph,
-  }
+  return buildSchema({
+    dto,
+    url,
+    title,
+    description,
+    breadcrumbs: breads.value,
+    types: ['article', 'breadcrumb'],
+  })
 })
 
 const setMetaData = () => {
   if (!contentData.value) return
 
-  const { section_title, base_title, title, is_paper } = contentData.value
+  const dto: PastPaperDTO = contentData.value
+  const { section_title, base_title, title, is_paper } = dto
 
-  // Build common title parts
-  const titleParts = [section_title, base_title, title].filter(Boolean)
+  // Build title parts safely from DTO
+  const titleParts = [
+    section_title,
+    base_title,
+    title,
+  ].filter(Boolean)
+
   const baseTitle = titleParts.join(' ')
 
   if (is_paper) {
@@ -268,8 +221,8 @@ const setMetaData = () => {
     pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
   }
 
-  const ogImage = contentData.value?.thumb_pic
-    ? contentData.value?.thumb_pic
+  const ogImage = dto.thumb_pic
+    ? dto.thumb_pic
     : null
 
   useHead({
@@ -316,18 +269,20 @@ const setMetaData = () => {
         content: ogImage,
       },
     ],
-    script: [
-      {
-        key: 'json-ld-schema',
-        type: 'application/ld+json',
-        innerHTML: JSON.stringify(fullSchema.value),
-      },
-    ],
+    script: schema.value
+      ? [
+          {
+            key: 'json-ld-schema',
+            type: 'application/ld+json',
+            innerHTML: JSON.stringify(schema.value),
+          },
+        ]
+      : [],
     link: [
       {
         rel: 'canonical',
-        href: contentData.value
-          ? `https://${requestURL.value}/paper/${contentData.value.id}/${contentData.value.title_url}`
+        href: dto
+          ? `https://${requestURL.value}/paper/${dto.id}/${dto.title_url}`
           : `https://${requestURL.value}/paper/${route.params.id}`,
       },
     ],
