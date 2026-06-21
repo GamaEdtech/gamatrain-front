@@ -365,14 +365,17 @@ const setMetaData = () => {
 
   const dto: TutorialDTO = contentData.value
 
-  // Build title parts safely from DTO
-  const titleParts = [
-    dto.section_title,
-    dto.base_title,
-    dto.title,
-  ].filter(Boolean)
+  const isGamaBoard = dto.section === '7131'
 
-  const baseTitle = titleParts.join(' ')
+  const baseTitle = (
+    isGamaBoard
+      // GAMA: use only the title
+      ? [dto.title]
+      // Other boards: include section, base title, and title
+      : [dto.section_title, dto.base_title, dto.title]
+  )
+    .filter(Boolean)
+    .join(' ')
 
   pageTitle.value = baseTitle
 
