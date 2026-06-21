@@ -48,10 +48,10 @@
       <img
         width="170"
         :src="thumbPic"
+        :alt="alt"
         class="w-100 h-100 main-image-paper"
         preload
         fetchpriority="high"
-        alt="Psat Paper Lesson"
         loading="eager"
       >
 
@@ -83,6 +83,7 @@ interface IPreviewActionCard {
   thumbPic: string
   id: string
   title: string
+  alt: string
   views?: number | string
   score?: string | number
   hasShare?: boolean
