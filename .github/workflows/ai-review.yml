@@ -1,11 +1,11 @@
-name: AI Review
+name: AI Review (Chunked)
 
 on:
   pull_request_target:
     types:
-    - opened
-    - reopened
-    - synchronize
+      - opened
+      - reopened
+      - synchronize
 
 permissions:
   pull-requests: write
@@ -14,7 +14,6 @@ permissions:
 
 jobs:
   review:
-    name: AI Pull Request Review
     runs-on: ubuntu-latest
 
     steps:
@@ -26,8 +25,8 @@ jobs:
             repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files \
             > files.json
 
-      - name: Build review payload
-        id: review_payload
+      - name: Build chunks
+        id: chunks
         run: |
           jq '
             map(
@@ -39,143 +38,158 @@ jobs:
                 (.filename | endswith(".jsx"))
               )
             )
-            | map({
-                filename,
-                status,
-                patch: (
-                  if .patch then
-                    .patch[0:3000]
-                  else
-                    "No patch available"
-                  end
-                )
-              })
-          ' files.json > review-files.json
+          ' files.json > filtered.json
 
-          {
-            echo "payload<<EOF"
-            cat review-files.json
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
+          jq -c '
+            to_entries
+            | group_by(.key / 5 | floor)
+            | map(map(.value))
+          ' filtered.json > chunks.json
 
-      - name: Generate AI review
-        id: ai_review
+          echo "chunks<<EOF" >> $GITHUB_OUTPUT
+          cat chunks.json >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Review chunks with OpenAI
+        id: ai
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          PR_TITLE: ${{ github.event.pull_request.title }}
-          REVIEW_FILES: ${{ steps.review_payload.outputs.payload }}
         run: |
-          if [ -z "$OPENAI_API_KEY" ]; then
-            echo "OPENAI_API_KEY secret is not configured."
-            exit 1
-          fi
+          echo "[]" > reviews.json
 
-          SYSTEM_PROMPT=$(cat <<'EOF'
-          You are a senior software engineer performing pull request reviews.
+          CHUNKS=$(cat chunks.json)
 
-          Your job is to review code changes and provide constructive feedback.
+          echo "$CHUNKS" | jq -c '.[]' | while read chunk; do
 
-          Focus on:
-          - Bugs and potential defects
-          - Security concerns
-          - Edge cases
-          - Maintainability
-          - Readability
-          - Performance issues
-          - Best practices
+            RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
+              -H "Authorization: Bearer $OPENAI_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d "$(jq -n \
+                --arg chunk "$chunk" \
+                '{
+                  model: "gpt-4o",
+                  messages: [
+                    {
+                      role: "system",
+                      content: "You are a senior software engineer performing a code review.
+                      Review the following code changes carefully.
 
-          Do not:
-          - Comment on formatting unless it affects readability
-          - Suggest unnecessary refactors
-          - Invent problems that are not supported by the diff
-          - Repeat the same point multiple times
+                      Focus on:
+                      - Bugs or potential runtime errors
+                      - Security issues
+                      - Code structure and maintainability
+                      - Best practices
+                      - Edge cases
 
-          Keep feedback concise and actionable.
+                      IMPORTANT RULES:
+                      - Be concise and actionable
+                      - Do NOT comment on formatting or style unless it affects correctness
+                      - Do NOT invent issues not supported by the code
+                      - Avoid repeating the same issue multiple times
+                      - Focus only on important findings
 
-          Return markdown using exactly this structure:
+                      OUTPUT FORMAT (STRICT):
 
-          ## Summary
+                      ## Summary
+                      Brief summary of what this chunk changes.
 
-          Short summary of the changes.
+                      ## Potential Issues
+                      - Bullet list of real problems or risks (if none, write: "No significant issues found.")
 
-          ## Potential Issues
+                      ## Suggestions
+                      - Actionable improvements (if none, write: "No major improvements suggested.")
 
-          List possible bugs, risks, or concerns.
-          If none, write "No significant issues found."
+                      ## Positive Feedback
+                      - Good parts of the code (if none, write: "No notable positives.")
 
-          ## Suggestions
+                      Keep the response under 300–400 words.
+                    },
+                    {
+                      role: "user",
+                      content: ("Review this code chunk:\n\n" + $chunk + "\n\nReturn issues, suggestions, positives.")
+                    }
+                  ],
+                  max_tokens: 800
+                }'
+              )")
 
-          List actionable improvements.
-          If none, write "No major improvements suggested."
+            REVIEW=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
 
-          ## Positive Feedback
+            echo "$REVIEW" >> reviews.tmp
+            echo "---" >> reviews.tmp
+          done
 
-          Mention good practices or well-written code.
-          If none, write "No additional positive feedback."
+          echo "reviews<<EOF" >> $GITHUB_OUTPUT
+          cat reviews.tmp >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
 
-          Keep the review under 400 words.
-          EOF
-          )
-
-          USER_PROMPT=$(cat <<EOF
-          Review the following pull request.
-
-          PR Title:
-          $PR_TITLE
-
-          Changed Files:
-          $REVIEW_FILES
-          EOF
-          )
-
+      - name: Final merge review
+        id: final
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          REVIEWS: ${{ steps.ai.outputs.reviews }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
           RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
             -H "Authorization: Bearer $OPENAI_API_KEY" \
             -H "Content-Type: application/json" \
             -d "$(jq -n \
-              --arg system "$SYSTEM_PROMPT" \
-              --arg user "$USER_PROMPT" \
+              --arg reviews "$REVIEWS" \
+              --arg title "$PR_TITLE" \
               '{
                 model: "gpt-4o",
                 messages: [
                   {
                     role: "system",
-                    content: $system
+                    content: "You are a senior software engineer.
+                    You will be given multiple partial code review reports from different parts of a pull request.
+                    Your task:
+                    - Merge them into a single clean, non-redundant review
+                    - Remove duplicate issues
+                    - Prioritize critical problems first
+                    - Keep only meaningful and actionable feedback
+
+                    IMPORTANT RULES:
+                    - Do NOT repeat the same issue
+                    - Do NOT add new issues not mentioned in the inputs
+                    - Keep it concise and structured
+                    - Focus on overall PR quality
+
+                    OUTPUT FORMAT (STRICT):
+
+                    ## Summary
+                    Overall summary of the pull request.
+
+                    ## Potential Issues
+                    - Consolidated list of real issues (most critical first)
+
+                    ## Suggestions
+                    - Consolidated actionable improvements
+
+                    ## Positive Feedback
+                    - Good parts across all chunks"
                   },
                   {
                     role: "user",
-                    content: $user
+                    content: ("PR Title: " + $title + "\n\nCombine these reviews into one:\n\n" + $reviews)
                   }
                 ],
-                max_tokens: 1000
+                max_tokens: 900
               }'
             )")
 
-          API_ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
-
-          if [ -n "$API_ERROR" ]; then
-            echo "OpenAI API Error:"
-            echo "$API_ERROR"
-            exit 1
-          fi
-
-          REVIEW=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
-
-          if [ -z "$REVIEW" ] || [ "$REVIEW" = "null" ]; then
-            echo "No review returned from OpenAI"
-            echo "$RESPONSE"
-            exit 1
-          fi
+          FINAL=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
 
           {
-            echo "review<<EOF"
-            echo "$REVIEW"
+            echo "final<<EOF"
+            echo "$FINAL"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Post AI review comment
+      - name: Post comment
         uses: actions/github-script@v7
         env:
-          REVIEW: ${{ steps.ai_review.outputs.review }}
+          FINAL: ${{ steps.final.outputs.final }}
         with:
           script: |
             const pr = context.payload.pull_request
@@ -185,10 +199,10 @@ jobs:
               repo: context.repo.repo,
               issue_number: pr.number,
               body: `
-              🤖 AI Generated Review
+                🤖 AI Generated Review (Chunked)
 
-              This review was generated automatically and does not replace human review.
+                This review was generated automatically.
 
-              ${process.env.REVIEW}
-              `
+                ${process.env.FINAL}
+                `
             })
