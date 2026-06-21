@@ -1,29 +1,36 @@
-name: AI Review Test
+name: PR Comment Test
 
 on:
-  pull_request:
+  pull_request_target:
     types:
       - opened
-      - synchronize
       - reopened
+      - synchronize
 
 permissions:
   pull-requests: write
   issues: write
-  contents: read
 
 jobs:
-  test-comment:
+  comment:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Add Comment
-        uses: marocchino/sticky-pull-request-comment@v2
+      - name: Add comment to PR
+        uses: actions/github-script@v7
         with:
-          header: ai-review-test
-          message: |
-            🤖 AI Review Test
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `
+              🤖 AI Review Test
 
-            Workflow triggered successfully.
+              Hello from GitHub Actions.
 
-            PR #${{ github.event.pull_request.number }}
+              PR Number: #${context.payload.pull_request.number}
+
+              This is a test comment.
+              `
+            })
