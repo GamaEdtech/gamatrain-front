@@ -20,17 +20,19 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            await github.rest.issues.createComment({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.pull_request.number,
-              body: `
-              🤖 AI Review Test
+             const pr = context.payload.pull_request
 
-              Hello from GitHub Actions.
+             await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: pr.number,
+                  body: `
+                  🤖 AI Review Test
 
-              PR Number: #${context.payload.pull_request.number}
+                  Title: ${pr.title}
 
-              This is a test comment.
-              `
-            })
+                  Author: ${pr.user.login}
+
+                  Changed Files: ${pr.changed_files}
+                 `
+                })
