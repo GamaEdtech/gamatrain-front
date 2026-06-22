@@ -139,7 +139,7 @@ const remove = <T = unknown>(
   params?: SearchParameters,
   opts?: UseFetchOptions,
 ): Promise<T> => {
-  return apiRequest<T>(request, { ...opts, method: 'DELETE' })
+  return apiRequest<T>(request, { ...opts, method: 'DELETE', body: params })
 }
 
 export const useApiService = {

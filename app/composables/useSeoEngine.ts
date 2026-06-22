@@ -7,6 +7,7 @@ export type SchemaContext<TDto = unknown> = {
   description: string
   image?: string
   lang?: string
+  body?: string
 }
 
 export interface BreadCrumb {
@@ -22,7 +23,7 @@ export function useSeoSchema() {
 
   /**
    * ---------------------------
-   * Organization
+   * Organization Schema
    * ---------------------------
    */
   const organizationSchema = {
@@ -38,10 +39,38 @@ export function useSeoSchema() {
 
   /**
    * ---------------------------
-   * WebPage
+   * WebPage Schema
    * ---------------------------
    */
-  const createWebPageSchema = (ctx: SchemaContext) => ({
+  const ABOUT_MAP = {
+    'article': '#article',
+    'learning': '#learning-resource',
+    'article-learning': '#learning-resource',
+    'quiz': '#quiz',
+    'webpage': '#primary',
+  } as const
+  const TYPE_PRIORITY = [
+    'article-learning',
+    'article',
+    'learning',
+    'quiz',
+    'webpage',
+  ] as const
+
+  const getAboutFragment = (types: string[]) => {
+    for (const type of TYPE_PRIORITY) {
+      if (types.includes(type)) {
+        return ABOUT_MAP[type]
+      }
+    }
+
+    return '#primary'
+  }
+
+  const createWebPageSchema = (
+    ctx: SchemaContext,
+    aboutFragment: string,
+  ) => ({
     '@type': 'WebPage',
     '@id': `${ctx.url}#webpage`,
     'url': ctx.url,
@@ -56,7 +85,7 @@ export function useSeoSchema() {
     },
 
     'about': {
-      '@id': `${ctx.url}#primary`,
+      '@id': `${ctx.url}${aboutFragment}`,
     },
   })
 
@@ -66,18 +95,34 @@ export function useSeoSchema() {
    * ---------------------------
    */
   const createArticleSchema = <TDto>(dto: TDto, ctx: SchemaContext<TDto>) => {
+    const url = new URL(ctx.url)
+    const parts = url.pathname.split('/').filter(Boolean)
+    const base = parts.slice(0, 2)
+
+    const articleBasePath = url.origin + '/' + base.join('/')
+
     const image
-      = (dto as Record<string, unknown>)?.lesson_pic
-        || (dto as Record<string, unknown>)?.thumb_pic
+      = (dto as Record<string, unknown>)?.thumb_pic
+        || (dto as Record<string, unknown>)?.lesson_pic
         || LOGO
 
     const up_date = (dto as Record<string, unknown>)?.up_date as
       | string
       | undefined
 
+    const first_name = (dto as Record<string, unknown>)?.first_name as
+      | string
+      | undefined
+
+    const last_name = (dto as Record<string, unknown>)?.last_name as
+      | string
+      | undefined
+
+    const authorName = [first_name, last_name].filter(Boolean).join(' ')
+
     return {
       '@type': 'Article',
-      '@id': `${ctx.url}#article`,
+      '@id': `${articleBasePath}#article`,
       'headline': ctx.title,
       'description': ctx.description,
       'image': [image],
@@ -87,27 +132,40 @@ export function useSeoSchema() {
         '@id': `${ctx.url}`,
       },
 
+      ...(authorName && {
+        author: {
+          '@type': 'Person',
+          'name': authorName,
+        },
+      }),
+
       'publisher': {
-        '@type': 'Organization',
         '@id': `${SITE_URL}/#organization`,
       },
 
-      'datePublished': up_date ? new Date(up_date).toISOString() : undefined,
-
-      'dateModified': up_date ? new Date(up_date).toISOString() : undefined,
+      'datePublished': (up_date && new Date(up_date).toISOString()) || undefined,
+      'dateModified': (up_date && new Date(up_date).toISOString()) || undefined,
     }
   }
 
   /**
    * ---------------------------
-   * LearningResource
+   * LearningResource Schema
    * ---------------------------
    */
   const createLearningResourceSchema = <TDto>(
     dto: TDto,
     ctx: SchemaContext<TDto>,
   ) => {
-    const content = (dto as Record<string, unknown>)?.content as
+    const up_date = (dto as Record<string, unknown>)?.up_date as
+      | string
+      | undefined
+
+    const course = (dto as Record<string, unknown>)?.course as
+      | string
+      | undefined
+
+    const headline = (dto as Record<string, unknown>)?.title as
       | string
       | undefined
 
@@ -118,12 +176,14 @@ export function useSeoSchema() {
       'url': ctx.url,
       'description': ctx.description,
 
+      'body': ctx.body || undefined,
+
       'educationalUse': 'Instruction',
       'learningResourceType': 'Lesson',
-
-      'teaches': ctx.title,
-
-      'body': content ? String(content).slice(0, 300) : undefined,
+      'educationalLevel': course && course !== '0' ? course : undefined,
+      'teaches': headline,
+      'datePublished': (up_date && new Date(up_date).toISOString()) || undefined,
+      'inLanguage': ctx.lang || 'en',
 
       'mainEntityOfPage': {
         '@type': 'WebPage',
@@ -131,9 +191,44 @@ export function useSeoSchema() {
       },
 
       'publisher': {
-        '@type': 'Organization',
         '@id': `${SITE_URL}/#organization`,
       },
+    }
+  }
+
+  /**
+   * ---------------------------
+   * Article - LearningResource Schema
+   * ---------------------------
+   */
+  const createArticleLearningResourceSchema = <TDto>(
+    dto: TDto,
+    ctx: SchemaContext<TDto>,
+  ) => {
+    const article = createArticleSchema(dto, ctx)
+    const learning = createLearningResourceSchema(dto, ctx)
+
+    const {
+      '@type': _articleType,
+      '@id': _articleId,
+    } = article
+
+    const {
+      '@type': _learningType,
+      '@id': _learningId,
+      body: _body,
+      mainEntityOfPage: _mainEntityOfPage,
+      publisher: _publisher,
+      ...learningProps
+    } = learning
+
+    return {
+      '@type': ['Article', 'LearningResource'],
+      '@id': `${ctx.url}#learning-resource`,
+
+      'articleBody': learning.body,
+
+      ...learningProps,
     }
   }
 
@@ -144,7 +239,6 @@ export function useSeoSchema() {
    */
   const createBreadcrumbSchema = (
     items: BreadCrumb[] | undefined,
-    baseUrl: string,
   ) => {
     if (!items?.length) return null
 
@@ -154,7 +248,7 @@ export function useSeoSchema() {
         '@type': 'ListItem',
         'position': index + 1,
         'name': item.text,
-        'item': `${baseUrl}${item.href}`,
+        'item': `${SITE_URL}${item.href}`,
       })),
     }
   }
@@ -196,7 +290,6 @@ export function useSeoSchema() {
       },
 
       'publisher': {
-        '@type': 'Organization',
         '@id': `${SITE_URL}/#organization`,
       },
 
@@ -236,20 +329,31 @@ export function useSeoSchema() {
     url: string
     title: string
     description: string
+    body?: string
     breadcrumbs?: BreadCrumb[]
-    types: Array<'article' | 'webpage' | 'learning' | 'breadcrumb' | 'quiz'>
+    types: Array<
+      | 'webpage'
+      | 'article'
+      | 'learning'
+      | 'article-learning'
+      | 'breadcrumb'
+      | 'quiz'
+    >
   }) => {
     const ctx: SchemaContext<TDto> = {
       dto: options.dto,
       url: options.url,
       title: options.title,
       description: options.description,
+      body: options.body,
     }
 
     const schemas: SchemaNode[] = [organizationSchema] // Organization schema as default
 
+    const aboutFragment = getAboutFragment(options.types)
+
     if (options.types.includes('webpage')) {
-      schemas.push(createWebPageSchema(ctx))
+      schemas.push(createWebPageSchema(ctx, aboutFragment))
     }
 
     if (options.types.includes('article')) {
@@ -260,8 +364,12 @@ export function useSeoSchema() {
       schemas.push(createLearningResourceSchema(options.dto, ctx))
     }
 
+    if (options.types.includes('article-learning')) {
+      schemas.push(createArticleLearningResourceSchema(options.dto, ctx))
+    }
+
     if (options.types.includes('breadcrumb')) {
-      schemas.push(createBreadcrumbSchema(options.breadcrumbs, options.url))
+      schemas.push(createBreadcrumbSchema(options.breadcrumbs))
     }
 
     if (options.types.includes('quiz')) {

@@ -39,6 +39,7 @@ export interface PastPaperDTO {
   avatar: string
   first_name: string
   last_name: string
+  test_type: string
   test_type_title?: string
   up_date: string
   edu_month_title: string

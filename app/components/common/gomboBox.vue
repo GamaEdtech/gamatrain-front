@@ -51,9 +51,13 @@
         :items="items"
         :loading-items="dataLoading"
         :loading-value="loadingValue"
+        :infinite-loading="infiniteLoading"
+        :loading-more="loadingMore"
+        :has-more-items="hasMoreItems"
         :selected-item="selectedItem"
         :has-search="hasSearch"
         @change-selected-item="setValue"
+        @load-more="emit('loadMore')"
       />
     </common-modal-base>
   </div>
@@ -89,6 +93,9 @@ interface IGomboBox {
   loadingValue?: boolean
   clearable?: boolean
   hasSearch?: boolean
+  infiniteLoading?: boolean
+  loadingMore?: boolean
+  hasMoreItems?: boolean
   height?: string | number
   titleModal?: string
 }
@@ -109,12 +116,13 @@ const props = withDefaults(defineProps<IGomboBox>(), {
   loadingValue: false,
   clearable: true,
   hasSearch: true,
+  infiniteLoading: false,
+  loadingMore: false,
+  hasMoreItems: true,
   titleModal: '',
 })
 
-const emit = defineEmits<{
-  'update:modelValue': [value: string | number]
-}>()
+const emit = defineEmits(['update:modelValue', 'loadMore'])
 
 const sheet = ref(false)
 const inputText = ref('')

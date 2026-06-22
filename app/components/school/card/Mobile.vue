@@ -76,6 +76,18 @@
             </span>
           </div>
         </div>
+        <div
+          v-if="school.distance"
+          class="d-flex align-start justify-start"
+        >
+          <div
+            class="d-flex align-center w-100 text-h6 font-weight-regular ga-1 text-grey500"
+          >
+            Distance :
+
+            <span class="text-grey800 font-weight-semibold">        {{ school.distance < 1000 ? Math.round(school.distance) + " m" : (school.distance / 1000).toFixed(1) + " km" }}</span>
+          </div>
+        </div>
       </div>
     </div>
     <div

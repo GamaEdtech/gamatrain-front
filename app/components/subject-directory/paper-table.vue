@@ -416,6 +416,36 @@
     :delta-price="5"
     @complete-animation="completeWalletAnimation"
   />
+  <v-dialog
+    v-model="downloadIssue"
+    max-width="600"
+  >
+    <v-card class="pa-4">
+      <v-card-title class="text-h4">
+        Your download is ready and saved on your device!
+      </v-card-title>
+      <v-card-text>
+        <p>
+          If the file doesn't save to your device, click here to open it in a new tab and download it manually.
+        </p>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn
+          color="primary"
+          :href="downloadIssueLink"
+          target="_blank"
+        >
+          Show file in new tab
+        </v-btn>
+        <v-btn
+          text
+          @click="downloadIssue = false"
+        >
+          Close
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -497,6 +527,8 @@ const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
 const isStartWalletAnimation = ref(false)
+const downloadIssue = ref(false)
+const downloadIssueLink = ref('')
 
 // For 2025 files, only these file types require coins:
 // - Mark schemes/answer files (a_file)
@@ -546,13 +578,15 @@ const requiresCoinPaymentForFile = (type, item) => {
   return false
 }
 
-const handleCoinPaymentConfirm = async () => {
+const handleCoinPaymentConfirm = async (item) => {
   showCoinPaymentModal.value = false
   isProcessingPayment.value = true
 
   try {
     const response = await consumeCoins(
       PRICE_FILE,
+      'PastPaper',
+      item.id,
       'Past paper download',
     )
     if (response.succeeded) {
@@ -604,7 +638,7 @@ const handleDownload = async (type, item) => {
         return
       }
       if ((Number(balanceResult.data) / 10 ** 6) > 5) {
-        handleCoinPaymentConfirm()
+        handleCoinPaymentConfirm(item)
         startDownload(type, item, downloadKey)
       }
       else {
@@ -673,6 +707,9 @@ const startDownload = async (type, item, downloadKey) => {
         import('file-saver').then(({ saveAs }) => {
           saveAs(xhr.response, response.data.name)
         })
+
+        downloadIssueLink.value = response.data?.url || ''
+        downloadIssue.value = true
         // Clean up after a short delay
         setTimeout(() => {
           downloadingItems.value.delete(downloadKey)

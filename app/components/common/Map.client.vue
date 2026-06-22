@@ -309,6 +309,53 @@ const calculateDistance = (point1, point2) => {
   return formatNumber(R * c)
 }
 
+const getViewportRadiusAtZoom = (centerLatLng, targetZoom) => {
+  if (!map.value) return 0
+
+  const leafletMap = map.value.leafletObject || map.value
+  const mapSize = leafletMap.getSize()
+  const centerPoint = leafletMap.project(centerLatLng, targetZoom)
+  const northEastPoint = centerPoint.add([mapSize.x / 2, -mapSize.y / 2])
+  const northEastLatLng = leafletMap.unproject(northEastPoint, targetZoom)
+
+  return calculateDistance(centerLatLng, northEastLatLng)
+}
+
+const getZoomByRadius = (lat, lng, radius) => {
+  if (!map.value) return zoom.value
+
+  const targetLat = Number(lat)
+  const targetLng = Number(lng)
+  const targetRadius = Number(radius)
+
+  if (!Number.isFinite(targetLat) || !Number.isFinite(targetLng)) {
+    return zoom.value
+  }
+
+  if (!Number.isFinite(targetRadius) || targetRadius <= 0) {
+    return zoom.value
+  }
+
+  const leafletMap = map.value.leafletObject || map.value
+  const centerLatLng = L.latLng(targetLat, targetLng)
+  const minMapZoom = leafletMap.getMinZoom() ?? minZoom.value
+  const maxMapZoom = leafletMap.getMaxZoom() ?? 19
+  let bestZoom = minMapZoom
+  let bestDiff = Infinity
+
+  for (let targetZoom = minMapZoom; targetZoom <= maxMapZoom; targetZoom += 1) {
+    const viewportRadius = getViewportRadiusAtZoom(centerLatLng, targetZoom)
+    const diff = Math.abs(viewportRadius - targetRadius)
+
+    if (diff < bestDiff) {
+      bestDiff = diff
+      bestZoom = targetZoom
+    }
+  }
+
+  return bestZoom
+}
+
 const formatNumber = (number) => {
   // Remove latest zero from number to avoid error from api side
   const roundedNumber = parseFloat(number.toFixed(6))
@@ -352,7 +399,31 @@ const setView = (lat, lng, zoom = 8) => {
   }
 }
 
-defineExpose({ setView })
+const setViewByRadius = (lat, lng, radius) => {
+  if (!map.value) return
+
+  const targetLat = Number(lat)
+  const targetLng = Number(lng)
+  const targetRadius = Number(radius)
+
+  if (!Number.isFinite(targetLat) || !Number.isFinite(targetLng)) {
+    return
+  }
+
+  if (!Number.isFinite(targetRadius) || targetRadius <= 0) {
+    return
+  }
+
+  const targetZoom = getZoomByRadius(targetLat, targetLng, targetRadius)
+
+  setView(targetLat, targetLng, targetZoom)
+}
+
+defineExpose({
+  setView,
+  getZoomByRadius,
+  setViewByRadius,
+})
 </script>
 
 <style scoped>

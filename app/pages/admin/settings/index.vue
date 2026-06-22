@@ -160,6 +160,10 @@ const form = reactive<AdminAppSettingsDTO>({
   postContributionConfirmationEmailTemplate: '',
   ticketConfirmationEmailTemplate: '',
   registrationEmailTemplate: '',
+  initializeDeletingAccountEmailTemplate: '',
+  startDeletingAccountEmailTemplate: '',
+  finishedDeletingAccountEmailTemplate: '',
+  adminTransactionCreationEmailTemplate: '',
 })
 const loading = ref(true)
 const fields: FieldConfig[] = [
@@ -192,6 +196,11 @@ const fields: FieldConfig[] = [
   { key: 'postContributionConfirmationEmailTemplate', label: 'Post Contribution Email', type: 'textarea', valueType: 'string' },
   { key: 'ticketConfirmationEmailTemplate', label: 'Ticket Email', type: 'textarea', valueType: 'string' },
   { key: 'registrationEmailTemplate', label: 'Registration Email', type: 'textarea', valueType: 'string' },
+
+  { key: 'initializeDeletingAccountEmailTemplate', label: 'Initialize Deleting Account Email Template', type: 'textarea', valueType: 'string' },
+  { key: 'startDeletingAccountEmailTemplate', label: 'Start Deleting Account Email Template', type: 'textarea', valueType: 'string' },
+  { key: 'finishedDeletingAccountEmailTemplate', label: 'Finished Deleting Account Email Template', type: 'textarea', valueType: 'string' },
+  { key: 'adminTransactionCreationEmailTemplate', label: 'Admin Transaction Creation Email Template', type: 'textarea', valueType: 'string' },
 ]
 const loadingSave = ref(false)
 const showModalPreview = ref(false)
