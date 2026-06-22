@@ -795,7 +795,7 @@ const setNearMeFilter = async () => {
     if (!filterForm.value.sort.includes('distance')) {
       filterForm.value.sort.push('distance')
     }
-    mapRef.value.setView(location.value.lat, location.value.lng, 6)
+    mapRef.value.setViewByRadius(location.value.lat, location.value.lng, 10000)
   }
 }
 </script>

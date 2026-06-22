@@ -38,3 +38,8 @@ export interface EditProfileDTO {
   profileVisibility?: ProfileVisibility
   avatar?: File
 }
+
+export interface DeleteProfileDTO {
+  username: string
+  password: string
+}

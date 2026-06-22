@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="dialogModel"
-    max-width="400"
+    :max-width="maxWidth"
     :fullscreen="!mdAndUp"
     @click="clickOnOverlay"
   >
@@ -41,10 +41,12 @@ import { useDisplay } from 'vuetify'
 interface IModalBase {
   title: string
   showDialog?: boolean
+  maxWidth?: number
 }
 
 const props = withDefaults(defineProps<IModalBase>(), {
   showDialog: false,
+  maxWidth: 400,
 })
 
 const { mdAndUp } = useDisplay()

@@ -98,6 +98,19 @@
             {{ $dayjs(school.lastModifyDate).format("YYYY-MM-DD") }}
           </span>
         </div>
+
+        <div
+          v-if="school.distance"
+          class="d-flex align-center ga-2 text-h6"
+        >
+          <v-icon
+            size="x-large"
+            color="grey500"
+          >md:distance</v-icon>
+          <span class="text-grey800 font-weight-semibold">
+            {{ school.distance < 1000 ? Math.round(school.distance) + " m" : (school.distance / 1000).toFixed(1) + " km" }}
+          </span>
+        </div>
       </div>
     </div>
   </NuxtLink>

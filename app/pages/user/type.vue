@@ -1,83 +1,136 @@
 <template>
-  <div class="mt-15">
-    <v-container>
-      <v-row>
-        <v-col cols="12">
-          <h2>Select account type</h2>
-          <p>Please select user type</p>
-          <v-divider class="my-2" />
+  <v-container class="w-100 d-flex flex-column">
+    <h1 class="text-h3 font-weight-bold text-grey700">
+      Choose your role
+    </h1>
+    <span class="text-h5 font-weight-regular text-grey500 mt-8">This helps us personalize GamaTrain for you.</span>
+    <div class="d-flex align-center justify-center ga-2 mt-16">
+      <div
+        :class="`box-role bg-grey50 px-6 pt-4 d-flex flex-column rounded-lg cursor-pointer ${selectedUserGroup === UserGroup.Student ? `box-role-selected`:``}`"
+        @click="selectedUserGroup = UserGroup.Student"
+      >
+        <div class="d-flex justify-center">
+          <img
+            src="@/assets/images/man-student.svg"
+            alt="Student"
+            class="mr-n4"
+          >
+          <img
+            src="@/assets/images/woman-student.svg"
+            alt="Student"
+          >
+        </div>
+        <v-checkbox
+          :model-value="selectedUserGroup === UserGroup.Student"
+          color="primary"
+          class="text-h5"
+          hide-details
+          readonly
+          false-icon="md:radio_button_unchecked"
+          true-icon="md:radio_button_checked"
+        >
+          <template #label>
+            <span class="text-h5 text-sm-h4 text-grey800 font-weight-regular">Student</span>
+          </template>
+        </v-checkbox>
+      </div>
 
-          <v-radio-group v-model="userType">
-            <v-radio
-              value="6"
-              label="I'm student"
-            />
-            <v-radio
-              value="5"
-              label="I'm teacher"
-            />
-          </v-radio-group>
-
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-          <br>
-        </v-col>
-      </v-row>
-    </v-container>
-  </div>
+      <div
+        :class="`box-role bg-grey50 px-6 pt-4 d-flex flex-column rounded-lg cursor-pointer ${
+          selectedUserGroup === UserGroup.Teacher ? `box-role-selected`:``}`"
+        @click="selectedUserGroup = UserGroup.Teacher"
+      >
+        <div class="d-flex justify-center">
+          <img
+            src="@/assets/images/man-teacher.svg"
+            alt="Teacher"
+            class="mr-n4"
+          >
+          <img
+            src="@/assets/images/woman-teacher.svg"
+            alt="Teacher"
+          >
+        </div>
+        <v-checkbox
+          :model-value="selectedUserGroup === UserGroup.Teacher"
+          color="primary"
+          class="text-h5"
+          hide-details
+          readonly
+          false-icon="md:radio_button_unchecked"
+          true-icon="md:radio_button_checked"
+        >
+          <template #label>
+            <span class="text-h5 text-sm-h4 text-grey800 font-weight-regular">Teacher</span>
+          </template>
+        </v-checkbox>
+      </div>
+    </div>
+    <div
+      class="w-100 d-flex justify-center mt-12"
+    >
+      <v-btn
+        flat
+        rounded="lg"
+        width="250"
+        class="text-h5 font-weight-bold"
+        color="success"
+        :loading="loadingChangeGroup || loadingEditItem"
+        @click="save"
+      >
+        Submit
+      </v-btn>
+    </div>
+  </v-container>
 </template>
 
-<script setup>
-const { $toast } = useNuxtApp()
-const { user } = useUser()
+<script setup lang="ts">
+import { UserGroup } from '@/types'
 
-const userType = ref(2)
+definePageMeta({
+  layout: 'dashboard-layout',
+})
+
+useSeoMeta({
+  title: 'Choose Role',
+})
+
+const { user } = useUser()
+const { changeGroup, loadingChangeGroup, editItem, loadingEditItem } = useProfile()
+
+const selectedUserGroup = ref<UserGroup | null>(
+  user.value?.group === UserGroup.Student || user.value?.group === UserGroup.Teacher
+    ? user.value.group
+    : null,
+)
 
 // Redirect to user page on mount
 onMounted(() => {
-  if (user.value.group === 6 || user.value.group === 5)
+  if (user.value?.group === UserGroup.Student || user.value?.group === UserGroup.Teacher)
     navigateTo('/user')
 })
 
-// Watch for user type changes
-watch(userType, async (_newType) => {
-  await setUserType()
-})
+const save = async () => {
+  if (!selectedUserGroup.value) return
 
-// Update user type
-async function setUserType() {
-  try {
-    const response = await useApiService.post('/api/v1/users/group', {
-      group: userType.value,
-    })
-    const data = response
-    if (data?.status === 1) {
-      user.value.group = Number(userType.value)
+  const response = await changeGroup(selectedUserGroup.value)
 
-      // update bk v2
-      const profilePayload = new FormData()
-      profilePayload.append(
-        'Group',
-        Number(userType.value),
-      )
+  if (response?.status === 1 && user.value) {
+    user.value.group = selectedUserGroup.value
 
-      useApiService.put(
-        '/api/v2/identities/profiles',
-        profilePayload,
-      )
-      // Navigate to user page
+    const responseEditProfile = await editItem({ group: selectedUserGroup.value })
+    if (responseEditProfile.succeeded) {
       navigateTo('/user')
     }
-  }
-  catch (err) {
-    $toast.error(err?.message || 'An error occurred')
   }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.box-role{
+  border : 1px solid rgb(var(--v-theme-grey200))
+}
+.box-role-selected{
+  border-color : rgb(var(--v-theme-primary));
+}
+</style>

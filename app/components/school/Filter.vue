@@ -759,6 +759,7 @@ const filter = reactive({
   coedStatusList: [],
   religionList: [],
 })
+const NEARME_DISTANCE = 10000
 
 const getFilterList = async (params, type) => {
   try {
@@ -839,7 +840,7 @@ const nearMeFilter = async () => {
   if (location) {
     filterForm.lat = location.value.lat
     filterForm.lng = location.value.lng
-    filterForm.distance = 5598568
+    filterForm.distance = NEARME_DISTANCE
     filterForm.sort.push('distance')
     updateQueryParams()
   }
@@ -851,7 +852,7 @@ const openFilterSection = async (event, filter) => {
     if (location) {
       filterForm.lat = location.value.lat
       filterForm.lng = location.value.lng
-      filterForm.distance = 5598568
+      filterForm.distance = NEARME_DISTANCE
       filterForm.sort.push('distance')
       updateQueryParams()
     }
