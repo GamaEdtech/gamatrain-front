@@ -59,6 +59,11 @@ export interface SearchFilterUser {
   referralId: string
 }
 
+export enum UserGroup {
+  Student = 6,
+  Teacher = 5,
+}
+
 export interface User {
   userName: string
   firstName: string
