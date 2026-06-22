@@ -9,10 +9,12 @@
         md="3"
         class="pa-0"
       >
-        <tutorial-lesson-tree
-          v-model:show-drawer="showLessonTree"
-          :units="lessonTree?.list ?? []"
-        />
+        <div class="tree-container">
+          <tutorial-lesson-tree
+            v-model:show-drawer="showLessonTree"
+            :units="lessonTree?.list ?? []"
+          />
+        </div>
       </v-col>
       <v-col
         cols="12"
@@ -474,6 +476,14 @@ if (contentData.value) {
   right: 12px;
   bottom : 70px;
   z-index : 3
+}
+
+@media (min-width: 960px) {
+  .tree-container {
+    position: sticky;
+    top: 70px;
+    height: 100vh;
+  }
 }
 
 .book-content {

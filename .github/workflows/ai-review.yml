@@ -1,0 +1,264 @@
+name: AI Review
+
+on:
+  pull_request_target:
+    types:
+    - opened
+    - reopened
+    - synchronize
+
+permissions:
+  pull-requests: write
+  issues: write
+  contents: read
+
+jobs:
+  review:
+    name: AI Pull Request Review
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout base branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build full review chunks
+        id: review_chunks
+        run: |
+          PR_REF="refs/remotes/origin/pr-${{ github.event.pull_request.number }}"
+          git fetch --no-tags --prune --depth=1 origin \
+            "+refs/pull/${{ github.event.pull_request.number }}/head:$PR_REF"
+
+          mkdir -p review-chunks
+
+          git diff --name-status "${{ github.event.pull_request.base.sha }}" "$PR_REF" -- \
+            '*.ts' '*.js' '*.vue' '*.tsx' '*.jsx' \
+            > changed-files.txt
+
+          git diff --unified=3 --no-ext-diff "${{ github.event.pull_request.base.sha }}" "$PR_REF" -- \
+            '*.ts' '*.js' '*.vue' '*.tsx' '*.jsx' \
+            > changed.diff
+
+          {
+            echo "Changed file list:"
+            cat changed-files.txt
+            echo
+            echo "Full diff:"
+            cat changed.diff
+          } > review-payload.txt
+
+          node <<'NODE'
+          const fs = require('fs')
+          const path = require('path')
+
+          const maxChars = Number(process.env.CHUNK_MAX_CHARS || 45000)
+          const payload = fs.readFileSync('review-payload.txt', 'utf8')
+          const lines = payload.split(/\r?\n/)
+          const chunks = []
+          let current = ''
+
+          for (const line of lines) {
+            if (line.length > maxChars) {
+              if (current) {
+                chunks.push(current)
+                current = ''
+              }
+
+              for (let index = 0; index < line.length; index += maxChars) {
+                chunks.push(line.slice(index, index + maxChars))
+              }
+
+              continue
+            }
+
+            const next = current ? `${current}\n${line}` : line
+            if (current && next.length > maxChars) {
+              chunks.push(current)
+              current = line
+            } else {
+              current = next
+            }
+          }
+
+          if (current) {
+            chunks.push(current)
+          }
+
+          if (chunks.length === 0) {
+            chunks.push('No matching TypeScript, JavaScript, JSX, TSX, or Vue changes were found.')
+          }
+
+          {
+            chunks.forEach((chunk, index) => {
+              fs.writeFileSync(
+                path.join('review-chunks', `chunk-${String(index + 1).padStart(4, '0')}.txt`),
+                chunk
+              )
+            })
+          }
+
+          fs.writeFileSync('chunk-count.txt', String(chunks.length))
+          NODE
+
+          echo "count=$(cat chunk-count.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate AI review
+        id: ai_review
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          if [ -z "$OPENAI_API_KEY" ]; then
+            echo "OPENAI_API_KEY secret is not configured."
+            exit 1
+          fi
+
+          SYSTEM_PROMPT=$(cat <<'EOF'
+          You are a senior software engineer performing pull request reviews.
+
+          Your job is to review code changes and provide constructive feedback.
+
+          Focus on:
+          - Bugs and potential defects
+          - Security concerns
+          - Edge cases
+          - Maintainability
+          - Readability
+          - Performance issues
+          - Best practices
+
+          Do not:
+          - Comment on formatting unless it affects readability
+          - Suggest unnecessary refactors
+          - Invent problems that are not supported by the diff
+          - Repeat the same point multiple times
+
+          Keep feedback concise and actionable.
+
+          Return markdown using exactly this structure:
+
+          ## Summary
+
+          Short summary of the changes.
+
+          ## Potential Issues
+
+          List possible bugs, risks, or concerns.
+          If none, write "No significant issues found."
+
+          ## Suggestions
+
+          List actionable improvements.
+          If none, write "No major improvements suggested."
+
+          ## Positive Feedback
+
+          Mention good practices or well-written code.
+          If none, write "No additional positive feedback."
+
+          Keep the review under 400 words.
+          EOF
+          )
+
+          : > ai-review.md
+          CHUNK_COUNT=$(cat chunk-count.txt)
+
+          for CHUNK_FILE in review-chunks/*.txt; do
+            CHUNK_NUMBER=$(basename "$CHUNK_FILE" .txt | sed 's/chunk-//; s/^0*//')
+            REVIEW_FILES=$(cat "$CHUNK_FILE")
+
+            USER_PROMPT=$(cat <<EOF
+          Review the following pull request.
+
+          PR Title:
+          $PR_TITLE
+
+          Changed Files:
+          $REVIEW_FILES
+          EOF
+            )
+
+            RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
+              -H "Authorization: Bearer $OPENAI_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d "$(jq -n \
+                --arg system "$SYSTEM_PROMPT" \
+                --arg user "$USER_PROMPT" \
+                '{
+                  model: "gpt-4o",
+                  messages: [
+                    {
+                      role: "system",
+                      content: $system
+                    },
+                    {
+                      role: "user",
+                      content: $user
+                    }
+                  ],
+                  max_tokens: 1000
+                }'
+              )")
+
+            API_ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
+
+            if [ -n "$API_ERROR" ]; then
+              echo "OpenAI API Error on chunk $CHUNK_NUMBER of $CHUNK_COUNT:"
+              echo "$API_ERROR"
+              exit 1
+            fi
+
+            REVIEW=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
+
+            if [ -z "$REVIEW" ] || [ "$REVIEW" = "null" ]; then
+              echo "No review returned from OpenAI for chunk $CHUNK_NUMBER of $CHUNK_COUNT"
+              echo "$RESPONSE"
+              exit 1
+            fi
+
+            {
+              echo "## Review chunk $CHUNK_NUMBER/$CHUNK_COUNT"
+              echo
+              echo "$REVIEW"
+              echo
+            } >> ai-review.md
+          done
+
+      - name: Post AI review comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs')
+            const pr = context.payload.pull_request
+            const review = fs.readFileSync('ai-review.md', 'utf8')
+            const header = [
+              '🤖 AI Generated Review',
+              '',
+              'This review was generated automatically and does not replace human review.',
+              ''
+            ].join('\n')
+
+            const maxCommentLength = 62000
+            const parts = []
+            let remaining = review
+
+            while (remaining.length > 0) {
+              parts.push(remaining.slice(0, maxCommentLength - header.length - 1000))
+              remaining = remaining.slice(maxCommentLength - header.length - 1000)
+            }
+
+            if (parts.length === 0) {
+              parts.push('No review content was generated.')
+            }
+
+            for (const [index, part] of parts.entries()) {
+              const suffix = parts.length > 1 ? `\n\nPart ${index + 1}/${parts.length}` : ''
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: `${header}${part}${suffix}`
+              })
+            }
