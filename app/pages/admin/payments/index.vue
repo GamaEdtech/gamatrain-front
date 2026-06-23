@@ -295,125 +295,16 @@
       </div>
     </div>
 
-    <AdminCommonModal
+    <admin-common-modal
       v-model:show-dialog="showSearchModal"
       title="Search"
     >
-      <div class="w-100 d-flex flex-column pa-4">
-        <v-text-field
-          v-model="userId"
-          label="User ID"
-          rounded="lg"
-          variant="outlined"
-          color="primary"
-          density="compact"
-          class="mt-1"
-        />
-        <v-text-field
-          v-model="identifierId"
-          label="Identifier ID"
-          rounded="lg"
-          variant="outlined"
-          color="primary"
-          density="compact"
-          class="mt-1"
-        />
-
-        <v-menu
-          v-model="startDateMenuOpen"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-        >
-          <template #activator="{ props }">
-            <v-text-field
-              v-model="startDate"
-              readonly
-              rounded="lg"
-              variant="outlined"
-              color="primary"
-              density="compact"
-              class="mt-1"
-              v-bind="props"
-              label="Start Date"
-              clearable
-            />
-          </template>
-          <v-date-picker
-            v-model="startDate"
-            color="primary"
-            @update:model-value="() => (startDateMenuOpen = false)"
-          />
-        </v-menu>
-
-        <v-menu
-          v-model="endDateMenuOpen"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-        >
-          <template #activator="{ props }">
-            <v-text-field
-              v-model="endDate"
-              readonly
-              rounded="lg"
-              variant="outlined"
-              color="primary"
-              density="compact"
-              class="mt-1"
-              v-bind="props"
-              label="End Date"
-            />
-          </template>
-          <v-date-picker
-            v-model="endDate"
-            color="primary"
-            @update:model-value="() => (endDateMenuOpen = false)"
-          />
-        </v-menu>
-
-        <common-gombo-box
-          v-model="status"
-          label="Status"
-          :items="statusList.map((item) => ({
-            id: item,
-            title: item,
-          }))"
-          rounded="lg"
-          density="compact"
-          base-color="grey800"
-          color="primary"
-          class="mt-1"
-        />
-
-        <common-gombo-box
-          v-model="gateway"
-          label="Gateway"
-          :items="gatewayList.map((item) => ({
-            id: item,
-            title: item,
-          }))"
-          rounded="lg"
-          density="compact"
-          base-color="grey800"
-          color="primary"
-          class="mt-6"
-        />
-
-        <v-btn
-          color="primary"
-          rounded="xl"
-          height="40"
-          width="200"
-          class="text-h5 mt-4 mx-auto"
-          :loading="loading"
-          flat
-          @click="startSearch"
-        >
-          Search
-        </v-btn>
-      </div>
-    </AdminCommonModal>
+      <admin-payment-modal-search
+        :data="searchFilter"
+        :loading="loading"
+        @search="startSearch"
+      />
+    </admin-common-modal>
 
     <admin-common-confirm-modal
       v-model="showConfirmPaymentModal"
@@ -428,12 +319,11 @@
 import dayjs from 'dayjs'
 import type {
   ApiResult,
-  AppError,
-  ResponseListDTO,
   AdminPaymentDTO,
   StatusPayment,
   CurrencyPayment,
   PaymentGateway,
+  SearchFilterAdminPayment,
 } from '@/types'
 import { TOKEN_DECIMALS } from '~/composables/useJupiterSwap'
 
@@ -449,7 +339,15 @@ definePageMeta({
 
 const { $dayjs, $toast } = useNuxtApp()
 const { verifyPayment, loadingVerifyPayment } = usePayment()
-const { exportPayments, loadingExportPayments } = usePaymentAdmin()
+const {
+  exportPayments,
+  loadingExportPayments,
+  loadingGetData: loading,
+  data: list,
+  getData,
+  totalCount,
+  pageCount,
+} = usePaymentAdmin()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
@@ -478,26 +376,14 @@ const headers = [
   { title: 'Source Wallet', key: 'sourceWallet', sortable: false, width: '30vw' },
   { title: 'Action', key: 'action', sortable: false, width: '10vw' },
 ]
-const list = ref<AdminPaymentDTO[]>([])
-const loading = ref(true)
-const totalCount = ref(0)
 const showSearchModal = ref(false)
 const pageSize = ref(10)
 const page = ref(1)
-const pageCount = ref(0)
 const allPageSize = [
   { label: '10 Rows', value: 10 },
   { label: '20 Rows', value: 20 },
   { label: '50 Rows', value: 50 },
 ]
-
-const userId = ref('')
-const identifierId = ref('')
-
-const startDateMenuOpen = ref(false)
-const startDate = ref('')
-const endDateMenuOpen = ref(false)
-const endDate = ref('')
 const sortSelected = ref<string[]>([])
 const sortList = [
   {
@@ -506,85 +392,60 @@ const sortList = [
   },
 ]
 
-const status = ref('')
-const statusList = ['Pending', 'Paid', 'Failed']
-
-const gateway = ref('')
-const gatewayList = ['GamaTrain', 'Stripe']
+const searchFilter = reactive<SearchFilterAdminPayment>({
+  userId: '',
+  identifierId: '',
+  startDate: '',
+  endDate: '',
+  status: '',
+  gateway: '',
+})
 
 const showConfirmPaymentModal = ref(false)
 const selectedPaymentForVerfy = ref<AdminPaymentDTO | null>(null)
 
-const getData = async () => {
-  loading.value = true
-  try {
-    const params: Record<string, string | number | boolean | null> = {
-      'PagingDto.PageFilter.Size': pageSize.value,
-      'PagingDto.PageFilter.Skip': (page.value - 1) * pageSize.value,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-      'UserId': userId.value,
-      'IdentifierId': identifierId.value,
-      'StartDate': startDate.value ? dayjs(startDate.value).toISOString() : null,
-      'EndDate': endDate.value ? dayjs(endDate.value).toISOString() : null,
-      'Gateway': gateway.value,
-      'Status': status.value,
-    }
-    if (sortSelected.value && sortSelected.value.length > 0) {
-      sortSelected.value.forEach((sortOption, index) => {
-        params[`PagingDto.SortFilter[${index}].sortType`] = 'Asc'
-        params[`PagingDto.SortFilter[${index}].column`] = sortOption
-      })
-    }
-    const response = await useApiService.get<
-      ApiResult<ResponseListDTO<AdminPaymentDTO>>
-    >('/api/v2/admin/payments', params)
-    if (response.data) {
-      list.value = response.data.list
-      totalCount.value = response.data.totalRecordsCount
-      pageCount.value = Math.ceil(totalCount.value / pageSize.value)
-    }
-    else {
-      list.value = []
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loading.value = false
-  }
+const fetchPayments = async () => {
+  await getData({
+    page: page.value,
+    pageSize: pageSize.value,
+    sortSelected: sortSelected.value,
+    ...searchFilter,
+  })
 }
 
 const changePageNumber = async () => {
-  await getData()
+  await fetchPayments()
 }
 
 const changePageSize = async () => {
   page.value = 1
-  await getData()
+  await fetchPayments()
 }
 
 onMounted(async () => {
-  await getData()
+  await fetchPayments()
 })
 
-const startSearch = async () => {
+const startSearch = async (item: SearchFilterAdminPayment) => {
+  searchFilter.userId = item.userId
+  searchFilter.identifierId = item.identifierId
+  searchFilter.startDate = item.startDate
+  searchFilter.endDate = item.endDate
+  searchFilter.status = item.status
+  searchFilter.gateway = item.gateway
   page.value = 1
   showSearchModal.value = false
-  await getData()
+  await fetchPayments()
 }
 
 const isShowClearFilter = computed(() => {
   if (
-    userId.value.length > 0
-    || identifierId.value.length > 0
-    || startDate.value.toString().length > 0
-    || endDate.value.toString().length > 0
-    || status.value.length > 0
-    || gateway.value.length > 0
+    searchFilter.userId.length > 0
+    || searchFilter.identifierId.length > 0
+    || searchFilter.startDate.toString().length > 0
+    || searchFilter.endDate.toString().length > 0
+    || searchFilter.status.length > 0
+    || searchFilter.gateway.length > 0
   ) {
     return true
   }
@@ -592,14 +453,14 @@ const isShowClearFilter = computed(() => {
 })
 
 const clearFilter = async () => {
-  userId.value = ''
-  identifierId.value = ''
-  startDate.value = ''
-  endDate.value = ''
-  status.value = ''
-  gateway.value = ''
+  searchFilter.userId = ''
+  searchFilter.identifierId = ''
+  searchFilter.startDate = ''
+  searchFilter.endDate = ''
+  searchFilter.status = ''
+  searchFilter.gateway = ''
   page.value = 1
-  await getData()
+  await fetchPayments()
 }
 
 const getColorBadgeStatus = (status: StatusPayment) => {
@@ -651,7 +512,7 @@ const handleCheckboxChange = async (checked: boolean | null, item: SortOption) =
     sortSelected.value.splice(index, 1)
   }
   page.value = 1
-  await getData()
+  await fetchPayments()
 }
 
 const openVerifyPaymentModal = (item: AdminPaymentDTO) => {
@@ -669,11 +530,11 @@ const confirmPayment = async () => {
   }
   showConfirmPaymentModal.value = false
   selectedPaymentForVerfy.value = null
-  await getData()
+  await fetchPayments()
 }
 
 const refreshData = async () => {
-  await getData()
+  await fetchPayments()
 }
 
 const isBlobResponse = (response: unknown): response is Blob => {
@@ -694,13 +555,13 @@ const getExportErrorMessage = (response: ApiResult<string>) => {
 
 const exportData = async () => {
   const response = await exportPayments({
-    startDate: startDate.value ? dayjs(startDate.value).toISOString() : null,
-    endDate: endDate.value ? dayjs(endDate.value).toISOString() : null,
-    gateway: gateway.value
-      ? gateway.value as PaymentGateway
+    startDate: searchFilter.startDate ? dayjs(searchFilter.startDate).toISOString() : null,
+    endDate: searchFilter.endDate ? dayjs(searchFilter.endDate).toISOString() : null,
+    gateway: searchFilter.gateway
+      ? searchFilter.gateway as PaymentGateway
       : null,
-    status: status.value
-      ? status.value as StatusPayment
+    status: searchFilter.status
+      ? searchFilter.status as StatusPayment
       : null,
   })
 

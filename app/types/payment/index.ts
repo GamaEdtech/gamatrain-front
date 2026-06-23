@@ -55,3 +55,18 @@ export interface PaymentAdminExportParams {
   gateway?: PaymentGateway | null
   status?: StatusPayment | null
 }
+
+export interface SearchFilterAdminPayment {
+  userId: string
+  identifierId: string
+  startDate: string
+  endDate: string
+  status: string
+  gateway: string
+}
+
+export interface GetAdminPaymentsParams extends SearchFilterAdminPayment {
+  page: number
+  pageSize: number
+  sortSelected: string[]
+}
