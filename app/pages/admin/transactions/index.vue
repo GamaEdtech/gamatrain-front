@@ -184,134 +184,18 @@
       v-model:show-dialog="showSearchModal"
       title="Search"
     >
-      <div class="w-100 d-flex flex-column pa-4">
-        <v-text-field
-          v-model="userId"
-          label="User ID"
-          rounded="lg"
-          variant="outlined"
-          color="primary"
-          density="compact"
-          class="mt-1"
-        />
-        <v-text-field
-          v-model="name"
-          label="Name"
-          rounded="lg"
-          variant="outlined"
-          color="primary"
-          density="compact"
-          class="mt-1"
-        />
-        <v-text-field
-          v-model="email"
-          label="Email"
-          rounded="lg"
-          variant="outlined"
-          color="primary"
-          density="compact"
-          class="mt-1"
-        />
-        <v-text-field
-          v-model="identifierId"
-          label="Identifier ID"
-          rounded="lg"
-          variant="outlined"
-          color="primary"
-          density="compact"
-          class="mt-1"
-        />
-
-        <v-menu
-          v-model="startDateMenuOpen"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-        >
-          <template #activator="{ props }">
-            <v-text-field
-              v-model="startDate"
-              readonly
-              rounded="lg"
-              variant="outlined"
-              color="primary"
-              density="compact"
-              class="mt-1"
-              v-bind="props"
-              label="Start Date"
-              clearable
-            />
-          </template>
-          <v-date-picker
-            v-model="startDate"
-            color="primary"
-            @update:model-value="() => (startDateMenuOpen = false)"
-          />
-        </v-menu>
-
-        <v-menu
-          v-model="endDateMenuOpen"
-          :close-on-content-click="false"
-          transition="scale-transition"
-          offset-y
-        >
-          <template #activator="{ props }">
-            <v-text-field
-              v-model="endDate"
-              readonly
-              rounded="lg"
-              variant="outlined"
-              color="primary"
-              density="compact"
-              class="mt-1"
-              v-bind="props"
-              label="End Date"
-            />
-          </template>
-          <v-date-picker
-            v-model="endDate"
-            color="primary"
-            @update:model-value="() => (endDateMenuOpen = false)"
-          />
-        </v-menu>
-        <v-select
-          v-model="isDebitFilter"
-          :items="isDebitOptions"
-          item-title="label"
-          item-value="value"
-          label="Transaction Type"
-          rounded="lg"
-          variant="outlined"
-          color="primary"
-          density="compact"
-          class="mt-1"
-          clearable
-        />
-
-        <v-btn
-          color="primary"
-          rounded="xl"
-          height="40"
-          width="200"
-          class="text-h5 mt-4 mx-auto"
-          :loading="loading"
-          flat
-          @click="startSearch"
-        >
-          Search
-        </v-btn>
-      </div>
+      <admin-transaction-modal-search
+        :data="searchFilter"
+        :loading="loading"
+        @search="startSearch"
+      />
     </AdminCommonModal>
   </div>
 </template>
 
 <script setup lang="ts">
-import dayjs from 'dayjs'
 import type {
-  ApiResult,
-  AppError,
-  ResponseListDTO,
-  AdminTransactionDTO,
+  SearchFilterAdminTransaction,
 } from '@/types'
 
 definePageMeta({
@@ -319,7 +203,14 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { $dayjs, $toast } = useNuxtApp()
+const { $dayjs } = useNuxtApp()
+const {
+  loadingGetData: loading,
+  data: list,
+  getData,
+  totalCount,
+  pageCount,
+} = useTransactionAdmin()
 
 const headers = [
   { title: 'User ID', key: 'userId', sortable: false, width: '5vw' },
@@ -339,100 +230,68 @@ const headers = [
   { title: 'Type', key: 'isDebit', sortable: false, width: '10vw' },
   { title: 'Description', key: 'description', sortable: false, width: '40vw' },
 ]
-const list = ref<AdminTransactionDTO[]>([])
-const loading = ref(true)
-const totalCount = ref(0)
 const showSearchModal = ref(false)
 const pageSize = ref(10)
 const page = ref(1)
-const pageCount = ref(0)
 const allPageSize = [
   { label: '10 Rows', value: 10 },
   { label: '20 Rows', value: 20 },
   { label: '50 Rows', value: 50 },
 ]
 
-const isDebitFilter = ref(null)
-const isDebitOptions = [
-  { label: 'All', value: null },
-  { label: 'Debit (Money Out)', value: true },
-  { label: 'Credit (Money In)', value: false },
-]
-const userId = ref('')
-const name = ref('')
-const email = ref('')
-const identifierId = ref('')
+const searchFilter = reactive<SearchFilterAdminTransaction>({
+  isDebit: null,
+  userId: '',
+  name: '',
+  email: '',
+  identifierId: '',
+  startDate: '',
+  endDate: '',
+})
 
-const startDateMenuOpen = ref(false)
-const startDate = ref('')
-const endDateMenuOpen = ref(false)
-const endDate = ref('')
-
-const getData = async () => {
-  loading.value = true
-  try {
-    const response = await useApiService.get<
-      ApiResult<ResponseListDTO<AdminTransactionDTO>>
-    >('/api/v2/admin/transactions', {
-      'PagingDto.PageFilter.Size': pageSize.value,
-      'PagingDto.PageFilter.Skip': (page.value - 1) * pageSize.value,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-      'IsDebit': isDebitFilter.value !== null ? isDebitFilter.value : null,
-      'UserId': userId.value,
-      'Name': name.value,
-      'Email': email.value,
-      'IdentifierId': identifierId.value,
-      'StartDate': startDate.value ? dayjs(startDate.value).toISOString() : null,
-      'EndDate': endDate.value ? dayjs(endDate.value).toISOString() : null,
-    })
-    if (response.data) {
-      list.value = response.data.list
-      totalCount.value = response.data.totalRecordsCount
-      pageCount.value = Math.ceil(totalCount.value / pageSize.value)
-    }
-    else {
-      list.value = []
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loading.value = false
-  }
+const fetchTransactions = async () => {
+  await getData({
+    page: page.value,
+    pageSize: pageSize.value,
+    ...searchFilter,
+  })
 }
 
 const changePageNumber = async () => {
-  await getData()
+  await fetchTransactions()
 }
 
 const changePageSize = async () => {
   page.value = 1
-  await getData()
+  await fetchTransactions()
 }
 
 onMounted(async () => {
-  await getData()
+  await fetchTransactions()
 })
 
-const startSearch = async () => {
+const startSearch = async (item: SearchFilterAdminTransaction) => {
+  searchFilter.isDebit = item.isDebit
+  searchFilter.userId = item.userId
+  searchFilter.name = item.name
+  searchFilter.email = item.email
+  searchFilter.identifierId = item.identifierId
+  searchFilter.startDate = item.startDate
+  searchFilter.endDate = item.endDate
   page.value = 1
   showSearchModal.value = false
-  await getData()
+  await fetchTransactions()
 }
 
 const isShowClearFilter = computed(() => {
   if (
-    isDebitFilter.value !== null
-    || userId.value.length > 0
-    || name.value.length > 0
-    || email.value.length > 0
-    || identifierId.value.length > 0
-    || startDate.value.toString().length > 0
-    || endDate.value.toString().length > 0
+    searchFilter.isDebit !== null
+    || searchFilter.userId.length > 0
+    || searchFilter.name.length > 0
+    || searchFilter.email.length > 0
+    || searchFilter.identifierId.length > 0
+    || searchFilter.startDate.toString().length > 0
+    || searchFilter.endDate.toString().length > 0
   ) {
     return true
   }
@@ -440,19 +299,19 @@ const isShowClearFilter = computed(() => {
 })
 
 const clearFilter = async () => {
-  isDebitFilter.value = null
-  userId.value = ''
-  name.value = ''
-  email.value = ''
-  identifierId.value = ''
-  startDate.value = ''
-  endDate.value = ''
+  searchFilter.isDebit = null
+  searchFilter.userId = ''
+  searchFilter.name = ''
+  searchFilter.email = ''
+  searchFilter.identifierId = ''
+  searchFilter.startDate = ''
+  searchFilter.endDate = ''
   page.value = 1
-  await getData()
+  await fetchTransactions()
 }
 
 const refreshData = async () => {
-  await getData()
+  await fetchTransactions()
 }
 </script>
 

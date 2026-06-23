@@ -20,3 +20,18 @@ export interface TransactionDTO {
   creationDate: string
   isDebit: boolean
 }
+
+export interface SearchFilterAdminTransaction {
+  isDebit: boolean | null
+  userId: string
+  name: string
+  email: string
+  identifierId: string
+  startDate: string
+  endDate: string
+}
+
+export interface GetAdminTransactionsParams extends SearchFilterAdminTransaction {
+  page: number
+  pageSize: number
+}
