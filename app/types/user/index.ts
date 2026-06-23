@@ -1,6 +1,7 @@
 import type { ExperienceDTO, ProfileVisibility, Gender } from '@/types'
 
 export type Role = 'Admin' | 'Teacher' | 'Student' | 'Advisor' | 'Finance'
+export type SystemClaims = 'AutoConfirmSchoolContribution' | 'AutoConfirmSchoolImage' | 'AutoConfirmSchoolComment' | 'AutoConfirmPost' | 'AutoConfirmRemoveSchoolImage' | 'AutoConfirmPostComment'
 
 export interface AdminUserDTO {
   id: number
@@ -19,7 +20,7 @@ export interface AdminTokenDTO {
 }
 export interface AdminPermissionDTO {
   roles: Role[]
-  systemClaims: string[]
+  systemClaims: SystemClaims[]
   permissions: {
     value: string
     text: string

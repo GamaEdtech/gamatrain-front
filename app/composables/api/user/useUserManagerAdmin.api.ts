@@ -8,6 +8,8 @@ import type {
   AddUserDTO,
   EditUserDTO,
   GetUsersParams,
+  Role,
+  SystemClaims,
 } from '@/types'
 
 const data = ref<AdminUserDTO[]>()
@@ -377,11 +379,12 @@ export const useUserManagerAdmin = () => {
     }
   }
 
-  const editPermission = async (roles: string[], id: string) => {
+  const editPermission = async (roles: Role[], systemClaims: SystemClaims[], id: string) => {
     try {
       loadingEditPermission.value = true
       const params = {
         roles,
+        systemClaims,
       }
       const response = await useApiService.put<
         ApiResult<boolean>
