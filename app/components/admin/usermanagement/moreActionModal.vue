@@ -20,8 +20,8 @@
         <v-tab value="Password">
           Password
         </v-tab>
-        <v-tab value="Token">
-          Token
+        <v-tab value="Charge">
+          Charge
         </v-tab>
         <v-tab value="Permissions">
           Permissions
@@ -45,9 +45,10 @@
           />
         </v-window-item>
 
-        <v-window-item value="Token">
-          <admin-usermanagement-actions-user-token
+        <v-window-item value="Charge">
+          <admin-usermanagement-actions-user-charge-wallet
             :id="id"
+            @charge-wallet-success-full="chargeWalletSuccessFull"
           />
         </v-window-item>
         <v-window-item value="Permissions">
@@ -94,6 +95,10 @@ const editUserSuccessFull = () => {
 }
 
 const resetPasswordSuccessFull = () => {
+  emit('update:showDialog', false)
+}
+
+const chargeWalletSuccessFull = () => {
   emit('update:showDialog', false)
 }
 </script>

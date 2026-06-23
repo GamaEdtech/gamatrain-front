@@ -35,3 +35,12 @@ export interface GetAdminTransactionsParams extends SearchFilterAdminTransaction
   page: number
   pageSize: number
 }
+export interface AddTransactionAdminDTO {
+  userId: number | string
+  isDebit: boolean
+  points: number
+  description: string
+}
+export interface ResponseAddTransactionAdminDTO {
+  balance: number
+}
