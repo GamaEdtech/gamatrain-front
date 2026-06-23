@@ -609,12 +609,25 @@ const filters = [
   },
 ]
 
+const scrollToPageTop = async () => {
+  if (!import.meta.client) return
+
+  await nextTick()
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth',
+  })
+  await new Promise(resolve => requestAnimationFrame(resolve))
+}
+
 const changeFilter = async (query) => {
   isAllDataLoaded.value = false
   isInitialDataLoading.value = true
   firstLoadedPageNumber.value = 1
   latestLoadedPageNumber.value = 1
   querySearch.value = { ...query, page: 1 }
+  await scrollToPageTop()
   const responseList = await getDataList()
   data.value = responseList
 }
