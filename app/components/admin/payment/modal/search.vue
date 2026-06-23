@@ -63,6 +63,7 @@
           class="mt-1"
           v-bind="menuProps"
           label="End Date"
+          clearable
         />
       </template>
       <v-date-picker
