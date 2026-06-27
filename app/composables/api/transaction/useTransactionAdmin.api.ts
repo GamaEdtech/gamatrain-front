@@ -4,11 +4,14 @@ import type {
   AppError,
   GetAdminTransactionsParams,
   ResponseListDTO,
+  AddTransactionAdminDTO,
+  ResponseAddTransactionAdminDTO,
 } from '@/types'
 import dayjs from 'dayjs'
 
 const data = ref<AdminTransactionDTO[]>([])
 const loadingGetData = ref(true)
+const loadingAddItem = ref(false)
 const totalCount = ref(0)
 const pageCount = ref(0)
 
@@ -56,11 +59,46 @@ export const useTransactionAdmin = () => {
     }
   }
 
+  const addItem = async (item: AddTransactionAdminDTO) => {
+    try {
+      loadingAddItem.value = true
+      const response = await useApiService.post<
+        ApiResult<ResponseAddTransactionAdminDTO>
+      >(
+        '/api/v2/admin/transactions',
+        { ...item },
+      )
+      if (response.succeeded) {
+        $toast.success('The user wallet was successfully recharged!')
+      }
+      else {
+        $toast.error('The operation failed. Please try again later.')
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        data: {},
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+      }
+    }
+    finally {
+      loadingAddItem.value = false
+    }
+  }
+
   return {
     getData,
     data,
     loadingGetData,
     totalCount,
     pageCount,
+    addItem,
+    loadingAddItem,
   }
 }

@@ -28,7 +28,39 @@
               v-if="loadingGetPermission"
               indeterminate
               size="20"
-              color="#ffb300"
+              color="primary"
+              class="mr-2"
+            />
+          </template>
+        </v-select>
+      </div>
+
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <div class="text-h6 text-grey700 ml-2">
+          System Claim
+        </div>
+        <v-select
+          v-model="systemClaims"
+          :items="systemClaimList"
+          rounded="lg"
+          density="compact"
+          placeholder="Claim"
+          variant="outlined"
+          autocomplete="off"
+          persistent-clear
+          base-color="grey200"
+          color="primary"
+          active-color="primary"
+          bg-color="white"
+          class="w-100"
+          multiple
+        >
+          <template #prepend-inner>
+            <v-progress-circular
+              v-if="loadingGetPermission"
+              indeterminate
+              size="20"
+              color="primary"
               class="mr-2"
             />
           </template>
@@ -57,6 +89,8 @@
 import { shallowRef } from 'vue'
 import type {
   AdminPermissionDTO,
+  Role,
+  SystemClaims,
 } from '@/types'
 
 interface IUserPermission {
@@ -64,8 +98,11 @@ interface IUserPermission {
 }
 
 const props = defineProps<IUserPermission>()
-const roles = shallowRef<string[]>([])
+const roles = shallowRef<Role[]>([])
 const roleList = ['Admin', 'Teacher', 'Student', 'Advisor', 'Finance']
+
+const systemClaims = shallowRef<SystemClaims[]>([])
+const systemClaimList = ['AutoConfirmSchoolContribution', 'AutoConfirmSchoolImage', 'AutoConfirmSchoolComment', 'AutoConfirmPost', 'AutoConfirmRemoveSchoolImage', 'AutoConfirmPostComment']
 
 const { loadingGetPermission, getPermission, editPermission, loadingEditPermission } = useUserManagerAdmin()
 
@@ -73,11 +110,12 @@ onMounted(async () => {
   const response = await getPermission(props.id)
   if (response.succeeded && response.data) {
     roles.value = (response.data as AdminPermissionDTO).roles
+    systemClaims.value = (response.data as AdminPermissionDTO).systemClaims
   }
 })
 
 const save = async (id: string) => {
-  await editPermission(roles.value, id)
+  await editPermission(roles.value, systemClaims.value, id)
 }
 </script>
 
