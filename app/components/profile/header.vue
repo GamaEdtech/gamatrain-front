@@ -20,7 +20,7 @@
       <div class="profile-div d-flex ga-1">
         <div class="image-div rounded-circle position-relative d-flex align-center justify-center">
           <img
-            :src="data.avatar ? data.avatar : `/images/default-user.svg`"
+            :src="data.avatarUri ? data.avatarUri : `/images/default-user.svg`"
             alt="Profile Avatar"
             class="profile-img rounded-circle"
             width="140"

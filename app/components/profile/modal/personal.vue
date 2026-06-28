@@ -345,7 +345,7 @@ const closeModal = () => {
 
 const user = ref<IPersonalData>({
   avatarFile: null,
-  avatarUrl: props.data?.avatar ?? '',
+  avatarUrl: props.data?.avatarUri ?? '',
   handle: props.data?.handle ?? '',
   firstName: props.data?.firstName ?? '',
   lastName: props.data?.lastName ?? '',

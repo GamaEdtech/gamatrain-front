@@ -32,8 +32,8 @@
       >
         <template #prepend>
           <v-avatar
-            v-if="user && user.avatar"
-            :image="user.avatar"
+            v-if="user && user.avatarUri"
+            :image="user.avatarUri"
             class="border-image"
           />
           <v-avatar
