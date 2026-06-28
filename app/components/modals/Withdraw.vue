@@ -259,7 +259,10 @@ const initSolanaWallet = async () => {
 
     const { initWallet, useWallet } = await import('solana-wallets-vue')
     const { WalletAdapterNetwork } = await import('@solana/wallet-adapter-base')
-    const adapters = await import('@solana/wallet-adapter-wallets')
+    const { PhantomWalletAdapter } = await import('@solana/wallet-adapter-phantom')
+    const { CloverWalletAdapter } = await import('@solana/wallet-adapter-clover')
+    const { Coin98WalletAdapter } = await import('@solana/wallet-adapter-coin98')
+    const { SolflareWalletAdapter } = await import('@solana/wallet-adapter-solflare')
 
     const netStr = config.public?.solanaNetwork?.toLowerCase() || 'mainnet'
     const network
@@ -271,10 +274,10 @@ const initSolanaWallet = async () => {
 
     initWallet({
       wallets: [
-        new adapters.PhantomWalletAdapter(),
-        new adapters.CloverWalletAdapter(),
-        new adapters.Coin98WalletAdapter(),
-        new adapters.SolflareWalletAdapter({ network }),
+        new PhantomWalletAdapter(),
+        new CloverWalletAdapter(),
+        new Coin98WalletAdapter(),
+        new SolflareWalletAdapter({ network }),
       ],
       autoConnect: true,
     })

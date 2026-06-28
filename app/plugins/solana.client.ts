@@ -26,7 +26,10 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     await import('solana-wallets-vue/styles.css')
     const { default: SolanaWallets } = await import('solana-wallets-vue')
     const { WalletAdapterNetwork } = await import('@solana/wallet-adapter-base')
-    const walletsMod = await import('@solana/wallet-adapter-wallets')
+    const { PhantomWalletAdapter } = await import('@solana/wallet-adapter-phantom')
+    const { CloverWalletAdapter } = await import('@solana/wallet-adapter-clover')
+    const { Coin98WalletAdapter } = await import('@solana/wallet-adapter-coin98')
+    const { SolflareWalletAdapter } = await import('@solana/wallet-adapter-solflare')
 
     // Network from runtime config (defaults to mainnet)
     const config = useRuntimeConfig()
@@ -46,10 +49,10 @@ export default defineNuxtPlugin(async (nuxtApp) => {
 
     const walletOptions = {
       wallets: [
-        new walletsMod.PhantomWalletAdapter(),
-        new walletsMod.CloverWalletAdapter(),
-        new walletsMod.Coin98WalletAdapter(),
-        new walletsMod.SolflareWalletAdapter({ network }),
+        new PhantomWalletAdapter(),
+        new CloverWalletAdapter(),
+        new Coin98WalletAdapter(),
+        new SolflareWalletAdapter({ network }),
       ],
       autoConnect: true,
     }
