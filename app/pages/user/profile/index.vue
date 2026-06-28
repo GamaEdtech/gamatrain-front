@@ -351,7 +351,7 @@ interface UserProfileDTO {
   gender: string | null
   board: number | null
   grade: number | null
-  avatar: string | null
+  avatarUri: string | null
 }
 
 interface ApiResponse<T> {
@@ -531,7 +531,7 @@ const getUserInfo = async () => {
       handle,
       firstName,
       lastName,
-      avatar,
+      avatarUri,
       countryId,
       stateId,
       cityId,
@@ -545,7 +545,7 @@ const getUserInfo = async () => {
       handle: handle ?? '',
       firstName,
       lastName,
-      avatarUrl: avatar || null,
+      avatarUrl: avatarUri || null,
       country: countryId ? { id: countryId } : null,
       state: stateId ? { id: stateId } : null,
       city: cityId ? { id: cityId } : null,

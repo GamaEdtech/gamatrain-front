@@ -73,11 +73,11 @@
         class="pa-1"
       >
         <img
-          v-if="user.user.value?.avatar"
+          v-if="user.user.value?.avatarUri"
           width="24"
           height="24"
           class="rounded-circle"
-          :src="user.user.value?.avatar"
+          :src="user.user.value?.avatarUri"
           alt="User Profile"
         >
         <v-icon

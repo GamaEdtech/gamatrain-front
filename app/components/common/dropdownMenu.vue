@@ -39,11 +39,11 @@
         class="d-flex d-lg-none"
       >
         <v-avatar
-          v-if="user?.avatar"
+          v-if="user?.avatarUri"
           size="26"
         >
           <v-img
-            :src="user?.avatar"
+            :src="user?.avatarUri"
             alt="user avatar"
           />
         </v-avatar>

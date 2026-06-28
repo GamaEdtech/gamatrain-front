@@ -183,7 +183,7 @@ useHead(() => {
     || `View ${fullName || handle}'s profile, skills, and learning experience on GamaTrain.`
   const canonical = `${requestURL.protocol}//${requestURL.host}/profile/${handle}`
   const ogImage = getAbsoluteUrl(
-    profile?.avatar || '/images/default-user.svg',
+    profile?.avatarUri || '/images/default-user.svg',
   )
   const fullSchema = {
     '@context': 'https://schema.org',
@@ -316,9 +316,9 @@ const changePersonalSuccessfully = (data: EditProfileDTO) => {
     board: data.board ?? user.value.board,
     grade: data.grade ?? user.value.grade,
     gender: data.gender ?? user.value.gender,
-    avatar: data.avatar
+    avatarUri: data.avatar
       ? URL.createObjectURL(data.avatar)
-      : user.value.avatar,
+      : user.value.avatarUri,
   }
   setUser(newUser)
 
@@ -332,9 +332,9 @@ const changePersonalSuccessfully = (data: EditProfileDTO) => {
       data.firstName ?? contentData.value.firstName,
     lastName:
       data.lastName ?? contentData.value.lastName,
-    avatar: data.avatar
+    avatarUri: data.avatar
       ? URL.createObjectURL(data.avatar)
-      : contentData.value.avatar,
+      : contentData.value.avatarUri,
   }
 }
 
