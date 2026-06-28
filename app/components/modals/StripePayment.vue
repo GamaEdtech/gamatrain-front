@@ -72,7 +72,7 @@ const { trackPayment } = useGtmEvents()
 const { startPayment, loadingPayment, savePathRedirect } = usePayment()
 
 const minAmount = 2
-const currency: PaymentCurrency = 'USDC'
+const currency: PaymentCurrency = 'USD'
 const gateway: PaymentGateway = 'Stripe'
 
 const pay = async (amount: number) => {
