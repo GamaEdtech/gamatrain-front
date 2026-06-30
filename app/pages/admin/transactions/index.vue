@@ -142,7 +142,7 @@
             class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
           >
            <NuxtLink v-if="item.transactionType === 'DownloadPastPaper'" :to="`/paper/${item.identifierId}`"
-              target="_blank" rel="noopener noreferrer">
+              target="_blank" rel="noopener noreferrer" class="text-decoration-none">
               {{ item.description }} ({{ item.identifierId }})
             </NuxtLink>
 
@@ -337,6 +337,9 @@ const refreshData = async () => {
 }
 .select-size-div {
   top: 18px;
+}
+.text-decoration-none:hover {
+  text-decoration: underline !important;
 }
 
 :deep(.custom-pagination li button:hover) {
