@@ -73,3 +73,57 @@ export interface PDFResponseDTO {
   url?: string
   name?: string
 }
+
+export interface PastPaperExtraFileCreateDTO {
+  type: number
+  file: string
+}
+
+export interface PastPaperCreateDTO {
+  board: string | number
+  grade: string | number
+  subject: string | number
+  classification: string | number
+  topics: number[]
+  answer_type: number
+  level: number
+  holding_level: number
+  title: string
+  description: string
+  file_pdf: string
+  file_word: string
+  file_answer: string
+  edu_year: string | number
+  edu_month: string | number
+  file_extra?: PastPaperExtraFileCreateDTO[]
+  state: string
+  area: string
+  school: string
+}
+
+export interface PastPaperCreatePayloadDTO {
+  section: string | number
+  base: string | number
+  lesson: string | number
+  test_type: string | number
+  topics: number[]
+  answer_type: number
+  level: number
+  holding_level: number
+  title: string
+  description: string
+  file_pdf: string
+  file_word: string
+  file_answer: string
+  edu_year: string | number
+  edu_month: string | number
+  file_extra: PastPaperExtraFileCreateDTO[]
+  state: string
+  area: string
+  school: string
+}
+
+export interface PastPaperCreateResponseDTO {
+  id: number
+  repeated?: boolean
+}

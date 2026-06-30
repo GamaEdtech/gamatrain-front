@@ -278,7 +278,7 @@
             persistent-clear
             no-resize
             rows="7"
-            :rules="[required, min(70)]"
+            :rules="[required, minLength(70)]"
           />
         </div>
 
@@ -422,38 +422,49 @@
 
           <div class="each-item d-flex flex-column align-start justify-start ga-1">
             <span class="text-h6 text-grey700 font-weight-medium">Extra File</span>
-            <v-file-input
-              v-model="extra.file"
-              density="compact"
-              variant="outlined"
-              label=""
-              base-color="grey200"
-              color="primary"
-              prepend-icon=""
-              append-inner-icon="md:files"
-              autocomplete="off"
-              max-height="48"
-              rounded="pill"
-              class="w-100"
-              :disabled="isUploadingFile('file_extra', index)"
-              @update:model-value="uploadPaperFile('file_extra', $event, index)"
-            >
-              <template #prepend-inner>
-                <v-icon
-                  size="20"
-                  color="success"
-                >
-                  md:add
-                </v-icon>
-                <v-progress-circular
-                  v-if="isUploadingFile('file_extra', index)"
-                  indeterminate
-                  size="20"
-                  color="primary"
-                  class="mx-2"
-                />
-              </template>
-            </v-file-input>
+            <div class="w-100 d-flex align-start ga-1">
+              <v-file-input
+                v-model="extra.file"
+                density="compact"
+                variant="outlined"
+                label=""
+                base-color="grey200"
+                color="primary"
+                prepend-icon=""
+                append-inner-icon="md:files"
+                autocomplete="off"
+                max-height="48"
+                rounded="pill"
+                class="w-100"
+                :disabled="isUploadingFile('file_extra', index)"
+                @update:model-value="uploadPaperFile('file_extra', $event, index)"
+              >
+                <template #prepend-inner>
+                  <v-icon
+                    size="20"
+                    color="success"
+                  >
+                    md:add
+                  </v-icon>
+                  <v-progress-circular
+                    v-if="isUploadingFile('file_extra', index)"
+                    indeterminate
+                    size="20"
+                    color="primary"
+                    class="mx-2"
+                  />
+                </template>
+              </v-file-input>
+
+              <v-icon
+                size="24"
+                color="lightError"
+                class="cursor-pointer mt-2"
+                @click="removeExtra(index)"
+              >
+                md:delete
+              </v-icon>
+            </div>
           </div>
         </div>
 
@@ -474,28 +485,38 @@
       </div>
     </v-form>
 
-    <v-row>
-      <v-col
-        cols="12"
-        class="pb-0 d-flex justify-center mt-4"
+    <div class="d-flex align-center justify-center mt-8 ga-2">
+      <v-btn
+        variant="outlined"
+        color="lightError"
+        to="/user/paper"
+        flat
+        rounded="pill"
+        height="40"
+        class="text-h5 font-weight-medium"
       >
-        <v-btn
-          flat
-          rounded="pill"
-          width="250"
-          height="40"
-          class="text-h5 font-weight-medium text-grey800"
-          color="primary"
-        >
-          Submit
-        </v-btn>
-      </v-col>
-    </v-row>
+        Discard
+      </v-btn>
+      <v-btn
+        flat
+        rounded="pill"
+        width="200"
+        height="40"
+        class="text-h5 font-weight-medium text-grey800"
+        color="primary"
+        :loading="loadingAddItem"
+        :disabled="!isFormValid"
+        @click="submitPaper"
+      >
+        Submit
+      </v-btn>
+    </div>
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { ANSWER_STATUS_LIST, TEST_LEVEL_LIST, YEAR_LIST, MONTH_LIST, HOLDING_LEVEL_LIST } from '@/constants'
+import type { PastPaperCreateDTO } from '@/types'
 
 interface ExtraFileInfo {
   name: string | null
@@ -504,6 +525,7 @@ interface ExtraFileInfo {
 }
 
 type PaperFileField = 'file_pdf' | 'file_word' | 'file_answer' | 'file_extra'
+type PaperForm = Omit<PastPaperCreateDTO, 'file_extra'>
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -518,12 +540,15 @@ const {
   loadingGetData: loadingBoards, data: boards, getData: getBoards, getGrades, grades, loadingGrade, resetGrades,
   subjects, loadingSubject, resetSubjects, getSubjects, getClassification, resetClassifications, loadingClassification, classifications, getTopics, resetTopics, loadingTopic, topics, getExtraTypeFile, extraTypeFile, loadingExtraTypeFile,
 } = useBoard()
-const { required, min } = useValidationRules()
+const { required, minLength } = useValidationRules()
 const { uploadFile } = useUpload()
 const { $toast } = useNuxtApp()
+const { addItem,
+  loadingAddItem } = usePastPaper()
+const router = useRouter()
 
 const isFormValid = ref(false)
-const paper = ref({
+const paper = ref<PaperForm>({
   board: '',
   grade: '',
   subject: '',
@@ -539,6 +564,9 @@ const paper = ref({
   file_pdf: '',
   file_word: '',
   file_answer: '',
+  state: '',
+  area: '',
+  school: '',
 })
 const pdfQuestionFile = ref(null)
 const pdfSolutionFile = ref(null)
@@ -548,6 +576,22 @@ const uploadingFileKeys = ref<string[]>([])
 
 const addExtraFile = () => {
   extraFileList.value.push({ type: '', file: null, name: null })
+}
+
+const removeExtra = (index: number) => {
+  const hasExtraUploadInProgress = uploadingFileKeys.value.some(key =>
+    key.startsWith('file_extra-'),
+  )
+
+  if (hasExtraUploadInProgress) {
+    $toast.error('Please wait until the file upload is complete.')
+    return
+  }
+
+  extraFileList.value.splice(index, 1)
+  uploadingFileKeys.value = uploadingFileKeys.value.filter(
+    key => key !== getUploadKey('file_extra', index),
+  )
 }
 
 const getUploadKey = (fileField: PaperFileField, index?: number) => {
@@ -723,6 +767,22 @@ const subjectChange = async (subjectId: number | string) => {
   }
 }
 
+const submitPaper = async () => {
+  const response = await addItem({
+    ...paper.value,
+    file_extra: extraFileList.value
+      .filter(item => item.type && item.name)
+      .map(item => ({
+        type: Number(item.type),
+        file: item.name || '',
+      })),
+  })
+
+  if (response.status === 1 && response.data?.id !== 0) {
+    router.push('/user/paper')
+  }
+}
+
 onMounted(async () => {
   await getBoards()
   await getExtraTypeFile()
@@ -735,5 +795,10 @@ onMounted(async () => {
 }
 .container-topics{
   border : 2px solid rgb(var(--v-theme-grey200))
+}
+@media screen and (max-width: 960px) {
+  .each-item{
+    width: 100%;
+  }
 }
 </style>
