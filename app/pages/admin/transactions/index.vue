@@ -141,7 +141,14 @@
           <div
             class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
           >
-            {{ item.description }}
+           <NuxtLink v-if="item.transactionType === 'DownloadPastPaper'" :to="`/paper/${item.identifierId}`"
+              target="_blank" rel="noopener noreferrer">
+              {{ item.description }} ({{ item.identifierId }})
+            </NuxtLink>
+
+            <span v-else>
+              {{ item.description }}
+            </span>
           </div>
         </template>
       </v-data-table>

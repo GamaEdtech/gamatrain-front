@@ -6,6 +6,8 @@ export interface AdminTransactionDTO {
   creationDate: string
   currentBalance: number
   isDebit: boolean
+  transactionType: string
+  identifierId: number
 }
 export interface TransactionStatisticDTO {
   name: string
