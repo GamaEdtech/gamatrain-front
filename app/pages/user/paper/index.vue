@@ -1,514 +1,470 @@
 <template>
-  <div class="mt-4">
-    <v-col
-      cols="12"
-      class="px-0 px-sm-2"
-    >
-      <!-- Filter section -->
-      <v-row>
-        <v-col
-          cols="12"
-          class="pl-5"
-        >
-          <span class="text-h4 text-teal px-3 px-sm-0">
-            My Past Papers List
-          </span>
-        </v-col>
-      </v-row>
-      <v-row class="d-none d-md-flex">
-        <v-col
-          cols="12"
-          md="3"
-        >
-          <v-autocomplete
-            v-model="filter.level"
-            density="compact"
-            variant="outlined"
-            clearable
-            :items="level_list"
-            item-title="title"
-            item-value="id"
-            label="Curriculum"
-            @update:model-value="filterChanged('level')"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          md="3"
-        >
-          <v-autocomplete
-            v-model="filter.grade"
-            density="compact"
-            variant="outlined"
-            clearable
-            :items="grade_list"
-            item-value="id"
-            item-title="title"
-            label="Grade"
-            @update:model-value="filterChanged('grade')"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          md="3"
-        >
-          <v-autocomplete
-            v-model="filter.lesson"
-            density="compact"
-            variant="outlined"
-            :items="lesson_list"
-            item-value="id"
-            item-title="title"
-            clearable
-            label="Subject"
-            @update:model-value="filterChanged('lesson')"
-          />
-        </v-col>
-      </v-row>
-      <!-- End filter section -->
+  <div class="w-100 h-100 d-flex flex-column align-start justify-start px-2 pa-md-0">
+    <div class="w-100 d-flex align-center justify-space-between ga-2 mt-4">
+      <h1 class="text-h4 text-grey700 font-weight-regular">
+        My Past Papers
+      </h1>
+    </div>
 
-      <v-card class="mt-3 px-1">
-        <v-card-title class="text-h4">
-          <v-row>
-            <v-col
-              cols="12"
-              class="text-left"
+    <div class="w-100 d-flex ga-1 flex-wrap align-end mt-4">
+      <div class="filter-item">
+        <common-gombo-box
+          v-model="filters.board"
+          label="Board"
+          :items="boards?.map((board) => {
+            return {
+              id: board.code,
+              title: board.title,
+            }
+          })"
+          :data-loading="loadingBoards"
+          rounded="pill"
+          height="48"
+          base-color="grey200"
+          color="primary"
+          density="compact"
+          :defalut-lable="false"
+          @update:model-value="boardFilterChange"
+        />
+      </div>
+
+      <div class="filter-item">
+        <common-gombo-box
+          v-model="filters.grade"
+          label="Grade"
+          :items="grades?.map((item) => {
+            return {
+              id: item.id,
+              title: item.title,
+            }
+          })"
+          :data-loading="loadingBoards || loadingGrade"
+          rounded="pill"
+          height="48"
+          base-color="grey200"
+          color="primary"
+          density="compact"
+          :defalut-lable="false"
+          :disabled="!filters.board || loadingGrade"
+          @update:model-value="gradeFilterChange"
+        />
+      </div>
+
+      <div class="filter-item">
+        <common-gombo-box
+          v-model="filters.subject"
+          label="Subject"
+          :items="subjects?.map((item) => {
+            return {
+              id: item.id,
+              title: item.title,
+            }
+          })"
+          :data-loading="loadingBoards || loadingGrade || loadingSubject"
+          rounded="pill"
+          height="48"
+          base-color="grey200"
+          color="primary"
+          density="compact"
+          :defalut-lable="false"
+          :disabled="!filters.board || !filters.grade || loadingSubject"
+          @update:model-value="subjectFilterChange"
+        />
+      </div>
+    </div>
+
+    <div class="w-100 d-flex justify-space-between align-center mt-4">
+      <v-btn
+        to="/user/paper/create"
+        rounded="pill"
+        color="primary"
+        flat
+        max-width="200"
+        height="34"
+      >
+        <v-icon
+          color="grey800"
+          size="20"
+        >
+          md:add
+        </v-icon>
+        <span class="text-grey800 font-weight-bold text-h6">New Paper</span>
+      </v-btn>
+      <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold ml-auto">
+        <span class="text-grey500 font-weight-bold mr-1">
+          {{ totalCount }}
+        </span>
+        Papers
+      </span>
+    </div>
+
+    <div class="w-100 mt-4">
+      <v-data-table
+        :headers="headers"
+        :items="list"
+        :items-per-page="pageSize"
+        class="elevation-1 set-height-table"
+        :loading="loading"
+        fixed-header
+        hide-default-footer
+      >
+        <template #headers="{ columns }">
+          <tr>
+            <th
+              v-for="(column, index) in columns"
+              :key="index"
+              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
+               ${index == 0 ? `` : `th-min-width`}`"
             >
-              <v-btn
-                to="/user/paper/create"
-                color="teal"
-                variant="flat"
-                class="text-white"
+              {{ column.title }}
+            </th>
+          </tr>
+        </template>
+
+        <template #[`item.id`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
+            {{ item.id }}
+          </div>
+        </template>
+
+        <template #[`item.title`]="{ item }">
+          <div class="d-flex justify-center align-center">
+            <NuxtLink
+              :to="`/paper/${item.id}`"
+              class="text-grey600 text-h5 font-weight-bold text-decoration-none text-center"
+            >
+              {{ item.title }}
+            </NuxtLink>
+          </div>
+        </template>
+
+        <template #[`item.ref_score`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
+            {{ item.ref_score }}
+          </div>
+        </template>
+
+        <template #[`item.downloads`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
+            {{ item.downloads }}
+          </div>
+        </template>
+
+        <template #[`item.subdate`]="{ item }">
+          <div class="text-center text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
+            {{ item.subdate }}
+          </div>
+        </template>
+
+        <template #[`item.status`]="{ item }">
+          <div class="w-100 d-flex justify-center align-center">
+            <v-chip
+              :color="getStatusColor(item.status)"
+              class="font-weight-bold text-h5"
+            >
+              {{ getStatusTitle(item.status) }}
+            </v-chip>
+          </div>
+        </template>
+
+        <template #[`item.Action`]="{ item }">
+          <div class="d-flex justify-center align-center">
+            <v-btn
+              icon
+              flat
+              :to="`/paper/${item.id}/${item.title}`"
+            >
+              <v-icon
+                size="20"
+                color="grey800"
               >
-                New Paper
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-title>
-        <v-card-text class="px-sm-8 px-md-4">
-          <v-row>
-            <v-col
-              cols="12"
-              class="px-0 px-sm-4 px-md-4"
+                md:visibility
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                View
+              </v-tooltip>
+            </v-btn>
+
+            <v-btn
+              icon
+              flat
+              :to="`/user/paper/edit/${item.id}`"
             >
-              <v-table class="content_table">
-                <thead>
-                  <tr>
-                    <th class="text-left text-h5">
-                      #
-                    </th>
-                    <th class="text-center text-h5">
-                      Title
-                    </th>
-                    <th class="text-center text-h5">
-                      Score
-                    </th>
-                    <th class="text-center text-h5">
-                      Download
-                    </th>
-                    <th class="text-center text-h5">
-                      Date
-                    </th>
-                    <th class="text-center text-h5">
-                      Status
-                    </th>
-                    <th class="text-center text-h5">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="(item, index) in paper_list"
-                    v-show="paper_list.length > 0"
-                    :key="item.id"
-                  >
-                    <td>{{ item.id }}</td>
-                    <td
-                      class="text-center"
-                      style="max-width: 20rem"
-                    >
-                      <a
-                        :href="`/paper/${item.id}/${item.title}`"
-                        target="_blank"
-                      >
-                        {{ item.title }}
-                      </a>
-                    </td>
-                    <td class="text-center">
-                      {{ item.teacher_score }}
-                    </td>
-                    <td class="text-center">
-                      {{ item.downloads }}
-                    </td>
-                    <td class="text-center">
-                      {{ item.subdate }}
-                    </td>
-                    <td class="text-center">
-                      {{ calcStatus(item.status) }}
-                    </td>
-                    <td class="text-center">
-                      <div class="d-flex justify-center">
-                        <v-tooltip location="bottom">
-                          <template #activator="{ props }">
-                            <v-btn
-                              icon
-                              color="green"
-                              :to="`/paper/${item.id}`"
-                              target="_blank"
-                              v-bind="props"
-                              variant="text"
-                              density="compact"
-                            >
-                              <v-icon> mdi-eye </v-icon>
-                            </v-btn>
-                          </template>
-                          <span>View</span>
-                        </v-tooltip>
-                        <v-tooltip location="bottom">
-                          <template #activator="{ props }">
-                            <v-btn
-                              icon
-                              v-bind="props"
-                              :to="`/user/paper/edit/${item.id}`"
-                              variant="text"
-                              density="compact"
-                            >
-                              <v-icon> mdi-note-edit-outline </v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Edit</span>
-                        </v-tooltip>
-                        <v-tooltip location="bottom">
-                          <template #activator="{ props }">
-                            <v-btn
-                              icon
-                              color="error"
-                              v-bind="props"
-                              variant="text"
-                              density="compact"
-                              @click="openDeleteConfirmDialog(item.id, index)"
-                            >
-                              <v-icon> mdi-delete </v-icon>
-                            </v-btn>
-                          </template>
-                          <span>Delete</span>
-                        </v-tooltip>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr
-                    v-show="
-                      !initialLoading
-                        && page_loading === false
-                        && paper_list.length === 0
-                    "
-                  >
-                    <td
-                      colspan="7"
-                      class="text-center"
-                    >
-                      <p>Oops! no data found</p>
-                    </td>
-                  </tr>
-                  <tr v-show="page_loading || initialLoading">
-                    <td
-                      colspan="7"
-                      class="text-center"
-                    >
-                      <v-progress-circular
-                        :size="30"
-                        :width="3"
-                        class="mt-12 mb-12"
-                        color="orange"
-                        indeterminate
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </v-table>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
-    </v-col>
+              <v-icon
+                size="20"
+                color="grey800"
+              >
+                md:edit
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                Edit
+              </v-tooltip>
+            </v-btn>
 
-    <!-- Delete dialog -->
-    <v-dialog
-      v-model="deleteConfirmDialog"
-      max-width="290"
+            <v-btn
+              icon
+              flat
+              @click="openModalDelete(item)"
+            >
+              <v-icon
+                size="20"
+                color="grey800"
+              >
+                md:delete
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                Delete
+              </v-tooltip>
+            </v-btn>
+          </div>
+        </template>
+      </v-data-table>
+    </div>
+
+    <div class="w-100 d-flex mt-2 position-relative ga-6">
+      <div class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4">
+        <v-pagination
+          v-model="page"
+          :length="pageCount"
+          :total-visible="4"
+          next-icon="md:arrow_forward"
+          prev-icon="md:arrow_back"
+          size="40"
+          class="custom-pagination"
+          @update:model-value="changePageNumber"
+        />
+      </div>
+
+      <div class="position-absolute right-0 select-size-div">
+        <v-select
+          v-model="pageSize"
+          :items="allPageSize"
+          item-title="label"
+          item-value="value"
+          variant="outlined"
+          density="compact"
+          rounded
+          hide-details
+          max-width="140"
+          class="rounded-pill"
+          @update:model-value="changePageSize"
+        />
+      </div>
+    </div>
+
+    <common-modal-base
+      v-model:show-dialog="showDeleteModal"
+      title="Delete"
     >
-      <v-card>
-        <v-card-title class="text-h5">
-          Are you sure?
-        </v-card-title>
-
-        <v-card-text>
-          <p>If you are sure to delete, click Yes.</p>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-
-          <v-btn
-            variant="text"
-            @click="deleteConfirmDialog = false"
-          >
-            No
-          </v-btn>
-
-          <v-btn
-            color="green-darken-1"
-            variant="text"
-            :loading="delete_loading"
-            @click="deletePaper()"
-          >
-            Yes
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <!-- End delete dialog -->
+      <common-modal-delete
+        :loading="loadingDeleteItem"
+        @confirm="confirmDelete"
+      />
+    </common-modal-base>
   </div>
 </template>
 
-<script setup>
-// Core imports
-import { useAuth } from '#imports'
+<script setup lang="ts">
+import type { PastPaperBriefDTO } from '@/types'
 
-// Define layout and page metadata
 definePageMeta({
   layout: 'dashboard-layout',
   middleware: ['auth', 'user-type'],
 })
 
-// Use services
-const _router = useRouter()
-const _auth = useAuth()
-const { $auth, $toast } = useNuxtApp()
-
-// Page title
-useHead({
+useSeoMeta({
   title: 'Paper manage',
 })
 
-// Reactive state
-const paper_list = ref([])
-const initialLoading = ref(true)
+const {
+  loadingGetData: loading,
+  data: list,
+  getData,
+  totalCount,
+  pageCount,
+  deleteItem,
+  loadingDeleteItem,
+} = usePastPaper()
+const {
+  loadingGetData: loadingBoards,
+  data: boards,
+  getData: getBoards,
+  getGrades,
+  grades,
+  loadingGrade,
+  resetGrades,
+  subjects,
+  loadingSubject,
+  resetSubjects,
+  getSubjects,
+} = useBoard()
 
-// Filter section
-const filter = reactive({
-  level: '',
+const headers = [
+  { title: 'ID', key: 'id', sortable: false, width: '10vw' },
+  { title: 'Title', key: 'title', sortable: false, width: '30vw' },
+  { title: 'Score', key: 'ref_score', sortable: false, width: '5vw' },
+  { title: 'Download', key: 'downloads', sortable: false, width: '5vw' },
+  { title: 'Date', key: 'subdate', sortable: false, width: '20vw' },
+  { title: 'Status', key: 'status', sortable: false, width: '15vw' },
+  { title: 'Action', key: 'Action', sortable: false, width: '15vw' },
+]
+
+const pageSize = ref(10)
+const page = ref(1)
+const allPageSize = [
+  { label: '10 Rows', value: 10 },
+  { label: '20 Rows', value: 20 },
+  { label: '50 Rows', value: 50 },
+]
+
+const filters = reactive<{
+  board: string | number
+  grade: string | number
+  subject: string | number
+}>({
+  board: '',
   grade: '',
-  lesson: '',
+  subject: '',
 })
 
-const level_list = ref([])
-const grade_list = ref([])
-const _field_list = ref([])
-const lesson_list = ref([])
+const showDeleteModal = ref(false)
+const selectedItemIdForDelete = ref('')
 
-// Paginate section
-const page_loading = ref(false)
-const page = ref(1)
-const all_files_loaded = ref(false)
-const timer = ref(null)
-
-// Delete section
-const deleteConfirmDialog = ref(false)
-const delete_paper_id = ref(null)
-const delete_paper_index = ref(null)
-const delete_loading = ref(false)
-
-// Methods
-const getPaperList = () => {
-  if (!all_files_loaded.value) {
-    page_loading.value = true
-
-    // Direct token in the request headers
-    useApiService
-      .get('/api/v1/tests', {
-        perpage: 20,
-        page: page.value,
-        section: filter.level,
-        base: filter.grade,
-        lesson: filter.lesson,
-      })
-      .then((response) => {
-        paper_list.value.push(...response.data.list)
-
-        if (
-          response.data.num
-          && paper_list.value.length >= Number(response.data.num)
-        ) {
-          all_files_loaded.value = true
-        }
-
-        // Handle case where no more items are returned
-        if (response.data.list.length === 0) {
-          all_files_loaded.value = true
-        }
-      })
-      .catch((err) => {
-        // Handle the error directly from the catch block
-        if (err.response?.status === 403) $auth.logout()
-      })
-      .finally(() => {
-        page_loading.value = false
-        initialLoading.value = false
-      })
-  }
+const fetchPapers = async () => {
+  await getData({
+    page: page.value,
+    pageSize: pageSize.value,
+    section: filters.board,
+    base: filters.grade,
+    lesson: filters.subject,
+  })
 }
 
-const calcStatus = (val) => {
-  let title = ''
-  if (val == 0) title = 'Unreviewed'
-  else if (val == 1) title = 'Confirmed'
-  else if (val == 2) title = 'Reference to type unit'
-  else if (val == 3) title = 'Has a message'
-  else if (val == 4) title = 'Inactive'
-  else if (val == 5) title = 'Edited'
-  return title
+const changePageNumber = async () => {
+  await fetchPapers()
 }
 
-const getTypeList = (type, parent = '') => {
-  const params = { type }
-
-  if (type === 'base') params.section_id = parent
-  if (type === 'lesson') params.base_id = parent
-
-  useApiService
-    .get('/api/v1/types/list', params, { public: true })
-    .then((response) => {
-      // Process the direct response
-      if (type === 'section') {
-        level_list.value = response.data
-      }
-      else if (type === 'base') {
-        grade_list.value = response.data
-      }
-      else if (type === 'lesson') {
-        lesson_list.value = response.data
-      }
-    })
-    .catch((err) => {
-      $toast.error(err.message || 'Error loading data')
-    })
+const changePageSize = async () => {
+  page.value = 1
+  await fetchPapers()
 }
 
-const scroll = () => {
-  // For infinite loading
-  window.onscroll = () => {
-    // Don't proceed if all files are loaded
-    if (all_files_loaded.value) {
-      return
-    }
+const boardFilterChange = async (boardId: string | number) => {
+  filters.board = boardId
+  filters.grade = ''
+  filters.subject = ''
+  resetGrades()
+  resetSubjects()
 
-    // Scroll position
-    const scrollPosition
-      = Math.max(
-        window.pageYOffset,
-        document.documentElement.scrollTop,
-        document.body.scrollTop,
-      )
-      + window.innerHeight
-      + 50
-    const bottomOfWindow
-      = scrollPosition >= document.documentElement.offsetHeight
-
-    // Avoid the number of requests
-    if (timer.value) {
-      clearTimeout(timer.value)
-      timer.value = null
-    }
-
-    // Load next page
-    if (bottomOfWindow && all_files_loaded.value === false) {
-      page_loading.value = true
-      timer.value = setTimeout(() => {
-        page.value++
-        getPaperList()
-      }, 800)
-    }
+  if (boardId) {
+    getGrades(boardId)
   }
+
+  page.value = 1
+  fetchPapers()
 }
 
-const filterChanged = (type) => {
-  if (type == 'level') {
-    filter.grade = ''
-    filter.lesson = ''
-    if (filter.level) getTypeList('base', filter.level)
+const gradeFilterChange = async (gradeId: string | number) => {
+  filters.grade = gradeId
+  filters.subject = ''
+  resetSubjects()
 
-    page.value = 1
-    all_files_loaded.value = false
-
-    grade_list.value = []
-    lesson_list.value = []
-    paper_list.value = []
-
-    getPaperList()
+  if (gradeId) {
+    getSubjects(gradeId)
   }
-  else if (type == 'grade') {
-    filter.lesson = ''
-    if (filter.grade) getTypeList('lesson', filter.grade)
 
-    page.value = 1
-    all_files_loaded.value = false
-    paper_list.value = []
-    lesson_list.value = []
-    getPaperList()
-  }
-  else if (type == 'lesson') {
-    page.value = 1
-    all_files_loaded.value = false
-    paper_list.value = []
-    getPaperList()
-  }
+  page.value = 1
+  fetchPapers()
 }
 
-const openDeleteConfirmDialog = (item_id, index) => {
-  delete_paper_id.value = item_id
-  delete_paper_index.value = index
-  deleteConfirmDialog.value = true
+const subjectFilterChange = async (subjectId: string | number) => {
+  filters.subject = subjectId
+  page.value = 1
+  await fetchPapers()
 }
 
-const deletePaper = async () => {
-  delete_loading.value = true
-
-  try {
-    await useApiService.remove(`/api/v1/tests/${delete_paper_id.value}`)
-    paper_list.value.splice(delete_paper_index.value, 1)
-    delete_paper_id.value = null
-    delete_paper_index.value = null
-    deleteConfirmDialog.value = false
-    $toast.success('Deleted successfully')
-    // paper_list.value = [];
-    // getPaperList();
-  }
-  catch (e) {
-    if (e.response?.status == 400) {
-      $toast.error(e.response.data.message || 'Error deleting paper')
-    }
-
-    delete_paper_id.value = null
-    delete_paper_index.value = null
-    deleteConfirmDialog.value = false
-  }
-  finally {
-    delete_loading.value = false
-  }
+const openModalDelete = (item: PastPaperBriefDTO) => {
+  selectedItemIdForDelete.value = item.id.toString()
+  showDeleteModal.value = true
 }
 
-// Initialize on mount
-onMounted(() => {
-  getPaperList()
-  getTypeList('section')
-  scroll()
+const confirmDelete = async () => {
+  await deleteItem(selectedItemIdForDelete.value)
+  selectedItemIdForDelete.value = ''
+  showDeleteModal.value = false
+  await fetchPapers()
+}
+
+const getStatusTitle = (value: string | number) => {
+  const status = Number(value)
+
+  if (status === 0) return 'Unreviewed'
+  if (status === 1) return 'Confirmed'
+  if (status === 2) return 'Reference to type unit'
+  if (status === 3) return 'Has a message'
+  if (status === 4) return 'Inactive'
+  if (status === 5) return 'Edited'
+
+  return 'Unknown'
+}
+
+const getStatusColor = (value: string | number) => {
+  const status = Number(value)
+
+  if (status === 1) return 'success'
+  if (status === 3 || status === 5) return 'info'
+  if (status === 4) return 'error'
+
+  return 'warning'
+}
+
+onMounted(async () => {
+  await Promise.all([
+    fetchPapers(),
+    getBoards(),
+  ])
 })
 </script>
 
 <style scoped>
-p {
-  font-size: 1.4rem;
+.set-height-table {
+  max-height: 70vh;
+}
+.th-min-width {
+  min-width: 130px;
+}
+.select-size-div {
+  top: 18px;
+}
+.filter-item{
+  width: 30%;
+  max-width : 200px;
+}
+
+:deep(.custom-pagination li button:hover) {
+  background-color: rgb(var(--v-theme-primary));
+  opacity: 0.6;
+}
+:deep(.custom-pagination .v-pagination__item--is-active button) {
+  background: rgb(var(--v-theme-primary)) !important;
+}
+:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
+  opacity: 0 !important;
+}
+
+@media screen and (max-width: 600px) {
+  .filter-item{
+    width: 100%;
+     max-width : 100%
+  }
 }
 </style>

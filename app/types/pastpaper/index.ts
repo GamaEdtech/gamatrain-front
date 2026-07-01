@@ -196,3 +196,21 @@ export interface PastPaperDetailDTO {
   files: FilesDTO
   singleSell: boolean
 }
+
+export interface PastPaperBriefDTO {
+  id: string
+  title: string
+  ref_score: string
+  downloads: string
+  status: string
+  msg: string
+  subdate: string
+  subdate_jalali: string
+}
+export interface GetPastPaperParams {
+  page: number
+  pageSize: number
+  section?: string | number
+  base?: string | number
+  lesson?: string | number
+}
