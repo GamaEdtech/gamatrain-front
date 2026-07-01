@@ -4,7 +4,7 @@ export type OnlineStatus = 'Online' | 'ActiveRecently' | 'OnlineToday' | 'Active
 
 export interface ProfileDTO {
   profileView: number
-  avatar: string
+  avatarUri: string
   registrationDate: string
   onlineStatus: OnlineStatus
   biography: string

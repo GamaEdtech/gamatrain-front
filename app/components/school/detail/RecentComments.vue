@@ -21,7 +21,7 @@
               <v-avatar size="60">
                 <img
                   class="profile-avatar"
-                  :src="comment.creationUserAvatar"
+                  :src="comment.creationUserAvatarUri"
                 >
               </v-avatar>
               <div class="ml-2">

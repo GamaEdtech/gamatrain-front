@@ -85,8 +85,8 @@
           <div class="w-50 d-flex align-center ga-2">
             <v-img
               :src="
-                contentData.creationUserAvatar
-                  ? contentData.creationUserAvatar
+                contentData.creationUserAvatarUri
+                  ? contentData.creationUserAvatarUri
                   : '/images/member/avatar.svg'
               "
               width="30"

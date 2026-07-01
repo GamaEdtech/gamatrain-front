@@ -141,7 +141,19 @@
           <div
             class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
           >
-            {{ item.description }}
+            <NuxtLink
+              v-if="item.transactionType === 'DownloadPastPaper'"
+              :to="`/paper/${item.identifierId}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-decoration-none"
+            >
+              {{ item.description }} ({{ item.identifierId }})
+            </NuxtLink>
+
+            <span v-else>
+              {{ item.description }}
+            </span>
           </div>
         </template>
       </v-data-table>
@@ -330,6 +342,9 @@ const refreshData = async () => {
 }
 .select-size-div {
   top: 18px;
+}
+.text-decoration-none:hover {
+  text-decoration: underline !important;
 }
 
 :deep(.custom-pagination li button:hover) {

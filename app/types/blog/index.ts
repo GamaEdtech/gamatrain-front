@@ -42,7 +42,7 @@ export interface TranslationDTO {
 export interface CommentBlogDTO {
   id: number
   creationUser: string
-  creationUserAvatar: string
+  creationUserAvatarUri: string
   creationDate: string
   comment: string
   likeCount: number
@@ -50,6 +50,7 @@ export interface CommentBlogDTO {
   likedByCurrentUser: boolean
   dislikedByCurrentUser: boolean
 }
+
 export interface AddCommentBlogResponseDTO {
   id: number
 }

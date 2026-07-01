@@ -79,7 +79,7 @@ export interface User {
   grade: number
   group: number
   coreId: number
-  avatar: string
+  avatarUri: string
   walletId: string
   profileUpdated: boolean
   roles: Role[]

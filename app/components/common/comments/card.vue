@@ -5,11 +5,11 @@
     <div class="w-100 d-flex align-center justify-space-between">
       <div class="img-name d-flex ga-2 align-center">
         <img
-          v-if="comment.creationUserAvatar"
+          v-if="comment.creationUserAvatarUri"
           width="40"
           height="40"
           class="rounded-circle image-user"
-          :src="comment.creationUserAvatar"
+          :src="comment.creationUserAvatarUri"
         >
         <v-icon
           v-else
