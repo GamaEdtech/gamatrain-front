@@ -1,1192 +1,993 @@
 <template>
-  <div
-    cols="12"
-    class="px-2 px-sm-2 mt-8"
-  >
-    <!-- Main loader overlay -->
-    <template v-if="isLoading">
-      <v-skeleton-loader
-        type="article, article, table"
-        class="my-4"
-      />
-    </template>
+  <v-container class="w-100 d-flex flex-column">
+    <v-form
+      v-model="isFormValid"
+      class="w-100 d-flex flex-column"
+    >
+      <h1 class="text-h4 text-grey700 font-weight-regular">
+        Past Papers Edit Form
+      </h1>
 
-    <template v-else>
-      <v-row>
-        <v-col
-          cols="12"
-          class="pl-5"
-        >
-          <span class="text-h4 text-teal"> Past Papers Edit Form </span>
-        </v-col>
-      </v-row>
-      <v-card class="mt-3">
-        <v-card-text class="py-10 px-8">
-          <VForm
-            ref="form"
-            v-model="isFormValid"
-            lazy-validation
-            autocomplete="off"
-            @submit.prevent="updateQuestion"
+      <div class="d-flex flex-wrap justify-space-between">
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="paper.board"
+            label="Board"
+            :items="boards?.map((board) => {
+              return {
+                id: board.code,
+                title: board.title,
+              }
+            })"
+            :data-loading="loadingBoards"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            :defalut-lable="false"
+            density="compact"
+            :rules="[required]"
+            @update:model-value="boardChange"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="paper.grade"
+            label="Grade"
+            :items="grades?.map((item) => {
+              return {
+                id: item.id,
+                title: item.title,
+              }
+            })"
+            :data-loading="loadingBoards || loadingGrade"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :disabled="!paper.board || loadingGrade"
+            :rules="[required]"
+            @update:model-value="gradeChange"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="paper.subject"
+            label="Subject"
+            :items="subjects?.map((item) => {
+              return {
+                id: item.id,
+                title: item.title,
+              }
+            })"
+            :data-loading="loadingBoards || loadingGrade || loadingSubject"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :disabled="!paper.board || !paper.grade || loadingSubject"
+            :rules="[required]"
+            @update:model-value="subjectChange"
+          />
+        </div>
+
+        <div class="container-topics w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
+          <common-multi-choice-check-box-list
+            v-model:choices="paper.topics"
+            title="Topics"
+            :loading-get-data="loadingGetItemById || loadingTopic"
+            :data="topics?.map((item) => {
+              return {
+                id: item.id,
+                title: item.title,
+              }
+            })"
+            :disabled="!paper.subject"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="paper.classification"
+            label="Subject"
+            :items="classifications?.map((item) => {
+              return {
+                id: item.id,
+                title: item.title,
+              }
+            })"
+            :data-loading="loadingBoards || loadingClassification"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :disabled="!paper.board || loadingClassification"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="paper.answer_type"
+            label="Solution Availability"
+            :items="ANSWER_STATUS_LIST"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :has-search="false"
+            :rules="[required]"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="paper.level"
+            label="Difficulty Level"
+            :items="TEST_LEVEL_LIST"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :has-search="false"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="paper.edu_year"
+            label="Year"
+            :loading-value="loadingGetItemById"
+            :items="YEAR_LIST.map((item) => {
+              return {
+                id: item.toString(),
+                title: item.toString(),
+              }
+            })"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :rules="[required]"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="paper.edu_month"
+            label="Month"
+            :items="MONTH_LIST"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :rules="[required]"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="paper.holding_level"
+            label="Testing Scope"
+            :items="HOLDING_LEVEL_LIST"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :has-search="false"
+          />
+        </div>
+
+        <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
+          <span class="text-h6 text-grey700 font-weight-medium">Title</span>
+          <v-text-field
+            v-model="paper.title"
+            density="compact"
+            variant="outlined"
+            label=""
+            outlined
+            rounded="pill"
+            color="primary"
+            height="48"
+            base-color="grey200"
+            class="w-100"
+            :rules="[required]"
           >
-            <v-row>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.section"
-                  required
-                  density="compact"
-                  variant="outlined"
-                  :items="section_list"
-                  :rules="[(v) => !!v || 'Board is required']"
-                  item-title="title"
-                  item-value="id"
-                  label="Board"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.base"
-                  required
-                  density="compact"
-                  variant="outlined"
-                  :items="grade_list"
-                  :rules="[(v) => !!v || 'Grade is required']"
-                  item-value="id"
-                  item-title="title"
-                  label="Grade"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.lesson"
-                  required
-                  density="compact"
-                  variant="outlined"
-                  :items="lesson_list"
-                  :rules="[(v) => !!v || 'Subject is required']"
-                  item-value="id"
-                  item-title="title"
-                  label="Subject"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="12"
-              >
-                <form-topic-selector
-                  v-if="topic_list.length > 0"
-                  ref="topicSelectorRef"
-                  :topic-list="topic_list"
-                  :selected-topics="formData.topics"
-                  @select-topic="selectTopic"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.test_type"
-                  density="compact"
-                  variant="outlined"
-                  :items="test_type_list"
-                  :loading="test_type_loading"
-                  :disabled="!formData.section || test_type_loading"
-                  item-value="id"
-                  item-title="title"
-                  label="Classification"
-                  placeholder="Select a board first"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.answer_type"
-                  required
-                  density="compact"
-                  variant="outlined"
-                  :items="answer_status_list"
-                  :rules="[
-                    (v) =>
-                      (v !== null && v !== undefined && v !== '')
-                      || v === 0
-                      || 'Answer status is required',
-                  ]"
-                  item-value="id"
-                  item-title="title"
-                  label="Solution Availability"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.level"
-                  density="compact"
-                  variant="outlined"
-                  :items="test_level_list"
-                  item-value="id"
-                  item-title="title"
-                  label="Difficulty Level"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.edu_year"
-                  required
-                  density="compact"
-                  variant="outlined"
-                  :items="year_list"
-                  :rules="[(v) => !!v || 'Year is required']"
-                  label="Year"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.edu_month"
-                  required
-                  density="compact"
-                  variant="outlined"
-                  :items="month_list"
-                  :rules="[(v) => !!v || 'Month is required']"
-                  item-title="title"
-                  item-value="id"
-                  label="Month"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.holding_level"
-                  density="compact"
-                  variant="outlined"
-                  :items="holding_level_list"
-                  item-title="title"
-                  item-value="id"
-                  label="Testing Scope"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
+            <template #prepend-inner>
+              <v-progress-circular
+                v-if="loadingGetItemById"
+                indeterminate
+                size="20"
+                color="primary"
+                class="mx-2"
+              />
+            </template>
+          </v-text-field>
+        </div>
 
-              <v-col
-                v-if="formData.holding_level < 4"
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.state"
-                  density="compact"
-                  variant="outlined"
-                  :items="state_list"
-                  item-title="title"
-                  item-value="id"
-                  label="State"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                v-if="formData.holding_level < 3"
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.area"
-                  density="compact"
-                  variant="outlined"
-                  :items="area_list"
-                  item-title="title"
-                  item-value="id"
-                  label="Area"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                v-if="formData.holding_level < 2"
-                cols="12"
-                md="4"
-              >
-                <v-autocomplete
-                  v-model="formData.school"
-                  density="compact"
-                  variant="outlined"
-                  :items="school_list"
-                  item-title="title"
-                  item-value="id"
-                  label="School"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
+        <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
+          <span class="text-h6 text-grey700 font-weight-medium">Description</span>
+          <v-textarea
+            v-model="paper.description"
+            density="compact"
+            variant="outlined"
+            label=""
+            outlined
+            rounded="lg"
+            color="primary"
+            base-color="grey200"
+            class="w-100"
+            placeholder="Type your description"
+            persistent-clear
+            no-resize
+            rows="7"
+            :rules="[required, minLength(70)]"
+          >
+            <template #prepend-inner>
+              <v-progress-circular
+                v-if="loadingGetItemById"
+                indeterminate
+                size="20"
+                color="primary"
+                class="mx-2"
+              />
+            </template>
+          </v-textarea>
+        </div>
 
-              <v-col
-                cols="12"
-                md="12"
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <span class="text-h6 text-grey700 font-weight-medium">
+            Pdf Question
+            <span
+              v-if="hasExistingFile('pdf') || paper.file_pdf"
+              class="text-subtitle-1 text-grey600"
+            >
+              ({{ getFileStatusText('pdf') }})
+            </span>
+          </span>
+          <v-file-input
+            v-model="pdfQuestionFile"
+            density="compact"
+            variant="outlined"
+            accept="application/pdf"
+            label=""
+            base-color="grey200"
+            color="primary"
+            prepend-icon=""
+            append-inner-icon="md:files"
+            autocomplete="off"
+            max-height="48"
+            rounded="pill"
+            class="w-100"
+            :disabled="isUploadingFile('file_pdf')"
+            @update:model-value="uploadPaperFile('file_pdf', $event)"
+          >
+            <template #prepend-inner>
+              <v-icon
+                size="20"
+                color="error"
               >
-                <v-text-field
-                  v-model="formData.title"
-                  required
-                  density="compact"
-                  variant="outlined"
-                  :rules="[(v) => !!v || 'Title is required']"
-                  label="Title"
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="12"
+                md:picture_as_pdf
+              </v-icon>
+              <v-progress-circular
+                v-if="isUploadingFile('file_pdf') || loadingGetItemById"
+                indeterminate
+                size="20"
+                color="primary"
+                class="mx-2"
+              />
+            </template>
+            <template #append>
+              <v-icon
+                v-if="hasExistingFile('pdf')"
+                size="26"
+                color="error"
+                class="cursor-pointer"
+                @click.stop="downloadExistingFile('q_pdf')"
               >
-                <v-textarea
-                  v-model="formData.description"
-                  required
-                  density="compact"
-                  variant="outlined"
-                  :rules="[
-                    (v) => !!v || 'Description is required',
-                    (v) =>
-                      (v && v.length >= 70)
-                      || 'Description must be at least 70 characters',
-                  ]"
-                  label="Content outline"
-                  hint="You must enter at least 70 characters."
-                  persistent-hint
-                  placeholder="A brief overview of the content, outlining sections, topics, and question formats."
-                  color="#FFB300"
-                  autocomplete="off"
-                />
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-file-input
-                  v-model="file_pdf"
-                  density="compact"
-                  variant="outlined"
-                  :prepend-icon="null"
-                  accept="application/pdf"
-                  label="Pdf Question"
-                  color="red"
-                  :loading="file_pdf_loading"
-                  prepend-inner-icon="mdi-file-pdf-box"
-                  append-inner-icon="mdi-folder-open"
-                  @change="uploadFile('file_pdf', $event)"
-                >
-                  <template #append>
-                    <v-icon
-                      v-show="paperData?.files?.pdf?.exist || formData.file_pdf"
-                      color="red"
-                      size="x-large"
-                      @click="startDownload('q_pdf')"
-                    >
-                      mdi-download
-                    </v-icon>
-                  </template>
-                </v-file-input>
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-file-input
-                  v-model="file_answer"
-                  density="compact"
-                  variant="outlined"
-                  label="PDF Solution"
-                  :prepend-icon="null"
-                  accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  :loading="file_answer_loading"
-                  color="default"
-                  prepend-inner-icon="mdi-file"
-                  append-inner-icon="mdi-folder-open"
-                  @change="uploadFile('file_answer', $event)"
-                >
-                  <template #append>
-                    <v-icon
-                      v-show="
-                        paperData?.files?.answer?.exist || formData.file_answer
-                      "
-                      color="blue"
-                      size="x-large"
-                      @click="startDownload('a_file')"
-                    >
-                      mdi-download
-                    </v-icon>
-                  </template>
-                </v-file-input>
-              </v-col>
-              <v-col
-                cols="12"
-                md="4"
-              >
-                <v-file-input
-                  v-model="file_word"
-                  density="compact"
-                  variant="outlined"
-                  label="Word Q & S"
-                  :prepend-icon="null"
-                  accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                  :loading="file_word_loading"
-                  color="blue"
-                  prepend-inner-icon="mdi-file-word-outline"
-                  append-inner-icon="mdi-folder-open"
-                  @change="uploadFile('file_word', $event)"
-                >
-                  <template #append>
-                    <v-icon
-                      v-show="
-                        paperData?.files?.word?.exist || formData.file_word
-                      "
-                      color="teal"
-                      size="x-large"
-                      @click="startDownload('q_word')"
-                    >
-                      mdi-download
-                    </v-icon>
-                  </template>
-                </v-file-input>
-              </v-col>
+                md:download
+              </v-icon>
+            </template>
+          </v-file-input>
+        </div>
 
-              <v-col
-                v-if="extraAttr.length"
-                cols="12"
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <span class="text-h6 text-grey700 font-weight-medium">
+            Pdf Solution
+            <span
+              v-if="hasExistingFile('answer') || paper.file_answer"
+              class="text-subtitle-1 text-grey600"
+            >
+              ({{ getFileStatusText('answer') }})
+            </span>
+          </span>
+          <v-file-input
+            v-model="pdfSolutionFile"
+            density="compact"
+            variant="outlined"
+            accept="application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            label=""
+            base-color="grey200"
+            color="primary"
+            prepend-icon=""
+            append-inner-icon="md:files"
+            autocomplete="off"
+            max-height="48"
+            rounded="pill"
+            class="w-100"
+            :disabled="isUploadingFile('file_answer')"
+            @update:model-value="uploadPaperFile('file_answer', $event)"
+          >
+            <template #prepend-inner>
+              <v-icon
+                size="20"
+                color="error"
               >
-                <v-row
-                  v-for="(item, index) in extraAttr"
-                  :key="index"
-                >
-                  <v-col
-                    cols="12"
-                    md="4"
+                md:picture_as_pdf
+              </v-icon>
+              <v-progress-circular
+                v-if="isUploadingFile('file_answer') || loadingGetItemById"
+                indeterminate
+                size="20"
+                color="primary"
+                class="mx-2"
+              />
+            </template>
+            <template #append>
+              <v-icon
+                v-if="hasExistingFile('answer')"
+                size="26"
+                color="error"
+                class="cursor-pointer"
+                @click.stop="downloadExistingFile('a_file')"
+              >
+                md:download
+              </v-icon>
+            </template>
+          </v-file-input>
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <span class="text-h6 text-grey700 font-weight-medium">
+            Word Q & S
+            <span
+              v-if="hasExistingFile('word') || paper.file_word"
+              class="text-subtitle-1 text-grey600"
+            >
+              ({{ getFileStatusText('word') }})
+            </span>
+          </span>
+          <v-file-input
+            v-model="wordQuestionAndSolutionFile"
+            density="compact"
+            variant="outlined"
+            accept="application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            label=""
+            base-color="grey200"
+            color="primary"
+            prepend-icon=""
+            append-inner-icon="md:files"
+            autocomplete="off"
+            max-height="48"
+            rounded="pill"
+            class="w-100"
+            :disabled="isUploadingFile('file_word')"
+            @update:model-value="uploadPaperFile('file_word', $event)"
+          >
+            <template #prepend-inner>
+              <v-icon
+                size="20"
+                color="info"
+              >
+                md:text_snippet
+              </v-icon>
+              <v-progress-circular
+                v-if="isUploadingFile('file_word') || loadingGetItemById"
+                indeterminate
+                size="20"
+                color="primary"
+                class="mx-2"
+              />
+            </template>
+            <template #append>
+              <v-icon
+                v-if="hasExistingFile('word')"
+                size="26"
+                color="info"
+                class="cursor-pointer"
+                @click.stop="downloadExistingFile('q_word')"
+              >
+                md:download
+              </v-icon>
+            </template>
+          </v-file-input>
+        </div>
+
+        <div
+          v-for="(extra, index) in extraFileList"
+          :key="index"
+          class="w-100 d-flex flex-wrap ga-1 mt-4"
+        >
+          <div class="each-item d-flex flex-column align-start justify-start ga-1">
+            <common-gombo-box
+              v-model="extra.type"
+              label="Subject"
+              :items="extraTypeFile?.map((item) => {
+                return {
+                  id: item.id,
+                  title: item.title,
+                }
+              })"
+              :data-loading="loadingExtraTypeFile"
+              :loading-value="loadingGetItemById"
+              rounded="pill"
+              height="48"
+              base-color="grey200"
+              color="primary"
+              density="compact"
+              :defalut-lable="false"
+              :has-search="false"
+            />
+          </div>
+
+          <div class="each-item d-flex flex-column align-start justify-start ga-1">
+            <span class="text-h6 text-grey700 font-weight-medium">
+              Extra File
+              <span
+                v-if="hasExistingExtraFile(extra) || extra.name"
+                class="text-subtitle-1 text-grey600"
+              >
+                ({{ getExtraFileStatusText(extra) }})
+              </span>
+            </span>
+            <div class="w-100 d-flex align-start ga-1">
+              <v-file-input
+                v-model="extra.file"
+                density="compact"
+                variant="outlined"
+                label=""
+                base-color="grey200"
+                color="primary"
+                prepend-icon=""
+                append-inner-icon="md:files"
+                autocomplete="off"
+                max-height="48"
+                rounded="pill"
+                class="w-100"
+                :disabled="isUploadingFile('file_extra', index)"
+                @update:model-value="uploadPaperFile('file_extra', $event, index)"
+              >
+                <template #prepend-inner>
+                  <v-icon
+                    size="20"
+                    color="success"
                   >
-                    <v-autocomplete
-                      v-model="item.type"
-                      :items="extra_type_list"
-                      variant="outlined"
-                      density="compact"
-                      item-title="title"
-                      item-value="id"
-                      label="Select file type"
-                      color="#FFB300"
-                      autocomplete="off"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
+                    md:add
+                  </v-icon>
+                  <v-progress-circular
+                    v-if="isUploadingFile('file_extra', index) || loadingGetItemById"
+                    indeterminate
+                    size="20"
+                    color="primary"
+                    class="mx-2"
+                  />
+                </template>
+                <template #append>
+                  <v-icon
+                    v-if="hasExistingExtraFile(extra)"
+                    size="26"
+                    color="success"
+                    class="cursor-pointer"
+                    @click.stop="downloadExistingFile('extra', extra.id)"
                   >
-                    <v-file-input
-                      v-model="item.file_extra"
-                      density="compact"
-                      variant="outlined"
-                      label="Select file"
-                      :prepend-icon="null"
-                      :loading="file_extra_loading"
-                      color="green"
-                      prepend-inner-icon="mdi-plus"
-                      append-inner-icon="mdi-folder-open"
-                      @change="
-                        (event) => uploadFile('file_extra', event, index)
-                      "
-                    >
-                      <template #append>
-                        <v-icon
-                          v-show="item.id"
-                          size="x-large"
-                          @click="startDownload('extra', item.id)"
-                        >
-                          mdi-download
-                        </v-icon>
-                      </template>
-                    </v-file-input>
-                  </v-col>
-                </v-row>
-              </v-col>
-              <v-col cols="12">
-                <v-btn
-                  variant="outlined"
-                  color="success"
-                  @click="addExtraAttr"
-                >
-                  <v-icon> mdi-plus </v-icon>
-                  Add Extra file
-                </v-btn>
-              </v-col>
-              <!-- <v-col cols="12" md="12">
-                <v-checkbox
-                  density="compact"
-                  v-model="formData.free_agreement"
-                  label="I would like the file to be freely available to others."
-                />
-              </v-col> -->
-
-              <v-col
-                cols="12"
-                md="6"
-                class="pb-0"
+                    md:download
+                  </v-icon>
+                </template>
+              </v-file-input>
+              <v-icon
+                size="24"
+                color="lightError"
+                class="cursor-pointer mt-2"
+                @click="removeExtra(index)"
               >
-                <v-btn
-                  color="success"
-                  type="submit"
-                  block
-                  :loading="loading.form"
-                  :disabled="!isFormValid"
-                >
-                  Update
-                </v-btn>
-              </v-col>
+                md:delete
+              </v-icon>
+            </div>
+          </div>
+        </div>
 
-              <v-col
-                cols="12"
-                md="6"
-              >
-                <v-btn
-                  variant="outlined"
-                  color="error"
-                  to="/user/paper"
-                  block
-                >
-                  Discard
-                </v-btn>
-              </v-col>
-            </v-row>
-          </VForm>
-        </v-card-text>
-      </v-card>
-    </template>
-  </div>
+        <v-btn
+          flat
+          rounded="pill"
+          width="250"
+          height="40"
+          class="text-h5 font-weight-medium text-white"
+          color="success"
+          @click="addExtraFile"
+        >
+          <v-icon color="white">
+            md:add
+          </v-icon>
+          Add Solution video
+        </v-btn>
+      </div>
+    </v-form>
+
+    <div class="d-flex align-center justify-center mt-8 ga-2">
+      <v-btn
+        variant="outlined"
+        color="lightError"
+        to="/user/paper"
+        flat
+        rounded="pill"
+        height="40"
+        class="text-h5 font-weight-medium"
+      >
+        Discard
+      </v-btn>
+      <v-btn
+        flat
+        rounded="pill"
+        width="200"
+        height="40"
+        class="text-h5 font-weight-medium text-grey800"
+        color="primary"
+        :loading="loadingEditItem"
+        :disabled="!isFormValid || hasUploadInProgress"
+        @click="submitPaper"
+      >
+        Submit
+      </v-btn>
+    </div>
+  </v-container>
 </template>
 
-<script setup>
-const { $toast } = useNuxtApp()
+<script setup lang="ts">
+import { ANSWER_STATUS_LIST, TEST_LEVEL_LIST, YEAR_LIST, MONTH_LIST, HOLDING_LEVEL_LIST } from '@/constants'
+import type { FilesDTO, PastPaperCreateDTO, PastPaperDetailDTO } from '@/types'
 
-// Define layout
+interface ExtraFileInfo {
+  id?: string | number | null
+  name: string | null
+  type: string | number
+  file: File | File[] | null
+}
+
+type PaperFileField = 'file_pdf' | 'file_word' | 'file_answer' | 'file_extra'
+type PaperForm = Omit<PastPaperCreateDTO, 'file_extra'>
+
 definePageMeta({
   layout: 'dashboard-layout',
   middleware: ['auth', 'user-type'],
 })
 
-// Page title
-useHead({
-  title: 'Edit paper',
+useSeoMeta({
+  title: 'Edit Paper',
 })
 
-// Get services
 const route = useRoute()
+const router = useRouter()
+const {
+  loadingGetData: loadingBoards,
+  data: boards,
+  getData: getBoards,
+  getGrades,
+  grades,
+  loadingGrade,
+  resetGrades,
+  subjects,
+  loadingSubject,
+  resetSubjects,
+  getSubjects,
+  getClassification,
+  resetClassifications,
+  loadingClassification,
+  classifications,
+  getTopics,
+  resetTopics,
+  loadingTopic,
+  topics,
+  getExtraTypeFile,
+  extraTypeFile,
+  loadingExtraTypeFile,
+} = useBoard()
+const { getItemById, loadingGetItemById, editItem, loadingEditItem } = usePastPaper()
+const { downloadFile, loadingDownloadPastPaperFile } = usePastPaperDownload()
+const { required, minLength } = useValidationRules()
+const { uploadFile } = useUpload()
+const { $toast } = useNuxtApp()
 
-// Form validation
-const form = ref(null)
-const isFormValid = ref(true)
-const topicSelectorRef = ref(null)
-const isLoading = ref(true) // Global loading state
+const isFormValid = ref(false)
+const hasUploadInProgress = computed(() => uploadingFileKeys.value.length > 0)
 
-// Reactive state
-const formData = reactive({
-  section: '',
-  base: '',
-  lesson: '',
-  topics: '',
-  test_type: '',
-  answer_type: 0,
+const paper = ref<PaperForm>({
+  board: '',
+  grade: '',
+  subject: '',
+  classification: '',
+  topics: [],
+  answer_type: '',
   level: '',
   edu_year: '',
   edu_month: '',
   holding_level: '',
   title: '',
   description: '',
-  state: '',
-  area: '',
-  school: '',
-  // free_agreement: false,
   file_pdf: '',
   file_word: '',
   file_answer: '',
+  state: '',
+  area: '',
+  school: '',
 })
 
-// File section
-const file_pdf = ref(null)
-const file_word = ref(null)
-const file_answer = ref(null)
+const pdfQuestionFile = ref<File | File[] | null>(null)
+const pdfSolutionFile = ref<File | File[] | null>(null)
+const wordQuestionAndSolutionFile = ref<File | File[] | null>(null)
+const extraFileList = ref<ExtraFileInfo[]>([])
+const uploadingFileKeys = ref<string[]>([])
+const existingFiles = ref<FilesDTO | null>(null)
 
-const file_pdf_loading = ref(false)
-const file_word_loading = ref(false)
-const file_answer_loading = ref(false)
-const file_extra_loading = ref(false)
-const test_type_loading = ref(false)
+const paperId = computed(() => String(route.params.id || ''))
 
-// Lists
-const section_list = ref([])
-const grade_list = ref([])
-const _field_list = ref([])
-const lesson_list = ref([])
-const topic_list = ref([])
-const test_type_list = ref([])
+const getNumber = (value: string | number | undefined, fallback: number) => {
+  const parsedValue = Number(value)
 
-const answer_status_list = [
-  { id: 0, title: 'No Solution' },
-  { id: 1, title: 'Answer Key' },
-  { id: 2, title: 'Complete Solution' },
-]
-
-const test_level_list = [
-  { id: 1, title: 'Easy' },
-  { id: 2, title: 'Moderate' },
-  { id: 3, title: 'Hard' },
-]
-
-const year_list = [
-  2026, 2025, 2024, 2023, 2022, 2021, 2020, 2019, 2018, 2017, 2016, 2015, 2014, 2013,
-]
-
-const month_list = [
-  { id: 1, title: 'January' },
-  { id: 2, title: 'February' },
-  { id: 3, title: 'March' },
-  { id: 4, title: 'April' },
-  { id: 5, title: 'May' },
-  { id: 6, title: 'June' },
-  { id: 7, title: 'July' },
-  { id: 8, title: 'August' },
-  { id: 9, title: 'September' },
-  { id: 10, title: 'October' },
-  { id: 11, title: 'November' },
-  { id: 12, title: 'December' },
-]
-
-const holding_level_list = [
-  // { id: 1, title: "School" },
-  // { id: 2, title: "District" },
-  // { id: 3, title: "State" },
-  // { id: 4, title: "Country" },
-  { id: 4, title: 'National' },
-  { id: 5, title: 'International' },
-]
-
-const state_list = ref([])
-const area_list = ref([])
-const school_list = ref([])
-const extraAttr = ref([])
-const extra_type_list = ref([])
-
-const download_loading = ref(false)
-const loading = reactive({
-  form: false,
-})
-
-// Fetch paper data
-const { data: paperData } = await useAsyncData('paper-data', async () => {
-  try {
-    const content = await useApiService.get(`/api/v1/tests/${route.params.id}`)
-    if (content.status === 1) {
-      return content.data
-    }
-    return null
-  }
-  catch (error) {
-    console.error('Error fetching paper data:', error)
-    return null
-  }
-})
-
-// Methods
-const _changeOption = (optionName, optionVal) => {
-  if (optionName === 'section') {
-    formData.base = ''
-    formData.lesson = ''
-    formData.topics = []
-    grade_list.value = []
-    lesson_list.value = []
-    topic_list.value = []
-
-    if (topicSelectorRef.value) {
-      topicSelectorRef.value.lesson_selected = false
-    }
-
-    getTypeList('base', optionVal)
-    if (formData.area) getTypeList('school')
-
-    if (topicSelectorRef.value) {
-      topicSelectorRef.value.lesson_selected = false
-    }
-  }
-  else if (optionName === 'base') {
-    formData.lesson = ''
-    if (optionVal) {
-      getTypeList('lesson', optionVal)
-    }
-    if (topicSelectorRef.value) {
-      topicSelectorRef.value.lesson_selected = false
-    }
-  }
-  else if (optionName === 'lesson') {
-    if (optionVal) {
-      getTypeList('topic', optionVal)
-      if (topicSelectorRef.value) {
-        topicSelectorRef.value.lesson_selected = true
-      }
-    }
-    else {
-      formData.topics = []
-      topic_list.value = []
-      if (topicSelectorRef.value) {
-        topicSelectorRef.value.lesson_selected = false
-      }
-    }
-  }
-  else if (optionName === 'state') {
-    getTypeList('area', optionVal)
-  }
-  else if (optionName === 'area') {
-    getTypeList('school')
-  }
+  return Number.isNaN(parsedValue) ? fallback : parsedValue
 }
 
-const handleClassificationError = (error) => {
-  console.error('Classification loading error:', error)
-  $toast.error('Unable to load paper types. Please try selecting the board again.')
-  test_type_list.value = []
-  formData.test_type = ''
+type MainFileType = keyof Pick<FilesDTO, 'answer' | 'pdf' | 'word'>
+
+const hasExistingFile = (type: MainFileType) => {
+  return existingFiles.value?.[type]?.exist === true
 }
 
-const getClassificationTypes = async (sectionId) => {
-  if (!sectionId) {
-    test_type_list.value = []
+const hasExistingExtraFile = (extra: ExtraFileInfo) => {
+  return Boolean(extra.id)
+}
+
+const getFileStatusText = (type: MainFileType) => {
+  const uploadedFiles = {
+    answer: paper.value.file_answer,
+    pdf: paper.value.file_pdf,
+    word: paper.value.file_word,
+  }
+
+  return uploadedFiles[type] ? 'new file selected' : 'saved file attached'
+}
+
+const getExtraFileStatusText = (extra: ExtraFileInfo) => {
+  return extra.name ? 'new file selected' : 'saved file attached'
+}
+
+const downloadExistingFile = async (
+  type: 'q_word' | 'q_pdf' | 'a_file' | 'extra',
+  extraId?: string | number | null,
+) => {
+  if (loadingDownloadPastPaperFile.value || (type === 'extra' && !extraId)) return
+
+  await downloadFile(paperId.value, type, extraId || undefined)
+}
+
+const getTopicsFromItem = (item: PastPaperDetailDTO) => {
+  if (Array.isArray(item.topics)) return item.topics.map(item => item.id)
+  if (item.topic) {
+    return item.topic
+      .split('+')
+      .filter(Boolean)
+  }
+
+  return []
+}
+
+const addExtraFile = () => {
+  extraFileList.value.push({ type: '', file: null, name: null })
+}
+
+const removeExtra = (index: number) => {
+  const hasExtraUploadInProgress = uploadingFileKeys.value.some(key =>
+    key.startsWith('file_extra-'),
+  )
+
+  if (hasExtraUploadInProgress) {
+    $toast.error('Please wait until the file upload is complete.')
     return
   }
 
-  test_type_loading.value = true
-  try {
-    const params = {
-      type: 'test_type',
-      section_id: sectionId,
-    }
-    const response = await useApiService.get('/api/v1/types/list', params, { public: true })
-
-    // The API should return board-specific classifications including:
-    // - General resources (Coursebook, Workbook) for all boards
-    // - CIE papers (Paper 1, Paper 2, etc.) for CIE board
-    // - Edexcel papers and Units for Edexcel board
-    // - Other board-specific classifications
-    test_type_list.value = response.data || []
-
-    // Handle empty response
-    if (!response.data || response.data.length === 0) {
-      console.warn('No classification types returned for board:', sectionId)
-    }
-  }
-  catch (err) {
-    handleClassificationError(err)
-  }
-  finally {
-    test_type_loading.value = false
-  }
+  extraFileList.value.splice(index, 1)
+  uploadingFileKeys.value = uploadingFileKeys.value.filter(
+    key => key !== getUploadKey('file_extra', index),
+  )
 }
 
-const getTypeList = async (type, parent = '') => {
-  const params = { type }
-
-  if (type === 'base') params.section_id = parent
-  if (type === 'lesson') params.base_id = parent
-  if (type === 'topic') params.lesson_id = parent
-  if (type === 'area') params.state_id = parent
-
-  if (type === 'school') {
-    params.section_id = formData.section
-    params.area_id = formData.area
-  }
-
-  try {
-    const response = await useApiService.get('/api/v1/types/list', params, { public: true })
-
-    if (type === 'section') {
-      section_list.value = response.data
-    }
-    else if (type === 'base') {
-      grade_list.value = response.data
-    }
-    else if (type === 'lesson') {
-      lesson_list.value = response.data
-    }
-    else if (type === 'topic') {
-      topic_list.value = response.data
-    }
-    else if (type === 'test_type') {
-      test_type_list.value = response.data
-    }
-    else if (type === 'state') {
-      state_list.value = response.data
-    }
-    else if (type === 'area') {
-      area_list.value = response.data
-    }
-    else if (type === 'school') {
-      school_list.value = response.data
-    }
-
-    return response.data
-  }
-  catch (err) {
-    $toast.error(err)
-    return []
-  }
+const getUploadKey = (fileField: PaperFileField, index?: number) => {
+  return fileField === 'file_extra' ? `${fileField}-${index}` : fileField
 }
 
-const getExtraFileType = async () => {
-  try {
-    const response = await useApiService.get('/api/v1/types/list', {
-      type: 'test_extra_file',
-    },
-    { public: true })
-    extra_type_list.value = response.data
-    return response.data
-  }
-  catch (error) {
-    console.error('Error fetching extra file types:', error)
-    return []
-  }
+const isUploadingFile = (fileField: PaperFileField, index?: number) => {
+  return uploadingFileKeys.value.includes(getUploadKey(fileField, index))
 }
 
-const updateQuestion = async () => {
-  loading.form = true
+const setUploadingFile = (
+  fileField: PaperFileField,
+  isLoading: boolean,
+  index?: number,
+) => {
+  const key = getUploadKey(fileField, index)
 
-  try {
-    // Prepare payload
-    const payload = {
-      ...formData,
-      topics: Array.isArray(formData.topics) ? formData.topics.map(Number) : [],
-      file_extra: extraAttr.value.length
-        ? extraAttr.value.map(item => ({
-            type: Number(item.type),
-            file: item.file,
-          }))
-        : [],
+  if (isLoading) {
+    if (!uploadingFileKeys.value.includes(key)) {
+      uploadingFileKeys.value.push(key)
     }
 
-    const response = await useApiService.put(
-      `/api/v1/tests/${route.params.id}`,
-      payload,
-    )
-
-    if (response.data.id === 0 && response.data.repeated) {
-      $toast.info('The paper is duplicated')
-    }
-    else {
-      $toast.success('Updated successfully')
-      navigateTo('/user/paper')
-    }
-  }
-  catch (err) {
-    if (err.response?.status === 403) {
-      $toast.error('You do not have permission to edit this paper')
-    }
-    else if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-    else {
-      $toast.error('Something went wrong')
-    }
-  }
-  finally {
-    loading.form = false
-  }
-}
-
-const selectTopic = (event) => {
-  formData.topics = event
-}
-
-const uploadFile = async (file_name, ev, index = '') => {
-  let value
-  if (ev && ev.target && ev.target.files) {
-    value = ev.target.files[0]
-  }
-  else if (ev instanceof File) {
-    value = ev
-  }
-  else if (Array.isArray(ev) && ev.length > 0) {
-    value = ev[0]
-  }
-  else {
     return
   }
 
-  if (!value) {
-    console.error('No valid file found')
+  uploadingFileKeys.value = uploadingFileKeys.value.filter(item => item !== key)
+}
+
+const getSelectedFile = (value: unknown) => {
+  if (value instanceof File) return value
+  if (Array.isArray(value)) return value[0] ?? null
+
+  return null
+}
+
+const isPdfFile = (file: File) => {
+  return file.type.includes('pdf') || file.name.toLowerCase().endsWith('.pdf')
+}
+
+const isWordFile = (file: File) => {
+  const fileName = file.name.toLowerCase()
+
+  return file.type.includes('word')
+    || fileName.endsWith('.doc')
+    || fileName.endsWith('.docx')
+}
+
+const resetPaperFile = (fileField: PaperFileField, index?: number) => {
+  if (fileField === 'file_pdf') {
+    pdfQuestionFile.value = null
+    paper.value.file_pdf = ''
+  }
+  else if (fileField === 'file_word') {
+    wordQuestionAndSolutionFile.value = null
+    paper.value.file_word = ''
+  }
+  else if (fileField === 'file_answer') {
+    pdfSolutionFile.value = null
+    paper.value.file_answer = ''
+  }
+  else if (typeof index === 'number' && extraFileList.value[index]) {
+    extraFileList.value[index].file = null
+    extraFileList.value[index].name = null
+  }
+}
+
+const validatePaperFile = (fileField: PaperFileField, file: File) => {
+  if (fileField === 'file_pdf' && !isPdfFile(file)) {
+    $toast.error('Please upload a valid PDF file')
+    return false
+  }
+
+  if (fileField === 'file_word' && !isWordFile(file)) {
+    $toast.error('Please upload a valid Word document')
+    return false
+  }
+
+  if (fileField === 'file_answer' && !isPdfFile(file) && !isWordFile(file)) {
+    $toast.error('Please upload a valid PDF or Word document')
+    return false
+  }
+
+  return true
+}
+
+const setUploadedFileName = (
+  fileField: PaperFileField,
+  fileName: string,
+  index?: number,
+) => {
+  if (fileField === 'file_pdf') {
+    paper.value.file_pdf = fileName
+  }
+  else if (fileField === 'file_word') {
+    paper.value.file_word = fileName
+  }
+  else if (fileField === 'file_answer') {
+    paper.value.file_answer = fileName
+  }
+  else if (typeof index === 'number' && extraFileList.value[index]) {
+    extraFileList.value[index].name = fileName
+  }
+}
+
+const uploadPaperFile = async (
+  fileField: PaperFileField,
+  value: unknown,
+  index?: number,
+) => {
+  const file = getSelectedFile(value)
+
+  if (!file) {
+    resetPaperFile(fileField, index)
     return
   }
 
-  const fileFormData = new FormData()
+  if (!validatePaperFile(fileField, file)) {
+    resetPaperFile(fileField, index)
+    return
+  }
+
+  setUploadingFile(fileField, true, index)
 
   try {
-    if (file_name == 'file_pdf') {
-      if (
-        !value.type.includes('pdf')
-        && !value.name.toLowerCase().endsWith('.pdf')
-      ) {
-        $toast.error('Please upload a valid PDF file')
-        file_pdf.value = null
-        return
-      }
+    const response = await uploadFile(file)
 
-      const isPdf
-        = value.type.includes('pdf') || value.name.toLowerCase().endsWith('.pdf')
-
-      if (!isPdf) {
-        $toast.error('Please upload a valid PDF file')
-        file_pdf.value = null
-        return
-      }
-
-      file_pdf_loading.value = true
-      loading.form = true
-      fileFormData.append('file', value)
+    if (response.status == 1 && response.data && response.data.length > 0) {
+      const uploadedFileName = response.data[0]?.file.name ?? ''
+      setUploadedFileName(fileField, uploadedFileName, index)
     }
-    else if (file_name == 'file_word') {
-      if (
-        !value.type.includes('word')
-        && !value.name.toLowerCase().endsWith('.doc')
-        && !value.name.toLowerCase().endsWith('.docx')
-      ) {
-        $toast.error('Please upload a valid Word document')
-        file_word.value = null
-        return
-      }
-
-      const isWord
-        = value.type.includes('word')
-          || value.name.toLowerCase().endsWith('.doc')
-          || value.name.toLowerCase().endsWith('.docx')
-
-      if (!isWord) {
-        $toast.error('Please upload a valid Word document')
-        file_word.value = null
-        return
-      }
-
-      file_word_loading.value = true
-      loading.form = true
-      fileFormData.append('file', value)
+    else {
+      resetPaperFile(fileField, index)
     }
-    else if (file_name == 'file_answer') {
-      const isPdf
-        = value.type.includes('pdf') || value.name.toLowerCase().endsWith('.pdf')
-      const isWord
-        = value.type.includes('word')
-          || value.name.toLowerCase().endsWith('.doc')
-          || value.name.toLowerCase().endsWith('.docx')
-
-      if (!isPdf && !isWord) {
-        file_answer.value = null
-        return
-      }
-
-      file_answer_loading.value = true
-      loading.form = true
-      fileFormData.append('file', value)
-    }
-    else if (file_name == 'file_extra') {
-      file_extra_loading.value = true
-      fileFormData.append('file', value)
-    }
-
-    const response = await useApiService.post('/api/v1/upload',
-      fileFormData,
-    )
-
-    if (file_name == 'file_pdf')
-      formData.file_pdf = response.data[0].file.name
-    else if (file_name == 'file_word')
-      formData.file_word = response.data[0].file.name
-    else if (file_name == 'file_answer')
-      formData.file_answer = response.data[0].file.name
-    else if (file_name == 'file_extra') {
-      if (extraAttr.value[index]) {
-        extraAttr.value[index].file = response.data[0].file.name
-      }
-    }
-  }
-  catch (err) {
-    if (err.response?.status == 403) {
-      const auth = useAuth()
-      auth.logout()
-    }
-    else $toast.error('Upload failed. Please try again.')
   }
   finally {
-    file_pdf_loading.value = false
-    file_word_loading.value = false
-    file_answer_loading.value = false
-    file_extra_loading.value = false
-    loading.form = false
+    setUploadingFile(fileField, false, index)
   }
 }
 
-const addExtraAttr = () => {
-  extraAttr.value.push({ type: '', file: null, file_extra: null })
+const boardChange = async (boardId: number | string) => {
+  paper.value.board = boardId
+  paper.value.grade = ''
+  paper.value.subject = ''
+  paper.value.classification = ''
+  paper.value.topics = []
+  resetGrades()
+  resetSubjects()
+  resetClassifications()
+  resetTopics()
+  if (boardId) {
+    await getGrades(boardId)
+    await getClassification(boardId)
+  }
 }
 
-const _applyExtraType = (value, index) => {
-  extraAttr.value[index].type = value
+const gradeChange = async (gradeId: number | string) => {
+  paper.value.grade = gradeId
+  paper.value.subject = ''
+  paper.value.topics = []
+  resetSubjects()
+  resetTopics()
+  if (gradeId) {
+    await getSubjects(gradeId)
+  }
+}
+
+const subjectChange = async (subjectId: number | string) => {
+  paper.value.subject = subjectId
+  paper.value.topics = []
+  resetTopics()
+  if (subjectId) {
+    await getTopics(subjectId)
+  }
+}
+
+const applyPaperData = (item: PastPaperDetailDTO) => {
+  paper.value.board = item.section || ''
+  paper.value.answer_type = getNumber(item.answer_type, 0)
+  paper.value.level = getNumber(item.level, 2)
+  paper.value.edu_year = item.edu_year || ''
+  paper.value.edu_month = item.edu_month || ''
+  paper.value.holding_level = getNumber(item.holding_level, 4)
+  paper.value.title = item.title || ''
+  paper.value.description = item.description || ''
+  paper.value.state = item.state || ''
+  paper.value.area = item.area || ''
+  paper.value.school = item.school || ''
+  existingFiles.value = item.files || null
+
+  if (paper.value.board) {
+    getGrades(paper.value.board)
+    getClassification(paper.value.board)
+  }
+
+  paper.value.grade = item.base || ''
+
+  if (paper.value.grade) {
+    getSubjects(paper.value.grade)
+  }
+
+  paper.value.subject = item.lesson || ''
+
+  if (paper.value.subject) {
+    getTopics(paper.value.subject)
+  }
+
+  paper.value.classification = item.test_type || ''
+  paper.value.topics = getTopicsFromItem(item)
+
+  extraFileList.value = item.files?.extra?.map(file => ({
+    id: file.id || null,
+    type: file.type || '',
+    file: null,
+    name: null,
+  })) || []
+}
+
+const submitPaper = async () => {
+  if (hasUploadInProgress.value) {
+    $toast.error('Please wait until the file upload is complete.')
+    return
+  }
+
+  const response = await editItem(paperId.value, {
+    ...paper.value,
+    file_extra: extraFileList.value
+      .filter(item => item.type && item.name)
+      .map(item => ({
+        type: Number(item.type),
+        file: item.name || '',
+      })),
+  })
+
+  if (response.status === 1 && response.data?.id !== 0) {
+    router.push('/user/paper')
+  }
 }
 
 const initData = async () => {
-  if (!paperData.value) return
+  const [paperResponse] = await Promise.all([
+    getItemById(paperId.value),
+    getBoards(),
+    getExtraTypeFile(),
+  ])
 
-  formData.section = paperData.value.section
-  if (formData.section) {
-    // Load grade list
-    await getTypeList('base', formData.section)
-
-    // Only set base after grade list is loaded
-    formData.base = paperData.value.base
-
-    if (formData.base) {
-      // Load lesson list
-      await getTypeList('lesson', formData.base)
-
-      // Only set lesson after lesson list is loaded
-      formData.lesson = paperData.value.lesson
-
-      if (formData.lesson) {
-        await getTypeList('topic', formData.lesson)
-      }
-    }
-  }
-
-  if (paperData.value.topic) {
-    formData.topics = paperData.value.topic.split('+')
-  }
-
-  formData.test_type = paperData.value.test_type
-  formData.answer_type = parseInt(paperData.value.answer_type || 0)
-  formData.level = parseInt(paperData.value.level || 2)
-  formData.edu_year = parseInt(paperData.value.edu_year)
-  formData.edu_month = parseInt(paperData.value.edu_month)
-  formData.holding_level = parseInt(paperData.value.holding_level || 4)
-  formData.title = paperData.value.title
-  formData.description = paperData.value.description
-
-  // Set free agreement
-  // formData.free_agreement = paperData.value.free_agreement == 1;
-
-  if (paperData.value.files?.extra) {
-    for (const index in paperData.value.files.extra) {
-      extraAttr.value.push({
-        type: paperData.value.files.extra[index].type,
-        id: paperData.value.files.extra[index].id,
-      })
-    }
+  if (paperResponse.data) {
+    await applyPaperData(paperResponse.data)
   }
 }
 
-// Setup watchers
-watch(
-  () => formData.section,
-  (val) => {
-    formData.base = ''
-    formData.lesson = ''
-    formData.topics = []
-    formData.test_type = ''
-    grade_list.value = []
-    lesson_list.value = []
-    topic_list.value = []
-
-    getTypeList('base', val)
-    getClassificationTypes(val)
-    if (formData.area) getTypeList('school')
-  },
-)
-
-watch(
-  () => formData.base,
-  (val) => {
-    formData.lesson = ''
-    if (val) getTypeList('lesson', val)
-  },
-)
-
-watch(
-  () => formData.lesson,
-  (val) => {
-    if (val) {
-      getTypeList('topic', val)
-      if (topicSelectorRef.value) {
-        topicSelectorRef.value.lesson_selected = true
-      }
-    }
-    else {
-      formData.topics = []
-      topic_list.value = []
-      if (topicSelectorRef.value) {
-        topicSelectorRef.value.lesson_selected = false
-      }
-    }
-  },
-)
-
-watch(
-  () => formData.state,
-  (val) => {
-    getTypeList('area', val)
-  },
-)
-
-watch(
-  () => formData.area,
-  () => {
-    getTypeList('school')
-  },
-)
-
-const startDownload = async (type, extra_id = '') => {
-  download_loading.value = true
-  let apiUrl = ''
-
-  if (type === 'q_word') {
-    apiUrl = `/api/v1/tests/download/${route.params.id}/word`
-  }
-  else if (type === 'q_pdf') {
-    apiUrl = `/api/v1/tests/download/${route.params.id}/pdf`
-  }
-  else if (type === 'a_file') {
-    apiUrl = `/api/v1/tests/download/${route.params.id}/answer`
-  }
-  else if (type === 'extra') {
-    apiUrl = `/api/v1/tests/download/${route.params.id}/extra/${extra_id}`
-  }
-  try {
-    const response = await useApiService.get(apiUrl)
-    const FileSaver = await import('file-saver')
-    FileSaver.saveAs(response.data.url, response.data.name)
-  }
-  catch (err) {
-    if (err.response?.status == 400) {
-      if (
-        err.response.data.status == 0
-        && err.response.data.error == 'creditNotEnough'
-      ) {
-        $toast.info('No enough credit')
-      }
-    }
-  }
-  finally {
-    download_loading.value = false
-  }
-}
-
-// Initialize on mount
 onMounted(async () => {
-  isLoading.value = true
-  try {
-    await getTypeList('section')
-    await getTypeList('test_type')
-    await getTypeList('state')
-    await getExtraFileType()
-    await initData()
-  }
-  catch (error) {
-    console.error('Error during initialization:', error)
-    $toast.error('Error loading form data. Please try again.')
-  }
-  finally {
-    // Hide the loading state whether successful or not
-    isLoading.value = false
-  }
-  // Load classifications if board is already selected (from user state)
-  if (formData.section) {
-    getClassificationTypes(formData.section)
-  }
+  await initData()
 })
 </script>
 
-<style>
-.submission-notice {
-  line-height: 2rem;
-  background-color: #ffefe5 !important;
+<style scoped>
+.each-item{
+  width : 33%
 }
-
-.submission-notice .v-alert__icon.v-icon {
-  color: white !important;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  background-color: #ff6600;
+.container-topics{
+  border : 2px solid rgb(var(--v-theme-grey200))
 }
-
-.notice_item {
-  font-size: 1.4rem;
-  line-height: 2.2rem;
-  list-style-type: none;
-  color: black;
-  padding-left: 0 !important;
-}
-
-.notice_item li {
-  margin-bottom: 1rem;
-}
-
-.notice_item li:before {
-  font-family: "Font Awesome 5 Free";
-  font-size: 2rem;
-  color: #ffc700ff;
-  content: "\f0a4";
-  font-weight: 900;
-}
-
-.topic_season {
-  font-weight: bolder !important;
-  color: blue !important;
-}
-
-.loader-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, 0.8);
-  z-index: 10;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+@media screen and (max-width: 960px) {
+  .each-item{
+    width: 100%;
+  }
 }
 </style>

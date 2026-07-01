@@ -79,14 +79,16 @@
 </template>
 
 <script setup lang="ts">
+type ChoiceValue = string | number
+
 interface IMultiChoiceCheckBoxList {
   data: {
-    id: string | number
+    id: ChoiceValue
     title: string
   }[]
   title: string
-  choices: number[]
-  rules?: ((value: number[]) => true | string)[]
+  choices: ChoiceValue[]
+  rules?: ((value: ChoiceValue[]) => true | string)[]
   loadingValue?: boolean
   loadingGetData?: boolean
   disabled?: boolean
@@ -94,7 +96,7 @@ interface IMultiChoiceCheckBoxList {
 
 const props = defineProps<IMultiChoiceCheckBoxList>()
 const emit = defineEmits(['update:choices'])
-const localChoices = ref<number[]>([...props.choices])
+const localChoices = ref<ChoiceValue[]>([...props.choices])
 const errorMessage = ref('')
 const isTouched = ref(false)
 
@@ -102,6 +104,12 @@ watch(
   () => props.choices,
   (val) => {
     localChoices.value = [...val]
+  },
+)
+watch(
+  () => props.data,
+  () => {
+    localChoices.value = [...props.choices]
   },
 )
 
@@ -128,7 +136,7 @@ const validate = (force = false) => {
   errorMessage.value = ''
   return true
 }
-const updateChoices = (val: number[] | null) => {
+const updateChoices = (val: ChoiceValue[] | null) => {
   if (props.disabled) return
 
   localChoices.value = val ?? []
