@@ -43,5 +43,6 @@ export const useUpload = () => {
 
   return {
     uploadFile,
+    loadingUploadFile,
   }
 }
