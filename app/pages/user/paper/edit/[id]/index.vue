@@ -509,14 +509,14 @@
                   </v-icon>
                 </template>
               </v-file-input>
-              <v-icon
+              <!-- <v-icon
                 size="24"
                 color="lightError"
                 class="cursor-pointer mt-2"
                 @click="removeExtra(index)"
               >
                 md:delete
-              </v-icon>
+              </v-icon> -->
             </div>
           </div>
         </div>
@@ -709,21 +709,21 @@ const addExtraFile = () => {
   extraFileList.value.push({ type: '', file: null, name: null })
 }
 
-const removeExtra = (index: number) => {
-  const hasExtraUploadInProgress = uploadingFileKeys.value.some(key =>
-    key.startsWith('file_extra-'),
-  )
+// const removeExtra = (index: number) => {
+//   const hasExtraUploadInProgress = uploadingFileKeys.value.some(key =>
+//     key.startsWith('file_extra-'),
+//   )
 
-  if (hasExtraUploadInProgress) {
-    $toast.error('Please wait until the file upload is complete.')
-    return
-  }
+//   if (hasExtraUploadInProgress) {
+//     $toast.error('Please wait until the file upload is complete.')
+//     return
+//   }
 
-  extraFileList.value.splice(index, 1)
-  uploadingFileKeys.value = uploadingFileKeys.value.filter(
-    key => key !== getUploadKey('file_extra', index),
-  )
-}
+//   extraFileList.value.splice(index, 1)
+//   uploadingFileKeys.value = uploadingFileKeys.value.filter(
+//     key => key !== getUploadKey('file_extra', index),
+//   )
+// }
 
 const getUploadKey = (fileField: PaperFileField, index?: number) => {
   return fileField === 'file_extra' ? `${fileField}-${index}` : fileField
