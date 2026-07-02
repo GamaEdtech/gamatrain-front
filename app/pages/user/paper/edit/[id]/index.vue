@@ -965,7 +965,7 @@ const initData = async () => {
   const [paperResponse] = await Promise.all([
     getItemById(paperId.value),
     getBoards(),
-    getExtraTypeFile(),
+    getExtraTypeFile('test_extra_file'),
   ])
 
   if (paperResponse.data) {
