@@ -17,6 +17,20 @@ export interface MultimediaCreateResponseDTO {
   repeated?: boolean
 }
 
+export interface MultimediaBriefDTO {
+  id: string
+  title: string
+  ref_score: string
+  live: string
+  play_datetime: string | null
+  file_duration: string
+  downloads: string
+  status: string
+  msg: string
+  subdate: string
+  subdate_jalali: string
+}
+
 export interface MultimediaFileInfoDTO {
   exist: boolean
   size: string | number
@@ -95,4 +109,11 @@ export interface MultimediaDetailDTO {
   hasMembership: boolean
   files: MultimediaFileInfoDTO
   collectionList: MultimediaCollectionDTO[]
+}
+export interface GetDataParamsMultimedia {
+  page: number
+  pageSize: number
+  section?: string | number
+  base?: string | number
+  lesson?: string | number
 }

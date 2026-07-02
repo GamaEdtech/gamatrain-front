@@ -1,18 +1,68 @@
 import type {
   ApiResult,
   AppError,
+  MultimediaBriefDTO,
   MultimediaCreateDTO,
   MultimediaDetailDTO,
   MultimediaCreateResponseDTO,
+  ResponseListDTO,
+  GetDataParamsMultimedia,
 } from '@/types'
 
+const data = ref<MultimediaBriefDTO[]>([])
+const totalCount = ref(0)
+const pageCount = ref(0)
+const loadingGetData = ref(true)
 const loadingAddItem = ref(false)
 const loadingEditItem = ref(false)
 const loadingGetItemById = ref(false)
+const loadingDeleteItem = ref(false)
 const NAME = 'Multimedia'
 
 export const useMultimedia = () => {
   const { $toast } = useNuxtApp()
+
+  const getData = async (params: GetDataParamsMultimedia) => {
+    const { page, pageSize, section, base, lesson } = params
+    loadingGetData.value = true
+
+    try {
+      const query = {
+        perpage: pageSize,
+        page,
+        section: section || '',
+        base: base || '',
+        lesson: lesson || '',
+      }
+
+      const response = await useApiService.get<
+        ApiResult<ResponseListDTO<MultimediaBriefDTO>>
+      >('/api/v1/files', query)
+
+      if (response.data) {
+        data.value = response.data.list
+        totalCount.value = response.data.num
+        pageCount.value = Math.ceil(totalCount.value / pageSize)
+      }
+      else {
+        data.value = []
+        totalCount.value = 0
+        pageCount.value = 0
+      }
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      data.value = []
+      totalCount.value = 0
+      pageCount.value = 0
+    }
+    finally {
+      loadingGetData.value = false
+    }
+  }
 
   const encodePayload = (item: MultimediaCreateDTO) => {
     const payload = new URLSearchParams()
@@ -158,12 +208,56 @@ export const useMultimedia = () => {
     }
   }
 
+  const deleteItem = async (id: string | number) => {
+    loadingDeleteItem.value = true
+
+    try {
+      const response = await useApiService.remove<ApiResult<boolean>>(
+        `/api/v1/files/${id}`,
+      )
+
+      if (response.status === 1 || response.succeeded) {
+        $toast.success(`${NAME} deleted successfully!`)
+      }
+      else {
+        $toast.error('The operation failed. Please try again later.')
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      else {
+        $toast.error('Error deleting multimedia')
+      }
+
+      return {
+        succeeded: false,
+        status: 0,
+        data: false,
+      }
+    }
+    finally {
+      loadingDeleteItem.value = false
+    }
+  }
+
   return {
+    loadingGetData,
+    data,
+    getData,
+    totalCount,
+    pageCount,
     addItem,
     loadingAddItem,
     editItem,
     loadingEditItem,
     getItemById,
     loadingGetItemById,
+    deleteItem,
+    loadingDeleteItem,
   }
 }
