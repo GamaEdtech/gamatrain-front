@@ -2,10 +2,13 @@ import type {
   ApiResult,
   AppError,
   MultimediaCreateDTO,
+  MultimediaDetailDTO,
   MultimediaCreateResponseDTO,
 } from '@/types'
 
 const loadingAddItem = ref(false)
+const loadingEditItem = ref(false)
+const loadingGetItemById = ref(false)
 const NAME = 'Multimedia'
 
 export const useMultimedia = () => {
@@ -80,8 +83,87 @@ export const useMultimedia = () => {
     }
   }
 
+  const getItemById = async (id: string | number) => {
+    loadingGetItemById.value = true
+
+    try {
+      const response = await useApiService.get<ApiResult<MultimediaDetailDTO>>(
+        `/api/v1/files/${id}`,
+      )
+
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+
+      return {
+        succeeded: false,
+        status: 0,
+        data: null,
+      }
+    }
+    finally {
+      loadingGetItemById.value = false
+    }
+  }
+
+  const editItem = async (id: string | number, item: MultimediaCreateDTO) => {
+    loadingEditItem.value = true
+
+    try {
+      const response = await useApiService.put<
+        ApiResult<MultimediaCreateResponseDTO>
+      >(
+        `/api/v1/files/${id}`,
+        encodePayload(item) as unknown as Record<string, never>,
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        },
+      )
+
+      if (response.data?.id === 0 && response.data.repeated) {
+        $toast.info(`The ${NAME} is duplicated.`)
+      }
+      else if (response.status === 1) {
+        $toast.success(`${NAME} updated successfully!`)
+      }
+      else {
+        $toast.error('The operation failed. Please try again later.')
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      else {
+        $toast.error('Error updating multimedia')
+      }
+
+      return {
+        succeeded: false,
+        status: 0,
+        data: null,
+      }
+    }
+    finally {
+      loadingEditItem.value = false
+    }
+  }
+
   return {
     addItem,
     loadingAddItem,
+    editItem,
+    loadingEditItem,
+    getItemById,
+    loadingGetItemById,
   }
 }

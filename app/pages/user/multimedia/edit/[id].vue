@@ -1,334 +1,404 @@
 <template>
-  <div
-    id="multimedia-edit-form"
-    class="mt-4"
-  >
-    <v-col
-      cols="12"
-      class="px-2 px-sm-2 px-md-0"
+  <v-container class="w-100 d-flex flex-column">
+    <v-form
+      v-model="isFormValid"
+      class="w-100 d-flex flex-column"
     >
-      <v-row>
-        <v-col
-          cols="12"
-          class="pl-5"
-        >
-          <span
-            class="text-h4"
-            style="color: #009688"
+      <h1 class="text-h4 text-grey700 font-weight-regular">
+        Multimedia Edit Form
+      </h1>
+
+      <div class="d-flex flex-wrap justify-space-between">
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="multimedia.board"
+            label="Board"
+            :items="boards?.map((board) => {
+              return {
+                id: board.code,
+                title: board.title,
+              }
+            })"
+            :data-loading="loadingBoards"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            :defalut-lable="false"
+            density="compact"
+            :rules="[required]"
+            @update:model-value="boardChange"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="multimedia.grade"
+            label="Grade"
+            :items="grades?.map((item) => {
+              return {
+                id: item.id,
+                title: item.title,
+              }
+            })"
+            :data-loading="loadingBoards || loadingGrade"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :disabled="!multimedia.board || loadingGrade"
+            :rules="[required]"
+            @update:model-value="gradeChange"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="multimedia.subject"
+            label="Subject"
+            :items="subjects?.map((item) => {
+              return {
+                id: item.id,
+                title: item.title,
+              }
+            })"
+            :data-loading="loadingBoards || loadingGrade || loadingSubject"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :disabled="!multimedia.board || !multimedia.grade || loadingSubject"
+            :rules="[required]"
+            @update:model-value="subjectChange"
+          />
+        </div>
+
+        <div class="container-topics w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
+          <common-multi-choice-check-box-list
+            v-model:choices="multimedia.topics"
+            title="Topics"
+            :loading-get-data="loadingGetItemById || loadingTopic"
+            :data="topics?.map((item) => {
+              return {
+                id: item.id,
+                title: item.title,
+              }
+            })"
+            :disabled="!multimedia.subject"
+          />
+        </div>
+
+        <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
+          <span class="text-h6 text-grey700 font-weight-medium">Title</span>
+          <v-text-field
+            v-model="multimedia.title"
+            density="compact"
+            variant="outlined"
+            label=""
+            outlined
+            rounded="pill"
+            color="primary"
+            height="48"
+            base-color="grey200"
+            class="w-100"
+            :rules="[required]"
           >
-            Multimedia Edit Form
-          </span>
-        </v-col>
-      </v-row>
-      <v-card
-        class="mt-3"
-        :elevation="3"
-      >
-        <v-card-text class="px-0 px-sm-8 px-md-4">
-          <v-card-text>
-            <v-card
-              flat
-              class="mt-3"
-            >
-              <VForm
-                ref="form"
-                v-model="isFormValid"
-                lazy-validation
-                @submit.prevent="updateContent"
+            <template #prepend-inner>
+              <v-progress-circular
+                v-if="loadingGetItemById"
+                indeterminate
+                size="20"
+                color="primary"
+                class="mx-2"
+              />
+            </template>
+          </v-text-field>
+        </div>
+
+        <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
+          <span class="text-h6 text-grey700 font-weight-medium">Description</span>
+          <v-textarea
+            v-model="multimedia.description"
+            density="compact"
+            variant="outlined"
+            label=""
+            outlined
+            rounded="lg"
+            color="primary"
+            base-color="grey200"
+            class="w-100"
+            placeholder="Write a brief description about the files to help the user make an informed choice"
+            persistent-clear
+            no-resize
+            rows="7"
+            :rules="[required, minLength(70)]"
+          >
+            <template #prepend-inner>
+              <v-progress-circular
+                v-if="loadingGetItemById"
+                indeterminate
+                size="20"
+                color="primary"
+                class="mx-2"
+              />
+            </template>
+          </v-textarea>
+        </div>
+
+        <div
+          class="w-100 d-flex flex-wrap ga-1 mt-4"
+        >
+          <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+            <common-gombo-box
+              v-model="multimedia.content_type"
+              label="Content type"
+              :items="extraTypeFile?.map((item) => {
+                return {
+                  id: item.id,
+                  title: item.title,
+                }
+              })"
+              :data-loading="loadingExtraTypeFile"
+              :loading-value="loadingGetItemById"
+              rounded="pill"
+              height="48"
+              base-color="grey200"
+              color="primary"
+              density="compact"
+              :defalut-lable="false"
+              :has-search="false"
+              :rules="[required]"
+            />
+          </div>
+
+          <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+            <span class="text-h6 text-grey700 font-weight-medium">
+              Multimedia File
+              <span
+                v-if="hasExistingFile || multimedia.file"
+                class="text-subtitle-1 text-grey600"
               >
-                <v-row class="py-3">
-                  <v-col
-                    cols="12"
-                    md="4"
-                  >
-                    <v-autocomplete
-                      v-model="formData.section"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :items="section_list"
-                      :rules="[(v) => !!v || 'This field is required']"
-                      item-title="title"
-                      item-value="id"
-                      label="Board"
-                      color="orange"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                  >
-                    <v-autocomplete
-                      v-model="formData.base"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :items="grade_list"
-                      :rules="[(v) => !!v || 'This field is required']"
-                      item-value="id"
-                      item-title="title"
-                      label="Grade"
-                      color="orange"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                  >
-                    <v-autocomplete
-                      v-model="formData.lesson"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :items="lesson_list"
-                      :rules="[(v) => !!v || 'This field is required']"
-                      item-value="id"
-                      item-title="title"
-                      label="Subject"
-                      color="orange"
-                    />
-                  </v-col>
-                  <v-col
-                    v-if="topic_list.length"
-                    cols="12"
-                    md="12"
-                  >
-                    <form-topic-selector
-                      v-if="formData.lesson !== ''"
-                      ref="topicSelectorRef"
-                      :topic-list="topic_list"
-                      :selected-topics="formData.topics"
-                      @select-topic="selectTopic"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="12"
-                  >
-                    <v-text-field
-                      v-model="formData.title"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :rules="[(v) => !!v || 'This field is required']"
-                      label="Title"
-                      color="orange"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="12"
-                  >
-                    <v-textarea
-                      v-model="formData.description"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :rules="[
-                        (v) => !!v || 'This field is required',
-                        (v) =>
-                          (v && v.length >= 70)
-                          || 'Description must be at least 70 characters',
-                      ]"
-                      label="Describe"
-                      hint="You must enter at least 70 characters."
-                      persistent-hint
-                      placeholder="Write a brief description about the files to help the user make an informed choice"
-                      color="orange"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                  >
-                    <v-autocomplete
-                      v-model="formData.content_type"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :items="content_type_list"
-                      :rules="[(v) => !!v || 'This field is required']"
-                      item-value="id"
-                      item-title="title"
-                      label="Content type"
-                      color="orange"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                  >
-                    <v-file-input
-                      v-model="file"
-                      density="compact"
-                      variant="outlined"
-                      label="Multimedia file"
-                      accept=".mp4,.avi,.m4a,.mpg,.flv,.docx,.pptx,.pdf,.exe,.apk,.mp3,.wave,.acc,.swf,.gif,.zip"
-                      :rules="[
-                        (v) =>
-                          !v
-                          || v.size < 20000000
-                          || 'File size should be less than 20 MB!',
-                      ]"
-                      :loading="loading.file"
-                      :prepend-icon="null"
-                      color="orange"
-                      prepend-inner-icon="mdi-play-box"
-                      append-icon="mdi-folder-open"
-                      persistent-hint
-                      @update:model-value="uploadFile($event)"
-                    >
-                      <template #append>
-                        <v-btn
-                          v-if="multimediaData.files.exist"
-                          icon
-                          size="small"
-                          variant="plain"
-                          title="Download file"
-                          :loading="download_loading"
-                          @click="startDownload('multimedia')"
-                        >
-                          <v-icon
-                            size="18"
-                            style="margin-left: 0.5rem"
-                          >
-                            mdi-download
-                          </v-icon>
-                        </v-btn>
-                      </template>
-                    </v-file-input>
-                  </v-col>
+                ({{ fileStatusText }})
+              </span>
+            </span>
+            <v-file-input
+              v-model="multimediaFile"
+              density="compact"
+              variant="outlined"
+              accept=".mp4,.avi,.m4a,.mpg,.flv,.docx,.pptx,.pdf,.exe,.apk,.mp3,.wave,.acc,.swf,.gif,.zip"
+              label=""
+              base-color="grey200"
+              color="primary"
+              prepend-icon=""
+              append-inner-icon="md:files"
+              autocomplete="off"
+              max-height="48"
+              rounded="pill"
+              class="w-100"
+              :disabled="loadingUploadMultimediaFile"
+              @update:model-value="uploadMultimediaFile"
+            >
+              <template #prepend-inner>
+                <v-icon
+                  size="20"
+                  color="info"
+                >
+                  md:text_snippet
+                </v-icon>
+                <v-progress-circular
+                  v-if="loadingUploadMultimediaFile || loadingGetItemById"
+                  indeterminate
+                  size="20"
+                  color="primary"
+                  class="mx-2"
+                />
+              </template>
+              <template #append>
+                <v-icon
+                  v-if="hasExistingFile"
+                  size="26"
+                  color="info"
+                  class="cursor-pointer"
+                  @click.stop="downloadExistingFile"
+                >
+                  md:download
+                </v-icon>
+              </template>
+            </v-file-input>
+          </div>
+        </div>
 
-                  <v-col cols="12">
-                    <v-divider class="my-3" />
-                    <p class="text-h5">
-                      Content cover
-                    </p>
-                    <p class="text-h6">
-                      What pages of the book does this content cover?
-                    </p>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="formData.from_page"
-                      type="number"
-                      min="1"
-                      label="From page"
-                      density="compact"
-                      variant="outlined"
-                      color="orange"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="4"
-                  >
-                    <v-text-field
-                      v-model="formData.to_page"
-                      type="number"
-                      min="1"
-                      label="To page"
-                      density="compact"
-                      variant="outlined"
-                      color="orange"
-                    />
-                  </v-col>
+        <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6 rounded-lg pa-2">
+          <span class="text-h5 text-grey700 font-weight-bold">Content cover</span>
+          <span class="text-h6 text-grey600 font-weight-bold">
+            What pages of the book does this content cover?
+          </span>
+        </div>
 
-                  <v-col
-                    cols="12"
-                    md="6"
-                    class="pb-0"
-                  >
-                    <v-btn
-                      type="submit"
-                      :loading="loading.form"
-                      :disabled="!isFormValid"
-                      color="success"
-                      block
-                      style="font-size: 1.2rem; text-transform: none"
-                    >
-                      Update
-                    </v-btn>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="6"
-                  >
-                    <v-btn
-                      variant="outlined"
-                      color="error"
-                      to="/user/multimedia"
-                      block
-                      style="font-size: 1.2rem; text-transform: none"
-                    >
-                      Discard
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </VForm>
-            </v-card>
-          </v-card-text>
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </div>
+        <div class="w-100 d-flex flex-wrap justify-start">
+          <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+            <span class="text-h6 text-grey700 font-weight-medium">From page</span>
+            <v-text-field
+              v-model="multimedia.from_page"
+              type="number"
+              min="1"
+              density="compact"
+              variant="outlined"
+              rounded="pill"
+              color="primary"
+              base-color="grey200"
+              class="w-100"
+            >
+              <template #prepend-inner>
+                <v-progress-circular
+                  v-if="loadingGetItemById"
+                  indeterminate
+                  size="20"
+                  color="primary"
+                  class="mx-2"
+                />
+              </template>
+            </v-text-field>
+          </div>
+
+          <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4 ml-2">
+            <span class="text-h6 text-grey700 font-weight-medium">To page</span>
+            <v-text-field
+              v-model="multimedia.to_page"
+              type="number"
+              min="1"
+              density="compact"
+              variant="outlined"
+              rounded="pill"
+              color="primary"
+              base-color="grey200"
+              class="w-100"
+            >
+              <template #prepend-inner>
+                <v-progress-circular
+                  v-if="loadingGetItemById"
+                  indeterminate
+                  size="20"
+                  color="primary"
+                  class="mx-2"
+                />
+              </template>
+            </v-text-field>
+          </div>
+        </div>
+
+        <!-- <div class="w-100 d-flex align-center justify-start mt-4">
+          <v-checkbox
+            v-model="multimedia.free_available"
+            density="compact"
+            color="primary"
+            hide-details
+            class="text-h5"
+          >
+            <template #label>
+              <span class="text-h5 text-grey700 font-weight-medium">
+                I would like the file to be freely available to others.
+              </span>
+            </template>
+          </v-checkbox>
+        </div> -->
+      </div>
+    </v-form>
+
+    <div class="d-flex align-center justify-center mt-8 ga-2">
+      <v-btn
+        variant="outlined"
+        color="lightError"
+        to="/user/multimedia"
+        flat
+        rounded="pill"
+        height="40"
+        class="text-h5 font-weight-medium"
+      >
+        Discard
+      </v-btn>
+      <v-btn
+        flat
+        rounded="pill"
+        width="200"
+        height="40"
+        class="text-h5 font-weight-medium text-grey800"
+        color="primary"
+        :loading="loadingEditItem"
+        :disabled="!isFormValid || loadingUploadMultimediaFile"
+        @click="submitMultimedia"
+      >
+        Update
+      </v-btn>
+    </div>
+  </v-container>
 </template>
 
-<script setup>
-import { useAuth } from '~/composables/useAuth'
-import FormTopicSelector from '~/components/form/topic-selector.vue'
+<script setup lang="ts">
+import type {
+  MultimediaCreateDTO,
+  MultimediaDetailDTO,
+  MultimediaFileInfoDTO,
+} from '@/types'
 
-const auth = useAuth()
-// Define layout and page metadata
+type MultimediaForm = MultimediaCreateDTO
+
 definePageMeta({
   layout: 'dashboard-layout',
   middleware: ['auth', 'user-type'],
 })
 
-useHead({
+useSeoMeta({
   title: 'Edit Multimedia',
 })
 
-// Get services
 const route = useRoute()
 const router = useRouter()
-const userState = useState('user', () => ({
-  lastSelectedCurriculum: '',
-  lastSelectedGrade: '',
-  lastSelectedSubject: '',
-  lastSelectedHoldingLevel: 4,
-}))
+const {
+  loadingGetData: loadingBoards,
+  data: boards,
+  getData: getBoards,
+  getGrades,
+  grades,
+  loadingGrade,
+  resetGrades,
+  subjects,
+  loadingSubject,
+  resetSubjects,
+  getSubjects,
+  getTopics,
+  resetTopics,
+  loadingTopic,
+  topics,
+  getExtraTypeFile,
+  extraTypeFile,
+  loadingExtraTypeFile,
+} = useBoard()
+const { getItemById, loadingGetItemById, editItem, loadingEditItem } = useMultimedia()
+const { downloadFile, loadingDownloadPastPaperFile } = usePastPaperDownload()
+const { required, minLength } = useValidationRules()
+const { uploadFile } = useUpload()
 const { $toast } = useNuxtApp()
 
-// User token
-const userToken = ref('')
-
-// Loading flag to prevent watchers from firing during initial load
-const isInitialLoad = ref(true)
-
-// Form validation
-const form = ref(null)
 const isFormValid = ref(false)
+const multimediaFile = ref<File | File[] | null>(null)
+const existingFile = ref<MultimediaFileInfoDTO | null>(null)
+const loadingUploadMultimediaFile = ref(false)
+const multimediaId = computed(() => String(route.params.id || ''))
+const hasExistingFile = computed(() => existingFile.value?.exist === true)
+const fileStatusText = computed(() => multimedia.value.file ? 'new file selected' : 'saved file attached')
 
-// Multimedia data
-const multimediaData = reactive({
-  id: route.params.id || null,
-  files: {
-    exist: false,
-    url: null,
-  },
-})
-
-// Check if we're in edit mode
-const isEditMode = computed(() => !!multimediaData.id)
-
-const formData = reactive({
-  section: '',
-  base: '',
-  lesson: '',
+const multimedia = ref<MultimediaForm>({
+  board: '',
+  grade: '',
+  subject: '',
   topics: [],
   title: '',
   description: '',
@@ -339,482 +409,159 @@ const formData = reactive({
   file: '',
 })
 
-const file = ref(null)
-const section_list = ref([])
-const grade_list = ref([])
-const lesson_list = ref([])
-const topic_list = ref([])
-const content_type_list = ref([])
+const getSelectedFile = (value: unknown) => {
+  if (value instanceof File) return value
+  if (Array.isArray(value)) return value[0] ?? null
 
-// Handle loading states
-const loading = reactive({
-  multimedia: false, // Loading multimedia data
-  section: false,
-  base: false,
-  lesson: false,
-  topic: false,
-  file: false, // Upload file
-  form: false, // Submit form
-})
+  return null
+}
 
-// Reference to topic selector component
-const topicSelectorRef = ref(null)
+const getTopicsFromItem = (item: MultimediaDetailDTO) => {
+  if (item.topic) {
+    return item.topic
+      .split('+')
+      .filter(Boolean)
+  }
 
-// Fetch multimedia data
-const fetchMultimediaData = async () => {
-  if (!multimediaData.id) return
+  return []
+}
 
-  loading.multimedia = true
-  // Ensure initial load flag is set during the whole loading process
-  isInitialLoad.value = true
+const boardChange = async (boardId: string | number) => {
+  multimedia.value.board = boardId
+  multimedia.value.grade = ''
+  multimedia.value.subject = ''
+  multimedia.value.topics = []
+  resetGrades()
+  resetSubjects()
+  resetTopics()
+  if (boardId) {
+    await getGrades(boardId)
+  }
+}
+
+const gradeChange = async (gradeId: string | number) => {
+  multimedia.value.grade = gradeId
+  multimedia.value.subject = ''
+  multimedia.value.topics = []
+  resetSubjects()
+  resetTopics()
+  if (gradeId) {
+    await getSubjects(gradeId)
+  }
+}
+
+const subjectChange = async (subjectId: string | number) => {
+  multimedia.value.subject = subjectId
+  multimedia.value.topics = []
+  resetTopics()
+  if (subjectId) {
+    await getTopics(subjectId)
+  }
+}
+
+const uploadMultimediaFile = async (value: unknown) => {
+  const file = getSelectedFile(value)
+
+  if (!file) {
+    multimedia.value.file = ''
+    return
+  }
+
+  if (file.size >= 20000000) {
+    $toast.error('File size should be less than 20 MB!')
+    multimediaFile.value = null
+    multimedia.value.file = ''
+    return
+  }
+
+  loadingUploadMultimediaFile.value = true
 
   try {
-    const response = await useApiService.get(
-      `/api/v1/files/${multimediaData.id}`,
-    )
+    const response = await uploadFile(file)
 
-    // Set multimedia data
-    const data = response.data
-
-    // First load all dropdowns sequentially
-    if (data.section) {
-      await getTypeList('base', data.section)
+    if (response.status == 1 && response.data && response.data.length > 0) {
+      multimedia.value.file = response.data[0]?.file.name ?? ''
     }
-
-    if (data.base) {
-      await getTypeList('lesson', data.base)
-    }
-
-    if (data.lesson) {
-      await getTypeList('topic', data.lesson)
-    }
-
-    // Process topics data based on its format
-    let topicsData = []
-
-    if (data.topics) {
-      // If topics is already an array, use it directly
-      if (Array.isArray(data.topics)) {
-        topicsData = data.topics
-      }
-      // If topics is a string (possibly comma or plus separated), convert to array
-      else if (typeof data.topics === 'string') {
-        // Try different separators, checking for + first as it's used in the old version
-        if (data.topics.includes('+')) {
-          topicsData = data.topics.split('+')
-        }
-        else if (data.topics.includes(',')) {
-          topicsData = data.topics.split(',')
-        }
-        else {
-          // Single value case
-          topicsData = [data.topics]
-        }
-      }
-      else if (
-        typeof data.topics === 'object'
-        && !Array.isArray(data.topics)
-      ) {
-        // Handle case where topics might be an object with keys
-        topicsData = Object.values(data.topics).filter(t => t)
-      }
-    }
-    else if (data.topic) {
-      // Backward compatibility with old API that uses 'topic' instead of 'topics'
-      if (typeof data.topic === 'string') {
-        if (data.topic.includes('+')) {
-          topicsData = data.topic.split('+')
-        }
-        else if (data.topic.includes(',')) {
-          topicsData = data.topic.split(',')
-        }
-        else {
-          topicsData = [data.topic]
-        }
-      }
-      else if (Array.isArray(data.topic)) {
-        topicsData = data.topic
-      }
-    }
-
-    // Clean up topic IDs and ensure they're strings (if they're numeric values)
-    topicsData = topicsData
-      .map(t => (typeof t === 'object' ? t.id : t.toString().trim()))
-      .filter(t => t)
-    // Now set all form values at once
-    formData.section = data.section
-    formData.base = data.base
-    formData.lesson = data.lesson
-    formData.topics = topicsData
-    formData.title = data.title
-    formData.description = data.description
-    formData.content_type = data.content_type
-    formData.from_page = data.from_page
-    formData.to_page = data.to_page
-    formData.free_available = !!data.free_available
-
-    // Handle file information - API returns it in a 'files' object
-    // Check if files object exists and has exist property set to true
-    const hasFile = data.files && data.files.exist === true
-
-    // Store file information
-    formData.file = hasFile ? data.files.name || data.title : ''
-
-    // Set files information for download button
-    multimediaData.files = {
-      exist: hasFile,
-      url: hasFile ? `/api/v1/files/download/${multimediaData.id}` : null,
-      size: hasFile ? data.files.size : null,
-      ext: hasFile ? data.files.ext : null,
+    else {
+      multimediaFile.value = null
+      multimedia.value.file = ''
     }
   }
-  catch (err) {
-    $toast.error(err.message || 'Error loading multimedia data')
+  finally {
+    loadingUploadMultimediaFile.value = false
+  }
+}
+
+const applyMultimediaData = async (item: MultimediaDetailDTO) => {
+  multimedia.value.board = item.section || ''
+  multimedia.value.topics = getTopicsFromItem(item)
+  multimedia.value.title = item.title || ''
+  multimedia.value.description = item.description || ''
+  multimedia.value.content_type = item.content_type || ''
+  multimedia.value.from_page = item.from_page || ''
+  multimedia.value.to_page = item.to_page || ''
+  multimedia.value.free_available = item.free_aggrement === '1'
+  multimedia.value.file = ''
+  existingFile.value = item.files || null
+
+  if (multimedia.value.board) {
+    getGrades(multimedia.value.board)
+  }
+
+  multimedia.value.grade = item.base || ''
+
+  if (multimedia.value.grade) {
+    getSubjects(multimedia.value.grade)
+  }
+
+  multimedia.value.subject = item.lesson || ''
+
+  if (multimedia.value.subject) {
+    getTopics(multimedia.value.subject)
+  }
+}
+
+const downloadExistingFile = async () => {
+  if (loadingDownloadPastPaperFile.value || !hasExistingFile.value) return
+
+  await downloadFile(multimediaId.value, 'multimedia')
+}
+
+const submitMultimedia = async () => {
+  const response = await editItem(multimediaId.value, multimedia.value)
+
+  if (response.status === 1 && response.data?.id !== 0) {
     router.push('/user/multimedia')
   }
-  finally {
-    loading.multimedia = false
-    // Reset the initial load flag when we're done
-    setTimeout(() => {
-      isInitialLoad.value = false
-    }, 100) // Small delay to ensure Vue has finished processing all reactivity
+}
+
+const initData = async () => {
+  const [multimediaResponse] = await Promise.all([
+    getItemById(multimediaId.value),
+    getBoards(),
+    getExtraTypeFile('content_type'),
+  ])
+
+  if (multimediaResponse.data) {
+    await applyMultimediaData(multimediaResponse.data)
   }
 }
 
-const getTypeList = async (type, parent = '') => {
-  const params = { type }
-
-  if (type === 'section') {
-    loading.section = true
-  }
-  if (type === 'base') {
-    params.section_id = parent
-    loading.base = true
-  }
-  if (type === 'lesson') {
-    params.base_id = parent
-    loading.lesson = true
-  }
-  if (type === 'topic') {
-    params.lesson_id = parent
-    loading.topic = true
-  }
-
-  try {
-    const response = await useApiService.get('/api/v1/types/list', params)
-
-    if (type === 'section') {
-      section_list.value = response.data
-    }
-    else if (type === 'base') {
-      grade_list.value = response.data
-    }
-    else if (type === 'lesson') {
-      lesson_list.value = response.data
-    }
-    else if (type === 'topic') {
-      topic_list.value = response.data
-
-      // If we have topics data and the topic selector exists, set lesson_selected
-      if (topic_list.value.length > 0 && topicSelectorRef.value) {
-        topicSelectorRef.value.lesson_selected = true
-
-        // If we have saved topics, set them after a short delay to ensure component is mounted
-        if (formData.topics && formData.topics.length > 0) {
-          setTimeout(() => {
-            if (topicSelectorRef.value) {
-              topicSelectorRef.value.topic = [...formData.topics]
-            }
-          }, 100)
-        }
-      }
-    }
-    else if (type === 'content_type') {
-      content_type_list.value = response.data
-    }
-  }
-  catch {
-    $toast.error('Error loading data')
-  }
-  finally {
-    loading.section = false
-    loading.base = false
-    loading.lesson = false
-    loading.topic = false
-  }
-}
-
-const _changeOption = (type, value) => {
-  // Skip if we're in initial load
-  if (isInitialLoad.value) return
-
-  if (type === 'topic') {
-    formData.topics = Array.isArray(value) ? value : [value]
-  }
-}
-
-const updateContent = async () => {
-  loading.form = true
-
-  // Prepare form data
-  const formSubmitData = new FormData()
-  for (const key in formData) {
-    if (!(key === 'topics' || key === 'file_extra')) {
-      formSubmitData.append(key, formData[key])
-    }
-  }
-
-  // Handle topics array
-  if (formData.topics && Array.isArray(formData.topics)) {
-    if (formData.topics.length > 0) {
-      formData.topics.forEach((topic) => {
-        formSubmitData.append('topics[]', topic)
-      })
-    }
-    else {
-      // Ensure we send an empty topics array to clear existing topics
-      formSubmitData.append('topics[]', '')
-    }
-  }
-
-  // For free_available, ensure it's 1 or 0
-  formSubmitData.set('free_available', formData.free_available ? 1 : 0)
-
-  try {
-    const response = await useApiService.put(
-      `/api/v1/files/${multimediaData.id}`,
-      urlencodeFormData(formSubmitData),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      },
-    )
-
-    if (response.data.id === 0 && response.data.repeated) {
-      $toast.info('The multimedia is duplicated')
-    }
-    else {
-      $toast.success('Updated successfully')
-      router.push('/user/multimedia')
-    }
-  }
-  catch {
-    $toast.error('Error updating multimedia')
-  }
-  finally {
-    loading.form = false
-  }
-}
-
-// Convert form data to URL encoded format
-const urlencodeFormData = (fd) => {
-  let s = ''
-  for (const pair of fd.entries()) {
-    if (typeof pair[1] === 'string') {
-      s += (s ? '&' : '') + encode(pair[0]) + '=' + encode(pair[1])
-    }
-  }
-  return s
-}
-
-const encode = (s) => {
-  return encodeURIComponent(s).replace(/%20/g, '+')
-}
-
-const selectTopic = (event) => {
-  formData.topics = event
-}
-
-const uploadFile = async (value) => {
-  if (!value) return
-
-  loading.file = true
-
-  const fileFormData = new FormData()
-  fileFormData.append('file', value)
-
-  try {
-    const response = await useApiService.post('/api/v1/upload', fileFormData)
-
-    // Get file information from the upload response
-    const fileInfo = response.data[0].file
-    formData.file = fileInfo.name
-
-    // Update files object for download button
-    multimediaData.files = {
-      exist: true,
-      url: multimediaData.id
-        ? `/api/v1/files/download/${multimediaData.id}`
-        : `/api/v1/download/${fileInfo.name}`,
-      size: fileInfo.size || null,
-      ext: fileInfo.ext || null,
-    }
-
-    $toast.success('File uploaded successfully')
-  }
-  catch {
-    $toast.error('An error occurred during file upload')
-  }
-  finally {
-    loading.file = false
-  }
-}
-
-// Set up watchers
-watch(
-  () => formData.section,
-  (val) => {
-    // Skip watchers during initial load
-    if (isInitialLoad.value) return
-
-    formData.base = ''
-    formData.lesson = ''
-    formData.topics = []
-    grade_list.value = []
-    lesson_list.value = []
-    topic_list.value = []
-
-    if (val) {
-      getTypeList('base', val)
-    }
-  },
-)
-
-watch(
-  () => formData.base,
-  (val) => {
-    // Skip watchers during initial load
-    if (isInitialLoad.value) return
-
-    userState.value.lastSelectedGrade = val
-    formData.lesson = ''
-    formData.topics = []
-    lesson_list.value = []
-    topic_list.value = []
-
-    if (val) {
-      getTypeList('lesson', val)
-    }
-  },
-)
-
-watch(
-  () => formData.lesson,
-  (val) => {
-    // Skip watchers during initial load
-    if (isInitialLoad.value) return
-
-    userState.value.lastSelectedSubject = val
-
-    // Only clear topics if we're not in edit mode or if we've explicitly changed the lesson
-    // This prevents losing topics when editing an existing record
-    if (!isEditMode.value || val === '') {
-      formData.topics = []
-    }
-
-    // Always clear topic list when lesson changes to force reload
-    topic_list.value = []
-
-    if (val) {
-      getTypeList('topic', val)
-      if (topicSelectorRef.value) {
-        topicSelectorRef.value.lesson_selected = true
-      }
-    }
-    else {
-      if (topicSelectorRef.value) {
-        topicSelectorRef.value.lesson_selected = false
-      }
-    }
-  },
-)
-
-watch(
-  () => formData.topics,
-  (val) => {
-    // Ensure topic selector gets updated with current topics
-    if (topicSelectorRef.value && val && val.length > 0) {
-      topicSelectorRef.value.topic = val
-    }
-  },
-)
-
-const download_loading = ref(false)
-
-const startDownload = async () => {
-  download_loading.value = true
-  try {
-    const response = await useApiService.get(
-      `/api/v1/files/download/${route.params.id}`,
-    )
-    const FileSaver = await import('file-saver')
-    FileSaver.saveAs(response.data.url, response.data.name)
-  }
-  catch {
-    $toast.error('Error downloading file')
-  }
-  finally {
-    download_loading.value = false
-  }
-}
-
-// Initialize on mount
 onMounted(async () => {
-  // Set initial load flag
-  isInitialLoad.value = true
-
-  userToken.value = auth.getUserToken()
-
-  // Load initial dropdown data
-  await getTypeList('section')
-  await getTypeList('content_type')
-
-  // Fetch multimedia data if in edit mode
-  if (isEditMode.value) {
-    await fetchMultimediaData()
-  }
-  else {
-    // If not in edit mode, we can turn off the initial load flag
-    isInitialLoad.value = false
-  }
+  await initData()
 })
 </script>
 
-<style>
-#multimedia-edit-form .text-h4 {
-  line-height: 4rem;
+<style scoped>
+.each-item{
+  width : 33%
 }
-
-.submission-notice {
-  line-height: 2rem;
-  background-color: #ffefe5 !important;
+.container-topics{
+  border : 2px solid rgb(var(--v-theme-grey200))
 }
-
-.submission-notice .v-alert__icon.v-icon {
-  color: white !important;
-  padding: 2rem;
-  border-radius: 0.5rem;
-  background-color: #ff6600;
-}
-
-.notice_item {
-  font-size: 1.4rem;
-  line-height: 2.2rem;
-  list-style-type: none;
-  color: black;
-  padding-left: 0 !important;
-}
-
-.notice_item li {
-  margin-bottom: 1rem;
-}
-
-.notice_item li:before {
-  font-family: "Font Awesome 5 Free";
-  font-size: 2rem;
-  color: #ffc700ff;
-  content: "\f0a4";
-  font-weight: 900;
+@media screen and (max-width: 960px) {
+  .each-item{
+    width: 100%;
+  }
 }
 </style>
