@@ -131,6 +131,7 @@ export interface FilesForumDetail {
   exist: boolean
   size: number
   ext: string
+  url?: string
 }
 
 export interface StatsForumDetail {
