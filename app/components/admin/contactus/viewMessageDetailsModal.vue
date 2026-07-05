@@ -123,7 +123,7 @@
         <common-rich-editor
           v-model="bodyReply"
           mode="custom"
-          :features="['bold', 'italic', 'list', 'link']"
+          :features="['bold', 'italic', 'list', 'link', 'image', 'mediaEmbed']"
           :rules="[required]"
         />
         <v-btn

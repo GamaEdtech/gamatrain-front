@@ -94,8 +94,8 @@
         <common-rich-editor
           v-model="body"
           mode="custom"
-          :features="['bold', 'italic', 'list', 'link']"
-          :rules="requiredRule"
+          :features="['bold', 'italic', 'list', 'link', 'image', 'mediaEmbed']"
+          :rules="[requiredRule]"
           required
         />
       </div>

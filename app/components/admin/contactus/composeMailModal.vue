@@ -73,10 +73,10 @@
 
         <common-rich-editor
           v-model="body"
-          :rules="requiredRule"
           required
           mode="custom"
-          :features="['bold', 'italic', 'list', 'link']"
+          :features="['bold', 'italic', 'list', 'link', 'image', 'mediaEmbed']"
+          :rules="[requiredRule]"
         />
       </div>
     </div>

@@ -240,6 +240,7 @@
     <admin-common-modal
       v-model:show-dialog="showDetailModal"
       title="Detail"
+      :max-width="600"
     >
       <admin-contactus-view-message-details-modal
         :id="selectedItemIdForDetail"
@@ -250,6 +251,7 @@
     <admin-common-modal
       v-model:show-dialog="showComposeMailModal"
       title="Compose"
+      :max-width="600"
     >
       <admin-contactus-compose-mail-modal @compose-mail-success-full="showComposeMailModal = false" />
     </admin-common-modal>
@@ -257,6 +259,7 @@
     <admin-common-modal
       v-model:show-dialog="showCreateTicketModal"
       title="Ticket"
+      :max-width="600"
     >
       <admin-contactus-create-ticket-modal @create-ticket-success-full="createTicketSuccessfull" />
     </admin-common-modal>
