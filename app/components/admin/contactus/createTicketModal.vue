@@ -118,22 +118,20 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  ApiResult,
-  AppError,
-} from '@/types'
-
 const emit = defineEmits(['CreateTicketSuccessFull'])
-const { $toast } = useNuxtApp()
+const {
+  createTicket,
+  loadingCreateTicket: loading,
+  getEmailAddresses,
+  loadingGetEmailAddresses: loadingEmailList,
+  emailAddresses: fromEmailList,
+} = useContactUsAdmin()
 
-const loading = ref(false)
 const subject = ref('')
 const body = ref('')
 const email = ref('')
 const name = ref('')
-const selectedFromEmail = ref()
-const fromEmailList = ref<string[]>([])
-const loadingEmailList = ref(false)
+const selectedFromEmail = ref('')
 
 const isRequired = (value: string) => !!value
 const isEmailValid = (value: string) => /.+@.+\..+/.test(value)
@@ -166,63 +164,16 @@ const removeScriptTags = (html: string) => {
 }
 
 const create = async () => {
-  try {
-    loading.value = true
+  const response = await createTicket({
+    from: selectedFromEmail.value,
+    receiverName: name.value,
+    receiverEmail: email.value,
+    subject: subject.value,
+    body: removeScriptTags(body.value),
+  })
 
-    const formData = new FormData()
-    formData.append('From', selectedFromEmail.value)
-    formData.append('ReceiverName', name.value)
-    formData.append('ReceiverEmail', email.value)
-    formData.append('Subject', subject.value)
-    formData.append('Body', removeScriptTags(body.value))
-    const response = await useApiService.post<
-      ApiResult<unknown>
-    >(
-      '/api/v2/admin/tickets',
-      formData,
-    )
-    if (response.succeeded) {
-      $toast.success('Ticket Create Successfully!')
-      emit('CreateTicketSuccessFull')
-    }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loading.value = false
-  }
-}
-
-const getEmailAddresses = async () => {
-  try {
-    loadingEmailList.value = true
-    const response = await useApiService.get<
-      ApiResult<string[]>
-    >(
-      '/api/v2/admin/emails/addresses',
-    )
-    if (response.succeeded) {
-      fromEmailList.value = response.data ?? []
-    }
-    else {
-      $toast.error('The operation get data failed. Please try again later.')
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loadingEmailList.value = false
+  if (response.succeeded) {
+    emit('CreateTicketSuccessFull')
   }
 }
 

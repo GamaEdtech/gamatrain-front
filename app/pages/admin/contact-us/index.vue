@@ -267,19 +267,12 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  ApiResult,
-  AppError,
-  ResponseListDTO,
-  AdminContactUsDTO,
-} from '@/types'
+import type { AdminContactUsDTO } from '@/types'
 
 definePageMeta({
   layout: 'admin',
   middleware: ['auth', 'admin'],
 })
-
-const { $toast } = useNuxtApp()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
@@ -299,12 +292,8 @@ const headers = [
     width: '20vw',
   },
 ]
-const list = ref<AdminContactUsDTO[]>([])
-const loading = ref(true)
-const totalCount = ref(0)
 const pageSize = ref(10)
 const page = ref(1)
-const pageCount = ref(0)
 const allPageSize = [
   { label: '10 Rows', value: 10 },
   { label: '20 Rows', value: 20 },
@@ -315,43 +304,24 @@ const statusList = ['All', 'Read', 'UnRead']
 const showDeleteModal = ref(false)
 const selectedItemIdForDelete = ref('')
 const showDetailModal = ref(false)
-const selectedItemIdForDetail = ref()
+const selectedItemIdForDetail = ref<number | null>(null)
 const showComposeMailModal = ref(false)
 const showCreateTicketModal = ref(false)
 
-const getData = async () => {
-  loading.value = true
-  try {
-    const params: Record<string, string | number | boolean | null> = {
-      'PagingDto.PageFilter.Size': pageSize.value,
-      'PagingDto.PageFilter.Skip': (page.value - 1) * pageSize.value,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-    }
-    if (statusSelect.value != 'All') {
-      params[`PagingDto.SearchFilter.phrase`] = statusSelect.value == 'Read' ? true : false
-      params[`PagingDto.SearchFilter.column`] = 'isReadByAdmin'
-    }
-    const response = await useApiService.get<
-      ApiResult<ResponseListDTO<AdminContactUsDTO>>
-    >('/api/v2/admin/tickets', params)
-    if (response.data) {
-      list.value = response.data.list
-      totalCount.value = response.data.totalRecordsCount
-      pageCount.value = Math.ceil(totalCount.value / pageSize.value)
-    }
-    else {
-      list.value = []
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loading.value = false
-  }
+const {
+  loadingGetData: loading,
+  data: list,
+  getData,
+  totalCount,
+  pageCount,
+} = useContactUsAdmin()
+
+const fetchData = async () => {
+  await getData({
+    page: page.value,
+    pageSize: pageSize.value,
+    status: statusSelect.value,
+  })
 }
 
 const changeFilterStatus = async (status: string | number) => {
@@ -362,20 +332,20 @@ const changeFilterStatus = async (status: string | number) => {
     statusSelect.value = status as string
   }
   page.value = 1
-  await getData()
+  await fetchData()
 }
 
 const changePageNumber = async () => {
-  await getData()
+  await fetchData()
 }
 
 const changePageSize = async () => {
   page.value = 1
-  await getData()
+  await fetchData()
 }
 
 onMounted(async () => {
-  await getData()
+  await fetchData()
 })
 
 const viewDetail = async (contact: AdminContactUsDTO) => {
@@ -392,7 +362,7 @@ const replySuccessFull = () => {
 const createTicketSuccessfull = async () => {
   showCreateTicketModal.value = false
   page.value = 1
-  await getData()
+  await fetchData()
 }
 
 const deleteContact = (contact: AdminContactUsDTO) => {
@@ -402,11 +372,11 @@ const deleteContact = (contact: AdminContactUsDTO) => {
 const deleteSuccessFull = async () => {
   selectedItemIdForDelete.value = ''
   showDeleteModal.value = false
-  await getData()
+  await fetchData()
 }
 
 const refreshData = async () => {
-  await getData()
+  await fetchData()
 }
 </script>
 
