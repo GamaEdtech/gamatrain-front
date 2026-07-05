@@ -40,16 +40,17 @@ export interface TranslationDTO {
 }
 
 export interface CommentBlogDTO {
-  id: number;
-  creationUser: string;
-  creationUserAvatarUri: string;
-  creationDate: string;
-  comment: string;
-  likeCount: number;
-  dislikeCount: number;
-  likedByCurrentUser: boolean;
-  dislikedByCurrentUser: boolean;
+  id: number
+  creationUser: string
+  creationUserAvatarUri: string
+  creationDate: string
+  comment: string
+  likeCount: number
+  dislikeCount: number
+  likedByCurrentUser: boolean
+  dislikedByCurrentUser: boolean
 }
+
 export interface AddCommentBlogResponseDTO {
   id: number
 }

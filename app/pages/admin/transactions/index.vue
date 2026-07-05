@@ -141,8 +141,13 @@
           <div
             class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
           >
-           <NuxtLink v-if="item.transactionType === 'DownloadPastPaper'" :to="`/paper/${item.identifierId}`"
-              target="_blank" rel="noopener noreferrer" class="text-decoration-none">
+            <NuxtLink
+              v-if="item.transactionType === 'DownloadPastPaper'"
+              :to="`/paper/${item.identifierId}`"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-decoration-none"
+            >
               {{ item.description }} ({{ item.identifierId }})
             </NuxtLink>
 

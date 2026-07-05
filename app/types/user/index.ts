@@ -66,29 +66,29 @@ export enum UserGroup {
 }
 
 export interface User {
-  userName: string;
-  firstName: string;
-  lastName: string;
-  countryId: number;
-  cityId: number;
-  stateId: number;
-  schoolId: number;
-  referralId: string;
-  gender: Gender;
-  board: number;
-  grade: number;
-  group: number;
-  coreId: number;
-  avatarUri: string;
-  walletId: string;
-  profileUpdated: boolean;
-  roles: Role[];
-  profileVisibility: ProfileVisibility;
-  biography: string;
-  skills: string[];
-  currentStatusSentence: string;
-  userRateLevel: string;
-  experiences: ExperienceDTO[];
-  handle: string;
-  orphanDate: string | null;
+  userName: string
+  firstName: string
+  lastName: string
+  countryId: number
+  cityId: number
+  stateId: number
+  schoolId: number
+  referralId: string
+  gender: Gender
+  board: number
+  grade: number
+  group: number
+  coreId: number
+  avatarUri: string
+  walletId: string
+  profileUpdated: boolean
+  roles: Role[]
+  profileVisibility: ProfileVisibility
+  biography: string
+  skills: string[]
+  currentStatusSentence: string
+  userRateLevel: string
+  experiences: ExperienceDTO[]
+  handle: string
+  orphanDate: string | null
 }

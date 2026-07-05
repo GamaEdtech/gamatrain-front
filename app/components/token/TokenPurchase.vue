@@ -1322,7 +1322,7 @@ const handleSwap = async () => {
         throw new Error(
           `Transaction submission failed: ${
             rpcError instanceof Error ? rpcError.message : String(rpcError)
-          }`,
+          }`, { cause: rpcError },
         )
       }
     }

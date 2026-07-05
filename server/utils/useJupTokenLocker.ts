@@ -106,15 +106,9 @@ export function useJupTokenLocker() {
       .signers([baseKP])
       .rpc()
 
-    let confirmed = false
-
-    try {
-      await connection.confirmTransaction(tx, 'finalized')
-      confirmed = true
-    }
-    catch {
-      confirmed = false
-    }
+    const confirmed = await connection.confirmTransaction(tx, 'finalized')
+      .then(() => true)
+      .catch(() => false)
 
     return {
       tx,

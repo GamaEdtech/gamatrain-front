@@ -33,4 +33,5 @@ export type StatusErrorCodeApp = 500 | 404 | 403 | 401 | 'disconnect'
 export interface ResponseListDTO<T> {
   list: T[]
   totalRecordsCount: number
+  num: number
 }

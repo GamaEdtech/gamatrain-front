@@ -86,7 +86,7 @@ export async function fetchTokenBalance(params: {
   }
   catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unknown error fetching token balance'
-    throw new Error(`Solana fetchTokenBalance failed: ${msg}`)
+    throw new Error(`Solana fetchTokenBalance failed: ${msg}`, { cause: err })
   }
 }
 
@@ -128,7 +128,7 @@ export async function getTokenAccountsByOwner(params: {
   }
   catch (err: unknown) {
     const msg = err instanceof Error ? err.message : 'Unknown error fetching token accounts'
-    throw new Error(`Solana getTokenAccountsByOwner failed: ${msg}`)
+    throw new Error(`Solana getTokenAccountsByOwner failed: ${msg}`, { cause: err })
   }
 }
 
