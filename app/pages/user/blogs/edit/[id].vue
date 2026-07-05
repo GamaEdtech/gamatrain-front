@@ -1,6 +1,6 @@
 <template>
-  <div class="w-100 d-flex flex-column">
-    <v-row>
+  <div class="w-100 d-flex flex-column align-center">
+    <v-row class="w-100">
       <v-col
         cols="12"
         md="8"
