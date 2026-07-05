@@ -128,13 +128,8 @@
         </template>
 
         <template #[`item.title`]="{ item }">
-          <div class="d-flex justify-center align-center">
-            <NuxtLink
-              :to="`/multimedia/${item.id}/${item.title}`"
-              class="text-grey600 text-h5 font-weight-bold text-decoration-none text-center"
-            >
-              {{ item.title }}
-            </NuxtLink>
+          <div class="text-grey600 text-h5 font-weight-bold d-flex justify-center align-center">
+            {{ item.title }}
           </div>
         </template>
 
