@@ -85,7 +85,7 @@ export const useValidationRules = () => {
     !v || /^[a-zA-Z]+$/.test(v) || 'Only letters allowed'
 
   const numeric = (v: string) =>
-    !v || /^[0-9]+$/.test(v) || 'Only numbers allowed'
+    !v || /^-?\d+(\.\d+)?$/.test(v) || 'Only numbers allowed'
 
   // Phone validation
   const phone = (v: string) =>
