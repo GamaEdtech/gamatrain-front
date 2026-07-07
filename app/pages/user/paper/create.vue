@@ -785,7 +785,7 @@ const submitPaper = async () => {
 
 onMounted(async () => {
   await getBoards()
-  await getExtraTypeFile()
+  await getExtraTypeFile('test_extra_file')
 })
 </script>
 

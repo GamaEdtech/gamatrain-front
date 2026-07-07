@@ -4,7 +4,7 @@ import type {
   PDFResponseDTO,
 } from '@/types'
 
-type PastPaperDownloadType = 'q_word' | 'q_pdf' | 'a_file' | 'extra'
+type PastPaperDownloadType = 'q_word' | 'q_pdf' | 'a_file' | 'extra' | 'multimedia'
 
 const loadingDownloadPastPaperFile = ref(false)
 
@@ -16,6 +16,7 @@ export const usePastPaperDownload = () => {
     type: PastPaperDownloadType,
     extraId?: string | number,
   ) => {
+    if (type === 'multimedia') return `/api/v1/files/download/${paperId}`
     if (type === 'q_word') return `/api/v1/tests/download/${paperId}/word`
     if (type === 'q_pdf') return `/api/v1/tests/download/${paperId}/pdf`
     if (type === 'a_file') return `/api/v1/tests/download/${paperId}/answer`
