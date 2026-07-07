@@ -10,7 +10,7 @@ import type {
   ResponseListDTO,
 } from '@/types'
 
-const locations = ref<AdminLocationDTO[]>([])
+const locations = ref<LocationItemDTO[]>([])
 const countries = ref<LocationItemDTO[]>([])
 const states = ref<LocationItemDTO[]>([])
 const cities = ref<LocationItemDTO[]>([])
@@ -71,7 +71,7 @@ export const useLocationAdmin = () => {
 
     try {
       const response = await useApiService.get<
-        ApiResult<ResponseListDTO<AdminLocationDTO>>
+        ApiResult<ResponseListDTO<LocationItemDTO>>
       >(
         `/api/v2/admin/locations/${params.locationType}`,
         {

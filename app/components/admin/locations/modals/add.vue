@@ -62,7 +62,7 @@
             active-color="primary"
             bg-color="white"
             class="w-100"
-            :rules="[rules.required]"
+            :rules="[required]"
           />
         </div>
       </div>
@@ -75,21 +75,18 @@
           <common-gombo-box
             v-model="selectedCountryId"
             label="Country"
-            :items="countries.map((item) => ({
+            :items="countries?.map((item) => ({
               id: item.id,
               title: item.title,
             }))"
             :data-loading="loadingCountries"
-            :infinite-loading="true"
-            :loading-more="loadingMoreCountries"
-            :has-more-items="countriesHasMoreItems"
             rounded="lg"
             density="compact"
             base-color="grey200"
             color="primary"
             :defalut-lable="false"
-            :rules="[rules.required]"
-            @load-more="loadMoreCountries"
+            :rules="[required]"
+            @update:model-value="countryChange"
           />
         </div>
 
@@ -98,24 +95,20 @@
           class="w-100 d-flex flex-column align-start justify-start ga-1"
         >
           <common-gombo-box
-            v-model="newItem.parentId"
+            v-model="newItem.parentId as string"
             label="State"
             :items="states.map((item) => ({
               id: item.id,
               title: item.title,
             }))"
             :data-loading="loadingStates"
-            :infinite-loading="true"
-            :loading-more="loadingMoreStates"
-            :has-more-items="statesHasMoreItems"
             rounded="lg"
             density="compact"
             base-color="grey200"
             color="primary"
             :defalut-lable="false"
             :disabled="!selectedCountryId"
-            :rules="[rules.required]"
-            @load-more="loadMoreStates"
+            :rules="[required]"
           />
         </div>
       </div>
@@ -139,7 +132,7 @@
             bg-color="white"
             class="w-100"
             type="number"
-            :rules="[rules.required, rules.onlyNumbers]"
+            :rules="[required, numeric]"
           />
         </div>
 
@@ -161,7 +154,7 @@
             bg-color="white"
             class="w-100"
             type="number"
-            :rules="[rules.required, rules.onlyNumbers]"
+            :rules="[required, numeric]"
           />
         </div>
       </div>
@@ -204,100 +197,60 @@ const {
   loadingAddLocation,
   getCountries,
   loadingCountries,
-  loadingMoreCountries,
-  countriesHasMoreItems,
   countries,
   getStates,
   loadingStates,
-  loadingMoreStates,
-  statesHasMoreItems,
   states,
   resetCountries,
   resetStates,
 } = useLocationAdmin()
+const { required, numeric } = useValidationRules()
 
 const newItem = reactive<AddAdminLocationDTO>({
   title: '',
   localTitle: '',
   code: '',
-  parentId: null,
+  parentId: '',
   latitude: null,
   longitude: null,
 })
 
-const selectedCountryId = ref<number | string | null>(null)
+const selectedCountryId = ref<number | string>('')
 const isFormValid = ref(false)
-const countriesPage = ref(1)
-const statesPage = ref(1)
-const locationPageSize = 20
-
-const rules = {
-  required: (v: unknown) => ![null, undefined, ''].includes(v as string) || 'This field is required',
-  onlyNumbers: (v: string | number) => /^-?\d+(\.\d+)?$/.test(String(v)) || 'Only numbers are allowed',
-}
+const locationPageSize = 10000
 
 const resetForm = () => {
   newItem.title = ''
   newItem.localTitle = ''
   newItem.code = ''
-  newItem.parentId = null
+  newItem.parentId = ''
   newItem.latitude = null
   newItem.longitude = null
-  selectedCountryId.value = null
-  countriesPage.value = 1
-  statesPage.value = 1
+  selectedCountryId.value = ''
   resetStates()
 }
 
-watch(selectedCountryId, async (countryId) => {
-  newItem.parentId = props.locationType === 'states' ? countryId : null
-  statesPage.value = 1
+const countryChange = async (countryId: string | number) => {
+  newItem.parentId = props.locationType === 'states' ? countryId : ''
   resetStates()
 
   if (props.locationType === 'cities' && countryId) {
     await getStates(countryId, {
-      page: statesPage.value,
+      page: 1,
       pageSize: locationPageSize,
     })
   }
-})
+}
 
 onMounted(async () => {
   if (props.locationType !== 'countries') {
     resetCountries()
     await getCountries({
-      page: countriesPage.value,
+      page: 1,
       pageSize: locationPageSize,
     })
   }
 })
-
-const loadMoreCountries = async () => {
-  countriesPage.value += 1
-
-  await getCountries(
-    {
-      page: countriesPage.value,
-      pageSize: locationPageSize,
-    },
-    { append: true },
-  )
-}
-
-const loadMoreStates = async () => {
-  if (!selectedCountryId.value) return
-
-  statesPage.value += 1
-
-  await getStates(
-    selectedCountryId.value,
-    {
-      page: statesPage.value,
-      pageSize: locationPageSize,
-    },
-    { append: true },
-  )
-}
 
 const add = async () => {
   if (!isFormValid.value) return

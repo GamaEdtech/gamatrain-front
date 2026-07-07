@@ -66,41 +66,17 @@
         flat
         variant="outlined"
         height="40"
+        max-width="200"
         @click="showAddModal = true"
       >
         <span class="text-primary font-weight-bold text-h5">Add {{ selectedLocationLabel }}</span>
       </v-btn>
-
-      <v-text-field
-        v-model="search"
-        rounded="pill"
-        density="compact"
-        placeholder="Search"
-        variant="outlined"
-        autocomplete="off"
-        persistent-clear
-        base-color="grey200"
-        color="primary"
-        active-color="primary"
-        bg-color="white"
-        hide-details
-        class="search-input"
-      >
-        <template #prepend-inner>
-          <v-icon
-            size="20"
-            color="grey400"
-          >
-            md:search
-          </v-icon>
-        </template>
-      </v-text-field>
     </div>
 
     <div class="w-100 mt-4">
       <v-data-table
         :headers="headers"
-        :items="filteredList"
+        :items="list"
         :items-per-page="pageSize"
         class="elevation-1 set-height-table"
         :loading="loading"
@@ -121,7 +97,7 @@
         </template>
 
         <template #[`item.id`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
             {{ item.id }}
           </div>
         </template>
@@ -132,33 +108,9 @@
           </div>
         </template>
 
-        <template #[`item.localTitle`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.localTitle || '-' }}
-          </div>
-        </template>
-
         <template #[`item.code`]="{ item }">
           <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
             {{ item.code }}
-          </div>
-        </template>
-
-        <template #[`item.parentTitle`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.parentTitle || '-' }}
-          </div>
-        </template>
-
-        <template #[`item.latitude`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.latitude }}
-          </div>
-        </template>
-
-        <template #[`item.longitude`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.longitude }}
           </div>
         </template>
 
@@ -271,7 +223,7 @@
 <script setup lang="ts">
 import { ADMIN_LOCATION_FILTER_LIST } from '@/constants'
 import type {
-  AdminLocationDTO,
+  LocationItemDTO,
   AdminLocationFilterDTO,
   AdminLocationTypeDTO,
 } from '@/types'
@@ -292,14 +244,10 @@ const {
 } = useLocationAdmin()
 
 const headers = [
-  { title: 'ID', key: 'id', sortable: false, width: '8vw' },
-  { title: 'Title', key: 'title', sortable: false, width: '18vw' },
-  { title: 'Local Title', key: 'localTitle', sortable: false, width: '16vw' },
-  { title: 'Code', key: 'code', sortable: false, width: '10vw' },
-  { title: 'Parent', key: 'parentTitle', sortable: false, width: '16vw' },
-  { title: 'Latitude', key: 'latitude', sortable: false, width: '10vw' },
-  { title: 'Longitude', key: 'longitude', sortable: false, width: '10vw' },
-  { title: 'Action', key: 'Action', sortable: false, width: '12vw' },
+  { title: 'ID', key: 'id', sortable: false, width: '20vw' },
+  { title: 'Title', key: 'title', sortable: false, width: '40vw' },
+  { title: 'Code', key: 'code', sortable: false, width: '30vw' },
+  { title: 'Action', key: 'Action', sortable: false, width: '10vw' },
 ]
 
 const pageSize = ref(10)
@@ -311,7 +259,6 @@ const allPageSize = [
 ]
 
 const selectedLocationFilter = ref<AdminLocationFilterDTO>('country')
-const search = ref('')
 const showDeleteModal = ref(false)
 const selectedItemIdForDelete = ref('')
 const showAddModal = ref(false)
@@ -324,25 +271,12 @@ const selectedLocationItem = computed(() => {
 })
 
 const selectedLocationType = computed<AdminLocationTypeDTO>(() => {
-  return selectedLocationItem.value.locationType
+  return selectedLocationItem.value!.locationType
 })
 
-const selectedLocationTitle = computed(() => selectedLocationItem.value.title)
+const selectedLocationTitle = computed(() => selectedLocationItem.value?.title)
 
 const selectedLocationLabel = computed(() => selectedLocationFilter.value)
-
-const filteredList = computed(() => {
-  if (!search.value) return list.value
-
-  const term = search.value.toLowerCase()
-
-  return list.value.filter((item) => {
-    return item.title?.toLowerCase().includes(term)
-      || item.localTitle?.toLowerCase().includes(term)
-      || item.code?.toLowerCase().includes(term)
-      || String(item.parentTitle || '').toLowerCase().includes(term)
-  })
-})
 
 const fetchLocations = async () => {
   await getLocations({
@@ -355,7 +289,6 @@ const fetchLocations = async () => {
 const changeFilter = async (locationFilter: string | number) => {
   selectedLocationFilter.value = locationFilter as AdminLocationFilterDTO
   page.value = 1
-  search.value = ''
   await fetchLocations()
 }
 
@@ -377,7 +310,7 @@ const addLocationSuccessFull = async () => {
   await fetchLocations()
 }
 
-const openDeleteModal = (item: AdminLocationDTO) => {
+const openDeleteModal = (item: LocationItemDTO) => {
   selectedItemIdForDelete.value = item.id.toString()
   showDeleteModal.value = true
 }
@@ -389,7 +322,7 @@ const confirmDelete = async () => {
   await fetchLocations()
 }
 
-const openDetailModal = (item: AdminLocationDTO) => {
+const openDetailModal = (item: LocationItemDTO) => {
   selectedItemIdForDetail.value = item.id.toString()
   showDetailModal.value = true
 }
@@ -420,10 +353,6 @@ const refreshData = async () => {
 .filter-mobile-container{
   width: 170px;
 }
-.search-input{
-  max-width: 360px;
-}
-
 :deep(.custom-pagination li button:hover) {
   background-color: rgb(var(--v-theme-primary));
   opacity: 0.6;
@@ -433,11 +362,5 @@ const refreshData = async () => {
 }
 :deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
   opacity: 0 !important;
-}
-
-@media screen and (max-width: 960px) {
-  .search-input{
-    max-width: 100%;
-  }
 }
 </style>
