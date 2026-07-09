@@ -129,3 +129,29 @@ export interface GetSchoolsParams {
 
   boards?: number[] | null
 }
+
+export type AdminSchoolImageIssueStatus = 'Confirmed' | 'Rejected' | 'Deleted' | 'Review'
+
+export interface AdminSchoolImageIssueDTO {
+  id: number
+  schoolId: number
+  creationUser: string
+  creationDate: string
+  description: string
+  fileType: string | null
+  fileUri: string
+  status: AdminSchoolImageIssueStatus
+}
+
+export interface AdminSchoolImageIssueDetailDTO {
+  id: number
+  schoolId: number
+  schoolName: string
+  fileUri: string
+}
+
+export interface GetAdminSchoolImageIssueParams {
+  page: number
+  pageSize: number
+  status: AdminSchoolImageIssueStatus | ''
+}
