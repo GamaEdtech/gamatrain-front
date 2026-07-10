@@ -168,3 +168,34 @@ export interface GetAdminSchoolCommentParams extends SearchFilterAdminSchoolComm
   page: number
   pageSize: number
 }
+
+export type AdminSchoolImageStatus = 'Draft' | 'Review' | 'Confirmed' | 'Rejected' | 'Deleted'
+export type AdminSchoolImageFileType = 'SimpleImage' | string
+
+export interface AdminSchoolImageDTO {
+  id: number
+  creationUser: string
+  creationDate: string
+  schoolId: number
+  status: AdminSchoolImageStatus
+  fileUri: string
+  fileType: AdminSchoolImageFileType
+  isDefault: boolean
+}
+
+export interface AdminSchoolImageDetailDTO {
+  id: number
+  schoolName: string
+  schoolId: number
+  fileUri: string
+  fileType: AdminSchoolImageFileType
+  isDefault: boolean
+  tagId: number
+  tagName: string
+}
+
+export interface GetAdminSchoolImageParams {
+  page: number
+  pageSize: number
+  status: AdminSchoolImageStatus | ''
+}
