@@ -1,4 +1,4 @@
-import type { AdminSchoolImageStatus, AdminSchoolCommentStatus } from '@/types'
+import type { AdminSchoolImageStatus, AdminSchoolCommentStatus, AdminSchoolImageIssueStatus } from '@/types'
 
 export const SCHOOL_IMAGE_STATUS_FILTER_LIST: {
   id: AdminSchoolImageStatus | ''
@@ -34,3 +34,14 @@ export const SCHOOL_COMMENT_RATE_LIST = [
   { title: 'Artistic activities', key: 'artisticActivitiesRate' },
   { title: 'Average', key: 'averageRate' },
 ] as const
+
+export const SCHOOL_IMAGE_ISSUE_STATUS_FILTER_LIST: {
+  id: AdminSchoolImageIssueStatus | ''
+  title: string
+}[] = [
+  { id: '', title: 'All' },
+  { id: 'Confirmed', title: 'Confirmed' },
+  { id: 'Review', title: 'Pending' },
+  { id: 'Rejected', title: 'Rejected' },
+  { id: 'Deleted', title: 'Deleted' },
+]
