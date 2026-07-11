@@ -110,8 +110,6 @@
 
 <script setup lang="ts">
 import type {
-  ApiResult,
-  AppError,
   AdminAppSettingsDTO,
 } from '@/types'
 
@@ -129,7 +127,12 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { $toast } = useNuxtApp()
+const {
+  getSettings,
+  loadingGetSettings: loading,
+  updateSettings,
+  loadingUpdateSettings: loadingSave,
+} = useAppSettingAdmin()
 const form = reactive<AdminAppSettingsDTO>({
   gridPageSize: undefined,
   defaultTimeZoneId: '',
@@ -165,7 +168,6 @@ const form = reactive<AdminAppSettingsDTO>({
   finishedDeletingAccountEmailTemplate: '',
   adminTransactionCreationEmailTemplate: '',
 })
-const loading = ref(true)
 const fields: FieldConfig[] = [
   { key: 'gridPageSize', label: 'Grid Page Size', type: 'text', valueType: 'number' },
   { key: 'defaultTimeZoneId', label: 'Default Time Zone', type: 'text', valueType: 'string' },
@@ -202,31 +204,17 @@ const fields: FieldConfig[] = [
   { key: 'finishedDeletingAccountEmailTemplate', label: 'Finished Deleting Account Email Template', type: 'textarea', valueType: 'string' },
   { key: 'adminTransactionCreationEmailTemplate', label: 'Admin Transaction Creation Email Template', type: 'textarea', valueType: 'string' },
 ]
-const loadingSave = ref(false)
 const showModalPreview = ref(false)
 const previewMessageHtml = ref('')
 
 const getData = async () => {
-  loading.value = true
-  try {
-    const response = await useApiService.get<
-      ApiResult<AdminAppSettingsDTO>
-    >('/api/v2/admin/applicationsettings')
-    if (response.data) {
-      Object.assign(form, response.data)
-      if (form.defaultTimeZoneId == null) {
-        form.defaultTimeZoneId = ''
-      }
+  const response = await getSettings()
+
+  if (response.data) {
+    Object.assign(form, response.data)
+    if (form.defaultTimeZoneId == null) {
+      form.defaultTimeZoneId = ''
     }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loading.value = false
   }
 }
 
@@ -247,28 +235,8 @@ const buildPayload = () => {
   return payload
 }
 const save = async () => {
-  loadingSave.value = true
-  try {
-    const payload = buildPayload()
-    const response = await useApiService.put<
-      ApiResult<boolean>
-    >('/api/v2/admin/applicationsettings', payload)
-    if (response.data) {
-      $toast.success('Your settings have been changed successfully.')
-    }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loadingSave.value = false
-  }
+  const payload = buildPayload()
+  await updateSettings(payload)
 }
 
 const openPreviewModal = (field: FieldConfig) => {
