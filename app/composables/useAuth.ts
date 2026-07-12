@@ -1,19 +1,18 @@
-export const useAuth = () => {
-  const cookieToken = useCookie<string | null>('authToken', {
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7, // 1 week
-  })
+import type { LoginInformationDTO, LoginResponseDTO, ApiResult, AppError } from '@/types'
 
-  // -------------------------
-  // Token v2
-  // -------------------------
-  const cookieTokenV2 = useCookie<string | null>('tokenV2', {
+const loadingLogin = ref(false)
+const loadingLoginByGoogle = ref(false)
+
+export const useAuth = () => {
+  const { $toast } = useNuxtApp()
+  const cookieToken = useCookie<string | null>('authToken', {
     path: '/',
     maxAge: 60 * 60 * 24 * 7, // 1 week
   })
 
   const setUserToken = (newToken: string) => {
     cookieToken.value = newToken
+    localStorage.setItem('token', newToken)
   }
 
   const getUserToken = () => {
@@ -22,22 +21,7 @@ export const useAuth = () => {
 
   const clearAuth = () => {
     cookieToken.value = null
-    cookieTokenV2.value = null
-  }
-
-  // -------------------------
-  // Token v2 helpers
-  // -------------------------
-  const setUserTokenV2 = (newToken: string) => {
-    cookieTokenV2.value = newToken
-  }
-
-  const getUserTokenV2 = () => {
-    return cookieTokenV2?.value
-  }
-
-  const clearTokenV2 = () => {
-    cookieTokenV2.value = null
+    localStorage.removeItem('token')
   }
 
   const logout = async () => {
@@ -67,21 +51,11 @@ export const useAuth = () => {
 
     // Clear all local storage data
     if (import.meta.client) {
-      localStorage.removeItem('v2_token') // Remove v2 token specifically
       localStorage.clear()
       sessionStorage.clear()
     }
     // Navigate to home page
     await navigateTo('/')
-  }
-
-  const login = async (credentials: { identity: string, pass: string }) => {
-    const response: { token?: string, message?: string, success?: boolean }
-      = await useApiService.post('/api/v1/users/login', {
-        ...credentials,
-        type: 'request',
-      })
-    return response
   }
 
   const register = async (formData: { identity: string, pass: string }) => {
@@ -98,21 +72,80 @@ export const useAuth = () => {
     })
     return response
   }
+  const login = async (data: LoginInformationDTO) => {
+    try {
+      loadingLogin.value = true
+      const response = await useApiService.post<
+        ApiResult<LoginResponseDTO>
+      >(
+        '/api/v2/legacy-auth/login',
+        { ...data },
+      )
+      if (!response.succeeded) {
+        $toast.error('The operation failed. Please try again later.')
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: null,
+      }
+    }
+    finally {
+      loadingLogin.value = false
+    }
+  }
 
-  const isAuthenticated = computed(() => !!cookieToken.value && !!cookieTokenV2.value)
+  const loginByGoogle = async (idToken: string) => {
+    try {
+      loadingLoginByGoogle.value = true
+      const response = await useApiService.post<
+        ApiResult<LoginResponseDTO>
+      >(
+        '/api/v2/legacy-auth/google',
+        { idToken },
+      )
+      if (!response.succeeded) {
+        $toast.error('The operation failed. Please try again later.')
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: null,
+      }
+    }
+    finally {
+      loadingLoginByGoogle.value = false
+    }
+  }
+
+  const isAuthenticated = computed(() => !!cookieToken.value)
 
   return {
     cookieToken,
     setUserToken,
-    setUserTokenV2,
     clearAuth,
-    clearTokenV2,
     logout,
     login,
+    loadingLogin,
     register,
     isAuthenticated,
     forgotPassword,
     getUserToken,
-    getUserTokenV2,
+    loginByGoogle,
+    loadingLoginByGoogle,
   }
 }

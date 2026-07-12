@@ -119,21 +119,27 @@
           color="primary"
           flat
           class="text-black text-h5 font-weight-bold "
-          @click="openLoginDialog('login')"
+          @click="openLoginDialog"
         >
           Sign in
         </v-btn>
       </div>
     </v-container>
 
-    <div v-if="currentAuthComponent.length > 0 && loginDialogVisible">
-      <component
+    <div v-if="loginDialogVisible">
+      <lazy-common-modal-base
+        v-model:show-dialog="showLoginModal"
+        title="Login"
+      >
+        <common-modal-auth-login @login-successfull="showLoginModal = false" />
+      </lazy-common-modal-base>
+      <!-- <component
         :is="currentAuthComponentMap[currentAuthComponent]"
         v-model:dialog="loginDialogVisible"
         @switch-to-login="switchTo('login')"
         @switch-to-register="switchTo('register')"
         @switch-to-recover="switchTo('recover')"
-      />
+      /> -->
     </div>
 
     <lazy-menu-add-option-bottom-menu
@@ -242,20 +248,23 @@ const handleChnageMenuSetting = () => {
   }
 }
 
-const currentAuthComponentMap = {
-  login: defineAsyncComponent(() => import('~/components/common/login.vue')),
-  register: defineAsyncComponent(() => import('~/components/common/register.vue')),
-  recover: defineAsyncComponent(() => import('~/components/common/pass-recover.vue')),
-}
-type AuthComponentName = keyof typeof currentAuthComponentMap
-const currentAuthComponent = ref<AuthComponentName>('login')
+// const currentAuthComponentMap = {
+//   login: defineAsyncComponent(() => import('~/components/common/login.vue')),
+//   register: defineAsyncComponent(() => import('~/components/common/register.vue')),
+//   recover: defineAsyncComponent(() => import('~/components/common/pass-recover.vue')),
+// }
+// type AuthComponentName = keyof typeof currentAuthComponentMap
+// const currentAuthComponent = ref<AuthComponentName>('login')
 const loginDialogVisible = ref(false)
-const switchTo = (name: AuthComponentName) => {
-  currentAuthComponent.value = name
-}
-const openLoginDialog = (componentName: AuthComponentName = 'login') => {
-  currentAuthComponent.value = componentName
+const showLoginModal = ref(false)
+// const switchTo = (name: AuthComponentName) => {
+//   currentAuthComponent.value = name
+// }
+// const openLoginDialog = (componentName: AuthComponentName = 'login') => {
+const openLoginDialog = () => {
+  // currentAuthComponent.value = componentName
   loginDialogVisible.value = true
+  showLoginModal.value = true
 }
 
 const isAddOptionOpen = ref(false)
@@ -297,7 +306,7 @@ watch(
   (val) => {
     if (val === 'login') {
       const noRedirect = !!route.query.auth_noredirect
-      openLoginDialog('login')
+      openLoginDialog()
       if (!noRedirect) router.push({ query: {} })
     }
   },
@@ -315,7 +324,7 @@ onMounted(async () => {
   }
 
   requestIdleCallback?.(() => {
-    import('~/components/common/login.vue')
+    // import('~/components/common/login.vue')
     import('~/components/common/register.vue')
     import('~/components/common/pass-recover.vue')
     import('~/components/dashboard/drawer-menu.vue')
