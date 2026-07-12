@@ -47,6 +47,13 @@
       >
         <lazy-common-detail-content-details-section :content-data="contentData" />
 
+        <div class="text-success500 bg-primary-success-50 pa-2 mt-4">
+          <v-icon>
+            md:library_add_check
+          </v-icon>
+          <span> Answers are available at the end of the files</span>
+        </div>
+
         <lazy-common-detail-download-and-purchase-buttons
           :id="contentData.id"
           :files="contentData.files"
