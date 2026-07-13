@@ -132,7 +132,7 @@
         title="Login"
       >
         <common-modal-auth-login
-          @login-successfull="showLoginModal = false"
+          @login-successfull="handleLoginSuccessfull"
           @open-register="openRegisterModal"
           @open-forget-password="openForgetPasswordModal"
           @open-otp-code="openOTPModalForLogin"
@@ -168,10 +168,10 @@
         title="Login"
       >
         <common-modal-auth-otp
-          :password="passwordForOTP"
-          :identity="identityForOTP"
+          :password="passwordForAuth"
+          :identity="identityForAuth"
           :mode="modeOTP"
-          @login-successfull="otpLoginSuccessfull"
+          @login-successfull="handleLoginSuccessfull"
           @open-login="openLoginModal"
           @open-register="openRegisterModal"
           @open-forget-password="openForgetPasswordModal"
@@ -185,19 +185,12 @@
         title="Password"
       >
         <common-modal-auth-confirm-password
-          :identity="identityForOTP"
+          :identity="identityForAuth"
           :mode="confirmPasswordMode"
           @open-login="openLoginModal"
           @close="showConfirmPasswordModal = false"
         />
       </lazy-common-modal-base>
-      <!-- <component
-        :is="currentAuthComponentMap[currentAuthComponent]"
-        v-model:dialog="loginDialogVisible"
-        @switch-to-login="switchTo('login')"
-        @switch-to-register="switchTo('register')"
-        @switch-to-recover="switchTo('recover')"
-      /> -->
     </div>
 
     <lazy-menu-add-option-bottom-menu
@@ -234,6 +227,7 @@ interface MenuSetting {
 
 const route = useRoute()
 const router = useRouter()
+const { $toast } = useNuxtApp()
 const theme = useTheme()
 const { isAuthenticated } = useAuth()
 const { mdAndDown } = useDisplay()
@@ -307,49 +301,50 @@ const handleChnageMenuSetting = () => {
   }
 }
 
-// const currentAuthComponentMap = {
-//   login: defineAsyncComponent(() => import('~/components/common/login.vue')),
-//   register: defineAsyncComponent(() => import('~/components/common/register.vue')),
-//   recover: defineAsyncComponent(() => import('~/components/common/pass-recover.vue')),
-// }
-// type AuthComponentName = keyof typeof currentAuthComponentMap
-// const currentAuthComponent = ref<AuthComponentName>('login')
 const loginDialogVisible = ref(false)
 const showLoginModal = ref(false)
 const showRegisterModal = ref(false)
 const showForgetPasswordModal = ref(false)
 const showOTPModal = ref(false)
 const showConfirmPasswordModal = ref(false)
-const passwordForOTP = ref('')
-const identityForOTP = ref('')
+const passwordForAuth = ref('')
+const identityForAuth = ref('')
 const modeOTP = ref<OTPMode>('login')
 const confirmPasswordMode = ref<ConfirmPasswordMode>('register')
 
 const openOTPModalForLogin = (identity: string, password: string) => {
   showLoginModal.value = false
-  identityForOTP.value = identity
-  passwordForOTP.value = password
+  identityForAuth.value = identity
+  passwordForAuth.value = password
   modeOTP.value = 'login'
   showOTPModal.value = true
 }
 const openOTPModalForRegister = (identity: string) => {
   showRegisterModal.value = false
-  identityForOTP.value = identity
-  passwordForOTP.value = ''
+  identityForAuth.value = identity
+  passwordForAuth.value = ''
   modeOTP.value = 'register'
   showOTPModal.value = true
 }
 const openOTPModalForForgetPassword = (identity: string) => {
   showForgetPasswordModal.value = false
-  identityForOTP.value = identity
-  passwordForOTP.value = ''
+  identityForAuth.value = identity
+  passwordForAuth.value = ''
   modeOTP.value = 'forgetPassword'
   showOTPModal.value = true
 }
-const otpLoginSuccessfull = () => {
+const clearAuthModalState = () => {
   showOTPModal.value = false
-  identityForOTP.value = ''
-  passwordForOTP.value = ''
+  showLoginModal.value = false
+  showRegisterModal.value = false
+  showForgetPasswordModal.value = false
+  showConfirmPasswordModal.value = false
+  identityForAuth.value = ''
+  passwordForAuth.value = ''
+}
+const handleLoginSuccessfull = () => {
+  clearAuthModalState()
+  $toast.success('You have signed in successfully.')
 }
 const openConfirmPasswordModal = (mode: ConfirmPasswordMode) => {
   showOTPModal.value = false
@@ -377,12 +372,8 @@ const openForgetPasswordModal = () => {
   showConfirmPasswordModal.value = false
   showForgetPasswordModal.value = true
 }
-// const switchTo = (name: AuthComponentName) => {
-//   currentAuthComponent.value = name
-// }
-// const openLoginDialog = (componentName: AuthComponentName = 'login') => {
+
 const openLoginDialog = () => {
-  // currentAuthComponent.value = componentName
   loginDialogVisible.value = true
   showLoginModal.value = true
 }
@@ -442,13 +433,6 @@ onMounted(async () => {
   else {
     isDrawerOpen.value = true
   }
-
-  requestIdleCallback?.(() => {
-    // import('~/components/common/login.vue')
-    // import('~/components/common/register.vue')
-    // import('~/components/common/pass-recover.vue')
-    // import('~/components/dashboard/drawer-menu.vue')
-  })
 })
 
 onBeforeUnmount(() => {

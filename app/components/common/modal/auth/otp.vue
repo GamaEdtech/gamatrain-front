@@ -95,10 +95,12 @@ const isProcessing = computed(() => authLoading.value || resendLoading.value || 
 const checkEmail = () => {
   if (props.mode === 'register') {
     emit('openRegister')
+    return
   }
 
   if (props.mode === 'forgetPassword') {
     emit('openForgetPassword')
+    return
   }
 
   emit('openLogin')
