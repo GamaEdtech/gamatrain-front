@@ -87,7 +87,7 @@
             size="x-large"
             color="primary"
           > md:star </v-icon>
-          {{ school.score ? school.score.toFixed(1) : "New" }}
+          {{ school.rating ? school.rating.toFixed(1) : "New" }}
         </div>
         <div class="d-flex align-center ga-2 text-h6">
           <v-icon
