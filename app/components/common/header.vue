@@ -133,7 +133,7 @@
       >
         <common-modal-auth-login
           @login-successfull="showLoginModal = false"
-          @open-otp-code="openOTPModal"
+          @open-otp-code="openOTPModalForLogin"
           @close="showLoginModal = false"
         />
       </lazy-common-modal-base>
@@ -145,6 +145,7 @@
         <common-modal-auth-otp
           :password="passwordForOTP"
           :identity="identityForOTP"
+          :mode="modeOTP"
           @login-successfull="otpLoginSuccessfull"
           @open-login="openLoginModal"
         />
@@ -177,6 +178,7 @@
 </template>
 
 <script setup lang="ts">
+import type { OTPMode } from '@/types'
 import { useTheme, useDisplay } from 'vuetify'
 
 interface IHeader {
@@ -276,11 +278,13 @@ const showLoginModal = ref(false)
 const showOTPModal = ref(false)
 const passwordForOTP = ref('')
 const identityForOTP = ref('')
+const modeOTP = ref<OTPMode>('login')
 
-const openOTPModal = (identity: string, password: string) => {
+const openOTPModalForLogin = (identity: string, password: string) => {
   showLoginModal.value = false
   identityForOTP.value = identity
   passwordForOTP.value = password
+  modeOTP.value = 'login'
   showOTPModal.value = true
 }
 const otpLoginSuccessfull = () => {

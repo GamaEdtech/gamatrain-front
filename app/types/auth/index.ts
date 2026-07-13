@@ -1,8 +1,10 @@
+import type { ApiResult } from '@/types'
+
 // type request for login by username and password
 // type confirm for login by otpCode
 // type resend_code for send otp code again
 
-export type TypeAuth = 'request' | 'register' | 'resend_code' | 'confirm'
+export type TypeAuth = 'request' | 'resetpass' | 'resend_code' | 'confirm'
 
 export interface LoginInformationDTO {
   identity: string
@@ -30,3 +32,6 @@ export interface RegisterResponseDTO {
 export interface ForgetPasswordResponseDTO {
   message: string
 }
+export type OTPMode = 'login' | 'register' | 'forgetPassword'
+export type OTPResponseData = LoginResponseDTO | RegisterResponseDTO | ForgetPasswordResponseDTO
+export type OTPResponse = ApiResult<OTPResponseData>
