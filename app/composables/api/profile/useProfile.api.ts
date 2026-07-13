@@ -24,7 +24,7 @@ export const useProfile = () => {
         ApiResult<ProfileDTO>
       >(`/api/v2/identities/profiles/${id}`, {}, {
         headers: {
-          Authorization: `Bearer ${auth.getUserTokenV2()}`,
+          Authorization: `Bearer ${auth.getUserToken()}`,
         },
       })
 

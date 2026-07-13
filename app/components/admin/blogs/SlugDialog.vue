@@ -141,7 +141,7 @@ watch(localSlug, async (newVal) => {
         {
           params: { slug: newVal },
           headers: {
-            Authorization: `Bearer ${auth.getUserTokenV2()}`,
+            Authorization: `Bearer ${auth.getUserToken()}`,
           },
         },
       )
