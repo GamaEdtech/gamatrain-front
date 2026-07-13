@@ -35,3 +35,4 @@ export interface ForgetPasswordResponseDTO {
 export type OTPMode = 'login' | 'register' | 'forgetPassword'
 export type OTPResponseData = LoginResponseDTO | RegisterResponseDTO | ForgetPasswordResponseDTO
 export type OTPResponse = ApiResult<OTPResponseData>
+export type ConfirmPasswordMode = 'register' | 'forgetPassword'

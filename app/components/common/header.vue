@@ -46,12 +46,12 @@
                 {{ link.icon }}
               </v-icon>
               <span :style="{ color: menuSetting.linkColor }">{{ link.title }}</span>
-              <span
+              <!-- <span
                 v-if="link.badge"
                 class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
               >
                 {{ link.badge }}
-              </span>
+              </span> -->
             </nuxt-link>
 
             <span
@@ -67,12 +67,12 @@
                 {{ link.icon }}
               </v-icon>
               <span :style="{ color: menuSetting.linkColor }">{{ link.title }}</span>
-              <span
+              <!-- <span
                 v-if="link.badge"
                 class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
               >
                 {{ link.badge }}
-              </span>
+              </span> -->
             </span>
           </template>
         </div>
@@ -175,6 +175,20 @@
           @open-login="openLoginModal"
           @open-register="openRegisterModal"
           @open-forget-password="openForgetPasswordModal"
+          @register-code-confirmed="openConfirmPasswordModal('register')"
+          @forget-password-code-confirmed="openConfirmPasswordModal('forgetPassword')"
+        />
+      </lazy-common-modal-base>
+
+      <lazy-common-modal-base
+        v-model:show-dialog="showConfirmPasswordModal"
+        title="Password"
+      >
+        <common-modal-auth-confirm-password
+          :identity="identityForOTP"
+          :mode="confirmPasswordMode"
+          @open-login="openLoginModal"
+          @close="showConfirmPasswordModal = false"
         />
       </lazy-common-modal-base>
       <!-- <component
@@ -205,7 +219,7 @@
 </template>
 
 <script setup lang="ts">
-import type { OTPMode } from '@/types'
+import type { OTPMode, ConfirmPasswordMode } from '@/types'
 import { useTheme, useDisplay } from 'vuetify'
 
 interface IHeader {
@@ -305,9 +319,11 @@ const showLoginModal = ref(false)
 const showRegisterModal = ref(false)
 const showForgetPasswordModal = ref(false)
 const showOTPModal = ref(false)
+const showConfirmPasswordModal = ref(false)
 const passwordForOTP = ref('')
 const identityForOTP = ref('')
 const modeOTP = ref<OTPMode>('login')
+const confirmPasswordMode = ref<ConfirmPasswordMode>('register')
 
 const openOTPModalForLogin = (identity: string, password: string) => {
   showLoginModal.value = false
@@ -335,22 +351,30 @@ const otpLoginSuccessfull = () => {
   identityForOTP.value = ''
   passwordForOTP.value = ''
 }
+const openConfirmPasswordModal = (mode: ConfirmPasswordMode) => {
+  showOTPModal.value = false
+  confirmPasswordMode.value = mode
+  showConfirmPasswordModal.value = true
+}
 const openLoginModal = () => {
   showOTPModal.value = false
   showRegisterModal.value = false
   showForgetPasswordModal.value = false
+  showConfirmPasswordModal.value = false
   showLoginModal.value = true
 }
 const openRegisterModal = () => {
   showLoginModal.value = false
   showOTPModal.value = false
   showForgetPasswordModal.value = false
+  showConfirmPasswordModal.value = false
   showRegisterModal.value = true
 }
 const openForgetPasswordModal = () => {
   showLoginModal.value = false
   showRegisterModal.value = false
   showOTPModal.value = false
+  showConfirmPasswordModal.value = false
   showForgetPasswordModal.value = true
 }
 // const switchTo = (name: AuthComponentName) => {
