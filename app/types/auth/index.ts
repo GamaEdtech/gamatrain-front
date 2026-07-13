@@ -24,3 +24,9 @@ export interface GoogleLoginTokenDTO {
   credential: string
   select_by: string
 }
+export interface RegisterResponseDTO {
+  message: string
+}
+export interface ForgetPasswordResponseDTO {
+  message: string
+}

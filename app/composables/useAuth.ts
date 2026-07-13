@@ -1,7 +1,9 @@
-import type { LoginInformationDTO, LoginResponseDTO, ApiResult, AppError } from '@/types'
+import type { LoginInformationDTO, LoginResponseDTO, ApiResult, AppError, RegisterResponseDTO, ForgetPasswordResponseDTO } from '@/types'
 
 const loadingLogin = ref(false)
 const loadingLoginByGoogle = ref(false)
+const loadingRegister = ref(false)
+const loadingForgetPassword = ref(false)
 
 export const useAuth = () => {
   const { $toast } = useNuxtApp()
@@ -58,20 +60,6 @@ export const useAuth = () => {
     await navigateTo('/')
   }
 
-  const register = async (formData: { identity: string, pass: string }) => {
-    await useApiService.post('/api/v1/users/register', {
-      ...formData,
-      type: 'register',
-    })
-  }
-
-  const forgotPassword = async (passForm: { identity: string }) => {
-    const response = await useApiService.post('/api/v1/users/recovery', {
-      ...passForm,
-      type: 'request',
-    })
-    return response
-  }
   const login = async (data: LoginInformationDTO) => {
     try {
       loadingLogin.value = true
@@ -132,6 +120,66 @@ export const useAuth = () => {
     }
   }
 
+  const register = async (data: LoginInformationDTO) => {
+    try {
+      loadingRegister.value = true
+      const response = await useApiService.post<
+        ApiResult<RegisterResponseDTO>
+      >(
+        '/api/v2/legacy-auth/register',
+        { ...data },
+      )
+      if (!response.succeeded) {
+        $toast.error('The operation failed. Please try again later.')
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: null,
+      }
+    }
+    finally {
+      loadingRegister.value = false
+    }
+  }
+
+  const forgetPassword = async (data: LoginInformationDTO) => {
+    try {
+      loadingForgetPassword.value = true
+      const response = await useApiService.post<
+        ApiResult<ForgetPasswordResponseDTO>
+      >(
+        '/api/v2/legacy-auth/recovery',
+        { ...data },
+      )
+      if (!response.succeeded) {
+        $toast.error('The operation failed. Please try again later.')
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: null,
+      }
+    }
+    finally {
+      loadingForgetPassword.value = false
+    }
+  }
+
   const isAuthenticated = computed(() => !!cookieToken.value)
 
   return {
@@ -143,9 +191,11 @@ export const useAuth = () => {
     loadingLogin,
     register,
     isAuthenticated,
-    forgotPassword,
+    forgetPassword,
     getUserToken,
     loginByGoogle,
     loadingLoginByGoogle,
+    loadingForgetPassword,
+    loadingRegister,
   }
 }
