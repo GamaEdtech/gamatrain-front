@@ -134,6 +134,7 @@
         <common-modal-auth-login
           @login-successfull="showLoginModal = false"
           @open-register="openRegisterModal"
+          @open-forget-password="openForgetPasswordModal"
           @open-otp-code="openOTPModalForLogin"
           @close="showLoginModal = false"
         />
@@ -151,6 +152,18 @@
       </lazy-common-modal-base>
 
       <lazy-common-modal-base
+        v-model:show-dialog="showForgetPasswordModal"
+        title="Forget"
+      >
+        <common-modal-auth-forget-password
+          @open-login="openLoginModal"
+          @open-register="openRegisterModal"
+          @open-otp-code="openOTPModalForForgetPassword"
+          @close="showForgetPasswordModal = false"
+        />
+      </lazy-common-modal-base>
+
+      <lazy-common-modal-base
         v-model:show-dialog="showOTPModal"
         title="Login"
       >
@@ -160,6 +173,8 @@
           :mode="modeOTP"
           @login-successfull="otpLoginSuccessfull"
           @open-login="openLoginModal"
+          @open-register="openRegisterModal"
+          @open-forget-password="openForgetPasswordModal"
         />
       </lazy-common-modal-base>
       <!-- <component
@@ -288,6 +303,7 @@ const handleChnageMenuSetting = () => {
 const loginDialogVisible = ref(false)
 const showLoginModal = ref(false)
 const showRegisterModal = ref(false)
+const showForgetPasswordModal = ref(false)
 const showOTPModal = ref(false)
 const passwordForOTP = ref('')
 const identityForOTP = ref('')
@@ -307,6 +323,13 @@ const openOTPModalForRegister = (identity: string) => {
   modeOTP.value = 'register'
   showOTPModal.value = true
 }
+const openOTPModalForForgetPassword = (identity: string) => {
+  showForgetPasswordModal.value = false
+  identityForOTP.value = identity
+  passwordForOTP.value = ''
+  modeOTP.value = 'forgetPassword'
+  showOTPModal.value = true
+}
 const otpLoginSuccessfull = () => {
   showOTPModal.value = false
   identityForOTP.value = ''
@@ -315,12 +338,20 @@ const otpLoginSuccessfull = () => {
 const openLoginModal = () => {
   showOTPModal.value = false
   showRegisterModal.value = false
+  showForgetPasswordModal.value = false
   showLoginModal.value = true
 }
 const openRegisterModal = () => {
   showLoginModal.value = false
   showOTPModal.value = false
+  showForgetPasswordModal.value = false
   showRegisterModal.value = true
+}
+const openForgetPasswordModal = () => {
+  showLoginModal.value = false
+  showRegisterModal.value = false
+  showOTPModal.value = false
+  showForgetPasswordModal.value = true
 }
 // const switchTo = (name: AuthComponentName) => {
 //   currentAuthComponent.value = name
