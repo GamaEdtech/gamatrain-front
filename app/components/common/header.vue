@@ -131,7 +131,23 @@
         v-model:show-dialog="showLoginModal"
         title="Login"
       >
-        <common-modal-auth-login @login-successfull="showLoginModal = false" />
+        <common-modal-auth-login
+          @login-successfull="showLoginModal = false"
+          @open-otp-code="openOTPModal"
+          @close="showLoginModal = false"
+        />
+      </lazy-common-modal-base>
+
+      <lazy-common-modal-base
+        v-model:show-dialog="showOTPModal"
+        title="Login"
+      >
+        <common-modal-auth-otp
+          :password="passwordForOTP"
+          :identity="identityForOTP"
+          @login-successfull="otpLoginSuccessfull"
+          @open-login="openLoginModal"
+        />
       </lazy-common-modal-base>
       <!-- <component
         :is="currentAuthComponentMap[currentAuthComponent]"
@@ -257,6 +273,25 @@ const handleChnageMenuSetting = () => {
 // const currentAuthComponent = ref<AuthComponentName>('login')
 const loginDialogVisible = ref(false)
 const showLoginModal = ref(false)
+const showOTPModal = ref(false)
+const passwordForOTP = ref('')
+const identityForOTP = ref('')
+
+const openOTPModal = (identity: string, password: string) => {
+  showLoginModal.value = false
+  identityForOTP.value = identity
+  passwordForOTP.value = password
+  showOTPModal.value = true
+}
+const otpLoginSuccessfull = () => {
+  showOTPModal.value = false
+  identityForOTP.value = ''
+  passwordForOTP.value = ''
+}
+const openLoginModal = () => {
+  showOTPModal.value = false
+  showLoginModal.value = true
+}
 // const switchTo = (name: AuthComponentName) => {
 //   currentAuthComponent.value = name
 // }
@@ -325,9 +360,9 @@ onMounted(async () => {
 
   requestIdleCallback?.(() => {
     // import('~/components/common/login.vue')
-    import('~/components/common/register.vue')
-    import('~/components/common/pass-recover.vue')
-    import('~/components/dashboard/drawer-menu.vue')
+    // import('~/components/common/register.vue')
+    // import('~/components/common/pass-recover.vue')
+    // import('~/components/dashboard/drawer-menu.vue')
   })
 })
 

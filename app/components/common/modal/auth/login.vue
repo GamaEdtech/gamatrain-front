@@ -108,7 +108,7 @@
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(['loginSuccessfull', 'openRegister', 'openForgetPassword', 'openOTPCode', 'close'])
+const emit = defineEmits(['loginSuccessfull', 'openRegister', 'openForgetPassword', 'openOtpCode', 'close'])
 
 const { $toast } = useNuxtApp()
 const { email, required } = useValidationRules()
@@ -129,7 +129,7 @@ const loginUser = async () => {
   if (response.succeeded && response.data) {
     if (response.data.type == 'loginByOTP') {
       $toast.success('Otp code sent')
-      emit('openOTPCode')
+      emit('openOtpCode', emailUser.value, password.value)
     }
     else if (response.data.type == 'register') {
       emit('openRegister')
@@ -143,12 +143,12 @@ const loginUser = async () => {
         emit('loginSuccessfull')
       }
       else {
-        $toast.error('Sign-in succeeded, but we could not load your profile. Please try again.')
+        $toast.error('You are signed in, but we could not load your profile details. Please refresh the page or try again.')
       }
     }
   }
   else {
-    $toast.error('Sign-in did not work. Please try again.')
+    $toast.error('We could not sign you in. Please check your email and password, then try again.')
   }
 }
 </script>

@@ -1,6 +1,8 @@
 // type request for login by username and password
+// type confirm for login by otpCode
+// type resend_code for send otp code again
 
-export type TypeAuth = 'request' | 'register' | 'resend_code'
+export type TypeAuth = 'request' | 'register' | 'resend_code' | 'confirm'
 
 export interface LoginInformationDTO {
   identity: string
