@@ -133,8 +133,20 @@
       >
         <common-modal-auth-login
           @login-successfull="showLoginModal = false"
+          @open-register="openRegisterModal"
           @open-otp-code="openOTPModalForLogin"
           @close="showLoginModal = false"
+        />
+      </lazy-common-modal-base>
+
+      <lazy-common-modal-base
+        v-model:show-dialog="showRegisterModal"
+        title="Register"
+      >
+        <common-modal-auth-register
+          @open-login="openLoginModal"
+          @open-otp-code="openOTPModalForRegister"
+          @close="showRegisterModal = false"
         />
       </lazy-common-modal-base>
 
@@ -275,6 +287,7 @@ const handleChnageMenuSetting = () => {
 // const currentAuthComponent = ref<AuthComponentName>('login')
 const loginDialogVisible = ref(false)
 const showLoginModal = ref(false)
+const showRegisterModal = ref(false)
 const showOTPModal = ref(false)
 const passwordForOTP = ref('')
 const identityForOTP = ref('')
@@ -287,6 +300,13 @@ const openOTPModalForLogin = (identity: string, password: string) => {
   modeOTP.value = 'login'
   showOTPModal.value = true
 }
+const openOTPModalForRegister = (identity: string) => {
+  showRegisterModal.value = false
+  identityForOTP.value = identity
+  passwordForOTP.value = ''
+  modeOTP.value = 'register'
+  showOTPModal.value = true
+}
 const otpLoginSuccessfull = () => {
   showOTPModal.value = false
   identityForOTP.value = ''
@@ -294,7 +314,13 @@ const otpLoginSuccessfull = () => {
 }
 const openLoginModal = () => {
   showOTPModal.value = false
+  showRegisterModal.value = false
   showLoginModal.value = true
+}
+const openRegisterModal = () => {
+  showLoginModal.value = false
+  showOTPModal.value = false
+  showRegisterModal.value = true
 }
 // const switchTo = (name: AuthComponentName) => {
 //   currentAuthComponent.value = name
