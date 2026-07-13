@@ -75,7 +75,7 @@
       class="container-question w-100 d-flex flex-column align-start justift-start mt-6"
     >
       <div
-        class="text-h5 text-sm-h3 text-grey800"
+        class="text-h6 text-sm-h4 text-grey800"
         v-html="contentData.question"
       />
       <img
@@ -130,7 +130,7 @@
             </v-icon>
           </div>
           <div
-            class="text-h5 text-sm-h3 choise-text text-grey800 overflow-x-auto overflow-y-hidden"
+            class="text-h6 text-sm-h4 choise-text text-grey800 overflow-x-auto overflow-y-hidden"
             v-html="item.text"
           />
           <img
@@ -154,7 +154,7 @@
         Solution:
       </div>
       <div
-        class="text-h5 text-sm-h3 text-grey800 mt-4"
+        class="text-h6 text-sm-h4 text-grey800 mt-4"
         v-html="contentData.answer_full"
       />
     </div>
