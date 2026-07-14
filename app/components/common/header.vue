@@ -127,6 +127,7 @@
     </v-container>
 
     <lazy-common-modal-auth
+      v-if="shouldMountAuthModal"
       v-model:show-dialog="showAuthModal"
     />
 
@@ -237,8 +238,11 @@ const handleChnageMenuSetting = () => {
 }
 
 const showAuthModal = ref(false)
+const shouldMountAuthModal = ref(false)
 
-const openLoginDialog = () => {
+const openLoginDialog = async () => {
+  shouldMountAuthModal.value = true
+  await nextTick()
   showAuthModal.value = true
 }
 
@@ -298,7 +302,7 @@ onMounted(async () => {
     isDrawerOpen.value = true
   }
 
-  requestIdleCallback(() => {
+  requestIdleCallback?.(() => {
     import('@/components/common/modal/auth/index.vue')
   })
 })

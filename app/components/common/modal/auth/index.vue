@@ -185,6 +185,7 @@ watch(
       closeAllModals()
     }
   },
+  { immediate: true },
 )
 
 watch(
