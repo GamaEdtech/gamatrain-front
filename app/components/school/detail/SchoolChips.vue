@@ -1,83 +1,37 @@
 <template>
   <div class="d-flex">
     <v-sheet class="chips-container">
+      <!-- School location chips::start -->
       <v-chip
-        v-show="localContentData.countryTitle"
+        v-for="chip in locationChips"
+        :key="chip.key"
         :class="chipClass"
-        :to="buildSchoolListUrl('country', localContentData)"
+        :to="buildSchoolListUrl(chip.key, props.contentData)"
       >
         <div :class="chipContentClass">
           <v-icon
-            v-show="localContentData.countryRank"
-            color="#FA0369"
+            v-show="chip.rank"
+            :color="chip.iconColor"
           >
             md:workspace_premium
           </v-icon>
-          <span v-show="localContentData.countryRank">#{{ localContentData.countryRank }}</span>
-          <span>{{ localContentData.countryTitle }}</span>
-        </div>
-      </v-chip>
 
-      <v-chip
-        v-show="localContentData.stateTitle"
-        :class="chipClass"
-        :to="buildSchoolListUrl('state', localContentData)"
-      >
-        <div :class="chipContentClass">
-          <v-icon
-            v-show="localContentData.stateRank"
-            color="#FB6514"
-          >
-            md:workspace_premium
-          </v-icon>
-          <span v-show="localContentData.stateRank">#{{ localContentData.stateRank }}</span>
-          <span>{{ localContentData.stateTitle }}</span>
+          <span v-show="chip.rank">#{{ chip.rank }}</span>
+          <span>{{ chip.title }}</span>
         </div>
       </v-chip>
+      <!-- School location chips::end -->
 
+      <!-- School filter chips::start -->
       <v-chip
-        v-show="localContentData.cityTitle"
-        :class="chipClass"
-        :to="buildSchoolListUrl('city', localContentData)"
-      >
-        <div :class="chipContentClass">
-          <v-icon
-            v-show="localContentData.cityRank"
-            color="#4E5BA6"
-          >
-            md:workspace_premium
-          </v-icon>
-          <span v-show="localContentData.cityRank">#{{ localContentData.cityRank }}</span>
-          <span>{{ localContentData.cityTitle }}</span>
-        </div>
-      </v-chip>
-      <v-chip
-        v-if="localContentData.schoolType && localContentData.schoolType.name"
+        v-for="chip in filterChips"
+        :key="chip.title"
+        :to="chip.url"
         :class="chipClass"
       >
-        {{ localContentData?.schoolType?.name }}
+        {{ chip.title }}
       </v-chip>
-      <v-chip
-        v-if="localContentData.school_type_title"
-        :to="`/school?school_type=${localContentData.school_type}`"
-        :class="chipClass"
-      >
-        {{ localContentData.school_type_title }}
-      </v-chip>
-      <v-chip
-        v-if="localContentData.section_title"
-        :to="`/school?section=${localContentData.section}`"
-        :class="chipClass"
-      >
-        {{ localContentData.section_title }}
-      </v-chip>
-      <v-chip
-        v-if="localContentData.sex_title"
-        :to="`/school?coed_status=${localContentData.sex}`"
-        :class="chipClass"
-      >
-        {{ localContentData.sex_title }}
-      </v-chip>
+      <!-- School filter chips::end -->
     </v-sheet>
   </div>
 </template>
@@ -96,6 +50,48 @@ const localContentData = ref(props.contentData)
 
 const chipClass = 'bg-grey100 text-grey600 mr-1 text-h6'
 const chipContentClass = 'd-flex ga-1'
+
+const locationChips = computed(() => [
+  {
+    key: 'country',
+    title: props.contentData.countryTitle,
+    rank: props.contentData.countryRank,
+    id: props.contentData.countryId,
+    iconColor: '#FA0369',
+  },
+  {
+    key: 'state',
+    title: props.contentData.stateTitle,
+    rank: props.contentData.stateRank,
+    id: props.contentData.stateId,
+    iconColor: '#FB6514',
+  },
+  {
+    key: 'city',
+    title: props.contentData.cityTitle,
+    rank: props.contentData.cityRank,
+    id: props.contentData.cityId,
+    iconColor: '#4E5BA6',
+  },
+].filter(item => item.title))
+
+const filterChips = computed(() => [
+  {
+    title: props.contentData.schoolType?.name,
+  },
+  {
+    title: props.contentData.school_type_title,
+    url: `/school?school_type=${props.contentData.school_type}`,
+  },
+  {
+    title: props.contentData.section_title,
+    url: `/school?section=${props.contentData.section}`,
+  },
+  {
+    title: props.contentData.sex_title,
+    url: `/school?coed_status=${props.contentData.sex}`,
+  },
+].filter(item => item.title))
 
 watch(
   () => props.contentData,
