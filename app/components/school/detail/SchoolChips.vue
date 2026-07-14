@@ -3,49 +3,78 @@
     <v-sheet class="chips-container">
       <v-chip
         v-show="localContentData.countryTitle"
-        class="bg-blue-grey-darken-1 text-white mr-1"
+        :class="chipClass"
         :to="buildSchoolListUrl('country', localContentData)"
       >
-        {{ localContentData.countryTitle }}
+        <div :class="chipContentClass">
+          <v-icon
+            v-show="localContentData.countryRank"
+            color="#FA0369"
+          >
+            md:workspace_premium
+          </v-icon>
+          <span v-show="localContentData.countryRank">#{{ localContentData.countryRank }}</span>
+          <span>{{ localContentData.countryTitle }}</span>
+        </div>
       </v-chip>
+
       <v-chip
         v-show="localContentData.stateTitle"
-        class="bg-blue-grey-darken-1 text-white mr-1"
+        :class="chipClass"
         :to="buildSchoolListUrl('state', localContentData)"
       >
-        {{ localContentData.stateTitle }}
+        <div :class="chipContentClass">
+          <v-icon
+            v-show="localContentData.stateRank"
+            color="#FB6514"
+          >
+            md:workspace_premium
+          </v-icon>
+          <span v-show="localContentData.stateRank">#{{ localContentData.stateRank }}</span>
+          <span>{{ localContentData.stateTitle }}</span>
+        </div>
       </v-chip>
+
       <v-chip
         v-show="localContentData.cityTitle"
-        class="bg-blue-grey-darken-1 text-white mr-1"
+        :class="chipClass"
         :to="buildSchoolListUrl('city', localContentData)"
       >
-        {{ localContentData.cityTitle }}
+        <div :class="chipContentClass">
+          <v-icon
+            v-show="localContentData.cityRank"
+            color="#4E5BA6"
+          >
+            md:workspace_premium
+          </v-icon>
+          <span v-show="localContentData.cityRank">#{{ localContentData.cityRank }}</span>
+          <span>{{ localContentData.cityTitle }}</span>
+        </div>
       </v-chip>
       <v-chip
         v-if="localContentData.schoolType && localContentData.schoolType.name"
-        class="bg-blue-grey-darken-1 text-white mr-1"
+        :class="chipClass"
       >
         {{ localContentData?.schoolType?.name }}
       </v-chip>
       <v-chip
         v-if="localContentData.school_type_title"
         :to="`/school?school_type=${localContentData.school_type}`"
-        class="bg-blue-grey-darken-1 text-white mr-1"
+        :class="chipClass"
       >
         {{ localContentData.school_type_title }}
       </v-chip>
       <v-chip
         v-if="localContentData.section_title"
         :to="`/school?section=${localContentData.section}`"
-        class="bg-blue-grey-darken-1 text-white mr-1"
+        :class="chipClass"
       >
         {{ localContentData.section_title }}
       </v-chip>
       <v-chip
         v-if="localContentData.sex_title"
         :to="`/school?coed_status=${localContentData.sex}`"
-        class="bg-blue-grey-darken-1 text-white mr-1"
+        :class="chipClass"
       >
         {{ localContentData.sex_title }}
       </v-chip>
@@ -64,6 +93,9 @@ const props = defineProps({
 })
 
 const localContentData = ref(props.contentData)
+
+const chipClass = 'bg-grey100 text-grey600 mr-1 text-h6'
+const chipContentClass = 'd-flex ga-1'
 
 watch(
   () => props.contentData,
@@ -91,7 +123,7 @@ function buildSchoolListUrl(type, data) {
 .chips-container {
   white-space: nowrap;
   overflow-x: auto;
-  width: 75%;
+  /* width: 75%; */
   padding-top: 0.4rem;
   scrollbar-width: thin;
   /* Firefox */
