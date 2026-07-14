@@ -9,12 +9,15 @@
         :to="buildSchoolListUrl(chip.key, props.contentData)"
       >
         <div :class="chipContentClass">
-          <v-icon
-            v-show="chip.rank"
-            :color="chip.iconColor"
-          >
-            md:workspace_premium
-          </v-icon>
+          <span class="badge-item">
+            <v-icon
+              v-show="chip.rank"
+              :color="chip.iconColor"
+              size="large"
+            >
+              md:workspace_premium
+            </v-icon>
+          </span>
 
           <span v-show="chip.rank">#{{ chip.rank }}</span>
           <span>{{ chip.title }}</span>
@@ -125,6 +128,12 @@ function buildSchoolListUrl(type, data) {
   /* Firefox */
   scrollbar-color: transparent transparent;
   /* Firefox */
+}
+
+.badge-item {
+  background-color: white;
+  z-index: 10;
+  border-radius: 10px;
 }
 
 /* Webkit (Chrome, Safari) */
