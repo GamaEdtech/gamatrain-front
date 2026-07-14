@@ -40,16 +40,12 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-
 const props = defineProps({
   contentData: {
     type: Object,
     required: true,
   },
 })
-
-const localContentData = ref(props.contentData)
 
 const chipClass = 'bg-grey100 text-grey600 mr-1 text-h6'
 const chipContentClass = 'd-flex ga-1'
@@ -59,21 +55,18 @@ const locationChips = computed(() => [
     key: 'country',
     title: props.contentData.countryTitle,
     rank: props.contentData.countryRank,
-    id: props.contentData.countryId,
     iconColor: '#FA0369',
   },
   {
     key: 'state',
     title: props.contentData.stateTitle,
     rank: props.contentData.stateRank,
-    id: props.contentData.stateId,
     iconColor: '#FB6514',
   },
   {
     key: 'city',
     title: props.contentData.cityTitle,
     rank: props.contentData.cityRank,
-    id: props.contentData.cityId,
     iconColor: '#4E5BA6',
   },
 ].filter(item => item.title))
@@ -96,14 +89,6 @@ const filterChips = computed(() => [
   },
 ].filter(item => item.title))
 
-watch(
-  () => props.contentData,
-  (newContent) => {
-    localContentData.value = newContent
-  },
-  { deep: true },
-)
-
 function buildSchoolListUrl(type, data) {
   const query = {}
   if (data.countryId) query.country = data.countryId
@@ -122,7 +107,6 @@ function buildSchoolListUrl(type, data) {
 .chips-container {
   white-space: nowrap;
   overflow-x: auto;
-  /* width: 75%; */
   padding-top: 0.4rem;
   scrollbar-width: thin;
   /* Firefox */
