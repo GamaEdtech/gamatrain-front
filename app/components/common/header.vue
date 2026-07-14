@@ -126,72 +126,7 @@
       </div>
     </v-container>
 
-    <div v-if="loginDialogVisible">
-      <lazy-common-modal-base
-        v-model:show-dialog="showLoginModal"
-        title="Login"
-      >
-        <common-modal-auth-login
-          @login-successfull="handleLoginSuccessfull"
-          @open-register="openRegisterModal"
-          @open-forget-password="openForgetPasswordModal"
-          @open-otp-code="openOTPModalForLogin"
-          @close="showLoginModal = false"
-        />
-      </lazy-common-modal-base>
-
-      <lazy-common-modal-base
-        v-model:show-dialog="showRegisterModal"
-        title="Register"
-      >
-        <common-modal-auth-register
-          @open-login="openLoginModal"
-          @open-otp-code="openOTPModalForRegister"
-          @close="showRegisterModal = false"
-        />
-      </lazy-common-modal-base>
-
-      <lazy-common-modal-base
-        v-model:show-dialog="showForgetPasswordModal"
-        title="Forget"
-      >
-        <common-modal-auth-forget-password
-          @open-login="openLoginModal"
-          @open-register="openRegisterModal"
-          @open-otp-code="openOTPModalForForgetPassword"
-          @close="showForgetPasswordModal = false"
-        />
-      </lazy-common-modal-base>
-
-      <lazy-common-modal-base
-        v-model:show-dialog="showOTPModal"
-        title="Login"
-      >
-        <common-modal-auth-otp
-          :password="passwordForAuth"
-          :identity="identityForAuth"
-          :mode="modeOTP"
-          @login-successfull="handleLoginSuccessfull"
-          @open-login="openLoginModal"
-          @open-register="openRegisterModal"
-          @open-forget-password="openForgetPasswordModal"
-          @register-code-confirmed="openConfirmPasswordModal('register')"
-          @forget-password-code-confirmed="openConfirmPasswordModal('forgetPassword')"
-        />
-      </lazy-common-modal-base>
-
-      <lazy-common-modal-base
-        v-model:show-dialog="showConfirmPasswordModal"
-        title="Password"
-      >
-        <common-modal-auth-confirm-password
-          :identity="identityForAuth"
-          :mode="confirmPasswordMode"
-          @open-login="openLoginModal"
-          @close="showConfirmPasswordModal = false"
-        />
-      </lazy-common-modal-base>
-    </div>
+    <common-modal-auth v-model:show-dialog="showAuthModal" />
 
     <lazy-menu-add-option-bottom-menu
       v-if="isAddOptionOpen"
@@ -212,7 +147,6 @@
 </template>
 
 <script setup lang="ts">
-import type { OTPMode, ConfirmPasswordMode } from '@/types'
 import { useTheme, useDisplay } from 'vuetify'
 
 interface IHeader {
@@ -227,7 +161,6 @@ interface MenuSetting {
 
 const route = useRoute()
 const router = useRouter()
-const { $toast } = useNuxtApp()
 const theme = useTheme()
 const { isAuthenticated } = useAuth()
 const { mdAndDown } = useDisplay()
@@ -301,81 +234,10 @@ const handleChnageMenuSetting = () => {
   }
 }
 
-const loginDialogVisible = ref(false)
-const showLoginModal = ref(false)
-const showRegisterModal = ref(false)
-const showForgetPasswordModal = ref(false)
-const showOTPModal = ref(false)
-const showConfirmPasswordModal = ref(false)
-const passwordForAuth = ref('')
-const identityForAuth = ref('')
-const modeOTP = ref<OTPMode>('login')
-const confirmPasswordMode = ref<ConfirmPasswordMode>('register')
-
-const openOTPModalForLogin = (identity: string, password: string) => {
-  showLoginModal.value = false
-  identityForAuth.value = identity
-  passwordForAuth.value = password
-  modeOTP.value = 'login'
-  showOTPModal.value = true
-}
-const openOTPModalForRegister = (identity: string) => {
-  showRegisterModal.value = false
-  identityForAuth.value = identity
-  passwordForAuth.value = ''
-  modeOTP.value = 'register'
-  showOTPModal.value = true
-}
-const openOTPModalForForgetPassword = (identity: string) => {
-  showForgetPasswordModal.value = false
-  identityForAuth.value = identity
-  passwordForAuth.value = ''
-  modeOTP.value = 'forgetPassword'
-  showOTPModal.value = true
-}
-const clearAuthModalState = () => {
-  showOTPModal.value = false
-  showLoginModal.value = false
-  showRegisterModal.value = false
-  showForgetPasswordModal.value = false
-  showConfirmPasswordModal.value = false
-  identityForAuth.value = ''
-  passwordForAuth.value = ''
-}
-const handleLoginSuccessfull = () => {
-  clearAuthModalState()
-  $toast.success('You have signed in successfully.')
-}
-const openConfirmPasswordModal = (mode: ConfirmPasswordMode) => {
-  showOTPModal.value = false
-  confirmPasswordMode.value = mode
-  showConfirmPasswordModal.value = true
-}
-const openLoginModal = () => {
-  showOTPModal.value = false
-  showRegisterModal.value = false
-  showForgetPasswordModal.value = false
-  showConfirmPasswordModal.value = false
-  showLoginModal.value = true
-}
-const openRegisterModal = () => {
-  showLoginModal.value = false
-  showOTPModal.value = false
-  showForgetPasswordModal.value = false
-  showConfirmPasswordModal.value = false
-  showRegisterModal.value = true
-}
-const openForgetPasswordModal = () => {
-  showLoginModal.value = false
-  showRegisterModal.value = false
-  showOTPModal.value = false
-  showConfirmPasswordModal.value = false
-  showForgetPasswordModal.value = true
-}
+const showAuthModal = ref(false)
 
 const openLoginDialog = () => {
-  loginDialogVisible.value = true
-  showLoginModal.value = true
+  showAuthModal.value = true
 }
 
 const isAddOptionOpen = ref(false)
