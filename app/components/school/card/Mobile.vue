@@ -59,7 +59,7 @@
           >
             Score:
             <v-icon color="primary"> md:star </v-icon>
-            <span class="text-grey800 font-weight-semibold">            {{ school.score ? school.score.toFixed(1) : "N/A" }}</span>
+            <span class="text-grey800 font-weight-semibold">{{ school.rating ? school.rating.toFixed(1) : "N/A" }}</span>
           </div>
           <v-divider
             :thickness="1"

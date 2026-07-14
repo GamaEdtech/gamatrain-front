@@ -388,7 +388,6 @@ onMounted(() => {
     defaultImageUri: '',
 
     distance: 0,
-    score: 0,
 
     hasEmail: false,
     hasPhone: false,
@@ -400,7 +399,7 @@ onMounted(() => {
 
     lastModifyDate: '',
 
-    reviewScore: 0,
+    rating: 0,
     countryRank: 0,
     stateRank: 0,
     cityRank: 0,

@@ -716,7 +716,7 @@ const validateSchoolData = (school) => {
     || school.countryTitle
     || school.stateTitle
     || school.cityTitle
-    || school.score
+    || school.rating
     || school.lastModifyDate
   )
 
