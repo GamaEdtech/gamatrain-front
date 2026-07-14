@@ -134,7 +134,7 @@ const submitPassword = async () => {
   const payload = {
     identity: props.identity,
     password: password.value,
-    type: props.mode === 'register' ? 'request' : 'resetpass',
+    type: props.mode === 'register' ? 'register' : 'resetpass',
   }
 
   const response = props.mode === 'register'

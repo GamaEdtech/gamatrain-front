@@ -126,7 +126,9 @@
       </div>
     </v-container>
 
-    <common-modal-auth v-model:show-dialog="showAuthModal" />
+    <lazy-common-modal-auth
+      v-model:show-dialog="showAuthModal"
+    />
 
     <lazy-menu-add-option-bottom-menu
       v-if="isAddOptionOpen"
@@ -295,6 +297,10 @@ onMounted(async () => {
   else {
     isDrawerOpen.value = true
   }
+
+  requestIdleCallback(() => {
+    import('@/components/common/modal/auth/index.vue')
+  })
 })
 
 onBeforeUnmount(() => {

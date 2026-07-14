@@ -28,7 +28,6 @@ export const useAuth = () => {
 
   const logout = async () => {
     try {
-      // Call old backend logout
       await useApiService.get('/api/v1/users/logout', {
         headers: `Bearer ${cookieToken.value}`,
       })
@@ -36,18 +35,8 @@ export const useAuth = () => {
     catch (error) {
       console.warn('Old backend logout API call failed:', error)
     }
-    try {
-      // Call new backend logout
-      await useApiService.get('/api/v2/identities/logout', {
-        headers: `Bearer ${cookieToken.value}`,
-      })
-    }
-    catch (error) {
-      console.warn('New backend logout API call failed:', error)
-    }
     clearAuth()
 
-    // Clear user data from store
     const { cleanUser } = useUser()
     cleanUser()
 

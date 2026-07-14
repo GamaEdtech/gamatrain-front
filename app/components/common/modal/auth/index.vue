@@ -194,6 +194,5 @@ watch(
       closeAuthFlow()
     }
   },
-  { flush: 'post' },
 )
 </script>
