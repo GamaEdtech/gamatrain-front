@@ -110,7 +110,7 @@
   <lazy-common-modal-base
     v-model:show-dialog="isAddOptionOpen"
     title="What would you like to create?"
-    subtitle="hoose a type. We will prepare the right form for you."
+    subtitle="Choose a type. We will prepare the right form for you."
   >
     <menu-add-option-bottom-menu
       @close="isAddOptionOpen = false"
