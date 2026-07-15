@@ -78,8 +78,6 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 
-const auth = useAuth()
-
 const props = defineProps({
   value: {
     type: Boolean,
@@ -136,18 +134,15 @@ watch(localSlug, async (newVal) => {
 
   _slugDebounce = setTimeout(async () => {
     try {
-      const { data: response } = await useFetch(
+      const response = await useApiService.post(
         '/api/v2/blogs/slugs/validate',
         {
-          params: { slug: newVal },
-          headers: {
-            Authorization: `Bearer ${auth.getUserToken()}`,
-          },
+          slug: newVal,
         },
       )
 
-      if (response.value && response.value.succeeded) {
-        if (response.value.data === true) {
+      if (response && response.succeeded) {
+        if (response.data === true) {
           slugValid.value = true
         }
         else {
@@ -183,11 +178,8 @@ const saveSlug = async () => {
 
   submitLoader.value = true
   try {
-    const { data: response } = await useFetch('/api/v2/blogs/slugs/generate', {
-      params: { title: localSlug.value },
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('v2_token')}`,
-      },
+    const response = await useApiService.post('/api/v2/blogs/slugs/generate', {
+      title: localSlug.value,
     })
 
     if (response.value && response.value.succeeded && response.value.data) {
