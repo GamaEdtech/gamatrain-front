@@ -22,7 +22,7 @@
           active-color="primary"
           bg-color="white"
           class="w-100"
-          :rules="[email]"
+          :rules="[email, required]"
         />
       </div>
 
