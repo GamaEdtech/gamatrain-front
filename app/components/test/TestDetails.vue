@@ -22,6 +22,12 @@
     </div>
     <div class="w-100 d-flex align-center mt-4">
       <div
+        v-if="showTitle"
+        class="text-h4 font-weight-bold text-grey600"
+      >
+        Question:
+      </div>
+      <div
         v-if="contentData.answer_full.length > 0"
         class="w-100 d-flex align-center justify-end"
       >
