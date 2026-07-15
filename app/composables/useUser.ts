@@ -14,11 +14,11 @@ export const useUser = () => {
     user.value = null
   }
 
-  const getProfile = async (token?: null) => {
+  const getProfile = async (token?: null | string) => {
     try {
       const response = await useApiService.get<ApiResult<User>>(`/api/v2/identities/profiles`, {}, {
         headers: {
-          Authorization: `Bearer ${token || auth.getUserTokenV2()}`,
+          Authorization: `Bearer ${token || auth.getUserToken()}`,
         },
       })
 
