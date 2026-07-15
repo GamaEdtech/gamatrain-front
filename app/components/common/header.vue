@@ -131,10 +131,16 @@
       v-model:show-dialog="showAuthModal"
     />
 
-    <lazy-menu-add-option-bottom-menu
-      v-if="isAddOptionOpen"
-      @close="isAddOptionOpen = false"
-    />
+    <lazy-common-modal-base
+      v-model:show-dialog="isAddOptionOpen"
+      title="What would you like to create?"
+      subtitle="hoose a type. We will prepare the right form for you."
+    >
+      <menu-add-option-bottom-menu
+        @close="isAddOptionOpen = false"
+      />
+    </lazy-common-modal-base>
+
     <ClientOnly>
       <lazy-dashboard-drawer-menu
         v-if="shouldMountDrawer"
