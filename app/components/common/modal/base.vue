@@ -11,10 +11,10 @@
     >
       <div class="w-100 d-flex align-center justify-space-between">
         <div class="d-flex flex-column align-start justify-start ga-1">
-          <span class="text-h3 font-weight-bold text-grey700">{{ title }}</span>
+          <span class="text-h5 text-sm-h3 font-weight-bold text-grey700">{{ title }}</span>
           <span
             v-if="subtitle"
-            class="text-h6 font-weight-medium text-grey400"
+            class="text-subtitle-1 text-sm-h6 font-weight-medium text-grey400"
           >{{ subtitle }}</span>
         </div>
         <v-icon

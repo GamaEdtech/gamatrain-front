@@ -1,28 +1,13 @@
 <template>
-  <div
-    class="custom-overlay d-flex justify-center align-end align-md-center position-fixed w-100 top-0 left-0"
-    @click="clickOnOverlay"
-  >
-    <div
-      class="search-container bg-white d-flex flex-column align-center pa-4"
-      @click="clickOnModal"
-    >
-      <div class="w-100 d-flex justify-end">
-        <v-icon
-          size="x-large"
-          color="grey400"
-          @click="close"
-        >
-          md:close
-        </v-icon>
-      </div>
-      <div class="w-100 d-flex flex-column ga-2 mt-4 pa-3 overflow-y-auto overflow-x-hidden">
-        <nuxt-link
-          v-for="(item, index) in addOptions"
-          :key="index"
-          :to="item.path"
-          class="w-100 card-option d-flex align-center ga-2"
-        >
+  <div class="w-100 d-flex align-center justify-center flex-column mt-4">
+    <div class="w-100 d-flex flex-wrap justify-center ga-1 container-card">
+      <nuxt-link
+        v-for="(item, index) in addOptions"
+        :key="index"
+        :to="item.path"
+        class="card-add-option mt-1 d-flex flex-column align-center justify-center ga-1 rounded-xl"
+      >
+        <div class="icon-div rounded-lg pa-2 d-flex align-center justify-center bg-primary100">
           <span
             v-if="item.icon"
             class="icon-add text-grey700"
@@ -31,20 +16,31 @@
           <v-icon
             v-if="item.iconMd"
             color="grey700"
-            size="24"
+            size="20"
           >
             {{ item.iconMd }}
           </v-icon>
+        </div>
+        <span class="text-grey700 text-h6 font-weight-bold mt-1">{{ item.title }}</span>
 
-          <span class="text-grey700 text-h5 font-weight-bold">{{ item.title }}</span>
+        <span class="text-subtitle-2 font-weight-bold text-grey500 px-2 rounded-pill bg-grey100 mt-1 chip-type-file">
+          {{ item.typeFile }}
+        </span>
+      </nuxt-link>
+    </div>
 
-          <v-icon
-            color="grey700"
-            size="20"
-          >
-            md:chevron_forward
-          </v-icon>
-        </nuxt-link>
+    <div class="w-100 bg-primary50 rounded-lg pa-2 d-flex align-center justify-start ga-2 info-card mt-4">
+      <div class="pa-2 rounded-lg bg-primary d-flex align-center justify-center">
+        <v-icon
+          color="grey700"
+          size="16"
+        >
+          md:star
+        </v-icon>
+      </div>
+      <div class="d-flex flex-column align-start justify-start ">
+        <span class="text-subtitle-1 font-weight-bold text-grey700">Earn points and income</span>
+        <span class="text-subtitle-2 font-weight-medium text-grey400">Publishing useful educational content rewards you with Gamatrain points and can generate income.</span>
       </div>
     </div>
   </div>
@@ -59,41 +55,34 @@ const addOptions = [
     path: '/user/paper/create',
     title: 'Past Paper',
     icon: 'icon-paper',
+    typeFile: 'PDF - DOCX',
   },
   {
     path: '/user/question/create',
     title: 'Q & A',
     icon: 'icon-q-a',
+    typeFile: 'TEXT',
   },
   {
     path: '/user/multimedia/create',
     title: 'Multimedia',
     icon: 'icon-multimedia',
+    typeFile: 'MP4 - PPTX',
   },
   {
     path: '/user/blogs/create',
     title: 'Blogs',
     iconMd: 'md:art_track',
+    typeFile: 'HTML',
   },
   {
     path: '/school/add',
     title: 'Schools',
     icon: 'icon-school',
+    typeFile: 'INFO',
   },
 
 ]
-
-const close = () => {
-  emit('close')
-}
-
-const clickOnOverlay = () => {
-  emit('close')
-}
-
-const clickOnModal = (event: Event) => {
-  event.stopPropagation()
-}
 
 watch(
   () => route.fullPath,
@@ -104,32 +93,29 @@ watch(
 </script>
 
 <style scoped>
-.custom-overlay{
-  height: calc(100% - 62px);
-  background-color: rgba(0, 0, 0, 0.32);
-  z-index: 10000;
+.container-card{
+  max-width : 370px
 }
-.search-container{
-  height: 70%;
-  width : 100%;
-  border-radius : 24px 24px 0 0
+.card-add-option{
+  width : 30%;
+  max-width : 120px;
+  height : 120px;
+  border : 1px solid rgb(var(--v-theme-grey200));
+  transition: 0.3s;
+  text-decoration: none;
 }
-
-.card-option{
-  height: 60px;
+.card-add-option:hover{
+  transform: translateY(-6px);
+  border : 1px solid rgb(var(--v-theme-primary))
 }
 .icon-add{
-  font-size: 24px;
+  font-size: 20px;
 }
-
-@media (min-width: 960px) {
-  .custom-overlay{
-  height: 100%;
+.chip-type-file{
+  border : 1px solid rgb(var(--v-theme-grey200));
 }
-.search-container{
-  height:auto;
-  width : 300px;
-    border-radius : 24px
-}
+.info-card{
+  max-width : 320px;
+  border : 1px solid rgb(var(--v-theme-primary100))
 }
 </style>
