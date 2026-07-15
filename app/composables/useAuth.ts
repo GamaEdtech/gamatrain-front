@@ -72,6 +72,7 @@ export const useAuth = () => {
         succeeded: false,
         message: 'The operation failed. Please try again later.',
         data: null,
+        errors: [],
       }
     }
     finally {
