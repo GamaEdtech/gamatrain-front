@@ -314,7 +314,7 @@ const confirmWithdraw = async () => {
     const transferResult = await useApiService.post<ApiResult<unknown>>(
       '/api/solana/transfer',
       {
-        token: auth.getUserTokenV2(),
+        token: auth.getUserToken(),
         to: wallet.value.publicKey.toBase58(),
         amount,
       },

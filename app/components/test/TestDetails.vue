@@ -1,51 +1,26 @@
 <template>
-  <div class="w-100 d-flex flex-column align-start justify-start py-4">
+  <div class="w-100 d-flex flex-column align-start justify-start py-4 mt-md-0 mt-6">
     <div
       v-if="showChips"
       class="w-100 d-flex align-center ga-2 flex-wrap"
     >
       <v-chip
-        v-if="contentData.section_title"
+        v-for="chip in chips"
+        :key="chip.title"
         variant="flat"
-        class="text-subtitle-1 text-sm-h5 px-3"
+        :class="chipClass"
         color="grey100"
-        :to="`/search?type=paper&section=${contentData.section}`"
+        :to="{
+          path: '/search',
+          query: chip.params,
+        }"
       >
-        <span class="text-grey500">{{ contentData?.section_title }}</span>
-      </v-chip>
-      <v-chip
-        v-if="contentData.base_title"
-        variant="flat"
-        class="text-subtitle-1 text-sm-h5 px-3"
-        color="grey100"
-        :to="`/search?type=paper&section=${contentData.section}&base=${contentData.base}`"
-      >
-        <span class="text-grey500">{{ contentData?.base_title }}</span>
-      </v-chip>
-      <v-chip
-        v-if="contentData.lesson_title"
-        variant="flat"
-        class="text-subtitle-1 text-sm-h5 px-3"
-        color="grey100"
-        :to="`/search?type=paper&section=${contentData.section}&base=${contentData.base}&lesson=${
-          contentData.lesson
-        }`"
-      >
-        <span class="text-grey500">{{ contentData.lesson_title }}</span>
-      </v-chip>
-      <v-chip
-        v-if="contentData.topic_title"
-        variant="flat"
-        class="text-subtitle-1 text-sm-h5 px-3"
-        color="grey100"
-        :to="`/search?type=paper&section=${contentData.section}&base=${contentData.base}&lesson=${
-          contentData.lesson
-        }&topic=${contentData.topic}`"
-      >
-        <span class="text-grey500">{{ contentData.topic_title }}</span>
+        <span :class="chipTextClass">
+          {{ chip.title }}
+        </span>
       </v-chip>
     </div>
-    <div class="w-100 d-flex align-center  mt-4">
+    <div class="w-100 d-flex align-center mt-4">
       <div
         v-if="showTitle"
         class="text-h4 font-weight-bold text-grey600"
@@ -75,12 +50,12 @@
       class="container-question w-100 d-flex flex-column align-start justift-start mt-6"
     >
       <div
-        class="text-h6 text-sm-h4 text-grey800"
+        class="text-h5 text-sm-h4 text-grey700 font-weight-regular"
         v-html="contentData.question"
       />
       <img
         v-if="contentData.q_file && contentData.q_file != '0'"
-        class="answer-img mt-1"
+        class="answer-img mt-1 ma-auto ms-sm-0"
         :src="contentData.q_file"
         alt="Question Image"
       >
@@ -92,12 +67,12 @@
         <div
           v-for="item in answers"
           :key="item.key"
-          class="d-flex align-center flex-wrap ga-3 cursor-pointer w-100 position-relative container-choice"
+          class="d-flex align-center flex-wrap ga-3 cursor-pointer position-relative container-choice"
           @click="handleAnswerSelect(item.key)"
         >
           <div
             :class="[
-              'choice-div position-absolute left-0 top-0 text-h6 text-sm-h4 text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
+              'choice-div position-absolute left-0 top-0 text-h5 text-sm-h4 font-weight-medium text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
               {
                 'border-grey200': getChoiceStatus(item.key) === 'default',
                 'border-success': getChoiceStatus(item.key) === 'success',
@@ -130,7 +105,7 @@
             </v-icon>
           </div>
           <div
-            class="text-h6 text-sm-h4 choise-text text-grey800 overflow-x-auto overflow-y-hidden"
+            class="text-h5 text-sm-h4 font-weight-semibold choise-text text-grey800 overflow-x-auto overflow-y-hidden"
             v-html="item.text"
           />
           <img
@@ -159,16 +134,16 @@
       />
     </div>
 
-    <div class="w-100 d-flex align-center justify-start mt-6">
+    <div class="w-100 d-flex align-center justify-center mt-6">
       <v-btn
         :disabled="!nextTestId && !ssrNextTestId"
         :loading="nextTestLoading"
-        color="info"
-        rounded="lg"
+        color="primary"
+        rounded="pill"
         flat
         :to="`/test/${ssrNextTest ? ssrNextTestId : nextTestId}`"
       >
-        <span class="text-h5 font-weight-bold text-white">
+        <span class="text-h5 font-weight-medium text-grey800 pl-5 pr-5">
           {{ buttonNextText }}
         </span>
       </v-btn>
@@ -246,6 +221,49 @@ const isStartProcessShowAnswer = ref(false)
 
 const nextTestId = ref()
 const nextTestLoading = ref(false)
+
+const chipClass = 'text-subtitle-1 px-3'
+const chipTextClass = 'text-grey500 text-h6 text-sm-h5'
+
+const chips = computed(() => {
+  const data = props.contentData
+
+  return [{
+    title: data.section_title,
+    params: {
+      type: 'paper',
+      section: data.section,
+    },
+  },
+  {
+    title: data.base_title,
+    params: {
+      type: 'paper',
+      section: data.section,
+      base: data.base,
+    },
+  },
+  {
+    title: data.lesson_title,
+    params: {
+      type: 'paper',
+      section: data.section,
+      base: data.base,
+      lesson: data.lesson,
+    },
+  },
+  {
+    title: data.topic_title,
+    params: {
+      type: 'paper',
+      section: data.section,
+      base: data.base,
+      lesson: data.lesson,
+      topic: data.topic,
+    },
+  },
+  ].filter(chip => chip.title)
+})
 
 const completeSuccessCoinAnimation = () => {
   isStartSuccessAnimation.value = false

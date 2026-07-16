@@ -9,28 +9,27 @@
       class="w-100 d-flex flex-column bg-white pa-6 rounded-xl overflow-y-auto mobile-style"
       @click="clickOnModal"
     >
-      <v-row>
-        <v-col cols="6">
-          <span class="text-h3">{{ title }}</span>
-        </v-col>
-        <v-col
-          cols="6"
-          class="d-flex align-center justify-end ga-2"
+      <div class="w-100 d-flex align-center justify-space-between">
+        <div class="d-flex flex-column align-start justify-start ga-1">
+          <span class="modal-title text-h5 text-sm-h3 font-weight-bold text-grey700">{{ title }}</span>
+          <span
+            v-if="subtitle"
+            class="text-subtitle-1 text-sm-h6 font-weight-medium text-grey400"
+          >{{ subtitle }}</span>
+        </div>
+        <v-icon
+          class="ml-4"
+          size="x-large"
+          color="grey300"
+          @click="closeModal"
         >
-          <v-icon
-            class="ml-4"
-            size="x-large"
-            color="#D0D5DD"
-            @click="closeModal"
-          >
-            md:cancel
-          </v-icon>
-        </v-col>
-      </v-row>
+          md:cancel
+        </v-icon>
+      </div>
 
-      <v-row>
+      <div class="w-100 d-flex">
         <slot />
-      </v-row>
+      </div>
     </div>
   </v-dialog>
 </template>
@@ -40,6 +39,7 @@ import { useDisplay } from 'vuetify'
 
 interface IModalBase {
   title: string
+  subtitle?: string
   showDialog?: boolean
   maxWidth?: number
 }
@@ -47,6 +47,7 @@ interface IModalBase {
 const props = withDefaults(defineProps<IModalBase>(), {
   showDialog: false,
   maxWidth: 400,
+  subtitle: '',
 })
 
 const { mdAndUp } = useDisplay()
@@ -76,6 +77,10 @@ const clickOnModal = (event: MouseEvent) => {
 <style>
 .mobile-style{
   max-height: 90%;
+}
+.modal-title {
+  line-height: 1.3 !important;
+  padding-bottom: 2px;
 }
 .ck ol, .ck ul{
   padding-left : 24px !important;
