@@ -2,12 +2,8 @@
   <div
     class="w-100 d-flex flex-wrap flex-column bg-white pa-2"
   >
-    <common-google-login-button
-      @login-successfull="emit('loginSuccessfull')"
-    />
-
     <span
-      class="w-100 font-weight-medium text-h5 text-grey700 mt-6 text-start"
+      class="w-100 font-weight-medium text-h5 text-grey700 mt-4 text-start"
     >Please enter the code received on your email address:</span>
 
     <v-otp-input

@@ -2,10 +2,12 @@
   <div
     class="w-100 d-flex flex-wrap flex-column bg-white pa-2"
   >
-    <common-google-login-button @login-successfull="emit('loginSuccessfull')" />
-
-    <v-form v-model="isFormValid">
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
+    <v-form
+      v-model="isFormValid"
+      class="w-100"
+      @submit.prevent="loginUser"
+    >
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-2 mb-4">
         <div class="text-h6 text-grey700 font-weight-bold ml-2">
           Email
         </div>
@@ -14,8 +16,10 @@
           rounded="lg"
           height="48"
           placeholder="Email"
+          type="email"
           variant="outlined"
-          autocomplete="off"
+          autocomplete="email"
+          hide-details="auto"
           persistent-clear
           base-color="grey200"
           color="primary"
@@ -36,7 +40,8 @@
           height="48"
           placeholder="Password"
           variant="outlined"
-          autocomplete="off"
+          autocomplete="current-password"
+          hide-details="auto"
           persistent-clear
           base-color="grey200"
           color="primary"
@@ -51,64 +56,57 @@
           @click:append-inner="showCurrentPassword = !showCurrentPassword"
         />
       </div>
-    </v-form>
 
-    <span
-      class="w-100 font-weight-medium text-h5 text-grey700 mt-4 text-start cursor-pointer"
-      @click="emit('openForgetPassword')"
-    >Forget password?</span>
+      <div class="w-100 d-flex justify-end mt-1">
+        <v-btn
+          type="button"
+          variant="text"
+          color="primary"
+          density="compact"
+          class="px-0 text-h6 font-weight-bold"
+          @click="emit('openForgetPassword')"
+        >
+          Forgot password?
+        </v-btn>
+      </div>
 
-    <v-divider
-      :thickness="2"
-      class="border-opacity-100 mt-8"
-      color="grey200"
-    />
-    <span
-      class="w-100 font-weight-medium text-h5 text-grey700 mt-4 text-center cursor-pointer"
-      @click="emit('openRegister')"
-    >Not registered? <span class="text-primary font-weight-bold">Register now
-    </span>
-    </span>
-    <v-divider
-      :thickness="2"
-      class="border-opacity-100 mt-4"
-      color="grey200"
-    />
-
-    <div class="w-100 d-flex justify-center align-center ga-2 mt-4">
       <v-btn
-        color="grey200"
-        variant="outlined"
-        rounded="pill"
-        height="38"
-        width="120"
-        class="text-h5 font-weight-medium"
-        flat
-        @click="emit('close')"
-      >
-        <span class="text-grey800">
-          Cancel
-        </span>
-      </v-btn>
-      <v-btn
+        type="submit"
+        block
         color="primary"
         rounded="pill"
-        height="38"
-        width="180"
-        class="text-h5 text-grey800 font-weight-medium"
+        height="44"
+        class="mt-2 text-h5 text-grey800 font-weight-bold"
         flat
         :disabled="!isFormValid"
         :loading="loadingLogin"
-        @click="loginUser"
       >
-        Login
+        Sign in
       </v-btn>
+    </v-form>
+
+    <div class="w-100 d-flex align-center ga-3 my-4">
+      <v-divider color="grey200" />
+      <span class="text-h6 text-grey500">or</span>
+      <v-divider color="grey200" />
     </div>
+
+    <common-google-login-button @login-successfull="emit('loginSuccessfull')" />
+
+    <v-btn
+      variant="text"
+      color="grey700"
+      class="mt-3 text-h6 font-weight-medium text-none"
+      @click="emit('openRegister')"
+    >
+      New to GamaTrain?
+      <span class="ml-1 text-primary font-weight-bold">Create account</span>
+    </v-btn>
   </div>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(['loginSuccessfull', 'openRegister', 'openForgetPassword', 'openOtpCode', 'close'])
+const emit = defineEmits(['loginSuccessfull', 'openRegister', 'openRegisterOtp', 'openForgetPassword', 'openOtpCode', 'close'])
 
 const { $toast } = useNuxtApp()
 const { email, required } = useValidationRules()
@@ -132,7 +130,8 @@ const loginUser = async () => {
       emit('openOtpCode', emailUser.value, password.value)
     }
     else if (response.data.type == 'register') {
-      emit('openRegister')
+      $toast.success('Verification code sent.')
+      emit('openRegisterOtp', emailUser.value)
     }
     else if (response.data.token) {
       setUserToken(response.data.token)

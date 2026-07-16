@@ -3,6 +3,18 @@ import type { GoogleLoginTokenDTO } from '@/types'
 export const useGoogleLogin = () => {
   const loading = ref(true)
   const error = ref<Error | null>(null)
+  let resizeObserver: ResizeObserver | null = null
+  let resizeFrame: number | null = null
+
+  const stopResponsiveRendering = () => {
+    resizeObserver?.disconnect()
+    resizeObserver = null
+
+    if (resizeFrame !== null) {
+      cancelAnimationFrame(resizeFrame)
+      resizeFrame = null
+    }
+  }
 
   const loadScript = () => {
     return new Promise<boolean>((resolve, reject) => {
@@ -57,12 +69,47 @@ export const useGoogleLogin = () => {
         auto_select: true,
       })
 
-      window.google.accounts.id.renderButton(buttonEl, {
-        text: 'signin_with',
-        size: 'large',
-        width: 252,
-        theme: 'outline',
-      })
+      let renderedWidth = 0
+      const renderButton = () => {
+        const availableWidth
+          = buttonEl.parentElement?.clientWidth || buttonEl.clientWidth
+
+        if (!availableWidth) {
+          return
+        }
+
+        const nextWidth = Math.min(Math.floor(availableWidth), 400)
+        if (nextWidth === renderedWidth) {
+          return
+        }
+
+        renderedWidth = nextWidth
+        buttonEl.replaceChildren()
+        window.google.accounts.id.renderButton(buttonEl, {
+          text: 'signin_with',
+          size: 'large',
+          shape: 'pill',
+          width: nextWidth,
+          theme: 'outline',
+        })
+      }
+
+      renderButton()
+
+      if (buttonEl.parentElement && 'ResizeObserver' in window) {
+        stopResponsiveRendering()
+        resizeObserver = new ResizeObserver(() => {
+          if (resizeFrame !== null) {
+            cancelAnimationFrame(resizeFrame)
+          }
+
+          resizeFrame = requestAnimationFrame(() => {
+            resizeFrame = null
+            renderButton()
+          })
+        })
+        resizeObserver.observe(buttonEl.parentElement)
+      }
     }
     catch (e) {
       error.value = e as Error
@@ -72,6 +119,8 @@ export const useGoogleLogin = () => {
       loading.value = false
     }
   }
+
+  onScopeDispose(stopResponsiveRendering)
 
   return {
     loading,

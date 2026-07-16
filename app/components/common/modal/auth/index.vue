@@ -2,11 +2,12 @@
   <div v-if="dialogModel">
     <lazy-common-modal-base
       v-model:show-dialog="showLoginModal"
-      title="Login"
+      title="Sign in"
     >
       <common-modal-auth-login
         @login-successfull="handleLoginSuccessfull"
         @open-register="openRegisterModal"
+        @open-register-otp="openOTPModalForRegister"
         @open-forget-password="openForgetPasswordModal"
         @open-otp-code="openOTPModalForLogin"
         @close="closeAuthFlow"
