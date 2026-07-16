@@ -1,8 +1,8 @@
 <template>
-  <div class="w-100 d-flex align-center justify-center">
+  <div class="google-login-container w-100 d-flex align-center justify-center">
     <div
       v-show="googleLoginLoading || loadingLoginByGoogle"
-      class="login-google py-2 px-3"
+      class="login-google px-3"
     >
       <v-progress-circular
         color="primary"
@@ -17,6 +17,7 @@
     <div
       v-show="!googleLoginLoading && !loadingLoginByGoogle"
       ref="googleLoginBtn"
+      class="google-login-button w-100"
     />
   </div>
 </template>
@@ -70,7 +71,17 @@ onMounted(() => {
 
 <style scoped>
 .login-google{
+  width: 100%;
+  min-height: 44px;
   border : 1px solid rgb(var(--v-theme-grey200));
-  border-radius: 4px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.google-login-container,
+.google-login-button {
+  min-height: 44px;
 }
 </style>

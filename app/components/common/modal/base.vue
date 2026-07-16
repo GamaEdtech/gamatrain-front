@@ -11,7 +11,7 @@
     >
       <div class="w-100 d-flex align-center justify-space-between">
         <div class="d-flex flex-column align-start justify-start ga-1">
-          <span class="text-h5 text-sm-h3 font-weight-bold text-grey700">{{ title }}</span>
+          <span class="modal-title text-h5 text-sm-h3 font-weight-bold text-grey700">{{ title }}</span>
           <span
             v-if="subtitle"
             class="text-subtitle-1 text-sm-h6 font-weight-medium text-grey400"
@@ -77,6 +77,10 @@ const clickOnModal = (event: MouseEvent) => {
 <style>
 .mobile-style{
   max-height: 90%;
+}
+.modal-title {
+  line-height: 1.3 !important;
+  padding-bottom: 2px;
 }
 .ck ol, .ck ul{
   padding-left : 24px !important;
