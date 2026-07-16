@@ -85,7 +85,7 @@
                 Reply
               </span> -->
       </div>
-      <span class="text-grey700 font-weight-regular"> {{ $dayjs(comment.creationDate).format("MM/DD/YYYY") }} </span>
+      <span class="text-grey700 font-weight-regular"> {{ formatLocal(comment.creationDate, "MM/DD/YYYY") }} </span>
     </div>
 
     <!-- <div
@@ -170,7 +170,8 @@ const props = defineProps<ICardComment>()
 const emit = defineEmits(['likeSuccessfull', 'dislikeSuccessfull'])
 
 const router = useRouter()
-const { $toast, $dayjs } = useNuxtApp()
+const { $toast } = useNuxtApp()
+const { formatLocal } = useDateTime()
 const auth = useAuth()
 const { like, loadingLikeItem, dislike, loadingDislikeItem } = useBlogComment()
 

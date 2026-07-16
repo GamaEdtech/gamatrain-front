@@ -176,7 +176,7 @@
           <div
             class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
           >
-            {{ $dayjs(item.registrationDate).format("DD/MM/YYYY HH:mm:ss") }}
+            {{ formatLocal(item.registrationDate, "DD/MM/YYYY HH:mm:ss") }}
           </div>
         </template>
 
@@ -334,7 +334,7 @@ definePageMeta({
 })
 
 const { loadingGetData: loading, data: list, getData, totalCount, pageCount, deleteItem, loadingDeleteItem, toggleStatus, loadingToggleStatus } = useUserManagerAdmin()
-const { $dayjs } = useNuxtApp()
+const { formatLocal } = useDateTime()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
