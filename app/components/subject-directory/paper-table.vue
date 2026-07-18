@@ -400,7 +400,6 @@
     :is-processing="isLoading || isProcessingPayment"
     :user-balance="balance"
     :amount-to-pay="PRICE_FILE"
-    @confirm="handleCoinPaymentConfirm"
     @close="handleCoinPaymentClose"
   />
 
@@ -482,6 +481,7 @@ const props = defineProps({
 const emit = defineEmits(['loadNextPageData'])
 
 const nuxtApp = useNuxtApp()
+const { downloadFile } = useDownload()
 
 onMounted(() => {
   checkScreenSize()
@@ -522,90 +522,13 @@ const downloadProgress = ref({})
 const downloadingItems = ref(new Set())
 const auth = useAuth()
 const router = useRouter()
-const { balance, isLoading, fetchBalance, consumeCoins } = useCoinBalance()
+const { balance, isLoading } = useCoinBalance()
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
 const isStartWalletAnimation = ref(false)
 const downloadIssue = ref(false)
 const downloadIssueLink = ref('')
-
-// For 2025 files, only these file types require coins:
-// - Mark schemes/answer files (a_file)
-// - Extra files (audio, additional resources)
-// - Question papers (q_word, q_pdf) remain FREE
-const requiresCoinPaymentForFile = (type, item) => {
-  const paidTestTypes = [
-    '8691', '7130', '6897', '8073', '8344',
-  ]
-
-  const paidLessons = [
-    '6649', '6527', '6650', '6526',
-    '6651', '6529', '6652', '6532',
-    '6653', '6516', '6654', '6515',
-    '6655', '6519', '6656', '6522',
-  ]
-
-  if (item.year === '2026') {
-    return true
-  }
-  else if (item.edu_year === '2026') {
-    return true
-  }
-  else if (paidTestTypes.some(id => item.testType?.includes(id)))
-    return true
-  else if (type === 'extra')
-    return true
-  else if (
-    type === 'a_file'
-    && (
-      item.year === '2025'
-      || paidLessons.some(id => item.lesson?.includes(id))
-    )
-  ) {
-    return true
-  }
-  else if (
-    type === 'a_file'
-    && (
-      item.edu_year === '2025'
-      || paidLessons.some(id => item.lesson?.includes(id))
-    )
-  ) {
-    return true
-  }
-
-  return false
-}
-
-const handleCoinPaymentConfirm = async (item) => {
-  showCoinPaymentModal.value = false
-  isProcessingPayment.value = true
-
-  try {
-    const response = await consumeCoins(
-      PRICE_FILE,
-      'PastPaper',
-      item.id,
-      'Past paper download',
-    )
-    if (response.succeeded) {
-      showCoinAnimation.value = true
-      // Wait for animation to complete before starting download
-      // The download will be triggered in handleAnimationComplete
-    }
-    else {
-      $toast.error('Failed to process payment. Please try again.')
-    }
-  }
-  catch (error) {
-    console.error('Error processing coin payment:', error)
-    $toast.error('Payment failed. Please try again.')
-  }
-  finally {
-    isProcessingPayment.value = false
-  }
-}
 
 const handleCoinPaymentClose = () => {
   showCoinPaymentModal.value = false
@@ -618,60 +541,34 @@ const handleAnimationComplete = async () => {
 }
 
 const completeWalletAnimation = () => {
+  downloadIssue.value = true
   isStartWalletAnimation.value = false
 }
 
 const handleDownload = async (type, item) => {
   const downloadKey = `${item.id}-${type}`
 
-  // Set loading state
   downloadingItems.value.add(downloadKey)
   downloadProgress.value[downloadKey] = 0
-  if (requiresCoinPaymentForFile(type, item)) {
-    if (auth.isAuthenticated.value) {
-      const balanceResult = await fetchBalance()
-      if (!balanceResult.succeeded) {
-        downloadingItems.value.delete(downloadKey)
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete downloadProgress.value[downloadKey]
-        $toast.error('Failed to fetch balance. Please try again.')
-        return
-      }
-      if ((Number(balanceResult.data) / 10 ** 6) > 5) {
-        handleCoinPaymentConfirm(item)
-        startDownload(type, item, downloadKey)
-      }
-      else {
-        downloadingItems.value.delete(downloadKey)
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete downloadProgress.value[downloadKey]
-        showCoinPaymentModal.value = true
-      }
-    }
-    else {
-      downloadingItems.value.delete(downloadKey)
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete downloadProgress.value[downloadKey]
-      router.push({})
-      setTimeout(() => {
-        router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
-      }, 100)
-    }
+  if (auth.isAuthenticated.value) {
+    startDownload(type, item, downloadKey)
   }
   else {
-    startDownload(type, item, downloadKey)
+    downloadingItems.value.delete(downloadKey)
+    Reflect.deleteProperty(downloadProgress.value, downloadKey)
+    router.push({})
+    setTimeout(() => {
+      router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
+    }, 100)
   }
 }
 
 const startDownload = async (type, item, downloadKey) => {
-  let apiUrl = ''
-  if (type === 'q_word') apiUrl = `/api/v1/tests/download/${item.id}/word`
-  if (type === 'q_pdf') apiUrl = `/api/v1/tests/download/${item.id}/pdf`
-  if (type === 'a_file') apiUrl = `/api/v1/tests/download/${item.id}/answer`
+  let extraId = undefined
   if (type === 'sf_file')
-    apiUrl = `/api/v1/tests/download/${item.id}/extra/${item.sf_file_id}`
+    extraId = item.sf_file_id
   if (type === 'in_file')
-    apiUrl = `/api/v1/tests/download/${item.id}/extra/${item.in_file_id}`
+    extraId = item.in_file_id
 
   try {
     // Simulate progressive loading for API call
@@ -681,51 +578,74 @@ const startDownload = async (type, item, downloadKey) => {
       }
     }, 100)
 
-    const response = await useApiService.get(apiUrl)
+    const response = await downloadFile({
+      contentType: 'PastPaper',
+      fileType: type,
+      id: Number(item.id),
+      extraId: extraId ? Number(extraId) : undefined,
+    })
 
     // Update progress to 60% after API response
     downloadProgress.value[downloadKey] = 60
     clearInterval(progressInterval)
 
     // Create a custom fetch with progress tracking
-    const xhr = new XMLHttpRequest()
-    xhr.open('GET', response.data.url, true)
-    xhr.responseType = 'blob'
+    if (response.succeeded && response.data) {
+      if (response.data.url) {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', response.data.url, true)
+        xhr.responseType = 'blob'
 
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentComplete = 60 + (event.loaded / event.total) * 40
-        downloadProgress.value[downloadKey] = Math.min(percentComplete, 100)
-      }
-    }
+        xhr.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percentComplete = 60 + (event.loaded / event.total) * 40
+            downloadProgress.value[downloadKey] = Math.min(percentComplete, 100)
+          }
+        }
 
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        downloadProgress.value[downloadKey] = 100
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            downloadProgress.value[downloadKey] = 100
 
-        // Use file-saver to save the blob
-        import('file-saver').then(({ saveAs }) => {
-          saveAs(xhr.response, response.data.name)
-        })
+            const blob = xhr.response
+            const url = window.URL.createObjectURL(blob)
 
-        downloadIssueLink.value = response.data?.url || ''
-        downloadIssue.value = true
-        // Clean up after a short delay
-        setTimeout(() => {
+            const a = document.createElement('a')
+            a.href = url
+            a.download = response.data?.name || 'file.pdf'
+            document.body.appendChild(a)
+            a.click()
+
+            a.remove()
+            window.URL.revokeObjectURL(url)
+            downloadIssueLink.value = response.data?.url || ''
+            if (!response.data?.spent) {
+              showCoinAnimation.value = true
+            }
+
+            setTimeout(() => {
+              downloadingItems.value.delete(downloadKey)
+              Reflect.deleteProperty(downloadProgress.value, downloadKey)
+            }, 1000)
+          }
+        }
+
+        xhr.onerror = () => {
           downloadingItems.value.delete(downloadKey)
-          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-          delete downloadProgress.value[downloadKey]
-        }, 1000)
+          Reflect.deleteProperty(downloadProgress.value, downloadKey)
+          $toast.error('Download failed. Please try again.')
+        }
+
+        xhr.send()
+      }
+      if (response.data.upgradeSuggestions.length > 0) {
+        showCoinPaymentModal.value = true
       }
     }
-
-    xhr.onerror = () => {
+    else {
       downloadingItems.value.delete(downloadKey)
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-      delete downloadProgress.value[downloadKey]
+      Reflect.deleteProperty(downloadProgress.value, downloadKey)
     }
-
-    xhr.send()
   }
   catch (err) {
     // Clean up on error
