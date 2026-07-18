@@ -10,6 +10,7 @@
         variant="flat"
         :class="chipClass"
         color="grey100"
+        :size="smAndUp ? 'large' : 'small'"
         :to="{
           path: '/search',
           query: chip.params,
@@ -21,12 +22,6 @@
       </v-chip>
     </div>
     <div class="w-100 d-flex align-center mt-4">
-      <div
-        v-if="showTitle"
-        class="text-h4 font-weight-bold text-grey600"
-      >
-        Question:
-      </div>
       <div
         v-if="contentData.answer_full.length > 0"
         class="w-100 d-flex align-center justify-end"
@@ -50,7 +45,7 @@
       class="container-question w-100 d-flex flex-column align-start justift-start mt-6"
     >
       <div
-        class="text-h5 text-sm-h4 text-grey700 font-weight-regular"
+        class="test-text text-grey700 font-weight-semibold"
         v-html="contentData.question"
       />
       <img
@@ -72,7 +67,7 @@
         >
           <div
             :class="[
-              'choice-div position-absolute left-0 top-0 text-h5 text-sm-h4 font-weight-medium text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
+              'choice-div font-weight-regular text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
               {
                 'border-grey200': getChoiceStatus(item.key) === 'default',
                 'border-success': getChoiceStatus(item.key) === 'success',
@@ -105,7 +100,7 @@
             </v-icon>
           </div>
           <div
-            class="text-h5 text-sm-h4 font-weight-semibold choise-text text-grey800 overflow-x-auto overflow-y-hidden"
+            class="test-text font-weight-regular choise-text text-grey800 overflow-x-auto overflow-y-hidden"
             v-html="item.text"
           />
           <img
@@ -134,19 +129,22 @@
       />
     </div>
 
-    <div class="w-100 d-flex align-center justify-center mt-6">
-      <v-btn
-        :disabled="!nextTestId && !ssrNextTestId"
-        :loading="nextTestLoading"
-        color="primary"
-        rounded="pill"
-        flat
-        :to="`/test/${ssrNextTest ? ssrNextTestId : nextTestId}`"
-      >
-        <span class="text-h5 font-weight-medium text-grey800 pl-5 pr-5">
-          {{ buttonNextText }}
-        </span>
-      </v-btn>
+    <div class="w-100 d-flex align-center justify-center justify-sm-start mt-6">
+      <div class="w-100 w-sm-25">
+        <v-btn
+          :disabled="!nextTestId && !ssrNextTestId"
+          :loading="nextTestLoading"
+          color="primary"
+          rounded="pill"
+          block
+          flat
+          :to="`/test/${ssrNextTest ? ssrNextTestId : nextTestId}`"
+        >
+          <span class="text-h5 font-weight-medium text-grey800">
+            {{ buttonNextText }}
+          </span>
+        </v-btn>
+      </div>
     </div>
 
     <lazy-test-success-coin-animation
@@ -178,12 +176,12 @@
 
 <script setup lang="ts">
 import type { QuestionDTO, NextQuestionDTO, ApiResult, TestTimeDTO, AppError } from '@/types'
+import { useDisplay } from 'vuetify/lib/composables/display.mjs'
 
 interface ITestDetail {
   contentData: QuestionDTO
   buttonNextText?: string
   showChips?: boolean
-  showTitle?: boolean
   ssrNextTest?: boolean
   ssrNextTestId?: string
 }
@@ -222,8 +220,10 @@ const isStartProcessShowAnswer = ref(false)
 const nextTestId = ref()
 const nextTestLoading = ref(false)
 
+const { smAndUp } = useDisplay()
+
 const chipClass = 'text-subtitle-1 px-3'
-const chipTextClass = 'text-grey500 text-h6 text-sm-h5'
+const chipTextClass = 'text-grey500 text-h6 text-sm-h5 font-weight-regular'
 
 const chips = computed(() => {
   const data = props.contentData
@@ -441,16 +441,26 @@ const loadNextTest = async () => {
   max-width: 100%;
 }
 .container-choice{
-  min-height: 30px;
+  min-height: 24px;
 }
 .choice-div{
-  min-width : 30px;
-  min-height: 30px;
-  max-width : 30px;
-  max-height: 30px;
+  min-width : 24px;
+  min-height: 24px;
+  max-width : 24px;
+  max-height: 24px;
+  font-size: 1.4rem;
 }
 .choise-text{
-  text-indent: 40px;
   line-height: 34px;
+}
+
+.test-text {
+  font-size: 1.6rem;
+}
+
+@media only screen and (min-width: 600px) {
+  .test-text {
+    font-size: 1.8rem;
+  }
 }
 </style>
