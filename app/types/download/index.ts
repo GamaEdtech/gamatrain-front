@@ -13,4 +13,9 @@ export interface DownloadResponseDTO {
   name: string
   spent: boolean
   paidBy: PaidByDownloadResponseDTO
+  upgradeSuggestions: {
+    subscriptionPlanId: number
+    title: string
+    limit: number
+  }[]
 }

@@ -21,8 +21,9 @@ export const useDownload = () => {
       )
 
       if (response.succeeded && response.data?.url) {
-        const FileSaver = await import('file-saver')
-        FileSaver.saveAs(response.data.url, response.data.name)
+        console.log('okay')
+        // const FileSaver = await import('file-saver')
+        // FileSaver.saveAs(response.data.url, response.data.name)
       }
       else {
         if (response.errors && response.errors.length > 0) {
@@ -43,7 +44,7 @@ export const useDownload = () => {
       return {
         succeeded: false,
         message: 'The operation failed. Please try again later.',
-        data: {},
+        data: null,
       }
     }
     finally {

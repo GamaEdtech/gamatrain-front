@@ -207,7 +207,6 @@
       :is-processing="isLoading || isProcessingPayment"
       :user-balance="balance"
       :amount-to-pay="PRICE_FILE"
-      @confirm="handleCoinPaymentConfirm"
       @close="handleCoinPaymentClose"
     />
 
@@ -253,8 +252,6 @@
 
 <script setup lang="ts">
 import type {
-  ApiResult,
-  PDFResponseDTO,
   AppError,
   FilesDTO,
 } from '@/types'
@@ -287,10 +284,10 @@ const { $toast } = useNuxtApp()
 const { trackFileDownload } = useGtmEvents()
 const auth = useAuth()
 const router = useRouter()
-const route = useRoute()
 const { xs } = useDisplay()
 
-const { balance, isLoading, fetchBalance, consumeCoins } = useCoinBalance()
+const { balance, isLoading } = useCoinBalance()
+const { downloadFile } = useDownload()
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
@@ -306,36 +303,16 @@ const handleDownloadClick = async (type: TypeFile, extraId?: string) => {
   // Set loading state and progress tracking
   downloadingItems.value.add(downloadKey)
   downloadProgress.value[downloadKey] = 0
-  if (requiresCoinPaymentForFile(type)) {
-    if (auth.isAuthenticated.value) {
-      const balanceResult = await fetchBalance()
-      if (!balanceResult.succeeded) {
-        $toast.error('Failed to fetch balance. Please try again.')
-        downloadingItems.value.delete(downloadKey)
-        Reflect.deleteProperty(downloadProgress.value, downloadKey)
-        return
-      }
-
-      pendingDownload.value = { type, extraId }
-      if (Number(balanceResult.data) > 5) {
-        handleCoinPaymentConfirm()
-        startDownload(type, extraId)
-      }
-      else {
-        showCoinPaymentModal.value = true
-      }
-    }
-    else {
-      downloadingItems.value.delete(downloadKey)
-      Reflect.deleteProperty(downloadProgress.value, downloadKey)
-      router.push({})
-      setTimeout(() => {
-        router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
-      }, 100)
-    }
+  if (auth.isAuthenticated.value) {
+    startDownload(type, extraId)
   }
   else {
-    startDownload(type, extraId)
+    downloadingItems.value.delete(downloadKey)
+    Reflect.deleteProperty(downloadProgress.value, downloadKey)
+    router.push({})
+    setTimeout(() => {
+      router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
+    }, 100)
   }
 }
 
@@ -362,83 +339,83 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
 
   const downloadKey = extraId ? `${type}-${extraId}` : type
 
-  let apiUrl = ''
-  if (type === 'q_word') {
-    apiUrl = `/api/v1/tests/download/${props.id}/word`
-  }
-  if (type === 'q_pdf') {
-    apiUrl = `/api/v1/tests/download/${props.id}/pdf`
-  }
-  if (type === 'a_file') {
-    apiUrl = `/api/v1/tests/download/${props.id}/answer`
-  }
-  if (type === 'extra') {
-    apiUrl = `/api/v1/tests/download/${props.id}/extra/${extraId}`
-  }
-
   try {
     // Simulate progressive loading for API call
     const progressInterval = setInterval(() => {
-      if (downloadProgress.value[downloadKey] < 50) {
-        downloadProgress.value[downloadKey] += Math.random() * 15
+      const currentProgress = downloadProgress.value[downloadKey] ?? 0
+      if (currentProgress < 50) {
+        downloadProgress.value[downloadKey] = currentProgress + Math.random() * 15
       }
     }, 100)
 
-    const response = await useApiService.get<ApiResult<PDFResponseDTO>>(apiUrl)
+    const response = await downloadFile({
+      contentType: 'PastPaper',
+      fileType: type,
+      id: Number(props.id),
+      extraId: extraId ? Number(extraId) : undefined,
+    })
 
     // Update progress to 60% after API response
     downloadProgress.value[downloadKey] = 60
     clearInterval(progressInterval)
 
     // Create a custom fetch with progress tracking
-    const xhr = new XMLHttpRequest()
-    xhr.open('GET', response.data!.url!, true)
-    xhr.responseType = 'blob'
+    if (response.succeeded && response.data) {
+      if (response.data.url) {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', response.data.url, true)
+        xhr.responseType = 'blob'
 
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentComplete = 60 + (event.loaded / event.total) * 40
-        downloadProgress.value[downloadKey] = Math.min(percentComplete, 100)
-      }
-    }
-
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        downloadProgress.value[downloadKey] = 100
-
-        const blob = xhr.response
-        const url = window.URL.createObjectURL(blob)
-
-        const a = document.createElement('a')
-        a.href = url
-        a.download = response.data?.name || 'file.pdf'
-        document.body.appendChild(a)
-        a.click()
-
-        a.remove()
-        window.URL.revokeObjectURL(url)
-
-        if (requiresCoinPaymentForFile(type)) {
-          $toast.success('Download started! 5 coins deducted from your balance.')
+        xhr.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percentComplete = 60 + (event.loaded / event.total) * 40
+            downloadProgress.value[downloadKey] = Math.min(percentComplete, 100)
+          }
         }
 
-        downloadIssueLink.value = response.data?.url || ''
-        downloadIssue.value = true
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            downloadProgress.value[downloadKey] = 100
 
-        setTimeout(() => {
+            const blob = xhr.response
+            const url = window.URL.createObjectURL(blob)
+
+            const a = document.createElement('a')
+            a.href = url
+            a.download = response.data?.name || 'file.pdf'
+            document.body.appendChild(a)
+            a.click()
+
+            a.remove()
+            window.URL.revokeObjectURL(url)
+            downloadIssueLink.value = response.data?.url || ''
+            if (!response.data?.spent) {
+              showCoinAnimation.value = true
+            }
+
+            setTimeout(() => {
+              downloadingItems.value.delete(downloadKey)
+              Reflect.deleteProperty(downloadProgress.value, downloadKey)
+            }, 1000)
+          }
+        }
+
+        xhr.onerror = () => {
           downloadingItems.value.delete(downloadKey)
           Reflect.deleteProperty(downloadProgress.value, downloadKey)
-        }, 1000)
+          $toast.error('Download failed. Please try again.')
+        }
+
+        xhr.send()
+      }
+      if (response.data.upgradeSuggestions.length > 0) {
+        showCoinPaymentModal.value = true
       }
     }
-
-    xhr.onerror = () => {
+    else {
       downloadingItems.value.delete(downloadKey)
       Reflect.deleteProperty(downloadProgress.value, downloadKey)
-      $toast.error('Download failed. Please try again.')
     }
-
-    xhr.send()
   }
   catch (error: unknown) {
     const err = error as AppError
@@ -469,75 +446,6 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
   }
 }
 
-// For 2025 files, only these file types require coins:
-// - Mark schemes/answer files (a_file)
-// - Extra files (audio, additional resources)
-// - Question papers (q_word, q_pdf) remain FREE
-const requiresCoinPaymentForFile = (type: TypeFile) => {
-  const paidTestTypes = [
-    '8691', '7130', '6897', '8073', '8344',
-  ]
-
-  const paidLessons = [
-    '6649', '6527', '6650', '6526',
-    '6651', '6529', '6652', '6532',
-    '6653', '6516', '6654', '6515',
-    '6655', '6519', '6656', '6522',
-  ]
-
-  if (props.year === '2026') {
-    return true
-  }
-  else if (props.section === '8674' || props.section === '9130')
-    return true
-  else if (paidTestTypes.some(id => props.testType.includes(id)))
-    return true
-  else if (type === 'extra')
-    return true
-  else if (
-    type === 'a_file'
-    && (
-      props.year === '2025'
-      || paidLessons.some(id => props.lesson.includes(id))
-    )
-  ) {
-    return true
-  }
-
-  return false
-}
-
-const handleCoinPaymentConfirm = async () => {
-  if (!pendingDownload.value) return
-
-  showCoinPaymentModal.value = false
-  isProcessingPayment.value = true
-
-  try {
-    const response = await consumeCoins(
-      PRICE_FILE,
-      'PastPaper',
-      route.params.id as unknown as number,
-      'Past paper download',
-    )
-    if (response.succeeded) {
-      // showCoinAnimation.value = true
-      // Wait for animation to complete before starting download
-      // The download will be triggered in handleAnimationComplete
-    }
-    else {
-      $toast.error('Failed to process payment. Please try again.')
-    }
-  }
-  catch (error) {
-    console.error('Error processing coin payment:', error)
-    $toast.error('Payment failed. Please try again.')
-  }
-  finally {
-    isProcessingPayment.value = false
-  }
-}
-
 const handleCoinPaymentClose = () => {
   showCoinPaymentModal.value = false
   if (pendingDownload.value) {
@@ -552,21 +460,14 @@ const handleCoinPaymentClose = () => {
 
 const handleAnimationComplete = async () => {
   // Close everything immediately when animation completes
+  downloadIssue.value = true
   showCoinAnimation.value = false
-
-  if (pendingDownload.value) {
-    await startDownload(
-      pendingDownload.value.type,
-      pendingDownload.value.extraId,
-    )
-    pendingDownload.value = null
-  }
 }
 
 const startExam = () => {
   if (auth.isAuthenticated.value) {
     if (props.exams && props.exams.length > 0) {
-      router.push(`/exam/start/${props.exams[0].id}`)
+      router.push(`/exam/start/${props.exams[0]?.id}`)
     }
   }
   else {
