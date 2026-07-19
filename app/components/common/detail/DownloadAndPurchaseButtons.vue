@@ -32,12 +32,12 @@
         color="#2e90fa35"
         flat
         height="42"
-        :loading="isDownloading('q_word')"
-        @click="handleDownloadClick('q_word')"
+        :loading="isDownloading('word')"
+        @click="handleDownloadClick('word')"
       >
         <template #loader>
           <v-progress-circular
-            :model-value="getDownloadProgress('q_word')"
+            :model-value="getDownloadProgress('word')"
             color="#2e90fa"
             size="24"
             width="3"
@@ -64,12 +64,12 @@
         color="#f0443835"
         flat
         height="42"
-        :loading="isDownloading('q_pdf')"
-        @click="handleDownloadClick('q_pdf')"
+        :loading="isDownloading('pdf')"
+        @click="handleDownloadClick('pdf')"
       >
         <template #loader>
           <v-progress-circular
-            :model-value="getDownloadProgress('q_pdf')"
+            :model-value="getDownloadProgress('pdf')"
             color="#f04438"
             size="24"
             width="3"
@@ -96,12 +96,12 @@
         color="#00808035"
         flat
         height="42"
-        :loading="isDownloading('a_file')"
-        @click="handleDownloadClick('a_file')"
+        :loading="isDownloading('answer')"
+        @click="handleDownloadClick('answer')"
       >
         <template #loader>
           <v-progress-circular
-            :model-value="getDownloadProgress('a_file')"
+            :model-value="getDownloadProgress('answer')"
             color="#008080"
             size="24"
             width="3"
@@ -212,7 +212,6 @@
 
     <!-- Coin Consumption Animation -->
     <lazy-common-coin-consumption-animation
-      v-if="showCoinAnimation"
       v-model:is-visible="showCoinAnimation"
       @animation-complete="handleAnimationComplete"
     />
@@ -252,7 +251,6 @@
 
 <script setup lang="ts">
 import type {
-  AppError,
   FilesDTO,
 } from '@/types'
 import { useDisplay } from 'vuetify'
@@ -275,7 +273,7 @@ interface IDownloadAndPurchaseButtons {
   testType: string
 }
 
-type TypeFile = 'q_word' | 'q_pdf' | 'a_file' | 'extra'
+type TypeFile = 'word' | 'pdf' | 'answer' | 'extra'
 
 const PRICE_FILE = 5
 const props = defineProps<IDownloadAndPurchaseButtons>()
@@ -338,10 +336,11 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
   })
 
   const downloadKey = extraId ? `${type}-${extraId}` : type
+  let progressInterval: ReturnType<typeof setInterval> | null = null
 
   try {
     // Simulate progressive loading for API call
-    const progressInterval = setInterval(() => {
+    progressInterval = setInterval(() => {
       const currentProgress = downloadProgress.value[downloadKey] ?? 0
       if (currentProgress < 50) {
         downloadProgress.value[downloadKey] = currentProgress + Math.random() * 15
@@ -358,6 +357,7 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
     // Update progress to 60% after API response
     downloadProgress.value[downloadKey] = 60
     clearInterval(progressInterval)
+    progressInterval = null
 
     // Create a custom fetch with progress tracking
     if (response.succeeded && response.data) {
@@ -389,8 +389,11 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
             a.remove()
             window.URL.revokeObjectURL(url)
             downloadIssueLink.value = response.data?.url || ''
-            if (!response.data?.spent) {
+            if (response.data?.spent) {
               showCoinAnimation.value = true
+            }
+            else {
+              downloadIssue.value = true
             }
 
             setTimeout(() => {
@@ -408,7 +411,7 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
 
         xhr.send()
       }
-      if (response.data.upgradeSuggestions.length > 0) {
+      if (response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
         showCoinPaymentModal.value = true
       }
     }
@@ -418,31 +421,15 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
     }
   }
   catch (error: unknown) {
-    const err = error as AppError
-    // Clean up on error
+    console.error('Download failed:', error)
     downloadingItems.value.delete(downloadKey)
     Reflect.deleteProperty(downloadProgress.value, downloadKey)
-
-    if (err.response?.status === 403) {
-      $toast.error('Access denied. Insufficient permissions.')
-    }
-    else if (err.response?.status === 400) {
-      if (
-        err.response.data?.status === 0
-        && err.response.data?.error === 'creditNotEnough'
-      ) {
-        $toast.info('No enough credit')
-      }
-      else {
-        $toast.error('Invalid request. Please try again.')
-      }
-    }
-    else {
-      $toast.error('Download failed. Please try again.')
-    }
+    $toast.error('Download failed. Please try again.')
   }
   finally {
-    // Reset loading state
+    if (progressInterval) {
+      clearInterval(progressInterval)
+    }
   }
 }
 

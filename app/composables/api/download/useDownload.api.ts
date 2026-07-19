@@ -10,7 +10,9 @@ const loadingDownload = ref(false)
 export const useDownload = () => {
   const { $toast } = useNuxtApp()
 
-  const downloadFile = async (params: BodyRequestDownloadDTO,
+  const downloadFile = async (
+    params: BodyRequestDownloadDTO,
+    shouldDownload = false,
   ) => {
     loadingDownload.value = true
 
@@ -21,9 +23,10 @@ export const useDownload = () => {
       )
 
       if (response.succeeded && response.data?.url) {
-        console.log('okay')
-        // const FileSaver = await import('file-saver')
-        // FileSaver.saveAs(response.data.url, response.data.name)
+        if (shouldDownload) {
+          const FileSaver = await import('file-saver')
+          FileSaver.saveAs(response.data.url, response.data.name)
+        }
       }
       else {
         if (response.errors && response.errors.length > 0) {
