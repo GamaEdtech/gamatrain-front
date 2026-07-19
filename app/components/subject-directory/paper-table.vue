@@ -53,36 +53,36 @@
             class="ma-1 chip-pill position-relative"
             color="#F04438"
             :disabled="!item.q_file"
-            @click="handleDownload('q_pdf', item)"
+            @click="handleDownload('pdf', item)"
           >
-            <template v-if="isDownloading(item, 'q_pdf')">
+            <template v-if="isDownloading(item, 'pdf')">
               <v-progress-circular
-                :model-value="getDownloadProgress(item, 'q_pdf')"
+                :model-value="getDownloadProgress(item, 'pdf')"
                 size="20"
                 width="2"
                 color="white"
                 class="position-absolute"
               />
             </template>
-            <span :class="{ 'text-transparent': isDownloading(item, 'q_pdf') }">qp</span>
+            <span :class="{ 'text-transparent': isDownloading(item, 'pdf') }">qp</span>
           </v-chip>
           <v-chip
             small
             class="ma-1 chip-pill position-relative"
             color="#12B76A"
             :disabled="!item.a_file"
-            @click="handleDownload('a_file', item)"
+            @click="handleDownload('answer', item)"
           >
-            <template v-if="isDownloading(item, 'a_file')">
+            <template v-if="isDownloading(item, 'answer')">
               <v-progress-circular
-                :model-value="getDownloadProgress(item, 'a_file')"
+                :model-value="getDownloadProgress(item, 'answer')"
                 size="20"
                 width="2"
                 color="white"
                 class="position-absolute"
               />
             </template>
-            <span :class="{ 'text-transparent': isDownloading(item, 'a_file') }">ms</span>
+            <span :class="{ 'text-transparent': isDownloading(item, 'answer') }">ms</span>
           </v-chip>
 
           <v-chip
@@ -225,11 +225,11 @@
                   class="chip-pill position-relative"
                   color="#F04438"
                   :disabled="!item.q_file"
-                  @click="handleDownload('q_pdf', item)"
+                  @click="handleDownload('pdf', item)"
                 >
-                  <template v-if="isDownloading(item, 'q_pdf')">
+                  <template v-if="isDownloading(item, 'pdf')">
                     <v-progress-circular
-                      :model-value="getDownloadProgress(item, 'q_pdf')"
+                      :model-value="getDownloadProgress(item, 'pdf')"
                       size="16"
                       width="2"
                       color="white"
@@ -238,7 +238,7 @@
                   </template>
                   <span
                     :class="{
-                      'text-transparent': isDownloading(item, 'q_pdf'),
+                      'text-transparent': isDownloading(item, 'pdf'),
                     }"
                   >qp</span>
                 </v-chip>
@@ -248,11 +248,11 @@
                   class="chip-pill position-relative"
                   color="#12B76A"
                   :disabled="!item.a_file"
-                  @click="handleDownload('a_file', item)"
+                  @click="handleDownload('answer', item)"
                 >
-                  <template v-if="isDownloading(item, 'a_file')">
+                  <template v-if="isDownloading(item, 'answer')">
                     <v-progress-circular
-                      :model-value="getDownloadProgress(item, 'a_file')"
+                      :model-value="getDownloadProgress(item, 'answer')"
                       size="16"
                       width="2"
                       color="white"
@@ -261,7 +261,7 @@
                   </template>
                   <span
                     :class="{
-                      'text-transparent': isDownloading(item, 'a_file'),
+                      'text-transparent': isDownloading(item, 'answer'),
                     }"
                   >ms</span>
                 </v-chip>
@@ -580,7 +580,7 @@ const startDownload = async (type, item, downloadKey) => {
 
     const response = await downloadFile({
       contentType: 'PastPaper',
-      fileType: type,
+      fileType: type == 'in_file' || type == 'sf_file' ? 'extra' : type,
       id: Number(item.id),
       extraId: extraId ? Number(extraId) : undefined,
     })
@@ -619,8 +619,11 @@ const startDownload = async (type, item, downloadKey) => {
             a.remove()
             window.URL.revokeObjectURL(url)
             downloadIssueLink.value = response.data?.url || ''
-            if (!response.data?.spent) {
+            if (response.data?.spent) {
               showCoinAnimation.value = true
+            }
+            else {
+              downloadIssue.value = true
             }
 
             setTimeout(() => {
@@ -638,7 +641,7 @@ const startDownload = async (type, item, downloadKey) => {
 
         xhr.send()
       }
-      if (response.data.upgradeSuggestions.length > 0) {
+      if (response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
         showCoinPaymentModal.value = true
       }
     }
@@ -648,20 +651,10 @@ const startDownload = async (type, item, downloadKey) => {
     }
   }
   catch (err) {
-    // Clean up on error
+    console.error('Download failed:', err)
     downloadingItems.value.delete(downloadKey)
-    // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-    delete downloadProgress.value[downloadKey]
-
-    if (err.response?.status === 400) {
-      if (
-        err.response.data?.status === 0
-        && err.response.data?.error === 'creditNotEnough'
-      ) {
-        // useToast().info("No enough credit");
-      }
-    }
-    console.error(err)
+    Reflect.deleteProperty(downloadProgress.value, downloadKey)
+    $toast.error('Download failed. Please try again.')
   }
 }
 
