@@ -157,6 +157,53 @@
         />
       </v-col>
     </v-row>
+
+    <!-- Coin Payment Modal -->
+    <lazy-modals-coin-payment-modal
+      v-if="showCoinPaymentModal"
+      v-model:show-dialog="showCoinPaymentModal"
+      :is-processing="isLoading"
+      :user-balance="balance"
+      :amount-to-pay="5"
+      @close="showCoinPaymentModal = false"
+    />
+
+    <!-- Coin Consumption Animation -->
+    <lazy-common-coin-consumption-animation
+      v-model:is-visible="showCoinAnimation"
+      @animation-complete="handleAnimationComplete"
+    />
+
+    <v-dialog
+      v-model="downloadIssue"
+      max-width="600"
+    >
+      <v-card class="pa-4">
+        <v-card-title class="text-h4">
+          Your download is ready and saved on your device!
+        </v-card-title>
+        <v-card-text>
+          <p>
+            If the file doesn't save to your device, click here to open it in a new tab and download it manually.
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn
+            color="primary"
+            :href="downloadIssueLink"
+            target="_blank"
+          >
+            Show file in new tab
+          </v-btn>
+          <v-btn
+            text
+            @click="downloadIssue = false"
+          >
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -167,6 +214,7 @@ const router = useRouter()
 const auth = useAuth()
 const user = useUser()
 const { $toast } = useNuxtApp()
+const { downloadFile } = useDownload()
 const requestURL = ref(useRequestURL().host)
 // Component data
 const contentData = ref({})
@@ -361,7 +409,13 @@ const copyUrl = () => {
   copy_btn.value = 'Copied'
 }
 
-const startDownload = async () => {
+const { balance, isLoading } = useCoinBalance()
+const showCoinPaymentModal = ref(false)
+const showCoinAnimation = ref(false)
+const downloadIssue = ref(false)
+const downloadIssueLink = ref('')
+
+const startDownload = async (type) => {
   download_loading.value = true
   isDownloading.value = true
   downloadProgress.value = 0
@@ -374,49 +428,75 @@ const startDownload = async () => {
       }
     }, 100)
 
-    const response = await useApiService.get(
-      `/api/v1/exams/download/${route.params.id}`,
-    )
+    const response = await downloadFile({
+      contentType: 'Exam',
+      fileType: type,
+      id: Number(route.params.id),
+    })
 
     // Update progress to 60% after API response
     downloadProgress.value = 60
     clearInterval(progressInterval)
 
-    // Create a custom fetch with progress tracking
-    const xhr = new XMLHttpRequest()
-    xhr.open('GET', response.data.url, true)
-    xhr.responseType = 'blob'
+    if (response.succeeded && response.data) {
+      if (response.data.url) {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', response.data.url, true)
+        xhr.responseType = 'blob'
 
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentComplete = 60 + (event.loaded / event.total) * 40
-        downloadProgress.value = Math.min(percentComplete, 100)
-      }
-    }
+        xhr.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percentComplete = 60 + (event.loaded / event.total) * 40
+            downloadProgress.value = Math.min(percentComplete, 100)
+          }
+        }
 
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        downloadProgress.value = 100
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            downloadProgress.value = 100
 
-        // Use file-saver to save the blob
-        import('file-saver').then(({ saveAs }) => {
-          saveAs(xhr.response, response.data.name)
-        })
+            const blob = xhr.response
+            const url = window.URL.createObjectURL(blob)
 
-        // Clean up after a short delay
-        setTimeout(() => {
+            const a = document.createElement('a')
+            a.href = url
+            a.download = response.data?.name || 'file.pdf'
+            document.body.appendChild(a)
+            a.click()
+
+            a.remove()
+            window.URL.revokeObjectURL(url)
+            downloadIssueLink.value = response.data?.url || ''
+            if (response.data?.spent) {
+              showCoinAnimation.value = true
+            }
+            else {
+              downloadIssue.value = true
+            }
+
+            setTimeout(() => {
+              isDownloading.value = false
+              downloadProgress.value = 0
+            }, 1000)
+          }
+        }
+
+        xhr.onerror = () => {
           isDownloading.value = false
           downloadProgress.value = 0
-        }, 1000)
+          $toast.error('Download failed. Please try again.')
+        }
+
+        xhr.send()
+      }
+      if (response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
+        showCoinPaymentModal.value = true
       }
     }
-
-    xhr.onerror = () => {
+    else {
       isDownloading.value = false
       downloadProgress.value = 0
     }
-
-    xhr.send()
   }
   catch (err) {
     // Clean up on error
@@ -435,6 +515,12 @@ const startDownload = async () => {
   finally {
     download_loading.value = false
   }
+}
+
+const handleAnimationComplete = async () => {
+  // Close everything immediately when animation completes
+  showCoinAnimation.value = false
+  downloadIssue.value = true
 }
 
 const openCrashReportDialog = () => {
