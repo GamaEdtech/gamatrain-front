@@ -89,13 +89,13 @@ const addOptions: AddOption[] = [
     typeFile: 'PDF · DOCX',
   },
   {
-    path: '/user/multimedia/create',
+    path: '/user/multimedia/create?contentType=Video',
     title: 'Video',
     iconMd: 'md:videocam',
     typeFile: 'MP4',
   },
   {
-    path: '/user/multimedia/create',
+    path: '/user/multimedia/create?contentType=PowerPoint',
     title: 'Presentation',
     iconMd: 'md:slideshow',
     typeFile: 'PPTX',

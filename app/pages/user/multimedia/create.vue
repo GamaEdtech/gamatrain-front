@@ -151,6 +151,7 @@
               :defalut-lable="false"
               :has-search="false"
               :rules="[required]"
+              :find-by-title="true"
             />
           </div>
 
@@ -318,6 +319,7 @@ const { uploadFile, loadingUploadFile } = useUpload()
 const { addItem, loadingAddItem } = useMultimedia()
 const { $toast } = useNuxtApp()
 const router = useRouter()
+const route = useRoute()
 
 const isFormValid = ref(false)
 const multimediaFile = ref<File | File[] | null>(null)
@@ -409,12 +411,26 @@ const submitMultimedia = async () => {
   }
 }
 
+const applyQueryDefaults = async () => {
+  if (route.query.contentType) {
+    multimedia.value.content_type = route.query.contentType as string
+  }
+}
+
 onMounted(async () => {
   await Promise.all([
     getBoards(),
     getExtraTypeFile('content_type'),
   ])
+  await applyQueryDefaults()
 })
+
+watch(
+  () => route.query,
+  async () => {
+    await applyQueryDefaults()
+  },
+)
 </script>
 
 <style scoped>
