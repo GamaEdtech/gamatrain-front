@@ -35,7 +35,7 @@
           class="text-h6"
           icon="md:question_mark"
           :disabled="isPaymentComplete"
-          @click="openPaymentMdoal"
+          @click="openPaymentModal"
         />
       </div>
     </div>
@@ -45,7 +45,10 @@
       class="container-question w-100 d-flex flex-column align-start justift-start mt-6"
     >
       <div
-        class="test-text text-grey700 font-weight-semibold"
+        :class="[
+          'test-text text-grey700 font-weight-semibold',
+          { 'test-text-sm': smAndUp },
+        ]"
         v-html="contentData.question"
       />
       <img
@@ -100,7 +103,10 @@
             </v-icon>
           </div>
           <div
-            class="test-text font-weight-regular choise-text text-grey800 overflow-x-auto overflow-y-hidden"
+            :class="[
+              'test-text font-weight-regular choice-text text-grey800 overflow-x-auto overflow-y-hidden',
+              { 'test-text-sm': smAndUp },
+            ]"
             v-html="item.text"
           />
           <img
@@ -119,12 +125,12 @@
       class="w-100 mt-4 d-flex flex-column align-start justify-start px-2 px-sm-8"
     >
       <div
-        class="text-h4 font-weight-bold text-grey600"
+        :class="['test-text font-weight-bold text-grey600', { 'test-text-sm': smAndUp }]"
       >
         Solution:
       </div>
       <div
-        class="text-h6 text-sm-h4 text-grey800 mt-4"
+        :class="['test-text text-grey800 mt-4', { 'test-text-sm': smAndUp }]"
         v-html="contentData.answer_full"
       />
     </div>
@@ -364,7 +370,7 @@ onMounted(async () => {
   }
 })
 
-const openPaymentMdoal = async () => {
+const openPaymentModal = async () => {
   if (auth.isAuthenticated.value) {
     showCoinPaymentModal.value = true
   }
@@ -440,17 +446,17 @@ const loadNextTest = async () => {
   width: auto;
   max-width: 100%;
 }
-.container-choice{
+.container-choice {
   min-height: 24px;
 }
-.choice-div{
+.choice-div {
   min-width : 24px;
   min-height: 24px;
   max-width : 24px;
   max-height: 24px;
   font-size: 1.4rem;
 }
-.choise-text{
+.choice-text {
   line-height: 34px;
 }
 
@@ -458,9 +464,7 @@ const loadNextTest = async () => {
   font-size: 1.6rem;
 }
 
-@media only screen and (min-width: 600px) {
-  .test-text {
-    font-size: 1.8rem;
-  }
+.test-text-sm {
+  font-size: 1.8rem;
 }
 </style>
