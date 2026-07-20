@@ -8,7 +8,7 @@
       @click="openModalDownloadMobile = false"
     />
     <div
-      :class="`w-100 d-flex flex-column flex-sm-row flex-wrap align-start justify-start justify-sm-space-between ga-2 pa-8 pa-sm-0 ${
+      :class="`w-100 d-flex flex-column flex-sm-row flex-wrap align-start justify-start justify-sm-space-between ga-2 py-8 px-4 pa-sm-0 ${
         xs ? `mobile-style-bottom-sheet` : ``
       } ${openModalDownloadMobile ? `set-bottom` : ``}`"
     >
@@ -51,10 +51,10 @@
         </v-icon>
         <span class="text-word text-h5 font-weight-bold mt-1 mx-2">Download Question Doc</span>
 
-        <!-- <span
-          v-if="requiresCoinPaymentForFile(`q_word`)"
+        <span
+          v-if="files.word.price && files.word.price !=0"
           class="text-word text-h5 font-weight-bold mt-1"
-        >5 <span class="text-h6 font-weight-normal">$GET</span></span> -->
+        >{{ files.word.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
       </v-btn>
 
       <v-btn
@@ -83,10 +83,10 @@
         </v-icon>
         <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download Question Paper</span>
 
-        <!-- <span
-          v-if="requiresCoinPaymentForFile(`q_pdf`)"
-          class="text-pdf text-h4 font-weight-bold mt-1"
-        >5 <span class="text-h5 font-weight-normal">$GET</span></span> -->
+        <span
+          v-if="files.pdf.price && files.pdf.price != 0"
+          class="text-pdf text-h5 font-weight-bold mt-1"
+        >{{ files.pdf.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
       </v-btn>
 
       <v-btn
@@ -114,10 +114,10 @@
             : `Download Mark Scheme`
         }}</span>
 
-        <!-- <span
-          v-if="requiresCoinPaymentForFile(`a_file`)"
+        <span
+          v-if="files.answer.price && files.answer.price != 0"
           class="text-answer text-h5 font-weight-bold mt-1"
-        >5 <span class="text-h6 font-weight-normal">$GET</span></span> -->
+        >{{ files.answer.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
       </v-btn>
 
       <template v-if="files.extra && files.extra.length > 0">
@@ -150,10 +150,10 @@
 
           <span class="text-extra text-h5 font-weight-bold mt-1 mx-2">Download {{ extra.type_title ? extra.type_title : "Extra" }}</span>
 
-          <!-- <span
-            v-if="requiresCoinPaymentForFile(`extra`)"
+          <span
+            v-if="extra.price && extra.price != 0"
             class="text-extra text-h5 font-weight-bold mt-1"
-          >5 <span class="text-h6 font-weight-normal">$GET</span></span> -->
+          >{{ extra.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
         </v-btn>
       </template>
 
