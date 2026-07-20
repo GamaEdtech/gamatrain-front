@@ -48,6 +48,11 @@ export const useDownload = () => {
         succeeded: false,
         message: 'The operation failed. Please try again later.',
         data: null,
+        errors: [
+          {
+            message: 'The operation failed. Please try again later.',
+          },
+        ],
       }
     }
     finally {

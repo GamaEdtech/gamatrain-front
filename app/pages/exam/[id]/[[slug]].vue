@@ -474,6 +474,12 @@ const startDownload = async (type) => {
       }
     }
     else {
+      if (response.errors && response.errors.length > 0) {
+        const messgage = response.errors[0].message
+        if (messgage == 'InsufficientBalance') {
+          showCoinPaymentModal.value = true
+        }
+      }
       isDownloading.value = false
       downloadProgress.value = 0
     }
