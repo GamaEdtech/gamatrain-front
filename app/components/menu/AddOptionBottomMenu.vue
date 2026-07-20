@@ -59,27 +59,31 @@ interface AddOption {
   iconMd?: string
 }
 
+const { user } = useUser()
+const defaultBoardId = 6627
+const userBoardId = user.value?.board ? user.value?.board : defaultBoardId
+
 const addOptions: AddOption[] = [
   {
-    path: '/user/paper/create',
+    path: `/user/paper/create?board=${userBoardId}&classification=Worksheet`,
     title: 'Worksheet',
     iconMd: 'md:description_outlined',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: '/user/paper/create',
+    path: `/user/paper/create?board=${userBoardId}&classification=Predicted-Paper`,
     title: 'Predicted Paper',
     icon: 'icon-paper',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: '/user/paper/create',
+    path: `/user/paper/create?board=${userBoardId}&classification=Study-and-Revision-Guide`,
     title: 'Study Guide',
     iconMd: 'md:menu_book',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: '/user/paper/create',
+    path: `/user/paper/create?board=${userBoardId}&classification=Topical`,
     title: 'Topical Questions',
     iconMd: 'md:quiz_outlined',
     typeFile: 'PDF · DOCX',
