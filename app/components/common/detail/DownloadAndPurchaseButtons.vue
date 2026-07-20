@@ -217,36 +217,16 @@
     />
   </div>
 
-  <v-dialog
-    v-model="downloadIssue"
-    max-width="600"
+  <lazy-common-modal-base
+    v-model:show-dialog="downloadIssue"
+    :max-width="600"
+    title="Download"
   >
-    <v-card class="pa-4">
-      <v-card-title class="text-h4">
-        Your download is ready and saved on your device!
-      </v-card-title>
-      <v-card-text>
-        <p>
-          If the file doesn't save to your device, click here to open it in a new tab and download it manually.
-        </p>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn
-          color="primary"
-          :href="downloadIssueLink"
-          target="_blank"
-        >
-          Show file in new tab
-        </v-btn>
-        <v-btn
-          text
-          @click="downloadIssue = false"
-        >
-          Close
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <lazy-common-modal-download-file
+      :link="downloadIssueLink"
+      @close="downloadIssue = false"
+    />
+  </lazy-common-modal-base>
 </template>
 
 <script setup lang="ts">
