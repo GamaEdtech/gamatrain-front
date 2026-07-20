@@ -26,8 +26,8 @@
     <div
       v-if="!seeCompleteDescription"
       class="blur-div position-absolute h-100 w-100 left-0 bottom-0"
+      v-html="contentData?.description"
     />
-    {{ contentData?.description }}
   </div>
   <span
     class="w-100 cursor-pointer text-h5 d-flex align-center color-link ga-1 mt-1"
