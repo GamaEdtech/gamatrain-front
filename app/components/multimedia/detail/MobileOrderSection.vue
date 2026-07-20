@@ -3,7 +3,7 @@
     class="order-btn-holder d-block d-md-none"
     width="100%"
   >
-    <v-card-text class="pb-0">
+    <v-card-text class="pb-0 mb-16">
       <v-row class="px-10 text-center">
         <v-col
           cols="12"
