@@ -81,7 +81,7 @@
           <div
             class="text-grey700 text-h6 d-flex justify-center align-center font-weight-bold text-center ga-1"
           >
-            {{ $numberFormat(item.points) }}<span class="text-subtitle-1 text-grey500 font-weight-regular">Points</span>
+            {{ $numberFormat(item.points) }}<span class="text-subtitle-1 text-grey500 font-weight-regular">GEM</span>
           </div>
         </template>
         <template #[`item.isDebit`]="{ item }">
