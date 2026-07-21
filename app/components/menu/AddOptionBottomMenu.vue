@@ -22,7 +22,7 @@
             {{ item.iconMd }}
           </v-icon>
         </div>
-        <span class="card-option-title w-100 text-center text-grey700 text-h6 font-weight-bold mt-1">{{ item.title }}</span>
+        <span class="card-option-title w-100 text-center text-grey700 text-h6 px-1 font-weight-bold mt-1">{{ item.title }}</span>
 
         <span class="text-center text-subtitle-2 font-weight-bold text-grey500 px-2 rounded-pill bg-grey100 chip-type-file">
           {{ item.typeFile }}
@@ -133,9 +133,9 @@ watch(
   max-width : 370px
 }
 .card-add-option{
-  width : 30%;
+  width : 31%;
   max-width : 120px;
-  height : 112px;
+  height : 130px;
   padding-top: 8px;
   border : 1px solid rgb(var(--v-theme-grey200));
   transition: 0.3s;
@@ -156,14 +156,6 @@ watch(
   border : 1px solid rgb(var(--v-theme-primary100))
 }
 
-@media only screen and (max-width: 599.98px) {
-  .card-option-title {
-    padding-inline: 8px;
-    font-size: calc(1.25rem - 1px) !important;
-    line-height: 1.25rem;
-  }
-}
-
 @media only screen and (min-width: 960px) {
   .container-card {
     max-width: 480px;
@@ -171,10 +163,6 @@ watch(
 
   .card-add-option {
     max-width: 144px;
-  }
-
-  .card-option-title {
-    padding-inline: 8px;
   }
 }
 </style>
