@@ -24,9 +24,12 @@
     }`"
   >
     <div
-      v-if="!seeCompleteDescription"
-      class="blur-div position-absolute h-100 w-100 left-0 bottom-0"
       v-html="contentData?.description"
+    />
+
+    <div
+      v-if="!seeCompleteDescription"
+      class="blur-div position-absolute left-0 bottom-0 w-100"
     />
   </div>
   <span
@@ -140,6 +143,7 @@ const seeCompleteDescription = ref(false)
   overflow: hidden;
 }
 .blur-div {
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #ffffff 80%);
+  height: 40px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%,#ffffff 80%);
 }
 </style>
