@@ -33,7 +33,7 @@
         flat
         height="42"
         :loading="isDownloading('word')"
-        @click="handleDownloadClick('word')"
+        @click="handleDownloadClick('word', files.word.price)"
       >
         <template #loader>
           <v-progress-circular
@@ -65,7 +65,7 @@
         flat
         height="42"
         :loading="isDownloading('pdf')"
-        @click="handleDownloadClick('pdf')"
+        @click="handleDownloadClick('pdf', files.pdf.price)"
       >
         <template #loader>
           <v-progress-circular
@@ -97,7 +97,7 @@
         flat
         height="42"
         :loading="isDownloading('answer')"
-        @click="handleDownloadClick('answer')"
+        @click="handleDownloadClick('answer', files.answer.price)"
       >
         <template #loader>
           <v-progress-circular
@@ -130,7 +130,7 @@
           flat
           height="42"
           :loading="isDownloading('extra', extra.id)"
-          @click="handleDownloadClick('extra', extra.id)"
+          @click="handleDownloadClick('extra', extra.price, extra.id)"
         >
           <template #loader>
             <v-progress-circular
@@ -206,7 +206,7 @@
       v-model:show-dialog="showCoinPaymentModal"
       :is-processing="isLoading || isProcessingPayment"
       :user-balance="balance"
-      :amount-to-pay="PRICE_FILE"
+      :amount-to-pay="5"
       @close="handleCoinPaymentClose"
     />
 
@@ -214,6 +214,13 @@
     <lazy-common-coin-consumption-animation
       v-model:is-visible="showCoinAnimation"
       @animation-complete="handleAnimationComplete"
+    />
+
+    <lazy-test-counting-wallet-animation
+      :is-start-animation="isStartWalletAnimation"
+      :direction="-1"
+      :delta-price="priceFile"
+      @complete-animation="completeWalletAnimation"
     />
   </div>
 
@@ -255,7 +262,6 @@ interface IDownloadAndPurchaseButtons {
 
 type TypeFile = 'word' | 'pdf' | 'answer' | 'extra'
 
-const PRICE_FILE = 5
 const props = defineProps<IDownloadAndPurchaseButtons>()
 
 const { $toast } = useNuxtApp()
@@ -269,14 +275,17 @@ const { downloadFile } = useDownload()
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
+const isStartWalletAnimation = ref(false)
+const priceFile = ref(0)
 const pendingDownload = ref<{
   type: TypeFile
   extraId?: string
 } | null>(null)
 const openModalDownloadMobile = ref(false)
 
-const handleDownloadClick = async (type: TypeFile, extraId?: string) => {
+const handleDownloadClick = async (type: TypeFile, price: number, extraId?: string) => {
   const downloadKey = extraId ? `${type}-${extraId}` : type
+  priceFile.value = price
 
   // Set loading state and progress tracking
   downloadingItems.value.add(downloadKey)
@@ -433,8 +442,13 @@ const handleCoinPaymentClose = () => {
 
 const handleAnimationComplete = async () => {
   // Close everything immediately when animation completes
-  downloadIssue.value = true
   showCoinAnimation.value = false
+  isStartWalletAnimation.value = true
+}
+
+const completeWalletAnimation = () => {
+  downloadIssue.value = true
+  isStartWalletAnimation.value = false
 }
 
 const startExam = () => {
