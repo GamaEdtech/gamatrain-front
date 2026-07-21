@@ -114,7 +114,7 @@
           class="text-h5"
           @click="onLogin"
         >
-          Start Exam{{ item.price > 0 ? " | $" + item.price : "" }}
+          Start Exam{{ item.price > 0 ? " | " + item.price + " GEM" : "" }}
         </v-btn>
 
         <!-- For authenticated user -->
@@ -130,7 +130,7 @@
             Show result
           </span>
           <span v-else>
-            Start Exam{{ item.price > 0 ? " | $" + item.price : "" }}
+            Start Exam{{ item.price > 0 ? " | " + item.price + " GEM" : "" }}
           </span>
         </v-btn>
 
@@ -140,7 +140,7 @@
           color="primary"
           class="text-h5"
         >
-          Download WORD{{ item.price > 0 ? " | $" + item.price : "" }}
+          Download WORD{{ item.price > 0 ? " | " + item.price + " GEM" : "" }}
         </v-btn>
 
         <v-btn
@@ -163,15 +163,15 @@
               style="z-index: 2;"
             />
           </template>
-          <v-icon
+          <!-- <v-icon
             size="x-large"
             class="btn-icon"
             :class="{ 'text-transparent': isDownloading }"
           >
             mdi-file-pdf-box
-          </v-icon>
+          </v-icon> -->
           <span :class="{ 'text-transparent': isDownloading }">
-            Download PDF{{ item.price > 0 ? " | $" + item.price : "" }}
+            Download PDF{{ item.price > 0 ? " | " + item.price + " GEM" : "" }}
           </span>
         </v-btn>
       </v-col>
