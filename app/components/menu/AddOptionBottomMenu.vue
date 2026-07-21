@@ -6,7 +6,7 @@
         :key="item.title"
         :to="item.path"
         :aria-label="`${item.title} — ${item.typeFile}`"
-        class="card-add-option d-flex flex-column align-center justify-center text-center ga-1 rounded-xl"
+        class="card-add-option d-flex flex-column align-center justify-start text-center ga-1 rounded-xl py-4"
       >
         <div class="icon-div rounded-lg pa-2 d-flex align-center justify-center bg-primary100">
           <span
@@ -135,8 +135,6 @@ watch(
 .card-add-option{
   width : 31%;
   max-width : 120px;
-  height : 130px;
-  padding-top: 8px;
   border : 1px solid rgb(var(--v-theme-grey200));
   transition: 0.3s;
   text-decoration: none;
