@@ -65,50 +65,52 @@
         <div
           v-for="item in answers"
           :key="item.key"
-          class="d-flex align-center flex-wrap ga-3 cursor-pointer position-relative container-choice"
+          class="w-100 d-flex flex-column align-start ga-2 cursor-pointer position-relative container-choice"
           @click="handleAnswerSelect(item.key)"
         >
-          <div
-            :class="[
-              'choice-div font-weight-regular text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
-              {
-                'border-grey200': getChoiceStatus(item.key) === 'default',
-                'border-success': getChoiceStatus(item.key) === 'success',
-                'border-lightError': getChoiceStatus(item.key) === 'error',
-                'border-primary': getChoiceStatus(item.key) === 'loading',
-              },
-            ]"
-          >
-            <v-progress-circular
-              v-if="getChoiceStatus(item.key) === 'loading'"
-              color="primary"
-              size="20"
-              indeterminate
-              :width="2"
+          <div class="w-100 d-flex flex-nowrap align-start ga-3">
+            <div
+              :class="[
+                'choice-div flex-shrink-0 font-weight-regular text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
+                {
+                  'border-grey200': getChoiceStatus(item.key) === 'default',
+                  'border-success': getChoiceStatus(item.key) === 'success',
+                  'border-lightError': getChoiceStatus(item.key) === 'error',
+                  'border-primary': getChoiceStatus(item.key) === 'loading',
+                },
+              ]"
+            >
+              <v-progress-circular
+                v-if="getChoiceStatus(item.key) === 'loading'"
+                color="primary"
+                size="20"
+                indeterminate
+                :width="2"
+              />
+              <span v-else-if="getChoiceStatus(item.key) === 'default'">{{ item.key }}</span>
+
+              <v-icon
+                v-else-if="getChoiceStatus(item.key) === 'success'"
+                color="success"
+              >
+                md:check
+              </v-icon>
+
+              <v-icon
+                v-else
+                color="lightError"
+              >
+                md:close
+              </v-icon>
+            </div>
+            <div
+              :class="[
+                'test-text flex-grow-1 font-weight-regular choice-text text-grey800 overflow-x-auto overflow-y-hidden',
+                { 'test-text-sm': smAndUp },
+              ]"
+              v-html="item.text"
             />
-            <span v-else-if="getChoiceStatus(item.key) === 'default'">{{ item.key }}</span>
-
-            <v-icon
-              v-else-if="getChoiceStatus(item.key) === 'success'"
-              color="success"
-            >
-              md:check
-            </v-icon>
-
-            <v-icon
-              v-else
-              color="lightError"
-            >
-              md:close
-            </v-icon>
           </div>
-          <div
-            :class="[
-              'test-text font-weight-regular choice-text text-grey800 overflow-x-auto overflow-y-hidden',
-              { 'test-text-sm': smAndUp },
-            ]"
-            v-html="item.text"
-          />
           <img
             v-if="item.file"
             class="answer-img mt-1"
@@ -457,7 +459,8 @@ const loadNextTest = async () => {
   font-size: 1.4rem;
 }
 .choice-text {
-  line-height: 34px;
+  min-width: 0;
+  line-height: 22px;
 }
 
 .test-text {
