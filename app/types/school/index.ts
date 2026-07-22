@@ -242,3 +242,10 @@ export interface GetAdminSchoolImageIssueParams {
   pageSize: number
   status: AdminSchoolImageIssueStatus | ''
 }
+
+export interface GetAdminSchoolContributionParams {
+  page: number
+  pageSize: number
+  status: string
+  sort: string[]
+}
