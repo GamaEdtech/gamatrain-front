@@ -50,7 +50,7 @@
             </span>
             <span class="text-h5 d-flex align-end text-grey400 ga-1">
               <v-icon>md:update</v-icon>
-              {{ $dayjs(contentData?.up_date).fromNow() }}
+              {{ fromNowLocal(contentData?.up_date) }}
             </span>
 
             <v-icon color="grey400">
@@ -197,7 +197,8 @@ interface BreadCrumb {
   href: string
 }
 
-const { $dayjs, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
+const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
+const { fromNowLocal } = useDateTime()
 const { mdAndUp } = useDisplay()
 const route = useRoute()
 const router = useRouter()

@@ -254,6 +254,32 @@
         />
       </v-col>
     </v-row>
+
+    <lazy-modals-coin-payment-modal
+      v-if="showCoinPaymentModal"
+      v-model:show-dialog="showCoinPaymentModal"
+      :is-processing="isLoading"
+      :user-balance="balance"
+      :amount-to-pay="5"
+      @close="showCoinPaymentModal = false"
+    />
+
+    <!-- Coin Consumption Animation -->
+    <lazy-common-coin-consumption-animation
+      v-model:is-visible="showCoinAnimation"
+      @animation-complete="handleAnimationComplete"
+    />
+
+    <lazy-common-modal-base
+      v-model:show-dialog="downloadIssue"
+      :max-width="600"
+      title="Download"
+    >
+      <lazy-common-modal-download-file
+        :link="downloadIssueLink"
+        @close="downloadIssue = false"
+      />
+    </lazy-common-modal-base>
   </div>
 </template>
 
@@ -535,12 +561,17 @@ function openAuthDialog(val) {
   router.push({ query: { auth_form: val } })
 }
 
+const { downloadFile } = useDownload()
+const { balance, isLoading } = useCoinBalance()
+const showCoinPaymentModal = ref(false)
+const showCoinAnimation = ref(false)
+const downloadIssue = ref(false)
+const downloadIssueLink = ref('')
+
 async function startDownload(_type) {
   download_loading.value = true
   isDownloading.value = true
   downloadProgress.value = 0
-
-  const apiUrl = `/api/v1/files/download/${route.params.id}`
 
   try {
     // Simulate progressive loading for API call
@@ -550,47 +581,81 @@ async function startDownload(_type) {
       }
     }, 100)
 
-    const response = await useApiService.get(apiUrl)
+    const response = await downloadFile({
+      contentType: 'Multimedia',
+      fileType: _type,
+      id: Number(route.params.id),
+    })
 
     // Update progress to 60% after API response
     downloadProgress.value = 60
     clearInterval(progressInterval)
 
-    // Create a custom fetch with progress tracking
-    const xhr = new XMLHttpRequest()
-    xhr.open('GET', response.data.url, true)
-    xhr.responseType = 'blob'
+    if (response.succeeded && response.data) {
+      if (response.data.url) {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', response.data.url, true)
+        xhr.responseType = 'blob'
 
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentComplete = 60 + (event.loaded / event.total) * 40
-        downloadProgress.value = Math.min(percentComplete, 100)
-      }
-    }
+        xhr.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percentComplete = 60 + (event.loaded / event.total) * 40
+            downloadProgress.value = Math.min(percentComplete, 100)
+          }
+        }
 
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        downloadProgress.value = 100
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            downloadProgress.value = 100
 
-        // Use file-saver to save the blob
-        import('file-saver').then(({ saveAs }) => {
-          saveAs(xhr.response, response.data.name)
-        })
+            const blob = xhr.response
+            const url = window.URL.createObjectURL(blob)
 
-        // Clean up after a short delay
-        setTimeout(() => {
+            const a = document.createElement('a')
+            a.href = url
+            a.download = response.data?.name || 'file.pdf'
+            document.body.appendChild(a)
+            a.click()
+
+            a.remove()
+            window.URL.revokeObjectURL(url)
+            downloadIssueLink.value = response.data?.url || ''
+            if (response.data?.spent) {
+              showCoinAnimation.value = true
+            }
+            else {
+              downloadIssue.value = true
+            }
+
+            setTimeout(() => {
+              isDownloading.value = false
+              downloadProgress.value = 0
+            }, 1000)
+          }
+        }
+
+        xhr.onerror = () => {
           isDownloading.value = false
           downloadProgress.value = 0
-        }, 1000)
+          $toast.error('Download failed. Please try again.')
+        }
+
+        xhr.send()
+      }
+      if (response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
+        showCoinPaymentModal.value = true
       }
     }
-
-    xhr.onerror = () => {
+    else {
+      if (response.errors && response.errors.length > 0) {
+        const messgage = response.errors[0].message
+        if (messgage == 'InsufficientBalance') {
+          showCoinPaymentModal.value = true
+        }
+      }
       isDownloading.value = false
       downloadProgress.value = 0
     }
-
-    xhr.send()
   }
   catch (err) {
     // Clean up on error
@@ -609,6 +674,12 @@ async function startDownload(_type) {
   finally {
     download_loading.value = false
   }
+}
+
+const handleAnimationComplete = async () => {
+  // Close everything immediately when animation completes
+  showCoinAnimation.value = false
+  downloadIssue.value = true
 }
 
 function urlencodeFormData(fd) {

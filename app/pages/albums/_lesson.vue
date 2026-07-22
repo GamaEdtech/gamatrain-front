@@ -232,7 +232,7 @@
                     <v-icon class="ml-1 icon">
                       md:calendar_month
                     </v-icon>
-                    Last update: {{ $dayjs(contentData.up_date).fromNow() }}
+                    Last update: {{ fromNowLocal(contentData.up_date) }}
                   </v-col>
                   <v-col
                     cols="12"
@@ -592,6 +592,13 @@ export default {
   auth: false,
   components: {
     // Remove unused components
+  },
+  setup() {
+    const { fromNowLocal } = useDateTime()
+
+    return {
+      fromNowLocal,
+    }
   },
   async asyncData({ params, $axios }) {
     // This could also be an action dispatch

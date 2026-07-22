@@ -162,7 +162,7 @@
           <div
             class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
           >
-            {{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm:ss") }}
+            {{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm:ss") }}
           </div>
         </template>
 
@@ -299,8 +299,9 @@ definePageMeta({
   auth: true,
 })
 
-const { $dayjs } = useNuxtApp()
 const { data: list, loadingGetData, totalCount, pageCount, getData } = useSchoolContributionAdmin()
+const { $toast } = useNuxtApp()
+const { formatLocal } = useDateTime()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },

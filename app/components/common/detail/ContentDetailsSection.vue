@@ -24,18 +24,27 @@
     }`"
   >
     <div
-      v-if="!seeCompleteDescription"
-      class="blur-div position-absolute h-100 w-100 left-0 bottom-0"
+      ref="descriptionContent"
+      v-html="contentData?.description"
     />
-    {{ contentData?.description }}
+
+    <div
+      v-if="hasOverflow && !seeCompleteDescription"
+      class="blur-div position-absolute left-0 bottom-0 w-100"
+    />
   </div>
-  <span
-    class="w-100 cursor-pointer text-h5 d-flex align-center color-link ga-1 mt-1"
+  <button
+    v-if="hasOverflow"
+    type="button"
+    class="w-100 pa-0 bg-transparent border-0 text-left cursor-pointer text-h5 d-flex align-center color-link ga-1 mt-1"
+    :aria-expanded="seeCompleteDescription"
     @click="seeCompleteDescription = !seeCompleteDescription"
   >
     {{ seeCompleteDescription ? `See Less` : `See More` }}
-    <v-icon color="#1a73e8">md:chevron_forward</v-icon>
-  </span>
+    <v-icon color="#1a73e8">
+      {{ seeCompleteDescription ? 'md:keyboard_arrow_up' : 'md:keyboard_arrow_down' }}
+    </v-icon>
+  </button>
 
   <div class="w-100 d-flex align-center justify-space-between mt-8">
     <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
@@ -44,7 +53,7 @@
     </span>
     <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
       <v-icon color="#475467">md:update</v-icon>
-      {{ $dayjs(contentData?.up_date).fromNow() }}
+      {{ fromNowLocal(contentData?.up_date) }}
     </span>
   </div>
 
@@ -116,14 +125,45 @@ interface IContentDetailsSection {
   edu_year: string
 }
 
-defineProps<{
+const props = defineProps<{
   contentData: IContentDetailsSection
 }>()
 
-const { $dayjs } = useNuxtApp()
+const { fromNowLocal } = useDateTime()
 const { mdAndDown } = useDisplay()
 
 const seeCompleteDescription = ref(false)
+const descriptionContent = ref<HTMLElement | null>(null)
+const hasOverflow = ref(false)
+const collapsedDescriptionHeight = 70
+let descriptionResizeObserver: ResizeObserver | null = null
+
+function updateDescriptionOverflow() {
+  hasOverflow.value = (descriptionContent.value?.scrollHeight ?? 0) > collapsedDescriptionHeight
+}
+
+onMounted(async () => {
+  await nextTick()
+  updateDescriptionOverflow()
+
+  if (descriptionContent.value && typeof ResizeObserver !== 'undefined') {
+    descriptionResizeObserver = new ResizeObserver(updateDescriptionOverflow)
+    descriptionResizeObserver.observe(descriptionContent.value)
+  }
+})
+
+watch(
+  () => props.contentData?.description,
+  async () => {
+    seeCompleteDescription.value = false
+    await nextTick()
+    updateDescriptionOverflow()
+  },
+)
+
+onBeforeUnmount(() => {
+  descriptionResizeObserver?.disconnect()
+})
 </script>
 
 <style scoped>
@@ -136,10 +176,12 @@ const seeCompleteDescription = ref(false)
   overflow: unset;
 }
 .close-description {
-  height: 70px;
+  max-height: 70px;
   overflow: hidden;
 }
 .blur-div {
+  height: 40px;
+  pointer-events: none;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #ffffff 80%);
 }
 </style>

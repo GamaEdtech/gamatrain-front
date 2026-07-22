@@ -94,7 +94,7 @@
         <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
           <common-gombo-box
             v-model="paper.classification"
-            label="Subject"
+            label="Classification"
             :items="classifications?.map((item) => {
               return {
                 id: item.id,
