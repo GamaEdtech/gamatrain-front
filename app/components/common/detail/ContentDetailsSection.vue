@@ -53,7 +53,7 @@
     </span>
     <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
       <v-icon color="#475467">md:update</v-icon>
-      {{ $dayjs(contentData?.up_date).fromNow() }}
+      {{ fromNowLocal(contentData?.up_date) }}
     </span>
   </div>
 
@@ -129,7 +129,7 @@ const props = defineProps<{
   contentData: IContentDetailsSection
 }>()
 
-const { $dayjs } = useNuxtApp()
+const { fromNowLocal } = useDateTime()
 const { mdAndDown } = useDisplay()
 
 const seeCompleteDescription = ref(false)
