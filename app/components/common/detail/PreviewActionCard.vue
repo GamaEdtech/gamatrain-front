@@ -77,7 +77,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, PDFResponseDTO } from '@/types'
+// import type { ApiResult, PDFResponseDTO } from '@/types'
 
 interface IPreviewActionCard {
   thumbPic: string
@@ -96,10 +96,10 @@ const props = withDefaults(defineProps<IPreviewActionCard>(), {
 })
 const emit = defineEmits(['share'])
 
-const previewDialog = ref(false)
-const previewPdfUrl = ref('')
-const previewFileName = ref('')
-const previewTitle = ref('')
+// const previewDialog = ref(false)
+// const previewPdfUrl = ref('')
+// const previewFileName = ref('')
+// const previewTitle = ref('')
 
 const openWebPDF = async () => {
   if (!props.id) {
@@ -107,24 +107,24 @@ const openWebPDF = async () => {
     return
   }
 
-  try {
-    const response = await useApiService.get<ApiResult<PDFResponseDTO>>(
-      `/api/v1/tests/download/${props.id}/pdf`,
-    )
+  // try {
+  //   const response = await useApiService.get<ApiResult<PDFResponseDTO>>(
+  //     `/api/v1/tests/download/${props.id}/pdf`,
+  //   )
 
-    if (response.status === 1 && response.data?.url) {
-      previewPdfUrl.value = response.data.url
-      previewFileName.value = response.data.name || 'document.pdf'
-      previewTitle.value = props.title || 'PDF Preview'
-      previewDialog.value = true
-    }
-    else {
-      console.error('Unable to load PDF preview')
-    }
-  }
-  catch (err) {
-    console.error('Error loading PDF preview:', err)
-  }
+  //   if (response.status === 1 && response.data?.url) {
+  //     previewPdfUrl.value = response.data.url
+  //     previewFileName.value = response.data.name || 'document.pdf'
+  //     previewTitle.value = props.title || 'PDF Preview'
+  //     previewDialog.value = true
+  //   }
+  //   else {
+  //     console.error('Unable to load PDF preview')
+  //   }
+  // }
+  // catch (err) {
+  //   console.error('Error loading PDF preview:', err)
+  // }
 }
 
 const shareContent = () => {
@@ -138,8 +138,8 @@ const shareContent = () => {
   border: 1px solid #f2f4f7;
   max-width: 360px;
   height: 100%;
-  /* min-height: 400px; */
-  max-height: 500px;
+  min-height: 400px;
+  max-height: 400px;
 }
 .button-div {
   min-width: 60px;
