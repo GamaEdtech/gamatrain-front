@@ -300,7 +300,6 @@ definePageMeta({
 })
 
 const { data: list, loadingGetData, totalCount, pageCount, getData } = useSchoolContributionAdmin()
-const { $toast } = useNuxtApp()
 const { formatLocal } = useDateTime()
 
 const headers = [
