@@ -27,6 +27,7 @@
             color="primary"
             :defalut-lable="false"
             density="compact"
+            :disabled="!areMainFieldsEditable"
             :rules="[required]"
             @update:model-value="boardChange"
           />
@@ -50,7 +51,7 @@
             color="primary"
             density="compact"
             :defalut-lable="false"
-            :disabled="!paper.board || loadingGrade"
+            :disabled="!areMainFieldsEditable || !paper.board || loadingGrade"
             :rules="[required]"
             @update:model-value="gradeChange"
           />
@@ -74,7 +75,7 @@
             color="primary"
             density="compact"
             :defalut-lable="false"
-            :disabled="!paper.board || !paper.grade || loadingSubject"
+            :disabled="!areMainFieldsEditable || !paper.board || !paper.grade || loadingSubject"
             :rules="[required]"
             @update:model-value="subjectChange"
           />
@@ -91,7 +92,7 @@
                 title: item.title,
               }
             })"
-            :disabled="!paper.subject"
+            :disabled="!areMainFieldsEditable || !paper.subject"
           />
         </div>
 
@@ -113,7 +114,7 @@
             color="primary"
             density="compact"
             :defalut-lable="false"
-            :disabled="!paper.board || loadingClassification"
+            :disabled="!areMainFieldsEditable || !paper.board || loadingClassification"
           />
         </div>
 
@@ -130,6 +131,7 @@
             density="compact"
             :defalut-lable="false"
             :has-search="false"
+            :disabled="!areMainFieldsEditable"
             :rules="[required]"
           />
         </div>
@@ -147,6 +149,7 @@
             density="compact"
             :defalut-lable="false"
             :has-search="false"
+            :disabled="!areMainFieldsEditable"
           />
         </div>
 
@@ -167,6 +170,7 @@
             color="primary"
             density="compact"
             :defalut-lable="false"
+            :disabled="!areMainFieldsEditable"
             :rules="[required]"
           />
         </div>
@@ -183,6 +187,7 @@
             color="primary"
             density="compact"
             :defalut-lable="false"
+            :disabled="!areMainFieldsEditable"
             :rules="[required]"
           />
         </div>
@@ -200,6 +205,7 @@
             density="compact"
             :defalut-lable="false"
             :has-search="false"
+            :disabled="!areMainFieldsEditable"
           />
         </div>
 
@@ -216,6 +222,7 @@
             height="48"
             base-color="grey200"
             class="w-100"
+            :disabled="!areMainFieldsEditable"
             :rules="[required]"
           >
             <template #prepend-inner>
@@ -624,6 +631,13 @@ const { $toast } = useNuxtApp()
 
 const isFormValid = ref(false)
 const hasUploadInProgress = computed(() => uploadingFileKeys.value.length > 0)
+const paperStatus = ref('')
+const editableStatusList = ['0', '2', '3']
+const areMainFieldsEditable = computed(() => {
+  return paperStatus.value
+    ? editableStatusList.includes(paperStatus.value)
+    : true
+})
 
 const paper = ref<PaperForm>({
   board: '',
@@ -899,6 +913,7 @@ const subjectChange = async (subjectId: number | string) => {
 }
 
 const applyPaperData = (item: PastPaperDetailDTO) => {
+  paperStatus.value = item.status || ''
   paper.value.board = item.section || ''
   paper.value.answer_type = getNumber(item.answer_type, 0)
   paper.value.level = getNumber(item.level, 2)

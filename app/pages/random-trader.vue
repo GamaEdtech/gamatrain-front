@@ -89,7 +89,7 @@
           <div
             class="text-white text-h5 d-flex justify-start align-center font-weight-bold"
           >
-            {{ $dayjs(item.date).format("DD/MM/YYYY") }}
+            {{ formatLocal(item.date, "DD/MM/YYYY") }}
           </div>
         </template>
         <template #[`item.wallet`]="{ item }">
@@ -114,6 +114,7 @@
 
 <script setup>
 const { $toast } = useNuxtApp()
+const { formatLocal } = useDateTime()
 const winnerWallet = ref('')
 const randomCharacters
   = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

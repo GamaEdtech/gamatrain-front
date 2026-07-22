@@ -27,14 +27,11 @@ export const useAuth = () => {
   }
 
   const logout = async () => {
-    try {
-      await useApiService.get('/api/v1/users/logout', {
-        headers: `Bearer ${cookieToken.value}`,
-      })
-    }
-    catch (error) {
-      console.warn('Old backend logout API call failed:', error)
-    }
+    useApiService.get('/api/v2/legacy-auth/logout',
+    ).catch((error) => {
+      console.warn('Logout API call failed:', error)
+    })
+
     clearAuth()
 
     const { cleanUser } = useUser()

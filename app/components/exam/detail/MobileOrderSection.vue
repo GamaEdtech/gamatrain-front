@@ -3,7 +3,7 @@
     class="order-btn-holder d-block d-md-none"
     width="100%"
   >
-    <v-card-text class="pb-0">
+    <v-card-text class="pb-0 mb-16">
       <v-row class="px-10 text-center mt-1">
         <v-col
           v-for="(item, key) in examPrices"
@@ -20,7 +20,7 @@
             class="text-h6"
             @click="handleLogin"
           >
-            Start Exam{{ item.price > 0 ? " | $" + item.price : "" }}
+            Start Exam{{ item.price > 0 ? " | " + item.price + " GEM" : "" }}
           </v-btn>
 
           <!-- For authenticated user -->
@@ -34,7 +34,7 @@
           >
             <span v-if="userExamStatus === 1"> Show result </span>
             <span v-else>
-              Start Exam{{ item.price > 0 ? " | $" + item.price : "" }}
+              Start Exam{{ item.price > 0 ? " | " + item.price+ " GEM" : "" }}
             </span>
           </v-btn>
 
@@ -45,7 +45,7 @@
             class="text-h6"
             color="primary"
           >
-            Download WORD{{ item.price > 0 ? " | $" + item.price : "" }}
+            Download WORD{{ item.price > 0 ? " | " + item.price+ " GEM" : "" }}
           </v-btn>
 
           <!-- PDF download button -->
@@ -76,7 +76,7 @@
               mdi-file-pdf-box
             </v-icon>
             <span :class="{ 'text-transparent': isDownloading }">
-              Download PDF{{ item.price > 0 ? " | $" + item.price : "" }}
+              Download PDF{{ item.price > 0 ? " | " + item.price+ " GEM" : "" }}
             </span>
           </v-btn>
         </v-col>

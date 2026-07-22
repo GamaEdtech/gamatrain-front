@@ -477,7 +477,7 @@ if (initialData.value && initialData.value.succeeded) {
   position: relative;
 
   #main-title-holder {
-    background-image: url("public/images/leaderBoard-Rectangle.png");
+    background-image: url("/images/leaderBoard-Rectangle.png");
     background-position: center;
     position: absolute;
     margin: auto;
@@ -503,7 +503,7 @@ if (initialData.value && initialData.value.succeeded) {
 }
 
 #submain-title-holder {
-  background-image: url("public/images/leaderBoard-reverseRectangle.png");
+  background-image: url("/images/leaderBoard-reverseRectangle.png");
   background-position: center;
   position: absolute;
   margin: auto;

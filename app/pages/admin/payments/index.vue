@@ -221,7 +221,7 @@
           <div
             class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
           >
-            {{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm:ss") }}
+            {{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm:ss") }}
           </div>
         </template>
 
@@ -229,7 +229,7 @@
           <div
             class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
           >
-            {{ item.verifyDate ? $dayjs(item.verifyDate).format("DD/MM/YYYY HH:mm:ss") : 'Pending' }}
+            {{ item.verifyDate ? formatLocal(item.verifyDate, "DD/MM/YYYY HH:mm:ss") : 'Pending' }}
           </div>
         </template>
 
@@ -337,7 +337,8 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { $dayjs, $toast } = useNuxtApp()
+const { $toast } = useNuxtApp()
+const { formatLocal } = useDateTime()
 const { verifyPayment, loadingVerifyPayment } = usePayment()
 const {
   exportPayments,

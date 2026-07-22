@@ -124,15 +124,15 @@
                 style="z-index: 2;"
               />
             </template>
-            <v-icon
+            <!-- <v-icon
               size="x-large"
               class="btn-icon"
               :class="{ 'text-transparent': isDownloading }"
             >
               mdi-file-pdf-box
-            </v-icon>
+            </v-icon> -->
             <span :class="{ 'text-transparent': isDownloading }">
-              Download {{ fileExt.toUpperCase() }}{{ showPrice ? " | $" + price : "" }}
+              Download {{ fileExt.toUpperCase() }}{{ showPrice ? " | " + price + " GEM" : "" }}
             </span>
           </v-btn>
         </div>

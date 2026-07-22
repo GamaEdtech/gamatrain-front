@@ -10,10 +10,10 @@
         class="d-none d-lg-flex align-center"
       >
         <div
-          :class="`gama-text-subtitle1 ${
-            menuSetting.bgColor == '#fff'
-              ? 'header-username-dark'
-              : 'header-username-light'
+          :class="`text-h5 font-weight-medium mr-2 mt-1 ${
+            menuSetting.bgColor == '#FFFFFF'
+              ? 'text-grey800'
+              : 'text-white'
           }`"
         >
           {{ user?.firstName || user?.lastName }}
@@ -314,19 +314,6 @@ const logout = async () => {
 <style scoped>
 :deep(.v-list-item__prepend .v-list-item__spacer) {
   width: 16px !important;
-}
-.header-username-light {
-  color: #fff;
-  margin-top: 0.2rem;
-  min-width: 6.2rem;
-  margin-right: 1rem;
-}
-
-.header-username-dark {
-  color: #000;
-  margin-top: 0.2rem;
-  min-width: 6.2rem;
-  margin-right: 1rem;
 }
 
 .size-custom-icon {

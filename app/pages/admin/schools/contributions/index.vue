@@ -86,7 +86,7 @@
           flat
           icon
           color="info"
-          :loading="loading"
+          :loading="loadingGetData"
           @click="refreshData"
         >
           <v-icon
@@ -118,7 +118,7 @@
         :items="list"
         :items-per-page="pageSize"
         class="elevation-1 set-height-table"
-        :loading="loading"
+        :loading="loadingGetData"
         fixed-header
         hide-default-footer
       >
@@ -162,7 +162,7 @@
           <div
             class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
           >
-            {{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm:ss") }}
+            {{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm:ss") }}
           </div>
         </template>
 
@@ -285,9 +285,6 @@
 
 <script setup lang="ts">
 import type {
-  ApiResult,
-  AppError,
-  ResponseListDTO,
   AdminSchoolContributionBriefDTO,
   SchoolContributionStatus,
 } from '@/types'
@@ -302,7 +299,8 @@ definePageMeta({
   auth: true,
 })
 
-const { $dayjs, $toast } = useNuxtApp()
+const { data: list, loadingGetData, totalCount, pageCount, getData } = useSchoolContributionAdmin()
+const { formatLocal } = useDateTime()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },
@@ -328,12 +326,9 @@ const headers = [
     width: '20vw',
   },
 ]
-const list = ref<AdminSchoolContributionBriefDTO[]>([])
-const loading = ref(true)
-const totalCount = ref(0)
+
 const pageSize = ref(10)
 const page = ref(1)
-const pageCount = ref(0)
 const allPageSize = [
   { label: '10 Rows', value: 10 },
   { label: '20 Rows', value: 20 },
@@ -353,42 +348,8 @@ const sortList = [
 const showDetailModal = ref(false)
 const selectedSchool = ref()
 
-const getData = async () => {
-  loading.value = true
-  try {
-    const params: Record<string, string | number | boolean | null> = {
-      'PagingDto.PageFilter.Size': pageSize.value,
-      'PagingDto.PageFilter.Skip': (page.value - 1) * pageSize.value,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-      'Status': statusSelect.value == 'All' ? '' : statusSelect.value,
-    }
-    if (sortSelected.value && sortSelected.value.length > 0) {
-      sortSelected.value.forEach((sortOption, index) => {
-        params[`PagingDto.SortFilter[${index}].sortType`] = 'Asc'
-        params[`PagingDto.SortFilter[${index}].column`] = sortOption
-      })
-    }
-    const response = await useApiService.get<
-      ApiResult<ResponseListDTO<AdminSchoolContributionBriefDTO>>
-    >('/api/v2/admin/schools/contributions', params)
-    if (response.data) {
-      list.value = response.data.list
-      totalCount.value = response.data.totalRecordsCount
-      pageCount.value = Math.ceil(totalCount.value / pageSize.value)
-    }
-    else {
-      list.value = []
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loading.value = false
-  }
+const fetchContributions = async () => {
+  await getData({ page: page.value, pageSize: pageSize.value, status: statusSelect.value, sort: sortSelected.value })
 }
 
 const changeFilterStatus = async (status: string | number) => {
@@ -399,20 +360,20 @@ const changeFilterStatus = async (status: string | number) => {
     statusSelect.value = status as string
   }
   page.value = 1
-  await getData()
+  await fetchContributions()
 }
 
 const changePageNumber = async () => {
-  await getData()
+  await fetchContributions()
 }
 
 const changePageSize = async () => {
   page.value = 1
-  await getData()
+  await fetchContributions()
 }
 
 onMounted(async () => {
-  await getData()
+  await fetchContributions()
 })
 
 const getColorBadgeStatus = (status: SchoolContributionStatus) => {
@@ -442,7 +403,7 @@ const handleCheckboxChange = async (checked: boolean | null, item: SortOption) =
     sortSelected.value.splice(index, 1)
   }
   page.value = 1
-  await getData()
+  await fetchContributions()
 }
 
 const openDetaiModal = async (school: AdminSchoolContributionBriefDTO) => {
@@ -454,11 +415,11 @@ const changeStatusSuccessfull = async () => {
   showDetailModal.value = false
   selectedSchool.value = null
   page.value = 1
-  await getData()
+  await fetchContributions()
 }
 
 const refreshData = async () => {
-  await getData()
+  await fetchContributions()
 }
 </script>
 

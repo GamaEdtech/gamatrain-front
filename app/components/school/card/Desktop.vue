@@ -95,7 +95,7 @@
             color="grey500"
           >md:update</v-icon>
           <span class="text-grey800 font-weight-semibold">
-            {{ $dayjs(school.lastModifyDate).format("YYYY-MM-DD") }}
+            {{ formatLocal(school.lastModifyDate, "YYYY-MM-DD") }}
           </span>
         </div>
 
@@ -118,6 +118,8 @@
 
 <script setup>
 import defaultImage from '@/assets/images/default-school.png'
+
+const { formatLocal } = useDateTime()
 
 const props = defineProps({
   school: {

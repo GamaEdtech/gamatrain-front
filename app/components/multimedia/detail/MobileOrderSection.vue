@@ -3,7 +3,7 @@
     class="order-btn-holder d-block d-md-none"
     width="100%"
   >
-    <v-card-text class="pb-0">
+    <v-card-text class="pb-0 mb-16">
       <v-row class="px-10 text-center">
         <v-col
           cols="12"
@@ -28,15 +28,15 @@
                   style="z-index: 2;"
                 />
               </template>
-              <v-icon
+              <!-- <v-icon
                 size="x-large"
                 class="btn-icon"
                 :class="{ 'text-transparent': isDownloading }"
               >
                 mdi-file-pdf-box
-              </v-icon>
+              </v-icon> -->
               <span :class="{ 'text-transparent': isDownloading }">
-                Download {{ fileExt.toUpperCase() }}{{ showPrice ? " | $" + price : "" }}
+                Download {{ fileExt.toUpperCase() }}{{ showPrice ? " | " + price+ " GEM" : "" }}
               </span>
             </v-btn>
           </div>

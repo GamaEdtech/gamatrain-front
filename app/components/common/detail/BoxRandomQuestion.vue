@@ -42,7 +42,6 @@
       v-if="!loadingRandomTest && randomTestContent"
       :content-data="randomTestContent"
       :show-chips="false"
-      :show-title="false"
       button-next-text="Time to Test!"
     />
   </div>

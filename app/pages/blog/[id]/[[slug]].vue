@@ -127,7 +127,7 @@
                 md:calendar_month
               </v-icon>
               <span class="gama-text-overline">
-                {{ $dayjs(contentData.publishDate).format("YYYY-MM-DD") }}
+                {{ formatLocal(contentData.publishDate, "YYYY-MM-DD") }}
               </span>
             </div>
           </div>
@@ -219,6 +219,7 @@ import { useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 
 const { $toast, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
+const { formatLocal } = useDateTime()
 const route = useRoute()
 const blogId = route.params.id
 const { xs, sm } = useDisplay()

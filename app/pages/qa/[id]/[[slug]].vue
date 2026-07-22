@@ -395,7 +395,7 @@
                                           mdi-calendar-month
                                         </v-icon>
                                         {{
-                                          $dayjs(contentData.subdate).fromNow()
+                                          fromNowLocal(contentData.subdate)
                                         }}
                                       </v-btn>
                                       <v-btn
@@ -414,7 +414,8 @@
                                           mdi-clock-time-five-outline
                                         </v-icon>
                                         {{
-                                          $dayjs(contentData.subdate).format(
+                                          formatLocal(
+                                            contentData.subdate,
                                             "HH:mm",
                                           )
                                         }}
@@ -851,7 +852,7 @@
                                         >
                                           mdi-calendar-month
                                         </v-icon>
-                                        {{ $dayjs(answer.subdate).fromNow() }}
+                                        {{ fromNowLocal(answer.subdate) }}
                                       </v-btn>
                                       <v-btn
                                         style="
@@ -869,7 +870,7 @@
                                           mdi-clock-time-five-outline
                                         </v-icon>
                                         {{
-                                          $dayjs(answer.subdate).format("HH:mm")
+                                          formatLocal(answer.subdate, "HH:mm")
                                         }}
                                       </v-btn>
                                     </div>
@@ -1113,6 +1114,7 @@ const EmojiPicker = defineAsyncComponent(() =>
   import('vue3-emoji-picker').then(EmojiPicker => EmojiPicker),
 )
 const { $toast } = useNuxtApp()
+const { formatLocal, fromNowLocal } = useDateTime()
 
 const { isAuthenticated } = useAuth()
 

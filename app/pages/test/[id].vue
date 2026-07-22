@@ -13,7 +13,6 @@
       v-if="contentData"
       :content-data="contentData"
       :show-chips="true"
-      :show-title="true"
     />
 
     <v-row>
