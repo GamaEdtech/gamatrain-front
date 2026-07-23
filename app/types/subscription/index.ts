@@ -44,3 +44,30 @@ export interface GetAdminSubscriptionPlanParams {
   page: number
   pageSize: number
 }
+
+export interface EditAdminSubscriptionPlanFeaturesDTO {
+  features: {
+    featureId: number
+    limit: number
+  }[]
+}
+
+export interface AdminSubscriptionFeatureDTO {
+  id: number
+  code: string
+  name: string
+  description: string
+  isActive: boolean
+}
+
+export interface AddAdminSubscriptionFeatureDTO {
+  code: string
+  name: string
+  description: string
+  isActive: boolean
+}
+
+export interface GetAdminSubscriptionFeatureParams {
+  page: number
+  pageSize: number
+}

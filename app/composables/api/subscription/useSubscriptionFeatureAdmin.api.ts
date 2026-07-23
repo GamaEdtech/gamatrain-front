@@ -1,15 +1,13 @@
 import type {
-  AddAdminSubscriptionPlanDTO,
-  AdminSubscriptionPlanDTO,
+  AddAdminSubscriptionFeatureDTO,
+  AdminSubscriptionFeatureDTO,
   ApiResult,
   AppError,
-  EditAdminSubscriptionPlanFeaturesDTO,
-  GetAdminSubscriptionPlanParams,
+  GetAdminSubscriptionFeatureParams,
   ResponseListDTO,
 } from '@/types'
 
-const data = ref<AdminSubscriptionPlanDTO[]>([])
-const planFeatures = ref<AdminSubscriptionPlanDTO['features']>([])
+const data = ref<AdminSubscriptionFeatureDTO[]>([])
 const totalCount = ref(0)
 const pageCount = ref(0)
 const loadingGetData = ref(true)
@@ -17,13 +15,11 @@ const loadingGetItemById = ref(false)
 const loadingDeleteItem = ref(false)
 const loadingAddItem = ref(false)
 const loadingEditItem = ref(false)
-const loadingGetFeatures = ref(false)
-const loadingEditFeatures = ref(false)
 
-const NAME = 'Subscription plan'
-const BASE_URL = '/api/v2/admin/subscriptions/plans'
+const NAME = 'Subscription feature'
+const BASE_URL = '/api/v2/admin/subscriptions/features'
 
-export const useSubscriptionPlanAdmin = () => {
+export const useSubscriptionFeatureAdmin = () => {
   const { $toast } = useNuxtApp()
 
   const handleError = (err: unknown) => {
@@ -43,12 +39,12 @@ export const useSubscriptionPlanAdmin = () => {
     }
   }
 
-  const getData = async (params: GetAdminSubscriptionPlanParams) => {
+  const getData = async (params: GetAdminSubscriptionFeatureParams) => {
     loadingGetData.value = true
 
     try {
       const response = await useApiService.get<
-        ApiResult<ResponseListDTO<AdminSubscriptionPlanDTO>>
+        ApiResult<ResponseListDTO<AdminSubscriptionFeatureDTO>>
       >(
         BASE_URL,
         {
@@ -93,7 +89,7 @@ export const useSubscriptionPlanAdmin = () => {
     loadingGetItemById.value = true
 
     try {
-      const response = await useApiService.get<ApiResult<AdminSubscriptionPlanDTO>>(
+      const response = await useApiService.get<ApiResult<AdminSubscriptionFeatureDTO>>(
         `${BASE_URL}/${id}`,
       )
 
@@ -144,13 +140,13 @@ export const useSubscriptionPlanAdmin = () => {
     }
   }
 
-  const addItem = async (subscriptionPlan: AddAdminSubscriptionPlanDTO) => {
+  const addItem = async (subscriptionFeature: AddAdminSubscriptionFeatureDTO) => {
     loadingAddItem.value = true
 
     try {
-      const response = await useApiService.post<ApiResult<number>>(
+      const response = await useApiService.post<ApiResult<boolean>>(
         BASE_URL,
-        { ...subscriptionPlan },
+        { ...subscriptionFeature },
       )
 
       if (response.succeeded) {
@@ -168,7 +164,7 @@ export const useSubscriptionPlanAdmin = () => {
       return {
         succeeded: false,
         status: 0,
-        data: null,
+        data: false,
       }
     }
     finally {
@@ -177,7 +173,7 @@ export const useSubscriptionPlanAdmin = () => {
   }
 
   const editItem = async (
-    subscriptionPlan: AddAdminSubscriptionPlanDTO,
+    subscriptionFeature: AddAdminSubscriptionFeatureDTO,
     id: string | number,
   ) => {
     loadingEditItem.value = true
@@ -185,7 +181,7 @@ export const useSubscriptionPlanAdmin = () => {
     try {
       const response = await useApiService.put<ApiResult<boolean>>(
         `${BASE_URL}/${id}`,
-        { ...subscriptionPlan },
+        { ...subscriptionFeature },
       )
 
       if (response.succeeded) {
@@ -211,78 +207,9 @@ export const useSubscriptionPlanAdmin = () => {
     }
   }
 
-  const getFeatures = async (id: string | number) => {
-    loadingGetFeatures.value = true
-
-    try {
-      const response = await useApiService.get<ApiResult<AdminSubscriptionPlanDTO['features']>>(
-        `${BASE_URL}/${id}/features`,
-      )
-
-      if (response.data) {
-        planFeatures.value = response.data
-      }
-      else {
-        planFeatures.value = []
-      }
-
-      return response
-    }
-    catch (err: unknown) {
-      handleError(err)
-
-      planFeatures.value = []
-
-      return {
-        succeeded: false,
-        status: 0,
-        data: null,
-      }
-    }
-    finally {
-      loadingGetFeatures.value = false
-    }
-  }
-
-  const editFeatures = async (
-    id: string | number,
-    payload: EditAdminSubscriptionPlanFeaturesDTO,
-  ) => {
-    loadingEditFeatures.value = true
-
-    try {
-      const response = await useApiService.put<ApiResult<boolean>>(
-        `${BASE_URL}/${id}/features`,
-        { ...payload },
-      )
-
-      if (response.succeeded) {
-        $toast.success(`${NAME} features updated successfully!`)
-      }
-      else {
-        showResponseError(response)
-      }
-
-      return response
-    }
-    catch (err: unknown) {
-      handleError(err)
-
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
-    }
-    finally {
-      loadingEditFeatures.value = false
-    }
-  }
-
   return {
     loadingGetData,
     data,
-    planFeatures,
     getData,
     totalCount,
     pageCount,
@@ -294,9 +221,5 @@ export const useSubscriptionPlanAdmin = () => {
     loadingAddItem,
     editItem,
     loadingEditItem,
-    getFeatures,
-    loadingGetFeatures,
-    editFeatures,
-    loadingEditFeatures,
   }
 }
