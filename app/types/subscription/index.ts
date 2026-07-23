@@ -93,3 +93,23 @@ export interface GetAdminSubscriptionPriceParams {
   page: number
   pageSize: number
 }
+
+export interface AdminSubscriptionGatewayMappingDTO {
+  id: number
+  subscriptionPlanPriceId: number
+  gateway: string
+  externalProductId: string
+  externalPlanId: string
+}
+
+export interface AddAdminSubscriptionGatewayMappingDTO {
+  subscriptionPlanPriceId: number
+  gateway: string
+  externalProductId: string
+  externalPlanId: string
+}
+
+export interface GetAdminSubscriptionGatewayMappingParams {
+  page: number
+  pageSize: number
+}
