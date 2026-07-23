@@ -106,7 +106,7 @@ const get = <T = unknown>(
 
 const post = <T = unknown>(
   request: string,
-  params?: SearchParameters | FormData,
+  params?: SearchParameters | FormData | Record<string, unknown>,
   opts?: UseFetchOptions,
 ): Promise<T> => {
   return apiRequest<T>(request, { ...opts, method: 'POST', body: params })
@@ -114,7 +114,7 @@ const post = <T = unknown>(
 
 const put = <T = unknown>(
   request: string,
-  params: SearchParameters | FormData,
+  params: SearchParameters | FormData | Record<string, unknown>,
   opts?: UseFetchOptions,
 ): Promise<T> => {
   return apiRequest<T>(request, { ...opts, method: 'PUT', body: params })
