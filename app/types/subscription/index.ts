@@ -1,4 +1,5 @@
 export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Seasonally' | 'Yearly'
+export type SubscriptionCurrency = 'SOL' | 'USDC' | 'GET' | 'USDT' | 'USD'
 
 export interface SubscriptionPolygonPointDTO {
   latitude: number
@@ -9,7 +10,7 @@ export interface AdminSubscriptionPlanPriceDTO {
   id: number
   subscriptionPlanId: number
   countryCode: string
-  currency: string
+  currency: SubscriptionCurrency
   currencySymbol: string
   price: number
 }
@@ -68,6 +69,27 @@ export interface AddAdminSubscriptionFeatureDTO {
 }
 
 export interface GetAdminSubscriptionFeatureParams {
+  page: number
+  pageSize: number
+}
+
+export interface AdminSubscriptionPriceDTO {
+  id: number
+  subscriptionPlanId: number
+  countryCode: string
+  currency: SubscriptionCurrency
+  currencySymbol: string
+  price: number
+}
+
+export interface AddAdminSubscriptionPriceDTO {
+  subscriptionPlanId: number
+  countryCode: string
+  currency: SubscriptionCurrency
+  price: number
+}
+
+export interface GetAdminSubscriptionPriceParams {
   page: number
   pageSize: number
 }
