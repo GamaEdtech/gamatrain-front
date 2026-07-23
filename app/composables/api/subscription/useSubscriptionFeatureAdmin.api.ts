@@ -11,7 +11,6 @@ const data = ref<AdminSubscriptionFeatureDTO[]>([])
 const totalCount = ref(0)
 const pageCount = ref(0)
 const loadingGetData = ref(true)
-const loadingGetItemById = ref(false)
 const loadingDeleteItem = ref(false)
 const loadingAddItem = ref(false)
 const loadingEditItem = ref(false)
@@ -82,30 +81,6 @@ export const useSubscriptionFeatureAdmin = () => {
     }
     finally {
       loadingGetData.value = false
-    }
-  }
-
-  const getItemById = async (id: string | number) => {
-    loadingGetItemById.value = true
-
-    try {
-      const response = await useApiService.get<ApiResult<AdminSubscriptionFeatureDTO>>(
-        `${BASE_URL}/${id}`,
-      )
-
-      return response
-    }
-    catch (err: unknown) {
-      handleError(err)
-
-      return {
-        succeeded: false,
-        status: 0,
-        data: null,
-      }
-    }
-    finally {
-      loadingGetItemById.value = false
     }
   }
 
@@ -213,8 +188,6 @@ export const useSubscriptionFeatureAdmin = () => {
     getData,
     totalCount,
     pageCount,
-    getItemById,
-    loadingGetItemById,
     deleteItem,
     loadingDeleteItem,
     addItem,
