@@ -26,38 +26,6 @@
         </v-icon>
       </div>
       <v-btn
-        v-if="files.word.exist"
-        rounded="pill"
-        class="width-btn btn-word d-flex align-center justify-center"
-        color="#2e90fa35"
-        flat
-        height="42"
-        :loading="isDownloading('word')"
-        @click="handleDownloadClick('word', files.word.price)"
-      >
-        <template #loader>
-          <v-progress-circular
-            :model-value="getDownloadProgress('word')"
-            color="#2e90fa"
-            size="24"
-            width="3"
-          />
-        </template>
-        <v-icon
-          color="#2e90fa"
-          size="20"
-        >
-          md:description_outlined
-        </v-icon>
-        <span class="text-word text-h5 font-weight-bold mt-1 mx-2">Download Question Doc</span>
-
-        <span
-          v-if="files.word.price && files.word.price !=0"
-          class="text-word text-h5 font-weight-bold mt-1"
-        >{{ files.word.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
-      </v-btn>
-
-      <v-btn
         v-if="files.pdf.exist"
         rounded="pill"
         class="width-btn btn-pdf d-flex align-center justify-center"
@@ -81,12 +49,44 @@
         >
           md:picture_as_pdf_outlined
         </v-icon>
-        <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download Question Paper</span>
+        <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download {{ isPaper ? 'Question Paper' : 'PDF' }}</span>
 
         <span
           v-if="files.pdf.price && files.pdf.price != 0"
           class="text-pdf text-h5 font-weight-bold mt-1"
         >{{ files.pdf.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+      </v-btn>
+
+      <v-btn
+        v-if="files.word.exist"
+        rounded="pill"
+        class="width-btn btn-word d-flex align-center justify-center"
+        color="#2e90fa35"
+        flat
+        height="42"
+        :loading="isDownloading('word')"
+        @click="handleDownloadClick('word', files.word.price)"
+      >
+        <template #loader>
+          <v-progress-circular
+            :model-value="getDownloadProgress('word')"
+            color="#2e90fa"
+            size="24"
+            width="3"
+          />
+        </template>
+        <v-icon
+          color="#2e90fa"
+          size="20"
+        >
+          md:description_outlined
+        </v-icon>
+        <span class="text-word text-h5 font-weight-bold mt-1 mx-2">Download {{ isPaper ? 'Question Doc': 'DOC' }}</span>
+
+        <span
+          v-if="files.word.price && files.word.price !=0"
+          class="text-word text-h5 font-weight-bold mt-1"
+        >{{ files.word.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
       </v-btn>
 
       <v-btn
@@ -258,6 +258,7 @@ interface IDownloadAndPurchaseButtons {
   base: string
   lesson: string
   testType: string
+  isPaper: boolean
 }
 
 type TypeFile = 'word' | 'pdf' | 'answer' | 'extra'
