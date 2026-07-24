@@ -8,11 +8,9 @@ import type {
   ResponseListDTO,
 } from '@/types'
 
-const data = ref<AdminSubscriptionPlanDTO[]>([])
 const planFeatures = ref<AdminSubscriptionPlanDTO['features']>([])
 const totalCount = ref(0)
 const pageCount = ref(0)
-const loadingGetData = ref(true)
 const loadingGetItemById = ref(false)
 const loadingDeleteItem = ref(false)
 const loadingAddItem = ref(false)
@@ -25,6 +23,8 @@ const BASE_URL = '/api/v2/admin/subscriptions/plans'
 
 export const useSubscriptionPlanAdmin = () => {
   const { $toast } = useNuxtApp()
+  const data = ref<AdminSubscriptionPlanDTO[]>([])
+  const loadingGetData = ref(true)
 
   const handleError = (err: unknown) => {
     const error = err as AppError
