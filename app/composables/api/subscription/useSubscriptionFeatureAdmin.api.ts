@@ -8,9 +8,11 @@ import type {
 } from '@/types'
 
 const data = ref<AdminSubscriptionFeatureDTO[]>([])
+const featureOptions = ref<AdminSubscriptionFeatureDTO[]>([])
 const totalCount = ref(0)
 const pageCount = ref(0)
 const loadingGetData = ref(true)
+const loadingGetFeatureOptions = ref(false)
 const loadingDeleteItem = ref(false)
 const loadingAddItem = ref(false)
 const loadingEditItem = ref(false)
@@ -81,6 +83,46 @@ export const useSubscriptionFeatureAdmin = () => {
     }
     finally {
       loadingGetData.value = false
+    }
+  }
+
+  const getFeatureOptions = async (params: GetAdminSubscriptionFeatureParams) => {
+    loadingGetFeatureOptions.value = true
+
+    try {
+      const response = await useApiService.get<
+        ApiResult<ResponseListDTO<AdminSubscriptionFeatureDTO>>
+      >(
+        BASE_URL,
+        {
+          'PagingDto.PageFilter.Size': params.pageSize,
+          'PagingDto.PageFilter.Skip': (params.page - 1) * params.pageSize,
+          'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+        },
+      )
+
+      if (response.data) {
+        featureOptions.value = response.data.list
+      }
+      else {
+        featureOptions.value = []
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleError(err)
+
+      featureOptions.value = []
+
+      return {
+        succeeded: false,
+        status: 0,
+        data: null,
+      }
+    }
+    finally {
+      loadingGetFeatureOptions.value = false
     }
   }
 
@@ -185,7 +227,10 @@ export const useSubscriptionFeatureAdmin = () => {
   return {
     loadingGetData,
     data,
+    featureOptions,
     getData,
+    getFeatureOptions,
+    loadingGetFeatureOptions,
     totalCount,
     pageCount,
     deleteItem,

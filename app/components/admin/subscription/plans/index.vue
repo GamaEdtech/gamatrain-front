@@ -128,6 +128,25 @@
             <v-btn
               icon
               flat
+              @click="openFeaturesModal(item)"
+            >
+              <v-icon
+                size="20"
+                color="grey800"
+              >
+                md:extension
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="top"
+              >
+                Manage Features
+              </v-tooltip>
+            </v-btn>
+
+            <v-btn
+              icon
+              flat
               @click="openDeleteModal(item)"
             >
               <v-icon
@@ -221,6 +240,17 @@
         @edit-item-success-full="editItemSuccessFull"
       />
     </admin-common-modal>
+
+    <admin-common-modal
+      v-if="showFeaturesModal && selectedPlanForFeatures"
+      v-model:show-dialog="showFeaturesModal"
+      title="Features"
+    >
+      <admin-subscription-plans-features
+        :plan="selectedPlanForFeatures"
+        @features-success-full="featuresSuccessFull"
+      />
+    </admin-common-modal>
   </div>
 </template>
 
@@ -261,6 +291,8 @@ const selectedItemIdForDelete = ref('')
 const showAddModal = ref(false)
 const showDetailModal = ref(false)
 const selectedItemIdForDetail = ref('')
+const showFeaturesModal = ref(false)
+const selectedPlanForFeatures = ref<AdminSubscriptionPlanDTO | null>(null)
 
 const fetchPlans = async () => {
   await getData({
@@ -306,6 +338,17 @@ const openDetailModal = (item: AdminSubscriptionPlanDTO) => {
 
 const editItemSuccessFull = async () => {
   showDetailModal.value = false
+  await fetchPlans()
+}
+
+const openFeaturesModal = (item: AdminSubscriptionPlanDTO) => {
+  selectedPlanForFeatures.value = item
+  showFeaturesModal.value = true
+}
+
+const featuresSuccessFull = async () => {
+  showFeaturesModal.value = false
+  selectedPlanForFeatures.value = null
   await fetchPlans()
 }
 
