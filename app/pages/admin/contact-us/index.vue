@@ -240,7 +240,7 @@
     <admin-common-modal
       v-model:show-dialog="showDetailModal"
       title="Detail"
-      :max-width="600"
+      :max-width="900"
     >
       <admin-contactus-view-message-details-modal
         :id="selectedItemIdForDetail"

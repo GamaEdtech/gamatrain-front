@@ -424,8 +424,8 @@ onMounted(async () => {
   img{
     width : 100% !important;
     height : 100% !important;
-    max-width : 300px !important;
-    max-height : 300px !important;
+    max-width : 600px !important;
+    max-height : 600px !important;
   }
 }
 </style>
