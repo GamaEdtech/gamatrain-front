@@ -1,7 +1,6 @@
 import type {
   AdminAppSettingsDTO,
   ApiResult,
-  AppError,
 } from '@/types'
 
 type AppSettingsPayload = Record<string, string | number | undefined>
@@ -11,14 +10,7 @@ const loadingUpdateSettings = ref(false)
 
 export const useAppSettingAdmin = () => {
   const { $toast } = useNuxtApp()
-
-  const handleError = (err: unknown) => {
-    const error = err as AppError
-
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getSettings = async () => {
     loadingGetSettings.value = true
@@ -28,16 +20,17 @@ export const useAppSettingAdmin = () => {
         '/api/v2/admin/applicationsettings',
       )
 
+      if (response.succeeded && response.data) {
+        return response
+      }
+
+      handleApiResponseError(response)
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: null,
-      }
+      return createApiFailure<AdminAppSettingsDTO>(err)
     }
     finally {
       loadingGetSettings.value = false
@@ -53,23 +46,19 @@ export const useAppSettingAdmin = () => {
         payload,
       )
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         $toast.success('Your settings have been changed successfully.')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingUpdateSettings.value = false
