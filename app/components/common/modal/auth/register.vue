@@ -34,7 +34,7 @@
       >
         <template #label>
           <span class="text-h6 text-grey700">
-            <span class="font-weight-bold">A agree</span>
+            <span class="font-weight-bold">I agree</span>
             <span class="font-weight-bold text-primary"> terms and conditions</span>
           </span>
         </template>
