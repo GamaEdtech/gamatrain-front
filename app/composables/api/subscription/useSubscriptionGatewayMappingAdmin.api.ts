@@ -2,7 +2,6 @@ import type {
   AddAdminSubscriptionGatewayMappingDTO,
   AdminSubscriptionGatewayMappingDTO,
   ApiResult,
-  AppError,
   GetAdminSubscriptionGatewayMappingParams,
   ResponseListDTO,
 } from '@/types'
@@ -20,23 +19,7 @@ const BASE_URL = '/api/v2/admin/subscriptions/gateway-mappings'
 
 export const useSubscriptionGatewayMappingAdmin = () => {
   const { $toast } = useNuxtApp()
-
-  const handleError = (err: unknown) => {
-    const error = err as AppError
-
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-
-  const showResponseError = (response: ApiResult<unknown>) => {
-    if (response.errors && response.errors.length > 0) {
-      $toast.error(response.errors[0].message || '')
-    }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetAdminSubscriptionGatewayMappingParams) => {
     loadingGetData.value = true
@@ -53,7 +36,7 @@ export const useSubscriptionGatewayMappingAdmin = () => {
         },
       )
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / params.pageSize)
@@ -62,22 +45,19 @@ export const useSubscriptionGatewayMappingAdmin = () => {
         data.value = []
         totalCount.value = 0
         pageCount.value = 0
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
-
       data.value = []
       totalCount.value = 0
       pageCount.value = 0
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: null,
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<ResponseListDTO<AdminSubscriptionGatewayMappingDTO>>(err)
     }
     finally {
       loadingGetData.value = false
@@ -96,19 +76,15 @@ export const useSubscriptionGatewayMappingAdmin = () => {
         $toast.success(`${NAME} deleted successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingDeleteItem.value = false
@@ -130,19 +106,15 @@ export const useSubscriptionGatewayMappingAdmin = () => {
         $toast.success(`${NAME} created successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingAddItem.value = false
@@ -165,19 +137,15 @@ export const useSubscriptionGatewayMappingAdmin = () => {
         $toast.success(`${NAME} updated successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingEditItem.value = false
