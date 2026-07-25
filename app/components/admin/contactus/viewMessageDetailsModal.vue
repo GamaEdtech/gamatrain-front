@@ -87,7 +87,7 @@
             class="w-100 text-start text-h5 font-weight-bold text-grey900"
             v-html="item.body"
           />
-          <span class="w-100 text-end text-subtitle-2 font-weight-regular text-grey700">{{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm") }}</span>
+          <span class="w-100 text-end text-subtitle-2 font-weight-regular text-grey700">{{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm") }}</span>
         </div>
       </template>
     </div>
@@ -193,7 +193,8 @@ interface IViewMessageDetailsModal {
 
 const props = defineProps<IViewMessageDetailsModal>()
 const emit = defineEmits(['replySuccessFull'])
-const { $dayjs, $toast } = useNuxtApp()
+const { $toast } = useNuxtApp()
+const { formatLocal } = useDateTime()
 const { required } = useValidationRules()
 const {
   getItemById,
@@ -263,7 +264,7 @@ const buildAiReplyPrompt = () => {
         .map((item, index) => {
           return [
             `Reply ${index + 1}:`,
-            `Date: ${$dayjs(item.creationDate).format('DD/MM/YYYY HH:mm')}`,
+            `Date: ${formatLocal(item.creationDate, 'DD/MM/YYYY HH:mm')}`,
             `Body: ${stripHtml(item.body)}`,
           ].join('\n')
         })

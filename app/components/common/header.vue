@@ -46,12 +46,12 @@
                 {{ link.icon }}
               </v-icon>
               <span :style="{ color: menuSetting.linkColor }">{{ link.title }}</span>
-              <span
+              <!-- <span
                 v-if="link.badge"
                 class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
               >
                 {{ link.badge }}
-              </span>
+              </span> -->
             </nuxt-link>
 
             <span
@@ -67,12 +67,12 @@
                 {{ link.icon }}
               </v-icon>
               <span :style="{ color: menuSetting.linkColor }">{{ link.title }}</span>
-              <span
+              <!-- <span
                 v-if="link.badge"
                 class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
               >
                 {{ link.badge }}
-              </span>
+              </span> -->
             </span>
           </template>
         </div>
@@ -119,27 +119,29 @@
           color="primary"
           flat
           class="text-black text-h5 font-weight-bold "
-          @click="openLoginDialog('login')"
+          @click="openLoginDialog"
         >
           Sign in
         </v-btn>
       </div>
     </v-container>
 
-    <div v-if="currentAuthComponent.length > 0 && loginDialogVisible">
-      <component
-        :is="currentAuthComponentMap[currentAuthComponent]"
-        v-model:dialog="loginDialogVisible"
-        @switch-to-login="switchTo('login')"
-        @switch-to-register="switchTo('register')"
-        @switch-to-recover="switchTo('recover')"
-      />
-    </div>
-
-    <lazy-menu-add-option-bottom-menu
-      v-if="isAddOptionOpen"
-      @close="isAddOptionOpen = false"
+    <lazy-common-modal-auth
+      v-if="shouldMountAuthModal"
+      v-model:show-dialog="showAuthModal"
     />
+
+    <lazy-common-modal-base
+      v-model:show-dialog="isAddOptionOpen"
+      title="What would you like to publish?"
+      subtitle="Choose a type. We will prepare the right form for you."
+      :max-width="560"
+    >
+      <menu-add-option-bottom-menu
+        @close="isAddOptionOpen = false"
+      />
+    </lazy-common-modal-base>
+
     <ClientOnly>
       <lazy-dashboard-drawer-menu
         v-if="shouldMountDrawer"
@@ -242,20 +244,13 @@ const handleChnageMenuSetting = () => {
   }
 }
 
-const currentAuthComponentMap = {
-  login: defineAsyncComponent(() => import('~/components/common/login.vue')),
-  register: defineAsyncComponent(() => import('~/components/common/register.vue')),
-  recover: defineAsyncComponent(() => import('~/components/common/pass-recover.vue')),
-}
-type AuthComponentName = keyof typeof currentAuthComponentMap
-const currentAuthComponent = ref<AuthComponentName>('login')
-const loginDialogVisible = ref(false)
-const switchTo = (name: AuthComponentName) => {
-  currentAuthComponent.value = name
-}
-const openLoginDialog = (componentName: AuthComponentName = 'login') => {
-  currentAuthComponent.value = componentName
-  loginDialogVisible.value = true
+const showAuthModal = ref(false)
+const shouldMountAuthModal = ref(false)
+
+const openLoginDialog = async () => {
+  shouldMountAuthModal.value = true
+  await nextTick()
+  showAuthModal.value = true
 }
 
 const isAddOptionOpen = ref(false)
@@ -297,7 +292,7 @@ watch(
   (val) => {
     if (val === 'login') {
       const noRedirect = !!route.query.auth_noredirect
-      openLoginDialog('login')
+      openLoginDialog()
       if (!noRedirect) router.push({ query: {} })
     }
   },
@@ -315,10 +310,7 @@ onMounted(async () => {
   }
 
   requestIdleCallback?.(() => {
-    import('~/components/common/login.vue')
-    import('~/components/common/register.vue')
-    import('~/components/common/pass-recover.vue')
-    import('~/components/dashboard/drawer-menu.vue')
+    import('@/components/common/modal/auth/index.vue')
   })
 })
 

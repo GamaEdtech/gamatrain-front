@@ -98,3 +98,119 @@ export interface CommnetBlogDetailAdminDTO {
   postId: number
   comment: string
 }
+
+export type BlogUserBreifDTOStatus = 'Draft' | 'Review' | 'Confirmed' | 'Rejected' | 'Deleted'
+export interface BlogUserBreifDTO {
+  id: number
+  comment: string
+  status: BlogUserBreifDTOStatus
+  creationUser: string
+  creationDate: string
+  title: string
+  postId: number
+}
+
+export interface BlogCreateDTO {
+  title: string
+  slug: string
+  summary: string
+  body: string
+  image: string
+  podcast?: string
+  visibilityType: string
+  publishDate: string
+  scheduledDate?: string
+  keywords?: string[]
+  tags: number[]
+  draft: string
+  localizedValues?: {
+    languageId: number
+    title: string
+    summary: string
+    body: string
+  }[]
+}
+
+export interface BlogEditDTO {
+  title: string
+  slug: string
+  summary: string
+  body: string
+  image: string
+  podcast?: string
+  removePodcast: boolean
+  visibilityType: string
+  publishDate: string
+  scheduledDate?: string
+  keywords?: string[]
+  tags: number[]
+  draft: string
+  localizedValues?: {
+    languageId: number
+    title: string
+    summary: string
+    body: string
+  }[]
+}
+export interface GetBlogUserParams {
+  page: number
+  pageSize: number
+  startDate?: string
+  endDate?: string
+  email?: string
+  username?: string
+  status?: BlogUserBreifDTOStatus
+}
+
+export type AdminBlogContributionStatus = 'Draft' | 'Review' | 'Confirmed' | 'Rejected' | 'Deleted'
+
+export interface AdminBlogContributionDTO {
+  id: number
+  comment: string
+  status: AdminBlogContributionStatus
+  creationUser: string
+  creationDate: string
+  title: string
+  postId: number
+}
+
+export interface AdminBlogContributionLocalizedValueDTO {
+  languageId: number
+  title: string
+  summary: string
+  body: string
+}
+
+export interface AdminBlogContributionDetailDTO {
+  title: string
+  slug: string
+  summary: string
+  body: string
+  imageUri: string | null
+  podcastUri: string | null
+  keywords: string | null
+  postId: number
+  visibilityType: string
+  publishDate: string
+  tags: number[]
+  draft: boolean
+  localizedValues: AdminBlogContributionLocalizedValueDTO[]
+}
+
+export interface GetAdminBlogContributionParams {
+  page: number
+  pageSize: number
+  startDate: string
+  endDate: string
+  email: string
+  username: string
+  status: AdminBlogContributionStatus | ''
+}
+
+export interface SearchFilterAdminBlogContribution {
+  startDate: string
+  endDate: string
+  email: string
+  username: string
+  status: AdminBlogContributionStatus | ''
+}

@@ -1,4 +1,9 @@
-export type SchoolContributionStatus = 'Draft' | 'Review' | 'Confirmed' | 'Rejected' | 'Deleted'
+export type SchoolContributionStatus
+  = | 'Draft'
+    | 'Review'
+    | 'Confirmed'
+    | 'Rejected'
+    | 'Deleted'
 
 export interface AdminSchoolContributionBriefDTO {
   id: number
@@ -65,7 +70,6 @@ export interface AdminSchoolContributionOldDataDTO {
     code: number
     title: string
     icon: string
-
   }[]
   defaultImageUri: string
   tuition: number
@@ -89,7 +93,6 @@ export interface SchoolListDTO {
   defaultImageUri: string
 
   distance: number
-  score: number
 
   hasEmail: boolean
   hasPhone: boolean
@@ -101,7 +104,7 @@ export interface SchoolListDTO {
 
   lastModifyDate: string
 
-  reviewScore: number
+  rating: number | null
   countryRank: number
   stateRank: number
   cityRank: number
@@ -121,11 +124,128 @@ export interface GetSchoolsParams {
 
   name?: string | null
 
-  hasScore?: boolean | null
+  hasRating?: boolean | null
   hasImage?: boolean | null
 
   tuitionStart?: number | null
   tuitionEnd?: number | null
 
   boards?: number[] | null
+}
+
+export type AdminSchoolCommentStatus
+  = | 'Draft'
+    | 'Review'
+    | 'Confirmed'
+    | 'Rejected'
+    | 'Deleted'
+
+export interface AdminSchoolCommentDTO {
+  id: number
+  creationUser: string
+  creationDate: string
+  schoolId: number
+  status: AdminSchoolCommentStatus
+}
+
+export interface AdminSchoolCommentDetailDTO {
+  id: number
+  schoolName: string
+  schoolId: number
+  comment: string
+  artisticActivitiesRate: number
+  behaviorRate: number
+  classesQualityRate: number
+  educationRate: number
+  facilitiesRate: number
+  itTrainingRate: number
+  safetyAndHappinessRate: number
+  tuitionRatioRate: number
+  averageRate: number
+}
+
+export interface SearchFilterAdminSchoolComment {
+  startDate: string
+  endDate: string
+  commenterEmail: string
+  commenterName: string
+  status: AdminSchoolCommentStatus | ''
+}
+
+export interface GetAdminSchoolCommentParams extends SearchFilterAdminSchoolComment {
+  page: number
+  pageSize: number
+}
+
+export type AdminSchoolImageStatus
+  = | 'Draft'
+    | 'Review'
+    | 'Confirmed'
+    | 'Rejected'
+    | 'Deleted'
+export type AdminSchoolImageFileType = 'SimpleImage' | string
+
+export interface AdminSchoolImageDTO {
+  id: number
+  creationUser: string
+  creationDate: string
+  schoolId: number
+  status: AdminSchoolImageStatus
+  fileUri: string
+  fileType: AdminSchoolImageFileType
+  isDefault: boolean
+}
+
+export interface AdminSchoolImageDetailDTO {
+  id: number
+  schoolName: string
+  schoolId: number
+  fileUri: string
+  fileType: AdminSchoolImageFileType
+  isDefault: boolean
+  tagId: number
+  tagName: string
+}
+
+export interface GetAdminSchoolImageParams {
+  page: number
+  pageSize: number
+  status: AdminSchoolImageStatus | ''
+}
+
+export type AdminSchoolImageIssueStatus
+  = | 'Confirmed'
+    | 'Rejected'
+    | 'Deleted'
+    | 'Review'
+
+export interface AdminSchoolImageIssueDTO {
+  id: number
+  schoolId: number
+  creationUser: string
+  creationDate: string
+  description: string
+  fileType: string | null
+  fileUri: string
+  status: AdminSchoolImageIssueStatus
+}
+
+export interface AdminSchoolImageIssueDetailDTO {
+  id: number
+  schoolId: number
+  schoolName: string
+  fileUri: string
+}
+
+export interface GetAdminSchoolImageIssueParams {
+  page: number
+  pageSize: number
+  status: AdminSchoolImageIssueStatus | ''
+}
+
+export interface GetAdminSchoolContributionParams {
+  page: number
+  pageSize: number
+  status: string
+  sort: string[]
 }

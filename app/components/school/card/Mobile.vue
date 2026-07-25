@@ -59,7 +59,7 @@
           >
             Score:
             <v-icon color="primary"> md:star </v-icon>
-            <span class="text-grey800 font-weight-semibold">            {{ school.score ? school.score.toFixed(1) : "N/A" }}</span>
+            <span class="text-grey800 font-weight-semibold">{{ school.rating ? school.rating.toFixed(1) : "N/A" }}</span>
           </div>
           <v-divider
             :thickness="1"
@@ -72,7 +72,7 @@
           >
             <v-icon color="grey500">md:update</v-icon>
             <span class="text-grey800 font-weight-semibold">
-              {{ $dayjs(school.lastModifyDate).format("YYYY-MM-DD") }}
+              {{ formatLocal(school.lastModifyDate, "YYYY-MM-DD") }}
             </span>
           </div>
         </div>
@@ -124,6 +124,8 @@
 
 <script setup>
 import defaultImage from '@/assets/images/default-school.png'
+
+const { formatLocal } = useDateTime()
 
 const props = defineProps({
   school: {

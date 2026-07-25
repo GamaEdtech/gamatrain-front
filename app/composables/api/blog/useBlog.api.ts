@@ -2,51 +2,17 @@ import type {
   ApiResult,
   AppError,
   BlogUserDTO,
+  BlogUserBreifDTO,
+  BlogCreateDTO,
+  BlogEditDTO,
+  GetBlogUserParams,
+  ResponseListDTO,
 } from '@/types'
 
-interface BlogCreateDTO {
-  title: string
-  slug: string
-  summary: string
-  body: string
-  image: string
-  podcast?: string
-  visibilityType: string
-  publishDate: string
-  scheduledDate?: string
-  keywords?: string[]
-  tags: number[]
-  draft: string
-  localizedValues?: {
-    languageId: number
-    title: string
-    summary: string
-    body: string
-  }[]
-}
-
-interface BlogEditDTO {
-  title: string
-  slug: string
-  summary: string
-  body: string
-  image: string
-  podcast?: string
-  removePodcast: boolean
-  visibilityType: string
-  publishDate: string
-  scheduledDate?: string
-  keywords?: string[]
-  tags: number[]
-  draft: string
-  localizedValues?: {
-    languageId: number
-    title: string
-    summary: string
-    body: string
-  }[]
-}
-
+const data = ref<BlogUserBreifDTO[]>([])
+const totalCount = ref(0)
+const pageCount = ref(0)
+const loadingGetData = ref(true)
 const loadingValidateSlug = ref(false)
 const loadingSaveSlug = ref(false)
 const loadingCreateBlog = ref(false)
@@ -55,6 +21,39 @@ const loadingEditBlog = ref(false)
 
 export const useBlog = () => {
   const { $toast } = useNuxtApp()
+
+  const getData = async (params: GetBlogUserParams) => {
+    const { page, pageSize } = params
+    loadingGetData.value = true
+    try {
+      const query: Record<string, string | number | boolean | null> = {
+        'PagingDto.PageFilter.Size': pageSize,
+        'PagingDto.PageFilter.Skip': (page - 1) * pageSize,
+        'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+        'Status': 'Confirmed',
+      }
+      const response = await useApiService.get<
+        ApiResult<ResponseListDTO<BlogUserBreifDTO>>
+      >('/api/v2/blogs/contributions', query)
+      if (response.data) {
+        data.value = response.data.list
+        totalCount.value = response.data.totalRecordsCount
+        pageCount.value = Math.ceil(totalCount.value / pageSize)
+      }
+      else {
+        data.value = []
+      }
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+    }
+    finally {
+      loadingGetData.value = false
+    }
+  }
 
   const validateSlug = async (slug: string) => {
     loadingValidateSlug.value = true
@@ -289,5 +288,5 @@ export const useBlog = () => {
     }
   }
 
-  return { validateSlug, loadingValidateSlug, saveSlug, loadingSaveSlug, createBlug, loadingCreateBlog, getBlog, loadingGetBlog, editBlug, loadingEditBlog }
+  return { loadingGetData, data, getData, totalCount, pageCount, validateSlug, loadingValidateSlug, saveSlug, loadingSaveSlug, createBlug, loadingCreateBlog, getBlog, loadingGetBlog, editBlug, loadingEditBlog }
 }

@@ -8,7 +8,7 @@
       @click="openModalDownloadMobile = false"
     />
     <div
-      :class="`w-100 d-flex flex-column flex-sm-row flex-wrap align-start justify-start justify-sm-space-between ga-2 pa-8 pa-sm-0 ${
+      :class="`w-100 d-flex flex-column flex-sm-row flex-wrap align-start justify-start justify-sm-space-between ga-2 py-8 px-4 pa-sm-0 ${
         xs ? `mobile-style-bottom-sheet` : ``
       } ${openModalDownloadMobile ? `set-bottom` : ``}`"
     >
@@ -26,50 +26,18 @@
         </v-icon>
       </div>
       <v-btn
-        v-if="files.word.exist"
-        rounded="pill"
-        class="width-btn btn-word d-flex align-center justify-center"
-        color="#2e90fa35"
-        flat
-        height="42"
-        :loading="isDownloading('q_word')"
-        @click="handleDownloadClick('q_word')"
-      >
-        <template #loader>
-          <v-progress-circular
-            :model-value="getDownloadProgress('q_word')"
-            color="#2e90fa"
-            size="24"
-            width="3"
-          />
-        </template>
-        <v-icon
-          color="#2e90fa"
-          size="20"
-        >
-          md:description_outlined
-        </v-icon>
-        <span class="text-word text-h5 font-weight-bold mt-1 mx-2">Download Question Doc</span>
-
-        <!-- <span
-          v-if="requiresCoinPaymentForFile(`q_word`)"
-          class="text-word text-h5 font-weight-bold mt-1"
-        >5 <span class="text-h6 font-weight-normal">$GET</span></span> -->
-      </v-btn>
-
-      <v-btn
         v-if="files.pdf.exist"
         rounded="pill"
         class="width-btn btn-pdf d-flex align-center justify-center"
         color="#f0443835"
         flat
         height="42"
-        :loading="isDownloading('q_pdf')"
-        @click="handleDownloadClick('q_pdf')"
+        :loading="isDownloading('pdf')"
+        @click="handleDownloadClick('pdf', files.pdf.price)"
       >
         <template #loader>
           <v-progress-circular
-            :model-value="getDownloadProgress('q_pdf')"
+            :model-value="getDownloadProgress('pdf')"
             color="#f04438"
             size="24"
             width="3"
@@ -81,12 +49,44 @@
         >
           md:picture_as_pdf_outlined
         </v-icon>
-        <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download Question Paper</span>
+        <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download {{ isPaper ? 'Question Paper' : 'PDF' }}</span>
 
-        <!-- <span
-          v-if="requiresCoinPaymentForFile(`q_pdf`)"
-          class="text-pdf text-h4 font-weight-bold mt-1"
-        >5 <span class="text-h5 font-weight-normal">$GET</span></span> -->
+        <span
+          v-if="files.pdf.price && files.pdf.price != 0"
+          class="text-pdf text-h5 font-weight-bold mt-1"
+        >{{ files.pdf.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+      </v-btn>
+
+      <v-btn
+        v-if="files.word.exist"
+        rounded="pill"
+        class="width-btn btn-word d-flex align-center justify-center"
+        color="#2e90fa35"
+        flat
+        height="42"
+        :loading="isDownloading('word')"
+        @click="handleDownloadClick('word', files.word.price)"
+      >
+        <template #loader>
+          <v-progress-circular
+            :model-value="getDownloadProgress('word')"
+            color="#2e90fa"
+            size="24"
+            width="3"
+          />
+        </template>
+        <v-icon
+          color="#2e90fa"
+          size="20"
+        >
+          md:description_outlined
+        </v-icon>
+        <span class="text-word text-h5 font-weight-bold mt-1 mx-2">Download {{ isPaper ? 'Question Doc': 'DOC' }}</span>
+
+        <span
+          v-if="files.word.price && files.word.price !=0"
+          class="text-word text-h5 font-weight-bold mt-1"
+        >{{ files.word.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
       </v-btn>
 
       <v-btn
@@ -96,12 +96,12 @@
         color="#00808035"
         flat
         height="42"
-        :loading="isDownloading('a_file')"
-        @click="handleDownloadClick('a_file')"
+        :loading="isDownloading('answer')"
+        @click="handleDownloadClick('answer', files.answer.price)"
       >
         <template #loader>
           <v-progress-circular
-            :model-value="getDownloadProgress('a_file')"
+            :model-value="getDownloadProgress('answer')"
             color="#008080"
             size="24"
             width="3"
@@ -114,10 +114,10 @@
             : `Download Mark Scheme`
         }}</span>
 
-        <!-- <span
-          v-if="requiresCoinPaymentForFile(`a_file`)"
+        <span
+          v-if="files.answer.price && files.answer.price != 0"
           class="text-answer text-h5 font-weight-bold mt-1"
-        >5 <span class="text-h6 font-weight-normal">$GET</span></span> -->
+        >{{ files.answer.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
       </v-btn>
 
       <template v-if="files.extra && files.extra.length > 0">
@@ -130,7 +130,7 @@
           flat
           height="42"
           :loading="isDownloading('extra', extra.id)"
-          @click="handleDownloadClick('extra', extra.id)"
+          @click="handleDownloadClick('extra', extra.price, extra.id)"
         >
           <template #loader>
             <v-progress-circular
@@ -150,10 +150,10 @@
 
           <span class="text-extra text-h5 font-weight-bold mt-1 mx-2">Download {{ extra.type_title ? extra.type_title : "Extra" }}</span>
 
-          <!-- <span
-            v-if="requiresCoinPaymentForFile(`extra`)"
+          <span
+            v-if="extra.price && extra.price != 0"
             class="text-extra text-h5 font-weight-bold mt-1"
-          >5 <span class="text-h6 font-weight-normal">$GET</span></span> -->
+          >{{ extra.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
         </v-btn>
       </template>
 
@@ -206,56 +206,38 @@
       v-model:show-dialog="showCoinPaymentModal"
       :is-processing="isLoading || isProcessingPayment"
       :user-balance="balance"
-      :amount-to-pay="PRICE_FILE"
-      @confirm="handleCoinPaymentConfirm"
+      :amount-to-pay="5"
       @close="handleCoinPaymentClose"
     />
 
     <!-- Coin Consumption Animation -->
     <lazy-common-coin-consumption-animation
-      v-if="showCoinAnimation"
       v-model:is-visible="showCoinAnimation"
       @animation-complete="handleAnimationComplete"
     />
+
+    <lazy-test-counting-wallet-animation
+      :is-start-animation="isStartWalletAnimation"
+      :direction="-1"
+      :delta-price="priceFile"
+      @complete-animation="completeWalletAnimation"
+    />
   </div>
 
-  <v-dialog
-    v-model="downloadIssue"
-    max-width="600"
+  <lazy-common-modal-base
+    v-model:show-dialog="downloadIssue"
+    :max-width="600"
+    title="Download"
   >
-    <v-card class="pa-4">
-      <v-card-title class="text-h4">
-        Your download is ready and saved on your device!
-      </v-card-title>
-      <v-card-text>
-        <p>
-          If the file doesn't save to your device, click here to open it in a new tab and download it manually.
-        </p>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn
-          color="primary"
-          :href="downloadIssueLink"
-          target="_blank"
-        >
-          Show file in new tab
-        </v-btn>
-        <v-btn
-          text
-          @click="downloadIssue = false"
-        >
-          Close
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+    <lazy-common-modal-download-file
+      :link="downloadIssueLink"
+      @close="downloadIssue = false"
+    />
+  </lazy-common-modal-base>
 </template>
 
 <script setup lang="ts">
 import type {
-  ApiResult,
-  PDFResponseDTO,
-  AppError,
   FilesDTO,
 } from '@/types'
 import { useDisplay } from 'vuetify'
@@ -276,66 +258,49 @@ interface IDownloadAndPurchaseButtons {
   base: string
   lesson: string
   testType: string
+  isPaper: boolean
 }
 
-type TypeFile = 'q_word' | 'q_pdf' | 'a_file' | 'extra'
+type TypeFile = 'word' | 'pdf' | 'answer' | 'extra'
 
-const PRICE_FILE = 5
 const props = defineProps<IDownloadAndPurchaseButtons>()
 
 const { $toast } = useNuxtApp()
 const { trackFileDownload } = useGtmEvents()
 const auth = useAuth()
 const router = useRouter()
-const route = useRoute()
 const { xs } = useDisplay()
 
-const { balance, isLoading, fetchBalance, consumeCoins } = useCoinBalance()
+const { balance, isLoading } = useCoinBalance()
+const { downloadFile } = useDownload()
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
+const isStartWalletAnimation = ref(false)
+const priceFile = ref(0)
 const pendingDownload = ref<{
   type: TypeFile
   extraId?: string
 } | null>(null)
 const openModalDownloadMobile = ref(false)
 
-const handleDownloadClick = async (type: TypeFile, extraId?: string) => {
+const handleDownloadClick = async (type: TypeFile, price: number, extraId?: string) => {
   const downloadKey = extraId ? `${type}-${extraId}` : type
+  priceFile.value = price
 
   // Set loading state and progress tracking
   downloadingItems.value.add(downloadKey)
   downloadProgress.value[downloadKey] = 0
-  if (requiresCoinPaymentForFile(type)) {
-    if (auth.isAuthenticated.value) {
-      const balanceResult = await fetchBalance()
-      if (!balanceResult.succeeded) {
-        $toast.error('Failed to fetch balance. Please try again.')
-        downloadingItems.value.delete(downloadKey)
-        Reflect.deleteProperty(downloadProgress.value, downloadKey)
-        return
-      }
-
-      pendingDownload.value = { type, extraId }
-      if (Number(balanceResult.data) > 5) {
-        handleCoinPaymentConfirm()
-        startDownload(type, extraId)
-      }
-      else {
-        showCoinPaymentModal.value = true
-      }
-    }
-    else {
-      downloadingItems.value.delete(downloadKey)
-      Reflect.deleteProperty(downloadProgress.value, downloadKey)
-      router.push({})
-      setTimeout(() => {
-        router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
-      }, 100)
-    }
+  if (auth.isAuthenticated.value) {
+    startDownload(type, extraId)
   }
   else {
-    startDownload(type, extraId)
+    downloadingItems.value.delete(downloadKey)
+    Reflect.deleteProperty(downloadProgress.value, downloadKey)
+    router.push({})
+    setTimeout(() => {
+      router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
+    }, 100)
   }
 }
 
@@ -361,180 +326,106 @@ const startDownload = async (type: TypeFile, extraId?: string) => {
   })
 
   const downloadKey = extraId ? `${type}-${extraId}` : type
-
-  let apiUrl = ''
-  if (type === 'q_word') {
-    apiUrl = `/api/v1/tests/download/${props.id}/word`
-  }
-  if (type === 'q_pdf') {
-    apiUrl = `/api/v1/tests/download/${props.id}/pdf`
-  }
-  if (type === 'a_file') {
-    apiUrl = `/api/v1/tests/download/${props.id}/answer`
-  }
-  if (type === 'extra') {
-    apiUrl = `/api/v1/tests/download/${props.id}/extra/${extraId}`
-  }
+  let progressInterval: ReturnType<typeof setInterval> | null = null
 
   try {
     // Simulate progressive loading for API call
-    const progressInterval = setInterval(() => {
-      if (downloadProgress.value[downloadKey] < 50) {
-        downloadProgress.value[downloadKey] += Math.random() * 15
+    progressInterval = setInterval(() => {
+      const currentProgress = downloadProgress.value[downloadKey] ?? 0
+      if (currentProgress < 50) {
+        downloadProgress.value[downloadKey] = currentProgress + Math.random() * 15
       }
     }, 100)
 
-    const response = await useApiService.get<ApiResult<PDFResponseDTO>>(apiUrl)
+    const response = await downloadFile({
+      contentType: 'PastPaper',
+      fileType: type,
+      id: Number(props.id),
+      extraId: extraId ? Number(extraId) : undefined,
+    })
 
     // Update progress to 60% after API response
     downloadProgress.value[downloadKey] = 60
     clearInterval(progressInterval)
+    progressInterval = null
 
     // Create a custom fetch with progress tracking
-    const xhr = new XMLHttpRequest()
-    xhr.open('GET', response.data!.url!, true)
-    xhr.responseType = 'blob'
+    if (response.succeeded && response.data) {
+      if (response.data.url) {
+        const xhr = new XMLHttpRequest()
+        xhr.open('GET', response.data.url, true)
+        xhr.responseType = 'blob'
 
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentComplete = 60 + (event.loaded / event.total) * 40
-        downloadProgress.value[downloadKey] = Math.min(percentComplete, 100)
-      }
-    }
-
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        downloadProgress.value[downloadKey] = 100
-
-        const blob = xhr.response
-        const url = window.URL.createObjectURL(blob)
-
-        const a = document.createElement('a')
-        a.href = url
-        a.download = response.data?.name || 'file.pdf'
-        document.body.appendChild(a)
-        a.click()
-
-        a.remove()
-        window.URL.revokeObjectURL(url)
-
-        if (requiresCoinPaymentForFile(type)) {
-          $toast.success('Download started! 5 coins deducted from your balance.')
+        xhr.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percentComplete = 60 + (event.loaded / event.total) * 40
+            downloadProgress.value[downloadKey] = Math.min(percentComplete, 100)
+          }
         }
 
-        downloadIssueLink.value = response.data?.url || ''
-        downloadIssue.value = true
+        xhr.onload = () => {
+          if (xhr.status === 200) {
+            downloadProgress.value[downloadKey] = 100
 
-        setTimeout(() => {
+            const blob = xhr.response
+            const url = window.URL.createObjectURL(blob)
+
+            const a = document.createElement('a')
+            a.href = url
+            a.download = response.data?.name || 'file.pdf'
+            document.body.appendChild(a)
+            a.click()
+
+            a.remove()
+            window.URL.revokeObjectURL(url)
+            downloadIssueLink.value = response.data?.url || ''
+            if (response.data?.spent) {
+              showCoinAnimation.value = true
+            }
+            else {
+              downloadIssue.value = true
+            }
+
+            setTimeout(() => {
+              downloadingItems.value.delete(downloadKey)
+              Reflect.deleteProperty(downloadProgress.value, downloadKey)
+            }, 1000)
+          }
+        }
+
+        xhr.onerror = () => {
           downloadingItems.value.delete(downloadKey)
           Reflect.deleteProperty(downloadProgress.value, downloadKey)
-        }, 1000)
+          $toast.error('Download failed. Please try again.')
+        }
+
+        xhr.send()
+      }
+      if (response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
+        showCoinPaymentModal.value = true
       }
     }
-
-    xhr.onerror = () => {
+    else {
+      if (response.errors && response.errors.length > 0) {
+        const messgage = response.errors[0].message
+        if (messgage == 'InsufficientBalance') {
+          showCoinPaymentModal.value = true
+        }
+      }
       downloadingItems.value.delete(downloadKey)
       Reflect.deleteProperty(downloadProgress.value, downloadKey)
-      $toast.error('Download failed. Please try again.')
     }
-
-    xhr.send()
   }
   catch (error: unknown) {
-    const err = error as AppError
-    // Clean up on error
+    console.error('Download failed:', error)
     downloadingItems.value.delete(downloadKey)
     Reflect.deleteProperty(downloadProgress.value, downloadKey)
-
-    if (err.response?.status === 403) {
-      $toast.error('Access denied. Insufficient permissions.')
-    }
-    else if (err.response?.status === 400) {
-      if (
-        err.response.data?.status === 0
-        && err.response.data?.error === 'creditNotEnough'
-      ) {
-        $toast.info('No enough credit')
-      }
-      else {
-        $toast.error('Invalid request. Please try again.')
-      }
-    }
-    else {
-      $toast.error('Download failed. Please try again.')
-    }
+    $toast.error('Download failed. Please try again.')
   }
   finally {
-    // Reset loading state
-  }
-}
-
-// For 2025 files, only these file types require coins:
-// - Mark schemes/answer files (a_file)
-// - Extra files (audio, additional resources)
-// - Question papers (q_word, q_pdf) remain FREE
-const requiresCoinPaymentForFile = (type: TypeFile) => {
-  const paidTestTypes = [
-    '8691', '7130', '6897', '8073', '8344',
-  ]
-
-  const paidLessons = [
-    '6649', '6527', '6650', '6526',
-    '6651', '6529', '6652', '6532',
-    '6653', '6516', '6654', '6515',
-    '6655', '6519', '6656', '6522',
-  ]
-
-  if (props.year === '2026') {
-    return true
-  }
-  else if (props.section === '8674' || props.section === '9130')
-    return true
-  else if (paidTestTypes.some(id => props.testType.includes(id)))
-    return true
-  else if (type === 'extra')
-    return true
-  else if (
-    type === 'a_file'
-    && (
-      props.year === '2025'
-      || paidLessons.some(id => props.lesson.includes(id))
-    )
-  ) {
-    return true
-  }
-
-  return false
-}
-
-const handleCoinPaymentConfirm = async () => {
-  if (!pendingDownload.value) return
-
-  showCoinPaymentModal.value = false
-  isProcessingPayment.value = true
-
-  try {
-    const response = await consumeCoins(
-      PRICE_FILE,
-      'PastPaper',
-      route.params.id as unknown as number,
-      'Past paper download',
-    )
-    if (response.succeeded) {
-      // showCoinAnimation.value = true
-      // Wait for animation to complete before starting download
-      // The download will be triggered in handleAnimationComplete
+    if (progressInterval) {
+      clearInterval(progressInterval)
     }
-    else {
-      $toast.error('Failed to process payment. Please try again.')
-    }
-  }
-  catch (error) {
-    console.error('Error processing coin payment:', error)
-    $toast.error('Payment failed. Please try again.')
-  }
-  finally {
-    isProcessingPayment.value = false
   }
 }
 
@@ -553,20 +444,18 @@ const handleCoinPaymentClose = () => {
 const handleAnimationComplete = async () => {
   // Close everything immediately when animation completes
   showCoinAnimation.value = false
+  isStartWalletAnimation.value = true
+}
 
-  if (pendingDownload.value) {
-    await startDownload(
-      pendingDownload.value.type,
-      pendingDownload.value.extraId,
-    )
-    pendingDownload.value = null
-  }
+const completeWalletAnimation = () => {
+  downloadIssue.value = true
+  isStartWalletAnimation.value = false
 }
 
 const startExam = () => {
   if (auth.isAuthenticated.value) {
     if (props.exams && props.exams.length > 0) {
-      router.push(`/exam/start/${props.exams[0].id}`)
+      router.push(`/exam/start/${props.exams[0]?.id}`)
     }
   }
   else {

@@ -1,57 +1,27 @@
 <template>
-  <div class="w-100 d-flex flex-column align-start justify-start py-4">
+  <div class="w-100 d-flex flex-column align-start justify-start py-4 mt-md-0 mt-6">
     <div
       v-if="showChips"
       class="w-100 d-flex align-center ga-2 flex-wrap"
     >
       <v-chip
-        v-if="contentData.section_title"
+        v-for="chip in chips"
+        :key="chip.title"
         variant="flat"
-        class="text-subtitle-1 text-sm-h5 px-3"
+        :class="chipClass"
         color="grey100"
-        :to="`/search?type=paper&section=${contentData.section}`"
+        :size="smAndUp ? 'large' : 'small'"
+        :to="{
+          path: '/search',
+          query: chip.params,
+        }"
       >
-        <span class="text-grey500">{{ contentData?.section_title }}</span>
-      </v-chip>
-      <v-chip
-        v-if="contentData.base_title"
-        variant="flat"
-        class="text-subtitle-1 text-sm-h5 px-3"
-        color="grey100"
-        :to="`/search?type=paper&section=${contentData.section}&base=${contentData.base}`"
-      >
-        <span class="text-grey500">{{ contentData?.base_title }}</span>
-      </v-chip>
-      <v-chip
-        v-if="contentData.lesson_title"
-        variant="flat"
-        class="text-subtitle-1 text-sm-h5 px-3"
-        color="grey100"
-        :to="`/search?type=paper&section=${contentData.section}&base=${contentData.base}&lesson=${
-          contentData.lesson
-        }`"
-      >
-        <span class="text-grey500">{{ contentData.lesson_title }}</span>
-      </v-chip>
-      <v-chip
-        v-if="contentData.topic_title"
-        variant="flat"
-        class="text-subtitle-1 text-sm-h5 px-3"
-        color="grey100"
-        :to="`/search?type=paper&section=${contentData.section}&base=${contentData.base}&lesson=${
-          contentData.lesson
-        }&topic=${contentData.topic}`"
-      >
-        <span class="text-grey500">{{ contentData.topic_title }}</span>
+        <span :class="chipTextClass">
+          {{ chip.title }}
+        </span>
       </v-chip>
     </div>
-    <div class="w-100 d-flex align-center  mt-4">
-      <div
-        v-if="showTitle"
-        class="text-h4 font-weight-bold text-grey600"
-      >
-        Question:
-      </div>
+    <div class="w-100 d-flex align-center mt-4">
       <div
         v-if="contentData.answer_full.length > 0"
         class="w-100 d-flex align-center justify-end"
@@ -65,7 +35,7 @@
           class="text-h6"
           icon="md:question_mark"
           :disabled="isPaymentComplete"
-          @click="openPaymentMdoal"
+          @click="openPaymentModal"
         />
       </div>
     </div>
@@ -75,12 +45,15 @@
       class="container-question w-100 d-flex flex-column align-start justift-start mt-6"
     >
       <div
-        class="text-h6 text-sm-h4 text-grey800"
+        :class="[
+          'test-text text-grey700 font-weight-semibold',
+          { 'test-text-sm': smAndUp },
+        ]"
         v-html="contentData.question"
       />
       <img
         v-if="contentData.q_file && contentData.q_file != '0'"
-        class="answer-img mt-1"
+        class="answer-img mt-1 ma-auto ms-sm-0"
         :src="contentData.q_file"
         alt="Question Image"
       >
@@ -92,47 +65,52 @@
         <div
           v-for="item in answers"
           :key="item.key"
-          class="d-flex align-center flex-wrap ga-3 cursor-pointer w-100 position-relative container-choice"
+          class="w-100 d-flex flex-column align-start ga-2 cursor-pointer position-relative container-choice"
           @click="handleAnswerSelect(item.key)"
         >
-          <div
-            :class="[
-              'choice-div position-absolute left-0 top-0 text-h6 text-sm-h4 text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
-              {
-                'border-grey200': getChoiceStatus(item.key) === 'default',
-                'border-success': getChoiceStatus(item.key) === 'success',
-                'border-lightError': getChoiceStatus(item.key) === 'error',
-                'border-primary': getChoiceStatus(item.key) === 'loading',
-              },
-            ]"
-          >
-            <v-progress-circular
-              v-if="getChoiceStatus(item.key) === 'loading'"
-              color="primary"
-              size="20"
-              indeterminate
-              :width="2"
+          <div class="w-100 d-flex flex-nowrap align-start ga-3">
+            <div
+              :class="[
+                'choice-div flex-shrink-0 font-weight-regular text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
+                {
+                  'border-grey200': getChoiceStatus(item.key) === 'default',
+                  'border-success': getChoiceStatus(item.key) === 'success',
+                  'border-lightError': getChoiceStatus(item.key) === 'error',
+                  'border-primary': getChoiceStatus(item.key) === 'loading',
+                },
+              ]"
+            >
+              <v-progress-circular
+                v-if="getChoiceStatus(item.key) === 'loading'"
+                color="primary"
+                size="20"
+                indeterminate
+                :width="2"
+              />
+              <span v-else-if="getChoiceStatus(item.key) === 'default'">{{ item.key }}</span>
+
+              <v-icon
+                v-else-if="getChoiceStatus(item.key) === 'success'"
+                color="success"
+              >
+                md:check
+              </v-icon>
+
+              <v-icon
+                v-else
+                color="lightError"
+              >
+                md:close
+              </v-icon>
+            </div>
+            <div
+              :class="[
+                'test-text flex-grow-1 font-weight-regular choice-text text-grey800 overflow-x-auto overflow-y-hidden',
+                { 'test-text-sm': smAndUp },
+              ]"
+              v-html="item.text"
             />
-            <span v-else-if="getChoiceStatus(item.key) === 'default'">{{ item.key }}</span>
-
-            <v-icon
-              v-else-if="getChoiceStatus(item.key) === 'success'"
-              color="success"
-            >
-              md:check
-            </v-icon>
-
-            <v-icon
-              v-else
-              color="lightError"
-            >
-              md:close
-            </v-icon>
           </div>
-          <div
-            class="text-h6 text-sm-h4 choise-text text-grey800 overflow-x-auto overflow-y-hidden"
-            v-html="item.text"
-          />
           <img
             v-if="item.file"
             class="answer-img mt-1"
@@ -149,29 +127,32 @@
       class="w-100 mt-4 d-flex flex-column align-start justify-start px-2 px-sm-8"
     >
       <div
-        class="text-h4 font-weight-bold text-grey600"
+        :class="['test-text font-weight-bold text-grey600', { 'test-text-sm': smAndUp }]"
       >
         Solution:
       </div>
       <div
-        class="text-h6 text-sm-h4 text-grey800 mt-4"
+        :class="['test-text text-grey800 mt-4', { 'test-text-sm': smAndUp }]"
         v-html="contentData.answer_full"
       />
     </div>
 
-    <div class="w-100 d-flex align-center justify-start mt-6">
-      <v-btn
-        :disabled="!nextTestId && !ssrNextTestId"
-        :loading="nextTestLoading"
-        color="info"
-        rounded="lg"
-        flat
-        :to="`/test/${ssrNextTest ? ssrNextTestId : nextTestId}`"
-      >
-        <span class="text-h5 font-weight-bold text-white">
-          {{ buttonNextText }}
-        </span>
-      </v-btn>
+    <div class="w-100 d-flex align-center justify-center justify-sm-start mt-6">
+      <div class="w-100 w-sm-25">
+        <v-btn
+          :disabled="!nextTestId && !ssrNextTestId"
+          :loading="nextTestLoading"
+          color="primary"
+          rounded="pill"
+          block
+          flat
+          :to="`/test/${ssrNextTest ? ssrNextTestId : nextTestId}`"
+        >
+          <span class="text-h5 font-weight-medium text-grey800">
+            {{ buttonNextText }}
+          </span>
+        </v-btn>
+      </div>
     </div>
 
     <lazy-test-success-coin-animation
@@ -203,12 +184,12 @@
 
 <script setup lang="ts">
 import type { QuestionDTO, NextQuestionDTO, ApiResult, TestTimeDTO, AppError } from '@/types'
+import { useDisplay } from 'vuetify/lib/composables/display.mjs'
 
 interface ITestDetail {
   contentData: QuestionDTO
   buttonNextText?: string
   showChips?: boolean
-  showTitle?: boolean
   ssrNextTest?: boolean
   ssrNextTestId?: string
 }
@@ -246,6 +227,51 @@ const isStartProcessShowAnswer = ref(false)
 
 const nextTestId = ref()
 const nextTestLoading = ref(false)
+
+const { smAndUp } = useDisplay()
+
+const chipClass = 'text-subtitle-1 px-3'
+const chipTextClass = 'text-grey500 text-h6 text-sm-h5 font-weight-regular'
+
+const chips = computed(() => {
+  const data = props.contentData
+
+  return [{
+    title: data.section_title,
+    params: {
+      type: 'paper',
+      section: data.section,
+    },
+  },
+  {
+    title: data.base_title,
+    params: {
+      type: 'paper',
+      section: data.section,
+      base: data.base,
+    },
+  },
+  {
+    title: data.lesson_title,
+    params: {
+      type: 'paper',
+      section: data.section,
+      base: data.base,
+      lesson: data.lesson,
+    },
+  },
+  {
+    title: data.topic_title,
+    params: {
+      type: 'paper',
+      section: data.section,
+      base: data.base,
+      lesson: data.lesson,
+      topic: data.topic,
+    },
+  },
+  ].filter(chip => chip.title)
+})
 
 const completeSuccessCoinAnimation = () => {
   isStartSuccessAnimation.value = false
@@ -346,7 +372,7 @@ onMounted(async () => {
   }
 })
 
-const openPaymentMdoal = async () => {
+const openPaymentModal = async () => {
   if (auth.isAuthenticated.value) {
     showCoinPaymentModal.value = true
   }
@@ -422,17 +448,26 @@ const loadNextTest = async () => {
   width: auto;
   max-width: 100%;
 }
-.container-choice{
-  min-height: 30px;
+.container-choice {
+  min-height: 24px;
 }
-.choice-div{
-  min-width : 30px;
-  min-height: 30px;
-  max-width : 30px;
-  max-height: 30px;
+.choice-div {
+  min-width : 24px;
+  min-height: 24px;
+  max-width : 24px;
+  max-height: 24px;
+  font-size: 1.4rem;
 }
-.choise-text{
-  text-indent: 40px;
-  line-height: 34px;
+.choice-text {
+  min-width: 0;
+  line-height: 22px;
+}
+
+.test-text {
+  font-size: 1.6rem;
+}
+
+.test-text-sm {
+  font-size: 1.8rem;
 }
 </style>

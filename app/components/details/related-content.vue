@@ -147,7 +147,7 @@
                           <v-icon size="12">
                             mdi-calendar
                           </v-icon>
-                          {{ $dayjs(item.subdate).format("MMM DD") }}
+                          {{ formatLocal(item.subdate, "MMM DD") }}
                         </v-col>
                       </v-row>
                     </v-card-subtitle>
@@ -222,7 +222,7 @@
                           <v-icon size="12">
                             mdi-calendar
                           </v-icon>
-                          {{ $dayjs(item.subdate).format("MMM DD") }}
+                          {{ formatLocal(item.subdate, "MMM DD") }}
                         </v-col>
                       </v-row>
                     </v-card-subtitle>
@@ -251,6 +251,13 @@ export default {
       required: false,
       default: '',
     },
+  },
+  setup() {
+    const { formatLocal } = useDateTime()
+
+    return {
+      formatLocal,
+    }
   },
   data() {
     return {

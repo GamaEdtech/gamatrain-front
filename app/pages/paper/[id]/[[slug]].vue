@@ -58,6 +58,7 @@
           :lesson="contentData.lesson"
           :exams="contentData.exams"
           :test-type="contentData.test_type"
+          :is-paper="contentData.is_paper"
         />
         <lazy-common-detail-subject-directory-nav :content-data="contentData" />
       </v-col>

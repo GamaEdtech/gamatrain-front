@@ -1,495 +1,430 @@
 <template>
-  <div class="mt-4">
-    <v-col
-      cols="12"
-      class="px-2 px-sm-2 px-md-0"
+  <v-container class="w-100 d-flex flex-column">
+    <v-form
+      v-model="isFormValid"
+      class="w-100 d-flex flex-column"
     >
-      <v-row>
-        <v-col
-          cols="12"
-          class="pl-5"
-        >
-          <span
-            class="text-h4"
-            style="color: #009688"
-          > Forum Edit Form </span>
-        </v-col>
-      </v-row>
-      <v-card class="mt-3">
-        <v-card-text class="px-0 px-sm-8 px-md-4">
-          <v-card-text>
-            <v-card
-              flat
-              class="mt-3"
+      <h1 class="text-h4 text-grey700 font-weight-regular">
+        Forum Submission Form
+      </h1>
+
+      <div class="d-flex flex-wrap justify-space-between">
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="forum.board"
+            label="Board"
+            :items="boards?.map((board) => {
+              return {
+                id: board.code,
+                title: board.title,
+              }
+            })"
+            :data-loading="loadingBoards"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            :defalut-lable="false"
+            density="compact"
+            :rules="[required]"
+            @update:model-value="boardChange"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="forum.grade"
+            label="Grade"
+            :items="grades?.map((item) => {
+              return {
+                id: item.id,
+                title: item.title,
+              }
+            })"
+            :data-loading="loadingBoards || loadingGrade"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :disabled="!forum.board || loadingGrade"
+            :rules="[required]"
+            @update:model-value="gradeChange"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="forum.subject"
+            label="Subject"
+            :items="subjects?.map((item) => {
+              return {
+                id: item.id,
+                title: item.title,
+              }
+            })"
+            :data-loading="loadingBoards || loadingGrade || loadingSubject"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :disabled="!forum.board || !forum.grade || loadingSubject"
+            :rules="[required]"
+            @update:model-value="subjectChange"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
+            v-model="forum.topics"
+            label="Topics"
+            :items="topics?.map((item) => {
+              return {
+                id: item.id,
+                title: item.title,
+              }
+            })"
+            :data-loading="loadingBoards || loadingGrade || loadingSubject || loadingTopic"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :disabled="!forum.board || !forum.grade || !forum.subject || loadingTopic"
+          />
+        </div>
+
+        <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
+          <span class="text-h6 text-grey700 font-weight-medium">Title</span>
+          <v-text-field
+            v-model="forum.title"
+            density="compact"
+            variant="outlined"
+            label=""
+            outlined
+            rounded="pill"
+            color="primary"
+            height="48"
+            base-color="grey200"
+            class="w-100"
+            :rules="[required, minLength(20)]"
+          >
+            <template #prepend-inner>
+              <v-progress-circular
+                v-if="loadingGetItemById"
+                indeterminate
+                size="20"
+                color="primary"
+                class="mx-2"
+              />
+            </template>
+          </v-text-field>
+        </div>
+
+        <div class="w-100 d-flex flex-column align-start justify-start ga-1 rounded-lg pa-2">
+          <span class="text-h6 text-grey700 font-weight-medium">Question</span>
+          <v-textarea
+            v-model="forum.question"
+            density="compact"
+            variant="outlined"
+            label=""
+            outlined
+            rounded="lg"
+            color="primary"
+            base-color="grey200"
+            class="w-100"
+            placeholder="Enter your question"
+            persistent-clear
+            no-resize
+            rows="7"
+            :rules="[required, minLength(70)]"
+          >
+            <template #prepend-inner>
+              <v-progress-circular
+                v-if="loadingGetItemById"
+                indeterminate
+                size="20"
+                color="primary"
+                class="mx-2"
+              />
+            </template>
+          </v-textarea>
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1">
+          <span class="text-h6 text-grey700 font-weight-medium">Attach file
+            <span
+              v-if="fileStatusText"
+              class="text-subtitle-1 text-grey600"
             >
-              <VForm
-                ref="form"
-                v-model="isFormValid"
-                lazy-validation
-                @submit.prevent="onSubmit"
+              ({{ fileStatusText }})
+            </span>
+          </span>
+          <v-file-input
+            v-model="forumFile"
+            density="compact"
+            variant="outlined"
+            accept=".png,.jpg,jpeg,.gif,.zip,.rar,.mp4,.flv"
+            label=""
+            base-color="grey200"
+            color="primary"
+            prepend-icon=""
+            append-inner-icon="md:files"
+            autocomplete="off"
+            max-height="48"
+            rounded="pill"
+            class="w-100"
+            :disabled="loadingUploadFile"
+            @update:model-value="uploadForumFile"
+          >
+            <template #prepend-inner>
+              <v-icon
+                size="20"
+                color="info"
               >
-                <v-row class="py-2">
-                  <v-col
-                    cols="12"
-                    md="3"
-                  >
-                    <v-autocomplete
-                      v-model="formData.section"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :items="section_list"
-                      :rules="[(v) => !!v || 'This field is required']"
-                      item-title="title"
-                      item-value="id"
-                      label="Board"
-                      color="#FFB300"
-                      @update:model-value="changeOption('section', $event)"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="3"
-                  >
-                    <v-autocomplete
-                      v-model="formData.base"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :items="grade_list"
-                      :rules="[(v) => !!v || 'This field is required']"
-                      item-value="id"
-                      item-title="title"
-                      label="Grade"
-                      color="#FFB300"
-                      @update:model-value="changeOption('base', $event)"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="3"
-                  >
-                    <v-autocomplete
-                      v-model="formData.lesson"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :items="lesson_list"
-                      :rules="[(v) => !!v || 'This field is required']"
-                      item-value="id"
-                      item-title="title"
-                      label="Subject"
-                      color="#FFB300"
-                      @update:model-value="changeOption('lesson', $event)"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="3"
-                  >
-                    <v-autocomplete
-                      v-model="formData.topics"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :items="topic_list"
-                      :rules="[
-                        (v) =>
-                          topic_list.length === 0
-                          || !!v
-                          || 'This field is required',
-                      ]"
-                      item-value="id"
-                      item-title="title"
-                      label="Topic"
-                      color="#FFB300"
-                      @update:model-value="changeOption('topic', $event)"
-                    />
-                  </v-col>
+                md:text_snippet
+              </v-icon>
+              <v-progress-circular
+                v-if="loadingUploadFile || loadingGetItemById"
+                indeterminate
+                size="20"
+                color="primary"
+                class="mx-2"
+              />
+            </template>
 
-                  <v-col
-                    cols="12"
-                    md="12"
-                  >
-                    <v-text-field
-                      v-model="formData.title"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :rules="[
-                        (v) => !!v || 'This field is required',
-                        (v) =>
-                          (v && v.length >= 20)
-                          || 'This field must be at least 20 characters',
-                      ]"
-                      label="Summary of the question"
-                      color="#FFB300"
-                    />
-                  </v-col>
+            <template #append>
+              <a
+                v-if="fileStatusText == 'saved file attached'"
+                :href="forum.file"
+                target="_blank"
+              >
+                <v-icon
 
-                  <v-col
-                    cols="12"
-                    md="12"
-                  >
-                    <v-textarea
-                      v-model="formData.question"
-                      required
-                      density="compact"
-                      variant="outlined"
-                      :rules="[
-                        (v) => !!v || 'This field is required',
-                        (v) =>
-                          (v && v.length >= 70)
-                          || 'This field must be at least 70 characters',
-                      ]"
-                      label="Question"
-                      hint="You must enter at least 70 characters."
-                      persistent-hint
-                      placeholder="Enter your question"
-                      color="#FFB300"
-                    />
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="3"
-                  >
-                    <v-file-input
-                      v-model="file"
-                      density="compact"
-                      variant="outlined"
-                      label="Attach file"
-                      accept=".png,.jpg,jpeg,.gif,.zip,.rar,.mp4,.flv"
-                      :rules="[
-                        (v) =>
-                          !v
-                          || v.size < 20000000
-                          || 'File size should be less than 20 MB!',
-                      ]"
-                      :loading="loading.file"
-                      :prepend-icon="null"
-                      color="red"
-                      prepend-inner-icon="mdi-file"
-                      append-icon="mdi-folder-open"
-                      @update:model-value="uploadFile($event)"
-                    >
-                      <template #append>
-                        <v-btn
-                          v-if="questionData.files?.exist"
-                          icon
-                          size="small"
-                          variant="plain"
-                          :href="questionData.files?.url"
-                          target="_blank"
-                        >
-                          <v-icon size="22">
-                            mdi-download
-                          </v-icon>
-                        </v-btn>
-                      </template>
-                    </v-file-input>
-                  </v-col>
-                </v-row>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    md="6"
-                    class="pb-0"
-                  >
-                    <v-btn
-                      type="submit"
-                      :loading="loading.form"
-                      :disabled="!isFormValid"
-                      color="success"
-                      block
-                    >
-                      Update
-                    </v-btn>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    md="6"
-                  >
-                    <v-btn
-                      variant="outlined"
-                      color="error"
-                      to="/user/question"
-                      block
-                    >
-                      Discard
-                    </v-btn>
-                  </v-col>
-                </v-row>
-              </VForm>
-            </v-card>
-          </v-card-text>
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </div>
+                  size="26"
+                  color="info"
+                  class="cursor-pointer"
+                >
+                  md:download
+                </v-icon>
+              </a>
+            </template>
+          </v-file-input>
+        </div>
+      </div>
+    </v-form>
+
+    <div class="d-flex align-center justify-center mt-8 ga-2">
+      <v-btn
+        variant="outlined"
+        color="lightError"
+        to="/user/question"
+        flat
+        rounded="pill"
+        height="40"
+        class="text-h5 font-weight-medium"
+      >
+        Discard
+      </v-btn>
+      <v-btn
+        flat
+        rounded="pill"
+        width="200"
+        height="40"
+        class="text-h5 font-weight-medium text-grey800"
+        color="primary"
+        :loading="loadingEditItem"
+        :disabled="!isFormValid || loadingUploadFile"
+        @click="submit"
+      >
+        Update
+      </v-btn>
+    </div>
+  </v-container>
 </template>
 
-<script setup>
-import { useAuth } from '~/composables/useAuth'
+<script setup lang="ts">
+import type { ForumCreateDTO, ForumDetailDTO } from '@/types'
 
-const auth = useAuth()
-// Define layout and page metadata
 definePageMeta({
   layout: 'dashboard-layout',
-  middleware: ['auth', 'user-type'],
+  middleware: ['auth'],
 })
 
-// Get route params
-const route = useRoute()
-const router = useRouter()
+useSeoMeta({
+  title: 'Forum submission form',
+})
+
+const {
+  loadingGetData: loadingBoards,
+  data: boards,
+  getData: getBoards,
+  getGrades,
+  grades,
+  loadingGrade,
+  resetGrades,
+  subjects,
+  loadingSubject,
+  resetSubjects,
+  getSubjects,
+  getTopics,
+  resetTopics,
+  loadingTopic,
+  topics,
+} = useBoard()
+const { required, minLength } = useValidationRules()
+const { uploadFile, loadingUploadFile } = useUpload()
+const { getItemById, loadingGetItemById, editItem, loadingEditItem } = useForum()
 const { $toast } = useNuxtApp()
-const userToken = ref('')
+const router = useRouter()
+const route = useRoute()
 
-// Page title
-useHead({
-  title: 'Q & A edit form',
-})
+const forumId = computed(() => String(route.params.id || ''))
+const fileStatusText = ref('')
 
-// Form validation
-const form = ref(null)
 const isFormValid = ref(false)
-
-const onSubmit = () => {
-  updateContent()
-}
-
-const { data: questionData } = await useAsyncData('question-data', async () => {
-  try {
-    const content = await useApiService.get(`/api/v1/questions/${route.params.id}`)
-    if (content.status === 1) {
-      return content.data
-    }
-    return null
-  }
-  catch (error) {
-    console.error('Error fetching paper data:', error)
-    return null
-  }
-})
-
-// Form data
-const formData = reactive({
-  id: route.params.id,
-  section: '',
-  base: '',
-  lesson: '',
+const forumFile = ref<File | File[] | null>(null)
+const forum = ref<ForumCreateDTO>({
+  board: '',
+  grade: '',
+  subject: '',
   topics: '',
   title: '',
   question: '',
   file: '',
 })
 
-const file = ref(null)
-const section_list = ref([])
-const grade_list = ref([])
-const lesson_list = ref([])
-const topic_list = ref([])
+const getSelectedFile = (value: unknown) => {
+  if (value instanceof File) return value
+  if (Array.isArray(value)) return value[0] ?? null
 
-// Handle loading states
-const loading = reactive({
-  section: false,
-  base: false,
-  lesson: false,
-  topic: false,
-  file: false,
-  form: false,
-})
+  return null
+}
 
-// Methods
-const getTypeList = async (type, parent = '') => {
-  const params = { type }
-
-  if (type === 'section') {
-    loading.section = true
-  }
-  if (type === 'base') {
-    params.section_id = parent
-    loading.base = true
-  }
-  if (type === 'lesson') {
-    params.base_id = parent
-    loading.lesson = true
-  }
-  if (type === 'topic') {
-    params.lesson_id = parent
-    loading.topic = true
-  }
-
-  try {
-    const response = await useApiService.get('/api/v1/types/list', params, { public: true })
-
-    if (type === 'section') {
-      section_list.value = response.data
-    }
-    else if (type === 'base') {
-      grade_list.value = response.data
-    }
-    else if (type === 'lesson') {
-      lesson_list.value = response.data
-    }
-    else if (type === 'topic') {
-      topic_list.value = response.data
-    }
-  }
-  catch {
-    $toast.error('Error loading data')
-  }
-  finally {
-    loading.section = false
-    loading.base = false
-    loading.lesson = false
-    loading.topic = false
+const boardChange = async (boardId: string | number) => {
+  forum.value.board = boardId
+  forum.value.grade = ''
+  forum.value.subject = ''
+  forum.value.topics = ''
+  resetGrades()
+  resetSubjects()
+  resetTopics()
+  if (boardId) {
+    await getGrades(boardId)
   }
 }
 
-const initData = () => {
-  formData.section = questionData.value?.section || ''
-  formData.base = questionData.value?.base || ''
-  formData.lesson = questionData.value?.lesson || ''
-
-  // Set topic directly (not as array)
-  formData.topics = questionData.value?.topic || ''
-
-  formData.title = questionData.value?.title || ''
-  formData.question = questionData.value?.question || ''
-}
-
-const changeOption = async (optionName, optionVal) => {
-  if (optionName === 'section') {
-    formData.base = ''
-    formData.lesson = ''
-    formData.topics = '' // Reset as string, not array
-    grade_list.value = []
-    lesson_list.value = []
-    topic_list.value = []
-
-    if (optionVal) {
-      await getTypeList('base', optionVal)
-    }
-  }
-  else if (optionName === 'base') {
-    formData.lesson = ''
-    if (optionVal) {
-      await getTypeList('lesson', optionVal)
-    }
-  }
-  else if (optionName === 'lesson') {
-    if (optionVal) {
-      await getTypeList('topic', optionVal)
-    }
-    else {
-      formData.topics = '' // Reset as string, not array
-      topic_list.value = []
-    }
-  }
-  else if (optionName === 'topic') {
-    // When topic is directly selected
-    formData.topics = optionVal
+const gradeChange = async (gradeId: string | number) => {
+  forum.value.grade = gradeId
+  forum.value.subject = ''
+  forum.value.topics = ''
+  resetSubjects()
+  resetTopics()
+  if (gradeId) {
+    await getSubjects(gradeId)
   }
 }
 
-const updateContent = async () => {
-  loading.form = true
-
-  // Prepare form data
-  const formSubmitData = new FormData()
-
-  // Directly append all form fields - no special handling for topics
-  for (const key in formData) {
-    formSubmitData.append(key, formData[key])
-  }
-
-  try {
-    const response = await useApiService.put(
-      `/api/v1/questions/${route.params.id}`,
-      urlencodeFormData(formSubmitData),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      },
-    )
-
-    if (response.data.id === 0 && response.data.repeated) {
-      $toast.info('The question is duplicated')
-    }
-    else {
-      $toast.success('Updated successfully')
-      router.push('/user/question')
-    }
-  }
-  catch {
-    $toast.error('Error updating question')
-  }
-  finally {
-    loading.form = false
+const subjectChange = async (subjectId: string | number) => {
+  forum.value.subject = subjectId
+  forum.value.topics = ''
+  resetTopics()
+  if (subjectId) {
+    await getTopics(subjectId)
   }
 }
 
-// Convert form data to URL encoded format
-const urlencodeFormData = (fd) => {
-  let s = ''
-  for (const pair of fd.entries()) {
-    if (typeof pair[1] === 'string') {
-      s += (s ? '&' : '') + encode(pair[0]) + '=' + encode(pair[1])
-    }
+const uploadForumFile = async (value: unknown) => {
+  const file = getSelectedFile(value)
+
+  if (!file) {
+    forum.value.file = ''
+    return
   }
-  return s
-}
 
-const encode = (s) => {
-  return encodeURIComponent(s).replace(/%20/g, '+')
-}
-const uploadFile = async (value) => {
-  if (!value) return
-
-  loading.file = true
-
-  const fileFormData = new FormData()
-  fileFormData.append('file', value)
-
-  try {
-    const response = await useApiService.post('/api/v1/upload', fileFormData)
-
-    formData.file = response.data[0].file.name
-    $toast.success('File uploaded successfully')
+  if (file.size >= 20000000) {
+    $toast.error('File size should be less than 20 MB!')
+    forumFile.value = null
+    forum.value.file = ''
+    return
   }
-  catch {
-    $toast.error('An error occurred during file upload')
+
+  const response = await uploadFile(file)
+
+  if (response.status == 1 && response.data && response.data.length > 0) {
+    forum.value.file = response.data[0]?.file.name ?? ''
+    fileStatusText.value = 'new file selected'
   }
-  finally {
-    loading.file = false
+  else {
+    forumFile.value = null
+    forum.value.file = ''
   }
 }
 
-// Initialize data on load
+const submit = async () => {
+  const response = await editItem(forumId.value, forum.value)
+
+  if (response.status === 1 && response.data?.id !== 0) {
+    router.push('/user/question')
+  }
+}
+
+const applyData = async (item: ForumDetailDTO) => {
+  forum.value.board = item.section || ''
+  forum.value.topics = item.topic || ''
+  forum.value.title = item.title || ''
+  forum.value.question = item.question || ''
+  forum.value.file = item.files?.url ?? ''
+  fileStatusText.value = item.files?.exist ? 'saved file attached' : ''
+
+  if (forum.value.board) {
+    getGrades(forum.value.board)
+  }
+
+  forum.value.grade = item.base || ''
+
+  if (forum.value.grade) {
+    getSubjects(forum.value.grade)
+  }
+
+  forum.value.subject = item.lesson || ''
+
+  if (forum.value.subject) {
+    getTopics(forum.value.subject)
+  }
+}
+
 onMounted(async () => {
-  userToken.value = auth.getUserToken()
-  await getTypeList('section')
-  initData()
+  const [forumResponse] = await Promise.all([
+    getItemById(forumId.value),
+    getBoards(),
 
-  // Load dependent type lists
-  if (formData.section) {
-    await getTypeList('base', formData.section)
-  }
+  ])
 
-  if (formData.base) {
-    await getTypeList('lesson', formData.base)
-  }
-
-  if (formData.lesson) {
-    await getTypeList('topic', formData.lesson)
+  if (forumResponse.data) {
+    await applyData(forumResponse.data)
   }
 })
 </script>
 
-<style>
-.topic_season {
-  font-weight: bolder !important;
-  color: blue !important;
+<style scoped>
+.each-item{
+  width : 33%
+}
+.container-topics{
+  border : 2px solid rgb(var(--v-theme-grey200))
+}
+@media screen and (max-width: 960px) {
+  .each-item{
+    width: 100%;
+  }
 }
 </style>

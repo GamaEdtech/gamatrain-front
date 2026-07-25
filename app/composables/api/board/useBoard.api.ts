@@ -230,14 +230,14 @@ export const useBoard = () => {
     topics.value = []
   }
 
-  const getExtraTypeFile = async () => {
+  const getExtraTypeFile = async (type: string) => {
     try {
       loadingExtraTypeFile.value = true
 
       const response = await useApiService.get<
         ApiResult<ExtraTypeFilePastPaperCreateDTO[]>
       >(
-        `/api/v1/types/list/?type=test_extra_file`,
+        `/api/v1/types/list?type=${type}`,
       )
 
       if (response.data && response.data.length > 0) {

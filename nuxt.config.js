@@ -56,7 +56,7 @@ export default defineNuxtConfig({
   ],
 
   dayjs: {
-    plugins: ['relativeTime'],
+    plugins: ['utc', 'relativeTime'],
   },
 
   site: {
@@ -214,7 +214,6 @@ export default defineNuxtConfig({
       name: 'Gamatrain',
     },
     workbox: {
-      navigateFallback: '/',
       globPatterns: [],
       globIgnores: [
         '**/_payload.json',
@@ -262,11 +261,17 @@ export default defineNuxtConfig({
       chunkSizeWarningLimit: 1000,
       rollupOptions: {
         output: {
-          manualChunks: {
-            vendor: ['vue', 'vue-router'],
-            vuetify: ['vuetify'],
-            charts: ['vue-chartjs', 'chart.js'],
-            ckeditor: ['@ckeditor/ckeditor5-vue'],
+          manualChunks(id) {
+            const normalizedId = id.replaceAll('\\', '/')
+
+            if (/\/node_modules\/(?:vue|vue-router|@vue)\//.test(normalizedId))
+              return 'vendor'
+            if (normalizedId.includes('/node_modules/vuetify/'))
+              return 'vuetify'
+            if (/\/node_modules\/(?:vue-chartjs|chart\.js)\//.test(normalizedId))
+              return 'charts'
+            if (normalizedId.includes('/node_modules/@ckeditor/ckeditor5-vue/'))
+              return 'ckeditor'
           },
         },
       },

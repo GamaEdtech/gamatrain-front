@@ -1,1 +1,6 @@
 export * from './pastpaper'
+export * from './blog'
+export * from './school'
+export * from './tags'
+export * from './location'
+export * from './school'
