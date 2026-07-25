@@ -2,7 +2,6 @@ import dayjs from 'dayjs'
 import type {
   AdminCommissionDTO,
   ApiResult,
-  AppError,
   GetAdminCommissionParams,
   ResponseListDTO,
 } from '@/types'
@@ -15,7 +14,7 @@ const pageCount = ref(0)
 const BASE_URL = '/api/v2/admin/commissions'
 
 export const useCommissionAdmin = () => {
-  const { $toast } = useNuxtApp()
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetAdminCommissionParams) => {
     const { page, pageSize, startDate, endDate } = params
@@ -35,7 +34,7 @@ export const useCommissionAdmin = () => {
         },
       )
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / pageSize)
@@ -44,18 +43,17 @@ export const useCommissionAdmin = () => {
         data.value = []
         totalCount.value = 0
         pageCount.value = 0
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      handleApiCatchError(err)
 
       data.value = []
       totalCount.value = 0
       pageCount.value = 0
+
+      return createApiFailure<ResponseListDTO<AdminCommissionDTO>>(err)
     }
     finally {
       loadingGetData.value = false
