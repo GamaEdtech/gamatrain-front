@@ -101,6 +101,17 @@
             </div>
           </v-carousel-item>
         </v-carousel>
+
+        <img
+          v-if="previewData.type == 'pdf'"
+          width="170"
+          :src="previewData.preview[0]"
+          :alt="title"
+          class="w-100 h-100 cover-image"
+          preload
+          fetchpriority="high"
+          loading="eager"
+        >
       </template>
 
       <span
@@ -151,5 +162,8 @@ const shareContent = () => {
 
 .main-image-paper {
   max-width : 100%
+}
+.cover-image {
+  object-fit: cover;
 }
 </style>

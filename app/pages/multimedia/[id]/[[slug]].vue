@@ -20,7 +20,7 @@
         md:chevron_forward
       </v-icon>
     </div>
-    <div class="w-100 d-flex align-start justify-center justify-md-space-between mt-6">
+    <div class="w-100 d-flex align-start justify-center justify-md-space-between mt-6 flex-wrap">
       <div class="w-100 w-md-33 d-flex justify-center">
         <lazy-multimedia-preview-card
           :id="contentData.id"
@@ -31,6 +31,10 @@
           :preview-data="contentData.previewData"
           @share="openShare = true"
         />
+      </div>
+
+      <div class="w-100 w-md-66 d-flex align-start flex-wrap mt-4 mt-md-0">
+        <lazy-multimedia-content-detail :content-data="contentData" />
       </div>
     </div>
 
