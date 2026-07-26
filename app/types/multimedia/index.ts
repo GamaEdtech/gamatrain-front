@@ -31,10 +31,11 @@ export interface MultimediaBriefDTO {
   subdate_jalali: string
 }
 
+export type TypeFileExtentionMultimedia = 'pptx' | 'pdf' | 'docx' | 'mp4'
 export interface MultimediaFileInfoDTO {
   exist: boolean
   size: string | number
-  ext: string
+  ext: TypeFileExtentionMultimedia
   pages?: number
   price?: number
   price_unit?: string
