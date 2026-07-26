@@ -58,6 +58,12 @@ export interface MultimediaCollectionDTO {
   chapters?: MultimediaCollectionChapterDTO[]
 }
 
+export interface MultimediaPreviewDataDTO {
+  type: string
+  preview: string[]
+  poster: boolean
+}
+
 export interface MultimediaDetailDTO {
   id: string
   user_: string
@@ -109,7 +115,9 @@ export interface MultimediaDetailDTO {
   hasMembership: boolean
   files: MultimediaFileInfoDTO
   collectionList: MultimediaCollectionDTO[]
+  previewData: MultimediaPreviewDataDTO
 }
+
 export interface GetDataParamsMultimedia {
   page: number
   pageSize: number
