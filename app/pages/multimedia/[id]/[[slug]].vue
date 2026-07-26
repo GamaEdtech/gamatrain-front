@@ -49,6 +49,12 @@
       :lesson="contentData.lesson"
     />
 
+    <lazy-common-detail-related-content
+      :id="contentData.id"
+      source="file"
+      :request="[`file`]"
+    />
+
     <lazy-common-share-modal
       v-if="openShare"
       v-model:show-dialog="openShare"
