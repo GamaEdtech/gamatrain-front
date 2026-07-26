@@ -20,7 +20,7 @@
         md:chevron_forward
       </v-icon>
     </div>
-    <div class="w-100 d-flex align-start justify-center justify-md-space-between mt-6 flex-wrap">
+    <div class="w-100 d-flex align-start justify-center justify-md-space-between mt-6 flex-wrap mb-4">
       <div class="w-100 w-md-33 d-flex justify-center">
         <lazy-multimedia-preview-card
           :id="contentData.id"
@@ -44,6 +44,10 @@
         />
       </div>
     </div>
+
+    <lazy-common-detail-box-random-question
+      :lesson="contentData.lesson"
+    />
 
     <lazy-common-share-modal
       v-if="openShare"
