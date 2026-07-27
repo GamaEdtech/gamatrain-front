@@ -49,10 +49,10 @@
       :lesson="contentData.lesson"
     />
 
-    <lazy-related-content
+    <lazy-common-related-content
       :id="contentData.id"
       source="file"
-      :request="[`file`]"
+      :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
     />
 
     <lazy-common-modal-base

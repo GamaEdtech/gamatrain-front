@@ -66,7 +66,7 @@
       <lazy-common-box-random-question :lesson="contentData.lesson" />
 
       <v-col cols="12">
-        <lazy-related-content
+        <lazy-common-related-content
           :id="contentData.id"
           source="test"
           :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
