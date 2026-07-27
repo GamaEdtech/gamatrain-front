@@ -61,10 +61,29 @@ export interface ContentItemDTO {
   test_type: string
   type_title?: string
 }
+export interface FileRelatedContentDTO {
+  id: string
+  title: string
+  type: string
+  file_duration: string
+  file_pages: string
+  views: string
+  subdate: string
+  first_name: string
+  last_name: string
+  avatar: string
+  poster: string
+  title_url: string
+  url: string
+  legacy_url: string
+  type_title: string
+  type_title_fa: string
+  subdate_jalali: string
+}
 
 export interface RelatedContentDTO {
   exams: ContentItemDTO[]
-  files: ContentItemDTO[]
+  files: FileRelatedContentDTO[]
   questions: ContentItemDTO[]
   tests: ContentItemDTO[]
   tutorials: ContentItemDTO[]
