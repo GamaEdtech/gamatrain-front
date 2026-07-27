@@ -19,7 +19,7 @@
         v-for="item in 10"
         :key="item"
       >
-        <lazy-common-detail-related-content-card-skeleton type="paper" />
+        <lazy-related-content-card-skeleton type="paper" />
       </v-slide-group-item>
     </v-slide-group>
     <v-slide-group
@@ -55,7 +55,7 @@
         :key="item.id"
       >
         <nuxt-link :to="`/paper/${item.id}/${item.title_url}`">
-          <lazy-common-detail-related-content-card
+          <lazy-related-content-card
             :picture="item.thumb_pic || fallbackImage"
             :title="item.title"
             :score="item.referee_score || item.type_title"

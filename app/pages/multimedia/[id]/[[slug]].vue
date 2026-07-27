@@ -49,7 +49,7 @@
       :lesson="contentData.lesson"
     />
 
-    <lazy-common-detail-related-content
+    <lazy-related-content
       :id="contentData.id"
       source="file"
       :request="[`file`]"
