@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <lazy-common-detail-box-random-question
+    <lazy-common-box-random-question
       :lesson="contentData.lesson"
     />
 

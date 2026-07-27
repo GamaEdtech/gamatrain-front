@@ -130,7 +130,7 @@
           md:format_list_bulleted
         </v-icon>
       </v-btn>
-      <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
+      <lazy-common-box-random-question :lesson="contentData.lesson" />
 
       <v-col cols="12">
         <CommonDetailRelatedContent

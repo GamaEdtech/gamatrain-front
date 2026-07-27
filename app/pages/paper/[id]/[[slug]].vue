@@ -63,7 +63,7 @@
         <lazy-common-detail-subject-directory-nav :content-data="contentData" />
       </v-col>
 
-      <lazy-common-detail-box-random-question :lesson="contentData.lesson" />
+      <lazy-common-box-random-question :lesson="contentData.lesson" />
 
       <v-col cols="12">
         <lazy-common-detail-related-content
