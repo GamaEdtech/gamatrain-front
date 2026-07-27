@@ -29,7 +29,7 @@
         md="4"
         class="d-flex justify-center justify-md-start"
       >
-        <lazy-common-detail-preview-action-card
+        <lazy-paper-preview-action-card
           :id="contentData.id"
           :thumb-pic="contentData.thumb_pic"
           :title="contentData.title"
@@ -45,9 +45,9 @@
         md="8"
         class="d-flex h-100 align-start flex-wrap"
       >
-        <lazy-common-detail-content-details-section :content-data="contentData" />
+        <lazy-paper-content-details-section :content-data="contentData" />
 
-        <lazy-common-detail-download-and-purchase-buttons
+        <lazy-paper-download-and-purchase-buttons
           :id="contentData.id"
           :files="contentData.files"
           :year="contentData.edu_year"
