@@ -101,12 +101,18 @@
         </v-col>
       </ClientOnly>
     </v-row>
-    <lazy-common-crash-report-modal
-      v-if="openCrashReport"
-      :id="contentData.id"
+
+    <lazy-common-modal-base
       v-model:show-dialog="openCrashReport"
-      type-crash-report="test"
-    />
+      title="Crash Report"
+    >
+      <lazy-common-modal-crash-report
+        :id="contentData.id"
+        type-crash-report="test"
+        @close="openCrashReport = false"
+      />
+    </lazy-common-modal-base>
+
     <lazy-common-modal-base
       v-model:show-dialog="openShare"
       title="Share"
