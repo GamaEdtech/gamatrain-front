@@ -1,18 +1,13 @@
 <template>
-  <v-row>
-    <v-col cols="12">
-      <p class="mb-3">
-        Share this content:
-      </p>
-    </v-col>
-    <v-col
-      cols="12"
-      sm="4"
-    >
+  <div class="w-100 d-flex flex-column mt-4">
+    <span class="text-h5 font-weight-medium text-grey700">
+      Share this content:
+    </span>
+    <div class="w-100 d-flex flex-wrap flex-sm-nowrap align-center ga-4 ga-sm-1 mt-8">
       <v-btn
         rounded="xl"
         color="primary"
-        class="w-100 text-h5 text-white"
+        class="w-100 w-sm-33 text-h5 text-white"
         flat
         @click="copyUrl"
       >
@@ -22,16 +17,12 @@
             &nbsp;
         {{ copyBtnText }}
       </v-btn>
-    </v-col>
-    <v-col
-      cols="12"
-      sm="4"
-    >
+
       <v-btn
         target="_blank"
         rounded="xl"
         color="#25d366"
-        class="w-100 text-h5 text-white"
+        class="w-100 w-sm-33 text-h5 text-white"
         flat
         @click="shareSocial('whatsapp')"
       >
@@ -42,22 +33,18 @@
         >
         &nbsp; WhatsApp
       </v-btn>
-    </v-col>
-    <v-col
-      cols="12"
-      sm="4"
-    >
+
       <v-btn
         rounded="xl"
         flat
         color="#00acee"
-        class="w-100 text-h5 text-white"
+        class="w-100 w-sm-33 text-h5 text-white"
         @click="shareSocial('telegram')"
       >
         <v-icon> md:near_me_outlined </v-icon> &nbsp; Telegram
       </v-btn>
-    </v-col>
-  </v-row>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
