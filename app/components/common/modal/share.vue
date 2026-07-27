@@ -63,6 +63,11 @@
 <script setup lang="ts">
 import whatsAppIcon from '~/assets/images/whatsapp.svg'
 
+interface Share {
+  title: string
+}
+const props = defineProps<Share>()
+
 const copyBtnText = ref('Copy')
 
 // Methods

@@ -184,7 +184,7 @@
       v-model:show-dialog="openShare"
       title="Share"
     >
-      <lazy-common-modal-share />
+      <lazy-common-modal-share :title="contentData.title" />
     </lazy-common-modal-base>
   </v-container>
 </template>
