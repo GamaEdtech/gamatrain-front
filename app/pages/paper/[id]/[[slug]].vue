@@ -107,11 +107,12 @@
       v-model:show-dialog="openCrashReport"
       type-crash-report="test"
     />
-    <lazy-common-share-modal
-      v-if="openShare"
+    <lazy-common-modal-base
       v-model:show-dialog="openShare"
-      :title="contentData.title"
-    />
+      title="Share"
+    >
+      <lazy-common-modal-share />
+    </lazy-common-modal-base>
   </v-container>
 </template>
 
