@@ -65,7 +65,7 @@
         height="42"
         :to="`/exam/start/${id}`"
       >
-        <template v-if="examUserData && (examUserData as ExamUserDataExamDetaiDTO)?.status == 1">
+        <template v-if="examUserData && (examUserData as ExamUserDataExamDetaiDTO)?.status == '1'">
           <span class="text-begin-quiz text-h5 font-weight-bold mt-1 mx-2">
             Show result</span>
         </template>
