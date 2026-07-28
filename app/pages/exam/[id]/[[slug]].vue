@@ -36,12 +36,13 @@
       <div class="w-100 w-md-66 d-flex align-start flex-wrap mt-4 mt-md-0">
         <lazy-exam-detail-content :content-data="contentData" />
 
-        <!-- <lazy-multimedia-download-button
+        <lazy-exam-detail-download-button
           :id="contentData.id"
-          :files="contentData.files"
+          :files="contentData.price"
           :title="contentData.title"
-          :title-url="contentData.title"
-        /> -->
+          :title-url="contentData.title_url"
+          :exam-user-data="contentData.examUserData"
+        />
       </div>
     </div>
 

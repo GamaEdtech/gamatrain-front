@@ -103,7 +103,7 @@ export interface MetadataExamDetaiDTO {
 
 export interface ExamUserDataExamDetaiDTO {
   id: string
-  status: string
+  status: string | number
 }
 
 export interface PriceExamDetaiDTO {
