@@ -219,7 +219,7 @@ const setMetaData = () => {
   }
   else {
     pageTitle.value = baseTitle
-    pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
+    pageDescribe.value = `Download ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
   }
 
   const ogImage = dto.thumb_pic
