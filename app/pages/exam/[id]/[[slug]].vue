@@ -20,42 +20,42 @@
         md:chevron_forward
       </v-icon>
     </div>
-    <!-- <div class="w-100 d-flex align-start justify-center justify-md-space-between mt-6 flex-wrap mb-4">
+    <div class="w-100 d-flex align-start justify-center justify-md-space-between mt-6 flex-wrap mb-4">
       <div class="w-100 w-md-33 d-flex justify-center">
-        <lazy-multimedia-preview-card
+        <lazy-exam-detail-preview-card
           :id="contentData.id"
           :title="contentData.title"
           :views="contentData.views"
-          :score="contentData.ref_score"
-          :page-count="contentData.file_pages"
-          :preview-data="contentData.previewData"
+          :thumb-pic="contentData.thumb_pic_url"
+          :question-number="contentData.tests_num"
+          :level="contentData.level"
           @share="openShare = true"
         />
       </div>
 
       <div class="w-100 w-md-66 d-flex align-start flex-wrap mt-4 mt-md-0">
-        <lazy-multimedia-content-detail :content-data="contentData" />
+        <!-- <lazy-multimedia-content-detail :content-data="contentData" /> -->
 
-        <lazy-multimedia-download-button
+        <!-- <lazy-multimedia-download-button
           :id="contentData.id"
           :files="contentData.files"
           :title="contentData.title"
           :title-url="contentData.title"
-        />
+        /> -->
       </div>
     </div>
 
-    <lazy-common-box-random-question
+    <!-- <lazy-common-box-random-question
       :lesson="contentData.lesson"
-    />
+    /> -->
 
-    <lazy-common-related-content
+    <!-- <lazy-common-related-content
       :id="contentData.id"
       source="file"
       :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
-    />
+    /> -->
 
-    <lazy-common-modal-base
+    <!-- <lazy-common-modal-base
       v-model:show-dialog="openShare"
       title="Share"
     >
@@ -79,7 +79,7 @@ const { getItemById } = useExam()
 
 // const requestURL = ref(useRequestURL().host)
 const breads = ref<BreadCrumb[]>([])
-// const openShare = ref(false)
+const openShare = ref(false)
 
 const { data: contentData } = await useAsyncData(
   `exam-${route.params.id}`,
