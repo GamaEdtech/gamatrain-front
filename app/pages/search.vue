@@ -742,10 +742,10 @@ const metadata = computed(() => {
 
   const descriptionTemplates = {
     learnfiles: {
-      dynamic: `Download ${joinTextTitles}  multimedia. ${descAppendText}`,
+      dynamic: `Download list of ${joinTextTitles}  multimedia. ${descAppendText}`,
     },
     test: {
-      dynamic: `Download ${joinTextTitles} ${appendText}. ${descAppendText}`,
+      dynamic: `Download list of ${joinTextTitles} ${appendText}. ${descAppendText}`,
     },
     question: {
       dynamic: `Download list of ${joinTextTitles} Forum. ${descAppendText}`,
