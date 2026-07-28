@@ -34,7 +34,7 @@
       </div>
 
       <div class="w-100 w-md-66 d-flex align-start flex-wrap mt-4 mt-md-0">
-        <!-- <lazy-multimedia-content-detail :content-data="contentData" /> -->
+        <lazy-exam-detail-content :content-data="contentData" />
 
         <!-- <lazy-multimedia-download-button
           :id="contentData.id"
