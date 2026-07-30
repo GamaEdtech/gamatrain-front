@@ -80,9 +80,22 @@ export interface FileRelatedContentDTO {
   type_title_fa: string
   subdate_jalali: string
 }
+export interface ExamRelatedContentDTO {
+  id: string
+  title: string
+  code: string
+  tests_num: string
+  thumb_pic: string
+  first_name: string
+  last_name: string
+  avatar: string
+  title_url: string
+  url: string
+  legacy_url: string
+}
 
 export interface RelatedContentDTO {
-  exams: ContentItemDTO[]
+  exams: ExamRelatedContentDTO[]
   files: FileRelatedContentDTO[]
   questions: ContentItemDTO[]
   tests: ContentItemDTO[]
