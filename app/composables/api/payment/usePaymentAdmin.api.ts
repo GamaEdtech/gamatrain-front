@@ -1,6 +1,5 @@
 import type {
   ApiResult,
-  AppError,
   AdminPaymentDTO,
   GetAdminPaymentsParams,
   PaymentAdminExportParams,
@@ -15,7 +14,7 @@ const pageCount = ref(0)
 const loadingExportPayments = ref(false)
 
 export const usePaymentAdmin = () => {
-  const { $toast } = useNuxtApp()
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetAdminPaymentsParams) => {
     const { page, pageSize, userId, identifierId, startDate, endDate, gateway, status, sortSelected } = params
@@ -44,20 +43,25 @@ export const usePaymentAdmin = () => {
         ApiResult<ResponseListDTO<AdminPaymentDTO>>
       >('/api/v2/admin/payments', query)
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / pageSize)
       }
       else {
         data.value = []
+        totalCount.value = 0
+        pageCount.value = 0
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      data.value = []
+      totalCount.value = 0
+      pageCount.value = 0
+      handleApiCatchError(err)
+
+      return createApiFailure<ResponseListDTO<AdminPaymentDTO>>(err)
     }
     finally {
       loadingGetData.value = false
@@ -78,18 +82,17 @@ export const usePaymentAdmin = () => {
         '/api/v2/admin/payments/export',
         query,
       )
+
+      if (!response.succeeded) {
+        handleApiResponseError(response)
+      }
+
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        data: undefined,
-        message: 'The operation failed. Please try again later.',
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<string>(err)
     }
     finally {
       loadingExportPayments.value = false
