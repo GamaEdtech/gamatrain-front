@@ -40,7 +40,7 @@
           :id="contentData.id"
           :files="contentData.files"
           :title="contentData.title"
-          :title-url="contentData.title"
+          :title-url="contentData.title_url"
         />
       </div>
     </div>
