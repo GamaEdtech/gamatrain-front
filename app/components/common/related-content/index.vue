@@ -1,9 +1,9 @@
 <template>
   <div
     v-if="loading || pastpaper.length > 0"
-    class="mx-4 my-4"
+    class="mx-4 my-6"
   >
-    <div class="d-flex align-center mb-6 ga-2">
+    <div class="d-flex align-center mb-4 ga-2">
       <div
         class="d-flex align-center justify-center rounded-circle pa-2"
         :style="`background-color : ${infoMap[`paper`].color}`"
@@ -71,9 +71,9 @@
 
   <div
     v-if="loading || multimedias.length > 0"
-    class="mx-4"
+    class="mx-4 my-6"
   >
-    <div class="d-flex align-center mb-6 ga-2">
+    <div class="d-flex align-center mb-4 ga-2">
       <div
         class="d-flex align-center justify-center rounded-circle pa-2"
         :style="`background-color : ${infoMap[`multimedia`].color}`"
@@ -141,9 +141,9 @@
 
   <div
     v-if="loading || exams.length > 0"
-    class="mx-4"
+    class="mx-4 my-6"
   >
-    <div class="d-flex align-center mb-6 ga-2">
+    <div class="d-flex align-center mb-4 ga-2">
       <div
         class="d-flex align-center justify-center rounded-circle pa-2"
         :style="`background-color : ${infoMap[`exam`].color}`"
@@ -211,7 +211,7 @@
 
   <div
     v-if="loading || tutorials.length > 0"
-    class="mx-4 my-8"
+    class="mx-4 my-6"
   >
     <div class="d-flex align-center mb-6 ga-2">
       <div
