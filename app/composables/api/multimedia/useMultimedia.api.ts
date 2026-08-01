@@ -3,6 +3,7 @@ import type {
   AppError,
   MultimediaBriefDTO,
   MultimediaCreateDTO,
+  MultimediaEditDTO,
   MultimediaDetailDTO,
   MultimediaCreateResponseDTO,
   ResponseListDTO,
@@ -64,7 +65,7 @@ export const useMultimedia = () => {
     }
   }
 
-  const encodePayload = (item: MultimediaCreateDTO) => {
+  const encodePayload = (item: MultimediaCreateDTO | MultimediaEditDTO) => {
     const payload = new URLSearchParams()
 
     payload.append('section', String(item.board || ''))
@@ -78,9 +79,11 @@ export const useMultimedia = () => {
     payload.append('free_available', item.free_available ? '1' : '0')
     payload.append('file', item.file || '')
 
-    item.topics.forEach((topic) => {
-      payload.append('topics[]', String(topic))
-    })
+    if (item.topics && item.topics.length > 0) {
+      item.topics.forEach((topic) => {
+        payload.append('topics[]', String(topic))
+      })
+    }
 
     return payload
   }
@@ -160,7 +163,7 @@ export const useMultimedia = () => {
     }
   }
 
-  const editItem = async (id: string | number, item: MultimediaCreateDTO) => {
+  const editItem = async (id: string | number, item: MultimediaEditDTO) => {
     loadingEditItem.value = true
 
     try {

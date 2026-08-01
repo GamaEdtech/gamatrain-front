@@ -19,6 +19,20 @@
       <v-icon color="primary">
         md:chevron_forward
       </v-icon>
+
+      <v-btn
+        v-if="contentData.owner"
+        color="info"
+        class="rounded-circle"
+        size="24"
+        flat
+        variant="tonal"
+        @click="openEditModal = true"
+      >
+        <v-icon size="16">
+          md:edit
+        </v-icon>
+      </v-btn>
     </div>
     <div class="w-100 d-flex align-start justify-center justify-md-space-between mt-6 flex-wrap mb-4">
       <div class="w-100 w-md-33 d-flex justify-center">
@@ -83,6 +97,20 @@
     >
       <lazy-common-modal-share :title="contentData.title" />
     </lazy-common-modal-base>
+
+    <lazy-common-modal-base
+      v-if="openEditModal"
+      v-model:show-dialog="openEditModal"
+      title="Edit"
+    >
+      <lazy-multimedia-modal-edit
+        :id="contentData.id"
+        :title="contentData.title"
+        :description="contentData.description"
+        @close="openEditModal = false"
+        @success="editSuccessfully"
+      />
+    </lazy-common-modal-base>
   </v-container>
 </template>
 
@@ -103,6 +131,7 @@ const requestURL = ref(useRequestURL().host)
 const breads = ref<BreadCrumb[]>([])
 const openShare = ref(false)
 const openCrashReport = ref(false)
+const openEditModal = ref(false)
 
 const { data: contentData } = await useAsyncData(
   `multimedia-${route.params.id}`,
@@ -143,23 +172,32 @@ const initBreadCrumb = () => {
     disabled: false,
     href: '/search?type=multimedia',
   })
-  breads.value.push(
-    {
-      text: contentData.value.section_title,
-      disabled: false,
-      href: `/search?type=multimedia&section=${contentData.value.section}`,
-    },
-    {
-      text: contentData.value.base_title,
-      disabled: false,
-      href: `/search?type=multimedia&section=${contentData.value.section}&base=${contentData.value.base}`,
-    },
-    {
-      text: contentData.value.lesson_title,
-      disabled: false,
-      href: `/search?type=multimedia&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
-    },
-  )
+  if (contentData.value.section_title) {
+    breads.value.push(
+      {
+        text: contentData.value.section_title,
+        disabled: false,
+        href: `/search?type=multimedia&section=${contentData.value.section}`,
+      })
+  }
+  if (contentData.value.base_title) {
+    breads.value.push(
+      {
+        text: contentData.value.base_title,
+        disabled: false,
+        href: `/search?type=multimedia&section=${contentData.value.section}&base=${contentData.value.base}`,
+      })
+  }
+  if (contentData.value.lesson_title) {
+    breads.value.push(
+
+      {
+        text: contentData.value.lesson_title,
+        disabled: false,
+        href: `/search?type=multimedia&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
+      },
+    )
+  }
 }
 
 if (contentData.value) {
@@ -233,6 +271,16 @@ useHead(() => ({
     },
   ],
 }))
+
+const editSuccessfully = (data: {
+  title: string
+  description: string
+}) => {
+  if (contentData.value) {
+    contentData.value.title = data.title
+    contentData.value.description = data.description
+  }
+}
 </script>
 
 <style scoped>
