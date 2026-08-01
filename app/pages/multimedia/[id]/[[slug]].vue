@@ -55,6 +55,28 @@
       :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
     />
 
+    <span
+      class="d-flex align-center ga-1 text-h5 cursor-pointer text-lightError mt-4"
+      @click="openCrashReport = true"
+    >
+      <v-icon
+        color="lightError"
+        class="mb-1"
+      >md:warning_outlined</v-icon>
+      Crash report
+    </span>
+
+    <lazy-common-modal-base
+      v-model:show-dialog="openCrashReport"
+      title="Crash Report"
+    >
+      <lazy-common-modal-crash-report
+        :id="contentData.id"
+        type-crash-report="test"
+        @close="openCrashReport = false"
+      />
+    </lazy-common-modal-base>
+
     <lazy-common-modal-base
       v-model:show-dialog="openShare"
       title="Share"
@@ -80,6 +102,7 @@ const { getItemById } = useMultimedia()
 const requestURL = ref(useRequestURL().host)
 const breads = ref<BreadCrumb[]>([])
 const openShare = ref(false)
+const openCrashReport = ref(false)
 
 const { data: contentData } = await useAsyncData(
   `multimedia-${route.params.id}`,
