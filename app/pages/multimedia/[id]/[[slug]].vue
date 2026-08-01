@@ -277,8 +277,11 @@ const editSuccessfully = (data: {
   description: string
 }) => {
   if (contentData.value) {
-    contentData.value.title = data.title
-    contentData.value.description = data.description
+    contentData.value = {
+      ...contentData.value,
+      title: data.title,
+      description: data.description,
+    }
   }
 }
 </script>
