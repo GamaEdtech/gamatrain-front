@@ -5,7 +5,7 @@
     </h1>
 
     <img
-      :src="errorInfo[statusCode].image ?? `/images/error/error-500.svg`"
+      :src="errorInfo[statusCode].image ?? `/images/error/error-500.webp`"
       :alt="errorInfo[statusCode].title.toString() ?? '500'"
       height="300"
       width="300"
@@ -39,7 +39,7 @@ defineProps<IError>()
 const errorInfo = {
   500: {
     title: 500,
-    image: '/images/error/error-500.svg',
+    image: '/images/error/error-500.webp',
     subtitle: 'There was a problem on our side!',
   },
   404: {

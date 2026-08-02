@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="type == `paper`"
     class="mx-1 card-paper position-relative rounded-lg d-flex flex-column justify-space-between"
   >
     <v-img
@@ -25,7 +24,7 @@
           class="text-subtitle-2 text-white font-weight-regular text-no-wrap"
           style="line-height: 1"
         >
-          score
+          {{ type == 'exam' ? `question` :`score` }}
         </p>
       </div>
       <div

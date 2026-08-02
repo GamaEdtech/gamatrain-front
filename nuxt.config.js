@@ -220,6 +220,7 @@ export default defineNuxtConfig({
         '_nuxt/builds/**/*.json',
         '**/node_modules/**/*',
       ],
+      navigateFallback: undefined,
     },
     devOptions: {
       enabled: false,
