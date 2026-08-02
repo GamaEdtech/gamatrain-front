@@ -15,6 +15,7 @@ export const useSubscriptionFeatureAdmin = () => {
 
   const data = ref<AdminSubscriptionFeatureDTO[]>([])
   const featureOptions = ref<AdminSubscriptionFeatureDTO[]>([])
+  const featurCodes = ref<string[]>([])
   const totalCount = ref(0)
   const pageCount = ref(0)
   const loadingGetData = ref(true)
@@ -22,6 +23,7 @@ export const useSubscriptionFeatureAdmin = () => {
   const loadingDeleteItem = ref(false)
   const loadingAddItem = ref(false)
   const loadingEditItem = ref(false)
+  const loadingGetFeatureCodes = ref(false)
 
   const getData = async (params: GetAdminSubscriptionFeatureParams) => {
     loadingGetData.value = true
@@ -189,6 +191,38 @@ export const useSubscriptionFeatureAdmin = () => {
     }
   }
 
+  const getFeatureCodes = async () => {
+    loadingGetFeatureCodes.value = true
+
+    try {
+      const response = await useApiService.get<
+        ApiResult<string[]>
+      >(
+        BASE_URL + '/codes',
+      )
+
+      if (response.succeeded && response.data) {
+        featurCodes.value = response.data
+      }
+      else {
+        featurCodes.value = []
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      featurCodes.value = []
+
+      return createApiFailure<string[]>(err)
+    }
+    finally {
+      loadingGetFeatureCodes.value = false
+    }
+  }
+
   return {
     loadingGetData,
     data,
@@ -204,5 +238,8 @@ export const useSubscriptionFeatureAdmin = () => {
     loadingAddItem,
     editItem,
     loadingEditItem,
+    featurCodes,
+    loadingGetFeatureCodes,
+    getFeatureCodes,
   }
 }

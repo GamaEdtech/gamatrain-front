@@ -5,22 +5,19 @@
       class="w-100 d-flex flex-column align-start ga-2"
     >
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
-          Code
-        </div>
-        <v-text-field
+        <common-gombo-box
           v-model="form.code"
+          label="Code"
+          :items="featurCodes.map((item) => ({
+            id: item,
+            title: item,
+          }))"
+          :data-loading="loadingGetFeatureCodes"
           rounded="lg"
           density="compact"
-          placeholder="Code"
-          variant="outlined"
-          autocomplete="off"
-          persistent-clear
           base-color="grey200"
           color="primary"
-          active-color="primary"
-          bg-color="white"
-          class="w-100"
+          :defalut-lable="false"
           :rules="[required]"
         />
       </div>
@@ -124,6 +121,9 @@ const emit = defineEmits<{
 }>()
 
 const { required } = useValidationRules()
+const { featurCodes,
+  loadingGetFeatureCodes,
+  getFeatureCodes } = useSubscriptionFeatureAdmin()
 
 const form = reactive<AddAdminSubscriptionFeatureDTO>({
   code: '',
@@ -159,4 +159,8 @@ const submit = () => {
     isActive: form.isActive,
   })
 }
+
+onMounted(() => {
+  getFeatureCodes()
+})
 </script>
