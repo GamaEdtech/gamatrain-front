@@ -7,24 +7,24 @@ import type {
   ResponseListDTO,
 } from '@/types'
 
-const planFeatures = ref<AdminSubscriptionPlanDTO['features']>([])
-const totalCount = ref(0)
-const pageCount = ref(0)
-const loadingGetItemById = ref(false)
-const loadingDeleteItem = ref(false)
-const loadingAddItem = ref(false)
-const loadingEditItem = ref(false)
-const loadingGetFeatures = ref(false)
-const loadingEditFeatures = ref(false)
-
 const NAME = 'Subscription plan'
 const BASE_URL = '/api/v2/admin/subscriptions/plans'
 
 export const useSubscriptionPlanAdmin = () => {
   const { $toast } = useNuxtApp()
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
+
   const data = ref<AdminSubscriptionPlanDTO[]>([])
   const loadingGetData = ref(true)
+  const planFeatures = ref<AdminSubscriptionPlanDTO['features']>([])
+  const totalCount = ref(0)
+  const pageCount = ref(0)
+  const loadingGetItemById = ref(false)
+  const loadingDeleteItem = ref(false)
+  const loadingAddItem = ref(false)
+  const loadingEditItem = ref(false)
+  const loadingGetFeatures = ref(false)
+  const loadingEditFeatures = ref(false)
 
   const getData = async (params: GetAdminSubscriptionPlanParams) => {
     loadingGetData.value = true

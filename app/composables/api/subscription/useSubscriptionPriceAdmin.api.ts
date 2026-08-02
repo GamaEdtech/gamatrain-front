@@ -6,20 +6,20 @@ import type {
   ResponseListDTO,
 } from '@/types'
 
-const totalCount = ref(0)
-const pageCount = ref(0)
-const loadingDeleteItem = ref(false)
-const loadingAddItem = ref(false)
-const loadingEditItem = ref(false)
-
 const NAME = 'Subscription price'
 const BASE_URL = '/api/v2/admin/subscriptions/prices'
 
 export const useSubscriptionPriceAdmin = () => {
   const { $toast } = useNuxtApp()
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
+
   const data = ref<AdminSubscriptionPriceDTO[]>([])
   const loadingGetData = ref(true)
+  const totalCount = ref(0)
+  const pageCount = ref(0)
+  const loadingDeleteItem = ref(false)
+  const loadingAddItem = ref(false)
+  const loadingEditItem = ref(false)
 
   const getData = async (params: GetAdminSubscriptionPriceParams) => {
     loadingGetData.value = true

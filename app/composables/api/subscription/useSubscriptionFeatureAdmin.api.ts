@@ -6,22 +6,22 @@ import type {
   ResponseListDTO,
 } from '@/types'
 
-const data = ref<AdminSubscriptionFeatureDTO[]>([])
-const featureOptions = ref<AdminSubscriptionFeatureDTO[]>([])
-const totalCount = ref(0)
-const pageCount = ref(0)
-const loadingGetData = ref(true)
-const loadingGetFeatureOptions = ref(false)
-const loadingDeleteItem = ref(false)
-const loadingAddItem = ref(false)
-const loadingEditItem = ref(false)
-
 const NAME = 'Subscription feature'
 const BASE_URL = '/api/v2/admin/subscriptions/features'
 
 export const useSubscriptionFeatureAdmin = () => {
   const { $toast } = useNuxtApp()
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
+
+  const data = ref<AdminSubscriptionFeatureDTO[]>([])
+  const featureOptions = ref<AdminSubscriptionFeatureDTO[]>([])
+  const totalCount = ref(0)
+  const pageCount = ref(0)
+  const loadingGetData = ref(true)
+  const loadingGetFeatureOptions = ref(false)
+  const loadingDeleteItem = ref(false)
+  const loadingAddItem = ref(false)
+  const loadingEditItem = ref(false)
 
   const getData = async (params: GetAdminSubscriptionFeatureParams) => {
     loadingGetData.value = true

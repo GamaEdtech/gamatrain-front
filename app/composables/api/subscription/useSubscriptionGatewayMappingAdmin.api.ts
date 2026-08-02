@@ -6,20 +6,20 @@ import type {
   ResponseListDTO,
 } from '@/types'
 
-const data = ref<AdminSubscriptionGatewayMappingDTO[]>([])
-const totalCount = ref(0)
-const pageCount = ref(0)
-const loadingGetData = ref(true)
-const loadingDeleteItem = ref(false)
-const loadingAddItem = ref(false)
-const loadingEditItem = ref(false)
-
 const NAME = 'Subscription gateway mapping'
 const BASE_URL = '/api/v2/admin/subscriptions/gateway-mappings'
 
 export const useSubscriptionGatewayMappingAdmin = () => {
   const { $toast } = useNuxtApp()
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
+
+  const data = ref<AdminSubscriptionGatewayMappingDTO[]>([])
+  const totalCount = ref(0)
+  const pageCount = ref(0)
+  const loadingGetData = ref(true)
+  const loadingDeleteItem = ref(false)
+  const loadingAddItem = ref(false)
+  const loadingEditItem = ref(false)
 
   const getData = async (params: GetAdminSubscriptionGatewayMappingParams) => {
     loadingGetData.value = true
