@@ -56,7 +56,7 @@
         width="80"
         class="text-h5 font-weight-medium"
         flat
-        :loading="loadingEditItem"
+        :disabled="loadingEditItem"
         @click="closeModal"
       >
         <span class="text-grey800">
