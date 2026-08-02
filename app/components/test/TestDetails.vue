@@ -317,12 +317,12 @@ const checkAndGetPointQuestion = async () => {
     })
     if (response.succeeded && response.data) {
       if (response.data?.isCorrect) {
-        questionReward.value = Math.abs(response.data.points) / 1_000_000
+        questionReward.value = Math.abs(response.data.points)
         directionWalletAniamtion.value = 1
         isStartSuccessAnimation.value = true
       }
       else {
-        questionReward.value = Math.abs(response.data.points) / 1_000_000
+        questionReward.value = Math.abs(response.data.points)
         directionWalletAniamtion.value = -1
         isStartFailCoinAnimation.value = true
       }
