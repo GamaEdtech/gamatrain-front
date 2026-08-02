@@ -46,22 +46,43 @@
       </div>
     </div>
 
-    <!-- <lazy-common-box-random-question
+    <lazy-common-box-random-question
       :lesson="contentData.lesson"
-    /> -->
+    />
 
-    <!-- <lazy-common-related-content
+    <lazy-common-related-content
       :id="contentData.id"
-      source="file"
+      source="exam"
       :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
-    /> -->
+    />
+    <span
+      class="d-flex align-center ga-1 text-h5 cursor-pointer text-lightError mt-4"
+      @click="openCrashReport = true"
+    >
+      <v-icon
+        color="lightError"
+        class="mb-1"
+      >md:warning_outlined</v-icon>
+      Crash report
+    </span>
 
-    <!-- <lazy-common-modal-base
+    <lazy-common-modal-base
+      v-model:show-dialog="openCrashReport"
+      title="Crash Report"
+    >
+      <lazy-common-modal-crash-report
+        :id="contentData.id"
+        type-crash-report="test"
+        @close="openCrashReport = false"
+      />
+    </lazy-common-modal-base>
+
+    <lazy-common-modal-base
       v-model:show-dialog="openShare"
       title="Share"
     >
       <lazy-common-modal-share :title="contentData.title" />
-    </lazy-common-modal-base> -->
+    </lazy-common-modal-base>
   </v-container>
 </template>
 
@@ -81,6 +102,7 @@ const { getItemById } = useExam()
 const requestURL = ref(useRequestURL().host)
 const breads = ref<BreadCrumb[]>([])
 const openShare = ref(false)
+const openCrashReport = ref(false)
 
 const { data: contentData } = await useAsyncData(
   `exam-${route.params.id}`,
