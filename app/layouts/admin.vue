@@ -47,11 +47,6 @@ const menuItems = [
         link: '/admin/payments',
         icon: 'md:payments_outlined',
       },
-      {
-        title: 'Subscription ',
-        link: '/admin/subscription',
-        icon: 'md:subscriptions_outlined',
-      },
     ],
   }, {
     Blog: [
@@ -106,6 +101,11 @@ const menuItems = [
         title: 'Settings',
         link: '/admin/settings',
         icon: 'md:settings_outlined',
+      },
+      {
+        title: 'Subscription',
+        link: '/admin/subscription',
+        icon: 'md:subscriptions_outlined',
       },
     ],
   },
