@@ -19,7 +19,7 @@ export interface AdminSubscriptionPlanFeatureDTO {
   featureId: number
   featureCode: string
   featureName: string
-  limit: number
+  limit: number | null
 }
 
 export interface AdminSubscriptionPlanDTO {
@@ -49,7 +49,7 @@ export interface GetAdminSubscriptionPlanParams {
 export interface EditAdminSubscriptionPlanFeaturesDTO {
   features: {
     featureId: number
-    limit: number
+    limit: number | null
   }[]
 }
 

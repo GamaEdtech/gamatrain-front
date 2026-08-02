@@ -62,7 +62,7 @@
             {{ feature.featureName }}
           </span>
           <span class="text-grey500 text-h6 text-truncate">
-            {{ feature.featureCode }} / Limit: {{ feature.limit }}
+            {{ feature.featureCode }} / {{ feature.limit ? 'Limit: ' + feature.limit : 'Unlimited' }}
           </span>
         </div>
 
@@ -105,6 +105,19 @@
       />
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <v-checkbox
+          v-model="isUnlimitedLimit"
+          color="primary"
+          class="text-h4"
+          hide-details
+          false-icon="md:check_box_outline_blank"
+          true-icon="md:check_box"
+        >
+          <template #label>
+            <span class="text-h6 text-grey700 text-no-wrap ml-2">Unlimited</span>
+          </template>
+        </v-checkbox>
+
         <div class="text-h6 text-grey700 ml-2">
           Limit
         </div>
@@ -120,7 +133,8 @@
           active-color="primary"
           bg-color="white"
           class="w-100"
-          :rules="[required, positiveNumber]"
+          :disabled="isUnlimitedLimit"
+          :rules="isUnlimitedLimit ? [] : [required, positiveNumber]"
         />
       </div>
 
@@ -190,6 +204,7 @@ const selectedFeatures = ref<AdminSubscriptionPlanFeatureDTO[]>([])
 const selectedFeatureId = ref('')
 const selectedFeature = ref<AdminSubscriptionFeatureDTO | null>(null)
 const newLimit = ref<number | null>(null)
+const isUnlimitedLimit = ref(true)
 const isAddFormValid = ref(false)
 
 onMounted(async () => {
@@ -212,10 +227,14 @@ const resetAddForm = () => {
   selectedFeatureId.value = ''
   selectedFeature.value = null
   newLimit.value = null
+  isUnlimitedLimit.value = true
 }
 
 const addFeature = () => {
-  if (!isAddFormValid.value || !selectedFeature.value || newLimit.value === null) return
+  if (!isAddFormValid.value || !selectedFeature.value || (!isUnlimitedLimit.value && newLimit.value === null)) {
+    $toast.error('Complete form correctly.')
+    return
+  }
 
   const isDuplicateFeature = selectedFeatures.value.some((feature) => {
     return feature.featureId === selectedFeature.value?.id
@@ -230,7 +249,7 @@ const addFeature = () => {
     featureId: selectedFeature.value.id,
     featureCode: selectedFeature.value.code,
     featureName: selectedFeature.value.name,
-    limit: Number(newLimit.value),
+    limit: isUnlimitedLimit.value ? null : Number(newLimit.value),
   })
 
   resetAddForm()
