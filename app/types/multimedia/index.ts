@@ -11,6 +11,19 @@ export interface MultimediaCreateDTO {
   free_available: boolean
   file: string
 }
+export interface MultimediaEditDTO {
+  board?: string | number
+  grade?: string | number
+  subject?: string | number
+  topics?: (string | number)[]
+  title?: string
+  description?: string
+  content_type?: string | number
+  from_page?: string | number
+  to_page?: string | number
+  free_available?: boolean
+  file?: string
+}
 
 export interface MultimediaCreateResponseDTO {
   id: number
@@ -31,10 +44,11 @@ export interface MultimediaBriefDTO {
   subdate_jalali: string
 }
 
+export type TypeFileExtentionMultimedia = 'pptx' | 'pdf' | 'docx' | 'mp4'
 export interface MultimediaFileInfoDTO {
   exist: boolean
   size: string | number
-  ext: string
+  ext: TypeFileExtentionMultimedia
   pages?: number
   price?: number
   price_unit?: string
@@ -56,6 +70,12 @@ export interface MultimediaCollectionDTO {
   title: string
   season: boolean
   chapters?: MultimediaCollectionChapterDTO[]
+}
+
+export interface MultimediaPreviewDataDTO {
+  type: string
+  preview: string[]
+  poster: boolean
 }
 
 export interface MultimediaDetailDTO {
@@ -109,7 +129,9 @@ export interface MultimediaDetailDTO {
   hasMembership: boolean
   files: MultimediaFileInfoDTO
   collectionList: MultimediaCollectionDTO[]
+  previewData: MultimediaPreviewDataDTO
 }
+
 export interface GetDataParamsMultimedia {
   page: number
   pageSize: number
