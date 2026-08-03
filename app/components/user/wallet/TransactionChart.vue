@@ -191,8 +191,8 @@ const updateChartWithData = (data: TransactionStatisticDTO[]) => {
 
   // Extract labels and values
   const labels = filteredData.map(item => item.name)
-  const debitValues = filteredData.map(item => item.debitValue / 1_000_000)
-  const creditValues = filteredData.map(item => item.creditValue / 1_000_000)
+  const debitValues = filteredData.map(item => item.debitValue)
+  const creditValues = filteredData.map(item => item.creditValue)
 
   // Calculate max value for Y axis
   const maxValue = Math.max(
