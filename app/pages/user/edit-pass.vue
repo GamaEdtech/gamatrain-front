@@ -186,7 +186,7 @@ const passwordRules = [
 
 const repeatPasswordRules = [
   required,
-  matches(newPassword, 'passwords'),
+  matches(newPassword, 'passwords', 'Passwords do not match'),
 ]
 
 const currentTime = ref($dayjs())

@@ -107,11 +107,11 @@ export const useValidationRules = () => {
     || 'Password must contain uppercase, lowercase, number and special character'
 
   // Confirmation validation
-  const matches = (target: Ref<string> | string, fieldName = 'field') =>
+  const matches = (target: Ref<string> | string, fieldName = 'field', message?: string) =>
     (v: string) => {
       const targetValue
         = typeof target === 'string' ? target : target.value
-      return v === targetValue || `Must match ${fieldName}`
+      return v === targetValue || message || `Must match ${fieldName}`
     }
 
   // Array validation
