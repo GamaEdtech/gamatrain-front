@@ -130,10 +130,10 @@
           md:format_list_bulleted
         </v-icon>
       </v-btn>
-      <CommonDetailBoxRandomQuestion :lesson="contentData.lesson" />
+      <lazy-common-box-random-question :lesson="contentData.lesson" />
 
       <v-col cols="12">
-        <CommonDetailRelatedContent
+        <lazy-common-related-content
           :id="contentData.id"
           source="tutorial"
           :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
@@ -175,15 +175,23 @@
         </v-col>
       </ClientOnly>
     </v-row>
-    <CommonCrashReportModal
-      :id="contentData.id"
+    <lazy-common-modal-base
       v-model:show-dialog="openCrashReport"
-      type-crash-report="tutorial"
-    />
-    <CommonShareModal
+      title="Crash Report"
+    >
+      <lazy-common-modal-crash-report
+        :id="contentData.id"
+        type-crash-report="tutorial"
+        @close="openCrashReport = false"
+      />
+    </lazy-common-modal-base>
+
+    <lazy-common-modal-base
       v-model:show-dialog="openShare"
-      :title="contentData.title"
-    />
+      title="Share"
+    >
+      <lazy-common-modal-share :title="contentData.title" />
+    </lazy-common-modal-base>
   </v-container>
 </template>
 

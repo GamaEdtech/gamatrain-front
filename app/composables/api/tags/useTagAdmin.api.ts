@@ -2,7 +2,6 @@ import type {
   AddAdminTagDTO,
   AdminTagDTO,
   ApiResult,
-  AppError,
   GetAdminTagParams,
   ResponseListDTO,
 } from '@/types'
@@ -20,22 +19,7 @@ const NAME = 'Tag'
 
 export const useTagAdmin = () => {
   const { $toast } = useNuxtApp()
-
-  const handleError = (err: unknown) => {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-
-  const showResponseError = (response: ApiResult<unknown>) => {
-    if (response.errors && response.errors.length > 0) {
-      $toast.error(response.errors[0].message || '')
-    }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetAdminTagParams) => {
     loadingGetData.value = true
@@ -52,7 +36,7 @@ export const useTagAdmin = () => {
         ApiResult<ResponseListDTO<AdminTagDTO>>
       >('/api/v2/admin/tags', query)
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / params.pageSize)
@@ -61,10 +45,14 @@ export const useTagAdmin = () => {
         data.value = []
         totalCount.value = 0
         pageCount.value = 0
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      handleError(err)
+      data.value = []
+      totalCount.value = 0
+      pageCount.value = 0
+      handleApiCatchError(err)
     }
     finally {
       loadingGetData.value = false
@@ -79,16 +67,17 @@ export const useTagAdmin = () => {
         `/api/v2/admin/tags/${id}`,
       )
 
+      if (response.succeeded && response.data) {
+        return response
+      }
+
+      handleApiResponseError(response)
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: null,
-      }
+      return createApiFailure<AdminTagDTO>(err)
     }
     finally {
       loadingGetItemById.value = false
@@ -107,19 +96,15 @@ export const useTagAdmin = () => {
         $toast.success(`${NAME} deleted successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingDeleteItem.value = false
@@ -139,19 +124,15 @@ export const useTagAdmin = () => {
         $toast.success(`${NAME} created successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingAddItem.value = false
@@ -171,19 +152,15 @@ export const useTagAdmin = () => {
         $toast.success(`${NAME} updated successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingEditItem.value = false

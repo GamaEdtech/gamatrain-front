@@ -1,412 +1,208 @@
 <template>
-  <div class="test-details-content">
-    <common-category />
-
-    <section>
-      <v-container class="py-0">
-        <v-row class="mt-0 py-0">
-          <v-col cols="12">
-            <!-- Skeleton loader for breadcrumb -->
-            <v-skeleton-loader
-              v-if="pending"
-              class="mx-auto"
-              height="60"
-            />
-            <!-- Actual breadcrumb when loaded -->
-            <widgets-breadcrumb
-              v-else
-              :breads="breads"
-            />
-          </v-col>
-        </v-row>
-      </v-container>
-    </section>
-
-    <section>
-      <v-container class="py-0">
-        <div
-          v-if="pending"
-          class="detail mt-md-8"
-        >
-          <v-row>
-            <v-col
-              cols="12"
-              md="4"
-            >
-              <v-skeleton-loader
-                class="mx-auto"
-                height="300"
-              />
-            </v-col>
-
-            <v-col
-              cols="12"
-              md="5"
-            >
-              <v-skeleton-loader
-                class="mx-auto"
-                height="300"
-              />
-            </v-col>
-
-            <v-col md="3">
-              <v-skeleton-loader
-                class="mx-auto"
-                type="list-item-avatar"
-              />
-
-              <v-skeleton-loader
-                class="mx-auto mt-2"
-                type="list-item-three-line"
-                repeat="4"
-              />
-
-              <v-skeleton-loader
-                class="mx-auto mt-4"
-                type="button"
-              />
-            </v-col>
-          </v-row>
-        </div>
-
-        <div
-          v-else
-          class="detail mt-md-8"
-        >
-          <v-row>
-            <v-col
-              cols="12"
-              md="4"
-            >
-              <details-multimedia-preview-gallery
-                ref="preview_gallery"
-                :gallery-images="previewImages"
-                :link-data="previewLinkData"
-                :initial-slide="0"
-              />
-            </v-col>
-            <v-col
-              cols="12"
-              md="5"
-            >
-              <div class="d-flex mb-4">
-                <div class="w-100">
-                  <div class="d-flex align-center justify-space-between header">
-                    <h1
-                      v-show="!editMode.title"
-                      class="gama-text-h5 font-weight-bold"
-                    >
-                      {{ contentData?.title }}
-                      <v-btn
-                        v-if="user?.id == contentData?.user_"
-                        icon
-                        size="x-small"
-                        @click="editMode.title = true"
-                      >
-                        <v-icon> mdi-pencil </v-icon>
-                      </v-btn>
-                    </h1>
-                  </div>
-
-                  <div class="w-100">
-                    <v-textarea
-                      v-if="editMode.title"
-                      v-model="contentData.title"
-                      width="100%"
-                      rows="3"
-                      placeholder="Title"
-                    >
-                      <template #append-inner>
-                        <v-btn
-                          color="success"
-                          icon
-                          :loading="editMode.title_loading"
-                          size="x-small"
-                          @click="updateDetails()"
-                        >
-                          <v-icon> mdi-check </v-icon>
-                        </v-btn>
-                      </template>
-                    </v-textarea>
-                  </div>
-
-                  <multimedia-detail-description-section
-                    :description="contentData?.description"
-                    :collection-list="contentData?.collectionList"
-                    :can-edit="user?.id == contentData?.user_"
-                    @update:description="contentData.description = $event"
-                    @save="updateDetails"
-                  />
-
-                  <multimedia-detail-tag-section
-                    :section-id="contentData?.section"
-                    :section-title="contentData?.section_title"
-                    :base-id="contentData?.base"
-                    :base-title="contentData?.base_title"
-                    :lesson-id="contentData?.lesson"
-                    :lesson-title="contentData?.lesson_title"
-                  />
-                </div>
-              </div>
-              <div class="text-center download-sec">
-                <multimedia-detail-download-section
-                  :file-ext="contentData?.files?.ext || 'pptx'"
-                  :price="contentData?.files?.price || 0"
-                  :file-id="route.params.id"
-                  :credit="user?.credit || 0"
-                  @login="openAuthDialog('login')"
-                  @register="openAuthDialog('register')"
-                />
-              </div>
-            </v-col>
-            <v-col md="3">
-              <multimedia-detail-sidebar
-                :avatar="contentData?.avatar"
-                :first-name="contentData?.first_name"
-                :last-name="contentData?.last_name"
-                :content-type-title="contentData?.content_type_title"
-                :file-pages="contentData?.file_pages"
-                :views="contentData?.views"
-                :up-date="contentData?.up_date"
-                :file-ext="contentData?.files?.ext || 'pptx'"
-                :price="contentData?.files?.price || 0"
-                :title="contentData?.title"
-                :download-loading="download_loading"
-                :is-downloading="isDownloading"
-                :download-progress="downloadProgress"
-                @download="startDownload"
-              />
-            </v-col>
-          </v-row>
-        </div>
-      </v-container>
-    </section>
-
-    <multimedia-detail-mobile-order-section
-      v-if="!pending"
-      :file-ext="contentData?.files?.ext || 'pptx'"
-      :price="contentData?.files?.price || 0"
-      :credit="user?.credit || 0"
-      :is-logged-in="isLoggedIn"
-      :download-loading="download_loading"
-      :is-downloading="isDownloading"
-      :download-progress="downloadProgress"
-      @download="startDownload"
-      @login="openAuthDialog('login')"
-      @register="openAuthDialog('register')"
+  <v-container
+    v-if="contentData"
+    class="d-flex flex-column mt-16"
+  >
+    <lazy-widgets-breadcrumb
+      background-color="white"
+      :breads="breads"
     />
-
-    <v-container>
-      <v-row v-if="pending">
-        <v-col
-          cols="12"
-          md="6"
-        >
-          <v-skeleton-loader
-            class="mx-auto mb-4"
-            type="card"
-            height="200"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          md="6"
-        >
-          <v-skeleton-loader
-            class="mx-auto mb-4"
-            type="card"
-            height="200"
-          />
-        </v-col>
-      </v-row>
-
-      <v-row v-else>
-        <v-col
-          cols="12"
-          md="6"
-        />
-        <v-col
-          cols="12"
-          md="6"
-        />
-      </v-row>
-      <common-related-portrait-content
-        page-type="multimedia"
-        page-name="Multimedia"
-        source="file"
-        request="file"
-      />
-    </v-container>
-    <section class="feed" />
-
-    <v-row
-      justify="center"
-      class="mt-10"
+    <div
+      class="w-100 d-flex align-center ga-1"
     >
-      <v-col
-        cols="12"
-        md="8"
-        class="text-center"
+      <v-icon color="primary">
+        md:chevron_backward
+      </v-icon>
+      <h1 class="text-h4 font-weight-bold">
+        {{ contentData.title }}
+      </h1>
+      <v-icon color="primary">
+        md:chevron_forward
+      </v-icon>
+
+      <v-btn
+        v-if="contentData.owner"
+        color="info"
+        class="rounded-circle"
+        size="24"
+        flat
+        variant="tonal"
+        @click="openEditModal = true"
       >
-        <common-ad-banner
-          v-model="isAdsLoad"
-          adslot="7199289937"
+        <v-icon size="16">
+          md:edit
+        </v-icon>
+      </v-btn>
+    </div>
+    <div class="w-100 d-flex align-start justify-center justify-md-space-between mt-6 flex-wrap mb-4">
+      <div class="w-100 w-md-33 d-flex justify-center">
+        <lazy-multimedia-preview-card
+          :id="contentData.id"
+          :title="contentData.title"
+          :views="contentData.views"
+          :score="contentData.ref_score"
+          :page-count="contentData.file_pages"
+          :preview-data="contentData.previewData"
+          @share="openShare = true"
         />
-      </v-col>
-    </v-row>
+      </div>
 
-    <lazy-modals-coin-payment-modal
-      v-if="showCoinPaymentModal"
-      v-model:show-dialog="showCoinPaymentModal"
-      :is-processing="isLoading"
-      :user-balance="balance"
-      :amount-to-pay="5"
-      @close="showCoinPaymentModal = false"
+      <div class="w-100 w-md-66 d-flex align-start flex-wrap mt-4 mt-md-0">
+        <lazy-multimedia-content-detail :content-data="contentData" />
+
+        <lazy-multimedia-download-button
+          :id="contentData.id"
+          :files="contentData.files"
+          :title="contentData.title"
+          :title-url="contentData.title_url"
+        />
+      </div>
+    </div>
+
+    <lazy-common-box-random-question
+      :lesson="contentData.lesson"
     />
 
-    <!-- Coin Consumption Animation -->
-    <lazy-common-coin-consumption-animation
-      v-model:is-visible="showCoinAnimation"
-      @animation-complete="handleAnimationComplete"
+    <lazy-common-related-content
+      :id="contentData.id"
+      source="file"
+      :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
     />
+
+    <span
+      class="d-flex align-center ga-1 text-h5 cursor-pointer text-lightError mt-4"
+      @click="openCrashReport = true"
+    >
+      <v-icon
+        color="lightError"
+        class="mb-1"
+      >md:warning_outlined</v-icon>
+      Crash report
+    </span>
 
     <lazy-common-modal-base
-      v-model:show-dialog="downloadIssue"
-      :max-width="600"
-      title="Download"
+      v-model:show-dialog="openCrashReport"
+      title="Crash Report"
     >
-      <lazy-common-modal-download-file
-        :link="downloadIssueLink"
-        @close="downloadIssue = false"
+      <lazy-common-modal-crash-report
+        :id="contentData.id"
+        type-crash-report="test"
+        @close="openCrashReport = false"
       />
     </lazy-common-modal-base>
-  </div>
+
+    <lazy-common-modal-base
+      v-model:show-dialog="openShare"
+      title="Share"
+    >
+      <lazy-common-modal-share :title="contentData.title" />
+    </lazy-common-modal-base>
+
+    <lazy-common-modal-base
+      v-if="openEditModal"
+      v-model:show-dialog="openEditModal"
+      title="Edit"
+    >
+      <lazy-multimedia-modal-edit
+        :id="contentData.id"
+        :title="contentData.title"
+        :description="contentData.description"
+        @close="openEditModal = false"
+        @success="editSuccessfully"
+      />
+    </lazy-common-modal-base>
+  </v-container>
 </template>
 
-<script setup>
-const auth = useAuth()
-const { user } = useUser()
+<script setup lang="ts">
+import type { AppError } from '@/types'
 
-definePageMeta({
-  auth: false,
-})
+interface BreadCrumb {
+  text: string
+  disabled: boolean
+  href: string
+}
 
-const preview_gallery = ref(null)
 const route = useRoute()
 const router = useRouter()
-const { $toast } = useNuxtApp()
-const editMode = reactive({
-  title: false,
-  title_loading: false,
-})
+const { getItemById } = useMultimedia()
+
 const requestURL = ref(useRequestURL().host)
-const breads = ref([])
-
-const download_loading = ref(false)
-
-// Track download progress
-const downloadProgress = ref(0)
-const isDownloading = ref(false)
-
-const isAdsLoad = ref(false)
-
-const previewImages = computed(() => {
-  return contentData.value?.previewData?.preview || []
-})
-
-const previewLinkData = computed(() => {
-  return {
-    state: contentData.value?.state || '',
-    section: contentData.value?.section || '',
-    base: contentData.value?.base || '',
-    course: contentData.value?.course || '',
-    lesson: contentData.value?.lesson || '',
-  }
-})
-
-const isLoggedIn = computed(() => {
-  return auth.isAuthenticated.value ?? false
-})
+const breads = ref<BreadCrumb[]>([])
+const openShare = ref(false)
+const openCrashReport = ref(false)
+const openEditModal = ref(false)
 
 const { data: contentData } = await useAsyncData(
-  () => `multimedia-${route.params.id}`,
+  `multimedia-${route.params.id}`,
   async () => {
     try {
-      const content = await useApiService.get(`/api/v1/files/${route.params.id}`)
-      if (content.status === 1) {
-        return content.data
+      const response = await getItemById(route.params.id as string)
+
+      if (response.status == 1 && response.data) {
+        return response.data
       }
       else {
         showError({
           statusCode: 404,
           statusMessage: 'Page Not Founded!',
         })
-        return {}
+        return null
       }
     }
-    catch (e) {
+    catch (e: unknown) {
       showError({
         statusCode: 404,
         statusMessage: 'Page Not Founded!',
       })
-      if (e?.status === 404) {
-        // router.push("/search?type=question");
+      const error = e as AppError
+      if (error?.status === 404) {
+        router.push('/search?type=paper')
       }
-      throw e
+      throw error
     }
   },
-  {
-    watch: [() => route.params.id],
-  },
 )
 
-// const {
-//   pending,
-//   error,
-//   data: asyncContentData,
-// } = useAsyncData(
-//   `multimedia-details-${route.params.id}`,
-//   async () => {
-//     try {
-//       const data = await fetchContentData();
-
-//       if (data) {
-//         contentData.value = data;
-
-//         initBreadCrumb();
-//       }
-
-//       return data;
-//     } catch (err) {
-//       showError({
-//         statusCode: err.response?.status || 500,
-//         message:
-//           err.response?.data?.message ||
-//           "Something went wrong loading the content",
-//       });
-//       return null;
-//     }
-//   },
-//   {
-//     server: true,
-//     lazy: false,
-//     immediate: true,
-//     watch: [() => route.params.id],
-//   }
-// );
-const { data, pending, _error } = await useAsyncData(
-  `multimedia-details-${route.params.id}`,
-  async () => {
-    const data = await fetchContentData()
-    return data
-  },
-)
-watchEffect(async () => {
-  if (data.value) {
-    contentData.value = data.value
-    await initBreadCrumb()
+const initBreadCrumb = () => {
+  if (!contentData.value) return
+  breads.value = []
+  breads.value.push({
+    text: 'Multimedia',
+    disabled: false,
+    href: '/search?type=multimedia',
+  })
+  if (contentData.value.section_title) {
+    breads.value.push(
+      {
+        text: contentData.value.section_title,
+        disabled: false,
+        href: `/search?type=multimedia&section=${contentData.value.section}`,
+      })
   }
-})
+  if (contentData.value.base_title) {
+    breads.value.push(
+      {
+        text: contentData.value.base_title,
+        disabled: false,
+        href: `/search?type=multimedia&section=${contentData.value.section}&base=${contentData.value.base}`,
+      })
+  }
+  if (contentData.value.lesson_title) {
+    breads.value.push(
+
+      {
+        text: contentData.value.lesson_title,
+        disabled: false,
+        href: `/search?type=multimedia&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
+      },
+    )
+  }
+}
+
+if (contentData.value) {
+  initBreadCrumb()
+}
 
 const ogImage
   = contentData.value?.previewData
@@ -471,287 +267,24 @@ useHead(() => ({
   link: [
     {
       rel: 'canonical',
-      href: `https://${requestURL.value}/multimedia/${contentData.value.id}/${contentData.value.title_url}`,
+      href: `https://${requestURL.value}/multimedia/${contentData.value?.id}/${contentData.value?.title_url}`,
     },
   ],
 }))
 
-// onMounted(async () => {
-//   if (pending.value) {
-//     await _waitForAsyncData();
-//   }
-
-//   if (!contentData.value || Object.keys(contentData.value).length === 0) {
-//     if (asyncContentData.value) {
-//       contentData.value = asyncContentData.value;
-//       initBreadCrumb();
-//     }
-//   }
-// });
-
-function _waitForAsyncData() {
-  return new Promise((resolve) => {
-    if (!pending.value) {
-      resolve()
-      return
+const editSuccessfully = (data: {
+  title: string
+  description: string
+}) => {
+  if (contentData.value) {
+    contentData.value = {
+      ...contentData.value,
+      title: data.title,
+      description: data.description,
     }
-
-    const checkInterval = setInterval(() => {
-      if (!pending.value) {
-        clearInterval(checkInterval)
-        resolve()
-      }
-    }, 100)
-
-    // Add a safety timeout after 5 seconds
-    setTimeout(() => {
-      clearInterval(checkInterval)
-      resolve()
-    }, 5000)
-  })
-}
-
-watch(
-  contentData,
-  (newData) => {
-    if (newData) {
-      initBreadCrumb()
-    }
-  },
-  { deep: true },
-)
-
-async function initBreadCrumb() {
-  if (!contentData.value || !contentData.value.section_title) {
-    return
-  }
-
-  breads.value.push({
-    text: 'Multimedia',
-    disabled: false,
-    href: '/search?type=multimedia',
-  })
-
-  if (contentData.value.section_title) {
-    breads.value.push({
-      text: contentData.value.section_title,
-      disabled: false,
-      href: `/search?type=multimedia&section=${contentData.value.section}`,
-    })
-  }
-
-  if (contentData.value.base_title) {
-    breads.value.push({
-      text: contentData.value.base_title,
-      disabled: false,
-      href: `/search?type=paper&section=${contentData.value.section}&base=${contentData.value.base}`,
-    })
-  }
-
-  if (contentData.value.lesson_title) {
-    breads.value.push({
-      text: contentData.value.lesson_title,
-      disabled: false,
-      href: `/search?type=paper&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
-    })
-  }
-}
-
-function openAuthDialog(val) {
-  router.push({ query: { auth_form: val } })
-}
-
-const { downloadFile } = useDownload()
-const { balance, isLoading } = useCoinBalance()
-const showCoinPaymentModal = ref(false)
-const showCoinAnimation = ref(false)
-const downloadIssue = ref(false)
-const downloadIssueLink = ref('')
-
-async function startDownload(_type) {
-  download_loading.value = true
-  isDownloading.value = true
-  downloadProgress.value = 0
-
-  try {
-    // Simulate progressive loading for API call
-    const progressInterval = setInterval(() => {
-      if (downloadProgress.value < 50) {
-        downloadProgress.value += Math.random() * 15
-      }
-    }, 100)
-
-    const response = await downloadFile({
-      contentType: 'Multimedia',
-      fileType: _type,
-      id: Number(route.params.id),
-    })
-
-    // Update progress to 60% after API response
-    downloadProgress.value = 60
-    clearInterval(progressInterval)
-
-    if (response.succeeded && response.data) {
-      if (response.data.url) {
-        const xhr = new XMLHttpRequest()
-        xhr.open('GET', response.data.url, true)
-        xhr.responseType = 'blob'
-
-        xhr.onprogress = (event) => {
-          if (event.lengthComputable) {
-            const percentComplete = 60 + (event.loaded / event.total) * 40
-            downloadProgress.value = Math.min(percentComplete, 100)
-          }
-        }
-
-        xhr.onload = () => {
-          if (xhr.status === 200) {
-            downloadProgress.value = 100
-
-            const blob = xhr.response
-            const url = window.URL.createObjectURL(blob)
-
-            const a = document.createElement('a')
-            a.href = url
-            a.download = response.data?.name || 'file.pdf'
-            document.body.appendChild(a)
-            a.click()
-
-            a.remove()
-            window.URL.revokeObjectURL(url)
-            downloadIssueLink.value = response.data?.url || ''
-            if (response.data?.spent) {
-              showCoinAnimation.value = true
-            }
-            else {
-              downloadIssue.value = true
-            }
-
-            setTimeout(() => {
-              isDownloading.value = false
-              downloadProgress.value = 0
-            }, 1000)
-          }
-        }
-
-        xhr.onerror = () => {
-          isDownloading.value = false
-          downloadProgress.value = 0
-          $toast.error('Download failed. Please try again.')
-        }
-
-        xhr.send()
-      }
-      if (response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
-        showCoinPaymentModal.value = true
-      }
-    }
-    else {
-      if (response.errors && response.errors.length > 0) {
-        const messgage = response.errors[0].message
-        if (messgage == 'InsufficientBalance') {
-          showCoinPaymentModal.value = true
-        }
-      }
-      isDownloading.value = false
-      downloadProgress.value = 0
-    }
-  }
-  catch (err) {
-    // Clean up on error
-    isDownloading.value = false
-    downloadProgress.value = 0
-
-    if (err.response?.status == 400) {
-      if (
-        err.response.data.status == 0
-        && err.response.data.error == 'creditNotEnough'
-      ) {
-        $toast.info('No enough credit')
-      }
-    }
-  }
-  finally {
-    download_loading.value = false
-  }
-}
-
-const handleAnimationComplete = async () => {
-  // Close everything immediately when animation completes
-  showCoinAnimation.value = false
-  downloadIssue.value = true
-}
-
-function urlencodeFormData(fd) {
-  let s = ''
-  for (const pair of fd.entries()) {
-    if (typeof pair[1] == 'string') {
-      s += (s ? '&' : '') + encode(pair[0]) + '=' + encode(pair[1])
-    }
-  }
-  return s
-}
-
-function encode(s) {
-  return encodeURIComponent(s).replace(/%20/g, '+')
-}
-
-async function updateDetails() {
-  // Arrange to form data
-  const isEditingTitle = editMode.title
-  if (isEditingTitle) {
-    editMode.title_loading = true
-  }
-
-  const formData = new FormData()
-  formData.append('title', contentData.value?.title)
-  formData.append('description', contentData.value?.description)
-
-  try {
-    const { data } = await useApiService.put(
-      `/api/v1/files/${route.params.id}`,
-      urlencodeFormData(formData),
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      },
-    )
-
-    if (data.value?.id == 0 && data.value?.repeated) {
-      $toast.info('The multimedia is duplicated')
-    }
-    else {
-      $toast.success('Updated successfully')
-    }
-  }
-  catch (err) {
-    if (err.response?.status == 403) {
-      $toast.error('You do not have permission to update this content')
-    }
-    else if (err.response?.status == 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-  finally {
-    editMode.title = false
-    editMode.title_loading = false
   }
 }
 </script>
 
-<style>
-.content_main_info {
-  padding: 27px;
-  background: #f5f5f5 !important;
-  border-radius: 6px;
-}
-
-.content_main_info .creator_title {
-  font-size: 18px;
-}
-
-p {
-  font-size: 1.3rem !important;
-}
+<style scoped>
 </style>

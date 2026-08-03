@@ -214,13 +214,13 @@ export default defineNuxtConfig({
       name: 'Gamatrain',
     },
     workbox: {
-      navigateFallback: '/',
       globPatterns: [],
       globIgnores: [
         '**/_payload.json',
         '_nuxt/builds/**/*.json',
         '**/node_modules/**/*',
       ],
+      navigateFallback: undefined,
     },
     devOptions: {
       enabled: false,

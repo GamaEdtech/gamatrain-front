@@ -742,25 +742,25 @@ const metadata = computed(() => {
 
   const descriptionTemplates = {
     learnfiles: {
-      dynamic: `Free download list of ${joinTextTitles}  multimedia. ${descAppendText}`,
+      dynamic: `Download list of ${joinTextTitles}  multimedia. ${descAppendText}`,
     },
     test: {
-      dynamic: `Free download list of ${joinTextTitles} ${appendText}. ${descAppendText}`,
+      dynamic: `Download list of ${joinTextTitles} ${appendText}. ${descAppendText}`,
     },
     question: {
-      dynamic: `Free download list of ${joinTextTitles} Forum. ${descAppendText}`,
+      dynamic: `Download list of ${joinTextTitles} Forum. ${descAppendText}`,
     },
     azmoon: {
-      dynamic: `Free download list of ${joinTextTitles} Online test. ${descAppendText}`,
+      dynamic: `Download list of ${joinTextTitles} Online test. ${descAppendText}`,
     },
     dars: {
-      dynamic: `Free download list of ${joinTextTitles} Textbook. ${descAppendText}`,
+      dynamic: `Download list of ${joinTextTitles} Textbook. ${descAppendText}`,
     },
     teacher: {
       dynamic: `Browse qualified teachers and explore their profiles, experience, and subjects they teach.`,
     },
     default: {
-      dynamic: `Free download list of ${joinTextTitles} ${appendText}. ${descAppendText}`,
+      dynamic: `Download list of ${joinTextTitles} ${appendText}. ${descAppendText}`,
     },
   }
 
