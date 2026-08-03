@@ -533,7 +533,6 @@ const fetchSchoolList = async (append = false) => {
 }
 
 const countyChange = async (countryId: SelectValue) => {
-  userInformation.value.country = countryId
   userInformation.value.state = ''
   userInformation.value.city = ''
   userInformation.value.school = ''
@@ -548,7 +547,6 @@ const countyChange = async (countryId: SelectValue) => {
 }
 
 const stateChange = async (stateId: SelectValue) => {
-  userInformation.value.state = stateId
   userInformation.value.city = ''
   userInformation.value.school = ''
   resetCities()
@@ -561,7 +559,6 @@ const stateChange = async (stateId: SelectValue) => {
 }
 
 const cityChange = async (cityId: SelectValue) => {
-  userInformation.value.city = cityId
   userInformation.value.school = ''
   resetSchools()
   pageSchool.value = 1
@@ -572,7 +569,6 @@ const cityChange = async (cityId: SelectValue) => {
 }
 
 const boardChange = async (boardId: SelectValue) => {
-  userInformation.value.board = boardId
   userInformation.value.grade = ''
   resetGrades()
 
