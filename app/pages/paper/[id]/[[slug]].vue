@@ -92,11 +92,11 @@
         class="mt-6"
       >
         <span
-          class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
+          class="d-flex align-center ga-1 text-h5 cursor-pointer text-lightError"
           @click="openCrashReport = true"
         >
           <v-icon
-            color="#C62828"
+            color="lightError"
             class="mb-1"
           >md:warning_outlined</v-icon>
           Crash report
@@ -373,7 +373,4 @@ const editSuccessfully = (data: {
 </script>
 
 <style scoped>
-.text-crash-report {
-  color: #c62828;
-}
 </style>
