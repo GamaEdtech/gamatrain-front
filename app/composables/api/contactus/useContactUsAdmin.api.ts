@@ -13,24 +13,24 @@ import type {
   ResponseListDTO,
 } from '@/types'
 
-const data = ref<AdminContactUsDTO[]>([])
-const totalCount = ref(0)
-const pageCount = ref(0)
-const emailAddresses = ref<string[]>([])
-const replyList = ref<AdminReplyTicketListDTO[]>([])
-
-const loadingGetData = ref(true)
-const loadingDeleteItem = ref(false)
-const loadingSendEmail = ref(false)
-const loadingCreateTicket = ref(false)
-const loadingGetEmailAddresses = ref(false)
-const loadingGetItemById = ref(false)
-const loadingReplyTicket = ref(false)
-const loadingGetReplyList = ref(false)
-const loadingGenerateAiResponse = ref(false)
-
 export const useContactUsAdmin = () => {
   const { $toast } = useNuxtApp()
+
+  const data = ref<AdminContactUsDTO[]>([])
+  const totalCount = ref(0)
+  const pageCount = ref(0)
+  const emailAddresses = ref<string[]>([])
+  const replyList = ref<AdminReplyTicketListDTO[]>([])
+
+  const loadingGetData = ref(true)
+  const loadingDeleteItem = ref(false)
+  const loadingSendEmail = ref(false)
+  const loadingCreateTicket = ref(false)
+  const loadingGetEmailAddresses = ref(false)
+  const loadingGetItemById = ref(false)
+  const loadingReplyTicket = ref(false)
+  const loadingGetReplyList = ref(false)
+  const loadingGenerateAiResponse = ref(false)
 
   const handleError = (err: unknown, fallbackMessage = '') => {
     const error = err as AppError
