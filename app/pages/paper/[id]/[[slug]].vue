@@ -23,6 +23,20 @@
         <v-icon color="primary">
           md:chevron_forward
         </v-icon>
+
+        <v-btn
+          v-if="contentData.owner"
+          color="info"
+          class="rounded-circle"
+          size="24"
+          flat
+          variant="tonal"
+          @click="openEditModal = true"
+        >
+          <v-icon size="16">
+            md:edit
+          </v-icon>
+        </v-btn>
       </v-col>
       <v-col
         cols="12"
@@ -119,6 +133,20 @@
     >
       <lazy-common-modal-share :title="contentData.title" />
     </lazy-common-modal-base>
+
+    <lazy-common-modal-base
+      v-if="openEditModal"
+      v-model:show-dialog="openEditModal"
+      title="Edit"
+    >
+      <lazy-paper-modal-edit
+        :id="contentData.id"
+        :title="contentData.title"
+        :description="contentData.description"
+        @close="openEditModal = false"
+        @success="editSuccessfully"
+      />
+    </lazy-common-modal-base>
   </v-container>
 </template>
 
@@ -142,6 +170,7 @@ const pageTitle = ref('')
 const breads = ref<BreadCrumb[]>([])
 const openCrashReport = ref(false)
 const openShare = ref(false)
+const openEditModal = ref(false)
 const isAdsLoad = ref(false)
 
 const { data: contentData } = await useAsyncData(
@@ -327,6 +356,19 @@ const initBreadCrumb = () => {
 if (contentData.value) {
   initBreadCrumb()
   setMetaData()
+}
+
+const editSuccessfully = (data: {
+  title: string
+  description: string
+}) => {
+  if (contentData.value) {
+    contentData.value = {
+      ...contentData.value,
+      title: data.title,
+      description: data.description,
+    }
+  }
 }
 </script>
 
