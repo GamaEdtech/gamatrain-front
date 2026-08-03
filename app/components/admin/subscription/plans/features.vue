@@ -62,7 +62,7 @@
             {{ feature.featureName }}
           </span>
           <span class="text-grey500 text-h6 text-truncate">
-            {{ feature.featureCode }} / {{ feature.limit ? 'Limit: ' + feature.limit : 'Unlimited' }}
+            {{ feature.featureCode }} / {{ feature.limit == null ? 'Unlimited' : 'Limit: ' + feature.limit }}
           </span>
         </div>
 
