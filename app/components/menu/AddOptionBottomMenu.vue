@@ -61,41 +61,41 @@ interface AddOption {
 
 const { user } = useUser()
 const defaultBoardId = 6627
-const userBoardId = user.value?.board ? user.value?.board : defaultBoardId
+const userBoardId = computed(() => user.value?.board || defaultBoardId)
 
-const addOptions: AddOption[] = [
+const addOptions = computed<AddOption[]>(() => [
   {
-    path: `/user/paper/create?board=${userBoardId}&classification=Worksheet`,
+    path: `/user/paper/create?board=${userBoardId.value}&classification=310`,
     title: 'Worksheet',
     iconMd: 'md:description_outlined',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: `/user/paper/create?board=${userBoardId}&classification=Predicted-Paper`,
+    path: `/user/paper/create?board=${userBoardId.value}&classification=8344`,
     title: 'Predicted Paper',
     icon: 'icon-paper',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: `/user/paper/create?board=${userBoardId}&classification=Study-and-Revision-Guide`,
+    path: `/user/paper/create?board=${userBoardId.value}&classification=6896`,
     title: 'Study Guide',
     iconMd: 'md:menu_book',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: `/user/paper/create?board=${userBoardId}&classification=Topical`,
+    path: `/user/paper/create?board=${userBoardId.value}&classification=7180`,
     title: 'Topical Questions',
     iconMd: 'md:quiz_outlined',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: '/user/multimedia/create?contentType=Video',
+    path: '/user/multimedia/create?contentType=6022',
     title: 'Video',
     iconMd: 'md:videocam',
     typeFile: 'MP4',
   },
   {
-    path: '/user/multimedia/create?contentType=PowerPoint',
+    path: '/user/multimedia/create?contentType=6024',
     title: 'Presentation',
     iconMd: 'md:slideshow',
     typeFile: 'PPTX',
@@ -118,7 +118,7 @@ const addOptions: AddOption[] = [
     iconMd: 'md:art_track',
     typeFile: 'HTML',
   },
-]
+])
 
 watch(
   () => route.fullPath,

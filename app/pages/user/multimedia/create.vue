@@ -151,7 +151,6 @@
               :defalut-lable="false"
               :has-search="false"
               :rules="[required]"
-              :find-by-title="true"
             />
           </div>
 
@@ -323,7 +322,7 @@ const route = useRoute()
 
 const isFormValid = ref(false)
 const multimediaFile = ref<File | File[] | null>(null)
-const multimedia = ref<MultimediaForm>({
+const createDefaultMultimedia = (): MultimediaForm => ({
   board: '',
   grade: '',
   subject: '',
@@ -336,6 +335,7 @@ const multimedia = ref<MultimediaForm>({
   free_available: false,
   file: '',
 })
+const multimedia = ref<MultimediaForm>(createDefaultMultimedia())
 
 const getSelectedFile = (value: unknown) => {
   if (value instanceof File) return value
@@ -417,6 +417,14 @@ const applyQueryDefaults = async () => {
   }
 }
 
+const resetFormState = () => {
+  multimedia.value = createDefaultMultimedia()
+  multimediaFile.value = null
+  resetGrades()
+  resetSubjects()
+  resetTopics()
+}
+
 onMounted(async () => {
   await Promise.all([
     getBoards(),
@@ -428,6 +436,7 @@ onMounted(async () => {
 watch(
   () => route.query,
   async () => {
+    resetFormState()
     await applyQueryDefaults()
   },
 )

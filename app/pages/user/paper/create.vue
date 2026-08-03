@@ -109,7 +109,6 @@
             density="compact"
             :defalut-lable="false"
             :disabled="!paper.board || loadingClassification"
-            :find-by-title="true"
           />
         </div>
 
@@ -789,7 +788,7 @@ const applyQueryDefaults = async () => {
     await getGrades(paper.value.board)
     await getClassification(paper.value.board)
     if (route.query.classification) {
-      paper.value.classification = (route.query.classification as string).replaceAll('-', ' ')
+      paper.value.classification = route.query.classification as string
     }
   }
 }
