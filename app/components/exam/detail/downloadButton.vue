@@ -139,8 +139,6 @@ import type {
 } from '@/types'
 import { useDisplay } from 'vuetify'
 
-const downloadIssue = ref(false)
-const downloadIssueLink = ref('')
 interface IDownloadButtons {
   files: PriceExamDetaiDTO
   id: string
@@ -151,14 +149,9 @@ interface IDownloadButtons {
 
 const props = defineProps<IDownloadButtons>()
 
-const { $toast } = useNuxtApp()
-const { trackFileDownload } = useGtmEvents()
-const auth = useAuth()
-const router = useRouter()
 const { xs } = useDisplay()
 
 const { balance, isLoading } = useCoinBalance()
-const { downloadFile } = useDownload()
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isProcessingPayment = ref(false)
@@ -169,160 +162,53 @@ const pendingDownload = ref<{
   extraId?: string
 } | null>(null)
 const openModalDownloadMobile = ref(false)
+const downloadIssue = ref(false)
+const downloadIssueLink = ref('')
 
-const handleDownloadClick = async (type: string, price: number, extraId?: string) => {
-  const downloadKey = extraId ? `${type}-${extraId}` : type
-  priceFile.value = price
-
-  // Set loading state and progress tracking
-  downloadingItems.value.add(downloadKey)
-  downloadProgress.value[downloadKey] = 0
-  if (auth.isAuthenticated.value) {
-    startDownload(type, extraId)
-  }
-  else {
-    downloadingItems.value.delete(downloadKey)
-    Reflect.deleteProperty(downloadProgress.value, downloadKey)
-    router.push({})
-    setTimeout(() => {
-      router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
-    }, 100)
-  }
-}
-
-// Track download progress for each button
-const downloadProgress = ref<Record<string, number>>({})
-const downloadingItems = ref<Set<string>>(new Set())
-
-const getDownloadProgress = (type: string, extraId?: string) => {
-  const key = extraId ? `${type}-${extraId}` : type
-  return downloadProgress.value[key] || 0
-}
-
-const isDownloading = (type: string, extraId?: string) => {
-  const key = extraId ? `${type}-${extraId}` : type
-  return downloadingItems.value.has(key)
-}
-
-const startDownload = async (type: string, extraId?: string) => {
-  trackFileDownload({
+const {
+  clearDownload,
+  getDownloadProgress,
+  isDownloading,
+  startDownload,
+} = useDownloadWithProgress({
+  contentType: 'Exam',
+  id: props.id,
+  trackPayload: () => ({
     file_type: 'quiz',
     file_name: props.title,
     file_url: props.titleUrl,
-  })
-
-  const downloadKey = extraId ? `${type}-${extraId}` : type
-  let progressInterval: ReturnType<typeof setInterval> | null = null
-
-  try {
-    // Simulate progressive loading for API call
-    progressInterval = setInterval(() => {
-      const currentProgress = downloadProgress.value[downloadKey] ?? 0
-      if (currentProgress < 50) {
-        downloadProgress.value[downloadKey] = currentProgress + Math.random() * 15
-      }
-    }, 100)
-
-    const response = await downloadFile({
-      contentType: 'Exam',
-      fileType: type,
-      id: Number(props.id),
-      extraId: extraId ? Number(extraId) : undefined,
-    })
-
-    // Update progress to 60% after API response
-    downloadProgress.value[downloadKey] = 60
-    clearInterval(progressInterval)
-    progressInterval = null
-
-    // Create a custom fetch with progress tracking
-    if (response.succeeded && response.data) {
-      if (response.data.url) {
-        const xhr = new XMLHttpRequest()
-        xhr.open('GET', response.data.url, true)
-        xhr.responseType = 'blob'
-
-        xhr.onprogress = (event) => {
-          if (event.lengthComputable) {
-            const percentComplete = 60 + (event.loaded / event.total) * 40
-            downloadProgress.value[downloadKey] = Math.min(percentComplete, 100)
-          }
-        }
-
-        xhr.onload = () => {
-          if (xhr.status === 200) {
-            downloadProgress.value[downloadKey] = 100
-
-            const blob = xhr.response
-            const url = window.URL.createObjectURL(blob)
-
-            const a = document.createElement('a')
-            a.href = url
-            a.download = response.data?.name || 'file.pdf'
-            document.body.appendChild(a)
-            a.click()
-
-            a.remove()
-            window.URL.revokeObjectURL(url)
-            downloadIssueLink.value = response.data?.url || ''
-            if (response.data?.spent) {
-              showCoinAnimation.value = true
-            }
-            else {
-              downloadIssue.value = true
-            }
-
-            setTimeout(() => {
-              downloadingItems.value.delete(downloadKey)
-              Reflect.deleteProperty(downloadProgress.value, downloadKey)
-            }, 1000)
-          }
-        }
-
-        xhr.onerror = () => {
-          downloadingItems.value.delete(downloadKey)
-          Reflect.deleteProperty(downloadProgress.value, downloadKey)
-          $toast.error('Download failed. Please try again.')
-        }
-
-        xhr.send()
-      }
-      if (response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
-        showCoinPaymentModal.value = true
-      }
+  }),
+  onDownloaded: (data) => {
+    downloadIssueLink.value = data.url || ''
+    if (data.spent) {
+      showCoinAnimation.value = true
     }
     else {
-      if (response.errors && response.errors.length > 0) {
-        const messgage = response.errors[0]?.message
-        if (messgage == 'InsufficientBalance') {
-          showCoinPaymentModal.value = true
-        }
-      }
-      downloadingItems.value.delete(downloadKey)
-      Reflect.deleteProperty(downloadProgress.value, downloadKey)
+      downloadIssue.value = true
     }
+  },
+  onInsufficientBalance: () => {
+    showCoinPaymentModal.value = true
+  },
+  onUpgradeSuggestions: () => {
+    showCoinPaymentModal.value = true
+  },
+})
+
+const handleDownloadClick = async (type: string, price: number, extraId?: string) => {
+  priceFile.value = price
+  pendingDownload.value = {
+    type,
+    extraId,
   }
-  catch (error: unknown) {
-    console.error('Download failed:', error)
-    downloadingItems.value.delete(downloadKey)
-    Reflect.deleteProperty(downloadProgress.value, downloadKey)
-    $toast.error('Download failed. Please try again.')
-  }
-  finally {
-    if (progressInterval) {
-      clearInterval(progressInterval)
-    }
-  }
+
+  startDownload({ type, extraId })
 }
 
 const handleCoinPaymentClose = () => {
   showCoinPaymentModal.value = false
   if (pendingDownload.value) {
-    const downloadKey = pendingDownload.value.extraId
-      ? `${pendingDownload.value.type}-${pendingDownload.value.extraId}`
-      : pendingDownload.value.type
-    downloadingItems.value.delete(downloadKey)
-    Reflect.deleteProperty(downloadProgress.value, downloadKey)
+    clearDownload(pendingDownload.value.type, pendingDownload.value.extraId)
   }
   pendingDownload.value = null
 }
