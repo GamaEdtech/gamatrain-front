@@ -95,6 +95,17 @@
           </div>
         </template>
 
+        <template #[`item.billingInterval`]="{ item }">
+          <div class="w-100 d-flex justify-center align-center">
+            <v-chip
+              color="info"
+              class="font-weight-bold text-h5"
+            >
+              {{ item.billingInterval }}
+            </v-chip>
+          </div>
+        </template>
+
         <template #[`item.price`]="{ item }">
           <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center ga-1">
             <div
@@ -223,7 +234,8 @@ const headers = [
   { title: 'Plan ID', key: 'subscriptionPlanId', sortable: false, width: '18vw' },
   { title: 'Country', key: 'countryCode', sortable: false, width: '16vw' },
   { title: 'Currency', key: 'currency', sortable: false, width: '16vw' },
-  { title: 'Price', key: 'price', sortable: false, width: '22vw' },
+  { title: 'Billing', key: 'billingInterval', sortable: false, width: '16vw' },
+  { title: 'Price', key: 'price', sortable: false, width: '18vw' },
   { title: 'Action', key: 'Action', sortable: false, width: '20vw' },
 ]
 

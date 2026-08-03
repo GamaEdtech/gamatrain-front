@@ -35,25 +35,6 @@
         </v-text-field>
       </div>
 
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <common-gombo-box
-          v-model="form.billingInterval"
-          label="Billing Interval"
-          :items="billingIntervals.map((item) => ({
-            id: item,
-            title: item,
-          }))"
-          :data-loading="dataLoading"
-          rounded="lg"
-          density="compact"
-          base-color="grey200"
-          color="primary"
-          :defalut-lable="false"
-          :has-search="false"
-          :rules="[required]"
-        />
-      </div>
-
       <div class="w-100 d-flex align-center justify-start ga-4 flex-wrap">
         <v-checkbox
           v-model="form.isActive"
@@ -177,7 +158,6 @@
 import type {
   AddAdminSubscriptionPlanDTO,
   AdminSubscriptionPlanDTO,
-  BillingInterval,
 } from '@/types'
 
 interface PlanFormProps {
@@ -199,20 +179,11 @@ const emit = defineEmits<{
 
 const { required, numeric } = useValidationRules()
 
-const billingIntervals: BillingInterval[] = [
-  'Daily',
-  'Weekly',
-  'Monthly',
-  'Seasonally',
-  'Yearly',
-]
-
 const form = reactive<AddAdminSubscriptionPlanDTO>({
   title: '',
   polygon: [],
   isActive: false,
   highlight: false,
-  billingInterval: '',
 })
 
 const isFormValid = ref(false)
@@ -229,7 +200,6 @@ const fillForm = (value: AdminSubscriptionPlanDTO | null) => {
     : [{ latitude: 0, longitude: 0 }]
   form.isActive = value.isActive
   form.highlight = value.highlight
-  form.billingInterval = value.billingInterval
 }
 
 watch(
@@ -260,7 +230,6 @@ const submit = () => {
     })),
     isActive: form.isActive,
     highlight: form.highlight,
-    billingInterval: form.billingInterval,
   })
 }
 </script>

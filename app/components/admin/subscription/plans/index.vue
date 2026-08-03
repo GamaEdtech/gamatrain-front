@@ -78,17 +78,6 @@
           </div>
         </template>
 
-        <template #[`item.billingInterval`]="{ item }">
-          <div class="w-100 d-flex justify-center align-center">
-            <v-chip
-              color="info"
-              class="font-weight-bold text-h5"
-            >
-              {{ item.billingInterval }}
-            </v-chip>
-          </div>
-        </template>
-
         <template #[`item.isActive`]="{ item }">
           <div class="w-100 d-flex justify-center align-center">
             <v-chip
@@ -270,10 +259,9 @@ const {
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '8vw' },
   { title: 'Title', key: 'title', sortable: false, width: '22vw' },
-  { title: 'Billing', key: 'billingInterval', sortable: false, width: '14vw' },
   { title: 'Status', key: 'isActive', sortable: false, width: '12vw' },
   { title: 'Highlight', key: 'highlight', sortable: false, width: '12vw' },
-  { title: 'Prices', key: 'prices', sortable: false, width: '10vw' },
+  { title: 'Prices', key: 'prices', sortable: false, width: '24vw' },
   { title: 'Features', key: 'features', sortable: false, width: '10vw' },
   { title: 'Action', key: 'Action', sortable: false, width: '12vw' },
 ]

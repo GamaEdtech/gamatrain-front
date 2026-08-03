@@ -51,6 +51,26 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <common-gombo-box
+          v-model="form.billingInterval"
+          label="Billing Interval"
+          :items="billingIntervals.map((item) => {
+            return {
+              id: item,
+              title: item,
+            }
+          })"
+          rounded="lg"
+          density="compact"
+          base-color="grey200"
+          color="primary"
+          :defalut-lable="false"
+          :has-search="false"
+          :rules="[required]"
+        />
+      </div>
+
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div class="text-h6 text-grey700 ml-2">
           Price
         </div>
@@ -92,6 +112,7 @@
 import type {
   AddAdminSubscriptionPriceDTO,
   AdminSubscriptionPriceDTO,
+  BillingInterval,
   SubscriptionCurrency,
 } from '@/types'
 
@@ -119,11 +140,19 @@ const {
 } = useSubscriptionPlanAdmin()
 
 const currencies: SubscriptionCurrency[] = ['SOL', 'USDC', 'GET', 'USDT', 'USD']
+const billingIntervals: BillingInterval[] = [
+  'Daily',
+  'Weekly',
+  'Monthly',
+  'Seasonally',
+  'Yearly',
+]
 
 interface SubscriptionPriceFormDTO {
   subscriptionPlanId: number | string
   countryCode: string
   currency: SubscriptionCurrency | ''
+  billingInterval: BillingInterval | ''
   price: number | null
 }
 
@@ -131,6 +160,7 @@ const form = reactive<SubscriptionPriceFormDTO>({
   subscriptionPlanId: '',
   countryCode: '',
   currency: '',
+  billingInterval: '',
   price: null,
 })
 
@@ -156,6 +186,7 @@ const fillForm = (value: AdminSubscriptionPriceDTO | null) => {
   form.subscriptionPlanId = value.subscriptionPlanId
   form.countryCode = value.countryCode
   form.currency = value.currency
+  form.billingInterval = value.billingInterval
   form.price = value.price
 }
 
@@ -183,6 +214,7 @@ const submit = () => {
     countryCode: form.countryCode,
     currency: form.currency as SubscriptionCurrency,
     price: Number(form.price),
+    billingInterval: form.billingInterval as BillingInterval,
   })
 }
 </script>

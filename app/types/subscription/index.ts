@@ -1,4 +1,4 @@
-export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Seasonally' | 'Yearly' | ''
+export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Seasonally' | 'Yearly'
 export type SubscriptionCurrency = 'SOL' | 'USDC' | 'GET' | 'USDT' | 'USD'
 
 export interface SubscriptionPolygonPointDTO {
@@ -13,6 +13,7 @@ export interface AdminSubscriptionPlanPriceDTO {
   currency: SubscriptionCurrency
   currencySymbol: string
   price: number
+  billingInterval: BillingInterval
 }
 
 export interface AdminSubscriptionPlanFeatureDTO {
@@ -28,7 +29,6 @@ export interface AdminSubscriptionPlanDTO {
   polygon: SubscriptionPolygonPointDTO[]
   isActive: boolean
   highlight: boolean
-  billingInterval: BillingInterval
   prices: AdminSubscriptionPlanPriceDTO[]
   features: AdminSubscriptionPlanFeatureDTO[]
 }
@@ -38,7 +38,6 @@ export interface AddAdminSubscriptionPlanDTO {
   polygon: SubscriptionPolygonPointDTO[]
   isActive: boolean
   highlight: boolean
-  billingInterval: BillingInterval
 }
 
 export interface GetAdminSubscriptionPlanParams {
@@ -80,6 +79,7 @@ export interface AdminSubscriptionPriceDTO {
   currency: SubscriptionCurrency
   currencySymbol: string
   price: number
+  billingInterval: BillingInterval
 }
 
 export interface AddAdminSubscriptionPriceDTO {
@@ -87,6 +87,7 @@ export interface AddAdminSubscriptionPriceDTO {
   countryCode: string
   currency: SubscriptionCurrency
   price: number
+  billingInterval: BillingInterval
 }
 
 export interface GetAdminSubscriptionPriceParams {
