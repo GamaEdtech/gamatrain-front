@@ -394,7 +394,7 @@ onMounted(async () => {
 })
 </script>
 
-<style>
+<style scoped>
 .detail-item {
   width: 100%;
   display: flex;
@@ -420,12 +420,10 @@ onMounted(async () => {
   right: 10px;
   bottom: 60px;
 }
-.container-body{
-  img{
-    width : 100% !important;
-    height : 100% !important;
-    max-width : 600px !important;
-    max-height : 600px !important;
-  }
+:deep(.container-body img){
+  width : 100% !important;
+  height : auto !important;
+  max-width : 600px !important;
+  max-height : 600px !important;
 }
 </style>
