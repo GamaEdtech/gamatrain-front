@@ -16,7 +16,7 @@ export const useSubscriptionPlanAdmin = () => {
 
   const data = ref<AdminSubscriptionPlanDTO[]>([])
   const loadingGetData = ref(true)
-  const planFeatures = ref<AdminSubscriptionPlanDTO['features']>([])
+  const planFeatures = ref<AdminSubscriptionPlanDTO['featureGroups']>([])
   const totalCount = ref(0)
   const pageCount = ref(0)
   const loadingGetItemById = ref(false)
@@ -182,7 +182,7 @@ export const useSubscriptionPlanAdmin = () => {
     loadingGetFeatures.value = true
 
     try {
-      const response = await useApiService.get<ApiResult<AdminSubscriptionPlanDTO['features']>>(
+      const response = await useApiService.get<ApiResult<AdminSubscriptionPlanDTO['featureGroups']>>(
         `${BASE_URL}/${id}/features`,
       )
 

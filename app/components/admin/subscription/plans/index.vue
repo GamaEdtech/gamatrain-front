@@ -106,9 +106,9 @@
           </div>
         </template>
 
-        <template #[`item.features`]="{ item }">
+        <template #[`item.featureGroups`]="{ item }">
           <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.features?.length ?? 0 }}
+            {{ item.featureGroups.length }}
           </div>
         </template>
 
@@ -262,7 +262,7 @@ const headers = [
   { title: 'Status', key: 'isActive', sortable: false, width: '12vw' },
   { title: 'Highlight', key: 'highlight', sortable: false, width: '12vw' },
   { title: 'Prices', key: 'prices', sortable: false, width: '24vw' },
-  { title: 'Features', key: 'features', sortable: false, width: '10vw' },
+  { title: 'Features', key: 'featureGroups', sortable: false, width: '10vw' },
   { title: 'Action', key: 'Action', sortable: false, width: '12vw' },
 ]
 

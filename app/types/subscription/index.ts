@@ -20,7 +20,12 @@ export interface AdminSubscriptionPlanFeatureDTO {
   featureId: number
   featureCode: string
   featureName: string
+}
+
+export interface AdminSubscriptionPlanFeatureGroupDTO {
+  features: AdminSubscriptionPlanFeatureDTO[]
   limit: number | null
+  description: string
 }
 
 export interface AdminSubscriptionPlanDTO {
@@ -30,7 +35,7 @@ export interface AdminSubscriptionPlanDTO {
   isActive: boolean
   highlight: boolean
   prices: AdminSubscriptionPlanPriceDTO[]
-  features: AdminSubscriptionPlanFeatureDTO[]
+  featureGroups: AdminSubscriptionPlanFeatureGroupDTO[]
 }
 
 export interface AddAdminSubscriptionPlanDTO {
@@ -46,9 +51,10 @@ export interface GetAdminSubscriptionPlanParams {
 }
 
 export interface EditAdminSubscriptionPlanFeaturesDTO {
-  features: {
-    featureId: number
+  featureGroups: {
+    featureIds: number[]
     limit: number | null
+    description: string
   }[]
 }
 

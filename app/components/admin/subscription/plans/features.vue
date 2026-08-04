@@ -5,7 +5,7 @@
         Plan : {{ plan.title }}
       </span>
       <span class="text-h6 text-grey500">
-        {{ selectedFeatures.length }} selected features
+        {{ selectedFeatureGroups.length }} selected feature groups
       </span>
     </div>
 
@@ -44,7 +44,7 @@
       class="w-100 d-flex flex-column ga-2"
     >
       <div
-        v-if="selectedFeatures.length === 0"
+        v-if="selectedFeatureGroups.length === 0"
         class="w-100 d-flex align-center justify-center py-4 bg-grey100 rounded-lg"
       >
         <span class="text-grey500 text-h6 font-weight-semibold">
@@ -53,23 +53,29 @@
       </div>
 
       <div
-        v-for="feature in selectedFeatures"
-        :key="feature.featureId"
+        v-for="(group, index) in selectedFeatureGroups"
+        :key="index"
         class="w-100 d-flex align-center justify-space-between ga-2 border rounded-lg pa-2"
       >
-        <div class="d-flex flex-column align-start justify-start overflow-hidden">
+        <div class="d-flex flex-column align-start justify-start overflow-hidden ga-1">
           <span class="text-grey700 text-h6 font-weight-bold text-truncate">
-            {{ feature.featureName }}
+            {{ group.features.map(feature => feature.featureName).join(', ') }}
           </span>
           <span class="text-grey500 text-h6 text-truncate">
-            {{ feature.featureCode }} / {{ feature.limit == null ? 'Unlimited' : 'Limit: ' + feature.limit }}
+            {{ group.features.map(feature => feature.featureCode).join(', ') }} / {{ group.limit == null ? 'Unlimited' : 'Limit: ' + group.limit }}
+          </span>
+          <span
+            v-if="group.description"
+            class="text-grey500 text-h6"
+          >
+            {{ group.description }}
           </span>
         </div>
 
         <v-btn
           icon
           flat
-          @click="removeFeature(feature.featureId)"
+          @click="removeFeatureGroup(index)"
         >
           <v-icon
             size="20"
@@ -87,23 +93,28 @@
       v-model="isAddFormValid"
       class="w-100 d-flex flex-column ga-2"
     >
-      <common-gombo-box
-        v-model="selectedFeatureId"
-        label="Feature"
-        :items=" featureOptions.map(feature => ({
-          id: feature.id,
-          title: `${feature.name} (${feature.code})`,
-        }))"
-        :data-loading="loadingGetFeatureOptions"
-        rounded="lg"
-        density="compact"
-        base-color="grey200"
-        color="primary"
-        :defalut-lable="false"
-        :rules="[required]"
-        @update:model-value="setSelectedFeature"
-      />
+      <div class="w-100 d-flex flex-column ga-1">
+        <div class="text-h6 text-grey700 ml-2">
+          Limit
+        </div>
 
+        <v-select
+          v-model="selectedFeatureIds"
+          :items="featureSelectItems"
+          item-title="title"
+          item-value="id"
+          multiple
+          chips
+          closable-chips
+          :loading="loadingGetFeatureOptions"
+          density="compact"
+          variant="outlined"
+          base-color="grey200"
+          color="primary"
+          rounded="lg"
+          :rules="[requiredFeatureSelection]"
+        />
+      </div>
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <v-checkbox
           v-model="isUnlimitedLimit"
@@ -138,13 +149,35 @@
         />
       </div>
 
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <div class="text-h6 text-grey700 ml-2">
+          Description
+        </div>
+        <v-textarea
+          v-model="newDescription"
+          rounded="lg"
+          density="compact"
+          placeholder="Description"
+          variant="outlined"
+          base-color="grey200"
+          color="primary"
+          active-color="primary"
+          bg-color="white"
+          class="w-100"
+          no-resize
+          rows="3"
+          :disabled="!isDescriptionRequired"
+          :rules="isDescriptionRequired ? [required] : []"
+        />
+      </div>
+
       <v-btn
         color="primary"
         rounded="xl"
         variant="outlined"
         height="40"
         class="text-h5"
-        :disabled="!isAddFormValid || !selectedFeature"
+        :disabled="!isAddFormValid || selectedFeatureIds.length === 0"
         flat
         @click="addFeature"
       >
@@ -173,7 +206,7 @@
 import type {
   AdminSubscriptionFeatureDTO,
   AdminSubscriptionPlanDTO,
-  AdminSubscriptionPlanFeatureDTO,
+  AdminSubscriptionPlanFeatureGroupDTO,
 } from '@/types'
 
 interface PlanFeaturesProps {
@@ -200,12 +233,25 @@ const {
 const { $toast } = useNuxtApp()
 const { required, positiveNumber } = useValidationRules()
 
-const selectedFeatures = ref<AdminSubscriptionPlanFeatureDTO[]>([])
-const selectedFeatureId = ref('')
-const selectedFeature = ref<AdminSubscriptionFeatureDTO | null>(null)
+const selectedFeatureGroups = ref<AdminSubscriptionPlanFeatureGroupDTO[]>([])
+const selectedFeatureIds = ref<number[]>([])
 const newLimit = ref<number | null>(null)
+const newDescription = ref('')
 const isUnlimitedLimit = ref(true)
 const isAddFormValid = ref(false)
+
+const featureSelectItems = computed(() => {
+  return featureOptions.value.map(feature => ({
+    id: feature.id,
+    title: `${feature.name} (${feature.code})`,
+  }))
+})
+
+const isDescriptionRequired = computed(() => selectedFeatureIds.value.length > 1)
+
+const requiredFeatureSelection = (value: unknown) => {
+  return (Array.isArray(value) && value.length > 0) || 'This field is required.'
+}
 
 onMounted(async () => {
   await Promise.all([
@@ -216,28 +262,34 @@ onMounted(async () => {
     }),
   ])
 
-  selectedFeatures.value = planFeatures.value.map(feature => ({ ...feature }))
+  selectedFeatureGroups.value = planFeatures.value.map(group => ({
+    features: group.features.map(feature => ({ ...feature })),
+    limit: group.limit,
+    description: group.description,
+  }))
 })
 
-const setSelectedFeature = (featureId: string | number) => {
-  selectedFeature.value = featureOptions.value.find(feature => feature.id === Number(featureId)) ?? null
-}
-
 const resetAddForm = () => {
-  selectedFeatureId.value = ''
-  selectedFeature.value = null
+  selectedFeatureIds.value = []
   newLimit.value = null
+  newDescription.value = ''
   isUnlimitedLimit.value = true
 }
 
 const addFeature = () => {
-  if (!isAddFormValid.value || !selectedFeature.value || (!isUnlimitedLimit.value && newLimit.value === null)) {
+  if (
+    !isAddFormValid.value
+    || selectedFeatureIds.value.length === 0
+    || (!isUnlimitedLimit.value && newLimit.value === null)
+    || (isDescriptionRequired.value && !newDescription.value)
+  ) {
     $toast.error('Complete form correctly.')
     return
   }
 
-  const isDuplicateFeature = selectedFeatures.value.some((feature) => {
-    return feature.featureId === selectedFeature.value?.id
+  const selectedIds = selectedFeatureIds.value.map(Number)
+  const isDuplicateFeature = selectedFeatureGroups.value.some((group) => {
+    return group.features.some(feature => selectedIds.includes(feature.featureId))
   })
 
   if (isDuplicateFeature) {
@@ -245,25 +297,35 @@ const addFeature = () => {
     return
   }
 
-  selectedFeatures.value.push({
-    featureId: selectedFeature.value.id,
-    featureCode: selectedFeature.value.code,
-    featureName: selectedFeature.value.name,
+  const selectedFeatures = selectedIds
+    .map((featureId) => {
+      return featureOptions.value.find(feature => feature.id === featureId) ?? null
+    })
+    .filter((feature): feature is AdminSubscriptionFeatureDTO => feature !== null)
+
+  selectedFeatureGroups.value.push({
+    features: selectedFeatures.map(feature => ({
+      featureId: feature.id,
+      featureCode: feature.code,
+      featureName: feature.name,
+    })),
     limit: isUnlimitedLimit.value ? null : Number(newLimit.value),
+    description: isDescriptionRequired.value ? newDescription.value : '',
   })
 
   resetAddForm()
 }
 
-const removeFeature = (featureId: number) => {
-  selectedFeatures.value = selectedFeatures.value.filter(feature => feature.featureId !== featureId)
+const removeFeatureGroup = (index: number) => {
+  selectedFeatureGroups.value.splice(index, 1)
 }
 
 const saveFeatures = async () => {
   const response = await editFeatures(props.plan.id, {
-    features: selectedFeatures.value.map(feature => ({
-      featureId: feature.featureId,
-      limit: feature.limit,
+    featureGroups: selectedFeatureGroups.value.map(group => ({
+      featureIds: group.features.map(feature => feature.featureId),
+      limit: group.limit,
+      description: group.description,
     })),
   })
 
