@@ -80,7 +80,7 @@
 
         <template #[`item.countryCode`]="{ item }">
           <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.countryCode }}
+            {{ item.countryCode ?? 'Worldwide' }}
           </div>
         </template>
 

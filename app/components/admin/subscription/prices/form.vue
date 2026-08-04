@@ -140,6 +140,7 @@ const {
 } = useSubscriptionPlanAdmin()
 
 const currencies: SubscriptionCurrency[] = ['SOL', 'USDC', 'GET', 'USDT', 'USD']
+const worldwideCountryCode = 'worldwide'
 const billingIntervals: BillingInterval[] = [
   'Daily',
   'Weekly',
@@ -172,10 +173,16 @@ const planItems = computed(() => {
 })
 
 const countryItems = computed(() => {
-  return countries.value.map(country => ({
-    id: country.code,
-    title: country.title,
-  }))
+  return [
+    {
+      id: worldwideCountryCode,
+      title: worldwideCountryCode,
+    },
+    ...countries.value.map(country => ({
+      id: country.code,
+      title: country.title,
+    })),
+  ]
 })
 
 const isFormValid = ref(false)
@@ -184,7 +191,7 @@ const fillForm = (value: AdminSubscriptionPriceDTO | null) => {
   if (!value) return
 
   form.subscriptionPlanId = value.subscriptionPlanId
-  form.countryCode = value.countryCode
+  form.countryCode = value.countryCode ?? worldwideCountryCode
   form.currency = value.currency
   form.billingInterval = value.billingInterval
   form.price = value.price
@@ -211,7 +218,7 @@ const submit = () => {
 
   emit('submit', {
     subscriptionPlanId: Number(form.subscriptionPlanId),
-    countryCode: form.countryCode,
+    countryCode: form.countryCode === worldwideCountryCode ? null : form.countryCode,
     currency: form.currency as SubscriptionCurrency,
     price: Number(form.price),
     billingInterval: form.billingInterval as BillingInterval,

@@ -9,7 +9,7 @@ export interface SubscriptionPolygonPointDTO {
 export interface AdminSubscriptionPlanPriceDTO {
   id: number
   subscriptionPlanId: number
-  countryCode: string
+  countryCode: string | null
   currency: SubscriptionCurrency
   currencySymbol: string
   price: number
@@ -75,7 +75,7 @@ export interface GetAdminSubscriptionFeatureParams {
 export interface AdminSubscriptionPriceDTO {
   id: number
   subscriptionPlanId: number
-  countryCode: string
+  countryCode: string | null
   currency: SubscriptionCurrency
   currencySymbol: string
   price: number
@@ -84,7 +84,7 @@ export interface AdminSubscriptionPriceDTO {
 
 export interface AddAdminSubscriptionPriceDTO {
   subscriptionPlanId: number
-  countryCode: string
+  countryCode: string | null
   currency: SubscriptionCurrency
   price: number
   billingInterval: BillingInterval
