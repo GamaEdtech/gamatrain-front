@@ -1,9 +1,9 @@
 <template>
   <div
     v-if="loading || pastpaper.length > 0"
-    class="mx-4"
+    class="mx-4 my-6"
   >
-    <div class="d-flex align-center mb-6 ga-2">
+    <div class="d-flex align-center mb-4 ga-2">
       <div
         class="d-flex align-center justify-center rounded-circle pa-2"
         :style="`background-color : ${infoMap[`paper`].color}`"
@@ -19,7 +19,7 @@
         v-for="item in 10"
         :key="item"
       >
-        <lazy-common-detail-related-content-card-skeleton type="paper" />
+        <lazy-common-related-content-card-skeleton type="paper" />
       </v-slide-group-item>
     </v-slide-group>
     <v-slide-group
@@ -55,7 +55,7 @@
         :key="item.id"
       >
         <nuxt-link :to="`/paper/${item.id}/${item.title_url}`">
-          <lazy-common-detail-related-content-card
+          <lazy-common-related-content-card
             :picture="item.thumb_pic || fallbackImage"
             :title="item.title"
             :score="item.referee_score || item.type_title"
@@ -70,8 +70,148 @@
   </div>
 
   <div
+    v-if="loading || multimedias.length > 0"
+    class="mx-4 my-6"
+  >
+    <div class="d-flex align-center mb-4 ga-2">
+      <div
+        class="d-flex align-center justify-center rounded-circle pa-2"
+        :style="`background-color : ${infoMap[`multimedia`].color}`"
+      >
+        <span :class="`icon-title ${infoMap[`multimedia`].icon}`" />
+      </div>
+      <h1 class="text-h4 font-weight-semibold primary-gray-700">
+        Related Multimedias
+      </h1>
+    </div>
+    <v-slide-group v-if="loading">
+      <v-slide-group-item
+        v-for="item in 10"
+        :key="item"
+      >
+        <lazy-common-related-content-card-skeleton type="paper" />
+      </v-slide-group-item>
+    </v-slide-group>
+    <v-slide-group
+      v-else
+      show-arrows
+      class="related-content position-relative"
+      :style="{ height: `${CardHeight}` }"
+    >
+      <template #prev>
+        <v-btn
+          icon
+          size="sm"
+        >
+          <v-icon color="#000000">
+            md:chevron_backward
+          </v-icon>
+        </v-btn>
+      </template>
+
+      <template #next>
+        <v-btn
+          icon
+          size="sm"
+        >
+          <v-icon color="#000000">
+            md:chevron_forward
+          </v-icon>
+        </v-btn>
+      </template>
+
+      <v-slide-group-item
+        v-for="item in multimedias"
+        :key="item.id"
+      >
+        <nuxt-link :to="`/multimedia/${item.id}/${item.title_url}`">
+          <lazy-common-related-content-card
+            :picture="item.poster || fallbackImage"
+            :title="item.title"
+            :score="item.type_title"
+            :avatar="item.avatar"
+            :first-name="item.first_name"
+            :last-name="item.last_name"
+            type="paper"
+          />
+        </nuxt-link>
+      </v-slide-group-item>
+    </v-slide-group>
+  </div>
+
+  <div
+    v-if="loading || exams.length > 0"
+    class="mx-4 my-6"
+  >
+    <div class="d-flex align-center mb-4 ga-2">
+      <div
+        class="d-flex align-center justify-center rounded-circle pa-2"
+        :style="`background-color : ${infoMap[`exam`].color}`"
+      >
+        <span :class="`icon-title ${infoMap[`exam`].icon}`" />
+      </div>
+      <h1 class="text-h4 font-weight-semibold primary-gray-700">
+        Related Exams
+      </h1>
+    </div>
+    <v-slide-group v-if="loading">
+      <v-slide-group-item
+        v-for="item in 10"
+        :key="item"
+      >
+        <lazy-common-related-content-card-skeleton type="paper" />
+      </v-slide-group-item>
+    </v-slide-group>
+    <v-slide-group
+      v-else
+      show-arrows
+      class="related-content position-relative"
+      :style="{ height: `${CardHeight}` }"
+    >
+      <template #prev>
+        <v-btn
+          icon
+          size="sm"
+        >
+          <v-icon color="#000000">
+            md:chevron_backward
+          </v-icon>
+        </v-btn>
+      </template>
+
+      <template #next>
+        <v-btn
+          icon
+          size="sm"
+        >
+          <v-icon color="#000000">
+            md:chevron_forward
+          </v-icon>
+        </v-btn>
+      </template>
+
+      <v-slide-group-item
+        v-for="item in exams"
+        :key="item.id"
+      >
+        <nuxt-link :to="`/exam/${item.id}/${item.title_url}`">
+          <lazy-common-related-content-card
+            :picture="item.thumb_pic || fallbackImage"
+            :title="item.title"
+            :score="item.tests_num"
+            :avatar="item.avatar"
+            :first-name="item.first_name"
+            :last-name="item.last_name"
+            type="exam"
+          />
+        </nuxt-link>
+      </v-slide-group-item>
+    </v-slide-group>
+  </div>
+
+  <div
     v-if="loading || tutorials.length > 0"
-    class="mx-4 my-8"
+    class="mx-4 my-6"
   >
     <div class="d-flex align-center mb-6 ga-2">
       <div
@@ -125,7 +265,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, RelatedContentDTO, ContentItemDTO } from '@/types'
+import type { ApiResult, RelatedContentDTO, ContentItemDTO, FileRelatedContentDTO, ExamRelatedContentDTO } from '@/types'
 
 type sourceType
   = | 'test'
@@ -151,14 +291,19 @@ const infoMap = {
     color: '#2e90fa',
     keyResponse: 'tests',
   },
+  multimedia: {
+    icon: 'icon-multimedia',
+    color: '#02b719',
+    keyResponse: 'files',
+  },
   exam: {
-    icon: 'icon-paper',
-    color: '#2e90fa',
+    icon: 'icon-exam',
+    color: '#7c4dff',
     keyResponse: 'tests',
   },
   question: {
-    icon: 'icon-paper',
-    color: '#2e90fa',
+    icon: 'icon-q-a',
+    color: '#fdb022',
     keyResponse: 'tests',
   },
   tutorial: {
@@ -169,6 +314,8 @@ const infoMap = {
 }
 const pastpaper = ref<ContentItemDTO[]>([])
 const tutorials = ref<ContentItemDTO[]>([])
+const multimedias = ref<FileRelatedContentDTO[]>([])
+const exams = ref<ExamRelatedContentDTO[]>([])
 
 const loading = ref(true)
 const fallbackImage = '/images/GamaBag.webp'
@@ -190,10 +337,10 @@ const getRelatedContent = async () => {
     )
     const related = response.data
     if (related) {
-      pastpaper.value
-        = related[infoMap['paper'].keyResponse as keyof RelatedContentDTO]
-      tutorials.value
-        = related[infoMap['tutorial'].keyResponse as keyof RelatedContentDTO]
+      pastpaper.value = related.tests
+      tutorials.value = related.tutorials
+      multimedias.value = related.files
+      exams.value = related.exams
     }
   }
   catch (error) {

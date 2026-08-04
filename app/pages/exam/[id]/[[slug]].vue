@@ -523,7 +523,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 p {
   font-size: 1.3rem !important;
 }
