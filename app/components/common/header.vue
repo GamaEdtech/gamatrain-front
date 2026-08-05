@@ -267,6 +267,9 @@ const isDrawerOpen = ref(false)
 const openNavigationMenu = () => {
   isDrawerOpen.value = true
 }
+const syncDrawerWithDisplay = () => {
+  isDrawerOpen.value = props.isUserDashboard && !mdAndDown.value
+}
 const shouldMountDrawer = computed(() => {
   if (props.isUserDashboard) {
     if (mdAndDown.value) {
@@ -298,16 +301,15 @@ watch(
   },
 )
 
+watch(
+  mdAndDown,
+  syncDrawerWithDisplay,
+  { immediate: true },
+)
+
 onMounted(async () => {
   handleChnageMenuSetting()
   window.addEventListener('scroll', handleChnageMenuSetting)
-
-  if (mdAndDown.value) {
-    isDrawerOpen.value = false
-  }
-  else {
-    isDrawerOpen.value = true
-  }
 
   requestIdleCallback?.(() => {
     import('@/components/common/modal/auth/index.vue')
