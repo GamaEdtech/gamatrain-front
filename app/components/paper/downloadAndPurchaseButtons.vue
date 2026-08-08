@@ -239,6 +239,8 @@
 <script setup lang="ts">
 import type {
   FilesDTO,
+  DownloadResponseDTO,
+  UpgradeSuggestionsDTO,
 } from '@/types'
 import { useDisplay } from 'vuetify'
 
@@ -280,6 +282,7 @@ const pendingDownload = ref<{
   extraId?: string
 } | null>(null)
 const openModalDownloadMobile = ref(false)
+const paymentPlans = ref<UpgradeSuggestionsDTO[]>([])
 
 const {
   clearDownload,
@@ -306,7 +309,8 @@ const {
   onInsufficientBalance: () => {
     showCoinPaymentModal.value = true
   },
-  onUpgradeSuggestions: () => {
+  onUpgradeSuggestions: (data: DownloadResponseDTO) => {
+    paymentPlans.value = data.upgradeSuggestions ?? []
     showCoinPaymentModal.value = true
   },
 })
