@@ -1,19 +1,19 @@
 import type {
   ApiResult,
-  AdminSubscriptionPlanDTO,
+  UpgradeSuggestionsDTO,
 } from '@/types'
 
 export const useSubscription = () => {
   const { handleApiResponseError, handleApiCatchError } = useApiErrorHandler()
 
-  const data = ref<AdminSubscriptionPlanDTO[]>([])
+  const data = ref<UpgradeSuggestionsDTO[]>([])
   const loadingGetData = ref(true)
 
   const getData = async () => {
     loadingGetData.value = true
     try {
       const response = await useApiService.get<
-        ApiResult<AdminSubscriptionPlanDTO[]>
+        ApiResult<UpgradeSuggestionsDTO[]>
       >(`/api/v2/subscriptions/plans`)
 
       if (response.succeeded && response.data) {

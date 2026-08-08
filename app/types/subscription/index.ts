@@ -120,3 +120,11 @@ export interface GetAdminSubscriptionGatewayMappingParams {
   page: number
   pageSize: number
 }
+
+export interface SubscriptionPlanDTO {
+  id: number
+  title: string
+  highlight: boolean
+  prices: AdminSubscriptionPlanPriceDTO[]
+  featureGroups: AdminSubscriptionPlanFeatureGroupDTO[]
+}

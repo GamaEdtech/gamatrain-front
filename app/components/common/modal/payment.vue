@@ -1,11 +1,11 @@
 <template>
-  <div class="w-100 d-flex flex-column flex-sm-row justify-center align-center align-sm-end ga-1 ga-sm-2 mt-12">
+  <div class="w-100 d-flex flex-column flex-sm-row flex-wrap justify-center justify-sm-space-between align-center align-sm-end ga-4 ga-sm-2 mt-12">
     <template
       v-for="plan in plans"
       :key="plan.subscriptionPlanId"
     >
       <v-card
-        :class="`plan-card border-solid border-sm border-grey600 mt-4 mr-2 mb-2 px-3 py-6 pa-md-6 text-center ${plan.highlight ? `bg-grey900`:``}`"
+        :class="`plan-card border-solid border-sm border-grey600 px-3 py-6 pa-md-6 text-center ${plan.highlight ? `bg-grey900`:``}`"
       >
         <!-- Badge -->
         <v-chip
@@ -96,7 +96,7 @@ const pay = async (plan: UpgradeSuggestionsDTO) => {
         amount: price.price,
         currency: price.currency as PaymentCurrency,
         gateway: 'Stripe' as PaymentGateway,
-        title: plan.title,
+        title: 'Gamatrain Usage Invoice',
         description: 'One-time charge for use of the Gamatrain e-learning platform. Payment grants access to platform features and learning materials.',
       }
       const response = await startPayment(payload)
@@ -112,6 +112,7 @@ const pay = async (plan: UpgradeSuggestionsDTO) => {
 <style scoped>
 .plan-card {
   height : fit-content;
+  width : 30%;
   border-radius: 16px;
   transition: all 0.25s ease;
 }
@@ -122,5 +123,11 @@ const pay = async (plan: UpgradeSuggestionsDTO) => {
 
 .features {
   list-style: none;
+}
+@media screen and (max-width: 600px) {
+ .plan-card {
+   width : 100%;
+   max-width : 220px;
+ }
 }
 </style>
