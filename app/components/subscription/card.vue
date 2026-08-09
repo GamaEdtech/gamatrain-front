@@ -52,7 +52,7 @@
       :color="plan.highlight ? 'primary' : 'grey300'"
       block
       size="large"
-      :loading="loadingPayment"
+      :loading="loadingStartPaymentSubscription"
       @click="pay"
     >
       Pay with Stripe
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import type { BillingInterval, UpgradeSuggestionsDTO, PaymentCurrency, PaymentGateway } from '@/types'
+import type { BillingInterval, UpgradeSuggestionsDTO, PaymentGateway } from '@/types'
 
 interface ICard {
   plan: UpgradeSuggestionsDTO
@@ -72,7 +72,9 @@ const props = defineProps<ICard>()
 
 const route = useRoute()
 const { trackPayment } = useGtmEvents()
-const { startPayment, loadingPayment, savePathRedirect } = usePayment()
+const { savePathRedirect } = usePayment()
+const { startPaymentSubscription, loadingStartPaymentSubscription } = useSubscription()
+
 const selectedPrice = computed(() => {
   return props.plan.prices.find(price => price.billingInterval === props.billingInterval)
 })
@@ -83,13 +85,10 @@ const pay = async () => {
   })
   if (selectedPrice.value) {
     const payload = {
-      amount: selectedPrice.value.price,
-      currency: selectedPrice.value.currency as PaymentCurrency,
       gateway: 'Stripe' as PaymentGateway,
-      title: 'Gamatrain Usage Invoice',
-      description: 'One-time charge for use of the Gamatrain e-learning platform. Payment grants access to platform features and learning materials.',
+      billingInterval: props.billingInterval,
     }
-    const response = await startPayment(payload)
+    const response = await startPaymentSubscription(payload, props.plan.subscriptionPlanId || props.plan.id)
     if (response.succeeded && response.data && response.data.url) {
       savePathRedirect(route.fullPath)
       window.location.href = response.data.url

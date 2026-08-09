@@ -1,13 +1,16 @@
 import type {
   ApiResult,
   UpgradeSuggestionsDTO,
+  PaymentSubscriptionResponseDTO,
+  PayloadPaymentSubscriptionDTO,
 } from '@/types'
 
 export const useSubscription = () => {
-  const { handleApiResponseError, handleApiCatchError } = useApiErrorHandler()
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const data = ref<UpgradeSuggestionsDTO[]>([])
   const loadingGetData = ref(true)
+  const loadingStartPaymentSubscription = ref(false)
 
   const getData = async () => {
     loadingGetData.value = true
@@ -33,5 +36,28 @@ export const useSubscription = () => {
     }
   }
 
-  return { loadingGetData, data, getData }
+  const startPaymentSubscription = async (payload: PayloadPaymentSubscriptionDTO, id: string | number) => {
+    loadingStartPaymentSubscription.value = true
+    try {
+      const response = await useApiService.post<
+        ApiResult<PaymentSubscriptionResponseDTO>
+      >(`/api/v2/subscriptions/plans/${id}/purchase`, { ...payload })
+
+      if (!response.succeeded) {
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<PaymentSubscriptionResponseDTO>(err)
+    }
+    finally {
+      loadingStartPaymentSubscription.value = false
+    }
+  }
+
+  return { loadingGetData, data, getData, startPaymentSubscription, loadingStartPaymentSubscription }
 }

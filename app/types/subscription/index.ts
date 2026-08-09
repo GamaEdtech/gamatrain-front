@@ -1,3 +1,5 @@
+import type { PaymentGateway } from '@/types'
+
 export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Seasonally' | 'Yearly'
 export type SubscriptionCurrency = 'SOL' | 'USDC' | 'GET' | 'USDT' | 'USD'
 
@@ -127,4 +129,13 @@ export interface SubscriptionPlanDTO {
   highlight: boolean
   prices: AdminSubscriptionPlanPriceDTO[]
   featureGroups: AdminSubscriptionPlanFeatureGroupDTO[]
+}
+export interface PayloadPaymentSubscriptionDTO {
+  gateway: PaymentGateway
+  billingInterval: BillingInterval
+}
+export interface PaymentSubscriptionResponseDTO {
+  userSubscriptionId: number
+  paymentId: number
+  url: string
 }
