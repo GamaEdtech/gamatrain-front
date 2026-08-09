@@ -18,11 +18,11 @@
 
     <!-- Price -->
     <div
-      v-if="plan.prices && plan.prices.length > 0"
+      v-if="selectedPrice"
       class="mb-4"
     >
       <span><span class="text-h6 text-md-h4 text-grey400 mt-2">$</span><sub class="text-h4 text-md-h2 font-weight-bold">
-        {{ plan.prices[0]?.price }}</sub></span>
+        {{ selectedPrice.price }}</sub></span>
     </div>
 
     <!-- Features -->
@@ -32,8 +32,6 @@
         :key="groupIndex"
       >
         <li
-          v-for="feature in featureGroup.features"
-          :key="`${groupIndex}-${feature.featureId}`"
           class="d-flex align-center mb-2 text-h6 text-md-h5"
         >
           <v-icon
@@ -43,7 +41,7 @@
           >
             md:check
           </v-icon>
-          {{ featureGroup.limit || 'Unlimited' }} {{ feature.featureName }}
+          {{ featureGroup.limit || 'Unlimited' }} {{ featureGroup.description }}
         </li>
       </template>
     </ul>
@@ -55,7 +53,7 @@
       block
       size="large"
       :loading="loadingPayment"
-      @click="pay(plan)"
+      @click="pay"
     >
       Pay with Stripe
     </v-btn>
@@ -63,37 +61,38 @@
 </template>
 
 <script setup lang="ts">
-import type { UpgradeSuggestionsDTO, PaymentCurrency, PaymentGateway } from '@/types'
+import type { BillingInterval, UpgradeSuggestionsDTO, PaymentCurrency, PaymentGateway } from '@/types'
 
 interface ICard {
   plan: UpgradeSuggestionsDTO
+  billingInterval: BillingInterval
 }
 
-defineProps<ICard>()
+const props = defineProps<ICard>()
 
 const route = useRoute()
 const { trackPayment } = useGtmEvents()
 const { startPayment, loadingPayment, savePathRedirect } = usePayment()
+const selectedPrice = computed(() => {
+  return props.plan.prices.find(price => price.billingInterval === props.billingInterval)
+})
 
-const pay = async (plan: UpgradeSuggestionsDTO) => {
+const pay = async () => {
   trackPayment({
     route: route.fullPath,
   })
-  if (plan.prices && plan.prices.length > 0) {
-    const price = plan.prices[0]
-    if (price) {
-      const payload = {
-        amount: price.price,
-        currency: price.currency as PaymentCurrency,
-        gateway: 'Stripe' as PaymentGateway,
-        title: 'Gamatrain Usage Invoice',
-        description: 'One-time charge for use of the Gamatrain e-learning platform. Payment grants access to platform features and learning materials.',
-      }
-      const response = await startPayment(payload)
-      if (response.succeeded && response.data && response.data.url) {
-        savePathRedirect(route.fullPath)
-        window.location.href = response.data.url
-      }
+  if (selectedPrice.value) {
+    const payload = {
+      amount: selectedPrice.value.price,
+      currency: selectedPrice.value.currency as PaymentCurrency,
+      gateway: 'Stripe' as PaymentGateway,
+      title: 'Gamatrain Usage Invoice',
+      description: 'One-time charge for use of the Gamatrain e-learning platform. Payment grants access to platform features and learning materials.',
+    }
+    const response = await startPayment(payload)
+    if (response.succeeded && response.data && response.data.url) {
+      savePathRedirect(route.fullPath)
+      window.location.href = response.data.url
     }
   }
 }
