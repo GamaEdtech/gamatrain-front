@@ -1,6 +1,6 @@
 import type {
   ApiResult,
-  UpgradeSuggestionsDTO,
+  ResponseGetPlanDTO,
   PaymentSubscriptionResponseDTO,
   PayloadPaymentSubscriptionDTO,
 } from '@/types'
@@ -8,7 +8,7 @@ import type {
 export const useSubscription = () => {
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
-  const data = ref<UpgradeSuggestionsDTO[]>([])
+  const data = ref<ResponseGetPlanDTO | null>(null)
   const loadingGetData = ref(true)
   const loadingStartPaymentSubscription = ref(false)
 
@@ -16,19 +16,19 @@ export const useSubscription = () => {
     loadingGetData.value = true
     try {
       const response = await useApiService.get<
-        ApiResult<UpgradeSuggestionsDTO[]>
+        ApiResult<ResponseGetPlanDTO>
       >(`/api/v2/subscriptions/plans`)
 
       if (response.succeeded && response.data) {
         data.value = response.data
       }
       else {
-        data.value = []
+        data.value = null
         handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      data.value = []
+      data.value = null
       handleApiCatchError(err)
     }
     finally {

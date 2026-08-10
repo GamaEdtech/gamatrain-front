@@ -102,7 +102,8 @@
       title="Payment"
     >
       <common-modal-payment
-        :plans="data"
+        :plans="data?.plans || []"
+        :billing-interval="data?.availableBillingIntervals || []"
         :loading="loadingGetData"
       />
     </lazy-common-modal-base>

@@ -1,3 +1,5 @@
+import type { BillingInterval } from '@/types'
+
 export type ContentTypeDownload = 'PastPaper' | 'Multimedia' | 'Exam'
 
 export interface BodyRequestDownloadDTO {
@@ -47,4 +49,5 @@ export interface DownloadResponseDTO {
   spent: boolean
   paidBy: PaidByDownloadResponseDTO
   upgradeSuggestions: UpgradeSuggestionsDTO[]
+  availableBillingIntervals: BillingInterval[]
 }

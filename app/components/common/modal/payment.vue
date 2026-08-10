@@ -1,7 +1,16 @@
 <template>
   <div class="w-100 d-flex flex-column flex-sm-row flex-wrap justify-center justify-sm-space-between align-center align-sm-end ga-4 ga-sm-2 mt-12">
     <div class="w-100 d-flex align-start mb-4">
-      <div class="btn-filter-container d-flex align-center justify-center ga-1 bg-grey100 pa-1 rounded-pill">
+      <v-skeleton-loader
+        v-if="loading"
+        width="200"
+        height="44"
+        class="rounded-pill"
+      />
+      <div
+        v-else
+        class="btn-filter-container d-flex align-center justify-center ga-1 bg-grey100 pa-1 rounded-pill"
+      >
         <v-btn
           v-for="item in billingInterval"
           :key="item"
@@ -41,6 +50,7 @@ import type { BillingInterval, UpgradeSuggestionsDTO } from '@/types'
 
 interface IPaymentModal {
   plans: UpgradeSuggestionsDTO[]
+  billingInterval: BillingInterval[]
   loading?: boolean
 }
 const props = withDefaults(defineProps<IPaymentModal>(),
@@ -50,7 +60,6 @@ const props = withDefaults(defineProps<IPaymentModal>(),
 
 const skeletonCount = 3
 const intervalSelect = ref<BillingInterval>('Monthly')
-const billingInterval: BillingInterval[] = ['Monthly', 'Seasonally', 'Yearly']
 const filteredPlans = computed(() => {
   return props.plans.filter((plan) => {
     return plan.prices.some(price => price.billingInterval === intervalSelect.value)

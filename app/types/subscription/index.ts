@@ -1,4 +1,4 @@
-import type { PaymentGateway } from '@/types'
+import type { PaymentGateway, UpgradeSuggestionsDTO } from '@/types'
 
 export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Seasonally' | 'Yearly'
 export type SubscriptionCurrency = 'SOL' | 'USDC' | 'GET' | 'USDT' | 'USD'
@@ -121,6 +121,11 @@ export interface AddAdminSubscriptionGatewayMappingDTO {
 export interface GetAdminSubscriptionGatewayMappingParams {
   page: number
   pageSize: number
+}
+
+export interface ResponseGetPlanDTO {
+  plans: UpgradeSuggestionsDTO[]
+  availableBillingIntervals: BillingInterval[]
 }
 
 export interface SubscriptionPlanDTO {

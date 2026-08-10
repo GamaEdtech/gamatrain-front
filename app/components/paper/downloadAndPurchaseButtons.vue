@@ -206,7 +206,10 @@
       :max-width="900"
       title="Payment"
     >
-      <common-modal-payment :plans="paymentPlans" />
+      <common-modal-payment
+        :plans="paymentPlans"
+        :billing-interval="billingInterval"
+      />
     </lazy-common-modal-base>
 
     <!-- Coin Consumption Animation -->
@@ -240,6 +243,7 @@ import type {
   FilesDTO,
   DownloadResponseDTO,
   UpgradeSuggestionsDTO,
+  BillingInterval,
 } from '@/types'
 import { useDisplay } from 'vuetify'
 
@@ -280,6 +284,7 @@ const pendingDownload = ref<{
 } | null>(null)
 const openModalDownloadMobile = ref(false)
 const paymentPlans = ref<UpgradeSuggestionsDTO[]>([])
+const billingInterval = ref<BillingInterval[]>([])
 
 const {
   // clearDownload,
@@ -307,7 +312,8 @@ const {
     showCoinPaymentModal.value = true
   },
   onUpgradeSuggestions: (data: DownloadResponseDTO) => {
-    paymentPlans.value = data.upgradeSuggestions ?? []
+    paymentPlans.value = data.upgradeSuggestions || []
+    billingInterval.value = data.availableBillingIntervals || []
     showCoinPaymentModal.value = true
   },
 })
