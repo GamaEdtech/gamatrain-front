@@ -42,7 +42,7 @@
             color="grey400"
             size="24"
           >
-            <span class="text-h5 text-grey700">{{
+            <span class="text-h6 text-grey700 font-weight-bold">{{
               user?.firstName ? user.firstName[0].toUpperCase() : "U"
             }}</span>
           </v-avatar>
