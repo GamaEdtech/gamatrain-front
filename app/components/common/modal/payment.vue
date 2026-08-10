@@ -37,7 +37,7 @@
     <template v-else>
       <subscription-card
         v-for="plan in filteredPlans"
-        :key="plan.subscriptionPlanId"
+        :key="plan.id"
         :plan="plan"
         :billing-interval="intervalSelect"
       />

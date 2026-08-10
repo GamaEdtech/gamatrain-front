@@ -88,7 +88,7 @@ const pay = async () => {
       gateway: 'Stripe' as PaymentGateway,
       billingInterval: props.billingInterval,
     }
-    const response = await startPaymentSubscription(payload, props.plan.subscriptionPlanId || props.plan.id)
+    const response = await startPaymentSubscription(payload, props.plan.id)
     if (response.succeeded && response.data && response.data.url) {
       savePathRedirect(route.fullPath)
       window.location.href = response.data.url

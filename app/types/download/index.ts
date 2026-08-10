@@ -12,7 +12,6 @@ export interface BodyRequestDownloadDTO {
 export type PaidByDownloadResponseDTO = 'SubscriptionQuota' | 'Points'
 export interface UpgradeSuggestionsDTO {
   id: number
-  subscriptionPlanId: number
   title: string
   limit: number
   pooledFeatureCodes: string[]
