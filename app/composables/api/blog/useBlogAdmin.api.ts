@@ -41,7 +41,7 @@ export const useBlogAdmin = () => {
         },
       )
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / params.pageSize)
@@ -77,7 +77,7 @@ export const useBlogAdmin = () => {
         `/api/v2/admin/blogs/contributions/${id}`,
       )
 
-      if (!response.succeeded) {
+      if (!response.succeeded || !response.data) {
         handleApiResponseError(response)
       }
 

@@ -36,7 +36,7 @@ export const useBlogCommentAdmin = () => {
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<CommnetBlogAdminDTO>>
       >(`/api/v2/admin/blogs/posts/comments/contributions`, query)
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / params.pageSize)
