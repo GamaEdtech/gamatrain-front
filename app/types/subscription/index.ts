@@ -162,8 +162,8 @@ export interface UserSubscriptionDTO {
 
 export interface FeatureGroupUserSubscriptionDTO {
   features: AdminSubscriptionPlanFeatureDTO[]
-  limit: number
+  limit: number | null
   used: number
-  remaining: number
+  remaining: number | null
   description: string
 }

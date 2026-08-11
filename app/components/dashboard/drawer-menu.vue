@@ -337,6 +337,7 @@ const items = [
     value: 'financial',
     subMenuList: [
       { title: 'Wallet', link: '/user/wallet', icon: 'md:shopping_cart' },
+      { title: 'Subscription', link: '/user/subscription', icon: 'md:subscriptions_outlined' },
       // {
       //   title: 'Top Up Wallet',
       //   link: '/user/charge-wallet',

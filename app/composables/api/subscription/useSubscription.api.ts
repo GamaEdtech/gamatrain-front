@@ -73,14 +73,14 @@ export const useSubscription = () => {
         userSubscription.value = response.data
       }
       else {
-        data.value = null
+        userSubscription.value = null
         handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      data.value = null
+      userSubscription.value = null
       handleApiCatchError(err)
 
       return createApiFailure<UserSubscriptionDTO>(err)
