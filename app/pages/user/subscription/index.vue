@@ -12,7 +12,7 @@
     </div>
 
     <template v-if="loadingGetUserSubscription">
-      <v-row class="w-100">
+      <v-row class="w-100 ma-0">
         <v-col
           v-for="i in 4"
           :key="i"
@@ -35,7 +35,7 @@
     </template>
 
     <template v-else-if="userSubscription">
-      <v-row class="w-100">
+      <v-row class="w-100 ma-0">
         <v-col
           v-for="item in summaryItems"
           :key="item.title"
