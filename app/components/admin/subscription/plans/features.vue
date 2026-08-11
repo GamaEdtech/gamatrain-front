@@ -1,0 +1,336 @@
+<template>
+  <div class="w-100 d-flex flex-column pa-4 ga-4">
+    <div class="w-100 d-flex flex-column ga-1">
+      <span class="text-h5 text-grey700 font-weight-bold">
+        Plan : {{ plan.title }}
+      </span>
+      <span class="text-h6 text-grey500">
+        {{ selectedFeatureGroups.length }} selected feature groups
+      </span>
+    </div>
+
+    <div
+      v-if="loadingGetFeatures"
+      class="w-100 d-flex flex-column align-center justify-center ga-2"
+    >
+      <div
+        v-for="i in 2"
+        :key="i"
+        class="w-100 d-flex align-center justify-space-between ga-2 border rounded-lg pa-2"
+      >
+        <div class="d-flex flex-column align-start justify-start overflow-hidden ga-1">
+          <v-skeleton-loader
+            width="160"
+            height="10"
+            class="rounded-pill"
+          />
+          <v-skeleton-loader
+            width="180"
+            height="10"
+            class="rounded-pill"
+          />
+        </div>
+
+        <v-skeleton-loader
+          width="40"
+          height="40"
+          class="rounded-circle"
+        />
+      </div>
+    </div>
+
+    <div
+      v-else
+      class="w-100 d-flex flex-column ga-2"
+    >
+      <div
+        v-if="selectedFeatureGroups.length === 0"
+        class="w-100 d-flex align-center justify-center py-4 bg-grey100 rounded-lg"
+      >
+        <span class="text-grey500 text-h6 font-weight-semibold">
+          No features selected.
+        </span>
+      </div>
+
+      <div
+        v-for="(group, index) in selectedFeatureGroups"
+        :key="index"
+        class="w-100 d-flex align-center justify-space-between ga-2 border rounded-lg pa-2"
+      >
+        <div class="d-flex flex-column align-start justify-start overflow-hidden ga-1">
+          <span class="text-grey700 text-h6 font-weight-bold text-truncate">
+            {{ group.features.map(feature => feature.featureName).join(', ') }}
+          </span>
+          <span class="text-grey500 text-h6 text-truncate">
+            {{ group.features.map(feature => feature.featureCode).join(', ') }} / {{ group.limit == null ? 'Unlimited' : 'Limit: ' + group.limit }}
+          </span>
+          <span
+            v-if="group.description"
+            class="text-grey500 text-h6"
+          >
+            {{ group.description }}
+          </span>
+        </div>
+
+        <v-btn
+          icon
+          flat
+          @click="removeFeatureGroup(index)"
+        >
+          <v-icon
+            size="20"
+            color="grey800"
+          >
+            md:delete
+          </v-icon>
+        </v-btn>
+      </div>
+    </div>
+
+    <v-divider class="w-100" />
+
+    <v-form
+      v-model="isAddFormValid"
+      class="w-100 d-flex flex-column ga-2"
+    >
+      <div class="w-100 d-flex flex-column ga-1">
+        <div class="text-h6 text-grey700 ml-2">
+          Limit
+        </div>
+
+        <v-select
+          v-model="selectedFeatureIds"
+          :items="featureSelectItems"
+          item-title="title"
+          item-value="id"
+          multiple
+          chips
+          closable-chips
+          :loading="loadingGetFeatureOptions"
+          density="compact"
+          variant="outlined"
+          base-color="grey200"
+          color="primary"
+          rounded="lg"
+          :rules="[requiredFeatureSelection]"
+        />
+      </div>
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <v-checkbox
+          v-model="isUnlimitedLimit"
+          color="primary"
+          class="text-h4"
+          hide-details
+          false-icon="md:check_box_outline_blank"
+          true-icon="md:check_box"
+        >
+          <template #label>
+            <span class="text-h6 text-grey700 text-no-wrap ml-2">Unlimited</span>
+          </template>
+        </v-checkbox>
+
+        <div class="text-h6 text-grey700 ml-2">
+          Limit
+        </div>
+        <v-text-field
+          v-model.number="newLimit"
+          type="number"
+          rounded="lg"
+          density="compact"
+          placeholder="Limit"
+          variant="outlined"
+          base-color="grey200"
+          color="primary"
+          active-color="primary"
+          bg-color="white"
+          class="w-100"
+          :disabled="isUnlimitedLimit"
+          :rules="isUnlimitedLimit ? [] : [required, positiveNumber]"
+        />
+      </div>
+
+      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+        <div class="text-h6 text-grey700 ml-2">
+          Description
+        </div>
+        <v-textarea
+          v-model="newDescription"
+          rounded="lg"
+          density="compact"
+          placeholder="Description"
+          variant="outlined"
+          base-color="grey200"
+          color="primary"
+          active-color="primary"
+          bg-color="white"
+          class="w-100"
+          no-resize
+          rows="3"
+          :disabled="!isDescriptionRequired"
+          :rules="isDescriptionRequired ? [required] : []"
+        />
+      </div>
+
+      <v-btn
+        color="primary"
+        rounded="xl"
+        variant="outlined"
+        height="40"
+        class="text-h5"
+        :disabled="!isAddFormValid || selectedFeatureIds.length === 0"
+        flat
+        @click="addFeature"
+      >
+        Add Feature
+      </v-btn>
+    </v-form>
+
+    <v-btn
+      color="success"
+      rounded="xl"
+      variant="outlined"
+      height="40"
+      width="200"
+      class="text-h5 mt-2 mx-auto"
+      :loading="loadingEditFeatures"
+      :disabled="loadingGetFeatures || loadingEditFeatures"
+      flat
+      @click="saveFeatures"
+    >
+      Save Changes
+    </v-btn>
+  </div>
+</template>
+
+<script setup lang="ts">
+import type {
+  AdminSubscriptionFeatureDTO,
+  AdminSubscriptionPlanDTO,
+  AdminSubscriptionPlanFeatureGroupDTO,
+} from '@/types'
+
+interface PlanFeaturesProps {
+  plan: AdminSubscriptionPlanDTO
+}
+
+const props = defineProps<PlanFeaturesProps>()
+const emit = defineEmits(['FeaturesSuccessFull'])
+
+const {
+  planFeatures,
+  getFeatures,
+  loadingGetFeatures,
+  editFeatures,
+  loadingEditFeatures,
+} = useSubscriptionPlanAdmin()
+
+const {
+  featureOptions,
+  getFeatureOptions,
+  loadingGetFeatureOptions,
+} = useSubscriptionFeatureAdmin()
+
+const { $toast } = useNuxtApp()
+const { required, positiveNumber } = useValidationRules()
+
+const selectedFeatureGroups = ref<AdminSubscriptionPlanFeatureGroupDTO[]>([])
+const selectedFeatureIds = ref<number[]>([])
+const newLimit = ref<number | null>(null)
+const newDescription = ref('')
+const isUnlimitedLimit = ref(true)
+const isAddFormValid = ref(false)
+
+const featureSelectItems = computed(() => {
+  return featureOptions.value.map(feature => ({
+    id: feature.id,
+    title: `${feature.name} (${feature.code})`,
+  }))
+})
+
+const isDescriptionRequired = computed(() => selectedFeatureIds.value.length > 1)
+
+const requiredFeatureSelection = (value: unknown) => {
+  return (Array.isArray(value) && value.length > 0) || 'This field is required.'
+}
+
+onMounted(async () => {
+  await Promise.all([
+    getFeatures(props.plan.id),
+    getFeatureOptions({
+      page: 1,
+      pageSize: 1000,
+    }),
+  ])
+
+  selectedFeatureGroups.value = planFeatures.value.map(group => ({
+    features: group.features.map(feature => ({ ...feature })),
+    limit: group.limit,
+    description: group.description,
+  }))
+})
+
+const resetAddForm = () => {
+  selectedFeatureIds.value = []
+  newLimit.value = null
+  newDescription.value = ''
+  isUnlimitedLimit.value = true
+}
+
+const addFeature = () => {
+  if (
+    !isAddFormValid.value
+    || selectedFeatureIds.value.length === 0
+    || (!isUnlimitedLimit.value && newLimit.value === null)
+    || (isDescriptionRequired.value && !newDescription.value)
+  ) {
+    $toast.error('Complete form correctly.')
+    return
+  }
+
+  const selectedIds = selectedFeatureIds.value.map(Number)
+  const isDuplicateFeature = selectedFeatureGroups.value.some((group) => {
+    return group.features.some(feature => selectedIds.includes(feature.featureId))
+  })
+
+  if (isDuplicateFeature) {
+    $toast.error('Duplicate items are not allowed.')
+    return
+  }
+
+  const selectedFeatures = selectedIds
+    .map((featureId) => {
+      return featureOptions.value.find(feature => feature.id === featureId) ?? null
+    })
+    .filter((feature): feature is AdminSubscriptionFeatureDTO => feature !== null)
+
+  selectedFeatureGroups.value.push({
+    features: selectedFeatures.map(feature => ({
+      featureId: feature.id,
+      featureCode: feature.code,
+      featureName: feature.name,
+    })),
+    limit: isUnlimitedLimit.value ? null : Number(newLimit.value),
+    description: isDescriptionRequired.value ? newDescription.value : '',
+  })
+
+  resetAddForm()
+}
+
+const removeFeatureGroup = (index: number) => {
+  selectedFeatureGroups.value.splice(index, 1)
+}
+
+const saveFeatures = async () => {
+  const response = await editFeatures(props.plan.id, {
+    featureGroups: selectedFeatureGroups.value.map(group => ({
+      featureIds: group.features.map(feature => feature.featureId),
+      limit: group.limit,
+      description: group.description,
+    })),
+  })
+
+  if (response.succeeded) {
+    emit('FeaturesSuccessFull')
+  }
+}
+</script>
