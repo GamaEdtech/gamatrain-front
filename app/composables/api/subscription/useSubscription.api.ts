@@ -14,6 +14,8 @@ export const useSubscription = () => {
   const loadingGetData = ref(true)
   const loadingStartPaymentSubscription = ref(false)
   const loadingGetUserSubscription = ref(false)
+  const loadingCancelSubscription = ref(false)
+  const loadingResumeSubscription = ref(false)
 
   const getData = async () => {
     loadingGetData.value = true
@@ -90,5 +92,51 @@ export const useSubscription = () => {
     }
   }
 
-  return { loadingGetData, data, getData, startPaymentSubscription, loadingStartPaymentSubscription, userSubscription, loadingGetUserSubscription, getUserSubscription }
+  const cancelSubscription = async () => {
+    loadingCancelSubscription.value = true
+    try {
+      const response = await useApiService.post<
+        ApiResult<boolean>
+      >(`/api/v2/subscriptions/me/cancel`)
+
+      if (!response.succeeded || !response.data) {
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
+    }
+    finally {
+      loadingCancelSubscription.value = false
+    }
+  }
+
+  const resumeSubscription = async () => {
+    loadingResumeSubscription.value = true
+    try {
+      const response = await useApiService.post<
+        ApiResult<boolean>
+      >(`/api/v2/subscriptions/me/resume`)
+
+      if (!response.succeeded || !response.data) {
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
+    }
+    finally {
+      loadingResumeSubscription.value = false
+    }
+  }
+
+  return { loadingGetData, data, getData, startPaymentSubscription, loadingStartPaymentSubscription, userSubscription, loadingGetUserSubscription, getUserSubscription, resumeSubscription, loadingResumeSubscription, loadingCancelSubscription, cancelSubscription }
 }
