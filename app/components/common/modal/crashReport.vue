@@ -130,6 +130,7 @@ const sendReport = async () => {
     await useApiService.post('/api/v1/reports', payload as SearchParameters)
 
     $toast.success('Report sent successfully')
+    emit('close')
     reportType.value = null
     textReport.value = ''
   }
