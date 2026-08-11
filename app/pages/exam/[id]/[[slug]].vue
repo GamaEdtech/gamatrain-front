@@ -165,10 +165,13 @@ const initBreadCrumb = () => {
 if (contentData.value) {
   initBreadCrumb()
 }
-
-const ogImage = contentData.value?.thumb_pic_url
-  ? contentData.value?.thumb_pic_url
-  : null
+watch(
+  () => contentData.value,
+  () => {
+    initBreadCrumb()
+  },
+  { immediate: true },
+)
 
 useHead(() => ({
   title: contentData.value?.title || 'Exam Details',
@@ -201,7 +204,7 @@ useHead(() => ({
     {
       hid: 'og:image',
       property: 'og:image',
-      content: ogImage,
+      content: contentData.value?.thumb_pic_url ?? null,
     },
     {
       hid: 'twitter:card',
@@ -221,7 +224,7 @@ useHead(() => ({
     {
       hid: 'twitter:image',
       name: 'twitter:image',
-      content: ogImage,
+      content: contentData.value?.thumb_pic_url ?? null,
     },
   ],
   link: [
