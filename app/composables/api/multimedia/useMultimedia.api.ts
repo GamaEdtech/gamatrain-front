@@ -92,7 +92,7 @@ export const useMultimedia = () => {
     if (item.to_page) {
       payload.append('to_page', String(item.to_page || ''))
     }
-    if (item.free_available) {
+    if (item.free_available !== undefined && item.free_available !== null) {
       payload.append('free_available', item.free_available ? '1' : '0')
     }
     if (item.file) {
