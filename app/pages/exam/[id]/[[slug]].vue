@@ -128,7 +128,7 @@ const { data: contentData } = await useAsyncData(
       })
       const error = e as AppError
       if (error?.status === 404) {
-        router.push('/search?type=paper')
+        router.push('/search?type=quizhub')
       }
       throw error
     }
