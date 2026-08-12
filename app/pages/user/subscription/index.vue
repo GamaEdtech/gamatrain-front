@@ -9,6 +9,51 @@
           Current plan and usage details
         </p>
       </div>
+
+      <div
+        v-if="userSubscription && !loadingGetUserSubscription"
+        class="d-flex align-center justify-end ga-3 flex-wrap"
+      >
+        <v-chip
+          v-if="renewalBadge"
+          :color="renewalBadge.color"
+          class="text-h6 font-weight-bold"
+        >
+          <v-icon
+            start
+            size="18"
+          >
+            {{ renewalBadge.icon }}
+          </v-icon>
+          {{ renewalBadge.text }}
+        </v-chip>
+
+        <v-btn
+          v-if="showCancelButton"
+          rounded="pill"
+          color="lightError"
+          height="40"
+          flat
+          :loading="loadingCancelSubscription"
+          class="text-h5 font-weight-bold text-white"
+          @click="showCancelModal = true"
+        >
+          Cancel subscription
+        </v-btn>
+
+        <v-btn
+          v-if="showResumeButton"
+          rounded="pill"
+          color="warning"
+          height="40"
+          flat
+          :loading="loadingResumeSubscription"
+          class="text-h5 font-weight-bold text-white"
+          @click="showResumeModal = true"
+        >
+          Resume subscription
+        </v-btn>
+      </div>
     </div>
 
     <template v-if="loadingGetUserSubscription">
@@ -168,6 +213,34 @@
       <span class="text-h5 text-grey700 font-weight-bold mt-3">No active subscription</span>
       <span class="text-h6 text-grey500 mt-1">You do not have a subscription to show right now.</span>
     </div>
+
+    <common-modal-base
+      v-model:show-dialog="showCancelModal"
+      title="Cancel your subscription?"
+      :max-width="480"
+    >
+      <user-subscription-modals-confirm
+        :text="getCancelModalText()"
+        confirm-color="lightError"
+        :loading="loadingCancelSubscription"
+        @back="showCancelModal = false"
+        @confirm="confirmCancelSubscription"
+      />
+    </common-modal-base>
+
+    <common-modal-base
+      v-model:show-dialog="showResumeModal"
+      title="Resume your subscription?"
+      :max-width="480"
+    >
+      <user-subscription-modals-confirm
+        :text="getResumeModalText()"
+        confirm-color="primary"
+        :loading="loadingResumeSubscription"
+        @back="showResumeModal = false"
+        @confirm="confirmResumeSubscription"
+      />
+    </common-modal-base>
   </div>
 </template>
 
@@ -191,8 +264,15 @@ const { formatLocal } = useDateTime()
 const {
   userSubscription,
   loadingGetUserSubscription,
+  loadingCancelSubscription,
+  loadingResumeSubscription,
   getUserSubscription,
+  cancelSubscription,
+  resumeSubscription,
 } = useSubscription()
+
+const showCancelModal = ref(false)
+const showResumeModal = ref(false)
 
 const headers = [
   { title: 'Feature Group', key: 'description', sortable: false, width: '24vw' },
@@ -203,6 +283,67 @@ const headers = [
 ]
 
 const featureGroups = computed(() => userSubscription.value?.featureGroups ?? [])
+
+const formattedExpirationDate = computed(() => {
+  return formatLocal(userSubscription.value?.expirationDate, 'MMM D, YYYY')
+})
+
+const showCancelButton = computed(() => {
+  return userSubscription.value?.autoRenews === true && userSubscription.value.cancelAtPeriodEnd === false
+})
+
+const showResumeButton = computed(() => {
+  return userSubscription.value?.autoRenews === true && userSubscription.value.cancelAtPeriodEnd === true
+})
+
+const renewalBadge = computed(() => {
+  if (!userSubscription.value?.autoRenews) return null
+
+  if (userSubscription.value.cancelAtPeriodEnd) {
+    return {
+      color: 'warning',
+      icon: 'md:event_busy',
+      text: `Ends ${formattedExpirationDate.value} - won't renew`,
+    }
+  }
+
+  return {
+    color: 'success',
+    icon: 'md:autorenew',
+    text: `Active - auto-renews ${formattedExpirationDate.value}`,
+  }
+})
+
+const billingPeriod = computed(() => {
+  switch (userSubscription.value?.billingInterval) {
+    case 'Daily':
+      return 'day'
+    case 'Weekly':
+      return 'week'
+    case 'Monthly':
+      return 'month'
+    case 'Seasonally':
+      return 'season'
+    case 'Yearly':
+      return 'year'
+    default:
+      return 'period'
+  }
+})
+
+const getFormattedSubscriptionPrice = () => {
+  if (!userSubscription.value) return ''
+
+  return `${userSubscription.value.currency} ${$numberFormat(userSubscription.value.pricePaid)}/${billingPeriod.value}`
+}
+
+const getCancelModalText = () => {
+  return `You'll keep full access until ${formattedExpirationDate.value} after that it won't renew. This can be undone any time`
+}
+
+const getResumeModalText = () => {
+  return `You'll go back to auto-renewing on ${formattedExpirationDate.value} at ${getFormattedSubscriptionPrice()}.`
+}
 
 const formatLimit = (value: number | null) => {
   return value === null ? 'Unlimited' : $numberFormat(value)
@@ -316,6 +457,24 @@ const summaryItems = computed(() => {
     },
   ]
 })
+
+const confirmCancelSubscription = async () => {
+  const response = await cancelSubscription()
+
+  if (response.succeeded && response.data) {
+    showCancelModal.value = false
+    await getUserSubscription()
+  }
+}
+
+const confirmResumeSubscription = async () => {
+  const response = await resumeSubscription()
+
+  if (response.succeeded && response.data) {
+    showResumeModal.value = false
+    await getUserSubscription()
+  }
+}
 
 onMounted(async () => {
   await getUserSubscription()
