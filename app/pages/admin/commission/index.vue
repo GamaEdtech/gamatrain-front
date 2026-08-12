@@ -109,6 +109,18 @@
           </div>
         </template>
 
+        <template #[`item.downloaderUserId`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
+            {{ formatCell(item.downloaderUserId) }}
+          </div>
+        </template>
+
+        <template #[`item.source`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
+            {{ formatCell(item.source) }}
+          </div>
+        </template>
+
         <template #[`item.contentType`]="{ item }">
           <div class="w-100 d-flex justify-center align-center">
             <v-chip
@@ -117,6 +129,42 @@
             >
               {{ item.contentType }}
             </v-chip>
+          </div>
+        </template>
+
+        <template #[`item.externalContentId`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
+            {{ formatCell(item.externalContentId) }}
+          </div>
+        </template>
+
+        <template #[`item.externalFileType`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
+            {{ formatCell(item.externalFileType) }}
+          </div>
+        </template>
+
+        <template #[`item.externalExtraId`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
+            {{ formatCell(item.externalExtraId) }}
+          </div>
+        </template>
+
+        <template #[`item.points`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
+            {{ $numberFormat(item.points) }}
+          </div>
+        </template>
+
+        <template #[`item.commissionPercent`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
+            {{ $numberFormat(item.commissionPercent) }}%
+          </div>
+        </template>
+
+        <template #[`item.amountUsd`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
+            ${{ $numberFormat(item.amountUsd) }}
           </div>
         </template>
 
@@ -184,6 +232,7 @@ definePageMeta({
 })
 
 const { formatLocal } = useDateTime()
+const { $numberFormat } = useNuxtApp()
 const {
   loadingGetData: loading,
   data: list,
@@ -267,6 +316,12 @@ const getOwnerName = (item: AdminCommissionDTO) => {
   if (!item.ownerFirstName && !item.ownerLastName) return 'unknown'
 
   return `${item.ownerFirstName} ${item.ownerLastName}`
+}
+
+const formatCell = (value: string | number | null | undefined) => {
+  if (value === null || value === undefined || value === '') return 'unknown'
+
+  return value
 }
 
 const refreshData = async () => {
