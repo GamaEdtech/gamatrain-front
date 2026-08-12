@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="type == `paper`"
     class="mx-1 card-paper position-relative rounded-lg d-flex flex-column justify-space-between"
   >
     <v-img
@@ -12,7 +11,7 @@
     />
     <div class="circle-container">
       <div
-        v-if="score != 'pp'"
+        v-if="type == 'exam' || type == 'paper'"
         class="text-center"
       >
         <p
@@ -25,7 +24,7 @@
           class="text-subtitle-2 text-white font-weight-regular text-no-wrap"
           style="line-height: 1"
         >
-          score
+          {{ type == 'exam' ? `question` : `score` }}
         </p>
       </div>
       <div
@@ -38,6 +37,13 @@
           size="18"
         >
           md:file_present
+        </v-icon>
+        <v-icon
+          v-else-if="score == 'pdf'"
+          class="text-white"
+          size="18"
+        >
+          md:picture_as_pdf_outlined
         </v-icon>
         <v-icon
           v-else

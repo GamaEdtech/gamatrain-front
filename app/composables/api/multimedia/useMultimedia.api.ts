@@ -3,6 +3,7 @@ import type {
   AppError,
   MultimediaBriefDTO,
   MultimediaCreateDTO,
+  MultimediaEditDTO,
   MultimediaDetailDTO,
   MultimediaCreateResponseDTO,
   ResponseListDTO,
@@ -64,23 +65,45 @@ export const useMultimedia = () => {
     }
   }
 
-  const encodePayload = (item: MultimediaCreateDTO) => {
+  const encodePayload = (item: MultimediaCreateDTO | MultimediaEditDTO) => {
     const payload = new URLSearchParams()
 
-    payload.append('section', String(item.board || ''))
-    payload.append('base', String(item.grade || ''))
-    payload.append('lesson', String(item.subject || ''))
-    payload.append('title', item.title || '')
-    payload.append('description', item.description || '')
-    payload.append('content_type', String(item.content_type || ''))
-    payload.append('from_page', String(item.from_page || ''))
-    payload.append('to_page', String(item.to_page || ''))
-    payload.append('free_available', item.free_available ? '1' : '0')
-    payload.append('file', item.file || '')
+    if (item.board) {
+      payload.append('section', String(item.board || ''))
+    }
+    if (item.grade) {
+      payload.append('base', String(item.grade || ''))
+    }
+    if (item.subject) {
+      payload.append('lesson', String(item.subject || ''))
+    }
+    if (item.title) {
+      payload.append('title', String(item.title || ''))
+    }
+    if (item.description) {
+      payload.append('description', String(item.description || ''))
+    }
+    if (item.content_type) {
+      payload.append('content_type', String(item.content_type || ''))
+    }
+    if (item.from_page) {
+      payload.append('from_page', String(item.from_page || ''))
+    }
+    if (item.to_page) {
+      payload.append('to_page', String(item.to_page || ''))
+    }
+    if (item.free_available !== undefined && item.free_available !== null) {
+      payload.append('free_available', item.free_available ? '1' : '0')
+    }
+    if (item.file) {
+      payload.append('file', String(item.file || ''))
+    }
 
-    item.topics.forEach((topic) => {
-      payload.append('topics[]', String(topic))
-    })
+    if (item.topics && item.topics.length > 0) {
+      item.topics.forEach((topic) => {
+        payload.append('topics[]', String(topic))
+      })
+    }
 
     return payload
   }
@@ -160,7 +183,7 @@ export const useMultimedia = () => {
     }
   }
 
-  const editItem = async (id: string | number, item: MultimediaCreateDTO) => {
+  const editItem = async (id: string | number, item: MultimediaEditDTO) => {
     loadingEditItem.value = true
 
     try {

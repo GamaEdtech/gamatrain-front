@@ -107,6 +107,11 @@ const menuItems = [
         link: '/admin/settings',
         icon: 'md:settings_outlined',
       },
+      {
+        title: 'Subscription',
+        link: '/admin/subscription',
+        icon: 'md:subscriptions_outlined',
+      },
     ],
   },
 ]
