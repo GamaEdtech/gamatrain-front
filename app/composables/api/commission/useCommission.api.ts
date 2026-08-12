@@ -8,7 +8,7 @@ import type {
 
 const BASE_URL = '/api/v2/commissions'
 
-export const useCommissionAdmin = () => {
+export const useCommission = () => {
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const data = ref<UserCommissionDTO[]>([])
