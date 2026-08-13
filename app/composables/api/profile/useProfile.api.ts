@@ -4,6 +4,7 @@ import type {
   ProfileDTO,
   EditProfileDTO,
   DeleteProfileDTO,
+  ChangePasswordDTO,
 } from '@/types'
 
 const loadingGetItemById = ref(false)
@@ -11,11 +12,13 @@ const loadingEditItem = ref(false)
 const loadingDeleteItem = ref(false)
 const loadingCancelDeleteItem = ref(false)
 const loadingChangeGroup = ref(false)
+const loadingChangePassword = ref(false)
 const NAME = 'Profile'
 
 export const useProfile = () => {
   const { $toast } = useNuxtApp()
   const auth = useAuth()
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getItemById = async (id: string) => {
     loadingGetItemById.value = true
@@ -304,7 +307,33 @@ export const useProfile = () => {
     }
   }
 
+  const changePassword = async (item: ChangePasswordDTO) => {
+    try {
+      loadingChangePassword.value = true
+      const response = await useApiService.put<
+        ApiResult<boolean>
+      >('/api/v1/users/password', { ...item })
+
+      if (response.status == 1) {
+        $toast.success('Password changed successfully')
+      }
+      else {
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
+    }
+    finally {
+      loadingChangePassword.value = false
+    }
+  }
+
   return {
-    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, cancelDeleteItem, loadingCancelDeleteItem, changeGroup, loadingChangeGroup,
+    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, cancelDeleteItem, loadingCancelDeleteItem, changeGroup, loadingChangeGroup, changePassword, loadingChangePassword,
   }
 }
