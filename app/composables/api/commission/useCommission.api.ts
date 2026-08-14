@@ -38,12 +38,20 @@ export const useCommission = () => {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / pageSize)
+
+        return response.data
       }
       else {
         data.value = []
         totalCount.value = 0
         pageCount.value = 0
         handleApiResponseError(response)
+
+        return {
+          list: [] as UserCommissionDTO[],
+          totalRecordsCount: 0,
+          num: 0,
+        }
       }
     }
     catch (err: unknown) {
