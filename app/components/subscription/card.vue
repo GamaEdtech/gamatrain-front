@@ -41,7 +41,7 @@
           >
             md:check
           </v-icon>
-          {{ featureGroup.limit || 'Unlimited' }} {{ featureGroup.description }}
+          {{ resolveGroupLimit(featureGroup) ?? 'Unlimited' }} {{ featureGroup.description }}
         </li>
       </template>
     </ul>
@@ -61,10 +61,19 @@
 </template>
 
 <script setup lang="ts">
-import type { BillingInterval, UpgradeSuggestionsDTO, PaymentGateway } from '@/types'
+import type {
+  AdminSubscriptionPlanFeatureGroupDTO,
+  BillingInterval,
+  PaymentGateway,
+  SubscriptionPlanDTO,
+  UpgradeSuggestionsDTO,
+  UpgradeSuggestionsFeatureGroup,
+} from '@/types'
 
 interface ICard {
-  plan: UpgradeSuggestionsDTO
+  // subscriptions/plans ("buy a plan") sends one featureGroups list per plan, each group carrying a limit
+  // per billing interval; a download's upgrade suggestion sends a group already resolved to one flat limit.
+  plan: SubscriptionPlanDTO | UpgradeSuggestionsDTO
   billingInterval: BillingInterval
 }
 
@@ -78,6 +87,14 @@ const { startPaymentSubscription, loadingStartPaymentSubscription } = useSubscri
 const selectedPrice = computed(() => {
   return props.plan.prices.find(price => price.billingInterval === props.billingInterval)
 })
+
+const resolveGroupLimit = (group: AdminSubscriptionPlanFeatureGroupDTO | UpgradeSuggestionsFeatureGroup) => {
+  if ('limits' in group) {
+    return group.limits.find(limit => limit.billingInterval === props.billingInterval)?.limit ?? null
+  }
+
+  return group.limit
+}
 
 const pay = async () => {
   trackPayment({

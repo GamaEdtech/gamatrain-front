@@ -1,4 +1,4 @@
-import type { PaymentGateway, UpgradeSuggestionsDTO } from '@/types'
+import type { PaymentGateway } from '@/types'
 
 export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Seasonally' | 'Yearly'
 export type SubscriptionCurrency = 'SOL' | 'USDC' | 'GET' | 'USDT' | 'USD'
@@ -129,15 +129,24 @@ export interface GetAdminSubscriptionGatewayMappingParams {
 }
 
 export interface ResponseGetPlanDTO {
-  plans: UpgradeSuggestionsDTO[]
+  plans: SubscriptionPlanDTO[]
   availableBillingIntervals: BillingInterval[]
+}
+
+// Mirrors GET subscriptions/plans (ActiveSubscriptionPlanResponseViewModel) - no id/countryCode on its
+// prices, unlike the admin price list.
+export interface ActiveSubscriptionPlanPriceDTO {
+  billingInterval: BillingInterval
+  currency: SubscriptionCurrency
+  currencySymbol: string
+  price: number
 }
 
 export interface SubscriptionPlanDTO {
   id: number
   title: string
   highlight: boolean
-  prices: AdminSubscriptionPlanPriceDTO[]
+  prices: ActiveSubscriptionPlanPriceDTO[]
   featureGroups: AdminSubscriptionPlanFeatureGroupDTO[]
 }
 export interface PayloadPaymentSubscriptionDTO {
