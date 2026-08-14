@@ -170,14 +170,16 @@ export const useDownloadWithProgress = (options: UseDownloadWithProgressOptions)
           }, 1000)
         }
 
-        if (response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
-          options.onUpgradeSuggestions?.(response.data)
-        }
-
         if (!hasDownloadUrl) {
           clearDownload(type, extraId)
         }
 
+        return
+      }
+
+      if (response.data && response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
+        options.onUpgradeSuggestions?.(response.data)
+        clearDownload(type, extraId)
         return
       }
 

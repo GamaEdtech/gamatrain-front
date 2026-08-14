@@ -394,14 +394,18 @@
   </template>
 
   <!-- Coin Payment Modal -->
-  <lazy-modals-coin-payment-modal
-    v-if="showCoinPaymentModal"
+  <lazy-common-modal-base
     v-model:show-dialog="showCoinPaymentModal"
-    :is-processing="isLoading || isProcessingPayment"
-    :user-balance="balance"
-    :amount-to-pay="PRICE_FILE"
-    @close="handleCoinPaymentClose"
-  />
+    :max-width="900"
+    title="Get Membership. Unlock Premium Downloads."
+    subtitle="Join +50,000 Students"
+  >
+    <common-modal-payment
+      :plans="paymentPlans"
+      :billing-interval="billingInterval"
+      @dismiss="showCoinPaymentModal = false"
+    />
+  </lazy-common-modal-base>
 
   <!-- Coin Consumption Animation -->
   <lazy-common-coin-consumption-animation
@@ -412,7 +416,7 @@
   <lazy-test-counting-wallet-animation
     :is-start-animation="isStartWalletAnimation"
     :direction="-1"
-    :delta-price="5"
+    :delta-price="PRICE_FILE"
     @complete-animation="completeWalletAnimation"
   />
   <lazy-common-modal-base
@@ -430,7 +434,7 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
-const PRICE_FILE = 5
+const PRICE_FILE = 10
 const props = defineProps({
   desktopHeader: {
     type: Array,
@@ -461,7 +465,6 @@ const props = defineProps({
 const emit = defineEmits(['loadNextPageData'])
 
 const nuxtApp = useNuxtApp()
-const { downloadFile } = useDownload()
 
 onMounted(() => {
   checkScreenSize()
@@ -497,21 +500,17 @@ const safeParseArray = (stringList) => {
   }
 }
 
-// Track download progress for each button
-const downloadProgress = ref({})
-const downloadingItems = ref(new Set())
-const auth = useAuth()
-const router = useRouter()
-const { balance, isLoading } = useCoinBalance()
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
-const isProcessingPayment = ref(false)
 const isStartWalletAnimation = ref(false)
 const downloadIssue = ref(false)
 const downloadIssueLink = ref('')
-
-const handleCoinPaymentClose = () => {
-  showCoinPaymentModal.value = false
+const paymentPlans = ref([])
+const billingInterval = ref([])
+const currentDownloadPaper = ref(null)
+const activeDownloadKey = ref('')
+const currentDownloadPaperId = {
+  valueOf: () => currentDownloadPaper.value?.id || 0,
 }
 
 const handleAnimationComplete = async () => {
@@ -525,133 +524,81 @@ const completeWalletAnimation = () => {
   isStartWalletAnimation.value = false
 }
 
-const handleDownload = async (type, item) => {
-  const downloadKey = `${item.id}-${type}`
-
-  downloadingItems.value.add(downloadKey)
-  downloadProgress.value[downloadKey] = 0
-  if (auth.isAuthenticated.value) {
-    startDownload(type, item, downloadKey)
+const getFileDownloadParams = (type, item) => {
+  if (type === 'sf_file') {
+    return {
+      type: 'extra',
+      extraId: item.sf_file_id,
+    }
   }
-  else {
-    downloadingItems.value.delete(downloadKey)
-    Reflect.deleteProperty(downloadProgress.value, downloadKey)
-    router.push({})
-    setTimeout(() => {
-      router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
-    }, 100)
+
+  if (type === 'in_file') {
+    return {
+      type: 'extra',
+      extraId: item.in_file_id,
+    }
+  }
+
+  return {
+    type,
   }
 }
 
-const startDownload = async (type, item, downloadKey) => {
-  let extraId = undefined
-  if (type === 'sf_file')
-    extraId = item.sf_file_id
-  if (type === 'in_file')
-    extraId = item.in_file_id
-
-  try {
-    // Simulate progressive loading for API call
-    const progressInterval = setInterval(() => {
-      if (downloadProgress.value[downloadKey] < 50) {
-        downloadProgress.value[downloadKey] += Math.random() * 15
-      }
-    }, 100)
-
-    const response = await downloadFile({
-      contentType: 'PastPaper',
-      fileType: type == 'in_file' || type == 'sf_file' ? 'extra' : type,
-      id: Number(item.id),
-      extraId: extraId ? Number(extraId) : undefined,
-    })
-
-    // Update progress to 60% after API response
-    downloadProgress.value[downloadKey] = 60
-    clearInterval(progressInterval)
-
-    // Create a custom fetch with progress tracking
-    if (response.succeeded && response.data) {
-      if (response.data.url) {
-        const xhr = new XMLHttpRequest()
-        xhr.open('GET', response.data.url, true)
-        xhr.responseType = 'blob'
-
-        xhr.onprogress = (event) => {
-          if (event.lengthComputable) {
-            const percentComplete = 60 + (event.loaded / event.total) * 40
-            downloadProgress.value[downloadKey] = Math.min(percentComplete, 100)
-          }
-        }
-
-        xhr.onload = () => {
-          if (xhr.status === 200) {
-            downloadProgress.value[downloadKey] = 100
-
-            const blob = xhr.response
-            const url = window.URL.createObjectURL(blob)
-
-            const a = document.createElement('a')
-            a.href = url
-            a.download = response.data?.name || 'file.pdf'
-            document.body.appendChild(a)
-            a.click()
-
-            a.remove()
-            window.URL.revokeObjectURL(url)
-            downloadIssueLink.value = response.data?.url || ''
-            if (response.data?.spent) {
-              showCoinAnimation.value = true
-            }
-            else {
-              downloadIssue.value = true
-            }
-
-            setTimeout(() => {
-              downloadingItems.value.delete(downloadKey)
-              Reflect.deleteProperty(downloadProgress.value, downloadKey)
-            }, 1000)
-          }
-        }
-
-        xhr.onerror = () => {
-          downloadingItems.value.delete(downloadKey)
-          Reflect.deleteProperty(downloadProgress.value, downloadKey)
-          $toast.error('Download failed. Please try again.')
-        }
-
-        xhr.send()
-      }
-      if (response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
-        showCoinPaymentModal.value = true
-      }
+const {
+  getDownloadProgress: getDownloadProgressByType,
+  isDownloading: isDownloadingByType,
+  startDownload,
+} = useDownloadWithProgress({
+  contentType: 'PastPaper',
+  id: currentDownloadPaperId,
+  trackPayload: () => ({
+    file_type: 'past_paper',
+    file_name: currentDownloadPaper.value?.test_type_title || currentDownloadPaper.value?.title || '',
+    file_url: currentDownloadPaper.value ? `/paper/${currentDownloadPaper.value.id}/${currentDownloadPaper.value.title_url}` : '',
+  }),
+  onDownloaded: (data) => {
+    downloadIssueLink.value = data.url || ''
+    activeDownloadKey.value = ''
+    if (data.spent) {
+      showCoinAnimation.value = true
     }
     else {
-      if (response.errors && response.errors.length > 0) {
-        const messgage = response.errors[0].message
-        if (messgage == 'InsufficientBalance') {
-          showCoinPaymentModal.value = true
-        }
-      }
-      downloadingItems.value.delete(downloadKey)
-      Reflect.deleteProperty(downloadProgress.value, downloadKey)
+      downloadIssue.value = true
     }
-  }
-  catch (err) {
-    console.error('Download failed:', err)
-    downloadingItems.value.delete(downloadKey)
-    Reflect.deleteProperty(downloadProgress.value, downloadKey)
-    $toast.error('Download failed. Please try again.')
-  }
+  },
+  onInsufficientBalance: () => {
+    activeDownloadKey.value = ''
+    showCoinPaymentModal.value = true
+  },
+  onUpgradeSuggestions: (data) => {
+    activeDownloadKey.value = ''
+    paymentPlans.value = data.upgradeSuggestions || []
+    billingInterval.value = data.availableBillingIntervals || []
+    showCoinPaymentModal.value = true
+  },
+})
+
+const handleDownload = async (type, item) => {
+  const downloadParams = getFileDownloadParams(type, item)
+  currentDownloadPaper.value = item
+  activeDownloadKey.value = getTableDownloadKey(item, type)
+
+  startDownload({
+    ...downloadParams,
+  })
 }
 
+const getTableDownloadKey = (item, type) => `${item.id}-${type}`
+
 const isDownloading = (item, type) => {
-  const downloadKey = `${item.id}-${type}`
-  return downloadingItems.value.has(downloadKey)
+  const downloadParams = getFileDownloadParams(type, item)
+  return activeDownloadKey.value === getTableDownloadKey(item, type)
+    && isDownloadingByType(downloadParams.type, downloadParams.extraId)
 }
 
 const getDownloadProgress = (item, type) => {
-  const downloadKey = `${item.id}-${type}`
-  return downloadProgress.value[downloadKey] || 0
+  const downloadParams = getFileDownloadParams(type, item)
+  return getDownloadProgressByType(downloadParams.type, downloadParams.extraId)
 }
 
 const lineDetectLoadMorePaperRef = ref(null)

@@ -50,7 +50,7 @@
     <div class="d-flex align-center justify-center">
       <div
         class="d-flex flex-column align-center justify-center ga-1 cursor-pointer"
-        @click="showChargeWalletModal = true"
+        @click="openChargeWallet"
       >
         <v-icon
           color="grey400"
@@ -96,13 +96,19 @@
       </div>
     </div>
 
-    <modals-coin-payment-modal
+    <lazy-common-modal-base
       v-model:show-dialog="showChargeWalletModal"
-      :is-processing="isLoading"
-      :user-balance="balance"
-      :amount-to-pay="Infinity"
-      @confirm="chargeComplete"
-    />
+      :max-width="900"
+      title="Get Membership. Unlock Premium Downloads."
+      subtitle="Join +50,000 Students"
+    >
+      <common-modal-payment
+        :plans="data?.plans || []"
+        :billing-interval="data?.availableBillingIntervals || []"
+        :loading="loadingGetData"
+        @dismiss="showChargeWalletModal = false"
+      />
+    </lazy-common-modal-base>
 
     <modals-withdraw
       v-model:show-dialog="showWithdrawModal"
@@ -117,6 +123,7 @@ import { ref, onMounted } from 'vue'
 
 const { $numberFormat } = useNuxtApp()
 const { balance, isLoading, fetchBalance } = useCoinBalance()
+const { loadingGetData, data, getData: getPlans } = useSubscription()
 const showBalance = ref(true)
 const showWithdrawModal = ref(false)
 const showChargeWalletModal = ref(false)
@@ -125,9 +132,9 @@ const toggleBalanceVisibility = () => {
   showBalance.value = !showBalance.value
 }
 
-const chargeComplete = () => {
-  showChargeWalletModal.value = false
-  fetchBalance()
+const openChargeWallet = async () => {
+  showChargeWalletModal.value = true
+  await getPlans()
 }
 
 onMounted(() => {

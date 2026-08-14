@@ -1,3 +1,5 @@
+import type { PaymentGateway } from '@/types'
+
 export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Seasonally' | 'Yearly'
 export type SubscriptionCurrency = 'SOL' | 'USDC' | 'GET' | 'USDT' | 'USD'
 
@@ -124,4 +126,60 @@ export interface AddAdminSubscriptionGatewayMappingDTO {
 export interface GetAdminSubscriptionGatewayMappingParams {
   page: number
   pageSize: number
+}
+
+export interface ResponseGetPlanDTO {
+  plans: SubscriptionPlanDTO[]
+  availableBillingIntervals: BillingInterval[]
+}
+
+// Mirrors GET subscriptions/plans (ActiveSubscriptionPlanResponseViewModel) - no id/countryCode on its
+// prices, unlike the admin price list.
+export interface ActiveSubscriptionPlanPriceDTO {
+  billingInterval: BillingInterval
+  currency: SubscriptionCurrency
+  currencySymbol: string
+  price: number
+}
+
+export interface SubscriptionPlanDTO {
+  id: number
+  title: string
+  highlight: boolean
+  prices: ActiveSubscriptionPlanPriceDTO[]
+  featureGroups: AdminSubscriptionPlanFeatureGroupDTO[]
+}
+export interface PayloadPaymentSubscriptionDTO {
+  gateway: PaymentGateway
+  billingInterval: BillingInterval
+}
+export interface PaymentSubscriptionResponseDTO {
+  userSubscriptionId: number
+  paymentId: number
+  url: string
+}
+
+export type UserSubscriptionStatus = 'Pending' | 'Active' | 'Expired' | 'Cancelled'
+
+export interface UserSubscriptionDTO {
+  id: number
+  subscriptionPlanId: number
+  planTitle: string
+  status: UserSubscriptionStatus
+  startDate: string
+  expirationDate: string
+  pricePaid: number
+  currency: SubscriptionCurrency
+  billingInterval: BillingInterval
+  featureGroups: FeatureGroupUserSubscriptionDTO[]
+  autoRenews: boolean
+  cancelAtPeriodEnd: boolean
+}
+
+export interface FeatureGroupUserSubscriptionDTO {
+  features: AdminSubscriptionPlanFeatureDTO[]
+  limit: number | null
+  used: number
+  remaining: number | null
+  description: string
 }
