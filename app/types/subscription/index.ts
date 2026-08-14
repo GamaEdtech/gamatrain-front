@@ -22,9 +22,14 @@ export interface AdminSubscriptionPlanFeatureDTO {
   featureName: string
 }
 
+export interface AdminSubscriptionPlanFeatureLimitDTO {
+  billingInterval: BillingInterval
+  limit: number | null
+}
+
 export interface AdminSubscriptionPlanFeatureGroupDTO {
   features: AdminSubscriptionPlanFeatureDTO[]
-  limit: number | null
+  limits: AdminSubscriptionPlanFeatureLimitDTO[]
   description: string
 }
 
@@ -53,7 +58,7 @@ export interface GetAdminSubscriptionPlanParams {
 export interface EditAdminSubscriptionPlanFeaturesDTO {
   featureGroups: {
     featureIds: number[]
-    limit: number | null
+    limits: AdminSubscriptionPlanFeatureLimitDTO[]
     description: string
   }[]
 }

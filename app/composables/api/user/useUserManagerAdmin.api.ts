@@ -1,6 +1,5 @@
 import type {
   ApiResult,
-  AppError,
   ResponseListDTO,
   AdminUserDTO,
   AdminTokenDTO,
@@ -39,6 +38,7 @@ const permission = ref<AdminPermissionDTO>({
 
 export const useUserManagerAdmin = () => {
   const { $toast } = useNuxtApp()
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetUsersParams) => {
     const { page, pageSize, hasReferral, firstName, lastName, email, referralId } = params
@@ -57,20 +57,25 @@ export const useUserManagerAdmin = () => {
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<AdminUserDTO>>
       >('/api/v2/admin/identities', query)
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / pageSize)
       }
       else {
         data.value = []
+        totalCount.value = 0
+        pageCount.value = 0
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      data.value = []
+      totalCount.value = 0
+      pageCount.value = 0
+      handleApiCatchError(err)
+
+      return createApiFailure<ResponseListDTO<AdminUserDTO>>(err)
     }
     finally {
       loadingGetData.value = false
@@ -84,18 +89,17 @@ export const useUserManagerAdmin = () => {
         ApiResult<AdminUserDTO>
       >(`/api/v2/admin/identities/${id}`)
 
+      if (response.succeeded && response.data) {
+        return response
+      }
+
+      handleApiResponseError(response)
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-        data: {},
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<AdminUserDTO>(err)
     }
     finally {
       loadingGetItemById.value = false
@@ -114,14 +118,13 @@ export const useUserManagerAdmin = () => {
         $toast.success('User deleted successfully!')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingDeleteItem.value = false
@@ -141,14 +144,13 @@ export const useUserManagerAdmin = () => {
         $toast.success('User status change successfully!')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingToggleStatus.value = false
@@ -181,19 +183,14 @@ export const useUserManagerAdmin = () => {
         $toast.success('User Added successfully!')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingAddItem.value = false
@@ -222,19 +219,14 @@ export const useUserManagerAdmin = () => {
         $toast.success('User Edited successfully!')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingEditItem.value = false
@@ -258,19 +250,14 @@ export const useUserManagerAdmin = () => {
         $toast.success('User Password Edited successfully!')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingEditPassword.value = false
@@ -287,12 +274,14 @@ export const useUserManagerAdmin = () => {
       if (response.succeeded && response.data) {
         tokenInfo.value.token = response.data.token
       }
+      else {
+        handleApiResponseError(response)
+      }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<AdminTokenDTO>(err)
     }
     finally {
       loadingGetToken.value = false
@@ -315,14 +304,13 @@ export const useUserManagerAdmin = () => {
         }
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingDeleteToken.value = false
@@ -339,12 +327,14 @@ export const useUserManagerAdmin = () => {
       if (response.succeeded && response.data) {
         tokenInfo.value = response.data
       }
+      else {
+        handleApiResponseError(response)
+      }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<AdminTokenDTO>(err)
     }
     finally {
       loadingGenerateToken.value = false
@@ -361,18 +351,15 @@ export const useUserManagerAdmin = () => {
       if (response.succeeded && response.data) {
         permission.value = response.data
       }
+      else {
+        handleApiResponseError(response)
+      }
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-        data: {},
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<AdminPermissionDTO>(err)
     }
     finally {
       loadingGetPermission.value = false
@@ -396,19 +383,14 @@ export const useUserManagerAdmin = () => {
         $toast.success('User Role Edited successfully!')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingEditPermission.value = false
