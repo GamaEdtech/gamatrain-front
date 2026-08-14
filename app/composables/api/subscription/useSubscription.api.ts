@@ -71,8 +71,10 @@ export const useSubscription = () => {
         ApiResult<UserSubscriptionDTO>
       >(`/api/v2/subscriptions/me`)
 
-      if (response.succeeded && response.data) {
-        userSubscription.value = response.data
+      // data is legitimately null on success when the user has no active subscription (not an error) -
+      // only a non-succeeded response is a real failure worth toasting.
+      if (response.succeeded) {
+        userSubscription.value = response.data ?? null
       }
       else {
         userSubscription.value = null

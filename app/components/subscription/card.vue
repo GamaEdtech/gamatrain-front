@@ -1,6 +1,7 @@
 <template>
   <v-card
-    :class="`plan-card border-solid border-sm border-grey600 px-3 py-6 pa-md-6 text-center ${plan.highlight ? `bg-grey900`:``}`"
+    :class="`plan-card border-solid px-3 py-6 pa-md-6 text-center position-relative ${plan.highlight ? `bg-grey900` : ``} ${selected ? `plan-card--selected` : `border-sm border-grey600`}`"
+    @click="selectPlan"
   >
     <!-- Badge -->
     <v-chip
@@ -19,11 +20,29 @@
     <!-- Price -->
     <div
       v-if="selectedPrice"
-      class="mb-4"
+      class="mb-1 d-flex align-baseline justify-center flex-wrap ga-2"
     >
-      <span><span class="text-h6 text-md-h4 text-grey400 mt-2">$</span><sub class="text-h4 text-md-h2 font-weight-bold">
-        {{ selectedPrice.price }}</sub></span>
+      <span
+        v-if="strikeThroughMonthlyPrice"
+        class="text-h6 text-md-h5 text-grey400 text-decoration-line-through"
+      >
+        ${{ formatPrice(strikeThroughMonthlyPrice) }}
+      </span>
+      <span>
+        <span class="text-h6 text-md-h4 text-grey400 mt-2">$</span><sub class="text-h4 text-md-h2 font-weight-bold">
+          {{ formatPrice(displayMonthlyPrice) }}</sub><span class="text-h6 text-grey400">/mo</span>
+      </span>
     </div>
+    <div
+      v-if="selectedPrice && billingInterval !== 'Monthly'"
+      class="mb-4 text-h6 text-grey400"
+    >
+      billed ${{ formatPrice(selectedPrice.price) }} {{ billingSuffix[billingInterval] }}
+    </div>
+    <div
+      v-else
+      class="mb-4"
+    />
 
     <!-- Features -->
     <ul class="features text-left mb-6 pa-0">
@@ -41,7 +60,7 @@
           >
             md:check
           </v-icon>
-          {{ resolveGroupLimit(featureGroup) ?? 'Unlimited' }} {{ featureGroup.description }}
+          {{ formatGroupLimit(featureGroup) }} {{ featureGroup.description }}
         </li>
       </template>
     </ul>
@@ -49,13 +68,15 @@
     <!-- Button -->
     <v-btn
       class="text-h6 text-md-h5 font-weight-bold"
-      :color="plan.highlight ? 'primary' : 'grey300'"
+      :color="isCurrentPlan ? `grey300` : `primary`"
+      :variant="ctaVariant"
       block
       size="large"
-      :loading="loadingStartPaymentSubscription"
-      @click="pay"
+      :disabled="isCurrentPlan"
+      :loading="selected && loadingStartPaymentSubscription"
+      @click.stop="onCtaClick"
     >
-      Pay with Stripe
+      {{ ctaLabel }}
     </v-btn>
   </v-card>
 </template>
@@ -76,17 +97,46 @@ interface ICard {
   // already resolved to that one interval's flat limit.
   plan: SubscriptionPlanDTO | UpgradeSuggestionsDTO
   billingInterval: BillingInterval
+  selected: boolean
+  isCurrentPlan: boolean
 }
 
 const props = defineProps<ICard>()
+const emit = defineEmits<{ select: [id: number] }>()
 
 const route = useRoute()
 const { trackPayment } = useGtmEvents()
 const { savePathRedirect } = usePayment()
 const { startPaymentSubscription, loadingStartPaymentSubscription } = useSubscription()
+const { monthlyEquivalentPrice, discountPercent } = useBillingIntervalPricing()
+
+const billingSuffix: Record<BillingInterval, string> = {
+  Daily: 'per day',
+  Weekly: 'per week',
+  Monthly: 'per month',
+  Seasonally: 'every 3 months',
+  Yearly: 'per year',
+}
 
 const selectedPrice = computed(() => {
   return props.plan.prices.find(price => price.billingInterval === props.billingInterval)
+})
+
+const monthlyPrice = computed(() => {
+  return props.plan.prices.find(price => price.billingInterval === 'Monthly')?.price ?? null
+})
+
+const displayMonthlyPrice = computed(() => {
+  if (!selectedPrice.value) return 0
+  return monthlyEquivalentPrice(selectedPrice.value.price, props.billingInterval)
+})
+
+// Only shown when this interval is genuinely cheaper per month than the plan's own Monthly price, so the
+// discount from committing to a longer interval is legible (not just "$5/mo" with no reference point).
+const strikeThroughMonthlyPrice = computed(() => {
+  if (!selectedPrice.value) return null
+  const discount = discountPercent(selectedPrice.value.price, props.billingInterval, monthlyPrice.value)
+  return discount === null ? null : monthlyPrice.value
 })
 
 const featureGroups = computed(() => {
@@ -99,6 +149,30 @@ const resolveGroupLimit = (group: AdminSubscriptionPlanFeatureGroupDTO | Upgrade
   }
 
   return group.limit
+}
+
+const formatPrice = (value: number) => {
+  return value % 1 === 0 ? value.toLocaleString() : value.toFixed(2)
+}
+
+const formatGroupLimit = (group: AdminSubscriptionPlanFeatureGroupDTO | UpgradeSuggestionsFeatureGroup) => {
+  const limit = resolveGroupLimit(group)
+  return limit === null ? 'Unlimited' : formatPrice(limit)
+}
+
+const ctaLabel = computed(() => {
+  if (props.isCurrentPlan) return 'Current Plan'
+  return props.selected ? 'Continue' : 'Choose Plan'
+})
+
+const ctaVariant = computed(() => {
+  if (props.isCurrentPlan) return 'flat'
+  return props.selected ? 'flat' : 'outlined'
+})
+
+const selectPlan = () => {
+  if (props.isCurrentPlan) return
+  emit('select', props.plan.id)
 }
 
 const pay = async () => {
@@ -117,6 +191,15 @@ const pay = async () => {
     }
   }
 }
+
+const onCtaClick = () => {
+  if (props.isCurrentPlan) return
+  if (!props.selected) {
+    emit('select', props.plan.id)
+    return
+  }
+  pay()
+}
 </script>
 
 <style scoped>
@@ -124,11 +207,16 @@ const pay = async () => {
   height : fit-content;
   width : 30%;
   border-radius: 16px;
-  transition: all 0.25s ease;
+  transition: all 0.25s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  cursor: pointer;
 }
 .plan-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+.plan-card--selected {
+  border: 2px solid rgb(var(--v-theme-primary));
+  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.15);
 }
 
 .features {

@@ -77,11 +77,13 @@
     <lazy-common-modal-base
       v-model:show-dialog="showCoinPaymentModal"
       :max-width="900"
-      title="Payment"
+      title="Get Membership. Unlock Premium Downloads."
+      subtitle="Join +50,000 Students"
     >
       <common-modal-payment
         :plans="paymentPlans"
         :billing-interval="billingInterval"
+        @dismiss="showCoinPaymentModal = false"
       />
     </lazy-common-modal-base>
 
