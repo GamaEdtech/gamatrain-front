@@ -132,7 +132,7 @@
             :avatar="item.avatar"
             :first-name="item.first_name"
             :last-name="item.last_name"
-            type="paper"
+            type="multimedia"
           />
         </nuxt-link>
       </v-slide-group-item>

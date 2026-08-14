@@ -3,7 +3,6 @@ import type {
   AdminLocationDTO,
   AdminLocationTypeDTO,
   ApiResult,
-  AppError,
   GetAdminLocationParams,
   GetAdminParentLocationParams,
   LocationItemDTO,
@@ -48,23 +47,7 @@ interface GetLocationListOptions {
 
 export const useLocationAdmin = () => {
   const { $toast } = useNuxtApp()
-
-  const handleError = (err: unknown) => {
-    const error = err as AppError
-
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-
-  const showResponseError = (response: ApiResult<unknown>) => {
-    if (response.errors && response.errors.length > 0) {
-      $toast.error(response.errors[0].message || '')
-    }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getLocations = async (params: GetAdminLocationParams) => {
     loadingLocations.value = true
@@ -81,7 +64,7 @@ export const useLocationAdmin = () => {
         },
       )
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         locations.value = response.data.list
         locationsTotalCount.value = response.data.totalRecordsCount
         locationsPageCount.value = Math.ceil(
@@ -92,22 +75,19 @@ export const useLocationAdmin = () => {
         locations.value = []
         locationsTotalCount.value = 0
         locationsPageCount.value = 0
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
       locations.value = []
       locationsTotalCount.value = 0
       locationsPageCount.value = 0
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: null,
-      }
+      return createApiFailure<ResponseListDTO<LocationItemDTO>>(err)
     }
     finally {
       loadingLocations.value = false
@@ -125,16 +105,17 @@ export const useLocationAdmin = () => {
         `/api/v2/admin/locations/${locationType}/${id}`,
       )
 
+      if (response.succeeded && response.data) {
+        return response
+      }
+
+      handleApiResponseError(response)
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: null,
-      }
+      return createApiFailure<AdminLocationDTO>(err)
     }
     finally {
       loadingLocation.value = false
@@ -157,19 +138,15 @@ export const useLocationAdmin = () => {
         $toast.success(`${NAME} added successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingAddLocation.value = false
@@ -193,19 +170,15 @@ export const useLocationAdmin = () => {
         $toast.success(`${NAME} edited successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingEditLocation.value = false
@@ -227,19 +200,15 @@ export const useLocationAdmin = () => {
         $toast.success(`${NAME} deleted successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingDeleteLocation.value = false
@@ -269,7 +238,7 @@ export const useLocationAdmin = () => {
         },
       )
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         const newItems = response.data.list ?? []
 
         countries.value = append
@@ -281,12 +250,15 @@ export const useLocationAdmin = () => {
           countriesTotalCount.value / params.pageSize,
         )
       }
-      else if (!append) {
-        resetCountries()
+      else {
+        if (!append) {
+          resetCountries()
+        }
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
       if (!append) {
         resetCountries()
@@ -324,7 +296,7 @@ export const useLocationAdmin = () => {
         },
       )
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         const newItems = response.data.list ?? []
 
         states.value = append
@@ -336,12 +308,15 @@ export const useLocationAdmin = () => {
           statesTotalCount.value / params.pageSize,
         )
       }
-      else if (!append) {
-        resetStates()
+      else {
+        if (!append) {
+          resetStates()
+        }
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
       if (!append) {
         resetStates()
@@ -379,7 +354,7 @@ export const useLocationAdmin = () => {
         },
       )
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         const newItems = response.data.list ?? []
 
         cities.value = append
@@ -391,12 +366,15 @@ export const useLocationAdmin = () => {
           citiesTotalCount.value / params.pageSize,
         )
       }
-      else if (!append) {
-        resetCities()
+      else {
+        if (!append) {
+          resetCities()
+        }
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
       if (!append) {
         resetCities()
