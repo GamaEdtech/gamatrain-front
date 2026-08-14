@@ -28,7 +28,7 @@
     <!-- Features -->
     <ul class="features text-left mb-6 pa-0">
       <template
-        v-for="(featureGroup, groupIndex) in plan.featureGroups"
+        v-for="(featureGroup, groupIndex) in featureGroups"
         :key="groupIndex"
       >
         <li
@@ -72,7 +72,8 @@ import type {
 
 interface ICard {
   // subscriptions/plans ("buy a plan") sends one featureGroups list per plan, each group carrying a limit
-  // per billing interval; a download's upgrade suggestion sends a group already resolved to one flat limit.
+  // per billing interval; a download's upgrade suggestion carries featureGroups per price entry instead,
+  // already resolved to that one interval's flat limit.
   plan: SubscriptionPlanDTO | UpgradeSuggestionsDTO
   billingInterval: BillingInterval
 }
@@ -86,6 +87,10 @@ const { startPaymentSubscription, loadingStartPaymentSubscription } = useSubscri
 
 const selectedPrice = computed(() => {
   return props.plan.prices.find(price => price.billingInterval === props.billingInterval)
+})
+
+const featureGroups = computed(() => {
+  return 'featureGroups' in props.plan ? props.plan.featureGroups : selectedPrice.value?.featureGroups ?? []
 })
 
 const resolveGroupLimit = (group: AdminSubscriptionPlanFeatureGroupDTO | UpgradeSuggestionsFeatureGroup) => {
