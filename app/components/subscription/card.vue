@@ -1,6 +1,12 @@
 <template>
   <v-card
-    :class="`plan-card border-solid border-sm border-grey600 pa-4 pa-md-5 position-relative ${isCurrentPlan ? `plan-card--current` : ``} ${plan.highlight ? `plan-card--highlight` : ``}`"
+    :class="[
+      'plan-card w-33 pa-4 pa-md-5 position-relative bg-white rounded-xl border-solid',
+      plan.highlight ? 'border-md border-primary plan-card--highlight' : 'border-sm border-grey600',
+    ]"
+    :elevation="plan.highlight ? 4 : 1"
+    hover
+    :disabled="isCurrentPlan"
     @click="selectPlan"
   >
     <!-- Price panel -->
@@ -9,18 +15,16 @@
         <span class="text-h6 text-md-h4 font-weight-bold text-grey700">
           {{ plan.title }}
         </span>
-        <div
+        <v-chip
           v-if="plan.highlight"
-          class="popular-badge d-flex align-center ga-1 px-2 py-1 rounded-pill bg-white flex-shrink-0"
+          color="success"
+          variant="tonal"
+          size="small"
+          prepend-icon="md:favorite"
+          class="font-weight-bold flex-shrink-0"
         >
-          <v-icon
-            size="14"
-            color="success"
-          >
-            md:favorite
-          </v-icon>
-          <span class="text-h6 font-weight-bold text-success">Popular</span>
-        </div>
+          Popular
+        </v-chip>
       </div>
 
       <div class="d-flex align-center justify-space-between">
@@ -199,31 +203,14 @@ const selectPlan = async () => {
 <style scoped>
 .plan-card {
   height : fit-content;
-  width : 30%;
-  border-radius: 20px;
-  transition: all 0.25s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   cursor: pointer;
-  background: rgb(var(--v-theme-white));
 }
-.plan-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-}
+/* elevation/hover/disabled dimming all come from v-card's own props (see the template) - this is just the
+   colored glow ring on the highlighted plan. Uses outline rather than box-shadow so it layers on top of
+   the elevation prop's own box-shadow instead of overriding it. */
 .plan-card--highlight {
-  border: 2px solid rgb(var(--v-theme-primary));
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.12);
-}
-.plan-card--current {
-  opacity: 0.7;
-  cursor: default;
-}
-.plan-card--current:hover {
-  transform: none;
-  box-shadow: none;
-}
-
-.popular-badge {
-  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  outline: 3px solid rgba(var(--v-theme-primary), 0.15);
+  outline-offset: 2px;
 }
 
 /* Per-tier tint, matching the 3 pastel gradients from the Figma cards (blue / purple / amber) - rotates
@@ -250,7 +237,7 @@ const selectPlan = async () => {
 }
 @media screen and (max-width: 600px) {
  .plan-card {
-   width : 100%;
+   width : 100% !important;
    max-width : 220px;
  }
 }
