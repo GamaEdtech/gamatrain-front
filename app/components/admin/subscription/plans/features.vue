@@ -62,7 +62,10 @@
             {{ group.features.map(feature => feature.featureName).join(', ') }}
           </span>
           <span class="text-grey500 text-h6 text-truncate">
-            {{ group.features.map(feature => feature.featureCode).join(', ') }} / {{ group.limit == null ? 'Unlimited' : 'Limit: ' + group.limit }}
+            {{ group.features.map(feature => feature.featureCode).join(', ') }}
+          </span>
+          <span class="text-grey500 text-h6 text-truncate">
+            {{ formatLimits(group.limits) }}
           </span>
           <span
             v-if="group.description"
@@ -95,7 +98,7 @@
     >
       <div class="w-100 d-flex flex-column ga-1">
         <div class="text-h6 text-grey700 ml-2">
-          Limit
+          Features
         </div>
 
         <v-select
@@ -115,38 +118,50 @@
           :rules="[requiredFeatureSelection]"
         />
       </div>
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <v-checkbox
-          v-model="isUnlimitedLimit"
-          color="primary"
-          class="text-h4"
-          hide-details
-          false-icon="md:check_box_outline_blank"
-          true-icon="md:check_box"
-        >
-          <template #label>
-            <span class="text-h6 text-grey700 text-no-wrap ml-2">Unlimited</span>
-          </template>
-        </v-checkbox>
 
+      <div class="w-100 d-flex flex-column ga-2">
         <div class="text-h6 text-grey700 ml-2">
-          Limit
+          Limit per Billing Interval
         </div>
-        <v-text-field
-          v-model.number="newLimit"
-          type="number"
-          rounded="lg"
-          density="compact"
-          placeholder="Limit"
-          variant="outlined"
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
-          class="w-100"
-          :disabled="isUnlimitedLimit"
-          :rules="isUnlimitedLimit ? [] : [required, positiveNumber]"
-        />
+
+        <div
+          v-for="interval in planIntervals"
+          :key="interval"
+          class="w-100 d-flex flex-column align-start justify-start ga-1 border rounded-lg pa-2"
+        >
+          <div class="w-100 d-flex align-center justify-space-between">
+            <span class="text-h6 text-grey700 font-weight-bold">{{ interval }}</span>
+
+            <v-checkbox
+              v-model="intervalLimits[interval].unlimited"
+              color="primary"
+              hide-details
+              density="compact"
+              false-icon="md:check_box_outline_blank"
+              true-icon="md:check_box"
+            >
+              <template #label>
+                <span class="text-h6 text-grey700 text-no-wrap">Unlimited</span>
+              </template>
+            </v-checkbox>
+          </div>
+
+          <v-text-field
+            v-model.number="intervalLimits[interval].limit"
+            type="number"
+            rounded="lg"
+            density="compact"
+            placeholder="Limit"
+            variant="outlined"
+            base-color="grey200"
+            color="primary"
+            active-color="primary"
+            bg-color="white"
+            class="w-100"
+            :disabled="intervalLimits[interval].unlimited"
+            :rules="intervalLimits[interval].unlimited ? [] : [required, positiveNumber]"
+          />
+        </div>
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
@@ -207,6 +222,8 @@ import type {
   AdminSubscriptionFeatureDTO,
   AdminSubscriptionPlanDTO,
   AdminSubscriptionPlanFeatureGroupDTO,
+  AdminSubscriptionPlanFeatureLimitDTO,
+  BillingInterval,
 } from '@/types'
 
 interface PlanFeaturesProps {
@@ -233,12 +250,36 @@ const {
 const { $toast } = useNuxtApp()
 const { required, positiveNumber } = useValidationRules()
 
+const billingIntervalOrder: BillingInterval[] = [
+  'Daily',
+  'Weekly',
+  'Monthly',
+  'Seasonally',
+  'Yearly',
+]
+
+type IntervalLimitState = Record<BillingInterval, { unlimited: boolean, limit: number | null }>
+
+const createDefaultIntervalLimits = (): IntervalLimitState => {
+  return billingIntervalOrder.reduce((state, interval) => {
+    state[interval] = { unlimited: true, limit: null }
+    return state
+  }, {} as IntervalLimitState)
+}
+
 const selectedFeatureGroups = ref<AdminSubscriptionPlanFeatureGroupDTO[]>([])
 const selectedFeatureIds = ref<number[]>([])
-const newLimit = ref<number | null>(null)
 const newDescription = ref('')
-const isUnlimitedLimit = ref(true)
+const intervalLimits = reactive<IntervalLimitState>(createDefaultIntervalLimits())
 const isAddFormValid = ref(false)
+
+// Only the intervals this plan is actually sold at - falls back to the full list when the plan has no
+// prices yet, so the limit form is never left with nothing to fill in.
+const planIntervals = computed<BillingInterval[]>(() => {
+  const soldIntervals = new Set(props.plan.prices.map(price => price.billingInterval))
+  const intervals = billingIntervalOrder.filter(interval => soldIntervals.has(interval))
+  return intervals.length > 0 ? intervals : billingIntervalOrder
+})
 
 const featureSelectItems = computed(() => {
   return featureOptions.value.map(feature => ({
@@ -253,6 +294,12 @@ const requiredFeatureSelection = (value: unknown) => {
   return (Array.isArray(value) && value.length > 0) || 'This field is required.'
 }
 
+const formatLimits = (limits: AdminSubscriptionPlanFeatureLimitDTO[]) => {
+  return limits
+    .map(({ billingInterval, limit }) => `${billingInterval}: ${limit == null ? 'Unlimited' : limit}`)
+    .join(' · ')
+}
+
 onMounted(async () => {
   await Promise.all([
     getFeatures(props.plan.id),
@@ -264,23 +311,26 @@ onMounted(async () => {
 
   selectedFeatureGroups.value = planFeatures.value.map(group => ({
     features: group.features.map(feature => ({ ...feature })),
-    limit: group.limit,
+    limits: group.limits.map(limit => ({ ...limit })),
     description: group.description,
   }))
 })
 
 const resetAddForm = () => {
   selectedFeatureIds.value = []
-  newLimit.value = null
   newDescription.value = ''
-  isUnlimitedLimit.value = true
+  Object.assign(intervalLimits, createDefaultIntervalLimits())
 }
 
 const addFeature = () => {
+  const hasMissingLimit = planIntervals.value.some(
+    interval => !intervalLimits[interval].unlimited && intervalLimits[interval].limit === null,
+  )
+
   if (
     !isAddFormValid.value
     || selectedFeatureIds.value.length === 0
-    || (!isUnlimitedLimit.value && newLimit.value === null)
+    || hasMissingLimit
     || (isDescriptionRequired.value && !newDescription.value)
   ) {
     $toast.error('Complete form correctly.')
@@ -309,7 +359,10 @@ const addFeature = () => {
       featureCode: feature.code,
       featureName: feature.name,
     })),
-    limit: isUnlimitedLimit.value ? null : Number(newLimit.value),
+    limits: planIntervals.value.map(interval => ({
+      billingInterval: interval,
+      limit: intervalLimits[interval].unlimited ? null : Number(intervalLimits[interval].limit),
+    })),
     description: isDescriptionRequired.value ? newDescription.value : '',
   })
 
@@ -324,7 +377,7 @@ const saveFeatures = async () => {
   const response = await editFeatures(props.plan.id, {
     featureGroups: selectedFeatureGroups.value.map(group => ({
       featureIds: group.features.map(feature => feature.featureId),
-      limit: group.limit,
+      limits: group.limits,
       description: group.description,
     })),
   })
