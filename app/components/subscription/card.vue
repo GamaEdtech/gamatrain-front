@@ -63,19 +63,6 @@
       </div>
     </div>
 
-    <!-- Value framing: everything below is covered by the plan itself, not the pay-per-item GEM price
-         seen elsewhere in the app. No specific GEM amount is claimed - each content item has its own GEM
-         price, so there's no single accurate number for a quota pooled across several feature types. -->
-    <div class="d-flex align-center ga-1 mb-3 text-h6 text-success font-weight-semibold">
-      <v-icon
-        size="16"
-        color="success"
-      >
-        md:bolt
-      </v-icon>
-      Included in your plan - no extra GEM needed
-    </div>
-
     <!-- Features -->
     <ul class="features text-left mb-6 pa-0">
       <template
