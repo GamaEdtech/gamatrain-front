@@ -1,7 +1,7 @@
 <template>
   <v-card
     :class="[
-      'plan-card w-33 pa-4 pa-md-5 position-relative bg-white rounded-xl border-solid',
+      'plan-card pa-4 pa-md-5 position-relative bg-white rounded-xl border-solid',
       plan.highlight ? 'border-md border-primary plan-card--highlight' : 'border-sm border-grey600',
     ]"
     :elevation="plan.highlight ? 4 : 1"
@@ -202,6 +202,9 @@ const selectPlan = async () => {
 
 <style scoped>
 .plan-card {
+  /* Not a Vuetify width utility (w-33 etc.) on purpose - the container also has an explicit gap between
+     cards, so 3 * exactly-33% overflows 100% and wraps. 30% leaves headroom for that gap. */
+  width: 30%;
   height : fit-content;
   cursor: pointer;
 }
