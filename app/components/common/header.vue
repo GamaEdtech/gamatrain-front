@@ -89,17 +89,6 @@
         </v-icon>
         <template v-if="isAuthenticated">
           <lazy-common-dropdown-menu :menu-setting="menuSetting" />
-          <nuxt-link
-            to="/user/wallet"
-            aria-label="Wallet"
-          >
-            <v-icon
-              :color="menuSetting.linkColor"
-              size="24"
-            >
-              md:account_balance_wallet_outlined
-            </v-icon>
-          </nuxt-link>
 
           <nuxt-link
             aria-label="Notification"

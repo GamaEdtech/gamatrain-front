@@ -149,3 +149,26 @@ export interface PaymentSubscriptionResponseDTO {
   paymentId: number
   url: string
 }
+
+export type UserSubscriptionStatus = 'Pending' | 'Active' | 'Expired' | 'Cancelled'
+
+export interface UserSubscriptionDTO {
+  id: number
+  subscriptionPlanId: number
+  planTitle: string
+  status: UserSubscriptionStatus
+  startDate: string
+  expirationDate: string
+  pricePaid: number
+  currency: SubscriptionCurrency
+  billingInterval: BillingInterval
+  featureGroups: FeatureGroupUserSubscriptionDTO[]
+}
+
+export interface FeatureGroupUserSubscriptionDTO {
+  features: AdminSubscriptionPlanFeatureDTO[]
+  limit: number | null
+  used: number
+  remaining: number | null
+  description: string
+}
