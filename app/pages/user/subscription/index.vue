@@ -202,7 +202,7 @@
 
     <div
       v-else
-      class="w-100 d-flex flex-column align-start justify-start ga-2"
+      class="w-100 d-flex flex-column align-start justify-start ga-2 choose-plan-section"
     >
       <span class="text-h5 text-grey700 font-weight-bold">Choose a plan to get started</span>
       <span class="text-h6 text-grey500">
@@ -516,5 +516,10 @@ onMounted(async () => {
 }
 .card-feature-mobile {
   min-height: 190px;
+}
+/* Matches the max-width the same plan picker is shown at everywhere else (the Get Membership modal, e.g.
+   BalanceCard.vue's :max-width="900") - on this full-width page it would otherwise stretch edge to edge. */
+.choose-plan-section {
+  max-width: 900px;
 }
 </style>
