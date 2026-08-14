@@ -163,6 +163,8 @@ export interface UserSubscriptionDTO {
   currency: SubscriptionCurrency
   billingInterval: BillingInterval
   featureGroups: FeatureGroupUserSubscriptionDTO[]
+  autoRenews: boolean
+  cancelAtPeriodEnd: boolean
 }
 
 export interface FeatureGroupUserSubscriptionDTO {
