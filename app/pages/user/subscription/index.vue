@@ -202,16 +202,19 @@
 
     <div
       v-else
-      class="empty-state w-100 bg-grey100 rounded-lg pa-6 d-flex flex-column align-center justify-center text-center"
+      class="w-100 d-flex flex-column align-start justify-start ga-2"
     >
-      <v-icon
-        size="40"
-        color="grey500"
-      >
-        md:subscriptions_outlined
-      </v-icon>
-      <span class="text-h5 text-grey700 font-weight-bold mt-3">No active subscription</span>
-      <span class="text-h6 text-grey500 mt-1">You do not have a subscription to show right now.</span>
+      <span class="text-h5 text-grey700 font-weight-bold">Choose a plan to get started</span>
+      <span class="text-h6 text-grey500">
+        You don't have an active subscription yet - pick a plan below to unlock premium downloads.
+      </span>
+
+      <common-modal-payment
+        :plans="plansData?.plans || []"
+        :billing-interval="plansData?.availableBillingIntervals || []"
+        :loading="loadingGetPlansData"
+        :show-limited-access-link="false"
+      />
     </div>
 
     <common-modal-base
@@ -269,6 +272,9 @@ const {
   getUserSubscription,
   cancelSubscription,
   resumeSubscription,
+  data: plansData,
+  loadingGetData: loadingGetPlansData,
+  getData: getPlans,
 } = useSubscription()
 
 const showCancelModal = ref(false)
@@ -478,6 +484,13 @@ const confirmResumeSubscription = async () => {
 
 onMounted(async () => {
   await getUserSubscription()
+
+  // subscriptions/me comes back with no data when the user has no active subscription (not an error -
+  // see the fix in useSubscription.api.ts) - only then is there anything to suggest, so only then fetch
+  // the plan list to fill the same card/payment component used elsewhere for choosing a plan.
+  if (!userSubscription.value) {
+    await getPlans()
+  }
 })
 </script>
 
@@ -503,8 +516,5 @@ onMounted(async () => {
 }
 .card-feature-mobile {
   min-height: 190px;
-}
-.empty-state {
-  min-height: 280px;
 }
 </style>

@@ -53,7 +53,10 @@
       </template>
     </div>
 
-    <div class="w-100 d-flex justify-center justify-sm-start mt-6">
+    <div
+      v-if="showLimitedAccessLink"
+      class="w-100 d-flex justify-center justify-sm-start mt-6"
+    >
       <button
         type="button"
         class="limited-access-link text-h6 text-grey500 font-weight-semibold d-flex align-center ga-1"
