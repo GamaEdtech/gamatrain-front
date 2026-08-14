@@ -1,48 +1,58 @@
 <template>
   <v-card
-    :class="`plan-card border-solid px-3 py-6 pa-md-6 text-center position-relative ${plan.highlight ? `bg-grey900` : ``} ${selected ? `plan-card--selected` : `border-sm border-grey600`}`"
+    :class="`plan-card border-solid border-sm border-grey600 pa-4 pa-md-5 position-relative ${isCurrentPlan ? `plan-card--current` : ``} ${plan.highlight ? `plan-card--highlight` : ``}`"
     @click="selectPlan"
   >
     <!-- Badge -->
-    <v-chip
+    <div
       v-if="plan.highlight"
-      color="primary"
-      class="mb-3 text-h5 font-weight-bold"
+      class="popular-badge d-flex align-center ga-1 px-2 py-1 rounded-pill bg-white"
     >
-      Most Popular
-    </v-chip>
-
-    <!-- Name -->
-    <div class="text-h6 text-md-h4 font-weight-bold mb-2 text-primary">
-      {{ plan.title }}
-    </div>
-
-    <!-- Price -->
-    <div
-      v-if="selectedPrice"
-      class="mb-1 d-flex align-baseline justify-center flex-wrap ga-2"
-    >
-      <span
-        v-if="strikeThroughMonthlyPrice"
-        class="text-h6 text-md-h5 text-grey400 text-decoration-line-through"
+      <v-icon
+        size="14"
+        color="success"
       >
-        ${{ formatPrice(strikeThroughMonthlyPrice) }}
-      </span>
-      <span>
-        <span class="text-h6 text-md-h4 text-grey400 mt-2">$</span><sub class="text-h4 text-md-h2 font-weight-bold">
-          {{ formatPrice(displayMonthlyPrice) }}</sub><span class="text-h6 text-grey400">/mo</span>
-      </span>
+        md:favorite
+      </v-icon>
+      <span class="text-h6 font-weight-bold text-success">Popular</span>
     </div>
-    <div
-      v-if="selectedPrice && billingInterval !== 'Monthly'"
-      class="mb-4 text-h6 text-grey400"
-    >
-      billed ${{ formatPrice(selectedPrice.price) }} {{ billingSuffix[billingInterval] }}
+
+    <!-- Price panel -->
+    <div class="price-panel rounded-lg pa-4 mb-4 text-left position-relative overflow-hidden">
+      <v-icon
+        class="diamond-icon"
+        size="40"
+        color="grey900"
+      >
+        md:diamond
+      </v-icon>
+
+      <div class="text-h6 text-md-h4 font-weight-bold mb-2 text-grey700">
+        {{ plan.title }}
+      </div>
+
+      <div
+        v-if="selectedPrice"
+        class="d-flex align-baseline flex-wrap ga-2"
+      >
+        <span
+          v-if="strikeThroughMonthlyPrice"
+          class="text-h6 text-md-h5 text-grey400 text-decoration-line-through"
+        >
+          ${{ formatPrice(strikeThroughMonthlyPrice) }}
+        </span>
+        <span>
+          <span class="text-h6 text-md-h4 text-grey400 mt-2">$</span><sub class="text-h4 text-md-h2 font-weight-bold">
+            {{ formatPrice(displayMonthlyPrice) }}</sub><span class="text-h6 text-grey400">/mo</span>
+        </span>
+      </div>
+      <div
+        v-if="selectedPrice && billingInterval !== 'Monthly'"
+        class="text-h6 text-grey400"
+      >
+        billed ${{ formatPrice(selectedPrice.price) }} {{ billingSuffix[billingInterval] }}
+      </div>
     </div>
-    <div
-      v-else
-      class="mb-4"
-    />
 
     <!-- Features -->
     <ul class="features text-left mb-6 pa-0">
@@ -55,7 +65,7 @@
         >
           <v-icon
             size="18"
-            class="mr-2"
+            class="mr-2 flex-shrink-0"
             color="success"
           >
             md:check
@@ -68,13 +78,13 @@
     <!-- Button -->
     <v-btn
       class="text-h6 text-md-h5 font-weight-bold"
-      :color="isCurrentPlan ? `grey300` : `primary`"
-      :variant="ctaVariant"
+      :color="isCurrentPlan ? `grey300` : `grey900`"
+      variant="flat"
       block
       size="large"
       :disabled="isCurrentPlan"
-      :loading="selected && loadingStartPaymentSubscription"
-      @click.stop="onCtaClick"
+      :loading="loadingStartPaymentSubscription"
+      @click.stop="selectPlan"
     >
       {{ ctaLabel }}
     </v-btn>
@@ -97,12 +107,10 @@ interface ICard {
   // already resolved to that one interval's flat limit.
   plan: SubscriptionPlanDTO | UpgradeSuggestionsDTO
   billingInterval: BillingInterval
-  selected: boolean
   isCurrentPlan: boolean
 }
 
 const props = defineProps<ICard>()
-const emit = defineEmits<{ select: [id: number] }>()
 
 const route = useRoute()
 const { trackPayment } = useGtmEvents()
@@ -160,45 +168,26 @@ const formatGroupLimit = (group: AdminSubscriptionPlanFeatureGroupDTO | UpgradeS
   return limit === null ? 'Unlimited' : formatPrice(limit)
 }
 
-const ctaLabel = computed(() => {
-  if (props.isCurrentPlan) return 'Current Plan'
-  return props.selected ? 'Continue' : 'Choose Plan'
-})
+const ctaLabel = computed(() => props.isCurrentPlan ? 'Current Plan' : 'Choose Plan')
 
-const ctaVariant = computed(() => {
-  if (props.isCurrentPlan) return 'flat'
-  return props.selected ? 'flat' : 'outlined'
-})
-
-const selectPlan = () => {
+const selectPlan = async () => {
   if (props.isCurrentPlan) return
-  emit('select', props.plan.id)
-}
 
-const pay = async () => {
   trackPayment({
     route: route.fullPath,
   })
-  if (selectedPrice.value) {
-    const payload = {
-      gateway: 'Stripe' as PaymentGateway,
-      billingInterval: props.billingInterval,
-    }
-    const response = await startPaymentSubscription(payload, props.plan.id)
-    if (response.succeeded && response.data && response.data.url) {
-      savePathRedirect(route.fullPath)
-      window.location.href = response.data.url
-    }
-  }
-}
 
-const onCtaClick = () => {
-  if (props.isCurrentPlan) return
-  if (!props.selected) {
-    emit('select', props.plan.id)
-    return
+  if (!selectedPrice.value) return
+
+  const payload = {
+    gateway: 'Stripe' as PaymentGateway,
+    billingInterval: props.billingInterval,
   }
-  pay()
+  const response = await startPaymentSubscription(payload, props.plan.id)
+  if (response.succeeded && response.data && response.data.url) {
+    savePathRedirect(route.fullPath)
+    window.location.href = response.data.url
+  }
 }
 </script>
 
@@ -206,17 +195,56 @@ const onCtaClick = () => {
 .plan-card {
   height : fit-content;
   width : 30%;
-  border-radius: 16px;
+  border-radius: 20px;
   transition: all 0.25s ease, box-shadow 0.15s ease, border-color 0.15s ease;
   cursor: pointer;
+  background: rgb(var(--v-theme-white));
 }
 .plan-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 30px rgba(0,0,0,0.08);
 }
-.plan-card--selected {
+.plan-card--highlight {
   border: 2px solid rgb(var(--v-theme-primary));
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.15);
+  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.12);
+}
+.plan-card--current {
+  opacity: 0.7;
+  cursor: default;
+}
+.plan-card--current:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.popular-badge {
+  position: absolute;
+  top: -14px;
+  right: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  z-index: 1;
+}
+
+/* Per-tier tint, matching the 3 pastel gradients from the Figma cards (blue / purple / amber) - rotates
+   by card position rather than plan data, since the design ties it to slot order, not a plan attribute. */
+.price-panel {
+  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, rgb(var(--v-theme-grey100)) 100%);
+}
+.plan-card:nth-of-type(3n+1) .price-panel {
+  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #e7eefb 100%);
+}
+.plan-card:nth-of-type(3n+2) .price-panel {
+  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #f1e6f6 100%);
+}
+.plan-card:nth-of-type(3n+3) .price-panel {
+  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #f7f1e1 100%);
+}
+
+.diamond-icon {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  opacity: 0.35;
 }
 
 .features {

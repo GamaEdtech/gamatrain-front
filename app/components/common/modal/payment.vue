@@ -48,9 +48,7 @@
           :key="plan.id"
           :plan="plan"
           :billing-interval="intervalSelect"
-          :selected="selectedPlanId === plan.id"
           :is-current-plan="isCurrentPlan(plan.id)"
-          @select="selectPlan"
         />
       </template>
     </div>
@@ -96,7 +94,6 @@ const { userSubscription, getUserSubscription } = useSubscription()
 
 const skeletonCount = 3
 const intervalSelect = ref<BillingInterval>('Monthly')
-const selectedPlanId = ref<number | null>(null)
 
 const filteredPlans = computed(() => {
   return props.plans.filter((plan) => {
@@ -123,10 +120,6 @@ const bestDiscountByInterval = computed(() => {
 
 const isCurrentPlan = (planId: number) => {
   return userSubscription.value?.status === 'Active' && userSubscription.value.subscriptionPlanId === planId
-}
-
-const selectPlan = (id: number) => {
-  selectedPlanId.value = id
 }
 
 const changeFilterInterval = async (status: BillingInterval) => {
