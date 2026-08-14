@@ -65,10 +65,11 @@
 
     <!-- Features -->
     <ul class="features text-left mb-6 pa-0">
-      <!-- The Gem balance, not a download count - this is the actual credit the plan grants; what it buys
-           varies per item's own Gem cost, so there's no fixed "N downloads" figure to show. -->
+      <!-- The Gem balance: the plan's own feature-group limits, summed (unlimited groups don't contribute
+           a number - there's nothing to add). Real backend data, not a derived/marketing figure - what
+           each item actually costs to use still varies per item, so this isn't "N downloads" either. -->
       <li
-        v-if="selectedPrice"
+        v-if="gemsBalance !== null"
         class="d-flex align-center mb-3 text-h5 font-weight-bold text-grey900"
       >
         <v-icon
@@ -172,14 +173,6 @@ const strikeThroughMonthlyPrice = computed(() => {
   return discount === null ? null : monthlyPrice.value
 })
 
-// Gem balance the plan grants per month, e.g. $5/mo -> 5,000 Gems. This is a marketing conversion, not a
-// backend-tracked value - Feature/SubscriptionPlanFeature carry no Gem price, so this is computed from the
-// plan's own monthly-equivalent price at a fixed rate, not read from the API. Uses displayMonthlyPrice
-// (not the raw selected-interval price) so it always matches the "$X/mo" figure shown right above it,
-// regardless of which billing interval is selected.
-const gemsPerDollar = 1000
-const gemsBalance = computed(() => Math.round(displayMonthlyPrice.value * gemsPerDollar))
-
 const featureGroups = computed(() => {
   return 'featureGroups' in props.plan ? props.plan.featureGroups : selectedPrice.value?.featureGroups ?? []
 })
@@ -191,6 +184,17 @@ const resolveGroupLimit = (group: AdminSubscriptionPlanFeatureGroupDTO | Upgrade
 
   return group.limit
 }
+
+// Gem balance = the plan's own feature-group limits at this billing interval, summed - real, admin-set
+// backend data (see plans/features.vue), not a price-derived figure. Unlimited groups (limit === null)
+// don't contribute a number; null overall means every group is unlimited, so there's no total to show.
+const gemsBalance = computed(() => {
+  const limits = featureGroups.value
+    .map(group => resolveGroupLimit(group))
+    .filter((limit): limit is number => limit !== null)
+
+  return limits.length > 0 ? limits.reduce((total, limit) => total + limit, 0) : null
+})
 
 const formatPrice = (value: number) => {
   return value % 1 === 0 ? value.toLocaleString() : value.toFixed(2)
