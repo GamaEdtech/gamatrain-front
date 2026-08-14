@@ -65,6 +65,22 @@
 
     <!-- Features -->
     <ul class="features text-left mb-6 pa-0">
+      <!-- The Gem balance, not a download count - this is the actual credit the plan grants; what it buys
+           varies per item's own Gem cost, so there's no fixed "N downloads" figure to show. -->
+      <li
+        v-if="selectedPrice"
+        class="d-flex align-center mb-3 text-h5 font-weight-bold text-grey900"
+      >
+        <v-icon
+          size="20"
+          class="mr-2 flex-shrink-0"
+          color="primary"
+        >
+          md:diamond
+        </v-icon>
+        {{ formatPrice(gemsBalance) }} Gems
+      </li>
+
       <template
         v-for="(featureGroup, groupIndex) in featureGroups"
         :key="groupIndex"
@@ -79,7 +95,7 @@
           >
             md:check
           </v-icon>
-          {{ formatGroupLimit(featureGroup) }} {{ featureGroup.description }}
+          {{ formatFeatureLine(featureGroup) }}
         </li>
       </template>
     </ul>
@@ -156,6 +172,14 @@ const strikeThroughMonthlyPrice = computed(() => {
   return discount === null ? null : monthlyPrice.value
 })
 
+// Gem balance the plan grants per month, e.g. $5/mo -> 5,000 Gems. This is a marketing conversion, not a
+// backend-tracked value - Feature/SubscriptionPlanFeature carry no Gem price, so this is computed from the
+// plan's own monthly-equivalent price at a fixed rate, not read from the API. Uses displayMonthlyPrice
+// (not the raw selected-interval price) so it always matches the "$X/mo" figure shown right above it,
+// regardless of which billing interval is selected.
+const gemsPerDollar = 1000
+const gemsBalance = computed(() => Math.round(displayMonthlyPrice.value * gemsPerDollar))
+
 const featureGroups = computed(() => {
   return 'featureGroups' in props.plan ? props.plan.featureGroups : selectedPrice.value?.featureGroups ?? []
 })
@@ -172,9 +196,11 @@ const formatPrice = (value: number) => {
   return value % 1 === 0 ? value.toLocaleString() : value.toFixed(2)
 }
 
-const formatGroupLimit = (group: AdminSubscriptionPlanFeatureGroupDTO | UpgradeSuggestionsFeatureGroup) => {
+// No fixed count is shown for Gem-spendable groups (each item's actual Gem cost varies); an unlimited
+// group still reads as "Unlimited X", same as before.
+const formatFeatureLine = (group: AdminSubscriptionPlanFeatureGroupDTO | UpgradeSuggestionsFeatureGroup) => {
   const limit = resolveGroupLimit(group)
-  return limit === null ? 'Unlimited' : formatPrice(limit)
+  return limit === null ? `Unlimited ${group.description}` : `Use Gems for ${group.description}`
 }
 
 const ctaLabel = computed(() => props.isCurrentPlan ? 'Current Plan' : 'Choose Plan')
