@@ -74,14 +74,16 @@
     </div>
 
     <!-- Coin Payment Modal -->
-    <lazy-modals-coin-payment-modal
-      v-if="showCoinPaymentModal"
+    <lazy-common-modal-base
       v-model:show-dialog="showCoinPaymentModal"
-      :is-processing="isLoading || isProcessingPayment"
-      :user-balance="balance"
-      :amount-to-pay="5"
-      @close="handleCoinPaymentClose"
-    />
+      :max-width="900"
+      title="Payment"
+    >
+      <common-modal-payment
+        :plans="paymentPlans"
+        :billing-interval="billingInterval"
+      />
+    </lazy-common-modal-base>
 
     <!-- Coin Consumption Animation -->
     <lazy-common-coin-consumption-animation
@@ -113,6 +115,9 @@
 import type {
   MultimediaFileInfoDTO,
   TypeFileExtentionMultimedia,
+  DownloadResponseDTO,
+  UpgradeSuggestionsDTO,
+  BillingInterval,
 } from '@/types'
 import { useDisplay } from 'vuetify'
 
@@ -129,10 +134,8 @@ const props = defineProps<IDownloadButtons>()
 
 const { xs } = useDisplay()
 
-const { balance, isLoading } = useCoinBalance()
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
-const isProcessingPayment = ref(false)
 const isStartWalletAnimation = ref(false)
 const priceFile = ref(0)
 const pendingDownload = ref<{
@@ -140,9 +143,11 @@ const pendingDownload = ref<{
   extraId?: string
 } | null>(null)
 const openModalDownloadMobile = ref(false)
+const paymentPlans = ref<UpgradeSuggestionsDTO[]>([])
+const billingInterval = ref<BillingInterval[]>([])
 
 const {
-  clearDownload,
+  // clearDownload,
   getDownloadProgress,
   isDownloading,
   startDownload,
@@ -166,7 +171,9 @@ const {
   onInsufficientBalance: () => {
     showCoinPaymentModal.value = true
   },
-  onUpgradeSuggestions: () => {
+  onUpgradeSuggestions: (data: DownloadResponseDTO) => {
+    paymentPlans.value = data.upgradeSuggestions || []
+    billingInterval.value = data.availableBillingIntervals || []
     showCoinPaymentModal.value = true
   },
 })
@@ -181,13 +188,13 @@ const handleDownloadClick = async (type: TypeFileExtentionMultimedia, price: num
   startDownload({ type, extraId })
 }
 
-const handleCoinPaymentClose = () => {
-  showCoinPaymentModal.value = false
-  if (pendingDownload.value) {
-    clearDownload(pendingDownload.value.type, pendingDownload.value.extraId)
-  }
-  pendingDownload.value = null
-}
+// const handleCoinPaymentClose = () => {
+//   showCoinPaymentModal.value = false
+//   if (pendingDownload.value) {
+//     clearDownload(pendingDownload.value.type, pendingDownload.value.extraId)
+//   }
+//   pendingDownload.value = null
+// }
 
 const handleAnimationComplete = async () => {
   // Close everything immediately when animation completes
