@@ -2,7 +2,6 @@ import type {
   AdminSchoolImageDTO,
   AdminSchoolImageDetailDTO,
   ApiResult,
-  AppError,
   GetAdminSchoolImageParams,
   ResponseListDTO,
 } from '@/types'
@@ -20,23 +19,7 @@ const NAME = 'Image'
 
 export const useSchoolImageAdmin = () => {
   const { $toast } = useNuxtApp()
-
-  const handleError = (err: unknown) => {
-    const error = err as AppError
-
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-
-  const showResponseError = (response: ApiResult<unknown>) => {
-    if (response.errors && response.errors.length > 0) {
-      $toast.error(response.errors[0].message || '')
-    }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetAdminSchoolImageParams) => {
     loadingGetData.value = true
@@ -54,7 +37,7 @@ export const useSchoolImageAdmin = () => {
         },
       )
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / params.pageSize)
@@ -63,22 +46,19 @@ export const useSchoolImageAdmin = () => {
         data.value = []
         totalCount.value = 0
         pageCount.value = 0
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
       data.value = []
       totalCount.value = 0
       pageCount.value = 0
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: null,
-      }
+      return createApiFailure<ResponseListDTO<AdminSchoolImageDTO>>(err)
     }
     finally {
       loadingGetData.value = false
@@ -93,16 +73,17 @@ export const useSchoolImageAdmin = () => {
         `/api/v2/admin/schools/images/contributions/${id}`,
       )
 
+      if (response.succeeded && response.data) {
+        return response
+      }
+
+      handleApiResponseError(response)
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: null,
-      }
+      return createApiFailure<AdminSchoolImageDetailDTO>(err)
     }
     finally {
       loadingGetItemById.value = false
@@ -122,19 +103,15 @@ export const useSchoolImageAdmin = () => {
         $toast.success(`${NAME} approved successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingConfirm.value = false
@@ -154,19 +131,15 @@ export const useSchoolImageAdmin = () => {
         $toast.success(`${NAME} rejected successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingReject.value = false
@@ -185,19 +158,15 @@ export const useSchoolImageAdmin = () => {
         $toast.success(`${NAME} deleted successfully!`)
       }
       else {
-        showResponseError(response)
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: false,
-      }
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingDeleteItem.value = false

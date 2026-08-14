@@ -309,11 +309,15 @@ const specialMonths = {
     { id: 11, title: 'Oct/Nov' },
   ],
   6635: [
+    { id: 3, title: 'March' },
     { id: 4, title: 'April' },
+    { id: 5, title: 'May' },
     { id: 10, title: 'October' },
   ],
   6639: [
+    { id: 3, title: 'March' },
     { id: 4, title: 'April' },
+    { id: 5, title: 'May' },
     { id: 10, title: 'October' },
   ],
   // AQA-GCSE

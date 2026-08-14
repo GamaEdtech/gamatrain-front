@@ -110,7 +110,7 @@ const save = async () => {
     description: description.value,
   })
 
-  if (response.status === 1 && response.data?.id !== 0) {
+  if (response.status === 1 && response.data != null && response.data.id !== 0) {
     emit('success', {
       title: title.value,
       description: description.value,
