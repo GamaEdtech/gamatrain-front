@@ -79,7 +79,7 @@
           >
             md:check
           </v-icon>
-          <span class="font-weight-bold">{{ formatGroupLimit(featureGroup) }}</span>&nbsp;·&nbsp;{{ featureGroup.description }}
+          {{ formatGroupLimit(featureGroup) }} {{ featureGroup.description }}
         </li>
       </template>
     </ul>
