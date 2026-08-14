@@ -3,54 +3,59 @@
     :class="`plan-card border-solid border-sm border-grey600 pa-4 pa-md-5 position-relative ${isCurrentPlan ? `plan-card--current` : ``} ${plan.highlight ? `plan-card--highlight` : ``}`"
     @click="selectPlan"
   >
-    <!-- Badge -->
-    <div
-      v-if="plan.highlight"
-      class="popular-badge d-flex align-center ga-1 px-2 py-1 rounded-pill bg-white"
-    >
-      <v-icon
-        size="14"
-        color="success"
-      >
-        md:favorite
-      </v-icon>
-      <span class="text-h6 font-weight-bold text-success">Popular</span>
-    </div>
-
     <!-- Price panel -->
-    <div class="price-panel rounded-lg pa-4 mb-4 text-left position-relative overflow-hidden">
-      <v-icon
-        class="diamond-icon"
-        size="40"
-        color="grey900"
-      >
-        md:diamond
-      </v-icon>
-
-      <div class="text-h6 text-md-h4 font-weight-bold mb-2 text-grey700">
-        {{ plan.title }}
-      </div>
-
-      <div
-        v-if="selectedPrice"
-        class="d-flex align-baseline flex-wrap ga-2"
-      >
-        <span
-          v-if="strikeThroughMonthlyPrice"
-          class="text-h6 text-md-h5 text-grey400 text-decoration-line-through"
+    <div class="price-panel rounded-lg pa-4 mb-4 text-left">
+      <div class="d-flex align-center justify-space-between mb-2">
+        <span class="text-h6 text-md-h4 font-weight-bold text-grey700">
+          {{ plan.title }}
+        </span>
+        <div
+          v-if="plan.highlight"
+          class="popular-badge d-flex align-center ga-1 px-2 py-1 rounded-pill bg-white flex-shrink-0"
         >
-          ${{ formatPrice(strikeThroughMonthlyPrice) }}
-        </span>
-        <span>
-          <span class="text-h6 text-md-h4 text-grey400 mt-2">$</span><sub class="text-h4 text-md-h2 font-weight-bold">
-            {{ formatPrice(displayMonthlyPrice) }}</sub><span class="text-h6 text-grey400">/mo</span>
-        </span>
+          <v-icon
+            size="14"
+            color="success"
+          >
+            md:favorite
+          </v-icon>
+          <span class="text-h6 font-weight-bold text-success">Popular</span>
+        </div>
       </div>
-      <div
-        v-if="selectedPrice && billingInterval !== 'Monthly'"
-        class="text-h6 text-grey400"
-      >
-        billed ${{ formatPrice(selectedPrice.price) }} {{ billingSuffix[billingInterval] }}
+
+      <div class="d-flex align-center justify-space-between">
+        <div class="d-flex flex-column">
+          <div
+            v-if="selectedPrice"
+            class="d-flex align-baseline flex-wrap ga-2"
+          >
+            <span
+              v-if="strikeThroughMonthlyPrice"
+              class="text-h6 text-md-h5 text-grey400 text-decoration-line-through"
+            >
+              ${{ formatPrice(strikeThroughMonthlyPrice) }}
+            </span>
+            <span>
+              <span class="text-h6 text-md-h4 text-grey400 mt-2">$</span><sub class="text-h4 text-md-h2 font-weight-bold">
+                {{ formatPrice(displayMonthlyPrice) }}</sub><span class="text-h6 text-grey400">/mo</span>
+            </span>
+          </div>
+          <div
+            v-if="selectedPrice && billingInterval !== 'Monthly'"
+            class="text-h6 text-grey400"
+          >
+            billed ${{ formatPrice(selectedPrice.price) }} {{ billingSuffix[billingInterval] }}
+          </div>
+        </div>
+
+        <v-icon
+          v-if="selectedPrice"
+          size="36"
+          color="grey900"
+          class="diamond-icon flex-shrink-0"
+        >
+          md:diamond
+        </v-icon>
       </div>
     </div>
 
@@ -218,11 +223,7 @@ const selectPlan = async () => {
 }
 
 .popular-badge {
-  position: absolute;
-  top: -14px;
-  right: 16px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-  z-index: 1;
 }
 
 /* Per-tier tint, matching the 3 pastel gradients from the Figma cards (blue / purple / amber) - rotates
@@ -241,9 +242,6 @@ const selectPlan = async () => {
 }
 
 .diamond-icon {
-  position: absolute;
-  top: 16px;
-  right: 16px;
   opacity: 0.35;
 }
 
