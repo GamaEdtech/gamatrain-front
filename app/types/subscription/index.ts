@@ -192,8 +192,8 @@ export interface AdminUserSubscriptionListDTO {
   planTitle: string
   status: UserSubscriptionStatus
   creationDate: string
-  startDate: string
-  expirationDate: string
+  startDate: string | null
+  expirationDate: string | null
   pricePaid: number
   currency: SubscriptionCurrency
   billingInterval: BillingInterval
@@ -214,8 +214,8 @@ export interface AdminUserSubscriptionDetailDTO {
   planTitle: string
   status: UserSubscriptionStatus
   creationDate: string
-  startDate: string
-  expirationDate: string
+  startDate: string | null
+  expirationDate: string | null
   pricePaid: number
   currency: SubscriptionCurrency
   billingInterval: BillingInterval
