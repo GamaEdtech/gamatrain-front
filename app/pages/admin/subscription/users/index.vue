@@ -279,6 +279,14 @@
         @search="startSearch"
       />
     </admin-common-modal>
+
+    <admin-common-modal
+      v-if="showDetailModal && selectedSubscription"
+      v-model:show-dialog="showDetailModal"
+      title="Detail"
+    >
+      <admin-subscription-users-modal-detail :id="selectedSubscription.id" />
+    </admin-common-modal>
   </div>
 </template>
 
