@@ -11,19 +11,13 @@
         <common-gombo-box
           v-model="filters.status"
           label="Status"
-          :items="USER_BLOG_STATUS.map((item) => {
-            return {
-              id: item,
-              title: item,
-            }
-          })"
+          :items="statusFilterItems"
           rounded="pill"
           height="48"
           base-color="grey200"
           color="primary"
           density="compact"
           :defalut-lable="false"
-          clearable
           @update:model-value="statusFilterChange"
         />
       </div>
@@ -267,6 +261,13 @@ const filters = reactive<{
 }>({
   status: '',
 })
+
+// 'All' (empty status) is an explicit choice here rather than relying on the gombo-box's clear button, so
+// switching back to every status is as discoverable as picking one.
+const statusFilterItems = [
+  { id: '', title: 'All' },
+  ...USER_BLOG_STATUS.map(item => ({ id: item, title: item })),
+]
 
 // const showDeleteModal = ref(false)
 // const selectedItemIdForDelete = ref('')
