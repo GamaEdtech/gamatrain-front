@@ -37,8 +37,8 @@ export const useUserSubscriptionAdmin = () => {
           'PagingDto.PageFilter.Size': params.pageSize,
           'PagingDto.PageFilter.Skip': (params.page - 1) * params.pageSize,
           'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-          'UserId': params.userId ?? null,
-          'Status': params.status ?? null,
+          'UserId': params.userId || null,
+          'Status': params.status || null,
         },
       )
 

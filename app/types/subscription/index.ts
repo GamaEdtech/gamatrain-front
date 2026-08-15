@@ -228,11 +228,14 @@ export interface AdminUserSubscriptionDetailDTO {
   gateway: PaymentGateway
 }
 
-export interface GetAdminUserSubscriptionParams {
+export interface SearchFilterAdminUserSubscription {
+  userId: string
+  status: UserSubscriptionStatus | ''
+}
+
+export interface GetAdminUserSubscriptionParams extends SearchFilterAdminUserSubscription {
   page: number
   pageSize: number
-  userId?: number | string | null
-  status?: UserSubscriptionStatus | null
 }
 
 export interface GrantAdminUserSubscriptionDTO {
