@@ -23,14 +23,17 @@ export const useBlog = () => {
   const { $toast } = useNuxtApp()
 
   const getData = async (params: GetBlogUserParams) => {
-    const { page, pageSize } = params
+    const { page, pageSize, status } = params
     loadingGetData.value = true
     try {
       const query: Record<string, string | number | boolean | null> = {
         'PagingDto.PageFilter.Size': pageSize,
         'PagingDto.PageFilter.Skip': (page - 1) * pageSize,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-        'Status': 'Confirmed',
+        // Status is optional on the backend - omitting it (null, dropped from the query string) returns
+        // every status, which is the desired default so users see all their contributions, not just
+        // Confirmed ones.
+        'Status': status ?? null,
       }
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<BlogUserBreifDTO>>

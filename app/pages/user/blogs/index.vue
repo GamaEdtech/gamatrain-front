@@ -6,51 +6,60 @@
       </h1>
     </div>
 
-    <!-- <div class="w-100 d-flex ga-1 flex-wrap align-end mt-4">
-      <div class="filter-item">
-        <common-gombo-box
-          v-model="filters.status"
-          label="Subject"
-          :items="USER_BLOG_STATUS?.map((item) => {
-            return {
-              id: item,
-              title: item,
-            }
-          })"
+    <div class="w-100 d-flex justify-space-between align-center ga-2 flex-wrap mt-4">
+      <div class="d-flex align-center ga-2 flex-wrap">
+        <v-btn
+          to="/user/blogs/create"
           rounded="pill"
-          height="48"
-          base-color="grey200"
           color="primary"
-          density="compact"
-          :defalut-lable="false"
-          @update:model-value="statusFilterChange"
-        />
-      </div>
-    </div> -->
-
-    <div class="w-100 d-flex justify-space-between align-center mt-4">
-      <v-btn
-        to="/user/blogs/create"
-        rounded="pill"
-        color="primary"
-        flat
-        max-width="220"
-        height="34"
-      >
-        <v-icon
-          color="grey800"
-          size="20"
+          flat
+          max-width="220"
+          height="34"
         >
-          md:add
-        </v-icon>
-        <span class="text-grey800 font-weight-bold text-h6">New Blog</span>
-      </v-btn>
-      <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold ml-auto">
-        <span class="text-grey500 font-weight-bold mr-1">
-          {{ totalCount }}
+          <v-icon
+            color="grey800"
+            size="20"
+          >
+            md:add
+          </v-icon>
+          <span class="text-grey800 font-weight-bold text-h6">New Blog</span>
+        </v-btn>
+
+        <v-btn
+          v-if="isShowClearFilter"
+          color="primary"
+          rounded="xl"
+          height="34"
+          class="text-h6"
+          flat
+          variant="outlined"
+          @click="clearFilter"
+        >
+          Clear Filter
+        </v-btn>
+      </div>
+
+      <div class="d-flex align-center justify-end ga-1 flex-wrap">
+        <v-btn
+          variant="plain"
+          max-width="20"
+          @click="showFilterModal = true"
+        >
+          <v-icon
+            size="26"
+            class="grey500"
+          >
+            md:filter_list
+          </v-icon>
+        </v-btn>
+
+        <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold">
+          <span class="text-grey500 font-weight-bold mr-1">
+            {{ totalCount }}
+          </span>
+          Blog
         </span>
-        Blog
-      </span>
+      </div>
     </div>
 
     <div class="w-100 mt-4">
@@ -85,12 +94,6 @@
         <template #[`item.title`]="{ item }">
           <div class="text-grey600 text-h5 font-weight-bold d-flex justify-center align-center">
             {{ item.title }}
-          </div>
-        </template>
-
-        <template #[`item.creationUser`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.creationUser ?? 'unkhown' }}
           </div>
         </template>
 
@@ -206,6 +209,36 @@
       </div>
     </div>
 
+    <common-modal-base
+      v-model:show-dialog="showFilterModal"
+      title="Filter"
+    >
+      <div class="w-100 d-flex flex-column pa-4">
+        <common-gombo-box
+          v-model="pendingStatus"
+          label="Status"
+          :items="statusFilterItems"
+          rounded="lg"
+          density="compact"
+          base-color="grey200"
+          color="primary"
+          :defalut-lable="false"
+        />
+
+        <v-btn
+          color="primary"
+          rounded="xl"
+          height="40"
+          width="200"
+          class="text-h5 mt-4 mx-auto"
+          flat
+          @click="applyFilter"
+        >
+          Apply
+        </v-btn>
+      </div>
+    </common-modal-base>
+
     <!-- <common-modal-base
       v-model:show-dialog="showDeleteModal"
       title="Delete"
@@ -220,7 +253,7 @@
 
 <script setup lang="ts">
 import type { BlogUserBreifDTOStatus } from '@/types'
-// import { USER_BLOG_STATUS } from '@/constants'
+import { USER_BLOG_STATUS } from '@/constants'
 // import type { BlogUserBreifDTO } from '@/types'
 
 definePageMeta({
@@ -246,8 +279,7 @@ const route = useRoute()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '10vw' },
-  { title: 'Title', key: 'title', sortable: false, width: '30vw' },
-  { title: 'User', key: 'creationUser', sortable: false, width: '10vw' },
+  { title: 'Title', key: 'title', sortable: false, width: '40vw' },
   { title: 'Date', key: 'creationDate', sortable: false, width: '20vw' },
   { title: 'Status', key: 'status', sortable: false, width: '15vw' },
   { title: 'Action', key: 'Action', sortable: false, width: '15vw' },
@@ -261,20 +293,42 @@ const allPageSize = [
   { label: '50 Rows', value: 50 },
 ]
 
-// const filters = reactive<{
-//   status: string
-// }>({
-//   status: '',
-// })
+const filters = reactive<{
+  status: BlogUserBreifDTOStatus | ''
+}>({
+  status: '',
+})
 
-// // const showDeleteModal = ref(false)
+// 'All' (empty status) is an explicit choice here rather than relying on the gombo-box's clear button, so
+// switching back to every status is as discoverable as picking one.
+const statusFilterItems = [
+  { id: '', title: 'All' },
+  ...USER_BLOG_STATUS.map(item => ({ id: item, title: item })),
+]
+
+const showFilterModal = ref(false)
+// Separate from filters.status so opening the modal and closing it without hitting Apply doesn't touch
+// the currently-applied filter.
+const pendingStatus = ref<BlogUserBreifDTOStatus | ''>('')
+
+const isShowClearFilter = computed(() => filters.status.length > 0)
+
+// Reflect the currently-applied filter each time the modal opens, rather than whatever was left over
+// from the last time it was opened and dismissed without applying.
+watch(showFilterModal, (isOpen) => {
+  if (isOpen) {
+    pendingStatus.value = filters.status
+  }
+})
+
+// const showDeleteModal = ref(false)
 // const selectedItemIdForDelete = ref('')
 
 const fetchData = async () => {
   await getData({
     page: page.value,
     pageSize: pageSize.value,
-    // status: filters.status,
+    status: filters.status || undefined,
   })
 }
 
@@ -287,10 +341,19 @@ const changePageSize = async () => {
   await fetchData()
 }
 
-// const statusFilterChange = async () => {
-//   page.value = 1
-//   await fetchData()
-// }
+const applyFilter = async () => {
+  filters.status = pendingStatus.value
+  showFilterModal.value = false
+  page.value = 1
+  await fetchData()
+}
+
+const clearFilter = async () => {
+  filters.status = ''
+  pendingStatus.value = ''
+  page.value = 1
+  await fetchData()
+}
 
 // const openModalDelete = (item: BlogUserBreifDTO) => {
 //   selectedItemIdForDelete.value = item.id.toString()
@@ -337,10 +400,6 @@ onMounted(async () => {
 .select-size-div {
   top: 18px;
 }
-.filter-item{
-  width: 30%;
-  max-width : 200px;
-}
 
 :deep(.custom-pagination li button:hover) {
   background-color: rgb(var(--v-theme-primary));
@@ -351,12 +410,5 @@ onMounted(async () => {
 }
 :deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
   opacity: 0 !important;
-}
-
-@media screen and (max-width: 600px) {
-  .filter-item{
-    width: 100%;
-     max-width : 100%
-  }
 }
 </style>
