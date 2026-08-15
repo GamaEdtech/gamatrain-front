@@ -287,6 +287,17 @@
     >
       <admin-subscription-users-modal-detail :id="selectedSubscription.id" />
     </admin-common-modal>
+
+    <admin-common-modal
+      v-if="showGrantModal && selectedSubscription"
+      v-model:show-dialog="showGrantModal"
+      title="Grant Subscription"
+    >
+      <admin-subscription-users-modal-grant
+        :subscription="selectedSubscription"
+        @grant-success-full="grantSuccessFull"
+      />
+    </admin-common-modal>
   </div>
 </template>
 
@@ -395,6 +406,11 @@ const openDetailModal = (item: AdminUserSubscriptionListDTO) => {
 const openGrantModal = (item: AdminUserSubscriptionListDTO) => {
   selectSubscription(item)
   showGrantModal.value = true
+}
+
+const grantSuccessFull = async () => {
+  showGrantModal.value = false
+  await fetchUserSubscriptions()
 }
 
 const openRevokeModal = (item: AdminUserSubscriptionListDTO) => {
