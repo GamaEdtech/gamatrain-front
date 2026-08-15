@@ -6,40 +6,41 @@
       </h1>
     </div>
 
-    <div class="w-100 d-flex ga-1 flex-wrap align-end mt-4">
-      <div class="filter-item">
-        <common-gombo-box
-          v-model="filters.status"
-          label="Status"
-          :items="statusFilterItems"
+    <div class="w-100 d-flex justify-space-between align-center ga-2 flex-wrap mt-4">
+      <div class="d-flex align-center ga-2 flex-wrap">
+        <v-btn
+          to="/user/blogs/create"
           rounded="pill"
-          height="48"
-          base-color="grey200"
           color="primary"
-          density="compact"
-          :defalut-lable="false"
-          @update:model-value="statusFilterChange"
-        />
-      </div>
-    </div>
-
-    <div class="w-100 d-flex justify-space-between align-center mt-4">
-      <v-btn
-        to="/user/blogs/create"
-        rounded="pill"
-        color="primary"
-        flat
-        max-width="220"
-        height="34"
-      >
-        <v-icon
-          color="grey800"
-          size="20"
+          flat
+          max-width="220"
+          height="34"
         >
-          md:add
-        </v-icon>
-        <span class="text-grey800 font-weight-bold text-h6">New Blog</span>
-      </v-btn>
+          <v-icon
+            color="grey800"
+            size="20"
+          >
+            md:add
+          </v-icon>
+          <span class="text-grey800 font-weight-bold text-h6">New Blog</span>
+        </v-btn>
+
+        <div class="filter-item">
+          <common-gombo-box
+            v-model="filters.status"
+            label="Status"
+            :items="statusFilterItems"
+            rounded="pill"
+            height="34"
+            base-color="grey200"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            @update:model-value="statusFilterChange"
+          />
+        </div>
+      </div>
+
       <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold ml-auto">
         <span class="text-grey500 font-weight-bold mr-1">
           {{ totalCount }}
@@ -340,8 +341,7 @@ onMounted(async () => {
   top: 18px;
 }
 .filter-item{
-  width: 30%;
-  max-width : 200px;
+  width: 160px;
 }
 
 :deep(.custom-pagination li button:hover) {
@@ -358,7 +358,6 @@ onMounted(async () => {
 @media screen and (max-width: 600px) {
   .filter-item{
     width: 100%;
-     max-width : 100%
   }
 }
 </style>
