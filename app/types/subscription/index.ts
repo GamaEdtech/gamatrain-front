@@ -183,3 +183,68 @@ export interface FeatureGroupUserSubscriptionDTO {
   remaining: number | null
   description: string
 }
+
+export interface AdminUserSubscriptionListDTO {
+  id: number
+  userId: number
+  userEmail: string
+  subscriptionPlanId: number
+  planTitle: string
+  status: UserSubscriptionStatus
+  creationDate: string
+  startDate: string
+  expirationDate: string
+  pricePaid: number
+  currency: SubscriptionCurrency
+  billingInterval: BillingInterval
+  autoRenews: boolean
+  cancelAtPeriodEnd: boolean
+  pendingSwitchPlanId: number | null
+  pendingSwitchPlanTitle: string | null
+  lastPaymentFailedDate: string | null
+  externalSubscriptionId: string | null
+  gateway: PaymentGateway
+}
+
+export interface AdminUserSubscriptionDetailDTO {
+  id: number
+  userId: number
+  userEmail: string
+  subscriptionPlanId: number
+  planTitle: string
+  status: UserSubscriptionStatus
+  creationDate: string
+  startDate: string
+  expirationDate: string
+  pricePaid: number
+  currency: SubscriptionCurrency
+  billingInterval: BillingInterval
+  autoRenews: boolean
+  cancelAtPeriodEnd: boolean
+  pendingSwitchPlanId: number | null
+  pendingSwitchPlanTitle: string | null
+  lastPaymentFailedDate: string | null
+  externalSubscriptionId: string | null
+  gateway: PaymentGateway
+}
+
+export interface GetAdminUserSubscriptionParams {
+  page: number
+  pageSize: number
+  userId?: number | string | null
+  status?: UserSubscriptionStatus | null
+}
+
+export interface GrantAdminUserSubscriptionDTO {
+  userId: number
+  subscriptionPlanId: number
+  billingInterval: BillingInterval
+}
+
+export interface GrantAdminUserSubscriptionResponseDTO {
+  id: number
+}
+
+export interface ExtendAdminUserSubscriptionDTO {
+  days: number
+}
