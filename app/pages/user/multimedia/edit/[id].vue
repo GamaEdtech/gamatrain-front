@@ -235,14 +235,14 @@
           </div>
         </div>
 
-        <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6 rounded-lg pa-2">
+        <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6 rounded-lg pa-2">
           <span class="text-h5 text-grey700 font-weight-bold">Content cover</span>
           <span class="text-h6 text-grey600 font-weight-bold">
             What pages of the book does this content cover?
           </span>
-        </div>
+        </div> -->
 
-        <div class="w-100 d-flex flex-wrap justify-start">
+        <!-- <div class="w-100 d-flex flex-wrap justify-start">
           <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
             <span class="text-h6 text-grey700 font-weight-medium">From page</span>
             <v-text-field
@@ -292,7 +292,7 @@
               </template>
             </v-text-field>
           </div>
-        </div>
+        </div> -->
 
         <!-- <div class="w-100 d-flex align-center justify-start mt-4">
           <v-checkbox
@@ -403,8 +403,8 @@ const multimedia = ref<MultimediaForm>({
   title: '',
   description: '',
   content_type: '',
-  from_page: '',
-  to_page: '',
+  // from_page: '',
+  // to_page: '',
   free_available: false,
   file: '',
 })
@@ -498,8 +498,8 @@ const applyMultimediaData = async (item: MultimediaDetailDTO) => {
   multimedia.value.title = item.title || ''
   multimedia.value.description = item.description || ''
   multimedia.value.content_type = item.content_type || ''
-  multimedia.value.from_page = item.from_page || ''
-  multimedia.value.to_page = item.to_page || ''
+  // multimedia.value.from_page = item.from_page || ''
+  // multimedia.value.to_page = item.to_page || ''
   multimedia.value.free_available = item.free_aggrement === '1'
   multimedia.value.file = ''
   existingFile.value = item.files || null
