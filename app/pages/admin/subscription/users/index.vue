@@ -298,6 +298,24 @@
         @grant-success-full="grantSuccessFull"
       />
     </admin-common-modal>
+
+    <admin-common-confirm-modal
+      v-model="showRevokeModal"
+      text="Revoke this subscription now? This will cancel access immediately and will not wait until the end of the billing period."
+      :loading="loadingRevokeItem"
+      @confirm="confirmRevoke"
+    />
+
+    <admin-common-modal
+      v-if="showExtendModal && selectedSubscription"
+      v-model:show-dialog="showExtendModal"
+      title="Extend Subscription"
+    >
+      <admin-subscription-users-modal-extend
+        :subscription="selectedSubscription"
+        @extend-success-full="extendSuccessFull"
+      />
+    </admin-common-modal>
   </div>
 </template>
 
@@ -320,6 +338,8 @@ const {
   getData,
   totalCount,
   pageCount,
+  revokeItem,
+  loadingRevokeItem,
 } = useUserSubscriptionAdmin()
 
 const headers = [
@@ -418,9 +438,26 @@ const openRevokeModal = (item: AdminUserSubscriptionListDTO) => {
   showRevokeModal.value = true
 }
 
+const confirmRevoke = async () => {
+  if (!selectedSubscription.value) return
+
+  const response = await revokeItem(selectedSubscription.value.id)
+
+  if (response.succeeded) {
+    showRevokeModal.value = false
+    selectedSubscription.value = null
+    await fetchUserSubscriptions()
+  }
+}
+
 const openExtendModal = (item: AdminUserSubscriptionListDTO) => {
   selectSubscription(item)
   showExtendModal.value = true
+}
+
+const extendSuccessFull = async () => {
+  showExtendModal.value = false
+  await fetchUserSubscriptions()
 }
 
 const openHistoryModal = (item: AdminUserSubscriptionListDTO) => {
