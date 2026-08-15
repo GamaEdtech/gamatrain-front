@@ -6,12 +6,12 @@
       </h1>
     </div>
 
-    <!-- <div class="w-100 d-flex ga-1 flex-wrap align-end mt-4">
+    <div class="w-100 d-flex ga-1 flex-wrap align-end mt-4">
       <div class="filter-item">
         <common-gombo-box
           v-model="filters.status"
-          label="Subject"
-          :items="USER_BLOG_STATUS?.map((item) => {
+          label="Status"
+          :items="USER_BLOG_STATUS.map((item) => {
             return {
               id: item,
               title: item,
@@ -23,10 +23,11 @@
           color="primary"
           density="compact"
           :defalut-lable="false"
+          clearable
           @update:model-value="statusFilterChange"
         />
       </div>
-    </div> -->
+    </div>
 
     <div class="w-100 d-flex justify-space-between align-center mt-4">
       <v-btn
@@ -220,7 +221,7 @@
 
 <script setup lang="ts">
 import type { BlogUserBreifDTOStatus } from '@/types'
-// import { USER_BLOG_STATUS } from '@/constants'
+import { USER_BLOG_STATUS } from '@/constants'
 // import type { BlogUserBreifDTO } from '@/types'
 
 definePageMeta({
@@ -261,20 +262,20 @@ const allPageSize = [
   { label: '50 Rows', value: 50 },
 ]
 
-// const filters = reactive<{
-//   status: string
-// }>({
-//   status: '',
-// })
+const filters = reactive<{
+  status: BlogUserBreifDTOStatus | ''
+}>({
+  status: '',
+})
 
-// // const showDeleteModal = ref(false)
+// const showDeleteModal = ref(false)
 // const selectedItemIdForDelete = ref('')
 
 const fetchData = async () => {
   await getData({
     page: page.value,
     pageSize: pageSize.value,
-    // status: filters.status,
+    status: filters.status || undefined,
   })
 }
 
@@ -287,10 +288,10 @@ const changePageSize = async () => {
   await fetchData()
 }
 
-// const statusFilterChange = async () => {
-//   page.value = 1
-//   await fetchData()
-// }
+const statusFilterChange = async () => {
+  page.value = 1
+  await fetchData()
+}
 
 // const openModalDelete = (item: BlogUserBreifDTO) => {
 //   selectedItemIdForDelete.value = item.id.toString()
