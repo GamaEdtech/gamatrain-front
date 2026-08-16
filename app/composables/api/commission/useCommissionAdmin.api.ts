@@ -6,15 +6,15 @@ import type {
   ResponseListDTO,
 } from '@/types'
 
-const data = ref<AdminCommissionDTO[]>([])
-const loadingGetData = ref(true)
-const totalCount = ref(0)
-const pageCount = ref(0)
-
 const BASE_URL = '/api/v2/admin/commissions'
 
 export const useCommissionAdmin = () => {
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
+
+  const data = ref<AdminCommissionDTO[]>([])
+  const loadingGetData = ref(true)
+  const totalCount = ref(0)
+  const pageCount = ref(0)
 
   const getData = async (params: GetAdminCommissionParams) => {
     const { page, pageSize, startDate, endDate } = params
