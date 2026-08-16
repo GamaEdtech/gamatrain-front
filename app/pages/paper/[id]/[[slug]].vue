@@ -45,14 +45,9 @@
         md="8"
         class="d-flex h-100 align-start flex-wrap"
       >
-        <lazy-common-detail-content-details-section :content-data="contentData" />
+        <lazy-paper-content-details-section :content-data="contentData" />
 
-        <div class="text-success500 bg-primary-success-50 pa-2 mt-4">
-          <v-icon>
-            md:library_add_check
-          </v-icon>
-          <span> Answers are available at the end of the files</span>
-        </div>
+        <lazy-paper-answer-availability-notice v-show="(contentData.answer_type == 1 || contentData.answer_type == 2) && !contentData.files.answer.exist" />
 
         <lazy-paper-download-and-purchase-buttons
           :id="contentData.id"
