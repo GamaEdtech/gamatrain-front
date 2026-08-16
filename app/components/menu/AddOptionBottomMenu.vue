@@ -61,7 +61,7 @@ interface AddOption {
 
 const { user } = useUser()
 const defaultBoardId = 6627
-const userBoardId = computed(() => user.value?.board || defaultBoardId)
+const userBoardId = computed(() => user.value?.board ?? defaultBoardId)
 
 const addOptions = computed<AddOption[]>(() => [
   {
