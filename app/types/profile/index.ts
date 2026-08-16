@@ -43,3 +43,9 @@ export interface DeleteProfileDTO {
   username: string
   password: string
 }
+
+export interface ChangePasswordDTO {
+  oldpass: string
+  newpass: string
+  repeat_newpass: string
+}

@@ -1,6 +1,5 @@
 import type {
   ApiResult,
-  AppError,
   ResponseListDTO,
   CommnetBlogAdminDTO,
   CommnetBlogDetailAdminDTO,
@@ -19,6 +18,7 @@ const NAME = 'Comment'
 
 export const useBlogCommentAdmin = () => {
   const { $toast } = useNuxtApp()
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetCommentBlogAdminParams) => {
     loadingGetData.value = true
@@ -36,20 +36,20 @@ export const useBlogCommentAdmin = () => {
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<CommnetBlogAdminDTO>>
       >(`/api/v2/admin/blogs/posts/comments/contributions`, query)
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / params.pageSize)
       }
       else {
         data.value = []
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<ResponseListDTO<CommnetBlogAdminDTO>>(err)
     }
     finally {
       loadingGetData.value = false
@@ -63,18 +63,16 @@ export const useBlogCommentAdmin = () => {
         ApiResult<CommnetBlogDetailAdminDTO>
       >(`/api/v2/admin/blogs/posts/comments/contributions/${id}`)
 
+      if (!response.succeeded) {
+        handleApiResponseError(response)
+      }
+
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-        data: {},
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<CommnetBlogDetailAdminDTO>(err)
     }
     finally {
       loadingGetItemById.value = false
@@ -94,24 +92,13 @@ export const useBlogCommentAdmin = () => {
         $toast.success(`${NAME} confirm successfully!`)
       }
       else {
-        if (response.errors && response.errors.length > 0) {
-          $toast.error(response.errors[0].message || '')
-        }
-        else {
-          $toast.error('The operation failed. Please try again later.')
-        }
+        handleApiResponseError(response)
       }
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-      }
+      handleApiCatchError(err)
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingConfirm.value = false
@@ -133,24 +120,13 @@ export const useBlogCommentAdmin = () => {
         $toast.success(`${NAME} reject successfully!`)
       }
       else {
-        if (response.errors && response.errors.length > 0) {
-          $toast.error(response.errors[0].message || '')
-        }
-        else {
-          $toast.error('The operation failed. Please try again later.')
-        }
+        handleApiResponseError(response)
       }
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-      }
+      handleApiCatchError(err)
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingReject.value = false

@@ -89,17 +89,6 @@
         </v-icon>
         <template v-if="isAuthenticated">
           <lazy-common-dropdown-menu :menu-setting="menuSetting" />
-          <nuxt-link
-            to="/user/wallet"
-            aria-label="Wallet"
-          >
-            <v-icon
-              :color="menuSetting.linkColor"
-              size="24"
-            >
-              md:account_balance_wallet_outlined
-            </v-icon>
-          </nuxt-link>
 
           <nuxt-link
             aria-label="Notification"
@@ -267,6 +256,9 @@ const isDrawerOpen = ref(false)
 const openNavigationMenu = () => {
   isDrawerOpen.value = true
 }
+const syncDrawerWithDisplay = () => {
+  isDrawerOpen.value = props.isUserDashboard && !mdAndDown.value
+}
 const shouldMountDrawer = computed(() => {
   if (props.isUserDashboard) {
     if (mdAndDown.value) {
@@ -298,16 +290,15 @@ watch(
   },
 )
 
+watch(
+  mdAndDown,
+  syncDrawerWithDisplay,
+  { immediate: true },
+)
+
 onMounted(async () => {
   handleChnageMenuSetting()
   window.addEventListener('scroll', handleChnageMenuSetting)
-
-  if (mdAndDown.value) {
-    isDrawerOpen.value = false
-  }
-  else {
-    isDrawerOpen.value = true
-  }
 
   requestIdleCallback?.(() => {
     import('@/components/common/modal/auth/index.vue')

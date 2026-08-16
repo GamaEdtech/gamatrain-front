@@ -86,13 +86,13 @@ export const useMultimedia = () => {
     if (item.content_type) {
       payload.append('content_type', String(item.content_type || ''))
     }
-    if (item.from_page) {
-      payload.append('from_page', String(item.from_page || ''))
-    }
-    if (item.to_page) {
-      payload.append('to_page', String(item.to_page || ''))
-    }
-    if (item.free_available) {
+    // if (item.from_page) {
+    //   payload.append('from_page', String(item.from_page || ''))
+    // }
+    // if (item.to_page) {
+    //   payload.append('to_page', String(item.to_page || ''))
+    // }
+    if (item.free_available !== undefined && item.free_available !== null) {
       payload.append('free_available', item.free_available ? '1' : '0')
     }
     if (item.file) {

@@ -167,6 +167,8 @@ const form = reactive<AdminAppSettingsDTO>({
   startDeletingAccountEmailTemplate: '',
   finishedDeletingAccountEmailTemplate: '',
   adminTransactionCreationEmailTemplate: '',
+  subscriptionCancelledEmailTemplate: '',
+  subscriptionResumedEmailTemplate: '',
 })
 const fields: FieldConfig[] = [
   { key: 'gridPageSize', label: 'Grid Page Size', type: 'text', valueType: 'number' },
@@ -203,6 +205,8 @@ const fields: FieldConfig[] = [
   { key: 'startDeletingAccountEmailTemplate', label: 'Start Deleting Account Email Template', type: 'textarea', valueType: 'string' },
   { key: 'finishedDeletingAccountEmailTemplate', label: 'Finished Deleting Account Email Template', type: 'textarea', valueType: 'string' },
   { key: 'adminTransactionCreationEmailTemplate', label: 'Admin Transaction Creation Email Template', type: 'textarea', valueType: 'string' },
+  { key: 'subscriptionCancelledEmailTemplate', label: 'Subscription Cancelled Email Template', type: 'textarea', valueType: 'string' },
+  { key: 'subscriptionResumedEmailTemplate', label: 'Subscription Resumed Email Template', type: 'textarea', valueType: 'string' },
 ]
 const showModalPreview = ref(false)
 const previewMessageHtml = ref('')

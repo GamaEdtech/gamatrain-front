@@ -35,12 +35,14 @@
             v-if="user && user.avatarUri"
             :image="user.avatarUri"
             class="border-image"
+            size="24"
           />
           <v-avatar
             v-else
-            color="#667085"
+            color="grey400"
+            size="24"
           >
-            <span class="text-h5">{{
+            <span class="text-h6 text-grey700 font-weight-bold">{{
               user?.firstName ? user.firstName[0].toUpperCase() : "U"
             }}</span>
           </v-avatar>
@@ -336,6 +338,7 @@ const items = [
     icon: 'md:account_balance',
     value: 'financial',
     subMenuList: [
+      { title: 'Subscription', link: '/user/subscription', icon: 'md:subscriptions_outlined' },
       { title: 'Wallet', link: '/user/wallet', icon: 'md:shopping_cart' },
       // {
       //   title: 'Top Up Wallet',
