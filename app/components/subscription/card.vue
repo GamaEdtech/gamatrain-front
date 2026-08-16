@@ -1,5 +1,5 @@
 <template>
-  <div :class="`d-flex flex-column align-center justify-start plan-card rounded-xl pa-3 pa-md-4 elevation-3 ${plan.highlight ? `hightlight-card`:`simple-card`}`">
+  <div :class="`d-flex flex-column align-center justify-start plan-card rounded-xl pa-3 pa-md-4 elevation-3 ${plan.highlight ? `hightlight-card`:`simple-card`} ${isCurrentPlan ? `disabled-card`:``}`">
     <div class="price-div w-100 d-flex flex-column aligh-start justify-start pa-3 pa-md-4 rounded-lg">
       <div class="d-flex align-center justify-space-between mb-2">
         <span class="text-h6 text-md-h4 font-weight-bold text-grey700">
@@ -221,6 +221,14 @@ const selectPlan = async () => {
   height : fit-content;
   min-height : 300px;
   cursor: pointer;
+  transition: all 0.5s;
+}
+.plan-card:hover{
+  background-color : rgb(var(--v-theme-grey100));
+}
+.disabled-card{
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 .hightlight-card{
   border : 2px solid rgb(var(--v-theme-primary));

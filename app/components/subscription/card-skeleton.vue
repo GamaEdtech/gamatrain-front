@@ -1,45 +1,92 @@
 <template>
-  <v-card
-    :class="`plan-card border-solid border-sm border-grey600 px-3 py-6 pa-md-6 text-center`"
-  >
-    <v-skeleton-loader
-      width="80"
-      height="30"
-      class="rounded-pill mb-3 mx-auto"
-    />
+  <div class="d-flex flex-column align-center justify-start plan-card rounded-xl pa-3 pa-md-4 elevation-3 simple-card">
+    <div class="price-div w-100 d-flex flex-column align-start justify-start pa-3 pa-md-4 rounded-lg">
+      <div class="w-100 d-flex align-center justify-space-between mb-2">
+        <v-skeleton-loader
+          width="105"
+          height="20"
+          class="rounded-pill"
+        />
 
-    <v-skeleton-loader
-      width="120"
-      height="10"
-      class="rounded-pill mb-2 mx-auto"
-    />
+        <v-skeleton-loader
+          width="74"
+          height="20"
+          class="rounded-pill flex-shrink-0"
+        />
+      </div>
 
-    <v-skeleton-loader
-      width="80"
-      height="20"
-      class="rounded-pill mb-8 mx-auto"
-    />
+      <v-skeleton-loader
+        width="72"
+        height="16"
+        class="rounded-pill mb-1"
+      />
 
-    <ul class="mb-6 pa-0 mx-auto">
-      <template
+      <div class="w-100 d-flex align-center justify-space-between mt-2">
+        <div class="d-flex align-end">
+          <v-skeleton-loader
+            width="96"
+            height="30"
+            class="rounded-pill"
+          />
+          <v-skeleton-loader
+            width="34"
+            height="16"
+            class="rounded-pill ml-2 mb-1"
+          />
+        </div>
+
+        <v-skeleton-loader
+          width="20"
+          height="20"
+          class="rounded-circle"
+        />
+      </div>
+
+      <v-skeleton-loader
+        width="140"
+        height="18"
+        class="rounded-pill mt-2"
+      />
+    </div>
+
+    <div class="w-100 d-flex align-center justify-start mt-2">
+      <v-skeleton-loader
+        width="16"
+        height="16"
+        class="rounded-circle mr-2"
+      />
+      <v-skeleton-loader
+        width="110"
+        height="16"
+        class="rounded-pill"
+      />
+    </div>
+
+    <ul class="features w-100 text-left mt-4 pa-0">
+      <li
         v-for="i in 4"
         :key="i"
+        class="d-flex align-center mb-2"
       >
         <v-skeleton-loader
-          width="160"
-          height="10"
-          class="rounded-pill mb-2 mx-auto"
+          width="18"
+          height="18"
+          class="rounded-circle mr-2 flex-shrink-0"
         />
-      </template>
+        <v-skeleton-loader
+          :width="i % 2 === 0 ? 168 : 132"
+          height="14"
+          class="rounded-pill"
+        />
+      </li>
     </ul>
 
-    <!-- Button -->
     <v-skeleton-loader
-      width="160"
-      height="40"
-      class="rounded-pill mx-auto"
+      width="100%"
+      height="48"
+      class="rounded-lg mt-6"
     />
-  </v-card>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -47,22 +94,31 @@
 
 <style scoped>
 .plan-card {
+  width: 30%;
   height : fit-content;
-  width : 30%;
-  border-radius: 16px;
-  transition: all 0.25s ease;
+  min-height : 300px;
 }
-.plan-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+.simple-card{
+  border : 2px solid rgb(var(--v-theme-grey300));
 }
-
 .features {
   list-style: none;
 }
+.price-div {
+  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, rgb(var(--v-theme-grey100)) 100%);
+}
+.plan-card:nth-of-type(3n+1) .price-div {
+  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #e7eefb 100%);
+}
+.plan-card:nth-of-type(3n+2) .price-div {
+  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #f1e6f6 100%);
+}
+.plan-card:nth-of-type(3n+3) .price-div {
+  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #f7f1e1 100%);
+}
 @media screen and (max-width: 600px) {
  .plan-card {
-   width : 100%;
+   width : 100% !important;
    max-width : 220px;
  }
 }
