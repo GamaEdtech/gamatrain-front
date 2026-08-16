@@ -1,199 +1,43 @@
-<script setup>
-import blogCard from '~/components/admin/blogs/blogCard.vue'
-
-definePageMeta({
-  layout: 'admin',
-  middleware: ['auth', 'admin'],
-})
-
-const { $toast } = useNuxtApp()
-
-const headers = [
-  { title: 'Title', key: 'title', sortable: false, width: '20vw' },
-  { title: 'Contributer', key: 'creationUser', sortable: false, width: '15vw' },
-  { title: 'Status', key: 'confirmed', sortable: false, width: '10vw' },
-  { title: 'Actions', key: 'actions', sortable: false, width: '5vw' },
-]
-
-const selectedBlog = reactive({
-  title: null,
-  slug: null,
-  summary: null,
-  body: null,
-  imageUri: null,
-  keywords: null,
-  postId: null,
-  visibilityType: null,
-  publishDate: null,
-  tags: [],
-})
-
-const list = ref([])
-const tableLoading = ref(true)
-const dialogVisible = ref(false)
-const filter = ref('Confirmed')
-const selectedPageSize = ref(10)
-const page = ref(1)
-const pageCount = ref(0)
-const totalCount = ref(0)
-const selected = ref([])
-const isDeleteModalOpen = ref(false)
-const selectedDeleteId = ref(null)
-
-const allPageSize = [
-  { label: '10 Rows', value: 10 },
-  { label: '20 Rows', value: 20 },
-  { label: '50 Rows', value: 50 },
-]
-
-const fetchBlogs = async () => {
-  tableLoading.value = true
-  try {
-    const response = await useApiService.get('/api/v2/admin/blogs/contributions', {
-      'PagingDto.PageFilter.Size': selectedPageSize.value,
-      'PagingDto.PageFilter.Skip': (page.value - 1) * selectedPageSize.value,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-      'Status': filter.value,
-    })
-
-    list.value = response.data.list
-    totalCount.value = response.data.totalRecordsCount
-    pageCount.value = Math.ceil(totalCount.value / selectedPageSize.value)
-  }
-  catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-  finally {
-    tableLoading.value = false
-  }
-}
-
-const viewBlogDetails = async (id) => {
-  try {
-    const response = await useApiService.get(`/api/v2/admin/blogs/contributions/${id}`)
-
-    selectedBlog.title = response.data.title
-    selectedBlog.slug = response.data.slug
-    selectedBlog.summary = response.data.summary
-    selectedBlog.body = response.data.body
-    selectedBlog.imageUri = response.data.imageUri
-    selectedBlog.keywords = response.data.keywords
-    selectedBlog.postId = response.data.postId
-    selectedBlog.visibilityType = response.data.visibilityType
-    selectedBlog.publishDate = response.data.publishDate
-    selectedBlog.tags = response.data.tags
-
-    dialogVisible.value = true
-  }
-  catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-}
-
-const handleDelete = (id) => {
-  isDeleteModalOpen.value = true
-  selectedDeleteId.value = id
-}
-
-const deleteBlog = async () => {
-  try {
-    const res = await useApiService.remove(`/api/v2/admin/blogs/posts/${selectedDeleteId.value}`)
-    if (res.succeeded === true)
-      $toast.success('Blog deleted successfully!')
-    else
-      $toast.error(res.errors[0].message)
-  }
-  catch (err) {
-    if (err.response?.status === 400) {
-      $toast.error(err.response.data.message)
-    }
-  }
-  finally {
-    isDeleteModalOpen.value = false
-    fetchBlogs()
-  }
-}
-
-const goToBlog = (postId) => {
-  window.open(`/posts/${postId}`, '_blank')
-}
-
-watch(page, () => {
-  fetchBlogs()
-})
-
-watch(selectedPageSize, () => {
-  page.value = 1
-  fetchBlogs()
-})
-
-watch(filter, (_val) => {
-  page.value = 1
-  fetchBlogs()
-}, { immediate: true })
-
-const refreshData = async () => {
-  await fetchBlogs()
-}
-</script>
-
 <template>
-  <div>
-    <div class="d-flex justify-end ga-2 align-center px-2 justify-space-between">
-      <div class="filterBtns mb-4">
+  <div class="w-100 h-100 d-flex flex-column align-start justify-start">
+    <div class="w-100 d-flex justify-space-between align-center">
+      <div class="d-flex align-center justify-start position-relative flex-wrap ga-2">
         <v-btn
-          :class="{ 'active-filter': filter === 'Confirmed', 'inactive-filter': filter !== 'Confirmed' }"
-          depressed
-          rounded
-          variant="plain"
-          class="gtext-t4 font-weight-medium"
-          @click="filter = 'Confirmed'"
+          v-if="isShowClearFilter"
+          color="primary"
+          rounded="xl"
+          height="40"
+          width="120"
+          class="text-h5"
+          flat
+          variant="outlined"
+          @click="clearFilter"
         >
-          Confirmed
-        </v-btn>
-
-        <v-btn
-          :class="{ 'active-filter': filter === 'Review', 'inactive-filter': filter !== 'Review' }"
-          depressed
-          class="ml-2 gtext-t4 font-weight-medium"
-          rounded
-          variant="plain"
-          @click="filter = 'Review'"
-        >
-          Pending
-        </v-btn>
-        <v-btn
-          :class="{ 'active-filter': filter === 'Rejected', 'inactive-filter': filter !== 'Rejected' }"
-          depressed
-          class="ml-2 gtext-t4 font-weight-medium"
-          rounded
-          variant="plain"
-          @click="filter = 'Rejected'"
-        >
-          Rejected
-        </v-btn>
-        <v-btn
-          :class="{ 'active-filter': filter === 'Deleted', 'inactive-filter': filter !== 'Deleted' }"
-          depressed
-          class="ml-2 gtext-t4 font-weight-medium"
-          rounded
-          variant="plain"
-          @click="filter = 'Deleted'"
-        >
-          Deleted
+          Clear Filter
         </v-btn>
       </div>
-      <div class="d-flex ga-1 align-center">
+
+      <div class="d-flex align-center justify-end ga-1 flex-wrap">
+        <v-btn
+          variant="plain"
+          max-width="20"
+          @click="showSearchModal = true"
+        >
+          <v-icon
+            size="26"
+            class="grey500"
+          >
+            md:search
+          </v-icon>
+        </v-btn>
+
         <v-btn
           size="small"
           flat
           icon
           color="info"
-          :loading="tableLoading"
+          :loading="loading"
+          class="mr-1"
           @click="refreshData"
         >
           <v-icon
@@ -210,73 +54,85 @@ const refreshData = async () => {
           </v-tooltip>
         </v-btn>
 
-        <p class="primary-gray-500 gtext-t6 font-weight-bold">
-          {{ totalCount }}
-        </p>
-        <p class="gray--text gtext-t6 font-weight-semibold">
+        <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold">
+          <span class="text-grey500 font-weight-bold mr-1">
+            {{ totalCount }}
+          </span>
           Blogs
-        </p>
+        </span>
       </div>
     </div>
-    <div class="scrollable-table">
+
+    <div class="w-100 mt-4">
       <v-data-table
-        v-model="selected"
         :headers="headers"
         :items="list"
-        :items-per-page="selectedPageSize"
-        class="elevation-1"
-        :loading="tableLoading"
+        :items-per-page="pageSize"
+        class="elevation-1 set-height-table"
+        :loading="loading"
+        fixed-header
         hide-default-footer
       >
+        <template #headers="{ columns }">
+          <tr>
+            <th
+              v-for="(column, index) in columns"
+              :key="index"
+              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
+               ${index == 0 ? `` : `th-min-width`}`"
+            >
+              {{ column.title }}
+            </th>
+          </tr>
+        </template>
+
+        <template #[`item.id`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold">
+            {{ item.id }}
+          </div>
+        </template>
+
         <template #[`item.title`]="{ item }">
-          <div class="d-flex align-center">
-            <span class="truncate-text">{{ item.title }}</span>
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center truncate-text">
+            {{ item.title }}
           </div>
         </template>
 
         <template #[`item.creationUser`]="{ item }">
-          <div class="d-flex align-center">
-            <span class="truncate-text">{{ item.creationUser }}</span>
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
+            {{ item.creationUser || 'unknown' }}
           </div>
         </template>
 
-        <template #[`header.actions`]>
-          <div class="d-flex justify-end pr-6">
-            Actions
+        <template #[`item.creationDate`]="{ item }">
+          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
+            {{ $dayjs(item.creationDate).format('DD/MM/YYYY HH:mm:ss') }}
           </div>
         </template>
 
-        <template #[`item.confirmed`]="{ item }">
-          <span
-            v-if="item.status == 'Confirmed'"
-            class="gtext-t5 green-12b76a"
-          >Confirmed</span>
-          <span
-            v-if="item.status == 'Review'"
-            class="gtext-t5 pending-status"
-          >Pending</span>
-          <span
-            v-if="item.status == 'Deleted'"
-            class="gtext-t5 red-F04438"
-          >Deleted</span>
-          <span
-            v-if="item.status == 'Rejected'"
-            class="gtext-t5 red-F04438"
-          >Rejected</span>
+        <template #[`item.status`]="{ item }">
+          <div class="w-100 d-flex justify-center align-center">
+            <v-chip
+              :color="getStatusColor(item.status)"
+              class="font-weight-bold text-h5"
+            >
+              {{ getStatusTitle(item.status) }}
+            </v-chip>
+          </div>
         </template>
 
-        <template #[`item.actions`]="{ item }">
-          <div class="d-flex justify-end pr-2">
+        <template #[`item.Action`]="{ item }">
+          <div class="d-flex justify-center align-center">
             <v-btn
-              variant="plain"
-              class="px-0 min-width-10"
+              icon
+              flat
+              @click="openDetailModal(item)"
             >
               <v-icon
-                small
-                class="mr-2 gtext-t1"
-                @click="viewBlogDetails(item.id)"
+                size="20"
+                color="grey800"
               >
-                mdi-file-find
+                md:plagiarism
               </v-icon>
               <v-tooltip
                 activator="parent"
@@ -285,16 +141,18 @@ const refreshData = async () => {
                 Details
               </v-tooltip>
             </v-btn>
+
             <v-btn
-              variant="plain"
-              class="px-0 min-width-10"
+              icon
+              flat
+              :href="`/posts/${item.postId}`"
+              target="_blank"
             >
               <v-icon
-                small
-                class="mr-2 gtext-t1"
-                @click="goToBlog(item.postId)"
+                size="20"
+                color="grey800"
               >
-                mdi-arrow-right-circle
+                md:arrow_circle_right
               </v-icon>
               <v-tooltip
                 activator="parent"
@@ -303,16 +161,17 @@ const refreshData = async () => {
                 Blog Page
               </v-tooltip>
             </v-btn>
-            <v-btn
-              variant="plain"
-              class="px-0 min-width-10"
+
+            <!-- <v-btn
+              icon
+              flat
+              @click="openDeleteModal(item)"
             >
               <v-icon
-                small
-                class="gtext-t1"
-                @click="handleDelete(item.postId)"
+                size="20"
+                color="grey800"
               >
-                mdi-delete
+                md:delete
               </v-icon>
               <v-tooltip
                 activator="parent"
@@ -320,201 +179,250 @@ const refreshData = async () => {
               >
                 Delete
               </v-tooltip>
-            </v-btn>
+            </v-btn> -->
           </div>
         </template>
       </v-data-table>
-
-      <blogCard
-        v-model="dialogVisible"
-        :selected-blog="selectedBlog"
-        @fetch-blogs="fetchBlogs"
-      />
-      <admin-common-delete-modal
-        v-model="isDeleteModalOpen"
-        @confirm="deleteBlog"
-      />
     </div>
 
-    <v-row
-      class="mt-2"
-      align="center"
-      justify="space-between"
-      no-gutters
-    >
-      <v-col
-        cols="12"
-        class="d-flex align-center position-relative"
-      >
-        <div class="d-none d-sm-flex pagination-center">
-          <v-pagination
-            v-model="page"
-            :length="pageCount"
-            :total-visible="5"
-            class="custom-pagination"
-            next-icon="mdi-arrow-right"
-            prev-icon="mdi-arrow-left"
-          />
-        </div>
-
-        <div class="ml-auto">
-          <v-select
-            v-model="selectedPageSize"
-            :items="allPageSize"
-            item-title="label"
-            item-value="value"
-            variant="outlined"
-            density="compact"
-            rounded
-            hide-details
-            class="rounded-pill footerBtns"
-          />
-        </div>
-      </v-col>
-
-      <!-- Pagination (visible only on xs) -->
-      <v-col
-        cols="12"
-        class="d-flex justify-center d-sm-none mt-2"
-      >
+    <div class="w-100 d-flex mt-2 position-relative ga-6">
+      <div class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4">
         <v-pagination
           v-model="page"
           :length="pageCount"
-          :total-visible="5"
+          :total-visible="4"
+          next-icon="md:arrow_forward"
+          prev-icon="md:arrow_back"
+          size="40"
           class="custom-pagination"
-          next-icon="mdi-arrow-right"
-          prev-icon="mdi-arrow-left"
+          @update:model-value="changePageNumber"
         />
-      </v-col>
-    </v-row>
+      </div>
+
+      <div class="position-absolute right-0 select-size-div">
+        <v-select
+          v-model="pageSize"
+          :items="allPageSize"
+          item-title="label"
+          item-value="value"
+          variant="outlined"
+          density="compact"
+          rounded
+          hide-details
+          max-width="140"
+          class="rounded-pill"
+          @update:model-value="changePageSize"
+        />
+      </div>
+    </div>
+
+    <admin-common-modal
+      v-model:show-dialog="showSearchModal"
+      title="Search"
+    >
+      <admin-blogs-modal-search
+        :data="searchFilter"
+        :loading="loading"
+        @search="startSearch"
+      />
+    </admin-common-modal>
+
+    <admin-common-modal
+      v-if="showDetailModal"
+      v-model:show-dialog="showDetailModal"
+      title="Detail"
+      :max-width="850"
+    >
+      <admin-blogs-modal-detail
+        :contribution-id="selectedItemIdForDetail"
+        @change-status-successfull="changeStatusSuccessfull"
+      />
+    </admin-common-modal>
+
+    <admin-common-delete-modal
+      v-model="showDeleteModal"
+      :loading="loadingDeleteItem"
+      @confirm="deleteBlog"
+    />
   </div>
 </template>
 
+<script setup lang="ts">
+import type {
+  AdminBlogContributionDTO,
+  AdminBlogContributionStatus,
+  SearchFilterAdminBlogContribution,
+} from '@/types'
+
+definePageMeta({
+  layout: 'admin',
+  middleware: ['auth', 'admin'],
+})
+
+const { $dayjs } = useNuxtApp()
+const {
+  loadingGetData: loading,
+  data: list,
+  getData,
+  totalCount,
+  pageCount,
+  deleteItem,
+  loadingDeleteItem,
+} = useBlogAdmin()
+
+const headers = [
+  { title: 'ID', key: 'id', sortable: false, width: '8vw' },
+  { title: 'Title', key: 'title', sortable: false, width: '28vw' },
+  { title: 'Contributor', key: 'creationUser', sortable: false, width: '18vw' },
+  { title: 'Date', key: 'creationDate', sortable: false, width: '18vw' },
+  { title: 'Status', key: 'status', sortable: false, width: '12vw' },
+  { title: 'Action', key: 'Action', sortable: false, width: '16vw' },
+]
+
+const pageSize = ref(10)
+const page = ref(1)
+const allPageSize = [
+  { label: '10 Rows', value: 10 },
+  { label: '20 Rows', value: 20 },
+  { label: '50 Rows', value: 50 },
+]
+
+const searchFilter = reactive<SearchFilterAdminBlogContribution>({
+  startDate: '',
+  endDate: '',
+  email: '',
+  username: '',
+  status: 'Confirmed',
+})
+
+const showSearchModal = ref(false)
+const showDetailModal = ref(false)
+const showDeleteModal = ref(false)
+const selectedItemIdForDetail = ref('')
+const selectedPostIdForDelete = ref<number | null>(null)
+
+const fetchBlogs = async () => {
+  await getData({
+    page: page.value,
+    pageSize: pageSize.value,
+    ...searchFilter,
+  })
+}
+
+const changePageNumber = async () => {
+  await fetchBlogs()
+}
+
+const changePageSize = async () => {
+  page.value = 1
+  await fetchBlogs()
+}
+
+onMounted(async () => {
+  await fetchBlogs()
+})
+
+const startSearch = async (item: SearchFilterAdminBlogContribution) => {
+  searchFilter.startDate = item.startDate
+  searchFilter.endDate = item.endDate
+  searchFilter.email = item.email
+  searchFilter.username = item.username
+  searchFilter.status = item.status
+  page.value = 1
+  showSearchModal.value = false
+  await fetchBlogs()
+}
+
+const isShowClearFilter = computed(() => {
+  return searchFilter.startDate.length > 0
+    || searchFilter.endDate.length > 0
+    || searchFilter.email.length > 0
+    || searchFilter.username.length > 0
+    || searchFilter.status.length > 0
+})
+
+const clearFilter = async () => {
+  searchFilter.startDate = ''
+  searchFilter.endDate = ''
+  searchFilter.email = ''
+  searchFilter.username = ''
+  searchFilter.status = 'Confirmed'
+  page.value = 1
+  await fetchBlogs()
+}
+
+const openDetailModal = (item: AdminBlogContributionDTO) => {
+  selectedItemIdForDetail.value = item.id.toString()
+  showDetailModal.value = true
+}
+
+// const openDeleteModal = (item: AdminBlogContributionDTO) => {
+//   selectedPostIdForDelete.value = item.postId
+//   showDeleteModal.value = true
+// }
+
+const deleteBlog = async () => {
+  if (!selectedPostIdForDelete.value) return
+
+  const response = await deleteItem(selectedPostIdForDelete.value)
+  if (response.succeeded) {
+    showDeleteModal.value = false
+    selectedPostIdForDelete.value = null
+    await fetchBlogs()
+  }
+}
+
+const changeStatusSuccessfull = async () => {
+  selectedItemIdForDetail.value = ''
+  showDetailModal.value = false
+  page.value = 1
+  await fetchBlogs()
+}
+
+const refreshData = async () => {
+  await fetchBlogs()
+}
+
+const getStatusTitle = (status: AdminBlogContributionStatus) => {
+  if (status === 'Review') return 'Pending'
+
+  return status
+}
+
+const getStatusColor = (status: AdminBlogContributionStatus) => {
+  if (status === 'Confirmed') return 'success'
+  if (status === 'Draft') return 'info'
+  if (status === 'Review') return 'warning'
+
+  return 'error'
+}
+</script>
+
 <style scoped>
-.scrollable-table {
+.set-height-table {
   max-height: 70vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  position: relative;
 }
-
-:deep(.v-field__outline){
-    --v-field-border-width: 1px !important;
-    --v-field-border-opacity: 0.38 !important;
+.th-min-width {
+  min-width: 130px;
 }
-
-:deep(.v-data-table__th){
-    color: #344054 !important;
-    font-family: Inter, sans-serif !important;
-    font-size: 1.4rem !important;
-    line-height: 2.4rem !important;
-    font-weight: 500;
-    white-space: nowrap;
+.select-size-div {
+  top: 18px;
 }
-
-:deep(.v-table__wrapper > table > thead > tr){
-  background-color: #F2F4F7 !important;
-}
-
-.filterBtns{
-    display: flex;
-    padding: 4px;
-    background-color: #0000001A;
-    border-radius: 28px;
-    align-items: center;
-}
-
-.footerBtns{
-  width: 150px !important;
-  max-width: 150px !important;
-}
-
-.v-pagination > li > button {
-  margin: 0.1rem !important;
-}
-
-.custom-pagination {
-  width: 100% !important;
-  justify-content: center !important;
-}
-:deep(.custom-pagination li),:deep(.custom-pagination li button){
-  min-width: 36px !important;
-  width: 36px !important;
-  height: 36px !important;
-}
-:deep(.custom-pagination li button:hover){
-  background-color: #ffb300;
-  opacity: 0.7;
-}
-:deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: #ffb300 !important;
-}
-
-:deep(.v-data-table td) {
-  cursor: default !important;
-}
-
-.active-filter {
-  background-color: #FFB600 !important;
-  color: #101828 !important;
-}
-
-.inactive-filter {
-  color: #667085 !important;
-}
-
-:deep(.v-btn--variant-plain){
-  opacity: 1 !important;
-}
-
 .truncate-text {
-  max-width: 200px;
+  max-width: 320px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-:deep(.v-data-table thead) {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  background-color: #F2F4F7 !important;
+:deep(.custom-pagination li button:hover) {
+  background-color: rgb(var(--v-theme-primary));
+  opacity: 0.6;
 }
-
-:deep(.v-data-table thead th) {
-  background-color: #F2F4F7 !important;
+:deep(.custom-pagination .v-pagination__item--is-active button) {
+  background: rgb(var(--v-theme-primary)) !important;
 }
-
-.red-F04438{
-  color: #F04438;
-  border-radius: 4px;
-  padding: 4px 8px;
-  border: 1.5px solid #F04438;
-  font-weight: 600 !important;
-}
-.green-12b76a{
-  color: #12b76a;
-  border-radius: 4px;
-  padding: 4px 8px;
-  border: 1.5px solid #12b76a;
-  font-weight: 600 !important;
-}
-
-.pending-status{
-  color: #6c6c6c;
-  border-radius: 4px;
-  padding: 4px 8px;
-  border: 1.5px solid #6c6c6c;
-  font-weight: 600 !important;
-}
-
-.min-width-10{
-  min-width: 10px !important;
-  height: 20px !important;
-}
-.pagination-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
+  opacity: 0 !important;
 }
 </style>

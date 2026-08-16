@@ -31,7 +31,7 @@ const apiRequest = <T = unknown>(
   opts?: UseFetchOptions,
 ): Promise<T> => {
   const config = useRuntimeConfig()
-  const headers = authHeader(request, opts?.public)
+  const headers = authHeader(opts?.public)
 
   let baseURL = ''
   let cleanRequest = request
@@ -85,7 +85,6 @@ const apiRequest = <T = unknown>(
 }
 
 const authHeader = (
-  req: string | null = null,
   publicApi: boolean | null = false,
 ): AuthHeaders | undefined => {
   const auth = useAuth()
@@ -93,12 +92,7 @@ const authHeader = (
   if (!auth.isAuthenticated.value || publicApi) return
 
   if (import.meta.client) {
-    if (req?.includes('v2')) {
-      return { Authorization: `Bearer ${auth.getUserTokenV2()}` }
-    }
-    else {
-      return { Authorization: `Bearer ${auth.getUserToken()}` }
-    }
+    return { Authorization: `Bearer ${auth.getUserToken()}` }
   }
 }
 
@@ -112,7 +106,7 @@ const get = <T = unknown>(
 
 const post = <T = unknown>(
   request: string,
-  params?: SearchParameters | FormData,
+  params?: SearchParameters | FormData | Record<string, unknown>,
   opts?: UseFetchOptions,
 ): Promise<T> => {
   return apiRequest<T>(request, { ...opts, method: 'POST', body: params })
@@ -120,7 +114,7 @@ const post = <T = unknown>(
 
 const put = <T = unknown>(
   request: string,
-  params: SearchParameters | FormData,
+  params: SearchParameters | FormData | Record<string, unknown>,
   opts?: UseFetchOptions,
 ): Promise<T> => {
   return apiRequest<T>(request, { ...opts, method: 'PUT', body: params })

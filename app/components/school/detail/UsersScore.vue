@@ -39,7 +39,7 @@
             Average score &nbsp;<span
               class="primary-gray-900 gtext-t4 font-weight-medium"
             >
-              {{ averageRate ? averageRate.toFixed(1) : "New" }} </span><span>&nbsp;/&nbsp;5</span>
+              {{ averageRate ? averageRate.toFixed(1) : "New" }} </span><span v-show="averageRate">&nbsp;/&nbsp;5</span>
           </div>
         </div>
       </div>

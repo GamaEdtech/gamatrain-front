@@ -1,293 +1,177 @@
 <template>
-  <div class="test-details-content">
-    <common-category />
+  <v-container
+    v-if="contentData"
+    class="d-flex flex-column mt-16"
+  >
+    <lazy-widgets-breadcrumb
+      background-color="white"
+      :breads="breads"
+    />
+    <div
+      class="w-100 d-flex align-center ga-1"
+    >
+      <v-icon color="primary">
+        md:chevron_backward
+      </v-icon>
+      <h1 class="text-h4 font-weight-bold">
+        {{ contentData.title }}
+      </h1>
+      <v-icon color="primary">
+        md:chevron_forward
+      </v-icon>
+    </div>
+    <div class="w-100 d-flex align-start justify-center justify-md-space-between mt-6 flex-wrap mb-4">
+      <div class="w-100 w-md-33 d-flex justify-center">
+        <lazy-exam-detail-preview-card
+          :id="contentData.id"
+          :title="contentData.title"
+          :views="contentData.views"
+          :thumb-pic="contentData.thumb_pic_url"
+          :question-number="contentData.tests_num"
+          :level="contentData.level"
+          @share="openShare = true"
+        />
+      </div>
 
-    <section>
-      <v-container class="py-0">
-        <div class="mt-0 py-0 header-path">
-          <v-skeleton-loader
-            v-if="pending"
-            class="mx-auto"
-            height="60"
-          />
-          <widgets-breadcrumb
-            v-else
-            :breads="breads"
-          />
-        </div>
-      </v-container>
-    </section>
+      <div class="w-100 w-md-66 d-flex align-start flex-wrap mt-4 mt-md-0">
+        <lazy-exam-detail-content :content-data="contentData" />
 
-    <section>
-      <v-container class="py-0">
-        <div
-          v-if="pending"
-          class="detail mt-md-8"
-        >
-          <v-row>
-            <v-col
-              cols="12"
-              md="3"
-            >
-              <v-skeleton-loader
-                class="mx-auto"
-                height="300"
-              />
-            </v-col>
+        <lazy-exam-detail-download-button
+          :id="contentData.id"
+          :files="contentData.price"
+          :title="contentData.title"
+          :title-url="contentData.title_url"
+          :exam-user-data="contentData.examUserData"
+        />
+      </div>
+    </div>
 
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <v-skeleton-loader
-                class="mx-auto"
-                height="300"
-              />
-            </v-col>
-
-            <v-col md="3">
-              <v-skeleton-loader
-                class="mx-auto"
-                type="list-item-avatar"
-              />
-
-              <v-skeleton-loader
-                class="mx-auto mt-2"
-                type="list-item-three-line"
-                repeat="4"
-              />
-
-              <v-skeleton-loader
-                class="mx-auto mt-4"
-                type="button"
-              />
-            </v-col>
-          </v-row>
-        </div>
-
-        <div
-          v-else
-          class="detail mt-md-8"
-        >
-          <v-row>
-            <v-col
-              cols="12"
-              md="3"
-            >
-              <details-preview-gallery
-                :image-urls="galleryImages"
-                :help-link-data="galleryHelpData"
-                :initial-slide="1"
-              />
-            </v-col>
-            <v-col
-              cols="12"
-              md="6"
-            >
-              <exam-detail-description-section
-                :content-data="contentData"
-                :is-logged-in="auth.isAuthenticated.value"
-                :credit="user?.user.value?.credit || 0"
-                @login="openAuthDialog('login')"
-                @register="openAuthDialog('register')"
-              />
-            </v-col>
-
-            <v-col md="3">
-              <exam-detail-sidebar-details
-                :content-data="contentData"
-                :is-logged-in="auth.isAuthenticated.value"
-                :credit="user?.user.value?.credit || 0"
-                :download-loading="download_loading"
-                :is-downloading="isDownloading"
-                :download-progress="downloadProgress"
-                @download="startDownload"
-                @login="openAuthDialog('login')"
-                @copy-url="copyUrl"
-                @crash-report="openCrashReportDialog"
-              />
-            </v-col>
-          </v-row>
-        </div>
-      </v-container>
-    </section>
-
-    <exam-detail-mobile-order-section
-      v-if="!pending"
-      :exam-id="contentData.id"
-      :exam-prices="contentData.price"
-      :is-logged-in="auth.isAuthenticated.value"
-      :credit="user?.user.value?.credit || 0"
-      :user-exam-status="contentData.examUserData?.status || 0"
-      :download-loading="download_loading"
-      :is-downloading="isDownloading"
-      :download-progress="downloadProgress"
-      @download="startDownload"
-      @login="openAuthDialog('login')"
-      @register="openAuthDialog('register')"
+    <lazy-common-box-random-question
+      :lesson="contentData.lesson"
     />
 
-    <common-crash-report ref="crash_report" />
-
-    <ClientOnly>
-      <v-container
-        class="py-0"
-      >
-        <common-related-portrait-content
-          page-type="paper"
-          page-name="Past Papers"
-          source="exam"
-          request="test"
-        />
-      </v-container>
-    </ClientOnly>
-
-    <v-row
-      justify="center"
-      class="mt-10"
+    <lazy-common-related-content
+      :id="contentData.id"
+      source="exam"
+      :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+    />
+    <span
+      class="d-flex align-center ga-1 text-h5 cursor-pointer text-lightError mt-4"
+      @click="openCrashReport = true"
     >
-      <v-col
-        cols="12"
-        md="8"
-        class="text-center"
-      >
-        <common-ad-banner
-          v-model="isAdsLoad"
-          adslot="7199289937"
-        />
-      </v-col>
-    </v-row>
-  </div>
+      <v-icon
+        color="lightError"
+        class="mb-1"
+      >md:warning_outlined</v-icon>
+      Crash report
+    </span>
+
+    <lazy-common-modal-base
+      v-model:show-dialog="openCrashReport"
+      title="Crash Report"
+    >
+      <lazy-common-modal-crash-report
+        :id="contentData.id"
+        type-crash-report="test"
+        @close="openCrashReport = false"
+      />
+    </lazy-common-modal-base>
+
+    <lazy-common-modal-base
+      v-model:show-dialog="openShare"
+      title="Share"
+    >
+      <lazy-common-modal-share :title="contentData.title" />
+    </lazy-common-modal-base>
+  </v-container>
 </template>
 
-<script setup>
-// Get api, router, and route
-const route = useRoute()
-const router = useRouter()
-const auth = useAuth()
-const user = useUser()
-const { $toast } = useNuxtApp()
-const requestURL = ref(useRequestURL().host)
-// Component data
-const contentData = ref({})
-const crash_report = ref(null)
-const copy_btn = ref('Copy')
-const download_loading = ref(false)
+<script setup lang="ts">
+import type { AppError } from '@/types'
 
-// Track download progress
-const downloadProgress = ref(0)
-const isDownloading = ref(false)
-
-const breads = reactive([])
-
-const galleryImages = ref([])
-const galleryHelpData = ref({
-  state: '',
-  section: '',
-  base: '',
-  course: '',
-  lesson: '',
-})
-
-const isAdsLoad = ref(false)
-
-// Fetch the exam data
-async function fetchExamData() {
-  try {
-    const { id } = route.params
-
-    const response = await useApiService.get(`/api/v1/exams/${id}`)
-
-    if (response.status === 1 && response.data) {
-      return response.data
-    }
-
-    showError({
-      statusCode: 404,
-      statusMessage: 'Page Not Founded!',
-    })
-    return {}
-  }
-  catch (err) {
-    console.error('API Error:', err)
-
-    showError({
-      statusCode: 404,
-      statusMessage: 'Page Not Founded!',
-    })
-  }
+interface BreadCrumb {
+  text: string
+  disabled: boolean
+  href: string
 }
 
-// Use asyncData to fetch data
-const { data, pending, _error } = await useAsyncData(
+const route = useRoute()
+const router = useRouter()
+const { getItemById } = useExam()
+
+const requestURL = ref(useRequestURL().host)
+const breads = ref<BreadCrumb[]>([])
+const openShare = ref(false)
+const openCrashReport = ref(false)
+
+const { data: contentData } = await useAsyncData(
   `exam-${route.params.id}`,
   async () => {
-    const data = await fetchExamData()
-    return data
+    try {
+      const response = await getItemById(route.params.id as string)
+
+      if (response.status == 1 && response.data) {
+        return response.data
+      }
+      else {
+        showError({
+          statusCode: 404,
+          statusMessage: 'Page Not Founded!',
+        })
+        return null
+      }
+    }
+    catch (e: unknown) {
+      showError({
+        statusCode: 404,
+        statusMessage: 'Page Not Founded!',
+      })
+      const error = e as AppError
+      if (error?.status === 404) {
+        router.push('/search?type=quizhub')
+      }
+      throw error
+    }
   },
 )
 
-watchEffect(async () => {
-  if (data.value) {
-    contentData.value = data.value
-    await initBreadCrumb()
-    await updateGalleryData()
-  }
-})
-
-// Method to initialize breadcrumbs
-async function initBreadCrumb() {
+const initBreadCrumb = () => {
   if (!contentData.value) return
-
-  breads.push({
-    text: 'Online exam',
+  breads.value = []
+  breads.value.push({
+    text: 'Exam',
     disabled: false,
     href: '/search?type=quizhub',
   })
-
-  if (contentData.value.section_title) {
-    breads.push({
+  breads.value.push(
+    {
       text: contentData.value.section_title,
       disabled: false,
       href: `/search?type=quizhub&section=${contentData.value.section}`,
-    })
-  }
-
-  if (contentData.value.base_title) {
-    breads.push({
+    },
+    {
       text: contentData.value.base_title,
       disabled: false,
       href: `/search?type=quizhub&section=${contentData.value.section}&base=${contentData.value.base}`,
-    })
-  }
-
-  if (contentData.value.lesson_title) {
-    breads.push({
+    },
+    {
       text: contentData.value.lesson_title,
       disabled: false,
       href: `/search?type=quizhub&section=${contentData.value.section}&base=${contentData.value.base}&lesson=${contentData.value.lesson}`,
-    })
-  }
+    },
+  )
 }
 
-// Function to update gallery data
-function updateGalleryData() {
-  if (contentData.value?.thumb_pic_url) {
-    galleryImages.value = [contentData.value.thumb_pic_url]
-  }
-
-  galleryHelpData.value = {
-    state: contentData.value?.state || '',
-    section: contentData.value?.section || '',
-    base: contentData.value?.base || '',
-    course: contentData.value?.course || '',
-    lesson: contentData.value?.lesson || '',
-  }
+if (contentData.value) {
+  initBreadCrumb()
 }
-
-const ogImage = contentData.value?.thumb_pic_url
-  ? contentData.value?.thumb_pic_url
-  : null
+watch(
+  () => contentData.value,
+  () => {
+    initBreadCrumb()
+  },
+  { immediate: true },
+)
 
 useHead(() => ({
   title: contentData.value?.title || 'Exam Details',
@@ -310,17 +194,17 @@ useHead(() => ({
     {
       hid: 'description',
       name: 'description',
-      content: contentData.value?.description,
+      content: contentData.value?.title,
     },
     {
       hid: 'og:description',
       name: 'og:description',
-      content: contentData.value?.description,
+      content: contentData.value?.title,
     },
     {
       hid: 'og:image',
       property: 'og:image',
-      content: ogImage,
+      content: contentData.value?.thumb_pic_url ?? null,
     },
     {
       hid: 'twitter:card',
@@ -335,12 +219,12 @@ useHead(() => ({
     {
       hid: 'twitter:description',
       name: 'twitter:description',
-      content: contentData.value?.description,
+      content: contentData.value?.title,
     },
     {
       hid: 'twitter:image',
       name: 'twitter:image',
-      content: ogImage,
+      content: contentData.value?.thumb_pic_url ?? null,
     },
   ],
   link: [
@@ -350,109 +234,7 @@ useHead(() => ({
     },
   ],
 }))
-
-// Methods
-const openAuthDialog = (val) => {
-  router.push({ query: { auth_form: val } })
-}
-
-const copyUrl = () => {
-  navigator.clipboard.writeText(window.location.href)
-  copy_btn.value = 'Copied'
-}
-
-const startDownload = async () => {
-  download_loading.value = true
-  isDownloading.value = true
-  downloadProgress.value = 0
-
-  try {
-    // Simulate progressive loading for API call
-    const progressInterval = setInterval(() => {
-      if (downloadProgress.value < 50) {
-        downloadProgress.value += Math.random() * 15
-      }
-    }, 100)
-
-    const response = await useApiService.get(
-      `/api/v1/exams/download/${route.params.id}`,
-    )
-
-    // Update progress to 60% after API response
-    downloadProgress.value = 60
-    clearInterval(progressInterval)
-
-    // Create a custom fetch with progress tracking
-    const xhr = new XMLHttpRequest()
-    xhr.open('GET', response.data.url, true)
-    xhr.responseType = 'blob'
-
-    xhr.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentComplete = 60 + (event.loaded / event.total) * 40
-        downloadProgress.value = Math.min(percentComplete, 100)
-      }
-    }
-
-    xhr.onload = () => {
-      if (xhr.status === 200) {
-        downloadProgress.value = 100
-
-        // Use file-saver to save the blob
-        import('file-saver').then(({ saveAs }) => {
-          saveAs(xhr.response, response.data.name)
-        })
-
-        // Clean up after a short delay
-        setTimeout(() => {
-          isDownloading.value = false
-          downloadProgress.value = 0
-        }, 1000)
-      }
-    }
-
-    xhr.onerror = () => {
-      isDownloading.value = false
-      downloadProgress.value = 0
-    }
-
-    xhr.send()
-  }
-  catch (err) {
-    // Clean up on error
-    isDownloading.value = false
-    downloadProgress.value = 0
-
-    if (err.response?.status == 400) {
-      if (
-        err.response.data.status == 0
-        && err.response.data.error == 'creditNotEnough'
-      ) {
-        $toast.info('No enough credit')
-      }
-    }
-  }
-  finally {
-    download_loading.value = false
-  }
-}
-
-const openCrashReportDialog = () => {
-  crash_report.value.dialog = true
-  crash_report.value.form.type = 'test'
-}
 </script>
 
-<script>
-// Component metadata
-export default {
-  name: 'ExamDetails',
-  auth: false,
-}
-</script>
-
-<style>
-p {
-  font-size: 1.3rem !important;
-}
+<style scoped>
 </style>

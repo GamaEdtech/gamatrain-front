@@ -35,7 +35,7 @@ export const useSchool = () => {
       longitude,
       radius,
       name,
-      hasScore,
+      hasRating,
       hasImage,
       tuitionStart,
       tuitionEnd,
@@ -85,8 +85,8 @@ export const useSchool = () => {
         query.Name = name
       }
 
-      if (hasScore !== undefined && hasScore !== null) {
-        query.HasScore = hasScore
+      if (hasRating !== undefined && hasRating !== null) {
+        query.HasRating = hasRating
       }
 
       if (hasImage !== undefined && hasImage !== null) {

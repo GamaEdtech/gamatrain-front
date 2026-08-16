@@ -28,4 +28,6 @@ export interface AdminAppSettingsDTO {
   startDeletingAccountEmailTemplate: string
   finishedDeletingAccountEmailTemplate: string
   adminTransactionCreationEmailTemplate: string
+  subscriptionCancelledEmailTemplate: string
+  subscriptionResumedEmailTemplate: string
 }

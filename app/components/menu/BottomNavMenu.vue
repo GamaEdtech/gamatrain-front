@@ -107,10 +107,16 @@
     @close="isSearchOptionOpen = false"
   />
 
-  <menu-add-option-bottom-menu
-    v-if="isAddOptionOpen"
-    @close="isAddOptionOpen = false"
-  />
+  <lazy-common-modal-base
+    v-model:show-dialog="isAddOptionOpen"
+    title="What would you like to publish?"
+    subtitle="Choose a type. We will prepare the right form for you."
+    :max-width="560"
+  >
+    <menu-add-option-bottom-menu
+      @close="isAddOptionOpen = false"
+    />
+  </lazy-common-modal-base>
 </template>
 
 <script setup lang="ts">

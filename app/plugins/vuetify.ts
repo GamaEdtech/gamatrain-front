@@ -11,6 +11,7 @@ import { defineNuxtPlugin } from 'nuxt/app'
 export default defineNuxtPlugin(
   (app: { vueApp: { use: (plugin: unknown) => void } }) => {
     const vuetify = createVuetify({
+      ssr: true,
       theme: {
         defaultTheme: 'light',
         themes: {
@@ -33,6 +34,7 @@ export default defineNuxtPlugin(
               grey100: '#f2f4f7',
               grey50: '#F9FAFB',
               grey25: '#FCFCFD',
+              primary100: '#fff4bc',
               primary50: '#FFF2D1',
               lightError: '#F04438',
               greenLight700: '#02B719',
@@ -66,6 +68,7 @@ export default defineNuxtPlugin(
               grey100: '#f2f4f7',
               grey50: '#F9FAFB',
               grey25: '#FCFCFD',
+              primary100: '#fff4bc',
               primary50: '#FFF2D1',
               lightError: '#F04438',
               greenLight700: '#02B719',

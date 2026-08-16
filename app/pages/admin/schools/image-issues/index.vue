@@ -96,7 +96,7 @@
 
         <template #[`item.creationDate`]="{ item }">
           <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm") }}
+            {{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm") }}
           </div>
         </template>
 
@@ -232,7 +232,7 @@ const {
   totalCount,
   pageCount,
 } = useSchoolImageIssueAdmin()
-const { $dayjs } = useNuxtApp()
+const { formatLocal } = useDateTime()
 
 const headers = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw' },

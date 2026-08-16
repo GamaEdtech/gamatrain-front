@@ -329,10 +329,10 @@
               <div class="date-holder">
                 <div>
                   <div class="gama-text-button d-block">
-                    {{ $dayjs(item.publishDate).format("DD") }}
+                    {{ formatLocal(item.publishDate, "DD") }}
                   </div>
                   <div class="gama-text-overline d-block">
-                    {{ $dayjs(item.publishDate).format("MMM") }}
+                    {{ formatLocal(item.publishDate, "MMM") }}
                   </div>
                 </div>
               </div>
@@ -350,7 +350,7 @@
                   class="top-sign"
                 />
                 <div class="gama-text-overline">
-                  {{ $dayjs(item.publishDate).format("YYYY") }}
+                  {{ formatLocal(item.publishDate, "YYYY") }}
                 </div>
                 <div class="bottom-sign" />
               </div>
@@ -432,13 +432,13 @@
 <script setup>
 import { ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import dayjs from 'dayjs'
 import { useDisplay } from 'vuetify'
 
 const route = useRoute()
 const router = useRouter()
 
 const { lgAndUp, mdAndUp, xs, sm } = useDisplay()
+const { local, formatLocal } = useDateTime()
 
 // SEO
 useHead({
@@ -574,7 +574,7 @@ const blogLoading = ref(loadingBlogsServer.value)
 
 const processBlogs = (list) => {
   for (let i = 0; i < list.length; i++) {
-    const year = dayjs(list[i].subdate).format('YYYY')
+    const year = local(list[i].subdate)?.format('YYYY') ?? ''
     if (printedYearArr.value.includes(year)) {
       list[i].yearDisplay = false
     }
@@ -618,7 +618,7 @@ const getBlogList = async () => {
 
     // Arrange data for show year
     for (let i = 0; i < data.list.length; i++) {
-      const year = dayjs(data.list[i].subdate).format('YYYY')
+      const year = local(data.list[i].subdate)?.format('YYYY') ?? ''
       if (printedYearArr.value.includes(year)) {
         data.list[i].yearDisplay = false
       }

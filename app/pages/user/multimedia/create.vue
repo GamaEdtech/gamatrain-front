@@ -193,7 +193,7 @@
           </div>
         </div>
 
-        <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6 rounded-lg pa-2">
+        <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6 rounded-lg pa-2">
           <span class="text-h5 text-grey700 font-weight-bold">Content cover</span>
           <span class="text-h6 text-grey600 font-weight-bold">
             What pages of the book does this content cover?
@@ -230,7 +230,7 @@
               class="w-100"
             />
           </div>
-        </div>
+        </div> -->
 
         <div class="w-100 d-flex align-center justify-start mt-4">
           <v-checkbox
@@ -329,8 +329,8 @@ const multimedia = ref<MultimediaForm>({
   title: '',
   description: '',
   content_type: '',
-  from_page: '',
-  to_page: '',
+  // from_page: '',
+  // to_page: '',
   free_available: false,
   file: '',
 })

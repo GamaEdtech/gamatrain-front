@@ -232,7 +232,7 @@
                     <v-icon class="ml-1 icon">
                       md:calendar_month
                     </v-icon>
-                    Last update: {{ $dayjs(contentData.up_date).fromNow() }}
+                    Last update: {{ fromNowLocal(contentData.up_date) }}
                   </v-col>
                   <v-col
                     cols="12"
@@ -593,6 +593,13 @@ export default {
   components: {
     // Remove unused components
   },
+  setup() {
+    const { fromNowLocal } = useDateTime()
+
+    return {
+      fromNowLocal,
+    }
+  },
   async asyncData({ params, $axios }) {
     // This could also be an action dispatch
     const content = await $axios.$get(`/api/v1/albums/${params.lesson}`)
@@ -873,7 +880,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .content_main_info {
   padding: 27px;
   background: #f5f5f5 !important;

@@ -49,7 +49,7 @@
       />
       <div
         v-else
-        class="value"
+        class="value container-body"
         v-html="contactData?.body"
       />
     </div>
@@ -87,7 +87,7 @@
             class="w-100 text-start text-h5 font-weight-bold text-grey900"
             v-html="item.body"
           />
-          <span class="w-100 text-end text-subtitle-2 font-weight-regular text-grey700">{{ $dayjs(item.creationDate).format("DD/MM/YYYY HH:mm") }}</span>
+          <span class="w-100 text-end text-subtitle-2 font-weight-regular text-grey700">{{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm") }}</span>
         </div>
       </template>
     </div>
@@ -123,7 +123,7 @@
         <common-rich-editor
           v-model="bodyReply"
           mode="custom"
-          :features="['bold', 'italic', 'list', 'link']"
+          :features="['bold', 'italic', 'list', 'link', 'image', 'mediaEmbed']"
           :rules="[required]"
         />
         <v-btn
@@ -184,10 +184,7 @@
 
 <script setup lang="ts">
 import type {
-  ApiResult,
-  AppError,
   AdminContactUsDetailDTO,
-  AdminReplyTicketListDTO,
 } from '@/types'
 
 interface IViewMessageDetailsModal {
@@ -196,21 +193,29 @@ interface IViewMessageDetailsModal {
 
 const props = defineProps<IViewMessageDetailsModal>()
 const emit = defineEmits(['replySuccessFull'])
-const { $dayjs, $toast } = useNuxtApp()
+const { $toast } = useNuxtApp()
+const { formatLocal } = useDateTime()
 const { required } = useValidationRules()
+const {
+  getItemById,
+  loadingGetItemById: loadingData,
+  getEmailAddresses,
+  loadingGetEmailAddresses: loadingEmailList,
+  emailAddresses: fromEmailList,
+  replyTicket,
+  loadingReplyTicket: loadingReply,
+  getReplyList: fetchReplyList,
+  loadingGetReplyList: loadingReplyList,
+  replyList,
+  generateAiResponse,
+} = useContactUsAdmin()
 
 const contactData = ref<AdminContactUsDetailDTO>()
-const loadingReply = ref(false)
-const loadingData = ref(true)
 
 const bodyReply = ref('')
-const selectedFromEmail = ref()
-const fromEmailList = ref<string[]>([])
-const loadingEmailList = ref(false)
+const selectedFromEmail = ref('')
 const loadingAiReply = ref(false)
 const loadingPolishReply = ref(false)
-const loadingReplyList = ref(true)
-const replyList = ref<AdminReplyTicketListDTO[]>([])
 
 const replyValid = computed(() => {
   if (bodyReply.value.length == 0 || selectedFromEmail.value == null || selectedFromEmail.value.length == 0) {
@@ -220,28 +225,13 @@ const replyValid = computed(() => {
 })
 
 const getDetail = async () => {
-  try {
-    loadingData.value = true
-    const response = await useApiService.get<
-      ApiResult<AdminContactUsDetailDTO>
-    >(
-      `/api/v2/admin/tickets/${props.id}`,
-    )
-    if (response.succeeded && response.data) {
-      contactData.value = response.data
-    }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loadingData.value = false
+  if (props.id == null)
+    return
+
+  const response = await getItemById(props.id)
+
+  if (response.succeeded && response.data) {
+    contactData.value = response.data
   }
 }
 
@@ -274,7 +264,7 @@ const buildAiReplyPrompt = () => {
         .map((item, index) => {
           return [
             `Reply ${index + 1}:`,
-            `Date: ${$dayjs(item.creationDate).format('DD/MM/YYYY HH:mm')}`,
+            `Date: ${formatLocal(item.creationDate, 'DD/MM/YYYY HH:mm')}`,
             `Body: ${stripHtml(item.body)}`,
           ].join('\n')
         })
@@ -315,30 +305,14 @@ const generateAiReply = async () => {
 
   try {
     loadingAiReply.value = true
-    const response = await useApiService.post<{
-      response?: string
-    }>(
-      '/api/chatgpt',
-      {
-        userComment: buildAiReplyPrompt(),
-      },
-    )
+    const response = await generateAiResponse({
+      userComment: buildAiReplyPrompt(),
+    })
 
     if (response.response) {
       bodyReply.value = response.response
       $toast.success('AI reply generated successfully!')
     }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    $toast.error(
-      error.response?.data?.message
-      || error.message
-      || 'The operation failed. Please try again later.',
-    )
   }
   finally {
     loadingAiReply.value = false
@@ -374,30 +348,14 @@ const polishReplyWithAi = async () => {
 
   try {
     loadingPolishReply.value = true
-    const response = await useApiService.post<{
-      response?: string
-    }>(
-      '/api/chatgpt',
-      {
-        userComment: buildPolishReplyPrompt(),
-      },
-    )
+    const response = await generateAiResponse({
+      userComment: buildPolishReplyPrompt(),
+    })
 
     if (response.response) {
       bodyReply.value = response.response
       $toast.success('Reply polished successfully!')
     }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    $toast.error(
-      error.response?.data?.message
-      || error.message
-      || 'The operation failed. Please try again later.',
-    )
   }
   finally {
     loadingPolishReply.value = false
@@ -406,33 +364,13 @@ const polishReplyWithAi = async () => {
 
 const reply = async () => {
   if (contactData.value) {
-    try {
-      loadingReply.value = true
-      const formData = new FormData()
-      formData.append('From', selectedFromEmail.value)
-      formData.append('Body', removeScriptTags(bodyReply.value))
-      const response = await useApiService.post<
-        ApiResult<unknown>
-      >(
-        `/api/v2/admin/tickets/${contactData.value.id}/replys`,
-        formData,
-      )
-      if (response.succeeded) {
-        $toast.success('Reply Message Send Successfully!')
-        emit('replySuccessFull')
-      }
-      else {
-        $toast.error('The operation failed. Please try again later.')
-      }
-    }
-    catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-    }
-    finally {
-      loadingReply.value = false
+    const response = await replyTicket(contactData.value.id, {
+      from: selectedFromEmail.value,
+      body: removeScriptTags(bodyReply.value),
+    })
+
+    if (response.succeeded) {
+      emit('replySuccessFull')
     }
   }
   else {
@@ -440,56 +378,11 @@ const reply = async () => {
   }
 }
 
-const getEmailAddresses = async () => {
-  try {
-    loadingEmailList.value = true
-    const response = await useApiService.get<
-      ApiResult<string[]>
-    >(
-      '/api/v2/admin/emails/addresses',
-    )
-    if (response.succeeded) {
-      fromEmailList.value = response.data ?? []
-    }
-    else {
-      $toast.error('The operation get data failed. Please try again later.')
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loadingEmailList.value = false
-  }
-}
-
 const getReplyList = async () => {
-  try {
-    loadingReplyList.value = true
-    const response = await useApiService.get<
-      ApiResult<AdminReplyTicketListDTO[]>
-    >(
-      `/api/v2/admin/tickets/${props.id}/replys`,
-    )
-    if (response.succeeded) {
-      replyList.value = response.data ?? []
-    }
-    else {
-      $toast.error('The operation get data failed. Please try again later.')
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loadingReplyList.value = false
-  }
+  if (props.id == null)
+    return
+
+  await fetchReplyList(props.id)
 }
 
 onMounted(async () => {
@@ -526,5 +419,11 @@ onMounted(async () => {
 .position-button-ai {
   right: 10px;
   bottom: 60px;
+}
+:deep(.container-body img){
+  width : 100% !important;
+  height : auto !important;
+  max-width : 600px !important;
+  max-height : 600px !important;
 }
 </style>

@@ -1,19 +1,20 @@
-export const useAuth = () => {
-  const cookieToken = useCookie<string | null>('authToken', {
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7, // 1 week
-  })
+import type { LoginInformationDTO, LoginResponseDTO, ApiResult, AppError, RegisterResponseDTO, ForgetPasswordResponseDTO } from '@/types'
 
-  // -------------------------
-  // Token v2
-  // -------------------------
-  const cookieTokenV2 = useCookie<string | null>('tokenV2', {
+const loadingLogin = ref(false)
+const loadingLoginByGoogle = ref(false)
+const loadingRegister = ref(false)
+const loadingForgetPassword = ref(false)
+
+export const useAuth = () => {
+  const { $toast } = useNuxtApp()
+  const cookieToken = useCookie<string | null>('authToken', {
     path: '/',
     maxAge: 60 * 60 * 24 * 7, // 1 week
   })
 
   const setUserToken = (newToken: string) => {
     cookieToken.value = newToken
+    localStorage.setItem('token', newToken)
   }
 
   const getUserToken = () => {
@@ -22,52 +23,22 @@ export const useAuth = () => {
 
   const clearAuth = () => {
     cookieToken.value = null
-    cookieTokenV2.value = null
-  }
-
-  // -------------------------
-  // Token v2 helpers
-  // -------------------------
-  const setUserTokenV2 = (newToken: string) => {
-    cookieTokenV2.value = newToken
-  }
-
-  const getUserTokenV2 = () => {
-    return cookieTokenV2?.value
-  }
-
-  const clearTokenV2 = () => {
-    cookieTokenV2.value = null
+    localStorage.removeItem('token')
   }
 
   const logout = async () => {
-    try {
-      // Call old backend logout
-      await useApiService.get('/api/v1/users/logout', {
-        headers: `Bearer ${cookieToken.value}`,
-      })
-    }
-    catch (error) {
-      console.warn('Old backend logout API call failed:', error)
-    }
-    try {
-      // Call new backend logout
-      await useApiService.get('/api/v2/identities/logout', {
-        headers: `Bearer ${cookieToken.value}`,
-      })
-    }
-    catch (error) {
-      console.warn('New backend logout API call failed:', error)
-    }
+    useApiService.get('/api/v2/legacy-auth/logout',
+    ).catch((error) => {
+      console.warn('Logout API call failed:', error)
+    })
+
     clearAuth()
 
-    // Clear user data from store
     const { cleanUser } = useUser()
     cleanUser()
 
     // Clear all local storage data
     if (import.meta.client) {
-      localStorage.removeItem('v2_token') // Remove v2 token specifically
       localStorage.clear()
       sessionStorage.clear()
     }
@@ -75,44 +46,143 @@ export const useAuth = () => {
     await navigateTo('/')
   }
 
-  const login = async (credentials: { identity: string, pass: string }) => {
-    const response: { token?: string, message?: string, success?: boolean }
-      = await useApiService.post('/api/v1/users/login', {
-        ...credentials,
-        type: 'request',
-      })
-    return response
+  const login = async (data: LoginInformationDTO) => {
+    try {
+      loadingLogin.value = true
+      const response = await useApiService.post<
+        ApiResult<LoginResponseDTO>
+      >(
+        '/api/v2/legacy-auth/login',
+        { ...data },
+      )
+      if (!response.succeeded) {
+        $toast.error('The operation failed. Please try again later.')
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: null,
+        errors: [],
+      }
+    }
+    finally {
+      loadingLogin.value = false
+    }
   }
 
-  const register = async (formData: { identity: string, pass: string }) => {
-    await useApiService.post('/api/v1/users/register', {
-      ...formData,
-      type: 'register',
-    })
+  const loginByGoogle = async (idToken: string) => {
+    try {
+      loadingLoginByGoogle.value = true
+      const response = await useApiService.post<
+        ApiResult<LoginResponseDTO>
+      >(
+        '/api/v2/legacy-auth/google',
+        { idToken },
+      )
+      if (!response.succeeded) {
+        $toast.error('The operation failed. Please try again later.')
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: null,
+      }
+    }
+    finally {
+      loadingLoginByGoogle.value = false
+    }
   }
 
-  const forgotPassword = async (passForm: { identity: string }) => {
-    const response = await useApiService.post('/api/v1/users/recovery', {
-      ...passForm,
-      type: 'request',
-    })
-    return response
+  const register = async (data: LoginInformationDTO) => {
+    try {
+      loadingRegister.value = true
+      const response = await useApiService.post<
+        ApiResult<RegisterResponseDTO>
+      >(
+        '/api/v2/legacy-auth/register',
+        { ...data },
+      )
+      if (!response.succeeded) {
+        $toast.error('The operation failed. Please try again later.')
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: null,
+      }
+    }
+    finally {
+      loadingRegister.value = false
+    }
   }
 
-  const isAuthenticated = computed(() => !!cookieToken.value && !!cookieTokenV2.value)
+  const forgetPassword = async (data: LoginInformationDTO) => {
+    try {
+      loadingForgetPassword.value = true
+      const response = await useApiService.post<
+        ApiResult<ForgetPasswordResponseDTO>
+      >(
+        '/api/v2/legacy-auth/recovery',
+        { ...data },
+      )
+      if (!response.succeeded) {
+        $toast.error('The operation failed. Please try again later.')
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: null,
+      }
+    }
+    finally {
+      loadingForgetPassword.value = false
+    }
+  }
+
+  const isAuthenticated = computed(() => !!cookieToken.value)
 
   return {
     cookieToken,
     setUserToken,
-    setUserTokenV2,
     clearAuth,
-    clearTokenV2,
     logout,
     login,
+    loadingLogin,
     register,
     isAuthenticated,
-    forgotPassword,
+    forgetPassword,
     getUserToken,
-    getUserTokenV2,
+    loginByGoogle,
+    loadingLoginByGoogle,
+    loadingForgetPassword,
+    loadingRegister,
   }
 }

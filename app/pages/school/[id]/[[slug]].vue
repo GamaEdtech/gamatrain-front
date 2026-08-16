@@ -111,7 +111,7 @@
                   <v-icon small>
                     mdi-update
                   </v-icon>
-                  {{ $dayjs(contentData.up_date).format("YY/MM/DD") }}
+                  {{ formatLocal(contentData.up_date, "YY/MM/DD") }}
                 </div>
               </div>
             </v-col>
@@ -288,6 +288,7 @@
 <script setup>
 const route = useRoute()
 const router = useRouter()
+const { formatLocal } = useDateTime()
 const tourPanoramas = ref([])
 const slideToggler = ref('map')
 const topSlideClass = reactive({

@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="dialogModel"
-    max-width="400"
+    :max-width="maxWidth"
     :fullscreen="!mdAndUp"
     @click="clickOnOverlay"
   >
@@ -47,6 +47,10 @@ const props = defineProps({
   showDialog: {
     type: Boolean,
     default: false,
+  },
+  maxWidth: {
+    type: Number,
+    default: 400,
   },
 })
 

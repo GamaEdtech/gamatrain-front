@@ -100,7 +100,7 @@
 
         <template #[`item.creationDate`]="{ item }">
           <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ $dayjs(item.creationDate).format('DD/MM/YYYY HH:mm:ss') }}
+            {{ formatLocal(item.creationDate, 'DD/MM/YYYY HH:mm:ss') }}
           </div>
         </template>
 
@@ -228,7 +228,7 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { $dayjs } = useNuxtApp()
+const { formatLocal } = useDateTime()
 const {
   loadingGetData: loading,
   data: list,

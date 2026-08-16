@@ -29,7 +29,7 @@
         md="4"
         class="d-flex justify-center justify-md-start"
       >
-        <lazy-common-detail-preview-action-card
+        <lazy-paper-preview-action-card
           :id="contentData.id"
           :thumb-pic="contentData.thumb_pic"
           :title="contentData.title"
@@ -54,7 +54,7 @@
           <span> Answers are available at the end of the files</span>
         </div>
 
-        <lazy-common-detail-download-and-purchase-buttons
+        <lazy-paper-download-and-purchase-buttons
           :id="contentData.id"
           :files="contentData.files"
           :year="contentData.edu_year"
@@ -65,14 +65,15 @@
           :lesson="contentData.lesson"
           :exams="contentData.exams"
           :test-type="contentData.test_type"
+          :is-paper="contentData.is_paper"
         />
         <lazy-common-detail-subject-directory-nav :content-data="contentData" />
       </v-col>
 
-      <lazy-common-detail-box-random-question :lesson="contentData.lesson" />
+      <lazy-common-box-random-question :lesson="contentData.lesson" />
 
       <v-col cols="12">
-        <lazy-common-detail-related-content
+        <lazy-common-related-content
           :id="contentData.id"
           source="test"
           :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
@@ -107,17 +108,24 @@
         </v-col>
       </ClientOnly>
     </v-row>
-    <lazy-common-crash-report-modal
-      v-if="openCrashReport"
-      :id="contentData.id"
+
+    <lazy-common-modal-base
       v-model:show-dialog="openCrashReport"
-      type-crash-report="test"
-    />
-    <lazy-common-share-modal
-      v-if="openShare"
+      title="Crash Report"
+    >
+      <lazy-common-modal-crash-report
+        :id="contentData.id"
+        type-crash-report="test"
+        @close="openCrashReport = false"
+      />
+    </lazy-common-modal-base>
+
+    <lazy-common-modal-base
       v-model:show-dialog="openShare"
-      :title="contentData.title"
-    />
+      title="Share"
+    >
+      <lazy-common-modal-share :title="contentData.title" />
+    </lazy-common-modal-base>
   </v-container>
 </template>
 
@@ -225,7 +233,7 @@ const setMetaData = () => {
   }
   else {
     pageTitle.value = baseTitle
-    pageDescribe.value = `Free download of ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
+    pageDescribe.value = `Download ${title} – ${base_title}, ${section_title} curriculum. Ideal for quick revision, practice, and exam prep.`
   }
 
   const ogImage = dto.thumb_pic
