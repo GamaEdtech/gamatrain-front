@@ -4,6 +4,8 @@ import type {
   PaymentSubscriptionResponseDTO,
   PayloadPaymentSubscriptionDTO,
   UserSubscriptionDTO,
+  SwitchSubscriptionPlanDTO,
+  SwitchSubscriptionPlanResponseDTO,
 } from '@/types'
 
 export const useSubscription = () => {
@@ -16,6 +18,7 @@ export const useSubscription = () => {
   const loadingGetUserSubscription = ref(false)
   const loadingCancelSubscription = ref(false)
   const loadingResumeSubscription = ref(false)
+  const loadingSwitchSubscriptionPlan = ref(false)
 
   const getData = async () => {
     loadingGetData.value = true
@@ -140,5 +143,37 @@ export const useSubscription = () => {
     }
   }
 
-  return { loadingGetData, data, getData, startPaymentSubscription, loadingStartPaymentSubscription, userSubscription, loadingGetUserSubscription, getUserSubscription, resumeSubscription, loadingResumeSubscription, loadingCancelSubscription, cancelSubscription }
+  // Switches the caller's own Active (Stripe-recurring) subscription to a different plan/interval. Kept for
+  // a dedicated "manage my subscription" screen; startPaymentSubscription (plans/{id}/purchase) now handles
+  // the same decision on its own for a generic "choose a plan" UI (gamatrain-back#577), so this isn't
+  // currently called from subscription/card.vue. An upgrade previews first (response.data.requiresConfirmation,
+  // .previewAmount) - resubmit with confirm:true to actually apply/charge it; a downgrade applies straight
+  // away, deferred to the current period's end (response.data.immediate === false).
+  const switchSubscriptionPlan = async (payload: SwitchSubscriptionPlanDTO) => {
+    loadingSwitchSubscriptionPlan.value = true
+    try {
+      const response = await useApiService.post<
+        ApiResult<SwitchSubscriptionPlanResponseDTO>
+      >(`/api/v2/subscriptions/me/switch`, payload)
+
+      // A preview response is `succeeded: true` at this top level with `data.success: false` +
+      // `data.requiresConfirmation: true` - not a real failure, so only a non-succeeded response (an actual
+      // rejection, e.g. SamePlanSwitchNotAllowed) is worth toasting here.
+      if (!response.succeeded) {
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<SwitchSubscriptionPlanResponseDTO>(err)
+    }
+    finally {
+      loadingSwitchSubscriptionPlan.value = false
+    }
+  }
+
+  return { loadingGetData, data, getData, startPaymentSubscription, loadingStartPaymentSubscription, userSubscription, loadingGetUserSubscription, getUserSubscription, resumeSubscription, loadingResumeSubscription, loadingCancelSubscription, cancelSubscription, switchSubscriptionPlan, loadingSwitchSubscriptionPlan }
 }
