@@ -94,9 +94,10 @@
 
 <style scoped>
 .plan-card {
-  width: 30%;
+  max-width : 260px;
+  min-width: 260px;
   height : fit-content;
-  min-height : 300px;
+  min-height : 380px;
 }
 .simple-card{
   border : 2px solid rgb(var(--v-theme-grey300));
@@ -120,6 +121,8 @@
  .plan-card {
    width : 100% !important;
    max-width : 220px;
+   min-width: 220px;
+   min-height : 360px;
  }
 }
 </style>

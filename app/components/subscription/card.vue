@@ -1,5 +1,5 @@
 <template>
-  <div :class="`d-flex flex-column align-center justify-start plan-card rounded-xl pa-3 pa-md-4 elevation-3 ${plan.highlight ? `hightlight-card`:`simple-card`} ${isDisabled ? `disabled-card`:``}`">
+  <div :class="`d-flex flex-column align-center justify-space-between plan-card rounded-xl pa-3 pa-md-4 elevation-3 ${plan.highlight ? `hightlight-card`:`simple-card`} ${isDisabled ? `disabled-card`:``}`">
     <div class="price-div w-100 d-flex flex-column aligh-start justify-start pa-3 pa-md-4 rounded-lg">
       <div class="d-flex align-center justify-space-between mb-2">
         <span class="text-h6 text-md-h4 font-weight-bold text-grey700">
@@ -79,11 +79,10 @@
     </ul>
 
     <v-btn
-      class="text-h6 text-md-h5 font-weight-bold mt-6 rounded-lg"
+      class="w-100 text-h6 text-md-h5 font-weight-bold mt-6 rounded-lg"
       :color="isDisabled ? `grey300` : `grey900`"
       variant="flat"
-      block
-      size="large"
+      height="44"
       :disabled="isDisabled"
       :loading="loadingStartPaymentSubscription"
       @click.stop="selectPlan"
@@ -330,9 +329,10 @@ const confirmUpgrade = () => purchaseOrSwitch(true)
 
 <style scoped>
 .plan-card {
-  width: 30%;
+  max-width : 260px;
+  min-width: 260px;
   height : fit-content;
-  min-height : 300px;
+  min-height : 380px;
   cursor: pointer;
   transition: all 0.5s;
 }
@@ -370,6 +370,8 @@ const confirmUpgrade = () => purchaseOrSwitch(true)
  .plan-card {
    width : 100% !important;
    max-width : 220px;
+   min-width: 220px;
+   min-height : 360px;
  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex flex-column pa-4 pa-sm-8 pt-2">
+  <div class="w-100 d-flex flex-column pt-2">
     <v-alert
       v-if="hasActiveSubscription && userSubscription?.planTitle"
       type="info"
@@ -44,26 +44,48 @@
       </div>
     </div>
 
-    <div class="w-100 d-flex flex-column flex-sm-row flex-wrap justify-center justify-sm-space-between align-center align-sm-end ga-4 ga-sm-2">
+    <div class="w-100 d-flex justify-center align-center">
       <template
         v-if="loading"
       >
-        <subscription-card-skeleton
-          v-for="item in skeletonCount"
-          :key="item"
-        />
+        <v-slide-group
+          :model-value="activeSkeletonIndex"
+          class="pa-4 d-flex"
+          show-arrows="always"
+          center-active
+        >
+          <v-slide-group-item
+            v-for="(item, index) in skeletonCount"
+            :key="item"
+            :value="index"
+          >
+            <subscription-card-skeleton class="mr-4 mb-1" />
+          </v-slide-group-item>
+        </v-slide-group>
       </template>
 
       <template v-else>
-        <subscription-card
-          v-for="plan in filteredPlans"
-          :key="plan.id"
-          :plan="plan"
-          :billing-interval="intervalSelect"
-          :is-current-plan="isCurrentPlan(plan.id)"
-          :has-active-subscription="hasActiveSubscription"
-          @switched="emit('dismiss')"
-        />
+        <v-slide-group
+          :model-value="activePlanIndex"
+          class="pa-4 d-flex"
+          show-arrows="always"
+          center-active
+        >
+          <v-slide-group-item
+            v-for="(plan, index) in filteredPlans"
+            :key="plan.id"
+            :value="index"
+          >
+            <subscription-card
+              :plan="plan"
+              :billing-interval="intervalSelect"
+              :is-current-plan="isCurrentPlan(plan.id)"
+              :has-active-subscription="hasActiveSubscription"
+              class="mr-4 mb-1"
+              @switched="emit('dismiss')"
+            />
+          </v-slide-group-item>
+        </v-slide-group>
       </template>
     </div>
 
@@ -112,6 +134,7 @@ const auth = useAuth()
 const { userSubscription, getUserSubscription } = useSubscription()
 
 const skeletonCount = 3
+const activeSkeletonIndex = computed(() => Math.floor(skeletonCount / 2))
 const intervalSelect = ref<BillingInterval>('Monthly')
 
 const filteredPlans = computed(() => {
@@ -119,6 +142,8 @@ const filteredPlans = computed(() => {
     return plan.prices.some(price => price.billingInterval === intervalSelect.value)
   })
 })
+
+const activePlanIndex = computed(() => Math.floor(filteredPlans.value.length / 2))
 
 // Best (highest) savings any currently-listed plan offers at each interval vs its own Monthly price -
 // shown as a "Save X%" pill on the interval toggle itself, same spot the Figma mockup had it (just with
@@ -180,5 +205,8 @@ onMounted(async () => {
   background: none;
   border: none;
   cursor: pointer;
+}
+:deep(.v-slide-group__content){
+  align-items: flex-end;
 }
 </style>

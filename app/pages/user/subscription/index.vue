@@ -517,9 +517,4 @@ onMounted(async () => {
 .card-feature-mobile {
   min-height: 190px;
 }
-/* Matches the max-width the same plan picker is shown at everywhere else (the Get Membership modal, e.g.
-   BalanceCard.vue's :max-width="900") - on this full-width page it would otherwise stretch edge to edge. */
-.choose-plan-section {
-  max-width: 900px;
-}
 </style>
