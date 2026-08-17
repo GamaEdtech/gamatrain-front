@@ -152,11 +152,26 @@ export interface SubscriptionPlanDTO {
 export interface PayloadPaymentSubscriptionDTO {
   gateway: PaymentGateway
   billingInterval: BillingInterval
+  // Purchase now delegates to a switch internally when the caller already has an Active subscription
+  // (gamatrain-back#577) - meaningless on a genuine first purchase. Defaults false server-side; only ever
+  // sent true on the resubmit after the user has confirmed a previewed upgrade charge.
+  confirm?: boolean
 }
 export interface PaymentSubscriptionResponseDTO {
   userSubscriptionId: number
+  // 0 whenever `switched` - an immediate switch bills via Stripe's own proration invoice, not a Payment row.
   paymentId: number
-  url: string
+  // Stripe Checkout redirect - set only for a genuine fresh purchase; null whenever `switched` or
+  // `requiresConfirmation`.
+  url: string | null
+  // True when this call changed an already-existing subscription instead of starting a new one.
+  switched: boolean
+  // True when nothing was applied yet and this response is only a preview - resend the identical request
+  // with `confirm: true` to actually apply it and charge `previewAmount`.
+  requiresConfirmation: boolean
+  /** Set only alongside requiresConfirmation - the exact amount a confirm:true resubmit will charge now. */
+  previewAmount: number | null
+  previewCurrency: SubscriptionCurrency | null
 }
 
 export type UserSubscriptionStatus = 'Pending' | 'Active' | 'Expired' | 'Cancelled'
@@ -307,4 +322,27 @@ export interface GetAdminSubscriptionUsageAggregateParams {
   userId?: number | string | null
   fromDate?: string | null
   toDate?: string | null
+// POST subscriptions/me/switch (gamatrain-back#575/#577). Kept for a dedicated "manage my subscription"
+// screen that already knows the caller has a plan; startPaymentSubscription (plans/{id}/purchase) now
+// handles the same buy/upgrade/downgrade decision on its own for any generic "choose a plan" UI, so this
+// isn't currently called from subscription/card.vue.
+}
+
+export interface SwitchSubscriptionPlanDTO {
+  subscriptionPlanId: number
+  // Omitted keeps the current interval; only a move to a bigger interval is supported (gamatrain-back#577).
+  billingInterval?: BillingInterval
+  // Defaults false; set true only on the resubmit after the user confirmed a previewed upgrade charge.
+  confirm?: boolean
+}
+
+export interface SwitchSubscriptionPlanResponseDTO {
+  success: boolean
+  /** true when the switch applied right away (upgrade, prorated invoice); false when it's deferred to
+   *  effectiveDate instead (downgrade). */
+  immediate: boolean
+  effectiveDate: string | null
+  requiresConfirmation: boolean
+  previewAmount: number | null
+  previewCurrency: SubscriptionCurrency | null
 }

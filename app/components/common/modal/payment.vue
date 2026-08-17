@@ -1,5 +1,17 @@
 <template>
   <div class="w-100 d-flex flex-column pa-4 pa-sm-8 pt-2">
+    <v-alert
+      v-if="hasActiveSubscription && userSubscription?.planTitle"
+      type="info"
+      color="primary"
+      density="compact"
+      variant="tonal"
+      class="mb-4"
+    >
+      You're currently on the <strong>{{ userSubscription.planTitle }}</strong> plan. Picking another plan
+      below switches you over - it won't start a separate subscription.
+    </v-alert>
+
     <div class="w-100 d-flex align-start justify-center justify-sm-start mb-4">
       <v-skeleton-loader
         v-if="loading"
@@ -49,6 +61,8 @@
           :plan="plan"
           :billing-interval="intervalSelect"
           :is-current-plan="isCurrentPlan(plan.id)"
+          :has-active-subscription="hasActiveSubscription"
+          @switched="emit('dismiss')"
         />
       </template>
     </div>
@@ -83,10 +97,12 @@ interface IPaymentModal {
   plans: (SubscriptionPlanDTO | UpgradeSuggestionsDTO)[]
   billingInterval: BillingInterval[]
   loading?: boolean
+  showLimitedAccessLink?: boolean
 }
 const props = withDefaults(defineProps<IPaymentModal>(),
   {
     loading: false,
+    showLimitedAccessLink: true,
   })
 
 const emit = defineEmits<{ dismiss: [] }>()
@@ -121,9 +137,20 @@ const bestDiscountByInterval = computed(() => {
   })) as Record<BillingInterval, number | null>
 })
 
+// Interval-aware on purpose: a same-plan move to a bigger billing interval is a real, allowed switch now
+// (gamatrain-back#577 - e.g. Monthly -> Yearly grants the bigger interval's own quota), not a no-op. Only
+// the exact plan+interval the user is already on should read as "Current Plan" and be unclickable; the
+// same plan at a different interval must stay a live card so that move is reachable.
 const isCurrentPlan = (planId: number) => {
-  return userSubscription.value?.status === 'Active' && userSubscription.value.subscriptionPlanId === planId
+  return userSubscription.value?.status === 'Active'
+    && userSubscription.value.subscriptionPlanId === planId
+    && userSubscription.value.billingInterval === intervalSelect.value
 }
+
+// Any plan card that isn't the current one is reached via subscriptions/me/switch rather than a fresh
+// purchase once the viewer already has one Active - a second purchase is now rejected server-side
+// (OperationResult.Duplicate, gamatrain-back#575).
+const hasActiveSubscription = computed(() => userSubscription.value?.status === 'Active')
 
 const changeFilterInterval = async (status: BillingInterval) => {
   intervalSelect.value = status
