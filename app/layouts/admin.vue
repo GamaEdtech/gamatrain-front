@@ -52,6 +52,11 @@ const menuItems = [
         link: '/admin/subscription/users',
         icon: 'md:manage_accounts_outlined',
       },
+      {
+        title: 'Subscription Usage',
+        link: '/admin/subscription/usage',
+        icon: 'md:query_stats',
+      },
     ],
   }, {
     Blog: [

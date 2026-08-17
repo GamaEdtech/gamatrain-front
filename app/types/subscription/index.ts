@@ -279,16 +279,19 @@ export interface AdminSubscriptionUsageDTO {
   creationDate: string
 }
 
-export interface GetAdminSubscriptionUsageParams {
+export interface SearchFilterAdminSubscriptionUsage {
+  userId: string
+  featureCode: string
+  identifierId: string
+  fromDate: string
+  toDate: string
+}
+
+export interface GetAdminSubscriptionUsageParams extends SearchFilterAdminSubscriptionUsage {
   page: number
   pageSize: number
   sortFilter?: AdminSubscriptionUsageSortFilter[]
   searchFilter?: AdminSubscriptionUsageSearchFilter[]
-  userId?: number | string | null
-  featureCode?: string | null
-  identifierId?: number | string | null
-  fromDate?: string | null
-  toDate?: string | null
 }
 
 export interface AdminSubscriptionUsageAggregateDTO {
