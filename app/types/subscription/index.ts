@@ -251,3 +251,57 @@ export interface GrantAdminUserSubscriptionResponseDTO {
 export interface ExtendAdminUserSubscriptionDTO {
   days: number
 }
+
+export type AdminSubscriptionUsageSortType = 'Asc' | 'Desc'
+
+export interface AdminSubscriptionUsageSortFilter {
+  sortType: AdminSubscriptionUsageSortType
+  column: string
+}
+
+export interface AdminSubscriptionUsageSearchFilter {
+  phrase: string
+  column: string
+}
+
+export interface AdminSubscriptionUsageDTO {
+  id: number
+  userId: number
+  userEmail: string
+  userSubscriptionId: number
+  subscriptionPlanId: number
+  planTitle: string
+  featureId: number
+  featureCode: string
+  featureName: string
+  amount: number
+  identifierId: number
+  creationDate: string
+}
+
+export interface GetAdminSubscriptionUsageParams {
+  page: number
+  pageSize: number
+  sortFilter?: AdminSubscriptionUsageSortFilter[]
+  searchFilter?: AdminSubscriptionUsageSearchFilter[]
+  userId?: number | string | null
+  featureCode?: string | null
+  identifierId?: number | string | null
+  fromDate?: string | null
+  toDate?: string | null
+}
+
+export interface AdminSubscriptionUsageAggregateDTO {
+  featureId: number
+  featureCode: string
+  featureName: string
+  totalAmount: number
+  eventCount: number
+  distinctUserCount: number
+}
+
+export interface GetAdminSubscriptionUsageAggregateParams {
+  userId?: number | string | null
+  fromDate?: string | null
+  toDate?: string | null
+}
