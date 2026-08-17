@@ -98,7 +98,6 @@ interface IGomboBox {
   hasMoreItems?: boolean
   height?: string | number
   titleModal?: string
-  findByTitle?: boolean
 }
 
 const props = withDefaults(defineProps<IGomboBox>(), {
@@ -121,7 +120,6 @@ const props = withDefaults(defineProps<IGomboBox>(), {
   loadingMore: false,
   hasMoreItems: true,
   titleModal: '',
-  findByTitle: false,
 })
 
 const emit = defineEmits(['update:modelValue', 'loadMore'])
@@ -138,11 +136,6 @@ const isSameValue = (firstValue: unknown, secondValue: unknown) => {
 const findSelectedItem = (value?: string | number) => {
   return props.items.find((item) => {
     const selectedValue = item[props.itemValue]
-    const selectedTitle = item[props.itemTitle]
-
-    if (props.findByTitle && isSameValue(selectedTitle, value)) {
-      return true
-    }
 
     return isSameValue(selectedValue, value)
   })
@@ -164,15 +157,6 @@ const syncSelectedItem = (value?: string | number) => {
   const foundObj = findSelectedItem(value)
   selectedItem.value = foundObj || null
   inputText.value = foundObj ? getItemText(foundObj, props.itemTitle) : ''
-
-  if (props.findByTitle && value && !foundObj) {
-    emit('update:modelValue', '')
-    return
-  }
-
-  if (props.findByTitle && foundObj && !isSameValue(foundObj.id, value)) {
-    emit('update:modelValue', String(foundObj.id))
-  }
 }
 
 watch(
