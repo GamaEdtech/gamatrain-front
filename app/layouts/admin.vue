@@ -66,6 +66,11 @@ const menuItems = [
         link: '/admin/subscription/usage',
         icon: 'md:query_stats',
       },
+      {
+        title: 'Commission ',
+        link: '/admin/commission',
+        icon: 'md:percent_outlined',
+      },
     ],
   },
   {
