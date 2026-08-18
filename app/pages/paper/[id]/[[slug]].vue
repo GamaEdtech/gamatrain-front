@@ -47,7 +47,12 @@
       >
         <lazy-paper-content-details-section :content-data="contentData" />
 
-        <lazy-paper-answer-availability-notice v-show="(contentData.answer_type == 1 || contentData.answer_type == 2) && !contentData.files.answer.exist" />
+        <lazy-paper-answer-availability-notice
+          v-if="
+            (contentData.answer_type === '1' || contentData.answer_type === '2')
+              && !contentData.files?.answer?.exist
+          "
+        />
 
         <lazy-paper-download-and-purchase-buttons
           :id="contentData.id"
