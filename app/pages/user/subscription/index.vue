@@ -14,6 +14,17 @@
         v-if="userSubscription && !loadingGetUserSubscription"
         class="d-flex align-center justify-end ga-3 flex-wrap"
       >
+        <v-btn
+          rounded="pill"
+          color="primary"
+          height="40"
+          flat
+          outlined
+          class="text-h5 font-weight-bold text-white"
+          @click="openChangePlanModal"
+        >
+          Change Plan
+        </v-btn>
         <v-chip
           v-if="renewalBadge"
           :color="renewalBadge.color"
@@ -244,6 +255,23 @@
         @confirm="confirmResumeSubscription"
       />
     </common-modal-base>
+
+    <common-modal-base
+      v-model:show-dialog="showChangePlanModal"
+      :max-width="900"
+      title="Get Membership. Unlock Premium Downloads."
+      subtitle="Join +50,000 Students"
+    >
+      <common-modal-payment
+        :plans="plansData?.plans || []"
+        :billing-interval="plansData?.availableBillingIntervals || []"
+        :loading="loadingGetPlansData"
+        :current-plan-id="userSubscription?.subscriptionPlanId"
+        :current-billing-interval="userSubscription?.billingInterval"
+        :current-plan-title="userSubscription?.planTitle"
+        @dismiss="showChangePlanModal = false"
+      />
+    </common-modal-base>
   </div>
 </template>
 
@@ -279,6 +307,7 @@ const {
 
 const showCancelModal = ref(false)
 const showResumeModal = ref(false)
+const showChangePlanModal = ref(false)
 
 const headers = [
   { title: 'Feature Group', key: 'description', sortable: false, width: '24vw' },
@@ -482,12 +511,14 @@ const confirmResumeSubscription = async () => {
   }
 }
 
+const openChangePlanModal = async () => {
+  showChangePlanModal.value = true
+  await getPlans()
+}
+
 onMounted(async () => {
   await getUserSubscription()
 
-  // subscriptions/me comes back with no data when the user has no active subscription (not an error -
-  // see the fix in useSubscription.api.ts) - only then is there anything to suggest, so only then fetch
-  // the plan list to fill the same card/payment component used elsewhere for choosing a plan.
   if (!userSubscription.value) {
     await getPlans()
   }

@@ -21,7 +21,7 @@
       />
       <div
         v-else
-        class="btn-filter-container d-flex align-center justify-center ga-1 bg-grey100 pa-1 rounded-pill"
+        class="btn-filter-container d-flex align-center justify-start ga-1 bg-grey100 pa-1 rounded-pill overflow-x-auto overflow-y-hidden "
       >
         <v-btn
           v-for="item in billingInterval"
@@ -50,10 +50,46 @@
       >
         <v-slide-group
           :model-value="activeSkeletonIndex"
-          class="pa-4 d-flex"
-          show-arrows="always"
+          class="payment-plan-slider pt-4 d-flex position-relative"
+          show-arrows
           center-active
         >
+          <template #prev>
+            <v-btn
+              aria-label="Previous plans"
+              icon
+              flat
+              size="30"
+              class="slider-arrow-button"
+              color="white"
+            >
+              <v-icon
+                size="24"
+                color="grey700"
+              >
+                md:chevron_left
+              </v-icon>
+            </v-btn>
+          </template>
+
+          <template #next>
+            <v-btn
+              aria-label="Next plans"
+              icon
+              flat
+              size="30"
+              class="slider-arrow-button"
+              color="white"
+            >
+              <v-icon
+                size="24"
+                color="grey700"
+              >
+                md:chevron_right
+              </v-icon>
+            </v-btn>
+          </template>
+
           <v-slide-group-item
             v-for="(item, index) in skeletonCount"
             :key="item"
@@ -67,10 +103,46 @@
       <template v-else>
         <v-slide-group
           :model-value="activePlanIndex"
-          class="pa-4 d-flex"
-          show-arrows="always"
+          class="payment-plan-slider pt-4 d-flex align-center position-relative"
+          show-arrows
           center-active
         >
+          <template #prev>
+            <v-btn
+              aria-label="Previous plans"
+              icon
+              flat
+              size="30"
+              class="slider-arrow-button"
+              color="white"
+            >
+              <v-icon
+                size="24"
+                color="grey700"
+              >
+                md:chevron_left
+              </v-icon>
+            </v-btn>
+          </template>
+
+          <template #next>
+            <v-btn
+              aria-label="Next plans"
+              icon
+              flat
+              size="30"
+              class="slider-arrow-button"
+              color="white"
+            >
+              <v-icon
+                size="24"
+                color="grey700"
+              >
+                md:chevron_right
+              </v-icon>
+            </v-btn>
+          </template>
+
           <v-slide-group-item
             v-for="(plan, index) in filteredPlans"
             :key="plan.id"
@@ -123,7 +195,7 @@ interface IPaymentModal {
   currentBillingInterval?: BillingInterval | null
   currentPlanTitle?: string | null
 }
-const props = withDefaults(defineProps<IPaymentModal>(),
+const propsData = withDefaults(defineProps<IPaymentModal>(),
   {
     loading: false,
     showLimitedAccessLink: true,
@@ -141,7 +213,7 @@ const activeSkeletonIndex = 1
 const intervalSelect = ref<BillingInterval>('Monthly')
 
 const filteredPlans = computed(() => {
-  return props.plans.filter((plan) => {
+  return propsData.plans.filter((plan) => {
     return plan.prices.some(price => price.billingInterval === intervalSelect.value)
   })
 })
@@ -149,8 +221,8 @@ const filteredPlans = computed(() => {
 const activePlanIndex = computed(() => Math.floor(filteredPlans.value.length / 2))
 
 const bestDiscountByInterval = computed(() => {
-  return Object.fromEntries(props.billingInterval.map((interval) => {
-    const discounts = props.plans
+  return Object.fromEntries(propsData.billingInterval.map((interval) => {
+    const discounts = propsData.plans
       .map((plan) => {
         const price = plan.prices.find(p => p.billingInterval === interval)
         const monthlyPrice = plan.prices.find(p => p.billingInterval === 'Monthly')?.price ?? null
@@ -166,7 +238,7 @@ const changeFilterInterval = async (status: BillingInterval) => {
   intervalSelect.value = status
 }
 
-watch(() => props.billingInterval, (intervals) => {
+watch(() => propsData.billingInterval, (intervals) => {
   if (intervals.length > 0 && !intervals.includes(intervalSelect.value)) {
     intervalSelect.value = intervals[0]!
   }
@@ -177,6 +249,10 @@ watch(() => props.billingInterval, (intervals) => {
 .btn-filter-container{
   height : 44px;
 }
+.btn-filter-container::-webkit-scrollbar {
+  height: 4px;
+}
+
 .limited-access-link {
   background: none;
   border: none;
@@ -184,5 +260,33 @@ watch(() => props.billingInterval, (intervals) => {
 }
 :deep(.v-slide-group__content){
   align-items: flex-end;
+}
+
+:deep(.payment-plan-slider > .v-slide-group__prev),
+:deep(.payment-plan-slider > .v-slide-group__next) {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  min-width: 30px;
+  transform: translateY(-50%);
+}
+
+:deep(.payment-plan-slider > .v-slide-group__prev) {
+  left: 0;
+}
+
+:deep(.payment-plan-slider > .v-slide-group__next) {
+  right: 0;
+}
+
+.slider-arrow-button {
+  border: 1px solid rgb(var(--v-theme-grey300));
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.12);
+}
+
+:deep(.v-slide-group__prev--disabled .slider-arrow-button),
+:deep(.v-slide-group__next--disabled .slider-arrow-button) {
+  opacity: 0.45;
+  box-shadow: none;
 }
 </style>

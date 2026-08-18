@@ -85,6 +85,7 @@
       height="44"
       :disabled="card.action.disabled"
       :loading="loadingStartPaymentSubscription"
+      @click="selectPlan"
     >
       {{ card.action.label }}
     </v-btn>
@@ -112,6 +113,7 @@ import type {
   // SubscriptionCurrency,
   SubscriptionPlanDTO,
   UpgradeSuggestionsDTO,
+  PaymentGateway,
 } from '@/types'
 
 interface ICard {
@@ -130,15 +132,13 @@ const props = withDefaults(defineProps<ICard>(), {
 
 // const emit = defineEmits<{ switched: [] }>()
 
-// const route = useRoute()
+const route = useRoute()
 // const { $toast } = useNuxtApp()
-// const { trackPayment } = useGtmEvents()
-// const { savePathRedirect } = usePayment()
+const { trackPayment } = useGtmEvents()
+const { savePathRedirect } = usePayment()
 const {
-  // startPaymentSubscription,
+  startPaymentSubscription,
   loadingStartPaymentSubscription,
-  // getUserSubscription,
-  // userSubscription,
 } = useSubscription()
 const {
   billingSuffix,
@@ -219,8 +219,34 @@ const card = computed(() => {
 
 //   await purchaseOrSwitch(false)
 // }
-
 // const confirmUpgrade = () => purchaseOrSwitch(true)
+
+const chooseNewPlan = async () => {
+  const payload = {
+    gateway: 'Stripe' as PaymentGateway,
+    billingInterval: props.billingInterval,
+    confirm: true,
+  }
+  const response = await startPaymentSubscription(payload, props.plan.id)
+  if (!response.succeeded || !response.data) return
+  if (response.data.url) {
+    savePathRedirect(route.fullPath)
+    window.location.href = response.data.url
+    return
+  }
+}
+
+const selectPlan = async () => {
+  if (card.value.action.disabled) return
+
+  trackPayment({
+    route: route.fullPath,
+  })
+
+  if (card.value.action.type == 'choose') {
+    await chooseNewPlan()
+  }
+}
 </script>
 
 <style scoped>
