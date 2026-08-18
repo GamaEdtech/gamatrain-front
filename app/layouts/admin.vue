@@ -48,6 +48,11 @@ const menuItems = [
         icon: 'md:payments_outlined',
       },
       {
+        title: 'User Subscriptions',
+        link: '/admin/subscription/users',
+        icon: 'md:manage_accounts_outlined',
+      },
+      {
         title: 'Commission ',
         link: '/admin/commission',
         icon: 'md:percent_outlined',
@@ -111,11 +116,6 @@ const menuItems = [
         title: 'Subscription',
         link: '/admin/subscription',
         icon: 'md:subscriptions_outlined',
-      },
-      {
-        title: 'User Subscriptions',
-        link: '/admin/subscription/users',
-        icon: 'md:manage_accounts_outlined',
       },
     ],
   },
