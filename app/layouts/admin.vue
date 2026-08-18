@@ -47,6 +47,11 @@ const menuItems = [
         link: '/admin/payments',
         icon: 'md:payments_outlined',
       },
+      {
+        title: 'Commission ',
+        link: '/admin/commission',
+        icon: 'md:percent_outlined',
+      },
     ],
   }, {
     Blog: [
