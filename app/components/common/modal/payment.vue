@@ -1,14 +1,14 @@
 <template>
   <div class="w-100 d-flex flex-column pt-2">
     <v-alert
-      v-if="hasActiveSubscription && userSubscription?.planTitle"
+      v-if="currentPlanId && currentPlanTitle"
       type="info"
       color="primary"
       density="compact"
       variant="tonal"
       class="mb-4"
     >
-      You're currently on the <strong>{{ userSubscription.planTitle }}</strong> plan. Picking another plan
+      You're currently on the <strong>{{ currentPlanTitle }}</strong> plan. Picking another plan
       below switches you over - it won't start a separate subscription.
     </v-alert>
 
@@ -79,8 +79,9 @@
             <subscription-card
               :plan="plan"
               :billing-interval="intervalSelect"
-              :is-current-plan="isCurrentPlan(plan.id)"
-              :has-active-subscription="hasActiveSubscription"
+              :current-plan-id="currentPlanId"
+              :current-billing-interval="currentBillingInterval"
+              :has-active-subscription="currentPlanId !== null"
               class="mr-4 mb-1"
               @switched="emit('dismiss')"
             />
@@ -118,21 +119,25 @@ interface IPaymentModal {
   billingInterval: BillingInterval[]
   loading?: boolean
   showLimitedAccessLink?: boolean
+  currentPlanId?: number | null
+  currentBillingInterval?: BillingInterval | null
+  currentPlanTitle?: string | null
 }
 const props = withDefaults(defineProps<IPaymentModal>(),
   {
     loading: false,
     showLimitedAccessLink: true,
+    currentPlanId: null,
+    currentBillingInterval: null,
+    currentPlanTitle: null,
   })
 
 const emit = defineEmits<{ dismiss: [] }>()
 
 const { discountPercent } = useBillingIntervalPricing()
-const auth = useAuth()
-const { userSubscription, getUserSubscription } = useSubscription()
 
 const skeletonCount = 3
-const activeSkeletonIndex = computed(() => Math.floor(skeletonCount / 2))
+const activeSkeletonIndex = 1
 const intervalSelect = ref<BillingInterval>('Monthly')
 
 const filteredPlans = computed(() => {
@@ -143,9 +148,6 @@ const filteredPlans = computed(() => {
 
 const activePlanIndex = computed(() => Math.floor(filteredPlans.value.length / 2))
 
-// Best (highest) savings any currently-listed plan offers at each interval vs its own Monthly price -
-// shown as a "Save X%" pill on the interval toggle itself, same spot the Figma mockup had it (just with
-// a real, computed number instead of a hardcoded string).
 const bestDiscountByInterval = computed(() => {
   return Object.fromEntries(props.billingInterval.map((interval) => {
     const discounts = props.plans
@@ -160,39 +162,15 @@ const bestDiscountByInterval = computed(() => {
   })) as Record<BillingInterval, number | null>
 })
 
-// Interval-aware on purpose: a same-plan move to a bigger billing interval is a real, allowed switch now
-// (gamatrain-back#577 - e.g. Monthly -> Yearly grants the bigger interval's own quota), not a no-op. Only
-// the exact plan+interval the user is already on should read as "Current Plan" and be unclickable; the
-// same plan at a different interval must stay a live card so that move is reachable.
-const isCurrentPlan = (planId: number) => {
-  return userSubscription.value?.status === 'Active'
-    && userSubscription.value.subscriptionPlanId === planId
-    && userSubscription.value.billingInterval === intervalSelect.value
-}
-
-// Any plan card that isn't the current one is reached via subscriptions/me/switch rather than a fresh
-// purchase once the viewer already has one Active - a second purchase is now rejected server-side
-// (OperationResult.Duplicate, gamatrain-back#575).
-const hasActiveSubscription = computed(() => userSubscription.value?.status === 'Active')
-
 const changeFilterInterval = async (status: BillingInterval) => {
   intervalSelect.value = status
 }
 
-// billingInterval arrives async (starts empty while the parent's fetch is in flight) and doesn't always
-// include Monthly - fall back to whatever's actually on offer instead of leaving every toggle button
-// unselected and filteredPlans empty.
 watch(() => props.billingInterval, (intervals) => {
   if (intervals.length > 0 && !intervals.includes(intervalSelect.value)) {
-    intervalSelect.value = intervals[0]
+    intervalSelect.value = intervals[0]!
   }
 }, { immediate: true })
-
-onMounted(async () => {
-  if (auth.isAuthenticated.value) {
-    await getUserSubscription()
-  }
-})
 </script>
 
 <style scoped>

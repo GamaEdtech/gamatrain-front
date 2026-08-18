@@ -6,7 +6,6 @@ import type {
   UpgradeSuggestionsDTO,
   UpgradeSuggestionsFeatureGroup,
   UpgradeSuggestionsPrice,
-  UserSubscriptionDTO,
 } from '@/types'
 
 type PlanPrice = ActiveSubscriptionPlanPriceDTO | UpgradeSuggestionsPrice
@@ -36,9 +35,9 @@ export interface SubscriptionPlanCardViewModel {
 interface BuildSubscriptionPlanCardParams {
   plan: SubscriptionPlanDTO | UpgradeSuggestionsDTO
   billingInterval: BillingInterval
-  userSubscription: UserSubscriptionDTO | null | undefined
-  isCurrentPlan: boolean
-  hasActiveSubscription: boolean
+  currentPlanId?: number | null
+  currentBillingInterval?: BillingInterval | null
+  hasActiveSubscription?: boolean
 }
 
 const billingSuffix: Record<BillingInterval, string> = {
@@ -57,6 +56,10 @@ const isUpgradeSuggestionsPlan = (
 
 const isUpgradeSuggestionsPrice = (price: PlanPrice): price is UpgradeSuggestionsPrice => {
   return 'featureGroups' in price
+}
+
+const isCurrentSuggestionPrice = (price: PlanPrice) => {
+  return isUpgradeSuggestionsPrice(price) && price.isCurrent
 }
 
 const resolveGroupLimit = (group: FeatureGroup, billingInterval: BillingInterval) => {
@@ -85,8 +88,8 @@ export const useSubscriptionPlanCard = () => {
   const buildSubscriptionPlanCard = ({
     plan,
     billingInterval,
-    userSubscription,
-    isCurrentPlan,
+    currentPlanId,
+    currentBillingInterval,
     hasActiveSubscription,
   }: BuildSubscriptionPlanCardParams): SubscriptionPlanCardViewModel => {
     const selectedPrice = plan.prices.find(price => price.billingInterval === billingInterval)
@@ -110,15 +113,19 @@ export const useSubscriptionPlanCard = () => {
     const limits = featureGroups
       .map(group => resolveGroupLimit(group, billingInterval))
       .filter((limit): limit is number => limit !== null)
+    const currentSuggestionPrice = plan.prices.find(isCurrentSuggestionPrice)
+    const resolvedCurrentPlanId = currentPlanId ?? (currentSuggestionPrice ? plan.id : null)
+    const resolvedCurrentBillingInterval = currentBillingInterval ?? currentSuggestionPrice?.billingInterval ?? null
     const suggestionCanUpgrade = selectedPrice && 'canUpgrade' in selectedPrice ? selectedPrice.canUpgrade : true
-    const suggestionIsCurrent = selectedPrice && 'isCurrent' in selectedPrice ? selectedPrice.isCurrent : false
-    const isSamePlanIntervalMove = userSubscription?.status === 'Active'
-      && userSubscription.subscriptionPlanId === plan.id
+    const suggestionIsCurrent = selectedPrice ? isCurrentSuggestionPrice(selectedPrice) : false
+    const fallbackIsCurrent = resolvedCurrentPlanId === plan.id && resolvedCurrentBillingInterval === billingInterval
+    const isCurrentPlan = suggestionIsCurrent || fallbackIsCurrent
+    const isSamePlanIntervalMove = resolvedCurrentPlanId === plan.id && !isCurrentPlan && !suggestionIsCurrent
     const isDisabled = isCurrentPlan || suggestionIsCurrent || !suggestionCanUpgrade
 
     let action: SubscriptionPlanCardViewModel['action']
 
-    if (isCurrentPlan || suggestionIsCurrent) {
+    if (isCurrentPlan) {
       action = { type: 'current', label: 'Current Plan', disabled: true }
     }
     else if (!suggestionCanUpgrade) {

@@ -117,11 +117,14 @@ import type {
 interface ICard {
   plan: SubscriptionPlanDTO | UpgradeSuggestionsDTO
   billingInterval: BillingInterval
-  isCurrentPlan: boolean
+  currentPlanId?: number | null
+  currentBillingInterval?: BillingInterval | null
   hasActiveSubscription?: boolean
 }
 
 const props = withDefaults(defineProps<ICard>(), {
+  currentPlanId: null,
+  currentBillingInterval: null,
   hasActiveSubscription: false,
 })
 
@@ -151,8 +154,8 @@ const card = computed(() => {
   return buildSubscriptionPlanCard({
     plan: props.plan,
     billingInterval: props.billingInterval,
-    userSubscription: null,
-    isCurrentPlan: props.isCurrentPlan,
+    currentPlanId: props.currentPlanId,
+    currentBillingInterval: props.currentBillingInterval,
     hasActiveSubscription: props.hasActiveSubscription,
   })
 })
