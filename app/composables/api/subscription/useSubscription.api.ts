@@ -74,14 +74,11 @@ export const useSubscription = () => {
         ApiResult<UserSubscriptionDTO>
       >(`/api/v2/subscriptions/me`)
 
-      // data is legitimately null on success when the user has no active subscription (not an error) -
-      // only a non-succeeded response is a real failure worth toasting.
       if (response.succeeded) {
         userSubscription.value = response.data ?? null
       }
       else {
         userSubscription.value = null
-        handleApiResponseError(response)
       }
 
       return response
@@ -154,11 +151,8 @@ export const useSubscription = () => {
     try {
       const response = await useApiService.post<
         ApiResult<SwitchSubscriptionPlanResponseDTO>
-      >(`/api/v2/subscriptions/me/switch`, payload)
+      >(`/api/v2/subscriptions/me/switch`, { ...payload })
 
-      // A preview response is `succeeded: true` at this top level with `data.success: false` +
-      // `data.requiresConfirmation: true` - not a real failure, so only a non-succeeded response (an actual
-      // rejection, e.g. SamePlanSwitchNotAllowed) is worth toasting here.
       if (!response.succeeded) {
         handleApiResponseError(response)
       }

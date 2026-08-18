@@ -114,8 +114,6 @@
 import type { BillingInterval, SubscriptionPlanDTO, UpgradeSuggestionsDTO } from '@/types'
 
 interface IPaymentModal {
-  // Fed either the "buy a plan" list (subscriptions/plans) or a download's upgrade suggestions - the two
-  // shapes differ (see subscription/card.vue), so this stays a union rather than picking one.
   plans: (SubscriptionPlanDTO | UpgradeSuggestionsDTO)[]
   billingInterval: BillingInterval[]
   loading?: boolean

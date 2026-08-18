@@ -133,8 +133,6 @@ export interface ResponseGetPlanDTO {
   availableBillingIntervals: BillingInterval[]
 }
 
-// Mirrors GET subscriptions/plans (ActiveSubscriptionPlanResponseViewModel) - no id/countryCode on its
-// prices, unlike the admin price list.
 export interface ActiveSubscriptionPlanPriceDTO {
   billingInterval: BillingInterval
   currency: SubscriptionCurrency
@@ -267,10 +265,8 @@ export interface ExtendAdminUserSubscriptionDTO {
   days: number
 }
 
-// POST subscriptions/me/switch (gamatrain-back#575/#577). Kept for a dedicated "manage my subscription"
 // screen that already knows the caller has a plan; startPaymentSubscription (plans/{id}/purchase) now
 // handles the same buy/upgrade/downgrade decision on its own for any generic "choose a plan" UI, so this
-// isn't currently called from subscription/card.vue.
 export interface SwitchSubscriptionPlanDTO {
   subscriptionPlanId: number
   // Omitted keeps the current interval; only a move to a bigger interval is supported (gamatrain-back#577).
