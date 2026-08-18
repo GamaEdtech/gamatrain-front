@@ -6,7 +6,7 @@
     ]"
     :elevation="plan.highlight ? 4 : 1"
     hover
-    :disabled="isCurrentPlan"
+    :disabled="isDisabled"
     @click="selectPlan"
   >
     <!-- Price panel -->
@@ -104,24 +104,43 @@
     <!-- Button -->
     <v-btn
       class="text-h6 text-md-h5 font-weight-bold"
-      :color="isCurrentPlan ? `grey300` : `grey900`"
+      :color="isDisabled ? `grey300` : `grey900`"
       variant="flat"
       block
       size="large"
-      :disabled="isCurrentPlan"
+      :disabled="isDisabled"
       :loading="loadingStartPaymentSubscription"
       @click.stop="selectPlan"
     >
       {{ ctaLabel }}
     </v-btn>
   </v-card>
+
+  <!-- Upgrade-charge confirmation - only reachable when purchase comes back as a preview
+       (requiresConfirmation: true, gamatrain-back#577): an immediate upgrade bills the card synchronously,
+       so it's never applied on the strength of a single click with no visible amount. A downgrade or a
+       first purchase never goes through this - both apply/redirect straight from the one click. -->
+  <common-modal-base
+    v-model:show-dialog="showConfirmUpgrade"
+    :title="isSamePlanIntervalMove ? `Switch to ${billingInterval} billing?` : `Switch to ${plan.title}?`"
+    :max-width="480"
+  >
+    <user-subscription-modals-confirm
+      :text="confirmUpgradeText"
+      confirm-color="primary"
+      :loading="loadingStartPaymentSubscription"
+      @back="showConfirmUpgrade = false"
+      @confirm="confirmUpgrade"
+    />
+  </common-modal-base>
 </template>
 
 <script setup lang="ts">
 import type {
   AdminSubscriptionPlanFeatureGroupDTO,
   BillingInterval,
-  PaymentGateway,
+  PayloadPaymentSubscriptionDTO,
+  SubscriptionCurrency,
   SubscriptionPlanDTO,
   UpgradeSuggestionsDTO,
   UpgradeSuggestionsFeatureGroup,
@@ -134,15 +153,33 @@ interface ICard {
   plan: SubscriptionPlanDTO | UpgradeSuggestionsDTO
   billingInterval: BillingInterval
   isCurrentPlan: boolean
+  // True when the viewer already has an Active subscription (to any plan, not just this one) - cosmetic
+  // only (button label): plans/{id}/purchase now decides buy vs. switch on its own either way
+  // (gamatrain-back#577), so every non-current card below always just calls startPaymentSubscription.
+  hasActiveSubscription?: boolean
 }
 
-const props = defineProps<ICard>()
+const props = withDefaults(defineProps<ICard>(), {
+  hasActiveSubscription: false,
+})
+
+const emit = defineEmits<{ switched: [] }>()
 
 const route = useRoute()
+const { $toast } = useNuxtApp()
 const { trackPayment } = useGtmEvents()
 const { savePathRedirect } = usePayment()
-const { startPaymentSubscription, loadingStartPaymentSubscription } = useSubscription()
+const {
+  startPaymentSubscription,
+  loadingStartPaymentSubscription,
+  getUserSubscription,
+  userSubscription,
+} = useSubscription()
 const { monthlyEquivalentPrice, discountPercent } = useBillingIntervalPricing()
+
+const showConfirmUpgrade = ref(false)
+const previewAmount = ref<number | null>(null)
+const previewCurrency = ref<SubscriptionCurrency | null>(null)
 
 const billingSuffix: Record<BillingInterval, string> = {
   Daily: 'per day',
@@ -207,10 +244,96 @@ const formatFeatureLine = (group: AdminSubscriptionPlanFeatureGroupDTO | Upgrade
   return limit === null ? `Unlimited ${group.description}` : `Use Gems for ${group.description}`
 }
 
-const ctaLabel = computed(() => props.isCurrentPlan ? 'Current Plan' : 'Choose Plan')
+// True when this card is the plan the viewer is already on, just at a different billing interval - e.g.
+// the Yearly card for a plan they're currently paying Monthly. isCurrentPlan (exact plan+interval) is
+// already false here, or the card would be disabled - but "the Alpha plan" reads oddly when Alpha is
+// exactly what they're on; "Yearly billing" is what's actually changing (gamatrain-back#577).
+const isSamePlanIntervalMove = computed(() => {
+  return userSubscription.value?.status === 'Active'
+    && userSubscription.value.subscriptionPlanId === props.plan.id
+})
+
+// Only an upgrade-suggestion price (a quota-exhausted "here's what fixes it" card) carries these -
+// SubscriptionPlanDTO's own prices (the general subscriptions/plans catalog) don't, since that endpoint
+// wasn't touched by gamatrain-back#580. Absent means there's nothing to grey out beyond isCurrentPlan.
+const suggestionCanUpgrade = computed(() => {
+  return selectedPrice.value && 'canUpgrade' in selectedPrice.value ? selectedPrice.value.canUpgrade : true
+})
+
+// Backend now flags the caller's own plan+interval directly on the suggestion (compared by id, immune to
+// a live admin limit change) - trust that over the client-side isCurrentPlan prop when it's present.
+const suggestionIsCurrent = computed(() => {
+  return selectedPrice.value && 'isCurrent' in selectedPrice.value ? selectedPrice.value.isCurrent : false
+})
+
+// Non-selectable either because it's the plan they're already on, or (in the upgrade-suggestion context
+// only) because canUpgrade:false - an equal/lower-quota lateral or downgrade doesn't fix the quota wall
+// that put this card in front of the user, so it's greyed out here even though the switch itself would be
+// mechanically allowed (gamatrain-back#580).
+const isDisabled = computed(() => props.isCurrentPlan || suggestionIsCurrent.value || !suggestionCanUpgrade.value)
+
+const ctaLabel = computed(() => {
+  if (props.isCurrentPlan || suggestionIsCurrent.value) return 'Current Plan'
+  if (!suggestionCanUpgrade.value) return 'Not an Upgrade'
+  if (isSamePlanIntervalMove.value) return `Switch to ${props.billingInterval}`
+  return props.hasActiveSubscription ? 'Switch Plan' : 'Choose Plan'
+})
+
+const switchTargetDescription = computed(() => {
+  return isSamePlanIntervalMove.value ? `${props.billingInterval} billing` : `the ${props.plan.title} plan`
+})
+
+// Only shown while showConfirmUpgrade is open (a real charge pending), so the target/amount below are
+// always what confirming will actually apply.
+const confirmUpgradeText = computed(() => {
+  if (previewAmount.value === null) return `You'll switch to ${switchTargetDescription.value}.`
+
+  return `You'll switch to ${switchTargetDescription.value} and be charged `
+    + `${previewCurrency.value ?? ''} ${formatPrice(previewAmount.value)} right now.`
+})
+
+// plans/{id}/purchase now makes the buy-vs-switch-vs-preview decision itself (gamatrain-back#577) - this
+// one call covers a first purchase, a downgrade (applied immediately, no charge), and an upgrade (which
+// comes back as a preview first; resubmitting with confirm: true is what actually applies/bills it).
+const purchaseOrSwitch = async (confirm: boolean) => {
+  const payload: PayloadPaymentSubscriptionDTO = {
+    gateway: 'Stripe',
+    billingInterval: props.billingInterval,
+    confirm,
+  }
+  const response = await startPaymentSubscription(payload, props.plan.id)
+  if (!response.succeeded || !response.data) return
+
+  const data = response.data
+
+  if (data.url) {
+    // Genuine first purchase - unchanged redirect-to-Checkout flow.
+    savePathRedirect(route.fullPath)
+    window.location.href = data.url
+    return
+  }
+
+  if (data.requiresConfirmation) {
+    previewAmount.value = data.previewAmount
+    previewCurrency.value = data.previewCurrency
+    showConfirmUpgrade.value = true
+    return
+  }
+
+  if (data.switched) {
+    showConfirmUpgrade.value = false
+    $toast.success(
+      confirm
+        ? `You're now on ${switchTargetDescription.value}.`
+        : `You'll switch to ${switchTargetDescription.value} at the end of your current billing period.`,
+    )
+    await getUserSubscription()
+    emit('switched')
+  }
+}
 
 const selectPlan = async () => {
-  if (props.isCurrentPlan) return
+  if (isDisabled.value) return
 
   trackPayment({
     route: route.fullPath,
@@ -218,16 +341,10 @@ const selectPlan = async () => {
 
   if (!selectedPrice.value) return
 
-  const payload = {
-    gateway: 'Stripe' as PaymentGateway,
-    billingInterval: props.billingInterval,
-  }
-  const response = await startPaymentSubscription(payload, props.plan.id)
-  if (response.succeeded && response.data && response.data.url) {
-    savePathRedirect(route.fullPath)
-    window.location.href = response.data.url
-  }
+  await purchaseOrSwitch(false)
 }
+
+const confirmUpgrade = () => purchaseOrSwitch(true)
 </script>
 
 <style scoped>

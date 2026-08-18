@@ -52,6 +52,11 @@ const menuItems = [
         link: '/admin/subscription/users',
         icon: 'md:manage_accounts_outlined',
       },
+      {
+        title: 'Commission ',
+        link: '/admin/commission',
+        icon: 'md:percent_outlined',
+      },
     ],
   }, {
     Blog: [
