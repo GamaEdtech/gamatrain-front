@@ -313,7 +313,7 @@ const isLoading = computed(() => {
 
 const usageQueryDates = computed(() => ({
   fromDate: searchFilter.fromDate ? dayjs(searchFilter.fromDate).toISOString() : '',
-  toDate: searchFilter.toDate ? dayjs(searchFilter.toDate).toISOString() : '',
+  toDate: searchFilter.toDate ? dayjs(searchFilter.toDate).endOf('day').toISOString() : '',
 }))
 
 const fetchUsageData = async () => {
