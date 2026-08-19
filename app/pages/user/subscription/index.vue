@@ -12,7 +12,7 @@
 
       <div
         v-if="userSubscription && !loadingGetUserSubscription"
-        class="d-flex align-center justify-end ga-3 flex-wrap"
+        class="d-flex align-center justify-start ga-3 flex-wrap"
       >
         <v-btn
           rounded="pill"
@@ -448,6 +448,16 @@ const statusConfig = computed(() => {
 const summaryItems = computed(() => {
   if (!userSubscription.value) return []
 
+  const pendingSwitchItem = userSubscription.value.pendingSwitchPlanId
+    ? {
+        title: 'Pending Switch',
+        value: userSubscription.value.pendingSwitchPlanTitle ?? `Plan #${userSubscription.value.pendingSwitchPlanId}`,
+        icon: 'md:move_up',
+        iconColor: 'warning',
+        colorClass: 'text-warning',
+      }
+    : null
+
   return [
     {
       title: 'Plan',
@@ -484,6 +494,7 @@ const summaryItems = computed(() => {
       iconColor: 'grey500',
       colorClass: 'text-grey700',
     },
+    ...(pendingSwitchItem ? [pendingSwitchItem] : []),
     {
       title: 'Expires',
       value: formatLocal(userSubscription.value.expirationDate, 'DD/MM/YYYY'),

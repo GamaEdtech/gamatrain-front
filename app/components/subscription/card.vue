@@ -194,7 +194,6 @@ const switchPlan = async () => {
     confirm: false,
   }
   const response = await switchSubscriptionPlan(payload)
-  console.log(response)
   if (response.succeeded && response.data) {
     previewAmount.value = response.data.previewAmount
     previewCurrency.value = response.data.previewCurrency
@@ -209,7 +208,6 @@ const confirmUpgrade = async () => {
     confirm: true,
   }
   const response = await switchSubscriptionPlan(payload)
-  console.log(response)
   if (response.succeeded && response.data) {
     showConfirmUpgradeModal.value = false
     $toast.success(

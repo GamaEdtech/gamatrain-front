@@ -187,6 +187,9 @@ export interface UserSubscriptionDTO {
   featureGroups: FeatureGroupUserSubscriptionDTO[]
   autoRenews: boolean
   cancelAtPeriodEnd: boolean
+  pendingSwitchPlanId: number | null
+  pendingSwitchPlanTitle: string | null
+  lastPaymentFailedDate: string
 }
 
 export interface FeatureGroupUserSubscriptionDTO {
