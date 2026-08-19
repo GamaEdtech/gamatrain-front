@@ -84,33 +84,32 @@
       variant="flat"
       height="44"
       :disabled="card.action.disabled"
-      :loading="loadingStartPaymentSubscription"
+      :loading="loadingStartPaymentSubscription || loadingSwitchSubscriptionPlan"
       @click="selectPlan"
     >
       {{ card.action.label }}
     </v-btn>
 
-    <!-- <common-modal-base
-      v-model:show-dialog="showConfirmUpgrade"
+    <common-modal-base
+      v-model:show-dialog="showConfirmUpgradeModal"
       :title="card.isSamePlanIntervalMove ? `Switch to ${billingInterval} billing?` : `Switch to ${card.title}?`"
       :max-width="480"
     >
       <user-subscription-modals-confirm
         :text="confirmUpgradeText"
         confirm-color="primary"
-        :loading="loadingStartPaymentSubscription"
-        @back="showConfirmUpgrade = false"
+        :loading="loadingStartPaymentSubscription || loadingSwitchSubscriptionPlan"
+        @back="showConfirmUpgradeModal = false"
         @confirm="confirmUpgrade"
       />
-    </common-modal-base> -->
+    </common-modal-base>
   </div>
 </template>
 
 <script setup lang="ts">
 import type {
   BillingInterval,
-  // PayloadPaymentSubscriptionDTO,
-  // SubscriptionCurrency,
+  SubscriptionCurrency,
   SubscriptionPlanDTO,
   UpgradeSuggestionsDTO,
   PaymentGateway,
@@ -130,15 +129,17 @@ const props = withDefaults(defineProps<ICard>(), {
   hasActiveSubscription: false,
 })
 
-// const emit = defineEmits<{ switched: [] }>()
+const emit = defineEmits(['switchSuccessfully'])
 
 const route = useRoute()
-// const { $toast } = useNuxtApp()
+const { $toast } = useNuxtApp()
 const { trackPayment } = useGtmEvents()
 const { savePathRedirect } = usePayment()
 const {
   startPaymentSubscription,
   loadingStartPaymentSubscription,
+  switchSubscriptionPlan,
+  loadingSwitchSubscriptionPlan,
 } = useSubscription()
 const {
   billingSuffix,
@@ -146,9 +147,9 @@ const {
   formatSubscriptionPlanCardPrice: formatPrice,
 } = useSubscriptionPlanCard()
 
-// const showConfirmUpgrade = ref(false)
-// const previewAmount = ref<number | null>(null)
-// const previewCurrency = ref<SubscriptionCurrency | null>(null)
+const showConfirmUpgradeModal = ref(false)
+const previewAmount = ref<number | null>(null)
+const previewCurrency = ref<SubscriptionCurrency | null>(null)
 
 const card = computed(() => {
   return buildSubscriptionPlanCard({
@@ -160,66 +161,16 @@ const card = computed(() => {
   })
 })
 
-// const switchTargetDescription = computed(() => {
-//   return card.value.isSamePlanIntervalMove ? `${props.billingInterval} billing` : `the ${card.value.title} plan`
-// })
+const switchTargetDescription = computed(() => {
+  return card.value.isSamePlanIntervalMove ? `${props.billingInterval} billing` : `the ${card.value.title} plan`
+})
 
-// const confirmUpgradeText = computed(() => {
-//   if (previewAmount.value === null) return `You'll switch to ${switchTargetDescription.value}.`
+const confirmUpgradeText = computed(() => {
+  if (previewAmount.value === null) return `You'll switch to ${switchTargetDescription.value}.`
 
-//   return `You'll switch to ${switchTargetDescription.value} and be charged `
-//     + `${previewCurrency.value ?? ''} ${formatPrice(previewAmount.value)} right now.`
-// })
-
-// const purchaseOrSwitch = async (confirm: boolean) => {
-//   const payload: PayloadPaymentSubscriptionDTO = {
-//     gateway: 'Stripe',
-//     billingInterval: props.billingInterval,
-//     confirm,
-//   }
-//   const response = await startPaymentSubscription(payload, props.plan.id)
-//   if (!response.succeeded || !response.data) return
-
-//   const data = response.data
-
-//   if (data.url) {
-//     // Genuine first purchase - unchanged redirect-to-Checkout flow.
-//     savePathRedirect(route.fullPath)
-//     window.location.href = data.url
-//     return
-//   }
-
-//   if (data.requiresConfirmation) {
-//     previewAmount.value = data.previewAmount
-//     previewCurrency.value = data.previewCurrency
-//     showConfirmUpgrade.value = true
-//     return
-//   }
-
-//   if (data.switched) {
-//     showConfirmUpgrade.value = false
-//     $toast.success(
-//       confirm
-//         ? `You're now on ${switchTargetDescription.value}.`
-//         : `You'll switch to ${switchTargetDescription.value} at the end of your current billing period.`,
-//     )
-//     await getUserSubscription()
-//     emit('switched')
-//   }
-// }
-
-// const selectPlan = async () => {
-//   if (card.value.action.disabled) return
-
-//   trackPayment({
-//     route: route.fullPath,
-//   })
-
-//   if (!card.value.selectedPrice) return
-
-//   await purchaseOrSwitch(false)
-// }
-// const confirmUpgrade = () => purchaseOrSwitch(true)
+  return `You'll switch to ${switchTargetDescription.value} and be charged `
+    + `${previewCurrency.value ?? ''} ${formatPrice(previewAmount.value)} right now.`
+})
 
 const chooseNewPlan = async () => {
   const payload = {
@@ -236,6 +187,40 @@ const chooseNewPlan = async () => {
   }
 }
 
+const switchPlan = async () => {
+  const payload = {
+    subscriptionPlanId: props.plan.id,
+    billingInterval: props.billingInterval,
+    confirm: false,
+  }
+  const response = await switchSubscriptionPlan(payload)
+  console.log(response)
+  if (response.succeeded && response.data) {
+    previewAmount.value = response.data.previewAmount
+    previewCurrency.value = response.data.previewCurrency
+    showConfirmUpgradeModal.value = true
+  }
+}
+
+const confirmUpgrade = async () => {
+  const payload = {
+    subscriptionPlanId: props.plan.id,
+    billingInterval: props.billingInterval,
+    confirm: true,
+  }
+  const response = await switchSubscriptionPlan(payload)
+  console.log(response)
+  if (response.succeeded && response.data) {
+    showConfirmUpgradeModal.value = false
+    $toast.success(
+      response.data.immediate
+        ? `You're now on ${switchTargetDescription.value}.`
+        : `You'll switch to ${switchTargetDescription.value} at the end of your current billing period(${response.data.effectiveDate}).`,
+    )
+    emit('switchSuccessfully')
+  }
+}
+
 const selectPlan = async () => {
   if (card.value.action.disabled) return
 
@@ -245,6 +230,9 @@ const selectPlan = async () => {
 
   if (card.value.action.type == 'choose') {
     await chooseNewPlan()
+  }
+  else if (card.value.action.type == 'switch') {
+    await switchPlan()
   }
 }
 </script>

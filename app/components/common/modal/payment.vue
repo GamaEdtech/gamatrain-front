@@ -155,7 +155,7 @@
               :current-billing-interval="currentBillingInterval"
               :has-active-subscription="currentPlanId !== null"
               class="mr-4 mb-1"
-              @switched="emit('dismiss')"
+              @switch-successfully="emit('switchSuccessfully')"
             />
           </v-slide-group-item>
         </v-slide-group>
@@ -204,7 +204,7 @@ const propsData = withDefaults(defineProps<IPaymentModal>(),
     currentPlanTitle: null,
   })
 
-const emit = defineEmits<{ dismiss: [] }>()
+const emit = defineEmits(['switchSuccessfully', 'dismiss'])
 
 const { discountPercent } = useBillingIntervalPricing()
 

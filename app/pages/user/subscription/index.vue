@@ -270,6 +270,7 @@
         :current-billing-interval="userSubscription?.billingInterval"
         :current-plan-title="userSubscription?.planTitle"
         @dismiss="showChangePlanModal = false"
+        @switch-successfully="switchSuccessfully"
       />
     </common-modal-base>
   </div>
@@ -514,6 +515,11 @@ const confirmResumeSubscription = async () => {
 const openChangePlanModal = async () => {
   showChangePlanModal.value = true
   await getPlans()
+}
+
+const switchSuccessfully = async () => {
+  showChangePlanModal.value = false
+  await getUserSubscription()
 }
 
 onMounted(async () => {
