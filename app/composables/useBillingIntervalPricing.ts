@@ -8,8 +8,8 @@ const BILLING_INTERVAL_DAYS: Record<BillingInterval, number> = {
   Daily: 1,
   Weekly: 7,
   Monthly: 30,
-  Seasonally: 90,
-  Yearly: 365,
+  Quarterly: 90,
+  Annual: 365,
 }
 
 export const useBillingIntervalPricing = () => {

@@ -358,9 +358,9 @@ const billingPeriod = computed(() => {
       return 'week'
     case 'Monthly':
       return 'month'
-    case 'Seasonally':
+    case 'Quarterly':
       return 'season'
-    case 'Yearly':
+    case 'Annual':
       return 'year'
     default:
       return 'period'

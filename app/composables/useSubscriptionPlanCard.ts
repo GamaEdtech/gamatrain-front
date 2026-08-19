@@ -44,8 +44,8 @@ const billingSuffix: Record<BillingInterval, string> = {
   Daily: 'per day',
   Weekly: 'per week',
   Monthly: 'per month',
-  Seasonally: 'every 3 months',
-  Yearly: 'per year',
+  Quarterly: 'every 3 months',
+  Annual: 'per year',
 }
 
 const isUpgradeSuggestionsPlan = (
@@ -116,11 +116,13 @@ export const useSubscriptionPlanCard = () => {
     const currentSuggestionPrice = plan.prices.find(isCurrentSuggestionPrice)
     const resolvedCurrentPlanId = currentPlanId ?? (currentSuggestionPrice ? plan.id : null)
     const resolvedCurrentBillingInterval = currentBillingInterval ?? currentSuggestionPrice?.billingInterval ?? null
+    const isUpgradeSuggestionCard = selectedPrice ? isUpgradeSuggestionsPrice(selectedPrice) : false
     const suggestionCanUpgrade = selectedPrice && 'canUpgrade' in selectedPrice ? selectedPrice.canUpgrade : true
     const suggestionIsCurrent = selectedPrice ? isCurrentSuggestionPrice(selectedPrice) : false
     const fallbackIsCurrent = resolvedCurrentPlanId === plan.id && resolvedCurrentBillingInterval === billingInterval
     const isCurrentPlan = suggestionIsCurrent || fallbackIsCurrent
     const isSamePlanIntervalMove = resolvedCurrentPlanId === plan.id && !isCurrentPlan && !suggestionIsCurrent
+    const shouldSwitchPlan = hasActiveSubscription || (isUpgradeSuggestionCard && suggestionCanUpgrade)
     const isDisabled = isCurrentPlan || suggestionIsCurrent || !suggestionCanUpgrade
 
     let action: SubscriptionPlanCardViewModel['action']
@@ -134,7 +136,7 @@ export const useSubscriptionPlanCard = () => {
     else if (isSamePlanIntervalMove) {
       action = { type: 'switch', label: `Switch to ${billingInterval}`, disabled: isDisabled }
     }
-    else if (hasActiveSubscription) {
+    else if (shouldSwitchPlan) {
       action = { type: 'switch', label: 'Switch Plan', disabled: isDisabled }
     }
     else {
