@@ -26,7 +26,7 @@
           Current Expiration
         </div>
         <v-text-field
-          :model-value="formatLocal(subscription.expirationDate, 'DD/MM/YYYY HH:mm')"
+          :model-value="formatDate(subscription.expirationDate)"
           rounded="lg"
           density="compact"
           variant="outlined"
@@ -104,6 +104,10 @@ const form = reactive<{
 })
 
 const isFormValid = ref(false)
+
+const formatDate = (value: string | null) => {
+  return value ? formatLocal(value, 'DD/MM/YYYY HH:mm') : '-'
+}
 
 const submit = async () => {
   if (!isFormValid.value || !form.days) return

@@ -208,8 +208,8 @@ export interface AdminUserSubscriptionListDTO {
   planTitle: string
   status: UserSubscriptionStatus
   creationDate: string
-  startDate: string
-  expirationDate: string
+  startDate: string | null
+  expirationDate: string | null
   pricePaid: number
   currency: SubscriptionCurrency
   billingInterval: BillingInterval
@@ -230,8 +230,8 @@ export interface AdminUserSubscriptionDetailDTO {
   planTitle: string
   status: UserSubscriptionStatus
   creationDate: string
-  startDate: string
-  expirationDate: string
+  startDate: string | null
+  expirationDate: string | null
   pricePaid: number
   currency: SubscriptionCurrency
   billingInterval: BillingInterval
@@ -268,6 +268,64 @@ export interface ExtendAdminUserSubscriptionDTO {
   days: number
 }
 
+export type AdminSubscriptionUsageSortType = 'Asc' | 'Desc'
+
+export interface AdminSubscriptionUsageSortFilter {
+  sortType: AdminSubscriptionUsageSortType
+  column: string
+}
+
+export interface AdminSubscriptionUsageSearchFilter {
+  phrase: string
+  column: string
+}
+
+export interface AdminSubscriptionUsageDTO {
+  id: number
+  userId: number
+  userEmail: string
+  userSubscriptionId: number
+  subscriptionPlanId: number
+  planTitle: string
+  featureId: number
+  featureCode: string
+  featureName: string
+  amount: number
+  identifierId: number
+  creationDate: string
+}
+
+export interface SearchFilterAdminSubscriptionUsage {
+  userId: string
+  featureCode: string
+  identifierId: string
+  fromDate: string
+  toDate: string
+}
+
+export interface GetAdminSubscriptionUsageParams extends SearchFilterAdminSubscriptionUsage {
+  page: number
+  pageSize: number
+  sortFilter?: AdminSubscriptionUsageSortFilter[]
+  searchFilter?: AdminSubscriptionUsageSearchFilter[]
+}
+
+export interface AdminSubscriptionUsageAggregateDTO {
+  featureId: number
+  featureCode: string
+  featureName: string
+  totalAmount: number
+  eventCount: number
+  distinctUserCount: number
+}
+
+export interface GetAdminSubscriptionUsageAggregateParams {
+  userId?: number | string | null
+  fromDate?: string | null
+  toDate?: string | null
+}
+
+// POST subscriptions/me/switch (gamatrain-back#575/#577). Kept for a dedicated "manage my subscription"
 // screen that already knows the caller has a plan; startPaymentSubscription (plans/{id}/purchase) now
 // handles the same buy/upgrade/downgrade decision on its own for any generic "choose a plan" UI, so this
 export interface SwitchSubscriptionPlanDTO {
