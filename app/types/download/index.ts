@@ -11,12 +11,8 @@ export interface BodyRequestDownloadDTO {
 
 export type PaidByDownloadResponseDTO = 'SubscriptionQuota' | 'Points'
 
-// Verified against the live QuotaFailureReason enum (sandbox.gamaedtech.com/swagger/v1/swagger.json).
 export type QuotaFailureReason = 'NoActiveSubscription' | 'FeatureNotInPlan' | 'QuotaExhausted'
 
-// Shared "why did this quota consumption fail" context (gamatrain-back#575), returned by both the
-// download and games/spends endpoints whenever the caller's plan/balance couldn't cover the request.
-// Left unset (null) on a successful response.
 export interface QuotaFailureContextDTO {
   reason: QuotaFailureReason | null
   currentSubscriptionId: number | null
@@ -24,9 +20,6 @@ export interface QuotaFailureContextDTO {
   currentPlanTitle: string | null
 }
 
-// A plan's quota can differ per billing interval (gamatrain-back#563), so limit/description/
-// pooledFeatureCodes/featureGroups live on each UpgradeSuggestionsPrice entry - already resolved server-side
-// for that one interval - rather than once at the suggestion's top level.
 export interface UpgradeSuggestionsDTO {
   id: number
   title: string

@@ -1,6 +1,6 @@
 import type { PaymentGateway } from '@/types'
 
-export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Seasonally' | 'Yearly'
+export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Annual'
 export type SubscriptionCurrency = 'SOL' | 'USDC' | 'GET' | 'USDT' | 'USD'
 
 export interface SubscriptionPolygonPointDTO {
@@ -133,8 +133,6 @@ export interface ResponseGetPlanDTO {
   availableBillingIntervals: BillingInterval[]
 }
 
-// Mirrors GET subscriptions/plans (ActiveSubscriptionPlanResponseViewModel) - no id/countryCode on its
-// prices, unlike the admin price list.
 export interface ActiveSubscriptionPlanPriceDTO {
   billingInterval: BillingInterval
   currency: SubscriptionCurrency
@@ -189,6 +187,9 @@ export interface UserSubscriptionDTO {
   featureGroups: FeatureGroupUserSubscriptionDTO[]
   autoRenews: boolean
   cancelAtPeriodEnd: boolean
+  pendingSwitchPlanId: number | null
+  pendingSwitchPlanTitle: string | null
+  lastPaymentFailedDate: string
 }
 
 export interface FeatureGroupUserSubscriptionDTO {
@@ -267,10 +268,66 @@ export interface ExtendAdminUserSubscriptionDTO {
   days: number
 }
 
+export type AdminSubscriptionUsageSortType = 'Asc' | 'Desc'
+
+export interface AdminSubscriptionUsageSortFilter {
+  sortType: AdminSubscriptionUsageSortType
+  column: string
+}
+
+export interface AdminSubscriptionUsageSearchFilter {
+  phrase: string
+  column: string
+}
+
+export interface AdminSubscriptionUsageDTO {
+  id: number
+  userId: number
+  userEmail: string
+  userSubscriptionId: number
+  subscriptionPlanId: number
+  planTitle: string
+  featureId: number
+  featureCode: string
+  featureName: string
+  amount: number
+  identifierId: number
+  creationDate: string
+}
+
+export interface SearchFilterAdminSubscriptionUsage {
+  userId: string
+  featureCode: string
+  identifierId: string
+  fromDate: string
+  toDate: string
+}
+
+export interface GetAdminSubscriptionUsageParams extends SearchFilterAdminSubscriptionUsage {
+  page: number
+  pageSize: number
+  sortFilter?: AdminSubscriptionUsageSortFilter[]
+  searchFilter?: AdminSubscriptionUsageSearchFilter[]
+}
+
+export interface AdminSubscriptionUsageAggregateDTO {
+  featureId: number
+  featureCode: string
+  featureName: string
+  totalAmount: number
+  eventCount: number
+  distinctUserCount: number
+}
+
+export interface GetAdminSubscriptionUsageAggregateParams {
+  userId?: number | string | null
+  fromDate?: string | null
+  toDate?: string | null
+}
+
 // POST subscriptions/me/switch (gamatrain-back#575/#577). Kept for a dedicated "manage my subscription"
 // screen that already knows the caller has a plan; startPaymentSubscription (plans/{id}/purchase) now
 // handles the same buy/upgrade/downgrade decision on its own for any generic "choose a plan" UI, so this
-// isn't currently called from subscription/card.vue.
 export interface SwitchSubscriptionPlanDTO {
   subscriptionPlanId: number
   // Omitted keeps the current interval; only a move to a bigger interval is supported (gamatrain-back#577).

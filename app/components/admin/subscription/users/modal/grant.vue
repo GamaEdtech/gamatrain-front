@@ -73,6 +73,7 @@ import type {
   AdminUserSubscriptionListDTO,
   BillingInterval,
 } from '@/types'
+import { BILLING_INTERVALS } from '@/constants'
 
 interface IGrantModal {
   subscription: AdminUserSubscriptionListDTO
@@ -94,13 +95,7 @@ const {
   loadingGrantItem,
 } = useUserSubscriptionAdmin()
 
-const billingIntervals: BillingInterval[] = [
-  'Daily',
-  'Weekly',
-  'Monthly',
-  'Seasonally',
-  'Yearly',
-]
+const billingIntervals = BILLING_INTERVALS
 
 const form = reactive<{
   subscriptionPlanId: string

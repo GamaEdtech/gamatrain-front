@@ -12,8 +12,19 @@
 
       <div
         v-if="userSubscription && !loadingGetUserSubscription"
-        class="d-flex align-center justify-end ga-3 flex-wrap"
+        class="d-flex align-center justify-start ga-3 flex-wrap"
       >
+        <v-btn
+          rounded="pill"
+          color="primary"
+          height="40"
+          flat
+          outlined
+          class="text-h5 font-weight-bold text-white"
+          @click="openChangePlanModal"
+        >
+          Change Plan
+        </v-btn>
         <v-chip
           v-if="renewalBadge"
           :color="renewalBadge.color"
@@ -244,11 +255,30 @@
         @confirm="confirmResumeSubscription"
       />
     </common-modal-base>
+
+    <common-modal-base
+      v-model:show-dialog="showChangePlanModal"
+      :max-width="900"
+      title="Get Membership. Unlock Premium Downloads."
+      subtitle="Join +50,000 Students"
+    >
+      <common-modal-payment
+        :plans="plansData?.plans || []"
+        :billing-interval="plansData?.availableBillingIntervals || []"
+        :loading="loadingGetPlansData"
+        :current-plan-id="userSubscription?.subscriptionPlanId"
+        :current-billing-interval="userSubscription?.billingInterval"
+        :current-plan-title="userSubscription?.planTitle"
+        @dismiss="showChangePlanModal = false"
+        @switch-successfully="switchSuccessfully"
+      />
+    </common-modal-base>
   </div>
 </template>
 
 <script setup lang="ts">
 import type { FeatureGroupUserSubscriptionDTO } from '@/types'
+import { BILLING_INTERVAL_PERIOD_LABEL } from '@/constants'
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -279,6 +309,7 @@ const {
 
 const showCancelModal = ref(false)
 const showResumeModal = ref(false)
+const showChangePlanModal = ref(false)
 
 const headers = [
   { title: 'Feature Group', key: 'description', sortable: false, width: '24vw' },
@@ -321,20 +352,9 @@ const renewalBadge = computed(() => {
 })
 
 const billingPeriod = computed(() => {
-  switch (userSubscription.value?.billingInterval) {
-    case 'Daily':
-      return 'day'
-    case 'Weekly':
-      return 'week'
-    case 'Monthly':
-      return 'month'
-    case 'Seasonally':
-      return 'season'
-    case 'Yearly':
-      return 'year'
-    default:
-      return 'period'
-  }
+  return userSubscription.value
+    ? BILLING_INTERVAL_PERIOD_LABEL[userSubscription.value.billingInterval]
+    : 'period'
 })
 
 const getFormattedSubscriptionPrice = () => {
@@ -418,6 +438,16 @@ const statusConfig = computed(() => {
 const summaryItems = computed(() => {
   if (!userSubscription.value) return []
 
+  const pendingSwitchItem = userSubscription.value.pendingSwitchPlanId
+    ? {
+        title: 'Pending Switch',
+        value: userSubscription.value.pendingSwitchPlanTitle ?? `Plan #${userSubscription.value.pendingSwitchPlanId}`,
+        icon: 'md:move_up',
+        iconColor: 'warning',
+        colorClass: 'text-warning',
+      }
+    : null
+
   return [
     {
       title: 'Plan',
@@ -454,6 +484,7 @@ const summaryItems = computed(() => {
       iconColor: 'grey500',
       colorClass: 'text-grey700',
     },
+    ...(pendingSwitchItem ? [pendingSwitchItem] : []),
     {
       title: 'Expires',
       value: formatLocal(userSubscription.value.expirationDate, 'DD/MM/YYYY'),
@@ -482,12 +513,19 @@ const confirmResumeSubscription = async () => {
   }
 }
 
+const openChangePlanModal = async () => {
+  showChangePlanModal.value = true
+  await getPlans()
+}
+
+const switchSuccessfully = async () => {
+  showChangePlanModal.value = false
+  await getUserSubscription()
+}
+
 onMounted(async () => {
   await getUserSubscription()
 
-  // subscriptions/me comes back with no data when the user has no active subscription (not an error -
-  // see the fix in useSubscription.api.ts) - only then is there anything to suggest, so only then fetch
-  // the plan list to fill the same card/payment component used elsewhere for choosing a plan.
   if (!userSubscription.value) {
     await getPlans()
   }
@@ -516,10 +554,5 @@ onMounted(async () => {
 }
 .card-feature-mobile {
   min-height: 190px;
-}
-/* Matches the max-width the same plan picker is shown at everywhere else (the Get Membership modal, e.g.
-   BalanceCard.vue's :max-width="900") - on this full-width page it would otherwise stretch edge to edge. */
-.choose-plan-section {
-  max-width: 900px;
 }
 </style>

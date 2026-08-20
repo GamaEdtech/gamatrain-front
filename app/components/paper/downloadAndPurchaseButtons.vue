@@ -211,6 +211,7 @@
         :plans="paymentPlans"
         :billing-interval="billingInterval"
         @dismiss="showCoinPaymentModal = false"
+        @switch-successfully="upgradePlanSuccessfully"
       />
     </lazy-common-modal-base>
 
@@ -309,6 +310,7 @@ const {
     else {
       downloadIssue.value = true
     }
+    pendingDownload.value = null
   },
   onInsufficientBalance: () => {
     showCoinPaymentModal.value = true
@@ -329,14 +331,6 @@ const handleDownloadClick = async (type: TypeFile, price: number, extraId?: stri
 
   startDownload({ type, extraId })
 }
-
-// const handleCoinPaymentClose = () => {
-//   showCoinPaymentModal.value = false
-//   if (pendingDownload.value) {
-//     clearDownload(pendingDownload.value.type, pendingDownload.value.extraId)
-//   }
-//   pendingDownload.value = null
-// }
 
 const handleAnimationComplete = async () => {
   // Close everything immediately when animation completes
@@ -360,6 +354,13 @@ const startExam = () => {
     setTimeout(() => {
       router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
     }, 100)
+  }
+}
+
+const upgradePlanSuccessfully = async () => {
+  showCoinPaymentModal.value = false
+  if (pendingDownload.value) {
+    startDownload({ type: pendingDownload.value.type, extraId: pendingDownload.value.extraId })
   }
 }
 </script>
