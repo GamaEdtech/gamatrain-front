@@ -12,7 +12,7 @@
       below switches you over - it won't start a separate subscription.
     </v-alert>
 
-    <div class="w-100 d-flex align-start justify-center justify-sm-start mb-4">
+    <div class="w-100 d-flex align-center justify-center mb-4">
       <v-skeleton-loader
         v-if="loading"
         width="200"

@@ -5,9 +5,6 @@
         <h1 class="text-h4 font-weight-bold text-grey700">
           Subscription
         </h1>
-        <p class="text-h6 text-grey500 font-weight-regular mt-1 mb-0">
-          Current plan and usage details
-        </p>
       </div>
 
       <div
