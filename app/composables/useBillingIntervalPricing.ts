@@ -1,17 +1,10 @@
 import type { BillingInterval } from '@/types'
+import { BILLING_INTERVAL_DAYS } from '@/constants'
 
 // Mirrors the backend's BillingInterval.Days (src/Domain/Enumeration/BillingInterval.cs) - used purely to
 // normalize a price to a monthly-equivalent rate client-side. subscriptions/plans doesn't send a
 // pre-computed monthlyEquivalentPrice/discountPercent (unlike the upgrade-suggestions payload), so the
 // "buy a plan" flow derives it here instead.
-const BILLING_INTERVAL_DAYS: Record<BillingInterval, number> = {
-  Daily: 1,
-  Weekly: 7,
-  Monthly: 30,
-  Quarterly: 90,
-  Annual: 365,
-}
-
 export const useBillingIntervalPricing = () => {
   const monthlyEquivalentPrice = (price: number, interval: BillingInterval) => {
     return price / (BILLING_INTERVAL_DAYS[interval] / BILLING_INTERVAL_DAYS.Monthly)

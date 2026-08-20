@@ -278,6 +278,7 @@
 
 <script setup lang="ts">
 import type { FeatureGroupUserSubscriptionDTO } from '@/types'
+import { BILLING_INTERVAL_PERIOD_LABEL } from '@/constants'
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -351,20 +352,9 @@ const renewalBadge = computed(() => {
 })
 
 const billingPeriod = computed(() => {
-  switch (userSubscription.value?.billingInterval) {
-    case 'Daily':
-      return 'day'
-    case 'Weekly':
-      return 'week'
-    case 'Monthly':
-      return 'month'
-    case 'Quarterly':
-      return 'season'
-    case 'Annual':
-      return 'year'
-    default:
-      return 'period'
-  }
+  return userSubscription.value
+    ? BILLING_INTERVAL_PERIOD_LABEL[userSubscription.value.billingInterval]
+    : 'period'
 })
 
 const getFormattedSubscriptionPrice = () => {

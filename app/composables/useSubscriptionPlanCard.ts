@@ -7,6 +7,7 @@ import type {
   UpgradeSuggestionsFeatureGroup,
   UpgradeSuggestionsPrice,
 } from '@/types'
+import { BILLING_INTERVAL_SUFFIX } from '@/constants'
 
 type PlanPrice = ActiveSubscriptionPlanPriceDTO | UpgradeSuggestionsPrice
 type FeatureGroup = AdminSubscriptionPlanFeatureGroupDTO | UpgradeSuggestionsFeatureGroup
@@ -38,14 +39,6 @@ interface BuildSubscriptionPlanCardParams {
   currentPlanId?: number | null
   currentBillingInterval?: BillingInterval | null
   hasActiveSubscription?: boolean
-}
-
-const billingSuffix: Record<BillingInterval, string> = {
-  Daily: 'per day',
-  Weekly: 'per week',
-  Monthly: 'per month',
-  Quarterly: 'every 3 months',
-  Annual: 'per year',
 }
 
 const isUpgradeSuggestionsPlan = (
@@ -160,7 +153,7 @@ export const useSubscriptionPlanCard = () => {
   }
 
   return {
-    billingSuffix,
+    billingSuffix: BILLING_INTERVAL_SUFFIX,
     buildSubscriptionPlanCard,
     formatSubscriptionPlanCardPrice,
     formatSubscriptionPlanFeatureLine,
