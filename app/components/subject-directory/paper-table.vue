@@ -403,7 +403,10 @@
     <common-modal-payment
       :plans="paymentPlans"
       :billing-interval="billingInterval"
+      :current-plan-id="currentPlanId"
+      :current-plan-title="currentPlanTitle"
       @dismiss="showCoinPaymentModal = false"
+      @switch-successfully="upgradePlanSuccessfully"
     />
   </lazy-common-modal-base>
 
@@ -512,6 +515,9 @@ const activeDownloadKey = ref('')
 const currentDownloadPaperId = {
   valueOf: () => currentDownloadPaper.value?.id || 0,
 }
+const pendingDownload = ref(null)
+const currentPlanTitle = ref(null)
+const currentPlanId = ref(null)
 
 const handleAnimationComplete = async () => {
   // Close everything immediately when animation completes
@@ -565,6 +571,7 @@ const {
     else {
       downloadIssue.value = true
     }
+    pendingDownload.value = null
   },
   onInsufficientBalance: () => {
     activeDownloadKey.value = ''
@@ -574,6 +581,8 @@ const {
     activeDownloadKey.value = ''
     paymentPlans.value = data.upgradeSuggestions || []
     billingInterval.value = data.availableBillingIntervals || []
+    currentPlanTitle.value = data.currentPlanTitle
+    currentPlanId.value = data.currentPlanId
     showCoinPaymentModal.value = true
   },
 })
@@ -582,10 +591,18 @@ const handleDownload = async (type, item) => {
   const downloadParams = getFileDownloadParams(type, item)
   currentDownloadPaper.value = item
   activeDownloadKey.value = getTableDownloadKey(item, type)
+  pendingDownload.value = downloadParams
 
   startDownload({
     ...downloadParams,
   })
+}
+
+const upgradePlanSuccessfully = async () => {
+  showCoinPaymentModal.value = false
+  if (pendingDownload.value) {
+    startDownload({ type: pendingDownload.value.type, extraId: pendingDownload.value.extraId })
+  }
 }
 
 const getTableDownloadKey = (item, type) => `${item.id}-${type}`
