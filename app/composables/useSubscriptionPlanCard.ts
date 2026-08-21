@@ -38,7 +38,14 @@ interface BuildSubscriptionPlanCardParams {
   billingInterval: BillingInterval
   currentPlanId?: number | null
   currentBillingInterval?: BillingInterval | null
-  hasActiveSubscription?: boolean
+}
+
+interface ResolvePlanCardActionParams {
+  billingInterval: BillingInterval
+  hasCurrentPlan: boolean
+  isCurrentPlan: boolean
+  isSamePlanIntervalMove: boolean
+  canUpgrade: boolean
 }
 
 const isUpgradeSuggestionsPlan = (
@@ -75,6 +82,32 @@ export const formatSubscriptionPlanFeatureLine = (
   return limit === null ? `Unlimited ${group.description}` : `Use Gems for ${group.description}`
 }
 
+const resolvePlanCardAction = ({
+  billingInterval,
+  hasCurrentPlan,
+  isCurrentPlan,
+  isSamePlanIntervalMove,
+  canUpgrade,
+}: ResolvePlanCardActionParams): SubscriptionPlanCardViewModel['action'] => {
+  if (isCurrentPlan) {
+    return { type: 'current', label: 'Current Plan', disabled: true }
+  }
+
+  if (!canUpgrade) {
+    return { type: 'locked', label: 'Not an Upgrade', disabled: true }
+  }
+
+  if (!hasCurrentPlan) {
+    return { type: 'choose', label: 'Choose Plan', disabled: false }
+  }
+
+  return {
+    type: 'switch',
+    label: isSamePlanIntervalMove ? `Switch to ${billingInterval}` : 'Switch Plan',
+    disabled: false,
+  }
+}
+
 export const useSubscriptionPlanCard = () => {
   const { monthlyEquivalentPrice, discountPercent } = useBillingIntervalPricing()
 
@@ -83,7 +116,6 @@ export const useSubscriptionPlanCard = () => {
     billingInterval,
     currentPlanId,
     currentBillingInterval,
-    hasActiveSubscription,
   }: BuildSubscriptionPlanCardParams): SubscriptionPlanCardViewModel => {
     const selectedPrice = plan.prices.find(price => price.billingInterval === billingInterval)
     const monthlyPrice = plan.prices.find(price => price.billingInterval === 'Monthly')?.price ?? null
@@ -109,32 +141,19 @@ export const useSubscriptionPlanCard = () => {
     const currentSuggestionPrice = plan.prices.find(isCurrentSuggestionPrice)
     const resolvedCurrentPlanId = currentPlanId ?? (currentSuggestionPrice ? plan.id : null)
     const resolvedCurrentBillingInterval = currentBillingInterval ?? currentSuggestionPrice?.billingInterval ?? null
-    const isUpgradeSuggestionCard = selectedPrice ? isUpgradeSuggestionsPrice(selectedPrice) : false
+    const hasCurrentPlan = resolvedCurrentPlanId !== null
     const suggestionCanUpgrade = selectedPrice && 'canUpgrade' in selectedPrice ? selectedPrice.canUpgrade : true
     const suggestionIsCurrent = selectedPrice ? isCurrentSuggestionPrice(selectedPrice) : false
     const fallbackIsCurrent = resolvedCurrentPlanId === plan.id && resolvedCurrentBillingInterval === billingInterval
     const isCurrentPlan = suggestionIsCurrent || fallbackIsCurrent
     const isSamePlanIntervalMove = resolvedCurrentPlanId === plan.id && !isCurrentPlan && !suggestionIsCurrent
-    const shouldSwitchPlan = hasActiveSubscription || (isUpgradeSuggestionCard && suggestionCanUpgrade)
-    const isDisabled = isCurrentPlan || suggestionIsCurrent || !suggestionCanUpgrade
-
-    let action: SubscriptionPlanCardViewModel['action']
-
-    if (isCurrentPlan) {
-      action = { type: 'current', label: 'Current Plan', disabled: true }
-    }
-    else if (!suggestionCanUpgrade) {
-      action = { type: 'locked', label: 'Not an Upgrade', disabled: true }
-    }
-    else if (isSamePlanIntervalMove) {
-      action = { type: 'switch', label: `Switch to ${billingInterval}`, disabled: isDisabled }
-    }
-    else if (shouldSwitchPlan) {
-      action = { type: 'switch', label: 'Switch Plan', disabled: isDisabled }
-    }
-    else {
-      action = { type: 'choose', label: 'Choose Plan', disabled: isDisabled }
-    }
+    const action = resolvePlanCardAction({
+      billingInterval,
+      hasCurrentPlan,
+      isCurrentPlan,
+      isSamePlanIntervalMove,
+      canUpgrade: suggestionCanUpgrade,
+    })
 
     return {
       id: plan.id,

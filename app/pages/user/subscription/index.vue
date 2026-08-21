@@ -5,9 +5,6 @@
         <h1 class="text-h4 font-weight-bold text-grey700">
           Subscription
         </h1>
-        <p class="text-h6 text-grey500 font-weight-regular mt-1 mb-0">
-          Current plan and usage details
-        </p>
       </div>
 
       <div
@@ -213,10 +210,10 @@
 
     <div
       v-else
-      class="w-100 d-flex flex-column align-start justify-start ga-2 choose-plan-section"
+      class="w-100 d-flex flex-column align-center justify-start ga-2 choose-plan-section"
     >
-      <span class="text-h5 text-grey700 font-weight-bold">Choose a plan to get started</span>
-      <span class="text-h6 text-grey500">
+      <span class="text-h5 text-grey700 font-weight-bold text-center">Choose a plan to get started</span>
+      <span class="text-h6 text-grey500 text-center">
         You don't have an active subscription yet - pick a plan below to unlock premium downloads.
       </span>
 

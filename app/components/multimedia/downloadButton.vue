@@ -83,6 +83,8 @@
       <common-modal-payment
         :plans="paymentPlans"
         :billing-interval="billingInterval"
+        :current-plan-id="currentPlanId"
+        :current-plan-title="currentPlanTitle"
         @dismiss="showCoinPaymentModal = false"
         @switch-successfully="upgradePlanSuccessfully"
       />
@@ -148,6 +150,8 @@ const pendingDownload = ref<{
 const openModalDownloadMobile = ref(false)
 const paymentPlans = ref<UpgradeSuggestionsDTO[]>([])
 const billingInterval = ref<BillingInterval[]>([])
+const currentPlanTitle = ref<string | null>(null)
+const currentPlanId = ref<number | null>(null)
 
 const {
   // clearDownload,
@@ -178,6 +182,8 @@ const {
   onUpgradeSuggestions: (data: DownloadResponseDTO) => {
     paymentPlans.value = data.upgradeSuggestions || []
     billingInterval.value = data.availableBillingIntervals || []
+    currentPlanTitle.value = data.currentPlanTitle
+    currentPlanId.value = data.currentPlanId
     showCoinPaymentModal.value = true
   },
 })

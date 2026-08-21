@@ -120,13 +120,11 @@ interface ICard {
   billingInterval: BillingInterval
   currentPlanId?: number | null
   currentBillingInterval?: BillingInterval | null
-  hasActiveSubscription?: boolean
 }
 
 const props = withDefaults(defineProps<ICard>(), {
   currentPlanId: null,
   currentBillingInterval: null,
-  hasActiveSubscription: false,
 })
 
 const emit = defineEmits(['switchSuccessfully'])
@@ -157,7 +155,6 @@ const card = computed(() => {
     billingInterval: props.billingInterval,
     currentPlanId: props.currentPlanId,
     currentBillingInterval: props.currentBillingInterval,
-    hasActiveSubscription: props.hasActiveSubscription,
   })
 })
 
