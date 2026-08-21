@@ -1,7 +1,7 @@
 <template>
   <div class="w-100 d-flex flex-column pt-2">
     <v-alert
-      v-if="currentPlanId && currentPlanTitle"
+      v-if="currentPlanId !== null && currentPlanTitle"
       type="info"
       color="primary"
       density="compact"
@@ -153,7 +153,6 @@
               :billing-interval="intervalSelect"
               :current-plan-id="currentPlanId"
               :current-billing-interval="currentBillingInterval"
-              :has-active-subscription="currentPlanId !== null"
               class="mr-4 mb-1"
               @switch-successfully="emit('switchSuccessfully')"
             />
