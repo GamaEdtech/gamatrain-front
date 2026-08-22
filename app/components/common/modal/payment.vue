@@ -1,18 +1,18 @@
 <template>
-  <div class="w-100 d-flex flex-column pa-4 pa-sm-8 pt-2">
+  <div class="w-100 d-flex flex-column pt-2">
     <v-alert
-      v-if="hasActiveSubscription && userSubscription?.planTitle"
+      v-if="currentPlanId !== null && currentPlanTitle"
       type="info"
       color="primary"
       density="compact"
       variant="tonal"
       class="mb-4"
     >
-      You're currently on the <strong>{{ userSubscription.planTitle }}</strong> plan. Picking another plan
+      You're currently on the <strong>{{ currentPlanTitle }}</strong> plan. Picking another plan
       below switches you over - it won't start a separate subscription.
     </v-alert>
 
-    <div class="w-100 d-flex align-start justify-center justify-sm-start mb-4">
+    <div class="w-100 d-flex align-center justify-center mb-4">
       <v-skeleton-loader
         v-if="loading"
         width="200"
@@ -21,7 +21,7 @@
       />
       <div
         v-else
-        class="btn-filter-container d-flex align-center justify-center ga-1 bg-grey100 pa-1 rounded-pill"
+        class="btn-filter-container d-flex align-center justify-start ga-1 bg-grey100 pa-1 rounded-pill overflow-x-auto overflow-y-hidden "
       >
         <v-btn
           v-for="item in billingInterval"
@@ -44,26 +44,120 @@
       </div>
     </div>
 
-    <div class="w-100 d-flex flex-column flex-sm-row flex-wrap justify-center justify-sm-space-between align-center align-sm-end ga-4 ga-sm-2">
+    <div class="w-100 d-flex justify-center align-center">
       <template
         v-if="loading"
       >
-        <subscription-card-skeleton
-          v-for="item in skeletonCount"
-          :key="item"
-        />
+        <v-slide-group
+          :model-value="activeSkeletonIndex"
+          class="payment-plan-slider pt-4 d-flex position-relative"
+          show-arrows
+          center-active
+        >
+          <template #prev>
+            <v-btn
+              aria-label="Previous plans"
+              icon
+              flat
+              size="30"
+              class="slider-arrow-button"
+              color="white"
+            >
+              <v-icon
+                size="24"
+                color="grey700"
+              >
+                md:chevron_left
+              </v-icon>
+            </v-btn>
+          </template>
+
+          <template #next>
+            <v-btn
+              aria-label="Next plans"
+              icon
+              flat
+              size="30"
+              class="slider-arrow-button"
+              color="white"
+            >
+              <v-icon
+                size="24"
+                color="grey700"
+              >
+                md:chevron_right
+              </v-icon>
+            </v-btn>
+          </template>
+
+          <v-slide-group-item
+            v-for="(item, index) in skeletonCount"
+            :key="item"
+            :value="index"
+          >
+            <subscription-card-skeleton class="mr-4 mb-1" />
+          </v-slide-group-item>
+        </v-slide-group>
       </template>
 
       <template v-else>
-        <subscription-card
-          v-for="plan in filteredPlans"
-          :key="plan.id"
-          :plan="plan"
-          :billing-interval="intervalSelect"
-          :is-current-plan="isCurrentPlan(plan.id)"
-          :has-active-subscription="hasActiveSubscription"
-          @switched="emit('dismiss')"
-        />
+        <v-slide-group
+          :model-value="activePlanIndex"
+          class="payment-plan-slider pt-4 d-flex align-center position-relative"
+          show-arrows
+          center-active
+        >
+          <template #prev>
+            <v-btn
+              aria-label="Previous plans"
+              icon
+              flat
+              size="30"
+              class="slider-arrow-button"
+              color="white"
+            >
+              <v-icon
+                size="24"
+                color="grey700"
+              >
+                md:chevron_left
+              </v-icon>
+            </v-btn>
+          </template>
+
+          <template #next>
+            <v-btn
+              aria-label="Next plans"
+              icon
+              flat
+              size="30"
+              class="slider-arrow-button"
+              color="white"
+            >
+              <v-icon
+                size="24"
+                color="grey700"
+              >
+                md:chevron_right
+              </v-icon>
+            </v-btn>
+          </template>
+
+          <v-slide-group-item
+            v-for="(plan, index) in filteredPlans"
+            :key="plan.id"
+            :value="index"
+          >
+            <subscription-card
+              :plan="plan"
+              :billing-interval="intervalSelect"
+              :current-plan-id="currentPlanId"
+              :current-billing-interval="currentBillingInterval"
+              class="mr-4 mb-1"
+              @switch-successfully="emit('switchSuccessfully')"
+            />
+          </v-slide-group-item>
+        </v-slide-group>
       </template>
     </div>
 
@@ -92,40 +186,42 @@
 import type { BillingInterval, SubscriptionPlanDTO, UpgradeSuggestionsDTO } from '@/types'
 
 interface IPaymentModal {
-  // Fed either the "buy a plan" list (subscriptions/plans) or a download's upgrade suggestions - the two
-  // shapes differ (see subscription/card.vue), so this stays a union rather than picking one.
   plans: (SubscriptionPlanDTO | UpgradeSuggestionsDTO)[]
   billingInterval: BillingInterval[]
   loading?: boolean
   showLimitedAccessLink?: boolean
+  currentPlanId?: number | null
+  currentBillingInterval?: BillingInterval | null
+  currentPlanTitle?: string | null
 }
-const props = withDefaults(defineProps<IPaymentModal>(),
+const propsData = withDefaults(defineProps<IPaymentModal>(),
   {
     loading: false,
     showLimitedAccessLink: true,
+    currentPlanId: null,
+    currentBillingInterval: null,
+    currentPlanTitle: null,
   })
 
-const emit = defineEmits<{ dismiss: [] }>()
+const emit = defineEmits(['switchSuccessfully', 'dismiss'])
 
 const { discountPercent } = useBillingIntervalPricing()
-const auth = useAuth()
-const { userSubscription, getUserSubscription } = useSubscription()
 
 const skeletonCount = 3
+const activeSkeletonIndex = 1
 const intervalSelect = ref<BillingInterval>('Monthly')
 
 const filteredPlans = computed(() => {
-  return props.plans.filter((plan) => {
+  return propsData.plans.filter((plan) => {
     return plan.prices.some(price => price.billingInterval === intervalSelect.value)
   })
 })
 
-// Best (highest) savings any currently-listed plan offers at each interval vs its own Monthly price -
-// shown as a "Save X%" pill on the interval toggle itself, same spot the Figma mockup had it (just with
-// a real, computed number instead of a hardcoded string).
+const activePlanIndex = computed(() => Math.floor(filteredPlans.value.length / 2))
+
 const bestDiscountByInterval = computed(() => {
-  return Object.fromEntries(props.billingInterval.map((interval) => {
-    const discounts = props.plans
+  return Object.fromEntries(propsData.billingInterval.map((interval) => {
+    const discounts = propsData.plans
       .map((plan) => {
         const price = plan.prices.find(p => p.billingInterval === interval)
         const monthlyPrice = plan.prices.find(p => p.billingInterval === 'Monthly')?.price ?? null
@@ -137,48 +233,59 @@ const bestDiscountByInterval = computed(() => {
   })) as Record<BillingInterval, number | null>
 })
 
-// Interval-aware on purpose: a same-plan move to a bigger billing interval is a real, allowed switch now
-// (gamatrain-back#577 - e.g. Monthly -> Yearly grants the bigger interval's own quota), not a no-op. Only
-// the exact plan+interval the user is already on should read as "Current Plan" and be unclickable; the
-// same plan at a different interval must stay a live card so that move is reachable.
-const isCurrentPlan = (planId: number) => {
-  return userSubscription.value?.status === 'Active'
-    && userSubscription.value.subscriptionPlanId === planId
-    && userSubscription.value.billingInterval === intervalSelect.value
-}
-
-// Any plan card that isn't the current one is reached via subscriptions/me/switch rather than a fresh
-// purchase once the viewer already has one Active - a second purchase is now rejected server-side
-// (OperationResult.Duplicate, gamatrain-back#575).
-const hasActiveSubscription = computed(() => userSubscription.value?.status === 'Active')
-
 const changeFilterInterval = async (status: BillingInterval) => {
   intervalSelect.value = status
 }
 
-// billingInterval arrives async (starts empty while the parent's fetch is in flight) and doesn't always
-// include Monthly - fall back to whatever's actually on offer instead of leaving every toggle button
-// unselected and filteredPlans empty.
-watch(() => props.billingInterval, (intervals) => {
+watch(() => propsData.billingInterval, (intervals) => {
   if (intervals.length > 0 && !intervals.includes(intervalSelect.value)) {
-    intervalSelect.value = intervals[0]
+    intervalSelect.value = intervals[0]!
   }
 }, { immediate: true })
-
-onMounted(async () => {
-  if (auth.isAuthenticated.value) {
-    await getUserSubscription()
-  }
-})
 </script>
 
 <style scoped>
 .btn-filter-container{
   height : 44px;
 }
+.btn-filter-container::-webkit-scrollbar {
+  height: 4px;
+}
+
 .limited-access-link {
   background: none;
   border: none;
   cursor: pointer;
+}
+:deep(.v-slide-group__content){
+  align-items: flex-end;
+}
+
+:deep(.payment-plan-slider > .v-slide-group__prev),
+:deep(.payment-plan-slider > .v-slide-group__next) {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  min-width: 30px;
+  transform: translateY(-50%);
+}
+
+:deep(.payment-plan-slider > .v-slide-group__prev) {
+  left: 0;
+}
+
+:deep(.payment-plan-slider > .v-slide-group__next) {
+  right: 0;
+}
+
+.slider-arrow-button {
+  border: 1px solid rgb(var(--v-theme-grey300));
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.12);
+}
+
+:deep(.v-slide-group__prev--disabled .slider-arrow-button),
+:deep(.v-slide-group__next--disabled .slider-arrow-button) {
+  opacity: 0.45;
+  box-shadow: none;
 }
 </style>

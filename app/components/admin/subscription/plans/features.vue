@@ -218,6 +218,7 @@
 </template>
 
 <script setup lang="ts">
+import { BILLING_INTERVALS } from '@/constants'
 import type {
   AdminSubscriptionFeatureDTO,
   AdminSubscriptionPlanDTO,
@@ -250,18 +251,10 @@ const {
 const { $toast } = useNuxtApp()
 const { required, positiveNumber } = useValidationRules()
 
-const billingIntervalOrder: BillingInterval[] = [
-  'Daily',
-  'Weekly',
-  'Monthly',
-  'Seasonally',
-  'Yearly',
-]
-
 type IntervalLimitState = Record<BillingInterval, { unlimited: boolean, limit: number | null }>
 
 const createDefaultIntervalLimits = (): IntervalLimitState => {
-  return billingIntervalOrder.reduce((state, interval) => {
+  return BILLING_INTERVALS.reduce((state, interval) => {
     state[interval] = { unlimited: true, limit: null }
     return state
   }, {} as IntervalLimitState)
@@ -277,8 +270,8 @@ const isAddFormValid = ref(false)
 // prices yet, so the limit form is never left with nothing to fill in.
 const planIntervals = computed<BillingInterval[]>(() => {
   const soldIntervals = new Set(props.plan.prices.map(price => price.billingInterval))
-  const intervals = billingIntervalOrder.filter(interval => soldIntervals.has(interval))
-  return intervals.length > 0 ? intervals : billingIntervalOrder
+  const intervals = BILLING_INTERVALS.filter(interval => soldIntervals.has(interval))
+  return intervals.length > 0 ? intervals : BILLING_INTERVALS
 })
 
 const featureSelectItems = computed(() => {

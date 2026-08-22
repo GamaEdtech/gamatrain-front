@@ -116,7 +116,7 @@
 
         <template #[`item.expirationDate`]="{ item }">
           <div class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold">
-            {{ formatLocal(item.expirationDate, 'DD/MM/YYYY HH:mm') }}
+            {{ formatDate(item.expirationDate) }}
           </div>
         </template>
 
@@ -316,6 +316,15 @@
         @extend-success-full="extendSuccessFull"
       />
     </admin-common-modal>
+
+    <admin-common-modal
+      v-if="showHistoryModal && selectedSubscription"
+      v-model:show-dialog="showHistoryModal"
+      title="History"
+      :max-width="900"
+    >
+      <admin-subscription-users-modal-history :user-id="selectedSubscription.userId" />
+    </admin-common-modal>
   </div>
 </template>
 
@@ -467,6 +476,10 @@ const openHistoryModal = (item: AdminUserSubscriptionListDTO) => {
 
 const refreshData = async () => {
   await fetchUserSubscriptions()
+}
+
+const formatDate = (value: string | null) => {
+  return value ? formatLocal(value, 'DD/MM/YYYY HH:mm') : '-'
 }
 
 const getStatusColor = (status: UserSubscriptionStatus) => {

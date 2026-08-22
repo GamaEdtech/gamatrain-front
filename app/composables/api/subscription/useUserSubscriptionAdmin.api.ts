@@ -1,8 +1,12 @@
 import type {
   AdminUserSubscriptionDetailDTO,
   AdminUserSubscriptionListDTO,
+  AdminSubscriptionUsageAggregateDTO,
+  AdminSubscriptionUsageDTO,
   ApiResult,
   ExtendAdminUserSubscriptionDTO,
+  GetAdminSubscriptionUsageAggregateParams,
+  GetAdminSubscriptionUsageParams,
   GetAdminUserSubscriptionParams,
   GrantAdminUserSubscriptionDTO,
   GrantAdminUserSubscriptionResponseDTO,
@@ -11,6 +15,7 @@ import type {
 
 const NAME = 'User subscription'
 const BASE_URL = '/api/v2/admin/subscriptions/users'
+const USAGE_BASE_URL = '/api/v2/admin/subscriptions/usage'
 
 export const useUserSubscriptionAdmin = () => {
   const { $toast } = useNuxtApp()
@@ -24,6 +29,12 @@ export const useUserSubscriptionAdmin = () => {
   const loadingGrantItem = ref(false)
   const loadingRevokeItem = ref(false)
   const loadingExtendItem = ref(false)
+  const usageData = ref<AdminSubscriptionUsageDTO[]>([])
+  const usageTotalCount = ref(0)
+  const usagePageCount = ref(0)
+  const loadingGetUsageData = ref(false)
+  const usageAggregateData = ref<AdminSubscriptionUsageAggregateDTO[]>([])
+  const loadingGetUsageAggregateData = ref(false)
 
   const getData = async (params: GetAdminUserSubscriptionParams) => {
     loadingGetData.value = true
@@ -180,6 +191,105 @@ export const useUserSubscriptionAdmin = () => {
     }
   }
 
+  const getUsageData = async (params: GetAdminSubscriptionUsageParams) => {
+    loadingGetUsageData.value = true
+
+    try {
+      const query: Record<string, string | number | boolean | null> = {
+        'PagingDto.PageFilter.Size': params.pageSize,
+        'PagingDto.PageFilter.Skip': (params.page - 1) * params.pageSize,
+        'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+        'UserId': params.userId || null,
+        'FeatureCode': params.featureCode || null,
+        'IdentifierId': params.identifierId || null,
+        'FromDate': params.fromDate || null,
+        'ToDate': params.toDate || null,
+      }
+
+      params.sortFilter?.forEach((sortOption, index) => {
+        query[`PagingDto.SortFilter[${index}].sortType`] = sortOption.sortType
+        query[`PagingDto.SortFilter[${index}].column`] = sortOption.column
+      })
+
+      params.searchFilter?.forEach((searchOption, index) => {
+        query[`PagingDto.SearchFilter[${index}].phrase`] = searchOption.phrase
+        query[`PagingDto.SearchFilter[${index}].column`] = searchOption.column
+      })
+
+      const response = await useApiService.get<
+        ApiResult<ResponseListDTO<AdminSubscriptionUsageDTO>>
+      >(
+        USAGE_BASE_URL,
+        query,
+      )
+
+      if (response.succeeded && response.data) {
+        usageData.value = response.data.list
+        usageTotalCount.value = response.data.totalRecordsCount
+        usagePageCount.value = Math.ceil(usageTotalCount.value / params.pageSize)
+      }
+      else {
+        usageData.value = []
+        usageTotalCount.value = 0
+        usagePageCount.value = 0
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      usageData.value = []
+      usageTotalCount.value = 0
+      usagePageCount.value = 0
+
+      handleApiCatchError(err)
+
+      return createApiFailure<ResponseListDTO<AdminSubscriptionUsageDTO>>(err)
+    }
+    finally {
+      loadingGetUsageData.value = false
+    }
+  }
+
+  const getUsageAggregateData = async (
+    params: GetAdminSubscriptionUsageAggregateParams = {},
+  ) => {
+    loadingGetUsageAggregateData.value = true
+
+    try {
+      const response = await useApiService.get<
+        ApiResult<AdminSubscriptionUsageAggregateDTO[]>
+      >(
+        `${USAGE_BASE_URL}/aggregate`,
+        {
+          UserId: params.userId || null,
+          FromDate: params.fromDate || null,
+          ToDate: params.toDate || null,
+        },
+      )
+
+      if (response.succeeded && response.data) {
+        usageAggregateData.value = response.data
+      }
+      else {
+        usageAggregateData.value = []
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      usageAggregateData.value = []
+
+      handleApiCatchError(err)
+
+      return createApiFailure<AdminSubscriptionUsageAggregateDTO[]>(err, [])
+    }
+    finally {
+      loadingGetUsageAggregateData.value = false
+    }
+  }
+
   return {
     data,
     totalCount,
@@ -194,5 +304,13 @@ export const useUserSubscriptionAdmin = () => {
     revokeItem,
     loadingExtendItem,
     extendItem,
+    usageData,
+    usageTotalCount,
+    usagePageCount,
+    loadingGetUsageData,
+    getUsageData,
+    usageAggregateData,
+    loadingGetUsageAggregateData,
+    getUsageAggregateData,
   }
 }

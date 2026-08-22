@@ -210,7 +210,10 @@
       <common-modal-payment
         :plans="paymentPlans"
         :billing-interval="billingInterval"
+        :current-plan-id="currentPlanId"
+        :current-plan-title="currentPlanTitle"
         @dismiss="showCoinPaymentModal = false"
+        @switch-successfully="upgradePlanSuccessfully"
       />
     </lazy-common-modal-base>
 
@@ -287,6 +290,8 @@ const pendingDownload = ref<{
 const openModalDownloadMobile = ref(false)
 const paymentPlans = ref<UpgradeSuggestionsDTO[]>([])
 const billingInterval = ref<BillingInterval[]>([])
+const currentPlanTitle = ref<string | null>(null)
+const currentPlanId = ref<number | null>(null)
 
 const {
   // clearDownload,
@@ -309,6 +314,7 @@ const {
     else {
       downloadIssue.value = true
     }
+    pendingDownload.value = null
   },
   onInsufficientBalance: () => {
     showCoinPaymentModal.value = true
@@ -316,6 +322,8 @@ const {
   onUpgradeSuggestions: (data: DownloadResponseDTO) => {
     paymentPlans.value = data.upgradeSuggestions || []
     billingInterval.value = data.availableBillingIntervals || []
+    currentPlanTitle.value = data.currentPlanTitle
+    currentPlanId.value = data.currentPlanId
     showCoinPaymentModal.value = true
   },
 })
@@ -329,14 +337,6 @@ const handleDownloadClick = async (type: TypeFile, price: number, extraId?: stri
 
   startDownload({ type, extraId })
 }
-
-// const handleCoinPaymentClose = () => {
-//   showCoinPaymentModal.value = false
-//   if (pendingDownload.value) {
-//     clearDownload(pendingDownload.value.type, pendingDownload.value.extraId)
-//   }
-//   pendingDownload.value = null
-// }
 
 const handleAnimationComplete = async () => {
   // Close everything immediately when animation completes
@@ -360,6 +360,13 @@ const startExam = () => {
     setTimeout(() => {
       router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
     }, 100)
+  }
+}
+
+const upgradePlanSuccessfully = async () => {
+  showCoinPaymentModal.value = false
+  if (pendingDownload.value) {
+    startDownload({ type: pendingDownload.value.type, extraId: pendingDownload.value.extraId })
   }
 }
 </script>
