@@ -434,7 +434,7 @@ onMounted(async () => {
 })
 
 watch(
-  () => route.query,
+  () => route.query.contentType,
   async () => {
     resetFormState()
     await applyQueryDefaults()

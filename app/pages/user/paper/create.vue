@@ -815,7 +815,10 @@ onMounted(async () => {
 })
 
 watch(
-  () => route.query,
+  [
+    () => route.query.board,
+    () => route.query.classification,
+  ],
   async () => {
     resetFormState()
     await applyQueryDefaults()
