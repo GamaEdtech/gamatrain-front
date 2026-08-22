@@ -74,19 +74,13 @@ const clickOnModal = (event: MouseEvent) => {
 }
 </script>
 
-<style>
+<style scoped>
 .mobile-style{
   max-height: 90%;
 }
 .modal-title {
   line-height: 1.3 !important;
   padding-bottom: 2px;
-}
-.ck ol, .ck ul{
-  padding-left : 24px !important;
-}
-.ck.ck-balloon-panel{
-  z-index: 2400 !important;
 }
 @media only screen and (max-width: 960px) {
   .mobile-style {
