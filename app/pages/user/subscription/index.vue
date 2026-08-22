@@ -225,6 +225,8 @@
       />
     </div>
 
+    <user-subscription-history-table class="mt-6" />
+
     <common-modal-base
       v-model:show-dialog="showCancelModal"
       title="Cancel your subscription?"
