@@ -412,8 +412,10 @@ const submitMultimedia = async () => {
 }
 
 const applyQueryDefaults = async () => {
-  if (route.query.contentType) {
-    multimedia.value.content_type = route.query.contentType as string
+  const contentType = typeof route.query.contentType === 'string' ? route.query.contentType : ''
+
+  if (contentType) {
+    multimedia.value.content_type = contentType
   }
 }
 

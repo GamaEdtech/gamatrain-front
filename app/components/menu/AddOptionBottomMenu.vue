@@ -48,6 +48,8 @@
 </template>
 
 <script setup lang="ts">
+import { DEFAULT_BOARD_ID, MULTIMEDIA_CONTENT_TYPE_IDS, PAPER_CLASSIFICATION_IDS } from '@/constants'
+
 const route = useRoute()
 const emit = defineEmits(['close'])
 
@@ -60,42 +62,41 @@ interface AddOption {
 }
 
 const { user } = useUser()
-const defaultBoardId = 6627
-const userBoardId = computed(() => user.value?.board ?? defaultBoardId)
+const userBoardId = computed(() => user.value?.board ?? DEFAULT_BOARD_ID)
 
 const addOptions = computed<AddOption[]>(() => [
   {
-    path: `/user/paper/create?board=${userBoardId.value}&classification=310`,
+    path: `/user/paper/create?board=${userBoardId.value}&classification=${PAPER_CLASSIFICATION_IDS.WORKSHEET}`,
     title: 'Worksheet',
     iconMd: 'md:description_outlined',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: `/user/paper/create?board=${userBoardId.value}&classification=8344`,
+    path: `/user/paper/create?board=${userBoardId.value}&classification=${PAPER_CLASSIFICATION_IDS.PREDICTED_PAPER}`,
     title: 'Predicted Paper',
     icon: 'icon-paper',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: `/user/paper/create?board=${userBoardId.value}&classification=6896`,
+    path: `/user/paper/create?board=${userBoardId.value}&classification=${PAPER_CLASSIFICATION_IDS.STUDY_GUIDE}`,
     title: 'Study Guide',
     iconMd: 'md:menu_book',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: `/user/paper/create?board=${userBoardId.value}&classification=7180`,
+    path: `/user/paper/create?board=${userBoardId.value}&classification=${PAPER_CLASSIFICATION_IDS.TOPICAL_QUESTIONS}`,
     title: 'Topical Questions',
     iconMd: 'md:quiz_outlined',
     typeFile: 'PDF · DOCX',
   },
   {
-    path: '/user/multimedia/create?contentType=6022',
+    path: `/user/multimedia/create?contentType=${MULTIMEDIA_CONTENT_TYPE_IDS.VIDEO}`,
     title: 'Video',
     iconMd: 'md:videocam',
     typeFile: 'MP4',
   },
   {
-    path: '/user/multimedia/create?contentType=6024',
+    path: `/user/multimedia/create?contentType=${MULTIMEDIA_CONTENT_TYPE_IDS.PRESENTATION}`,
     title: 'Presentation',
     iconMd: 'md:slideshow',
     typeFile: 'PPTX',

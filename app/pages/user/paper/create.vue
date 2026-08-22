@@ -782,12 +782,17 @@ const resetFormState = () => {
   resetTopics()
 }
 
+const getQueryString = (value: unknown) => typeof value === 'string' ? value : ''
+
 const applyQueryDefaults = async () => {
-  if (route.query.board) {
-    paper.value.board = route.query.board as string
+  const board = getQueryString(route.query.board)
+  const classification = getQueryString(route.query.classification)
+
+  if (board) {
+    paper.value.board = board
     await Promise.allSettled([getGrades(paper.value.board), getClassification(paper.value.board)])
-    if (route.query.classification) {
-      paper.value.classification = route.query.classification as string
+    if (classification) {
+      paper.value.classification = classification
     }
   }
 }
