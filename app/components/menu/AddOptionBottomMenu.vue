@@ -1,33 +1,37 @@
 <template>
   <div class="w-100 d-flex align-center justify-center flex-column mt-4">
     <div class="w-100 d-flex flex-wrap justify-center ga-2 container-card">
-      <nuxt-link
+      <v-btn
         v-for="item in addOptions"
         :key="item.title"
         :to="item.path"
+        :disabled="item.disabled"
         :aria-label="`${item.title} — ${item.typeFile}`"
-        class="card-add-option d-flex flex-column align-center justify-start text-center ga-1 rounded-xl py-4"
+        variant="plain"
+        class="card-add-option rounded-xl py-4 px-0"
       >
-        <div class="icon-div rounded-lg pa-2 d-flex align-center justify-center bg-primary100">
-          <span
-            v-if="item.icon"
-            class="icon-add text-grey700"
-            :class="item.icon"
-          />
-          <v-icon
-            v-if="item.iconMd"
-            color="grey700"
-            size="20"
-          >
-            {{ item.iconMd }}
-          </v-icon>
-        </div>
-        <span class="card-option-title w-100 text-center text-grey700 text-h6 px-1 font-weight-bold mt-1">{{ item.title }}</span>
+        <div class="w-100 d-flex flex-column align-center justify-start ga-1">
+          <div class="icon-div rounded-lg pa-2 d-flex align-center justify-center bg-primary100">
+            <span
+              v-if="item.icon"
+              class="icon-add text-grey700"
+              :class="item.icon"
+            />
+            <v-icon
+              v-if="item.iconMd"
+              color="grey700"
+              size="20"
+            >
+              {{ item.iconMd }}
+            </v-icon>
+          </div>
+          <span class="card-option-title w-100 text-center text-grey700 text-h6 px-1 font-weight-bold mt-1">{{ item.title }}</span>
 
-        <span class="text-center text-subtitle-2 font-weight-bold text-grey500 px-2 rounded-pill bg-grey100 chip-type-file">
-          {{ item.typeFile }}
-        </span>
-      </nuxt-link>
+          <span class="text-center text-subtitle-2 font-weight-bold text-grey500 px-2 rounded-pill bg-grey100 chip-type-file">
+            {{ item.typeFile }}
+          </span>
+        </div>
+      </v-btn>
     </div>
 
     <div class="w-100 bg-primary50 rounded-lg pa-2 d-flex align-center justify-start ga-2 info-card mt-4">
@@ -59,10 +63,12 @@ interface AddOption {
   typeFile: string
   icon?: string
   iconMd?: string
+  disabled: boolean
 }
 
 const { user } = useUser()
 const userBoardId = computed(() => user.value?.board ?? DEFAULT_BOARD_ID)
+const canAddEducationalContent = computed(() => user.value?.group === 5)
 
 const addOptions = computed<AddOption[]>(() => [
   {
@@ -70,54 +76,63 @@ const addOptions = computed<AddOption[]>(() => [
     title: 'Worksheet',
     iconMd: 'md:description_outlined',
     typeFile: 'PDF · DOCX',
+    disabled: !canAddEducationalContent.value,
   },
   {
     path: `/user/paper/create?board=${userBoardId.value}&classification=${PAPER_CLASSIFICATION_IDS.PREDICTED_PAPER}`,
     title: 'Predicted Paper',
     icon: 'icon-paper',
     typeFile: 'PDF · DOCX',
+    disabled: !canAddEducationalContent.value,
   },
   {
     path: `/user/paper/create?board=${userBoardId.value}&classification=${PAPER_CLASSIFICATION_IDS.STUDY_GUIDE}`,
     title: 'Study Guide',
     iconMd: 'md:menu_book',
     typeFile: 'PDF · DOCX',
+    disabled: !canAddEducationalContent.value,
   },
   {
     path: `/user/paper/create?board=${userBoardId.value}&classification=${PAPER_CLASSIFICATION_IDS.TOPICAL_QUESTIONS}`,
     title: 'Topical Questions',
     iconMd: 'md:quiz_outlined',
     typeFile: 'PDF · DOCX',
+    disabled: !canAddEducationalContent.value,
   },
   {
     path: `/user/multimedia/create?contentType=${MULTIMEDIA_CONTENT_TYPE_IDS.VIDEO}`,
     title: 'Video',
     iconMd: 'md:videocam',
     typeFile: 'MP4',
+    disabled: !canAddEducationalContent.value,
   },
   {
     path: `/user/multimedia/create?contentType=${MULTIMEDIA_CONTENT_TYPE_IDS.PRESENTATION}`,
     title: 'Presentation',
     iconMd: 'md:slideshow',
     typeFile: 'PPTX',
+    disabled: !canAddEducationalContent.value,
   },
   {
     path: '/school/add',
     title: 'School',
     icon: 'icon-school',
     typeFile: 'INFO',
+    disabled: false,
   },
   {
     path: '/user/question/create',
     title: 'Q&A',
     icon: 'icon-q-a',
     typeFile: 'TEXT',
+    disabled: false,
   },
   {
     path: '/user/blogs/create',
     title: 'Blogs',
     iconMd: 'md:art_track',
     typeFile: 'HTML',
+    disabled: false,
   },
 ])
 
@@ -136,13 +151,33 @@ watch(
 .card-add-option{
   width : 31%;
   max-width : 120px;
+  height: auto !important;
   border : 1px solid rgb(var(--v-theme-grey200));
   transition: 0.3s;
   text-decoration: none;
+  opacity: 1;
 }
-.card-add-option:hover{
+.card-add-option :deep(.v-btn__content) {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  white-space: wrap !important;
+  gap: 4px;
+}
+.card-add-option:not(.v-btn--disabled):hover{
   transform: translateY(-6px);
   border : 1px solid rgb(var(--v-theme-primary))
+}
+.card-add-option.v-btn--disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.card-add-option.v-btn--disabled:hover{
+  transform: none;
+  border : 1px solid rgb(var(--v-theme-grey200))
 }
 .icon-add{
   font-size: 20px;
