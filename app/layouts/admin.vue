@@ -52,11 +52,6 @@ const menuItems = [
   {
     Subscription: [
       {
-        title: 'Setting',
-        link: '/admin/subscription',
-        icon: 'md:subscriptions_outlined',
-      },
-      {
         title: 'Users',
         link: '/admin/subscription/users',
         icon: 'md:manage_accounts_outlined',
@@ -126,6 +121,11 @@ const menuItems = [
         title: 'Settings',
         link: '/admin/settings',
         icon: 'md:settings_outlined',
+      },
+      {
+        title: 'Subscription Setting',
+        link: '/admin/subscription',
+        icon: 'md:subscriptions_outlined',
       },
     ],
   },
