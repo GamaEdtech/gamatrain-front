@@ -2,10 +2,10 @@
   <div class="w-100 d-flex flex-column flex-md-row ga-2">
     <div class="activity-transaction-chart-div w-100 bg-grey100 rounded-lg pa-2 d-flex flex-column flex-sm-row flex-md-column align-center justify-space-between ga-2">
       <user-activity-transaction-balance-card />
-      <user-activity-transaction-transaction-chart v-if="!xs || isShowChart" />
+      <user-activity-transaction-chart v-if="!xs || isShowChart" />
     </div>
     <div class="w-100">
-      <user-activity-transaction-transaction-history @show-chart="changeStatusChart" />
+      <user-activity-transaction-history @show-chart="changeStatusChart" />
     </div>
   </div>
 </template>
