@@ -318,10 +318,11 @@ const { uploadFile, loadingUploadFile } = useUpload()
 const { addItem, loadingAddItem } = useMultimedia()
 const { $toast } = useNuxtApp()
 const router = useRouter()
+const route = useRoute()
 
 const isFormValid = ref(false)
 const multimediaFile = ref<File | File[] | null>(null)
-const multimedia = ref<MultimediaForm>({
+const createDefaultMultimedia = (): MultimediaForm => ({
   board: '',
   grade: '',
   subject: '',
@@ -334,6 +335,7 @@ const multimedia = ref<MultimediaForm>({
   free_available: false,
   file: '',
 })
+const multimedia = ref<MultimediaForm>(createDefaultMultimedia())
 
 const getSelectedFile = (value: unknown) => {
   if (value instanceof File) return value
@@ -409,12 +411,37 @@ const submitMultimedia = async () => {
   }
 }
 
+const applyQueryDefaults = async () => {
+  const contentType = typeof route.query.contentType === 'string' ? route.query.contentType : ''
+
+  if (contentType) {
+    multimedia.value.content_type = contentType
+  }
+}
+
+const resetFormState = () => {
+  multimedia.value = createDefaultMultimedia()
+  multimediaFile.value = null
+  resetGrades()
+  resetSubjects()
+  resetTopics()
+}
+
 onMounted(async () => {
   await Promise.all([
     getBoards(),
     getExtraTypeFile('content_type'),
   ])
+  await applyQueryDefaults()
 })
+
+watch(
+  () => route.query.contentType,
+  async () => {
+    resetFormState()
+    await applyQueryDefaults()
+  },
+)
 </script>
 
 <style scoped>

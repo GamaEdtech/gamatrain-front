@@ -274,8 +274,9 @@ const { user } = useUser()
 const { mdAndDown } = useDisplay()
 const route = useRoute()
 const auth = useAuth()
+const canAccessEducationalContent = computed(() => user.value?.group === 5)
 
-const items = [
+const items = computed(() => [
   {
     title: 'Dashboard',
     icon: 'md:dashboard',
@@ -293,14 +294,14 @@ const items = [
         link: '/user/paper',
         icon: 'icon-paper',
         icon_type: 'custom',
-        status: user.value && user.value.group == 5 ? false : true,
+        status: !canAccessEducationalContent.value,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icon-multimedia',
         icon_type: 'custom',
-        status: user.value && user.value.group == 5 ? false : true,
+        status: !canAccessEducationalContent.value,
       },
       {
         title: 'Q & A',
@@ -377,7 +378,7 @@ const items = [
       { title: 'Security', link: '/user/edit-pass', icon: 'md:password' },
     ],
   },
-]
+])
 
 const mobileItems = [
   {

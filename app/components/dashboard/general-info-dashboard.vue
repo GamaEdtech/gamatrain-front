@@ -9,21 +9,22 @@
         class="d-flex pb-0"
       >
         <NuxtLink to="/user/profile">
-          <img
-            v-if="userInfoData?.avatar"
-            width="72"
-            height="72"
-            :src="userInfoData?.avatar"
+          <v-avatar
+            v-if="user?.avatarUri"
+            size="72"
           >
-          <v-btn
+            <v-img
+              :src="user?.avatarUri"
+              alt="user avatar"
+            />
+          </v-avatar>
+          <v-icon
             v-else
-            class="d-flex"
-            outlined
-            fab
-            x-large
+            color="grey700"
+            size="72"
           >
-            <v-icon> mdi-account-outline </v-icon>
-          </v-btn>
+            md:account_circle
+          </v-icon>
         </NuxtLink>
         <div class="pa-3">
           <p class="text-h4">
