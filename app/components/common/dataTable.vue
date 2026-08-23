@@ -78,6 +78,7 @@
           v-model="pageModel"
           :length="pageCount"
           :total-visible="4"
+          :disabled="loading"
           next-icon="md:arrow_forward"
           prev-icon="md:arrow_back"
           size="40"
@@ -89,6 +90,7 @@
         <v-select
           v-model="pageSizeModel"
           :items="pageSizeOptions"
+          :disabled="loading"
           item-title="label"
           item-value="value"
           variant="outlined"
@@ -97,7 +99,17 @@
           hide-details
           max-width="140"
           class="rounded-pill"
-        />
+        >
+          <template #prepend-inner>
+            <v-progress-circular
+              v-if="loading"
+              indeterminate
+              size="20"
+              color="primary"
+              class="mr-2"
+            />
+          </template>
+        </v-select>
       </div>
     </div>
   </div>
