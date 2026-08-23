@@ -115,7 +115,7 @@ const save = async () => {
 
   const response = await changeGroup(selectedUserGroup.value)
 
-  if (response?.status === 1 && user.value) {
+  if (response?.succeeded && user.value) {
     user.value.group = selectedUserGroup.value
 
     const responseEditProfile = await editItem({ group: selectedUserGroup.value })
