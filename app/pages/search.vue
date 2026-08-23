@@ -146,7 +146,7 @@ const isPreviousLoading = ref(false)
 const data = ref([])
 const isAllDataLoaded = ref(false)
 const totalDataFind = ref(0)
-const perPage = 10
+const perPage = 5
 const perPageServerSide = 5
 const firstLoadedPageNumber = ref(Number(route.query.page) || 1)
 const latestLoadedPageNumber = ref(Number(route.query.page) || 1)
@@ -185,6 +185,7 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
         'PagingDto.PageFilter.Size': perPageServerSide,
         'PagingDto.PageFilter.Skip': (pageNumber - 1) * perPageServerSide,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+        'FullName': route.query.title ?? '',
       }
       return useApiService.get('/api/v2/identities/profiles/list', query)
     }
@@ -243,6 +244,7 @@ const getDataList = async () => {
         'PagingDto.PageFilter.Size': perPage,
         'PagingDto.PageFilter.Skip': (querySearch.value.page - 1) * perPage,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+        'FullName': querySearch.value.title,
       }
       response = await useApiService.get('/api/v2/identities/profiles/list', query)
       totalDataFind.value = response.data.totalRecordsCount || 0
@@ -256,8 +258,11 @@ const getDataList = async () => {
     if (response.data.list && response.data.list.length < perPage) {
       isAllDataLoaded.value = true
     }
+    if (response.data.list == null && response.data.totalRecordsCount == null) {
+      isAllDataLoaded.value = true
+    }
 
-    return response.data.list
+    return response.data.list ?? []
   }
   catch (err) {
     console.error(err)
