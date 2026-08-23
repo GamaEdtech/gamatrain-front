@@ -30,7 +30,7 @@
         :is-all-data-loaded="isAllDataLoaded"
         :is-previous-loading="isPreviousLoading"
         :first-loaded-page-number="firstLoadedPageNumber"
-        :is-profile-mode="route.query.type == 'teacher'"
+        :is-profile-mode="isProfileMode"
         @load-next-page="loadNextPageData"
         @load-previous-page="loadPreviousPageData"
       />
@@ -150,6 +150,8 @@ const perPage = 5
 const perPageServerSide = 5
 const firstLoadedPageNumber = ref(Number(route.query.page) || 1)
 const latestLoadedPageNumber = ref(Number(route.query.page) || 1)
+
+const isProfileMode = computed(() => getEquivalentOldType(querySearch.value.type) == 'teacher')
 
 const loadNextPageData = async () => {
   latestLoadedPageNumber.value += 1
