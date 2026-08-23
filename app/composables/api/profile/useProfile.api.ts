@@ -273,34 +273,22 @@ export const useProfile = () => {
       const response = await useApiService.post<
         ApiResult<boolean>
       >(
-        '/api/v1/users/group',
+        '/api/v2/legacy-auth/group',
         { group },
       )
-      if (response?.status === 1) {
+      if (response.succeeded) {
         $toast.success('Update group was successful.')
       }
       else {
-        if (response.errors && response.errors.length > 0) {
-          $toast.error(response.errors[0].message || '')
-        }
-        else {
-          $toast.error('The operation failed. Please try again later.')
-        }
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        status: 0,
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-        data: {},
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingChangeGroup.value = false
