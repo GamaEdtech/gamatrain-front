@@ -187,7 +187,7 @@ const selectedGrade = ref(null)
 const showBoardHint = ref(false)
 
 const categoryLink = (category) => {
-  return category.type === 'school' ? `/school` : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
+  return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/search?type=teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
 }
 const fetchInitialData = async () => {
   await getBoards()
