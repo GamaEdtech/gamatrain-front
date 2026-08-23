@@ -127,8 +127,8 @@ const items = reactive([
     icon: 'mdi-credit-card-outline',
     subMenuList: [
       {
-        title: 'Wallet',
-        link: '/user/wallet',
+        title: 'Activity Transaction',
+        link: '/user/activity-transaction',
         icon: 'mdi-wallet',
       },
       {

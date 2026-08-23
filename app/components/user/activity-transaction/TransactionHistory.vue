@@ -41,7 +41,7 @@
       v-if="loading"
       class="w-100 mt-4 d-none d-sm-flex"
     >
-      <user-wallet-skeleton-table-desktop />
+      <user-activity-transaction-skeleton-table-desktop />
     </div>
     <div
       v-else

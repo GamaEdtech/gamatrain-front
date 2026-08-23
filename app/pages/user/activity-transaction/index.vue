@@ -1,11 +1,11 @@
 <template>
   <div class="w-100 d-flex flex-column flex-md-row ga-2">
-    <div class="wallet-chart-div w-100 bg-grey100 rounded-lg pa-2 d-flex flex-column flex-sm-row flex-md-column align-center justify-space-between ga-2">
-      <user-wallet-balance-card />
-      <user-wallet-transaction-chart v-if="!xs || isShowChart" />
+    <div class="activity-transaction-chart-div w-100 bg-grey100 rounded-lg pa-2 d-flex flex-column flex-sm-row flex-md-column align-center justify-space-between ga-2">
+      <user-activity-transaction-balance-card />
+      <user-activity-transaction-transaction-chart v-if="!xs || isShowChart" />
     </div>
     <div class="w-100">
-      <user-wallet-transaction-history @show-chart="changeStatusChart" />
+      <user-activity-transaction-transaction-history @show-chart="changeStatusChart" />
     </div>
   </div>
 </template>
@@ -18,7 +18,7 @@ definePageMeta({
 })
 
 useHead({
-  title: 'Wallet',
+  title: 'Activity Transaction',
   meta: [
     { name: 'description', content: 'Manage your GET tokens and view transaction history' },
   ],
@@ -33,14 +33,14 @@ const changeStatusChart = () => {
 </script>
 
 <style scoped>
-.wallet-chart-div{
+.activity-transaction-chart-div{
   max-width: 370px;
   min-width: 300px;
   height : fit-content
 }
 
 @media screen and (max-width: 960px) {
-  .wallet-chart-div{
+  .activity-transaction-chart-div{
     max-width: 100%;
   }
 }
