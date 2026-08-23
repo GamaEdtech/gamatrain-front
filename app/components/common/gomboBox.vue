@@ -129,11 +129,15 @@ const inputText = ref('')
 const dense = ref(false)
 const selectedItem = ref<IItemGomboBox | null>(null)
 
+const isSameValue = (firstValue: unknown, secondValue: unknown) => {
+  return firstValue == Number(secondValue) || firstValue == secondValue
+}
+
 const findSelectedItem = (value?: string | number) => {
   return props.items.find((item) => {
     const selectedValue = item[props.itemValue]
 
-    return selectedValue == Number(value) || selectedValue == value
+    return isSameValue(selectedValue, value)
   })
 }
 
@@ -143,19 +147,27 @@ const getItemText = (item: IItemGomboBox, key: string) => {
   return value == null ? '' : String(value)
 }
 
+const syncSelectedItem = (value?: string | number) => {
+  if (props.items.length === 0) {
+    inputText.value = ''
+    selectedItem.value = null
+    return
+  }
+
+  const foundObj = findSelectedItem(value)
+  selectedItem.value = foundObj || null
+  inputText.value = foundObj ? getItemText(foundObj, props.itemTitle) : ''
+}
+
 watch(
   () => props.items,
   (newValue) => {
     if (newValue.length > 0) {
-      const foundObj = findSelectedItem(props.modelValue)
-      if (foundObj) {
-        inputText.value = getItemText(foundObj, props.itemTitle)
-        selectedItem.value = foundObj
-      }
-      else inputText.value = ''
+      syncSelectedItem(props.modelValue)
     }
     else {
       inputText.value = ''
+      selectedItem.value = null
     }
   },
 )
@@ -163,14 +175,7 @@ watch(
 watch(
   () => props.modelValue,
   (newValue) => {
-    if (props.items.length > 0) {
-      const foundObj = findSelectedItem(newValue)
-      selectedItem.value = foundObj ? foundObj : null
-      inputText.value = foundObj ? getItemText(foundObj, props.itemTitle) : ''
-    }
-    else {
-      inputText.value = ''
-    }
+    syncSelectedItem(newValue)
   },
 )
 
@@ -191,11 +196,7 @@ const setValue = (item: IItemGomboBox) => {
 }
 
 onMounted(() => {
-  if (props.items.length > 0) {
-    const foundObj = findSelectedItem(props.modelValue)
-    selectedItem.value = foundObj ? foundObj : null
-    inputText.value = foundObj ? getItemText(foundObj, props.itemTitle) : ''
-  }
+  syncSelectedItem(props.modelValue)
 })
 </script>
 
