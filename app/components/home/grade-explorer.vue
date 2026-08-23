@@ -164,6 +164,13 @@ const categories = ref([
     icon: 'icon-multimedia',
   },
   {
+    type: 'teacher',
+    key: 'teachers',
+    stat: '--',
+    title: 'Teacher',
+    icon: 'icon-teacher',
+  },
+  {
     type: 'school',
     key: 'schools',
     stat: '+600K',
@@ -263,6 +270,9 @@ const fetchCategoryCounts = async () => {
 
       categories.value.find((cat, _i) => cat.key == 'tutorial').stat
         = parseInt(response.data.types_stats.tutorials) || 0
+
+      categories.value.find((cat, _i) => cat.key == 'teachers').stat
+        = parseInt(response.data.types_stats.teachers) || 0
     }
   }
   catch (error) {
@@ -392,6 +402,9 @@ onMounted(() => {
 }
 .icon-multimedia {
   color: #02b719;
+}
+.icon-teacher{
+  color : #12b76a
 }
 .icon-paper {
   color: #2e90fa;

@@ -227,6 +227,17 @@ const categories = [
     activeColor: '#c0deff',
   },
   {
+    title: 'Teacher',
+    value: 'Teacher',
+    api: '/api/v2/identities/profiles/list',
+    type: 'teacher',
+    isOldApi: false,
+    keywordSearch: 'FullName',
+    iconName: 'icon-teacher',
+    backgroundColor: '#12b76a',
+    activeColor: '#12b76a70',
+  },
+  {
     title: 'School',
     value: 'School',
     api: '/api/v2/schools',

@@ -12,12 +12,28 @@
       </div>
       <div class="d-flex flex-column align-start justify-center ga-4">
         <span class="text-h5 text-sm-h4 font-weight-bold">{{
-          information.title || information.name
+          information.title || information.name || information.fullName
         }}</span>
         <span
           v-if="information.summary"
           class="d-none d-sm-flex text-h5 primary-gray-500"
         >{{ information.summary }}</span>
+        <div class="d-flex align-center ga-2">
+          <span
+            v-if="information.userRateLevel"
+            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
+          >
+            <v-icon color="grey300">md:user_attributes_outlined</v-icon>
+            {{ information.userRateLevel }}
+          </span>
+          <span
+            v-if="information.onlineStatus"
+            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
+          >
+            <v-icon color="grey300">md:wifi_outlined</v-icon>
+            {{ information.onlineStatus }}
+          </span>
+        </div>
         <div class="d-none d-sm-flex flex-wrap align-center ga-2">
           <v-chip
             v-if="information.section_title"
@@ -79,6 +95,19 @@
           >
             {{ information.cityTitle }}
           </v-chip>
+
+          <template v-if="information.skills && information.skills.length > 0">
+            <v-chip
+              v-for="skill in information.skills.slice(0, 3)"
+              :key="skill"
+              variant="flat"
+              class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
+              color="#F2F4F7"
+            >
+              {{ skill }}
+            </v-chip>
+          </template>
+
         </div>
       </div>
     </div>
@@ -150,6 +179,17 @@
       >
         {{ information.cityTitle }}
       </v-chip>
+      <template v-if="information.skills && information.skills.length > 0">
+        <v-chip
+          v-for="skill in information.skills.slice(0, 3)"
+          :key="skill"
+          variant="flat"
+          class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
+          color="#F2F4F7"
+        >
+          {{ skill }}
+        </v-chip>
+      </template>
     </div>
   </NuxtLink>
 </template>
@@ -176,6 +216,9 @@ const createLink = () => {
   }
   else if (props.category.type == 'blog') {
     link = `/blog/${props.information.id}/${props.information.slug}`
+  }
+  else if (props.category.type == 'teacher') {
+    link = `/profile/${props.information.handle}`
   }
   return link
 }
