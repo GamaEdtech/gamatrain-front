@@ -340,7 +340,7 @@ const items = computed(() => [
     value: 'financial',
     subMenuList: [
       { title: 'Subscription', link: '/user/subscription', icon: 'md:subscriptions_outlined' },
-      { title: 'Activity Transaction', link: '/user/activity-transaction', icon: 'md:shopping_cart' },
+      { title: 'Activity History', link: '/user/activity-history', icon: 'md:shopping_cart' },
       { title: 'Commission', link: '/user/commission', icon: 'md:paid' },
       // {
       //   title: 'Top Up Wallet',
