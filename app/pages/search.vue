@@ -219,12 +219,12 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
 
 watchEffect(() => {
   if (initialData.value) {
-    data.value = initialData.value.data.list
+    data.value = initialData.value.data.list ?? []
   }
 })
 
 if (initialData.value) {
-  data.value = initialData.value.data.list
+  data.value = initialData.value.data.list ?? []
   if (getEquivalentOldType(route.query.type) == 'teacher') {
     totalDataFind.value = initialData.value.data.totalRecordsCount || 0
   }
@@ -252,7 +252,7 @@ const getDataList = async () => {
       totalDataFind.value = response.data.totalRecordsCount || 0
     }
     else {
-      const params = { ...querySearch.value, type: typeRoute }
+      const params = { ...querySearch.value, type: typeRoute, perpage: perPage }
       response = await useApiService.get('/api/v1/search', params)
       totalDataFind.value = response.data.num || 0
     }
