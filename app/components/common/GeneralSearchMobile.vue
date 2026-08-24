@@ -234,8 +234,8 @@ const categories = [
     isOldApi: false,
     keywordSearch: 'FullName',
     iconName: 'icon-teacher',
-    backgroundColor: '#12b76a',
-    activeColor: '#12b76a70',
+    backgroundColor: '#1CB423',
+    activeColor: '#1CB42370',
   },
   {
     title: 'School',

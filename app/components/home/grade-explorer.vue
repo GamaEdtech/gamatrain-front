@@ -270,15 +270,26 @@ const fetchCategoryCounts = async () => {
 
       categories.value.find((cat, _i) => cat.key == 'tutorial').stat
         = parseInt(response.data.types_stats.tutorials) || 0
-
-      categories.value.find((cat, _i) => cat.key == 'teachers').stat
-        = parseInt(response.data.types_stats.teachers) || 0
     }
   }
   catch (error) {
     console.error('Error fetching category counts:', error)
   }
 }
+
+const fetchTeachers = async () => {
+  const query = {
+    'PagingDto.PageFilter.Size': 1,
+    'PagingDto.PageFilter.Skip': 0,
+    'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+  }
+  const response = await useApiService.get('/api/v2/identities/profiles/list', query)
+  const totalDataFind = response.data.totalRecordsCount || 0
+
+  categories.value.find((cat, _i) => cat.key == 'teachers').stat
+    = parseInt(totalDataFind)
+}
+
 const handleBoardFocused = () => {
   if (selectedBoard.value && showBoardHint.value) {
     localStorage.setItem('boardHintShown', 'true')
@@ -304,6 +315,7 @@ watch(
 
 onMounted(() => {
   fetchInitialData()
+  fetchTeachers()
   if (localStorage.getItem('boardHintShown') === 'true') {
     showBoardHint.value = false
   }
@@ -404,7 +416,7 @@ onMounted(() => {
   color: #02b719;
 }
 .icon-teacher{
-  color : #12b76a
+  color : #1CB423
 }
 .icon-paper {
   color: #2e90fa;
