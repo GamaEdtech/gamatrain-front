@@ -16,8 +16,23 @@
           Clear Filter
         </v-btn>
       </div>
+    </div>
 
-      <div class="d-flex align-center justify-end ga-1 flex-wrap">
+    <common-data-table
+      v-model:page="page"
+      v-model:page-size="pageSize"
+      :headers="headers"
+      :items="list || []"
+      :page-count="pageCount"
+      :total-count="totalCount"
+      :page-size-options="allPageSize"
+      :loading="loading"
+      item-label="User Subscriptions"
+      class="mt-4"
+      @update:page="changePageNumber"
+      @update:page-size="changePageSize"
+    >
+      <template #actions>
         <v-btn
           variant="plain"
           max-width="20"
@@ -30,7 +45,6 @@
             md:search
           </v-icon>
         </v-btn>
-
         <v-btn
           size="small"
           flat
@@ -52,222 +66,8 @@
             Refresh Data
           </v-tooltip>
         </v-btn>
-
-        <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold">
-          <span class="text-grey500 font-weight-bold mr-1">
-            {{ totalCount }}
-          </span>
-          User Subscriptions
-        </span>
-      </div>
-    </div>
-
-    <div class="w-100 mt-4">
-      <v-data-table
-        :headers="headers"
-        :items="list"
-        :items-per-page="pageSize"
-        class="elevation-1 set-height-table"
-        :loading="loading"
-        fixed-header
-        hide-default-footer
-      >
-        <template #headers="{ columns }">
-          <tr>
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
-               ${index == 0 ? `` : `th-min-width`}`"
-            >
-              {{ column.title }}
-            </th>
-          </tr>
-        </template>
-
-        <template #[`item.userId`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.userId }}
-          </div>
-        </template>
-
-        <template #[`item.userEmail`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.userEmail }}
-          </div>
-        </template>
-
-        <template #[`item.planTitle`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.planTitle }}
-          </div>
-        </template>
-
-        <template #[`item.status`]="{ item }">
-          <div class="w-100 d-flex justify-center align-center">
-            <v-chip
-              :color="getStatusColor(item.status)"
-              class="font-weight-bold text-h5"
-            >
-              {{ item.status }}
-            </v-chip>
-          </div>
-        </template>
-
-        <template #[`item.expirationDate`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold">
-            {{ formatDate(item.expirationDate) }}
-          </div>
-        </template>
-
-        <template #[`item.autoRenews`]="{ item }">
-          <div class="w-100 d-flex justify-center align-center">
-            <v-chip
-              :color="item.autoRenews ? `success` : `grey400`"
-              class="font-weight-bold text-h5"
-            >
-              {{ item.autoRenews ? `Yes` : `No` }}
-            </v-chip>
-          </div>
-        </template>
-
-        <template #[`item.gateway`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.gateway }}
-          </div>
-        </template>
-
-        <template #[`item.Action`]="{ item }">
-          <div class="d-flex justify-center align-center ga-1">
-            <v-btn
-              icon
-              flat
-              @click="openDetailModal(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:visibility
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Detail
-              </v-tooltip>
-            </v-btn>
-
-            <v-btn
-              icon
-              flat
-              @click="openGrantModal(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:add_card
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Grant
-              </v-tooltip>
-            </v-btn>
-
-            <v-btn
-              icon
-              flat
-              @click="openRevokeModal(item)"
-            >
-              <v-icon
-                size="20"
-                color="error"
-              >
-                md:block
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Revoke now
-              </v-tooltip>
-            </v-btn>
-
-            <v-btn
-              icon
-              flat
-              @click="openExtendModal(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:more_time
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Extend
-              </v-tooltip>
-            </v-btn>
-
-            <v-btn
-              icon
-              flat
-              @click="openHistoryModal(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:history
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                History
-              </v-tooltip>
-            </v-btn>
-          </div>
-        </template>
-      </v-data-table>
-    </div>
-
-    <div class="w-100 d-flex mt-2 position-relative ga-6">
-      <div class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4">
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-          :total-visible="4"
-          next-icon="md:arrow_forward"
-          prev-icon="md:arrow_back"
-          size="40"
-          class="custom-pagination"
-          @update:model-value="changePageNumber"
-        />
-      </div>
-
-      <div class="position-absolute right-0 select-size-div">
-        <v-select
-          v-model="pageSize"
-          :items="allPageSize"
-          item-title="label"
-          item-value="value"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          max-width="140"
-          class="rounded-pill"
-          @update:model-value="changePageSize"
-        />
-      </div>
-    </div>
+      </template>
+    </common-data-table>
 
     <admin-common-modal
       v-model:show-dialog="showSearchModal"
@@ -340,7 +140,6 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { formatLocal } = useDateTime()
 const {
   loadingGetData: loading,
   data: list,
@@ -355,11 +154,46 @@ const headers = [
   { title: 'User ID', key: 'userId', sortable: false, width: '8vw' },
   { title: 'Email', key: 'userEmail', sortable: false, width: '20vw' },
   { title: 'Plan', key: 'planTitle', sortable: false, width: '18vw' },
-  { title: 'Status', key: 'status', sortable: false, width: '10vw' },
-  { title: 'Expiration', key: 'expirationDate', sortable: false, width: '14vw' },
-  { title: 'Auto Renews', key: 'autoRenews', sortable: false, width: '10vw' },
+  {
+    title: 'Status',
+    key: 'status',
+    sortable: false,
+    width: '10vw',
+    type: 'chip' as const,
+    getChipColor: (item: AdminUserSubscriptionListDTO) => getStatusColor(item.status),
+  },
+  {
+    title: 'Expiration',
+    key: 'expirationDate',
+    sortable: false,
+    width: '14vw',
+    type: 'date' as const,
+    dateFormat: 'DD/MM/YYYY HH:mm',
+  },
+  {
+    title: 'Auto Renews',
+    key: 'autoRenews',
+    sortable: false,
+    width: '10vw',
+    type: 'chip' as const,
+    getText: (item: AdminUserSubscriptionListDTO) => item.autoRenews ? 'Yes' : 'No',
+    getChipColor: (item: AdminUserSubscriptionListDTO) => item.autoRenews ? 'success' : 'grey400',
+  },
   { title: 'Gateway', key: 'gateway', sortable: false, width: '10vw' },
-  { title: 'Action', key: 'Action', sortable: false, width: '16vw' },
+  {
+    title: 'Action',
+    key: 'Action',
+    sortable: false,
+    width: '16vw',
+    type: 'actions' as const,
+    actions: [
+      { icon: 'md:visibility', tooltip: 'Detail', onClick: (item: AdminUserSubscriptionListDTO) => openDetailModal(item) },
+      { icon: 'md:add_card', tooltip: 'Grant', onClick: (item: AdminUserSubscriptionListDTO) => openGrantModal(item) },
+      { icon: 'md:block', tooltip: 'Revoke now', color: 'error', onClick: (item: AdminUserSubscriptionListDTO) => openRevokeModal(item) },
+      { icon: 'md:more_time', tooltip: 'Extend', onClick: (item: AdminUserSubscriptionListDTO) => openExtendModal(item) },
+      { icon: 'md:history', tooltip: 'History', onClick: (item: AdminUserSubscriptionListDTO) => openHistoryModal(item) },
+    ],
+  },
 ]
 
 const pageSize = ref(10)
@@ -391,11 +225,13 @@ const fetchUserSubscriptions = async () => {
   })
 }
 
-const changePageNumber = async () => {
+const changePageNumber = async (pageNumber: number) => {
+  page.value = pageNumber
   await fetchUserSubscriptions()
 }
 
-const changePageSize = async () => {
+const changePageSize = async (newPageSize: number) => {
+  pageSize.value = newPageSize
   page.value = 1
   await fetchUserSubscriptions()
 }
@@ -478,10 +314,6 @@ const refreshData = async () => {
   await fetchUserSubscriptions()
 }
 
-const formatDate = (value: string | null) => {
-  return value ? formatLocal(value, 'DD/MM/YYYY HH:mm') : '-'
-}
-
 const getStatusColor = (status: UserSubscriptionStatus) => {
   switch (status) {
     case 'Active':
@@ -500,23 +332,4 @@ const getStatusColor = (status: UserSubscriptionStatus) => {
 </script>
 
 <style scoped>
-.set-height-table {
-  max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
-}
-.select-size-div {
-  top: 18px;
-}
-:deep(.custom-pagination li button:hover) {
-  background-color: rgb(var(--v-theme-primary));
-  opacity: 0.6;
-}
-:deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: rgb(var(--v-theme-primary)) !important;
-}
-:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
-  opacity: 0 !important;
-}
 </style>

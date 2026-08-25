@@ -30,7 +30,37 @@
             md:search
           </v-icon>
         </v-btn>
+      </div>
+    </div>
 
+    <common-data-table
+      title="Usage Aggregate"
+      item-label="Features"
+      :headers="aggregateHeaders"
+      :items="usageAggregateList"
+      :page-size="usageAggregateList.length || 1"
+      :total-count="usageAggregateList.length"
+      :loading="loadingGetUsageAggregateData"
+      :show-pagination="false"
+      class="mt-4"
+    />
+
+    <common-data-table
+      v-model:page="page"
+      v-model:page-size="pageSize"
+      title="Usage Events"
+      item-label="Events"
+      :headers="usageHeaders"
+      :items="usageList"
+      :page-count="usagePageCount"
+      :total-count="usageTotalCount"
+      :page-size-options="allPageSize"
+      :loading="loadingGetUsageData"
+      class="mt-8"
+      @update:page="changePageNumber"
+      @update:page-size="changePageSize"
+    >
+      <template #actions>
         <v-btn
           size="small"
           flat
@@ -53,185 +83,8 @@
             Refresh Data
           </v-tooltip>
         </v-btn>
-      </div>
-    </div>
-
-    <div class="w-100 d-flex flex-column mt-4">
-      <div class="w-100 d-flex align-center justify-space-between mb-2">
-        <span class="text-h4 text-grey700 font-weight-bold">
-          Usage Aggregate
-        </span>
-        <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold">
-          <span class="text-grey500 font-weight-bold mr-1">
-            {{ usageAggregateList.length }}
-          </span>
-          Features
-        </span>
-      </div>
-
-      <v-data-table
-        :headers="aggregateHeaders"
-        :items="usageAggregateList"
-        :items-per-page="usageAggregateList.length || 1"
-        class="elevation-1 aggregate-table"
-        :loading="loadingGetUsageAggregateData"
-        fixed-header
-        hide-default-footer
-      >
-        <template #headers="{ columns }">
-          <tr>
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
-               ${index == 0 ? `` : `th-min-width`}`"
-            >
-              {{ column.title }}
-            </th>
-          </tr>
-        </template>
-
-        <template #[`item.featureCode`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.featureCode }}
-          </div>
-        </template>
-
-        <template #[`item.featureName`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.featureName }}
-          </div>
-        </template>
-
-        <template #[`item.totalAmount`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.totalAmount }}
-          </div>
-        </template>
-
-        <template #[`item.eventCount`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.eventCount }}
-          </div>
-        </template>
-
-        <template #[`item.distinctUserCount`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.distinctUserCount }}
-          </div>
-        </template>
-      </v-data-table>
-    </div>
-
-    <div class="w-100 d-flex flex-column mt-8">
-      <div class="w-100 d-flex align-center justify-space-between mb-2">
-        <span class="text-h4 text-grey700 font-weight-bold">
-          Usage Events
-        </span>
-        <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold">
-          <span class="text-grey500 font-weight-bold mr-1">
-            {{ usageTotalCount }}
-          </span>
-          Events
-        </span>
-      </div>
-
-      <v-data-table
-        :headers="usageHeaders"
-        :items="usageList"
-        :items-per-page="pageSize"
-        class="elevation-1 set-height-table"
-        :loading="loadingGetUsageData"
-        fixed-header
-        hide-default-footer
-      >
-        <template #headers="{ columns }">
-          <tr>
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
-               ${index == 0 ? `` : `th-min-width`}`"
-            >
-              {{ column.title }}
-            </th>
-          </tr>
-        </template>
-
-        <template #[`item.userId`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.userId }}
-          </div>
-        </template>
-
-        <template #[`item.userEmail`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.userEmail }}
-          </div>
-        </template>
-
-        <template #[`item.planTitle`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.planTitle }}
-          </div>
-        </template>
-
-        <template #[`item.featureCode`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.featureCode }}
-          </div>
-        </template>
-
-        <template #[`item.amount`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.amount }}
-          </div>
-        </template>
-
-        <template #[`item.identifierId`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.identifierId }}
-          </div>
-        </template>
-
-        <template #[`item.creationDate`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold">
-            {{ formatLocal(item.creationDate, 'DD/MM/YYYY HH:mm') }}
-          </div>
-        </template>
-      </v-data-table>
-    </div>
-
-    <div class="w-100 d-flex mt-2 position-relative ga-6">
-      <div class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4">
-        <v-pagination
-          v-model="page"
-          :length="usagePageCount"
-          :total-visible="4"
-          next-icon="md:arrow_forward"
-          prev-icon="md:arrow_back"
-          size="40"
-          class="custom-pagination"
-          @update:model-value="changePageNumber"
-        />
-      </div>
-
-      <div class="position-absolute right-0 select-size-div">
-        <v-select
-          v-model="pageSize"
-          :items="allPageSize"
-          item-title="label"
-          item-value="value"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          max-width="140"
-          class="rounded-pill"
-          @update:model-value="changePageSize"
-        />
-      </div>
-    </div>
+      </template>
+    </common-data-table>
 
     <admin-common-modal
       v-model:show-dialog="showSearchModal"
@@ -258,7 +111,6 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { formatLocal } = useDateTime()
 const {
   usageData: usageList,
   usageTotalCount,
@@ -273,9 +125,9 @@ const {
 const aggregateHeaders = [
   { title: 'Feature Code', key: 'featureCode', sortable: false, width: '18vw' },
   { title: 'Feature Name', key: 'featureName', sortable: false, width: '34vw' },
-  { title: 'Total Amount', key: 'totalAmount', sortable: false, width: '16vw' },
-  { title: 'Events', key: 'eventCount', sortable: false, width: '16vw' },
-  { title: 'Users', key: 'distinctUserCount', sortable: false, width: '16vw' },
+  { title: 'Total Amount', key: 'totalAmount', sortable: false, width: '16vw', type: 'number' as const },
+  { title: 'Events', key: 'eventCount', sortable: false, width: '16vw', type: 'number' as const },
+  { title: 'Users', key: 'distinctUserCount', sortable: false, width: '16vw', type: 'number' as const },
 ]
 
 const usageHeaders = [
@@ -283,9 +135,16 @@ const usageHeaders = [
   { title: 'Email', key: 'userEmail', sortable: false, width: '18vw' },
   { title: 'Plan', key: 'planTitle', sortable: false, width: '16vw' },
   { title: 'Feature', key: 'featureCode', sortable: false, width: '12vw' },
-  { title: 'Amount', key: 'amount', sortable: false, width: '8vw' },
+  { title: 'Amount', key: 'amount', sortable: false, width: '8vw', type: 'number' as const },
   { title: 'Identifier ID', key: 'identifierId', sortable: false, width: '12vw' },
-  { title: 'Creation Date', key: 'creationDate', sortable: false, width: '16vw' },
+  {
+    title: 'Creation Date',
+    key: 'creationDate',
+    sortable: false,
+    width: '16vw',
+    type: 'date' as const,
+    dateFormat: 'DD/MM/YYYY HH:mm',
+  },
 ]
 
 const pageSize = ref(10)
@@ -342,11 +201,13 @@ const fetchData = async () => {
   ])
 }
 
-const changePageNumber = async () => {
+const changePageNumber = async (pageNumber: number) => {
+  page.value = pageNumber
   await fetchUsageData()
 }
 
-const changePageSize = async () => {
+const changePageSize = async (newPageSize: number) => {
+  pageSize.value = newPageSize
   page.value = 1
   await fetchUsageData()
 }
@@ -392,26 +253,4 @@ const refreshData = async () => {
 </script>
 
 <style scoped>
-.aggregate-table {
-  max-height: 36vh;
-}
-.set-height-table {
-  max-height: 48vh;
-}
-.th-min-width {
-  min-width: 130px;
-}
-.select-size-div {
-  top: 18px;
-}
-:deep(.custom-pagination li button:hover) {
-  background-color: rgb(var(--v-theme-primary));
-  opacity: 0.6;
-}
-:deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: rgb(var(--v-theme-primary)) !important;
-}
-:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
-  opacity: 0 !important;
-}
 </style>
