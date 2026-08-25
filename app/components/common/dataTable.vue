@@ -114,8 +114,15 @@
           </div>
           <div
             v-else
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center"
+            :class="getCellClass(header)"
           >
+            <v-icon
+              v-if="header.icon"
+              size="18"
+              :color="header.iconColor || 'grey300'"
+            >
+              {{ header.icon }}
+            </v-icon>
             {{ getCellText(slotProps.item, header) }}
           </div>
         </template>
@@ -139,7 +146,10 @@
         />
       </div>
 
-      <div class="position-absolute right-0 select-size-div">
+      <div
+        v-if="showPageSizeSelector"
+        class="position-absolute right-0 select-size-div"
+      >
         <v-select
           v-model="pageSizeModel"
           :items="pageSizeOptions"
@@ -189,10 +199,16 @@ interface TableAction {
 interface TableHeader {
   title: string
   key: string
-  type?: 'text' | 'date' | 'chip' | 'link' | 'actions'
+  type?: 'text' | 'date' | 'chip' | 'link' | 'actions' | 'number' | 'currency' | 'percent'
   sortable?: boolean
   width?: string | number
   dateFormat?: string
+  emptyText?: string
+  prefix?: string
+  suffix?: string
+  icon?: string
+  iconColor?: string
+  align?: 'start' | 'center' | 'end'
   target?: string
   getText?: (item: TItem) => string | number
   getTo?: (item: TItem) => string
@@ -216,6 +232,7 @@ const props = withDefaults(defineProps<{
   title?: string
   itemLabel?: string
   showPagination?: boolean
+  showPageSizeSelector?: boolean
   pageSizeOptions?: PageSizeOption[]
 }>(), {
   loading: false,
@@ -226,6 +243,7 @@ const props = withDefaults(defineProps<{
   title: '',
   itemLabel: '',
   showPagination: true,
+  showPageSizeSelector: true,
   pageSizeOptions: () => [
     { label: '10', value: 10 },
     { label: '20', value: 20 },
@@ -244,6 +262,7 @@ defineSlots<{
 }>()
 
 const { formatLocal } = useDateTime()
+const { $numberFormat } = useNuxtApp()
 
 const pageModel = computed({
   get: () => props.page,
@@ -258,7 +277,7 @@ const pageSizeModel = computed({
 const getItemValue = (item: TItem, key: string) => {
   const value = item[key as keyof TItem]
 
-  return value === null || value === undefined || value === '' ? '-' : value
+  return value === null || value === undefined || value === '' ? undefined : value
 }
 
 const getCellText = (item: TItem, header: TableHeader) => {
@@ -267,9 +286,26 @@ const getCellText = (item: TItem, header: TableHeader) => {
   }
 
   const value = getItemValue(item, header.key)
+  const emptyText = header.emptyText ?? '-'
 
   if (header.type === 'date') {
-    return formatLocal(getDateValue(value), header.dateFormat || 'DD/MM/YYYY HH:mm') || '-'
+    return formatLocal(getDateValue(value), header.dateFormat || 'DD/MM/YYYY HH:mm') || emptyText
+  }
+
+  if (value === undefined) {
+    return emptyText
+  }
+
+  if (header.type === 'number') {
+    return getNumberValue(value)
+  }
+
+  if (header.type === 'currency') {
+    return `${header.prefix || ''}${getNumberValue(value)}${header.suffix || ''}`
+  }
+
+  if (header.type === 'percent') {
+    return `${getNumberValue(value)}%`
   }
 
   return value
@@ -309,6 +345,20 @@ const getActionHref = (item: TItem, action: TableAction) => {
 
 const getActionDisabled = (item: TItem, action: TableAction) => {
   return resolveActionValue(item, action.disabled) || false
+}
+
+const getNumberValue = (value: unknown) => {
+  return typeof value === 'number' ? $numberFormat(value) : value
+}
+
+const getCellClass = (header: TableHeader) => {
+  const justifyClass = header.align === 'start'
+    ? 'justify-start text-start'
+    : header.align === 'end'
+      ? 'justify-end text-end'
+      : 'justify-center text-center'
+
+  return `text-grey600 text-h5 d-flex ${justifyClass} align-center font-weight-bold ga-1`
 }
 </script>
 
