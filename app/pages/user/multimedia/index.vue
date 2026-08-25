@@ -208,7 +208,7 @@ const headers = [
       {
         icon: 'md:delete',
         tooltip: 'Delete',
-        onClick: openModalDelete,
+        onClick: (item: MultimediaBriefDTO) => openModalDelete(item),
       },
     ],
   },

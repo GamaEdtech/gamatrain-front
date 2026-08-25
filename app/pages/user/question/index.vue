@@ -200,7 +200,7 @@ const headers = [
       {
         icon: 'md:delete',
         tooltip: 'Delete',
-        onClick: openModalDelete,
+        onClick: (item: ForumBriefDTO) => openModalDelete(item),
       },
     ],
   },

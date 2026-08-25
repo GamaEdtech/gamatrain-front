@@ -68,10 +68,27 @@
           </v-list>
         </v-menu>
       </div>
-      <div class="d-flex align-center justify-end ga-1 flex-wrap">
+    </div>
+
+    <common-data-table
+      v-model:page="page"
+      v-model:page-size="pageSize"
+      :headers="headers"
+      :items="list || []"
+      :page-count="pageCount"
+      :total-count="totalCount"
+      :page-size-options="allPageSize"
+      :loading="loading"
+      item-label="Payments"
+      class="mt-4"
+      @update:page="changePageNumber"
+      @update:page-size="changePageSize"
+    >
+      <template #actions>
         <v-btn
           variant="plain"
           max-width="20"
+          class="mr-1"
           @click="showSearchModal = true"
         >
           <v-icon
@@ -81,7 +98,6 @@
             md:search
           </v-icon>
         </v-btn>
-
         <v-btn
           size="small"
           flat
@@ -127,173 +143,35 @@
             Export Data
           </v-tooltip>
         </v-btn>
+      </template>
 
-        <span
-          class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
+      <template #[`item.sourceWallet`]="{ item }">
+        <div
+          class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold ga-2 cursor-pointer"
+          @click="copyWalletAddress(item.sourceWallet)"
         >
-          <span class="text-grey500 font-weight-bold mr-1">
-            {{ totalCount }}
-          </span>
-          Payments
-        </span>
-      </div>
-    </div>
-    <div class="w-100 mt-4">
-      <v-data-table
-        :headers="headers"
-        :items="list"
-        :items-per-page="pageSize"
-        class="elevation-1 set-height-table"
-        :loading="loading"
-        fixed-header
-        hide-default-footer
-      >
-        <template #headers="{ columns }">
-          <tr>
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 ${
-                index == columns.length - 1
-                  ? `text-left`
-                  : `text-center`
-              } ${index == columns.length - 1 ? `description-width` : ``}
-               ${index == 0 ? `` : `th-min-width`}`"
-            >
-              {{ column.title }}
-            </th>
-          </tr>
-        </template>
+          {{ item.sourceWallet ? shortenWallet(item.sourceWallet) : 'unknown' }}
 
-        <template #[`item.id`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
-          >
-            {{ item.id }}
-          </div>
-        </template>
+          <v-icon v-if="item.sourceWallet">
+            md:content_copy_outlined
+          </v-icon>
+        </div>
+      </template>
 
-        <template #[`item.firstName`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center"
-          >
-            {{ !item.firstName && !item.lastName ? `unknown` : item.firstName + ` ` + item.lastName }}
-          </div>
-        </template>
-        <template #[`item.amount`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
-          >
-            {{ formatAmount(item.amount, item.currency, item.gateway) }}
-          </div>
-        </template>
-
-        <template #[`item.currency`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
-          >
-            {{ item.gateway=='Stripe' ? 'USD' : item.currency }}
-          </div>
-        </template>
-
-        <template #[`item.gateway`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
-          >
-            {{ item.gateway }}
-          </div>
-        </template>
-
-        <template #[`item.status`]="{ item }">
-          <div
-            class="w-100 d-flex justify-center align-center"
-          >
-            <v-chip
-              :color="getColorBadgeStatus(item.status)"
-              class="font-weight-bold text-h5"
-            >
-              {{ item.status }}
-            </v-chip>
-          </div>
-        </template>
-
-        <template #[`item.creationDate`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
-          >
-            {{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm:ss") }}
-          </div>
-        </template>
-
-        <template #[`item.verifyDate`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
-          >
-            {{ item.verifyDate ? formatLocal(item.verifyDate, "DD/MM/YYYY HH:mm:ss") : 'Pending' }}
-          </div>
-        </template>
-
-        <template #[`item.sourceWallet`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold ga-2 cursor-pointer"
-            @click="copyWalletAddress(item.sourceWallet)"
-          >
-            {{ item.sourceWallet ? shortenWallet(item.sourceWallet) : 'unknown' }}
-
-            <v-icon v-if="item.sourceWallet">
-              md:content_copy_outlined
-            </v-icon>
-          </div>
-        </template>
-
-        <template #[`item.action`]="{ item }">
-          <v-btn
-            v-if="canVerifyPayment(item)"
-            flat
-            size="small"
-            class="text-h6"
-            color="success"
-            variant="outlined"
-            @click="openVerifyPaymentModal(item)"
-          >
-            verify
-          </v-btn>
-        </template>
-      </v-data-table>
-    </div>
-
-    <div class="w-100 d-flex mt-2 position-relative ga-6">
-      <div
-        class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4"
-      >
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-          :total-visible="4"
-          next-icon="md:arrow_forward"
-          prev-icon="md:arrow_back"
-          size="40"
-          class="custom-pagination"
-          @update:model-value="changePageNumber"
-        />
-      </div>
-
-      <div class="position-absolute right-0 select-size-div">
-        <v-select
-          v-model="pageSize"
-          :items="allPageSize"
-          item-title="label"
-          item-value="value"
+      <template #[`item.action`]="{ item }">
+        <v-btn
+          v-if="canVerifyPayment(item)"
+          flat
+          size="small"
+          class="text-h6"
+          color="success"
           variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          max-width="140"
-          class="rounded-pill"
-          @update:model-value="changePageSize"
-        />
-      </div>
-    </div>
+          @click="openVerifyPaymentModal(item)"
+        >
+          verify
+        </v-btn>
+      </template>
+    </common-data-table>
 
     <admin-common-modal
       v-model:show-dialog="showSearchModal"
@@ -338,7 +216,6 @@ definePageMeta({
 })
 
 const { $toast } = useNuxtApp()
-const { formatLocal } = useDateTime()
 const { verifyPayment, loadingVerifyPayment } = usePayment()
 const {
   exportPayments,
@@ -351,19 +228,28 @@ const {
 } = usePaymentAdmin()
 
 const headers = [
-  { title: 'ID', key: 'id', sortable: false, width: '5vw' },
-  { title: 'User', key: 'firstName', sortable: false, width: '15vw' },
+  { title: 'ID', key: 'id', sortable: false, width: '5vw', align: 'start' as const },
+  {
+    title: 'User',
+    key: 'firstName',
+    sortable: false,
+    width: '15vw',
+    emptyText: 'unknown',
+    getText: (item: AdminPaymentDTO) => getFullName(item),
+  },
   {
     title: 'Amount',
     key: 'amount',
     sortable: false,
     width: '10vw',
+    getText: (item: AdminPaymentDTO) => formatAmount(item.amount, item.currency, item.gateway),
   },
   {
     title: 'Currency',
     key: 'currency',
     sortable: false,
     width: '5vw',
+    getText: (item: AdminPaymentDTO) => item.gateway === 'Stripe' ? 'USD' : item.currency,
   },
   {
     title: 'Gateway',
@@ -371,10 +257,32 @@ const headers = [
     sortable: false,
     width: '5vw',
   },
-  { title: 'Status', key: 'status', sortable: false, width: '5vw' },
-  { title: 'Created At', key: 'creationDate', sortable: false, width: '10vw' },
-  { title: 'Verify At', key: 'verifyDate', sortable: false, width: '10vw' },
-  { title: 'Source Wallet', key: 'sourceWallet', sortable: false, width: '30vw' },
+  {
+    title: 'Status',
+    key: 'status',
+    sortable: false,
+    width: '5vw',
+    type: 'chip' as const,
+    getChipColor: (item: AdminPaymentDTO) => getColorBadgeStatus(item.status),
+  },
+  {
+    title: 'Created At',
+    key: 'creationDate',
+    sortable: false,
+    width: '10vw',
+    type: 'date' as const,
+    dateFormat: 'DD/MM/YYYY HH:mm:ss',
+  },
+  {
+    title: 'Verify At',
+    key: 'verifyDate',
+    sortable: false,
+    width: '10vw',
+    type: 'date' as const,
+    dateFormat: 'DD/MM/YYYY HH:mm:ss',
+    emptyText: 'Pending',
+  },
+  { title: 'Source Wallet', key: 'sourceWallet', sortable: false, width: '30vw', align: 'start' as const },
   { title: 'Action', key: 'action', sortable: false, width: '10vw' },
 ]
 const showSearchModal = ref(false)
@@ -414,11 +322,13 @@ const fetchPayments = async () => {
   })
 }
 
-const changePageNumber = async () => {
+const changePageNumber = async (pageNumber: number) => {
+  page.value = pageNumber
   await fetchPayments()
 }
 
-const changePageSize = async () => {
+const changePageSize = async (newPageSize: number) => {
+  pageSize.value = newPageSize
   page.value = 1
   await fetchPayments()
 }
@@ -504,6 +414,12 @@ const formatAmount = (amount: number, currency: CurrencyPayment, gateway: Paymen
   return fixValue
 }
 
+const getFullName = (item: AdminPaymentDTO) => {
+  const fullName = `${item.firstName || ''} ${item.lastName || ''}`.trim()
+
+  return fullName || 'unknown'
+}
+
 const handleCheckboxChange = async (checked: boolean | null, item: SortOption) => {
   const index = sortSelected.value.indexOf(item.value)
   if (checked && index === -1) {
@@ -543,7 +459,7 @@ const isBlobResponse = (response: unknown): response is Blob => {
 }
 
 const getExportErrorMessage = (response: ApiResult<string>) => {
-  if (response.errors?.length && response.errors[0].message) {
+  if (response && response.errors?.length && response.errors[0].message) {
     return response.errors[0].message
   }
 
@@ -594,30 +510,7 @@ const canVerifyPayment = (item: AdminPaymentDTO) => {
 </script>
 
 <style scoped>
-.set-height-table {
-  max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
-}
-.description-width {
-  min-width: 200px;
-}
 .reverse-icon {
   transform: rotateZ(180deg);
-}
-.select-size-div {
-  top: 18px;
-}
-
-:deep(.custom-pagination li button:hover) {
-  background-color: rgb(var(--v-theme-primary));
-  opacity: 0.6;
-}
-:deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: rgb(var(--v-theme-primary)) !important;
-}
-:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
-  opacity: 0 !important;
 }
 </style>
