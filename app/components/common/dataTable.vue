@@ -60,10 +60,63 @@
             v-bind="slotProps"
           />
           <div
+            v-else-if="header.type === 'chip'"
+            class="w-100 d-flex justify-center align-center"
+          >
+            <v-chip
+              :color="getChipColor(slotProps.item, header)"
+              class="font-weight-bold text-h5"
+            >
+              {{ getCellText(slotProps.item, header) }}
+            </v-chip>
+          </div>
+          <div
+            v-else-if="header.type === 'link'"
+            class="d-flex justify-center align-center"
+          >
+            <NuxtLink
+              :to="getLinkTo(slotProps.item, header)"
+              :target="header.target"
+              class="text-grey600 text-h5 font-weight-bold text-decoration-none text-center"
+            >
+              {{ getCellText(slotProps.item, header) }}
+            </NuxtLink>
+          </div>
+          <div
+            v-else-if="header.type === 'actions'"
+            class="d-flex justify-center align-center"
+          >
+            <v-btn
+              v-for="action in getVisibleActions(slotProps.item, header)"
+              :key="action.icon"
+              icon
+              flat
+              :to="getActionTo(slotProps.item, action)"
+              :href="getActionHref(slotProps.item, action)"
+              :target="action.target"
+              :disabled="getActionDisabled(slotProps.item, action)"
+              @click="action.onClick?.(slotProps.item)"
+            >
+              <v-icon
+                size="20"
+                :color="action.color || 'grey800'"
+              >
+                {{ action.icon }}
+              </v-icon>
+              <v-tooltip
+                v-if="action.tooltip"
+                activator="parent"
+                location="top"
+              >
+                {{ action.tooltip }}
+              </v-tooltip>
+            </v-btn>
+          </div>
+          <div
             v-else
             class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center"
           >
-            {{ getItemValue(slotProps.item, header.key) }}
+            {{ getCellText(slotProps.item, header) }}
           </div>
         </template>
       </v-data-table>
@@ -116,11 +169,35 @@
 </template>
 
 <script setup lang="ts" generic="TItem extends object">
+type DateInput = string | number | Date | null | undefined
+
+type ActionValue = string | boolean
+type ItemResolver<TValue extends ActionValue> = TValue | ((item: TItem) => TValue)
+
+interface TableAction {
+  icon: string
+  tooltip?: string
+  color?: string
+  to?: ItemResolver<string>
+  href?: ItemResolver<string>
+  target?: string
+  show?: ItemResolver<boolean>
+  disabled?: ItemResolver<boolean>
+  onClick?: (item: TItem) => void | Promise<void>
+}
+
 interface TableHeader {
   title: string
   key: string
+  type?: 'text' | 'date' | 'chip' | 'link' | 'actions'
   sortable?: boolean
   width?: string | number
+  dateFormat?: string
+  target?: string
+  getText?: (item: TItem) => string | number
+  getTo?: (item: TItem) => string
+  getChipColor?: (item: TItem) => string
+  actions?: TableAction[]
 }
 
 interface PageSizeOption {
@@ -166,6 +243,8 @@ defineSlots<{
   [name: `item.${string}`]: (props: { item: TItem }) => unknown
 }>()
 
+const { formatLocal } = useDateTime()
+
 const pageModel = computed({
   get: () => props.page,
   set: value => emit('update:page', value),
@@ -180,6 +259,56 @@ const getItemValue = (item: TItem, key: string) => {
   const value = item[key as keyof TItem]
 
   return value === null || value === undefined || value === '' ? '-' : value
+}
+
+const getCellText = (item: TItem, header: TableHeader) => {
+  if (header.getText) {
+    return header.getText(item)
+  }
+
+  const value = getItemValue(item, header.key)
+
+  if (header.type === 'date') {
+    return formatLocal(getDateValue(value), header.dateFormat || 'DD/MM/YYYY HH:mm') || '-'
+  }
+
+  return value
+}
+
+const getDateValue = (value: unknown): DateInput => {
+  if (value instanceof Date || typeof value === 'string' || typeof value === 'number') {
+    return value
+  }
+
+  return undefined
+}
+
+const getChipColor = (item: TItem, header: TableHeader) => {
+  return header.getChipColor?.(item) || 'primary'
+}
+
+const getLinkTo = (item: TItem, header: TableHeader) => {
+  return header.getTo?.(item) || '#'
+}
+
+function resolveActionValue<TValue extends ActionValue>(item: TItem, value?: ItemResolver<TValue>) {
+  return typeof value === 'function' ? value(item) : value
+}
+
+const getVisibleActions = (item: TItem, header: TableHeader) => {
+  return header.actions?.filter(action => resolveActionValue(item, action.show) !== false) || []
+}
+
+const getActionTo = (item: TItem, action: TableAction) => {
+  return resolveActionValue(item, action.to)
+}
+
+const getActionHref = (item: TItem, action: TableAction) => {
+  return resolveActionValue(item, action.href)
+}
+
+const getActionDisabled = (item: TItem, action: TableAction) => {
+  return resolveActionValue(item, action.disabled) || false
 }
 </script>
 

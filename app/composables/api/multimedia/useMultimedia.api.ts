@@ -42,7 +42,7 @@ export const useMultimedia = () => {
 
       if (response.data) {
         data.value = response.data.list
-        totalCount.value = response.data.num
+        totalCount.value = Number(response.data.num)
         pageCount.value = Math.ceil(totalCount.value / pageSize)
       }
       else {
