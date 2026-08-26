@@ -242,7 +242,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FeatureGroupUserSubscriptionDTO } from '@/types'
+import type { DataTableHeader, FeatureGroupUserSubscriptionDTO } from '@/types'
 import { BILLING_INTERVAL_PERIOD_LABEL } from '@/constants'
 
 definePageMeta({
@@ -276,7 +276,7 @@ const showCancelModal = ref(false)
 const showResumeModal = ref(false)
 const showChangePlanModal = ref(false)
 
-const headers = [
+const headers: DataTableHeader<FeatureGroupUserSubscriptionDTO>[] = [
   {
     title: 'Feature Group',
     key: 'description',
@@ -291,7 +291,7 @@ const headers = [
     width: '16vw',
     getText: (item: FeatureGroupUserSubscriptionDTO) => formatLimit(item.limit),
   },
-  { title: 'Used', key: 'used', sortable: false, width: '16vw', type: 'number' as const },
+  { title: 'Used', key: 'used', sortable: false, width: '16vw', type: 'number' },
   {
     title: 'Remaining',
     key: 'remaining',

@@ -150,6 +150,7 @@
 <script setup lang="ts">
 import type {
   AdminUserDTO,
+  DataTableHeader,
   SearchFilterUser,
 } from '@/types'
 
@@ -160,8 +161,8 @@ definePageMeta({
 
 const { loadingGetData: loading, data: list, getData, totalCount, pageCount, deleteItem, loadingDeleteItem, toggleStatus, loadingToggleStatus } = useUserManagerAdmin()
 
-const headers = [
-  { title: 'ID', key: 'id', sortable: false, width: '5vw', align: 'start' as const },
+const headers: DataTableHeader<AdminUserDTO>[] = [
+  { title: 'ID', key: 'id', sortable: false, width: '5vw', align: 'start' },
   { title: 'Username', key: 'username', sortable: false, width: '10vw', emptyText: 'unknown' },
   {
     title: 'Name',
@@ -178,7 +179,7 @@ const headers = [
     key: 'enabled',
     sortable: false,
     width: '10vw',
-    type: 'chip' as const,
+    type: 'chip',
     getText: (item: AdminUserDTO) => item.enabled ? 'Enable' : 'Disable',
     getChipColor: (item: AdminUserDTO) => item.enabled ? 'success' : 'error',
   },
@@ -187,7 +188,7 @@ const headers = [
     key: 'registrationDate',
     sortable: false,
     width: '10vw',
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm:ss',
   },
   { title: 'ReferralId', key: 'referralId', sortable: false, width: '10vw' },
@@ -196,7 +197,7 @@ const headers = [
     key: 'Action',
     sortable: false,
     width: '20vw',
-    type: 'actions' as const,
+    type: 'actions',
     actions: [
       {
         icon: 'md:person',

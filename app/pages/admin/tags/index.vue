@@ -108,7 +108,7 @@
 
 <script setup lang="ts">
 import { TAG_TYPE_FILTER_LIST } from '@/constants'
-import type { AdminTagDTO, TagTypeDTO } from '@/types'
+import type { AdminTagDTO, DataTableHeader, TagTypeDTO } from '@/types'
 
 definePageMeta({
   layout: 'admin',
@@ -125,7 +125,7 @@ const {
   loadingDeleteItem,
 } = useTagAdmin()
 
-const headers = [
+const headers: DataTableHeader<AdminTagDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '10vw' },
   { title: 'Name', key: 'name', sortable: false, width: '25vw' },
   {
@@ -133,7 +133,7 @@ const headers = [
     key: 'tagType',
     sortable: false,
     width: '20vw',
-    type: 'chip' as const,
+    type: 'chip',
     getChipColor: () => 'info',
   },
   { title: 'Icon', key: 'icon', sortable: false, width: '25vw' },
@@ -142,7 +142,7 @@ const headers = [
     key: 'Action',
     sortable: false,
     width: '20vw',
-    type: 'actions' as const,
+    type: 'actions',
     actions: [
       {
         icon: 'md:delete',

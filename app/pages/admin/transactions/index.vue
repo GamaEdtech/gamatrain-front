@@ -122,6 +122,8 @@
 
 <script setup lang="ts">
 import type {
+  AdminTransactionDTO,
+  DataTableHeader,
   SearchFilterAdminTransaction,
 } from '@/types'
 
@@ -138,26 +140,26 @@ const {
   pageCount,
 } = useTransactionAdmin()
 
-const headers = [
-  { title: 'User ID', key: 'userId', sortable: false, width: '5vw', align: 'start' as const },
-  { title: 'Points', key: 'points', sortable: false, width: '15vw', type: 'number' as const },
+const headers: DataTableHeader<AdminTransactionDTO>[] = [
+  { title: 'User ID', key: 'userId', sortable: false, width: '5vw', align: 'start' },
+  { title: 'Points', key: 'points', sortable: false, width: '15vw', type: 'number' },
   {
     title: 'Current Balance',
     key: 'currentBalance',
     sortable: false,
     width: '15vw',
-    type: 'number' as const,
+    type: 'number',
   },
   {
     title: 'Creation Date',
     key: 'creationDate',
     sortable: false,
     width: '15vw',
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm',
   },
   { title: 'Type', key: 'isDebit', sortable: false, width: '10vw' },
-  { title: 'Description', key: 'description', sortable: false, width: '40vw', align: 'start' as const },
+  { title: 'Description', key: 'description', sortable: false, width: '40vw', align: 'start' },
 ]
 const showSearchModal = ref(false)
 const pageSize = ref(10)

@@ -116,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import type { UserSubscriptionHistoryDTO } from '@/types'
+import type { DataTableHeader, UserSubscriptionHistoryDTO } from '@/types'
 
 const { $numberFormat } = useNuxtApp()
 const { formatLocal } = useDateTime()
@@ -131,34 +131,34 @@ const {
 const page = ref(1)
 const pageSize = ref(10)
 
-const headers = [
+const headers: DataTableHeader<UserSubscriptionHistoryDTO>[] = [
   { title: 'Plan', key: 'planTitle', sortable: false },
   {
     title: 'Status',
     key: 'status',
     sortable: false,
-    type: 'chip' as const,
+    type: 'chip',
     getChipColor: (item: UserSubscriptionHistoryDTO) => getStatusColor(item.status),
   },
   {
     title: 'Created',
     key: 'creationDate',
     sortable: false,
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY',
   },
   {
     title: 'Started',
     key: 'startDate',
     sortable: false,
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY',
   },
   {
     title: 'Expires',
     key: 'expirationDate',
     sortable: false,
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY',
   },
   {
@@ -172,7 +172,7 @@ const headers = [
     title: 'Auto Renews',
     key: 'autoRenews',
     sortable: false,
-    type: 'chip' as const,
+    type: 'chip',
     getText: (item: UserSubscriptionHistoryDTO) => item.autoRenews ? 'Yes' : 'No',
     getChipColor: (item: UserSubscriptionHistoryDTO) => item.autoRenews ? 'success' : 'grey400',
   },

@@ -120,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import type { MultimediaBriefDTO } from '@/types'
+import type { DataTableHeader, MultimediaBriefDTO } from '@/types'
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -159,14 +159,14 @@ const openModalDelete = (item: MultimediaBriefDTO) => {
   showDeleteModal.value = true
 }
 
-const headers = [
+const headers: DataTableHeader<MultimediaBriefDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '10vw' },
   {
     title: 'Title',
     key: 'title',
     sortable: false,
     width: '30vw',
-    type: 'link' as const,
+    type: 'link',
     getTo: (item: MultimediaBriefDTO) => `/multimedia/${item.id}/${item.title}`,
   },
   { title: 'Score', key: 'ref_score', sortable: false, width: '5vw' },
@@ -176,7 +176,7 @@ const headers = [
     key: 'subdate',
     sortable: false,
     width: '20vw',
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm:ss',
   },
   {
@@ -184,7 +184,7 @@ const headers = [
     key: 'status',
     sortable: false,
     width: '15vw',
-    type: 'chip' as const,
+    type: 'chip',
     getText: (item: MultimediaBriefDTO) => getStatusTitle(item.status),
     getChipColor: (item: MultimediaBriefDTO) => getStatusColor(item.status),
   },
@@ -193,7 +193,7 @@ const headers = [
     key: 'Action',
     sortable: false,
     width: '15vw',
-    type: 'actions' as const,
+    type: 'actions',
     actions: [
       {
         icon: 'md:visibility',

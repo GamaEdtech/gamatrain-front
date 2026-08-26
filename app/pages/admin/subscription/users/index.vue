@@ -131,6 +131,7 @@
 <script setup lang="ts">
 import type {
   AdminUserSubscriptionListDTO,
+  DataTableHeader,
   SearchFilterAdminUserSubscription,
   UserSubscriptionStatus,
 } from '@/types'
@@ -150,7 +151,7 @@ const {
   loadingRevokeItem,
 } = useUserSubscriptionAdmin()
 
-const headers = [
+const headers: DataTableHeader<AdminUserSubscriptionListDTO>[] = [
   { title: 'User ID', key: 'userId', sortable: false, width: '8vw' },
   { title: 'Email', key: 'userEmail', sortable: false, width: '20vw' },
   { title: 'Plan', key: 'planTitle', sortable: false, width: '18vw' },
@@ -159,7 +160,7 @@ const headers = [
     key: 'status',
     sortable: false,
     width: '10vw',
-    type: 'chip' as const,
+    type: 'chip',
     getChipColor: (item: AdminUserSubscriptionListDTO) => getStatusColor(item.status),
   },
   {
@@ -167,7 +168,7 @@ const headers = [
     key: 'expirationDate',
     sortable: false,
     width: '14vw',
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm',
   },
   {
@@ -175,7 +176,7 @@ const headers = [
     key: 'autoRenews',
     sortable: false,
     width: '10vw',
-    type: 'chip' as const,
+    type: 'chip',
     getText: (item: AdminUserSubscriptionListDTO) => item.autoRenews ? 'Yes' : 'No',
     getChipColor: (item: AdminUserSubscriptionListDTO) => item.autoRenews ? 'success' : 'grey400',
   },
@@ -185,7 +186,7 @@ const headers = [
     key: 'Action',
     sortable: false,
     width: '16vw',
-    type: 'actions' as const,
+    type: 'actions',
     actions: [
       { icon: 'md:visibility', tooltip: 'Detail', onClick: (item: AdminUserSubscriptionListDTO) => openDetailModal(item) },
       { icon: 'md:add_card', tooltip: 'Grant', onClick: (item: AdminUserSubscriptionListDTO) => openGrantModal(item) },

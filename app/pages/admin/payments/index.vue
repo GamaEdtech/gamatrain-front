@@ -198,6 +198,7 @@ import dayjs from 'dayjs'
 import type {
   ApiResult,
   AdminPaymentDTO,
+  DataTableHeader,
   StatusPayment,
   CurrencyPayment,
   PaymentGateway,
@@ -227,8 +228,8 @@ const {
   pageCount,
 } = usePaymentAdmin()
 
-const headers = [
-  { title: 'ID', key: 'id', sortable: false, width: '5vw', align: 'start' as const },
+const headers: DataTableHeader<AdminPaymentDTO>[] = [
+  { title: 'ID', key: 'id', sortable: false, width: '5vw', align: 'start' },
   {
     title: 'User',
     key: 'firstName',
@@ -262,7 +263,7 @@ const headers = [
     key: 'status',
     sortable: false,
     width: '5vw',
-    type: 'chip' as const,
+    type: 'chip',
     getChipColor: (item: AdminPaymentDTO) => getColorBadgeStatus(item.status),
   },
   {
@@ -270,7 +271,7 @@ const headers = [
     key: 'creationDate',
     sortable: false,
     width: '10vw',
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm:ss',
   },
   {
@@ -278,11 +279,11 @@ const headers = [
     key: 'verifyDate',
     sortable: false,
     width: '10vw',
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm:ss',
     emptyText: 'Pending',
   },
-  { title: 'Source Wallet', key: 'sourceWallet', sortable: false, width: '30vw', align: 'start' as const },
+  { title: 'Source Wallet', key: 'sourceWallet', sortable: false, width: '30vw', align: 'start' },
   { title: 'Action', key: 'action', sortable: false, width: '10vw' },
 ]
 const showSearchModal = ref(false)

@@ -102,6 +102,9 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import type {
+  AdminSubscriptionUsageAggregateDTO,
+  AdminSubscriptionUsageDTO,
+  DataTableHeader,
   GetAdminSubscriptionUsageAggregateParams,
   SearchFilterAdminSubscriptionUsage,
 } from '@/types'
@@ -122,27 +125,27 @@ const {
   getUsageAggregateData,
 } = useUserSubscriptionAdmin()
 
-const aggregateHeaders = [
+const aggregateHeaders: DataTableHeader<AdminSubscriptionUsageAggregateDTO>[] = [
   { title: 'Feature Code', key: 'featureCode', sortable: false, width: '18vw' },
   { title: 'Feature Name', key: 'featureName', sortable: false, width: '34vw' },
-  { title: 'Total Amount', key: 'totalAmount', sortable: false, width: '16vw', type: 'number' as const },
-  { title: 'Events', key: 'eventCount', sortable: false, width: '16vw', type: 'number' as const },
-  { title: 'Users', key: 'distinctUserCount', sortable: false, width: '16vw', type: 'number' as const },
+  { title: 'Total Amount', key: 'totalAmount', sortable: false, width: '16vw', type: 'number' },
+  { title: 'Events', key: 'eventCount', sortable: false, width: '16vw', type: 'number' },
+  { title: 'Users', key: 'distinctUserCount', sortable: false, width: '16vw', type: 'number' },
 ]
 
-const usageHeaders = [
+const usageHeaders: DataTableHeader<AdminSubscriptionUsageDTO>[] = [
   { title: 'User ID', key: 'userId', sortable: false, width: '8vw' },
   { title: 'Email', key: 'userEmail', sortable: false, width: '18vw' },
   { title: 'Plan', key: 'planTitle', sortable: false, width: '16vw' },
   { title: 'Feature', key: 'featureCode', sortable: false, width: '12vw' },
-  { title: 'Amount', key: 'amount', sortable: false, width: '8vw', type: 'number' as const },
+  { title: 'Amount', key: 'amount', sortable: false, width: '8vw', type: 'number' },
   { title: 'Identifier ID', key: 'identifierId', sortable: false, width: '12vw' },
   {
     title: 'Creation Date',
     key: 'creationDate',
     sortable: false,
     width: '16vw',
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm',
   },
 ]

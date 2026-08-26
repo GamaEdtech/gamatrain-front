@@ -113,7 +113,7 @@
 </template>
 
 <script setup lang="ts">
-import type { BlogUserBreifDTO, BlogUserBreifDTOStatus } from '@/types'
+import type { BlogUserBreifDTO, BlogUserBreifDTOStatus, DataTableHeader } from '@/types'
 import { USER_BLOG_STATUS } from '@/constants'
 
 definePageMeta({
@@ -136,7 +136,7 @@ const {
 } = useBlog()
 const route = useRoute()
 
-const headers = [
+const headers: DataTableHeader<BlogUserBreifDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '10vw' },
   { title: 'Title', key: 'title', sortable: false, width: '40vw' },
   {
@@ -144,7 +144,7 @@ const headers = [
     key: 'creationDate',
     sortable: false,
     width: '20vw',
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm:ss',
   },
   {
@@ -152,7 +152,7 @@ const headers = [
     key: 'status',
     sortable: false,
     width: '15vw',
-    type: 'chip' as const,
+    type: 'chip',
     getChipColor: (item: BlogUserBreifDTO) => getStatusColor(item.status),
   },
   {
@@ -160,7 +160,7 @@ const headers = [
     key: 'Action',
     sortable: false,
     width: '15vw',
-    type: 'actions' as const,
+    type: 'actions',
     actions: [
       {
         icon: 'md:visibility',

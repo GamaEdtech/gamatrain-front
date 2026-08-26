@@ -47,6 +47,8 @@
 </template>
 
 <script setup lang="ts">
+import type { DataTableHeader, UserCommissionDTO } from '@/types'
+
 const emit = defineEmits(['showChart'])
 const {
   loadingGetData: loading,
@@ -56,15 +58,15 @@ const {
   pageCount,
 } = useCommission()
 
-const headers = [
-  { title: 'ID', key: 'id', sortable: false, width: '8vw', align: 'start' as const },
+const headers: DataTableHeader<UserCommissionDTO>[] = [
+  { title: 'ID', key: 'id', sortable: false, width: '8vw', align: 'start' },
   { title: 'Downloader ID', key: 'downloaderUserId', sortable: false, width: '14vw', emptyText: 'unknown' },
   {
     title: 'Reason',
     key: 'reason',
     sortable: false,
     width: '16vw',
-    type: 'chip' as const,
+    type: 'chip',
     getChipColor: () => 'info',
   },
   { title: 'Source', key: 'source', sortable: false, width: '16vw', emptyText: 'unknown' },
@@ -73,21 +75,21 @@ const headers = [
     key: 'contentType',
     sortable: false,
     width: '16vw',
-    type: 'chip' as const,
+    type: 'chip',
     getChipColor: () => 'primary',
   },
   { title: 'Content ID', key: 'externalContentId', sortable: false, width: '14vw', emptyText: 'unknown' },
   { title: 'File Type', key: 'externalFileType', sortable: false, width: '14vw', emptyText: 'unknown' },
   { title: 'Extra ID', key: 'externalExtraId', sortable: false, width: '12vw', emptyText: 'unknown' },
-  { title: 'Points', key: 'points', sortable: false, width: '10vw', type: 'number' as const },
-  { title: 'Commission', key: 'commissionPercent', sortable: false, width: '14vw', type: 'percent' as const },
-  { title: 'Amount USD', key: 'amountUsd', sortable: false, width: '14vw', type: 'currency' as const, prefix: '$' },
+  { title: 'Points', key: 'points', sortable: false, width: '10vw', type: 'number' },
+  { title: 'Commission', key: 'commissionPercent', sortable: false, width: '14vw', type: 'percent' },
+  { title: 'Amount USD', key: 'amountUsd', sortable: false, width: '14vw', type: 'currency', prefix: '$' },
   {
     title: 'Created At',
     key: 'creationDate',
     sortable: false,
     width: '18vw',
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm',
     icon: 'md:history',
   },

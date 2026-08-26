@@ -120,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ForumBriefDTO } from '@/types'
+import type { DataTableHeader, ForumBriefDTO } from '@/types'
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -159,7 +159,7 @@ const openModalDelete = (item: ForumBriefDTO) => {
   showDeleteModal.value = true
 }
 
-const headers = [
+const headers: DataTableHeader<ForumBriefDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '10vw' },
   { title: 'Title', key: 'title', sortable: false, width: '30vw' },
   { title: 'UnRead Reply', key: 'unread_reply', sortable: false, width: '10vw' },
@@ -168,7 +168,7 @@ const headers = [
     key: 'subdate',
     sortable: false,
     width: '20vw',
-    type: 'date' as const,
+    type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm:ss',
   },
   {
@@ -176,7 +176,7 @@ const headers = [
     key: 'status',
     sortable: false,
     width: '15vw',
-    type: 'chip' as const,
+    type: 'chip',
     getText: (item: ForumBriefDTO) => getStatusTitle(item.status),
     getChipColor: (item: ForumBriefDTO) => getStatusColor(item.status),
   },
@@ -185,7 +185,7 @@ const headers = [
     key: 'Action',
     sortable: false,
     width: '15vw',
-    type: 'actions' as const,
+    type: 'actions',
     actions: [
       {
         icon: 'md:visibility',

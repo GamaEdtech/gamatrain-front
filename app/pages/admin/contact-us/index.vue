@@ -132,7 +132,7 @@
 </template>
 
 <script setup lang="ts">
-import type { AdminContactUsDTO } from '@/types'
+import type { AdminContactUsDTO, DataTableHeader } from '@/types'
 
 definePageMeta({
   layout: 'admin',
@@ -228,8 +228,8 @@ const refreshData = async () => {
   await fetchData()
 }
 
-const headers = [
-  { title: 'ID', key: 'id', sortable: false, width: '5vw', align: 'start' as const },
+const headers: DataTableHeader<AdminContactUsDTO>[] = [
+  { title: 'ID', key: 'id', sortable: false, width: '5vw', align: 'start' },
   { title: 'User', key: 'sender', sortable: false, width: '15vw', emptyText: 'unknown' },
   {
     title: 'Email',
@@ -243,7 +243,7 @@ const headers = [
     key: 'isReadByAdmin',
     sortable: false,
     width: '10vw',
-    type: 'chip' as const,
+    type: 'chip',
     getText: (item: AdminContactUsDTO) => item.isReadByAdmin ? 'Read' : 'UnRead',
     getChipColor: (item: AdminContactUsDTO) => item.isReadByAdmin ? 'success' : 'warning',
   },
@@ -252,7 +252,7 @@ const headers = [
     key: 'Action',
     sortable: false,
     width: '20vw',
-    type: 'actions' as const,
+    type: 'actions',
     actions: [
       {
         icon: 'md:plagiarism',
