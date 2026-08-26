@@ -103,6 +103,20 @@
         @confirm="confirmUpgrade"
       />
     </common-modal-base>
+
+    <common-modal-base
+      v-model:show-dialog="showResumeModal"
+      title="Resume"
+      :max-width="480"
+    >
+      <user-subscription-modals-confirm
+        text="To upgrade your plan, you must first reactivate your current plan. Please confirm to continue."
+        confirm-color="primary"
+        :loading="loadingResumeSubscription"
+        @back="showResumeModal = false"
+        @confirm="confirmResumeSubscription"
+      />
+    </common-modal-base>
   </div>
 </template>
 
@@ -138,6 +152,8 @@ const {
   loadingStartPaymentSubscription,
   switchSubscriptionPlan,
   loadingSwitchSubscriptionPlan,
+  loadingResumeSubscription,
+  resumeSubscription,
 } = useSubscription()
 const {
   billingSuffix,
@@ -148,6 +164,7 @@ const {
 const showConfirmUpgradeModal = ref(false)
 const previewAmount = ref<number | null>(null)
 const previewCurrency = ref<SubscriptionCurrency | null>(null)
+const showResumeModal = ref(false)
 
 const card = computed(() => {
   return buildSubscriptionPlanCard({
@@ -196,6 +213,12 @@ const switchPlan = async () => {
     previewCurrency.value = response.data.previewCurrency
     showConfirmUpgradeModal.value = true
   }
+  if (!response.succeeded && response.errors && response.errors.length > 0) {
+    const messages = response.errors.map(error => error.message)
+    if (messages.includes('SwitchNotAllowedWhileCancellationPending')) {
+      showResumeModal.value = true
+    }
+  }
 }
 
 const confirmUpgrade = async () => {
@@ -227,6 +250,15 @@ const selectPlan = async () => {
     await chooseNewPlan()
   }
   else if (card.value.action.type == 'switch') {
+    await switchPlan()
+  }
+}
+
+const confirmResumeSubscription = async () => {
+  const response = await resumeSubscription()
+
+  if (response.succeeded && response.data) {
+    showResumeModal.value = false
     await switchPlan()
   }
 }
