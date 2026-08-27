@@ -106,7 +106,7 @@ const selectedUserGroup = ref<UserGroup | null>(
 
 // Redirect to user page on mount
 onMounted(() => {
-  if (user.value?.group === UserGroup.Student || user.value?.group === UserGroup.Teacher)
+  if (user.value?.roles.includes('Teacher') || user.value?.roles.includes('Student'))
     navigateTo('/user')
 })
 

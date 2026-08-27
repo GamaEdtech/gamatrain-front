@@ -197,7 +197,7 @@ defineProps({
 
 const { user } = useUser()
 const auth = useAuth()
-const canAccessEducationalContent = computed(() => user.value?.group === 5)
+const { canAddEducationalContent } = useUserPermissions()
 
 const openedGroups = ref([])
 const items = computed(() => [
@@ -218,14 +218,14 @@ const items = computed(() => [
         link: '/user/paper',
         icon: 'icon-paper',
         icon_type: 'custom',
-        status: !canAccessEducationalContent.value,
+        status: !canAddEducationalContent.value,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icon-multimedia',
         icon_type: 'custom',
-        status: !canAccessEducationalContent.value,
+        status: !canAddEducationalContent.value,
       },
       {
         title: 'Q & A',

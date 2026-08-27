@@ -1,9 +1,7 @@
 export default defineNuxtRouteMiddleware(() => {
   const { user } = useUser()
 
-  if (user.value?.group === 3)
-    return navigateTo('/test-maker')
-  else if (user.value?.group === 5 || user.value?.group === 6)
+  if (user.value?.roles.includes('Teacher') || user.value?.roles.includes('Student'))
     return
   else
     return navigateTo('/user/type')
