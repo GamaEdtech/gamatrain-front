@@ -25,7 +25,12 @@
         </v-icon>
 
         <v-btn
-          v-if="contentData.owner"
+          v-if="
+            isAuthenticated
+              && user
+              && contentData.user_
+              && Number(contentData.user_) === user?.coreId
+          "
           color="info"
           class="rounded-circle"
           size="24"
@@ -168,6 +173,8 @@ interface BreadCrumb {
 
 const route = useRoute()
 const router = useRouter()
+const { user } = useUser()
+const { isAuthenticated } = useAuth()
 
 const { buildSchema } = useSeoSchema()
 
@@ -375,6 +382,7 @@ const editSuccessfully = (data: {
       title: data.title,
       description: data.description,
     }
+    setMetaData()
   }
 }
 </script>

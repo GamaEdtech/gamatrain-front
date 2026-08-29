@@ -46,6 +46,7 @@ export interface PastPaperDTO {
   up_date: string
   edu_month_title: string
   owner: boolean
+  user_: string
 }
 
 export interface ContentItemDTO {
