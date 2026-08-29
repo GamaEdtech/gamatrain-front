@@ -115,6 +115,7 @@ import type {
   BillingInterval,
   SubscriptionCurrency,
 } from '@/types'
+import { BILLING_INTERVALS } from '@/constants'
 
 interface PriceFormProps {
   mode: 'add' | 'edit'
@@ -141,13 +142,7 @@ const {
 
 const currencies: SubscriptionCurrency[] = ['SOL', 'USDC', 'GET', 'USDT', 'USD']
 const worldwideCountryCode = 'worldwide'
-const billingIntervals: BillingInterval[] = [
-  'Daily',
-  'Weekly',
-  'Monthly',
-  'Seasonally',
-  'Yearly',
-]
+const billingIntervals = BILLING_INTERVALS
 
 interface SubscriptionPriceFormDTO {
   subscriptionPlanId: number | string

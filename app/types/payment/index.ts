@@ -1,6 +1,6 @@
 export type CurrencyPayment = 'SOL' | 'USDC' | 'GET' | 'USDT'
 export type StatusPayment = 'Pending' | 'Paid' | 'Failed'
-export type PaymentCurrency = 'SOL' | 'USDC'
+export type PaymentCurrency = 'SOL' | 'USDC' | 'USD'
 export type PaymentGateway = 'GamaTrain' | 'Stripe'
 
 export interface AdminPaymentDTO {

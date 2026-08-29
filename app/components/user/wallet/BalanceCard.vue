@@ -49,8 +49,7 @@
 
     <div class="d-flex align-center justify-center">
       <div
-        class="d-flex flex-column align-center justify-center ga-1 cursor-pointer"
-        @click="showChargeWalletModal = true"
+        class="d-flex flex-column align-center justify-center ga-1 opacity-60"
       >
         <v-icon
           color="grey400"
@@ -96,14 +95,6 @@
       </div>
     </div>
 
-    <modals-coin-payment-modal
-      v-model:show-dialog="showChargeWalletModal"
-      :is-processing="isLoading"
-      :user-balance="balance"
-      :amount-to-pay="Infinity"
-      @confirm="chargeComplete"
-    />
-
     <modals-withdraw
       v-model:show-dialog="showWithdrawModal"
       :user-balance="balance"
@@ -119,15 +110,9 @@ const { $numberFormat } = useNuxtApp()
 const { balance, isLoading, fetchBalance } = useCoinBalance()
 const showBalance = ref(true)
 const showWithdrawModal = ref(false)
-const showChargeWalletModal = ref(false)
 
 const toggleBalanceVisibility = () => {
   showBalance.value = !showBalance.value
-}
-
-const chargeComplete = () => {
-  showChargeWalletModal.value = false
-  fetchBalance()
 }
 
 onMounted(() => {

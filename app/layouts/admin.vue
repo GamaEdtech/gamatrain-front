@@ -48,7 +48,27 @@ const menuItems = [
         icon: 'md:payments_outlined',
       },
     ],
-  }, {
+  },
+  {
+    Subscription: [
+      {
+        title: 'Users',
+        link: '/admin/subscription/users',
+        icon: 'md:manage_accounts_outlined',
+      },
+      {
+        title: 'Usage',
+        link: '/admin/subscription/usage',
+        icon: 'md:query_stats',
+      },
+      {
+        title: 'Commission ',
+        link: '/admin/commission',
+        icon: 'md:percent_outlined',
+      },
+    ],
+  },
+  {
     Blog: [
 
       { title: 'Blogs ', link: '/admin/blogs', icon: 'md:post_outlined' },
@@ -103,7 +123,7 @@ const menuItems = [
         icon: 'md:settings_outlined',
       },
       {
-        title: 'Subscription',
+        title: 'Subscription Setting',
         link: '/admin/subscription',
         icon: 'md:subscriptions_outlined',
       },

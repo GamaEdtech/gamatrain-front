@@ -201,14 +201,21 @@
     </div>
 
     <!-- Coin Payment Modal -->
-    <lazy-modals-coin-payment-modal
-      v-if="showCoinPaymentModal"
+    <lazy-common-modal-base
       v-model:show-dialog="showCoinPaymentModal"
-      :is-processing="isLoading || isProcessingPayment"
-      :user-balance="balance"
-      :amount-to-pay="5"
-      @close="handleCoinPaymentClose"
-    />
+      :max-width="900"
+      title="Get Membership. Unlock Premium Downloads."
+      subtitle="Join +50,000 Students"
+    >
+      <common-modal-payment
+        :plans="paymentPlans"
+        :billing-interval="billingInterval"
+        :current-plan-id="currentPlanId"
+        :current-plan-title="currentPlanTitle"
+        @dismiss="showCoinPaymentModal = false"
+        @switch-successfully="upgradePlanSuccessfully"
+      />
+    </lazy-common-modal-base>
 
     <!-- Coin Consumption Animation -->
     <lazy-common-coin-consumption-animation
@@ -239,6 +246,9 @@
 <script setup lang="ts">
 import type {
   FilesDTO,
+  DownloadResponseDTO,
+  UpgradeSuggestionsDTO,
+  BillingInterval,
 } from '@/types'
 import { useDisplay } from 'vuetify'
 
@@ -269,10 +279,8 @@ const auth = useAuth()
 const router = useRouter()
 const { xs } = useDisplay()
 
-const { balance, isLoading } = useCoinBalance()
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
-const isProcessingPayment = ref(false)
 const isStartWalletAnimation = ref(false)
 const priceFile = ref(0)
 const pendingDownload = ref<{
@@ -280,9 +288,13 @@ const pendingDownload = ref<{
   extraId?: string
 } | null>(null)
 const openModalDownloadMobile = ref(false)
+const paymentPlans = ref<UpgradeSuggestionsDTO[]>([])
+const billingInterval = ref<BillingInterval[]>([])
+const currentPlanTitle = ref<string | null>(null)
+const currentPlanId = ref<number | null>(null)
 
 const {
-  clearDownload,
+  // clearDownload,
   getDownloadProgress,
   isDownloading,
   startDownload,
@@ -302,11 +314,16 @@ const {
     else {
       downloadIssue.value = true
     }
+    pendingDownload.value = null
   },
   onInsufficientBalance: () => {
     showCoinPaymentModal.value = true
   },
-  onUpgradeSuggestions: () => {
+  onUpgradeSuggestions: (data: DownloadResponseDTO) => {
+    paymentPlans.value = data.upgradeSuggestions || []
+    billingInterval.value = data.availableBillingIntervals || []
+    currentPlanTitle.value = data.currentPlanTitle
+    currentPlanId.value = data.currentPlanId
     showCoinPaymentModal.value = true
   },
 })
@@ -319,14 +336,6 @@ const handleDownloadClick = async (type: TypeFile, price: number, extraId?: stri
   }
 
   startDownload({ type, extraId })
-}
-
-const handleCoinPaymentClose = () => {
-  showCoinPaymentModal.value = false
-  if (pendingDownload.value) {
-    clearDownload(pendingDownload.value.type, pendingDownload.value.extraId)
-  }
-  pendingDownload.value = null
 }
 
 const handleAnimationComplete = async () => {
@@ -351,6 +360,13 @@ const startExam = () => {
     setTimeout(() => {
       router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
     }, 100)
+  }
+}
+
+const upgradePlanSuccessfully = async () => {
+  showCoinPaymentModal.value = false
+  if (pendingDownload.value) {
+    startDownload({ type: pendingDownload.value.type, extraId: pendingDownload.value.extraId })
   }
 }
 </script>

@@ -1,4 +1,6 @@
-export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Seasonally' | 'Yearly'
+import type { PaymentGateway } from '@/types'
+
+export type BillingInterval = 'Daily' | 'Weekly' | 'Monthly' | 'Quarterly' | 'Annual'
 export type SubscriptionCurrency = 'SOL' | 'USDC' | 'GET' | 'USDT' | 'USD'
 
 export interface SubscriptionPolygonPointDTO {
@@ -124,4 +126,223 @@ export interface AddAdminSubscriptionGatewayMappingDTO {
 export interface GetAdminSubscriptionGatewayMappingParams {
   page: number
   pageSize: number
+}
+
+export interface ResponseGetPlanDTO {
+  plans: SubscriptionPlanDTO[]
+  availableBillingIntervals: BillingInterval[]
+}
+
+export interface ActiveSubscriptionPlanPriceDTO {
+  billingInterval: BillingInterval
+  currency: SubscriptionCurrency
+  currencySymbol: string
+  price: number
+}
+
+export interface SubscriptionPlanDTO {
+  id: number
+  title: string
+  highlight: boolean
+  prices: ActiveSubscriptionPlanPriceDTO[]
+  featureGroups: AdminSubscriptionPlanFeatureGroupDTO[]
+}
+export interface PayloadPaymentSubscriptionDTO {
+  gateway: PaymentGateway
+  billingInterval: BillingInterval
+  // Purchase now delegates to a switch internally when the caller already has an Active subscription
+  // (gamatrain-back#577) - meaningless on a genuine first purchase. Defaults false server-side; only ever
+  // sent true on the resubmit after the user has confirmed a previewed upgrade charge.
+  confirm?: boolean
+}
+export interface PaymentSubscriptionResponseDTO {
+  userSubscriptionId: number
+  // 0 whenever `switched` - an immediate switch bills via Stripe's own proration invoice, not a Payment row.
+  paymentId: number
+  // Stripe Checkout redirect - set only for a genuine fresh purchase; null whenever `switched` or
+  // `requiresConfirmation`.
+  url: string | null
+  // True when this call changed an already-existing subscription instead of starting a new one.
+  switched: boolean
+  // True when nothing was applied yet and this response is only a preview - resend the identical request
+  // with `confirm: true` to actually apply it and charge `previewAmount`.
+  requiresConfirmation: boolean
+  /** Set only alongside requiresConfirmation - the exact amount a confirm:true resubmit will charge now. */
+  previewAmount: number | null
+  previewCurrency: SubscriptionCurrency | null
+}
+
+export type UserSubscriptionStatus = 'Pending' | 'Active' | 'Expired' | 'Cancelled'
+
+export interface UserSubscriptionDTO {
+  id: number
+  subscriptionPlanId: number
+  planTitle: string
+  status: UserSubscriptionStatus
+  startDate: string
+  expirationDate: string
+  pricePaid: number
+  currency: SubscriptionCurrency
+  billingInterval: BillingInterval
+  featureGroups: FeatureGroupUserSubscriptionDTO[]
+  autoRenews: boolean
+  cancelAtPeriodEnd: boolean
+  pendingSwitchPlanId: number | null
+  pendingSwitchPlanTitle: string | null
+  lastPaymentFailedDate: string
+}
+
+export interface FeatureGroupUserSubscriptionDTO {
+  features: AdminSubscriptionPlanFeatureDTO[]
+  limit: number | null
+  used: number
+  remaining: number | null
+  description: string
+}
+
+export interface AdminUserSubscriptionListDTO {
+  id: number
+  userId: number
+  userEmail: string
+  subscriptionPlanId: number
+  planTitle: string
+  status: UserSubscriptionStatus
+  creationDate: string
+  startDate: string | null
+  expirationDate: string | null
+  pricePaid: number
+  currency: SubscriptionCurrency
+  billingInterval: BillingInterval
+  autoRenews: boolean
+  cancelAtPeriodEnd: boolean
+  pendingSwitchPlanId: number | null
+  pendingSwitchPlanTitle: string | null
+  lastPaymentFailedDate: string | null
+  externalSubscriptionId: string | null
+  gateway: PaymentGateway
+}
+
+export interface AdminUserSubscriptionDetailDTO {
+  id: number
+  userId: number
+  userEmail: string
+  subscriptionPlanId: number
+  planTitle: string
+  status: UserSubscriptionStatus
+  creationDate: string
+  startDate: string | null
+  expirationDate: string | null
+  pricePaid: number
+  currency: SubscriptionCurrency
+  billingInterval: BillingInterval
+  autoRenews: boolean
+  cancelAtPeriodEnd: boolean
+  pendingSwitchPlanId: number | null
+  pendingSwitchPlanTitle: string | null
+  lastPaymentFailedDate: string | null
+  externalSubscriptionId: string | null
+  gateway: PaymentGateway
+}
+
+export interface SearchFilterAdminUserSubscription {
+  userId: string
+  status: UserSubscriptionStatus | ''
+}
+
+export interface GetAdminUserSubscriptionParams extends SearchFilterAdminUserSubscription {
+  page: number
+  pageSize: number
+}
+
+export interface GrantAdminUserSubscriptionDTO {
+  userId: number
+  subscriptionPlanId: number
+  billingInterval: BillingInterval
+}
+
+export interface GrantAdminUserSubscriptionResponseDTO {
+  id: number
+}
+
+export interface ExtendAdminUserSubscriptionDTO {
+  days: number
+}
+
+export type AdminSubscriptionUsageSortType = 'Asc' | 'Desc'
+
+export interface AdminSubscriptionUsageSortFilter {
+  sortType: AdminSubscriptionUsageSortType
+  column: string
+}
+
+export interface AdminSubscriptionUsageSearchFilter {
+  phrase: string
+  column: string
+}
+
+export interface AdminSubscriptionUsageDTO {
+  id: number
+  userId: number
+  userEmail: string
+  userSubscriptionId: number
+  subscriptionPlanId: number
+  planTitle: string
+  featureId: number
+  featureCode: string
+  featureName: string
+  amount: number
+  identifierId: number
+  creationDate: string
+}
+
+export interface SearchFilterAdminSubscriptionUsage {
+  userId: string
+  featureCode: string
+  identifierId: string
+  fromDate: string
+  toDate: string
+}
+
+export interface GetAdminSubscriptionUsageParams extends SearchFilterAdminSubscriptionUsage {
+  page: number
+  pageSize: number
+  sortFilter?: AdminSubscriptionUsageSortFilter[]
+  searchFilter?: AdminSubscriptionUsageSearchFilter[]
+}
+
+export interface AdminSubscriptionUsageAggregateDTO {
+  featureId: number
+  featureCode: string
+  featureName: string
+  totalAmount: number
+  eventCount: number
+  distinctUserCount: number
+}
+
+export interface GetAdminSubscriptionUsageAggregateParams {
+  userId?: number | string | null
+  fromDate?: string | null
+  toDate?: string | null
+}
+
+// POST subscriptions/me/switch (gamatrain-back#575/#577). Kept for a dedicated "manage my subscription"
+// screen that already knows the caller has a plan; startPaymentSubscription (plans/{id}/purchase) now
+// handles the same buy/upgrade/downgrade decision on its own for any generic "choose a plan" UI, so this
+export interface SwitchSubscriptionPlanDTO {
+  subscriptionPlanId: number
+  // Omitted keeps the current interval; only a move to a bigger interval is supported (gamatrain-back#577).
+  billingInterval?: BillingInterval
+  // Defaults false; set true only on the resubmit after the user confirmed a previewed upgrade charge.
+  confirm?: boolean
+}
+
+export interface SwitchSubscriptionPlanResponseDTO {
+  success: boolean
+  /** true when the switch applied right away (upgrade, prorated invoice); false when it's deferred to
+   *  effectiveDate instead (downgrade). */
+  immediate: boolean
+  effectiveDate: string | null
+  requiresConfirmation: boolean
+  previewAmount: number | null
+  previewCurrency: SubscriptionCurrency | null
 }

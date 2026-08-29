@@ -76,14 +76,14 @@ const clickOnModal = (event) => {
 }
 </script>
 
-<style>
+<style scoped>
 .mobile-style{
   max-height: 90%;
 }
-.ck ol, .ck ul{
+:deep(.ck ol), :deep(.ck ul){
   padding-left : 24px !important;
 }
-.ck.ck-balloon-panel{
+:global(.ck.ck-balloon-panel){
   z-index: 2400 !important;
 }
 @media only screen and (max-width: 960px) {
