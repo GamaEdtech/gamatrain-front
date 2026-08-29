@@ -520,12 +520,6 @@ onMounted(async () => {
 .summary-card {
   min-height: 116px;
 }
-.set-height-table {
-  max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
-}
 .description-width {
   min-width: 200px;
 }
