@@ -150,13 +150,6 @@ const categories = ref([
     icon: 'icon-tutorial',
   },
   {
-    type: 'forum',
-    key: 'questions',
-    stat: '--',
-    title: 'Forum',
-    icon: 'icon-q-a',
-  },
-  {
     type: 'multimedia',
     key: 'files',
     stat: '--',
@@ -176,6 +169,13 @@ const categories = ref([
     stat: '+600K',
     title: 'Schools',
     icon: 'icon-school',
+  },
+  {
+    type: 'forum',
+    key: 'questions',
+    stat: '--',
+    title: 'Forum',
+    icon: 'icon-q-a',
   },
 
 ])
@@ -416,7 +416,7 @@ onMounted(() => {
   color: #02b719;
 }
 .icon-teacher{
-  color : #1CB423
+  color : #7f56d9
 }
 .icon-paper {
   color: #2e90fa;
