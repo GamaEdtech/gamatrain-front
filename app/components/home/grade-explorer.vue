@@ -70,7 +70,7 @@
           />
         </div>
       </div>
-      <div class="mt-10 w-100 pa-4">
+      <div class="mt-10 w-100 d-none d-sm-flex">
         <v-slide-group
           class="category-slider pt-4 d-flex align-center position-relative"
           show-arrows
@@ -150,6 +150,56 @@
             </nuxt-link>
           </v-slide-group-item>
         </v-slide-group>
+      </div>
+      <div class="mt-10 d-flex d-sm-none">
+        <v-row justify="center">
+          <v-col
+            v-for="category in categories"
+            :key="category.key"
+            cols="12"
+            sm="4"
+            md="3"
+            lg="2"
+          >
+            <nuxt-link
+              :to="categoryLink(category)"
+            >
+              <div class="ex-category__card">
+                <div class="d-flex align-center">
+                  <div class="ex-category__card--title mb-sm-4 pr-6 pr-md-0">
+                    {{ typeof category.stat === 'number' ? $numberFormat(category.stat) : category.stat }}
+                  </div>
+                  <span class="d-sm-none">
+                    <v-icon
+                      size="x-large"
+                      color="#D0D5DD"
+                    >mdi-chevron-right</v-icon>
+                  </span>
+                </div>
+
+                <div class="d-flex align-center order-first order-sm-last">
+                  <div class="ex-category__card--icon">
+                    <span
+                      class="stat-icon"
+                      :class="category.icon"
+                    />
+                  </div>
+                  <div class="d-flex align-center pl-1">
+                    <span class="ex-category__card--subtitle">
+                      {{ category.title }}
+                    </span>
+                    <span class="pl-1 d-none d-sm-block">
+                      <v-icon
+                        size="x-large"
+                        color="#D0D5DD"
+                      >mdi-chevron-right</v-icon>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </nuxt-link>
+          </v-col>
+        </v-row>
       </div>
     </div>
   </v-container>
@@ -466,7 +516,7 @@ onMounted(() => {
 }
 .ex-category__card--title {
   color: #344054;
-  font-size: 30px;
+  font-size: 20px;
   font-weight: 700;
 }
 .ex-category__card--subtitle {
@@ -475,18 +525,17 @@ onMounted(() => {
   font-weight: 500;
 }
 .ex-category__card {
-  min-width : 160px;
   background: linear-gradient(
-    90deg,
+    to bottom,
     rgba(255, 255, 255, 1),
     rgba(249, 250, 251, 1)
   );
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   border: 1px solid rgba(242, 244, 247, 1);
-  padding: 3rem 1rem;
+  padding: 2rem 1.5rem;
   border-radius: 24px;
   transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s,
     background 0.2s;
@@ -553,6 +602,21 @@ onMounted(() => {
 }
 
 @media (min-width: 600px) {
+  .ex-category__card {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 1),
+      rgba(249, 250, 251, 1)
+    );
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(242, 244, 247, 1);
+    padding: 3rem 1rem;
+    border-radius: 24px;
+    min-width : 154px;
+  }
   .ex-board-select {
     width: max-content;
     min-width: max-content;
@@ -573,19 +637,13 @@ onMounted(() => {
     width: 450px;
   }
 }
-
-@media (max-width: 600px) {
-  .ex-category__card {
-    min-width: 120px;
-    padding: 2rem 0.5rem;
-    border-radius: 16px;
-  }
-   .ex-category__card--title {
-    font-size: 20px;
+@media (min-width: 960px) {
+  .ex-category__card--title {
+    font-size: 30px;
     font-weight: 700;
   }
   .ex-category__card--subtitle {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 500;
   }
 }
