@@ -172,7 +172,7 @@
             <v-btn
               icon
               flat
-              :to="`/paper/${item.id}/${item.title}`"
+              :to="`/paper/${item.id}`"
             >
               <v-icon
                 size="20"

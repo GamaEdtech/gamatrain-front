@@ -2,6 +2,7 @@ import type {
   ApiResult,
   AppError,
   PastPaperCreateDTO,
+  PastPaperEditDTO,
   PastPaperCreatePayloadDTO,
   PastPaperCreateResponseDTO,
   PastPaperDetailDTO,
@@ -165,29 +166,35 @@ export const usePastPaper = () => {
     }
   }
 
-  const editItem = async (id: string | number, item: PastPaperCreateDTO) => {
+  const encodeEditPayload = (item: PastPaperEditDTO) => {
+    const params: Partial<PastPaperCreatePayloadDTO> = {}
+
+    if (item.board !== undefined) params.section = item.board
+    if (item.grade !== undefined) params.base = item.grade
+    if (item.subject !== undefined) params.lesson = item.subject
+    if (item.classification !== undefined) params.test_type = item.classification
+    if (item.topics !== undefined) params.topics = Array.isArray(item.topics) ? item.topics.map(Number) : []
+    if (item.answer_type !== undefined) params.answer_type = item.answer_type
+    if (item.level !== undefined) params.level = item.level
+    if (item.holding_level !== undefined) params.holding_level = item.holding_level
+    if (item.title !== undefined) params.title = item.title
+    if (item.description !== undefined) params.description = item.description
+    if (item.file_pdf !== undefined) params.file_pdf = item.file_pdf
+    if (item.file_word !== undefined) params.file_word = item.file_word
+    if (item.file_answer !== undefined) params.file_answer = item.file_answer
+    if (item.edu_year !== undefined) params.edu_year = item.edu_year
+    if (item.edu_month !== undefined) params.edu_month = item.edu_month
+    if (item.file_extra !== undefined) params.file_extra = item.file_extra
+    if (item.state !== undefined) params.state = item.state
+    if (item.area !== undefined) params.area = item.area
+    if (item.school !== undefined) params.school = item.school
+
+    return params
+  }
+
+  const editItem = async (id: string | number, item: PastPaperEditDTO) => {
     loadingEditItem.value = true
-    const params: PastPaperCreatePayloadDTO = {
-      section: item.board,
-      base: item.grade,
-      lesson: item.subject,
-      test_type: item.classification,
-      topics: Array.isArray(item.topics) ? item.topics.map(Number) : [],
-      answer_type: item.answer_type,
-      level: item.level,
-      holding_level: item.holding_level,
-      title: item.title,
-      description: item.description,
-      file_pdf: item.file_pdf,
-      file_word: item.file_word,
-      file_answer: item.file_answer,
-      edu_year: item.edu_year,
-      edu_month: item.edu_month,
-      file_extra: item.file_extra ?? [],
-      state: item.state,
-      area: item.area,
-      school: item.school,
-    }
+    const params = encodeEditPayload(item)
 
     try {
       const response = await useApiService.put<
