@@ -10,6 +10,7 @@ import type {
 
 export const useSubscription = () => {
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
+  const switchNotAllowedWhileCancellationPendingError = 'SwitchNotAllowedWhileCancellationPending'
 
   const data = ref<ResponseGetPlanDTO | null>(null)
   const userSubscription = ref<UserSubscriptionDTO | null>(null)
@@ -154,7 +155,8 @@ export const useSubscription = () => {
       >(`/api/v2/subscriptions/me/switch`, { ...payload })
 
       if (!response.succeeded) {
-        handleApiResponseError(response)
+        const shouldShowToast = !response.errors?.some(error => error.message === switchNotAllowedWhileCancellationPendingError)
+        handleApiResponseError(response, undefined, shouldShowToast)
       }
 
       return response
