@@ -23,6 +23,25 @@
         <v-icon color="primary">
           md:chevron_forward
         </v-icon>
+
+        <v-btn
+          v-if="
+            isAuthenticated
+              && user
+              && contentData.user_
+              && Number(contentData.user_) === user?.coreId
+          "
+          color="info"
+          class="rounded-circle"
+          size="24"
+          flat
+          variant="tonal"
+          @click="openEditModal = true"
+        >
+          <v-icon size="16">
+            md:edit
+          </v-icon>
+        </v-btn>
       </v-col>
       <v-col
         cols="12"
@@ -85,11 +104,11 @@
         class="mt-6"
       >
         <span
-          class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
+          class="d-flex align-center ga-1 text-h5 cursor-pointer text-lightError"
           @click="openCrashReport = true"
         >
           <v-icon
-            color="#C62828"
+            color="lightError"
             class="mb-1"
           >md:warning_outlined</v-icon>
           Crash report
@@ -126,6 +145,20 @@
     >
       <lazy-common-modal-share :title="contentData.title" />
     </lazy-common-modal-base>
+
+    <lazy-common-modal-base
+      v-if="openEditModal"
+      v-model:show-dialog="openEditModal"
+      title="Edit"
+    >
+      <lazy-paper-modal-edit
+        :id="contentData.id"
+        :title="contentData.title"
+        :description="contentData.description"
+        @close="openEditModal = false"
+        @success="editSuccessfully"
+      />
+    </lazy-common-modal-base>
   </v-container>
 </template>
 
@@ -140,6 +173,8 @@ interface BreadCrumb {
 
 const route = useRoute()
 const router = useRouter()
+const { user } = useUser()
+const { isAuthenticated } = useAuth()
 
 const { buildSchema } = useSeoSchema()
 
@@ -149,6 +184,7 @@ const pageTitle = ref('')
 const breads = ref<BreadCrumb[]>([])
 const openCrashReport = ref(false)
 const openShare = ref(false)
+const openEditModal = ref(false)
 const isAdsLoad = ref(false)
 
 const { data: contentData } = await useAsyncData(
@@ -335,10 +371,21 @@ if (contentData.value) {
   initBreadCrumb()
   setMetaData()
 }
+
+const editSuccessfully = (data: {
+  title: string
+  description: string
+}) => {
+  if (contentData.value) {
+    contentData.value = {
+      ...contentData.value,
+      title: data.title,
+      description: data.description,
+    }
+    setMetaData()
+  }
+}
 </script>
 
 <style scoped>
-.text-crash-report {
-  color: #c62828;
-}
 </style>
