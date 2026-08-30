@@ -50,17 +50,11 @@
         </v-icon>
         <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download PDF</span>
 
-        <span
-          v-if="files.pdf.price && files.pdf.price != 0"
+        <common-price-with-gem
           class="text-pdf text-h5 font-weight-bold mt-1"
-        >{{ files.pdf.price }}
-          <v-icon
-            size="20"
-            color="lightError"
-          >
-            md:diamond_outlined
-          </v-icon>
-        </span>
+          :price="files.pdf.price"
+          color="lightError"
+        />
       </v-btn>
 
       <v-btn
@@ -79,17 +73,11 @@
         <template v-else>
           <span class="text-begin-quiz text-h5 font-weight-bold mt-1 mx-2">
             Start Exam</span>
-          <span
-            v-if="files.participation.price && files.participation.price != 0"
+          <common-price-with-gem
             class="text-begin-quiz text-h5 font-weight-bold mt-1"
-          >{{ files.participation.price }}
-            <v-icon
-              size="20"
-              color="#5500e835"
-            >
-              md:diamond_outlined
-            </v-icon>
-          </span>
+            :price="files.participation.price"
+            color="#5600e8"
+          />
         </template>
       </v-btn>
     </div>
