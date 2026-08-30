@@ -70,7 +70,7 @@
           />
         </div>
       </div>
-      <div class="mt-10 w-100 d-none d-sm-flex">
+      <div class="mt-4 w-100 d-none d-sm-flex">
         <v-slide-group
           class="category-slider pt-4 d-flex align-center position-relative"
           show-arrows
@@ -615,7 +615,7 @@ onMounted(() => {
     border: 1px solid rgba(242, 244, 247, 1);
     padding: 3rem 1rem;
     border-radius: 24px;
-    min-width : 154px;
+    min-width : 250px;
   }
   .ex-board-select {
     width: max-content;
