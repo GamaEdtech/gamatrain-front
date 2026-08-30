@@ -51,10 +51,11 @@
         </v-icon>
         <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download {{ isPaper ? 'Question Paper' : 'PDF' }}</span>
 
-        <span
-          v-if="files.pdf.price && files.pdf.price != 0"
+        <common-price-with-gem
           class="text-pdf text-h5 font-weight-bold mt-1"
-        >{{ files.pdf.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+          :price="files.pdf.price"
+          color="#f04438"
+        />
       </v-btn>
 
       <v-btn
@@ -83,10 +84,11 @@
         </v-icon>
         <span class="text-word text-h5 font-weight-bold mt-1 mx-2">Download {{ isPaper ? 'Question Doc': 'DOC' }}</span>
 
-        <span
-          v-if="files.word.price && files.word.price !=0"
+        <common-price-with-gem
           class="text-word text-h5 font-weight-bold mt-1"
-        >{{ files.word.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+          :price="files.word.price"
+          color="#2e90fa"
+        />
       </v-btn>
 
       <v-btn
@@ -114,10 +116,11 @@
             : `Download Mark Scheme`
         }}</span>
 
-        <span
-          v-if="files.answer.price && files.answer.price != 0"
+        <common-price-with-gem
           class="text-answer text-h5 font-weight-bold mt-1"
-        >{{ files.answer.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+          :price="files.answer.price"
+          color="#008080"
+        />
       </v-btn>
 
       <template v-if="files.extra && files.extra.length > 0">
@@ -150,10 +153,11 @@
 
           <span class="text-extra text-h5 font-weight-bold mt-1 mx-2">Download {{ extra.type_title ? extra.type_title : "Extra" }}</span>
 
-          <span
-            v-if="extra.price && extra.price != 0"
+          <common-price-with-gem
             class="text-extra text-h5 font-weight-bold mt-1"
-          >{{ extra.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+            :price="extra.price"
+            color="#ff03d6"
+          />
         </v-btn>
       </template>
 

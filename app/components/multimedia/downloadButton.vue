@@ -50,10 +50,11 @@
         </v-icon>
         <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download {{ files.ext ? files.ext.toUpperCase() : 'PPTX' }}</span>
 
-        <span
-          v-if="files.price && files.price != 0"
+        <common-price-with-gem
           class="text-pdf text-h5 font-weight-bold mt-1"
-        >{{ files.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+          :price="files.price"
+          color="lightError"
+        />
       </v-btn>
     </div>
 
