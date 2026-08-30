@@ -191,8 +191,6 @@
           />
         </div>
       </div>
-
-      <user-subscription-history-table class="mt-6" />
     </template>
 
     <div
@@ -211,6 +209,13 @@
         :show-limited-access-link="false"
       />
     </div>
+
+    <!-- Independent of whether the user currently has an active subscription -
+         a lapsed/cancelled subscriber can still have real history to see. -->
+    <user-subscription-history-table
+      v-if="!loadingGetUserSubscription"
+      class="mt-6"
+    />
 
     <common-modal-base
       v-model:show-dialog="showCancelModal"

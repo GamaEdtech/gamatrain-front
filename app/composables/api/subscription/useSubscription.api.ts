@@ -116,7 +116,7 @@ export const useSubscription = () => {
       )
 
       if (response.succeeded && response.data) {
-        userSubscriptionHistory.value = response.data.list
+        userSubscriptionHistory.value = response.data.list ?? []
         userSubscriptionHistoryTotalCount.value = response.data.totalRecordsCount
         userSubscriptionHistoryPageCount.value = Math.ceil(response.data.totalRecordsCount / params.pageSize)
       }
