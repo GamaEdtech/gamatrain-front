@@ -12,8 +12,8 @@
         {{ contentData?.first_name }} {{ contentData?.last_name }}
       </p>
     </div>
-    <span class="text-h5 d-flex align-center color-link ga-1">
-      <v-icon color="#1a73e8">md:notifications_outlined</v-icon>
+    <span class="text-h5 d-flex align-center text-info ga-1">
+      <v-icon color="info">md:notifications_outlined</v-icon>
       follow
     </span>
   </div>
@@ -36,12 +36,12 @@
   <button
     v-if="hasOverflow"
     type="button"
-    class="w-100 pa-0 bg-transparent border-0 text-left cursor-pointer text-h5 d-flex align-center color-link ga-1 mt-1"
+    class="w-100 pa-0 bg-transparent border-0 text-left cursor-pointer text-h5 d-flex align-center ga-1 mt-1"
     :aria-expanded="seeCompleteDescription"
     @click="seeCompleteDescription = !seeCompleteDescription"
   >
-    {{ seeCompleteDescription ? `See Less` : `See More` }}
-    <v-icon color="#1a73e8">
+    <span class="text-info">{{ seeCompleteDescription ? `See Less` : `See More` }}</span>
+    <v-icon color="info">
       {{ seeCompleteDescription ? 'md:keyboard_arrow_up' : 'md:keyboard_arrow_down' }}
     </v-icon>
   </button>
@@ -167,9 +167,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.color-link {
-  color: #1a73e8;
-}
 .open-description {
   height: unset;
   min-height: 70px;
