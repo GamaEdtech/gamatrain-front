@@ -359,16 +359,21 @@ const fetchCategoryCounts = async () => {
 }
 
 const fetchTeachers = async () => {
-  const query = {
-    'PagingDto.PageFilter.Size': 1,
-    'PagingDto.PageFilter.Skip': 0,
-    'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-  }
-  const response = await useApiService.get('/api/v2/identities/profiles/list', query)
-  const totalDataFind = response.data.totalRecordsCount || 0
+  try {
+    const query = {
+      'PagingDto.PageFilter.Size': 1,
+      'PagingDto.PageFilter.Skip': 0,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+    }
+    const response = await useApiService.get('/api/v2/identities/profiles/list', query, { public: true })
+    const totalDataFind = response.data.totalRecordsCount || 0
 
-  categories.value.find((cat, _i) => cat.key == 'teachers').stat
-    = parseInt(totalDataFind)
+    categories.value.find((cat, _i) => cat.key == 'teachers').stat
+      = parseInt(totalDataFind)
+  }
+  catch (error) {
+    console.error('Error fetching teacher count:', error)
+  }
 }
 
 const handleBoardFocused = () => {

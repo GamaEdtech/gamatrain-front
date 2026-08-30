@@ -146,7 +146,8 @@ const isPreviousLoading = ref(false)
 const data = ref([])
 const isAllDataLoaded = ref(false)
 const totalDataFind = ref(0)
-const perPage = 5
+const perPage = 10
+const perPageProfiles = 5
 const perPageServerSide = 5
 const firstLoadedPageNumber = ref(Number(route.query.page) || 1)
 const latestLoadedPageNumber = ref(Number(route.query.page) || 1)
@@ -240,31 +241,30 @@ const getDataList = async () => {
   try {
     const typeRoute = getEquivalentOldType(querySearch.value.type)
     let response = {}
+    const pageSize = typeRoute == 'teacher' ? perPageProfiles : perPage
 
     if (typeRoute == 'teacher') {
       const query = {
-        'PagingDto.PageFilter.Size': perPage,
-        'PagingDto.PageFilter.Skip': (querySearch.value.page - 1) * perPage,
+        'PagingDto.PageFilter.Size': pageSize,
+        'PagingDto.PageFilter.Skip': (querySearch.value.page - 1) * pageSize,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-        'FullName': querySearch.value.title,
+        'FullName': querySearch.value.title ?? '',
       }
       response = await useApiService.get('/api/v2/identities/profiles/list', query)
       totalDataFind.value = response.data.totalRecordsCount || 0
     }
     else {
-      const params = { ...querySearch.value, type: typeRoute, perpage: perPage }
+      const params = { ...querySearch.value, type: typeRoute, perpage: pageSize }
       response = await useApiService.get('/api/v1/search', params)
       totalDataFind.value = response.data.num || 0
     }
 
-    if (response.data.list && response.data.list.length < perPage) {
-      isAllDataLoaded.value = true
-    }
-    if (response.data.list == null && response.data.totalRecordsCount == null) {
+    const list = response.data.list ?? []
+    if (list.length < pageSize) {
       isAllDataLoaded.value = true
     }
 
-    return response.data.list ?? []
+    return list
   }
   catch (err) {
     console.error(err)
