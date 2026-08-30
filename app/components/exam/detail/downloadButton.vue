@@ -53,7 +53,14 @@
         <span
           v-if="files.pdf.price && files.pdf.price != 0"
           class="text-pdf text-h5 font-weight-bold mt-1"
-        >{{ files.pdf.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+        >{{ files.pdf.price }}
+          <v-icon
+            size="20"
+            color="lightError"
+          >
+            md:diamond_outlined
+          </v-icon>
+        </span>
       </v-btn>
 
       <v-btn
@@ -75,7 +82,14 @@
           <span
             v-if="files.participation.price && files.participation.price != 0"
             class="text-begin-quiz text-h5 font-weight-bold mt-1"
-          >{{ files.participation.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+          >{{ files.participation.price }}
+            <v-icon
+              size="20"
+              color="#5500e835"
+            >
+              md:diamond_outlined
+            </v-icon>
+          </span>
         </template>
       </v-btn>
     </div>

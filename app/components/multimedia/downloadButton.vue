@@ -53,7 +53,14 @@
         <span
           v-if="files.price && files.price != 0"
           class="text-pdf text-h5 font-weight-bold mt-1"
-        >{{ files.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+        >{{ files.price }}
+          <v-icon
+            size="20"
+            color="lightError"
+          >
+            md:diamond_outlined
+          </v-icon>
+        </span>
       </v-btn>
     </div>
 

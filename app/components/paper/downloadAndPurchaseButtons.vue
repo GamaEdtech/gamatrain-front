@@ -54,7 +54,14 @@
         <span
           v-if="files.pdf.price && files.pdf.price != 0"
           class="text-pdf text-h5 font-weight-bold mt-1"
-        >{{ files.pdf.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+        >{{ files.pdf.price }}
+          <v-icon
+            size="20"
+            color="#f04438"
+          >
+            md:diamond_outlined
+          </v-icon>
+        </span>
       </v-btn>
 
       <v-btn
@@ -86,7 +93,14 @@
         <span
           v-if="files.word.price && files.word.price !=0"
           class="text-word text-h5 font-weight-bold mt-1"
-        >{{ files.word.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+        >{{ files.word.price }}
+          <v-icon
+            size="20"
+            color="#2e90fa"
+          >
+            md:diamond_outlined
+          </v-icon>
+        </span>
       </v-btn>
 
       <v-btn
@@ -117,7 +131,14 @@
         <span
           v-if="files.answer.price && files.answer.price != 0"
           class="text-answer text-h5 font-weight-bold mt-1"
-        >{{ files.answer.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+        >{{ files.answer.price }}
+          <v-icon
+            size="20"
+            color="#008080"
+          >
+            md:diamond_outlined
+          </v-icon>
+        </span>
       </v-btn>
 
       <template v-if="files.extra && files.extra.length > 0">
@@ -153,7 +174,14 @@
           <span
             v-if="extra.price && extra.price != 0"
             class="text-extra text-h5 font-weight-bold mt-1"
-          >{{ extra.price }} <span class="text-h6 font-weight-normal">GEM</span></span>
+          >{{ extra.price }}
+            <v-icon
+              size="20"
+              color="#ff03d6"
+            >
+              md:diamond_outlined
+            </v-icon>
+          </span>
         </v-btn>
       </template>
 
