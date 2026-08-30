@@ -72,12 +72,14 @@
       </div>
       <div class="mt-4 w-100 d-none d-sm-flex">
         <v-slide-group
+          ref="categorySlider"
           class="category-slider pt-4 d-flex align-center position-relative"
           show-arrows
           center-active
         >
           <template #prev>
             <v-btn
+              v-show="categorySlider?.hasPrev"
               aria-label="Previous plans"
               icon
               flat
@@ -96,6 +98,7 @@
 
           <template #next>
             <v-btn
+              v-show="categorySlider?.hasNext"
               aria-label="Next plans"
               icon
               flat
@@ -207,6 +210,8 @@
 
 <script setup>
 const { data: boardList, getData: getBoards } = useBoard()
+
+const categorySlider = ref(null)
 
 const categories = ref([
   {
