@@ -17,56 +17,63 @@
       </v-row>
     </template>
     <template v-else>
-      <!-- Profile section -->
-      <v-row>
-        <v-col
-          cols="12"
-          class="px-0 px-md-2"
-        >
-          <v-card :flat="display.xs.value">
-            <v-card-text class="px-8 px-sm-8 pa-md-3">
-              <v-row>
-                <!-- General info -->
-                <v-col cols="12">
-                  <dashboard-general-info-dashboard
-                    ref="generalInfoRef"
-                    :user-data="userInfo?.user || {}"
-                    :progress-data="userInfo?.profileCompletion || {}"
-                  />
-                </v-col>
-                <!-- End general info -->
+      <div class="d-flex flex-column ga-5">
+        <!-- Profile + level -->
+        <dashboard-general-info-dashboard
+          ref="generalInfoRef"
+          :user-data="userInfo?.user || {}"
+          :progress-data="userInfo?.profileCompletion || {}"
+        />
 
-                <!-- Statistics section -->
-                <v-col
-                  cols="12"
-                  class="px-0 px-md-4"
-                >
-                  <dashboard-statistics :user-info="userInfo" />
-                </v-col>
-                <!-- End Statistics section -->
-              </v-row>
+        <!-- Subscription -->
+        <dashboard-subscription-banner />
 
-              <!-- Content type -->
-              <dashboard-create-content-button
-                ref="createContentRef"
-                :statistics="userInfo?.stats || {}"
-              />
-              <!-- End content type -->
-            </v-card-text>
-          </v-card>
-        </v-col>
-      </v-row>
-      <!-- End profile section -->
+        <!-- Achievements -->
+        <dashboard-badges-strip />
 
-      <!-- Exams section -->
-      <dashboard-exam-section :exam-data="userInfo?.examSuggestions" />
-      <!-- End exam section -->
+        <!-- Statistics -->
+        <dashboard-statistics :user-info="userInfo" />
+
+        <!-- Exams & progress (students) / Support -->
+        <v-row v-if="userType === 6">
+          <v-col
+            cols="12"
+            md="8"
+          >
+            <dashboard-exam-section :exam-data="userInfo?.examSuggestions" />
+          </v-col>
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <dashboard-support-widget />
+          </v-col>
+        </v-row>
+        <v-row v-else>
+          <v-col
+            cols="12"
+            md="4"
+          >
+            <dashboard-support-widget />
+          </v-col>
+        </v-row>
+
+        <!-- Content type -->
+        <div>
+          <p class="gama-text-h6 font-weight-bold text-grey900 mb-4">
+            {{ userType === 5 ? 'Create & Share' : 'Get Involved' }}
+          </p>
+          <dashboard-create-content-button
+            ref="createContentRef"
+            :statistics="userInfo?.stats || {}"
+          />
+        </div>
+      </div>
     </template>
   </div>
 </template>
 
 <script setup>
-import { useDisplay } from 'vuetify'
 import { useAuth } from '@/composables/useAuth'
 
 const { $toast } = useNuxtApp()
@@ -88,7 +95,7 @@ const createContentRef = ref(null)
 const loader = ref(true)
 const userInfo = ref({})
 const userType = computed(() => user.value?.group)
-const display = useDisplay()
+
 const getUserInfo = async () => {
   try {
     loader.value = true
@@ -116,14 +123,3 @@ onMounted(() => {
   getUserInfo()
 })
 </script>
-
-<style scoped>
-.teaching-request-details i {
-  font-size: 1.5rem;
-  margin-right: 0.5rem;
-}
-
-.teaching-request-details span {
-  font-size: 1.5rem;
-}
-</style>
