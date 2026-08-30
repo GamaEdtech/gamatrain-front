@@ -3,7 +3,7 @@
     <div class="w-100 d-flex flex-column justify-start align-start">
       <div class="w-100 d-flex justify-space-between align-center">
         <h1 class="text-h4 font-weight-bold text-grey700">
-          Transaction History
+          Activity History
         </h1>
 
         <v-btn
