@@ -191,6 +191,8 @@
           />
         </div>
       </div>
+
+      <user-subscription-history-table class="mt-6" />
     </template>
 
     <div
@@ -209,8 +211,6 @@
         :show-limited-access-link="false"
       />
     </div>
-
-    <user-subscription-history-table class="mt-6" />
 
     <common-modal-base
       v-model:show-dialog="showCancelModal"

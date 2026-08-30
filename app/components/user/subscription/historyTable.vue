@@ -1,5 +1,6 @@
 <template>
   <common-data-table
+    v-if="userSubscriptionHistoryTotalCount > 0"
     :page="page"
     :page-size="pageSize"
     title="Subscription History"
