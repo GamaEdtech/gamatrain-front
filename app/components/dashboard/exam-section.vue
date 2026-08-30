@@ -1,122 +1,67 @@
 <template>
-  <v-row v-if="userType === 6">
-    <v-col
-      cols="12"
-      class="px-0 px-sm-2"
+  <v-card
+    v-if="userType === 6"
+    flat
+    class="dashboard-card pa-4"
+  >
+    <div class="d-flex justify-space-between align-center">
+      <p class="gama-text-h6 font-weight-bold text-grey900 mb-0">
+        Exams &amp; Progress
+      </p>
+      <NuxtLink
+        to="/leader-board"
+        class="gama-text-body2 font-weight-bold text-decoration-none d-flex align-center ga-1"
+      >
+        See leaderboard
+        <v-icon size="16">
+          mdi-chevron-right
+        </v-icon>
+      </NuxtLink>
+    </div>
+
+    <v-alert
+      v-if="notParticipatedTotal > 0"
+      type="warning"
+      variant="tonal"
+      density="comfortable"
+      class="mt-4"
     >
-      <v-card>
-        <v-card-title class="text-h4">
-          <v-row>
-            <v-col cols="6">
-              <v-icon class="mr-2">
-                md:laptop_mac
-              </v-icon>
-              Exams
-            </v-col>
-            <v-col
-              cols="6"
-              class="text-right"
-            >
-              <v-btn color="warning">
-                See result
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-title>
-        <v-card-text class="px-sm-8 px-md-4">
-          <v-alert type="warning">
-            You have not participated in 10 out of 20 tests
-          </v-alert>
+      You have not participated in {{ notParticipatedTotal }} out of {{ examData?.total || 0 }} tests
+    </v-alert>
 
-          <v-row class="mt-5 d-flex d-md-none">
-            <v-col cols="6">
-              <p class="text-h5">
-                <v-icon color="green">
-                  md:check_circle
-                </v-icon>
-                Participated
-              </p>
-            </v-col>
-            <v-col cols="6">
-              <p class="text-h5">
-                <v-icon color="red">
-                  md:cancel
-                </v-icon>
-                Not Participated
-              </p>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col
-              cols="12"
-              class="px-0 px-sm-4 px-md-4"
-            >
-              <v-table class="exams_table">
-                <thead>
-                  <tr>
-                    <th class="text-left text-h5">
-                      Course name
-                    </th>
-                    <th class="text-center teal--text text-h5">
-                      <v-icon
-                        class="d-block d-md-none"
-                        size="x-large"
-                        color="green"
-                      >
-                        md:check_circle
-                      </v-icon>
+    <div
+      v-if="examData?.lessons?.length"
+      class="d-flex flex-column ga-4 mt-4"
+    >
+      <div
+        v-for="item in examData.lessons"
+        :key="item.id"
+      >
+        <div class="d-flex justify-space-between mb-1">
+          <span class="gama-text-body1 font-weight-bold text-grey700">{{ item.title }}</span>
+          <span class="gama-text-caption text-grey500">{{ item.participated }} of {{ item.total }} done</span>
+        </div>
+        <v-progress-linear
+          :model-value="item.total ? (item.participated / item.total) * 100 : 0"
+          :color="item.participated >= item.total ? 'success' : 'warning'"
+          height="7"
+          rounded
+          bg-color="grey200"
+        />
+      </div>
+    </div>
 
-                      <span class="d-none d-md-block"> Participated </span>
-                    </th>
-                    <th class="text-center orange--text text-h5">
-                      <v-icon
-                        class="d-block d-md-none"
-                        size="x-large"
-                        color="red"
-                      >
-                        md:cancel
-                      </v-icon>
+    <v-divider class="my-4" />
 
-                      <span class="d-none d-md-block"> Not Participated </span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="item in examData?.lessons || []"
-                    :key="item.id"
-                  >
-                    <td>{{ item.title }}</td>
-                    <td class="text-center">
-                      {{ item.participated }}
-                    </td>
-                    <td class="text-center">
-                      {{ item.total - item.participated }}
-                    </td>
-                  </tr>
-                </tbody>
-                <tfoot>
-                  <tr bgcolor="#E5FBF7">
-                    <td>Total</td>
-                    <td class="text-center">
-                      {{ examData?.participated || "" }}
-                    </td>
-                    <td class="text-center">
-                      {{ examData?.total || "" }}
-                    </td>
-                  </tr>
-                </tfoot>
-              </v-table>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row>
+    <div class="d-flex justify-space-between gama-text-body2 font-weight-bold text-grey900">
+      <span>Total</span>
+      <span>{{ examData?.participated || 0 }} participated · {{ notParticipatedTotal }} not participated</span>
+    </div>
+  </v-card>
 </template>
 
 <script setup>
-const _props = defineProps({
+const props = defineProps({
   examData: {
     type: Object,
     default: () => ({}),
@@ -125,15 +70,13 @@ const _props = defineProps({
 
 const { user } = useUser()
 const userType = computed(() => user.value?.group)
+
+const notParticipatedTotal = computed(() => Math.max((props.examData?.total || 0) - (props.examData?.participated || 0), 0))
 </script>
 
 <style scoped>
-.exams_table tbody tr td {
-  font-size: 1.2rem !important;
-}
-
-.exams_table tfoot tr td {
-  font-size: 1.2rem !important;
-  font-weight: bolder;
+.dashboard-card {
+  border-radius: 1rem;
+  border: 1px solid #E4E7EC;
 }
 </style>

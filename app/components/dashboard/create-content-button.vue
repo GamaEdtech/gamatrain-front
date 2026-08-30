@@ -1,73 +1,58 @@
 <template>
   <!-- Content type -->
-  <v-row class="create_content_section">
+  <v-row>
     <v-col
       v-for="(item, index) in button_list"
       :key="index"
-      cols="6"
-      md="3"
-      class="px-2"
-      :class="`${item.class}`"
+      cols="12"
+      sm="6"
     >
       <v-card
-        outlined
-        class="px-2"
-        :disabled="
-          (user && user.group === 6) && button_list[index].class !== 'question_answer'
-        "
+        flat
+        class="dashboard-card pa-4 d-flex align-center justify-space-between ga-4"
+        :class="{ 'opacity-55': isLocked(item) }"
       >
-        <v-card-text class="px-0 px-md-4">
-          <v-row>
-            <v-col
-              cols="6"
-              class="text-left"
-            >
-              <v-btn
-                class="icon_btn"
-                rounded="circle"
-                size="56"
-                fab
-                :to="`${item.manage_link}`"
-              >
-                <span :class="`icon icon-${item.icon} group-icon`" />
-              </v-btn>
-            </v-col>
-            <v-col
-              cols="6"
-              class="text-right counter"
-            >
-              <dashboard-question-statistics
-                v-if="button_list[index].class === 'question_answer'"
-                ref="questionStatisticsRef"
-                :statistics="statistics"
-              />
-              <span v-else>
-                {{ item.count }}
-              </span>
-            </v-col>
-            <v-col
-              cols="12"
-              class="title py-0"
-            >
+        <div class="d-flex align-center ga-3">
+          <v-avatar
+            :color="item.color"
+            variant="tonal"
+            rounded="lg"
+            size="44"
+          >
+            <v-icon>{{ item.icon }}</v-icon>
+          </v-avatar>
+          <div>
+            <p class="gama-text-body1 font-weight-bold text-grey900 mb-0">
               {{ item.title }}
-            </v-col>
-            <v-col cols="12">
-              <v-btn
-                class="icon_link"
-                block
-                :to="`${item.link}`"
-              >
-                <v-icon
-                  class="px-1 icon"
-                  size="x-large"
-                >
-                  md:add_circle
-                </v-icon>
-                New
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-card-text>
+            </p>
+            <p class="gama-text-caption text-grey500 mb-0">
+              <template v-if="isLocked(item)">
+                Unlocks for teachers
+              </template>
+              <template v-else>
+                {{ item.count }} {{ item.countLabel }}
+              </template>
+            </p>
+          </div>
+        </div>
+
+        <v-btn
+          v-if="!isLocked(item)"
+          class="dashboard-btn"
+          :color="item.color"
+          variant="flat"
+          rounded="pill"
+          size="small"
+          :to="item.link"
+        >
+          + {{ item.actionLabel }}
+        </v-btn>
+        <v-icon
+          v-else
+          color="grey400"
+        >
+          mdi-lock-outline
+        </v-icon>
       </v-card>
     </v-col>
   </v-row>
@@ -84,7 +69,54 @@ const props = defineProps({
   },
 })
 
-const questionStatisticsRef = ref(null)
+const isLocked = item => user.value && user.value.group === 6 && item.class !== 'question_answer'
+
+const button_list = reactive([
+  {
+    class: 'sample_exam',
+    title: 'Past Papers',
+    count: 0,
+    countLabel: 'published',
+    link: '/user/paper/create',
+    manage_link: '/user/paper',
+    icon: 'mdi-file-document-outline',
+    color: 'primary',
+    actionLabel: 'New Past Paper',
+  },
+  {
+    class: 'training_content',
+    title: 'Multimedia',
+    count: 0,
+    countLabel: 'published',
+    link: '/user/multimedia/create',
+    manage_link: '/user/multimedia',
+    icon: 'mdi-play-circle-outline',
+    color: 'info',
+    actionLabel: 'Add Multimedia',
+  },
+  {
+    class: 'question_answer',
+    title: 'Forum',
+    count: 0,
+    countLabel: 'questions',
+    link: '/user/question/create',
+    manage_link: '/user/question',
+    icon: 'mdi-forum-outline',
+    color: 'secondary',
+    actionLabel: 'Ask a Question',
+  },
+  {
+    class: 'online_exam',
+    title: 'QuizHub',
+    count: 0,
+    countLabel: 'published',
+    link: '/test-maker/create',
+    manage_link: '/test-maker',
+    icon: 'mdi-clipboard-check-outline',
+    color: 'warning',
+    actionLabel: 'New Quiz',
+  },
+])
 
 const updateButtonCount = (className, count) => {
   const index = button_list.findIndex(x => x.class === className)
@@ -93,46 +125,10 @@ const updateButtonCount = (className, count) => {
   }
 }
 
-const button_list = reactive([
-  {
-    class: 'sample_exam',
-    title: 'Past Papers',
-    count: 0,
-    link: '/user/paper/create',
-    manage_link: '/user/paper',
-    icon: 'paper',
-  },
-  {
-    class: 'training_content',
-    title: 'Multimedia',
-    count: 0,
-    link: '/user/multimedia/create',
-    manage_link: '/user/multimedia',
-    icon: 'multimedia',
-  },
-  {
-    class: 'question_answer',
-    title: 'Forum',
-    count: 0,
-    link: '/user/question/create',
-    manage_link: '/user/question',
-    icon: 'q-a',
-  },
-  {
-    class: 'online_exam',
-    title: 'QuizHub',
-    count: 0,
-    link: '/test-maker/create',
-    manage_link: '/test-maker',
-    icon: 'exam',
-  },
-])
-
 watch(
   () => props.statistics,
   (newStats) => {
     if (newStats) {
-      // Update button counts based on statistics
       updateButtonCount('sample_exam', newStats?.test?.total || 0)
       updateButtonCount('training_content', newStats?.file?.total || 0)
       updateButtonCount('question_answer', newStats?.question?.total || 0)
@@ -147,4 +143,15 @@ defineExpose({
 })
 </script>
 
-<style scoped></style>
+<style scoped>
+.dashboard-card {
+  border-radius: 1rem;
+  border: 1px solid #E4E7EC;
+}
+
+/* See general-info-dashboard.vue: Vuetify 3's button size scale is tuned
+   for a 16px root; this project forces html { font-size: 10px }. */
+.dashboard-btn {
+  font-size: 1.4rem !important;
+}
+</style>

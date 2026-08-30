@@ -1,103 +1,88 @@
 <template>
-  <v-card
-    color="#F8FAFB"
-    class="mt-3 dashboard-statistic"
-    flat
-  >
-    <v-card-text class="px-0 px-sm-6 px-md-2">
-      <v-row class="text-center">
-        <v-col
-          md="2"
-          class="d-none d-md-block"
-        />
-        <v-col
-          cols="12"
-          md="8"
+  <v-row class="dashboard-statistic">
+    <v-col
+      cols="12"
+      :sm="userType === 5 ? 4 : 6"
+    >
+      <v-card
+        flat
+        class="dashboard-card pa-4 d-flex align-center ga-4"
+      >
+        <v-avatar
+          color="info"
+          variant="tonal"
+          rounded="lg"
+          size="48"
         >
-          <v-row>
-            <v-col
-              :cols="userType === '5' ? 3 : 4"
-              class="d-md-flex"
-            >
-              <div
-                class="mt-4 mr-2"
-                color="#D4F4EE"
-                fab
-                x-large
-              >
-                <v-icon color="#00d2ae">
-                  md:account_balance_wallet
-                </v-icon>
-              </div>
-              <div class="pa-3">
-                <p class="text-h6">
-                  Wallet
-                </p>
-                <p class="text-h5">
-                  <strong> ${{ formatNumber(user?.credit) }} </strong>
-                </p>
-              </div>
-            </v-col>
-            <v-col
-              :cols="userType === '5' ? 3 : 4"
-              class="d-md-flex"
-            >
-              <div
-                class="mt-4 mr-2"
-                color="rgba(142, 11, 228, 0.1)"
-                fab
-                x-large
-              >
-                <v-icon color="#8e0be4">
-                  md:mail
-                </v-icon>
-              </div>
-              <NuxtLink
-                to="/user/ticket"
-                class="pa-3"
-              >
-                <p class="text-h6">Msg</p>
-                <p class="text-h5">
-                  <strong>
-                    {{ userInfo?.unreadMessages?.total || 0 }}
-                  </strong>
-                </p>
-              </NuxtLink>
-            </v-col>
-            <v-col
-              :cols="userType === '5' ? 3 : 4"
-              class="d-md-flex"
-            >
-              <div
-                class="mt-4 mr-2"
-                color="rgba(218, 222, 255, 1)"
-                fab
-                x-large
-              >
-                <v-icon color="#0b62e4">
-                  md:star
-                </v-icon>
-              </div>
-              <div class="pa-3">
-                <p class="text-h6">
-                  Score
-                </p>
-                <p class="text-h5">
-                  <strong>
-                    {{ userInfo?.user?.score || 0 }}
-                  </strong>
-                </p>
-              </div>
-            </v-col>
-          </v-row>
-        </v-col>
-        <v-col
-          md="2"
-          class="d-none d-md-block"
-        />
-      </v-row>
-    </v-card-text>
-  </v-card>
+          <v-icon>mdi-email-outline</v-icon>
+        </v-avatar>
+        <div>
+          <p class="gama-text-body2 text-grey500 mb-0">
+            Messages
+          </p>
+          <p class="gama-text-h5 font-weight-bold text-grey900 mb-0">
+            {{ userInfo?.unreadMessages?.total || 0 }}
+          </p>
+        </div>
+      </v-card>
+    </v-col>
+    <v-col
+      cols="12"
+      :sm="userType === 5 ? 4 : 6"
+    >
+      <v-card
+        flat
+        class="dashboard-card pa-4 d-flex align-center ga-4"
+      >
+        <v-avatar
+          color="primary"
+          variant="tonal"
+          rounded="lg"
+          size="48"
+        >
+          <v-icon>mdi-star-outline</v-icon>
+        </v-avatar>
+        <div>
+          <p class="gama-text-body2 text-grey500 mb-0">
+            Score
+          </p>
+          <p class="gama-text-h5 font-weight-bold text-grey900 mb-0">
+            {{ formatNumber(userInfo?.user?.score || 0) }}
+          </p>
+        </div>
+      </v-card>
+    </v-col>
+    <v-col
+      v-if="userType === 5"
+      cols="12"
+      sm="4"
+    >
+      <v-card
+        flat
+        class="dashboard-card bg-grey900 pa-4 d-flex align-center justify-space-between"
+        style="border: none;"
+        to="/user/sell-report"
+      >
+        <div>
+          <p class="gama-text-body2 text-grey400 mb-0">
+            Sell Report
+          </p>
+          <p class="gama-text-h6 font-weight-bold text-white mb-0">
+            View earnings
+          </p>
+        </div>
+        <v-avatar
+          color="secondary"
+          rounded="lg"
+          size="36"
+        >
+          <v-icon color="grey900">
+            mdi-arrow-right
+          </v-icon>
+        </v-avatar>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>
@@ -114,7 +99,8 @@ const { formatNumber } = useFormatNumber()
 </script>
 
 <style scoped>
-.dashboard-statistic i {
-  font-size: 30px;
+.dashboard-card {
+  border-radius: 1rem;
+  border: 1px solid #E4E7EC;
 }
 </style>
