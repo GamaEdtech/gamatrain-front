@@ -615,7 +615,7 @@ onMounted(() => {
     border: 1px solid rgba(242, 244, 247, 1);
     padding: 3rem 1rem;
     border-radius: 24px;
-    min-width : 250px;
+    min-width : 230px;
   }
   .ex-board-select {
     width: max-content;
