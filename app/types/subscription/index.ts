@@ -192,6 +192,25 @@ export interface UserSubscriptionDTO {
   lastPaymentFailedDate: string
 }
 
+export interface GetUserSubscriptionHistoryParams {
+  page: number
+  pageSize: number
+}
+
+export interface UserSubscriptionHistoryDTO {
+  id: number
+  subscriptionPlanId: number
+  planTitle: string
+  status: UserSubscriptionStatus
+  creationDate: string
+  startDate: string
+  expirationDate: string
+  pricePaid: number
+  currency: SubscriptionCurrency
+  billingInterval: BillingInterval
+  autoRenews: boolean
+}
+
 export interface FeatureGroupUserSubscriptionDTO {
   features: AdminSubscriptionPlanFeatureDTO[]
   limit: number | null

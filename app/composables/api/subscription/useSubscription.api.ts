@@ -1,8 +1,11 @@
 import type {
   ApiResult,
+  GetUserSubscriptionHistoryParams,
   ResponseGetPlanDTO,
   PaymentSubscriptionResponseDTO,
   PayloadPaymentSubscriptionDTO,
+  ResponseListDTO,
+  UserSubscriptionHistoryDTO,
   UserSubscriptionDTO,
   SwitchSubscriptionPlanDTO,
   SwitchSubscriptionPlanResponseDTO,
@@ -13,9 +16,13 @@ export const useSubscription = () => {
 
   const data = ref<ResponseGetPlanDTO | null>(null)
   const userSubscription = ref<UserSubscriptionDTO | null>(null)
+  const userSubscriptionHistory = ref<UserSubscriptionHistoryDTO[]>([])
+  const userSubscriptionHistoryTotalCount = ref(0)
+  const userSubscriptionHistoryPageCount = ref(0)
   const loadingGetData = ref(true)
   const loadingStartPaymentSubscription = ref(false)
   const loadingGetUserSubscription = ref(false)
+  const loadingGetUserSubscriptionHistory = ref(false)
   const loadingCancelSubscription = ref(false)
   const loadingResumeSubscription = ref(false)
   const loadingSwitchSubscriptionPlan = ref(false)
@@ -94,6 +101,47 @@ export const useSubscription = () => {
     }
   }
 
+  const getUserSubscriptionHistory = async (params: GetUserSubscriptionHistoryParams) => {
+    loadingGetUserSubscriptionHistory.value = true
+    try {
+      const response = await useApiService.get<
+        ApiResult<ResponseListDTO<UserSubscriptionHistoryDTO>>
+      >(
+        `/api/v2/subscriptions/me/history`,
+        {
+          'PagingDto.PageFilter.Size': params.pageSize,
+          'PagingDto.PageFilter.Skip': (params.page - 1) * params.pageSize,
+          'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+        },
+      )
+
+      if (response.succeeded && response.data) {
+        userSubscriptionHistory.value = response.data.list ?? []
+        userSubscriptionHistoryTotalCount.value = response.data.totalRecordsCount
+        userSubscriptionHistoryPageCount.value = Math.ceil(response.data.totalRecordsCount / params.pageSize)
+      }
+      else {
+        userSubscriptionHistory.value = []
+        userSubscriptionHistoryTotalCount.value = 0
+        userSubscriptionHistoryPageCount.value = 0
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      userSubscriptionHistory.value = []
+      userSubscriptionHistoryTotalCount.value = 0
+      userSubscriptionHistoryPageCount.value = 0
+      handleApiCatchError(err)
+
+      return createApiFailure<ResponseListDTO<UserSubscriptionHistoryDTO>>(err)
+    }
+    finally {
+      loadingGetUserSubscriptionHistory.value = false
+    }
+  }
+
   const cancelSubscription = async () => {
     loadingCancelSubscription.value = true
     try {
@@ -169,5 +217,5 @@ export const useSubscription = () => {
     }
   }
 
-  return { loadingGetData, data, getData, startPaymentSubscription, loadingStartPaymentSubscription, userSubscription, loadingGetUserSubscription, getUserSubscription, resumeSubscription, loadingResumeSubscription, loadingCancelSubscription, cancelSubscription, switchSubscriptionPlan, loadingSwitchSubscriptionPlan }
+  return { loadingGetData, data, getData, startPaymentSubscription, loadingStartPaymentSubscription, userSubscription, loadingGetUserSubscription, getUserSubscription, userSubscriptionHistory, userSubscriptionHistoryTotalCount, userSubscriptionHistoryPageCount, loadingGetUserSubscriptionHistory, getUserSubscriptionHistory, resumeSubscription, loadingResumeSubscription, loadingCancelSubscription, cancelSubscription, switchSubscriptionPlan, loadingSwitchSubscriptionPlan }
 }

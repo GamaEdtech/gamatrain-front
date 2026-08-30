@@ -115,29 +115,14 @@
 
       <!-- Start Desktop -->
       <div class="w-100 mt-2 d-none d-sm-flex">
-        <v-data-table
+        <common-data-table
           :headers="headers"
           :items="featureGroups"
-          :items-per-page="featureGroups.length || 1"
-          class="elevation-1 set-height-table"
-          fixed-header
-          hide-default-footer
+          :page-size="featureGroups.length || 1"
+          :show-pagination="false"
         >
-          <template #headers="{ columns }">
-            <tr>
-              <th
-                v-for="(column, index) in columns"
-                :key="index"
-                :class="`bg-grey100 text-grey700 text-h5 font-weight-medium pa-2 text-center
-                 ${index == 0 ? `text-start` : `th-min-width`}`"
-              >
-                {{ column.title }}
-              </th>
-            </tr>
-          </template>
-
           <template #[`item.description`]="{ item }">
-            <div class="text-grey700 text-h6 d-flex justify-start align-center font-weight-medium description-width">
+            <div class="text-grey700 text-h6 d-flex justify-center align-center text-center font-weight-medium description-width">
               {{ item.description || featureNames(item) }}
             </div>
           </template>
@@ -173,7 +158,7 @@
               />
             </div>
           </template>
-        </v-data-table>
+        </common-data-table>
       </div>
       <!-- End Desktop -->
 
@@ -224,6 +209,13 @@
         :show-limited-access-link="false"
       />
     </div>
+
+    <!-- Independent of whether the user currently has an active subscription -
+         a lapsed/cancelled subscriber can still have real history to see. -->
+    <user-subscription-history-table
+      v-if="!loadingGetUserSubscription"
+      class="mt-6"
+    />
 
     <common-modal-base
       v-model:show-dialog="showCancelModal"
@@ -532,12 +524,6 @@ onMounted(async () => {
 <style scoped>
 .summary-card {
   min-height: 116px;
-}
-.set-height-table {
-  max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
 }
 .description-width {
   min-width: 200px;
