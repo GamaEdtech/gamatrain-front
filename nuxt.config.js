@@ -242,9 +242,6 @@ export default defineNuxtConfig({
     '/user/**': { ssr: false },
     '/admin/**': { ssr: false },
     '/payments/**': { ssr: false },
-    '/user/wallet': {
-      redirect: '/user/activity-history',
-    },
   },
   // Development server configuration
   devServer: {
