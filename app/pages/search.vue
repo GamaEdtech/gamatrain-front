@@ -30,7 +30,7 @@
         :is-all-data-loaded="isAllDataLoaded"
         :is-previous-loading="isPreviousLoading"
         :first-loaded-page-number="firstLoadedPageNumber"
-        :is-profile-mode="route.query.type == 'teacher'"
+        :is-profile-mode="isProfileMode"
         @load-next-page="loadNextPageData"
         @load-previous-page="loadPreviousPageData"
       />
@@ -147,9 +147,12 @@ const data = ref([])
 const isAllDataLoaded = ref(false)
 const totalDataFind = ref(0)
 const perPage = 10
+const perPageProfiles = 5
 const perPageServerSide = 5
 const firstLoadedPageNumber = ref(Number(route.query.page) || 1)
 const latestLoadedPageNumber = ref(Number(route.query.page) || 1)
+
+const isProfileMode = computed(() => getEquivalentOldType(querySearch.value.type) == 'teacher')
 
 const loadNextPageData = async () => {
   latestLoadedPageNumber.value += 1
@@ -185,6 +188,7 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
         'PagingDto.PageFilter.Size': perPageServerSide,
         'PagingDto.PageFilter.Skip': (pageNumber - 1) * perPageServerSide,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+        'FullName': route.query.title ?? '',
       }
       return useApiService.get('/api/v2/identities/profiles/list', query)
     }
@@ -216,12 +220,12 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
 
 watchEffect(() => {
   if (initialData.value) {
-    data.value = initialData.value.data.list
+    data.value = initialData.value.data.list ?? []
   }
 })
 
 if (initialData.value) {
-  data.value = initialData.value.data.list
+  data.value = initialData.value.data.list ?? []
   if (getEquivalentOldType(route.query.type) == 'teacher') {
     totalDataFind.value = initialData.value.data.totalRecordsCount || 0
   }
@@ -237,27 +241,30 @@ const getDataList = async () => {
   try {
     const typeRoute = getEquivalentOldType(querySearch.value.type)
     let response = {}
+    const pageSize = typeRoute == 'teacher' ? perPageProfiles : perPage
 
     if (typeRoute == 'teacher') {
       const query = {
-        'PagingDto.PageFilter.Size': perPage,
-        'PagingDto.PageFilter.Skip': (querySearch.value.page - 1) * perPage,
+        'PagingDto.PageFilter.Size': pageSize,
+        'PagingDto.PageFilter.Skip': (querySearch.value.page - 1) * pageSize,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+        'FullName': querySearch.value.title ?? '',
       }
       response = await useApiService.get('/api/v2/identities/profiles/list', query)
       totalDataFind.value = response.data.totalRecordsCount || 0
     }
     else {
-      const params = { ...querySearch.value, type: typeRoute }
+      const params = { ...querySearch.value, type: typeRoute, perpage: pageSize }
       response = await useApiService.get('/api/v1/search', params)
       totalDataFind.value = response.data.num || 0
     }
 
-    if (response.data.list && response.data.list.length < perPage) {
+    const list = response.data.list ?? []
+    if (list.length < pageSize) {
       isAllDataLoaded.value = true
     }
 
-    return response.data.list
+    return list
   }
   catch (err) {
     console.error(err)
