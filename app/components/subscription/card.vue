@@ -114,7 +114,8 @@
         text="To upgrade your plan, you must first reactivate your current plan. Please confirm to continue."
         confirm-color="primary"
         :loading="loadingResumeSubscription"
-        @back="showResumeModal = false"
+        :error-message="resumeError"
+        @back="closeResumeModal"
         @confirm="confirmResumeSubscription"
       />
     </common-modal-base>
@@ -168,6 +169,7 @@ const previewAmount = ref<number | null>(null)
 const previewCurrency = ref<SubscriptionCurrency | null>(null)
 const showResumeModal = ref(false)
 const confirmUpgradeError = ref<string | null>(null)
+const resumeError = ref<string | null>(null)
 
 const card = computed(() => {
   return buildSubscriptionPlanCard({
@@ -225,6 +227,7 @@ const switchPlan = async () => {
   if (!response.succeeded && response.errors && response.errors.length > 0) {
     const messages = response.errors.map(error => error.message)
     if (messages.includes(SWITCH_NOT_ALLOWED_WHILE_CANCELLATION_PENDING_ERROR)) {
+      resumeError.value = null
       showResumeModal.value = true
     }
   }
@@ -283,12 +286,37 @@ const selectPlan = async () => {
   }
 }
 
+const closeResumeModal = () => {
+  showResumeModal.value = false
+  resumeError.value = null
+}
+
 const confirmResumeSubscription = async () => {
+  resumeError.value = null
   const response = await resumeSubscription()
 
   if (response.succeeded && response.data) {
     showResumeModal.value = false
     await switchPlan()
+
+    // switchPlan() re-opens showResumeModal itself if the retry hits the
+    // exact same cancellation-pending error - most likely the backend hasn't
+    // fully propagated the resume yet (eventual consistency). Surface that
+    // explicitly instead of silently reopening the same modal with the same
+    // generic text, which reads as if nothing happened and invites the user
+    // to just keep clicking "confirm".
+    if (showResumeModal.value) {
+      resumeError.value = 'Your subscription was resumed, but switching plans right away didn\'t go through. Please wait a moment and try again.'
+    }
+
+    return
+  }
+
+  if (response.errors && response.errors.length > 0) {
+    resumeError.value = response.errors[0].message
+  }
+  else {
+    resumeError.value = 'Something went wrong resuming your subscription. Please try again.'
   }
 }
 </script>
