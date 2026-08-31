@@ -42,9 +42,7 @@
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 ${getHeaderAlignClass(column)}
-               ${index == 0 || getHeaderWidth(column) ? `` : `th-min-width`}`"
-              :style="getHeaderWidth(column) ? { width: getHeaderWidth(column), minWidth: getHeaderWidth(column) } : undefined"
+              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-no-wrap ${getHeaderAlignClass(column)}`"
             >
               {{ column.title }}
             </th>
@@ -336,20 +334,12 @@ const getCellClass = (header: TableHeader) => {
 }
 
 // The #headers slot's `column` comes from Vuetify's own internal header type,
-// which loses our TableHeader extras (width/align) in its declared shape even
-// though they're passed straight through at runtime (we spread `headers` as
-// Vuetify's own column definitions). Read them back via our own header list
+// which loses our TableHeader's `align` extra in its declared shape even
+// though it's passed straight through at runtime (we spread `headers` as
+// Vuetify's own column definitions). Read it back via our own header list
 // instead of trusting `column`'s TS type.
-const getHeaderConfig = (column: { key?: string }) => {
-  return props.headers.find(header => header.key === column.key)
-}
-
-const getHeaderWidth = (column: { key?: string }) => {
-  return getHeaderConfig(column)?.width
-}
-
 const getHeaderAlignClass = (column: { key?: string }) => {
-  const align = getHeaderConfig(column)?.align
+  const align = props.headers.find(header => header.key === column.key)?.align
 
   return align === 'start' ? 'text-start' : align === 'end' ? 'text-end' : 'text-center'
 }
@@ -358,9 +348,6 @@ const getHeaderAlignClass = (column: { key?: string }) => {
 <style scoped>
 .set-height-table {
   max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
 }
 :deep(.custom-pagination li button:hover) {
   background-color: rgb(var(--v-theme-primary));
