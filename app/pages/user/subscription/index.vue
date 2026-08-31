@@ -116,7 +116,6 @@
       <!-- Start Desktop -->
       <div class="w-100 mt-2 d-none d-sm-flex">
         <common-data-table
-          sticky-header-offset="64px"
           :headers="headers"
           :items="featureGroups"
           :page-size="featureGroups.length || 1"

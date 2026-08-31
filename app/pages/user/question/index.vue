@@ -95,7 +95,6 @@
     <common-data-table
       v-model:page="page"
       v-model:page-size="pageSize"
-      sticky-header-offset="64px"
       :headers="headers"
       :items="list || []"
       :page-count="pageCount"
