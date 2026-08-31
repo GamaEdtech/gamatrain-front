@@ -49,3 +49,7 @@ export interface ChangePasswordDTO {
   newpass: string
   repeat_newpass: string
 }
+
+export interface EditUsernameDTO {
+  username: string
+}

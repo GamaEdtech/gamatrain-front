@@ -19,10 +19,15 @@
     <template v-else>
       <div class="d-flex flex-column ga-5">
         <!-- Profile + level -->
-        <dashboard-general-info-dashboard
+        <!-- <dashboard-general-info-dashboard
           ref="generalInfoRef"
           :user-data="userInfo?.user || {}"
           :progress-data="userInfo?.profileCompletion || {}"
+        /> -->
+        <user-dashboard-general-info
+          :user-data="userInfo?.user || {}"
+          :progress-data="userInfo?.profileCompletion || {}"
+          @update-username="updateUsername"
         />
 
         <!-- Subscription -->
@@ -90,11 +95,20 @@ useHead({
 })
 
 const { user } = useUser()
-const generalInfoRef = ref(null)
 const createContentRef = ref(null)
 const loader = ref(true)
 const userInfo = ref({})
 const userType = computed(() => user.value?.group)
+
+const updateUsername = (data) => {
+  userInfo.value = {
+    ...userInfo.value,
+    user: {
+      ...userInfo.value.user,
+      username: data.username,
+    },
+  }
+}
 
 const getUserInfo = async () => {
   try {
@@ -106,6 +120,7 @@ const getUserInfo = async () => {
 
     const data = await useApiService.get(apiUrl)
 
+    console.log('data', data)
     if (data.data) {
       userInfo.value = data.data
     }
