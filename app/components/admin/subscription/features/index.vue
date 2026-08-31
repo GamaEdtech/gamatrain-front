@@ -11,8 +11,23 @@
       >
         <span class="text-primary font-weight-bold text-h5">Add Feature</span>
       </v-btn>
+    </div>
 
-      <div class="d-flex align-center justify-end ga-2 flex-wrap">
+    <common-data-table
+      v-model:page="page"
+      v-model:page-size="pageSize"
+      :headers="headers"
+      :items="list || []"
+      :page-count="pageCount"
+      :total-count="totalCount"
+      :page-size-options="allPageSize"
+      :loading="loading"
+      item-label="Features"
+      class="mt-4"
+      @update:page="changePageNumber"
+      @update:page-size="changePageSize"
+    >
+      <template #actions>
         <v-btn
           size="small"
           flat
@@ -34,147 +49,8 @@
             Refresh Data
           </v-tooltip>
         </v-btn>
-        <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold">
-          <span class="text-grey500 font-weight-bold mr-1">
-            {{ totalCount }}
-          </span>
-          Features
-        </span>
-      </div>
-    </div>
-
-    <div class="w-100 mt-4">
-      <v-data-table
-        :headers="headers"
-        :items="list"
-        :items-per-page="pageSize"
-        class="elevation-1 set-height-table"
-        :loading="loading"
-        fixed-header
-        hide-default-footer
-      >
-        <template #headers="{ columns }">
-          <tr>
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
-               ${index == 0 ? `` : `th-min-width`}`"
-            >
-              {{ column.title }}
-            </th>
-          </tr>
-        </template>
-
-        <template #[`item.id`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.id }}
-          </div>
-        </template>
-
-        <template #[`item.code`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.code }}
-          </div>
-        </template>
-
-        <template #[`item.name`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.name }}
-          </div>
-        </template>
-
-        <template #[`item.description`]="{ item }">
-          <div class="description-width text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.description }}
-          </div>
-        </template>
-
-        <template #[`item.isActive`]="{ item }">
-          <div class="w-100 d-flex justify-center align-center">
-            <v-chip
-              :color="item.isActive ? `success` : `error`"
-              class="font-weight-bold text-h5"
-            >
-              {{ item.isActive ? `Active` : `Inactive` }}
-            </v-chip>
-          </div>
-        </template>
-
-        <template #[`item.Action`]="{ item }">
-          <div class="d-flex justify-center align-center">
-            <v-btn
-              icon
-              flat
-              @click="openDeleteModal(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:delete
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                delete
-              </v-tooltip>
-            </v-btn>
-
-            <v-btn
-              icon
-              flat
-              @click="openDetailModal(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:settings
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Detail
-              </v-tooltip>
-            </v-btn>
-          </div>
-        </template>
-      </v-data-table>
-    </div>
-
-    <div class="w-100 d-flex mt-2 position-relative ga-6">
-      <div class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4">
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-          :total-visible="4"
-          next-icon="md:arrow_forward"
-          prev-icon="md:arrow_back"
-          size="40"
-          class="custom-pagination"
-          @update:model-value="changePageNumber"
-        />
-      </div>
-
-      <div class="position-absolute right-0 select-size-div">
-        <v-select
-          v-model="pageSize"
-          :items="allPageSize"
-          item-title="label"
-          item-value="value"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          max-width="140"
-          class="rounded-pill"
-          @update:model-value="changePageSize"
-        />
-      </div>
-    </div>
+      </template>
+    </common-data-table>
 
     <admin-common-delete-modal
       v-model="showDeleteModal"
@@ -203,7 +79,7 @@
 </template>
 
 <script setup lang="ts">
-import type { AdminSubscriptionFeatureDTO } from '@/types'
+import type { AdminSubscriptionFeatureDTO, DataTableHeader } from '@/types'
 
 const {
   loadingGetData: loading,
@@ -215,13 +91,31 @@ const {
   loadingDeleteItem,
 } = useSubscriptionFeatureAdmin()
 
-const headers = [
-  { title: 'ID', key: 'id', sortable: false, width: '8vw' },
+const headers: DataTableHeader<AdminSubscriptionFeatureDTO>[] = [
+  { title: 'ID', key: 'id', sortable: false, width: '8vw', align: 'start' },
   { title: 'Code', key: 'code', sortable: false, width: '18vw' },
   { title: 'Name', key: 'name', sortable: false, width: '22vw' },
   { title: 'Description', key: 'description', sortable: false, width: '30vw' },
-  { title: 'Status', key: 'isActive', sortable: false, width: '10vw' },
-  { title: 'Action', key: 'Action', sortable: false, width: '12vw' },
+  {
+    title: 'Status',
+    key: 'isActive',
+    sortable: false,
+    width: '10vw',
+    type: 'chip',
+    getText: (item: AdminSubscriptionFeatureDTO) => item.isActive ? 'Active' : 'Inactive',
+    getChipColor: (item: AdminSubscriptionFeatureDTO) => item.isActive ? 'success' : 'error',
+  },
+  {
+    title: 'Action',
+    key: 'Action',
+    sortable: false,
+    width: '12vw',
+    type: 'actions',
+    actions: [
+      { icon: 'md:delete', tooltip: 'delete', onClick: (item: AdminSubscriptionFeatureDTO) => openDeleteModal(item) },
+      { icon: 'md:settings', tooltip: 'Detail', onClick: (item: AdminSubscriptionFeatureDTO) => openDetailModal(item) },
+    ],
+  },
 ]
 
 const pageSize = ref(10)
@@ -245,11 +139,13 @@ const fetchFeatures = async () => {
   })
 }
 
-const changePageNumber = async () => {
+const changePageNumber = async (pageNumber: number) => {
+  page.value = pageNumber
   await fetchFeatures()
 }
 
-const changePageSize = async () => {
+const changePageSize = async (newPageSize: number) => {
+  pageSize.value = newPageSize
   page.value = 1
   await fetchFeatures()
 }
@@ -290,28 +186,3 @@ const refreshData = async () => {
   await fetchFeatures()
 }
 </script>
-
-<style scoped>
-.set-height-table {
-  max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
-}
-.description-width {
-  min-width: 220px;
-}
-.select-size-div {
-  top: 18px;
-}
-:deep(.custom-pagination li button:hover) {
-  background-color: rgb(var(--v-theme-primary));
-  opacity: 0.6;
-}
-:deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: rgb(var(--v-theme-primary)) !important;
-}
-:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
-  opacity: 0 !important;
-}
-</style>
