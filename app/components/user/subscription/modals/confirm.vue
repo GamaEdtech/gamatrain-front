@@ -4,6 +4,16 @@
       {{ text }}
     </p>
 
+    <v-alert
+      v-if="errorMessage"
+      type="error"
+      variant="tonal"
+      density="comfortable"
+      class="w-100"
+    >
+      {{ errorMessage }}
+    </v-alert>
+
     <div class="w-100 d-flex align-center justify-center ga-3 flex-wrap">
       <v-btn
         rounded="pill"
@@ -39,10 +49,12 @@ interface ISubscriptionConfirmModal {
   text: string
   confirmColor: string
   loading?: boolean
+  errorMessage?: string | null
 }
 
 withDefaults(defineProps<ISubscriptionConfirmModal>(), {
   loading: false,
+  errorMessage: null,
 })
 
 const emit = defineEmits(['back', 'confirm'])
