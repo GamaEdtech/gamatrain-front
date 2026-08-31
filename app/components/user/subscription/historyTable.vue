@@ -116,7 +116,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DataTableHeader, UserSubscriptionHistoryDTO } from '@/types'
+import type { DataTableHeader, UserSubscriptionHistoryDTO, UserSubscriptionStatus } from '@/types'
 
 const { $numberFormat } = useNuxtApp()
 const { formatLocal } = useDateTime()
@@ -189,19 +189,8 @@ const formatDate = (value: string) => {
   return formatLocal(value, 'DD/MM/YYYY')
 }
 
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'Active':
-      return 'success'
-    case 'Pending':
-      return 'warning'
-    case 'Expired':
-      return 'lightError'
-    case 'Cancelled':
-      return 'grey400'
-    default:
-      return 'grey400'
-  }
+const getStatusColor = (status: UserSubscriptionStatus) => {
+  return useSubscriptionStatusColor(status)
 }
 
 const changePageNumber = async (value: number) => {

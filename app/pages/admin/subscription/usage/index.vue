@@ -42,6 +42,7 @@
       :total-count="usageAggregateList.length"
       :loading="loadingGetUsageAggregateData"
       :show-pagination="false"
+      max-height="36vh"
       class="mt-4"
     />
 
@@ -56,6 +57,7 @@
       :total-count="usageTotalCount"
       :page-size-options="allPageSize"
       :loading="loadingGetUsageData"
+      max-height="48vh"
       class="mt-8"
       @update:page="changePageNumber"
       @update:page-size="changePageSize"

@@ -116,7 +116,16 @@ const headers: DataTableHeader<CommnetBlogAdminDTO>[] = [
     type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm:ss',
   },
-  { title: 'Post Id', key: 'postId', sortable: false, width: '10vw' },
+  {
+    title: 'Post Id',
+    key: 'postId',
+    sortable: false,
+    width: '10vw',
+    // postId === 0 means "not tied to a specific post" (a site-level comment),
+    // not "missing" - the shared table's default empty-check only treats
+    // null/undefined/'' as empty, so this needs its own falsy check.
+    getText: (item: CommnetBlogAdminDTO) => item.postId ? String(item.postId) : '-',
+  },
   {
     title: 'Status',
     key: 'status',

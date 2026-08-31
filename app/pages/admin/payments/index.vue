@@ -416,9 +416,7 @@ const formatAmount = (amount: number, currency: CurrencyPayment, gateway: Paymen
 }
 
 const getFullName = (item: AdminPaymentDTO) => {
-  const fullName = `${item.firstName || ''} ${item.lastName || ''}`.trim()
-
-  return fullName || 'unknown'
+  return useFullName(item)
 }
 
 const handleCheckboxChange = async (checked: boolean | null, item: SortOption) => {

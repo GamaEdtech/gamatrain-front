@@ -313,9 +313,7 @@ const refreshData = async () => {
 }
 
 const getFullName = (user: AdminUserDTO) => {
-  const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim()
-
-  return fullName || 'unknown'
+  return useFullName(user)
 }
 
 const isShowClearFilter = computed(() => {

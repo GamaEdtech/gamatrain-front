@@ -107,7 +107,8 @@ const fetchCommissions = async () => {
   })
 }
 
-const changePageNumber = async () => {
+const changePageNumber = async (pageNumber: number) => {
+  page.value = pageNumber
   await fetchCommissions()
 }
 

@@ -32,6 +32,7 @@
         :items="items"
         :items-per-page="pageSize"
         class="elevation-1 set-height-table"
+        :style="{ maxHeight }"
         :loading="loading"
         fixed-header
         hide-default-footer
@@ -41,8 +42,9 @@
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
-               ${index == 0 ? `` : `th-min-width`}`"
+              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 ${getHeaderAlignClass(column)}
+               ${index == 0 || getHeaderWidth(column) ? `` : `th-min-width`}`"
+              :style="getHeaderWidth(column) ? { width: getHeaderWidth(column), minWidth: getHeaderWidth(column) } : undefined"
             >
               {{ column.title }}
             </th>
@@ -87,8 +89,8 @@
             class="d-flex justify-center align-center"
           >
             <v-btn
-              v-for="action in getVisibleActions(slotProps.item, header)"
-              :key="action.icon"
+              v-for="(action, actionIndex) in getVisibleActions(slotProps.item, header)"
+              :key="actionIndex"
               icon
               flat
               :to="getActionTo(slotProps.item, action)"
@@ -205,6 +207,7 @@ const props = withDefaults(defineProps<{
   showPagination?: boolean
   showPageSizeSelector?: boolean
   pageSizeOptions?: PageSizeOption[]
+  maxHeight?: string
 }>(), {
   loading: false,
   page: 1,
@@ -331,6 +334,25 @@ const getCellClass = (header: TableHeader) => {
 
   return `text-grey600 text-h5 d-flex ${justifyClass} align-center font-weight-bold ga-1`
 }
+
+// The #headers slot's `column` comes from Vuetify's own internal header type,
+// which loses our TableHeader extras (width/align) in its declared shape even
+// though they're passed straight through at runtime (we spread `headers` as
+// Vuetify's own column definitions). Read them back via our own header list
+// instead of trusting `column`'s TS type.
+const getHeaderConfig = (column: { key?: string }) => {
+  return props.headers.find(header => header.key === column.key)
+}
+
+const getHeaderWidth = (column: { key?: string }) => {
+  return getHeaderConfig(column)?.width
+}
+
+const getHeaderAlignClass = (column: { key?: string }) => {
+  const align = getHeaderConfig(column)?.align
+
+  return align === 'start' ? 'text-start' : align === 'end' ? 'text-end' : 'text-center'
+}
 </script>
 
 <style scoped>
@@ -339,6 +361,10 @@ const getCellClass = (header: TableHeader) => {
 }
 .th-min-width {
   min-width: 130px;
+}
+:deep(.custom-pagination li button:hover) {
+  background-color: rgb(var(--v-theme-primary));
+  opacity: 0.6;
 }
 :deep(.custom-pagination .v-pagination__item--is-active button) {
   background-color: rgb(var(--v-theme-primary)) !important;
