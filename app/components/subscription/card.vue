@@ -99,7 +99,8 @@
         :text="confirmUpgradeText"
         confirm-color="primary"
         :loading="loadingStartPaymentSubscription || loadingSwitchSubscriptionPlan"
-        @back="showConfirmUpgradeModal = false"
+        :error-message="confirmUpgradeError"
+        @back="closeConfirmUpgradeModal"
         @confirm="confirmUpgrade"
       />
     </common-modal-base>
@@ -128,6 +129,7 @@ import type {
   UpgradeSuggestionsDTO,
   PaymentGateway,
 } from '@/types'
+import { SWITCH_NOT_ALLOWED_WHILE_CANCELLATION_PENDING_ERROR } from '@/constants'
 
 interface ICard {
   plan: SubscriptionPlanDTO | UpgradeSuggestionsDTO
@@ -165,6 +167,7 @@ const showConfirmUpgradeModal = ref(false)
 const previewAmount = ref<number | null>(null)
 const previewCurrency = ref<SubscriptionCurrency | null>(null)
 const showResumeModal = ref(false)
+const confirmUpgradeError = ref<string | null>(null)
 
 const card = computed(() => {
   return buildSubscriptionPlanCard({
@@ -201,6 +204,11 @@ const chooseNewPlan = async () => {
   }
 }
 
+const closeConfirmUpgradeModal = () => {
+  showConfirmUpgradeModal.value = false
+  confirmUpgradeError.value = null
+}
+
 const switchPlan = async () => {
   const payload = {
     subscriptionPlanId: props.plan.id,
@@ -211,17 +219,19 @@ const switchPlan = async () => {
   if (response.succeeded && response.data) {
     previewAmount.value = response.data.previewAmount
     previewCurrency.value = response.data.previewCurrency
+    confirmUpgradeError.value = null
     showConfirmUpgradeModal.value = true
   }
   if (!response.succeeded && response.errors && response.errors.length > 0) {
     const messages = response.errors.map(error => error.message)
-    if (messages.includes('SwitchNotAllowedWhileCancellationPending')) {
+    if (messages.includes(SWITCH_NOT_ALLOWED_WHILE_CANCELLATION_PENDING_ERROR)) {
       showResumeModal.value = true
     }
   }
 }
 
 const confirmUpgrade = async () => {
+  confirmUpgradeError.value = null
   const payload = {
     subscriptionPlanId: props.plan.id,
     billingInterval: props.billingInterval,
@@ -236,6 +246,25 @@ const confirmUpgrade = async () => {
         : `You'll switch to ${switchTargetDescription.value} at the end of your current billing period(${response.data.effectiveDate}).`,
     )
     emit('switchSuccessfully')
+    return
+  }
+
+  if (response.errors && response.errors.length > 0) {
+    const messages = response.errors.map(error => error.message)
+    if (messages.includes(SWITCH_NOT_ALLOWED_WHILE_CANCELLATION_PENDING_ERROR)) {
+      // Same resolution as the preview-time check in switchPlan(): this switch
+      // can't proceed until the pending cancellation is reversed.
+      showConfirmUpgradeModal.value = false
+      showResumeModal.value = true
+      return
+    }
+
+    // Any other failure: surface it as an alert in this same dialog instead of
+    // leaving the user with no feedback (a toast is easy to miss behind a modal).
+    confirmUpgradeError.value = response.errors[0].message
+  }
+  else {
+    confirmUpgradeError.value = 'Something went wrong. Please try again.'
   }
 }
 

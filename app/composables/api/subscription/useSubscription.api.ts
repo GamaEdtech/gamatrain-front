@@ -7,10 +7,10 @@ import type {
   SwitchSubscriptionPlanDTO,
   SwitchSubscriptionPlanResponseDTO,
 } from '@/types'
+import { SWITCH_NOT_ALLOWED_WHILE_CANCELLATION_PENDING_ERROR } from '@/constants'
 
 export const useSubscription = () => {
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
-  const switchNotAllowedWhileCancellationPendingError = 'SwitchNotAllowedWhileCancellationPending'
 
   const data = ref<ResponseGetPlanDTO | null>(null)
   const userSubscription = ref<UserSubscriptionDTO | null>(null)
@@ -155,7 +155,7 @@ export const useSubscription = () => {
       >(`/api/v2/subscriptions/me/switch`, { ...payload })
 
       if (!response.succeeded) {
-        const shouldShowToast = !response.errors?.some(error => error.message === switchNotAllowedWhileCancellationPendingError)
+        const shouldShowToast = !response.errors?.some(error => error.message === SWITCH_NOT_ALLOWED_WHILE_CANCELLATION_PENDING_ERROR)
         handleApiResponseError(response, undefined, shouldShowToast)
       }
 
