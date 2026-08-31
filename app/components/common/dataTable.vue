@@ -31,10 +31,8 @@
         :headers="headers"
         :items="items"
         :items-per-page="pageSize"
-        class="elevation-1 set-height-table"
-        :style="{ maxHeight }"
+        class="elevation-1"
         :loading="loading"
-        fixed-header
         hide-default-footer
       >
         <template #headers="{ columns }">
@@ -42,7 +40,8 @@
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-no-wrap ${getHeaderAlignClass(column)}`"
+              :style="{ top: stickyHeaderOffset }"
+              :class="`sticky-header bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-no-wrap ${getHeaderAlignClass(column)}`"
             >
               {{ column.title }}
             </th>
@@ -205,7 +204,15 @@ const props = withDefaults(defineProps<{
   showPagination?: boolean
   showPageSizeSelector?: boolean
   pageSizeOptions?: PageSizeOption[]
-  maxHeight?: string
+  /**
+   * How far from the top of the viewport the sticky header should stop -
+   * i.e. the height of whatever fixed/sticky chrome (an app bar, a fixed
+   * site header) already sits above this table's scroll context. Admin
+   * pages (Vuetify's own v-app-bar) need '0'; pages under the site's fixed
+   * 64px header (app/components/common/header.vue, layout: dashboard-layout)
+   * need '64px' so the table header doesn't stick underneath it.
+   */
+  stickyHeaderOffset?: string
 }>(), {
   loading: false,
   page: 1,
@@ -222,6 +229,7 @@ const props = withDefaults(defineProps<{
     { label: '50', value: 50 },
     { label: '100', value: 100 },
   ],
+  stickyHeaderOffset: '0',
 })
 
 const emit = defineEmits<{
@@ -346,8 +354,9 @@ const getHeaderAlignClass = (column: { key?: string }) => {
 </script>
 
 <style scoped>
-.set-height-table {
-  max-height: 70vh;
+.sticky-header {
+  position: sticky;
+  z-index: 1;
 }
 :deep(.custom-pagination li button:hover) {
   background-color: rgb(var(--v-theme-primary));

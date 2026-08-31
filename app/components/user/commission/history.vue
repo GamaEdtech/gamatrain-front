@@ -32,6 +32,7 @@
 
     <common-data-table
       v-else
+      sticky-header-offset="64px"
       :headers="headers"
       :items="list"
       :page="page"

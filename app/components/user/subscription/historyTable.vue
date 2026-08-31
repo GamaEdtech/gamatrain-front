@@ -14,6 +14,7 @@
     <!-- Start Desktop -->
     <div class="w-100 mt-4 d-none d-sm-block">
       <common-data-table
+        sticky-header-offset="64px"
         :page="page"
         :page-size="pageSize"
         :headers="headers"
