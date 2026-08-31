@@ -31,7 +31,7 @@
         />
 
         <!-- Subscription -->
-        <dashboard-subscription-banner />
+        <user-dashboard-subscription-banner />
 
         <!-- Achievements -->
         <dashboard-badges-strip />
