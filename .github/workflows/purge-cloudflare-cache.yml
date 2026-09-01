@@ -1,0 +1,28 @@
+name: Purge Cloudflare Cache After Vercel Deploy
+
+# Vercel's GitHub App creates a GitHub Deployment (and updates its status)
+# for every deploy it runs. This listens for that status update instead of
+# `push`, so it fires only once Vercel itself reports the deploy as live -
+# not on every commit, and not before the new deployment is actually ready.
+on:
+  deployment_status
+
+jobs:
+  purge-cache:
+    # Only act on Vercel's own successful Production deploys - ignore
+    # preview deployments and any other GitHub App that posts deployments
+    # to this repo.
+    if: |
+      github.event.deployment_status.state == 'success' &&
+      github.event.deployment.creator.login == 'vercel[bot]' &&
+      github.event.deployment_status.environment == 'Production'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Purge Cloudflare cache
+        run: |
+          curl -sS -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+            -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            --data '{"purge_everything": true}' \
+            --fail
