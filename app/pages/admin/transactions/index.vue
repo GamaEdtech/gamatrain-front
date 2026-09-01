@@ -16,7 +16,23 @@
           Clear Filter
         </v-btn>
       </div>
-      <div class="d-flex align-center justify-end ga-1 flex-wrap">
+    </div>
+
+    <common-data-table
+      v-model:page="page"
+      v-model:page-size="pageSize"
+      :headers="headers"
+      :items="list || []"
+      :page-count="pageCount"
+      :total-count="totalCount"
+      :page-size-options="allPageSize"
+      :loading="loading"
+      item-label="Transactions"
+      class="mt-4"
+      @update:page="changePageNumber"
+      @update:page-size="changePageSize"
+    >
+      <template #actions>
         <v-btn
           variant="plain"
           max-width="20"
@@ -29,7 +45,6 @@
             md:search
           </v-icon>
         </v-btn>
-
         <v-btn
           size="small"
           flat
@@ -52,145 +67,45 @@
             Refresh Data
           </v-tooltip>
         </v-btn>
+      </template>
 
-        <span
-          class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
+      <template #[`item.isDebit`]="{ item }">
+        <div
+          class="text-grey600 text-h5 d-flex justify-center align-end font-weight-bold ga-1"
         >
-          <span class="text-grey500 font-weight-bold mr-1">
-            {{ totalCount }}
+          <v-icon
+            :class="`${item.isDebit ? `reverse-icon` : ``}`"
+            size="26"
+            :color="item.isDebit ? `error` : `success`"
+          >
+            md:payment_arrow_down
+          </v-icon>
+          <span :class="`${item.isDebit ? `text-error` : `text-success`}`">{{
+            item.isDebit ? "Debit" : "Credit"
+          }}</span>
+        </div>
+      </template>
+
+      <template #[`item.description`]="{ item }">
+        <div
+          class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
+        >
+          <NuxtLink
+            v-if="item.transactionType === 'DownloadPastPaper'"
+            :to="`/paper/${item.identifierId}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-decoration-none"
+          >
+            {{ item.description }} ({{ item.identifierId }})
+          </NuxtLink>
+
+          <span v-else>
+            {{ item.description }}
           </span>
-          Transactions
-        </span>
-      </div>
-    </div>
-    <div class="w-100 mt-4">
-      <v-data-table
-        :headers="headers"
-        :items="list"
-        :items-per-page="pageSize"
-        class="elevation-1 set-height-table"
-        :loading="loading"
-        fixed-header
-        hide-default-footer
-      >
-        <template #headers="{ columns }">
-          <tr>
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 th-min-width ${
-                index == 0 || index == columns.length - 1
-                  ? `text-left`
-                  : `text-center`
-              } ${index == columns.length - 1 ? `description-width` : ``}`"
-            >
-              {{ column.title }}
-            </th>
-          </tr>
-        </template>
-
-        <template #[`item.userId`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
-          >
-            {{ item.userId }}
-          </div>
-        </template>
-
-        <template #[`item.points`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
-          >
-            {{ $numberFormat(item.points) }}
-          </div>
-        </template>
-        <template #[`item.currentBalance`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
-          >
-            {{ $numberFormat(item.currentBalance) }}
-          </div>
-        </template>
-
-        <template #[`item.creationDate`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
-          >
-            {{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm") }}
-          </div>
-        </template>
-
-        <template #[`item.isDebit`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-end font-weight-bold ga-1"
-          >
-            <v-icon
-              :class="`${item.isDebit ? `reverse-icon` : ``}`"
-              size="26"
-              :color="item.isDebit ? `error` : `success`"
-            >
-              md:payment_arrow_down
-            </v-icon>
-            <span :class="`${item.isDebit ? `text-error` : `text-success`}`">{{
-              item.isDebit ? "Debit" : "Credit"
-            }}</span>
-          </div>
-        </template>
-
-        <template #[`item.description`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
-          >
-            <NuxtLink
-              v-if="item.transactionType === 'DownloadPastPaper'"
-              :to="`/paper/${item.identifierId}`"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="text-decoration-none"
-            >
-              {{ item.description }} ({{ item.identifierId }})
-            </NuxtLink>
-
-            <span v-else>
-              {{ item.description }}
-            </span>
-          </div>
-        </template>
-      </v-data-table>
-    </div>
-
-    <div class="w-100 d-flex mt-2 position-relative ga-6">
-      <div
-        class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4"
-      >
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-          :total-visible="4"
-          next-icon="md:arrow_forward"
-          prev-icon="md:arrow_back"
-          size="40"
-          class="custom-pagination"
-          @update:model-value="changePageNumber"
-        />
-      </div>
-
-      <div class="position-absolute right-0 select-size-div">
-        <v-select
-          v-model="pageSize"
-          :items="allPageSize"
-          item-title="label"
-          item-value="value"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          max-width="140"
-          class="rounded-pill"
-          @update:model-value="changePageSize"
-        />
-      </div>
-    </div>
+        </div>
+      </template>
+    </common-data-table>
 
     <AdminCommonModal
       v-model:show-dialog="showSearchModal"
@@ -207,6 +122,8 @@
 
 <script setup lang="ts">
 import type {
+  AdminTransactionDTO,
+  DataTableHeader,
   SearchFilterAdminTransaction,
 } from '@/types'
 
@@ -215,7 +132,6 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { formatLocal } = useDateTime()
 const {
   loadingGetData: loading,
   data: list,
@@ -224,23 +140,26 @@ const {
   pageCount,
 } = useTransactionAdmin()
 
-const headers = [
-  { title: 'User ID', key: 'userId', sortable: false, width: '5vw' },
-  { title: 'Points', key: 'points', sortable: false, width: '15vw' },
+const headers: DataTableHeader<AdminTransactionDTO>[] = [
+  { title: 'User ID', key: 'userId', sortable: false, width: '5vw', align: 'start' },
+  { title: 'Points', key: 'points', sortable: false, width: '15vw', type: 'number' },
   {
     title: 'Current Balance',
     key: 'currentBalance',
     sortable: false,
     width: '15vw',
+    type: 'number',
   },
   {
     title: 'Creation Date',
     key: 'creationDate',
     sortable: false,
     width: '15vw',
+    type: 'date',
+    dateFormat: 'DD/MM/YYYY HH:mm',
   },
   { title: 'Type', key: 'isDebit', sortable: false, width: '10vw' },
-  { title: 'Description', key: 'description', sortable: false, width: '40vw' },
+  { title: 'Description', key: 'description', sortable: false, width: '40vw', align: 'start' },
 ]
 const showSearchModal = ref(false)
 const pageSize = ref(10)
@@ -269,11 +188,13 @@ const fetchTransactions = async () => {
   })
 }
 
-const changePageNumber = async () => {
+const changePageNumber = async (pageNumber: number) => {
+  page.value = pageNumber
   await fetchTransactions()
 }
 
-const changePageSize = async () => {
+const changePageSize = async (newPageSize: number) => {
+  pageSize.value = newPageSize
   page.value = 1
   await fetchTransactions()
 }
@@ -328,33 +249,10 @@ const refreshData = async () => {
 </script>
 
 <style scoped>
-.set-height-table {
-  max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
-}
-.description-width {
-  min-width: 200px;
-}
 .reverse-icon {
   transform: rotateZ(180deg);
 }
-.select-size-div {
-  top: 18px;
-}
 .text-decoration-none:hover {
   text-decoration: underline !important;
-}
-
-:deep(.custom-pagination li button:hover) {
-  background-color: rgb(var(--v-theme-primary));
-  opacity: 0.6;
-}
-:deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: rgb(var(--v-theme-primary)) !important;
-}
-:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
-  opacity: 0 !important;
 }
 </style>

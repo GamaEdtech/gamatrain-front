@@ -16,8 +16,23 @@
           Clear Filter
         </v-btn>
       </div>
+    </div>
 
-      <div class="d-flex align-center justify-end ga-1 flex-wrap">
+    <common-data-table
+      v-model:page="page"
+      v-model:page-size="pageSize"
+      :headers="headers"
+      :items="list || []"
+      :page-count="pageCount"
+      :total-count="totalCount"
+      :page-size-options="allPageSize"
+      :loading="loading"
+      item-label="Blogs"
+      class="mt-4"
+      @update:page="changePageNumber"
+      @update:page-size="changePageSize"
+    >
+      <template #actions>
         <v-btn
           variant="plain"
           max-width="20"
@@ -30,7 +45,6 @@
             md:search
           </v-icon>
         </v-btn>
-
         <v-btn
           size="small"
           flat
@@ -53,168 +67,14 @@
             Refresh Data
           </v-tooltip>
         </v-btn>
+      </template>
 
-        <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold">
-          <span class="text-grey500 font-weight-bold mr-1">
-            {{ totalCount }}
-          </span>
-          Blogs
-        </span>
-      </div>
-    </div>
-
-    <div class="w-100 mt-4">
-      <v-data-table
-        :headers="headers"
-        :items="list"
-        :items-per-page="pageSize"
-        class="elevation-1 set-height-table"
-        :loading="loading"
-        fixed-header
-        hide-default-footer
-      >
-        <template #headers="{ columns }">
-          <tr>
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
-               ${index == 0 ? `` : `th-min-width`}`"
-            >
-              {{ column.title }}
-            </th>
-          </tr>
-        </template>
-
-        <template #[`item.id`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold">
-            {{ item.id }}
-          </div>
-        </template>
-
-        <template #[`item.title`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center truncate-text">
-            {{ item.title }}
-          </div>
-        </template>
-
-        <template #[`item.creationUser`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ item.creationUser || 'unknown' }}
-          </div>
-        </template>
-
-        <template #[`item.creationDate`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ $dayjs(item.creationDate).format('DD/MM/YYYY HH:mm:ss') }}
-          </div>
-        </template>
-
-        <template #[`item.status`]="{ item }">
-          <div class="w-100 d-flex justify-center align-center">
-            <v-chip
-              :color="getStatusColor(item.status)"
-              class="font-weight-bold text-h5"
-            >
-              {{ getStatusTitle(item.status) }}
-            </v-chip>
-          </div>
-        </template>
-
-        <template #[`item.Action`]="{ item }">
-          <div class="d-flex justify-center align-center">
-            <v-btn
-              icon
-              flat
-              @click="openDetailModal(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:plagiarism
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Details
-              </v-tooltip>
-            </v-btn>
-
-            <v-btn
-              icon
-              flat
-              :href="`/posts/${item.postId}`"
-              target="_blank"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:arrow_circle_right
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Blog Page
-              </v-tooltip>
-            </v-btn>
-
-            <!-- <v-btn
-              icon
-              flat
-              @click="openDeleteModal(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:delete
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Delete
-              </v-tooltip>
-            </v-btn> -->
-          </div>
-        </template>
-      </v-data-table>
-    </div>
-
-    <div class="w-100 d-flex mt-2 position-relative ga-6">
-      <div class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4">
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-          :total-visible="4"
-          next-icon="md:arrow_forward"
-          prev-icon="md:arrow_back"
-          size="40"
-          class="custom-pagination"
-          @update:model-value="changePageNumber"
-        />
-      </div>
-
-      <div class="position-absolute right-0 select-size-div">
-        <v-select
-          v-model="pageSize"
-          :items="allPageSize"
-          item-title="label"
-          item-value="value"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          max-width="140"
-          class="rounded-pill"
-          @update:model-value="changePageSize"
-        />
-      </div>
-    </div>
+      <template #[`item.title`]="{ item }">
+        <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center truncate-text">
+          {{ item.title }}
+        </div>
+      </template>
+    </common-data-table>
 
     <admin-common-modal
       v-model:show-dialog="showSearchModal"
@@ -251,6 +111,7 @@
 import type {
   AdminBlogContributionDTO,
   AdminBlogContributionStatus,
+  DataTableHeader,
   SearchFilterAdminBlogContribution,
 } from '@/types'
 
@@ -259,7 +120,6 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { $dayjs } = useNuxtApp()
 const {
   loadingGetData: loading,
   data: list,
@@ -270,13 +130,47 @@ const {
   loadingDeleteItem,
 } = useBlogAdmin()
 
-const headers = [
-  { title: 'ID', key: 'id', sortable: false, width: '8vw' },
+const headers: DataTableHeader<AdminBlogContributionDTO>[] = [
+  { title: 'ID', key: 'id', sortable: false, width: '8vw', align: 'start' },
   { title: 'Title', key: 'title', sortable: false, width: '28vw' },
-  { title: 'Contributor', key: 'creationUser', sortable: false, width: '18vw' },
-  { title: 'Date', key: 'creationDate', sortable: false, width: '18vw' },
-  { title: 'Status', key: 'status', sortable: false, width: '12vw' },
-  { title: 'Action', key: 'Action', sortable: false, width: '16vw' },
+  { title: 'Contributor', key: 'creationUser', sortable: false, width: '18vw', emptyText: 'unknown' },
+  {
+    title: 'Date',
+    key: 'creationDate',
+    sortable: false,
+    width: '18vw',
+    type: 'date',
+    dateFormat: 'DD/MM/YYYY HH:mm:ss',
+  },
+  {
+    title: 'Status',
+    key: 'status',
+    sortable: false,
+    width: '12vw',
+    type: 'chip',
+    getText: (item: AdminBlogContributionDTO) => getStatusTitle(item.status),
+    getChipColor: (item: AdminBlogContributionDTO) => getStatusColor(item.status),
+  },
+  {
+    title: 'Action',
+    key: 'Action',
+    sortable: false,
+    width: '16vw',
+    type: 'actions',
+    actions: [
+      {
+        icon: 'md:plagiarism',
+        tooltip: 'Details',
+        onClick: (item: AdminBlogContributionDTO) => openDetailModal(item),
+      },
+      {
+        icon: 'md:arrow_circle_right',
+        tooltip: 'Blog Page',
+        href: (item: AdminBlogContributionDTO) => `/posts/${item.postId}`,
+        target: '_blank',
+      },
+    ],
+  },
 ]
 
 const pageSize = ref(10)
@@ -309,11 +203,13 @@ const fetchBlogs = async () => {
   })
 }
 
-const changePageNumber = async () => {
+const changePageNumber = async (pageNumber: number) => {
+  page.value = pageNumber
   await fetchBlogs()
 }
 
-const changePageSize = async () => {
+const changePageSize = async (newPageSize: number) => {
+  pageSize.value = newPageSize
   page.value = 1
   await fetchBlogs()
 }
@@ -399,30 +295,10 @@ const getStatusColor = (status: AdminBlogContributionStatus) => {
 </script>
 
 <style scoped>
-.set-height-table {
-  max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
-}
-.select-size-div {
-  top: 18px;
-}
 .truncate-text {
   max-width: 320px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-:deep(.custom-pagination li button:hover) {
-  background-color: rgb(var(--v-theme-primary));
-  opacity: 0.6;
-}
-:deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: rgb(var(--v-theme-primary)) !important;
-}
-:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
-  opacity: 0 !important;
 }
 </style>

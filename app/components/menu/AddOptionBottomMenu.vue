@@ -68,7 +68,7 @@ interface AddOption {
 
 const { user } = useUser()
 const userBoardId = computed(() => user.value?.board ?? DEFAULT_BOARD_ID)
-const canAddEducationalContent = computed(() => user.value?.group === 5)
+const { canAddEducationalContent } = useUserPermissions()
 
 const addOptions = computed<AddOption[]>(() => [
   {

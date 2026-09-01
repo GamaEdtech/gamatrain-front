@@ -16,8 +16,23 @@
           Clear Filter
         </v-btn>
       </div>
+    </div>
 
-      <div class="d-flex align-center justify-end ga-1 flex-wrap">
+    <common-data-table
+      v-model:page="page"
+      v-model:page-size="pageSize"
+      :headers="headers"
+      :items="list || []"
+      :page-count="pageCount"
+      :total-count="totalCount"
+      :page-size-options="allPageSize"
+      :loading="loading"
+      item-label="Commissions"
+      class="mt-4"
+      @update:page="changePageNumber"
+      @update:page-size="changePageSize"
+    >
+      <template #actions>
         <v-btn
           variant="plain"
           max-width="20"
@@ -30,7 +45,6 @@
             md:search
           </v-icon>
         </v-btn>
-
         <v-btn
           size="small"
           flat
@@ -53,159 +67,8 @@
             Refresh Data
           </v-tooltip>
         </v-btn>
-
-        <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold">
-          <span class="text-grey500 font-weight-bold mr-1">
-            {{ totalCount }}
-          </span>
-          Commissions
-        </span>
-      </div>
-    </div>
-
-    <div class="w-100 mt-4">
-      <v-data-table
-        :headers="headers"
-        :items="list"
-        :items-per-page="pageSize"
-        class="elevation-1 set-height-table"
-        :loading="loading"
-        fixed-header
-        hide-default-footer
-      >
-        <template #headers="{ columns }">
-          <tr>
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
-               ${index == 0 ? `` : `th-min-width`}`"
-            >
-              {{ column.title }}
-            </th>
-          </tr>
-        </template>
-
-        <template #[`item.id`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold">
-            {{ item.id }}
-          </div>
-        </template>
-
-        <template #[`item.ownerFirstName`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ getOwnerName(item) }}
-          </div>
-        </template>
-
-        <template #[`item.reason`]="{ item }">
-          <div class="w-100 d-flex justify-center align-center">
-            <v-chip
-              color="info"
-              class="font-weight-bold text-h5"
-            >
-              {{ item.reason }}
-            </v-chip>
-          </div>
-        </template>
-
-        <template #[`item.downloaderUserId`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ formatCell(item.downloaderUserId) }}
-          </div>
-        </template>
-
-        <template #[`item.source`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ formatCell(item.source) }}
-          </div>
-        </template>
-
-        <template #[`item.contentType`]="{ item }">
-          <div class="w-100 d-flex justify-center align-center">
-            <v-chip
-              color="primary"
-              class="font-weight-bold text-h5"
-            >
-              {{ item.contentType }}
-            </v-chip>
-          </div>
-        </template>
-
-        <template #[`item.externalContentId`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ formatCell(item.externalContentId) }}
-          </div>
-        </template>
-
-        <template #[`item.externalFileType`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ formatCell(item.externalFileType) }}
-          </div>
-        </template>
-
-        <template #[`item.externalExtraId`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ formatCell(item.externalExtraId) }}
-          </div>
-        </template>
-
-        <template #[`item.points`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ $numberFormat(item.points) }}
-          </div>
-        </template>
-
-        <template #[`item.commissionPercent`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            {{ $numberFormat(item.commissionPercent) }}%
-          </div>
-        </template>
-
-        <template #[`item.amountUsd`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center">
-            ${{ $numberFormat(item.amountUsd) }}
-          </div>
-        </template>
-
-        <template #[`item.creationDate`]="{ item }">
-          <div class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold">
-            {{ formatLocal(item.creationDate, 'DD/MM/YYYY HH:mm:ss') }}
-          </div>
-        </template>
-      </v-data-table>
-    </div>
-
-    <div class="w-100 d-flex mt-2 position-relative ga-6">
-      <div class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4">
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-          :total-visible="4"
-          next-icon="md:arrow_forward"
-          prev-icon="md:arrow_back"
-          size="40"
-          class="custom-pagination"
-          @update:model-value="changePageNumber"
-        />
-      </div>
-
-      <div class="position-absolute right-0 select-size-div">
-        <v-select
-          v-model="pageSize"
-          :items="allPageSize"
-          item-title="label"
-          item-value="value"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          max-width="140"
-          class="rounded-pill"
-          @update:model-value="changePageSize"
-        />
-      </div>
-    </div>
+      </template>
+    </common-data-table>
 
     <admin-common-modal
       v-model:show-dialog="showSearchModal"
@@ -223,6 +86,7 @@
 <script setup lang="ts">
 import type {
   AdminCommissionDTO,
+  DataTableHeader,
   SearchFilterAdminCommission,
 } from '@/types'
 
@@ -231,8 +95,6 @@ definePageMeta({
   middleware: ['auth', 'admin'],
 })
 
-const { formatLocal } = useDateTime()
-const { $numberFormat } = useNuxtApp()
 const {
   loadingGetData: loading,
   data: list,
@@ -241,20 +103,47 @@ const {
   pageCount,
 } = useCommissionAdmin()
 
-const headers = [
+const headers: DataTableHeader<AdminCommissionDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '8vw' },
-  { title: 'Owner', key: 'ownerFirstName', sortable: false, width: '18vw' },
-  { title: 'Downloader ID', key: 'downloaderUserId', sortable: false, width: '14vw' },
-  { title: 'Reason', key: 'reason', sortable: false, width: '16vw' },
-  { title: 'Source', key: 'source', sortable: false, width: '16vw' },
-  { title: 'Content Type', key: 'contentType', sortable: false, width: '16vw' },
-  { title: 'Content ID', key: 'externalContentId', sortable: false, width: '14vw' },
-  { title: 'File Type', key: 'externalFileType', sortable: false, width: '14vw' },
-  { title: 'Extra ID', key: 'externalExtraId', sortable: false, width: '12vw' },
-  { title: 'Points', key: 'points', sortable: false, width: '10vw' },
-  { title: 'Commission', key: 'commissionPercent', sortable: false, width: '14vw' },
-  { title: 'Amount USD', key: 'amountUsd', sortable: false, width: '14vw' },
-  { title: 'Created At', key: 'creationDate', sortable: false, width: '18vw' },
+  {
+    title: 'Owner',
+    key: 'ownerFirstName',
+    sortable: false,
+    width: '18vw',
+    getText: (item: AdminCommissionDTO) => getOwnerName(item),
+  },
+  { title: 'Downloader ID', key: 'downloaderUserId', sortable: false, width: '14vw', emptyText: 'unknown' },
+  {
+    title: 'Reason',
+    key: 'reason',
+    sortable: false,
+    width: '16vw',
+    type: 'chip',
+    getChipColor: () => 'info',
+  },
+  { title: 'Source', key: 'source', sortable: false, width: '16vw', emptyText: 'unknown' },
+  {
+    title: 'Content Type',
+    key: 'contentType',
+    sortable: false,
+    width: '16vw',
+    type: 'chip',
+    getChipColor: () => 'primary',
+  },
+  { title: 'Content ID', key: 'externalContentId', sortable: false, width: '14vw', emptyText: 'unknown' },
+  { title: 'File Type', key: 'externalFileType', sortable: false, width: '14vw', emptyText: 'unknown' },
+  { title: 'Extra ID', key: 'externalExtraId', sortable: false, width: '12vw', emptyText: 'unknown' },
+  { title: 'Points', key: 'points', sortable: false, width: '10vw', type: 'number' },
+  { title: 'Commission', key: 'commissionPercent', sortable: false, width: '14vw', type: 'percent' },
+  { title: 'Amount USD', key: 'amountUsd', sortable: false, width: '14vw', type: 'currency', prefix: '$' },
+  {
+    title: 'Created At',
+    key: 'creationDate',
+    sortable: false,
+    width: '18vw',
+    type: 'date',
+    dateFormat: 'DD/MM/YYYY HH:mm:ss',
+  },
 ]
 
 const pageSize = ref(10)
@@ -279,11 +168,13 @@ const fetchCommissions = async () => {
   })
 }
 
-const changePageNumber = async () => {
+const changePageNumber = async (pageNumber: number) => {
+  page.value = pageNumber
   await fetchCommissions()
 }
 
-const changePageSize = async () => {
+const changePageSize = async (newPageSize: number) => {
+  pageSize.value = newPageSize
   page.value = 1
   await fetchCommissions()
 }
@@ -318,35 +209,10 @@ const getOwnerName = (item: AdminCommissionDTO) => {
   return `${item.ownerFirstName} ${item.ownerLastName}`
 }
 
-const formatCell = (value: string | number | null | undefined) => {
-  if (value === null || value === undefined || value === '') return 'unknown'
-
-  return value
-}
-
 const refreshData = async () => {
   await fetchCommissions()
 }
 </script>
 
 <style scoped>
-.set-height-table {
-  max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
-}
-.select-size-div {
-  top: 18px;
-}
-:deep(.custom-pagination li button:hover) {
-  background-color: rgb(var(--v-theme-primary));
-  opacity: 0.6;
-}
-:deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: rgb(var(--v-theme-primary)) !important;
-}
-:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
-  opacity: 0 !important;
-}
 </style>

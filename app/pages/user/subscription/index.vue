@@ -121,30 +121,6 @@
           :page-size="featureGroups.length || 1"
           :show-pagination="false"
         >
-          <template #[`item.description`]="{ item }">
-            <div class="text-grey700 text-h6 d-flex justify-center align-center text-center font-weight-medium description-width">
-              {{ item.description || featureNames(item) }}
-            </div>
-          </template>
-
-          <template #[`item.limit`]="{ item }">
-            <div class="text-grey700 text-h6 d-flex justify-center align-center font-weight-bold">
-              {{ formatLimit(item.limit) }}
-            </div>
-          </template>
-
-          <template #[`item.used`]="{ item }">
-            <div class="text-grey700 text-h6 d-flex justify-center align-center font-weight-bold">
-              {{ $numberFormat(item.used) }}
-            </div>
-          </template>
-
-          <template #[`item.remaining`]="{ item }">
-            <div class="text-grey700 text-h6 d-flex justify-center align-center font-weight-bold">
-              {{ formatRemaining(item) }}
-            </div>
-          </template>
-
           <template #[`item.usage`]="{ item }">
             <div class="usage-cell d-flex flex-column ga-1 py-2">
               <div class="w-100 d-flex justify-space-between text-subtitle-1 text-grey500">
@@ -266,7 +242,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FeatureGroupUserSubscriptionDTO } from '@/types'
+import type { DataTableHeader, FeatureGroupUserSubscriptionDTO } from '@/types'
 import { BILLING_INTERVAL_PERIOD_LABEL } from '@/constants'
 
 definePageMeta({
@@ -300,11 +276,29 @@ const showCancelModal = ref(false)
 const showResumeModal = ref(false)
 const showChangePlanModal = ref(false)
 
-const headers = [
-  { title: 'Feature Group', key: 'description', sortable: false, width: '24vw' },
-  { title: 'Limit', key: 'limit', sortable: false, width: '16vw' },
-  { title: 'Used', key: 'used', sortable: false, width: '16vw' },
-  { title: 'Remaining', key: 'remaining', sortable: false, width: '16vw' },
+const headers: DataTableHeader<FeatureGroupUserSubscriptionDTO>[] = [
+  {
+    title: 'Feature Group',
+    key: 'description',
+    sortable: false,
+    width: '24vw',
+    getText: (item: FeatureGroupUserSubscriptionDTO) => item.description || featureNames(item),
+  },
+  {
+    title: 'Limit',
+    key: 'limit',
+    sortable: false,
+    width: '16vw',
+    getText: (item: FeatureGroupUserSubscriptionDTO) => formatLimit(item.limit),
+  },
+  { title: 'Used', key: 'used', sortable: false, width: '16vw', type: 'number' },
+  {
+    title: 'Remaining',
+    key: 'remaining',
+    sortable: false,
+    width: '16vw',
+    getText: (item: FeatureGroupUserSubscriptionDTO) => formatRemaining(item),
+  },
   { title: 'Usage', key: 'usage', sortable: false, width: '28vw' },
 ]
 
@@ -524,9 +518,6 @@ onMounted(async () => {
 <style scoped>
 .summary-card {
   min-height: 116px;
-}
-.description-width {
-  min-width: 200px;
 }
 .usage-cell {
   min-width: 160px;

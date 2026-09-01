@@ -1,7 +1,36 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column align-start justify-start">
-    <div class="w-100 d-flex justify-end align-center">
-      <div class="d-flex align-center justify-end ga-1 flex-wrap">
+    <div class="w-100 d-flex align-center justify-start ga-2 mt-4">
+      <v-btn
+        v-if="isShowClearFilter"
+        color="primary"
+        rounded="pill"
+        height="40"
+        width="120"
+        class="text-h5 font-weight-bold "
+        flat
+        variant="outlined"
+        @click="clearFilter"
+      >
+        Clear Filter
+      </v-btn>
+    </div>
+
+    <common-data-table
+      v-model:page="page"
+      v-model:page-size="pageSize"
+      :headers="headers"
+      :items="list || []"
+      :page-count="pageCount"
+      :total-count="totalCount"
+      :page-size-options="allPageSize"
+      :loading="loading"
+      item-label="Comments"
+      class="mt-4"
+      @update:page="changePageNumber"
+      @update:page-size="changePageSize"
+    >
+      <template #actions>
         <v-btn
           variant="plain"
           max-width="20"
@@ -36,159 +65,8 @@
             Refresh Data
           </v-tooltip>
         </v-btn>
-
-        <span
-          class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
-        >
-          <span class="text-grey500 font-weight-bold mr-1">
-            {{ totalCount }}
-          </span>
-          Comments
-        </span>
-      </div>
-    </div>
-    <div class="w-100 d-flex align-center justify-start ga-2 mt-4">
-      <v-btn
-        v-if="isShowClearFilter"
-        color="primary"
-        rounded="pill"
-        height="40"
-        width="120"
-        class="text-h5 font-weight-bold "
-        flat
-        variant="outlined"
-        @click="clearFilter"
-      >
-        Clear Filter
-      </v-btn>
-    </div>
-    <div class="w-100 mt-4">
-      <v-data-table
-        :headers="headers"
-        :items="list"
-        :items-per-page="pageSize"
-        class="elevation-1 set-height-table"
-        :loading="loading"
-        fixed-header
-        hide-default-footer
-      >
-        <template #headers="{ columns }">
-          <tr>
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
-               ${index == 0 ? `` : `th-min-width`}`"
-            >
-              {{ column.title }}
-            </th>
-          </tr>
-        </template>
-
-        <template #[`item.id`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
-          >
-            {{ item.id }}
-          </div>
-        </template>
-
-        <template #[`item.creationUser`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center"
-          >
-            {{ !item.creationUser ? `unknown` : item.creationUser }}
-          </div>
-        </template>
-
-        <template #[`item.creationDate`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
-          >
-            {{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm:ss") }}
-          </div>
-        </template>
-
-        <template #[`item.postId`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
-          >
-            {{ !item.postId ? '-': item.postId }}
-          </div>
-        </template>
-
-        <template #[`item.status`]="{ item }">
-          <div
-            class="w-100 d-flex justify-center align-center"
-          >
-            <v-chip
-              :color="getColorStatus(item.status)"
-              class="font-weight-bold text-h5"
-            >
-              {{ item.status }}
-            </v-chip>
-          </div>
-        </template>
-
-        <template #[`item.Action`]="{ item }">
-          <div
-            class="d-flex justify-center align-center"
-          >
-            <v-btn
-              icon
-              flat
-              @click="openModalMoreAction(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:settings
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                More
-              </v-tooltip>
-            </v-btn>
-          </div>
-        </template>
-      </v-data-table>
-    </div>
-
-    <div class="w-100 d-flex mt-2 position-relative ga-6">
-      <div
-        class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4"
-      >
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-          :total-visible="4"
-          next-icon="md:arrow_forward"
-          prev-icon="md:arrow_back"
-          size="40"
-          class="custom-pagination"
-          @update:model-value="changePageNumber"
-        />
-      </div>
-
-      <div class="position-absolute right-0 select-size-div">
-        <v-select
-          v-model="pageSize"
-          :items="allPageSize"
-          item-title="label"
-          item-value="value"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          max-width="140"
-          class="rounded-pill"
-          @update:model-value="changePageSize"
-        />
-      </div>
-    </div>
+      </template>
+    </common-data-table>
 
     <admin-common-modal
       v-model:show-dialog="showSearchModal"
@@ -217,6 +95,7 @@ import type {
   CommnetBlogAdminDTO,
   CommentBlogAdminSearchFilter,
   CommentBlogStatus,
+  DataTableHeader,
 } from '@/types'
 
 definePageMeta({
@@ -225,19 +104,49 @@ definePageMeta({
 })
 
 const { loadingGetData: loading, data: list, getData, totalCount, pageCount } = useBlogCommentAdmin()
-const { formatLocal } = useDateTime()
 
-const headers = [
-  { title: 'ID', key: 'id', sortable: false, width: '10vw' },
-  { title: 'User', key: 'creationUser', sortable: false, width: '20vw' },
-  { title: 'Creation Date', key: 'creationDate', sortable: false, width: '20vw' },
-  { title: 'Post Id', key: 'postId', sortable: false, width: '10vw' },
-  { title: 'Status', key: 'status', sortable: false, width: '20vw' },
+const headers: DataTableHeader<CommnetBlogAdminDTO>[] = [
+  { title: 'ID', key: 'id', sortable: false, width: '10vw', align: 'start' },
+  { title: 'User', key: 'creationUser', sortable: false, width: '20vw', emptyText: 'unknown' },
+  {
+    title: 'Creation Date',
+    key: 'creationDate',
+    sortable: false,
+    width: '20vw',
+    type: 'date',
+    dateFormat: 'DD/MM/YYYY HH:mm:ss',
+  },
+  {
+    title: 'Post Id',
+    key: 'postId',
+    sortable: false,
+    width: '10vw',
+    // postId === 0 means "not tied to a specific post" (a site-level comment),
+    // not "missing" - the shared table's default empty-check only treats
+    // null/undefined/'' as empty, so this needs its own falsy check.
+    getText: (item: CommnetBlogAdminDTO) => item.postId ? String(item.postId) : '-',
+  },
+  {
+    title: 'Status',
+    key: 'status',
+    sortable: false,
+    width: '20vw',
+    type: 'chip',
+    getChipColor: (item: CommnetBlogAdminDTO) => getColorStatus(item.status),
+  },
   {
     title: 'Action',
     key: 'Action',
     sortable: false,
     width: '20vw',
+    type: 'actions',
+    actions: [
+      {
+        icon: 'md:settings',
+        tooltip: 'More',
+        onClick: (item: CommnetBlogAdminDTO) => openModalMoreAction(item),
+      },
+    ],
   },
 ]
 const pageSize = ref(10)
@@ -267,11 +176,13 @@ const fetchData = async () => {
   })
 }
 
-const changePageNumber = async () => {
+const changePageNumber = async (pageNumber: number) => {
+  page.value = pageNumber
   await fetchData()
 }
 
-const changePageSize = async () => {
+const changePageSize = async (newPageSize: number) => {
+  pageSize.value = newPageSize
   page.value = 1
   await fetchData()
 }
@@ -349,36 +260,13 @@ const getColorStatus = (status?: CommentBlogStatus) => {
 </script>
 
 <style scoped>
-.set-height-table {
-  max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
-}
-.description-width {
-  min-width: 200px;
-}
 .reverse-icon {
   transform: rotateZ(180deg);
-}
-.select-size-div {
-  top: 18px;
 }
 .btn-filter-container{
   height : 48px;
 }
 .filter-mobile-container{
   width: 170px;
-}
-
-:deep(.custom-pagination li button:hover) {
-  background-color: rgb(var(--v-theme-primary));
-  opacity: 0.6;
-}
-:deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: rgb(var(--v-theme-primary)) !important;
-}
-:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
-  opacity: 0 !important;
 }
 </style>

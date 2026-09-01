@@ -97,6 +97,7 @@ useSeoMeta({
 
 const { user } = useUser()
 const { changeGroup, loadingChangeGroup, editItem, loadingEditItem } = useProfile()
+const { hasChosenUserType } = useUserPermissions()
 
 const selectedUserGroup = ref<UserGroup | null>(
   user.value?.group === UserGroup.Student || user.value?.group === UserGroup.Teacher
@@ -106,7 +107,7 @@ const selectedUserGroup = ref<UserGroup | null>(
 
 // Redirect to user page on mount
 onMounted(() => {
-  if (user.value?.group === UserGroup.Student || user.value?.group === UserGroup.Teacher)
+  if (hasChosenUserType.value)
     navigateTo('/user')
 })
 
