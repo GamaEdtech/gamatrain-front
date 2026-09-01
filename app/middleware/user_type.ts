@@ -1,7 +1,7 @@
 export default defineNuxtRouteMiddleware(() => {
-  const { user } = useUser()
+  const { hasChosenUserType } = useUserPermissions()
 
-  if (user.value?.roles.includes('Teacher') || user.value?.roles.includes('Student'))
+  if (hasChosenUserType.value)
     return
   else
     return navigateTo('/user/type')
