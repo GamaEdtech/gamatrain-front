@@ -19,11 +19,6 @@
     <template v-else>
       <div class="d-flex flex-column ga-5">
         <!-- Profile + level -->
-        <!-- <dashboard-general-info-dashboard
-          ref="generalInfoRef"
-          :user-data="userInfo?.user || {}"
-          :progress-data="userInfo?.profileCompletion || {}"
-        /> -->
         <user-dashboard-general-info
           :user-data="userInfo?.user || {}"
           :progress-data="userInfo?.profileCompletion || {}"
@@ -120,7 +115,6 @@ const getUserInfo = async () => {
 
     const data = await useApiService.get(apiUrl)
 
-    console.log('data', data)
     if (data.data) {
       userInfo.value = data.data
     }
