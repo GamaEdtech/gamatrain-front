@@ -1,35 +1,33 @@
 <template>
-  <v-card
-    flat
+  <div
     class="dashboard-card bg-primary50 pa-4 d-flex align-center justify-space-between flex-wrap ga-3"
   >
-    <div class="d-flex align-center ga-3">
+    <div class="d-flex align-start ga-3">
       <v-avatar
         color="white"
         rounded="lg"
         size="44"
       >
         <v-icon color="primary">
-          mdi-star-four-points-outline
+          md:star_shine_outlined
         </v-icon>
       </v-avatar>
       <div>
-        <p class="gama-text-h6 font-weight-bold text-grey900 mb-0">
+        <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-0">
           Go Pro
         </p>
-        <p class="gama-text-body2 text-grey700 mb-0">
+        <p class="text-h6 text-sm-h5 text-grey700 mb-0">
           Unlock every content type — plans are coming soon
         </p>
       </div>
     </div>
     <v-chip
-      class="gama-text-body2"
-      color="primary"
-      variant="tonal"
+      class="bg-white text-primary text-h6 font-weight-bold"
+      variant="flat"
     >
       Coming soon
     </v-chip>
-  </v-card>
+  </div>
 </template>
 
 <script setup>
@@ -40,6 +38,6 @@
 <style scoped>
 .dashboard-card {
   border-radius: 1rem;
-  border: 1px solid #E4E7EC;
+  border: 1px solid rgb(var(--v-theme-grey200));
 }
 </style>

@@ -34,8 +34,8 @@
   border: 1px solid #E4E7EC;
 }
 
-/* See general-info-dashboard.vue: Vuetify 3's button size scale is tuned
-   for a 16px root; this project forces html { font-size: 10px }. */
+/* Vuetify 3's button size scale is tuned for a 16px root; this project
+   forces html { font-size: 10px }. */
 .dashboard-btn {
   font-size: 1.4rem !important;
 }

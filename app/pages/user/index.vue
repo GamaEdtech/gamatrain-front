@@ -19,14 +19,14 @@
     <template v-else>
       <div class="d-flex flex-column ga-5">
         <!-- Profile + level -->
-        <dashboard-general-info-dashboard
-          ref="generalInfoRef"
+        <user-dashboard-general-info
           :user-data="userInfo?.user || {}"
           :progress-data="userInfo?.profileCompletion || {}"
+          @update-username="updateUsername"
         />
 
         <!-- Subscription -->
-        <dashboard-subscription-banner />
+        <user-dashboard-subscription-banner />
 
         <!-- Achievements -->
         <dashboard-badges-strip />
@@ -90,11 +90,20 @@ useHead({
 })
 
 const { user } = useUser()
-const generalInfoRef = ref(null)
 const createContentRef = ref(null)
 const loader = ref(true)
 const userInfo = ref({})
 const userType = computed(() => user.value?.group)
+
+const updateUsername = (data) => {
+  userInfo.value = {
+    ...userInfo.value,
+    user: {
+      ...userInfo.value.user,
+      username: data.username,
+    },
+  }
+}
 
 const getUserInfo = async () => {
   try {

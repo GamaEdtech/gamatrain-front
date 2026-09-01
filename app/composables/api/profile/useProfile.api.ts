@@ -5,6 +5,7 @@ import type {
   EditProfileDTO,
   DeleteProfileDTO,
   ChangePasswordDTO,
+  EditUsernameDTO,
 } from '@/types'
 
 const loadingGetItemById = ref(false)
@@ -13,6 +14,7 @@ const loadingDeleteItem = ref(false)
 const loadingCancelDeleteItem = ref(false)
 const loadingChangeGroup = ref(false)
 const loadingChangePassword = ref(false)
+const loadingEditUsername = ref(false)
 const NAME = 'Profile'
 
 export const useProfile = () => {
@@ -321,7 +323,36 @@ export const useProfile = () => {
     }
   }
 
+  const editUsername = async (item: EditUsernameDTO) => {
+    try {
+      loadingEditUsername.value = true
+      const response = await useApiService.put<
+        ApiResult<boolean>
+      >('/api/v1/users/username', { ...item })
+
+      if (response.status === 1 || response.succeeded) {
+        $toast.success('Username changed successfully')
+      }
+      else {
+        handleApiResponseError(response)
+      }
+
+      return {
+        ...response,
+        succeeded: response.succeeded || response.status === 1,
+      }
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
+    }
+    finally {
+      loadingEditUsername.value = false
+    }
+  }
+
   return {
-    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, cancelDeleteItem, loadingCancelDeleteItem, changeGroup, loadingChangeGroup, changePassword, loadingChangePassword,
+    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, cancelDeleteItem, loadingCancelDeleteItem, changeGroup, loadingChangeGroup, changePassword, loadingChangePassword, editUsername, loadingEditUsername,
   }
 }
