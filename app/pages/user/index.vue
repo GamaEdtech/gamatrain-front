@@ -34,7 +34,7 @@
         <user-dashboard-subscription-banner />
 
         <!-- Achievements -->
-        <dashboard-badges-strip />
+        <user-dashboard-badges-strip :earned-badge-ids="userInfo.badges" />
 
         <!-- Statistics -->
         <dashboard-statistics :user-info="userInfo" />
