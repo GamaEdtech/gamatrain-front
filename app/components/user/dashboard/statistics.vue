@@ -72,7 +72,7 @@
 import { UserGroup } from '@/types'
 
 interface IStatistics {
-  score: number | null
+  score: string | number | null
   unreadMessage: number | null
 }
 

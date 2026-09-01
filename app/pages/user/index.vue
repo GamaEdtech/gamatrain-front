@@ -25,7 +25,10 @@
         />
         <user-dashboard-subscription-banner />
         <user-dashboard-badges-strip :earned-badge-ids="userInfo.badges" />
-        <user-dashboard-statistics :user-info="userInfo" />
+        <user-dashboard-statistics
+          :score="userInfo.user.score || 0"
+          :unread-message="userInfo.unreadMessages.total || 0"
+        />
         <v-row>
           <v-col
             v-if="userType === 6"
@@ -44,12 +47,11 @@
 
         <!-- Content type -->
         <div>
-          <p class="gama-text-h6 font-weight-bold text-grey900 mb-4">
+          <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-4">
             {{ userType === 5 ? 'Create & Share' : 'Get Involved' }}
           </p>
-          <dashboard-create-content-button
-            ref="createContentRef"
-            :statistics="userInfo?.stats || {}"
+          <user-dashboard-create-content-button
+            :data="userInfo?.stats || {}"
           />
         </div>
       </div>
@@ -58,11 +60,7 @@
 </template>
 
 <script setup>
-import { useAuth } from '@/composables/useAuth'
-
 const { $toast } = useNuxtApp()
-const auth = useAuth()
-const _authToken = auth.getUserToken()
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -74,7 +72,6 @@ useHead({
 })
 
 const { user } = useUser()
-const createContentRef = ref(null)
 const loader = ref(true)
 const userInfo = ref({})
 const userType = computed(() => user.value?.group)
