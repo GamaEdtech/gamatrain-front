@@ -26,10 +26,9 @@
         <user-dashboard-subscription-banner />
         <user-dashboard-badges-strip :earned-badge-ids="userInfo.badges" />
         <user-dashboard-statistics :user-info="userInfo" />
-
-        <!-- Exams & progress (students) / Support -->
-        <v-row v-if="userType === 6">
+        <v-row>
           <v-col
+            v-if="userType === 6"
             cols="12"
             md="8"
           >
@@ -39,15 +38,7 @@
             cols="12"
             md="4"
           >
-            <dashboard-support-widget />
-          </v-col>
-        </v-row>
-        <v-row v-else>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <dashboard-support-widget />
+            <user-dashboard-support-widget />
           </v-col>
         </v-row>
 
