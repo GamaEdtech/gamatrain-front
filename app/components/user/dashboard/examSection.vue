@@ -1,20 +1,18 @@
 <template>
-  <v-card
-    v-if="userType === 6"
-    flat
-    class="dashboard-card pa-4"
+  <div
+    class="dashboard-card pa-4 d-flex flex-column ga-1"
   >
     <div class="d-flex justify-space-between align-center">
-      <p class="gama-text-h6 font-weight-bold text-grey900 mb-0">
-        Exams &amp; Progress
+      <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-0">
+        Exams Progress
       </p>
       <NuxtLink
         to="/leader-board"
-        class="gama-text-body2 font-weight-bold text-decoration-none d-flex align-center ga-1"
+        class="text-h6 text-sm-h5 font-weight-medium text-decoration-none d-flex align-center ga-1 text-primary"
       >
         See leaderboard
         <v-icon size="16">
-          mdi-chevron-right
+          md:chevron_right
         </v-icon>
       </NuxtLink>
     </div>
@@ -38,12 +36,12 @@
         :key="item.id"
       >
         <div class="d-flex justify-space-between mb-1">
-          <span class="gama-text-body1 font-weight-bold text-grey700">{{ item.title }}</span>
-          <span class="gama-text-caption text-grey500">{{ item.participated }} of {{ item.total }} done</span>
+          <span class="text-h5 font-weight-bold text-grey700">{{ item.title }}</span>
+          <span class="text-h5 text-grey500">{{ item.participated }} of {{ item.total }} done</span>
         </div>
         <v-progress-linear
-          :model-value="item.total ? (item.participated / item.total) * 100 : 0"
-          :color="item.participated >= item.total ? 'success' : 'warning'"
+          :model-value="item.total ? (item.participated / Number(item.total)) * 100 : 0"
+          :color="Number(item.participated) >= Number(item.total) ? 'success' : 'warning'"
           height="7"
           rounded
           bg-color="grey200"
@@ -53,23 +51,27 @@
 
     <v-divider class="my-4" />
 
-    <div class="d-flex justify-space-between gama-text-body2 font-weight-bold text-grey900">
+    <div class="d-flex justify-space-between text-h5 font-weight-bold text-grey900">
       <span>Total</span>
       <span>{{ examData?.participated || 0 }} participated · {{ notParticipatedTotal }} not participated</span>
     </div>
-  </v-card>
+  </div>
 </template>
 
-<script setup>
-const props = defineProps({
+<script setup lang="ts">
+interface IExamSection {
   examData: {
-    type: Object,
-    default: () => ({}),
-  },
-})
-
-const { user } = useUser()
-const userType = computed(() => user.value?.group)
+    total: number
+    participated: number
+    lessons: {
+      id: string
+      title: string
+      total: string
+      participated: number
+    }[]
+  }
+}
+const props = defineProps<IExamSection>()
 
 const notParticipatedTotal = computed(() => Math.max((props.examData?.total || 0) - (props.examData?.participated || 0), 0))
 </script>
@@ -77,6 +79,6 @@ const notParticipatedTotal = computed(() => Math.max((props.examData?.total || 0
 <style scoped>
 .dashboard-card {
   border-radius: 1rem;
-  border: 1px solid #E4E7EC;
+  border: 1px solid rgb(var(--v-theme-grey200));
 }
 </style>

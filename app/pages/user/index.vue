@@ -33,7 +33,7 @@
             cols="12"
             md="8"
           >
-            <dashboard-exam-section :exam-data="userInfo?.examSuggestions" />
+            <user-dashboard-exam-section :exam-data="userInfo?.examSuggestions" />
           </v-col>
           <v-col
             cols="12"
