@@ -274,7 +274,7 @@ const { user } = useUser()
 const { mdAndDown } = useDisplay()
 const route = useRoute()
 const auth = useAuth()
-const canAccessEducationalContent = computed(() => user.value?.group === 5)
+const { canAddEducationalContent } = useUserPermissions()
 
 const items = computed(() => [
   {
@@ -294,14 +294,14 @@ const items = computed(() => [
         link: '/user/paper',
         icon: 'icon-paper',
         icon_type: 'custom',
-        status: !canAccessEducationalContent.value,
+        status: !canAddEducationalContent.value,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icon-multimedia',
         icon_type: 'custom',
-        status: !canAccessEducationalContent.value,
+        status: !canAddEducationalContent.value,
       },
       {
         title: 'Q & A',
