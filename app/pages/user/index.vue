@@ -18,26 +18,14 @@
     </template>
     <template v-else>
       <div class="d-flex flex-column ga-5">
-        <!-- Profile + level -->
-        <!-- <dashboard-general-info-dashboard
-          ref="generalInfoRef"
-          :user-data="userInfo?.user || {}"
-          :progress-data="userInfo?.profileCompletion || {}"
-        /> -->
         <user-dashboard-general-info
           :user-data="userInfo?.user || {}"
           :progress-data="userInfo?.profileCompletion || {}"
           @update-username="updateUsername"
         />
-
-        <!-- Subscription -->
         <user-dashboard-subscription-banner />
-
-        <!-- Achievements -->
         <user-dashboard-badges-strip :earned-badge-ids="userInfo.badges" />
-
-        <!-- Statistics -->
-        <dashboard-statistics :user-info="userInfo" />
+        <user-dashboard-statistics :user-info="userInfo" />
 
         <!-- Exams & progress (students) / Support -->
         <v-row v-if="userType === 6">
