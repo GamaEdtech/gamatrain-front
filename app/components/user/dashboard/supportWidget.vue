@@ -1,6 +1,6 @@
 <template>
   <div
-    class="dashboard-card pa-4 d-flex flex-column aligh-start"
+    class="dashboard-card pa-4 d-flex flex-column aligh-start w-100"
   >
     <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-2">
       Need help?

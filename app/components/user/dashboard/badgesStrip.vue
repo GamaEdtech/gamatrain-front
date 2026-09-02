@@ -1,6 +1,6 @@
 <template>
   <div
-    class="dashboard-card pa-4 d-flex flex-column ga-4"
+    class="dashboard-card pa-4 d-flex flex-column ga-4 w-100"
   >
     <div class="d-flex justify-space-between align-center">
       <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 ">

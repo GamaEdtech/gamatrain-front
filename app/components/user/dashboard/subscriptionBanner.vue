@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-card pa-4">
+  <div class="dashboard-card pa-4 w-100">
     <template v-if="subscription">
       <div class="subscription-layout">
         <div class="d-flex align-start ga-3 min-width-0">
