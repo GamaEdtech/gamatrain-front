@@ -61,55 +61,17 @@
 </template>
 
 <script setup lang="ts">
+import type { DashboardStatsDTO } from '@/types'
 import { CONTENT_TYPE_META } from '@/constants'
 
 interface ICreateContentButton {
-  data: {
-    test: {
-      total: string
-      waitToConfirm: string
-    }
-    file: {
-      total: string
-      waitToConfirm: string
-      nonLiveTotal: number
-      types: {
-        video: number
-        powerpoint: number
-        text: number
-        podcast: number
-      }
-      live: {
-        total: string
-        nextPlay: string | null
-      }
-    }
-    question: {
-      total: string
-      waitToConfirm: string
-      unreadReplies: number
-    }
-    questionReply: {
-      total: string
-      waitToConfirm: string
-    }
-    exam: {
-      total: string
-      waitToConfirm: string
-      types: {
-        fourchoice: number
-        descriptive: number
-      }
-      nextStart: string | null
-    }
-  }
+  data: DashboardStatsDTO
+  roles: string[]
 }
-
-const { user } = useUser()
 
 const props = defineProps<ICreateContentButton>()
 
-const isLocked = (className: string) => user.value && user.value.group === 6 && className !== 'question_answer' && className !== 'online_exam'
+const isLocked = (className: string) => props.roles.includes('Student') && className !== 'question_answer'
 
 const button_list = reactive([
   {
@@ -132,13 +94,6 @@ const button_list = reactive([
     countLabel: 'questions',
     actionLabel: 'Ask a Question',
     ...CONTENT_TYPE_META.forum,
-  },
-  {
-    class: 'online_exam',
-    count: props.data?.exam?.total || 0,
-    countLabel: 'published',
-    actionLabel: 'New Quiz',
-    ...CONTENT_TYPE_META.exam,
   },
 ])
 </script>

@@ -11,11 +11,11 @@
             bg-color="grey25"
           >
             <v-avatar
-              v-if="user?.avatarUri"
+              v-if="userData?.avatarUri"
               size="60"
             >
               <v-img
-                :src="user.avatarUri"
+                :src="userData.avatarUri"
                 alt="user avatar"
               />
             </v-avatar>
@@ -30,8 +30,8 @@
         </NuxtLink>
         <div class="d-flex flex-column ga-1">
           <p class="text-h4 text-sm-h3 font-weight-bold text-white mb-1">
-            <template v-if="user?.firstName || user?.lastName">
-              {{ user?.firstName }} {{ user?.lastName }}
+            <template v-if="userData?.firstName || userData?.lastName">
+              {{ userData?.firstName }} {{ userData?.lastName }}
             </template>
             <template v-else>
               No name
@@ -40,14 +40,13 @@
           <span
             class="text-h5 text-sm-h4 font-weight-bold text-grey300 d-flex align-center"
           >
-            <template v-if="userData.username && userData.username !== '0'">
-              @{{ userData.username }}
+            <template v-if="userData.handle">
+              <nuxt-link :to="`profile/${userData.handle}`">@{{ userData.handle }}</nuxt-link>
             </template>
             <template v-else>
               Choose username
             </template>
             <v-btn
-              v-if="userData.username && userData.username === '0'"
               flat
               color="white"
               size="20"
@@ -112,7 +111,7 @@
       title="Username"
     >
       <lazy-user-dashboard-modal-username
-        :username="userData.username"
+        :username="userData.handle"
         @close="showUsernameModal = false"
         @success="emit('updateUsername', $event)"
       />
@@ -121,59 +120,29 @@
 </template>
 
 <script setup lang="ts">
-import type { EditUsernameDTO } from '@/types'
+import type { UserDashboardDTO, DashboardProfileCompletionDTO } from '@/types'
 
 interface IGeneralInfo {
-  userData: {
-    id: string
-    username: string
-    first_name: string
-    last_name: string
-    phone: string | null
-    avatar: string
-    sex: string
-    active: string
-    credit: string
-    active_package: string
-    group_id: number
-    score: string
-    section: string | null
-    base: string | null
-    course: string
-    area: string | null
-    school: string | null
-    score_check_info: string
-    state: string | null
-    city: string | null
-  }
-  progressData: {
-    total: number
-    num: number
-    notComplete: string[]
-  }
+  userData: UserDashboardDTO
+  progressData: DashboardProfileCompletionDTO
 }
 const props = defineProps<IGeneralInfo>()
 const emit = defineEmits<{
-  updateUsername: [data: EditUsernameDTO]
+  updateUsername: [data: string]
 }>()
 
-const { user } = useUser()
-const userType = computed(() => user.value?.group)
-const ringColor = computed(() => (userType.value === 5 ? 'secondary' : 'primary'))
+const ringColor = computed(() => (props.userData.roles.includes('Teacher') ? 'primary' : 'secondary'))
 
 const showUsernameModal = ref(false)
 
-const level = computed(() => useLevel(Number(props.userData.score) || 0))
+const level = computed(() => useLevel(Number(props.userData.scoreCheckInfo) || 0))
 
 const initials = computed(() => {
-  const first = user.value?.firstName?.[0] || ''
-  const last = user.value?.lastName?.[0] || ''
+  const first = props.userData.firstName?.[0] || ''
+  const last = props.userData.lastName?.[0] || ''
   return (first + last).toUpperCase() || '?'
 })
 
-// Real signal from the API: field names still missing from the user's profile.
-// We don't know the full set of possible values, so keep the label as-is
-// (matches the previous behaviour) and route every step to the profile page.
 const nextSteps = computed(() => {
   const notComplete = props.progressData.notComplete || []
   return notComplete.slice(0, 3).map(field => ({

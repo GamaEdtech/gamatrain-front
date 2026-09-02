@@ -1,6 +1,6 @@
 <template>
   <div>
-    <template v-if="loader">
+    <template v-if="loadingGetDashboardData">
       <v-row>
         <v-col
           cols="12"
@@ -17,25 +17,29 @@
       </v-row>
     </template>
     <template v-else>
-      <div class="d-flex flex-column ga-5">
+      <div
+        v-if="dashboardInfo"
+        class="d-flex flex-column ga-5"
+      >
         <user-dashboard-general-info
-          :user-data="userInfo?.user || {}"
-          :progress-data="userInfo?.profileCompletion || {}"
+          :user-data="dashboardInfo.user"
+          :progress-data="dashboardInfo.profileCompletion"
           @update-username="updateUsername"
         />
         <user-dashboard-subscription-banner />
-        <user-dashboard-badges-strip :earned-badge-ids="userInfo.badges" />
+        <user-dashboard-badges-strip :earned-badge-ids="[]" />
         <user-dashboard-statistics
-          :score="userInfo.user.score || 0"
-          :unread-message="userInfo.unreadMessages.total || 0"
+          :score="dashboardInfo.user.scoreCheckInfo || 0"
+          :unread-message="dashboardInfo.unreadMessages.total || 0"
+          :roles="dashboardInfo.user.roles"
         />
         <v-row>
           <v-col
-            v-if="userType === 6"
+            v-if="dashboardInfo.user.roles.includes('Student')"
             cols="12"
             md="8"
           >
-            <user-dashboard-exam-section :exam-data="userInfo?.examSuggestions" />
+            <user-dashboard-exam-section :exam-data="dashboardInfo.examSuggestions" />
           </v-col>
           <v-col
             cols="12"
@@ -45,13 +49,13 @@
           </v-col>
         </v-row>
 
-        <!-- Content type -->
         <div>
           <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-4">
-            {{ userType === 5 ? 'Create & Share' : 'Get Involved' }}
+            {{ dashboardInfo.user.roles.includes('Teacher') ? 'Create & Share' : 'Get Involved' }}
           </p>
           <user-dashboard-create-content-button
-            :data="userInfo?.stats || {}"
+            :data="dashboardInfo.stats"
+            :roles="dashboardInfo.user.roles"
           />
         </div>
       </div>
@@ -59,8 +63,8 @@
   </div>
 </template>
 
-<script setup>
-const { $toast } = useNuxtApp()
+<script setup lang="ts">
+import type { GetDashboardDataDTO } from '@/types'
 
 definePageMeta({
   layout: 'dashboard-layout',
@@ -71,45 +75,26 @@ useHead({
   title: 'Dashboard',
 })
 
-const { user } = useUser()
-const loader = ref(true)
-const userInfo = ref({})
-const userType = computed(() => user.value?.group)
+const { getDashboardData, loadingGetDashboardData } = useProfile()
 
-const updateUsername = (data) => {
-  userInfo.value = {
-    ...userInfo.value,
-    user: {
-      ...userInfo.value.user,
-      username: data.username,
-    },
-  }
-}
+const dashboardInfo = ref<GetDashboardDataDTO | null>()
 
-const getUserInfo = async () => {
-  try {
-    loader.value = true
-    const apiUrl
-      = userType.value === 5
-        ? '/api/v1/teachers/dashboard'
-        : '/api/v1/students/dashboard'
-
-    const data = await useApiService.get(apiUrl)
-
-    if (data.data) {
-      userInfo.value = data.data
+const updateUsername = (username: string) => {
+  if (dashboardInfo.value) {
+    dashboardInfo.value = {
+      ...dashboardInfo.value,
+      user: {
+        ...dashboardInfo.value.user,
+        handle: username,
+      },
     }
-    loader.value = false
-  }
-  catch (error) {
-    // if (error.response?.status === 403) {
-    //   useAuth().logout()
-    // }
-    $toast.error(error.response.data.message)
   }
 }
 
-onMounted(() => {
-  getUserInfo()
+onMounted(async () => {
+  const response = await getDashboardData()
+  if (response.succeeded && response.data) {
+    dashboardInfo.value = response.data
+  }
 })
 </script>

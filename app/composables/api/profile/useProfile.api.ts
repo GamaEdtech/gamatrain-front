@@ -359,7 +359,7 @@ export const useProfile = () => {
     try {
       const response = await useApiService.get<
         ApiResult<GetDashboardDataDTO>
-      >('/api/v1/identities/dashboard')
+      >('/api/v2/identities/dashboard')
 
       if (response.succeeded && response.data) {
         return response

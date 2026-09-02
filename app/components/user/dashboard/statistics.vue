@@ -43,7 +43,7 @@
     </div>
 
     <nuxt-link
-      v-if="userType === UserGroup.Teacher"
+      v-if="roles.includes('Teacher')"
       class="dashboard-card w-100 bg-grey700 pa-4 d-flex align-center justify-space-between"
       to="/user/commission"
     >
@@ -69,17 +69,14 @@
 </template>
 
 <script setup lang="ts">
-import { UserGroup } from '@/types'
-
 interface IStatistics {
   score: string | number | null
   unreadMessage: number | null
+  roles: string[]
 }
 
 defineProps<IStatistics>()
 
-const { user } = useUser()
-const userType = computed(() => user.value?.group)
 const { formatNumber } = useFormatNumber()
 </script>
 

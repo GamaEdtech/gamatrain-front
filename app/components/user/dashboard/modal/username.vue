@@ -36,7 +36,7 @@
         width="80"
         class="text-h5 font-weight-medium"
         flat
-        :disabled="loadingEditUsername"
+        :disabled="loadingEditItem"
         @click="closeModal"
       >
         <span class="text-grey800">
@@ -51,7 +51,7 @@
         class="text-h5 text-grey800 font-weight-medium"
         flat
         type="submit"
-        :loading="loadingEditUsername"
+        :loading="loadingEditItem"
         :disabled="!isFormValid"
       >
         Submit
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import type { EditUsernameDTO } from '@/types'
+import type { EditProfileDTO } from '@/types'
 
 interface IModalUsername {
   username?: string
@@ -72,23 +72,21 @@ const props = withDefaults(defineProps<IModalUsername>(), {
 })
 const emit = defineEmits<{
   close: []
-  success: [data: EditUsernameDTO]
+  success: [data: string]
 }>()
 
 const {
   requiredWithMessage,
   minLength,
   maxLength,
-  alphanumeric,
 } = useValidationRules()
-const { editUsername, loadingEditUsername } = useProfile()
+const { editItem, loadingEditItem } = useProfile()
 
-const username = ref(props.username === '0' ? '' : props.username)
+const username = ref(props.username)
 const usernameRules = [
   requiredWithMessage('Username is required'),
-  minLength(6),
+  minLength(2),
   maxLength(50),
-  alphanumeric,
 ]
 const isFormValid = ref(false)
 
@@ -98,17 +96,17 @@ const closeModal = () => {
 
 const save = async () => {
   const trimmedUsername = username.value.trim()
-  if (!trimmedUsername || trimmedUsername.length < 6)
+  if (!trimmedUsername || trimmedUsername.length < 2)
     return
 
-  const response = await editUsername({
-    username: trimmedUsername,
-  })
+  const data: EditProfileDTO = {
+    handle: trimmedUsername,
+  }
+
+  const response = await editItem(data)
 
   if (response?.succeeded) {
-    emit('success', {
-      username: trimmedUsername,
-    })
+    emit('success', trimmedUsername)
     emit('close')
   }
 }

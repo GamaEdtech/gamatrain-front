@@ -59,17 +59,10 @@
 </template>
 
 <script setup lang="ts">
+import type { DashboardExamSuggestionsDTO } from '@/types'
+
 interface IExamSection {
-  examData: {
-    total: number
-    participated: number
-    lessons: {
-      id: string
-      title: string
-      total: string
-      participated: number
-    }[]
-  }
+  examData: DashboardExamSuggestionsDTO
 }
 const props = defineProps<IExamSection>()
 
