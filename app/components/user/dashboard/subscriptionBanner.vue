@@ -1,11 +1,12 @@
 <template>
   <div class="dashboard-card pa-4 w-100">
     <template v-if="subscription">
-      <div class="subscription-layout">
-        <div class="d-flex align-start ga-3 min-width-0">
+      <div class="d-flex align-center justify-space-between flex-wrap ga-4">
+        <div class="d-flex align-start ga-3 flex-grow-1">
           <v-avatar
             color="primary50"
             rounded="lg"
+            class="flex-shrink-0"
             size="48"
           >
             <v-icon color="primary">
@@ -13,16 +14,15 @@
             </v-icon>
           </v-avatar>
 
-          <div class="min-width-0">
+          <div class="min-width-0 flex-grow-1">
             <div class="d-flex align-center flex-wrap ga-2 mb-1">
               <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-0 text-truncate">
                 {{ subscription.planTitle }}
               </p>
               <v-chip
                 :color="statusColor"
-                size="small"
                 variant="tonal"
-                class="font-weight-bold"
+                class="font-weight-bold text-h6"
               >
                 {{ subscription.status }}
               </v-chip>
@@ -30,10 +30,10 @@
 
             <div class="d-flex align-center flex-wrap ga-2 text-h6 text-sm-h5 text-grey700">
               <span>{{ subscription.billingInterval }}</span>
-              <span class="detail-separator" />
+              <span class="text-grey400">|</span>
               <span>{{ formattedPrice }}</span>
               <template v-if="subscription.expirationDate">
-                <span class="detail-separator" />
+                <span class="text-grey400">|</span>
                 <span>Expires {{ formatLocal(subscription.expirationDate, 'MMM D, YYYY') }}</span>
               </template>
             </div>
@@ -73,7 +73,7 @@
           </div>
         </div>
 
-        <div class="usage-summary">
+        <div class="d-flex align-center justify-end flex-wrap ga-3">
           <v-progress-circular
             :model-value="hasLimitedUsage ? usagePercent : 100"
             :color="usageColor"
@@ -82,7 +82,7 @@
             :width="10"
           >
             <span class="text-h5 font-weight-bold text-grey900">
-              {{ hasLimitedUsage ? `${usagePercent}%` : '∞' }}
+              {{ hasLimitedUsage ? `${usagePercent}%` : 'All' }}
             </span>
           </v-progress-circular>
           <div class="text-center text-md-left">
@@ -95,37 +95,10 @@
           </div>
         </div>
       </div>
-
-      <div
-        v-if="visibleFeatureUsage.length"
-        class="feature-grid mt-4"
-      >
-        <div
-          v-for="feature in visibleFeatureUsage"
-          :key="feature.key"
-          class="feature-usage"
-        >
-          <div class="d-flex align-center justify-space-between ga-2 mb-2">
-            <span class="text-body-2 font-weight-bold text-grey800 text-truncate">
-              {{ feature.title }}
-            </span>
-            <span class="text-caption text-grey600 flex-shrink-0">
-              {{ feature.used }}{{ feature.limitLabel }}
-            </span>
-          </div>
-          <v-progress-linear
-            :model-value="feature.percent"
-            :color="feature.color"
-            bg-color="grey200"
-            height="7"
-            rounded
-          />
-        </div>
-      </div>
     </template>
 
     <template v-else>
-      <div class="subscription-layout">
+      <div class="d-flex align-center justify-space-between flex-wrap ga-4">
         <div class="d-flex align-start ga-3">
           <v-avatar
             color="primary50"
@@ -148,12 +121,13 @@
 
         <v-btn
           color="primary"
-          variant="flat"
+          variant="tonal"
           rounded="lg"
           to="/user/subscription"
+          append-icon="md:chevron_right"
+          class="font-weight-bold"
         >
-          <span class="text-h5 font-weight-bold">
-            <v-icon class="mr-1">md:subscriptions_outlined</v-icon>View plans</span>
+          View plans
         </v-btn>
       </div>
     </template>
@@ -161,16 +135,7 @@
 </template>
 
 <script setup lang="ts">
-import type { FeatureGroupUserSubscriptionDTO, UserSubscriptionDTO } from '@/types'
-
-interface FeatureUsageItem {
-  key: string
-  title: string
-  used: number
-  percent: number
-  limitLabel: string
-  color: string
-}
+import type { UserSubscriptionDTO } from '@/types'
 
 const props = defineProps<{
   subscription: UserSubscriptionDTO | null
@@ -224,32 +189,6 @@ const totalLimitLabel = computed(() => {
 
 const hasLimitedUsage = computed(() => totalLimit.value > 0)
 
-const visibleFeatureUsage = computed<FeatureUsageItem[]>(() => {
-  return subscription.value?.featureGroups.slice(0, 4).map((group, index) => {
-    const limit = group.limit
-    const percent = limit ? Math.min(Math.round((group.used / limit) * 100), 100) : 0
-
-    return {
-      key: `${index}-${group.description}`,
-      title: getFeatureTitle(group),
-      used: group.used,
-      percent,
-      limitLabel: limit === null ? ' used' : ` / ${formatNumber(limit)}`,
-      color: limit === null ? 'info' : getFeatureUsageColor(percent),
-    }
-  }) ?? []
-})
-
-function getFeatureTitle(group: FeatureGroupUserSubscriptionDTO) {
-  return group.description || group.features.map(feature => feature.featureName).join(', ') || 'Subscription usage'
-}
-
-function getFeatureUsageColor(percent: number) {
-  if (percent >= 90) return 'error'
-  if (percent >= 70) return 'warning'
-  return 'primary'
-}
-
 function formatNumber(value: number) {
   return new Intl.NumberFormat('en-US').format(value)
 }
@@ -262,63 +201,7 @@ function formatNumber(value: number) {
   background: rgb(var(--v-theme-white));
 }
 
-.subscription-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 1rem;
-  align-items: center;
-}
-
-.usage-summary {
-  min-width: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.75rem;
-}
-
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.75rem;
-}
-
-.feature-usage {
-  min-width: 0;
-  padding: 0.75rem;
-  border-radius: 0.75rem;
-  background: rgb(var(--v-theme-grey50));
-  border: 1px solid rgb(var(--v-theme-grey200));
-}
-
-.detail-separator {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: rgb(var(--v-theme-grey400));
-}
-
 .min-width-0 {
   min-width: 0;
-}
-
-@media screen and (max-width: 960px) {
-  .subscription-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .usage-summary {
-    justify-content: flex-start;
-  }
-
-  .feature-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media screen and (max-width: 600px) {
-  .feature-grid {
-    grid-template-columns: 1fr;
-  }
 }
 </style>
