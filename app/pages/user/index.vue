@@ -1,20 +1,31 @@
 <template>
   <div class="w-100 d-flex flex-column align-start justify-start ga-5">
     <template v-if="loadingGetDashboardData">
-      <v-row>
+      <user-dashboard-general-info-skeleton />
+      <user-dashboard-subscription-banner-skeleton />
+      <user-dashboard-badges-strip-skeleton />
+      <user-dashboard-statistics-skeleton />
+      <v-row class="w-100 ma-0">
         <v-col
           cols="12"
-          md="12"
+          md="8"
+          class="pa-0 pr-0 pr-md-2"
         >
-          <v-skeleton-loader height="200" />
+          <user-dashboard-exam-section-skeleton />
         </v-col>
         <v-col
           cols="12"
-          md="12"
+          md="4"
+          class="pa-0 mt-4 mt-md-0"
         >
-          <v-skeleton-loader height="200" />
+          <user-dashboard-support-widget-skeleton />
         </v-col>
       </v-row>
+      <v-skeleton-loader
+        height="28"
+        width="160"
+      />
+      <user-dashboard-create-content-button-skeleton />
     </template>
     <template v-else-if="!loadingGetDashboardData && dashboardInfo">
       <user-dashboard-general-info
@@ -34,14 +45,14 @@
           v-if="dashboardInfo.user.roles.includes('Student')"
           cols="12"
           md="8"
-          class="pa-0"
+          class="pa-0 pr-0 pr-md-2"
         >
           <user-dashboard-exam-section :exam-data="dashboardInfo.examSuggestions" />
         </v-col>
         <v-col
           cols="12"
           md="4"
-          class="pa-0"
+          class="pa-0 mt-4 mt-md-0"
         >
           <user-dashboard-support-widget />
         </v-col>
