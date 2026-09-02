@@ -26,7 +26,7 @@
           :progress-data="dashboardInfo.profileCompletion"
           @update-username="updateUsername"
         />
-        <user-dashboard-subscription-banner />
+        <user-dashboard-subscription-banner :subscription="dashboardInfo.user.subscription" />
         <user-dashboard-badges-strip :earned-badge-ids="[]" />
         <user-dashboard-statistics
           :score="dashboardInfo.user.scoreCheckInfo || 0"

@@ -111,7 +111,7 @@ export interface UserDashboardDTO {
   schoolTitle: string
   board: number
   grade: number
-  subscription: UserSubscriptionDTO
+  subscription: UserSubscriptionDTO | null
   scoreCheckInfo: string
 }
 export interface GetDashboardDataDTO {
