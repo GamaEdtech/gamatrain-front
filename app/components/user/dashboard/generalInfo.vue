@@ -166,8 +166,8 @@ const showUsernameModal = ref(false)
 const level = computed(() => useLevel(Number(props.userData.score) || 0))
 
 const initials = computed(() => {
-  const first = user.value?.firstName[0] || ''
-  const last = user.value?.lastName[0] || ''
+  const first = user.value?.firstName?.[0] || ''
+  const last = user.value?.lastName?.[0] || ''
   return (first + last).toUpperCase() || '?'
 })
 

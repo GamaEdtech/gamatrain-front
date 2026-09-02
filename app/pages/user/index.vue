@@ -96,7 +96,6 @@ const getUserInfo = async () => {
 
     const data = await useApiService.get(apiUrl)
 
-    console.log('data', data)
     if (data.data) {
       userInfo.value = data.data
     }
