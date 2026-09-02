@@ -6,6 +6,7 @@ import type {
   DeleteProfileDTO,
   ChangePasswordDTO,
   EditUsernameDTO,
+  GetDashboardDataDTO,
 } from '@/types'
 
 const loadingGetItemById = ref(false)
@@ -15,6 +16,7 @@ const loadingCancelDeleteItem = ref(false)
 const loadingChangeGroup = ref(false)
 const loadingChangePassword = ref(false)
 const loadingEditUsername = ref(false)
+const loadingGetDashboardData = ref(false)
 const NAME = 'Profile'
 
 export const useProfile = () => {
@@ -352,7 +354,31 @@ export const useProfile = () => {
     }
   }
 
+  const getDashboardData = async () => {
+    loadingGetDashboardData.value = true
+    try {
+      const response = await useApiService.get<
+        ApiResult<GetDashboardDataDTO>
+      >('/api/v1/identities/dashboard')
+
+      if (response.succeeded && response.data) {
+        return response
+      }
+
+      handleApiResponseError(response)
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<GetDashboardDataDTO>(err)
+    }
+    finally {
+      loadingGetDashboardData.value = false
+    }
+  }
+
   return {
-    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, cancelDeleteItem, loadingCancelDeleteItem, changeGroup, loadingChangeGroup, changePassword, loadingChangePassword, editUsername, loadingEditUsername,
+    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, cancelDeleteItem, loadingCancelDeleteItem, changeGroup, loadingChangeGroup, changePassword, loadingChangePassword, editUsername, loadingEditUsername, getDashboardData, loadingGetDashboardData,
   }
 }
