@@ -4,12 +4,12 @@
       My Tickets
     </h1>
     <v-btn
-      to="/user/ticket/create"
       rounded="pill"
       color="primary"
       flat
       height="34"
       class="mt-2"
+      @click="openCreateModal"
     >
       <v-icon
         color="grey800"
@@ -34,6 +34,18 @@
       @update:page="changePageNumber"
       @update:page-size="changePageSize"
     />
+
+    <common-modal-base
+      v-model:show-dialog="showCreateModal"
+      title="New Ticket"
+      subtitle="Send a new support request."
+      :max-width="560"
+    >
+      <user-ticket-modals-create
+        @back="showCreateModal = false"
+        @success="handleTicketCreated"
+      />
+    </common-modal-base>
   </div>
 </template>
 
@@ -110,6 +122,7 @@ const pageSizeOptions = [
   { label: '20 Rows', value: 20 },
   { label: '50 Rows', value: 50 },
 ]
+const showCreateModal = ref(false)
 
 const fetchTickets = async () => {
   await getData({
@@ -125,6 +138,15 @@ const changePageNumber = async (pageNumber: number) => {
 
 const changePageSize = async (newPageSize: number) => {
   pageSize.value = newPageSize
+  page.value = 1
+  await fetchTickets()
+}
+
+const openCreateModal = () => {
+  showCreateModal.value = true
+}
+
+const handleTicketCreated = async () => {
   page.value = 1
   await fetchTickets()
 }
