@@ -95,7 +95,7 @@ useSeoMeta({
   title: 'Choose Role',
 })
 
-const { user } = useUser()
+const { user, getProfile, setUser } = useUser()
 const { changeGroup, loadingChangeGroup, editItem, loadingEditItem } = useProfile()
 const { hasChosenUserType } = useUserPermissions()
 
@@ -121,6 +121,16 @@ const save = async () => {
 
     const responseEditProfile = await editItem({ group: selectedUserGroup.value })
     if (responseEditProfile.succeeded) {
+      // changeGroup/editItem only return a boolean, not the updated user -
+      // refetch the real profile so `roles` (which hasChosenUserType and
+      // the user-type middleware both gate on) reflects the role we just
+      // set server-side, instead of navigating with a stale roles array
+      // and immediately getting bounced back here.
+      const { data: profileResponse } = await getProfile()
+      if (profileResponse?.succeeded && profileResponse.data) {
+        setUser(profileResponse.data)
+      }
+
       navigateTo('/user')
     }
   }
