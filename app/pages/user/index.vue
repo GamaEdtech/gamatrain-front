@@ -36,13 +36,13 @@
       <user-dashboard-subscription-banner :subscription="dashboardInfo.user.subscription" />
       <user-dashboard-badges-strip :earned-badge-ids="[]" />
       <user-dashboard-statistics
-        :score="dashboardInfo.user.scoreCheckInfo || 0"
-        :unread-message="dashboardInfo.unreadMessages.total || 0"
-        :roles="dashboardInfo.user.roles"
+        :score="dashboardInfo.user.points || 0"
+        :unread-message="dashboardInfo.unreadMessages?.total || 0"
+        :roles="dashboardInfo.user.roles || []"
       />
       <v-row class="w-100 ma-0">
         <v-col
-          v-if="dashboardInfo.user.roles.includes('Student')"
+          v-if="dashboardInfo.user.roles?.includes('Student')"
           cols="12"
           md="8"
           class="pa-0 pr-0 pr-md-2"
@@ -59,11 +59,11 @@
       </v-row>
 
       <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-1 w-100">
-        {{ dashboardInfo.user.roles.includes('Teacher') ? 'Create & Share' : 'Get Involved' }}
+        {{ dashboardInfo.user.roles?.includes('Teacher') ? 'Create & Share' : 'Get Involved' }}
       </p>
       <user-dashboard-create-content-button
         :data="dashboardInfo.stats"
-        :roles="dashboardInfo.user.roles"
+        :roles="dashboardInfo.user.roles || []"
       />
     </template>
   </div>

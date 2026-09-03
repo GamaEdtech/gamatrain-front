@@ -142,6 +142,7 @@ const props = defineProps<{
 }>()
 
 const { formatLocal } = useDateTime()
+const { formatNumber } = useFormatNumber()
 
 const subscription = computed(() => props.subscription)
 
@@ -188,10 +189,6 @@ const totalLimitLabel = computed(() => {
 })
 
 const hasLimitedUsage = computed(() => totalLimit.value > 0)
-
-function formatNumber(value: number) {
-  return new Intl.NumberFormat('en-US').format(value)
-}
 </script>
 
 <style scoped>

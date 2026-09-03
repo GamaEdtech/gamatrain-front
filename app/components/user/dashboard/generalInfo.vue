@@ -41,7 +41,7 @@
             class="text-h5 text-sm-h4 font-weight-bold text-grey300 d-flex align-center"
           >
             <template v-if="userData.handle">
-              <nuxt-link :to="`profile/${userData.handle}`">@{{ userData.handle }}</nuxt-link>
+              <nuxt-link :to="`profile/${encodeURIComponent(userData.handle)}`">@{{ userData.handle }}</nuxt-link>
             </template>
             <template v-else>
               Choose username
@@ -135,7 +135,7 @@ const ringColor = computed(() => (props.userData.roles.includes('Teacher') ? 'pr
 
 const showUsernameModal = ref(false)
 
-const level = computed(() => useLevel(Number(props.userData.scoreCheckInfo) || 0))
+const level = computed(() => useLevel(props.userData.points || 0))
 
 const initials = computed(() => {
   const first = props.userData.firstName?.[0] || ''
