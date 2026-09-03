@@ -190,7 +190,7 @@ const { data: initialData, pending: _loadingDataServer } = await useAsyncData(
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
         'FullName': route.query.title ?? '',
       }
-      return useApiService.get('/api/v2/identities/profiles/list', query)
+      return useApiService.get('/api/v2/identities/profiles/list', query, { public: true })
     }
     else {
       const params = {
@@ -250,12 +250,12 @@ const getDataList = async () => {
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
         'FullName': querySearch.value.title ?? '',
       }
-      response = await useApiService.get('/api/v2/identities/profiles/list', query)
+      response = await useApiService.get('/api/v2/identities/profiles/list', query, { public: true })
       totalDataFind.value = response.data.totalRecordsCount || 0
     }
     else {
       const params = { ...querySearch.value, type: typeRoute, perpage: pageSize }
-      response = await useApiService.get('/api/v1/search', params)
+      response = await useApiService.get('/api/v1/search', params, { public: true })
       totalDataFind.value = response.data.num || 0
     }
 
