@@ -107,10 +107,11 @@
         bg-color="white"
         class="w-100"
         clearable
+        accept=".zip,.png,.jpg,.jpeg,.gif,.webp,.svg"
         prepend-icon=""
         prepend-inner-icon="md:attach_file"
         density="compact"
-        :rules="[fileSizeRule]"
+        :rules="[fileSizeRule, fileTypeRule]"
       />
     </div>
 
@@ -160,6 +161,7 @@ const { required, emailStrict } = useValidationRules()
 const { createTicket } = useTicket()
 const { getToken, initCaptcha, isLoaded } = useRecaptcha()
 
+const allowedFileExtensions = ['zip', 'png', 'jpg', 'jpeg', 'gif', 'webp', 'svg']
 const isFormValid = ref(false)
 const loading = ref(false)
 const form = reactive<{
@@ -199,7 +201,16 @@ const getSelectedFile = () => {
 const fileSizeRule = (value: File | File[] | null) => {
   const file = Array.isArray(value) ? value[0] : value
 
-  return !file || file.size <= 2 * 1024 * 1024 || 'File size must be less than 2MB'
+  return !file || file.size <= 1 * 1024 * 1024 || 'File size must be less than 1MB'
+}
+
+const fileTypeRule = (value: File | File[] | null) => {
+  const file = Array.isArray(value) ? value[0] : value
+  const extension = file?.name.split('.').pop()?.toLowerCase()
+
+  return !file
+    || (!!extension && allowedFileExtensions.includes(extension))
+    || `File type must be one of: ${allowedFileExtensions.join(', ')}`
 }
 
 const submitTicket = async () => {
