@@ -1,37 +1,41 @@
 <template>
   <div class="w-100 d-flex align-center justify-center flex-column mt-4">
     <div class="w-100 d-flex flex-wrap justify-center ga-2 container-card">
-      <v-btn
+      <template
         v-for="item in addOptions"
         :key="item.title"
-        :to="item.path"
-        :disabled="item.disabled"
-        :aria-label="`${item.title} — ${item.typeFile}`"
-        variant="plain"
-        class="card-add-option rounded-xl py-4 px-0"
       >
-        <div class="w-100 d-flex flex-column align-center justify-start ga-1">
-          <div class="icon-div rounded-lg pa-2 d-flex align-center justify-center bg-primary100">
-            <span
-              v-if="item.icon"
-              class="icon-add text-grey700"
-              :class="item.icon"
-            />
-            <v-icon
-              v-if="item.iconMd"
-              color="grey700"
-              size="20"
-            >
-              {{ item.iconMd }}
-            </v-icon>
-          </div>
-          <span class="card-option-title w-100 text-center text-grey700 text-h6 px-1 font-weight-bold mt-1">{{ item.title }}</span>
+        <v-btn
+          v-if="!item.disabled"
+          :to="item.path"
+          :disabled="item.disabled"
+          :aria-label="`${item.title} — ${item.typeFile}`"
+          variant="plain"
+          class="card-add-option rounded-xl py-4 px-0"
+        >
+          <div class="w-100 d-flex flex-column align-center justify-start ga-1">
+            <div class="icon-div rounded-lg pa-2 d-flex align-center justify-center bg-primary100">
+              <span
+                v-if="item.icon"
+                class="icon-add text-grey700"
+                :class="item.icon"
+              />
+              <v-icon
+                v-if="item.iconMd"
+                color="grey700"
+                size="20"
+              >
+                {{ item.iconMd }}
+              </v-icon>
+            </div>
+            <span class="card-option-title w-100 text-center text-grey700 text-h6 px-1 font-weight-bold mt-1">{{ item.title }}</span>
 
-          <span class="text-center text-subtitle-2 font-weight-bold text-grey500 px-2 rounded-pill bg-grey100 chip-type-file">
-            {{ item.typeFile }}
-          </span>
-        </div>
-      </v-btn>
+            <span class="text-center text-subtitle-2 font-weight-bold text-grey500 px-2 rounded-pill bg-grey100 chip-type-file">
+              {{ item.typeFile }}
+            </span>
+          </div>
+        </v-btn>
+      </template>
     </div>
 
     <div class="w-100 bg-primary50 rounded-lg pa-2 d-flex align-center justify-start ga-2 info-card mt-4">
@@ -45,14 +49,14 @@
       </div>
       <div class="d-flex flex-column align-start justify-start ">
         <span class="text-subtitle-1 font-weight-bold text-grey700">Turn your expertise into reputation and income</span>
-        <span class="text-subtitle-2 font-weight-medium text-grey400">Publish educational content to boost your score and earn from sales.</span>
+        <!-- <span class="text-subtitle-2 font-weight-medium text-grey400">Publish educational content to boost your score and earn from sales.</span> -->
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { DEFAULT_BOARD_ID, MULTIMEDIA_CONTENT_TYPE_IDS, PAPER_CLASSIFICATION_IDS } from '@/constants'
+import { DEFAULT_BOARD_ID, PAPER_CLASSIFICATION_IDS } from '@/constants'
 
 const route = useRoute()
 const emit = defineEmits(['close'])
@@ -99,20 +103,20 @@ const addOptions = computed<AddOption[]>(() => [
     typeFile: 'PDF · DOCX',
     disabled: !canAddEducationalContent.value,
   },
-  {
-    path: `/user/multimedia/create?contentType=${MULTIMEDIA_CONTENT_TYPE_IDS.VIDEO}`,
-    title: 'Video',
-    iconMd: 'md:videocam',
-    typeFile: 'MP4',
-    disabled: !canAddEducationalContent.value,
-  },
-  {
-    path: `/user/multimedia/create?contentType=${MULTIMEDIA_CONTENT_TYPE_IDS.PRESENTATION}`,
-    title: 'Presentation',
-    iconMd: 'md:slideshow',
-    typeFile: 'PPTX',
-    disabled: !canAddEducationalContent.value,
-  },
+  // {
+  //   path: `/user/multimedia/create?contentType=${MULTIMEDIA_CONTENT_TYPE_IDS.VIDEO}`,
+  //   title: 'Video',
+  //   iconMd: 'md:videocam',
+  //   typeFile: 'MP4',
+  //   disabled: !canAddEducationalContent.value,
+  // },
+  // {
+  //   path: `/user/multimedia/create?contentType=${MULTIMEDIA_CONTENT_TYPE_IDS.PRESENTATION}`,
+  //   title: 'Presentation',
+  //   iconMd: 'md:slideshow',
+  //   typeFile: 'PPTX',
+  //   disabled: !canAddEducationalContent.value,
+  // },
   {
     path: '/school/add',
     title: 'School',
@@ -120,13 +124,13 @@ const addOptions = computed<AddOption[]>(() => [
     typeFile: 'INFO',
     disabled: false,
   },
-  {
-    path: '/user/question/create',
-    title: 'Q&A',
-    icon: 'icon-q-a',
-    typeFile: 'TEXT',
-    disabled: false,
-  },
+  // {
+  //   path: '/user/question/create',
+  //   title: 'Q&A',
+  //   icon: 'icon-q-a',
+  //   typeFile: 'TEXT',
+  //   disabled: false,
+  // },
   {
     path: '/user/blogs/create',
     title: 'Blogs',

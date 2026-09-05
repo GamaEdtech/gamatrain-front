@@ -228,7 +228,7 @@
       cols="12"
       class="d-flex align-end justify-end ga-2 mt-1 py-0 px-2 max-width-container"
     >
-      <span class="text-h5 text-grey400">Result</span>
+      <span class="text-h5 text-grey400">Results</span>
       <v-skeleton-loader
         v-if="loading"
         width="100"
