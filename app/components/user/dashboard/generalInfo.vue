@@ -41,7 +41,7 @@
             class="text-h5 text-sm-h4 font-weight-bold text-grey300 d-flex align-center"
           >
             <template v-if="userData.handle">
-              <nuxt-link :to="`profile/${encodeURIComponent(userData.handle)}`">@{{ userData.handle }}</nuxt-link>
+              <nuxt-link :to="`profile/${userData.handle}`">@{{ userData.handle }}</nuxt-link>
             </template>
             <template v-else>
               Choose username
