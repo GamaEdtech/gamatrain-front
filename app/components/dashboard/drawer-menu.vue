@@ -362,7 +362,6 @@ const items = computed(() => [
     icon: 'md:mail',
     link: '/user/ticket',
     value: 'messages',
-    status: true,
   },
   {
     title: 'Settings',
