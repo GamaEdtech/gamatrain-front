@@ -46,6 +46,17 @@
         @success="handleTicketCreated"
       />
     </common-modal-base>
+
+    <common-modal-base
+      v-model:show-dialog="showDetailModal"
+      title="Ticket details"
+      :max-width="760"
+    >
+      <user-ticket-modals-detail
+        v-if="selectedTicketId"
+        :ticket-id="selectedTicketId"
+      />
+    </common-modal-base>
   </div>
 </template>
 
@@ -109,7 +120,7 @@ const headers: DataTableHeader<TicketListDTO>[] = [
       {
         icon: 'md:visibility',
         tooltip: 'Details',
-        to: item => `/user/ticket/${item.id}`,
+        onClick: item => openDetailModal(item),
       },
     ],
   },
@@ -123,6 +134,8 @@ const pageSizeOptions = [
   { label: '50 Rows', value: 50 },
 ]
 const showCreateModal = ref(false)
+const showDetailModal = ref(false)
+const selectedTicketId = ref<number | null>(null)
 
 const fetchTickets = async () => {
   await getData({
@@ -144,6 +157,11 @@ const changePageSize = async (newPageSize: number) => {
 
 const openCreateModal = () => {
   showCreateModal.value = true
+}
+
+const openDetailModal = (item: TicketListDTO) => {
+  selectedTicketId.value = item.id
+  showDetailModal.value = true
 }
 
 const handleTicketCreated = async () => {
