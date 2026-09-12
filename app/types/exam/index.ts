@@ -82,6 +82,29 @@ export interface ExamDetaiDTO {
   participateTime: boolean
 }
 
+export interface ExamResultDTO {
+  id: string
+  exam_id: string
+  exam_code: string
+  exam_title: string
+  base: string
+  base_title: string
+  lesson: string
+  lesson_title: string
+  result_score: string
+  status: string
+  subdate: string
+  subdate_jalali: string
+}
+
+export interface GetDataParamsExamResult {
+  page: number
+  pageSize: number
+  section?: string | number
+  base?: string | number
+  lesson?: string | number
+}
+
 export interface TopicExamDetaiDTO {
   id: string
   order: string
