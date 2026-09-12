@@ -129,9 +129,7 @@ const headers: DataTableHeader<ExamResultDTO>[] = [
     key: 'exam_title',
     sortable: false,
     width: '38vw',
-    type: 'link',
     align: 'center',
-    getTo: (item: ExamResultDTO) => `/exam/result/${item.id}`,
   },
   { title: 'Code', key: 'exam_code', sortable: false, width: '8vw' },
   { title: 'Grade', key: 'base_title', sortable: false, width: '10vw' },
@@ -164,7 +162,7 @@ const headers: DataTableHeader<ExamResultDTO>[] = [
       {
         icon: 'md:description',
         tooltip: 'Report card',
-        to: (item: ExamResultDTO) => `/exam/result/${item.id}`,
+        to: (item: ExamResultDTO) => `/user/exam/result/${item.id}`,
         show: (item: ExamResultDTO) => Number(item.status) === 1,
       },
       {
