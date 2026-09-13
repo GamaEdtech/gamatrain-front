@@ -50,11 +50,12 @@
       <v-card
         v-for="(question, index) in questions"
         :key="question.id"
-        class="question-card pa-3 d-flex align-center justify-space-between ga-3 flex-wrap"
+        class="question-card pa-3 d-flex align-center justify-space-between ga-3 flex-wrap cursor-pointer"
         color="grey100"
         flat
         rounded="lg"
         border
+        @click="openQuestionModal(question)"
       >
         <div class="d-flex align-center ga-2">
           <v-avatar
@@ -116,6 +117,38 @@
         </div>
       </v-card>
     </div>
+
+    <common-modal-base
+      v-model:show-dialog="showQuestionModal"
+      title="Question detail"
+      :max-width="760"
+    >
+      <div class="w-100 d-flex flex-column">
+        <test-details
+          v-if="selectedQuestion"
+          :content-data="selectedQuestion"
+          review-mode
+        />
+
+        <div class="w-100 d-flex justify-end mt-4">
+          <v-btn
+            color="primary"
+            rounded="pill"
+            flat
+          >
+            <v-icon
+              color="grey800"
+              size="20"
+            >
+              md:bug_report
+            </v-icon>
+            <span class="text-grey800 text-h6 font-weight-bold">
+              Crash report
+            </span>
+          </v-btn>
+        </div>
+      </div>
+    </common-modal-base>
   </v-card>
 </template>
 
@@ -156,6 +189,13 @@ const guideItems = [
 ]
 
 const questions = computed(() => props.questions || [])
+const showQuestionModal = ref(false)
+const selectedQuestion = ref<ExamResultQuestionDTO | null>(null)
+
+const openQuestionModal = (question: ExamResultQuestionDTO) => {
+  selectedQuestion.value = question
+  showQuestionModal.value = true
+}
 
 const getChoiceStatus = (question: ExamResultQuestionDTO, choice: string) => {
   if (question.true_answer === choice && question.user_answer === choice) return 'success'
