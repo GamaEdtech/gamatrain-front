@@ -135,6 +135,7 @@
             color="primary"
             rounded="pill"
             flat
+            @click="openCrashReportModal"
           >
             <v-icon
               color="grey800"
@@ -148,6 +149,20 @@
           </v-btn>
         </div>
       </div>
+    </common-modal-base>
+
+    <common-modal-base
+      v-model:show-dialog="showCrashReportModal"
+      title="Crash report"
+      :max-width="760"
+    >
+      <common-modal-crash-report
+        v-if="selectedQuestion"
+        :id="selectedQuestion.id"
+        :report-type-list="reportTypeList"
+        type-crash-report="examTest"
+        @close="showCrashReportModal = false"
+      />
     </common-modal-base>
   </v-card>
 </template>
@@ -190,11 +205,29 @@ const guideItems = [
 
 const questions = computed(() => props.questions || [])
 const showQuestionModal = ref(false)
+const showCrashReportModal = ref(false)
 const selectedQuestion = ref<ExamResultQuestionDTO | null>(null)
+const reportTypeList = [
+  {
+    value: 1,
+    label: 'The selected option in the answer sheet is not correct.',
+  },
+  { value: 2, label: 'There is more than one correct option.' },
+  { value: 3, label: 'None of the options are correct.' },
+  { value: 4, label: 'There are typos in questions or options.' },
+  { value: 5, label: 'This test is similar to another test in the same test.' },
+  { value: 6, label: 'There are problems in the descriptive answer.' },
+  { value: 7, label: 'This test is out of budget or topic.' },
+  { value: 8, label: 'Other cases' },
+]
 
 const openQuestionModal = (question: ExamResultQuestionDTO) => {
   selectedQuestion.value = question
   showQuestionModal.value = true
+}
+
+const openCrashReportModal = () => {
+  showCrashReportModal.value = true
 }
 
 const getChoiceStatus = (question: ExamResultQuestionDTO, choice: string) => {
