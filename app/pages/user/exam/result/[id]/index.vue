@@ -1,8 +1,11 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column align-start justify-start px-2 pa-md-0">
-    <div v-if="loadingGetItemById">
-      loading
-    </div>
+    <template v-if="loadingGetItemById">
+      <user-exam-result-header-skeleton />
+      <user-exam-result-overview-skeleton />
+      <user-exam-result-summary-skeleton />
+      <user-exam-result-answers-skeleton />
+    </template>
     <template v-else>
       <user-exam-result-header
         :content-data="contentData"
