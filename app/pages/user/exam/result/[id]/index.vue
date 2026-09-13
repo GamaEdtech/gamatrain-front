@@ -6,7 +6,7 @@
       <user-exam-result-summary-skeleton />
       <user-exam-result-answers-skeleton />
     </template>
-    <template v-else>
+    <template v-else-if="contentData">
       <user-exam-result-header
         :content-data="contentData"
       />
