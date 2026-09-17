@@ -72,6 +72,17 @@
       :delta-price="priceFile"
       @complete-animation="completeWalletAnimation"
     />
+
+    <lazy-common-modal-base
+      v-model:show-dialog="downloadIssue"
+      :max-width="600"
+      title="Download"
+    >
+      <lazy-common-modal-download-file
+        :link="downloadIssueLink"
+        @close="downloadIssue = false"
+      />
+    </lazy-common-modal-base>
   </div>
 </template>
 

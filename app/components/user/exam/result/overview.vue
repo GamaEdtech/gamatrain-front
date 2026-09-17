@@ -39,9 +39,9 @@
           color="grey100"
         >
           <v-img
-            v-if="user?.avatarUri"
-            :src="user?.avatarUri"
-            :alt="fullName"
+            v-if="contentData?.user.avatar"
+            :src="contentData?.user.avatar"
+            :alt="participantName"
           />
           <v-icon
             v-else
@@ -54,7 +54,7 @@
 
         <div class="min-w-0">
           <div class="text-grey800 text-h5 font-weight-bold text-truncate">
-            {{ fullName }}
+            {{ participantName }}
           </div>
           <div class="text-grey500 text-h6 mt-1">
             Code: {{ contentData?.exam.code }}
@@ -86,13 +86,10 @@ const props = defineProps<{
   contentData: ExamResultDetailDTO | null
 }>()
 
-const { user } = useUser()
-const fullName = useFullName(user.value!)
-
-// const participantName = computed(() => {
-//   const user = props.contentData?.user
-//   return `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || '-'
-// })
+const participantName = computed(() => {
+  const user = props.contentData?.user
+  return `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || '-'
+})
 
 const isComplete = computed(() => Number(props.contentData?.userData.status) === 1)
 

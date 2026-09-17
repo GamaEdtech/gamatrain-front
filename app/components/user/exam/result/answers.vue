@@ -207,6 +207,12 @@ const questions = computed(() => props.questions || [])
 const showQuestionModal = ref(false)
 const showCrashReportModal = ref(false)
 const selectedQuestion = ref<ExamResultQuestionDTO | null>(null)
+const {
+  getChoiceStatus: getSharedChoiceStatus,
+  getChoiceClass: getSharedChoiceClass,
+  getQuestionStatusText: getSharedQuestionStatusText,
+  getQuestionChipColor: getSharedQuestionChipColor,
+} = useExamResultChoiceStatus()
 const reportTypeList = [
   {
     value: 1,
@@ -231,30 +237,19 @@ const openCrashReportModal = () => {
 }
 
 const getChoiceStatus = (question: ExamResultQuestionDTO, choice: string) => {
-  if (question.true_answer === choice && question.user_answer === choice) return 'success'
-  if (question.user_answer === choice && question.true_answer !== choice) return 'error'
-  if (question.true_answer === choice) return 'correct'
-
-  return 'default'
+  return getSharedChoiceStatus(question.true_answer, question.user_answer, choice)
 }
 
 const getChoiceClass = (question: ExamResultQuestionDTO, choice: string) => {
-  const status = getChoiceStatus(question, choice)
-
-  if (status === 'success' || status === 'correct') return 'border-success'
-  if (status === 'error') return 'border-lightError'
-
-  return 'border-grey200'
+  return getSharedChoiceClass(getChoiceStatus(question, choice))
 }
 
 const getQuestionStatusText = (question: ExamResultQuestionDTO) => {
-  if (!question.user_answer || question.user_answer === '0') return 'No answer'
-  return question.user_answer === question.true_answer ? 'Correct' : 'Wrong'
+  return getSharedQuestionStatusText(question.true_answer, question.user_answer)
 }
 
 const getQuestionChipColor = (question: ExamResultQuestionDTO) => {
-  if (!question.user_answer || question.user_answer === '0') return 'grey300'
-  return question.user_answer === question.true_answer ? 'success' : 'lightError'
+  return getSharedQuestionChipColor(question.true_answer, question.user_answer)
 }
 </script>
 

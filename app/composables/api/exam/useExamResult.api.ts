@@ -64,6 +64,9 @@ export const useExamResult = () => {
       const response = await useApiService.get<ApiResult<ExamResultDetailDTO>>(
         `/api/v1/exams/result/${id}`,
       )
+      if (response.data == null || response.status != 1) {
+        handleApiResponseError(response)
+      }
 
       return response
     }

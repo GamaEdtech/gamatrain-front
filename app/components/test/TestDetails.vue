@@ -258,6 +258,7 @@ const { smAndUp } = useDisplay()
 
 const chipClass = 'text-subtitle-1 px-3'
 const chipTextClass = 'text-grey500 text-h6 text-sm-h5 font-weight-regular'
+const { getChoiceStatus: getResultChoiceStatus } = useExamResultChoiceStatus()
 
 const chips = computed<TestDetailChip[]>(() => {
   const data = props.contentData
@@ -385,11 +386,7 @@ const checkAndGetPointQuestion = async () => {
 const getChoiceStatus = (choice: string) => {
   if (props.reviewMode) {
     const userAnswer = getUserAnswer()
-    if (choice === props.contentData.true_answer && choice === userAnswer) return 'success'
-    if (choice === userAnswer && choice !== props.contentData.true_answer) return 'error'
-    if (choice === props.contentData.true_answer) return 'correct'
-
-    return 'default'
+    return getResultChoiceStatus(props.contentData.true_answer, userAnswer, choice)
   }
 
   if (isLoadingGetAnswerAndPoint.value) return 'loading'
