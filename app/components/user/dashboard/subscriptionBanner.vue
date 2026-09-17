@@ -93,6 +93,17 @@
               {{ totalLimitLabel }}
             </p>
           </div>
+
+          <v-btn
+            color="primary"
+            variant="tonal"
+            rounded="lg"
+            to="/user/subscription"
+            append-icon="md:chevron_right"
+            class="font-weight-bold flex-shrink-0"
+          >
+            Manage subscription
+          </v-btn>
         </div>
       </div>
     </template>
