@@ -173,6 +173,27 @@
       v-else
       class="w-100 d-flex flex-column align-center justify-start ga-2 choose-plan-section"
     >
+      <div
+        v-if="lapsedPaymentFailureEntry"
+        class="w-100 bg-grey100 border border-warning rounded-lg pa-4 mb-2 d-flex flex-column flex-sm-row align-center justify-space-between ga-3"
+      >
+        <div class="d-flex flex-column align-center align-sm-start">
+          <span class="text-h6 font-weight-bold text-grey700">Your {{ lapsedPaymentFailureEntry.planTitle }} subscription ended</span>
+          <span class="text-h6 text-grey500 text-center text-sm-start">We couldn't process your last payment. Resume to pick up right where you left off.</span>
+        </div>
+        <v-btn
+          rounded="pill"
+          color="primary"
+          height="40"
+          flat
+          class="text-h5 font-weight-bold text-white flex-shrink-0"
+          :loading="loadingStartPaymentSubscription"
+          @click="resumeLapsedSubscription"
+        >
+          Resume subscription
+        </v-btn>
+      </div>
+
       <span class="text-h5 text-grey700 font-weight-bold text-center">Choose a plan to get started</span>
       <span class="text-h6 text-grey500 text-center">
         You don't have an active subscription yet - pick a plan below to unlock premium downloads.
@@ -242,7 +263,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DataTableHeader, FeatureGroupUserSubscriptionDTO } from '@/types'
+import type { DataTableHeader, FeatureGroupUserSubscriptionDTO, PaymentGateway } from '@/types'
 import { BILLING_INTERVAL_PERIOD_LABEL } from '@/constants'
 
 definePageMeta({
@@ -259,6 +280,8 @@ useHead({
 
 const { $numberFormat } = useNuxtApp()
 const { formatLocal } = useDateTime()
+const route = useRoute()
+const { savePathRedirect } = usePayment()
 const {
   userSubscription,
   loadingGetUserSubscription,
@@ -267,6 +290,10 @@ const {
   getUserSubscription,
   cancelSubscription,
   resumeSubscription,
+  userSubscriptionHistory,
+  getUserSubscriptionHistory,
+  startPaymentSubscription,
+  loadingStartPaymentSubscription,
   data: plansData,
   loadingGetData: loadingGetPlansData,
   getData: getPlans,
@@ -314,6 +341,17 @@ const showCancelButton = computed(() => {
 
 const showResumeButton = computed(() => {
   return userSubscription.value?.cancelAtPeriodEnd === true
+})
+
+// Only the most recent history row counts (history is sorted newest-first) - an old payment
+// failure several subscriptions ago shouldn't keep offering a stale "resume" for it. A truly
+// cancelled/expired subscription can't be resumed in place (that's only possible for the
+// cancelAtPeriodEnd-pending case above, via the real me/resume endpoint), so this is a one-click
+// fresh purchase of the same plan/interval instead - see docs/business/subscriptions.md,
+// "Self-service subscription history" (gamatrain-back#675).
+const lapsedPaymentFailureEntry = computed(() => {
+  const latest = userSubscriptionHistory.value[0]
+  return latest?.lastPaymentFailedDate ? latest : null
 })
 
 const renewalBadge = computed(() => {
@@ -501,6 +539,20 @@ const openChangePlanModal = async () => {
   await getPlans()
 }
 
+const resumeLapsedSubscription = async () => {
+  const entry = lapsedPaymentFailureEntry.value
+  if (!entry) return
+
+  const response = await startPaymentSubscription(
+    { gateway: 'Stripe' as PaymentGateway, billingInterval: entry.billingInterval, confirm: true },
+    entry.subscriptionPlanId,
+  )
+  if (response.succeeded && response.data?.url) {
+    savePathRedirect(route.fullPath)
+    window.location.href = response.data.url
+  }
+}
+
 const switchSuccessfully = async () => {
   showChangePlanModal.value = false
   await getUserSubscription()
@@ -510,7 +562,7 @@ onMounted(async () => {
   await getUserSubscription()
 
   if (!userSubscription.value) {
-    await getPlans()
+    await Promise.all([getPlans(), getUserSubscriptionHistory({ page: 1, pageSize: 1 })])
   }
 })
 </script>
