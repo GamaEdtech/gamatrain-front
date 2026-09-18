@@ -13,7 +13,7 @@
       color="primary"
       variant="tonal"
       rounded="pill"
-      to="/contact-us"
+      to="/user/ticket"
       block
     >
       <span class="text-h5 font-weight-bold">
