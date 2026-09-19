@@ -211,7 +211,7 @@ const { data, error, pending } = await useAsyncData(
 if (error.value) {
   if (error.value.statusCode === 400 && error.value.data?.data?.id) {
     if (import.meta.client) {
-      router.push(`/exam/result/${error.value.data.data.id}`)
+      router.push(`/user/exam/result/${error.value.data.data.id}`)
     }
   }
   else {
@@ -373,11 +373,11 @@ const endExam = async () => {
         answers: examStats.answerData,
       },
     )
-    await router.push(`/exam/result/${response.data.id}`)
+    await router.push(`/user/exam/result/${response.data.id}`)
   }
   catch (err) {
     if (err.response?._data?.data?.id) {
-      await router.push(`/exam/result/${err.response._data.data.id}`)
+      await router.push(`/user/exam/result/${err.response._data.data.id}`)
     }
     else {
       console.error('Error submitting exam:', err)

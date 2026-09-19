@@ -70,7 +70,7 @@ const items = [
     subMenuList: [
       { title: 'My Exams', link: '/user/exam', icon: 'mdi-clipboard-list-outline', icon_type: 'custom', status: true },
       { title: 'Albums', link: '/test-maker', icon: 'mdi-image-album', icon_type: 'custom', status: true },
-      { title: 'Results', link: '/exam/results', icon: 'mdi-list-status', icon_type: 'custom', status: true },
+      { title: 'Results', link: '/user/exam/result/list', icon: 'mdi-list-status', icon_type: 'custom', status: true },
     ],
   },
   {
