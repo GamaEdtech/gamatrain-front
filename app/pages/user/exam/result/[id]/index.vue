@@ -42,6 +42,7 @@ useSeoMeta({
 })
 
 const route = useRoute()
+const { getUserToken } = useAuth()
 
 const {
   getItemById,
@@ -55,6 +56,21 @@ const fetchResult = async () => {
   const response = await getItemById(resultId.value)
   if (response.status == 1 && response.data) {
     contentData.value = response.data
+
+    const authToken = getUserToken() ?? ''
+    try {
+      await useApiService.post('/api/v2/games/exams/points',
+        { id: resultId.value },
+        {
+          headers: {
+            SecretKey: authToken,
+          },
+        },
+      )
+    }
+    catch (error) {
+      console.warn('Fetch failed but continuing...', error)
+    }
   }
 }
 
