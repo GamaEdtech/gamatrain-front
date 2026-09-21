@@ -19,7 +19,7 @@
           height="36"
           class="text-h5 d-none d-md-flex font-weight-bold"
         >
-          Go to post
+          Go to posts
         </v-btn>
         <router-link
           to="/post"
