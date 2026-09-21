@@ -394,7 +394,7 @@ const route = useRoute()
 const { $toast, $slugGenerator } = useNuxtApp()
 const { required, arrayNotEmpty } = useValidationRules()
 const { getPost, loadingGetPost, editPost, loadingEditPost } = usePost()
-const originalPublishDate = ref<string | undefined>(undefined)
+const keepPublishDate = ref(false)
 const { data: languages, loadingGetData: loadingGetLanguages, getData: getLanguages } = useLanguage()
 
 const post = ref({
@@ -469,7 +469,7 @@ const mapToCreatePostDTO = () => {
     keywords: post.value.keywords,
     tags: post.value.categories,
     draft: post.value.status === 'Drafted' ? 'true' : 'false',
-    originalPublishDate: originalPublishDate.value,
+    keepPublishDate: keepPublishDate.value,
 
     localizedValues: translations.value?.map(t => ({
       languageId: Number(t.languageId),
@@ -519,7 +519,7 @@ onMounted(async () => {
       : null
     const isScheduled = publishDate && publishDate > new Date()
     if (data.status === 'Confirmed' && publishDate && !isScheduled) {
-      originalPublishDate.value = data.publishDate
+      keepPublishDate.value = true
     }
     post.value = {
       title: data.title,

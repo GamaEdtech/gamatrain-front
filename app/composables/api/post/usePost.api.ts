@@ -198,8 +198,7 @@ export const usePost = () => {
       formData.append('Summary', post.summary || '')
       formData.append('VisibilityType', post.visibilityType)
 
-      // An edit that leaves "Immediately" selected must not move an already-published post's date to now.
-      let publishDate = post.originalPublishDate ?? new Date().toISOString()
+      let publishDate = new Date().toISOString()
       if (post.publishDate === 'Schedule') {
       // Send the selected scheduled date, preserving the selected date without timezone issues
         const selectedDate = new Date(post.scheduledDate!)
@@ -207,7 +206,12 @@ export const usePost = () => {
         selectedDate.setHours(12, 0, 0, 0)
         publishDate = selectedDate.toISOString()
       }
-      formData.append('PublishDate', publishDate)
+      // An edit that leaves "Immediately" selected must not move an already-published post's date to now. The API
+      // keeps the stored date when PublishDate is omitted (and returns dates as MM/dd/yyyy, which it cannot parse
+      // back from a form), so in that case the field is simply not sent.
+      if (!(post.keepPublishDate && post.publishDate !== 'Schedule')) {
+        formData.append('PublishDate', publishDate)
+      }
       formData.append('Slug', post.slug)
       formData.append('Draft', post.draft)
 
