@@ -53,7 +53,7 @@ const route = useRoute()
 const config = useRuntimeConfig()
 
 const includedRouteNames = [
-  'blog-id-slug',
+  'post-id-slug',
   'tutorial-id-slug',
   'qa-id-slug',
   'paper-id-slug',

@@ -216,8 +216,8 @@ const createLink = () => {
   else if (props.category.type == 'school') {
     link = `/school/${props.information.id}/${props.information.slug}`
   }
-  else if (props.category.type == 'blog') {
-    link = `/blog/${props.information.id}/${props.information.slug}`
+  else if (props.category.type == 'post') {
+    link = `/post/${props.information.id}/${props.information.slug}`
   }
   else if (props.category.type == 'teacher') {
     link = `/profile/${props.information.handle}`

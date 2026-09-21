@@ -110,8 +110,8 @@ const addOptions = computed<AddOption[]>(() => [
     disabled: false,
   },
   {
-    path: '/user/blogs/create',
-    title: 'Blogs',
+    path: '/user/posts/create',
+    title: 'Posts',
     iconMd: 'md:art_track',
     typeFile: 'HTML',
     disabled: false,

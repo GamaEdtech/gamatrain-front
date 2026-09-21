@@ -24,9 +24,9 @@
         <div>
           <slot />
         </div>
-        <!-- Blog container -->
-        <lazy-home-blog-container v-if="showBlogSlider" />
-      <!-- End blog container -->
+        <!-- Post container -->
+        <lazy-home-post-container v-if="showPostSlider" />
+      <!-- End post container -->
       </main>
       <lazy-common-footer />
       <menu-bottom-nav-menu v-if="showBottomNavSlider" />
@@ -50,7 +50,7 @@ const { isOnline } = useNetwork()
 const excludedPaths = ['/', '/search', '/school', 'unsubscribe']
 const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate', 'payments-id-verify', 'teacher-id', 'unsubscribe']
 
-const showBlogSlider = computed(() => {
+const showPostSlider = computed(() => {
   return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)
 })
 
