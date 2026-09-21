@@ -263,12 +263,16 @@ const getQuestionChipColor = (question: ExamResultQuestionDTO) => {
 }
 
 .question-card {
-  width: 100%;
+  width: calc(33% - 4px);
 }
-
-@media screen and (min-width: 600px) {
+@media screen and (max-width: 960px) {
   .question-card {
     width: calc(50% - 4px);
+  }
+}
+@media screen and (max-width: 600px) {
+  .question-card {
+    width: 100%;
   }
 }
 </style>

@@ -31,18 +31,16 @@
         border
         min-width="240"
       >
-        <v-progress-circular
-          :model-value="totalStats.percent"
-          :size="150"
-          :width="16"
-          color="success"
-          bg-color="grey200"
-        >
-          <div class="d-flex flex-column align-center justify-center">
+        <div class="chart-container position-relative d-flex align-center justify-center">
+          <DoughnutChart
+            :data="chartData"
+            :options="chartOptions"
+          />
+          <div class="position-absolute d-flex flex-column align-center justify-center">
             <span class="text-grey800 text-h3 font-weight-bold">{{ totalStats.percent }}%</span>
             <span class="text-grey500 text-h6">Score</span>
           </div>
-        </v-progress-circular>
+        </div>
 
         <div class="w-100 d-flex flex-column ga-2">
           <div
@@ -97,7 +95,7 @@
             <span>{{ lesson.num }} Questions</span>
             <span>{{ lesson.true }} Correct</span>
             <span>{{ lesson.false }} Wrong</span>
-            <span>{{ lesson.noanswer }} No answer</span>
+            <span>{{ getNoAnswerCount(lesson) }} No answer</span>
           </div>
         </div>
 
@@ -122,7 +120,24 @@
 </template>
 
 <script setup lang="ts">
+import type { ChartData, ChartOptions } from 'chart.js'
 import type { ExamResultAnswerStatsDTO, ExamResultRankDTO } from '@/types'
+import {
+  ArcElement,
+  Chart as ChartJS,
+  Legend,
+  Tooltip,
+} from 'chart.js'
+import { Doughnut as DoughnutChart } from 'vue-chartjs'
+import { useTheme } from 'vuetify'
+
+ChartJS.register(
+  ArcElement,
+  Tooltip,
+  Legend,
+)
+
+const theme = useTheme()
 
 const props = defineProps<{
   answerStats?: ExamResultAnswerStatsDTO
@@ -130,7 +145,15 @@ const props = defineProps<{
 }>()
 
 const totalStats = computed(() => {
-  return props.answerStats?.total || {
+  const total = props.answerStats?.total
+  if (total) {
+    return {
+      ...total,
+      noAnswer: getNoAnswerCount(total),
+    }
+  }
+
+  return {
     num: 0,
     true: 0,
     false: 0,
@@ -145,9 +168,53 @@ const statItems = computed(() => [
   { label: 'No answer', value: totalStats.value.noAnswer, color: 'grey300' },
 ])
 
+const chartData = computed<ChartData<'doughnut'>>(() => ({
+  labels: ['Correct answers', 'Wrong answers', 'No answer'],
+  datasets: [
+    {
+      data: [
+        totalStats.value.true,
+        totalStats.value.false,
+        totalStats.value.noAnswer,
+      ],
+      backgroundColor: [
+        theme.current.value.colors.success,
+        theme.current.value.colors.lightError,
+        theme.current.value.colors.grey300,
+      ],
+      borderColor: theme.current.value.colors.grey100,
+      borderWidth: 3,
+      hoverOffset: 4,
+    },
+  ],
+}))
+
+const chartOptions = computed<ChartOptions<'doughnut'>>(() => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  cutout: '68%',
+  plugins: {
+    legend: {
+      display: false,
+    },
+    tooltip: {
+      callbacks: {
+        label: (context) => {
+          const value = Number(context.raw || 0)
+          return `${context.label}: ${value}`
+        },
+      },
+    },
+  },
+}))
+
 const lessonStats = computed(() => {
   return Object.values(props.answerStats?.lessons || {})
 })
+
+const getNoAnswerCount = (lesson: { noanswer?: number, noAnswer?: number }) => {
+  return lesson.noanswer ?? lesson.noAnswer ?? 0
+}
 
 const rankItems = computed(() => {
   return [
@@ -162,3 +229,10 @@ const formatRank = (rank?: { user: number, total: string }) => {
   return `${rank.user} of ${rank.total}`
 }
 </script>
+
+<style scoped>
+.chart-container {
+  width: 160px;
+  height: 160px;
+}
+</style>

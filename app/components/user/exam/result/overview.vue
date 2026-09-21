@@ -100,26 +100,44 @@ const overviewItems = computed(() => {
   return [
     { label: 'Started at', value: data.userData.subdate_jalali || data.userData.subdate },
     { label: 'Test duration', value: `${data.exam.azmoon_time} min` },
-    { label: 'Response time', value: formatSeconds(data.userData.submit_time) },
+    { label: 'Response time', value: formatResponseTime(data.userData.submit_time, data.exam.azmoon_time) },
     { label: 'Score', value: data.userData.result_score },
     { label: 'Questions', value: data.exam.tests_num },
     { label: 'Result ID', value: data.userData.id },
   ]
 })
 
-const formatSeconds = (value: string | number) => {
-  const totalSeconds = Number(value)
-  if (!Number.isFinite(totalSeconds) || totalSeconds <= 0) return '0 seconds'
+const TEHRAN_OFFSET_SECONDS = 3.5 * 60 * 60
 
-  const hours = Math.floor(totalSeconds / 3600)
-  const minutes = Math.floor((totalSeconds % 3600) / 60)
-  const seconds = totalSeconds % 60
+const formatResponseTime = (value: string | number, durationMinutes: string | number) => {
+  const totalSeconds = Number(value)
+  if (!Number.isFinite(totalSeconds) || totalSeconds < 0) return '-'
+  if (totalSeconds === 0) return '0 seconds'
+
+  const durationSeconds = Number(durationMinutes) * 60
+  const correctedSeconds = totalSeconds - TEHRAN_OFFSET_SECONDS
+  const shouldApplyTimezoneFix
+    = Number.isFinite(durationSeconds)
+      && durationSeconds > 0
+      && totalSeconds > durationSeconds
+      && correctedSeconds >= 0
+      && correctedSeconds <= durationSeconds
+
+  return formatSeconds(shouldApplyTimezoneFix ? correctedSeconds : totalSeconds)
+}
+
+const formatSeconds = (value: number) => {
+  const hours = Math.floor(value / 3600)
+  const minutes = Math.floor((value % 3600) / 60)
+  const seconds = value % 60
   const parts = []
 
   if (hours) parts.push(`${hours} hour${hours > 1 ? 's' : ''}`)
   if (minutes) parts.push(`${minutes} minute${minutes > 1 ? 's' : ''}`)
   if (seconds || parts.length === 0) parts.push(`${seconds} second${seconds > 1 ? 's' : ''}`)
 
-  return parts.join(' and ')
+  if (parts.length <= 2) return parts.join(' and ')
+
+  return `${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}`
 }
 </script>
