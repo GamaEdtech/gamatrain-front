@@ -50,7 +50,7 @@
       <div
         v-else
         class="value container-body"
-        v-html="contactData?.body"
+        v-safe-html="contactData?.body"
       />
     </div>
 
@@ -85,7 +85,7 @@
         >
           <div
             class="w-100 text-start text-h5 font-weight-bold text-grey900"
-            v-html="item.body"
+            v-safe-html="item.body"
           />
           <span class="w-100 text-end text-subtitle-2 font-weight-regular text-grey700">{{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm") }}</span>
         </div>
