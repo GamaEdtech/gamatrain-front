@@ -1,6 +1,6 @@
 export * from './api'
 export * from './appSetting'
-export * from './blog'
+export * from './post'
 export * from './board'
 export * from './commission'
 export * from './contactus'

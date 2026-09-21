@@ -310,8 +310,8 @@ const items = computed(() => [
         icon_type: 'custom',
       },
       {
-        title: 'Blogs',
-        link: '/user/blogs',
+        title: 'Posts',
+        link: '/user/posts',
         icon: 'md:art_track',
       },
     ],

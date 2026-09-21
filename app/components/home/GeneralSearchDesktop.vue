@@ -204,10 +204,10 @@ const categories = [
     activeColor: '#e3cdb3',
   },
   {
-    title: 'Blog',
-    value: 'Blog',
+    title: 'Post',
+    value: 'Post',
     api: '/api/v2/posts',
-    type: 'blog',
+    type: 'post',
     isOldApi: false,
     keywordSearch: 'Title',
     iconName: 'icon-student',

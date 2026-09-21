@@ -56,7 +56,7 @@ const { user } = useUser()
 const auth = useAuth()
 const { getToken, isLoaded } = useRecaptcha()
 const loadingToken = ref(false)
-const { addItem, loadingAddItem } = useBlogComment()
+const { addItem, loadingAddItem } = usePostComment()
 
 const commentText = ref('')
 
