@@ -152,7 +152,7 @@
       >
         <div
           id="post-describe"
-          v-html="contentData.body"
+          v-safe-html="contentData.body"
         />
       </v-col>
       <v-col
