@@ -210,6 +210,4 @@ onMounted(async () => {
   font-weight: 700;
   word-break: break-word;
 }
-
-:deep(
 </style>
