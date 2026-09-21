@@ -25,45 +25,12 @@
       <!-- End Filter -->
     </v-row>
 
-    <v-row class="flex-column-reverse flex-sm-row">
+    <v-row>
       <resources
         :topical-data="topicalData"
         :data="resourcesData"
         :is-loading="isLoadingResources"
       />
-
-      <!-- Start Image Lesson -->
-      <v-col
-        cols="12"
-        sm="4"
-        md="4"
-        class="position-relative mt-0 mt-sm-n15"
-      >
-        <template v-if="isLoadingResources">
-          <v-skeleton-loader type="image" />
-        </template>
-        <template v-else>
-          <template v-if="imageLesson">
-            <div
-              :class="`d-flex justify-center w-100 h-100 mx-auto max-height-image`"
-            >
-              <!-- <NuxtImg
-                width="300px"
-                :src="imageLesson"
-                placeholder
-                class="rounded-lg w-100 h-100"
-              /> -->
-              <v-img
-                width="300px"
-                :src="imageLesson"
-                cover
-                class="rounded-lg w-100 h-100"
-              />
-            </div>
-          </template>
-        </template>
-      </v-col>
-      <!-- End Image Lesson -->
     </v-row>
 
     <v-row
@@ -161,7 +128,6 @@ const topicalData = ref({
   icon: 'Topical.svg',
   items: [],
 })
-const imageLesson = ref(null)
 // End Section Resources
 
 // Start Section Papers
@@ -319,7 +285,6 @@ const { data: papersResponse } = await useAsyncData(
 
 if (resourcesResponse.value?.data) {
   titleLesson.value = resourcesResponse.value.data.lesson_title
-  imageLesson.value = resourcesResponse.value.data.lesson_pic
   resourcesData.value = resourcesResponse.value.data.list
   const filterTopical = resourcesData.value.filter(
     item => item.title === 'Topical',
@@ -361,7 +326,6 @@ const resetParameter = () => {
   titleLesson.value = ''
   resourcesData.value = []
   topicalData.value.items = []
-  imageLesson.value = null
 }
 
 const fetchDataForNewSubject = async (subject) => {
@@ -378,7 +342,6 @@ const fetchDataForNewSubject = async (subject) => {
 
     if (responseResource.data) {
       titleLesson.value = responseResource.data.lesson_title
-      imageLesson.value = responseResource.data.lesson_pic
       resourcesData.value = responseResource.data.list
       const filterTopical = resourcesData.value.filter(
         item => item.title === 'Topical',
@@ -455,11 +418,6 @@ useHead({
 .margin-top-handle {
   margin-top: 64px;
   min-height: calc(100vh - 64px);
-}
-.max-height-image {
-  max-width: 250px;
-  max-height: 300px;
-  min-height: 300px;
 }
 @media (min-width: 960px) {
   .margin-top-handle {

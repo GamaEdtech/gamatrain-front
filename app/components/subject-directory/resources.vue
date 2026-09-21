@@ -3,8 +3,8 @@
   <v-col
     v-if="isLoading"
     cols="12"
-    sm="8"
-    md="8"
+    sm="12"
+    md="12"
     class="d-flex flex-column"
   >
     <v-skeleton-loader
@@ -19,8 +19,8 @@
   <v-col
     v-if="!isLoading && data.length > 0"
     cols="12"
-    sm="8"
-    md="8"
+    sm="12"
+    md="12"
   >
     <!-- Start Resource Section -->
     <v-list
