@@ -20,6 +20,7 @@ type UseFetchOptions = {
   pick?: string[]
   proxy?: boolean
   public?: boolean
+  signal?: AbortSignal
 }
 
 interface AuthHeaders {

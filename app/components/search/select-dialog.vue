@@ -66,7 +66,7 @@
         </v-text-field>
       </v-row>
       <v-list
-        v-if="!isLoading"
+        v-if="!isLoading && !errorMessage"
         max-height="320"
       >
         <v-list-item
@@ -109,6 +109,22 @@
           color="primary"
         />
       </div>
+
+      <v-alert
+        v-if="errorMessage && !isLoading"
+        type="error"
+        variant="tonal"
+        class="mt-4"
+      >
+        {{ errorMessage }}
+        <v-btn
+          variant="text"
+          class="text-none"
+          @click="emit('retry')"
+        >
+          Retry
+        </v-btn>
+      </v-alert>
 
       <v-alert
         v-if="searchText && filteredItems.length === 0 && !isLoading"
@@ -157,7 +173,8 @@ const HighlightedText = defineComponent({
     const parts = computed(() => {
       if (!props.searchText) return [{ text: props.text, highlight: false }]
 
-      const regex = new RegExp(`(${props.searchText})`, 'gi')
+      const escaped = props.searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      const regex = new RegExp(`(${escaped})`, 'gi')
       const segments = props.text.split(regex)
 
       return segments.map(segment => ({
@@ -173,8 +190,8 @@ const HighlightedText = defineComponent({
           h(
             'span',
             {
-              style: part.highlight
-                ? 'background-color: #FFB600; color: white;'
+              class: part.highlight
+                ? 'bg-primary text-white'
                 : '',
             },
             part.text,
@@ -206,13 +223,17 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  errorMessage: {
+    type: String,
+    default: '',
+  },
   hasSearch: {
     type: Boolean,
     default: true,
   },
 })
 
-const emit = defineEmits(['update:showDialog', 'changeSelectedItem'])
+const emit = defineEmits(['update:showDialog', 'changeSelectedItem', 'retry'])
 
 // Start Section Search Item In List
 const searchText = ref('')
@@ -222,11 +243,6 @@ const filteredItems = computed(() => {
     item.title.toLowerCase().includes(searchText.value.toLowerCase()),
   )
 })
-const _highlightSearchText = (text) => {
-  if (!searchText.value) return text
-  const regex = new RegExp(`(${searchText.value})`, 'gi')
-  return text.replace(regex, '<mark>$1</mark>')
-}
 // End Section Search Item In List
 
 // Start Section Handle Status Modal

@@ -118,6 +118,7 @@
 
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
+import { CAMBRIDGE_BOARD_ID } from '~/constants/pastpaper'
 
 const emit = defineEmits([
   'changeSubject',
@@ -133,6 +134,11 @@ const { loadingGetData: isLoadingBoard, data: boards, getData: fetchBoards } = u
 onMounted(async () => {
   await fetchBoards()
   setBoard()
+  if (!selectedBoard.value) {
+    isLoadingGrades.value = false
+    isLoadingSubjects.value = false
+    return
+  }
   await fetchGrade()
   setGrade()
   await fetchSubject()
@@ -178,25 +184,9 @@ const setBoard = () => {
   isLoadingBoard.value = false
 }
 const setDefaltBoard = () => {
-  const cieBoard = boards.value.find(
-    board => board.title === 'CIE' || board.code === '6659', // CIE ID
-  )
-  if (cieBoard) {
-    selectedBoard.value = cieBoard
-  }
-  else {
-    if (this.boards.length > 0) {
-      selectedBoard.value = this.boards[0]
-    }
-    else {
-      const defaultBoard = {
-        id: '6659',
-        title: 'CIE',
-        name: 'CIE',
-      }
-      selectedBoard.value = defaultBoard
-    }
-  }
+  selectedBoard.value = boards.value.find(
+    board => String(board.code) === String(CAMBRIDGE_BOARD_ID),
+  ) || boards.value[0] || null
 }
 
 const boardChange = async (board) => {

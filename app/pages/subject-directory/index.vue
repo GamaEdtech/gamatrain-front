@@ -33,24 +33,13 @@
       />
     </v-row>
 
-    <v-row
-      class="container-table-time-line d-flex flex-row justify-space-between justify-lg-space-between"
-    >
-      <v-col cols="10">
+    <v-row>
+      <v-col cols="12">
         <paperTable
-          :desktop-header="headerPapersTableDesktop"
-          :mobile-headers="headerPapersTableMobile"
-          :is-loading-papers="isLoadingPapers"
-          :is-loading-infinite-scroll="isLoadingInfiniteScroll"
-          :is-all-data-loaded="isAllPapersLoaded"
-          :data="papers"
-          @load-next-page-data="fetchNextPagePapers"
-        />
-      </v-col>
-      <v-col cols="2">
-        <timeline
-          :timeline="timelineData"
-          :is-loading="loadingTimeline"
+          :subject-id="paperContext.subjectId"
+          :grade-id="paperContext.gradeId"
+          :board-id="paperContext.boardId"
+          :subject-title="paperContext.subjectTitle"
         />
       </v-col>
     </v-row>
@@ -58,17 +47,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
 import breadcrumb from '~/components/widgets/breadcrumb.vue'
 import resources from '~/components/subject-directory/resources.vue'
 import paperTable from '~/components/subject-directory/paper-table.vue'
-import timeline from '~/components/subject-directory/timeline.vue'
 import filterPapers from '~/components/subject-directory/filter-papers.vue'
 
 const route = useRoute()
-const nuxtApp = useNuxtApp()
+const paperContext = ref({
+  subjectId: route.params.subject || route.query.subject || '',
+  boardId: route.query.board || '',
+  gradeId: route.query.grade || '',
+  subjectTitle: '',
+})
 
 // Initial State Bread Crumb
 const breadsCrumb = ref([
@@ -81,6 +74,12 @@ const breadsCrumb = ref([
 ])
 
 const changeFilterForBreadCrumb = (board, grade, subject) => {
+  paperContext.value = {
+    subjectId: subject?.id || '',
+    boardId: board?.code || '',
+    gradeId: grade?.id || '',
+    subjectTitle: subject?.title || '',
+  }
   if (board) {
     const newBoard = {
       text: board.title,
@@ -130,137 +129,6 @@ const topicalData = ref({
 })
 // End Section Resources
 
-// Start Section Papers
-const isLoadingPapers = ref(true)
-const isLoadingInfiniteScroll = ref(false)
-const isAllPapersLoaded = ref(false)
-const pageNumber = ref(1)
-const perPage = 20
-const papers = ref([])
-const selectedSubjectId = ref(route.query.subject ? route.query.subject : '')
-const headerPapersTableDesktop = [
-  {
-    title: 'Classification',
-    align: 'start',
-    value: 'name',
-    icon: 'mdi-format-list-bulleted',
-  },
-  {
-    title: 'Year',
-    align: 'center',
-    value: 'year',
-    icon: 'mdi-format-list-bulleted',
-  },
-  {
-    title: 'Term',
-    align: 'center',
-    value: 'term',
-    icon: 'mdi-format-list-bulleted',
-  },
-  {
-    title: 'Download Files',
-    align: 'center',
-    value: 'downloadFilesContains',
-  },
-  {
-    title: 'ExamHub',
-    align: 'center',
-    value: 'examHubIcon',
-  },
-]
-const headerPapersTableMobile = [
-  { title: 'Classification', value: 'classification' },
-  { title: 'Year', value: 'year' },
-  { title: 'Term', value: 'term' },
-]
-
-const fetchNextPagePapers = async () => {
-  if (selectedSubjectId.value && selectedSubjectId.value.length > 0) {
-    try {
-      isLoadingInfiniteScroll.value = true
-      pageNumber.value += 1
-      const endpointPapers = `/api/v1/tests/search?lesson=${selectedSubjectId.value}&page=${pageNumber.value}&perpage=20&is_paper=true&directory=true`
-      const responsePapers = await useApiService.get(endpointPapers)
-      if (responsePapers) {
-        if (responsePapers.data.list.length < perPage) {
-          isAllPapersLoaded.value = true
-        }
-        papers.value = [...papers.value, ...responsePapers.data.list]
-
-        generateTimeLine()
-      }
-    }
-    catch (error) {
-      console.error('Error fetching search results:', error)
-    }
-    finally {
-      isLoadingInfiniteScroll.value = false
-    }
-  }
-}
-// End Section Papers
-
-// Start Section Timeline
-const loadingTimeline = ref(true)
-const timelineData = ref([])
-const generateTimeLine = () => {
-  const sortedItems = [...papers.value].sort((a, b) => {
-    const yearDiff = parseInt(b.edu_year) - parseInt(a.edu_year)
-    if (yearDiff !== 0) return yearDiff
-    return parseInt(b.edu_month) - parseInt(a.edu_month)
-  })
-
-  const timelineMap = {}
-  let positionCounter = 0
-  sortedItems.forEach((item) => {
-    const year = parseInt(item.edu_year)
-    const monthNumber = parseInt(item.edu_month)
-    const month = nuxtApp
-      .$dayjs()
-      .month(monthNumber - 1)
-      .format('MMM')
-
-    if (!timelineMap[year]) {
-      timelineMap[year] = { months: new Set(), positions: [] }
-    }
-
-    if (!timelineMap[year].months.has(month)) {
-      timelineMap[year].positions.push(positionCounter)
-    }
-
-    timelineMap[year].months.add(month)
-    positionCounter++
-  })
-
-  const MIN_DIFF = 2
-
-  const years = Object.keys(timelineMap).sort((a, b) => b - a)
-
-  for (let i = 1; i < years.length; i++) {
-    const prevYear = years[i - 1]
-    const currentYear = years[i]
-
-    const prevLast = timelineMap[prevYear].positions.at(-1)
-    const currentFirst = timelineMap[currentYear].positions[0]
-
-    if (currentFirst - prevLast === 1) {
-      const offset = MIN_DIFF - 1
-
-      timelineMap[currentYear].positions[0] += offset
-    }
-  }
-
-  timelineData.value = Object.keys(timelineMap)
-    .sort((a, b) => b - a)
-    .map(year => ({
-      year: parseInt(year),
-      months: Array.from(timelineMap[year].months),
-      positions: timelineMap[year].positions,
-    }))
-}
-
-// End Section Timeline
-
 const subjectId = route.params.subject || route.query.subject
 
 const { data: resourcesResponse } = await useAsyncData(
@@ -270,16 +138,6 @@ const { data: resourcesResponse } = await useAsyncData(
     const baseURL = `/api/v1/`
     const endpointResources = `${baseURL}tests/search?is_paper=false&directory=true&lesson=${subjectId}`
     return await useApiService.get(endpointResources)
-  },
-)
-
-const { data: papersResponse } = await useAsyncData(
-  `papersData-${subjectId}`,
-  async () => {
-    if (!subjectId) return null
-    const baseURL = `/api/v1/`
-    const endpointPapers = `${baseURL}tests/search?lesson=${subjectId}&page=1&perpage=20&is_paper=true&directory=true`
-    return await useApiService.get(endpointPapers)
   },
 )
 
@@ -295,34 +153,12 @@ if (resourcesResponse.value?.data) {
   isLoadingResources.value = false
 }
 
-if (papersResponse.value?.data) {
-  papers.value = papersResponse.value.data.list
-  isLoadingPapers.value = false
-}
-
-onMounted(async () => {
-  if (!route.query.subject) {
-    isLoadingResources.value = true
-    isLoadingPapers.value = true
-    loadingTimeline.value = true
-  }
-  if (papers.value.length > 0) {
-    generateTimeLine()
-  }
-  loadingTimeline.value = false
-})
-
 const changeLoadingStatus = () => {
   isLoadingResources.value = true
-  isLoadingPapers.value = true
-  loadingTimeline.value = true
+  paperContext.value = { ...paperContext.value, subjectId: '' }
 }
 
 const resetParameter = () => {
-  timelineData.value = []
-  papers.value = []
-  isAllPapersLoaded.value = false
-  pageNumber.value = 1
   titleLesson.value = ''
   resourcesData.value = []
   topicalData.value.items = []
@@ -331,14 +167,8 @@ const resetParameter = () => {
 const fetchDataForNewSubject = async (subject) => {
   try {
     isLoadingResources.value = true
-    isLoadingPapers.value = true
     const endpointResources = `/api/v1/tests/search?is_paper=false&directory=true&lesson=${subject.id}`
-    const endpointPapers = `/api/v1/tests/search?lesson=${subject.id}&page=1&perpage=20&is_paper=true&directory=true`
-
-    const [responseResource, responsePapers] = await Promise.all([
-      useApiService.get(endpointResources),
-      useApiService.get(endpointPapers),
-    ])
+    const responseResource = await useApiService.get(endpointResources)
 
     if (responseResource.data) {
       titleLesson.value = responseResource.data.lesson_title
@@ -350,32 +180,23 @@ const fetchDataForNewSubject = async (subject) => {
         topicalData.value.items = filterTopical[0].items
       }
     }
-
-    if (responsePapers.data) {
-      papers.value = responsePapers.data.list
-      generateTimeLine()
-    }
   }
   catch (error) {
     console.error('error', error)
   }
   finally {
     isLoadingResources.value = false
-    loadingTimeline.value = false
-    isLoadingPapers.value = false
   }
 }
 
 const changeSubject = (subject) => {
   resetParameter()
   if (subject && subject.id) {
-    selectedSubjectId.value = subject.id
+    paperContext.value = { ...paperContext.value, subjectId: subject.id, subjectTitle: subject.title || '' }
     fetchDataForNewSubject(subject)
   }
   else {
     isLoadingResources.value = false
-    loadingTimeline.value = false
-    isLoadingPapers.value = false
   }
 }
 

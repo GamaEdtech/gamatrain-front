@@ -61,6 +61,7 @@
 
 <script setup>
 import dayjs from 'dayjs'
+import { getPastPaperMonths, PAST_PAPER_MONTHS_BY_GRADE as specialMonths, PAST_PAPER_YEAR_OPTIONS } from '~/constants/pastpaper/sessions'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
@@ -277,112 +278,6 @@ const getDataList = async () => {
   }
 }
 
-const allMonths = [
-  { id: 1, title: 'January' },
-  { id: 2, title: 'February' },
-  { id: 3, title: 'March' },
-  { id: 4, title: 'April' },
-  { id: 5, title: 'May' },
-  { id: 6, title: 'June' },
-  { id: 7, title: 'July' },
-  { id: 8, title: 'August' },
-  { id: 9, title: 'September' },
-  { id: 10, title: 'October' },
-  { id: 11, title: 'November' },
-  { id: 12, title: 'December' },
-]
-
-const specialMonths = {
-  4161: [
-    { id: 3, title: 'March' },
-    { id: 6, title: 'May/Jun' },
-    { id: 11, title: 'Oct/Nov' },
-  ],
-  22: [
-    { id: 3, title: 'March' },
-    { id: 6, title: 'May/Jun' },
-    { id: 11, title: 'Oct/Nov' },
-  ],
-  6374: [
-    { id: 6, title: 'May/Jun' },
-    { id: 11, title: 'Oct/Nov' },
-  ],
-  23: [
-    { id: 6, title: 'May/Jun' },
-    { id: 11, title: 'Oct/Nov' },
-  ],
-  6533: [
-    { id: 6, title: 'May/Jun' },
-    { id: 11, title: 'Oct/Nov' },
-  ],
-  6635: [
-    { id: 3, title: 'March' },
-    { id: 4, title: 'April' },
-    { id: 5, title: 'May' },
-    { id: 10, title: 'October' },
-  ],
-  6639: [
-    { id: 3, title: 'March' },
-    { id: 4, title: 'April' },
-    { id: 5, title: 'May' },
-    { id: 10, title: 'October' },
-  ],
-  // AQA-GCSE
-  6672: [
-    { id: 6, title: 'June' },
-    { id: 11, title: 'November' },
-  ],
-  // AQA-AS LEVEL
-  6673: [{ id: 6, title: 'June' }],
-  // AQA-A LEVEL
-  6674: [{ id: 6, title: 'June' }],
-  // OCR GCSE
-  6676: [
-    { id: 6, title: 'June' },
-    { id: 11, title: 'November' },
-  ],
-  // OCR AS LEVEL
-  6677: [
-    { id: 6, title: 'June' },
-    { id: 11, title: 'Oct/Nov' },
-  ],
-  // OCR A LEVEL
-  6678: [
-    { id: 6, title: 'June' },
-    { id: 11, title: 'Oct/Nov' },
-  ],
-  // Edexcel A LEVEL
-  6671: [
-    { id: 6, title: 'May/Jun' },
-    { id: 11, title: 'Oct/Nov' },
-  ],
-  // Edexcel AS LEVEL
-  6675: [
-    { id: 6, title: 'May/Jun' },
-    { id: 11, title: 'Oct/Nov' },
-  ],
-  // Edexcel GCSE
-  6669: [
-    { id: 6, title: 'May/Jun' },
-    { id: 11, title: 'Oct/Nov' },
-  ],
-  // Edexcel International A/AS LEVEL
-  6670: [
-    { id: 1, title: 'January' },
-    { id: 4, title: 'April' },
-    { id: 6, title: 'June' },
-    { id: 10, title: 'October' },
-    { id: 11, title: 'November' },
-  ],
-  // Edexcel International GCSE
-  6668: [
-    { id: 1, title: 'January' },
-    { id: 4, title: 'April' },
-    { id: 6, title: 'June' },
-    { id: 10, title: 'October' },
-    { id: 11, title: 'November' },
-  ],
-}
 const FILTER_INDEX = {
   Board: 0,
   Grade: 1,
@@ -579,12 +474,7 @@ const filters = [
         disableIds: ['learnfiles', 'dars', 'question', 'multimedia', 'tutorial', 'forum'],
       },
     ],
-    staticList: Array.from({ length: 14 }, (_, i) => 2013 + i)
-      .reverse()
-      .map(year => ({
-        title: `${year}`,
-        id: year,
-      })),
+    staticList: PAST_PAPER_YEAR_OPTIONS,
     queryKey: 'edu_year',
     closable: true,
     children: [],
@@ -610,9 +500,7 @@ const filters = [
     dependenciesForGetStaticData: [FILTER_INDEX.Grade],
     getStaticList: (id = route.query.base) => {
       const gradeId = id ? id : route.query.base
-      return gradeId && specialMonths[gradeId]
-        ? specialMonths[gradeId]
-        : allMonths
+      return getPastPaperMonths(gradeId)
     },
     queryKey: 'edu_month',
     closable: true,
