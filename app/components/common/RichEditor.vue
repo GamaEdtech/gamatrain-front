@@ -139,6 +139,69 @@ const SvgPreview = function (editor) {
   })
 }
 
+const { $ensureMathJaxReady, $renderMathInElement } = useNuxtApp()
+
+const renderMath = async (element) => {
+  try {
+    await $ensureMathJaxReady()
+    $renderMathInElement(element)
+  }
+  catch {
+    // MathJax could not load: the raw \( ... \) text simply stays visible.
+  }
+}
+
+// Draws <span class="math-tex">\(...\)</span> formulas with the same MathJax the post page uses. Each one becomes an
+// inline object in the editor, and is written back as exactly the same span, so the saved HTML does not change. Spans
+// that carry anything else (extra attributes, styles, nested markup) are left as ordinary content. To change a
+// formula, use the Source view.
+const createMathTexPreview = ({ toWidget }) => function (editor) {
+  // CKEditor writes the space in front of an inline object as &nbsp;; put it back so saving a post does not rewrite
+  // every "word \(x\)" in the stored HTML.
+  const processor = editor.data.processor
+  const toData = processor.toData.bind(processor)
+  processor.toData = fragment => toData(fragment).replaceAll('&nbsp;<span class="math-tex">', ' <span class="math-tex">')
+
+  editor.model.schema.register('mathTex', {
+    inheritAllFrom: '$inlineObject',
+    allowAttributes: ['equation'],
+  })
+
+  editor.conversion.for('upcast').elementToElement({
+    view: { name: 'span', classes: 'math-tex' },
+    model: (viewElement, { writer }) => {
+      const child = viewElement.getChild(0)
+      const onlyClass = [...viewElement.getAttributeKeys()].every(key => key === 'class')
+      if (viewElement.childCount !== 1 || !child.is('$text') || !onlyClass || viewElement.getClassNames().length !== 1) {
+        return null
+      }
+      return writer.createElement('mathTex', { equation: child.data })
+    },
+    converterPriority: 'high',
+  })
+
+  editor.conversion.for('dataDowncast').elementToElement({
+    model: 'mathTex',
+    // A raw element (not a container) so the spaces around a formula are not turned into &nbsp; on save.
+    view: (modelElement, { writer }) =>
+      writer.createRawElement('span', { class: 'math-tex' }, (domElement) => {
+        domElement.textContent = modelElement.getAttribute('equation')
+      }),
+  })
+
+  editor.conversion.for('editingDowncast').elementToElement({
+    model: 'mathTex',
+    view: (modelElement, { writer }) => {
+      const equation = modelElement.getAttribute('equation')
+      const preview = writer.createRawElement('span', { class: 'math-tex-preview' }, (domElement) => {
+        domElement.textContent = equation
+        renderMath(domElement)
+      })
+      return toWidget(writer.createContainerElement('span', { class: 'math-tex' }, [preview]), writer)
+    },
+  })
+}
+
 const LazyCkeditor = defineAsyncComponent({
   loader: async () => {
     const ck = await import('ckeditor5')
@@ -160,7 +223,7 @@ const LazyCkeditor = defineAsyncComponent({
       selectedFeatures = ['bold', 'italic']
     }
 
-    const plugins = [Essentials, Paragraph, SvgPreview]
+    const plugins = [Essentials, Paragraph, SvgPreview, ck.Widget, createMathTexPreview(ck)]
     const toolbar = ['undo', 'redo', '|']
 
     selectedFeatures.forEach((feature) => {
