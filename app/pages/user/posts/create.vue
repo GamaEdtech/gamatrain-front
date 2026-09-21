@@ -292,10 +292,7 @@
         @delete="removeTranslation(index)"
       />
 
-      <v-col
-        cols="12"
-        class="d-flex justify-center align-center ga-2 mt-4"
-      >
+      <user-posts-form-actions above-mobile-nav>
         <v-btn
           color="primary"
           rounded="pill"
@@ -319,7 +316,7 @@
         >
           Add Language
         </v-btn>
-      </v-col>
+      </user-posts-form-actions>
 
       <user-posts-modals-slug
         v-model:show-dialog="showSlugModal"
