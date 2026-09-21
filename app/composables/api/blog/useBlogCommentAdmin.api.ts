@@ -35,7 +35,7 @@ export const useBlogCommentAdmin = () => {
       }
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<CommnetBlogAdminDTO>>
-      >(`/api/v2/admin/blogs/posts/comments/contributions`, query)
+      >(`/api/v2/admin/posts/comments`, query)
       if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
@@ -56,23 +56,19 @@ export const useBlogCommentAdmin = () => {
     }
   }
 
+  // The admin comment list already carries the comment text and its post title, and the backend no
+  // longer has a separate detail endpoint, so the detail view reads from the loaded list.
   const getItemById = async (id: string) => {
     loadingGetItemById.value = true
     try {
-      const response = await useApiService.get<
-        ApiResult<CommnetBlogDetailAdminDTO>
-      >(`/api/v2/admin/blogs/posts/comments/contributions/${id}`)
-
-      if (!response.succeeded) {
-        handleApiResponseError(response)
+      const item = data.value.find(t => String(t.id) === String(id))
+      if (!item) {
+        return { succeeded: false, data: undefined, errors: [] } as unknown as ApiResult<CommnetBlogDetailAdminDTO>
       }
-
-      return response
-    }
-    catch (err: unknown) {
-      handleApiCatchError(err)
-
-      return createApiFailure<CommnetBlogDetailAdminDTO>(err)
+      return {
+        succeeded: true,
+        data: { id: item.id, postId: item.postId, postTitle: item.postTitle, comment: item.comment },
+      } as unknown as ApiResult<CommnetBlogDetailAdminDTO>
     }
     finally {
       loadingGetItemById.value = false
@@ -85,7 +81,7 @@ export const useBlogCommentAdmin = () => {
       const response = await useApiService.patch<
         ApiResult<boolean>
       >(
-        `/api/v2/admin/blogs/posts/comments/contributions/${id}/confirm`,
+        `/api/v2/admin/posts/comments/${id}/confirm`,
         {},
       )
       if (response.succeeded) {
@@ -111,7 +107,7 @@ export const useBlogCommentAdmin = () => {
       const response = await useApiService.patch<
         ApiResult<boolean>
       >(
-        `/api/v2/admin/blogs/posts/comments/contributions/${id}/reject`,
+        `/api/v2/admin/posts/comments/${id}/reject`,
         {
           comment,
         },

@@ -10,6 +10,7 @@ export interface BlogDTO {
   publishDate: string
 }
 export interface BlogUserDTO {
+  id: number
   title: string
   slug: string
   summary: string
@@ -17,11 +18,11 @@ export interface BlogUserDTO {
   imageUri: string
   podcastUri: string
   keywords: string
-  postId: number
   visibilityType: string
   publishDate: string
   tags: number[]
-  draft: boolean
+  status: BlogUserBreifDTOStatus
+  rejectionComment: string | null
   localizedValues: LocalizedValueDTO[]
 }
 
@@ -89,6 +90,9 @@ export interface CommnetBlogAdminDTO {
   creationUser: string
   creationDate: string
   postId: number
+  postTitle: string
+  comment: string
+  rejectionComment: string | null
   status: CommentBlogStatus
 }
 
@@ -102,12 +106,11 @@ export interface CommnetBlogDetailAdminDTO {
 export type BlogUserBreifDTOStatus = 'Draft' | 'Review' | 'Confirmed' | 'Rejected' | 'Deleted'
 export interface BlogUserBreifDTO {
   id: number
-  comment: string
+  rejectionComment: string | null
   status: BlogUserBreifDTOStatus
   creationUser: string
   creationDate: string
   title: string
-  postId: number
 }
 
 export interface BlogCreateDTO {
@@ -166,12 +169,11 @@ export type AdminBlogContributionStatus = 'Draft' | 'Review' | 'Confirmed' | 'Re
 
 export interface AdminBlogContributionDTO {
   id: number
-  comment: string
+  rejectionComment: string | null
   status: AdminBlogContributionStatus
   creationUser: string
   creationDate: string
   title: string
-  postId: number
 }
 
 export interface AdminBlogContributionLocalizedValueDTO {
@@ -182,6 +184,7 @@ export interface AdminBlogContributionLocalizedValueDTO {
 }
 
 export interface AdminBlogContributionDetailDTO {
+  id: number
   title: string
   slug: string
   summary: string
@@ -189,11 +192,11 @@ export interface AdminBlogContributionDetailDTO {
   imageUri: string | null
   podcastUri: string | null
   keywords: string | null
-  postId: number
   visibilityType: string
   publishDate: string
   tags: number[]
-  draft: boolean
+  status: AdminBlogContributionStatus
+  rejectionComment: string | null
   localizedValues: AdminBlogContributionLocalizedValueDTO[]
 }
 

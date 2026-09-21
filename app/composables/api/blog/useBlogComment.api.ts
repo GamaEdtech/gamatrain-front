@@ -32,7 +32,7 @@ export const useBlogComment = () => {
       }
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<CommentBlogDTO>>
-      >(`/api/v2/blogs/posts/${postId}/comments`, query)
+      >(`/api/v2/posts/${postId}/comments`, query)
       if (response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
@@ -59,7 +59,7 @@ export const useBlogComment = () => {
       const response = await useApiService.post<
         ApiResult<AddCommentBlogResponseDTO>
       >(
-        `/api/v2/blogs/posts/${postId}/comments`,
+        `/api/v2/posts/${postId}/comments`,
         { ...item },
       )
       if (response.succeeded) {
@@ -97,7 +97,7 @@ export const useBlogComment = () => {
       const response = await useApiService.patch<
         ApiResult<boolean>
       >(
-        `/api/v2/blogs/posts/${postId}/comments/${commentId}/like`,
+        `/api/v2/posts/${postId}/comments/${commentId}/like`,
         {},
       )
       if (response.succeeded) {
@@ -134,7 +134,7 @@ export const useBlogComment = () => {
       const response = await useApiService.patch<
         ApiResult<boolean>
       >(
-        `/api/v2/blogs/posts/${postId}/comments/${commentId}/dislike`,
+        `/api/v2/posts/${postId}/comments/${commentId}/dislike`,
         {},
       )
       if (response.succeeded) {

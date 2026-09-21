@@ -165,7 +165,7 @@ const headers: DataTableHeader<BlogUserBreifDTO>[] = [
       {
         icon: 'md:visibility',
         tooltip: 'View',
-        to: (item: BlogUserBreifDTO) => `/blog/${item.postId}`,
+        to: (item: BlogUserBreifDTO) => `/blog/${item.id}`,
         target: '_blank',
       },
       {

@@ -520,7 +520,7 @@ onMounted(async () => {
       title: data.title,
       content: data.body,
       summary: data.summary,
-      status: data.draft ? 'Drafted' : 'Published',
+      status: data.status === 'Draft' ? 'Drafted' : 'Published',
       visibility: data.visibilityType,
       publishTime: isScheduled ? 'Schedule' : 'Immediately',
       scheduledDate: isScheduled ? data.publishDate : '',

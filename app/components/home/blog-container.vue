@@ -74,7 +74,7 @@ const route = useRoute()
 const loadBlog = async () => {
   isLoading.value = true
   try {
-    const response = await useApiService.get<ApiResult<ResponseListDTO<BlogDTO>>>('/api/v2/blogs/posts/random', {
+    const response = await useApiService.get<ApiResult<ResponseListDTO<BlogDTO>>>('/api/v2/posts/random', {
       Size: 10,
     },
     { public: true })

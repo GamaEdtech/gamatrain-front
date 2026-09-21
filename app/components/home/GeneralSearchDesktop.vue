@@ -206,7 +206,7 @@ const categories = [
   {
     title: 'Blog',
     value: 'Blog',
-    api: '/api/v2/blogs/posts',
+    api: '/api/v2/posts',
     type: 'blog',
     isOldApi: false,
     keywordSearch: 'Title',

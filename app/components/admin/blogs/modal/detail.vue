@@ -190,7 +190,7 @@ const detailFields = computed<DetailField[]>(() => {
     { key: 'slug', label: 'Slug :', value: blogDetail.value.slug, full: true },
     { key: 'summary', label: 'Summary :', value: blogDetail.value.summary, full: true },
     { key: 'keywords', label: 'Keywords :', value: blogDetail.value.keywords || '', full: true },
-    { key: 'postId', label: 'Post ID :', value: blogDetail.value.postId },
+    { key: 'postId', label: 'Post ID :', value: blogDetail.value.id },
     { key: 'visibilityType', label: 'Visibility :', value: blogDetail.value.visibilityType },
     {
       key: 'publishDate',
@@ -199,7 +199,7 @@ const detailFields = computed<DetailField[]>(() => {
         ? dayjs(blogDetail.value.publishDate).format('DD/MM/YYYY HH:mm:ss')
         : '',
     },
-    { key: 'draft', label: 'Draft :', value: blogDetail.value.draft ? 'Yes' : 'No' },
+    { key: 'status', label: 'Status :', value: blogDetail.value.status },
     { key: 'tags', label: 'Tags :', value: blogDetail.value.tags.join(', '), full: true },
   ]
 

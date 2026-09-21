@@ -31,13 +31,13 @@ export const useBlog = () => {
         'PagingDto.PageFilter.Skip': (page - 1) * pageSize,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
         // Status is optional on the backend - omitting it (null, dropped from the query string) returns
-        // every status, which is the desired default so users see all their contributions, not just
+        // every status, which is the desired default so users see all their posts, not just
         // Confirmed ones.
         'Status': status ?? null,
       }
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<BlogUserBreifDTO>>
-      >('/api/v2/blogs/contributions', query)
+      >('/api/v2/posts/mine', query)
       if (response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
@@ -66,7 +66,7 @@ export const useBlog = () => {
       }
       const response = await useApiService.get<
         ApiResult<boolean>
-      >('/api/v2/blogs/slugs/validate', query)
+      >('/api/v2/posts/slugs/validate', query)
       if (response.data) {
         $toast.success('The selected slug is ready, you can save it.')
         return true
@@ -96,7 +96,7 @@ export const useBlog = () => {
       }
       const response = await useApiService.get<
         ApiResult<string>
-      >('/api/v2/blogs/slugs/generate', query)
+      >('/api/v2/posts/slugs/generate', query)
       if (response.succeeded) {
         $toast.success('Slug saved successfully!')
         return response
@@ -164,7 +164,7 @@ export const useBlog = () => {
 
       const response = await useApiService.post<
         ApiResult<string>
-      >('/api/v2/blogs/contributions', formData)
+      >('/api/v2/posts', formData)
       if (response.succeeded) {
         $toast.success('Blog created successfully!')
       }
@@ -242,7 +242,7 @@ export const useBlog = () => {
 
       const response = await useApiService.put<
         ApiResult<string>
-      >(`/api/v2/blogs/contributions/${id}`, formData)
+      >(`/api/v2/posts/${id}`, formData)
       if (response.succeeded) {
         $toast.success('Blog Edited successfully!')
       }
@@ -272,7 +272,7 @@ export const useBlog = () => {
     try {
       const response = await useApiService.get<
         ApiResult<BlogUserDTO>
-      >(`/api/v2/blogs/contributions/${id}`)
+      >(`/api/v2/posts/mine/${id}`)
       return response
     }
     catch (err: unknown) {

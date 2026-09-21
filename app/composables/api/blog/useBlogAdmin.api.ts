@@ -28,7 +28,7 @@ export const useBlogAdmin = () => {
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<AdminBlogContributionDTO>>
       >(
-        '/api/v2/admin/blogs/contributions',
+        '/api/v2/admin/posts',
         {
           'PagingDto.PageFilter.Size': params.pageSize,
           'PagingDto.PageFilter.Skip': (params.page - 1) * params.pageSize,
@@ -74,7 +74,7 @@ export const useBlogAdmin = () => {
 
     try {
       const response = await useApiService.get<ApiResult<AdminBlogContributionDetailDTO>>(
-        `/api/v2/admin/blogs/contributions/${id}`,
+        `/api/v2/admin/posts/${id}`,
       )
 
       if (!response.succeeded || !response.data) {
@@ -98,7 +98,7 @@ export const useBlogAdmin = () => {
 
     try {
       const response = await useApiService.patch<ApiResult<boolean>>(
-        `/api/v2/admin/blogs/contributions/${id}/confirm`,
+        `/api/v2/admin/posts/${id}/confirm`,
         {},
       )
 
@@ -126,7 +126,7 @@ export const useBlogAdmin = () => {
 
     try {
       const response = await useApiService.patch<ApiResult<boolean>>(
-        `/api/v2/admin/blogs/contributions/${id}/reject`,
+        `/api/v2/admin/posts/${id}/reject`,
         { comment },
       )
 
@@ -154,7 +154,7 @@ export const useBlogAdmin = () => {
 
     try {
       const response = await useApiService.remove<ApiResult<boolean>>(
-        `/api/v2/admin/blogs/posts/${postId}`,
+        `/api/v2/admin/posts/${postId}`,
       )
 
       if (response.succeeded) {

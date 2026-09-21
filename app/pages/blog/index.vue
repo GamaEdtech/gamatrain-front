@@ -566,7 +566,7 @@ const { data: initialBlogs, pending: loadingBlogsServer } = await useAsyncData(
       'TagId': route.query.cat ? route.query.cat : null,
       'Title': route.query.keyword || '',
     }
-    return useApiService.get('/api/v2/blogs/posts', params)
+    return useApiService.get('/api/v2/posts', params)
   },
 )
 
@@ -607,7 +607,7 @@ const getBlogList = async () => {
   }
 
   try {
-    const response = await useApiService.get('/api/v2/blogs/posts', params)
+    const response = await useApiService.get('/api/v2/posts', params)
     const data = response.data
     pageCount.value = Math.ceil(data.totalRecordsCount / pageSize.value)
 

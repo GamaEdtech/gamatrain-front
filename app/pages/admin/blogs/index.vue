@@ -166,7 +166,7 @@ const headers: DataTableHeader<AdminBlogContributionDTO>[] = [
       {
         icon: 'md:arrow_circle_right',
         tooltip: 'Blog Page',
-        href: (item: AdminBlogContributionDTO) => `/posts/${item.postId}`,
+        href: (item: AdminBlogContributionDTO) => `/blog/${item.id}`,
         target: '_blank',
       },
     ],
@@ -253,7 +253,7 @@ const openDetailModal = (item: AdminBlogContributionDTO) => {
 }
 
 // const openDeleteModal = (item: AdminBlogContributionDTO) => {
-//   selectedPostIdForDelete.value = item.postId
+//   selectedPostIdForDelete.value = item.id
 //   showDeleteModal.value = true
 // }
 
