@@ -31,77 +31,11 @@
       </div>
 
       <div
-        v-if="postDetail.imageUri"
-        class="detail-item w-100 flex-column"
+        v-if="canReject"
+        class="w-100 d-flex flex-column align-start justify-start ga-1"
       >
-        <span class="label">Image :</span>
-        <img
-          :src="postDetail.imageUri"
-          width="220"
-          class="rounded-lg post-image"
-          alt="Post image"
-        >
-      </div>
-
-      <div
-        v-if="postDetail.podcastUri"
-        class="detail-item w-100 flex-column"
-      >
-        <span class="label">Podcast :</span>
-        <audio
-          controls
-          :src="postDetail.podcastUri"
-          class="w-100"
-        />
-      </div>
-
-      <div
-        v-if="postDetail.body"
-        class="detail-item w-100 flex-column"
-      >
-        <span class="label">Body :</span>
-        <div
-          class="value body-content"
-          v-html="postDetail.body"
-        />
-      </div>
-
-      <div
-        v-if="postDetail.localizedValues?.length"
-        class="detail-item w-100 flex-column"
-      >
-        <span class="label">Localized Values :</span>
-
-        <div
-          v-for="item in postDetail.localizedValues"
-          :key="item.languageId"
-          class="localized-box"
-        >
-          <div class="detail-item w-100">
-            <span class="label">Language ID :</span>
-            <span class="value">{{ item.languageId }}</span>
-          </div>
-          <div class="detail-item w-100">
-            <span class="label">Title :</span>
-            <span class="value">{{ item.title }}</span>
-          </div>
-          <div class="detail-item w-100">
-            <span class="label">Summary :</span>
-            <span class="value">{{ item.summary }}</span>
-          </div>
-          <div class="detail-item w-100 flex-column">
-            <span class="label">Body :</span>
-            <div
-              class="value body-content"
-              v-html="item.body"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div class="text-h6 text-grey700 ml-2">
-          You can write a message to reject.
+          Write the reason to reject.
         </div>
         <v-text-field
           v-model="commentReject"
@@ -122,11 +56,12 @@
 
     <div class="w-100 d-flex align-center ga-2 mt-8">
       <v-btn
+        v-if="canApprove"
         color="success"
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 w-50"
+        class="text-h5 flex-1-1"
         :disabled="loading"
         :loading="loadingConfirm || loadingReject"
         flat
@@ -135,17 +70,30 @@
         Approve
       </v-btn>
       <v-btn
+        v-if="canReject"
         color="error"
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 w-50"
+        class="text-h5 flex-1-1"
         :disabled="loading || !commentReject"
         :loading="loadingConfirm || loadingReject"
         flat
         @click="rejectItem"
       >
         Reject
+      </v-btn>
+      <v-btn
+        v-if="postDetail"
+        color="primary"
+        rounded="xl"
+        variant="outlined"
+        height="40"
+        class="text-h5 flex-1-1"
+        :to="`/admin/posts/edit/${postDetail.id}`"
+        flat
+      >
+        Edit
       </v-btn>
     </div>
   </div>
@@ -182,15 +130,17 @@ const {
 const postDetail = ref<AdminPostDetailDTO | null>(null)
 const commentReject = ref('')
 
+// Review can go either way; a Confirmed post can be pulled back (rejected) and a Rejected one re-approved.
+const canApprove = computed(() => ['Review', 'Rejected'].includes(postDetail.value?.status ?? ''))
+const canReject = computed(() => ['Review', 'Confirmed'].includes(postDetail.value?.status ?? ''))
+
 const detailFields = computed<DetailField[]>(() => {
   if (!postDetail.value) return []
 
   const fields: DetailField[] = [
     { key: 'title', label: 'Title :', value: postDetail.value.title, full: true },
-    { key: 'slug', label: 'Slug :', value: postDetail.value.slug, full: true },
-    { key: 'summary', label: 'Summary :', value: postDetail.value.summary, full: true },
-    { key: 'keywords', label: 'Keywords :', value: postDetail.value.keywords || '', full: true },
     { key: 'postId', label: 'Post ID :', value: postDetail.value.id },
+    { key: 'status', label: 'Status :', value: postDetail.value.status },
     { key: 'visibilityType', label: 'Visibility :', value: postDetail.value.visibilityType },
     {
       key: 'publishDate',
@@ -199,8 +149,7 @@ const detailFields = computed<DetailField[]>(() => {
         ? dayjs(postDetail.value.publishDate).format('DD/MM/YYYY HH:mm:ss')
         : '',
     },
-    { key: 'status', label: 'Status :', value: postDetail.value.status },
-    { key: 'tags', label: 'Tags :', value: postDetail.value.tags.join(', '), full: true },
+    { key: 'rejectionComment', label: 'Rejection reason :', value: postDetail.value.rejectionComment || '', full: true },
   ]
 
   return fields.filter(field => field.value !== null && field.value !== undefined && field.value !== '')
@@ -262,30 +211,5 @@ onMounted(async () => {
   word-break: break-word;
 }
 
-.post-image {
-  max-width: 100%;
-  max-height : 300px;
-  height: auto;
-  object-fit: contain;
-}
-
-.body-content {
-  width: 100%;
-  font-weight: 500;
-  line-height: 1.7;
-}
-
-:deep(.body-content img) {
-  max-width: 100%;
-  max-height : 300px;
-  height: auto;
-}
-
-.localized-box {
-  width: 100%;
-  border: 1px solid rgb(var(--v-theme-grey200));
-  border-radius: 8px;
-  padding: 12px;
-  margin-top: 8px;
-}
+:deep(
 </style>

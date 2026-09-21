@@ -1,11 +1,11 @@
 <template>
-  <user-posts-edit-post />
+  <user-posts-edit-post admin />
 </template>
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'dashboard-layout',
-  middleware: ['auth', 'user-type'],
+  layout: 'admin',
+  middleware: ['auth', 'admin'],
 })
 
 useHead({

@@ -135,6 +135,7 @@ export interface PostCreateDTO {
 }
 
 export interface PostEditDTO {
+  originalPublishDate?: string
   title: string
   slug: string
   summary: string

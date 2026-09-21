@@ -164,6 +164,11 @@ const headers: DataTableHeader<AdminPostDTO>[] = [
         onClick: (item: AdminPostDTO) => openDetailModal(item),
       },
       {
+        icon: 'md:edit',
+        tooltip: 'Edit',
+        to: (item: AdminPostDTO) => `/admin/posts/edit/${item.id}`,
+      },
+      {
         icon: 'md:arrow_circle_right',
         tooltip: 'Post Page',
         href: (item: AdminPostDTO) => `/post/${item.id}`,

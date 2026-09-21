@@ -189,7 +189,7 @@ export const usePost = () => {
     }
   }
 
-  const editPost = async (post: PostEditDTO, id: string) => {
+  const editPost = async (post: PostEditDTO, id: string, admin = false) => {
     loadingEditPost.value = true
     try {
       const formData = new FormData()
@@ -198,7 +198,8 @@ export const usePost = () => {
       formData.append('Summary', post.summary || '')
       formData.append('VisibilityType', post.visibilityType)
 
-      let publishDate = new Date().toISOString()
+      // An edit that leaves "Immediately" selected must not move an already-published post's date to now.
+      let publishDate = post.originalPublishDate ?? new Date().toISOString()
       if (post.publishDate === 'Schedule') {
       // Send the selected scheduled date, preserving the selected date without timezone issues
         const selectedDate = new Date(post.scheduledDate!)
@@ -242,7 +243,7 @@ export const usePost = () => {
 
       const response = await useApiService.put<
         ApiResult<string>
-      >(`/api/v2/posts/${id}`, formData)
+      >(`/api/v2/${admin ? 'admin/' : ''}posts/${id}`, formData)
       if (response.succeeded) {
         $toast.success('Post Edited successfully!')
       }
@@ -267,12 +268,12 @@ export const usePost = () => {
     }
   }
 
-  const getPost = async (id: string) => {
+  const getPost = async (id: string, admin = false) => {
     loadingGetPost.value = true
     try {
       const response = await useApiService.get<
         ApiResult<PostUserDTO>
-      >(`/api/v2/posts/mine/${id}`)
+      >(admin ? `/api/v2/admin/posts/${id}` : `/api/v2/posts/mine/${id}`)
       return response
     }
     catch (err: unknown) {
