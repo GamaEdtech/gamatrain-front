@@ -1,6 +1,6 @@
 <template>
   <v-container id="main-post-div">
-    <v-row v-if="error">
+    <v-row v-if="!contentData">
       <h1 class="text-h3 font-weight-bold">
         Pleas Try Again Later.
       </h1>
@@ -221,23 +221,51 @@ import { useDisplay } from 'vuetify'
 const { $toast, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 const { formatLocal } = useDateTime()
 const route = useRoute()
+const router = useRouter()
 const postId = route.params.id
 const { xs, sm } = useDisplay()
 const requestURL = ref(useRequestURL().host)
 const postContentRef = ref(null)
-const { data: contentData, error } = await useAsyncData(
+
+const { data: contentData } = await useAsyncData(
   `post-${postId}`,
-  () => useApiService.get(`/api/v2/posts/${postId}`,
-    undefined,
-    {
-      public: true,
-    },
-  ),
-  {
-    transform: response => response.data,
+  async () => {
+    try {
+      const response = (await useApiService.get(
+        `/api/v2/posts/${postId}`,
+        undefined,
+        {
+          public: true,
+        },
+      ))
+
+      if (response.data) {
+        return response.data
+      }
+      else {
+        showError({
+          statusCode: 404,
+          statusMessage: 'Page Not Founded!',
+        })
+        return null
+      }
+    }
+    catch (e) {
+      showError({
+        statusCode: 404,
+        statusMessage: 'Page Not Founded!',
+      })
+      const error = e
+      if (error?.status === 404) {
+        router.push('/post')
+      }
+      throw error
+    }
+    finally {
+      // Reset loading states if needed
+    }
   },
 )
-console.log('error', error)
 
 const organizationSchema = {
   '@type': 'Organization',
