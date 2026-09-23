@@ -98,14 +98,24 @@ export const PAST_PAPER_MONTHS_BY_GRADE: Record<string, { id: number, title: str
 export const getPastPaperMonths = (gradeId?: string | number) =>
   PAST_PAPER_MONTHS_BY_GRADE[String(gradeId)] ?? MONTH_LIST
 
-// The directory groups Cambridge sessions in the order shown in the approved design.
+const DIRECTORY_SESSION_TITLES: Record<string, string> = {
+  'Feb/Mar': 'February/March',
+  'May/Jun': 'May/June',
+  'Oct/Nov': 'October/November',
+}
+
+// Directory session cards follow calendar order. Cambridge's March API value
+// represents the combined February/March examination series.
 export const getDirectoryPaperSessions = (gradeId?: string | number) => {
   const months = getPastPaperMonths(gradeId)
   const isCambridge = ['22', '4161', '6374', '23', '6533'].includes(String(gradeId))
-  if (!isCambridge) return months
 
-  return [6, 11, 3].flatMap((id) => {
-    const month = months.find(item => item.id === id)
-    return month ? [{ ...month, title: id === 3 ? 'Feb/Mar' : month.title }] : []
-  })
+  return [...months]
+    .sort((first, second) => first.id - second.id)
+    .map(month => ({
+      ...month,
+      title: isCambridge && month.id === 3
+        ? 'February/March'
+        : DIRECTORY_SESSION_TITLES[month.title] || month.title,
+    }))
 }

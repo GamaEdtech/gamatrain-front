@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { createDirectoryPaperLoader } from '../app/utils/directoryPaperLoader.js'
+import { createDirectorySessionAvailability } from '../app/utils/directorySessionAvailability.js'
 import {
   getDirectoryDownloadParams, getDirectoryExamIds, getDirectoryPaperCode,
   getDirectoryPaperDownloads, getDirectoryPaperLink, getDirectoryPaperTitle,
@@ -58,6 +59,36 @@ test('hydrates the first server-rendered batch without refetching page one', asy
   await loader.load(query)
   assert.equal(calls[0].page, 2)
   assert.deepEqual(loader.getState(query).items.map(item => item.id), ['1', '2', '3'])
+})
+
+test('checks only one paper to determine session availability and caches the count', async () => {
+  const calls = []
+  const availability = createDirectorySessionAvailability(async (params) => {
+    calls.push(params)
+    return result(['1'], 12)
+  })
+  assert.equal(await availability.check(query), 'available')
+  assert.deepEqual(calls[0], { ...query, is_paper: true, directory: true, page: 1, perpage: 1 })
+  assert.equal(availability.getState(query).status, 'available')
+  await availability.check(query)
+  assert.equal(calls.length, 1)
+})
+
+test('hides zero-count sessions while failed checks remain visible and retryable', async () => {
+  let calls = 0
+  const availability = createDirectorySessionAvailability(async () => {
+    calls++
+    if (calls === 1) return result([])
+    if (calls === 2) throw new Error('offline')
+    return result(['1'])
+  })
+  const emptyQuery = { ...query, edu_month: 3 }
+  const retryQuery = { ...query, edu_month: 11 }
+  assert.equal(await availability.check(emptyQuery), 'empty')
+  assert.equal(availability.getState(emptyQuery).status, 'empty')
+  assert.equal(await availability.check(retryQuery), 'error')
+  assert.equal(availability.getState(retryQuery).status, 'error')
+  assert.equal(await availability.check(retryQuery), 'available')
 })
 
 test('coalesces duplicate loading events and limits simultaneous requests', async () => {

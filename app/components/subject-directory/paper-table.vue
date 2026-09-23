@@ -92,14 +92,28 @@
           {{ year.title }}
         </v-expansion-panel-title>
         <v-expansion-panel-text>
+          <div
+            v-if="yearAvailabilityLoading(year.id)"
+            class="d-flex align-center justify-center ga-3 pa-4 text-grey600"
+            role="status"
+          >
+            <v-progress-circular
+              indeterminate
+              size="24"
+              width="2"
+              color="directoryInk"
+            />
+            <span>Checking available sessions…</span>
+          </div>
           <v-expansion-panels
+            v-if="displayedSessions(year.id).length"
             v-model="expandedSessions[year.id]"
             class="directory-sessions"
             variant="accordion"
             multiple
           >
             <v-expansion-panel
-              v-for="session in visibleSessions"
+              v-for="session in displayedSessions(year.id)"
               :key="session.id"
               :value="session.id"
               elevation="0"
@@ -126,6 +140,13 @@
               </v-expansion-panel-text>
             </v-expansion-panel>
           </v-expansion-panels>
+          <p
+            v-else-if="!yearAvailabilityLoading(year.id)"
+            class="pa-6 ma-0 text-grey600 text-center"
+            role="status"
+          >
+            No papers are available for this year.
+          </p>
         </v-expansion-panel-text>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -181,9 +202,10 @@ const props = defineProps({
 })
 
 const {
-  filters, filterButtons, visibleYears, visibleSessions, expandedYears, expandedSessions,
+  filters, filterButtons, visibleYears, expandedYears, expandedSessions,
   modalFilter, modalItems, selectedModalItem, showFilterDialog, optionsLoading, optionsError,
   openFilter, selectFilter, fetchOptions, expandYears, sessionKey, sessionState, loadSession, isSessionOpen,
+  displayedSessions, yearAvailabilityLoading,
 } = await useDirectoryPapers(props)
 
 const downloadState = useDirectoryPaperDownloads()
