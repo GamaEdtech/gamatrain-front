@@ -1164,7 +1164,7 @@
             <v-breadcrumbs
               :items="[
                 { title: 'Dashboard', href: '/user' },
-                { title: 'My online exam', href: '/exam/results' },
+                { title: 'My online exam', href: '/user/exam/result/list' },
               ]"
               class="justify-center mt-2 mb-2 font-size-16"
               color="gray"

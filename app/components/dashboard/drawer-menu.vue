@@ -324,7 +324,7 @@ const items = computed(() => [
     subMenuList: [
       {
         title: 'Results',
-        link: '/exam/results',
+        link: '/user/exam/result/list',
         icon: 'md:fact_check',
       },
       {

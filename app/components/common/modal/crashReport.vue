@@ -67,31 +67,38 @@
 <script setup lang="ts">
 import type { AppError } from '@/types'
 
+interface CrashReportTypeItem {
+  value: number
+  label: string
+}
+
 interface ICrashReportModal {
   typeCrashReport: string
   id: string
+  reportTypeList?: CrashReportTypeItem[]
 }
 
 const { $toast } = useNuxtApp()
 const router = useRouter()
 
-const props = defineProps<ICrashReportModal>()
+const props = withDefaults(defineProps<ICrashReportModal>(), {
+  reportTypeList: () => [
+    {
+      value: 1,
+      label: 'The file cannot be downloaded',
+    },
+    {
+      value: 2,
+      label: 'The file is wrong',
+    },
+    {
+      value: 3,
+      label: 'The content of the file is inappropriate or incorrect.',
+    },
+  ],
+})
 const emit = defineEmits(['close'])
 
-const reportTypeList = [
-  {
-    value: 1,
-    label: 'The file cannot be downloaded',
-  },
-  {
-    value: 2,
-    label: 'The file is wrong',
-  },
-  {
-    value: 3,
-    label: 'The content of the file is inappropriate or incorrect.',
-  },
-]
 const reportTypeRules = [
   (v: number) =>
     (v !== null && v !== undefined) || 'Please select an issue type',
@@ -124,7 +131,7 @@ const sendReport = async () => {
     const payload = new URLSearchParams({
       id: props.id,
       type: props.typeCrashReport,
-      report_type: reportType.value!,
+      report_type: String(reportType.value!),
       message: textReport.value.trim(),
     }) as unknown
     await useApiService.post('/api/v1/reports', payload as SearchParameters)
