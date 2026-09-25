@@ -4,22 +4,13 @@
     aria-labelledby="directory-papers-title"
   >
     <div class="d-flex align-center ga-2 mb-2">
-      <v-icon
-        size="34"
-        color="info"
-      >
-        mdi-file-clock-outline
-      </v-icon>
       <h2
         id="directory-papers-title"
-        class="directory-heading font-weight-bold"
+        class="directory-heading text-grey900"
       >
         Past Papers
       </h2>
     </div>
-    <p class="directory-description text-directoryDescription mb-4">
-      Download past papers, mark schemes and examiner reports.
-    </p>
 
     <SubjectDirectoryPaperFilters
       :filters="filterButtons"
@@ -191,13 +182,10 @@ const PRICE_FILE = 10
 }
 
 .directory-heading {
-  font-size: 28px;
-  line-height: 34px;
-}
-
-.directory-description {
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .directory-years :deep(.v-expansion-panel) {
@@ -239,10 +227,6 @@ const PRICE_FILE = 10
 }
 
 @media (max-width: 959px) {
-  .directory-heading {
-    font-size: 24px;
-  }
-
   .directory-year-title {
     padding-inline: 16px;
   }

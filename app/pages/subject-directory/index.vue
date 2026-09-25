@@ -1,14 +1,5 @@
 <template>
   <v-container class="flex-column margin-top-handle">
-    <!-- Start BreadCrumb  -->
-    <v-row>
-      <breadcrumb
-        :breads="breadsCrumb"
-        background-color="transparent"
-      />
-    </v-row>
-    <!-- End BreadCrumb -->
-
     <v-row class="justify-space-between flex-wrap">
       <!-- Start Filter -->
       <v-col
@@ -19,7 +10,7 @@
         <filterPapers
           @change-status-loading="changeLoadingStatus"
           @change-subject="changeSubject"
-          @change-filter-for-bread-crumb="changeFilterForBreadCrumb"
+          @change-filter-for-bread-crumb="updatePaperContext"
         />
       </v-col>
       <!-- End Filter -->
@@ -27,9 +18,11 @@
 
     <v-row>
       <resources
-        :topical-data="topicalData"
+        :context="{ ...paperContext, subjectTitle: titleLesson }"
         :data="resourcesData"
-        :is-loading="isLoadingResources"
+        :is-loading="isLoadingResources || isChangingSubject"
+        :error="Boolean(resourceError)"
+        @retry="refreshResources()"
       />
     </v-row>
 
@@ -50,7 +43,6 @@
 import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-import breadcrumb from '~/components/widgets/breadcrumb.vue'
 import resources from '~/components/subject-directory/resources.vue'
 import paperTable from '~/components/subject-directory/paper-table.vue'
 import filterPapers from '~/components/subject-directory/filter-papers.vue'
@@ -63,141 +55,31 @@ const paperContext = ref({
   subjectTitle: '',
 })
 
-// Initial State Bread Crumb
-const breadsCrumb = ref([
-  {
-    text: 'Subject Directory',
-    disabled: true,
-    href: '/search?type=paper',
-    name: 'type',
-  },
-])
-
-const changeFilterForBreadCrumb = (board, grade, subject) => {
+const updatePaperContext = (board, grade, subject) => {
   paperContext.value = {
     subjectId: subject?.id || '',
     boardId: board?.code || '',
     gradeId: grade?.id || '',
     subjectTitle: subject?.title || '',
   }
-  if (board) {
-    const newBoard = {
-      text: board.title,
-      disabled: true,
-      href: `/search?type=paper&section=${board.code}`,
-      name: 'board',
-    }
-    breadsCrumb.value = breadsCrumb.value.filter(item => item.name == 'type')
-    breadsCrumb.value.push(newBoard)
-  }
-  if (grade) {
-    const newGrade = {
-      text: grade.title,
-      disabled: true,
-      href: `/search?type=paper&base=${grade.id}`,
-      name: 'grade',
-    }
-    breadsCrumb.value = breadsCrumb.value.filter(
-      item => item.name == 'type' || item.name == 'board',
-    )
-    breadsCrumb.value.push(newGrade)
-  }
-  if (subject) {
-    const newSubject = {
-      text: subject.title,
-      disabled: true,
-      href: `/search?type=paper&lesson=${subject.id}`,
-      name: 'subject',
-    }
-    breadsCrumb.value = breadsCrumb.value.filter(
-      item =>
-        item.name == 'type' || item.name == 'board' || item.name == 'grade',
-    )
-    breadsCrumb.value.push(newSubject)
-  }
 }
 
-// Start Section Resources
-const isLoadingResources = ref(true)
-
-const titleLesson = ref('')
-const resourcesData = ref([])
-const topicalData = ref({
-  label: 'Topical',
-  icon: 'Topical.svg',
-  items: [],
-})
-// End Section Resources
-
-const subjectId = route.params.subject || route.query.subject
-
-const { data: resourcesResponse } = await useAsyncData(
-  `resourcesData-${subjectId}`,
-  async () => {
-    if (!subjectId) return null
-    const baseURL = `/api/v1/`
-    const endpointResources = `${baseURL}tests/search?is_paper=false&directory=true&lesson=${subjectId}`
-    return await useApiService.get(endpointResources)
-  },
-)
-
-if (resourcesResponse.value?.data) {
-  titleLesson.value = resourcesResponse.value.data.lesson_title
-  resourcesData.value = resourcesResponse.value.data.list
-  const filterTopical = resourcesData.value.filter(
-    item => item.title === 'Topical',
-  )
-  if (filterTopical.length > 0) {
-    topicalData.value.items = filterTopical[0].items
-  }
-  isLoadingResources.value = false
-}
+const isChangingSubject = ref(false)
+const { resourcesData, titleLesson, isLoadingResources, resourceError, refreshResources }
+  = await useDirectoryResources(paperContext)
 
 const changeLoadingStatus = () => {
-  isLoadingResources.value = true
+  isChangingSubject.value = true
   paperContext.value = { ...paperContext.value, subjectId: '' }
 }
 
-const resetParameter = () => {
-  titleLesson.value = ''
-  resourcesData.value = []
-  topicalData.value.items = []
-}
-
-const fetchDataForNewSubject = async (subject) => {
-  try {
-    isLoadingResources.value = true
-    const endpointResources = `/api/v1/tests/search?is_paper=false&directory=true&lesson=${subject.id}`
-    const responseResource = await useApiService.get(endpointResources)
-
-    if (responseResource.data) {
-      titleLesson.value = responseResource.data.lesson_title
-      resourcesData.value = responseResource.data.list
-      const filterTopical = resourcesData.value.filter(
-        item => item.title === 'Topical',
-      )
-      if (filterTopical.length > 0) {
-        topicalData.value.items = filterTopical[0].items
-      }
-    }
-  }
-  catch (error) {
-    console.error('error', error)
-  }
-  finally {
-    isLoadingResources.value = false
-  }
-}
-
 const changeSubject = (subject) => {
-  resetParameter()
-  if (subject && subject.id) {
-    paperContext.value = { ...paperContext.value, subjectId: subject.id, subjectTitle: subject.title || '' }
-    fetchDataForNewSubject(subject)
+  paperContext.value = {
+    ...paperContext.value,
+    subjectId: subject?.id || '',
+    subjectTitle: subject?.title || '',
   }
-  else {
-    isLoadingResources.value = false
-  }
+  isChangingSubject.value = false
 }
 
 // SEO
