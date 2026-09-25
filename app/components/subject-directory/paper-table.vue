@@ -21,40 +21,13 @@
       Download past papers, mark schemes and examiner reports.
     </p>
 
-    <div class="directory-filters d-flex flex-wrap mb-4">
-      <v-btn
-        v-for="filter in filterButtons"
-        :key="filter.key"
-        class="directory-filter d-flex text-none text-start font-weight-regular"
-        variant="outlined"
-        height="60"
-        :disabled="!subjectId || (filter.key === 'paper' && !boardId)"
-        aria-haspopup="dialog"
-        :aria-label="`${filter.title}: ${filter.selection}`"
-        @click="openFilter(filter.key)"
-      >
-        <span class="d-flex flex-column">
-          <span>{{ filter.title }}</span>
-          <span>{{ filter.selection }}</span>
-        </span>
-        <v-icon
-          size="24"
-          class="ml-auto"
-        >
-          md:keyboard_arrow_down
-        </v-icon>
-      </v-btn>
-    </div>
-
-    <search-select-dialog
-      v-model:show-dialog="showFilterDialog"
-      :title-modal="modalFilter.title"
-      :items="modalItems"
-      :selected-item="selectedModalItem"
-      :is-loading="optionsLoading"
-      :error-message="optionsError"
+    <SubjectDirectoryPaperFilters
+      :filters="filterButtons"
+      :board-id="boardId"
+      :context-key="`${subjectId}:${gradeId}:${boardId}`"
+      @select="selectFilter"
+      @clear="clearFilters"
       @retry="fetchOptions"
-      @change-selected-item="selectFilter"
     />
 
     <p
@@ -203,8 +176,7 @@ const props = defineProps({
 
 const {
   filters, filterButtons, visibleYears, expandedYears, expandedSessions,
-  modalFilter, modalItems, selectedModalItem, showFilterDialog, optionsLoading, optionsError,
-  openFilter, selectFilter, fetchOptions, expandYears, sessionKey, sessionState, loadSession, isSessionOpen,
+  selectFilter, clearFilters, fetchOptions, expandYears, sessionKey, sessionState, loadSession, isSessionOpen,
   displayedSessions, yearAvailabilityLoading,
 } = await useDirectoryPapers(props)
 
@@ -232,32 +204,6 @@ const PRICE_FILE = 10
 .directory-description {
   font-size: 16px;
   line-height: 24px;
-}
-
-.directory-filters {
-  gap: 16px 26px;
-}
-
-.directory-filter {
-  width: 169px;
-  border-color: rgb(var(--v-theme-grey300));
-  border-radius: 8px;
-  padding-inline: 16px;
-  font-size: 16px;
-  line-height: 20px;
-  letter-spacing: normal;
-}
-
-.directory-filter :deep(.v-btn__content) {
-  display: flex;
-  width: 100%;
-  gap: 8px;
-  justify-content: space-between;
-}
-
-.directory-filter :deep(.v-btn__content > span) {
-  min-width: 0;
-  white-space: normal;
 }
 
 .directory-years :deep(.v-expansion-panel) {
@@ -301,14 +247,6 @@ const PRICE_FILE = 10
 @media (max-width: 959px) {
   .directory-heading {
     font-size: 24px;
-  }
-
-  .directory-filters {
-    gap: 12px;
-  }
-
-  .directory-filter {
-    width: calc((100% - 12px) / 2);
   }
 
   .directory-year-title {

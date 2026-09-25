@@ -87,7 +87,7 @@
       </template>
     </div>
 
-    <search-select-dialog
+    <CommonFilterSelectDialog
       v-model:show-dialog="showBoardDialog"
       title-modal="Board"
       :items="boards"
@@ -96,7 +96,7 @@
       @change-selected-item="boardChange"
     />
 
-    <search-select-dialog
+    <CommonFilterSelectDialog
       v-model:show-dialog="showGradeDialog"
       title-modal="Grade"
       :items="grades"
@@ -105,7 +105,7 @@
       @change-selected-item="gradeChange"
     />
 
-    <search-select-dialog
+    <CommonFilterSelectDialog
       v-model:show-dialog="showSubjectDialog"
       title-modal="Subject"
       :items="subjects"

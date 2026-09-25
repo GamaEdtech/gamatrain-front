@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { getDirectoryVariantOptions } from '../app/utils/directoryFilterOptions.js'
 import { createDirectoryPaperLoader } from '../app/utils/directoryPaperLoader.js'
 import { createDirectorySessionAvailability } from '../app/utils/directorySessionAvailability.js'
 import {
@@ -16,6 +17,20 @@ const deferred = () => {
   })
   return { promise, resolve }
 }
+
+test('shows only directory variants 1 through 3 in numeric order', () => {
+  const variants = [
+    { id: '4', title: '4' },
+    { id: 'nv', title: 'nv' },
+    { id: '3', title: '3' },
+    { id: '1', title: ' 1 ' },
+    { id: '2', title: 2 },
+  ]
+
+  const options = getDirectoryVariantOptions(variants)
+  assert.deepEqual(options.map(item => item.id), ['1', '2', '3'])
+  assert.deepEqual(options.map(item => item.title), ['1', '2', '3'])
+})
 
 test('requests one filtered page at a time, stops at num and reuses cached results', async () => {
   const calls = []

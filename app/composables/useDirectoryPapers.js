@@ -1,6 +1,7 @@
 import { onMounted, onScopeDispose } from 'vue'
 import { useAsyncData } from '#app'
 import { useApiService } from '~/composables/useApiService'
+import { useDirectoryFilterOptions } from '~/composables/useDirectoryFilterOptions'
 import { DIRECTORY_FILTERS } from '~/constants/pastpaper/directory'
 import { getDirectoryPaperSessions, PAST_PAPER_YEAR_OPTIONS } from '~/constants/pastpaper/sessions'
 import { createDirectoryPaperLoader } from '~/utils/directoryPaperLoader'
@@ -11,13 +12,7 @@ export const useDirectoryPapers = async (context) => {
   const filters = reactive({ year: '', series: '', paper: '', variant: '' })
   const expandedYears = ref([])
   const expandedSessions = reactive({})
-  const activeFilter = ref(null)
-  const showFilterDialog = ref(false)
-  const optionsLoading = ref(false)
-  const optionsError = ref('')
-  const catalogues = reactive({})
-  const optionRequests = new Map()
-  let optionsVersion = 0
+  const { optionLists, optionLoading, optionErrors, fetchOptions } = useDirectoryFilterOptions(context)
 
   const loader = createDirectoryPaperLoader((params, signal) =>
     useApiService.get('/api/v1/tests/search', params, { public: true, signal }),
@@ -36,66 +31,20 @@ export const useDirectoryPapers = async (context) => {
     : sessions.value)
   const firstSession = () => (visibleSessions.value.find(item => item.id === 6) || visibleSessions.value[0])?.id
 
-  const paperCatalogueKey = computed(() => `papers:${context.boardId}`)
-  const optionLists = computed(() => ({
-    year: PAST_PAPER_YEAR_OPTIONS,
-    series: sessions.value,
-    paper: catalogues[paperCatalogueKey.value] || [],
-    variant: catalogues.variants || [],
-  }))
   const filterButtons = computed(() => DIRECTORY_FILTERS.map(filter => ({
     ...filter,
-    selection: optionLists.value[filter.key].find(item => String(item.id) === filters[filter.key])?.title || filter.allTitle,
+    selectedItem: optionLists.value[filter.key].find(item => String(item.id) === filters[filter.key]) || null,
+    items: optionLists.value[filter.key],
+    disabled: !context.subjectId || (filter.key === 'paper' && !context.boardId),
+    loading: Boolean(optionLoading.value[filter.key]),
+    error: optionErrors.value[filter.key] || '',
   })))
-  const modalFilter = computed(() => DIRECTORY_FILTERS.find(item => item.key === activeFilter.value) || DIRECTORY_FILTERS[0])
-  const modalItems = computed(() => [
-    { id: '', title: modalFilter.value.allTitle },
-    ...optionLists.value[modalFilter.value.key],
-  ])
-  const selectedModalItem = computed(() => modalItems.value.find(item => String(item.id) === filters[modalFilter.value.key]))
 
-  const fetchOptions = async () => {
-    const version = ++optionsVersion
-    const filter = activeFilter.value
-    if (!['paper', 'variant'].includes(filter)) return
-    const key = filter === 'paper' ? paperCatalogueKey.value : 'variants'
-    if (catalogues[key]) return
-    optionsLoading.value = true
-    optionsError.value = ''
-    try {
-      if (!optionRequests.has(key)) {
-        const params = filter === 'paper'
-          ? { type: 'test_type', section_id: context.boardId }
-          : { type: 'variant' }
-        optionRequests.set(key, useApiService.get('/api/v1/types/list', params, { public: true }))
-      }
-      const response = await optionRequests.get(key)
-      if (Number(response?.status) !== 1 || !Array.isArray(response.data)) throw new Error('Invalid options')
-      catalogues[key] = filter === 'paper'
-        ? response.data.filter(item => item.is_paper === true || item.is_paper === '1' || item.is_paper === 1)
-        : response.data.map(item => ({ ...item, title: item.title === 'nv' ? 'No variant' : item.title }))
-    }
-    catch {
-      if (version === optionsVersion) optionsError.value = 'Unable to load options. Please try again.'
-    }
-    finally {
-      optionRequests.delete(key)
-      if (version === optionsVersion) optionsLoading.value = false
-    }
+  const selectFilter = (key, item) => {
+    if (Object.hasOwn(filters, key)) filters[key] = item ? String(item.id) : ''
   }
-
-  const openFilter = (key) => {
-    activeFilter.value = key
-    showFilterDialog.value = true
-    optionsLoading.value = false
-    optionsError.value = ''
-    fetchOptions()
-  }
-
-  const selectFilter = (item) => {
-    filters[modalFilter.value.key] = String(item.id)
-    showFilterDialog.value = false
-    optionsVersion++
+  const clearFilters = () => {
+    Object.assign(filters, { year: '', series: '', paper: '', variant: '' })
   }
 
   const sessionQuery = (year, month) => ({
@@ -161,8 +110,6 @@ export const useDirectoryPapers = async (context) => {
     loader.clear()
     availability.clear()
     Object.assign(filters, { year: '', series: '', paper: '', variant: '' })
-    showFilterDialog.value = false
-    optionsVersion++
     for (const year of Object.keys(expandedSessions)) delete expandedSessions[year]
     expandYears(context.subjectId ? [PAST_PAPER_YEAR_OPTIONS[0].id] : [])
   }, { immediate: true })
@@ -207,8 +154,7 @@ export const useDirectoryPapers = async (context) => {
 
   return {
     filters, filterButtons, visibleYears, visibleSessions, expandedYears, expandedSessions,
-    modalFilter, modalItems, selectedModalItem, showFilterDialog, optionsLoading, optionsError,
-    openFilter, selectFilter, fetchOptions, expandYears, sessionKey, sessionState, loadSession, isSessionOpen,
+    selectFilter, clearFilters, fetchOptions, expandYears, sessionKey, sessionState, loadSession, isSessionOpen,
     displayedSessions, yearAvailabilityLoading,
   }
 }
