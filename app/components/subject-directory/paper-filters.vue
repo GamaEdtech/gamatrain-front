@@ -33,13 +33,6 @@
     </div>
 
     <div class="mobile-quick-filter-bar d-flex d-md-none">
-      <div class="mobile-quick-filter-bar__trigger">
-        <CommonFilterTrigger
-          :count="activeCount"
-          label="Filters"
-          @click="showPanel = true"
-        />
-      </div>
       <div
         class="mobile-quick-filter-bar__scroller"
         aria-label="Quick filters"
@@ -95,85 +88,11 @@
       </div>
     </div>
 
-    <v-dialog
-      v-model="showPanel"
-      transition="dialog-bottom-transition"
-      fullscreen
-      scrim="white"
-    >
-      <div class="mobile-filter-modal w-100 h-100 d-flex flex-column position-relative">
-        <v-container class="mobile-filter-modal__container flex-column">
-          <section class="mobile-filter-panel">
-            <div class="mobile-filter-panel__header d-flex align-center justify-space-between">
-              <span class="mobile-filter-panel__title d-flex align-center ga-2">
-                <v-icon size="18">md:filter_list</v-icon>
-                Filters
-              </span>
-              <div class="d-flex align-center ga-1">
-                <v-btn
-                  variant="text"
-                  class="filter-clear"
-                  @click="emit('clear')"
-                >
-                  Clear
-                </v-btn>
-                <v-btn
-                  icon
-                  variant="text"
-                  class="mobile-filter-panel__close"
-                  aria-label="Close filters"
-                  @click="showPanel = false"
-                >
-                  <v-icon size="20">
-                    md:close
-                  </v-icon>
-                </v-btn>
-              </div>
-            </div>
-            <div class="mobile-filter-control-list">
-              <CommonFilterControl
-                v-for="filter in selectFilters"
-                :key="filter.key"
-                :title="filter.title"
-                :selected-item="filter.selectedItem"
-                :disabled="filter.disabled"
-                :icon="filter.icon"
-                :open="showPicker && activeKey === filter.key"
-                @click="openPicker(filter)"
-                @clear="emit('select', filter.key, null)"
-              />
-            </div>
-            <div class="mobile-inline-filter-group">
-              <SubjectDirectoryFilterOptionRow
-                v-for="filter in inlineFilters"
-                :key="filter.key"
-                :filter="filter"
-                :board-id="boardId"
-                @select="emit('select', filter.key, $event)"
-                @retry="emit('retry', filter.key)"
-              />
-            </div>
-          </section>
-        </v-container>
-        <div class="mobile-filter-modal__footer w-100 d-flex align-center justify-center position-fixed bottom-0">
-          <v-btn
-            color="academicGold"
-            rounded="xl"
-            height="40"
-            class="mobile-filter-modal__show-results text-h5 text-grey800"
-            @click="showPanel = false"
-          >
-            Show papers
-          </v-btn>
-        </div>
-      </div>
-    </v-dialog>
-
     <CommonFilterSelectDialog
       v-model:show-dialog="showPicker"
       :title-modal="activeFilter.title"
       :items="pickerItems"
-      :selected-item="activeFilter.selectedItem || (activeFilter.inline ? null : pickerItems[0])"
+      :selected-item="activeFilter.selectedItem"
       :is-loading="activeFilter.loading"
       :error-message="activeFilter.error"
       :has-search="!activeFilter.inline"
@@ -188,7 +107,6 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
-import { useDisplay } from 'vuetify'
 import { getDirectoryFilterColumns, getDirectoryFilterOptionTitle } from '~/constants/pastpaper/directory'
 
 const props = defineProps({
@@ -197,17 +115,12 @@ const props = defineProps({
   contextKey: { type: String, default: '' },
 })
 const emit = defineEmits(['select', 'clear', 'retry'])
-const { mdAndUp } = useDisplay()
-const showPanel = ref(false)
 const showPicker = ref(false)
 const activeKey = ref('year')
 const selectFilters = computed(() => props.filters.filter(filter => !filter.inline))
 const inlineFilters = computed(() => props.filters.filter(filter => filter.inline))
-const activeCount = computed(() => props.filters.filter(filter => filter.selectedItem).length)
 const activeFilter = computed(() => props.filters.find(filter => filter.key === activeKey.value) || props.filters[0])
-const pickerItems = computed(() => activeFilter.value.inline
-  ? activeFilter.value.items
-  : [{ id: '', title: activeFilter.value.allTitle }, ...activeFilter.value.items])
+const pickerItems = computed(() => activeFilter.value.items)
 
 const openPicker = (filter) => {
   if (filter.disabled) return
@@ -218,12 +131,8 @@ const selectPickerItem = (item) => {
   emit('select', activeKey.value, item)
   showPicker.value = false
 }
-watch(mdAndUp, (desktop) => {
-  if (desktop) showPanel.value = false
-})
 watch(() => props.contextKey, () => {
   showPicker.value = false
-  showPanel.value = false
 })
 </script>
 
@@ -259,53 +168,10 @@ watch(() => props.contextKey, () => {
     height: 64px;
     align-items: center;
     gap: 0;
-    padding: 6px 12px;
+    padding: 6px 0;
     overflow: hidden;
     background: rgb(var(--v-theme-grey25));
     border-bottom: 1px solid rgb(var(--v-theme-directoryButtonBorder));
-  }
-
-  .mobile-quick-filter-bar__trigger {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    width: 108px;
-    min-width: 108px;
-    height: 52px;
-    flex: 0 0 108px;
-    align-items: stretch;
-    justify-content: flex-start;
-    box-shadow: 4px 0 8px -4px rgba(var(--v-theme-directoryInk), 0.18);
-    transition: background-color 160ms ease;
-  }
-
-  .mobile-quick-filter-bar__trigger:hover {
-    background: rgb(var(--v-theme-surfaceSecondary));
-  }
-
-  .mobile-quick-filter-bar__trigger :deep(.height-badge) {
-    width: 100%;
-    height: 100%;
-  }
-
-  .mobile-quick-filter-bar__trigger :deep(.filter-trigger) {
-    width: 100%;
-    height: 100% !important;
-    min-width: 0;
-    justify-content: flex-start;
-    padding-inline: 12px;
-    background: rgb(var(--v-theme-grey25));
-    border: 0 !important;
-    border-radius: 0 !important;
-    box-shadow: none;
-  }
-
-  .mobile-quick-filter-bar__trigger :deep(.filter-trigger:hover) {
-    background: transparent !important;
-  }
-
-  .mobile-quick-filter-bar__trigger :deep(.filter-trigger .v-btn__overlay) {
-    opacity: 0 !important;
   }
 
   .mobile-quick-filter-bar__scroller {
@@ -501,115 +367,5 @@ watch(() => props.contextKey, () => {
   .mobile-quick-filter__clear:hover {
     color: rgb(var(--v-theme-errorStrong));
   }
-
-  .mobile-filter-modal {
-    height: 100dvh !important;
-    overflow: hidden !important;
-    color: rgb(var(--v-theme-directoryInk));
-    background: rgb(var(--v-theme-surfaceSecondary));
-  }
-
-  .mobile-filter-modal__container {
-    display: block;
-    width: 100%;
-    max-width: none;
-    height: 100%;
-    min-height: 0;
-    flex: 1 1 auto;
-    padding: 0 0 calc(88px + env(safe-area-inset-bottom));
-    margin: 0;
-    overflow-x: hidden;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .mobile-filter-panel {
-    width: 100%;
-    min-height: calc(100dvh - 88px);
-    overflow: visible;
-    background: rgb(var(--v-theme-grey25));
-    border: 0;
-    border-radius: 0;
-    box-shadow: none;
-  }
-
-  .mobile-filter-panel__header {
-    min-height: 64px;
-    padding: 16px;
-    border-bottom: 1px solid rgb(var(--v-theme-directoryButtonBorder));
-  }
-
-  .mobile-filter-panel__title {
-    color: rgb(var(--v-theme-directoryInk));
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 24px;
-  }
-
-  .mobile-filter-panel__close {
-    width: 32px !important;
-    height: 32px !important;
-    color: rgb(var(--v-theme-grey500));
-  }
-
-  .mobile-filter-control-list :deep(.filter-control) {
-    width: 100%;
-    min-width: 0;
-    height: 56px !important;
-    justify-content: stretch !important;
-    padding-inline: 16px;
-    direction: ltr;
-    color: rgb(var(--v-theme-directoryInk));
-    text-align: left;
-    background: rgb(var(--v-theme-grey25));
-    border: 0 !important;
-    border-bottom: 1px solid rgb(var(--v-theme-directoryAnswer)) !important;
-    border-radius: 0 !important;
-    box-shadow: none;
-  }
-
-  .mobile-filter-control-list :deep(.filter-control:not(:has(.filter-control__icon))) {
-    padding-left: 52px;
-  }
-
-  .mobile-filter-control-list :deep(.filter-control .v-btn__content) {
-    justify-content: flex-start !important;
-  }
-
-  .mobile-filter-control-list :deep(.filter-control__copy) {
-    align-items: flex-start;
-    text-align: left;
-  }
-
-  .mobile-filter-control-list :deep(.filter-control:hover) {
-    background: rgb(var(--v-theme-surfaceSecondary));
-  }
-
-  .mobile-filter-control-list :deep(.filter-control--selected) {
-    background: rgb(var(--v-theme-directoryButtonBorder));
-    border-color: transparent !important;
-  }
-
-  .mobile-filter-control-list :deep(.filter-control__value) {
-    max-width: min(190px, 48vw);
-  }
-
-  .mobile-inline-filter-group {
-    padding: 0 16px 0 52px;
-    background: rgb(var(--v-theme-grey25));
-  }
-  .mobile-filter-modal__footer {
-    z-index: 2;
-    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
-    background: rgb(var(--v-theme-grey25));
-    border-top: 1px solid rgb(var(--v-theme-directoryButtonBorder));
-  }
-
-  .mobile-filter-modal__show-results {
-    width: 100%;
-    max-width: 448px;
-  }
-
 }
 </style>

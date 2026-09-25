@@ -56,12 +56,6 @@
           expand-icon="md:keyboard_arrow_down"
           collapse-icon="md:keyboard_arrow_up"
         >
-          <v-icon
-            size="24"
-            class="mr-3"
-          >
-            md:calendar_today_outlined
-          </v-icon>
           {{ year.title }}
         </v-expansion-panel-title>
         <v-expansion-panel-text>

@@ -11,12 +11,15 @@
     :aria-label="selectedItem ? `${title}: ${selectedItem.title}` : title"
     @click="emit('click')"
   >
-    <v-icon
+    <span
       v-if="icon"
-      :icon="icon"
-      size="20"
       class="filter-control__icon mr-2"
-    />
+    >
+      <v-icon
+        :icon="icon"
+        size="20"
+      />
+    </span>
     <span class="filter-control__copy">
       <span class="filter-control__label">{{ title }}</span>
       <span
@@ -42,6 +45,7 @@
       <v-icon
         class="mt-1"
         color="grey500"
+        size="24"
       >
         md:keyboard_arrow_down
       </v-icon>
@@ -76,22 +80,27 @@ const emit = defineEmits(['click', 'clear'])
 }
 .filter-control:hover {
   background: rgb(var(--v-theme-surfaceSecondary));
-  border-color: rgb(var(--v-theme-academicGoldHover)) !important;
+  border-color: rgb(var(--v-theme-directoryButtonBorder)) !important;
 }
 .filter-control:focus-visible {
   box-shadow: 0 0 0 3px rgba(var(--v-theme-academicGold), 0.28);
 }
 .filter-control--selected,
 .filter-control--selected:hover {
-  background: rgb(var(--v-theme-directoryAnswer));
+  background: rgb(var(--v-theme-directoryButtonBorder));
   border-color: transparent !important;
 }
 .filter-control--open:not(.filter-control--selected) {
   border-color: rgb(var(--v-theme-directoryInk)) !important;
 }
 .filter-control__icon {
+  box-sizing: border-box;
+  display: inline-flex;
   width: 28px;
+  height: 28px;
   flex: 0 0 28px;
+  align-items: center;
+  justify-content: center;
 }
 .filter-control__copy {
   display: flex;
@@ -107,7 +116,7 @@ const emit = defineEmits(['click', 'clear'])
 .filter-control--selected .filter-control__label {
   font-size: 12px;
   font-weight: 500;
-  color: rgba(var(--v-theme-directoryInk), 0.68);
+  color: rgb(var(--v-theme-directoryInk));
 }
 .filter-control__value {
   max-width: 190px;

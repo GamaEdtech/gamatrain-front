@@ -71,6 +71,7 @@ const emit = defineEmits(['select', 'retry'])
 .directory-option-row__label {
   display: block;
   margin-bottom: 8px;
+  font-family: Inter;
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
@@ -93,7 +94,5 @@ const emit = defineEmits(['select', 'retry'])
 }
 .directory-option-row--compact .directory-option-row__label {
   margin-bottom: 0;
-  font-size: 14px;
-  line-height: 20px;
 }
 </style>

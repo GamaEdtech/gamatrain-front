@@ -99,8 +99,8 @@ const emit = defineEmits(['select'])
   min-height: 28px;
   padding: 3px 8px !important;
   border-radius: 8px !important;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 14px;
+  line-height: 20px;
 }
 @media (prefers-reduced-motion: reduce) {
   .filter-option { transition: none; }

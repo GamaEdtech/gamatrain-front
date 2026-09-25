@@ -1,8 +1,8 @@
 export const DIRECTORY_FILTERS = [
-  { key: 'year', title: 'Years', allTitle: 'All years', icon: 'md:calendar_today_outlined' },
-  { key: 'series', title: 'Session', allTitle: 'All sessions' },
-  { key: 'paper', title: 'Paper', allTitle: 'All papers', inline: true },
-  { key: 'variant', title: 'Variant', allTitle: 'All variants', inline: true },
+  { key: 'year', title: 'Year', icon: 'md:calendar_today_outlined' },
+  { key: 'series', title: 'Session' },
+  { key: 'paper', title: 'Paper', inline: true },
+  { key: 'variant', title: 'Variant', inline: true },
 ]
 
 // Exact colors from the approved directory Figma frame (25:3943). These named
