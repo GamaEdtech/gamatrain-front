@@ -34,3 +34,30 @@ export const getDirectoryFilterOptionTitle = (key: string, item: { title: string
 export const getDirectoryFilterColumns = (key: string, boardId: string | number) => key === 'paper'
   ? Number(boardId) === 6657 ? 2 : 4
   : 3
+
+export const DIRECTORY_BOARD_IMAGE_BY_TITLE: Record<string, string> = {
+  Cambridge: 'CIE',
+  Edexcel: 'Edexcel',
+  AQA: 'AQA',
+  OCR: 'OCR',
+  GAMA: 'GAMA',
+  CXC: 'CXC',
+  Nigerian: 'Nijeria',
+  Olympiad: 'Scientific Competition',
+}
+
+export const DIRECTORY_BOARD_ORDER = [
+  'Cambridge',
+  'Edexcel',
+  'AQA',
+  'OCR',
+  'GAMA',
+  'CXC',
+  'Nigerian',
+  'Olympiad',
+]
+
+export const getDirectoryBoardImageSrc = (board?: { title?: string } | null) => {
+  const imageName = board?.title && DIRECTORY_BOARD_IMAGE_BY_TITLE[board.title]
+  return imageName ? `/images/boards/${imageName}.svg` : ''
+}

@@ -1,98 +1,46 @@
 <template>
-  <div class="mb-4 d-inline-flex align-center flex-wrap">
-    <div>
-      <template v-if="isLoadingBoard">
-        <div class="d-inline-flex mt-2">
-          <v-skeleton-loader
-            min-width="200"
-            type="heading"
-          />
-        </div>
-      </template>
-      <template v-else>
-        <div
-          v-if="selectedBoard"
-          class="d-inline-flex flex-row align-center cursor-pointer"
-          @click="openBoardDialog"
-        >
-          <span class="w-100 gama-text-h3 font-weight-semibold">
-            {{ selectedBoard?.title }}
-          </span>
-          <v-icon
-            size="18"
-            color="black"
-            class="mx-2"
-          >
-            mdi-menu-down
-          </v-icon>
-        </div>
-      </template>
-    </div>
-    <div>
-      <template v-if="isLoadingGrades">
-        <div class="d-inline-flex mt-2">
-          <v-skeleton-loader
-            min-width="200"
-            type="heading"
-          />
-        </div>
-      </template>
-      <template v-else>
-        <div
-          v-if="selectedGrade"
-          class="d-inline-flex flex-row align-center cursor-pointer"
-          @click="openGradeDialog"
-        >
-          <span class="w-100 gama-text-h3 font-weight-semibold">
-            {{ selectedGrade?.title }}
-          </span>
-          <v-icon
-            v-if="selectedBoard"
-            size="18"
-            color="black"
-            class="mx-2"
-          >
-            mdi-menu-down
-          </v-icon>
-        </div>
-      </template>
-    </div>
-    <div>
-      <template v-if="isLoadingSubjects">
-        <div class="d-inline-flex mt-2">
-          <v-skeleton-loader
-            type="heading"
-            min-width="200"
-          />
-        </div>
-      </template>
-      <template v-else>
-        <div
-          v-if="selectedSubject"
-          class="d-inline-flex flex-row align-center mb-4 mb-md-0 cursor-pointer"
-          @click="openSubjectDialog"
-        >
-          <span class="w-100 gama-text-h3 font-weight-semibold">
-            {{ selectedSubject?.title }}
-          </span>
-          <v-icon
-            v-if="selectedSubject"
-            size="18"
-            color="black"
-            class="mx-2"
-          >
-            mdi-menu-down
-          </v-icon>
-        </div>
-      </template>
-    </div>
+  <div class="directory-primary-filters mb-4 d-flex align-center flex-wrap ga-3">
+    <CommonFilterControl
+      title="Board"
+      :selected-item="selectedBoard"
+      :disabled="isLoadingBoard || !selectedBoard"
+      :loading="isLoadingBoard"
+      :open="showBoardDialog"
+      :image-src="getDirectoryBoardImageSrc(selectedBoard)"
+      :image-alt="selectedBoard?.title"
+      :clearable="false"
+      large
+      @click="openBoardDialog"
+    />
+    <CommonFilterControl
+      title="Grade"
+      :selected-item="selectedGrade"
+      :disabled="isLoadingGrades || !selectedGrade"
+      :loading="isLoadingGrades"
+      :open="showGradeDialog"
+      :clearable="false"
+      large
+      @click="openGradeDialog"
+    />
+    <CommonFilterControl
+      title="Subject"
+      :selected-item="selectedSubject"
+      :disabled="isLoadingSubjects || !selectedSubject"
+      :loading="isLoadingSubjects"
+      :open="showSubjectDialog"
+      :clearable="false"
+      large
+      @click="openSubjectDialog"
+    />
 
     <CommonFilterSelectDialog
       v-model:show-dialog="showBoardDialog"
       title-modal="Board"
-      :items="boards"
+      :items="orderedBoards"
       :selected-item="selectedBoard"
       :has-search="true"
+      :show-item-icon="true"
+      :icon-src="getDirectoryBoardImageSrc"
       @change-selected-item="boardChange"
     />
 
@@ -119,6 +67,10 @@
 <script setup>
 import { useRouter, useRoute } from 'vue-router'
 import { CAMBRIDGE_BOARD_ID } from '~/constants/pastpaper'
+import {
+  DIRECTORY_BOARD_ORDER,
+  getDirectoryBoardImageSrc,
+} from '~/constants/pastpaper/directory'
 
 const emit = defineEmits([
   'changeSubject',
@@ -130,6 +82,17 @@ const router = useRouter()
 const route = useRoute()
 
 const { loadingGetData: isLoadingBoard, data: boards, getData: fetchBoards } = useBoard()
+const orderedBoards = computed(() => {
+  const orderByTitle = new Map(
+    DIRECTORY_BOARD_ORDER.map((title, index) => [title, index]),
+  )
+
+  return [...boards.value].sort((firstBoard, secondBoard) => {
+    const firstOrder = orderByTitle.get(firstBoard.title) ?? Number.MAX_SAFE_INTEGER
+    const secondOrder = orderByTitle.get(secondBoard.title) ?? Number.MAX_SAFE_INTEGER
+    return firstOrder - secondOrder
+  })
+})
 
 onMounted(async () => {
   await fetchBoards()
@@ -356,4 +319,15 @@ const openSubjectDialog = () => {
 // End Subject Section
 </script>
 
-<style></style>
+<style scoped>
+.directory-primary-filters :deep(.filter-control) {
+  max-width: 280px;
+  flex: 1 1 200px;
+}
+@media (max-width: 599px) {
+  .directory-primary-filters :deep(.filter-control) {
+    max-width: none;
+    flex-basis: 100%;
+  }
+}
+</style>

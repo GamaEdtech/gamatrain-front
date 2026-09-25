@@ -1,7 +1,11 @@
 <template>
   <v-btn
     class="filter-control text-none text-start"
-    :class="{ 'filter-control--selected': selectedItem, 'filter-control--open': open }"
+    :class="{
+      'filter-control--selected': selectedItem,
+      'filter-control--open': open,
+      'filter-control--large': large,
+    }"
     variant="outlined"
     rounded="lg"
     :disabled="disabled"
@@ -12,7 +16,17 @@
     @click="emit('click')"
   >
     <span
-      v-if="icon"
+      v-if="imageSrc"
+      class="filter-control__image mr-2"
+    >
+      <v-img
+        :src="imageSrc"
+        :alt="imageAlt || selectedItem?.title || title"
+        contain
+      />
+    </span>
+    <span
+      v-else-if="icon"
       class="filter-control__icon mr-2"
     >
       <v-icon
@@ -29,7 +43,7 @@
     </span>
     <template #append>
       <span
-        v-if="selectedItem"
+        v-if="clearable && selectedItem"
         class="filter-control__clear mr-1"
         role="button"
         tabindex="0"
@@ -61,6 +75,10 @@ defineProps({
   loading: { type: Boolean, default: false },
   open: { type: Boolean, default: false },
   icon: { type: String, default: '' },
+  imageSrc: { type: String, default: '' },
+  imageAlt: { type: String, default: '' },
+  clearable: { type: Boolean, default: true },
+  large: { type: Boolean, default: false },
 })
 const emit = defineEmits(['click', 'clear'])
 </script>
@@ -93,14 +111,19 @@ const emit = defineEmits(['click', 'clear'])
 .filter-control--open:not(.filter-control--selected) {
   border-color: rgb(var(--v-theme-directoryInk)) !important;
 }
-.filter-control__icon {
+.filter-control__icon,
+.filter-control__image {
   box-sizing: border-box;
   display: inline-flex;
   width: 28px;
   height: 28px;
-  flex: 0 0 28px;
+  flex: 0 0 auto;
   align-items: center;
   justify-content: center;
+}
+.filter-control__image :deep(.v-img) {
+  width: 100%;
+  height: 100%;
 }
 .filter-control__copy {
   display: flex;
@@ -125,6 +148,19 @@ const emit = defineEmits(['click', 'clear'])
   font-weight: 650;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.filter-control--large {
+  width: 100%;
+  min-width: 200px;
+  height: 60px !important;
+  padding-inline: 20px;
+}
+.filter-control--large.filter-control--selected .filter-control__label {
+  font-size: 14px;
+}
+.filter-control--large .filter-control__value {
+  max-width: 240px;
+  font-size: 16px;
 }
 .filter-control :deep(.v-btn__content) {
   flex: 1;

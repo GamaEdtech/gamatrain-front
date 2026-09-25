@@ -114,7 +114,7 @@
               class="select-item-icon mr-2"
             >
               <v-img
-                v-if="item.icon && !hasIconFailed(getIconSrc(item))"
+                v-if="getIconSrc(item) && !hasIconFailed(getIconSrc(item))"
                 :src="getIconSrc(item)"
                 :alt="item.title"
                 contain
