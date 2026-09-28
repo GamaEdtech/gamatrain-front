@@ -51,7 +51,7 @@
     <nuxt-link
       v-slot="{ isActive }"
       class="each-menu d-flex align-center justify-start flex-column"
-      to="/blog"
+      to="/post"
     >
       <v-icon
         size="24"
@@ -63,7 +63,7 @@
       <span
         v-if="isActive"
         class="text-grey500 text-subtitle-1"
-      >blogs</span>
+      >posts</span>
     </nuxt-link>
 
     <div class="each-menu d-flex align-start flex-column">

@@ -57,3 +57,23 @@ export interface GetUserCommissionParams extends SearchFilterUserCommission {
   page: number
   pageSize: number
 }
+
+export type CommissionStatisticsPeriod = 'DayOfWeek' | 'MonthOfYear'
+
+export interface CommissionStatisticDTO {
+  name: string
+  amountUsd: number
+  points: number
+}
+
+export interface CommissionStatisticsResponseDTO {
+  statistics: CommissionStatisticDTO[]
+  totalAmountUsd: number
+  totalPoints: number
+}
+
+export interface CommissionStatisticsParams {
+  period: CommissionStatisticsPeriod
+  startDate: string
+  endDate: string
+}

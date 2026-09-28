@@ -1,0 +1,171 @@
+import type {
+  ApiResult,
+  AppError,
+  ResponseListDTO,
+  CommentPostDTO,
+  AddCommnetPostDTO,
+  GetCommentPostParams,
+  AddCommentPostResponseDTO,
+} from '@/types'
+
+const data = ref<CommentPostDTO[]>([])
+const totalCount = ref(0)
+const pageCount = ref(0)
+const loadingGetData = ref(true)
+const loadingAddItem = ref(false)
+
+const NAME = 'Comment'
+
+export const usePostComment = () => {
+  const { $toast } = useNuxtApp()
+  const loadingLikeItem = ref(false)
+  const loadingDislikeItem = ref(false)
+
+  const getData = async (params: GetCommentPostParams) => {
+    const { page, pageSize, postId } = params
+    loadingGetData.value = true
+    try {
+      const query: Record<string, string | number | boolean | null> = {
+        'PagingDto.PageFilter.Size': pageSize,
+        'PagingDto.PageFilter.Skip': (page - 1) * pageSize,
+        'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+      }
+      const response = await useApiService.get<
+        ApiResult<ResponseListDTO<CommentPostDTO>>
+      >(`/api/v2/posts/${postId}/comments`, query)
+      if (response.data) {
+        data.value = response.data.list
+        totalCount.value = response.data.totalRecordsCount
+        pageCount.value = Math.ceil(totalCount.value / pageSize)
+      }
+      else {
+        data.value = []
+      }
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+    }
+    finally {
+      loadingGetData.value = false
+    }
+  }
+
+  const addItem = async (item: AddCommnetPostDTO, postId: string) => {
+    try {
+      loadingAddItem.value = true
+      const response = await useApiService.post<
+        ApiResult<AddCommentPostResponseDTO>
+      >(
+        `/api/v2/posts/${postId}/comments`,
+        { ...item },
+      )
+      if (response.succeeded) {
+        $toast.success(`${NAME} Added successfully!`)
+      }
+      else {
+        if (response.errors && response.errors.length > 0) {
+          $toast.error(response.errors[0].message || '')
+        }
+        else {
+          $toast.error('The operation failed. Please try again later.')
+        }
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+        data: null,
+      }
+    }
+    finally {
+      loadingAddItem.value = false
+    }
+  }
+
+  const like = async (postId: string, commentId: string) => {
+    try {
+      loadingLikeItem.value = true
+      const response = await useApiService.patch<
+        ApiResult<boolean>
+      >(
+        `/api/v2/posts/${postId}/comments/${commentId}/like`,
+        {},
+      )
+      if (response.succeeded) {
+        $toast.success(`${NAME} like successfully!`)
+      }
+      else {
+        if (response.errors && response.errors.length > 0) {
+          $toast.error(response.errors[0].message || '')
+        }
+        else {
+          $toast.error('The operation failed. Please try again later.')
+        }
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+      }
+    }
+    finally {
+      loadingLikeItem.value = false
+    }
+  }
+
+  const dislike = async (postId: string, commentId: string) => {
+    try {
+      loadingDislikeItem.value = true
+      const response = await useApiService.patch<
+        ApiResult<boolean>
+      >(
+        `/api/v2/posts/${postId}/comments/${commentId}/dislike`,
+        {},
+      )
+      if (response.succeeded) {
+        $toast.success(`${NAME} dislike successfully!`)
+      }
+      else {
+        if (response.errors && response.errors.length > 0) {
+          $toast.error(response.errors[0].message || '')
+        }
+        else {
+          $toast.error('The operation failed. Please try again later.')
+        }
+      }
+      return response
+    }
+    catch (err: unknown) {
+      const error = err as AppError
+      if (error.response?.status === 400) {
+        $toast.error(error.response.data?.message || '')
+      }
+      return {
+        succeeded: false,
+        message: 'The operation failed. Please try again later.',
+      }
+    }
+    finally {
+      loadingDislikeItem.value = false
+    }
+  }
+
+  return { loadingGetData, data, getData, totalCount, pageCount,
+    addItem, loadingAddItem, like, loadingLikeItem, dislike, loadingDislikeItem,
+  }
+}

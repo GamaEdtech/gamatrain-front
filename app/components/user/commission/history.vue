@@ -59,8 +59,7 @@ const {
 } = useCommission()
 
 const headers: DataTableHeader<UserCommissionDTO>[] = [
-  { title: 'ID', key: 'id', sortable: false, width: '8vw', align: 'start' },
-  { title: 'Downloader ID', key: 'downloaderUserId', sortable: false, width: '14vw', emptyText: 'unknown' },
+  { title: '#', key: 'rowIndex', sortable: false, width: '4vw', type: 'index' },
   {
     title: 'Reason',
     key: 'reason',
@@ -69,7 +68,6 @@ const headers: DataTableHeader<UserCommissionDTO>[] = [
     type: 'chip',
     getChipColor: () => 'info',
   },
-  { title: 'Source', key: 'source', sortable: false, width: '16vw', emptyText: 'unknown' },
   {
     title: 'Content Type',
     key: 'contentType',
@@ -80,8 +78,6 @@ const headers: DataTableHeader<UserCommissionDTO>[] = [
   },
   { title: 'Content ID', key: 'externalContentId', sortable: false, width: '14vw', emptyText: 'unknown' },
   { title: 'File Type', key: 'externalFileType', sortable: false, width: '14vw', emptyText: 'unknown' },
-  { title: 'Extra ID', key: 'externalExtraId', sortable: false, width: '12vw', emptyText: 'unknown' },
-  { title: 'Points', key: 'points', sortable: false, width: '10vw', type: 'number' },
   { title: 'Commission', key: 'commissionPercent', sortable: false, width: '14vw', type: 'percent' },
   { title: 'Amount USD', key: 'amountUsd', sortable: false, width: '14vw', type: 'currency', prefix: '$' },
   {
@@ -92,6 +88,22 @@ const headers: DataTableHeader<UserCommissionDTO>[] = [
     type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm',
     icon: 'md:history',
+  },
+  {
+    title: 'Action',
+    key: 'Action',
+    sortable: false,
+    width: '12vw',
+    type: 'actions',
+    actions: [
+      {
+        icon: 'md:arrow_circle_right',
+        tooltip: 'Content Page',
+        to: (item: UserCommissionDTO) => createLink(item),
+        target: '_blank',
+        disabled: (item: UserCommissionDTO) => !createLink(item),
+      },
+    ],
   },
 ]
 
@@ -110,6 +122,22 @@ const fetchCommissions = async () => {
 const changePageNumber = async (pageNumber: number) => {
   page.value = pageNumber
   await fetchCommissions()
+}
+
+const createLink = (item: UserCommissionDTO) => {
+  if (!item.externalContentId) return undefined
+
+  switch (item.contentType) {
+    case 'PastPaper':
+    case 'Test':
+      return `/paper/${item.externalContentId}`
+    case 'Exam':
+      return `/exam/${item.externalContentId}`
+    case 'Multimedia':
+      return `/multimedia/${item.externalContentId}`
+    default:
+      return undefined
+  }
 }
 
 onMounted(async () => {

@@ -99,6 +99,7 @@ export const usePayment = () => {
         Gateway: params?.gateway ?? '',
         Status: params?.status ?? '',
         Currency: params?.currency ?? '',
+        Kind: params?.kind ?? '',
       }
       const response = await useApiService.get<
         ApiResult<PaymentSummaryDTO[]>

@@ -202,6 +202,7 @@ import type {
   StatusPayment,
   CurrencyPayment,
   PaymentGateway,
+  PaymentKind,
   SearchFilterAdminPayment,
 } from '@/types'
 import { TOKEN_DECIMALS } from '~/composables/useJupiterSwap'
@@ -267,6 +268,15 @@ const headers: DataTableHeader<AdminPaymentDTO>[] = [
     getChipColor: (item: AdminPaymentDTO) => getColorBadgeStatus(item.status),
   },
   {
+    title: 'Kind',
+    key: 'kind',
+    sortable: false,
+    width: '7vw',
+    type: 'chip',
+    emptyText: 'unknown',
+    getChipColor: (item: AdminPaymentDTO) => getColorBadgeKind(item.kind),
+  },
+  {
     title: 'Created At',
     key: 'creationDate',
     sortable: false,
@@ -309,6 +319,7 @@ const searchFilter = reactive<SearchFilterAdminPayment>({
   endDate: '',
   status: '',
   gateway: '',
+  kind: '',
 })
 
 const showConfirmPaymentModal = ref(false)
@@ -345,6 +356,7 @@ const startSearch = async (item: SearchFilterAdminPayment) => {
   searchFilter.endDate = item.endDate
   searchFilter.status = item.status
   searchFilter.gateway = item.gateway
+  searchFilter.kind = item.kind
   page.value = 1
   showSearchModal.value = false
   await fetchPayments()
@@ -358,6 +370,7 @@ const isShowClearFilter = computed(() => {
     || searchFilter.endDate.toString().length > 0
     || searchFilter.status.length > 0
     || searchFilter.gateway.length > 0
+    || searchFilter.kind.length > 0
   ) {
     return true
   }
@@ -371,8 +384,25 @@ const clearFilter = async () => {
   searchFilter.endDate = ''
   searchFilter.status = ''
   searchFilter.gateway = ''
+  searchFilter.kind = ''
   page.value = 1
   await fetchPayments()
+}
+
+const getColorBadgeKind = (kind?: PaymentKind | null) => {
+  switch (kind) {
+    case 'NewSubscription':
+      return 'info'
+    case 'Renewal':
+      return 'secondary'
+    case 'PlanSwitch':
+      return 'primary'
+    case 'PointsTopUp':
+      return 'blueGray300'
+
+    default:
+      return 'grey400'
+  }
 }
 
 const getColorBadgeStatus = (status: StatusPayment) => {
@@ -478,6 +508,9 @@ const exportData = async () => {
       : null,
     status: searchFilter.status
       ? searchFilter.status as StatusPayment
+      : null,
+    kind: searchFilter.kind
+      ? searchFilter.kind as PaymentKind
       : null,
   })
 

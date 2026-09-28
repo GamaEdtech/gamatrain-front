@@ -105,6 +105,20 @@
       class="mt-6"
     />
 
+    <common-gombo-box
+      v-model="searchFilter.kind!"
+      label="Kind"
+      :items="kindList.map((item) => ({
+        id: item,
+        title: item,
+      }))"
+      rounded="lg"
+      density="compact"
+      base-color="grey800"
+      color="primary"
+      class="mt-6"
+    />
+
     <v-btn
       color="primary"
       rounded="xl"
@@ -136,12 +150,14 @@ const searchFilter = reactive<PaymentSummaryGetParams>({
   gateway: null,
   status: null,
   currency: null,
+  kind: null,
 })
 const startDateMenuOpen = ref(false)
 const endDateMenuOpen = ref(false)
 const statusList = ['Pending', 'Paid', 'Failed']
 const gatewayList = ['GamaTrain', 'Stripe']
 const currencyList = ['SOL', 'USDC', 'GET', 'USDT']
+const kindList = ['NewSubscription', 'Renewal', 'PlanSwitch', 'PointsTopUp']
 
 const startSearch = () => {
   emit('searchData', searchFilter)
@@ -154,6 +170,7 @@ onMounted(() => {
   searchFilter.gateway = propsData.data.gateway
   searchFilter.status = propsData.data.status
   searchFilter.currency = propsData.data.currency
+  searchFilter.kind = propsData.data.kind
 })
 </script>
 

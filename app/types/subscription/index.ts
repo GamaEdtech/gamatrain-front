@@ -209,6 +209,10 @@ export interface UserSubscriptionHistoryDTO {
   currency: SubscriptionCurrency
   billingInterval: BillingInterval
   autoRenews: boolean
+  // Set when the gateway reported a failed renewal charge before this subscription ended - lets us
+  // tell "ended because a payment failed" apart from a user-requested cancellation or a plan that
+  // simply ran its course, and offer a one-click resubscribe to the same plan/interval for that case.
+  lastPaymentFailedDate: string | null
 }
 
 export interface FeatureGroupUserSubscriptionDTO {

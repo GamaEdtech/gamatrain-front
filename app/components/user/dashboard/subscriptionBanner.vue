@@ -1,5 +1,9 @@
 <template>
-  <div class="dashboard-card pa-4 w-100">
+  <component
+    :is="subscription ? NuxtLink : 'div'"
+    :to="subscription ? '/user/subscription' : undefined"
+    class="dashboard-card pa-4 w-100 d-block text-decoration-none"
+  >
     <template v-if="subscription">
       <div class="d-flex align-center justify-space-between flex-wrap ga-4">
         <div class="d-flex align-start ga-3 flex-grow-1">
@@ -131,11 +135,12 @@
         </v-btn>
       </div>
     </template>
-  </div>
+  </component>
 </template>
 
 <script setup lang="ts">
 import type { UserSubscriptionDTO } from '@/types'
+import { NuxtLink } from '#components'
 
 const props = defineProps<{
   subscription: UserSubscriptionDTO | null
@@ -196,6 +201,11 @@ const hasLimitedUsage = computed(() => totalLimit.value > 0)
   border-radius: 1rem;
   border: 1px solid rgb(var(--v-theme-grey200));
   background: rgb(var(--v-theme-white));
+  transition: border-color 0.15s ease;
+}
+
+a.dashboard-card:hover {
+  border-color: rgb(var(--v-theme-primary));
 }
 
 .min-width-0 {

@@ -31,6 +31,8 @@ const apiRequest = <T = unknown>(
   opts?: UseFetchOptions,
 ): Promise<T> => {
   const config = useRuntimeConfig()
+  // Resolve while the Nuxt context is active; it is gone inside async fetch hooks.
+  const router = useRouter()
   const headers = authHeader(opts?.public)
 
   let baseURL = ''
@@ -62,7 +64,6 @@ const apiRequest = <T = unknown>(
       options: _options,
     }) {
       if (_response?.status == 401 || _response?.status == 403) {
-        const router = useRouter()
         router.push({ query: { auth_form: 'login' } })
       }
     },

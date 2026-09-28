@@ -310,8 +310,8 @@ const items = computed(() => [
         icon_type: 'custom',
       },
       {
-        title: 'Blogs',
-        link: '/user/blogs',
+        title: 'Posts',
+        link: '/user/posts',
         icon: 'md:art_track',
       },
     ],
@@ -324,7 +324,7 @@ const items = computed(() => [
     subMenuList: [
       {
         title: 'Results',
-        link: '/exam/results',
+        link: '/user/exam/result/list',
         icon: 'md:fact_check',
       },
       {

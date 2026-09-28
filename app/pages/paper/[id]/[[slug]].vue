@@ -53,6 +53,7 @@
           :thumb-pic="contentData.thumb_pic"
           :title="contentData.title"
           :alt="pageTitle"
+          :files="contentData.files"
           :views="contentData.views"
           :score="contentData.ref_score"
           :q-file-pages="contentData.q_file_pages"
