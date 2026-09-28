@@ -1,9 +1,8 @@
 import type {
   ApiResult,
+  ConnectionStatusDTO,
+  ConnectionStatusResponseDTO,
 } from '@/types'
-
-const loadingFollow = ref(false)
-const loadingUnfollow = ref(false)
 
 // const NAME = 'Connection'
 
@@ -11,12 +10,16 @@ export const useConnection = () => {
   const { $toast } = useNuxtApp()
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
+  const loadingFollow = ref(false)
+  const loadingUnfollow = ref(false)
+  const loadingCheckConnectionStatus = ref(false)
+
   const follow = async (id: string) => {
     loadingFollow.value = true
 
     try {
       const response = await useApiService.post<ApiResult<boolean>>(
-        `/api/v2/connections/users/${id}/follow`,
+        `/api/v2/connections/users/${id}/follow?idType=CoreId`,
         {
           subscribeToActivityFeed: true,
         },
@@ -46,7 +49,7 @@ export const useConnection = () => {
 
     try {
       const response = await useApiService.post<ApiResult<boolean>>(
-        `/api/v2/connections/users/${id}/unfollow`,
+        `/api/v2/connections/users/${id}/unfollow?idType=CoreId`,
         {
           twoWayRevoke: true,
         },
@@ -71,10 +74,33 @@ export const useConnection = () => {
     }
   }
 
+  const checkConnectionStatus = async (data: ConnectionStatusDTO) => {
+    loadingCheckConnectionStatus.value = true
+
+    try {
+      const response = await useApiService.post<ApiResult<ConnectionStatusResponseDTO[]>>(
+        `/api/v2/connections/status`,
+        { ...data },
+      )
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<ConnectionStatusResponseDTO[]>(err)
+    }
+    finally {
+      loadingCheckConnectionStatus.value = false
+    }
+  }
+
   return {
     loadingUnfollow,
     loadingFollow,
+    loadingCheckConnectionStatus,
     follow,
     unFollow,
+    checkConnectionStatus,
   }
 }
