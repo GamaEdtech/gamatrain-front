@@ -9,7 +9,7 @@ import { mdSymbols } from '../utils/iconsets/mdSymbols'
 import { defineNuxtPlugin } from 'nuxt/app'
 
 export default defineNuxtPlugin(
-  (app: { vueApp: { use: (plugin: unknown) => void } }) => {
+  (app) => {
     const vuetify = createVuetify({
       ssr: true,
       theme: {
@@ -17,24 +17,24 @@ export default defineNuxtPlugin(
         themes: {
           light: {
             colors: {
-              primary: '#FFB300',
+              primary: '#F4B400',
               secondary: '#03DAC6',
               error: '#B00020',
               info: '#2196F3',
               success: '#4CAF50',
-              warning: '#FB8C00',
-              grey900: '#24292F',
+              warning: '#E8A800',
+              grey900: '#1E2A44',
               grey800: '#1D2939',
               grey700: '#344054',
               grey600: '#475467',
               grey500: '#667085',
               grey400: '#98A2B3',
               grey300: '#D0D5DD',
-              grey200: '#E4E7EC',
-              grey100: '#f2f4f7',
-              grey50: '#F9FAFB',
+              grey200: '#D8DEE8',
+              grey100: '#EEF1F5',
+              grey50: '#F7F8FA',
               grey25: '#FCFCFD',
-              primary100: '#fff4bc',
+              primary100: '#FFF8E1',
               primary50: '#FFF2D1',
               lightError: '#F04438',
               greenLight700: '#02B719',
@@ -52,23 +52,23 @@ export default defineNuxtPlugin(
           dark: {
             colors: {
               surface: '#FFFFFF',
-              primary: '#FFB300',
+              primary: '#F4B400',
               secondary: '#03DAC6',
               error: '#B00020',
               success: '#4CAF50',
-              warning: '#FB8C00',
-              grey900: '#24292F',
+              warning: '#E8A800',
+              grey900: '#1E2A44',
               grey800: '#1D2939',
               grey700: '#344054',
               grey600: '#475467',
               grey500: '#667085',
               grey400: '#98A2B3',
               grey300: '#D0D5DD',
-              grey200: '#E4E7EC',
-              grey100: '#f2f4f7',
-              grey50: '#F9FAFB',
+              grey200: '#D8DEE8',
+              grey100: '#EEF1F5',
+              grey50: '#F7F8FA',
               grey25: '#FCFCFD',
-              primary100: '#fff4bc',
+              primary100: '#FFF8E1',
               primary50: '#FFF2D1',
               lightError: '#F04438',
               greenLight700: '#02B719',
