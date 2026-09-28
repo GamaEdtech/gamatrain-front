@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="dialogModel"
-    max-width="400"
+    :max-width="maxWidth"
     :fullscreen="!mdAndUp"
     @click="clickOnOverlay"
   >
@@ -48,6 +48,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  maxWidth: {
+    type: Number,
+    default: 400,
+  },
 })
 
 const emit = defineEmits(['update:showDialog'])
@@ -72,14 +76,14 @@ const clickOnModal = (event) => {
 }
 </script>
 
-<style>
+<style scoped>
 .mobile-style{
   max-height: 90%;
 }
-.ck ol, .ck ul{
+:deep(.ck ol), :deep(.ck ul){
   padding-left : 24px !important;
 }
-.ck.ck-balloon-panel{
+:global(.ck.ck-balloon-panel){
   z-index: 2400 !important;
 }
 @media only screen and (max-width: 960px) {

@@ -4,6 +4,9 @@ import type {
   ProfileDTO,
   EditProfileDTO,
   DeleteProfileDTO,
+  ChangePasswordDTO,
+  EditUsernameDTO,
+  GetDashboardDataDTO,
 } from '@/types'
 
 const loadingGetItemById = ref(false)
@@ -11,11 +14,15 @@ const loadingEditItem = ref(false)
 const loadingDeleteItem = ref(false)
 const loadingCancelDeleteItem = ref(false)
 const loadingChangeGroup = ref(false)
+const loadingChangePassword = ref(false)
+const loadingEditUsername = ref(false)
+const loadingGetDashboardData = ref(false)
 const NAME = 'Profile'
 
 export const useProfile = () => {
   const { $toast } = useNuxtApp()
   const auth = useAuth()
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getItemById = async (id: string) => {
     loadingGetItemById.value = true
@@ -270,41 +277,108 @@ export const useProfile = () => {
       const response = await useApiService.post<
         ApiResult<boolean>
       >(
-        '/api/v1/users/group',
+        '/api/v2/legacy-auth/group',
         { group },
       )
-      if (response?.status === 1) {
+      if (response.succeeded) {
         $toast.success('Update group was successful.')
       }
       else {
-        if (response.errors && response.errors.length > 0) {
-          $toast.error(response.errors[0].message || '')
-        }
-        else {
-          $toast.error('The operation failed. Please try again later.')
-        }
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        status: 0,
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-        data: {},
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingChangeGroup.value = false
     }
   }
 
+  const changePassword = async (item: ChangePasswordDTO) => {
+    try {
+      loadingChangePassword.value = true
+      const response = await useApiService.put<
+        ApiResult<boolean>
+      >('/api/v1/users/password', { ...item })
+
+      if (response.status == 1) {
+        $toast.success('Password changed successfully')
+      }
+      else {
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
+    }
+    finally {
+      loadingChangePassword.value = false
+    }
+  }
+
+  const editUsername = async (item: EditUsernameDTO) => {
+    try {
+      loadingEditUsername.value = true
+      const response = await useApiService.put<
+        ApiResult<boolean>
+      >('/api/v1/users/username', { ...item })
+
+      if (response.status === 1 || response.succeeded) {
+        $toast.success('Username changed successfully')
+      }
+      else {
+        handleApiResponseError(response)
+      }
+
+      return {
+        ...response,
+        succeeded: response.succeeded || response.status === 1,
+      }
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
+    }
+    finally {
+      loadingEditUsername.value = false
+    }
+  }
+
+  const getDashboardData = async () => {
+    loadingGetDashboardData.value = true
+    try {
+      const response = await useApiService.get<
+        ApiResult<GetDashboardDataDTO>
+      >('/api/v2/identities/dashboard')
+
+      if (response.succeeded && response.data) {
+        return response
+      }
+
+      handleApiResponseError(response)
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<GetDashboardDataDTO>(err)
+    }
+    finally {
+      loadingGetDashboardData.value = false
+    }
+  }
+
   return {
-    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, cancelDeleteItem, loadingCancelDeleteItem, changeGroup, loadingChangeGroup,
+    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, cancelDeleteItem, loadingCancelDeleteItem, changeGroup, loadingChangeGroup, changePassword, loadingChangePassword, editUsername, loadingEditUsername, getDashboardData, loadingGetDashboardData,
   }
 }

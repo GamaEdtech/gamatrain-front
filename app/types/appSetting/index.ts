@@ -28,4 +28,11 @@ export interface AdminAppSettingsDTO {
   startDeletingAccountEmailTemplate: string
   finishedDeletingAccountEmailTemplate: string
   adminTransactionCreationEmailTemplate: string
+  subscriptionCancelledEmailTemplate: string
+  subscriptionResumedEmailTemplate: string
+  // Exam export price = question count x the format's multiplier (backend ExamExportPricing).
+  // Optional: omitted/empty keeps the stored value; never set means the defaults 1 / 2 / 2.5.
+  examExportPdfMultiplier?: number
+  examExportWordMultiplier?: number
+  examExportPowerPointMultiplier?: number
 }

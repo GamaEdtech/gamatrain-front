@@ -28,38 +28,8 @@
           />
         </div>
       </div>
-      <div class="d-flex align-center justify-end flex-wrap ga-1">
-        <v-btn
-          size="small"
-          flat
-          icon
-          color="info"
-          :loading="loading"
-          @click="refreshData"
-        >
-          <v-icon
-            color="white"
-            size="20"
-          >
-            md:refresh
-          </v-icon>
-          <v-tooltip
-            activator="parent"
-            location="top"
-          >
-            Refresh Data
-          </v-tooltip>
-        </v-btn>
-        <span
-          class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
-        >
-          <span class="text-grey500 font-weight-bold mr-1">
-            {{ totalCount }}
-          </span>
-          Contacts
-        </span>
-      </div>
     </div>
+
     <div class="w-100 d-flex align-center justify-start ga-2 mt-4">
       <v-btn
         rounded="pill"
@@ -82,150 +52,45 @@
         <span class="text-primary font-weight-bold text-h5">Create Ticket</span>
       </v-btn>
     </div>
-    <div class="w-100 mt-4">
-      <v-data-table
-        :headers="headers"
-        :items="list"
-        :items-per-page="pageSize"
-        class="elevation-1 set-height-table"
-        :loading="loading"
-        fixed-header
-        hide-default-footer
-      >
-        <template #headers="{ columns }">
-          <tr>
-            <th
-              v-for="(column, index) in columns"
-              :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
-               ${index == 0 ? `` : `th-min-width`}`"
-            >
-              {{ column.title }}
-            </th>
-          </tr>
-        </template>
 
-        <template #[`item.id`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
+    <common-data-table
+      v-model:page="page"
+      v-model:page-size="pageSize"
+      :headers="headers"
+      :items="list || []"
+      :page-count="pageCount"
+      :total-count="totalCount"
+      :page-size-options="allPageSize"
+      :loading="loading"
+      item-label="Contacts"
+      class="mt-4"
+      @update:page="changePageNumber"
+      @update:page-size="changePageSize"
+    >
+      <template #actions>
+        <v-btn
+          size="small"
+          flat
+          icon
+          color="info"
+          :loading="loading"
+          @click="refreshData"
+        >
+          <v-icon
+            color="white"
+            size="20"
           >
-            {{ item.id }}
-          </div>
-        </template>
-
-        <template #[`item.sender`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center"
+            md:refresh
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="top"
           >
-            {{ !item.sender ? `unknown` : item.sender }}
-          </div>
-        </template>
-        <template #[`item.email`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold"
-          >
-            {{ item.email }}
-          </div>
-        </template>
-
-        <template #[`item.subject`]="{ item }">
-          <div
-            class="text-grey600 text-h5 d-flex text-center justify-center align-center font-weight-bold"
-          >
-            {{ item.subject }}
-          </div>
-        </template>
-
-        <template #[`item.isReadByAdmin`]="{ item }">
-          <div
-            class="w-100 d-flex justify-center align-center"
-          >
-            <v-chip
-              :color="item.isReadByAdmin ? `success`:`warning`"
-              class="font-weight-bold text-h5"
-            >
-              {{ item.isReadByAdmin ? `Read`:`UnRead` }}
-            </v-chip>
-          </div>
-        </template>
-
-        <template #[`item.Action`]="{ item }">
-          <div
-            class="d-flex justify-center align-center"
-          >
-            <v-btn
-              icon
-              flat
-              @click="viewDetail(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:plagiarism
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                Details
-              </v-tooltip>
-            </v-btn>
-            <v-btn
-              icon
-              flat
-              @click="deleteContact(item)"
-            >
-              <v-icon
-                size="20"
-                color="grey800"
-              >
-                md:delete
-              </v-icon>
-              <v-tooltip
-                activator="parent"
-                location="top"
-              >
-                delete
-              </v-tooltip>
-            </v-btn>
-          </div>
-        </template>
-      </v-data-table>
-    </div>
-
-    <div class="w-100 d-flex mt-2 position-relative ga-6">
-      <div
-        class="w-100 d-flex justify-center justify-sm-start justify-md-center mt-16 mt-sm-4"
-      >
-        <v-pagination
-          v-model="page"
-          :length="pageCount"
-          :total-visible="4"
-          next-icon="md:arrow_forward"
-          prev-icon="md:arrow_back"
-          size="40"
-          class="custom-pagination"
-          @update:model-value="changePageNumber"
-        />
-      </div>
-
-      <div class="position-absolute right-0 select-size-div">
-        <v-select
-          v-model="pageSize"
-          :items="allPageSize"
-          item-title="label"
-          item-value="value"
-          variant="outlined"
-          density="compact"
-          rounded
-          hide-details
-          max-width="140"
-          class="rounded-pill"
-          @update:model-value="changePageSize"
-        />
-      </div>
-    </div>
+            Refresh Data
+          </v-tooltip>
+        </v-btn>
+      </template>
+    </common-data-table>
 
     <admin-common-modal
       v-model:show-dialog="showDeleteModal"
@@ -240,6 +105,7 @@
     <admin-common-modal
       v-model:show-dialog="showDetailModal"
       title="Detail"
+      :max-width="900"
     >
       <admin-contactus-view-message-details-modal
         :id="selectedItemIdForDetail"
@@ -250,6 +116,7 @@
     <admin-common-modal
       v-model:show-dialog="showComposeMailModal"
       title="Compose"
+      :max-width="600"
     >
       <admin-contactus-compose-mail-modal @compose-mail-success-full="showComposeMailModal = false" />
     </admin-common-modal>
@@ -257,6 +124,7 @@
     <admin-common-modal
       v-model:show-dialog="showCreateTicketModal"
       title="Ticket"
+      :max-width="600"
     >
       <admin-contactus-create-ticket-modal @create-ticket-success-full="createTicketSuccessfull" />
     </admin-common-modal>
@@ -264,44 +132,15 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  ApiResult,
-  AppError,
-  ResponseListDTO,
-  AdminContactUsDTO,
-} from '@/types'
+import type { AdminContactUsDTO, DataTableHeader } from '@/types'
 
 definePageMeta({
   layout: 'admin',
   middleware: ['auth', 'admin'],
 })
 
-const { $toast } = useNuxtApp()
-
-const headers = [
-  { title: 'ID', key: 'id', sortable: false, width: '5vw' },
-  { title: 'User', key: 'sender', sortable: false, width: '15vw' },
-  {
-    title: 'Email',
-    key: 'email',
-    sortable: false,
-    width: '15vw',
-  },
-  { title: 'Subject', key: 'subject', sortable: false, width: '20vw' },
-  { title: 'Status', key: 'isReadByAdmin', sortable: false, width: '10vw' },
-  {
-    title: 'Action',
-    key: 'Action',
-    sortable: false,
-    width: '20vw',
-  },
-]
-const list = ref<AdminContactUsDTO[]>([])
-const loading = ref(true)
-const totalCount = ref(0)
 const pageSize = ref(10)
 const page = ref(1)
-const pageCount = ref(0)
 const allPageSize = [
   { label: '10 Rows', value: 10 },
   { label: '20 Rows', value: 20 },
@@ -312,43 +151,24 @@ const statusList = ['All', 'Read', 'UnRead']
 const showDeleteModal = ref(false)
 const selectedItemIdForDelete = ref('')
 const showDetailModal = ref(false)
-const selectedItemIdForDetail = ref()
+const selectedItemIdForDetail = ref<number | null>(null)
 const showComposeMailModal = ref(false)
 const showCreateTicketModal = ref(false)
 
-const getData = async () => {
-  loading.value = true
-  try {
-    const params: Record<string, string | number | boolean | null> = {
-      'PagingDto.PageFilter.Size': pageSize.value,
-      'PagingDto.PageFilter.Skip': (page.value - 1) * pageSize.value,
-      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-    }
-    if (statusSelect.value != 'All') {
-      params[`PagingDto.SearchFilter.phrase`] = statusSelect.value == 'Read' ? true : false
-      params[`PagingDto.SearchFilter.column`] = 'isReadByAdmin'
-    }
-    const response = await useApiService.get<
-      ApiResult<ResponseListDTO<AdminContactUsDTO>>
-    >('/api/v2/admin/tickets', params)
-    if (response.data) {
-      list.value = response.data.list
-      totalCount.value = response.data.totalRecordsCount
-      pageCount.value = Math.ceil(totalCount.value / pageSize.value)
-    }
-    else {
-      list.value = []
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loading.value = false
-  }
+const {
+  loadingGetData: loading,
+  data: list,
+  getData,
+  totalCount,
+  pageCount,
+} = useContactUsAdmin()
+
+const fetchData = async () => {
+  await getData({
+    page: page.value,
+    pageSize: pageSize.value,
+    status: statusSelect.value,
+  })
 }
 
 const changeFilterStatus = async (status: string | number) => {
@@ -359,20 +179,22 @@ const changeFilterStatus = async (status: string | number) => {
     statusSelect.value = status as string
   }
   page.value = 1
-  await getData()
+  await fetchData()
 }
 
-const changePageNumber = async () => {
-  await getData()
+const changePageNumber = async (pageNumber: number) => {
+  page.value = pageNumber
+  await fetchData()
 }
 
-const changePageSize = async () => {
+const changePageSize = async (newPageSize: number) => {
+  pageSize.value = newPageSize
   page.value = 1
-  await getData()
+  await fetchData()
 }
 
 onMounted(async () => {
-  await getData()
+  await fetchData()
 })
 
 const viewDetail = async (contact: AdminContactUsDTO) => {
@@ -389,7 +211,7 @@ const replySuccessFull = () => {
 const createTicketSuccessfull = async () => {
   showCreateTicketModal.value = false
   page.value = 1
-  await getData()
+  await fetchData()
 }
 
 const deleteContact = (contact: AdminContactUsDTO) => {
@@ -399,45 +221,62 @@ const deleteContact = (contact: AdminContactUsDTO) => {
 const deleteSuccessFull = async () => {
   selectedItemIdForDelete.value = ''
   showDeleteModal.value = false
-  await getData()
+  await fetchData()
 }
 
 const refreshData = async () => {
-  await getData()
+  await fetchData()
 }
+
+const headers: DataTableHeader<AdminContactUsDTO>[] = [
+  { title: 'ID', key: 'id', sortable: false, width: '5vw', align: 'start' },
+  { title: 'User', key: 'sender', sortable: false, width: '15vw', emptyText: 'unknown' },
+  {
+    title: 'Email',
+    key: 'email',
+    sortable: false,
+    width: '15vw',
+  },
+  { title: 'Subject', key: 'subject', sortable: false, width: '20vw' },
+  {
+    title: 'Status',
+    key: 'isReadByAdmin',
+    sortable: false,
+    width: '10vw',
+    type: 'chip',
+    getText: (item: AdminContactUsDTO) => item.isReadByAdmin ? 'Read' : 'UnRead',
+    getChipColor: (item: AdminContactUsDTO) => item.isReadByAdmin ? 'success' : 'warning',
+  },
+  {
+    title: 'Action',
+    key: 'Action',
+    sortable: false,
+    width: '20vw',
+    type: 'actions',
+    actions: [
+      {
+        icon: 'md:plagiarism',
+        tooltip: 'Details',
+        onClick: (item: AdminContactUsDTO) => viewDetail(item),
+      },
+      {
+        icon: 'md:delete',
+        tooltip: 'delete',
+        onClick: (item: AdminContactUsDTO) => deleteContact(item),
+      },
+    ],
+  },
+]
 </script>
 
 <style scoped>
-.set-height-table {
-  max-height: 70vh;
-}
-.th-min-width {
-  min-width: 130px;
-}
-.description-width {
-  min-width: 200px;
-}
 .reverse-icon {
   transform: rotateZ(180deg);
-}
-.select-size-div {
-  top: 18px;
 }
 .btn-filter-container{
   height : 48px;
 }
 .filter-mobile-container{
   width: 170px;
-}
-
-:deep(.custom-pagination li button:hover) {
-  background-color: rgb(var(--v-theme-primary));
-  opacity: 0.6;
-}
-:deep(.custom-pagination .v-pagination__item--is-active button) {
-  background: rgb(var(--v-theme-primary)) !important;
-}
-:deep(.custom-pagination .v-pagination__item--is-active .v-btn__overlay){
-  opacity: 0 !important;
 }
 </style>

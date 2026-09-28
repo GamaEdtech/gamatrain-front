@@ -16,8 +16,10 @@ Please follow these coding standards to keep the project consistent and maintain
 
 - **Folder names** must use kebab-case. Use hyphens to separate words.
   - Example: `profile-modal`, `school-card`, `payment-history`
-- **File names** must use camelCase. Start with a lowercase letter and capitalize each following word.
-  - Example: `userProfile.vue`, `paymentHistory.ts`, `usePaymentAdmin.api.ts`
+- **Component file names** (`.vue`) must use PascalCase, matching common Vue/frontend convention.
+  - Example: `UserProfile.vue`, `PaymentHistory.vue`
+- **Other file names** (composables, utils, types, etc.) must use camelCase. Start with a lowercase letter and capitalize each following word.
+  - Example: `paymentHistory.ts`, `usePaymentAdmin.api.ts`
 - **Variables** must use camelCase.
   - Example: `selectedUser`, `paymentStatus`, `isFormValid`
 - **Functions** must use camelCase and follow ES6 standards.

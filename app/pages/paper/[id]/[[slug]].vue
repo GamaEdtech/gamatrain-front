@@ -23,19 +23,40 @@
         <v-icon color="primary">
           md:chevron_forward
         </v-icon>
+
+        <v-btn
+          v-if="
+            isAuthenticated
+              && user
+              && contentData.user_
+              && Number(contentData.user_) === user?.coreId
+          "
+          color="info"
+          class="rounded-circle"
+          size="24"
+          flat
+          variant="tonal"
+          @click="openEditModal = true"
+        >
+          <v-icon size="16">
+            md:edit
+          </v-icon>
+        </v-btn>
       </v-col>
       <v-col
         cols="12"
         md="4"
         class="d-flex justify-center justify-md-start"
       >
-        <lazy-common-detail-preview-action-card
+        <lazy-paper-preview-action-card
           :id="contentData.id"
           :thumb-pic="contentData.thumb_pic"
           :title="contentData.title"
           :alt="pageTitle"
+          :files="contentData.files"
           :views="contentData.views"
           :score="contentData.ref_score"
+          :q-file-pages="contentData.q_file_pages"
           @share="openShare = true"
         />
       </v-col>
@@ -45,9 +66,16 @@
         md="8"
         class="d-flex h-100 align-start flex-wrap"
       >
-        <lazy-common-detail-content-details-section :content-data="contentData" />
+        <lazy-paper-content-details-section :content-data="contentData" />
 
-        <lazy-common-detail-download-and-purchase-buttons
+        <lazy-paper-answer-availability-notice
+          v-if="
+            (contentData.answer_type === '1' || contentData.answer_type === '2')
+              && !contentData.files?.answer?.exist
+          "
+        />
+
+        <lazy-paper-download-and-purchase-buttons
           :id="contentData.id"
           :files="contentData.files"
           :year="contentData.edu_year"
@@ -63,10 +91,10 @@
         <lazy-common-detail-subject-directory-nav :content-data="contentData" />
       </v-col>
 
-      <lazy-common-detail-box-random-question :lesson="contentData.lesson" />
+      <lazy-common-box-random-question :lesson="contentData.lesson" />
 
       <v-col cols="12">
-        <lazy-common-detail-related-content
+        <lazy-common-related-content
           :id="contentData.id"
           source="test"
           :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
@@ -78,11 +106,11 @@
         class="mt-6"
       >
         <span
-          class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
+          class="d-flex align-center ga-1 text-h5 cursor-pointer text-lightError"
           @click="openCrashReport = true"
         >
           <v-icon
-            color="#C62828"
+            color="lightError"
             class="mb-1"
           >md:warning_outlined</v-icon>
           Crash report
@@ -101,17 +129,38 @@
         </v-col>
       </ClientOnly>
     </v-row>
-    <lazy-common-crash-report-modal
-      v-if="openCrashReport"
-      :id="contentData.id"
+
+    <lazy-common-modal-base
       v-model:show-dialog="openCrashReport"
-      type-crash-report="test"
-    />
-    <lazy-common-share-modal
-      v-if="openShare"
+      title="Crash Report"
+    >
+      <lazy-common-modal-crash-report
+        :id="contentData.id"
+        type-crash-report="test"
+        @close="openCrashReport = false"
+      />
+    </lazy-common-modal-base>
+
+    <lazy-common-modal-base
       v-model:show-dialog="openShare"
-      :title="contentData.title"
-    />
+      title="Share"
+    >
+      <lazy-common-modal-share :title="contentData.title" />
+    </lazy-common-modal-base>
+
+    <lazy-common-modal-base
+      v-if="openEditModal"
+      v-model:show-dialog="openEditModal"
+      title="Edit"
+    >
+      <lazy-paper-modal-edit
+        :id="contentData.id"
+        :title="contentData.title"
+        :description="contentData.description"
+        @close="openEditModal = false"
+        @success="editSuccessfully"
+      />
+    </lazy-common-modal-base>
   </v-container>
 </template>
 
@@ -126,6 +175,9 @@ interface BreadCrumb {
 
 const route = useRoute()
 const router = useRouter()
+const { user } = useUser()
+const { isAuthenticated } = useAuth()
+const { buildCambridgeMeta } = useCambridgeSeo()
 
 const { buildSchema } = useSeoSchema()
 
@@ -135,6 +187,7 @@ const pageTitle = ref('')
 const breads = ref<BreadCrumb[]>([])
 const openCrashReport = ref(false)
 const openShare = ref(false)
+const openEditModal = ref(false)
 const isAdsLoad = ref(false)
 
 const { data: contentData } = await useAsyncData(
@@ -202,7 +255,12 @@ const setMetaData = () => {
   if (!contentData.value) return
 
   const dto: PastPaperDTO = contentData.value
-  const { section_title, base_title, title, is_paper } = dto
+  const {
+    section_title,
+    base_title,
+    title,
+    is_paper,
+  } = dto
 
   // Build title parts safely from DTO
   const titleParts = [
@@ -216,6 +274,13 @@ const setMetaData = () => {
   if (is_paper) {
     pageTitle.value = `${baseTitle} past paper`
     pageDescribe.value = `Download ${baseTitle} past paper with mark scheme (MS). Access a full collection of past papers for study, revision, and exam practice.`
+
+    const cambridgeMeta = buildCambridgeMeta(dto)
+
+    if (cambridgeMeta) {
+      pageTitle.value = `${pageTitle.value} ${cambridgeMeta.titleSuffix}`
+      pageDescribe.value = cambridgeMeta.description
+    }
   }
   else {
     pageTitle.value = baseTitle
@@ -321,10 +386,21 @@ if (contentData.value) {
   initBreadCrumb()
   setMetaData()
 }
+
+const editSuccessfully = (data: {
+  title: string
+  description: string
+}) => {
+  if (contentData.value) {
+    contentData.value = {
+      ...contentData.value,
+      title: data.title,
+      description: data.description,
+    }
+    setMetaData()
+  }
+}
 </script>
 
 <style scoped>
-.text-crash-report {
-  color: #c62828;
-}
 </style>

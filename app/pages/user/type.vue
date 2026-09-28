@@ -95,8 +95,9 @@ useSeoMeta({
   title: 'Choose Role',
 })
 
-const { user } = useUser()
+const { user, getProfile, setUser } = useUser()
 const { changeGroup, loadingChangeGroup, editItem, loadingEditItem } = useProfile()
+const { hasChosenUserType } = useUserPermissions()
 
 const selectedUserGroup = ref<UserGroup | null>(
   user.value?.group === UserGroup.Student || user.value?.group === UserGroup.Teacher
@@ -106,7 +107,7 @@ const selectedUserGroup = ref<UserGroup | null>(
 
 // Redirect to user page on mount
 onMounted(() => {
-  if (user.value?.group === UserGroup.Student || user.value?.group === UserGroup.Teacher)
+  if (hasChosenUserType.value)
     navigateTo('/user')
 })
 
@@ -115,11 +116,21 @@ const save = async () => {
 
   const response = await changeGroup(selectedUserGroup.value)
 
-  if (response?.status === 1 && user.value) {
+  if (response?.succeeded && user.value) {
     user.value.group = selectedUserGroup.value
 
     const responseEditProfile = await editItem({ group: selectedUserGroup.value })
     if (responseEditProfile.succeeded) {
+      // changeGroup/editItem only return a boolean, not the updated user -
+      // refetch the real profile so `roles` (which hasChosenUserType and
+      // the user-type middleware both gate on) reflects the role we just
+      // set server-side, instead of navigating with a stale roles array
+      // and immediately getting bounced back here.
+      const { data: profileResponse } = await getProfile()
+      if (profileResponse?.succeeded && profileResponse.data) {
+        setUser(profileResponse.data)
+      }
+
       navigateTo('/user')
     }
   }

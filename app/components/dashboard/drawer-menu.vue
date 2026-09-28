@@ -35,12 +35,14 @@
             v-if="user && user.avatarUri"
             :image="user.avatarUri"
             class="border-image"
+            size="24"
           />
           <v-avatar
             v-else
-            color="#667085"
+            color="grey400"
+            size="24"
           >
-            <span class="text-h5">{{
+            <span class="text-h6 text-grey700 font-weight-bold">{{
               user?.firstName ? user.firstName[0].toUpperCase() : "U"
             }}</span>
           </v-avatar>
@@ -272,8 +274,9 @@ const { user } = useUser()
 const { mdAndDown } = useDisplay()
 const route = useRoute()
 const auth = useAuth()
+const { canAddEducationalContent } = useUserPermissions()
 
-const items = [
+const items = computed(() => [
   {
     title: 'Dashboard',
     icon: 'md:dashboard',
@@ -291,14 +294,14 @@ const items = [
         link: '/user/paper',
         icon: 'icon-paper',
         icon_type: 'custom',
-        status: user.value && user.value.group == 5 ? false : true,
+        status: !canAddEducationalContent.value,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icon-multimedia',
         icon_type: 'custom',
-        status: user.value && user.value.group == 5 ? false : true,
+        status: !canAddEducationalContent.value,
       },
       {
         title: 'Q & A',
@@ -307,8 +310,8 @@ const items = [
         icon_type: 'custom',
       },
       {
-        title: 'Blogs',
-        link: '/user/blogs',
+        title: 'Posts',
+        link: '/user/posts',
         icon: 'md:art_track',
       },
     ],
@@ -321,7 +324,7 @@ const items = [
     subMenuList: [
       {
         title: 'Results',
-        link: '/exam/results',
+        link: '/user/exam/result/list',
         icon: 'md:fact_check',
       },
       {
@@ -336,7 +339,9 @@ const items = [
     icon: 'md:account_balance',
     value: 'financial',
     subMenuList: [
-      { title: 'Wallet', link: '/user/wallet', icon: 'md:shopping_cart' },
+      { title: 'Subscription', link: '/user/subscription', icon: 'md:subscriptions_outlined' },
+      { title: 'Activity History', link: '/user/activity-history', icon: 'md:manage_history' },
+      { title: 'Commission', link: '/user/commission', icon: 'md:paid' },
       // {
       //   title: 'Top Up Wallet',
       //   link: '/user/charge-wallet',
@@ -373,7 +378,7 @@ const items = [
       { title: 'Security', link: '/user/edit-pass', icon: 'md:password' },
     ],
   },
-]
+])
 
 const mobileItems = [
   {

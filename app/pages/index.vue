@@ -7,9 +7,9 @@
 
     <lazy-home-grade-explorer />
 
-    <!-- Blog container -->
-    <home-blog-container />
-    <!-- End blog container -->
+    <!-- Post container -->
+    <home-post-container />
+    <!-- End post container -->
 
     <home-level-guide-banner :slide-arr="slideArr" />
 

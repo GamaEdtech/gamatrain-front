@@ -142,7 +142,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import type { CommentBlogDTO } from '@/types'
+import type { CommentPostDTO } from '@/types'
 
 interface IComment {
   id: string
@@ -150,7 +150,7 @@ interface IComment {
 
 const props = defineProps<IComment>()
 const { initCaptcha } = useRecaptcha()
-const { data: comments, getData, totalCount, loadingGetData } = useBlogComment()
+const { data: comments, getData, totalCount, loadingGetData } = usePostComment()
 
 const { xs } = useDisplay()
 const isShowAllComments = ref(false)
@@ -169,7 +169,7 @@ onMounted(() => {
   initCaptcha()
 })
 
-// const sendCommentSuccessfull = (comment: CommentBlogDTO) => {
+// const sendCommentSuccessfull = (comment: CommentPostDTO) => {
 //   comments.value.push(comment)
 //   totalCount.value += 1
 // }
@@ -177,7 +177,7 @@ const sendCommentSuccessfull = async () => {
   await getData(params)
 }
 
-const likeSuccessfull = (comment: CommentBlogDTO) => {
+const likeSuccessfull = (comment: CommentPostDTO) => {
   if (!comment.likedByCurrentUser) {
     if (comment.dislikedByCurrentUser) {
       comment.dislikeCount -= 1
@@ -188,7 +188,7 @@ const likeSuccessfull = (comment: CommentBlogDTO) => {
   }
 }
 
-const dislikeSuccessfull = (comment: CommentBlogDTO) => {
+const dislikeSuccessfull = (comment: CommentPostDTO) => {
   if (!comment.dislikedByCurrentUser) {
     if (comment.likedByCurrentUser) {
       comment.likeCount -= 1

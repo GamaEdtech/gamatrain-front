@@ -95,6 +95,7 @@ const paymentSummaryGetParams = reactive<PaymentSummaryGetParams>({
   gateway: 'Stripe',
   status: 'Paid',
   currency: null,
+  kind: null,
 })
 
 onMounted(async () => {
@@ -109,6 +110,7 @@ const isShowClearFilter = computed(() => {
     || (!!paymentSummaryGetParams.gateway && paymentSummaryGetParams.gateway != 'Stripe')
     || (!!paymentSummaryGetParams.status && paymentSummaryGetParams.status != 'Paid')
     || !!paymentSummaryGetParams.currency
+    || !!paymentSummaryGetParams.kind
   )
 })
 const clearFilter = async () => {
@@ -118,6 +120,7 @@ const clearFilter = async () => {
   paymentSummaryGetParams.gateway = 'Stripe'
   paymentSummaryGetParams.status = 'Paid'
   paymentSummaryGetParams.currency = null
+  paymentSummaryGetParams.kind = null
   await getPaymentSummary(paymentSummaryGetParams)
 }
 
@@ -128,6 +131,7 @@ const startSearch = async (item: PaymentSummaryGetParams) => {
   paymentSummaryGetParams.gateway = item.gateway
   paymentSummaryGetParams.status = item.status
   paymentSummaryGetParams.currency = item.currency
+  paymentSummaryGetParams.kind = item.kind
   showSearchModal.value = false
   await getPaymentSummary(paymentSummaryGetParams)
 }

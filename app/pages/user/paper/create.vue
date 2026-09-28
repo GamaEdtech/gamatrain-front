@@ -546,9 +546,10 @@ const { $toast } = useNuxtApp()
 const { addItem,
   loadingAddItem } = usePastPaper()
 const router = useRouter()
+const route = useRoute()
 
 const isFormValid = ref(false)
-const paper = ref<PaperForm>({
+const createDefaultPaper = (): PaperForm => ({
   board: '',
   grade: '',
   subject: '',
@@ -568,6 +569,7 @@ const paper = ref<PaperForm>({
   area: '',
   school: '',
 })
+const paper = ref<PaperForm>(createDefaultPaper())
 const pdfQuestionFile = ref(null)
 const pdfSolutionFile = ref(null)
 const wordQuestionAndSolutionFile = ref(null)
@@ -767,6 +769,34 @@ const subjectChange = async (subjectId: number | string) => {
   }
 }
 
+const resetFormState = () => {
+  paper.value = createDefaultPaper()
+  pdfQuestionFile.value = null
+  pdfSolutionFile.value = null
+  wordQuestionAndSolutionFile.value = null
+  extraFileList.value = []
+  uploadingFileKeys.value = []
+  resetGrades()
+  resetSubjects()
+  resetClassifications()
+  resetTopics()
+}
+
+const getQueryString = (value: unknown) => typeof value === 'string' ? value : ''
+
+const applyQueryDefaults = async () => {
+  const board = getQueryString(route.query.board)
+  const classification = getQueryString(route.query.classification)
+
+  if (board) {
+    paper.value.board = board
+    await Promise.allSettled([getGrades(paper.value.board), getClassification(paper.value.board)])
+    if (classification) {
+      paper.value.classification = classification
+    }
+  }
+}
+
 const submitPaper = async () => {
   const response = await addItem({
     ...paper.value,
@@ -784,9 +814,21 @@ const submitPaper = async () => {
 }
 
 onMounted(async () => {
-  await getBoards()
-  await getExtraTypeFile('test_extra_file')
+  getBoards()
+  getExtraTypeFile('test_extra_file')
+  await applyQueryDefaults()
 })
+
+watch(
+  [
+    () => route.query.board,
+    () => route.query.classification,
+  ],
+  async () => {
+    resetFormState()
+    await applyQueryDefaults()
+  },
+)
 </script>
 
 <style scoped>

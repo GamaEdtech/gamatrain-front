@@ -73,10 +73,10 @@
 
         <common-rich-editor
           v-model="body"
-          :rules="requiredRule"
           required
           mode="custom"
-          :features="['bold', 'italic', 'list', 'link']"
+          :features="['bold', 'italic', 'list', 'link', 'image', 'mediaEmbed']"
+          :rules="[requiredRule]"
         />
       </div>
     </div>
@@ -98,21 +98,19 @@
 </template>
 
 <script setup lang="ts">
-import type {
-  ApiResult,
-  AppError,
-} from '@/types'
-
 const emit = defineEmits(['ComposeMailSuccessFull'])
-const { $toast } = useNuxtApp()
+const {
+  sendEmail,
+  loadingSendEmail: loading,
+  getEmailAddresses,
+  loadingGetEmailAddresses: loadingEmailList,
+  emailAddresses: fromEmailList,
+} = useContactUsAdmin()
 
-const loading = ref(false)
 const subject = ref('')
 const body = ref('')
 const email = ref('')
-const selectedFromEmail = ref()
-const fromEmailList = ref<string[]>([])
-const loadingEmailList = ref(false)
+const selectedFromEmail = ref('')
 
 const isRequired = (value: string) => !!value
 const isEmailValid = (value: string) => /.+@.+\..+/.test(value)
@@ -144,65 +142,18 @@ const removeScriptTags = (html: string) => {
 }
 
 const send = async () => {
-  try {
-    loading.value = true
-    const params = {
-      from: selectedFromEmail.value,
-      body: removeScriptTags(body.value),
-      subject: subject.value,
-      users: [],
-      emailAddresses: [
-        email.value,
-      ],
-    }
-    const response = await useApiService.post<
-      ApiResult<unknown>
-    >(
-      '/api/v2/admin/emails',
-      params,
-    )
-    if (response.succeeded) {
-      $toast.success('Message Send Successfully!')
-      emit('ComposeMailSuccessFull')
-    }
-    else {
-      $toast.error('The operation failed. Please try again later.')
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loading.value = false
-  }
-}
+  const response = await sendEmail({
+    from: selectedFromEmail.value,
+    body: removeScriptTags(body.value),
+    subject: subject.value,
+    users: [],
+    emailAddresses: [
+      email.value,
+    ],
+  })
 
-const getEmailAddresses = async () => {
-  try {
-    loadingEmailList.value = true
-    const response = await useApiService.get<
-      ApiResult<string[]>
-    >(
-      '/api/v2/admin/emails/addresses',
-    )
-    if (response.succeeded) {
-      fromEmailList.value = response.data ?? []
-    }
-    else {
-      $toast.error('The operation get data failed. Please try again later.')
-    }
-  }
-  catch (err: unknown) {
-    const error = err as AppError
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
-  finally {
-    loadingEmailList.value = false
+  if (response.succeeded) {
+    emit('ComposeMailSuccessFull')
   }
 }
 

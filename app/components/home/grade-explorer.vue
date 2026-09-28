@@ -70,7 +70,91 @@
           />
         </div>
       </div>
-      <div class="mt-10">
+      <div class="mt-4 w-100 d-none d-sm-flex">
+        <v-slide-group
+          ref="categorySlider"
+          class="category-slider pt-4 d-flex align-center position-relative"
+          show-arrows
+          center-active
+        >
+          <template #prev>
+            <v-btn
+              v-show="categorySlider?.hasPrev"
+              aria-label="Previous plans"
+              icon
+              flat
+              size="30"
+              class="slider-arrow-button"
+              color="white"
+            >
+              <v-icon
+                size="24"
+                color="grey700"
+              >
+                md:chevron_left
+              </v-icon>
+            </v-btn>
+          </template>
+
+          <template #next>
+            <v-btn
+              v-show="categorySlider?.hasNext"
+              aria-label="Next plans"
+              icon
+              flat
+              size="30"
+              class="slider-arrow-button"
+              color="white"
+            >
+              <v-icon
+                size="24"
+                color="grey700"
+              >
+                md:chevron_right
+              </v-icon>
+            </v-btn>
+          </template>
+
+          <v-slide-group-item
+            v-for="category in categories"
+            :key="category.key"
+          >
+            <nuxt-link
+              :to="categoryLink(category)"
+              class="mx-1 mx-sm-2 mt-2"
+            >
+              <div class="ex-category__card">
+                <div class="d-flex align-center">
+                  <div class="ex-category__card--title mb-4">
+                    {{ typeof category.stat === 'number' ? $numberFormat(category.stat) : category.stat }}
+                  </div>
+                </div>
+
+                <div class="d-flex align-center">
+                  <div class="ex-category__card--icon">
+                    <span
+                      class="stat-icon"
+                      :class="category.icon"
+                    />
+                  </div>
+                  <div class="d-flex align-center pl-1">
+                    <span class="ex-category__card--subtitle">
+                      {{ category.title }}
+                    </span>
+                    <span class="pl-1 d-block">
+                      <v-icon
+                        size="x-large"
+                        color="#D0D5DD"
+                      >mdi-chevron-right</v-icon>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </nuxt-link>
+          </v-slide-group-item>
+        </v-slide-group>
+      </div>
+      <div class="mt-10 d-flex d-sm-none">
         <v-row justify="center">
           <v-col
             v-for="category in categories"
@@ -127,6 +211,8 @@
 <script setup>
 const { data: boardList, getData: getBoards } = useBoard()
 
+const categorySlider = ref(null)
+
 const categories = ref([
   {
     type: 'paper',
@@ -150,13 +236,6 @@ const categories = ref([
     icon: 'icon-tutorial',
   },
   {
-    type: 'forum',
-    key: 'questions',
-    stat: '--',
-    title: 'Forum',
-    icon: 'icon-q-a',
-  },
-  {
     type: 'multimedia',
     key: 'files',
     stat: '--',
@@ -164,11 +243,25 @@ const categories = ref([
     icon: 'icon-multimedia',
   },
   {
+    type: 'teacher',
+    key: 'teachers',
+    stat: '--',
+    title: 'Teacher',
+    icon: 'icon-teacher',
+  },
+  {
     type: 'school',
     key: 'schools',
     stat: '+600K',
     title: 'Schools',
     icon: 'icon-school',
+  },
+  {
+    type: 'forum',
+    key: 'questions',
+    stat: '--',
+    title: 'Forum',
+    icon: 'icon-q-a',
   },
 
 ])
@@ -180,7 +273,7 @@ const selectedGrade = ref(null)
 const showBoardHint = ref(false)
 
 const categoryLink = (category) => {
-  return category.type === 'school' ? `/school` : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
+  return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/search?type=teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
 }
 const fetchInitialData = async () => {
   await getBoards()
@@ -269,6 +362,25 @@ const fetchCategoryCounts = async () => {
     console.error('Error fetching category counts:', error)
   }
 }
+
+const fetchTeachers = async () => {
+  try {
+    const query = {
+      'PagingDto.PageFilter.Size': 1,
+      'PagingDto.PageFilter.Skip': 0,
+      'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
+    }
+    const response = await useApiService.get('/api/v2/identities/profiles/list', query, { public: true })
+    const totalDataFind = response.data.totalRecordsCount || 0
+
+    categories.value.find((cat, _i) => cat.key == 'teachers').stat
+      = parseInt(totalDataFind)
+  }
+  catch (error) {
+    console.error('Error fetching teacher count:', error)
+  }
+}
+
 const handleBoardFocused = () => {
   if (selectedBoard.value && showBoardHint.value) {
     localStorage.setItem('boardHintShown', 'true')
@@ -294,6 +406,7 @@ watch(
 
 onMounted(() => {
   fetchInitialData()
+  fetchTeachers()
   if (localStorage.getItem('boardHintShown') === 'true') {
     showBoardHint.value = false
   }
@@ -392,6 +505,9 @@ onMounted(() => {
 }
 .icon-multimedia {
   color: #02b719;
+}
+.icon-teacher{
+  color : #7f56d9
 }
 .icon-paper {
   color: #2e90fa;
@@ -509,6 +625,7 @@ onMounted(() => {
     border: 1px solid rgba(242, 244, 247, 1);
     padding: 3rem 1rem;
     border-radius: 24px;
+    min-width : 230px;
   }
   .ex-board-select {
     width: max-content;
@@ -539,5 +656,37 @@ onMounted(() => {
     font-size: 14px;
     font-weight: 500;
   }
+}
+
+:deep(.v-slide-group__content){
+  align-items: flex-end;
+}
+
+:deep(.category-slider > .v-slide-group__prev),
+:deep(.category-slider > .v-slide-group__next) {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  min-width: 30px;
+  transform: translateY(-50%);
+}
+
+:deep(.category-slider > .v-slide-group__prev) {
+  left: 0;
+}
+
+:deep(.category-slider > .v-slide-group__next) {
+  right: 0;
+}
+
+.slider-arrow-button {
+  border: 1px solid rgb(var(--v-theme-grey300));
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.12);
+}
+
+:deep(.v-slide-group__prev--disabled .slider-arrow-button),
+:deep(.v-slide-group__next--disabled .slider-arrow-button) {
+  opacity: 0.45;
+  box-shadow: none;
 }
 </style>

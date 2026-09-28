@@ -22,7 +22,7 @@
           v-for="item in 10"
           :key="item"
         >
-          <lazy-common-detail-related-content-card-skeleton type="paper" />
+          <lazy-common-related-content-card-skeleton type="paper" />
         </v-slide-group-item>
       </v-slide-group>
       <!-- <v-slide-group

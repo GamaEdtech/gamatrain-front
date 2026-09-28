@@ -75,7 +75,7 @@
                 class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
               >
                 <v-icon color="grey300">md:wifi_outlined</v-icon>
-                {{ information.onlineStatus }}
+                {{ getOnlineStatusText(information.onlineStatus) }}
               </span>
 
             </div>
@@ -113,6 +113,8 @@ defineProps({
 const createLinkCard = (information) => {
   return `/profile/${information.handle}`
 }
+
+const getOnlineStatusText = useOnlineStatusText
 </script>
 
 <style scoped>

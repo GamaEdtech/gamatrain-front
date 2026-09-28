@@ -1,7 +1,6 @@
 import type {
   AdminSchoolContributionBriefDTO,
   ApiResult,
-  AppError,
   GetAdminSchoolContributionParams,
   ResponseListDTO,
 } from '@/types'
@@ -12,15 +11,7 @@ const pageCount = ref(0)
 const loadingGetData = ref(true)
 
 export const useSchoolContributionAdmin = () => {
-  const { $toast } = useNuxtApp()
-
-  const handleError = (err: unknown) => {
-    const error = err as AppError
-
-    if (error.response?.status === 400) {
-      $toast.error(error.response.data?.message || '')
-    }
-  }
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetAdminSchoolContributionParams) => {
     loadingGetData.value = true
@@ -45,26 +36,23 @@ export const useSchoolContributionAdmin = () => {
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<AdminSchoolContributionBriefDTO>>
       >('/api/v2/admin/schools/contributions', query)
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list ?? []
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / pageSize)
       }
       else {
         resetData()
+        handleApiResponseError(response)
       }
 
       return response
     }
     catch (err: unknown) {
-      handleError(err)
+      handleApiCatchError(err)
       resetData()
 
-      return {
-        succeeded: false,
-        status: 0,
-        data: null,
-      }
+      return createApiFailure<ResponseListDTO<AdminSchoolContributionBriefDTO>>(err)
     }
     finally {
       loadingGetData.value = false

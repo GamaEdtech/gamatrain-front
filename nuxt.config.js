@@ -220,6 +220,7 @@ export default defineNuxtConfig({
         '_nuxt/builds/**/*.json',
         '**/node_modules/**/*',
       ],
+      navigateFallback: undefined,
     },
     devOptions: {
       enabled: false,
@@ -241,7 +242,6 @@ export default defineNuxtConfig({
     '/user/**': { ssr: false },
     '/admin/**': { ssr: false },
     '/payments/**': { ssr: false },
-
   },
   // Development server configuration
   devServer: {
@@ -272,6 +272,8 @@ export default defineNuxtConfig({
               return 'charts'
             if (normalizedId.includes('/node_modules/@ckeditor/ckeditor5-vue/'))
               return 'ckeditor'
+            if (normalizedId.includes('/node_modules/pdfjs-dist/'))
+              return 'pdfjs'
           },
         },
       },

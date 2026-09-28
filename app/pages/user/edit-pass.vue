@@ -3,7 +3,7 @@
     <v-row>
       <v-col
         cols="12"
-        class="pl-5 text-h4 teal--text"
+        class="pl-5 text-h4 text-grey700"
       >
         <v-icon
           large
@@ -25,7 +25,7 @@
           label="Current password"
           outlined
           rounded="lg"
-          color="#FFB600"
+          color="primary"
           :append-inner-icon="
             showCurrentPassword ? 'md:visibility' : 'md:visibility_off'
           "
@@ -46,7 +46,7 @@
           label="New password"
           outlined
           rounded="lg"
-          color="#FFB600"
+          color="primary"
           :append-inner-icon="
             showNewPassword ? 'md:visibility' : 'md:visibility_off'
           "
@@ -67,7 +67,7 @@
           label="Repeat new password"
           outlined
           rounded="lg"
-          color="#FFB600"
+          color="primary"
           :append-inner-icon="
             showRepeatNewPassword ? 'md:visibility' : 'md:visibility_off'
           "
@@ -91,7 +91,7 @@
           class="text-h5 font-weight-bold"
           color="success"
           :disabled="!isFormValid"
-          :loading="loading"
+          :loading="loadingChangePassword"
           @click="updatePassword"
         >
           Submit
@@ -146,17 +146,6 @@
 </template>
 
 <script setup lang="ts">
-interface ApiError {
-  response?: {
-    status?: number
-    data?: {
-      message?: string
-      [key: string]: unknown
-    }
-  }
-  message?: string
-  [key: string]: unknown
-}
 definePageMeta({
   layout: 'dashboard-layout',
 })
@@ -165,9 +154,16 @@ useSeoMeta({
   title: 'Change Password',
 })
 
-const { $dayjs, $toast } = useNuxtApp()
+const { $dayjs } = useNuxtApp()
 const router = useRouter()
 const { user } = useUser()
+const { changePassword, loadingChangePassword } = useProfile()
+const {
+  required,
+  minLength,
+  pattern,
+  matches,
+} = useValidationRules()
 
 const showCurrentPassword = ref(false)
 const currentPassword = ref('')
@@ -178,23 +174,19 @@ const newPassword = ref('')
 const showRepeatNewPassword = ref(false)
 const repeatNewPassword = ref('')
 
-const loading = ref(false)
-
-const requiredRule = (v: string) => !!v || 'This field is required'
+const requiredRule = required
 
 const passwordRules = [
-  (v: string) => !!v || 'Password is required',
-  (v: string) => v.length >= 8 || 'Minimum 8 characters',
-  (v: string) =>
-    /[A-Z]/.test(v) || 'Must include at least one uppercase letter',
-  (v: string) =>
-    /[a-z]/.test(v) || 'Must include at least one lowercase letter',
-  (v: string) => /\d/.test(v) || 'Must include at least one number',
+  required,
+  minLength(8),
+  pattern(/[A-Z]/, 'Must include at least one uppercase letter'),
+  pattern(/[a-z]/, 'Must include at least one lowercase letter'),
+  pattern(/\d/, 'Must include at least one number'),
 ]
 
 const repeatPasswordRules = [
-  (v: string) => !!v || 'Repeat password is required',
-  (v: string) => v === newPassword.value || 'Passwords do not match',
+  required,
+  matches(newPassword, 'passwords', 'Passwords do not match'),
 ]
 
 const currentTime = ref($dayjs())
@@ -236,24 +228,14 @@ const isFormValid = computed(() => {
 const updatePassword = async () => {
   if (!isFormValid.value) return
 
-  try {
-    loading.value = true
+  const response = await changePassword({
+    oldpass: currentPassword.value,
+    newpass: newPassword.value,
+    repeat_newpass: repeatNewPassword.value,
+  })
 
-    const payload = {
-      oldpass: currentPassword.value,
-      newpass: newPassword.value,
-      repeat_newpass: repeatNewPassword.value,
-    }
-    await useApiService.put('/api/v1/users/password', payload)
-    $toast.success('Password changed successfully')
+  if (response?.succeeded) {
     router.push('/user')
-  }
-  catch (err: unknown) {
-    const error = err as ApiError
-    $toast.error(error?.response?.data?.message || 'Failed to change password')
-  }
-  finally {
-    loading.value = false
   }
 }
 </script>

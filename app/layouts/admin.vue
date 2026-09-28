@@ -48,11 +48,31 @@ const menuItems = [
         icon: 'md:payments_outlined',
       },
     ],
-  }, {
-    Blog: [
+  },
+  {
+    Subscription: [
+      {
+        title: 'Users',
+        link: '/admin/subscription/users',
+        icon: 'md:manage_accounts_outlined',
+      },
+      {
+        title: 'Usage',
+        link: '/admin/subscription/usage',
+        icon: 'md:query_stats',
+      },
+      {
+        title: 'Commission ',
+        link: '/admin/commission',
+        icon: 'md:percent_outlined',
+      },
+    ],
+  },
+  {
+    Post: [
 
-      { title: 'Blogs ', link: '/admin/blogs', icon: 'md:post_outlined' },
-      { title: 'Comments ', link: '/admin/blogs/comments', icon: 'md:comment_outlined' },
+      { title: 'Posts ', link: '/admin/posts', icon: 'md:post_outlined' },
+      { title: 'Comments ', link: '/admin/posts/comments', icon: 'md:comment_outlined' },
     ],
   },
   { 'Type Managment': [{ title: 'Location', link: '/admin/Locations', icon: 'md:location_on_outlined' }] },
@@ -72,6 +92,11 @@ const menuItems = [
         title: 'Image Issues',
         link: '/admin/schools/image-issues',
         icon: 'md:reset_image_outlined',
+      },
+      {
+        title: 'Issues',
+        link: '/admin/schools/issues',
+        icon: 'md:report_outlined',
       },
       {
         title: 'Comments ',
@@ -101,6 +126,11 @@ const menuItems = [
         title: 'Settings',
         link: '/admin/settings',
         icon: 'md:settings_outlined',
+      },
+      {
+        title: 'Subscription Setting',
+        link: '/admin/subscription',
+        icon: 'md:subscriptions_outlined',
       },
     ],
   },

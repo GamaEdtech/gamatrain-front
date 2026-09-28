@@ -874,7 +874,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .content_main_info {
   padding: 27px;
   background: #f5f5f5 !important;

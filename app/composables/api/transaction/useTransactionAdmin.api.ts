@@ -1,7 +1,6 @@
 import type {
   AdminTransactionDTO,
   ApiResult,
-  AppError,
   GetAdminTransactionsParams,
   ResponseListDTO,
   AddTransactionAdminDTO,
@@ -17,6 +16,7 @@ const pageCount = ref(0)
 
 export const useTransactionAdmin = () => {
   const { $toast } = useNuxtApp()
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetAdminTransactionsParams) => {
     const { page, pageSize, isDebit, userId, name, email, identifierId, startDate, endDate } = params
@@ -39,20 +39,25 @@ export const useTransactionAdmin = () => {
         ApiResult<ResponseListDTO<AdminTransactionDTO>>
       >('/api/v2/admin/transactions', query)
 
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / pageSize)
       }
       else {
         data.value = []
+        totalCount.value = 0
+        pageCount.value = 0
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      data.value = []
+      totalCount.value = 0
+      pageCount.value = 0
+      handleApiCatchError(err)
+
+      return createApiFailure<ResponseListDTO<AdminTransactionDTO>>(err)
     }
     finally {
       loadingGetData.value = false
@@ -72,20 +77,14 @@ export const useTransactionAdmin = () => {
         $toast.success('The user wallet was successfully recharged!')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        data: {},
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<ResponseAddTransactionAdminDTO>(err)
     }
     finally {
       loadingAddItem.value = false

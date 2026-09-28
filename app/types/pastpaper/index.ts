@@ -24,7 +24,9 @@ export interface PastPaperDTO {
   description: string
   views: number
   ref_score: number
+  q_file_pages?: string
   edu_year: string
+  edu_month: string
   section: string
   base: string
   lesson: string
@@ -42,9 +44,14 @@ export interface PastPaperDTO {
   last_name: string
   test_type: string
   test_type_title?: string
+  answer_type: string
   up_date: string
   edu_month_title: string
   ownerIdentity: string
+  variant: string | null
+  variant_title: string | null
+  owner: boolean
+  user_: string
 }
 
 export interface ContentItemDTO {
@@ -62,10 +69,42 @@ export interface ContentItemDTO {
   test_type: string
   type_title?: string
 }
+export interface FileRelatedContentDTO {
+  id: string
+  title: string
+  type: string
+  file_duration: string
+  file_pages: string
+  views: string
+  subdate: string
+  first_name: string
+  last_name: string
+  avatar: string
+  poster: string
+  title_url: string
+  url: string
+  legacy_url: string
+  type_title: string
+  type_title_fa: string
+  subdate_jalali: string
+}
+export interface ExamRelatedContentDTO {
+  id: string
+  title: string
+  code: string
+  tests_num: string
+  thumb_pic: string
+  first_name: string
+  last_name: string
+  avatar: string
+  title_url: string
+  url: string
+  legacy_url: string
+}
 
 export interface RelatedContentDTO {
-  exams: ContentItemDTO[]
-  files: ContentItemDTO[]
+  exams: ExamRelatedContentDTO[]
+  files: FileRelatedContentDTO[]
   questions: ContentItemDTO[]
   tests: ContentItemDTO[]
   tutorials: ContentItemDTO[]
@@ -101,6 +140,28 @@ export interface PastPaperCreateDTO {
   state: string
   area: string
   school: string
+}
+
+export interface PastPaperEditDTO {
+  board?: string | number
+  grade?: string | number
+  subject?: string | number
+  classification?: string | number
+  topics?: number[] | string[]
+  answer_type?: string | number
+  level?: string | number
+  holding_level?: string | number
+  title?: string
+  description?: string
+  file_pdf?: string
+  file_word?: string
+  file_answer?: string
+  edu_year?: string | number
+  edu_month?: string | number
+  file_extra?: PastPaperExtraFileCreateDTO[]
+  state?: string
+  area?: string
+  school?: string
 }
 
 export interface PastPaperCreatePayloadDTO {
@@ -177,6 +238,7 @@ export interface PastPaperDetailDTO {
   avatar: string
   bookmark: boolean
   ownerIdentity: string
+  owner: boolean
   section_title: string
   base_title: string
   lesson_title: string

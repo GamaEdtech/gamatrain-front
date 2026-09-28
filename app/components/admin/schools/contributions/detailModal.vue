@@ -29,7 +29,49 @@
         :class="{ 'w-100': field.full }"
       >
         <span class="label">{{ field.label }}</span>
-        <span class="value">{{ field.value }}</span>
+
+        <span
+          v-if="!field.type"
+          class="value"
+        >
+          {{ field.value }}
+        </span>
+
+        <div
+          v-else-if="field.type === 'tags'"
+          class="d-flex flex-wrap ga-2 w-100"
+        >
+          <div
+            v-for="(tag, index) in field.value"
+            :key="index"
+            class="bg-primary-gray-800 text-white rounded-lg pa-3 d-flex align-center justify-center"
+          >
+            <v-icon
+              size="20"
+              color="white"
+            >
+              md:{{ tag.icon }}
+            </v-icon>
+          </div>
+        </div>
+
+        <div
+          v-else-if="field.type === 'boards'"
+          class="d-flex flex-wrap ga-2 w-100"
+        >
+          <v-btn
+            v-for="(board, index) in field.value"
+            :key="index"
+            flat
+            color="grey700"
+            height="38"
+            rounded="lg"
+          >
+            <span class="font-weight-bold text-h5 text-grey300">{{
+              board.title
+            }}</span>
+          </v-btn>
+        </div>
       </div>
 
       <div
@@ -254,7 +296,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, AppError, AdminSchoolContributionDTO, AdminSchoolContributionNewDataDTO, AdminSchoolContributionOldDataDTO } from '@/types'
+import type { ApiResult, AppError, AdminSchoolContributionDTO, AdminSchoolContributionNewDataDTO, AdminSchoolContributionOldDataDTO, BoardDTO } from '@/types'
 
 interface IDetailModal {
   contributionId?: number
@@ -265,12 +307,14 @@ type FieldConfig<T> = {
   label: string
   full?: boolean
   type?: 'text' | 'tags' | 'boards' | 'image'
-  formatter?: (val: T[keyof T]) => string
+  formatter?: (val: T[keyof T]) => string | BoardDTO[]
 }
 
 const { $toast } = useNuxtApp()
 const props = defineProps<IDetailModal>()
 const emit = defineEmits(['changeStatusSuccessfull'])
+
+const { data: boardsData, getData: getBoardsData } = useBoard()
 
 const loading = ref(true)
 const schoolDetailData = ref()
@@ -304,15 +348,18 @@ const newDataFields: FieldConfig<AdminSchoolContributionNewDataDTO>[] = [
   },
   {
     key: 'tags',
-    label: 'Tags :',
+    label: 'Facilities :',
     full: true,
-    formatter: v => (v as number[]).join(', '),
+    type: 'tags',
   },
   {
     key: 'boards',
     label: 'Boards :',
     full: true,
-    formatter: v => (v as number[]).join(', '),
+    type: 'boards',
+    formatter: v => (v as number[])
+      .map(id => boardsData.value.find(board => board.id === id))
+      .filter((board): board is BoardDTO => board !== undefined),
   },
   { key: 'description', label: 'Description :', full: true },
 ]
@@ -349,7 +396,7 @@ const oldDataFields: FieldConfig<AdminSchoolContributionOldDataDTO>[] = [
   { key: 'description', label: 'Description :', full: true },
   {
     key: 'tags',
-    label: 'Tags :',
+    label: 'Facilities :',
     full: true,
     type: 'tags',
   },
@@ -370,9 +417,14 @@ const oldDataFields: FieldConfig<AdminSchoolContributionOldDataDTO>[] = [
 const getData = async () => {
   try {
     loading.value = true
-    const response = await useApiService.get<
-      ApiResult<AdminSchoolContributionDTO>
-    >(`/api/v2/admin/schools/contributions/${props.contributionId}`)
+    const [response] = await Promise.all([
+      useApiService.get<
+        ApiResult<AdminSchoolContributionDTO>
+      >(`/api/v2/admin/schools/contributions/${props.contributionId}`),
+      // Needed to resolve the new-value board IDs into titles below, matching how old-value
+      // boards already arrive from the API as full {title, icon} objects.
+      boardsData.value.length === 0 ? getBoardsData() : Promise.resolve(),
+    ])
     if (response.succeeded) {
       schoolDetailData.value = response.data
       newDataFormated.value = createFormatedData(schoolDetailData.value.newValues, newDataFields)

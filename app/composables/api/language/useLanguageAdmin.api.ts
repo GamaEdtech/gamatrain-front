@@ -1,6 +1,5 @@
 import type {
   ApiResult,
-  AppError,
   ResponseListDTO,
   AdminLanguageDTO,
   AdminCultureDTO,
@@ -31,6 +30,7 @@ const loadingGetCultures = ref(false)
 
 export const useLanguageAdmin = () => {
   const { $toast } = useNuxtApp()
+  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetDataParams) => {
     const { page, pageSize } = params
@@ -44,20 +44,25 @@ export const useLanguageAdmin = () => {
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<AdminLanguageDTO>>
       >('/api/v2/admin/languages', query)
-      if (response.data) {
+      if (response.succeeded && response.data) {
         data.value = response.data.list
         totalCount.value = response.data.totalRecordsCount
         pageCount.value = Math.ceil(totalCount.value / pageSize)
       }
       else {
         data.value = []
+        totalCount.value = 0
+        pageCount.value = 0
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      data.value = []
+      totalCount.value = 0
+      pageCount.value = 0
+      handleApiCatchError(err)
+
+      return createApiFailure<ResponseListDTO<AdminLanguageDTO>>(err)
     }
     finally {
       loadingGetData.value = false
@@ -71,18 +76,17 @@ export const useLanguageAdmin = () => {
         ApiResult<AdminLanguageDTO>
       >(`/api/v2/admin/languages/${id}`)
 
+      if (response.succeeded && response.data) {
+        return response
+      }
+
+      handleApiResponseError(response)
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-        data: {},
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<AdminLanguageDTO>(err)
     }
     finally {
       loadingGetItemById.value = false
@@ -101,14 +105,13 @@ export const useLanguageAdmin = () => {
         $toast.success('Language deleted successfully!')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingDeleteItem.value = false
@@ -128,19 +131,14 @@ export const useLanguageAdmin = () => {
         $toast.success('Language Added successfully!')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingAddItem.value = false
@@ -160,19 +158,14 @@ export const useLanguageAdmin = () => {
         $toast.success('Language Edited successfully!')
       }
       else {
-        $toast.error('The operation failed. Please try again later.')
+        handleApiResponseError(response)
       }
       return response
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
     }
     finally {
       loadingEditItem.value = false
@@ -187,15 +180,17 @@ export const useLanguageAdmin = () => {
       const response = await useApiService.get<
         ApiResult<AdminCultureDTO[]>
       >('/api/v2/admin/languages/cultures')
-      if (response.data && response.data.length > 0) {
+      if (response.succeeded && response.data && response.data.length > 0) {
         cultures.value = response.data
+      }
+      else if (!response.succeeded) {
+        handleApiResponseError(response)
       }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
+      handleApiCatchError(err)
+
+      return createApiFailure<AdminCultureDTO[]>(err)
     }
     finally {
       loadingGetCultures.value = false

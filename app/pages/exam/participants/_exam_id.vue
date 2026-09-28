@@ -121,7 +121,7 @@
                         </td>
                         <td class="text-center">
                           <nuxt-link
-                            :to="`/exam/result/${item.id}`"
+                            :to="`/user/exam/result/${item.id}`"
                             class="teal--text"
                           >
                             Show report card

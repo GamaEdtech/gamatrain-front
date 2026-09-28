@@ -6,7 +6,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex flex-column bg-white pa-6 rounded-xl overflow-y-auto mobile-style"
+      class="w-100 d-flex flex-column bg-white rounded-xl overflow-y-auto mobile-style py-6 px-3 px-sm-6"
       @click="clickOnModal"
     >
       <div class="w-100 d-flex align-center justify-space-between">
@@ -74,19 +74,13 @@ const clickOnModal = (event: MouseEvent) => {
 }
 </script>
 
-<style>
+<style scoped>
 .mobile-style{
   max-height: 90%;
 }
 .modal-title {
   line-height: 1.3 !important;
   padding-bottom: 2px;
-}
-.ck ol, .ck ul{
-  padding-left : 24px !important;
-}
-.ck.ck-balloon-panel{
-  z-index: 2400 !important;
 }
 @media only screen and (max-width: 960px) {
   .mobile-style {

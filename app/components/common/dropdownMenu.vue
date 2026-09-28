@@ -197,9 +197,10 @@ defineProps({
 
 const { user } = useUser()
 const auth = useAuth()
+const { canAddEducationalContent } = useUserPermissions()
 
 const openedGroups = ref([])
-const items = [
+const items = computed(() => [
   {
     title: 'Dashboard',
     icon: 'md:dashboard',
@@ -217,14 +218,14 @@ const items = [
         link: '/user/paper',
         icon: 'icon-paper',
         icon_type: 'custom',
-        status: user.value && user.value.group === 5 ? false : true,
+        status: !canAddEducationalContent.value,
       },
       {
         title: 'Multimedia',
         link: '/user/multimedia',
         icon: 'icon-multimedia',
         icon_type: 'custom',
-        status: user.value && user.value.group == 5 ? false : true,
+        status: !canAddEducationalContent.value,
       },
       {
         title: 'Q & A',
@@ -233,8 +234,8 @@ const items = [
         icon_type: 'custom',
       },
       {
-        title: 'Blogs',
-        link: '/user/blogs',
+        title: 'Posts',
+        link: '/user/posts',
         icon: 'md:art_track',
       },
     ],
@@ -247,7 +248,7 @@ const items = [
     subMenuList: [
       {
         title: 'Results',
-        link: '/exam/results',
+        link: '/user/exam/result/list',
         icon: 'md:fact_check',
       },
       {
@@ -262,7 +263,9 @@ const items = [
     icon: 'md:account_balance',
     value: 'financial',
     subMenuList: [
-      { title: 'Wallet', link: '/user/wallet', icon: 'md:shopping_cart' },
+      { title: 'Subscription', link: '/user/subscription', icon: 'md:subscriptions_outlined' },
+      { title: 'Activity History', link: '/user/activity-history', icon: 'md:manage_history' },
+      { title: 'Commission', link: '/user/commission', icon: 'md:paid' },
       // {
       //   title: 'Top Up Wallet',
       //   link: '/user/charge-wallet',
@@ -299,7 +302,7 @@ const items = [
       { title: 'Security', link: '/user/edit-pass', icon: 'md:password' },
     ],
   },
-]
+])
 
 const logout = async () => {
   try {
