@@ -88,6 +88,7 @@ const emit = defineEmits(['selectBar'])
 
 const theme = useTheme()
 const { paymentSummary, loadingPaymentSummary } = usePayment()
+const { formatLocal } = useDateTime()
 
 const barChartRef = ref()
 const BORDERRADIUS = 10
@@ -130,7 +131,7 @@ const kindDatasets = computed(() => [
 ])
 
 const chartData = computed(() => ({
-  labels: paymentSummary.value.map(item => item.date),
+  labels: paymentSummary.value.map(item => formatLocal(item.date, 'DD/MM/YYYY HH:mm')),
   datasets: viewMode.value === 'kind' ? kindDatasets.value : statusDatasets.value,
 }))
 
