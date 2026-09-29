@@ -79,7 +79,6 @@ const {
   requiredWithMessage,
   minLength,
   maxLength,
-  alphanumeric,
 } = useValidationRules()
 const { editItem, loadingEditItem } = useProfile()
 
@@ -88,7 +87,6 @@ const usernameRules = [
   requiredWithMessage('Username is required'),
   minLength(2),
   maxLength(50),
-  alphanumeric,
 ]
 const isFormValid = ref(false)
 

@@ -1,13 +1,11 @@
 <template>
-  <v-row class="ma-0 w-100">
-    <v-col
+  <div class="d-flex flex-wrap justify-space-between ga-2 w-100 ma-0">
+    <template
       v-for="(item, index) in button_list"
       :key="index"
-      cols="12"
-      sm="6"
-      class="pa-0 pa-sm-1"
     >
       <div
+        v-if="!isLocked(item.class)"
         class="dashboard-card pa-4 d-flex align-center justify-space-between ga-2"
         :class="{ 'opacity-55': isLocked(item.class) }"
       >
@@ -53,8 +51,8 @@
           md:lock_outlined
         </v-icon>
       </div>
-    </v-col>
-  </v-row>
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -92,13 +90,6 @@ const button_list = reactive([
     actionLabel: 'Ask a Question',
     ...CONTENT_TYPE_META.forum,
   },
-  {
-    class: 'online_exam',
-    count: props.data?.test?.total || 0,
-    countLabel: 'published',
-    actionLabel: 'New Quiz',
-    ...CONTENT_TYPE_META.exam,
-  },
 ])
 </script>
 
@@ -106,8 +97,14 @@ const button_list = reactive([
 .dashboard-card {
   border-radius: 1rem;
   border: 1px solid rgb(var(--v-theme-grey200));
+  width : 49%
 }
 .icon-size{
   font-size : 26px;
+}
+@media screen and (max-width: 600px) {
+  .dashboard-card {
+    width : 100%;
+  }
 }
 </style>
