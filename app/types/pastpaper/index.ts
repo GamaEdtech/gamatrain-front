@@ -47,6 +47,7 @@ export interface PastPaperDTO {
   answer_type: string
   up_date: string
   edu_month_title: string
+  ownerIdentity: string
   variant: string | null
   variant_title: string | null
   owner: boolean
