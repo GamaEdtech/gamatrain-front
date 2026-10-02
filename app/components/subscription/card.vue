@@ -188,7 +188,7 @@ const confirmUpgradeText = computed(() => {
   if (previewAmount.value === null) return `You'll switch to ${switchTargetDescription.value}.`
 
   return `You'll switch to ${switchTargetDescription.value} and be charged `
-    + `${previewCurrency.value ?? ''} ${formatPrice(previewAmount.value)} right now.`
+    + `${previewCurrency.value ?? ''} ${formatPrice(previewAmount.value)} right now (including any applicable tax).`
 })
 
 const chooseNewPlan = async () => {
