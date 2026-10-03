@@ -16,6 +16,30 @@ export interface ProfileDTO {
   userRateLevel: string
 }
 
+export type TeacherProfileSortType = 'Asc' | 'Desc'
+
+export interface TeacherProfileSortFilter {
+  sortType: TeacherProfileSortType
+  column: string
+}
+
+export interface TeacherProfileDTO {
+  avatar: string
+  fullName: string
+  onlineStatus: OnlineStatus
+  userRateLevel: string
+  skills: string[]
+  handle: string
+}
+
+export interface GetTeacherProfilesParams {
+  page: number
+  pageSize: number
+  fullName?: string | null
+  skill?: string | null
+  sortFilter?: TeacherProfileSortFilter[]
+}
+
 export type Gender = 'Male' | 'Female' | 'Other'
 export type ProfileVisibility = 'Private' | 'Public' | 'ConnectionsOnly'
 
