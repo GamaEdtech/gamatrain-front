@@ -1,79 +1,102 @@
 <template>
-  <v-container class="d-flex flex-column margin-top-handle">
-    <v-row class="justify-center">
-      <div class="w-100 d-flex align-start justify-center px-2">
-        <div class="w-100 d-flex flex-column flex-md-row align-stretch ga-3">
-          <v-text-field
-            v-model="filters.fullName"
-            variant="outlined"
-            density="compact"
-            hide-details
-            label="Teacher name"
-            rounded="lg"
-            base-color="grey400"
-            color="primary"
-            active-color="primary"
-            bg-color="white"
-            prepend-inner-icon="md:person_search"
-            icon-color="primary"
-            glow
-            @update:model-value="handleFilterInput"
-          />
+  <v-container class="d-flex flex-column align-center margin-top-handle pa-0">
+    <div class="w-100 d-flex align-start justify-center px-2">
+      <div class="w-100 d-flex flex-column flex-md-row align-stretch ga-3">
+        <v-text-field
+          v-model="filters.fullName"
+          variant="outlined"
+          density="compact"
+          hide-details
+          label="Teacher name"
+          rounded="lg"
+          base-color="grey400"
+          color="primary"
+          active-color="primary"
+          bg-color="white"
+          prepend-inner-icon="md:person_search"
+          icon-color="primary"
+          glow
+          @update:model-value="handleFilterInput"
+        />
 
-          <v-text-field
-            v-model="filters.skill"
-            variant="outlined"
-            density="compact"
-            hide-details
-            clearable
-            label="Skill"
-            rounded="lg"
-            base-color="grey400"
-            color="primary"
-            active-color="primary"
-            bg-color="white"
-            prepend-inner-icon="md:psychology"
-            icon-color="primary"
-            glow
-            @update:model-value="handleFilterInput"
-          />
+        <v-text-field
+          v-model="filters.skill"
+          variant="outlined"
+          density="compact"
+          hide-details
+          clearable
+          label="Skill"
+          rounded="lg"
+          base-color="grey400"
+          color="primary"
+          active-color="primary"
+          bg-color="white"
+          prepend-inner-icon="md:psychology"
+          icon-color="primary"
+          glow
+          @update:model-value="handleFilterInput"
+        />
 
-          <v-menu location="bottom end">
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                flat
-                color="grey200"
-                height="40"
-                class="text-grey700"
-                rounded="lg"
+        <v-menu location="bottom end">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              flat
+              color="grey200"
+              height="40"
+              class="text-grey700"
+              rounded="lg"
+            >
+              <v-icon
+                color="grey500"
+                size="20"
+                class="mr-1"
               >
-                <v-icon
-                  color="grey500"
-                  size="20"
-                  class="mr-1"
-                >
-                  md:sort
-                </v-icon>
-                {{ selectedSort.title }}
-              </v-btn>
-            </template>
+                md:sort
+              </v-icon>
+              {{ selectedSort.title }}
+            </v-btn>
+          </template>
 
-            <v-list density="compact">
-              <v-list-item
-                v-for="item in sortItems"
-                :key="item.value"
-                :active="item.value === selectedSort.value"
-                @click="selectSort(item)"
-              >
-                <v-list-item-title class="text-h6 text-grey700">
-                  {{ item.title }}
-                </v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-menu>
-        </div>
+          <v-list density="compact">
+            <v-list-item
+              v-for="item in sortItems"
+              :key="item.value"
+              :active="item.value === selectedSort.value"
+              @click="selectSort(item)"
+            >
+              <v-list-item-title class="text-h6 text-grey700">
+                {{ item.title }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
+    </div>
+
+    <v-row class="w-100 my-4 justify-start flex-0-1">
+      <template v-if="isLoadingTeachers">
+        <v-col
+          v-for="item in 4"
+          :key="item"
+          cols="12"
+          sm="6"
+          class="h-100"
+        >
+          <TeachersCardSkeleton />
+        </v-col>
+      </template>
+
+      <template v-else>
+        <v-col
+          v-for="teacher in teachers"
+          :key="teacher.handle || teacher.fullName"
+          cols="12"
+          sm="6"
+        >
+          <TeachersCard :teacher="teacher" />
+        </v-col>
+      </template>
     </v-row>
   </v-container>
 </template>
@@ -168,6 +191,7 @@ const updateTeachersData = (items: TeacherProfileDTO[], reset = false) => {
 }
 
 const handleFilterInput = () => {
+  isLoadingTeachers.value = true
   if (inputTimer) {
     clearTimeout(inputTimer)
   }
@@ -178,6 +202,7 @@ const handleFilterInput = () => {
 }
 
 const selectSort = (item: SortItem) => {
+  isLoadingTeachers.value = true
   selectedSort.value = item
   handleFiltersChanged()
 }
@@ -242,9 +267,8 @@ const { data: initialTeachersResponse } = await useAsyncData(
   'teachers-list',
   () => getData(getTeacherParams()),
 )
-
 if (initialTeachersResponse.value?.data) {
-  updateTeachersData(initialTeachersResponse.value.data.list, true)
+  updateTeachersData(initialTeachersResponse.value.data.list ?? [], true)
 }
 
 onBeforeUnmount(() => {
