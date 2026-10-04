@@ -207,7 +207,7 @@ interface InfiniteScrollLoadOptions {
 }
 
 useHead({
-  title: 'Teachers | GamaTrain',
+  title: 'Teachers',
 })
 
 const route = useRoute()
