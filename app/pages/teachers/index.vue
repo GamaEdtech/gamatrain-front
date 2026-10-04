@@ -74,30 +74,84 @@
       </div>
     </div>
 
-    <v-row class="w-100 my-4 justify-start flex-0-1">
-      <template v-if="isLoadingTeachers">
-        <v-col
-          v-for="item in 4"
-          :key="item"
-          cols="12"
-          sm="6"
-          class="h-100"
+    <v-infinite-scroll
+      ref="infiniteScroll"
+      class="w-100 custome-infinite-scroll"
+      mode="intersect"
+      side="end"
+      margin="80"
+      @load="loadNextPage"
+    >
+      <v-row class="w-100 my-4 justify-start flex-0-1 mx-0">
+        <template v-if="isLoadingFilters">
+          <v-col
+            v-for="item in 4"
+            :key="item"
+            cols="12"
+            sm="6"
+            class="h-100"
+          >
+            <TeachersCardSkeleton />
+          </v-col>
+        </template>
+
+        <template v-else>
+          <v-col
+            v-if="!isLoadingFilters && !isLoadingNextPage && teachers.length === 0 && isAllDataLoaded"
+            cols="12"
+          >
+            <div class="w-100 d-flex flex-column align-center justify-center ga-4 pa-8 rounded-lg empty-teachers">
+              <v-icon
+                color="grey300"
+                size="48"
+              >
+                md:person_search
+              </v-icon>
+              <div class="d-flex flex-column align-center ga-1 text-center">
+                <span class="text-h4 font-weight-bold text-grey700">
+                  No teachers found
+                </span>
+                <span class="text-h6 font-weight-regular text-grey500">
+                  Try changing the teacher name or skill filter.
+                </span>
+              </div>
+            </div>
+          </v-col>
+
+          <v-col
+            v-for="teacher in teachers"
+            :key="teacher.handle || teacher.fullName"
+            cols="12"
+            sm="6"
+          >
+            <TeachersCard :teacher="teacher" />
+          </v-col>
+        </template>
+      </v-row>
+
+      <template
+        #loading
+      >
+        <v-row
+          v-if="teachers.length > 0 && !isLoadingFilters"
+          class="w-100 my-1 justify-start flex-0-1 mx-0"
         >
-          <TeachersCardSkeleton />
-        </v-col>
+          <v-col
+            v-for="item in 2"
+            :key="item"
+            cols="12"
+            sm="6"
+            class="h-100"
+          >
+            <TeachersCardSkeleton />
+          </v-col>
+        </v-row>
       </template>
 
-      <template v-else>
-        <v-col
-          v-for="teacher in teachers"
-          :key="teacher.handle || teacher.fullName"
-          cols="12"
-          sm="6"
-        >
-          <TeachersCard :teacher="teacher" />
-        </v-col>
+      <template #empty>
+        <div />
       </template>
-    </v-row>
+    </v-infinite-scroll>
   </v-container>
 </template>
 
@@ -105,6 +159,7 @@
 import type { GetTeacherProfilesParams, TeacherProfileDTO, TeacherProfileSortFilter } from '@/types'
 
 type SortValue = '' | 'name-asc' | 'name-desc'
+type InfiniteScrollStatus = 'ok' | 'empty' | 'loading' | 'error'
 
 interface SortItem {
   title: string
@@ -113,13 +168,17 @@ interface SortItem {
   column?: 'FullName'
 }
 
+interface InfiniteScrollLoadOptions {
+  done: (status: InfiniteScrollStatus) => void
+}
+
 useHead({
   title: 'Teachers | GamaTrain',
 })
 
 const route = useRoute()
 const router = useRouter()
-const { totalCount, getData } = useTeachers()
+const { getData } = useTeachers()
 
 const INPUT_DEBOUNCE_MS = 1000
 const PAGE_SIZE = 10
@@ -160,7 +219,9 @@ const selectedSort = ref<SortItem>(
 const teachers = ref<TeacherProfileDTO[]>([])
 const page = ref(Number(route.query.page) || 1)
 const isAllDataLoaded = ref(false)
-const isLoadingTeachers = ref(false)
+const isLoadingFilters = ref(false)
+const isLoadingNextPage = ref(false)
+const infiniteScroll = ref<{ reset: () => void } | null>(null)
 
 const getSortFilter = (): TeacherProfileSortFilter[] | undefined => {
   if (!selectedSort.value.column || !selectedSort.value.sortType) {
@@ -187,11 +248,11 @@ const getTeacherParams = (pageNumber = page.value): GetTeacherProfilesParams => 
 
 const updateTeachersData = (items: TeacherProfileDTO[], reset = false) => {
   teachers.value = reset ? items : [...teachers.value, ...items]
-  isAllDataLoaded.value = teachers.value.length >= totalCount.value || items.length < PAGE_SIZE
+  isAllDataLoaded.value = items.length < PAGE_SIZE
 }
 
 const handleFilterInput = () => {
-  isLoadingTeachers.value = true
+  isLoadingFilters.value = true
   if (inputTimer) {
     clearTimeout(inputTimer)
   }
@@ -202,13 +263,18 @@ const handleFilterInput = () => {
 }
 
 const selectSort = (item: SortItem) => {
-  isLoadingTeachers.value = true
+  isLoadingFilters.value = true
   selectedSort.value = item
   handleFiltersChanged()
 }
 
-const fetchTeachers = async (reset = false) => {
-  isLoadingTeachers.value = true
+const fetchTeachers = async (reset = false, loadingType: 'filters' | 'next-page' = 'filters') => {
+  if (loadingType === 'filters') {
+    isLoadingFilters.value = true
+  }
+  else {
+    isLoadingNextPage.value = true
+  }
 
   try {
     const response = await getData(getTeacherParams())
@@ -219,7 +285,12 @@ const fetchTeachers = async (reset = false) => {
     return response
   }
   finally {
-    isLoadingTeachers.value = false
+    if (loadingType === 'filters') {
+      isLoadingFilters.value = false
+    }
+    else {
+      isLoadingNextPage.value = false
+    }
   }
 }
 
@@ -228,18 +299,32 @@ const handleFiltersChanged = async () => {
   teachers.value = []
   isAllDataLoaded.value = false
   await updateQuery()
-  await fetchTeachers(true)
+  await fetchTeachers(true, 'filters')
+  infiniteScroll.value?.reset()
 }
 
-// const loadNextPage = async () => {
-//   if (isLoadingTeachers.value || isAllDataLoaded.value) {
-//     return
-//   }
+const loadNextPage = async ({ done }: InfiniteScrollLoadOptions) => {
+  if (isLoadingFilters.value || isLoadingNextPage.value) {
+    done('ok')
+    return
+  }
 
-//   page.value += 1
-//   await updateQuery()
-//   await fetchTeachers()
-// }
+  if (isAllDataLoaded.value) {
+    done('empty')
+    return
+  }
+
+  page.value += 1
+  await updateQuery()
+
+  try {
+    await fetchTeachers(false, 'next-page')
+    done(isAllDataLoaded.value ? 'empty' : 'ok')
+  }
+  catch {
+    done('error')
+  }
+}
 
 const updateQuery = async () => {
   const query: Record<string, string> = {}
@@ -264,7 +349,7 @@ const updateQuery = async () => {
 }
 
 const { data: initialTeachersResponse } = await useAsyncData(
-  'teachers-list',
+  `teachers-list-${page.value}`,
   () => getData(getTeacherParams()),
 )
 if (initialTeachersResponse.value?.data) {
@@ -282,5 +367,12 @@ onBeforeUnmount(() => {
 .margin-top-handle {
   margin-top: 80px;
   min-height: calc(100vh - 80px);
+}
+:deep(.custome-infinite-scroll .v-infinite-scroll__side){
+  padding : 0
+}
+.empty-teachers {
+  min-height: 220px;
+  border: 1px solid rgb(var(--v-theme-grey200));
 }
 </style>
