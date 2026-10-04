@@ -48,8 +48,8 @@ const route = useRoute()
 const isSearchExperience = computed(() => route.meta.searchExperience === true)
 const { isOnline } = useNetwork()
 
-const excludedPaths = ['/', '/school', 'unsubscribe']
-const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate', 'payments-id-verify', 'teacher-id', 'unsubscribe']
+const excludedPaths = ['/', '/school', 'unsubscribe', '/teacher']
+const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate', 'payments-id-verify', 'teacher-id', 'unsubscribe', 'teacher']
 
 const showPostSlider = computed(() => {
   return !isSearchExperience.value

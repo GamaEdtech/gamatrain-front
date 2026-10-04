@@ -259,14 +259,6 @@ const categories = ref([
     title: 'Schools',
     icon: 'icon-school',
   },
-  {
-    type: 'forum',
-    key: 'questions',
-    stat: '--',
-    title: 'Forum',
-    icon: 'icon-q-a',
-  },
-
 ])
 const _selectLoader = ref(true)
 const gradeList = ref([])
@@ -277,7 +269,7 @@ const showBoardHint = ref(false)
 let categoryCountRequestId = 0
 
 const categoryLink = (category) => {
-  return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/search?type=teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
+  return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
 }
 const fetchInitialData = async () => {
   await getBoards()
