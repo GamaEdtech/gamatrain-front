@@ -10,7 +10,7 @@
             Millions Trust Us
           </h2>
           <div id="stats-section">
-            <v-row>
+            <v-row justify="center">
               <v-col
                 v-for="(item, index) in stats"
                 :key="index"
@@ -67,11 +67,6 @@ const stats = ref([
     icon: 'icon-exam',
     stat: '7000',
     title: 'QuizHub',
-  },
-  {
-    icon: 'icon-q-a',
-    stat: '60000',
-    title: 'Forum',
   },
   {
     icon: 'icon-multimedia',
