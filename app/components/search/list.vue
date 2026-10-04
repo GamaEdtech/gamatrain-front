@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex flex-column align-center justify-start mt-4 ga-4">
+  <div class="search-results-list w-100 d-flex flex-column align-center justify-start mt-4 ga-4">
     <template v-if="isInitialLoading">
       <search-card-skeleton
         v-for="(item, index) in 4"
@@ -92,23 +92,34 @@ const props = defineProps({
 const emit = defineEmits(['loadNextPage', 'loadPreviousPage'])
 
 const lineSpecifierLoadMoreRef = ref(null)
+let scrollContainer = null
 
 onMounted(() => {
   setupScrollListener()
 })
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScrollListener)
+  const scrollTarget = scrollContainer || window
+  scrollTarget.removeEventListener('scroll', handleScrollListener)
 })
 
 const setupScrollListener = () => {
-  window.addEventListener('scroll', handleScrollListener)
+  const candidate = lineSpecifierLoadMoreRef.value?.closest('.search-results-scroll-region')
+  const candidateOverflow = candidate ? window.getComputedStyle(candidate).overflowY : ''
+  scrollContainer = candidate && ['auto', 'scroll'].includes(candidateOverflow)
+    ? candidate
+    : window
+  scrollContainer.addEventListener('scroll', handleScrollListener)
 }
 
 const handleScrollListener = () => {
   const targetDiv = lineSpecifierLoadMoreRef.value
+  if (!targetDiv) return
   const rect = targetDiv.getBoundingClientRect()
-  const isDivInView = rect.top >= 0 && rect.bottom <= window.innerHeight
+  const viewport = scrollContainer === window
+    ? { top: 0, bottom: window.innerHeight }
+    : scrollContainer.getBoundingClientRect()
+  const isDivInView = rect.top >= viewport.top && rect.bottom <= viewport.bottom
 
   if (
     isDivInView

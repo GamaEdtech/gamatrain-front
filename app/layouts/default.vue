@@ -19,7 +19,7 @@
           {{ progress }}%
         </v-progress-circular>
       </div>
-      <common-header />
+      <common-header :fixed="!isSearchExperience" />
       <main>
         <div>
           <slot />
@@ -28,7 +28,7 @@
         <lazy-home-post-container v-if="showPostSlider" />
       <!-- End post container -->
       </main>
-      <lazy-common-footer />
+      <lazy-common-footer v-if="!isSearchExperience" />
       <menu-bottom-nav-menu v-if="showBottomNavSlider" />
       <AppGlobalSnackbar />
       <!-- <client-only>
@@ -45,13 +45,16 @@ let animationFrame = null
 let startTime = null
 const duration = 10000
 const route = useRoute()
+const isSearchExperience = computed(() => route.meta.searchExperience === true)
 const { isOnline } = useNetwork()
 
-const excludedPaths = ['/', '/search', '/school', 'unsubscribe', '/teachers']
+const excludedPaths = ['/', '/school', 'unsubscribe', '/teachers']
 const excludedNames = ['exam-start-id', 'school-add', 'subject-directory', 'governance', 'donate', 'payments-id-verify', 'teacher-id', 'unsubscribe', 'teachers']
 
 const showPostSlider = computed(() => {
-  return !excludedPaths.includes(route.path) && !excludedNames.includes(route.name)
+  return !isSearchExperience.value
+    && !excludedPaths.includes(route.path)
+    && !excludedNames.includes(route.name)
 })
 
 const excludedPathsForBottomNavMenu = ['/school', '/game/car-racing', '/game/castle']

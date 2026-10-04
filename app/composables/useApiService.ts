@@ -3,7 +3,7 @@ import type {
 } from 'ofetch'
 
 export interface SearchParameters {
-  [key: string]: string | number | boolean | null | undefined | string[] | number[]
+  [key: string]: string | number | boolean | null | undefined | (string | number | null | undefined)[]
 }
 
 type UseFetchOptions = {

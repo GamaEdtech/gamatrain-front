@@ -9,6 +9,13 @@ import type {
   ExtraTypeFilePastPaperCreateDTO,
 } from '@/types'
 
+export const useBoardApi = () => {
+  const getBoards = () =>
+    useApiService.get<ApiResult<BoardDTO[]>>('/api/v2/boards', undefined, { public: true })
+
+  return { getBoards }
+}
+
 const data = ref<BoardDTO[]>([])
 const loadingGetData = ref(true)
 
@@ -29,13 +36,12 @@ const loadingExtraTypeFile = ref(false)
 
 export const useBoard = () => {
   const { $toast } = useNuxtApp()
+  const { getBoards } = useBoardApi()
 
   const getData = async () => {
     loadingGetData.value = true
     try {
-      const response = await useApiService.get<
-        ApiResult<BoardDTO[]>
-      >('/api/v2/boards', undefined, { public: true })
+      const response = await getBoards()
       if (response.data) {
         data.value = response.data
       }

@@ -38,10 +38,10 @@
             </template>
           </div>
           <div
-            class="content-card d-flex flex-column ga-2 align-start justify-center justify-sm-space-between"
+            class="content-card d-flex flex-column ga-2 align-start justify-center justify-md-space-between"
           >
             <h2
-              class="text-h5 text-sm-h4 text-black font-weight-medium"
+              class="text-h5 text-md-h4 text-black font-weight-medium"
             >
               {{ information.fullName && information.fullName.trim() ? information?.fullName : 'unkhown' }}
             </h2>
@@ -54,14 +54,14 @@
                 :key="index"
                 :prefetch="false"
                 variant="flat"
-                class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
+                class="text-subtitle-1 text-md-h5 pl-5 pr-5"
                 color="grey100"
               >
                 <span class="text-grey500">{{ skill }}</span>
               </v-chip>
             </div>
             <div
-              class="d-none d-sm-flex align-center justify-space-between container-extra-info"
+              class="d-none d-md-flex align-center justify-space-between container-extra-info"
             >
               <span
                 v-if="information.userRateLevel"
@@ -81,7 +81,7 @@
             </div>
           </div>
         </div>
-        <div class="d-flex d-sm-none align-center justify-space-between w-100 mt-2">
+        <div class="d-flex d-md-none align-center justify-space-between w-100 mt-2">
           <span
             v-if="information.userRateLevel"
             class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
