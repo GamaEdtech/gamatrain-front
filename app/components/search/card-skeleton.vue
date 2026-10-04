@@ -1,66 +1,69 @@
 <template>
-  <div
-    class="w-100 card-skelton rounded-lg px-2 py-4 d-flex flex-wrap ga-3 align-center justify-start"
-  >
-    <div class="d-flex ga-3 align-stretch justify-start">
-      <v-skeleton-loader
-        type="image"
-        class="img-div rounded-ts-lg rounded-bs-lg"
-      />
-      <div
-        class="content-card d-flex flex-column ga-2 align-start justify-center justify-sm-space-between"
-      >
+  <div class="card-skeleton w-100 rounded-xl d-flex align-stretch">
+    <v-skeleton-loader
+      type="image"
+      class="skeleton-cover flex-shrink-0"
+    />
+    <div class="skeleton-body d-flex flex-column flex-grow-1">
+      <div class="d-flex justify-space-between align-center ga-4">
+        <div class="d-flex align-center ga-2">
+          <v-skeleton-loader type="avatar" width="26" height="26" />
+          <v-skeleton-loader type="text" width="120" />
+        </div>
         <v-skeleton-loader
-          type="heading"
-          width="200"
-          height="40"
-          class="w-100"
+          class="d-none d-md-block"
+          type="text"
+          width="250"
         />
-        <div class="d-flex align-center justify-start flex-wrap">
-          <v-skeleton-loader
-            type="subtitle"
-            width="150"
-            height="40"
-          />
-          <v-skeleton-loader
-            type="subtitle"
-            width="150"
-            height="40"
-          />
-        </div>
-        <div class="d-none d-sm-flex align-center justify-space-between w-100">
-          <v-skeleton-loader
-            v-for="(item, idx) in 4"
-            :key="idx"
-            type="sentences"
-            width="100"
-            height="30"
-          />
-        </div>
       </div>
-    </div>
-    <div class="d-flex d-sm-none align-center justify-space-between w-100">
-      <v-skeleton-loader
-        v-for="(item, idx) in 4"
-        :key="idx"
-        type="sentences"
-        width="120"
-        height="30"
-      />
+      <v-skeleton-loader type="heading" width="55%" height="30" />
+      <v-skeleton-loader type="text" width="82%" />
+      <div class="d-flex ga-2">
+        <v-skeleton-loader type="chip" width="86" />
+        <v-skeleton-loader type="chip" width="86" />
+        <v-skeleton-loader type="chip" width="120" />
+      </div>
+      <v-skeleton-loader type="text" width="340" />
     </div>
   </div>
 </template>
 
-<script setup></script>
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
 
-<style scoped>
-.card-skelton {
-  border: 1px solid rgb(var(--v-theme-grey200));
-  min-height: 120px;
+.card-skeleton {
+  height: 174px;
   max-width: 1200px;
+  padding: 0;
+  border: 1px solid rgb(var(--v-theme-borderSkeleton));
+  border-radius: 16px !important;
+  background: rgb(var(--v-theme-white));
+  box-shadow: 0 1px 2px rgba(var(--v-theme-grey900), 0.08);
 }
-.img-div {
-  min-width: 100px;
-  height: 120px;
+
+.skeleton-cover {
+  width: auto;
+  min-width: 0;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  aspect-ratio: 63 / 74;
+  overflow: hidden;
+  border-radius: 15px 0 0 15px;
+}
+
+.skeleton-body {
+  gap: 4px;
+  min-width: 0;
+  padding: 16px 16px 8px;
+}
+
+/* Match the result card on phones so nothing jumps when results replace the skeleton */
+@media #{map.get(vuetify.$display-breakpoints, 'sm-and-down')} {
+  .skeleton-cover {
+    width: 96px;
+    aspect-ratio: auto;
+  }
 }
 </style>

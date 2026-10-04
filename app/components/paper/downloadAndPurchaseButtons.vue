@@ -43,12 +43,10 @@
             width="3"
           />
         </template>
-        <v-icon
-          color="#f04438"
-          size="20"
-        >
-          md:picture_as_pdf_outlined
-        </v-icon>
+        <span
+          class="download-file-icon download-file-icon--pdf icon-pdf"
+          aria-hidden="true"
+        />
         <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download {{ isPaper ? 'Question Paper' : 'PDF' }}</span>
 
         <common-price-with-gem
@@ -76,12 +74,10 @@
             width="3"
           />
         </template>
-        <v-icon
-          color="#2e90fa"
-          size="20"
-        >
-          md:description_outlined
-        </v-icon>
+        <span
+          class="download-file-icon download-file-icon--word icon-word"
+          aria-hidden="true"
+        />
         <span class="text-word text-h5 font-weight-bold mt-1 mx-2">Download {{ isPaper ? 'Question Doc': 'DOC' }}</span>
 
         <common-price-with-gem
@@ -110,6 +106,13 @@
           />
         </template>
 
+        <v-icon
+          v-if="files.answer.ext != 'word'"
+          icon="md:check_box_outlined"
+          class="download-file-icon download-file-icon--mark-scheme"
+          size="20"
+          aria-hidden="true"
+        />
         <span class="text-answer text-h5 font-weight-bold mt-1 mx-2">{{
           files.answer.ext == `word`
             ? `Download Answer Doc`
@@ -375,7 +378,33 @@ const upgradePlanSuccessfully = async () => {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
+.download-file-icon {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.download-file-icon--pdf {
+  color: rgb(var(--v-theme-lightError));
+}
+
+.download-file-icon--word {
+  color: rgb(var(--v-theme-blue500));
+}
+
+.download-file-icon--mark-scheme {
+  color: rgb(var(--v-theme-teal500));
+}
+
 .width-btn {
   width: 48%;
 }
@@ -428,7 +457,7 @@ const upgradePlanSuccessfully = async () => {
   background-color: #d0d5dd;
 }
 
-@media only screen and (max-width: 600px) {
+@media #{map.get(vuetify.$display-breakpoints, 'xs')} {
   .overlay-div {
     position: fixed;
     left: 0;
