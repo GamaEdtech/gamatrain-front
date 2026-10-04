@@ -52,6 +52,7 @@
         :key="skill"
         variant="flat"
         color="primary50"
+        size="small"
       >
         <span class="text-h6 font-weight-medium text-primary">
           {{ skill }}
@@ -61,6 +62,7 @@
         v-if="teacher.skills.length > 3"
         variant="flat"
         color="grey100"
+        size="small"
       >
         <span class="text-h6 font-weight-medium text-grey500">
           +{{ teacher.skills.length - 3 }}

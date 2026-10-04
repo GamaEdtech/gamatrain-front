@@ -97,6 +97,42 @@
 
         <template v-else>
           <v-col
+            v-if="firstLoadedPage > 1"
+            cols="12"
+            class="d-flex justify-center"
+          >
+            <v-btn
+              flat
+              rounded="lg"
+              color="grey200"
+              class="text-grey700"
+              :loading="isLoadingPreviousPage"
+              @click="loadPreviousPage"
+            >
+              <v-icon
+                color="grey500"
+                size="20"
+                class="mr-1"
+              >
+                md:keyboard_arrow_up
+              </v-icon>
+              Load previous teachers
+            </v-btn>
+          </v-col>
+
+          <template v-if="isLoadingPreviousPage">
+            <v-col
+              v-for="item in 2"
+              :key="`previous-${item}`"
+              cols="12"
+              sm="6"
+              class="h-100"
+            >
+              <TeachersCardSkeleton />
+            </v-col>
+          </template>
+
+          <v-col
             v-if="!isLoadingFilters && !isLoadingNextPage && teachers.length === 0 && isAllDataLoaded"
             cols="12"
           >
@@ -129,9 +165,7 @@
         </template>
       </v-row>
 
-      <template
-        #loading
-      >
+      <template #loading>
         <v-row
           v-if="teachers.length > 0 && !isLoadingFilters"
           class="w-100 my-1 justify-start flex-0-1 mx-0"
@@ -216,10 +250,14 @@ const selectedSort = ref<SortItem>(
   sortItems.find(item => item.value === route.query.sort) ?? sortItems[0]!,
 )
 
+const initialPage = Number(route.query.page) || 1
 const teachers = ref<TeacherProfileDTO[]>([])
-const page = ref(Number(route.query.page) || 1)
+const page = ref(initialPage)
+const firstLoadedPage = ref(initialPage)
+const lastLoadedPage = ref(initialPage)
 const isAllDataLoaded = ref(false)
 const isLoadingFilters = ref(false)
+const isLoadingPreviousPage = ref(false)
 const isLoadingNextPage = ref(false)
 const infiniteScroll = ref<{ reset: () => void } | null>(null)
 
@@ -246,9 +284,23 @@ const getTeacherParams = (pageNumber = page.value): GetTeacherProfilesParams => 
   }
 }
 
-const updateTeachersData = (items: TeacherProfileDTO[], reset = false) => {
-  teachers.value = reset ? items : [...teachers.value, ...items]
-  isAllDataLoaded.value = items.length < PAGE_SIZE
+const updateTeachersData = (
+  items: TeacherProfileDTO[],
+  mode: 'reset' | 'append' | 'prepend' = 'append',
+) => {
+  if (mode === 'reset') {
+    teachers.value = items
+  }
+  else if (mode === 'prepend') {
+    teachers.value = [...items, ...teachers.value]
+  }
+  else {
+    teachers.value = [...teachers.value, ...items]
+  }
+
+  if (mode !== 'prepend') {
+    isAllDataLoaded.value = items.length < PAGE_SIZE
+  }
 }
 
 const handleFilterInput = () => {
@@ -268,25 +320,35 @@ const selectSort = (item: SortItem) => {
   handleFiltersChanged()
 }
 
-const fetchTeachers = async (reset = false, loadingType: 'filters' | 'next-page' = 'filters') => {
+const fetchTeachers = async (
+  mode: 'reset' | 'append' | 'prepend' = 'reset',
+  loadingType: 'filters' | 'previous-page' | 'next-page' = 'filters',
+  pageNumber = page.value,
+) => {
   if (loadingType === 'filters') {
     isLoadingFilters.value = true
+  }
+  else if (loadingType === 'previous-page') {
+    isLoadingPreviousPage.value = true
   }
   else {
     isLoadingNextPage.value = true
   }
 
   try {
-    const response = await getData(getTeacherParams())
+    const response = await getData(getTeacherParams(pageNumber))
     const items = response?.data?.list ?? []
 
-    updateTeachersData(items, reset)
+    updateTeachersData(items, mode)
 
     return response
   }
   finally {
     if (loadingType === 'filters') {
       isLoadingFilters.value = false
+    }
+    else if (loadingType === 'previous-page') {
+      isLoadingPreviousPage.value = false
     }
     else {
       isLoadingNextPage.value = false
@@ -296,15 +358,35 @@ const fetchTeachers = async (reset = false, loadingType: 'filters' | 'next-page'
 
 const handleFiltersChanged = async () => {
   page.value = 1
+  firstLoadedPage.value = 1
+  lastLoadedPage.value = 1
   teachers.value = []
   isAllDataLoaded.value = false
   await updateQuery()
-  await fetchTeachers(true, 'filters')
+  await fetchTeachers('reset', 'filters', page.value)
   infiniteScroll.value?.reset()
 }
 
+const loadPreviousPage = async () => {
+  if (
+    firstLoadedPage.value <= 1
+    || isLoadingFilters.value
+    || isLoadingPreviousPage.value
+    || isLoadingNextPage.value
+  ) {
+    return
+  }
+
+  const previousPage = firstLoadedPage.value - 1
+  page.value = previousPage
+  await updateQuery()
+
+  await fetchTeachers('prepend', 'previous-page', previousPage)
+  firstLoadedPage.value = previousPage
+}
+
 const loadNextPage = async ({ done }: InfiniteScrollLoadOptions) => {
-  if (isLoadingFilters.value || isLoadingNextPage.value) {
+  if (isLoadingFilters.value || isLoadingPreviousPage.value || isLoadingNextPage.value) {
     done('ok')
     return
   }
@@ -314,11 +396,13 @@ const loadNextPage = async ({ done }: InfiniteScrollLoadOptions) => {
     return
   }
 
-  page.value += 1
+  const nextPage = lastLoadedPage.value + 1
+  page.value = nextPage
   await updateQuery()
 
   try {
-    await fetchTeachers(false, 'next-page')
+    await fetchTeachers('append', 'next-page', nextPage)
+    lastLoadedPage.value = nextPage
     done(isAllDataLoaded.value ? 'empty' : 'ok')
   }
   catch {
@@ -353,7 +437,7 @@ const { data: initialTeachersResponse } = await useAsyncData(
   () => getData(getTeacherParams()),
 )
 if (initialTeachersResponse.value?.data) {
-  updateTeachersData(initialTeachersResponse.value.data.list ?? [], true)
+  updateTeachersData(initialTeachersResponse.value.data.list ?? [], 'reset')
 }
 
 onBeforeUnmount(() => {
