@@ -84,8 +84,7 @@ const {
 
 const headers: DataTableHeader<TicketListDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '8vw' },
-  { title: 'Sender', key: 'sender', sortable: false, width: '21vw', emptyText: 'unknown' },
-  { title: 'Subject', key: 'subject', sortable: false, width: '29vw', align: 'start' },
+  { title: 'Subject', key: 'subject', sortable: false, width: '60vw', align: 'start' },
   {
     title: 'Status',
     key: 'isReadByAdmin',
@@ -94,14 +93,6 @@ const headers: DataTableHeader<TicketListDTO>[] = [
     type: 'chip',
     getText: item => item.isReadByAdmin ? 'Read' : 'Unread',
     getChipColor: item => item.isReadByAdmin ? 'success' : 'warning',
-  },
-  {
-    title: 'Receivers',
-    key: 'receivers',
-    sortable: false,
-    width: '10vw',
-    emptyText: '-',
-    getText: item => item.receivers?.length ? item.receivers.join(', ') : '-',
   },
   {
     title: 'Created At',
