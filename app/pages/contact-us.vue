@@ -28,7 +28,7 @@
               </div>
 
               <!-- Email Input -->
-              <div>
+              <div v-if="!hasAccountEmail">
                 <label class="label">Email*</label>
 
                 <v-text-field
@@ -148,6 +148,10 @@ useSeoMeta({
 })
 
 const { $toast } = useNuxtApp()
+const { user } = useUser()
+
+// The backend uses the account email for signed-in users, so only ask for one when there is none.
+const hasAccountEmail = computed(() => !!user.value?.email)
 
 const zoom = ref(16)
 const rules = useValidationRules()
@@ -180,7 +184,7 @@ const submitForm = async () => {
       const formData = new FormData()
       formData.append('Captcha', token)
       formData.append('FullName', formsData.name)
-      formData.append('Email', formsData.email)
+      if (!hasAccountEmail.value) formData.append('Email', formsData.email)
       formData.append('Subject', formsData.subject)
       formData.append('Body', formsData.message)
 
