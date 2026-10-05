@@ -85,7 +85,6 @@ const {
 const headers: DataTableHeader<TicketListDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '8vw' },
   { title: 'Sender', key: 'sender', sortable: false, width: '21vw', emptyText: 'unknown' },
-  // { title: 'Email', key: 'email', sortable: false, width: '20vw', emptyText: 'unknown' },
   { title: 'Subject', key: 'subject', sortable: false, width: '29vw', align: 'start' },
   {
     title: 'Status',

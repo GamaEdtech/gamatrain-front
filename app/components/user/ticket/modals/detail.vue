@@ -165,8 +165,8 @@
             </div>
 
             <div
+              v-safe-html="reply.body"
               class="text-h6 text-grey700 font-weight-medium mb-0 ticket-body pl-2"
-              v-html="reply.body"
             />
 
             <v-btn
@@ -326,7 +326,6 @@ const emit = defineEmits<{
 const { $toast } = useNuxtApp()
 const { formatLocal } = useDateTime()
 const { required, fileSize, fileType } = useValidationRules()
-const { sanitizeTextForHtml } = useHtmlSanitizer()
 const {
   replyList,
   loadingGetItemById: loadingDetail,
@@ -443,7 +442,7 @@ const isUserReply = (reply: TicketReplyDTO) => {
 const submitReply = async () => {
   if (!isReplyFormValid.value || loadingCreateReply.value) return
   const response = await createReply(props.ticketId, {
-    body: sanitizeTextForHtml(replyForm.body),
+    body: replyForm.body,
     file: getSelectedFile(),
   })
 

@@ -143,7 +143,6 @@ const { required, emailStrict, fileSize, fileType } = useValidationRules()
 const { createTicket } = useTicket()
 const { getToken, initCaptcha, isLoaded } = useRecaptcha()
 const { user } = useUser()
-const { sanitizeTextForHtml } = useHtmlSanitizer()
 
 const isFormValid = ref(false)
 const loading = ref(false)
@@ -193,7 +192,7 @@ const submitTicket = async () => {
       fullName: useFullName(user.value || {}),
       email: form.email,
       subject: form.subject,
-      body: sanitizeTextForHtml(form.body),
+      body: form.body,
       file: getSelectedFile(),
     })
 
