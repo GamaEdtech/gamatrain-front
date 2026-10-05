@@ -97,6 +97,7 @@
           <lazy-common-dropdown-menu :menu-setting="menuSetting" />
 
           <nuxt-link
+            to="/user/ticket"
             aria-label="Notification"
           >
             <v-icon
