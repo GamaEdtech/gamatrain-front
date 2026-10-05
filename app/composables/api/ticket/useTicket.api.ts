@@ -84,7 +84,7 @@ export const useTicket = () => {
 
       formData.append('Captcha', payload.captcha)
       formData.append('FullName', payload.fullName)
-      formData.append('Email', payload.email)
+      if (payload.email) formData.append('Email', payload.email)
       formData.append('Subject', payload.subject)
       formData.append('Body', payload.body)
       appendFile(formData, payload.file)

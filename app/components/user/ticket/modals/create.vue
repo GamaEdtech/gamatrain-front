@@ -4,7 +4,10 @@
     class="w-100 d-flex flex-column"
     @submit.prevent="submitTicket"
   >
-    <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+    <div
+      v-if="!hasAccountEmail"
+      class="w-100 d-flex flex-column align-start justify-start ga-1"
+    >
       <div class="text-h6 text-grey700 font-weight-medium ml-2">
         Email
       </div>
@@ -144,6 +147,8 @@ const { createTicket } = useTicket()
 const { getToken, initCaptcha, isLoaded } = useRecaptcha()
 const { user } = useUser()
 
+// The backend uses the account email for signed-in users, so only ask for one when the account has none.
+const hasAccountEmail = computed(() => !!user.value?.email)
 const isFormValid = ref(false)
 const loading = ref(false)
 const form = reactive<{
@@ -190,7 +195,7 @@ const submitTicket = async () => {
     const response = await createTicket({
       captcha,
       fullName: useFullName(user.value || {}),
-      email: form.email,
+      email: hasAccountEmail.value ? undefined : form.email,
       subject: form.subject,
       body: form.body,
       file: getSelectedFile(),

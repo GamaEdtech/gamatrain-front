@@ -37,7 +37,7 @@ export interface GetTicketParams {
 export interface CreateTicketDTO {
   captcha: string
   fullName: string
-  email: string
+  email?: string
   subject: string
   body: string
   file?: File | Blob | null
