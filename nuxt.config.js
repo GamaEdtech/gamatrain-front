@@ -272,6 +272,8 @@ export default defineNuxtConfig({
               return 'charts'
             if (normalizedId.includes('/node_modules/@ckeditor/ckeditor5-vue/'))
               return 'ckeditor'
+            if (normalizedId.includes('/node_modules/pdfjs-dist/'))
+              return 'pdfjs'
           },
         },
       },

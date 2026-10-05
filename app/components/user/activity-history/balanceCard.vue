@@ -4,7 +4,7 @@
       class="text-h5 font-weight-regular text-grey400 cursor-pointer"
       @click="toggleBalanceVisibility"
     >
-      Main balance
+      {{ commission ? 'Total commission' : 'Main balance' }}
       <v-icon
         color="grey400"
         size="14"
@@ -13,7 +13,7 @@
     </span>
 
     <div
-      v-if="isLoading"
+      v-if="isLoading || (commission && loadingCommission)"
       class="d-flex align-center my-3"
     >
       <v-skeleton-loader
@@ -35,6 +35,13 @@
       />
     </div>
     <div
+      v-else-if="commission"
+      class="d-flex align-end my-3"
+    >
+      <span class="text-h6 font-weight-semibold text-primary mr-1">$</span>
+      <span class="text-h3 font-weight-bold text-white">{{ $numberFormat(commission.totalAmountUsd) }}</span>
+    </div>
+    <div
       v-else
       class="d-flex align-end position-relative my-3"
     >
@@ -48,27 +55,29 @@
     </div>
 
     <div class="d-flex align-center justify-center">
-      <div
-        class="d-flex flex-column align-center justify-center ga-1 opacity-60"
-      >
-        <v-icon
-          color="grey400"
-          size="20"
+      <template v-if="!commission">
+        <div
+          class="d-flex flex-column align-center justify-center ga-1 opacity-60"
         >
-          md:upload
-        </v-icon>
-        <span class="text-h6 font-weight-regular text-primary">Top up</span>
-      </div>
-      <v-divider
-        :thickness="3"
-        color="grey900"
-        vertical
-        class="mx-3"
-      />
-      <!-- Temporarily disable this area. To enable it again, add this event to the div -->
-      <!-- @click="showWithdrawModal = true" -->
+          <v-icon
+            color="grey400"
+            size="20"
+          >
+            md:upload
+          </v-icon>
+          <span class="text-h6 font-weight-regular text-primary">Top up</span>
+        </div>
+        <v-divider
+          :thickness="3"
+          color="grey900"
+          vertical
+          class="mx-3"
+        />
+      </template>
       <div
-        class="d-flex flex-column align-center justify-center ga-1 opacity-60"
+        class="d-flex flex-column align-center justify-center ga-1"
+        :class="{ 'opacity-60': commission }"
+        @click="commission ? undefined : (showWithdrawModal = true)"
       >
         <v-icon
           color="grey400"
@@ -105,6 +114,16 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+
+interface IBalanceCard {
+  commission?: { totalAmountUsd: number } | null
+  loadingCommission?: boolean
+}
+
+withDefaults(defineProps<IBalanceCard>(), {
+  commission: null,
+  loadingCommission: false,
+})
 
 const { $numberFormat } = useNuxtApp()
 const { balance, isLoading, fetchBalance } = useCoinBalance()

@@ -1,3 +1,5 @@
+export const CAMBRIDGE_BOARD_ID = 6627
+
 export const ANSWER_STATUS_LIST = [
   { id: 0, title: 'No Solution' },
   { id: 1, title: 'Answer Key' },

@@ -26,35 +26,59 @@
         </v-icon>
       </div>
       <v-btn
-        v-if="files.pdf"
+        v-for="format in exportFormats"
+        :key="format.fileType"
         rounded="pill"
-        class="width-btn btn-pdf d-flex align-center justify-center"
+        :class="`width-btn d-flex align-center justify-center ${format.buttonClass}`"
         flat
         height="42"
-        :loading="isDownloading('pdf')"
-        @click="handleDownloadClick('pdf', files.pdf.price ?? 0)"
+        @click="handleExportClick(format.fileType)"
       >
-        <template #loader>
+        <!-- Generating: the server is building the file (before any byte arrives). -->
+        <template v-if="getPhase(format.fileType) === 'cooking'">
+          <span :class="`${format.textClass} text-h5 font-weight-bold mt-1 ml-2`">Cooking for you</span>
+          <v-icon
+            class="heart-blink ml-1"
+            color="#e53935"
+            size="20"
+          >
+            md:favorite
+          </v-icon>
+        </template>
+
+        <!-- Streaming the finished file, with real progress. -->
+        <template v-else-if="getPhase(format.fileType) === 'downloading'">
           <v-progress-circular
-            :model-value="getDownloadProgress('pdf')"
-            color="lightError"
+            :model-value="getProgress(format.fileType)"
+            :color="format.color"
             size="24"
             width="3"
           />
+          <span :class="`${format.textClass} text-h5 font-weight-bold mt-1 mx-2`">
+            Downloading {{ getProgress(format.fileType) }}%
+          </span>
         </template>
-        <v-icon
-          color="lightError"
-          size="20"
-        >
-          md:picture_as_pdf_outlined
-        </v-icon>
-        <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download PDF</span>
 
-        <common-price-with-gem
-          class="text-pdf text-h5 font-weight-bold mt-1"
-          :price="files.pdf.price"
-          color="lightError"
-        />
+        <template v-else>
+          <v-icon
+            :color="format.color"
+            size="20"
+          >
+            {{ format.icon }}
+          </v-icon>
+          <span :class="`${format.textClass} text-h5 font-weight-bold mt-1 mx-2`">Download {{ format.label }}</span>
+
+          <span
+            v-if="getPrice(format.fileType)?.purchased"
+            :class="`${format.textClass} text-h6 font-weight-bold mt-1`"
+          >Owned</span>
+          <common-price-with-gem
+            v-else-if="getPrice(format.fileType)"
+            :class="`${format.textClass} text-h5 font-weight-bold mt-1`"
+            :price="getPrice(format.fileType)?.points"
+            :color="format.color"
+          />
+        </template>
       </v-btn>
 
       <v-btn
@@ -128,17 +152,6 @@
       @complete-animation="completeWalletAnimation"
     />
   </div>
-
-  <lazy-common-modal-base
-    v-model:show-dialog="downloadIssue"
-    :max-width="600"
-    title="Download"
-  >
-    <lazy-common-modal-download-file
-      :link="downloadIssueLink"
-      @close="downloadIssue = false"
-    />
-  </lazy-common-modal-base>
 </template>
 
 <script setup lang="ts">
@@ -146,6 +159,7 @@ import type {
   PriceExamDetaiDTO,
   ExamUserDataExamDetaiDTO,
   DownloadResponseDTO,
+  ExamExportFileType,
   UpgradeSuggestionsDTO,
   BillingInterval,
 } from '@/types'
@@ -163,44 +177,47 @@ const props = defineProps<IDownloadButtons>()
 
 const { xs } = useDisplay()
 
+// Our own export (gamatrain-back exams/export), priced per format by question count.
+const exportFormats: {
+  fileType: ExamExportFileType
+  label: string
+  icon: string
+  color: string
+  buttonClass: string
+  textClass: string
+}[] = [
+  { fileType: 'Pdf', label: 'PDF', icon: 'md:picture_as_pdf_outlined', color: 'lightError', buttonClass: 'btn-pdf', textClass: 'text-pdf' },
+  { fileType: 'Word', label: 'Word', icon: 'md:description_outlined', color: '#2b579a', buttonClass: 'btn-word', textClass: 'text-word' },
+  { fileType: 'PowerPoint', label: 'PowerPoint', icon: 'md:slideshow_outlined', color: '#c43e1c', buttonClass: 'btn-powerpoint', textClass: 'text-powerpoint' },
+]
+
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isStartWalletAnimation = ref(false)
 const priceFile = ref(0)
-const pendingDownload = ref<{
-  type: string
-  extraId?: string
-} | null>(null)
+const pendingExport = ref<ExamExportFileType | null>(null)
 const openModalDownloadMobile = ref(false)
-const downloadIssue = ref(false)
-const downloadIssueLink = ref('')
 const paymentPlans = ref<UpgradeSuggestionsDTO[]>([])
 const billingInterval = ref<BillingInterval[]>([])
 const currentPlanTitle = ref<string | null>(null)
 const currentPlanId = ref<number | null>(null)
 
 const {
-  // clearDownload,
-  getDownloadProgress,
-  isDownloading,
-  startDownload,
-} = useDownloadWithProgress({
-  contentType: 'Exam',
-  id: props.id,
-  trackPayload: () => ({
-    file_type: 'quiz',
-    file_name: props.title,
-    file_url: props.titleUrl,
-  }),
-  onDownloaded: (data) => {
-    downloadIssueLink.value = data.url || ''
-    if (data.spent) {
+  fetchPrices,
+  getPrice,
+  getPhase,
+  getProgress,
+  startExport,
+} = useExamExportDownload({
+  examId: props.id,
+  title: props.title,
+  titleUrl: props.titleUrl,
+  onDownloaded: (points) => {
+    pendingExport.value = null
+    if (points > 0) {
+      priceFile.value = points
       showCoinAnimation.value = true
     }
-    else {
-      downloadIssue.value = true
-    }
-    pendingDownload.value = null
   },
   onInsufficientBalance: () => {
     showCoinPaymentModal.value = true
@@ -214,14 +231,9 @@ const {
   },
 })
 
-const handleDownloadClick = async (type: string, price: number, extraId?: string) => {
-  priceFile.value = price
-  pendingDownload.value = {
-    type,
-    extraId,
-  }
-
-  startDownload({ type, extraId })
+const handleExportClick = (fileType: ExamExportFileType) => {
+  pendingExport.value = fileType
+  startExport(fileType)
 }
 
 const handleAnimationComplete = async () => {
@@ -231,16 +243,19 @@ const handleAnimationComplete = async () => {
 }
 
 const completeWalletAnimation = () => {
-  downloadIssue.value = true
   isStartWalletAnimation.value = false
 }
 
 const upgradePlanSuccessfully = async () => {
   showCoinPaymentModal.value = false
-  if (pendingDownload.value) {
-    startDownload({ type: pendingDownload.value.type, extraId: pendingDownload.value.extraId })
+  if (pendingExport.value) {
+    startExport(pendingExport.value)
   }
 }
+
+onMounted(() => {
+  fetchPrices()
+})
 </script>
 
 <style scoped>
@@ -259,6 +274,34 @@ const upgradePlanSuccessfully = async () => {
 }
 .text-pdf {
     color: rgb(var(--v-theme-lightError));
+}
+.btn-word {
+  background-color: rgba(43, 87, 154, 0.12);
+  border: 1px solid #2b579a;
+}
+.text-word {
+  color: #2b579a;
+}
+.btn-powerpoint {
+  background-color: rgba(196, 62, 28, 0.12);
+  border: 1px solid #c43e1c;
+}
+.text-powerpoint {
+  color: #c43e1c;
+}
+/* "Cooking" phase: a blinking (pulsing) heart while the server generates the file. */
+.heart-blink {
+  animation: heart-blink 1s ease-in-out infinite;
+}
+@keyframes heart-blink {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
 }
 .button-mobile-download {
   height: 46px;

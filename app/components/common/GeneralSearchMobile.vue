@@ -21,8 +21,8 @@
         @update:model-value="changeSelectCategory"
       >
         <v-slide-group-item
-          v-for="(item, index) in categories"
-          :key="index"
+          v-for="item in categories"
+          :key="item.value"
           v-slot="{ isSelected, toggle }"
           :value="item"
         >
@@ -31,16 +31,17 @@
             @click="toggle"
           >
             <div
-              :class="`d-flex align-center justify-center rounded-circle ${
-                isSelected ? `active-category` : ``
-              }`"
-              :style="{ backgroundColor: isSelected ? item.activeColor : `` }"
+              class="d-flex align-center justify-center rounded-circle"
+              :class="isSelected ? ['active-category', item.activeColorClass] : undefined"
             >
               <div
                 class="category-div d-flex align-center justify-center rounded-circle"
-                :style="{ backgroundColor: item.backgroundColor }"
+                :class="item.colorClass"
               >
-                <span :class="`icon-category ${item.iconName}`" />
+                <span
+                  class="icon-category d-inline-flex align-center justify-center"
+                  :class="item.iconName"
+                />
               </div>
             </div>
             <div class="primary-gray-600">
@@ -147,6 +148,8 @@
 </template>
 
 <script setup>
+import { MOBILE_GENERAL_SEARCH_CATEGORIES } from '@/constants'
+
 const route = useRoute()
 const props = defineProps({
   showSearchBottomSheet: {
@@ -165,101 +168,7 @@ const searchBottomSheetModel = computed({
 const searchResults = ref([])
 const searchCount = ref('...')
 const searchKey = ref('')
-const categories = [
-  {
-    title: 'Past Papers',
-    value: 'Past Papers',
-    api: '/api/v1/search?type=test',
-    type: 'paper',
-    typePaper: 'paper',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-paper',
-    backgroundColor: '#01c8c8',
-    activeColor: '#bbe9bd',
-  },
-  {
-    title: 'Multimedia',
-    value: 'Multimedia',
-    api: '/api/v1/search?type=learnfiles',
-    type: 'paper',
-    typePaper: 'multimedia',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-multimedia',
-    backgroundColor: '#8800b8',
-    activeColor: '#dcb3ea',
-  },
-  {
-    title: 'QuizHub',
-    value: 'QuizHub',
-    api: '/api/v1/search?type=azmoon',
-    type: 'paper',
-    typePaper: 'exam',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-exam',
-    backgroundColor: '#7b61ff',
-    activeColor: '#d8d0ff',
-  },
-  {
-    title: 'Forum',
-    value: 'Forum',
-    api: '/api/v1/search?type=question',
-    type: 'paper',
-    typePaper: 'qa',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-q-a',
-    backgroundColor: '#ff50a6',
-    activeColor: '#ffcbe4',
-  },
-  {
-    title: 'Tutorial',
-    value: 'Tutorial',
-    api: '/api/v1/search?type=dars',
-    type: 'paper',
-    typePaper: 'tutorial',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-tutorial',
-    backgroundColor: '#2a91ff',
-    activeColor: '#c0deff',
-  },
-  {
-    title: 'Teacher',
-    value: 'Teacher',
-    api: '/api/v2/identities/profiles/list',
-    type: 'teacher',
-    isOldApi: false,
-    keywordSearch: 'FullName',
-    iconName: 'icon-teacher',
-    backgroundColor: '#7f56d9',
-    activeColor: '#7f56d970',
-  },
-  {
-    title: 'School',
-    value: 'School',
-    api: '/api/v2/schools',
-    type: 'school',
-    isOldApi: false,
-    keywordSearch: 'Name',
-    iconName: 'icon-school',
-    backgroundColor: '#a15801',
-    activeColor: '#e3cdb3',
-  },
-  {
-    title: 'Blog',
-    value: 'Blog',
-    api: '/api/v2/blogs/posts',
-    type: 'blog',
-    isOldApi: false,
-    keywordSearch: 'Title',
-    iconName: 'icon-student',
-    backgroundColor: '#ff9400',
-    activeColor: '#ffdfb3',
-  },
-]
+const categories = MOBILE_GENERAL_SEARCH_CATEGORIES
 const selectedCategory = ref(categories[0])
 const searchLoading = ref(true)
 const pageNumber = ref(1)
@@ -307,7 +216,7 @@ const debouncedSearchText = () => {
 const search = async () => {
   if (searchKey.value && allDataLoaded.value == false) {
     try {
-      let params = {}
+      let params = { ...selectedCategory.value.apiParams }
       params[selectedCategory.value.keywordSearch] = searchKey.value
       if (selectedCategory.value.isOldApi) {
         params.page = pageNumber.value
@@ -423,7 +332,10 @@ watch(
 )
 </script>
 
-<style>
+<style lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
 .line-specifier-load-more {
   width: 100%;
   height: 4px;
@@ -433,8 +345,15 @@ watch(
   height: 50px;
 }
 .icon-category {
+  width: 30px;
+  height: 30px;
   font-size: 30px;
-  color: #ffffff;
+  line-height: 1;
+  color: rgb(var(--v-theme-white));
+}
+
+.icon-category:not(.icon-paper):not(.icon-study-materials) {
+  transform: translateX(4px);
 }
 
 .active-category {
@@ -525,7 +444,7 @@ watch(
 .background-odd {
   background-color: #ebebeb;
 }
-@media (min-width: 600px) {
+@media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
   .mobile-search-sheet {
     height: 50vh;
     border-radius: 3rem 3rem 0 0;

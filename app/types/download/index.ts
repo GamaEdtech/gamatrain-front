@@ -84,3 +84,19 @@ export interface SpendPointsResponseDTO extends QuotaFailureContextDTO {
   upgradeSuggestions: UpgradeSuggestionsDTO[]
   availableBillingIntervals: BillingInterval[]
 }
+
+// Our own exam export (gamatrain-back `exams/export`, paid since gamatrain-back#700): the exam's question
+// count x the format's admin-set multiplier, from ExamDownload quota then points, once per exam + format.
+export type ExamExportFileType = 'Pdf' | 'Word' | 'PowerPoint'
+
+export interface ExamExportPriceDTO {
+  fileType: ExamExportFileType
+  points: number
+  /** Already bought: exporting this format again is free. */
+  purchased: boolean
+}
+
+export interface ExamExportPricesDTO {
+  questionCount: number
+  items: ExamExportPriceDTO[]
+}

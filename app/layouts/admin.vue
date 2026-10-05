@@ -69,10 +69,10 @@ const menuItems = [
     ],
   },
   {
-    Blog: [
+    Post: [
 
-      { title: 'Blogs ', link: '/admin/blogs', icon: 'md:post_outlined' },
-      { title: 'Comments ', link: '/admin/blogs/comments', icon: 'md:comment_outlined' },
+      { title: 'Posts ', link: '/admin/posts', icon: 'md:post_outlined' },
+      { title: 'Comments ', link: '/admin/posts/comments', icon: 'md:comment_outlined' },
     ],
   },
   { 'Type Managment': [{ title: 'Location', link: '/admin/Locations', icon: 'md:location_on_outlined' }] },
@@ -92,6 +92,11 @@ const menuItems = [
         title: 'Image Issues',
         link: '/admin/schools/image-issues',
         icon: 'md:reset_image_outlined',
+      },
+      {
+        title: 'Issues',
+        link: '/admin/schools/issues',
+        icon: 'md:report_outlined',
       },
       {
         title: 'Comments ',

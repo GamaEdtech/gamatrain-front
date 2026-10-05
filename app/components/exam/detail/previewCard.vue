@@ -48,6 +48,11 @@
         </v-tooltip>
         {{ level }}
       </div>
+      <common-bookmark-button
+        v-if="hasSave"
+        :id="id"
+        type="exams"
+      />
       <div
         v-if="hasShare"
         class="d-flex flex-column align-center justify-center ga-1 primary-gray-700 cursor-pointer text-no-wrap"
@@ -96,6 +101,7 @@ interface IPreviewCard {
   title: string
   views?: number | string
   hasShare?: boolean
+  hasSave?: boolean
   questionNumber?: number | string
   level?: number | string
   thumbPic: string
@@ -103,6 +109,7 @@ interface IPreviewCard {
 
 withDefaults(defineProps<IPreviewCard>(), {
   hasShare: true,
+  hasSave: true,
 })
 const emit = defineEmits(['share'])
 

@@ -234,11 +234,11 @@
 /* Gamatrain icon */
 @font-face {
   font-family: 'gamatrain';
-  src:  url('../../fonts/gamatrain/gamatrain.eot?3wd5o8');
-  src:  url('../../fonts/gamatrain/gamatrain.eot?3wd5o8#iefix') format('embedded-opentype'),
-    url('../../fonts/gamatrain/gamatrain.ttf?3wd5o8') format('truetype'),
-    url('../../fonts/gamatrain/gamatrain.woff?3wd5o8') format('woff'),
-    url('../../fonts/gamatrain/gamatrain.svg?3wd5o8#gamatrain') format('svg');
+  src:  url('../../fonts/gamatrain/gamatrain.eot?6mrc2v');
+  src:  url('../../fonts/gamatrain/gamatrain.eot?6mrc2v#iefix') format('embedded-opentype'),
+    url('../../fonts/gamatrain/gamatrain.ttf?6mrc2v') format('truetype'),
+    url('../../fonts/gamatrain/gamatrain.woff?6mrc2v') format('woff'),
+    url('../../fonts/gamatrain/gamatrain.svg?6mrc2v#gamatrain') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -285,4 +285,16 @@
 }
 .icon-tutorial:before {
   content: "\e908";
+}
+.icon-study-materials:before {
+  content: "\e909";
+}
+.icon-pdf:before {
+  content: "\e90a";
+}
+.icon-word:before {
+  content: "\e90b";
+}
+.icon-subject-directory:before {
+  content: "\e90c";
 }

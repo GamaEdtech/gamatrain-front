@@ -17,7 +17,7 @@ export const usePaymentAdmin = () => {
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetAdminPaymentsParams) => {
-    const { page, pageSize, userId, identifierId, startDate, endDate, gateway, status, sortSelected } = params
+    const { page, pageSize, userId, identifierId, startDate, endDate, gateway, status, kind, sortSelected } = params
     loadingGetData.value = true
     try {
       const query: Record<string, string | number | boolean | null> = {
@@ -30,6 +30,7 @@ export const usePaymentAdmin = () => {
         'EndDate': endDate ? dayjs(endDate).toISOString() : null,
         'Gateway': gateway,
         'Status': status,
+        'Kind': kind,
       }
 
       if (sortSelected && sortSelected.length > 0) {
@@ -76,6 +77,7 @@ export const usePaymentAdmin = () => {
         EndDate: params?.endDate ?? null,
         Gateway: params?.gateway ?? null,
         Status: params?.status ?? null,
+        Kind: params?.kind ?? null,
       }
 
       const response = await useApiService.get<ApiResult<string>>(

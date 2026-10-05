@@ -248,6 +248,31 @@ export interface GetAdminSchoolImageIssueParams {
   status: AdminSchoolImageIssueStatus | ''
 }
 
+export type AdminSchoolIssueStatus
+  = | 'Confirmed'
+    | 'Rejected'
+    | 'Deleted'
+    | 'Review'
+
+// A user-reported "something's wrong with this school" issue - GET/PATCH admin/schools/issues/contributions/*.
+// Unlike image issues, there's no separate get-by-id endpoint: the list response already carries
+// everything the review modal needs (including the resolved schoolName).
+export interface AdminSchoolIssueDTO {
+  id: number
+  creationUser: string
+  creationDate: string
+  schoolId: number
+  schoolName: string | null
+  status: AdminSchoolIssueStatus
+  description: string
+}
+
+export interface GetAdminSchoolIssueParams {
+  page: number
+  pageSize: number
+  status: AdminSchoolIssueStatus | ''
+}
+
 export interface GetAdminSchoolContributionParams {
   page: number
   pageSize: number

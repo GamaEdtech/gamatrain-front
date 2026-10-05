@@ -58,6 +58,12 @@
             v-bind="slotProps"
           />
           <div
+            v-else-if="header.type === 'index'"
+            :class="getCellClass(header)"
+          >
+            {{ getRowIndex(slotProps.index) }}
+          </div>
+          <div
             v-else-if="header.type === 'chip'"
             class="w-100 d-flex justify-center align-center"
           >
@@ -75,6 +81,7 @@
             <NuxtLink
               :to="getLinkTo(slotProps.item, header)"
               :target="header.target"
+              :rel="header.target === '_blank' ? 'noopener noreferrer' : undefined"
               class="text-grey600 text-h5 font-weight-bold text-decoration-none text-center"
             >
               {{ getCellText(slotProps.item, header) }}
@@ -92,6 +99,7 @@
               :to="getActionTo(slotProps.item, action)"
               :href="getActionHref(slotProps.item, action)"
               :target="action.target"
+              :rel="action.target === '_blank' ? 'noopener noreferrer' : undefined"
               :disabled="getActionDisabled(slotProps.item, action)"
               @click="action.onClick?.(slotProps.item)"
             >
@@ -180,7 +188,7 @@
 import type { DataTableAction, DataTableHeader } from '@/types'
 
 type DateInput = string | number | Date | null | undefined
-type ActionValue = string | boolean
+type ActionValue = string | boolean | undefined
 type ItemResolver<TValue extends ActionValue> = TValue | ((item: TItem) => TValue)
 type TableAction = DataTableAction<TItem>
 type TableHeader = DataTableHeader<TItem>
@@ -294,6 +302,10 @@ const getChipColor = (item: TItem, header: TableHeader) => {
 
 const getLinkTo = (item: TItem, header: TableHeader) => {
   return header.getTo?.(item) || '#'
+}
+
+const getRowIndex = (index: number) => {
+  return (props.page - 1) * props.pageSize + index + 1
 }
 
 function resolveActionValue<TValue extends ActionValue>(item: TItem, value?: ItemResolver<TValue>) {

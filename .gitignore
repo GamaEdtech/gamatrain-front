@@ -102,6 +102,9 @@ OneSignalSDK*
 # Local documentation (not for git)
 docs/GOVERNANCE_V2.md
 
+# Local agent instructions
+/AGENTS.md
+
 
 
 .claude

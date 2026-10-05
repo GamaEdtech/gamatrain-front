@@ -474,18 +474,14 @@ const fetchSchoolData = async () => {
       return response
     }
     else {
-      showError({
-        statusCode: 404,
-        statusMessage: 'Page Not Founded!',
-      })
+      // Not-found signal only - the actual 404 response/error page is triggered below, right
+      // after useAsyncData resolves. showError() called from inside this nested handler doesn't
+      // reliably convert the SSR response to a real 404 (confirmed: page still returns 200 with
+      // broken/undefined content), so this only returns null for the caller to act on.
       return null
     }
   }
   catch (error) {
-    showError({
-      statusCode: 404,
-      statusMessage: 'Page Not Founded!',
-    })
     console.error('Error fetching data:', error)
     return null
   }
@@ -513,6 +509,17 @@ const {
   lazy: false,
   immediate: true,
 })
+
+// Thrown here (top-level script, right after the data is awaited) rather than from inside
+// fetchSchoolData - that's what actually makes Nuxt return a real 404 status and render the
+// error page during SSR, instead of a 200 response with empty/undefined content.
+if (!contentDataRaw.value?.data) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Page Not Founded!',
+    fatal: true,
+  })
+}
 
 const {
   data: ratingDataRaw,

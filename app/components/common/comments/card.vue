@@ -159,11 +159,11 @@
 </template>
 
 <script setup lang="ts">
-import type { CommentBlogDTO } from '@/types'
+import type { CommentPostDTO } from '@/types'
 
 interface ICardComment {
   id: string
-  comment: CommentBlogDTO
+  comment: CommentPostDTO
 }
 
 const props = defineProps<ICardComment>()
@@ -173,7 +173,7 @@ const router = useRouter()
 const { $toast } = useNuxtApp()
 const { formatLocal } = useDateTime()
 const auth = useAuth()
-const { like, loadingLikeItem, dislike, loadingDislikeItem } = useBlogComment()
+const { like, loadingLikeItem, dislike, loadingDislikeItem } = usePostComment()
 
 const likeComment = async () => {
   if (auth.isAuthenticated.value) {

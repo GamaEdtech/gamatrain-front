@@ -119,7 +119,9 @@ interface FieldConfig {
   key: keyof AdminAppSettingsDTO
   label: string
   type: FieldType
-  valueType: 'string' | 'number'
+  // 'optionalNumber': empty is sent as undefined (the backend keeps the stored value) instead of 0 --
+  // for the exam export multipliers, where 0 would make that format free.
+  valueType: 'string' | 'number' | 'optionalNumber'
 }
 
 definePageMeta({
@@ -169,6 +171,9 @@ const form = reactive<AdminAppSettingsDTO>({
   adminTransactionCreationEmailTemplate: '',
   subscriptionCancelledEmailTemplate: '',
   subscriptionResumedEmailTemplate: '',
+  examExportPdfMultiplier: undefined,
+  examExportWordMultiplier: undefined,
+  examExportPowerPointMultiplier: undefined,
 })
 const fields: FieldConfig[] = [
   { key: 'gridPageSize', label: 'Grid Page Size', type: 'text', valueType: 'number' },
@@ -189,6 +194,10 @@ const fields: FieldConfig[] = [
   { key: 'testTimeIncorrectSubmissionPoints', label: 'Test Time Incorrect', type: 'text', valueType: 'number' },
   { key: 'examCorrectTestSubmissionPoints', label: 'Exam Correct', type: 'text', valueType: 'number' },
   { key: 'examIncorrectTestSubmissionPoints', label: 'Exam Incorrect', type: 'text', valueType: 'number' },
+
+  { key: 'examExportPdfMultiplier', label: 'Exam Export PDF Multiplier (x questions)', type: 'text', valueType: 'optionalNumber' },
+  { key: 'examExportWordMultiplier', label: 'Exam Export Word Multiplier (x questions)', type: 'text', valueType: 'optionalNumber' },
+  { key: 'examExportPowerPointMultiplier', label: 'Exam Export PowerPoint Multiplier (x questions)', type: 'text', valueType: 'optionalNumber' },
 
   { key: 'schoolCommentContributionConfirmationEmailTemplate', label: 'School Comment Email', type: 'textarea', valueType: 'string' },
   { key: 'schoolImageContributionConfirmationEmailTemplate', label: 'School Image Confirmation Email', type: 'textarea', valueType: 'string' },
@@ -226,7 +235,11 @@ const buildPayload = () => {
   const payload: Record<string, string | number | undefined> = { ...form }
 
   for (const field of fields) {
-    if (field.valueType === 'number') {
+    if (field.valueType === 'optionalNumber') {
+      const value = payload[field.key]
+      payload[field.key] = value === '' || value == null || Number.isNaN(Number(value)) ? undefined : Number(value)
+    }
+    else if (field.valueType === 'number') {
       const value = payload[field.key]
 
       payload[field.key]

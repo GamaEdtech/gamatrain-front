@@ -27,8 +27,7 @@
 
 <script setup lang="ts">
 import type { Chart, ChartOptions } from 'chart.js'
-import type { UserCommissionDTO } from '@/types'
-import dayjs from 'dayjs'
+import type { CommissionStatisticDTO } from '@/types'
 import {
   Chart as ChartJS,
   Title,
@@ -42,6 +41,19 @@ import {
 import { Line as LineChart } from 'vue-chartjs'
 import { useTheme } from 'vuetify'
 
+type CommissionChartMetric = 'amountUsd' | 'points'
+
+const props = withDefaults(defineProps<{
+  items: CommissionStatisticDTO[]
+  loading: boolean
+  metric: CommissionChartMetric
+  title: string
+  label: string
+  color?: string
+}>(), {
+  color: 'success',
+})
+
 ChartJS.register(
   Title,
   Tooltip,
@@ -53,20 +65,17 @@ ChartJS.register(
 )
 
 const theme = useTheme()
-const {
-  data,
-  getData,
-} = useCommission()
 
-const loading = ref(true)
+const chartColor = computed(() => theme.current.value.colors[props.color] ?? props.color)
+
 const chartData = reactive({
   labels: [] as string[],
   datasets: [
     {
-      label: 'Income',
+      label: props.label,
       data: [] as number[],
-      borderColor: theme.current.value.colors['success'],
-      backgroundColor: theme.current.value.colors['success'],
+      borderColor: chartColor.value,
+      backgroundColor: chartColor.value,
       tension: 0.4,
       pointRadius: 0,
       borderWidth: 2,
@@ -96,7 +105,7 @@ const chartOptions = reactive<ChartOptions<'line'>>({
   plugins: {
     title: {
       display: true,
-      text: 'Commission Income',
+      text: props.title,
       align: 'start',
       color: theme.current.value.colors['grey500'],
       font: {
@@ -155,38 +164,26 @@ const chartOptions = reactive<ChartOptions<'line'>>({
   },
 })
 
-const getMonthKey = (date: string) => {
-  return dayjs(date).format('MMM YYYY')
-}
-
-const updateChartWithData = (items: UserCommissionDTO[]) => {
-  const groupedData = items.reduce<Record<string, number>>((result, item) => {
-    const key = getMonthKey(item.creationDate)
-    result[key] = (result[key] ?? 0) + item.amountUsd
-
-    return result
-  }, {})
-
-  const labels = Object.keys(groupedData)
-  const values = Object.values(groupedData)
+const updateChartWithData = () => {
+  const filteredData = props.items.filter(item => item.name !== '')
+  const labels = filteredData.map(item => item.name)
+  const values = filteredData.map(item => item[props.metric])
   const maxValue = Math.max(...values, 0)
 
   chartData.labels = labels
+  chartData.datasets[0]!.label = props.label
   chartData.datasets[0]!.data = values
+  chartData.datasets[0]!.borderColor = chartColor.value
+  chartData.datasets[0]!.backgroundColor = chartColor.value
+  chartOptions.plugins!.title!.text = props.title
   chartOptions.scales!.y!.suggestedMax = Math.ceil(maxValue * 1.1)
 }
 
-onMounted(async () => {
-  loading.value = true
-  await getData({
-    page: 1,
-    pageSize: 200,
-    startDate: '',
-    endDate: '',
-  })
-  updateChartWithData(data.value)
-  loading.value = false
-})
+watch(
+  () => [props.items, props.metric, props.label, props.title, chartColor.value],
+  updateChartWithData,
+  { immediate: true, deep: true },
+)
 </script>
 
 <style scoped>

@@ -6,7 +6,7 @@
     >
       <v-chip
         v-for="chip in chips"
-        :key="chip.title"
+        :key="chip.title as string"
         variant="flat"
         :class="chipClass"
         color="grey100"
@@ -23,7 +23,7 @@
     </div>
     <div class="w-100 d-flex align-center mt-4">
       <div
-        v-if="contentData.answer_full.length > 0"
+        v-if="!reviewMode && hasFullAnswer"
         class="w-100 d-flex align-center justify-end"
       >
         <v-btn
@@ -34,8 +34,8 @@
           height="40"
           class="text-h6"
           icon="md:question_mark"
-          :disabled="isPaymentComplete"
-          @click="openPaymentModal"
+          :disabled="isFullAnswerVisible"
+          @click="showFullAnswer"
         />
       </div>
     </div>
@@ -65,7 +65,10 @@
         <div
           v-for="item in answers"
           :key="item.key"
-          class="w-100 d-flex flex-column align-start ga-2 cursor-pointer position-relative container-choice"
+          :class="[
+            'w-100 d-flex flex-column align-start ga-2 position-relative container-choice',
+            { 'cursor-pointer': !reviewMode },
+          ]"
           @click="handleAnswerSelect(item.key)"
         >
           <div class="w-100 d-flex flex-nowrap align-start ga-3">
@@ -74,7 +77,7 @@
                 'choice-div flex-shrink-0 font-weight-regular text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
                 {
                   'border-grey200': getChoiceStatus(item.key) === 'default',
-                  'border-success': getChoiceStatus(item.key) === 'success',
+                  'border-success': getChoiceStatus(item.key) === 'success' || getChoiceStatus(item.key) === 'correct',
                   'border-lightError': getChoiceStatus(item.key) === 'error',
                   'border-primary': getChoiceStatus(item.key) === 'loading',
                 },
@@ -97,10 +100,17 @@
               </v-icon>
 
               <v-icon
-                v-else
+                v-else-if="getChoiceStatus(item.key) === 'error'"
                 color="lightError"
               >
                 md:close
+              </v-icon>
+
+              <v-icon
+                v-else
+                color="success"
+              >
+                md:radio_button_unchecked
               </v-icon>
             </div>
             <div
@@ -122,7 +132,7 @@
     </div>
 
     <div
-      v-if="contentData.answer_full.length > 0 && isPaymentComplete"
+      v-if="!reviewMode && hasFullAnswer && isFullAnswerVisible"
       ref="fullAnswerRef"
       class="w-100 mt-4 d-flex flex-column align-start justify-start px-2 px-sm-8"
     >
@@ -132,12 +142,22 @@
         Solution:
       </div>
       <div
+        v-if="contentData.answer_full"
         :class="['test-text text-grey800 mt-4', { 'test-text-sm': smAndUp }]"
         v-html="contentData.answer_full"
       />
+      <img
+        v-if="fullAnswerFile"
+        class="answer-img mt-4 ma-auto ms-sm-0"
+        :src="fullAnswerFile"
+        alt="Solution Image"
+      >
     </div>
 
-    <div class="w-100 d-flex align-center justify-center justify-sm-start mt-6">
+    <div
+      v-if="!reviewMode"
+      class="w-100 d-flex align-center justify-center justify-sm-start mt-6"
+    >
       <div class="w-100 w-sm-25">
         <v-btn
           :disabled="!nextTestId && !ssrNextTestId"
@@ -156,50 +176,52 @@
     </div>
 
     <lazy-test-success-coin-animation
+      v-if="!reviewMode"
       :is-start-animation="isStartSuccessAnimation"
       @complete-success-animation="completeSuccessCoinAnimation"
     />
     <lazy-test-counting-wallet-animation
+      v-if="!reviewMode"
       :is-start-animation="isStartWalletAnimation"
       :direction="directionWalletAniamtion"
       :delta-price="questionReward"
       @complete-animation="completeWalletAnimation"
     />
     <lazy-common-coin-consumption-animation
+      v-if="!reviewMode"
       v-model:is-visible="isStartFailCoinAnimation"
       @animation-complete="completeFailAnimation"
-    />
-
-    <lazy-modals-coin-payment-modal
-      v-if="showCoinPaymentModal"
-      v-model:show-dialog="showCoinPaymentModal"
-      :user-balance="balance"
-      :is-processing="isLoading || isProcessingPayment"
-      text-modal="Unlock the answer by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!"
-      @confirm="handleCoinPaymentConfirm"
-      @close="handleCoinPaymentClose"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import type { QuestionDTO, NextQuestionDTO, ApiResult, TestTimeDTO, AppError } from '@/types'
+import type { QuestionDTO, NextQuestionDTO, ApiResult, TestTimeDTO, AppError, ExamResultQuestionDTO } from '@/types'
 import { useDisplay } from 'vuetify/lib/composables/display.mjs'
 
+type TestDetailsContent = QuestionDTO | ExamResultQuestionDTO
+type ChipQuery = Record<string, string>
+
+interface TestDetailChip {
+  title: string
+  params: ChipQuery
+}
+
 interface ITestDetail {
-  contentData: QuestionDTO
+  contentData: TestDetailsContent
   buttonNextText?: string
   showChips?: boolean
   ssrNextTest?: boolean
   ssrNextTestId?: string
+  reviewMode?: boolean
 }
 
 const { $renderMathInElement, $ensureMathJaxReady, $toast } = useNuxtApp()
-const auth = useAuth()
 const router = useRouter()
 const props = withDefaults(defineProps<ITestDetail>(), {
   buttonNextText: 'Next One',
   ssrNextTest: false,
+  reviewMode: false,
 })
 
 const isAnswerSelected = ref(false)
@@ -218,12 +240,13 @@ const isStartFailCoinAnimation = ref(false)
 const directionWalletAniamtion = ref(1)
 const questionReward = ref(0)
 
-const { balance, fetchBalance, consumeCoins, isLoading } = useCoinBalance()
-const showCoinPaymentModal = ref(false)
-const isProcessingPayment = ref(false)
-const fullAnswerRef = ref(null)
-const isPaymentComplete = ref(false)
-const isStartProcessShowAnswer = ref(false)
+const fullAnswerRef = ref<HTMLElement>()
+const isFullAnswerVisible = ref(false)
+const fullAnswerFile = computed(() => {
+  const file = props.contentData.answer_full_file
+  return file && file !== '0' ? file : null
+})
+const hasFullAnswer = computed(() => !!props.contentData.answer_full || !!fullAnswerFile.value)
 
 const nextTestId = ref()
 const nextTestLoading = ref(false)
@@ -232,42 +255,53 @@ const { smAndUp } = useDisplay()
 
 const chipClass = 'text-subtitle-1 px-3'
 const chipTextClass = 'text-grey500 text-h6 text-sm-h5 font-weight-regular'
+const { getChoiceStatus: getResultChoiceStatus } = useExamResultChoiceStatus()
 
-const chips = computed(() => {
+const chips = computed<TestDetailChip[]>(() => {
   const data = props.contentData
+  const section = getQuestionQueryValue(data, 'section')
+  const base = getQuestionQueryValue(data, 'base')
+  const lesson = getQuestionQueryValue(data, 'lesson')
+  const topic = getQuestionQueryValue(data, 'topic') || getQuestionQueryValue(data, 'topics')
 
   return [{
-    title: data.section_title,
+    title: getQuestionField(data, 'section_title'),
     params: {
       type: 'paper',
-      section: data.section,
+      section,
+      base: '',
+      lesson: '',
+      topic: '',
     },
   },
   {
-    title: data.base_title,
+    title: getQuestionField(data, 'base_title'),
     params: {
       type: 'paper',
-      section: data.section,
-      base: data.base,
+      section,
+      base,
+      lesson: '',
+      topic: '',
     },
   },
   {
     title: data.lesson_title,
     params: {
       type: 'paper',
-      section: data.section,
-      base: data.base,
-      lesson: data.lesson,
+      section,
+      base,
+      lesson,
+      topic: '',
     },
   },
   {
-    title: data.topic_title,
+    title: getQuestionField(data, 'topic_title') || getQuestionField(data, 'topics_title'),
     params: {
       type: 'paper',
-      section: data.section,
-      base: data.base,
-      lesson: data.lesson,
-      topic: data.topic,
+      section,
+      base,
+      lesson,
+      topic,
     },
   },
   ].filter(chip => chip.title)
@@ -282,25 +316,13 @@ const completeWalletAnimation = () => {
   isStartWalletAnimation.value = false
 }
 
-const completeFailAnimation = async () => {
+const completeFailAnimation = () => {
   isStartFailCoinAnimation.value = false
-  if (isStartProcessShowAnswer.value) {
-    isPaymentComplete.value = true
-    isStartProcessShowAnswer.value = false
-    questionReward.value = 5
-    directionWalletAniamtion.value = -1
-    isStartWalletAnimation.value = true
-    await nextTick()
-    if (fullAnswerRef.value) {
-      $renderMathInElement?.(fullAnswerRef.value)
-    }
-  }
-  else {
-    isStartWalletAnimation.value = true
-  }
+  isStartWalletAnimation.value = true
 }
 
 const handleAnswerSelect = async (answer: string) => {
+  if (props.reviewMode) return
   if (isAnswerSelected.value) return
 
   selectedAnswer.value = answer
@@ -328,7 +350,7 @@ const checkAndGetPointQuestion = async () => {
       }
     }
     else {
-      $toast.error(response.errors[0].message)
+      $toast.error((response.errors && response.errors[0]) ? response.errors[0]?.message : '')
     }
   }
   catch (err) {
@@ -346,6 +368,11 @@ const checkAndGetPointQuestion = async () => {
 }
 
 const getChoiceStatus = (choice: string) => {
+  if (props.reviewMode) {
+    const userAnswer = getUserAnswer()
+    return getResultChoiceStatus(props.contentData.true_answer, userAnswer, choice)
+  }
+
   if (isLoadingGetAnswerAndPoint.value) return 'loading'
   if (!isAnswerSelected.value) return 'default'
 
@@ -363,61 +390,26 @@ onMounted(async () => {
     $renderMathInElement?.(textQuestionRef.value)
   }
 
-  if (auth.isAuthenticated.value && props.contentData.answer_full.length > 0) {
-    await fetchBalance()
-  }
-
-  if (!props.ssrNextTest) {
+  if (!props.reviewMode && !props.ssrNextTest) {
     await loadNextTest()
   }
 })
 
-const openPaymentModal = async () => {
-  if (auth.isAuthenticated.value) {
-    showCoinPaymentModal.value = true
+// Free for now: the backend can't yet tell whether a subscription covers this,
+// so revealing the full answer no longer costs coins.
+const showFullAnswer = async () => {
+  isFullAnswerVisible.value = true
+  await nextTick()
+  if (fullAnswerRef.value) {
+    $renderMathInElement?.(fullAnswerRef.value)
   }
-  else {
-    router.push({ query: { auth_form: 'login' } })
-  }
-}
-
-const handleCoinPaymentConfirm = async () => {
-  isProcessingPayment.value = true
-
-  try {
-    const response = await consumeCoins(
-      5,
-      'Test',
-      props.contentData.id as unknown as number,
-      'See Full Answer Question',
-    ) as ApiResult<unknown>
-    if (response.succeeded) {
-      showCoinPaymentModal.value = false
-      isStartProcessShowAnswer.value = true
-      isStartFailCoinAnimation.value = true
-    }
-    else {
-      $toast.error('Failed to process payment. Please try again.')
-    }
-  }
-  catch (error) {
-    console.error('Error processing coin payment:', error)
-    $toast.error('Payment failed. Please try again.')
-  }
-  finally {
-    isProcessingPayment.value = false
-  }
-}
-
-const handleCoinPaymentClose = () => {
-  showCoinPaymentModal.value = false
 }
 
 const loadNextTest = async () => {
   try {
     nextTestLoading.value = true
     const response = await useApiService.get<ApiResult<NextQuestionDTO>>(
-      `/api/v1/examTests/random?lesson=${props.contentData.lesson}&topic=${props.contentData.topic}`,
+      `/api/v1/examTests/random?lesson=${props.contentData.lesson}&topic=${getQuestionField(props.contentData, 'topic')}`,
       undefined,
       {
         public: true,
@@ -439,6 +431,20 @@ const loadNextTest = async () => {
   finally {
     nextTestLoading.value = false
   }
+}
+
+const getUserAnswer = () => {
+  return 'user_answer' in props.contentData ? props.contentData.user_answer : selectedAnswer.value
+}
+
+const getQuestionField = (data: TestDetailsContent, field: string) => {
+  const value = field in data ? data[field as keyof TestDetailsContent] : ''
+  return typeof value === 'string' ? value : ''
+}
+
+const getQuestionQueryValue = (data: TestDetailsContent, field: string) => {
+  const value = getQuestionField(data, field)
+  return value || ''
 }
 </script>
 

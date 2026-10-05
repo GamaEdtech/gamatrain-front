@@ -2,6 +2,10 @@ export type CurrencyPayment = 'SOL' | 'USDC' | 'GET' | 'USDT'
 export type StatusPayment = 'Pending' | 'Paid' | 'Failed'
 export type PaymentCurrency = 'SOL' | 'USDC' | 'USD'
 export type PaymentGateway = 'GamaTrain' | 'Stripe'
+// What a payment represents - see GamaEdtech.Domain.Enumeration.PaymentKind (gamatrain-back).
+// Null on rows recorded before this classification existed (can't be reliably backfilled for
+// Renewal vs. PlanSwitch - both used the same TransactionId scheme).
+export type PaymentKind = 'PointsTopUp' | 'NewSubscription' | 'Renewal' | 'PlanSwitch'
 
 export interface AdminPaymentDTO {
   id: number
@@ -12,6 +16,7 @@ export interface AdminPaymentDTO {
   currency: CurrencyPayment
   gateway: PaymentGateway
   status: StatusPayment
+  kind?: PaymentKind | null
   creationDate: string
   verifyDate?: string
   sourceWallet?: string
@@ -38,6 +43,17 @@ export interface PaymentSummaryDTO {
   failedCount: number
   paidCount: number
   pendingCount: number
+  // Independent pivot of the same rows by Kind, not a subset of paidAmount - see the backend's own
+  // doc comment (docs/business/payments-and-points.md, "Payment.Kind") for why these can sum to
+  // less than paidAmount for a date range that includes pre-2026-09-16 payments.
+  newSubscriptionAmount: number
+  newSubscriptionCount: number
+  renewalAmount: number
+  renewalCount: number
+  planSwitchAmount: number
+  planSwitchCount: number
+  pointsTopUpAmount: number
+  pointsTopUpCount: number
 }
 
 export interface PaymentSummaryGetParams {
@@ -47,6 +63,7 @@ export interface PaymentSummaryGetParams {
   gateway: PaymentGateway | null
   status: StatusPayment | null
   currency: CurrencyPayment | null
+  kind: PaymentKind | null
 }
 
 export interface PaymentAdminExportParams {
@@ -54,6 +71,7 @@ export interface PaymentAdminExportParams {
   endDate?: string | null
   gateway?: PaymentGateway | null
   status?: StatusPayment | null
+  kind?: PaymentKind | null
 }
 
 export interface SearchFilterAdminPayment {
@@ -63,6 +81,7 @@ export interface SearchFilterAdminPayment {
   endDate: string
   status: string
   gateway: string
+  kind: string
 }
 
 export interface GetAdminPaymentsParams extends SearchFilterAdminPayment {

@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="pending && !contentData"
+    v-if="!contentData && !fetchError"
     class="d-flex justify-center align-center"
     style="height: 80vh"
   >
@@ -11,7 +11,7 @@
     />
   </div>
   <div
-    v-else-if="fetchError && !pending"
+    v-else-if="fetchError"
     class="text-center mt-20"
   >
     <p class="text-h5">
@@ -195,7 +195,9 @@ const examStats = reactive({
   nextNotAnswer: '',
 })
 
-const { data, error, pending } = await useAsyncData(
+// Exam start is per-user and backed by localStorage state, so load it on the client only;
+// on the server the request has no Authorization header.
+const { data, error, status } = await useAsyncData(
   `exam-start-${route.params.id}`,
   () => {
     if (!authToken) {
@@ -206,37 +208,37 @@ const { data, error, pending } = await useAsyncData(
     }
     return useApiService.get(`/api/v1/exams/start/${route.params.id}`)
   },
+  { server: false },
 )
 
-if (error.value) {
-  if (error.value.statusCode === 400 && error.value.data?.data?.id) {
-    if (import.meta.client) {
-      router.push(`/exam/result/${error.value.data.data.id}`)
+const handleExamResponse = () => {
+  if (error.value) {
+    if (error.value.statusCode === 400 && error.value.data?.data?.id) {
+      router.push(`/user/exam/result/${error.value.data.data.id}`)
     }
+    else {
+      fetchError.value = {
+        message:
+          error.value.data?.message
+          || error.value.statusMessage
+          || 'Could not load the exam.',
+      }
+      console.error('Failed to load exam data:', error.value)
+    }
+  }
+  else if (data.value?.status !== 1) {
+    fetchError.value = {
+      message: data.value?.message || 'The exam data is invalid.',
+    }
+    console.error('API returned a non-success status:', data.value)
   }
   else {
-    fetchError.value = {
-      message:
-        error.value.data?.message
-        || error.value.statusMessage
-        || 'Could not load the exam.',
-    }
-    console.error('Failed to load exam data:', error.value)
+    contentData.value = data.value.data
+    setupExamStats()
   }
-}
-else if (data.value?.status !== 1) {
-  fetchError.value = {
-    message: data.value.message || 'The exam data is invalid.',
-  }
-  console.error('API returned a non-success status:', data.value)
-}
-else {
-  contentData.value = data.value.data
 }
 
-const examTitle = contentData.value.exam.title
-  ? contentData.value.exam.title
-  : 'Exam'
+const examTitle = () => contentData.value?.exam?.title || 'Exam'
 useSeoMeta({
   title: examTitle,
   ogTitle: examTitle,
@@ -373,11 +375,11 @@ const endExam = async () => {
         answers: examStats.answerData,
       },
     )
-    await router.push(`/exam/result/${response.data.id}`)
+    await router.push(`/user/exam/result/${response.data.id}`)
   }
   catch (err) {
     if (err.response?._data?.data?.id) {
-      await router.push(`/exam/result/${err.response._data.data.id}`)
+      await router.push(`/user/exam/result/${err.response._data.data.id}`)
     }
     else {
       console.error('Error submitting exam:', err)
@@ -388,11 +390,9 @@ const endExam = async () => {
   }
 }
 
-onMounted(() => {
-  if (contentData.value) {
-    setupExamStats()
-  }
-})
+watch(status, (value) => {
+  if (value === 'success' || value === 'error') handleExamResponse()
+}, { immediate: true })
 </script>
 
 <style scoped>
