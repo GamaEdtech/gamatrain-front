@@ -1,10 +1,13 @@
 <template>
   <header
-    class="w-100 position-fixed top-0 main-header d-flex align-center justify-center"
-    :style="{ backgroundColor: menuSetting.bgColor, boxShadow: menuSetting.boxShadow }"
+    class="w-100 main-header d-flex align-center justify-center"
+    :class="[
+      { 'position-fixed top-0': fixed },
+      isTransparentMenu ? 'bg-transparent' : 'bg-white elevation-2',
+    ]"
   >
     <v-container class="d-flex align-center justify-space-between">
-      <div class="logo-link d-flex align-center ga-4">
+      <div class="logo-link d-flex align-center flex-shrink-0 ga-4">
         <v-icon
           :color="menuSetting.linkColor"
           role="button"
@@ -45,7 +48,7 @@
               >
                 {{ link.icon }}
               </v-icon>
-              <span :style="{ color: menuSetting.linkColor }">{{ link.title }}</span>
+              <span :class="isTransparentMenu ? 'text-white' : 'text-grey800'">{{ link.title }}</span>
               <!-- <span
                 v-if="link.badge"
                 class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
@@ -66,7 +69,7 @@
               >
                 {{ link.icon }}
               </v-icon>
-              <span :style="{ color: menuSetting.linkColor }">{{ link.title }}</span>
+              <span :class="isTransparentMenu ? 'text-white' : 'text-grey800'">{{ link.title }}</span>
               <!-- <span
                 v-if="link.badge"
                 class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
@@ -77,7 +80,10 @@
           </template>
         </div>
       </div>
-      <div class="d-flex align-center ga-3 action-button">
+      <div
+        class="d-flex align-center flex-shrink-0 ga-3 action-button"
+        :class="{ 'search-header-actions': isSearchExperience }"
+      >
         <v-icon
           :color="menuSetting.linkColor"
           role="button"
@@ -91,6 +97,7 @@
           <lazy-common-dropdown-menu :menu-setting="menuSetting" />
 
           <nuxt-link
+            to="/user/ticket"
             aria-label="Notification"
           >
             <v-icon
@@ -123,7 +130,8 @@
     <lazy-common-modal-base
       v-model:show-dialog="isAddOptionOpen"
       title="What would you like to publish?"
-      :max-width="560"
+      :max-width="744"
+      variant="publish"
     >
       <menu-add-option-bottom-menu
         @close="isAddOptionOpen = false"
@@ -149,6 +157,7 @@ import { useTheme, useDisplay } from 'vuetify'
 
 interface IHeader {
   isUserDashboard?: boolean
+  fixed?: boolean
 }
 interface MenuSetting {
   logo: string
@@ -159,12 +168,14 @@ interface MenuSetting {
 
 const route = useRoute()
 const router = useRouter()
+const isSearchExperience = computed(() => route.meta.searchExperience === true)
 const theme = useTheme()
 const { isAuthenticated } = useAuth()
 const { mdAndDown } = useDisplay()
 
 const props = withDefaults(defineProps<IHeader>(), {
   isUserDashboard: false,
+  fixed: true,
 })
 
 const menuLink = [
@@ -216,10 +227,12 @@ const blackMenuSetting: MenuSetting = {
 const whiteMenuSetting: MenuSetting = {
   logo: 'gamatrain-logo-black.svg',
   bgColor: theme.current.value.colors['white']!,
-  boxShadow: '0px 1px 10px 0px #424A5340',
+  boxShadow: '0px 1px 10px 0px rgba(var(--v-theme-shadowNeutral), 0.25)',
   linkColor: theme.current.value.colors['grey800']!,
 }
 const menuSetting = ref<MenuSetting>(whiteMenuSetting)
+// Over the dark homepage hero the menu is transparent with white links.
+const isTransparentMenu = computed(() => menuSetting.value.bgColor === blackMenuSetting.bgColor)
 
 const routeNeedChangeMenuSetting = ['index', 'smart-learning', 'services', 'school-service', 'faq', 'governance', 'terms', 'about-us', 'earn-money', 'leader-board', 'get-token']
 
@@ -309,7 +322,15 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
+.search-header-actions {
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: flex-end;
+}
 .main-header{
   height : 64px;
   z-index : 1005;
@@ -333,13 +354,16 @@ onBeforeUnmount(() => {
   width: 120px;
   height : 32px
 }
-@media (max-width: 960px) {
-  .logo-image{
-    width: 80px;
-    height : 20px
+@media #{map.get(vuetify.$display-breakpoints, 'sm-and-down')} {
+  .main-header {
+    z-index: 1003;
   }
-  .main-header{
-   z-index : 1003;
+  .main-header > .v-container {
+    column-gap: 10px;
+  }
+  .logo-image {
+    width: 80px;
+    height: 20px;
   }
 }
 </style>

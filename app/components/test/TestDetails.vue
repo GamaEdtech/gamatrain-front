@@ -23,7 +23,7 @@
     </div>
     <div class="w-100 d-flex align-center mt-4">
       <div
-        v-if="!reviewMode && contentData.answer_full.length > 0"
+        v-if="!reviewMode && hasFullAnswer"
         class="w-100 d-flex align-center justify-end"
       >
         <v-btn
@@ -34,8 +34,8 @@
           height="40"
           class="text-h6"
           icon="md:question_mark"
-          :disabled="isPaymentComplete"
-          @click="openPaymentModal"
+          :disabled="isFullAnswerVisible"
+          @click="showFullAnswer"
         />
       </div>
     </div>
@@ -132,7 +132,7 @@
     </div>
 
     <div
-      v-if="!reviewMode && contentData.answer_full.length > 0 && isPaymentComplete"
+      v-if="!reviewMode && hasFullAnswer && isFullAnswerVisible"
       ref="fullAnswerRef"
       class="w-100 mt-4 d-flex flex-column align-start justify-start px-2 px-sm-8"
     >
@@ -142,9 +142,16 @@
         Solution:
       </div>
       <div
+        v-if="contentData.answer_full"
         :class="['test-text text-grey800 mt-4', { 'test-text-sm': smAndUp }]"
         v-html="contentData.answer_full"
       />
+      <img
+        v-if="fullAnswerFile"
+        class="answer-img mt-4 ma-auto ms-sm-0"
+        :src="fullAnswerFile"
+        alt="Solution Image"
+      >
     </div>
 
     <div
@@ -185,16 +192,6 @@
       v-model:is-visible="isStartFailCoinAnimation"
       @animation-complete="completeFailAnimation"
     />
-
-    <lazy-modals-coin-payment-modal
-      v-if="!reviewMode && showCoinPaymentModal"
-      v-model:show-dialog="showCoinPaymentModal"
-      :user-balance="balance"
-      :is-processing="isLoading || isProcessingPayment"
-      text-modal="Unlock the answer by finding 5 Coins hidden on the site—don’t worry, it’s all part of the game!"
-      @confirm="handleCoinPaymentConfirm"
-      @close="handleCoinPaymentClose"
-    />
   </div>
 </template>
 
@@ -220,7 +217,6 @@ interface ITestDetail {
 }
 
 const { $renderMathInElement, $ensureMathJaxReady, $toast } = useNuxtApp()
-const auth = useAuth()
 const router = useRouter()
 const props = withDefaults(defineProps<ITestDetail>(), {
   buttonNextText: 'Next One',
@@ -244,12 +240,13 @@ const isStartFailCoinAnimation = ref(false)
 const directionWalletAniamtion = ref(1)
 const questionReward = ref(0)
 
-const { balance, fetchBalance, consumeCoins, isLoading } = useCoinBalance()
-const showCoinPaymentModal = ref(false)
-const isProcessingPayment = ref(false)
-const fullAnswerRef = ref(null)
-const isPaymentComplete = ref(false)
-const isStartProcessShowAnswer = ref(false)
+const fullAnswerRef = ref<HTMLElement>()
+const isFullAnswerVisible = ref(false)
+const fullAnswerFile = computed(() => {
+  const file = props.contentData.answer_full_file
+  return file && file !== '0' ? file : null
+})
+const hasFullAnswer = computed(() => !!props.contentData.answer_full || !!fullAnswerFile.value)
 
 const nextTestId = ref()
 const nextTestLoading = ref(false)
@@ -319,22 +316,9 @@ const completeWalletAnimation = () => {
   isStartWalletAnimation.value = false
 }
 
-const completeFailAnimation = async () => {
+const completeFailAnimation = () => {
   isStartFailCoinAnimation.value = false
-  if (isStartProcessShowAnswer.value) {
-    isPaymentComplete.value = true
-    isStartProcessShowAnswer.value = false
-    questionReward.value = 5
-    directionWalletAniamtion.value = -1
-    isStartWalletAnimation.value = true
-    await nextTick()
-    if (fullAnswerRef.value) {
-      $renderMathInElement?.(fullAnswerRef.value)
-    }
-  }
-  else {
-    isStartWalletAnimation.value = true
-  }
+  isStartWalletAnimation.value = true
 }
 
 const handleAnswerSelect = async (answer: string) => {
@@ -406,54 +390,19 @@ onMounted(async () => {
     $renderMathInElement?.(textQuestionRef.value)
   }
 
-  if (!props.reviewMode && auth.isAuthenticated.value && props.contentData.answer_full.length > 0) {
-    await fetchBalance()
-  }
-
   if (!props.reviewMode && !props.ssrNextTest) {
     await loadNextTest()
   }
 })
 
-const openPaymentModal = async () => {
-  if (auth.isAuthenticated.value) {
-    showCoinPaymentModal.value = true
+// Free for now: the backend can't yet tell whether a subscription covers this,
+// so revealing the full answer no longer costs coins.
+const showFullAnswer = async () => {
+  isFullAnswerVisible.value = true
+  await nextTick()
+  if (fullAnswerRef.value) {
+    $renderMathInElement?.(fullAnswerRef.value)
   }
-  else {
-    router.push({ query: { auth_form: 'login' } })
-  }
-}
-
-const handleCoinPaymentConfirm = async () => {
-  isProcessingPayment.value = true
-
-  try {
-    const response = await consumeCoins(
-      5,
-      'Test',
-      props.contentData.id as unknown as number,
-      'See Full Answer Question',
-    ) as ApiResult<unknown>
-    if (response.succeeded) {
-      showCoinPaymentModal.value = false
-      isStartProcessShowAnswer.value = true
-      isStartFailCoinAnimation.value = true
-    }
-    else {
-      $toast.error('Failed to process payment. Please try again.')
-    }
-  }
-  catch (error) {
-    console.error('Error processing coin payment:', error)
-    $toast.error('Payment failed. Please try again.')
-  }
-  finally {
-    isProcessingPayment.value = false
-  }
-}
-
-const handleCoinPaymentClose = () => {
-  showCoinPaymentModal.value = false
 }
 
 const loadNextTest = async () => {

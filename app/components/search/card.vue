@@ -1,296 +1,300 @@
 <template>
-  <div
-    class="w-100 card-search rounded-lg px-2 py-4 d-flex flex-wrap ga-3 align-center justify-start position-relative"
+  <v-card
+    :to="createLinkCard(information)"
+    color="grey25"
+    elevation="1"
+    rounded="lg"
+    height="174"
+    max-width="1200"
+    hover
+    class="card-search d-flex w-100 border border-borderSubtle border-opacity-100"
   >
-    <Nuxt-link
-      :to="createLinkCard(information)"
-      :prefetch="false"
-    >
-      <div class="w-100 h-100 ">
-        <div class="d-flex ga-3 align-stretch justify-start">
-          <div
-            class="img-div rounded-ts-lg rounded-bs-lg d-flex align-center justify-center ga-3 flex-column"
-          >
-            <!-- <NuxtImg
-          v-if="information.lesson_pic"
-          :alt="information?.title"
-          width="100px"
-          :src="information.lesson_pic"
-          placeholder
-          class="w-100 h-100 rounded-ts-lg rounded-bs-lg"
-        /> -->
-            <v-img
-              v-if="information.lesson_pic"
-              :alt="information?.title"
-              width="100px"
-              cover
-              :src="information.lesson_pic"
-              class="w-100 h-100 rounded-ts-lg rounded-bs-lg"
-            />
-            <template v-else>
-              <p class="text-subtitle-1 font-weight-bold text-center">
-                {{ information.lesson_title }}
-              </p>
-              <a
-                class="text-subtitle-2"
-                href="https://gamatrain.com text-center"
-              >Gamatrain.com</a>
-            </template>
-          </div>
-          <div
-            class="content-card d-flex flex-column ga-2 align-start justify-center justify-sm-space-between"
-          >
-            <h2
-              class="text-h5 text-sm-h4 text-black font-weight-medium"
-            >
-              {{ information?.title }}
-            </h2>
-            <div class="d-flex align-center justify-start flex-wrap ga-3">
-              <v-chip
-                v-show="information.section_title"
-                :prefetch="false"
-                variant="flat"
-                class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
-                color="grey100"
-                :to="`/search?type=${
-                  route.query.type ? route.query.type : `paper`
-                }&section=${information.section}`"
-              >
-                <span class="text-grey500">{{ information?.section_title }}</span>
-              </v-chip>
-              <v-chip
-                v-show="information.base_title"
-                :prefetch="false"
-                variant="flat"
-                class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
-                color="grey100"
-                :to="`/search?type=${
-                  route.query.type ? route.query.type : `paper`
-                }&section=${information.section}&base=${information.base}`"
-              >
-                <span class="text-grey500">{{ information?.base_title }}</span>
-              </v-chip>
-              <v-chip
-                v-show="information.lesson_title"
-                :prefetch="false"
-                variant="flat"
-                class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
-                color="grey100"
-                :to="`/search?type=${
-                  route.query.type ? route.query.type : `paper`
-                }&section=${information.section}&base=${information.base}&lesson=${
-                  information.lesson
-                }`"
-              >
-                <span class="text-grey500">{{ information.lesson_title }}</span>
-              </v-chip>
-            </div>
-            <div
-              class="d-none d-sm-flex align-center justify-space-between container-extra-info"
-            >
-              <span
-                v-if="information.ext && route.query.type == `learnfiles`"
-                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
-              >
-                <v-icon color="grey300">md:sticky_note_outlined</v-icon>
-                {{ information.ext }}
-              </span>
-              <span
-                v-if="information.test_type_title"
-                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
-              >
-                <v-icon color="grey300">md:folder_outlined</v-icon>
-                {{ information.test_type_title }}
-              </span>
-              <span
-                v-if="information.tests_num && route.query.type == `azmoon`"
-                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
-              >
-                <v-icon color="grey300">md:list</v-icon>
-                {{ information.tests_num }}
-              </span>
+    <div class="cover-wrap h-100 flex-shrink-0 bg-softGold">
+      <v-img
+        v-if="information.lesson_pic"
+        :alt="information.title ?? undefined"
+        :src="information.lesson_pic"
+        cover
+        class="h-100"
+      />
+      <div
+        v-else
+        class="h-100 d-flex align-center justify-center flex-column text-center pa-3 bg-surfaceTertiary text-grey600 font-weight-bold"
+      >
+        <span>{{ fallbackSubject.name }}</span>
+        <span v-if="fallbackSubject.code">{{ fallbackSubject.code }}</span>
+      </div>
+    </div>
 
-              <span
-                v-if="information.views"
-                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
-              >
-                <v-icon color="grey300">md:visibility_outlined</v-icon>
-                {{ information.views }}
-              </span>
-
-              <span
-                v-if="information.reply_num && route.query.type == `question`"
-                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
-              >
-                <v-icon color="grey300">md:reply</v-icon>
-                {{ information.reply_num }}
-              </span>
-
-              <span
-                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
-              >
-                <v-icon color="grey300">md:calendar_month_outlined</v-icon>
-                {{ new Date(information.subdate).toLocaleDateString() }}
-              </span>
-
-              <div class="d-flex align-center ga-1">
-                <v-icon
-                  v-if="information.q_file"
-                  color="lightError"
-                  :to="`/paper/${information.id}/${information.title_url}`"
-                >
-                  md:picture_as_pdf
-                </v-icon>
-                <v-icon
-                  v-if="information.q_file_word"
-                  color="info"
-                >
-                  md:text_snippet
-                </v-icon>
-              </div>
-            </div>
-          </div>
+    <div class="d-flex flex-column flex-grow-1 overflow-hidden px-4 py-3">
+      <div class="d-flex align-start justify-space-between ga-4 mb-2">
+        <div class="d-flex align-center ga-2 overflow-hidden">
+          <v-avatar
+            :image="information.avatar || '/images/default-user.svg'"
+            size="26"
+            class="border border-borderSubtle border-opacity-100"
+          />
+          <span class="card-publisher text-brandNavy opacity-70 font-weight-semibold text-truncate">{{ publisherName }}</span>
         </div>
-        <div class="d-flex d-sm-none align-center justify-space-between w-100 mt-2">
-          <span
-            v-if="information.ext && route.query.type == `learnfiles`"
-            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
-          >
-            <v-icon color="grey300">md:sticky_note_outlined</v-icon>
-            {{ information.ext }}
-          </span>
-          <span
-            v-if="information.test_type_title"
-            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
-          >
-            <v-icon color="grey300">md:folder_outlined</v-icon>
-            {{ information.test_type_title }}
-          </span>
 
-          <span
-            v-if="information.tests_num && route.query.type == `azmoon`"
-            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
+        <div
+          class="d-flex align-center flex-shrink-0 ga-3 ga-md-6"
+          aria-label="Resource information"
+        >
+          <DifficultyIndicator
+            v-if="hasDifficulty"
+            :level="information.level ?? undefined"
+            :size="16"
+          />
+          <v-avatar
+            v-if="hasPdfAvailable"
+            v-tooltip:top="'PDF file'"
+            size="16"
+            color="grey50"
+            role="img"
+            aria-label="PDF file"
           >
-            <v-icon color="grey300">md:list</v-icon>
-            {{ information.tests_num }}
-          </span>
-          <span
-            v-if="information.views"
-            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
+            <span
+              class="card-glyph icon-pdf text-lightError"
+              aria-hidden="true"
+            />
+          </v-avatar>
+          <v-icon
+            v-if="information.is_paper && information.a_file"
+            v-tooltip:top="'Mark scheme'"
+            icon="md:check_box_outlined"
+            color="teal500"
+            size="16"
+            role="img"
+            aria-label="Mark scheme"
+          />
+          <v-avatar
+            v-if="!information.is_paper && information.q_file_word"
+            v-tooltip:top="'Word file'"
+            size="16"
+            rounded
+            color="grey50"
+            role="img"
+            aria-label="Word file"
           >
-            <v-icon color="grey300">md:visibility_outlined</v-icon>
-            {{ information.views }}
-          </span>
-          <span
-            v-if="information.reply_num && route.query.type == `question`"
-            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
-          >
-            <v-icon color="grey300">md:reply</v-icon>
-            {{ information.reply_num }}
-          </span>
-          <span class="text-grey500 text-subtitle-1 d-flex align-start ga-1">
-            <v-icon color="grey300">md:calendar_month_outlined</v-icon>
-            {{ new Date(information.subdate).toLocaleDateString() }}
-          </span>
-
-          <div class="d-flex align-center ga-1">
-            <v-icon
-              v-show="information.q_file"
-              color="lightError"
-            >
-              md:picture_as_pdf
-            </v-icon>
-            <v-icon
-              v-show="information.q_file_word"
-              color="info"
-            >
-              md:text_snippet
-            </v-icon>
-          </div>
+            <span
+              class="card-glyph icon-word text-blue500"
+              aria-hidden="true"
+            />
+          </v-avatar>
+          <v-icon
+            v-if="isFeaturedResource"
+            v-tooltip:top="'Featured resource'"
+            icon="md:local_fire_department"
+            color="lightError"
+            size="16"
+            role="img"
+            aria-label="Featured resource"
+          />
+          <QualityIndicator
+            v-if="hasQualityRating"
+            :score="qualityScore"
+            :size="16"
+          />
         </div>
       </div>
-    </Nuxt-link>
-  </div>
+
+      <h2 class="card-title text-brandNavy font-weight-bold text-break mb-1">
+        {{ information.title }}
+      </h2>
+      <p
+        v-if="description"
+        class="card-description text-brandNavy opacity-70 text-truncate ma-0"
+      >
+        {{ description }}
+      </p>
+
+      <div class="d-flex align-center flex-nowrap overflow-hidden ga-1 my-1">
+        <v-chip
+          v-for="tag in subjectTags"
+          :key="tag"
+          label
+          variant="flat"
+          color="surfaceSecondary"
+          class="card-tag text-grey500 border border-surfaceTertiary border-opacity-100 px-2 flex-shrink-0"
+        >
+          {{ tag }}
+        </v-chip>
+      </div>
+
+      <div class="card-metadata d-flex align-center flex-nowrap overflow-hidden ga-3 ga-lg-5 text-brandNavy opacity-70">
+        <span
+          v-if="information.test_type_title"
+          class="d-inline-flex align-center ga-1 flex-shrink-0"
+        >
+          <v-icon
+            icon="md:segment_outlined"
+            size="12"
+            aria-hidden="true"
+          />
+          {{ information.test_type_title }}
+        </span>
+        <span
+          v-if="information.tests_num && legacyType === 'azmoon'"
+          class="d-inline-flex align-center ga-1 flex-shrink-0"
+        >
+          <v-icon
+            icon="md:list"
+            size="12"
+            aria-hidden="true"
+          />
+          {{ information.tests_num }} questions
+        </span>
+        <span
+          v-if="information.views"
+          class="d-inline-flex align-center ga-1 flex-shrink-0"
+        >
+          <v-icon
+            icon="md:visibility_outlined"
+            size="12"
+            aria-hidden="true"
+          />
+          {{ information.views }}
+        </span>
+        <span class="d-inline-flex align-center ga-1 flex-shrink-0">
+          <v-icon
+            icon="md:calendar_month_outlined"
+            size="12"
+            aria-hidden="true"
+          />
+          {{ formattedDate }}
+        </span>
+      </div>
+    </div>
+  </v-card>
 </template>
 
-<script setup>
-import { useRoute } from 'vue-router'
+<script setup lang="ts">
+import type { SearchCardItem, LegacySearchType } from '@/types/search'
+import DifficultyIndicator from './difficultyIndicator.vue'
+import QualityIndicator from './qualityIndicator.vue'
+import { getLegacySearchType } from '@/utils/searchServices'
 
-const route = useRoute()
-
-defineProps({
-  information: {
-    type: Object,
-  },
+const props = withDefaults(defineProps<{
+  information?: SearchCardItem
+}>(), {
+  information: () => ({ id: '' }),
 })
 
-const getEquivalentOldType = (type) => {
-  switch (type) {
-    case 'paper':
-      return 'test'
-    case 'multimedia':
-      return 'learnfiles'
-    case 'quizhub':
-      return 'azmoon'
-    case 'forum':
-      return 'question'
-    case 'tutorial':
-      return 'dars'
-    case 'test':
-      return 'test'
-    case 'learnfiles':
-      return 'learnfiles'
-    case 'azmoon':
-      return 'azmoon'
-    case 'question':
-      return 'question'
-    case 'dars':
-      return 'dars'
-    default:
-      return 'test'
+const route = useRoute()
+const { $stripHtmlTags } = useNuxtApp()
+
+const legacyType = computed(() => getLegacySearchType(route.query.type))
+
+const publisherName = computed(() => {
+  const name = [props.information.first_name, props.information.last_name]
+    .filter(Boolean)
+    .join(' ')
+    .trim()
+  return name || props.information.username || 'GamaTrain'
+})
+
+const fallbackSubject = computed(() => {
+  const title = String(props.information.lesson_title || '').trim()
+  const subjectMatch = title.match(/^(.*?)\s*(\(\d+\))$/)
+
+  return {
+    name: subjectMatch?.[1]?.trim() || title,
+    code: subjectMatch?.[2] || '',
   }
+})
+
+const subjectTags = computed(() => [
+  props.information.section_title,
+  props.information.base_title,
+  props.information.lesson_title,
+].filter((tag): tag is string => Boolean(tag)))
+
+const description = computed(() => $stripHtmlTags(
+  String(props.information.description || props.information.summary || ''),
+  1200,
+))
+
+const qualityScore = computed(() => {
+  const score = Number(props.information.referee_score ?? props.information.ref_score ?? 0)
+  return Number.isFinite(score) ? Math.min(5, Math.max(0, Math.round(score))) : 0
+})
+
+const hasDifficulty = computed(() =>
+  !props.information.is_paper
+  && ['1', '2', '3'].includes(String(props.information.level)),
+)
+
+const hasQualityRating = computed(() =>
+  !props.information.is_paper && qualityScore.value > 0,
+)
+
+const isFeaturedResource = computed(() =>
+  !props.information.is_paper && qualityScore.value === 5,
+)
+
+const formattedDate = computed(() => {
+  const subdate = props.information.subdate
+  if (!subdate) return ''
+  // The API sends "YYYY-MM-DD HH:mm:ss"; the ISO "T" form parses in every browser.
+  const date = new Date(subdate.replace(' ', 'T'))
+  return Number.isNaN(date.getTime())
+    ? subdate
+    : date.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      })
+})
+
+// Exam Hub PDFs are generated by the exam-detail flow and do not use q_file.
+const hasPdfAvailable = computed(() =>
+  legacyType.value === 'azmoon' || Boolean(props.information.q_file),
+)
+
+const DETAIL_ROUTE_BY_TYPE: Partial<Record<LegacySearchType, string>> = {
+  test: 'paper',
+  dars: 'tutorial',
+  azmoon: 'exam',
 }
 
-const createLinkCard = (information) => {
-  let idType = ''
-  switch (getEquivalentOldType(route.query.type)) {
-    case 'test':
-      idType = 'paper'
-      break
-    case 'question':
-      idType = 'qa'
-      break
-    case 'dars':
-      idType = 'tutorial'
-      break
-
-    case 'azmoon':
-      idType = 'exam'
-      break
-    case 'learnfiles':
-      idType = 'multimedia'
-      break
-    default:
-      idType = 'paper'
-      break
-  }
-  return `/${idType}/${information.id}/${information.title_url}`
-}
+const createLinkCard = (information: SearchCardItem) =>
+  `/${DETAIL_ROUTE_BY_TYPE[legacyType.value] ?? 'paper'}/${information.id}/${information.title_url}`
 </script>
 
-<style scoped>
-.card-search {
-  border: 1px solid rgb(var(--v-theme-grey200));
-  min-height: 120px;
-  max-width: 1200px;
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
+/* Cover keeps the book-cover proportions; narrower on phones so the text isn't crowded */
+.cover-wrap {
+  aspect-ratio: 63 / 74;
 }
-.img-div {
-  min-width: 100px;
-  max-width: 100px;
-  height: 120px;
-  background-color: #f9f3f3;
+
+/* Two-line title clamp: Vuetify only has single-line text-truncate */
+.card-title {
+  display: -webkit-box;
+  height: 44px;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
-.container-extra-info {
-  width: 400px;
+
+/* px sizes: the app's 10px root font size makes Vuetify's rem-based type scale too small */
+.card-title { font-size: 18px; line-height: 22px; }
+.card-publisher, .card-description { font-size: 13px; line-height: 20px; }
+.card-metadata { font-size: 12px; line-height: 18px; }
+.card-tag { height: 24px; font-size: 11px; line-height: 16px; }
+.card-glyph { font-size: 16px; }
+
+/* Phones (below Vuetify's md breakpoint): no utility class covers px widths or font sizes */
+@media #{map.get(vuetify.$display-breakpoints, 'sm-and-down')} {
+  .cover-wrap {
+    width: 96px;
+    aspect-ratio: auto;
+  }
+
+  .card-title { font-size: 16px; }
 }
 </style>

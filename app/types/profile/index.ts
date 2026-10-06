@@ -1,4 +1,26 @@
 import type { ExperienceDTO, UserSubscriptionDTO } from '@/types'
+import type { SearchParameters } from '@/composables/useApiService'
+
+export interface ProfileListParams extends SearchParameters {
+  'PagingDto.PageFilter.Size': number
+  'PagingDto.PageFilter.Skip': number
+  'PagingDto.PageFilter.ReturnTotalRecordsCount': boolean
+  'FullName'?: string
+}
+
+export interface ProfileListItemDTO {
+  handle: string
+  fullName?: string | null
+  avatar?: string | null
+  skills?: string[] | null
+  userRateLevel?: string | null
+  onlineStatus?: OnlineStatus | null
+}
+
+export interface ProfileListResponseDTO {
+  list: ProfileListItemDTO[]
+  totalRecordsCount: number
+}
 
 export type OnlineStatus = 'Online' | 'ActiveRecently' | 'OnlineToday' | 'ActiveThisWeek' | 'ActiveThisMonth' | 'ActiveLongTimeAgo' | 'NewUser'
 
@@ -14,6 +36,30 @@ export interface ProfileDTO {
   firstName: string
   lastName: string
   userRateLevel: string
+}
+
+export type TeacherProfileSortType = 'Asc' | 'Desc'
+
+export interface TeacherProfileSortFilter {
+  sortType: TeacherProfileSortType
+  column: string
+}
+
+export interface TeacherProfileDTO {
+  avatar: string
+  fullName: string
+  onlineStatus: OnlineStatus
+  userRateLevel: string
+  skills: string[]
+  handle: string
+}
+
+export interface GetTeacherProfilesParams {
+  page: number
+  pageSize: number
+  fullName?: string | null
+  skill?: string | null
+  sortFilter?: TeacherProfileSortFilter[]
 }
 
 export type Gender = 'Male' | 'Female' | 'Other'

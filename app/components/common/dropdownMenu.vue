@@ -36,7 +36,7 @@
       </div>
       <div
         v-bind="props"
-        class="d-flex d-lg-none"
+        class="d-none d-md-flex d-lg-none"
       >
         <v-avatar
           v-if="user?.avatarUri"
@@ -286,7 +286,6 @@ const items = computed(() => [
     icon: 'md:mail',
     link: '/user/ticket',
     value: 'messages',
-    status: true,
   },
   {
     title: 'Settings',

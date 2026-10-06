@@ -2,3 +2,9 @@
 @use "styles";
 @use "responsive";
 @forward "mixin";
+
+// Height of the mobile sticky bottom navigation (BottomNavMenu); also used by
+// elements that must sit above it (Explore overlay, post form actions).
+:root {
+  --bottom-nav-height: 62px;
+}

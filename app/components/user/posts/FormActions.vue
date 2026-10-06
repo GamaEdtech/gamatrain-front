@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-// The dashboard layout shows a 62px sticky bottom navigation on mobile; lift the bar above it there.
+// The dashboard layout shows a sticky bottom navigation (--bottom-nav-height) on mobile; lift the bar above it there.
 defineProps<{
   aboveMobileNav?: boolean
 }>()
@@ -24,7 +24,7 @@ defineProps<{
 
 @media (max-width: 959.98px) {
   .form-actions--above-nav {
-    bottom: 62px;
+    bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
   }
 }
 </style>

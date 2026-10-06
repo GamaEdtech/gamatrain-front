@@ -10,12 +10,14 @@
 
     <div class="inner-wrap position-absolute">
       <div class="circle-wrap position-absolute d-flex align-center justify-center">
+        <!-- my_location is the same crosshair with the centre dot built in, so the dot is
+             always concentric; it pulses with the base icon and only fades in and out. -->
         <v-icon
           :size="size"
           :color="color"
-          class="circle-icon"
+          class="location-icon"
         >
-          md:circle
+          md:my_location
         </v-icon>
       </div>
 
@@ -48,13 +50,10 @@ withDefaults(
 </script>
 
 <style scoped>
-.inner-wrap {
+.inner-wrap,
+.circle-wrap,
+.line-wrap {
     inset: 0;
-}
-
-.circle-icon {
-    transform: scale(0.3);
-    transform-origin: center;
 }
 
 .line-icon {
@@ -115,19 +114,16 @@ withDefaults(
     0%,
     45% {
         opacity: 0;
-        transform: scale(0.85);
     }
 
     8%,
     35% {
         opacity: 1;
-        transform: scale(1.05);
     }
 
     50%,
     100% {
         opacity: 0;
-        transform: scale(0.85);
     }
 }
 
