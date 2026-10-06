@@ -2,31 +2,19 @@
   <div class="w-100 h-100 d-flex flex-column align-start justify-start">
     <div class="w-100 d-flex justify-space-between align-center">
       <div class="d-flex align-center justify-start position-relative flex-wrap ga-2">
-        <div class="btn-filter-container d-none d-md-flex align-center justify-center ga-1 bg-grey100 pa-1 rounded-pill">
-          <v-btn
-            v-for="status in statusList"
-            :key="status"
-            rounded="pill"
-            :color="status == statusSelect ? `primary`:`transparent`"
-            flat
-            height="40"
-            @click="changeFilterStatus(status)"
-          >
-            <span :class="`${status == statusSelect ? `text-grey900`:`text-grey500`} font-weight-bold text-h5`">{{ status }}</span>
-          </v-btn>
-        </div>
-
-        <div class="filter-mobile-container d-flex d-md-none align-center justify-start">
-          <common-gombo-box
-            v-model="statusSelect"
-            label="Status"
-            :items="statusList.map((item) => ({
-              id: item,
-              title: item,
-            }))"
-            @update:model-value="changeFilterStatus"
-          />
-        </div>
+        <v-btn
+          v-if="isShowClearFilter"
+          color="primary"
+          rounded="xl"
+          height="40"
+          width="120"
+          class="text-h5"
+          flat
+          variant="outlined"
+          @click="clearFilter"
+        >
+          Clear Filter
+        </v-btn>
       </div>
     </div>
 
@@ -68,6 +56,19 @@
       @update:page-size="changePageSize"
     >
       <template #actions>
+        <v-btn
+          variant="plain"
+          max-width="20"
+          class="mr-1"
+          @click="showSearchModal = true"
+        >
+          <v-icon
+            size="26"
+            color="grey500"
+          >
+            md:search
+          </v-icon>
+        </v-btn>
         <v-btn
           size="small"
           flat
@@ -128,11 +129,22 @@
     >
       <admin-contactus-create-ticket-modal @create-ticket-success-full="createTicketSuccessfull" />
     </admin-common-modal>
+
+    <admin-common-modal
+      v-model:show-dialog="showSearchModal"
+      title="Search"
+    >
+      <admin-contactus-search-modal
+        :data="searchFilter"
+        :loading="loading"
+        @search="startSearch"
+      />
+    </admin-common-modal>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { AdminContactUsDTO, DataTableHeader } from '@/types'
+import type { AdminContactUsDTO, DataTableHeader, SearchFilterAdminContactUs } from '@/types'
 
 definePageMeta({
   layout: 'admin',
@@ -146,14 +158,21 @@ const allPageSize = [
   { label: '20 Rows', value: 20 },
   { label: '50 Rows', value: 50 },
 ]
-const statusSelect = ref('All')
-const statusList = ['All', 'Read', 'UnRead']
 const showDeleteModal = ref(false)
 const selectedItemIdForDelete = ref('')
 const showDetailModal = ref(false)
 const selectedItemIdForDetail = ref<number | null>(null)
 const showComposeMailModal = ref(false)
 const showCreateTicketModal = ref(false)
+const showSearchModal = ref(false)
+
+const searchFilter = reactive<SearchFilterAdminContactUs>({
+  unread: null,
+  search: '',
+  email: '',
+  startDate: '',
+  endDate: '',
+})
 
 const {
   loadingGetData: loading,
@@ -167,19 +186,8 @@ const fetchData = async () => {
   await getData({
     page: page.value,
     pageSize: pageSize.value,
-    status: statusSelect.value,
+    ...searchFilter,
   })
-}
-
-const changeFilterStatus = async (status: string | number) => {
-  if (status == '') {
-    statusSelect.value = 'All'
-  }
-  else {
-    statusSelect.value = status as string
-  }
-  page.value = 1
-  await fetchData()
 }
 
 const changePageNumber = async (pageNumber: number) => {
@@ -221,6 +229,37 @@ const deleteContact = (contact: AdminContactUsDTO) => {
 const deleteSuccessFull = async () => {
   selectedItemIdForDelete.value = ''
   showDeleteModal.value = false
+  await fetchData()
+}
+
+const startSearch = async (item: SearchFilterAdminContactUs) => {
+  searchFilter.unread = item.unread
+  searchFilter.search = item.search
+  searchFilter.email = item.email
+  searchFilter.startDate = item.startDate
+  searchFilter.endDate = item.endDate
+  page.value = 1
+  showSearchModal.value = false
+  await fetchData()
+}
+
+const isShowClearFilter = computed(() => {
+  return (
+    searchFilter.unread !== null
+    || searchFilter.search.length > 0
+    || searchFilter.email.length > 0
+    || searchFilter.startDate.toString().length > 0
+    || searchFilter.endDate.toString().length > 0
+  )
+})
+
+const clearFilter = async () => {
+  searchFilter.unread = null
+  searchFilter.search = ''
+  searchFilter.email = ''
+  searchFilter.startDate = ''
+  searchFilter.endDate = ''
+  page.value = 1
   await fetchData()
 }
 

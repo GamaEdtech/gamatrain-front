@@ -26,10 +26,17 @@ export interface AdminReplyTicketListDTO {
   receivers: string[]
 }
 
-export interface GetAdminContactUsParams {
+export interface SearchFilterAdminContactUs {
+  unread: boolean | null
+  search: string
+  email: string
+  startDate: string
+  endDate: string
+}
+
+export interface GetAdminContactUsParams extends SearchFilterAdminContactUs {
   page: number
   pageSize: number
-  status: string
 }
 
 export interface AdminContactUsComposeMailDTO {

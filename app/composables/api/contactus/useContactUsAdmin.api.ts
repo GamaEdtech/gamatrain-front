@@ -12,6 +12,7 @@ import type {
   GetAdminContactUsParams,
   ResponseListDTO,
 } from '@/types'
+import dayjs from 'dayjs'
 
 export const useContactUsAdmin = () => {
   const { $toast } = useNuxtApp()
@@ -50,11 +51,11 @@ export const useContactUsAdmin = () => {
         'PagingDto.PageFilter.Size': params.pageSize,
         'PagingDto.PageFilter.Skip': (params.page - 1) * params.pageSize,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-      }
-
-      if (params.status !== 'All') {
-        query['PagingDto.SearchFilter.phrase'] = params.status === 'Read'
-        query['PagingDto.SearchFilter.column'] = 'isReadByAdmin'
+        'Unread': params.unread !== null ? params.unread : null,
+        'Search': params.search,
+        'Email': params.email,
+        'StartDate': params.startDate ? dayjs(params.startDate).toISOString() : null,
+        'EndDate': params.endDate ? dayjs(params.endDate).toISOString() : null,
       }
 
       const response = await useApiService.get<
