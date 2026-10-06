@@ -61,7 +61,6 @@
               :class="`${
                 isParentActive(item) ? 'custom-list-item' : ''
               }
-                ${isParentActive(item) ? 'custom-list-item' : ''}
                rounded-lg mt-3`"
               role="listitem"
             >
@@ -92,8 +91,8 @@
           </template>
 
           <v-list-item
-            v-for="(subMenuItem, side) in item.subMenuList"
-            :key="side.title"
+            v-for="subMenuItem in item.subMenuList"
+            :key="subMenuItem.title"
             class="pl-1 py-2"
             :to="subMenuItem.link"
             :disabled="subMenuItem.status"
@@ -252,8 +251,8 @@ const items = computed(() => [
     icon: 'md:article_outlined',
     value: 'blog',
     subMenuList: [
-      { title: 'Blogs ', link: '/admin/blogs', icon: 'md:post_outlined' },
-      { title: 'Comments ', link: '/admin/blogs/comments', icon: 'md:comment_outlined' },
+      { title: 'Blogs ', link: '/admin/posts', icon: 'md:post_outlined' },
+      { title: 'Comments ', link: '/admin/posts/comments', icon: 'md:comment_outlined' },
     ],
   },
   {
@@ -273,6 +272,11 @@ const items = computed(() => [
         title: 'General ',
         link: '/admin/schools/contributions',
         icon: 'md:account_balance_outlined',
+      },
+      {
+        title: 'Issues',
+        link: '/admin/schools/issues',
+        icon: 'md:bug_report_outlined',
       },
       {
         title: 'Images ',
@@ -336,7 +340,7 @@ const openedGroups = ref([])
 
 const isParentActive = (item) => {
   if (!item.subMenuList) return false
-  return item.subMenuList.some(sub => route.path.startsWith(sub.link))
+  return item.subMenuList.some(sub => route.path.toLowerCase() === sub.link.toLowerCase())
 }
 
 const logout = () => {

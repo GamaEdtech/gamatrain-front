@@ -117,7 +117,7 @@ const headers: DataTableHeader<AdminNudgeTemplateDTO>[] = [
     width: '20vw',
     type: 'chip',
     getChipColor: (item: AdminNudgeTemplateDTO) => item.isActive ? 'success' : 'lightError',
-    getText: (item: AdminNudgeTemplateDTO) => item.isActive ? 'Acitve' : 'Inactive',
+    getText: (item: AdminNudgeTemplateDTO) => item.isActive ? 'Active' : 'Inactive',
   },
   {
     title: 'Action',

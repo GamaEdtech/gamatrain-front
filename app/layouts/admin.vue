@@ -27,8 +27,11 @@
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify'
+
+const { mdAndDown } = useDisplay()
 const { isOnline } = useNetwork()
-const drawer = ref(true)
+const drawer = ref(!mdAndDown.value)
 </script>
 
 <style scoped>
