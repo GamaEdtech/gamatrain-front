@@ -123,3 +123,9 @@ export interface RequestCommissionPayoutBody {
   amountUsd?: number
   destination: string
 }
+
+export type CommissionPayoutDecision = 'approve' | 'reject' | 'paid'
+
+export interface GetAdminCommissionPayoutsParams extends GetCommissionPayoutsParams {
+  userId?: number | null
+}
