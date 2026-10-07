@@ -25,7 +25,7 @@
     />
 
     <v-text-field
-      v-if="decision === 'paid'"
+      v-if="decision === 'paid' && !isStripe"
       id="payout-transfer-reference"
       v-model="transferReference"
       label="Transfer reference (bank / PayPal transaction id)"
@@ -90,32 +90,38 @@ const formatUsd = (value: number) => Number(value || 0).toLocaleString('en-US', 
 
 const ownerName = computed(() => `${props.payout.userFirstName ?? ''} ${props.payout.userLastName ?? ''}`.trim() || `user ${props.payout.userId}`)
 
+const isStripe = computed(() => props.payout.method === 'StripeConnect')
+
 const description = computed(() => {
   switch (props.decision) {
     case 'approve':
-      return 'Approve this request. You confirm the transfer separately once the money has been sent.'
+      return isStripe.value
+        ? `Approving sends $${formatUsd(props.payout.amountUsd)} from Gamatrain's Stripe balance to the owner's Stripe account right away, and marks it paid.`
+        : 'Approve this request. You confirm the transfer separately once the money has been sent.'
     case 'reject':
       return 'Reject this request. The amount goes back to the owner\'s available balance.'
     default:
-      return 'Confirm you have sent the money. The owner gets an email with the transfer reference.'
+      return isStripe.value
+        ? 'This approval stopped before the Stripe transfer was recorded. Finishing it sends the transfer, or finds the one already sent; it never pays twice.'
+        : 'Confirm you have sent the money. The owner gets an email with the transfer reference.'
   }
 })
 
 const buttonLabel = computed(() => {
   switch (props.decision) {
     case 'approve':
-      return 'Approve'
+      return isStripe.value ? 'Approve and send' : 'Approve'
     case 'reject':
       return 'Reject'
     default:
-      return 'Mark as paid'
+      return isStripe.value ? 'Finish transfer' : 'Mark as paid'
   }
 })
 
 const isValid = computed(() => {
   if (!/^\d{6}$/.test(code.value)) return false
   if (props.decision === 'reject') return reason.value.trim() !== '' && reason.value.length <= 1000
-  if (props.decision === 'paid') return transferReference.value.trim() !== '' && transferReference.value.length <= 200
+  if (props.decision === 'paid' && !isStripe.value) return transferReference.value.trim() !== '' && transferReference.value.length <= 200
   return true
 })
 
@@ -124,7 +130,7 @@ const submit = () => {
   emit('submit', {
     twoFactorCode: code.value,
     reason: props.decision === 'reject' ? reason.value.trim() : undefined,
-    transferReference: props.decision === 'paid' ? transferReference.value.trim() : undefined,
+    transferReference: props.decision === 'paid' && !isStripe.value ? transferReference.value.trim() : undefined,
   })
 }
 

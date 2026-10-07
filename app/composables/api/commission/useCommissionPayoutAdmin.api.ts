@@ -9,6 +9,7 @@ import type {
 const BASE_URL = '/api/v2/admin/commissions/payouts'
 
 const SUCCESS_MESSAGES: Record<CommissionPayoutDecision, string> = {
+  // A Stripe payout is also sent at this point; the list then shows it as Paid.
   approve: 'Payout approved.',
   reject: 'Payout rejected.',
   paid: 'Payout marked as paid. The owner gets an email.',

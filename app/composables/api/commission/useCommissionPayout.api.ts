@@ -3,6 +3,7 @@ import type {
   CommissionBalanceDTO,
   CommissionPayoutDTO,
   GetCommissionPayoutsParams,
+  PayoutAccountDTO,
   RequestCommissionPayoutBody,
   ResponseListDTO,
 } from '@/types'
@@ -31,6 +32,54 @@ export const useCommissionPayout = () => {
   const pageCount = ref(0)
   const loadingRequest = ref(false)
   const loadingCancel = ref(false)
+  const payoutAccount = ref<PayoutAccountDTO | null>(null)
+  const loadingPayoutAccount = ref(false)
+  const loadingOnboarding = ref(false)
+
+  /** The owner's Stripe payout account, read live from Stripe by the backend. */
+  const getPayoutAccount = async () => {
+    loadingPayoutAccount.value = true
+    try {
+      const response = await useApiService.get<ApiResult<PayoutAccountDTO>>(`${BASE_URL}/payout-account`)
+      if (response.succeeded && response.data) {
+        payoutAccount.value = response.data
+      }
+      else {
+        handleApiResponseError(response)
+      }
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+      return createApiFailure<PayoutAccountDTO>(err)
+    }
+    finally {
+      loadingPayoutAccount.value = false
+    }
+  }
+
+  /** Starts (or continues) Stripe onboarding and sends the browser to Stripe. Stripe returns to returnPath with ?stripe=return. */
+  const startStripeOnboarding = async (country: string | null, returnPath = '/user/commission') => {
+    loadingOnboarding.value = true
+    try {
+      const response = await useApiService.post<ApiResult<string>>(`${BASE_URL}/payout-account/onboarding`, {
+        country: country || undefined,
+        returnUrl: `${window.location.origin}${returnPath}`,
+      })
+      if (response.succeeded && response.data) {
+        window.location.href = response.data
+        return response
+      }
+      handleApiResponseError(response)
+      loadingOnboarding.value = false
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+      loadingOnboarding.value = false
+      return createApiFailure<string>(err)
+    }
+  }
 
   const getBalance = async () => {
     loadingBalance.value = true
@@ -96,7 +145,7 @@ export const useCommissionPayout = () => {
     try {
       const response = await useApiService.post<ApiResult<number>>(`${BASE_URL}/payouts`, { ...body })
       if (response.succeeded) {
-        $toast.success('Payout request sent. We\'ll email you when the money is on its way.')
+        $toast.success('Payout request sent. An admin will review it, and we\'ll email you when the money is on its way.')
       }
       else {
         handleApiResponseError(response)
@@ -146,5 +195,10 @@ export const useCommissionPayout = () => {
     requestPayout,
     loadingCancel,
     cancelPayout,
+    payoutAccount,
+    loadingPayoutAccount,
+    getPayoutAccount,
+    loadingOnboarding,
+    startStripeOnboarding,
   }
 }

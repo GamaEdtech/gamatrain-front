@@ -55,6 +55,13 @@ const headers: DataTableHeader<CommissionPayoutDTO>[] = [
   { title: '#', key: 'id', sortable: false, width: '6vw' },
   { title: 'Amount', key: 'amountUsd', sortable: false, width: '12vw', type: 'currency', prefix: '$' },
   {
+    title: 'Method',
+    key: 'method',
+    sortable: false,
+    width: '10vw',
+    getText: (item: CommissionPayoutDTO) => (item.method === 'StripeConnect' ? 'Stripe' : 'Manual'),
+  },
+  {
     title: 'Status',
     key: 'status',
     sortable: false,
@@ -104,11 +111,12 @@ const selectedPayoutId = ref<number | null>(null)
 const getDetails = (item: CommissionPayoutDTO) => {
   switch (item.status) {
     case 'Paid':
+      if (item.method === 'StripeConnect') return 'Sent to your Stripe account'
       return item.transferReference ? `Sent - ref ${item.transferReference}` : 'Sent'
     case 'Rejected':
       return item.rejectionReason ?? ''
     case 'Approved':
-      return 'Approved, transfer on its way'
+      return item.method === 'StripeConnect' ? 'Approved, sending through Stripe' : 'Approved, transfer on its way'
     case 'Pending':
       return 'Waiting for review'
     default:
