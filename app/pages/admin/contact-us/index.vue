@@ -1,45 +1,34 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column align-start justify-start">
-    <div class="w-100 d-flex justify-space-between align-center">
-      <div class="d-flex align-center justify-start position-relative flex-wrap ga-2">
-        <v-btn
-          v-if="isShowClearFilter"
-          color="primary"
-          rounded="xl"
-          height="40"
-          width="120"
-          class="text-h5"
-          flat
-          variant="outlined"
-          @click="clearFilter"
-        >
-          Clear Filter
-        </v-btn>
-      </div>
-    </div>
-
-    <div class="w-100 d-flex align-center justify-start ga-2 mt-4">
+    <div class="w-100 d-flex align-center justify-start flex-wrap ga-2">
       <v-btn
         rounded="pill"
         color="primary"
         flat
-        variant="outlined"
         height="40"
+        prepend-icon="md:edit_square"
         @click="showComposeMailModal = true"
       >
-        <span class="text-primary font-weight-bold text-h5">Compose Mail</span>
+        <span class="text-grey900 font-weight-bold text-h5">Compose Mail</span>
       </v-btn>
       <v-btn
         rounded="pill"
-        color="primary"
+        color="grey700"
         flat
         variant="outlined"
         height="40"
+        prepend-icon="md:confirmation_number_outlined"
         @click="showCreateTicketModal = true"
       >
-        <span class="text-primary font-weight-bold text-h5">Create Ticket</span>
+        <span class="font-weight-bold text-h5">Create Ticket</span>
       </v-btn>
     </div>
+
+    <admin-common-clear-filter-btn
+      v-if="isShowClearFilter"
+      class="mt-3"
+      @click="clearFilter"
+    />
 
     <common-data-table
       v-model:page="page"

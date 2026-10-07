@@ -1,19 +1,10 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column align-start justify-start">
     <div class="w-100 d-flex align-center justify-start ga-2 mt-4">
-      <v-btn
+      <admin-common-clear-filter-btn
         v-if="isShowClearFilter"
-        color="primary"
-        rounded="pill"
-        height="40"
-        width="120"
-        class="text-h5 font-weight-bold "
-        flat
-        variant="outlined"
         @click="clearFilter"
-      >
-        Clear Filter
-      </v-btn>
+      />
     </div>
 
     <common-data-table
