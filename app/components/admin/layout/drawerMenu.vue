@@ -224,6 +224,16 @@ const items = computed(() => [
         link: '/admin/payments',
         icon: 'md:payments_outlined',
       },
+      {
+        title: 'Commission ',
+        link: '/admin/commission',
+        icon: 'md:percent_outlined',
+      },
+      {
+        title: 'Payouts',
+        link: '/admin/commission/payouts',
+        icon: 'md:account_balance_wallet_outlined',
+      },
     ],
   },
   {
@@ -241,24 +251,14 @@ const items = computed(() => [
         link: '/admin/subscription/usage',
         icon: 'md:query_stats',
       },
-      {
-        title: 'Commission ',
-        link: '/admin/commission',
-        icon: 'md:percent_outlined',
-      },
-      {
-        title: 'Payouts',
-        link: '/admin/commission/payouts',
-        icon: 'md:account_balance_wallet_outlined',
-      },
     ],
   },
   {
-    title: 'Blog',
+    title: 'Post',
     icon: 'md:article_outlined',
-    value: 'blog',
+    value: 'post',
     subMenuList: [
-      { title: 'Blogs ', link: '/admin/posts', icon: 'md:post_outlined' },
+      { title: 'Posts ', link: '/admin/posts', icon: 'md:post_outlined' },
       { title: 'Comments ', link: '/admin/posts/comments', icon: 'md:comment_outlined' },
     ],
   },

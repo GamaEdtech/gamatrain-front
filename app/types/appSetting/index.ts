@@ -41,4 +41,5 @@ export interface AdminAppSettingsDTO {
   contentOwnerCommissionPayoutThresholdUsd?: number
   commissionPayoutRequestedEmailTemplate?: string
   commissionPayoutPaidEmailTemplate?: string
+  twoFactorSetupEmailTemplate?: string
 }

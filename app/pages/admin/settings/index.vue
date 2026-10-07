@@ -180,6 +180,7 @@ const form = reactive<AdminAppSettingsDTO>({
   contentOwnerCommissionPayoutThresholdUsd: undefined,
   commissionPayoutRequestedEmailTemplate: '',
   commissionPayoutPaidEmailTemplate: '',
+  twoFactorSetupEmailTemplate: '',
 })
 const fields: FieldConfig[] = [
   { key: 'gridPageSize', label: 'Grid Page Size', type: 'text', valueType: 'number' },
@@ -227,6 +228,7 @@ const fields: FieldConfig[] = [
   { key: 'subscriptionResumedEmailTemplate', label: 'Subscription Resumed Email Template', type: 'textarea', valueType: 'string' },
   { key: 'subscriptionSwitchedEmailTemplate', label: 'Subscription Plan Switched Email ([RECEIVER_NAME], [PLAN_TITLE], [DATE])', type: 'textarea', valueType: 'string' },
   { key: 'commissionPayoutRequestedEmailTemplate', label: 'Payout Request Received Email ([RECEIVER_NAME], [AMOUNT], [PAYOUT_ID], [DATE])', type: 'textarea', valueType: 'string' },
+  { key: 'twoFactorSetupEmailTemplate', label: 'Admin 2FA Setup Code Email ([CODE] required; [RECEIVER_NAME], [MINUTES])', type: 'textarea', valueType: 'string' },
   { key: 'commissionPayoutPaidEmailTemplate', label: 'Payout Sent Email ([RECEIVER_NAME], [AMOUNT], [TRANSFER_REFERENCE], [PAYOUT_ID], [DATE])', type: 'textarea', valueType: 'string' },
 ]
 const showModalPreview = ref(false)
