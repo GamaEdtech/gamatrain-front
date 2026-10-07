@@ -75,9 +75,8 @@
         />
       </template>
       <div
-        class="d-flex flex-column align-center justify-center ga-1"
-        :class="{ 'opacity-60': commission }"
-        @click="commission ? undefined : (showWithdrawModal = true)"
+        class="d-flex flex-column align-center justify-center ga-1 cursor-pointer"
+        @click="commission ? (showPayoutModal = true) : (showWithdrawModal = true)"
       >
         <v-icon
           color="grey400"
@@ -105,9 +104,15 @@
     </div>
 
     <modals-withdraw
+      v-if="!commission"
       v-model:show-dialog="showWithdrawModal"
       :user-balance="balance"
       @update-balance="fetchBalance"
+    />
+    <user-commission-payout-modal
+      v-else
+      v-model:show-dialog="showPayoutModal"
+      @requested="emit('payoutRequested')"
     />
   </div>
 </template>
@@ -125,10 +130,13 @@ withDefaults(defineProps<IBalanceCard>(), {
   loadingCommission: false,
 })
 
+const emit = defineEmits(['payoutRequested'])
+
 const { $numberFormat } = useNuxtApp()
 const { balance, isLoading, fetchBalance } = useCoinBalance()
 const showBalance = ref(true)
 const showWithdrawModal = ref(false)
+const showPayoutModal = ref(false)
 
 const toggleBalanceVisibility = () => {
   showBalance.value = !showBalance.value

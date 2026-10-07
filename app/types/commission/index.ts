@@ -77,3 +77,49 @@ export interface CommissionStatisticsParams {
   startDate: string
   endDate: string
 }
+
+// Payouts (gamatrain-back: commissions/balance, commissions/payouts, admin/commissions/payouts)
+export type CommissionPayoutStatus = 'Pending' | 'Approved' | 'Paid' | 'Rejected' | 'Cancelled'
+
+export interface CommissionBalanceDTO {
+  totalEarnedUsd: number
+  paidOutUsd: number
+  reservedUsd: number
+  availableUsd: number
+  payoutThresholdUsd: number
+  openPayoutId: number | null
+}
+
+export interface CommissionPayoutDTO {
+  id: number
+  userId: number
+  userFirstName: string | null
+  userLastName: string | null
+  amountUsd: number
+  destination: string
+  status: CommissionPayoutStatus
+  creationDate: string
+  approvedByUserId: number | null
+  approvedByFullName: string | null
+  approvalDate: string | null
+  paidByUserId: number | null
+  paidByFullName: string | null
+  paidDate: string | null
+  transferReference: string | null
+  rejectedByUserId: number | null
+  rejectedByFullName: string | null
+  rejectionDate: string | null
+  rejectionReason: string | null
+  cancellationDate: string | null
+}
+
+export interface GetCommissionPayoutsParams {
+  page: number
+  pageSize: number
+  status?: CommissionPayoutStatus | ''
+}
+
+export interface RequestCommissionPayoutBody {
+  amountUsd?: number
+  destination: string
+}
