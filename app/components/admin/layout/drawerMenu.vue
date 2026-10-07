@@ -246,6 +246,11 @@ const items = computed(() => [
         link: '/admin/commission',
         icon: 'md:percent_outlined',
       },
+      {
+        title: 'Payouts',
+        link: '/admin/commission/payouts',
+        icon: 'md:account_balance_wallet_outlined',
+      },
     ],
   },
   {

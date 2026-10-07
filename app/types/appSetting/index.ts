@@ -35,4 +35,7 @@ export interface AdminAppSettingsDTO {
   examExportPdfMultiplier?: number
   examExportWordMultiplier?: number
   examExportPowerPointMultiplier?: number
+  contentOwnerCommissionPayoutThresholdUsd?: number
+  commissionPayoutRequestedEmailTemplate?: string
+  commissionPayoutPaidEmailTemplate?: string
 }

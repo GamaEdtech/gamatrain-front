@@ -174,6 +174,9 @@ const form = reactive<AdminAppSettingsDTO>({
   examExportPdfMultiplier: undefined,
   examExportWordMultiplier: undefined,
   examExportPowerPointMultiplier: undefined,
+  contentOwnerCommissionPayoutThresholdUsd: undefined,
+  commissionPayoutRequestedEmailTemplate: '',
+  commissionPayoutPaidEmailTemplate: '',
 })
 const fields: FieldConfig[] = [
   { key: 'gridPageSize', label: 'Grid Page Size', type: 'text', valueType: 'number' },
@@ -198,6 +201,7 @@ const fields: FieldConfig[] = [
   { key: 'examExportPdfMultiplier', label: 'Exam Export PDF Multiplier (x questions)', type: 'text', valueType: 'optionalNumber' },
   { key: 'examExportWordMultiplier', label: 'Exam Export Word Multiplier (x questions)', type: 'text', valueType: 'optionalNumber' },
   { key: 'examExportPowerPointMultiplier', label: 'Exam Export PowerPoint Multiplier (x questions)', type: 'text', valueType: 'optionalNumber' },
+  { key: 'contentOwnerCommissionPayoutThresholdUsd', label: 'Minimum Commission Payout (USD, at least 100)', type: 'text', valueType: 'optionalNumber' },
 
   { key: 'schoolCommentContributionConfirmationEmailTemplate', label: 'School Comment Email', type: 'textarea', valueType: 'string' },
   { key: 'schoolImageContributionConfirmationEmailTemplate', label: 'School Image Confirmation Email', type: 'textarea', valueType: 'string' },
@@ -216,6 +220,8 @@ const fields: FieldConfig[] = [
   { key: 'adminTransactionCreationEmailTemplate', label: 'Admin Transaction Creation Email Template', type: 'textarea', valueType: 'string' },
   { key: 'subscriptionCancelledEmailTemplate', label: 'Subscription Cancelled Email Template', type: 'textarea', valueType: 'string' },
   { key: 'subscriptionResumedEmailTemplate', label: 'Subscription Resumed Email Template', type: 'textarea', valueType: 'string' },
+  { key: 'commissionPayoutRequestedEmailTemplate', label: 'Payout Request Received Email ([RECEIVER_NAME], [AMOUNT], [PAYOUT_ID], [DATE])', type: 'textarea', valueType: 'string' },
+  { key: 'commissionPayoutPaidEmailTemplate', label: 'Payout Sent Email ([RECEIVER_NAME], [AMOUNT], [TRANSFER_REFERENCE], [PAYOUT_ID], [DATE])', type: 'textarea', valueType: 'string' },
 ]
 const showModalPreview = ref(false)
 const previewMessageHtml = ref('')
