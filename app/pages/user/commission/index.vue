@@ -20,6 +20,7 @@
         <user-activity-history-balance-card
           :commission="{ totalAmountUsd: statistics.totalAmountUsd }"
           :loading-commission="loadingGetStatistics"
+          @payout-requested="refreshPayouts"
         />
         <user-commission-chart
           v-if="!xs || isShowChart"
@@ -31,8 +32,9 @@
           color="success"
         />
       </div>
-      <div class="container-table">
+      <div class="container-table d-flex flex-column ga-6">
         <user-commission-history @show-chart="changeStatusChart" />
+        <user-commission-payouts ref="payoutsRef" />
       </div>
     </div>
   </div>
@@ -61,6 +63,11 @@ const {
   loadingGetStatistics,
 } = useCommission()
 const isShowChart = ref(false)
+const payoutsRef = ref<{ refresh: () => Promise<void> } | null>(null)
+
+const refreshPayouts = async () => {
+  await payoutsRef.value?.refresh()
+}
 
 const periodOptions = [
   { id: 'DayOfWeek', title: 'Week' },
