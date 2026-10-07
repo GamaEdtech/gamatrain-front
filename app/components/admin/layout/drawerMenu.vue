@@ -308,6 +308,11 @@ const items = computed(() => [
         icon: 'md:settings_outlined',
       },
       {
+        title: 'Two-Factor',
+        link: '/admin/two-factor',
+        icon: 'md:shield_outlined',
+      },
+      {
         title: 'Languages',
         link: '/admin/languages',
         icon: 'md:language_outlined',
