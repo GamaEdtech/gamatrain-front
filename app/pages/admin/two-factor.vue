@@ -29,18 +29,55 @@
       v-if="!loadingStatus && !enabled"
       class="bg-grey100 rounded-lg pa-4 d-flex flex-column ga-4"
     >
-      <template v-if="!setup">
+      <template v-if="!setup && emailCodeSentTo === null">
         <span class="text-h5 text-grey700">Link an authenticator app to your account.</span>
+        <span class="text-h6 text-grey500">
+          First we email a code to your account's confirmed address, to check it's really you.
+        </span>
         <v-btn
           color="primary"
           flat
           rounded="lg"
           class="align-self-start"
-          :loading="loadingSetup"
-          @click="beginSetup"
+          :loading="loadingEmailCode"
+          @click="sendSetupEmailCode"
         >
-          Set up authenticator
+          Email me a code
         </v-btn>
+      </template>
+
+      <template v-else-if="!setup">
+        <span class="text-h5 font-weight-bold text-grey700">Enter the code we emailed to {{ emailCodeSentTo }}</span>
+        <span class="text-h6 text-grey500">It expires in 10 minutes.</span>
+        <v-otp-input
+          v-model="emailCode"
+          length="6"
+          type="number"
+          variant="outlined"
+          class="px-0 otp"
+          :disabled="loadingSetup"
+          @finish="confirmEmailCode"
+        />
+        <div class="d-flex flex-wrap ga-2">
+          <v-btn
+            color="primary"
+            flat
+            rounded="lg"
+            :disabled="!isCode(emailCode)"
+            :loading="loadingSetup"
+            @click="confirmEmailCode"
+          >
+            Continue
+          </v-btn>
+          <v-btn
+            variant="text"
+            rounded="lg"
+            :loading="loadingEmailCode"
+            @click="sendSetupEmailCode"
+          >
+            Send a new code
+          </v-btn>
+        </div>
       </template>
 
       <template v-else>
@@ -193,12 +230,16 @@ const {
   setup,
   loadingSetup,
   beginSetup,
+  emailCodeSentTo,
+  loadingEmailCode,
+  sendSetupEmailCode,
   loadingAction,
   enable,
   disable,
   resetUser,
 } = useTwoFactorAdmin()
 
+const emailCode = ref('')
 const enableCode = ref('')
 const disableCode = ref('')
 const resetCode = ref('')
@@ -216,6 +257,12 @@ const copyKey = async () => {
   catch {
     $toast.info('Copy the key by hand')
   }
+}
+
+const confirmEmailCode = async () => {
+  if (!isCode(emailCode.value) || loadingSetup.value) return
+  await beginSetup(emailCode.value)
+  emailCode.value = ''
 }
 
 const turnOn = async () => {

@@ -12,6 +12,9 @@ export const useTwoFactorAdmin = () => {
   const setup = ref<AuthenticatorSetupDTO | null>(null)
   const loadingSetup = ref(false)
   const loadingAction = ref(false)
+  /** Masked address the setup code was emailed to; set once a code has been sent. */
+  const emailCodeSentTo = ref<string | null>(null)
+  const loadingEmailCode = ref(false)
 
   const getStatus = async () => {
     loadingStatus.value = true
@@ -34,10 +37,34 @@ export const useTwoFactorAdmin = () => {
     }
   }
 
-  const beginSetup = async () => {
+  /** Step 1 of setup: emails a 6-digit code to the admin's confirmed address. */
+  const sendSetupEmailCode = async () => {
+    loadingEmailCode.value = true
+    try {
+      const response = await useApiService.post<ApiResult<string>>(`${BASE_URL}/setup/email-code`, {})
+      if (response.succeeded) {
+        emailCodeSentTo.value = response.data ?? ''
+        $toast.success(`Code sent to ${response.data ?? 'your email'}`)
+      }
+      else {
+        handleApiResponseError(response)
+      }
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+      return createApiFailure<string>(err)
+    }
+    finally {
+      loadingEmailCode.value = false
+    }
+  }
+
+  /** Step 2: with the emailed code, get the authenticator key and QR link. */
+  const beginSetup = async (emailCode: string) => {
     loadingSetup.value = true
     try {
-      const response = await useApiService.post<ApiResult<AuthenticatorSetupDTO>>(`${BASE_URL}/setup`, {})
+      const response = await useApiService.post<ApiResult<AuthenticatorSetupDTO>>(`${BASE_URL}/setup`, { emailCode })
       if (response.succeeded && response.data) {
         setup.value = response.data
       }
@@ -81,6 +108,7 @@ export const useTwoFactorAdmin = () => {
     if (response.succeeded) {
       enabled.value = true
       setup.value = null
+      emailCodeSentTo.value = null
     }
     return response
   }
@@ -101,6 +129,9 @@ export const useTwoFactorAdmin = () => {
     setup,
     loadingSetup,
     beginSetup,
+    emailCodeSentTo,
+    loadingEmailCode,
+    sendSetupEmailCode,
     loadingAction,
     enable,
     disable,
