@@ -1,57 +1,40 @@
 <template>
   <div class="d-flex flex-wrap justify-space-between ga-2 w-100 ma-0">
-    <template
+    <div
       v-for="(item, index) in button_list"
       :key="index"
+      class="dashboard-card pa-4 d-flex align-center justify-space-between ga-2"
     >
-      <div
-        v-if="!isLocked(item.class)"
-        class="dashboard-card pa-4 d-flex align-center justify-space-between ga-2"
-        :class="{ 'opacity-55': isLocked(item.class) }"
-      >
-        <div class="d-flex align-center ga-3">
-          <v-avatar
-            :color="item.color"
-            variant="tonal"
-            rounded="lg"
-            size="44"
-          >
-            <span :class="`${item.icon} icon-size`" />
-          </v-avatar>
-          <div>
-            <p class="text-h5 font-weight-bold text-grey900 mb-0">
-              {{ item.title }}
-            </p>
-            <p class="text-h6 font-weight-medium text-grey500 mb-0">
-              <template v-if="isLocked(item.class)">
-                Unlocks for teachers
-              </template>
-              <template v-else>
-                {{ item.count }} {{ item.countLabel }}
-              </template>
-            </p>
-          </div>
-        </div>
-
-        <v-btn
-          v-if="!isLocked(item.class)"
-          class="text-subtitle-1 text-white font-weight-bold"
+      <div class="d-flex align-center ga-3">
+        <v-avatar
           :color="item.color"
-          variant="flat"
-          rounded="pill"
-          size="small"
-          :to="item.createLink"
+          variant="tonal"
+          rounded="lg"
+          size="44"
         >
-          + {{ item.actionLabel }}
-        </v-btn>
-        <v-icon
-          v-else
-          color="grey400"
-        >
-          md:lock_outlined
-        </v-icon>
+          <span :class="`${item.icon} icon-size`" />
+        </v-avatar>
+        <div>
+          <p class="text-h5 font-weight-bold text-grey900 mb-0">
+            {{ item.title }}
+          </p>
+          <p class="text-h6 font-weight-medium text-grey500 mb-0">
+            {{ item.count }} {{ item.countLabel }}
+          </p>
+        </div>
       </div>
-    </template>
+
+      <v-btn
+        class="text-subtitle-1 text-white font-weight-bold"
+        :color="item.color"
+        variant="flat"
+        rounded="pill"
+        size="small"
+        :to="item.createLink"
+      >
+        + {{ item.actionLabel }}
+      </v-btn>
+    </div>
   </div>
 </template>
 
@@ -61,12 +44,9 @@ import { CONTENT_TYPE_META } from '@/constants'
 
 interface ICreateContentButton {
   data: DashboardStatsDTO
-  roles: string[]
 }
 
 const props = defineProps<ICreateContentButton>()
-
-const isLocked = (className: string) => props.roles.includes('Student') && className !== 'question_answer'
 
 const button_list = reactive([
   {
@@ -77,18 +57,11 @@ const button_list = reactive([
     ...CONTENT_TYPE_META.pastPaper,
   },
   {
-    class: 'training_content',
-    count: props.data?.file?.total || 0,
+    class: 'online_exam',
+    count: props.data?.test?.total || 0,
     countLabel: 'published',
-    actionLabel: 'Add Multimedia',
-    ...CONTENT_TYPE_META.multimedia,
-  },
-  {
-    class: 'question_answer',
-    count: props.data?.question?.total || 0,
-    countLabel: 'questions',
-    actionLabel: 'Ask a Question',
-    ...CONTENT_TYPE_META.forum,
+    actionLabel: 'New Quiz',
+    ...CONTENT_TYPE_META.exam,
   },
 ])
 </script>

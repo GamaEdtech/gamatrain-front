@@ -3,7 +3,7 @@
     v-model="drawerModel"
     :temporary="mdAndDown"
     expand-on-hover
-    :class="`d-block bg-grey800 navigation-height-top`"
+    class="bg-grey800"
   >
     <v-list
       v-model:opened="openedGroups"
@@ -114,8 +114,10 @@
           </v-list-item>
         </v-list-group>
       </div>
+    </v-list>
 
-      <div class="d-flex justify-space-between align-center ga-3 position-extra-link">
+    <template #append>
+      <div class="d-flex justify-space-between align-center ga-3 px-4 py-4">
         <div class="d-flex align-center ga-1">
           <v-avatar
             v-if="user && user.avatarUri"
@@ -162,7 +164,7 @@
           </v-icon>
         </v-btn>
       </div>
-    </v-list>
+    </template>
   </v-navigation-drawer>
 </template>
 
@@ -380,10 +382,5 @@ const closeNavigation = () => {
 }
 .border-image {
   border: 2px solid rgb(var(--v-theme-white));
-}
-.position-extra-link {
-  height: 20px;
-  position: absolute;
-  bottom: 20px;
 }
 </style>
