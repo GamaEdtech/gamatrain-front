@@ -46,6 +46,84 @@
           </div>
         </div>
 
+        <span class="text-h5 text-grey600 mt-6 mb-2">Get paid with</span>
+        <v-btn-toggle
+          v-model="method"
+          mandatory
+          divided
+          rounded="lg"
+          color="primary"
+          variant="outlined"
+          density="comfortable"
+          class="w-100 method-toggle"
+        >
+          <v-btn
+            value="StripeConnect"
+            class="flex-grow-1"
+          >
+            Stripe
+          </v-btn>
+          <v-btn
+            value="Manual"
+            class="flex-grow-1"
+          >
+            Bank / PayPal (manual)
+          </v-btn>
+        </v-btn-toggle>
+
+        <!-- Stripe: setup or status -->
+        <div
+          v-if="method === 'StripeConnect'"
+          class="w-100 d-flex flex-column ga-2 mt-4"
+        >
+          <v-skeleton-loader
+            v-if="loadingPayoutAccount && !payoutAccount"
+            height="64"
+            class="rounded-lg"
+          />
+          <div
+            v-else-if="payoutAccount?.payoutsEnabled"
+            class="d-flex align-center ga-2 text-h5 text-grey600"
+          >
+            <v-icon
+              color="success"
+              size="20"
+            >
+              md:verified
+            </v-icon>
+            Paid to your Stripe account. Stripe then sends it to your bank.
+          </div>
+          <template v-else>
+            <span class="text-h5 text-grey600">
+              {{ payoutAccount?.hasAccount
+                ? 'Your Stripe setup isn\'t finished yet. Continue where you left off.'
+                : 'Set up Stripe once: it asks for your ID and bank details and takes a few minutes.' }}
+            </span>
+            <common-gombo-box
+              v-if="!payoutAccount?.hasAccount"
+              v-model="country"
+              label="Country of your bank account"
+              :items="countryItems"
+              :data-loading="loadingCountries"
+              rounded="lg"
+              density="compact"
+              base-color="grey200"
+              color="primary"
+              :defalut-lable="false"
+            />
+            <v-btn
+              color="primary"
+              flat
+              rounded="lg"
+              :disabled="!payoutAccount?.hasAccount && !country"
+              :loading="loadingOnboarding"
+              @click="setUpStripe"
+            >
+              {{ payoutAccount?.hasAccount ? 'Continue Stripe setup' : 'Set up Stripe payouts' }}
+            </v-btn>
+          </template>
+        </div>
+
         <div
           v-if="balance.openPayoutId"
           class="w-100 text-h5 text-grey600 mt-6"
@@ -62,7 +140,7 @@
         </div>
 
         <v-form
-          v-else
+          v-else-if="method === 'Manual' || payoutAccount?.payoutsEnabled"
           class="w-100 d-flex flex-column mt-6"
           @submit.prevent="submit"
         >
@@ -96,23 +174,27 @@
             </template>
           </v-text-field>
 
-          <span class="text-h5 text-grey600 mt-4 mb-2">Send the money to</span>
-          <v-textarea
-            id="payout-destination"
-            v-model="destination"
-            variant="outlined"
-            density="comfortable"
-            rounded="lg"
-            color="primary"
-            rows="3"
-            auto-grow
-            counter="500"
-            :error-messages="destinationError"
-            placeholder="Bank name and IBAN, PayPal email, or wallet address"
-          />
+          <template v-if="method === 'Manual'">
+            <span class="text-h5 text-grey600 mt-4 mb-2">Send the money to</span>
+            <v-textarea
+              id="payout-destination"
+              v-model="destination"
+              variant="outlined"
+              density="comfortable"
+              rounded="lg"
+              color="primary"
+              rows="3"
+              auto-grow
+              counter="500"
+              :error-messages="destinationError"
+              placeholder="Bank name and IBAN, PayPal email, or wallet address"
+            />
+          </template>
 
           <span class="text-h6 text-grey400 mt-2">
-            An admin reviews every request and sends the money by hand. We email you when it's sent.
+            {{ method === 'Manual'
+              ? 'An admin reviews every request and sends the money by hand. We email you when it\'s sent.'
+              : 'An admin reviews every request; once approved, Stripe sends it to your account right away. We email you when it\'s sent.' }}
           </span>
 
           <v-btn
@@ -134,6 +216,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
+import type { CommissionPayoutMethod } from '@/types'
 
 const props = defineProps({
   showDialog: {
@@ -151,15 +234,25 @@ const {
   getBalance,
   loadingRequest,
   requestPayout,
+  payoutAccount,
+  loadingPayoutAccount,
+  getPayoutAccount,
+  loadingOnboarding,
+  startStripeOnboarding,
 } = useCommissionPayout()
+const { countries, getCountries, loadingCountries } = useLocation()
 
+const method = ref<CommissionPayoutMethod>('StripeConnect')
 const amount = ref('')
 const destination = ref('')
+const country = ref<string | null>(null)
 
 const dialogModel = computed({
   get: () => props.showDialog,
   set: value => emit('update:showDialog', value),
 })
+
+const countryItems = computed(() => countries.value.map(item => ({ id: item.code, title: item.title })))
 
 const formatUsd = (value: number) => Number(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 
@@ -177,11 +270,16 @@ const amountError = computed(() => {
 
 const destinationError = computed(() => (destination.value.length > 500 ? 'Keep it under 500 characters' : ''))
 
-const isValid = computed(() => amount.value !== '' && !amountError.value && destination.value.trim() !== '' && !destinationError.value)
+const isValid = computed(() => {
+  if (amount.value === '' || amountError.value) return false
+  if (method.value === 'StripeConnect') return payoutAccount.value?.payoutsEnabled === true
+  return destination.value.trim() !== '' && !destinationError.value
+})
 
 const reset = () => {
   amount.value = ''
   destination.value = ''
+  method.value = 'StripeConnect'
 }
 
 const closeModal = () => {
@@ -196,9 +294,17 @@ const clickOnModal = (event: Event) => {
   event.stopPropagation()
 }
 
+const setUpStripe = async () => {
+  await startStripeOnboarding(payoutAccount.value?.hasAccount ? null : country.value)
+}
+
 const submit = async () => {
   if (!isValid.value) return
-  const response = await requestPayout({ amountUsd: Number(amount.value), destination: destination.value.trim() })
+  const response = await requestPayout({
+    amountUsd: Number(amount.value),
+    method: method.value,
+    destination: method.value === 'Manual' ? destination.value.trim() : undefined,
+  })
   if (response.succeeded) {
     reset()
     closeModal()
@@ -209,13 +315,19 @@ const submit = async () => {
 watch(() => props.showDialog, async (open) => {
   if (open) {
     reset()
-    await getBalance()
+    await Promise.all([getBalance(), getPayoutAccount()])
     if (canRequest.value) amount.value = String(balance.value.availableUsd)
+    if (!payoutAccount.value?.hasAccount && !countries.value.length) {
+      await getCountries({ pageSize: 300 })
+    }
   }
 })
 </script>
 
 <style scoped>
+.method-toggle :deep(.v-btn) {
+  text-transform: none;
+}
 @media only screen and (max-width: 960px) {
   .mobile-style {
     position: absolute;

@@ -81,6 +81,16 @@ export interface CommissionStatisticsParams {
 // Payouts (gamatrain-back: commissions/balance, commissions/payouts, admin/commissions/payouts)
 export type CommissionPayoutStatus = 'Pending' | 'Approved' | 'Paid' | 'Rejected' | 'Cancelled'
 
+/** StripeConnect (default): approval sends a Stripe transfer. Manual: an admin transfers by hand and marks it paid. */
+export type CommissionPayoutMethod = 'StripeConnect' | 'Manual'
+
+export interface PayoutAccountDTO {
+  hasAccount: boolean
+  country: string | null
+  detailsSubmitted: boolean
+  payoutsEnabled: boolean
+}
+
 export interface CommissionBalanceDTO {
   totalEarnedUsd: number
   paidOutUsd: number
@@ -98,6 +108,7 @@ export interface CommissionPayoutDTO {
   amountUsd: number
   destination: string
   status: CommissionPayoutStatus
+  method: CommissionPayoutMethod
   creationDate: string
   approvedByUserId: number | null
   approvedByFullName: string | null
@@ -121,7 +132,9 @@ export interface GetCommissionPayoutsParams {
 
 export interface RequestCommissionPayoutBody {
   amountUsd?: number
-  destination: string
+  method: CommissionPayoutMethod
+  /** Manual only. */
+  destination?: string
 }
 
 export type CommissionPayoutDecision = 'approve' | 'reject' | 'paid'

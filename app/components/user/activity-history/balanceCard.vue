@@ -125,7 +125,7 @@ interface IBalanceCard {
   loadingCommission?: boolean
 }
 
-withDefaults(defineProps<IBalanceCard>(), {
+const props = withDefaults(defineProps<IBalanceCard>(), {
   commission: null,
   loadingCommission: false,
 })
@@ -142,8 +142,19 @@ const toggleBalanceVisibility = () => {
   showBalance.value = !showBalance.value
 }
 
+const route = useRoute()
+const router = useRouter()
+
 onMounted(() => {
   fetchBalance()
+
+  // Stripe onboarding sends the owner back here with ?stripe=return (finished or left) or ?stripe=refresh (link
+  // expired): reopen the withdraw dialog, which re-reads the Stripe status, and drop the query so a reload doesn't.
+  if (props.commission && route.query.stripe) {
+    showPayoutModal.value = true
+    const { stripe: _stripe, ...query } = route.query
+    router.replace({ query })
+  }
 })
 </script>
 

@@ -130,6 +130,15 @@ const headers: DataTableHeader<CommissionPayoutDTO>[] = [
     getText: (item: CommissionPayoutDTO) => fullName(`${item.userFirstName ?? ''} ${item.userLastName ?? ''}`, item.userId),
   },
   { title: 'Amount', key: 'amountUsd', sortable: false, width: '8vw', type: 'currency', prefix: '$' },
+  {
+    title: 'Method',
+    key: 'method',
+    sortable: false,
+    width: '7vw',
+    type: 'chip',
+    getText: (item: CommissionPayoutDTO) => (item.method === 'StripeConnect' ? 'Stripe' : 'Manual'),
+    getChipColor: (item: CommissionPayoutDTO) => (item.method === 'StripeConnect' ? 'primary' : 'grey500'),
+  },
   { title: 'Send To', key: 'destination', sortable: false, width: '16vw' },
   {
     title: 'Status',
@@ -192,6 +201,7 @@ const headers: DataTableHeader<CommissionPayoutDTO>[] = [
       },
       {
         icon: 'md:payments',
+        // An Approved Stripe payout only exists when an approval stopped half-way; this finishes its transfer.
         tooltip: 'Mark as paid',
         color: 'success',
         show: (item: CommissionPayoutDTO) => item.status === 'Approved',
@@ -201,7 +211,8 @@ const headers: DataTableHeader<CommissionPayoutDTO>[] = [
         icon: 'md:cancel',
         tooltip: 'Reject',
         color: 'error',
-        show: (item: CommissionPayoutDTO) => item.status === 'Pending' || item.status === 'Approved',
+        // An Approved Stripe payout may already be transferred, so the backend refuses to reject it.
+        show: (item: CommissionPayoutDTO) => item.status === 'Pending' || (item.status === 'Approved' && item.method === 'Manual'),
         onClick: (item: CommissionPayoutDTO) => openDecision(item, 'reject'),
       },
     ],
@@ -241,7 +252,7 @@ const decisionTitle = computed(() => {
     case 'reject':
       return 'Reject payout'
     default:
-      return 'Confirm transfer'
+      return selectedPayout.value?.method === 'StripeConnect' ? 'Finish Stripe transfer' : 'Confirm transfer'
   }
 })
 
