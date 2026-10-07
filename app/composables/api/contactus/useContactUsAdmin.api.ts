@@ -12,6 +12,7 @@ import type {
   GetAdminContactUsParams,
   ResponseListDTO,
 } from '@/types'
+import dayjs from 'dayjs'
 
 export const useContactUsAdmin = () => {
   const { $toast } = useNuxtApp()
@@ -50,11 +51,12 @@ export const useContactUsAdmin = () => {
         'PagingDto.PageFilter.Size': params.pageSize,
         'PagingDto.PageFilter.Skip': (params.page - 1) * params.pageSize,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
-      }
-
-      if (params.status !== 'All') {
-        query['PagingDto.SearchFilter.phrase'] = params.status === 'Read'
-        query['PagingDto.SearchFilter.column'] = 'isReadByAdmin'
+        'Unread': params.unread,
+        'Search': params.search,
+        'Email': params.email,
+        // Backend bounds are inclusive on LastActivityDate: cover the whole picked days, not just their midnight.
+        'StartDate': params.startDate ? dayjs(params.startDate).startOf('day').toISOString() : null,
+        'EndDate': params.endDate ? dayjs(params.endDate).endOf('day').toISOString() : null,
       }
 
       const response = await useApiService.get<
