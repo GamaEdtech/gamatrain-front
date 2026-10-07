@@ -170,8 +170,8 @@ const searchFilter = reactive<SearchFilterAdminContactUs>({
   unread: null,
   search: '',
   email: '',
-  startDate: '',
-  endDate: '',
+  startDate: null,
+  endDate: null,
 })
 
 const {
@@ -246,10 +246,10 @@ const startSearch = async (item: SearchFilterAdminContactUs) => {
 const isShowClearFilter = computed(() => {
   return (
     searchFilter.unread !== null
-    || searchFilter.search.length > 0
-    || searchFilter.email.length > 0
-    || searchFilter.startDate.toString().length > 0
-    || searchFilter.endDate.toString().length > 0
+    || !!searchFilter.search
+    || !!searchFilter.email
+    || !!searchFilter.startDate
+    || !!searchFilter.endDate
   )
 })
 
@@ -257,8 +257,8 @@ const clearFilter = async () => {
   searchFilter.unread = null
   searchFilter.search = ''
   searchFilter.email = ''
-  searchFilter.startDate = ''
-  searchFilter.endDate = ''
+  searchFilter.startDate = null
+  searchFilter.endDate = null
   page.value = 1
   await fetchData()
 }

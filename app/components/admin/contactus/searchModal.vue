@@ -28,7 +28,7 @@
     >
       <template #activator="{ props: menuProps }">
         <v-text-field
-          v-model="searchFilter.startDate"
+          :model-value="formatDate(searchFilter.startDate)"
           readonly
           rounded="lg"
           variant="outlined"
@@ -38,6 +38,7 @@
           v-bind="menuProps"
           label="Start Date"
           clearable
+          @click:clear="searchFilter.startDate = null"
         />
       </template>
       <v-date-picker
@@ -55,7 +56,7 @@
     >
       <template #activator="{ props: menuProps }">
         <v-text-field
-          v-model="searchFilter.endDate"
+          :model-value="formatDate(searchFilter.endDate)"
           readonly
           rounded="lg"
           variant="outlined"
@@ -65,6 +66,7 @@
           v-bind="menuProps"
           label="End Date"
           clearable
+          @click:clear="searchFilter.endDate = null"
         />
       </template>
       <v-date-picker
@@ -104,6 +106,7 @@
 </template>
 
 <script setup lang="ts">
+import dayjs from 'dayjs'
 import type { SearchFilterAdminContactUs } from '@/types'
 
 interface ISearchModal {
@@ -126,21 +129,25 @@ const searchFilter = reactive<SearchFilterAdminContactUs>({
   unread: null,
   search: '',
   email: '',
-  startDate: '',
-  endDate: '',
+  startDate: null,
+  endDate: null,
 })
+
+const formatDate = (date: Date | null) => (date ? dayjs(date).format('DD/MM/YYYY') : '')
 
 const startSearch = () => {
   emit('search', searchFilter)
 }
 
-onMounted(() => {
-  searchFilter.unread = props.data.unread
-  searchFilter.search = props.data.search
-  searchFilter.email = props.data.email
-  searchFilter.startDate = props.data.startDate
-  searchFilter.endDate = props.data.endDate
-})
+// v-dialog keeps its content mounted after the first open, so re-sync whenever the page's filter changes
+// (e.g. after "Clear Filter"); otherwise the form would show, and re-apply, stale values.
+watch(
+  () => ({ ...props.data }),
+  (data) => {
+    Object.assign(searchFilter, data)
+  },
+  { immediate: true },
+)
 </script>
 
 <style scoped>

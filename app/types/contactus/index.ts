@@ -30,8 +30,8 @@ export interface SearchFilterAdminContactUs {
   unread: boolean | null
   search: string
   email: string
-  startDate: string
-  endDate: string
+  startDate: Date | null
+  endDate: Date | null
 }
 
 export interface GetAdminContactUsParams extends SearchFilterAdminContactUs {
