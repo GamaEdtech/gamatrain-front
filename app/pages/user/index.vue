@@ -58,13 +58,12 @@
         </v-col>
       </v-row>
 
-      <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-1 w-100">
-        {{ dashboardInfo.user.roles?.includes('Teacher') ? 'Create & Share' : 'Get Involved' }}
-      </p>
-      <user-dashboard-create-content-button
-        :data="dashboardInfo.stats"
-        :roles="dashboardInfo.user.roles || []"
-      />
+      <template v-if="!dashboardInfo.user.roles?.includes('Student')">
+        <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-1 w-100">
+          {{ dashboardInfo.user.roles?.includes('Teacher') ? 'Create & Share' : 'Get Involved' }}
+        </p>
+        <user-dashboard-create-content-button :data="dashboardInfo.stats" />
+      </template>
     </template>
   </div>
 </template>

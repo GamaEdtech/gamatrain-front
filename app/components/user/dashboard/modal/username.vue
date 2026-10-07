@@ -79,7 +79,6 @@ const {
   requiredWithMessage,
   minLength,
   maxLength,
-  alphanumeric,
 } = useValidationRules()
 const { editItem, loadingEditItem } = useProfile()
 
@@ -88,7 +87,8 @@ const usernameRules = [
   requiredWithMessage('Username is required'),
   minLength(2),
   maxLength(50),
-  alphanumeric,
+  // Handle is used raw in /profile/<handle> links, so keep it URL-safe
+  (v: string) => !v || /^[a-zA-Z0-9][\w.-]*$/.test(v) || 'Only letters, numbers, ".", "_" and "-" allowed',
 ]
 const isFormValid = ref(false)
 
