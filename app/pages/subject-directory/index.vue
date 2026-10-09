@@ -7,20 +7,29 @@
         sm="8"
         md="8"
       >
-        <filterPapers
-          @change-status-loading="changeLoadingStatus"
-          @change-subject="changeSubject"
-          @change-filter-for-bread-crumb="updatePaperContext"
+        <SubjectCascader
+          :state="selectorState"
+          :columns="columns"
+          :display-path="displayPath"
+          :search="searchState"
+          :search-results="searchResults"
+          @open="setOpen"
+          @select="selectOption"
+          @navigate="selectorState.stage = $event"
+          @retry="retry"
+          @search="searchState.query = $event"
+          @select-search="selectSearchResult"
+          @retry-search="retrySearch"
         />
       </v-col>
       <!-- End Filter -->
     </v-row>
 
     <v-row>
-      <resources
+      <ResourceCollections
         :context="{ ...paperContext, subjectTitle: titleLesson }"
         :data="resourcesData"
-        :is-loading="isLoadingResources || isChangingSubject"
+        :is-loading="isLoadingResources"
         :error="Boolean(resourceError)"
         @retry="refreshResources()"
       />
@@ -39,48 +48,27 @@
   </v-container>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
+<script setup lang="ts">
+import { computed } from 'vue'
 
-import resources from '~/components/subject-directory/resources.vue'
+import ResourceCollections from '~/components/subject-directory/ResourceCollections.vue'
 import paperTable from '~/components/subject-directory/paper-table.vue'
-import filterPapers from '~/components/subject-directory/filter-papers.vue'
+import SubjectCascader from '~/components/subject-directory/SubjectCascader.vue'
+import { useDirectoryCascader } from '~/composables/useDirectoryCascader'
 
-const route = useRoute()
-const paperContext = ref({
-  subjectId: route.params.subject || route.query.subject || '',
-  boardId: route.query.board || '',
-  gradeId: route.query.grade || '',
-  subjectTitle: '',
-})
+const {
+  state: selectorState, columns, displayPath, setOpen, selectOption, retry,
+  searchState, searchResults, retrySearch, selectSearchResult,
+} = await useDirectoryCascader()
+const paperContext = computed(() => ({
+  subjectId: selectorState.selection?.subject.id || '',
+  boardId: selectorState.selection?.board.code || '',
+  gradeId: selectorState.selection?.grade.id || '',
+  subjectTitle: selectorState.selection?.subject.title || '',
+}))
 
-const updatePaperContext = (board, grade, subject) => {
-  paperContext.value = {
-    subjectId: subject?.id || '',
-    boardId: board?.code || '',
-    gradeId: grade?.id || '',
-    subjectTitle: subject?.title || '',
-  }
-}
-
-const isChangingSubject = ref(false)
 const { resourcesData, titleLesson, isLoadingResources, resourceError, refreshResources }
   = await useDirectoryResources(paperContext)
-
-const changeLoadingStatus = () => {
-  isChangingSubject.value = true
-  paperContext.value = { ...paperContext.value, subjectId: '' }
-}
-
-const changeSubject = (subject) => {
-  paperContext.value = {
-    ...paperContext.value,
-    subjectId: subject?.id || '',
-    subjectTitle: subject?.title || '',
-  }
-  isChangingSubject.value = false
-}
 
 // SEO
 useHead({

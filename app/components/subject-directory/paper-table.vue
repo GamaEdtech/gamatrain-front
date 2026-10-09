@@ -42,10 +42,10 @@
         elevation="0"
       >
         <v-expansion-panel-title
-          class="directory-year-title font-weight-bold"
+          class="directory-year-title font-weight-bold rounded-0 justify-start"
           static
-          expand-icon="md:keyboard_arrow_down"
-          collapse-icon="md:keyboard_arrow_up"
+          expand-icon="md:keyboard_arrow_right"
+          collapse-icon="md:keyboard_arrow_down"
         >
           {{ year.title }}
         </v-expansion-panel-title>
@@ -77,11 +77,11 @@
               elevation="0"
             >
               <v-expansion-panel-title
-                class="directory-session-title font-weight-bold"
+                class="directory-session-title font-weight-bold rounded justify-start"
                 color="directorySeries"
                 static
-                expand-icon="md:keyboard_arrow_down"
-                collapse-icon="md:keyboard_arrow_up"
+                expand-icon="md:keyboard_arrow_right"
+                collapse-icon="md:keyboard_arrow_down"
               >
                 {{ session.title }}
               </v-expansion-panel-title>
@@ -201,39 +201,30 @@ const PRICE_FILE = 10
   padding: 0;
 }
 
-.directory-years :deep(.v-expansion-panel-title) {
-  border: 1px solid rgb(var(--v-theme-grey300));
-  border-radius: 8px;
+.directory-years :deep(.v-expansion-panel-title__icon) {
+  order: -1;
+  margin-inline: 0 12px;
+  color: rgb(var(--v-theme-grey500));
 }
 
 .directory-years :deep(.v-expansion-panel-title__icon .v-icon) {
-  width: 24px;
-  height: 24px;
-  font-size: 24px;
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
 }
 
 .directory-year-title {
-  min-height: 55px;
-  padding: 12px 30px 12px 40px;
-  font-size: 20px;
-  line-height: 24px;
-}
-
-.directory-session-title {
-  min-height: 50px;
-  padding: 12px 30px 12px 76px;
+  min-height: 48px;
+  padding: 8px;
   font-size: 18px;
   line-height: 24px;
 }
 
-@media (max-width: 959px) {
-  .directory-year-title {
-    padding-inline: 16px;
-  }
-
-  .directory-session-title {
-    padding-inline: 52px 16px;
-  }
+.directory-session-title {
+  min-height: 44px;
+  padding: 8px 24px;
+  font-size: 16px;
+  line-height: 24px;
 }
 
 @media (prefers-reduced-motion: reduce) {

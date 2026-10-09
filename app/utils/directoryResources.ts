@@ -1,6 +1,7 @@
 import { DIRECTORY_RESOURCE_PRESENTATION } from '~/constants/pastpaper/resources'
+import type { DirectoryResourceContext, DirectoryResourceGroup } from '~/types/subject-directory/resources'
 
-export const getDirectoryResourceCollections = (data = []) => data
+export const getDirectoryResourceCollections = (data: DirectoryResourceGroup[] = []) => data
   .filter(resource => Array.isArray(resource.items) && resource.items.length > 0)
   .map((resource) => {
     const title = resource.title.trim()
@@ -19,7 +20,7 @@ export const getDirectoryResourceCollections = (data = []) => data
     }
   })
 
-export const getDirectoryResourceSearchLink = (collection, context) => ({
+export const getDirectoryResourceSearchLink = (collection: { id: string | number }, context: DirectoryResourceContext) => ({
   path: '/search',
   query: {
     type: 'paper',
