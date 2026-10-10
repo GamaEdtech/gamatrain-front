@@ -13,6 +13,7 @@
           v-for="item in 4"
           :key="item"
           cols="12"
+          class="px-0"
         >
           <SearchCardSkeleton />
         </v-col>
@@ -48,6 +49,7 @@
             v-for="item in 2"
             :key="`previous-${item}`"
             cols="12"
+            class="px-0"
           >
             <SearchCardSkeleton />
           </v-col>
@@ -79,6 +81,7 @@
           v-for="item in items"
           :key="item.id"
           cols="12"
+          class="px-0"
         >
           <SearchCard :information="item" />
         </v-col>
@@ -94,6 +97,7 @@
           v-for="item in 2"
           :key="item"
           cols="12"
+          class="px-0"
         >
           <SearchCardSkeleton />
         </v-col>

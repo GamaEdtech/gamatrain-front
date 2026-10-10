@@ -81,6 +81,9 @@
             @change="handleServiceChange"
           />
         </div>
+        <div class="w-100 d-flex align-start justify-start pt-1">
+          <CommonDetailSubjectDirectoryNav :content-data="results[0]" />
+        </div>
 
         <SearchResultsList
           ref="resultsList"
