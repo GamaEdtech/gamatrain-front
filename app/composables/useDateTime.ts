@@ -55,6 +55,12 @@ export function useDateTime() {
     return local(date)?.format(format) ?? ''
   }
 
+  // For values that are already a calendar day (e.g. a "YYYY-MM-DD" bucket the backend computed in the
+  // viewer's own time zone) - formatted as-is, with no UTC-to-local shift.
+  const formatCalendarDate = (date?: DateInput, format = 'DD/MM/YYYY') => {
+    return date ? $dayjs(date).format(format) : ''
+  }
+
   const fromNowLocal = (date?: DateInput) => {
     return local(date)?.fromNow() ?? ''
   }
@@ -62,6 +68,7 @@ export function useDateTime() {
   return {
     local,
     formatLocal,
+    formatCalendarDate,
     fromNowLocal,
   }
 }

@@ -100,6 +100,9 @@ export const usePayment = () => {
         Status: params?.status ?? '',
         Currency: params?.currency ?? '',
         Kind: params?.kind ?? '',
+        // The viewer's own zone, so StartDate/EndDate and the per-day buckets are their calendar days
+        // rather than UTC days.
+        TimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       }
       const response = await useApiService.get<
         ApiResult<PaymentSummaryDTO[]>
