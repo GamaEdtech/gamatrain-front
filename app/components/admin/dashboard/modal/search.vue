@@ -30,9 +30,9 @@
         />
       </template>
       <v-date-picker
-        v-model="searchFilter.startDate"
+        :model-value="searchFilter.startDate"
         color="primary"
-        @update:model-value="() => (startDateMenuOpen = false)"
+        @update:model-value="selectDate('startDate', $event)"
       />
     </v-menu>
 
@@ -57,9 +57,9 @@
         />
       </template>
       <v-date-picker
-        v-model="searchFilter.endDate"
+        :model-value="searchFilter.endDate"
         color="primary"
-        @update:model-value="() => (endDateMenuOpen = false)"
+        @update:model-value="selectDate('endDate', $event)"
       />
     </v-menu>
 
@@ -152,12 +152,21 @@ const searchFilter = reactive<PaymentSummaryGetParams>({
   currency: null,
   kind: null,
 })
+const { formatCalendarDate } = useDateTime()
+const DATE_FORMAT = 'YYYY-MM-DD'
 const startDateMenuOpen = ref(false)
 const endDateMenuOpen = ref(false)
 const statusList = ['Pending', 'Paid', 'Failed']
 const gatewayList = ['GamaTrain', 'Stripe']
 const currencyList = ['SOL', 'USDC', 'GET', 'USDT']
 const kindList = ['NewSubscription', 'Renewal', 'PlanSwitch', 'PointsTopUp']
+
+// The picker emits a Date; the filter (and its text field) keeps the calendar day as "YYYY-MM-DD".
+const selectDate = (key: 'startDate' | 'endDate', date: Date | null) => {
+  searchFilter[key] = date ? formatCalendarDate(date, DATE_FORMAT) : null
+  startDateMenuOpen.value = false
+  endDateMenuOpen.value = false
+}
 
 const startSearch = () => {
   emit('searchData', searchFilter)
