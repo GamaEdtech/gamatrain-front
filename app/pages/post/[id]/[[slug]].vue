@@ -1,11 +1,6 @@
 <template>
   <v-container id="main-post-div">
-    <v-row v-if="!contentData">
-      <h1 class="text-h3 font-weight-bold">
-        Pleas Try Again Later.
-      </h1>
-    </v-row>
-    <v-row v-else>
+    <v-row>
       <v-col
         cols="12"
         class="d-flex flex-column pa-6 mt-4 position-relative"
@@ -221,51 +216,42 @@ import { useDisplay } from 'vuetify'
 const { $toast, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 const { formatLocal } = useDateTime()
 const route = useRoute()
-const router = useRouter()
 const postId = route.params.id
 const { xs, sm } = useDisplay()
 const requestURL = ref(useRequestURL().host)
 const postContentRef = ref(null)
 
-const { data: contentData } = await useAsyncData(
+const { data: contentData, error } = await useAsyncData(
   `post-${postId}`,
-  async () => {
-    try {
-      const response = (await useApiService.get(
-        `/api/v2/posts/${postId}`,
-        undefined,
-        {
-          public: true,
-        },
-      ))
-
-      if (response.data) {
-        return response.data
-      }
-      else {
-        showError({
-          statusCode: 404,
-          statusMessage: 'Page Not Founded!',
-        })
-        return null
-      }
-    }
-    catch (e) {
-      showError({
-        statusCode: 404,
-        statusMessage: 'Page Not Founded!',
-      })
-      const error = e
-      if (error?.status === 404) {
-        router.push('/post')
-      }
-      throw error
-    }
-    finally {
-      // Reset loading states if needed
-    }
+  () => useApiService.get(`/api/v2/posts/${postId}`,
+    undefined,
+    {
+      public: true,
+    },
+  ),
+  {
+    transform: response => response.data,
   },
 )
+
+// Thrown here (top-level script, right after the data is awaited) rather than from inside the
+// useAsyncData handler - that's what makes Nuxt return the real status and render the error page
+// during SSR, instead of a 200 response with a fallback message. A failed request is a 500; a
+// missing post (the API answers 200 with `data: null`) is a 404.
+if (error.value) {
+  throw createError({
+    statusCode: 500,
+    statusMessage: 'Something Went Wrong',
+    fatal: true,
+  })
+}
+if (!contentData.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Page Not Founded!',
+    fatal: true,
+  })
+}
 
 const organizationSchema = {
   '@type': 'Organization',
