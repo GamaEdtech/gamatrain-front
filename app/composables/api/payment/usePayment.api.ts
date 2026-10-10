@@ -15,6 +15,7 @@ const paymentSummary = ref<PaymentSummaryDTO[]>([])
 
 export const usePayment = () => {
   const { $toast } = useNuxtApp()
+  const { localTimeZone } = useDateTime()
 
   const startPayment = async (payload: PayloadPaymentDTO) => {
     try {
@@ -102,7 +103,7 @@ export const usePayment = () => {
         Kind: params?.kind ?? '',
         // The viewer's own zone, so StartDate/EndDate and the per-day buckets are their calendar days
         // rather than UTC days.
-        TimeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        TimeZone: localTimeZone(),
       }
       const response = await useApiService.get<
         ApiResult<PaymentSummaryDTO[]>

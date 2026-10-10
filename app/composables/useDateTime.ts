@@ -61,6 +61,10 @@ export function useDateTime() {
     return date ? $dayjs(date).format(format) : ''
   }
 
+  // IANA id of the viewer's own time zone (e.g. "Asia/Tehran"), for endpoints that bucket or filter by
+  // the viewer's calendar days. Same lookup dayjs.tz.guess() does, without loading the timezone plugin.
+  const localTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone
+
   const fromNowLocal = (date?: DateInput) => {
     return local(date)?.fromNow() ?? ''
   }
@@ -69,6 +73,7 @@ export function useDateTime() {
     local,
     formatLocal,
     formatCalendarDate,
+    localTimeZone,
     fromNowLocal,
   }
 }
