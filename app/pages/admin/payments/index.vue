@@ -222,6 +222,7 @@ const {
 
 const headers: DataTableHeader<AdminPaymentDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '5vw', align: 'start' },
+  { title: 'User ID', key: 'userId', sortable: false, width: '5vw', align: 'start' },
   {
     title: 'User',
     key: 'firstName',
