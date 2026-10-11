@@ -23,7 +23,7 @@
       <v-autocomplete
         v-model="selectedCategory"
         hide-details
-        label="Select category"
+        label="Select Services"
         :items="categories"
         variant="solo"
         return-object
@@ -117,104 +117,12 @@
 </template>
 
 <script setup>
+import { DESKTOP_GENERAL_SEARCH_CATEGORIES } from '@/constants'
+
 const searchResults = ref([])
 const searchCount = ref('...')
 const searchKey = ref('')
-const categories = [
-  {
-    title: 'Past Papers',
-    value: 'Past Papers',
-    api: '/api/v1/search?type=test',
-    type: 'paper',
-    typePaper: 'paper',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-paper',
-    backgroundColor: '#01c8c8',
-    activeColor: '#bbe9bd',
-  },
-  {
-    title: 'Multimedia',
-    value: 'Multimedia',
-    api: '/api/v1/search?type=learnfiles',
-    type: 'paper',
-    typePaper: 'multimedia',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-multimedia',
-    backgroundColor: '#8800b8',
-    activeColor: '#dcb3ea',
-  },
-  {
-    title: 'QuizHub',
-    value: 'QuizHub',
-    api: '/api/v1/search?type=azmoon',
-    type: 'paper',
-    typePaper: 'exam',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-exam',
-    backgroundColor: '#7b61ff',
-    activeColor: '#d8d0ff',
-  },
-  {
-    title: 'Forum',
-    value: 'Forum',
-    api: '/api/v1/search?type=question',
-    type: 'paper',
-    typePaper: 'qa',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-q-a',
-    backgroundColor: '#ff50a6',
-    activeColor: '#ffcbe4',
-  },
-  {
-    title: 'Tutorial',
-    value: 'Tutorial',
-    api: '/api/v1/search?type=dars',
-    type: 'paper',
-    typePaper: 'tutorial',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-tutorial',
-    backgroundColor: '#2a91ff',
-    activeColor: '#c0deff',
-  },
-  {
-    title: 'Teacher',
-    value: 'Teacher',
-    api: '/api/v2/identities/profiles/list',
-    type: 'teacher',
-    isOldApi: false,
-    keywordSearch: 'FullName',
-    iconName: 'icon-teacher',
-    backgroundColor: '#7f56d9',
-    activeColor: '#7f56d970',
-  },
-  {
-    title: 'School',
-    value: 'School',
-    api: '/api/v2/schools',
-    type: 'school',
-    isOldApi: false,
-    keywordSearch: 'Name',
-    iconName: 'icon-school',
-    backgroundColor: '#a15801',
-    activeColor: '#e3cdb3',
-  },
-  {
-    title: 'Post',
-    value: 'Post',
-    api: '/api/v2/posts',
-    type: 'post',
-    isOldApi: false,
-    keywordSearch: 'Title',
-    iconName: 'icon-student',
-    backgroundColor: '#ff9400',
-    activeColor: '#ffdfb3',
-  },
-]
+const categories = DESKTOP_GENERAL_SEARCH_CATEGORIES
 const selectedCategory = ref(categories[0])
 const searchLoading = ref(true)
 const pageNumber = ref(1)
@@ -267,7 +175,7 @@ const checkSearchScroll = () => {
 const search = async () => {
   if (searchKey.value && allDataLoaded.value == false) {
     try {
-      let params = {}
+      let params = { ...selectedCategory.value.apiParams }
       params[selectedCategory.value.keywordSearch] = searchKey.value
       if (selectedCategory.value.isOldApi) {
         params.page = pageNumber.value

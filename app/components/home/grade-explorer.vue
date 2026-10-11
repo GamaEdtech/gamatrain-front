@@ -210,6 +210,7 @@
 
 <script setup>
 const { data: boardList, getData: getBoards } = useBoard()
+const { getTypesStats } = useSearchApi()
 
 const categorySlider = ref(null)
 
@@ -222,10 +223,17 @@ const categories = ref([
     icon: 'icon-paper',
   },
   {
+    type: 'study-materials',
+    key: 'study-materials',
+    stat: '--',
+    title: 'Study Materials',
+    icon: 'icon-study-materials',
+  },
+  {
     type: 'quizhub',
     key: 'exams',
     stat: '--',
-    title: 'QuizHub',
+    title: 'Exam Hub',
     icon: 'icon-exam',
   },
   {
@@ -234,13 +242,6 @@ const categories = ref([
     stat: '--',
     title: 'Tutorial',
     icon: 'icon-tutorial',
-  },
-  {
-    type: 'multimedia',
-    key: 'files',
-    stat: '--',
-    title: 'Multimedia',
-    icon: 'icon-multimedia',
   },
   {
     type: 'teacher',
@@ -263,9 +264,10 @@ const gradeLoader = ref(false)
 const selectedBoard = ref(null)
 const selectedGrade = ref(null)
 const showBoardHint = ref(false)
+let categoryCountRequestId = 0
 
 const categoryLink = (category) => {
-  return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
+  return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}${selectedGrade.value ? `&base=${selectedGrade.value}` : ``}`
 }
 const fetchInitialData = async () => {
   await getBoards()
@@ -321,38 +323,56 @@ const fetchCategoryCounts = async () => {
       return
     }
 
-    const params = new URLSearchParams()
-    params.append('type', 'test')
-    params.append('perpage', '1')
-    params.append('section', selectedBoard.value.code)
-    params.append('base', selectedGrade.value)
-    const requestUrl = `/api/v1/search?${params.toString()}`
-    const response = await useApiService.get(requestUrl, undefined, { public: true })
-    if (
-      response
-      && response.status === 1
-      && response.data
-      && response.data.types_stats
-    ) {
-      categories.value.find((cat, _i) => cat.key == 'papers').stat
-        = parseInt(response.data.types_stats.papers) || 0
-
-      categories.value.find((cat, _i) => cat.key == 'files').stat
-        = parseInt(response.data.types_stats.learnfiles) || 0
-
-      categories.value.find((cat, _i) => cat.key == 'exams').stat
-        = parseInt(response.data.types_stats.exams) || 0
-
-      categories.value.find((cat, _i) => cat.key == 'questions').stat
-        = parseInt(response.data.types_stats.question) || 0
-
-      categories.value.find((cat, _i) => cat.key == 'tutorial').stat
-        = parseInt(response.data.types_stats.tutorials) || 0
+    const requestId = ++categoryCountRequestId
+    const params = {
+      section: selectedBoard.value.code,
+      base: selectedGrade.value || undefined,
     }
+
+    const [paperResult, studyMaterialsResult] = await Promise.allSettled([
+      getTypesStats({ ...params, is_paper: 1 }),
+      getTypesStats({ ...params, is_paper: 0 }),
+    ])
+
+    if (requestId !== categoryCountRequestId) return
+
+    const paperStats = getTypesStatsData(paperResult)
+    const studyMaterialsStats = getTypesStatsData(studyMaterialsResult)
+    const sharedStats = paperStats || studyMaterialsStats
+
+    setCategoryStat('papers', getStatCount(paperStats, 'papers'))
+    setCategoryStat('study-materials', getStatCount(studyMaterialsStats, 'papers'))
+    setCategoryStat('exams', getStatCount(sharedStats, 'exams', 'azmoon'))
+    setCategoryStat('questions', getStatCount(sharedStats, 'question', 'questions'))
+    setCategoryStat('tutorial', getStatCount(sharedStats, 'tutorials', 'dars'))
   }
   catch (error) {
     console.error('Error fetching category counts:', error)
   }
+}
+
+const getTypesStatsData = (result) => {
+  if (result.status !== 'fulfilled' || !result.value.data) return null
+
+  return 'types_stats' in result.value.data
+    ? result.value.data.types_stats
+    : result.value.data
+}
+
+const getStatCount = (stats, ...keys) => {
+  if (!stats) return 0
+
+  const value = keys
+    .map(key => stats[key])
+    .find(candidate => candidate !== undefined && candidate !== null)
+  const count = Number.parseInt(String(value), 10)
+
+  return Number.isFinite(count) ? count : 0
+}
+
+const setCategoryStat = (key, value) => {
+  const category = categories.value.find(category => category.key === key)
+  if (category) category.stat = value
 }
 
 const fetchTeachers = async () => {
@@ -515,6 +535,9 @@ onMounted(() => {
 }
 .icon-school {
   color: #a5673f;
+}
+.icon-study-materials {
+  color: rgb(var(--v-theme-greenLight700));
 }
 .ex-category__card--title {
   color: #344054;
