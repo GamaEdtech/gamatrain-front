@@ -157,7 +157,7 @@
           <div :class="`reply-bubble rounded-lg d-flex flex-column ga-2 pa-3 ${isUserReply(reply) ? 'bg-primary50' : 'bg-grey100'}`">
             <div class="d-flex align-center justify-space-between ga-3 flex-wrap">
               <span class="text-h6 text-grey700 font-weight-bold">
-                {{ reply.creationUser || 'Support' }}
+                {{ isUserReply(reply) ? reply.creationUser : 'Support' }}
               </span>
               <span class="text-subtitle-1 text-grey500 font-weight-medium">
                 {{ formatLocal(reply.creationDate, 'DD/MM/YYYY HH:mm') }}

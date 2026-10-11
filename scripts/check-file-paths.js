@@ -53,11 +53,19 @@ function extractFilePaths(content) {
   return paths
 }
 
+// Resolve a referenced path the way Nuxt does: `/` is public/, `@/` and `~/` are the
+// app/ srcDir, `@@/` and `~~/` are the project root, anything else is relative to the file
+function resolveReferencedPath(filePath, sourceFile) {
+  if (filePath.startsWith('/')) return path.resolve(`public${filePath}`)
+  if (/^(@@|~~)\//.test(filePath)) return path.resolve(filePath.slice(3))
+  if (/^[@~]\//.test(filePath)) return path.resolve('app', filePath.slice(2))
+  return path.resolve(path.dirname(sourceFile), filePath)
+}
+
 // Function to check if a file exists with exact case
-function checkFileExists(filePath) {
+function checkFileExists(filePath, sourceFile) {
   try {
-    // Convert relative path to absolute
-    const absolutePath = path.resolve(filePath.startsWith('/') ? `public${filePath}` : filePath)
+    const absolutePath = resolveReferencedPath(filePath, sourceFile)
 
     // Check if file exists
     if (!fs.existsSync(absolutePath)) {
@@ -116,7 +124,7 @@ async function checkFilePaths() {
           continue
         }
 
-        const result = checkFileExists(referencedPath)
+        const result = checkFileExists(referencedPath, file)
 
         if (!result.exists) {
           issues.push({

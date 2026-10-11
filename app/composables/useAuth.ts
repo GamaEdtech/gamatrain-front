@@ -42,8 +42,14 @@ export const useAuth = () => {
       localStorage.clear()
       sessionStorage.clear()
     }
-    // Navigate to home page
-    await navigateTo('/')
+    // Only leave pages that require login; public pages (papers, blog, ...) stay put
+    const route = useRouter().currentRoute.value
+    const requiresAuth = route.matched.some((record) => {
+      const middleware = record.meta.middleware
+      return Array.isArray(middleware) ? middleware.includes('auth') : middleware === 'auth'
+    })
+    if (requiresAuth || /^\/(user|admin)(\/|$)/.test(route.path))
+      await navigateTo('/')
   }
 
   const login = async (data: LoginInformationDTO) => {

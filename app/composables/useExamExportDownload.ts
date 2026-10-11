@@ -23,8 +23,11 @@ interface UseExamExportDownloadOptions {
   examId: string | number
   title: string
   titleUrl: string
-  /** A paid export finished: `points` were charged (0 when it was free or already bought). */
-  onDownloaded?: (points: number) => void
+  /**
+   * An export finished: `points` were charged (0 when it was free or already bought).
+   * `file` is the generated file, for callers that offer to open it again.
+   */
+  onDownloaded?: (points: number, file: Blob) => void
   onInsufficientBalance?: () => void
   onUpgradeSuggestions?: (data: DownloadResponseDTO) => void
 }
@@ -185,7 +188,7 @@ export const useExamExportDownload = (options: UseExamExportDownloadOptions) => 
       saveBlob(blob, fileNameFromDisposition(response.headers.get('Content-Disposition'))
       ?? `${options.title || 'exam'}.${extensions[fileType]}`)
 
-      options.onDownloaded?.(Number(response.headers.get('X-Export-Points')) || 0)
+      options.onDownloaded?.(Number(response.headers.get('X-Export-Points')) || 0, blob)
       await fetchPrices()
       setTimeout(() => clear(fileType), 800)
     }

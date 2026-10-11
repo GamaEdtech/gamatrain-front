@@ -4,23 +4,29 @@
     class="question-item pa-4"
   >
     <div class="d-flex align-baseline mb-2 gtext-t3">
-      <div class="font-weight-bold mr-2 text-grey-darken-1">
+      <div class="flex-shrink-0 font-weight-bold mr-2 text-grey-darken-1">
         {{ index + 1 }})
       </div>
       <div
-        class="gama-text-h1 text-grey-darken-1"
-        style="line-height: 1.7 !important"
+        class="question-text gama-text-h1 text-grey-darken-1"
         v-html="item.question"
       />
     </div>
 
-    <img
-      v-if="item.q_file && item.q_file !== '0'"
-      class="answer-img mb-4"
-      :src="item.q_file"
-      alt="Question Image"
-      loading="lazy"
+    <button
+      v-if="hasFile(item.q_file)"
+      type="button"
+      class="image-zoom-trigger mb-4"
+      aria-label="Enlarge question image"
+      @click="openZoom(item.q_file, 'Question Image')"
     >
+      <img
+        class="question-img border rounded-lg"
+        :src="item.q_file"
+        alt="Question Image"
+        loading="lazy"
+      >
+    </button>
 
     <v-radio-group
       :model-value="modelValue"
@@ -29,79 +35,39 @@
       @update:model-value="onAnswerChange"
     >
       <v-radio
-        :value="'1'"
+        v-for="option in options"
+        :key="option.value"
+        :value="option.value"
         density="compact"
-        style="font-size: 1.5rem; padding-block: 0.5rem"
+        class="answer-option py-2"
       >
         <template #label>
-          <div
-            class="mr-6 d-flex align-center gtext-t4 text-grey-darken-1"
-            v-html="`1)&nbsp;&nbsp;${item.answer_a}`"
-          />
-          <img
-            v-if="item.a_file && item.a_file !== '0'"
-            class="answer-img mt-2"
-            :src="item.a_file"
-            alt="Answer A Image"
-            loading="lazy"
-          >
-        </template>
-      </v-radio>
-      <v-radio
-        :value="'2'"
-        density="compact"
-        style="font-size: 1.5rem; padding-block: 0.5rem"
-      >
-        <template #label>
-          <div
-            class="mr-6 d-flex align-center gtext-t4 text-grey-darken-1"
-            v-html="`2)&nbsp;&nbsp;${item.answer_b}`"
-          />
-          <img
-            v-if="item.b_file && item.b_file !== '0'"
-            class="answer-img mt-2"
-            :src="item.b_file"
-            alt="Answer B Image"
-            loading="lazy"
-          >
-        </template>
-      </v-radio>
-      <v-radio
-        :value="'3'"
-        density="compact"
-        style="font-size: 1.5rem; padding-block: 0.5rem"
-      >
-        <template #label>
-          <div
-            class="mr-6 d-flex align-center gtext-t4 text-grey-darken-1"
-            v-html="`3)&nbsp;&nbsp;${item.answer_c}`"
-          />
-          <img
-            v-if="item.c_file && item.c_file !== '0'"
-            class="answer-img mt-2"
-            :src="item.c_file"
-            alt="Answer C Image"
-            loading="lazy"
-          >
-        </template>
-      </v-radio>
-      <v-radio
-        :value="'4'"
-        density="compact"
-        style="font-size: 1.5rem"
-      >
-        <template #label>
-          <div
-            class="mr-6 d-flex align-center gtext-t4 text-grey-darken-1"
-            v-html="`4)&nbsp;&nbsp;${item.answer_d}`"
-          />
-          <img
-            v-if="item.d_file && item.d_file !== '0'"
-            class="answer-img mt-2"
-            :src="item.d_file"
-            alt="Answer D Image"
-            loading="lazy"
-          >
+          <div class="answer-content mr-6">
+            <div class="d-flex align-baseline gtext-t4 text-grey-darken-1">
+              <div class="flex-shrink-0 mr-2">
+                {{ option.value }})
+              </div>
+              <div
+                class="answer-text"
+                v-html="option.text"
+              />
+            </div>
+            <!-- .prevent keeps the click from reaching the label, so enlarging never changes the answer -->
+            <button
+              v-if="hasFile(option.file)"
+              type="button"
+              class="image-zoom-trigger mt-2"
+              :aria-label="`Enlarge ${option.alt}`"
+              @click.prevent.stop="openZoom(option.file, option.alt)"
+            >
+              <img
+                class="answer-img border rounded-lg"
+                :src="option.file"
+                :alt="option.alt"
+                loading="lazy"
+              >
+            </button>
+          </div>
         </template>
       </v-radio>
     </v-radio-group>
@@ -126,11 +92,35 @@
     </div>
 
     <v-divider class="mt-4" />
+
+    <v-dialog
+      v-model="isZoomOpen"
+      max-width="1100"
+    >
+      <v-card>
+        <v-card-actions class="justify-end pb-0">
+          <v-btn
+            icon="mdi-close"
+            size="small"
+            variant="text"
+            aria-label="Close enlarged image"
+            @click="isZoomOpen = false"
+          />
+        </v-card-actions>
+        <v-card-text class="zoom-scroll pt-0">
+          <img
+            class="zoom-img"
+            :src="zoomedImage.src"
+            :alt="zoomedImage.alt"
+          >
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup>
-const _props = defineProps({
+const props = defineProps({
   item: { type: Object, required: true },
   index: { type: Number, required: true },
   modelValue: { type: [String, Number], default: null },
@@ -141,6 +131,24 @@ const emit = defineEmits(['update:modelValue', 'pin', 'erase'])
 
 const questionRootRef = ref(null)
 const { $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
+
+const options = computed(() => [
+  { value: '1', text: props.item.answer_a, file: props.item.a_file, alt: 'Answer A Image' },
+  { value: '2', text: props.item.answer_b, file: props.item.b_file, alt: 'Answer B Image' },
+  { value: '3', text: props.item.answer_c, file: props.item.c_file, alt: 'Answer C Image' },
+  { value: '4', text: props.item.answer_d, file: props.item.d_file, alt: 'Answer D Image' },
+])
+
+// The API sends '0' for "no file".
+const hasFile = file => Boolean(file) && file !== '0'
+
+const isZoomOpen = ref(false)
+const zoomedImage = ref({ src: '', alt: '' })
+
+const openZoom = (src, alt) => {
+  zoomedImage.value = { src, alt }
+  isZoomOpen.value = true
+}
 
 const onAnswerChange = (value) => {
   emit('update:modelValue', value)
@@ -163,19 +171,61 @@ onMounted(async () => {
 .question-item {
   border-bottom: 1px solid #eee;
 }
+.question-text {
+  min-width: 0;
+  line-height: 1.7 !important;
+}
+/* Question and option images follow one rule: shown at their own size, never enlarged, and scaled
+   down (keeping the aspect ratio) to fit a box. Options get a smaller box than the question. */
+.question-img,
 .answer-img {
-  max-width: 100%;
+  display: block;
+  width: auto;
   height: auto;
-  border-radius: 8px;
-  border: 1px solid #ddd;
+  max-width: 100%;
+}
+.question-img {
+  max-height: 420px;
+}
+.answer-img {
+  max-height: 240px;
+}
+.image-zoom-trigger {
+  display: block;
+  max-width: min(100%, 720px);
+  cursor: zoom-in;
+}
+/* Enlarged view: fills the dialog on wide screens; on phones it is twice the screen width and pans. */
+.zoom-scroll {
+  overflow: auto;
+}
+.zoom-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+}
+@media (max-width: 599.98px) {
+  .zoom-img {
+    width: 200%;
+    max-height: none;
+  }
 }
 .answer-group .v-radio {
   width: 100%;
 }
-.answer-group .answer-img {
-  display: block;
-  width: 100%;
-  max-width: 300px;
-  margin-left: 24px;
+.answer-option {
+  font-size: 1.5rem;
+}
+.answer-content,
+.answer-text {
+  min-width: 0;
+}
+/* Images typed into the question or option text itself. */
+.question-item :deep(.answer-text img),
+.question-item :deep(.question-text img) {
+  max-width: 100%;
+  height: auto;
 }
 </style>

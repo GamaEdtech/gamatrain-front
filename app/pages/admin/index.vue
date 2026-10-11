@@ -41,19 +41,10 @@
       </div>
     </div>
     <div class="w-100 d-flex align-center justify-start mb-4">
-      <v-btn
+      <admin-common-clear-filter-btn
         v-if="isShowClearFilter"
-        color="primary"
-        rounded="pill"
-        height="40"
-        width="120"
-        class="text-h5 font-weight-bold "
-        flat
-        variant="outlined"
         @click="clearFilter"
-      >
-        Clear Filter
-      </v-btn>
+      />
     </div>
     <admin-dashboard-payment-chart @select-bar="selectBar" />
     <admin-dashboard-payment-table />

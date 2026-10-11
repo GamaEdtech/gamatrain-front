@@ -55,6 +55,16 @@ export function useDateTime() {
     return local(date)?.format(format) ?? ''
   }
 
+  // For values that are already a calendar day (e.g. a "YYYY-MM-DD" bucket the backend computed in the
+  // viewer's own time zone) - formatted as-is, with no UTC-to-local shift.
+  const formatCalendarDate = (date?: DateInput, format = 'DD/MM/YYYY') => {
+    return date ? $dayjs(date).format(format) : ''
+  }
+
+  // IANA id of the viewer's own time zone (e.g. "Asia/Tehran"), for endpoints that bucket or filter by
+  // the viewer's calendar days. Same lookup dayjs.tz.guess() does, without loading the timezone plugin.
+  const localTimeZone = () => Intl.DateTimeFormat().resolvedOptions().timeZone
+
   const fromNowLocal = (date?: DateInput) => {
     return local(date)?.fromNow() ?? ''
   }
@@ -62,6 +72,8 @@ export function useDateTime() {
   return {
     local,
     formatLocal,
+    formatCalendarDate,
+    localTimeZone,
     fromNowLocal,
   }
 }

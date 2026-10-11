@@ -111,7 +111,7 @@
               color="success"
               size="18"
             >
-              md:radio_button_unchecked
+              md:circle
             </v-icon>
           </div>
         </div>
@@ -192,7 +192,7 @@ const guideItems = [
   {
     label: 'Correct option',
     class: 'border-success',
-    icon: 'md:radio_button_unchecked',
+    icon: 'md:circle',
     iconColor: 'success',
   },
   {

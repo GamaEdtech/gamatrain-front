@@ -214,7 +214,9 @@ const { data, error, status } = await useAsyncData(
 const handleExamResponse = () => {
   if (error.value) {
     if (error.value.statusCode === 400 && error.value.data?.data?.id) {
-      router.push(`/user/exam/result/${error.value.data.data.id}`)
+      // Replace, so the browser's Back button leaves the result for the page before the exam
+      // instead of landing here again.
+      router.replace(`/user/exam/result/${error.value.data.data.id}`)
     }
     else {
       fetchError.value = {
@@ -375,11 +377,11 @@ const endExam = async () => {
         answers: examStats.answerData,
       },
     )
-    await router.push(`/user/exam/result/${response.data.id}`)
+    await router.replace(`/user/exam/result/${response.data.id}`)
   }
   catch (err) {
     if (err.response?._data?.data?.id) {
-      await router.push(`/user/exam/result/${err.response._data.data.id}`)
+      await router.replace(`/user/exam/result/${err.response._data.data.id}`)
     }
     else {
       console.error('Error submitting exam:', err)

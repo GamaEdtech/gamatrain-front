@@ -1251,14 +1251,31 @@
             <v-spacer />
             <v-toolbar-items>
               <v-btn
-                style="text-transform: none; font-size: 13px; font-weight: 500"
+                class="text-none preview-toolbar-btn"
                 variant="text"
+                :disabled="publish_loading"
                 @click="printPreviewDialog = false"
               >
-                Ok
+                Continue editing
+              </v-btn>
+              <v-btn
+                class="text-none preview-toolbar-btn"
+                variant="flat"
+                color="primary"
+                prepend-icon="mdi-publish"
+                :disabled="tests.length < 5"
+                :loading="publish_loading"
+                @click="publishFromPreview"
+              >
+                Publish
               </v-btn>
             </v-toolbar-items>
           </v-toolbar>
+          <v-progress-linear
+            :active="previewLoading"
+            indeterminate
+            color="primary"
+          />
           <v-card-text
             id="preview-dialog"
             ref="mathJaxPrintDialogContainerRef"
@@ -1494,7 +1511,19 @@
                 </client-only>
               </v-col>
               <v-col
-                v-show="!previewTestList.length"
+                v-if="previewLoading && !previewTestList.length"
+                cols="12"
+                class="text-center py-10"
+              >
+                <v-progress-circular
+                  indeterminate
+                  color="teal"
+                  class="mb-4"
+                />
+                <p>Loading preview...</p>
+              </v-col>
+              <v-col
+                v-show="!previewTestList.length && !previewLoading"
                 cols="12"
                 class="text-center"
               >
@@ -1705,7 +1734,12 @@ const filter = reactive({
 })
 
 // UI State
+const PREVIEW_QUERY_VALUE = 'true'
 const printPreviewDialog = ref(false)
+const initialDataLoading = ref(true)
+const previewLoading = computed(
+  () => initialDataLoading.value || test_loading.value,
+)
 const confirmDeleteDialog = ref(false)
 const deleteLoading = ref(false)
 const previewTestList = ref([])
@@ -2159,6 +2193,14 @@ const publishTest = async () => {
   }
   finally {
     publish_loading.value = false
+  }
+}
+
+// Publish from the print preview dialog, then close it to show the publish step
+const publishFromPreview = async () => {
+  await publishTest()
+  if (test_step.value === 4) {
+    printPreviewDialog.value = false
   }
 }
 
@@ -2805,13 +2847,21 @@ watch(
   },
 )
 
-// Watch for changes in route query parameter
+// Watch for changes in the active tab query parameter
 watch(
-  () => route.query,
+  () => route.query.active,
   () => {
     checkActiveParam()
   },
-  { deep: true },
+)
+
+// Keep the print preview dialog and the `preview` query parameter in sync,
+// so the preview has a direct link: /test-maker/edit/:id?preview=true
+watch(
+  () => route.query.preview,
+  (preview) => {
+    printPreviewDialog.value = preview === PREVIEW_QUERY_VALUE
+  },
 )
 
 // Watch for changes in tests array to update the button number
@@ -2865,6 +2915,15 @@ watch(
 )
 
 watch(printPreviewDialog, async (isDialogVisible) => {
+  if (isDialogVisible !== (route.query.preview === PREVIEW_QUERY_VALUE)) {
+    const { preview: _preview, ...query } = route.query
+    _router.replace({
+      query: isDialogVisible
+        ? { ...query, preview: PREVIEW_QUERY_VALUE }
+        : query,
+    })
+  }
+
   if (isDialogVisible) {
     await nextTick()
     await typesetMathInSpecificContainer(mathJaxPrintDialogContainerRef)
@@ -2892,6 +2951,12 @@ watch(testListSwitch, async (isSwitchedOn) => {
 
 // Initialize component on mount
 onMounted(async () => {
+  // Open the print preview right away when the page is opened through its
+  // direct link. Vuetify cannot render a dialog that is already open on mount.
+  if (route.query.preview === PREVIEW_QUERY_VALUE) {
+    printPreviewDialog.value = true
+  }
+
   // Get user token
   const _auth = useAuth()
   userToken.value = _auth.getUserToken()
@@ -2932,6 +2997,8 @@ onMounted(async () => {
       createForm.value.examTestListLength = tests.value.length
     }
   }
+
+  initialDataLoading.value = false
 
   // Check active tab from route and enable it
   if (route.query?.active === 'test_list') {
@@ -3581,6 +3648,11 @@ onUpdated(async () => {
 </script>
 
 <style lang="scss">
+.preview-toolbar-btn {
+  font-size: 13px;
+  font-weight: 500;
+}
+
 .create-test-container {
   max-width: 1200px;
   margin: 5rem auto;

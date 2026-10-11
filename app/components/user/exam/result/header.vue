@@ -13,34 +13,56 @@
     </div>
 
     <v-btn
-      v-if="contentData?.exam.file_pdf"
       rounded="pill"
       class="width-btn btn-pdf d-flex align-center justify-center"
       flat
       height="42"
       width="280"
-      :loading="isDownloading('pdf')"
-      @click="handleDownloadClick('pdf', contentData?.price.price ?? 0)"
+      @click="startExport(exportFileType)"
     >
-      <template #loader>
+      <!-- Generating: the server is building the file (before any byte arrives). -->
+      <template v-if="getPhase(exportFileType) === 'cooking'">
+        <span class="text-lightError text-h5 font-weight-bold mt-1 ml-2">Cooking for you</span>
+        <v-icon
+          class="heart-blink ml-1"
+          color="lightError"
+          size="20"
+        >
+          md:favorite
+        </v-icon>
+      </template>
+
+      <!-- Streaming the finished file, with real progress. -->
+      <template v-else-if="getPhase(exportFileType) === 'downloading'">
         <v-progress-circular
-          :model-value="getDownloadProgress('pdf')"
+          :model-value="getProgress(exportFileType)"
           color="lightError"
           size="24"
           width="3"
         />
+        <span class="text-lightError text-h5 font-weight-bold mt-1 mx-2">
+          Downloading {{ getProgress(exportFileType) }}%
+        </span>
       </template>
-      <span
-        class="text-lightError icon-pdf icon-size mt-1"
-        aria-hidden="true"
-      />
-      <span class="text-lightError text-h5 font-weight-bold mt-1 mx-2">Download key</span>
 
-      <common-price-with-gem
-        class="text-lightError text-h5 font-weight-bold mt-1"
-        :price="contentData?.price.price"
-        color="lightError"
-      />
+      <template v-else>
+        <span
+          class="text-lightError icon-pdf icon-size mt-1"
+          aria-hidden="true"
+        />
+        <span class="text-lightError text-h5 font-weight-bold mt-1 mx-2">Download key</span>
+
+        <span
+          v-if="getPrice(exportFileType)?.purchased"
+          class="text-lightError text-h6 font-weight-bold mt-1"
+        >Owned</span>
+        <common-price-with-gem
+          v-else-if="getPrice(exportFileType)"
+          class="text-lightError text-h5 font-weight-bold mt-1"
+          :price="getPrice(exportFileType)?.points"
+          color="lightError"
+        />
+      </template>
     </v-btn>
 
     <lazy-common-modal-base
@@ -87,6 +109,7 @@
 <script setup lang="ts">
 import type { ExamResultDetailDTO,
   DownloadResponseDTO,
+  ExamExportFileType,
   UpgradeSuggestionsDTO,
   BillingInterval } from '@/types'
 
@@ -94,14 +117,12 @@ const props = defineProps<{
   contentData: ExamResultDetailDTO
 }>()
 
+const exportFileType: ExamExportFileType = 'Pdf'
+
 const showCoinPaymentModal = ref(false)
 const showCoinAnimation = ref(false)
 const isStartWalletAnimation = ref(false)
 const priceFile = ref(0)
-const pendingDownload = ref<{
-  type: string
-  extraId?: string
-} | null>(null)
 const downloadIssue = ref(false)
 const downloadIssueLink = ref('')
 const paymentPlans = ref<UpgradeSuggestionsDTO[]>([])
@@ -109,28 +130,35 @@ const billingInterval = ref<BillingInterval[]>([])
 const currentPlanTitle = ref<string | null>(null)
 const currentPlanId = ref<number | null>(null)
 
+// "Show file in new tab" opens the file that was just generated, kept as an object URL.
+const setDownloadIssueLink = (file?: Blob) => {
+  if (downloadIssueLink.value) {
+    window.URL.revokeObjectURL(downloadIssueLink.value)
+  }
+  downloadIssueLink.value = file ? window.URL.createObjectURL(file) : ''
+}
+
+// The same generated export as the exam details page (gamatrain-back exams/export),
+// not the file saved with the exam.
 const {
-  // clearDownload,
-  getDownloadProgress,
-  isDownloading,
-  startDownload,
-} = useDownloadWithProgress({
-  contentType: 'Exam',
-  id: Number(props.contentData.exam.id),
-  trackPayload: () => ({
-    file_type: 'quiz',
-    file_name: props.contentData.exam.title || '',
-    file_url: props.contentData.exam.title || '',
-  }),
-  onDownloaded: (data) => {
-    downloadIssueLink.value = data.url || ''
-    if (data.spent) {
+  fetchPrices,
+  getPrice,
+  getPhase,
+  getProgress,
+  startExport,
+} = useExamExportDownload({
+  examId: props.contentData.exam.id,
+  title: props.contentData.exam.title || '',
+  titleUrl: props.contentData.exam.title || '',
+  onDownloaded: (points, file) => {
+    setDownloadIssueLink(file)
+    if (points > 0) {
+      priceFile.value = points
       showCoinAnimation.value = true
     }
     else {
       downloadIssue.value = true
     }
-    pendingDownload.value = null
   },
   onInsufficientBalance: () => {
     showCoinPaymentModal.value = true
@@ -143,16 +171,6 @@ const {
     showCoinPaymentModal.value = true
   },
 })
-
-const handleDownloadClick = async (type: string, price: number, extraId?: string) => {
-  priceFile.value = price
-  pendingDownload.value = {
-    type,
-    extraId,
-  }
-
-  startDownload({ type, extraId })
-}
 
 const handleAnimationComplete = async () => {
   // Close everything immediately when animation completes
@@ -167,10 +185,16 @@ const completeWalletAnimation = () => {
 
 const upgradePlanSuccessfully = async () => {
   showCoinPaymentModal.value = false
-  if (pendingDownload.value) {
-    startDownload({ type: pendingDownload.value.type, extraId: pendingDownload.value.extraId })
-  }
+  startExport(exportFileType)
 }
+
+onMounted(() => {
+  fetchPrices()
+})
+
+onBeforeUnmount(() => {
+  setDownloadIssueLink()
+})
 </script>
 
 <style scoped>
@@ -180,5 +204,19 @@ const upgradePlanSuccessfully = async () => {
 }
 .icon-size{
   font-size : 24px;
+}
+/* "Cooking" phase: a blinking (pulsing) heart while the server generates the file. */
+.heart-blink {
+  animation: heart-blink 1s ease-in-out infinite;
+}
+@keyframes heart-blink {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.25;
+    transform: scale(0.8);
+  }
 }
 </style>

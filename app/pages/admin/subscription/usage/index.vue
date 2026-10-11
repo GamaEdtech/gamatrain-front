@@ -2,19 +2,10 @@
   <div class="w-100 h-100 d-flex flex-column align-start justify-start">
     <div class="w-100 d-flex justify-space-between align-center">
       <div class="d-flex align-center justify-start">
-        <v-btn
+        <admin-common-clear-filter-btn
           v-if="isShowClearFilter"
-          color="primary"
-          rounded="xl"
-          height="40"
-          width="120"
-          class="text-h5"
-          flat
-          variant="outlined"
           @click="clearFilter"
-        >
-          Clear Filter
-        </v-btn>
+        />
       </div>
 
       <div class="d-flex align-center justify-end ga-1 flex-wrap">

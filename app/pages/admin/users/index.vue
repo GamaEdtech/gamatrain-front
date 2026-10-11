@@ -42,19 +42,10 @@
         <span class="text-primary font-weight-bold text-h5">Add User</span>
       </v-btn>
 
-      <v-btn
+      <admin-common-clear-filter-btn
         v-if="isShowClearFilter"
-        color="primary"
-        rounded="pill"
-        height="40"
-        width="120"
-        class="text-h5 font-weight-bold "
-        flat
-        variant="outlined"
         @click="clearFilter"
-      >
-        Clear Filter
-      </v-btn>
+      />
     </div>
 
     <common-data-table
