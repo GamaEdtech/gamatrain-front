@@ -44,6 +44,13 @@ export const SEARCH_SERVICE_OPTIONS = [
 
 export const DEFAULT_SEARCH_SERVICE = SEARCH_SERVICE_OPTIONS[0]!
 
+export const SEARCH_SERVICE_TITLE_SUFFIXES: Partial<Record<SearchServiceId, string>> = {
+  'paper': 'Past Papers',
+  'study-materials': 'Study Materials',
+  'quizhub': 'Exams',
+  'tutorial': 'Revision notes',
+}
+
 export const SEARCH_FILTERS_BY_SERVICE: Partial<Record<SearchServiceId, SearchConditionalFilter[]>> = {
   'paper': ['year', 'session', 'paper', 'variant'],
   'study-materials': ['material', 'topic'],

@@ -9,7 +9,7 @@
         sm="6"
       >
         <h1 class="text-h5 text-md-h4 font-weight-bold text-grey700">
-          Find the right learning resource
+          {{ metadata.title }}
         </h1>
       </v-col>
 
@@ -346,8 +346,10 @@ onBeforeUnmount(() => {
   }
 })
 
-useHead({
-  title: 'Search',
+const { metadata } = useSearchMetadata({
+  activeService,
+  filters,
+  data: results,
 })
 </script>
 
