@@ -24,6 +24,15 @@ export type SearchCountService = 'paper' | 'study-materials' | 'quizhub' | 'tuto
 
 export type SearchServiceCounts = Partial<Record<SearchCountService, number>>
 
+export interface SearchTypesStatsDTO {
+  papers?: number | string | null
+  exams?: number | string | null
+  azmoon?: number | string | null
+  tutorials?: number | string | null
+  dars?: number | string | null
+  [key: string]: number | string | null | undefined
+}
+
 export type SearchFilterKey
   = | 'section'
     | 'base'

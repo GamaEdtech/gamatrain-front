@@ -22,7 +22,16 @@
           class="text-h6 text-sm-h5 font-weight-bold d-none d-sm-flex"
           :class="activeService === service.id ? 'text-primary d-flex' : 'text-grey400'"
         >
-          {{ $numberFormat(service.id) || '-' }}
+          <v-progress-circular
+            v-if="countsLoading"
+            indeterminate
+            size="16"
+            width="2"
+            color="primary"
+          />
+          <template v-else>
+            {{ $numberFormat(getServiceCount(service.id)) }}
+          </template>
         </span>
         <span
           class="d-none d-sm-flex text-h6 text-sm-h5 font-weight-bold text-truncate"
@@ -42,14 +51,16 @@
 </template>
 
 <script setup lang="ts">
-import type { SearchServiceCounts, SearchServiceId } from '@/types/search'
+import type { SearchCountService, SearchServiceCounts, SearchServiceId } from '@/types/search'
 import { SEARCH_SERVICE_OPTIONS } from '@/constants'
 
-withDefaults(defineProps<{
+const props = withDefaults(defineProps<{
   activeService: SearchServiceId
   serviceCounts?: SearchServiceCounts
+  countsLoading?: boolean
 }>(), {
   serviceCounts: () => ({}),
+  countsLoading: false,
 })
 
 const emit = defineEmits<{
@@ -58,6 +69,9 @@ const emit = defineEmits<{
 
 const { $numberFormat } = useNuxtApp()
 const services = SEARCH_SERVICE_OPTIONS
+
+const getServiceCount = (serviceId: SearchServiceId) =>
+  props.serviceCounts[serviceId as SearchCountService] ?? 0
 
 const selectService = (serviceId: unknown) => {
   if (typeof serviceId !== 'string') return

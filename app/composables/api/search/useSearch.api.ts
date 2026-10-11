@@ -2,11 +2,12 @@ import type {
   ApiResult,
 } from '@/types'
 import type { SearchParameters } from '@/composables/useApiService'
-import type { SearchListDTO, SearchRequestOptions, SearchResourceItem } from '@/types/search'
+import type { SearchListDTO, SearchRequestOptions, SearchResourceItem, SearchTypesStatsDTO } from '@/types/search'
 
 const data = ref<SearchResourceItem[]>([])
 const totalCount = ref<number | string>(0)
 const loadingGetData = ref(false)
+const loadingGetTypesStats = ref(false)
 
 export const useSearchApi = () => {
   const getData = async (params: SearchParameters, options?: SearchRequestOptions) => {
@@ -59,11 +60,44 @@ export const useSearchApi = () => {
     totalCount.value = 0
   }
 
+  const getTypesStats = async (params: SearchParameters) => {
+    loadingGetTypesStats.value = true
+
+    try {
+      return await useApiService.get<ApiResult<SearchTypesStatsDTO | { types_stats: SearchTypesStatsDTO }>>(
+        '/api/v1/search/typesstats',
+        params,
+        { public: true },
+      )
+    }
+    catch {
+      return {
+        succeeded: false,
+        status: 0,
+        errors: [
+          {
+            message: 'The operation failed. Please try again later.',
+            code: '',
+            reference: '',
+            info: '',
+            value: '',
+          },
+        ],
+        data: null,
+      }
+    }
+    finally {
+      loadingGetTypesStats.value = false
+    }
+  }
+
   return {
     data,
     totalCount,
     loadingGetData,
+    loadingGetTypesStats,
     getData,
+    getTypesStats,
     resetData,
   }
 }

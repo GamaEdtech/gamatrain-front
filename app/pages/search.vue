@@ -59,6 +59,8 @@
         <div class="d-md-none mb-1">
           <search-services-tabs
             :active-service="activeService"
+            :service-counts="serviceCounts"
+            :counts-loading="isServiceCountsLoading"
             @change="handleServiceChange"
           />
         </div>
@@ -78,6 +80,8 @@
         <div class="d-none d-md-flex mb-4 py-2 bg-white container-service">
           <search-services-tabs
             :active-service="activeService"
+            :service-counts="serviceCounts"
+            :counts-loading="isServiceCountsLoading"
             @change="handleServiceChange"
           />
         </div>
@@ -107,8 +111,11 @@ import type {
   SearchFilterOption,
   SearchQuery,
   SearchResourceItem,
+  SearchServiceCounts,
   SearchServiceId,
+  SearchTypesStatsDTO,
 } from '@/types/search'
+import type { SearchParameters } from '@/composables/useApiService'
 import { buildSearchParams, normalizeSearchService } from '@/utils/searchServices'
 
 type InfiniteScrollStatus = 'ok' | 'empty' | 'loading' | 'error'
@@ -118,8 +125,23 @@ const INPUT_DEBOUNCE_MS = 1000
 
 const route = useRoute()
 const router = useRouter()
-const { getData } = useSearchApi()
+const { getData, getTypesStats } = useSearchApi()
 let inputTimer: ReturnType<typeof setTimeout> | null = null
+let serviceCountsRequestId = 0
+
+const SERVICE_COUNT_FILTER_KEYS = [
+  'title',
+  'section',
+  'base',
+  'lesson',
+  'topic',
+  'test_type',
+  'variant',
+  'exam_type',
+  'content_type',
+  'edu_year',
+  'edu_month',
+] as const
 
 const getQueryString = (value: unknown) => {
   return typeof value === 'string' ? value : ''
@@ -140,6 +162,8 @@ const isInitialLoading = ref(false)
 const isPaginationLoading = ref(false)
 const isPreviousLoading = ref(false)
 const isAllDataLoaded = ref(false)
+const isServiceCountsLoading = ref(true)
+const serviceCounts = ref<SearchServiceCounts>({})
 const initialPage = getPageNumber(route.query.page)
 const firstLoadedPage = ref(initialPage)
 const lastLoadedPage = ref(initialPage)
@@ -195,6 +219,75 @@ const fetchSearchData = async (
   return list
 }
 
+const getServiceCount = (
+  stats: SearchTypesStatsDTO,
+  ...keys: (keyof SearchTypesStatsDTO)[]
+) => {
+  const value = keys
+    .map(key => stats[key])
+    .find(candidate => candidate !== undefined && candidate !== null)
+  const count = Number.parseInt(String(value), 10)
+
+  return Number.isFinite(count) ? count : 0
+}
+
+const buildServiceCountsParams = (query: SearchQuery, isPaper: number): SearchParameters => {
+  const params: SearchParameters = { is_paper: isPaper }
+
+  SERVICE_COUNT_FILTER_KEYS.forEach((key) => {
+    if (query[key] !== undefined && query[key] !== null && query[key] !== '') {
+      params[key] = query[key]
+    }
+  })
+
+  return params
+}
+
+type TypesStatsResponse = Awaited<ReturnType<typeof getTypesStats>>
+
+const getTypesStatsData = (result: PromiseSettledResult<TypesStatsResponse>) => {
+  if (result.status !== 'fulfilled' || !result.value.data) return null
+
+  return 'types_stats' in result.value.data
+    ? result.value.data.types_stats
+    : result.value.data
+}
+
+const refreshServiceCounts = async () => {
+  const requestId = ++serviceCountsRequestId
+  const query = normalizeRouteQuery()
+
+  isServiceCountsLoading.value = true
+
+  try {
+    const [paperResult, studyMaterialsResult] = await Promise.allSettled([
+      getTypesStats(buildServiceCountsParams(query, 1)),
+      getTypesStats(buildServiceCountsParams(query, 0)),
+    ])
+
+    if (requestId !== serviceCountsRequestId) return
+
+    const paperStats = getTypesStatsData(paperResult)
+    const studyMaterialsStats = getTypesStatsData(studyMaterialsResult)
+    const sharedStats = paperStats || studyMaterialsStats
+    const counts: SearchServiceCounts = {}
+
+    if (paperStats) counts.paper = getServiceCount(paperStats as SearchTypesStatsDTO, 'papers')
+    if (studyMaterialsStats) counts['study-materials'] = getServiceCount(studyMaterialsStats as SearchTypesStatsDTO, 'papers')
+    if (sharedStats) {
+      counts.quizhub = getServiceCount(sharedStats as SearchTypesStatsDTO, 'exams', 'azmoon')
+      counts.tutorial = getServiceCount(sharedStats as SearchTypesStatsDTO, 'tutorials', 'dars')
+    }
+
+    serviceCounts.value = counts
+  }
+  finally {
+    if (requestId === serviceCountsRequestId) {
+      isServiceCountsLoading.value = false
+    }
+  }
+}
+
 const loadFirstPage = async (
   query = normalizeRouteQuery(),
   page = getPageNumber(route.query.page),
@@ -242,6 +335,7 @@ const searchByKeyword = async () => {
   }
 
   await updateKeywordQuery()
+  void refreshServiceCounts()
   await reloadResults()
 }
 
@@ -317,11 +411,13 @@ const loadPreviousPage = async () => {
 
 const handleFilterChange = async (key: SearchFilterKey, option: SearchFilterOption | null) => {
   await selectFilter(key, option)
+  void refreshServiceCounts()
   await reloadResults()
 }
 
 const handleFiltersReset = async () => {
   await resetFilters()
+  void refreshServiceCounts()
   await reloadResults()
 }
 
@@ -344,6 +440,10 @@ onBeforeUnmount(() => {
   if (inputTimer) {
     clearTimeout(inputTimer)
   }
+})
+
+onMounted(() => {
+  void refreshServiceCounts()
 })
 
 const { metadata } = useSearchMetadata({
