@@ -20,7 +20,7 @@ const props = withDefaults(defineProps<{
 
 const DIFFICULTIES = {
   1: { label: 'Easy', icon: 'md:signal_cellular_alt_1_bar', color: 'greenLight700' },
-  2: { label: 'Medium', icon: 'md:signal_cellular_alt_2_bar', color: 'warning400' },
+  2: { label: 'Medium', icon: 'md:signal_cellular_alt_2_bar', color: 'warning500' },
   3: { label: 'Hard', icon: 'md:signal_cellular_alt', color: 'lightError' },
 } as const
 

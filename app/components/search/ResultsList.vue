@@ -15,7 +15,7 @@
           cols="12"
           class="px-0"
         >
-          <SearchCardSkeleton />
+          <search-card-skeleton />
         </v-col>
       </template>
 
@@ -51,7 +51,7 @@
             cols="12"
             class="px-0"
           >
-            <SearchCardSkeleton />
+            <search-card-skeleton />
           </v-col>
         </template>
 
@@ -83,7 +83,7 @@
           cols="12"
           class="px-0"
         >
-          <SearchCard :information="item" />
+          <search-card :information="item" />
         </v-col>
       </template>
     </v-row>
@@ -99,7 +99,7 @@
           cols="12"
           class="px-0"
         >
-          <SearchCardSkeleton />
+          <search-card-skeleton />
         </v-col>
       </v-row>
     </template>
