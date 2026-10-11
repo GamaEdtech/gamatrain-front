@@ -60,20 +60,22 @@
           cols="12"
         >
           <div class="w-100 d-flex flex-column align-center justify-center ga-4 pa-8 rounded-lg empty-results">
-            <v-icon
-              color="grey300"
-              size="48"
+            <span class="text-h4 font-weight-bold text-grey700 text-center">
+              Be the first to add content to this category.
+            </span>
+            <v-btn
+              color="primary"
+              rounded="pill"
+              flat
+              width="250"
+              class="text-none text-h5 font-weight-bold"
+              @click="publishContent"
             >
-              md:search_off
-            </v-icon>
-            <div class="d-flex flex-column align-center ga-1 text-center">
-              <span class="text-h4 font-weight-bold text-grey700">
-                No results found
-              </span>
-              <span class="text-h6 font-weight-regular text-grey500">
-                Try changing the selected filters.
-              </span>
-            </div>
+              <v-icon color="brandNavy">
+                md:add
+              </v-icon>
+              Publish
+            </v-btn>
           </div>
         </v-col>
 
@@ -125,7 +127,7 @@
 </template>
 
 <script setup lang="ts">
-import type { SearchResourceItem } from '@/types/search'
+import type { SearchResourceItem, SearchServiceId } from '@/types/search'
 
 type InfiniteScrollStatus = 'ok' | 'empty' | 'loading' | 'error'
 
@@ -134,6 +136,9 @@ interface InfiniteScrollLoadOptions {
 }
 
 const infiniteScroll = ref<{ reset: () => void } | null>(null)
+const router = useRouter()
+const route = useRoute()
+const auth = useAuth()
 
 const props = defineProps<{
   items: SearchResourceItem[]
@@ -142,6 +147,7 @@ const props = defineProps<{
   isPreviousLoading: boolean
   isAllDataLoaded: boolean
   firstLoadedPage: number
+  activeService: SearchServiceId
 }>()
 
 const emit = defineEmits<{
@@ -165,6 +171,28 @@ const loadNextResults = async ({ done }: InfiniteScrollLoadOptions) => {
 
 const reset = () => {
   infiniteScroll.value?.reset()
+}
+
+const createLinksByService: Partial<Record<SearchServiceId, string>> = {
+  'paper': '/user/paper/create',
+  'study-materials': '/user/multimedia/create',
+  'tutorial': '/user/paper/create',
+  'quizhub': '/test-maker/create',
+  'forum': '/user/question/create',
+}
+
+const publishContent = () => {
+  if (!auth.isAuthenticated.value) {
+    router.push({
+      query: {
+        ...route.query,
+        auth_form: 'login',
+      },
+    })
+    return
+  }
+
+  router.push(createLinksByService[props.activeService] || '/user/paper/create')
 }
 
 defineExpose({

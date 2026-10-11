@@ -105,9 +105,10 @@
             rounded="xl"
             height="44"
             class="text-none font-weight-bold"
+            :loading="resultsLoading"
             @click="isMobileDialogOpen = false"
           >
-            Show results (128)
+            Show results ({{ formattedResultsCount }})
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -124,12 +125,19 @@ const emit = defineEmits<{
   reset: []
 }>()
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   filters: SearchFilterState[]
-}>()
+  resultsCount?: number | string
+  resultsLoading?: boolean
+}>(), {
+  resultsCount: 0,
+  resultsLoading: false,
+})
 
 const { mdAndUp } = useDisplay()
+const { $numberFormat } = useNuxtApp()
 const visibleFilters = computed(() => props.filters.filter(filter => filter.key !== 'type'))
+const formattedResultsCount = computed(() => $numberFormat(props.resultsCount || 0))
 const isMobileDialogOpen = ref(false)
 
 const selectFilter = (key: SearchFilterKey, option: SearchFilterOption | null) => {

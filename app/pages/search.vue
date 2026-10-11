@@ -67,6 +67,8 @@
 
         <search-filter-panel
           :filters="filters"
+          :results-count="totalCount"
+          :results-loading="isInitialLoading"
           @select-filter="handleFilterChange"
           @reset="handleFiltersReset"
         />
@@ -97,6 +99,7 @@
           :is-previous-loading="isPreviousLoading"
           :is-all-data-loaded="isAllDataLoaded"
           :first-loaded-page="firstLoadedPage"
+          :active-service="activeService"
           @load-next="loadNextPage"
           @load-previous="loadPreviousPage"
         />
@@ -125,7 +128,7 @@ const INPUT_DEBOUNCE_MS = 1000
 
 const route = useRoute()
 const router = useRouter()
-const { getData, getTypesStats } = useSearchApi()
+const { getData, getTypesStats, totalCount } = useSearchApi()
 let inputTimer: ReturnType<typeof setTimeout> | null = null
 let serviceCountsRequestId = 0
 
