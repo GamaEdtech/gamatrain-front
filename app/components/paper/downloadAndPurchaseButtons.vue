@@ -43,12 +43,10 @@
             width="3"
           />
         </template>
-        <v-icon
-          color="#f04438"
-          size="20"
-        >
-          md:picture_as_pdf_outlined
-        </v-icon>
+        <span
+          class="text-lightError icon-pdf icon-size mt-1"
+          aria-hidden="true"
+        />
         <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download {{ isPaper ? 'Question Paper' : 'PDF' }}</span>
 
         <common-price-with-gem
@@ -76,12 +74,10 @@
             width="3"
           />
         </template>
-        <v-icon
-          color="#2e90fa"
-          size="20"
-        >
-          md:description_outlined
-        </v-icon>
+        <span
+          class="text-info icon-word icon-size mt-1"
+          aria-hidden="true"
+        />
         <span class="text-word text-h5 font-weight-bold mt-1 mx-2">Download {{ isPaper ? 'Question Doc': 'DOC' }}</span>
 
         <common-price-with-gem
@@ -426,6 +422,9 @@ const upgradePlanSuccessfully = async () => {
   height: 6px;
   border-radius: 20px;
   background-color: #d0d5dd;
+}
+.icon-size{
+  font-size : 24px;
 }
 
 @media only screen and (max-width: 600px) {

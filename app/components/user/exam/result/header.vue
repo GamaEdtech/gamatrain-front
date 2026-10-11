@@ -30,12 +30,10 @@
           width="3"
         />
       </template>
-      <v-icon
-        color="lightError"
-        size="20"
-      >
-        md:picture_as_pdf_outlined
-      </v-icon>
+      <span
+        class="text-lightError icon-pdf icon-size mt-1"
+        aria-hidden="true"
+      />
       <span class="text-lightError text-h5 font-weight-bold mt-1 mx-2">Download key</span>
 
       <common-price-with-gem
@@ -179,5 +177,8 @@ const upgradePlanSuccessfully = async () => {
 .btn-pdf {
   background-color : rgb(var(--v-theme-lightError), 0.25);
   border: 1px solid rgb(var(--v-theme-lightError));
+}
+.icon-size{
+  font-size : 24px;
 }
 </style>

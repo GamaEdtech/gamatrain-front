@@ -61,11 +61,17 @@
 
         <template v-else>
           <v-icon
+            v-if="format.icon"
             :color="format.color"
             size="20"
           >
             {{ format.icon }}
           </v-icon>
+          <span
+            v-if="format.gamaIcon"
+            :class="`${format.gamaIcon} text-${format.color} icon-size mt-1`"
+            aria-hidden="true"
+          />
           <span :class="`${format.textClass} text-h5 font-weight-bold mt-1 mx-2`">Download {{ format.label }}</span>
 
           <span
@@ -181,13 +187,14 @@ const { xs } = useDisplay()
 const exportFormats: {
   fileType: ExamExportFileType
   label: string
-  icon: string
+  icon?: string
+  gamaIcon?: string
   color: string
   buttonClass: string
   textClass: string
 }[] = [
-  { fileType: 'Pdf', label: 'PDF', icon: 'md:picture_as_pdf_outlined', color: 'lightError', buttonClass: 'btn-pdf', textClass: 'text-pdf' },
-  { fileType: 'Word', label: 'Word', icon: 'md:description_outlined', color: '#2b579a', buttonClass: 'btn-word', textClass: 'text-word' },
+  { fileType: 'Pdf', label: 'PDF', gamaIcon: 'icon-pdf', color: 'lightError', buttonClass: 'btn-pdf', textClass: 'text-pdf' },
+  { fileType: 'Word', label: 'Word', gamaIcon: 'icon-word', color: 'info', buttonClass: 'btn-word', textClass: 'text-word' },
   { fileType: 'PowerPoint', label: 'PowerPoint', icon: 'md:slideshow_outlined', color: '#c43e1c', buttonClass: 'btn-powerpoint', textClass: 'text-powerpoint' },
 ]
 
@@ -276,11 +283,11 @@ onMounted(() => {
     color: rgb(var(--v-theme-lightError));
 }
 .btn-word {
-  background-color: rgba(43, 87, 154, 0.12);
-  border: 1px solid #2b579a;
+  background-color: rgba(var(--v-theme-info),0.2);
+  border: 1px solid  rgb(var(--v-theme-info));
 }
 .text-word {
-  color: #2b579a;
+  color: rgb(var(--v-theme-info));
 }
 .btn-powerpoint {
   background-color: rgba(196, 62, 28, 0.12);
@@ -289,6 +296,10 @@ onMounted(() => {
 .text-powerpoint {
   color: #c43e1c;
 }
+.icon-size{
+  font-size : 24px;
+}
+
 /* "Cooking" phase: a blinking (pulsing) heart while the server generates the file. */
 .heart-blink {
   animation: heart-blink 1s ease-in-out infinite;
