@@ -171,8 +171,6 @@
 
 <script setup lang="ts">
 import type { SearchCardItem, LegacySearchType } from '@/types/search'
-import DifficultyIndicator from './DifficultyIndicator.vue'
-import QualityIndicator from './QualityIndicator.vue'
 import { getLegacySearchType } from '@/utils/searchServices'
 
 const props = withDefaults(defineProps<{
