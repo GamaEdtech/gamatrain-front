@@ -43,11 +43,17 @@
           />
         </template>
         <v-icon
+          v-if="files.ext == 'mp4' || files.ext == 'pptx'"
           color="lightError"
           size="20"
         >
-          {{ files.ext == 'mp4' ? `md:video_file` : files.ext == 'pptx' ? 'md:slideshow' : 'md:picture_as_pdf_outlined' }}
+          {{ files.ext == 'mp4' ? `md:video_file` : 'md:slideshow' }}
         </v-icon>
+        <span
+          v-else
+          class="text-lightError icon-pdf icon-size mt-1"
+          aria-hidden="true"
+        />
         <span class="text-pdf text-h5 font-weight-bold mt-1 mx-2">Download {{ files.ext ? files.ext.toUpperCase() : 'PPTX' }}</span>
 
         <common-price-with-gem
@@ -241,6 +247,9 @@ const upgradePlanSuccessfully = async () => {
   height: 6px;
   border-radius: 20px;
   background-color: rgb(var(--v-theme-grey300));
+}
+.icon-size{
+  font-size : 24px;
 }
 
 @media only screen and (max-width: 600px) {

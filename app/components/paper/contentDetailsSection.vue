@@ -48,13 +48,7 @@
 
   <div class="w-100 d-flex align-center justify-space-between mt-8">
     <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
-      <v-icon
-        icon="md:segment_outlined"
-        class="detail-test-type-icon"
-        color="brandNavy"
-        size="22.5"
-        aria-hidden="true"
-      />
+      <v-icon color="#475467">md:files_outlined</v-icon>
       {{ contentData?.test_type_title }}
     </span>
     <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
@@ -186,11 +180,5 @@ onBeforeUnmount(() => {
   height: 40px;
   pointer-events: none;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, #ffffff 80%);
-}
-.detail-test-type-icon {
-  width: 22.5px;
-  height: 22.5px;
-  flex: 0 0 22.5px;
-  background: transparent;
 }
 </style>

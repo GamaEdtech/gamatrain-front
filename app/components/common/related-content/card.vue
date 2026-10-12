@@ -38,13 +38,11 @@
         >
           md:file_present
         </v-icon>
-        <v-icon
+        <span
           v-else-if="score == 'pdf'"
-          class="text-white"
-          size="18"
-        >
-          md:picture_as_pdf_outlined
-        </v-icon>
+          class="text-white icon-pdf icon-size ml-1"
+          aria-hidden="true"
+        />
         <v-icon
           v-else
           class="text-white"
@@ -162,5 +160,8 @@ defineProps<IRelatedContentCard>()
   width: 20px;
   height: 20px;
   object-fit: cover;
+}
+.icon-size{
+  font-size : 18px;
 }
 </style>

@@ -1,7 +1,6 @@
 import type {
   LegacySearchType,
   SearchQuery,
-  SearchQueryValue,
   SearchRequestParams,
   SearchServiceId,
   SearchTypeAlias,
@@ -40,12 +39,12 @@ const LEGACY_TYPE_BY_SEARCH_SERVICE = {
 const isSearchTypeAlias = (type: string): type is SearchTypeAlias =>
   Object.prototype.hasOwnProperty.call(SEARCH_SERVICE_BY_TYPE, type)
 
-export const normalizeSearchService = (type: SearchQueryValue): SearchServiceId => {
+export const normalizeSearchService = (type: unknown): SearchServiceId => {
   const key = String(type ?? '')
   return isSearchTypeAlias(key) ? SEARCH_SERVICE_BY_TYPE[key] : 'paper'
 }
 
-export const getLegacySearchType = (type: SearchQueryValue): LegacySearchType => {
+export const getLegacySearchType = (type: unknown): LegacySearchType => {
   const key = String(type ?? '')
   return isSearchTypeAlias(key) ? LEGACY_TYPE_BY_SEARCH_SERVICE[key] : 'test'
 }
@@ -83,16 +82,6 @@ export const buildSearchParams = (query: SearchQuery, page: number, perpage: num
   }
   else if (frontendType === 'tutorial') {
     params.topic = query.topic
-  }
-  else if (frontendType === 'multimedia') {
-    params.content_type = query.content_type
-  }
-  else {
-    params.topic = query.topic
-    params.test_type = query.test_type
-    params.content_type = query.content_type
-    params.edu_year = query.edu_year
-    params.edu_month = query.edu_month
   }
 
   return params

@@ -6,7 +6,7 @@
     <div class="w-100 d-flex align-center align-md-start justify-start ga-2">
       <div
         class="icon-div rounded-circle d-flex align-center justify-center"
-        :class="category.colorClass"
+        :style="{ backgroundColor: category.backgroundColor }"
       >
         <span :class="`icon-span ${category.iconName}`" />
       </div>
@@ -41,7 +41,7 @@
             class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
             color="#F2F4F7"
             :to="`/search?type=${
-              searchType
+              category.typePaper ? category.typePaper : `paper`
             }&section=${information.section}`"
           >
             {{ information?.section_title }}
@@ -52,7 +52,7 @@
             class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
             color="#F2F4F7"
             :to="`/search?type=${
-              searchType
+              category.typePaper ? category.typePaper : `paper`
             }&section=${information.section}&base=${information.base}`"
           >
             {{ information?.base_title }}
@@ -63,7 +63,7 @@
             class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
             color="#F2F4F7"
             :to="`/search?type=${
-              searchType
+              category.typePaper ? category.typePaper : `paper`
             }&section=${information.section}&base=${information.base}&lesson=${
               information.lesson
             }`"
@@ -125,7 +125,7 @@
         class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
         color="#F2F4F7"
         :to="`/search?type=${
-          searchType
+          category.typePaper ? category.typePaper : `paper`
         }&section=${information.section}`"
       >
         {{ information?.section_title }}
@@ -136,7 +136,7 @@
         class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
         color="#F2F4F7"
         :to="`/search?type=${
-          searchType
+          category.typePaper ? category.typePaper : `paper`
         }&section=${information.section}&base=${information.base}`"
       >
         {{ information?.base_title }}
@@ -147,7 +147,7 @@
         class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
         color="#F2F4F7"
         :to="`/search?type=${
-          searchType
+          category.typePaper ? category.typePaper : `paper`
         }&section=${information.section}&base=${information.base}&lesson=${
           information.lesson
         }`"
@@ -206,10 +206,6 @@ const props = defineProps({
   },
 })
 
-const searchType = computed(() =>
-  props.category.searchType || props.category.typePaper || 'paper',
-)
-
 const getOnlineStatusText = useOnlineStatusText
 
 const createLink = () => {
@@ -230,10 +226,7 @@ const createLink = () => {
 }
 </script>
 
-<style scoped lang="scss">
-@use 'sass:map';
-@use 'vuetify/settings' as vuetify;
-
+<style scoped>
 .icon-div {
   min-width: 60px;
   min-height: 60px;
@@ -243,7 +236,7 @@ const createLink = () => {
   color: #ffffff;
 }
 
-@media #{map.get(vuetify.$display-breakpoints, 'xs')} {
+@media only screen and (max-width: 600px) {
   .icon-div {
     min-width: 40px;
     min-height: 40px;

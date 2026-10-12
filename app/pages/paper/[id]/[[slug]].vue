@@ -88,9 +88,7 @@
           :test-type="contentData.test_type"
           :is-paper="contentData.is_paper"
         />
-        <div class="paper-subject-directory w-100">
-          <lazy-common-detail-subject-directory-nav :content-data="contentData" />
-        </div>
+        <lazy-common-detail-subject-directory-nav :content-data="contentData" />
       </v-col>
 
       <lazy-common-box-random-question :lesson="contentData.lesson" />
@@ -405,7 +403,4 @@ const editSuccessfully = (data: {
 </script>
 
 <style scoped>
-.paper-subject-directory {
-  margin-top: 16px;
-}
 </style>
