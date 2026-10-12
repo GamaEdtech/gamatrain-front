@@ -12,95 +12,100 @@
       >{{ paperCode }}</span>
     </NuxtLink>
 
-    <div class="directory-exam-cell">
-      <v-btn
-        v-if="examIds.length === 1"
-        :to="`/exam/${examIds[0]}`"
-        class="directory-action directory-exam-button text-none font-weight-regular"
-        color="black"
-        variant="flat"
-        height="38"
+    <div class="directory-paper-actions d-flex flex-wrap align-center ga-2">
+      <div
+        v-if="examIds.length"
+        class="directory-exam-cell"
       >
-        <v-icon
-          size="24"
-          color="lightError"
-          class="mr-2"
+        <v-btn
+          v-if="examIds.length === 1"
+          :to="`/exam/${examIds[0]}`"
+          class="directory-action directory-exam-button text-none font-weight-regular"
+          color="black"
+          variant="flat"
+          height="40"
         >
-          md:sensors
-        </v-icon>
-        Online Exam
-        <v-icon
-          size="24"
-          class="ml-2"
-        >
-          md:chevron_right
-        </v-icon>
-      </v-btn>
-      <v-menu v-else-if="examIds.length > 1">
-        <template #activator="{ props: menuProps }">
-          <v-btn
-            v-bind="menuProps"
-            class="directory-action directory-exam-button text-none font-weight-regular"
-            color="black"
-            variant="flat"
-            height="38"
+          <v-icon
+            size="20"
+            color="lightError"
+            class="mr-1"
           >
-            <v-icon
-              size="24"
-              color="lightError"
-              class="mr-2"
+            md:sensors
+          </v-icon>
+          Online Exam
+          <v-icon
+            size="20"
+            class="ml-1"
+          >
+            md:chevron_right
+          </v-icon>
+        </v-btn>
+        <v-menu v-else-if="examIds.length > 1">
+          <template #activator="{ props: menuProps }">
+            <v-btn
+              v-bind="menuProps"
+              class="directory-action directory-exam-button text-none font-weight-regular"
+              color="black"
+              variant="flat"
+              height="40"
             >
-              md:sensors
-            </v-icon>
-            Online Exam
-            <v-icon
-              size="24"
-              class="ml-2"
-            >
-              md:chevron_right
-            </v-icon>
-          </v-btn>
-        </template>
-        <v-list aria-label="Connected online exams">
-          <v-list-item
-            v-for="(id, index) in examIds"
-            :key="id"
-            :to="`/exam/${id}`"
-            :title="`Online Exam ${index + 1}`"
-          />
-        </v-list>
-      </v-menu>
-    </div>
+              <v-icon
+                size="20"
+                color="lightError"
+                class="mr-1"
+              >
+                md:sensors
+              </v-icon>
+              Online Exam
+              <v-icon
+                size="20"
+                class="ml-1"
+              >
+                md:chevron_right
+              </v-icon>
+            </v-btn>
+          </template>
+          <v-list aria-label="Connected online exams">
+            <v-list-item
+              v-for="(id, index) in examIds"
+              :key="id"
+              :to="`/exam/${id}`"
+              :title="`Online Exam ${index + 1}`"
+            />
+          </v-list>
+        </v-menu>
+      </div>
 
-    <div class="directory-downloads d-flex align-center ga-3">
-      <v-btn
-        v-for="file in files"
-        :key="file.type"
-        class="directory-action directory-download text-none font-weight-regular flex-shrink-0"
-        :class="`directory-download--${file.style}`"
-        :color="file.style === 'question' ? 'directoryInk' : undefined"
-        variant="flat"
-        height="38"
-        :loading="downloads.isDownloading(paper, file.type)"
-        :disabled="downloads.isBusy && !downloads.isDownloading(paper, file.type)"
-        :aria-label="`${file.title} — ${getDirectoryPaperTitle(paper)}`"
-        @click="downloads.handleDownload(file.type, paper)"
-      >
-        <v-icon
-          :icon="file.icon"
-          size="24"
-          class="mr-2"
-          :class="{ 'directory-insert-icon': file.type === 'in_file' }"
-        />
-        {{ file.title }}
-        <template #loader>
-          <v-progress-circular
-            :model-value="downloads.getDownloadProgress(paper, file.type)"
-            size="24"
-            width="2"
+      <div class="directory-downloads">
+        <v-btn
+          v-for="file in files"
+          :key="file.type"
+          class="directory-action directory-download text-none font-weight-regular flex-shrink-0"
+          :class="`directory-download--${file.style}`"
+          :color="file.style === 'question' ? 'directoryInk' : undefined"
+          variant="flat"
+          height="40"
+          :loading="downloads.isDownloading(paper, file.type)"
+          :disabled="downloads.isBusy && !downloads.isDownloading(paper, file.type)"
+          :aria-label="`${file.title} — ${getDirectoryPaperTitle(paper)}`"
+          @click="downloads.handleDownload(file.type, paper)"
+        >
+          <v-icon
+            :icon="file.icon"
+            size="20"
+            class="mr-1"
+            :class="{ 'directory-insert-icon': file.type === 'in_file' }"
           />
-        </template>
-      </v-btn>
+          {{ file.title }}
+          <template #loader>
+            <v-progress-circular
+              :model-value="downloads.getDownloadProgress(paper, file.type)"
+              size="20"
+              width="2"
+            />
+          </template>
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -116,18 +121,19 @@ const props = defineProps({
   subjectTitle: { type: String, default: '' },
   downloads: { type: Object, required: true },
 })
-const files = computed(() => getDirectoryPaperDownloads(props.paper))
+const files = computed(() => [...getDirectoryPaperDownloads(props.paper)].reverse())
 const examIds = computed(() => getDirectoryExamIds(props.paper.exam_id))
 const paperCode = computed(() => getDirectoryPaperCode(props.paper, props.subjectTitle))
 </script>
 
 <style scoped>
 .directory-paper-row {
-  display: grid;
-  grid-template-columns: 154px 180px minmax(0, 1fr);
-  column-gap: 24px;
-  min-height: 61px;
-  padding: 8px 24px 8px 106px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  min-width: 0;
+  min-height: 56px;
+  padding: 8px 0 8px var(--directory-session-text-offset, 56px);
   transition: background-color 150ms ease;
 }
 
@@ -152,9 +158,15 @@ const paperCode = computed(() => getDirectoryPaperCode(props.paper, props.subjec
   outline-offset: -2px;
 }
 
+.directory-paper-link {
+  min-width: 0;
+  flex: 1 1 100px;
+  overflow-wrap: anywhere;
+}
+
 .directory-paper-title {
-  font-size: 18px;
-  line-height: 22px;
+  font-size: 16px;
+  line-height: 20px;
 }
 
 .directory-paper-code {
@@ -166,27 +178,42 @@ const paperCode = computed(() => getDirectoryPaperCode(props.paper, props.subjec
   position: relative;
   z-index: 1;
   border-radius: 10px;
-  font-size: 15px;
+  max-width: 100%;
+  font-size: 12px;
   letter-spacing: normal;
 }
 
 .directory-exam-button {
-  width: 180px;
-  padding-inline: 10px;
+  width: 100%;
+  padding-inline: 8px;
+}
+
+.directory-paper-actions {
+  min-width: 0;
+  flex: 3 1 480px;
+}
+.directory-exam-cell {
+  flex: 0 0 140px;
+  max-width: 100%;
+}
+
+.directory-action :deep(.v-btn__content) {
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
 .directory-downloads {
+  display: flex;
+  flex: 1 1 310px;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
   min-width: 0;
-  overflow-x: auto;
-  padding: 2px;
-}
-
-.directory-download:first-child {
-  margin-inline-start: auto;
 }
 
 .directory-download {
-  padding-inline: 14px;
+  padding-inline: 8px;
   border: 2px solid rgb(var(--v-theme-directoryExtraBorder));
   color: rgb(var(--v-theme-directoryInk));
   background-color: rgb(var(--v-theme-white));
@@ -203,37 +230,6 @@ const paperCode = computed(() => getDirectoryPaperCode(props.paper, props.subjec
 
 .directory-insert-icon {
   transform: rotate(45deg);
-}
-
-@media (max-width: 1279px) {
-  .directory-paper-row {
-    grid-template-columns: 130px 180px minmax(0, 1fr);
-    column-gap: 16px;
-    padding-inline-start: 24px;
-  }
-}
-
-@media (max-width: 959px) {
-  .directory-paper-row {
-    grid-template-columns: minmax(0, 1fr) 180px;
-    grid-template-rows: 44px 42px;
-    gap: 8px 12px;
-    min-height: 118px;
-    padding: 12px;
-  }
-
-  .directory-paper-title {
-    font-size: 16px;
-    line-height: 20px;
-  }
-
-  .directory-downloads {
-    grid-column: 1 / -1;
-  }
-
-  .directory-download:first-child {
-    margin-inline-start: 0;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

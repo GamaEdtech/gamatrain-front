@@ -13,10 +13,6 @@ export const getDirectoryResourceCollections = (data: DirectoryResourceGroup[] =
       icon: presentation?.icon || 'md:description_outlined',
       // The directory endpoint returns full, unpaginated collection lists.
       count: resource.items.length,
-      items: resource.items.map(item => ({
-        ...item,
-        to: `/paper/${encodeURIComponent(item.id)}/${encodeURIComponent(item.title_url)}`,
-      })),
     }
   })
 

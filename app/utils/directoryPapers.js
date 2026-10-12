@@ -9,8 +9,10 @@ export const getDirectoryPaperCode = (paper, subjectTitle = '') => {
   // code for boards whose payload/title does not provide one.
   const code = (paper.lesson_title || subjectTitle).match(/\((\d{4})\)\s*$/)?.[1]
   const number = getDirectoryPaperTitle(paper).match(/^Paper\s+(\w+)$/)?.[1]
-  if (code && number) return `${code}/${number}`
-  return paper.title?.match(/\b\d{4}\/\w+\b/)?.[0] || ''
+  const paperCode = code && number ? `${code}/${number}` : paper.title?.match(/\b\d{4}\/\w+\b/)?.[0] || ''
+  const variantTitle = String(paper.variant_title || '').trim().toLowerCase()
+  const hasVariant = paper.variant && String(paper.variant) !== '0' && variantTitle && variantTitle !== 'nv'
+  return hasVariant ? paperCode : paperCode.replace(/\/(\d)$/, '/0$1')
 }
 
 export const getDirectoryPaperLink = paper => `/paper/${paper.id}/${paper.title_url || ''}`

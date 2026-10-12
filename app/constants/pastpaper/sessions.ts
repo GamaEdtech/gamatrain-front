@@ -104,14 +104,14 @@ const DIRECTORY_SESSION_TITLES: Record<string, string> = {
   'Oct/Nov': 'October/November',
 }
 
-// Directory session cards follow calendar order. Cambridge's March API value
+// Directory sessions run from newest to oldest. Cambridge's March API value
 // represents the combined February/March examination series.
 export const getDirectoryPaperSessions = (gradeId?: string | number) => {
   const months = getPastPaperMonths(gradeId)
   const isCambridge = ['22', '4161', '6374', '23', '6533'].includes(String(gradeId))
 
   return [...months]
-    .sort((first, second) => first.id - second.id)
+    .sort((first, second) => second.id - first.id)
     .map(month => ({
       ...month,
       title: isCambridge && month.id === 3

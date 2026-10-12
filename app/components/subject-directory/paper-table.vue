@@ -3,14 +3,12 @@
     class="directory-papers text-black"
     aria-labelledby="directory-papers-title"
   >
-    <div class="d-flex align-center ga-2 mb-2">
-      <h2
-        id="directory-papers-title"
-        class="directory-heading text-grey900"
-      >
-        Past Papers
-      </h2>
-    </div>
+    <h2
+      id="directory-papers-title"
+      class="d-sr-only"
+    >
+      Past Papers
+    </h2>
 
     <SubjectDirectoryPaperFilters
       :filters="filterButtons"
@@ -52,7 +50,7 @@
         <v-expansion-panel-text>
           <div
             v-if="yearAvailabilityLoading(year.id)"
-            class="d-flex align-center justify-center ga-3 pa-4 text-grey600"
+            class="d-flex align-center ga-3 py-4 text-grey600"
             role="status"
           >
             <v-progress-circular
@@ -65,10 +63,11 @@
           </div>
           <v-expansion-panels
             v-if="displayedSessions(year.id).length"
-            v-model="expandedSessions[year.id]"
+            :model-value="expandedSessions[year.id]"
             class="directory-sessions"
             variant="accordion"
             multiple
+            @update:model-value="expandSessions(year.id, $event)"
           >
             <v-expansion-panel
               v-for="session in displayedSessions(year.id)"
@@ -100,7 +99,7 @@
           </v-expansion-panels>
           <p
             v-else-if="!yearAvailabilityLoading(year.id)"
-            class="pa-6 ma-0 text-grey600 text-center"
+            class="py-6 ma-0 text-grey600"
             role="status"
           >
             No papers are available for this year.
@@ -161,7 +160,7 @@ const props = defineProps({
 
 const {
   filters, filterButtons, visibleYears, expandedYears, expandedSessions,
-  selectFilter, clearFilters, fetchOptions, expandYears, sessionKey, sessionState, loadSession, isSessionOpen,
+  selectFilter, clearFilters, fetchOptions, expandYears, expandSessions, sessionKey, sessionState, loadSession, isSessionOpen,
   displayedSessions, yearAvailabilityLoading,
 } = await useDirectoryPapers(props)
 
@@ -178,14 +177,11 @@ const PRICE_FILE = 10
 
 <style scoped>
 .directory-papers {
+  --directory-session-padding: 24px;
+  --directory-chevron-size: 20px;
+  --directory-chevron-gap: 12px;
+  --directory-session-text-offset: calc(var(--directory-session-padding) + var(--directory-chevron-size) + var(--directory-chevron-gap));
   width: 100%;
-}
-
-.directory-heading {
-  font-size: 22px;
-  font-weight: 600;
-  line-height: 1.4;
-  overflow-wrap: anywhere;
 }
 
 .directory-years :deep(.v-expansion-panel) {
@@ -203,26 +199,26 @@ const PRICE_FILE = 10
 
 .directory-years :deep(.v-expansion-panel-title__icon) {
   order: -1;
-  margin-inline: 0 12px;
+  margin-inline: 0 var(--directory-chevron-gap);
   color: rgb(var(--v-theme-grey500));
 }
 
 .directory-years :deep(.v-expansion-panel-title__icon .v-icon) {
-  width: 20px;
-  height: 20px;
-  font-size: 20px;
+  width: var(--directory-chevron-size);
+  height: var(--directory-chevron-size);
+  font-size: var(--directory-chevron-size);
 }
 
 .directory-year-title {
   min-height: 48px;
-  padding: 8px;
+  padding: 8px 0;
   font-size: 18px;
   line-height: 24px;
 }
 
 .directory-session-title {
   min-height: 44px;
-  padding: 8px 24px;
+  padding: 8px var(--directory-session-padding);
   font-size: 16px;
   line-height: 24px;
 }

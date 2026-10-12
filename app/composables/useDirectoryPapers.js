@@ -7,6 +7,7 @@ import { getDirectoryPaperSessions, PAST_PAPER_YEAR_OPTIONS } from '~/constants/
 import { createDirectoryPaperLoader } from '~/utils/directoryPaperLoader'
 import { getDirectorySessionKey } from '~/utils/directoryPapers'
 import { createDirectorySessionAvailability } from '~/utils/directorySessionAvailability'
+import { createDirectoryLatestSessionExpansion } from '~/utils/directoryPaperExpansion'
 
 export const useDirectoryPapers = async (context) => {
   const filters = reactive({ year: '', series: '', paper: '', variant: '' })
@@ -21,6 +22,7 @@ export const useDirectoryPapers = async (context) => {
     useApiService.get('/api/v1/tests/search', params, { public: true, signal }),
   { makeState: reactive })
   let availabilityReady = false
+  let resettingSubjectFilters = false
 
   const sessions = computed(() => getDirectoryPaperSessions(context.gradeId))
   const visibleYears = computed(() => filters.year
@@ -29,7 +31,7 @@ export const useDirectoryPapers = async (context) => {
   const visibleSessions = computed(() => filters.series
     ? sessions.value.filter(item => String(item.id) === filters.series)
     : sessions.value)
-  const firstSession = () => (visibleSessions.value.find(item => item.id === 6) || visibleSessions.value[0])?.id
+  const firstSession = () => visibleSessions.value[0]?.id
 
   const filterButtons = computed(() => DIRECTORY_FILTERS.map(filter => ({
     ...filter,
@@ -90,33 +92,58 @@ export const useDirectoryPapers = async (context) => {
     const available = displayedSessions(year)
     const allowed = new Set(available.map(session => session.id))
     const selected = (expandedSessions[year] || []).filter(month => allowed.has(month))
-    if (selected.length) {
-      expandedSessions[year] = selected
-      return
-    }
-    const preferred = available.find(session => session.id === 6) || available[0]
-    expandedSessions[year] = preferred ? [preferred.id] : []
+    expandedSessions[year] = selected
   }
 
+  const automaticExpansion = createDirectoryLatestSessionExpansion({
+    years: () => context.subjectId ? visibleYears.value : [],
+    sessions: () => visibleSessions.value,
+    checkYear: ensureYearAvailability,
+    status: (year, month) => availabilityState(year, month).status,
+    open: (year, month) => {
+      expandedYears.value = [year]
+      expandedSessions[year] = [month]
+    },
+  })
+
   const expandYears = (years) => {
+    automaticExpansion.cancel()
+    const previousYears = expandedYears.value
     expandedYears.value = years
     for (const year of years) {
-      if (!expandedSessions[year]) expandedSessions[year] = firstSession() == null ? [] : [firstSession()]
+      if (!previousYears.includes(year) || !expandedSessions[year]) expandedSessions[year] = []
       if (availabilityReady) ensureYearAvailability(year)
     }
   }
 
+  const expandSessions = (year, months) => {
+    automaticExpansion.cancel()
+    expandedSessions[year] = months
+  }
+
   watch(() => [context.subjectId, context.gradeId, context.boardId].map(value => String(value || '')).join(':'), () => {
+    automaticExpansion.cancel()
     loader.clear()
     availability.clear()
+    resettingSubjectFilters = Object.values(filters).some(Boolean)
     Object.assign(filters, { year: '', series: '', paper: '', variant: '' })
     for (const year of Object.keys(expandedSessions)) delete expandedSessions[year]
     expandYears(context.subjectId ? [PAST_PAPER_YEAR_OPTIONS[0].id] : [])
+    if (availabilityReady) automaticExpansion.openLatest()
   }, { immediate: true })
 
-  watch(() => [filters.year, filters.series, filters.paper, filters.variant], () => {
+  watch(() => [filters.year, filters.series, filters.paper, filters.variant], (values, previous) => {
+    if (resettingSubjectFilters && values.every(value => !value)) {
+      resettingSubjectFilters = false
+      return
+    }
+    resettingSubjectFilters = false
+    automaticExpansion.cancel()
     loader.cancelPending()
     availability.cancelPending()
+    if (values[0] !== previous[0]) {
+      for (const year of Object.keys(expandedSessions)) expandedSessions[year] = []
+    }
     const validYears = new Set(visibleYears.value.map(item => item.id))
     const years = expandedYears.value.filter(year => validYears.has(year))
     if (!years.length && visibleYears.value.length) years.push(visibleYears.value[0].id)
@@ -124,22 +151,23 @@ export const useDirectoryPapers = async (context) => {
     for (const year of years) {
       const allowed = new Set(visibleSessions.value.map(item => item.id))
       const months = (expandedSessions[year] || []).filter(month => allowed.has(month))
-      expandedSessions[year] = months.length ? months : firstSession() == null ? [] : [firstSession()]
+      expandedSessions[year] = months
     }
   })
 
   onMounted(() => {
     availabilityReady = true
-    expandedYears.value.forEach(ensureYearAvailability)
+    automaticExpansion.openLatest()
   })
 
   onScopeDispose(() => {
+    automaticExpansion.cancel()
     loader.clear()
     availability.clear()
   })
 
-  // Hydrate the first batch from Nuxt's payload, preserving server-rendered
-  // paper links without repeating the initial request in the browser.
+  // Hydrate the latest candidate from Nuxt's payload so the availability check
+  // and subsequent expansion can reuse it without another page request.
   if (context.subjectId && firstSession() != null) {
     const query = sessionQuery(PAST_PAPER_YEAR_OPTIONS[0].id, firstSession())
     const { data } = await useAsyncData(`directory-papers:${getDirectorySessionKey(query)}`, () =>
@@ -154,7 +182,7 @@ export const useDirectoryPapers = async (context) => {
 
   return {
     filters, filterButtons, visibleYears, visibleSessions, expandedYears, expandedSessions,
-    selectFilter, clearFilters, fetchOptions, expandYears, sessionKey, sessionState, loadSession, isSessionOpen,
+    selectFilter, clearFilters, fetchOptions, expandYears, expandSessions, sessionKey, sessionState, loadSession, isSessionOpen,
     displayedSessions, yearAvailabilityLoading,
   }
 }

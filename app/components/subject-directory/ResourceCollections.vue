@@ -1,13 +1,23 @@
 <template>
-  <v-col
+  <v-card
     v-if="isLoading || error || collections.length"
-    cols="12"
-    class="pb-4"
+    class="resource-collections"
+    variant="outlined"
+    color="grey50"
+    elevation="0"
+    tag="section"
+    aria-labelledby="resource-collections-title"
   >
+    <h2
+      id="resource-collections-title"
+      class="resource-collections__heading bg-surfaceSecondary text-grey900 d-flex align-center px-3 py-2"
+    >
+      Resources
+    </h2>
     <v-skeleton-loader
       v-if="isLoading"
       class="bg-transparent"
-      type="article"
+      type="list-item, list-item, list-item"
       aria-label="Loading resource collections"
     />
     <v-alert
@@ -24,114 +34,47 @@
         Retry
       </v-btn>
     </v-alert>
-    <section
+    <v-list
       v-else
-      class="resource-collections"
-      aria-labelledby="resource-collections-title"
+      class="bg-transparent pa-0"
+      density="compact"
+      aria-label="Resource collections"
     >
-      <div class="resource-collections__intro">
-        <h2
-          id="resource-collections-title"
-          class="resource-collections__heading text-grey900"
-        >
-          Resources
-        </h2>
-      </div>
-      <div class="resource-collections__buttons d-flex flex-wrap ga-3">
-        <v-btn
-          v-for="collection in collections"
-          :key="collection.id"
-          class="resource-collection text-none"
-          :class="{ 'resource-collection--active': selectedId === collection.id }"
-          variant="outlined"
-          rounded="lg"
-          :aria-label="collection.count != null ? `${collection.label}, ${collection.count} resources` : collection.label"
-          :aria-expanded="selectedId === collection.id"
-          :aria-controls="selectedId === collection.id ? expansionId : undefined"
-          @click="toggleCollection(collection.id)"
-        >
+      <v-list-item
+        v-for="collection in collections"
+        :key="collection.id"
+        :to="getDirectoryResourceSearchLink(collection, context)"
+        class="resource-collection text-grey900 px-2"
+        :aria-label="collection.count != null ? `${collection.label}, ${collection.count} resources` : collection.label"
+      >
+        <template #prepend>
           <v-icon
             :icon="collection.icon"
-            size="22"
-            class="mr-2"
+            size="20"
+            class="resource-collection__icon"
           />
-          <span class="resource-collection__label">{{ collection.label }}</span>
+        </template>
+        <v-list-item-title class="resource-collection__label">
+          {{ collection.label }}
+        </v-list-item-title>
+        <template #append>
           <span
             v-if="collection.count != null"
-            class="resource-collection__count bg-white text-grey900 ml-3"
+            class="resource-collection__count bg-white text-grey900 ml-2"
           >{{ collection.count }}</span>
           <v-icon
-            :icon="selectedId === collection.id ? 'md:keyboard_arrow_up' : 'md:keyboard_arrow_down'"
-            size="20"
+            icon="md:chevron_right"
+            size="18"
             class="ml-2"
           />
-        </v-btn>
-      </div>
-
-      <section
-        v-if="selectedCollection"
-        :id="expansionId"
-        class="resource-expansion mt-2"
-        :aria-labelledby="`${expansionId}-title`"
-      >
-        <div class="d-flex align-center justify-space-between ga-3 mb-2">
-          <h3
-            :id="`${expansionId}-title`"
-            class="resource-expansion__title text-grey900"
-          >
-            {{ selectedCollection.title }}
-          </h3>
-          <v-btn
-            variant="text"
-            color="grey600"
-            height="32"
-            class="text-none flex-shrink-0 px-2"
-            append-icon="md:keyboard_arrow_up"
-            @click="selectedId = null"
-          >
-            Collapse
-          </v-btn>
-        </div>
-        <v-list
-          class="resource-expansion__list bg-transparent pa-0"
-          aria-label="Resources in this collection"
-        >
-          <v-list-item
-            v-for="item in previewItems"
-            :key="item.id"
-            :to="item.to"
-            class="resource-expansion__item text-grey900"
-          >
-            <v-list-item-title class="resource-expansion__item-title">
-              {{ item.title }}
-            </v-list-item-title>
-            <template #append>
-              <v-icon
-                icon="md:arrow_outward"
-                color="grey500"
-                size="22"
-                class="ml-3"
-              />
-            </template>
-          </v-list-item>
-        </v-list>
-        <v-btn
-          :to="getDirectoryResourceSearchLink(selectedCollection, context)"
-          variant="text"
-          color="info"
-          class="resource-expansion__view-all text-none mt-2 px-0"
-          append-icon="md:arrow_forward"
-        >
-          View all {{ selectedCollection.title }}
-        </v-btn>
-        <v-divider class="resource-expansion__divider mt-3" />
-      </section>
-    </section>
-  </v-col>
+        </template>
+      </v-list-item>
+    </v-list>
+  </v-card>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useId, watch } from 'vue'
+import { computed } from 'vue'
 import { getDirectoryResourceCollections, getDirectoryResourceSearchLink } from '~/utils/directoryResources'
 import type { DirectoryResourceContext, DirectoryResourceGroup } from '~/types/subject-directory/resources'
 
@@ -142,117 +85,54 @@ const props = withDefaults(defineProps<{
   error?: boolean
 }>(), { data: () => [], isLoading: false, error: false })
 const emit = defineEmits<{ retry: [] }>()
-const expansionId = useId()
-const selectedId = ref<string | number | null>(null)
 const collections = computed(() => getDirectoryResourceCollections(props.data))
-const selectedCollection = computed(() => collections.value.find(collection => collection.id === selectedId.value))
-const previewItems = computed(() => selectedCollection.value?.items.slice(0, 4) || [])
-
-const toggleCollection = (id: string | number) => {
-  selectedId.value = selectedId.value === id ? null : id
-}
-
-watch(() => [props.data, props.context.boardId, props.context.gradeId, props.context.subjectId, props.isLoading], () => {
-  selectedId.value = null
-})
 </script>
 
 <style scoped>
 .resource-collections {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
-}
-.resource-collections__intro {
-  align-self: flex-start;
-  max-width: 100%;
+  border: 1px solid rgb(var(--v-theme-grey200));
+  border-radius: 12px;
+  background: rgb(var(--v-theme-grey50));
 }
 .resource-collections__heading {
-  font-size: 22px;
-  font-weight: 600;
+  min-height: 44px;
+  font-size: 18px;
+  font-weight: 700;
   line-height: 1.4;
-  overflow-wrap: anywhere;
-}
-.resource-collections__buttons {
-  min-width: 0;
-  align-content: center;
 }
 .resource-collection {
-  min-height: 48px;
-  height: auto !important;
-  padding: 10px 14px;
-  color: rgb(var(--v-theme-grey900));
-  background: rgb(var(--v-theme-surfaceSecondary));
-  border: 1px solid rgb(var(--v-theme-grey200));
-  border-radius: 12px !important;
-  font-size: 16px;
-  font-weight: 400;
-  letter-spacing: normal;
+  min-height: 44px;
+  border-top: 1px solid rgb(var(--v-theme-grey200));
 }
-.resource-collection:hover,
-.resource-collection--active {
-  color: rgb(var(--v-theme-info));
-  border-color: rgb(var(--v-theme-info));
+.resource-collection:hover {
   background: rgb(var(--v-theme-blue50));
+  color: rgb(var(--v-theme-info)) !important;
 }
 .resource-collection:focus-visible {
   outline: 2px solid rgb(var(--v-theme-info));
-  outline-offset: 3px;
+  outline-offset: -2px;
+}
+.resource-collection :deep(.v-list-item__prepend > .v-list-item__spacer) {
+  width: 8px;
+}
+.resource-collection__icon { opacity: 1; }
+.resource-collection__label {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
 }
 .resource-collection__count {
   display: inline-flex;
-  min-width: 26px;
-  height: 26px;
-  padding: 0 6px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 5px;
   align-items: center;
   justify-content: center;
+  border: 1px solid rgb(var(--v-theme-grey100));
   border-radius: 50%;
   font-size: 12px;
   font-weight: 600;
-}
-.resource-expansion__title {
-  min-width: 0;
-  overflow-wrap: anywhere;
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-.resource-expansion__list { overflow: visible; }
-.resource-expansion__item { padding: 12px 0; }
-.resource-expansion__item + .resource-expansion__item {
-  border-top: 1px solid rgb(var(--v-theme-grey200));
-}
-.resource-expansion__item-title {
-  white-space: normal;
-  overflow-wrap: anywhere;
-  font-size: 18px;
-  font-weight: 500;
-  line-height: 1.5;
-}
-.resource-expansion__view-all {
-  max-width: 100%;
-  min-height: 40px;
-  height: auto;
-  padding-block: 8px;
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: normal;
-}
-.resource-expansion__view-all :deep(.v-btn__content) {
-  white-space: normal;
-  overflow-wrap: anywhere;
-  text-align: start;
-}
-.resource-expansion__divider {
-  border-color: rgb(var(--v-theme-grey200));
-  opacity: 1;
-}
-@media (max-width: 599px) {
-  .resource-collection { width: 100%; }
-  .resource-collection :deep(.v-btn__content) { width: 100%; justify-content: flex-start; }
-  .resource-collection__label { min-width: 0; white-space: normal; text-align: left; }
-  .resource-collection__count { margin-left: auto !important; flex-shrink: 0; }
-  .resource-expansion__item-title { font-size: 16px; }
 }
 </style>

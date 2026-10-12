@@ -1,5 +1,5 @@
 <template>
-  <div class="mb-4">
+  <div>
     <v-menu
       :model-value="state.open"
       :close-on-content-click="false"
@@ -8,7 +8,7 @@
       :min-width="0"
       max-width="calc(100vw - 32px)"
       @update:model-value="emit('open', $event)"
-      @after-enter="onMenuOpened"
+      @after-enter="scrollSelectedOptions"
     >
       <template #activator="{ props: activatorProps }">
         <v-btn
@@ -36,8 +36,8 @@
       <v-card
         ref="menuCard"
         class="directory-cascader-menu"
-        elevation="2"
-        color="white"
+        elevation="0"
+        color="grey25"
         aria-label="Board, Grade and Subject options"
         @keydown.enter.stop
       >
@@ -57,7 +57,9 @@
             clear-icon="md:close"
             variant="outlined"
             density="compact"
-            color="info"
+            color="academicGold"
+            base-color="directoryInk"
+            rounded="lg"
             clearable
             hide-details
             single-line
@@ -105,7 +107,7 @@
           <v-list
             v-else-if="searchResults.length"
             :id="searchResultsId"
-            class="directory-cascader-options py-1 px-0"
+            class="directory-cascader-options bg-transparent py-1 px-0"
             role="listbox"
             aria-label="Matching subjects"
             density="compact"
@@ -121,7 +123,7 @@
               :disabled="state.committing"
               role="option"
               tabindex="-1"
-              color="info"
+              color="directoryInk"
               min-height="48"
               height="48"
               class="directory-cascader-option px-3 py-0"
@@ -163,6 +165,7 @@
             class="directory-cascader-column"
             :class="{
               'directory-cascader-column--current': state.stage === column.stage,
+              'directory-cascader-column--grade': column.stage === 'grade',
               'directory-cascader-column--subject': column.stage === 'subject',
             }"
           >
@@ -194,7 +197,7 @@
                 indeterminate
                 size="20"
                 width="2"
-                color="directoryInk"
+                color="academicGold"
               />
               <span>Loading…</span>
             </div>
@@ -215,7 +218,7 @@
             </div>
             <v-list
               v-else-if="column.items.length"
-              class="directory-cascader-options py-1 px-0"
+              class="directory-cascader-options bg-transparent py-1 px-0"
               density="compact"
               :aria-label="column.title"
             >
@@ -226,7 +229,7 @@
                 :active="column.selectedId === option.id"
                 :disabled="state.committing"
                 :data-selected="column.selectedId === option.id || undefined"
-                color="info"
+                color="directoryInk"
                 min-height="34"
                 height="34"
                 class="directory-cascader-option px-3 py-0"
@@ -326,14 +329,6 @@ const onSearchKeydown = (event: KeyboardEvent) => {
   activeResultIndex.value = (activeResultIndex.value + (event.key === 'ArrowDown' ? 1 : -1) + count) % count
 }
 
-const onMenuOpened = async () => {
-  await nextTick()
-  if (!props.state.open) return
-  const menu = menuCard.value?.$el as HTMLElement | undefined
-  menu?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true })
-  await scrollSelectedOptions()
-}
-
 const scrollSelectedOptions = async () => {
   await nextTick()
   if (!props.state.open) return
@@ -376,17 +371,25 @@ const emit = defineEmits<{
 <style scoped>
 .directory-cascader-trigger {
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: normal;
   color: rgb(var(--v-theme-directoryInk));
   border-color: rgb(var(--v-theme-directoryButtonBorder));
-  border-radius: 7px;
-  background-color: rgb(var(--v-theme-white));
+  border-radius: 12px;
+  background-color: rgb(var(--v-theme-grey25));
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
-.directory-cascader-trigger--open,
+.directory-cascader-trigger:hover {
+  background-color: rgb(var(--v-theme-surfaceSecondary));
+}
+
+.directory-cascader-trigger--open {
+  border-color: rgb(var(--v-theme-directoryInk));
+}
+
 .directory-cascader-trigger:focus-visible {
-  border-color: rgb(var(--v-theme-info));
+  box-shadow: 0 0 0 3px rgb(var(--v-theme-academicGold) / 28%);
 }
 
 .directory-cascader-trigger :deep(.v-btn__content) {
@@ -402,15 +405,17 @@ const emit = defineEmits<{
 .directory-cascader-menu {
   display: flex;
   flex-direction: column;
-  width: 600px;
-  max-width: min(602px, calc(100vw - 32px));
+  width: 740px;
+  max-width: calc(100vw - 32px);
   overflow: hidden;
-  border: 1px solid rgb(var(--v-theme-grey200));
-  border-radius: 7px;
+  color: rgb(var(--v-theme-directoryInk));
+  border: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+  border-radius: 16px;
+  box-shadow: 0 20px 48px rgb(var(--v-theme-directoryInk) / 16%);
 }
 
 .directory-cascader-search {
-  border-bottom: 1px solid rgb(var(--v-theme-grey200));
+  border-bottom: 1px solid rgb(var(--v-theme-directoryButtonBorder));
 }
 
 .directory-cascader-search :deep(.v-field) {
@@ -418,6 +423,24 @@ const emit = defineEmits<{
   --v-field-padding-top: 4px;
   --v-field-padding-bottom: 4px;
   font-size: 14px;
+  color: rgb(var(--v-theme-directoryInk));
+  background: rgb(var(--v-theme-white));
+  border-radius: 12px !important;
+  box-shadow: none;
+}
+
+.directory-cascader-search :deep(.v-field__outline) {
+  color: rgb(var(--v-theme-directoryButtonBorder));
+  --v-field-border-opacity: 1;
+}
+
+.directory-cascader-search :deep(.v-field--focused .v-field__outline) {
+  color: rgb(var(--v-theme-academicGold));
+}
+
+.directory-cascader-search :deep(.v-field__prepend-inner),
+.directory-cascader-search :deep(.v-field__input) {
+  color: rgb(var(--v-theme-directoryInk));
 }
 
 .directory-cascader-result-path {
@@ -441,11 +464,15 @@ const emit = defineEmits<{
 }
 
 .directory-cascader-column + .directory-cascader-column {
-  border-inline-start: 1px solid rgb(var(--v-theme-grey200));
+  border-inline-start: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+}
+
+.directory-cascader-column--grade {
+  width: 220px;
 }
 
 .directory-cascader-column--subject {
-  width: 280px;
+  width: 360px;
 }
 
 .directory-cascader-options {
@@ -471,17 +498,54 @@ const emit = defineEmits<{
 }
 
 .directory-cascader-option-title {
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 22px;
   white-space: nowrap;
 }
 
+.directory-cascader-option {
+  color: rgb(var(--v-theme-directoryInk));
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.directory-cascader-option:not(:last-child) {
+  border-bottom-color: rgb(var(--v-theme-directoryAnswer));
+}
+
+.directory-cascader-option:hover {
+  background: rgb(var(--v-theme-surfaceSecondary));
+  border-color: rgb(var(--v-theme-directoryButtonBorder));
+}
+
 .directory-cascader-option--active {
-  background-color: rgb(var(--v-theme-blue50));
+  color: rgb(var(--v-theme-directoryInk)) !important;
+  background: rgb(var(--v-theme-directoryAnswer)) !important;
+  border-color: rgb(var(--v-theme-directoryButtonBorder));
+  box-shadow: 0 1px 2px rgb(var(--v-theme-directoryInk) / 8%);
+}
+
+.directory-cascader-option:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-academicGold) / 28%);
+  outline-offset: -2px;
+}
+
+.directory-cascader-option :deep(.v-list-item__overlay) {
+  opacity: 0 !important;
 }
 
 .directory-cascader-option :deep(.v-list-item__spacer) {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .directory-cascader-trigger,
+  .directory-cascader-option {
+    transition: none;
+  }
 }
 
 @media (max-width: 599px) {

@@ -63,7 +63,6 @@ const emit = defineEmits(['select', 'retry'])
 .directory-option-row {
   padding: 12px 0;
   min-width: 0;
-  overflow-x: auto;
 }
 .directory-option-row + .directory-option-row {
   border-top: 1px solid rgb(var(--v-theme-directoryAnswer));
@@ -80,11 +79,10 @@ const emit = defineEmits(['select', 'retry'])
 .directory-option-row--compact {
   box-sizing: border-box;
   display: flex;
-  height: 52px;
+  min-height: 44px;
   align-items: center;
   gap: 8px;
-  padding: 7px 10px;
-  overflow: visible;
+  padding: 6px 8px;
   background: rgb(var(--v-theme-grey25));
   border: 1px solid rgb(var(--v-theme-directoryButtonBorder));
   border-radius: 12px;
@@ -94,5 +92,19 @@ const emit = defineEmits(['select', 'retry'])
 }
 .directory-option-row--compact .directory-option-row__label {
   margin-bottom: 0;
+  font-size: 14px;
+}
+.directory-option-row--compact :deep(.filter-options) {
+  min-width: 0;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.directory-option-row--compact :deep(.filter-options__items) {
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.directory-option-row--compact :deep(.filter-option) {
+  padding: 3px 6px !important;
+  font-size: 13px;
 }
 </style>

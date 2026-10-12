@@ -1,12 +1,18 @@
 <template>
-  <v-container class="flex-column margin-top-handle">
-    <v-row class="justify-space-between flex-wrap">
-      <!-- Start Filter -->
-      <v-col
-        cols="12"
-        sm="8"
-        md="8"
-      >
+  <v-container class="margin-top-handle">
+    <div
+      class="directory-layout text-left"
+      :class="{ 'directory-layout--without-resources': !hasResources }"
+    >
+      <header class="directory-introduction">
+        <h1 class="directory-title text-grey900 mb-2">
+          {{ introduction.title }}
+        </h1>
+        <p class="directory-description text-grey600 ma-0">
+          {{ introduction.description }}
+        </p>
+      </header>
+      <div class="directory-selector">
         <SubjectCascader
           :state="selectorState"
           :columns="columns"
@@ -21,30 +27,30 @@
           @select-search="selectSearchResult"
           @retry-search="retrySearch"
         />
-      </v-col>
-      <!-- End Filter -->
-    </v-row>
-
-    <v-row>
-      <ResourceCollections
-        :context="{ ...paperContext, subjectTitle: titleLesson }"
-        :data="resourcesData"
-        :is-loading="isLoadingResources"
-        :error="Boolean(resourceError)"
-        @retry="refreshResources()"
-      />
-    </v-row>
-
-    <v-row>
-      <v-col cols="12">
+      </div>
+      <aside
+        v-if="hasResources"
+        class="directory-sidebar"
+        aria-label="Additional study resources"
+      >
+        <ResourceCollections
+          class="directory-sidebar__resources"
+          :context="paperContext"
+          :data="resourcesData"
+          :is-loading="isLoadingResources"
+          :error="Boolean(resourceError)"
+          @retry="refreshResources()"
+        />
+      </aside>
+      <div class="directory-paper-content">
         <paperTable
           :subject-id="paperContext.subjectId"
           :grade-id="paperContext.gradeId"
           :board-id="paperContext.boardId"
           :subject-title="paperContext.subjectTitle"
         />
-      </v-col>
-    </v-row>
+      </div>
+    </div>
   </v-container>
 </template>
 
@@ -55,6 +61,8 @@ import ResourceCollections from '~/components/subject-directory/ResourceCollecti
 import paperTable from '~/components/subject-directory/paper-table.vue'
 import SubjectCascader from '~/components/subject-directory/SubjectCascader.vue'
 import { useDirectoryCascader } from '~/composables/useDirectoryCascader'
+import { getDirectoryIntroduction } from '~/utils/directoryPresentation'
+import { getDirectoryResourceCollections } from '~/utils/directoryResources'
 
 const {
   state: selectorState, columns, displayPath, setOpen, selectOption, retry,
@@ -67,24 +75,28 @@ const paperContext = computed(() => ({
   subjectTitle: selectorState.selection?.subject.title || '',
 }))
 
-const { resourcesData, titleLesson, isLoadingResources, resourceError, refreshResources }
+const introduction = computed(() => getDirectoryIntroduction(selectorState.selection))
+const { resourcesData, isLoadingResources, resourceError, refreshResources }
   = await useDirectoryResources(paperContext)
+const hasResources = computed(() => Boolean(
+  isLoadingResources.value || resourceError.value || getDirectoryResourceCollections(resourcesData.value).length,
+))
 
 // SEO
-useHead({
+useHead(() => ({
   titleTemplate: '%s',
-  title: `${titleLesson.value} Past Papers, Resources | Coursebook & Workbook – Free PDFs`,
+  title: `${introduction.value.title} & Resources`,
 
   meta: [
     {
       hid: 'apple-mobile-web-app-title',
       name: 'apple-mobile-web-app-title',
-      content: `${titleLesson.value} Past Papers, Resources | Coursebook & Workbook – Free PDFs`,
+      content: `${introduction.value.title} & Resources`,
     },
     {
       hid: 'og:title',
       name: 'og:title',
-      content: `${titleLesson.value} Past Papers, Resources | Coursebook & Workbook – Free PDFs`,
+      content: `${introduction.value.title} & Resources`,
     },
     {
       hid: 'og:site_name',
@@ -94,15 +106,15 @@ useHead({
     {
       hid: 'description',
       name: 'description',
-      content: `Download free PDF resources for ${titleLesson.value}, including coursebook, workbook, study guide, and past papers with mark schemes. Updated for 2024 & 2025 exams.`,
+      content: introduction.value.description,
     },
     {
       hid: 'og:description',
       name: 'og:description',
-      content: `Download free PDF resources for ${titleLesson.value}, including coursebook, workbook, study guide, and past papers with mark schemes. Updated for 2024 & 2025 exams.`,
+      content: introduction.value.description,
     },
   ],
-})
+}))
 </script>
 
 <style scoped>
@@ -110,10 +122,50 @@ useHead({
   margin-top: 64px;
   min-height: calc(100vh - 64px);
 }
+.directory-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  grid-template-areas:
+    'introduction resources'
+    'selector resources'
+    'papers resources';
+  gap: 24px;
+  align-items: start;
+}
+.directory-introduction { grid-area: introduction; min-width: 0; }
+.directory-selector { grid-area: selector; min-width: 0; }
+.directory-paper-content { grid-area: papers; min-width: 0; }
+.directory-sidebar { grid-area: resources; align-self: stretch; min-width: 0; }
+.directory-sidebar__resources {
+  position: sticky;
+  top: 80px;
+}
+.directory-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+.directory-description {
+  font-size: 14px;
+  line-height: 1.5;
+}
 @media (min-width: 960px) {
   .margin-top-handle {
     margin-top: 6.4rem;
     min-height: calc(100vh - 6.4rem);
   }
+}
+@media (max-width: 959px) {
+  .directory-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'introduction' 'selector' 'papers' 'resources';
+    gap: 20px;
+  }
+  .directory-layout--without-resources {
+    grid-template-areas: 'introduction' 'selector' 'papers';
+  }
+  .directory-sidebar__resources { position: static; }
+  .directory-title { font-size: 20px; }
 }
 </style>

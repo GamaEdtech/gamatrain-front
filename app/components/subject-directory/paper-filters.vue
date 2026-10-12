@@ -1,35 +1,33 @@
 <template>
   <div class="directory-paper-filters mb-4">
-    <div class="d-none d-md-block">
-      <div class="desktop-filter-row d-flex align-center ga-2">
-        <CommonFilterControl
-          v-for="filter in selectFilters"
-          :key="filter.key"
-          :title="filter.title"
-          :selected-item="filter.selectedItem"
-          :disabled="filter.disabled"
-          :icon="filter.icon"
-          :open="showPicker && activeKey === filter.key"
-          @click="openPicker(filter)"
-          @clear="emit('select', filter.key, null)"
-        />
-        <SubjectDirectoryFilterOptionRow
-          v-for="filter in inlineFilters"
-          :key="filter.key"
-          :filter="filter"
-          :board-id="boardId"
-          compact-row
-          @select="emit('select', filter.key, $event)"
-          @retry="emit('retry', filter.key)"
-        />
-        <v-btn
-          variant="text"
-          class="filter-clear"
-          @click="emit('clear')"
-        >
-          Clear
-        </v-btn>
-      </div>
+    <div class="directory-filter-row d-none d-md-flex flex-wrap align-center ga-2">
+      <CommonFilterControl
+        v-for="filter in selectFilters"
+        :key="filter.key"
+        :title="filter.title"
+        :selected-item="filter.selectedItem"
+        :disabled="filter.disabled"
+        :icon="filter.icon"
+        :open="showPicker && activeKey === filter.key"
+        @click="openPicker(filter)"
+        @clear="emit('select', filter.key, null)"
+      />
+      <SubjectDirectoryFilterOptionRow
+        v-for="filter in inlineFilters"
+        :key="filter.key"
+        :filter="filter"
+        :board-id="boardId"
+        compact-row
+        @select="emit('select', filter.key, $event)"
+        @retry="emit('retry', filter.key)"
+      />
+      <v-btn
+        variant="text"
+        class="filter-clear"
+        @click="emit('clear')"
+      >
+        Clear
+      </v-btn>
     </div>
 
     <div class="mobile-quick-filter-bar d-flex d-md-none">
@@ -46,9 +44,13 @@
             'mobile-quick-filter--disabled': filter.disabled,
           }"
         >
-          <button
+          <v-btn
             type="button"
-            class="mobile-quick-filter__control"
+            variant="text"
+            :ripple="false"
+            class="mobile-quick-filter__control text-none"
+            aria-haspopup="dialog"
+            :aria-expanded="showPicker && activeKey === filter.key"
             :aria-label="filter.selectedItem ? `${filter.title}: ${filter.selectedItem.title}` : filter.title"
             :aria-pressed="Boolean(filter.selectedItem)"
             :disabled="filter.disabled"
@@ -72,10 +74,12 @@
                 {{ getDirectoryFilterOptionTitle(filter.key, filter.selectedItem) }}
               </span>
             </span>
-          </button>
-          <button
+          </v-btn>
+          <v-btn
             v-if="filter.selectedItem"
             type="button"
+            variant="text"
+            :ripple="false"
             class="mobile-quick-filter__clear"
             :aria-label="`Clear ${filter.title} filter`"
             @click.stop="emit('select', filter.key, null)"
@@ -83,7 +87,7 @@
             <v-icon size="18">
               md:cancel
             </v-icon>
-          </button>
+          </v-btn>
         </div>
       </div>
     </div>
@@ -137,19 +141,37 @@ watch(() => props.contextKey, () => {
 </script>
 
 <style scoped>
-.desktop-filter-row {
+.directory-filter-row {
   width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  white-space: nowrap;
-  scrollbar-width: thin;
+  min-width: 0;
 }
-.desktop-filter-row > * {
-  flex: 0 0 auto;
+.directory-filter-row > * {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+.directory-filter-row :deep(.filter-control) {
+  min-width: 100px;
+  height: 44px !important;
+  padding-inline: 8px;
+}
+.directory-filter-row :deep(.filter-control__icon) {
+  width: 20px;
+  height: 20px;
+}
+.directory-filter-row :deep(.filter-control__label) { font-size: 14px; }
+.directory-filter-row :deep(.filter-control--selected .filter-control__label) { font-size: 11px; }
+.directory-filter-row :deep(.filter-control__value) {
+  max-width: 140px;
+  font-size: 12px;
+}
+.directory-filter-row :deep(.v-btn__append .v-icon) {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
 }
 .filter-clear {
   min-width: 0;
-  height: 32px !important;
+  height: 44px !important;
   padding: 0 8px !important;
   color: rgb(var(--v-theme-errorStrong));
   font-size: 12px;
@@ -228,6 +250,7 @@ watch(() => props.contextKey, () => {
 
   .mobile-quick-filter--disabled .mobile-quick-filter__control {
     cursor: default;
+    opacity: 1;
   }
 
   .mobile-quick-filter--disabled .mobile-quick-filter__icon,
@@ -256,6 +279,27 @@ watch(() => props.contextKey, () => {
     border: 0;
     border-radius: inherit;
     cursor: pointer;
+  }
+
+  .mobile-quick-filter__control,
+  .mobile-quick-filter__clear {
+    height: 100%;
+    letter-spacing: normal;
+    text-indent: 0;
+  }
+
+  .mobile-quick-filter__control :deep(.v-btn__content) {
+    min-width: 0;
+    flex: 1 1 auto;
+    justify-content: flex-start;
+    gap: 8px;
+  }
+
+  .mobile-quick-filter__control :deep(.v-btn__overlay),
+  .mobile-quick-filter__clear :deep(.v-btn__overlay),
+  .mobile-quick-filter__control::after,
+  .mobile-quick-filter__clear::after {
+    display: none;
   }
 
   .mobile-quick-filter--selected .mobile-quick-filter__control {
