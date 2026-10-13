@@ -24,7 +24,7 @@
           indeterminate
           size="24"
           width="2"
-          color="directoryInk"
+          color="primary"
         />
         <span>Loading papers…</span>
       </div>
@@ -47,7 +47,7 @@
         <v-btn
           v-bind="retryProps"
           variant="text"
-          color="directoryInk"
+          color="brandNavy"
           class="text-none"
         >
           Retry

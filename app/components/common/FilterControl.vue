@@ -89,27 +89,30 @@ const emit = defineEmits(['click', 'clear'])
   height: 52px !important;
   justify-content: space-between;
   padding-inline: 16px;
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
   background: rgb(var(--v-theme-grey25));
-  border-color: rgb(var(--v-theme-directoryButtonBorder)) !important;
+  border-color: rgb(var(--v-theme-borderSubtle)) !important;
   border-radius: 12px !important;
   letter-spacing: normal;
   transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 .filter-control:hover {
   background: rgb(var(--v-theme-surfaceSecondary));
-  border-color: rgb(var(--v-theme-directoryButtonBorder)) !important;
+  border-color: rgb(var(--v-theme-borderSubtle)) !important;
+}
+.filter-control :deep(.v-btn__overlay) {
+  opacity: 0 !important;
 }
 .filter-control:focus-visible {
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-academicGold), 0.28);
+  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.28);
 }
 .filter-control--selected,
 .filter-control--selected:hover {
-  background: rgb(var(--v-theme-directoryButtonBorder));
-  border-color: transparent !important;
+  background: rgb(var(--v-theme-surfaceTertiary));
+  border-color: rgb(var(--v-theme-borderSubtle)) !important;
 }
 .filter-control--open:not(.filter-control--selected) {
-  border-color: rgb(var(--v-theme-directoryInk)) !important;
+  border-color: rgb(var(--v-theme-brandNavy)) !important;
 }
 .filter-control__icon,
 .filter-control__image {
@@ -139,7 +142,7 @@ const emit = defineEmits(['click', 'clear'])
 .filter-control--selected .filter-control__label {
   font-size: 12px;
   font-weight: 500;
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
 }
 .filter-control__value {
   max-width: 190px;
@@ -174,7 +177,7 @@ const emit = defineEmits(['click', 'clear'])
   color: rgb(var(--v-theme-grey500)) !important;
 }
 .filter-control__clear:focus-visible {
-  outline: 2px solid rgb(var(--v-theme-academicGold));
+  outline: 2px solid rgb(var(--v-theme-primary));
   outline-offset: 2px;
 }
 .filter-control__clear:hover {

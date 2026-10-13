@@ -56,8 +56,8 @@
           prepend-inner-icon="md:search"
           glow
           variant="outlined"
-          color="academicGold"
-          icon-color="directoryInk"
+          color="primary"
+          icon-color="brandNavy"
           density="compact"
           rounded="lg"
           hide-details
@@ -66,7 +66,7 @@
           <template #append-inner>
             <v-btn
               class="select-dialog-search-button mr-n2"
-              color="academicGold"
+              color="primary"
               width="64"
               height="32"
               rounded="lg"
@@ -100,7 +100,7 @@
           :key="item.title"
           :value="item.title"
           :active="item.id == selectedItem?.id"
-          color="directoryInk"
+          color="brandNavy"
           class="select-dialog-item"
           :class="{
             'select-dialog-item--main-topic': titleModal === 'Topic' && item.season,
@@ -122,13 +122,13 @@
               />
               <span
                 v-else-if="item.contentIcon"
-                :class="`${item.contentIcon} select-item-content-icon text-directoryInk`"
+                :class="`${item.contentIcon} select-item-content-icon text-brandNavy`"
               />
               <v-icon
                 v-else
                 class="select-item-material-icon"
                 size="34"
-                color="directoryInk"
+                color="brandNavy"
               >{{ fallbackIcon }}</v-icon>
             </span>
             <v-avatar
@@ -139,7 +139,7 @@
             </v-avatar>
             <span
               v-else-if="item.contentIcon"
-              :class="`${item.contentIcon} size-icon text-directoryInk`"
+              :class="`${item.contentIcon} size-icon text-brandNavy`"
             />
           </template>
           <v-list-item-title class="text-h5">
@@ -158,7 +158,7 @@
         <v-progress-circular
           indeterminate
           :width="3"
-          color="academicGold"
+          color="primary"
         />
       </div>
 
@@ -181,7 +181,7 @@
       <v-alert
         v-if="searchText && filteredItems.length === 0 && !isLoading && !errorMessage"
         type="info"
-        color="directoryInk"
+        color="brandNavy"
         density="compact"
         class="select-dialog-empty"
         variant="tonal"
@@ -194,7 +194,7 @@
           searchText.length == 0 && filteredItems.length === 0 && !isLoading && !errorMessage
         "
         type="info"
-        color="directoryInk"
+        color="brandNavy"
         density="compact"
         class="select-dialog-empty"
         variant="tonal"
@@ -244,7 +244,7 @@ const HighlightedText = defineComponent({
           h(
             'span',
             {
-              class: part.highlight ? 'bg-softGold text-directoryInk' : '',
+              class: part.highlight ? 'bg-softGold text-brandNavy' : '',
             },
             part.text,
           ),
@@ -369,11 +369,11 @@ const clickOnModal = (event) => {
 .select-dialog-panel {
   max-height: min(82vh, 680px);
   overflow: hidden;
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
   background: rgb(var(--v-theme-grey25)) !important;
-  border: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
   border-radius: 16px;
-  box-shadow: 0 20px 48px rgb(var(--v-theme-directoryInk) / 16%);
+  box-shadow: 0 20px 48px rgb(var(--v-theme-brandNavy) / 16%);
 }
 
 .select-dialog-header {
@@ -382,7 +382,7 @@ const clickOnModal = (event) => {
   align-items: center;
   padding: 16px 20px;
   margin: 0 !important;
-  border-bottom: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+  border-bottom: 1px solid rgb(var(--v-theme-borderSubtle));
 }
 
 .select-dialog-header > .v-col {
@@ -390,7 +390,7 @@ const clickOnModal = (event) => {
 }
 
 .select-dialog-title {
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
   font-size: 18px;
   font-weight: 700;
   line-height: 24px;
@@ -420,7 +420,7 @@ const clickOnModal = (event) => {
 .select-dialog-close:hover {
   color: rgb(var(--v-theme-errorStrong));
   background: rgb(var(--v-theme-surfaceSecondary));
-  border-color: rgb(var(--v-theme-directoryButtonBorder));
+  border-color: rgb(var(--v-theme-borderSubtle));
 }
 
 .select-dialog-close:active {
@@ -428,7 +428,7 @@ const clickOnModal = (event) => {
 }
 
 .select-dialog-close:focus-visible {
-  outline: 3px solid rgb(var(--v-theme-academicGold) / 28%);
+  outline: 3px solid rgb(var(--v-theme-primary) / 28%);
   outline-offset: 2px;
 }
 
@@ -444,7 +444,7 @@ const clickOnModal = (event) => {
 }
 
 .select-dialog-result-count__number {
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
   font-size: 16px;
   font-weight: 700;
   line-height: 20px;
@@ -469,30 +469,30 @@ const clickOnModal = (event) => {
 
 .select-dialog-search :deep(.v-field) {
   min-height: 44px;
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
   background: rgb(var(--v-theme-white));
   border-radius: 12px !important;
   box-shadow: none;
 }
 
 .select-dialog-search :deep(.v-field__outline) {
-  color: rgb(var(--v-theme-directoryButtonBorder));
+  color: rgb(var(--v-theme-borderSubtle));
   --v-field-border-opacity: 1;
 }
 
 .select-dialog-search :deep(.v-field.v-field--focused .v-field__outline) {
-  color: rgb(var(--v-theme-academicGold));
+  color: rgb(var(--v-theme-primary));
 }
 
 .select-dialog-search :deep(.v-field__prepend-inner),
 .select-dialog-search :deep(.v-field__input),
 .select-dialog-search :deep(.v-label) {
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
 }
 
 .select-dialog-search-button {
-  color: rgb(var(--v-theme-directoryInk)) !important;
-  background: rgb(var(--v-theme-academicGold)) !important;
+  color: rgb(var(--v-theme-brandNavy)) !important;
+  background: rgb(var(--v-theme-primary)) !important;
   font-size: 12px;
   font-weight: 650;
   letter-spacing: 0;
@@ -501,7 +501,7 @@ const clickOnModal = (event) => {
 }
 
 .select-dialog-search-button:hover {
-  background: rgb(var(--v-theme-academicGoldHover)) !important;
+  background: rgb(var(--v-theme-primary-darken-1)) !important;
 }
 
 .select-dialog-list {
@@ -527,7 +527,7 @@ const clickOnModal = (event) => {
   min-height: 48px;
   padding: 6px 12px;
   margin: 0;
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
   background: transparent;
   border: 1px solid transparent;
   border-radius: 12px;
@@ -540,18 +540,18 @@ const clickOnModal = (event) => {
 
 .select-dialog-list :deep(.select-dialog-item:hover) {
   background: rgb(var(--v-theme-surfaceSecondary));
-  border-color: rgb(var(--v-theme-directoryButtonBorder));
+  border-color: rgb(var(--v-theme-borderSubtle));
 }
 
 .select-dialog-list :deep(.select-dialog-item.v-list-item--active) {
-  color: rgb(var(--v-theme-directoryInk)) !important;
-  background: rgb(var(--v-theme-directoryAnswer)) !important;
-  border-color: rgb(var(--v-theme-directoryButtonBorder));
-  box-shadow: 0 1px 2px rgb(var(--v-theme-directoryInk) / 8%);
+  color: rgb(var(--v-theme-brandNavy)) !important;
+  background: rgb(var(--v-theme-surfaceTertiary)) !important;
+  border-color: rgb(var(--v-theme-borderSubtle));
+  box-shadow: 0 1px 2px rgb(var(--v-theme-brandNavy) / 8%);
 }
 
 .select-dialog-list :deep(.select-dialog-item:not(:last-child)) {
-  border-bottom: 1px solid rgb(var(--v-theme-directoryAnswer));
+  border-bottom: 1px solid rgb(var(--v-theme-surfaceTertiary));
 }
 
 .select-dialog-list :deep(.select-dialog-item .v-list-item__overlay) {
@@ -590,9 +590,9 @@ const clickOnModal = (event) => {
 
 .select-dialog-empty {
   margin: 8px 20px 20px;
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
   background: rgb(var(--v-theme-surfaceSecondary)) !important;
-  border: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
   border-radius: 12px;
 }
 

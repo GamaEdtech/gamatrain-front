@@ -13,7 +13,7 @@
         indeterminate
         size="20"
         width="2"
-        color="academicGold"
+        color="primary"
       />
       <span class="text-grey500 text-body-2">Loading {{ filter.title.toLowerCase() }} options…</span>
     </div>
@@ -65,7 +65,7 @@ const emit = defineEmits(['select', 'retry'])
   min-width: 0;
 }
 .directory-option-row + .directory-option-row {
-  border-top: 1px solid rgb(var(--v-theme-directoryAnswer));
+  border-top: 1px solid rgb(var(--v-theme-surfaceTertiary));
 }
 .directory-option-row__label {
   display: block;
@@ -74,7 +74,7 @@ const emit = defineEmits(['select', 'retry'])
   font-size: 16px;
   font-weight: 600;
   line-height: 24px;
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
 }
 .directory-option-row--compact {
   box-sizing: border-box;
@@ -84,11 +84,11 @@ const emit = defineEmits(['select', 'retry'])
   gap: 8px;
   padding: 6px 8px;
   background: rgb(var(--v-theme-grey25));
-  border: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
   border-radius: 12px;
 }
 .directory-option-row--compact + .directory-option-row--compact {
-  border-top: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+  border-top: 1px solid rgb(var(--v-theme-borderSubtle));
 }
 .directory-option-row--compact .directory-option-row__label {
   margin-bottom: 0;

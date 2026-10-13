@@ -57,9 +57,10 @@
             clear-icon="md:close"
             variant="outlined"
             density="compact"
-            color="academicGold"
-            base-color="directoryInk"
+            color="primary"
+            base-color="brandNavy"
             rounded="lg"
+            center-affix
             clearable
             hide-details
             single-line
@@ -97,7 +98,7 @@
             <p>{{ search.error }}</p>
             <v-btn
               variant="text"
-              color="directoryInk"
+              color="brandNavy"
               class="text-none mt-1"
               @click="emit('retrySearch')"
             >
@@ -123,7 +124,7 @@
               :disabled="state.committing"
               role="option"
               tabindex="-1"
-              color="directoryInk"
+              color="brandNavy"
               min-height="48"
               height="48"
               class="directory-cascader-option px-3 py-0"
@@ -197,7 +198,7 @@
                 indeterminate
                 size="20"
                 width="2"
-                color="academicGold"
+                color="primary"
               />
               <span>Loading…</span>
             </div>
@@ -209,7 +210,7 @@
               <p>Unable to load {{ column.title.toLowerCase() }} options.</p>
               <v-btn
                 variant="text"
-                color="directoryInk"
+                color="brandNavy"
                 class="text-none mt-2"
                 @click="emit('retry')"
               >
@@ -229,7 +230,7 @@
                 :active="column.selectedId === option.id"
                 :disabled="state.committing"
                 :data-selected="column.selectedId === option.id || undefined"
-                color="directoryInk"
+                color="brandNavy"
                 min-height="34"
                 height="34"
                 class="directory-cascader-option px-3 py-0"
@@ -373,8 +374,8 @@ const emit = defineEmits<{
   font-size: 14px;
   font-weight: 500;
   letter-spacing: normal;
-  color: rgb(var(--v-theme-directoryInk));
-  border-color: rgb(var(--v-theme-directoryButtonBorder));
+  color: rgb(var(--v-theme-brandNavy));
+  border-color: rgb(var(--v-theme-borderSubtle));
   border-radius: 12px;
   background-color: rgb(var(--v-theme-grey25));
   transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
@@ -384,12 +385,16 @@ const emit = defineEmits<{
   background-color: rgb(var(--v-theme-surfaceSecondary));
 }
 
+.directory-cascader-trigger :deep(.v-btn__overlay) {
+  opacity: 0 !important;
+}
+
 .directory-cascader-trigger--open {
-  border-color: rgb(var(--v-theme-directoryInk));
+  border-color: rgb(var(--v-theme-brandNavy));
 }
 
 .directory-cascader-trigger:focus-visible {
-  box-shadow: 0 0 0 3px rgb(var(--v-theme-academicGold) / 28%);
+  box-shadow: 0 0 0 3px rgb(var(--v-theme-primary) / 28%);
 }
 
 .directory-cascader-trigger :deep(.v-btn__content) {
@@ -408,39 +413,42 @@ const emit = defineEmits<{
   width: 740px;
   max-width: calc(100vw - 32px);
   overflow: hidden;
-  color: rgb(var(--v-theme-directoryInk));
-  border: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+  color: rgb(var(--v-theme-brandNavy));
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
   border-radius: 16px;
-  box-shadow: 0 20px 48px rgb(var(--v-theme-directoryInk) / 16%);
+  box-shadow: 0 20px 48px rgb(var(--v-theme-brandNavy) / 16%);
 }
 
 .directory-cascader-search {
-  border-bottom: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+  border-bottom: 1px solid rgb(var(--v-theme-borderSubtle));
 }
 
 .directory-cascader-search :deep(.v-field) {
   --v-input-control-height: 36px;
-  --v-field-padding-top: 4px;
-  --v-field-padding-bottom: 4px;
   font-size: 14px;
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
   background: rgb(var(--v-theme-white));
   border-radius: 12px !important;
   box-shadow: none;
 }
 
+.directory-cascader-search :deep(.v-field__input) {
+  padding-block: 8px;
+  line-height: 20px;
+}
+
 .directory-cascader-search :deep(.v-field__outline) {
-  color: rgb(var(--v-theme-directoryButtonBorder));
+  color: rgb(var(--v-theme-borderSubtle));
   --v-field-border-opacity: 1;
 }
 
 .directory-cascader-search :deep(.v-field--focused .v-field__outline) {
-  color: rgb(var(--v-theme-academicGold));
+  color: rgb(var(--v-theme-primary));
 }
 
 .directory-cascader-search :deep(.v-field__prepend-inner),
 .directory-cascader-search :deep(.v-field__input) {
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
 }
 
 .directory-cascader-result-path {
@@ -464,7 +472,7 @@ const emit = defineEmits<{
 }
 
 .directory-cascader-column + .directory-cascader-column {
-  border-inline-start: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+  border-inline-start: 1px solid rgb(var(--v-theme-borderSubtle));
 }
 
 .directory-cascader-column--grade {
@@ -481,7 +489,7 @@ const emit = defineEmits<{
   max-height: 212px;
   overflow-y: auto;
   scrollbar-width: thin;
-  scrollbar-color: rgb(var(--v-theme-grey300)) transparent;
+  scrollbar-color: rgb(var(--v-theme-borderSubtle)) transparent;
 }
 
 .directory-cascader-options::-webkit-scrollbar {
@@ -489,7 +497,7 @@ const emit = defineEmits<{
 }
 
 .directory-cascader-options::-webkit-scrollbar-thumb {
-  background-color: rgb(var(--v-theme-grey300));
+  background-color: rgb(var(--v-theme-borderSubtle));
   border-radius: 4px;
 }
 
@@ -505,7 +513,7 @@ const emit = defineEmits<{
 }
 
 .directory-cascader-option {
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
   background: transparent;
   border: 1px solid transparent;
   border-radius: 12px;
@@ -513,23 +521,23 @@ const emit = defineEmits<{
 }
 
 .directory-cascader-option:not(:last-child) {
-  border-bottom-color: rgb(var(--v-theme-directoryAnswer));
+  border-bottom-color: rgb(var(--v-theme-surfaceTertiary));
 }
 
 .directory-cascader-option:hover {
   background: rgb(var(--v-theme-surfaceSecondary));
-  border-color: rgb(var(--v-theme-directoryButtonBorder));
+  border-color: rgb(var(--v-theme-borderSubtle));
 }
 
 .directory-cascader-option--active {
-  color: rgb(var(--v-theme-directoryInk)) !important;
-  background: rgb(var(--v-theme-directoryAnswer)) !important;
-  border-color: rgb(var(--v-theme-directoryButtonBorder));
-  box-shadow: 0 1px 2px rgb(var(--v-theme-directoryInk) / 8%);
+  color: rgb(var(--v-theme-brandNavy)) !important;
+  background: rgb(var(--v-theme-surfaceTertiary)) !important;
+  border-color: rgb(var(--v-theme-borderSubtle));
+  box-shadow: 0 1px 2px rgb(var(--v-theme-brandNavy) / 8%);
 }
 
 .directory-cascader-option:focus-visible {
-  outline: 2px solid rgb(var(--v-theme-academicGold) / 28%);
+  outline: 2px solid rgb(var(--v-theme-primary) / 28%);
   outline-offset: -2px;
 }
 

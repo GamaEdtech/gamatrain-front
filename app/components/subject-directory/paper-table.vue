@@ -1,6 +1,6 @@
 <template>
   <section
-    class="directory-papers text-black"
+    class="directory-papers text-brandNavy"
     aria-labelledby="directory-papers-title"
   >
     <h2
@@ -57,7 +57,7 @@
               indeterminate
               size="24"
               width="2"
-              color="directoryInk"
+              color="primary"
             />
             <span>Checking available sessions…</span>
           </div>
@@ -73,11 +73,12 @@
               v-for="session in displayedSessions(year.id)"
               :key="session.id"
               :value="session.id"
+              class="rounded-0"
               elevation="0"
             >
               <v-expansion-panel-title
-                class="directory-session-title font-weight-bold rounded justify-start"
-                color="directorySeries"
+                class="directory-session-title text-brandNavy font-weight-bold rounded-0 justify-start"
+                color="surfaceTertiary"
                 static
                 expand-icon="md:keyboard_arrow_right"
                 collapse-icon="md:keyboard_arrow_down"
@@ -135,7 +136,7 @@
   <lazy-test-counting-wallet-animation
     :is-start-animation="isStartWalletAnimation"
     :direction="-1"
-    :delta-price="PRICE_FILE"
+    :delta-price="priceFile"
     @complete-animation="completeWalletAnimation"
   />
   <lazy-common-modal-base
@@ -170,9 +171,8 @@ const {
   showCoinPaymentModal, showCoinAnimation, isStartWalletAnimation,
   downloadIssue, downloadIssueLink, paymentPlans, billingInterval,
   currentPlanTitle, currentPlanId, handleAnimationComplete, completeWalletAnimation,
-  upgradePlanSuccessfully,
+  upgradePlanSuccessfully, priceFile,
 } = downloadState
-const PRICE_FILE = 10
 </script>
 
 <style scoped>
@@ -185,7 +185,7 @@ const PRICE_FILE = 10
 }
 
 .directory-years :deep(.v-expansion-panel) {
-  background-color: rgb(var(--v-theme-white));
+  background-color: rgb(var(--v-theme-grey25));
   color: inherit;
 }
 

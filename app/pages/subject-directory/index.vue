@@ -1,14 +1,14 @@
 <template>
-  <v-container class="margin-top-handle">
+  <v-container class="margin-top-handle bg-grey25 text-brandNavy">
     <div
       class="directory-layout text-left"
       :class="{ 'directory-layout--without-resources': !hasResources }"
     >
       <header class="directory-introduction">
-        <h1 class="directory-title text-grey900 mb-2">
+        <h1 class="directory-title mb-2">
           {{ introduction.title }}
         </h1>
-        <p class="directory-description text-grey600 ma-0">
+        <p class="directory-description opacity-70 ma-0">
           {{ introduction.description }}
         </p>
       </header>

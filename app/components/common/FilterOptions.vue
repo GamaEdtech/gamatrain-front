@@ -77,21 +77,20 @@ const emit = defineEmits(['select'])
   max-width: none;
   height: auto !important;
   padding: 8px 12px !important;
-  border-radius: 12px !important;
+  border-radius: 8px !important;
   font-size: 14px;
   line-height: 20px;
   letter-spacing: normal;
   text-transform: none;
-  color: rgb(var(--v-theme-directoryInk));
+  color: rgb(var(--v-theme-brandNavy));
   background: rgb(var(--v-theme-grey25));
-  border-color: rgb(var(--v-theme-directoryButtonBorder)) !important;
+  border-color: rgb(var(--v-theme-borderSubtle)) !important;
   transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 .filter-option--selected {
   color: rgb(var(--v-theme-white)) !important;
-  background: rgb(var(--v-theme-directoryInk)) !important;
-  border-color: rgb(var(--v-theme-directoryInk)) !important;
-  box-shadow: 0 1px 2px rgba(var(--v-theme-directoryInk), 0.16);
+  background: rgb(var(--v-theme-brandNavy)) !important;
+  border-color: rgb(var(--v-theme-brandNavy)) !important;
 }
 .filter-options--compact,
 .filter-options--compact .filter-options__items { gap: 6px; }

@@ -29,26 +29,7 @@ export const getDirectoryExamIds = (value) => {
   }
 }
 
-const isAvailable = value => value === true || value === 1 || value === '1'
-const hasExtraId = value => /^[1-9]\d*$/.test(String(value))
-
-// Left-to-right order from Figma. Unsupported extra types are deliberately
-// omitted until the directory list endpoint exposes their availability and IDs.
-const DOWNLOADS = [
-  { type: 'sf_file', flag: 'sf_file', extraId: 'sf_file_id', title: 'Sound File', icon: 'md:volume_up_outlined', style: 'extra' },
-  { type: 'in_file', flag: 'in_file', extraId: 'in_file_id', title: 'Insert', icon: 'md:attach_file', style: 'extra' },
-  { type: 'answer', flag: 'a_file', title: 'Mark Scheme', icon: 'md:check_box_outlined', style: 'answer' },
-  { type: 'pdf', flag: 'q_file', title: 'Question Paper', icon: 'md:download', style: 'question' },
-]
-
-export const getDirectoryPaperDownloads = paper => DOWNLOADS.filter(file =>
-  isAvailable(paper[file.flag]) && (!file.extraId || hasExtraId(paper[file.extraId])),
-)
-
-export const getDirectoryDownloadParams = (type, paper) => {
-  const file = DOWNLOADS.find(item => item.type === type)
-  return file?.extraId ? { type: 'extra', extraId: String(paper[file.extraId]) } : { type }
-}
+export { getDirectoryPaperDownloads, getDirectoryDownloadParams } from './directoryPaperFiles.ts'
 
 export const getDirectorySessionKey = query => JSON.stringify([
   String(query.lesson), String(query.edu_year), String(query.edu_month),

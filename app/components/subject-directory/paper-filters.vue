@@ -193,7 +193,7 @@ watch(() => props.contextKey, () => {
     padding: 6px 0;
     overflow: hidden;
     background: rgb(var(--v-theme-grey25));
-    border-bottom: 1px solid rgb(var(--v-theme-directoryButtonBorder));
+    border-bottom: 1px solid rgb(var(--v-theme-borderSubtle));
   }
 
   .mobile-quick-filter-bar__scroller {
@@ -224,9 +224,9 @@ watch(() => props.contextKey, () => {
     flex: 0 0 auto;
     align-items: stretch;
     overflow: hidden;
-    color: rgb(var(--v-theme-directoryInk));
+    color: rgb(var(--v-theme-brandNavy));
     background: rgb(var(--v-theme-grey25));
-    border-left: 1px solid rgb(var(--v-theme-directoryAnswer));
+    border-left: 1px solid rgb(var(--v-theme-surfaceTertiary));
     transition: background-color 160ms ease;
   }
 
@@ -245,7 +245,7 @@ watch(() => props.contextKey, () => {
   }
 
   .mobile-quick-filter--disabled {
-    color: rgba(var(--v-theme-directoryInk), 0.38);
+    color: rgba(var(--v-theme-brandNavy), 0.38);
   }
 
   .mobile-quick-filter--disabled .mobile-quick-filter__control {
@@ -317,13 +317,13 @@ watch(() => props.contextKey, () => {
   }
 
   .mobile-quick-filter__control:active {
-    background: rgb(var(--v-theme-directoryAnswer));
+    background: rgb(var(--v-theme-surfaceTertiary));
   }
 
   .mobile-quick-filter__control:focus-visible,
   .mobile-quick-filter__clear:focus-visible {
     z-index: 1;
-    outline: 3px solid rgba(var(--v-theme-academicGold), 0.28);
+    outline: 3px solid rgba(var(--v-theme-primary), 0.28);
     outline-offset: -3px;
   }
 
@@ -335,7 +335,7 @@ watch(() => props.contextKey, () => {
     flex: 0 0 20px;
     align-items: center;
     justify-content: center;
-    color: rgb(var(--v-theme-directoryInk));
+    color: rgb(var(--v-theme-brandNavy));
   }
 
   .mobile-quick-filter__icon :deep(.v-img) {
@@ -372,21 +372,21 @@ watch(() => props.contextKey, () => {
   }
 
   .mobile-quick-filter__label {
-    color: rgb(var(--v-theme-directoryInk));
+    color: rgb(var(--v-theme-brandNavy));
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
   }
 
   .mobile-quick-filter--selected .mobile-quick-filter__label {
-    color: rgba(var(--v-theme-directoryInk), 0.68);
+    color: rgba(var(--v-theme-brandNavy), 0.68);
     font-size: 11px;
     font-weight: 500;
     line-height: 14px;
   }
 
   .mobile-quick-filter__value {
-    color: rgb(var(--v-theme-directoryInk));
+    color: rgb(var(--v-theme-brandNavy));
     font-size: 14px;
     font-weight: 650;
     line-height: 18px;

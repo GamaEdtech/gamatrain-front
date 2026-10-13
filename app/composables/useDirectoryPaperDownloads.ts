@@ -1,4 +1,7 @@
-import { getDirectoryDownloadParams } from '~/utils/directoryPapers'
+import { ref } from 'vue'
+import type { BillingInterval, UpgradeSuggestionsDTO } from '~/types'
+import type { DirectoryPaper } from '~/types/subject-directory/paperFiles'
+import { getDirectoryDownloadParams, getDirectoryPaperDownloads } from '~/utils/directoryPaperFiles'
 import { useDownloadWithProgress } from '~/composables/useDownloadWithProgress'
 
 // Reuses the original table's download, membership and wallet flow.
@@ -9,16 +12,14 @@ export const useDirectoryPaperDownloads = () => {
   const isStartWalletAnimation = ref(false)
   const downloadIssue = ref(false)
   const downloadIssueLink = ref('')
-  const paymentPlans = ref([])
-  const billingInterval = ref([])
-  const currentDownloadPaper = ref(null)
+  const paymentPlans = ref<UpgradeSuggestionsDTO[]>([])
+  const billingInterval = ref<BillingInterval[]>([])
+  const currentDownloadPaper = ref<DirectoryPaper | null>(null)
   const activeDownloadKey = ref('')
-  const currentDownloadPaperId = {
-    valueOf: () => currentDownloadPaper.value?.id || 0,
-  }
-  const pendingDownload = ref(null)
-  const currentPlanTitle = ref(null)
-  const currentPlanId = ref(null)
+  const priceFile = ref(0)
+  const pendingDownload = ref<string | null>(null)
+  const currentPlanTitle = ref<string | null>(null)
+  const currentPlanId = ref<number | null>(null)
 
   const handleAnimationComplete = async () => {
     // Close everything immediately when animation completes
@@ -37,7 +38,7 @@ export const useDirectoryPaperDownloads = () => {
     startDownload,
   } = useDownloadWithProgress({
     contentType: 'PastPaper',
-    id: currentDownloadPaperId,
+    get id() { return currentDownloadPaper.value?.id || 0 },
     trackPayload: () => ({
       file_type: 'past_paper',
       file_name: currentDownloadPaper.value?.test_type_title || currentDownloadPaper.value?.title || '',
@@ -68,13 +69,15 @@ export const useDirectoryPaperDownloads = () => {
     },
   })
 
-  const handleDownload = async (type, item) => {
+  const handleDownload = async (type: string, item: DirectoryPaper) => {
     if (isBusy.value) return
-    isBusy.value = true
     const downloadParams = getDirectoryDownloadParams(type, item)
+    if (!downloadParams) return
+    isBusy.value = true
     currentDownloadPaper.value = item
+    priceFile.value = getDirectoryPaperDownloads(item).find(file => file.type === type)?.price ?? 0
     activeDownloadKey.value = getTableDownloadKey(item, type)
-    pendingDownload.value = downloadParams
+    pendingDownload.value = type
 
     try {
       await startDownload(downloadParams)
@@ -86,26 +89,29 @@ export const useDirectoryPaperDownloads = () => {
 
   const upgradePlanSuccessfully = async () => {
     showCoinPaymentModal.value = false
-    if (pendingDownload.value) {
-      startDownload({ type: pendingDownload.value.type, extraId: pendingDownload.value.extraId })
+    if (pendingDownload.value && currentDownloadPaper.value) {
+      await handleDownload(pendingDownload.value, currentDownloadPaper.value)
     }
   }
 
-  const getTableDownloadKey = (item, type) => `${item.id}-${type}`
+  const getTableDownloadKey = (item: DirectoryPaper, type: string) => `${item.id}-${type}`
 
-  const isDownloading = (item, type) => {
+  const isDownloading = (item: DirectoryPaper, type: string) => {
     const downloadParams = getDirectoryDownloadParams(type, item)
+    if (!downloadParams) return false
     return activeDownloadKey.value === getTableDownloadKey(item, type)
       && isDownloadingByType(downloadParams.type, downloadParams.extraId)
   }
 
-  const getDownloadProgress = (item, type) => {
+  const getDownloadProgress = (item: DirectoryPaper, type: string) => {
     const downloadParams = getDirectoryDownloadParams(type, item)
+    if (!downloadParams) return 0
     return getDownloadProgressByType(downloadParams.type, downloadParams.extraId)
   }
 
   return {
     isBusy,
+    priceFile,
     showCoinPaymentModal,
     showCoinAnimation,
     isStartWalletAnimation,

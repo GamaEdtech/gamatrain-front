@@ -3,14 +3,14 @@
     v-if="isLoading || error || collections.length"
     class="resource-collections"
     variant="outlined"
-    color="grey50"
+    color="grey25"
     elevation="0"
     tag="section"
     aria-labelledby="resource-collections-title"
   >
     <h2
       id="resource-collections-title"
-      class="resource-collections__heading bg-surfaceSecondary text-grey900 d-flex align-center px-3 py-2"
+      class="resource-collections__heading bg-brandNavy text-white d-flex align-center px-3 py-2"
     >
       Resources
     </h2>
@@ -23,6 +23,7 @@
     <v-alert
       v-else-if="error"
       type="error"
+      color="errorStrong"
       variant="text"
     >
       Resources could not be loaded.
@@ -44,7 +45,7 @@
         v-for="collection in collections"
         :key="collection.id"
         :to="getDirectoryResourceSearchLink(collection, context)"
-        class="resource-collection text-grey900 px-2"
+        class="resource-collection text-brandNavy px-2"
         :aria-label="collection.count != null ? `${collection.label}, ${collection.count} resources` : collection.label"
       >
         <template #prepend>
@@ -60,7 +61,7 @@
         <template #append>
           <span
             v-if="collection.count != null"
-            class="resource-collection__count bg-white text-grey900 ml-2"
+            class="resource-collection__count bg-white text-brandNavy ml-2"
           >{{ collection.count }}</span>
           <v-icon
             icon="md:chevron_right"
@@ -90,9 +91,9 @@ const collections = computed(() => getDirectoryResourceCollections(props.data))
 
 <style scoped>
 .resource-collections {
-  border: 1px solid rgb(var(--v-theme-grey200));
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
   border-radius: 12px;
-  background: rgb(var(--v-theme-grey50));
+  background: rgb(var(--v-theme-grey25));
 }
 .resource-collections__heading {
   min-height: 44px;
@@ -102,15 +103,21 @@ const collections = computed(() => getDirectoryResourceCollections(props.data))
 }
 .resource-collection {
   min-height: 44px;
-  border-top: 1px solid rgb(var(--v-theme-grey200));
+  border-top: 1px solid rgb(var(--v-theme-surfaceTertiary));
+  transition: background-color 160ms ease;
 }
 .resource-collection:hover {
-  background: rgb(var(--v-theme-blue50));
-  color: rgb(var(--v-theme-info)) !important;
+  background: rgb(var(--v-theme-surfaceSecondary));
+}
+.resource-collection:active {
+  background: rgb(var(--v-theme-surfaceTertiary));
+}
+.resource-collection :deep(.v-list-item__overlay) {
+  opacity: 0 !important;
 }
 .resource-collection:focus-visible {
-  outline: 2px solid rgb(var(--v-theme-info));
-  outline-offset: -2px;
+  outline: 3px solid rgb(var(--v-theme-primary) / 28%);
+  outline-offset: -3px;
 }
 .resource-collection :deep(.v-list-item__prepend > .v-list-item__spacer) {
   width: 8px;
@@ -130,9 +137,12 @@ const collections = computed(() => getDirectoryResourceCollections(props.data))
   padding: 0 5px;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgb(var(--v-theme-grey100));
+  border: 1px solid rgb(var(--v-theme-surfaceTertiary));
   border-radius: 50%;
   font-size: 12px;
   font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  .resource-collection { transition: none; }
 }
 </style>
