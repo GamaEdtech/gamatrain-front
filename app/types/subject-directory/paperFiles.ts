@@ -39,6 +39,7 @@ export interface DirectoryPaper extends DirectoryPaperFileSource {
 export interface DirectoryPaperDownload {
   type: string
   title: string
+  shortTitle: string
   icon: string
   style: 'question' | 'answer' | 'extra'
   price: number | null

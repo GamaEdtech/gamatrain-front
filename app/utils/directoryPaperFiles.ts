@@ -12,6 +12,17 @@ const extraFileIcons: Record<string, string> = {
   8043: 'md:import_contacts_outlined',
 }
 
+const extraFileShortTitles: Record<string, string> = {
+  6351: 'IN',
+  6705: 'SF',
+  8043: 'Solved',
+  10517: 'CI',
+  10519: 'QR',
+  10520: 'TN',
+  10560: 'I2',
+  10561: 'PM',
+}
+
 // Right-to-left order after Question Paper and Mark Scheme.
 const extraFileOrder: Record<string, number> = {
   6351: 0, // Insert
@@ -53,6 +64,7 @@ const getExtraDownloads = (paper: DirectoryPaperFileSource): DirectoryPaperDownl
         type: `extra:${id}`,
         extraId: id,
         title,
+        shortTitle: extraFileShortTitles[String(file.type)] || title,
         icon: extraFileIcons[String(file.type)]
           || (title.toLowerCase() === 'solved paper' ? 'md:import_contacts_outlined' : 'md:draft_outlined'),
         style: 'extra',
@@ -68,6 +80,7 @@ const getExtraDownloads = (paper: DirectoryPaperFileSource): DirectoryPaperDownl
   ].filter(file => isAvailable(file.available) && hasExtraId(file.id))
     .map<DirectoryPaperDownload>(file => ({
       type: file.type, extraId: String(file.id), title: file.title,
+      shortTitle: file.type === 'in_file' ? 'IN' : 'SF',
       icon: file.icon, style: 'extra', price: null,
     }))
 }
@@ -77,10 +90,10 @@ export const getDirectoryPaperDownloads = (paper: DirectoryPaperFileSource): Dir
   const pdf = paper.files?.pdf
   const answer = paper.files?.answer
   if (isAvailable(pdf?.exist ?? paper.q_file)) {
-    downloads.push({ type: 'pdf', title: 'Question Paper', icon: 'md:download', style: 'question', price: getPrice(pdf?.price) })
+    downloads.push({ type: 'pdf', title: 'Question Paper', shortTitle: 'Paper', icon: 'md:download', style: 'question', price: getPrice(pdf?.price) })
   }
   if (isAvailable(answer?.exist ?? paper.a_file)) {
-    downloads.push({ type: 'answer', title: 'Mark Scheme', icon: 'md:check_box_outlined', style: 'answer', price: getPrice(answer?.price) })
+    downloads.push({ type: 'answer', title: 'Mark Scheme', shortTitle: 'MS', icon: 'md:check_box_outlined', style: 'answer', price: getPrice(answer?.price) })
   }
   downloads.push(...getExtraDownloads(paper))
   // Keep the existing right-to-left visual order after the row reverses this list.
