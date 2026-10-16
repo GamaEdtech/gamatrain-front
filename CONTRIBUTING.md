@@ -33,6 +33,23 @@ Please follow these coding standards to keep the project consistent and maintain
 - All required colors should be defined in the Vuetify plugin configuration.
 - Prefer existing project components and design patterns before creating new UI patterns.
 
+### UI Text (UX Writing)
+Follow the [GamaTrain UX Writing Guide](https://gamatrain.notion.site/GamaTrain-UX-Writing-Direction-Style-Guide-f0262bb2e5a383b39d7081d93be3fdc2) when adding or updating user-facing text.
+
+- Product names: Use the approved names consistently: QuizHub, Past Paper, Forum, School Finder, and other terms listed in the [Terminology Glossary](https://gamatrain.notion.site/Terminology-Glossary-8e562bb2e5a383fe8d0c01055d25e744?pvs=25).
+
+- Billing terminology: Use Gems, Plan, and Subscription consistently. Check the glossary before introducing new terms.
+
+- Errors: Explain what happened and what the user can do next. Never expose raw server or API error text.
+
+- Actions: Use clear, consistent verbs: Submit, Save, Delete, and Discard. Match the label to the actual outcome.
+
+- Confirmations: State what will happen before the user proceeds, especially for destructive or irreversible actions.
+
+- Tone: Keep student-facing text simple, warm, and encouraging; keep teacher-facing text clear, respectful, and efficient.
+
+See [Voice & Tone](https://gamatrain.notion.site/Voice-Tone-1a962bb2e5a382ddb33c8137a6d42d8d?pvs=25), [Microcopy Guidelines](https://gamatrain.notion.site/Microcopy-Guidelines-4f962bb2e5a38262987a81a994f01998?pvs=25), and [Quick Reference](https://gamatrain.notion.site/Quick-Reference-42062bb2e5a38319bc29013b5269ed64?pvs=25) for detailed rules and examples.
+
 ### TypeScript and Project Structure
 
 - New code should be written with **TypeScript**.
