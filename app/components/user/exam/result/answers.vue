@@ -32,10 +32,11 @@
           :class="[
             'choice-div flex-shrink-0 font-weight-regular text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
             item.class,
+            { 'choice-correct': item.icon === 'md:circle' },
           ]"
         >
           <v-icon
-            v-if="item.icon"
+            v-if="item.icon && item.icon !== 'md:circle'"
             :color="item.iconColor"
             size="18"
           >
@@ -84,6 +85,7 @@
             :class="[
               'choice-div flex-shrink-0 font-weight-regular text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
               getChoiceClass(question, choice),
+              { 'choice-correct': getChoiceStatus(question, choice) === 'correct' },
             ]"
           >
             <span v-if="getChoiceStatus(question, choice) === 'default'">
@@ -104,14 +106,6 @@
               size="18"
             >
               md:close
-            </v-icon>
-
-            <v-icon
-              v-else
-              color="success"
-              size="18"
-            >
-              md:circle
             </v-icon>
           </div>
         </div>
@@ -260,6 +254,10 @@ const getQuestionChipColor = (question: ExamResultQuestionDTO) => {
   max-width: 24px;
   max-height: 24px;
   font-size: 1.4rem;
+}
+/* The correct-option dot, painted from the box's own center: a separate dot element rounded half a pixel off it. */
+.choice-correct {
+  background: radial-gradient(circle, rgb(var(--v-theme-success)) 7px, transparent 7.5px);
 }
 
 .question-card {

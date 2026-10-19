@@ -119,6 +119,7 @@
     <lazy-common-modal-auth
       v-if="shouldMountAuthModal"
       v-model:show-dialog="showAuthModal"
+      @login-successfull="goToRedirectAfterLogin"
     />
 
     <lazy-common-modal-base
@@ -279,15 +280,26 @@ watch(
   },
 )
 
+// Where to send the user after they sign in, when the auth middleware sent them here from a protected page.
+const redirectAfterLogin = ref<string | null>(null)
+
+const handleAuthFormQuery = () => {
+  if (route.query.auth_form !== 'login') return
+  const noRedirect = !!route.query.auth_noredirect
+  redirectAfterLogin.value = getSafeAuthRedirect(route.query[AUTH_REDIRECT_QUERY_KEY])
+  openLoginDialog()
+  if (!noRedirect) router.push({ query: {} })
+}
+
+const goToRedirectAfterLogin = () => {
+  const target = redirectAfterLogin.value
+  redirectAfterLogin.value = null
+  if (target) router.push(target)
+}
+
 watch(
   () => route.query.auth_form,
-  (val) => {
-    if (val === 'login') {
-      const noRedirect = !!route.query.auth_noredirect
-      openLoginDialog()
-      if (!noRedirect) router.push({ query: {} })
-    }
-  },
+  handleAuthFormQuery,
 )
 
 watch(
@@ -298,6 +310,8 @@ watch(
 
 onMounted(async () => {
   handleChnageMenuSetting()
+  // A page can load with ?auth_form=login already set (the auth middleware redirect), which the watcher never sees.
+  handleAuthFormQuery()
   window.addEventListener('scroll', handleChnageMenuSetting)
 
   requestIdleCallback?.(() => {

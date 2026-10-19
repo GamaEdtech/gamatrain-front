@@ -1,6 +1,9 @@
 User-agent: *
 Disallow: /admin
 Disallow: /_nuxt
+Disallow: /test-maker
+Disallow: /user
+Disallow: /payments
 Allow: /
 
 Sitemap: https://gamatrain.com/sitemap

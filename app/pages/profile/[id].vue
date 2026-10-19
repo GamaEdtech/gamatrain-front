@@ -158,6 +158,18 @@ const { data: contentData } = await useAsyncData(
   },
 )
 
+// The API resolves a profile by any path that starts with its id ("/profile/14", "/profile/14-Old-Name"), and each
+// used to declare itself canonical. Only the handle the API names is; every other path 301s to it (the same rules
+// as useCanonicalContentPath, which covers the /{type}/{id}/{slug} pages).
+const canonicalHandle = contentData.value?.handle || String(route.params.id)
+if (
+  contentData.value?.handle
+  && (route.params.id !== canonicalHandle || route.path.endsWith('/'))
+  && !/[/?#%]/.test(canonicalHandle)
+) {
+  await navigateTo({ path: `/profile/${canonicalHandle}`, hash: route.hash }, { redirectCode: 301, replace: true })
+}
+
 const isEditable = computed(() => {
   return user.value?.handle === route.params.id
 })
@@ -171,7 +183,7 @@ const getAbsoluteUrl = (path: string) => {
 
 useHead(() => {
   const profile = contentData.value
-  const handle = String(route.params.id)
+  const handle = canonicalHandle
   const fullName = profile
     ? `${profile.firstName ?? ''} ${profile.lastName ?? ''}`.trim()
     : handle
@@ -181,20 +193,27 @@ useHead(() => {
   const pageDescribe = profile?.biography
     || profile?.currentStatusSentence
     || `View ${fullName || handle}'s profile, skills, and learning experience on GamaTrain.`
-  const canonical = `${requestURL.protocol}//${requestURL.host}/profile/${handle}`
+  const canonical = `https://${requestURL.host}/profile/${handle}`
   const ogImage = getAbsoluteUrl(
     profile?.avatarUri || '/images/default-user.svg',
   )
+  // A ProfilePage around the Person is what Google reads as a profile (the "Profile page" rich result);
+  // a bare Person isn't picked up.
   const fullSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Person',
-    'name': fullName || handle,
+    '@type': 'ProfilePage',
     'url': canonical,
-    'image': ogImage,
-    'description': pageDescribe,
-    'affiliation': {
-      '@type': 'Organization',
-      'name': 'GamaTrain',
+    'mainEntity': {
+      '@type': 'Person',
+      'name': fullName || handle,
+      'alternateName': handle,
+      'url': canonical,
+      'image': ogImage,
+      'description': pageDescribe,
+      'affiliation': {
+        '@type': 'Organization',
+        'name': 'GamaTrain',
+      },
     },
   }
 

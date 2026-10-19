@@ -55,8 +55,10 @@ const showPostSlider = computed(() => {
 })
 
 const excludedPathsForBottomNavMenu = ['/school', '/game/car-racing', '/game/castle']
+// A page can also opt out with definePageMeta({ hideBottomNav: true }), e.g. pages with dynamic paths.
 const showBottomNavSlider = computed(() => {
-  return !excludedPathsForBottomNavMenu.includes(route.path)
+  return route.meta.hideBottomNav !== true
+    && !excludedPathsForBottomNavMenu.includes(route.path)
 })
 
 onMounted(() => {

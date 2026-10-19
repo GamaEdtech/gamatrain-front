@@ -21,7 +21,7 @@
       <!-- Column Classification -->
       <template #[`item.name`]="{ item }">
         <NuxtLink
-          :to="`/paper/${item.id}/${item.title_url}`"
+          :to="contentPath('paper', item.id, item.title_url)"
           class="font-weight-medium text-grey-darken-2"
         >{{
           item.variant && item.variant != "0"
@@ -201,7 +201,7 @@
             <div class="mobile-card">
               <div class="paper-info">
                 <NuxtLink
-                  :to="`/paper/${item.id}/${item.title_url}`"
+                  :to="contentPath('paper', item.id, item.title_url)"
                   class="paper-info-part"
                 >{{
                   item.variant && item.variant != "0"

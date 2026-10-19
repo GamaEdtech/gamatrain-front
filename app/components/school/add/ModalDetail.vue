@@ -53,9 +53,7 @@
           height="40"
           max-width="180"
           class="w-50 text-h5"
-          :to="`/school/${schoolInformation.id}/${$slugGenerator(
-            schoolInformation.name,
-          )}`"
+          :to="contentPath('school', schoolInformation.id, schoolInformation.slug)"
         >
           Edit School
         </v-btn>
@@ -67,7 +65,6 @@
 <script setup>
 import { useDisplay } from 'vuetify'
 
-const { $slugGenerator } = useNuxtApp()
 const { mdAndUp } = useDisplay()
 
 const props = defineProps({

@@ -115,8 +115,6 @@
 </template>
 
 <script setup lang="ts">
-import type { AppError } from '@/types'
-
 interface BreadCrumb {
   text: string
   disabled: boolean
@@ -124,10 +122,8 @@ interface BreadCrumb {
 }
 
 const route = useRoute()
-const router = useRouter()
 const { getItemById } = useMultimedia()
 
-const requestURL = ref(useRequestURL().host)
 const breads = ref<BreadCrumb[]>([])
 const openShare = ref(false)
 const openCrashReport = ref(false)
@@ -138,31 +134,25 @@ const { data: contentData } = await useAsyncData(
   async () => {
     try {
       const response = await getItemById(route.params.id as string)
-
-      if (response.status == 1 && response.data) {
-        return response.data
-      }
-      else {
-        showError({
-          statusCode: 404,
-          statusMessage: 'Page Not Founded!',
-        })
-        return null
-      }
+      return response.status == 1 && response.data ? response.data : null
     }
-    catch (e: unknown) {
-      showError({
-        statusCode: 404,
-        statusMessage: 'Page Not Founded!',
-      })
-      const error = e as AppError
-      if (error?.status === 404) {
-        router.push('/search?type=multimedia')
-      }
-      throw error
+    catch {
+      return null
     }
   },
 )
+
+// showError inside the handler only lands in useAsyncData's error, so SSR answered 200 with an empty page.
+// Throwing from setup makes Nuxt render the error page with a real 404.
+if (!contentData.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Page Not Found',
+    fatal: true,
+  })
+}
+
+const { url: canonicalUrl } = await useCanonicalContentPath('multimedia', contentData.value.id, contentData.value.title_url)
 
 const initBreadCrumb = () => {
   if (!contentData.value) return
@@ -210,6 +200,32 @@ const ogImage
     && contentData.value?.previewData.preview.length > 0
     ? contentData.value?.previewData.preview[0]
     : null
+
+const { buildSchema } = useSeoSchema()
+
+// Most multimedia items are documents (PDF, Word, slides) rather than videos, so a LearningResource
+// describes them; breadcrumbs are what Google shows in results.
+const schema = computed(() => {
+  const item = contentData.value
+  if (!item) return null
+  const author = [item.first_name, item.last_name].filter(Boolean).join(' ')
+  return buildSchema({
+    dto: item,
+    url: canonicalUrl,
+    title: item.title,
+    description: item.description || item.title,
+    breadcrumbs: breads.value,
+    types: ['webpage', 'learning', 'breadcrumb'],
+    learning: {
+      learningResourceType: item.content_type_title || item.type_title || 'Learning material',
+      teaches: item.lesson_title?.trim() || undefined,
+      educationalLevel: item.base_title?.trim() || undefined,
+      image: ogImage || item.lesson_pic || undefined,
+      ...(author && { author: { '@type': 'Person', 'name': author } }),
+    },
+  })
+})
+
 useHead(() => ({
   title: contentData.value?.title || 'Multimedia Details',
   meta: [
@@ -264,10 +280,13 @@ useHead(() => ({
       content: ogImage,
     },
   ],
+  script: schema.value
+    ? [{ key: 'json-ld-schema', type: 'application/ld+json', innerHTML: JSON.stringify(schema.value) }]
+    : [],
   link: [
     {
       rel: 'canonical',
-      href: `https://${requestURL.value}/multimedia/${contentData.value?.id}/${contentData.value?.title_url}`,
+      href: canonicalUrl,
     },
   ],
 }))

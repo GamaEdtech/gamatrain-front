@@ -17,7 +17,7 @@
         <v-card
           v-else-if="featuredItems[0]"
           flat
-          :to="`/post/${featuredItems[slideIndex].id}/${featuredItems[0].slug}`"
+          :to="contentPath('post', featuredItems[slideIndex].id, featuredItems[slideIndex].slug)"
           class="ma-1"
         >
           <v-card>
@@ -75,7 +75,7 @@
           :key="n"
           class="featured-item"
         >
-          <nuxt-link :to="`/post/${item.id}/${item.slug}`">
+          <nuxt-link :to="contentPath('post', item.id, item.slug)">
             <div class="v-responsive v-img">
               <!-- <NuxtImg
                 width="100px"
@@ -96,7 +96,7 @@
           </nuxt-link>
 
           <div class="item-text">
-            <nuxt-link :to="`/post/${item.id}/${item.slug}`">
+            <nuxt-link :to="contentPath('post', item.id, item.slug)">
               <h2 class="gama-text-caption">{{ item.title }}</h2>
             </nuxt-link>
           </div>
@@ -136,7 +136,7 @@
             >
               <v-card
                 flat
-                :to="`/post/${item.id}/${item.slug}`"
+                :to="contentPath('post', item.id, item.slug)"
                 class="ma-1"
               >
                 <v-card>
@@ -252,7 +252,7 @@
           >
             <v-card
               flat
-              :to="`/post/${item.id}/${item.slug}`"
+              :to="contentPath('post', item.id, item.slug)"
             >
               <v-card class="ma-1">
                 <!-- <NuxtImg
@@ -291,7 +291,7 @@
             class="d-none d-sm-block"
           >
             <div class="d-flex">
-              <nuxt-link :to="`/post/${item.id}/${item.slug}`">
+              <nuxt-link :to="contentPath('post', item.id, item.slug)">
                 <!-- <NuxtImg
                   width="180px"
                   height="135px"
@@ -310,7 +310,7 @@
               </nuxt-link>
 
               <div class="item-text">
-                <nuxt-link :to="`/post/${item.id}/${item.slug}`">
+                <nuxt-link :to="contentPath('post', item.id, item.slug)">
                   <h2 class="gama-text-button">{{ item.title }}</h2>
                   <span
                     class="gama-text-subtitle2"

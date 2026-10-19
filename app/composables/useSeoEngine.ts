@@ -247,7 +247,8 @@ export function useSeoSchema() {
       'itemListElement': items.map((item, index) => ({
         '@type': 'ListItem',
         'position': index + 1,
-        'name': item.text,
+        // Board/grade titles come from the API with stray spaces (" Science Combined (0653)").
+        'name': item.text?.trim(),
         'item': `${SITE_URL}${item.href}`,
       })),
     }
@@ -331,6 +332,9 @@ export function useSeoSchema() {
     description: string
     body?: string
     breadcrumbs?: BreadCrumb[]
+    // Merged over the 'learning' node, for pages that are a more specific kind of resource (an exam is a
+    // Quiz) or know more about it (image, author, level, duration).
+    learning?: Record<string, unknown>
     types: Array<
       | 'webpage'
       | 'article'
@@ -361,7 +365,7 @@ export function useSeoSchema() {
     }
 
     if (options.types.includes('learning')) {
-      schemas.push(createLearningResourceSchema(options.dto, ctx))
+      schemas.push({ ...createLearningResourceSchema(options.dto, ctx), ...options.learning })
     }
 
     if (options.types.includes('article-learning')) {

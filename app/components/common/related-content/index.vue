@@ -54,7 +54,7 @@
         v-for="item in pastpaper"
         :key="item.id"
       >
-        <nuxt-link :to="`/paper/${item.id}/${item.title_url}`">
+        <nuxt-link :to="contentPath('paper', item.id, item.title_url)">
           <lazy-common-related-content-card
             :picture="item.thumb_pic || fallbackImage"
             :title="item.title"
@@ -124,7 +124,7 @@
         v-for="item in multimedias"
         :key="item.id"
       >
-        <nuxt-link :to="`/multimedia/${item.id}/${item.title_url}`">
+        <nuxt-link :to="contentPath('multimedia', item.id, item.title_url)">
           <lazy-common-related-content-card
             :picture="item.poster || fallbackImage"
             :title="item.title"
@@ -194,7 +194,7 @@
         v-for="item in exams"
         :key="item.id"
       >
-        <nuxt-link :to="`/exam/${item.id}/${item.title_url}`">
+        <nuxt-link :to="contentPath('exam', item.id, item.title_url)">
           <lazy-common-related-content-card
             :picture="item.thumb_pic || fallbackImage"
             :title="item.title"
@@ -252,7 +252,7 @@
       <nuxt-link
         v-for="(tutorial, index) in tutorials"
         :key="index"
-        :to="`/tutorial/${tutorial.id}/${tutorial.title_url}`"
+        :to="contentPath('tutorial', tutorial.id, tutorial.title_url)"
         class="d-flex align-center ga-2"
       >
         <div class="square-div" />

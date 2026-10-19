@@ -198,6 +198,7 @@ const allPageSize = [
 
 const showSearchModal = ref(false)
 const searchFilter = reactive<SearchFilterAdminUserSubscription>({
+  search: '',
   userId: '',
   status: '',
 })
@@ -233,6 +234,7 @@ onMounted(async () => {
 })
 
 const startSearch = async (item: SearchFilterAdminUserSubscription) => {
+  searchFilter.search = item.search
   searchFilter.userId = item.userId
   searchFilter.status = item.status
   page.value = 1
@@ -241,10 +243,11 @@ const startSearch = async (item: SearchFilterAdminUserSubscription) => {
 }
 
 const isShowClearFilter = computed(() => {
-  return searchFilter.userId.length > 0 || searchFilter.status.length > 0
+  return searchFilter.search.length > 0 || searchFilter.userId.length > 0 || searchFilter.status.length > 0
 })
 
 const clearFilter = async () => {
+  searchFilter.search = ''
   searchFilter.userId = ''
   searchFilter.status = ''
   page.value = 1

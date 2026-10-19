@@ -87,8 +87,6 @@
 </template>
 
 <script setup lang="ts">
-import type { AppError } from '@/types'
-
 interface BreadCrumb {
   text: string
   disabled: boolean
@@ -96,10 +94,8 @@ interface BreadCrumb {
 }
 
 const route = useRoute()
-const router = useRouter()
 const { getItemById } = useExam()
 
-const requestURL = ref(useRequestURL().host)
 const breads = ref<BreadCrumb[]>([])
 const openShare = ref(false)
 const openCrashReport = ref(false)
@@ -109,31 +105,25 @@ const { data: contentData } = await useAsyncData(
   async () => {
     try {
       const response = await getItemById(route.params.id as string)
-
-      if (response.status == 1 && response.data) {
-        return response.data
-      }
-      else {
-        showError({
-          statusCode: 404,
-          statusMessage: 'Page Not Founded!',
-        })
-        return null
-      }
+      return response.status == 1 && response.data ? response.data : null
     }
-    catch (e: unknown) {
-      showError({
-        statusCode: 404,
-        statusMessage: 'Page Not Founded!',
-      })
-      const error = e as AppError
-      if (error?.status === 404) {
-        router.push('/search?type=quizhub')
-      }
-      throw error
+    catch {
+      return null
     }
   },
 )
+
+// showError inside the handler only lands in useAsyncData's error, so SSR answered 200 with an empty page.
+// Throwing from setup makes Nuxt render the error page with a real 404.
+if (!contentData.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Page Not Found',
+    fatal: true,
+  })
+}
+
+const { url: canonicalUrl } = await useCanonicalContentPath('exam', contentData.value.id, contentData.value.title_url)
 
 const initBreadCrumb = () => {
   if (!contentData.value) return
@@ -173,6 +163,47 @@ watch(
   { immediate: true },
 )
 
+const { buildSchema } = useSeoSchema()
+
+// The meta description used to repeat the title; what the exam covers and how long it is says more.
+const examDescription = computed(() => {
+  const exam = contentData.value
+  if (!exam) return ''
+  const minutes = Number(exam.azmoon_time) || 0
+  const facts = [
+    Number(exam.tests_num) ? `${exam.tests_num} questions` : '',
+    minutes ? `${minutes} minutes` : '',
+  ].filter(Boolean).join(', ')
+  const subject = [exam.lesson_title, exam.base_title, exam.section_title].map(t => t?.trim()).filter(Boolean).join(', ')
+  return `${exam.title}${facts ? ` - ${facts}` : ''}. Online exam for ${subject || 'practice'} on GamaTrain.`
+})
+
+// Quiz is schema.org's LearningResource for an assessment; breadcrumbs are what Google shows in results.
+const schema = computed(() => {
+  const exam = contentData.value
+  if (!exam) return null
+  const minutes = Number(exam.azmoon_time) || 0
+  const author = [exam.first_name, exam.last_name].filter(Boolean).join(' ')
+  return buildSchema({
+    dto: exam,
+    url: canonicalUrl,
+    title: exam.title,
+    description: examDescription.value,
+    breadcrumbs: breads.value,
+    types: ['webpage', 'learning', 'breadcrumb'],
+    learning: {
+      '@type': 'Quiz',
+      'learningResourceType': 'Practice exam',
+      'educationalUse': 'Assessment',
+      'teaches': exam.lesson_title?.trim() || undefined,
+      'educationalLevel': exam.base_title?.trim() || undefined,
+      'image': exam.thumb_pic_url || undefined,
+      'timeRequired': minutes ? `PT${minutes}M` : undefined,
+      ...(author && { author: { '@type': 'Person', 'name': author } }),
+    },
+  })
+})
+
 useHead(() => ({
   title: contentData.value?.title || 'Exam Details',
   meta: [
@@ -194,12 +225,12 @@ useHead(() => ({
     {
       hid: 'description',
       name: 'description',
-      content: contentData.value?.title,
+      content: examDescription.value,
     },
     {
       hid: 'og:description',
       name: 'og:description',
-      content: contentData.value?.title,
+      content: examDescription.value,
     },
     {
       hid: 'og:image',
@@ -219,7 +250,7 @@ useHead(() => ({
     {
       hid: 'twitter:description',
       name: 'twitter:description',
-      content: contentData.value?.title,
+      content: examDescription.value,
     },
     {
       hid: 'twitter:image',
@@ -227,10 +258,13 @@ useHead(() => ({
       content: contentData.value?.thumb_pic_url ?? null,
     },
   ],
+  script: schema.value
+    ? [{ key: 'json-ld-schema', type: 'application/ld+json', innerHTML: JSON.stringify(schema.value) }]
+    : [],
   link: [
     {
       rel: 'canonical',
-      href: `https://${requestURL.value}/exam/${contentData.value?.id}/${contentData.value?.title_url}`,
+      href: canonicalUrl,
     },
   ],
 }))

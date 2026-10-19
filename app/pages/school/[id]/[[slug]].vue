@@ -304,14 +304,12 @@ const ratingData = ref(null)
 const galleryImages = ref([])
 const isAdsLoad = ref(false)
 
-const requestURL = ref(useRequestURL().host)
-
 const breadcrumbSchema = computed(() => {
-  if (!contentData.value) return null
+  if (!contentData.value?.name) return null
 
   return {
     '@type': 'BreadcrumbList',
-    '@id': 'https://gamatrain.com/school/123#breadcrumb',
+    '@id': `${canonicalUrl}#breadcrumb`,
     'itemListElement': [
       {
         '@type': 'ListItem',
@@ -323,13 +321,13 @@ const breadcrumbSchema = computed(() => {
         '@type': 'ListItem',
         'position': 2,
         'name': 'Schools',
-        'item': 'https://gamatrain.com/schools',
+        'item': 'https://gamatrain.com/school',
       },
       {
         '@type': 'ListItem',
         'position': 3,
         'name': contentData.value.name,
-        'item': `https://${requestURL.value}/school/${contentData.value.id}/${contentData.value.slug}`,
+        'item': canonicalUrl,
       },
     ],
   }
@@ -351,35 +349,50 @@ const ratingSchema = computed(() => {
   }
 })
 
+// Everything the school API knows about a place goes in: street address, postcode and coordinates are
+// what local results and knowledge panels match a school on. Empty values are left out rather than sent
+// as "" - and a school without a photo has no image, instead of claiming the GamaTrain logo as its own.
 const schoolSchema = computed(() => {
-  if (!contentData.value) return null
+  const school = contentData.value
+  // A nameless school would be an Organization without its one required field.
+  if (!school?.name) return null
 
-  const imageUrl = contentData.value.defaultImageUri
-    ? contentData.value.defaultImageUri.replace(/^http:\/\//, 'https://')
-    : 'https://gamatrain.com/android-chrome-512x512-light.png'
+  const latitude = Number(school.latitude)
+  const longitude = Number(school.longitude)
+  // webSite is free text and sometimes not a URL at all ("government").
+  const website = /^https?:\/\/\S+\.\S+/i.test(school.webSite ?? '') ? school.webSite : null
+  const address = {
+    ...(school.address && { streetAddress: school.address }),
+    ...(school.cityTitle && { addressLocality: school.cityTitle }),
+    ...(school.stateTitle && { addressRegion: school.stateTitle }),
+    ...(school.zipCode && { postalCode: school.zipCode }),
+    ...(school.countryTitle && { addressCountry: school.countryTitle }),
+  }
 
   return {
     '@type': 'School',
-    '@id': `https://${requestURL.value}/school/${contentData.value.id}#school`,
-    'name': contentData.value.name,
-    'description': contentData.value.description,
-    'url': `https://${requestURL.value}/school/${contentData.value.id}/${contentData.value.slug}`,
+    '@id': `${canonicalUrl}#school`,
+    'name': school.name,
+    ...(school.localName && school.localName !== school.name && { alternateName: school.localName }),
+    'description': school.description || metaDescription.value,
+    'url': canonicalUrl,
     'mainEntityOfPage': {
       '@type': 'WebPage',
-      '@id': `https://${requestURL.value}/school/${contentData.value.id}/${contentData.value.slug}`,
+      '@id': canonicalUrl,
     },
-    'image': [{
-      '@type': 'ImageObject',
-      'url': imageUrl,
-    }],
-    ...(contentData.value.phoneNumber && { telephone: contentData.value.phoneNumber }),
-    ...(contentData.value.email && { email: contentData.value.email }),
-    'address': {
-      '@type': 'PostalAddress',
-      ...(contentData.value.cityTitle && { addressLocality: contentData.value.cityTitle }),
-      ...(contentData.value.stateTitle && { addressRegion: contentData.value.stateTitle }),
-      ...(contentData.value.countryTitle && { addressCountry: contentData.value.countryTitle }),
-    },
+    ...(school.defaultImageUri && {
+      image: [{
+        '@type': 'ImageObject',
+        'url': school.defaultImageUri.replace(/^http:\/\//, 'https://'),
+      }],
+    }),
+    ...(website && { sameAs: [website] }),
+    ...(school.phoneNumber && { telephone: school.phoneNumber }),
+    ...(school.email && { email: school.email }),
+    ...(Object.keys(address).length && { address: { '@type': 'PostalAddress', ...address } }),
+    ...(Number.isFinite(latitude) && Number.isFinite(longitude) && (latitude || longitude) && {
+      geo: { '@type': 'GeoCoordinates', latitude, longitude },
+    }),
     ...(ratingSchema.value && { aggregateRating: ratingSchema.value }),
   }
 })
@@ -521,6 +534,8 @@ if (!contentDataRaw.value?.data) {
   })
 }
 
+const { url: canonicalUrl } = await useCanonicalContentPath('school', contentDataRaw.value.data.id, contentDataRaw.value.data.slug)
+
 const {
   data: ratingDataRaw,
   status: _ratingStatus,
@@ -545,19 +560,13 @@ useHead(() => ({
   htmlAttrs: {
     lang: 'en',
   },
-  script: [
-    {
-      key: 'json-ld-schema',
-      type: 'application/ld+json',
-      innerHTML: JSON.stringify(fullSchema.value),
-    },
-  ],
+  script: fullSchema.value
+    ? [{ key: 'json-ld-schema', type: 'application/ld+json', innerHTML: JSON.stringify(fullSchema.value) }]
+    : [],
   link: [
     {
       rel: 'canonical',
-      href: contentData.value
-        ? `https://${requestURL.value}/school/${contentData.value.id}/${contentData.value.slug}`
-        : `https://${requestURL.value}/school/${route.params.id}`,
+      href: canonicalUrl,
     },
     {
       rel: 'icon',
@@ -575,8 +584,7 @@ useSeoMeta({
   description: () => metaDescription.value,
   ogTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
   ogDescription: () => metaDescription.value,
-  ogUrl: () =>
-    `${requestURL.value}/school/${contentData.value?.id}/${contentData?.value?.slug}`,
+  ogUrl: canonicalUrl,
   twitterTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
   twitterDescription: () => metaDescription.value,
   twitterCard: 'summary_large_image',

@@ -62,6 +62,7 @@ const historyList = computed<AdminUserSubscriptionListDTO[]>(() => data.value)
 onMounted(async () => {
   await getData({
     page: 1,
+    search: '',
     pageSize: 1000,
     userId: props.userId.toString(),
     status: '',

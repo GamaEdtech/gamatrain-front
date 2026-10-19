@@ -78,16 +78,24 @@
         </div>
       </template>
       <template v-else>
+        <!-- Support replies on the right in the brand tint, the customer's on the left, mirroring the customer's view. -->
         <div
           v-for="item in replyList"
           :key="item.id"
-          class="box-chat d-flex flex-column rounded-lg bg-grey100 py-4 px-6 ga-1"
+          :class="['w-100 d-flex', item.bySupport ? 'justify-end' : 'justify-start']"
         >
           <div
-            v-safe-html="item.body"
-            class="w-100 text-start text-h5 font-weight-bold text-grey900"
-          />
-          <span class="w-100 text-end text-subtitle-2 font-weight-regular text-grey700">{{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm") }}</span>
+            :class="['reply-bubble d-flex flex-column rounded-lg py-4 px-6 ga-1', item.bySupport ? 'bg-primary50' : 'bg-grey100']"
+          >
+            <span class="text-h6 font-weight-bold text-grey700">
+              {{ getReplyAuthor(item) }}
+            </span>
+            <div
+              v-safe-html="item.body"
+              class="w-100 text-start text-h5 font-weight-bold text-grey900"
+            />
+            <span class="w-100 text-end text-subtitle-2 font-weight-regular text-grey700">{{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm") }}</span>
+          </div>
         </div>
       </template>
     </div>
@@ -185,6 +193,7 @@
 <script setup lang="ts">
 import type {
   AdminContactUsDetailDTO,
+  AdminReplyTicketListDTO,
 } from '@/types'
 
 interface IViewMessageDetailsModal {
@@ -257,6 +266,13 @@ const stripHtml = (html?: string | null) => {
   return doc.body.textContent?.trim() ?? ''
 }
 
+// Admins see which colleague answered; customers only ever see "Support team".
+const getReplyAuthor = (reply: AdminReplyTicketListDTO) => {
+  if (reply.bySupport) return reply.creationUser ? `Support team · ${reply.creationUser}` : 'Support team'
+
+  return reply.creationUser || contactData.value?.fullName || 'Customer'
+}
+
 const buildAiReplyPrompt = () => {
   const ticket = contactData.value
   const conversation = replyList.value.length
@@ -264,6 +280,7 @@ const buildAiReplyPrompt = () => {
         .map((item, index) => {
           return [
             `Reply ${index + 1}:`,
+            `From: ${item.bySupport ? 'Support team' : 'Customer'}`,
             `Date: ${formatLocal(item.creationDate, 'DD/MM/YYYY HH:mm')}`,
             `Body: ${stripHtml(item.body)}`,
           ].join('\n')
@@ -415,6 +432,9 @@ onMounted(async () => {
   color: rgb(var(--v-theme-grey700));
   font-weight: 700;
   word-break: break-word;
+}
+.reply-bubble {
+  max-width: 80%;
 }
 .position-button-ai {
   right: 10px;

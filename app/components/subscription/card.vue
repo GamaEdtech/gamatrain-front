@@ -95,7 +95,64 @@
       :title="card.isSamePlanIntervalMove ? `Switch to ${billingInterval} billing?` : `Switch to ${card.title}?`"
       :max-width="480"
     >
+      <div
+        v-if="paymentActionUrl"
+        class="w-100 d-flex flex-column align-start justify-start ga-6 pt-4"
+      >
+        <p class="text-h5 text-grey600 font-weight-medium mb-0">
+          Your bank needs you to confirm this payment. Open the payment page, confirm it there, then come back to this tab.
+        </p>
+
+        <v-alert
+          type="info"
+          variant="tonal"
+          density="comfortable"
+          class="w-100"
+        >
+          <div class="d-flex align-center ga-3">
+            <v-progress-circular
+              v-if="waitingForSwitch"
+              indeterminate
+              size="18"
+              width="2"
+            />
+            <span>{{ waitingForSwitch ? 'Waiting for your payment to be confirmed...' : 'Your plan switches as soon as the payment is confirmed. You can close this and check back later.' }}</span>
+          </div>
+        </v-alert>
+
+        <div class="w-100 d-flex align-center justify-center ga-3 flex-wrap">
+          <v-btn
+            rounded="pill"
+            variant="outlined"
+            color="grey500"
+            height="40"
+            min-width="110"
+            class="text-h5 font-weight-bold"
+            @click="closeConfirmUpgradeModal"
+          >
+            Close
+          </v-btn>
+
+          <v-btn
+            rounded="pill"
+            color="primary"
+            height="40"
+            min-width="110"
+            class="text-h5 font-weight-bold text-white"
+            flat
+            :href="paymentActionUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            append-icon="md:open_in_new"
+            @click="startWaitingForSwitch"
+          >
+            Confirm payment
+          </v-btn>
+        </div>
+      </div>
+
       <user-subscription-modals-confirm
+        v-else
         :text="confirmUpgradeText"
         confirm-color="primary"
         :loading="loadingStartPaymentSubscription || loadingSwitchSubscriptionPlan"
@@ -157,6 +214,7 @@ const {
   loadingSwitchSubscriptionPlan,
   loadingResumeSubscription,
   resumeSubscription,
+  getUserSubscription,
 } = useSubscription()
 const {
   billingSuffix,
@@ -169,6 +227,14 @@ const previewAmount = ref<number | null>(null)
 const previewCurrency = ref<SubscriptionCurrency | null>(null)
 const showResumeModal = ref(false)
 const confirmUpgradeError = ref<string | null>(null)
+// Set when the bank wants the user to confirm the upgrade payment (3-D Secure / OTP): Stripe's payment page,
+// opened in a new tab from a real link (a window.open after the API call would be blocked as a pop-up).
+const paymentActionUrl = ref<string | null>(null)
+const waitingForSwitch = ref(false)
+let switchPollTimer: ReturnType<typeof setInterval> | null = null
+let switchPollDeadline = 0
+const SWITCH_POLL_INTERVAL_MS = 5000
+const SWITCH_POLL_MAX_MS = 10 * 60 * 1000
 const resumeError = ref<string | null>(null)
 
 const card = computed(() => {
@@ -206,10 +272,49 @@ const chooseNewPlan = async () => {
   }
 }
 
+const stopWaitingForSwitch = () => {
+  if (switchPollTimer) clearInterval(switchPollTimer)
+  switchPollTimer = null
+  waitingForSwitch.value = false
+}
+
 const closeConfirmUpgradeModal = () => {
+  stopWaitingForSwitch()
   showConfirmUpgradeModal.value = false
   confirmUpgradeError.value = null
+  paymentActionUrl.value = null
 }
+
+// After the user opens the payment page, the plan switches once Stripe tells the backend it's paid
+// (invoice.paid webhook). Check the subscription until it's on the target plan, for a few minutes at most.
+const checkSwitchApplied = async () => {
+  if (Date.now() > switchPollDeadline) {
+    stopWaitingForSwitch()
+    return
+  }
+
+  const response = await getUserSubscription()
+  const subscription = response.succeeded ? response.data : null
+  if (subscription?.subscriptionPlanId === props.plan.id && subscription.billingInterval === props.billingInterval) {
+    closeConfirmUpgradeModal()
+    $toast.success(`You're now on ${switchTargetDescription.value}.`)
+    emit('switchSuccessfully')
+  }
+}
+
+const startWaitingForSwitch = () => {
+  switchPollDeadline = Date.now() + SWITCH_POLL_MAX_MS
+  if (switchPollTimer) return
+
+  waitingForSwitch.value = true
+  switchPollTimer = setInterval(checkSwitchApplied, SWITCH_POLL_INTERVAL_MS)
+}
+
+watch(showConfirmUpgradeModal, (show) => {
+  if (!show) closeConfirmUpgradeModal()
+})
+
+onBeforeUnmount(stopWaitingForSwitch)
 
 const switchPlan = async () => {
   const payload = {
@@ -249,6 +354,21 @@ const confirmUpgrade = async () => {
         : `You'll switch to ${switchTargetDescription.value} at the end of your current billing period(${response.data.effectiveDate}).`,
     )
     emit('switchSuccessfully')
+    return
+  }
+
+  // Not a decline: the bank wants the user to confirm the payment (3-D Secure / OTP), which can't happen on
+  // the off-session charge. The dialog now offers Stripe's payment page; the plan switches once it's paid there.
+  if (response.data?.paymentActionUrl) {
+    paymentActionUrl.value = response.data.paymentActionUrl
+    return
+  }
+
+  // Not a decline either: the bank is still processing the payment. The plan switches by itself once it's
+  // confirmed, so don't invite a retry.
+  if (response.data?.paymentProcessing) {
+    showConfirmUpgradeModal.value = false
+    $toast.info(response.errors?.[0]?.message ?? 'Your payment is being processed by your bank. Your plan will switch automatically once it\'s confirmed.')
     return
   }
 

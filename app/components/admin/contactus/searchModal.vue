@@ -77,11 +77,25 @@
     </v-menu>
 
     <v-select
+      v-model="searchFilter.status"
+      :items="ADMIN_TICKET_STATUSES"
+      item-title="title"
+      item-value="value"
+      label="Status"
+      rounded="lg"
+      variant="outlined"
+      color="primary"
+      density="compact"
+      class="mt-1"
+      clearable
+    />
+
+    <v-select
       v-model="searchFilter.unread"
       :items="unreadOptions"
       item-title="label"
       item-value="value"
-      label="Status"
+      label="Read"
       rounded="lg"
       variant="outlined"
       color="primary"
@@ -108,6 +122,7 @@
 <script setup lang="ts">
 import dayjs from 'dayjs'
 import type { SearchFilterAdminContactUs } from '@/types'
+import { ADMIN_TICKET_STATUSES } from '@/constants'
 
 interface ISearchModal {
   data: SearchFilterAdminContactUs
@@ -127,6 +142,7 @@ const unreadOptions = [
 
 const searchFilter = reactive<SearchFilterAdminContactUs>({
   unread: null,
+  status: null,
   search: '',
   email: '',
   startDate: null,

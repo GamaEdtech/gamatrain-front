@@ -14,7 +14,7 @@
           <v-sheet class="mx-auto sample-width">
             <v-slide-group multiple show-arrows>
               <v-slide-item v-for="(item, index) in relatedItms" :key="index">
-                <nuxt-link :to="`/paper/${item.id}/${item.title_url}`">
+                <nuxt-link :to="contentPath('paper', item.id, item.title_url)">
                   <div class="book-sample pa-4 mx-2">
                     <div class="py-4 img-holder">
                       <div class="item-img">
@@ -200,7 +200,7 @@
                     <v-card-title>
                       <nuxt-link
                         class="gama-text-caption"
-                        :to="`/paper/${item.id}/${item.title_url}`"
+                        :to="contentPath('paper', item.id, item.title_url)"
                       >
                         <span v-html="item.title" />
                       </nuxt-link>

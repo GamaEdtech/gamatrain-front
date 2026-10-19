@@ -682,8 +682,7 @@ const handleSchoolMarkerClick = (school) => {
     console.error('Error displaying school modal:', error)
     // Fallback to direct navigation if modal fails
     if (school && school.id) {
-      const schoolSlug = $slugGenerator(school.name)
-      window.open(`/school/${school.id}/${schoolSlug}`, '_blank')
+      window.open(contentPath('school', school.id, school.slug), '_blank')
     }
   }
 }
@@ -756,10 +755,7 @@ const fetchAdditionalSchoolDetails = async (schoolId) => {
 
     // Fallback to direct navigation
     if (schoolId) {
-      const schoolSlug = selectedSchool.value?.name
-        ? $slugGenerator(selectedSchool.value.name)
-        : 'school'
-      window.open(`/school/${schoolId}/${schoolSlug}`, '_blank')
+      window.open(contentPath('school', schoolId, selectedSchool.value?.slug), '_blank')
     }
   }
 }
@@ -767,7 +763,7 @@ const fetchAdditionalSchoolDetails = async (schoolId) => {
 // Handle navigation from modal to school details
 const navigateToSchoolDetails = (schoolId, schoolSlug) => {
   showSchoolModal.value = true
-  window.open(`/school/${schoolId}/${schoolSlug}`, '_blank')
+  window.open(contentPath('school', schoolId, schoolSlug), '_blank')
 }
 
 // Handle marker click errors

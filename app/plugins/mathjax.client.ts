@@ -35,7 +35,7 @@ function initializeMathJax(): Promise<void> {
             if (window.MathJax) {
               if (!isMathJaxConfigured) {
                 window.MathJax.Hub.Config({
-                  'tex2jax': {
+                  tex2jax: {
                     inlineMath: [
                       ['$', '$'],
                       ['\\(', '\\)'],
@@ -55,14 +55,15 @@ function initializeMathJax(): Promise<void> {
                       'code',
                     ],
                   },
-                  'displayAlign': 'center',
-                  'HTML-CSS': {
-                    styles: { '.MathJax_Display': { margin: '0 auto' } },
+                  displayAlign: 'center',
+                  // The TeX-MML-AM_CHTML config renders with the CommonHTML output, so its options go here
+                  // ('HTML-CSS' options are ignored). Long formulas wrap to fit narrow screens.
+                  CommonHTML: {
                     linebreaks: { automatic: true },
                   },
-                  'showProcessingMessages': false,
-                  'messageStyle': 'none',
-                  'skipStartupTypeset': true,
+                  showProcessingMessages: false,
+                  messageStyle: 'none',
+                  skipStartupTypeset: true,
                 })
                 isMathJaxConfigured = true
               }

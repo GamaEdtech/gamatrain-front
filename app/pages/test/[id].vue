@@ -59,15 +59,28 @@ const {
   pending: _pending,
   execute: _execute,
 } = await useAsyncData(`exam-test-${route.params.id}`, async () => {
-  const res = await useApiService.get(`/api/v1/examTests/${route.params.id}`,
-    { full: true },
-  ) as ApiResult<QuestionDTO>
+  try {
+    const res = await useApiService.get(`/api/v1/examTests/${route.params.id}`,
+      { full: true },
+    ) as ApiResult<QuestionDTO>
 
-  if (res.status === 1) {
-    return res.data
+    // A missing question still answers status 1, with every field of data null.
+    return res.status === 1 && res.data?.id ? res.data : null
   }
-  throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+  catch {
+    return null
+  }
 })
+
+// An error thrown inside the handler only lands in useAsyncData's error, so SSR answered 200 with an empty page.
+// Throwing from setup makes Nuxt render the error page with a real 404.
+if (!contentData.value) {
+  throw createError({
+    statusCode: 404,
+    statusMessage: 'Page Not Found',
+    fatal: true,
+  })
+}
 
 const stripHtmlTags = (input: string, length = 1200) => {
   if (!input) return ''

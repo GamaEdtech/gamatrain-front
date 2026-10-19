@@ -122,6 +122,18 @@ export const usePost = () => {
     }
   }
 
+  // A unique slug the backend builds from the title - the same Slugify the sitemap uses, so the post's
+  // canonical URL and its sitemap entry agree. Silent: it runs as part of saving, not as its own action.
+  const generateSlug = async (title: string): Promise<string | null> => {
+    try {
+      const response = await useApiService.get<ApiResult<string>>('/api/v2/posts/slugs/generate', { title })
+      return response.succeeded && response.data ? response.data : null
+    }
+    catch {
+      return null
+    }
+  }
+
   const createPost = async (post: PostCreateDTO) => {
     loadingCreatePost.value = true
     try {
@@ -296,5 +308,5 @@ export const usePost = () => {
     }
   }
 
-  return { loadingGetData, data, getData, totalCount, pageCount, validateSlug, loadingValidateSlug, saveSlug, loadingSaveSlug, createPost, loadingCreatePost, getPost, loadingGetPost, editPost, loadingEditPost }
+  return { loadingGetData, data, getData, totalCount, pageCount, validateSlug, loadingValidateSlug, saveSlug, loadingSaveSlug, generateSlug, createPost, loadingCreatePost, getPost, loadingGetPost, editPost, loadingEditPost }
 }

@@ -23,7 +23,9 @@ export interface TicketDetailDTO {
 export interface TicketReplyDTO {
   id: number
   body: string
-  creationUser: string
+  /** Empty on support replies: customers see "Support team", not the staff member's name. */
+  creationUser: string | null
+  bySupport: boolean
   creationDate: string
   fileUri: string
   receivers: string[]

@@ -63,7 +63,7 @@
               v-for="(item, j) in resource.items"
               :key="j"
               class="font-weight-medium primary-subtitle-500"
-              :to="`/paper/${item.id}/${item.title_url}`"
+              :to="contentPath('paper', item.id, item.title_url)"
             >
               {{
                 item.title.length > 50

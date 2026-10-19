@@ -57,7 +57,7 @@
           v-for="item in pastpaper"
           :key="item.id"
         >
-          <nuxt-link :to="`/paper/${item.id}/${item.title_url}`">
+          <nuxt-link :to="contentPath('paper', item.id, item.title_url)">
             <lazy-common-detail-related-content-card
               :picture="item.thumb_pic || fallbackImage"
               :title="item.title"

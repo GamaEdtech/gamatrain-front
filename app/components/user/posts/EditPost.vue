@@ -388,9 +388,9 @@ const { admin } = defineProps<{
 
 const router = useRouter()
 const route = useRoute()
-const { $toast, $slugGenerator } = useNuxtApp()
+const { $toast } = useNuxtApp()
 const { required, arrayNotEmpty } = useValidationRules()
-const { getPost, loadingGetPost, editPost, loadingEditPost } = usePost()
+const { getPost, loadingGetPost, editPost, loadingEditPost, generateSlug } = usePost()
 const keepPublishDate = ref(false)
 const { data: languages, loadingGetData: loadingGetLanguages, getData: getLanguages } = useLanguage()
 
@@ -451,10 +451,10 @@ const isValid = () => {
   return true
 }
 
-const mapToCreatePostDTO = () => {
+const mapToCreatePostDTO = (slug: string) => {
   return {
     title: post.value.title,
-    slug: post.value.slug ? post.value.slug : $slugGenerator(post.value.title),
+    slug,
     summary: post.value.summary,
     body: post.value.content,
     image: post.value.image!,
@@ -481,7 +481,9 @@ const update = async () => {
     $toast.error('Please fill all required fields')
     return
   }
-  const payload = mapToCreatePostDTO()
+  // A slug left empty is generated from the title by the backend, so it can only be one it would publish.
+  const slug = post.value.slug || await generateSlug(post.value.title) || post.value.title
+  const payload = mapToCreatePostDTO(slug)
   const response = await editPost(payload, route.params.id as string, admin)
   if (response && response.succeeded) {
     if (admin) {

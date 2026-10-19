@@ -340,8 +340,8 @@ useHead({
 
 const { required, arrayNotEmpty } = useValidationRules()
 const router = useRouter()
-const { $toast, $slugGenerator } = useNuxtApp()
-const { createPost, loadingCreatePost } = usePost()
+const { $toast } = useNuxtApp()
+const { createPost, loadingCreatePost, generateSlug } = usePost()
 const { data: languages, loadingGetData: loadingGetLanguages, getData: getLanguages } = useLanguage()
 
 const post = ref({
@@ -398,10 +398,10 @@ const isValid = () => {
   return true
 }
 
-const mapToCreatePostDTO = () => {
+const mapToCreatePostDTO = (slug: string) => {
   return {
     title: post.value.title,
-    slug: post.value.slug ? post.value.slug : $slugGenerator(post.value.title),
+    slug,
     summary: post.value.summary,
     body: post.value.content,
     image: post.value.image!,
@@ -426,7 +426,9 @@ const publish = async () => {
     $toast.error('Please fill all required fields')
     return
   }
-  const payload = mapToCreatePostDTO()
+  // A slug left empty is generated from the title by the backend, so it can only be one it would publish.
+  const slug = post.value.slug || await generateSlug(post.value.title) || post.value.title
+  const payload = mapToCreatePostDTO(slug)
   const response = await createPost(payload)
   if (response && response.succeeded) {
     router.push('/user/posts')

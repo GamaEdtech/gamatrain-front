@@ -91,8 +91,6 @@ const hasError = ref(false)
 const errorMessage = ref('')
 const isLoading = ref(false)
 
-const { $slugGenerator } = useNuxtApp()
-
 // Handle v-model binding
 const internalValue = computed({
   get: () => props.modelValue,
@@ -111,11 +109,7 @@ const closeModal = () => {
 const navigateToSchoolDetailsDirect = () => {
   if (!props.school?.id) return
 
-  const schoolSlug
-    = props.school.name && props.school.name !== 'Loading...'
-      ? $slugGenerator(props.school.name)
-      : 'school'
-  const schoolUrl = `/school/${props.school.id}/${schoolSlug}`
+  const schoolUrl = contentPath('school', props.school.id, props.school.slug)
 
   closeModal()
   window.open(schoolUrl, '_blank')

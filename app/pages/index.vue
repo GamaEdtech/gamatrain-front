@@ -262,6 +262,30 @@ useSeoMeta({
   ogTitle: `GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education`,
 
 })
+
+// WebSite gives Google the site name it shows in results, and every page's WebPage node already points
+// at "#website" and "#organization" - this is where both are defined.
+const { organizationSchema } = useSeoSchema()
+useHead({
+  script: [{
+    key: 'json-ld-schema',
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebSite',
+          '@id': 'https://gamatrain.com/#website',
+          'name': 'GamaTrain',
+          'url': 'https://gamatrain.com',
+          'publisher': { '@id': 'https://gamatrain.com/#organization' },
+          'inLanguage': 'en',
+        },
+        { ...organizationSchema, sameAs: ['https://x.com/GamaEdtech'] },
+      ],
+    }),
+  }],
+})
 </script>
 
 <style>

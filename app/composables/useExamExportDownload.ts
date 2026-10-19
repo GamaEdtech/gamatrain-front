@@ -82,6 +82,7 @@ export const useExamExportDownload = (options: UseExamExportDownloadOptions) => 
     Reflect.deleteProperty(progress.value, fileType)
   }
 
+  // Open to guests (prices only); with a signed-in user it also says which formats they already bought.
   const fetchPrices = async () => {
     try {
       const response = await useApiService.get<ApiResult<ExamExportPricesDTO>>(

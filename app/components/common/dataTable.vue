@@ -95,7 +95,7 @@
               v-for="(action, actionIndex) in getVisibleActions(slotProps.item, header)"
               :key="actionIndex"
               icon
-              flat
+              variant="text"
               :to="getActionTo(slotProps.item, action)"
               :href="getActionHref(slotProps.item, action)"
               :target="action.target"

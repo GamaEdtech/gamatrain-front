@@ -1,6 +1,17 @@
 <template>
   <div class="w-100 d-flex flex-column pa-4">
     <v-text-field
+      v-model="searchFilter.search"
+      label="Email or name"
+      rounded="lg"
+      variant="outlined"
+      color="primary"
+      density="compact"
+      class="mt-1"
+      @keyup.enter="startSearch"
+    />
+
+    <v-text-field
       v-model="searchFilter.userId"
       label="User ID"
       rounded="lg"
@@ -63,6 +74,7 @@ const statusList: UserSubscriptionStatus[] = [
 ]
 
 const searchFilter = reactive<SearchFilterAdminUserSubscription>({
+  search: '',
   userId: '',
   status: '',
 })
@@ -72,6 +84,7 @@ const startSearch = () => {
 }
 
 onMounted(() => {
+  searchFilter.search = props.data.search
   searchFilter.userId = props.data.userId
   searchFilter.status = props.data.status
 })

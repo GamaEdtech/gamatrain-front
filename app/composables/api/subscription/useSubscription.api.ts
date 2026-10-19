@@ -203,7 +203,10 @@ export const useSubscription = () => {
       >(`/api/v2/subscriptions/me/switch`, { ...payload })
 
       if (!response.succeeded) {
-        const shouldShowToast = !response.errors?.some(error => error.message === SWITCH_NOT_ALLOWED_WHILE_CANCELLATION_PENDING_ERROR)
+        // A payment waiting on the bank isn't an error to toast: the caller sends the user to confirm it or says it's processing.
+        const awaitingBank = Boolean(response.data?.paymentActionUrl || response.data?.paymentProcessing)
+        const shouldShowToast = !awaitingBank
+          && !response.errors?.some(error => error.message === SWITCH_NOT_ALLOWED_WHILE_CANCELLATION_PENDING_ERROR)
         handleApiResponseError(response, undefined, shouldShowToast)
       }
 

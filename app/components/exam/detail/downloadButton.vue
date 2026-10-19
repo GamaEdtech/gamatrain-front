@@ -94,7 +94,7 @@
         color="#5500e835"
         flat
         height="42"
-        :to="`/exam/start/${id}`"
+        @click="startExam"
       >
         <template v-if="examUserData && (examUserData as ExamUserDataExamDetaiDTO)?.status == '1'">
           <span class="text-begin-quiz text-h5 font-weight-bold mt-1 mx-2">
@@ -260,8 +260,43 @@ const upgradePlanSuccessfully = async () => {
   }
 }
 
+const { user } = useUser()
+
 onMounted(() => {
   fetchPrices()
+})
+// Logging in through the dialog keeps the page: reload so "Owned" shows the user's purchases (and clears on logout).
+watch(user, () => {
+  fetchPrices()
+})
+
+const auth = useAuth()
+const router = useRouter()
+const route = useRoute()
+
+// Starting an exam needs an account: a guest gets the login dialog, then goes on to the exam once signed in.
+const startExamAfterSignIn = ref(false)
+
+const startExam = () => {
+  if (auth.isAuthenticated.value) {
+    router.push(`/exam/start/${props.id}`)
+    return
+  }
+
+  startExamAfterSignIn.value = true
+  router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
+}
+
+watch(user, (value) => {
+  if (!value || !startExamAfterSignIn.value) return
+
+  startExamAfterSignIn.value = false
+  router.push(`/exam/start/${props.id}`)
+})
+
+// Closed the dialog without signing in: a later sign-in from the header shouldn't jump into the exam.
+watch(() => route.query.auth_form, (form) => {
+  if (!form && !auth.isAuthenticated.value) startExamAfterSignIn.value = false
 })
 </script>
 

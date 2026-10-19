@@ -80,6 +80,52 @@
           </v-tooltip>
         </v-btn>
       </template>
+
+      <template #[`item.subject`]="{ item }">
+        <div class="d-flex justify-center align-center ga-2 text-grey600 text-h5 font-weight-bold text-center">
+          {{ item.subject }}
+          <v-chip
+            v-if="isUnread(item)"
+            color="warning"
+            size="small"
+            label
+            class="text-h6 font-weight-bold flex-shrink-0"
+          >
+            {{ item.hasNewReply ? 'New reply' : 'Unread' }}
+          </v-chip>
+        </div>
+      </template>
+
+      <template #[`item.status`]="{ item }">
+        <div class="w-100 d-flex justify-center align-center">
+          <v-menu>
+            <template #activator="{ props: menuProps }">
+              <v-chip
+                v-bind="menuProps"
+                :color="getAdminTicketStatusOption(item.status).color"
+                :disabled="updatingStatusId === item.id"
+                append-icon="md:arrow_drop_down"
+                class="font-weight-bold text-h5"
+              >
+                {{ getAdminTicketStatusOption(item.status).title }}
+              </v-chip>
+            </template>
+            <v-list density="compact">
+              <v-list-item
+                v-for="option in ADMIN_TICKET_STATUSES"
+                :key="option.value"
+                :active="option.value === getAdminTicketStatusOption(item.status).value"
+                :color="option.color"
+                @click="changeStatus(item, option.value)"
+              >
+                <v-list-item-title class="text-h5">
+                  {{ option.title }}
+                </v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </div>
+      </template>
     </common-data-table>
 
     <admin-common-modal
@@ -133,7 +179,8 @@
 </template>
 
 <script setup lang="ts">
-import type { AdminContactUsDTO, DataTableHeader, SearchFilterAdminContactUs } from '@/types'
+import type { AdminContactUsDTO, AdminTicketStatus, DataTableHeader, SearchFilterAdminContactUs } from '@/types'
+import { ADMIN_TICKET_STATUSES, getAdminTicketStatusOption } from '@/constants'
 
 definePageMeta({
   layout: 'admin',
@@ -157,6 +204,7 @@ const showSearchModal = ref(false)
 
 const searchFilter = reactive<SearchFilterAdminContactUs>({
   unread: null,
+  status: null,
   search: '',
   email: '',
   startDate: null,
@@ -169,7 +217,31 @@ const {
   getData,
   totalCount,
   pageCount,
+  setStatus,
+  markAsUnread,
 } = useContactUsAdmin()
+
+const updatingStatusId = ref<number | null>(null)
+
+// Same meaning as the backend's Unread filter: the ticket itself or a reply on it is unread by admin.
+const isUnread = (contact: AdminContactUsDTO) => !contact.isReadByAdmin || contact.hasNewReply
+
+const changeStatus = async (contact: AdminContactUsDTO, status: AdminTicketStatus) => {
+  if (getAdminTicketStatusOption(contact.status).value === status) return
+
+  updatingStatusId.value = contact.id
+  const updated = await setStatus(contact.id, status)
+  updatingStatusId.value = null
+  if (!updated) return
+
+  contact.status = status
+  // With a status filter on, the row no longer belongs in this list.
+  if (searchFilter.status) await fetchData()
+}
+
+const markContactAsUnread = async (contact: AdminContactUsDTO) => {
+  if (await markAsUnread(contact.id)) contact.isReadByAdmin = false
+}
 
 const fetchData = async () => {
   await getData({
@@ -195,14 +267,18 @@ onMounted(async () => {
 })
 
 const viewDetail = async (contact: AdminContactUsDTO) => {
+  // Opening the ticket marks it and its replies read on the backend.
   contact.isReadByAdmin = true
+  contact.hasNewReply = false
   selectedItemIdForDetail.value = contact.id
   showDetailModal.value = true
 }
 
-const replySuccessFull = () => {
+const replySuccessFull = async () => {
   selectedItemIdForDetail.value = null
   showDetailModal.value = false
+  // An admin reply moves the ticket to Answered and to the top of the list.
+  await fetchData()
 }
 
 const createTicketSuccessfull = async () => {
@@ -223,6 +299,7 @@ const deleteSuccessFull = async () => {
 
 const startSearch = async (item: SearchFilterAdminContactUs) => {
   searchFilter.unread = item.unread
+  searchFilter.status = item.status
   searchFilter.search = item.search
   searchFilter.email = item.email
   searchFilter.startDate = item.startDate
@@ -235,6 +312,7 @@ const startSearch = async (item: SearchFilterAdminContactUs) => {
 const isShowClearFilter = computed(() => {
   return (
     searchFilter.unread !== null
+    || !!searchFilter.status
     || !!searchFilter.search
     || !!searchFilter.email
     || !!searchFilter.startDate
@@ -244,6 +322,7 @@ const isShowClearFilter = computed(() => {
 
 const clearFilter = async () => {
   searchFilter.unread = null
+  searchFilter.status = null
   searchFilter.search = ''
   searchFilter.email = ''
   searchFilter.startDate = null
@@ -266,15 +345,7 @@ const headers: DataTableHeader<AdminContactUsDTO>[] = [
     width: '15vw',
   },
   { title: 'Subject', key: 'subject', sortable: false, width: '20vw' },
-  {
-    title: 'Status',
-    key: 'isReadByAdmin',
-    sortable: false,
-    width: '10vw',
-    type: 'chip',
-    getText: (item: AdminContactUsDTO) => item.isReadByAdmin ? 'Read' : 'UnRead',
-    getChipColor: (item: AdminContactUsDTO) => item.isReadByAdmin ? 'success' : 'warning',
-  },
+  { title: 'Status', key: 'status', sortable: false, width: '10vw' },
   {
     title: 'Action',
     key: 'Action',
@@ -286,6 +357,13 @@ const headers: DataTableHeader<AdminContactUsDTO>[] = [
         icon: 'md:plagiarism',
         tooltip: 'Details',
         onClick: (item: AdminContactUsDTO) => viewDetail(item),
+      },
+      {
+        icon: 'md:mark_email_unread',
+        tooltip: 'Mark as unread',
+        // Disabled rather than hidden, so every row keeps the same icons in the same places.
+        disabled: (item: AdminContactUsDTO) => isUnread(item),
+        onClick: (item: AdminContactUsDTO) => markContactAsUnread(item),
       },
       {
         icon: 'md:delete',

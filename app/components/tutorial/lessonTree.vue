@@ -38,8 +38,7 @@
             <v-list-item
               v-if="chapter.tutorials && chapter.tutorials.length > 0"
               :class="`py-2 ${chapter.tutorials[0]?.id == route.params.id ? `bg-white`:``}`"
-              :to="`/tutorial/${chapter.tutorials[0]?.id}/${$slugGenerator(
-                chapter.tutorials[0]?.title || '')}`"
+              :to="contentPath('tutorial', chapter.tutorials[0]?.id, chapter.tutorials[0]?.title_url)"
             >
               <div
                 v-show="chapter.tutorials[0]?.id == route.params.id"

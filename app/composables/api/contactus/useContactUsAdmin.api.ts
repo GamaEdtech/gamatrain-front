@@ -7,6 +7,7 @@ import type {
   AdminContactUsDetailDTO,
   AdminContactUsReplyDTO,
   AdminReplyTicketListDTO,
+  AdminTicketStatus,
   ApiResult,
   AppError,
   GetAdminContactUsParams,
@@ -32,6 +33,8 @@ export const useContactUsAdmin = () => {
   const loadingReplyTicket = ref(false)
   const loadingGetReplyList = ref(false)
   const loadingGenerateAiResponse = ref(false)
+  const loadingSetStatus = ref(false)
+  const loadingMarkAsUnread = ref(false)
 
   const handleError = (err: unknown, fallbackMessage = '') => {
     const error = err as AppError
@@ -52,6 +55,7 @@ export const useContactUsAdmin = () => {
         'PagingDto.PageFilter.Skip': (params.page - 1) * params.pageSize,
         'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
         'Unread': params.unread,
+        'Status': params.status,
         'Search': params.search,
         'Email': params.email,
         // Backend bounds are inclusive on LastActivityDate: cover the whole picked days, not just their midnight.
@@ -345,6 +349,57 @@ export const useContactUsAdmin = () => {
     }
   }
 
+  const setStatus = async (id: number, status: AdminTicketStatus) => {
+    loadingSetStatus.value = true
+
+    try {
+      const response = await useApiService.patch<ApiResult<boolean>>(
+        `/api/v2/admin/tickets/${id}/status`,
+        { status },
+      )
+
+      if (!response.succeeded) {
+        $toast.error('The operation failed. Please try again later.')
+      }
+
+      return response.succeeded
+    }
+    catch (err: unknown) {
+      handleError(err, 'The operation failed. Please try again later.')
+
+      return false
+    }
+    finally {
+      loadingSetStatus.value = false
+    }
+  }
+
+  // The backend endpoint toggles the ticket's read flag; the page only offers it on a read ticket.
+  const markAsUnread = async (id: number) => {
+    loadingMarkAsUnread.value = true
+
+    try {
+      const response = await useApiService.patch<ApiResult<boolean>>(
+        `/api/v2/admin/tickets/${id}/toggle`,
+        {},
+      )
+
+      if (!response.succeeded) {
+        $toast.error('The operation failed. Please try again later.')
+      }
+
+      return response.succeeded
+    }
+    catch (err: unknown) {
+      handleError(err, 'The operation failed. Please try again later.')
+
+      return false
+    }
+    finally {
+      loadingMarkAsUnread.value = false
+    }
+  }
+
   return {
     loadingGetData,
     data,
@@ -369,5 +424,9 @@ export const useContactUsAdmin = () => {
     replyList,
     generateAiResponse,
     loadingGenerateAiResponse,
+    setStatus,
+    loadingSetStatus,
+    markAsUnread,
+    loadingMarkAsUnread,
   }
 }

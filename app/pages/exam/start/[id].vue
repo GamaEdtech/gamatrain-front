@@ -1,14 +1,53 @@
 <template>
   <div
-    v-if="!contentData && !fetchError"
-    class="d-flex justify-center align-center"
-    style="height: 80vh"
+    v-if="!contentData && !fetchError && !needsSignIn"
+    class="mt-20"
   >
-    <v-progress-circular
-      indeterminate
-      color="teal"
-      size="64"
-    />
+    <v-container class="px-0 px-sm-4">
+      <exam-start-skeleton />
+    </v-container>
+  </div>
+  <div
+    v-else-if="needsSignIn"
+    class="d-flex flex-column align-center justify-center text-center ga-4 px-4"
+    style="min-height: 60vh"
+  >
+    <v-icon
+      size="56"
+      color="primary"
+    >
+      md:lock_outline
+    </v-icon>
+    <p class="text-h4 font-weight-bold mb-0">
+      Sign in to start this exam
+    </p>
+    <p class="text-h6 text-grey600 mb-0">
+      Your answers and result are saved to your account.
+    </p>
+    <div class="d-flex align-center justify-center ga-3 flex-wrap">
+      <v-btn
+        rounded="pill"
+        variant="outlined"
+        color="grey500"
+        height="40"
+        min-width="110"
+        class="text-h5 font-weight-bold"
+        @click="router.back()"
+      >
+        Back
+      </v-btn>
+      <v-btn
+        rounded="pill"
+        color="primary"
+        height="40"
+        min-width="110"
+        class="text-h5 font-weight-bold"
+        flat
+        @click="openSignIn"
+      >
+        Sign in
+      </v-btn>
+    </div>
   </div>
   <div
     v-else-if="fetchError"
@@ -27,81 +66,79 @@
   </div>
   <div
     v-else-if="contentData"
-    class="test-maker mt-20"
+    class="mt-20"
   >
-    <v-container class="test-maker">
+    <v-container class="px-0 px-sm-4">
       <!-- Header -->
       <v-card
         id="participating-exam-header"
-        class="mb-4"
+        class="exam-card mb-4"
       >
-        <v-card-text>
-          <v-row class="text-center">
-            <v-col cols="4">
-              <p>
-                Remaining time:
-                <ClientOnly>
-                  <v-chip
-                    label
-                    color="teal"
-                    variant="tonal"
-                  >
-                    {{ hhmmss(examStats.remainTime) }}
-                  </v-chip>
-                </ClientOnly>
-              </p>
-            </v-col>
-            <v-col cols="4">
-              <a
-                :href="
-                  examStats.nextNotAnswer
-                    ? `#item-${examStats.nextNotAnswer}`
-                    : ''
-                "
-                @click="updateNextNotAnswer()"
+        <div class="d-flex align-center flex-wrap ga-3 pa-3 px-sm-6">
+          <div class="d-flex align-center ga-2">
+            <v-icon
+              icon="md:timer"
+              size="28"
+              :color="timerColor"
+            />
+            <div class="d-flex flex-column">
+              <span class="text-h6 text-grey500">Time left</span>
+              <span
+                :class="['text-h4 font-weight-bold', `text-${timerColor}`]"
+                role="timer"
               >
-                Unanswered questions:
-                <ClientOnly>
-                  <v-chip
-                    label
-                    color="teal"
-                    variant="tonal"
-                  >
-                    {{
-                      contentData.tests.length
-                        - Object.keys(examStats.answerData).length
-                    }}
-                  </v-chip>
-                </ClientOnly>
-              </a>
-            </v-col>
-            <v-col cols="4">
-              <a
-                :href="examStats.nextPin ? `#item-${examStats.nextPin}` : '#'"
-                @click="updateNextPin()"
-              >
-                Pined question:
-                <ClientOnly>
-                  <v-chip
-                    label
-                    color="teal"
-                    variant="tonal"
-                  >
-                    {{ examStats.pinQuestionsArr.length }}
-                  </v-chip>
-                </ClientOnly>
-              </a>
-            </v-col>
-          </v-row>
-        </v-card-text>
+                {{ hhmmss(examStats.remainTime) }}
+              </span>
+            </div>
+          </div>
+
+          <v-spacer />
+
+          <div class="d-flex align-center ga-2">
+            <v-btn
+              variant="tonal"
+              color="grey700"
+              rounded="pill"
+              class="text-h5"
+              prepend-icon="md:radio_button_unchecked"
+              :disabled="!unansweredCount"
+              :aria-label="`Go to the next unanswered question, ${unansweredCount} left`"
+              @click="goToNextUnanswered"
+            >
+              <span class="d-none d-sm-inline me-1">Unanswered</span>
+              <span class="font-weight-bold">{{ unansweredCount }}</span>
+            </v-btn>
+            <v-btn
+              :variant="examStats.pinQuestionsArr.length ? 'flat' : 'tonal'"
+              :color="examStats.pinQuestionsArr.length ? 'primary' : 'grey700'"
+              rounded="pill"
+              :class="['text-h5', { 'text-grey800': examStats.pinQuestionsArr.length }]"
+              prepend-icon="md:push_pin"
+              :disabled="!examStats.pinQuestionsArr.length"
+              :aria-label="`Go to the next pinned question, ${examStats.pinQuestionsArr.length} pinned`"
+              @click="goToNextPin"
+            >
+              <span class="d-none d-sm-inline me-1">Pinned</span>
+              <span class="font-weight-bold">{{ examStats.pinQuestionsArr.length }}</span>
+            </v-btn>
+          </div>
+        </div>
+        <v-progress-linear
+          :model-value="answeredPercent"
+          color="primary"
+          bg-color="grey200"
+          bg-opacity="1"
+          height="4"
+          :aria-label="`${answeredCount} of ${contentData.tests.length} questions answered`"
+        />
       </v-card>
 
       <!-- Main Content -->
-      <v-card class="test-list mb-4 mt-4">
-        <v-card-title class="text-h4 font-weight-bold py-6 mt-6">
+      <v-card class="exam-card test-list mb-4 mt-4">
+        <v-card-title class="text-h4 font-weight-bold text-wrap py-6 mt-6 px-4 px-sm-6 px-md-8">
           {{ contentData.exam?.title || "" }}
         </v-card-title>
-        <v-card-text>
+        <v-card-text class="px-4 px-sm-6 px-md-8">
           <v-divider class="mb-4" />
 
           <div v-if="contentData.tests.length > 0">
@@ -127,11 +164,13 @@
             v-else
             class="text-center pa-10"
           >
-            <p>Oops! No questions found for this exam.</p>
+            <p class="text-h5">
+              Oops! No questions found for this exam.
+            </p>
           </div>
 
           <!-- Submit buttons -->
-          <v-row class="mb-16 mt-4">
+          <v-row class="mb-4 mb-md-16 mt-4">
             <v-col
               cols="12"
               md="6"
@@ -140,10 +179,10 @@
               <v-btn
                 :loading="submit_loading"
                 size="large"
-                color="teal"
-                class="text-white"
+                color="primary"
+                class="text-h5 text-grey800"
                 block
-                style="text-transform: none"
+                flat
                 @click="endExam()"
               >
                 Send answers
@@ -157,9 +196,9 @@
                 size="large"
                 variant="outlined"
                 color="error"
+                class="text-h5"
                 to="/search?type=quizhub"
                 block
-                style="text-transform: none"
               >
                 Discard
               </v-btn>
@@ -175,14 +214,21 @@
 import QuestionItem from '~/components/exam/QuestionItem.vue'
 import { useAuth } from '~/composables/useAuth'
 
+// A timed exam is a focus mode: no mobile bottom nav taking space or tempting the user to leave mid-exam.
+definePageMeta({
+  hideBottomNav: true,
+})
+
 const route = useRoute()
 
 const router = useRouter()
 const auth = useAuth()
-const authToken = auth.getUserToken()
+const { user } = useUser()
 
 const contentData = ref(null)
 const fetchError = ref(null)
+// A guest can't start an exam: ask them to sign in here rather than showing an error.
+const needsSignIn = ref(!auth.getUserToken())
 const submit_loading = ref(false)
 const allExamStats = ref([])
 const examStats = reactive({
@@ -197,10 +243,10 @@ const examStats = reactive({
 
 // Exam start is per-user and backed by localStorage state, so load it on the client only;
 // on the server the request has no Authorization header.
-const { data, error, status } = await useAsyncData(
+const { data, error, status, refresh } = await useAsyncData(
   `exam-start-${route.params.id}`,
   () => {
-    if (!authToken) {
+    if (!auth.getUserToken()) {
       throw createError({
         statusCode: 401,
         statusMessage: 'You must be logged in to start an exam.',
@@ -212,6 +258,11 @@ const { data, error, status } = await useAsyncData(
 )
 
 const handleExamResponse = () => {
+  if (!auth.getUserToken()) {
+    needsSignIn.value = true
+    return
+  }
+
   if (error.value) {
     if (error.value.statusCode === 400 && error.value.data?.data?.id) {
       // Replace, so the browser's Back button leaves the result for the page before the exam
@@ -285,7 +336,12 @@ const setupExamStats = () => {
 
 const initNotAnswered = () => {
   if (!contentData.value?.tests) return
-  const answeredIds = new Set(Object.keys(examStats.answerData))
+  // Erasing an answer leaves its key with an undefined value, so only keys with a value count as answered.
+  const answeredIds = new Set(
+    Object.entries(examStats.answerData)
+      .filter(([, answer]) => answer != null)
+      .map(([id]) => id),
+  )
   examStats.notAnsweredArr = contentData.value.tests
     .map(test => test.id)
     .filter(id => !answeredIds.has(id.toString()))
@@ -341,6 +397,36 @@ const eraseTest = (question_id) => {
   updateLocalStorage()
 }
 
+// Below these many seconds left, the timer turns amber, then red.
+const TIMER_WARNING_SECONDS = 5 * 60
+const TIMER_CRITICAL_SECONDS = 60
+
+const timerColor = computed(() => {
+  if (examStats.remainTime <= TIMER_CRITICAL_SECONDS) return 'lightError'
+  if (examStats.remainTime <= TIMER_WARNING_SECONDS) return 'warning500'
+  return 'grey800'
+})
+const unansweredCount = computed(() => examStats.notAnsweredArr.length)
+const answeredCount = computed(() => (contentData.value?.tests.length || 0) - unansweredCount.value)
+const answeredPercent = computed(() => {
+  const total = contentData.value?.tests.length || 0
+  return total ? (answeredCount.value / total) * 100 : 0
+})
+
+const scrollToQuestion = (questionId) => {
+  document.getElementById(`item-${questionId}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+const goToNextUnanswered = () => {
+  updateNextNotAnswer()
+  scrollToQuestion(examStats.nextNotAnswer)
+}
+
+const goToNextPin = () => {
+  updateNextPin()
+  scrollToQuestion(examStats.nextPin)
+}
+
 const updateNextPin = () => {
   if (!examStats.pinQuestionsArr.length) return
   const currentIndex = examStats.pinQuestionsArr.indexOf(examStats.nextPin)
@@ -392,12 +478,35 @@ const endExam = async () => {
   }
 }
 
+const openSignIn = () => {
+  router.push({ query: { auth_form: 'login', auth_noredirect: 'true' } })
+}
+
+// Signing in through the dialog keeps this page: load the exam as soon as the user is known.
+watch(user, async (value) => {
+  if (!value || !needsSignIn.value) return
+
+  needsSignIn.value = false
+  fetchError.value = null
+  await refresh()
+})
+
 watch(status, (value) => {
   if (value === 'success' || value === 'error') handleExamResponse()
 }, { immediate: true })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
+/* On phones the cards run edge to edge, so the exam gets the full screen width. */
+@media #{map.get(vuetify.$display-breakpoints, 'xs')} {
+  .exam-card {
+    border-radius: 0;
+  }
+}
+
 #participating-exam-header {
   position: sticky;
   top: 64px;
@@ -406,8 +515,8 @@ watch(status, (value) => {
   z-index: 10;
 }
 
+/* Keeps a question scrolled to by the header buttons clear of the app bar and the sticky header. */
 .bookmark-target {
-  padding-top: 80px;
-  margin-top: -80px;
+  scroll-margin-top: 170px;
 }
 </style>

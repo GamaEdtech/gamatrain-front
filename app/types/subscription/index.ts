@@ -288,6 +288,7 @@ export interface AdminUserSubscriptionDetailDTO {
 }
 
 export interface SearchFilterAdminUserSubscription {
+  search: string
   userId: string
   status: UserSubscriptionStatus | ''
 }
@@ -388,4 +389,10 @@ export interface SwitchSubscriptionPlanResponseDTO {
   requiresConfirmation: boolean
   previewAmount: number | null
   previewCurrency: SubscriptionCurrency | null
+  // Set (with succeeded: false) when an immediate upgrade's payment isn't paid yet but isn't a decline either
+  // (gamatrain-back#777). paymentActionUrl: the bank wants the user to confirm it (3-D Secure / OTP) - send them
+  // to this Stripe payment page. paymentProcessing: the bank is still processing it. Either way the plan switches
+  // by itself once paid; don't offer a retry.
+  paymentProcessing?: boolean
+  paymentActionUrl?: string | null
 }

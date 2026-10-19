@@ -1,6 +1,6 @@
 <template>
   <nuxt-link
-    :to="`/post/${data.id}/${data.slug}`"
+    :to="contentPath('post', data.id, data.slug)"
     class="d-flex flex-column align-start justify-start pa-2 card-post"
     :aria-label="data.slug"
   >

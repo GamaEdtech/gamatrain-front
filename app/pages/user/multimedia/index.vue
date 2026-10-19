@@ -167,7 +167,7 @@ const headers: DataTableHeader<MultimediaBriefDTO>[] = [
     sortable: false,
     width: '30vw',
     type: 'link',
-    getTo: (item: MultimediaBriefDTO) => `/multimedia/${item.id}/${item.title}`,
+    getTo: (item: MultimediaBriefDTO) => contentPath('multimedia', item.id),
   },
   { title: 'Score', key: 'ref_score', sortable: false, width: '5vw' },
   { title: 'Download', key: 'downloads', sortable: false, width: '5vw' },

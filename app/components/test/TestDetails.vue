@@ -42,93 +42,29 @@
 
     <div
       ref="textQuestionRef"
-      class="container-question w-100 d-flex flex-column align-start justift-start mt-6"
+      class="container-question w-100 d-flex flex-column align-start justify-start mt-6"
     >
-      <div
-        :class="[
-          'test-text text-grey700 font-weight-semibold',
-          { 'test-text-sm': smAndUp },
-        ]"
-        v-html="contentData.question"
+      <test-question-stem
+        :question="contentData.question"
+        :file="contentData.q_file"
       />
-      <img
-        v-if="contentData.q_file && contentData.q_file != '0'"
-        class="answer-img mt-1 ma-auto ms-sm-0"
-        :src="contentData.q_file"
-        alt="Question Image"
-      >
-      <div
+      <v-radio-group
         v-if="contentData.type == 'fourchoice' || contentData.type == 'twochoice'
           || contentData.type == 'tf'"
-        class="w-100 d-flex flex-column align-start justify-start px-1 px-sm-3 mt-4 ga-4"
+        :model-value="selectedAnswer"
+        :readonly="reviewMode || isAnswerSelected"
+        aria-label="Answer options"
+        hide-details
+        class="w-100 px-1 px-sm-3 mt-2"
+        @update:model-value="handleAnswerSelect(String($event))"
       >
-        <div
-          v-for="item in answers"
-          :key="item.key"
-          :class="[
-            'w-100 d-flex flex-column align-start ga-2 position-relative container-choice',
-            { 'cursor-pointer': !reviewMode },
-          ]"
-          @click="handleAnswerSelect(item.key)"
-        >
-          <div class="w-100 d-flex flex-nowrap align-start ga-3">
-            <div
-              :class="[
-                'choice-div flex-shrink-0 font-weight-regular text-grey800 d-flex align-center justify-center rounded-lg border-md border-solid border-opacity-100',
-                {
-                  'border-grey200': getChoiceStatus(item.key) === 'default',
-                  'border-success': getChoiceStatus(item.key) === 'success' || getChoiceStatus(item.key) === 'correct',
-                  'border-lightError': getChoiceStatus(item.key) === 'error',
-                  'border-primary': getChoiceStatus(item.key) === 'loading',
-                },
-              ]"
-            >
-              <v-progress-circular
-                v-if="getChoiceStatus(item.key) === 'loading'"
-                color="primary"
-                size="20"
-                indeterminate
-                :width="2"
-              />
-              <span v-else-if="getChoiceStatus(item.key) === 'default'">{{ item.key }}</span>
-
-              <v-icon
-                v-else-if="getChoiceStatus(item.key) === 'success'"
-                color="success"
-              >
-                md:check
-              </v-icon>
-
-              <v-icon
-                v-else-if="getChoiceStatus(item.key) === 'error'"
-                color="lightError"
-              >
-                md:close
-              </v-icon>
-
-              <v-icon
-                v-else
-                color="success"
-              >
-                md:radio_button_unchecked
-              </v-icon>
-            </div>
-            <div
-              :class="[
-                'test-text flex-grow-1 font-weight-regular choice-text text-grey800 overflow-x-auto overflow-y-hidden',
-                { 'test-text-sm': smAndUp },
-              ]"
-              v-html="item.text"
-            />
-          </div>
-          <img
-            v-if="item.file"
-            class="answer-img mt-1"
-            :src="item.file"
-            alt="Answer Image"
-          >
-        </div>
-      </div>
+        <test-question-choice
+          v-for="option in options"
+          :key="option.key"
+          :option="option"
+          :status="getChoiceStatus(option.key)"
+        />
+      </v-radio-group>
     </div>
 
     <div
@@ -137,13 +73,13 @@
       class="w-100 mt-4 d-flex flex-column align-start justify-start px-2 px-sm-8"
     >
       <div
-        :class="['test-text font-weight-bold text-grey600', { 'test-text-sm': smAndUp }]"
+        class="test-text font-weight-bold text-grey600"
       >
         Solution:
       </div>
       <div
         v-if="contentData.answer_full"
-        :class="['test-text text-grey800 mt-4', { 'test-text-sm': smAndUp }]"
+        class="test-text text-grey800 mt-4"
         v-html="contentData.answer_full"
       />
       <img
@@ -197,7 +133,7 @@
 
 <script setup lang="ts">
 import type { QuestionDTO, NextQuestionDTO, ApiResult, TestTimeDTO, AppError, ExamResultQuestionDTO } from '@/types'
-import { useDisplay } from 'vuetify/lib/composables/display.mjs'
+import { useDisplay } from 'vuetify'
 
 type TestDetailsContent = QuestionDTO | ExamResultQuestionDTO
 type ChipQuery = Record<string, string>
@@ -216,7 +152,8 @@ interface ITestDetail {
   reviewMode?: boolean
 }
 
-const { $renderMathInElement, $ensureMathJaxReady, $toast } = useNuxtApp()
+const { $toast } = useNuxtApp()
+const renderMath = useMathJaxRender()
 const router = useRouter()
 const props = withDefaults(defineProps<ITestDetail>(), {
   buttonNextText: 'Next One',
@@ -226,12 +163,7 @@ const props = withDefaults(defineProps<ITestDetail>(), {
 
 const isAnswerSelected = ref(false)
 const selectedAnswer = ref<string | null>(null)
-const answers = computed(() => [
-  { key: '1', text: props.contentData.answer_a, file: props.contentData.a_file },
-  { key: '2', text: props.contentData.answer_b, file: props.contentData.b_file },
-  { key: '3', text: props.contentData.answer_c, file: props.contentData.c_file },
-  { key: '4', text: props.contentData.answer_d, file: props.contentData.d_file },
-].filter(a => a.text || a.file))
+const options = useQuestionOptions(() => props.contentData)
 const isLoadingGetAnswerAndPoint = ref(false)
 
 const isStartSuccessAnimation = ref(false)
@@ -242,10 +174,7 @@ const questionReward = ref(0)
 
 const fullAnswerRef = ref<HTMLElement>()
 const isFullAnswerVisible = ref(false)
-const fullAnswerFile = computed(() => {
-  const file = props.contentData.answer_full_file
-  return file && file !== '0' ? file : null
-})
+const fullAnswerFile = computed(() => getQuestionFile(props.contentData.answer_full_file))
 const hasFullAnswer = computed(() => !!props.contentData.answer_full || !!fullAnswerFile.value)
 
 const nextTestId = ref()
@@ -385,10 +314,7 @@ const getChoiceStatus = (choice: string) => {
 
 const textQuestionRef = ref<HTMLElement>()
 onMounted(async () => {
-  await $ensureMathJaxReady?.()
-  if (textQuestionRef.value) {
-    $renderMathInElement?.(textQuestionRef.value)
-  }
+  await renderMath(textQuestionRef.value)
 
   if (!props.reviewMode && !props.ssrNextTest) {
     await loadNextTest()
@@ -400,9 +326,7 @@ onMounted(async () => {
 const showFullAnswer = async () => {
   isFullAnswerVisible.value = true
   await nextTick()
-  if (fullAnswerRef.value) {
-    $renderMathInElement?.(fullAnswerRef.value)
-  }
+  await renderMath(fullAnswerRef.value)
 }
 
 const loadNextTest = async () => {
@@ -448,32 +372,20 @@ const getQuestionQueryValue = (data: TestDetailsContent, field: string) => {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
 .answer-img {
-  /* max-height: 15rem; */
   width: auto;
   max-width: 100%;
 }
-.container-choice {
-  min-height: 24px;
-}
-.choice-div {
-  min-width : 24px;
-  min-height: 24px;
-  max-width : 24px;
-  max-height: 24px;
-  font-size: 1.4rem;
-}
-.choice-text {
-  min-width: 0;
-  line-height: 22px;
-}
-
 .test-text {
   font-size: 1.6rem;
 }
-
-.test-text-sm {
-  font-size: 1.8rem;
+@media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
+  .test-text {
+    font-size: 1.8rem;
+  }
 }
 </style>

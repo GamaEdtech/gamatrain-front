@@ -1,9 +1,14 @@
+export type AdminTicketStatus = 'Open' | 'Answered' | 'Closed' | 'NotImportant'
+
 export interface AdminContactUsDTO {
   id: number
   sender: string
   email: string
   subject: string
   isReadByAdmin: boolean
+  /** The customer replied and admin hasn't read that reply yet. */
+  hasNewReply: boolean
+  status: AdminTicketStatus | null
   creationDate: string
 }
 
@@ -21,6 +26,8 @@ export interface AdminReplyTicketListDTO {
   id: number
   body: string
   creationUser: string
+  /** Written by support (an admin reply), not by the customer. */
+  bySupport: boolean
   creationDate: string
   fileUri: string
   receivers: string[]
@@ -28,6 +35,7 @@ export interface AdminReplyTicketListDTO {
 
 export interface SearchFilterAdminContactUs {
   unread: boolean | null
+  status: AdminTicketStatus | null
   search: string
   email: string
   startDate: Date | null
