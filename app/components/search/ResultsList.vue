@@ -71,7 +71,7 @@
               class="text-none text-h5 font-weight-bold"
               @click="publishContent"
             >
-              <v-icon color="brandNavy">
+              <v-icon color="grey700">
                 md:add
               </v-icon>
               Publish
@@ -175,7 +175,7 @@ const reset = () => {
 
 const createLinksByService: Partial<Record<SearchServiceId, string>> = {
   'paper': '/user/paper/create',
-  'study-materials': '/user/multimedia/create',
+  'study-materials': '/user/paper/create',
   'tutorial': '/user/paper/create',
   'quizhub': '/test-maker/create',
   'forum': '/user/question/create',

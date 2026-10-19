@@ -24,14 +24,14 @@
             v-else-if="filter.icon"
             :icon="filter.icon"
             size="22"
-            color="brandNavy"
+            color="grey700"
           />
         </div>
 
         <span class="d-flex flex-column align-start justify-center flex-grow-1 min-width-0 overflow-hidden">
           <span
             class="d-block text-truncate"
-            :class="filter.selected ? 'text-caption text-grey600 font-weight-medium' : 'text-h6 text-brandNavy font-weight-bold'"
+            :class="filter.selected ? 'text-caption text-grey600 font-weight-medium' : 'text-h6 text-grey700 font-weight-bold'"
           >
             {{ filter.title }}
           </span>

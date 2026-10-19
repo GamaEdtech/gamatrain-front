@@ -41,7 +41,7 @@
           class="d-flex align-center flex-shrink-0 ga-3 ga-md-6"
           aria-label="Resource information"
         >
-          <difficulty-indicator
+          <search-difficulty-indicator
             v-if="hasDifficulty"
             :level="information.level ?? undefined"
             :size="16"
@@ -91,7 +91,7 @@
             role="img"
             aria-label="Featured resource"
           />
-          <quality-indicator
+          <search-quality-indicator
             v-if="hasQualityRating"
             :score="qualityScore"
             :size="16"

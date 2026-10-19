@@ -4,19 +4,19 @@ import type { SearchParameters } from '@/composables/useApiService'
 export type SearchServiceId
   = | 'paper'
     | 'study-materials'
-    | 'multimedia'
+    // | 'multimedia'
     | 'quizhub'
     | 'forum'
     | 'tutorial'
-    | 'teacher'
+    // | 'teacher'
 
 export type LegacySearchType
   = | 'test'
-    | 'learnfiles'
+    // | 'learnfiles'
     | 'azmoon'
     | 'question'
     | 'dars'
-    | 'teacher'
+    // | 'teacher'
 
 export type SearchTypeAlias = SearchServiceId | LegacySearchType
 

@@ -1,4 +1,4 @@
-export interface SearchTypesStatsDTO {
+export interface SearchTypesStatsMenuDTO {
   types_stats: TypesStatsDTO
 }
 

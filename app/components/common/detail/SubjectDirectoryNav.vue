@@ -1,6 +1,7 @@
 <template>
   <nuxt-link
-    :to="`/subject-directory?board=${contentData?.section}&grade=${contentData?.base}&subject=${contentData?.lesson}`"
+    v-if="directoryLink"
+    :to="directoryLink"
     class="w-100 rounded-lg d-flex align-center justify-space-between flex-wrap pa-2 ga-2 mt-2 border border-grey300 subject-directory-alert"
   >
     <div class="d-flex align-center ga-2">
@@ -36,9 +37,23 @@
   </nuxt-link>
 </template>
 
-<script setup>
-defineProps({
+<script setup lang="ts">
+const props = defineProps({
   contentData: Object,
+})
+
+const hasValue = (value: unknown) => value !== undefined && value !== null && value !== ''
+
+// Only link when board, grade and subject are all known: empty result lists and teacher
+// profiles have none of them, which used to produce ?board=undefined&grade=undefined&subject=undefined.
+const directoryLink = computed(() => {
+  const { section, base, lesson } = props.contentData ?? {}
+  if (![section, base, lesson].every(hasValue)) return null
+
+  return {
+    path: '/subject-directory',
+    query: { board: String(section), grade: String(base), subject: String(lesson) },
+  }
 })
 </script>
 

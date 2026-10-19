@@ -4,12 +4,12 @@ import type {
 import type { SearchParameters } from '@/composables/useApiService'
 import type { SearchListDTO, SearchRequestOptions, SearchResourceItem, SearchTypesStatsDTO } from '@/types/search'
 
-const data = ref<SearchResourceItem[]>([])
-const totalCount = ref<number | string>(0)
-const loadingGetData = ref(false)
-const loadingGetTypesStats = ref(false)
-
 export const useSearchApi = () => {
+  const data = ref<SearchResourceItem[]>([])
+  const totalCount = ref<number | string>(0)
+  const loadingGetData = ref(false)
+  const loadingGetTypesStats = ref(false)
+
   const getData = async (params: SearchParameters, options?: SearchRequestOptions) => {
     loadingGetData.value = true
 

@@ -41,7 +41,7 @@
             class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
             color="#F2F4F7"
             :to="`/search?type=${
-              category.typePaper ? category.typePaper : `paper`
+              searchType
             }&section=${information.section}`"
           >
             {{ information?.section_title }}
@@ -52,7 +52,7 @@
             class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
             color="#F2F4F7"
             :to="`/search?type=${
-              category.typePaper ? category.typePaper : `paper`
+              searchType
             }&section=${information.section}&base=${information.base}`"
           >
             {{ information?.base_title }}
@@ -63,7 +63,7 @@
             class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
             color="#F2F4F7"
             :to="`/search?type=${
-              category.typePaper ? category.typePaper : `paper`
+              searchType
             }&section=${information.section}&base=${information.base}&lesson=${
               information.lesson
             }`"
@@ -125,7 +125,7 @@
         class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
         color="#F2F4F7"
         :to="`/search?type=${
-          category.typePaper ? category.typePaper : `paper`
+          searchType
         }&section=${information.section}`"
       >
         {{ information?.section_title }}
@@ -136,7 +136,7 @@
         class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
         color="#F2F4F7"
         :to="`/search?type=${
-          category.typePaper ? category.typePaper : `paper`
+          searchType
         }&section=${information.section}&base=${information.base}`"
       >
         {{ information?.base_title }}
@@ -147,7 +147,7 @@
         class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
         color="#F2F4F7"
         :to="`/search?type=${
-          category.typePaper ? category.typePaper : `paper`
+          searchType
         }&section=${information.section}&base=${information.base}&lesson=${
           information.lesson
         }`"
@@ -224,6 +224,10 @@ const createLink = () => {
   }
   return link
 }
+
+const searchType = computed(() =>
+  props.category.searchType || props.category.typePaper || 'paper',
+)
 </script>
 
 <style scoped>
