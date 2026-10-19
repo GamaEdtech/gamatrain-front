@@ -31,17 +31,16 @@
             @click="toggle"
           >
             <div
-              class="d-flex align-center justify-center rounded-circle"
-              :class="isSelected ? ['active-category', item.activeColorClass] : undefined"
+              :class="`d-flex align-center justify-center rounded-circle ${
+                isSelected ? `active-category` : ``
+              }`"
+              :style="{ backgroundColor: isSelected ? item.activeColor : `` }"
             >
               <div
                 class="category-div d-flex align-center justify-center rounded-circle"
-                :class="item.colorClass"
+                :style="{ backgroundColor: item.backgroundColor }"
               >
-                <span
-                  class="icon-category d-inline-flex align-center justify-center"
-                  :class="item.iconName"
-                />
+                <span :class="`icon-category ${item.iconName}`" />
               </div>
             </div>
             <div class="primary-gray-600">
@@ -332,10 +331,7 @@ watch(
 )
 </script>
 
-<style lang="scss">
-@use 'sass:map';
-@use 'vuetify/settings' as vuetify;
-
+<style>
 .line-specifier-load-more {
   width: 100%;
   height: 4px;
@@ -345,15 +341,8 @@ watch(
   height: 50px;
 }
 .icon-category {
-  width: 30px;
-  height: 30px;
   font-size: 30px;
-  line-height: 1;
-  color: rgb(var(--v-theme-white));
-}
-
-.icon-category:not(.icon-paper):not(.icon-study-materials) {
-  transform: translateX(4px);
+  color: #ffffff;
 }
 
 .active-category {
@@ -444,7 +433,7 @@ watch(
 .background-odd {
   background-color: #ebebeb;
 }
-@media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
+@media (min-width: 600px) {
   .mobile-search-sheet {
     height: 50vh;
     border-radius: 3rem 3rem 0 0;

@@ -209,10 +209,8 @@
 </template>
 
 <script setup>
-import { useSearchServiceCounts } from '@/composables/useSearchServiceCounts'
-
 const { data: boardList, getData: getBoards } = useBoard()
-const { fetchServiceCounts } = useSearchServiceCounts()
+const { getTypesStats } = useSearchApi()
 
 const categorySlider = ref(null)
 
@@ -269,7 +267,7 @@ const showBoardHint = ref(false)
 let categoryCountRequestId = 0
 
 const categoryLink = (category) => {
-  return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}&base=${selectedGrade.value}`
+  return category.type === 'school' ? `/school` : category.type === 'teacher' ? '/teacher' : `/search?type=${category.type}&section=${selectedBoard.value?.code}${selectedGrade.value ? `&base=${selectedGrade.value}` : ``}`
 }
 const fetchInitialData = async () => {
   await getBoards()
@@ -326,21 +324,55 @@ const fetchCategoryCounts = async () => {
     }
 
     const requestId = ++categoryCountRequestId
-    const counts = await fetchServiceCounts({
+    const params = {
       section: selectedBoard.value.code,
-      base: selectedGrade.value,
-    })
+      base: selectedGrade.value || undefined,
+    }
+
+    const [paperResult, studyMaterialsResult] = await Promise.allSettled([
+      getTypesStats({ ...params, is_paper: 1 }),
+      getTypesStats({ ...params, is_paper: 0 }),
+    ])
 
     if (requestId !== categoryCountRequestId) return
 
-    categories.value.forEach((category) => {
-      const count = counts[category.type]
-      if (count !== undefined) category.stat = count
-    })
+    const paperStats = getTypesStatsData(paperResult)
+    const studyMaterialsStats = getTypesStatsData(studyMaterialsResult)
+    const sharedStats = paperStats || studyMaterialsStats
+
+    setCategoryStat('papers', getStatCount(paperStats, 'papers'))
+    setCategoryStat('study-materials', getStatCount(studyMaterialsStats, 'papers'))
+    setCategoryStat('exams', getStatCount(sharedStats, 'exams', 'azmoon'))
+    setCategoryStat('questions', getStatCount(sharedStats, 'question', 'questions'))
+    setCategoryStat('tutorial', getStatCount(sharedStats, 'tutorials', 'dars'))
   }
   catch (error) {
     console.error('Error fetching category counts:', error)
   }
+}
+
+const getTypesStatsData = (result) => {
+  if (result.status !== 'fulfilled' || !result.value.data) return null
+
+  return 'types_stats' in result.value.data
+    ? result.value.data.types_stats
+    : result.value.data
+}
+
+const getStatCount = (stats, ...keys) => {
+  if (!stats) return 0
+
+  const value = keys
+    .map(key => stats[key])
+    .find(candidate => candidate !== undefined && candidate !== null)
+  const count = Number.parseInt(String(value), 10)
+
+  return Number.isFinite(count) ? count : 0
+}
+
+const setCategoryStat = (key, value) => {
+  const category = categories.value.find(category => category.key === key)
+  if (category) category.stat = value
 }
 
 const fetchTeachers = async () => {
@@ -396,10 +428,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped lang="scss">
-@use 'sass:map';
-@use 'vuetify/settings' as vuetify;
-
+<style scoped>
 .board-hint {
   position: absolute;
   left: 0;
@@ -486,8 +515,8 @@ onMounted(() => {
 .stat-icon {
   font-size: 2.3rem;
 }
-.icon-study-materials {
-  color: rgb(var(--v-theme-greenLight700));
+.icon-multimedia {
+  color: #02b719;
 }
 .icon-teacher{
   color : #7f56d9
@@ -498,11 +527,17 @@ onMounted(() => {
 .icon-exam {
   color: #7c4dff;
 }
+.icon-q-a {
+  color: #fdb022;
+}
 .icon-tutorial {
   color: #2e90fa;
 }
 .icon-school {
   color: #a5673f;
+}
+.icon-study-materials {
+  color: rgb(var(--v-theme-greenLight700));
 }
 .ex-category__card--title {
   color: #344054;
@@ -591,7 +626,7 @@ onMounted(() => {
   flex-grow: 1;
 }
 
-@media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
+@media (min-width: 600px) {
   .ex-category__card {
     background: linear-gradient(
       90deg,
@@ -627,7 +662,7 @@ onMounted(() => {
     width: 450px;
   }
 }
-@media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
+@media (min-width: 960px) {
   .ex-category__card--title {
     font-size: 30px;
     font-weight: 700;

@@ -1,4 +1,9 @@
-import type { GeneralSearchCategory, SearchServiceId, SearchServiceOption } from '@/types/search'
+import type {
+  SearchConditionalFilter,
+  SearchFilterOption,
+  SearchServiceId,
+  SearchServiceOption,
+} from '@/types/search'
 
 export const EDEXCEL_BOARD_CODE = 6657
 
@@ -37,7 +42,7 @@ export const SEARCH_SERVICE_OPTIONS = [
   },
 ] satisfies SearchServiceOption[]
 
-export const DEFAULT_SEARCH_SERVICE = SEARCH_SERVICE_OPTIONS[0]
+export const DEFAULT_SEARCH_SERVICE = SEARCH_SERVICE_OPTIONS[0]!
 
 export const SEARCH_SERVICE_TITLE_SUFFIXES: Partial<Record<SearchServiceId, string>> = {
   'paper': 'Past Papers',
@@ -46,102 +51,14 @@ export const SEARCH_SERVICE_TITLE_SUFFIXES: Partial<Record<SearchServiceId, stri
   'tutorial': 'Revision notes',
 }
 
-export const LEGACY_SEARCH_TYPES = ['test', 'learnfiles', 'azmoon', 'question', 'dars']
+export const SEARCH_FILTERS_BY_SERVICE: Partial<Record<SearchServiceId, SearchConditionalFilter[]>> = {
+  'paper': ['year', 'session', 'paper', 'variant'],
+  'study-materials': ['material', 'topic'],
+  'quizhub': ['topic', 'year', 'session', 'exam-type'],
+  'tutorial': ['topic'],
+}
 
-export const GENERAL_SEARCH_CATEGORIES = [
-  {
-    title: 'Past Papers',
-    value: 'Past Papers',
-    api: '/api/v1/search',
-    apiParams: { type: 'test' },
-    type: 'paper',
-    typePaper: 'paper',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-paper',
-    colorClass: 'bg-generalSearchPaper',
-    activeColorClass: 'bg-generalSearchPaperActive',
-  },
-  {
-    title: 'Study Materials',
-    value: 'Study Materials',
-    api: '/api/v1/search',
-    apiParams: { type: 'test', is_paper: 0, noTypesStats: 1 },
-    type: 'paper',
-    typePaper: 'paper',
-    searchType: 'study-materials',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-study-materials',
-    colorClass: 'bg-greenLight700',
-    activeColorClass: 'bg-generalSearchStudyMaterialsActive',
-  },
-  {
-    title: 'Exam Hub',
-    value: 'Exam Hub',
-    api: '/api/v1/search',
-    apiParams: { type: 'azmoon' },
-    type: 'paper',
-    typePaper: 'exam',
-    searchType: 'quizhub',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-exam',
-    colorClass: 'bg-generalSearchQuiz',
-    activeColorClass: 'bg-generalSearchQuizActive',
-  },
-  {
-    title: 'Tutorial',
-    value: 'Tutorial',
-    api: '/api/v1/search',
-    apiParams: { type: 'dars' },
-    type: 'paper',
-    typePaper: 'tutorial',
-    isOldApi: true,
-    keywordSearch: 'title',
-    iconName: 'icon-tutorial',
-    colorClass: 'bg-blue500',
-    activeColorClass: 'bg-generalSearchTutorialActive',
-  },
-  {
-    title: 'Teacher',
-    value: 'Teacher',
-    api: '/api/v2/identities/profiles/list',
-    type: 'teacher',
-    isOldApi: false,
-    keywordSearch: 'FullName',
-    iconName: 'icon-teacher',
-    colorClass: 'bg-generalSearchTeacher',
-    activeColorClass: 'bg-generalSearchTeacherActive',
-  },
-  {
-    title: 'School',
-    value: 'School',
-    api: '/api/v2/schools',
-    type: 'school',
-    isOldApi: false,
-    keywordSearch: 'Name',
-    iconName: 'icon-school',
-    colorClass: 'bg-generalSearchSchool',
-    activeColorClass: 'bg-generalSearchSchoolActive',
-  },
-  {
-    title: 'Post',
-    value: 'Post',
-    api: '/api/v2/posts',
-    type: 'post',
-    isOldApi: false,
-    keywordSearch: 'Title',
-    iconName: 'icon-student',
-    colorClass: 'bg-generalSearchBlog',
-    activeColorClass: 'bg-generalSearchBlogActive',
-  },
-] satisfies GeneralSearchCategory[]
-
-export const MOBILE_GENERAL_SEARCH_CATEGORIES = GENERAL_SEARCH_CATEGORIES
-export const DESKTOP_GENERAL_SEARCH_CATEGORIES = GENERAL_SEARCH_CATEGORIES
-
-export const ALL_SEARCH_MONTHS = [
+export const ALL_SEARCH_MONTHS: SearchFilterOption[] = [
   { id: 1, title: 'January' },
   { id: 2, title: 'February' },
   { id: 3, title: 'March' },
@@ -156,7 +73,7 @@ export const ALL_SEARCH_MONTHS = [
   { id: 12, title: 'December' },
 ]
 
-export const SEARCH_MONTHS_BY_LEVEL: Record<number, { id: number, title: string }[]> = {
+export const SEARCH_MONTHS_BY_LEVEL: Record<number, SearchFilterOption[]> = {
   22: [
     { id: 3, title: 'March' },
     { id: 6, title: 'May/Jun' },
@@ -246,3 +163,97 @@ export const SEARCH_BOARD_ICON_BY_TITLE: Record<string, string> = {
   CXC: 'CXC',
   Nigerian: 'Nijeria',
 }
+
+export const GENERAL_SEARCH_CATEGORIES = [
+  {
+    title: 'Past Papers',
+    value: 'Past Papers',
+    api: '/api/v1/search',
+    apiParams: { type: 'test' },
+    type: 'paper',
+    typePaper: 'paper',
+    isOldApi: true,
+    keywordSearch: 'title',
+    iconName: 'icon-paper',
+    backgroundColor: '#01c8c8',
+    activeColor: '#bbe9bd',
+  },
+  {
+    title: 'Study Materials',
+    value: 'Study Materials',
+    api: '/api/v1/search',
+    apiParams: { type: 'test', is_paper: 0, noTypesStats: 1 },
+    type: 'paper',
+    typePaper: 'paper',
+    searchType: 'study-materials',
+    isOldApi: true,
+    keywordSearch: 'title',
+    iconName: 'icon-study-materials',
+    backgroundColor: '#02b719',
+    activeColor: '#b7edc1',
+  },
+  {
+    title: 'Exam Hub',
+    value: 'Exam Hub',
+    api: '/api/v1/search',
+    apiParams: { type: 'azmoon' },
+    type: 'paper',
+    typePaper: 'exam',
+    searchType: 'quizhub',
+    isOldApi: true,
+    keywordSearch: 'title',
+    iconName: 'icon-exam',
+    backgroundColor: '#7b61ff',
+    activeColor: '#d8d0ff',
+  },
+  {
+    title: 'Tutorial',
+    value: 'Tutorial',
+    api: '/api/v1/search',
+    apiParams: { type: 'dars' },
+    type: 'paper',
+    typePaper: 'tutorial',
+    searchType: 'tutorial',
+    isOldApi: true,
+    keywordSearch: 'title',
+    iconName: 'icon-tutorial',
+    backgroundColor: '#2a91ff',
+    activeColor: '#c0deff',
+  },
+  {
+    title: 'Teacher',
+    value: 'Teacher',
+    api: '/api/v2/identities/profiles/list',
+    type: 'teacher',
+    isOldApi: false,
+    keywordSearch: 'FullName',
+    iconName: 'icon-teacher',
+    backgroundColor: '#7f56d9',
+    activeColor: '#7f56d970',
+  },
+  {
+    title: 'School',
+    value: 'School',
+    api: '/api/v2/schools',
+    type: 'school',
+    isOldApi: false,
+    keywordSearch: 'Name',
+    iconName: 'icon-school',
+    backgroundColor: '#a15801',
+    activeColor: '#e3cdb3',
+  },
+  {
+    title: 'Post',
+    value: 'Post',
+    api: '/api/v2/posts',
+    type: 'post',
+    isOldApi: false,
+    keywordSearch: 'Title',
+    iconName: 'icon-student',
+    backgroundColor: '#ff9400',
+    activeColor: '#ffdfb3',
+  },
+]
+
+export const MOBILE_GENERAL_SEARCH_CATEGORIES = GENERAL_SEARCH_CATEGORIES
+export const DESKTOP_GENERAL_SEARCH_CATEGORIES = GENERAL_SEARCH_CATEGORIES

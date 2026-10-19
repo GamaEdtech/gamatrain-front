@@ -2,14 +2,14 @@
   <v-card
     :to="createLinkCard(information)"
     color="grey25"
-    elevation="1"
+    elevation="0"
     rounded="lg"
-    height="174"
+    min-height="174"
     max-width="1200"
     hover
-    class="card-search d-flex w-100 border border-borderSubtle border-opacity-100"
+    class="d-flex w-100 border border-grey200 border-opacity-100"
   >
-    <div class="cover-wrap h-100 flex-shrink-0 bg-softGold">
+    <div class="container-img w-100 bg-grey100">
       <v-img
         v-if="information.lesson_pic"
         :alt="information.title ?? undefined"
@@ -19,7 +19,7 @@
       />
       <div
         v-else
-        class="h-100 d-flex align-center justify-center flex-column text-center pa-3 bg-surfaceTertiary text-grey600 font-weight-bold"
+        class="h-100 d-flex align-center justify-center flex-column text-center pa-3 text-grey600 font-weight-bold text-h6 text-sm-h5"
       >
         <span>{{ fallbackSubject.name }}</span>
         <span v-if="fallbackSubject.code">{{ fallbackSubject.code }}</span>
@@ -32,16 +32,16 @@
           <v-avatar
             :image="information.avatar || '/images/default-user.svg'"
             size="26"
-            class="border border-borderSubtle border-opacity-100"
+            class="border border-grey200 border-opacity-100"
           />
-          <span class="card-publisher text-brandNavy opacity-70 font-weight-semibold text-truncate">{{ publisherName }}</span>
+          <span class="text-grey500 font-weight-semibold text-truncate">{{ publisherName }}</span>
         </div>
 
         <div
           class="d-flex align-center flex-shrink-0 ga-3 ga-md-6"
           aria-label="Resource information"
         >
-          <DifficultyIndicator
+          <search-difficulty-indicator
             v-if="hasDifficulty"
             :level="information.level ?? undefined"
             :size="16"
@@ -55,7 +55,7 @@
             aria-label="PDF file"
           >
             <span
-              class="card-glyph icon-pdf text-lightError"
+              class="icon-pdf text-lightError"
               aria-hidden="true"
             />
           </v-avatar>
@@ -63,7 +63,7 @@
             v-if="information.is_paper && information.a_file"
             v-tooltip:top="'Mark scheme'"
             icon="md:check_box_outlined"
-            color="teal500"
+            color="success"
             size="16"
             role="img"
             aria-label="Mark scheme"
@@ -73,12 +73,12 @@
             v-tooltip:top="'Word file'"
             size="16"
             rounded
-            color="grey50"
+            color="transparent"
             role="img"
             aria-label="Word file"
           >
             <span
-              class="card-glyph icon-word text-blue500"
+              class="icon-word text-info"
               aria-hidden="true"
             />
           </v-avatar>
@@ -91,7 +91,7 @@
             role="img"
             aria-label="Featured resource"
           />
-          <QualityIndicator
+          <search-quality-indicator
             v-if="hasQualityRating"
             :score="qualityScore"
             :size="16"
@@ -99,33 +99,33 @@
         </div>
       </div>
 
-      <h2 class="card-title text-brandNavy font-weight-bold text-break mb-1">
+      <h2 class="text-h5 text-md-h4 text-grey700 font-weight-bold text-break mb-1">
         {{ information.title }}
       </h2>
       <p
         v-if="description"
-        class="card-description text-brandNavy opacity-70 text-truncate ma-0"
+        class="text-h6 text-grey500 text-truncate ma-0"
       >
         {{ description }}
       </p>
 
-      <div class="d-flex align-center flex-nowrap overflow-hidden ga-1 my-1">
+      <div class="d-flex align-center flex-nowrap overflow-hidden ga-1 mt-2 mt-sm-4">
         <v-chip
           v-for="tag in subjectTags"
           :key="tag"
           label
           variant="flat"
-          color="surfaceSecondary"
-          class="card-tag text-grey500 border border-surfaceTertiary border-opacity-100 px-2 flex-shrink-0"
+          color="grey200"
+          class="text-grey600 border border-grey300 border-opacity-100 px-2 flex-shrink-0"
         >
           {{ tag }}
         </v-chip>
       </div>
 
-      <div class="card-metadata d-flex align-center flex-nowrap overflow-hidden ga-3 ga-lg-5 text-brandNavy opacity-70">
+      <div class="d-flex align-center flex-nowrap overflow-hidden ga-3 ga-lg-5 text-grey700 mt-3 text-h6 text-sm-h5">
         <span
           v-if="information.test_type_title"
-          class="d-inline-flex align-center ga-1 flex-shrink-0"
+          class="d-flex align-center ga-1 flex-shrink-0"
         >
           <v-icon
             icon="md:segment_outlined"
@@ -136,7 +136,7 @@
         </span>
         <span
           v-if="information.tests_num && legacyType === 'azmoon'"
-          class="d-inline-flex align-center ga-1 flex-shrink-0"
+          class="d-flex align-center ga-1 flex-shrink-0"
         >
           <v-icon
             icon="md:list"
@@ -147,7 +147,7 @@
         </span>
         <span
           v-if="information.views"
-          class="d-inline-flex align-center ga-1 flex-shrink-0"
+          class="d-flex align-center ga-1 flex-shrink-0"
         >
           <v-icon
             icon="md:visibility_outlined"
@@ -156,7 +156,7 @@
           />
           {{ information.views }}
         </span>
-        <span class="d-inline-flex align-center ga-1 flex-shrink-0">
+        <span class="d-flex align-center ga-1 flex-shrink-0">
           <v-icon
             icon="md:calendar_month_outlined"
             size="12"
@@ -171,8 +171,6 @@
 
 <script setup lang="ts">
 import type { SearchCardItem, LegacySearchType } from '@/types/search'
-import DifficultyIndicator from './difficultyIndicator.vue'
-import QualityIndicator from './qualityIndicator.vue'
 import { getLegacySearchType } from '@/utils/searchServices'
 
 const props = withDefaults(defineProps<{
@@ -262,39 +260,15 @@ const createLinkCard = (information: SearchCardItem) =>
   `/${DETAIL_ROUTE_BY_TYPE[legacyType.value] ?? 'paper'}/${information.id}/${information.title_url}`
 </script>
 
-<style scoped lang="scss">
-@use 'sass:map';
-@use 'vuetify/settings' as vuetify;
-
-/* Cover keeps the book-cover proportions; narrower on phones so the text isn't crowded */
-.cover-wrap {
-  aspect-ratio: 63 / 74;
+<style scoped>
+.container-img{
+  min-width : 146px;
+  max-width : 146px;
 }
-
-/* Two-line title clamp: Vuetify only has single-line text-truncate */
-.card-title {
-  display: -webkit-box;
-  height: 44px;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-}
-
-/* px sizes: the app's 10px root font size makes Vuetify's rem-based type scale too small */
-.card-title { font-size: 18px; line-height: 22px; }
-.card-publisher, .card-description { font-size: 13px; line-height: 20px; }
-.card-metadata { font-size: 12px; line-height: 18px; }
-.card-tag { height: 24px; font-size: 11px; line-height: 16px; }
-.card-glyph { font-size: 16px; }
-
-/* Phones (below Vuetify's md breakpoint): no utility class covers px widths or font sizes */
-@media #{map.get(vuetify.$display-breakpoints, 'sm-and-down')} {
-  .cover-wrap {
-    width: 96px;
-    aspect-ratio: auto;
+@media (max-width: 600px) {
+  .container-img {
+    min-width: 96px;
+    max-width : 96px;
   }
-
-  .card-title { font-size: 16px; }
 }
 </style>

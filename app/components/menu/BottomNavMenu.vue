@@ -110,8 +110,7 @@
     v-model:show-dialog="isAddOptionOpen"
     title="What would you like to publish?"
     subtitle="Choose a type. We will prepare the right form for you."
-    :max-width="744"
-    variant="publish"
+    :max-width="560"
   >
     <menu-add-option-bottom-menu
       @close="isAddOptionOpen = false"
