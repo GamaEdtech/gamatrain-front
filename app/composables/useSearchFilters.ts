@@ -89,7 +89,7 @@ export const useSearchFilters = ({
         listTransform: enrichBoardsWithIcons,
         itemSort: (a, b) => Number(a.list_order) - Number(b.list_order),
         showItemIcon: true,
-        iconSrc: item => `/images/boards/${item.icon}.svg`,
+        iconSrc: item => item.icon ? `/images/boards/${item.icon}.svg` : undefined,
         fallbackIcon: 'md:school_outlined',
         fallbackIconPadding: 4,
         queryKey: 'section',

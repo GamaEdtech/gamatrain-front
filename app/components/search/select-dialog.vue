@@ -76,19 +76,18 @@
         </v-text-field>
       </v-row>
       <CommonFilterOptionChips
-        v-if="!isLoading && inlineOptions"
+        v-if="!isLoading && !errorMessage && inlineOptions"
         class="select-dialog-inline-options"
         :items="filteredItems"
         :selected-item="selectedItem"
         :allow-clear="inlineAllowClear"
         :items-per-row="inlineItemsPerRow"
         :item-title="itemTitle"
-        grouped
         @select="changeSelectedItem"
       />
 
       <v-list
-        v-else-if="!isLoading"
+        v-else-if="!isLoading && !errorMessage"
         class="select-dialog-list"
         max-height="320"
       >
@@ -172,7 +171,23 @@
       </div>
 
       <v-alert
-        v-if="searchText && filteredItems.length === 0 && !isLoading"
+        v-if="errorMessage && !isLoading"
+        type="error"
+        variant="tonal"
+        class="select-dialog-empty"
+      >
+        {{ errorMessage }}
+        <v-btn
+          variant="text"
+          class="text-none"
+          @click="emit('retry')"
+        >
+          Retry
+        </v-btn>
+      </v-alert>
+
+      <v-alert
+        v-if="searchText && filteredItems.length === 0 && !isLoading && !errorMessage"
         type="info"
         color="brandNavy"
         density="compact"
@@ -184,7 +199,7 @@
       </v-alert>
       <v-alert
         v-if="
-          searchText.length == 0 && filteredItems.length === 0 && !isLoading
+          searchText.length == 0 && filteredItems.length === 0 && !isLoading && !errorMessage
         "
         type="info"
         color="brandNavy"
@@ -200,7 +215,7 @@
 
 <script setup>
 import { useDisplay } from 'vuetify'
-import { ref, computed, defineComponent, h } from 'vue'
+import { ref, computed, watch, defineComponent, h } from 'vue'
 
 const escapeRegExp = text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
@@ -236,9 +251,7 @@ const HighlightedText = defineComponent({
           h(
             'span',
             {
-              style: part.highlight
-                ? 'background-color: rgb(var(--v-theme-softGold)); color: rgb(var(--v-theme-brandNavy));'
-                : '',
+              class: part.highlight ? 'bg-softGold text-brandNavy' : '',
             },
             part.text,
           ),
@@ -268,6 +281,10 @@ const props = defineProps({
   isLoading: {
     type: Boolean,
     default: false,
+  },
+  errorMessage: {
+    type: String,
+    default: '',
   },
   hasSearch: {
     type: Boolean,
@@ -307,7 +324,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:showDialog', 'changeSelectedItem'])
+const emit = defineEmits(['update:showDialog', 'changeSelectedItem', 'retry'])
 
 // Start Section Search Item In List
 const searchText = ref('')
