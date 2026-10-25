@@ -102,7 +102,7 @@
           rounded="pill"
           block
           flat
-          :to="`/test/${ssrNextTest ? ssrNextTestId : nextTestId}`"
+          :to="nextTestPath"
         >
           <span class="text-h5 font-weight-medium text-grey800">
             {{ buttonNextText }}
@@ -178,6 +178,11 @@ const fullAnswerFile = computed(() => getQuestionFile(props.contentData.answer_f
 const hasFullAnswer = computed(() => !!props.contentData.answer_full || !!fullAnswerFile.value)
 
 const nextTestId = ref()
+// No link until there is a next question: the server-rendered `/test/undefined` was crawled as a 404.
+const nextTestPath = computed(() => {
+  const id = props.ssrNextTest ? props.ssrNextTestId : nextTestId.value
+  return id ? `/test/${id}` : undefined
+})
 const nextTestLoading = ref(false)
 
 const { smAndUp } = useDisplay()

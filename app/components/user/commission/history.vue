@@ -66,7 +66,8 @@ const headers: DataTableHeader<UserCommissionDTO>[] = [
     sortable: false,
     width: '16vw',
     type: 'chip',
-    getChipColor: () => 'info',
+    getText: item => reasonLabel(item.reason),
+    getChipColor: item => (item.reason === 'ReferralSubscription' ? 'success' : 'info'),
   },
   {
     title: 'Content Type',
@@ -74,6 +75,8 @@ const headers: DataTableHeader<UserCommissionDTO>[] = [
     sortable: false,
     width: '16vw',
     type: 'chip',
+    // An invite earning has no content: it is a share of an invited user's subscription payment.
+    getText: item => item.contentType ?? 'Subscription',
     getChipColor: () => 'primary',
   },
   { title: 'Content ID', key: 'externalContentId', sortable: false, width: '14vw', emptyText: 'unknown' },
@@ -106,6 +109,8 @@ const headers: DataTableHeader<UserCommissionDTO>[] = [
     ],
   },
 ]
+
+const reasonLabel = (reason: UserCommissionDTO['reason']) => (reason === 'ReferralSubscription' ? 'Invite earning' : 'Download')
 
 const pageSize = ref(10)
 const page = ref(1)

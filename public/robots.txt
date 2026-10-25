@@ -1,14 +1,14 @@
 User-agent: *
 Disallow: /admin
-Disallow: /_nuxt
 Disallow: /test-maker
 Disallow: /user
 Disallow: /payments
 Allow: /
 
-Sitemap: https://gamatrain.com/sitemap
-Sitemap: https://gamatrain.com/sitemap/paper-index
-Sitemap: https://gamatrain.com/sitemap/qa-index
-Sitemap: https://gamatrain.com/sitemap/multimedia-index
-Sitemap: https://gamatrain.com/sitemap/tutorial-index
-Sitemap: https://gamatrain.com/sitemap/blog-index
+Sitemap: https://gamatrain.com/sitemap/sitemap
+Sitemap: https://gamatrain.com/sitemap/sitemap-general.xml
+Sitemap: https://gamatrain.com/sitemap/paper
+Sitemap: https://gamatrain.com/sitemap/qa
+Sitemap: https://gamatrain.com/sitemap/exam
+Sitemap: https://gamatrain.com/sitemap/tutorial
+Sitemap: https://gamatrain.com/sitemap/multimedia

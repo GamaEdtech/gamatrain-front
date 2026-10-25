@@ -1,4 +1,5 @@
-export type CommissionReason = 'ContentDownload'
+// ReferralSubscription: a teacher's share of an invited user's subscription payment; its download fields are null.
+export type CommissionReason = 'ContentDownload' | 'ReferralSubscription'
 export type ContentSource = 'GamaApiLegacy'
 export type CommissionContentType = 'PastPaper' | 'Test' | 'Multimedia' | 'Exam'
 
@@ -9,10 +10,10 @@ export interface AdminCommissionDTO {
   ownerLastName: string
   downloaderUserId: number
   reason: CommissionReason
-  source: ContentSource
-  contentType: CommissionContentType
-  externalContentId: number
-  externalFileType: string
+  source: ContentSource | null
+  contentType: CommissionContentType | null
+  externalContentId: number | null
+  externalFileType: string | null
   externalExtraId: number
   points: number
   commissionPercent: number
@@ -37,10 +38,10 @@ export interface UserCommissionDTO {
   ownerLastName: string
   downloaderUserId: number
   reason: CommissionReason
-  source: ContentSource
-  contentType: CommissionContentType
-  externalContentId: number
-  externalFileType: string
+  source: ContentSource | null
+  contentType: CommissionContentType | null
+  externalContentId: number | null
+  externalFileType: string | null
   externalExtraId: number
   points: number
   commissionPercent: number

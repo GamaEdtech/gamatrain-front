@@ -1,4 +1,5 @@
 import type { LoginInformationDTO, LoginResponseDTO, ApiResult, AppError, RegisterResponseDTO, ForgetPasswordResponseDTO } from '@/types'
+import { clearInviteCode, getInviteCode } from '~/utils/inviteCode'
 
 const loadingLogin = ref(false)
 const loadingLoginByGoogle = ref(false)
@@ -15,6 +16,8 @@ export const useAuth = () => {
   const setUserToken = (newToken: string) => {
     cookieToken.value = newToken
     localStorage.setItem('token', newToken)
+    // Signed in: a teacher's invite code has either just linked this new account or can't apply to an existing one.
+    clearInviteCode()
   }
 
   const getUserToken = () => {
@@ -90,7 +93,8 @@ export const useAuth = () => {
         ApiResult<LoginResponseDTO>
       >(
         '/api/v2/legacy-auth/google',
-        { idToken },
+        // A teacher's invite code; the backend uses it only if this sign-in creates the account.
+        { idToken, referralCode: getInviteCode() ?? undefined },
       )
       if (!response.succeeded) {
         $toast.error('The operation failed. Please try again later.')
@@ -120,7 +124,8 @@ export const useAuth = () => {
         ApiResult<RegisterResponseDTO>
       >(
         '/api/v2/legacy-auth/register',
-        { ...data },
+        // A teacher's invite code, kept by the backend for the sign-in that creates the account.
+        { ...data, referralCode: getInviteCode() ?? undefined },
       )
       if (!response.succeeded) {
         $toast.error('The operation failed. Please try again later.')

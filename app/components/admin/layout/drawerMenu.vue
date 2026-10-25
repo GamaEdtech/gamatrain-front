@@ -80,6 +80,16 @@
               </v-list-item-title>
 
               <template #append>
+                <v-chip
+                  v-if="!isOpen && groupCount(item)"
+                  color="error"
+                  variant="flat"
+                  size="small"
+                  class="text-h6 font-weight-bold mr-1"
+                  :title="`${groupCount(item)} waiting`"
+                >
+                  {{ formatBadge(groupCount(item)) }}
+                </v-chip>
                 <v-icon
                   color="white"
                   size="20"
@@ -111,6 +121,20 @@
             >
               {{ subMenuItem.title }}
             </v-list-item-title>
+            <template
+              v-if="subMenuItem.badgeKey && attentionCount(subMenuItem.badgeKey)"
+              #append
+            >
+              <v-chip
+                color="error"
+                variant="flat"
+                size="small"
+                class="text-h6 font-weight-bold"
+                :title="`${attentionCount(subMenuItem.badgeKey)} waiting`"
+              >
+                {{ formatBadge(attentionCount(subMenuItem.badgeKey)) }}
+              </v-chip>
+            </template>
           </v-list-item>
         </v-list-group>
       </div>
@@ -190,6 +214,13 @@ const { mdAndDown } = useDisplay()
 const route = useRoute()
 const auth = useAuth()
 
+// "Needs attention" counts on the menu (backend admin/dashboard/summary, shared with the dashboard page, refreshed every 2 minutes).
+const { attentionCount, startSummaryRefresh, stopSummaryRefresh } = useAdminDashboard()
+const formatBadge = count => (count > 99 ? '99+' : String(count))
+const groupCount = item => (item.subMenuList ?? []).reduce((sum, sub) => sum + (sub.badgeKey ? attentionCount(sub.badgeKey) : 0), 0)
+onMounted(startSummaryRefresh)
+onBeforeUnmount(stopSummaryRefresh)
+
 const items = computed(() => [
   {
     title: 'Users',
@@ -198,7 +229,7 @@ const items = computed(() => [
     subMenuList: [
       {
         title: 'Contact Us',
-        link: '/admin/contact-us',
+        link: '/admin/contact-us', badgeKey: 'ContactUs',
         icon: 'md:archive_outlined',
       },
       {
@@ -231,7 +262,7 @@ const items = computed(() => [
       },
       {
         title: 'Payouts',
-        link: '/admin/commission/payouts',
+        link: '/admin/commission/payouts', badgeKey: 'Payouts',
         icon: 'md:account_balance_wallet_outlined',
       },
     ],
@@ -258,8 +289,8 @@ const items = computed(() => [
     icon: 'md:article_outlined',
     value: 'post',
     subMenuList: [
-      { title: 'Posts ', link: '/admin/posts', icon: 'md:post_outlined' },
-      { title: 'Comments ', link: '/admin/posts/comments', icon: 'md:comment_outlined' },
+      { title: 'Posts ', link: '/admin/posts', icon: 'md:post_outlined', badgeKey: 'Posts' },
+      { title: 'Comments ', link: '/admin/posts/comments', icon: 'md:comment_outlined', badgeKey: 'PostComments' },
     ],
   },
   {
@@ -277,27 +308,27 @@ const items = computed(() => [
     subMenuList: [
       {
         title: 'General ',
-        link: '/admin/schools/contributions',
+        link: '/admin/schools/contributions', badgeKey: 'SchoolContributions',
         icon: 'md:account_balance_outlined',
       },
       {
         title: 'Issues',
-        link: '/admin/schools/issues',
+        link: '/admin/schools/issues', badgeKey: 'SchoolIssues',
         icon: 'md:bug_report_outlined',
       },
       {
         title: 'Images ',
-        link: '/admin/schools/images',
+        link: '/admin/schools/images', badgeKey: 'SchoolImages',
         icon: 'md:image_outlined',
       },
       {
         title: 'Image Issues',
-        link: '/admin/schools/image-issues',
+        link: '/admin/schools/image-issues', badgeKey: 'SchoolImageRemovals',
         icon: 'md:reset_image_outlined',
       },
       {
         title: 'Comments ',
-        link: '/admin/schools/comments',
+        link: '/admin/schools/comments', badgeKey: 'SchoolComments',
         icon: 'md:comment_outlined',
       },
     ],

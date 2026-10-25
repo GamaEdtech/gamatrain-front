@@ -181,6 +181,12 @@ const form = reactive<AdminAppSettingsDTO>({
   commissionPayoutRequestedEmailTemplate: '',
   commissionPayoutPaidEmailTemplate: '',
   twoFactorSetupEmailTemplate: '',
+  checkoutRecoveryDiscountPercent: undefined,
+  checkoutRecoveryOfferDays: undefined,
+  referralCommissionPercent: undefined,
+  referralOfferValidDays: undefined,
+  referralOfferEmailSubject: '',
+  referralOfferEmailTemplate: '',
 })
 const fields: FieldConfig[] = [
   { key: 'gridPageSize', label: 'Grid Page Size', type: 'text', valueType: 'number' },
@@ -207,6 +213,11 @@ const fields: FieldConfig[] = [
   { key: 'examExportPowerPointMultiplier', label: 'Exam Export PowerPoint Multiplier (x questions)', type: 'text', valueType: 'optionalNumber' },
   { key: 'contentOwnerCommissionPercent', label: 'Content Owner Commission (%)', type: 'text', valueType: 'optionalNumber' },
   { key: 'contentOwnerCommissionPayoutThresholdUsd', label: 'Minimum Commission Payout (USD, at least 100)', type: 'text', valueType: 'optionalNumber' },
+  { key: 'checkoutRecoveryDiscountPercent', label: 'Checkout Recovery Email Discount (% off first payment, 1-90)', type: 'text', valueType: 'optionalNumber' },
+  { key: 'checkoutRecoveryOfferDays', label: 'Checkout Recovery Offer Valid For (days, 1-30)', type: 'text', valueType: 'optionalNumber' },
+  { key: 'referralCommissionPercent', label: 'Teacher Invite Commission (% of invited users\' subscriptions; locked per teacher at join, so changes apply to new members only)', type: 'text', valueType: 'optionalNumber' },
+  { key: 'referralOfferEmailSubject', label: 'Teacher Invite Offer Email Subject (avoid money words like "earn 15%", they look like spam)', type: 'text', valueType: 'string' },
+  { key: 'referralOfferValidDays', label: 'Teacher Invite Offer Valid For (days; 0 = never expires)', type: 'text', valueType: 'optionalNumber' },
 
   { key: 'schoolCommentContributionConfirmationEmailTemplate', label: 'School Comment Email', type: 'textarea', valueType: 'string' },
   { key: 'schoolImageContributionConfirmationEmailTemplate', label: 'School Image Confirmation Email', type: 'textarea', valueType: 'string' },
@@ -229,6 +240,7 @@ const fields: FieldConfig[] = [
   { key: 'subscriptionSwitchedEmailTemplate', label: 'Subscription Plan Switched Email ([RECEIVER_NAME], [PLAN_TITLE], [DATE])', type: 'textarea', valueType: 'string' },
   { key: 'commissionPayoutRequestedEmailTemplate', label: 'Payout Request Received Email ([RECEIVER_NAME], [AMOUNT], [PAYOUT_ID], [DATE])', type: 'textarea', valueType: 'string' },
   { key: 'twoFactorSetupEmailTemplate', label: 'Admin 2FA Setup Code Email ([CODE] required; [RECEIVER_NAME], [MINUTES])', type: 'textarea', valueType: 'string' },
+  { key: 'referralOfferEmailTemplate', label: 'Teacher Invite Offer Email ([PERCENT] and [JOIN_LINK] required; [FIRST_NAME], [RECEIVER_NAME], [EXPIRY_DATE])', type: 'textarea', valueType: 'string' },
   { key: 'commissionPayoutPaidEmailTemplate', label: 'Payout Sent Email ([RECEIVER_NAME], [AMOUNT], [TRANSFER_REFERENCE], [PAYOUT_ID], [DATE])', type: 'textarea', valueType: 'string' },
 ]
 const showModalPreview = ref(false)

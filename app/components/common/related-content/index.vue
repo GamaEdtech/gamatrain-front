@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="loading || pastpaper.length > 0"
+    v-if="shows(`test`) && (loading || pastpaper.length > 0)"
     class="mx-4 my-6"
   >
     <div class="d-flex align-center mb-4 ga-2">
@@ -70,7 +70,7 @@
   </div>
 
   <div
-    v-if="loading || multimedias.length > 0"
+    v-if="shows(`file`) && (loading || multimedias.length > 0)"
     class="mx-4 my-6"
   >
     <div class="d-flex align-center mb-4 ga-2">
@@ -140,7 +140,7 @@
   </div>
 
   <div
-    v-if="loading || exams.length > 0"
+    v-if="shows(`exam`) && (loading || exams.length > 0)"
     class="mx-4 my-6"
   >
     <div class="d-flex align-center mb-4 ga-2">
@@ -210,7 +210,7 @@
   </div>
 
   <div
-    v-if="loading || tutorials.length > 0"
+    v-if="shows(`tutorial`) && (loading || tutorials.length > 0)"
     class="mx-4 my-6"
   >
     <div class="d-flex align-center mb-6 ga-2">
@@ -265,15 +265,9 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, RelatedContentDTO, ContentItemDTO, FileRelatedContentDTO, ExamRelatedContentDTO } from '@/types'
+import type { RelatedContentSource } from '~/composables/useRelatedContent'
 
-type sourceType
-  = | 'test'
-    | 'file'
-    | 'question'
-    | 'exam'
-    | 'examTest'
-    | 'tutorial'
+type sourceType = RelatedContentSource
 type requestType = 'test' | 'file' | 'exam' | 'question' | 'tutorial'
 // type content = 'paper' | 'exam' | 'question' | 'tutorial'
 
@@ -284,6 +278,9 @@ interface IRelatedPortraitContent {
 }
 
 const props = defineProps<IRelatedPortraitContent>()
+
+// The endpoint answers with every content type whatever `request` says, so a section shows only when asked for.
+const shows = (type: requestType) => props.request.includes(type)
 
 const infoMap = {
   paper: {
@@ -312,48 +309,14 @@ const infoMap = {
     keyResponse: 'tutorials',
   },
 }
-const pastpaper = ref<ContentItemDTO[]>([])
-const tutorials = ref<ContentItemDTO[]>([])
-const multimedias = ref<FileRelatedContentDTO[]>([])
-const exams = ref<ExamRelatedContentDTO[]>([])
+const { data: related, status } = useRelatedContent(props.source, () => props.id)
+const pastpaper = computed(() => related.value?.tests ?? [])
+const tutorials = computed(() => related.value?.tutorials ?? [])
+const multimedias = computed(() => related.value?.files ?? [])
+const exams = computed(() => related.value?.exams ?? [])
 
-const loading = ref(true)
+const loading = computed(() => status.value === 'pending' || status.value === 'idle')
 const fallbackImage = '/images/GamaBag.webp'
-
-const getRelatedContent = async () => {
-  try {
-    loading.value = true
-    const params = {
-      source: props.source,
-      request: props.request.join(','),
-      id: props.id,
-    }
-    const response = await useApiService.get<ApiResult<RelatedContentDTO>>(
-      '/api/v1/recommendations/related',
-      params,
-      {
-        public: true,
-      },
-    )
-    const related = response.data
-    if (related) {
-      pastpaper.value = related.tests
-      tutorials.value = related.tutorials
-      multimedias.value = related.files
-      exams.value = related.exams
-    }
-  }
-  catch (error) {
-    console.error('Search error:', error)
-  }
-  finally {
-    loading.value = false
-  }
-}
-
-onMounted(async () => {
-  await getRelatedContent()
-})
 
 const CardHeight = computed(() => {
   // if (props.type === "paper") {

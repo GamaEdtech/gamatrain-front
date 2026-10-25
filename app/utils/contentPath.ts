@@ -1,5 +1,5 @@
-// Detail pages whose canonical URL is `/{type}/{id}/{slug}`.
-export type SlugContentType = 'post' | 'school' | 'paper' | 'exam' | 'tutorial' | 'multimedia'
+// Detail pages whose canonical URL is `/{type}/{id}/{slug}`, or `/test/{code}` (no slug).
+export type SlugContentType = 'post' | 'school' | 'paper' | 'exam' | 'tutorial' | 'multimedia' | 'qa' | 'test'
 
 // The path a detail page declares as canonical, and the one the sitemap lists: `/{type}/{id}/{slug}`, or
 // `/{type}/{id}` when there is no slug. Never a trailing slash - "/school/11/" and "/school/11" are two

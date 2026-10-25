@@ -68,10 +68,14 @@ export interface AdminContactUsReplyDTO {
   body: string
 }
 
-export interface AdminContactUsAiPromptDTO {
-  userComment: string
+export type AdminContactUsAiReplyMode = 'Generate' | 'Polish'
+
+export interface AdminContactUsAiReplyDTO {
+  mode: AdminContactUsAiReplyMode
+  /** The admin's current reply, required when polishing. */
+  draft?: string
 }
 
 export interface AdminContactUsAiResponseDTO {
-  response?: string
+  reply: string | null
 }

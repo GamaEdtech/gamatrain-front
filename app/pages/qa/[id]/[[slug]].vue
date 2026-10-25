@@ -1072,11 +1072,8 @@
                         :key="question.id"
                         class="question-item pointer text-info gama-text-body2"
                       >
-                        <NuxtLink
-                          :to="`/qa/${question.id}/${convertSlug(
-                            question.title,
-                          )}`"
-                        >
+                        <!-- The related API sends no title_url, and a slug guessed from the title doesn't match it -->
+                        <NuxtLink :to="contentPath('qa', question.id)">
                           <span>{{ question.title }}</span>
                         </NuxtLink>
                       </li>
@@ -1128,7 +1125,6 @@ const replySchema = yup.object({
 
 const route = useRoute()
 const router = useRouter()
-const requestURL = ref(useRequestURL().host)
 
 const display = useGlobalDisplay()
 // use useAsyncData to getting Major Questions - SSR-friendly
@@ -1157,6 +1153,8 @@ if (!contentData.value) {
     fatal: true,
   })
 }
+
+const { url: qaUrl } = await useCanonicalContentPath('qa', contentData.value.id, contentData.value.title_url)
 
 // Reactive States
 const textAreaHeight = ref(10)
@@ -1290,17 +1288,6 @@ function openAuthDialog(val) {
   router.push({ query: { auth_form: val } })
 }
 
-// Using local slug convertor (Can be added to helpers too)
-function convertSlug(text) {
-  return text
-    .toString()
-    .toLowerCase()
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^\w-]+/g, '')
-    .replace(/--+/g, '-')
-}
-
 function openQuestionForm() {
   if (isAuthenticated.value) {
     router.push({ path: '/user/question/create' })
@@ -1383,7 +1370,6 @@ async function reInit() {
 
 await reInit()
 
-const qaUrl = `https://gamatrain.com/qa/${contentData.value?.id}/${contentData.value?.title_url}`
 const toAnswerSchema = a => ({
   '@type': 'Answer',
   'text': a.answer,
@@ -1425,7 +1411,7 @@ useHead({
   link: [
     {
       rel: 'canonical',
-      href: `https://${requestURL.value}/qa/${contentData.value.id}/${contentData.value.title_url}`,
+      href: qaUrl,
     },
   ],
   // Google's Q&A result needs at least one answer, so an unanswered question gets no QAPage markup at all.

@@ -281,6 +281,10 @@ const items = computed(() => [
       },
     ],
   },
+  // Teacher invite program: teachers only (the backend refuses anyone else).
+  ...(canAddEducationalContent.value
+    ? [{ title: 'Invite & Earn', icon: 'md:redeem', link: '/user/invite', value: 'invite' }]
+    : []),
   {
     title: 'Messages',
     icon: 'md:mail',

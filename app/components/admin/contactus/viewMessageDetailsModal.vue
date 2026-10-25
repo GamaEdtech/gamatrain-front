@@ -160,7 +160,7 @@
           flat
           class="text-h5 font-weight-bold"
           :loading="loadingPolishReply"
-          :disabled="!bodyReply.trim() || loadingPolishReply"
+          :disabled="!bodyReply.trim() || loadingPolishReply || !contactData"
           @click="polishReplyWithAi"
         >
           Polish with AI
@@ -256,16 +256,6 @@ const removeScriptTags = (html: string) => {
   return doc.body.innerHTML
 }
 
-const stripHtml = (html?: string | null) => {
-  if (!html)
-    return ''
-
-  const parser = new DOMParser()
-  const doc = parser.parseFromString(html, 'text/html')
-
-  return doc.body.textContent?.trim() ?? ''
-}
-
 // Admins see which colleague answered; customers only ever see "Support team".
 const getReplyAuthor = (reply: AdminReplyTicketListDTO) => {
   if (reply.bySupport) return reply.creationUser ? `Support team · ${reply.creationUser}` : 'Support team'
@@ -273,61 +263,17 @@ const getReplyAuthor = (reply: AdminReplyTicketListDTO) => {
   return reply.creationUser || contactData.value?.fullName || 'Customer'
 }
 
-const buildAiReplyPrompt = () => {
-  const ticket = contactData.value
-  const conversation = replyList.value.length
-    ? replyList.value
-        .map((item, index) => {
-          return [
-            `Reply ${index + 1}:`,
-            `From: ${item.bySupport ? 'Support team' : 'Customer'}`,
-            `Date: ${formatLocal(item.creationDate, 'DD/MM/YYYY HH:mm')}`,
-            `Body: ${stripHtml(item.body)}`,
-          ].join('\n')
-        })
-        .join('\n\n')
-    : 'No previous replies.'
-
-  return [
-    'You are a GamaTrain admin support agent.',
-    'Write a direct reply to the customer based on the ticket information below.',
-    'Use the customer name when it is available.',
-    'Keep the tone professional, warm, clear, and concise.',
-    'Answer only based on the provided subject, original message, and previous conversation.',
-    'Do not invent facts, prices, discounts, timelines, links, policies, or technical details.',
-    'If the issue cannot be resolved with the provided information, politely ask the customer for the exact missing details.',
-    'Do not mention that you are an AI or that you received a prompt.',
-    'Format the reply as clean HTML suitable for a rich text editor.',
-    'Use <p> tags for the greeting, each paragraph, and the closing.',
-    'Put the greeting in its own paragraph, for example: <p>Dear [Customer Name],</p>.',
-    'Use separate paragraphs wherever a line break is needed.',
-    'Put the closing in its own final paragraph, for example: <p>Best regards,<br>GamaTrain Support</p>.',
-    'Do not use Markdown.',
-    'Do not include scripts, styles, images, tables, or unnecessary HTML attributes.',
-    'Return only the final HTML reply body that the admin can send to the customer.',
-    '',
-    `Customer name: ${ticket?.fullName || 'Unknown'}`,
-    `Customer email: ${ticket?.email || 'Unknown'}`,
-    `Subject: ${ticket?.subject || 'No subject'}`,
-    `Original message: ${stripHtml(ticket?.body) || 'No body'}`,
-    '',
-    'Previous conversation:',
-    conversation,
-  ].join('\n')
-}
-
+// The prompt and the support handbook live on the backend (POST admin/tickets/{id}/ai-replies).
 const generateAiReply = async () => {
   if (!contactData.value)
     return
 
   try {
     loadingAiReply.value = true
-    const response = await generateAiResponse({
-      userComment: buildAiReplyPrompt(),
-    })
+    const reply = await generateAiResponse(contactData.value.id, { mode: 'Generate' })
 
-    if (response.response) {
-      bodyReply.value = response.response
+    if (reply) {
+      bodyReply.value = reply
       $toast.success('AI reply generated successfully!')
     }
   }
@@ -336,41 +282,19 @@ const generateAiReply = async () => {
   }
 }
 
-const buildPolishReplyPrompt = () => {
-  return [
-    'You are a professional English writing editor for a GamaTrain admin support reply.',
-    'Polish the admin reply below.',
-    'Improve grammar, spelling, word choice, clarity, and professional tone.',
-    'Preserve the original meaning and intent exactly.',
-    'Do not add new facts, promises, prices, discounts, links, timelines, policies, or technical details.',
-    'Remove or soften any rude, offensive, aggressive, or unprofessional wording while keeping the message clear.',
-    'Format the polished reply as clean HTML suitable for a rich text editor.',
-    'Use <p> tags for the greeting, each paragraph, and the closing.',
-    'Put the greeting in its own paragraph when a greeting exists.',
-    'Use separate paragraphs wherever a line break is needed.',
-    'Put the closing in its own final paragraph when a closing exists, for example: <p>Best regards,<br>GamaTrain Support</p>.',
-    'Do not use Markdown.',
-    'Do not wrap the reply in a fenced code block such as ```html or ```.',
-    'Do not include scripts, styles, images, tables, or unnecessary HTML attributes.',
-    'Return only the polished HTML reply body.',
-    '',
-    'Admin reply:',
-    stripHtml(bodyReply.value),
-  ].join('\n')
-}
-
 const polishReplyWithAi = async () => {
-  if (!bodyReply.value.trim())
+  if (!contactData.value || !bodyReply.value.trim())
     return
 
   try {
     loadingPolishReply.value = true
-    const response = await generateAiResponse({
-      userComment: buildPolishReplyPrompt(),
+    const reply = await generateAiResponse(contactData.value.id, {
+      mode: 'Polish',
+      draft: bodyReply.value,
     })
 
-    if (response.response) {
-      bodyReply.value = response.response
+    if (reply) {
+      bodyReply.value = reply
       $toast.success('Reply polished successfully!')
     }
   }
@@ -402,10 +326,18 @@ const getReplyList = async () => {
   await fetchReplyList(props.id)
 }
 
+// Addresses come as "Support dep <support@gamatrain.com>"; match the address, not the label.
+const selectSupportSender = () => {
+  if (selectedFromEmail.value)
+    return
+
+  selectedFromEmail.value = fromEmailList.value.find((email: string) => email.toLowerCase().includes('<support@')) ?? ''
+}
+
 onMounted(async () => {
   await Promise.allSettled([
     getDetail(),
-    getEmailAddresses(),
+    getEmailAddresses().then(selectSupportSender),
     getReplyList(),
   ])
 })

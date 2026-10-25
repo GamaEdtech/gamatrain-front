@@ -88,7 +88,17 @@
           :test-type="contentData.test_type"
           :is-paper="contentData.is_paper"
         />
-        <lazy-common-detail-subject-directory-nav :content-data="contentData" />
+        <!-- A real link, unlike Begin Quiz: it is how crawlers reach the paper's online test. -->
+        <nuxt-link
+          v-if="onlineExamId"
+          :to="contentPath('exam', onlineExamId)"
+          class="w-100 text-h5 text-primary font-weight-semibold mt-3"
+        >
+          Take this {{ contentData.is_paper ? 'past paper' : 'question set' }} as an online test, with your score and the correct answers
+        </nuxt-link>
+        <div class="paper-subject-directory w-100">
+          <lazy-common-detail-subject-directory-nav :content-data="contentData" />
+        </div>
       </v-col>
 
       <lazy-common-box-random-question :lesson="contentData.lesson" />
@@ -221,6 +231,9 @@ if (!contentData.value) {
 }
 
 const { url: canonicalUrl } = await useCanonicalContentPath('paper', contentData.value.id, contentData.value.title_url)
+
+// The published online test made from this paper, if there is one.
+const onlineExamId = computed(() => contentData.value?.exams?.find(exam => exam.status == '1')?.id)
 
 const schema = computed(() => {
   if (!contentData.value) return null

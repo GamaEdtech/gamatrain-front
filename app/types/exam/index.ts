@@ -82,6 +82,39 @@ export interface ExamDetaiDTO {
   participateTime: boolean
 }
 
+// A question shown on the public exam page as a preview: never its correct option (gamatrain-back `GET exams/{id}`).
+export interface ExamSampleQuestionDTO {
+  id: number
+  /** The question page's id in `/test/{code}`; older backends don't send it, then `id` works too. */
+  code?: string | null
+  /** Sanitized HTML; may hold TeX for MathJax. */
+  question: string | null
+  image: string | null
+  /** `key` is the option's number (1-4) as the correct answer names it; empty options are left out. */
+  options: { key?: number, text: string | null, image: string | null }[]
+}
+
+// The past paper an exam was made from. `isPastPaper` is false for a topical question set.
+export interface ExamPaperLinkDTO {
+  id: number
+  title: string
+  slug: string | null
+  isPastPaper: boolean
+}
+
+// gamatrain-back's `GET exams/{id}`: gama-api's exam as it sends it, plus the page's extras.
+export interface ExamPageResponseDTO {
+  exam: ExamDetaiDTO
+  sampleQuestions: ExamSampleQuestionDTO[]
+  paper: ExamPaperLinkDTO | null
+}
+
+// What the exam page works with: the exam, with the extras empty when they couldn't be loaded.
+export type ExamPageDetailDTO = ExamDetaiDTO & {
+  sampleQuestions: ExamSampleQuestionDTO[]
+  paper: ExamPaperLinkDTO | null
+}
+
 export interface ExamResultDTO {
   id: string
   exam_id: string

@@ -5,6 +5,7 @@ export type NudgeType
     | 'BioMissing'
     | 'SkillsMissing'
     | 'ExperienceMissing'
+    | 'CheckoutAbandoned'
 
 export interface AdminNudgeTemplateDTO {
   id: number

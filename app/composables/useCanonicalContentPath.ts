@@ -24,6 +24,10 @@ export const useCanonicalContentPath = async (type: SlugContentType, id: string 
   // otherwise travel along and keep the redirect target a duplicate of the canonical.
   if (!isCanonical && isRedirectable) {
     await navigateTo({ path, hash: route.hash }, { redirectCode: 301, replace: true })
+    // On the server, navigateTo from a page's setup only records the 301: the rest of the page would still
+    // run its API calls and render HTML that is thrown away. Throwing stops it there; Nuxt's renderer
+    // sends the recorded redirect ahead of any error.
+    if (import.meta.server) throw createError({ statusCode: 301, statusMessage: 'Redirecting to canonical URL' })
   }
 
   return { path, url }

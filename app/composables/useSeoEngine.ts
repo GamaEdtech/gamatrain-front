@@ -95,12 +95,6 @@ export function useSeoSchema() {
    * ---------------------------
    */
   const createArticleSchema = <TDto>(dto: TDto, ctx: SchemaContext<TDto>) => {
-    const url = new URL(ctx.url)
-    const parts = url.pathname.split('/').filter(Boolean)
-    const base = parts.slice(0, 2)
-
-    const articleBasePath = url.origin + '/' + base.join('/')
-
     const image
       = (dto as Record<string, unknown>)?.thumb_pic
         || (dto as Record<string, unknown>)?.lesson_pic
@@ -122,7 +116,8 @@ export function useSeoSchema() {
 
     return {
       '@type': 'Article',
-      '@id': `${articleBasePath}#article`,
+      // The canonical URL, like every other node here, so the WebPage's `about` reference resolves to it.
+      '@id': `${ctx.url}#article`,
       'headline': ctx.title,
       'description': ctx.description,
       'image': [image],

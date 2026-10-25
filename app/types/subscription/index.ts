@@ -396,3 +396,18 @@ export interface SwitchSubscriptionPlanResponseDTO {
   paymentProcessing?: boolean
   paymentActionUrl?: string | null
 }
+
+// Checkout recovery offer (gamatrain-back, 2026-10-19): the one-time first-payment discount emailed after an
+// abandoned checkout. The page reads it with the link's token and redeems it into a discounted Stripe checkout.
+export interface CheckoutRecoveryOfferDTO {
+  subscriptionPlanId: number
+  planTitle: string | null
+  billingInterval: BillingInterval
+  discountPercent: number
+  /** The plan's regular price; renewals are charged this. */
+  price: number
+  /** The first payment after the discount. */
+  discountedPrice: number
+  currency: SubscriptionCurrency
+  expirationDate: string
+}

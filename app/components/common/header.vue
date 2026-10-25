@@ -243,6 +243,15 @@ const openLoginDialog = async () => {
   showAuthModal.value = true
 }
 
+// A button that needs sign-in opens the dialog by setting ?auth_form=login (with auth_noredirect, which keeps it).
+// Closing the dialog left it in the URL, so the next click set the same query, nothing changed, and the dialog never
+// opened again. Drop it on close; the rest of the query stays.
+watch(showAuthModal, (open) => {
+  if (open || !route.query.auth_form) return
+  const { auth_form: _form, auth_noredirect: _noRedirect, ...query } = route.query
+  router.replace({ query })
+})
+
 const isAddOptionOpen = ref(false)
 const openAddOption = () => {
   if (isAuthenticated.value) {

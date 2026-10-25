@@ -1,5 +1,5 @@
 import type {
-  AdminContactUsAiPromptDTO,
+  AdminContactUsAiReplyDTO,
   AdminContactUsAiResponseDTO,
   AdminContactUsComposeMailDTO,
   AdminContactUsCreateTicketDTO,
@@ -316,33 +316,27 @@ export const useContactUsAdmin = () => {
     }
   }
 
-  const generateAiResponse = async (payload: AdminContactUsAiPromptDTO) => {
+  // Returns the suggested reply HTML, or null when it failed (an error toast is already shown).
+  const generateAiResponse = async (id: string | number, payload: AdminContactUsAiReplyDTO) => {
     loadingGenerateAiResponse.value = true
 
     try {
-      const response = await useApiService.post<AdminContactUsAiResponseDTO>(
-        '/api/chatgpt',
-        payload as unknown as Record<string, string>,
+      const response = await useApiService.post<ApiResult<AdminContactUsAiResponseDTO>>(
+        `/api/v2/admin/tickets/${id}/ai-replies`,
+        payload as unknown as Record<string, unknown>,
       )
 
-      if (!response.response) {
-        $toast.error('The operation failed. Please try again later.')
+      if (!response.succeeded || !response.data?.reply) {
+        $toast.error(response.errors?.[0]?.message || 'The operation failed. Please try again later.')
+        return null
       }
 
-      return response
+      return response.data.reply
     }
     catch (err: unknown) {
-      const error = err as AppError
+      handleError(err)
 
-      $toast.error(
-        error.response?.data?.message
-        || error.message
-        || 'The operation failed. Please try again later.',
-      )
-
-      return {
-        response: '',
-      }
+      return null
     }
     finally {
       loadingGenerateAiResponse.value = false

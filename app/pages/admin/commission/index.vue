@@ -103,14 +103,15 @@ const headers: DataTableHeader<AdminCommissionDTO>[] = [
     width: '18vw',
     getText: (item: AdminCommissionDTO) => getOwnerName(item),
   },
-  { title: 'Downloader ID', key: 'downloaderUserId', sortable: false, width: '14vw', emptyText: 'unknown' },
+  { title: 'Downloader / Payer ID', key: 'downloaderUserId', sortable: false, width: '14vw', emptyText: 'unknown' },
   {
     title: 'Reason',
     key: 'reason',
     sortable: false,
     width: '16vw',
     type: 'chip',
-    getChipColor: () => 'info',
+    getText: (item: AdminCommissionDTO) => (item.reason === 'ReferralSubscription' ? 'Invite earning' : 'Download'),
+    getChipColor: (item: AdminCommissionDTO) => (item.reason === 'ReferralSubscription' ? 'success' : 'info'),
   },
   { title: 'Source', key: 'source', sortable: false, width: '16vw', emptyText: 'unknown' },
   {

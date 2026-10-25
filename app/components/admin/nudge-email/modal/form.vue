@@ -222,7 +222,7 @@ const emit = defineEmits<{
 }>()
 
 const { required } = useValidationRules()
-const nudgeType: NudgeType[] = ['RoleMissing', 'AvatarMissing', 'NameMissing', 'BioMissing', 'SkillsMissing', 'ExperienceMissing']
+const nudgeType: NudgeType[] = ['RoleMissing', 'AvatarMissing', 'NameMissing', 'BioMissing', 'SkillsMissing', 'ExperienceMissing', 'CheckoutAbandoned']
 const form = reactive<Omit<AddAdminNudgeTemplateDTO, 'nudgeType'> & {
   nudgeType: NudgeType | ''
 }>({
