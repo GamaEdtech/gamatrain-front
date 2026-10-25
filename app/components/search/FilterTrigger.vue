@@ -83,6 +83,8 @@
       :selected-item="filter.selected || undefined"
       :is-loading="filter.loading"
       :has-search="filter.options.length > 8"
+      :display-mode="usesButtonOptions ? 'buttons' : 'list'"
+      :hide-option-word="filter.key === 'test_type' ? 'paper' : undefined"
       @change-selected-item="selectItem"
     />
   </div>
@@ -91,7 +93,7 @@
 <script setup lang="ts">
 import type { SearchFilterOption, SearchFilterState } from '@/types/search'
 
-defineProps<{
+const props = defineProps<{
   filter: SearchFilterState
 }>()
 
@@ -101,10 +103,15 @@ const emit = defineEmits<{
 }>()
 
 const isDialogOpen = ref(false)
+const usesButtonOptions = computed(() =>
+  props.filter.key === 'variant'
+  || (props.filter.key === 'test_type' && props.filter.title === 'Paper'),
+)
 
-const selectItem = (option: SearchFilterOption) => {
+const selectItem = (option: SearchFilterOption | null) => {
   isDialogOpen.value = false
-  emit('select', option)
+  if (option) emit('select', option)
+  else emit('clear')
 }
 
 const clearItem = () => {

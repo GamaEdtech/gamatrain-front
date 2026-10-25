@@ -65,8 +65,29 @@
           </template>
         </v-text-field>
       </v-row>
+      <div
+        v-if="!isLoading && displayMode === 'buttons'"
+        class="d-flex align-center flex-wrap ga-2 mt-6"
+      >
+        <div
+          :class="`${selectedItem ? `bg-white text-grey700` : `bg-grey700 text-white`} text-h6 font-weight-bold button-filter rounded-lg d-flex justify-center align-center px-1 cursor-pointer`"
+          @click="changeSelectedItem(null)"
+        >
+          All
+        </div>
+
+        <div
+          v-for="item in filteredItems"
+          :key="item.id"
+          :class="`${item.id === selectedItem?.id ? `bg-grey700 text-white` : `bg-white text-grey700`} text-h6 font-weight-bold button-filter rounded-lg d-flex justify-center align-center px-1 cursor-pointer`"
+          @click="changeSelectedItem(item)"
+        >
+          {{ getButtonTitle(item.title) }}
+        </div>
+      </div>
+
       <v-list
-        v-if="!isLoading"
+        v-else-if="!isLoading"
         max-height="320"
       >
         <v-list-item
@@ -210,6 +231,14 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
+  displayMode: {
+    type: String,
+    default: 'list',
+  },
+  hideOptionWord: {
+    type: String,
+    default: '',
+  },
 })
 
 const emit = defineEmits(['update:showDialog', 'changeSelectedItem'])
@@ -222,6 +251,17 @@ const filteredItems = computed(() => {
     item.title.toLowerCase().includes(searchText.value.toLowerCase()),
   )
 })
+const getButtonTitle = (title) => {
+  if (!props.hideOptionWord) return title
+
+  const escapedWord = props.hideOptionWord.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const normalizedTitle = title
+    .replace(new RegExp(`\\b${escapedWord}\\b`, 'gi'), '')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+  return normalizedTitle || title
+}
 const _highlightSearchText = (text) => {
   if (!searchText.value) return text
   const regex = new RegExp(`(${searchText.value})`, 'gi')
@@ -256,6 +296,11 @@ const clickOnModal = (event) => {
 </script>
 
 <style scoped>
+.button-filter{
+  height : 30px;
+  min-width : 30px;
+  border : 1px solid rgb(var(--v-theme-grey300))
+}
 .size-icon {
   font-size: 24px;
   margin-right: 12px;

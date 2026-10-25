@@ -30,13 +30,22 @@
     </div>
 
     <div class="d-none d-md-flex flex-column ga-3">
-      <search-filter-trigger
+      <template
         v-for="filter in visibleFilters"
         :key="filter.key"
-        :filter="filter"
-        @select="selectFilter(filter.key, $event)"
-        @clear="clearFilter(filter.key)"
-      />
+      >
+        <search-filter-button-options
+          v-if="usesButtonOptions(filter)"
+          :filter="filter"
+          @select="selectFilter(filter.key, $event)"
+        />
+        <search-filter-trigger
+          v-else
+          :filter="filter"
+          @select="selectFilter(filter.key, $event)"
+          @clear="clearFilter(filter.key)"
+        />
+      </template>
     </div>
 
     <div class="mobile-filter-scroller d-flex d-md-none ga-2 overflow-x-auto pb-1">
@@ -88,13 +97,22 @@
 
         <v-card-text class="pa-4">
           <div class="d-flex flex-column ga-3">
-            <search-filter-trigger
+            <template
               v-for="filter in visibleFilters"
               :key="`modal-${filter.key}`"
-              :filter="filter"
-              @select="selectFilter(filter.key, $event)"
-              @clear="clearFilter(filter.key)"
-            />
+            >
+              <search-filter-button-options
+                v-if="usesButtonOptions(filter)"
+                :filter="filter"
+                @select="selectFilter(filter.key, $event)"
+              />
+              <search-filter-trigger
+                v-else
+                :filter="filter"
+                @select="selectFilter(filter.key, $event)"
+                @clear="clearFilter(filter.key)"
+              />
+            </template>
           </div>
         </v-card-text>
 
@@ -139,6 +157,9 @@ const { $numberFormat } = useNuxtApp()
 const visibleFilters = computed(() => props.filters.filter(filter => filter.key !== 'type'))
 const formattedResultsCount = computed(() => $numberFormat(props.resultsCount || 0))
 const isMobileDialogOpen = ref(false)
+
+const usesButtonOptions = (filter: SearchFilterState) =>
+  filter.key === 'variant' || (filter.key === 'test_type' && filter.title === 'Paper')
 
 const selectFilter = (key: SearchFilterKey, option: SearchFilterOption | null) => {
   emit('selectFilter', key, option)
