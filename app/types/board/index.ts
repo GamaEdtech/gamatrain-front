@@ -1,3 +1,10 @@
+export interface BoardApiOptions {
+  /** Cache successful option lists and share pending requests within this instance. */
+  cache?: boolean
+  /** Omit authentication for grade and subject lookups. Boards are always public. */
+  public?: boolean
+}
+
 export interface BoardDTO {
   id: number
   code: number

@@ -1,3 +1,7 @@
+import { ref } from 'vue'
+import { useNuxtApp } from '#app'
+import { useApiService } from '~/composables/useApiService'
+import type { BoardApiOptions } from '~/types/board'
 import type {
   ApiResult,
   AppError,
@@ -9,11 +13,42 @@ import type {
   ExtraTypeFilePastPaperCreateDTO,
 } from '@/types'
 
-export const useBoardApi = () => {
-  const getBoards = () =>
-    useApiService.get<ApiResult<BoardDTO[]>>('/api/v2/boards', undefined, { public: true })
+export const useBoardApi = (options: BoardApiOptions = {}) => {
+  const nuxtApp = useNuxtApp()
+  // Keep caches local to this consumer, never shared between SSR requests.
+  const boardsByKey = new Map<string, Promise<ApiResult<BoardDTO[]>>>()
+  const gradesByBoard = new Map<string, Promise<ApiResult<GradeDTO[]>>>()
+  const subjectsByGrade = new Map<string, Promise<ApiResult<SubjectDTO[]>>>()
 
-  return { getBoards }
+  const loadOptions = <T>(cache: Map<string, Promise<ApiResult<T[]>>>, key: string, request: () => Promise<ApiResult<T[]>>) => {
+    if (!options.cache) return nuxtApp.runWithContext(request)
+    const cached = cache.get(key)
+    if (cached) return cached
+    const pending = nuxtApp.runWithContext(request).then((response) => {
+      if (response.succeeded === false || !Array.isArray(response.data)) throw new Error('Unable to load board options')
+      return response
+    }).catch((error: unknown) => {
+      cache.delete(key)
+      throw error
+    })
+    cache.set(key, pending)
+    return pending
+  }
+
+  const getBoards = () => loadOptions(boardsByKey, 'boards', () =>
+    useApiService.get<ApiResult<BoardDTO[]>>('/api/v2/boards', undefined, { public: true }))
+
+  const getGrades = (boardId: number | string) => loadOptions(gradesByBoard, String(boardId), () =>
+    useApiService.get<ApiResult<GradeDTO[]>>('/api/v1/types/list/', {
+      type: 'base', section_id: boardId,
+    }, { public: options.public ?? false }))
+
+  const getSubjects = (gradeId: number | string) => loadOptions(subjectsByGrade, String(gradeId), () =>
+    useApiService.get<ApiResult<SubjectDTO[]>>('/api/v1/types/list/', {
+      type: 'lesson', base_id: gradeId,
+    }, { public: options.public ?? false }))
+
+  return { getBoards, getGrades, getSubjects }
 }
 
 const data = ref<BoardDTO[]>([])
@@ -36,7 +71,7 @@ const loadingExtraTypeFile = ref(false)
 
 export const useBoard = () => {
   const { $toast } = useNuxtApp()
-  const { getBoards } = useBoardApi()
+  const { getBoards, getGrades: fetchGrades, getSubjects: fetchSubjects } = useBoardApi()
 
   const getData = async () => {
     loadingGetData.value = true
@@ -68,11 +103,7 @@ export const useBoard = () => {
     try {
       loadingGrade.value = true
 
-      const response = await useApiService.get<
-        ApiResult<GradeDTO[]>
-      >(
-        `/api/v1/types/list/?type=base&section_id=${boardId}`,
-      )
+      const response = await fetchGrades(boardId)
 
       if (response.data && response.data.length > 0) {
         grades.value = response.data
@@ -111,11 +142,7 @@ export const useBoard = () => {
     try {
       loadingSubject.value = true
 
-      const response = await useApiService.get<
-        ApiResult<SubjectDTO[]>
-      >(
-        `/api/v1/types/list/?type=lesson&base_id=${gradeId}`,
-      )
+      const response = await fetchSubjects(gradeId)
 
       if (response.data && response.data.length > 0) {
         subjects.value = response.data
