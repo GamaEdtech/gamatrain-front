@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-100 d-flex flex-wrap flex-column bg-white pa-2"
+    class="w-100 d-flex flex-wrap flex-column pa-2"
   >
     <span class="text-h5 text-sm-h4 font-weight-bold text-grey700 mt-4"> Your download is ready and saved on your device!</span>
 

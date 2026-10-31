@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-100 d-flex flex-wrap flex-column bg-white pa-2"
+    class="w-100 d-flex flex-wrap flex-column pa-2"
   >
     <div class="w-100 d-flex align-center justify-end ga-1">
       <span

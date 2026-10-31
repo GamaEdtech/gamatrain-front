@@ -82,85 +82,25 @@
         name="services-navigation"
         :select-service="selectService"
       />
-      <div
+      <CommonMobileQuickFilterBar
         v-if="$slots['services-navigation']"
-        class="mobile-quick-filter-bar d-flex d-md-none"
+        ref="mobileQuickFilters"
+        :filters="mobileQuickFilterEntries.map(entry => entry.filter)"
+        :item-key="getFilterIdentity"
+        @open="openMobileQuickFilter"
+        @clear="filter => clearFilter(filters.indexOf(filter))"
       >
-        <div class="mobile-quick-filter-bar__trigger">
-          <CommonFilterTrigger
-            :count="countFilterSelect"
-            icon="md:filter_list"
-            label="Filters"
-            @click="dialogFilterMobileModel = true"
-          />
-        </div>
-
-        <div
-          ref="mobileQuickFilters"
-          class="mobile-quick-filter-bar__scroller"
-          aria-label="Quick filters"
-        >
-          <div
-            v-for="entry in mobileQuickFilterEntries"
-            :key="`quick-${getFilterIdentity(entry.filter)}`"
-            class="mobile-quick-filter"
-            :class="{
-              'mobile-quick-filter--selected': entry.filter.selectedItem,
-              'mobile-quick-filter--disabled': entry.filter.disabled,
-            }"
-          >
-            <v-btn
-              type="button"
-              variant="text"
-              :ripple="false"
-              class="mobile-quick-filter__control text-none"
-              :aria-label="getQuickFilterAriaLabel(entry.filter)"
-              :aria-pressed="Boolean(entry.filter.selectedItem)"
-              :aria-disabled="entry.filter.disabled"
-              :disabled="entry.filter.disabled"
-              @click="openMobileQuickFilter(entry.filter)"
-            >
-              <span
-                v-if="hasFilterIcon(entry.filter)"
-                class="mobile-quick-filter__icon text-brandNavy me-2"
-                aria-hidden="true"
-              >
-                <CommonFilterControlIcon
-                  :selected-item="entry.filter.selectedItem"
-                  :show-item-icon="entry.filter.showItemIcon"
-                  :icon-src="entry.filter.iconSrc"
-                  :fallback-icon="entry.filter.fallbackIcon"
-                  :fallback-icon-padding="entry.filter.fallbackIconPadding"
-                  :control-icon="entry.filter.controlIcon"
-                  :icon-size="20"
-                />
-              </span>
-
-              <span class="mobile-quick-filter__copy">
-                <span class="mobile-quick-filter__label">{{ entry.filter.title }}</span>
-                <span
-                  v-if="entry.filter.selectedItem"
-                  class="mobile-quick-filter__value"
-                >{{ getQuickFilterValue(entry.filter) }}</span>
-              </span>
-            </v-btn>
-
-            <v-btn
-              v-if="entry.filter.selectedItem && entry.filter.closable"
-              type="button"
-              variant="text"
-              :ripple="false"
-              class="mobile-quick-filter__clear"
-              :aria-label="`Clear ${entry.filter.title} filter`"
-              @click.stop="clearFilter(entry.index)"
-            >
-              <v-icon size="18">
-                md:cancel
-              </v-icon>
-            </v-btn>
+        <template #prepend>
+          <div class="mobile-quick-filter-bar__trigger">
+            <CommonFilterTrigger
+              :count="countFilterSelect"
+              icon="md:filter_list"
+              label="Filters"
+              @click="dialogFilterMobileModel = true"
+            />
           </div>
-        </div>
-      </div>
+        </template>
+      </CommonMobileQuickFilterBar>
       <div
         class="desktop-filter-controls-shell w-100 d-flex justify-center"
       >
@@ -556,22 +496,6 @@ const setMobileFilterSectionRef = (filter, element) => {
   }
 }
 
-const hasFilterIcon = filter => Boolean(
-  filter.showItemIcon
-  || filter.controlIcon,
-)
-
-const getQuickFilterValue = (filter) => {
-  if (!filter.selectedItem) return ''
-
-  return filter.itemTitle?.(filter.selectedItem) || filter.selectedItem.title || ''
-}
-
-const getQuickFilterAriaLabel = (filter) => {
-  const value = getQuickFilterValue(filter)
-  return value ? `${filter.title}: ${value}` : filter.title
-}
-
 const openMobileQuickFilter = (filter) => {
   if (filter.inlineOptions) {
     filter.refElement.openInlineOptionsModal()
@@ -618,7 +542,7 @@ watch(activeFilterService, async (service, previousService) => {
   if (!previousService || service === previousService) return
 
   await nextTick()
-  if (mobileQuickFilters.value) mobileQuickFilters.value.scrollLeft = 0
+  mobileQuickFilters.value?.resetScroll()
 })
 </script>
 
@@ -906,22 +830,6 @@ watch(activeFilterService, async (service, previousService) => {
 }
 
 @media #{map.get(vuetify.$display-breakpoints, 'sm-and-down')} {
-  .mobile-quick-filter-bar {
-    position: sticky;
-    z-index: 10;
-    top: 0;
-    box-sizing: border-box;
-    width: 100%;
-    min-width: 0;
-    height: 64px;
-    align-items: center;
-    gap: 0;
-    padding: 6px 12px;
-    overflow: hidden;
-    background: rgb(var(--v-theme-grey25));
-    border-bottom: 1px solid rgb(var(--v-theme-borderSubtle));
-  }
-
   .mobile-quick-filter-bar__trigger {
     position: relative;
     z-index: 1;
@@ -963,225 +871,6 @@ watch(activeFilterService, async (service, previousService) => {
 
   .mobile-quick-filter-bar__trigger :deep(.filter-trigger .v-btn__overlay) {
     opacity: 0 !important;
-  }
-
-  .mobile-quick-filter-bar__scroller {
-    display: flex;
-    min-width: 0;
-    height: 52px;
-    flex: 1 1 auto;
-    align-items: stretch;
-    overflow-x: auto;
-    overflow-y: hidden;
-    overscroll-behavior-inline: contain;
-    scrollbar-width: none;
-    touch-action: pan-x pan-y;
-    white-space: nowrap;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .mobile-quick-filter-bar__scroller::-webkit-scrollbar {
-    display: none;
-  }
-
-  .mobile-quick-filter {
-    position: relative;
-    display: flex;
-    width: 112px;
-    min-width: 104px;
-    height: 52px;
-    flex: 0 0 auto;
-    align-items: stretch;
-    overflow: hidden;
-    color: rgb(var(--v-theme-brandNavy));
-    background: rgb(var(--v-theme-grey25));
-    border-left: 1px solid rgb(var(--v-theme-surfaceTertiary));
-    transition: background-color 160ms ease;
-  }
-
-  .mobile-quick-filter:first-child {
-    border-left: 0;
-  }
-
-  .mobile-quick-filter--selected {
-    box-sizing: border-box;
-    width: 148px;
-    max-width: 160px;
-    height: 100%;
-    padding-right: 12px;
-    background: transparent;
-    border-radius: 0;
-  }
-
-  .mobile-quick-filter--disabled {
-    color: rgba(var(--v-theme-brandNavy), 0.38);
-  }
-
-  .mobile-quick-filter--disabled .mobile-quick-filter__control {
-    cursor: default;
-    opacity: 1;
-  }
-
-  .mobile-quick-filter--disabled .mobile-quick-filter__icon,
-  .mobile-quick-filter--disabled .mobile-quick-filter__copy {
-    opacity: 0.38;
-  }
-
-  .mobile-quick-filter--disabled .mobile-quick-filter__control:hover,
-  .mobile-quick-filter--disabled .mobile-quick-filter__control:active {
-    background: transparent;
-  }
-
-  .mobile-quick-filter__control {
-    display: flex;
-    min-width: 0;
-    min-height: 44px;
-    flex: 1 1 auto;
-    align-items: center;
-    padding: 6px 12px;
-    overflow: hidden;
-    color: inherit;
-    font: inherit;
-    text-align: left;
-    background: transparent;
-    border: 0;
-    border-radius: inherit;
-    cursor: pointer;
-  }
-
-  .mobile-quick-filter__control,
-  .mobile-quick-filter__clear {
-    height: 100%;
-    letter-spacing: normal;
-    text-indent: 0;
-  }
-
-  .mobile-quick-filter__control :deep(.v-btn__content) {
-    min-width: 0;
-    flex: 1 1 auto;
-    justify-content: flex-start;
-  }
-
-  /* Keep the existing hover backgrounds and focus outline without a second overlay. */
-  .mobile-quick-filter__control :deep(.v-btn__overlay),
-  .mobile-quick-filter__clear :deep(.v-btn__overlay),
-  .mobile-quick-filter__control::after,
-  .mobile-quick-filter__clear::after {
-    display: none;
-  }
-
-  .mobile-quick-filter--selected .mobile-quick-filter__control {
-    height: 100%;
-    padding-right: 4px;
-    border-radius: 0;
-  }
-
-  .mobile-quick-filter__control:hover {
-    background: rgb(var(--v-theme-surfaceSecondary));
-  }
-
-  .mobile-quick-filter--selected .mobile-quick-filter__control:hover {
-    background: transparent;
-  }
-
-  .mobile-quick-filter__control:active {
-    background: rgb(var(--v-theme-surfaceTertiary));
-  }
-
-  .mobile-quick-filter__control:focus-visible,
-  .mobile-quick-filter__clear:focus-visible {
-    z-index: 1;
-    outline: 3px solid rgba(var(--v-theme-primary), 0.28);
-    outline-offset: -3px;
-  }
-
-  .mobile-quick-filter__icon {
-    box-sizing: border-box;
-    display: inline-flex;
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    min-height: 20px;
-    max-width: 20px;
-    max-height: 20px;
-    flex: 0 0 20px;
-    align-items: center;
-    justify-content: center;
-    color: rgb(var(--v-theme-brandNavy));
-  }
-
-  .mobile-quick-filter__icon :deep(.v-img) {
-    width: 100%;
-    height: 100%;
-  }
-
-  .mobile-quick-filter__icon :deep(.v-icon),
-  .mobile-quick-filter__icon :deep(.search-filter-content-icon) {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    font-size: 20px !important;
-    line-height: 20px;
-  }
-
-  .mobile-quick-filter__copy {
-    display: flex;
-    min-width: 0;
-    flex: 1 1 auto;
-    flex-direction: column;
-    justify-content: center;
-    overflow: hidden;
-    line-height: 1.2;
-  }
-
-  .mobile-quick-filter__label,
-  .mobile-quick-filter__value {
-    display: block;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .mobile-quick-filter__label {
-    color: rgb(var(--v-theme-brandNavy));
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 20px;
-  }
-
-  .mobile-quick-filter--selected .mobile-quick-filter__label {
-    color: rgba(var(--v-theme-brandNavy), 0.68);
-    font-size: 11px;
-    font-weight: 500;
-    line-height: 14px;
-  }
-
-  .mobile-quick-filter__value {
-    color: rgb(var(--v-theme-brandNavy));
-    font-size: 14px;
-    font-weight: 650;
-    line-height: 18px;
-  }
-
-  .mobile-quick-filter__clear {
-    display: inline-flex;
-    width: 18px;
-    min-width: 18px;
-    min-height: 44px;
-    flex: 0 0 18px;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    color: rgb(var(--v-theme-grey500));
-    background: transparent;
-    border: 0;
-    border-radius: 0;
-    cursor: pointer;
-  }
-
-  .mobile-quick-filter__clear:hover {
-    color: rgb(var(--v-theme-errorStrong));
   }
 
   .desktop-filter-controls-shell .inline-filter-group-wrapper {
