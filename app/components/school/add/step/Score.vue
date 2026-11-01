@@ -72,23 +72,6 @@
           rows="7"
           :rules="[descriptionRule]"
         />
-        <v-btn
-          size="x-small"
-          height="40"
-          width="40"
-          icon
-          color="primary"
-          :loading="loadingHelpAi"
-          class="position-absolute position-button-ai"
-          @click="sendToAI"
-        >
-          <v-icon
-            size="x-large"
-            color="white"
-          >
-            md:wand_stars
-          </v-icon>
-        </v-btn>
       </div>
     </div>
 
@@ -134,13 +117,10 @@
 <script setup>
 const router = useRouter()
 
-const props = defineProps({
+defineProps({
   loading: {
     type: Boolean,
     default: false,
-  },
-  schoolAiData: {
-    type: Object,
   },
 })
 const emit = defineEmits(['nextStep', 'prevStep'])
@@ -201,29 +181,6 @@ const updateRating = (rate, index) => {
 }
 const comment = ref('')
 
-const { loading: loadingHelpAi, getDescriptionFromAi } = useCommentAssistant()
-
-const sendToAI = async () => {
-  try {
-    const result = await getDescriptionFromAi(props.schoolAiData)
-    if (result) {
-      comment.value = result.description
-      const ratings = result.ratings
-      itemsScore.value[0].score = ratings.classrooms_quality
-      itemsScore.value[1].score = ratings.teachers_proficiency
-      itemsScore.value[2].score = ratings.technology_access
-      itemsScore.value[3].score = ratings.school_safety
-      itemsScore.value[4].score = ratings.officials_behavior
-      itemsScore.value[5].score = ratings.affordability
-      itemsScore.value[6].score = ratings.sports_facilities
-      itemsScore.value[7].score = ratings.art_counseling
-    }
-  }
-  catch (err) {
-    console.error('AI Error:', err)
-  }
-}
-
 const descriptionRule = (value) => {
   if (!value) return true
   return value.length <= 500 || 'Maximum 500 characters allowed'
@@ -267,9 +224,5 @@ const preStep = () => {
   height: 8px;
   border-radius: 50%;
   background-color: #ffb600;
-}
-.position-button-ai {
-  right: 20px;
-  bottom: 30px;
 }
 </style>
