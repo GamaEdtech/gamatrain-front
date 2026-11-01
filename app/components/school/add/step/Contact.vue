@@ -417,12 +417,7 @@ const submitForm = () => {
       latitude: latLng.value[0] ? latLng.value[0] : 0,
       longitude: latLng.value[1] ? latLng.value[1] : 0,
     }
-    const aiInfo = {
-      webSite: website.value,
-      latitude: latLng.value[0] ? latLng.value[0] : null,
-      longitude: latLng.value[1] ? latLng.value[1] : null,
-    }
-    emit('nextStep', contactStepInfo, aiInfo)
+    emit('nextStep', contactStepInfo)
   }
 }
 

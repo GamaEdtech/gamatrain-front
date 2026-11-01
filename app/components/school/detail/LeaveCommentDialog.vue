@@ -258,28 +258,9 @@ const { loading: helpLoading, getDescriptionFromAi } = useCommentAssistant()
 
 async function sendToAI() {
   try {
-    const schoolAiData = {
-      name: props.contentData.name,
-      countryTitle: props.contentData.countryTitle,
-      stateTitle: props.contentData.stateTitle,
-      cityTitle: props.contentData.cityTitle,
-      webSite: props.contentData.webSite ? props.contentData.webSite : '',
-      latitude: props.contentData.latitude,
-      longitude: props.contentData.longitude,
-    }
-    const result = await getDescriptionFromAi(schoolAiData)
-    if (result) {
-      const ratings = result.ratings
-      commentForm.comment = result.description
-      commentForm.classesQualityRate = ratings.classrooms_quality
-      commentForm.educationRate = ratings.teachers_proficiency
-      commentForm.itTrainingRate = ratings.technology_access
-      commentForm.safetyAndHappinessRate = ratings.school_safety
-      commentForm.behaviorRate = ratings.officials_behavior
-      commentForm.tuitionRatioRate = ratings.affordability
-      commentForm.facilitiesRate = ratings.sports_facilities
-      commentForm.artisticActivitiesRate = ratings.art_counseling
-    }
+    // The draft's fields have the same names as the comment form's.
+    const draft = await getDescriptionFromAi(route.params.id)
+    if (draft) Object.assign(commentForm, draft)
   }
   catch (err) {
     console.error('AI Error:', err)
