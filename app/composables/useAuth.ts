@@ -11,6 +11,9 @@ export const useAuth = () => {
   const cookieToken = useCookie<string | null>('authToken', {
     path: '/',
     maxAge: 60 * 60 * 24 * 7, // 1 week
+    // Never over plain http (browsers treat localhost as secure), and not on cross-site POSTs (CSRF).
+    secure: true,
+    sameSite: 'lax',
   })
 
   const setUserToken = (newToken: string) => {
@@ -179,6 +182,12 @@ export const useAuth = () => {
   }
 
   const isAuthenticated = computed(() => !!cookieToken.value)
+  // Page HTML is cached by Cloudflare and shared by every visitor, so what the server renders must not depend on
+  // who is signed in. The server and the first (hydrating) render show the signed-out UI; the signed-in parts
+  // appear as soon as the app runs in the browser (set by plugins/init-user.client.ts). Use this for what's shown,
+  // and isAuthenticated for API calls and click handlers.
+  const appHydrated = useState('appHydrated', () => false)
+  const isAuthenticatedUi = computed(() => appHydrated.value && isAuthenticated.value)
 
   return {
     cookieToken,
@@ -189,6 +198,7 @@ export const useAuth = () => {
     loadingLogin,
     register,
     isAuthenticated,
+    isAuthenticatedUi,
     forgetPassword,
     getUserToken,
     loginByGoogle,

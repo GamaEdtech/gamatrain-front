@@ -64,7 +64,7 @@
     </nuxt-link>
 
     <nuxt-link
-      v-if="isAuthenticated"
+      v-if="isAuthenticatedUi"
       v-slot="{ isActive }"
       to="/user"
       class="nav-item flex-1-1-0 h-100 d-flex align-center justify-center flex-column"
@@ -122,7 +122,7 @@
 <script setup lang="ts">
 const router = useRouter()
 const route = useRoute()
-const { isAuthenticated } = useAuth()
+const { isAuthenticated, isAuthenticatedUi } = useAuth()
 const user = useUser()
 
 const ICON_SIZE = 26

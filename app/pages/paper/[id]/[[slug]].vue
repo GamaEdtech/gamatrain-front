@@ -26,7 +26,7 @@
 
         <v-btn
           v-if="
-            isAuthenticated
+            isAuthenticatedUi
               && user
               && contentData.user_
               && Number(contentData.user_) === user?.coreId
@@ -185,7 +185,7 @@ interface BreadCrumb {
 
 const route = useRoute()
 const { user } = useUser()
-const { isAuthenticated } = useAuth()
+const { isAuthenticatedUi } = useAuth()
 const { buildCambridgeMeta } = useCambridgeSeo()
 
 const { buildSchema } = useSeoSchema()
