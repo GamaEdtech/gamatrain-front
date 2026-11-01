@@ -33,7 +33,6 @@ export const useSearchResults = async ({
   const serviceResultCounts = ref<SearchServiceCounts>({})
   const perPage = 10
   const perPageProfiles = 5
-  const perPageServerSide = 5
   const firstLoadedPageNumber = ref(Number(route.query.page) || 1)
   const latestLoadedPageNumber = ref(Number(route.query.page) || 1)
   const lastRequestedService = ref(activeService.value)
@@ -137,18 +136,20 @@ export const useSearchResults = async ({
   const initialDataRequest = useAsyncData<ApiResult<SearchListDTO | ProfileListResponseDTO>>(
     'dataSearchSSR',
     () => {
+      // Same page size as infinite scroll: with a smaller one here, the next page skipped results
+      // (5 rendered, then page 2 of 10 started at the 11th).
       const pageNumber = Number(route.query.page) || 1
       if (getLegacySearchType(route.query.type) == 'teacher') {
         const query = {
-          'PagingDto.PageFilter.Size': perPageServerSide,
-          'PagingDto.PageFilter.Skip': (pageNumber - 1) * perPageServerSide,
+          'PagingDto.PageFilter.Size': perPageProfiles,
+          'PagingDto.PageFilter.Skip': (pageNumber - 1) * perPageProfiles,
           'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
           'FullName': String(route.query.title ?? ''),
         }
         return getProfiles(query)
       }
 
-      const params = buildSearchParams(route.query, pageNumber, perPageServerSide)
+      const params = buildSearchParams(route.query, pageNumber, perPage)
       return getResults(params)
     },
   )
@@ -181,7 +182,11 @@ export const useSearchResults = async ({
 
   if (initialData.value?.data) {
     data.value = initialData.value.data.list ?? []
-    if (getLegacySearchType(route.query.type) == 'teacher') {
+    const isTeacher = getLegacySearchType(route.query.type) == 'teacher'
+    if (data.value.length < (isTeacher ? perPageProfiles : perPage)) {
+      isAllDataLoaded.value = true
+    }
+    if (isTeacher) {
       totalDataFind.value = 'totalRecordsCount' in initialData.value.data
         ? initialData.value.data.totalRecordsCount || 0
         : 0
