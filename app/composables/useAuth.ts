@@ -6,30 +6,57 @@ const loadingLoginByGoogle = ref(false)
 const loadingRegister = ref(false)
 const loadingForgetPassword = ref(false)
 
+// The JWT is kept in localStorage only and sent as a Bearer header. Not in a cookie: browsers send cookies with
+// every page request, and page HTML is cached by Cloudflare and shared by every visitor, so the server must not
+// be able to tell who is signed in.
+const TOKEN_KEY = 'token'
+// Until 2026-11 the JWT was also kept in this cookie: read once to move it over, then deleted.
+const LEGACY_TOKEN_COOKIE = 'authToken'
+
+const readStoredToken = (): string | null => {
+  try {
+    const legacy = document.cookie.match(new RegExp(`(?:^|;\\s*)${LEGACY_TOKEN_COOKIE}=([^;]*)`))?.[1]
+    if (legacy !== undefined) document.cookie = `${LEGACY_TOKEN_COOKIE}=; path=/; max-age=0`
+
+    const stored = localStorage.getItem(TOKEN_KEY)
+    if (stored) return stored
+
+    const migrated = legacy ? decodeURIComponent(legacy).replace(/^"|"$/g, '') : ''
+    if (!migrated) return null
+    localStorage.setItem(TOKEN_KEY, migrated)
+    return migrated
+  }
+  catch {
+    // Storage blocked (e.g. some private modes): signed out.
+    return null
+  }
+}
+
+// Browser only; the server never has a token (see above).
+const token = ref<string | null>(import.meta.client ? readStoredToken() : null)
+
+if (import.meta.client) {
+  // Signed in or out in another tab.
+  window.addEventListener('storage', (event) => {
+    if (event.key === TOKEN_KEY || event.key === null) token.value = localStorage.getItem(TOKEN_KEY)
+  })
+}
+
 export const useAuth = () => {
   const { $toast } = useNuxtApp()
-  const cookieToken = useCookie<string | null>('authToken', {
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7, // 1 week
-    // Never over plain http (browsers treat localhost as secure), and not on cross-site POSTs (CSRF).
-    secure: true,
-    sameSite: 'lax',
-  })
 
   const setUserToken = (newToken: string) => {
-    cookieToken.value = newToken
-    localStorage.setItem('token', newToken)
+    token.value = newToken
+    localStorage.setItem(TOKEN_KEY, newToken)
     // Signed in: a teacher's invite code has either just linked this new account or can't apply to an existing one.
     clearInviteCode()
   }
 
-  const getUserToken = () => {
-    return cookieToken?.value
-  }
+  const getUserToken = () => token.value
 
   const clearAuth = () => {
-    cookieToken.value = null
-    localStorage.removeItem('token')
+    token.value = null
+    localStorage.removeItem(TOKEN_KEY)
   }
 
   const logout = async () => {
@@ -181,16 +208,14 @@ export const useAuth = () => {
     }
   }
 
-  const isAuthenticated = computed(() => !!cookieToken.value)
-  // Page HTML is cached by Cloudflare and shared by every visitor, so what the server renders must not depend on
-  // who is signed in. The server and the first (hydrating) render show the signed-out UI; the signed-in parts
-  // appear as soon as the app runs in the browser (set by plugins/init-user.client.ts). Use this for what's shown,
-  // and isAuthenticated for API calls and click handlers.
+  const isAuthenticated = computed(() => !!token.value)
+  // The server never has the token, so it renders the signed-out UI, and the first (hydrating) render in the
+  // browser must match it. The signed-in parts appear as soon as hydration is done (set by
+  // plugins/init-user.client.ts). Use this for what's shown, and isAuthenticated for API calls and click handlers.
   const appHydrated = useState('appHydrated', () => false)
   const isAuthenticatedUi = computed(() => appHydrated.value && isAuthenticated.value)
 
   return {
-    cookieToken,
     setUserToken,
     clearAuth,
     logout,
