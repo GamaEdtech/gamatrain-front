@@ -28,7 +28,7 @@
       </v-checkbox>
       <div class="w-100 d-flex justify-center align-center ga-2 mt-10 z-index-item">
         <v-btn
-          color="white"
+          color="transparent"
           rounded="pill"
           height="38"
           :width="mdAndUp ? `220` : `80`"
@@ -106,6 +106,6 @@ const confirmDelete = async () => {
   height : 100px
 }
 .border-button-discard{
-  border : 1px solid rgb(var(--v-theme-grey200))
+  border : 1px solid rgb(var(--v-theme-grey400))
 }
 </style>

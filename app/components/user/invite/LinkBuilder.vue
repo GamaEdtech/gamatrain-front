@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 bg-white border rounded-xl pa-4 pa-md-6 d-flex flex-column ga-4">
+  <div class="w-100 bg-grey50 border rounded-xl pa-4 pa-md-6 d-flex flex-column ga-4">
     <div class="d-flex flex-column ga-1">
       <h3 class="text-h4 font-weight-bold text-grey700">
         Your invite link

@@ -30,7 +30,7 @@
             @click="changeUserAvatar"
           >
             <v-icon
-              color="white"
+              color="grey200"
               size="14"
             >
               md:photo_camera
@@ -50,10 +50,10 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="transparent"
           class="w-100"
           :rules="[required, minLength(2), maxLength(50)]"
         />
@@ -70,10 +70,10 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="transparent"
           class="w-100"
           :rules="[required, minLength(2), maxLength(50), alphabetic]"
         />
@@ -90,10 +90,10 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="transparent"
           class="w-100"
           :rules="[required, minLength(2), maxLength(50), alphabetic]"
         />
@@ -103,12 +103,12 @@
         <div class="text-h6 text-grey700 font-weight-medium ml-2">
           Gender
         </div>
-        <div class="btn-gender-container w-100 flex align-center justify-center ga-1 bg-grey100 pa-1 rounded-pill">
+        <div class="btn-gender-container w-100 flex align-center justify-center ga-1 bg-grey300 pa-1 rounded-pill">
           <v-btn
             v-for="gender in genderList"
             :key="gender"
             rounded="pill"
-            :color="gender == user.gender ? `white`:`transparent`"
+            :color="gender == user.gender ? `grey100`:`transparent`"
             flat
             height="26"
             class="w-50"
@@ -137,8 +137,9 @@
           :data-loading="loadingCountries"
           rounded="pill"
           height="48"
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
+          bg-color="transparent"
           :defalut-lable="false"
           @update:model-value="countyChange"
         />
@@ -152,8 +153,9 @@
           :data-loading="loadingStates || loadingCountries"
           rounded="pill"
           height="48"
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
+          bg-color="transparent"
           :defalut-lable="false"
           :disabled="!user.country || loadingCountries"
           @update:model-value="stateChange"
@@ -168,8 +170,9 @@
           :data-loading="loadingCities || loadingStates || loadingCountries"
           rounded="pill"
           height="48"
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
+          bg-color="transparent"
           :defalut-lable="false"
           :disabled="!user.state || loadingCountries || loadingStates"
           @update:model-value="cityChange"
@@ -194,8 +197,9 @@
           :data-loading="loadingBoards"
           rounded="pill"
           height="48"
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
+          bg-color="transparent"
           :defalut-lable="false"
           @update:model-value="boardChange"
         />
@@ -214,8 +218,9 @@
           :data-loading="loadingBoards || loadingGrade"
           rounded="pill"
           height="48"
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
+          bg-color="transparent"
           :defalut-lable="false"
           :disabled="!user.board || loadingGrade"
           @update:model-value="gradeChange"
@@ -235,8 +240,9 @@
         :data-loading="loadingSchools || loadingCities || loadingCountries || loadingStates"
         rounded="pill"
         height="48"
-        base-color="grey200"
+        base-color="grey400"
         color="primary"
+        bg-color="transparent"
         :defalut-lable="false"
         :disabled="!user.city || loadingCities"
         :infinite-loading="true"
@@ -522,8 +528,8 @@ const save = async () => {
   width : 100px;
   height : 100px;
   border : 2px solid transparent;
-  background : linear-gradient(180deg,rgb(var(--v-theme-white)) 50%, rgb(var(--v-theme-white)) 50%) padding-box,
-  linear-gradient(to right, rgb(var(--v-theme-grey700)) ,rgb(var(--v-theme-primary))) border-box
+  background : linear-gradient(180deg,rgb(var(--v-theme-surface)) 50%, rgb(var(--v-theme-surface)) 50%) padding-box,
+   linear-gradient(to right, rgb(var(--v-theme-grey700)) ,rgb(var(--v-theme-primary))) border-box
 }
 .camera-button{
   bottom : -16px
