@@ -108,7 +108,7 @@
         >
           md:search
         </v-icon>
-        <template v-if="isAuthenticated">
+        <template v-if="isAuthenticatedUi">
           <lazy-common-dropdown-menu :menu-setting="menuSetting" />
 
           <nuxt-link
@@ -186,7 +186,7 @@ const route = useRoute()
 const router = useRouter()
 const isSearchExperience = computed(() => route.meta.searchExperience === true)
 const theme = useTheme()
-const { isAuthenticated } = useAuth()
+const { isAuthenticated, isAuthenticatedUi } = useAuth()
 const { mdAndDown } = useDisplay()
 
 const props = withDefaults(defineProps<IHeader>(), {
