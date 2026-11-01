@@ -61,7 +61,7 @@ export const useSearchResults = async ({
       }
       else {
         const params = buildSearchParams(querySearch.value, querySearch.value.page, pageSize)
-        const response = await getResults(params, { public: true })
+        const response = await getResults(params)
         if (!response.data) throw new Error('Resource search returned no data')
         totalDataFind.value = response.data.num || 0
         list = response.data.list ?? []
@@ -149,7 +149,7 @@ export const useSearchResults = async ({
       }
 
       const params = buildSearchParams(route.query, pageNumber, perPageServerSide)
-      return getResults(params, { public: true })
+      return getResults(params)
     },
   )
   const initialData = initialDataRequest.data
