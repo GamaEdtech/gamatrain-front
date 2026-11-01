@@ -114,6 +114,8 @@ const buildDataset = (label: string, colorHex: string, data: number[]) => ({
   borderColor: colorHex,
   backgroundColor: hexToRgba(colorHex, OPACITYCOLOR),
   borderRadius: BORDERRADIUS,
+  // A few days (the start of a month) would otherwise stretch each bar across the chart.
+  maxBarThickness: 48,
   stack: 'payments',
 })
 

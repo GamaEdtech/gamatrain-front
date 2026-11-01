@@ -42,7 +42,6 @@
       :data="chartData"
       :options="chartOptions"
     />
-    <span class="text-subtitle-1 text-grey400">Days are UTC.</span>
   </v-card>
 </template>
 
@@ -77,6 +76,9 @@ const color = (name: string) => theme.current.value.colors[name] as string
 
 const metric = ref<'activity' | 'revenue'>('activity')
 
+// With only a few days (the start of a month) a line has little to draw: show each day's point, and centre the days.
+const fewDays = computed(() => props.daily.length <= 7)
+
 const series = (label: string, colorName: string, data: number[], fill = false) => ({
   label,
   data,
@@ -84,7 +86,7 @@ const series = (label: string, colorName: string, data: number[], fill = false) 
   backgroundColor: fill ? `${color(colorName)}22` : color(colorName),
   fill,
   tension: 0.35,
-  pointRadius: 0,
+  pointRadius: fewDays.value ? 3 : 0,
   pointHoverRadius: 4,
   borderWidth: 2,
 })
@@ -115,7 +117,7 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
     },
   },
   scales: {
-    x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } },
+    x: { grid: { display: false }, offset: fewDays.value, ticks: { maxTicksLimit: 10 } },
     y: {
       beginAtZero: true,
       grid: { color: color('surfaceTertiary') },
