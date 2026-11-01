@@ -71,6 +71,7 @@ import {
   CategoryScale,
   type ChartOptions,
 } from 'chart.js'
+import dayjs from 'dayjs'
 import { Bar as BarChart } from 'vue-chartjs'
 import { useTheme } from 'vuetify'
 import type { PaymentSummaryDTO } from '@/types'
@@ -84,11 +85,29 @@ ChartJS.register(
   CategoryScale,
 )
 
+const props = defineProps<{
+  // Every day of the month (YYYY-MM-DD) to show on the x-axis, the days to come staying empty. Without it (a
+  // custom filter), the chart shows the days the summary has.
+  days?: string[]
+}>()
+
 const emit = defineEmits(['selectBar'])
 
 const theme = useTheme()
 const { paymentSummary, loadingPaymentSummary } = usePayment()
 const { formatCalendarDate } = useDateTime()
+
+// One entry per bar: the summary's day, or null for a day without payments (still to come).
+const rows = computed<(PaymentSummaryDTO | null)[]>(() => {
+  if (!props.days) return paymentSummary.value
+  const byDate = new Map(paymentSummary.value.map(item => [dayjs(item.date).format('YYYY-MM-DD'), item]))
+  return props.days.map(day => byDate.get(day) ?? null)
+})
+// A whole month reads like the trends chart ("1 Nov"); a custom filter keeps the full dates.
+const labels = computed(() => (props.days
+  ? props.days.map(day => dayjs(day).format('D MMM'))
+  : paymentSummary.value.map(item => formatCalendarDate(item.date))))
+const valuesOf = (key: keyof PaymentSummaryDTO) => rows.value.map(item => (item ? Number(item[key]) : null))
 
 const barChartRef = ref()
 const BORDERRADIUS = 10
@@ -108,32 +127,32 @@ const hexToRgba = (hex: string, opacity: number) => {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`
 }
 
-const buildDataset = (label: string, colorHex: string, data: number[]) => ({
+const buildDataset = (label: string, colorHex: string, data: (number | null)[]) => ({
   label,
   data,
   borderColor: colorHex,
   backgroundColor: hexToRgba(colorHex, OPACITYCOLOR),
   borderRadius: BORDERRADIUS,
-  // A few days (the start of a month) would otherwise stretch each bar across the chart.
+  // A custom filter of a day or two would otherwise stretch each bar across the chart.
   maxBarThickness: 48,
   stack: 'payments',
 })
 
 const statusDatasets = computed(() => [
-  buildDataset('Paid Amount', theme.current.value.colors.success, paymentSummary.value.map(item => item.paidAmount)),
-  buildDataset('Pending Amount', theme.current.value.colors.warning, paymentSummary.value.map(item => item.pendingAmount)),
-  buildDataset('Failed Amount', theme.current.value.colors.error, paymentSummary.value.map(item => item.failedAmount)),
+  buildDataset('Paid Amount', theme.current.value.colors.success, valuesOf('paidAmount')),
+  buildDataset('Pending Amount', theme.current.value.colors.warning, valuesOf('pendingAmount')),
+  buildDataset('Failed Amount', theme.current.value.colors.error, valuesOf('failedAmount')),
 ])
 
 const kindDatasets = computed(() => [
-  buildDataset('New Subscription', theme.current.value.colors.info, paymentSummary.value.map(item => item.newSubscriptionAmount)),
-  buildDataset('Renewal', theme.current.value.colors.secondary, paymentSummary.value.map(item => item.renewalAmount)),
-  buildDataset('Plan Switch', theme.current.value.colors.primary, paymentSummary.value.map(item => item.planSwitchAmount)),
-  buildDataset('Points Top-Up', theme.current.value.colors.blueGray300, paymentSummary.value.map(item => item.pointsTopUpAmount)),
+  buildDataset('New Subscription', theme.current.value.colors.info, valuesOf('newSubscriptionAmount')),
+  buildDataset('Renewal', theme.current.value.colors.secondary, valuesOf('renewalAmount')),
+  buildDataset('Plan Switch', theme.current.value.colors.primary, valuesOf('planSwitchAmount')),
+  buildDataset('Points Top-Up', theme.current.value.colors.blueGray300, valuesOf('pointsTopUpAmount')),
 ])
 
 const chartData = computed(() => ({
-  labels: paymentSummary.value.map(item => formatCalendarDate(item.date)),
+  labels: labels.value,
   datasets: viewMode.value === 'kind' ? kindDatasets.value : statusDatasets.value,
 }))
 
@@ -186,7 +205,7 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
         label(context) {
           const dataIndex = context.dataIndex
           const datasetLabel = context.dataset.label
-          const item = paymentSummary.value[dataIndex]
+          const item = rows.value[dataIndex]
 
           if (!item || !datasetLabel)
             return ''
@@ -214,6 +233,9 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
           size: 12,
         },
         padding: 10,
+        // A month of days: a label every few days, level, instead of 30 rotated dates.
+        maxRotation: props.days ? 0 : undefined,
+        maxTicksLimit: props.days ? 10 : undefined,
       },
       grid: {
         display: false,
@@ -256,7 +278,8 @@ const handleChartClick = (event: MouseEvent) => {
 
   const firstElement = elements[0]
   const dataIndex = firstElement.index
-  const item = paymentSummary.value[dataIndex]
+  const item = rows.value[dataIndex]
+  if (!item) return
 
   emit('selectBar', item)
 }

@@ -66,6 +66,8 @@ ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, 
 
 const props = defineProps<{
   daily: AdminDashboardOverviewDTO['daily']
+  // Every day of the month (YYYY-MM-DD): the x-axis shows the whole month, and the days to come stay empty.
+  days: string[]
   loading: boolean
 }>()
 
@@ -76,10 +78,18 @@ const color = (name: string) => theme.current.value.colors[name] as string
 
 const metric = ref<'activity' | 'revenue'>('activity')
 
-// With only a few days (the start of a month) a line has little to draw: show each day's point, and centre the days.
+// A line needs two days to draw: in the first days of a month, show each day's point.
 const fewDays = computed(() => props.daily.length <= 7)
 
-const series = (label: string, colorName: string, data: number[], fill = false) => ({
+const dailyByDate = computed(() => new Map(props.daily.map(t => [dayjs(t.date).format('YYYY-MM-DD'), t])))
+// null for a day without data (still to come), so the line stops at today instead of dropping to zero.
+const valuesOf = (pick: (point: AdminDashboardOverviewDTO['daily'][number]) => number) =>
+  props.days.map((day) => {
+    const point = dailyByDate.value.get(day)
+    return point ? pick(point) : null
+  })
+
+const series = (label: string, colorName: string, data: (number | null)[], fill = false) => ({
   label,
   data,
   borderColor: color(colorName),
@@ -92,14 +102,14 @@ const series = (label: string, colorName: string, data: number[], fill = false) 
 })
 
 const chartData = computed(() => ({
-  labels: props.daily.map(t => dayjs(t.date).format('D MMM')),
+  labels: props.days.map(day => dayjs(day).format('D MMM')),
   datasets: metric.value === 'revenue'
-    ? [series('Revenue (USD)', 'success500', props.daily.map(t => t.revenueUsd), true)]
+    ? [series('Revenue (USD)', 'success500', valuesOf(t => t.revenueUsd), true)]
     : [
-        series('Sign-ups', 'blue500', props.daily.map(t => t.signUps), true),
-        series('Paid payments', 'success500', props.daily.map(t => t.paidPayments)),
-        series('Invited sign-ups', 'primary', props.daily.map(t => t.invitedSignUps)),
-        series('Teachers joined invite program', 'generalSearchQuiz', props.daily.map(t => t.inviteJoins)),
+        series('Sign-ups', 'blue500', valuesOf(t => t.signUps), true),
+        series('Paid payments', 'success500', valuesOf(t => t.paidPayments)),
+        series('Invited sign-ups', 'primary', valuesOf(t => t.invitedSignUps)),
+        series('Teachers joined invite program', 'generalSearchQuiz', valuesOf(t => t.inviteJoins)),
       ],
 }))
 
@@ -117,7 +127,7 @@ const chartOptions = computed<ChartOptions<'line'>>(() => ({
     },
   },
   scales: {
-    x: { grid: { display: false }, offset: fewDays.value, ticks: { maxTicksLimit: 10 } },
+    x: { grid: { display: false }, ticks: { maxTicksLimit: 10 } },
     y: {
       beginAtZero: true,
       grid: { color: color('surfaceTertiary') },
