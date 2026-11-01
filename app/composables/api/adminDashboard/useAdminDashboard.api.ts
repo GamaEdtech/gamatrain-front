@@ -21,6 +21,7 @@ let summarySubscribers = 0
 /** The admin dashboard (backend docs/business/admin-dashboard.md). */
 export const useAdminDashboard = () => {
   const { handleApiResponseError, handleApiCatchError } = useApiErrorHandler()
+  const { localTimeZone } = useDateTime()
 
   const overview = ref<AdminDashboardOverviewDTO | null>(null)
   const loadingOverview = ref(false)
@@ -64,7 +65,8 @@ export const useAdminDashboard = () => {
 
   const attentionCount = (key: AttentionKey) => summary.value?.items.find(t => t.key === key)?.count ?? 0
 
-  const rangeQuery = (range: DashboardRange) => ({ StartDate: range.startDate, EndDate: range.endDate })
+  // Days are counted in the admin's own time zone, as for the payments summary.
+  const rangeQuery = (range: DashboardRange) => ({ StartDate: range.startDate, EndDate: range.endDate, TimeZone: localTimeZone() })
 
   const fetchOverview = async (range: DashboardRange) => {
     loadingOverview.value = true
