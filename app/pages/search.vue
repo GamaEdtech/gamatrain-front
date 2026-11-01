@@ -1,5 +1,5 @@
 <template>
-  <v-container class="flex-column margin-top-handle">
+  <v-container class="flex-column margin-top-handle mt-16">
     <v-row class="justify-center">
       <div class="w-100 d-flex justify-center flex-wrap top-info-div">
         <CommonFilterList
@@ -77,7 +77,6 @@
 
 <script setup>
 import ServicesFilterContainer from '~/components/search/servicesFilterContainer.vue'
-import { useRoute } from 'vue-router'
 import { LEGACY_SEARCH_TYPES } from '@/constants'
 import {
   getLegacySearchType,
@@ -197,6 +196,7 @@ onMounted(() => {
 .top-info-div {
   display: contents !important;
 }
+/* mt-16 on this container clears the header the way detail pages do, so moving between them shifts nothing */
 .margin-top-handle {
   min-height: 100vh;
   color: rgb(var(--v-theme-brandNavy));

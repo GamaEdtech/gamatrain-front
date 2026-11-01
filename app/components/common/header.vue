@@ -1,8 +1,10 @@
 <template>
   <header
-    class="w-100 main-header d-flex align-center justify-center"
+    class="w-100 main-header d-flex align-center justify-center top-0"
     :class="[
-      { 'position-fixed top-0': fixed },
+      // Out of the page flow either way, so <main> starts at the same place on every page (no layout
+      // shift when moving between Search and other pages); a non-fixed header scrolls away with the page.
+      fixed ? 'position-fixed' : 'position-absolute',
       isTransparentMenu ? 'bg-transparent' : 'bg-surface elevation-2',
     ]"
   >

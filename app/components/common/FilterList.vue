@@ -277,6 +277,7 @@
         v-model="dialogFilterMobileModel"
         transition="dialog-bottom-transition"
         fullscreen
+        scroll-strategy="none"
         scrim="white"
       >
         <div class="mobile-filter-modal w-100 h-100 d-flex flex-column overflow-y-auto position-relative">

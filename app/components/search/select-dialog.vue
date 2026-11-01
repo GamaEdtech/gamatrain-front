@@ -3,6 +3,7 @@
     v-model="dialogModel"
     max-width="440"
     :fullscreen="!mdAndUp"
+    :scroll-strategy="mdAndUp ? 'block' : 'none'"
     @click="clickOnOverlay"
   >
     <div
