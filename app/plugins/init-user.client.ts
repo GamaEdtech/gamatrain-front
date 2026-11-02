@@ -1,4 +1,10 @@
-export default defineNuxtPlugin(async () => {
+export default defineNuxtPlugin(async (nuxtApp) => {
+  // Hydration is done: the signed-in UI (useAuth's isAuthenticatedUi) can show now.
+  const appHydrated = useState('appHydrated', () => false)
+  nuxtApp.hook('app:suspense:resolve', () => {
+    appHydrated.value = true
+  })
+
   const { isAuthenticated } = useAuth()
   const { getProfile, setUser } = useUser()
 

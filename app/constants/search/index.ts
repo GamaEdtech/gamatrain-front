@@ -2,6 +2,15 @@ import type { GeneralSearchCategory, SearchServiceId, SearchServiceOption } from
 
 export const EDEXCEL_BOARD_CODE = 6657
 
+// Paper and Variant filters, shared by Search and the subject directory.
+export const PAPER_VARIANT_OPTIONS = [
+  { id: '7814', title: '1' },
+  { id: '7815', title: '2' },
+  { id: '7816', title: '3' },
+]
+export const getPaperOptionTitle = (item: { title?: string }): string => item.title?.match(/^\s*paper\s+(\d+)\s*$/i)?.[1] ?? item.title ?? ''
+export const getPaperOptionsPerRow = (boardCode: unknown) => Number(boardCode) === EDEXCEL_BOARD_CODE ? 2 : 4
+
 export const SEARCH_SERVICE_OPTIONS = [
   {
     id: 'paper',

@@ -64,6 +64,7 @@
         >
           <admin-dashboard-trend-chart
             :daily="overview?.daily ?? []"
+            :days="monthDays"
             :loading="loadingOverview"
           />
         </v-col>
@@ -123,7 +124,11 @@
           </v-btn>
         </div>
       </div>
-      <admin-dashboard-payment-chart @select-bar="selectBar" />
+      <!-- The whole month, unless the payments are filtered to other dates -->
+      <admin-dashboard-payment-chart
+        :days="isMonthPaymentRange ? monthDays : undefined"
+        @select-bar="selectBar"
+      />
       <admin-dashboard-payment-table />
     </v-card>
 
@@ -202,6 +207,11 @@ const range = computed<DashboardRange>(() => {
   const end = monthEnd.isAfter(dayjs()) ? dayjs() : monthEnd
   return { startDate: start.format('YYYY-MM-DD'), endDate: end.format('YYYY-MM-DD') }
 })
+// Every day of the selected month, for the charts' x-axis: the month keeps its shape and fills in day by day.
+const monthDays = computed(() => {
+  const start = dayjs(`${month.value}-01`)
+  return Array.from({ length: start.daysInMonth() }, (_, i) => start.add(i, 'day').format('YYYY-MM-DD'))
+})
 const monthLabel = computed(() => (month.value === dayjs().format('YYYY-MM') ? 'this month' : dayjs(`${month.value}-01`).format('MMMM YYYY')))
 const rangeLabel = computed(() => `${dayjs(range.value.startDate).format('D MMM')} – ${dayjs(range.value.endDate).format('D MMM YYYY')}`)
 
@@ -222,6 +232,9 @@ const paymentsRangeLabel = computed(() => {
     ? dayjs(startDate).format('D MMM YYYY')
     : `${dayjs(startDate).format('D MMM')} – ${dayjs(endDate).format('D MMM YYYY')}`
 })
+
+const isMonthPaymentRange = computed(() => paymentSummaryGetParams.startDate === range.value.startDate
+  && paymentSummaryGetParams.endDate === range.value.endDate)
 
 const isShowClearFilter = computed(() => (
   !!paymentSummaryGetParams.userId

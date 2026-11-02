@@ -20,7 +20,7 @@ interface IFollowButton {
 
 const props = defineProps<IFollowButton>()
 
-const { isAuthenticated } = useAuth()
+const { isAuthenticatedUi } = useAuth()
 // Set only once the profile request succeeds (init-user plugin or the login dialog), so it means the token is valid.
 const { user } = useUser()
 const router = useRouter()
@@ -32,9 +32,10 @@ const isOwnContent = computed(() => user.value?.coreId === authorId.value)
 const showButton = computed(() => hasAuthor.value && !isOwnContent.value)
 
 const isFollowing = ref(false)
-// The user is loaded on the client only, but the auth cookie is readable on the server, so a probably signed-in
-// viewer gets the loading state from the first render instead of a "follow" that flips to "unfollow".
-const checkingStatus = ref(isAuthenticated.value && hasAuthor.value)
+// The server render is shared by every visitor (useAuth's isAuthenticatedUi), so it never starts loading; after
+// hydration, or when the button first renders in the browser, a signed-in viewer starts in the loading state
+// instead of a "follow" that flips to "unfollow".
+const checkingStatus = ref(isAuthenticatedUi.value && hasAuthor.value)
 // A signed-out click opens the login dialog; the follow is finished once the login succeeds.
 const followAfterLogin = ref(false)
 let statusRequest = 0

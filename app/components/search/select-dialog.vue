@@ -3,6 +3,7 @@
     v-model="dialogModel"
     max-width="440"
     :fullscreen="!mdAndUp"
+    :scroll-strategy="mdAndUp ? 'block' : 'none'"
     @click="clickOnOverlay"
   >
     <div
@@ -466,7 +467,7 @@ const clickOnModal = (event) => {
 .select-dialog-search :deep(.v-field) {
   min-height: 44px;
   color: rgb(var(--v-theme-brandNavy));
-  background: rgb(var(--v-theme-white));
+  background: rgb(var(--v-theme-surface));
   border-radius: 12px !important;
   box-shadow: none;
 }

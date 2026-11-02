@@ -1,5 +1,10 @@
 <template>
-  <div :class="`d-flex flex-column align-center justify-space-between plan-card rounded-xl pa-3 pa-md-4 elevation-3 ${card.highlight ? `hightlight-card`:`simple-card`} ${card.action.disabled ? `disabled-card`:``}`">
+  <!-- A tap anywhere on the card does what its button does: people tapped the feature lines expecting that (Clarity
+       dead clicks). The button stays the control for keyboard and screen readers. -->
+  <div
+    :class="`d-flex flex-column align-center justify-space-between plan-card rounded-xl pa-3 pa-md-4 elevation-3 ${card.highlight ? `hightlight-card`:`simple-card`} ${card.action.disabled ? `disabled-card`:`selectable-card`}`"
+    @click="onCardClick"
+  >
     <div class="price-div w-100 d-flex flex-column aligh-start justify-start pa-3 pa-md-4 rounded-lg">
       <div class="d-flex align-center justify-space-between mb-2">
         <span class="text-h6 text-md-h4 font-weight-bold text-grey700">
@@ -391,6 +396,13 @@ const confirmUpgrade = async () => {
   }
 }
 
+const onCardClick = (event: MouseEvent) => {
+  // The button and links handle their own clicks; the open confirm dialog is teleported, but guard anyway.
+  if ((event.target as HTMLElement | null)?.closest('button, a, .v-overlay')) return
+  if (showConfirmUpgradeModal.value) return
+  selectPlan()
+}
+
 const selectPlan = async () => {
   if (card.value.action.disabled) return
 
@@ -452,6 +464,9 @@ const confirmResumeSubscription = async () => {
 }
 .plan-card:hover{
   background-color : rgb(var(--v-theme-grey100));
+}
+.selectable-card {
+  cursor: pointer;
 }
 .disabled-card{
   opacity: 0.6;

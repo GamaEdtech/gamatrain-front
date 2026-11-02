@@ -1,9 +1,10 @@
 import type { FilterConfiguration, FilterItem, SearchConditionalFilter, SearchServiceId, SearchServiceOptions } from '@/types/search'
-import { useBoardApi } from '@/composables/api/board/useBoard.api'
 import {
   ALL_SEARCH_MONTHS,
   DEFAULT_SEARCH_SERVICE,
-  EDEXCEL_BOARD_CODE,
+  getPaperOptionsPerRow,
+  getPaperOptionTitle,
+  PAPER_VARIANT_OPTIONS,
   SEARCH_BOARD_ICON_BY_TITLE,
   SEARCH_MONTHS_BY_LEVEL,
   SEARCH_SERVICE_OPTIONS,
@@ -13,7 +14,6 @@ export const useSearchFilters = ({
   activeService,
 }: SearchServiceOptions) => {
   const route = useRoute()
-  const { getBoards } = useBoardApi()
 
   const makeFilter = (overrides: Partial<FilterConfiguration> & Pick<FilterConfiguration, 'title' | 'queryKey'>): FilterConfiguration => ({
     selectedItem: null,
@@ -30,29 +30,12 @@ export const useSearchFilters = ({
     ...overrides,
   })
 
-  const enrichBoardsWithIcons = async (boards: FilterItem[]): Promise<FilterItem[]> => {
-    try {
-      const response = await getBoards()
-      const boardByCode = new Map(
-        (response.data || []).map(board => [String(board.code), board]),
-      )
-
-      return boards.map((board) => {
-        const v2Board = boardByCode.get(String(board.code))
-        return {
-          ...board,
-          apiIcon: v2Board?.icon || null,
-          icon: SEARCH_BOARD_ICON_BY_TITLE[v2Board?.title || board.title] || null,
-        }
-      })
-    }
-    catch {
-      return boards.map(board => ({
-        ...board,
-        icon: SEARCH_BOARD_ICON_BY_TITLE[board.title] || null,
-      }))
-    }
-  }
+  // v2 boards carry the API icon; the local SVG is picked by title.
+  const withBoardIcons = async (boards: FilterItem[]): Promise<FilterItem[]> => boards.map(board => ({
+    ...board,
+    apiIcon: board.icon || null,
+    icon: SEARCH_BOARD_ICON_BY_TITLE[board.title] || null,
+  }))
 
   return computed(() => {
     const service = activeService.value
@@ -83,11 +66,8 @@ export const useSearchFilters = ({
     const result = [
       makeFilter({
         title: 'Board',
-        api: '/api/v1/types/list',
-        extraApiParams: { type: 'section' },
-        itemTransform: item => ({ ...item, code: item.id }),
-        listTransform: enrichBoardsWithIcons,
-        itemSort: (a, b) => Number(a.list_order) - Number(b.list_order),
+        api: '/api/v2/boards',
+        listTransform: withBoardIcons,
         showItemIcon: true,
         iconSrc: item => `/images/boards/${item.icon}.svg`,
         fallbackIcon: 'md:school_outlined',
@@ -171,22 +151,12 @@ export const useSearchFilters = ({
         queryKey: 'test_type',
         inlineOptions: true,
         inlineAllowClear: true,
-        inlineItemsPerRow: filterState =>
-          Number(filterState[index.board]?.selectedItem?.code) === EDEXCEL_BOARD_CODE
-            ? 2
-            : 4,
-        itemTitle: (item) => {
-          const match = item.title?.match(/^\s*paper\s+(\d+)\s*$/i)
-          return match?.[1] ?? item.title
-        },
+        inlineItemsPerRow: filterState => getPaperOptionsPerRow(filterState[index.board]?.selectedItem?.code),
+        itemTitle: getPaperOptionTitle,
       }),
       'variant': () => makeFilter({
         title: 'Variant',
-        staticList: [
-          { id: '7814', title: '1' },
-          { id: '7815', title: '2' },
-          { id: '7816', title: '3' },
-        ],
+        staticList: PAPER_VARIANT_OPTIONS,
         queryKey: 'variant',
         inlineOptions: true,
         inlineAllowClear: true,

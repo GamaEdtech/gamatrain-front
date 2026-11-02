@@ -130,7 +130,16 @@
           md:format_list_bulleted
         </v-icon>
       </v-btn>
-      <lazy-common-box-random-question :lesson="contentData.lesson" />
+      <v-col
+        cols="12"
+        class="mt-6"
+      >
+        <lazy-common-practice-question
+          :lesson="contentData.lesson"
+          :topic="contentData.topic"
+          :subject="contentData.lesson_title?.trim()"
+        />
+      </v-col>
 
       <v-col cols="12">
         <lazy-common-related-content

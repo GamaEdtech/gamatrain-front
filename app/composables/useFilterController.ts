@@ -172,6 +172,7 @@ export const useFilterController = ({
   }
 
   const updateQueryFromFilters = async () => {
+    const serviceChange = pendingServiceChange
     const query: SearchQuery = { ...route.query }
     const filterQuery: SearchQuery = {}
     const titles: FilterTitles = {}
@@ -196,8 +197,11 @@ export const useFilterController = ({
     Object.assign(query, filterQuery)
 
     countFilterSelect.value = getActiveFilterCount(filterQuery)
+    // Paint the tapped tab or chip first: the URL change and results reload re-render most of the
+    // page, and running them in the same task kept the tap from showing (slow INP on phones).
+    await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve)))
     router.replace({ query })
-    onChangeFilter(query, titles, { serviceChange: pendingServiceChange })
+    onChangeFilter(query, titles, { serviceChange })
   }
 
   const updateSelectedItem = async (itemSelected: FilterItem | null, index: number) => {

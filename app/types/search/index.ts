@@ -3,10 +3,6 @@ import type { LocationQueryRaw } from 'vue-router'
 import type { SearchParameters } from '@/composables/useApiService'
 import type { ProfileListItemDTO } from '@/types/profile'
 
-export interface SearchRequestOptions {
-  public?: boolean
-}
-
 export interface SearchListDTO {
   num: number | string
   list: SearchResourceItem[]

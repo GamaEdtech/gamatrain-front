@@ -20,6 +20,8 @@ type UseFetchOptions = {
   pick?: string[]
   proxy?: boolean
   public?: boolean
+  // 'omit' for a shared, cacheable answer (search); otherwise the new backend gets cookies and gama-api doesn't.
+  credentials?: RequestCredentials
 }
 
 interface AuthHeaders {

@@ -80,6 +80,21 @@ export default defineNuxtConfig({
   // Development modules
   devtools: { enabled: true },
 
+  hooks: {
+    // The Solana wallet code (plugins/solana.client.ts) loads only on /get-token and /governance, yet every page
+    // prefetched it (~114 KB) and on a slow phone that competed with the page's own CSS. Don't prefetch it.
+    'build:manifest'(manifest) {
+      const seen = new Set()
+      const skipPrefetch = (key) => {
+        if (seen.has(key) || !manifest[key]) return
+        seen.add(key)
+        manifest[key].prefetch = false
+        manifest[key].imports?.forEach(skipPrefetch)
+      }
+      Object.keys(manifest).filter(key => /solana|wallet-adapter/.test(key)).forEach(skipPrefetch)
+    },
+  },
+
   // Global page headers
   app: {
     head: {
@@ -270,7 +285,10 @@ export default defineNuxtConfig({
 
             if (/\/node_modules\/(?:vue|vue-router|@vue)\//.test(normalizedId))
               return 'vendor'
-            if (normalizedId.includes('/node_modules/vuetify/'))
+            // Only Vuetify's shared core (framework, composables, utilities, base styles). Its components and
+            // their CSS stay with the pages that use them: with every component in this chunk, each page
+            // loaded all of them (387 KB JS) and a 502 KB render-blocking vuetify.css.
+            if (normalizedId.includes('/node_modules/vuetify/') && !/\/vuetify\/lib\/(?:components|labs)\//.test(normalizedId))
               return 'vuetify'
             if (/\/node_modules\/(?:vue-chartjs|chart\.js)\//.test(normalizedId))
               return 'charts'

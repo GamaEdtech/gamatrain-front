@@ -497,48 +497,20 @@ const approve = async () => {
   }
 }
 
-const buildPolishRejectCommentPrompt = () => {
-  return [
-    'You are a professional English writing editor for a school contribution rejection comment.',
-    'Polish the admin comment below.',
-    'Improve grammar, spelling, word choice, clarity, and professional tone.',
-    'Preserve the original meaning and intent exactly.',
-    'Do not add new facts, promises, links, timelines, policies, or technical details.',
-    'Remove or soften any rude, offensive, aggressive, or unprofessional wording while keeping the message clear.',
-    'Return plain text only.',
-    'Do not use Markdown.',
-    'Do not wrap the response in a fenced code block.',
-    '',
-    'Admin comment:',
-    commentReject.value.trim(),
-  ].join('\n')
-}
-
-const normalizeAiPlainTextResponse = (text: string) => {
-  return text
-    .trim()
-    .replace(/^```(?:text|txt)?\s*/i, '')
-    .replace(/\s*```$/i, '')
-    .trim()
-}
-
 const polishRejectCommentWithAi = async () => {
   if (!commentReject.value.trim())
     return
 
   try {
     loadingPolishComment.value = true
-    const response = await useApiService.post<{
-      response?: string
-    }>(
-      '/api/chatgpt',
-      {
-        userComment: buildPolishRejectCommentPrompt(),
-      },
+    // The backend holds the prompt and the AI key; it only polishes the admin's own text.
+    const response = await useApiService.post<ApiResult<string>>(
+      '/api/v2/admin/schools/contributions/reject-comment/ai-polish',
+      { comment: commentReject.value.trim() },
     )
 
-    if (response.response) {
-      commentReject.value = normalizeAiPlainTextResponse(response.response)
+    if (response.succeeded && response.data) {
+      commentReject.value = response.data
       $toast.success('Comment polished successfully!')
     }
     else {
