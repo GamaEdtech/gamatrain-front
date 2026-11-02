@@ -5,20 +5,12 @@
       status-code="disconnect"
     />
     <template v-else>
-      <div
-        v-if="isLoading"
-        class="w-100 h-100 position-fixed left-0 top-0 d-flex justify-center align-center custom-ovarlay"
-      >
-        <v-progress-circular
-          :model-value="progress"
-          color="#ffb300"
-          :size="80"
-          :width="8"
-          class="text-h4 font-weight-black"
-        >
-          {{ progress }}%
-        </v-progress-circular>
-      </div>
+      <!-- variant: "logo" (the Gama G fills up) or "bot" (the exam-analysis bot materialises from the feet up) -->
+      <common-page-loader
+        :active="isLoading"
+        :progress="progress"
+        variant="bot"
+      />
       <common-header :fixed="!isSearchExperience" />
       <main>
         <div>
@@ -121,10 +113,3 @@ const easeOutQuad = (t) => {
   return t * (2 - t)
 }
 </script>
-
-<style scoped>
-.custom-ovarlay {
-  background-color: #00000069;
-  z-index: 10001;
-}
-</style>

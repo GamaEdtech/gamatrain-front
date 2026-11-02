@@ -68,7 +68,8 @@ export interface DirectoryPaperQuery {
 }
 
 export interface DirectoryPaperResponse {
-  status: number | string
+  status?: number | string
+  succeeded?: boolean
   data: { list: DirectoryPaper[], num?: number | string | null }
 }
 

@@ -48,7 +48,9 @@ export const createDirectoryPaperList = (): DirectoryPaperList => ({
 
 // Add one API page to the list, skipping papers already shown and stopping at the total.
 export const appendDirectoryPapers = (list: DirectoryPaperList, response: DirectoryPaperResponse, pageSize: number) => {
-  if (Number(response?.status) !== 1 || !Array.isArray(response?.data?.list)) {
+  // gamatrain-back's cached proxy answers `succeeded`; gama-api itself answered `status: 1`.
+  const ok = response?.succeeded === true || Number(response?.status) === 1
+  if (!ok || !Array.isArray(response?.data?.list)) {
     throw new Error('Invalid directory response')
   }
   const page = response.data.list

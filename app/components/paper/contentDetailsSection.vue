@@ -1,134 +1,67 @@
 <template>
-  <div class="w-100 d-flex align-center justify-space-between">
-    <div class="ga-1 d-flex align-center">
-      <v-img
-        width="48"
-        height="48"
-        :src="contentData?.avatar"
-        class="rounded-circle"
-        alt="user profile"
-      />
-      <p class="text-h5 font-weight-bold">
-        {{ contentData?.first_name }} {{ contentData?.last_name }}
-      </p>
+  <v-card
+    rounded="lg"
+    border
+    elevation="0"
+    class="pa-4 pa-sm-5"
+  >
+    <div class="d-flex align-center justify-space-between flex-wrap ga-3">
+      <div class="d-flex align-center ga-3">
+        <v-avatar
+          :image="contentData?.avatar || '/images/member/avatar.svg'"
+          size="44"
+        />
+        <div class="text-h5 text-grey600">
+          Uploaded by <b class="text-grey900">{{ authorName }}</b>
+          <p class="text-h6 text-grey500">
+            <template v-if="contentData?.ownerIdentity">
+              {{ contentData.ownerIdentity }} ·
+            </template>
+            Updated {{ fromNowLocal(contentData?.up_date) }}
+          </p>
+        </div>
+      </div>
+      <common-follow-button :user-id="contentData?.user_" />
     </div>
-    <common-follow-button :user-id="contentData?.user_" />
-  </div>
-
-  <div
-    :class="`w-100 text-h5 mt-4 position-relative ${
-      seeCompleteDescription ? `open-description` : `close-description`
-    }`"
-  >
-    <div
-      ref="descriptionContent"
-      v-html="contentData?.description"
-    />
 
     <div
-      v-if="hasOverflow && !seeCompleteDescription"
-      class="blur-div position-absolute left-0 bottom-0 w-100"
-    />
-  </div>
-  <button
-    v-if="hasOverflow"
-    type="button"
-    class="w-100 pa-0 bg-transparent border-0 text-left cursor-pointer text-h5 d-flex align-center ga-1 mt-1"
-    :aria-expanded="seeCompleteDescription"
-    @click="seeCompleteDescription = !seeCompleteDescription"
-  >
-    <span class="text-info">{{ seeCompleteDescription ? `See Less` : `See More` }}</span>
-    <v-icon color="info">
-      {{ seeCompleteDescription ? 'md:keyboard_arrow_up' : 'md:keyboard_arrow_down' }}
-    </v-icon>
-  </button>
-
-  <div class="w-100 d-flex align-center justify-space-between mt-8">
-    <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
-      <v-icon
-        icon="md:segment_outlined"
-        class="detail-test-type-icon"
-        color="brandNavy"
-        size="22.5"
-        aria-hidden="true"
+      v-if="contentData?.description"
+      class="description text-h5 text-grey700 mt-4 position-relative"
+      :class="seeCompleteDescription ? 'description--open' : 'description--closed'"
+    >
+      <div
+        ref="descriptionContent"
+        v-html="contentData.description"
       />
-      {{ contentData?.test_type_title }}
-    </span>
-    <span class="text-h5 d-flex align-center primary-gray-600 ga-1">
-      <v-icon color="grey600">
-        md:update
+      <div
+        v-if="hasOverflow && !seeCompleteDescription"
+        class="blur-div position-absolute left-0 bottom-0 w-100"
+      />
+    </div>
+    <button
+      v-if="hasOverflow"
+      type="button"
+      class="pa-0 bg-transparent border-0 text-left cursor-pointer text-h5 d-flex align-center ga-1 mt-1"
+      :aria-expanded="seeCompleteDescription"
+      @click="seeCompleteDescription = !seeCompleteDescription"
+    >
+      <span class="text-info">{{ seeCompleteDescription ? 'Read less' : 'Read more' }}</span>
+      <v-icon color="info">
+        {{ seeCompleteDescription ? 'md:keyboard_arrow_up' : 'md:keyboard_arrow_down' }}
       </v-icon>
-      {{ fromNowLocal(contentData?.up_date) }}
-    </span>
-  </div>
-
-  <div class="w-100 d-flex flex-wrap ga-2 mt-3">
-    <v-chip
-      class="bg-primary-gray-100"
-      :small="mdAndDown"
-      :to="`/search?type=paper&section=${contentData?.section}`"
-      flat
-    >
-      <span class="primary-gray-500 text-h6 font-weight-bold">
-        {{ contentData?.section_title }}</span>
-    </v-chip>
-    <v-chip
-      class="bg-primary-gray-100"
-      flat
-      :small="mdAndDown"
-      :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}`"
-    >
-      <span class="primary-gray-500 text-h6 font-weight-bold">
-        {{ contentData?.base_title }}</span>
-    </v-chip>
-    <v-chip
-      class="bg-primary-gray-100"
-      flat
-      :small="mdAndDown"
-      :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
-    >
-      <span class="primary-gray-500 text-h6 font-weight-bold">
-        {{ contentData?.lesson_title }}</span>
-    </v-chip>
-    <v-chip
-      class="bg-primary-gray-100"
-      flat
-      :small="mdAndDown"
-    >
-      <span class="primary-gray-500 text-h6 font-weight-bold">
-        {{ contentData?.edu_month_title }}</span>
-    </v-chip>
-    <v-chip
-      :small="mdAndDown"
-      :to="`/search?type=paper&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}&edu_year=${contentData?.edu_year}`"
-      class="bg-primary-gray-100"
-      flat
-    >
-      <span class="primary-gray-500 text-h6 font-weight-bold">
-        {{ contentData?.edu_year }}</span>
-    </v-chip>
-  </div>
+    </button>
+  </v-card>
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from 'vuetify'
-
 interface IContentDetailsSection {
   avatar: string
   first_name: string
   last_name: string
   description: string
-  test_type_title?: string
   up_date: string
-  section: string
-  section_title: string
-  base: string
-  base_title: string
-  lesson: string
-  lesson_title: string
-  edu_month_title: string
-  edu_year: string
   user_: string
+  ownerIdentity?: string
 }
 
 const props = defineProps<{
@@ -136,12 +69,13 @@ const props = defineProps<{
 }>()
 
 const { fromNowLocal } = useDateTime()
-const { mdAndDown } = useDisplay()
+
+const authorName = computed(() => `${props.contentData?.first_name ?? ''} ${props.contentData?.last_name ?? ''}`.trim())
 
 const seeCompleteDescription = ref(false)
 const descriptionContent = ref<HTMLElement | null>(null)
 const hasOverflow = ref(false)
-const collapsedDescriptionHeight = 70
+const collapsedDescriptionHeight = 72
 let descriptionResizeObserver: ResizeObserver | null = null
 
 function updateDescriptionOverflow() {
@@ -173,24 +107,14 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.open-description {
-  height: unset;
-  min-height: 70px;
-  overflow: unset;
-}
-.close-description {
-  max-height: 70px;
+/* The collapsed height is set in CSS, so the server-rendered page already has it and nothing shifts on load. */
+.description--closed {
+  max-height: 72px;
   overflow: hidden;
 }
 .blur-div {
   height: 40px;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(var(--v-theme-background), 0) 0%, rgb(var(--v-theme-background)) 80%);
-}
-.detail-test-type-icon {
-  width: 22.5px;
-  height: 22.5px;
-  flex: 0 0 22.5px;
-  background: transparent;
+  background: linear-gradient(180deg, rgba(var(--v-theme-surface), 0) 0%, rgb(var(--v-theme-surface)) 80%);
 }
 </style>

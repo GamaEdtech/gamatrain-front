@@ -10,9 +10,9 @@
       >
         <span :class="`icon-title ${infoMap[`paper`].icon}`" />
       </div>
-      <h1 class="text-h4 font-weight-semibold primary-gray-700">
+      <h2 class="text-h4 font-weight-semibold primary-gray-700">
         Related Past Papers
-      </h1>
+      </h2>
     </div>
     <v-slide-group v-if="loading">
       <v-slide-group-item
@@ -80,9 +80,9 @@
       >
         <span :class="`icon-title ${infoMap[`multimedia`].icon}`" />
       </div>
-      <h1 class="text-h4 font-weight-semibold primary-gray-700">
+      <h2 class="text-h4 font-weight-semibold primary-gray-700">
         Related Multimedias
-      </h1>
+      </h2>
     </div>
     <v-slide-group v-if="loading">
       <v-slide-group-item
@@ -150,9 +150,9 @@
       >
         <span :class="`icon-title ${infoMap[`exam`].icon}`" />
       </div>
-      <h1 class="text-h4 font-weight-semibold primary-gray-700">
+      <h2 class="text-h4 font-weight-semibold primary-gray-700">
         Related Exams
-      </h1>
+      </h2>
     </div>
     <v-slide-group v-if="loading">
       <v-slide-group-item
@@ -220,9 +220,9 @@
       >
         <span :class="`icon-title ${infoMap[`tutorial`].icon}`" />
       </div>
-      <h1 class="text-h4 font-weight-semibold primary-gray-700">
+      <h2 class="text-h4 font-weight-semibold primary-gray-700">
         Related Tutorials
-      </h1>
+      </h2>
     </div>
     <div
       v-if="loading"
