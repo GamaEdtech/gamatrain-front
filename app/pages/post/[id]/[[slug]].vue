@@ -148,6 +148,7 @@
         <div
           id="post-describe"
           v-safe-html="contentData.body"
+          :class="`${isDark ? `dark-post`:``}`"
         />
       </v-col>
       <v-col
@@ -213,6 +214,7 @@
 import { useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 
+const { isDark } = useThemeMode()
 const { $toast, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 const { formatLocal } = useDateTime()
 const route = useRoute()
@@ -493,6 +495,22 @@ onMounted(() => {
 #main-post-div table{
   width: 100%;
 }
+#post-describe figure.table {
+  display: block;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-inline: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+#post-describe figure.table > table {
+  width: 100% !important;
+  min-width: 600px;
+  border-collapse: collapse;
+}
 
 .main-post-img {
   height: auto;
@@ -578,7 +596,12 @@ onMounted(() => {
     max-width: 100%;
   }
 }
-
+.dark-post{
+  filter : invert(1);
+  img {
+    filter : invert(1);
+  }
+}
 @media (min-width: 960px) {
   #main-post-div {
     margin-top: 6.4rem;
