@@ -1,8 +1,9 @@
 <template>
   <v-container class="d-flex flex-column align-center mt-16 px-2">
     <PostListFeatured
+      v-if="isLoadingFeatured || featuredPosts.length > 0"
       :posts="featuredPosts"
-      :loading="isLoadingInitial"
+      :loading="isLoadingFeatured"
     />
 
     <PostListFilters
@@ -72,7 +73,7 @@ const page = ref(initialPage)
 const firstLoadedPage = ref(initialPage)
 const lastLoadedPage = ref(initialPage)
 const isAllDataLoaded = ref(false)
-const isLoadingInitial = ref(true)
+const isLoadingFeatured = ref(true)
 const isLoadingCategories = ref(true)
 const isLoadingFilters = ref(false)
 const isLoadingPreviousPage = ref(false)
@@ -106,23 +107,17 @@ const updatePosts = (items: PostDTO[], mode: UpdateMode) => {
   else posts.value = [...posts.value, ...items]
 
   if (mode !== 'prepend') isAllDataLoaded.value = items.length < PAGE_SIZE
-  if (mode === 'reset') featuredPosts.value = items.slice(0, 6)
 }
 
 const fetchPosts = async (pageNumber: number, mode: UpdateMode): Promise<FetchResult> => {
   const version = filtersVersion
 
-  try {
-    const response = await getPosts(getParams(pageNumber))
-    if (version !== filtersVersion) return 'stale'
-    if (!response.succeeded) return 'error'
+  const response = await getPosts(getParams(pageNumber))
+  if (version !== filtersVersion) return 'stale'
+  if (!response.succeeded) return 'error'
 
-    updatePosts(response.data?.list ?? [], mode)
-    return 'ok'
-  }
-  finally {
-    isLoadingInitial.value = false
-  }
+  updatePosts(response.data?.list ?? [], mode)
+  return 'ok'
 }
 
 const updateQuery = async () => {
@@ -158,7 +153,6 @@ const applyFilters = async () => {
   firstLoadedPage.value = 1
   lastLoadedPage.value = 1
   posts.value = []
-  featuredPosts.value = []
   isAllDataLoaded.value = false
   await updateQuery()
   await reloadPosts(1)
@@ -222,16 +216,24 @@ const loadNextPage = async ({ done }: InfiniteScrollLoadOptions) => {
   done(isAllDataLoaded.value ? 'empty' : 'ok')
 }
 
-const [{ data: initialPosts }, { data: categoryResponse }] = await Promise.all([
-  useAsyncData(`post-list-${initialPage}`, () => getPosts(getParams(initialPage))),
+const [{ data: featuredResponse }, { data: initialPosts }, { data: categoryResponse }] = await Promise.all([
+  useAsyncData('post-featured', () => getPosts({ page: 1, pageSize: 6, isFeatured: true })),
+  useAsyncData(
+    `post-list-${initialPage}-${filters.title}-${filters.tagId}`,
+    () => getPosts(getParams(initialPage)),
+  ),
   useAsyncData('post-list-categories', () => getCategories()),
 ])
+console.log(featuredResponse.value)
+if (featuredResponse.value?.succeeded) {
+  featuredPosts.value = featuredResponse.value.data?.list ?? []
+}
 
 if (initialPosts.value?.succeeded) updatePosts(initialPosts.value.data?.list ?? [], 'reset')
 else loadError.value = true
 
 if (categoryResponse.value?.succeeded) categories.value = categoryResponse.value.data ?? []
-isLoadingInitial.value = false
+isLoadingFeatured.value = false
 isLoadingCategories.value = false
 
 onBeforeUnmount(() => {

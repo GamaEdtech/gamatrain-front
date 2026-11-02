@@ -19,6 +19,7 @@ export const usePostList = () => {
           'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
           'Title': params.title || null,
           'TagId': params.tagId || null,
+          'IsFeatured': params.isFeatured ?? null,
         },
       )
 

@@ -8,6 +8,7 @@ export interface PostDTO {
   imageUri: string
   visibilityType: string
   publishDate: string
+  isFeatured: boolean
 }
 
 export interface GetPostListParams {
@@ -15,6 +16,7 @@ export interface GetPostListParams {
   pageSize: number
   title?: string
   tagId?: number
+  isFeatured?: boolean
 }
 export interface PostUserDTO {
   id: number
