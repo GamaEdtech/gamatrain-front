@@ -93,9 +93,7 @@
           :key="item"
         >
           <v-skeleton-loader
-            :width="xs ? 280 : 350"
-            :height="xs ? 160 : 200"
-            class="mr-3 rounded-lg"
+            class="mobile-feature-skeleton mr-3 rounded-lg"
           />
         </v-slide-group-item>
       </template>
@@ -107,8 +105,7 @@
           <v-card
             flat
             rounded="lg"
-            :width="xs ? 280 : 350"
-            class="mr-3"
+            class="mobile-feature-card mr-3"
             :to="contentPath('post', post.id, post.slug)"
           >
             <v-img
@@ -143,7 +140,7 @@ const props = defineProps<{
   loading: boolean
 }>()
 
-const { xs, mdAndUp } = useDisplay()
+const { mdAndUp } = useDisplay()
 
 const AUTO_CYCLE_DELAY = 5000
 const selectedIndex = ref(0)
@@ -194,9 +191,32 @@ const imageUrl = (url: string) => url.replace(/^http:\/\//, 'https://')
 const truncate = (text: string, length: number) => text.length > length ? `${text.slice(0, length)}...` : text
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
+.mobile-feature-skeleton {
+  width: 350px;
+  height: 200px;
+}
+
+.mobile-feature-card {
+  width: 350px;
+}
+
 .background-title{
   background-color: rgba(var(--v-theme-grey700),0.6);
   backdrop-filter: blur(10px);
+}
+
+@media #{map.get(vuetify.$display-breakpoints, 'xs')} {
+  .mobile-feature-skeleton,
+  .mobile-feature-card {
+    width: 280px;
+  }
+
+  .mobile-feature-skeleton {
+    height: 160px;
+  }
 }
 </style>

@@ -101,10 +101,27 @@ const getParams = (pageNumber: number): GetPostListParams => ({
   tagId: filters.tagId || undefined,
 })
 
+const uniquePostsById = (items: PostDTO[]) => {
+  const seenIds = new Set<number>()
+
+  return items.filter((item) => {
+    if (seenIds.has(item.id)) return false
+
+    seenIds.add(item.id)
+    return true
+  })
+}
+
 const updatePosts = (items: PostDTO[], mode: UpdateMode) => {
-  if (mode === 'reset') posts.value = items
-  else if (mode === 'prepend') posts.value = [...items, ...posts.value]
-  else posts.value = [...posts.value, ...items]
+  if (mode === 'reset') {
+    posts.value = uniquePostsById(items)
+  }
+  else if (mode === 'prepend') {
+    posts.value = uniquePostsById([...items, ...posts.value])
+  }
+  else {
+    posts.value = uniquePostsById([...posts.value, ...items])
+  }
 
   if (mode !== 'prepend') isAllDataLoaded.value = items.length < PAGE_SIZE
 }
@@ -147,14 +164,18 @@ const reloadPosts = async (pageNumber = firstLoadedPage.value) => {
   postList.value?.reset()
 }
 
-const applyFilters = async () => {
+const applyFilters = async (syncQuery = true) => {
   filtersVersion++
   page.value = 1
   firstLoadedPage.value = 1
   lastLoadedPage.value = 1
   posts.value = []
   isAllDataLoaded.value = false
-  await updateQuery()
+
+  if (syncQuery) {
+    await updateQuery()
+  }
+
   await reloadPosts(1)
 }
 
@@ -171,6 +192,27 @@ const handleTagChanged = (value: number) => {
   if (inputTimer) clearTimeout(inputTimer)
   applyFilters()
 }
+
+watch(
+  () => [route.query.keyword, route.query.cat],
+  async ([keyword, category]) => {
+    const title = queryString(keyword)
+    const tagId = queryNumber(category, 0)
+
+    // Query changes made by this page already match the local state and must
+    // not start a second request.
+    if (title === filters.title && tagId === filters.tagId) return
+
+    if (inputTimer) {
+      clearTimeout(inputTimer)
+      inputTimer = null
+    }
+
+    filters.title = title
+    filters.tagId = tagId
+    await applyFilters(false)
+  },
+)
 
 const loadPreviousPage = async () => {
   if (firstLoadedPage.value <= 1 || isLoadingPreviousPage.value || isLoadingNextPage.value) return

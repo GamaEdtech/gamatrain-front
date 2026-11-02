@@ -7,18 +7,15 @@
       <v-card
         flat
         :to="contentPath('post', post.id, post.slug)"
-        class="h-100 rounded-lg ma-auto bg-transparent"
+        class="post-card rounded-lg ma-auto bg-transparent"
         :hover="false"
       >
         <div class="d-flex flex-column flex-sm-row ga-4">
           <v-img
             :src="imageUrl(post.imageUri)"
             :alt="post.title"
-            :max-width="xs ? 240 : 180"
-            :width="xs ? 240 : 180"
-            :height="xs ? 160 : 135"
             cover
-            class="rounded-lg"
+            class="post-image rounded-lg"
           >
             <template #default>
               <div class="d-flex d-sm-none h-100 align-end">
@@ -38,7 +35,7 @@
             </p>
           </div>
           <p class="d-block d-sm-none text-h6 font-weight-medium text-grey600 mb-0">
-            {{ summary }}
+            {{ mobileSummary }}
             <span class="text-primary font-weight-bold">Read more</span>
           </p>
         </div>
@@ -63,11 +60,9 @@
         {{ formatLocal(post.publishDate, 'YYYY') }}
       </span>
       <v-sheet
-        :width="xs ? 52 : 62"
-        :height="xs ? 52 : 62"
         color="grey100"
         rounded="lg"
-        class="d-flex flex-column align-center justify-center date-container"
+        class="post-date d-flex flex-column align-center justify-center date-container"
       >
         <span class="text-h6 text-sm-h5 font-weight-bold text-grey900">
           {{ formatLocal(post.publishDate, 'DD') }}
@@ -83,7 +78,6 @@
 <script setup lang="ts">
 import { contentPath } from '@/utils/contentPath'
 import type { PostDTO } from '@/types'
-import { useDisplay } from 'vuetify'
 
 const props = defineProps<{
   post: PostDTO
@@ -91,16 +85,36 @@ const props = defineProps<{
 }>()
 
 const { formatLocal } = useDateTime()
-const { xs } = useDisplay()
-const summary = computed(() => {
-  const text = props.post.summary.replace(/<[^>]*>/g, '')
-  return text.length > 150 ? `${text.slice(0, xs.value ? 100 : 150)}...` : text
-})
+const plainSummary = computed(() => props.post.summary.replace(/<[^>]*>/g, ''))
+const truncateSummary = (length: number) => plainSummary.value.length > length
+  ? `${plainSummary.value.slice(0, length)}...`
+  : plainSummary.value
+const summary = computed(() => truncateSummary(150))
+const mobileSummary = computed(() => truncateSummary(100))
 
 const imageUrl = (url: string) => url.replace(/^http:\/\//, 'https://')
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
+.post-card {
+  width: 100%;
+}
+
+.post-image {
+  flex: 0 0 180px;
+  width: 180px;
+  max-width: 180px;
+  height: 135px;
+}
+
+.post-date {
+  width: 62px;
+  height: 62px;
+}
+
 .background-title{
   background-color: rgba(var(--v-theme-grey700),0.6);
   backdrop-filter: blur(10px);
@@ -110,5 +124,22 @@ const imageUrl = (url: string) => url.replace(/^http:\/\//, 'https://')
 }
 .divider-position{
   right : 50%
+}
+
+@media #{map.get(vuetify.$display-breakpoints, 'xs')} {
+  .post-card {
+    width: 240px;
+  }
+
+  .post-image {
+    width: 240px;
+    max-width: 240px;
+    height: 160px;
+  }
+
+  .post-date {
+    width: 52px;
+    height: 52px;
+  }
 }
 </style>
