@@ -9,6 +9,13 @@ export interface PostDTO {
   visibilityType: string
   publishDate: string
 }
+
+export interface GetPostListParams {
+  page: number
+  pageSize: number
+  title?: string
+  tagId?: number
+}
 export interface PostUserDTO {
   id: number
   title: string
