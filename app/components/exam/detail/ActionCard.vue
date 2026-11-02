@@ -75,8 +75,7 @@
         @click="handleExportClick(format.fileType)"
       />
 
-      <div class="d-flex justify-space-between ga-2 text-h6 text-grey600 py-2">
-        <span>Your plan's limit is used first, then Gems.</span>
+      <div class="d-flex justify-end ga-2 text-h6 text-grey600 py-2">
         <nuxt-link
           to="/user/subscription"
           class="font-weight-bold text-generalSearchQuiz text-no-wrap"

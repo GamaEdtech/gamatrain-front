@@ -130,16 +130,32 @@
           Retry
         </v-btn>
       </div>
+      <!-- Older years load on their own as this comes near the screen; the button is the fallback. -->
       <div
         v-else-if="list.loaded && list.hasMore"
-        class="d-flex justify-center py-4"
+        ref="loadMoreArea"
+        class="directory-load-more-area d-flex align-center justify-center py-4"
       >
+        <!-- While loading, just a spinner and a line: a button with a spinner inside looked broken. -->
+        <div
+          v-if="list.loading"
+          class="d-flex align-center ga-3 text-grey600"
+          role="status"
+        >
+          <v-progress-circular
+            indeterminate
+            size="20"
+            width="2"
+            color="primary"
+          />
+          <span>Loading older papers…</span>
+        </div>
         <v-btn
+          v-else
           variant="outlined"
           color="brandNavy"
           rounded="lg"
           class="directory-load-more text-none"
-          :loading="list.loading"
           @click="loadMore"
         >
           Load older papers
@@ -187,7 +203,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, useId } from 'vue'
+import { reactive, ref, useId } from 'vue'
 import type { PropType } from 'vue'
 import type { DirectorySelection } from '~/types/subject-directory'
 
@@ -206,6 +222,13 @@ const {
 } = await useDirectoryPapers(props)
 
 const downloads = reactive(useDirectoryPaperDownloads())
+
+// Users saw only the newest two years and had to find "Load older papers"; the rest now follows as they scroll.
+const loadMoreArea = ref<HTMLElement | null>(null)
+useAutoLoadMore(loadMoreArea, {
+  canLoad: () => list.loaded && list.hasMore && !list.loading && !list.error,
+  load: loadMore,
+})
 </script>
 
 <style scoped>
@@ -261,6 +284,10 @@ const downloads = reactive(useDirectoryPaperDownloads())
 }
 
 /* px size: the app's 10px root font size makes Vuetify's rem-based button text too small */
+/* Same height for the spinner and the button, so nothing moves when one replaces the other. */
+.directory-load-more-area {
+  min-height: 76px;
+}
 .directory-load-more {
   font-size: 14px;
   letter-spacing: normal;

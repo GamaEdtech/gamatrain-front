@@ -4,6 +4,7 @@
     class="exam-details d-flex flex-column mt-16 pb-0"
   >
     <lazy-widgets-breadcrumb
+      flush
       background-color="transparent"
       :breads="breads"
     />
@@ -179,6 +180,10 @@
 
 <script setup lang="ts">
 import type { ExamUserDataExamDetaiDTO } from '@/types'
+
+// The page's own Download / Start quiz bar takes the bottom of the screen on a phone; the site menu under it
+// doubled the bars (about 140px) with links a reader doesn't need here.
+definePageMeta({ hideBottomNav: true })
 
 interface BreadCrumb {
   text: string

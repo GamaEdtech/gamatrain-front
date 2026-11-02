@@ -23,13 +23,19 @@ export interface PastPaperDTO {
   lesson_pic: string | null
   description: string
   views: number
+  /** How many times the paper's files were downloaded (the API sends a numeric string). */
+  downloads?: string | number
   ref_score: number
   q_file_pages?: string
+  /** The uploader's handle, e.g. "@name". */
+  ownerIdentity?: string
   edu_year: string
   edu_month: string
   section: string
   base: string
   lesson: string
+  /** Empty for most papers. */
+  topic?: string
   exams: {
     id: string
     status: string

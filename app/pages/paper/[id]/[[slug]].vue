@@ -1,144 +1,166 @@
 <template>
   <v-container
     v-if="contentData"
-    class="d-flex flex-column mt-16"
+    class="paper-details d-flex flex-column mt-16 pb-0"
   >
-    <v-row>
-      <lazy-widgets-breadcrumb
-        background-color="transparent"
-        :breads="breads"
-      />
-    </v-row>
-    <v-row>
-      <v-col
-        cols="12"
-        class="d-flex align-center ga-1"
-      >
-        <v-icon color="primary">
-          md:chevron_backward
-        </v-icon>
-        <h1 class="text-h4 font-weight-bold">
+    <widgets-breadcrumb
+      flush
+      background-color="transparent"
+      :breads="breads"
+    />
+
+    <header class="mt-2">
+      <div class="d-flex align-start ga-2">
+        <h1 class="gama-text-h2 text-brandNavy">
           {{ contentData.title }}
         </h1>
-        <v-icon color="primary">
-          md:chevron_forward
-        </v-icon>
-
         <v-btn
-          v-if="
-            isAuthenticatedUi
-              && user
-              && contentData.user_
-              && Number(contentData.user_) === user?.coreId
-          "
+          v-if="isOwner"
           color="info"
-          class="rounded-circle"
-          size="24"
+          class="rounded-circle flex-shrink-0 mt-1"
+          size="28"
           flat
           variant="tonal"
+          aria-label="Edit title and description"
           @click="openEditModal = true"
         >
           <v-icon size="16">
             md:edit
           </v-icon>
         </v-btn>
-      </v-col>
-      <v-col
-        cols="12"
-        md="4"
-        class="d-flex justify-center justify-md-start"
-      >
-        <lazy-paper-preview-action-card
+      </div>
+
+      <div class="d-flex flex-wrap ga-2 mt-4">
+        <v-chip
+          v-for="chip in chips"
+          :key="chip.text"
+          :to="chip.to"
+          :color="chip.color"
+          variant="tonal"
+          class="text-h6 font-weight-bold"
+        >
+          {{ chip.text }}
+        </v-chip>
+      </div>
+
+      <ul class="paper-stats d-none d-md-flex flex-wrap ga-6 mt-4 pa-0 text-h5 text-grey600">
+        <li
+          v-for="stat in stats"
+          :key="stat.label"
+          class="d-flex align-center ga-1"
+        >
+          <v-icon
+            size="18"
+            :color="stat.iconColor ?? 'grey600'"
+            aria-hidden="true"
+          >
+            {{ stat.icon }}
+          </v-icon>
+          <b class="text-grey900">{{ stat.value }}</b> {{ stat.label }}
+        </li>
+      </ul>
+    </header>
+
+    <!-- Phones read: title, the paper with its facts, the download card, about. Parts below the fold are
+         server-rendered but hydrate only when scrolled into view, which keeps the main thread free during load. -->
+    <div class="paper-layout mt-6">
+      <aside class="paper-preview">
+        <paper-preview-action-card
           :id="contentData.id"
           :thumb-pic="contentData.thumb_pic"
           :title="contentData.title"
           :alt="pageTitle"
           :files="contentData.files"
-          :views="contentData.views"
-          :score="contentData.ref_score"
           :q-file-pages="contentData.q_file_pages"
-          @share="openShare = true"
-        />
-      </v-col>
+        >
+          <ul class="paper-stats paper-stats--compact d-md-none pa-0 text-h6 text-grey600">
+            <li
+              v-for="stat in stats"
+              :key="stat.label"
+            >
+              <b :class="stat.iconColor ? 'text-primary' : 'text-grey900'">{{ stat.value }}</b> {{ stat.label }}
+            </li>
+          </ul>
+        </paper-preview-action-card>
+      </aside>
 
-      <v-col
-        cols="12"
-        md="8"
-        class="d-flex h-100 align-start flex-wrap"
-      >
-        <lazy-paper-content-details-section :content-data="contentData" />
-
-        <lazy-paper-answer-availability-notice
-          v-if="
-            (contentData.answer_type === '1' || contentData.answer_type === '2')
-              && !contentData.files?.answer?.exist
-          "
-        />
-
-        <lazy-paper-download-and-purchase-buttons
+      <div class="paper-main d-flex flex-column ga-5">
+        <paper-action-card
           :id="contentData.id"
-          :files="contentData.files"
-          :year="contentData.edu_year"
           :title="contentData.title"
           :title-url="contentData.title_url"
-          :section="contentData.section"
-          :base="contentData.base"
-          :lesson="contentData.lesson"
-          :exams="contentData.exams"
-          :test-type="contentData.test_type"
+          :files="contentData.files"
           :is-paper="contentData.is_paper"
+          :q-file-pages="contentData.q_file_pages"
+          :online-exam-id="onlineExamId"
+          :answers-in-file="answersInFile"
+          @share="openShare = true"
+          @report="openCrashReport = true"
         />
-        <!-- A real link, unlike Begin Quiz: it is how crawlers reach the paper's online test. -->
+
+        <!-- A real link, unlike Start quiz: it is how crawlers reach the paper's online test. -->
         <nuxt-link
           v-if="onlineExamId"
           :to="contentPath('exam', onlineExamId)"
-          class="w-100 text-h5 text-primary font-weight-semibold mt-3"
+          class="text-h6 text-generalSearchQuiz font-weight-semibold"
         >
           Take this {{ contentData.is_paper ? 'past paper' : 'question set' }} as an online test, with your score and the correct answers
         </nuxt-link>
-        <div class="paper-subject-directory w-100">
-          <lazy-common-detail-subject-directory-nav :content-data="contentData" />
-        </div>
-      </v-col>
 
-      <lazy-common-box-random-question :lesson="contentData.lesson" />
-
-      <v-col cols="12">
-        <lazy-common-related-content
-          :id="contentData.id"
-          source="test"
-          :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+        <lazy-paper-content-details-section
+          hydrate-on-visible
+          :content-data="contentData"
         />
-      </v-col>
 
-      <v-col
-        cols="12"
-        class="mt-6"
-      >
-        <span
-          class="d-flex align-center ga-1 text-h5 cursor-pointer text-lightError"
-          @click="openCrashReport = true"
-        >
-          <v-icon
-            color="lightError"
-            class="mb-1"
-          >md:warning_outlined</v-icon>
-          Crash report
-        </span>
-      </v-col>
+        <lazy-common-detail-subject-directory-nav
+          hydrate-on-visible
+          :content-data="contentData"
+        />
+      </div>
+    </div>
 
+    <lazy-common-practice-question
+      hydrate-on-visible
+      class="mt-10"
+      :lesson="contentData.lesson"
+      :topic="contentData.topic"
+      :subject="contentData.lesson_title?.trim()"
+      :exam-id="onlineExamId"
+    />
+
+    <div class="mt-6 mx-n4">
+      <lazy-common-related-content
+        :id="contentData.id"
+        source="test"
+        :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+      />
+    </div>
+
+    <p class="text-h6 text-grey500 mt-8">
+      Spotted a mistake?
+      <a
+        href="#"
+        class="text-decoration-underline text-grey600"
+        @click.prevent="openCrashReport = true"
+      >Report a problem with this paper</a>
+    </p>
+
+    <!-- The ad's space is kept before it loads, so it doesn't push the page when it arrives. -->
+    <div class="paper-ad text-center mt-8">
       <ClientOnly>
-        <v-col
-          cols="12"
-          class="text-center mt-10"
-        >
-          <lazy-common-ad-banner
-            v-model="isAdsLoad"
-            adslot="7199289937"
-          />
-        </v-col>
+        <lazy-common-ad-banner
+          v-model="isAdsLoad"
+          adslot="7199289937"
+        />
       </ClientOnly>
-    </v-row>
+    </div>
+
+    <exam-detail-mobile-action-bar
+      :id="onlineExamId ?? ''"
+      :can-start="!!onlineExamId"
+      :has-finished="false"
+      downloads-id="paper-downloads"
+    />
 
     <lazy-common-modal-base
       v-model:show-dialog="openCrashReport"
@@ -177,6 +199,10 @@
 <script setup lang="ts">
 import type { ApiResult, PastPaperDTO } from '@/types'
 
+// The page's own Download / Start quiz bar takes the bottom of the screen on a phone; the site menu under it
+// doubled the bars (about 140px) with links a reader doesn't need here.
+definePageMeta({ hideBottomNav: true })
+
 interface BreadCrumb {
   text: string
   disabled: boolean
@@ -202,12 +228,14 @@ const { data: contentData } = await useAsyncData(
   `paper-${route.params.id}`,
   async () => {
     try {
+      // gama-api's tests/{id} through gamatrain-back, which caches it (Redis, then Cloudflare). Anonymous on purpose, so
+      // one cached copy suits everyone.
       const response = (await useApiService.get(
-        `/api/v1/tests/${route.params.id}`,
+        `/api/v2/search/papers/${route.params.id}`,
         undefined,
         {
           public: true,
-          proxy: true,
+          credentials: 'omit',
         },
       )) as ApiResult<PastPaperDTO>
 
@@ -234,6 +262,50 @@ const { url: canonicalUrl } = await useCanonicalContentPath('paper', contentData
 
 // The published online test made from this paper, if there is one.
 const onlineExamId = computed(() => contentData.value?.exams?.find(exam => exam.status == '1')?.id)
+
+const isOwner = computed(() =>
+  Boolean(isAuthenticatedUi.value && user.value && contentData.value?.user_
+    && Number(contentData.value.user_) === user.value.coreId),
+)
+
+// The answers are in the question file itself (answer type 1/2 with no separate answer file).
+const answersInFile = computed(() =>
+  ['1', '2'].includes(String(contentData.value?.answer_type)) && !contentData.value?.files?.answer?.exist,
+)
+
+// Board, grade, subject and year link to the matching paper search; the session and paper type are labels.
+const chips = computed(() => {
+  const dto = contentData.value
+  if (!dto) return []
+  const search = `/search?type=paper&section=${dto.section}`
+  return [
+    { text: dto.section_title, to: search, color: 'brandNavy' },
+    { text: dto.base_title, to: `${search}&base=${dto.base}`, color: 'brandNavy' },
+    { text: dto.lesson_title, to: `${search}&base=${dto.base}&lesson=${dto.lesson}`, color: 'brandNavy' },
+    { text: dto.edu_year, to: `${search}&base=${dto.base}&lesson=${dto.lesson}&edu_year=${dto.edu_year}`, color: 'brandNavy' },
+    { text: dto.edu_month_title, to: undefined, color: 'primary' },
+    { text: dto.test_type_title, to: undefined, color: 'generalSearchQuiz' },
+  ]
+    .map(chip => ({ ...chip, text: String(chip.text ?? '').trim() }))
+    .filter(chip => chip.text && chip.text !== '0')
+})
+
+const formatCount = (value: unknown) => {
+  const count = Number(value)
+  return Number.isFinite(count) && count > 0 ? count.toLocaleString('en-US') : ''
+}
+
+// Plain facts, not buttons: they used to look clickable and drew dead clicks.
+const stats = computed(() => {
+  const dto = contentData.value
+  if (!dto) return []
+  return [
+    { label: 'pages', value: formatCount(dto.q_file_pages), icon: 'md:description' },
+    { label: 'views', value: formatCount(dto.views), icon: 'md:visibility' },
+    { label: 'downloads', value: formatCount(dto.downloads), icon: 'md:download' },
+    { label: 'rating', value: Number(dto.ref_score) ? Number(dto.ref_score).toFixed(1) : '', icon: 'md:star', iconColor: 'primary' },
+  ].filter(stat => stat.value)
+})
 
 const schema = computed(() => {
   if (!contentData.value) return null
@@ -404,8 +476,35 @@ const editSuccessfully = (data: {
 }
 </script>
 
-<style scoped>
-.paper-subject-directory {
-  margin-top: 16px;
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
+.paper-details {
+  max-width: 1232px;
+}
+.paper-stats {
+  list-style: none;
+}
+.paper-stats--compact {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 16px;
+}
+.paper-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+.paper-ad {
+  min-height: 100px;
+}
+@media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
+  .paper-layout {
+    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+  }
 }
 </style>

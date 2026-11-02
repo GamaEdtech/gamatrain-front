@@ -8,6 +8,10 @@ import type { DirectoryPaperQuery, DirectoryPaperResponse, DirectoryResourceGrou
 // Requests for the subject directory. Board, grade and subject lists are cached
 // once per app instance (one per server request, one in the browser), so the URL
 // resolver and the picker don't load the same list twice.
+// The paper lists are the same for every visitor and cached by gamatrain-back and Cloudflare, so no token or cookie is
+// sent: one cached copy then suits everyone, and the endpoint's any-origin CORS answer is valid without credentials.
+const publicRequest = { public: true, credentials: 'omit' } as const
+
 export const useSubjectDirectoryApi = () => {
   const nuxtApp = useNuxtApp() as ReturnType<typeof useNuxtApp> & { _directoryOptionLists?: Map<string, Promise<unknown[]>> }
   const lists = nuxtApp._directoryOptionLists ??= new Map<string, Promise<unknown[]>>()
@@ -35,13 +39,14 @@ export const useSubjectDirectoryApi = () => {
   const getSubjects = (gradeId: string) => getList<SubjectDTO>(`subjects:${gradeId}`, () =>
     useApiService.get<ApiResult<SubjectDTO[]>>('/api/v1/types/list/', { type: 'lesson', base_id: gradeId }, { public: true }))
 
+  // gama-api's tests/search through gamatrain-back, which caches it (Redis, then Cloudflare): it took 1.4-2.2s uncached.
   const fetchPapers = (params: DirectoryPaperQuery & { page: number, perpage: number }) => nuxtApp.runWithContext(() =>
-    useApiService.get<DirectoryPaperResponse>('/api/v1/tests/search', { ...params, is_paper: true, directory: true }, { public: true }))
+    useApiService.get<DirectoryPaperResponse>('/api/v2/search/papers', { ...params, is_paper: true, directory: true }, publicRequest))
 
   const fetchResources = (subjectId: string | number) =>
-    useApiService.get<{ data?: { list?: DirectoryResourceGroup[] } }>('/api/v1/tests/search', {
+    useApiService.get<{ data?: { list?: DirectoryResourceGroup[] } }>('/api/v2/search/papers', {
       is_paper: false, directory: true, lesson: subjectId,
-    }, { public: true })
+    }, publicRequest)
 
   return { getBoards, getGrades, getSubjects, fetchPapers, fetchResources }
 }
