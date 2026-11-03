@@ -175,7 +175,7 @@ const actionButtons = computed(() => {
   border: 1px solid rgb(var(--v-theme-primary50));
   min-height: unset;
   max-width: unset;
-  box-shadow: 2px 6px 24px 0px #1018280D;
+  box-shadow: 2px 6px 24px rgba(var(--v-theme-shadowNeutral), 0.12);
   text-decoration: none;
 }
 

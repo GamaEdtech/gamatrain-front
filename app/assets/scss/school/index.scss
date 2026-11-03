@@ -6,7 +6,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  background-color: #f2f4f7;
+  background-color: rgb(var(--v-theme-grey100));
   position: relative;
   @include style.responsive-size(
     height,
@@ -36,10 +36,10 @@
     left: 50%;
     transform: translate(-50%, -50%);
     z-index: 400;
-    background-color: rgb(255, 255, 255);
+    background-color: rgb(var(--v-theme-surface));
     border-radius: 10%;
     padding: 12px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 15px rgba(var(--v-theme-shadowNeutral), 0.18);
     display: flex;
     align-items: center;
     justify-content: center;

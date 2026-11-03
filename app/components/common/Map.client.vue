@@ -1,11 +1,11 @@
 <template>
   <div
     ref="mapElement"
+    class="bg-grey100"
     :style="{
       height: '100%',
       width: '100%',
       borderRadius: borderRadius + 'px',
-      backgroundColor: '#f2f4f7',
     }"
   />
 </template>
@@ -428,9 +428,9 @@ defineExpose({
 
 <style scoped>
 .custom-tooltip {
-  background-color: white;
-  color: black;
-  border: 1px solid #333;
+  background-color: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-grey900));
+  border: 1px solid rgb(var(--v-theme-borderStrong));
   border-radius: 4px;
   padding: 2px 6px;
   font-size: 18px;

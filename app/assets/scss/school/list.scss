@@ -10,7 +10,7 @@
     align-items: center;
     flex: 1 1 auto;
     overflow-y: auto;
-    @include style.responsive-size(background-color, #f2f4f7, white, white, white);
+    @include style.responsive-size(background-color, rgb(var(--v-theme-grey100)), rgb(var(--v-theme-surface)), rgb(var(--v-theme-surface)), rgb(var(--v-theme-surface)));
 
     .container-list-div {
         width: 100%;
@@ -55,7 +55,7 @@
         justify-content: center;
         margin-bottom: 10px;
         z-index: 3;
-        @include style.responsive-size(background-color, #f2f4f7, white, white, white);
+        @include style.responsive-size(background-color, rgb(var(--v-theme-grey100)), rgb(var(--v-theme-surface)), rgb(var(--v-theme-surface)), rgb(var(--v-theme-surface)));
     }
 }
 
