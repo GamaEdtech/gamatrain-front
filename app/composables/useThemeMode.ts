@@ -10,9 +10,10 @@ export const isThemeSwitchEnabled = () => {
   return import.meta.dev || flag === true || flag === 'true'
 }
 
+// No default value: a default makes the server send `Set-Cookie: theme=light` to every new visitor, and Cloudflare
+// doesn't cache a response that sets a cookie. No cookie means light; it's written only when the user picks a theme.
 export const useThemeCookie = () =>
-  useCookie<ThemeName>(THEME_COOKIE_NAME, {
-    default: () => 'light',
+  useCookie<ThemeName | undefined>(THEME_COOKIE_NAME, {
     maxAge: ONE_YEAR_IN_SECONDS,
     sameSite: 'lax',
   })

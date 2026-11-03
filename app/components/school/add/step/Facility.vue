@@ -45,7 +45,7 @@
                 size="x-large"
                 :color="selectedTags.includes(tag.id) ? 'grey200' : 'grey700'"
               >
-                {{ "md:" + tag.icon }}
+                mdfull:{{ tag.icon }}
               </v-icon>
             </v-btn>
             <span class="font-weight-bold text-h5 text-grey900">{{
@@ -339,6 +339,6 @@ const cancel = () => {
   background-color: rgb(var(--v-theme-grey200));
 }
 .upload-overlay {
-  background-color: rgba(var(--v-theme-inverseSurfaceStrong), 0.55);
+  background-color: rgba(var(--v-theme-inverseSurfaceStrong), 0.4);
 }
 </style>

@@ -184,14 +184,14 @@ onMounted(() => {
   setDefaultSortToRoute()
   const footer = document.getElementById('footer-container')
   if (footer) {
-    footer.style.display = 'none !important'
+    footer.style.setProperty('display', 'none', 'important')
   }
 })
 
 onUnmounted(() => {
   const footer = document.getElementById('footer-container')
   if (footer) {
-    footer.style.display = 'flex !important'
+    footer.style.removeProperty('display')
   }
 })
 

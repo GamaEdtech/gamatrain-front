@@ -182,7 +182,7 @@ const actionButtons = computed(() => {
   min-height: 260px;
   max-width: 320px;
   min-width : 300px;
-  box-shadow: 2px 6px 24px rgba(var(--v-theme-shadowNeutral), 0.12);
+  box-shadow: 2px 6px 24px rgba(var(--v-theme-shadowNeutral), 0.06);
   text-decoration: none;
 }
 
@@ -202,5 +202,17 @@ const actionButtons = computed(() => {
 .bottom-section {
   background-color: rgb(var(--v-theme-grey50));
   z-index: 2;
+}
+/* Dark: grey50 is darker than the list, so the card looked sunken. Lift it instead. */
+.v-theme--dark .card-school,
+.v-theme--dark .bottom-section {
+  background-color: rgb(var(--v-theme-surfaceTertiary));
+}
+.v-theme--dark .name-address-image {
+  background-color: rgba(var(--v-theme-surfaceTertiary), 0.95);
+}
+.v-theme--dark .card-school,
+.v-theme--dark .name-address-image {
+  border-color: rgb(var(--v-theme-borderSubtle));
 }
 </style>

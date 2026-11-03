@@ -45,13 +45,10 @@
       <v-btn
         color="primary"
         size="x-large"
-        class="text-white button-search rounded-e-pill"
+        class="button-search rounded-e-pill"
         min-width="50"
       >
-        <v-icon
-          color="#ffffff"
-          size="20"
-        >
+        <v-icon size="20">
           md:search
         </v-icon>
       </v-btn>
