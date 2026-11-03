@@ -5,11 +5,11 @@
     </h1>
 
     <img
-      :src="errorInfo[statusCode].image ?? `/images/error/error-500.webp`"
+      :src="image"
       :alt="errorInfo[statusCode].title.toString() ?? '500'"
-      height="300"
-      width="300"
-      class="w-100 max-width-img"
+      width="328"
+      height="266"
+      class="w-100 h-auto max-width-img"
     >
 
     <span class="text-h4 font-weight-bold text-grey700 mt-8 text-center"> {{ errorInfo[statusCode].subtitle ?? 'There was a problem on our side!' }}</span>
@@ -79,30 +79,37 @@ const hasPrimaryAction = computed(() => canRetry.value || !!listing.value)
 const errorInfo = {
   500: {
     title: 500,
-    image: '/images/error/error-500.webp',
+    image: '/images/error/error-500.svg',
     subtitle: 'There was a problem on our side!',
   },
   404: {
     title: 404,
-    image: '/images/error/error-404.webp',
+    image: '/images/error/error-404.svg',
     subtitle: 'Page not found!',
   },
   403: {
     title: 403,
-    image: '/images/error/error-403.webp',
+    image: '/images/error/error-403.svg',
     subtitle: 'You do not have access to this page!',
   },
   401: {
     title: 401,
-    image: '/images/error/error-403.webp',
+    image: '/images/error/error-403.svg',
     subtitle: 'You are not authenticated. Please log in to continue.',
   },
   disconnect: {
     title: 'Disconnect',
-    image: '/images/error/error-disconnect.webp',
+    image: '/images/error/error-disconnect.svg',
     subtitle: 'First check the internet',
   },
 }
+
+// Each illustration has a dark-theme copy next to it (`-dark` suffix).
+const { isDark } = useThemeMode()
+const image = computed(() => {
+  const src = errorInfo[props.statusCode]?.image ?? '/images/error/error-500.svg'
+  return isDark.value ? src.replace('.svg', '-dark.svg') : src
+})
 </script>
 
 <style scoped>
