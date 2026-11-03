@@ -13,7 +13,7 @@
     <v-skeleton-loader
       width="80"
       height="14"
-      class="rounded-lg mt-2"
+      class="rounded-lg mt-2 mb-3"
     />
   </div>
 </template>

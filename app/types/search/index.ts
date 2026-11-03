@@ -18,6 +18,16 @@ export interface SearchTypesStatsDTO {
 
 export type SearchCountService = 'paper' | 'study-materials' | 'quizhub' | 'tutorial'
 
+/** The home page's counts in one answer (`search/homestats`); a count the backend couldn't fetch is missing. */
+export interface HomeStatsDTO {
+  paper?: number
+  studyMaterials?: number
+  exam?: number
+  tutorial?: number
+  teacher?: number
+  school?: number
+}
+
 export type SearchServiceCounts = Partial<Record<SearchCountService, number>>
 
 export type SearchServiceId = 'paper' | 'study-materials' | 'quizhub' | 'tutorial' | 'teacher' | 'multimedia' | 'forum'

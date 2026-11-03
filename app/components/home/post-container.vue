@@ -7,7 +7,7 @@
     <v-container class="d-flex flex-column align-center justify-center">
       <div class="w-100 d-flex align-center justify-space-between">
         <h2 class="text-h3 text-grey700 font-weight-bold">
-          Post
+          Guides &amp; Insights
         </h2>
         <v-btn
           variant="outlined"
@@ -19,7 +19,7 @@
           height="36"
           class="text-h5 d-none d-md-flex font-weight-bold"
         >
-          Go to posts
+          See all
         </v-btn>
         <router-link
           to="/post"
@@ -38,7 +38,7 @@
             v-for="(i, index) in 10"
             :key="index"
           >
-            <lazy-post-card-skeleton />
+            <post-card-skeleton />
           </v-slide-group-item>
         </v-slide-group>
       </div>
@@ -52,7 +52,7 @@
             v-for="(item, index) in slideItems"
             :key="index"
           >
-            <lazy-post-card :data="item" />
+            <post-card :data="item" />
           </v-slide-group-item>
         </v-slide-group>
       </div>
@@ -67,30 +67,22 @@ import type {
   PostDTO,
 } from '@/types'
 
-const slideItems = ref<PostDTO[]>([])
-const isLoading = ref(true)
 const route = useRoute()
 
-const loadPost = async () => {
-  isLoading.value = true
-  try {
-    const response = await useApiService.get<ApiResult<ResponseListDTO<PostDTO>>>('/api/v2/posts/random', {
-      Size: 10,
-    },
-    { public: true })
-    if (response.data && response.succeeded) {
-      slideItems.value = response.data.list
-    }
-  }
-  catch (err) {
-    console.error(err)
-  }
-  finally {
-    isLoading.value = false
-  }
-}
-
-loadPost()
+// Fetched while the server renders, so the cards are in the HTML from the first paint (no skeleton swap that moves
+// the page, and crawlers see the links). On a client-side visit the skeleton shows until they arrive.
+const { data: slideItems, pending: isLoading } = useLazyAsyncData(
+  'home-posts',
+  async () => {
+    const response = await useApiService.get<ApiResult<ResponseListDTO<PostDTO>>>(
+      '/api/v2/posts/random',
+      { Size: 10 },
+      { public: true },
+    )
+    return response.succeeded ? response.data?.list ?? [] : []
+  },
+  { default: () => [] as PostDTO[] },
+)
 </script>
 
 <style scoped>
