@@ -5,17 +5,10 @@ import { defineNuxtConfig } from 'nuxt/config'
 import glsl from 'vite-plugin-glsl'
 
 // Public content pages render the same for everyone (the auth token lives in localStorage), so Cloudflare can keep
-// them for a day and refresh in the background. Only Cloudflare reads these headers: browsers and Vercel still
+// them for a day and refresh in the background. Only Cloudflare reads this header: browsers and Vercel still
 // revalidate on every request. Most Googlebot hits are on these pages, and each miss is a Vercel render.
-// Cache-Tag: a deploy purges only the 'app' pages (.github/workflows/purge-cloudflare-cache.yml). 'content' pages
-// stay cached across deploys; Vercel Skew Protection keeps the older JS files they load available.
-const edgeCached = {
-  headers: {
-    'Cloudflare-CDN-Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800',
-    'Cache-Tag': 'content',
-  },
-}
-const notEdgeCached = { headers: { 'Cloudflare-CDN-Cache-Control': 'no-store', 'Cache-Tag': 'app' } }
+const edgeCached = { headers: { 'Cloudflare-CDN-Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800' } }
+const notEdgeCached = { headers: { 'Cloudflare-CDN-Cache-Control': 'no-store' } }
 
 export default defineNuxtConfig({
   runtimeConfig: {
@@ -269,7 +262,6 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    '/**': { headers: { 'Cache-Tag': 'app' } },
     // Rendered in the browser only, so a `noindex` meta tag never reaches a crawler: send it as a header.
     '/test-maker/**': { ssr: false, prerender: true, headers: { 'X-Robots-Tag': 'noindex, nofollow' } },
     '/user/**': { ssr: false },
