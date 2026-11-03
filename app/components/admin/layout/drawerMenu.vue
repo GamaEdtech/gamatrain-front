@@ -3,7 +3,7 @@
     v-model="drawerModel"
     :temporary="mdAndDown"
     expand-on-hover
-    class="bg-grey800"
+    class="bg-inverseSurfaceStrong"
   >
     <v-list
       v-model:opened="openedGroups"
@@ -156,7 +156,7 @@
           >
             <span
               v-if="user"
-              class="text-h5 text-grey800"
+              class="text-h5 text-inverseSurfaceStrong"
             >{{
               user?.firstName ? user.firstName[0].toUpperCase() : "A"
             }}</span>
@@ -168,7 +168,7 @@
             >
               {{ !user.firstName && !user.lastName ? `Admin` : (user.firstName ? user.firstName : "") + " "+ (user.lastName ? user.lastName : "") }}
             </span>
-            <span class="text-h6 text-grey400">
+            <span class="text-h6 text-onInverseSurfaceMuted">
               Admin@Gamatrain
             </span>
           </div>
@@ -406,17 +406,18 @@ const closeNavigation = () => {
   width: 16px !important;
 }
 
+/* The drawer is dark in both themes, so the row states are white overlays rather than greys that flip. */
 :deep(.main-list .v-list-item--active){
-  background-color: rgb(var(--v-theme-grey500));
+  background-color: rgba(var(--v-theme-white), 0.24);
 }
 :deep(.main-list .v-list-item:hover) {
-  background-color: rgb(var(--v-theme-grey400)) !important;
+  background-color: rgba(var(--v-theme-white), 0.16) !important;
 }
 .text-item-height {
   line-height: 26px !important;
 }
 .custom-list-item {
-  background-color: rgb(var(--v-theme-grey500));
+  background-color: rgba(var(--v-theme-white), 0.24);
 }
 .name-user-span{
   max-width : 150px;

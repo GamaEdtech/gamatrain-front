@@ -337,14 +337,16 @@ const changeEditor = (event) => {
 }
 :deep(.ck.ck-editor__main > .ck-editor__editable) {
     border-radius: 0 0 8px 8px !important;
-    border : 1px solid rgb(var(--v-theme-grey200)) !important;
+    border : 1px solid rgb(var(--v-theme-grey400)) !important;
     min-height : 300px;
+    background-color: rgb(var(--v-theme-surface)) !important;
+    color :  rgb(var(--v-theme-brandNavy)) ;
 }
 :deep(.ck.ck-editor__top) {
   border-radius: 8px 8px 0 0 !important;
-  border : 1px solid rgb(var(--v-theme-grey200)) !important
+  border : 1px solid rgb(var(--v-theme-grey400)) !important;
 }
 :deep(.ck.ck-editor__top .ck-sticky-panel .ck-sticky-panel__content){
-  border: none !important
+  border: none !important;
 }
 </style>

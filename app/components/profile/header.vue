@@ -4,7 +4,7 @@
   >
     <div class="top-section-header w-100 d-flex bg-grey900 position-relative d-flex align-center justify-center">
       <img
-        src="/images/gamatrain-logo.svg"
+        :src="isDark ? `/images/gamatrain-logo-black.svg`:`/images/gamatrain-logo.svg`"
         alt="GamaTrain"
         class="logo-gamatrain"
         width="150"
@@ -28,7 +28,7 @@
           >
           <div :class="`status-div rounded-circle position-absolute bg-${getOnlineStatus(data.onlineStatus).nameColor}`" />
           <div
-            :class="`bio-div position-absolute text-caption text-sm-subtitle-1 rounded-lg border-solid border-sm border-grey100 pa-1 ${isEditable ? 'cursor-pointer' : ''} ${data.currentStatusSentence ? `text-grey700 font-weight-medium` : `text-grey400 font-weight-regular`}`"
+            :class="`bio-div bg-grey100 position-absolute text-caption text-sm-subtitle-1 rounded-lg border-solid border-sm border-grey200 pa-1 ${isEditable ? 'cursor-pointer' : ''} ${data.currentStatusSentence ? `text-grey700 font-weight-medium` : `text-grey400 font-weight-regular`}`"
             @click="isEditable && emit('editStatus')"
           >
             {{ data.currentStatusSentence ? data.currentStatusSentence : 'Add note ...' }}
@@ -204,6 +204,8 @@ const props = defineProps<IProfileHeader>()
 const emit = defineEmits(['editBio', 'editPrivacy', 'editPersonal', 'editStatus'])
 
 const theme = useTheme()
+const { isDark } = useThemeMode()
+
 const userOnlineStatus = {
   NewUser: {
     text: 'New here',
@@ -269,7 +271,7 @@ const getDisplayName = () => {
   height : 160px;
   margin-top : -96px;
   border : 4px solid transparent;
-  background : linear-gradient(180deg,rgb(var(--v-theme-grey900)) 50%, rgb(var(--v-theme-white)) 50%) padding-box,
+  background : linear-gradient(180deg,rgb(var(--v-theme-grey900)) 50%, rgb(var(--v-theme-grey50)) 50%) padding-box,
   linear-gradient(to right, rgb(var(--v-theme-grey700)) ,rgb(var(--v-theme-primary))) border-box
 }
 .profile-img{
@@ -297,7 +299,7 @@ const getDisplayName = () => {
   left: -10px;
   max-width : 160px;
   bottom : 105%;
-  background-color : rgb(var(--v-theme-white))
+  background-color : rgb(var(--v-theme-surface))
 }
 @media (max-width: 960px) {
   .top-section-header {

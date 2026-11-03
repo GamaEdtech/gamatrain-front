@@ -2,7 +2,7 @@
   <!-- Stays pinned to the bottom of the viewport so Publish/Update is always reachable on a long post. -->
   <v-col
     cols="12"
-    class="form-actions position-sticky bottom-0 d-flex justify-center align-center ga-2 mt-4 py-3 bg-white border-t"
+    class="form-actions position-sticky bottom-0 d-flex justify-center align-center ga-2 mt-4 py-3 bg-grey100 border-t"
     :class="{ 'form-actions--above-nav': aboveMobileNav }"
   >
     <slot />

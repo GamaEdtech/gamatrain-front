@@ -34,10 +34,10 @@
             variant="outlined"
             autocomplete="off"
             persistent-clear
-            base-color="grey200"
+            base-color="grey400"
             color="primary"
             active-color="primary"
-            bg-color="white"
+            bg-color="transparent"
             class="w-100"
           >
             <template #append-inner>
@@ -89,10 +89,10 @@
             variant="outlined"
             autocomplete="off"
             persistent-clear
-            base-color="grey200"
+            base-color="grey400"
             color="primary"
             active-color="primary"
-            bg-color="white"
+            bg-color="transparent"
             class="w-100"
             no-resize
             rows="10"
@@ -161,7 +161,7 @@
               }))"
               rounded="xl"
               density="compact"
-              base-color="grey200"
+              base-color="grey400"
               color="primary"
               :defalut-lable="false"
               :clearable="false"
@@ -188,7 +188,7 @@
               }))"
               rounded="xl"
               density="compact"
-              base-color="grey200"
+              base-color="grey400"
               color="primary"
               :defalut-lable="false"
               :clearable="false"
@@ -215,7 +215,7 @@
               }))"
               rounded="xl"
               density="compact"
-              base-color="grey200"
+              base-color="grey400"
               color="primary"
               :defalut-lable="false"
               :clearable="false"
@@ -267,10 +267,10 @@
                   variant="outlined"
                   autocomplete="off"
                   persistent-clear
-                  base-color="grey200"
+                  base-color="grey400"
                   color="primary"
                   active-color="primary"
-                  bg-color="white"
+                  bg-color="transparent"
                   class="w-100"
                 >
                   <template #prepend-inner>
@@ -293,7 +293,7 @@
           </div>
         </div>
 
-        <div class="bg-grey50 rounded-lg pa-4 d-flex align-center justify-center">
+        <div class="bg-grey100 rounded-lg pa-4 d-flex align-center justify-center">
           <user-posts-tag-list
             v-model:categories="post.categories"
             :rules="[arrayNotEmpty]"
@@ -301,14 +301,14 @@
           />
         </div>
 
-        <div class="bg-grey50 rounded-lg pa-4 d-flex align-center justify-center">
+        <div class="bg-grey100 rounded-lg pa-4 d-flex align-center justify-center">
           <user-posts-keyword-list
             v-model:keywords="post.keywords"
             :loading="loadingGetPost"
           />
         </div>
 
-        <div class="bg-grey50 rounded-lg pa-4 d-flex align-center justify-center">
+        <div class="bg-grey100 rounded-lg pa-4 d-flex align-center justify-center">
           <user-posts-image-selector
             v-model:image="post.image"
             :rules="[required]"
@@ -316,7 +316,7 @@
           />
         </div>
 
-        <div class="bg-grey50 rounded-lg pa-4 d-flex align-center justify-center">
+        <div class="bg-grey100 rounded-lg pa-4 d-flex align-center justify-center">
           <user-posts-podcast-selector
             v-model:podcast="post.podcast"
             :loading="loadingGetPost"

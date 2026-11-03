@@ -12,14 +12,14 @@
       variant="outlined"
       autocomplete="off"
       persistent-clear
-      base-color="grey200"
+      base-color="grey400"
       color="primary"
       active-color="primary"
-      bg-color="white"
+      bg-color="transparent"
       class="w-100 mt-2"
     />
     <div
-      class="container-items bg-white rounded-lg overflow-y-auto w-100 pa-2 mt-3 d-flex flex-column"
+      class="container-items bg-grey200 rounded-lg overflow-y-auto w-100 pa-2 mt-3 d-flex flex-column"
       :class="{ 'items-disabled': disabled }"
     >
       <template v-if="loadingGetData || loadingValue">

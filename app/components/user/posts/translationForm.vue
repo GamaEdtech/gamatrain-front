@@ -33,8 +33,9 @@
           title: item.name + ',' + item.code,
         }))"
         rounded="lg"
-        base-color="grey200"
+        base-color="grey400"
         color="primary"
+        bg-color="transparent"
         :data-loading="loadingLanguages"
         :defalut-lable="false"
         :clearable="false"
@@ -69,10 +70,10 @@
         variant="outlined"
         autocomplete="off"
         persistent-clear
-        base-color="grey200"
+        base-color="grey400"
         color="primary"
         active-color="primary"
-        bg-color="white"
+        bg-color="transparent"
         class="w-100"
         @update:model-value="emitUpdate"
       />
@@ -105,10 +106,10 @@
         variant="outlined"
         autocomplete="off"
         persistent-clear
-        base-color="grey200"
+        base-color="grey400"
         color="primary"
         active-color="primary"
-        bg-color="white"
+        bg-color="transparent"
         class="w-100"
         no-resize
         rows="10"

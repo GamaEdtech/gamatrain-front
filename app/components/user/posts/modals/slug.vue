@@ -6,7 +6,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex flex-column overflow-y-auto bg-white pa-6 rounded-xl mobile-style"
+      class="w-100 d-flex flex-column overflow-y-auto bg-surface pa-6 rounded-xl mobile-style"
       @click="clickOnModal"
     >
       <v-row class="d-flex align-center">
@@ -36,10 +36,10 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
+          base-color="grey400"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="transparent"
           class="w-100 mt-2"
           @update:model-value="onSlugUpdate"
         >

@@ -1,7 +1,7 @@
 <template>
   <NuxtLink
     :to="`/profile/${teacher.handle}`"
-    class="w-100 h-100 d-flex flex-column ga-4 pa-4 bg-white rounded-lg text-decoration-none teacher-card"
+    class="w-100 h-100 d-flex flex-column ga-4 pa-4 bg-surface rounded-lg text-decoration-none teacher-card"
   >
     <div class="d-flex align-start ga-3">
       <div class="teacher-avatar-holder rounded-circle position-relative d-flex align-center justify-center flex-shrink-0">
@@ -139,7 +139,7 @@ const onlineStatus = computed(() => {
   height: 84px;
   border: 2px solid transparent;
   background:
-    linear-gradient(rgb(var(--v-theme-white)), rgb(var(--v-theme-white))) padding-box,
+    linear-gradient(rgb(var(--v-theme-surface)), rgb(var(--v-theme-surface))) padding-box,
     linear-gradient(to right, rgb(var(--v-theme-grey700)), rgb(var(--v-theme-primary))) border-box;
 }
 
@@ -154,7 +154,7 @@ const onlineStatus = computed(() => {
   height: 14px;
   right: 7px;
   top: 10px;
-  border: 2px solid rgb(var(--v-theme-white));
+  border: 2px solid rgb(var(--v-theme-surface));
 }
 
 .teacher-name {

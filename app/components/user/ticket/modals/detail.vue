@@ -2,7 +2,7 @@
   <div class="w-100 d-flex flex-column ticket-detail mt-2">
     <template v-if="loadingDetail">
       <div
-        class="w-100 d-flex flex-column align-start justify-start ga-3 bg-grey100 rounded-lg pa-4"
+        class="w-100 d-flex flex-column align-start justify-start ga-3 bg-grey200 rounded-lg pa-4"
       >
         <div class="w-100 d-flex align-center justify-space-between ga-2 flex-wrap">
           <v-skeleton-loader
@@ -46,7 +46,7 @@
     <template v-else>
       <div
         v-if="ticketDetail"
-        class="w-100 d-flex flex-column align-start justify-start ga-3 bg-grey100 rounded-lg pa-4"
+        class="w-100 d-flex flex-column align-start justify-start ga-3 bg-grey200 rounded-lg pa-4"
       >
         <div class="w-100 d-flex align-center justify-space-between ga-2 flex-wrap">
           <span class="text-h5 text-sm-h4 text-grey800 font-weight-bold">
@@ -103,7 +103,7 @@
           :key="i"
           :class="`w-100 d-flex ${i % 2 == 0 ? 'justify-end' : 'justify-start'}`"
         >
-          <div :class="`reply-bubble rounded-lg d-flex flex-column ga-2 pa-3 ${i % 2 == 0 ? 'bg-primary50' : 'bg-grey100'}`">
+          <div :class="`reply-bubble rounded-lg d-flex flex-column ga-2 pa-3 ${i % 2 == 0 ? 'bg-primary50' : 'bg-grey200'}`">
             <div class="d-flex align-center justify-space-between ga-3 flex-wrap">
               <v-skeleton-loader
                 width="140"
@@ -154,7 +154,7 @@
           :key="reply.id"
           :class="`w-100 d-flex ${isUserReply(reply) ? 'justify-end' : 'justify-start'}`"
         >
-          <div :class="`reply-bubble rounded-lg d-flex flex-column ga-2 pa-3 ${isUserReply(reply) ? 'bg-primary50' : 'bg-grey100'}`">
+          <div :class="`reply-bubble rounded-lg d-flex flex-column ga-2 pa-3 ${isUserReply(reply) ? 'bg-primary50' : 'bg-grey200'}`">
             <div class="d-flex align-center justify-space-between ga-3 flex-wrap">
               <span class="text-h6 text-grey700 font-weight-bold">
                 {{ isUserReply(reply) ? reply.creationUser || 'You' : 'Support team' }}
@@ -195,10 +195,10 @@
         v-model="isReplyFormValid"
         class="w-100 mt-5"
       >
-        <div class="reply-composer rounded-lg bg-white">
+        <div class="reply-composer rounded-lg bg-transparent">
           <div
             v-if="selectedFile"
-            class="d-flex justify-space-between align-center pa-2 ma-2 rounded-lg bg-grey100"
+            class="d-flex justify-space-between align-center pa-2 ma-2 rounded-lg bg-grey200"
           >
             <div class="d-flex align-center ga-3 w-75">
               <v-img
@@ -469,7 +469,7 @@ onMounted(async () => {
   word-break: break-word;
 }
 .reply-composer {
-  border: 1px solid rgb(var(--v-theme-grey200));
+  border: 1px solid rgb(var(--v-theme-grey400));
 }
 @media screen and (max-width: 600px) {
   .reply-bubble {

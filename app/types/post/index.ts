@@ -8,6 +8,15 @@ export interface PostDTO {
   imageUri: string
   visibilityType: string
   publishDate: string
+  isFeatured: boolean
+}
+
+export interface GetPostListParams {
+  page: number
+  pageSize: number
+  title?: string
+  tagId?: number
+  isFeatured?: boolean
 }
 export interface PostUserDTO {
   id: number
@@ -175,6 +184,7 @@ export interface AdminPostDTO {
   creationUser: string
   creationDate: string
   title: string
+  isFeatured: boolean
 }
 
 export interface AdminPostLocalizedValueDTO {

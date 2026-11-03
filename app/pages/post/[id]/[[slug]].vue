@@ -147,7 +147,7 @@
       >
         <div
           id="post-describe"
-          v-safe-html="contentData.body"
+          v-safe-html="bodyHtml"
         />
       </v-col>
       <v-col
@@ -213,6 +213,7 @@
 import { useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 
+const { isDark } = useThemeMode()
 const { $toast, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 const { formatLocal } = useDateTime()
 const route = useRoute()
@@ -251,6 +252,12 @@ if (!contentData.value) {
     fatal: true,
   })
 }
+
+// Posts carry inline colours written for a white page; the dark theme flips their lightness (utils/darkHtmlColors.ts).
+// Cleaned first so the style attributes are in the sanitizer's normal form (v-safe-html still cleans the result).
+const bodyHtml = computed(() => isDark.value
+  ? darkHtmlColors(sanitizeUserHtml(contentData.value?.body))
+  : contentData.value?.body)
 
 // The post API doesn't echo the id back, so the route's is normalised: "/post/0126" is post 126.
 const { path: canonicalPath, url: canonicalUrl } = await useCanonicalContentPath('post', Number(postId), contentData.value.slug)
@@ -481,6 +488,12 @@ const typesetMathInSpecificContainer = async (containerRef) => {
 onMounted(() => {
   typesetMathInSpecificContainer(postContentRef)
 })
+
+// The theme switch swaps the body HTML, which drops the rendered formulas.
+watch(isDark, async () => {
+  await nextTick()
+  typesetMathInSpecificContainer(postContentRef)
+})
 </script>
 
 <style>
@@ -492,6 +505,22 @@ onMounted(() => {
 
 #main-post-div table{
   width: 100%;
+}
+#post-describe figure.table {
+  display: block;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  margin-inline: 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+#post-describe figure.table > table {
+  width: 100% !important;
+  min-width: 600px;
+  border-collapse: collapse;
 }
 
 .main-post-img {
@@ -553,7 +582,7 @@ onMounted(() => {
   }
 
   p {
-    color: rgba(36, 41, 47, 0.8);
+    color: rgba(var(--v-theme-grey900), 0.8);
     font-family: Inter;
     font-size: 1.4rem !important;
     font-style: normal;
@@ -563,7 +592,7 @@ onMounted(() => {
   }
 
   ul {
-    color: rgba(36, 41, 47, 0.8);
+    color: rgba(var(--v-theme-grey900), 0.8);
     font-family: Inter;
     font-size: 1.4rem;
     font-style: normal;
@@ -578,7 +607,6 @@ onMounted(() => {
     max-width: 100%;
   }
 }
-
 @media (min-width: 960px) {
   #main-post-div {
     margin-top: 6.4rem;

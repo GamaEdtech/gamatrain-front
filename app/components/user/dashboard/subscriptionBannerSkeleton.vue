@@ -52,7 +52,6 @@
 .dashboard-card {
   border-radius: 1rem;
   border: 1px solid rgb(var(--v-theme-grey200));
-  background: rgb(var(--v-theme-white));
 }
 
 .min-width-0 {

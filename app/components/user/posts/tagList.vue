@@ -26,13 +26,13 @@
       variant="outlined"
       autocomplete="off"
       persistent-clear
-      base-color="grey200"
+      base-color="grey400"
       color="primary"
       active-color="primary"
-      bg-color="white"
+      bg-color="transparent"
       class="w-100 mt-2"
     />
-    <div class="container-tag-list bg-white rounded-lg overflow-y-auto w-100 pa-2 mt-3 d-flex flex-column">
+    <div class="container-tag-list bg-grey200 rounded-lg overflow-y-auto w-100 pa-2 mt-3 d-flex flex-column">
       <template v-if="loadingGetData || loadingValue">
         <div
           v-for="i in 10"

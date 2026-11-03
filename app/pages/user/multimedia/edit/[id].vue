@@ -23,7 +23,7 @@
             :loading-value="loadingGetItemById"
             rounded="pill"
             height="48"
-            base-color="grey200"
+            base-color="grey400"
             color="primary"
             :defalut-lable="false"
             density="compact"
@@ -46,7 +46,7 @@
             :loading-value="loadingGetItemById"
             rounded="pill"
             height="48"
-            base-color="grey200"
+            base-color="grey400"
             color="primary"
             density="compact"
             :defalut-lable="false"
@@ -70,7 +70,7 @@
             :loading-value="loadingGetItemById"
             rounded="pill"
             height="48"
-            base-color="grey200"
+            base-color="grey400"
             color="primary"
             density="compact"
             :defalut-lable="false"
@@ -106,7 +106,7 @@
             rounded="pill"
             color="primary"
             height="48"
-            base-color="grey200"
+            base-color="grey400"
             class="w-100"
             :rules="[required]"
           >
@@ -132,7 +132,7 @@
             outlined
             rounded="lg"
             color="primary"
-            base-color="grey200"
+            base-color="grey400"
             class="w-100"
             placeholder="Write a brief description about the files to help the user make an informed choice"
             persistent-clear
@@ -169,7 +169,7 @@
               :loading-value="loadingGetItemById"
               rounded="pill"
               height="48"
-              base-color="grey200"
+              base-color="grey400"
               color="primary"
               density="compact"
               :defalut-lable="false"
@@ -194,7 +194,7 @@
               variant="outlined"
               accept=".mp4,.avi,.m4a,.mpg,.flv,.docx,.pptx,.pdf,.exe,.apk,.mp3,.wave,.acc,.swf,.gif,.zip"
               label=""
-              base-color="grey200"
+              base-color="grey400"
               color="primary"
               prepend-icon=""
               append-inner-icon="md:files"
@@ -253,7 +253,7 @@
               variant="outlined"
               rounded="pill"
               color="primary"
-              base-color="grey200"
+              base-color="grey400"
               class="w-100"
             >
               <template #prepend-inner>
@@ -278,7 +278,7 @@
               variant="outlined"
               rounded="pill"
               color="primary"
-              base-color="grey200"
+              base-color="grey400"
               class="w-100"
             >
               <template #prepend-inner>

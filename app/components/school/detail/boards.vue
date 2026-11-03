@@ -62,7 +62,7 @@
       max-width="500"
       :fullscreen="!mdAndUp"
     >
-      <div class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style">
+      <div class="w-100 d-flex flex-wrap flex-column bg-surface pa-6 rounded-xl mobile-style">
         <div class="d-flex align-center">
           <span class="text-h4 font-weight-bold">Which boards does this school follow?</span>
           <v-spacer />

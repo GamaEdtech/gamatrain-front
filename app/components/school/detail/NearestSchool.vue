@@ -31,7 +31,7 @@
           icon
           size="sm"
         >
-          <v-icon color="#000000">
+          <v-icon color="grey900">
             md:chevron_backward
           </v-icon>
         </v-btn>
@@ -42,7 +42,7 @@
           icon
           size="sm"
         >
-          <v-icon color="#000000">
+          <v-icon color="grey900">
             md:chevron_forward
           </v-icon>
         </v-btn>

@@ -8,13 +8,14 @@
       :is-editable="isEditable"
       :visibility="user?.profileVisibility"
       :default-bio="DEFAULT_BIO"
+      class="box-shadow-div rounded-b-lg"
       @edit-bio="showBioModal = true"
       @edit-privacy="showPrivacyModal = true"
       @edit-personal="showPersonalModal = true"
       @edit-status="showStatusModal = true"
     />
     <profile-skills
-      class="box-shadow-div"
+      class="box-shadow-div rounded-lg"
       :data="contentData.skills"
       :is-editable="isEditable"
       @edit-skill="showSkillsModal = true"
@@ -22,7 +23,7 @@
     <profile-experience
       :data="contentData.experiences"
       :is-editable="isEditable"
-      class="box-shadow-div"
+      class="box-shadow-div rounded-lg"
       @add="showExperienceModal = true"
       @delete="deleteExperience"
       @edit="editExperience"
@@ -424,6 +425,6 @@ const closeExperienceModal = (status: boolean) => {
 
 <style scoped>
 .box-shadow-div{
-  box-shadow: 0px 12px 30px 0px #1018280D;
+  box-shadow: 0px 12px 30px 0px rgba(var(--v-theme-grey400), 0.25);
 }
 </style>

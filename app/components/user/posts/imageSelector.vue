@@ -36,7 +36,7 @@
     </div>
     <div class="w-100 d-flex justify-space-between align-center mt-2">
       <v-btn
-        color="white"
+        color="grey50"
         rounded="pill"
         variant="flat"
         class="text-grey900 font-weight-medium text-h5 border-grey400 border-solid border-md"

@@ -14,6 +14,8 @@ const loadingGetItemById = ref(false)
 const loadingConfirm = ref(false)
 const loadingReject = ref(false)
 const loadingDeleteItem = ref(false)
+// Post ids whose featured flag is being saved, so each row's switch shows its own spinner.
+const savingFeaturedIds = ref<number[]>([])
 
 const NAME = 'Post'
 
@@ -149,6 +151,35 @@ export const usePostAdmin = () => {
     }
   }
 
+  // Featured posts fill the slider at the top of the public blog list.
+  const setFeatured = async (postId: number, isFeatured: boolean) => {
+    savingFeaturedIds.value = [...savingFeaturedIds.value, postId]
+
+    try {
+      const response = await useApiService.patch<ApiResult<boolean>>(
+        `/api/v2/admin/posts/${postId}/featured`,
+        { isFeatured },
+      )
+
+      if (response.succeeded) {
+        $toast.success(isFeatured ? `${NAME} added to featured posts` : `${NAME} removed from featured posts`)
+      }
+      else {
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
+    }
+    finally {
+      savingFeaturedIds.value = savingFeaturedIds.value.filter(id => id !== postId)
+    }
+  }
+
   const deleteItem = async (postId: string | number) => {
     loadingDeleteItem.value = true
 
@@ -190,5 +221,7 @@ export const usePostAdmin = () => {
     loadingReject,
     deleteItem,
     loadingDeleteItem,
+    setFeatured,
+    savingFeaturedIds,
   }
 }
