@@ -44,7 +44,7 @@
                 />
               </div>
             </div>
-            <div class="primary-grey600">
+            <div class="text-grey600">
               {{ item.title }}
             </div>
           </div>

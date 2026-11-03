@@ -94,7 +94,7 @@
   border : 1px solid rgb(var(--v-theme-grey200));
   min-height: 260px;
   max-width: 320px;
-  box-shadow: 2px 6px 24px rgba(var(--v-theme-shadowNeutral), 0.12);
+  box-shadow: 2px 6px 24px rgba(var(--v-theme-shadowNeutral), 0.06);
   text-decoration: none;
 }
 .without-image {

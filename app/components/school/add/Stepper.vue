@@ -27,13 +27,8 @@
               width="34"
               height="34"
               flat
-              :color="`${
-                stepIndex === index
-                  ? `primary100`
-                  : stepIndex > index
-                    ? `primary`
-                    : `grey100`
-              }`"
+              :color="stepIndex === index ? undefined : stepIndex > index ? 'primary' : 'grey100'"
+              :class="{ 'step-active': stepIndex === index }"
             >
               <v-icon
                 color="grey600"
@@ -82,8 +77,11 @@ function changeStep(step) {
 .shadow {
   box-shadow: 0 20px 30px rgba(var(--v-theme-shadowNeutral), 0.17);
 }
+.step-active {
+  background-color: rgba(var(--v-theme-primary), 0.5);
+}
 .border-active {
-  border: 2px solid rgb(var(--v-theme-primary100));
+  border: 2px solid rgba(var(--v-theme-primary), 0.5);
   border-radius: 50%;
   padding: 4px;
 }

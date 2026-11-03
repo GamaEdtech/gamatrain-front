@@ -134,7 +134,7 @@
                 @end="endTuitionMove"
               >
                 <template #thumb-label="{ modelValue }">
-                  <span class="text-h5 font-weight-black text-on-primary">${{ modelValue }}</span>
+                  <span class="text-h5 font-weight-black on-primary">${{ modelValue }}</span>
                 </template>
               </v-range-slider>
             </div>
@@ -510,7 +510,7 @@
               @end="endTuitionMove"
             >
               <template #thumb-label="{ modelValue }">
-                <span class="text-h5 font-weight-black text-on-primary">${{ modelValue }}</span>
+                <span class="text-h5 font-weight-black on-primary">${{ modelValue }}</span>
               </template>
             </v-range-slider>
           </div>

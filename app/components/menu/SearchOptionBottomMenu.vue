@@ -174,7 +174,7 @@ onMounted(async () => {
 <style scoped>
 .custom-overlay{
   height: calc(100% - var(--bottom-nav-height) - env(safe-area-inset-bottom, 0px));
-  background-color: rgba(var(--v-theme-inverseSurfaceStrong), 0.55);
+  background-color: rgba(var(--v-theme-inverseSurfaceStrong), 0.32);
   z-index: 1007;
 }
 .search-container{
