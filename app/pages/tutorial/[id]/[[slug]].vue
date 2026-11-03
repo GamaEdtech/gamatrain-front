@@ -344,12 +344,6 @@ const stripHtmlTags = (input: string, length = 1200) => {
     : text
 }
 
-defineOgImageComponent('TutorialDetail', {
-  title: contentData.value?.title,
-  views: contentData.value?.views,
-  up_date: contentData.value?.up_date,
-})
-
 const schema = computed(() => {
   if (!contentData.value) return null
 

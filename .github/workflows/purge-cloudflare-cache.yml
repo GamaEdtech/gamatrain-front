@@ -18,11 +18,15 @@ jobs:
       startsWith(github.event.deployment_status.environment, 'Production')
     runs-on: ubuntu-latest
     steps:
+      # Purge only pages tagged 'app' (everything but the content pages, see routeRules in
+      # nuxt.config.js). Content pages (~650k, mostly crawled by Google) stay cached across deploys,
+      # so a deploy doesn't make Vercel render them all again. Needs Vercel Skew Protection on, so the
+      # older JS files those cached pages load are still served.
       - name: Purge Cloudflare cache
         run: |
           curl -sS -X POST \
             "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
             -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_API_TOKEN }}" \
             -H "Content-Type: application/json" \
-            --data '{"purge_everything": true}' \
+            --data '{"tags": ["app"]}' \
             --fail
