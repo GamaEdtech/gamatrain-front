@@ -299,7 +299,7 @@ const getDisplayName = () => {
   left: -10px;
   max-width : 160px;
   bottom : 105%;
-  background-color : rgb(var(--v-theme-white))
+  background-color : rgb(var(--v-theme-surface))
 }
 @media (max-width: 960px) {
   .top-section-header {

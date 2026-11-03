@@ -21,6 +21,7 @@
       :first-loaded-page="firstLoadedPage"
       :loading-filters="isLoadingFilters"
       :loading-previous="isLoadingPreviousPage"
+      :load-previous-error="loadPreviousError"
       :all-data-loaded="isAllDataLoaded"
       :load-error="loadError"
       @load="loadNextPage"
@@ -79,6 +80,7 @@ const isLoadingFilters = ref(false)
 const isLoadingPreviousPage = ref(false)
 const isLoadingNextPage = ref(false)
 const loadError = ref(false)
+const loadPreviousError = ref(false)
 const postList = ref<PostListComponent | null>(null)
 
 const postListHost = useRequestURL().host
@@ -149,6 +151,7 @@ const reloadPosts = async (pageNumber = firstLoadedPage.value) => {
   filtersVersion++
   const requestVersion = filtersVersion
   loadError.value = false
+  loadPreviousError.value = false
   isLoadingFilters.value = true
 
   const result = await fetchPosts(pageNumber, 'reset')
@@ -164,19 +167,22 @@ const reloadPosts = async (pageNumber = firstLoadedPage.value) => {
   postList.value?.reset()
 }
 
-const applyFilters = async (syncQuery = true) => {
+const applyFilters = async (syncQuery = true, pageNumber = 1) => {
   filtersVersion++
-  page.value = 1
-  firstLoadedPage.value = 1
-  lastLoadedPage.value = 1
+  page.value = pageNumber
+  firstLoadedPage.value = pageNumber
+  lastLoadedPage.value = pageNumber
   posts.value = []
   isAllDataLoaded.value = false
+  // Keep the infinite scroll from loading page 2 of the new filter while the
+  // empty list waits for the query update.
+  isLoadingFilters.value = true
 
   if (syncQuery) {
     await updateQuery()
   }
 
-  await reloadPosts(1)
+  await reloadPosts(pageNumber)
 }
 
 const handleTitleInput = (value: string) => {
@@ -194,23 +200,25 @@ const handleTagChanged = (value: number) => {
 }
 
 watch(
-  () => [route.query.keyword, route.query.cat],
-  async ([keyword, category]) => {
+  () => [route.query.keyword, route.query.cat, route.query.page],
+  async ([keyword, category, pageQuery]) => {
     const title = queryString(keyword)
     const tagId = queryNumber(category, 0)
+    const pageNumber = Math.max(1, queryNumber(pageQuery, 1))
 
     // Query changes made by this page already match the local state and must
     // not start a second request.
-    if (title === filters.title && tagId === filters.tagId) return
+    if (title === filters.title && tagId === filters.tagId && pageNumber === page.value) return
 
     if (inputTimer) {
       clearTimeout(inputTimer)
       inputTimer = null
     }
 
+    // A link, an edited URL or back/forward: show exactly what the URL asks for.
     filters.title = title
     filters.tagId = tagId
-    await applyFilters(false)
+    await applyFilters(false, pageNumber)
   },
 )
 
@@ -218,9 +226,11 @@ const loadPreviousPage = async () => {
   if (firstLoadedPage.value <= 1 || isLoadingPreviousPage.value || isLoadingNextPage.value) return
 
   isLoadingPreviousPage.value = true
+  loadPreviousError.value = false
   const previousPage = firstLoadedPage.value - 1
   const result = await fetchPosts(previousPage, 'prepend')
   isLoadingPreviousPage.value = false
+  loadPreviousError.value = result === 'error'
   if (result !== 'ok') return
 
   firstLoadedPage.value = previousPage
@@ -266,7 +276,6 @@ const [{ data: featuredResponse }, { data: initialPosts }, { data: categoryRespo
   ),
   useAsyncData('post-list-categories', () => getCategories()),
 ])
-console.log(featuredResponse.value)
 if (featuredResponse.value?.succeeded) {
   featuredPosts.value = featuredResponse.value.data?.list ?? []
 }

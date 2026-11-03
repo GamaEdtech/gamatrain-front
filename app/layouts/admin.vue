@@ -9,8 +9,7 @@
 
       <v-app-bar
         app
-        color="grey800"
-        dark
+        color="inverseSurfaceStrong"
       >
         <v-app-bar-nav-icon
           class="d-flex d-lg-none"

@@ -190,7 +190,7 @@ const actionButtons = computed(() => {
   max-height: 130px;
 }
 .name-address-image {
-  background-color: rgba(var(--v-theme-white),0.95);
+  background-color: rgba(var(--v-theme-surface), 0.95);
   z-index: 2;
   border : 1px solid rgb(var(--v-theme-grey200));
 }

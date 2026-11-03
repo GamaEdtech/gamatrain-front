@@ -60,6 +60,21 @@
         </v-btn>
       </template>
 
+      <template #[`item.isFeatured`]="{ item }">
+        <div class="d-flex justify-center">
+          <v-switch
+            :model-value="item.isFeatured"
+            :loading="savingFeaturedIds.includes(item.id)"
+            :disabled="savingFeaturedIds.includes(item.id)"
+            color="primary"
+            density="compact"
+            hide-details
+            inset
+            @update:model-value="toggleFeatured(item, !!$event)"
+          />
+        </div>
+      </template>
+
       <template #[`item.title`]="{ item }">
         <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center truncate-text">
           {{ item.title }}
@@ -119,11 +134,13 @@ const {
   pageCount,
   deleteItem,
   loadingDeleteItem,
+  setFeatured,
+  savingFeaturedIds,
 } = usePostAdmin()
 
 const headers: DataTableHeader<AdminPostDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '8vw', align: 'start' },
-  { title: 'Title', key: 'title', sortable: false, width: '28vw' },
+  { title: 'Title', key: 'title', sortable: false, width: '24vw' },
   { title: 'Contributor', key: 'creationUser', sortable: false, width: '18vw', emptyText: 'unknown' },
   {
     title: 'Date',
@@ -142,6 +159,7 @@ const headers: DataTableHeader<AdminPostDTO>[] = [
     getText: (item: AdminPostDTO) => getStatusTitle(item.status),
     getChipColor: (item: AdminPostDTO) => getStatusColor(item.status),
   },
+  { title: 'Featured', key: 'isFeatured', sortable: false, width: '6vw' },
   {
     title: 'Action',
     key: 'Action',
@@ -252,6 +270,11 @@ const openDetailModal = (item: AdminPostDTO) => {
 //   selectedPostIdForDelete.value = item.id
 //   showDeleteModal.value = true
 // }
+
+const toggleFeatured = async (item: AdminPostDTO, isFeatured: boolean) => {
+  const response = await setFeatured(item.id, isFeatured)
+  if (response.succeeded) item.isFeatured = isFeatured
+}
 
 const deletePost = async () => {
   if (!selectedPostIdForDelete.value) return

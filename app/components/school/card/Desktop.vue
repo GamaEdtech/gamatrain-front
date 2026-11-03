@@ -171,7 +171,7 @@ const actionButtons = computed(() => {
 
 <style scoped>
 .card-school {
-  background-color: rgba(var(--v-theme-white),0.95);
+  background-color: rgba(var(--v-theme-surface), 0.95);
   border: 1px solid rgb(var(--v-theme-primary50));
   min-height: unset;
   max-width: unset;
@@ -184,7 +184,7 @@ const actionButtons = computed(() => {
 }
 .name-address-image {
   min-height: 130px;
-  background-color: rgba(var(--v-theme-white),0.95);
+  background-color: rgba(var(--v-theme-surface), 0.95);
   z-index: 2;
 }
 .position-bookmark {

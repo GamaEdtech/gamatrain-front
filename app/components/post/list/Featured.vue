@@ -15,7 +15,7 @@
           :to="contentPath('post', activePost.id, activePost.slug)"
         >
           <v-img
-            :src="imageUrl(activePost.imageUri)"
+            :src="secureImageUrl(activePost.imageUri)"
             :alt="activePost.title"
             min-height="500"
             max-height="500"
@@ -23,7 +23,7 @@
           >
             <template #default>
               <div class="d-flex h-100 align-end">
-                <v-card-title class="w-100 background-title text-grey50 text-h4 font-weight-bold py-4">
+                <v-card-title class="w-100 background-title text-white text-h4 font-weight-bold py-4">
                   {{ activePost.title }}
                 </v-card-title>
               </div>
@@ -67,7 +67,7 @@
           >
             <div class="d-flex ga-2 align-center">
               <v-img
-                :src="imageUrl(post.imageUri)"
+                :src="secureImageUrl(post.imageUri)"
                 :alt="post.title"
                 max-width="120"
                 min-height="80"
@@ -76,7 +76,7 @@
                 class="h-100 w-100 rounded-lg"
               />
               <span class="text-subtitle-1 font-weight-semibold text-grey800">
-                {{ truncate(post.title, 64) }}
+                {{ truncateText(post.title, 64) }}
               </span>
             </div>
           </v-card>
@@ -109,7 +109,7 @@
             :to="contentPath('post', post.id, post.slug)"
           >
             <v-img
-              :src="imageUrl(post.imageUri)"
+              :src="secureImageUrl(post.imageUri)"
               :alt="post.title"
               height="260"
               max-height="260"
@@ -117,8 +117,8 @@
             >
               <template #default>
                 <div class="d-flex h-100 align-end">
-                  <v-card-title class="w-100 background-title text-grey50 text-h6 font-weight-bold text-wrap py-2">
-                    {{ truncate(post.title, 74) }}
+                  <v-card-title class="w-100 background-title text-white text-h6 font-weight-bold text-wrap py-2">
+                    {{ truncateText(post.title, 74) }}
                   </v-card-title>
                 </div>
               </template>
@@ -133,6 +133,7 @@
 <script setup lang="ts">
 import type { PostDTO } from '@/types'
 import { contentPath } from '@/utils/contentPath'
+import { secureImageUrl, truncateText } from '@/utils/postCard'
 import { useDisplay } from 'vuetify'
 
 const props = defineProps<{
@@ -186,9 +187,6 @@ onBeforeUnmount(() => {
   isMounted = false
   stopAutoCycle()
 })
-
-const imageUrl = (url: string) => url.replace(/^http:\/\//, 'https://')
-const truncate = (text: string, length: number) => text.length > length ? `${text.slice(0, length)}...` : text
 </script>
 
 <style scoped lang="scss">
@@ -205,7 +203,7 @@ const truncate = (text: string, length: number) => text.length > length ? `${tex
 }
 
 .background-title{
-  background-color: rgba(var(--v-theme-grey700),0.6);
+  background-color: rgba(var(--v-theme-inverseSurface), 0.6);
   backdrop-filter: blur(10px);
 }
 

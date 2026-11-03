@@ -184,6 +184,7 @@ export interface AdminPostDTO {
   creationUser: string
   creationDate: string
   title: string
+  isFeatured: boolean
 }
 
 export interface AdminPostLocalizedValueDTO {

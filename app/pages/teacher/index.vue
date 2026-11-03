@@ -12,7 +12,7 @@
           base-color="grey400"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="transparent"
           prepend-inner-icon="md:person_search"
           icon-color="primary"
           glow
@@ -30,7 +30,7 @@
           base-color="grey400"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="transparent"
           prepend-inner-icon="md:psychology"
           icon-color="primary"
           glow

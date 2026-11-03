@@ -7,17 +7,11 @@
       <v-card
         flat
         color="transparent"
-        :width="xs ? 240 : '100%'"
-        class="h-100 rounded-lg ma-auto"
+        class="skeleton-card h-100 rounded-lg ma-auto"
       >
         <div class="d-flex flex-column flex-sm-row ga-4">
           <div class="position-relative flex-shrink-0">
-            <v-skeleton-loader
-              :max-width="xs ? 240 : 180"
-              :width="xs ? 240 : 180"
-              :height="xs ? 160 : 135"
-              class="rounded-lg"
-            />
+            <v-skeleton-loader class="skeleton-image rounded-lg" />
 
             <div class="d-flex d-sm-none w-100 position-absolute bottom-0 pa-2">
               <v-skeleton-loader
@@ -90,27 +84,51 @@
         height="18"
         class="rounded skeleton-content"
       />
-      <v-skeleton-loader
-        :width="xs ? 52 : 62"
-        :height="xs ? 52 : 62"
-        class="rounded-lg skeleton-content"
-      />
+      <v-skeleton-loader class="skeleton-date rounded-lg skeleton-content" />
     </v-col>
   </v-row>
 </template>
 
-<script setup lang="ts">
-import { useDisplay } from 'vuetify'
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
 
-const { xs } = useDisplay()
-</script>
+// Same sizes as PostListItem, so the list doesn't move when posts arrive.
+.skeleton-card {
+  width: 100%;
+}
 
-<style scoped>
+.skeleton-image {
+  width: 180px;
+  height: 135px;
+}
+
+.skeleton-date {
+  width: 62px;
+  height: 62px;
+}
+
 .skeleton-content {
   z-index: 2;
 }
 
 .divider-position {
   right: 50%;
+}
+
+@media #{map.get(vuetify.$display-breakpoints, 'xs')} {
+  .skeleton-card {
+    width: 240px;
+  }
+
+  .skeleton-image {
+    width: 240px;
+    height: 160px;
+  }
+
+  .skeleton-date {
+    width: 52px;
+    height: 52px;
+  }
 }
 </style>

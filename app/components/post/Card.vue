@@ -59,7 +59,7 @@ const truncateBody = (text: string) => {
 .title-box-div{
   -webkit-backdrop-filter: blur(7.5px);
   backdrop-filter: blur(7.5px);
-  background: rgba(var(--v-theme-grey700), 0.5);
+  background: rgba(var(--v-theme-inverseSurface), 0.5);
 }
 .title-box{
   text-wrap: wrap;

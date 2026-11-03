@@ -147,8 +147,7 @@
       >
         <div
           id="post-describe"
-          v-safe-html="contentData.body"
-          :class="`${isDark ? `dark-post`:``}`"
+          v-safe-html="bodyHtml"
         />
       </v-col>
       <v-col
@@ -253,6 +252,12 @@ if (!contentData.value) {
     fatal: true,
   })
 }
+
+// Posts carry inline colours written for a white page; the dark theme flips their lightness (utils/darkHtmlColors.ts).
+// Cleaned first so the style attributes are in the sanitizer's normal form (v-safe-html still cleans the result).
+const bodyHtml = computed(() => isDark.value
+  ? darkHtmlColors(sanitizeUserHtml(contentData.value?.body))
+  : contentData.value?.body)
 
 // The post API doesn't echo the id back, so the route's is normalised: "/post/0126" is post 126.
 const { path: canonicalPath, url: canonicalUrl } = await useCanonicalContentPath('post', Number(postId), contentData.value.slug)
@@ -483,6 +488,12 @@ const typesetMathInSpecificContainer = async (containerRef) => {
 onMounted(() => {
   typesetMathInSpecificContainer(postContentRef)
 })
+
+// The theme switch swaps the body HTML, which drops the rendered formulas.
+watch(isDark, async () => {
+  await nextTick()
+  typesetMathInSpecificContainer(postContentRef)
+})
 </script>
 
 <style>
@@ -571,7 +582,7 @@ onMounted(() => {
   }
 
   p {
-    color: rgba(36, 41, 47, 0.8);
+    color: rgba(var(--v-theme-grey900), 0.8);
     font-family: Inter;
     font-size: 1.4rem !important;
     font-style: normal;
@@ -581,7 +592,7 @@ onMounted(() => {
   }
 
   ul {
-    color: rgba(36, 41, 47, 0.8);
+    color: rgba(var(--v-theme-grey900), 0.8);
     font-family: Inter;
     font-size: 1.4rem;
     font-style: normal;
@@ -594,12 +605,6 @@ onMounted(() => {
     margin-bottom: 1rem;
     height: auto;
     max-width: 100%;
-  }
-}
-.dark-post{
-  filter : invert(1);
-  img {
-    filter : invert(1);
   }
 }
 @media (min-width: 960px) {

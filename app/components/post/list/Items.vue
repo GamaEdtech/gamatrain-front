@@ -18,9 +18,9 @@
         @click="$emit('loadPrevious')"
       >
         <v-icon start>
-          md:keyboard_arrow_up
+          {{ loadPreviousError ? 'md:refresh' : 'md:keyboard_arrow_up' }}
         </v-icon>
-        Load previous posts
+        {{ loadPreviousError ? "Couldn't load previous posts. Try again" : 'Load previous posts' }}
       </v-btn>
 
       <template v-if="loadingFilters">
@@ -126,6 +126,7 @@ const props = defineProps<{
   firstLoadedPage: number
   loadingFilters: boolean
   loadingPrevious: boolean
+  loadPreviousError: boolean
   allDataLoaded: boolean
   loadError: boolean
 }>()

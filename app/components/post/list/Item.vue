@@ -12,14 +12,14 @@
       >
         <div class="d-flex flex-column flex-sm-row ga-4">
           <v-img
-            :src="imageUrl(post.imageUri)"
+            :src="secureImageUrl(post.imageUri)"
             :alt="post.title"
             cover
             class="post-image rounded-lg"
           >
             <template #default>
               <div class="d-flex d-sm-none h-100 align-end">
-                <v-card-title class="w-100 background-title text-grey50 text-h6 font-weight-bold py-2">
+                <v-card-title class="w-100 background-title text-white text-h6 font-weight-bold py-2">
                   {{ post.title }}
                 </v-card-title>
               </div>
@@ -77,6 +77,7 @@
 
 <script setup lang="ts">
 import { contentPath } from '@/utils/contentPath'
+import { htmlToText, secureImageUrl, truncateText } from '@/utils/postCard'
 import type { PostDTO } from '@/types'
 
 const props = defineProps<{
@@ -85,14 +86,9 @@ const props = defineProps<{
 }>()
 
 const { formatLocal } = useDateTime()
-const plainSummary = computed(() => props.post.summary.replace(/<[^>]*>/g, ''))
-const truncateSummary = (length: number) => plainSummary.value.length > length
-  ? `${plainSummary.value.slice(0, length)}...`
-  : plainSummary.value
-const summary = computed(() => truncateSummary(150))
-const mobileSummary = computed(() => truncateSummary(100))
-
-const imageUrl = (url: string) => url.replace(/^http:\/\//, 'https://')
+const plainSummary = computed(() => htmlToText(props.post.summary))
+const summary = computed(() => truncateText(plainSummary.value, 150))
+const mobileSummary = computed(() => truncateText(plainSummary.value, 100))
 </script>
 
 <style scoped lang="scss">
@@ -116,7 +112,7 @@ const imageUrl = (url: string) => url.replace(/^http:\/\//, 'https://')
 }
 
 .background-title{
-  background-color: rgba(var(--v-theme-grey700),0.6);
+  background-color: rgba(var(--v-theme-inverseSurface), 0.6);
   backdrop-filter: blur(10px);
 }
 .date-container{

@@ -185,7 +185,7 @@ defineExpose({ startAddPhoto, startAddTour })
 }
 
 .media-tabs .media-tab--on {
-  background: rgb(var(--v-theme-white));
+  background: rgb(var(--v-theme-surface));
   color: rgb(var(--v-theme-grey900)) !important;
   font-weight: 600;
 }
@@ -299,7 +299,7 @@ defineExpose({ startAddPhoto, startAddTour })
     display: flex !important;
     position: absolute;
     inset: 0;
-    background: rgba(var(--v-theme-grey900), 0.55);
+    background: rgba(var(--v-theme-inverseSurfaceStrong), 0.55);
     color: rgb(var(--v-theme-white));
     font-size: 18px;
   }

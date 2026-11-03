@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 d-flex flex-column ga-4 pa-4 bg-white rounded-lg teacher-card-skeleton">
+  <div class="w-100 d-flex flex-column ga-4 pa-4 bg-surface rounded-lg teacher-card-skeleton">
     <div class="d-flex align-start ga-3">
       <v-skeleton-loader
         width="84"
