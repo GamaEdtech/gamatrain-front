@@ -4,10 +4,16 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import { defineNuxtConfig } from 'nuxt/config'
 import glsl from 'vite-plugin-glsl'
 
-// Public content pages render the same for everyone (the auth token lives in localStorage), so Cloudflare can keep
-// them for a day and refresh in the background. Only Cloudflare reads this header: browsers and Vercel still
-// revalidate on every request. Most Googlebot hits are on these pages, and each miss is a Vercel render.
-const edgeCached = { headers: { 'Cloudflare-CDN-Cache-Control': 'public, max-age=86400, stale-while-revalidate=604800' } }
+// How long Cloudflare keeps each page. Pages render the same for everyone (the auth token lives in localStorage), so
+// one cached copy can serve every visitor; Cloudflare's gamatrain.com cache rule skips dark-theme visitors and never
+// stores 4xx/5xx. Only Cloudflare reads this header: browsers and Vercel still revalidate on every request. A route
+// without it isn't cached. Each Cloudflare miss is a Vercel render, and most traffic is crawlers on content pages.
+const edgeCache = seconds => ({
+  headers: { 'Cloudflare-CDN-Cache-Control': `public, max-age=${seconds}, stale-while-revalidate=604800` },
+})
+const contentPage = edgeCache(86400)
+const sitePage = edgeCache(14400)
+const listPage = edgeCache(7200)
 const notEdgeCached = { headers: { 'Cloudflare-CDN-Cache-Control': 'no-store' } }
 
 export default defineNuxtConfig({
@@ -267,20 +273,28 @@ export default defineNuxtConfig({
     '/user/**': { ssr: false },
     '/admin/**': { ssr: false },
     '/payments/**': { ssr: false },
-    '/school/**': edgeCached,
-    '/paper/**': edgeCached,
-    '/qa/**': edgeCached,
-    '/test/**': edgeCached,
-    '/exam/**': edgeCached,
-    '/tutorial/**': edgeCached,
-    '/multimedia/**': edgeCached,
-    '/post/**': edgeCached,
-    // Lists, forms and exam sessions under those paths: not cached at the edge.
-    '/school': notEdgeCached,
+    '/school/**': contentPage,
+    '/paper/**': contentPage,
+    '/qa/**': contentPage,
+    '/test/**': contentPage,
+    '/exam/**': contentPage,
+    '/tutorial/**': contentPage,
+    '/multimedia/**': contentPage,
+    '/post/**': contentPage,
+    '/': sitePage,
+    '/about-us': sitePage,
+    '/faq': sitePage,
+    '/services': sitePage,
+    '/contact-us': sitePage,
+    '/leader-board': sitePage,
+    '/governance': sitePage,
+    '/search': listPage,
+    '/school': listPage,
+    '/post': listPage,
+    // A form and exam sessions under the content paths.
     '/school/add/**': notEdgeCached,
     '/exam/start/**': notEdgeCached,
     '/exam/participants/**': notEdgeCached,
-    '/post': notEdgeCached,
   },
   // Development server configuration
   devServer: {
