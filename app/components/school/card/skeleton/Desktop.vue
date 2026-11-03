@@ -104,4 +104,15 @@
   background-color: unset;
   z-index: 2;
 }
+/* Dark: the list is `surface` too, so lift the card and give it a visible edge */
+.v-theme--dark .card-school,
+.v-theme--dark .name-address-image {
+  background-color: rgb(var(--v-theme-surfaceTertiary));
+}
+.v-theme--dark .card-school {
+  border-color: rgb(var(--v-theme-borderSubtle));
+}
+.v-theme--dark .card-school :deep(.v-skeleton-loader) {
+  background: transparent;
+}
 </style>
