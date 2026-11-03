@@ -31,8 +31,6 @@
           }))"
           rounded="lg"
           density="compact"
-          base-color="grey200"
-          color="primary"
           :defalut-lable="false"
           :rules="[required]"
         />

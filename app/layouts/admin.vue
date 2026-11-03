@@ -18,7 +18,7 @@
       </v-app-bar>
 
       <v-main>
-        <v-defaults-provider :defaults="adminFormDefaults">
+        <v-defaults-provider :defaults="ADMIN_FORM_DEFAULTS">
           <NuxtPage class="pa-5" />
         </v-defaults-provider>
       </v-main>
@@ -29,23 +29,11 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
+import { ADMIN_FORM_DEFAULTS } from '@/constants/adminFormDefaults'
 
 const { mdAndDown } = useDisplay()
 const { isOnline } = useNetwork()
 const drawer = ref(!mdAndDown.value)
-
-const adminFieldDefaults = {
-  baseColor: 'grey400',
-  color: 'primary',
-  activeColor: 'primary',
-  bgColor: 'transparent',
-}
-
-const adminFormDefaults = {
-  VTextField: adminFieldDefaults,
-  VSelect: adminFieldDefaults,
-  VTextarea: adminFieldDefaults,
-}
 </script>
 
 <style scoped>

@@ -17,8 +17,10 @@
       :disabled="disabled"
       :clearable="clearable"
       class="w-100 text-grey700"
-      :base-color="baseColor"
-      :color="color"
+      :base-color="props.baseColor"
+      :color="props.color"
+      :active-color="props.activeColor"
+      :bg-color="props.bgColor"
       :density="density"
       :rules="rules"
       @click="getList"
@@ -64,6 +66,8 @@
 </template>
 
 <script setup lang="ts">
+import { useDefaults } from 'vuetify'
+
 interface IItemGomboBox {
   [key: string]: string | number | undefined
   id: string | number
@@ -86,6 +90,8 @@ interface IGomboBox {
   dataLoading?: boolean
   baseColor?: string
   color?: string
+  activeColor?: string
+  bgColor?: string
   density?: Density
   rounded?: string
   defalutLable?: boolean
@@ -100,14 +106,14 @@ interface IGomboBox {
   titleModal?: string
 }
 
-const props = withDefaults(defineProps<IGomboBox>(), {
+const rawProps = withDefaults(defineProps<IGomboBox>(), {
   label: '',
   items: () => [],
   itemTitle: 'title',
   itemValue: 'id',
   disabled: false,
   dataLoading: false,
-  baseColor: 'grey500',
+  baseColor: 'grey400',
   color: 'primary',
   density: 'default',
   rounded: 'xl',
@@ -121,6 +127,8 @@ const props = withDefaults(defineProps<IGomboBox>(), {
   hasMoreItems: true,
   titleModal: '',
 })
+
+const props = useDefaults(rawProps, 'CommonGomboBox')
 
 const emit = defineEmits(['update:modelValue', 'loadMore'])
 

@@ -11,8 +11,6 @@
         :data-loading="loadingPlans"
         rounded="lg"
         density="compact"
-        base-color="grey200"
-        color="primary"
         :defalut-lable="false"
         :rules="[required]"
       />
@@ -24,8 +22,6 @@
         :data-loading="loadingCountries"
         rounded="lg"
         density="compact"
-        base-color="grey200"
-        color="primary"
         :defalut-lable="false"
         :rules="[required]"
       />
@@ -43,8 +39,6 @@
           rounded="
           lg"
           density="compact"
-          base-color="grey200"
-          color="primary"
           :defalut-lable="false"
           :rules="[required]"
         />
@@ -62,8 +56,6 @@
           })"
           rounded="lg"
           density="compact"
-          base-color="grey200"
-          color="primary"
           :defalut-lable="false"
           :has-search="false"
           :rules="[required]"

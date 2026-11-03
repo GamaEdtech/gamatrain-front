@@ -77,8 +77,6 @@
       }))"
       rounded="lg"
       density="compact"
-      base-color="grey800"
-      color="primary"
       class="mt-1"
     />
 

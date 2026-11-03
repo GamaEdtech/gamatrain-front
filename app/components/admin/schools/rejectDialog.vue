@@ -1,4 +1,6 @@
 <script setup>
+import { ADMIN_FORM_DEFAULTS } from '@/constants/adminFormDefaults'
+
 const props = defineProps({
   modelValue: Boolean,
   id: Number,
@@ -42,42 +44,44 @@ const rejectItem = async () => {
       width="500"
       @click:outside="$emit('update:modelValue', false)"
     >
-      <v-card class="bg-primary-gray-200 rounded-xl">
-        <v-card-title
-          class="gtext-t4 bg-white flex-column d-flex align-center pt-12"
-        >
-          <p class="primary-gray-700 gtext-t3 font-weight-semibold mb-2">
-            Rejection
-          </p>
-        </v-card-title>
-        <v-card-text>
-          <label class="primary-gray-700 gtext-t6 font-weight-medium">
-            Comment
-          </label>
-          <v-text-field
-            v-model="comment"
-            variant="solo"
-            density="comfortable"
-            class="mt-1"
-          />
-        </v-card-text>
-        <v-card-actions class="px-0 justify-center">
-          <v-btn
-            class="closeBtn"
-            variant="plain"
-            @click="$emit('update:modelValue', false)"
+      <v-defaults-provider :defaults="ADMIN_FORM_DEFAULTS">
+        <v-card class="bg-primary-gray-200 rounded-xl">
+          <v-card-title
+            class="gtext-t4 bg-white flex-column d-flex align-center pt-12"
           >
-            <span class="mdi mdi-close gtext-t1" />
-          </v-btn>
-          <v-btn
-            variant="outlined"
-            class="rejectBtn"
-            @click="rejectItem"
-          >
-            Reject
-          </v-btn>
-        </v-card-actions>
-      </v-card>
+            <p class="primary-gray-700 gtext-t3 font-weight-semibold mb-2">
+              Rejection
+            </p>
+          </v-card-title>
+          <v-card-text>
+            <label class="primary-gray-700 gtext-t6 font-weight-medium">
+              Comment
+            </label>
+            <v-text-field
+              v-model="comment"
+              variant="solo"
+              density="comfortable"
+              class="mt-1"
+            />
+          </v-card-text>
+          <v-card-actions class="px-0 justify-center">
+            <v-btn
+              class="closeBtn"
+              variant="plain"
+              @click="$emit('update:modelValue', false)"
+            >
+              <span class="mdi mdi-close gtext-t1" />
+            </v-btn>
+            <v-btn
+              variant="outlined"
+              class="rejectBtn"
+              @click="rejectItem"
+            >
+              Reject
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-defaults-provider>
     </v-dialog>
   </div>
 </template>

@@ -28,15 +28,18 @@
         </v-col>
       </v-row>
 
-      <v-row>
-        <slot />
-      </v-row>
+      <v-defaults-provider :defaults="ADMIN_FORM_DEFAULTS">
+        <v-row>
+          <slot />
+        </v-row>
+      </v-defaults-provider>
     </div>
   </v-dialog>
 </template>
 
 <script setup>
 import { useDisplay } from 'vuetify'
+import { ADMIN_FORM_DEFAULTS } from '@/constants/adminFormDefaults'
 
 const { mdAndUp } = useDisplay()
 const props = defineProps({
