@@ -106,16 +106,16 @@
   list-style: none;
 }
 .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, rgb(var(--v-theme-grey100)) 100%);
+  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-grey100)) 100%);
 }
 .plan-card:nth-of-type(3n+1) .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #e7eefb 100%);
+  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-planTintBlue)) 100%);
 }
 .plan-card:nth-of-type(3n+2) .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #f1e6f6 100%);
+  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-planTintPurple)) 100%);
 }
 .plan-card:nth-of-type(3n+3) .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-white)) 0%, #f7f1e1 100%);
+  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-planTintGold)) 100%);
 }
 @media screen and (max-width: 600px) {
  .plan-card {

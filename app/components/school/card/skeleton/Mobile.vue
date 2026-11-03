@@ -118,4 +118,19 @@
   background-color: rgb(var(--v-theme-grey50));
   z-index: 2;
 }
+/* Dark: grey50 is darker than the list, so the card looked sunken. Lift it instead. */
+.v-theme--dark .card-school,
+.v-theme--dark .bottom-section {
+  background-color: rgb(var(--v-theme-surfaceTertiary));
+}
+.v-theme--dark .name-address-image {
+  background-color: rgba(var(--v-theme-surfaceTertiary), 0.95);
+}
+.v-theme--dark .card-school,
+.v-theme--dark .name-address-image {
+  border-color: rgb(var(--v-theme-borderSubtle));
+}
+.v-theme--dark .card-school :deep(.v-skeleton-loader) {
+  background: transparent;
+}
 </style>

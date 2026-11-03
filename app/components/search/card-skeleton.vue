@@ -1,5 +1,5 @@
 <template>
-  <div class="card-skeleton w-100 rounded-xl d-flex align-stretch">
+  <div class="card-skeleton w-100 rounded-lg d-flex align-stretch bg-grey25 elevation-1 border border-borderSubtle border-opacity-100">
     <v-skeleton-loader
       type="image"
       class="skeleton-cover flex-shrink-0"
@@ -36,10 +36,11 @@
   height: 174px;
   max-width: 1200px;
   padding: 0;
-  border: 1px solid rgb(var(--v-theme-borderSkeleton));
-  border-radius: 16px !important;
-  background: rgb(var(--v-theme-white));
-  box-shadow: 0 1px 2px rgba(var(--v-theme-grey900), 0.08);
+}
+
+/* Bones only: each loader's own surface box would show as a dark block on the card */
+.card-skeleton :deep(.v-skeleton-loader) {
+  background: transparent;
 }
 
 .skeleton-cover {
@@ -50,7 +51,7 @@
   max-height: 100%;
   aspect-ratio: 63 / 74;
   overflow: hidden;
-  border-radius: 15px 0 0 15px;
+  border-radius: 7px 0 0 7px;
 }
 
 .skeleton-body {
