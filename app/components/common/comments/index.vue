@@ -127,7 +127,7 @@
         </template>
       </div>
       <div
-        :class="`send-message-div d-flex w-100 left-0 bottom-0 rounded-lg bg-white ${
+        :class="`send-message-div d-flex w-100 left-0 bottom-0 rounded-lg bg-surface ${
           isShowAllComments ? `open-send-message` : ``
         }`"
       >
@@ -273,7 +273,7 @@ const dislikeSuccessfull = (comment: CommentPostDTO) => {
     bottom: -800px;
     border: none;
     min-height: 80%;
-    background-color: rgb(var(--v-theme-white));
+    background-color: rgb(var(--v-theme-surface));
     padding-top: 24px;
     border-radius: 24px 24px 0 0;
     z-index: 1006;
