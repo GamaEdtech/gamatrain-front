@@ -3,7 +3,7 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-10">
-      <div class="w-100 text-h4 primary-gray-500">
+      <div class="w-100 text-h4 text-grey500">
         School Score
       </div>
 
@@ -13,7 +13,7 @@
         class="w-100 d-flex justify-space-between align-center"
       >
         <span
-          class="d-flex align-center ga-3 text-h5 font-weight-bold primary-gray-700"
+          class="d-flex align-center ga-3 text-h5 font-weight-bold text-grey700"
         >
           <div class="dot-div" />
           {{ item.title }}
@@ -37,7 +37,7 @@
       <div
         class="w-100 d-flex flex-column align-start justify-start ga-1 position-relative"
       >
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           <v-badge
             floating
             location="top right"
@@ -47,7 +47,7 @@
             <template #badge>
               <v-icon
                 size="large"
-                color="red"
+                color="error"
               >
                 md:star
               </v-icon>
@@ -64,10 +64,10 @@
           autocomplete="off"
           persistent-clear
           no-resize
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           rows="7"
           :rules="[descriptionRule]"
@@ -87,7 +87,7 @@
       <v-btn
         :loading="loading"
         icon
-        color="#1D2939"
+        color="secondary"
         height="40"
         width="40"
         flat
@@ -98,7 +98,7 @@
         </v-icon>
       </v-btn>
       <v-btn
-        color="#ffb600"
+        color="primary"
         flat
         rounded="xl"
         height="40"
@@ -223,6 +223,6 @@ const preStep = () => {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: #ffb600;
+  background-color: rgb(var(--v-theme-primary));
 }
 </style>

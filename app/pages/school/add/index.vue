@@ -286,7 +286,7 @@ const buildFormDataFromObject = (
 .margin-top-handle {
   margin-top: 64px;
   min-height: calc(100vh - 64px);
-  background-color: #f8f7f7;
+  background-color: rgb(var(--v-theme-surfaceSecondary));
 }
 .handle-height {
   min-height: calc(100vh - 64px - 90px);

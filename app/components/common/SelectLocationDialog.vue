@@ -8,7 +8,7 @@
     <v-card>
       <v-card-text class="pa-2 rounded-t-xl">
         <div class="d-flex align-center">
-          <div class="gtext-h5 priamry-gray-700">
+          <div class="gtext-h5 text-grey700">
             Location
           </div>
           <v-spacer />
@@ -47,7 +47,7 @@
           @click="openLatLngSearch"
         >
           <v-icon
-            color="white"
+            color="on-primary"
             size="x-large"
           >
             md:my_location
@@ -62,7 +62,7 @@
       <a
         :href="`https://www.google.com/maps?q=${contentData.latitude},${contentData.longitude}`"
         target="_blank"
-        class="ml-1 text-blue text-decoration-none"
+        class="ml-1 text-info text-decoration-none"
       >
         See on Google Map
       </a>
@@ -129,7 +129,7 @@
             >
               <v-btn
                 :loading="mapSubmitLoader"
-                class="primary black--text text-transform-none gtext-t4 font-weight-medium w-100"
+                class="text-on-primary text-transform-none gtext-t4 font-weight-medium w-100"
                 rounded
                 size="x-large"
                 color="primary"
@@ -148,7 +148,7 @@
               <div class="d-flex gap-4">
                 <v-btn
                   :loading="mapSubmitLoader"
-                  class="primary black--text text-transform-none gtext-t4 font-weight-medium flex-grow-1"
+                  class="text-on-primary text-transform-none gtext-t4 font-weight-medium flex-grow-1"
                   rounded
                   size="x-large"
                   color="primary"
@@ -161,10 +161,10 @@
                   class="ml-2"
                   variant="outlined"
                   icon
-                  color="#F2F4F7"
+                  color="grey100"
                   @click="showLocationDialog = true"
                 >
-                  <v-icon color="#667085">
+                  <v-icon color="grey500">
                     mdi-dots-horizontal
                   </v-icon>
                 </v-btn>

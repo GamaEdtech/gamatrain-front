@@ -7,7 +7,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="select-dialog-panel w-100 d-flex flex-column bg-white pa-0 mobile-style"
+      class="select-dialog-panel w-100 d-flex flex-column bg-surface pa-0 mobile-style"
       @click="clickOnModal"
     >
       <v-row class="select-dialog-header">
@@ -30,7 +30,7 @@
           </div>
           <template v-else-if="hasSearch">
             <span class="text-h5 text-grey400">result</span>
-            <span class="text-h4 text-green font-weight-bold">{{ filteredItems.length }}</span>
+            <span class="text-h4 text-success font-weight-bold">{{ filteredItems.length }}</span>
           </template>
           <v-icon
             class="select-dialog-close ml-4"

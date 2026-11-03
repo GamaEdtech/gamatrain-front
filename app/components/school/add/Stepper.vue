@@ -1,5 +1,5 @@
 <template>
-  <div class="w-100 pt-1 pb-2 bg-white position-relative shadow">
+  <div class="w-100 pt-1 pb-2 bg-surface position-relative shadow">
     <v-container class="d-flex justify-space-between align-center">
       <div
         v-for="(step, index) in steps"
@@ -15,7 +15,7 @@
         >
           <v-progress-linear
             height="3"
-            bg-color="#848585"
+            bg-color="grey400"
             color="primary"
             :model-value="stepIndex >= index ? 100 : 0"
           />
@@ -29,14 +29,14 @@
               flat
               :color="`${
                 stepIndex === index
-                  ? `#FFDB80`
+                  ? `primary100`
                   : stepIndex > index
-                    ? `#FFB600`
-                    : `#F2F4F7`
+                    ? `primary`
+                    : `grey100`
               }`"
             >
               <v-icon
-                color="#475467"
+                color="grey600"
                 :icon="step.icon"
               />
             </v-btn>
@@ -46,8 +46,8 @@
               'text-body-2 text-md-h6 position-absolute bottom-0 mb-1',
               `${
                 stepIndex == index
-                  ? 'primary-gray-700 font-weight-bold'
-                  : 'primary-gray-400'
+                  ? 'text-grey700 font-weight-bold'
+                  : 'text-grey400'
               }`,
             ]"
           >
@@ -80,10 +80,10 @@ function changeStep(step) {
 
 <style scoped>
 .shadow {
-  box-shadow: 0px 20px 30px 0px #1018282b;
+  box-shadow: 0 20px 30px rgba(var(--v-theme-shadowNeutral), 0.17);
 }
 .border-active {
-  border: 2px solid #ffdb80;
+  border: 2px solid rgb(var(--v-theme-primary100));
   border-radius: 50%;
   padding: 4px;
 }

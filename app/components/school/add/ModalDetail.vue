@@ -6,14 +6,14 @@
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex align-center flex-wrap flex-column bg-white pa-2 pa-sm-6 rounded-xl mobile-style"
+      class="w-100 d-flex align-center flex-wrap flex-column bg-surface pa-2 pa-sm-6 rounded-xl mobile-style"
       @click="clickOnModal"
     >
       <div class="w-100 d-none d-md-flex align-center justify-end">
         <v-icon
           class="ml-4"
           size="x-large"
-          color="#D0D5DD"
+          color="grey300"
           @click="closeModal"
         >
           md:cancel
@@ -26,16 +26,16 @@
       <v-divider
         :thickness="2"
         class="w-100 mt-4 mb-6 border-opacity-100 max-width-contianer-modal"
-        color="#E4E7EC"
+        color="grey200"
       />
 
       <span
-        class="w-100 text-h5 font-weight-bold primary-gray-700 max-width-contianer-modal"
+        class="w-100 text-h5 font-weight-bold text-grey700 max-width-contianer-modal"
       >A matching school was found!</span>
 
       <div class="w-100 d-flex justify-center align-center ga-2 mt-4">
         <v-btn
-          color="#E4E7EC"
+          color="grey200"
           variant="outlined"
           flat
           rounded="xl"
@@ -44,10 +44,10 @@
           class="w-50 text-h5"
           @click="newSchool"
         >
-          <span class="primary-gray-700">New School</span>
+          <span class="text-grey700">New School</span>
         </v-btn>
         <v-btn
-          color="#ffb600"
+          color="primary"
           flat
           rounded="xl"
           height="40"
