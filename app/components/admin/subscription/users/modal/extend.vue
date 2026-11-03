@@ -13,9 +13,6 @@
           rounded="lg"
           density="compact"
           variant="outlined"
-          base-color="grey200"
-          color="primary"
-          bg-color="white"
           class="w-100"
           disabled
         />
@@ -30,9 +27,6 @@
           rounded="lg"
           density="compact"
           variant="outlined"
-          base-color="grey200"
-          color="primary"
-          bg-color="white"
           class="w-100"
           disabled
         />
@@ -49,10 +43,6 @@
           density="compact"
           placeholder="Days"
           variant="outlined"
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           :rules="[required, positiveNumber]"
         />

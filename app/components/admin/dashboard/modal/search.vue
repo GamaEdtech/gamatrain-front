@@ -5,7 +5,6 @@
       label="User Id"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -21,7 +20,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="props"
@@ -48,7 +46,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="props"

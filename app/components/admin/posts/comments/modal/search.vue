@@ -12,7 +12,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="props"
@@ -39,7 +38,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="props"
@@ -58,7 +56,6 @@
       label="Commenter Email"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -67,7 +64,6 @@
       label="Commenter Name"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />

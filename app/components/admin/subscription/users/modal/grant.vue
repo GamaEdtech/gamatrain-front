@@ -13,9 +13,6 @@
           rounded="lg"
           density="compact"
           variant="outlined"
-          base-color="grey200"
-          color="primary"
-          bg-color="white"
           class="w-100"
           disabled
         />

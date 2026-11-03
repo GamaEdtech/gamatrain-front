@@ -5,7 +5,6 @@
       label="Search"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -15,7 +14,6 @@
       label="Email"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -32,7 +30,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="menuProps"
@@ -60,7 +57,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="menuProps"
@@ -84,7 +80,6 @@
       label="Status"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
       clearable
@@ -98,7 +93,6 @@
       label="Read"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
       clearable

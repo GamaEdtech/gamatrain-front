@@ -21,10 +21,6 @@
         variant="outlined"
         autocomplete="off"
         persistent-clear
-        base-color="grey400"
-        color="primary"
-        active-color="primary"
-        bg-color="white"
         class="w-100"
       >
         <template #prepend-inner>
@@ -46,10 +42,6 @@
         variant="outlined"
         autocomplete="off"
         persistent-clear
-        base-color="grey400"
-        color="primary"
-        active-color="primary"
-        bg-color="white"
         class="w-100"
         no-resize
       >

@@ -32,10 +32,6 @@
           density="compact"
           placeholder="Subject"
           variant="outlined"
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           :rules="[required]"
         >
@@ -60,10 +56,6 @@
           density="compact"
           placeholder="CTA Label"
           variant="outlined"
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           :rules="[required]"
         >
@@ -89,10 +81,6 @@
           density="compact"
           placeholder="CTA Url"
           variant="outlined"
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           :rules="[required]"
         >
@@ -118,10 +106,6 @@
           density="compact"
           placeholder="Body"
           variant="outlined"
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           no-resize
           rows="7"

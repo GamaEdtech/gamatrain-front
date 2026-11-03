@@ -18,7 +18,9 @@
       </v-app-bar>
 
       <v-main>
-        <NuxtPage class="pa-5" />
+        <v-defaults-provider :defaults="adminFormDefaults">
+          <NuxtPage class="pa-5" />
+        </v-defaults-provider>
       </v-main>
       <AppGlobalSnackbar />
     </template>
@@ -31,6 +33,19 @@ import { useDisplay } from 'vuetify'
 const { mdAndDown } = useDisplay()
 const { isOnline } = useNetwork()
 const drawer = ref(!mdAndDown.value)
+
+const adminFieldDefaults = {
+  baseColor: 'grey400',
+  color: 'primary',
+  activeColor: 'primary',
+  bgColor: 'transparent',
+}
+
+const adminFormDefaults = {
+  VTextField: adminFieldDefaults,
+  VSelect: adminFieldDefaults,
+  VTextarea: adminFieldDefaults,
+}
 </script>
 
 <style scoped>

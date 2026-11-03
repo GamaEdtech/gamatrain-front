@@ -16,10 +16,6 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           type="number"
           :rules="[required, numeric, min(1)]"
@@ -38,10 +34,6 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           :rules="[required]"
         />
