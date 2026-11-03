@@ -463,20 +463,6 @@ useSeoMeta({
   twitterImage: () => ogImage,
 })
 
-if (!ogImage) {
-  defineOgImageComponent('SchoolDetail', {
-    title: contentData.value?.name,
-    address:
-      contentData.value?.countryTitle
-      + ', '
-      + contentData.value?.stateTitle
-      + ', '
-      + contentData.value?.cityTitle,
-    phone: contentData.value?.phoneNumber,
-    email: contentData.value?.email,
-  })
-}
-
 watch(
   () => ratingDataRaw.value,
   (newData) => {
