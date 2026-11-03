@@ -4,22 +4,22 @@
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-10">
       <v-alert
-        class="primary-gray-700 font-weight-bold"
+        class="text-grey700 font-weight-bold"
         text="You're adding a new school.Please enter the details carefully!"
         border="start"
-        color="#ffdb804d"
-        border-color="#FFB600"
+        color="softGold"
+        border-color="primaryStrong"
         rounded="lg"
       >
         <template #prepend>
-          <v-icon color="#FFB600">
+          <v-icon color="primaryStrong">
             md:lightbulb
           </v-icon>
         </template>
       </v-alert>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           <v-badge
             floating
             location="top right"
@@ -29,7 +29,7 @@
             <template #badge>
               <v-icon
                 size="large"
-                color="red"
+                color="error"
               >
                 md:star
               </v-icon>
@@ -47,10 +47,10 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
         />
       </div>
@@ -60,7 +60,7 @@
         :key="index"
         class="w-100 d-flex flex-column align-start justify-start ga-1"
       >
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           <v-badge
             floating
             location="top right"
@@ -70,7 +70,7 @@
             <template #badge>
               <v-icon
                 size="large"
-                color="red"
+                color="error"
               >
                 md:star
               </v-icon>
@@ -88,10 +88,10 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           readonly
           append-inner-icon="md:keyboard_arrow_down"
@@ -120,7 +120,7 @@
         Cancel
       </v-btn>
       <v-btn
-        color="#ffb600"
+        color="primary"
         flat
         rounded="xl"
         height="40"

@@ -8,7 +8,7 @@
         class="text-h5 text-md-h4"
         height="50"
         variant="outlined"
-        color="#ffb300"
+        color="primaryStrong"
         rounded="xl"
         @click="loadPreviousPage"
       >

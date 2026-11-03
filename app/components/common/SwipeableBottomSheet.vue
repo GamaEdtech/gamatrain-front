@@ -1,7 +1,7 @@
 <template>
   <div
     ref="sheet"
-    class="bottom-nav d-flex flex-column align-center justify-start w-100 rounded-t-xl bg-white position-absolute bottom-0"
+    class="bottom-nav d-flex flex-column align-center justify-start w-100 rounded-t-xl bg-surface position-absolute bottom-0"
   >
     <div
       class="w-100 d-flex align-center justify-center py-4 cursor-pointer"

@@ -4,7 +4,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="search-container w-100 bg-white rounded-t-xl d-flex flex-column align-center pa-4"
+      class="search-container w-100 bg-surface rounded-t-xl d-flex flex-column align-center pa-4"
       @click="clickOnModal"
     >
       <div class="w-100 d-flex justify-end">
@@ -32,7 +32,7 @@
                 <span>
                   <v-icon
                     size="x-large"
-                    color="#D0D5DD"
+                    color="grey300"
                   >md:chevron_forward</v-icon>
                 </span>
               </div>
@@ -174,7 +174,7 @@ onMounted(async () => {
 <style scoped>
 .custom-overlay{
   height: calc(100% - var(--bottom-nav-height) - env(safe-area-inset-bottom, 0px));
-  background-color: rgba(0, 0, 0, 0.32);
+  background-color: rgba(var(--v-theme-inverseSurfaceStrong), 0.32);
   z-index: 1007;
 }
 .search-container{
@@ -185,55 +185,55 @@ onMounted(async () => {
   font-size: 2.3rem;
 }
 .icon-multimedia {
-  color: #02b719;
+  color: rgb(var(--v-theme-greenLight700));
 }
 .icon-paper {
-  color: #2e90fa;
+  color: rgb(var(--v-theme-blue500));
 }
 .icon-exam {
-  color: #7c4dff;
+  color: rgb(var(--v-theme-generalSearchQuiz));
 }
 .icon-q-a {
-  color: #fdb022;
+  color: rgb(var(--v-theme-warning400));
 }
 .icon-tutorial {
-  color: #2e90fa;
+  color: rgb(var(--v-theme-blue500));
 }
 .icon-school {
-  color: #a5673f;
+  color: rgb(var(--v-theme-generalSearchSchool));
 }
 .ex-category__card--title {
-  color: #344054;
+  color: rgb(var(--v-theme-grey700));
   font-size: 20px;
   font-weight: 700;
 }
 .ex-category__card--subtitle {
-  color: #667085;
+  color: rgb(var(--v-theme-grey500));
   font-size: 16px;
   font-weight: 500;
 }
 .ex-category__card {
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 1),
-    rgba(249, 250, 251, 1)
+    rgb(var(--v-theme-surface)),
+    rgb(var(--v-theme-grey50))
   );
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  border: 1px solid rgba(242, 244, 247, 1);
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
   padding: 2rem 1.5rem;
   border-radius: 24px;
   transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s,
     background 0.2s;
 }
 .ex-category__card:hover {
-  box-shadow: 0 8px 24px 0 rgba(76, 74, 255, 0.1),
-    0 1.5px 6px 0 rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 24px rgba(var(--v-theme-generalSearchQuiz), 0.12),
+    0 2px 6px rgba(var(--v-theme-shadowNeutral), 0.12);
   transform: translateY(-6px) scale(1.01);
-  border-color: #ffb600;
-  background: #f8faff;
+  border-color: rgb(var(--v-theme-primaryStrong));
+  background: rgb(var(--v-theme-blue50));
   cursor: pointer;
 }
 .ex-select-board-label {
@@ -260,7 +260,7 @@ onMounted(async () => {
   position: relative;
   display: flex;
   align-items: center;
-  background: #4c4aff;
+  background: rgb(var(--v-theme-quizFill));
   max-width: 556px;
   justify-content: flex-start;
   margin: 0 auto;
@@ -276,7 +276,7 @@ onMounted(async () => {
   content: "";
   width: 1px;
   height: 32px;
-  background-color: #9ea5d1;
+  background-color: rgb(var(--v-theme-blueGray300));
   position: absolute;
   right: -10px;
   top: 50%;
@@ -293,14 +293,14 @@ onMounted(async () => {
   .ex-category__card {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 1),
-      rgba(249, 250, 251, 1)
+      rgb(var(--v-theme-surface)),
+      rgb(var(--v-theme-grey50))
     );
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 1px solid rgba(242, 244, 247, 1);
+    border: 1px solid rgb(var(--v-theme-borderSubtle));
     padding: 3rem 1rem;
     border-radius: 24px;
   }
@@ -313,7 +313,7 @@ onMounted(async () => {
     content: "";
     width: 1px;
     height: 32px;
-    background-color: #9ea5d1;
+    background-color: rgb(var(--v-theme-blueGray300));
     position: absolute;
     right: -15px;
     top: 50%;

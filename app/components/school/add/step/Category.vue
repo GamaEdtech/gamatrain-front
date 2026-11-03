@@ -3,12 +3,12 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-10">
-      <div class="w-100 text-h4 primary-gray-500">
+      <div class="w-100 text-h4 text-grey500">
         School Category
       </div>
 
       <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-2">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">Stage</div>
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">Stage</div>
         <v-text-field
           v-model="selectedStage.title"
           rounded
@@ -19,10 +19,10 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           readonly
           append-inner-icon="md:keyboard_arrow_down"
@@ -43,7 +43,7 @@
       <div
         class="w-100 d-flex align-center justify-space-between flex-wrap ga-6"
       >
-        <div class="text-h5 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h5 font-weight-bold text-grey700 ml-2">
           Coed Status
         </div>
         <v-skeleton-loader
@@ -57,10 +57,10 @@
           v-else
           v-model="selectedCeod"
           rounded="xl"
-          color="#1D2939"
+          color="secondary"
           density="compact"
           divided
-          base-color="#ffffff"
+          base-color="surface"
         >
           <v-btn
             class="font-weight-bold text-h6"
@@ -74,7 +74,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-6">
-        <div class="text-h5 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h5 font-weight-bold text-grey700 ml-2">
           School Type
         </div>
 
@@ -90,7 +90,7 @@
             v-else
             v-for="(type, index) in schoolTypes"
             :key="index"
-            color="#1D2939"
+            color="secondary"
             :variant="
               selectedschoolTypes.includes(type.id) ? `flat` : `outlined`
             "
@@ -108,7 +108,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-6">
-        <div class="text-h5 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h5 font-weight-bold text-grey700 ml-2">
           Boarding type
         </div>
 
@@ -124,7 +124,7 @@
             v-else
             v-for="(type, index) in boardingTypes"
             :key="index"
-            color="#1D2939"
+            color="secondary"
             :variant="
               selectedboardingTypes.includes(type.id) ? `flat` : `outlined`
             "
@@ -142,7 +142,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-6">
-        <div class="text-h5 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h5 font-weight-bold text-grey700 ml-2">
           Religion
         </div>
 
@@ -158,7 +158,7 @@
             v-else
             v-for="(type, index) in religions"
             :key="index"
-            color="#1D2939"
+            color="secondary"
             :variant="selectedReligions.includes(type.id) ? `flat` : `outlined`"
             class="font-weight-bold text-h6 cursor-pointer"
             @click="chooseReligion(type)"
@@ -176,16 +176,16 @@
       <div
         class="w-100 d-flex align-center justify-space-between flex-wrap ga-10 ga-sm-6"
       >
-        <div class="text-h5 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h5 font-weight-bold text-grey700 ml-2">
           Tuition fee to
         </div>
 
         <v-slider
           v-model="valueTuition"
           class="w-66"
-          thumb-color="#ffb600"
-          color="#ffb600"
-          track-color="#E4E7EC"
+          thumb-color="primary"
+          color="primary"
+          track-color="grey200"
           density="compact"
           hide-details
           :max="500000"
@@ -197,7 +197,7 @@
           tick-size="6"
         >
           <template #thumb-label="{ modelValue }">
-            <span class="text-h5 font-weight-black text-black">${{ modelValue }}</span>
+            <span class="text-h5 font-weight-black on-primary">${{ modelValue }}</span>
           </template>
         </v-slider>
       </div>
@@ -214,7 +214,7 @@
       </v-btn>
       <v-btn
         icon
-        color="#1D2939"
+        color="secondary"
         height="40"
         width="40"
         flat
@@ -225,7 +225,7 @@
         </v-icon>
       </v-btn>
       <v-btn
-        color="#ffb600"
+        color="primary"
         flat
         rounded="xl"
         height="40"
@@ -416,16 +416,16 @@ const cancel = () => {
   max-width: 500px;
 }
 :deep(.v-slider-thumb__label) {
-  background-color: #ffb600;
+  background-color: rgb(var(--v-theme-primary));
   height: 36px;
 }
 :deep(.v-slider-thumb__label::before) {
-  color: #ffb600;
+  color: rgb(var(--v-theme-primary));
 }
 :deep(.v-slider-track__tick) {
-  background-color: #d0d5dd;
+  background-color: rgb(var(--v-theme-grey300));
 }
 :deep(.v-slider-track__tick--filled) {
-  background-color: #ffd58d;
+  background-color: rgb(var(--v-theme-primary100));
 }
 </style>

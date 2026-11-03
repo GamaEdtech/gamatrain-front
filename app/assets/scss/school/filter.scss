@@ -14,7 +14,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    @include style.responsive-size(background-color, #1d2939, transparent, transparent, transparent);
+    @include style.responsive-size(background-color, rgb(var(--v-theme-inverseSurface)), transparent, transparent, transparent);
     .container-filter {
       max-width: 1200px;
       height: 100%;
@@ -41,7 +41,7 @@
         .each-item-filter {
           font-size: 20px;
           font-weight: 400;
-          color: white;
+          color: rgb(var(--v-theme-onInverseSurfaceSubtle));
           display: flex;
           align-items: center;
           cursor: pointer;
@@ -50,18 +50,18 @@
           .line-seperator {
             width: 2px;
             height: 50px;
-            background-color: #828385;
+            background-color: rgb(var(--v-theme-onInverseSurfaceMuted));
             margin-left: 20px;
           }
           .count-result {
-            color: white;
+            color: rgb(var(--v-theme-onInverseSurfaceSubtle));
             margin-left: 4px;
           }
 
           .main-box-board-option {
             width: 200px;
-            background-color: white;
-            box-shadow: rgb(76 76 76 / 52%) 0px 1px 10px 3px;
+            background-color: rgb(var(--v-theme-surface));
+            box-shadow: rgba(var(--v-theme-shadowNeutral), 0.28) 0 1px 10px 3px;
             border-radius: 0 0 10px 10px;
             display: flex;
             flex-direction: column;
@@ -81,11 +81,11 @@
               min-height: 60px;
               font-size: 20px;
               font-weight: 500;
-              color: black;
+              color: rgb(var(--v-theme-grey900));
               width: 100%;
 
               &:hover {
-                background: #cccccc;
+                background: rgb(var(--v-theme-surfaceTertiary));
               }
             }
           }
@@ -93,8 +93,8 @@
           .main-box-Tuition {
             width: 400px;
             height: 210px;
-            background-color: white;
-            box-shadow: rgb(76 76 76 / 52%) 0px 1px 10px 3px;
+            background-color: rgb(var(--v-theme-surface));
+            box-shadow: rgba(var(--v-theme-shadowNeutral), 0.28) 0 1px 10px 3px;
             border-radius: 0 0 10px 10px;
             display: flex;
             flex-direction: column;
@@ -109,33 +109,33 @@
             .title-Tuition {
               font-size: 24px;
               font-weight: 600;
-              color: black;
+              color: rgb(var(--v-theme-grey900));
               margin-top: 10px;
             }
             .subtitle-Tuition {
               font-size: 16px;
               font-weight: 400;
-              color: black;
+              color: rgb(var(--v-theme-grey900));
             }
             :deep(.v-slider-thumb__label) {
-              background-color: #ffb600;
+              background-color: rgb(var(--v-theme-primary));
               height: 36px;
             }
             :deep(.v-slider-thumb__label::before) {
-              color: #ffb600;
+              color: rgb(var(--v-theme-primary));
             }
             :deep(.v-slider-track__tick) {
-              background-color: #d0d5dd;
+              background-color: rgb(var(--v-theme-grey300));
             }
             :deep(.v-slider-track__tick--filled) {
-              background-color: #ffd58d;
+              background-color: rgb(var(--v-theme-primary100));
             }
           }
 
           .main-box-sort-option {
             width: 300px;
-            background-color: white;
-            box-shadow: rgb(76 76 76 / 52%) 0px 1px 10px 3px;
+            background-color: rgb(var(--v-theme-surface));
+            box-shadow: rgba(var(--v-theme-shadowNeutral), 0.28) 0 1px 10px 3px;
             border-radius: 0 0 10px 10px;
             display: flex;
             flex-direction: column;
@@ -155,20 +155,20 @@
               min-height: 60px;
               font-size: 20px;
               font-weight: 500;
-              color: black;
+              color: rgb(var(--v-theme-grey900));
               width: 100%;
 
               &:hover {
-                background: #cccccc;
+                background: rgb(var(--v-theme-surfaceTertiary));
               }
             }
           }
         }
         .result-div {
-          color: #a6bbce;
+          color: rgb(var(--v-theme-onInverseSurfaceMuted));
         }
         .deactive {
-          color: #a6bbce;
+          color: rgb(var(--v-theme-onInverseSurfaceMuted));
           cursor: not-allowed;
         }
       }
@@ -185,8 +185,8 @@
   .box-region-filter {
     width: 100%;
     height: 100px;
-    background-color: white;
-    box-shadow: rgba(99, 99, 99, 0.2) -3px 11px 8px 4px;
+    background-color: rgb(var(--v-theme-surface));
+    box-shadow: rgba(var(--v-theme-shadowNeutral), 0.18) -3px 11px 8px 4px;
     border-radius: 0 0 10px 10px;
     display: flex;
     align-items: center;
@@ -200,7 +200,7 @@
     position: fixed;
     width: 100%;
     z-index: 11;
-    background-color: rgba(0, 0, 0, 0.164);
+    background-color: rgba(var(--v-theme-inverseSurfaceStrong), 0.16);
     bottom: 0;
     display: flex;
     align-items: flex-end;
@@ -215,7 +215,7 @@
 
     .sort-bottom-nav {
       width: 100%;
-      background-color: white;
+      background-color: rgb(var(--v-theme-surface));
       border-radius: 20px 20px 0 0;
       display: flex;
       flex-direction: column;
@@ -226,12 +226,12 @@
       .title {
         font-size: 24px;
         font-weight: 400;
-        color: #475467;
+        color: rgb(var(--v-theme-grey600));
       }
       .item-sort {
         font-size: 20px;
         font-weight: 400;
-        color: black;
+        color: rgb(var(--v-theme-grey900));
         cursor: pointer;
       }
     }
@@ -240,7 +240,7 @@
     position: fixed;
     width: 100%;
     z-index: 11;
-    background-color: white;
+    background-color: rgb(var(--v-theme-surface));
     bottom: 0;
     display: flex;
     flex-direction: column;
@@ -290,7 +290,7 @@
           .title-group {
             font-size: 18px;
             font-weight: 600;
-            color: black;
+            color: rgb(var(--v-theme-grey900));
           }
           .checkbox-container {
             margin-left: 30px;
@@ -307,7 +307,7 @@
         .title-group {
           font-size: 18px;
           font-weight: 600;
-          color: black;
+          color: rgb(var(--v-theme-grey900));
         }
         .container-input {
           width: 60%;
@@ -316,17 +316,17 @@
           justify-content: center;
           position: relative;
           :deep(.v-slider-thumb__label) {
-            background-color: #ffb600;
+            background-color: rgb(var(--v-theme-primary));
             height: 36px;
           }
           :deep(.v-slider-thumb__label::before) {
-            color: #ffb600;
+            color: rgb(var(--v-theme-primary));
           }
           :deep(.v-slider-track__tick) {
-            background-color: #d0d5dd;
+            background-color: rgb(var(--v-theme-grey300));
           }
           :deep(.v-slider-track__tick--filled) {
-            background-color: #ffd58d;
+            background-color: rgb(var(--v-theme-primary100));
           }
         }
       }
@@ -336,7 +336,7 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        @include style.responsive-size(background-color, #f2f4f7, white, white, white);
+        @include style.responsive-size(background-color, rgb(var(--v-theme-grey100)), rgb(var(--v-theme-surface)), rgb(var(--v-theme-surface)), rgb(var(--v-theme-surface)));
         .container-chips {
           width: 90%;
           display: flex;
@@ -353,7 +353,7 @@
     justify-content: center;
     align-items: center;
     padding-top: 20px;
-    @include style.responsive-size(background-color, #f2f4f7, white, white, white);
+    @include style.responsive-size(background-color, rgb(var(--v-theme-grey100)), rgb(var(--v-theme-surface)), rgb(var(--v-theme-surface)), rgb(var(--v-theme-surface)));
     @include style.responsive-size(display, flex, none, none, none);
     .container-chips {
       width: 90%;

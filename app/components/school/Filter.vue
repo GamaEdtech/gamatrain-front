@@ -7,14 +7,14 @@
             v-model="filterForm.keyword"
             rounded
             :variant="textFieldVariant"
-            bg-color="white"
+            bg-color="surface"
             prepend-inner-icon="mdi-magnify"
             hide-details
-            color="#ffb300"
-            active-color="#ffb600"
+            color="primaryStrong"
+            active-color="primaryStrong"
             label="Search anything..."
             glow
-            icon-color="#ffb600"
+            icon-color="primaryStrong"
             :density="lgAndUp ?`default`:`compact`"
             :disabled="isExpandMap"
             @update:model-value="changeSearchValue"
@@ -24,12 +24,12 @@
           <v-btn
             size="small"
             icon
-            color="#f2f4f7"
+            color="grey100"
             @click="openFilterMobile"
           >
             <v-icon
               size="x-large"
-              color="#000000"
+              color="grey900"
             >
               mdi-filter
             </v-icon>
@@ -37,12 +37,12 @@
           <v-btn
             size="small"
             icon
-            color="#f2f4f7"
+            color="grey100"
             @click="openSortNav($event)"
           >
             <v-icon
               size="x-large"
-              color="#000000"
+              color="grey900"
             >
               mdi-filter-variant
             </v-icon>
@@ -50,12 +50,11 @@
           <v-btn
             size="small"
             icon
-            color="#2E90FA"
+            color="info"
             to="school/add"
           >
             <v-icon
               size="x-large"
-              color="#ffffff"
             >
               md:add
             </v-icon>
@@ -75,7 +74,7 @@
                 v-if="isLoading"
                 indeterminate
                 size="30"
-                color="white"
+                color="onInverseSurfaceSubtle"
                 class="mr-2"
               />
               <school-near-me-location-icon
@@ -86,7 +85,7 @@
             {{ item.name }}
             <v-icon
               v-if="item.hasMenu"
-              :color="item.active && !isExpandMap ? `#ffffff` : `#828385`"
+              :color="item.active && !isExpandMap ? 'onInverseSurfaceSubtle' : 'onInverseSurfaceMuted'"
             >
               md:keyboard_arrow_down
             </v-icon>
@@ -118,9 +117,9 @@
               <v-range-slider
                 v-model="valueTuition"
                 class="w-100"
-                thumb-color="#ffb600"
-                color="#ffb600"
-                track-color="#E4E7EC"
+                thumb-color="primary"
+                color="primary"
+                track-color="grey200"
                 density="compact"
                 hide-details
                 strict
@@ -135,7 +134,7 @@
                 @end="endTuitionMove"
               >
                 <template #thumb-label="{ modelValue }">
-                  <span class="text-h5 font-weight-black text-black">${{ modelValue }}</span>
+                  <span class="text-h5 font-weight-black on-primary">${{ modelValue }}</span>
                 </template>
               </v-range-slider>
             </div>
@@ -202,13 +201,12 @@
         <v-btn
           class="d-none d-lg-flex font-weight-bold text-h5"
           rounded="xl"
-          color="#2E90FA"
+          color="info"
           to="school/add"
           height="46"
         >
           <v-icon
             size="x-large"
-            color="#ffffff"
           >
             md:add
           </v-icon>
@@ -234,8 +232,8 @@
           role="presentation"
           :items="filter.countryList"
           clearable
-          color="#ffb300"
-          active-color="#ffb600"
+          color="primaryStrong"
+          active-color="primaryStrong"
           label="Country"
           :loading="loadingCountry"
           @update:model-value="countryChange"
@@ -254,8 +252,8 @@
           role="presentation"
           :items="filter.stateList"
           clearable
-          color="#ffb300"
-          active-color="#ffb600"
+          color="primaryStrong"
+          active-color="primaryStrong"
           label="State"
           :loading="loadingState"
           :disabled="!filterForm.country"
@@ -275,8 +273,8 @@
           role="presentation"
           :items="filter.cityList"
           clearable
-          color="#ffb300"
-          active-color="#ffb600"
+          color="primaryStrong"
+          active-color="primaryStrong"
           label="City"
           :loading="loadingCity"
           :disabled="!filterForm.state"
@@ -334,7 +332,7 @@
                 class="text-h4 pa-3"
                 size="large"
                 variant="outlined"
-                color="#252626"
+                color="grey900"
                 closable
                 @click:close="clearFilter(`keyword`)"
               >
@@ -349,7 +347,7 @@
                 class="text-h4 pa-3"
                 size="large"
                 variant="outlined"
-                color="#252626"
+                color="grey900"
                 closable
                 @click:close="clearFilter(`country`)"
               >
@@ -364,7 +362,7 @@
                 class="text-h4 pa-3"
                 size="large"
                 variant="outlined"
-                color="#252626"
+                color="grey900"
                 closable
                 @click:close="clearFilter(`state`)"
               >
@@ -380,7 +378,7 @@
                 class="text-h4 pa-3"
                 size="large"
                 variant="outlined"
-                color="#252626"
+                color="grey900"
                 closable
                 @click:close="clearFilter(`city`)"
               >
@@ -397,7 +395,7 @@
                 class="text-h4 pa-3"
                 size="large"
                 variant="outlined"
-                color="#252626"
+                color="grey900"
                 closable
                 @click:close="clearNearMe"
               >
@@ -495,9 +493,9 @@
             <v-range-slider
               v-model="valueTuition"
               class="w-100"
-              thumb-color="#ffb600"
-              color="#ffb600"
-              track-color="#E4E7EC"
+              thumb-color="primary"
+              color="primary"
+              track-color="grey200"
               density="compact"
               hide-details
               strict
@@ -512,7 +510,7 @@
               @end="endTuitionMove"
             >
               <template #thumb-label="{ modelValue }">
-                <span class="text-h5 font-weight-black text-black">${{ modelValue }}</span>
+                <span class="text-h5 font-weight-black on-primary">${{ modelValue }}</span>
               </template>
             </v-range-slider>
           </div>
@@ -526,7 +524,7 @@
             Cancel
           </v-btn>
           <v-btn
-            color="#ffb600"
+            color="primary"
             rounded="xl"
             height="50"
             width="160"
@@ -549,7 +547,7 @@
           class="text-h4 pa-3"
           size="large"
           variant="outlined"
-          color="#252626"
+          color="grey900"
           closable
           @click:close="clearFilter(`keyword`)"
         >
@@ -564,7 +562,7 @@
           class="text-h4 pa-3"
           size="large"
           variant="outlined"
-          color="#252626"
+          color="grey900"
           closable
           @click:close="clearFilter(`country`)"
         >
@@ -579,7 +577,7 @@
           class="text-h4 pa-3"
           size="large"
           variant="outlined"
-          color="#252626"
+          color="grey900"
           closable
           @click:close="clearFilter(`state`)"
         >
@@ -595,7 +593,7 @@
           class="text-h4 pa-3"
           size="large"
           variant="outlined"
-          color="#252626"
+          color="grey900"
           closable
           @click:close="clearFilter(`city`)"
         >
@@ -612,7 +610,7 @@
           class="text-h4 pa-3"
           size="large"
           variant="outlined"
-          color="#252626"
+          color="grey900"
           closable
           @click:close="clearNearMe"
         >

@@ -43,15 +43,12 @@
       class="pl-0"
     >
       <v-btn
-        color="#FFB300"
+        color="primary"
         size="x-large"
-        class="text-white button-search rounded-e-pill"
+        class="button-search rounded-e-pill"
         min-width="50"
       >
-        <v-icon
-          color="#ffffff"
-          size="20"
-        >
+        <v-icon size="20">
           md:search
         </v-icon>
       </v-btn>
@@ -60,15 +57,15 @@
 
   <div
     v-if="searchResultsSection"
-    class="d-none d-md-block position-absolute rounded-xl bg-white search-result-container"
+    class="d-none d-md-block position-absolute rounded-xl bg-surface search-result-container"
   >
     <div
       class="search-result"
       @scroll="checkSearchScroll"
     >
-      <div class="result-stat bg-white">
-        <span class="gama-text-overline-search"> Search result </span>
-        <span class="gama-text-button-search">
+      <div class="result-stat bg-surface">
+        <span class="gama-text-overline-search text-grey400"> Search result </span>
+        <span class="gama-text-button-search text-success font-weight-bold">
           {{ searchCount != "..." ? $numberFormat(searchCount) : searchCount }}
         </span>
       </div>
@@ -99,7 +96,7 @@
         v-else-if="searchCount == 0 && searchLoading == false"
         class="text-center"
       >
-        <span class="gama-text-button-search"> Opps! no data found </span>
+        <span class="gama-text-button-search text-grey400"> Opps! no data found </span>
       </div>
       <div v-else>
         <v-row
@@ -275,12 +272,10 @@ const changeSelectCategory = () => {
   z-index: 100;
 }
 .gama-text-button-search {
-  color: #57b947;
   text-align: right;
 }
 
 .gama-text-overline-search {
-  color: rgba(36, 41, 47, 0.3);
   margin-right: 0.22rem;
 }
 
@@ -298,6 +293,6 @@ const changeSelectCategory = () => {
   max-width: 100%;
 }
 .background-odd {
-  background-color: #ebebeb;
+  background-color: rgb(var(--v-theme-grey200));
 }
 </style>

@@ -3,7 +3,7 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-2">
-      <div class="w-100 text-h4 primary-gray-500">
+      <div class="w-100 text-h4 text-grey500">
         School Facilities
       </div>
 
@@ -37,18 +37,18 @@
             <v-btn
               icon
               flat
-              :color="selectedTags.includes(tag.id) ? `#344054` : `#D0D5DD`"
+              :color="selectedTags.includes(tag.id) ? 'grey700' : 'grey200'"
               width="48"
               height="48"
             >
               <v-icon
                 size="x-large"
-                color="#ffffff"
+                :color="selectedTags.includes(tag.id) ? 'grey200' : 'grey700'"
               >
-                {{ "md:" + tag.icon }}
+                mdfull:{{ tag.icon }}
               </v-icon>
             </v-btn>
-            <span class="font-weight-bold text-h5 primary-gray-900">{{
+            <span class="font-weight-bold text-h5 text-grey900">{{
               tag.name
             }}</span>
           </div>
@@ -77,7 +77,7 @@
               v-for="(board, index) in boards"
               :key="index"
               flat
-              :color="selectedBoards.includes(board.id) ? `grey700` : `grey300`"
+              :color="selectedBoards.includes(board.id) ? 'grey700' : 'grey200'"
               height="48"
               rounded="lg"
               @click="chooseBoard(board)"
@@ -90,7 +90,7 @@
                 height="26"
                 class="mr-1"
               >
-              <span :class="`font-weight-bold text-h5 ${selectedBoards.includes(board.id) ? `text-grey300`:`text-grey900`}`">{{
+              <span :class="`font-weight-bold text-h5 ${selectedBoards.includes(board.id) ? 'text-grey200' : 'text-grey700'}`">{{
                 board.title
               }}</span>
             </v-btn>
@@ -134,15 +134,15 @@
             >
               <v-icon
                 size="x-large"
-                class="primary-blue-500 mb-4"
+                class="text-info mb-4"
               >
                 md:cloud_upload
               </v-icon>
-              <div class="text-h5 font-weight-bold primary-blue-500">
+              <div class="text-h5 font-weight-bold text-info">
                 Upload Image
               </div>
               <div
-                class="text-h6 font-weight-normal text-center mt-2 primary-gray-400"
+                class="text-h6 font-weight-normal text-center mt-2 text-grey400"
               >
                 Accepted formats: JPG, PNG, WebP
               </div>
@@ -176,7 +176,7 @@
       </v-btn>
       <v-btn
         icon
-        color="#1D2939"
+        color="secondary"
         height="40"
         width="40"
         flat
@@ -187,7 +187,7 @@
         </v-icon>
       </v-btn>
       <v-btn
-        color="#ffb600"
+        color="primary"
         flat
         rounded="xl"
         height="40"
@@ -336,9 +336,9 @@ const cancel = () => {
 .container-image-school {
   max-width: 260px;
   height: 180px;
-  background-color: #d0d5dd;
+  background-color: rgb(var(--v-theme-grey200));
 }
 .upload-overlay {
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(var(--v-theme-inverseSurfaceStrong), 0.4);
 }
 </style>

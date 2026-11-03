@@ -6,7 +6,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex flex-wrap flex-column bg-white pa-6 rounded-xl mobile-style"
+      class="w-100 d-flex flex-wrap flex-column bg-surface pa-6 rounded-xl mobile-style"
       @click="clickOnModal"
     >
       <v-row class="align-center">
@@ -20,7 +20,7 @@
           <v-icon
             class="ml-4"
             size="x-large"
-            color="#D0D5DD"
+            color="grey300"
             @click="closeModal"
           >
             md:close
@@ -35,7 +35,7 @@
           v-model="lat"
           label="latitude"
           variant="outlined"
-          color="#FFB600"
+          color="primaryStrong"
           density="compact"
           rounded="xl"
           class="w-100"
@@ -45,7 +45,7 @@
           v-model="lng"
           label="longitude"
           variant="outlined"
-          color="#FFB600"
+          color="primaryStrong"
           density="compact"
           rounded="xl"
           class="w-100"

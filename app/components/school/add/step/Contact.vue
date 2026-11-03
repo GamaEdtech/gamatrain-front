@@ -3,12 +3,12 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-10">
-      <div class="w-100 text-h4 primary-gray-500">
+      <div class="w-100 text-h4 text-grey500">
         School Contact
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           Web site
         </div>
         <v-text-field
@@ -20,17 +20,17 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           :rules="[urlRule]"
         />
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           Email
         </div>
         <v-text-field
@@ -42,17 +42,17 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           :rules="[emailRule]"
         />
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           Phone
         </div>
         <v-text-field
@@ -64,10 +64,10 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           :rules="[phoneRule]"
         />
@@ -75,7 +75,7 @@
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div
-          class="text-h6 font-weight-bold primary-gray-700 ml-2 position-relative"
+          class="text-h6 font-weight-bold text-grey700 ml-2 position-relative"
         >
           <v-badge
             floating
@@ -86,7 +86,7 @@
             <template #badge>
               <v-icon
                 size="large"
-                color="red"
+                color="error"
               >
                 md:star
               </v-icon>
@@ -103,17 +103,17 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           :rules="[requiredRule]"
         />
       </div>
 
       <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           Local Name
         </div>
         <v-text-field
@@ -125,17 +125,17 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           :rules="[requiredRule]"
         />
       </div> -->
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           Zip Code
         </div>
         <v-text-field
@@ -147,17 +147,17 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           :rules="[zipCodeRule]"
         />
       </div>
 
       <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           Local Address
         </div>
         <v-text-field
@@ -169,17 +169,17 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           :rules="[requiredRule]"
         />
       </div> -->
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           Fax Number
         </div>
         <v-text-field
@@ -191,17 +191,17 @@
           autocomplete="off"
           clearable
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           :rules="[faxRule]"
         />
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           Description
         </div>
         <v-textarea
@@ -212,10 +212,10 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="#E4E7EC"
-          color="#ffb600"
-          active-color="#ffb600"
-          bg-color="#ffffff"
+          base-color="grey200"
+          color="primaryStrong"
+          active-color="primaryStrong"
+          bg-color="surface"
           class="w-100"
           :rules="[descriptionRule]"
           no-resize
@@ -223,7 +223,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold primary-gray-700 ml-2">
+        <div class="text-h6 font-weight-bold text-grey700 ml-2">
           Location On Map
         </div>
         <div class="w-100 d-flex align-center justify-start ga-1 mt-3">
@@ -262,7 +262,7 @@
       </v-btn>
       <v-btn
         icon
-        color="#1D2939"
+        color="secondary"
         height="40"
         width="40"
         flat
@@ -273,7 +273,7 @@
         </v-icon>
       </v-btn>
       <v-btn
-        color="#ffb600"
+        color="primary"
         flat
         rounded="xl"
         height="40"

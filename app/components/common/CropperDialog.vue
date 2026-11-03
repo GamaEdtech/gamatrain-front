@@ -27,7 +27,8 @@
         class="pa-0 d-flex align-center justify-center"
       >
         <v-btn
-          color="primary text-h5 font-weight-bold"
+          color="primary"
+          class="text-h5 font-weight-bold"
           width="150"
           rounded="xl"
           size="large"
