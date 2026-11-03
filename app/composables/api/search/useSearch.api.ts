@@ -1,6 +1,7 @@
 import type { ApiResult } from '@/types'
 import type { SearchParameters } from '@/composables/useApiService'
 import type {
+  HomeStatsDTO,
   SearchListDTO,
   SearchTypesStatsDTO,
 } from '@/types/search'
@@ -20,5 +21,8 @@ export const useSearchApi = () => {
       publicRequest,
     )
 
-  return { getResults, getTypesStats }
+  const getHomeStats = (params: Pick<SearchParameters, 'section' | 'base'>) =>
+    useApiService.get<ApiResult<HomeStatsDTO>>('/api/v2/search/homestats', params, publicRequest)
+
+  return { getResults, getTypesStats, getHomeStats }
 }
