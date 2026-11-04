@@ -1,8 +1,8 @@
 const ADMIN_FIELD_DEFAULTS = {
-  baseColor: 'grey400',
+  baseColor: 'borderSubtle',
   color: 'primary',
   activeColor: 'primary',
-  bgColor: 'transparent',
+  bgColor: 'surface',
 }
 
 export const ADMIN_FORM_DEFAULTS = {

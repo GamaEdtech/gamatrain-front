@@ -5,67 +5,64 @@
     :fullscreen="!mdAndUp"
     @click="clickOnOverlay"
   >
-    <v-defaults-provider :defaults="ADMIN_FORM_DEFAULTS">
-      <v-sheet
-        class="rounded-lg mobile-style"
-        @click="clickOnModal"
+    <v-sheet
+      class="rounded-lg mobile-style"
+      @click="clickOnModal"
+    >
+      <v-tabs
+        v-model="tab"
+        fixed-tabs
+        bg-color="surfaceTertiary"
       >
-        <v-tabs
-          v-model="tab"
-          fixed-tabs
-          bg-color="grey-lighten-4"
-        >
-          <v-tab value="Edit">
-            Edit
-          </v-tab>
-          <v-tab value="Password">
-            Password
-          </v-tab>
-          <v-tab value="Charge">
-            Charge
-          </v-tab>
-          <v-tab value="Permissions">
-            Permissions
-          </v-tab>
-        </v-tabs>
+        <v-tab value="Edit">
+          Edit
+        </v-tab>
+        <v-tab value="Password">
+          Password
+        </v-tab>
+        <v-tab value="Charge">
+          Charge
+        </v-tab>
+        <v-tab value="Permissions">
+          Permissions
+        </v-tab>
+      </v-tabs>
 
-        <v-divider />
+      <v-divider />
 
-        <v-window v-model="tab">
-          <v-window-item value="Edit">
-            <admin-usermanagement-actions-user-detail-modal
-              :id="id"
-              @edit-user-success-full="editUserSuccessFull"
-            />
-          </v-window-item>
+      <v-window v-model="tab">
+        <v-window-item value="Edit">
+          <admin-usermanagement-actions-user-detail-modal
+            :id="id"
+            @edit-user-success-full="editUserSuccessFull"
+          />
+        </v-window-item>
 
-          <v-window-item value="Password">
-            <admin-usermanagement-actions-reset-password
-              :id="id"
-              @reset-password-success-full="resetPasswordSuccessFull"
-            />
-          </v-window-item>
+        <v-window-item value="Password">
+          <admin-usermanagement-actions-reset-password
+            :id="id"
+            @reset-password-success-full="resetPasswordSuccessFull"
+          />
+        </v-window-item>
 
-          <v-window-item value="Charge">
-            <admin-usermanagement-actions-user-charge-wallet
-              :id="id"
-              @charge-wallet-success-full="chargeWalletSuccessFull"
-            />
-          </v-window-item>
-          <v-window-item value="Permissions">
-            <admin-usermanagement-actions-user-permission
-              :id="id"
-            />
-          </v-window-item>
-        </v-window>
-      </v-sheet>
-    </v-defaults-provider>
+        <v-window-item value="Charge">
+          <admin-usermanagement-actions-user-charge-wallet
+            :id="id"
+            @charge-wallet-success-full="chargeWalletSuccessFull"
+          />
+        </v-window-item>
+        <v-window-item value="Permissions">
+          <admin-usermanagement-actions-user-permission
+            :id="id"
+          />
+        </v-window-item>
+      </v-window>
+    </v-sheet>
   </v-dialog>
 </template>
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import { ADMIN_FORM_DEFAULTS } from '@/constants/adminFormDefaults'
 
 interface IMoreActionModal {
   showDialog: boolean

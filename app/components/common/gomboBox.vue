@@ -113,7 +113,7 @@ const rawProps = withDefaults(defineProps<IGomboBox>(), {
   itemValue: 'id',
   disabled: false,
   dataLoading: false,
-  baseColor: 'grey400',
+  baseColor: 'grey500',
   color: 'primary',
   density: 'default',
   rounded: 'xl',

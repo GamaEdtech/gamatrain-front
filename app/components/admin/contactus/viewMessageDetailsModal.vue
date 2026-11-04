@@ -63,7 +63,7 @@
         <div
           v-for="i in 3"
           :key="i"
-          class="box-chat d-flex flex-column rounded-lg bg-grey200 pa-4 ga-1"
+          class="box-chat d-flex flex-column rounded-lg bg-surfaceTertiary pa-4 ga-1"
         >
           <v-skeleton-loader
             width="80"
@@ -85,7 +85,7 @@
           :class="['w-100 d-flex', item.bySupport ? 'justify-end' : 'justify-start']"
         >
           <div
-            :class="['reply-bubble d-flex flex-column rounded-lg py-4 px-6 ga-1', item.bySupport ? 'bg-primary50' : 'bg-grey200']"
+            :class="['reply-bubble d-flex flex-column rounded-lg py-4 px-6 ga-1', item.bySupport ? 'bg-primary50' : 'bg-surfaceTertiary']"
           >
             <span class="text-h6 font-weight-bold text-grey700">
               {{ getReplyAuthor(item) }}

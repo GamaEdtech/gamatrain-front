@@ -69,6 +69,7 @@
       }))"
       rounded="lg"
       density="compact"
+      base-color="grey800"
       class="mt-1"
     />
 
@@ -81,6 +82,7 @@
       }))"
       rounded="lg"
       density="compact"
+      base-color="grey800"
       class="mt-6"
     />
 
@@ -93,6 +95,7 @@
       }))"
       rounded="lg"
       density="compact"
+      base-color="grey800"
       class="mt-6"
     />
 
@@ -105,6 +108,7 @@
       }))"
       rounded="lg"
       density="compact"
+      base-color="grey800"
       class="mt-6"
     />
 
