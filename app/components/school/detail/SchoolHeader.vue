@@ -70,8 +70,8 @@
         :target="action.external ? '_blank' : undefined"
         :rel="action.external ? 'noopener nofollow' : undefined"
         :prepend-icon="action.icon"
-        :color="action.contribute ? 'grey500' : 'grey800'"
-        :class="['text-none', { 'school-header__action--add': action.contribute }]"
+        color="grey800"
+        class="text-none"
         variant="outlined"
         rounded="lg"
         height="64"
@@ -93,7 +93,6 @@ interface QuickAction {
   label: string
   href?: string
   external?: boolean
-  contribute?: boolean
   onClick?: () => void
 }
 
@@ -103,7 +102,6 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{
   'leave-comment': []
-  'contribute': [field: string]
 }>()
 const nuxtApp = useNuxtApp()
 
@@ -131,12 +129,7 @@ const reviewCount = computed(() => props.ratingData?.totalCount || 0)
 const firstPhone = computed(() =>
   (props.content.phoneNumber || '').split('/').map(p => p.trim()).find(Boolean) || '')
 
-const websiteUrl = computed(() => {
-  const site = (props.content.webSite || '').trim()
-  // webSite is free text and sometimes not a URL at all ("government").
-  if (!/^(https?:\/\/)?[\w-]+(\.[\w-]+)+/i.test(site)) return ''
-  return /^https?:\/\//i.test(site) ? site : `https://${site}`
-})
+const websiteUrl = computed(() => schoolWebsiteUrl(props.content.webSite))
 
 const directionsUrl = computed(() => {
   const { latitude, longitude, address } = props.content
@@ -168,19 +161,14 @@ const share = async () => {
   }
 }
 
-// A missing detail turns its action into an invitation to add it.
+// Only actions that work are shown. Missing details are asked for in the "Fill in the gaps" card further
+// down: up here a dashed "Add phone" read as a broken button and sent first-time visitors to sign in.
 const actions = computed<QuickAction[]>(() => [
-  directionsUrl.value
-    ? { key: 'directions', icon: 'mdi-directions', label: 'Directions', href: directionsUrl.value, external: true }
-    : { key: 'directions', icon: 'mdi-map-marker-plus-outline', label: 'Add location', contribute: true, onClick: () => emit('contribute', 'location') },
-  firstPhone.value
-    ? { key: 'call', icon: 'mdi-phone-outline', label: 'Call', href: `tel:${firstPhone.value}` }
-    : { key: 'call', icon: 'mdi-phone-plus-outline', label: 'Add phone', contribute: true, onClick: () => emit('contribute', 'phone') },
-  websiteUrl.value
-    ? { key: 'website', icon: 'mdi-web', label: 'Website', href: websiteUrl.value, external: true }
-    : { key: 'website', icon: 'mdi-web-plus', label: 'Add website', contribute: true, onClick: () => emit('contribute', 'website') },
+  directionsUrl.value && { key: 'directions', icon: 'mdi-directions', label: 'Directions', href: directionsUrl.value, external: true },
+  firstPhone.value && { key: 'call', icon: 'mdi-phone-outline', label: 'Call', href: `tel:${firstPhone.value}` },
+  websiteUrl.value && { key: 'website', icon: 'mdi-web', label: 'Website', href: websiteUrl.value, external: true },
   { key: 'share', icon: 'mdi-share-variant-outline', label: 'Share', onClick: share },
-])
+].filter((action): action is QuickAction => !!action))
 </script>
 
 <style scoped>
@@ -202,18 +190,14 @@ const actions = computed<QuickAction[]>(() => [
 
 .school-header__actions {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 124px);
   gap: 8px;
-  max-width: 520px;
 }
 
 .school-header__actions .v-btn {
   font-size: 13px;
   letter-spacing: normal;
   border-color: rgb(var(--v-theme-grey200));
-}
-
-.school-header__action--add {
-  border-style: dashed;
 }
 </style>

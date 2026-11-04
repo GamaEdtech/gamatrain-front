@@ -12,6 +12,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { distanceInMeters } from '@/utils/geoDistance'
 
 const props = defineProps({
   items: {
@@ -55,6 +56,11 @@ const props = defineProps({
     default: '/images/gama-location.svg',
   },
   useForSelectLocation: {
+    type: Boolean,
+    default: false,
+  },
+  // Show only the current items and frame the map on them, so a filtered list opens over its own area.
+  fitItems: {
     type: Boolean,
     default: false,
   },
@@ -112,6 +118,10 @@ onMounted(async () => {
   }
   if (props.showHighlightLocation && props.highlightLocation.length > 0) {
     addHighlightMarker(props.highlightLocation)
+  }
+  // Items that arrived with the page (server-rendered list) are in before Leaflet is.
+  if (props.useCluster && props.items.length) {
+    setMarkers()
   }
 })
 onBeforeUnmount(() => {
@@ -186,9 +196,17 @@ async function setMarkers() {
       },
     }))
 
+    // A framed list, or an empty result (a new filter starts the map over), replaces what's on the map;
+    // otherwise markers build up as the map is moved, so panning back doesn't blank areas already seen.
+    if (props.fitItems || !mapItems.length) {
+      markerCluster.value?.clearLayers()
+    }
     if (mapItems.length === 0) {
       console.warn('No valid school markers to display on map')
       return
+    }
+    if (props.fitItems) {
+      map.value.fitBounds(L.latLngBounds(mapItems.map(item => [item.lat, item.lng])), { padding: [32, 32], maxZoom: 13 })
     }
 
     const markers = mapItems.map((item) => {
@@ -261,19 +279,21 @@ const onMoveStart = () => {
   emit('mapMoveStart')
 }
 
-const onMoveEnd = () => {
-  if (!map.value) return
+// The visible area as a centre and the distance to its corner, the shape the school search takes.
+const getViewArea = () => {
+  if (!map.value) return null
 
   const leafletMap = map.value.leafletObject || map.value
-  const bounds = leafletMap.getBounds()
   const newCenter = leafletMap.getCenter()
-  const ne = bounds.getNorthEast()
-
-  const distance = calculateDistance(newCenter, ne)
-  emit('mapMoved', {
+  return {
     center: [newCenter.lat, newCenter.lng],
-    distance: distance,
-  })
+    distance: calculateDistance(newCenter, leafletMap.getBounds().getNorthEast()),
+  }
+}
+
+const onMoveEnd = () => {
+  const area = getViewArea()
+  if (area) emit('mapMoved', area)
 }
 
 const onMove = () => {
@@ -291,23 +311,7 @@ const clickOnMap = () => {
   emit('clickOnMap')
 }
 
-const calculateDistance = (point1, point2) => {
-  const R = 6371000
-  const lat1 = point1.lat * (Math.PI / 180)
-  const lon1 = point1.lng * (Math.PI / 180)
-  const lat2 = point2.lat * (Math.PI / 180)
-  const lon2 = point2.lng * (Math.PI / 180)
-
-  const dLat = lat2 - lat1
-  const dLon = lon2 - lon1
-
-  const a
-    = Math.sin(dLat / 2) ** 2
-      + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
-
-  return formatNumber(R * c)
-}
+const calculateDistance = (point1, point2) => formatNumber(distanceInMeters(point1, point2))
 
 const getViewportRadiusAtZoom = (centerLatLng, targetZoom) => {
   if (!map.value) return 0
@@ -421,6 +425,7 @@ const setViewByRadius = (lat, lng, radius) => {
 
 defineExpose({
   setView,
+  getViewArea,
   getZoomByRadius,
   setViewByRadius,
 })

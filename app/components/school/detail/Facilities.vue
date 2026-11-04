@@ -1,6 +1,7 @@
 <template>
+  <!-- Hidden while empty; it's asked for in the "Fill in the gaps" card, which opens the editor here. -->
   <section
-    class="detail-section"
+    :class="['detail-section', { 'd-none': !selected.length }]"
     aria-labelledby="facilities-title"
   >
     <div class="section-head">
@@ -17,11 +18,10 @@
         class="text-none gtext-t5 px-2 section-action"
         @click="openModal"
       >
-        {{ selected.length ? 'Edit' : 'Add facilities' }}
+        Edit
       </v-btn>
     </div>
     <div
-      v-if="selected.length"
       class="d-flex flex-wrap ga-2"
     >
       <v-chip
@@ -37,12 +37,6 @@
         {{ facility.name }}
       </v-chip>
     </div>
-    <p
-      v-else
-      class="section-empty"
-    >
-      No facilities listed yet.
-    </p>
 
     <v-dialog
       v-model="facilitiesDialog"

@@ -12,11 +12,10 @@
             hide-details
             color="primaryStrong"
             active-color="primaryStrong"
-            label="Search anything..."
+            label="Search school name..."
             glow
             icon-color="primaryStrong"
             :density="lgAndUp ?`default`:`compact`"
-            :disabled="isExpandMap"
             @update:model-value="changeSearchValue"
           />
         </div>
@@ -954,9 +953,13 @@ const textFieldVariant = computed(() => {
   return width.value > 1280 ? 'solo' : 'outlined'
 })
 
+// Searches once typing pauses: every keystroke used to empty the list, rewrite the URL and cancel the last request.
+let searchTimer = null
 const changeSearchValue = () => {
-  updateQueryParams()
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(updateQueryParams, 400)
 }
+onBeforeUnmount(() => clearTimeout(searchTimer))
 
 // End Section Filter Search
 

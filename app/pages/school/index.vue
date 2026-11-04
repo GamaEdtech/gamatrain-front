@@ -24,23 +24,20 @@
 
       <Map
         ref="mapRef"
-        :items="newSchoolForMarkersOnMap"
+        :items="isMapMode ? newSchoolForMarkersOnMap : listMarkers"
         :use-cluster="true"
+        :fit-items="!isMapMode"
         :enable-user-location="false"
         @map-moved="changeFilterWithMapMoved"
-        @map-move-start="handleMapMoveStart"
         @user-location-found="userLocationFound"
         @school-marker-clicked="handleSchoolMarkerClick"
         @school-marker-click-error="handleSchoolMarkerClickError"
       />
     </div>
 
-    <!-- Map Loading Indicator - Only show on map view -->
+    <!-- Shown while the map is searching, not while it's being dragged. -->
     <div
-      v-if="
-        isUserMovingMap
-          && (isExpandMapInDesktop || (!openBottomNavFilterList && lgAndDown))
-      "
+      v-if="isUserMovingMap && isMapMode"
       class="map-loading-overlay"
     >
       <v-progress-circular
@@ -133,6 +130,7 @@ import Map from '~/components/common/Map.client.vue'
 import SchoolDetailsModal from '~/components/school/SchoolDetailsModal.vue'
 import SchoolList from '~/components/school/List.vue'
 import { useDisplay } from 'vuetify'
+import { distanceInMeters } from '@/utils/geoDistance'
 
 const router = useRouter()
 const route = useRoute()
@@ -282,33 +280,30 @@ const resetParameter = () => {
 
 const updateFilter = (query) => {
   filterForm.value = query
+  // New filters start the map over: its markers and the area it has already searched no longer apply.
+  newSchoolForMarkersOnMap.value = []
+  lastMapSearch = null
   resetParameter()
   updateQueryParams()
 }
 
-const handleMapMoveStart = () => {
-  // Only show loading if map view is active and will trigger data reload
-  if (
-    (isExpandMapInDesktop.value && window.innerWidth > 1260)
-    || (!openBottomNavFilterList.value && window.innerWidth < 1260)
-  ) {
-    isUserMovingMap.value = true
-  }
-}
+// The last area the map searched, and whether that search returned every school in it. While the view
+// stays inside such an area (zooming in, small pans) the markers are already there: no new search.
+let lastMapSearch = null
+
+const isCoveredByLastMapSearch = (lat, lng, distance) =>
+  !!lastMapSearch?.complete
+  && distanceInMeters(lastMapSearch, { lat, lng }) + distance <= lastMapSearch.distance
 
 const changeFilterWithMapMoved = (locationParam) => {
-  if (
-    (isExpandMapInDesktop.value && window.innerWidth > 1260)
-    || (!openBottomNavFilterList.value && window.innerWidth < 1260)
-  ) {
-    filterForm.value.distance = locationParam.distance
-    filterForm.value.lat = locationParam.center[0]
-    filterForm.value.lng = locationParam.center[1]
-    resetParameter()
-    updateQueryParams()
-  }
-  // Always set to false when movement ends, regardless of conditions
-  isUserMovingMap.value = false
+  if (!isMapMode.value) return
+  const [lat, lng] = locationParam.center
+  filterForm.value.distance = locationParam.distance
+  filterForm.value.lat = lat
+  filterForm.value.lng = lng
+  if (isCoveredByLastMapSearch(lat, lng, locationParam.distance)) return
+  resetParameter()
+  updateQueryParams()
 }
 
 const updateQueryParams = () => {
@@ -342,9 +337,10 @@ const debouncedGetSchoolList = async () => {
   }
   await nextTick()
 
+  // The map searches soon after it stops moving; the list waits a little longer between filter changes.
   timer.value = setTimeout(() => {
     getSchoolList()
-  }, 800)
+  }, isMapMode.value ? 300 : 800)
 }
 
 // Read once in setup: setMetaData also runs later, after a client-side filter change.
@@ -487,8 +483,12 @@ if (initialSchools.value) {
   isUserMovingMap.value = false
 }
 
+// Only the newest search may fill the list: a slow answer for an area the map has left is dropped.
+let latestSchoolRequest = 0
+
 const getSchoolList = async () => {
   if (isAllSchoolLoaded.value) return
+  const requestId = ++latestSchoolRequest
   try {
     const params = {
       'PagingDto.PageFilter.Skip': (filterForm.value.page - 1) * perPage.value,
@@ -501,33 +501,34 @@ const getSchoolList = async () => {
         params[`PagingDto.SortFilter[${index}].column`] = sortOption
       })
     }
-    if (isExpandMapInDesktop.value || !openBottomNavFilterList.value || filterForm.value.sort.includes('distance')) {
+    // The map searches the visible area on top of the filters, not instead of them: searching a name or
+    // picking a country and then opening the map shows those schools, not every school in view.
+    if (isMapMode.value || filterForm.value.sort.includes('distance')) {
       params['Location.Radius'] = filterForm.value.distance
       params['Location.Latitude'] = filterForm.value.lat
       params['Location.Longitude'] = filterForm.value.lng
     }
-    else {
-      params['Name'] = filterForm.value.keyword
-      params['section'] = filterForm.value.stage
-      params['Tuition.Start']
-        = filterForm.value.tuitionFeeMin == 0
-          ? undefined
-          : filterForm.value.tuitionFeeMin
-      params['Tuition.End']
-        = filterForm.value.tuitionFeeMax == 0
-          ? undefined
-          : filterForm.value.tuitionFeeMax
-      params['CountryId'] = filterForm.value.country
-      params['StateId'] = filterForm.value.state
-      params['CityId'] = filterForm.value.city
-      params['school_type'] = filterForm.value.school_type
-      params['religion'] = filterForm.value.religion
-      params['boarding_type'] = filterForm.value.boarding_type
-      params['coed_status'] = filterForm.value.coed_status
-      params['sort'] = filterForm.value.sort
-    }
+    params['Name'] = filterForm.value.keyword
+    params['section'] = filterForm.value.stage
+    params['Tuition.Start']
+      = filterForm.value.tuitionFeeMin == 0
+        ? undefined
+        : filterForm.value.tuitionFeeMin
+    params['Tuition.End']
+      = filterForm.value.tuitionFeeMax == 0
+        ? undefined
+        : filterForm.value.tuitionFeeMax
+    params['CountryId'] = filterForm.value.country
+    params['StateId'] = filterForm.value.state
+    params['CityId'] = filterForm.value.city
+    params['school_type'] = filterForm.value.school_type
+    params['religion'] = filterForm.value.religion
+    params['boarding_type'] = filterForm.value.boarding_type
+    params['coed_status'] = filterForm.value.coed_status
+    params['sort'] = filterForm.value.sort
 
     const response = await useApiService.get('/api/v2/schools', params, { public: true })
+    if (requestId !== latestSchoolRequest) return
     setMetaData(response)
 
     if (response?.data?.list) {
@@ -544,8 +545,14 @@ const getSchoolList = async () => {
       else {
         schools.value = [...schools.value, ...response.data.list]
       }
-      if (isExpandMapInDesktop.value || !openBottomNavFilterList.value) {
+      if (isMapMode.value) {
         newSchoolForMarkersOnMap.value = response.data.list
+        lastMapSearch = {
+          lat: filterForm.value.lat,
+          lng: filterForm.value.lng,
+          distance: filterForm.value.distance,
+          complete: response.data.list.length < perPage.value,
+        }
       }
     }
     else {
@@ -556,11 +563,13 @@ const getSchoolList = async () => {
     console.error(err)
   }
   finally {
-    isInitialSchoolLoading.value = false
-    isPaginationSchoolLoading.value = false
-    isPaginationPreviousSchoolLoading.value = false
-    // Hide loading indicator after data is loaded
-    isUserMovingMap.value = false
+    // A newer search is still running; it owns the loading state.
+    if (requestId === latestSchoolRequest) {
+      isInitialSchoolLoading.value = false
+      isPaginationSchoolLoading.value = false
+      isPaginationPreviousSchoolLoading.value = false
+      isUserMovingMap.value = false
+    }
   }
 }
 
@@ -590,14 +599,24 @@ const loadPreviousSchool = () => {
 // Start Open/Close bottom nav and Expand Map in Desktop
 const isExpandMapInDesktop = ref(false)
 
+// The map searches what it shows; in list mode it shows the first page of results and frames them.
+const isMapMode = computed(() => isExpandMapInDesktop.value || (!openBottomNavFilterList.value && lgAndDown.value))
+const listMarkers = computed(() => schools.value.slice(0, 20))
+
+// Opening the map searches the area it already shows (the listed schools), not a fixed default far away.
+const startMapSearchFromView = () => {
+  const area = mapRef.value?.getViewArea()
+  filterForm.value.lat = area?.center[0] ?? defaultLatLongDistance.lat
+  filterForm.value.lng = area?.center[1] ?? defaultLatLongDistance.lng
+  filterForm.value.distance = area?.distance ?? defaultLatLongDistance.distance
+}
+
 const changeStatusExpandMap = () => {
   isExpandMapInDesktop.value = !isExpandMapInDesktop.value
   if (isExpandMapInDesktop.value) {
     perPage.value = 200
     if (!filterForm.value.sort.includes('distance')) {
-      filterForm.value.lat = defaultLatLongDistance.lat
-      filterForm.value.lng = defaultLatLongDistance.lng
-      filterForm.value.distance = defaultLatLongDistance.distance
+      startMapSearchFromView()
     }
     schools.value = []
   }
@@ -634,9 +653,7 @@ const changeBottomSheetStatus = (value) => {
   else {
     perPage.value = 200
     if (!filterForm.value.sort.includes('distance')) {
-      filterForm.value.lat = defaultLatLongDistance.lat
-      filterForm.value.lng = defaultLatLongDistance.lng
-      filterForm.value.distance = defaultLatLongDistance.distance
+      startMapSearchFromView()
     }
   }
   resetParameter()

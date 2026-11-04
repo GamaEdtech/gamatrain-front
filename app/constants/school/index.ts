@@ -56,3 +56,16 @@ export const SCHOOL_ISSUE_STATUS_FILTER_LIST: {
   { id: 'Rejected', title: 'Rejected' },
   { id: 'Deleted', title: 'Deleted' },
 ]
+
+/**
+ * Where a country's national exam results are published, keyed by country id. Shown on that country's
+ * school pages: in results season most visitors arrive searching for their school's results.
+ */
+export const SCHOOL_EXAM_RESULTS_BY_COUNTRY: Record<number, {
+  board: string
+  exams: string
+  url: string
+}> = {
+  // Tanzania: NECTA's public results portal.
+  125077: { board: 'NECTA', exams: 'Standard 4 (SFNA), Standard 7 (PSLE), Form 4 (CSEE) and Form 6 (ACSEE)', url: 'https://matokeo.necta.go.tz/' },
+}

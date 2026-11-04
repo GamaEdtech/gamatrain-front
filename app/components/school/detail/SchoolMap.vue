@@ -1,6 +1,7 @@
 <template>
+  <!-- Hidden without a location; "Map location" in the "Fill in the gaps" card opens the picker. -->
   <section
-    class="detail-section"
+    :class="['detail-section', { 'd-none': !hasLocation }]"
     aria-labelledby="location-title"
   >
     <div class="section-head">
@@ -17,12 +18,11 @@
         class="text-none gtext-t5 px-2 section-action"
         @click="openLocationDialog"
       >
-        {{ hasLocation ? 'Edit location' : 'Add location' }}
+        Edit location
       </v-btn>
     </div>
 
     <div
-      v-if="hasLocation"
       ref="frameRef"
       class="map-frame"
     >
@@ -52,12 +52,6 @@
         Show map
       </v-card>
     </div>
-    <p
-      v-else
-      class="section-empty"
-    >
-      The map location hasn't been added yet.
-    </p>
 
     <LazySelectLocationDialog
       v-if="dialogMounted"

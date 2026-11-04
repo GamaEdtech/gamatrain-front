@@ -1,6 +1,7 @@
 <template>
+  <!-- Hidden while empty; it's asked for in the "Fill in the gaps" card, which opens the editor here. -->
   <section
-    class="detail-section"
+    :class="['detail-section', { 'd-none': !description && !isEditing }]"
     aria-labelledby="about-title"
   >
     <div class="section-head">
@@ -18,7 +19,7 @@
         class="text-none gtext-t5 px-2 section-action"
         @click="startEdit"
       >
-        {{ description ? 'Edit' : 'Add description' }}
+        Edit
       </v-btn>
     </div>
     <form
@@ -60,12 +61,6 @@
       class="description"
     >
       {{ description }}
-    </p>
-    <p
-      v-else
-      class="section-empty"
-    >
-      No description yet.
     </p>
   </section>
 </template>
