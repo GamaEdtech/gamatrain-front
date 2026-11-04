@@ -25,12 +25,12 @@
           <p class="gama-text-body1">
             {{ slideArr[slideIndex].describe }}
           </p>
-          <div class="img-holder illustration-stage">
+          <div class="img-holder">
             <v-slide-x-transition>
               <img
                 v-if="expand"
                 :alt="slideArr[slideIndex].caption"
-                :src="`/images/${slideArr[slideIndex].img}`"
+                :src="themedImage(`/images/${slideArr[slideIndex].img}`)"
               >
             </v-slide-x-transition>
           </div>
@@ -67,6 +67,10 @@ export default {
       required: false,
       default: () => [],
     },
+  },
+  setup() {
+    const { themedImage } = useThemeMode()
+    return { themedImage }
   },
   data() {
     return {

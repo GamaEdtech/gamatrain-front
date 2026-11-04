@@ -9,16 +9,6 @@
   --bottom-nav-height: 62px;
 }
 
-// Illustrations are drawn for a white page: light floor shadows and thin
-// frames turn into white blobs on a dark background. In dark mode they sit on
-// a soft light tile instead.
-.v-theme--dark .illustration-stage {
-  box-sizing: content-box;
-  padding: 12px;
-  border-radius: 24px;
-  background-color: rgba(var(--v-theme-white), 0.9);
-}
-
 // Browser autofill paints its own light background and dark text on inputs,
 // which clashes with dark fields. Repaint it with the theme's colours.
 .v-theme--dark input:-webkit-autofill,
