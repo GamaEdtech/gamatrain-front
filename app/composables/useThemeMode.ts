@@ -37,10 +37,14 @@ export const useThemeMode = () => {
 
   const toggleTheme = () => setTheme(isDark.value ? 'light' : 'dark')
 
+  // Illustrations with a dark-theme copy keep it next to the light one, with a `-dark` suffix.
+  const themedImage = (src: string) => (isDark.value ? src.replace(/(\.\w+)$/, '-dark$1') : src)
+
   return {
     isDark,
     isSwitchEnabled: isThemeSwitchEnabled(),
     setTheme,
     toggleTheme,
+    themedImage,
   }
 }

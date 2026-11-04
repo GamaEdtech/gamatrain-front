@@ -104,12 +104,8 @@ const errorInfo = {
   },
 }
 
-// Each illustration has a dark-theme copy next to it (`-dark` suffix).
-const { isDark } = useThemeMode()
-const image = computed(() => {
-  const src = errorInfo[props.statusCode]?.image ?? '/images/error/error-500.svg'
-  return isDark.value ? src.replace('.svg', '-dark.svg') : src
-})
+const { themedImage } = useThemeMode()
+const image = computed(() => themedImage(errorInfo[props.statusCode]?.image ?? '/images/error/error-500.svg'))
 </script>
 
 <style scoped>

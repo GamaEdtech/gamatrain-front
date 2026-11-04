@@ -83,8 +83,8 @@
           <v-img
             width="246"
             height="184"
-            class="mx-auto illustration-stage"
-            src="/images/school-service.webp"
+            class="mx-auto"
+            :src="themedImage('/images/school-service.webp')"
           />
         </v-col>
         <v-col
@@ -210,6 +210,7 @@
 import { useDisplay } from 'vuetify/lib/framework.mjs'
 
 const display = useDisplay()
+const { themedImage } = useThemeMode()
 // Data
 const _test_schools = ref('')
 const _less = ref(true)
