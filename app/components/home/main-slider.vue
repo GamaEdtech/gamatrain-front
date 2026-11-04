@@ -93,11 +93,11 @@ const slides = [
   // },
   {
     title:
-      '<span class="gama-text-h1">AI</span> <span class="gama-text-h4 text-white">&nbspSystem <span class="d-sm-none"><br>&nbsp&nbsp</span>in Education</span>',
-    img: 'ai-robot.webp',
-    text: 'Discover the future of education with our AI-powered learning platform,<br> revolutionizing the way you acquire knowledge and skills.',
-    id: 'ai-slide',
-    link: '/smart-learning',
+      '<span class="gama-text-h1 font-weight-bold">Online<span class="d-sm-none"><br></span> Exam</span>',
+    img: 'online-exam.webp',
+    text: 'Take timed exams by board, grade and subject,<br> and see your score the moment you finish.',
+    id: 'exam-slide',
+    link: '/search?type=quizhub',
   },
   {
     title: '<span class="gama-text-h1">School finder</span>',
@@ -108,11 +108,11 @@ const slides = [
   },
   {
     title:
-      '<span class="gama-text-h1 font-weight-bold">Question<span class="d-sm-none"><br>&nbsp&nbsp</span> & Answer</span>',
-    text: 'Q&A made easy. Connect with classmates and<br> teachers for quick answers to your questions.',
-    img: 'a-q.webp',
-    id: 'aq-slide',
-    link: '/search?type=quizhub',
+      '<span class="gama-text-h1 font-weight-bold">Exam<span class="d-sm-none"><br></span> Analysis</span>',
+    img: 'exam-analysis.webp',
+    text: 'Review every answer, see your country and state rank,<br> and let AI show your strengths and what to study next.',
+    id: 'analysis-slide',
+    link: '/user/exam/result/list',
   },
 ]
 </script>
@@ -184,37 +184,43 @@ const slides = [
   background-repeat: no-repeat;
 }
 
-#main-slider #ai-slide {
+#main-slider #exam-slide,
+#main-slider #analysis-slide {
   padding-top: 6rem;
-  background: #24292f !important;
-  background-repeat: no-repeat;
-  background-size: 90%, 10%;
   height: 21.5rem;
 }
 
-#main-slider #ai-slide .v-card {
+#main-slider #exam-slide {
+  background: linear-gradient(45deg, rgb(var(--v-theme-quizFill)) 0%, rgb(var(--v-theme-generalSearchQuiz)) 100%);
+}
+
+#main-slider #analysis-slide {
+  background: linear-gradient(45deg, rgb(var(--v-theme-inverseSurfaceStrong)) 0%, rgb(var(--v-theme-secondary)) 100%);
+}
+
+/* Same size and placement as the school finder figure, so it breaks out of the slide the same way. */
+#main-slider #exam-slide .v-card,
+#main-slider #analysis-slide .v-card {
   height: 21.5rem;
   background-color: transparent;
-  background-image: url("/images/ai-robot.webp");
   background-position: right 2.4rem;
-  background-size: 15rem 18.1rem;
+  background-size: auto 18.1rem;
   background-repeat: no-repeat;
 }
 
-#main-slider #aq-slide {
-  padding-top: 6rem;
-  height: 21.5rem;
-  background: linear-gradient(45deg, #0092a9 0%, #2bddff 100%);
-  background-repeat: no-repeat;
+#main-slider #exam-slide .v-card {
+  background-image: url("/images/online-exam.webp");
 }
 
-#main-slider #aq-slide .v-card {
-  height: 21.5rem;
-  background-size: 15.4rem 13.36rem;
-  background-color: transparent;
-  background-image: url("/images/a-q.webp");
-  background-repeat: no-repeat;
-  background-position: 95% top;
+#main-slider #analysis-slide .v-card {
+  background-image: url("/images/exam-analysis.webp");
+  /* This figure is wider than it is tall: at full height it would run into the title on phones. */
+  background-size: auto 11rem;
+}
+
+/* The default muted grey is too faint on the purple slide. */
+#main-slider #exam-slide #slide-register-btn {
+  color: rgb(var(--v-theme-white));
 }
 
 #main-slider #le-slide {
@@ -312,23 +318,16 @@ const slides = [
     background-size: 17.7rem 22.11rem;
   }
 
-  #main-slider #ai-slide {
+  #main-slider #exam-slide,
+  #main-slider #analysis-slide {
     height: 27rem;
   }
 
-  #main-slider #ai-slide .v-card {
+  #main-slider #exam-slide .v-card,
+  #main-slider #analysis-slide .v-card {
     height: 34rem;
     background-position: 98% top;
-    background-size: 17.7rem 22.11rem;
-  }
-
-  #main-slider #aq-slide {
-    height: 27rem;
-  }
-
-  #main-slider #aq-slide .v-card {
-    height: 34rem;
-    background-size: 18.4rem 16.36rem;
+    background-size: auto 22.11rem;
   }
 
   #main-slider #le-slide {
@@ -429,38 +428,17 @@ const slides = [
     z-index: 1;
   }
 
-  #main-slider #ai-slide {
-    padding-top: 6rem;
-    background: #24292f !important;
-    background-repeat: no-repeat;
-    background-size: 90%, 10%;
+  #main-slider #exam-slide,
+  #main-slider #analysis-slide {
     height: 44rem;
   }
 
-  #main-slider #ai-slide .v-card {
+  #main-slider #exam-slide .v-card,
+  #main-slider #analysis-slide .v-card {
     height: 42rem;
-    background-color: transparent;
-    background-image: url("/images/ai-robot.webp");
-    background-repeat: no-repeat;
     background-position: right bottom;
-    background-size: 32.4rem 40.5rem;
+    background-size: auto 40.5rem;
     z-index: 1;
-  }
-
-  #main-slider #aq-slide {
-    padding-top: 6rem;
-    background: linear-gradient(45deg, #0092a9 0%, #2bddff 100%);
-    background-repeat: no-repeat;
-    height: 44rem;
-  }
-
-  #main-slider #aq-slide .v-card {
-    height: 42rem;
-    background-color: transparent;
-    background-image: url("/images/a-q.webp");
-    background-repeat: no-repeat;
-    background-position: right top;
-    background-size: 32.4rem 30.36rem;
   }
 
   #main-slider #le-slide {
