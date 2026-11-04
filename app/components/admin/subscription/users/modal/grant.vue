@@ -13,9 +13,6 @@
           rounded="lg"
           density="compact"
           variant="outlined"
-          base-color="grey200"
-          color="primary"
-          bg-color="white"
           class="w-100"
           disabled
         />
@@ -28,8 +25,6 @@
         :data-loading="loadingPlans"
         rounded="lg"
         density="compact"
-        base-color="grey200"
-        color="primary"
         :defalut-lable="false"
         :rules="[required]"
       />
@@ -43,8 +38,6 @@
         }))"
         rounded="lg"
         density="compact"
-        base-color="grey200"
-        color="primary"
         :defalut-lable="false"
         :has-search="false"
         :rules="[required]"

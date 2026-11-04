@@ -16,10 +16,6 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
         />
       </div>
@@ -37,10 +33,6 @@
             variant="outlined"
             autocomplete="off"
             persistent-clear
-            base-color="grey200"
-            color="primary"
-            active-color="primary"
-            bg-color="white"
             class="w-100"
           />
         </div>
@@ -57,10 +49,6 @@
             variant="outlined"
             autocomplete="off"
             persistent-clear
-            base-color="grey200"
-            color="primary"
-            active-color="primary"
-            bg-color="white"
             class="w-100"
             :rules="[required]"
           />
@@ -82,8 +70,6 @@
             :data-loading="loadingCountries"
             rounded="lg"
             density="compact"
-            base-color="grey200"
-            color="primary"
             :defalut-lable="false"
             :rules="[required]"
             @update:model-value="countryChange"
@@ -104,8 +90,6 @@
             :data-loading="loadingStates"
             rounded="lg"
             density="compact"
-            base-color="grey200"
-            color="primary"
             :defalut-lable="false"
             :disabled="!selectedCountryId"
             :rules="[required]"
@@ -126,10 +110,6 @@
             variant="outlined"
             autocomplete="off"
             persistent-clear
-            base-color="grey200"
-            color="primary"
-            active-color="primary"
-            bg-color="white"
             class="w-100"
             type="number"
             :rules="[required, numeric]"
@@ -148,10 +128,6 @@
             variant="outlined"
             autocomplete="off"
             persistent-clear
-            base-color="grey200"
-            color="primary"
-            active-color="primary"
-            bg-color="white"
             class="w-100"
             type="number"
             :rules="[required, numeric]"

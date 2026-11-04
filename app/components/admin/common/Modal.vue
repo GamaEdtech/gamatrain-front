@@ -6,7 +6,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex flex-column bg-white pa-6 rounded-xl overflow-y-auto mobile-style"
+      class="w-100 d-flex flex-column bg-surface pa-6 rounded-xl overflow-y-auto mobile-style"
       @click="clickOnModal"
     >
       <v-row>

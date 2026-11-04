@@ -5,7 +5,6 @@
       label="First Name"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -14,7 +13,6 @@
       label="Last Name"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -23,7 +21,6 @@
       label="Email"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -32,7 +29,6 @@
       label="Referral Id"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />

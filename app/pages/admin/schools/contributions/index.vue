@@ -51,7 +51,7 @@
             density="compact"
             min-width="250"
             nav
-            bg-color="#f9fafb"
+            bg-color="surface"
             class="rounded-lg mt-1"
           >
             <v-list-item

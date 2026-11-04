@@ -12,7 +12,7 @@
       <v-tabs
         v-model="tab"
         fixed-tabs
-        bg-color="grey-lighten-4"
+        bg-color="surfaceTertiary"
       >
         <v-tab value="Edit">
           Edit

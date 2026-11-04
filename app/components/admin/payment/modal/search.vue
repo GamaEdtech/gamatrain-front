@@ -5,7 +5,6 @@
       label="User ID"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -14,7 +13,6 @@
       label="Identifier ID"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -31,7 +29,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="menuProps"
@@ -58,7 +55,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="menuProps"
@@ -82,8 +78,6 @@
       }))"
       rounded="lg"
       density="compact"
-      base-color="grey800"
-      color="primary"
       class="mt-1"
     />
 
@@ -96,8 +90,6 @@
       }))"
       rounded="lg"
       density="compact"
-      base-color="grey800"
-      color="primary"
       class="mt-6"
     />
 
@@ -110,8 +102,6 @@
       }))"
       rounded="lg"
       density="compact"
-      base-color="grey800"
-      color="primary"
       class="mt-6"
     />
 

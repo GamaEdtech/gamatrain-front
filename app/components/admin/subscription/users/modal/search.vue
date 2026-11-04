@@ -5,7 +5,6 @@
       label="Email or name"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
       @keyup.enter="startSearch"
@@ -16,7 +15,6 @@
       label="User ID"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -30,8 +28,6 @@
       }))"
       rounded="lg"
       density="compact"
-      base-color="grey800"
-      color="primary"
       class="mt-1"
     />
 

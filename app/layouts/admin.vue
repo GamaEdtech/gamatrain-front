@@ -18,7 +18,9 @@
       </v-app-bar>
 
       <v-main>
-        <NuxtPage class="pa-5" />
+        <v-defaults-provider :defaults="ADMIN_FORM_DEFAULTS">
+          <NuxtPage class="pa-5" />
+        </v-defaults-provider>
       </v-main>
       <AppGlobalSnackbar />
     </template>
@@ -27,6 +29,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
+import { ADMIN_FORM_DEFAULTS } from '@/constants/adminFormDefaults'
 
 const { mdAndDown } = useDisplay()
 const { isOnline } = useNetwork()

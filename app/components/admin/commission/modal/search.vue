@@ -12,7 +12,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="menuProps"
@@ -39,7 +38,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="menuProps"

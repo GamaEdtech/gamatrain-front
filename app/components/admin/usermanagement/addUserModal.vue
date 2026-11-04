@@ -16,10 +16,6 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           :rules="[rules.required, rules.username]"
         />
@@ -37,10 +33,6 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           :rules="[rules.required, rules.email]"
         />
@@ -58,10 +50,6 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           :rules="[rules.required, rules.minPassword]"
         />
@@ -79,10 +67,6 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
           :rules="[rules.required, rules.matchPassword]"
         />
@@ -100,10 +84,6 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
         />
       </div>
@@ -120,10 +100,6 @@
           variant="outlined"
           autocomplete="off"
           persistent-clear
-          base-color="grey200"
-          color="primary"
-          active-color="primary"
-          bg-color="white"
           class="w-100"
         />
       </div>

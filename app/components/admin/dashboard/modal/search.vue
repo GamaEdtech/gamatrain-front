@@ -5,7 +5,6 @@
       label="User Id"
       rounded="lg"
       variant="outlined"
-      color="primary"
       density="compact"
       class="mt-1"
     />
@@ -21,7 +20,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="props"
@@ -48,7 +46,6 @@
           readonly
           rounded="lg"
           variant="outlined"
-          color="primary"
           density="compact"
           class="mt-1"
           v-bind="props"
@@ -73,7 +70,6 @@
       rounded="lg"
       density="compact"
       base-color="grey800"
-      color="primary"
       class="mt-1"
     />
 
@@ -87,7 +83,6 @@
       rounded="lg"
       density="compact"
       base-color="grey800"
-      color="primary"
       class="mt-6"
     />
 
@@ -101,7 +96,6 @@
       rounded="lg"
       density="compact"
       base-color="grey800"
-      color="primary"
       class="mt-6"
     />
 
@@ -115,7 +109,6 @@
       rounded="lg"
       density="compact"
       base-color="grey800"
-      color="primary"
       class="mt-6"
     />
 
