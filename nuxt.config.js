@@ -205,20 +205,7 @@ export default defineNuxtConfig({
           type: 'image/png',
         },
       ],
-      screenshots: [
-        {
-          src: '/screenshots/home-desktop.png',
-          sizes: '1280x720',
-          type: 'image/png',
-          form_factor: 'wide',
-        },
-        {
-          src: '/screenshots/home-mobile.png',
-          sizes: '540x720',
-          type: 'image/png',
-          form_factor: 'narrow',
-        },
-      ],
+      // No `screenshots`: the files never existed, and every install prompt that asked for them got a 404.
       launch_handler: {
         client_mode: 'focus-existing',
       },

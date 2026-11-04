@@ -13,7 +13,10 @@
       Contact
     </h2>
 
-    <dl class="rows">
+    <dl
+      v-if="rows.length"
+      class="rows"
+    >
       <div
         v-for="row in rows"
         :key="row.key"
@@ -103,14 +106,14 @@
               </v-btn>
             </div>
           </form>
-          <template v-else-if="row.values.length">
+          <template v-else>
             <div class="values">
               <template
                 v-for="value in row.values"
                 :key="value"
               >
                 <a
-                  v-if="row.href"
+                  v-if="row.href?.(value)"
                   :href="row.href(value)"
                   :target="row.key === 'website' ? '_blank' : undefined"
                   :rel="row.key === 'website' ? 'noopener nofollow' : undefined"
@@ -131,16 +134,6 @@
               </v-icon>
             </v-btn>
           </template>
-          <v-btn
-            v-else
-            variant="text"
-            color="info"
-            size="small"
-            class="text-none gtext-t5 px-1"
-            @click="startEdit(row.key)"
-          >
-            Add {{ row.label.toLowerCase() }}
-          </v-btn>
         </dd>
       </div>
     </dl>
@@ -175,17 +168,14 @@ const form = reactive({ website: '', email: '', address: '', phones: [''] })
 const phones = computed(() =>
   (props.content.phoneNumber || '').split('/').map(p => p.trim()).filter(Boolean))
 
+// Only details the school has are listed; a missing one is added from the "Fill in the gaps" card, which
+// opens its row here. A website that isn't a URL ("government") is shown as text, not as a broken link.
 const rows = computed(() => [
   { key: 'phone', label: 'Phone', icon: 'mdi-phone-outline', values: phones.value, href: v => `tel:${v}` },
-  { key: 'website', label: 'Website', icon: 'mdi-web', values: props.content.webSite ? [props.content.webSite] : [], href: normalizeURL },
+  { key: 'website', label: 'Website', icon: 'mdi-web', values: props.content.webSite ? [props.content.webSite] : [], href: schoolWebsiteUrl },
   { key: 'email', label: 'Email', icon: 'mdi-email-outline', values: props.content.email ? [props.content.email] : [], href: v => `mailto:${v}` },
   { key: 'address', label: 'Address', icon: 'mdi-map-marker-outline', values: props.content.address ? [props.content.address] : [] },
-])
-
-function normalizeURL(url) {
-  if (!url) return ''
-  return /^https?:\/\//i.test(url) ? url : `https://${url}`
-}
+].filter(row => row.values.length || editing.value === row.key))
 
 function startEdit(field) {
   if (!requireSignIn()) return

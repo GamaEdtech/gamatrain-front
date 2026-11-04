@@ -1,6 +1,7 @@
 <template>
+  <!-- Hidden while empty; it's asked for in the "Fill in the gaps" card, which opens the editor here. -->
   <section
-    class="detail-section"
+    :class="['detail-section', { 'd-none': !hasTuition && !isEditMode }]"
     aria-labelledby="tuition-title"
   >
     <div class="section-head">
@@ -18,7 +19,7 @@
         class="text-none gtext-t5 px-2 section-action"
         @click="startEdit"
       >
-        {{ hasTuition ? 'Edit' : 'Add tuition' }}
+        Edit
       </v-btn>
     </div>
     <form
@@ -61,12 +62,6 @@
       class="tuition-value"
     >
       {{ Number(tuition) === 0 ? 'Free' : `$${Number(tuition).toLocaleString('en-US')}` }}
-    </p>
-    <p
-      v-else
-      class="section-empty"
-    >
-      Tuition hasn't been added yet.
     </p>
   </section>
 </template>

@@ -4,26 +4,34 @@
       v-if="contentData"
       class="school-container"
     >
-      <!-- Mobile: header, media, contact/location/profile, details. Desktop: details left, contact sidebar right. -->
-      <div class="school-layout">
-        <school-detail-school-header
-          class="area-header"
-          :content="contentData"
-          :rating-data="ratingData"
-          @leave-comment="openCommentDialog"
-          @contribute="contribute"
-        />
+      <!-- Mobile: header, media, contact/location, details. Desktop: details left, contact sidebar right. -->
+      <div :class="['school-layout', { 'school-layout--no-media': !showMedia }]">
+        <!-- Exam results sit with the header: when a country has none, there's no empty grid row left behind. -->
+        <div class="area-header d-flex flex-column ga-7">
+          <school-detail-school-header
+            :content="contentData"
+            :rating-data="ratingData"
+            @leave-comment="openCommentDialog"
+          />
+          <school-detail-exam-results :country-id="contentData.countryId" />
+        </div>
 
-        <school-detail-school-media
-          ref="mediaRef"
-          v-model:images="galleryImages"
+        <!-- v-show, not v-if: the hidden block still opens the photo and tour editors from "Fill in the gaps".
+             On a wrapper, because the component's own d-flex (!important) would override v-show's display. -->
+        <div
+          v-show="showMedia"
           class="area-media"
-          :content="contentData"
-          :tour="tour"
-          :images-loaded="imagesLoaded"
-          @fetch-images="loadGalleryImages"
-          @fetch-tour="loadTourPanorama"
-        />
+        >
+          <school-detail-school-media
+            ref="mediaRef"
+            v-model:images="galleryImages"
+            :content="contentData"
+            :tour="tour"
+            :images-loaded="imagesLoaded"
+            @fetch-images="loadGalleryImages"
+            @fetch-tour="loadTourPanorama"
+          />
+        </div>
 
         <aside class="area-side">
           <school-detail-school-main-info
@@ -36,13 +44,6 @@
             ref="mapRef"
             :content="contentData"
             @location-updated="handleLocationUpdate"
-          />
-          <school-detail-profile-progress
-            :content="contentData"
-            :images-count="galleryImages.length"
-            :has-tour="!!tour"
-            :media-loaded="tourLoaded"
-            @contribute="contribute"
           />
         </aside>
 
@@ -72,6 +73,14 @@
           <school-detail-recent-comments
             :comment-list="commentList"
             @reaction-updated="refreshComments()"
+          />
+          <!-- After the school's details, so visitors see what's known before being asked to add more. -->
+          <school-detail-profile-progress
+            :content="contentData"
+            :images-count="galleryImages.length"
+            :has-tour="!!tour"
+            :media-loaded="tourLoaded"
+            @contribute="contribute"
           />
         </div>
       </div>
@@ -150,6 +159,8 @@ const galleryImages = ref([])
 const imagesLoaded = ref(false)
 const tour = ref(null)
 const tourLoaded = ref(false)
+// Set when someone starts adding a tour to a school with nothing to show, so the media block opens for it.
+const mediaExpanded = ref(false)
 
 const mediaRef = ref(null)
 const contactRef = ref(null)
@@ -473,10 +484,13 @@ watch(
   { immediate: true },
 )
 
-// Opens the editor for one missing detail. Sections that edit in place are scrolled into view first.
+// Opens the editor for one missing detail, then scrolls it into view: an empty section stays hidden until its editor opens.
 const contributeTargets = {
   photo: { ref: mediaRef, open: el => el.startAddPhoto() },
-  tour: { ref: mediaRef, open: el => el.startAddTour() },
+  tour: { ref: mediaRef, open: (el) => {
+    mediaExpanded.value = true
+    el.startAddTour()
+  } },
   phone: { ref: contactRef, open: el => el.startEdit('phone') },
   website: { ref: contactRef, open: el => el.startEdit('website') },
   email: { ref: contactRef, open: el => el.startEdit('email') },
@@ -491,8 +505,8 @@ const contributeTargets = {
 function contribute(key) {
   const target = contributeTargets[key]
   if (!target?.ref.value || !requireSignIn()) return
-  target.ref.value.$el?.scrollIntoView?.({ behavior: 'smooth', block: 'center' })
   target.open(target.ref.value)
+  nextTick(() => target.ref.value?.$el?.scrollIntoView?.({ behavior: 'smooth', block: 'center' }))
 }
 
 function applyUpdate(update) {
@@ -556,6 +570,11 @@ watch(
   },
   { immediate: true },
 )
+
+// No photos and no tour: the block and its grid row go, instead of a large "No photos yet" box above the
+// details. Photos are known in the server HTML, so this doesn't shift the page as it loads.
+const showMedia = computed(() =>
+  mediaExpanded.value || !!contentData.value?.defaultImageUri || galleryImages.value.length > 0 || !!tour.value)
 
 function loadGalleryImages() {
   refreshGallery()
@@ -638,12 +657,6 @@ onMounted(() => {
   flex-shrink: 0;
   letter-spacing: normal;
 }
-
-.school-page .section-empty {
-  margin: 0;
-  font-size: 14px;
-  color: rgb(var(--v-theme-grey500));
-}
 </style>
 
 <style scoped>
@@ -681,6 +694,13 @@ onMounted(() => {
   gap: 20px;
 }
 
+.school-layout--no-media {
+  grid-template-areas:
+    "header"
+    "side"
+    "main";
+}
+
 @media (min-width: 960px) {
   .school-container {
     padding-top: 96px;
@@ -694,6 +714,12 @@ onMounted(() => {
       "main side";
     column-gap: 40px;
     row-gap: 32px;
+  }
+
+  .school-layout--no-media {
+    grid-template-areas:
+      "header header"
+      "main side";
   }
 
   .area-side {

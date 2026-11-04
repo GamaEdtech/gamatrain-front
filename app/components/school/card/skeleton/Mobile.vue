@@ -1,135 +1,56 @@
 <template>
-  <div
-    class="w-100 pa-0 rounded-lg d-flex flex-column align-start card-school justify-end position-relative"
-  >
-    <v-skeleton-loader
-      width="100"
-      height="100"
-      class="d-flex w-100 h-100 rounded-lg position-absolute"
-    />
-    <div
-      class="name-address-image pa-2 w-100 d-flex ga-1 position-relative justify-start rounded-t-xl"
-    >
-      <div
-        class="w-100 d-flex flex-column align-start justify-start ga-2"
-      >
-        <v-skeleton-loader
-          width="200"
-          height="20"
-          class="rounded-xl"
-        />
-        <div class="d-flex align-center justify-start flex-wrap ga-2">
-          <v-skeleton-loader
-            width="80"
-            height="20"
-            class="rounded-xl"
-          />
-          <v-skeleton-loader
-            width="60"
-            height="20"
-            class="rounded-xl"
-          />
-          <v-skeleton-loader
-            width="110"
-            height="20"
-            class="rounded-xl"
-          />
-        </div>
-
-        <div
-          class="w-100 d-flex align-strach justify-space-between pt-2"
-        >
-          <v-skeleton-loader
-            width="60"
-            height="20"
-            class="rounded-xl"
-          />
-          <v-divider
-            :thickness="1"
-            class="border-opacity-100 w-100"
-            vertical
-            color="grey300"
-          />
-          <v-skeleton-loader
-            width="60"
-            height="20"
-            class="rounded-xl"
-          />
-        </div>
-      </div>
+  <!-- Same shape as the compact (no photo) card, which most schools get. -->
+  <div class="w-100 pa-0 rounded-lg d-flex flex-column align-start card-school overflow-hidden">
+    <div class="w-100 d-flex flex-column ga-2 pa-3">
+      <v-skeleton-loader
+        width="200"
+        height="20"
+        class="rounded-xl"
+      />
+      <v-skeleton-loader
+        width="160"
+        height="16"
+        class="rounded-xl"
+      />
     </div>
-    <div
-      class="w-100 d-flex align-center justify-space-between rounded-b-lg mt-0 flex-wrap ga-5 bottom-section px-1 py-2"
-    >
-      <div class="d-flex align-center ga-2">
+    <div class="w-100 d-flex align-center justify-space-between bottom-section px-3 py-2">
+      <div class="d-flex align-center ga-3">
         <v-skeleton-loader
-          v-for="item in 4"
+          v-for="item in 2"
           :key="item"
-          width="30"
-          height="30"
+          width="20"
+          height="20"
           class="rounded-circle"
         />
       </div>
-      <div class="d-flex align-center ga-2">
-        <v-skeleton-loader
-          width="60"
-          height="20"
-          class="rounded-xl"
-        />
-        <v-skeleton-loader
-          width="60"
-          height="20"
-          class="rounded-xl"
-        />
-      </div>
+      <v-skeleton-loader
+        width="60"
+        height="20"
+        class="rounded-xl"
+      />
     </div>
   </div>
 </template>
 
-<script setup></script>
-
 <style scoped>
 .card-school {
-  background-color: rgb(var(--v-theme-grey50));
-  border : 1px solid rgb(var(--v-theme-grey200));
-  min-height: 260px;
+  background-color: rgb(var(--v-theme-surface));
+  border: 1px solid rgb(var(--v-theme-grey200));
   max-width: 320px;
-  box-shadow: 2px 6px 24px rgba(var(--v-theme-shadowNeutral), 0.06);
-  text-decoration: none;
+  min-width: 300px;
 }
-.without-image {
-  min-height: unset;
-  max-height: fit-content;
-}
-.image-school {
-  max-height: 130px;
-}
-.name-address-image {
-  background-color: rgba(var(--v-theme-surface), 0.95);
-  z-index: 2;
-  border : 1px solid rgb(var(--v-theme-grey200));
-}
-.position-bookmark {
-  z-index: 2;
-  top: 10px;
-  right: 10px;
-}
+
 .bottom-section {
   background-color: rgb(var(--v-theme-grey50));
-  z-index: 2;
+  border-top: 1px solid rgb(var(--v-theme-grey100));
 }
-/* Dark: grey50 is darker than the list, so the card looked sunken. Lift it instead. */
+
 .v-theme--dark .card-school,
 .v-theme--dark .bottom-section {
   background-color: rgb(var(--v-theme-surfaceTertiary));
-}
-.v-theme--dark .name-address-image {
-  background-color: rgba(var(--v-theme-surfaceTertiary), 0.95);
-}
-.v-theme--dark .card-school,
-.v-theme--dark .name-address-image {
   border-color: rgb(var(--v-theme-borderSubtle));
 }
+
 .v-theme--dark .card-school :deep(.v-skeleton-loader) {
   background: transparent;
 }

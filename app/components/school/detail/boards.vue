@@ -1,6 +1,7 @@
 <template>
+  <!-- Hidden while empty; it's asked for in the "Fill in the gaps" card, which opens the editor here. -->
   <section
-    class="detail-section"
+    :class="['detail-section', { 'd-none': !schoolBoards.length }]"
     aria-labelledby="boards-title"
   >
     <div class="section-head">
@@ -17,11 +18,10 @@
         class="text-none gtext-t5 px-2 section-action"
         @click="openModalContribute"
       >
-        {{ schoolBoards.length ? 'Edit' : 'Add board' }}
+        Edit
       </v-btn>
     </div>
     <div
-      v-if="schoolBoards.length"
       class="d-flex flex-wrap ga-2"
     >
       <v-chip
@@ -50,12 +50,6 @@
         {{ board.title }}
       </v-chip>
     </div>
-    <p
-      v-else
-      class="section-empty"
-    >
-      The education board hasn't been added yet.
-    </p>
 
     <v-dialog
       v-model="dialogModel"
