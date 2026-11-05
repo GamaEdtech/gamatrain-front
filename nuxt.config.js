@@ -277,6 +277,7 @@ export default defineNuxtConfig({
     '/governance': sitePage,
     '/search': listPage,
     '/school': listPage,
+    '/school-service': { redirect: { to: '/school', statusCode: 301 } },
     '/post': listPage,
     // A form and exam sessions under the content paths.
     '/school/add/**': notEdgeCached,

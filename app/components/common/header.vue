@@ -256,7 +256,7 @@ const menuSetting = computed<MenuSetting>(() => {
   }
 })
 
-const routeNeedChangeMenuSetting = ['index', 'smart-learning', 'services', 'school-service', 'faq', 'governance', 'terms', 'about-us', 'earn-money', 'leader-board', 'get-token']
+const routeNeedChangeMenuSetting = ['index', 'smart-learning', 'services', 'faq', 'governance', 'terms', 'about-us', 'earn-money', 'leader-board', 'get-token']
 
 const handleChnageMenuSetting = () => {
   if (routeNeedChangeMenuSetting.includes(route.name as string)) {
