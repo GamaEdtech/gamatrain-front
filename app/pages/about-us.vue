@@ -476,7 +476,7 @@ const services = [
   },
   {
     icon: 'icon-school',
-    link: '/school-service',
+    link: '/school',
     title: 'School finder',
   },
   {

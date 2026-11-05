@@ -148,7 +148,6 @@ export const GENERAL_SEARCH_CATEGORIES = [
 ] satisfies GeneralSearchCategory[]
 
 export const MOBILE_GENERAL_SEARCH_CATEGORIES = GENERAL_SEARCH_CATEGORIES
-export const DESKTOP_GENERAL_SEARCH_CATEGORIES = GENERAL_SEARCH_CATEGORIES
 
 export const ALL_SEARCH_MONTHS = [
   { id: 1, title: 'January' },

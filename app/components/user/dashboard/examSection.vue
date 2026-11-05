@@ -2,20 +2,9 @@
   <div
     class="dashboard-card pa-4 d-flex flex-column ga-1"
   >
-    <div class="d-flex justify-space-between align-center">
-      <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-0">
-        Exams Progress
-      </p>
-      <NuxtLink
-        to="/leader-board"
-        class="text-h6 text-sm-h5 font-weight-medium text-decoration-none d-flex align-center ga-1 text-primary"
-      >
-        See leaderboard
-        <v-icon size="16">
-          md:chevron_right
-        </v-icon>
-      </NuxtLink>
-    </div>
+    <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-0">
+      Exams Progress
+    </p>
 
     <v-alert
       v-if="notParticipatedTotal > 0"

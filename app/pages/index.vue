@@ -3,271 +3,90 @@
     fluid
     class="px-0 py-0 mt-md-0"
   >
-    <home-main-slider />
+    <home-hero />
 
-    <lazy-home-grade-explorer />
+    <home-grade-explorer />
 
-    <!-- Post container -->
-    <home-post-container />
-    <!-- End post container -->
+    <home-exam-cards />
 
-    <home-level-guide-banner :slide-arr="slideArr" />
-
-    <!-- Sudent help banner -->
-    <v-container
-      id="student-help-container"
-      fluid
-    >
-      <v-container>
-        <v-row>
-          <v-col cols="12">
-            <h2 class="gama-text-h4">
-              Study Smarter, Not Harder
-            </h2>
-          </v-col>
-          <v-col
-            cols="12"
-            sm="6"
-          >
-            <v-card
-              class="fill-height float-sm-right"
-              to="/search?type=paper"
-            >
-              <v-card-title class="gama-text-h6 pt-4 pb-3">
-                <v-icon
-                  size="48"
-                  class="text-primary icon mr-2"
-                >
-                  mdi-cloud-download
-                </v-icon>
-                <span class="text-white">Educational Content</span>
-              </v-card-title>
-              <v-card-text class="gama-text-body2">
-                <span class="text-white">Empower Your Studies. Download Worksheets and Educational
-                  Materials.</span>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col
-            cols="12"
-            sm="6"
-          >
-            <v-card
-              class="fill-height float-sm-left"
-              to="/search?type=quizhub"
-            >
-              <v-card-title class="gama-text-h6 pt-4 pb-3">
-                <v-icon
-                  size="48"
-                  class="text-primary icon icon-exam"
-                />
-                <span class="text-white">&nbsp; Exam</span>
-              </v-card-title>
-              <v-card-text class="gama-text-body2 text-white">
-                You can test yourself with online tests and increase your
-                preparation.
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-container>
-
-    <!-- School service banner -->
-    <v-container id="school-service-container">
-      <v-row>
-        <v-col
-          cols="12"
-          sm="4"
-        >
-          <v-img
-            width="246"
-            height="184"
-            class="mx-auto"
-            :src="themedImage('/images/school-service.webp')"
-          />
-        </v-col>
-        <v-col
-          cols="12"
-          sm="8"
-        >
-          <h2 class="gama-text-h4">
-            Search Nearby Schools by Location, Ratings & Reviews
+    <!-- School finder -->
+    <v-container class="py-10 py-md-16">
+      <div class="home-school">
+        <div class="home-school__text">
+          <h2 class="home-title">
+            Compare schools near you
           </h2>
-          <p class="gama-text-body1 describe">
-            Stop searching blindly. With GamaTrain, discovering the best schools
-            near you is just a few clicks away. Filter by location, ratings,
-            reviews, and facilities – and let us do the rest.
+          <p class="home-lead mb-6">
+            Filter by location, ratings, reviews and facilities.
           </p>
-
           <v-btn
-            :size="display.mdAndUp ? 'large' : 'small'"
-            rounded
-            class="primary gama-btn"
+            class="home-cta"
             to="/school"
-          >
-            School finder
-          </v-btn>
-        </v-col>
-      </v-row>
-    </v-container>
-    <!-- End school service banner -->
-
-    <!-- Castel container -->
-    <!-- <home-castle-banner /> -->
-    <!-- End Castel container -->
-
-    <!-- Car Race container -->
-    <!-- <home-car-race-banner /> -->
-    <!-- End Car Race container -->
-
-    <!-- Stats container -->
-    <home-stats-banner />
-    <!-- End stats container -->
-
-    <!-- Ai learn banner -->
-    <v-container>
-      <v-row>
-        <v-col
-          id="ai-learn-banner"
-          cols="12"
-        >
-          <img
-            id="img-top"
-            alt="AI Learn"
-            src="/images/ai-learn-bg1.webp"
-          >
-          <v-card
+            color="primary"
+            size="x-large"
+            rounded="pill"
             flat
-            class="overflow-unset"
           >
-            <h2 class="gama-text-h2">
-              AI Learn
-            </h2>
-            <p class="gama-text-subtitle1">
-              Discover Your Full Potential with AI-based Education
-            </p>
-            <v-btn
-              :large="display.mdAndUp"
-              :small="display.xs"
-              to="/smart-learning"
-              rounded
-              class="primary gama-btn"
-            >
-              Read about it
-            </v-btn>
-            <img
-              id="img-bottom"
-              alt="AI Learn"
-              src="/images/ai-learn-bg2.webp"
-            >
-          </v-card>
-        </v-col>
-      </v-row>
+            Find a school
+          </v-btn>
+        </div>
+        <img
+          src="/images/school-finder.webp"
+          width="391"
+          height="469"
+          alt="A phone showing schools on a map under a magnifying glass"
+          loading="lazy"
+        >
+      </div>
     </v-container>
-    <!-- End ai learn banner -->
 
-    <!-- Earn money banner -->
-    <v-container
-      id="earn-money-container"
-      fluid
-    >
-      <v-container>
-        <v-row>
-          <v-col
-            cols="12"
-            sm="12"
-            md="12"
-            class="text-md-right"
-          >
-            <h2 class="gama-text-h6 text-center">
-              Monetize Your Teaching Skills
-            </h2>
-          </v-col>
-          <v-col
-            cols="12"
-            sm="12"
-            md="12"
-            class="text-center"
-          >
-            <v-btn
-              rounded
-              :size="display.mdAndUp ? 'large' : 'small'"
-              to="/earn-money"
-              class="primary gama-btn"
-            >
-              Earn money
-            </v-btn>
-          </v-col>
-        </v-row>
+    <home-post-container />
+
+    <!-- Teachers -->
+    <div class="home-teachers">
+      <v-container class="d-flex flex-column flex-sm-row align-sm-center justify-space-between ga-4">
+        <div>
+          <h2 class="home-title text-white">
+            Are you a teacher?
+          </h2>
+          <p class="home-lead text-onInverseSurfaceSubtle">
+            Share your lessons and earn from every sale.
+          </p>
+        </div>
+        <v-btn
+          class="home-cta"
+          to="/earn-money"
+          color="primary"
+          size="x-large"
+          rounded="pill"
+          flat
+        >
+          Earn money
+        </v-btn>
       </v-container>
-    </v-container>
-    <!-- End earn money banner -->
+    </div>
   </v-container>
 </template>
 
 <script setup>
-import { useDisplay } from 'vuetify/lib/framework.mjs'
-
-const display = useDisplay()
-const { themedImage } = useThemeMode()
-// Data
-const _test_schools = ref('')
-const _less = ref(true)
-const _showLess = ref(true)
-
-const _items = ref([
-  {
-    src: 'banner_home_2.jpg',
-  },
-  {
-    src: 'banner_home_2.jpg',
-  },
-])
-
-const slideArr = ref([
-  {
-    img: 'guide-banner1.webp',
-    caption: 'Sign Up',
-    describe: 'Register and Create Your Content Creator Profile',
-  },
-  {
-    img: 'guide-banner2.webp',
-    caption: 'Upload Your Content',
-    describe: 'Share Your Lesson Plans, Study Guides, and More.',
-  },
-  {
-    img: 'guide-banner3.webp',
-    caption: 'Reach Students',
-    describe: 'Gain Exposure through Our Platform and Network.',
-  },
-  {
-    img: 'guide-banner4.webp',
-    caption: 'Earn Big',
-    describe: 'Reap the Rewards as Students Purchase Your Content.',
-  },
-])
-
-const _slideColor = computed(() => {
-  if (colors.value && carousel_model.value) {
-    return colors.value[carousel_model.value]
-  }
-  return '#24292F' // Default color if colors or carousel_model are not available
-})
-
-// Lifecycle Hook (onMounted)
+const title = 'GamaTrain: Online Exams & Past Papers for Cambridge, Edexcel'
+const description = 'Take online exams with instant scores, and find past papers, mark schemes and study materials for Cambridge, Edexcel and more.'
 
 useSeoMeta({
-  title: `GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education`,
-  description: `Discover GamaTrain, an innovative K12 learning platform transforming education with AI-powered instruction, a vibrant community, and personalized learning experiences.`,
-  ogTitle: `GamaTrain: Smart K12 Learning with AI, Community, and Personalized Education`,
-
+  title,
+  description,
+  ogTitle: title,
+  ogDescription: description,
+  ogImage: 'https://gamatrain.com/images/og-home.jpg',
+  twitterCard: 'summary_large_image',
 })
 
 // WebSite gives Google the site name it shows in results, and every page's WebPage node already points
 // at "#website" and "#organization" - this is where both are defined.
 const { organizationSchema } = useSeoSchema()
 useHead({
+  titleTemplate: '%s',
+  link: [{ rel: 'canonical', href: 'https://gamatrain.com/' }],
   script: [{
     key: 'json-ld-schema',
     type: 'application/ld+json',
@@ -289,268 +108,86 @@ useHead({
 })
 </script>
 
-<style>
-/*Home page banner control background*/
-.index-banner .v-window__prev,
-.v-window__next {
-  background: none !important;
+<style lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
+.home-title {
+  color: rgb(var(--v-theme-grey900));
+  font-size: 2.7rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
-.v-select__slot {
-  /* border: transparent; */
-  padding-left: 0;
-  padding-right: 0;
+.home-lead {
+  margin-top: 0.8rem;
+  color: rgb(var(--v-theme-grey600));
+  font-size: 1.5rem;
 }
 
-#ai-learn-banner {
-  position: relative;
-  max-width: 73rem;
-  margin: 0 auto 0 auto;
+.v-btn.home-cta {
+  width: 100%;
+  color: rgb(var(--v-theme-on-primary));
 
-  .v-card {
-    border-radius: 1rem;
-    background-color: rgb(var(--v-theme-inverseSurfaceStrong));
-    color: rgb(var(--v-theme-white));
-    text-align: center;
-    margin: 100px auto 100px auto;
-    padding: 2.4rem 0 2.4rem 0;
-    position: relative;
-    height: 17rem;
-
-    .gama-text-h2 {
-      color: rgb(var(--v-theme-white));
-      text-align: center;
-      margin-bottom: 1.6rem;
-    }
-
-    .gama-text-subtitle1 {
-      color: rgb(var(--v-theme-white));
-      width: 28.8rem;
-      margin: auto;
-    }
-
-    #img-bottom {
-      position: absolute;
-      top: 12.5rem;
-      width: 9.7rem;
-      height: 11.1rem;
-      flex-shrink: 0;
-      left: 0;
-    }
-
-    .gama-btn {
-      margin-top: 1.5rem;
-      color: rgb(var(--v-theme-on-primary));
-    }
+  .v-btn__content {
+    font-size: 1.6rem;
+    font-weight: 800;
+    text-transform: none;
+    letter-spacing: 0;
   }
+}
 
-  #img-top {
-    position: absolute;
-    top: 6.45rem;
+.home-school {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 0.6rem;
+  padding: 2.4rem 2.2rem;
+  border-radius: 2.4rem;
+  background: rgb(var(--v-theme-primary50));
+
+  img {
+    display: block;
+    width: 15rem;
     height: auto;
-    left: 0;
-    right: 0;
-    z-index: 1;
-    width: 7.7333rem;
-    height: 6.4rem;
     margin: 0 auto;
   }
 }
 
-/* The sitting robot has a white floor patch baked in; on a dark page it reads as a stain. */
-.v-theme--dark #ai-learn-banner #img-bottom {
-  display: none;
+.home-teachers {
+  padding: 3.6rem 0;
+  background: rgb(var(--v-theme-secondary));
 }
 
-#student-help-container {
-  padding-top: 2.4rem;
-  padding-bottom: 2.4rem;
-  background: rgb(var(--v-theme-primary));
+.v-theme--dark .home-teachers {
+  background: rgb(var(--v-theme-surface));
+}
 
-  .gama-text-h4 {
-    color: rgb(var(--v-theme-on-primary));
-    text-align: center;
-  }
-
-  .v-card {
-    border-radius: 1rem;
-    background: rgba(var(--v-theme-inverseSurfaceStrong), 0.7);
-    backdrop-filter: blur(0.46875rem);
-    color: white;
-    max-width: 35.3rem;
-    min-height: 10.4rem;
-    margin: auto;
-
-    .v-card__title {
-      color: rgb(var(--v-theme-white));
-      padding-bottom: 0.8rem;
-
-      .icon {
-        font-size: 2.4rem;
-        color: rgb(var(--v-theme-primary));
-      }
-    }
-
-    .v-card__text {
-      color: rgb(var(--v-theme-white));
-    }
+@media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
+  .v-btn.home-cta {
+    align-self: flex-start;
+    width: auto;
   }
 }
 
-#school-service-container {
-  margin: 10rem auto 10rem auto;
-  text-align: center;
-
-  .gama-text-h4 {
-    color: rgb(var(--v-theme-grey700));
-    margin-bottom: 2.4rem;
+@media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
+  .home-title {
+    font-size: 3.6rem;
   }
 
-  .gama-text-body1 {
-    color: rgb(var(--v-theme-grey600));
-    text-align: left;
+  .home-lead {
+    font-size: 1.7rem;
   }
 
-  .gama-btn {
-    margin-top: 2.4rem;
-  }
-}
+  .home-school {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4.4rem 5rem;
 
-#earn-money-container {
-  padding: 6.8rem 0 6.8rem 0;
-  background: rgb(var(--v-theme-inverseSurfaceStrong));
-
-  .v-btn {
-    .v-btn__content {
-      font-family: "Inter";
-      color: rgb(var(--v-theme-on-primary));
-    }
-  }
-
-  .gama-text-h6 {
-    color: rgb(var(--v-theme-white));
-  }
-}
-
-@media (min-width: 600px) {
-  #school-service-container {
-    margin: 10rem auto 10rem auto;
-    text-align: left;
-
-    .gama-text-h4 {
-      color: rgb(var(--v-theme-grey700));
-      margin-bottom: 2.4rem;
-    }
-
-    .gama-text-body1 {
-      color: rgb(var(--v-theme-grey600));
-    }
-
-    .v-btn {
-      margin-top: 2rem;
-    }
-  }
-
-  #ai-learn-banner {
-    .v-card {
-      padding: 4.8rem 0 4.8rem 0;
-      height: 21.5rem;
-
-      .gama-text-h2 {
-        color: rgb(var(--v-theme-white));
-        text-align: center;
-        margin-bottom: 1.6rem;
-      }
-
-      .gama-text-subtitle1 {
-        width: 40rem;
-      }
-
-      #img-bottom {
-        top: 13.8rem;
-        width: 12.8908rem;
-        height: 16.3rem;
-      }
-
-      .gama-btn {
-        margin-top: 2.4rem;
-        color: rgb(var(--v-theme-on-primary));
-      }
-    }
-
-    #img-top {
-      top: 4.55rem;
-      width: 10.9367rem;
-      height: 9rem;
-    }
-  }
-
-  #student-help-container {
-    padding-top: 3.6rem;
-    padding-bottom: 3.6rem;
-
-    .v-card {
-      min-height: 14.2rem;
-      margin: auto;
-
-      .v-card__title {
-        .icon {
-          font-size: 4.8rem;
-        }
-      }
-    }
-  }
-}
-
-@media (min-width: 960px) {
-  #ai-learn-banner {
-    margin: 8rem auto 8rem auto;
-
-    .v-card {
-      padding: 3.4rem 0 4.8rem 0;
-      height: 21.5rem;
-
-      .gama-text-h2 {
-        color: rgb(var(--v-theme-white));
-        text-align: center;
-        margin-bottom: 1.6rem;
-      }
-
-      .gama-text-subtitle1 {
-        width: 50rem;
-      }
-
-      #img-bottom {
-        top: 13.8rem;
-        width: 15.0261rem;
-        height: 19rem;
-      }
-
-      .gama-btn {
-        margin-top: 2.4rem;
-        color: rgb(var(--v-theme-on-primary));
-      }
-    }
-
-    #img-top {
-      top: 2.45rem;
-      width: 14.5823rem;
-      height: 12rem;
-    }
-  }
-
-  #student-help-container {
-    .v-card {
-      max-width: 47.1rem;
-      min-height: 14.2rem;
-      margin: auto;
-
-      .v-card__title {
-        padding-bottom: 1.6rem;
-        .icon {
-          font-size: 4.8rem;
-        }
-      }
+    img {
+      width: 22rem;
+      margin: -9rem 4rem -6rem 0;
     }
   }
 }
