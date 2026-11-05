@@ -1,28 +1,111 @@
-import type { ApiResult } from '@/types'
-import type { SearchParameters } from '@/composables/useApiService'
 import type {
-  HomeStatsDTO,
-  SearchListDTO,
-  SearchTypesStatsDTO,
-} from '@/types/search'
+  ApiResult,
+} from '@/types'
+import type { SearchParameters } from '@/composables/useApiService'
+import type { SearchListDTO, SearchRequestOptions, SearchResourceItem, SearchTypesStatsDTO, HomeStatsDTO } from '@/types/search'
 
 // gama-api's search through the new backend, which caches it (Redis and Cloudflare). It is the same for every
 // visitor, so no token or cookie is sent: that keeps one cached copy valid for everyone.
 const publicRequest = { public: true, credentials: 'omit' } as const
 
 export const useSearchApi = () => {
-  const getResults = (params: SearchParameters) =>
-    useApiService.get<ApiResult<SearchListDTO>>('/api/v2/search', params, publicRequest)
+  const data = ref<SearchResourceItem[]>([])
+  const totalCount = ref<number | string>(0)
+  const loadingGetData = ref(false)
+  const loadingGetTypesStats = ref(false)
 
-  const getTypesStats = (params: SearchParameters) =>
-    useApiService.get<ApiResult<SearchTypesStatsDTO | { types_stats: SearchTypesStatsDTO }>>(
-      '/api/v2/search/typesstats',
-      params,
-      publicRequest,
-    )
+  const getData = async (params: SearchParameters, options?: SearchRequestOptions) => {
+    loadingGetData.value = true
+
+    try {
+      const response = await useApiService.get<ApiResult<SearchListDTO>>(
+        '/api/v1/search',
+        params,
+        options,
+      )
+
+      if (response.data) {
+        data.value = response.data.list ?? []
+        totalCount.value = response.data.num || 0
+      }
+      else {
+        data.value = []
+        totalCount.value = 0
+      }
+
+      return response
+    }
+    catch {
+      data.value = []
+      totalCount.value = 0
+
+      return {
+        succeeded: false,
+        status: 0,
+        errors: [
+          {
+            message: 'The operation failed. Please try again later.',
+            code: '',
+            reference: '',
+            info: '',
+            value: '',
+          },
+        ],
+        data: null,
+      }
+    }
+    finally {
+      loadingGetData.value = false
+    }
+  }
+
+  const resetData = () => {
+    data.value = []
+    totalCount.value = 0
+  }
+
+  const getTypesStats = async (params: SearchParameters) => {
+    loadingGetTypesStats.value = true
+
+    try {
+      return await useApiService.get<ApiResult<SearchTypesStatsDTO | { types_stats: SearchTypesStatsDTO }>>(
+        '/api/v1/search/typesstats',
+        params,
+        { public: true },
+      )
+    }
+    catch {
+      return {
+        succeeded: false,
+        status: 0,
+        errors: [
+          {
+            message: 'The operation failed. Please try again later.',
+            code: '',
+            reference: '',
+            info: '',
+            value: '',
+          },
+        ],
+        data: null,
+      }
+    }
+    finally {
+      loadingGetTypesStats.value = false
+    }
+  }
 
   const getHomeStats = (params: Pick<SearchParameters, 'section' | 'base'>) =>
     useApiService.get<ApiResult<HomeStatsDTO>>('/api/v2/search/homestats', params, publicRequest)
 
-  return { getResults, getTypesStats, getHomeStats }
+  return {
+    data,
+    totalCount,
+    loadingGetData,
+    loadingGetTypesStats,
+    getData,
+    getTypesStats,
+    resetData,
+    getHomeStats,
+  }
 }
