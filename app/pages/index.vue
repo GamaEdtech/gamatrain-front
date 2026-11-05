@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-const title = 'GamaTrain: Online Exams & Past Papers for Cambridge, Edexcel'
+const title = 'GamaTrain: Online Exams & Past Papers for Checkpoint, IGCSE, A Level'
 const description = 'Take online exams with instant scores, and find past papers, mark schemes and study materials for Cambridge, Edexcel and more.'
 
 useSeoMeta({

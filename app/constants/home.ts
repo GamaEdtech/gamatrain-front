@@ -5,7 +5,7 @@ export const HOME_SEARCH_TYPES = [
   { value: 'tutorial', title: 'Tutorials', shortTitle: 'Tutorials', icon: 'mdi-play-circle-outline', action: 'Find tutorials' },
 ]
 
-export const HOME_POPULAR_SEARCHES = ['Checkpoint', 'Biology', 'Physics', 'Mathematics', 'English']
+export const HOME_POPULAR_SEARCHES = ['Biology', 'Physics', 'Mathematics', 'English']
 
 export const HOME_EXAM_STEPS = [
   { title: 'Take an exam', icon: 'mdi-timer-outline' },
