@@ -1,550 +1,384 @@
 <template>
-  <v-container class="d-flex flex-column align-center margin-top-handle pa-0">
-    <div class="w-100 d-flex align-start justify-center px-2">
-      <div class="w-100 d-flex flex-column flex-md-row align-stretch ga-3">
-        <v-text-field
-          v-model="filters.fullName"
-          variant="outlined"
-          density="compact"
-          hide-details
-          label="Teacher name"
-          rounded="lg"
-          base-color="grey400"
-          color="primary"
-          active-color="primary"
-          bg-color="transparent"
-          prepend-inner-icon="md:person_search"
-          icon-color="primary"
-          glow
-          @update:model-value="handleFilterInput"
-        />
-
-        <v-text-field
-          v-model="filters.skill"
-          variant="outlined"
-          density="compact"
-          hide-details
-          clearable
-          label="Skill"
-          rounded="lg"
-          base-color="grey400"
-          color="primary"
-          active-color="primary"
-          bg-color="transparent"
-          prepend-inner-icon="md:psychology"
-          icon-color="primary"
-          glow
-          @update:model-value="handleFilterInput"
-        />
-
-        <v-menu location="bottom end">
-          <template #activator="{ props }">
-            <v-btn
-              v-bind="props"
-              flat
-              color="grey200"
-              height="40"
-              class="text-grey700"
-              rounded="lg"
-            >
-              <v-icon
-                color="grey500"
-                size="20"
-                class="mr-1"
-              >
-                md:sort
-              </v-icon>
-              {{ selectedSort.title }}
-            </v-btn>
+  <div class="mt-16">
+    <section class="teacher-band teacher-hero text-white">
+      <v-container>
+        <v-breadcrumbs
+          :items="breadcrumbs"
+          class="d-none d-sm-flex pa-0 mb-3 text-h6 text-onInverseSurfaceSubtle"
+        >
+          <template #divider>
+            <v-icon size="16">
+              mdi-chevron-right
+            </v-icon>
           </template>
+        </v-breadcrumbs>
 
-          <v-list density="compact">
-            <v-list-item
-              v-for="item in sortItems"
-              :key="item.value"
-              :active="item.value === selectedSort.value"
-              @click="selectSort(item)"
-            >
-              <v-list-item-title class="text-h6 text-grey700">
-                {{ item.title }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </div>
-    </div>
+        <h1 class="teacher-hero__title">
+          Find your <span class="text-primary">teacher.</span>
+        </h1>
+        <p class="teacher-hero__lead text-onInverseSurfaceSubtle">
+          Browse {{ isFiltered ? '' : total || '' }} teachers on GamaTrain.
+          <span class="d-none d-sm-inline">Open a profile to see their skills and experience.</span>
+        </p>
 
-    <v-infinite-scroll
-      ref="infiniteScroll"
-      class="w-100 custome-infinite-scroll"
-      mode="intersect"
-      side="end"
-      margin="80"
-      @load="loadNextPage"
+        <form
+          role="search"
+          @submit.prevent
+        >
+          <v-text-field
+            v-model="fullName"
+            variant="solo"
+            flat
+            single-line
+            hide-details
+            clearable
+            rounded="lg"
+            bg-color="background"
+            max-width="640"
+            class="teacher-field"
+            label="Search teachers by name"
+            spellcheck="false"
+            prepend-inner-icon="mdi-magnify"
+          />
+        </form>
+      </v-container>
+    </section>
+
+    <v-container
+      id="teachers"
+      tag="section"
+      class="teacher-results pt-6 pb-10"
     >
-      <v-row class="w-100 my-4 justify-start flex-0-1 mx-0">
-        <template v-if="isLoadingFilters">
-          <v-col
-            v-for="item in 4"
-            :key="item"
-            cols="12"
-            sm="6"
-            class="h-100"
-          >
-            <TeachersCardSkeleton />
-          </v-col>
-        </template>
+      <div class="d-flex flex-column flex-sm-row align-sm-center justify-space-between ga-3 mb-4">
+        <h2
+          class="text-h4 text-sm-h3 font-weight-bold text-grey900 text-no-wrap"
+          aria-live="polite"
+        >
+          {{ isFiltered ? 'Results' : 'All teachers' }}
+          <span
+            v-if="!hasFailed && (teachers.length || !isUpdating)"
+            class="ml-1 text-h5 font-weight-medium text-grey500"
+          >{{ total }}</span>
+        </h2>
 
-        <template v-else>
-          <v-col
-            v-if="firstLoadedPage > 1"
-            cols="12"
-            class="d-flex justify-center"
-          >
-            <v-btn
-              flat
-              rounded="lg"
-              color="grey200"
-              class="text-grey700"
-              :loading="isLoadingPreviousPage"
-              @click="loadPreviousPage"
-            >
-              <v-icon
-                color="grey500"
-                size="20"
-                class="mr-1"
-              >
-                md:keyboard_arrow_up
-              </v-icon>
-              Load previous teachers
-            </v-btn>
-          </v-col>
+        <div class="d-flex flex-grow-1 justify-sm-end ga-3">
+          <v-text-field
+            v-model="skill"
+            variant="outlined"
+            density="compact"
+            single-line
+            hide-details
+            clearable
+            rounded="lg"
+            max-width="220"
+            class="teacher-field"
+            label="Subject"
+            spellcheck="false"
+            prepend-inner-icon="mdi-book-open-variant-outline"
+          />
+          <v-select
+            v-model="sort"
+            :items="TEACHER_SORT_ITEMS"
+            variant="outlined"
+            density="compact"
+            hide-details
+            rounded="lg"
+            max-width="200"
+            class="teacher-field"
+            aria-label="Sort teachers"
+          />
+        </div>
+      </div>
 
-          <template v-if="isLoadingPreviousPage">
-            <v-col
-              v-for="item in 2"
-              :key="`previous-${item}`"
-              cols="12"
-              sm="6"
-              class="h-100"
-            >
-              <TeachersCardSkeleton />
-            </v-col>
-          </template>
+      <v-empty-state
+        v-if="hasFailed"
+        icon="mdi-cloud-off-outline"
+        title="Couldn't load teachers"
+        text="Check your connection and try again."
+        action-text="Try again"
+        @click:action="refresh()"
+      />
 
-          <v-col
-            v-if="loadError && teachers.length === 0"
-            cols="12"
-          >
-            <div class="w-100 d-flex flex-column align-center justify-center ga-4 pa-8 rounded-lg empty-teachers">
-              <v-icon
-                color="grey300"
-                size="48"
-              >
-                md:cloud_off
-              </v-icon>
-              <div class="d-flex flex-column align-center ga-1 text-center">
-                <span class="text-h4 font-weight-bold text-grey700">
-                  Couldn't load teachers
-                </span>
-                <span class="text-h6 font-weight-regular text-grey500">
-                  Check your connection and try again.
-                </span>
-              </div>
-              <v-btn
-                flat
-                rounded="lg"
-                color="primary"
-                @click="reloadTeachers"
-              >
-                Try again
-              </v-btn>
-            </div>
-          </v-col>
+      <v-empty-state
+        v-else-if="!teachers.length && !isUpdating"
+        icon="mdi-account-search-outline"
+        title="No teachers found"
+        text="Try another name or subject."
+        action-text="Show all teachers"
+        @click:action="clearFilters()"
+      />
 
-          <v-col
-            v-else-if="!isLoadingNextPage && teachers.length === 0 && isAllDataLoaded"
-            cols="12"
-          >
-            <div class="w-100 d-flex flex-column align-center justify-center ga-4 pa-8 rounded-lg empty-teachers">
-              <v-icon
-                color="grey300"
-                size="48"
-              >
-                md:person_search
-              </v-icon>
-              <div class="d-flex flex-column align-center ga-1 text-center">
-                <span class="text-h4 font-weight-bold text-grey700">
-                  No teachers found
-                </span>
-                <span class="text-h6 font-weight-regular text-grey500">
-                  Try changing the teacher name or skill filter.
-                </span>
-              </div>
-            </div>
-          </v-col>
-
+      <template v-else>
+        <v-row
+          tag="ul"
+          class="teacher-results__list"
+          :class="{ 'opacity-60': isUpdating && teachers.length }"
+        >
           <v-col
             v-for="teacher in teachers"
-            :key="teacher.handle || teacher.fullName"
+            :key="teacher.handle"
+            tag="li"
             cols="12"
             sm="6"
+            md="3"
           >
             <TeachersCard :teacher="teacher" />
           </v-col>
-        </template>
-      </v-row>
 
-      <template #loading>
-        <v-row
-          v-if="teachers.length > 0 && !isLoadingFilters"
-          class="w-100 my-1 justify-start flex-0-1 mx-0"
+          <!-- Only when there is no list to keep on screen, e.g. a new search after "No teachers found". -->
+          <template v-if="!teachers.length">
+            <v-col
+              v-for="item in SKELETON_CARDS"
+              :key="item"
+              tag="li"
+              cols="12"
+              sm="6"
+              md="3"
+            >
+              <v-skeleton-loader
+                type="list-item-avatar-two-line"
+                class="teacher-skeleton border rounded-xl"
+              />
+            </v-col>
+          </template>
+        </v-row>
+
+        <v-pagination
+          v-if="pageCount > 1"
+          :model-value="page"
+          :length="pageCount"
+          total-visible="5"
+          class="teacher-pagination mt-8"
         >
+          <template #prev="{ disabled, 'aria-label': label }">
+            <v-btn
+              :to="disabled ? undefined : pageLink(page - 1)"
+              :disabled="disabled"
+              :aria-label="label"
+              :active="false"
+              icon="mdi-chevron-left"
+              variant="outlined"
+              density="comfortable"
+              rounded="lg"
+            />
+          </template>
+
+          <template #item="{ isActive, key, page: label, props: item }">
+            <span
+              v-if="item.ellipsis"
+              class="d-flex justify-center align-center h-100 text-grey500"
+            >{{ label }}</span>
+            <v-btn
+              v-else
+              :to="pageLink(Number(key))"
+              :aria-label="item['aria-label']"
+              :aria-current="isActive ? 'page' : undefined"
+              :active="false"
+              :color="isActive ? 'secondary' : undefined"
+              :variant="isActive ? 'flat' : 'text'"
+              density="comfortable"
+              icon
+              rounded="lg"
+              class="text-h6"
+            >
+              {{ label }}
+            </v-btn>
+          </template>
+
+          <template #next="{ disabled, 'aria-label': label }">
+            <v-btn
+              :to="disabled ? undefined : pageLink(page + 1)"
+              :disabled="disabled"
+              :aria-label="label"
+              :active="false"
+              icon="mdi-chevron-right"
+              variant="outlined"
+              density="comfortable"
+              rounded="lg"
+            />
+          </template>
+        </v-pagination>
+      </template>
+    </v-container>
+
+    <section class="bg-grey50 py-10">
+      <v-container>
+        <h2 class="text-h4 text-sm-h3 font-weight-bold text-grey900 mb-6">
+          How to choose a teacher
+        </h2>
+        <v-row>
           <v-col
-            v-for="item in 2"
-            :key="item"
+            v-for="step in GUIDE_STEPS"
+            :key="step.title"
             cols="12"
-            sm="6"
-            class="h-100"
+            md="4"
+            class="d-flex ga-4"
           >
-            <TeachersCardSkeleton />
+            <v-avatar
+              color="primary50"
+              rounded="lg"
+              size="44"
+            >
+              <v-icon
+                :icon="step.icon"
+                color="primaryStrong"
+              />
+            </v-avatar>
+            <div>
+              <h3 class="text-h5 font-weight-bold text-grey900 mb-1">
+                {{ step.title }}
+              </h3>
+              <p class="text-h5 font-weight-regular text-grey600">
+                {{ step.text }}
+                <NuxtLink
+                  v-if="step.link"
+                  :to="step.link.to"
+                  class="text-info font-weight-medium"
+                >
+                  {{ step.link.title }}
+                </NuxtLink>
+              </p>
+            </div>
           </v-col>
         </v-row>
-      </template>
+      </v-container>
+    </section>
 
-      <template #error="{ props }">
-        <div class="w-100 d-flex justify-center my-4">
-          <v-btn
-            v-bind="props"
-            flat
-            rounded="lg"
-            color="grey200"
-            class="text-grey700"
-          >
-            Couldn't load more teachers. Try again
-          </v-btn>
+    <section class="teacher-band text-white py-8">
+      <v-container class="d-flex flex-column flex-sm-row align-sm-center justify-space-between ga-4">
+        <div>
+          <h2 class="text-h2 font-weight-bold mb-1">
+            Are you a teacher?
+          </h2>
+          <p class="text-h5 font-weight-regular text-onInverseSurfaceSubtle">
+            Share your lessons and earn from every sale.
+          </p>
         </div>
-      </template>
-
-      <template #empty>
-        <div />
-      </template>
-    </v-infinite-scroll>
-  </v-container>
+        <v-btn
+          to="/earn-money"
+          color="primary"
+          size="x-large"
+          rounded="pill"
+          flat
+        >
+          Earn money
+        </v-btn>
+      </v-container>
+    </section>
+  </div>
 </template>
 
 <script setup lang="ts">
-import type { GetTeacherProfilesParams, TeacherProfileDTO, TeacherProfileSortFilter } from '@/types'
+const SKELETON_CARDS = 12
 
-type SortValue = '' | 'name-asc' | 'name-desc'
-type InfiniteScrollStatus = 'ok' | 'empty' | 'loading' | 'error'
-type FetchResult = 'ok' | 'error' | 'stale'
-
-interface SortItem {
-  title: string
-  value: SortValue
-  sortType?: 'Asc' | 'Desc'
-  column?: 'FullName'
-}
-
-interface InfiniteScrollLoadOptions {
-  done: (status: InfiniteScrollStatus) => void
-}
-
-useHead({
-  title: 'Teachers',
-})
-
-const route = useRoute()
-const router = useRouter()
-const { getData } = useTeachers()
-
-const INPUT_DEBOUNCE_MS = 1000
-const PAGE_SIZE = 10
-let inputTimer: ReturnType<typeof setTimeout> | null = null
-
-const getQueryString = (value: unknown) => {
-  return typeof value === 'string' ? value : ''
-}
-
-const sortItems: SortItem[] = [
+const GUIDE_STEPS = [
   {
-    title: 'No sort',
-    value: '',
+    icon: 'mdi-magnify',
+    title: 'Find a teacher',
+    text: 'Search by name, or filter by the subject you need help with.',
   },
   {
-    title: 'Name A-Z',
-    value: 'name-asc',
-    sortType: 'Asc',
-    column: 'FullName',
+    icon: 'mdi-account-check-outline',
+    title: 'Check their profile',
+    text: 'Read their biography, skills and teaching experience before you decide.',
   },
   {
-    title: 'Name Z-A',
-    value: 'name-desc',
-    sortType: 'Desc',
-    column: 'FullName',
+    icon: 'mdi-clipboard-check-outline',
+    title: 'Know what to work on',
+    text: 'See which topics need the most help before you start.',
+    link: { title: 'Take an online exam', to: '/search?type=quizhub' },
   },
 ]
 
-const filters = reactive({
-  fullName: getQueryString(route.query.fullName),
-  skill: getQueryString(route.query.skill),
-})
+const breadcrumbs = TEACHER_BREADCRUMBS.map(({ text, disabled, href }) => ({ title: text, disabled, to: href }))
 
-const selectedSort = ref<SortItem>(
-  sortItems.find(item => item.value === route.query.sort) ?? sortItems[0]!,
-)
+const {
+  ready,
+  page,
+  teachers,
+  total,
+  pageCount,
+  isUpdating,
+  hasFailed,
+  isFiltered,
+  fullName,
+  skill,
+  sort,
+  pageLink,
+  refresh,
+  clearFilters,
+} = useTeacherDirectory()
 
-const parsedPage = Number(getQueryString(route.query.page))
-const initialPage = Number.isInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1
-const teachers = ref<TeacherProfileDTO[]>([])
-const page = ref(initialPage)
-const firstLoadedPage = ref(initialPage)
-const lastLoadedPage = ref(initialPage)
-const isAllDataLoaded = ref(false)
-const isLoadingFilters = ref(false)
-const isLoadingPreviousPage = ref(false)
-const isLoadingNextPage = ref(false)
-const loadError = ref(false)
-const infiniteScroll = ref<{ reset: () => void } | null>(null)
-// Bumped on every filter/sort change so responses requested under older filters are dropped
-let filtersVersion = 0
-
-const getSortFilter = (): TeacherProfileSortFilter[] | undefined => {
-  if (!selectedSort.value.column || !selectedSort.value.sortType) {
-    return undefined
-  }
-
-  return [
-    {
-      sortType: selectedSort.value.sortType,
-      column: selectedSort.value.column,
-    },
-  ]
-}
-
-const getTeacherParams = (pageNumber = page.value): GetTeacherProfilesParams => {
-  return {
-    page: pageNumber,
-    pageSize: PAGE_SIZE,
-    fullName: filters.fullName,
-    skill: filters.skill,
-    sortFilter: getSortFilter(),
-  }
-}
-
-const updateTeachersData = (
-  items: TeacherProfileDTO[],
-  mode: 'reset' | 'append' | 'prepend' = 'append',
-) => {
-  if (mode === 'reset') {
-    teachers.value = items
-  }
-  else if (mode === 'prepend') {
-    teachers.value = [...items, ...teachers.value]
-  }
-  else {
-    teachers.value = [...teachers.value, ...items]
-  }
-
-  if (mode !== 'prepend') {
-    isAllDataLoaded.value = items.length < PAGE_SIZE
-  }
-}
-
-const handleFilterInput = () => {
-  filtersVersion++
-  isLoadingFilters.value = true
-  if (inputTimer) {
-    clearTimeout(inputTimer)
-  }
-
-  inputTimer = setTimeout(() => {
-    handleFiltersChanged()
-  }, INPUT_DEBOUNCE_MS)
-}
-
-const selectSort = (item: SortItem) => {
-  isLoadingFilters.value = true
-  selectedSort.value = item
-  handleFiltersChanged()
-}
-
-const fetchTeachers = async (
-  mode: 'reset' | 'append' | 'prepend' = 'reset',
-  loadingType: 'filters' | 'previous-page' | 'next-page' = 'filters',
-  pageNumber = page.value,
-): Promise<FetchResult> => {
-  const version = filtersVersion
-
-  if (loadingType === 'filters') {
-    isLoadingFilters.value = true
-  }
-  else if (loadingType === 'previous-page') {
-    isLoadingPreviousPage.value = true
-  }
-  else {
-    isLoadingNextPage.value = true
-  }
-
-  try {
-    // getData never throws: failures come back as { succeeded: false }
-    const response = await getData(getTeacherParams(pageNumber))
-
-    if (version !== filtersVersion) {
-      return 'stale'
-    }
-
-    if (!response.succeeded) {
-      return 'error'
-    }
-
-    updateTeachersData(response.data?.list ?? [], mode)
-
-    return 'ok'
-  }
-  finally {
-    if (loadingType === 'filters') {
-      // A newer filter request owns the loading state, leave it on until that one finishes
-      if (version === filtersVersion) {
-        isLoadingFilters.value = false
-      }
-    }
-    else if (loadingType === 'previous-page') {
-      isLoadingPreviousPage.value = false
-    }
-    else {
-      isLoadingNextPage.value = false
-    }
-  }
-}
-
-const reloadTeachers = async (pageNumber = firstLoadedPage.value) => {
-  filtersVersion++
-  loadError.value = false
-
-  const result = await fetchTeachers('reset', 'filters', pageNumber)
-  if (result === 'stale') {
-    return
-  }
-
-  loadError.value = result === 'error'
-  infiniteScroll.value?.reset()
-}
-
-const handleFiltersChanged = async () => {
-  filtersVersion++
-  page.value = 1
-  firstLoadedPage.value = 1
-  lastLoadedPage.value = 1
-  teachers.value = []
-  isAllDataLoaded.value = false
-  await updateQuery()
-  await reloadTeachers(1)
-}
-
-const loadPreviousPage = async () => {
-  if (
-    firstLoadedPage.value <= 1
-    || isLoadingFilters.value
-    || isLoadingPreviousPage.value
-    || isLoadingNextPage.value
-  ) {
-    return
-  }
-
-  const previousPage = firstLoadedPage.value - 1
-  const result = await fetchTeachers('prepend', 'previous-page', previousPage)
-  if (result !== 'ok') {
-    return
-  }
-
-  firstLoadedPage.value = previousPage
-  page.value = previousPage
-  await updateQuery()
-}
-
-const loadNextPage = async ({ done }: InfiniteScrollLoadOptions) => {
-  if (isLoadingFilters.value || isLoadingPreviousPage.value || isLoadingNextPage.value) {
-    done('ok')
-    return
-  }
-
-  // The first page failed, the "Try again" button reloads it instead
-  if (isAllDataLoaded.value || loadError.value) {
-    done('empty')
-    return
-  }
-
-  const nextPage = lastLoadedPage.value + 1
-  const result = await fetchTeachers('append', 'next-page', nextPage)
-
-  if (result === 'stale') {
-    done('ok')
-    return
-  }
-
-  if (result === 'error') {
-    done('error')
-    return
-  }
-
-  lastLoadedPage.value = nextPage
-  page.value = nextPage
-  await updateQuery()
-  done(isAllDataLoaded.value ? 'empty' : 'ok')
-}
-
-const updateQuery = async () => {
-  const query: Record<string, string> = {}
-
-  if (page.value > 1) {
-    query.page = String(page.value)
-  }
-
-  if (filters.fullName) {
-    query.fullName = filters.fullName
-  }
-
-  if (filters.skill) {
-    query.skill = filters.skill
-  }
-
-  if (selectedSort.value.value) {
-    query.sort = selectedSort.value.value
-  }
-
-  await router.replace({ query })
-}
-
-const { data: initialTeachersResponse } = await useAsyncData(
-  `teachers-list-${page.value}`,
-  () => getData(getTeacherParams()),
-)
-if (initialTeachersResponse.value?.succeeded) {
-  updateTeachersData(initialTeachersResponse.value.data?.list ?? [], 'reset')
-}
-else {
-  loadError.value = true
-}
-
-onBeforeUnmount(() => {
-  if (inputTimer) {
-    clearTimeout(inputTimer)
-  }
-})
+await ready
 </script>
 
-<style scoped>
-.margin-top-handle {
-  margin-top: 80px;
-  min-height: calc(100vh - 80px);
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
+.teacher-band {
+  background: rgb(var(--v-theme-secondary));
 }
-:deep(.custome-infinite-scroll .v-infinite-scroll__side){
-  padding : 0
+
+.v-theme--dark .teacher-band {
+  background: rgb(var(--v-theme-surface));
 }
-.empty-teachers {
-  min-height: 220px;
-  border: 1px solid rgb(var(--v-theme-grey200));
+
+.teacher-hero__title {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.teacher-hero__lead {
+  margin: 0.6rem 0 1.4rem;
+  font-size: 1.5rem;
+}
+
+.teacher-results {
+  // Clears the fixed header when a pagination link jumps here.
+  scroll-margin-top: 6.4rem;
+}
+
+// The site's root font is 10px, so Vuetify's rem-based field text comes out too small.
+.teacher-field :deep(.v-field),
+.teacher-field :deep(.v-label) {
+  font-size: 1.5rem;
+}
+
+// Seven buttons have to fit a 320px phone.
+.teacher-pagination :deep(.v-pagination__list) {
+  gap: 0.2rem;
+}
+
+.teacher-pagination :deep(.v-pagination__item),
+.teacher-pagination :deep(.v-pagination__prev),
+.teacher-pagination :deep(.v-pagination__next) {
+  margin: 0;
+}
+
+.teacher-skeleton {
+  height: 8.2rem;
+}
+
+.teacher-results__list {
+  padding: 0;
+  list-style: none;
+  transition: opacity 0.15s;
+}
+
+@media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
+  .teacher-hero__title {
+    font-size: 4rem;
+  }
+
+  .teacher-hero__lead {
+    margin: 0.8rem 0 2rem;
+    font-size: 1.7rem;
+  }
+
+  .teacher-skeleton {
+    height: 17.6rem;
+  }
 }
 </style>

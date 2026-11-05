@@ -1,82 +1,78 @@
 <template>
-  <NuxtLink
+  <v-card
     :to="`/profile/${teacher.handle}`"
-    class="w-100 h-100 d-flex flex-column ga-4 pa-4 bg-surface rounded-lg text-decoration-none teacher-card"
+    :ripple="false"
+    flat
+    rounded="xl"
+    class="teacher-card d-flex flex-sm-column align-center ga-3 h-100 pa-3 px-sm-4 py-sm-5 text-sm-center"
   >
-    <div class="d-flex align-start ga-3">
-      <div class="teacher-avatar-holder rounded-circle position-relative d-flex align-center justify-center flex-shrink-0">
-        <img
-          :src="teacher.avatar || '/images/default-user.svg'"
-          :alt="teacher.fullName || 'Teacher avatar'"
-          class="teacher-avatar rounded-circle"
-          width="72"
-          height="72"
-        >
-        <div :class="`teacher-status-dot rounded-circle position-absolute bg-${onlineStatus.nameColor}`" />
-      </div>
-
-      <div class="d-flex flex-column align-start ga-2 min-width-0">
-        <span class="text-h5 text-sm-h4 font-weight-bold text-grey900 teacher-name">
-          {{ teacher.fullName || 'Unknown teacher' }}
-        </span>
-        <span class="text-h6 font-weight-medium text-grey500 d-flex align-center ga-1">
-          <v-icon
-            color="primary"
-            size="18"
-          >
-            md:user_attributes_outlined
-          </v-icon>
-          {{ teacher.userRateLevel || 'Beginner' }}
-        </span>
-      </div>
-    </div>
-
-    <div class="d-flex align-start ga-2">
-      <v-icon
-        color="grey300"
-        size="18"
+    <v-avatar
+      class="teacher-card__avatar flex-shrink-0"
+      color="primary50"
+    >
+      <!-- A plain <img>: v-avatar's `image` prop goes through v-img, which leaves the picture out of the server HTML. -->
+      <img
+        v-if="teacher.avatar"
+        :src="teacher.avatar"
+        alt=""
+        width="80"
+        height="80"
+        loading="lazy"
+        decoding="async"
+        class="w-100 h-100"
       >
-        md:wifi_outlined
-      </v-icon>
-      <span class="text-h6 text-grey500 font-weight-regular">
-        {{ onlineStatus.text }}
+      <span
+        v-else
+        class="text-h5 text-sm-h3 font-weight-bold text-primaryStrong"
+      >{{ initials }}</span>
+    </v-avatar>
+
+    <div class="teacher-card__body flex-grow-1">
+      <h3 class="text-h5 font-weight-bold text-grey900 text-truncate">
+        {{ name }}
+      </h3>
+
+      <span
+        v-if="activity"
+        class="d-inline-flex align-center ga-1 mt-1 text-h6 font-weight-medium text-grey600"
+      >
+        <span class="teacher-card__dot rounded-circle bg-success500" />
+        {{ activity }}
       </span>
+
+      <div
+        v-if="skills.length"
+        class="d-flex flex-sm-wrap justify-sm-center ga-1 mt-2 overflow-hidden"
+      >
+        <v-chip
+          v-for="skill in skills.slice(0, MAX_SKILLS)"
+          :key="skill"
+          variant="flat"
+          color="primary50"
+          size="small"
+          class="teacher-card__skill"
+        >
+          <span class="text-h6 font-weight-medium text-primaryStrong text-truncate">{{ skill }}</span>
+        </v-chip>
+        <v-chip
+          v-if="skills.length > MAX_SKILLS"
+          variant="flat"
+          color="grey100"
+          size="small"
+          class="flex-shrink-0"
+        >
+          <span class="text-h6 font-weight-medium text-grey600">+{{ skills.length - MAX_SKILLS }}</span>
+        </v-chip>
+      </div>
     </div>
 
-    <div
-      v-if="teacher.skills && teacher.skills.length > 0"
-      class="d-flex flex-wrap ga-2"
+    <v-icon
+      class="d-sm-none flex-shrink-0"
+      color="grey400"
     >
-      <v-chip
-        v-for="skill in teacher.skills.slice(0, 3)"
-        :key="skill"
-        variant="flat"
-        color="primary50"
-        size="small"
-      >
-        <span class="text-h6 font-weight-medium text-primary">
-          {{ skill }}
-        </span>
-      </v-chip>
-      <v-chip
-        v-if="teacher.skills.length > 3"
-        variant="flat"
-        color="grey100"
-        size="small"
-      >
-        <span class="text-h6 font-weight-medium text-grey500">
-          +{{ teacher.skills.length - 3 }}
-        </span>
-      </v-chip>
-    </div>
-
-    <span
-      v-else
-      class="text-h6 font-weight-regular text-grey400"
-    >
-      No skills added yet
-    </span>
-  </NuxtLink>
+      mdi-chevron-right
+    </v-icon>
+  </v-card>
 </template>
 
 <script setup lang="ts">
@@ -86,86 +82,75 @@ const props = defineProps<{
   teacher: TeacherProfileDTO
 }>()
 
-const userOnlineStatus: Record<OnlineStatus, { text: string, nameColor: string }> = {
-  NewUser: {
-    text: 'New here',
-    nameColor: 'primary',
-  },
-  ActiveLongTimeAgo: {
-    text: 'Long time no see',
-    nameColor: 'grey300',
-  },
-  ActiveThisMonth: {
-    text: 'Missing for days',
-    nameColor: 'grey400',
-  },
-  ActiveThisWeek: {
-    text: 'Was here this week',
-    nameColor: 'warning300',
-  },
-  OnlineToday: {
-    text: 'Was here today',
-    nameColor: 'warning500',
-  },
-  ActiveRecently: {
-    text: 'Be right back',
-    nameColor: 'success300',
-  },
-  Online: {
-    text: 'Online',
-    nameColor: 'success500',
-  },
+const MAX_SKILLS = 2
+
+// Day-level wording: this list is cached at the edge, so a live "Online" could be hours old. Teachers who have been
+// away show nothing, so the list doesn't advertise it.
+const ACTIVITY_TEXT: Partial<Record<OnlineStatus, string>> = {
+  Online: 'Active today',
+  ActiveRecently: 'Active today',
+  OnlineToday: 'Active today',
+  ActiveThisWeek: 'Active this week',
 }
 
-const onlineStatus = computed(() => {
-  return userOnlineStatus[props.teacher.onlineStatus] ?? userOnlineStatus.NewUser
-})
+const name = computed(() => props.teacher.fullName?.trim() || 'GamaTrain teacher')
+const initials = computed(() => name.value.split(/\s+/).slice(0, 2).map(word => word[0]).join('').toUpperCase())
+const activity = computed(() => ACTIVITY_TEXT[props.teacher.onlineStatus])
+const skills = computed(() => props.teacher.skills ?? [])
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@use 'sass:map';
+@use 'vuetify/settings' as vuetify;
+
 .teacher-card {
-  border: 1px solid rgb(var(--v-theme-grey300));
-  box-shadow: 0px 12px 30px 0px #141a270d;
-  transition: 0.2s;
-}
-.teacher-card:hover{
-  border: 1px solid rgb(var(--v-theme-primary));
-  transform : translateY(-10px)
+  border: 1px solid rgb(var(--v-theme-grey200));
+  transition: border-color 0.2s;
+
+  &:hover {
+    border-color: rgb(var(--v-theme-primary));
+  }
 }
 
-.teacher-avatar-holder {
-  min-width: 84px;
-  width: 84px;
-  height: 84px;
-  border: 2px solid transparent;
-  background:
-    linear-gradient(rgb(var(--v-theme-surface)), rgb(var(--v-theme-surface))) padding-box,
-    linear-gradient(to right, rgb(var(--v-theme-grey700)), rgb(var(--v-theme-primary))) border-box;
+.teacher-card__avatar {
+  width: 5.6rem;
+  height: 5.6rem;
+  // v-avatar animates its size, which would shift the rows below while the page loads.
+  transition: none;
+
+  img {
+    object-fit: cover;
+  }
 }
 
-.teacher-avatar {
-  width: 72px;
-  height: 72px;
-  object-fit: cover;
-}
-
-.teacher-status-dot {
-  width: 14px;
-  height: 14px;
-  right: 7px;
-  top: 10px;
-  border: 2px solid rgb(var(--v-theme-surface));
-}
-
-.teacher-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.min-width-0 {
+.teacher-card__body {
   min-width: 0;
+  max-width: 100%;
+}
+
+.teacher-card__dot {
+  width: 0.7rem;
+  height: 0.7rem;
+}
+
+.teacher-card__skill {
+  max-width: 100%;
+  min-width: 0;
+
+  :deep(.v-chip__content) {
+    min-width: 0;
+  }
+}
+
+@media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
+  // A card without an activity line stays as tall as its neighbours.
+  .teacher-card {
+    min-height: 17.6rem;
+  }
+
+  .teacher-card__avatar {
+    width: 8rem;
+    height: 8rem;
+  }
 }
 </style>
