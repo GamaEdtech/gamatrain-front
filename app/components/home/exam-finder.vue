@@ -27,17 +27,27 @@
       class="exam-finder__fields mt-2"
       @submit.prevent="search"
     >
-      <v-select
-        v-model="selectedBoard"
-        :items="boardList"
-        item-title="title"
-        item-value="id"
-        label="Board"
-        variant="outlined"
-        hide-details
-        return-object
-        @update:model-value="changeBoard"
-      />
+      <div class="position-relative">
+        <v-select
+          v-model="selectedBoard"
+          :items="boardList"
+          :base-color="showBoardHint ? 'success500' : undefined"
+          item-title="title"
+          item-value="id"
+          label="Board"
+          variant="outlined"
+          hide-details
+          return-object
+          @update:model-value="changeBoard"
+          @update:focused="hideBoardHint"
+        />
+        <div
+          v-if="showBoardHint"
+          class="exam-finder__hint"
+        >
+          Select your Board!
+        </div>
+      </div>
       <v-select
         v-model="selectedGrade"
         :items="gradeList"
@@ -95,6 +105,7 @@ const selectedType = ref(HOME_SEARCH_TYPES[0].value)
 const keyword = ref('')
 const gradeList = ref([])
 const gradeLoader = ref(false)
+const showBoardHint = ref(false)
 
 const searchAction = computed(() => HOME_SEARCH_TYPES.find(type => type.value === selectedType.value)?.action)
 const search = () => navigateTo(searchLink(selectedType.value, keyword.value.trim()))
@@ -123,6 +134,12 @@ const changeBoard = () => {
   fetchGradeList()
 }
 
+// First-time visitors get a hint on the board field, until they first use it.
+const hideBoardHint = () => {
+  showBoardHint.value = false
+  localStorage.setItem('boardHintShown', 'true')
+}
+
 const restoreBoard = () => {
   try {
     const stored = JSON.parse(localStorage.getItem('selectedBoard'))
@@ -138,6 +155,7 @@ watch(selectedBoard, (board) => {
 })
 
 onMounted(async () => {
+  showBoardHint.value = localStorage.getItem('boardHintShown') !== 'true'
   await getBoards()
   // A visitor coming back to the page keeps the board and grade they picked.
   selectedBoard.value ??= restoreBoard() ?? boardList.value[0]
@@ -178,6 +196,44 @@ onMounted(async () => {
 
 .exam-finder__popular {
   font-size: 1.4rem;
+}
+
+.exam-finder__hint {
+  position: absolute;
+  z-index: 1;
+  bottom: -1.5rem;
+  left: 1rem;
+  padding: 0.3rem 1rem;
+  border-radius: 99rem;
+  color: rgb(var(--v-theme-on-primary));
+  background: rgb(var(--v-theme-success500));
+  font-size: 1.2rem;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: hint-bob 1.6s ease-in-out infinite;
+
+  // The pointer up to the field.
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 2rem;
+    border: 0.5rem solid transparent;
+    border-bottom-color: rgb(var(--v-theme-success500));
+  }
+}
+
+@keyframes hint-bob {
+  50% {
+    transform: translateY(-0.3rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .exam-finder__hint {
+    animation: none;
+  }
 }
 
 .exam-finder__fields {
