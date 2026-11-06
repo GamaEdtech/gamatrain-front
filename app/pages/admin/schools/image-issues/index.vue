@@ -69,13 +69,13 @@
     </common-data-table>
 
     <admin-common-modal
-      v-if="showDetailModal"
+      v-if="showDetailModal && selectedItem"
       v-model:show-dialog="showDetailModal"
-      title="Detail"
+      title="Image report"
       :max-width="600"
     >
       <admin-schools-image-issues-modals-detail
-        :id="selectedItemIdForDetail"
+        :issue="selectedItem"
         @change-status-successfull="changeStatusSuccessfull"
       />
     </admin-common-modal>
@@ -141,7 +141,7 @@ const allPageSize = [
 
 const statusSelect = ref<AdminSchoolImageIssueStatus | ''>('')
 const showDetailModal = ref(false)
-const selectedItemIdForDetail = ref('')
+const selectedItem = ref<AdminSchoolImageIssueDTO | null>(null)
 
 const fetchImageIssues = async () => {
   await getData({
@@ -173,12 +173,12 @@ onMounted(async () => {
 })
 
 const openDetailModal = (item: AdminSchoolImageIssueDTO) => {
-  selectedItemIdForDetail.value = item.id.toString()
+  selectedItem.value = item
   showDetailModal.value = true
 }
 
 const changeStatusSuccessfull = async () => {
-  selectedItemIdForDetail.value = ''
+  selectedItem.value = null
   showDetailModal.value = false
   page.value = 1
   await fetchImageIssues()
