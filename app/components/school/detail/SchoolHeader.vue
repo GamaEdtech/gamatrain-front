@@ -4,7 +4,7 @@
       <v-breadcrumbs
         :items="crumbs"
         density="compact"
-        class="pa-0 text-grey500 crumbs"
+        class="pa-0 text-grey500 crumbs flex-wrap"
       >
         <template #divider>
           <v-icon
