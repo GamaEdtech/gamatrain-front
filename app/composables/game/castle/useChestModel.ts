@@ -12,7 +12,7 @@ const useChestModel = async (): Promise<{
 } | null> => {
   try {
     const { loadModel } = useThreeJS()
-    const chestGlb = await loadModel('/game/castle/treasure_chest.glb')
+    const chestGlb = await loadModel('/game/castle-assets/treasure_chest.glb')
 
     const chest = chestGlb.scene
 
