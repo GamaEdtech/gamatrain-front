@@ -170,6 +170,8 @@ export default defineNuxtConfig({
   experimental: {
     payloadExtraction: false,
     appManifest: false,
+    // A deploy removes the previous build's chunks, so a page still on that build reloads instead of showing the error page.
+    emitRouteChunkError: 'automatic-immediate',
   },
 
   pwa: {
@@ -260,6 +262,8 @@ export default defineNuxtConfig({
     '/user/**': { ssr: false },
     '/admin/**': { ssr: false },
     '/payments/**': { ssr: false },
+    // The 3D game reads `window` during setup, so it can only render in the browser.
+    '/game/castle': { ssr: false },
     '/school/**': contentPage,
     '/paper/**': contentPage,
     '/qa/**': contentPage,
