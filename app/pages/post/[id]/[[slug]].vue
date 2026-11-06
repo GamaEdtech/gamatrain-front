@@ -213,6 +213,11 @@
 import { useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 
+// Post ids are numeric, so anything else (bot probes, unfilled links) is a 404 rather than a failed API call.
+definePageMeta({
+  validate: route => /^\d+$/.test(route.params.id),
+})
+
 const { isDark } = useThemeMode()
 const { $toast, $renderMathInElement, $ensureMathJaxReady } = useNuxtApp()
 const { formatLocal } = useDateTime()
