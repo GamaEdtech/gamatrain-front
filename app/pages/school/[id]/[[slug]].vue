@@ -462,12 +462,13 @@ const ogImage = contentData.value?.defaultImageUri
   : null
 
 useSeoMeta({
-  title: () => `${contentData.value?.name} | GamaTrain Schools`,
+  titleTemplate: '%s',
+  title: () => `${contentData.value?.name} | GamaTrain School Finder`,
   description: () => metaDescription.value,
-  ogTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
+  ogTitle: () => `${contentData.value?.name} | GamaTrain School Finder`,
   ogDescription: () => metaDescription.value,
   ogUrl: canonicalUrl,
-  twitterTitle: () => `${contentData.value?.name} | GamaTrain Schools`,
+  twitterTitle: () => `${contentData.value?.name} | GamaTrain School Finder`,
   twitterDescription: () => metaDescription.value,
   twitterCard: 'summary_large_image',
   ogImage: () => ogImage,

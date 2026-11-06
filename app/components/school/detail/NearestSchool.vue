@@ -3,9 +3,9 @@
     v-if="isLoading || schools.length != 0"
     class="w-100 d-flex flex-column"
   >
-    <h2 class="section-title">
+    <h3 class="section-title">
       Nearby schools
-    </h2>
+    </h3>
 
     <v-slide-group
       v-if="isLoading"
