@@ -20,25 +20,39 @@
       </div>
       <div class="home-hero__figure">
         <v-chip
-          class="home-hero__tag home-hero__tag--score d-none d-lg-inline-flex"
+          class="home-hero__tag home-hero__tag--score d-md-none d-lg-inline-flex"
           color="white"
           variant="flat"
+          elevation="4"
           prepend-icon="mdi-check-circle"
         >
-          Score in seconds
+          <span class="d-sm-none">Instant score</span>
+          <span class="d-none d-sm-inline">Score in seconds</span>
         </v-chip>
         <v-chip
-          class="home-hero__tag home-hero__tag--advice d-none d-lg-inline-flex"
+          class="home-hero__tag home-hero__tag--advice d-md-none d-lg-inline-flex"
           color="white"
           variant="flat"
+          elevation="4"
           prepend-icon="mdi-creation"
         >
-          AI study advice
+          <span class="d-sm-none">AI advice</span>
+          <span class="d-none d-sm-inline">AI study advice</span>
+        </v-chip>
+        <v-chip
+          class="home-hero__tag home-hero__tag--rank d-md-none d-lg-inline-flex"
+          color="white"
+          variant="flat"
+          elevation="4"
+          prepend-icon="mdi-trophy"
+        >
+          <span class="d-sm-none d-lg-inline">Level up</span>
+          <span class="d-none d-sm-inline d-lg-none">Level up with every exam</span>
         </v-chip>
         <img
           src="/images/hero-girl.webp"
           srcset="/images/hero-girl-sm.webp 340w, /images/hero-girl.webp 620w"
-          sizes="(max-width: 959px) 93px, 274px"
+          sizes="(max-width: 959px) 99px, 274px"
           width="620"
           height="1133"
           alt="The GamaTrain student floating under a glowing light bulb"
@@ -97,13 +111,14 @@
 
 .home-hero__figure {
   position: relative;
-  height: 17rem;
-  margin: 1.2rem 0 1.6rem;
+  height: 18rem;
+  margin: 0.6rem 0 1.2rem;
 
   img {
+    position: relative;
     display: block;
     width: auto;
-    height: 17rem;
+    height: 18rem;
   }
 }
 
@@ -114,8 +129,82 @@
 .home-hero__tag {
   position: absolute;
   z-index: 1;
+  max-width: none;
   color: rgb(var(--v-theme-brandNavy));
   font-weight: 700;
+}
+
+/* Below the desktop layout the tags tuck into the gaps around the bulb and the body. */
+.home-hero__tag--score {
+  top: 8.8rem;
+  right: calc(100% - 1.4rem);
+  transform: rotate(-4deg);
+
+  :deep(.v-chip__prepend) {
+    color: rgb(var(--v-theme-success));
+  }
+}
+
+.home-hero__tag--advice {
+  top: 1.6rem;
+  left: calc(100% - 1rem);
+  transform: rotate(3deg);
+
+  :deep(.v-chip__prepend) {
+    color: rgb(var(--v-theme-primary));
+  }
+}
+
+.home-hero__tag--rank {
+  top: 12.4rem;
+  left: calc(100% - 0.2rem);
+  transform: rotate(-2deg);
+
+  :deep(.v-chip__prepend) {
+    color: rgb(var(--v-theme-primary));
+  }
+}
+
+@keyframes home-hero-float {
+  50% {
+    translate: 0 -0.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-hero__tag {
+    animation: home-hero-float 5s ease-in-out infinite;
+  }
+
+  .home-hero__tag--advice {
+    animation-delay: -1.6s;
+  }
+
+  .home-hero__tag--rank {
+    animation-delay: -3.2s;
+  }
+}
+
+/* The bulb lights up the scene on phones and tablets. */
+@media #{map.get(vuetify.$display-breakpoints, 'sm-and-down')} {
+  .home-hero__figure::before {
+    position: absolute;
+    top: -5rem;
+    left: 50%;
+    width: 20rem;
+    height: 20rem;
+    background: radial-gradient(closest-side, rgba(var(--v-theme-primary), 0.16), transparent);
+    content: '';
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+}
+
+/* The narrowest phones have no room for the tag icons. */
+@media (max-width: 359.98px) {
+  .home-hero__tag :deep(.v-chip__prepend) {
+    display: none;
+  }
 }
 
 /* Short phones: the search form matters more than the character. */
@@ -191,14 +280,19 @@
 
   .home-hero__tag--score {
     top: 6rem;
+    right: auto;
     left: -9rem;
-    transform: rotate(-4deg);
   }
 
   .home-hero__tag--advice {
     top: 24rem;
     left: -6rem;
-    transform: rotate(3deg);
+  }
+
+  .home-hero__tag--rank {
+    top: 39rem;
+    right: calc(100% - 14.6rem);
+    left: auto;
   }
 }
 </style>
