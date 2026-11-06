@@ -91,7 +91,7 @@ const _onDialogInput = (val) => {
 }
 
 .icon-container {
-  background-color: #f2f4f7;
+  background-color: rgb(var(--v-theme-surfaceTertiary));
   width: 100px;
   height: 100px;
   border-radius: 50%;
@@ -102,7 +102,7 @@ const _onDialogInput = (val) => {
 }
 
 .text-box {
-  background-color: #f2f4f7;
+  background-color: rgb(var(--v-theme-surfaceTertiary));
   width: 100%;
   margin: 0;
   padding: 30px 60px;

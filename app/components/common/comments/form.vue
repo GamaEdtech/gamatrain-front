@@ -35,7 +35,7 @@
         :disabled="isDisabled"
         @click="sendComment"
       >
-        <v-icon color="white">
+        <v-icon color="on-success">
           md:send
         </v-icon>
       </v-btn>

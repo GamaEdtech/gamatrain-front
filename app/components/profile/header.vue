@@ -2,9 +2,9 @@
   <div
     class="main-teacher-header w-100 d-flex flex-column mt-n4"
   >
-    <div class="top-section-header w-100 d-flex bg-grey900 position-relative d-flex align-center justify-center">
+    <div class="top-section-header w-100 d-flex bg-inverseSurfaceStrong position-relative d-flex align-center justify-center">
       <img
-        :src="isDark ? `/images/gamatrain-logo-black.svg`:`/images/gamatrain-logo.svg`"
+        src="/images/gamatrain-logo.svg"
         alt="GamaTrain"
         class="logo-gamatrain"
         width="150"
@@ -204,7 +204,6 @@ const props = defineProps<IProfileHeader>()
 const emit = defineEmits(['editBio', 'editPrivacy', 'editPersonal', 'editStatus'])
 
 const theme = useTheme()
-const { isDark } = useThemeMode()
 
 const userOnlineStatus = {
   NewUser: {

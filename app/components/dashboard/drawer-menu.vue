@@ -39,7 +39,7 @@
           />
           <v-avatar
             v-else
-            color="grey400"
+            color="grey300"
             size="24"
           >
             <span class="text-h6 text-grey700 font-weight-bold">{{
@@ -478,8 +478,8 @@ const closeNavigation = () => {
 
 <style scoped>
 .dashboard-menu-container {
-  background-color: #fff;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  background-color: rgb(var(--v-theme-surface));
+  border-right: 1px solid rgb(var(--v-theme-borderSubtle));
   height: 100%;
 }
 .v-navigation-drawer__scrim{
@@ -504,7 +504,7 @@ const closeNavigation = () => {
   line-height: 26px !important;
 }
 .custom-list-item {
-  background-color: #d0d5dd;
+  background-color: rgb(var(--v-theme-grey300));
 }
 
 .size-custom-icon {
@@ -517,12 +517,12 @@ const closeNavigation = () => {
   border: 2px solid white;
 }
 .item-list-profile {
-  background-color: white;
+  background-color: rgb(var(--v-theme-surface));
 }
 
 .buy-more-div {
   height: 200px;
-  border: 2px solid #d0d5dd;
+  border: 2px solid rgb(var(--v-theme-borderSubtle));
 }
 .main-list {
   min-height: 100%;

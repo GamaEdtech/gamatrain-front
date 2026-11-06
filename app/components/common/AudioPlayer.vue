@@ -1,5 +1,5 @@
 <template>
-  <div class="container-player w-100 d-flex align-center justify-center bg-grey700 rounded-lg pa-2">
+  <div class="container-player w-100 d-flex align-center justify-center bg-inverseSurface rounded-lg pa-2">
     <v-icon
       color="white"
       size="24"

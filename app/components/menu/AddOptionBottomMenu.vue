@@ -10,6 +10,7 @@
           :to="item.path"
           :aria-label="`${item.title} — ${item.typeFile}`"
           variant="plain"
+          block
           class="card-add-option"
         >
           <div class="publish-option-content w-100 d-flex flex-column align-start justify-start">
@@ -144,7 +145,7 @@ watch(
   height: auto !important;
   padding: 16px !important;
   color: rgb(var(--v-theme-brandNavy));
-  background: rgb(var(--v-theme-white));
+  background: rgb(var(--v-theme-surface));
   border: 1px solid rgb(var(--v-theme-borderSubtle));
   border-radius: 14px;
   box-shadow: 0 2px 8px rgba(var(--v-theme-brandNavy), 0.05);
@@ -193,7 +194,7 @@ watch(
   display: grid;
   width: 22px;
   height: 22px;
-  color: rgb(var(--v-theme-brandNavy));
+  color: rgb(var(--v-theme-on-primary));
   font-size: 14px;
   font-weight: 800;
   content: '\2713';

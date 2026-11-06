@@ -522,26 +522,26 @@ if (contentData.value) {
 }
 
 .bookText .ui.message.red {
-  background-color: #fff !important;
-  color: red;
+  background-color: rgb(var(--v-theme-surface)) !important;
+  color: rgb(var(--v-theme-error));
   box-shadow: 0 0 0 1px red inset, 0 0 0 0 transparent;
 }
 
 .bookText .ui.message.blue {
-  background-color: #fff !important;
-  color: blue;
+  background-color: rgb(var(--v-theme-surface)) !important;
+  color: rgb(var(--v-theme-info));
   box-shadow: 0 0 0 1px blue inset, 0 0 0 0 transparent;
 }
 
 .bookText .ui.message.green {
-  background-color: #fff !important;
-  color: green;
+  background-color: rgb(var(--v-theme-surface)) !important;
+  color: rgb(var(--v-theme-success));
   box-shadow: 0 0 0 1px green inset, 0 0 0 0 transparent;
 }
 
 .bookText .ui.message.yellow {
-  background-color: #fff !important;
-  color: #b58105;
+  background-color: rgb(var(--v-theme-surface)) !important;
+  color: rgb(var(--v-theme-primaryStrong));
   box-shadow: 0 0 0 1px #b58105 inset, 0 0 0 0 transparent;
 }
 
@@ -549,8 +549,8 @@ if (contentData.value) {
 
 /*Segment section*/
 .bookText .ui.segment.red {
-  background-color: #fff !important;
-  color: #000000;
+  background-color: rgb(var(--v-theme-surface)) !important;
+  color: rgb(var(--v-theme-grey900));
   border-top: 2px solid red;
 }
 
@@ -560,8 +560,8 @@ if (contentData.value) {
 }
 
 .bookText .ui.segment.blue {
-  background-color: #fff !important;
-  color: #000000;
+  background-color: rgb(var(--v-theme-surface)) !important;
+  color: rgb(var(--v-theme-grey900));
   border-top: 2px solid blue;
 }
 
@@ -571,8 +571,8 @@ if (contentData.value) {
 }
 
 .bookText .ui.segment.green {
-  background-color: #fff !important;
-  color: #000000;
+  background-color: rgb(var(--v-theme-surface)) !important;
+  color: rgb(var(--v-theme-grey900));
   border-top: 2px solid green;
 }
 
@@ -582,8 +582,8 @@ if (contentData.value) {
 }
 
 .bookText .ui.segment.brown {
-  background-color: #fff !important;
-  color: #000000;
+  background-color: rgb(var(--v-theme-surface)) !important;
+  color: rgb(var(--v-theme-grey900));
   border-top: 2px solid #795548;
 }
 
@@ -596,13 +596,13 @@ if (contentData.value) {
 
 .bookText .ui.table {
   width: 100%;
-  background: #fff;
+  background: rgb(var(--v-theme-surface));
   margin: 1em 0;
-  border: 1px solid rgba(34, 36, 38, 0.15);
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
   box-shadow: none;
   border-radius: 0.28571429rem;
   text-align: left;
-  color: rgba(0, 0, 0, 0.87);
+  color: rgb(var(--v-theme-grey900));
   border-collapse: separate;
   border-spacing: 0;
   overflow-x: auto;
@@ -618,7 +618,7 @@ if (contentData.value) {
 
 /*Tutorial details image caption*/
 .bookText figcaption {
-  background-color: #efeeee;
+  background-color: rgb(var(--v-theme-grey100));
   padding: 5px 5px 5px 5px;
   border-radius: 5px;
   font-size: 14px;

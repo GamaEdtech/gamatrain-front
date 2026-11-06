@@ -15,7 +15,7 @@
         :alt="information.title ?? undefined"
         :src="information.lesson_pic"
         cover
-        class="h-100"
+        class="h-100 bg-white"
       />
       <div
         v-else

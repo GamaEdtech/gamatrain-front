@@ -133,7 +133,7 @@
 
         <v-btn
           :size="mdAndUp ? 'large' : 'default'"
-          color="grey800"
+          color="secondary"
           variant="flat"
           rounded
           class="ml-3"

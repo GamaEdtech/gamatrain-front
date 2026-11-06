@@ -504,7 +504,7 @@ const whitepaperSection = ref([
       + '<br>'
       + '<p class=\'gama-text-body1\'><strong>📦 Allocation Breakdown</strong></p>'
       + '<table style=\'width:100%; border-collapse: collapse; margin-bottom: 20px;\'>'
-      + '<tr style=\'background-color: #f4f4f4;\'><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Category</th><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Allocation</th><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Lock & Vesting Details</th></tr>'
+      + '<tr style=\'background-color: rgb(var(--v-theme-grey100));\'><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Category</th><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Allocation</th><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Lock & Vesting Details</th></tr>'
       + '<tr><td style=\'padding: 10px; border: 1px solid #ddd;\'>🔒 Liquidity Pool</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>10%</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>Permanently locked (LP tokens burned)</td></tr>'
       + '<tr><td style=\'padding: 10px; border: 1px solid #ddd;\'>💼 Private & Strategic Investors</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>10%</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>Vested over 6 years with a 1-year cliff (0% release in Year 1)</td></tr>'
       + '<tr><td style=\'padding: 10px; border: 1px solid #ddd;\'>👥 Community (Development and Rewards)</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>60%</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>Unlocked over 6 years (1B tokens per year for a total of 6 years)</td></tr>'
@@ -513,7 +513,7 @@ const whitepaperSection = ref([
       + '<br>'
       + '<p class=\'gama-text-body1\'><strong>⏳ Vesting Schedule Summary</strong></p>'
       + '<table style=\'width:100%; border-collapse: collapse; margin-bottom: 20px;\'>'
-      + '<tr style=\'background-color: #f4f4f4;\'><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Year</th><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Investors</th><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Community (Development and Rewards)</th><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Founders</th></tr>'
+      + '<tr style=\'background-color: rgb(var(--v-theme-grey100));\'><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Year</th><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Investors</th><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Community (Development and Rewards)</th><th style=\'padding: 10px; text-align: left; border: 1px solid #ddd;\'>Founders</th></tr>'
       + '<tr><td style=\'padding: 10px; border: 1px solid #ddd;\'>Y1</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>Locked</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>1B</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>0</td></tr>'
       + '<tr><td style=\'padding: 10px; border: 1px solid #ddd;\'>Y2</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>0.2B</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>1B</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>0</td></tr>'
       + '<tr><td style=\'padding: 10px; border: 1px solid #ddd;\'>Y3</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>0.2B</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>1B</td><td style=\'padding: 10px; border: 1px solid #ddd;\'>0</td></tr>'
@@ -911,7 +911,7 @@ const _smoothScroll = (elementId) => {
 
   :deep(.v-list),
   :deep(.v-list-item__overlay) {
-    background-color: #f4f4f4 !important;
+    background-color: rgb(var(--v-theme-grey100)) !important;
   }
 
   :deep(.search) {

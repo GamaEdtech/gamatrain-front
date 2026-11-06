@@ -259,7 +259,7 @@ const stepRows = computed(() => {
 <style scoped>
 /* Base (Mobile First) */
 .how-buy-section {
-  background: #f7fafd;
+  background: rgb(var(--v-theme-surfaceSecondary));
   padding: 4rem 0;
 }
 
@@ -272,7 +272,7 @@ const stepRows = computed(() => {
 .how-buy-title {
   font-size: 2rem;
   font-weight: 800;
-  color: #24292f;
+  color: rgb(var(--v-theme-grey900));
   text-align: center;
   margin-bottom: 2rem;
 }
@@ -311,7 +311,7 @@ const stepRows = computed(() => {
 .how-buy-token-label {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #222;
+  color: rgb(var(--v-theme-grey900));
 }
 
 .how-buy-man {
@@ -336,7 +336,7 @@ const stepRows = computed(() => {
 }
 
 .step-wrapper {
-  background: #f7fafd;
+  background: rgb(var(--v-theme-surfaceSecondary));
   border-radius: 24px;
   box-shadow: 0 2px 8px rgba(53, 52, 52, 0.03);
   padding: 2rem 1rem;
@@ -370,7 +370,7 @@ const stepRows = computed(() => {
 .step-title {
   font-size: 1.6rem;
   font-weight: 800;
-  color: #222;
+  color: rgb(var(--v-theme-grey900));
   text-align: center;
 }
 
@@ -386,7 +386,7 @@ const stepRows = computed(() => {
 
 .step-list li {
   margin-bottom: 0.5rem;
-  color: #4a5568;
+  color: rgb(var(--v-theme-grey600));
 }
 
 .step-arrow {
@@ -394,7 +394,7 @@ const stepRows = computed(() => {
 }
 
 .warning-text {
-  color: #e53935;
+  color: rgb(var(--v-theme-error));
   font-weight: 700;
 }
 
@@ -403,7 +403,7 @@ const stepRows = computed(() => {
 }
 
 .how-buy-link {
-  color: #3578e5;
+  color: rgb(var(--v-theme-info));
   text-decoration: underline;
   font-weight: 500;
 }
@@ -413,7 +413,7 @@ const stepRows = computed(() => {
 .how-buy-tokens { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1.5rem; margin-bottom: 0; height: 240px; flex-shrink: 0; }
 .token-row { display: flex; align-items: center; gap: 1.2rem; }
 .token-icon { width: 24px; height: 24px; }
-.how-buy-token-label { font-size: 1.5rem; font-weight: 700; color: #222; }
+.how-buy-token-label { font-size: 1.5rem; font-weight: 700; color: rgb(var(--v-theme-grey900)); }
 .how-buy-man { margin-top: 0; margin-left: 2.5rem; display: flex; align-items: center; height: 240px; flex-shrink: 0; }
 .how-buy-illustration { width: 140px; max-width: 100%; height: 240px; object-fit: contain; }
 
@@ -430,7 +430,7 @@ const stepRows = computed(() => {
   .steps-rows { gap: 2rem; }
   .step-wrapper, .step-item { height: auto !important; min-height: auto !important; max-height: none !important; }
   .step-wrapper {
-    background: #fff;
+    background: rgb(var(--v-theme-surface));
     padding: 2rem 1.4rem;
     overflow: hidden;
   }
@@ -511,7 +511,7 @@ const stepRows = computed(() => {
     flex-direction: column;
     align-items: center;
     min-height: 480px;
-    background: #fff;
+    background: rgb(var(--v-theme-surface));
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0,0,0,0.06);
     width: 100%;
     max-width: none;

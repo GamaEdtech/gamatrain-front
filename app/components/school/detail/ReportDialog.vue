@@ -45,7 +45,7 @@
             </div>
             <v-textarea
               v-model="reportForm.description"
-              bg-color="white"
+              bg-color="surface"
               variant="outlined"
               placeholder="Enter here..."
               :rules="[
@@ -159,7 +159,7 @@ async function submitReport() {
 
 <style scoped>
 .report-icon-alert {
-  background: #f2f4f7;
+  background: rgb(var(--v-theme-surfaceTertiary));
   width: 100px;
   height: 100px;
   border-radius: 100%;

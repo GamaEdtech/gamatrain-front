@@ -55,8 +55,8 @@
               v-for="(tag, index) in contentData.tags"
               :key="index"
               :to="`/post?page=1&cat=${tag.id}`"
-              class="text-subtitle-1 text-sm-h5 text-white font-weight-bold pa-3"
-              color="#a7b1c2"
+              class="text-subtitle-1 text-sm-h5 text-grey800 font-weight-bold pa-3"
+              color="surfaceTertiary"
               variant="flat"
               :size="xs ? `x-small` : `default`"
             >
@@ -193,7 +193,7 @@
             flat
             color="primary"
           >
-            <v-icon color="white">
+            <v-icon color="on-primary">
               md:thumb_up
             </v-icon>
           </v-btn>

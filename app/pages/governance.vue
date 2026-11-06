@@ -48,7 +48,7 @@ useHead({
 <style scoped lang="scss">
 #governance-page-header {
   height: 20rem;
-  background: rgb(var(--v-theme-grey900));
+  background: rgb(var(--v-theme-inverseSurfaceStrong));
   position: relative;
 
   #main-title-holder {

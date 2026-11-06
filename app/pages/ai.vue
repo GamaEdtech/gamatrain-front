@@ -98,7 +98,7 @@ function formatTime(date: Date) {
 </script>
 
 <template>
-  <div class="bg-white min-h-screen">
+  <div class="bg-surface min-h-screen">
     <!-- Header Section -->
     <v-container
       fluid
@@ -124,10 +124,10 @@ function formatTime(date: Date) {
             rounded="xl"
             max-width="900"
             border
-            color="white"
+            color="surface"
           >
             <!-- Chat Header -->
-            <v-card-title class="d-flex align-center justify-space-between pa-4 bg-grey-lighten-4">
+            <v-card-title class="d-flex align-center justify-space-between pa-4 bg-surfaceTertiary">
               <div class="d-flex align-center">
                 <v-avatar
                   color="primary"
@@ -167,7 +167,7 @@ function formatTime(date: Date) {
             <!-- Messages Area -->
             <div
               ref="messagesContainer"
-              class="pa-4 md-pa-8 d-flex flex-column overflow-y-auto bg-white chat-area"
+              class="pa-4 md-pa-8 d-flex flex-column overflow-y-auto bg-surface chat-area"
             >
               <!-- Welcome Screen -->
               <div
@@ -184,12 +184,12 @@ function formatTime(date: Date) {
                 <h2 class="gama-text-h4 mb-2">
                   Hello! I'm Gamatrain AI
                 </h2>
-                <p class="gama-text-body1 text-grey-darken-1 mb-6 text-center">
+                <p class="gama-text-body1 text-grey600 mb-6 text-center">
                   Ask me anything about your studies. I'm here to help!
                 </p>
 
                 <div class="w-100 suggested-container">
-                  <p class="gama-text-caption text-grey-darken-1 mb-3 text-uppercase">
+                  <p class="gama-text-caption text-grey600 mb-3 text-uppercase">
                     Suggested Questions
                   </p>
                   <v-row justify="center">
@@ -205,7 +205,7 @@ function formatTime(date: Date) {
                         block
                         size="2x-large"
                         class="px-4 py-3 font-size-12 justify-start btn-border-custom"
-                        color="grey-darken-3"
+                        color="grey800"
                         @click="selectQuickQuestion(q.text)"
                       >
                         <v-icon
@@ -233,7 +233,7 @@ function formatTime(date: Date) {
                     :class="message.role === 'user' ? 'flex-row-reverse' : ''"
                   >
                     <v-avatar
-                      :color="message.role === 'user' ? 'primary' : 'grey-lighten-4'"
+                      :color="message.role === 'user' ? 'primary' : 'surfaceTertiary'"
                       size="36"
                       class="flex-shrink-0"
                     >
@@ -253,7 +253,7 @@ function formatTime(date: Date) {
                         :class="[
                           message.role === 'user'
                             ? 'bg-primary text-grey-darken-4 rounded-be-sm'
-                            : 'bg-grey-lighten-4 text-grey-darken-3 rounded-bs-sm',
+                            : 'bg-surfaceTertiary text-grey800 rounded-bs-sm',
                         ]"
                       >
                         {{ message.content }}
@@ -272,7 +272,7 @@ function formatTime(date: Date) {
                 >
                   <div class="d-flex ga-2">
                     <v-avatar
-                      color="grey-lighten-4"
+                      color="surfaceTertiary"
                       size="36"
                       class="flex-shrink-0"
                     >
@@ -284,7 +284,7 @@ function formatTime(date: Date) {
                       </v-icon>
                     </v-avatar>
                     <div>
-                      <div class="bg-grey-lighten-4 pa-4 rounded-xl rounded-bs-2">
+                      <div class="bg-surfaceTertiary pa-4 rounded-xl rounded-bs-2">
                         <div class="d-flex align-center ga-1">
                           <span class="typing-dot" />
                           <span class="typing-dot" />
@@ -311,7 +311,7 @@ function formatTime(date: Date) {
             <v-divider />
 
             <!-- Input Area -->
-            <v-card-actions class="bg-grey-lighten-5 pa-4">
+            <v-card-actions class="bg-surfaceSecondary pa-4">
               <v-text-field
                 v-model="currentQuestion"
                 variant="outlined"
@@ -320,7 +320,7 @@ function formatTime(date: Date) {
                 hide-details
                 rounded
                 :disabled="loading"
-                class="bg-white"
+                class="bg-surface"
                 aria-autocomplete="none"
                 autocomplete="off"
                 @keydown="handleKeydown"

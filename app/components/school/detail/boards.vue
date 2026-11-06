@@ -27,7 +27,7 @@
       <v-chip
         v-for="board in schoolBoards"
         :key="board.id"
-        color="grey800"
+        color="secondary"
         variant="flat"
         label
         size="large"

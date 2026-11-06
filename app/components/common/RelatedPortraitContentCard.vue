@@ -4,9 +4,10 @@
     width="160"
     :style="{ height: `${CardHeight}`, borderRadius: '8px' }"
   >
+    <!-- Paper previews can be transparent PNGs with black text, so the sheet stays white in both themes. -->
     <v-img
       :src="cardPicture"
-      class="text-white align-end"
+      class="bg-white text-white align-end"
       :alt="cardTitle"
       width="160"
     />
@@ -59,7 +60,7 @@
       </div>
     </div>
 
-    <v-card-text class="text--primary relative z-10 bg-white bg-opacity-80">
+    <v-card-text class="text--primary relative z-10 bg-surface bg-opacity-80">
       <div class="inner-curve">
         <div class="two-line-ellipsis">
           {{ cardTitle }}
@@ -97,7 +98,7 @@ const CardHeight = computed(() => {
   padding-top: 16px;
   aspect-ratio: 3/2;
   background: #344054cc;
-  border: 1px solid #e4e7ec;
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
   border-radius: var(--r);
   --_m: var(--r), #000 calc(100% - 1px), #0000;
   --_d: (var(--s) + var(--r)) * cos(var(--a));
@@ -118,7 +119,7 @@ const CardHeight = computed(() => {
 }
 .circle-container {
   border-radius: 50%;
-  border: 1px solid #e4e7ec;
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
   background: #344054cc;
   width: 32px;
   height: 32px;

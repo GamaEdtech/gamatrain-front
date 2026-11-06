@@ -57,7 +57,7 @@
         :key="keyword"
         variant="flat"
         class="text-h5 pl-3 pr-3"
-        color="grey800"
+        color="secondary"
         closable
         @click:close="removeKeyword(keyword)"
       >

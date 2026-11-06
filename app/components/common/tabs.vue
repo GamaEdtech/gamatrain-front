@@ -234,7 +234,7 @@ defineExpose({
 
 /* Tab container */
 :deep(.v-tabs) {
-  background-color: #f5f5f5 !important;
+  background-color: rgb(var(--v-theme-grey100)) !important;
   border-radius: 1.2rem !important;
 }
 
@@ -392,7 +392,7 @@ defineExpose({
 .tab-header {
   margin: 1rem 0 !important;
   border-radius: 1.2rem !important;
-  background-color: #f5f5f5 !important;
+  background-color: rgb(var(--v-theme-grey100)) !important;
   padding: 0rem !important;
   border: none !important;
   min-width: max-content;
@@ -445,7 +445,7 @@ defineExpose({
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: #fff;
+  background: rgb(var(--v-theme-surface));
   border-radius: 50%;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   width: 36px;
@@ -472,6 +472,6 @@ defineExpose({
   background: #cacdd3;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: rgb(var(--v-theme-grey100));
 }
 </style>

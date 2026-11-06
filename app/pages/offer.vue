@@ -99,7 +99,7 @@
           md="5"
           class="order-2"
         >
-          <div class="summary-card rounded-xl bg-white pa-5 pa-sm-7">
+          <div class="summary-card rounded-xl bg-surface pa-5 pa-sm-7">
             <div class="discount-ribbon text-h6 font-weight-bold">
               -{{ offer.discountPercent }}%
             </div>
@@ -237,7 +237,7 @@
           md="6"
           lg="5"
         >
-          <div class="state-card rounded-xl bg-white d-flex flex-column align-center text-center ga-4 pa-6 pa-sm-10">
+          <div class="state-card rounded-xl bg-surface d-flex flex-column align-center text-center ga-4 pa-6 pa-sm-10">
             <div
               class="state-icon d-flex align-center justify-center rounded-circle"
               :style="{ background: `rgba(var(--v-theme-${state.color}), 0.14)` }"

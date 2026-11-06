@@ -10,7 +10,7 @@
   >
     <div class="d-flex align-center flex-grow-1 ga-2 ga-md-4 overflow-hidden">
       <v-avatar
-        color="brandNavy"
+        color="secondary"
         rounded="lg"
         size="40"
         aria-hidden="true"

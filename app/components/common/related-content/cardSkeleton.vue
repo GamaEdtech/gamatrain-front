@@ -34,7 +34,7 @@ defineProps<{
 .card-paper {
   width: 160px;
   height: 230px;
-  border: 1px solid #e4e7ec;
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
 }
 .box-bottom {
   height: 40px;

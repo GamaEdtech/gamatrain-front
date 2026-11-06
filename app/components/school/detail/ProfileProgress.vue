@@ -35,7 +35,7 @@
         prepend-icon="mdi-plus"
         color="grey800"
         variant="outlined"
-        class="bg-white font-weight-medium gtext-t5 profile-chip"
+        class="bg-surface font-weight-medium gtext-t5 profile-chip"
         @click="emit('contribute', item.key)"
       >
         {{ item.label }}

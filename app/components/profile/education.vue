@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-100 d-flex flex-column pa-6 ga-6 bg-white"
+    class="w-100 d-flex flex-column pa-6 ga-6 bg-surface"
   >
     <span class="text-h4 text-sm-h3 font-weight-bold text-grey700">Education</span>
     <div class="d-flex flex-column ga-1">

@@ -1625,7 +1625,7 @@ onMounted(() => {
 .image-preview {
   display: block;
   object-fit: contain;
-  border: 1px solid #e0e0e0;
+  border: 1px solid rgb(var(--v-theme-borderSubtle));
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-top: 8px;
   max-width: 100%;
@@ -1636,7 +1636,7 @@ onMounted(() => {
   position: absolute;
   margin-left: -20px;
   margin-top: -4px;
-  background-color: white !important;
+  background-color: rgb(var(--v-theme-surface)) !important;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.18);
   transition: all 0.2s ease;
 }
@@ -1759,7 +1759,7 @@ onMounted(() => {
 
 /* Make sure the cropper actions are always visible */
 #img-cropper-dialog .v-card-actions {
-  background-color: white;
+  background-color: rgb(var(--v-theme-surface));
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   z-index: 5;
 }
