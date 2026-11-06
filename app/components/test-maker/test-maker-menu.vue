@@ -141,13 +141,9 @@ const openLink = (item) => {
   margin-top: 10px !important;
 }
 
-.text-caption {
+.test-maker-menu .text-caption {
   font-size: 10px !important;
   font-weight: 500 !important;
   color: hsl(0, 0%, 100%) !important;
-}
-
-.v-btn:not(.v-btn--active) .text-caption{
-  color: hsla(0, 0%, 100%, .6) !important;
 }
 </style>
