@@ -332,7 +332,7 @@
           cols="12"
           md="12"
         >
-          <p class="gama-text-h4">
+          <p class="gama-text-h4 text-inverseSurfaceStrong">
             Join the Future of Education Today!
           </p>
         </v-col>

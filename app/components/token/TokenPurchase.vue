@@ -102,7 +102,7 @@
         close-on-content-click
       >
         <div
-          class="w-100 d-flex flex-wrap flex-column bg-white pa-6 position-absolute bottom-0 rounded-t-xl"
+          class="w-100 d-flex flex-wrap flex-column bg-surface pa-6 position-absolute bottom-0 rounded-t-xl"
         >
           <v-row>
             <v-col
@@ -1793,7 +1793,7 @@ watch(getTokenAmount, () => {
 }
 
 .figma-modal {
-  background: #ffffff;
+  background: rgb(var(--v-theme-surface));
   border-radius: 16px;
   padding: 32px;
   max-width: 400px;
@@ -1805,13 +1805,13 @@ watch(getTokenAmount, () => {
 .figma-modal-header h3 {
   font-size: 24px;
   font-weight: 700;
-  color: #212529;
+  color: rgb(var(--v-theme-grey900));
   margin-bottom: 8px;
 }
 
 .figma-modal-header p {
   font-size: 16px;
-  color: #6c757d;
+  color: rgb(var(--v-theme-grey600));
   margin-bottom: 24px;
 }
 
@@ -1947,7 +1947,7 @@ watch(getTokenAmount, () => {
   z-index: 1;
 }
 .token-purchase__title {
-  color: #000000;
+  color: rgb(var(--v-theme-grey900));
   font-size: 18px;
   font-weight: 700;
 }
@@ -1960,14 +1960,14 @@ watch(getTokenAmount, () => {
 .sub-heading {
   font-size: 34px;
   font-weight: 700;
-  color: #4e545b;
+  color: rgb(var(--v-theme-grey600));
   text-align: center;
 }
 .sub-heading .head-yellow {
   color: #fecd1c;
 }
 .token-purchase__description {
-  color: #6e7781;
+  color: rgb(var(--v-theme-grey600));
   font-size: 14px;
   font-weight: 500;
   text-align: center;
@@ -2002,7 +2002,7 @@ watch(getTokenAmount, () => {
     margin-top: 3rem;
   }
   .token-purchase__title {
-    color: #161716;
+    color: rgb(var(--v-theme-grey900));
     font-size: 24px;
     font-weight: 500;
   }
@@ -2034,7 +2034,7 @@ watch(getTokenAmount, () => {
     margin-top: 1rem;
   }
   .token-purchase__title {
-    color: #313231;
+    color: rgb(var(--v-theme-grey900));
     font-size: 24px;
     font-weight: 600;
   }
@@ -2049,7 +2049,7 @@ watch(getTokenAmount, () => {
     margin-bottom: 1.5rem;
   }
   .token-purchase__description {
-    color: #24292f;
+    color: rgb(var(--v-theme-grey900));
     font-size: 24px;
     font-weight: 400;
     text-align: center;
@@ -2107,7 +2107,7 @@ watch(getTokenAmount, () => {
 }
 
 .input-label {
-  color: #666;
+  color: rgb(var(--v-theme-grey600));
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 8px;
@@ -2154,7 +2154,7 @@ watch(getTokenAmount, () => {
   gap: 8px;
   padding: 8px 12px;
   border-radius: 8px;
-  background: #f5f5f5;
+  background: rgb(var(--v-theme-surfaceTertiary));
   font-weight: 600;
   height: 100%;
 }
@@ -2171,7 +2171,7 @@ watch(getTokenAmount, () => {
 }
 
 .balance-info {
-  color: #666;
+  color: rgb(var(--v-theme-grey600));
   font-size: 12px;
   margin-top: 4px;
   text-align: right;
@@ -2184,8 +2184,8 @@ watch(getTokenAmount, () => {
 }
 
 .swap-arrow-btn {
-  background: #ffffff !important;
-  border: 2px solid #e0e0e0 !important;
+  background: rgb(var(--v-theme-surface)) !important;
+  border: 2px solid rgb(var(--v-theme-borderSubtle)) !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
 }
 
@@ -2216,7 +2216,7 @@ watch(getTokenAmount, () => {
 }
 
 .detail-row span:first-child {
-  color: #666;
+  color: rgb(var(--v-theme-grey600));
 }
 
 .detail-row span:last-child {
@@ -2240,7 +2240,7 @@ watch(getTokenAmount, () => {
 }
 
 .fallback-text {
-  color: #666;
+  color: rgb(var(--v-theme-grey600));
   font-size: 14px;
   margin-bottom: 12px;
 }
@@ -2274,13 +2274,13 @@ watch(getTokenAmount, () => {
 }
 
 .wallet-modal h3 {
-  color: #333;
+  color: rgb(var(--v-theme-grey900));
   font-weight: 700;
   margin-bottom: 0;
 }
 
 .wallet-modal .text-body-2 {
-  color: #666;
+  color: rgb(var(--v-theme-grey600));
   font-weight: 400;
 }
 

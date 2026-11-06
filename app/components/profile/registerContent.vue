@@ -1,6 +1,6 @@
 <template>
   <div
-    class="w-100 d-flex flex-column pa-6 ga-4 bg-white"
+    class="w-100 d-flex flex-column pa-6 ga-4 bg-surface"
   >
     <span class="text-h4 text-sm-h3 font-weight-bold text-grey700">Registered content</span>
     <div class="btn-filter-container d-flex align-start justify-start ga-1 bg-grey50 pa-2 rounded-pill overflow-x-auto">
@@ -124,7 +124,7 @@ const changeFilterType = async (type: string) => {
   width: 40px !important;
   height: 40px !important;
   min-width: 40px !important;
-  border: 1px solid #e4e7ec;
+  border: 1px solid rgb(var(--v-theme-grey200));
   color: white;
   opacity: 0;
   visibility: hidden;

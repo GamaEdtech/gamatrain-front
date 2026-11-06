@@ -83,7 +83,6 @@
                 size="x-large"
                 type="submit"
                 rounded
-                class="primary-gray-800"
                 height="42"
                 block
                 :disabled="!isFormValid"

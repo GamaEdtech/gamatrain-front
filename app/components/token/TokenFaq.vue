@@ -114,7 +114,7 @@ const faqs = ref([
   font-weight: 500;
 }
 .token-market__expansion {
-  color: #24292f;
+  color: rgb(var(--v-theme-grey900));
   font-size: 12px;
   font-weight: 600;
 }

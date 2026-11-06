@@ -43,7 +43,7 @@ const emit = defineEmits(['click'])
 <style scoped>
 .filter-trigger {
   color: rgb(var(--v-theme-brandNavy));
-  background: rgb(var(--v-theme-white));
+  background: rgb(var(--v-theme-surface));
   border-color: rgb(var(--v-theme-borderSubtle));
   border-radius: 12px !important;
 }

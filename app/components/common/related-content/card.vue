@@ -2,9 +2,10 @@
   <div
     class="mx-1 card-paper position-relative rounded-lg d-flex flex-column justify-space-between"
   >
+    <!-- Paper previews can be transparent PNGs with black text, so the sheet stays white in both themes. -->
     <v-img
       :src="picture"
-      class="rounded-lg"
+      class="rounded-lg bg-white"
       :alt="title ? title :`Related Content Picture`"
       width="160"
       height="190"
@@ -55,7 +56,7 @@
       </div>
     </div>
 
-    <div class="w-100 text--primary relative z-10 bg-white bg-opacity-80">
+    <div class="w-100 text--primary relative z-10 bg-surface bg-opacity-80">
       <div class="inner-curve">
         <div class="two-line-ellipsis">
           {{ title }}
@@ -153,7 +154,7 @@ defineProps<IRelatedContentCard>()
 .card-paper {
   width: 160px;
   height: 230px;
-  border: 2px solid #f2f4f7;
+  border: 2px solid rgb(var(--v-theme-borderSubtle));
 }
 .box-bottom {
   height: 30px;

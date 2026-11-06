@@ -13,7 +13,7 @@
       v-model="target"
       mandatory
       column
-      selected-class="bg-primary text-grey900"
+      selected-class="bg-primary text-inverseSurfaceStrong"
       class="ma-0"
     >
       <v-chip
@@ -38,7 +38,7 @@
       variant="outlined"
       color="primary"
       base-color="grey400"
-      bg-color="white"
+      bg-color="surface"
       :error-messages="customError"
       hide-details="auto"
       prepend-inner-icon="md:link"

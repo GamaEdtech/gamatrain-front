@@ -2430,7 +2430,7 @@ defineExpose({
 
 /* Make sure the cropper actions are always visible */
 #img-cropper-dialog .v-card-actions {
-  background-color: white;
+  background-color: rgb(var(--v-theme-surface));
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
   z-index: 5;
 }

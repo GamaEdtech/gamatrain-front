@@ -288,7 +288,7 @@
     <div
       class="w-100 mt-8 bg-primary py-16 px-2 d-flex flex-column align-center justify-center"
     >
-      <h1 class="text-grey900 text-center text-h4 font-weight-black mb-4">
+      <h1 class="text-inverseSurfaceStrong text-center text-h4 font-weight-black mb-4">
         Check out our current job openings and apply today!
       </h1>
       <v-btn

@@ -139,7 +139,7 @@ onMounted(async () => {
   width: 40px !important;
   height: 40px !important;
   min-width: 40px !important;
-  border: 1px solid #e4e7ec;
+  border: 1px solid rgb(var(--v-theme-grey200));
   color: white;
   opacity: 0;
   visibility: hidden;

@@ -31,7 +31,7 @@
           density="comfortable"
           rounded="pill"
           flat
-          bg-color="white"
+          bg-color="surface"
           base-color="grey200"
           color="primary"
           :rules="[required]"
@@ -49,7 +49,7 @@
           density="comfortable"
           rounded="pill"
           flat
-          bg-color="white"
+          bg-color="surface"
           base-color="grey200"
           color="primary"
           :rules="[required]"

@@ -55,7 +55,7 @@
 
 <style scoped>
 .about-get-section {
-  background: #fff;
+  background: rgb(var(--v-theme-surface));
   padding: 5rem 0 2rem 0;
   max-width: 1200px;
   margin: 0 auto;
@@ -63,7 +63,7 @@
 
 .about-get-title {
   font-size: 24px;
-  color: #24292f;
+  color: rgb(var(--v-theme-grey900));
   text-align: center;
   margin-bottom: 2rem;
 }
@@ -76,7 +76,7 @@
 
 .about-get-desc {
   font-size: 16px;
-  color: #24292f;
+  color: rgb(var(--v-theme-grey900));
   line-height: 1.7;
   margin-bottom: 2rem;
 }

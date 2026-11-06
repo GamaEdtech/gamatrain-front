@@ -19,7 +19,7 @@
           base-color="grey200"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="surface"
           class="w-100"
           :rules="[required]"
         />
@@ -40,7 +40,7 @@
         base-color="grey200"
         color="primary"
         active-color="primary"
-        bg-color="white"
+        bg-color="surface"
         class="w-100"
         no-resize
         rows="7"

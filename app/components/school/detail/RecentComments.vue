@@ -94,7 +94,7 @@
                 </v-icon>
               </v-btn>
             </div>
-            <div class="float-right gtext-t5">
+            <div class="float-right gtext-t5 text-grey500">
               {{ comment.creationDate }}
             </div>
           </div>
@@ -105,7 +105,7 @@
           v-if="showLoadMoreButton"
           rounded
           class="text-transform-none gtext-t4 font-weight-medium"
-          color="white"
+          color="surface"
           size="x-large"
           @click="loadMoreComments"
         >

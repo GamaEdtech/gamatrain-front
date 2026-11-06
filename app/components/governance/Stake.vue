@@ -12,7 +12,7 @@
       <v-tabs
         v-model="tab"
         fixed-tabs
-        bg-color="grey-lighten-4"
+        bg-color="grey100"
       >
         <v-tab value="stake">
           Stake

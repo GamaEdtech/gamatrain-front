@@ -75,21 +75,21 @@ const items = ref([
 
 <style scoped>
 .trust-community-section {
-  background: #fff;
+  background: rgb(var(--v-theme-surface));
   padding: 56px 0 40px 0;
 }
 .trust-community-container {
 }
 .trust-community-title {
   text-align: center;
-  color: #354053;
+  color: rgb(var(--v-theme-grey900));
   font-weight: 800;
   margin-bottom: 32px;
   font-size: 24px;
 }
 .trust-community-subtitle {
   text-align: center;
-  color: #24292f;
+  color: rgb(var(--v-theme-grey900));
   margin-bottom: 32px;
   max-width: 600px;
   margin-left: auto;
@@ -129,7 +129,7 @@ const items = ref([
   object-fit: contain;
 }
 .trust-community-list-text {
-  color: #4a5568;
+  color: rgb(var(--v-theme-grey600));
   font-size: 16px;
   font-weight: 700;
   font-family: "Inter", "Roboto", "Arial", sans-serif;
@@ -148,7 +148,7 @@ const items = ref([
 .trust-community-description {
   margin-top: 40px;
   text-align: center;
-  color: #4a5568;
+  color: rgb(var(--v-theme-grey600));
   margin-left: auto;
   margin-right: auto;
   max-width: 600px;

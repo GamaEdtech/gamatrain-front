@@ -846,7 +846,7 @@ onBeforeUnmount(() => {
   width: 100%;
   height: calc(100vh - 64px);
   overflow: auto;
-  background: #f8f9fa;
+  background: rgb(var(--v-theme-surfaceSecondary));
   position: relative;
 }
 

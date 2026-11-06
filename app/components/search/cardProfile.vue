@@ -127,7 +127,7 @@ const getOnlineStatusText = useOnlineStatusText
   min-width: 100px;
   max-width: 100px;
   height: 120px;
-  background-color: #f9f3f3;
+  background-color: rgb(var(--v-theme-grey100));
 }
 .container-extra-info {
   width: 400px;

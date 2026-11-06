@@ -55,21 +55,21 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  background: #fff;
+  background: rgb(var(--v-theme-surface));
   padding-bottom: 2.5rem;
 }
 
 .can-get-title {
   font-size: 24px;
   font-weight: 800;
-  color: #24292f;
+  color: rgb(var(--v-theme-grey900));
   text-align: center;
   margin-bottom: 2rem;
 }
 
 .can-get-desc-label {
   font-size: 16px;
-  color: #24292f;
+  color: rgb(var(--v-theme-grey900));
   margin-bottom: 2rem;
   font-weight: 500;
 }
@@ -93,7 +93,7 @@
 }
 
 .can-get-footnote {
-  color: #24292f;
+  color: rgb(var(--v-theme-grey900));
   margin-top: 2.5rem;
   text-align: left;
   font-size: 16px;
@@ -269,7 +269,7 @@
 @media (min-width: 1200px) {
   .can-get-title {
     font-size: 4rem;
-    color: #24292f;
+    color: rgb(var(--v-theme-grey900));
     font-weight: 800;
   }
   .can-get-desc-label {

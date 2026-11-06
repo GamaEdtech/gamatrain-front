@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="earn-header bg-grey800 pb-3 pb-sm-10">
+    <div class="earn-header bg-inverseSurfaceStrong pb-3 pb-sm-10">
       <v-container class="py-0 text-center">
         <div class="earn-header__title mx-auto">
           <h1 class="gama-text-h1 text-primary mb-2">
@@ -94,9 +94,9 @@
       </div>
     </v-container>
 
-    <div class="bg-grey800 text-center py-6">
+    <div class="bg-inverseSurfaceStrong text-center py-6">
       <v-container>
-        <p class="gama-text-h6 text-grey25 mb-6">
+        <p class="gama-text-h6 text-white mb-6">
           Publish Your Materials. Reach Students Worldwide.
         </p>
         <v-btn

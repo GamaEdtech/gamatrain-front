@@ -223,7 +223,7 @@
                 <div
                   style="
                     font-size: 11px;
-                    color: rgba(0, 0, 0, 0.6);
+                    color: rgb(var(--v-theme-grey500));
                     margin-left: 15px;
                   "
                 >
@@ -1430,7 +1430,7 @@
               font-size: 11px;
               word-break: break-word;
               white-space: normal;
-              color: rgba(0, 0, 0, 0.6);
+              color: rgb(var(--v-theme-grey500));
             "
           >
             If you are sure about the deletion, click Agree button.
@@ -1474,7 +1474,7 @@
         </v-card-title>
 
         <v-card-text>
-          <p style="color: rgba(0, 0, 0, 0.6); font-size: 13px">
+          <p style="color: rgb(var(--v-theme-grey500)); font-size: 13px">
             If you are sure to delete, click Yes.
           </p>
         </v-card-text>
@@ -3504,7 +3504,7 @@ onUpdated(async () => {
 // Stepper styling
 .v-stepper {
   box-shadow: none !important;
-  background-color: #f9f9f9;
+  background-color: rgb(var(--v-theme-surfaceSecondary));
   display: contents;
 
   &__step {
@@ -3585,7 +3585,7 @@ onUpdated(async () => {
 .v-label--clickable {
   font-size: 16px !important;
   font-weight: 400 !important;
-  color: rgba(0, 0, 0, 0.6) !important;
+  color: rgb(var(--v-theme-grey500)) !important;
   margin-inline-start: 10px !important;
 }
 .v-expansion-panel-text__wrapper {
@@ -3595,7 +3595,7 @@ onUpdated(async () => {
 .v-label--clickable {
   font-size: 16px !important;
   font-weight: 400 !important;
-  color: rgba(0, 0, 0, 0.6) !important;
+  color: rgb(var(--v-theme-grey500)) !important;
   margin-inline-start: 10px !important;
 }
 

@@ -7,7 +7,7 @@
     @click="clickOnOverlay"
   >
     <div
-      class="w-100 d-flex flex-column bg-white pa-6 rounded-xl overflow-y-auto overflow-x-hidden mobile-style"
+      class="w-100 d-flex flex-column bg-surface pa-6 rounded-xl overflow-y-auto overflow-x-hidden mobile-style"
       @click="clickOnModal"
     >
       <div class="w-100 d-flex align-center justify-space-between">

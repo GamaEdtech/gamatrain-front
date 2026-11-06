@@ -169,7 +169,7 @@ watch(() => props.isStartAnimation, () => {
 .amount-balance {
   font-size: 20px;
   font-weight: 700;
-  color: black;
+  color: rgb(var(--v-theme-grey900));
 }
 
 .amount-balance.increasing {

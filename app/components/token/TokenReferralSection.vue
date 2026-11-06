@@ -13,7 +13,7 @@
             </h2>
           </div>
 
-          <div class="referral-card bg-white rounded-lg pa-8">
+          <div class="referral-card bg-surface rounded-lg pa-8">
             <!-- Loading State -->
             <div
               v-if="loading"
@@ -385,16 +385,16 @@ onMounted(() => {
 }
 
 .referral-link-container {
-  background: #f8f9fa;
+  background: rgb(var(--v-theme-surfaceTertiary));
   border-radius: 12px;
   padding: 16px;
-  border: 2px solid #e4e7ec;
+  border: 2px solid rgb(var(--v-theme-borderSubtle));
   transition: all 0.3s ease;
 }
 
 .referral-link-container:hover {
   border-color: #ffb600;
-  background: #fffbf0;
+  background: rgb(var(--v-theme-softGold));
 }
 
 .referral-input :deep(.v-field__input) {

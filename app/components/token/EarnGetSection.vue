@@ -82,7 +82,7 @@ const cards = ref([
   margin: 0 auto;
 }
 .earn-get-title {
-  color: #24292f;
+  color: rgb(var(--v-theme-grey900));
   font-size: 24px;
   font-weight: 800;
   text-align: center;
@@ -90,7 +90,7 @@ const cards = ref([
 }
 
 .earn-get-card {
-  background: #fff;
+  background: rgb(var(--v-theme-surface));
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -125,11 +125,11 @@ const cards = ref([
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 8px;
-  color: #222;
+  color: rgb(var(--v-theme-grey900));
 }
 
 .earn-get-card-desc {
-  color: #6e7781;
+  color: rgb(var(--v-theme-grey600));
   font-size: 12px;
   line-height: 1.4;
 }
@@ -175,7 +175,7 @@ const cards = ref([
   flex-direction: column;
   height: 100%;
   padding-bottom: 2rem;
-  background: #fff;
+  background: rgb(var(--v-theme-surface));
   border-radius: 8px;
   box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.08);
 }
@@ -211,7 +211,7 @@ const cards = ref([
   .earn-get-card {
     width: 100%;
     margin: 0;
-    background: #fff;
+    background: rgb(var(--v-theme-surface));
     border-radius: 8px;
     box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.08);
   }

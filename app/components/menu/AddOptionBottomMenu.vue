@@ -144,7 +144,7 @@ watch(
   height: auto !important;
   padding: 16px !important;
   color: rgb(var(--v-theme-brandNavy));
-  background: rgb(var(--v-theme-white));
+  background: rgb(var(--v-theme-surface));
   border: 1px solid rgb(var(--v-theme-borderSubtle));
   border-radius: 14px;
   box-shadow: 0 2px 8px rgba(var(--v-theme-brandNavy), 0.05);

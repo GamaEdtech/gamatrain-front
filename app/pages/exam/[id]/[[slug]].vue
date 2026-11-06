@@ -366,7 +366,7 @@ useHead(() => ({
   letter-spacing: 0.04em;
 }
 .tag-chip {
-  background-color: rgb(var(--v-theme-white));
+  background-color: rgb(var(--v-theme-surface));
 }
 .exam-layout {
   display: grid;

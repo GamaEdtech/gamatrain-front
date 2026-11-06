@@ -20,7 +20,7 @@
           base-color="grey200"
           color="primary"
           active-color="primary"
-          bg-color="white"
+          bg-color="surface"
           class="w-100"
           :rules="usernameRules"
           :counter="50"

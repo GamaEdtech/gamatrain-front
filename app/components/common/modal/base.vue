@@ -24,7 +24,7 @@
         <v-icon
           :class="variant === 'publish' ? 'modal-close--publish ml-2 ml-sm-4' : 'ml-4'"
           size="x-large"
-          :color="variant === 'publish' ? undefined : 'grey300'"
+          :color="variant === 'publish' ? undefined : 'grey400'"
           aria-label="Close dialog"
           @click="closeModal"
         >

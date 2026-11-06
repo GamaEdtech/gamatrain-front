@@ -678,7 +678,7 @@ const deleteImage = async (image) => {
 
 <style scoped>
 .enter-img-holder {
-  background: #f2f4f7;
+  background: rgb(var(--v-theme-surfaceTertiary));
   height: 300px;
 }
 
