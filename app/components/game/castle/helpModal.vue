@@ -138,16 +138,13 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
 
-const showModal = ref(true)
+const showModal = ref(false)
 const isMobileOrTablet = ref(window.innerWidth <= 1024)
 const dontShowAgain = ref(false)
 
 // Check localStorage for saved preference
 const checkSavedPreference = () => {
-  const savedPreference = localStorage.getItem('dontShowControlsGuide')
-  if (savedPreference === 'true') {
-    showModal.value = false
-  }
+  showModal.value = localStorage.getItem('dontShowControlsGuide') !== 'true'
 }
 
 const closeModal = () => {
