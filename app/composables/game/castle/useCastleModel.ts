@@ -8,7 +8,7 @@ const useCastleModel = async (
 ): Promise<THREE.Group<THREE.Object3DEventMap> | null> => {
   try {
     const { loadModel } = useThreeJS()
-    const castleGlb = await loadModel('/game/castle/castle-v3.glb')
+    const castleGlb = await loadModel('/game/castle-assets/castle-v3.glb')
 
     const castle = castleGlb.scene
 
