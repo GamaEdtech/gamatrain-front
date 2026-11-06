@@ -59,7 +59,6 @@ const showBottomNavSlider = computed(() => {
 })
 
 onMounted(() => {
-  setFavicon()
   const nuxtApp = useNuxtApp()
   nuxtApp.hook('page:start', () => {
     isLoading.value = true
@@ -84,18 +83,6 @@ onMounted(() => {
     progress.value = 0
   })
 })
-
-const setFavicon = () => {
-  const prefersDarkMode
-    = window.matchMedia
-      && window.matchMedia('(prefers-color-scheme: dark)').matches
-  const faviconElement = document.querySelector('link[rel="icon"]')
-  if (faviconElement) {
-    faviconElement.href = prefersDarkMode
-      ? '/favicon-dark.ico'
-      : '/favicon-light.ico'
-  }
-}
 
 const animateProgress = (timestamp) => {
   if (!startTime) startTime = timestamp

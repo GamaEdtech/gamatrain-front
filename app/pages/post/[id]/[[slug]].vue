@@ -193,7 +193,7 @@
             flat
             color="primary"
           >
-            <v-icon color="white">
+            <v-icon color="on-primary">
               md:thumb_up
             </v-icon>
           </v-btn>

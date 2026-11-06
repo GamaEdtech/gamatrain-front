@@ -35,7 +35,7 @@
         </p>
       </div>
       <v-btn
-        color="grey800"
+        color="secondary"
         variant="flat"
         rounded
         class="text-none gtext-t5"
@@ -63,7 +63,7 @@
         />
         <span class="count">{{ totalCount }} {{ totalCount === 1 ? 'review' : 'reviews' }}</span>
         <v-btn
-          color="grey800"
+          color="secondary"
           variant="flat"
           rounded
           class="text-none gtext-t5 mt-3"

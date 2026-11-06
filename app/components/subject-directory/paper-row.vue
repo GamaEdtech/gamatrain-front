@@ -62,7 +62,7 @@
           v-for="file in files"
           :key="file.type"
           class="directory-action directory-download text-none font-weight-regular flex-shrink-0"
-          :color="file.style === 'question' ? 'brandNavy' : 'surfaceTertiary'"
+          :color="file.style === 'question' ? 'secondary' : 'surfaceTertiary'"
           variant="flat"
           min-height="40"
           :loading="downloads.isActive(paper, file)"

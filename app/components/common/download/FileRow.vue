@@ -11,7 +11,7 @@
     :aria-label="ariaLabel"
   >
     <span
-      class="file-icon d-flex align-end justify-center pb-1 text-white font-weight-heavy rounded"
+      class="file-icon d-flex align-end justify-center pb-1 font-weight-heavy rounded"
       :class="`bg-${color}`"
       aria-hidden="true"
     >{{ badge }}</span>

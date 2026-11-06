@@ -27,7 +27,7 @@
       <slot />
       <v-btn
         v-if="files?.pdf?.exist"
-        color="brandNavy"
+        color="secondary"
         size="large"
         rounded="lg"
         flat

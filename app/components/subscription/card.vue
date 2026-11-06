@@ -85,7 +85,7 @@
 
     <v-btn
       class="w-100 text-h6 text-md-h5 font-weight-bold mt-6 rounded-lg"
-      :color="card.action.disabled ? `grey300` : `grey900`"
+      :color="card.action.disabled ? `grey300` : `secondary`"
       variant="flat"
       height="44"
       :disabled="card.action.disabled"

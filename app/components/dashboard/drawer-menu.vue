@@ -39,7 +39,7 @@
           />
           <v-avatar
             v-else
-            color="grey400"
+            color="grey300"
             size="24"
           >
             <span class="text-h6 text-grey700 font-weight-bold">{{

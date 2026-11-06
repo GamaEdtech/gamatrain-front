@@ -28,7 +28,7 @@
         v-for="facility in selected"
         :key="facility.id"
         :prepend-icon="`mdfull:${facility.icon}`"
-        color="grey800"
+        color="secondary"
         variant="flat"
         label
         size="large"
@@ -91,7 +91,7 @@
                 block
                 height="56"
                 :variant="tag.selected ? 'flat' : 'tonal'"
-                :color="tag.selected ? 'grey800' : 'grey500'"
+                :color="tag.selected ? 'secondary' : 'grey500'"
                 :prepend-icon="tag.selected ? 'mdi-check' : `mdfull:${tag.icon}`"
                 :aria-pressed="tag.selected"
                 class="justify-start text-none font-weight-medium gtext-t4"

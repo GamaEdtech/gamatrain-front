@@ -148,8 +148,11 @@ export default defineNuxtConfig({
       ],
       link: [
         { rel: 'manifest', href: '/manifest.webmanifest' },
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon-dark.ico' },
-        { rel: 'apple-touch-icon', href: '/apple-touch-icon-light.png' },
+        // `-dark` is the white G for dark browser UI, `-light` the dark G for light browser UI.
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon-dark.ico', media: '(prefers-color-scheme: dark)' },
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon-light.ico', media: '(prefers-color-scheme: light)' },
+        // iOS fills the transparent background with black, so only the white G shows up.
+        { rel: 'apple-touch-icon', href: '/apple-touch-icon-dark.png' },
         {
           rel: 'preload',
           as: 'style',

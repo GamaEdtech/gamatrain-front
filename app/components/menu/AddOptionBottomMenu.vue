@@ -10,6 +10,7 @@
           :to="item.path"
           :aria-label="`${item.title} — ${item.typeFile}`"
           variant="plain"
+          block
           class="card-add-option"
         >
           <div class="publish-option-content w-100 d-flex flex-column align-start justify-start">
@@ -193,7 +194,7 @@ watch(
   display: grid;
   width: 22px;
   height: 22px;
-  color: rgb(var(--v-theme-brandNavy));
+  color: rgb(var(--v-theme-on-primary));
   font-size: 14px;
   font-weight: 800;
   content: '\2713';
