@@ -88,12 +88,16 @@
       />
     </admin-common-modal>
 
-    <admin-common-confirm-modal
-      v-model="showRefundModal"
-      text="Refund this quota charge? The gems will be credited back to the user's subscription."
-      :loading="loadingRefundUsageItem"
-      @confirm="confirmRefund"
-    />
+    <admin-common-modal
+      v-if="showRefundModal && selectedUsageEvent"
+      v-model:show-dialog="showRefundModal"
+      title="Refund quota"
+    >
+      <admin-subscription-usage-modal-refund
+        :usage-event="selectedUsageEvent"
+        @refunded="onRefunded"
+      />
+    </admin-common-modal>
   </div>
 </template>
 
@@ -121,8 +125,6 @@ const {
   usageAggregateData: usageAggregateList,
   loadingGetUsageAggregateData,
   getUsageAggregateData,
-  loadingRefundUsageItem,
-  refundUsageItem,
 } = useUserSubscriptionAdmin()
 
 const aggregateHeaders: DataTableHeader<AdminSubscriptionUsageAggregateDTO>[] = [
@@ -185,7 +187,8 @@ const usageHeaders: DataTableHeader<AdminSubscriptionUsageDTO>[] = [
         icon: 'md:undo',
         tooltip: 'Refund quota',
         color: 'warning',
-        show: (item: AdminSubscriptionUsageDTO) => item.amount > 0,
+        // A charge not refunded yet; refund rows (negative amount) and refunded charges have no action.
+        show: (item: AdminSubscriptionUsageDTO) => item.amount > 0 && !item.refundLogId,
         onClick: (item: AdminSubscriptionUsageDTO) => openRefundModal(item),
       },
     ],
@@ -293,16 +296,10 @@ const openRefundModal = (item: AdminSubscriptionUsageDTO) => {
   showRefundModal.value = true
 }
 
-const confirmRefund = async () => {
-  if (!selectedUsageEvent.value) return
-
-  const response = await refundUsageItem(selectedUsageEvent.value.id)
-
-  if (response.succeeded) {
-    showRefundModal.value = false
-    selectedUsageEvent.value = null
-    await fetchUsageData()
-  }
+const onRefunded = async () => {
+  showRefundModal.value = false
+  selectedUsageEvent.value = null
+  await fetchData()
 }
 </script>
 

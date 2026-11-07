@@ -343,7 +343,16 @@ export interface AdminSubscriptionUsageDTO {
   featureName: string
   amount: number
   identifierId: number
+  /** On a refund row: the charge it reverses. */
+  refundOfLogId: number | null
+  /** On a charge: its refund, once refunded. A charge can be refunded while this is null. */
+  refundLogId: number | null
   creationDate: string
+}
+
+/** POST admin/subscriptions/usage/{id}/refund: the quota credited back (at most the bucket's current usage). */
+export interface RefundAdminSubscriptionUsageDTO {
+  refundedAmount: number
 }
 
 export interface SearchFilterAdminSubscriptionUsage {

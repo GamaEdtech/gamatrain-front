@@ -10,6 +10,7 @@ import type {
   GetAdminUserSubscriptionParams,
   GrantAdminUserSubscriptionDTO,
   GrantAdminUserSubscriptionResponseDTO,
+  RefundAdminSubscriptionUsageDTO,
   ResponseListDTO,
 } from '@/types'
 
@@ -253,16 +254,18 @@ export const useUserSubscriptionAdmin = () => {
     }
   }
 
-  const refundUsageItem = async (id: string | number) => {
+  // Gives one charge's quota back to the user. Needs the admin's authenticator code; a charge is refunded once.
+  const refundUsageItem = async (id: string | number, twoFactorCode: string) => {
     loadingRefundUsageItem.value = true
 
     try {
-      const response = await useApiService.post<ApiResult<boolean>>(
+      const response = await useApiService.post<ApiResult<RefundAdminSubscriptionUsageDTO>>(
         `${USAGE_BASE_URL}/${id}/refund`,
+        { twoFactorCode },
       )
 
       if (response.succeeded) {
-        $toast.success('Usage event refunded successfully!')
+        $toast.success(`Refunded ${response.data?.refundedAmount ?? 0} back to the user's subscription.`)
       }
       else {
         handleApiResponseError(response)
@@ -273,7 +276,7 @@ export const useUserSubscriptionAdmin = () => {
     catch (err: unknown) {
       handleApiCatchError(err)
 
-      return createApiFailure<boolean>(err, false)
+      return createApiFailure<RefundAdminSubscriptionUsageDTO>(err)
     }
     finally {
       loadingRefundUsageItem.value = false
