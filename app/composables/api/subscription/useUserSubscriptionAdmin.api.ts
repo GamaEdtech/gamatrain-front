@@ -35,6 +35,7 @@ export const useUserSubscriptionAdmin = () => {
   const loadingGetUsageData = ref(false)
   const usageAggregateData = ref<AdminSubscriptionUsageAggregateDTO[]>([])
   const loadingGetUsageAggregateData = ref(false)
+  const loadingRefundUsageItem = ref(false)
 
   const getData = async (params: GetAdminUserSubscriptionParams) => {
     loadingGetData.value = true
@@ -252,6 +253,33 @@ export const useUserSubscriptionAdmin = () => {
     }
   }
 
+  const refundUsageItem = async (id: string | number) => {
+    loadingRefundUsageItem.value = true
+
+    try {
+      const response = await useApiService.post<ApiResult<boolean>>(
+        `${USAGE_BASE_URL}/${id}/refund`,
+      )
+
+      if (response.succeeded) {
+        $toast.success('Usage event refunded successfully!')
+      }
+      else {
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<boolean>(err, false)
+    }
+    finally {
+      loadingRefundUsageItem.value = false
+    }
+  }
+
   const getUsageAggregateData = async (
     params: GetAdminSubscriptionUsageAggregateParams = {},
   ) => {
@@ -313,5 +341,7 @@ export const useUserSubscriptionAdmin = () => {
     usageAggregateData,
     loadingGetUsageAggregateData,
     getUsageAggregateData,
+    loadingRefundUsageItem,
+    refundUsageItem,
   }
 }
