@@ -60,7 +60,8 @@ export const useTeacherDirectory = () => {
   const asyncData = useAsyncData('teacher-directory', () => getData(params.value), { watch: [params] })
   const { data, status, refresh } = asyncData
 
-  const teachers = computed(() => data.value?.data?.list ?? [])
+  // The API leaves out teachers with no name; this guards against one slipping through, since a card needs a name.
+  const teachers = computed(() => (data.value?.data?.list ?? []).filter(teacher => teacher.fullName?.trim()))
   const total = computed(() => data.value?.data?.totalRecordsCount ?? 0)
   const pageCount = computed(() => Math.ceil(total.value / PAGE_SIZE))
   const isUpdating = computed(() => status.value === 'pending')

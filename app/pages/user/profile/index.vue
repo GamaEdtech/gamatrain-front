@@ -96,6 +96,20 @@
         </v-col>
 
         <v-col
+          v-if="isTeacherWithoutName"
+          cols="12"
+        >
+          <v-alert
+            type="info"
+            color="primaryStrong"
+            density="compact"
+            variant="tonal"
+          >
+            Add your name to appear in the teacher directory. Teachers without a name aren't listed.
+          </v-alert>
+        </v-col>
+
+        <v-col
           cols="12"
           md="4"
         >
@@ -409,6 +423,12 @@ const {
   setUser,
 } = useUser()
 const { editItem, loadingEditItem } = useProfile()
+
+// Reads the saved profile, not the form, so the note stays until the name is actually saved.
+const isTeacherWithoutName = computed(() =>
+  (currentUser.value?.roles?.includes('Teacher') ?? false)
+  && !`${currentUser.value?.firstName ?? ''}${currentUser.value?.lastName ?? ''}`.trim(),
+)
 const {
   countries,
   states,

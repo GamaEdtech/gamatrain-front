@@ -41,7 +41,7 @@ export const useUserManagerAdmin = () => {
   const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
 
   const getData = async (params: GetUsersParams) => {
-    const { page, pageSize, hasReferral, firstName, lastName, email, referralId } = params
+    const { page, pageSize, hasReferral, firstName, lastName, email, referralId, role } = params
     loadingGetData.value = true
     try {
       const query: Record<string, string | number | boolean | null> = {
@@ -53,6 +53,7 @@ export const useUserManagerAdmin = () => {
         'LastName': lastName,
         'Email': email,
         'ReferralId': referralId,
+        'Roles': role ?? null,
       }
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<AdminUserDTO>>

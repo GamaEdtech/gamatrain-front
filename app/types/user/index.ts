@@ -13,6 +13,7 @@ export interface AdminUserDTO {
   enabled: boolean
   registrationDate: string
   referralId: string
+  roles?: Role[] | null
 }
 export interface AdminTokenDTO {
   token: string
@@ -51,6 +52,7 @@ export interface GetUsersParams {
   lastName: string
   email: string
   referralId: string
+  role?: Role | null
 }
 
 export interface SearchFilterUser {
