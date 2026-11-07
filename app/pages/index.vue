@@ -31,9 +31,9 @@
           </v-btn>
         </div>
         <img
-          src="/images/school-finder.webp"
-          width="391"
-          height="469"
+          :src="themedImage('/images/school-finder-map.webp')"
+          width="440"
+          height="612"
           alt="A phone showing schools on a map under a magnifying glass"
           loading="lazy"
         >
@@ -69,6 +69,8 @@
 </template>
 
 <script setup>
+const { themedImage } = useThemeMode()
+
 const title = 'GamaTrain: Online Exams & Past Papers for Checkpoint, IGCSE, A Level'
 const description = 'Take online exams with instant scores, and find past papers, mark schemes and study materials for Cambridge, Edexcel and more.'
 

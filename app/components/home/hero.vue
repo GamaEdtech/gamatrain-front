@@ -50,11 +50,11 @@
           <span class="d-none d-sm-inline d-lg-none">Level up with every exam</span>
         </v-chip>
         <img
-          src="/images/hero-girl.webp"
-          srcset="/images/hero-girl-sm.webp 340w, /images/hero-girl.webp 620w"
+          src="/images/hero-student.webp"
+          srcset="/images/hero-student-sm.webp 340w, /images/hero-student.webp 620w"
           sizes="(max-width: 959px) 99px, 274px"
           width="620"
-          height="1133"
+          height="1134"
           alt="The GamaTrain student floating under a glowing light bulb"
           fetchpriority="high"
         >
@@ -285,8 +285,8 @@
   }
 
   .home-hero__tag--advice {
-    top: 24rem;
-    left: -6rem;
+    top: 20rem;
+    left: -15rem;
   }
 
   .home-hero__tag--rank {

@@ -44,8 +44,8 @@
           :class="`exam-card--${card.id}`"
         >
           <img
-            :src="card.image"
-            :srcset="`${card.imageSmall} ${card.smallWidth}w, ${card.image} ${card.width}w`"
+            :src="themedImage(card.image)"
+            :srcset="`${themedImage(card.imageSmall)} ${card.smallWidth}w, ${themedImage(card.image)} ${card.width}w`"
             :sizes="card.sizes"
             :width="card.width"
             :height="card.height"
@@ -90,6 +90,8 @@
 
 <script setup>
 import { HOME_EXAM_CARDS, HOME_EXAM_STEPS } from '@/constants/home'
+
+const { themedImage } = useThemeMode()
 </script>
 
 <style scoped lang="scss">
@@ -172,18 +174,13 @@ import { HOME_EXAM_CARDS, HOME_EXAM_STEPS } from '@/constants/home'
 
     img {
       position: absolute;
-      right: 0.6rem;
-      bottom: -1.4rem;
-      width: 28.5rem;
+      /* Sits beside the button and grows with the card, clear of the text column. */
+      right: 2.4rem;
+      bottom: 2.4rem;
+      width: clamp(25rem, calc(100% - 30rem), 38rem);
       max-height: none;
       margin: 0;
     }
-  }
-
-  .exam-card--analysis img {
-    right: 1.4rem;
-    bottom: 2.2rem;
-    width: 31rem;
   }
 
   .exam-card__title {
