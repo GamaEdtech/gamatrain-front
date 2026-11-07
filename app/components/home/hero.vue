@@ -136,8 +136,8 @@
 
 /* Below the desktop layout the tags tuck into the gaps around the bulb and the body. */
 .home-hero__tag--score {
-  top: 8.8rem;
-  right: calc(100% - 1.4rem);
+  top: 10.4rem;
+  right: calc(100% + 0.4rem);
   transform: rotate(-4deg);
 
   :deep(.v-chip__prepend) {
