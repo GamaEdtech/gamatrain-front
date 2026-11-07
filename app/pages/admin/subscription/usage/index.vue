@@ -87,6 +87,13 @@
         @search="startSearch"
       />
     </admin-common-modal>
+
+    <admin-common-confirm-modal
+      v-model="showRefundModal"
+      text="Refund this quota charge? The gems will be credited back to the user's subscription."
+      :loading="loadingRefundUsageItem"
+      @confirm="confirmRefund"
+    />
   </div>
 </template>
 
@@ -114,6 +121,8 @@ const {
   usageAggregateData: usageAggregateList,
   loadingGetUsageAggregateData,
   getUsageAggregateData,
+  loadingRefundUsageItem,
+  refundUsageItem,
 } = useUserSubscriptionAdmin()
 
 const aggregateHeaders: DataTableHeader<AdminSubscriptionUsageAggregateDTO>[] = [
@@ -124,20 +133,62 @@ const aggregateHeaders: DataTableHeader<AdminSubscriptionUsageAggregateDTO>[] = 
   { title: 'Users', key: 'distinctUserCount', sortable: false, width: '16vw', type: 'number' },
 ]
 
+const contentPath = (item: AdminSubscriptionUsageDTO): string | undefined => {
+  if (!item.identifierId) return undefined
+  switch (item.featureCode) {
+    case 'PastpaperDownload':
+    case 'TestDownload':
+      return `/paper/${item.identifierId}`
+    case 'MultimediaDownload':
+      return `/multimedia/${item.identifierId}`
+    case 'ExamDownload':
+    case 'ExamAnalysis':
+    case 'ExamParticipation':
+    case 'TestSubmission':
+      return `/exam/${item.identifierId}`
+    default:
+      return undefined
+  }
+}
+
 const usageHeaders: DataTableHeader<AdminSubscriptionUsageDTO>[] = [
   { title: 'User ID', key: 'userId', sortable: false, width: '8vw' },
-  { title: 'Email', key: 'userEmail', sortable: false, width: '18vw' },
-  { title: 'Plan', key: 'planTitle', sortable: false, width: '16vw' },
-  { title: 'Feature', key: 'featureCode', sortable: false, width: '12vw' },
-  { title: 'Amount', key: 'amount', sortable: false, width: '8vw', type: 'number' },
-  { title: 'Identifier ID', key: 'identifierId', sortable: false, width: '12vw' },
+  { title: 'Email', key: 'userEmail', sortable: false, width: '16vw' },
+  { title: 'Plan', key: 'planTitle', sortable: false, width: '14vw' },
+  { title: 'Feature', key: 'featureCode', sortable: false, width: '10vw' },
+  { title: 'Amount', key: 'amount', sortable: false, width: '7vw', type: 'number' },
+  {
+    title: 'Content',
+    key: 'identifierId',
+    sortable: false,
+    width: '10vw',
+    type: 'link',
+    target: '_blank',
+    getTo: contentPath,
+  },
   {
     title: 'Creation Date',
     key: 'creationDate',
     sortable: false,
-    width: '16vw',
+    width: '14vw',
     type: 'date',
     dateFormat: 'DD/MM/YYYY HH:mm',
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+    sortable: false,
+    width: '7vw',
+    type: 'actions',
+    actions: [
+      {
+        icon: 'md:undo',
+        tooltip: 'Refund quota',
+        color: 'warning',
+        show: (item: AdminSubscriptionUsageDTO) => item.amount > 0,
+        onClick: (item: AdminSubscriptionUsageDTO) => openRefundModal(item),
+      },
+    ],
   },
 ]
 
@@ -150,6 +201,9 @@ const allPageSize = [
 ]
 
 const showSearchModal = ref(false)
+const showRefundModal = ref(false)
+const selectedUsageEvent = ref<AdminSubscriptionUsageDTO | null>(null)
+
 const getDefaultFromDate = () => dayjs().startOf('month').format('YYYY-MM-DD')
 const getDefaultToDate = () => dayjs().format('YYYY-MM-DD')
 const searchFilter = reactive<SearchFilterAdminSubscriptionUsage>({
@@ -160,9 +214,7 @@ const searchFilter = reactive<SearchFilterAdminSubscriptionUsage>({
   toDate: getDefaultToDate(),
 })
 
-const isLoading = computed(() => {
-  return loadingGetUsageData.value || loadingGetUsageAggregateData.value
-})
+const isLoading = computed(() => loadingGetUsageData.value || loadingGetUsageAggregateData.value)
 
 const usageQueryDates = computed(() => ({
   fromDate: searchFilter.fromDate ? dayjs(searchFilter.fromDate).toISOString() : '',
@@ -189,10 +241,7 @@ const fetchUsageAggregateData = async () => {
 }
 
 const fetchData = async () => {
-  await Promise.all([
-    fetchUsageAggregateData(),
-    fetchUsageData(),
-  ])
+  await Promise.all([fetchUsageAggregateData(), fetchUsageData()])
 }
 
 const changePageNumber = async (pageNumber: number) => {
@@ -206,9 +255,7 @@ const changePageSize = async (newPageSize: number) => {
   await fetchUsageData()
 }
 
-onMounted(async () => {
-  await fetchData()
-})
+onMounted(fetchData)
 
 const startSearch = async (item: SearchFilterAdminSubscriptionUsage) => {
   searchFilter.userId = item.userId
@@ -221,15 +268,13 @@ const startSearch = async (item: SearchFilterAdminSubscriptionUsage) => {
   await fetchData()
 }
 
-const isShowClearFilter = computed(() => {
-  return (
-    searchFilter.userId.length > 0
-    || searchFilter.featureCode.length > 0
-    || searchFilter.identifierId.length > 0
-    || searchFilter.fromDate !== getDefaultFromDate()
-    || searchFilter.toDate !== getDefaultToDate()
-  )
-})
+const isShowClearFilter = computed(() =>
+  searchFilter.userId.length > 0
+  || searchFilter.featureCode.length > 0
+  || searchFilter.identifierId.length > 0
+  || searchFilter.fromDate !== getDefaultFromDate()
+  || searchFilter.toDate !== getDefaultToDate(),
+)
 
 const clearFilter = async () => {
   searchFilter.userId = ''
@@ -241,8 +286,23 @@ const clearFilter = async () => {
   await fetchData()
 }
 
-const refreshData = async () => {
-  await fetchData()
+const refreshData = () => fetchData()
+
+const openRefundModal = (item: AdminSubscriptionUsageDTO) => {
+  selectedUsageEvent.value = item
+  showRefundModal.value = true
+}
+
+const confirmRefund = async () => {
+  if (!selectedUsageEvent.value) return
+
+  const response = await refundUsageItem(selectedUsageEvent.value.id)
+
+  if (response.succeeded) {
+    showRefundModal.value = false
+    selectedUsageEvent.value = null
+    await fetchUsageData()
+  }
 }
 </script>
 
