@@ -42,6 +42,15 @@
         <span class="text-primary font-weight-bold text-h5">Add User</span>
       </v-btn>
 
+      <div class="role-filter-container">
+        <common-gombo-box
+          v-model="roleSelect"
+          label="Role"
+          :items="roleList"
+          @update:model-value="changeFilterRole"
+        />
+      </div>
+
       <admin-common-clear-filter-btn
         v-if="isShowClearFilter"
         @click="clearFilter"
@@ -142,6 +151,7 @@
 import type {
   AdminUserDTO,
   DataTableHeader,
+  Role,
   SearchFilterUser,
 } from '@/types'
 
@@ -164,6 +174,14 @@ const headers: DataTableHeader<AdminUserDTO>[] = [
     getText: (item: AdminUserDTO) => getFullName(item),
   },
   { title: 'Email', key: 'email', sortable: false, width: '15vw' },
+  {
+    title: 'Roles',
+    key: 'roles',
+    sortable: false,
+    width: '10vw',
+    emptyText: '-',
+    getText: (item: AdminUserDTO) => item.roles?.join(', ') ?? '',
+  },
   { title: 'Phone Number', key: 'phoneNumber', sortable: false, width: '10vw' },
   {
     title: 'Status',
@@ -217,6 +235,16 @@ const allPageSize = [
 ]
 const statusSelect = ref('All')
 const statusList = ['All', 'With Referral', 'Without Referral']
+const ROLE_ALL = 'All'
+const roleList: { id: Role | typeof ROLE_ALL, title: string }[] = [
+  { id: ROLE_ALL, title: 'All roles' },
+  { id: 'Teacher', title: 'Teacher' },
+  { id: 'Student', title: 'Student' },
+  { id: 'Admin', title: 'Admin' },
+  { id: 'Advisor', title: 'Advisor' },
+  { id: 'Finance', title: 'Finance' },
+]
+const roleSelect = ref<Role | typeof ROLE_ALL>(ROLE_ALL)
 const showDeleteModal = ref(false)
 const selectedItemIdForDelete = ref('')
 const showToggleStatusModal = ref(false)
@@ -237,6 +265,7 @@ const fetchUsers = async () => {
     page: page.value,
     pageSize: pageSize.value,
     hasReferral: statusSelect.value == 'All' ? null : statusSelect.value == 'With Referral' ? true : false,
+    role: roleSelect.value === ROLE_ALL ? null : roleSelect.value,
     ...searchFilter,
   })
 }
@@ -248,6 +277,12 @@ const changeFilterStatus = async (status: string | number) => {
   else {
     statusSelect.value = status as string
   }
+  page.value = 1
+  await fetchUsers()
+}
+
+const changeFilterRole = async (role: string | number | null) => {
+  roleSelect.value = (role || ROLE_ALL) as Role | typeof ROLE_ALL
   page.value = 1
   await fetchUsers()
 }
@@ -313,6 +348,7 @@ const isShowClearFilter = computed(() => {
     || searchFilter.lastName.length > 0
     || searchFilter.email.length > 0
     || searchFilter.referralId.length > 0
+    || roleSelect.value !== ROLE_ALL
   ) {
     return true
   }
@@ -324,6 +360,7 @@ const clearFilter = async () => {
   searchFilter.lastName = ''
   searchFilter.email = ''
   searchFilter.referralId = ''
+  roleSelect.value = ROLE_ALL
   page.value = 1
   await fetchUsers()
 }
@@ -347,6 +384,9 @@ const startSearch = async (item: SearchFilterUser) => {
   height : 48px;
 }
 .filter-mobile-container{
+  width: 170px;
+}
+.role-filter-container{
   width: 170px;
 }
 </style>

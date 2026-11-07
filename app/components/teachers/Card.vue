@@ -93,7 +93,7 @@ const ACTIVITY_TEXT: Partial<Record<OnlineStatus, string>> = {
   ActiveThisWeek: 'Active this week',
 }
 
-const name = computed(() => props.teacher.fullName?.trim() || 'GamaTrain teacher')
+const name = computed(() => props.teacher.fullName?.trim() ?? '')
 const initials = computed(() => name.value.split(/\s+/).slice(0, 2).map(word => word[0]).join('').toUpperCase())
 const activity = computed(() => ACTIVITY_TEXT[props.teacher.onlineStatus])
 const skills = computed(() => props.teacher.skills ?? [])
