@@ -50,11 +50,11 @@
           <span class="d-none d-sm-inline d-lg-none">Level up with every exam</span>
         </v-chip>
         <img
-          src="/images/hero-girl.webp"
-          srcset="/images/hero-girl-sm.webp 340w, /images/hero-girl.webp 620w"
+          src="/images/hero-student.webp"
+          srcset="/images/hero-student-sm.webp 340w, /images/hero-student.webp 620w"
           sizes="(max-width: 959px) 99px, 274px"
           width="620"
-          height="1133"
+          height="1134"
           alt="The GamaTrain student floating under a glowing light bulb"
           fetchpriority="high"
         >
@@ -136,8 +136,8 @@
 
 /* Below the desktop layout the tags tuck into the gaps around the bulb and the body. */
 .home-hero__tag--score {
-  top: 8.8rem;
-  right: calc(100% - 1.4rem);
+  top: 10.4rem;
+  right: calc(100% + 0.4rem);
   transform: rotate(-4deg);
 
   :deep(.v-chip__prepend) {
@@ -285,8 +285,8 @@
   }
 
   .home-hero__tag--advice {
-    top: 24rem;
-    left: -6rem;
+    top: 20rem;
+    left: -15rem;
   }
 
   .home-hero__tag--rank {
