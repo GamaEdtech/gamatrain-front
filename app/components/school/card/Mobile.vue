@@ -14,9 +14,12 @@
       @error="onPhotoError"
     />
     <div class="w-100 d-flex flex-column ga-1 pa-3">
-      <h2 class="text-h5 text-grey800 font-weight-semibold">
+      <component
+        :is="headingTag"
+        class="text-h5 text-grey800 font-weight-semibold"
+      >
         {{ school.name }}
-      </h2>
+      </component>
       <p
         v-if="locationLine"
         class="ma-0 text-h6 font-weight-regular text-grey600"
@@ -65,6 +68,11 @@
 const props = defineProps({
   school: {
     type: Object,
+  },
+  // Inside a titled section (e.g. Nearby schools) the card name sits one level below that section's h2.
+  headingTag: {
+    type: String,
+    default: 'h2',
   },
 })
 
