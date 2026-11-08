@@ -3,12 +3,12 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-10">
-      <div class="w-100 text-h4 text-grey500">
+      <div class="w-100 text-h6 font-weight-regular text-grey500">
         School Category
       </div>
 
       <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-2">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">Stage</div>
+        <div class="text-caption font-weight-bold text-grey700 ml-2">Stage</div>
         <v-text-field
           v-model="selectedStage.title"
           rounded
@@ -43,7 +43,7 @@
       <div
         class="w-100 d-flex align-center justify-space-between flex-wrap ga-6"
       >
-        <div class="text-h5 font-weight-bold text-grey700 ml-2">
+        <div class="text-body-1 font-weight-bold text-grey700 ml-2">
           Coed Status
         </div>
         <v-skeleton-loader
@@ -63,7 +63,7 @@
           base-color="surface"
         >
           <v-btn
-            class="font-weight-bold text-h6"
+            class="font-weight-bold text-caption"
             v-for="(item, index) in ceods"
             :key="index"
             :value="item.id"
@@ -74,7 +74,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-6">
-        <div class="text-h5 font-weight-bold text-grey700 ml-2">
+        <div class="text-body-1 font-weight-bold text-grey700 ml-2">
           School Type
         </div>
 
@@ -94,7 +94,7 @@
             :variant="
               selectedschoolTypes.includes(type.id) ? `flat` : `outlined`
             "
-            class="font-weight-bold text-h6 cursor-pointer"
+            class="font-weight-bold text-caption cursor-pointer"
             @click="chooseSchoolType(type)"
           >
             {{ type.title }}
@@ -108,7 +108,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-6">
-        <div class="text-h5 font-weight-bold text-grey700 ml-2">
+        <div class="text-body-1 font-weight-bold text-grey700 ml-2">
           Boarding type
         </div>
 
@@ -128,7 +128,7 @@
             :variant="
               selectedboardingTypes.includes(type.id) ? `flat` : `outlined`
             "
-            class="font-weight-bold text-h6 cursor-pointer"
+            class="font-weight-bold text-caption cursor-pointer"
             @click="chooseBoardingType(type)"
           >
             {{ type.title }}
@@ -142,7 +142,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-6">
-        <div class="text-h5 font-weight-bold text-grey700 ml-2">
+        <div class="text-body-1 font-weight-bold text-grey700 ml-2">
           Religion
         </div>
 
@@ -160,7 +160,7 @@
             :key="index"
             color="secondary"
             :variant="selectedReligions.includes(type.id) ? `flat` : `outlined`"
-            class="font-weight-bold text-h6 cursor-pointer"
+            class="font-weight-bold text-caption cursor-pointer"
             @click="chooseReligion(type)"
           >
             {{ type.title }}
@@ -176,7 +176,7 @@
       <div
         class="w-100 d-flex align-center justify-space-between flex-wrap ga-10 ga-sm-6"
       >
-        <div class="text-h5 font-weight-bold text-grey700 ml-2">
+        <div class="text-body-1 font-weight-bold text-grey700 ml-2">
           Tuition fee to
         </div>
 
@@ -197,7 +197,7 @@
           tick-size="6"
         >
           <template #thumb-label="{ modelValue }">
-            <span class="text-h5 font-weight-black on-primary">${{ modelValue }}</span>
+            <span class="text-body-1 font-weight-black on-primary">${{ modelValue }}</span>
           </template>
         </v-slider>
       </div>
@@ -207,7 +207,7 @@
       <v-btn
         size="x-small"
         variant="text"
-        class="text-h5"
+        class="text-body-1"
         @click="cancel"
       >
         Cancel
@@ -230,7 +230,7 @@
         rounded="xl"
         height="40"
         max-width="180"
-        class="w-100 text-h5"
+        class="w-100 text-body-1"
         :disabled="!isFormValid"
         @click="submitForm"
       >

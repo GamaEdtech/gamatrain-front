@@ -10,7 +10,7 @@
         class="d-none d-lg-flex align-center"
       >
         <div
-          :class="`text-h5 font-weight-medium mr-2 mt-1 ${
+          :class="`text-body-1 font-weight-medium mr-2 mt-1 ${
             menuSetting.bgColor === 'transparent'
               ? 'text-white'
               : 'text-grey800'
@@ -89,12 +89,12 @@
           </template>
 
           <v-list-item-title
-            class="text-h5 font-medium primary-gray-500 text-item-height"
+            class="text-body-1 font-medium primary-gray-500 text-item-height"
           >
             {{ item.title }}
             <!-- <div
                     v-if="item.value == `messages`"
-                    class="badge-messages d-flex align-center justify-center rounded-circle text-white text-h5 font-weight-bold position-absolute"
+                    class="badge-messages d-flex align-center justify-center rounded-circle text-white text-body-1 font-weight-bold position-absolute"
                   >
                     4
                   </div> -->
@@ -125,7 +125,7 @@
               </template>
 
               <v-list-item-title
-                class="text-h5 font-medium primary-gray-500 text-item-height"
+                class="text-body-1 font-medium primary-gray-500 text-item-height"
               >
                 {{ item.title }}
               </v-list-item-title>
@@ -155,7 +155,7 @@
               </v-icon>
             </template>
             <v-list-item-title
-              class="text-h5 font-medium primary-gray-600 text-item-height"
+              class="text-body-1 font-medium primary-gray-600 text-item-height"
             >
               {{ subMenuItem.title }}
             </v-list-item-title>
@@ -178,7 +178,7 @@
         </template>
 
         <v-list-item-title
-          class="text-h5 font-medium primary-gray-500 text-item-height"
+          class="text-body-1 font-medium primary-gray-500 text-item-height"
         >
           Logout
         </v-list-item-title>

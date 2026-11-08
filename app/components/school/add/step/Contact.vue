@@ -3,12 +3,12 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-10">
-      <div class="w-100 text-h4 text-grey500">
+      <div class="w-100 text-h6 font-weight-regular text-grey500">
         School Contact
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           Web site
         </div>
         <v-text-field
@@ -30,7 +30,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           Email
         </div>
         <v-text-field
@@ -52,7 +52,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           Phone
         </div>
         <v-text-field
@@ -75,7 +75,7 @@
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
         <div
-          class="text-h6 font-weight-bold text-grey700 ml-2 position-relative"
+          class="text-caption font-weight-bold text-grey700 ml-2 position-relative"
         >
           <v-badge
             floating
@@ -113,7 +113,7 @@
       </div>
 
       <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           Local Name
         </div>
         <v-text-field
@@ -135,7 +135,7 @@
       </div> -->
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           Zip Code
         </div>
         <v-text-field
@@ -157,7 +157,7 @@
       </div>
 
       <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           Local Address
         </div>
         <v-text-field
@@ -179,7 +179,7 @@
       </div> -->
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           Fax Number
         </div>
         <v-text-field
@@ -201,7 +201,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           Description
         </div>
         <v-textarea
@@ -223,7 +223,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           Location On Map
         </div>
         <div class="w-100 d-flex align-center justify-start ga-1 mt-3">
@@ -255,7 +255,7 @@
       <v-btn
         size="x-small"
         variant="text"
-        class="text-h5"
+        class="text-body-1"
         @click="cancel"
       >
         Cancel
@@ -278,7 +278,7 @@
         rounded="xl"
         height="40"
         max-width="180"
-        class="w-100 text-h5"
+        class="w-100 text-body-1"
         :disabled="!isFormValid"
         @click="submitForm"
       >

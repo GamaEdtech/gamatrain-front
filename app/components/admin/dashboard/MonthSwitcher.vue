@@ -16,7 +16,7 @@
     <v-sheet
       min-width="140"
       color="transparent"
-      class="text-h5 font-weight-bold text-grey700 text-center"
+      class="text-body-1 font-weight-bold text-grey700 text-center"
     >
       {{ label }}
     </v-sheet>
@@ -36,7 +36,7 @@
       variant="flat"
       rounded="pill"
       size="small"
-      class="text-h6 font-weight-bold ml-1"
+      class="text-caption font-weight-bold ml-1"
       prepend-icon="md:today"
       @click="emit('update:modelValue', currentMonth)"
     >

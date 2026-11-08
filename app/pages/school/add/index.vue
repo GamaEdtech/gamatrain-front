@@ -298,11 +298,11 @@ const buildFormDataFromObject = (
 }
 @media (min-width: 960px) {
   .margin-top-handle {
-    margin-top: 6.4rem;
-    min-height: calc(100vh - 6.4rem);
+    margin-top: 4rem;
+    min-height: calc(100vh - 4rem);
   }
   .handle-height {
-    min-height: calc(100vh - 6.4rem - 90px);
+    min-height: calc(100vh - 4rem - 90px);
   }
 }
 </style>

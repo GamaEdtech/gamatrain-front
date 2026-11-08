@@ -14,7 +14,7 @@
             size="large"
             class="mr-2"
           />
-          <span class="text-h6 font-weight-medium">{{ currentPrompt.name }} Interaction</span>
+          <span class="text-caption font-weight-medium">{{ currentPrompt.name }} Interaction</span>
         </div>
 
         <v-divider class="my-2" />

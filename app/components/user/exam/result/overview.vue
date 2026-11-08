@@ -13,13 +13,13 @@
         >
           md:assignment
         </v-icon>
-        <span class="text-h5 text-grey700 font-weight-bold">Overview</span>
+        <span class="text-body-1 text-grey700 font-weight-bold">Overview</span>
       </div>
 
       <v-chip
         :color="isComplete ? 'success' : 'warning'"
         variant="flat"
-        class="font-weight-bold text-h5"
+        class="font-weight-bold text-body-1"
       >
         {{ isComplete ? 'Complete' : 'Incomplete' }}
       </v-chip>
@@ -54,10 +54,10 @@
         </v-avatar>
 
         <div class="min-w-0 d-flex flex-column">
-          <span class="text-grey800 text-h5 font-weight-bold text-truncate">
+          <span class="text-grey800 text-body-1 font-weight-bold text-truncate">
             {{ participantName }}
           </span>
-          <span class="text-grey500 text-h6 mt-1">
+          <span class="text-grey500 text-caption font-weight-medium mt-1">
             Code: {{ contentData?.exam.code }}
           </span>
         </div>
@@ -71,10 +71,10 @@
         md
         class="pa-3 d-flex flex-column align-start justify-center ga-1"
       >
-        <span class="text-grey500 text-h6 font-weight-medium">
+        <span class="text-grey500 text-caption font-weight-medium">
           <v-icon class="mr-2">{{ item.icon }}</v-icon>
           {{ item.label }}</span>
-        <span class="text-grey800 text-h5 font-weight-bold pl-8">{{ item.value }}</span>
+        <span class="text-grey800 text-body-1 font-weight-bold pl-8">{{ item.value }}</span>
       </v-col>
     </v-row>
   </v-card>

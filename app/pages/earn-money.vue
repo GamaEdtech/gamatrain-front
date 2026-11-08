@@ -173,79 +173,79 @@ useHead({ title: 'Earn money' })
 
 <style scoped>
 .earn-header {
-  padding-top: 9.7rem;
+  padding-top: 6.0625rem;
 }
 
 .earn-header__title {
-  max-width: 31.2rem;
+  max-width: 19.5rem;
 }
 
 .earn-header .gama-text-subtitle2 {
-  font-size: 1.8rem;
+  font-size: 1.125rem;
 }
 
 .earn-steps {
-  max-width: 80rem;
-  padding: 0 0 5.8rem;
+  max-width: 50rem;
+  padding: 0 0 3.625rem;
   list-style: none;
 }
 
 /* The transparent top/bottom borders cut the left border into a chevron. */
 .earn-step {
   position: relative;
-  min-height: 10.7rem;
-  border-left: 6.4rem solid rgb(var(--v-theme-primary100));
-  border-top: 1rem solid transparent;
-  border-bottom: 1rem solid transparent;
+  min-height: 6.6875rem;
+  border-left: 4rem solid rgb(var(--v-theme-primary100));
+  border-top: 0.625rem solid transparent;
+  border-bottom: 0.625rem solid transparent;
 }
 
 .earn-step__num {
   position: absolute;
-  left: -3.2rem;
+  left: -2rem;
   top: 50%;
   transform: translate(-50%, -50%);
 }
 
 .earn-step__info {
-  min-height: 8.6rem;
-  padding: 1.6rem;
+  min-height: 5.375rem;
+  padding: 1rem;
   border: 1px solid rgb(var(--v-theme-grey200));
 }
 
 .earn-features {
-  max-width: 57.8rem;
+  max-width: 36.125rem;
 }
 
 .earn-feature {
   border: 1px solid rgb(var(--v-theme-grey200));
-  border-radius: 0.6rem;
+  border-radius: 0.375rem;
 }
 
 .earn-feature__icon {
-  font-size: 2rem;
+  font-size: 1.25rem;
 }
 
 @media (min-width: 600px) {
   .earn-header {
-    padding-top: 11.8rem;
+    padding-top: 7.375rem;
   }
 
   .earn-header__title {
-    max-width: 71.2rem;
+    max-width: 44.5rem;
   }
 
   .earn-step__info {
-    padding-top: 2.4rem;
+    padding-top: 1.5rem;
   }
 
   .earn-feature__icon {
-    font-size: 2.4rem;
+    font-size: 1.5rem;
   }
 }
 
 @media (min-width: 960px) {
   .earn-feature__icon {
-    font-size: 3.2rem;
+    font-size: 2rem;
   }
 }
 </style>

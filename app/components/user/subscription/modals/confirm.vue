@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-column align-start justify-start ga-6 pt-4">
-    <p class="text-h5 text-grey600 font-weight-medium mb-0">
+    <p class="text-body-1 text-grey600 font-weight-medium mb-0">
       {{ text }}
     </p>
 
@@ -21,7 +21,7 @@
         color="grey500"
         height="40"
         min-width="110"
-        class="text-h5 font-weight-bold"
+        class="text-body-1 font-weight-bold"
         :disabled="loading"
         @click="back"
       >
@@ -33,7 +33,7 @@
         :color="confirmColor"
         height="40"
         min-width="110"
-        class="text-h5 font-weight-bold text-white"
+        class="text-body-1 font-weight-bold text-white"
         flat
         :loading="loading"
         @click="confirm"

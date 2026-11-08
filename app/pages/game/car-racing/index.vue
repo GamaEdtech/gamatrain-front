@@ -966,7 +966,7 @@ onBeforeUnmount(() => {
 }
 
 .counter-number {
-  font-size: 10rem;
+  font-size: 6.25rem;
   color: #ff3c00;
   font-weight: bold;
 }

@@ -9,7 +9,7 @@
     >
       More {{ subject || 'related' }} quizzes
     </h2>
-    <p class="text-h5 text-grey500 mt-1 mb-4">
+    <p class="text-body-1 text-grey500 mt-1 mb-4">
       Keep going with the next unit.
     </p>
 
@@ -51,10 +51,10 @@
               size="20"
             >md:quiz</v-icon>
           </span>
-          <span class="text-h5 font-weight-bold text-brandNavy two-lines">{{ quiz.title.trim() }}</span>
+          <span class="text-body-1 font-weight-bold text-brandNavy two-lines">{{ quiz.title.trim() }}</span>
           <span
             v-if="Number(quiz.tests_num)"
-            class="text-h6 text-grey500 mt-auto pt-2"
+            class="text-caption font-weight-medium text-grey500 mt-auto pt-2"
           >{{ quiz.tests_num }} questions</span>
         </v-card>
       </v-col>

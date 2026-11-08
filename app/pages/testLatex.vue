@@ -13,7 +13,7 @@
           >
             mdi-test-tube
           </v-icon>
-          <h1 class="text-h4 font-weight-bold mt-4">
+          <h1 class="text-h6 font-weight-bold mt-4">
             MathJax Rendering Test Bench
           </h1>
           <p class="text-medium-emphasis mt-2">
@@ -39,7 +39,7 @@
               >
                 {{ testCase.icon }}
               </v-icon>
-              <h2 class="text-h6 font-weight-medium">
+              <h2 class="text-caption font-weight-medium">
                 {{ testCase.category }}
               </h2>
             </div>
@@ -51,7 +51,7 @@
                   md="6"
                 >
                   <v-card-title
-                    class="text-subtitle-1 font-weight-bold d-flex align-center"
+                    class="text-caption font-weight-bold d-flex align-center"
                   >
                     <v-icon
                       small
@@ -76,7 +76,7 @@
                   class="rendered-col"
                 >
                   <v-card-title
-                    class="text-subtitle-1 font-weight-bold d-flex align-center"
+                    class="text-caption font-weight-bold d-flex align-center"
                   >
                     <v-icon
                       small
@@ -221,17 +221,17 @@ onMounted(() => {
 .raw-latex-code {
   background-color: #2d2d2d;
   color: #f8f8f2;
-  padding: 1rem;
+  padding: 0.625rem;
   border-radius: 4px;
   white-space: pre-wrap; /* Allows wrapping of long lines */
   word-break: break-all; /* Breaks long words/strings */
   font-family: "Courier New", Courier, monospace;
-  font-size: 0.9rem;
+  font-size: 0.5625rem;
 }
 
 .expression-area {
-  padding: 1rem;
-  font-size: 1.2rem;
+  padding: 0.625rem;
+  font-size: 0.75rem;
   line-height: 1.8;
   min-height: 100%;
   display: flex;
@@ -244,7 +244,7 @@ onMounted(() => {
 }
 
 .v-card-title {
-  font-size: 1rem !important;
+  font-size: 0.625rem !important;
 }
 
 .v-icon {

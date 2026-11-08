@@ -2,7 +2,7 @@
   <div class="w-100 d-flex flex-column align-start justify-start ga-5">
     <div class="w-100 d-flex align-center justify-space-between ga-2 flex-wrap">
       <div>
-        <h1 class="text-h4 font-weight-bold text-grey700">
+        <h1 class="text-h6 font-weight-bold text-grey700">
           Subscription
         </h1>
       </div>
@@ -17,7 +17,7 @@
           height="40"
           flat
           outlined
-          class="text-h5 font-weight-bold text-white"
+          class="text-body-1 font-weight-bold text-white"
           @click="openChangePlanModal"
         >
           Change Plan
@@ -25,7 +25,7 @@
         <v-chip
           v-if="renewalBadge"
           :color="renewalBadge.color"
-          class="text-h6 font-weight-bold"
+          class="text-caption font-weight-bold"
         >
           <v-icon
             start
@@ -43,7 +43,7 @@
           height="40"
           flat
           :loading="loadingCancelSubscription"
-          class="text-h5 font-weight-bold text-white"
+          class="text-body-1 font-weight-bold text-white"
           @click="showCancelModal = true"
         >
           Cancel subscription
@@ -56,7 +56,7 @@
           height="40"
           flat
           :loading="loadingResumeSubscription"
-          class="text-h5 font-weight-bold text-white"
+          class="text-body-1 font-weight-bold text-white"
           @click="showResumeModal = true"
         >
           Resume subscription
@@ -98,7 +98,7 @@
         >
           <div class="summary-card bg-grey100 rounded-lg pa-4 d-flex flex-column justify-space-between">
             <div class="d-flex align-center justify-space-between">
-              <span class="text-h6 text-grey500 font-weight-medium">{{ item.title }}</span>
+              <span class="text-caption text-grey500 font-weight-medium">{{ item.title }}</span>
               <v-icon
                 size="22"
                 :color="item.iconColor"
@@ -106,7 +106,7 @@
                 {{ item.icon }}
               </v-icon>
             </div>
-            <span :class="`${item.colorClass} text-h4 font-weight-bold mt-3 text-truncate`">
+            <span :class="`${item.colorClass} text-h6 font-weight-bold mt-3 text-truncate`">
               {{ item.value }}
             </span>
           </div>
@@ -123,7 +123,7 @@
         >
           <template #[`item.usage`]="{ item }">
             <div class="usage-cell d-flex flex-column ga-1 py-2">
-              <div class="w-100 d-flex justify-space-between text-subtitle-1 text-grey500">
+              <div class="w-100 d-flex justify-space-between text-caption text-grey500">
                 <span>{{ usageLabel(item) }}</span>
               </div>
               <v-progress-linear
@@ -144,20 +144,20 @@
           :key="index"
           :class="`${index % 2 == 0 ? `bg-grey25 border-odd` : ``} card-feature-mobile w-100 d-flex flex-column align-start justify-start ga-3 pa-4`"
         >
-          <span class="text-grey700 text-h6 font-weight-medium">
+          <span class="text-grey700 text-caption font-weight-medium">
             {{ item.description || featureNames(item) }}
           </span>
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-grey500 text-h6">Limit</span>
-            <span class="text-grey700 text-h6 font-weight-bold">{{ formatLimit(item.limit) }}</span>
+            <span class="text-grey500 text-caption font-weight-medium">Limit</span>
+            <span class="text-grey700 text-caption font-weight-bold">{{ formatLimit(item.limit) }}</span>
           </div>
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-grey500 text-h6">Used</span>
-            <span class="text-grey700 text-h6 font-weight-bold">{{ $numberFormat(item.used) }}</span>
+            <span class="text-grey500 text-caption font-weight-medium">Used</span>
+            <span class="text-grey700 text-caption font-weight-bold">{{ $numberFormat(item.used) }}</span>
           </div>
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-grey500 text-h6">Remaining</span>
-            <span class="text-grey700 text-h6 font-weight-bold">{{ formatRemaining(item) }}</span>
+            <span class="text-grey500 text-caption font-weight-medium">Remaining</span>
+            <span class="text-grey700 text-caption font-weight-bold">{{ formatRemaining(item) }}</span>
           </div>
           <v-progress-linear
             :model-value="usagePercent(item)"
@@ -178,15 +178,15 @@
         class="w-100 bg-grey100 border border-warning rounded-lg pa-4 mb-2 d-flex flex-column flex-sm-row align-center justify-space-between ga-3"
       >
         <div class="d-flex flex-column align-center align-sm-start">
-          <span class="text-h6 font-weight-bold text-grey700">Your {{ lapsedPaymentFailureEntry.planTitle }} subscription ended</span>
-          <span class="text-h6 text-grey500 text-center text-sm-start">We couldn't process your last payment. Resume to pick up right where you left off.</span>
+          <span class="text-caption font-weight-bold text-grey700">Your {{ lapsedPaymentFailureEntry.planTitle }} subscription ended</span>
+          <span class="text-caption font-weight-medium text-grey500 text-center text-sm-start">We couldn't process your last payment. Resume to pick up right where you left off.</span>
         </div>
         <v-btn
           rounded="pill"
           color="primary"
           height="40"
           flat
-          class="text-h5 font-weight-bold text-white flex-shrink-0"
+          class="text-body-1 font-weight-bold text-white flex-shrink-0"
           :loading="loadingStartPaymentSubscription"
           @click="resumeLapsedSubscription"
         >
@@ -194,8 +194,8 @@
         </v-btn>
       </div>
 
-      <span class="text-h5 text-grey700 font-weight-bold text-center">Choose a plan to get started</span>
-      <span class="text-h6 text-grey500 text-center">
+      <span class="text-body-1 text-grey700 font-weight-bold text-center">Choose a plan to get started</span>
+      <span class="text-caption font-weight-medium text-grey500 text-center">
         You don't have an active subscription yet - pick a plan below to unlock premium downloads.
       </span>
 

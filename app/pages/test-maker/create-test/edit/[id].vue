@@ -792,7 +792,7 @@
       max-width="500"
     >
       <v-card>
-        <v-card-title class="text-h5">
+        <v-card-title class="text-body-1">
           Confirm Delete
         </v-card-title>
         <v-card-text>
@@ -1594,7 +1594,7 @@ onMounted(() => {
 <style lang="scss">
 .create-test-container {
   max-width: 1200px;
-  margin: 5rem auto;
+  margin: 3.125rem auto;
   padding-bottom: 80px; // Space for fixed bottom bar
 }
 
@@ -1725,8 +1725,8 @@ onMounted(() => {
 }
 
 .topic_list_item {
-  font-size: 1.4rem;
-  line-height: 2rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 .topic_season {

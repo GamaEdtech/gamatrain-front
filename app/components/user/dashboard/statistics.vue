@@ -12,10 +12,10 @@
         <v-icon>md:mail_outlined</v-icon>
       </v-avatar>
       <div>
-        <p class="text-h5 font-weight-medium text-grey500 mb-0">
+        <p class="text-body-1 font-weight-medium text-grey500 mb-0">
           Messages
         </p>
-        <p class="text-h4 font-weight-bold text-grey900 mb-0">
+        <p class="text-h6 font-weight-bold text-grey900 mb-0">
           {{ unreadMessage || 0 }}
         </p>
       </div>
@@ -33,10 +33,10 @@
         <v-icon>md:star_outlined</v-icon>
       </v-avatar>
       <div>
-        <p class="text-h5 font-weight-medium text-grey500 mb-0">
+        <p class="text-body-1 font-weight-medium text-grey500 mb-0">
           Score
         </p>
-        <p class="text-h4 font-weight-bold text-grey900 mb-0">
+        <p class="text-h6 font-weight-bold text-grey900 mb-0">
           {{ formatNumber(score || 0) }}
         </p>
       </div>
@@ -48,10 +48,10 @@
       to="/user/commission"
     >
       <div>
-        <p class="text-h5 font-weight-medium text-onInverseSurfaceSubtle mb-0">
+        <p class="text-body-1 font-weight-medium text-onInverseSurfaceSubtle mb-0">
           Sell Report
         </p>
-        <p class="text-h4 font-weight-bold text-white mb-0">
+        <p class="text-h6 font-weight-bold text-white mb-0">
           View earnings
         </p>
       </div>
@@ -82,7 +82,7 @@ const { formatNumber } = useFormatNumber()
 
 <style scoped>
 .dashboard-card {
-  border-radius: 1rem;
+  border-radius: 0.625rem;
   border: 1px solid rgb(var(--v-theme-grey200));
 }
 </style>

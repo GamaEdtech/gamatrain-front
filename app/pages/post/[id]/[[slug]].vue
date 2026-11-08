@@ -9,7 +9,7 @@
           class="bg-primary-gray-100 rounded-lg left-0 top-0 gray-background-div w-100 position-absolute"
         />
         <div class="w-100 d-flex flex-column align-center set-z-index">
-          <h1 class="d-flex align-center ga-2 w-100 text-h4 text-sm-h3 text-md-h2 font-weight-bold">
+          <h1 class="d-flex align-center ga-2 w-100 text-h6 text-sm-h4 text-md-h4 font-weight-bold">
             <v-btn
               icon
               color="primary"
@@ -55,7 +55,7 @@
               v-for="(tag, index) in contentData.tags"
               :key="index"
               :to="`/post?page=1&cat=${tag.id}`"
-              class="text-subtitle-1 text-sm-h5 text-grey800 font-weight-bold pa-3"
+              class="text-caption text-sm-body-1 text-grey800 font-weight-bold pa-3"
               color="surfaceTertiary"
               variant="flat"
               :size="xs ? `x-small` : `default`"
@@ -89,7 +89,7 @@
               height="30"
               rounded="circle"
             />
-            <span class="text-subtitle-1 font-weight-bold">{{
+            <span class="text-caption font-weight-bold">{{
               contentData.creationUser
                 ? contentData.creationUser
                 : "Unknown Author"
@@ -160,7 +160,7 @@
           :key="index"
           :to="canonicalPath"
           variant="plain"
-          class="text-h5 font-weight-bold"
+          class="text-body-1 font-weight-bold"
           :x-small="xs"
           :small="sm"
         >
@@ -171,7 +171,7 @@
         cols="12"
         class="d-flex flex-column ga-3 align-center justify-center"
       >
-        <p class="text-h4 mb-4">
+        <p class="text-h6 font-weight-regular mb-4">
           Did you like this article?
         </p>
         <div class="d-flex align-center ga-2">
@@ -540,23 +540,23 @@ watch(isDark, async () => {
 }
 
 #post-describe {
-  margin-bottom: 4.8rem !important;
+  margin-bottom: 3rem !important;
   width: 98%;
-  margin: auto auto 8.8rem auto;
+  margin: auto auto 5.5rem auto;
 
   h2 {
     font-family: Inter;
-    font-size: 3rem;
+    font-size: 1.875rem;
     font-style: normal;
     font-weight: 700;
     line-height: normal;
-    margin-top: 2.4rem;
-    margin-bottom: 2.4rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
   }
 
   h3 {
     font-family: Inter;
-    font-size: 2.8rem;
+    font-size: 1.75rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -564,7 +564,7 @@ watch(isDark, async () => {
 
   h4 {
     font-family: Inter;
-    font-size: 2.4rem;
+    font-size: 1.5rem;
     font-style: normal;
     font-weight: 800;
     line-height: normal;
@@ -572,7 +572,7 @@ watch(isDark, async () => {
 
   h5 {
     font-family: Inter;
-    font-size: 2rem;
+    font-size: 1.25rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -580,7 +580,7 @@ watch(isDark, async () => {
 
   h6 {
     font-family: Inter;
-    font-size: 1.6rem;
+    font-size: 1rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -589,92 +589,92 @@ watch(isDark, async () => {
   p {
     color: rgba(var(--v-theme-grey900), 0.8);
     font-family: Inter;
-    font-size: 1.4rem !important;
+    font-size: 0.875rem !important;
     font-style: normal;
     font-weight: 400 !important;
-    line-height: 2.4rem;
-    margin-bottom: 1rem;
+    line-height: 1.5rem;
+    margin-bottom: 0.625rem;
   }
 
   ul {
     color: rgba(var(--v-theme-grey900), 0.8);
     font-family: Inter;
-    font-size: 1.4rem;
+    font-size: 0.875rem;
     font-style: normal;
     font-weight: 400;
-    line-height: 2.4rem;
+    line-height: 1.5rem;
   }
   img {
-    border-radius: 2rem;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
+    border-radius: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.625rem;
     height: auto;
     max-width: 100%;
   }
 }
 @media (min-width: 960px) {
   #main-post-div {
-    margin-top: 6.4rem;
+    margin-top: 4rem;
   }
   #post-describe {
-    margin-bottom: 10rem !important;
+    margin-bottom: 6.25rem !important;
 
     h2 {
-      font-size: 4.4rem;
+      font-size: 2.75rem;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
-      margin-top: 2.4rem;
-      margin-bottom: 2.4rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
     }
 
     h3 {
-      font-size: 3.6rem;
+      font-size: 2.25rem;
       font-style: normal;
       font-weight: 500;
       line-height: normal;
     }
 
     h4 {
-      font-size: 3rem;
+      font-size: 1.875rem;
       font-style: normal;
       font-weight: 800;
       line-height: normal;
     }
 
     h5 {
-      font-size: 2.4rem;
+      font-size: 1.5rem;
       font-style: normal;
       font-weight: 500;
       line-height: normal;
     }
 
     h6 {
-      font-size: 2rem;
+      font-size: 1.25rem;
       font-style: normal;
       font-weight: 600;
       line-height: normal;
     }
 
     p {
-      font-size: 2rem !important;
+      font-size: 1.25rem !important;
       font-style: normal;
       font-weight: 400 !important;
-      line-height: 3.2rem;
-      margin-bottom: 1rem;
+      line-height: 2rem;
+      margin-bottom: 0.625rem;
     }
 
     ul {
       font-family: Inter;
-      font-size: 2rem;
+      font-size: 1.25rem;
       font-style: normal;
       font-weight: 400;
-      line-height: 3.2rem;
+      line-height: 2rem;
     }
     img {
-      border-radius: 2rem;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
+      border-radius: 1.25rem;
+      margin-top: 1.25rem;
+      margin-bottom: 0.625rem;
       height: auto;
       max-width: 100%;
     }
@@ -686,68 +686,68 @@ watch(isDark, async () => {
     height: calc(100% - 140px);
   }
   #post-describe {
-    margin-bottom: 6.4rem;
+    margin-bottom: 4rem;
     width: 98%;
     display: block;
-    margin: auto auto 6.8rem auto;
+    margin: auto auto 4.25rem auto;
 
     h2 {
       font-family: Inter;
-      font-size: 3rem;
+      font-size: 1.875rem;
       font-style: normal;
       font-weight: 700;
       line-height: normal;
-      margin-top: 2.4rem;
-      margin-bottom: 2.4rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
     }
 
     h3 {
       font-family: Inter;
-      font-size: 2.8rem;
+      font-size: 1.75rem;
       font-style: normal;
       font-weight: 500;
       line-height: normal;
     }
 
     h4 {
-      font-size: 2.6rem;
+      font-size: 1.625rem;
       font-style: normal;
       font-weight: 800;
       line-height: normal;
     }
 
     h5 {
-      font-size: 2rem;
+      font-size: 1.25rem;
       font-style: normal;
       font-weight: 500;
       line-height: normal;
     }
 
     h6 {
-      font-size: 1.6rem;
+      font-size: 1rem;
       font-style: normal;
       font-weight: 500;
       line-height: normal;
     }
 
     p {
-      font-size: 1.6rem !important;
+      font-size: 1rem !important;
       font-style: normal;
       font-weight: 400 !important;
-      line-height: 2.4rem;
-      margin-bottom: 1rem;
+      line-height: 1.5rem;
+      margin-bottom: 0.625rem;
     }
 
     ul {
-      font-size: 1.6rem;
+      font-size: 1rem;
       font-style: normal;
       font-weight: 400;
-      line-height: 2.4rem;
+      line-height: 1.5rem;
     }
     img {
-      border-radius: 2rem;
-      margin-top: 2rem;
-      margin-bottom: 1rem;
+      border-radius: 1.25rem;
+      margin-top: 1.25rem;
+      margin-bottom: 0.625rem;
       height: auto;
       max-width: 100%;
     }

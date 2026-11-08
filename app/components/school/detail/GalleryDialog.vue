@@ -8,7 +8,7 @@
     <v-card class="rounded-lg">
       <v-card-text class="py-6 py-md-8 px-6 px-md-8">
         <div class="d-flex align-center justify-space-between">
-          <div class="text-h3 font-weight-bold priamry-gray-700">
+          <div class="text-h4 font-weight-bold priamry-gray-700">
             School images
           </div>
           <v-btn
@@ -47,14 +47,14 @@
               <div class="text-center">
                 <v-icon
                   size="48"
-                  class="primary-gray-300 mb-10"
+                  class="text-grey300 mb-10"
                 >
                   md:panorama
                 </v-icon>
-                <p class="gtext-t4 primary-blue-500">
+                <p class="gtext-t4 text-blue500">
                   No image
                 </p>
-                <div class="mt-2 gtext-t6 primary-gray-400">
+                <div class="mt-2 gtext-t6 text-grey400">
                   Accepted formats: JPG, PNG, WebP
                 </div>
               </div>
@@ -76,20 +76,20 @@
                   v-show="!isDefaultImage && !loadingSetDefaultImage"
                   :model-value="isDefaultImage"
                   color="primary"
-                  class="text-h4"
+                  class="text-h6 font-weight-regular"
                   hide-details
                   false-icon="md:check_box_outline_blank"
                   true-icon="md:check_box"
                   @update:model-value="(val) => changeStatusDefaultImage(val)"
                 >
                   <template #label>
-                    <span class="text-h5 font-weight-bold text-no-wrap ml-1">Set as main Image</span>
+                    <span class="text-body-1 font-weight-bold text-no-wrap ml-1">Set as main Image</span>
                   </template>
                 </v-checkbox>
 
                 <v-chip
                   v-show="isDefaultImage"
-                  class="text-h6 font-weight-bold"
+                  class="text-caption font-weight-bold"
                   color="success"
                 >
                   Default image
@@ -100,13 +100,13 @@
               >
                 <span>
                   {{ mainImageInformation.index
-                  }}<span class="primary-gray-400">/{{
+                  }}<span class="text-grey400">/{{
                     images.length
                       + (croppedUploads ? croppedUploads.length : 0)
                   }}</span></span>
                 <v-chip
                   v-if="mainImageInformation.isPendingUpload"
-                  class="text-h6 font-weight-bold"
+                  class="text-caption font-weight-bold"
                   color="orange"
                 >
                   Pending upload
@@ -229,7 +229,7 @@
                   md:add
                 </v-icon>
               </v-btn>
-              <div class="mt-2 text-caption primary-gray-400 text-center">
+              <div class="mt-2 text-caption text-grey400 text-center">
                 JPG, PNG, WebP
               </div>
               <v-file-input
@@ -248,7 +248,7 @@
       <v-card-actions class="justify-center pb-6 mt-10">
         <div class="d-flex flex-column align-center w-100">
           <v-btn
-            class="primary black--text text-transform-none gtext-t4 font-weight-medium"
+            class="bg-primary text-none gtext-t4 font-weight-medium"
             rounded
             variant="flat"
             width="100%"

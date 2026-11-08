@@ -70,11 +70,11 @@
 
 .home-hero {
   --hero-base: var(--v-theme-secondary);
-  padding: 8.4rem 0 2.4rem;
+  padding: 5.25rem 0 1.5rem;
   color: rgb(var(--v-theme-white));
   text-align: center;
   background:
-    radial-gradient(60rem 42rem at 50% 45%, rgba(var(--v-theme-white), 0.1), transparent 72%),
+    radial-gradient(37.5rem 26.25rem at 50% 45%, rgba(var(--v-theme-white), 0.1), transparent 72%),
     rgb(var(--hero-base));
 }
 
@@ -94,36 +94,36 @@
 }
 
 .home-hero__title {
-  margin: 0 0 0.8rem;
-  font-size: clamp(2.6rem, 8.6vw, 3.2rem);
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.625rem, 8.6vw, 2rem);
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -0.03em;
 }
 
 .home-hero__lead {
-  max-width: 52rem;
+  max-width: 32.5rem;
   margin: 0 auto;
   color: rgb(var(--v-theme-onInverseSurfaceSubtle));
-  font-size: 1.6rem;
+  font-size: 1rem;
   line-height: 1.4;
 }
 
 .home-hero__figure {
   position: relative;
-  height: 18rem;
-  margin: 0.6rem 0 1.2rem;
+  height: 11.25rem;
+  margin: 0.375rem 0 0.75rem;
 
   img {
     position: relative;
     display: block;
     width: auto;
-    height: 18rem;
+    height: 11.25rem;
   }
 }
 
 .home-hero :deep(.v-chip) {
-  font-size: 1.3rem;
+  font-size: 0.8125rem;
 }
 
 .home-hero__tag {
@@ -136,8 +136,8 @@
 
 /* Below the desktop layout the tags tuck into the gaps around the bulb and the body. */
 .home-hero__tag--score {
-  top: 10.4rem;
-  right: calc(100% + 0.4rem);
+  top: 6.5rem;
+  right: calc(100% + 0.25rem);
   transform: rotate(-4deg);
 
   :deep(.v-chip__prepend) {
@@ -146,8 +146,8 @@
 }
 
 .home-hero__tag--advice {
-  top: 1.6rem;
-  left: calc(100% - 1rem);
+  top: 1rem;
+  left: calc(100% - 0.625rem);
   transform: rotate(3deg);
 
   :deep(.v-chip__prepend) {
@@ -156,8 +156,8 @@
 }
 
 .home-hero__tag--rank {
-  top: 12.4rem;
-  left: calc(100% - 0.2rem);
+  top: 7.75rem;
+  left: calc(100% - 0.125rem);
   transform: rotate(-2deg);
 
   :deep(.v-chip__prepend) {
@@ -167,7 +167,7 @@
 
 @keyframes home-hero-float {
   50% {
-    translate: 0 -0.5rem;
+    translate: 0 -0.3125rem;
   }
 }
 
@@ -189,10 +189,10 @@
 @media #{map.get(vuetify.$display-breakpoints, 'sm-and-down')} {
   .home-hero__figure::before {
     position: absolute;
-    top: -5rem;
+    top: -3.125rem;
     left: 50%;
-    width: 20rem;
-    height: 20rem;
+    width: 12.5rem;
+    height: 12.5rem;
     background: radial-gradient(closest-side, rgba(var(--v-theme-primary), 0.16), transparent);
     content: '';
     transform: translateX(-50%);
@@ -214,36 +214,36 @@
   }
 
   .home-hero__text {
-    margin-bottom: 1.2rem;
+    margin-bottom: 0.75rem;
   }
 }
 
 @media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
   .home-hero__title {
-    margin: 1.4rem 0 1.2rem;
-    font-size: 4rem;
+    margin: 0.875rem 0 0.75rem;
+    font-size: 2.5rem;
   }
 }
 
 @media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
   .home-hero {
-    padding: 10rem 0 5.6rem;
+    padding: 6.25rem 0 3.5rem;
     text-align: left;
     background:
-      radial-gradient(90rem 62rem at 78% 42%, rgba(var(--v-theme-white), 0.1), transparent 72%),
+      radial-gradient(56.25rem 38.75rem at 78% 42%, rgba(var(--v-theme-white), 0.1), transparent 72%),
       rgb(var(--hero-base));
   }
 
   .home-hero__grid {
-    grid-template-columns: minmax(0, 78rem) auto;
+    grid-template-columns: minmax(0, 48.75rem) auto;
     grid-template-areas:
       'text figure'
       'finder figure';
     justify-content: space-between;
     justify-items: start;
     align-items: center;
-    column-gap: 4rem;
-    row-gap: 2.8rem;
+    column-gap: 2.5rem;
+    row-gap: 1.75rem;
   }
 
   .home-hero__text {
@@ -255,19 +255,19 @@
   }
 
   .home-hero__title {
-    margin: 2rem 0 1.8rem;
-    font-size: 5.6rem;
+    margin: 1.25rem 0 1.125rem;
+    font-size: 3.5rem;
   }
 
   .home-hero__lead {
     margin: 0;
-    font-size: 1.9rem;
+    font-size: 1.1875rem;
   }
 
   .home-hero__figure {
     grid-area: figure;
-    height: 50rem;
-    margin: 0 3rem 0 0;
+    height: 31.25rem;
+    margin: 0 1.875rem 0 0;
 
     img {
       height: 100%;
@@ -275,24 +275,25 @@
   }
 
   .home-hero :deep(.v-chip) {
-    font-size: 1.4rem;
+    font-size: 0.875rem;
   }
 
   .home-hero__tag--score {
-    top: 6rem;
+    top: 3.75rem;
     right: auto;
-    left: -9rem;
+    left: -5.625rem;
   }
 
   .home-hero__tag--advice {
-    top: 20rem;
-    left: -15rem;
+    top: 12.5rem;
+    left: -9.375rem;
   }
 
+  // Right of the backpack: lower down it covered the shoes, and on the left it ran into the exam finder.
   .home-hero__tag--rank {
-    top: 39rem;
-    right: calc(100% - 14.6rem);
-    left: auto;
+    top: 16.25rem;
+    right: auto;
+    left: calc(100% - 4.5rem);
   }
 }
 </style>

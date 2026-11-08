@@ -249,7 +249,7 @@ function formatTime(date: Date) {
                       :class="message.role === 'user' ? 'align-end' : ''"
                     >
                       <div
-                        class="px-4 py-3 text-body-2 font-weight-medium rounded-xl font-size-12"
+                        class="px-4 py-3 text-caption font-weight-medium rounded-xl font-size-12"
                         :class="[
                           message.role === 'user'
                             ? 'bg-primary text-grey-darken-4 rounded-be-sm'
@@ -363,7 +363,7 @@ function formatTime(date: Date) {
 }
 
 .header-container {
-  height: 24rem;
+  height: 15rem;
 }
 
 .bg-header-dark {

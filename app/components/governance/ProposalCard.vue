@@ -36,7 +36,7 @@
         color="primary"
         variant="outlined"
         density="comfortable"
-        class="text-subtitle-1 font-weight-bold"
+        class="text-caption font-weight-bold"
       >
         {{ proposal.account.cate }}
       </v-chip>
@@ -114,7 +114,7 @@
         >
           <v-row class="d-flex align-center">
             <v-col cols="10">
-              <span class="text-h4">Delete Proposal</span>
+              <span class="text-h6 font-weight-regular">Delete Proposal</span>
             </v-col>
             <v-col
               cols="2"
@@ -129,7 +129,7 @@
               </v-icon>
             </v-col>
           </v-row>
-          <span class="text-h5 mt-6">Are you sure you want to delete this proposal? This action cannot be
+          <span class="text-body-1 mt-6">Are you sure you want to delete this proposal? This action cannot be
             undone.</span>
           <div class="w-100 mt-4 d-flex ga-2 align-center justify-center">
             <v-btn
@@ -138,7 +138,7 @@
               variant="text"
               rounded="lg"
               max-width="200"
-              class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+              class="w-50 font-weight-bold text-body-1 mt-4 mx-auto"
               @click="closeModal"
             >
               Cancel
@@ -148,7 +148,7 @@
               flat
               rounded="lg"
               max-width="200"
-              class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+              class="w-50 font-weight-bold text-body-1 mt-4 mx-auto"
               :loading="loadingDeleteProposal"
               @click="confirmDelete"
             >

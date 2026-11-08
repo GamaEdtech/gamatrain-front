@@ -1,10 +1,10 @@
 <template>
   <div class="w-100 d-flex flex-column pa-4">
     <div class="w-100 d-flex flex-column align-start">
-      <span class="text-h5 font-weight-bold text-grey700 mb-4">Do you create Ticket?</span>
+      <span class="text-body-1 font-weight-bold text-grey700 mb-4">Do you create Ticket?</span>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           From
         </div>
         <v-select
@@ -21,7 +21,7 @@
         />
       </div>
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Subject
         </div>
         <v-text-field
@@ -38,7 +38,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Receiver Name
         </div>
         <v-text-field
@@ -55,7 +55,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Receiver Email
         </div>
         <v-text-field
@@ -72,7 +72,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Body
         </div>
         <common-rich-editor
@@ -90,7 +90,7 @@
       variant="outlined"
       height="40"
       width="200"
-      class="text-h5 mt-8 mx-auto"
+      class="text-body-1 mt-8 mx-auto"
       :disabled="!dataValid || loadingEmailList"
       :loading="loading"
       flat

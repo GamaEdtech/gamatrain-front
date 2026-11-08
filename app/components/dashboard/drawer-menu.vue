@@ -42,14 +42,14 @@
             color="grey300"
             size="24"
           >
-            <span class="text-h6 text-grey700 font-weight-bold">{{
+            <span class="text-caption text-grey700 font-weight-bold">{{
               user?.firstName ? user.firstName[0].toUpperCase() : "U"
             }}</span>
           </v-avatar>
         </template>
 
         <v-list-item-title
-          class="text-h5 font-weight-bold primary-gray-500 text-item-height"
+          class="text-body-1 font-weight-bold primary-gray-500 text-item-height"
         >
           {{ user ? user.firstName + " " + user.lastName : "User" }}
         </v-list-item-title>
@@ -83,12 +83,12 @@
             </template>
 
             <v-list-item-title
-              class="text-h5 font-medium primary-gray-500 text-item-height"
+              class="text-body-1 font-medium primary-gray-500 text-item-height"
             >
               {{ item.title }}
               <!-- <div
               v-if="item.value == `messages`"
-              class="badge-messages d-flex align-center justify-center rounded-circle text-white text-h5 font-weight-bold position-absolute"
+              class="badge-messages d-flex align-center justify-center rounded-circle text-white text-body-1 font-weight-bold position-absolute"
             >
               4
             </div> -->
@@ -124,7 +124,7 @@
                 </template>
 
                 <v-list-item-title
-                  class="text-h5 font-medium primary-gray-500 text-item-height"
+                  class="text-body-1 font-medium primary-gray-500 text-item-height"
                 >
                   {{ item.title }}
                 </v-list-item-title>
@@ -155,7 +155,7 @@
                 </v-icon>
               </template>
               <v-list-item-title
-                class="text-h5 font-medium primary-gray-600 text-item-height"
+                class="text-body-1 font-medium primary-gray-600 text-item-height"
               >
                 {{ subMenuItem.title }}
               </v-list-item-title>
@@ -185,7 +185,7 @@
           </template>
 
           <v-list-item-title
-            class="text-h5 font-medium primary-gray-500 text-item-height"
+            class="text-body-1 font-medium primary-gray-500 text-item-height"
           >
             {{ item.title }}
           </v-list-item-title>
@@ -209,7 +209,7 @@
         </template>
 
         <v-list-item-title
-          class="text-h5 font-medium primary-gray-500 text-item-height"
+          class="text-body-1 font-medium primary-gray-500 text-item-height"
         >
           Logout
         </v-list-item-title>
@@ -236,13 +236,13 @@
         v-if="!drawerRail"
         class="w-100 buy-more-div d-flex flex-column justify-center align-center rounded-lg mt-10 ga-2"
       >
-        <span class="text-h5 font-weight-bold primary-gray-500">Buy More Storage</span>
+        <span class="text-body-1 font-weight-bold primary-gray-500">Buy More Storage</span>
         <v-btn
           color="#2E90FA"
           rounded="xl"
           width="120"
           height="40"
-          class="text-h6 text-white"
+          class="text-caption font-weight-medium text-white"
           flat
         >
           Upgrade Pro
@@ -492,7 +492,7 @@ const closeNavigation = () => {
 }
 @media (min-width: 1280px) {
   .navigation-height-top {
-    top: 6.4rem !important;
+    top: 4rem !important;
     height: 100% !important;
   }
 }

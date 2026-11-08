@@ -34,7 +34,7 @@
             <p>
               <NuxtLink :to="`/direct/${message.username}`">
                 <strong
-                  class="text-h6"
+                  class="text-caption font-weight-medium"
                   v-html="message.name"
                 />
               </NuxtLink>
@@ -100,7 +100,7 @@
                           size="small"
                         >
                           <v-card color="teal">
-                            <v-card-text class="text-white text-h6">
+                            <v-card-text class="text-white text-caption font-weight-medium">
                               Hi how are you>
                             </v-card-text>
                             <v-card-actions class="text-white">
@@ -110,7 +110,7 @@
                         </v-timeline-item>
                         <v-timeline-item size="small">
                           <v-card>
-                            <v-card-text class="text-h6">
+                            <v-card-text class="text-caption font-weight-medium">
                               Thanks. fine u?
                             </v-card-text>
                             <v-card-actions> 2022 Oct </v-card-actions>
@@ -180,7 +180,7 @@
       max-width="340"
     >
       <v-card>
-        <v-card-title class="text-h5">
+        <v-card-title class="text-body-1">
           Are you sure you want to add to black list {{ message.name }}?
         </v-card-title>
         <v-card-actions>

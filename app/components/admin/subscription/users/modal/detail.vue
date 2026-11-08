@@ -36,7 +36,7 @@
         class="w-100 d-flex flex-column ga-2 mt-2"
       >
         <v-divider class="w-100" />
-        <span class="text-h5 font-weight-bold text-grey700">Quota</span>
+        <span class="text-body-1 font-weight-bold text-grey700">Quota</span>
 
         <div
           v-for="(quota, index) in quotaStatuses"
@@ -44,8 +44,8 @@
           class="w-100 d-flex flex-column ga-1 border rounded-lg pa-2"
         >
           <div class="w-100 d-flex align-center justify-space-between ga-2">
-            <span class="text-h6 font-weight-bold text-grey700">{{ quota.title }}</span>
-            <span class="text-h6 text-grey600 text-no-wrap">{{ quota.usageLabel }}</span>
+            <span class="text-caption font-weight-bold text-grey700">{{ quota.title }}</span>
+            <span class="text-caption font-weight-medium text-grey600 text-no-wrap">{{ quota.usageLabel }}</span>
           </div>
 
           <v-progress-linear

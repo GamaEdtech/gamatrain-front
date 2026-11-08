@@ -472,7 +472,7 @@ if (initialData.value && initialData.value.succeeded) {
 
 <style scoped>
 #leader-board-page-header {
-  height: 36rem;
+  height: 22.5rem;
   background-color: rgb(var(--v-theme-inverseSurfaceStrong));
   position: relative;
 
@@ -483,7 +483,7 @@ if (initialData.value && initialData.value.succeeded) {
     margin: auto;
     left: 0;
     right: 0;
-    top: 9.7rem;
+    top: 6.0625rem;
     text-align: center;
     height: 110px !important;
     display: flex;
@@ -493,7 +493,7 @@ if (initialData.value && initialData.value.succeeded) {
 
     .gama-text-h1 {
       color: white;
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.5rem;
     }
 
     .gama-text-subtitle2 {
@@ -509,7 +509,7 @@ if (initialData.value && initialData.value.succeeded) {
   margin: auto;
   left: 0;
   right: 0;
-  top: 17rem;
+  top: 10.625rem;
   text-align: center;
   height: 162.25px;
   width: 349px;
@@ -557,8 +557,8 @@ if (initialData.value && initialData.value.succeeded) {
 :deep(.v-data-table__td) {
   color: rgb(var(--v-theme-grey700)) !important;
   font-family: Inter, sans-serif !important;
-  font-size: 1.4rem !important;
-  line-height: 2.4rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5rem !important;
   font-weight: 500;
   white-space: nowrap;
 }

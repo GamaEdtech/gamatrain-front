@@ -62,7 +62,7 @@
 
       <template #[`item.isDebit`]="{ item }">
         <div
-          class="text-grey600 text-h5 d-flex justify-center align-end font-weight-bold ga-1"
+          class="text-grey600 text-body-1 d-flex justify-center align-end font-weight-bold ga-1"
         >
           <v-icon
             :class="`${item.isDebit ? `reverse-icon` : ``}`"
@@ -79,7 +79,7 @@
 
       <template #[`item.description`]="{ item }">
         <div
-          class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold"
+          class="text-grey600 text-body-1 d-flex justify-start align-center font-weight-bold"
         >
           <NuxtLink
             v-if="item.transactionType === 'DownloadPastPaper'"

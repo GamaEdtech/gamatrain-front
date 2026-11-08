@@ -18,10 +18,10 @@
     >
       md:lock_outline
     </v-icon>
-    <p class="text-h4 font-weight-bold mb-0">
+    <p class="text-h6 font-weight-bold mb-0">
       Sign in to start this exam
     </p>
-    <p class="text-h6 text-grey600 mb-0">
+    <p class="text-caption font-weight-medium text-grey600 mb-0">
       Your answers and result are saved to your account.
     </p>
     <div class="d-flex align-center justify-center ga-3 flex-wrap">
@@ -31,7 +31,7 @@
         color="grey500"
         height="40"
         min-width="110"
-        class="text-h5 font-weight-bold"
+        class="text-body-1 font-weight-bold"
         @click="router.back()"
       >
         Back
@@ -41,7 +41,7 @@
         color="primary"
         height="40"
         min-width="110"
-        class="text-h5 font-weight-bold"
+        class="text-body-1 font-weight-bold"
         flat
         @click="openSignIn"
       >
@@ -53,7 +53,7 @@
     v-else-if="fetchError"
     class="text-center mt-20"
   >
-    <p class="text-h5">
+    <p class="text-body-1">
       An error occurred
     </p>
     <p>{{ fetchError.message }}</p>
@@ -82,9 +82,9 @@
               :color="timerColor"
             />
             <div class="d-flex flex-column">
-              <span class="text-h6 text-grey500">Time left</span>
+              <span class="text-caption font-weight-medium text-grey500">Time left</span>
               <span
-                :class="['text-h4 font-weight-bold', `text-${timerColor}`]"
+                :class="['text-h6 font-weight-bold', `text-${timerColor}`]"
                 role="timer"
               >
                 {{ hhmmss(examStats.remainTime) }}
@@ -99,7 +99,7 @@
               variant="tonal"
               color="grey700"
               rounded="pill"
-              class="text-h5"
+              class="text-body-1"
               prepend-icon="md:radio_button_unchecked"
               :disabled="!unansweredCount"
               :aria-label="`Go to the next unanswered question, ${unansweredCount} left`"
@@ -112,7 +112,7 @@
               :variant="examStats.pinQuestionsArr.length ? 'flat' : 'tonal'"
               :color="examStats.pinQuestionsArr.length ? 'primary' : 'grey700'"
               rounded="pill"
-              :class="['text-h5', { 'text-grey800': examStats.pinQuestionsArr.length }]"
+              :class="['text-body-1', { 'text-grey800': examStats.pinQuestionsArr.length }]"
               prepend-icon="md:push_pin"
               :disabled="!examStats.pinQuestionsArr.length"
               :aria-label="`Go to the next pinned question, ${examStats.pinQuestionsArr.length} pinned`"
@@ -135,7 +135,7 @@
 
       <!-- Main Content -->
       <v-card class="exam-card test-list mb-4 mt-4">
-        <v-card-title class="text-h4 font-weight-bold text-wrap py-6 mt-6 px-4 px-sm-6 px-md-8">
+        <v-card-title class="text-h6 font-weight-bold text-wrap py-6 mt-6 px-4 px-sm-6 px-md-8">
           {{ contentData.exam?.title || "" }}
         </v-card-title>
         <v-card-text class="px-4 px-sm-6 px-md-8">
@@ -164,7 +164,7 @@
             v-else
             class="text-center pa-10"
           >
-            <p class="text-h5">
+            <p class="text-body-1">
               Oops! No questions found for this exam.
             </p>
           </div>
@@ -180,7 +180,7 @@
                 :loading="submit_loading"
                 size="large"
                 color="primary"
-                class="text-h5"
+                class="text-body-1"
                 block
                 flat
                 @click="endExam()"
@@ -196,7 +196,7 @@
                 size="large"
                 variant="outlined"
                 color="error"
-                class="text-h5"
+                class="text-body-1"
                 to="/search?type=quizhub"
                 block
               >

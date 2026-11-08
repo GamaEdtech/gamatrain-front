@@ -19,7 +19,7 @@
       </v-alert>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           <v-badge
             floating
             location="top right"
@@ -60,7 +60,7 @@
         :key="index"
         class="w-100 d-flex flex-column align-start justify-start ga-1"
       >
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           <v-badge
             floating
             location="top right"
@@ -114,7 +114,7 @@
     <div class="w-100 d-flex align-center justify-center ga-3 mt-2">
       <v-btn
         variant="text"
-        class="text-h5"
+        class="text-body-1"
         @click="cancel"
       >
         Cancel
@@ -125,7 +125,7 @@
         rounded="xl"
         height="40"
         width="200"
-        class="text-h5"
+        class="text-body-1"
         :disabled="!isFormValid"
         :loading="loadingFindSchool"
         @click="submitForm"

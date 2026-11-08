@@ -17,19 +17,19 @@
     >{{ badge }}</span>
 
     <span class="flex-grow-1 d-flex flex-column overflow-hidden">
-      <span class="text-h5 font-weight-heavy text-brandNavy">{{ label }}</span>
+      <span class="text-body-1 font-weight-heavy text-brandNavy">{{ label }}</span>
 
       <span
         v-if="owned"
-        class="text-subtitle-1 font-weight-heavy text-success500"
+        class="text-caption font-weight-heavy text-success500"
       >Owned</span>
       <span
         v-else-if="points === 0"
-        class="text-subtitle-1 font-weight-heavy text-success500"
+        class="text-caption font-weight-heavy text-success500"
       >Free</span>
       <span
         v-else-if="points"
-        class="d-flex align-center ga-1 text-subtitle-1 font-weight-heavy text-brandNavy text-no-wrap"
+        class="d-flex align-center ga-1 text-caption font-weight-heavy text-brandNavy text-no-wrap"
       >
         <v-icon
           size="14"
@@ -40,7 +40,7 @@
       </span>
 
       <span
-        class="text-h6"
+        class="text-caption font-weight-medium"
         :class="status?.color ?? 'text-grey500'"
         aria-live="polite"
       >{{ status?.text ?? summary }}</span>
@@ -65,7 +65,7 @@
         size="26"
         width="2"
       >
-        <span class="text-subtitle-1 font-weight-heavy">{{ countdown.secondsLeft }}</span>
+        <span class="text-caption font-weight-heavy">{{ countdown.secondsLeft }}</span>
       </v-progress-circular>
       <v-icon
         v-else
@@ -130,7 +130,7 @@ const ariaLabel = computed(() => {
   flex: none;
   width: 36px;
   height: 42px;
-  font-size: 0.95rem;
+  font-size: 0.59375rem;
 }
 .file-icon::before {
   content: "";

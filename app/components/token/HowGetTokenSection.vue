@@ -2,12 +2,12 @@
   <div>
     <section class="can-get-section mt-10">
       <v-container>
-        <div class="d-flex justify-content-center mb-9">
+        <div class="d-flex justify-center mb-9">
           <h2 class="can-get-title">
             What Can You Do With $GET?
           </h2>
         </div>
-        <v-row class="justify-content-center align-center can-get-row">
+        <v-row class="justify-center align-center can-get-row">
           <v-col
             cols="12"
             sm="8"
@@ -56,7 +56,7 @@
   max-width: 1200px;
   margin: 0 auto;
   background: rgb(var(--v-theme-surface));
-  padding-bottom: 2.5rem;
+  padding-bottom: 1.5625rem;
 }
 
 .can-get-title {
@@ -64,13 +64,13 @@
   font-weight: 800;
   color: rgb(var(--v-theme-grey900));
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .can-get-desc-label {
   font-size: 16px;
   color: rgb(var(--v-theme-grey900));
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
   font-weight: 500;
 }
 
@@ -81,9 +81,9 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 1.1rem;
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  gap: 0.6875rem;
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
 }
 
 .can-get-list li {
@@ -94,7 +94,7 @@
 
 .can-get-footnote {
   color: rgb(var(--v-theme-grey900));
-  margin-top: 2.5rem;
+  margin-top: 1.5625rem;
   text-align: left;
   font-size: 16px;
   font-weight: 400;
@@ -105,7 +105,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
   width: 100%;
 }
 
@@ -134,7 +134,7 @@
 
   .can-get-img-col {
     order: -1; /* Move image to top */
-    margin-bottom: 3rem;
+    margin-bottom: 1.875rem;
   }
 
   .can-get-img {
@@ -150,23 +150,23 @@
 /* iPad mini specific styles */
 @media (min-width: 481px) and (max-width: 768px) {
   .can-get-section {
-    padding: 2rem 2rem 3rem 2rem;
+    padding: 1.25rem 1.25rem 1.875rem 1.25rem;
   }
 
   .can-get-title {
     font-size: 36px;
-    margin-bottom: 4rem;
+    margin-bottom: 2.5rem;
   }
 
   .can-get-row {
     flex-direction: row !important;
-    gap: 2rem;
+    gap: 1.25rem;
   }
 
   .can-get-desc-col {
     order: 1;
     flex: 1;
-    padding-right: 1rem;
+    padding-right: 0.625rem;
   }
 
   .can-get-img-col {
@@ -177,13 +177,13 @@
 
   .can-get-desc-label {
     font-size: 20px;
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
     text-align: left;
   }
 
   .can-get-list {
-    gap: 1.2rem;
-    margin: 0.5rem 0 1.5rem 1.5rem;
+    gap: 0.75rem;
+    margin: 0.3125rem 0 0.9375rem 0.9375rem;
     text-align: left;
   }
 
@@ -194,7 +194,7 @@
 
   .can-get-footnote {
     font-size: 18px;
-    margin-top: 2rem;
+    margin-top: 1.25rem;
     line-height: 1.6;
     padding: 0;
     text-align: left;
@@ -210,7 +210,7 @@
 @media (max-width: 600px) {
   .can-get-section {
     width: 100%;
-    padding: 0 1.5rem 1.5rem 1.5rem;
+    padding: 0 0.9375rem 0.9375rem 0.9375rem;
   }
 
   .can-get-desc-block {
@@ -224,12 +224,12 @@
 
   .can-get-desc-label {
     font-size: 18px;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5625rem;
   }
 
   .can-get-list {
-    gap: 0.8rem;
-    margin: 0.5rem 0 1rem 1.5rem;
+    gap: 0.5rem;
+    margin: 0.3125rem 0 0.625rem 0.9375rem;
   }
 
   .can-get-list li {
@@ -239,12 +239,12 @@
 
   .can-get-footnote {
     font-size: 16px;
-    margin-top: 1.5rem;
-    margin-bottom: 2rem;
+    margin-top: 0.9375rem;
+    margin-bottom: 1.25rem;
     line-height: 1.7;
   }
   .can-get-img-col {
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
   }
 
   .can-get-img {
@@ -254,7 +254,7 @@
 
 @media (max-width: 400px) {
   .can-get-section {
-    padding: 0 1.5rem 1rem 1.5rem;
+    padding: 0 0.9375rem 0.625rem 0.9375rem;
   }
 
   .can-get-img {
@@ -262,29 +262,29 @@
   }
 
   .can-get-list {
-    margin-left: 1.25rem;
+    margin-left: 0.78125rem;
   }
 }
 
 @media (min-width: 1200px) {
   .can-get-title {
-    font-size: 4rem;
+    font-size: 2.5rem;
     color: rgb(var(--v-theme-grey900));
     font-weight: 800;
   }
   .can-get-desc-label {
-    font-size: 2.3rem;
+    font-size: 1.4375rem;
     text-align: left;
   }
   .can-get-list {
     list-style-position: inside;
   }
   .can-get-list li {
-    font-size: 2.3rem;
-    padding-left: 4rem;
+    font-size: 1.4375rem;
+    padding-left: 2.5rem;
   }
   .can-get-footnote {
-    font-size: 2.3rem;
+    font-size: 1.4375rem;
   }
 }
 </style>

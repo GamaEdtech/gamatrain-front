@@ -12,7 +12,7 @@
           width="100"
           height="100"
         />
-        <h1 class="text-h4 text-grey900 font-weight-bold mt-4">
+        <h1 class="text-h6 text-grey900 font-weight-bold mt-4">
           Admin Login
         </h1>
       </div>
@@ -21,7 +21,7 @@
         v-model="isFormValid"
         @submit.prevent="submit"
       >
-        <div class="text-h6 text-grey700 font-weight-medium mb-1">
+        <div class="text-caption text-grey700 font-weight-medium mb-1">
           Email
         </div>
         <v-text-field
@@ -38,7 +38,7 @@
           class="mb-6"
         />
 
-        <div class="text-h6 text-grey700 font-weight-medium mb-1">
+        <div class="text-caption text-grey700 font-weight-medium mb-1">
           Password
         </div>
         <v-text-field
@@ -63,7 +63,7 @@
           block
           height="42"
           color="primary"
-          class="text-h5 font-weight-semibold"
+          class="text-body-1 font-weight-semibold"
           :loading="loading"
           :disabled="!isFormValid"
           type="submit"

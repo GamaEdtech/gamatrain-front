@@ -2,7 +2,7 @@
   <div
     class="w-100 d-flex flex-column pa-6 ga-4 bg-surface"
   >
-    <span class="text-h4 text-sm-h3 font-weight-bold text-grey700">Registered content</span>
+    <span class="text-h6 text-sm-h4 font-weight-bold text-grey700">Registered content</span>
     <div class="btn-filter-container d-flex align-start justify-start ga-1 bg-grey50 pa-2 rounded-pill overflow-x-auto">
       <v-btn
         v-for="type in typeList"
@@ -13,7 +13,7 @@
         height="40"
         @click="changeFilterType(type)"
       >
-        <span :class="`${type == typeSelect ? `text-grey900 font-weight-bold`:`text-grey500 font-weight-regular`} text-h6 text-sm-h5`">{{ type }}</span>
+        <span :class="`${type == typeSelect ? `text-grey900 font-weight-bold`:`text-grey500 font-weight-regular`} text-caption text-sm-body-1`">{{ type }}</span>
       </v-btn>
     </div>
     <div class="w-100 d-flex">

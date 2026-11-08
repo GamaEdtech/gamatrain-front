@@ -11,9 +11,9 @@
           :image="contentData?.avatar || '/images/member/avatar.svg'"
           size="44"
         />
-        <div class="text-h5 text-grey600">
+        <div class="text-body-1 text-grey600">
           Uploaded by <b class="text-grey900">{{ authorName }}</b>
-          <p class="text-h6 text-grey500">
+          <p class="text-caption font-weight-medium text-grey500">
             <template v-if="contentData?.ownerIdentity">
               {{ contentData.ownerIdentity }} ·
             </template>
@@ -26,7 +26,7 @@
 
     <div
       v-if="contentData?.description"
-      class="description text-h5 text-grey700 mt-4 position-relative"
+      class="description text-body-1 text-grey700 mt-4 position-relative"
       :class="seeCompleteDescription ? 'description--open' : 'description--closed'"
     >
       <div
@@ -41,7 +41,7 @@
     <button
       v-if="hasOverflow"
       type="button"
-      class="pa-0 bg-transparent border-0 text-left cursor-pointer text-h5 d-flex align-center ga-1 mt-1"
+      class="pa-0 bg-transparent border-0 text-left cursor-pointer text-body-1 d-flex align-center ga-1 mt-1"
       :aria-expanded="seeCompleteDescription"
       @click="seeCompleteDescription = !seeCompleteDescription"
     >

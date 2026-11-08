@@ -11,7 +11,7 @@
     >
       <v-row>
         <v-col cols="6">
-          <span class="text-h3">{{ title }}</span>
+          <span class="text-h4">{{ title }}</span>
         </v-col>
         <v-col
           cols="6"

@@ -12,7 +12,7 @@
     >
       <v-row class="d-flex align-center">
         <v-col cols="10">
-          <span class="text-h4">Withdraw</span>
+          <span class="text-h6 font-weight-regular">Withdraw</span>
         </v-col>
         <v-col
           cols="2"
@@ -29,13 +29,13 @@
       </v-row>
 
       <template v-if="step == 1">
-        <span class="w-100 text-h5 text-start mt-4">
+        <span class="w-100 text-body-1 text-start mt-4">
           Enter the amount you want to withdraw from the account.
         </span>
 
         <div class="w-100 d-flex flex-wrap align-start justify-start mt-6">
           <div class="w-100 d-flex align-center justify-start mb-1">
-            <span class="text-h6 text-grey400">Your Balance :<span class="text-grey600 font-weight-bold">{{
+            <span class="text-caption font-weight-medium text-grey400">Your Balance :<span class="text-grey600 font-weight-bold">{{
               Math.floor(userBalance) / 1000000
             }}</span>
 
@@ -73,7 +73,7 @@
               max-height="26"
               rounded="pill"
               variant="tonal"
-              class="text-h5 font-weight-bold"
+              class="text-body-1 font-weight-bold"
               @click="selectMaximumBalance"
             >
               Max
@@ -85,7 +85,7 @@
               max-height="26"
               rounded="pill"
               variant="tonal"
-              class="text-h5 font-weight-bold"
+              class="text-body-1 font-weight-bold"
               @click="selectHalfBalance"
             >
               Half
@@ -100,7 +100,7 @@
             flat
             rounded="lg"
             max-width="200"
-            class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+            class="w-50 font-weight-bold text-body-1 mt-4 mx-auto"
             @click="goToSecondStep"
           >
             Next Step
@@ -109,8 +109,8 @@
       </template>
 
       <template v-if="step == 2">
-        <span class="text-h4 font-weight-bold w-100 text-center mt-4">Connect Your Wallet</span>
-        <span class="text-h5 font-weight-normal w-100 text-center mt-4">Amount to withdraw : <span class="font-weight-bold">{{ Number(withdrawValue) }}</span></span>
+        <span class="text-h6 font-weight-bold w-100 text-center mt-4">Connect Your Wallet</span>
+        <span class="text-body-1 font-weight-normal w-100 text-center mt-4">Amount to withdraw : <span class="font-weight-bold">{{ Number(withdrawValue) }}</span></span>
         <div class="wallet-button-container d-flex w-100 align-center justify-center mt-6">
           <ClientOnly>
             <WalletMultiButton v-if="walletInitialized" />
@@ -131,7 +131,7 @@
             flat
             rounded="lg"
             max-width="200"
-            class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+            class="w-50 font-weight-bold text-body-1 mt-4 mx-auto"
             @click="confirmWithdraw"
           >
             Confirm

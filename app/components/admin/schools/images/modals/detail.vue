@@ -45,7 +45,7 @@
     </template>
 
     <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-      <div class="text-h6 text-grey700 ml-2">
+      <div class="text-caption font-weight-medium text-grey700 ml-2">
         You must write a message to reject.
       </div>
       <v-text-field
@@ -66,7 +66,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 w-50"
+        class="text-body-1 w-50"
         :disabled="loadingGetItemById || !image"
         :loading="loadingConfirm || loadingReject"
         flat
@@ -79,7 +79,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 w-50"
+        class="text-body-1 w-50"
         :disabled="loadingGetItemById || !image || !rejectComment"
         :loading="loadingConfirm || loadingReject"
         flat

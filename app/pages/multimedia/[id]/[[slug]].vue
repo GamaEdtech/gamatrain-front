@@ -13,7 +13,7 @@
       <v-icon color="primary">
         md:chevron_backward
       </v-icon>
-      <h1 class="text-h4 font-weight-bold">
+      <h1 class="text-h6 font-weight-bold">
         {{ contentData.title }}
       </h1>
       <v-icon color="primary">
@@ -73,7 +73,7 @@
     />
 
     <span
-      class="d-flex align-center ga-1 text-h5 cursor-pointer text-lightError mt-4"
+      class="d-flex align-center ga-1 text-body-1 cursor-pointer text-lightError mt-4"
       @click="openCrashReport = true"
     >
       <v-icon

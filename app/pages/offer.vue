@@ -46,10 +46,10 @@
             Saved for you
           </v-chip>
 
-          <h1 class="text-h3 text-md-h2 font-weight-bold text-grey900 mb-3">
+          <h1 class="text-h4 text-md-h4 font-weight-bold text-grey900 mb-3">
             Your {{ offer.planTitle }} plan is still waiting
           </h1>
-          <p class="text-h5 text-grey700 font-weight-regular mb-8">
+          <p class="text-body-1 text-grey700 font-weight-regular mb-8">
             You started subscribing but didn't finish. Complete it now and get
             <b class="text-grey900">{{ offer.discountPercent }}% off</b> your first payment.
           </p>
@@ -58,7 +58,7 @@
             v-if="featureLines.length"
             class="d-none d-md-block mb-8"
           >
-            <div class="text-h5 font-weight-bold text-grey800 mb-3">
+            <div class="text-body-1 font-weight-bold text-grey800 mb-3">
               What's included
             </div>
             <div
@@ -73,7 +73,7 @@
               >
                 md:check_circle
               </v-icon>
-              <span class="text-h5 text-grey700">{{ line }}</span>
+              <span class="text-body-1 text-grey700">{{ line }}</span>
             </div>
           </div>
 
@@ -89,7 +89,7 @@
               >
                 {{ item.icon }}
               </v-icon>
-              <span class="text-h5">{{ item.text }}</span>
+              <span class="text-body-1">{{ item.text }}</span>
             </div>
           </div>
         </v-col>
@@ -100,22 +100,22 @@
           class="order-2"
         >
           <div class="summary-card rounded-xl bg-surface pa-5 pa-sm-7">
-            <div class="discount-ribbon text-h6 font-weight-bold">
+            <div class="discount-ribbon text-caption font-weight-bold">
               -{{ offer.discountPercent }}%
             </div>
 
-            <div class="text-h6 text-grey400 font-weight-bold text-uppercase mb-1">
+            <div class="text-caption text-grey400 font-weight-bold text-uppercase mb-1">
               {{ intervalLabel }} plan
             </div>
-            <div class="text-h4 font-weight-bold text-grey900 mb-5">
+            <div class="text-h6 font-weight-bold text-grey900 mb-5">
               {{ offer.planTitle }}
             </div>
 
             <div class="d-flex align-end flex-wrap ga-2">
               <span class="price-now font-weight-bold text-grey900">{{ money(offer.discountedPrice) }}</span>
-              <span class="text-h5 text-grey400 text-decoration-line-through mb-2">{{ money(offer.price) }}</span>
+              <span class="text-body-1 text-grey400 text-decoration-line-through mb-2">{{ money(offer.price) }}</span>
             </div>
-            <div class="text-h5 text-grey700 mb-3">
+            <div class="text-body-1 text-grey700 mb-3">
               for your first {{ periodLabel }}
             </div>
             <v-chip
@@ -129,11 +129,11 @@
 
             <v-divider class="my-5" />
 
-            <div class="d-flex justify-space-between text-h5 mb-2">
+            <div class="d-flex justify-space-between text-body-1 mb-2">
               <span class="text-grey700">Today</span>
               <span class="font-weight-bold text-grey900">{{ money(offer.discountedPrice) }}</span>
             </div>
-            <div class="d-flex justify-space-between text-h5">
+            <div class="d-flex justify-space-between text-body-1">
               <span class="text-grey700">Then</span>
               <span class="text-grey900">{{ money(offer.price) }} {{ billingSuffix }}</span>
             </div>
@@ -143,7 +143,7 @@
               color="primary"
               rounded="pill"
               height="52"
-              class="text-h5 font-weight-bold mt-6"
+              class="text-body-1 font-weight-bold mt-6"
               flat
               append-icon="md:arrow_forward"
               :loading="loadingRedeemOffer"
@@ -153,11 +153,11 @@
             </v-btn>
             <div
               v-if="redeemError"
-              class="text-h6 text-error text-center mt-3"
+              class="text-caption font-weight-medium text-error text-center mt-3"
             >
               {{ redeemError }}
             </div>
-            <div class="text-h6 text-grey400 text-center mt-3">
+            <div class="text-caption font-weight-medium text-grey400 text-center mt-3">
               Discount already applied on the next page. No code needed.
             </div>
 
@@ -170,7 +170,7 @@
               >
                 md:schedule
               </v-icon>
-              <span class="text-h6 text-grey800">
+              <span class="text-caption font-weight-medium text-grey800">
                 Offer ends {{ expiryDate }}<template v-if="daysLeft !== null"> &middot; <b>{{ daysLeftLabel }}</b></template>
               </span>
             </div>
@@ -181,7 +181,7 @@
             v-if="featureLines.length"
             class="d-md-none mt-6"
           >
-            <div class="text-h5 font-weight-bold text-grey800 mb-3">
+            <div class="text-body-1 font-weight-bold text-grey800 mb-3">
               What's included
             </div>
             <div
@@ -196,7 +196,7 @@
               >
                 md:check_circle
               </v-icon>
-              <span class="text-h5 text-grey700">{{ line }}</span>
+              <span class="text-body-1 text-grey700">{{ line }}</span>
             </div>
           </div>
           <div class="d-md-none d-flex flex-column ga-2 mt-6 text-grey700">
@@ -211,14 +211,14 @@
               >
                 {{ item.icon }}
               </v-icon>
-              <span class="text-h5">{{ item.text }}</span>
+              <span class="text-body-1">{{ item.text }}</span>
             </div>
           </div>
 
           <div class="text-center mt-6">
             <nuxt-link
               to="/user/subscription"
-              class="text-h6 text-primary font-weight-bold text-decoration-none"
+              class="text-caption text-primary font-weight-bold text-decoration-none"
             >
               See all plans
             </nuxt-link>
@@ -250,10 +250,10 @@
               </v-icon>
             </div>
 
-            <h1 class="text-h3 font-weight-bold text-grey900">
+            <h1 class="text-h4 font-weight-bold text-grey900">
               {{ state.title }}
             </h1>
-            <p class="text-h5 text-grey700 font-weight-regular">
+            <p class="text-body-1 text-grey700 font-weight-regular">
               {{ state.description }}
             </p>
 
@@ -263,7 +263,7 @@
               color="primary"
               rounded="pill"
               height="48"
-              class="text-h5 font-weight-bold mt-2"
+              class="text-body-1 font-weight-bold mt-2"
               flat
               prepend-icon="md:login"
               @click="openSignIn"
@@ -276,7 +276,7 @@
               color="primary"
               rounded="pill"
               height="48"
-              class="text-h5 font-weight-bold mt-2"
+              class="text-body-1 font-weight-bold mt-2"
               flat
               :to="state.actionTo"
             >
@@ -286,7 +286,7 @@
             <nuxt-link
               v-if="status === 'signIn'"
               to="/user/subscription"
-              class="text-h6 text-primary font-weight-bold text-decoration-none"
+              class="text-caption text-primary font-weight-bold text-decoration-none"
             >
               See all plans
             </nuxt-link>
@@ -528,7 +528,7 @@ onMounted(() => {
 }
 
 .price-now {
-  font-size: 3.25rem;
+  font-size: 2.03125rem;
   line-height: 1;
 }
 

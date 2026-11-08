@@ -179,7 +179,7 @@
                         v-if="filter.selectedItem && !filter.defaultValue && !filter.inlineOptions"
                         :key="filter.title"
                         variant="flat"
-                        class="text-h5 pl-5 pr-5"
+                        class="text-body-1 pl-5 pr-5"
                         color="grey100"
                       >
                         <span class="text-grey500">{{ filter.selectedItem?.title }}</span>
@@ -247,7 +247,7 @@
               :count="countDataFound"
               :loading="loading"
             >
-              <span class="text-h5 text-grey400">Results</span>
+              <span class="text-body-1 text-grey400">Results</span>
               <v-skeleton-loader
                 v-if="loading"
                 width="100"
@@ -256,7 +256,7 @@
               />
               <span
                 v-else
-                class="text-h4 text-grey700 font-weight-bold"
+                class="text-h6 text-grey700 font-weight-bold"
               >{{
                 $numberFormat(countDataFound)
               }}</span>
@@ -383,7 +383,7 @@
               color="primary"
               rounded="xl"
               height="40"
-              class="mobile-filter-modal__show-results text-h5"
+              class="mobile-filter-modal__show-results text-body-1"
               :loading="loading"
               @click="dialogFilterMobileModel = false"
             >

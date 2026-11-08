@@ -31,7 +31,7 @@ useHead({
 <style lang="scss">
 .create-test-container {
   max-width: 1200px;
-  margin: 5rem auto;
+  margin: 3.125rem auto;
   padding-bottom: 80px; // Space for fixed bottom bar
 }
 

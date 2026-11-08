@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-column align-center pa-4">
-    <span class="w-100 text-h5 text-grey700 font-weight-regular mb-4">
+    <span class="w-100 text-body-1 text-grey700 font-weight-regular mb-4">
       Is this the school you worked at?
     </span>
     <div
@@ -16,7 +16,7 @@
         variant="text"
         height="38"
         width="140"
-        class="text-h5 font-weight-medium text-grey700"
+        class="text-body-1 font-weight-medium text-grey700"
         flat
       >
         No, it’s New!
@@ -26,7 +26,7 @@
         rounded="pill"
         height="38"
         width="120"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         @click="emit('confirm')"
       >

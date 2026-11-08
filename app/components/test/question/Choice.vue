@@ -109,7 +109,7 @@ const boxClass = computed(() => BOX_CLASSES[props.status])
   min-height: 24px;
   max-width : 24px;
   max-height: 24px;
-  font-size: 1.4rem;
+  font-size: 0.875rem;
 }
 /* The correct-option dot, painted from the box's own center: a separate dot element rounded half a pixel off it. */
 .choice-correct {
@@ -125,11 +125,11 @@ const boxClass = computed(() => BOX_CLASSES[props.status])
   height: auto;
 }
 .test-text {
-  font-size: 1.6rem;
+  font-size: 1rem;
 }
 @media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
   .test-text {
-    font-size: 1.8rem;
+    font-size: 1.125rem;
   }
 }
 </style>

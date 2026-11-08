@@ -15,7 +15,7 @@
       class="w-100 d-flex align-center justify-center"
     >
       <v-btn
-        class="text-h5 font-weight-bold"
+        class="text-body-1 font-weight-bold"
         height="36"
         variant="outlined"
         color="primary"
@@ -52,7 +52,7 @@
 
     <div
       v-if="!isInitialLoading && dataList.length == 0"
-      class="w-100 text-h4 text-center mt-4"
+      class="w-100 text-h6 font-weight-regular text-center mt-4"
     >
       Opps! no data found
     </div>

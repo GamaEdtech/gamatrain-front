@@ -9,7 +9,7 @@
       <v-card-text class="px-0 py-0">
         <div class="py-6 py-md-1 px-4">
           <div class="d-flex justify-space-between align-center">
-            <div class="gtext-h5 primary-gray-700" />
+            <div class="gtext-h5 text-grey700" />
             <v-btn
               icon
               variant="text"
@@ -31,7 +31,7 @@
               </div>
             </div>
             <div
-              class="mt-4 primary-gray-700 font-weight-bold font-size-18 text-center"
+              class="mt-4 text-grey700 font-weight-bold font-size-18 text-center"
             >
               Report Form
             </div>
@@ -40,7 +40,7 @@
 
         <div class="mt-4 bg-primary-gray-100 px-6 pb-3 pt-7">
           <div class="w-md-80 mx-md-auto">
-            <div class="mb-3 primary-gray-900 font-size-16">
+            <div class="mb-3 text-grey900 font-size-16">
               Description
             </div>
             <v-textarea

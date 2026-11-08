@@ -28,7 +28,7 @@
       >
         <v-btn
           color="primary"
-          class="text-h5 font-weight-bold"
+          class="text-body-1 font-weight-bold"
           width="150"
           rounded="xl"
           size="large"

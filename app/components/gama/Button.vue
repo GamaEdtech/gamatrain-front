@@ -18,7 +18,7 @@ export default {
 
 <style scoped>
 .gama-btn {
-  margin-top: 1.5rem;
+  margin-top: 0.9375rem;
   color: #24292f;
 }
 </style>

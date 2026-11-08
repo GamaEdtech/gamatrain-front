@@ -169,16 +169,16 @@ onMounted(async () => {
 
 .exam-finder {
   :deep(.v-chip) {
-    font-size: 1.4rem;
+    font-size: 0.875rem;
   }
 
   :deep(.v-label) {
-    font-size: 1.5rem;
+    font-size: 0.9375rem;
   }
 }
 
 .exam-finder__submit :deep(.v-btn__content) {
-  font-size: 1.6rem;
+  font-size: 1rem;
   text-transform: none;
 }
 
@@ -189,25 +189,25 @@ onMounted(async () => {
   }
 
   .exam-finder__tabs :deep(.v-chip) {
-    margin-inline: 0.2rem;
-    padding: 0 1rem;
+    margin-inline: 0.125rem;
+    padding: 0 0.625rem;
   }
 }
 
 .exam-finder__popular {
-  font-size: 1.4rem;
+  font-size: 0.875rem;
 }
 
 .exam-finder__hint {
   position: absolute;
   z-index: 1;
-  bottom: -1.5rem;
-  left: 1rem;
-  padding: 0.3rem 1rem;
-  border-radius: 99rem;
+  bottom: -0.9375rem;
+  left: 0.625rem;
+  padding: 0.1875rem 0.625rem;
+  border-radius: 61.875rem;
   color: rgb(var(--v-theme-on-primary));
   background: rgb(var(--v-theme-success500));
-  font-size: 1.2rem;
+  font-size: 0.75rem;
   font-weight: 700;
   white-space: nowrap;
   pointer-events: none;
@@ -218,15 +218,15 @@ onMounted(async () => {
     content: '';
     position: absolute;
     bottom: 100%;
-    left: 2rem;
-    border: 0.5rem solid transparent;
+    left: 1.25rem;
+    border: 0.3125rem solid transparent;
     border-bottom-color: rgb(var(--v-theme-success500));
   }
 }
 
 @keyframes hint-bob {
   50% {
-    transform: translateY(-0.3rem);
+    transform: translateY(-0.1875rem);
   }
 }
 
@@ -239,7 +239,7 @@ onMounted(async () => {
 .exam-finder__fields {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: 0.625rem;
 }
 
 .exam-finder__keyword,
@@ -249,7 +249,7 @@ onMounted(async () => {
 
 @media #{map.get(vuetify.$display-breakpoints, 'lg-and-up')} {
   .exam-finder__fields {
-    grid-template-columns: 15rem 14rem 1fr auto;
+    grid-template-columns: 9.375rem 8.75rem 1fr auto;
   }
 
   .exam-finder__keyword,

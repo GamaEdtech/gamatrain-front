@@ -11,7 +11,7 @@
         v-for="tabItem in tabs"
         :key="tabItem.value"
         :value="tabItem.value"
-        class="text-h5 font-weight-bold"
+        class="text-body-1 font-weight-bold"
       >
         {{ tabItem.title }}
       </v-tab>

@@ -2,7 +2,7 @@
   <div class="governance-overview__section mt-10 py-7">
     <div class="governance-overview__shape">
       <v-container>
-        <h1 class="text-h4 text-md-h3 font-weight-bold text-white text-center mb-5">
+        <h1 class="text-h6 text-md-h4 font-weight-bold text-white text-center mb-5">
           Your Governance Overview
         </h1>
 
@@ -67,7 +67,7 @@
           </div>
 
           <div class="text-caption text-md-button text-center mt-2 mt-sm-4">
-            <span class="text-white">Available Balance From Wallet </span><span class="pl-1 primary-blue-500">{{ shortAddress }}</span><span class="pl-1 text-white">1,250 $GET</span>
+            <span class="text-white">Available Balance From Wallet </span><span class="pl-1 text-blue500">{{ shortAddress }}</span><span class="pl-1 text-white">1,250 $GET</span>
           </div>
         </div>
       </v-container>

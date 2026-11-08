@@ -15,7 +15,7 @@
           :color="proposalStatus.color"
           variant="flat"
           density="compact"
-          class="text-capitalize font-weight-bold text-h6 "
+          class="text-capitalize font-weight-bold text-caption "
         >
           {{ proposalStatus.title }}
         </v-chip>
@@ -28,15 +28,15 @@
         </v-icon>
       </div>
       <div class="w-100 d-flex flex-column mt-2">
-        <span class="text-h4 font-weight-bold text-grey700">
+        <span class="text-h6 font-weight-bold text-grey700">
           {{ proposal?.account?.title || "Loading..." }}
         </span>
 
-        <span class="text-h5 text-grey500 mt-2 mb-10">
+        <span class="text-body-1 text-grey500 mt-2 mb-10">
           {{ proposal?.account?.brief || "Loading proposal description..." }}
           <a
             v-if="proposal?.account?.reference"
-            class="text-decoration-none font-weight-bold text-h5 text-primary"
+            class="text-decoration-none font-weight-bold text-body-1 text-primary"
             target="_blank"
             :href="proposal?.account?.reference"
           >
@@ -46,7 +46,7 @@
 
         <span
           v-if="proposal.account.amount && proposal.account.amount > 0"
-          class="text-h4 font-weight-bold text-grey700 mb-4"
+          class="text-h6 font-weight-bold text-grey700 mb-4"
         >
           {{ $numberFormat(proposal.account.amount) }} $GET
         </span>
@@ -72,7 +72,7 @@
           rounded
         />
 
-        <div class="w-100 d-flex justify-space-between align-center text-h6 text-grey500">
+        <div class="w-100 d-flex justify-space-between align-center text-caption font-weight-medium text-grey500">
           <span><span class="font-weight-bold text-black">{{ forPercentage }}%</span>
             Quorum
           </span>
@@ -141,7 +141,7 @@
             prepend-icon="md:north"
             color="success"
             rounded="lg"
-            class="w-50 text-h5 font-weight-bold"
+            class="w-50 text-body-1 font-weight-bold"
             :disabled="hasVoted || publicKey == null || (laodingVoteProcess && disableVoteButton ==`againt`)"
             variant="flat"
             :loading="(laodingVoteProcess && disableVoteButton ==`for`) || loadingGetVoteInformation"
@@ -154,7 +154,7 @@
             prepend-icon="md:south"
             color="error"
             rounded="lg"
-            class="w-50 text-h5 font-weight-bold"
+            class="w-50 text-body-1 font-weight-bold"
             :disabled="hasVoted || publicKey == null || (laodingVoteProcess && disableVoteButton ==`for`)"
             variant="flat"
             :loading="(laodingVoteProcess && disableVoteButton ==`againt`) || loadingGetVoteInformation"
@@ -171,7 +171,7 @@
             color="success"
             variant="outlined"
             rounded="xl"
-            class="mt-2 text-h5 font-weight-bold"
+            class="mt-2 text-body-1 font-weight-bold"
           >
             Request to fund
           </v-btn>

@@ -14,7 +14,7 @@
         >
           md:donut_large
         </v-icon>
-        <span class="text-h5 text-grey700 font-weight-bold">Result Summary</span>
+        <span class="text-body-1 text-grey700 font-weight-bold">Result Summary</span>
       </div>
     </div>
 
@@ -33,8 +33,8 @@
             :options="chartOptions"
           />
           <div class="position-absolute d-flex flex-column align-center justify-center">
-            <span class="text-grey800 text-h3 font-weight-bold">{{ totalStats.percent }}%</span>
-            <span class="text-grey500 text-h6">Score</span>
+            <span class="text-grey800 text-h4 font-weight-bold">{{ totalStats.percent }}%</span>
+            <span class="text-grey500 text-caption font-weight-medium">Score</span>
           </div>
         </div>
 
@@ -50,8 +50,8 @@
             >
               md:circle
             </v-icon>
-            <span class="text-grey600 text-h6 ml-2">{{ item.label }}</span>
-            <span class="text-grey800 text-h6 font-weight-bold ml-auto">
+            <span class="text-grey600 text-caption font-weight-medium ml-2">{{ item.label }}</span>
+            <span class="text-grey800 text-caption font-weight-bold ml-auto">
               {{ item.value }}
             </span>
 
@@ -82,11 +82,11 @@
             border
             min-width="150"
           >
-            <span class="text-grey400 text-h6 font-weight-medium">
+            <span class="text-grey400 text-caption font-weight-medium">
               <v-icon class="mr-1">{{ rankItem.icon }}</v-icon>
               {{ rankItem.label }}
             </span>
-            <span class="text-grey800 text-h5 font-weight-bold pl-6">
+            <span class="text-grey800 text-body-1 font-weight-bold pl-6">
               {{ rankItem.value }}
             </span>
           </v-card>
@@ -106,9 +106,9 @@
               class="h-100 image-robot"
             >
             <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-              <span class="text-grey800 text-h5 font-weight-bold">Get your personal exam analysis</span>
+              <span class="text-grey800 text-body-1 font-weight-bold">Get your personal exam analysis</span>
               <template v-if="loadingGetAnalyzeResultExam">
-                <span class="text-grey600 text-h5 font-weight-medium">
+                <span class="text-grey600 text-body-1 font-weight-medium">
                   Analyzing your answers… this can take a few seconds.
                 </span>
                 <v-progress-linear
@@ -121,7 +121,7 @@
                 />
               </template>
               <template v-else>
-                <span class="text-grey600 text-h5 font-weight-medium">Let alpha analyze your answers and reveal your strengths and areas to improve.</span>
+                <span class="text-grey600 text-body-1 font-weight-medium">Let alpha analyze your answers and reveal your strengths and areas to improve.</span>
                 <v-btn
                   rounded="pill"
                   class="d-flex align-center justify-center mt-2"
@@ -130,22 +130,22 @@
                   height="30"
                   @click="handleResultAnalyze"
                 >
-                  <span class="text-h6 font-weight-bold mt-1 mx-2">Get my analysis</span>
+                  <span class="text-caption font-weight-bold mt-1 mx-2">Get my analysis</span>
 
                   <common-price-with-gem
                     v-if="!resultAnalyze?.purchased"
-                    class="text-h6 font-weight-bold mt-1"
+                    class="text-caption font-weight-bold mt-1"
                     :price="resultAnalyze?.points"
                     color="on-primary"
                   />
                   <span
                     v-else
-                    class="text-h6 font-weight-bold mt-1"
+                    class="text-caption font-weight-bold mt-1"
                   >(Owned)</span>
                 </v-btn>
                 <span
                   v-if="!resultAnalyze?.purchased"
-                  class="text-grey500 text-h5 font-weight-medium d-flex align-center ga-1"
+                  class="text-grey500 text-body-1 font-weight-medium d-flex align-center ga-1"
                 >
                   <v-icon>md:lock</v-icon>
                   Free with membership</span>
@@ -175,12 +175,12 @@
             class="image-robot flex-shrink-0"
           >
           <div class="d-flex flex-column">
-            <span class="text-grey800 text-h5 font-weight-bold">Your personal exam analysis</span>
-            <span class="text-grey500 text-h6">Based on your answers in this exam</span>
+            <span class="text-grey800 text-body-1 font-weight-bold">Your personal exam analysis</span>
+            <span class="text-grey500 text-caption font-weight-medium">Based on your answers in this exam</span>
           </div>
         </div>
         <v-divider class="my-3" />
-        <p class="text-grey700 text-h5 font-weight-regular text-pre-line">
+        <p class="text-grey700 text-body-1 font-weight-regular text-pre-line">
           {{ analysisText }}
         </p>
       </v-card>

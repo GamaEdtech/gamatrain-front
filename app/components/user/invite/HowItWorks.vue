@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-column ga-3">
-    <h3 class="text-h4 font-weight-bold text-grey700">
+    <h3 class="text-h6 font-weight-bold text-grey700">
       How it works
     </h3>
     <v-row class="ma-0">
@@ -13,10 +13,10 @@
       >
         <div class="step-card h-100 bg-grey100 rounded-lg pa-4 d-flex flex-column ga-2">
           <div class="d-flex align-center ga-3">
-            <span class="step-number d-flex align-center justify-center text-h5 font-weight-bold">{{ index + 1 }}</span>
-            <span class="text-h5 font-weight-bold text-grey700">{{ step.title }}</span>
+            <span class="step-number d-flex align-center justify-center text-body-1 font-weight-bold">{{ index + 1 }}</span>
+            <span class="text-body-1 font-weight-bold text-grey700">{{ step.title }}</span>
           </div>
-          <span class="text-h6 text-grey600">{{ step.text }}</span>
+          <span class="text-caption font-weight-medium text-grey600">{{ step.text }}</span>
         </div>
       </v-col>
     </v-row>
@@ -31,10 +31,10 @@
         elevation="0"
         class="border-b"
       >
-        <v-expansion-panel-title class="text-h5 font-weight-medium text-grey700">
+        <v-expansion-panel-title class="text-body-1 font-weight-medium text-grey700">
           {{ item.question }}
         </v-expansion-panel-title>
-        <v-expansion-panel-text class="text-h6 text-grey600">
+        <v-expansion-panel-text class="text-caption font-weight-medium text-grey600">
           {{ item.answer }}
         </v-expansion-panel-text>
       </v-expansion-panel>

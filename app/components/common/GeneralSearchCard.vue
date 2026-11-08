@@ -11,24 +11,24 @@
         <span :class="`icon-span ${category.iconName}`" />
       </div>
       <div class="d-flex flex-column align-start justify-center ga-4">
-        <span class="text-h5 text-sm-h4 font-weight-bold">{{
+        <span class="text-body-1 text-sm-h6 font-weight-bold">{{
           information.title || information.name || information.fullName
         }}</span>
         <span
           v-if="information.summary"
-          class="d-none d-sm-flex text-h5 primary-gray-500"
+          class="d-none d-sm-flex text-body-1 primary-gray-500"
         >{{ information.summary }}</span>
         <div class="d-flex align-center ga-2">
           <span
             v-if="information.userRateLevel"
-            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
+            class="text-grey500 text-caption d-flex align-start ga-1"
           >
             <v-icon color="grey300">md:user_attributes_outlined</v-icon>
             {{ information.userRateLevel }}
           </span>
           <span
             v-if="information.onlineStatus"
-            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
+            class="text-grey500 text-caption d-flex align-start ga-1"
           >
             <v-icon color="grey300">md:wifi_outlined</v-icon>
             {{ getOnlineStatusText(information.onlineStatus) }}
@@ -38,7 +38,7 @@
           <v-chip
             v-if="information.section_title"
             variant="flat"
-            class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
+            class="text-caption text-sm-body-1 pl-3 pr-3"
             color="#F2F4F7"
             :to="`/search?type=${
               searchType
@@ -49,7 +49,7 @@
           <v-chip
             v-if="information.base_title"
             variant="flat"
-            class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
+            class="text-caption text-sm-body-1 pl-3 pr-3"
             color="#F2F4F7"
             :to="`/search?type=${
               searchType
@@ -60,7 +60,7 @@
           <v-chip
             v-if="information.lesson_title"
             variant="flat"
-            class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
+            class="text-caption text-sm-body-1 pl-5 pr-5"
             color="#F2F4F7"
             :to="`/search?type=${
               searchType
@@ -74,7 +74,7 @@
           <v-chip
             v-if="information.countryTitle"
             variant="flat"
-            class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
+            class="text-caption text-sm-body-1 pl-3 pr-3"
             color="#F2F4F7"
           >
             {{ information?.countryTitle }}
@@ -82,7 +82,7 @@
           <v-chip
             v-if="information.stateTitle"
             variant="flat"
-            class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
+            class="text-caption text-sm-body-1 pl-3 pr-3"
             color="#F2F4F7"
           >
             {{ information?.stateTitle }}
@@ -90,7 +90,7 @@
           <v-chip
             v-if="information.cityTitle"
             variant="flat"
-            class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
+            class="text-caption text-sm-body-1 pl-5 pr-5"
             color="#F2F4F7"
           >
             {{ information.cityTitle }}
@@ -101,7 +101,7 @@
               v-for="skill in information.skills.slice(0, 3)"
               :key="skill"
               variant="flat"
-              class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
+              class="text-caption text-sm-body-1 pl-5 pr-5"
               color="#F2F4F7"
             >
               {{ skill }}
@@ -115,14 +115,14 @@
     <div class="d-flex d-sm-none w-100 flex-wrap align-center ga-2">
       <span
         v-if="information.summary"
-        class="text-h5 primary-gray-500"
+        class="text-body-1 primary-gray-500"
       >{{
         information.summary
       }}</span>
       <v-chip
         v-if="information.section_title"
         variant="flat"
-        class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
+        class="text-caption text-sm-body-1 pl-3 pr-3"
         color="#F2F4F7"
         :to="`/search?type=${
           searchType
@@ -133,7 +133,7 @@
       <v-chip
         v-if="information.base_title"
         variant="flat"
-        class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
+        class="text-caption text-sm-body-1 pl-3 pr-3"
         color="#F2F4F7"
         :to="`/search?type=${
           searchType
@@ -144,7 +144,7 @@
       <v-chip
         v-if="information.lesson_title"
         variant="flat"
-        class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
+        class="text-caption text-sm-body-1 pl-5 pr-5"
         color="#F2F4F7"
         :to="`/search?type=${
           searchType
@@ -158,7 +158,7 @@
       <v-chip
         v-if="information.countryTitle"
         variant="flat"
-        class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
+        class="text-caption text-sm-body-1 pl-3 pr-3"
         color="#F2F4F7"
       >
         {{ information?.countryTitle }}
@@ -166,7 +166,7 @@
       <v-chip
         v-if="information.stateTitle"
         variant="flat"
-        class="text-subtitle-1 text-sm-h5 pl-3 pr-3"
+        class="text-caption text-sm-body-1 pl-3 pr-3"
         color="#F2F4F7"
       >
         {{ information?.stateTitle }}
@@ -174,7 +174,7 @@
       <v-chip
         v-if="information.cityTitle"
         variant="flat"
-        class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
+        class="text-caption text-sm-body-1 pl-5 pr-5"
         color="#F2F4F7"
       >
         {{ information.cityTitle }}
@@ -184,7 +184,7 @@
           v-for="skill in information.skills.slice(0, 3)"
           :key="skill"
           variant="flat"
-          class="text-subtitle-1 text-sm-h5 pl-5 pr-5"
+          class="text-caption text-sm-body-1 pl-5 pr-5"
           color="#F2F4F7"
         >
           {{ skill }}

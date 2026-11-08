@@ -19,22 +19,22 @@
           >
             <template #default>
               <div class="d-flex d-sm-none h-100 align-end">
-                <v-card-title class="w-100 background-title text-white text-h6 font-weight-bold py-2">
+                <v-card-title class="w-100 background-title text-white text-caption font-weight-bold py-2">
                   {{ post.title }}
                 </v-card-title>
               </div>
             </template>
           </v-img>
           <div class="d-none d-sm-flex flex-column ga-3 pa-2">
-            <h2 class="text-h5 text-md-h4 font-weight-bold text-grey700">
+            <h2 class="text-body-1 text-md-h6 font-weight-bold text-grey700">
               {{ post.title }}
             </h2>
-            <p class="text-subtitle-1 text-md-h6 font-weight-medium text-grey600 mb-0">
+            <p class="text-caption text-md-caption font-weight-medium text-grey600 mb-0">
               {{ summary }}
               <span class="text-primary font-weight-bold">Read more</span>
             </p>
           </div>
-          <p class="d-block d-sm-none text-h6 font-weight-medium text-grey600 mb-0">
+          <p class="d-block d-sm-none text-caption font-weight-medium text-grey600 mb-0">
             {{ mobileSummary }}
             <span class="text-primary font-weight-bold">Read more</span>
           </p>
@@ -55,7 +55,7 @@
       />
       <span
         v-if="showYear"
-        class="text-grey400 text-h6 font-weight-bold date-container"
+        class="text-grey400 text-caption font-weight-bold date-container"
       >
         {{ formatLocal(post.publishDate, 'YYYY') }}
       </span>
@@ -64,7 +64,7 @@
         rounded="lg"
         class="post-date d-flex flex-column align-center justify-center date-container"
       >
-        <span class="text-h6 text-sm-h5 font-weight-bold text-grey900">
+        <span class="text-caption text-sm-body-1 font-weight-bold text-grey900">
           {{ formatLocal(post.publishDate, 'DD') }}
         </span>
         <span class="text-caption text-grey500 text-uppercase">

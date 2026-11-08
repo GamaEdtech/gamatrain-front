@@ -14,10 +14,10 @@
         </v-icon>
       </v-avatar>
       <div>
-        <p class="text-h4 font-weight-bold text-grey900">
+        <p class="text-h6 font-weight-bold text-grey900">
           Saved to your downloads
         </p>
-        <p class="text-h6 text-grey500 mt-1">
+        <p class="text-caption font-weight-medium text-grey500 mt-1">
           Can't find it? Open it here and save it from there.
         </p>
       </div>
@@ -33,7 +33,7 @@
         rounded="lg"
         flat
         prepend-icon="md:open_in_new"
-        class="flex-1-1-0 text-h5 font-weight-heavy text-none"
+        class="flex-1-1-0 text-body-1 font-weight-heavy text-none"
         :disabled="!link"
       >
         Open file
@@ -43,7 +43,7 @@
         color="grey600"
         size="large"
         rounded="lg"
-        class="flex-1-1-0 text-h5 font-weight-bold text-none"
+        class="flex-1-1-0 text-body-1 font-weight-bold text-none"
         @click="emit('close')"
       >
         Done

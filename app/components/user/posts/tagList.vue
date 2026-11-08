@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-column align-start justify-start">
-    <span class="w-50 text-h5 font-weight-medium text-grey700 mt-1">
+    <span class="w-50 text-body-1 font-weight-medium text-grey700 mt-1">
       <v-badge
         floating
         location="top right"
@@ -61,12 +61,12 @@
           color="primary"
           false-icon="md:check_box_outline_blank"
           true-icon="md:check_box"
-          class="text-h5"
+          class="text-body-1"
           :model-value="localCategories"
           @update:model-value="updateCategories"
         >
           <template #label>
-            <span class="text-h5 font-weight-medium">{{
+            <span class="text-body-1 font-weight-medium">{{
               tag.name
             }}</span>
           </template>
@@ -75,7 +75,7 @@
     </div>
     <div
       v-if="errorMessage"
-      class="text-error text-subtitle-1 mt-1"
+      class="text-error text-caption mt-1"
     >
       {{ errorMessage }}
     </div>

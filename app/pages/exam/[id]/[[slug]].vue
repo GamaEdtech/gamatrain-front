@@ -16,7 +16,7 @@
         <v-chip
           color="generalSearchQuiz"
           variant="tonal"
-          class="kicker text-h6 text-uppercase font-weight-bold"
+          class="kicker text-caption text-uppercase font-weight-bold"
         >
           {{ kicker }}
         </v-chip>
@@ -55,7 +55,7 @@
                   :class="step <= fact.level ? 'bg-primary' : 'bg-grey200'"
                 />
               </div>
-              <p class="text-h6 text-grey500 mt-1">
+              <p class="text-caption font-weight-medium text-grey500 mt-1">
                 {{ fact.label }}
               </p>
             </v-card>
@@ -67,9 +67,9 @@
             :image="contentData.avatar || '/images/member/avatar.svg'"
             size="40"
           />
-          <div class="text-h5 text-grey600">
+          <div class="text-body-1 text-grey600">
             Made by <b class="text-grey900">{{ authorName }}</b>
-            <p class="text-h6 text-grey500">
+            <p class="text-caption font-weight-medium text-grey500">
               Updated {{ fromNowLocal(contentData.up_date) }}<template v-if="firstTopic">
                 · {{ firstTopic }}
               </template>
@@ -117,7 +117,7 @@
           >
             md:description
           </v-icon>
-          <span class="text-h5 text-grey700">
+          <span class="text-body-1 text-grey700">
             {{ contentData.paper.isPastPaper ? 'Original past paper: ' : 'The same questions as a downloadable set: ' }}
             <b class="text-brandNavy">{{ contentData.paper.title }}</b>
             {{ contentData.paper.isPastPaper ? '(question paper and mark scheme)' : '' }}
@@ -141,7 +141,7 @@
       />
     </div>
 
-    <div class="d-flex justify-space-between align-center flex-wrap ga-2 text-h6 text-grey500 mt-10 mb-8">
+    <div class="d-flex justify-space-between align-center flex-wrap ga-2 text-caption font-weight-medium text-grey500 mt-10 mb-8">
       <span>
         Spotted a mistake?
         <a

@@ -438,7 +438,7 @@ onMounted(() => {
 }
 .stats-section-stats__card {
   border-radius: 8px;
-  padding: 1.2rem;
+  padding: 0.75rem;
   background: #70eef1;
 }
 .darken-card {
@@ -485,7 +485,7 @@ onMounted(() => {
 }
 .stats-section {
   background: #03122e;
-  padding: 3rem 0;
+  padding: 1.875rem 0;
 }
 
 .stats-section__title {
@@ -518,7 +518,7 @@ onMounted(() => {
   }
 
   .stats-section {
-    padding: 2rem 0;
+    padding: 1.25rem 0;
   }
 }
 
@@ -579,7 +579,7 @@ onMounted(() => {
 }
 @media (min-width: 960px) {
   .stats-section-stats__card {
-    padding: 1.7rem;
+    padding: 1.0625rem;
   }
 }
 </style>

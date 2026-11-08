@@ -19,7 +19,7 @@
             min-width="40"
             fixed
             right
-            style="z-index: 10; bottom: 8rem"
+            style="z-index: 10; bottom: 5rem"
             size="x-large"
             color="teal"
             variant="flat"
@@ -27,7 +27,7 @@
           >
             <v-icon>mdi-filter</v-icon>
             <v-slide-x-reverse-transition>
-              <span v-show="expandFilterMenu" class="text-h6">filter</span>
+              <span v-show="expandFilterMenu" class="text-caption font-weight-medium">filter</span>
             </v-slide-x-reverse-transition>
           </v-btn>
         </template>
@@ -36,7 +36,7 @@
             <v-toolbar class="filter-btn-header">
               <v-toolbar-items>
                 <v-btn
-                  class="text-h5 font-weight-bold"
+                  class="text-body-1 font-weight-bold"
                   variant="text"
                   @click="dialog = false"
                 >
@@ -117,7 +117,7 @@
         cols="12"
         class="pl-5"
       >
-        <span class="text-h4 text-teal">
+        <span class="text-h6 font-weight-regular text-teal">
           <v-icon
             color="teal"
             size="large"
@@ -205,7 +205,7 @@
             md="3"
           >
             <v-card class="album-card">
-              <v-card-title class="text-h4">
+              <v-card-title class="text-h6 font-weight-regular">
                 <NuxtLink :to="`/albums/${album.lesson}`">
                   {{ album.lesson_title }} album
                 </NuxtLink>

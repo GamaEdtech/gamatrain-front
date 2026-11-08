@@ -3,7 +3,7 @@
     <v-row>
       <v-col
         cols="12"
-        class="pl-5 text-h4 text-grey700"
+        class="pl-5 text-h6 font-weight-regular text-grey700"
       >
         <v-icon
           large
@@ -88,7 +88,7 @@
           flat
           rounded="lg"
           width="250"
-          class="text-h5 font-weight-bold"
+          class="text-body-1 font-weight-bold"
           color="success"
           :disabled="!isFormValid"
           :loading="loadingChangePassword"
@@ -101,17 +101,17 @@
 
     <v-row class="d-flex justify-center mt-12">
       <div class="box-delete d-flex flex-column align-start justify-start pa-4 bg-grey50 rounded-lg">
-        <span class="text-h5 text-md-h4 text-grey500 font-weight-bold">Request Account Deletion</span>
+        <span class="text-body-1 text-md-h6 text-grey500 font-weight-bold">Request Account Deletion</span>
         <v-divider class="w-100 my-1" />
         <template v-if="!user?.orphanDate">
           <span
-            class="text-h6 text-grey700 font-weight-regular mt-4"
+            class="text-caption text-grey700 font-weight-regular mt-4"
           >
             Permanently delete your account and related data. You’ll have 7 days to cancel this request before your account is permanently deleted.
           </span>
           <NuxtLink
             to="/user/profile/delete"
-            class="text-subtitle-1 text-md-h5 text-lightError font-weight-medium mt-6 text-decoration-none"
+            class="text-caption text-md-body-1 text-lightError font-weight-medium mt-6 text-decoration-none"
           >
             Delete Account
           </NuxtLink>
@@ -119,16 +119,16 @@
 
         <template v-else>
           <span
-            class="text-h6 text-grey700 font-weight-regular mt-4"
+            class="text-caption text-grey700 font-weight-regular mt-4"
           >
-            Only <span class="text-h5 font-weight-bold text-lightError">{{ deletionTimeLeft }}</span> left before your account is permanently deleted. You can still cancel this request and keep your account.
+            Only <span class="text-body-1 font-weight-bold text-lightError">{{ deletionTimeLeft }}</span> left before your account is permanently deleted. You can still cancel this request and keep your account.
           </span>
           <v-btn
             flat
             rounded="lg"
             color="grey200"
             height="36"
-            class="text-subtitle-1 text-md-h5 text-grey700 font-weight-medium mt-6"
+            class="text-caption text-md-body-1 text-grey700 font-weight-medium mt-6"
             @click="showCancelDeleteModal = true"
           >
             Cancel deletion request

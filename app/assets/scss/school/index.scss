@@ -10,12 +10,12 @@
   position: relative;
   @include style.responsive-size(
     height,
-    calc(100dvh - 6.4rem),
-    calc(100dvh - 6.4rem),
+    calc(100dvh - 4rem),
+    calc(100dvh - 4rem),
     calc(100dvh - 64px),
     calc(100dvh - 64px)
   );
-  @include style.responsive-size(margin-top, 6.4rem, 6.4rem, 64px, 64px);
+  @include style.responsive-size(margin-top, 4rem, 4rem, 64px, 64px);
 
   .map-div {
     position: absolute;

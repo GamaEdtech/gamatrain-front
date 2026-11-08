@@ -6,7 +6,7 @@
   >
     <v-container class="d-flex flex-column align-center justify-center">
       <div class="w-100 d-flex align-center justify-space-between">
-        <h2 class="text-h3 text-grey700 font-weight-bold">
+        <h2 class="text-h4 text-grey700 font-weight-bold">
           Guides &amp; Insights
         </h2>
         <v-btn
@@ -17,13 +17,13 @@
           to="/post"
           color="grey900"
           height="36"
-          class="text-h5 d-none d-md-flex font-weight-bold"
+          class="text-body-1 d-none d-md-flex font-weight-bold"
         >
           See all
         </v-btn>
         <router-link
           to="/post"
-          class="d-flex align-center d-md-none text-h6 text-grey600 font-weight-bold"
+          class="d-flex align-center d-md-none text-caption text-grey600 font-weight-bold"
         >
           See all
           <v-icon color="primary">md:chevron_forward</v-icon>

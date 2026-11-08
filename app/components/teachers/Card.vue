@@ -23,18 +23,18 @@
       >
       <span
         v-else
-        class="text-h5 text-sm-h3 font-weight-bold text-primaryStrong"
+        class="text-body-1 text-sm-h4 font-weight-bold text-primaryStrong"
       >{{ initials }}</span>
     </v-avatar>
 
     <div class="teacher-card__body flex-grow-1">
-      <h3 class="text-h5 font-weight-bold text-grey900 text-truncate">
+      <h3 class="text-body-1 font-weight-bold text-grey900 text-truncate">
         {{ name }}
       </h3>
 
       <span
         v-if="activity"
-        class="d-inline-flex align-center ga-1 mt-1 text-h6 font-weight-medium text-grey600"
+        class="d-inline-flex align-center ga-1 mt-1 text-caption font-weight-medium text-grey600"
       >
         <span class="teacher-card__dot rounded-circle bg-success500" />
         {{ activity }}
@@ -52,7 +52,7 @@
           size="small"
           class="teacher-card__skill"
         >
-          <span class="text-h6 font-weight-medium text-primaryStrong text-truncate">{{ skill }}</span>
+          <span class="text-caption font-weight-medium text-primaryStrong text-truncate">{{ skill }}</span>
         </v-chip>
         <v-chip
           v-if="skills.length > MAX_SKILLS"
@@ -61,7 +61,7 @@
           size="small"
           class="flex-shrink-0"
         >
-          <span class="text-h6 font-weight-medium text-grey600">+{{ skills.length - MAX_SKILLS }}</span>
+          <span class="text-caption font-weight-medium text-grey600">+{{ skills.length - MAX_SKILLS }}</span>
         </v-chip>
       </div>
     </div>
@@ -113,8 +113,8 @@ const skills = computed(() => props.teacher.skills ?? [])
 }
 
 .teacher-card__avatar {
-  width: 5.6rem;
-  height: 5.6rem;
+  width: 3.5rem;
+  height: 3.5rem;
   // v-avatar animates its size, which would shift the rows below while the page loads.
   transition: none;
 
@@ -129,8 +129,8 @@ const skills = computed(() => props.teacher.skills ?? [])
 }
 
 .teacher-card__dot {
-  width: 0.7rem;
-  height: 0.7rem;
+  width: 0.4375rem;
+  height: 0.4375rem;
 }
 
 .teacher-card__skill {
@@ -145,12 +145,12 @@ const skills = computed(() => props.teacher.skills ?? [])
 @media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
   // A card without an activity line stays as tall as its neighbours.
   .teacher-card {
-    min-height: 17.6rem;
+    min-height: 11rem;
   }
 
   .teacher-card__avatar {
-    width: 8rem;
-    height: 8rem;
+    width: 5rem;
+    height: 5rem;
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="w-100 d-flex flex-column align-start justify-start">
     <div class="w-100 d-flex justify-space-between align-center">
-      <h2 class="text-h4 font-weight-bold text-grey700">
+      <h2 class="text-h6 font-weight-bold text-grey700">
         Payout Requests
       </h2>
     </div>

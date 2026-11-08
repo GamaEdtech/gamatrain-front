@@ -1,9 +1,9 @@
 <template>
   <v-container class="w-100 d-flex flex-column">
-    <h1 class="text-h3 font-weight-bold text-grey700">
+    <h1 class="text-h4 font-weight-bold text-grey700">
       Choose your role
     </h1>
-    <span class="text-h5 font-weight-regular text-grey500 mt-8">This helps us personalize GamaTrain for you.</span>
+    <span class="text-body-1 font-weight-regular text-grey500 mt-8">This helps us personalize GamaTrain for you.</span>
     <div class="d-flex align-center justify-center ga-2 mt-16">
       <div
         :class="`box-role bg-grey50 px-6 pt-4 d-flex flex-column rounded-lg cursor-pointer ${selectedUserGroup === UserGroup.Student ? `box-role-selected`:``}`"
@@ -23,14 +23,14 @@
         <v-checkbox
           :model-value="selectedUserGroup === UserGroup.Student"
           color="primary"
-          class="text-h5"
+          class="text-body-1"
           hide-details
           readonly
           false-icon="md:radio_button_unchecked"
           true-icon="md:radio_button_checked"
         >
           <template #label>
-            <span class="text-h5 text-sm-h4 text-grey800 font-weight-regular">Student</span>
+            <span class="text-body-1 text-sm-h6 text-grey800 font-weight-regular">Student</span>
           </template>
         </v-checkbox>
       </div>
@@ -54,14 +54,14 @@
         <v-checkbox
           :model-value="selectedUserGroup === UserGroup.Teacher"
           color="primary"
-          class="text-h5"
+          class="text-body-1"
           hide-details
           readonly
           false-icon="md:radio_button_unchecked"
           true-icon="md:radio_button_checked"
         >
           <template #label>
-            <span class="text-h5 text-sm-h4 text-grey800 font-weight-regular">Teacher</span>
+            <span class="text-body-1 text-sm-h6 text-grey800 font-weight-regular">Teacher</span>
           </template>
         </v-checkbox>
       </div>
@@ -73,7 +73,7 @@
         flat
         rounded="lg"
         width="250"
-        class="text-h5 font-weight-bold"
+        class="text-body-1 font-weight-bold"
         color="success"
         :loading="loadingChangeGroup || loadingEditItem"
         @click="save"

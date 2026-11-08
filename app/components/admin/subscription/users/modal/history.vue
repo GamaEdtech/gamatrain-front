@@ -1,10 +1,10 @@
 <template>
   <div class="w-100 d-flex flex-column pa-4 ga-3">
     <div class="w-100 d-flex flex-column ga-1">
-      <span class="text-h5 font-weight-bold text-grey700">
+      <span class="text-body-1 font-weight-bold text-grey700">
         User #{{ userId }}
       </span>
-      <span class="text-h6 text-grey500 font-weight-medium">
+      <span class="text-caption text-grey500 font-weight-medium">
         Full subscription history
       </span>
     </div>
@@ -34,7 +34,7 @@
       >
         md:history
       </v-icon>
-      <span class="text-h5 text-grey600 font-weight-bold mt-3">
+      <span class="text-body-1 text-grey600 font-weight-bold mt-3">
         No subscription history found.
       </span>
     </div>

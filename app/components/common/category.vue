@@ -110,8 +110,8 @@ export default {
 
 <style>
 #main-category-container {
-  margin-top: 6rem;
-  width: 40rem;
+  margin-top: 3.75rem;
+  width: 25rem;
   margin-left: auto;
   margin-right: auto;
 
@@ -120,26 +120,26 @@ export default {
   }
 
   .category-itm-content {
-    margin-left: 1rem;
-    margin-right: 1rem;
+    margin-left: 0.625rem;
+    margin-right: 0.625rem;
     text-align: center;
   }
 
   .category-btn {
     border-radius: 15%;
-    height: 4rem;
-    min-width: 4rem !important;
-    width: 4rem !important;
+    height: 2.5rem;
+    min-width: 2.5rem !important;
+    width: 2.5rem !important;
   }
 
   .category-text {
-    font-size: 1.2rem;
+    font-size: 0.75rem;
     font-weight: 400;
-    margin-top: 0.5rem;
+    margin-top: 0.3125rem;
   }
 
   .icon {
-    font-size: 2.5rem !important;
+    font-size: 1.5625rem !important;
   }
 }
 
@@ -149,90 +149,90 @@ export default {
 
 @media (min-width: 600px) {
   #main-category-container {
-    width: 55rem;
+    width: 34.375rem;
 
     .category-itm-content {
-      margin-left: 1.5rem;
-      margin-right: 1.5rem;
+      margin-left: 0.9375rem;
+      margin-right: 0.9375rem;
       text-align: center;
     }
 
     .category-btn {
       border-radius: 15%;
-      height: 5rem !important;
-      width: 5rem !important;
+      height: 3.125rem !important;
+      width: 3.125rem !important;
     }
 
     .category-text {
-      font-size: 1.5rem;
+      font-size: 0.9375rem;
       font-weight: 600;
-      margin-top: 1rem;
+      margin-top: 0.625rem;
     }
 
     .icon {
-      font-size: 3.5rem !important;
+      font-size: 2.1875rem !important;
     }
   }
 }
 
 @media (min-width: 960px) {
   #main-category-container {
-    margin-top: 8rem;
-    width: 80rem;
+    margin-top: 5rem;
+    width: 50rem;
 
     .category-sheet {
       max-width: 90%;
     }
 
     .category-itm-content {
-      margin-left: 2rem;
-      margin-right: 2rem;
+      margin-left: 1.25rem;
+      margin-right: 1.25rem;
       text-align: center;
     }
 
     .category-btn {
       border-radius: 15%;
-      height: 6rem !important;
-      width: 6rem !important;
+      height: 3.75rem !important;
+      width: 3.75rem !important;
     }
 
     .category-text {
-      font-size: 1.5rem;
+      font-size: 0.9375rem;
       font-weight: 600;
-      margin-top: 1rem;
+      margin-top: 0.625rem;
     }
 
     .icon {
-      font-size: 3.5rem !important;
+      font-size: 2.1875rem !important;
     }
   }
 }
 @media (min-width: 1264px) {
   #main-category-container {
-    margin-top: 2rem;
-    max-width: 80rem;
-    width: 80rem;
+    margin-top: 1.25rem;
+    max-width: 50rem;
+    width: 50rem;
 
     .category-itm-content {
-      margin-left: 2rem;
-      margin-right: 2rem;
+      margin-left: 1.25rem;
+      margin-right: 1.25rem;
       text-align: center;
     }
 
     .category-btn {
       border-radius: 15%;
-      height: 6rem;
-      width: 6rem;
+      height: 3.75rem;
+      width: 3.75rem;
     }
 
     .category-text {
-      font-size: 1.5rem;
+      font-size: 0.9375rem;
       font-weight: 600;
-      margin-top: 1rem;
+      margin-top: 0.625rem;
     }
 
     .icon {
-      font-size: 3.5rem !important;
+      font-size: 2.1875rem !important;
     }
   }
 }

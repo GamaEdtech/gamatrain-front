@@ -22,7 +22,7 @@
             >
           </nuxt-link>
           <span
-            class="text-grey500 text-h5 font-weight-medium mt-4 text-center text-sm-start"
+            class="text-grey500 text-body-1 font-weight-medium mt-4 text-center text-sm-start"
           >
             Our mission is to provide all training services to anyone and
             anywhere.
@@ -55,14 +55,14 @@
           md="3"
           class="d-none d-sm-flex flex-column"
         >
-          <div class="text-h4 text-grey900 font-weight-bold">
+          <div class="text-h6 text-grey900 font-weight-bold">
             {{ item.mainTitle }}
           </div>
           <nuxt-link
             v-for="link in item.subMenu"
             :key="link.link"
             :to="link.link"
-            class="text-h5 text-grey700 font-weight-medium mt-2"
+            class="text-body-1 text-grey700 font-weight-medium mt-2"
           >
             {{ link.title }}
           </nuxt-link>
@@ -76,7 +76,7 @@
             class="w-30"
             color="grey700"
           />
-          <span class="text-center text-no-wrap text-h6 font-weight-medium text-grey500">Learn&nbsp;&nbsp; &#x2022; &nbsp;&nbsp; Practice&nbsp;&nbsp; &#x2022;&nbsp;&nbsp;    Grow</span>
+          <span class="text-center text-no-wrap text-caption font-weight-medium text-grey500">Learn&nbsp;&nbsp; &#x2022; &nbsp;&nbsp; Practice&nbsp;&nbsp; &#x2022;&nbsp;&nbsp;    Grow</span>
           <v-divider
             class="w-30"
             color="grey700"
@@ -111,7 +111,7 @@
                       {{ item.icon }}
                     </v-icon>
                   </v-avatar>
-                  <span class="text-h4 font-weight-bold text-grey900">
+                  <span class="text-h6 font-weight-bold text-grey900">
                     {{ item.mainTitle }}
                   </span>
                 </div>
@@ -122,7 +122,7 @@
                     v-for="(link, index) in item.subMenu"
                     :key="link.link"
                     :to="link.link"
-                    class="text-h5 text-grey700 font-weight-medium d-flex align-center justify-space-between flex-wrap"
+                    class="text-body-1 text-grey700 font-weight-medium d-flex align-center justify-space-between flex-wrap"
                   >
                     {{ link.title }}
                     <v-icon>md:chevron_forward</v-icon>
@@ -146,7 +146,7 @@
             class="w-100"
             color="grey700"
           />
-          <span class="text-center text-h6 font-weight-medium text-grey500">
+          <span class="text-center text-caption font-weight-medium text-grey500">
             © {{ $dayjs().year() }} GamaEdtech. Licensed under
             <a
               href="https://www.gnu.org/licenses/old-licenses/gpl-2.0.html"

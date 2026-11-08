@@ -1,19 +1,19 @@
 <template>
   <div class="w-100 d-flex flex-column pa-2">
     <div class="w-100 d-flex flex-column ga-1 bg-grey100 rounded-lg pa-3">
-      <span class="text-h5 text-grey700 font-weight-bold">
+      <span class="text-body-1 text-grey700 font-weight-bold">
         #{{ usageEvent.id }} · {{ usageEvent.amount }} {{ usageEvent.featureName || usageEvent.featureCode }}
       </span>
-      <span class="text-h6 text-grey600">
+      <span class="text-caption font-weight-medium text-grey600">
         {{ usageEvent.userEmail || `user ${usageEvent.userId}` }} · {{ usageEvent.planTitle }}
       </span>
-      <span class="text-h6 text-grey600">
+      <span class="text-caption font-weight-medium text-grey600">
         The quota goes back to this subscription. A charge can be refunded once, and never more than the
         subscription has used in its current period.
       </span>
     </div>
 
-    <span class="text-h5 text-grey600 mt-4 mb-1">Authenticator code</span>
+    <span class="text-body-1 text-grey600 mt-4 mb-1">Authenticator code</span>
     <v-otp-input
       v-model="code"
       length="6"
@@ -23,7 +23,7 @@
       :disabled="loadingRefundUsageItem"
       @finish="submit"
     />
-    <span class="text-h6 text-grey400">
+    <span class="text-caption font-weight-medium text-grey400">
       The 6-digit code from your authenticator app.
       <nuxt-link
         to="/admin/two-factor"
@@ -38,7 +38,7 @@
       rounded="xl"
       height="40"
       flat
-      class="text-h5 mt-6"
+      class="text-body-1 mt-6"
       @click="submit"
     >
       Refund quota

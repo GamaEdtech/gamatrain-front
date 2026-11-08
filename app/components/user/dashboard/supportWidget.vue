@@ -2,10 +2,10 @@
   <div
     class="dashboard-card pa-4 d-flex flex-column aligh-start w-100"
   >
-    <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-2">
+    <p class="text-body-1 text-sm-h6 font-weight-bold text-grey900 mb-2">
       Need help?
     </p>
-    <p class="text-h6 text-sm-h5 text-grey500 mb-0">
+    <p class="text-caption font-weight-medium text-sm-body-1 text-grey500 mb-0">
       Reach our support team anytime from the ticket center.
     </p>
     <v-btn
@@ -16,7 +16,7 @@
       to="/user/ticket"
       block
     >
-      <span class="text-h5 font-weight-bold">
+      <span class="text-body-1 font-weight-bold">
         <v-icon class="mr-1">md:support</v-icon>Open ticket center</span>
     </v-btn>
   </div>
@@ -27,7 +27,7 @@
 
 <style scoped>
 .dashboard-card {
-  border-radius: 1rem;
+  border-radius: 0.625rem;
   border: 1px solid rgb(var(--v-theme-grey200));
 }
 </style>

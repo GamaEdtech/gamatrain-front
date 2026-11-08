@@ -124,8 +124,8 @@ useHead(() => ({
 }
 @media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
   .margin-top-handle {
-    margin-top: 6.4rem;
-    min-height: calc(100vh - 6.4rem);
+    margin-top: 4rem;
+    min-height: calc(100vh - 4rem);
   }
 }
 @media #{map.get(vuetify.$display-breakpoints, 'sm-and-down')} {

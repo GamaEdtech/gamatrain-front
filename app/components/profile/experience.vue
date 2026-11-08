@@ -3,7 +3,7 @@
     class="w-100 d-flex flex-column pa-6 ga-4 bg-grey50"
   >
     <div class="w-100 d-flex align-center justify-space-between">
-      <span class="text-h4 text-sm-h3 font-weight-bold text-grey700">Experience</span>
+      <span class="text-h6 text-sm-h4 font-weight-bold text-grey700">Experience</span>
       <v-btn
         v-if="isEditable && data && data.length > 0"
         flat
@@ -32,7 +32,7 @@
           class="w-100 d-flex align-start justify-start ga-1 flex-column"
         >
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-h5 text-sm-h4 text-grey700 font-weight-bold">{{ item.schoolTitle }}</span>
+            <span class="text-body-1 text-sm-h6 text-grey700 font-weight-bold">{{ item.schoolTitle }}</span>
             <div class="d-flex align-center ga-2">
               <v-btn
                 v-if="isEditable"
@@ -64,13 +64,13 @@
               </v-btn>
             </div>
           </div>
-          <span class="text-h6 text-grey400 font-weight-regular"> {{ formatDateRange(item.startDate, item.endDate) }}</span>
+          <span class="text-caption text-grey400 font-weight-regular"> {{ formatDateRange(item.startDate, item.endDate) }}</span>
 
           <div class="d-flex flex-column ga-2 mt-2">
             <span
               v-for="(desc, descIndex) in getDescriptions(item.description)"
               :key="descIndex"
-              class="d-flex align-center justify-start ga-3 text-grey700 font-weight-medium text-h6"
+              class="d-flex align-center justify-start ga-3 text-grey700 font-weight-medium text-caption"
             >
               <div class="dot-div rounded-circle bg-grey700" />
 
@@ -90,7 +90,7 @@
       v-else
       class="w-100 d-flex align-center justify-space-between"
     >
-      <span class="text-h6 font-weight-regular text-grey500">
+      <span class="text-caption font-weight-regular text-grey500">
         No experience added yet!
       </span>
 
@@ -99,7 +99,7 @@
         flat
         color="grey700"
         rounded="pill"
-        class="text-h6 text-white font-weight-medium"
+        class="text-caption text-white font-weight-medium"
         width="110"
         height="24"
         @click="emit('add')"

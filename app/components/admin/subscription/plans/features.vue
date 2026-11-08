@@ -1,10 +1,10 @@
 <template>
   <div class="w-100 d-flex flex-column pa-4 ga-4">
     <div class="w-100 d-flex flex-column ga-1">
-      <span class="text-h5 text-grey700 font-weight-bold">
+      <span class="text-body-1 text-grey700 font-weight-bold">
         Plan : {{ plan.title }}
       </span>
-      <span class="text-h6 text-grey500">
+      <span class="text-caption font-weight-medium text-grey500">
         {{ selectedFeatureGroups.length }} selected feature groups
       </span>
     </div>
@@ -47,7 +47,7 @@
         v-if="selectedFeatureGroups.length === 0"
         class="w-100 d-flex align-center justify-center py-4 bg-grey100 rounded-lg"
       >
-        <span class="text-grey500 text-h6 font-weight-semibold">
+        <span class="text-grey500 text-caption font-weight-semibold">
           No features selected.
         </span>
       </div>
@@ -59,25 +59,25 @@
       >
         <div class="d-flex flex-column align-start justify-start overflow-hidden ga-1">
           <div class="d-flex align-center ga-1">
-            <span class="text-grey700 text-h6 font-weight-bold text-truncate">
+            <span class="text-grey700 text-caption font-weight-bold text-truncate">
               {{ group.features.map(feature => feature.featureName).join(', ') }}
             </span>
             <span
               v-if="editingIndex === index"
-              class="text-primary text-h6 font-weight-bold"
+              class="text-primary text-caption font-weight-bold"
             >
               (editing)
             </span>
           </div>
-          <span class="text-grey500 text-h6 text-truncate">
+          <span class="text-grey500 text-caption font-weight-medium text-truncate">
             {{ group.features.map(feature => feature.featureCode).join(', ') }}
           </span>
-          <span class="text-grey500 text-h6 text-truncate">
+          <span class="text-grey500 text-caption font-weight-medium text-truncate">
             {{ formatLimits(group.limits) }}
           </span>
           <span
             v-if="group.description"
-            class="text-grey500 text-h6"
+            class="text-grey500 text-caption font-weight-medium"
           >
             {{ group.description }}
           </span>
@@ -121,7 +121,7 @@
     >
       <div class="w-100 d-flex flex-column ga-1">
         <div class="w-100 d-flex align-center justify-space-between">
-          <div class="text-h6 text-grey700 ml-2">
+          <div class="text-caption font-weight-medium text-grey700 ml-2">
             {{ isEditing ? 'Edit Feature Group' : 'Features' }}
           </div>
 
@@ -153,7 +153,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column ga-2">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Limit per Billing Interval
         </div>
 
@@ -163,7 +163,7 @@
           class="w-100 d-flex flex-column align-start justify-start ga-1 border rounded-lg pa-2"
         >
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-h6 text-grey700 font-weight-bold">{{ interval }}</span>
+            <span class="text-caption text-grey700 font-weight-bold">{{ interval }}</span>
 
             <v-checkbox
               v-model="intervalLimits[interval].unlimited"
@@ -174,7 +174,7 @@
               true-icon="md:check_box"
             >
               <template #label>
-                <span class="text-h6 text-grey700 text-no-wrap">Unlimited</span>
+                <span class="text-caption font-weight-medium text-grey700 text-no-wrap">Unlimited</span>
               </template>
             </v-checkbox>
           </div>
@@ -194,7 +194,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Description
         </div>
         <v-textarea
@@ -216,7 +216,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5"
+        class="text-body-1"
         :disabled="!isAddFormValid || selectedFeatureIds.length === 0"
         flat
         @click="addFeature"
@@ -231,7 +231,7 @@
       variant="outlined"
       height="40"
       width="200"
-      class="text-h5 mt-2 mx-auto"
+      class="text-body-1 mt-2 mx-auto"
       :loading="loadingEditFeatures"
       :disabled="loadingGetFeatures || loadingEditFeatures"
       flat
@@ -244,7 +244,7 @@
 
     <!-- Plan edits reach only new subscribers; this pushes the saved features to current ones (needs 2FA). -->
     <div class="w-100 d-flex flex-column align-center ga-1">
-      <span class="text-h6 text-grey500 text-center">
+      <span class="text-caption font-weight-medium text-grey500 text-center">
         Changes reach new subscribers only. Added a feature? Give it to current subscribers too.
       </span>
       <v-btn
@@ -252,7 +252,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5"
+        class="text-body-1"
         :disabled="loadingGetFeatures || hasUnsavedChanges"
         flat
         @click="showSyncModal = true"
@@ -261,7 +261,7 @@
       </v-btn>
       <span
         v-if="hasUnsavedChanges"
-        class="text-h6 text-warning"
+        class="text-caption font-weight-medium text-warning"
       >
         Save your changes first.
       </span>

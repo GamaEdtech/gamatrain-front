@@ -4,7 +4,7 @@
     class="w-100 d-flex flex-column pa-4"
   >
     <div class="w-100 d-flex flex-column align-start">
-      <span class="text-h5 text-grey700 font-weight-regular">Who can see my profile</span>
+      <span class="text-body-1 text-grey700 font-weight-regular">Who can see my profile</span>
       <div class="w-100 d-flex align-start justify-start mt-8">
         <v-radio-group
           v-model="privacy"
@@ -16,10 +16,10 @@
             :key="index"
             :value="item"
             color="primary"
-            class="text-h5"
+            class="text-body-1"
           >
             <template #label>
-              <span class="text-h5 text-grey700 font-weight-regular">{{ item }}</span>
+              <span class="text-body-1 text-grey700 font-weight-regular">{{ item }}</span>
             </template>
           </v-radio>
         </v-radio-group>
@@ -32,7 +32,7 @@
         rounded="pill"
         height="38"
         width="80"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :loading="loadingEditItem"
         @click="closeModal"
@@ -46,7 +46,7 @@
         rounded="pill"
         height="38"
         width="220"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :loading="loadingEditItem"
         :disabled="!isFormValid"

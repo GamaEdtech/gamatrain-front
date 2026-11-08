@@ -7,7 +7,7 @@
   >
     <h2
       id="multimedia-downloads-title"
-      class="text-h4 font-weight-heavy text-brandNavy mb-3"
+      class="text-h6 font-weight-heavy text-brandNavy mb-3"
     >
       Download this file
     </h2>
@@ -25,7 +25,7 @@
       @click="handleDownloadClick"
     />
 
-    <div class="d-flex justify-end flex-wrap ga-2 text-h6 text-grey600 py-2">
+    <div class="d-flex justify-end flex-wrap ga-2 text-caption font-weight-medium text-grey600 py-2">
       <nuxt-link
         to="/user/subscription"
         class="font-weight-bold text-generalSearchQuiz text-no-wrap"

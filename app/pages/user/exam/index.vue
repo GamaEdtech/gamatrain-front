@@ -10,7 +10,7 @@
             cols="12"
             class="pl-5"
           >
-            <span class="text-h4 teal--text">
+            <span class="text-h6 font-weight-regular teal--text">
               <v-icon
                 color="teal"
                 large
@@ -197,7 +197,7 @@
       >
         <v-card class="pa-0">
           <v-card-title
-            class="mt-2 text-h5"
+            class="mt-2 text-body-1"
             style="font-size: 13px"
           >
             Are you sure?
@@ -418,7 +418,7 @@ watch(
 
 <style scoped>
 p {
-  font-size: 1.4rem;
+  font-size: 0.875rem;
 }
 :deep(.mdi) {
   font-size: 16px !important;

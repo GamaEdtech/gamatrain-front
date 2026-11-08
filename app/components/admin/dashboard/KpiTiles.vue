@@ -24,7 +24,7 @@
         class="h-100 pa-4 d-flex flex-column ga-2"
       >
         <div class="d-flex align-center justify-space-between ga-2">
-          <span class="text-h6 font-weight-medium text-grey500 text-truncate">{{ tile.title }}</span>
+          <span class="text-caption font-weight-medium text-grey500 text-truncate">{{ tile.title }}</span>
           <v-avatar
             :color="tile.color"
             variant="tonal"
@@ -36,8 +36,8 @@
             </v-icon>
           </v-avatar>
         </div>
-        <span class="text-h3 font-weight-bold text-grey800">{{ tile.value }}</span>
-        <span class="text-subtitle-1 text-grey500">{{ tile.hint }}</span>
+        <span class="text-h4 font-weight-bold text-grey800">{{ tile.value }}</span>
+        <span class="text-caption text-grey500">{{ tile.hint }}</span>
       </v-card>
     </v-col>
   </v-row>

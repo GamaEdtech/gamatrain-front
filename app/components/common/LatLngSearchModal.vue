@@ -11,7 +11,7 @@
     >
       <v-row class="align-center">
         <v-col cols="10">
-          <span class="text-h4 font-weight-bold">Select Coordinates</span>
+          <span class="text-h6 font-weight-bold">Select Coordinates</span>
         </v-col>
         <v-col
           cols="2"
@@ -56,7 +56,7 @@
           block
           color="primary"
           rounded="xl"
-          class="mt-2 font-weight-bold text-h5"
+          class="mt-2 font-weight-bold text-body-1"
           :disabled="!canSubmit"
           @click="findLocation"
         >

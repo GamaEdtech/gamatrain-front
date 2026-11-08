@@ -207,8 +207,8 @@
     justify-content: center;
     @include style.responsive-size(
       height,
-      calc(100dvh - 6.4rem),
-      calc(100dvh - 6.4rem),
+      calc(100dvh - 4rem),
+      calc(100dvh - 4rem),
       calc(100dvh - 64px),
       calc(100dvh - 64px)
     );
@@ -248,12 +248,12 @@
     justify-content: flex-start;
     @include style.responsive-size(
       height,
-      calc(100dvh - 6.4rem),
-      calc(100dvh - 6.4rem),
+      calc(100dvh - 4rem),
+      calc(100dvh - 4rem),
       calc(100dvh - 64px),
       calc(100dvh - 64px)
     );
-    @include style.responsive-size(padding, 6.4rem 10px, 10px 10px 10px 10px, 10px 10px 10px 10px, 10px 10px 10px 10px);
+    @include style.responsive-size(padding, 4rem 10px, 10px 10px 10px 10px, 10px 10px 10px 10px, 10px 10px 10px 10px);
     .container-scroll {
       width: 100%;
       height: 100%;

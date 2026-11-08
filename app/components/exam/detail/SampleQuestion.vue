@@ -38,7 +38,7 @@
 
     <p
       v-if="result"
-      class="text-h5 font-weight-semibold mt-3"
+      class="text-body-1 font-weight-semibold mt-3"
       :class="result === 'correct' ? 'text-success' : 'text-error'"
       role="status"
     >
@@ -46,7 +46,7 @@
     </p>
     <p
       v-else-if="failed"
-      class="text-h5 text-grey600 mt-3"
+      class="text-body-1 text-grey600 mt-3"
       role="status"
     >
       The answer isn't available here. Take the test to see it.
@@ -56,7 +56,7 @@
       v-if="answer && (answer.answer_full || solutionFile)"
       class="mt-3"
     >
-      <p class="text-h5 font-weight-bold text-grey600">
+      <p class="text-body-1 font-weight-bold text-grey600">
         Solution:
       </p>
       <div
@@ -75,7 +75,7 @@
     <!-- A link crawlers can follow to the question's own page; answering happens right here. -->
     <nuxt-link
       :to="contentPath('test', question.code || question.id)"
-      class="d-inline-block text-h6 text-grey500 mt-3"
+      class="d-inline-block text-caption font-weight-medium text-grey500 mt-3"
     >
       Open this question on its own page
     </nuxt-link>
@@ -152,7 +152,7 @@ watch(answer, async () => {
 
 <style scoped>
 .solution {
-  font-size: 1.6rem;
+  font-size: 1rem;
 }
 .solution :deep(img) {
   max-width: 100%;

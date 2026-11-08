@@ -13,7 +13,7 @@
           <th
             v-for="(column, index) in columns"
             :key="index"
-            :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-center
+            :class="`bg-grey100 text-grey700 text-body-1 font-weight-bold pa-2 text-center
                ${index == 0 ? `text-start` : `th-min-width`}`"
           >
             {{ column.title }}
@@ -23,7 +23,7 @@
 
       <template #[`item.metric`]="{ item }">
         <div
-          :class="`text-${getColorTitle(item.metric)} text-h5 font-weight-bold py-4`"
+          :class="`text-${getColorTitle(item.metric)} text-body-1 font-weight-bold py-4`"
         >
           {{ item.metric }}
         </div>
@@ -31,21 +31,21 @@
 
       <template #[`item.totalAmount`]="{ item }">
         <div
-          class="text-grey600 text-h5 text-center font-weight-bold"
+          class="text-grey600 text-body-1 text-center font-weight-bold"
         >
           $ {{ $numberFormat(item.totalAmount.toFixed(2)) }}
         </div>
       </template>
       <template #[`item.totalCount`]="{ item }">
         <div
-          class="text-grey600 text-h5 text-center font-weight-bold"
+          class="text-grey600 text-body-1 text-center font-weight-bold"
         >
           {{ item.totalCount }}
         </div>
       </template>
       <template #[`item.trend`]="{ item }">
         <div
-          class="text-grey600 text-h5 text-center font-weight-bold"
+          class="text-grey600 text-body-1 text-center font-weight-bold"
         >
           {{ item.trend }}
         </div>

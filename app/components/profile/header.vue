@@ -28,7 +28,7 @@
           >
           <div :class="`status-div rounded-circle position-absolute bg-${getOnlineStatus(data.onlineStatus).nameColor}`" />
           <div
-            :class="`bio-div bg-grey100 position-absolute text-caption text-sm-subtitle-1 rounded-lg border-solid border-sm border-grey200 pa-1 ${isEditable ? 'cursor-pointer' : ''} ${data.currentStatusSentence ? `text-grey700 font-weight-medium` : `text-grey400 font-weight-regular`}`"
+            :class="`bio-div bg-grey100 position-absolute text-caption text-sm-caption rounded-lg border-solid border-sm border-grey200 pa-1 ${isEditable ? 'cursor-pointer' : ''} ${data.currentStatusSentence ? `text-grey700 font-weight-medium` : `text-grey400 font-weight-regular`}`"
             @click="isEditable && emit('editStatus')"
           >
             {{ data.currentStatusSentence ? data.currentStatusSentence : 'Add note ...' }}
@@ -43,22 +43,22 @@
             </div>
           </div> -->
         </div>
-        <span class="text-subtitle-1 text-sm-h6 text-grey700 font-weight-regular">{{ getOnlineStatus(data.onlineStatus).text }}</span>
+        <span class="text-caption text-sm-caption text-grey700 font-weight-regular">{{ getOnlineStatus(data.onlineStatus).text }}</span>
       </div>
       <div class="d-flex ga-2">
-        <span class="text-subtitle-1 text-grey400 font-weight-regular">
+        <span class="text-caption text-grey400 font-weight-regular">
           <v-icon
             color="grey400"
           >md:visibility</v-icon>
           View
         </span>
-        <span class="text-h6 text-grey700 font-weight-bold">
+        <span class="text-caption text-grey700 font-weight-bold">
           {{ data.profileView > 1000 ? (data.profileView / 1000) + " K" : data.profileView }}
         </span>
       </div>
     </div>
     <div class="w-100 d-flex align-center justify-space-between ga-4 mt-8 px-4">
-      <span class="text-h4 text-sm-h2 font-weight-bold text-grey900">{{ getDisplayName() }}</span>
+      <span class="text-h6 text-sm-h4 font-weight-bold text-grey900">{{ getDisplayName() }}</span>
       <div
         v-if="isEditable"
         class="d-flex align-center ga-2"
@@ -77,7 +77,7 @@
           >
             md:lock
           </v-icon>
-          <span class="text-info text-h6 font-weight-medium ml-1">Private</span>
+          <span class="text-info text-caption font-weight-medium ml-1">Private</span>
         </v-btn>
         <v-btn
           v-if="visibility == 'Public'"
@@ -93,7 +93,7 @@
           >
             md:lock_open_right
           </v-icon>
-          <span class="text-greenLight700 text-h6 font-weight-medium ml-1">Public</span>
+          <span class="text-greenLight700 text-caption font-weight-medium ml-1">Public</span>
         </v-btn>
         <v-btn
           v-if="visibility == 'ConnectionsOnly'"
@@ -109,7 +109,7 @@
           >
             md:lock_person
           </v-icon>
-          <span class="text-primary text-h6 font-weight-medium ml-1">Connection</span>
+          <span class="text-primary text-caption font-weight-medium ml-1">Connection</span>
         </v-btn>
 
         <v-btn
@@ -127,14 +127,14 @@
         </v-btn>
       </div>
 
-      <!-- <span class="text-h6 text-sm-h5 font-weight-bold text-grey700 mb-1 d-flex ga-1">
+      <!-- <span class="text-caption text-sm-body-1 font-weight-bold text-grey700 mb-1 d-flex ga-1">
         <v-icon
           color="primary"
           size="20"
         >md:star</v-icon>
         2.5</span> -->
     </div>
-    <span class="w-100 text-start text-h5 font-weight-regular text-grey700 mt-6 px-4">
+    <span class="w-100 text-start text-body-1 font-weight-regular text-grey700 mt-6 px-4">
       {{ data.biography ? data.biography : defaultBio }}
 
       <span
@@ -144,7 +144,7 @@
       >Edit Bio</span>
     </span>
 
-    <!-- <span class="w-100 text-start text-h6 font-weight-regular text-grey700 mt-4 px-4">
+    <!-- <span class="w-100 text-start text-caption font-weight-regular text-grey700 mt-4 px-4">
       <v-icon
         color="grey400"
         size="16"
@@ -158,7 +158,7 @@
         rounded="pill"
         color="grey100"
         width="130"
-        class="text-grey500 font-weight-medium text-h5"
+        class="text-grey500 font-weight-medium text-body-1"
       >
         <v-icon
           color="primary"
@@ -174,7 +174,7 @@
         rounded="pill"
         color="grey100"
         width="130"
-        class="text-grey500 font-weight-medium text-h5"
+        class="text-grey500 font-weight-medium text-body-1"
       >
         <v-icon
           color="primary"

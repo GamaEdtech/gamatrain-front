@@ -53,9 +53,9 @@
             v-else
             class="search-empty-state w-100 d-flex flex-column align-center justify-center ga-4"
           >
-            <span class="text-h4 font-weight-bold">Be the first to add content to this category.</span>
+            <span class="text-h6 font-weight-bold">Be the first to add content to this category.</span>
             <v-btn
-              class="text-h5 font-weight-bold"
+              class="text-body-1 font-weight-bold"
               width="250"
               color="primaryStrong"
               rounded="pill"

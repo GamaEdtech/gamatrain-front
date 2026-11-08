@@ -26,7 +26,7 @@
 
     <div
       v-if="errorMessage"
-      class="text-error text-subtitle-1 mt-1"
+      class="text-error text-caption mt-1"
     >
       {{ errorMessage }}
     </div>

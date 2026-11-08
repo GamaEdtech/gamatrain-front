@@ -49,10 +49,10 @@
         class="w-100 d-flex flex-column align-start justify-start ga-3 bg-grey200 rounded-lg pa-4"
       >
         <div class="w-100 d-flex align-center justify-space-between ga-2 flex-wrap">
-          <span class="text-h5 text-sm-h4 text-grey800 font-weight-bold">
+          <span class="text-body-1 text-sm-h6 text-grey800 font-weight-bold">
             {{ ticketDetail.subject }}
           </span>
-          <span class="text-h6 text-grey500 font-weight-medium d-flex align-center ga-1">
+          <span class="text-caption text-grey500 font-weight-medium d-flex align-center ga-1">
             <v-icon
               size="18"
               color="grey400"
@@ -65,13 +65,13 @@
 
         <div class="w-100 d-flex align-center justify-start ga-2 flex-wrap">
           <span
-            class="text-h6 font-weight-bold text-grey700"
+            class="text-caption font-weight-bold text-grey700"
           >
             {{ ticketDetail.fullName }}
           </span>
         </div>
 
-        <p class="text-h5 text-grey700 font-weight-medium mb-2 ml-4 ticket-body">
+        <p class="text-body-1 text-grey700 font-weight-medium mb-2 ml-4 ticket-body">
           {{ ticketDetail.body }}
         </p>
 
@@ -83,7 +83,7 @@
           variant="outlined"
           color="primary"
           height="30"
-          class="text-h6 font-weight-bold ml-4"
+          class="text-caption font-weight-bold ml-4"
         >
           <v-icon
             size="18"
@@ -144,7 +144,7 @@
           >
             md:forum
           </v-icon>
-          <span class="text-h5 text-grey700 font-weight-medium">
+          <span class="text-body-1 text-grey700 font-weight-medium">
             No replies yet
           </span>
         </div>
@@ -156,17 +156,17 @@
         >
           <div :class="`reply-bubble rounded-lg d-flex flex-column ga-2 pa-3 ${isUserReply(reply) ? 'bg-primary50' : 'bg-grey200'}`">
             <div class="d-flex align-center justify-space-between ga-3 flex-wrap">
-              <span class="text-h6 text-grey700 font-weight-bold">
+              <span class="text-caption text-grey700 font-weight-bold">
                 {{ isUserReply(reply) ? reply.creationUser || 'You' : 'Support team' }}
               </span>
-              <span class="text-subtitle-1 text-grey500 font-weight-medium">
+              <span class="text-caption text-grey500 font-weight-medium">
                 {{ formatLocal(reply.creationDate, 'DD/MM/YYYY HH:mm') }}
               </span>
             </div>
 
             <div
               v-safe-html="reply.body"
-              class="text-h6 text-grey700 font-weight-medium mb-0 ticket-body pl-2"
+              class="text-caption text-grey700 font-weight-medium mb-0 ticket-body pl-2"
             />
 
             <v-btn
@@ -177,7 +177,7 @@
               variant="text"
               color="primary"
               height="30"
-              class="align-self-start px-2 text-h6 font-weight-bold"
+              class="align-self-start px-2 text-caption font-weight-bold"
             >
               <v-icon
                 size="18"
@@ -223,10 +223,10 @@
               </div>
 
               <div class="d-flex flex-column overflow-hidden">
-                <span class="text-h6 text-grey800 font-weight-bold text-truncate">
+                <span class="text-caption text-grey800 font-weight-bold text-truncate">
                   {{ selectedFile.name }}
                 </span>
-                <span class="text-subtitle-1 text-grey500 font-weight-medium">
+                <span class="text-caption text-grey500 font-weight-medium">
                   {{ formatFileSize(selectedFile.size) }}
                 </span>
               </div>

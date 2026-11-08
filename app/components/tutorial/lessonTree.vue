@@ -24,7 +24,7 @@
               :class="`rounded-lg mt-3`"
             >
               <v-list-item-title
-                class="text-h5 font-weight-bold text-grey700 text-item-height"
+                class="text-body-1 font-weight-bold text-grey700 text-item-height"
               >
                 {{ unit.title }}
               </v-list-item-title>
@@ -45,7 +45,7 @@
                 class="active-line h-100 position-absolute left-0 top-0 bg-primary"
               />
               <v-list-item-title
-                class="text-h5 font-weight-regular text-grey700 text-item-height"
+                class="text-body-1 font-weight-regular text-grey700 text-item-height"
               >
                 {{ chapter.title }}
               </v-list-item-title>

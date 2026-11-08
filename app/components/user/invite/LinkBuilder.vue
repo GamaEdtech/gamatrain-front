@@ -1,10 +1,10 @@
 <template>
   <div class="w-100 bg-grey50 border rounded-xl pa-4 pa-md-6 d-flex flex-column ga-4">
     <div class="d-flex flex-column ga-1">
-      <h3 class="text-h4 font-weight-bold text-grey700">
+      <h3 class="text-h6 font-weight-bold text-grey700">
         Your invite link
       </h3>
-      <span class="text-h6 text-grey500">
+      <span class="text-caption font-weight-medium text-grey500">
         Pick the page your students should land on. Every link carries your code, so sign-ups from any of them count.
       </span>
     </div>
@@ -22,7 +22,7 @@
         :value="option.value"
         :prepend-icon="option.icon"
         variant="outlined"
-        class="text-h6 font-weight-medium"
+        class="text-caption font-weight-medium"
       >
         {{ option.label }}
       </v-chip>
@@ -46,7 +46,7 @@
 
     <div class="link-row w-100 d-flex flex-column flex-sm-row align-stretch ga-2">
       <div
-        class="link-box flex-grow-1 bg-grey100 rounded-lg px-4 d-flex align-center text-h6 text-grey700"
+        class="link-box flex-grow-1 bg-grey100 rounded-lg px-4 d-flex align-center text-caption font-weight-medium text-grey700"
         data-testid="invite-link"
       >
         <span class="text-truncate">{{ inviteLink || 'Paste a page link above' }}</span>
@@ -58,7 +58,7 @@
         flat
         :disabled="!inviteLink"
         :prepend-icon="copied ? 'md:check' : 'md:content_copy'"
-        class="text-h5 font-weight-bold px-6"
+        class="text-body-1 font-weight-bold px-6"
         @click="copyLink"
       >
         {{ copied ? 'Copied' : 'Copy link' }}
@@ -66,13 +66,13 @@
     </div>
 
     <div class="d-flex flex-wrap align-center ga-2">
-      <span class="text-h6 text-grey500 mr-1">Share:</span>
+      <span class="text-caption font-weight-medium text-grey500 mr-1">Share:</span>
       <v-btn
         v-if="canNativeShare"
         variant="tonal"
         rounded="pill"
         height="36"
-        class="text-none text-h6"
+        class="text-none text-caption font-weight-medium"
         prepend-icon="md:share"
         :disabled="!inviteLink"
         @click="nativeShare"
@@ -85,7 +85,7 @@
         variant="tonal"
         rounded="pill"
         height="36"
-        class="text-none text-h6"
+        class="text-none text-caption font-weight-medium"
         :prepend-icon="channel.icon"
         :href="inviteLink ? channel.href(inviteLink) : undefined"
         :disabled="!inviteLink"
@@ -98,7 +98,7 @@
         variant="tonal"
         rounded="pill"
         height="36"
-        class="text-none text-h6"
+        class="text-none text-caption font-weight-medium"
         prepend-icon="md:qr_code_2"
         :disabled="!inviteLink"
         @click="showQr = true"
@@ -107,7 +107,7 @@
       </v-btn>
     </div>
 
-    <span class="text-subtitle-1 text-grey500">
+    <span class="text-caption text-grey500">
       Your code: <b class="text-grey700">{{ code }}</b>. Anyone who signs up within 30 days of opening your link becomes your
       invitee for good.
     </span>
@@ -135,7 +135,7 @@
           rounded="pill"
           flat
           prepend-icon="md:download"
-          class="text-h5 font-weight-bold"
+          class="text-body-1 font-weight-bold"
           @click="downloadQr"
         >
           Download PNG

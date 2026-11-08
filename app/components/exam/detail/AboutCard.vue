@@ -5,10 +5,10 @@
     elevation="0"
     class="pa-5"
   >
-    <h2 class="text-h5 font-weight-heavy text-brandNavy mb-3">
+    <h2 class="text-body-1 font-weight-heavy text-brandNavy mb-3">
       About this quiz
     </h2>
-    <dl class="about-list text-h5">
+    <dl class="about-list text-body-1">
       <template
         v-for="item in items"
         :key="item.label"

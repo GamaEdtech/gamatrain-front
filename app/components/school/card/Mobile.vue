@@ -16,19 +16,19 @@
     <div class="w-100 d-flex flex-column ga-1 pa-3">
       <component
         :is="headingTag"
-        class="text-h5 text-grey800 font-weight-semibold"
+        class="text-body-1 text-grey800 font-weight-semibold"
       >
         {{ school.name }}
       </component>
       <p
         v-if="locationLine"
-        class="ma-0 text-h6 font-weight-regular text-grey600"
+        class="ma-0 text-caption font-weight-regular text-grey600"
       >
         {{ locationLine }}
       </p>
     </div>
     <div class="w-100 d-flex align-center justify-space-between ga-3 bottom-section px-3 py-2">
-      <div class="d-flex align-center flex-wrap ga-3 text-h6">
+      <div class="d-flex align-center flex-wrap ga-3 text-caption font-weight-medium">
         <span
           v-if="rating"
           class="d-flex align-center ga-1 text-grey800 font-weight-semibold"
@@ -53,7 +53,7 @@
           {{ contact.icon }}
         </v-icon>
       </div>
-      <span class="d-flex align-center flex-shrink-0 text-h6 font-weight-regular text-grey700">
+      <span class="d-flex align-center flex-shrink-0 text-caption font-weight-regular text-grey700">
         Details
         <v-icon
           size="small"

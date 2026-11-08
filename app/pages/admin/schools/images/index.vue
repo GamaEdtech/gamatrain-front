@@ -12,7 +12,7 @@
             height="40"
             @click="changeFilterStatus(status.id)"
           >
-            <span :class="`${status.id === statusSelect ? `text-grey900` : `text-grey500`} font-weight-bold text-h5`">
+            <span :class="`${status.id === statusSelect ? `text-grey900` : `text-grey500`} font-weight-bold text-body-1`">
               {{ status.title }}
             </span>
           </v-btn>

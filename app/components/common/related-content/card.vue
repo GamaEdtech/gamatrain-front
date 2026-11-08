@@ -16,13 +16,13 @@
         class="text-center"
       >
         <p
-          class="text-subtitle-1 font-weight-bold text-white text-no-wrap"
+          class="text-caption font-weight-bold text-white text-no-wrap"
           style="line-height: 1.5"
         >
           {{ score }}
         </p>
         <p
-          class="text-subtitle-2 text-white font-weight-regular text-no-wrap"
+          class="text-caption text-white font-weight-regular text-no-wrap"
           style="line-height: 1"
         >
           {{ type == 'exam' ? `question` : `score` }}
@@ -72,7 +72,7 @@
         :src="avatar ? avatar : `/images/member/avatar.svg`"
         :alt="lastName ? `${lastName} Avatar` : `Avatar User`"
       >
-      <span class="text-subtitle-2 font-weight-bold">{{
+      <span class="text-caption font-weight-bold">{{
         firstName + " " + lastName
       }}</span>
     </div>

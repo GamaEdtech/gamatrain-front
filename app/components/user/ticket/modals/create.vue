@@ -9,7 +9,7 @@
       v-if="!hasAccountEmail"
       class="w-100 d-flex flex-column align-start justify-start ga-1"
     >
-      <div class="text-h6 text-grey700 font-weight-medium ml-2">
+      <div class="text-caption text-grey700 font-weight-medium ml-2">
         Email
       </div>
       <v-text-field
@@ -31,7 +31,7 @@
     </div>
 
     <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-      <div class="text-h6 text-grey700 font-weight-medium ml-2">
+      <div class="text-caption text-grey700 font-weight-medium ml-2">
         Subject
       </div>
       <v-text-field
@@ -53,7 +53,7 @@
     </div>
 
     <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-      <div class="text-h6 text-grey700 font-weight-medium ml-2">
+      <div class="text-caption text-grey700 font-weight-medium ml-2">
         Message
       </div>
       <v-textarea
@@ -74,7 +74,7 @@
     </div>
 
     <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-      <div class="text-h6 text-grey700 font-weight-medium ml-2">
+      <div class="text-caption text-grey700 font-weight-medium ml-2">
         Attachment
       </div>
       <v-file-input
@@ -104,7 +104,7 @@
         rounded="pill"
         height="38"
         width="90"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :disabled="loading"
         @click="back"
@@ -119,7 +119,7 @@
         rounded="pill"
         height="38"
         width="220"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         type="submit"
         :disabled="!isFormValid || loading"

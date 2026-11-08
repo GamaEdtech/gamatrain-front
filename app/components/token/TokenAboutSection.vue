@@ -2,7 +2,7 @@
   <div>
     <section class="about-get-section">
       <v-container>
-        <div class="d-flex justify-content-center mb-4">
+        <div class="d-flex justify-center mb-4">
           <h2 class="about-get-title">
             What is <b>$GET</b>
           </h2>
@@ -15,7 +15,7 @@
             alt="$GET token about illustration"
           >
         </div>
-        <v-row class="justify-content-center about-get-row">
+        <v-row class="justify-center about-get-row">
           <v-col
             cols="12"
             sm="8"
@@ -56,7 +56,7 @@
 <style scoped>
 .about-get-section {
   background: rgb(var(--v-theme-surface));
-  padding: 5rem 0 2rem 0;
+  padding: 3.125rem 0 1.25rem 0;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -65,7 +65,7 @@
   font-size: 24px;
   color: rgb(var(--v-theme-grey900));
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .about-get-text-col {
@@ -78,14 +78,14 @@
   font-size: 16px;
   color: rgb(var(--v-theme-grey900));
   line-height: 1.7;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .about-get-img-col {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 0.625rem;
 }
 
 .about-get-img {
@@ -94,7 +94,7 @@
 }
 
 .about-get-img-mobile {
-  margin: 0 auto 2rem;
+  margin: 0 auto 1.25rem;
 }
 
 .about-get-img-mobile .about-get-img {
@@ -114,10 +114,10 @@
 
 @media (min-width: 1200px) {
   .about-get-title {
-    font-size: 4rem;
+    font-size: 2.5rem;
   }
   .about-get-desc {
-    font-size: 2.3rem;
+    font-size: 1.4375rem;
     text-align: left;
   }
 }
@@ -130,23 +130,23 @@
 /* iPad mini specific styles */
 @media (min-width: 481px) and (max-width: 768px) {
   .about-get-section {
-    padding: 4rem 2rem 3rem 2rem;
+    padding: 2.5rem 1.25rem 1.875rem 1.25rem;
   }
 
   .about-get-title {
     font-size: 36px;
-    margin-bottom: 4rem;
+    margin-bottom: 2.5rem;
   }
 
   .about-get-row {
     flex-direction: row !important;
-    gap: 2rem;
+    gap: 1.25rem;
   }
 
   .about-get-text-col {
     order: 1;
     flex: 1;
-    padding-right: 1rem;
+    padding-right: 0.625rem;
   }
 
   .about-get-img-col {
@@ -169,7 +169,7 @@
 /* Mobile styles */
 @media (max-width: 599px) {
   .about-get-section {
-    padding: 1rem 1.5rem 1rem 1.5rem;
+    padding: 0.625rem 0.9375rem 0.625rem 0.9375rem;
   }
 
   .about-get-desc {

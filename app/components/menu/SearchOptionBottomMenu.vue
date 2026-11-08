@@ -182,7 +182,7 @@ onMounted(async () => {
 }
 
 .stat-icon {
-  font-size: 2.3rem;
+  font-size: 1.4375rem;
 }
 .icon-multimedia {
   color: rgb(var(--v-theme-greenLight700));
@@ -223,7 +223,7 @@ onMounted(async () => {
   align-items: center;
   justify-content: space-between;
   border: 1px solid rgb(var(--v-theme-borderSubtle));
-  padding: 2rem 1.5rem;
+  padding: 1.25rem 0.9375rem;
   border-radius: 24px;
   transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s,
     background 0.2s;
@@ -264,7 +264,7 @@ onMounted(async () => {
   max-width: 556px;
   justify-content: flex-start;
   margin: 0 auto;
-  padding: 1rem 0.5rem;
+  padding: 0.625rem 0.3125rem;
   border-radius: 16px;
 }
 .ex-board-select {
@@ -301,7 +301,7 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     border: 1px solid rgb(var(--v-theme-borderSubtle));
-    padding: 3rem 1rem;
+    padding: 1.875rem 0.625rem;
     border-radius: 24px;
   }
   .ex-board-select {

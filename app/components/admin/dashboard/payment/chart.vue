@@ -15,14 +15,14 @@
         <v-btn
           value="status"
           size="small"
-          class="text-h6"
+          class="text-caption font-weight-medium"
         >
           By Status
         </v-btn>
         <v-btn
           value="kind"
           size="small"
-          class="text-h6"
+          class="text-caption font-weight-medium"
         >
           By Kind
         </v-btn>
@@ -41,7 +41,7 @@
 
     <div
       v-else-if="!paymentSummary.length"
-      class="w-100 text-center text-h4 font-weight-bold text-grey500 mt-16"
+      class="w-100 text-center text-h6 font-weight-bold text-grey500 mt-16"
     >
       No payment data found
     </div>

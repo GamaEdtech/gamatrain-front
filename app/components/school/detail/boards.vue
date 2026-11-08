@@ -58,7 +58,7 @@
     >
       <div class="w-100 d-flex flex-wrap flex-column bg-surface pa-6 rounded-xl mobile-style">
         <div class="d-flex align-center">
-          <span class="text-h4 font-weight-bold">Which boards does this school follow?</span>
+          <span class="text-h6 font-weight-bold">Which boards does this school follow?</span>
           <v-spacer />
           <v-btn
             variant="text"
@@ -108,11 +108,11 @@
               height="26"
               class="mr-1"
             >
-            <span :class="`font-weight-bold text-h5 ${selectedBoards.includes(Number(board.id)) ? `text-white` : `text-grey900`}`">{{ board.title }}</span>
+            <span :class="`font-weight-bold text-body-1 ${selectedBoards.includes(Number(board.id)) ? `text-white` : `text-grey900`}`">{{ board.title }}</span>
           </v-btn>
         </div>
         <v-btn
-          class="w-100 text-black font-weight-bold text-h5 ma-auto"
+          class="w-100 text-black font-weight-bold text-body-1 ma-auto"
           rounded="pill"
           color="primary"
           max-width="300"

@@ -103,7 +103,7 @@
       rounded="xl"
       height="40"
       width="200"
-      class="text-h5 mt-4 mx-auto"
+      class="text-body-1 mt-4 mx-auto"
       :loading="loading"
       flat
       @click="startSearch"

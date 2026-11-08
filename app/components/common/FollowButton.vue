@@ -3,7 +3,7 @@
     v-if="showButton"
     variant="text"
     color="info"
-    class="text-h5 text-none px-1"
+    class="text-body-1 text-none px-1"
     :prepend-icon="isFollowing ? 'md:notifications' : 'md:notifications_outlined'"
     :loading="checkingStatus || loadingFollow || loadingUnfollow"
     @click="toggleFollow"

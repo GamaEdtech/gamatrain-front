@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-column pa-4">
-    <span class="text-center text-h5 font-weight-bold text-grey700">{{ text }}</span>
+    <span class="text-center text-body-1 font-weight-bold text-grey700">{{ text }}</span>
 
     <v-btn
       color="error"
@@ -8,7 +8,7 @@
       variant="outlined"
       height="40"
       width="200"
-      class="text-h5 mt-8 mx-auto"
+      class="text-body-1 mt-8 mx-auto"
       :loading="loading"
       flat
       @click="confirm"

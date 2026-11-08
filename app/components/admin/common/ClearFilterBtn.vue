@@ -7,6 +7,6 @@
     prepend-icon="md:filter_alt_off"
     flat
   >
-    <span class="font-weight-bold text-h6">Clear Filter</span>
+    <span class="font-weight-bold text-caption">Clear Filter</span>
   </v-btn>
 </template>

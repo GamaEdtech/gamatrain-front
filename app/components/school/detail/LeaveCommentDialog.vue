@@ -36,7 +36,7 @@
               <li class="d-flex mb-4">
                 <div class="bullet" />
                 <div
-                  class="gtext-t4 font-weight-medium primary-gray-700 score-title"
+                  class="gtext-t4 font-weight-medium text-grey700 score-title"
                 >
                   Classroom & facility quality
                 </div>
@@ -52,7 +52,7 @@
               <li class="d-flex mb-4">
                 <div class="bullet" />
                 <div
-                  class="gtext-t4 font-weight-medium primary-gray-700 score-title"
+                  class="gtext-t4 font-weight-medium text-grey700 score-title"
                 >
                   Teachers' expertise
                 </div>
@@ -68,7 +68,7 @@
               <li class="d-flex mb-4">
                 <div class="bullet" />
                 <div
-                  class="gtext-t4 font-weight-medium primary-gray-700 score-title"
+                  class="gtext-t4 font-weight-medium text-grey700 score-title"
                 >
                   Tech accessibility
                 </div>
@@ -84,7 +84,7 @@
               <li class="d-flex mb-4">
                 <div class="bullet" />
                 <div
-                  class="gtext-t4 font-weight-medium primary-gray-700 score-title"
+                  class="gtext-t4 font-weight-medium text-grey700 score-title"
                 >
                   Safety & environment
                 </div>
@@ -100,7 +100,7 @@
               <li class="d-flex mb-4">
                 <div class="bullet" />
                 <div
-                  class="gtext-t4 font-weight-medium primary-gray-700 score-title"
+                  class="gtext-t4 font-weight-medium text-grey700 score-title"
                 >
                   Staff behavior
                 </div>
@@ -116,7 +116,7 @@
               <li class="d-flex mb-4">
                 <div class="bullet" />
                 <div
-                  class="gtext-t4 font-weight-medium primary-gray-700 score-title"
+                  class="gtext-t4 font-weight-medium text-grey700 score-title"
                 >
                   Value for tuition
                 </div>
@@ -132,7 +132,7 @@
               <li class="d-flex mb-4">
                 <div class="bullet" />
                 <div
-                  class="gtext-t4 font-weight-medium primary-gray-700 score-title"
+                  class="gtext-t4 font-weight-medium text-grey700 score-title"
                 >
                   Facilities
                 </div>
@@ -148,7 +148,7 @@
               <li class="d-flex">
                 <div class="bullet" />
                 <div
-                  class="gtext-t4 font-weight-medium primary-gray-700 score-title"
+                  class="gtext-t4 font-weight-medium text-grey700 score-title"
                 >
                   Art & counseling programs
                 </div>
@@ -197,7 +197,7 @@
       </v-card-text>
       <v-card-actions class="justify-center pb-13">
         <v-btn
-          class="primary black--text text-transform-none gtext-t4 font-weight-medium"
+          class="bg-primary text-none gtext-t4 font-weight-medium"
           rounded
           color="primary"
           width="100%"
@@ -304,12 +304,12 @@ async function submitComment() {
   padding: 0;
 
   .score-title {
-    width: 15rem;
-    margin-right: 1rem;
+    width: 9.375rem;
+    margin-right: 0.625rem;
   }
 }
 
 .score-title {
-  min-width: 22rem !important;
+  min-width: 13.75rem !important;
 }
 </style>

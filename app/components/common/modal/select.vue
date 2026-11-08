@@ -5,11 +5,11 @@
     <div class="w-100 d-flex align-center justify-end ga-1">
       <span
         v-if="hasSearch"
-        class="text-h5 text-grey400 mt-1"
+        class="text-body-1 text-grey400 mt-1"
       >result</span>
       <span
         v-if="hasSearch"
-        class="text-h4 text-green font-weight-bold"
+        class="text-h6 text-green font-weight-bold"
       >{{
         filteredItems.length
       }}</span>
@@ -69,7 +69,7 @@
             :style="{ color: item.color }"
           />
         </template>
-        <v-list-item-title class="text-h5">
+        <v-list-item-title class="text-body-1">
           <HighlightedText
             :text="item.title"
             :search-text="searchText"

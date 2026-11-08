@@ -9,7 +9,7 @@
         height="40"
         @click="showAddModal = true"
       >
-        <span class="text-primary font-weight-bold text-h5">Add Price</span>
+        <span class="text-primary font-weight-bold text-body-1">Add Price</span>
       </v-btn>
     </div>
 
@@ -52,7 +52,7 @@
       </template>
 
       <template #[`item.price`]="{ item }">
-        <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center ga-1">
+        <div class="text-grey600 text-body-1 d-flex justify-center align-center font-weight-bold text-center ga-1">
           <div
             class="container-symbol"
             v-html="item.currencySymbol"

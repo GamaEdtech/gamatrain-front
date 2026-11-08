@@ -8,7 +8,7 @@
         class="rounded-circle"
         alt="user profile"
       />
-      <p class="text-grey700 text-h5 font-weight-bold">
+      <p class="text-grey700 text-body-1 font-weight-bold">
         {{ contentData?.first_name }} {{ contentData?.last_name }}
       </p>
     </div>
@@ -16,7 +16,7 @@
   </div>
 
   <div
-    :class="`w-100 text-h5 mt-4 position-relative ${
+    :class="`w-100 text-body-1 mt-4 position-relative ${
       seeCompleteDescription ? `open-description` : `close-description`
     }`"
   >
@@ -33,7 +33,7 @@
   <button
     v-if="hasOverflow"
     type="button"
-    class="w-100 pa-0 bg-transparent border-0 text-left cursor-pointer text-h5 d-flex align-center ga-1 mt-1"
+    class="w-100 pa-0 bg-transparent border-0 text-left cursor-pointer text-body-1 d-flex align-center ga-1 mt-1"
     :aria-expanded="seeCompleteDescription"
     @click="seeCompleteDescription = !seeCompleteDescription"
   >
@@ -47,7 +47,7 @@
     v-if="contentData.collectionList && contentData.collectionList.length > 0"
     class="w-100 bg-grey100 mt-2 rounded-lg container-chapter-book overflow-y-auto pa-4"
   >
-    <span class="text-h5 font-weight-bold text-grey700">Book chapters</span>
+    <span class="text-body-1 font-weight-bold text-grey700">Book chapters</span>
     <ul
       class="pl-4 mt-2"
       style="list-style-type: none"
@@ -56,7 +56,7 @@
         v-for="(item, index) in contentData.collectionList"
         :key="index"
       >
-        <span class="text-h5 font-weight-medium text-grey700">{{ item.title }}</span>
+        <span class="text-body-1 font-weight-medium text-grey700">{{ item.title }}</span>
         <ul
           v-if="item.chapters && item.chapters.length"
           style="list-style-type: none"
@@ -65,18 +65,18 @@
             v-for="(chapter, chapterIndex) in item.chapters"
             :key="chapterIndex"
           >
-            <span class="text-h6 font-weight-regular text-grey700">{{ chapter.title }}</span>
+            <span class="text-caption font-weight-regular text-grey700">{{ chapter.title }}</span>
           </li>
         </ul>
       </li>
     </ul>
   </div>
   <div class="w-100 d-flex align-center justify-space-between mt-4">
-    <span class="text-h5 d-flex align-center text-grey600 ga-1">
+    <span class="text-body-1 d-flex align-center text-grey600 ga-1">
       <v-icon color="grey600">md:files_outlined</v-icon>
       {{ contentData?.content_type_title }}
     </span>
-    <span class="text-h5 d-flex align-center text-grey600 ga-1">
+    <span class="text-body-1 d-flex align-center text-grey600 ga-1">
       <v-icon color="grey600">md:update</v-icon>
       {{ fromNowLocal(contentData?.up_date) }}
     </span>
@@ -89,7 +89,7 @@
       :to="`/search?type=multimedia&section=${contentData?.section}`"
       flat
     >
-      <span class="text-grey500 text-h6 font-weight-bold">
+      <span class="text-grey500 text-caption font-weight-bold">
         {{ contentData?.section_title }}</span>
     </v-chip>
     <v-chip
@@ -98,7 +98,7 @@
       :small="mdAndDown"
       :to="`/search?type=multimedia&section=${contentData?.section}&base=${contentData?.base}`"
     >
-      <span class="text-grey500 text-h6 font-weight-bold">
+      <span class="text-grey500 text-caption font-weight-bold">
         {{ contentData?.base_title }}</span>
     </v-chip>
     <v-chip
@@ -107,7 +107,7 @@
       :small="mdAndDown"
       :to="`/search?type=multimedia&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
     >
-      <span class="text-grey500 text-h6 font-weight-bold">
+      <span class="text-grey500 text-caption font-weight-bold">
         {{ contentData?.lesson_title }}</span>
     </v-chip>
   </div>

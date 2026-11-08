@@ -1,5 +1,4 @@
 
-@use "variables" as *;;
 
 body {
   overflow-y: scroll;
@@ -8,303 +7,75 @@ body {
   .v-application {
     @media (min-width: 1904px) {
 
-
-      .video-carousel {
-        width: 700px;
-      }
-
-      .timeline-number {
-        right: -22% !important;
-      }
-
-
       .feed.v-carousel__controls {
         left: 1% !important;
-      }
-
-      .banner-sec.v-carousel__controls {
-        right: 1% !important;
       }
 
     }
 
     @media screen and (max-width: 1600px) {
 
-
       .feed {
-        .last-files {
-          .video-slider {
-
-            .v-carousel {
-              .v-carousel__controls {
-                bottom: 8% !important;
-              }
-            }
-
-            .slider-rating {
-              bottom: 11%;
-            }
-          }
-        }
       }
     }
 
     @media (max-width: 1380px) {
 
-
       .feed {
-        .last-files {
-          .video-slider {
-
-            .v-carousel {
-              .v-carousel__controls {
-                bottom: 10% !important;
-              }
-            }
-
-            .slider-rating {
-              bottom: 13%;
-            }
-          }
-        }
       }
 
       // sample q
-      .sample-q {
-        .sample-q-content {
-          .scroll-header {
-            width: 68.5%;
-            margin: 0;
-            z-index: 10;
-          }
-
-          .tab-header {}
-
-          .sample-q-items {
-            .sample-q-item {
-              .sample-item-content {
-                padding-left: 4rem;
-              }
-            }
-          }
-        }
-      }
 
       // training content
-      .training-content {
-        .training-contents {
-          .scroll-header {
-            width: 68.5%;
-            margin: 0;
-            z-index: 10;
-            border-radius: 0;
-          }
-
-          .tab-header {}
-        }
-
-        .training-items {
-          .training-item {
-            .training-item-content {
-              padding-left: 4rem;
-            }
-          }
-        }
-      }
 
       // Q&A
-      .q-a {
-        .q-a-contents {
-          .scroll-header {
-            width: 68.5%;
-            margin: 0;
-            z-index: 10;
-            border-radius: 0;
-          }
-
-          .tab-header {}
-        }
-
-        .q-a-items {
-          .q-a-item {
-            .q-a-content {
-              padding-left: 4rem;
-            }
-          }
-        }
-      }
 
       // online exam
-      .online-exam {
-        .online-exam-contents {
-          .scroll-header {
-            width: 68.5%;
-            margin: 0;
-            z-index: 10;
-            border-radius: 0;
-          }
-
-          .tab-header {}
-        }
-
-      }
 
       // online exam
       .tutorial {
-        .tutorial-contents {
-          .scroll-header {
-            width: 68.5%;
-            margin: 0;
-            z-index: 10;
-            border-radius: 0;
-          }
-
-          .tab-header {}
-        }
       }
-
 
     }
 
     @media (max-width:1250px) {
       .feed {
-        .last-files {
-          .video-slider {
-
-            .v-carousel {
-              .v-carousel__controls {
-                bottom: 17% !important;
-              }
-            }
-
-            .slider-rating {
-              bottom: 20%;
-            }
-          }
-        }
       }
     }
 
     @media (max-width:1180px) {
       .feed {
-        .last-files {
-          .video-slider {
-
-            .v-carousel {
-              .v-carousel__controls {
-                bottom: 22% !important;
-              }
-            }
-
-            .slider-rating {
-              bottom: 25%;
-            }
-          }
-        }
       }
     }
 
     @media (max-width:1070px) {
       .feed {
-        .last-files {
-          .video-slider {
-
-            .v-carousel {
-              .v-carousel__controls {
-                bottom: 27% !important;
-              }
-            }
-
-            .slider-rating {
-              bottom: 30%;
-            }
-          }
-        }
       }
     }
 
     @media (max-width:1000px) {
       .feed {
-        .last-files {
-          .video-slider {
-
-            .v-carousel {
-              .v-carousel__controls {
-                bottom: 32% !important;
-              }
-            }
-
-            .slider-rating {
-              bottom: 35%;
-            }
-          }
-        }
       }
     }
 
     .category{
-      .cat-title{
-        font-size: 1.5rem;
-        font-weight: 600;
-      }
     }
-
-    @media (min-width: 960px) {}
 
     @media screen and (max-width: 900px) {
       .feed {
-        .last-files {
-          .video-slider {
-
-            .v-carousel {
-              .v-carousel__controls {
-                bottom: 0% !important;
-              }
-            }
-
-            .slider-rating {
-              bottom: 3%;
-            }
-          }
-        }
       }
 
       // category
       .category {
-        .category-more {
-          width: 6rem;
-          height: 6rem;
-          border-radius: 50%;
-          background: $gray10;
-        }
-
-
-
-        .cat-more-icon {
-          color: $gray25;
-          font-size: 4rem;
-        }
-
-        .cat-more-p {
-          font-size: 0.95rem;
-          color: $gray9;
-        }
 
         border: none;
         box-shadow: none;
 
         .icon {
           &:before {
-            font-size: 3.5rem;
+            font-size: 2.1875rem;
           }
         }
-
-        .v-list-item__title {
-          font-size: $fontsize2;
-          white-space: break-spaces;
-        }
-
-
 
       }
 
@@ -319,207 +90,43 @@ body {
 
       // category
       .category {
-        .category-more {
-          width: 6rem;
-          height: 6rem;
-          border-radius: 50%;
-          background: $gray10;
-        }
-
-        .cat-more-icon {
-          color: $gray25;
-          font-size: 4rem;
-        }
-
-        .cat-more-p {
-          font-size: 0.95rem;
-          color: $gray9;
-        }
 
         border: none;
         box-shadow: none;
 
         .icon {
           &:before {
-            font-size: 3.5rem;
+            font-size: 2.1875rem;
           }
         }
 
-        .v-list-item__title {
-          font-size: $fontsize2;
-          white-space: break-spaces;
-        }
-
-
-
-
-      }
-
-
-      .feed-tab {
-        margin-top: 2rem;
-
-        .iconlearning {
-          color: $green5;
-          font-size: 2rem;
-        }
-
-        .iconquestion {
-          color: $orange2;
-          font-size: 2rem;
-        }
-
-        .icontest {
-          color: $blue4;
-          font-size: 2rem;
-        }
       }
 
       .status {
         margin: 25px 0 !important;
       }
 
-      .stat-item {
-        margin-bottom: 2rem;
-      }
-
       .search-item-button {
         margin-bottom: 20px !important;
       }
 
-      // .theme--light.v-input input {
-      //   font-size: 1.2rem !important;
-      // }
-
       // Banner
-      .index-banner {
-        height: 30vh !important;
-      }
-
-
-
-
 
       // mobile-search-modal
-      .mobile-card-dialog-search {
-        padding: 1.5rem 1.5rem !important;
-
-        .close-mobile-dialog-search {
-          background-color: $red3;
-          margin-bottom: 3rem;
-        }
-
-        .search-box {
-          border: 0.1rem solid rgba(34, 36, 38, 0.15);
-          border-radius: 5px;
-          background: #fff;
-          color: rgba(0, 0, 0, 0.8);
-          box-shadow: none;
-          width: 100%;
-          display: flex;
-          align-items: center;
-          margin-bottom: 4rem;
-
-
-
-          .search-icon {
-            color: $green  !important;
-          }
-        }
-
-        .search-icon-placeholder {
-          font-size: 1.5rem;
-        }
-
-        .category-sec {
-          .icon {
-            font-size: 2.7rem;
-          }
-
-          .test-cat {
-            color: $blue1;
-          }
-
-          .learnfile-cat {
-            color: $green3;
-          }
-
-          .qa-cat {
-            color: $orange1;
-          }
-
-          .azmoon-cat {
-            color: $blue2;
-          }
-
-          .blog-cat {
-            color: $orange2;
-          }
-
-          .school-cat {
-            color: $brown1;
-          }
-        }
-
-        .search-box .v-text-field>.v-input__control>.v-input__slot {
-          margin-bottom: 0 !important;
-          padding: 0.3rem;
-        }
-
-        .responsive-search-item p {
-          font-size: 1.5rem !important;
-        }
-      }
 
       .category {
-        .v-list-item__title {
-          font-size: 0.9rem;
-        }
       }
 
       //main header
       .main-header {
 
-
-        .header-search {
-          &.desktop-search {
-            display: none;
-          }
-        }
-
-        .navbar-items {
-          .hamburgers-icon {
-            font-size: 2.5rem;
-          }
-
-          .mobile-search {
-            display: none;
-
-            .search-icon {
-              font-size: 2.1rem;
-            }
-          }
-        }
       }
 
       //top bar
-      .topbar-items {
-        padding: 1rem !important;
-      }
 
       // grade search
-      .search-sec {
-        .search-item {
-          padding: 0.6rem;
-        }
-      }
 
       //grade card
-      .grade-card {
-        margin: 10px 5px !important;
-        max-width: 47% !important;
-        min-height: 26rem;
-      }
 
       .test-details-content {
         .detail {
@@ -528,7 +135,7 @@ body {
             box-shadow: none;
             margin: 0;
             padding: 0;
-            border-radius: 0.3rem;
+            border-radius: 0.1875rem;
             border: 0;
           }
 
@@ -539,391 +146,56 @@ body {
           }
 
           .detail-title {
-            font-size: 1.3rem;
-          }
-
-          .detail-rate {
-            font-size: 1.2rem !important;
-          }
-
-          .detail-image {
-            width: 6rem !important;
-            height: 7rem;
-          }
-
-          .main-content-footer {
-            font-size: 11px;
-          }
-
-          .modal-error {
-            font-size: 11px !important;
-          }
-
-          .extra-info-right {
-            width: 69% !important;
-          }
-
-          .extra-info-left {
-            width: 27% !important;
+            font-size: 0.8125rem;
           }
 
           .label-holder {
             .label {
               display: inline-block;
-              font-size: 1rem;
-              padding: 0.2rem 0.7rem;
-              margin-top: 0.5rem;
+              font-size: 0.625rem;
+              padding: 0.125rem 0.4375rem;
+              margin-top: 0.3125rem;
             }
           }
         }
       }
 
-      .last-view-title {
-        padding: 1rem;
-      }
-
-      .footer-items {
-        padding: 0 1rem !important;
-      }
     }
 
     @media (max-width:811px) {
 
       // category
       .category {
-        .category-more {
-          width: 6rem;
-          height: 6rem;
-          border-radius: 50%;
-          background: $gray10;
-        }
-
-        .cat-more-icon {
-          color: $gray25;
-          font-size: 4rem;
-        }
-
-        .cat-more-p {
-          font-size: 0.95rem;
-          color: $gray9;
-        }
 
         border: none;
         box-shadow: none;
 
         .icon {
           &:before {
-            font-size: 3.5rem;
+            font-size: 2.1875rem;
           }
-        }
-
-        .v-list-item__title {
-          font-size: $fontsize2;
-          white-space: break-spaces;
         }
 
       }
 
       // start sample q
-      .sample-q {
-        .scroll-header {
-          position: fixed;
-          z-index: 10;
-          width: 100% !important;
-          top: 0;
-          margin: 0;
-        }
-
-        .tab-header {
-          border-radius: 0.6rem;
-
-          .v-tabs {
-            .v-tabs-bar {
-              min-height: 6rem;
-              padding: 1rem 0;
-
-              .v-slide-group__prev {
-                display: none!important;
-              }
-
-              .v-badge {
-                .v-badge__badge {
-                  display: none;
-                }
-              }
-            }
-
-          }
-        }
-
-        .sample-item-content {
-          .item-content-footer {
-
-
-            img {
-              width: 25px;
-            }
-          }
-        }
-      }
 
       // start training content
-      .training-content {
-        .scroll-header {
-          position: fixed;
-          z-index: 10;
-          width: 100% !important;
-          top: 0;
-          margin: 0;
-        }
-
-        .tab-header {
-          border-radius: 0.6rem;
-          margin: 2rem 0;
-
-          .v-tabs {
-            .v-tabs-bar {
-              min-height: 6rem;
-              padding: 1rem 0;
-
-              .v-slide-group__prev {
-                display: none!important;
-              }
-
-              .v-badge {
-                .v-badge__badge {
-                  display: none;
-                }
-              }
-            }
-
-          }
-        }
-      }
 
       // start q&a
-      .q-a {
-        .scroll-header {
-          position: fixed;
-          z-index: 10;
-          width: 100% !important;
-          top: 0;
-          margin: 0;
-        }
-
-        .tab-header {
-          border-radius: 0.6rem;
-          margin: 2rem 0;
-
-          .v-tabs {
-            .v-tabs-bar {
-              min-height: 6rem;
-              padding: 1rem 0;
-
-              .v-slide-group__prev {
-                display: none!important;
-              }
-
-              .v-badge {
-                .v-badge__badge {
-                  display: none;
-                }
-              }
-            }
-
-          }
-        }
-      }
 
       // start q&a
-      .online-exam {
-        .scroll-header {
-          position: fixed;
-          z-index: 10;
-          width: 100% !important;
-          top: 0;
-          margin: 0;
-        }
-
-        .tab-header {
-          border-radius: 0.6rem;
-          margin: 2rem 0;
-
-          .v-tabs {
-            .v-tabs-bar {
-              min-height: 6rem;
-              padding: 1rem 0;
-
-              .v-slide-group__prev {
-                display: none!important;
-              }
-
-              .v-badge {
-                .v-badge__badge {
-                  display: none;
-                }
-              }
-            }
-
-          }
-        }
-      }
 
       // start q&a
       .tutorial {
-        .scroll-header {
-          position: fixed;
-          z-index: 10;
-          width: 100% !important;
-          top: 0;
-          margin: 0;
-        }
 
-        .tab-header {
-          border-radius: 0.6rem;
-          margin: 2rem 0;
-
-          .v-tabs {
-            .v-tabs-bar {
-              min-height: 6rem;
-              padding: 1rem 0;
-
-              .v-slide-group__prev {
-                display: none!important;
-              }
-
-              .v-badge {
-                .v-badge__badge {
-                  display: none;
-                }
-              }
-            }
-
-          }
-        }
       }
 
       // start: Teachers
 
-      .v-dialog__content {
-        .filter-show-result {
-          background: $green;
-          color: $white;
-          font-size: 1.4rem;
-          font-weight: 500;
-        }
-
-        .teachers-filter {
-          .v-expansion-panel {
-            border: 1px solid $border;
-            border-radius: 0.4rem;
-
-            .filter-title {
-              font-size: 1.6rem;
-            }
-          }
-
-          .v-expansion-panel::before {
-            box-shadow: none;
-          }
-        }
-
-        .filter-btn-result {
-          color: $green;
-          font-weight: 500;
-        }
-
-        .v-sheet {
-          .v-toolbar:not(.v-sheet--outlined) {
-            box-shadow: none;
-            border-bottom: 1px solid $border;
-          }
-        }
-      }
-
-      .filter-btn {
-        position: fixed;
-        bottom: 8%;
-        right: 5%;
-        z-index: 50;
-
-        .filter-mobile-btn {
-          background-color: $green;
-          padding: 2rem;
-          box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
-            0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-          border-radius: 1.2rem;
-        }
-      }
-
       .teachers {
         padding: 0;
 
-        .teachers-contents {
-          padding: 0;
-
-          .scroll-header {
-            position: fixed;
-            z-index: 10;
-            width: 100% !important;
-            top: 0;
-            margin: 0;
-          }
-
-          .tab-header {
-            border-radius: 0.6rem;
-            margin: 2rem 0;
-
-            .v-tabs {
-              .v-tabs-bar {
-                min-height: 6rem;
-                padding: 1rem 0;
-
-                .v-slide-group__prev {
-                  display: none!important;
-                }
-
-                .v-badge {
-                  .v-badge__badge {
-                    display: none;
-                  }
-                }
-              }
-
-            }
-          }
-
-
-          .teacher-items {
-            padding: 0;
-
-            .card {
-              padding: 1rem;
-
-              .card-user {
-                border-radius: 1.2rem;
-                box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1), 0px 1px 10px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.12);
-
-                .card-user-content {
-                  .card-user-tags {
-                    .card-user-tag {
-                      border-radius: 0.6rem;
-                      margin-right: 0.5rem;
-                    }
-                  }
-
-                  .card-user-details {
-                    display: flex;
-                    justify-content: flex-start;
-                  }
-                }
-              }
-            }
-
-          }
-
-
-        }
       }
 
       // End: Teachers
@@ -935,419 +207,34 @@ body {
       }
       .test-details-content {
         .detail {
-          .download-links {
-            padding: 4rem;
 
-            .word-download,
-            .pdf-download {
-              width: 100%;
-              margin: 0.3rem 0;
-            }
-          }
-
-          .pdf-page-numbers,
-          .preview-text {
-            padding: 1rem 0;
-          }
         }
       }
     }
 
-    // @media screen and (max-width: 480px) {
-
-
-    //   .stat-value {
-    //     font-size: 2.4rem !important;
-    //   }
-
-    //   .stat-item {
-    //     padding: 0 !important;
-    //     margin-right: 0 !important;
-    //     margin-left: 4rem !important;
-    //     margin-bottom: 2rem;
-    //   }
-
-    //   .stat-sec {
-    //     padding: 1rem 0 !important;
-    //     border: none;
-    //   }
-
-    //   .status {
-    //     border: none;
-    //     filter: none;
-    //   }
-
-    //   .topbar-items {
-    //     padding: 1rem !important;
-    //   }
-
-
-
-
-    //   .mobile-res-search {
-    //     width: 100% !important;
-    //     border: 1px solid gray;
-    //     background: $gray10;
-    //     display: flex !important;
-    //     border: 1px solid $border;
-    //     align-items: center;
-    //     border-radius: 4px;
-    //     height: 4rem;
-    //   }
-
-
-
-    //   .search-field {
-    //     font-size: 1rem;
-    //   }
-
-
-    //   .grade-list {
-    //     padding: 1.5rem;
-    //   }
-
     //   // Grade card
-    //   .grades-list {
-    //     .grade-card {
-    //       margin: 1.5rem 0 !important;
-    //       box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
-    //     }
-    //   }
-
-    //   .grade-list-lessons {
-    //     font-size: 14px;
-    //   }
-
-    //   .grade-divider {
-    //     display: none;
-    //   }
-
-    //   .grade-items {
-    //     display: flex;
-    //     justify-content: space-around;
-    //   }
-
-    //   .grade__item {
-    //     display: flex;
-    //     flex-direction: column;
-    //     background-color: #f0f0f0;
-    //     border-radius: 5px;
-    //     border: none;
-    //     width: 23%;
-    //     justify-content: center !important;
-    //     padding: 1rem !important;
-    //   }
-
-    //   .grade__item-title {
-    //     display: flex;
-    //     flex-direction: column;
-    //     color: #000000;
-    //   }
-
-    //   .grade-item__text {
-    //     font-size: 1.2rem !important;
-    //     text-align: center !important;
-    //   }
-
-    //   .grade-card {
-    //     max-width: 100% !important;
-    //   }
-
-    //   .feed-p-res {
-    //     font-size: 12px;
-    //     color: $gray4;
-    //     line-height: 2rem;
-    //   }
 
     //   // .grade-card__update {
     //   //   display: none;
     //   // }
-    //   .stat {
-    //     color: #000000 !important;
-    //   }
-
-    //   .stat:hover {
-    //     color: #1e70bf !important;
-    //   }
-
-    //   .feature-item {
-    //     padding: 0 4rem !important;
-    //     margin: 1rem 0 !important;
-    //   }
-
-    //   .suggestion {
-    //     display: none !important;
-    //   }
-
-    //   .test-details-content {
-    //     .detail {
-    //       .suggest-related-link {
-    //         display: none !important;
-    //       }
-    //     }
-
-    //     .remove-res {
-    //       display: none;
-    //     }
-
-    //     .course-card {
-    //       padding: 7rem 1rem;
-    //       margin: 0;
-
-    //     }
-
-    //     .album-card {
-    //       padding: 7rem 1rem;
-    //       margin: 0;
-    //     }
-
-    //     .related-box {
-    //       margin: 0;
-    //     }
-    //   }
-
-    //   .footer-items {
-    //     .about-footer-para {
-    //       font-size: 1.2rem !important;
-    //     }
-
-    //     .about-footer {
-    //       font-size: 1.4rem !important;
-    //     }
-    //   }
-
-    //   .footer-bar-item {
-    //     font-size: 1.4rem !important;
-    //     height: 6rem !important;
-    //   }
 
     //   // Start : Lesson page
-    //   .lesson-section {
-    //     padding: 0 !important;
-    //     border-radius: 0 !important;
-
-    //     .lesson-details {
-    //       order: 2;
-    //       padding: 2rem;
 
     //       .last-update,
     //       .visit,
-    //       .error-report {
-    //         font-size: 1.2rem;
-    //         font-weight: 400;
-    //         color: $gray11;
-    //       }
-    //     }
-
-    //     .lessons-title {
-    //       order: 1;
-    //       border-bottom: 1px solid $border1;
-    //       padding: 2rem;
-
-    //       .lesson-content {
-    //         text-align: right !important;
-
-    //         .lesson-title {
-    //           font-size: 1.6rem !important;
-    //           font-size: 500;
-    //         }
-
-    //         .lesson-subtitle {
-    //           font-size: 1.4rem;
-    //         }
-    //       }
-    //     }
-    //   }
-
-    //   .cards {
-    //     border-bottom: none;
-    //     padding: 0;
-    //     margin: 0;
-
-    //     .card-image img {
-    //       width: 11rem;
-    //       height: 11rem;
-    //     }
-
-    //     .card-body {
-    //       box-shadow: none !important;
-    //       border: none;
-    //       padding-top: 1.2rem !important;
-    //       padding-bottom: 0 !important;
-    //       padding-left: 0 !important;
-    //       padding-right: 0 !important;
-
-    //     }
-
-
-
-    //     .card {
-    //       border-radius: 0.8rem !important;
-
-    //       .card-title {
-    //         font-size: 1.2rem;
-    //         color: $gray45;
-    //         font-weight: 400;
-    //         letter-spacing: 0.06px;
-    //         margin-bottom: 1rem;
-    //       }
 
     //       .video-teacher,
-    //       .test-number {
-    //         margin-bottom: 1rem;
-
-    //       }
 
     //       .video-teacher,
     //       .durition,
     //       .test-number,
-    //       .levels {
-    //         font-size: 1rem;
-    //         font-weight: 400;
-    //         color: $gray4;
-    //         letter-spacing: 0.16px;
-    //       }
-    //     }
-    //   }
 
-
-    //   .sample {
-    //     .sample-titles {
-    //       margin-bottom: 0rem;
-    //       margin-top: 3rem;
-    //     }
-
-    //     .sample-slider {
-    //       .v-slide-group__prev {
-    //         display: none!important;
-    //       }
-
-    //       .v-slide-group__next {
-    //         display: none;
-    //       }
-
-    //       .sample-width {
-    //         max-width: 376px !important;
-    //       }
-
-    //     }
-
-    //   }
-
-    //   .feed {
-    //     .last-files {
-    //       .lastfile-titles {
-    //         width: 75%;
-    //       }
-
-    //       .video-slider {
-    //         position: relative;
-
-    //         .video-player {
-    //           position: relative;
-
-    //           .buttons {
     //             //opacity: 0;
-    //           }
 
-    //           &:hover .buttons {
     //             //opacity: 1;
-    //             transition: .3s ease-in-out;
-    //           }
-
-    //           .buttons button {
-    //             position: absolute;
-    //             top: 34%;
-    //             left: 43%;
-    //             width: 4rem;
-    //             height: 4rem;
-    //             color: #FFFFFF;
-    //             z-index: 10;
-    //             border-radius: 50%;
-    //             background: $black;
-    //           }
-
-    //           .buttons button.play:before {
-    //             content: "\f04b";
-    //             font-family: "Font Awesome 5 Free";
-    //             font-weight: 900;
-    //             font-size: 2rem;
-    //           }
-
-    //           .buttons button.pause:before {
-    //             content: "\f04c";
-    //             font-family: "Font Awesome 5 Free";
-    //             font-weight: 900;
-    //             font-size: 2rem;
-    //           }
-
-    //           .shadow {
-    //             background: #ffffff52;
-    //             content: " ";
-    //             width: 100%;
-    //             height: 100%;
-    //             position: absolute;
-    //             left: 0;
-    //             top: 0;
-    //             z-index: 1;
-    //           }
-    //         }
-
-    //         .slider-rating {
-    //           bottom: 6%;
-
-    //           .v-icon {
-    //             padding: 0.2rem;
-    //           }
-    //         }
-
-    //         .v-carousel {
-    //           height: 157px !important;
-
-    //           .v-carousel__controls {
-    //             background: none;
-    //             position: absolute;
-    //             bottom: -2% !important;
-    //             right: 0 !important;
-    //             display: flex;
-    //             justify-content: flex-end;
-    //             z-index: 5;
-    //             width: 42% !important;
-
-    //             .v-item-group {
-    //               margin-right: 0;
-    //             }
-    //           }
-
-    //           .item-video {
-    //             .v-carousel__item {
-    //               .my-player-dimensions {
-    //                 width: 293px;
-    //                 height: 153px;
-
-    //                 .vjs-big-play-button {
-    //                   left: 44%;
-    //                   top: 43%;
-    //                   background: #000000;
-    //                   border: none;
-    //                   border-radius: 50%;
-    //                   height: 3rem;
-    //                   width: 1em;
-    //                   z-index: 2;
-
-    //                   .vjs-icon-placeholder::before {
-    //                     top: -20%;
-    //                   }
-    //                 }
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
 
     //     // .video-slide {
-    //     //   height: 28rem !important;
+    //     //   height: 17.5rem !important;
 
     //     //   .rating {
     //     //     bottom: 21%;
@@ -1363,1163 +250,48 @@ body {
 
     //     // }
 
-    //     .related-ask-test {
-    //       padding: 0;
-    //     }
-
-    //     .date-name {
-    //       width: 100%;
-    //     }
-    //   }
-
     //   // End : Lesson page
 
-
-
     //   // start: sample-q
-    //   .v-dialog__content {
-    //     .filter-show-result {
-    //       background: $green;
-    //       color: $white;
-    //       font-size: 1.4rem;
-    //       font-weight: 500;
-    //     }
 
-    //     .sample-filter {
-    //       .v-expansion-panel {
-    //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
-
-    //         .filter-title {
-    //           font-size: 1.6rem;
-    //         }
-    //       }
-
-    //       .v-expansion-panel::before {
-    //         box-shadow: none;
-    //       }
-    //     }
-
-    //     .filter-btn-result {
-    //       color: $green;
-    //       font-weight: 500;
-    //     }
-
-    //     .v-sheet {
-    //       .v-toolbar:not(.v-sheet--outlined) {
-    //         box-shadow: none;
-    //         border-bottom: 1px solid $border;
-    //       }
-    //     }
-    //   }
-
-    //   .filter-btn {
-    //     position: fixed;
-    //     bottom: 8%;
-    //     right: 5%;
-
-    //     .filter-mobile-btn {
-    //       background-color: $green;
-    //       padding: 2rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
-    //     }
-    //   }
-
-    //   .sample-q {
-    //     padding: 0;
-
-    //     .sample-q-contents {
-    //       padding: 0;
-
-    //       .scroll-header {
-    //         position: fixed;
-    //         z-index: 10;
-    //         width: 100%;
-    //         top: 0;
-    //         margin: 0;
-    //       }
-
-    //       .tab-header {
-    //         border-radius: 0;
-
-    //         .v-tabs {
-    //           .v-tabs-bar {
-    //             min-height: 6rem;
-    //             padding: 1rem 0;
-
-    //             .v-slide-group__prev {
-    //               display: none!important;
-    //             }
-
-    //             .v-badge {
-    //               .v-badge__badge {
-    //                 display: none;
-    //               }
-    //             }
-    //           }
-
-    //         }
-    //       }
-
-    //       .sample-q-items-desktop {
-    //         padding: 0 1rem;
-
-    //         .sample-q-item {
-    //           .item-img {
-    //             height: 100%;
-
-    //             img {
-    //               border-radius: 1.2rem;
-    //               width: 100%;
-    //               height: 100%;
-    //             }
-    //           }
-
-    //           .card-footer {
-    //             .item-content-file-type {
-    //               display: flex;
-    //               align-items: center;
-    //             }
-    //             .item-content-view {
-    //               display: flex;
-    //               align-items: center;
-    //             }
-    //             .item-content-last-update {
-    //               display: flex;
-    //               align-items: center;
-    //             }
-    //             .item-content-test-type  {
-    //               display: none;
-    //             }
-
-    //             .item-content-footer-icon {
-    //               margin: 0 1.5rem;
-    //             }
-    //             p {
-    //               font-size: 1rem;
-    //               color: $gray8;
-    //             }
-
-    //             img {
-    //               width: 25px;
-    //             }
-
-    //             i {
-    //               color: $gray8;
-    //             }
-    //           }
-
-    //           .sample-item-content {
-    //             padding-left: 0;
-
-    //             .item-content-title {
-    //               font-size: 14px;
-
-    //               .item-content-title-icon {
-    //                 svg {
-    //                   width: 20px;
-    //                   height: 20px;
-    //                 }
-    //               }
-    //             }
-
-    //             .item-content-tags {
-    //               .v-chip {
-    //                 font-size: 1rem;
-    //                 padding: 0 6px;
-    //               }
-
-    //               .v-size--default {
-    //                 border-radius: 0.6rem !important;
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-    //       .card-footer {
-    //         .item-content-file-answers {
-    //           display: flex;
-    //           align-items: center;
-    //           margin: auto;
-    //           display: none !important;
-    //         }
-    //         font-size: 1rem;
-    //         img {
-    //           width: 25px;
-    //         }
-    //         .file-type {
-    //           display: none;
-    //         }
-    //         .view {
-    //           display: none;
-    //         }
-    //         .last-update {
-    //           display: none;
-    //         }
-    //         svg {
-    //           display: none;
-    //         }
-    //       }
-    //     }
-    //   }
 
     //   // Start : training-Content
 
-    //   .v-dialog__content {
-    //     .filter-show-result {
-    //       background: $green;
-    //       color: $white;
-    //       font-size: 1.4rem;
-    //       font-weight: 500;
-    //     }
-
-    //     .sample-filter {
-    //       .v-expansion-panel {
-    //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
-
-    //         .filter-title {
-    //           font-size: 1.6rem;
-    //         }
-    //       }
-
-    //       .v-expansion-panel::before {
-    //         box-shadow: none;
-    //       }
-    //     }
-
-    //     .filter-btn-result {
-    //       color: $green;
-    //       font-weight: 500;
-    //     }
-
-    //     .v-sheet {
-    //       .v-toolbar:not(.v-sheet--outlined) {
-    //         box-shadow: none;
-    //         border-bottom: 1px solid $border;
-    //       }
-    //     }
-    //   }
-
-    //   .filter-btn {
-    //     position: fixed;
-    //     bottom: 8%;
-    //     right: 5%;
-
-    //     .filter-mobile-btn {
-    //       background-color: $green;
-    //       padding: 2rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
-    //     }
-    //   }
-
-    //   .training-content {
-    //     padding: 0;
-
-    //     .training-contents {
-    //       padding: 0;
-
-    //       .scroll-header {
-    //         position: fixed;
-    //         z-index: 10;
-    //         width: 100%;
-    //         top: 0;
-    //         margin: 0;
-    //       }
-
-    //       .tab-header {
-    //         border-radius: 0;
-
-    //         .v-tabs {
-    //           .v-tabs-bar {
-    //             min-height: 6rem;
-    //             padding: 1rem 0;
-
-    //             .v-slide-group__prev {
-    //               display: none!important;
-    //             }
-
-    //             .v-badge {
-    //               .v-badge__badge {
-    //                 display: none;
-    //               }
-    //             }
-    //           }
-
-    //         }
-    //       }
-
-    //       .book-carousel {
-    //         .book-carousel-sub {
-    //           .book-carousel-q {
-    //             p {
-    //               font-size: 1.2rem;
-    //             }
-    //           }
-    //         }
-    //         .book-carousel-books {
-    //           .slide-item {
-    //             height: 30rem;
-    //             margin-top: 1.2rem !important;
-    //             .book-body {
-    //               padding: 0.7rem !important;
-    //               .book-body-image {
-    //                 height: 165px;
-    //               }
-    //               .book-season {
-    //                 margin: 5px 8px !important;
-    //                 font-size: 8px;
-    //                 border-radius: 0.6rem;
-    //                 .season-number {
-    //                   font-size: 1.4rem;
-    //                 }
-    //               }
-    //               .book-price {
-    //                 margin: 5px 8px !important;
-    //                 font-size: 8px;
-    //                 border-radius: 0.6rem;
-    //                 .price-number {
-    //                   font-size: 1.4rem;
-    //                 }
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-    //        .training-items-desktop {
-    //         padding: 0 1rem;
-
-    //         .training-item {
-    //           .item-image {
-    //             height: 100%;
-    //             border-radius: 1.2rem;
-    //             width: 100%;
-    //           }
-
-    //           .training-item-content {
-    //             padding-left: 0;
-
-    //             .item-content-title {
-    //               font-size: 1.4rem;
-
-    //               .item-content-title-icon {
-    //                 svg {
-    //                   width: 20px;
-    //                   height: 20px;
-    //                 }
-    //               }
-    //             }
-
-    //             .item-content-tags {
-    //               .v-chip {
-    //                 padding: 0 6px;
-    //                 font-size: 1rem;
-    //               }
-
-    //               .v-size--default {
-    //                 border-radius: 0.6rem !important;
-    //               }
-    //             }
-    //           }
-
-    //           .item-content-footer {
-    //             p {
-    //               font-size: 1rem;
-    //               color: $gray8;
-    //             }
-
-    //             i {
-    //               color: $gray8;
-    //             }
-
-    //             img {
-    //               width: 25px;
-    //             }
-    //           }
-    //         }
-    //       }
-    //       .card-footer {
-    //         font-size: 1rem;
-    //         .item-content-file-answers {
-    //           display: flex;
-    //           align-items: center;
-    //           margin: auto;
-    //           display: none !important;
-    //         }
-    //         .item-content-file-type {
-    //           display: flex;
-    //           align-items: center;
-    //         }
-    //         .item-content-view {
-    //           display: flex;
-    //           align-items: center;
-    //           display: none;
-    //         }
-    //         .item-content-last-update {
-    //           display: flex;
-    //           align-items: center;
-    //         }
-    //         .item-content-test-type  {
-    //           display: none;
-    //         }
-
-    //         .item-content-footer-icon {
-    //           margin: 0 1.5rem;
-    //         }
-    //         img {
-    //           width: 25px;
-    //         }
-    //         i {
-    //           color: $gray8;
-    //         }
-    //         p {
-    //           color: $gray8;
-    //         }
-    //         .file-type {
-    //           display: none;
-    //         }
-    //         .view {
-    //           display: none;
-    //         }
-    //         .last-update {
-    //           display: none;
-    //         }
-    //         svg {
-    //           display: none;
-    //         }
-    //       }
-    //     }
-    //   }
 
     //   // End : training-Content
 
     //   // start: Q & A
-    //   .v-dialog__content {
-    //     .filter-show-result {
-    //       background: $green;
-    //       color: $white;
-    //       font-size: 1.4rem;
-    //       font-weight: 500;
-    //     }
 
-    //     .q-a-filter {
-    //       .v-expansion-panel {
-    //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
-
-    //         .filter-title {
-    //           font-size: 1.6rem;
-    //         }
-    //       }
-
-    //       .v-expansion-panel::before {
-    //         box-shadow: none;
-    //       }
-    //     }
-
-    //     .filter-btn-result {
-    //       color: $green;
-    //       font-weight: 500;
-    //     }
-
-    //     .v-sheet {
-    //       .v-toolbar:not(.v-sheet--outlined) {
-    //         box-shadow: none;
-    //         border-bottom: 1px solid $border;
-    //       }
-    //     }
-    //   }
-
-    //   .filter-btn {
-    //     position: fixed;
-    //     bottom: 8%;
-    //     right: 5%;
-    //     z-index: 50;
-
-    //     .filter-mobile-btn {
-    //       background-color: $green;
-    //       padding: 2rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
-    //     }
-    //   }
-
-    //   .q-a {
-    //     padding: 0;
-
-    //     .q-a-contents {
-    //       padding: 0;
-
-    //       .scroll-header {
-    //         position: fixed;
-    //         z-index: 10;
-    //         width: 100%;
-    //         top: 0;
-    //         margin: 0;
-    //       }
-
-    //       .tab-header {
-    //         border-radius: 0;
-
-    //         .v-tabs {
-    //           .v-tabs-bar {
-    //             min-height: 6rem;
-    //             padding: 1rem 0;
-
-    //             .v-slide-group__prev {
-    //               display: none!important;
-    //             }
-
-    //             .v-badge {
-    //               .v-badge__badge {
-    //                 display: none;
-    //               }
-    //             }
-    //           }
-
-    //         }
-    //       }
-
-    //       .q-a-items-desktop {
-    //         padding: 0 1rem;
-
-    //         .q-a-item {
-    //           .item-img {
-    //             height: 100%;
-
-    //             img {
-    //               height: 100%;
-    //               width: 100%;
-    //               border-radius: 1.2rem;
-    //             }
-    //           }
-
-    //           .q-a-content {
-    //             padding-left: 0;
-
-    //             .q-a-title {
-    //               p {
-    //                 font-size: 1.4rem;
-    //               }
-    //             }
-
-    //             .item-content-tags {
-    //               .v-chip {
-    //                 padding: 0 0.6rem;
-    //               }
-
-    //               .v-size--default {
-    //                 border-radius: 0.6rem;
-    //               }
-
-    //             }
-    //           }
-
-    //           .card-footer {
-    //             .item-content-file-type {
-    //               display: none;
-    //             }
-    //             .item-content-view {
-    //               display: none;
-    //             }
-    //             .item-content-file-answers {
-    //               display: flex;
-    //               align-items: center;
-    //             }
-    //             .item-content-last-update {
-    //               display: flex;
-    //               align-items: center;
-    //             }
-    //             .item-content-test-type  {
-    //               display: none;
-    //             }
-    //             svg {
-    //               display: none;
-    //             }
-    //             img {
-    //               width: 25px;
-    //             }
-
-    //             p {
-    //               color: $gray8;
-    //               font-size: 1rem;
-    //             }
-
-    //             i {
-    //               color: $gray8;
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
 
     //   // End: Q & A
 
     //   // Start : Online-Exam
-    //   .v-dialog__content {
-    //     .filter-show-result {
-    //       background: $green;
-    //       color: $white;
-    //       font-size: 1.4rem;
-    //       font-weight: 500;
-    //     }
 
-    //     .online-exam-filter {
-    //       .v-expansion-panel {
-    //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
-
-    //         .filter-title {
-    //           font-size: 1.6rem;
-    //         }
-    //       }
-
-    //       .v-expansion-panel::before {
-    //         box-shadow: none;
-    //       }
-    //     }
-
-    //     .filter-btn-result {
-    //       color: $green;
-    //       font-weight: 500;
-    //     }
-
-    //     .v-sheet {
-    //       .v-toolbar:not(.v-sheet--outlined) {
-    //         box-shadow: none;
-    //         border-bottom: 1px solid $border;
-    //       }
-    //     }
-    //   }
-
-    //   .filter-btn {
-    //     position: fixed;
-    //     bottom: 8%;
-    //     right: 5% !important;
-    //     z-index: 10;
-
-    //     .filter-mobile-btn {
-    //       background-color: $green;
-    //       padding: 2rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
-    //     }
-    //   }
 
-    //   .online-exam {
-    //     padding: 0;
-
-    //     .online-exam-contents {
-    //       padding: 0;
-
-    //       .online-exam-content {
-    //         padding: 0;
-
-    //         .scroll-header {
-    //           position: fixed;
-    //           z-index: 10;
-    //           width: 100%;
-    //           top: 0;
-    //           margin: 0;
-    //         }
-
-    //         .tab-header {
-    //           border-radius: 0;
-
-    //           .v-tabs {
-    //             .v-tabs-bar {
-    //               min-height: 6rem;
-    //               padding: 1rem 0;
-
-    //               .v-slide-group__prev {
-    //                 display: none!important;
-    //               }
-
-    //               .v-badge {
-    //                 .v-badge__badge {
-    //                   display: none;
-    //                 }
-    //               }
-    //             }
-
-    //           }
-    //         }
-
-    //         .book-carousel {
-    //           border-radius: 0;
-
-    //           .book-carousel-sub {
-    //             .book-carousel-title h4 {
-    //               font-size: 14px;
-    //             }
-
-    //             .book-carousel-title p {
-    //               font-size: 12px;
-    //             }
-
-    //             .carousel-img {
-    //               .books-image {
-    //                 width: 106px;
-    //                 height: 114px;
-    //               }
-    //             }
-
-    //             .book-carousel-q ::before {
     //               content: url("../images/quote.png");
-    //               height: 0;
-    //               width: 1rem;
-    //               transform: rotate(30deg);
-    //               right: 0%;
-    //               top: -10%;
-    //               position: absolute;
-    //             }
-
-    //             .book-carousel-q {
-
-    //               width: 80%;
-    //               height: 30px;
-    //               background: #FFD12F;
-    //               position: relative;
-    //               border-radius: 15rem;
-    //               padding: 0.4rem;
-    //               display: flex;
-    //               align-items: center;
-    //               justify-content: center;
-
-    //               p {
-    //                 color: $green;
-    //               }
-    //             }
-
-    //             p {
-    //               font-size: 0.9rem;
-    //               color: $white;
-    //             }
-    //           }
-
-
-
-    //           .book-carousel-books {
-    //             .slide-item {
-    //               height: 30rem;
-
-    //               .book-body {
-    //                 width: 17rem;
-
-    //                 .book-body-image {
-    //                   width: 100%;
-    //                   height: 117px;
-    //                   padding: 0;
-    //                   border-radius: 1rem;
-    //                 }
-
-    //                 .book-title {
-    //                   font-size: 1.2rem;
-    //                 }
-
-    //                 .book-test {
-    //                   border-radius: 0.6rem;
-    //                   .test-number {
-    //                     font-size: 14px;
-    //                   }
-
-    //                   p {
-    //                     font-size: 8.5px;
-    //                   }
-    //                 }
-
-    //                 .book-price {
-    //                   border-radius: 0.6rem;
-    //                   .price-number {
-    //                     font-size: 14px;
-    //                   }
-
-    //                   p {
-    //                     font-size: 8.5px;
-    //                   }
-    //                 }
-    //               }
-    //             }
-    //           }
-    //         }
-
-    //         .online-exam-items-desktop {
-    //           padding: 0 1rem;
-
-    //           .online-exam-item {
-    //             .item-img {
-    //               height: 100%;
-
-    //               img {
-    //                 width: 100%;
-    //                 height: 100%;
-    //                 border-radius: 1.2rem;
-    //               }
-
-    //             }
-
-    //             .online-exam-item-content {
-    //               padding-left: 0;
-
-    //               .item-content-title {
-    //                 font-size: 1.4rem;
-    //               }
-
-    //               .item-content-features {
-    //                 font-size: 1rem;
-    //                 color: $gray8;
-    //               }
-    //             }
-
-    //             .item-content-tags {
-    //               .v-chip {
-    //                 font-size: 1rem;
-    //                 padding: 0 0.6rem;
-    //                 border-radius: 0.6rem;
-    //               }
-    //             }
-
-    //             .item-content-footer {
-    //               img {
-    //                 width: 25px;
-    //               }
-
-    //               p {
-    //                 font-size: 1rem;
-    //               }
-
-    //               i {
-    //                 color: $gray8;
-    //               }
-
-    //               svg {
-    //                 color: $gray8;
-    //               }
-    //             }
-    //           }
-    //         }
-    //       }
-    //       .card-footer {
-    //         p {
-    //           font-size: 1rem;
-    //           color: $gray8;
-    //         }
-    //         img {
-    //           width: 25px;
-    //         }
-    //         svg {
-    //           display: none;
-    //         }
-    //         i {
-    //           color: $gray8;
-    //         }
-    //         .item-content-user {
-    //           display: flex;
-    //           align-items: center;
-    //         }
-    //         .item-content-file-answers {
-    //           display: none;
-    //         }
-    //         .item-content-file-type {
-    //           display: none;
-    //         }
-    //         .item-content-test-type {
-    //           display: flex;
-    //           align-items: center;
-    //         }
-    //         .item-content-view {
-    //           display: none;
-    //         }
-    //         .item-content-last-update {
-    //           display: flex;
-    //           align-items: center;
-    //         }
-    //       }
-    //     }
-    //   }
 
     //   // End : Online-Exam
 
     //   // start: Tutorial
-    //   .v-dialog__content {
-    //     .filter-show-result {
-    //       background: $green;
-    //       color: $white;
-    //       font-size: 1.4rem;
-    //       font-weight: 500;
-    //     }
 
-    //     .tutorial-filter {
-    //       .v-expansion-panel {
-    //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
-
-    //         .filter-title {
-    //           font-size: 1.6rem;
-    //         }
-    //       }
-
-    //       .v-expansion-panel::before {
-    //         box-shadow: none;
-    //       }
-    //     }
-
-    //     .filter-btn-result {
-    //       color: $green;
-    //       font-weight: 500;
-    //     }
-
-    //     .v-sheet {
-    //       .v-toolbar:not(.v-sheet--outlined) {
-    //         box-shadow: none;
-    //         border-bottom: 1px solid $border;
-    //       }
-    //     }
-    //   }
-
-    //   .filter-btn {
-    //     position: fixed;
-    //     bottom: 8%;
-    //     right: 5%;
-    //     z-index: 50;
-
-    //     .filter-mobile-btn {
-    //       background-color: $green;
-    //       padding: 2rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
-    //     }
-    //   }
-
-    //   .tutorial {
-    //     padding: 0;
-
-    //     .tutorial-contents {
-    //       .scroll-header {
-    //         position: fixed;
-    //         z-index: 10;
-    //         width: 100%;
-    //         top: 0;
-    //         margin: 0;
-    //       }
-
-    //       .tab-header {
-    //         border-radius: 0;
-
-    //         .v-tabs {
-    //           .v-tabs-bar {
-    //             min-height: 6rem;
-    //             padding: 1rem 0;
-
-    //             .v-slide-group__prev {
-    //               display: none;
-    //             }
-
-    //             .v-badge {
-    //               .v-badge__badge {
-    //                 display: none;
-    //               }
-    //             }
-    //           }
-
-    //         }
-    //       }
-
-    //       .tutorial-items-desktop {
-    //         .tutorial-item {
-    //           .item-img {
-    //             height: 100%;
-
-    //             img {
-    //               height: 100%;
-    //               width: 100%;
-    //               border-radius: 1.2rem;
-    //             }
-    //           }
-
-    //           .tutorial-title {
-    //             font-size: 1.4rem;
-    //             font-weight: 500;
-    //           }
-
-    //           .item-content-tags {
-    //             .v-chip {
-    //               font-size: 1rem;
-    //               border-radius: 0.6rem;
-    //               padding: 0 0.6rem;
-    //             }
-    //           }
-
-    //           .card-footer  {
-    //             .item-content-user {
-    //               display: flex;
-    //               align-items: center;
-    //             }
-    //             .item-content-file-answers {
-    //               display: none;
-    //             }
-    //             .item-content-file-type {
-    //               display: none;
-    //             }
-    //             .item-content-test-type {
-    //              display: none;
-    //             }
-    //             .item-content-view {
-    //               display: none;
-    //             }
-    //             .item-content-last-update {
-    //               display: flex;
-    //               align-items: center;
-    //             }
-    //             svg {
-    //               display: none;
-    //             }
-    //             p {
-    //               font-size: 1rem;
-    //             }
-
-    //             i {
-    //               color: $gray8;
-    //             }
-
-    //             img {
-    //               width: 25px;
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   }
 
     //   // End: Tutorial
 
     //   // start: Teachers
-    //   .v-dialog__content {
-    //     .filter-show-result {
-    //       background: $green;
-    //       color: $white;
-    //       font-size: 1.4rem;
-    //       font-weight: 500;
-    //     }
 
-    //     .teachers-filter {
-    //       .v-expansion-panel {
-    //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
-
-    //         .filter-title {
-    //           font-size: 1.6rem;
-    //         }
-    //       }
-
-    //       .v-expansion-panel::before {
-    //         box-shadow: none;
-    //       }
-    //     }
-
-    //     .filter-btn-result {
-    //       color: $green;
-    //       font-weight: 500;
-    //     }
-
-    //     .v-sheet {
-    //       .v-toolbar:not(.v-sheet--outlined) {
-    //         box-shadow: none;
-    //         border-bottom: 1px solid $border;
-    //       }
-    //     }
-    //   }
-
-    //   .filter-btn {
-    //     position: fixed;
-    //     bottom: 8%;
-    //     right: 5%;
-    //     z-index: 50;
-
-    //     .filter-mobile-btn {
-    //       background-color: $green;
-    //       padding: 2rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
-    //     }
-    //   }
-
-    //   .teachers {
-    //     padding: 0;
-
-    //     .teachers-contents {
-    //       padding: 0;
-
-    //       .scroll-header {
-    //         position: fixed;
-    //         z-index: 10;
-    //         width: 100%;
-    //         top: 0;
-    //         margin: 0;
-    //       }
-
-    //       .tab-header {
-    //         border-radius: 0;
-
-    //         .v-tabs {
-    //           .v-tabs-bar {
-    //             min-height: 6rem;
-    //             padding: 1rem 0;
-
-    //             .v-slide-group__prev {
-    //               display: none!important;
-    //             }
-
-    //             .v-badge {
-    //               .v-badge__badge {
-    //                 display: none;
-    //               }
-    //             }
-    //           }
-
-    //         }
-    //       }
-
-    //       .teacher-items {
-    //         .card {
-    //           padding: 1rem;
-
-    //           .card-user {
-    //             border-radius: 1.2rem;
-    //             box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1), 0px 1px 10px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.12);
-
-    //             .card-user-content {
-    //               .card-user-tags {
-    //                 .card-user-tag {
-    //                   border-radius: 0.6rem;
-    //                   margin-right: 0.5rem;
-    //                 }
-    //               }
-
-    //               .card-user-details {
-    //                 display: flex;
-    //                 justify-content: flex-start;
-    //               }
-    //             }
-    //           }
-    //         }
-
-    //       }
-
-
-    //     }
-    //   }
 
     //   // End: Teachers
-    // }
   }
 }

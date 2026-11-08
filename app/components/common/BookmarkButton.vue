@@ -1,18 +1,18 @@
 <template>
   <div
-    class="d-flex flex-column align-center justify-center ga-1 primary-gray-700 cursor-pointer text-no-wrap"
+    class="d-flex flex-column align-center justify-center ga-1 text-grey700 cursor-pointer text-no-wrap"
     @click="addBookmarkClick"
   >
     <v-progress-circular
       v-if="loading"
       size="18"
       width="2"
-      color="primary-gray-700"
+      color="text-grey700"
       indeterminate
     />
     <v-icon
       v-else
-      :color="bookmarked ? 'primary' : 'primary-gray-700'"
+      :color="bookmarked ? 'primary' : 'text-grey700'"
     >
       {{ bookmarked ? 'md:bookmark' : 'md:bookmark_outlined' }}
     </v-icon>

@@ -1,10 +1,10 @@
 <template>
   <div class="w-100 d-flex flex-column align-start justify-start ga-6">
     <div class="d-flex flex-column ga-1">
-      <h1 class="text-h4 font-weight-bold text-grey700">
+      <h1 class="text-h6 font-weight-bold text-grey700">
         Invite &amp; Earn
       </h1>
-      <span class="text-h6 text-grey500">Invite your students to Gamatrain and earn from their subscriptions.</span>
+      <span class="text-caption font-weight-medium text-grey500">Invite your students to Gamatrain and earn from their subscriptions.</span>
     </div>
 
     <template v-if="loadingStatus && !status">
@@ -28,8 +28,8 @@
       >
         md:school
       </v-icon>
-      <span class="text-h5 font-weight-bold text-grey700">The invite program is for teachers</span>
-      <span class="text-h6 text-grey500">
+      <span class="text-body-1 font-weight-bold text-grey700">The invite program is for teachers</span>
+      <span class="text-caption font-weight-medium text-grey500">
         Teachers earn a share of the subscriptions bought by the students they invite. If you teach and your account
         is set up as a student, send us a message and we'll switch it.
       </span>
@@ -38,7 +38,7 @@
         color="primary"
         rounded="pill"
         flat
-        class="text-h5 font-weight-bold mt-2"
+        class="text-body-1 font-weight-bold mt-2"
       >
         Message support
       </v-btn>
@@ -62,7 +62,7 @@
         >
           <div class="summary-card h-100 bg-grey100 rounded-lg pa-4 d-flex flex-column justify-space-between ga-2">
             <div class="d-flex align-center justify-space-between ga-2">
-              <span class="text-h6 text-grey500 font-weight-medium">{{ item.title }}</span>
+              <span class="text-caption text-grey500 font-weight-medium">{{ item.title }}</span>
               <v-icon
                 size="22"
                 :color="item.iconColor"
@@ -70,15 +70,15 @@
                 {{ item.icon }}
               </v-icon>
             </div>
-            <span class="text-h4 font-weight-bold text-grey700 text-truncate">{{ item.value }}</span>
+            <span class="text-h6 font-weight-bold text-grey700 text-truncate">{{ item.value }}</span>
             <span
               v-if="item.hint"
-              class="text-subtitle-1 text-grey500"
+              class="text-caption text-grey500"
             >{{ item.hint }}</span>
             <nuxt-link
               v-if="item.link"
               :to="item.link.to"
-              class="text-subtitle-1 font-weight-bold text-info text-decoration-none"
+              class="text-caption font-weight-bold text-info text-decoration-none"
             >
               {{ item.link.label }}
             </nuxt-link>

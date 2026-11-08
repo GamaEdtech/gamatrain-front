@@ -5,7 +5,7 @@
     </h1>
     <div class="map-div">
       <v-btn
-        class="list-view-button mt-16 ml-12 position-absolute d-none d-lg-flex pa-6 text-h4"
+        class="list-view-button mt-16 ml-12 position-absolute d-none d-lg-flex pa-6 text-h6 font-weight-regular"
         height="50"
         elevation="4"
         prepend-icon="mdi-menu"
@@ -68,7 +68,7 @@
         class="w-100 bg-grey100 d-flex align-center justify-end pa-5 map-div-button"
       >
         <v-btn
-          class="text-h4"
+          class="text-h6 font-weight-regular"
           elevation="4"
           prepend-icon="md:location_on"
           color="success"

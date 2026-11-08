@@ -774,14 +774,14 @@ onMounted(async () => {
 /* Game container styles */
 .container {
   width: 100%;
-  height: calc(100vh - 8rem);
+  height: calc(100vh - 5rem);
   position: relative;
 }
 
 /* Main wrapper styles */
 .main {
   position: relative;
-  margin-top: 8rem;
+  margin-top: 5rem;
   /* Space for header/navigation */
 }
 </style>

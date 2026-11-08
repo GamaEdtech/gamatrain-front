@@ -39,7 +39,7 @@
         </div>
       </div>
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6">
-        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+        <div class="text-caption text-grey700 font-weight-medium ml-2">
           Handle
         </div>
         <v-text-field
@@ -59,7 +59,7 @@
         />
       </div>
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6">
-        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+        <div class="text-caption text-grey700 font-weight-medium ml-2">
           First name
         </div>
         <v-text-field
@@ -79,7 +79,7 @@
         />
       </div>
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+        <div class="text-caption text-grey700 font-weight-medium ml-2">
           Last name
         </div>
         <v-text-field
@@ -100,7 +100,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+        <div class="text-caption text-grey700 font-weight-medium ml-2">
           Gender
         </div>
         <div class="btn-gender-container w-100 flex align-center justify-center ga-1 bg-grey300 pa-1 rounded-pill">
@@ -124,7 +124,7 @@
         </div>
       </div>
 
-      <span class="text-h5 text-grey500 font-weight-regular mt-12 d-flex align-center ga-4">
+      <span class="text-body-1 text-grey500 font-weight-regular mt-12 d-flex align-center ga-4">
         <v-icon size="16">md:location_on</v-icon>
         Location
       </span>
@@ -179,7 +179,7 @@
         />
       </div>
 
-      <span class="text-h5 text-grey500 font-weight-regular mt-12 d-flex align-center ga-4">
+      <span class="text-body-1 text-grey500 font-weight-regular mt-12 d-flex align-center ga-4">
         <v-icon size="16">md:school</v-icon>
         School category
       </span>
@@ -258,7 +258,7 @@
         rounded="pill"
         height="38"
         width="80"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :loading="loadingEditItem"
         @click="closeModal"
@@ -272,7 +272,7 @@
         rounded="pill"
         height="38"
         width="220"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :loading="loadingEditItem"
         :disabled="!isFormValid"

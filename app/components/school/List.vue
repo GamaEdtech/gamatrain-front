@@ -5,7 +5,7 @@
       class="container-button-load-previous-data"
     >
       <v-btn
-        class="text-h5 text-md-h4"
+        class="text-body-1 text-md-h6"
         height="50"
         variant="outlined"
         color="primaryStrong"

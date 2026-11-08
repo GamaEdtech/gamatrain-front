@@ -7,12 +7,12 @@
   >
     <template v-if="participation">
       <div class="bg-quizFill px-6 py-5">
-        <p class="text-h6 text-white opacity-90">
+        <p class="text-caption font-weight-medium text-white opacity-90">
           Take it online
         </p>
         <p class="gama-text-h4 text-white">
           {{ participation.price ? `${participation.price} Gems` : 'Free' }}
-          <span class="text-h6 font-weight-semibold opacity-90">· instant score</span>
+          <span class="text-caption font-weight-semibold opacity-90">· instant score</span>
         </p>
       </div>
 
@@ -23,7 +23,7 @@
           size="x-large"
           rounded="lg"
           flat
-          class="text-h5 font-weight-heavy text-none"
+          class="text-body-1 font-weight-heavy text-none"
           prepend-icon="md:play_arrow"
           @click="startExam"
         >
@@ -31,7 +31,7 @@
         </v-btn>
         <p
           v-if="!hasFinished"
-          class="text-h6 text-grey500 text-center mt-2"
+          class="text-caption font-weight-medium text-grey500 text-center mt-2"
         >
           Sign in to save your result
         </p>
@@ -47,11 +47,11 @@
       <div class="d-flex align-baseline justify-space-between ga-2">
         <h2
           id="exam-downloads-title"
-          class="text-h4 font-weight-heavy text-brandNavy"
+          class="text-h6 font-weight-heavy text-brandNavy"
         >
           Download this quiz
         </h2>
-        <span class="text-h6 font-weight-bold text-grey700 text-no-wrap">
+        <span class="text-caption font-weight-bold text-grey700 text-no-wrap">
           <v-icon
             size="14"
             color="grey700"
@@ -59,7 +59,7 @@
           Pay once
         </span>
       </div>
-      <p class="text-h6 text-grey600 mt-1 mb-3">
+      <p class="text-caption font-weight-medium text-grey600 mt-1 mb-3">
         Ready-to-use files with all {{ questionCount }} questions
       </p>
 
@@ -75,7 +75,7 @@
         @click="handleExportClick(format.fileType)"
       />
 
-      <div class="d-flex justify-end ga-2 text-h6 text-grey600 py-2">
+      <div class="d-flex justify-end ga-2 text-caption font-weight-medium text-grey600 py-2">
         <nuxt-link
           to="/user/subscription"
           class="font-weight-bold text-generalSearchQuiz text-no-wrap"
@@ -92,7 +92,7 @@
         variant="text"
         size="small"
         color="grey600"
-        class="text-none text-h6"
+        class="text-none text-caption font-weight-medium"
         prepend-icon="md:share"
         @click="emit('share')"
       >
@@ -102,7 +102,7 @@
         variant="text"
         size="small"
         color="grey600"
-        class="text-none text-h6"
+        class="text-none text-caption font-weight-medium"
         prepend-icon="md:flag_outlined"
         @click="emit('report')"
       >

@@ -9,21 +9,21 @@
           md:warning
         </v-icon>
       </div>
-      <span class="text-h3 font-weight-bold text-grey700">Delete Account</span>
+      <span class="text-h4 font-weight-bold text-grey700">Delete Account</span>
     </div>
 
     <div class="w-100 d-flex flex-column align-start justify-start mt-6 position-relative py-8 px-4 px-md-16">
-      <span class="text-h5 text-md-h4 font-weight-medium text-grey700 z-index-item">Are you sure you want to delete your account?</span>
+      <span class="text-body-1 text-md-h6 font-weight-medium text-grey700 z-index-item">Are you sure you want to delete your account?</span>
       <v-checkbox
         v-model="isConfrimCheckBox"
         color="primary"
-        class="text-h4 z-index-item mt-12 mt-md-7"
+        class="text-h6 font-weight-regular z-index-item mt-12 mt-md-7"
         hide-details
         false-icon="md:check_box_outline_blank"
         true-icon="md:check_box"
       >
         <template #label>
-          <span class="text-h5 text-grey800 font-weight-regular ml-2">I understand that my account will be permanently deleted after 7 days.</span>
+          <span class="text-body-1 text-grey800 font-weight-regular ml-2">I understand that my account will be permanently deleted after 7 days.</span>
         </template>
       </v-checkbox>
       <div class="w-100 d-flex justify-center align-center ga-2 mt-10 z-index-item">
@@ -32,7 +32,7 @@
           rounded="pill"
           height="38"
           :width="mdAndUp ? `220` : `80`"
-          class="text-h5 font-weight-medium text-grey800 border-button-discard"
+          class="text-body-1 font-weight-medium text-grey800 border-button-discard"
           flat
           :loading="loadingDeleteItem"
           @click="emit('close')"
@@ -44,7 +44,7 @@
           rounded="pill"
           height="38"
           :width="mdAndUp ? `220` : `140`"
-          class="text-h5 text-white font-weight-medium"
+          class="text-body-1 text-white font-weight-medium"
           :disabled="!isConfrimCheckBox"
           flat
           :loading="loadingDeleteItem"

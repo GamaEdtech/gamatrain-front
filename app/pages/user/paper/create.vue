@@ -4,7 +4,7 @@
       v-model="isFormValid"
       class="w-100 d-flex flex-column"
     >
-      <h1 class="text-h4 text-grey700 font-weight-regular">
+      <h1 class="text-h6 text-grey700 font-weight-regular">
         Past Papers Submission Form
       </h1>
       <div class="d-flex flex-wrap justify-space-between">
@@ -246,7 +246,7 @@
             </v-col> -->
 
         <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
-          <span class="text-h6 text-grey700 font-weight-medium">Title</span>
+          <span class="text-caption text-grey700 font-weight-medium">Title</span>
           <v-text-field
             v-model="paper.title"
             density="compact"
@@ -263,7 +263,7 @@
         </div>
 
         <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
-          <span class="text-h6 text-grey700 font-weight-medium">Description</span>
+          <span class="text-caption text-grey700 font-weight-medium">Description</span>
           <v-textarea
             v-model="paper.description"
             density="compact"
@@ -283,7 +283,7 @@
         </div>
 
         <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <span class="text-h6 text-grey700 font-weight-medium">Pdf Question</span>
+          <span class="text-caption text-grey700 font-weight-medium">Pdf Question</span>
           <v-file-input
             v-model="pdfQuestionFile"
             density="compact"
@@ -321,7 +321,7 @@
         </div>
 
         <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <span class="text-h6 text-grey700 font-weight-medium">Pdf Solution</span>
+          <span class="text-caption text-grey700 font-weight-medium">Pdf Solution</span>
           <v-file-input
             v-model="pdfSolutionFile"
             density="compact"
@@ -358,7 +358,7 @@
         </div>
 
         <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <span class="text-h6 text-grey700 font-weight-medium">Word Q & S</span>
+          <span class="text-caption text-grey700 font-weight-medium">Word Q & S</span>
           <v-file-input
             v-model="wordQuestionAndSolutionFile"
             density="compact"
@@ -421,7 +421,7 @@
           </div>
 
           <div class="each-item d-flex flex-column align-start justify-start ga-1">
-            <span class="text-h6 text-grey700 font-weight-medium">Extra File</span>
+            <span class="text-caption text-grey700 font-weight-medium">Extra File</span>
             <div class="w-100 d-flex align-start ga-1">
               <v-file-input
                 v-model="extra.file"
@@ -473,7 +473,7 @@
           rounded="pill"
           width="250"
           height="40"
-          class="text-h5 font-weight-medium text-white"
+          class="text-body-1 font-weight-medium text-white"
           color="success"
           @click="addExtraFile"
         >
@@ -493,7 +493,7 @@
         flat
         rounded="pill"
         height="40"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
       >
         Discard
       </v-btn>
@@ -502,7 +502,7 @@
         rounded="pill"
         width="200"
         height="40"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         color="primary"
         :loading="loadingAddItem"
         :disabled="!isFormValid"

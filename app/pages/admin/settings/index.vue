@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 h-100 d-flex flex-wrap align-start justify-start">
-    <h2 class="w-100 text-h3 font-weight-bold text-grey700 mb-4">
+    <h2 class="w-100 text-h4 font-weight-bold text-grey700 mb-4">
       Application Setting
     </h2>
 
@@ -9,7 +9,7 @@
       :key="field.key"
       :class="`${field.type == 'text' ? `w-100 w-sm-50`:`w-100`} d-flex flex-column align-start justify-start ga-1 px-1`"
     >
-      <div class="text-h6 text-grey700 ml-2">
+      <div class="text-caption font-weight-medium text-grey700 ml-2">
         {{ field.label }}
       </div>
 
@@ -77,7 +77,7 @@
         variant="outlined"
         height="40"
         width="200"
-        class="text-h5 mt-8 mx-auto"
+        class="text-body-1 mt-8 mx-auto"
         :loading="loadingSave"
         flat
         @click="save"
@@ -91,7 +91,7 @@
       title="Preview"
     >
       <div class="w-100 d-flex flex-column pa-4">
-        <span class="text-h5 font-weight-bold text-grey700 mb-4">You can preview the email content.</span>
+        <span class="text-body-1 font-weight-bold text-grey700 mb-4">You can preview the email content.</span>
         <div class="w-100 d-flex align-start justify-start">
           <div v-html="previewMessageHtml" />
         </div>

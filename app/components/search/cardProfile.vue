@@ -28,11 +28,11 @@
               class="w-100 h-100 rounded-ts-lg rounded-bs-lg"
             />
             <template v-else>
-              <p class="text-subtitle-1 font-weight-bold text-center">
+              <p class="text-caption font-weight-bold text-center">
                 {{ information.fullName && information.fullName.trim() ? information.fullName : 'unkhown' }}
               </p>
               <a
-                class="text-subtitle-2 text-center"
+                class="text-caption font-weight-medium text-center"
                 href="https://gamatrain.com"
               >Gamatrain.com</a>
             </template>
@@ -41,7 +41,7 @@
             class="content-card d-flex flex-column ga-2 align-start justify-center justify-md-space-between"
           >
             <h2
-              class="text-h5 text-md-h4 text-black font-weight-medium"
+              class="text-body-1 text-md-h6 text-black font-weight-medium"
             >
               {{ information.fullName && information.fullName.trim() ? information?.fullName : 'unkhown' }}
             </h2>
@@ -54,7 +54,7 @@
                 :key="index"
                 :prefetch="false"
                 variant="flat"
-                class="text-subtitle-1 text-md-h5 pl-5 pr-5"
+                class="text-caption text-md-body-1 pl-5 pr-5"
                 color="grey100"
               >
                 <span class="text-grey500">{{ skill }}</span>
@@ -65,14 +65,14 @@
             >
               <span
                 v-if="information.userRateLevel"
-                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
+                class="text-grey500 text-caption d-flex align-start ga-1"
               >
                 <v-icon color="grey300">md:user_attributes_outlined</v-icon>
                 {{ information.userRateLevel }}
               </span>
               <span
                 v-if="information.onlineStatus"
-                class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
+                class="text-grey500 text-caption d-flex align-start ga-1"
               >
                 <v-icon color="grey300">md:wifi_outlined</v-icon>
                 {{ getOnlineStatusText(information.onlineStatus) }}
@@ -84,14 +84,14 @@
         <div class="d-flex d-md-none align-center justify-space-between w-100 mt-2">
           <span
             v-if="information.userRateLevel"
-            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
+            class="text-grey500 text-caption d-flex align-start ga-1"
           >
             <v-icon color="grey300">md:user_attributes_outlined</v-icon>
             {{ information.userRateLevel }}
           </span>
           <span
             v-if="information.onlineStatus"
-            class="text-grey500 text-subtitle-1 d-flex align-start ga-1"
+            class="text-grey500 text-caption d-flex align-start ga-1"
           >
             <v-icon color="grey300">md:wifi_outlined</v-icon>
             {{ information.onlineStatus }}

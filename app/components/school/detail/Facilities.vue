@@ -48,7 +48,7 @@
       <v-card class="rounded-lg">
         <v-card-text class="py-6 py-md-8 px-6 px-md-8">
           <div class="d-flex align-center">
-            <div class="text-h3 font-weight-bold">
+            <div class="text-h4 font-weight-bold">
               Which facilities does this school have?
             </div>
             <v-spacer />

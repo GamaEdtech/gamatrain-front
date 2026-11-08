@@ -1,7 +1,7 @@
 <template>
   <v-container class="mt-16 d-flex flex-column align-start justify-start">
     <div class="w-100 d-flex align-center justify-space-between ga-2 mt-4">
-      <h1 class="text-h4 text-grey700 font-weight-regular">
+      <h1 class="text-h6 text-grey700 font-weight-regular">
         Exam Results
       </h1>
     </div>

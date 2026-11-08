@@ -32,7 +32,7 @@
         rounded="lg"
         flat
         block
-        class="text-h5 font-weight-heavy text-none"
+        class="text-body-1 font-weight-heavy text-none"
         :loading="loadingPreview"
         prepend-icon="md:crop_free"
         @click="requestPreview"
@@ -40,7 +40,7 @@
         Preview<span class="d-none d-sm-inline">&nbsp;{{ pagesLabel }}</span>
         <span
           v-if="previewPrice"
-          class="preview-price d-inline-flex align-center ga-1 ml-2 px-2 rounded-pill text-h6"
+          class="preview-price d-inline-flex align-center ga-1 ml-2 px-2 rounded-pill text-caption font-weight-medium"
         >
           <v-icon
             size="14"
@@ -51,7 +51,7 @@
         </span>
         <span
           v-else
-          class="ml-1 text-h6 font-weight-semibold opacity-80"
+          class="ml-1 text-caption font-weight-semibold opacity-80"
         >(free)</span>
       </v-btn>
     </div>

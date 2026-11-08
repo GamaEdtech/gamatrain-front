@@ -4,7 +4,7 @@
       v-model="isFormValid"
       class="w-100 d-flex flex-column"
     >
-      <h1 class="text-h4 text-grey700 font-weight-regular">
+      <h1 class="text-h6 text-grey700 font-weight-regular">
         Forum Submission Form
       </h1>
 
@@ -103,7 +103,7 @@
         </div>
 
         <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
-          <span class="text-h6 text-grey700 font-weight-medium">Title</span>
+          <span class="text-caption text-grey700 font-weight-medium">Title</span>
           <v-text-field
             v-model="forum.title"
             density="compact"
@@ -130,7 +130,7 @@
         </div>
 
         <div class="w-100 d-flex flex-column align-start justify-start ga-1 rounded-lg pa-2">
-          <span class="text-h6 text-grey700 font-weight-medium">Question</span>
+          <span class="text-caption text-grey700 font-weight-medium">Question</span>
           <v-textarea
             v-model="forum.question"
             density="compact"
@@ -160,10 +160,10 @@
         </div>
 
         <div class="each-item d-flex flex-column align-start justify-start ga-1">
-          <span class="text-h6 text-grey700 font-weight-medium">Attach file
+          <span class="text-caption text-grey700 font-weight-medium">Attach file
             <span
               v-if="fileStatusText"
-              class="text-subtitle-1 text-grey600"
+              class="text-caption text-grey600"
             >
               ({{ fileStatusText }})
             </span>
@@ -230,7 +230,7 @@
         flat
         rounded="pill"
         height="40"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
       >
         Discard
       </v-btn>
@@ -239,7 +239,7 @@
         rounded="pill"
         width="200"
         height="40"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         color="primary"
         :loading="loadingEditItem"
         :disabled="!isFormValid || loadingUploadFile"

@@ -160,7 +160,7 @@
                     :rules="contentRules"
                     required
                   />
-                  <div style="position: absolute; right: 3rem; bottom: 3rem">
+                  <div style="position: absolute; right: 1.875rem; bottom: 1.875rem">
                     <v-btn
                       v-if="!form.q_file_base64"
                       variant="text"
@@ -191,8 +191,8 @@
                       :src="form.q_file_base64"
                       style="
                         border-radius: 5px;
-                        height: 7rem;
-                        width: 7rem;
+                        height: 4.375rem;
+                        width: 4.375rem;
                         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
                       "
                       @click="selectFile('q_file')"
@@ -662,7 +662,7 @@
                     :loading="create_loading"
                     size="large"
                     variant="flat"
-                    class="primary-gray-400"
+                    class="text-grey400"
                     density="compact"
                     block
                     :color="buttonDisabled == false ? '#009688' : 'gray'"
@@ -684,7 +684,7 @@
                     size="large"
                     variant="flat"
                     color="teal"
-                    class="primary-gray-400"
+                    class="text-grey400"
                     density="compact"
                     block
                     style="
@@ -2365,8 +2365,8 @@ defineExpose({
 
 .image-holder {
   position: relative;
-  height: 12.5rem;
-  margin-left: 2rem;
+  height: 7.8125rem;
+  margin-left: 1.25rem;
 }
 
 /* Ensure proper handling of radio buttons */
@@ -2393,8 +2393,8 @@ defineExpose({
 }
 
 .topic_list_item {
-  font-size: 1.4rem;
-  line-height: 2rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
 }
 
 .topic_season {
@@ -2436,8 +2436,8 @@ defineExpose({
 }
 .image-holder .image-input {
   border-radius: 5px;
-  height: 7rem;
-  width: 7rem;
+  height: 4.375rem;
+  width: 4.375rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.07);
 }
 
@@ -2446,6 +2446,6 @@ defineExpose({
   bottom: -20px;
 }
 .v-label {
-  font-size: 1.4rem !important;
+  font-size: 0.875rem !important;
 }
 </style>

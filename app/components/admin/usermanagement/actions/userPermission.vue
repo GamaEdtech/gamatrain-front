@@ -4,7 +4,7 @@
       class="w-100 d-flex flex-column align-start ga-1"
     >
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Role
         </div>
         <v-select
@@ -32,7 +32,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           System Claim
         </div>
         <v-select
@@ -66,7 +66,7 @@
         variant="outlined"
         height="40"
         width="140"
-        class="text-h5 mt-8"
+        class="text-body-1 mt-8"
         :loading="loadingEditPermission"
         flat
         @click="save(id)"

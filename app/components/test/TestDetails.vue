@@ -32,7 +32,7 @@
           flat
           width="40"
           height="40"
-          class="text-h6"
+          class="text-caption font-weight-medium"
           icon="md:question_mark"
           :disabled="isFullAnswerVisible"
           @click="showFullAnswer"
@@ -104,7 +104,7 @@
           flat
           :to="nextTestPath"
         >
-          <span class="text-h5 font-weight-medium">
+          <span class="text-body-1 font-weight-medium">
             {{ buttonNextText }}
           </span>
         </v-btn>
@@ -187,8 +187,8 @@ const nextTestLoading = ref(false)
 
 const { smAndUp } = useDisplay()
 
-const chipClass = 'text-subtitle-1 px-3'
-const chipTextClass = 'text-grey500 text-h6 text-sm-h5 font-weight-regular'
+const chipClass = 'text-caption px-3'
+const chipTextClass = 'text-grey500 text-caption text-sm-body-1 font-weight-regular'
 const { getChoiceStatus: getResultChoiceStatus } = useExamResultChoiceStatus()
 
 const chips = computed<TestDetailChip[]>(() => {
@@ -386,11 +386,11 @@ const getQuestionQueryValue = (data: TestDetailsContent, field: string) => {
   max-width: 100%;
 }
 .test-text {
-  font-size: 1.6rem;
+  font-size: 1rem;
 }
 @media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
   .test-text {
-    font-size: 1.8rem;
+    font-size: 1.125rem;
   }
 }
 </style>

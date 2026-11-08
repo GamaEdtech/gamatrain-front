@@ -189,7 +189,7 @@ onMounted(() => {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 2rem;
+  padding: 1.25rem;
 }
 
 .hero-container {
@@ -202,7 +202,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 4rem;
+  gap: 2.5rem;
 }
 
 .content-left {
@@ -225,7 +225,7 @@ onMounted(() => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
   backdrop-filter: blur(10px);
   cursor: pointer;
 }
@@ -243,7 +243,7 @@ onMounted(() => {
   font-size: 120px;
   font-weight: 700;
   color: #FFC107;
-  margin: 0 0 1.5rem 0;
+  margin: 0 0 0.9375rem 0;
   line-height: 1;
   text-align: left;
 }
@@ -253,8 +253,8 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  margin-bottom: 3rem;
+  gap: 0.625rem;
+  margin-bottom: 1.875rem;
 }
 
 .figma-price-container{
@@ -289,7 +289,7 @@ onMounted(() => {
 
 /* Purchase Component Wrapper */
 .figma-purchase-wrapper {
-  margin-top: 2rem;
+  margin-top: 1.25rem;
 }
 
 .token-wrapper {
@@ -348,8 +348,8 @@ onMounted(() => {
 
 .action-buttons {
   display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: 0.625rem;
+  margin-top: 0.625rem;
 }
 
 .buy-btn, .whitepaper-btn {
@@ -376,14 +376,14 @@ onMounted(() => {
 /* Mobile styles */
 @media (max-width: 599px) {
   .hero-section {
-    padding: 1rem;
+    padding: 0.625rem;
     min-height: auto;
   }
 
   .hero-content {
     flex-direction: column-reverse;
     text-align: center;
-    gap: 2rem;
+    gap: 1.25rem;
   }
 
   .content-left {
@@ -393,11 +393,11 @@ onMounted(() => {
 
   .content-right {
     width: 100%;
-    margin-top: 6.5rem;
+    margin-top: 4.0625rem;
   }
 
   .figma-live-badge {
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 0.9375rem;
   }
 
   .figma-get-title {
@@ -408,7 +408,7 @@ onMounted(() => {
 
   .figma-price-display {
     justify-content: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
     flex-wrap: wrap;
   }
 
@@ -430,13 +430,13 @@ onMounted(() => {
 /* Tablet styles */
 @media (min-width: 600px) and (max-width: 1199px) {
   .hero-section {
-    padding: 1.5rem;
+    padding: 0.9375rem;
   }
 
   .hero-content {
     flex-direction: column;
     text-align: center;
-    gap: 3rem;
+    gap: 1.875rem;
   }
 
   .content-left {
@@ -449,7 +449,7 @@ onMounted(() => {
   }
 
   .figma-live-badge {
-    margin: 0 auto 1.5rem;
+    margin: 0 auto 0.9375rem;
   }
 
   .figma-get-title {
@@ -459,7 +459,7 @@ onMounted(() => {
 
   .figma-price-display {
     justify-content: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5625rem;
   }
 
   .figma-price {
@@ -480,7 +480,7 @@ onMounted(() => {
 /* Desktop styles */
 @media (min-width: 1200px) {
   .hero-content {
-    gap: 4rem;
+    gap: 2.5rem;
     align-items: center;
   }
 

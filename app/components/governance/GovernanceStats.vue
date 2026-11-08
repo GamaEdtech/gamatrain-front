@@ -32,19 +32,19 @@
           <div v-else>
             <div
               v-if="stat.title != `Your Staked`"
-              class="text-grey700 text-h6 text-md-h5 font-weight-bold"
+              class="text-grey700 text-caption text-md-body-1 font-weight-bold"
             >
               {{ $numberFormat(Math.ceil(stat.value ?? 0)) }}
-              <span class="text-grey500 text-subtitle-1">
+              <span class="text-grey500 text-caption">
                 {{ stat.subtitle }}</span>
             </div>
             <div
               v-else
-              class="text-grey700 text-h6 text-md-h5 font-weight-bold"
+              class="text-grey700 text-caption text-md-body-1 font-weight-bold"
             >
               <template v-if="stat.value != null">
                 {{ $numberFormat(Math.ceil(stat.value ?? 0)) }}
-                <span class="text-grey500 text-subtitle-1">
+                <span class="text-grey500 text-caption">
                   {{ stat.subtitle }}</span>
               </template>
               <template v-else>
@@ -52,7 +52,7 @@
               </template>
             </div>
             <div
-              class="text-grey500 text-subtitle-2 text-md-h6 font-weight-normal mt-2"
+              class="text-grey500 text-caption text-md-caption font-weight-normal mt-2"
             >
               {{ stat.title }}
             </div>
@@ -118,8 +118,8 @@ const statsInfo = computed(() => {
 
 <style scoped>
 .governance-stats {
-  margin-top: -7rem;
-  margin-bottom: 2rem;
+  margin-top: -4.375rem;
+  margin-bottom: 1.25rem;
 }
 
 .stats-flex {
@@ -196,8 +196,8 @@ const statsInfo = computed(() => {
 
 @media only screen and (min-width: 960px) {
   .governance-stats {
-    margin-top: -7rem;
-    margin-bottom: 2rem;
+    margin-top: -4.375rem;
+    margin-bottom: 1.25rem;
   }
 
   .stat-card {

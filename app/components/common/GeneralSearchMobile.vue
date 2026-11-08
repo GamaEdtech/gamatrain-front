@@ -368,7 +368,7 @@ watch(
   }
 }
 .result-stat {
-  padding: 1.6rem;
+  padding: 1rem;
   text-align: right;
   position: sticky;
   top: 0;
@@ -380,12 +380,12 @@ watch(
 }
 
 .gama-text-overline-search {
-  margin-right: 0.22rem;
+  margin-right: 0.1375rem;
 }
 
 .mobile-search-sheet {
   height: 70vh !important;
-  border-radius: 3rem 3rem 0 0 !important;
+  border-radius: 1.875rem 1.875rem 0 0 !important;
   justify-content: center;
   align-items: center;
   background: rgb(var(--v-theme-surface));
@@ -399,8 +399,8 @@ watch(
 .search-sheet-handler-holder {
   position: absolute;
   width: 100%;
-  height: 6.4rem;
-  border-radius: 10rem;
+  height: 4rem;
+  border-radius: 6.25rem;
   opacity: 0.4;
   top: 0;
   left: 0;
@@ -411,11 +411,11 @@ watch(
 
 .search-sheet-handler {
   position: absolute;
-  width: 3.2rem;
-  height: 0.4rem;
-  border-radius: 10rem;
+  width: 2rem;
+  height: 0.25rem;
+  border-radius: 6.25rem;
   opacity: 0.4;
-  top: 1.6rem;
+  top: 1rem;
   left: 0;
   right: 0;
   background: var(--m-3-sys-light-outline, #79747e);
@@ -445,7 +445,7 @@ watch(
 @media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
   .mobile-search-sheet {
     height: 50vh;
-    border-radius: 3rem 3rem 0 0;
+    border-radius: 1.875rem 1.875rem 0 0;
     justify-content: center;
     align-items: center;
   }

@@ -125,7 +125,7 @@
               @click="handleDisconnect"
             >
               <v-list-item-title
-                class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
+                class="d-flex align-end justify-start ga-2 font-weight-bold text-body-1 primary-gray-500"
               >
                 <v-icon color="#667085">
                   md:sensors_off
@@ -138,7 +138,7 @@
               @click="changeWallet"
             >
               <v-list-item-title
-                class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
+                class="d-flex align-end justify-start ga-2 font-weight-bold text-body-1 primary-gray-500"
               >
                 <v-icon color="#667085">
                   md:change_circle
@@ -183,7 +183,7 @@
             @click="handleDisconnect"
           >
             <v-list-item-title
-              class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
+              class="d-flex align-end justify-start ga-2 font-weight-bold text-body-1 primary-gray-500"
             >
               <v-icon color="#667085">
                 md:sensors_off
@@ -196,7 +196,7 @@
             @click="changeWallet"
           >
             <v-list-item-title
-              class="d-flex align-end justify-start ga-2 font-weight-bold text-h5 primary-gray-500"
+              class="d-flex align-end justify-start ga-2 font-weight-bold text-body-1 primary-gray-500"
             >
               <v-icon color="#667085">
                 md:change_circle
@@ -214,7 +214,7 @@
       color="#98A2B3"
       height="56"
       rounded="xl"
-      class="w-100 font-weight-bold text-h5"
+      class="w-100 font-weight-bold text-body-1"
       to="/whitepaper"
     >
       <v-icon class="mr-2">
@@ -1937,7 +1937,7 @@ watch(getTokenAmount, () => {
 .token-purchase__illustration {
   position: static !important;
   display: block;
-  margin: 2.5rem auto 0 auto;
+  margin: 1.5625rem auto 0 auto;
   left: unset !important;
   right: unset !important;
   bottom: unset !important;
@@ -1992,14 +1992,14 @@ watch(getTokenAmount, () => {
 /* === TABLET (min-width: 600px and max-width: 1199px) === */
 @media (min-width: 600px) and (max-width: 1199px) {
   .token-purchase-bg {
-    padding-bottom: 4rem;
+    padding-bottom: 2.5rem;
   }
   .token-purchase-content {
     margin-bottom: 0;
   }
   .token-purchase__illustration {
     max-width: 900px;
-    margin-top: 3rem;
+    margin-top: 1.875rem;
   }
   .token-purchase__title {
     color: rgb(var(--v-theme-grey900));
@@ -2008,7 +2008,7 @@ watch(getTokenAmount, () => {
   }
   .token-purchase__description {
     font-size: 20px;
-    padding-top: 2rem;
+    padding-top: 1.25rem;
   }
   .main-heading {
     font-size: 56px;
@@ -2023,7 +2023,7 @@ watch(getTokenAmount, () => {
 /* === DESKTOP (min-width: 1200px) === */
 @media (min-width: 1200px) {
   .token-purchase-bg {
-    padding-bottom: 5rem;
+    padding-bottom: 3.125rem;
   }
   .token-purchase-content {
     margin-bottom: 0;
@@ -2031,7 +2031,7 @@ watch(getTokenAmount, () => {
   .token-purchase__illustration {
     width: 900px;
     max-width: 100%;
-    margin-top: 1rem;
+    margin-top: 0.625rem;
   }
   .token-purchase__title {
     color: rgb(var(--v-theme-grey900));
@@ -2041,26 +2041,26 @@ watch(getTokenAmount, () => {
   .main-heading {
     font-size: 76px;
     font-weight: 700;
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
   }
   .sub-heading {
     font-size: 64px;
     font-weight: 700;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.9375rem;
   }
   .token-purchase__description {
     color: rgb(var(--v-theme-grey900));
     font-size: 24px;
     font-weight: 400;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
   }
   .token-purchase__btn {
     height: 68px;
     width: 215px;
     font-size: 32px;
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 0.625rem;
   }
   .token-purchase__btn img {
     width: 40px;
@@ -2279,7 +2279,7 @@ watch(getTokenAmount, () => {
   margin-bottom: 0;
 }
 
-.wallet-modal .text-body-2 {
+.wallet-modal .text-caption {
   color: rgb(var(--v-theme-grey600));
   font-weight: 400;
 }

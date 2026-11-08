@@ -71,7 +71,7 @@ const handleTouchEnd = (direction: string) => {
 <style scoped>
 .mobile-controls {
   position: absolute;
-  bottom: 8rem;
+  bottom: 5rem;
   left: 20px;
   width: 150px;
   height: 150px;
