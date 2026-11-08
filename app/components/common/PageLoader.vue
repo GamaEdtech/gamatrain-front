@@ -90,7 +90,7 @@
         <transition name="page-loader">
           <p
             v-if="slow"
-            class="page-loader__label text-h6 font-weight-semibold"
+            class="page-loader__label text-caption font-weight-semibold"
           >
             Still building your page…
           </p>

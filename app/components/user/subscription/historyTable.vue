@@ -4,8 +4,8 @@
     class="w-100 d-flex flex-column align-start justify-start"
   >
     <div class="w-100 d-flex justify-space-between align-center flex-wrap ga-2">
-      <span class="text-h4 font-weight-bold text-grey700">Subscription History</span>
-      <span class="text-grey400 text-no-wrap text-h5 font-weight-semibold">
+      <span class="text-h6 font-weight-bold text-grey700">Subscription History</span>
+      <span class="text-grey400 text-no-wrap text-body-1 font-weight-semibold">
         <span class="text-grey500 font-weight-bold mr-1">{{ userSubscriptionHistoryTotalCount }}</span>
         Records
       </span>
@@ -54,39 +54,39 @@
           :class="`${index % 2 == 0 ? `bg-grey25 border-odd` : ``} card-history-mobile w-100 d-flex flex-column align-start justify-start ga-3 pa-4`"
         >
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-grey700 text-h6 font-weight-medium">{{ item.planTitle }}</span>
+            <span class="text-grey700 text-caption font-weight-medium">{{ item.planTitle }}</span>
             <v-chip
               :color="getStatusColor(item.status)"
-              class="font-weight-bold text-h6"
+              class="font-weight-bold text-caption"
             >
               {{ item.status }}
             </v-chip>
           </div>
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-grey500 text-h6">Created</span>
-            <span class="text-grey700 text-h6 font-weight-bold">{{ formatDate(item.creationDate) }}</span>
+            <span class="text-grey500 text-caption font-weight-medium">Created</span>
+            <span class="text-grey700 text-caption font-weight-bold">{{ formatDate(item.creationDate) }}</span>
           </div>
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-grey500 text-h6">Started</span>
-            <span class="text-grey700 text-h6 font-weight-bold">{{ formatDate(item.startDate) }}</span>
+            <span class="text-grey500 text-caption font-weight-medium">Started</span>
+            <span class="text-grey700 text-caption font-weight-bold">{{ formatDate(item.startDate) }}</span>
           </div>
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-grey500 text-h6">Expires</span>
-            <span class="text-grey700 text-h6 font-weight-bold">{{ formatDate(item.expirationDate) }}</span>
+            <span class="text-grey500 text-caption font-weight-medium">Expires</span>
+            <span class="text-grey700 text-caption font-weight-bold">{{ formatDate(item.expirationDate) }}</span>
           </div>
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-grey500 text-h6">Paid</span>
-            <span class="text-grey700 text-h6 font-weight-bold">{{ item.currency }} {{ $numberFormat(item.pricePaid) }}</span>
+            <span class="text-grey500 text-caption font-weight-medium">Paid</span>
+            <span class="text-grey700 text-caption font-weight-bold">{{ item.currency }} {{ $numberFormat(item.pricePaid) }}</span>
           </div>
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-grey500 text-h6">Billing</span>
-            <span class="text-grey700 text-h6 font-weight-bold">{{ item.billingInterval }}</span>
+            <span class="text-grey500 text-caption font-weight-medium">Billing</span>
+            <span class="text-grey700 text-caption font-weight-bold">{{ item.billingInterval }}</span>
           </div>
           <div class="w-100 d-flex align-center justify-space-between">
-            <span class="text-grey500 text-h6">Auto Renews</span>
+            <span class="text-grey500 text-caption font-weight-medium">Auto Renews</span>
             <v-chip
               :color="item.autoRenews ? `success` : `grey400`"
-              class="font-weight-bold text-h6"
+              class="font-weight-bold text-caption"
             >
               {{ item.autoRenews ? `Yes` : `No` }}
             </v-chip>

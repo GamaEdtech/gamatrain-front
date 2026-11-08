@@ -3,17 +3,17 @@
     v-model="isFormValid"
     class="w-100 d-flex flex-column pa-4"
   >
-    <h1 class="text-h4 text-grey700 font-weight-regular">
+    <h1 class="text-h6 text-grey700 font-weight-regular">
       Cancel deletion request
     </h1>
 
-    <h4 class="text-h6 text-grey700 font-weight-regular mt-5">
+    <h4 class="text-caption text-grey700 font-weight-regular mt-5">
       For your security, please enter your password to cancel the account deletion request and keep your account active.
     </h4>
     <div
       class="w-100 d-flex flex-column ga-1 mt-8"
     >
-      <span class="text-h6 text-grey700 font-weight-medium">Password</span>
+      <span class="text-caption text-grey700 font-weight-medium">Password</span>
       <v-text-field
         v-model="passwordUser"
         density="compact"
@@ -36,7 +36,7 @@
         rounded="pill"
         width="250"
         height="40"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         color="primary"
         :disabled="!isFormValid"
         :loading="loadingCancelDeleteItem"

@@ -2,7 +2,7 @@
   <div class="w-100 d-flex flex-column align-start justify-start ga-1">
     <div
       v-if="!defalutLable"
-      class="text-h6 text-grey700 ml-2"
+      class="text-caption font-weight-medium text-grey700 ml-2"
     >
       {{ label }}
     </div>
@@ -30,7 +30,7 @@
         v-if="defalutLable"
         #label
       >
-        <span class="text-grey700 font-weight-medium text-h6">{{
+        <span class="text-grey700 font-weight-medium text-caption">{{
           label
         }}</span>
       </template>

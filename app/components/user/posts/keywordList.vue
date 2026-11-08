@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-column align-start justify-start">
-    <span class="w-50 text-h5 font-weight-medium text-grey700 mt-1">
+    <span class="w-50 text-body-1 font-weight-medium text-grey700 mt-1">
       Keyword
     </span>
     <v-text-field
@@ -35,7 +35,7 @@
         </v-btn>
       </template>
     </v-text-field>
-    <span class="text-h5 font-weight-medium text-grey400 mt-1">You can also use commas</span>
+    <span class="text-body-1 font-weight-medium text-grey400 mt-1">You can also use commas</span>
     <div
       v-if="loading"
       class="d-flex flex-wrap ga-1 mt-3"
@@ -56,7 +56,7 @@
         v-for="keyword in localKeywords"
         :key="keyword"
         variant="flat"
-        class="text-h5 pl-3 pr-3"
+        class="text-body-1 pl-3 pr-3"
         color="secondary"
         closable
         @click:close="removeKeyword(keyword)"

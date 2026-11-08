@@ -327,7 +327,7 @@
             rounded="pill"
             color="inverseSurfaceStrong"
             flat
-            class="text-h5 mt-4 font-weight-bold text-primary"
+            class="text-body-1 mt-4 font-weight-bold text-primary"
           >
             Contact Us
           </v-btn>
@@ -373,12 +373,12 @@ useHead({
   max-width: 100%;
   width: 100%;
   height: auto;
-  border-radius: 1rem;
+  border-radius: 0.625rem;
   object-fit: cover;
 }
 
 #service-page-header {
-  min-height: 60rem;
+  min-height: 37.5rem;
   background: url("/images/services-bg.webp");
   background-repeat: no-repeat;
   background-position: center;
@@ -405,13 +405,13 @@ useHead({
   #main-title-holder {
     position: relative;
     margin: 0 auto;
-    border-radius: 0.625rem;
+    border-radius: 0.390625rem;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(7.5px);
-    max-width: 31.2rem;
-    margin-left: 1.6rem;
-    margin-right: 1.6rem;
-    padding: 1.6rem 2.4rem;
+    max-width: 19.5rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    padding: 1rem 1.5rem;
     text-align: center;
 
     > h1 {
@@ -422,20 +422,20 @@ useHead({
 }
 
 #service-find-school {
-  padding: 4.6rem 0 3.2rem 0;
+  padding: 2.875rem 0 2rem 0;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-ai-learning {
   background: rgb(var(--v-theme-inverseSurfaceStrong));
-  padding: 2rem;
+  padding: 1.25rem;
 
   .gama-text-h4 {
     color: white !important;
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
   .gama-text-h6 {
     color: white !important;
@@ -447,60 +447,60 @@ useHead({
 }
 
 #service-home-learning {
-  padding: 2rem;
+  padding: 1.25rem;
 
   .gama-text-h4 {
-    margin-bottom: 1.6rem;
+    margin-bottom: 1rem;
   }
 }
 
 #service-online-tests {
   background: rgb(var(--v-theme-grey100));
-  padding: 2rem;
+  padding: 1.25rem;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-interactive-tutorials {
-  padding: 2rem;
+  padding: 1.25rem;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-school-finder {
   background: rgb(var(--v-theme-grey100));
-  padding: 2rem;
+  padding: 1.25rem;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-live-streaming {
-  padding: 2rem;
+  padding: 1.25rem;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-content-monetization {
   background: rgb(var(--v-theme-grey100));
-  padding: 2rem;
+  padding: 1.25rem;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-education-future {
   background: rgb(var(--v-theme-primary));
   text-align: center;
-  padding: 2.4rem 0;
+  padding: 1.5rem 0;
 
   .v-btn {
     color: rgb(var(--v-theme-primary)) !important;
@@ -509,41 +509,41 @@ useHead({
 
 @media only screen and (min-width: 600px) {
   .service-image {
-    max-width: 40rem;
-    height: 26rem;
+    max-width: 25rem;
+    height: 16.25rem;
   }
 
   #service-page-header {
-    min-height: 44rem;
+    min-height: 27.5rem;
 
     #main-title-holder {
-      max-width: 54.4rem;
+      max-width: 34rem;
       margin-left: auto;
       margin-right: auto;
-      padding: 2.4rem;
+      padding: 1.5rem;
     }
   }
 }
 
 @media only screen and (min-width: 960px) {
   .service-image {
-    max-width: 40.6rem;
-    height: 26rem;
+    max-width: 25.375rem;
+    height: 16.25rem;
   }
 
   #service-page-header {
-    min-height: 51.2rem;
+    min-height: 32rem;
 
     #main-title-holder {
-      max-width: 73rem;
+      max-width: 45.625rem;
       margin-left: auto;
       margin-right: auto;
-      padding: 2.5rem 4.8rem;
+      padding: 1.5625rem 3rem;
     }
   }
 
   #service-find-school {
-    padding: 10rem 0;
+    padding: 6.25rem 0;
   }
 
   #service-ai-learning,
@@ -553,26 +553,26 @@ useHead({
   #service-school-finder,
   #service-live-streaming,
   #service-content-monetization {
-    padding: 10rem 0;
+    padding: 6.25rem 0;
   }
 
   #service-ai-learning .gama-text-h4,
   #service-online-tests .gama-text-h4,
   #service-interactive-tutorials .gama-text-h4,
   #service-school-finder .gama-text-h4 {
-    margin-bottom: 1.6rem;
+    margin-bottom: 1rem;
   }
 
   #service-education-future {
-    padding: 3.2rem 0;
+    padding: 2rem 0;
   }
 }
 
 @media only screen and (max-width: 599px) {
   .service-image {
-    max-width: 31.2rem;
-    height: 20rem;
-    margin-bottom: 2.4rem;
+    max-width: 19.5rem;
+    height: 12.5rem;
+    margin-bottom: 1.5rem;
   }
 }
 </style>

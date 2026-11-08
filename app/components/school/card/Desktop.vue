@@ -5,12 +5,12 @@
   >
     <div class="w-100 d-flex ga-5 justify-space-between">
       <div class="d-flex flex-column align-start justify-start ga-2">
-        <h2 class="text-h4 text-grey800 font-weight-semibold">
+        <h2 class="text-h6 text-grey800 font-weight-semibold">
           {{ school.name }}
         </h2>
         <p
           v-if="locationLine"
-          class="ma-0 text-h6 font-weight-regular text-grey600"
+          class="ma-0 text-caption font-weight-regular text-grey600"
         >
           {{ locationLine }}
         </p>
@@ -44,7 +44,7 @@
           {{ contact.icon }}
         </v-icon>
       </div>
-      <div class="d-flex align-center ga-4 text-h6">
+      <div class="d-flex align-center ga-4 text-caption font-weight-medium">
         <span
           v-if="rating"
           class="d-flex align-center ga-1 text-grey800 font-weight-semibold"

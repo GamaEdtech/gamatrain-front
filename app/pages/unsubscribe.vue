@@ -18,11 +18,11 @@
         {{ statusContent[status].icon }}
       </v-icon>
 
-      <h1 class="text-h4 text-grey800 font-weight-bold text-center">
+      <h1 class="text-h6 text-grey800 font-weight-bold text-center">
         {{ statusContent[status].title }}
       </h1>
 
-      <p class="text-h6 text-grey700 font-weight-regular text-center mb-2">
+      <p class="text-caption text-grey700 font-weight-regular text-center mb-2">
         {{ errorMessage || statusContent[status].description }}
       </p>
 
@@ -30,7 +30,7 @@
         <v-btn
           rounded="pill"
           color="primary"
-          class="text-h5 font-weight-bold"
+          class="text-body-1 font-weight-bold"
           height="36"
           min-width="160"
           flat
@@ -46,7 +46,7 @@
           color="primary"
           height="36"
           min-width="160"
-          class="text-h5 font-weight-bold"
+          class="text-body-1 font-weight-bold"
           :loading="loadingUnsubscribe"
           :disabled="!hasRequiredParams()"
           @click="submitUnsubscribe"

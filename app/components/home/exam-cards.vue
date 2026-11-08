@@ -101,15 +101,15 @@ const { themedImage } = useThemeMode()
 .exam-steps {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1rem;
+  gap: 0.625rem;
 }
 
 .exam-card {
   display: flex;
   flex-direction: column;
-  padding: 0 2.2rem 2.4rem;
+  padding: 0 1.375rem 1.5rem;
   overflow: hidden;
-  border-radius: 2.4rem;
+  border-radius: 1.5rem;
   color: rgb(var(--v-theme-white));
 
   img {
@@ -117,8 +117,8 @@ const { themedImage } = useThemeMode()
     width: auto;
     max-width: 100%;
     height: auto;
-    max-height: 26rem;
-    margin: 1.4rem auto 0.6rem;
+    max-height: 16.25rem;
+    margin: 0.875rem auto 0.375rem;
   }
 }
 
@@ -135,26 +135,26 @@ const { themedImage } = useThemeMode()
 }
 
 .exam-card__title {
-  font-size: 2.5rem;
+  font-size: 1.5625rem;
   font-weight: 800;
   letter-spacing: -0.02em;
 }
 
 .exam-card__text {
-  margin: 0.8rem 0 1.4rem;
-  font-size: 1.6rem;
+  margin: 0.5rem 0 0.875rem;
+  font-size: 1rem;
   line-height: 1.5;
 }
 
 .exam-card__points {
-  margin: 0 0 2rem;
+  margin: 0 0 1.25rem;
   padding: 0;
-  font-size: 1.5rem;
+  font-size: 0.9375rem;
   font-weight: 500;
   list-style: none;
 
   li {
-    margin: 0.7rem 0;
+    margin: 0.4375rem 0;
   }
 }
 
@@ -169,27 +169,27 @@ const { themedImage } = useThemeMode()
 @media #{map.get(vuetify.$display-breakpoints, 'lg-and-up')} {
   .exam-card {
     position: relative;
-    min-height: 40rem;
-    padding: 3.4rem;
+    min-height: 25rem;
+    padding: 2.125rem;
 
     img {
       position: absolute;
       /* Sits beside the button and grows with the card, clear of the text column. */
-      right: 2.4rem;
-      bottom: 2.4rem;
-      width: clamp(25rem, calc(100% - 30rem), 38rem);
+      right: 1.5rem;
+      bottom: 1.5rem;
+      width: clamp(15.625rem, calc(100% - 18.75rem), 23.75rem);
       max-height: none;
       margin: 0;
     }
   }
 
   .exam-card__title {
-    font-size: 3rem;
+    font-size: 1.875rem;
   }
 
   .exam-card__text,
   .exam-card__points {
-    max-width: 22rem;
+    max-width: 13.75rem;
   }
 
   .home-cta {

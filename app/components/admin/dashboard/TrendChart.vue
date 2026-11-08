@@ -6,7 +6,7 @@
     class="h-100 pa-4 pa-md-5 d-flex flex-column ga-3"
   >
     <div class="d-flex align-center justify-space-between flex-wrap ga-2">
-      <span class="text-h5 font-weight-bold text-grey700">Daily trends</span>
+      <span class="text-body-1 font-weight-bold text-grey700">Daily trends</span>
       <v-btn-toggle
         v-model="metric"
         mandatory
@@ -18,14 +18,14 @@
         <v-btn
           value="activity"
           size="small"
-          class="text-h6"
+          class="text-caption font-weight-medium"
         >
           Activity
         </v-btn>
         <v-btn
           value="revenue"
           size="small"
-          class="text-h6"
+          class="text-caption font-weight-medium"
         >
           Revenue
         </v-btn>

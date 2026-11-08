@@ -2,7 +2,7 @@
   <div class="mt-10">
     <div class="w-100 d-flex flex-column align-center justify-center ga-4 mb-md-4">
       <div
-        class="text-center text-h4 text-md-h3 font-weight-bold text-grey700"
+        class="text-center text-h6 text-md-h4 font-weight-bold text-grey700"
       >
         Active Proposals
       </div>
@@ -21,12 +21,12 @@
             />
           </template>
           <template v-else>
-            <span class="text-h5 text-grey500">Your Pending Reward :</span>
+            <span class="text-body-1 text-grey500">Your Pending Reward :</span>
             <template v-if="userStakeInformation != null ">
-              <span class="text-h5 font-weight-bold text-success">{{ $numberFormat(Math.ceil(userStakeInformation.pendingRewards ?? 0)) }} $GET</span>
+              <span class="text-body-1 font-weight-bold text-success">{{ $numberFormat(Math.ceil(userStakeInformation.pendingRewards ?? 0)) }} $GET</span>
             </template>
             <template v-else>
-              <span class="text-h5 font-weight-bold text-grey700">Connect Wallet</span>
+              <span class="text-body-1 font-weight-bold text-grey700">Connect Wallet</span>
             </template>
           </template>
         </div>
@@ -40,7 +40,7 @@
             height="48"
             variant="outlined"
             color="error"
-            class="text-h5 font-weight-bold rounded-lg d-block d-sm-none"
+            class="text-body-1 font-weight-bold rounded-lg d-block d-sm-none"
             @click="manualDisconnectWallet"
           >
             <v-icon class="mr-2">

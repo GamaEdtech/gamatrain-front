@@ -33,7 +33,7 @@
           <v-card flat>
             <v-card-text class="pa-3 pa-sm-6">
               <div class="mb-4">
-                <h3 class="text-h5 font-weight-bold mb-2">
+                <h3 class="text-body-1 font-weight-bold mb-2">
                   Stake $GET Tokens
                 </h3>
                 <p class="font-size-12 text-grey500 font-weight-medium ">
@@ -109,7 +109,7 @@
                   block
                   :loading="loadinStakeProccess"
                   :disabled="!stakeFormValid"
-                  class="mt-4 text-h5 font-weight-bold"
+                  class="mt-4 text-body-1 font-weight-bold"
                 >
                   Stake Tokens
                 </v-btn>
@@ -123,7 +123,7 @@
           <v-card flat>
             <v-card-text class="pa-3 pa-sm-6">
               <div class="mb-4">
-                <h3 class="text-h5 font-weight-bold mb-2">
+                <h3 class="text-body-1 font-weight-bold mb-2">
                   Unstake $GET Tokens
                 </h3>
                 <p
@@ -199,7 +199,7 @@
                       || !userStakeInformation
                       || userStakeInformation.stakedAmount === 0
                   "
-                  class="mt-4 text-h5 font-weight-bold"
+                  class="mt-4 text-body-1 font-weight-bold"
                 >
                   Initiate Unstake
                 </v-btn>
@@ -213,7 +213,7 @@
           <v-card flat>
             <v-card-text class="pa-3 pa-sm-6">
               <div class="mb-4">
-                <h3 class="text-h5 font-weight-bold mb-2">
+                <h3 class="text-body-1 font-weight-bold mb-2">
                   Claim Unstaked Tokens
                 </h3>
                 <p class="font-size-12 text-grey500">
@@ -270,7 +270,7 @@
                     || !userStakeInformation
                     || userStakeInformation.pendingUnstake === 0
                 "
-                class="mt-4 text-h5 font-weight-bold"
+                class="mt-4 text-body-1 font-weight-bold"
                 @click="handleClaim"
               >
                 Claim Tokens

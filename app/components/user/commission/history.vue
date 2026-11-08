@@ -2,7 +2,7 @@
   <div class="w-100 h-100 d-flex flex-column align-start justify-start">
     <div class="w-100 d-flex flex-column justify-start align-start">
       <div class="w-100 d-flex justify-space-between align-center">
-        <h1 class="text-h4 font-weight-bold text-grey700">
+        <h1 class="text-h6 font-weight-bold text-grey700">
           Commission History
         </h1>
 

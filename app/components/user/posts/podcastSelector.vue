@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-column align-start justify-start">
-    <span class="w-50 text-h5 font-weight-medium text-grey700 mt-1">
+    <span class="w-50 text-body-1 font-weight-medium text-grey700 mt-1">
       Podcast
     </span>
 
@@ -23,7 +23,7 @@
         color="grey50"
         rounded="pill"
         variant="flat"
-        class="text-grey900 font-weight-medium text-h5 border-grey400 border-solid border-md"
+        class="text-grey900 font-weight-medium text-body-1 border-grey400 border-solid border-md"
         @click="triggerPodcastUpload"
       >
         {{ podcastPreview ? "Change Podcast" : "Upload Podcast" }}

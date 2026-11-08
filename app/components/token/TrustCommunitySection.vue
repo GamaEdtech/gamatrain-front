@@ -12,7 +12,7 @@
         width="245"
         height="245"
       />
-      <p class="trust-community-subtitle text-h5">
+      <p class="trust-community-subtitle text-body-1">
         At Gamatrain, our mission is to empower the community through a
         foundation of:
       </p>
@@ -48,7 +48,7 @@
           </ul>
         </v-col>
       </v-row>
-      <p class="trust-community-description text-h5">
+      <p class="trust-community-description text-body-1">
         Every decision, reward, and improvement is made with our contributors in
         mind – because GamaTrain is built with you, not just for you.
       </p>
@@ -195,25 +195,25 @@ const items = ref([
 /* ===== TABLET STYLES (min-width: 600px) and (max-width: 1199px) ===== */
 @media (min-width: 600px) and (max-width: 1199px) {
   .trust-community-title {
-    font-size: 4rem !important;
+    font-size: 2.5rem !important;
     font-weight: 750;
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
   }
   .trust-community-illustration {
     display: block !important;
-    margin: 0 auto 2.5rem auto !important;
+    margin: 0 auto 1.5625rem auto !important;
     width: 300px;
     height: 300px;
   }
   .trust-community-subtitle {
-    font-size: 2.3rem !important;
-    margin-bottom: 4rem;
-  }
-  .trust-community-list {
+    font-size: 1.4375rem !important;
     margin-bottom: 2.5rem;
   }
+  .trust-community-list {
+    margin-bottom: 1.5625rem;
+  }
   .trust-community-list-text {
-    font-size: 2rem;
+    font-size: 1.25rem;
     padding-top: 0;
     padding-bottom: 0;
   }
@@ -226,9 +226,9 @@ const items = ref([
     height: 24px;
   }
   .trust-community-description {
-    font-size: 2.3rem !important;
-    margin-bottom: 4rem;
-    margin-top: 2.5rem;
+    font-size: 1.4375rem !important;
+    margin-bottom: 2.5rem;
+    margin-top: 1.5625rem;
   }
   .trust-community-content {
     flex-direction: column !important;
@@ -244,7 +244,7 @@ const items = ref([
     max-width: 1400px;
   }
   .trust-community-title {
-    font-size: 4rem;
+    font-size: 2.5rem;
     margin-bottom: 48px;
   }
   .trust-community-subtitle {
@@ -291,7 +291,7 @@ const items = ref([
     max-width: 1600px;
   }
   .trust-community-title {
-    font-size: 4rem;
+    font-size: 2.5rem;
   }
   .trust-community-subtitle,
   .trust-community-description {

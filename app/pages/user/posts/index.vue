@@ -1,7 +1,7 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column align-start justify-start px-2 pa-md-0">
     <div class="w-100 d-flex align-center justify-space-between ga-2 mt-4">
-      <h1 class="text-h4 text-grey700 font-weight-regular">
+      <h1 class="text-h6 text-grey700 font-weight-regular">
         My Post
       </h1>
     </div>
@@ -22,7 +22,7 @@
           >
             md:add
           </v-icon>
-          <span class="font-weight-bold text-h6">New Post</span>
+          <span class="font-weight-bold text-caption">New Post</span>
         </v-btn>
 
         <v-btn
@@ -30,7 +30,7 @@
           color="primary"
           rounded="xl"
           height="34"
-          class="text-h6"
+          class="text-caption font-weight-medium"
           flat
           variant="outlined"
           @click="clearFilter"
@@ -91,7 +91,7 @@
           rounded="xl"
           height="40"
           width="200"
-          class="text-h5 mt-4 mx-auto"
+          class="text-body-1 mt-4 mx-auto"
           flat
           @click="applyFilter"
         >

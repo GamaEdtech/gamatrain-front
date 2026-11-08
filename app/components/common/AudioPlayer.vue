@@ -22,7 +22,7 @@
         @mouseup="playAfterSeek"
       />
     </div>
-    <span class="text-subtitle-2 text-sm-h6 font-weight-bold text-white mr-1 text-no-wrap">{{ formattedTime }}</span>
+    <span class="text-caption text-sm-caption font-weight-bold text-white mr-1 text-no-wrap">{{ formattedTime }}</span>
     <v-icon
       color="white"
       size="20"

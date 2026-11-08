@@ -12,7 +12,7 @@
     >
       {{ heading }}
     </h2>
-    <p class="text-h5 text-grey500 mt-1 mb-4">
+    <p class="text-body-1 text-grey500 mt-1 mb-4">
       Pick an answer to check it right here.
     </p>
 

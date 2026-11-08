@@ -11,7 +11,7 @@
     >
       <v-row class="d-flex align-center">
         <v-col cols="10">
-          <span class="text-h4">Slug</span>
+          <span class="text-h6 font-weight-regular">Slug</span>
         </v-col>
         <v-col
           cols="2"
@@ -27,7 +27,7 @@
         </v-col>
       </v-row>
       <div class="w-100 d-flex flex-column align-start justify-start mt-4">
-        <span class="text-h5 font-weight-medium text-grey700">You can change slug</span>
+        <span class="text-body-1 font-weight-medium text-grey700">You can change slug</span>
         <v-text-field
           v-model="slug"
           rounded="lg"
@@ -57,7 +57,7 @@
           color="success"
           rounded="pill"
           variant="flat"
-          class="text-white font-weight-medium text-h5 mx-auto"
+          class="text-white font-weight-medium text-body-1 mx-auto"
           width="150"
           :loading="loadingSaveSlug"
           :disabled="!canSubmit"

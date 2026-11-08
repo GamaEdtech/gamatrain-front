@@ -12,7 +12,7 @@
         <th
           v-for="(column, index) in columns"
           :key="index"
-          :class="`bg-grey100 text-grey700 text-h5 font-weight-medium pa-2 text-center
+          :class="`bg-grey100 text-grey700 text-body-1 font-weight-medium pa-2 text-center
                ${index == 0 ? `text-start` : `th-min-width`}`"
         >
           {{ column.title }}

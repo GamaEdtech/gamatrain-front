@@ -12,7 +12,7 @@
             height="40"
             @click="changeFilterStatus(status)"
           >
-            <span :class="`${status == statusSelect ? `text-grey900`:`text-grey500`} font-weight-bold text-h5`">{{ status }}</span>
+            <span :class="`${status == statusSelect ? `text-grey900`:`text-grey500`} font-weight-bold text-body-1`">{{ status }}</span>
           </v-btn>
         </div>
 
@@ -39,7 +39,7 @@
         height="40"
         @click="showAddUserModal = true"
       >
-        <span class="text-primary font-weight-bold text-h5">Add User</span>
+        <span class="text-primary font-weight-bold text-body-1">Add User</span>
       </v-btn>
 
       <div class="role-filter-container">

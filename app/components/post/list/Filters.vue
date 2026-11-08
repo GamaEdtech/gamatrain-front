@@ -22,7 +22,7 @@
     <v-slide-group show-arrows>
       <v-slide-group-item>
         <v-chip
-          class="mr-2 font-weight-bold text-h6"
+          class="mr-2 font-weight-bold text-caption"
           :color="tagId === 0 ? 'primary' : 'grey200'"
           variant="flat"
           @click="$emit('update:tagId', 0)"
@@ -35,7 +35,7 @@
         :key="category.id"
       >
         <v-chip
-          class="mr-2 font-weight-bold text-h6"
+          class="mr-2 font-weight-bold text-caption"
           :color="tagId === category.id ? 'primary' : 'grey200'"
           variant="flat"
           @click="$emit('update:tagId', category.id)"

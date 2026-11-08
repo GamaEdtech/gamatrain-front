@@ -27,8 +27,8 @@
                 class="main-line-comment"
               /> -->
         <div class="d-flex flex-column align-start">
-          <span class="text-h5 text-grey700 font-weight-medium">{{ comment.creationUser }} </span>
-          <!-- <span class="text-h6 primary-gray-500">{{ comment.role }}</span> -->
+          <span class="text-body-1 text-grey700 font-weight-medium">{{ comment.creationUser }} </span>
+          <!-- <span class="text-caption font-weight-medium primary-gray-500">{{ comment.role }}</span> -->
         </div>
       </div>
       <!-- <span class="score d-flex align-center ga-1 text-grey400">
@@ -39,7 +39,7 @@
               Score
             </span> -->
     </div>
-    <span class="w-100 pl-6 pl-sm-8 text-h5 text-grey700 font-weight-regular">{{
+    <span class="w-100 pl-6 pl-sm-8 text-body-1 text-grey700 font-weight-regular">{{
       comment.comment
     }}</span>
     <div
@@ -47,7 +47,7 @@
     >
       <div class="d-flex ga-4 option-div">
         <span
-          class="d-flex align-center ga-2 text-subtitle-1 text-grey700 cursor-pointer"
+          class="d-flex align-center ga-2 text-caption text-grey700 cursor-pointer"
         >
           {{ comment.likeCount }}
           <v-progress-circular
@@ -63,7 +63,7 @@
         </span>
 
         <span
-          class="d-flex align-center ga-2 text-subtitle-1 text-grey700 cursor-pointer"
+          class="d-flex align-center ga-2 text-caption text-grey700 cursor-pointer"
         >
           {{ comment.dislikeCount }}
           <v-progress-circular
@@ -79,7 +79,7 @@
         </span>
 
         <!-- <span
-                class="d-flex align-center ga-2 text-subtitle-1 reply-text cursor-pointer"
+                class="d-flex align-center ga-2 text-caption reply-text cursor-pointer"
               >
                 <v-icon>md:reply</v-icon>
                 Reply
@@ -114,8 +114,8 @@
                   </div>
                   <div class="circle-reply-div" />
                   <div class="d-flex flex-column align-start">
-                    <span class="text-h5 text-grey700 font-weight-medium">{{ reply.fistName }} {{ reply.lastName }}</span>
-                    <span class="text-h6 text-grey500">{{
+                    <span class="text-body-1 text-grey700 font-weight-medium">{{ reply.fistName }} {{ reply.lastName }}</span>
+                    <span class="text-caption font-weight-medium text-grey500">{{
                       reply.role
                     }}</span>
                   </div>
@@ -128,7 +128,7 @@
                   Score
                 </span>
               </div>
-              <span class="w-100 pl-4 pl-sm-8 text-h5 text-grey700 font-weight-regular">{{
+              <span class="w-100 pl-4 pl-sm-8 text-body-1 text-grey700 font-weight-regular">{{
                 reply.text
               }}</span>
               <div
@@ -136,7 +136,7 @@
               >
                 <div class="d-flex ga-4 option-div">
                   <span
-                    class="d-flex align-center ga-2 text-subtitle-1 text-grey700 cursor-pointer"
+                    class="d-flex align-center ga-2 text-caption text-grey700 cursor-pointer"
                   >
                     {{ reply.countLike }}
                     <v-icon v-if="reply.isLike">md:thumb_up</v-icon>
@@ -144,7 +144,7 @@
                   </span>
 
                   <span
-                    class="d-flex align-center ga-2 text-subtitle-1 text-grey700 cursor-pointer"
+                    class="d-flex align-center ga-2 text-caption text-grey700 cursor-pointer"
                   >
                     {{ reply.countDislike }}
                     <v-icon v-if="reply.isDislike">md:thumb_down</v-icon>

@@ -7,7 +7,7 @@
     <div
       class="d-flex flex-column align-center justify-center mb-6 z-index-class mt-16"
     >
-      <h1 class="text-h1 text-white font-weight-bold d-flex align-center ga-2">
+      <h1 class="text-h2 text-white font-weight-bold d-flex align-center ga-2">
         <v-img
           src="/favicon-32x32-dark.png"
           width="32"
@@ -15,11 +15,11 @@
         />
         GamaTrain.com
       </h1>
-      <h1 class="text-h4 text-white font-weight-bold mt-4">
+      <h1 class="text-h6 text-white font-weight-bold mt-4">
         Buy 50K of $GET and
       </h1>
 
-      <h1 class="text-h2 text-white font-weight-bold mt-4">
+      <h1 class="text-h4 text-white font-weight-bold mt-4">
         Win 10$ of $GET Every Day
       </h1>
     </div>
@@ -31,7 +31,7 @@
           :key="idx"
           class="container-digit d-flex align-center justify-center"
         >
-          <span class="char-item text-h4 font-weight-bold">
+          <span class="char-item text-h6 font-weight-bold">
             {{ slot.currentChar }}
           </span>
         </div>
@@ -42,7 +42,7 @@
           :key="slot"
           class="container-digit d-flex align-center justify-center"
         >
-          <span class="char-item text-h4 font-weight-bold"> * </span>
+          <span class="char-item text-h6 font-weight-bold"> * </span>
         </div>
       </template>
     </div>
@@ -52,7 +52,7 @@
       rounded="pill"
       flat
       variant="outlined"
-      class="text-white text-h5 font-weight-bold my-6 z-index-class"
+      class="text-white text-body-1 font-weight-bold my-6 z-index-class"
       :loading="loadingTraders"
       @click="getTraders"
     >
@@ -76,7 +76,7 @@
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="`bg-primary-gray-700 text-white text-h5 font-weight-bold pa-2 th-min-width text-left ${
+              :class="`bg-primary-gray-700 text-white text-body-1 font-weight-bold pa-2 th-min-width text-left ${
                 index == columns.length - 1 ? `description-width` : ``
               }`"
             >
@@ -87,14 +87,14 @@
 
         <template #[`item.date`]="{ item }">
           <div
-            class="text-white text-h5 d-flex justify-start align-center font-weight-bold"
+            class="text-white text-body-1 d-flex justify-start align-center font-weight-bold"
           >
             {{ formatLocal(item.date, "DD/MM/YYYY") }}
           </div>
         </template>
         <template #[`item.wallet`]="{ item }">
           <div
-            class="text-white text-h5 d-flex justify-start align-center font-weight-bold"
+            class="text-white text-body-1 d-flex justify-start align-center font-weight-bold"
           >
             {{ item.wallet }}
           </div>
@@ -102,7 +102,7 @@
 
         <template #[`item.signature`]="{ item }">
           <div
-            class="text-white text-h5 d-flex justify-start align-center font-weight-bold"
+            class="text-white text-body-1 d-flex justify-start align-center font-weight-bold"
           >
             {{ item.signature }}
           </div>

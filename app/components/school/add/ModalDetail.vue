@@ -30,7 +30,7 @@
       />
 
       <span
-        class="w-100 text-h5 font-weight-bold text-grey700 max-width-contianer-modal"
+        class="w-100 text-body-1 font-weight-bold text-grey700 max-width-contianer-modal"
       >A matching school was found!</span>
 
       <div class="w-100 d-flex justify-center align-center ga-2 mt-4">
@@ -41,7 +41,7 @@
           rounded="xl"
           height="40"
           max-width="180"
-          class="w-50 text-h5"
+          class="w-50 text-body-1"
           @click="newSchool"
         >
           <span class="text-grey700">New School</span>
@@ -52,7 +52,7 @@
           rounded="xl"
           height="40"
           max-width="180"
-          class="w-50 text-h5"
+          class="w-50 text-body-1"
           :to="contentPath('school', schoolInformation.id, schoolInformation.slug)"
         >
           Edit School

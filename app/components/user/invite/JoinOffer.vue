@@ -6,16 +6,16 @@
           v-if="status.offerOpen && offerEndsLabel"
           color="primary"
           variant="flat"
-          class="align-self-start text-h6 font-weight-bold"
+          class="align-self-start text-caption font-weight-bold"
           prepend-icon="md:schedule"
         >
           Your {{ formatPercent(status.offerPercent) }} offer is open until {{ offerEndsLabel }}
         </v-chip>
 
-        <h2 class="text-h3 text-md-h2 font-weight-bold text-white">
+        <h2 class="text-h4 text-md-h4 font-weight-bold text-white">
           Bring your students to Gamatrain, and get {{ formatPercent(status.joinPercent) }} as a thank-you
         </h2>
-        <p class="text-h5 text-grey300 font-weight-regular">
+        <p class="text-body-1 text-grey300 font-weight-regular">
           Your students get free past papers, online exams and study tools. If any of them later choose a paid plan, you
           receive {{ formatPercent(status.joinPercent) }} of it, for as long as they stay subscribed. They pay nothing extra.
         </p>
@@ -25,7 +25,7 @@
           type="info"
           variant="tonal"
           density="compact"
-          class="text-h6"
+          class="text-caption font-weight-medium"
         >
           Your {{ formatPercent(status.offerPercent) }} offer has ended. You can still join today at
           {{ formatPercent(status.joinPercent) }}.
@@ -38,13 +38,13 @@
             height="48"
             flat
             :loading="loading"
-            class="text-h5 font-weight-bold px-8"
+            class="text-body-1 font-weight-bold px-8"
             prepend-icon="md:lock"
             @click="emit('join')"
           >
             Join and lock {{ formatPercent(status.joinPercent) }}
           </v-btn>
-          <span class="text-h6 text-grey300">
+          <span class="text-caption font-weight-medium text-grey300">
             Free to join. Your rate is locked once you're in.
           </span>
         </div>
@@ -52,7 +52,7 @@
 
       <div class="percent-badge d-none d-md-flex flex-column align-center justify-center flex-shrink-0">
         <span class="percent-value font-weight-black">{{ formatPercent(status.joinPercent) }}</span>
-        <span class="text-h6 text-grey700 font-weight-bold">for life</span>
+        <span class="text-caption text-grey700 font-weight-bold">for life</span>
       </div>
     </div>
 

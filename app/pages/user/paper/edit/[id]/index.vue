@@ -4,7 +4,7 @@
       v-model="isFormValid"
       class="w-100 d-flex flex-column"
     >
-      <h1 class="text-h4 text-grey700 font-weight-regular">
+      <h1 class="text-h6 text-grey700 font-weight-regular">
         Past Papers Edit Form
       </h1>
 
@@ -210,7 +210,7 @@
         </div>
 
         <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
-          <span class="text-h6 text-grey700 font-weight-medium">Title</span>
+          <span class="text-caption text-grey700 font-weight-medium">Title</span>
           <v-text-field
             v-model="paper.title"
             density="compact"
@@ -238,7 +238,7 @@
         </div>
 
         <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
-          <span class="text-h6 text-grey700 font-weight-medium">Description</span>
+          <span class="text-caption text-grey700 font-weight-medium">Description</span>
           <v-textarea
             v-model="paper.description"
             density="compact"
@@ -268,11 +268,11 @@
         </div>
 
         <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <span class="text-h6 text-grey700 font-weight-medium">
+          <span class="text-caption text-grey700 font-weight-medium">
             Pdf Question
             <span
               v-if="hasExistingFile('pdf') || paper.file_pdf"
-              class="text-subtitle-1 text-grey600"
+              class="text-caption text-grey600"
             >
               ({{ getFileStatusText('pdf') }})
             </span>
@@ -324,11 +324,11 @@
         </div>
 
         <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <span class="text-h6 text-grey700 font-weight-medium">
+          <span class="text-caption text-grey700 font-weight-medium">
             Pdf Solution
             <span
               v-if="hasExistingFile('answer') || paper.file_answer"
-              class="text-subtitle-1 text-grey600"
+              class="text-caption text-grey600"
             >
               ({{ getFileStatusText('answer') }})
             </span>
@@ -380,11 +380,11 @@
         </div>
 
         <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <span class="text-h6 text-grey700 font-weight-medium">
+          <span class="text-caption text-grey700 font-weight-medium">
             Word Q & S
             <span
               v-if="hasExistingFile('word') || paper.file_word"
-              class="text-subtitle-1 text-grey600"
+              class="text-caption text-grey600"
             >
               ({{ getFileStatusText('word') }})
             </span>
@@ -463,11 +463,11 @@
           </div>
 
           <div class="each-item d-flex flex-column align-start justify-start ga-1">
-            <span class="text-h6 text-grey700 font-weight-medium">
+            <span class="text-caption text-grey700 font-weight-medium">
               Extra File
               <span
                 v-if="hasExistingExtraFile(extra) || extra.name"
-                class="text-subtitle-1 text-grey600"
+                class="text-caption text-grey600"
               >
                 ({{ getExtraFileStatusText(extra) }})
               </span>
@@ -533,7 +533,7 @@
           rounded="pill"
           width="250"
           height="40"
-          class="text-h5 font-weight-medium text-white"
+          class="text-body-1 font-weight-medium text-white"
           color="success"
           @click="addExtraFile"
         >
@@ -553,7 +553,7 @@
         flat
         rounded="pill"
         height="40"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
       >
         Discard
       </v-btn>
@@ -562,7 +562,7 @@
         rounded="pill"
         width="200"
         height="40"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         color="primary"
         :loading="loadingEditItem"
         :disabled="!isFormValid || hasUploadInProgress"

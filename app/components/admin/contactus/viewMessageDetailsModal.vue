@@ -87,23 +87,23 @@
           <div
             :class="['reply-bubble d-flex flex-column rounded-lg py-4 px-6 ga-1', item.bySupport ? 'bg-primary50' : 'bg-surfaceTertiary']"
           >
-            <span class="text-h6 font-weight-bold text-grey700">
+            <span class="text-caption font-weight-bold text-grey700">
               {{ getReplyAuthor(item) }}
             </span>
             <div
               v-safe-html="item.body"
-              class="w-100 text-start text-h5 font-weight-bold text-grey900"
+              class="w-100 text-start text-body-1 font-weight-bold text-grey900"
             />
-            <span class="w-100 text-end text-subtitle-2 font-weight-regular text-grey700">{{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm") }}</span>
+            <span class="w-100 text-end text-caption font-weight-regular text-grey700">{{ formatLocal(item.creationDate, "DD/MM/YYYY HH:mm") }}</span>
           </div>
         </div>
       </template>
     </div>
     <div class="w-100 d-flex flex-column align-start">
-      <span class="text-h5 font-weight-bold text-grey700 mb-4">Do you Want Reply this Email?</span>
+      <span class="text-body-1 font-weight-bold text-grey700 mb-4">Do you Want Reply this Email?</span>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           From
         </div>
         <v-select
@@ -121,7 +121,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 position-relative">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Body
         </div>
         <common-rich-editor
@@ -154,7 +154,7 @@
           color="primary"
           variant="outlined"
           flat
-          class="text-h5 font-weight-bold"
+          class="text-body-1 font-weight-bold"
           :loading="loadingPolishReply"
           :disabled="!bodyReply.trim() || loadingPolishReply || !contactData"
           @click="polishReplyWithAi"
@@ -175,7 +175,7 @@
       variant="outlined"
       height="40"
       width="200"
-      class="text-h5 mt-8 mx-auto"
+      class="text-body-1 mt-8 mx-auto"
       :disabled="!replyValid || loadingData || loadingEmailList"
       :loading="loadingReply"
       flat

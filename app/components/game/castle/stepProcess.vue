@@ -33,7 +33,7 @@ const progress = computed(() => ((step.value - 1) / 4) * 100) // درصد پیش
 .progress-container {
     position: absolute;
     z-index: 100;
-    bottom: 2rem;
+    bottom: 1.25rem;
     left: 50%;
     transform: translateX(-50%);
     width: 100%;

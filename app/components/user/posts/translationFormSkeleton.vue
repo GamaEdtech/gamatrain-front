@@ -3,12 +3,12 @@
     class="main-translation-div d-flex flex-column ga-1 border-solid border-md border-grey600 rounded-lg pa-8 mt-2 mx-auto"
   >
     <div class="w-100 d-flex align-center justify-space-between mb-4">
-      <span class="text-h4 text-md-h3 font-weight-bold text-grey700">New translation</span>
+      <span class="text-h6 text-md-h4 font-weight-bold text-grey700">New translation</span>
     </div>
     <div
       class="w-100 d-flex flex-column align-start justify-start ga-1 mb-4"
     >
-      <span class="text-h4 font-weight-bold text-grey700 ml-2">
+      <span class="text-h6 font-weight-bold text-grey700 ml-2">
         Language
       </span>
       <v-skeleton-loader
@@ -17,7 +17,7 @@
       />
     </div>
     <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-      <div class="text-h4 font-weight-bold text-grey700 ml-2">
+      <div class="text-h6 font-weight-bold text-grey700 ml-2">
         <v-badge
           floating
           location="top right"
@@ -41,7 +41,7 @@
       />
     </div>
     <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-      <div class="text-h4 font-weight-bold text-grey700 ml-2">
+      <div class="text-h6 font-weight-bold text-grey700 ml-2">
         <v-badge
           floating
           location="top right"
@@ -66,7 +66,7 @@
     </div>
 
     <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-      <div class="text-h4 font-weight-bold text-grey700 ml-2">
+      <div class="text-h6 font-weight-bold text-grey700 ml-2">
         <v-badge
           floating
           location="top right"

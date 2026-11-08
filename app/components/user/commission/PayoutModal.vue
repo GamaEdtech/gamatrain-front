@@ -10,7 +10,7 @@
       @click="clickOnModal"
     >
       <div class="w-100 d-flex align-center justify-space-between">
-        <span class="text-h4">Withdraw commission</span>
+        <span class="text-h6 font-weight-regular">Withdraw commission</span>
         <v-icon
           size="x-large"
           color="grey400"
@@ -37,16 +37,16 @@
       <template v-else>
         <div class="w-100 d-flex justify-space-between align-center bg-grey100 rounded-lg pa-3 mt-6">
           <div class="d-flex flex-column">
-            <span class="text-h6 text-grey400">Available</span>
-            <span class="text-h4 font-weight-bold text-grey700">${{ formatUsd(balance.availableUsd) }}</span>
+            <span class="text-caption font-weight-medium text-grey400">Available</span>
+            <span class="text-h6 font-weight-bold text-grey700">${{ formatUsd(balance.availableUsd) }}</span>
           </div>
           <div class="d-flex flex-column align-end">
-            <span class="text-h6 text-grey400">Minimum payout</span>
-            <span class="text-h5 font-weight-bold text-grey600">${{ formatUsd(balance.payoutThresholdUsd) }}</span>
+            <span class="text-caption font-weight-medium text-grey400">Minimum payout</span>
+            <span class="text-body-1 font-weight-bold text-grey600">${{ formatUsd(balance.payoutThresholdUsd) }}</span>
           </div>
         </div>
 
-        <span class="text-h5 text-grey600 mt-6 mb-2">Get paid with</span>
+        <span class="text-body-1 text-grey600 mt-6 mb-2">Get paid with</span>
         <v-btn-toggle
           v-model="method"
           mandatory
@@ -83,7 +83,7 @@
           />
           <div
             v-else-if="payoutAccount?.payoutsEnabled"
-            class="d-flex align-center ga-2 text-h5 text-grey600"
+            class="d-flex align-center ga-2 text-body-1 text-grey600"
           >
             <v-icon
               color="success"
@@ -94,7 +94,7 @@
             Paid to your Stripe account. Stripe then sends it to your bank.
           </div>
           <template v-else>
-            <span class="text-h5 text-grey600">
+            <span class="text-body-1 text-grey600">
               {{ payoutAccount?.hasAccount
                 ? 'Your Stripe setup isn\'t finished yet. Continue where you left off.'
                 : 'Set up Stripe once: it asks for your ID and bank details and takes a few minutes.' }}
@@ -126,7 +126,7 @@
 
         <div
           v-if="balance.openPayoutId"
-          class="w-100 text-h5 text-grey600 mt-6"
+          class="w-100 text-body-1 text-grey600 mt-6"
         >
           You already have a payout request in progress (#{{ balance.openPayoutId }}).
           You can send a new one after it's paid, or cancel it from your payout history while it's still pending.
@@ -134,7 +134,7 @@
 
         <div
           v-else-if="!canRequest"
-          class="w-100 text-h5 text-grey600 mt-6"
+          class="w-100 text-body-1 text-grey600 mt-6"
         >
           You can request a payout once your available balance reaches ${{ formatUsd(balance.payoutThresholdUsd) }}.
         </div>
@@ -144,7 +144,7 @@
           class="w-100 d-flex flex-column mt-6"
           @submit.prevent="submit"
         >
-          <span class="text-h5 text-grey600 mb-2">Amount</span>
+          <span class="text-body-1 text-grey600 mb-2">Amount</span>
           <v-text-field
             id="payout-amount"
             v-model="amount"
@@ -175,7 +175,7 @@
           </v-text-field>
 
           <template v-if="method === 'Manual'">
-            <span class="text-h5 text-grey600 mt-4 mb-2">Send the money to</span>
+            <span class="text-body-1 text-grey600 mt-4 mb-2">Send the money to</span>
             <v-textarea
               id="payout-destination"
               v-model="destination"
@@ -191,7 +191,7 @@
             />
           </template>
 
-          <span class="text-h6 text-grey400 mt-2">
+          <span class="text-caption font-weight-medium text-grey400 mt-2">
             {{ method === 'Manual'
               ? 'An admin reviews every request and sends the money by hand. We email you when it\'s sent.'
               : 'An admin reviews every request; once approved, Stripe sends it to your account right away. We email you when it\'s sent.' }}
@@ -204,7 +204,7 @@
             color="success"
             flat
             rounded="lg"
-            class="font-weight-bold text-h5 mt-6"
+            class="font-weight-bold text-body-1 mt-6"
           >
             Request payout
           </v-btn>

@@ -9,7 +9,7 @@
     >
       Sample questions from {{ subject }}
     </h2>
-    <p class="text-h5 text-grey500 mt-1 mb-4">
+    <p class="text-body-1 text-grey500 mt-1 mb-4">
       The first {{ questions.length }} of {{ total || questions.length }} questions. Pick an answer to check it right here.
     </p>
 

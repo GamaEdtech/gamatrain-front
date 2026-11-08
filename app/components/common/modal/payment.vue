@@ -33,7 +33,7 @@
           :class="`${item == intervalSelect ? `elevation-2` : ``}`"
           @click="changeFilterInterval(item)"
         >
-          <span :class="`${item == intervalSelect ? `text-grey900`:`text-grey500`} font-weight-bold text-h5`">
+          <span :class="`${item == intervalSelect ? `text-grey900`:`text-grey500`} font-weight-bold text-body-1`">
             {{ item }}
             <span
               v-if="bestDiscountByInterval[item]"
@@ -167,7 +167,7 @@
     >
       <button
         type="button"
-        class="limited-access-link text-h6 text-grey500 font-weight-semibold d-flex align-center ga-1"
+        class="limited-access-link text-caption text-grey500 font-weight-semibold d-flex align-center ga-1"
         @click="emit('dismiss')"
       >
         Continue with Limited Access

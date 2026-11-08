@@ -8,7 +8,7 @@
         required
       >
         <template #label>
-          <span class="text-h5 font-weight-bold">Issue type</span>
+          <span class="text-body-1 font-weight-bold">Issue type</span>
         </template>
         <v-radio
           v-for="(type, index) in reportTypeList"
@@ -17,7 +17,7 @@
           color="primary"
         >
           <template #label>
-            <span class="text-h5">{{ type.label }}</span>
+            <span class="text-body-1">{{ type.label }}</span>
           </template>
         </v-radio>
       </v-radio-group>
@@ -42,7 +42,7 @@
     <div class="w-100 d-flex align-center justify-center ga-3">
       <v-btn
         variant="text"
-        class="text-h5"
+        class="text-body-1"
         @click="emit('close')"
       >
         Discard
@@ -52,7 +52,7 @@
         rounded="xl"
         height="40"
         width="180"
-        class="text-h5"
+        class="text-body-1"
         flat
         :disabled="!isValid"
         :loading="loading"

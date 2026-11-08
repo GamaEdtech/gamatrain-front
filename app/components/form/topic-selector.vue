@@ -8,7 +8,7 @@
     class="overflow-y-auto filter-container"
   >
     <v-card-title>
-      <p class="text-h5">
+      <p class="text-body-1">
         Topics
       </p>
     </v-card-title>
@@ -18,13 +18,13 @@
     >
       <p
         v-if="!lesson_selected"
-        class="text-h5"
+        class="text-body-1"
       >
         Please first select lesson
       </p>
       <p
         v-else
-        class="text-h5"
+        class="text-body-1"
       >
         This lesson hasn't any topics
       </p>
@@ -47,7 +47,7 @@
             color="#FFB300"
           >
             <template #label>
-              <span :class="[item.season ? 'topic_season' : '', 'text-h5']">{{
+              <span :class="[item.season ? 'topic_season' : '', 'text-body-1']">{{
                 item.title
               }}</span>
             </template>

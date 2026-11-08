@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-column ga-3">
-    <h3 class="text-h4 font-weight-bold text-grey700">
+    <h3 class="text-h6 font-weight-bold text-grey700">
       People you invited
     </h3>
 
@@ -21,8 +21,8 @@
       >
         md:group_add
       </v-icon>
-      <span class="text-h5 font-weight-bold text-grey700">No one has joined through your link yet</span>
-      <span class="text-h6 text-grey500">
+      <span class="text-body-1 font-weight-bold text-grey700">No one has joined through your link yet</span>
+      <span class="text-caption font-weight-medium text-grey500">
         Share your link with your students. They'll appear here as soon as they sign up.
       </span>
     </div>
@@ -38,7 +38,7 @@
         class="w-100 bg-grey100 rounded-lg pa-4 d-flex flex-column ga-2"
       >
         <div class="d-flex align-center justify-space-between ga-2">
-          <span class="text-h5 font-weight-bold text-grey700">{{ item.displayName }}</span>
+          <span class="text-body-1 font-weight-bold text-grey700">{{ item.displayName }}</span>
           <v-chip
             size="small"
             :color="item.subscribed ? 'success' : 'grey500'"
@@ -47,13 +47,13 @@
             {{ item.subscribed ? 'Subscribed' : 'Not subscribed' }}
           </v-chip>
         </div>
-        <div class="d-flex align-center justify-space-between text-h6 text-grey500">
+        <div class="d-flex align-center justify-space-between text-caption font-weight-medium text-grey500">
           <span>Joined {{ formatLocal(item.joinedDate, 'DD/MM/YYYY') }}</span>
           <span>{{ item.paymentsCount }} {{ item.paymentsCount === 1 ? 'payment' : 'payments' }}</span>
         </div>
         <div class="d-flex align-center justify-space-between">
-          <span class="text-h6 text-grey500">You earned</span>
-          <span class="text-h5 font-weight-bold text-success">${{ item.earnedUsd.toFixed(2) }}</span>
+          <span class="text-caption font-weight-medium text-grey500">You earned</span>
+          <span class="text-body-1 font-weight-bold text-success">${{ item.earnedUsd.toFixed(2) }}</span>
         </div>
       </div>
       <v-pagination

@@ -38,7 +38,7 @@
           </div>
           <div
             :class="[
-              'text-body-2 text-md-h6 position-absolute bottom-0 mb-1',
+              'text-caption text-md-caption position-absolute bottom-0 mb-1',
               `${
                 stepIndex == index
                   ? 'text-grey700 font-weight-bold'

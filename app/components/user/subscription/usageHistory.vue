@@ -4,7 +4,7 @@
     class="w-100 d-flex flex-column align-start justify-start ga-4"
   >
     <div class="w-100 d-flex align-center justify-space-between flex-wrap ga-3">
-      <span class="text-h4 font-weight-bold text-grey700">Usage History</span>
+      <span class="text-h6 font-weight-bold text-grey700">Usage History</span>
 
       <v-select
         v-model="period"
@@ -42,7 +42,7 @@
           :value="item.featureCode"
           filter
           variant="outlined"
-          class="text-h6"
+          class="text-caption font-weight-medium"
         >
           <v-icon
             start
@@ -82,14 +82,14 @@
         >
           md:history
         </v-icon>
-        <span class="text-h5 font-weight-bold text-grey700">Nothing used in this period</span>
-        <span class="text-h6 text-grey500">Premium downloads and exam analyses you use will show up here.</span>
+        <span class="text-body-1 font-weight-bold text-grey700">Nothing used in this period</span>
+        <span class="text-caption font-weight-medium text-grey500">Premium downloads and exam analyses you use will show up here.</span>
         <v-btn
           to="/search?type=paper"
           rounded="pill"
           color="primary"
           variant="tonal"
-          class="text-none text-h6 font-weight-bold mt-2"
+          class="text-none text-caption font-weight-bold mt-2"
         >
           Browse past papers
         </v-btn>
@@ -104,7 +104,7 @@
           v-for="group in groupedUsage"
           :key="group.label"
         >
-          <v-list-subheader class="text-h6 font-weight-bold text-grey500 text-uppercase">
+          <v-list-subheader class="text-caption font-weight-bold text-grey500 text-uppercase">
             {{ group.label }}
           </v-list-subheader>
 
@@ -125,10 +125,10 @@
               </v-avatar>
             </template>
 
-            <v-list-item-title class="text-h5 font-weight-bold text-grey700 text-wrap">
+            <v-list-item-title class="text-body-1 font-weight-bold text-grey700 text-wrap">
               {{ item.featureName || item.featureCode }}
             </v-list-item-title>
-            <v-list-item-subtitle class="text-h6 text-grey500 d-flex align-center flex-wrap ga-1 mt-1">
+            <v-list-item-subtitle class="text-caption font-weight-medium text-grey500 d-flex align-center flex-wrap ga-1 mt-1">
               <NuxtLink
                 v-if="contentPath(item)"
                 :to="contentPath(item)!"
@@ -152,7 +152,7 @@
             <template #append>
               <div class="d-flex flex-column align-end ga-1 ml-3">
                 <span
-                  :class="`text-h5 font-weight-bold text-no-wrap ${item.amount < 0 ? 'text-success' : 'text-grey700'}`"
+                  :class="`text-body-1 font-weight-bold text-no-wrap ${item.amount < 0 ? 'text-success' : 'text-grey700'}`"
                 >
                   {{ amountLabel(item.amount) }}
                 </span>
@@ -163,7 +163,7 @@
                   <template #activator="{ props: tooltipProps }">
                     <span
                       v-bind="tooltipProps"
-                      class="text-subtitle-1 text-grey500 text-no-wrap"
+                      class="text-caption text-grey500 text-no-wrap"
                     >
                       {{ fromNowLocal(item.creationDate) }}
                     </span>
@@ -185,7 +185,7 @@
         variant="outlined"
         color="primary"
         :loading="loadingUsage"
-        class="text-none text-h6 font-weight-bold"
+        class="text-none text-caption font-weight-bold"
         @click="loadMore"
       >
         Load more

@@ -116,16 +116,16 @@ useHead({
 
 .home-title {
   color: rgb(var(--v-theme-grey900));
-  font-size: 2.7rem;
+  font-size: 1.6875rem;
   font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.02em;
 }
 
 .home-lead {
-  margin-top: 0.8rem;
+  margin-top: 0.5rem;
   color: rgb(var(--v-theme-grey600));
-  font-size: 1.5rem;
+  font-size: 0.9375rem;
 }
 
 .v-btn.home-cta {
@@ -133,7 +133,7 @@ useHead({
   color: rgb(var(--v-theme-on-primary));
 
   .v-btn__content {
-    font-size: 1.6rem;
+    font-size: 1rem;
     font-weight: 800;
     text-transform: none;
     letter-spacing: 0;
@@ -143,21 +143,21 @@ useHead({
 .home-school {
   display: flex;
   flex-direction: column-reverse;
-  gap: 0.6rem;
-  padding: 2.4rem 2.2rem;
-  border-radius: 2.4rem;
+  gap: 0.375rem;
+  padding: 1.5rem 1.375rem;
+  border-radius: 1.5rem;
   background: rgb(var(--v-theme-primary50));
 
   img {
     display: block;
-    width: 15rem;
+    width: 9.375rem;
     height: auto;
     margin: 0 auto;
   }
 }
 
 .home-teachers {
-  padding: 3.6rem 0;
+  padding: 2.25rem 0;
   background: rgb(var(--v-theme-secondary));
 }
 
@@ -174,22 +174,22 @@ useHead({
 
 @media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
   .home-title {
-    font-size: 3.6rem;
+    font-size: 2.25rem;
   }
 
   .home-lead {
-    font-size: 1.7rem;
+    font-size: 1.0625rem;
   }
 
   .home-school {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 4.4rem 5rem;
+    padding: 2.75rem 3.125rem;
 
     img {
-      width: 22rem;
-      margin: -9rem 4rem -6rem 0;
+      width: 13.75rem;
+      margin: -5.625rem 2.5rem -3.75rem 0;
     }
   }
 }

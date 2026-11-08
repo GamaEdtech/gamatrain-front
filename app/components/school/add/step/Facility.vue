@@ -3,7 +3,7 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-2">
-      <div class="w-100 text-h4 text-grey500">
+      <div class="w-100 text-h6 font-weight-regular text-grey500">
         School Facilities
       </div>
 
@@ -48,7 +48,7 @@
                 mdfull:{{ tag.icon }}
               </v-icon>
             </v-btn>
-            <span class="font-weight-bold text-h5 text-grey900">{{
+            <span class="font-weight-bold text-body-1 text-grey900">{{
               tag.name
             }}</span>
           </div>
@@ -56,7 +56,7 @@
       </div>
 
       <div class="w-100 d-flex flex-wrap">
-        <span class="w-100 text-h4 text-grey500">Boards</span>
+        <span class="w-100 text-h6 font-weight-regular text-grey500">Boards</span>
         <div
           v-if="isLoadingBoard"
           class="w-100 d-flex flex-wrap align-center my-6 ga-2"
@@ -90,7 +90,7 @@
                 height="26"
                 class="mr-1"
               >
-              <span :class="`font-weight-bold text-h5 ${selectedBoards.includes(board.id) ? 'text-grey200' : 'text-grey700'}`">{{
+              <span :class="`font-weight-bold text-body-1 ${selectedBoards.includes(board.id) ? 'text-grey200' : 'text-grey700'}`">{{
                 board.title
               }}</span>
             </v-btn>
@@ -138,11 +138,11 @@
               >
                 md:cloud_upload
               </v-icon>
-              <div class="text-h5 font-weight-bold text-info">
+              <div class="text-body-1 font-weight-bold text-info">
                 Upload Image
               </div>
               <div
-                class="text-h6 font-weight-normal text-center mt-2 text-grey400"
+                class="text-caption font-weight-normal text-center mt-2 text-grey400"
               >
                 Accepted formats: JPG, PNG, WebP
               </div>
@@ -169,7 +169,7 @@
       <v-btn
         size="x-small"
         variant="text"
-        class="text-h5"
+        class="text-body-1"
         @click="cancel"
       >
         Cancel
@@ -192,7 +192,7 @@
         rounded="xl"
         height="40"
         max-width="180"
-        class="w-100 text-h5"
+        class="w-100 text-body-1"
         :disabled="!isFormValid"
         @click="submitForm"
       >

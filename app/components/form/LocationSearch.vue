@@ -110,11 +110,11 @@ watch(selectedItem, (val) => {
 <style>
 .locationField {
   position: absolute;
-  top: 1.6rem;
+  top: 1rem;
   left: 0;
   right: 0;
   margin: auto;
   z-index: 200002 !important;
-  max-width: 30rem;
+  max-width: 18.75rem;
 }
 </style>

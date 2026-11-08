@@ -304,12 +304,12 @@ async function submitComment() {
   padding: 0;
 
   .score-title {
-    width: 15rem;
-    margin-right: 1rem;
+    width: 9.375rem;
+    margin-right: 0.625rem;
   }
 }
 
 .score-title {
-  min-width: 22rem !important;
+  min-width: 13.75rem !important;
 }
 </style>

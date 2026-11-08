@@ -2,7 +2,7 @@
   <div class="governance-overview__section mt-10 py-7">
     <div class="governance-overview__shape">
       <v-container>
-        <h1 class="text-h4 text-md-h3 font-weight-bold text-white text-center mb-5">
+        <h1 class="text-h6 text-md-h4 font-weight-bold text-white text-center mb-5">
           Your Governance Overview
         </h1>
 

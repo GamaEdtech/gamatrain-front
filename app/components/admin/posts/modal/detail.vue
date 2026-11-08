@@ -34,7 +34,7 @@
         v-if="canReject"
         class="w-100 d-flex flex-column align-start justify-start ga-1"
       >
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Write the reason to reject.
         </div>
         <v-text-field
@@ -57,7 +57,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 flex-1-1"
+        class="text-body-1 flex-1-1"
         :disabled="loading"
         :loading="loadingConfirm || loadingReject"
         flat
@@ -71,7 +71,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 flex-1-1"
+        class="text-body-1 flex-1-1"
         :disabled="loading || !commentReject"
         :loading="loadingConfirm || loadingReject"
         flat
@@ -85,7 +85,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 flex-1-1"
+        class="text-body-1 flex-1-1"
         :to="`/admin/posts/edit/${postDetail.id}`"
         flat
       >

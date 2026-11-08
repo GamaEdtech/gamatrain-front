@@ -5,8 +5,8 @@
         cols="6"
         class="d-flex align-center mb-4"
       >
-        <span class="icon icong-azmoon text-h3 text-teal mx-1" />
-        <h1 class="text-md-h4 text-h5 text-teal">
+        <span class="icon icong-azmoon text-h4 text-teal mx-1" />
+        <h1 class="text-md-h6 text-body-1 text-teal">
           Update Online Exam
         </h1>
       </v-col>
@@ -883,7 +883,7 @@
           <v-card-text id="preview-dialog">
             <v-row>
               <v-col cols="12">
-                <p class="text-h4 font-weight-bold">
+                <p class="text-h6 font-weight-bold">
                   {{ form.title }}
                 </p>
               </v-col>
@@ -1282,7 +1282,7 @@
           >
             <v-row>
               <v-col cols="12">
-                <p class="text-h4 font-weight-bold">
+                <p class="text-h6 font-weight-bold">
                   {{ form.title }}
                 </p>
               </v-col>
@@ -1542,7 +1542,7 @@
       >
         <v-card class="px-5 py-3">
           <v-card-title
-            class="text-h5 px-0"
+            class="text-body-1 px-0"
             style="font-size: 13px; word-break: break-word; white-space: normal"
           >
             Are you sure of deleting the online exam?
@@ -1589,7 +1589,7 @@
     >
       <v-card class="pa-0">
         <v-card-title
-          class="mt-2 text-h5"
+          class="mt-2 text-body-1"
           style="font-size: 13px"
         >
           Are you sure?
@@ -3655,7 +3655,7 @@ onUpdated(async () => {
 
 .create-test-container {
   max-width: 1200px;
-  margin: 5rem auto;
+  margin: 3.125rem auto;
   padding-bottom: 80px; // Space for fixed bottom bar
 }
 @media (max-width: 768px) {
@@ -3691,7 +3691,7 @@ onUpdated(async () => {
   opacity: 0;
 }
 .v-stepper-vertical-item__title {
-  font-size: 1.5rem;
+  font-size: 0.9375rem;
   font-weight: 500;
 }
 

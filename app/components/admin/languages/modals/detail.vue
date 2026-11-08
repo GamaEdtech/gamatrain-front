@@ -5,7 +5,7 @@
       class="w-100 d-flex flex-column align-start ga-1"
     >
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Name
         </div>
         <v-text-field
@@ -49,7 +49,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-2">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Icon
         </div>
         <v-text-field
@@ -79,13 +79,13 @@
         <v-checkbox
           v-model="newItem.isEnable"
           color="primary"
-          class="text-h4"
+          class="text-h6 font-weight-regular"
           hide-details
           false-icon="md:check_box_outline_blank"
           true-icon="md:check_box"
         >
           <template #label>
-            <span class="text-h6 text-grey700 text-no-wrap ml-2">Is Enable</span>
+            <span class="text-caption font-weight-medium text-grey700 text-no-wrap ml-2">Is Enable</span>
           </template>
         </v-checkbox>
       </div>
@@ -94,13 +94,13 @@
         <v-checkbox
           v-model="newItem.isDefault"
           color="primary"
-          class="text-h4"
+          class="text-h6 font-weight-regular"
           hide-details
           false-icon="md:check_box_outline_blank"
           true-icon="md:check_box"
         >
           <template #label>
-            <span class="text-h6 text-grey700 text-no-wrap ml-2">Is Default</span>
+            <span class="text-caption font-weight-medium text-grey700 text-no-wrap ml-2">Is Default</span>
           </template>
         </v-checkbox>
       </div>
@@ -111,7 +111,7 @@
       variant="outlined"
       height="40"
       width="200"
-      class="text-h5 mt-8 mx-auto"
+      class="text-body-1 mt-8 mx-auto"
       :loading="loadingEditItem"
       :disabled="!isFormValid || loadingGetItemById"
       flat

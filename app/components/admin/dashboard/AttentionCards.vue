@@ -49,7 +49,7 @@
                   {{ item.icon }}
                 </v-icon>
               </v-avatar>
-              <span class="text-h6 font-weight-medium text-grey600 text-truncate flex-grow-1">{{ item.label }}</span>
+              <span class="text-caption font-weight-medium text-grey600 text-truncate flex-grow-1">{{ item.label }}</span>
               <v-icon
                 size="18"
                 color="grey400"
@@ -58,7 +58,7 @@
               </v-icon>
             </div>
 
-            <span class="text-h2 font-weight-bold text-grey800">{{ item.count.toLocaleString('en-US') }}</span>
+            <span class="text-h4 font-weight-bold text-grey800">{{ item.count.toLocaleString('en-US') }}</span>
 
             <div class="d-flex flex-wrap ga-2">
               <v-chip
@@ -66,7 +66,7 @@
                 color="error"
                 variant="tonal"
                 size="small"
-                class="text-h6 font-weight-bold"
+                class="text-caption font-weight-bold"
               >
                 +{{ item.newLast7Days }} this week
               </v-chip>
@@ -75,7 +75,7 @@
                 :color="item.overdue ? 'warning' : 'grey600'"
                 variant="tonal"
                 size="small"
-                class="text-h6 font-weight-bold"
+                class="text-caption font-weight-bold"
               >
                 oldest {{ fromNowLocal(item.oldestDate) }}
               </v-chip>
@@ -94,7 +94,7 @@
         >
           md:check_circle
         </v-icon>
-        <span class="text-h6 text-grey500">
+        <span class="text-caption font-weight-medium text-grey500">
           {{ waiting.length ? 'All clear:' : 'All caught up, nothing is waiting.' }}
         </span>
         <template v-if="waiting.length">
@@ -105,7 +105,7 @@
             variant="tonal"
             color="grey600"
             size="small"
-            class="text-h6"
+            class="text-caption font-weight-medium"
           >
             {{ item.label }}
           </v-chip>

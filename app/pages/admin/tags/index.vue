@@ -12,7 +12,7 @@
             height="40"
             @click="changeFilterTagType(tagType.id)"
           >
-            <span :class="`${tagType.id === selectedTagType ? `text-grey900` : `text-grey500`} font-weight-bold text-h5`">
+            <span :class="`${tagType.id === selectedTagType ? `text-grey900` : `text-grey500`} font-weight-bold text-body-1`">
               {{ tagType.title }}
             </span>
           </v-btn>
@@ -38,7 +38,7 @@
         height="40"
         @click="showAddModal = true"
       >
-        <span class="text-primary font-weight-bold text-h5">Add Tag</span>
+        <span class="text-primary font-weight-bold text-body-1">Add Tag</span>
       </v-btn>
     </div>
 

@@ -76,7 +76,7 @@
       </template>
 
       <template #[`item.title`]="{ item }">
-        <div class="text-grey600 text-h5 d-flex justify-center align-center font-weight-bold text-center truncate-text">
+        <div class="text-grey600 text-body-1 d-flex justify-center align-center font-weight-bold text-center truncate-text">
           {{ item.title }}
         </div>
       </template>

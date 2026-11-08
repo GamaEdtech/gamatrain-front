@@ -70,12 +70,12 @@ const cards = ref([
 .earn-get-section {
   background: rgba(36, 41, 47, 0.05);
   padding: 48px 0;
-  margin-top: 4rem;
+  margin-top: 2.5rem;
   max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
 }
 .earn-get-container {
   max-width: 1100px;
@@ -86,7 +86,7 @@ const cards = ref([
   font-size: 24px;
   font-weight: 800;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .earn-get-card {
@@ -107,7 +107,7 @@ const cards = ref([
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.5rem;
+  padding: 0.9375rem;
 }
 
 .earn-get-img {
@@ -117,7 +117,7 @@ const cards = ref([
 }
 
 .earn-get-card-content {
-  padding: 1.2rem;
+  padding: 0.75rem;
   height: 100px;
 }
 
@@ -148,7 +148,7 @@ const cards = ref([
   .earn-get-title {
     font-size: 32px;
     font-weight: 700;
-    margin-bottom: 3.5rem;
+    margin-bottom: 2.1875rem;
   }
   .earn-get-card-desc {
     font-size: 20px;
@@ -174,7 +174,7 @@ const cards = ref([
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding-bottom: 2rem;
+  padding-bottom: 1.25rem;
   background: rgb(var(--v-theme-surface));
   border-radius: 8px;
   box-shadow: 0 4px 24px 0 rgba(44, 62, 80, 0.08);
@@ -183,12 +183,12 @@ const cards = ref([
 /* iPad mini specific styles */
 @media (min-width: 481px) and (max-width: 768px) {
   .earn-get-section {
-    padding: 4rem 1rem;
-    margin-top: 3rem;
+    padding: 2.5rem 0.625rem;
+    margin-top: 1.875rem;
   }
 
   .earn-get-container {
-    padding: 0 1rem;
+    padding: 0 0.625rem;
   }
 
   .earn-get-grid {
@@ -205,7 +205,7 @@ const cards = ref([
 
   .earn-get-title {
     font-size: 36px;
-    margin-bottom: 4rem;
+    margin-bottom: 2.5rem;
   }
 
   .earn-get-card {
@@ -218,12 +218,12 @@ const cards = ref([
 
   .earn-get-img-section {
     height: 200px;
-    padding: 2rem;
+    padding: 1.25rem;
   }
 
   .earn-get-card-content {
     height: 140px;
-    padding: 1.5rem;
+    padding: 0.9375rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -231,7 +231,7 @@ const cards = ref([
 
   .earn-get-card-title {
     font-size: 22px;
-    margin-bottom: 1rem;
+    margin-bottom: 0.625rem;
   }
 
   .earn-get-card-desc {
@@ -258,12 +258,12 @@ const cards = ref([
 
   .earn-get-img-section {
     height: 100px;
-    padding: 1rem;
+    padding: 0.625rem;
   }
 
   .earn-get-section {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    padding-left: 0.3125rem;
+    padding-right: 0.3125rem;
   }
 
   .earn-get-card {
@@ -271,7 +271,7 @@ const cards = ref([
   }
 
   .earn-get-card-content {
-    padding: 0.8rem;
+    padding: 0.5rem;
     height: 90px;
     overflow: hidden;
   }
@@ -287,7 +287,7 @@ const cards = ref([
   .earn-get-card-desc {
     font-size: 14px;
     line-height: 1.2;
-    padding-bottom: 2rem;
+    padding-bottom: 1.25rem;
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -315,9 +315,9 @@ const cards = ref([
   }
 
   .earn-get-title {
-    font-size: 4rem;
+    font-size: 2.5rem;
     font-weight: 800;
-    margin-bottom: 6rem;
+    margin-bottom: 3.75rem;
   }
 
   .earn-get-card {
@@ -326,20 +326,20 @@ const cards = ref([
 
   .earn-get-img-section {
     height: 220px;
-    padding: 2rem;
+    padding: 1.25rem;
   }
 
   .earn-get-card-content {
     height: 130px;
-    padding: 2rem;
+    padding: 1.25rem;
   }
 
   .earn-get-card-title {
-    font-size: 2.2rem;
+    font-size: 1.375rem;
   }
 
   .earn-get-card-desc {
-    font-size: 1.6rem;
+    font-size: 1rem;
   }
 
   .earn-get-col {
@@ -358,20 +358,20 @@ const cards = ref([
 
   .earn-get-img-section {
     height: 280px;
-    padding: 2.5rem;
+    padding: 1.5625rem;
   }
 
   .earn-get-card-content {
     height: 180px;
-    padding: 2.5rem;
+    padding: 1.5625rem;
   }
 
   .earn-get-card-title {
-    font-size: 2.5rem;
+    font-size: 1.5625rem;
   }
 
   .earn-get-card-desc {
-    font-size: 2rem;
+    font-size: 1.25rem;
   }
 }
 </style>

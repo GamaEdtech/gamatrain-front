@@ -6,7 +6,7 @@
     >
       <span
         v-if="title"
-        class="text-h4 font-weight-bold text-grey700"
+        class="text-h6 font-weight-bold text-grey700"
       >
         {{ title }}
       </span>
@@ -16,7 +16,7 @@
 
         <span
           v-if="itemLabel"
-          class="text-grey400 text-no-wrap text-h5 font-weight-semibold"
+          class="text-grey400 text-no-wrap text-body-1 font-weight-semibold"
         >
           <span class="text-grey500 font-weight-bold mr-1">
             {{ totalCount }}
@@ -40,7 +40,7 @@
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-bold pa-2 text-no-wrap ${getHeaderAlignClass(column)}`"
+              :class="`bg-grey100 text-grey700 text-body-1 font-weight-bold pa-2 text-no-wrap ${getHeaderAlignClass(column)}`"
             >
               {{ column.title }}
             </th>
@@ -69,7 +69,7 @@
           >
             <v-chip
               :color="getChipColor(slotProps.item, header)"
-              class="font-weight-bold text-h5"
+              class="font-weight-bold text-body-1"
             >
               {{ getCellText(slotProps.item, header) }}
             </v-chip>
@@ -82,7 +82,7 @@
               :to="getLinkTo(slotProps.item, header)"
               :target="header.target"
               :rel="header.target === '_blank' ? 'noopener noreferrer' : undefined"
-              class="text-grey600 text-h5 font-weight-bold text-decoration-none text-center"
+              class="text-grey600 text-body-1 font-weight-bold text-decoration-none text-center"
             >
               {{ getCellText(slotProps.item, header) }}
             </NuxtLink>
@@ -339,7 +339,7 @@ const getCellClass = (header: TableHeader) => {
       ? 'justify-end text-end'
       : 'justify-center text-center'
 
-  return `text-grey600 text-h5 d-flex ${justifyClass} align-center font-weight-bold ga-1`
+  return `text-grey600 text-body-1 d-flex ${justifyClass} align-center font-weight-bold ga-1`
 }
 
 // The #headers slot's `column` comes from Vuetify's own internal header type,

@@ -4,7 +4,7 @@
   >
     <div class="w-100 d-flex flex-column align-start">
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 position-relative">
-        <div class="text-h6 text-grey700 font-weight-medium ml-2">
+        <div class="text-caption text-grey700 font-weight-medium ml-2">
           School
         </div>
 
@@ -67,7 +67,7 @@
               >
                 md:school
               </v-icon>
-              <span class="text-h5 font-weight-bold text-grey700">
+              <span class="text-body-1 font-weight-bold text-grey700">
                 {{ school.name }} - {{ school.countryTitle }}
               </span>
             </div>
@@ -100,13 +100,13 @@
           "
           class="mt-1"
         >
-          <span class="text-h6 text-grey700">
+          <span class="text-caption font-weight-medium text-grey700">
             No school found with this name.
           </span>
 
           <router-link
             to="/school/add"
-            class="text-h6 text-primary font-weight-bold cursor-pointer ml-1"
+            class="text-caption text-primary font-weight-bold cursor-pointer ml-1"
           >
             Click here to register a new school
           </router-link>
@@ -114,7 +114,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-4 mt-10">
-        <span class="text-h5 text-grey500 font-weight-regular">Start date</span>
+        <span class="text-body-1 text-grey500 font-weight-regular">Start date</span>
         <div class="w-100 d-flex align-center ga-4">
           <div class="w-50 d-flex flex-column align-start justify-start ga-1">
             <common-gombo-box
@@ -157,7 +157,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-4 mt-4">
-        <span class="text-h5 text-grey500 font-weight-regular">End date</span>
+        <span class="text-body-1 text-grey500 font-weight-regular">End date</span>
         <div class="w-100 d-flex align-center ga-4">
           <div class="w-50 d-flex flex-column align-start justify-start ga-1">
             <common-gombo-box
@@ -200,7 +200,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-8">
-        <span class="text-h5 text-grey500 font-weight-regular">Description</span>
+        <span class="text-body-1 text-grey500 font-weight-regular">Description</span>
         <v-text-field
           v-model="inputText"
           rounded="pill"
@@ -233,7 +233,7 @@
             </v-btn>
           </template>
         </v-text-field>
-        <span class="text-h5 font-weight-medium text-grey400 mt-1">You can also use commas</span>
+        <span class="text-body-1 font-weight-medium text-grey400 mt-1">You can also use commas</span>
 
         <div
           class="d-flex flex-wrap ga-1 mt-3"
@@ -246,7 +246,7 @@
             closable
             @click:close="removeKeyword(item)"
           >
-            <span class="text-h5 font-weight-medium text-primary">{{ item }}</span>
+            <span class="text-body-1 font-weight-medium text-primary">{{ item }}</span>
             <template #close>
               <v-icon
                 color="#0000008A"
@@ -265,7 +265,7 @@
         rounded="pill"
         height="38"
         width="220"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :disabled="!isFormValid"
         :loading="loadingEditItem || loadingAddItem"

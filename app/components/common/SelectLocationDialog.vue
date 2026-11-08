@@ -184,7 +184,7 @@
     <v-card class="rounded-t-xl">
       <v-card-text class="pt-6">
         <div class="d-flex align-center mb-6">
-          <div class="text-h6" />
+          <div class="text-caption font-weight-medium" />
           <v-spacer />
           <v-btn
             icon

@@ -5,7 +5,7 @@
         cols="12"
         class="text-left"
       >
-        <span class="text-h4 teal--text">
+        <span class="text-h6 font-weight-regular teal--text">
           <v-icon color="teal">
             mdi-account-cog-outline
           </v-icon>

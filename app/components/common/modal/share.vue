@@ -1,13 +1,13 @@
 <template>
   <div class="w-100 d-flex flex-column mt-4">
-    <span class="text-h5 font-weight-medium text-grey700">
+    <span class="text-body-1 font-weight-medium text-grey700">
       Share this content:
     </span>
     <div class="w-100 d-flex flex-wrap flex-sm-nowrap align-center ga-4 ga-sm-1 mt-8">
       <v-btn
         rounded="xl"
         color="primary"
-        class="w-100 w-sm-33 text-h5 text-white"
+        class="w-100 w-sm-33 text-body-1 text-white"
         flat
         @click="copyUrl"
       >
@@ -22,7 +22,7 @@
         target="_blank"
         rounded="xl"
         color="#25d366"
-        class="w-100 w-sm-33 text-h5 text-white"
+        class="w-100 w-sm-33 text-body-1 text-white"
         flat
         @click="shareSocial('whatsapp')"
       >
@@ -38,7 +38,7 @@
         rounded="xl"
         flat
         color="#00acee"
-        class="w-100 w-sm-33 text-h5 text-white"
+        class="w-100 w-sm-33 text-body-1 text-white"
         @click="shareSocial('telegram')"
       >
         <v-icon> md:near_me_outlined </v-icon> &nbsp; Telegram

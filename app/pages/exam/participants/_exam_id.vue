@@ -10,8 +10,8 @@
             cols="12"
             class="pl-5"
           >
-            <span class="icon icong-qa text-h3 teal--text" />
-            <span class="text-h4 teal--text"> Participated tests </span>
+            <span class="icon icong-qa text-h4 teal--text" />
+            <span class="text-h6 font-weight-regular teal--text"> Participated tests </span>
           </v-col>
         </v-row>
         <v-card class="mt-3">
@@ -90,16 +90,16 @@
                   <template #default>
                     <thead>
                       <tr>
-                        <th class="text-center text-h5">
+                        <th class="text-center text-body-1">
                           Participant
                         </th>
-                        <th class="text-center text-h5">
+                        <th class="text-center text-body-1">
                           Date
                         </th>
-                        <th class="text-center text-h5">
+                        <th class="text-center text-body-1">
                           Percent
                         </th>
-                        <th class="text-center text-h5">
+                        <th class="text-center text-body-1">
                           Report card
                         </th>
                       </tr>
@@ -363,6 +363,6 @@ export default {
 
 <style scoped>
 p {
-  font-size: 1.4rem;
+  font-size: 0.875rem;
 }
 </style>

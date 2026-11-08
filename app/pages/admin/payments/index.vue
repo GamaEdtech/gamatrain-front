@@ -19,7 +19,7 @@
               rounded="xl"
               height="40"
               width="120"
-              class="text-h5"
+              class="text-body-1"
               flat
               variant="outlined"
             >
@@ -40,7 +40,7 @@
               <v-checkbox
                 :model-value="sortSelected.includes(sortItem.value)"
                 color="primary"
-                class="text-h4"
+                class="text-h6 font-weight-regular"
                 hide-details
                 false-icon="md:check_box_outline_blank"
                 true-icon="md:check_box"
@@ -50,7 +50,7 @@
                 "
               >
                 <template #label>
-                  <span class="text-h5 font-weight-medium ml-2">{{
+                  <span class="text-body-1 font-weight-medium ml-2">{{
                     sortItem.title
                   }}</span>
                 </template>
@@ -138,7 +138,7 @@
 
       <template #[`item.transactionId`]="{ item }">
         <div
-          class="text-grey600 text-h5 d-flex justify-start align-center font-weight-bold ga-2 cursor-pointer"
+          class="text-grey600 text-body-1 d-flex justify-start align-center font-weight-bold ga-2 cursor-pointer"
           @click="copyToClipboard(item.transactionId)"
         >
           {{ item.transactionId ? shortenText(item.transactionId) : 'unknown' }}
@@ -154,7 +154,7 @@
           v-if="canVerifyPayment(item)"
           flat
           size="small"
-          class="text-h6"
+          class="text-caption font-weight-medium"
           color="success"
           variant="outlined"
           @click="openVerifyPaymentModal(item)"

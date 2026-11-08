@@ -74,7 +74,7 @@ body {
 
         .icon {
           &:before {
-            font-size: 3.5rem;
+            font-size: 2.1875rem;
           }
         }
 
@@ -102,7 +102,7 @@ body {
 
         .icon {
           &:before {
-            font-size: 3.5rem;
+            font-size: 2.1875rem;
           }
         }
 
@@ -118,7 +118,7 @@ body {
       }
 
       .stat-item {
-        margin-bottom: 2rem;
+        margin-bottom: 1.25rem;
       }
 
       .search-item-button {
@@ -126,7 +126,7 @@ body {
       }
 
       // .theme--light.v-input input {
-      //   font-size: 1.2rem !important;
+      //   font-size: 0.75rem !important;
       // }
 
       // Banner
@@ -135,7 +135,7 @@ body {
 
       .category {
         .v-list-item__title {
-          font-size: 0.9rem;
+          font-size: 0.5625rem;
         }
       }
 
@@ -152,7 +152,7 @@ body {
       .grade-card {
         margin: 10px 5px !important;
         max-width: 47% !important;
-        min-height: 26rem;
+        min-height: 16.25rem;
       }
 
       .test-details-content {
@@ -162,7 +162,7 @@ body {
             box-shadow: none;
             margin: 0;
             padding: 0;
-            border-radius: 0.3rem;
+            border-radius: 0.1875rem;
             border: 0;
           }
 
@@ -173,22 +173,22 @@ body {
           }
 
           .detail-title {
-            font-size: 1.3rem;
+            font-size: 0.8125rem;
           }
 
           .label-holder {
             .label {
               display: inline-block;
-              font-size: 1rem;
-              padding: 0.2rem 0.7rem;
-              margin-top: 0.5rem;
+              font-size: 0.625rem;
+              padding: 0.125rem 0.4375rem;
+              margin-top: 0.3125rem;
             }
           }
         }
       }
 
       .last-view-title {
-        padding: 1rem;
+        padding: 0.625rem;
       }
 
     }
@@ -203,7 +203,7 @@ body {
 
         .icon {
           &:before {
-            font-size: 3.5rem;
+            font-size: 2.1875rem;
           }
         }
 
@@ -226,13 +226,13 @@ body {
       .tutorial {
 
         .tab-header {
-          border-radius: 0.6rem;
-          margin: 2rem 0;
+          border-radius: 0.375rem;
+          margin: 1.25rem 0;
 
           .v-tabs {
             .v-tabs-bar {
-              min-height: 6rem;
-              padding: 1rem 0;
+              min-height: 3.75rem;
+              padding: 0.625rem 0;
 
               .v-slide-group__prev {
                 display: none!important;
@@ -255,7 +255,7 @@ body {
         .filter-show-result {
           background: $green;
           color: $white;
-          font-size: 1.4rem;
+          font-size: 0.875rem;
           font-weight: 500;
         }
 
@@ -289,18 +289,18 @@ body {
     // @media screen and (max-width: 480px) {
 
     //   .stat-value {
-    //     font-size: 2.4rem !important;
+    //     font-size: 1.5rem !important;
     //   }
 
     //   .stat-item {
     //     padding: 0 !important;
     //     margin-right: 0 !important;
-    //     margin-left: 4rem !important;
-    //     margin-bottom: 2rem;
+    //     margin-left: 2.5rem !important;
+    //     margin-bottom: 1.25rem;
     //   }
 
     //   .stat-sec {
-    //     padding: 1rem 0 !important;
+    //     padding: 0.625rem 0 !important;
     //     border: none;
     //   }
 
@@ -310,7 +310,7 @@ body {
     //   }
 
     //   .topbar-items {
-    //     padding: 1rem !important;
+    //     padding: 0.625rem !important;
     //   }
 
     //   .mobile-res-search {
@@ -321,21 +321,21 @@ body {
     //     border: 1px solid $border;
     //     align-items: center;
     //     border-radius: 4px;
-    //     height: 4rem;
+    //     height: 2.5rem;
     //   }
 
     //   .search-field {
-    //     font-size: 1rem;
+    //     font-size: 0.625rem;
     //   }
 
     //   .grade-list {
-    //     padding: 1.5rem;
+    //     padding: 0.9375rem;
     //   }
 
     //   // Grade card
     //   .grades-list {
     //     .grade-card {
-    //       margin: 1.5rem 0 !important;
+    //       margin: 0.9375rem 0 !important;
     //       box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
     //     }
     //   }
@@ -361,7 +361,7 @@ body {
     //     border: none;
     //     width: 23%;
     //     justify-content: center !important;
-    //     padding: 1rem !important;
+    //     padding: 0.625rem !important;
     //   }
 
     //   .grade__item-title {
@@ -371,7 +371,7 @@ body {
     //   }
 
     //   .grade-item__text {
-    //     font-size: 1.2rem !important;
+    //     font-size: 0.75rem !important;
     //     text-align: center !important;
     //   }
 
@@ -382,7 +382,7 @@ body {
     //   .feed-p-res {
     //     font-size: 12px;
     //     color: $gray4;
-    //     line-height: 2rem;
+    //     line-height: 1.25rem;
     //   }
 
     //   // .grade-card__update {
@@ -397,8 +397,8 @@ body {
     //   }
 
     //   .feature-item {
-    //     padding: 0 4rem !important;
-    //     margin: 1rem 0 !important;
+    //     padding: 0 2.5rem !important;
+    //     margin: 0.625rem 0 !important;
     //   }
 
     //   .suggestion {
@@ -417,13 +417,13 @@ body {
     //     }
 
     //     .course-card {
-    //       padding: 7rem 1rem;
+    //       padding: 4.375rem 0.625rem;
     //       margin: 0;
 
     //     }
 
     //     .album-card {
-    //       padding: 7rem 1rem;
+    //       padding: 4.375rem 0.625rem;
     //       margin: 0;
     //     }
 
@@ -434,17 +434,17 @@ body {
 
     //   .footer-items {
     //     .about-footer-para {
-    //       font-size: 1.2rem !important;
+    //       font-size: 0.75rem !important;
     //     }
 
     //     .about-footer {
-    //       font-size: 1.4rem !important;
+    //       font-size: 0.875rem !important;
     //     }
     //   }
 
     //   .footer-bar-item {
-    //     font-size: 1.4rem !important;
-    //     height: 6rem !important;
+    //     font-size: 0.875rem !important;
+    //     height: 3.75rem !important;
     //   }
 
     //   // Start : Lesson page
@@ -454,12 +454,12 @@ body {
 
     //     .lesson-details {
     //       order: 2;
-    //       padding: 2rem;
+    //       padding: 1.25rem;
 
     //       .last-update,
     //       .visit,
     //       .error-report {
-    //         font-size: 1.2rem;
+    //         font-size: 0.75rem;
     //         font-weight: 400;
     //         color: $gray11;
     //       }
@@ -468,18 +468,18 @@ body {
     //     .lessons-title {
     //       order: 1;
     //       border-bottom: 1px solid $border1;
-    //       padding: 2rem;
+    //       padding: 1.25rem;
 
     //       .lesson-content {
     //         text-align: right !important;
 
     //         .lesson-title {
-    //           font-size: 1.6rem !important;
+    //           font-size: 1rem !important;
     //           font-size: 500;
     //         }
 
     //         .lesson-subtitle {
-    //           font-size: 1.4rem;
+    //           font-size: 0.875rem;
     //         }
     //       }
     //     }
@@ -491,14 +491,14 @@ body {
     //     margin: 0;
 
     //     .card-image img {
-    //       width: 11rem;
-    //       height: 11rem;
+    //       width: 6.875rem;
+    //       height: 6.875rem;
     //     }
 
     //     .card-body {
     //       box-shadow: none !important;
     //       border: none;
-    //       padding-top: 1.2rem !important;
+    //       padding-top: 0.75rem !important;
     //       padding-bottom: 0 !important;
     //       padding-left: 0 !important;
     //       padding-right: 0 !important;
@@ -506,19 +506,19 @@ body {
     //     }
 
     //     .card {
-    //       border-radius: 0.8rem !important;
+    //       border-radius: 0.5rem !important;
 
     //       .card-title {
-    //         font-size: 1.2rem;
+    //         font-size: 0.75rem;
     //         color: $gray45;
     //         font-weight: 400;
     //         letter-spacing: 0.06px;
-    //         margin-bottom: 1rem;
+    //         margin-bottom: 0.625rem;
     //       }
 
     //       .video-teacher,
     //       .test-number {
-    //         margin-bottom: 1rem;
+    //         margin-bottom: 0.625rem;
 
     //       }
 
@@ -526,7 +526,7 @@ body {
     //       .durition,
     //       .test-number,
     //       .levels {
-    //         font-size: 1rem;
+    //         font-size: 0.625rem;
     //         font-weight: 400;
     //         color: $gray4;
     //         letter-spacing: 0.16px;
@@ -537,7 +537,7 @@ body {
     //   .sample {
     //     .sample-titles {
     //       margin-bottom: 0rem;
-    //       margin-top: 3rem;
+    //       margin-top: 1.875rem;
     //     }
 
     //     .sample-slider {
@@ -582,8 +582,8 @@ body {
     //             position: absolute;
     //             top: 34%;
     //             left: 43%;
-    //             width: 4rem;
-    //             height: 4rem;
+    //             width: 2.5rem;
+    //             height: 2.5rem;
     //             color: #FFFFFF;
     //             z-index: 10;
     //             border-radius: 50%;
@@ -594,14 +594,14 @@ body {
     //             content: "\f04b";
     //             font-family: "Font Awesome 5 Free";
     //             font-weight: 900;
-    //             font-size: 2rem;
+    //             font-size: 1.25rem;
     //           }
 
     //           .buttons button.pause:before {
     //             content: "\f04c";
     //             font-family: "Font Awesome 5 Free";
     //             font-weight: 900;
-    //             font-size: 2rem;
+    //             font-size: 1.25rem;
     //           }
 
     //           .shadow {
@@ -620,7 +620,7 @@ body {
     //           bottom: 6%;
 
     //           .v-icon {
-    //             padding: 0.2rem;
+    //             padding: 0.125rem;
     //           }
     //         }
 
@@ -654,7 +654,7 @@ body {
     //                   background: #000000;
     //                   border: none;
     //                   border-radius: 50%;
-    //                   height: 3rem;
+    //                   height: 1.875rem;
     //                   width: 1em;
     //                   z-index: 2;
 
@@ -670,7 +670,7 @@ body {
     //     }
 
     //     // .video-slide {
-    //     //   height: 28rem !important;
+    //     //   height: 17.5rem !important;
 
     //     //   .rating {
     //     //     bottom: 21%;
@@ -702,17 +702,17 @@ body {
     //     .filter-show-result {
     //       background: $green;
     //       color: $white;
-    //       font-size: 1.4rem;
+    //       font-size: 0.875rem;
     //       font-weight: 500;
     //     }
 
     //     .sample-filter {
     //       .v-expansion-panel {
     //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
+    //         border-radius: 0.25rem;
 
     //         .filter-title {
-    //           font-size: 1.6rem;
+    //           font-size: 1rem;
     //         }
     //       }
 
@@ -741,10 +741,10 @@ body {
 
     //     .filter-mobile-btn {
     //       background-color: $green;
-    //       padding: 2rem;
+    //       padding: 1.25rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
+    //       border-radius: 0.75rem;
     //     }
     //   }
 
@@ -767,8 +767,8 @@ body {
 
     //         .v-tabs {
     //           .v-tabs-bar {
-    //             min-height: 6rem;
-    //             padding: 1rem 0;
+    //             min-height: 3.75rem;
+    //             padding: 0.625rem 0;
 
     //             .v-slide-group__prev {
     //               display: none!important;
@@ -785,14 +785,14 @@ body {
     //       }
 
     //       .sample-q-items-desktop {
-    //         padding: 0 1rem;
+    //         padding: 0 0.625rem;
 
     //         .sample-q-item {
     //           .item-img {
     //             height: 100%;
 
     //             img {
-    //               border-radius: 1.2rem;
+    //               border-radius: 0.75rem;
     //               width: 100%;
     //               height: 100%;
     //             }
@@ -816,10 +816,10 @@ body {
     //             }
 
     //             .item-content-footer-icon {
-    //               margin: 0 1.5rem;
+    //               margin: 0 0.9375rem;
     //             }
     //             p {
-    //               font-size: 1rem;
+    //               font-size: 0.625rem;
     //               color: $gray8;
     //             }
 
@@ -848,12 +848,12 @@ body {
 
     //             .item-content-tags {
     //               .v-chip {
-    //                 font-size: 1rem;
+    //                 font-size: 0.625rem;
     //                 padding: 0 6px;
     //               }
 
     //               .v-size--default {
-    //                 border-radius: 0.6rem !important;
+    //                 border-radius: 0.375rem !important;
     //               }
     //             }
     //           }
@@ -866,7 +866,7 @@ body {
     //           margin: auto;
     //           display: none !important;
     //         }
-    //         font-size: 1rem;
+    //         font-size: 0.625rem;
     //         img {
     //           width: 25px;
     //         }
@@ -892,17 +892,17 @@ body {
     //     .filter-show-result {
     //       background: $green;
     //       color: $white;
-    //       font-size: 1.4rem;
+    //       font-size: 0.875rem;
     //       font-weight: 500;
     //     }
 
     //     .sample-filter {
     //       .v-expansion-panel {
     //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
+    //         border-radius: 0.25rem;
 
     //         .filter-title {
-    //           font-size: 1.6rem;
+    //           font-size: 1rem;
     //         }
     //       }
 
@@ -931,10 +931,10 @@ body {
 
     //     .filter-mobile-btn {
     //       background-color: $green;
-    //       padding: 2rem;
+    //       padding: 1.25rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
+    //       border-radius: 0.75rem;
     //     }
     //   }
 
@@ -957,8 +957,8 @@ body {
 
     //         .v-tabs {
     //           .v-tabs-bar {
-    //             min-height: 6rem;
-    //             padding: 1rem 0;
+    //             min-height: 3.75rem;
+    //             padding: 0.625rem 0;
 
     //             .v-slide-group__prev {
     //               display: none!important;
@@ -978,33 +978,33 @@ body {
     //         .book-carousel-sub {
     //           .book-carousel-q {
     //             p {
-    //               font-size: 1.2rem;
+    //               font-size: 0.75rem;
     //             }
     //           }
     //         }
     //         .book-carousel-books {
     //           .slide-item {
-    //             height: 30rem;
-    //             margin-top: 1.2rem !important;
+    //             height: 18.75rem;
+    //             margin-top: 0.75rem !important;
     //             .book-body {
-    //               padding: 0.7rem !important;
+    //               padding: 0.4375rem !important;
     //               .book-body-image {
     //                 height: 165px;
     //               }
     //               .book-season {
     //                 margin: 5px 8px !important;
     //                 font-size: 8px;
-    //                 border-radius: 0.6rem;
+    //                 border-radius: 0.375rem;
     //                 .season-number {
-    //                   font-size: 1.4rem;
+    //                   font-size: 0.875rem;
     //                 }
     //               }
     //               .book-price {
     //                 margin: 5px 8px !important;
     //                 font-size: 8px;
-    //                 border-radius: 0.6rem;
+    //                 border-radius: 0.375rem;
     //                 .price-number {
-    //                   font-size: 1.4rem;
+    //                   font-size: 0.875rem;
     //                 }
     //               }
     //             }
@@ -1012,12 +1012,12 @@ body {
     //         }
     //       }
     //        .training-items-desktop {
-    //         padding: 0 1rem;
+    //         padding: 0 0.625rem;
 
     //         .training-item {
     //           .item-image {
     //             height: 100%;
-    //             border-radius: 1.2rem;
+    //             border-radius: 0.75rem;
     //             width: 100%;
     //           }
 
@@ -1025,7 +1025,7 @@ body {
     //             padding-left: 0;
 
     //             .item-content-title {
-    //               font-size: 1.4rem;
+    //               font-size: 0.875rem;
 
     //               .item-content-title-icon {
     //                 svg {
@@ -1038,18 +1038,18 @@ body {
     //             .item-content-tags {
     //               .v-chip {
     //                 padding: 0 6px;
-    //                 font-size: 1rem;
+    //                 font-size: 0.625rem;
     //               }
 
     //               .v-size--default {
-    //                 border-radius: 0.6rem !important;
+    //                 border-radius: 0.375rem !important;
     //               }
     //             }
     //           }
 
     //           .item-content-footer {
     //             p {
-    //               font-size: 1rem;
+    //               font-size: 0.625rem;
     //               color: $gray8;
     //             }
 
@@ -1064,7 +1064,7 @@ body {
     //         }
     //       }
     //       .card-footer {
-    //         font-size: 1rem;
+    //         font-size: 0.625rem;
     //         .item-content-file-answers {
     //           display: flex;
     //           align-items: center;
@@ -1089,7 +1089,7 @@ body {
     //         }
 
     //         .item-content-footer-icon {
-    //           margin: 0 1.5rem;
+    //           margin: 0 0.9375rem;
     //         }
     //         img {
     //           width: 25px;
@@ -1123,17 +1123,17 @@ body {
     //     .filter-show-result {
     //       background: $green;
     //       color: $white;
-    //       font-size: 1.4rem;
+    //       font-size: 0.875rem;
     //       font-weight: 500;
     //     }
 
     //     .q-a-filter {
     //       .v-expansion-panel {
     //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
+    //         border-radius: 0.25rem;
 
     //         .filter-title {
-    //           font-size: 1.6rem;
+    //           font-size: 1rem;
     //         }
     //       }
 
@@ -1163,10 +1163,10 @@ body {
 
     //     .filter-mobile-btn {
     //       background-color: $green;
-    //       padding: 2rem;
+    //       padding: 1.25rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
+    //       border-radius: 0.75rem;
     //     }
     //   }
 
@@ -1189,8 +1189,8 @@ body {
 
     //         .v-tabs {
     //           .v-tabs-bar {
-    //             min-height: 6rem;
-    //             padding: 1rem 0;
+    //             min-height: 3.75rem;
+    //             padding: 0.625rem 0;
 
     //             .v-slide-group__prev {
     //               display: none!important;
@@ -1207,7 +1207,7 @@ body {
     //       }
 
     //       .q-a-items-desktop {
-    //         padding: 0 1rem;
+    //         padding: 0 0.625rem;
 
     //         .q-a-item {
     //           .item-img {
@@ -1216,7 +1216,7 @@ body {
     //             img {
     //               height: 100%;
     //               width: 100%;
-    //               border-radius: 1.2rem;
+    //               border-radius: 0.75rem;
     //             }
     //           }
 
@@ -1225,17 +1225,17 @@ body {
 
     //             .q-a-title {
     //               p {
-    //                 font-size: 1.4rem;
+    //                 font-size: 0.875rem;
     //               }
     //             }
 
     //             .item-content-tags {
     //               .v-chip {
-    //                 padding: 0 0.6rem;
+    //                 padding: 0 0.375rem;
     //               }
 
     //               .v-size--default {
-    //                 border-radius: 0.6rem;
+    //                 border-radius: 0.375rem;
     //               }
 
     //             }
@@ -1268,7 +1268,7 @@ body {
 
     //             p {
     //               color: $gray8;
-    //               font-size: 1rem;
+    //               font-size: 0.625rem;
     //             }
 
     //             i {
@@ -1287,17 +1287,17 @@ body {
     //     .filter-show-result {
     //       background: $green;
     //       color: $white;
-    //       font-size: 1.4rem;
+    //       font-size: 0.875rem;
     //       font-weight: 500;
     //     }
 
     //     .online-exam-filter {
     //       .v-expansion-panel {
     //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
+    //         border-radius: 0.25rem;
 
     //         .filter-title {
-    //           font-size: 1.6rem;
+    //           font-size: 1rem;
     //         }
     //       }
 
@@ -1327,10 +1327,10 @@ body {
 
     //     .filter-mobile-btn {
     //       background-color: $green;
-    //       padding: 2rem;
+    //       padding: 1.25rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
+    //       border-radius: 0.75rem;
     //     }
     //   }
 
@@ -1356,8 +1356,8 @@ body {
 
     //           .v-tabs {
     //             .v-tabs-bar {
-    //               min-height: 6rem;
-    //               padding: 1rem 0;
+    //               min-height: 3.75rem;
+    //               padding: 0.625rem 0;
 
     //               .v-slide-group__prev {
     //                 display: none!important;
@@ -1395,7 +1395,7 @@ body {
     //             .book-carousel-q ::before {
     //               content: url("../images/quote.png");
     //               height: 0;
-    //               width: 1rem;
+    //               width: 0.625rem;
     //               transform: rotate(30deg);
     //               right: 0%;
     //               top: -10%;
@@ -1408,8 +1408,8 @@ body {
     //               height: 30px;
     //               background: #FFD12F;
     //               position: relative;
-    //               border-radius: 15rem;
-    //               padding: 0.4rem;
+    //               border-radius: 9.375rem;
+    //               padding: 0.25rem;
     //               display: flex;
     //               align-items: center;
     //               justify-content: center;
@@ -1420,31 +1420,31 @@ body {
     //             }
 
     //             p {
-    //               font-size: 0.9rem;
+    //               font-size: 0.5625rem;
     //               color: $white;
     //             }
     //           }
 
     //           .book-carousel-books {
     //             .slide-item {
-    //               height: 30rem;
+    //               height: 18.75rem;
 
     //               .book-body {
-    //                 width: 17rem;
+    //                 width: 10.625rem;
 
     //                 .book-body-image {
     //                   width: 100%;
     //                   height: 117px;
     //                   padding: 0;
-    //                   border-radius: 1rem;
+    //                   border-radius: 0.625rem;
     //                 }
 
     //                 .book-title {
-    //                   font-size: 1.2rem;
+    //                   font-size: 0.75rem;
     //                 }
 
     //                 .book-test {
-    //                   border-radius: 0.6rem;
+    //                   border-radius: 0.375rem;
     //                   .test-number {
     //                     font-size: 14px;
     //                   }
@@ -1455,7 +1455,7 @@ body {
     //                 }
 
     //                 .book-price {
-    //                   border-radius: 0.6rem;
+    //                   border-radius: 0.375rem;
     //                   .price-number {
     //                     font-size: 14px;
     //                   }
@@ -1470,7 +1470,7 @@ body {
     //         }
 
     //         .online-exam-items-desktop {
-    //           padding: 0 1rem;
+    //           padding: 0 0.625rem;
 
     //           .online-exam-item {
     //             .item-img {
@@ -1479,7 +1479,7 @@ body {
     //               img {
     //                 width: 100%;
     //                 height: 100%;
-    //                 border-radius: 1.2rem;
+    //                 border-radius: 0.75rem;
     //               }
 
     //             }
@@ -1488,20 +1488,20 @@ body {
     //               padding-left: 0;
 
     //               .item-content-title {
-    //                 font-size: 1.4rem;
+    //                 font-size: 0.875rem;
     //               }
 
     //               .item-content-features {
-    //                 font-size: 1rem;
+    //                 font-size: 0.625rem;
     //                 color: $gray8;
     //               }
     //             }
 
     //             .item-content-tags {
     //               .v-chip {
-    //                 font-size: 1rem;
-    //                 padding: 0 0.6rem;
-    //                 border-radius: 0.6rem;
+    //                 font-size: 0.625rem;
+    //                 padding: 0 0.375rem;
+    //                 border-radius: 0.375rem;
     //               }
     //             }
 
@@ -1511,7 +1511,7 @@ body {
     //               }
 
     //               p {
-    //                 font-size: 1rem;
+    //                 font-size: 0.625rem;
     //               }
 
     //               i {
@@ -1527,7 +1527,7 @@ body {
     //       }
     //       .card-footer {
     //         p {
-    //           font-size: 1rem;
+    //           font-size: 0.625rem;
     //           color: $gray8;
     //         }
     //         img {
@@ -1571,17 +1571,17 @@ body {
     //     .filter-show-result {
     //       background: $green;
     //       color: $white;
-    //       font-size: 1.4rem;
+    //       font-size: 0.875rem;
     //       font-weight: 500;
     //     }
 
     //     .tutorial-filter {
     //       .v-expansion-panel {
     //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
+    //         border-radius: 0.25rem;
 
     //         .filter-title {
-    //           font-size: 1.6rem;
+    //           font-size: 1rem;
     //         }
     //       }
 
@@ -1611,10 +1611,10 @@ body {
 
     //     .filter-mobile-btn {
     //       background-color: $green;
-    //       padding: 2rem;
+    //       padding: 1.25rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
+    //       border-radius: 0.75rem;
     //     }
     //   }
 
@@ -1635,8 +1635,8 @@ body {
 
     //         .v-tabs {
     //           .v-tabs-bar {
-    //             min-height: 6rem;
-    //             padding: 1rem 0;
+    //             min-height: 3.75rem;
+    //             padding: 0.625rem 0;
 
     //             .v-slide-group__prev {
     //               display: none;
@@ -1660,20 +1660,20 @@ body {
     //             img {
     //               height: 100%;
     //               width: 100%;
-    //               border-radius: 1.2rem;
+    //               border-radius: 0.75rem;
     //             }
     //           }
 
     //           .tutorial-title {
-    //             font-size: 1.4rem;
+    //             font-size: 0.875rem;
     //             font-weight: 500;
     //           }
 
     //           .item-content-tags {
     //             .v-chip {
-    //               font-size: 1rem;
-    //               border-radius: 0.6rem;
-    //               padding: 0 0.6rem;
+    //               font-size: 0.625rem;
+    //               border-radius: 0.375rem;
+    //               padding: 0 0.375rem;
     //             }
     //           }
 
@@ -1702,7 +1702,7 @@ body {
     //               display: none;
     //             }
     //             p {
-    //               font-size: 1rem;
+    //               font-size: 0.625rem;
     //             }
 
     //             i {
@@ -1725,17 +1725,17 @@ body {
     //     .filter-show-result {
     //       background: $green;
     //       color: $white;
-    //       font-size: 1.4rem;
+    //       font-size: 0.875rem;
     //       font-weight: 500;
     //     }
 
     //     .teachers-filter {
     //       .v-expansion-panel {
     //         border: 1px solid $border;
-    //         border-radius: 0.4rem;
+    //         border-radius: 0.25rem;
 
     //         .filter-title {
-    //           font-size: 1.6rem;
+    //           font-size: 1rem;
     //         }
     //       }
 
@@ -1765,10 +1765,10 @@ body {
 
     //     .filter-mobile-btn {
     //       background-color: $green;
-    //       padding: 2rem;
+    //       padding: 1.25rem;
     //       box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.14),
     //         0px 1px 10px rgba(0, 0, 0, 0.12), 0px 2px 4px rgba(0, 0, 0, 0.2);
-    //       border-radius: 1.2rem;
+    //       border-radius: 0.75rem;
     //     }
     //   }
 
@@ -1791,8 +1791,8 @@ body {
 
     //         .v-tabs {
     //           .v-tabs-bar {
-    //             min-height: 6rem;
-    //             padding: 1rem 0;
+    //             min-height: 3.75rem;
+    //             padding: 0.625rem 0;
 
     //             .v-slide-group__prev {
     //               display: none!important;
@@ -1810,17 +1810,17 @@ body {
 
     //       .teacher-items {
     //         .card {
-    //           padding: 1rem;
+    //           padding: 0.625rem;
 
     //           .card-user {
-    //             border-radius: 1.2rem;
+    //             border-radius: 0.75rem;
     //             box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1), 0px 1px 10px rgba(0, 0, 0, 0.08), 0px 2px 4px rgba(0, 0, 0, 0.12);
 
     //             .card-user-content {
     //               .card-user-tags {
     //                 .card-user-tag {
-    //                   border-radius: 0.6rem;
-    //                   margin-right: 0.5rem;
+    //                   border-radius: 0.375rem;
+    //                   margin-right: 0.3125rem;
     //                 }
     //               }
 

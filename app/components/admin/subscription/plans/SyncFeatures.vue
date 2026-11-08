@@ -2,22 +2,22 @@
   <div class="w-100 d-flex flex-column pa-2">
     <template v-if="!result">
       <div class="w-100 d-flex flex-column ga-1 bg-grey100 rounded-lg pa-3">
-        <span class="text-h5 text-grey700 font-weight-bold">
+        <span class="text-body-1 text-grey700 font-weight-bold">
           Plan: {{ plan.title }}
         </span>
-        <span class="text-h6 text-grey600">
+        <span class="text-caption font-weight-medium text-grey600">
           Every active subscriber on this plan who is missing one of its saved features gets it now:
         </span>
-        <ul class="text-h6 text-grey600 pl-5">
+        <ul class="text-caption font-weight-medium text-grey600 pl-5">
           <li>A feature added to a shared quota joins the subscriber's existing quota and uses its remaining balance.</li>
           <li>A new standalone feature gets its own quota at this plan's limit for the subscriber's billing interval.</li>
         </ul>
-        <span class="text-h6 text-grey600">
+        <span class="text-caption font-weight-medium text-grey600">
           Existing limits and usage are never changed and nothing is removed. Running it again changes nothing.
         </span>
       </div>
 
-      <span class="text-h5 text-grey600 mt-4 mb-1">Authenticator code</span>
+      <span class="text-body-1 text-grey600 mt-4 mb-1">Authenticator code</span>
       <v-otp-input
         v-model="code"
         length="6"
@@ -27,7 +27,7 @@
         :disabled="loadingSyncFeatures"
         @finish="submit"
       />
-      <span class="text-h6 text-grey400">
+      <span class="text-caption font-weight-medium text-grey400">
         The 6-digit code from your authenticator app.
         <nuxt-link
           to="/admin/two-factor"
@@ -42,7 +42,7 @@
         rounded="xl"
         height="40"
         flat
-        class="text-h5 mt-6"
+        class="text-body-1 mt-6"
         @click="submit"
       >
         Apply to current subscribers
@@ -54,7 +54,7 @@
         :type="result.subscriptionCount > 0 ? 'success' : 'info'"
         variant="tonal"
         rounded="lg"
-        class="text-h5"
+        class="text-body-1"
       >
         <template v-if="result.subscriptionCount > 0">
           Updated {{ result.subscriptionCount }} {{ result.subscriptionCount === 1 ? 'subscription' : 'subscriptions' }}:
@@ -72,7 +72,7 @@
         rounded="xl"
         height="40"
         flat
-        class="text-h5 mt-6"
+        class="text-body-1 mt-6"
         @click="emit('close')"
       >
         Close

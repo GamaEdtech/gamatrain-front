@@ -11,7 +11,7 @@
     >
       <v-row class="d-flex align-center">
         <v-col cols="10">
-          <span class="text-h4">Photo Source</span>
+          <span class="text-h6 font-weight-regular">Photo Source</span>
         </v-col>
         <v-col
           cols="2"
@@ -28,9 +28,9 @@
       </v-row>
 
       <div class="w-100 d-flex flex-column align-center justify-center mt-8 ga-6">
-        <span class="w-100 text-start text-h5 font-weight-medium text-grey700">Choose how you want to upload your photo.</span>
+        <span class="w-100 text-start text-body-1 font-weight-medium text-grey700">Choose how you want to upload your photo.</span>
         <div class="w-100 d-flex justify-center ga-4">
-          <div class="d-flex flex-column align-center justify-center ga-1 text-h6 font-weight-bold text-grey700">
+          <div class="d-flex flex-column align-center justify-center ga-1 text-caption font-weight-bold text-grey700">
             <div
               class="option-div cursor-pointer bg-primary rounded-lg d-flex align-center justify-center pa-2"
               @click="openCamera"
@@ -44,7 +44,7 @@
             </div>
             Camera
           </div>
-          <div class="d-flex flex-column align-center justify-center ga-1 text-h6 font-weight-bold text-grey700">
+          <div class="d-flex flex-column align-center justify-center ga-1 text-caption font-weight-bold text-grey700">
             <div
               class="option-div cursor-pointer bg-primary rounded-lg d-flex align-center justify-center pa-2"
               @click="openFile"

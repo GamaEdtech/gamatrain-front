@@ -14,12 +14,12 @@
         :alt="data.title"
       />
       <div class="w-100 rounded-b-lg title-box-div position-absolute bottom-0 left-0 pa-2">
-        <span class="text-white text-h4 font-weight-bold title-box">
+        <span class="text-white text-h6 font-weight-bold title-box">
           {{ data.title }}
         </span>
       </div>
     </div>
-    <span class="description text-h5 font-weight-normal text-grey500 pa-2 w-100">
+    <span class="description text-body-1 font-weight-normal text-grey500 pa-2 w-100">
       {{ truncateBody(data.summary) }}
       <span
         class="text-primary"

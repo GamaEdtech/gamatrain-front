@@ -5,7 +5,7 @@
     rounded="xl"
     class="h-100 pa-4 pa-md-5 d-flex flex-column ga-4"
   >
-    <span class="text-h5 font-weight-bold text-grey700">Revenue by type</span>
+    <span class="text-body-1 font-weight-bold text-grey700">Revenue by type</span>
 
     <v-skeleton-loader
       v-if="loading && !overview"
@@ -22,7 +22,7 @@
       >
         md:receipt_long
       </v-icon>
-      <span class="text-h6 text-grey500">No paid payments in this period</span>
+      <span class="text-caption font-weight-medium text-grey500">No paid payments in this period</span>
     </div>
     <template v-else>
       <div
@@ -31,8 +31,8 @@
         class="d-flex flex-column ga-1"
       >
         <div class="d-flex align-center justify-space-between ga-2">
-          <span class="text-h6 font-weight-medium text-grey700">{{ row.label }}</span>
-          <span class="text-h6 font-weight-bold text-grey800">{{ usd(row.amountUsd) }}</span>
+          <span class="text-caption font-weight-medium text-grey700">{{ row.label }}</span>
+          <span class="text-caption font-weight-bold text-grey800">{{ usd(row.amountUsd) }}</span>
         </div>
         <v-progress-linear
           :model-value="row.share"
@@ -42,11 +42,11 @@
           height="8"
           rounded
         />
-        <span class="text-subtitle-1 text-grey500">{{ row.count }} {{ row.count === 1 ? 'payment' : 'payments' }}</span>
+        <span class="text-caption text-grey500">{{ row.count }} {{ row.count === 1 ? 'payment' : 'payments' }}</span>
       </div>
       <span
         v-if="overview && overview.paymentsWithoutUsd"
-        class="text-subtitle-1 text-grey500"
+        class="text-caption text-grey500"
       >
         {{ overview.paymentsWithoutUsd }} crypto payments without a USD value are counted but not in these totals.
       </span>

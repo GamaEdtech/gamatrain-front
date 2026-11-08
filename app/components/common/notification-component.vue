@@ -38,7 +38,7 @@
             cols="auto"
             class="align-self-center"
           >
-            <v-list-item-title class="text-h5">
+            <v-list-item-title class="text-body-1">
               Notifications
             </v-list-item-title>
           </v-col>
@@ -186,7 +186,7 @@ export default {
 
 <style>
 .unread-btn.v-btn.v-size--small {
-  font-size: 0.9rem !important;
+  font-size: 0.5625rem !important;
   font-weight: 800;
 }
 
@@ -194,20 +194,20 @@ export default {
   position: relative;
 
   .v-icon {
-    font-size: 2rem;
+    font-size: 1.25rem;
   }
 }
 
 .notice-btn .v-chip {
   position: absolute;
   top: 0rem;
-  right: 1.8rem;
+  right: 1.125rem;
 }
 
 @media screen and (min-width: 600px) {
   .notice-btn {
     .v-icon {
-      font-size: 2.4rem;
+      font-size: 1.5rem;
     }
   }
 }
@@ -215,7 +215,7 @@ export default {
 @media screen and (min-width: 960px) {
   .notice-btn {
     .v-icon {
-      font-size: 2.8rem !important;
+      font-size: 1.75rem !important;
     }
   }
 }

@@ -135,10 +135,10 @@ const faqs = ref([
 }
 @media (min-width: 1200px) {
   .token-market__expansion {
-    font-size: 2rem;
+    font-size: 1.25rem;
   }
   .v-expansion-panel-text p {
-    font-size: 1.6rem;
+    font-size: 1rem;
   }
 }
 </style>

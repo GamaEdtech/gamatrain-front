@@ -7,7 +7,7 @@
   >
     <div class="price-div w-100 d-flex flex-column aligh-start justify-start pa-3 pa-md-4 rounded-lg">
       <div class="d-flex align-center justify-space-between mb-2">
-        <span class="text-h6 text-md-h4 font-weight-bold text-grey700">
+        <span class="text-caption text-md-h6 font-weight-bold text-grey700">
           {{ card.title }}
         </span>
         <v-chip
@@ -23,7 +23,7 @@
       </div>
       <span
         v-if="card.strikeThroughMonthlyPrice"
-        class="text-h6 text-md-h5 text-grey400 text-decoration-line-through"
+        class="text-caption font-weight-medium text-md-body-1 text-grey400 text-decoration-line-through"
       >
         ${{ formatPrice(card.strikeThroughMonthlyPrice) }}
       </span>
@@ -32,10 +32,10 @@
         class="d-flex align-center justify-space-between mt-2"
       >
         <div class="d-flex align-center">
-          <span class="text-h6 text-md-h4 text-grey400">$</span>
-          <span class="text-h4 text-md-h2 font-weight-bold">
+          <span class="text-caption font-weight-medium text-md-h6 text-grey400">$</span>
+          <span class="text-h6 text-md-h4 font-weight-bold">
             {{ formatPrice(card.displayMonthlyPrice) }}</span>
-          <span class="text-h6 text-grey400">/mo</span>
+          <span class="text-caption font-weight-medium text-grey400">/mo</span>
         </div>
 
         <v-icon
@@ -47,14 +47,14 @@
       </div>
       <div
         v-if="card.selectedPrice && billingInterval !== 'Monthly'"
-        class="text-h6 text-grey400 mt-1"
+        class="text-caption font-weight-medium text-grey400 mt-1"
       >
         billed ${{ formatPrice(card.selectedPrice.price) }} {{ billingSuffix[billingInterval] }}
       </div>
     </div>
     <span
       v-if="card.gemsBalance !== null"
-      class="w-100 d-flex align-center jusify-start mt-2 text-h5 font-weight-bold text-grey900"
+      class="w-100 d-flex align-center jusify-start mt-2 text-body-1 font-weight-bold text-grey900"
     >
       <v-icon
         size="20"
@@ -70,7 +70,7 @@
       <li
         v-for="(featureLine, groupIndex) in card.featureLines"
         :key="groupIndex"
-        class="d-flex align-center mb-2 text-h6 text-md-h5"
+        class="d-flex align-center mb-2 text-caption font-weight-medium text-md-body-1"
       >
         <v-icon
           size="18"
@@ -84,7 +84,7 @@
     </ul>
 
     <v-btn
-      class="w-100 text-h6 text-md-h5 font-weight-bold mt-6 rounded-lg"
+      class="w-100 text-caption text-md-body-1 font-weight-bold mt-6 rounded-lg"
       :color="card.action.disabled ? `grey300` : `secondary`"
       variant="flat"
       height="44"
@@ -104,7 +104,7 @@
         v-if="paymentActionUrl"
         class="w-100 d-flex flex-column align-start justify-start ga-6 pt-4"
       >
-        <p class="text-h5 text-grey600 font-weight-medium mb-0">
+        <p class="text-body-1 text-grey600 font-weight-medium mb-0">
           Your bank needs you to confirm this payment. Open the payment page, confirm it there, then come back to this tab.
         </p>
 
@@ -132,7 +132,7 @@
             color="grey500"
             height="40"
             min-width="110"
-            class="text-h5 font-weight-bold"
+            class="text-body-1 font-weight-bold"
             @click="closeConfirmUpgradeModal"
           >
             Close
@@ -143,7 +143,7 @@
             color="primary"
             height="40"
             min-width="110"
-            class="text-h5 font-weight-bold text-white"
+            class="text-body-1 font-weight-bold text-white"
             flat
             :href="paymentActionUrl"
             target="_blank"

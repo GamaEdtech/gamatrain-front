@@ -37,13 +37,13 @@
           :to="chip.to"
           :color="chip.color"
           variant="tonal"
-          class="text-h6 font-weight-bold"
+          class="text-caption font-weight-bold"
         >
           {{ chip.text }}
         </v-chip>
       </div>
 
-      <ul class="paper-stats d-none d-md-flex flex-wrap ga-6 mt-4 pa-0 text-h5 text-grey600">
+      <ul class="paper-stats d-none d-md-flex flex-wrap ga-6 mt-4 pa-0 text-body-1 text-grey600">
         <li
           v-for="stat in stats"
           :key="stat.label"
@@ -73,7 +73,7 @@
           :files="contentData.files"
           :q-file-pages="contentData.q_file_pages"
         >
-          <ul class="paper-stats paper-stats--compact d-md-none pa-0 text-h6 text-grey600">
+          <ul class="paper-stats paper-stats--compact d-md-none pa-0 text-caption font-weight-medium text-grey600">
             <li
               v-for="stat in stats"
               :key="stat.label"
@@ -102,7 +102,7 @@
         <nuxt-link
           v-if="onlineExamId"
           :to="contentPath('exam', onlineExamId)"
-          class="text-h6 text-generalSearchQuiz font-weight-semibold"
+          class="text-caption text-generalSearchQuiz font-weight-semibold"
         >
           Take this {{ contentData.is_paper ? 'past paper' : 'question set' }} as an online test, with your score and the correct answers
         </nuxt-link>
@@ -136,7 +136,7 @@
       />
     </div>
 
-    <p class="text-h6 text-grey500 mt-8">
+    <p class="text-caption font-weight-medium text-grey500 mt-8">
       Spotted a mistake?
       <a
         href="#"

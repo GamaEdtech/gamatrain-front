@@ -27,7 +27,7 @@
       class="bg-grey100 rounded-lg"
     >
       <template #error>
-        <div class="h-100 d-flex align-center justify-center text-h5 text-grey500">
+        <div class="h-100 d-flex align-center justify-center text-body-1 text-grey500">
           The image could not be loaded.
         </div>
       </template>
@@ -42,7 +42,7 @@
       />
       <nuxt-link
         v-else
-        class="text-h4 text-grey700 font-weight-bold text-decoration-none"
+        class="text-h6 text-grey700 font-weight-bold text-decoration-none"
         :to="`/school/${issue.schoolId}`"
         target="_blank"
       >
@@ -54,7 +54,7 @@
         target="_blank"
         rel="noopener"
         variant="text"
-        class="text-h6"
+        class="text-caption font-weight-medium"
         prepend-icon="md:open_in_new"
       >
         Full size
@@ -66,13 +66,13 @@
       :key="detail.label"
       class="d-flex flex-column"
     >
-      <span class="text-h6 text-grey500">{{ detail.label }}</span>
-      <span class="text-h5 text-grey700 text-break">{{ detail.value }}</span>
+      <span class="text-caption font-weight-medium text-grey500">{{ detail.label }}</span>
+      <span class="text-body-1 text-grey700 text-break">{{ detail.value }}</span>
     </div>
 
     <template v-if="isPending">
       <div class="d-flex flex-column ga-1">
-        <div class="text-h6 text-grey700">
+        <div class="text-caption font-weight-medium text-grey700">
           To keep the image, write why this report is wrong.
         </div>
         <v-text-field
@@ -93,7 +93,7 @@
           variant="outlined"
           height="40"
           width="180"
-          class="text-h5"
+          class="text-body-1"
           :disabled="loadingConfirm || !rejectComment.trim()"
           :loading="loadingReject"
           flat
@@ -108,7 +108,7 @@
           variant="outlined"
           height="40"
           width="180"
-          class="text-h5"
+          class="text-body-1"
           :disabled="loadingReject"
           flat
           @click="showDeleteModal = true"

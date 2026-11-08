@@ -3,10 +3,10 @@
     class="dashboard-card pa-4 d-flex flex-column ga-4 w-100"
   >
     <div class="d-flex justify-space-between align-center">
-      <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 ">
+      <p class="text-body-1 text-sm-h6 font-weight-bold text-grey900 ">
         Your Achievements
       </p>
-      <span class="text-subtitle-1 text-sm-h5 text-grey500 font-weight-medium">
+      <span class="text-caption text-sm-body-1 text-grey500 font-weight-medium">
         More badges coming soon
       </span>
     </div>
@@ -27,7 +27,7 @@
           />
         </v-avatar>
         <span
-          class="text-h6 text-sm-h5 text-center font-weight-medium"
+          class="text-caption text-sm-body-1 text-center font-weight-medium"
           :class="isEarned(badge.id) ? 'text-grey700' : 'text-grey400'"
         >
           {{ badge.label }}
@@ -61,7 +61,7 @@ const isEarned = (id: string) => props.earnedBadgeIds.includes(id)
 
 <style scoped>
 .dashboard-card {
-  border-radius: 1rem;
+  border-radius: 0.625rem;
   border: 1px solid rgb(var(--v-theme-grey200));
 }
 .container-badge{

@@ -33,7 +33,7 @@
 
 <style scoped>
 .dashboard-card {
-  border-radius: 1rem;
+  border-radius: 0.625rem;
   border: 1px solid rgb(var(--v-theme-grey200));
 }
 

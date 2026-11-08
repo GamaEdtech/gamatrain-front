@@ -10,7 +10,7 @@
       color="rgba(0,0,0,1)"
     >
       <v-container class="text-white">
-        <p class="text-left text-md-h4 text-h5 font-weight-bold">
+        <p class="text-left text-md-h6 text-body-1 font-weight-bold">
           Stats and Achievements (GAMA Experience in Iran’s EdTech Market)
         </p>
         <v-row class="stat-sec mx-auto">

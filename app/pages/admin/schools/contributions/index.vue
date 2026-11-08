@@ -12,7 +12,7 @@
             height="40"
             @click="changeFilterStatus(status)"
           >
-            <span :class="`${status == statusSelect ? `text-grey900`:`text-grey500`} font-weight-bold text-h5`">{{ status }}</span>
+            <span :class="`${status == statusSelect ? `text-grey900`:`text-grey500`} font-weight-bold text-body-1`">{{ status }}</span>
           </v-btn>
         </div>
 
@@ -40,7 +40,7 @@
               rounded="xl"
               height="40"
               width="120"
-              class="text-h5"
+              class="text-body-1"
               flat
               variant="outlined"
             >
@@ -61,7 +61,7 @@
               <v-checkbox
                 :model-value="sortSelected.includes(sortItem.value)"
                 color="primary"
-                class="text-h4"
+                class="text-h6 font-weight-regular"
                 hide-details
                 false-icon="md:check_box_outline_blank"
                 true-icon="md:check_box"
@@ -71,7 +71,7 @@
                 "
               >
                 <template #label>
-                  <span class="text-h5 font-weight-medium ml-2">{{
+                  <span class="text-body-1 font-weight-medium ml-2">{{
                     sortItem.title
                   }}</span>
                 </template>

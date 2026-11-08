@@ -36,7 +36,7 @@
           :key="item.key"
           class="w-100 d-flex justify-space-between align-center overflow-x-hidden"
         >
-          <span class="d-flex align-center ga-3 text-h5 font-weight-bold primary-gray-700">
+          <span class="d-flex align-center ga-3 text-body-1 font-weight-bold primary-gray-700">
             <div class="dot-div" />
             {{ item.title }}
           </span>
@@ -58,7 +58,7 @@
     </template>
 
     <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6">
-      <div class="text-h6 text-grey700 ml-2">
+      <div class="text-caption font-weight-medium text-grey700 ml-2">
         You must write a message to reject.
       </div>
       <v-text-field
@@ -79,7 +79,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 w-50"
+        class="text-body-1 w-50"
         :disabled="loadingGetItemById"
         :loading="loadingConfirm || loadingReject"
         flat
@@ -92,7 +92,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 w-50"
+        class="text-body-1 w-50"
         :disabled="loadingGetItemById || !commentReject"
         :loading="loadingConfirm || loadingReject"
         flat

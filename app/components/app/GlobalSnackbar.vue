@@ -5,7 +5,7 @@
     :timeout="$snackbar.timeout"
     location="top"
   >
-    <span class="text-h6 text-sm-h5 font-weight-bold">
+    <span class="text-caption text-sm-body-1 font-weight-bold">
       {{ $snackbar.text }}</span>
     <template #actions>
       <v-btn

@@ -36,7 +36,7 @@
             </v-btn>
           </template>
         </v-text-field>
-        <span class="text-h5 font-weight-medium text-grey400 mt-1">You can also use commas</span>
+        <span class="text-body-1 font-weight-medium text-grey400 mt-1">You can also use commas</span>
 
         <div
           class="d-flex flex-wrap ga-1 mt-3"
@@ -49,7 +49,7 @@
             closable
             @click:close="removeKeyword(item)"
           >
-            <span class="text-h5 font-weight-medium text-primary">{{ item }}</span>
+            <span class="text-body-1 font-weight-medium text-primary">{{ item }}</span>
             <template #close>
               <v-icon
                 color="#0000008A"
@@ -69,7 +69,7 @@
         rounded="pill"
         height="38"
         width="80"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :loading="loadingEditItem"
         @click="closeModal"
@@ -83,7 +83,7 @@
         rounded="pill"
         height="38"
         width="220"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :loading="loadingEditItem"
         @click="save"

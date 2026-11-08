@@ -27,13 +27,13 @@
         class="text-center"
       >
         <p
-          class="text-subtitle-1 font-weight-bold text-white text-no-wrap"
+          class="text-caption font-weight-bold text-white text-no-wrap"
           style="line-height: 1.5"
         >
           {{ score }}
         </p>
         <p
-          class="text-subtitle-2 text-white font-weight-regular text-no-wrap"
+          class="text-caption text-white font-weight-regular text-no-wrap"
           style="line-height: 1"
         >
           score

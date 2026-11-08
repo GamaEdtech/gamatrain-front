@@ -11,7 +11,7 @@
         width="2"
         indeterminate
       />
-      <span class="font-weight-bold text-h5 text-grey700">Loading google sign in</span>
+      <span class="font-weight-bold text-body-1 text-grey700">Loading google sign in</span>
     </div>
 
     <div

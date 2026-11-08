@@ -3,7 +3,7 @@
     class="w-100 d-flex flex-wrap flex-column bg-surface pa-2"
   >
     <span
-      class="w-100 font-weight-medium text-h5 text-grey700 mt-4 text-start"
+      class="w-100 font-weight-medium text-body-1 text-grey700 mt-4 text-start"
     >Please enter the code received on your email address:</span>
 
     <v-otp-input
@@ -20,7 +20,7 @@
       color="grey200"
     />
     <span
-      class="w-100 font-weight-medium text-h5 text-grey700 mt-4 text-center cursor-pointer"
+      class="w-100 font-weight-medium text-body-1 text-grey700 mt-4 text-center cursor-pointer"
       @click="checkEmail"
     >Your email is incorrect? <span class="text-primaryStrong font-weight-bold">Recheck it.
     </span>
@@ -32,14 +32,14 @@
     />
 
     <div class="w-100 d-flex flex-column align-center ga-2 mt-4">
-      <span class="text-h6 text-grey600">
+      <span class="text-caption font-weight-medium text-grey600">
         {{ canResendCode ? 'Did not receive the code?' : `You can request a new code in ${counter}s` }}
       </span>
 
       <v-btn
         variant="text"
         color="primaryStrong"
-        class="text-h6 font-weight-bold"
+        class="text-caption font-weight-bold"
         :disabled="!canResendCode || isProcessing"
         :loading="resendLoading"
         @click="resendCode"

@@ -4,7 +4,7 @@
       <v-container>
         <v-breadcrumbs
           :items="breadcrumbs"
-          class="d-none d-sm-flex pa-0 mb-3 text-h6 text-onInverseSurfaceSubtle"
+          class="d-none d-sm-flex pa-0 mb-3 text-caption font-weight-medium text-onInverseSurfaceSubtle"
         >
           <template #divider>
             <v-icon size="16">
@@ -51,13 +51,13 @@
     >
       <div class="d-flex flex-column flex-sm-row align-sm-center justify-space-between ga-3 mb-4">
         <h2
-          class="text-h4 text-sm-h3 font-weight-bold text-grey900 text-no-wrap"
+          class="text-h6 text-sm-h4 font-weight-bold text-grey900 text-no-wrap"
           aria-live="polite"
         >
           {{ isFiltered ? 'Results' : 'All teachers' }}
           <span
             v-if="!hasFailed && (teachers.length || !isUpdating)"
-            class="ml-1 text-h5 font-weight-medium text-grey500"
+            class="ml-1 text-body-1 font-weight-medium text-grey500"
           >{{ total }}</span>
         </h2>
 
@@ -179,7 +179,7 @@
               density="comfortable"
               icon
               rounded="lg"
-              class="text-h6"
+              class="text-caption font-weight-medium"
             >
               {{ label }}
             </v-btn>
@@ -203,7 +203,7 @@
 
     <section class="bg-grey50 py-10">
       <v-container>
-        <h2 class="text-h4 text-sm-h3 font-weight-bold text-grey900 mb-6">
+        <h2 class="text-h6 text-sm-h4 font-weight-bold text-grey900 mb-6">
           How to choose a teacher
         </h2>
         <v-row>
@@ -225,10 +225,10 @@
               />
             </v-avatar>
             <div>
-              <h3 class="text-h5 font-weight-bold text-grey900 mb-1">
+              <h3 class="text-body-1 font-weight-bold text-grey900 mb-1">
                 {{ step.title }}
               </h3>
-              <p class="text-h5 font-weight-regular text-grey600">
+              <p class="text-body-1 font-weight-regular text-grey600">
                 {{ step.text }}
                 <NuxtLink
                   v-if="step.link"
@@ -247,10 +247,10 @@
     <section class="teacher-band text-white py-8">
       <v-container class="d-flex flex-column flex-sm-row align-sm-center justify-space-between ga-4">
         <div>
-          <h2 class="text-h2 font-weight-bold mb-1">
+          <h2 class="text-h4 font-weight-bold mb-1">
             Are you a teacher?
           </h2>
-          <p class="text-h5 font-weight-regular text-onInverseSurfaceSubtle">
+          <p class="text-body-1 font-weight-regular text-onInverseSurfaceSubtle">
             Share your lessons and earn from every sale.
           </p>
         </div>
@@ -325,30 +325,30 @@ await ready
 }
 
 .teacher-hero__title {
-  font-size: 3rem;
+  font-size: 1.875rem;
   font-weight: 800;
   line-height: 1.15;
 }
 
 .teacher-hero__lead {
-  margin: 0.6rem 0 1.4rem;
-  font-size: 1.5rem;
+  margin: 0.375rem 0 0.875rem;
+  font-size: 0.9375rem;
 }
 
 .teacher-results {
   // Clears the fixed header when a pagination link jumps here.
-  scroll-margin-top: 6.4rem;
+  scroll-margin-top: 4rem;
 }
 
 // The site's root font is 10px, so Vuetify's rem-based field text comes out too small.
 .teacher-field :deep(.v-field),
 .teacher-field :deep(.v-label) {
-  font-size: 1.5rem;
+  font-size: 0.9375rem;
 }
 
 // Seven buttons have to fit a 320px phone.
 .teacher-pagination :deep(.v-pagination__list) {
-  gap: 0.2rem;
+  gap: 0.125rem;
 }
 
 .teacher-pagination :deep(.v-pagination__item),
@@ -358,7 +358,7 @@ await ready
 }
 
 .teacher-skeleton {
-  height: 8.2rem;
+  height: 5.125rem;
 }
 
 .teacher-results__list {
@@ -369,16 +369,16 @@ await ready
 
 @media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
   .teacher-hero__title {
-    font-size: 4rem;
+    font-size: 2.5rem;
   }
 
   .teacher-hero__lead {
-    margin: 0.8rem 0 2rem;
-    font-size: 1.7rem;
+    margin: 0.5rem 0 1.25rem;
+    font-size: 1.0625rem;
   }
 
   .teacher-skeleton {
-    height: 17.6rem;
+    height: 11rem;
   }
 }
 </style>

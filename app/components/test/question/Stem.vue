@@ -37,11 +37,11 @@ const imageFile = computed(() => getQuestionFile(props.file))
 @use 'vuetify/settings' as vuetify;
 
 .test-text {
-  font-size: 1.6rem;
+  font-size: 1rem;
 }
 @media #{map.get(vuetify.$display-breakpoints, 'sm-and-up')} {
   .test-text {
-    font-size: 1.8rem;
+    font-size: 1.125rem;
   }
 }
 .question-text {

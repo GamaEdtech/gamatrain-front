@@ -221,12 +221,12 @@ const submitForm = async () => {
   display: flex;
   justify-content: space-between;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 0.9375rem;
 }
 
 .label {
   display: block;
-  margin-bottom: 1rem;
+  margin-bottom: 0.625rem;
   font-weight: 600;
 }
 
@@ -239,18 +239,18 @@ const submitForm = async () => {
   width: calc(100% - 24px);
   background-color: rgb(var(--v-theme-grey100));
   margin: 0 24px;
-  padding: 1rem 2rem;
+  padding: 0.625rem 1.25rem;
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
-  transform: translate(-1.2rem, -1.2rem);
+  transform: translate(-0.75rem, -0.75rem);
   z-index: 1000;
-  border-radius: 0 0 2rem 2rem;
+  border-radius: 0 0 1.25rem 1.25rem;
 }
 
 .address span {
-  font-size: 2rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: rgb(var(--v-theme-grey700));
 }

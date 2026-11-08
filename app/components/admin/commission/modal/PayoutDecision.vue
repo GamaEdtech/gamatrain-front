@@ -1,14 +1,14 @@
 <template>
   <div class="w-100 d-flex flex-column pa-2">
     <div class="w-100 d-flex flex-column ga-1 bg-grey100 rounded-lg pa-3">
-      <span class="text-h5 text-grey700 font-weight-bold">
+      <span class="text-body-1 text-grey700 font-weight-bold">
         #{{ payout.id }} · ${{ formatUsd(payout.amountUsd) }} to {{ ownerName }}
       </span>
-      <span class="text-h6 text-grey500">Send to</span>
-      <span class="text-h5 text-grey700 destination">{{ payout.destination }}</span>
+      <span class="text-caption font-weight-medium text-grey500">Send to</span>
+      <span class="text-body-1 text-grey700 destination">{{ payout.destination }}</span>
     </div>
 
-    <span class="text-h5 text-grey600 mt-4">{{ description }}</span>
+    <span class="text-body-1 text-grey600 mt-4">{{ description }}</span>
 
     <v-textarea
       v-if="decision === 'reject'"
@@ -36,7 +36,7 @@
       class="mt-4"
     />
 
-    <span class="text-h5 text-grey600 mt-4 mb-1">Authenticator code</span>
+    <span class="text-body-1 text-grey600 mt-4 mb-1">Authenticator code</span>
     <v-otp-input
       v-model="code"
       length="6"
@@ -46,7 +46,7 @@
       :disabled="loading"
       @finish="submit"
     />
-    <span class="text-h6 text-grey400">
+    <span class="text-caption font-weight-medium text-grey400">
       The 6-digit code from your authenticator app.
       <nuxt-link
         to="/admin/two-factor"
@@ -61,7 +61,7 @@
       rounded="xl"
       height="40"
       flat
-      class="text-h5 mt-6"
+      class="text-body-1 mt-6"
       @click="submit"
     >
       {{ buttonLabel }}

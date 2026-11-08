@@ -9,7 +9,7 @@
         prepend-icon="md:edit_square"
         @click="showComposeMailModal = true"
       >
-        <span class="font-weight-bold text-h5">Compose Mail</span>
+        <span class="font-weight-bold text-body-1">Compose Mail</span>
       </v-btn>
       <v-btn
         rounded="pill"
@@ -20,7 +20,7 @@
         prepend-icon="md:confirmation_number_outlined"
         @click="showCreateTicketModal = true"
       >
-        <span class="font-weight-bold text-h5">Create Ticket</span>
+        <span class="font-weight-bold text-body-1">Create Ticket</span>
       </v-btn>
     </div>
 
@@ -82,14 +82,14 @@
       </template>
 
       <template #[`item.subject`]="{ item }">
-        <div class="d-flex justify-center align-center ga-2 text-grey600 text-h5 font-weight-bold text-center">
+        <div class="d-flex justify-center align-center ga-2 text-grey600 text-body-1 font-weight-bold text-center">
           {{ item.subject }}
           <v-chip
             v-if="isUnread(item)"
             color="warning"
             size="small"
             label
-            class="text-h6 font-weight-bold flex-shrink-0"
+            class="text-caption font-weight-bold flex-shrink-0"
           >
             {{ item.hasNewReply ? 'New reply' : 'Unread' }}
           </v-chip>
@@ -105,7 +105,7 @@
                 :color="getAdminTicketStatusOption(item.status).color"
                 :disabled="updatingStatusId === item.id"
                 append-icon="md:arrow_drop_down"
-                class="font-weight-bold text-h5"
+                class="font-weight-bold text-body-1"
               >
                 {{ getAdminTicketStatusOption(item.status).title }}
               </v-chip>
@@ -118,7 +118,7 @@
                 :color="option.color"
                 @click="changeStatus(item, option.value)"
               >
-                <v-list-item-title class="text-h5">
+                <v-list-item-title class="text-body-1">
                   {{ option.title }}
                 </v-list-item-title>
               </v-list-item>

@@ -7,7 +7,7 @@
         class="d-flex flex-column ga-1"
       >
         <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-          <div class="text-h4 font-weight-bold text-grey700 ml-2">
+          <div class="text-h6 font-weight-bold text-grey700 ml-2">
             <v-badge
               floating
               location="top right"
@@ -53,7 +53,7 @@
           </v-text-field>
         </div>
         <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-          <div class="text-h4 font-weight-bold text-grey700 ml-2">
+          <div class="text-h6 font-weight-bold text-grey700 ml-2">
             <v-badge
               floating
               location="top right"
@@ -91,7 +91,7 @@
         </div>
 
         <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-          <div class="text-h4 font-weight-bold text-grey700 ml-2">
+          <div class="text-h6 font-weight-bold text-grey700 ml-2">
             <v-badge
               floating
               location="top right"
@@ -128,7 +128,7 @@
             align-center
             justify-space-between ga-1"
           >
-            <span class="w-50 text-h5 font-weight-medium text-grey700 mt-1">
+            <span class="w-50 text-body-1 font-weight-medium text-grey700 mt-1">
               State
             </span>
             <common-gombo-box
@@ -154,7 +154,7 @@
             align-center
             justify-space-between ga-1"
           >
-            <span class="w-50 text-h5 font-weight-medium text-grey700 mt-1">
+            <span class="w-50 text-body-1 font-weight-medium text-grey700 mt-1">
               Visibility
             </span>
             <common-gombo-box
@@ -180,7 +180,7 @@
             align-center
             justify-space-between ga-1"
           >
-            <span class="w-50 text-h5 font-weight-medium text-grey700 mt-1">
+            <span class="w-50 text-body-1 font-weight-medium text-grey700 mt-1">
               Publish time
             </span>
             <common-gombo-box
@@ -207,7 +207,7 @@
             align-start
             justify-space-between ga-1"
           >
-            <span class="w-50 text-h5 font-weight-medium text-grey700 mt-2">
+            <span class="w-50 text-body-1 font-weight-medium text-grey700 mt-2">
               <v-badge
                 floating
                 location="top right"
@@ -297,7 +297,7 @@
           color="primary"
           rounded="pill"
           variant="flat"
-          class="font-weight-medium text-h5"
+          class="font-weight-medium text-body-1"
           width="150"
           :loading="loadingCreatePost"
           @click="publish"
@@ -309,7 +309,7 @@
           rounded="pill"
           flat
           variant="outlined"
-          class="text-grey900 font-weight-medium text-h5"
+          class="text-grey900 font-weight-medium text-body-1"
           width="150"
           :loading="loadingGetLanguages"
           @click="AddAnotherLanguage"

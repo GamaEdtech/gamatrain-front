@@ -12,7 +12,7 @@
             height="40"
             @click="changeFilter(item.id)"
           >
-            <span :class="`${item.id === selectedLocationFilter ? `text-grey900` : `text-grey500`} font-weight-bold text-h5`">
+            <span :class="`${item.id === selectedLocationFilter ? `text-grey900` : `text-grey500`} font-weight-bold text-body-1`">
               {{ item.title }}
             </span>
           </v-btn>
@@ -39,7 +39,7 @@
         max-width="200"
         @click="showAddModal = true"
       >
-        <span class="text-primary font-weight-bold text-h5">Add {{ selectedLocationLabel }}</span>
+        <span class="text-primary font-weight-bold text-body-1">Add {{ selectedLocationLabel }}</span>
       </v-btn>
     </div>
 

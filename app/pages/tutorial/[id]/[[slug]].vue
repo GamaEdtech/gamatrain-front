@@ -36,7 +36,7 @@
             <v-icon color="primary">
               md:chevron_backward
             </v-icon>
-            <h1 class="text-h4 font-weight-bold">
+            <h1 class="text-h6 font-weight-bold">
               {{ contentData.title }}
             </h1>
             <v-icon color="primary">
@@ -44,11 +44,11 @@
             </v-icon>
           </v-col>
           <div class="w-100 d-flex align-center ga-3 mt-8 px-4">
-            <span class="text-h5 d-flex align-end text-grey400 ga-1">
+            <span class="text-body-1 d-flex align-end text-grey400 ga-1">
               <v-icon>md:visibility_outlined</v-icon>
               {{ contentData?.views }}
             </span>
-            <span class="text-h5 d-flex align-end text-grey400 ga-1">
+            <span class="text-body-1 d-flex align-end text-grey400 ga-1">
               <v-icon>md:update</v-icon>
               {{ fromNowLocal(contentData?.up_date) }}
             </span>
@@ -73,7 +73,7 @@
             :to="`/search?type=dars&section=${contentData?.section}`"
             flat
           >
-            <span class="text-grey500 text-h6 font-weight-bold">
+            <span class="text-grey500 text-caption font-weight-bold">
               {{ contentData?.section_title }}
             </span>
           </v-chip>
@@ -83,7 +83,7 @@
             :small="mdAndDown"
             :to="`/search?type=dars&section=${contentData?.section}&base=${contentData?.base}`"
           >
-            <span class="text-grey500 text-h6 font-weight-bold">
+            <span class="text-grey500 text-caption font-weight-bold">
               {{ contentData?.base_title }}
               Base Title
             </span>
@@ -94,7 +94,7 @@
             :small="mdAndDown"
             :to="`/search?type=dars&section=${contentData?.section}&base=${contentData?.base}&lesson=${contentData?.lesson}`"
           >
-            <span class="text-grey500 text-h6 font-weight-bold">
+            <span class="text-grey500 text-caption font-weight-bold">
               {{ contentData?.lesson_title }}
             </span>
           </v-chip>
@@ -161,7 +161,7 @@
         class="mt-6"
       >
         <span
-          class="d-flex align-center ga-1 text-h5 cursor-pointer text-crash-report"
+          class="d-flex align-center ga-1 text-body-1 cursor-pointer text-crash-report"
           @click="openCrashReport = true"
         >
           <v-icon
@@ -502,8 +502,8 @@ if (contentData.value) {
 .book-content img {
   max-width: 100% !important;
   height: auto !important;
-  border-radius: 0.5rem;
-  margin: 0.5rem 0.5rem 0.5rem 0.5rem !important;
+  border-radius: 0.3125rem;
+  margin: 0.3125rem 0.3125rem 0.3125rem 0.3125rem !important;
 
 }
 
@@ -600,7 +600,7 @@ if (contentData.value) {
   margin: 1em 0;
   border: 1px solid rgb(var(--v-theme-borderSubtle));
   box-shadow: none;
-  border-radius: 0.28571429rem;
+  border-radius: 0.178571rem;
   text-align: left;
   color: rgb(var(--v-theme-grey900));
   border-collapse: separate;

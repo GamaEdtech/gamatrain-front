@@ -3,7 +3,7 @@
     class="w-100 d-flex flex-column pa-6 ga-4 bg-grey50"
   >
     <div class="w-100 d-flex align-center justify-space-between">
-      <span class="text-h4 text-sm-h3 font-weight-bold text-grey700">Skills</span>
+      <span class="text-h6 text-sm-h4 font-weight-bold text-grey700">Skills</span>
       <v-btn
         v-if="isEditable && data && data?.length > 0"
         flat
@@ -30,7 +30,7 @@
         variant="flat"
         color="primary50"
       >
-        <span class="text-h5 font-weight-medium text-primary">
+        <span class="text-body-1 font-weight-medium text-primary">
           {{ item }}
         </span>
       </v-chip>
@@ -39,7 +39,7 @@
       v-else
       class="w-100 d-flex align-center justify-space-between"
     >
-      <span class="text-h6 font-weight-regular text-grey500">
+      <span class="text-caption font-weight-regular text-grey500">
         No skills added yet!
       </span>
 
@@ -48,7 +48,7 @@
         flat
         color="grey700"
         rounded="pill"
-        class="text-h6 text-white font-weight-medium"
+        class="text-caption text-white font-weight-medium"
         width="84"
         height="24"
         @click="emit('editSkill')"

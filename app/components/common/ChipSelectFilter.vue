@@ -106,7 +106,7 @@
   <!-- Compact pill (filter bars such as the leader board) -->
   <v-chip
     v-else
-    class="text-h5"
+    class="text-body-1"
     :variant="selectedItem ? 'flat' : 'outlined'"
     :color="selectedItem ? 'borderSubtle' : isShowSelectModal ? 'brandNavy' : 'grey200'"
     size="large"
@@ -373,7 +373,7 @@ defineExpose({
 
 <style scoped>
 /* px sizes: the app's 10px root font size makes Vuetify's rem-based list typography too small */
-/* Line-heights too: Vuetify's are rem-based (1rem = 10px here), which collapses long values */
+/* Line-heights too: Vuetify's are rem-based (0.625rem = 10px here), which collapses long values */
 .search-filter-label {
   font-size: 12px;
   line-height: 16px;

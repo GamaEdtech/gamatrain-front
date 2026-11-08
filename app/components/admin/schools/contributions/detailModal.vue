@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 d-flex flex-wrap pa-4">
-    <span class="w-100 text-h4 font-weight-bold text-grey700 mb-4">{{ oldDataFormated && oldDataFormated.length > 0 ? `New Value`:`New School` }}</span>
+    <span class="w-100 text-h6 font-weight-bold text-grey700 mb-4">{{ oldDataFormated && oldDataFormated.length > 0 ? `New Value`:`New School` }}</span>
 
     <template v-if="loading">
       <div
@@ -67,7 +67,7 @@
             height="38"
             rounded="lg"
           >
-            <span class="font-weight-bold text-h5 text-grey300">{{
+            <span class="font-weight-bold text-body-1 text-grey300">{{
               board.title
             }}</span>
           </v-btn>
@@ -79,7 +79,7 @@
         class="detail-item"
       >
         <a
-          class="text-h6 text-info font-weight-bold"
+          class="text-caption text-info font-weight-bold"
           :href="`https://www.google.com/maps?q=${schoolDetailData.newValues.latitude},${schoolDetailData.newValues.longitude}`"
           target="blank"
         >📍 View on Google Maps</a>
@@ -88,7 +88,7 @@
 
     <span
       v-if="!loading && oldDataFormated.length > 0"
-      class="w-100 text-h4 font-weight-bold text-grey700 my-4"
+      class="w-100 text-h6 font-weight-bold text-grey700 my-4"
     >Old Value</span>
 
     <template v-if="loading">
@@ -195,7 +195,7 @@
             height="38"
             rounded="lg"
           >
-            <span class="font-weight-bold text-h5 text-grey300">{{
+            <span class="font-weight-bold text-body-1 text-grey300">{{
               board.title
             }}</span>
           </v-btn>
@@ -220,14 +220,14 @@
         class="detail-item"
       >
         <a
-          class="text-h6 text-info font-weight-bold"
+          class="text-caption text-info font-weight-bold"
           :href="`https://www.google.com/maps?q=${schoolDetailData.oldValues.latitude},${schoolDetailData.oldValues.longitude}`"
           target="blank"
         >📍 View on Google Maps</a>
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           You can write a message to reject.
         </div>
         <v-text-field
@@ -244,7 +244,7 @@
           color="primary"
           variant="outlined"
           flat
-          class="text-h5 font-weight-bold"
+          class="text-body-1 font-weight-bold"
           :loading="loadingPolishComment"
           :disabled="!commentReject.trim() || loadingPolishComment"
           @click="polishRejectCommentWithAi"
@@ -266,7 +266,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 w-50"
+        class="text-body-1 w-50"
         :disabled="loading || !!commentReject.trim()"
         :loading="loadingChangeStatus"
         flat
@@ -279,7 +279,7 @@
         rounded="xl"
         variant="outlined"
         height="40"
-        class="text-h5 w-50"
+        class="text-body-1 w-50"
         :disabled="loading"
         :loading="loadingChangeStatus"
         flat

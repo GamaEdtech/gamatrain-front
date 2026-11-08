@@ -144,7 +144,7 @@
 
       <span
         v-else
-        class="text-h5 text-center font-weight-bold text-grey700"
+        class="text-body-1 text-center font-weight-bold text-grey700"
       >
         No visual preview available
       </span>

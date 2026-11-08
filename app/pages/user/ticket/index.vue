@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column align-start justify-start px-2 pa-md-0">
-    <h1 class="text-h4 text-grey700 font-weight-regular">
+    <h1 class="text-h6 text-grey700 font-weight-regular">
       My Tickets
     </h1>
     <v-btn
@@ -17,7 +17,7 @@
       >
         md:add
       </v-icon>
-      <span class="font-weight-bold text-h6">New Ticket</span>
+      <span class="font-weight-bold text-caption">New Ticket</span>
     </v-btn>
 
     <common-data-table

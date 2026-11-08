@@ -47,7 +47,7 @@ watch(isChestOpen, () => {
     z-index: 1000;
     display: flex;
     align-items: center;
-    gap: 3rem;
+    gap: 1.875rem;
 }
 
 .main{

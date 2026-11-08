@@ -2,7 +2,7 @@
   <div class="w-100 d-flex flex-column ga-6 page">
     <section class="d-flex flex-column ga-2">
       <div class="d-flex align-center ga-3">
-        <h1 class="text-h3 font-weight-bold text-grey700">
+        <h1 class="text-h4 font-weight-bold text-grey700">
           Two-factor authentication
         </h1>
         <v-skeleton-loader
@@ -18,7 +18,7 @@
           {{ enabled ? 'On' : 'Not set up' }}
         </v-chip>
       </div>
-      <p class="text-h5 text-grey600">
+      <p class="text-body-1 text-grey600">
         Approving, rejecting and paying out commission requests asks for a 6-digit code from an authenticator app
         (Google Authenticator, Microsoft Authenticator, 1Password...). Each code works once.
       </p>
@@ -30,8 +30,8 @@
       class="bg-grey100 rounded-lg pa-4 d-flex flex-column ga-4"
     >
       <template v-if="!setup && emailCodeSentTo === null">
-        <span class="text-h5 text-grey700">Link an authenticator app to your account.</span>
-        <span class="text-h6 text-grey500">
+        <span class="text-body-1 text-grey700">Link an authenticator app to your account.</span>
+        <span class="text-caption font-weight-medium text-grey500">
           First we email a code to your account's confirmed address, to check it's really you.
         </span>
         <v-btn
@@ -47,8 +47,8 @@
       </template>
 
       <template v-else-if="!setup">
-        <span class="text-h5 font-weight-bold text-grey700">Enter the code we emailed to {{ emailCodeSentTo }}</span>
-        <span class="text-h6 text-grey500">It expires in 10 minutes.</span>
+        <span class="text-body-1 font-weight-bold text-grey700">Enter the code we emailed to {{ emailCodeSentTo }}</span>
+        <span class="text-caption font-weight-medium text-grey500">It expires in 10 minutes.</span>
         <v-otp-input
           v-model="emailCode"
           length="6"
@@ -90,10 +90,10 @@
             />
           </div>
           <div class="d-flex flex-column ga-2 setup-text">
-            <span class="text-h5 font-weight-bold text-grey700">1. Scan the QR code with your authenticator app</span>
-            <span class="text-h6 text-grey500">Can't scan? Enter this key instead:</span>
+            <span class="text-body-1 font-weight-bold text-grey700">1. Scan the QR code with your authenticator app</span>
+            <span class="text-caption font-weight-medium text-grey500">Can't scan? Enter this key instead:</span>
             <div class="d-flex align-center ga-2">
-              <code class="text-h5 shared-key">{{ formattedKey }}</code>
+              <code class="text-body-1 shared-key">{{ formattedKey }}</code>
               <v-btn
                 icon
                 size="small"
@@ -112,7 +112,7 @@
               </v-btn>
             </div>
 
-            <span class="text-h5 font-weight-bold text-grey700 mt-4">2. Enter the code the app shows</span>
+            <span class="text-body-1 font-weight-bold text-grey700 mt-4">2. Enter the code the app shows</span>
             <v-otp-input
               v-model="enableCode"
               length="6"
@@ -143,8 +143,8 @@
       v-if="!loadingStatus && enabled"
       class="bg-grey100 rounded-lg pa-4 d-flex flex-column ga-2"
     >
-      <span class="text-h5 font-weight-bold text-grey700">Turn off</span>
-      <span class="text-h6 text-grey500">
+      <span class="text-body-1 font-weight-bold text-grey700">Turn off</span>
+      <span class="text-caption font-weight-medium text-grey500">
         You won't be able to decide payouts until you set it up again. Enter a current code to confirm.
       </span>
       <v-otp-input
@@ -173,8 +173,8 @@
       v-if="!loadingStatus && enabled"
       class="bg-grey100 rounded-lg pa-4 d-flex flex-column ga-2"
     >
-      <span class="text-h5 font-weight-bold text-grey700">Reset another admin</span>
-      <span class="text-h6 text-grey500">
+      <span class="text-body-1 font-weight-bold text-grey700">Reset another admin</span>
+      <span class="text-caption font-weight-medium text-grey500">
         If an admin lost their phone, turn their two-factor off so they can set it up again. Needs your own code.
       </span>
       <v-text-field

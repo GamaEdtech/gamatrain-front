@@ -10,7 +10,7 @@
         size="64"
         width="6"
       />
-      <p class="mt-4 text-h4 text-grey700 font-weight-bold">
+      <p class="mt-4 text-h6 text-grey700 font-weight-bold">
         Checking your payment...
       </p>
     </div>
@@ -25,10 +25,10 @@
       >
         md:check_circle_outlined
       </v-icon>
-      <p class="mt-4 text-h4 text-success font-weight-bold">
+      <p class="mt-4 text-h6 text-success font-weight-bold">
         Payment Successful
       </p>
-      <p class="mt-2 text-h5 text-grey700 font-weight-medium">
+      <p class="mt-2 text-body-1 text-grey700 font-weight-medium">
         Your payment was successful.
       </p>
     </div>
@@ -46,14 +46,14 @@
       >
         md:schedule
       </v-icon>
-      <p class="mt-4 text-h4 text-grey700 font-weight-bold">
+      <p class="mt-4 text-h6 text-grey700 font-weight-bold">
         We couldn't confirm your payment yet
       </p>
-      <p class="mt-2 text-h5 text-grey700 font-weight-medium">
+      <p class="mt-2 text-body-1 text-grey700 font-weight-medium">
         If you were charged, your plan or points will be applied automatically within a few minutes.
         Please don't pay again.
       </p>
-      <p class="mt-2 text-h6 text-grey600">
+      <p class="mt-2 text-caption font-weight-medium text-grey600">
         Still nothing after an hour?
         <NuxtLink
           to="/contact-us"
@@ -65,7 +65,7 @@
     </div>
 
     <v-btn
-      class="mt-6 font-weight-bold text-h5"
+      class="mt-6 font-weight-bold text-body-1"
       color="primary"
       rounded="pill"
       flat

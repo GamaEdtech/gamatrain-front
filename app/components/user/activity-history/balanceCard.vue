@@ -1,7 +1,7 @@
 <template>
   <div class="main-balance-card-div w-100 d-flex flex-column align-center justify-center ga-2">
     <span
-      class="text-h5 font-weight-regular text-grey400 cursor-pointer"
+      class="text-body-1 font-weight-regular text-grey400 cursor-pointer"
       @click="toggleBalanceVisibility"
     >
       {{ commission ? 'Total commission' : 'Main balance' }}
@@ -38,15 +38,15 @@
       v-else-if="commission"
       class="d-flex align-end my-3"
     >
-      <span class="text-h6 font-weight-semibold text-primary mr-1">$</span>
-      <span class="text-h3 font-weight-bold text-white">{{ $numberFormat(commission.totalAmountUsd) }}</span>
+      <span class="text-caption font-weight-semibold text-primary mr-1">$</span>
+      <span class="text-h4 font-weight-bold text-white">{{ $numberFormat(commission.totalAmountUsd) }}</span>
     </div>
     <div
       v-else
       class="d-flex align-end position-relative my-3"
     >
-      <span class="text-h6 font-weight-semibold text-primary mr-1">¢</span>
-      <span class="text-h3 font-weight-bold text-white">{{ $numberFormat((Math.floor(balance))) }}</span>
+      <span class="text-caption font-weight-semibold text-primary mr-1">¢</span>
+      <span class="text-h4 font-weight-bold text-white">{{ $numberFormat((Math.floor(balance))) }}</span>
       <img
         class="sign-wallet-amount position-absolute"
         src="@/assets/images/wallet/wallet-amount.png"
@@ -65,7 +65,7 @@
           >
             md:upload
           </v-icon>
-          <span class="text-h6 font-weight-regular text-primary">Top up</span>
+          <span class="text-caption font-weight-regular text-primary">Top up</span>
         </div>
         <v-divider
           :thickness="3"
@@ -84,7 +84,7 @@
         >
           md:download
         </v-icon>
-        <span class="text-h6 font-weight-regular text-primary">Withdraw</span>
+        <span class="text-caption font-weight-regular text-primary">Withdraw</span>
       </div>
       <v-divider
         :thickness="3"
@@ -99,7 +99,7 @@
         >
           md:sync_alt
         </v-icon>
-        <span class="text-h6 font-weight-regular text-primary">Transfer</span>
+        <span class="text-caption font-weight-regular text-primary">Transfer</span>
       </div>
     </div>
 

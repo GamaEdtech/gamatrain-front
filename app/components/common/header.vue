@@ -40,7 +40,7 @@
             <nuxt-link
               v-if="link.link"
               :to="link.link"
-              class="text-transform-none text-h5 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
+              class="text-transform-none text-body-1 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
               active-class="nav-link-active"
             >
               <v-icon
@@ -53,7 +53,7 @@
               <span :class="isTransparentMenu ? 'text-white' : 'text-grey800'">{{ link.title }}</span>
               <!-- <span
                 v-if="link.badge"
-                class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
+                class="text-primary text-caption font-weight-medium py-1 px-2 rounded-pill badge-header"
               >
                 {{ link.badge }}
               </span> -->
@@ -61,7 +61,7 @@
 
             <span
               v-else
-              class="text-transform-none text-h5 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
+              class="text-transform-none text-body-1 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
               @click="link.action && link.action()"
             >
               <v-icon
@@ -74,7 +74,7 @@
               <span :class="isTransparentMenu ? 'text-white' : 'text-grey800'">{{ link.title }}</span>
               <!-- <span
                 v-if="link.badge"
-                class="text-primary text-subtitle-2 py-1 px-2 rounded-pill badge-header"
+                class="text-primary text-caption font-weight-medium py-1 px-2 rounded-pill badge-header"
               >
                 {{ link.badge }}
               </span> -->
@@ -129,7 +129,7 @@
           height="36"
           color="primary"
           flat
-          class="text-black text-h5 font-weight-bold"
+          class="text-black text-body-1 font-weight-bold"
           @click="openLoginDialog"
         >
           Sign in

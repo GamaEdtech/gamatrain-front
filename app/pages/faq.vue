@@ -277,7 +277,7 @@ export default {
 
 <style>
 #faq-page-header {
-  height: 20rem;
+  height: 12.5rem;
   background: rgb(var(--v-theme-inverseSurfaceStrong));
   position: relative;
 
@@ -286,12 +286,12 @@ export default {
     margin: auto;
     left: 0;
     right: 0;
-    top: 9.7rem;
+    top: 6.0625rem;
     text-align: center;
 
     .gama-text-h1 {
       color: rgb(var(--v-theme-primary));
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.5rem;
     }
 
     .gama-text-subtitle2 {
@@ -301,19 +301,19 @@ export default {
 }
 
 #faq-data-container {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.9375rem;
   .v-field {
-    width: 42.8rem;
+    width: 26.75rem;
     min-height: auto;
-    height: 4rem !important;
-    border-radius: 3.8rem 0.4rem 0.4rem 3.8rem !important;
+    height: 2.5rem !important;
+    border-radius: 2.375rem 0.25rem 0.25rem 2.375rem !important;
 
-    margin: 1.6rem auto 1.6rem auto;
+    margin: 1rem auto 1rem auto;
   }
   .v-text-field {
     .v-input__control > .v-input__slot {
       min-height: auto;
-      height: 4rem !important;
+      height: 2.5rem !important;
 
       &:before {
         border-style: none;
@@ -321,16 +321,16 @@ export default {
     }
 
     .v-input__append {
-      margin: 0 0 0 0.8rem !important;
+      margin: 0 0 0 0.5rem !important;
       .v-btn {
         min-width: auto;
-        width: 3.9rem !important;
-        height: 3.9rem;
-        border-radius: 0.4rem 3.8rem 3.8rem 0.4rem;
+        width: 2.4375rem !important;
+        height: 2.4375rem;
+        border-radius: 0.25rem 2.375rem 2.375rem 0.25rem;
 
         .v-icon {
           color: rgb(var(--v-theme-on-primary));
-          font-size: 2.2rem;
+          font-size: 1.375rem;
         }
       }
     }
@@ -338,31 +338,31 @@ export default {
 
   #list-rows {
     .v-expansion-panel-title {
-      padding: 1.55rem 1.6rem;
+      padding: 0.96875rem 1rem;
       border-bottom: 1px solid rgba(var(--v-theme-grey900), 0.1);
 
       .gama-text-button {
         font-weight: 600;
-        font-size: 1.8rem;
+        font-size: 1.125rem;
       }
     }
 
     .v-expansion-panel-text__wrap {
-      padding: 2.4rem 1.6rem 1.6rem;
+      padding: 1.5rem 1rem 1rem;
 
       .gama-text-body2 {
-        line-height: 2.2rem;
+        line-height: 1.375rem;
 
         > p {
-          font-size: 1.6rem !important;
+          font-size: 1rem !important;
         }
 
         > ul {
-          font-size: 1.6rem;
-          margin-top: 1rem;
+          font-size: 1rem;
+          margin-top: 0.625rem;
 
           > li {
-            margin-bottom: 1rem;
+            margin-bottom: 0.625rem;
           }
         }
       }
@@ -372,25 +372,25 @@ export default {
 
 @media only screen and (min-width: 600px) {
   #faq-page-header {
-    height: 26rem;
+    height: 16.25rem;
 
     #main-title-holder {
-      top: 11.5rem;
+      top: 7.1875rem;
 
       .gama-text-h1 {
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.5rem;
       }
     }
   }
 
   #faq-data-container {
     .v-text-field {
-      width: 42.8rem;
-      margin: 1.6rem auto 1.6rem auto;
+      width: 26.75rem;
+      margin: 1rem auto 1rem auto;
 
       .v-input__control > .v-input__slot:before {
         border-color: rgb(var(--v-theme-primary));
-        height: 0.1rem;
+        height: 0.0625rem;
       }
 
       .v-icon {
@@ -403,28 +403,28 @@ export default {
       margin: auto;
 
       .v-expansion-panel-title {
-        padding: 1.9rem 2rem;
+        padding: 1.1875rem 1.25rem;
         border-bottom: 1px solid rgba(var(--v-theme-grey900), 0.1);
 
         .gama-text-button {
           font-weight: 600;
-          font-size: 1.8rem;
+          font-size: 1.125rem;
         }
       }
 
       .v-expansion-panel-text__wrap {
-        padding: 2.4rem 1.6rem 1.6rem;
+        padding: 1.5rem 1rem 1rem;
 
         .gama-text-body2 {
-          line-height: 2.2rem;
+          line-height: 1.375rem;
 
           > p {
-            font-size: 1.6rem;
+            font-size: 1rem;
           }
 
           > ul {
-            font-size: 1.6rem;
-            margin-top: 1rem;
+            font-size: 1rem;
+            margin-top: 0.625rem;
 
             > li {
             }
@@ -437,7 +437,7 @@ export default {
 
 @media only screen and (min-width: 960px) {
   #faq-page-header {
-    height: 34rem;
+    height: 21.25rem;
     background: rgb(var(--v-theme-inverseSurfaceStrong));
     position: relative;
 
@@ -446,12 +446,12 @@ export default {
       margin: auto;
       left: 0;
       right: 0;
-      top: 14.6rem;
+      top: 9.125rem;
       text-align: center;
 
       .gama-text-h1 {
         color: rgb(var(--v-theme-primary));
-        margin-bottom: 1.6rem;
+        margin-bottom: 1rem;
       }
 
       .gama-text-subtitle2 {
@@ -461,15 +461,15 @@ export default {
   }
 
   #faq-data-container {
-    margin-bottom: 4.8rem;
+    margin-bottom: 3rem;
 
     .v-text-field {
-      width: 42.8rem;
-      margin: 2.4rem auto 8.1rem auto;
+      width: 26.75rem;
+      margin: 1.5rem auto 5.0625rem auto;
 
       .v-input__control > .v-input__slot:before {
         border-color: rgb(var(--v-theme-primary));
-        height: 0.1rem;
+        height: 0.0625rem;
       }
 
       .v-icon {
@@ -479,11 +479,11 @@ export default {
 
     #list-rows {
       .v-expansion-panel-title {
-        padding: 2.5rem 2.4rem;
+        padding: 1.5625rem 1.5rem;
       }
 
       .v-expansion-panel-text__wrap {
-        padding: 2.4rem 1.6rem 1.6rem;
+        padding: 1.5rem 1rem 1rem;
       }
     }
   }

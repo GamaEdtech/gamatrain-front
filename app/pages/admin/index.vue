@@ -3,10 +3,10 @@
     <!-- Header -->
     <div class="w-100 d-flex align-center justify-space-between flex-wrap ga-3">
       <div class="d-flex flex-column">
-        <h1 class="text-h3 font-weight-bold text-grey800">
+        <h1 class="text-h4 font-weight-bold text-grey800">
           {{ greeting }}{{ user?.firstName ? `, ${user.firstName}` : '' }}
         </h1>
-        <span class="text-h6 text-grey500">
+        <span class="text-caption font-weight-medium text-grey500">
           Here's what needs you and how {{ monthLabel }} is going.
         </span>
       </div>
@@ -15,7 +15,7 @@
         rounded="pill"
         color="grey600"
         prepend-icon="md:refresh"
-        class="text-h6 font-weight-bold"
+        class="text-caption font-weight-bold"
         :loading="refreshing"
         @click="refreshAll"
       >
@@ -26,10 +26,10 @@
     <!-- Needs attention -->
     <section class="d-flex flex-column ga-3">
       <div class="d-flex flex-column">
-        <h2 class="text-h4 font-weight-bold text-grey700">
+        <h2 class="text-h6 font-weight-bold text-grey700">
           Needs attention
         </h2>
-        <span class="text-subtitle-1 text-grey500">
+        <span class="text-caption text-grey500">
           {{ totalWaiting ? `${totalWaiting.toLocaleString('en-US')} items waiting` : 'Nothing waiting' }}
           <template v-if="summary"> · updated {{ formatLocal(summary.generatedDate, 'HH:mm') }}</template>
         </span>
@@ -44,10 +44,10 @@
     <section class="d-flex flex-column ga-4">
       <div class="d-flex align-center justify-space-between flex-wrap ga-3">
         <div class="d-flex flex-column">
-          <h2 class="text-h4 font-weight-bold text-grey700">
+          <h2 class="text-h6 font-weight-bold text-grey700">
             Performance
           </h2>
-          <span class="text-subtitle-1 text-grey500">{{ rangeLabel }}</span>
+          <span class="text-caption text-grey500">{{ rangeLabel }}</span>
         </div>
         <admin-dashboard-month-switcher v-model="month" />
       </div>
@@ -90,10 +90,10 @@
     >
       <div class="w-100 d-flex align-center justify-space-between flex-wrap ga-2">
         <div class="d-flex flex-column">
-          <h2 class="text-h4 font-weight-bold text-grey700">
+          <h2 class="text-h6 font-weight-bold text-grey700">
             Payments
           </h2>
-          <span class="text-subtitle-1 text-grey500">{{ paymentsRangeLabel }}</span>
+          <span class="text-caption text-grey500">{{ paymentsRangeLabel }}</span>
         </div>
         <div class="d-flex align-center ga-2">
           <admin-common-clear-filter-btn
@@ -105,7 +105,7 @@
             rounded="pill"
             size="small"
             prepend-icon="md:tune"
-            class="text-h6"
+            class="text-caption font-weight-medium"
             @click="showSearchModal = true"
           >
             Filter
@@ -135,10 +135,10 @@
     <!-- Invite program -->
     <section class="d-flex flex-column ga-3">
       <div class="d-flex flex-column">
-        <h2 class="text-h4 font-weight-bold text-grey700">
+        <h2 class="text-h6 font-weight-bold text-grey700">
           Teacher invite program
         </h2>
-        <span class="text-subtitle-1 text-grey500">{{ rangeLabel }}</span>
+        <span class="text-caption text-grey500">{{ rangeLabel }}</span>
       </div>
       <admin-dashboard-referral-report
         :report="referrals"

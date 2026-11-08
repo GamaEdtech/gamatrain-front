@@ -85,7 +85,7 @@
                                   mdi-menu-up
                                 </v-icon>
                               </v-btn>
-                              <p class="text-h4">
+                              <p class="text-h6 font-weight-regular">
                                 {{ contentData?.score }}
                               </p>
                               <v-btn
@@ -195,7 +195,7 @@
                                           </span>
                                           <span v-else> No name </span>
                                         </p>
-                                        <p class="text-h6 text-warning">
+                                        <p class="text-caption font-weight-medium text-warning">
                                           <span
                                             v-show="contentData.stats?.qNum > 0"
                                           >
@@ -472,7 +472,7 @@
                     cols="3"
                     md="2"
                   >
-                    <h2 class="text-h5 text-md-h4">
+                    <h2 class="text-body-1 text-md-h6">
                       {{ answer_list.length }}
                       <span v-if="answer_list.length > 1">Answers</span>
                       <span v-else>Answer</span>
@@ -528,7 +528,7 @@
                                   </v-icon>
                                 </template>
                               </v-btn>
-                              <p class="text-h4">
+                              <p class="text-h6 font-weight-regular">
                                 {{ contentData?.score }}
                               </p>
                               <v-btn
@@ -634,7 +634,7 @@
                                           </span>
                                           <strong v-else> No name </strong>
                                         </p>
-                                        <p class="text-h6">
+                                        <p class="text-caption font-weight-medium">
                                           <span v-show="answer.stats?.qNum > 0">
                                             <span class="text-warning">
                                               {{ answer.stats?.qNum }} Qn
@@ -911,7 +911,7 @@
                     cols="4"
                     md="2"
                   >
-                    <h2 class="text-h5 text-md-h4">
+                    <h2 class="text-body-1 text-md-h6">
                       Your answer
                     </h2>
                   </v-col>
@@ -1046,7 +1046,7 @@
                   flat
                 >
                   <v-card-text>
-                    <h2 class="text-h4 text-center text-gray">
+                    <h2 class="text-h6 font-weight-regular text-center text-gray">
                       Related questions
                     </h2>
                     <v-divider
@@ -1558,25 +1558,25 @@ watch(
 }
 
 #qa-details-content {
-  margin-top: calc(10rem + 4rem);
-  margin-bottom: 2rem;
+  margin-top: calc(6.25rem + 2.5rem);
+  margin-bottom: 1.25rem;
 
   #similar-question {
     .question-item {
       list-style-type: none;
-      margin-bottom: 2rem;
+      margin-bottom: 1.25rem;
       font-weight: 400;
     }
 
     .v-skeleton-loader__list-item {
       background: transparent !important;
-      height: 1.8rem !important;
-      margin-bottom: 1rem;
+      height: 1.125rem !important;
+      margin-bottom: 0.625rem;
     }
   }
 
   #similar-question ul {
-    padding-left: 1rem;
+    padding-left: 0.625rem;
   }
 
   .v3-emoji-picker .v3-footer {
@@ -1584,13 +1584,13 @@ watch(
   }
 
   .v-label.v-field-label {
-    font-size: 1.5rem;
+    font-size: 0.9375rem;
   }
   .v-chip.v-chip--link.v-theme--light.v-chip--density-comfortable.v-chip--size-default {
     background-color: #4e636b;
     opacity: 100%;
     color: #fff;
-    font-size: 1.1rem;
+    font-size: 0.6875rem;
   }
 
   @media screen and (max-width: 600px) {

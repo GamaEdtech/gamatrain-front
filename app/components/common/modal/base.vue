@@ -15,10 +15,10 @@
         :class="{ 'ga-4 ga-sm-6 pb-2': variant === 'publish' }"
       >
         <div class="d-flex flex-column align-start justify-start ga-1">
-          <span class="modal-title text-h5 text-sm-h3 font-weight-bold text-grey700">{{ title }}</span>
+          <span class="modal-title text-body-1 text-sm-h4 font-weight-bold text-grey700">{{ title }}</span>
           <span
             v-if="subtitle"
-            class="text-subtitle-1 text-sm-h6 font-weight-medium text-grey400"
+            class="text-caption text-sm-caption font-weight-medium text-grey400"
           >{{ subtitle }}</span>
         </div>
         <v-icon

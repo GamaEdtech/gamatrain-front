@@ -5,7 +5,7 @@
       class="w-100 d-flex flex-column align-start ga-2"
     >
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           User ID
         </div>
         <v-text-field
@@ -19,7 +19,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Current Expiration
         </div>
         <v-text-field
@@ -33,7 +33,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Days
         </div>
         <v-text-field
@@ -55,7 +55,7 @@
       variant="outlined"
       height="40"
       width="200"
-      class="text-h5 mt-8 mx-auto"
+      class="text-body-1 mt-8 mx-auto"
       :loading="loadingExtendItem"
       :disabled="!isFormValid || loadingExtendItem"
       flat

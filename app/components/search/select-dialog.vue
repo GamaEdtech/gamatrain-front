@@ -29,8 +29,8 @@
             <span class="select-dialog-result-count__label">{{ filteredResultLabel }}</span>
           </div>
           <template v-else-if="hasSearch">
-            <span class="text-h5 text-grey400">result</span>
-            <span class="text-h4 text-success font-weight-bold">{{ filteredItems.length }}</span>
+            <span class="text-body-1 text-grey400">result</span>
+            <span class="text-h6 text-success font-weight-bold">{{ filteredItems.length }}</span>
           </template>
           <v-icon
             class="select-dialog-close ml-4"
@@ -152,7 +152,7 @@
               :class="`${item.contentIcon} size-icon text-brandNavy`"
             />
           </template>
-          <v-list-item-title class="text-h5">
+          <v-list-item-title class="text-body-1">
             <HighlightedText
               :text="item.title"
               :search-text="searchText"

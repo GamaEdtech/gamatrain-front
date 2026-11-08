@@ -34,47 +34,47 @@
 .economy-section {
   background: #000;
   width: 100%;
-  margin-top: 8rem;
+  margin-top: 5rem;
 }
 .economy-title-box {
   border: 2px solid #fff;
-  padding: 0.5rem 2.5rem;
+  padding: 0.3125rem 1.5625rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .economy-title {
   color: #fff;
-  font-size: 1.4rem;
+  font-size: 0.875rem;
   font-weight: 800;
   margin: 0;
   text-align: center;
 }
 .economy-desc-box {
   border: 1px solid #fff;
-  padding: 0.5rem 2rem;
+  padding: 0.3125rem 1.25rem;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .economy-desc {
   color: #fff;
-  font-size: 0.7rem;
+  font-size: 0.4375rem;
   margin: 0;
   text-align: center;
 }
 .economy-btn {
   color: #000 !important;
   font-weight: 800 !important;
-  margin-top: 2rem;
+  margin-top: 1.25rem;
   text-transform: none !important;
 }
 @media (min-width: 600px) {
   .economy-desc {
-    font-size: 1.1rem;
+    font-size: 0.6875rem;
   }
   .economy-title {
-    font-size: 2.2rem;
+    font-size: 1.375rem;
   }
 }
 </style>

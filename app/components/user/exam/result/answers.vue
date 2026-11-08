@@ -14,10 +14,10 @@
         >
           md:quiz
         </v-icon>
-        <span class="text-h5 text-grey700 font-weight-bold">Answer Sheet</span>
+        <span class="text-body-1 text-grey700 font-weight-bold">Answer Sheet</span>
       </div>
 
-      <span class="text-grey500 text-h6">
+      <span class="text-grey500 text-caption font-weight-medium">
         {{ questions.length }} items
       </span>
     </div>
@@ -43,7 +43,7 @@
             {{ item.icon }}
           </v-icon>
         </div>
-        <span class="text-grey600 text-h6">{{ item.label }}</span>
+        <span class="text-grey600 text-caption font-weight-medium">{{ item.label }}</span>
       </div>
     </div>
 
@@ -63,7 +63,7 @@
             color="primary"
             rounded="lg"
             size="32"
-            class="text-h6 font-weight-bold"
+            class="text-caption font-weight-bold"
           >
             {{ index + 1 }}
           </v-avatar>
@@ -72,7 +72,7 @@
             :color="getQuestionChipColor(question)"
             variant="outlined"
             size="small"
-            class="font-weight-bold text-h6"
+            class="font-weight-bold text-caption"
           >
             {{ getQuestionStatusText(question) }}
           </v-chip>
@@ -137,7 +137,7 @@
             >
               md:bug_report
             </v-icon>
-            <span class="text-h6 font-weight-bold">
+            <span class="text-caption font-weight-bold">
               Crash report
             </span>
           </v-btn>
@@ -253,7 +253,7 @@ const getQuestionChipColor = (question: ExamResultQuestionDTO) => {
   min-height: 24px;
   max-width: 24px;
   max-height: 24px;
-  font-size: 1.4rem;
+  font-size: 0.875rem;
 }
 /* The correct-option dot, painted from the box's own center: a separate dot element rounded half a pixel off it. */
 .choice-correct {

@@ -2,7 +2,7 @@
   <div class="w-100 d-flex flex-column pa-4">
     <div class="w-100 d-flex flex-column align-start ga-3">
       <nuxt-link
-        class="text-h4 text-grey700 font-weight-bold text-decoration-none"
+        class="text-h6 text-grey700 font-weight-bold text-decoration-none"
         :to="`/school/${issue.schoolId}`"
         target="_blank"
       >
@@ -10,21 +10,21 @@
       </nuxt-link>
 
       <div class="w-100 d-flex align-center justify-space-between ga-2 flex-wrap">
-        <span class="text-h6 text-grey500 font-weight-medium">
+        <span class="text-caption text-grey500 font-weight-medium">
           Reported by {{ issue.creationUser || 'unknown' }}
         </span>
-        <span class="text-h6 text-grey500 font-weight-medium">
+        <span class="text-caption text-grey500 font-weight-medium">
           {{ formatLocal(issue.creationDate, 'DD/MM/YYYY HH:mm') }}
         </span>
       </div>
 
-      <p class="text-h5 text-grey700 font-weight-medium bg-grey100 rounded-lg pa-4 w-100">
+      <p class="text-body-1 text-grey700 font-weight-medium bg-grey100 rounded-lg pa-4 w-100">
         {{ issue.description }}
       </p>
     </div>
 
     <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-      <div class="text-h6 text-grey700 ml-2">
+      <div class="text-caption font-weight-medium text-grey700 ml-2">
         You can write a message to reject.
       </div>
       <v-text-field
@@ -46,7 +46,7 @@
         variant="outlined"
         height="40"
         width="180"
-        class="text-h5"
+        class="text-body-1"
         :disabled="loadingConfirm || !rejectComment"
         :loading="loadingReject"
         flat
@@ -61,7 +61,7 @@
         variant="outlined"
         height="40"
         width="180"
-        class="text-h5"
+        class="text-body-1"
         :loading="loadingConfirm"
         :disabled="loadingReject"
         flat

@@ -14,7 +14,7 @@
         <v-card :class="`${smAndUp ? `rounded-xl`:`rounded-0`}`">
           <div class="px-4 py-4 d-flex justify-space-between align-center">
             <span
-              class="text-h4 font-weight-bold"
+              class="text-h6 font-weight-bold"
             >
               Creat Proposal
             </span>
@@ -32,7 +32,7 @@
             </div>
           </div>
           <v-card-text>
-            <div class="text-h6 text-md-button">
+            <div class="text-caption font-weight-medium text-md-button">
               <v-icon
                 size="x-large"
                 :color="publicKey ? 'success' : 'grey500'"
@@ -40,13 +40,13 @@
                 md:account_balance_wallet
               </v-icon>
               <span
-                class="text-h6 pl-2 text-grey400"
+                class="text-caption font-weight-medium pl-2 text-grey400"
                 style="display: inline-block"
               >Wallet
               </span>
               <span
                 v-if="publicKey"
-                class="text-h6 pl-1 text-info"
+                class="text-caption font-weight-medium pl-1 text-info"
                 style="display: inline-block"
               >
                 {{
@@ -57,7 +57,7 @@
               </span>
               <span
                 v-else
-                class="text-h6 pl-1 text-error"
+                class="text-caption font-weight-medium pl-1 text-error"
               > Not Connected </span>
             </div>
 
@@ -67,7 +67,7 @@
               variant="tonal"
               class="mt-4"
             >
-              <div class="text-h6 font-weight-bold">
+              <div class="text-caption font-weight-bold">
                 Staked:
                 {{ $numberFormat(userStakeInformation.stakedAmount || 0) }} $GET
               </div>
@@ -78,7 +78,7 @@
               variant="tonal"
               class="mt-4"
             >
-              <div class="text-h6 font-weight-bold">
+              <div class="text-caption font-weight-bold">
                 You must stake $GET tokens to create proposals. Please stake
                 tokens first.
               </div>
@@ -89,14 +89,14 @@
               variant="tonal"
               class="mt-4"
             >
-              <div class="text-h6 font-weight-bold">
+              <div class="text-caption font-weight-bold">
                 To create a proposal, you must have staked 50M $GET.
               </div>
             </v-alert>
 
             <div class="mt-10">
               <div class="mb-4">
-                <div class="mb-1 text-grey700 text-h6">
+                <div class="mb-1 text-grey700 text-caption font-weight-medium">
                   Title *
                 </div>
                 <v-text-field
@@ -111,7 +111,7 @@
               </div>
 
               <div class="mb-4">
-                <div class="mb-1 text-grey700 text-h6">
+                <div class="mb-1 text-grey700 text-caption font-weight-medium">
                   Description *
                 </div>
                 <v-textarea
@@ -127,7 +127,7 @@
               </div>
 
               <div class="mb-4">
-                <div class="mb-1 text-grey700 text-h6">
+                <div class="mb-1 text-grey700 text-caption font-weight-medium">
                   Category *
                 </div>
                 <v-select
@@ -142,7 +142,7 @@
               </div>
 
               <div class="mb-4">
-                <div class="mb-1 text-grey700 text-h6">
+                <div class="mb-1 text-grey700 text-caption font-weight-medium">
                   Reference URL
                 </div>
                 <v-text-field
@@ -157,7 +157,7 @@
               </div>
 
               <div class="mb-4">
-                <div class="mb-1 text-grey700 text-h6">
+                <div class="mb-1 text-grey700 text-caption font-weight-medium">
                   Requested Amount (GET tokens)
                 </div>
                 <v-text-field
@@ -180,7 +180,7 @@
             <v-btn
               variant="text"
               size="large"
-              class="text-h5 font-weight-bold w-30"
+              class="text-body-1 font-weight-bold w-30"
               rounded
               @click="isActive.value = false"
             >
@@ -192,7 +192,7 @@
               size="large"
               color="#FFB600"
               rounded
-              class="text-h5 font-weight-bold flex-1 w-70"
+              class="text-body-1 font-weight-bold flex-1 w-70"
               :loading="loadingCreateProposal"
               :disabled="(!userStakeInformation || userStakeInformation.stakedAmount == 0)"
             >

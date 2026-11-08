@@ -8,7 +8,7 @@
         <v-row>
           <v-col cols="12">
             <div id="main-title-holder">
-              <h1 class="text-h3 text-sm-h2 font-weight-bold text-white">
+              <h1 class="text-h4 text-sm-h4 font-weight-bold text-white">
                 Governance Portal
               </h1>
             </div>
@@ -47,7 +47,7 @@ useHead({
 
 <style scoped lang="scss">
 #governance-page-header {
-  height: 20rem;
+  height: 12.5rem;
   background: rgb(var(--v-theme-inverseSurfaceStrong));
   position: relative;
 
@@ -56,23 +56,23 @@ useHead({
     margin: auto;
     left: 0;
     right: 0;
-    top: 9.7rem;
+    top: 6.0625rem;
     text-align: center;
   }
 }
 
 @media only screen and (min-width: 600px) {
   #governance-page-header {
-    height: 26rem;
+    height: 16.25rem;
 
     #main-title-holder {
-      top: 11.5rem;
+      top: 7.1875rem;
     }
   }
 }
 @media only screen and (min-width: 960px) {
   #governance-page-header {
-    height: 34rem;
+    height: 21.25rem;
     position: relative;
 
     #main-title-holder {
@@ -80,7 +80,7 @@ useHead({
       margin: auto;
       left: 0;
       right: 0;
-      top: 14.6rem;
+      top: 9.125rem;
       text-align: center;
     }
   }

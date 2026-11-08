@@ -357,7 +357,7 @@ export default {
   max-width: 100%;
   width: 100%;
   height: auto;
-  border-radius: 1rem;
+  border-radius: 0.625rem;
   object-fit: cover;
 }
 
@@ -367,15 +367,15 @@ export default {
 }
 
 .text-content h2 {
-  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-size: clamp(0.9375rem, 4vw, 1.5625rem);
   line-height: 1.2;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.9375rem;
 }
 
 .text-content p {
-  font-size: clamp(1rem, 2.5vw, 1.125rem);
+  font-size: clamp(0.625rem, 2.5vw, 0.703125rem);
   line-height: 1.6;
-  margin-bottom: 1rem;
+  margin-bottom: 0.625rem;
 }
 
 #service-ai-unleashing,
@@ -386,11 +386,11 @@ export default {
 #service-content-sharing,
 #service-content-upload,
 #service-content-review {
-  padding: 2rem;
+  padding: 1.25rem;
 }
 
 #service-page-header {
-  min-height: 60rem;
+  min-height: 37.5rem;
   background: url("/images/ai-services-bg.webp");
   background-repeat: no-repeat;
   background-position: center;
@@ -417,13 +417,13 @@ export default {
   #main-title-holder {
     position: relative;
     margin: 0 auto;
-    border-radius: 0.625rem;
+    border-radius: 0.390625rem;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(7.5px);
-    max-width: 31.2rem;
-    margin-left: 1.6rem;
-    margin-right: 1.6rem;
-    padding: 1.6rem 2.4rem;
+    max-width: 19.5rem;
+    margin-left: 1rem;
+    margin-right: 1rem;
+    padding: 1rem 1.5rem;
     text-align: center;
 
     > h1 {
@@ -434,108 +434,108 @@ export default {
 }
 
 #service-ai-unleashing {
-  padding: 4rem 1rem;
-  min-height: 40rem;
+  padding: 2.5rem 0.625rem;
+  min-height: 25rem;
   display: flex;
   align-items: center;
 }
 
 #service-comprehensive-curriculum {
   background: rgb(var(--v-theme-inverseSurfaceStrong));
-  min-height: 60rem;
-  padding: 4rem 1rem;
+  min-height: 37.5rem;
+  padding: 2.5rem 0.625rem;
   display: flex;
   align-items: center;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-smart-assistance {
-  min-height: 50rem;
-  padding: 4rem 1rem;
+  min-height: 31.25rem;
+  padding: 2.5rem 0.625rem;
   display: flex;
   align-items: center;
 
   .gama-text-h4 {
-    margin-bottom: 1.6rem;
+    margin-bottom: 1rem;
   }
 }
 
 #service-progress-tracking {
-  min-height: 50rem;
+  min-height: 31.25rem;
   background: rgb(var(--v-theme-grey100));
-  padding: 4rem 1rem;
+  padding: 2.5rem 0.625rem;
   display: flex;
   align-items: center;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-smart-collaboration {
-  min-height: 50rem;
-  padding: 4rem 1rem;
+  min-height: 31.25rem;
+  padding: 2.5rem 0.625rem;
   display: flex;
   align-items: center;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-content-sharing {
-  min-height: 50rem;
+  min-height: 31.25rem;
   background: rgb(var(--v-theme-grey100));
-  padding: 4rem 1rem;
+  padding: 2.5rem 0.625rem;
   display: flex;
   align-items: center;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-content-upload {
-  min-height: 50rem;
-  padding: 4rem 1rem;
+  min-height: 31.25rem;
+  padding: 2.5rem 0.625rem;
   display: flex;
   align-items: center;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-content-review {
-  min-height: 50rem;
+  min-height: 31.25rem;
   background: rgb(var(--v-theme-grey100));
-  padding: 4rem 1rem;
+  padding: 2.5rem 0.625rem;
   display: flex;
   align-items: center;
 
   .gama-text-h4 {
-    margin-bottom: 2.4rem;
+    margin-bottom: 1.5rem;
   }
 }
 
 #service-education-future {
-  min-height: 8rem;
+  min-height: 5rem;
   background: rgb(var(--v-theme-primary));
   text-align: center;
   padding: 0;
 
   .col-12 {
-    padding: 1.1rem 6.5rem 1.1rem 6.5rem !important;
+    padding: 0.6875rem 4.0625rem 0.6875rem 4.0625rem !important;
   }
 }
 
 @media only screen and (min-width: 600px) {
   .service-image {
-    max-width: 40rem;
-    height: 26rem;
+    max-width: 25rem;
+    height: 16.25rem;
   }
 
   .text-content {
@@ -543,106 +543,106 @@ export default {
   }
 
   .text-content h2 {
-    font-size: clamp(1.8rem, 3vw, 2.2rem);
+    font-size: clamp(1.125rem, 3vw, 1.375rem);
   }
 
   .text-content p {
-    font-size: clamp(1.1rem, 2vw, 1.2rem);
+    font-size: clamp(0.6875rem, 2vw, 0.75rem);
   }
 
   #service-page-header {
-    min-height: 44rem;
+    min-height: 27.5rem;
     background-size: cover;
 
     #main-title-holder {
-      max-width: 54.4rem;
+      max-width: 34rem;
       margin-left: auto;
       margin-right: auto;
-      padding: 2.4rem;
+      padding: 1.5rem;
     }
   }
 
   #service-ai-unleashing {
-    min-height: 35rem;
-    padding: 3rem 2rem;
+    min-height: 21.875rem;
+    padding: 1.875rem 1.25rem;
   }
 
   #service-comprehensive-curriculum {
     background: rgb(var(--v-theme-inverseSurfaceStrong));
-    min-height: 45rem;
-    padding: 3rem 2rem;
+    min-height: 28.125rem;
+    padding: 1.875rem 1.25rem;
 
     .gama-text-h4 {
-      margin-bottom: 1.6rem;
+      margin-bottom: 1rem;
     }
   }
 
   #service-smart-assistance {
-    min-height: 45rem;
-    padding: 3rem 2rem;
+    min-height: 28.125rem;
+    padding: 1.875rem 1.25rem;
   }
 
   #service-progress-tracking {
-    min-height: 45rem;
-    padding: 3rem 2rem;
+    min-height: 28.125rem;
+    padding: 1.875rem 1.25rem;
 
     .gama-text-h4 {
-      margin-bottom: 1.6rem;
+      margin-bottom: 1rem;
     }
   }
 
   #service-smart-collaboration {
-    min-height: 45rem;
-    padding: 3rem 2rem;
+    min-height: 28.125rem;
+    padding: 1.875rem 1.25rem;
 
     .gama-text-h4 {
-      margin-bottom: 1.6rem;
+      margin-bottom: 1rem;
     }
   }
 
   #service-content-sharing {
-    min-height: 45rem;
-    padding: 3rem 2rem;
+    min-height: 28.125rem;
+    padding: 1.875rem 1.25rem;
 
     .gama-text-h4 {
-      margin-bottom: 1.6rem;
+      margin-bottom: 1rem;
     }
   }
 
   #service-content-upload {
-    min-height: 45rem;
-    padding: 3rem 2rem;
+    min-height: 28.125rem;
+    padding: 1.875rem 1.25rem;
 
     .gama-text-h4 {
-      margin-bottom: 1.6rem;
+      margin-bottom: 1rem;
     }
   }
 
   #service-content-review {
-    min-height: 45rem;
-    padding: 3rem 2rem;
+    min-height: 28.125rem;
+    padding: 1.875rem 1.25rem;
 
     .gama-text-h4 {
-      margin-bottom: 1.6rem;
+      margin-bottom: 1rem;
     }
   }
 
   #service-education-future {
-    min-height: 8rem;
+    min-height: 5rem;
     background: rgb(var(--v-theme-primary));
     text-align: center;
     padding: 0;
 
     .col-12 {
-      padding: 2.5rem 0 2.5rem 0 !important;
+      padding: 1.5625rem 0 1.5625rem 0 !important;
     }
   }
 }
 
 @media only screen and (min-width: 960px) {
   .service-image {
-    max-width: 40.6rem;
-    height: 26rem;
+    max-width: 25.375rem;
+    height: 16.25rem;
   }
 
   .text-content {
@@ -650,15 +650,15 @@ export default {
   }
 
   .text-content h2 {
-    font-size: clamp(2rem, 2.5vw, 2.5rem);
+    font-size: clamp(1.25rem, 2.5vw, 1.5625rem);
   }
 
   .text-content p {
-    font-size: clamp(1.2rem, 1.5vw, 1.4rem);
+    font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   }
 
   #service-page-header {
-    min-height: 51.2rem;
+    min-height: 32rem;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -667,13 +667,13 @@ export default {
     #main-title-holder {
       position: relative;
       margin: 0 auto;
-      border-radius: 0.625rem;
+      border-radius: 0.390625rem;
       background: rgba(0, 0, 0, 0.5);
       backdrop-filter: blur(7.5px);
-      max-width: 73rem;
+      max-width: 45.625rem;
       margin-left: auto;
       margin-right: auto;
-      padding: 2.5rem 4.8rem;
+      padding: 1.5625rem 3rem;
 
       > h1 {
         color: rgb(var(--v-theme-white));
@@ -683,149 +683,149 @@ export default {
   }
 
   #service-ai-unleashing {
-    min-height: 40rem;
-    padding: 8rem 3rem;
+    min-height: 25rem;
+    padding: 5rem 1.875rem;
   }
 
   #service-comprehensive-curriculum {
     background: rgb(var(--v-theme-inverseSurfaceStrong));
-    min-height: 50rem;
-    padding: 8rem 3rem;
+    min-height: 31.25rem;
+    padding: 5rem 1.875rem;
 
     .title {
-      margin-bottom: 2.4rem;
+      margin-bottom: 1.5rem;
     }
 
     .describe {
       color: rgb(var(--v-theme-white));
-      font-size: 1.8rem;
+      font-size: 1.125rem;
       font-style: normal;
       font-weight: 500;
-      line-height: 3rem;
+      line-height: 1.875rem;
     }
   }
 
   #service-smart-assistance {
-    min-height: 50rem;
-    padding: 8rem 3rem;
+    min-height: 31.25rem;
+    padding: 5rem 1.875rem;
   }
 
   #service-progress-tracking {
-    min-height: 50rem;
+    min-height: 31.25rem;
     background: rgb(var(--v-theme-grey100));
-    padding: 8rem 3rem;
+    padding: 5rem 1.875rem;
   }
 
   #service-smart-collaboration {
-    min-height: 50rem;
-    padding: 8rem 3rem;
+    min-height: 31.25rem;
+    padding: 5rem 1.875rem;
   }
 
   #service-content-sharing {
-    min-height: 50rem;
+    min-height: 31.25rem;
     background: rgb(var(--v-theme-grey100));
-    padding: 8rem 3rem;
+    padding: 5rem 1.875rem;
   }
 
   #service-content-upload {
-    min-height: 50rem;
-    padding: 8rem 3rem;
+    min-height: 31.25rem;
+    padding: 5rem 1.875rem;
   }
 
   #service-content-review {
-    min-height: 50rem;
+    min-height: 31.25rem;
     background: rgb(var(--v-theme-grey100));
-    padding: 8rem 3rem;
+    padding: 5rem 1.875rem;
   }
 
   #service-education-future {
-    min-height: 10rem;
+    min-height: 6.25rem;
     background: rgb(var(--v-theme-primary));
     text-align: center;
 
     .col-12 {
-      padding: 3.2rem 0 3.2rem 0 !important;
+      padding: 2rem 0 2rem 0 !important;
     }
   }
 }
 
 @media only screen and (max-width: 599px) {
   .service-image {
-    max-width: 31.2rem;
-    height: 20rem;
-    margin-bottom: 2.4rem;
-  }
-
-  .text-content h2 {
-    font-size: clamp(1.5rem, 4vw, 2rem);
-    line-height: 1.3;
+    max-width: 19.5rem;
+    height: 12.5rem;
     margin-bottom: 1.5rem;
   }
 
+  .text-content h2 {
+    font-size: clamp(0.9375rem, 4vw, 1.25rem);
+    line-height: 1.3;
+    margin-bottom: 0.9375rem;
+  }
+
   .text-content p {
-    font-size: clamp(1rem, 2.5vw, 1.125rem);
+    font-size: clamp(0.625rem, 2.5vw, 0.703125rem);
     line-height: 1.6;
-    margin-bottom: 1rem;
+    margin-bottom: 0.625rem;
   }
 
   #service-page-header {
-    min-height: 50rem;
+    min-height: 31.25rem;
     background-size: cover;
 
     #main-title-holder {
-      max-width: 28rem;
-      margin-left: 1rem;
-      margin-right: 1rem;
-      padding: 1.2rem 1.6rem;
+      max-width: 17.5rem;
+      margin-left: 0.625rem;
+      margin-right: 0.625rem;
+      padding: 0.75rem 1rem;
     }
   }
 
   #service-ai-unleashing {
-    min-height: 35rem;
-    padding: 2rem 0;
+    min-height: 21.875rem;
+    padding: 1.25rem 0;
   }
 
   #service-comprehensive-curriculum {
-    min-height: 45rem;
-    padding: 2rem 0;
+    min-height: 28.125rem;
+    padding: 1.25rem 0;
   }
 
   #service-smart-assistance {
-    min-height: 40rem;
-    padding: 2rem 0;
+    min-height: 25rem;
+    padding: 1.25rem 0;
   }
 
   #service-progress-tracking {
-    min-height: 40rem;
-    padding: 2rem 0;
+    min-height: 25rem;
+    padding: 1.25rem 0;
   }
 
   #service-smart-collaboration {
-    min-height: 40rem;
-    padding: 2rem 0;
+    min-height: 25rem;
+    padding: 1.25rem 0;
   }
 
   #service-content-sharing {
-    min-height: 45rem;
-    padding: 2rem 0;
+    min-height: 28.125rem;
+    padding: 1.25rem 0;
   }
 
   #service-content-upload {
-    min-height: 40rem;
-    padding: 2rem 0;
+    min-height: 25rem;
+    padding: 1.25rem 0;
   }
 
   #service-content-review {
-    min-height: 40rem;
-    padding: 2rem 0;
+    min-height: 25rem;
+    padding: 1.25rem 0;
   }
 
   #service-education-future {
-    min-height: 6rem;
+    min-height: 3.75rem;
     padding: 0;
 
     .col-12 {
-      padding: 1rem 2rem !important;
+      padding: 0.625rem 1.25rem !important;
     }
   }
 }
@@ -839,7 +839,7 @@ export default {
   #service-content-sharing,
   #service-content-upload,
   #service-content-review {
-    padding: 10rem 0;
+    padding: 6.25rem 0;
   }
 }
 </style>

@@ -23,11 +23,11 @@
             class="d-flex align-center justify-space-between ga-2"
           >
             <div class="d-flex flex-column ga-1">
-              <span class="text-subtitle-1 text-grey500">{{ step.label }}</span>
-              <span class="text-h3 font-weight-bold text-grey800">{{ step.value }}</span>
+              <span class="text-caption text-grey500">{{ step.label }}</span>
+              <span class="text-h4 font-weight-bold text-grey800">{{ step.value }}</span>
               <span
                 v-if="step.rate"
-                class="text-subtitle-1 text-grey500"
+                class="text-caption text-grey500"
               >{{ step.rate }}</span>
             </div>
             <v-icon
@@ -47,7 +47,7 @@
         variant="tonal"
         density="compact"
         rounded="xl"
-        class="text-h6"
+        class="text-caption font-weight-medium"
       >
         {{ report.sharedNetworkSignUps }} invited sign-up{{ report.sharedNetworkSignUps === 1 ? '' : 's' }} in this period came from a network
         the inviting teacher also used. That can be a self-invite, or just a shared school or family network: check before acting.
@@ -64,11 +64,11 @@
             rounded="xl"
             class="h-100 pa-4 pa-md-5"
           >
-            <span class="d-block text-h5 font-weight-bold text-grey700">Top teachers</span>
-            <span class="d-block text-subtitle-1 text-grey500">All time, by earnings then sign-ups</span>
+            <span class="d-block text-body-1 font-weight-bold text-grey700">Top teachers</span>
+            <span class="d-block text-caption text-grey500">All time, by earnings then sign-ups</span>
             <div
               v-if="!report.topTeachers.length"
-              class="text-h6 text-grey500 text-center py-6"
+              class="text-caption font-weight-medium text-grey500 text-center py-6"
             >
               No teacher has joined yet.
             </div>
@@ -88,21 +88,21 @@
                       color="primary"
                       variant="tonal"
                       size="28"
-                      class="text-h6 font-weight-bold"
+                      class="text-caption font-weight-bold"
                     >
                       {{ index + 1 }}
                     </v-avatar>
                   </template>
-                  <v-list-item-title class="text-h6 font-weight-bold text-grey800">
+                  <v-list-item-title class="text-caption font-weight-bold text-grey800">
                     {{ teacher.name || `User #${teacher.userId}` }}
                   </v-list-item-title>
-                  <v-list-item-subtitle class="text-subtitle-1">
+                  <v-list-item-subtitle class="text-caption">
                     {{ teacher.percent ?? '–' }}% · joined {{ formatLocal(teacher.joinedDate, 'D MMM YYYY') }}
                   </v-list-item-subtitle>
                   <template #append>
                     <div class="d-flex flex-column align-end">
-                      <span class="text-h6 font-weight-bold text-success">{{ usd(teacher.earnedUsd) }}</span>
-                      <span class="text-subtitle-1 text-grey500">{{ teacher.invited }} signed up · {{ teacher.paying }} paying</span>
+                      <span class="text-caption font-weight-bold text-success">{{ usd(teacher.earnedUsd) }}</span>
+                      <span class="text-caption text-grey500">{{ teacher.invited }} signed up · {{ teacher.paying }} paying</span>
                     </div>
                   </template>
                 </v-list-item>
@@ -121,11 +121,11 @@
             rounded="xl"
             class="h-100 pa-4 pa-md-5"
           >
-            <span class="d-block text-h5 font-weight-bold text-grey700">Recent invited sign-ups</span>
-            <span class="d-block text-subtitle-1 text-grey500">In this period, newest first</span>
+            <span class="d-block text-body-1 font-weight-bold text-grey700">Recent invited sign-ups</span>
+            <span class="d-block text-caption text-grey500">In this period, newest first</span>
             <div
               v-if="!report.recentSignUps.length"
-              class="text-h6 text-grey500 text-center py-6"
+              class="text-caption font-weight-medium text-grey500 text-center py-6"
             >
               No one signed up through an invite link in this period.
             </div>
@@ -140,7 +140,7 @@
               >
                 <v-divider v-if="index" />
                 <v-list-item class="px-0">
-                  <v-list-item-title class="text-h6 font-weight-bold text-grey800">
+                  <v-list-item-title class="text-caption font-weight-bold text-grey800">
                     {{ item.name || `User #${item.userId}` }}
                     <v-chip
                       v-if="item.sharedNetwork"
@@ -152,17 +152,17 @@
                       Same network
                     </v-chip>
                   </v-list-item-title>
-                  <v-list-item-subtitle class="text-subtitle-1">
+                  <v-list-item-subtitle class="text-caption">
                     invited by {{ item.inviterName || `User #${item.inviterUserId}` }} · {{ formatLocal(item.signedUpDate, 'D MMM, HH:mm') }}
                   </v-list-item-subtitle>
                   <template #append>
                     <div class="d-flex flex-column align-end">
-                      <span :class="['text-h6 font-weight-bold', item.payments ? 'text-success' : 'text-grey400']">
+                      <span :class="['text-caption font-weight-bold', item.payments ? 'text-success' : 'text-grey400']">
                         {{ item.payments ? usd(item.earnedUsd) : 'Not paid yet' }}
                       </span>
                       <span
                         v-if="item.payments"
-                        class="text-subtitle-1 text-grey500"
+                        class="text-caption text-grey500"
                       >{{ item.payments }} {{ item.payments === 1 ? 'payment' : 'payments' }}</span>
                     </div>
                   </template>

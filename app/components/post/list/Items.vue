@@ -44,10 +44,10 @@
           >
             md:cloud_off
           </v-icon>
-          <div class="text-h5 font-weight-bold text-grey700">
+          <div class="text-body-1 font-weight-bold text-grey700">
             Couldn't load posts
           </div>
-          <div class="text-body-2 text-grey500">
+          <div class="text-caption text-grey500">
             Check your connection and try again.
           </div>
           <v-btn
@@ -73,10 +73,10 @@
           >
             md:article
           </v-icon>
-          <div class="text-h5 font-weight-bold text-grey700">
+          <div class="text-body-1 font-weight-bold text-grey700">
             No posts found
           </div>
-          <div class="text-body-2 text-grey500">
+          <div class="text-caption text-grey500">
             Try changing the title or category filter.
           </div>
         </v-sheet>

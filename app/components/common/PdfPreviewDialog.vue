@@ -173,10 +173,10 @@
           >
             mdi-alert-circle
           </v-icon>
-          <h3 class="text-h6 mb-2">
+          <h3 class="text-caption font-weight-medium mb-2">
             Unable to load PDF
           </h3>
-          <p class="text-body-1 text-center mb-4">
+          <p class="text-caption text-center mb-4">
             {{ error }}
           </p>
         </div>
@@ -892,7 +892,7 @@ onBeforeUnmount(() => {
 
 .page-input-field :deep(.v-field__input) {
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.5rem;
   color: white;
   padding: 4px 2px;
   min-height: 32px;
@@ -903,7 +903,7 @@ onBeforeUnmount(() => {
 }
 
 .toolbar-title {
-  font-size: 1rem;
+  font-size: 0.625rem;
 }
 
 .mobile-title {

@@ -4,7 +4,7 @@
   >
     <v-form v-model="isFormValid">
       <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-        <div class="text-h6 text-grey700 font-weight-bold ml-2">
+        <div class="text-caption text-grey700 font-weight-bold ml-2">
           Password
         </div>
         <v-text-field
@@ -28,7 +28,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 font-weight-bold ml-2">
+        <div class="text-caption text-grey700 font-weight-bold ml-2">
           Confirm password
         </div>
         <v-text-field
@@ -58,7 +58,7 @@
       color="grey200"
     />
     <span
-      class="w-100 font-weight-medium text-h5 text-grey700 mt-4 text-center cursor-pointer"
+      class="w-100 font-weight-medium text-body-1 text-grey700 mt-4 text-center cursor-pointer"
       @click="emit('openLogin')"
     >Back to <span class="text-primaryStrong font-weight-bold">login
     </span>
@@ -76,7 +76,7 @@
         rounded="pill"
         height="38"
         width="120"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         @click="emit('close')"
       >
@@ -89,7 +89,7 @@
         rounded="pill"
         height="38"
         width="180"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :disabled="!isFormValid"
         :loading="loadingRegister || loadingForgetPassword"

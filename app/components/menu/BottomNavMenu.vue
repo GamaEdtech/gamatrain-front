@@ -15,7 +15,7 @@
       >
         md:home_outlined
       </v-icon>
-      <span :class="`text-subtitle-1 ${isActive ? `text-primary`:`text-onInverseSurfaceMuted`}`">Home</span>
+      <span :class="`text-caption ${isActive ? `text-primary`:`text-onInverseSurfaceMuted`}`">Home</span>
     </nuxt-link>
 
     <div
@@ -30,7 +30,7 @@
       >
         md:grid_view_outlined
       </v-icon>
-      <span :class="`text-subtitle-1 ${isSearchOptionOpen ? `text-primary`:`text-onInverseSurfaceMuted`}`">Explore</span>
+      <span :class="`text-caption ${isSearchOptionOpen ? `text-primary`:`text-onInverseSurfaceMuted`}`">Explore</span>
     </div>
 
     <div class="flex-1-1-0 h-100 d-flex justify-center">
@@ -60,7 +60,7 @@
       >
         md:explore_outlined
       </v-icon>
-      <span :class="`text-subtitle-1 ${isActive ? `text-primary`:`text-onInverseSurfaceMuted`}`">Discover</span>
+      <span :class="`text-caption ${isActive ? `text-primary`:`text-onInverseSurfaceMuted`}`">Discover</span>
     </nuxt-link>
 
     <nuxt-link
@@ -84,7 +84,7 @@
       >
         md:account_circle
       </v-icon>
-      <span :class="`text-subtitle-1 ${isActive ? `text-primary`:`text-onInverseSurfaceMuted`}`">Profile</span>
+      <span :class="`text-caption ${isActive ? `text-primary`:`text-onInverseSurfaceMuted`}`">Profile</span>
     </nuxt-link>
     <div
       v-else
@@ -98,7 +98,7 @@
       >
         md:account_circle
       </v-icon>
-      <span class="text-subtitle-1 text-onInverseSurfaceMuted">Profile</span>
+      <span class="text-caption text-onInverseSurfaceMuted">Profile</span>
     </div>
   </nav>
   <menu-search-option-bottom-menu

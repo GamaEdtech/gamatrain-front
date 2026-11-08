@@ -1,6 +1,6 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column align-center justify-center px-2">
-    <h1 class="text-h2 text-sm-h1 text-primary font-weight-black">
+    <h1 class="text-h4 text-sm-h2 text-primary font-weight-black">
       {{ errorInfo[statusCode].title ?? '500' }}
     </h1>
 
@@ -12,7 +12,7 @@
       class="w-100 h-auto max-width-img"
     >
 
-    <span class="text-h4 font-weight-bold text-grey700 mt-8 text-center"> {{ errorInfo[statusCode].subtitle ?? 'There was a problem on our side!' }}</span>
+    <span class="text-h6 font-weight-bold text-grey700 mt-8 text-center"> {{ errorInfo[statusCode].subtitle ?? 'There was a problem on our side!' }}</span>
 
     <div class="d-flex flex-column flex-sm-row justify-center ga-3 mt-4 w-100">
       <v-btn
@@ -21,7 +21,7 @@
         color="primary"
         min-width="220"
         rounded="pill"
-        class="text-h5"
+        class="text-body-1"
         prepend-icon="md:refresh"
         @click="reloadNuxtApp()"
       >
@@ -33,7 +33,7 @@
         color="primary"
         min-width="220"
         rounded="pill"
-        class="text-h5"
+        class="text-body-1"
         prepend-icon="md:search"
         :to="listing.to"
       >
@@ -46,7 +46,7 @@
         color="primary"
         :min-width="hasPrimaryAction ? 220 : 350"
         rounded="pill"
-        class="text-h5"
+        class="text-body-1"
         to="/"
       >
         Return To Home

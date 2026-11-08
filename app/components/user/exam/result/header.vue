@@ -1,12 +1,12 @@
 <template>
   <div class="w-100 d-flex flex-column ga-4 mt-4">
     <div class="d-flex flex-column align-start">
-      <h1 class="text-h4 text-grey700 font-weight-regular">
+      <h1 class="text-h6 text-grey700 font-weight-regular">
         Exam Result
       </h1>
       <span
         v-if="contentData?.exam.title"
-        class="text-grey500 text-h6 mt-1"
+        class="text-grey500 text-caption font-weight-medium mt-1"
       >
         {{ contentData?.exam.title }}
       </span>

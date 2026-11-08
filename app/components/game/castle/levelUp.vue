@@ -37,16 +37,16 @@ const closeLevelUp = () => {
       </v-icon>
 
       <!-- Level Up Title -->
-      <h1 class="text-h3 font-weight-bold text-white level-up-title mb-2">
+      <h1 class="text-h4 font-weight-bold text-white level-up-title mb-2">
         Level Up!
       </h1>
 
       <!-- Level Number -->
-      <div class="level-number text-h2 font-weight-bold mb-4">
+      <div class="level-number text-h4 font-weight-bold mb-4">
         Level {{ level }}
       </div>
 
-      <p class="text-subtitle-1 text-white mb-6">
+      <p class="text-caption text-white mb-6">
         Congratulations! You have reached a new level 🎉
       </p>
 

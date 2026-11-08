@@ -2,16 +2,16 @@
   <div class="history-card w-100 d-flex align-center justify-space-between ga-4 pa-4">
     <div class="d-flex flex-column ga-2 flex-grow-1 history-main">
       <div class="d-flex align-center ga-2 flex-wrap">
-        <span class="text-h5 text-grey700 font-weight-bold">
+        <span class="text-body-1 text-grey700 font-weight-bold">
           {{ subscription.planTitle }}
         </span>
-        <span class="text-h6 text-grey500 font-weight-bold">
+        <span class="text-caption text-grey500 font-weight-bold">
           #{{ subscription.id }}
         </span>
       </div>
 
       <div class="d-flex align-center ga-2 flex-wrap">
-        <span class="text-h6 text-grey500 font-weight-semibold">
+        <span class="text-caption text-grey500 font-weight-semibold">
           {{ formatDate(subscription.startDate) }}
         </span>
         <v-icon
@@ -20,7 +20,7 @@
         >
           md:arrow_forward
         </v-icon>
-        <span class="text-h6 text-grey500 font-weight-semibold">
+        <span class="text-caption text-grey500 font-weight-semibold">
           {{ formatDate(subscription.expirationDate) }}
         </span>
       </div>
@@ -29,22 +29,22 @@
     <div class="d-flex align-center justify-end ga-3 flex-wrap history-meta">
       <v-chip
         :color="getStatusColor(subscription.status)"
-        class="font-weight-bold text-h5"
+        class="font-weight-bold text-body-1"
       >
         {{ subscription.status }}
       </v-chip>
 
-      <span class="text-h6 text-grey600 font-weight-bold">
+      <span class="text-caption text-grey600 font-weight-bold">
         {{ subscription.billingInterval }}
       </span>
 
-      <span class="text-h6 text-grey600 font-weight-bold">
+      <span class="text-caption text-grey600 font-weight-bold">
         {{ subscription.gateway }}
       </span>
 
       <v-chip
         :color="subscription.autoRenews ? `success` : `grey400`"
-        class="font-weight-bold text-h6"
+        class="font-weight-bold text-caption"
       >
         {{ subscription.autoRenews ? `Auto renews` : `No auto renew` }}
       </v-chip>

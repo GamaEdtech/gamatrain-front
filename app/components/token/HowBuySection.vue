@@ -260,28 +260,28 @@ const stepRows = computed(() => {
 /* Base (Mobile First) */
 .how-buy-section {
   background: rgb(var(--v-theme-surfaceSecondary));
-  padding: 4rem 0;
+  padding: 2.5rem 0;
 }
 
 .how-buy-wrapper {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 1.25rem;
 }
 
 .how-buy-title {
-  font-size: 2rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: rgb(var(--v-theme-grey900));
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .how-buy-hero {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .how-buy-tokens {
@@ -289,7 +289,7 @@ const stepRows = computed(() => {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 0.9375rem;
   margin-bottom: 0;
   height: 240px;
   flex-shrink: 0;
@@ -299,7 +299,7 @@ const stepRows = computed(() => {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 1.2rem;
+  gap: 0.75rem;
   white-space: nowrap;
 }
 
@@ -309,13 +309,13 @@ const stepRows = computed(() => {
 }
 
 .how-buy-token-label {
-  font-size: 1.2rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: rgb(var(--v-theme-grey900));
 }
 
 .how-buy-man {
-  margin-top: 1.5rem;
+  margin-top: 0.9375rem;
 }
 
 .how-buy-illustration {
@@ -326,39 +326,39 @@ const stepRows = computed(() => {
 .steps-rows {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.25rem;
 }
 
 .steps-row {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.25rem;
 }
 
 .step-wrapper {
   background: rgb(var(--v-theme-surfaceSecondary));
   border-radius: 24px;
   box-shadow: 0 2px 8px rgba(53, 52, 52, 0.03);
-  padding: 2rem 1rem;
+  padding: 1.25rem 0.625rem;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .step-number {
-  font-size: 2rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: #24aa94;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3125rem;
 }
 
 .step-header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.2rem;
-  padding-top: 2rem;
+  gap: 0.625rem;
+  margin-bottom: 0.75rem;
+  padding-top: 1.25rem;
 }
 
 .how-buy-icon {
@@ -368,7 +368,7 @@ const stepRows = computed(() => {
 }
 
 .step-title {
-  font-size: 1.6rem;
+  font-size: 1rem;
   font-weight: 800;
   color: rgb(var(--v-theme-grey900));
   text-align: center;
@@ -380,12 +380,12 @@ const stepRows = computed(() => {
 
 .step-list {
   text-align: left;
-  font-size: 1.2rem;
+  font-size: 0.75rem;
   line-height: 1.7;
 }
 
 .step-list li {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3125rem;
   color: rgb(var(--v-theme-grey600));
 }
 
@@ -409,32 +409,32 @@ const stepRows = computed(() => {
 }
 
 /* === MOBILE (default) === */
-.how-buy-hero { display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 2rem; }
-.how-buy-tokens { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 1.5rem; margin-bottom: 0; height: 240px; flex-shrink: 0; }
-.token-row { display: flex; align-items: center; gap: 1.2rem; }
+.how-buy-hero { display: flex; flex-direction: row; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
+.how-buy-tokens { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 0.9375rem; margin-bottom: 0; height: 240px; flex-shrink: 0; }
+.token-row { display: flex; align-items: center; gap: 0.75rem; }
 .token-icon { width: 24px; height: 24px; }
-.how-buy-token-label { font-size: 1.5rem; font-weight: 700; color: rgb(var(--v-theme-grey900)); }
-.how-buy-man { margin-top: 0; margin-left: 2.5rem; display: flex; align-items: center; height: 240px; flex-shrink: 0; }
+.how-buy-token-label { font-size: 0.9375rem; font-weight: 700; color: rgb(var(--v-theme-grey900)); }
+.how-buy-man { margin-top: 0; margin-left: 1.5625rem; display: flex; align-items: center; height: 240px; flex-shrink: 0; }
 .how-buy-illustration { width: 140px; max-width: 100%; height: 240px; object-fit: contain; }
 
 /* === TABLET (min-width: 600px and max-width: 1199px) === */
 @media (min-width: 600px) and (max-width: 1199px) {
-  .how-buy-title { font-size: 28px; margin-bottom: 2rem; }
-  .how-buy-token-label { font-size: 1.5rem; }
-  .how-buy-hero { flex-direction: row; justify-content: center; align-items: center; margin-bottom: 2.5rem; gap: 1.5rem; }
-  .how-buy-tokens { flex-direction: column; gap: 1rem; margin-bottom: 0; align-items: flex-start; width: 160px; }
-  .token-row { display: flex; flex-direction: row; align-items: center; gap: 1rem; white-space: nowrap; width: 100%; justify-content: flex-start; }
+  .how-buy-title { font-size: 28px; margin-bottom: 1.25rem; }
+  .how-buy-token-label { font-size: 0.9375rem; }
+  .how-buy-hero { flex-direction: row; justify-content: center; align-items: center; margin-bottom: 1.5625rem; gap: 0.9375rem; }
+  .how-buy-tokens { flex-direction: column; gap: 0.625rem; margin-bottom: 0; align-items: flex-start; width: 160px; }
+  .token-row { display: flex; flex-direction: row; align-items: center; gap: 0.625rem; white-space: nowrap; width: 100%; justify-content: flex-start; }
   .token-icon { width: 36px; height: 36px; }
   .how-buy-man { margin-left: 0; }
   .how-buy-illustration { width: 200px; }
-  .steps-rows { gap: 2rem; }
+  .steps-rows { gap: 1.25rem; }
   .step-wrapper, .step-item { height: auto !important; min-height: auto !important; max-height: none !important; }
   .step-wrapper {
     background: rgb(var(--v-theme-surface));
-    padding: 2rem 1.4rem;
+    padding: 1.25rem 0.875rem;
     overflow: hidden;
   }
-  .step-title { font-size: 2.8rem; line-height: 1.1; margin-bottom: 0.8rem; }
+  .step-title { font-size: 1.75rem; line-height: 1.1; margin-bottom: 0.5rem; }
   .how-buy-icon { width: 85px; height: 85px; }
   .step-content {
     width: 100%;
@@ -454,14 +454,14 @@ const stepRows = computed(() => {
     overflow-wrap: anywhere;
   }
   .step-list li {
-    font-size: 2rem;
+    font-size: 1.25rem;
     line-height: 1.3;
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.375rem;
     max-width: 100%;
     word-break: break-word;
     overflow-wrap: anywhere;
   }
-  .step-header { padding-top: 0; gap: 1rem; margin-bottom: 1.2rem; }
+  .step-header { padding-top: 0; gap: 0.625rem; margin-bottom: 0.75rem; }
   .step-number {
     display: none;
   }
@@ -470,7 +470,7 @@ const stepRows = computed(() => {
 /* === DESKTOP (min-width: 1200px) === */
 @media (min-width: 1200px) {
   .how-buy-title {
-    font-size: 4rem;
+    font-size: 2.5rem;
   }
 
   .how-buy-wrapper {
@@ -479,7 +479,7 @@ const stepRows = computed(() => {
   }
 
   .how-buy-token-label {
-    font-size: 2rem;
+    font-size: 1.25rem;
   }
 
   .how-buy-illustration {
@@ -488,7 +488,7 @@ const stepRows = computed(() => {
 
   .steps-row {
     flex-direction: row;
-    gap: 2rem;
+    gap: 1.25rem;
     align-items: stretch;
   }
 
@@ -498,11 +498,11 @@ const stepRows = computed(() => {
   }
 
   .step-title {
-    font-size: 3rem;
+    font-size: 1.875rem;
   }
 
   .step-list li {
-    font-size: 1.8rem;
+    font-size: 1.125rem;
   }
 
   .step-wrapper {
@@ -518,7 +518,7 @@ const stepRows = computed(() => {
     height: auto;
   }
   .step-content {
-    padding: 2.5rem;
+    padding: 1.5625rem;
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;

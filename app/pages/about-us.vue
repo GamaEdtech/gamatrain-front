@@ -4,10 +4,10 @@
       class="w-100 d-flex flex-column align-center justify-end justify-md-center pb-4 position-relative top-section-div ga-2"
     >
       <div class="blur-div w-100 h-100 position-absolute top-0 left-0" />
-      <h1 class="text-primary text-h2 text-sm-h1 font-weight-bold set-z-index">
+      <h1 class="text-primary text-h4 text-sm-h2 font-weight-bold set-z-index">
         About Us
       </h1>
-      <h2 class="text-primary text-h5 set-z-index text-center px-2">
+      <h2 class="text-primary text-body-1 set-z-index text-center px-2">
         Learning Together, Earning Together Building a Brighter Future
       </h2>
     </div>
@@ -16,10 +16,10 @@
       class="w-100 d-flex flex-column justify-start align-center pt-12"
     >
       <div class="w-100 d-flex flex-column justify-start align-center">
-        <h1 class="text-grey900 text-h3 text-sm-h3 font-weight-black">
+        <h1 class="text-grey900 text-h4 text-sm-h4 font-weight-black">
           GamaTrain
         </h1>
-        <h2 class="primary-gray-500 text-h4 set-z-index text-start px-2 mt-4">
+        <h2 class="primary-gray-500 text-h6 font-weight-regular set-z-index text-start px-2 mt-4">
           Welcome to GamaTrain, the EdTech startup revolutionizing education.
           Our platform offers innovative services like sample exams, online
           tests, tutoring, and more, enhancing the learning experience for
@@ -49,10 +49,10 @@
         ref="ourVisionSectionRef"
         class="w-100 d-flex flex-column justify-start align-center"
       >
-        <h1 class="text-grey900 text-h3 text-sm-h3 font-weight-black">
+        <h1 class="text-grey900 text-h4 text-sm-h4 font-weight-black">
           Our Vision
         </h1>
-        <h2 class="primary-gray-500 text-h4 set-z-index text-start px-2 mt-4">
+        <h2 class="primary-gray-500 text-h6 font-weight-regular set-z-index text-start px-2 mt-4">
           At GamaTrain, our vision is to revolutionize the world of education by
           providing innovative solutions that empower both students and
           teachers. As we move toward the future, we are committed to offering
@@ -106,8 +106,8 @@
                 showFirst ? `show-card` : ``
               }`"
             >
-              <span class="text-grey900 font-weight-bold text-h4">Customized Learning Paths Using AI</span>
-              <span class="primary-gray-600 text-h6">We understand that every student has their own unique learning
+              <span class="text-grey900 font-weight-bold text-h6">Customized Learning Paths Using AI</span>
+              <span class="primary-gray-600 text-caption font-weight-medium">We understand that every student has their own unique learning
                 style and preferences. That's why we're working on integrating
                 AI into our platform to offer personalized learning paths that
                 adapt to each student's needs. With customized learning paths,
@@ -119,8 +119,8 @@
                 showSecond ? `show-card` : ``
               }`"
             >
-              <span class="text-grey900 font-weight-bold text-h4">Moving Towards Green Economy</span>
-              <span class="primary-gray-600 text-h6">We recognize the importance of environmental sustainability and
+              <span class="text-grey900 font-weight-bold text-h6">Moving Towards Green Economy</span>
+              <span class="primary-gray-600 text-caption font-weight-medium">We recognize the importance of environmental sustainability and
                 the role education plays in creating a better future. We are
                 committed to promoting a green economy by offering courses that
                 educate students about sustainability, eco-friendly practices,
@@ -133,8 +133,8 @@
                 showThird ? `show-card` : ``
               }`"
             >
-              <span class="text-grey900 font-weight-bold text-h4">Decentralized Content Quality Moderation</span>
-              <span class="primary-gray-600 text-h6">We believe that quality education is paramount, and that's why
+              <span class="text-grey900 font-weight-bold text-h6">Decentralized Content Quality Moderation</span>
+              <span class="primary-gray-600 text-caption font-weight-medium">We believe that quality education is paramount, and that's why
                 we are developing a decentralized content quality moderation
                 system. This system will allow our users to participate in
                 moderating the quality of the content on our platform, ensuring
@@ -151,7 +151,7 @@
     <div
       class="w-100 mt-4 slider-div d-flex flex-column align-center justify-center"
     >
-      <h1 class="text-primary text-h3 font-weight-black mb-4">
+      <h1 class="text-primary text-h4 font-weight-black mb-4">
         Our Commitment
       </h1>
       <div class="mx-auto w-100 max-width-slider">
@@ -173,10 +173,10 @@
               >
                 {{ slide.icon }}
               </v-icon>
-              <span class="text-primary text-h4 font-weight-bold">{{
+              <span class="text-primary text-h6 font-weight-bold">{{
                 slide.title
               }}</span>
-              <span class="text-primary text-h6 px-2">{{
+              <span class="text-primary text-caption font-weight-medium px-2">{{
                 slide.description
               }}</span>
             </div>
@@ -229,7 +229,7 @@
           cols="12"
           class="d-flex justify-center mb-8"
         >
-          <h2 class="text-grey900 text-h3 font-weight-black">
+          <h2 class="text-grey900 text-h4 font-weight-black">
             Our Services
           </h2>
         </v-col>
@@ -242,7 +242,7 @@
         >
           <nuxt-link
             :to="`${item.link}`"
-            class="text-grey900 text-h4 font-weight-black"
+            class="text-grey900 text-h6 font-weight-black"
           >
             <span :class="`text-primary ${item.icon}`" />
             {{ item.title }}
@@ -253,7 +253,7 @@
           cols="12"
           class="d-flex justify-center flex-column mt-6"
         >
-          <p class="primary-gray-600 text-h4">
+          <p class="primary-gray-600 text-h6 font-weight-regular">
             Welcome to GamaTrain, the EdTech startup revolutionizing education.
             Our platform offers innovative services like sample exams, online
             tests, tutoring, and more, enhancing the learning experience for
@@ -266,7 +266,7 @@
             rounded="pill"
             width="250"
             flat
-            class="text-h5 font-weight-bold mx-auto mt-4"
+            class="text-body-1 font-weight-bold mx-auto mt-4"
           >
             All services
           </v-btn>
@@ -274,10 +274,10 @@
       </v-row>
 
       <v-row class="mt-12">
-        <h2 class="text-grey900 text-h3 font-weight-black w-100 text-center">
+        <h2 class="text-grey900 text-h4 font-weight-black w-100 text-center">
           Join Us
         </h2>
-        <p class="primary-gray-600 text-h4 mt-4">
+        <p class="primary-gray-600 text-h6 font-weight-regular mt-4">
           Join Us and become part of the GamaTrain community! We're always
           looking for talented individuals who are passionate about EdTech and
           want to make a positive impact in the world of education.
@@ -288,7 +288,7 @@
     <div
       class="w-100 mt-8 bg-primary py-16 px-2 d-flex flex-column align-center justify-center"
     >
-      <h1 class="text-inverseSurfaceStrong text-center text-h4 font-weight-black mb-4">
+      <h1 class="text-inverseSurfaceStrong text-center text-h6 font-weight-black mb-4">
         Check out our current job openings and apply today!
       </h1>
       <v-btn
@@ -296,7 +296,7 @@
         rounded="pill"
         width="250"
         flat
-        class="text-btn text-h5 font-weight-bold mx-auto mt-4"
+        class="text-btn text-body-1 font-weight-bold mx-auto mt-4"
         href="mailto:contact@gamatrain.com"
       >
         Contact Us
@@ -499,7 +499,7 @@ const services = [
 
 <style scoped>
 .top-section-div {
-  height: 20rem;
+  height: 12.5rem;
   background-image: url("/images/about-header-xs.svg");
   background-repeat: no-repeat;
   background-position: center center;
@@ -578,7 +578,7 @@ const services = [
 
 @media (min-width: 960px) {
   .top-section-div {
-    height: 25rem;
+    height: 15.625rem;
   }
 }
 

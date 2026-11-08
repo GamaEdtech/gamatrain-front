@@ -46,7 +46,7 @@
           </v-btn>
           <div class="pa-3">
             <p
-              class="text-h5 pointer"
+              class="text-body-1 pointer"
               @click="changeUserAvatar"
             >
               <v-icon size="small">
@@ -54,7 +54,7 @@
               </v-icon>
               Edit
             </p>
-            <span class="text-h5"> Help to pick profile pic </span>
+            <span class="text-body-1"> Help to pick profile pic </span>
           </div>
         </v-col>
         <v-col cols="12">
@@ -66,7 +66,7 @@
           />
           <div
             v-else
-            class="text-h6 text-sm-h5 text-grey700"
+            class="text-caption font-weight-medium text-sm-body-1 text-grey700"
           >
             Want to see your public profile?
             <NuxtLink
@@ -84,7 +84,7 @@
       <v-row>
         <v-col
           cols="12"
-          class="pl-5 text-h4 text-grey700"
+          class="pl-5 text-h6 font-weight-regular text-grey700"
         >
           <v-icon
             large
@@ -182,7 +182,7 @@
       <v-row>
         <v-col
           cols="12"
-          class="pl-5 text-h4 text-grey700"
+          class="pl-5 text-h6 font-weight-regular text-grey700"
         >
           <v-icon
             large
@@ -251,7 +251,7 @@
       <v-row>
         <v-col
           cols="12"
-          class="pl-5 text-h4 text-grey700"
+          class="pl-5 text-h6 font-weight-regular text-grey700"
         >
           <v-icon
             large
@@ -339,7 +339,7 @@
             flat
             rounded="lg"
             width="250"
-            class="text-h5 font-weight-bold"
+            class="text-body-1 font-weight-bold"
             color="success"
             :loading="loadingEditItem"
             :disabled="!isFormValid"
@@ -357,7 +357,7 @@
             flat
             rounded="lg"
             width="250"
-            class="text-h5 font-weight-bold"
+            class="text-body-1 font-weight-bold"
             color="error"
             to="/user"
           >

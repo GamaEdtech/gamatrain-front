@@ -23,10 +23,10 @@
         >
           mdi-alert-circle
         </v-icon>
-        <div class="text-h6 mb-2">
+        <div class="text-caption font-weight-medium mb-2">
           {{ errorMessage || "Unable to display school information" }}
         </div>
-        <div class="text-body-2 mb-4 text-center text-grey600">
+        <div class="text-caption mb-4 text-center text-grey600">
           There was an issue loading the school details. You can still view the
           full information by visiting the school page directly.
         </div>
@@ -60,7 +60,7 @@
           color="primary"
           class="mb-3"
         />
-        <div class="text-body-1">
+        <div class="text-caption">
           Loading school information...
         </div>
       </v-card-text>

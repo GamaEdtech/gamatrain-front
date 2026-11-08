@@ -44,7 +44,7 @@
           <template #prepend>
             <v-icon>{{ sub_item.icon }}</v-icon>
           </template>
-          <v-list-item-title class="text-h6">
+          <v-list-item-title class="text-caption font-weight-medium">
             {{ sub_item.title }}
           </v-list-item-title>
         </v-list-item>

@@ -152,15 +152,15 @@ watch(boardsLoading, (loading) => {
 .ex-category__card--icon {
   display: grid;
   place-items: center;
-  width: 4rem;
-  height: 4rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 14px;
   background: rgba(var(--accent), 0.1);
   transition: background-color 0.3s ease, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .stat-icon {
   display: inline-block;
-  font-size: 2.4rem;
+  font-size: 1.5rem;
   color: rgb(var(--accent));
 }
 .ex-category__card--title {
@@ -185,9 +185,9 @@ watch(boardsLoading, (loading) => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.5rem;
   border: 1px solid rgb(var(--v-theme-grey200));
-  padding: 1.6rem 0.8rem;
+  padding: 1rem 0.5rem;
   border-radius: 20px;
   transition:
     transform 0.35s var(--card-ease),

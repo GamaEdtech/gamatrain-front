@@ -434,16 +434,16 @@ export default {
 
 <style scoped>
 .section-anchor {
-  padding-top: 8rem;
-  margin-top: -8rem;
+  padding-top: 5rem;
+  margin-top: -5rem;
 }
 
 .section-spacer {
-  height: 4rem;
+  height: 2.5rem;
 }
 
 #terms-page-header {
-  height: 20rem;
+  height: 12.5rem;
   background: rgb(var(--v-theme-inverseSurfaceStrong));
   position: relative;
 
@@ -452,12 +452,12 @@ export default {
     margin: auto;
     left: 0;
     right: 0;
-    top: 9.7rem;
+    top: 6.0625rem;
     text-align: center;
 
     .gama-text-h1 {
       color: rgb(var(--v-theme-primary));
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.5rem;
     }
 
     .gama-text-subtitle2 {
@@ -468,12 +468,12 @@ export default {
 
 .main {
   :deep(.v-list-item-title) {
-    font-size: 2.5rem;
+    font-size: 1.5625rem;
     font-weight: 500 !important;
   }
 
   :deep(.v-list-item-title) {
-    padding: 2rem 2rem;
+    padding: 1.25rem 1.25rem;
   }
 
   :deep(.v-list-item) {
@@ -492,7 +492,7 @@ export default {
 
   :deep(.search) {
     border-radius: 7px 50px 50px 7px;
-    margin-left: 1rem;
+    margin-left: 0.625rem;
     font-size: larger;
   }
 
@@ -506,18 +506,18 @@ export default {
 }
 
 #terms-data-container {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.9375rem;
 
   .v-text-field {
-    width: 42.8rem;
+    width: 26.75rem;
     min-height: auto;
-    height: 4rem !important;
-    border-radius: 3.8rem 0.4rem 0.4rem 3.8rem;
-    margin: 1.6rem auto 1.6rem auto;
+    height: 2.5rem !important;
+    border-radius: 2.375rem 0.25rem 0.25rem 2.375rem;
+    margin: 1rem auto 1rem auto;
 
     .v-input__control > .v-input__slot {
       min-height: auto;
-      height: 4rem !important;
+      height: 2.5rem !important;
 
       &:before {
         border-style: none;
@@ -525,17 +525,17 @@ export default {
     }
 
     .v-input__append-outer {
-      margin: 0 0 0 0.8rem !important;
+      margin: 0 0 0 0.5rem !important;
 
       .v-btn {
         min-width: auto;
-        width: 3.9rem !important;
-        height: 3.9rem;
-        border-radius: 0.4rem 3.8rem 3.8rem 0.4rem;
+        width: 2.4375rem !important;
+        height: 2.4375rem;
+        border-radius: 0.25rem 2.375rem 2.375rem 0.25rem;
 
         .v-icon {
           color: rgb(var(--v-theme-on-primary));
-          font-size: 2.2rem;
+          font-size: 1.375rem;
         }
       }
     }
@@ -545,24 +545,24 @@ export default {
     .v-card {
       .gama-text-h4 {
         text-align: center;
-        margin-bottom: 4.8rem;
+        margin-bottom: 3rem;
       }
     }
 
     #terms-navigation {
-      height: 18.5rem;
+      height: 11.5625rem;
       overflow-y: hidden !important;
 
       .v-navigation-drawer {
         background: rgba(var(--v-theme-grey900), 0.05);
 
         .v-list-item {
-          padding: 1.6rem;
+          padding: 1rem;
 
           .v-list-item__title {
             color: rgb(var(--v-theme-grey900));
             font-family: Inter;
-            font-size: 2rem;
+            font-size: 1.25rem;
             font-style: normal;
             font-weight: 500;
             line-height: normal;
@@ -573,9 +573,9 @@ export default {
       .active-title::before {
         content: "";
         display: block;
-        width: 0.4rem;
+        width: 0.25rem;
         height: 100%;
-        border-radius: 0.4rem;
+        border-radius: 0.25rem;
         background: rgb(var(--v-theme-primary));
         opacity: 1;
       }
@@ -585,29 +585,29 @@ export default {
 
 @media only screen and (min-width: 600px) {
   #terms-page-header {
-    height: 26rem;
+    height: 16.25rem;
 
     #main-title-holder {
-      top: 11.5rem;
+      top: 7.1875rem;
 
       .gama-text-h1 {
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.5rem;
       }
     }
   }
 
   #terms-data-container {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.9375rem;
 
     .v-text-field {
-      width: 42.8rem;
+      width: 26.75rem;
       min-height: auto;
-      height: 4rem !important;
-      margin: 1.6rem auto 1.6rem auto;
+      height: 2.5rem !important;
+      margin: 1rem auto 1rem auto;
 
       .v-input__control > .v-input__slot {
         min-height: auto;
-        height: 4rem !important;
+        height: 2.5rem !important;
 
         &:before {
           border-style: none;
@@ -615,17 +615,17 @@ export default {
       }
 
       .v-input__append-outer {
-        margin: 0 0 0 0.8rem !important;
+        margin: 0 0 0 0.5rem !important;
 
         .v-btn {
           min-width: auto;
-          width: 3.9rem !important;
-          height: 3.9rem;
-          border-radius: 0.4rem 3.8rem 3.8rem 0.4rem;
+          width: 2.4375rem !important;
+          height: 2.4375rem;
+          border-radius: 0.25rem 2.375rem 2.375rem 0.25rem;
 
           .v-icon {
             color: rgb(var(--v-theme-on-primary));
-            font-size: 2.2rem;
+            font-size: 1.375rem;
           }
         }
       }
@@ -635,21 +635,21 @@ export default {
       .v-card {
         .gama-text-h4 {
           text-align: center;
-          margin-bottom: 4.8rem;
+          margin-bottom: 3rem;
         }
       }
 
       #terms-navigation {
-        height: 20rem;
+        height: 12.5rem;
 
         .v-navigation-drawer {
           .v-list-item {
-            padding: 1.6rem;
+            padding: 1rem;
 
             .v-list-item__title {
               color: rgb(var(--v-theme-grey900));
               font-family: Inter;
-              font-size: 2.4rem;
+              font-size: 1.5rem;
               font-style: normal;
               font-weight: 500;
               line-height: normal;
@@ -659,9 +659,9 @@ export default {
           .active-title::before {
             content: "";
             display: block;
-            width: 0.4rem;
+            width: 0.25rem;
             height: 100%;
-            border-radius: 0.4rem;
+            border-radius: 0.25rem;
             background: rgb(var(--v-theme-primary));
             opacity: 1;
           }
@@ -673,7 +673,7 @@ export default {
 
 @media only screen and (min-width: 960px) {
   #terms-page-header {
-    height: 34rem;
+    height: 21.25rem;
     background: rgb(var(--v-theme-inverseSurfaceStrong));
     position: relative;
 
@@ -682,12 +682,12 @@ export default {
       margin: auto;
       left: 0;
       right: 0;
-      top: 14.6rem;
+      top: 9.125rem;
       text-align: center;
 
       .gama-text-h1 {
         color: rgb(var(--v-theme-primary));
-        margin-bottom: 1.6rem;
+        margin-bottom: 1rem;
       }
 
       .gama-text-subtitle2 {
@@ -697,18 +697,18 @@ export default {
   }
 
   #terms-data-container {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0.9375rem;
 
     .v-text-field {
-      width: 42.8rem;
+      width: 26.75rem;
       min-height: auto;
-      height: 4rem !important;
-      border-radius: 3.8rem 0.4rem 0.4rem 3.8rem;
-      margin: 1.6rem auto 1.6rem auto;
+      height: 2.5rem !important;
+      border-radius: 2.375rem 0.25rem 0.25rem 2.375rem;
+      margin: 1rem auto 1rem auto;
 
       .v-input__control > .v-input__slot {
         min-height: auto;
-        height: 4rem !important;
+        height: 2.5rem !important;
 
         &:before {
           border-style: none;
@@ -716,17 +716,17 @@ export default {
       }
 
       .v-input__append-outer {
-        margin: 0 0 0 0.8rem !important;
+        margin: 0 0 0 0.5rem !important;
 
         .v-btn {
           min-width: auto;
-          width: 3.9rem !important;
-          height: 3.9rem;
-          border-radius: 0.4rem 3.8rem 3.8rem 0.4rem;
+          width: 2.4375rem !important;
+          height: 2.4375rem;
+          border-radius: 0.25rem 2.375rem 2.375rem 0.25rem;
 
           .v-icon {
             color: rgb(var(--v-theme-on-primary));
-            font-size: 2.2rem;
+            font-size: 1.375rem;
           }
         }
       }
@@ -736,23 +736,23 @@ export default {
       .v-card {
         .gama-text-h4 {
           text-align: center;
-          margin-bottom: 4.8rem;
+          margin-bottom: 3rem;
         }
       }
 
       #terms-navigation {
         position: sticky;
-        top: 10rem;
-        height: 64.2rem;
+        top: 6.25rem;
+        height: 40.125rem;
 
         .v-navigation-drawer {
           .v-list-item {
-            padding: 2.4rem;
+            padding: 1.5rem;
 
             .v-list-item__title {
               color: rgb(var(--v-theme-grey900));
               font-family: Inter;
-              font-size: 2.4rem;
+              font-size: 1.5rem;
               font-style: normal;
               font-weight: 500;
               line-height: normal;
@@ -762,9 +762,9 @@ export default {
           .active-title::before {
             content: "";
             display: block;
-            width: 0.8rem;
+            width: 0.5rem;
             height: 100%;
-            border-radius: 0.4rem;
+            border-radius: 0.25rem;
             background: rgb(var(--v-theme-primary));
             opacity: 1;
           }

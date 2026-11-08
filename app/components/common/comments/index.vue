@@ -9,7 +9,7 @@
       class="w-100 d-flex flex-column align-center justify-center position-relative rounded-lg pa-4 brief-div"
     >
       <div class="w-100 d-flex justify-space-between">
-        <span class="text-h4 font-weight-medium text-grey700">
+        <span class="text-h6 font-weight-medium text-grey700">
           <v-icon
             size="26"
             color="grey700"
@@ -25,7 +25,7 @@
         />
         <span
           v-else
-          class="d-flex align-center ga-1 text-h6 text-grey400 font-weight-regular"
+          class="d-flex align-center ga-1 text-caption text-grey400 font-weight-regular"
         >
           <span class="text-grey500 font-weight-medium">{{
             totalCount
@@ -40,10 +40,10 @@
           class="rounded-circle"
           src="/images/member/avatar.svg"
         >
-        <span class="text-h5 primary-gray-700">Hello! Big thanks to Gama for this amazing website. I'm a student at
+        <span class="text-body-1 primary-gray-700">Hello! Big thanks to Gama for this amazing website. I'm a student at
           this school and super happy with it.</span>
       </div> -->
-      <span class="text-h6 position-absolute text-greenLight700 text-think">Your thoughts?</span>
+      <span class="text-caption font-weight-medium position-absolute text-greenLight700 text-think">Your thoughts?</span>
       <div
         class="rounded-div position-absolute d-flex align-start justify-center cursor-pointer"
         @click="openComments"
@@ -76,7 +76,7 @@
       </div>
 
       <div class="w-100 d-flex d-sm-none justify-space-between px-4">
-        <span class="text-h5 font-weight-medium text-grey700">
+        <span class="text-body-1 font-weight-medium text-grey700">
           <v-icon
             size="20"
             color="grey700"
@@ -92,7 +92,7 @@
         />
         <span
           v-else
-          class="text-h5 text-grey400 font-weight-regular"
+          class="text-body-1 text-grey400 font-weight-regular"
         >
           <span class="text-grey500 font-weight-medium">{{
             totalCount

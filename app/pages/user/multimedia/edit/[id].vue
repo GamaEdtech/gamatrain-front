@@ -4,7 +4,7 @@
       v-model="isFormValid"
       class="w-100 d-flex flex-column"
     >
-      <h1 class="text-h4 text-grey700 font-weight-regular">
+      <h1 class="text-h6 text-grey700 font-weight-regular">
         Multimedia Edit Form
       </h1>
 
@@ -96,7 +96,7 @@
         </div>
 
         <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
-          <span class="text-h6 text-grey700 font-weight-medium">Title</span>
+          <span class="text-caption text-grey700 font-weight-medium">Title</span>
           <v-text-field
             v-model="multimedia.title"
             density="compact"
@@ -123,7 +123,7 @@
         </div>
 
         <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
-          <span class="text-h6 text-grey700 font-weight-medium">Description</span>
+          <span class="text-caption text-grey700 font-weight-medium">Description</span>
           <v-textarea
             v-model="multimedia.description"
             density="compact"
@@ -179,11 +179,11 @@
           </div>
 
           <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-            <span class="text-h6 text-grey700 font-weight-medium">
+            <span class="text-caption text-grey700 font-weight-medium">
               Multimedia File
               <span
                 v-if="hasExistingFile || multimedia.file"
-                class="text-subtitle-1 text-grey600"
+                class="text-caption text-grey600"
               >
                 ({{ fileStatusText }})
               </span>
@@ -236,15 +236,15 @@
         </div>
 
         <!-- <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-6 rounded-lg pa-2">
-          <span class="text-h5 text-grey700 font-weight-bold">Content cover</span>
-          <span class="text-h6 text-grey600 font-weight-bold">
+          <span class="text-body-1 text-grey700 font-weight-bold">Content cover</span>
+          <span class="text-caption text-grey600 font-weight-bold">
             What pages of the book does this content cover?
           </span>
         </div> -->
 
         <!-- <div class="w-100 d-flex flex-wrap justify-start">
           <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-            <span class="text-h6 text-grey700 font-weight-medium">From page</span>
+            <span class="text-caption text-grey700 font-weight-medium">From page</span>
             <v-text-field
               v-model="multimedia.from_page"
               type="number"
@@ -269,7 +269,7 @@
           </div>
 
           <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4 ml-2">
-            <span class="text-h6 text-grey700 font-weight-medium">To page</span>
+            <span class="text-caption text-grey700 font-weight-medium">To page</span>
             <v-text-field
               v-model="multimedia.to_page"
               type="number"
@@ -300,10 +300,10 @@
             density="compact"
             color="primary"
             hide-details
-            class="text-h5"
+            class="text-body-1"
           >
             <template #label>
-              <span class="text-h5 text-grey700 font-weight-medium">
+              <span class="text-body-1 text-grey700 font-weight-medium">
                 I would like the file to be freely available to others.
               </span>
             </template>
@@ -320,7 +320,7 @@
         flat
         rounded="pill"
         height="40"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
       >
         Discard
       </v-btn>
@@ -329,7 +329,7 @@
         rounded="pill"
         width="200"
         height="40"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         color="primary"
         :loading="loadingEditItem"
         :disabled="!isFormValid || loadingUploadMultimediaFile"

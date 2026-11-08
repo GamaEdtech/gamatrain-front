@@ -207,7 +207,7 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 1.1rem;
+    font-size: 0.6875rem;
     margin-bottom: 16px;
 }
 
@@ -305,6 +305,6 @@ onUnmounted(() => {
 }
 
 :deep(.v-selection-control) {
-    margin-left: -2.5rem;
+    margin-left: -1.5625rem;
 }
 </style>

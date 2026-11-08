@@ -221,21 +221,21 @@ defineExpose({
   .icon-q-a,
   .icon-exam,
   .icon-tutorial {
-    font-size: 2.5rem !important;
-    margin-top: 0.5rem;
+    font-size: 1.5625rem !important;
+    margin-top: 0.3125rem;
   }
 }
 @media (max-width: 600px) {
   #search-top-filter {
     top: 50px;
-    margin-bottom: 3rem;
+    margin-bottom: 1.875rem;
   }
 }
 
 /* Tab container */
 :deep(.v-tabs) {
   background-color: rgb(var(--v-theme-grey100)) !important;
-  border-radius: 1.2rem !important;
+  border-radius: 0.75rem !important;
 }
 
 :deep(.v-btn__overlay) {
@@ -255,7 +255,7 @@ defineExpose({
   z-index: 1;
   .nav-link {
     border: 1px solid rgba(0, 0, 0, 0.12) !important;
-    border-radius: 1.4rem !important;
+    border-radius: 0.875rem !important;
     color: rgba(0, 0, 0, 0.9) !important;
     font-weight: 500;
   }
@@ -304,8 +304,8 @@ defineExpose({
   display: inline-block;
   .v-badge__badge {
     left: calc(100% - 8px) !important;
-    font-size: 1.1rem !important;
-    padding: 0.8rem !important;
+    font-size: 0.6875rem !important;
+    padding: 0.5rem !important;
     font-weight: bold !important;
     min-width: min-content !important;
     min-height: 22px !important;
@@ -348,50 +348,50 @@ defineExpose({
 
 /* Icon styling for each tab type */
 .sample-q-icon span {
-  font-size: 3rem !important;
-  padding-left: 1rem;
-  padding-right: 0.4rem;
+  font-size: 1.875rem !important;
+  padding-left: 0.625rem;
+  padding-right: 0.25rem;
   color: #2962ff;
 }
 
 .training-content-icon span {
-  font-size: 3rem !important;
-  padding-left: 1rem;
-  padding-right: 0.4rem;
+  font-size: 1.875rem !important;
+  padding-left: 0.625rem;
+  padding-right: 0.25rem;
   color: #2e7d32;
 }
 
 .q-a-icon span {
-  font-size: 3rem !important;
-  padding-left: 1rem;
-  padding-right: 0.4rem;
+  font-size: 1.875rem !important;
+  padding-left: 0.625rem;
+  padding-right: 0.25rem;
   color: #bf360c;
 }
 
 .exam-icon span {
-  font-size: 3rem !important;
-  padding-left: 1rem;
-  padding-right: 0.4rem;
+  font-size: 1.875rem !important;
+  padding-left: 0.625rem;
+  padding-right: 0.25rem;
   color: #5600e8;
 }
 
 .tutorial-icon span {
-  font-size: 3rem !important;
-  padding-left: 1rem;
-  padding-right: 0.4rem;
+  font-size: 1.875rem !important;
+  padding-left: 0.625rem;
+  padding-right: 0.25rem;
   color: #bd081c;
 }
 
 .teacher-icon span {
-  font-size: 3rem !important;
-  padding-left: 1rem;
-  padding-right: 0.4rem;
+  font-size: 1.875rem !important;
+  padding-left: 0.625rem;
+  padding-right: 0.25rem;
   color: #8e24aa;
 }
 
 .tab-header {
-  margin: 1rem 0 !important;
-  border-radius: 1.2rem !important;
+  margin: 0.625rem 0 !important;
+  border-radius: 0.75rem !important;
   background-color: rgb(var(--v-theme-grey100)) !important;
   padding: 0rem !important;
   border: none !important;
@@ -402,15 +402,15 @@ defineExpose({
 
 .tab-item {
   text-transform: none !important;
-  font-size: 1.2rem !important;
+  font-size: 0.75rem !important;
   transition: all 0.25s ease-in-out;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  padding: 0.8rem 0.8rem 0.8rem 0 !important;
-  margin: 0.2rem !important;
+  padding: 0.5rem 0.5rem 0.5rem 0 !important;
+  margin: 0.125rem !important;
   transition: all 0.2s ease;
 }
 
@@ -468,7 +468,7 @@ defineExpose({
   display: none;
 }
 ::-webkit-scrollbar-thumb {
-  border-radius: 0.8rem;
+  border-radius: 0.5rem;
   background: #cacdd3;
 }
 ::-webkit-scrollbar-track {

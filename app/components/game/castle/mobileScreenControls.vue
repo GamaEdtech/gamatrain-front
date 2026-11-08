@@ -1,7 +1,7 @@
 <template>
   <div
     class="screen-controls"
-    :style="{ top: isFullscreen ? '2rem' : '7rem' }"
+    :style="{ top: isFullscreen ? '1.25rem' : '4.375rem' }"
   >
     <v-btn
       :icon="isFullscreen ? 'mdi-fullscreen-exit' : 'mdi-fullscreen'"
@@ -219,7 +219,7 @@ const requestRotation = () => {
 <style scoped>
 .screen-controls {
   position: absolute;
-  right: 2rem;
+  right: 1.25rem;
   z-index: 100;
   display: flex;
 }
@@ -231,8 +231,8 @@ const requestRotation = () => {
 
 @media (min-width: 1025px) {
   .screen-controls {
-    top: 2rem !important;
-    right: 2rem;
+    top: 1.25rem !important;
+    right: 1.25rem;
   }
 }
 </style>

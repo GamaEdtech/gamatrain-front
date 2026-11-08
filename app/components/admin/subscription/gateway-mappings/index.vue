@@ -9,7 +9,7 @@
         height="40"
         @click="showAddModal = true"
       >
-        <span class="text-primary font-weight-bold text-h5">Add Gateway</span>
+        <span class="text-primary font-weight-bold text-body-1">Add Gateway</span>
       </v-btn>
     </div>
 

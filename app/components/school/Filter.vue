@@ -133,7 +133,7 @@
                 @end="endTuitionMove"
               >
                 <template #thumb-label="{ modelValue }">
-                  <span class="text-h5 font-weight-black on-primary">${{ modelValue }}</span>
+                  <span class="text-body-1 font-weight-black on-primary">${{ modelValue }}</span>
                 </template>
               </v-range-slider>
             </div>
@@ -151,7 +151,7 @@
                   <v-checkbox
                     :model-value="filterForm.sort.includes(sortItem.value)"
                     color="primary"
-                    class="text-h4"
+                    class="text-h6 font-weight-regular"
                     hide-details
                     false-icon="md:check_box_outline_blank"
                     true-icon="md:check_box"
@@ -161,7 +161,7 @@
                     "
                   >
                     <template #label>
-                      <span class="text-h4 font-weight-medium ml-2">{{
+                      <span class="text-h6 font-weight-medium ml-2">{{
                         sortItem.title
                       }}</span>
                     </template>
@@ -198,7 +198,7 @@
         </div>
 
         <v-btn
-          class="d-none d-lg-flex font-weight-bold text-h5"
+          class="d-none d-lg-flex font-weight-bold text-body-1"
           rounded="xl"
           color="info"
           to="school/add"
@@ -300,7 +300,7 @@
             <v-checkbox
               :model-value="filterForm.sort.includes(sortItem.value)"
               color="primary"
-              class="text-h4"
+              class="text-h6 font-weight-regular"
               hide-details
               false-icon="md:check_box_outline_blank"
               true-icon="md:check_box"
@@ -308,7 +308,7 @@
               @update:model-value="(val) => handleCheckboxChange(val, sortItem)"
             >
               <template #label>
-                <span class="text-h4 font-weight-medium ml-2">{{
+                <span class="text-h6 font-weight-medium ml-2">{{
                   sortItem.title
                 }}</span>
               </template>
@@ -328,7 +328,7 @@
             <div class="container-chips">
               <v-chip
                 v-if="filterForm.keyword.length > 0"
-                class="text-h4 pa-3"
+                class="text-h6 font-weight-regular pa-3"
                 size="large"
                 variant="outlined"
                 color="grey900"
@@ -343,7 +343,7 @@
                     && filterForm.country.toString().length > 0
                     && findTitle(`countryList`, filterForm.country)
                 "
-                class="text-h4 pa-3"
+                class="text-h6 font-weight-regular pa-3"
                 size="large"
                 variant="outlined"
                 color="grey900"
@@ -358,7 +358,7 @@
                     && filterForm.state.toString().length > 0
                     && findTitle(`stateList`, filterForm.state)
                 "
-                class="text-h4 pa-3"
+                class="text-h6 font-weight-regular pa-3"
                 size="large"
                 variant="outlined"
                 color="grey900"
@@ -374,7 +374,7 @@
                     && filterForm.city.toString().length > 0
                     && findTitle(`cityList`, filterForm.city)
                 "
-                class="text-h4 pa-3"
+                class="text-h6 font-weight-regular pa-3"
                 size="large"
                 variant="outlined"
                 color="grey900"
@@ -391,7 +391,7 @@
                     && route.query.distance
                     && route.query.sort.includes('distance')
                 "
-                class="text-h4 pa-3"
+                class="text-h6 font-weight-regular pa-3"
                 size="large"
                 variant="outlined"
                 color="grey900"
@@ -509,7 +509,7 @@
               @end="endTuitionMove"
             >
               <template #thumb-label="{ modelValue }">
-                <span class="text-h5 font-weight-black on-primary">${{ modelValue }}</span>
+                <span class="text-body-1 font-weight-black on-primary">${{ modelValue }}</span>
               </template>
             </v-range-slider>
           </div>
@@ -517,7 +517,7 @@
         <div class="w-100 mt-8 d-flex align-center justify-center ga-3">
           <v-btn
             variant="text"
-            class="text-h4 text-grey700"
+            class="text-h6 font-weight-regular text-grey700"
             @click="closeFilterMobile"
           >
             Cancel
@@ -527,7 +527,7 @@
             rounded="xl"
             height="50"
             width="160"
-            class="text-h4"
+            class="text-h6 font-weight-regular"
             @click="applyFilterMobie"
           >
             Apply filter
@@ -543,7 +543,7 @@
       <div class="container-chips">
         <v-chip
           v-if="filterForm.keyword.length > 0"
-          class="text-h4 pa-3"
+          class="text-h6 font-weight-regular pa-3"
           size="large"
           variant="outlined"
           color="grey900"
@@ -558,7 +558,7 @@
               && filterForm.country.toString().length > 0
               && findTitle(`countryList`, filterForm.country)
           "
-          class="text-h4 pa-3"
+          class="text-h6 font-weight-regular pa-3"
           size="large"
           variant="outlined"
           color="grey900"
@@ -573,7 +573,7 @@
               && filterForm.state.toString().length > 0
               && findTitle(`stateList`, filterForm.state)
           "
-          class="text-h4 pa-3"
+          class="text-h6 font-weight-regular pa-3"
           size="large"
           variant="outlined"
           color="grey900"
@@ -589,7 +589,7 @@
               && filterForm.city.toString().length > 0
               && findTitle(`cityList`, filterForm.city)
           "
-          class="text-h4 pa-3"
+          class="text-h6 font-weight-regular pa-3"
           size="large"
           variant="outlined"
           color="grey900"
@@ -606,7 +606,7 @@
               && route.query.distance
               && route.query.sort.includes('distance')
           "
-          class="text-h4 pa-3"
+          class="text-h6 font-weight-regular pa-3"
           size="large"
           variant="outlined"
           color="grey900"

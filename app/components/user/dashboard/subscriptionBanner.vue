@@ -20,19 +20,19 @@
 
           <div class="min-width-0 flex-grow-1">
             <div class="d-flex align-center flex-wrap ga-2 mb-1">
-              <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-0 text-truncate">
+              <p class="text-body-1 text-sm-h6 font-weight-bold text-grey900 mb-0 text-truncate">
                 {{ subscription.planTitle }}
               </p>
               <v-chip
                 :color="statusColor"
                 variant="tonal"
-                class="font-weight-bold text-h6"
+                class="font-weight-bold text-caption"
               >
                 {{ subscription.status }}
               </v-chip>
             </div>
 
-            <div class="d-flex align-center flex-wrap ga-2 text-h6 text-sm-h5 text-grey700">
+            <div class="d-flex align-center flex-wrap ga-2 text-caption font-weight-medium text-sm-body-1 text-grey700">
               <span>{{ subscription.billingInterval }}</span>
               <span class="text-grey400">|</span>
               <span>{{ formattedPrice }}</span>
@@ -85,15 +85,15 @@
             :size="96"
             :width="10"
           >
-            <span class="text-h5 font-weight-bold text-grey900">
+            <span class="text-body-1 font-weight-bold text-grey900">
               {{ hasLimitedUsage ? `${usagePercent}%` : 'All' }}
             </span>
           </v-progress-circular>
           <div class="text-center text-md-left">
-            <p class="text-h6 font-weight-bold text-grey900 mb-0">
+            <p class="text-caption font-weight-bold text-grey900 mb-0">
               {{ totalUsedLabel }} used
             </p>
-            <p class="text-body-2 text-grey600 mb-0">
+            <p class="text-caption text-grey600 mb-0">
               {{ totalLimitLabel }}
             </p>
           </div>
@@ -114,10 +114,10 @@
             </v-icon>
           </v-avatar>
           <div>
-            <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-1">
+            <p class="text-body-1 text-sm-h6 font-weight-bold text-grey900 mb-1">
               No active subscription
             </p>
-            <p class="text-h6 text-sm-h5 text-grey700 mb-0">
+            <p class="text-caption font-weight-medium text-sm-body-1 text-grey700 mb-0">
               Choose a plan to unlock premium content and download quotas.
             </p>
           </div>
@@ -198,7 +198,7 @@ const hasLimitedUsage = computed(() => totalLimit.value > 0)
 
 <style scoped>
 .dashboard-card {
-  border-radius: 1rem;
+  border-radius: 0.625rem;
   border: 1px solid rgb(var(--v-theme-grey200));
   background: rgb(var(--v-theme-surface));
   transition: border-color 0.15s ease;

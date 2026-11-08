@@ -21,7 +21,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Name
         </div>
         <v-text-field
@@ -38,7 +38,7 @@
       </div>
 
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 ml-2">
+        <div class="text-caption font-weight-medium text-grey700 ml-2">
           Description
         </div>
         <v-textarea
@@ -60,13 +60,13 @@
         <v-checkbox
           v-model="form.isActive"
           color="primary"
-          class="text-h4"
+          class="text-h6 font-weight-regular"
           hide-details
           false-icon="md:check_box_outline_blank"
           true-icon="md:check_box"
         >
           <template #label>
-            <span class="text-h6 text-grey700 text-no-wrap ml-2">Is Active</span>
+            <span class="text-caption font-weight-medium text-grey700 text-no-wrap ml-2">Is Active</span>
           </template>
         </v-checkbox>
       </div>
@@ -78,7 +78,7 @@
       variant="outlined"
       height="40"
       width="200"
-      class="text-h5 mt-8 mx-auto"
+      class="text-body-1 mt-8 mx-auto"
       :loading="loading"
       :disabled="!isFormValid || loading"
       flat

@@ -1,7 +1,7 @@
 <template>
   <div class="w-100 h-100 d-flex flex-column align-start justify-start px-2 pa-md-0">
     <div class="w-100 d-flex align-center justify-space-between ga-2 mt-4">
-      <h1 class="text-h4 text-grey700 font-weight-regular">
+      <h1 class="text-h6 text-grey700 font-weight-regular">
         My Multimedia
       </h1>
     </div>
@@ -88,7 +88,7 @@
         >
           md:add
         </v-icon>
-        <span class="font-weight-bold text-h6">New Multimedia</span>
+        <span class="font-weight-bold text-caption">New Multimedia</span>
       </v-btn>
     </div>
 

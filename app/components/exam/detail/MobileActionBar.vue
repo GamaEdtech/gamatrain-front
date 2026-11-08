@@ -4,7 +4,7 @@
   <div class="mobile-action-bar-spacer d-md-none">
     <div class="mobile-action-bar d-flex ga-3 px-4 py-3 bg-surface">
       <v-btn
-        class="flex-1-1-0 text-h5 font-weight-heavy text-none"
+        class="flex-1-1-0 text-body-1 font-weight-heavy text-none"
         color="secondary"
         size="large"
         rounded="lg"
@@ -16,7 +16,7 @@
       </v-btn>
       <v-btn
         v-if="canStart"
-        class="flex-1-1-0 text-h5 font-weight-heavy text-none"
+        class="flex-1-1-0 text-body-1 font-weight-heavy text-none"
         color="primary"
         size="large"
         rounded="lg"

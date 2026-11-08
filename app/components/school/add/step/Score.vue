@@ -3,7 +3,7 @@
     class="w-100 d-flex flex-column align-center justify-space-between ga-1 max-width-container"
   >
     <div class="w-100 d-flex flex-column align-center justify-start ga-10">
-      <div class="w-100 text-h4 text-grey500">
+      <div class="w-100 text-h6 font-weight-regular text-grey500">
         School Score
       </div>
 
@@ -13,7 +13,7 @@
         class="w-100 d-flex justify-space-between align-center"
       >
         <span
-          class="d-flex align-center ga-3 text-h5 font-weight-bold text-grey700"
+          class="d-flex align-center ga-3 text-body-1 font-weight-bold text-grey700"
         >
           <div class="dot-div" />
           {{ item.title }}
@@ -37,7 +37,7 @@
       <div
         class="w-100 d-flex flex-column align-start justify-start ga-1 position-relative"
       >
-        <div class="text-h6 font-weight-bold text-grey700 ml-2">
+        <div class="text-caption font-weight-bold text-grey700 ml-2">
           <v-badge
             floating
             location="top right"
@@ -79,7 +79,7 @@
       <v-btn
         size="x-small"
         variant="text"
-        class="text-h5"
+        class="text-body-1"
         @click="cancel"
       >
         Cancel
@@ -103,7 +103,7 @@
         rounded="xl"
         height="40"
         max-width="180"
-        class="w-100 text-h5"
+        class="w-100 text-body-1"
         :loading="loading"
         :disabled="!isFormValid"
         @click="submitForm"

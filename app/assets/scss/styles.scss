@@ -1,13 +1,5 @@
 @use "variables" as *;
 
-//General
-// 62.5% of the browser's font size (10px by default), so a reader's larger font setting still scales the page.
-// `:root`, not `html`: Vuetify's CSS sets `html { font-size: 1rem }`, and with equal specificity whichever stylesheet
-// loads last would win.
-:root {
-  font-size: 62.5%;
-}
-
 //‌Base style
 .v-application .primary {
   background-color: #ffb300 !important;
@@ -124,7 +116,7 @@
   .v-btn__content {
     color: rgb(var(--v-theme-on-primary));
     font-family: Inter;
-    font-size: 2rem !important;
+    font-size: 1.25rem !important;
     font-style: normal;
     line-height: normal;
     text-transform: capitalize;
@@ -135,7 +127,7 @@
   .v-btn__content {
     color: rgb(var(--v-theme-on-primary));
     font-family: Inter;
-    font-size: 1.8rem;
+    font-size: 1.125rem;
     font-style: normal;
     font-weight: 800;
     line-height: normal;
@@ -147,7 +139,7 @@
   .v-btn__content {
     color: rgb(var(--v-theme-on-primary));
     font-family: Inter;
-    font-size: 1.6rem;
+    font-size: 1rem;
     font-style: normal;
     font-weight: 800;
     line-height: normal;
@@ -159,7 +151,7 @@
   .v-btn__content {
     color: rgb(var(--v-theme-on-primary));
     font-family: Inter;
-    font-size: 1.2rem;
+    font-size: 0.75rem;
     font-style: normal;
     font-weight: 800;
     line-height: normal;
@@ -172,52 +164,52 @@
 //xs size
 .gtext-t1 {
   font-family: Inter, sans-serif;
-  font-size: 2.2rem !important;
-  line-height: 3.4rem;
+  font-size: 1.375rem !important;
+  line-height: 2.125rem;
   font-weight: 400;
 }
 
 .gtext-t2 {
   font-family: Inter, sans-serif;
-  font-size: 2rem !important;
-  line-height: 3.2rem;
+  font-size: 1.25rem !important;
+  line-height: 2rem;
   font-weight: 400;
 }
 
 .gtext-t4 {
   font-family: Inter, sans-serif;
-  font-size: 1.6rem !important;
-  line-height: 3rem;
+  font-size: 1rem !important;
+  line-height: 1.875rem;
   font-weight: 400;
 }
 
 .gtext-t5 {
   font-family: Inter, sans-serif !important;
-  font-size: 1.4rem !important;
-  line-height: 2.4rem !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5rem !important;
   font-weight: 400;
 }
 
 .gtext-t6 {
   font-family: Inter, sans-serif;
-  font-size: 1.2rem;
-  line-height: 1.8rem;
+  font-size: 0.75rem;
+  line-height: 1.125rem;
   font-weight: 400;
 }
 
 .gtext-h3 {
   font-family: Inter, sans-serif !important;
-  font-size: 3.6rem !important;
+  font-size: 2.25rem !important;
   font-style: normal;
   font-weight: 400;
-  line-height: 4rem !important;
-  letter-spacing: 0.025rem;
+  line-height: 2.5rem !important;
+  letter-spacing: 0.015625rem;
 }
 
 .gtext-h5 {
   font-family: Inter, sans-serif !important;
-  font-size: 2rem !important;
-  line-height: 3.2rem !important;
+  font-size: 1.25rem !important;
+  line-height: 2rem !important;
   font-weight: 400;
 }
 
@@ -240,7 +232,7 @@
 .gama-text-h1 {
   font-family: Inter, sans-serif;
   color: rgb(var(--v-theme-grey900));
-  font-size: 3.4rem;
+  font-size: 2.125rem;
   font-style: normal;
   font-weight: 800;
   line-height: normal;
@@ -249,7 +241,7 @@
 .gama-text-h2 {
   font-family: Inter, sans-serif !important;
   color: rgb(var(--v-theme-grey900));
-  font-size: 3rem !important;
+  font-size: 1.875rem !important;
   font-style: normal !important;
   font-weight: 700 !important;
   line-height: normal !important;
@@ -258,7 +250,7 @@
 .gama-text-h4 {
   font-family: Inter, sans-serif !important;
   color: rgb(var(--v-theme-grey900));
-  font-size: 2.4rem !important;
+  font-size: 1.5rem !important;
   font-style: normal !important;
   font-weight: 800 !important;
   line-height: normal !important;
@@ -267,16 +259,16 @@
 .gama-text-h5 {
   font-family: Inter, sans-serif !important;
   color: rgb(var(--v-theme-grey900));
-  font-size: 2rem !important;
+  font-size: 1.25rem !important;
   font-style: normal;
   font-weight: 400;
-  line-height: 3.2rem;
+  line-height: 2rem;
 }
 
 .gama-text-h6 {
   font-family: Inter, sans-serif !important;
   color: rgb(var(--v-theme-grey900));
-  font-size: 1.6rem !important;
+  font-size: 1rem !important;
   font-style: normal !important;
   font-weight: 500 !important;
   line-height: normal !important;
@@ -285,7 +277,7 @@
 .gama-text-subtitle1 {
   font-family: Inter, sans-serif;
   color: rgb(var(--v-theme-grey900));
-  font-size: 1.4rem !important;
+  font-size: 0.875rem !important;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
@@ -294,7 +286,7 @@
 .gama-text-subtitle2 {
   font-family: Inter, sans-serif;
   color: rgb(var(--v-theme-grey900));
-  font-size: 1.2rem;
+  font-size: 0.75rem;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
@@ -303,25 +295,25 @@
 .gama-text-body1 {
   font-family: Inter, sans-serif !important;
   color: rgb(var(--v-theme-grey900));
-  font-size: 1.4rem !important;
+  font-size: 0.875rem !important;
   font-style: normal;
   font-weight: 400;
-  line-height: 2.4rem;
+  line-height: 1.5rem;
 }
 
 .gama-text-body2 {
   font-family: Inter, sans-serif !important;
   color: rgb(var(--v-theme-grey900));
-  font-size: 1.2rem !important;
+  font-size: 0.75rem !important;
   font-style: normal !important;
   font-weight: 400 !important;
-  line-height: 2rem !important;
+  line-height: 1.25rem !important;
 }
 
 .gama-text-button {
   font-family: Inter, sans-serif !important;
   color: rgb(var(--v-theme-grey900));
-  font-size: 1.4rem !important;
+  font-size: 0.875rem !important;
   font-style: normal !important;
   font-weight: 600 !important;
   line-height: normal;
@@ -330,7 +322,7 @@
 .gama-text-caption {
   font-family: Inter, sans-serif !important;
   color: rgb(var(--v-theme-grey900));
-  font-size: 1.2rem;
+  font-size: 0.75rem;
   font-style: normal;
   font-weight: 300;
   line-height: normal;
@@ -339,7 +331,7 @@
 .gama-text-overline {
   font-family: Inter, sans-serif !important;
   color: rgb(var(--v-theme-grey900));
-  font-size: 1rem;
+  font-size: 0.625rem;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
@@ -350,15 +342,15 @@
 //Button style
 .gama-primary-btn {
   display: inline-flex;
-  height: 2.8rem;
-  padding: 0rem 1.2rem;
+  height: 1.75rem;
+  padding: 0rem 0.75rem;
   justify-content: center;
   align-items: center;
-  border-radius: 3rem;
+  border-radius: 1.875rem;
   background: rgb(var(--v-theme-primary));
   color: rgb(var(--v-theme-on-primary));
   font-family: Inter, sans-serif !important;
-  font-size: 1.4rem;
+  font-size: 0.875rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
@@ -368,7 +360,7 @@
 
 /* width */
 ::-webkit-scrollbar {
-  width: 0.8rem;
+  width: 0.5rem;
 }
 
 /* Track */
@@ -378,7 +370,7 @@
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  border-radius: 0.8rem;
+  border-radius: 0.5rem;
   background: rgb(var(--v-theme-grey300));
 }
 
@@ -392,28 +384,28 @@ body {
   //direction: rtl;
   margin: 0;
   padding: 0;
-  font-size: 1.4rem;
+  font-size: 0.875rem;
   box-sizing: border-box;
   transition: 0.5s ease-in-out;
 
   // p {
-  //   font-size: 1.8rem;
+  //   font-size: 1.125rem;
   // }
 
   .font-size-10 {
-    font-size: 1rem !important;
+    font-size: 0.625rem !important;
   }
 
   .font-size-12 {
-    font-size: 1.2rem !important;
+    font-size: 0.75rem !important;
   }
 
   .font-size-14 {
-    font-size: 1.4rem !important;
+    font-size: 0.875rem !important;
   }
 
   .font-size-16 {
-    font-size: 1.6rem !important;
+    font-size: 1rem !important;
   }
 
   .font-size-18 {
@@ -423,7 +415,7 @@ body {
   table {
     tr {
       td {
-        font-size: 1.4rem !important;
+        font-size: 0.875rem !important;
       }
     }
   }
@@ -510,7 +502,7 @@ body {
 
     .v-list--dense .v-list-item .v-list-item__title {
       font-size: $fontsize2;
-      line-height: 2rem;
+      line-height: 1.25rem;
     }
 
     .v-btn.v-size--default {
@@ -542,9 +534,9 @@ body {
       position: relative;
       background: #fff;
       box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
-      margin: 1rem 0;
-      padding: 1rem 1rem;
-      border-radius: 0.3rem;
+      margin: 0.625rem 0;
+      padding: 0.625rem 0.625rem;
+      border-radius: 0.1875rem;
       border: 1px solid rgba(34, 36, 38, 0.15);
     }
 
@@ -567,7 +559,7 @@ body {
     // Banner
 
     .banner .v-image {
-      height: 28rem !important;
+      height: 17.5rem !important;
     }
 
     //search
@@ -584,33 +576,33 @@ body {
         0 1px 3px 0 #d4d4d5,
         0 0 0 1px #d4d4d5 !important;
       position: relative;
-      margin-left: 1.5rem;
-      margin-bottom: 3rem;
+      margin-left: 0.9375rem;
+      margin-bottom: 1.875rem;
       max-width: 100%;
-      min-height: 32rem;
-      border-radius: 0.4rem !important;
+      min-height: 20rem;
+      border-radius: 0.25rem !important;
 
       .grade-divider {
         border-color: rgba(0, 0, 0, 0.05) !important;
       }
 
       .grade-title {
-        margin-left: 4.5rem;
+        margin-left: 2.8125rem;
         margin-bottom: 20px !important;
-        font-size: 1.8rem;
+        font-size: 1.125rem;
         font-weight: 800;
       }
 
       .label-tag {
-        font-size: 1.2rem;
+        font-size: 0.75rem;
         color: #fff;
         position: absolute;
-        width: 5.5rem;
-        height: 3.6rem;
+        width: 3.4375rem;
+        height: 2.25rem;
         left: 0;
-        top: 1.4rem;
-        border-radius: 0 1rem 1rem 0;
-        //margin: -.2rem 1.7rem 0 1.2rem;
+        top: 0.875rem;
+        border-radius: 0 0.625rem 0.625rem 0;
+        //margin: -0.125rem 1.0625rem 0 0.75rem;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -624,8 +616,8 @@ body {
         //   content: "";
         //   background-color: inherit;
         //   background-image: none;
-        //   width: 1.7rem;
-        //   height: 1.7rem;
+        //   width: 1.0625rem;
+        //   height: 1.0625rem;
         //   -webkit-transition: none;
         //   transition: none;
         // }
@@ -636,11 +628,11 @@ body {
         //   top: 50%;
         //   left: 0;
         //   transform: translateY(-50%);
-        //   width: 0.6rem;
-        //   height: 0.6rem;
+        //   width: 0.375rem;
+        //   height: 0.375rem;
         //   background-color: #fff !important;
-        //   box-shadow: 0 -0.1rem 0.1rem 0 rgba(0, 0, 0, 0.3);
-        //   border-radius: 500rem;
+        //   box-shadow: 0 -0.0625rem 0.0625rem 0 rgba(0, 0, 0, 0.3);
+        //   border-radius: 312.5rem;
         // }
       }
 
@@ -873,7 +865,7 @@ body {
     // footer feed card
 
     .date {
-      font-size: 1rem !important;
+      font-size: 0.625rem !important;
     }
 
     // stat-sec
@@ -884,37 +876,37 @@ body {
     }
 
     .stat-sec {
-      padding: 1rem 0;
+      padding: 0.625rem 0;
     }
 
     .stat-item {
-      min-width: 17rem;
+      min-width: 10.625rem;
 
       .stat-value {
-        font-size: 2.4rem;
-        line-height: 3rem;
+        font-size: 1.5rem;
+        line-height: 1.875rem;
         font-weight: 400;
       }
 
       .stat-label {
         font-weight: 400;
-        font-size: 2rem;
-        line-height: 2.4rem;
+        font-size: 1.25rem;
+        line-height: 1.5rem;
         color: rgba(0, 0, 0, 0.6);
-        margin-top: 0.5rem;
-        margin-bottom: 0.8rem;
+        margin-top: 0.3125rem;
+        margin-bottom: 0.5rem;
       }
 
       .stat-icon {
-        width: 4.2rem;
-        height: 4.2rem;
-        border-radius: 1.2rem;
+        width: 2.625rem;
+        height: 2.625rem;
+        border-radius: 0.75rem;
         background-color: $green11;
         color: $white;
 
         .icon-g {
-          height: 2.5rem;
-          font-size: 2.5rem;
+          height: 1.5625rem;
+          font-size: 1.5625rem;
         }
       }
     }
@@ -928,18 +920,18 @@ body {
     //last view Slider
     .last-view-holder {
       .last-view-title {
-        font-size: 1.7rem;
+        font-size: 1.0625rem;
         color: $green6;
       }
 
       .last-view-slider {
         .last-view-item {
-          width: 17.7rem;
+          width: 11.0625rem;
 
           .last-view-image {
             width: 100%;
             max-width: 100%;
-            height: 24rem;
+            height: 15rem;
           }
 
           .last-view-description {
@@ -956,25 +948,25 @@ body {
       .detail {
 
         .detail-title {
-          font-size: 1.8rem;
+          font-size: 1.125rem;
         }
 
         .label-holder {
-          margin-bottom: 3.4rem;
+          margin-bottom: 2.125rem;
 
           .label {
             display: inline-block;
-            font-size: 1.2rem;
+            font-size: 0.75rem;
             color: $gray4;
             background: $gray3;
-            border-radius: 0.3rem;
-            padding: 0.3rem 0.9rem;
-            margin-top: 0.5rem;
+            border-radius: 0.1875rem;
+            padding: 0.1875rem 0.5625rem;
+            margin-top: 0.3125rem;
           }
         }
 
         .download-sec {
-          padding: 1.4rem;
+          padding: 0.875rem;
 
           .register,
           .login {
@@ -989,60 +981,60 @@ body {
 
         .file-copy-right {
           color: $red4;
-          margin-bottom: 3rem;
+          margin-bottom: 1.875rem;
         }
 
       }
 
       .course-card {
         .icon {
-          font-size: 1.2rem;
+          font-size: 0.75rem;
         }
 
         .course-title {
           color: $pink;
-          font-size: 1.4rem;
-          margin-bottom: 0.8rem;
+          font-size: 0.875rem;
+          margin-bottom: 0.5rem;
         }
 
         .teacher {
           display: inline-block;
-          //margin-bottom: .5rem;
+          //margin-bottom: 0.3125rem;
         }
 
       }
 
       .album-card {
         .poster-img {
-          width: 8rem;
-          height: 10.6rem;
+          width: 5rem;
+          height: 6.625rem;
           box-shadow: 0 0 21px #87777c;
-          border-radius: 0.7rem;
-          margin-left: 1.6rem;
+          border-radius: 0.4375rem;
+          margin-left: 1rem;
         }
 
         .icon {
-          font-size: 1.2rem;
+          font-size: 0.75rem;
         }
 
         .course-title {
           color: $pink;
-          font-size: 1.4rem;
-          margin-bottom: 0.8rem;
+          font-size: 0.875rem;
+          margin-bottom: 0.5rem;
         }
 
         .teacher {
           display: inline-block;
-          //margin-bottom: .5rem;
+          //margin-bottom: 0.3125rem;
         }
 
         .suggestion {
-          width: 15rem;
-          margin: 0.8rem 0.5rem 0 0;
-          padding: 0.5rem 1rem;
+          width: 9.375rem;
+          margin: 0.5rem 0.3125rem 0 0;
+          padding: 0.3125rem 0.625rem;
           color: #efeded;
           background: $purple;
-          border-radius: 0.9rem;
+          border-radius: 0.5625rem;
           text-align: center;
         }
 
@@ -1070,7 +1062,7 @@ body {
 
 // @media only screen and (min-width:744px) {
 //   .container{
-//     max-width: 54.4rem!important;
+//     max-width: 34rem!important;
 //   }
 
 //   .gama-d-tablet-none{
@@ -1084,7 +1076,7 @@ body {
 
 // @media only screen and (min-width:1440px) {
 //   .container{
-//     max-width: 90.4rem!important;
+//     max-width: 56.5rem!important;
 //   }
 
 //   .gama-d-desktop-none{
@@ -1105,10 +1097,10 @@ body {
 @media only screen and (max-width: 600px) {
 
   .book-no-img {
-    width: 12rem;
-    min-width: 8rem;
-    min-height: 10.5rem;
-    max-height: 10.5rem;
+    width: 7.5rem;
+    min-width: 5rem;
+    min-height: 6.5625rem;
+    max-height: 6.5625rem;
 
     padding: 0 4.4px 4.4px 4.4px;
     text-align: center;
@@ -1116,11 +1108,11 @@ body {
     border-radius: 8px;
 
     p {
-      font-size: 1rem !important;
+      font-size: 0.625rem !important;
     }
 
     a {
-      font-size: 1rem;
+      font-size: 0.625rem;
     }
   }
 
@@ -1135,21 +1127,21 @@ body {
       border-radius: 8px;
 
       p {
-        font-size: 1rem !important;
+        font-size: 0.625rem !important;
       }
 
       a {
-        font-size: 1rem;
+        font-size: 0.625rem;
       }
     }
 
     .price_label {
       span {
-        font-size: 1.8rem;
+        font-size: 1.125rem;
       }
 
       .subscription_label {
-        font-size: 1.4rem !important;
+        font-size: 0.875rem !important;
         color: gray;
       }
     }
@@ -1173,7 +1165,7 @@ body {
   .gama-text-h1 {
     font-family: Inter, sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 4.6rem;
+    font-size: 2.875rem;
     font-style: normal;
     font-weight: 800;
     line-height: normal;
@@ -1182,7 +1174,7 @@ body {
   .gama-text-h2 {
     font-family: Inter, sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 4rem !important;
+    font-size: 2.5rem !important;
     font-style: normal !important;
     font-weight: 700 !important;
     line-height: normal !important;
@@ -1191,7 +1183,7 @@ body {
   .gama-text-h4 {
     color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
-    font-size: 2.6rem !important;
+    font-size: 1.625rem !important;
     font-style: normal !important;
     font-weight: 800 !important;
     line-height: normal !important;
@@ -1200,7 +1192,7 @@ body {
   .gama-text-h5 {
     font-family: Inter, sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 2.2rem;
+    font-size: 1.375rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -1209,7 +1201,7 @@ body {
   .gama-text-h6 {
     font-family: "Inter", sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 1.8rem !important;
+    font-size: 1.125rem !important;
     font-style: normal;
     font-weight: 500 !important;
     line-height: normal;
@@ -1218,7 +1210,7 @@ body {
   .gama-text-subtitle1 {
     font-family: Inter, sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 1.6rem !important;
+    font-size: 1rem !important;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
@@ -1227,7 +1219,7 @@ body {
   .gama-text-subtitle2 {
     font-family: Inter, sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 1.4rem;
+    font-size: 0.875rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -1236,25 +1228,25 @@ body {
   .gama-text-body1 {
     font-family: Inter, sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 1.6rem !important;
+    font-size: 1rem !important;
     font-style: normal;
     font-weight: 400;
-    line-height: 2.4rem;
+    line-height: 1.5rem;
   }
 
   .gama-text-body2 {
     font-family: Inter, sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 1.4rem !important;
+    font-size: 0.875rem !important;
     font-style: normal !important;
     font-weight: 400 !important;
-    line-height: 2.2rem !important;
+    line-height: 1.375rem !important;
   }
 
   .gama-text-button {
     font-family: Inter, sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 1.4rem;
+    font-size: 0.875rem;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
@@ -1263,7 +1255,7 @@ body {
   .gama-text-caption {
     font-family: Inter, sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 1.4rem;
+    font-size: 0.875rem;
     font-style: normal;
     font-weight: 300;
     line-height: normal;
@@ -1272,7 +1264,7 @@ body {
   .gama-text-overline {
     font-family: Inter, sans-serif !important;
     color: rgb(var(--v-theme-grey900));
-    font-size: 1.2rem;
+    font-size: 0.75rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -1281,15 +1273,15 @@ body {
   //Button style
   .gama-primary-btn {
     display: inline-flex;
-    height: 3.6rem;
-    padding: 0.4rem 1.6rem;
+    height: 2.25rem;
+    padding: 0.25rem 1rem;
     justify-content: center;
     align-items: center;
-    border-radius: 3rem;
+    border-radius: 1.875rem;
     background: rgb(var(--v-theme-primary));
     color: rgb(var(--v-theme-on-primary));
     font-family: Inter, sans-serif !important;
-    font-size: 1.4rem;
+    font-size: 0.875rem;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
@@ -1300,11 +1292,11 @@ body {
 
 @media only screen and (min-width: 600px) and (max-width: 960px) {
   .book-no-img {
-    width: 12rem;
-    height: 14rem;
-    min-width: 12rem;
-    min-height: 14.5rem;
-    max-height: 14.5rem;
+    width: 7.5rem;
+    height: 8.75rem;
+    min-width: 7.5rem;
+    min-height: 9.0625rem;
+    max-height: 9.0625rem;
     padding: 5px;
     text-align: center;
     background-color: rgb(var(--v-theme-grey100)) !important;
@@ -1314,12 +1306,12 @@ body {
     }
 
     a {
-      font-size: 1.2rem;
+      font-size: 0.75rem;
     }
   }
 
   .album-card {
-    min-height: 29rem;
+    min-height: 18.125rem;
 
     .album-no-img {
       width: 100%;
@@ -1331,11 +1323,11 @@ body {
       border-radius: 8px;
 
       p {
-        font-size: 1rem !important;
+        font-size: 0.625rem !important;
       }
 
       a {
-        font-size: 1rem;
+        font-size: 0.625rem;
       }
     }
   }
@@ -1346,7 +1338,7 @@ body {
   .gama-text-h1 {
     color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
-    font-size: 5rem !important;
+    font-size: 3.125rem !important;
     font-style: normal !important;
     font-weight: 800 !important;
     line-height: normal !important;
@@ -1355,7 +1347,7 @@ body {
   .gama-text-h2 {
     color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
-    font-size: 4.4rem !important;
+    font-size: 2.75rem !important;
     font-style: normal !important;
     font-weight: 700 !important;
     line-height: normal !important;
@@ -1364,7 +1356,7 @@ body {
   .gama-text-h4 {
     color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
-    font-size: 3rem !important;
+    font-size: 1.875rem !important;
     font-style: normal !important;
     font-weight: 800 !important;
     line-height: normal !important;
@@ -1373,7 +1365,7 @@ body {
   .gama-text-h5 {
     color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
-    font-size: 2.4rem;
+    font-size: 1.5rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -1382,7 +1374,7 @@ body {
   .gama-text-h6 {
     color: rgb(var(--v-theme-grey700));
     font-family: "Inter", sans-serif !important;
-    font-size: 2rem !important;
+    font-size: 1.25rem !important;
     font-style: normal;
     font-weight: 600 !important;
     line-height: normal;
@@ -1391,7 +1383,7 @@ body {
   .gama-text-subtitle1 {
     color: rgb(var(--v-theme-grey700));
     font-family: Inter, sans-serif !important;
-    font-size: 1.8rem !important;
+    font-size: 1.125rem !important;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
@@ -1400,7 +1392,7 @@ body {
   .gama-text-subtitle2 {
     color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
-    font-size: 1.4rem;
+    font-size: 0.875rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -1409,16 +1401,16 @@ body {
   .gama-text-body1 {
     color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
-    font-size: 2rem !important;
+    font-size: 1.25rem !important;
     font-style: normal;
     font-weight: 400;
-    line-height: 3.2rem;
+    line-height: 2rem;
   }
 
   .gama-text-body2 {
     color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
-    font-size: 1.6rem !important;
+    font-size: 1rem !important;
     font-style: normal;
     font-weight: 400 !important;
     line-height: normal !important;
@@ -1427,7 +1419,7 @@ body {
   .gama-text-button {
     color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
-    font-size: 1.8rem !important;
+    font-size: 1.125rem !important;
     font-style: normal !important;
     font-weight: 600 !important;
     line-height: normal !important;
@@ -1436,7 +1428,7 @@ body {
   .gama-text-caption {
     color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
-    font-size: 1.4rem;
+    font-size: 0.875rem;
     font-style: normal;
     font-weight: 300;
     line-height: normal;
@@ -1445,7 +1437,7 @@ body {
   .gama-text-overline {
     color: rgb(var(--v-theme-grey900));
     font-family: Inter, sans-serif !important;
-    font-size: 1.2rem;
+    font-size: 0.75rem;
     font-style: normal;
     font-weight: 500;
     line-height: normal;
@@ -1456,15 +1448,15 @@ body {
   //Button style
   .gama-primary-btn {
     display: inline-flex;
-    height: 4.4rem;
-    padding: 0.8rem 2rem;
+    height: 2.75rem;
+    padding: 0.5rem 1.25rem;
     justify-content: center;
     align-items: center;
-    border-radius: 3rem;
+    border-radius: 1.875rem;
     background: rgb(var(--v-theme-primary));
     color: rgb(var(--v-theme-on-primary));
     font-family: Inter, sans-serif !important;
-    font-size: 1.8rem;
+    font-size: 1.125rem;
     font-style: normal;
     font-weight: 600;
     line-height: normal;
@@ -1481,9 +1473,9 @@ body {
   }
 
   .book-no-img {
-    width: 12rem;
-    height: 14rem !important;
-    min-height: 14.5rem !important;
+    width: 7.5rem;
+    height: 8.75rem !important;
+    min-height: 9.0625rem !important;
     padding: 5px;
     margin: auto;
     text-align: center;
@@ -1491,16 +1483,16 @@ body {
     border-radius: 8px;
 
     p {
-      font-size: 1.4rem !important;
+      font-size: 0.875rem !important;
     }
 
     a {
-      font-size: 1.4rem;
+      font-size: 0.875rem;
     }
   }
 
   .album-card {
-    min-height: 30rem;
+    min-height: 18.75rem;
 
     .album-no-img {
       width: 100%;
@@ -1512,11 +1504,11 @@ body {
       border-radius: 8px;
 
       p {
-        font-size: 1.2rem !important;
+        font-size: 0.75rem !important;
       }
 
       a {
-        font-size: 1rem;
+        font-size: 0.625rem;
       }
     }
   }
@@ -1538,16 +1530,16 @@ body {
 
 // Start : Lesson page
 .lesson {
-  margin-bottom: 4rem;
+  margin-bottom: 2.5rem;
 
 }
 
 .cards {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 4rem 0;
+  padding: 2.5rem 0;
 
-  margin: 4rem 0;
+  margin: 2.5rem 0;
 
   .card {
     outline: 1px solid $green11;
@@ -1558,12 +1550,12 @@ body {
   }
 
   .card-title {
-    font-size: 1.4rem;
+    font-size: 0.875rem;
     font-weight: 500;
   }
 
   .levels {
-    font-size: 1.4rem;
+    font-size: 0.875rem;
     font-weight: 400;
     color: $gray13;
   }
@@ -1578,18 +1570,18 @@ body {
   background: $gray12;
 
   .title-icon {
-    font-size: 4rem;
+    font-size: 2.5rem;
     color: $category-test;
   }
 
   .sample-title {
     .s-title {
-      font-size: 2.4rem;
+      font-size: 1.5rem;
       font-weight: 400;
     }
 
     .s-subtitle {
-      font-size: 1.2rem;
+      font-size: 0.75rem;
       font-weight: 400;
       color: $gray4;
     }
@@ -1601,15 +1593,15 @@ body {
 
   .sample-slider {
     .v-slide-group__content {
-      padding-bottom: 1rem;
+      padding-bottom: 0.625rem;
     }
 
     .v-slide-group__next {
-      margin-left: -1rem;
+      margin-left: -0.625rem;
     }
 
     .v-slide-group__prev {
-      margin-right: -1rem;
+      margin-right: -0.625rem;
     }
 
     .v-slide-group.v-item-group > .v-slide-group__prev {
@@ -1620,12 +1612,12 @@ body {
       position: relative;
 
       .v-slide-group__next {
-        height: 4rem !important;
+        height: 2.5rem !important;
         position: absolute !important;
         right: 5% !important;
         top: 41% !important;
         border-radius: 50%;
-        min-width: 4rem;
+        min-width: 2.5rem;
         background-color: $white;
         box-shadow:
           0px 3px 4px rgba(0, 0, 0, 0.14),
@@ -1634,12 +1626,12 @@ body {
       }
 
       .v-slide-group__prev {
-        height: 4rem !important;
+        height: 2.5rem !important;
         position: absolute !important;
         left: 5% !important;
         top: 41% !important;
         border-radius: 50%;
-        min-width: 4rem;
+        min-width: 2.5rem;
         background-color: $white;
         box-shadow:
           0px 3px 4px rgba(0, 0, 0, 0.14),
@@ -1649,7 +1641,7 @@ body {
     }
 
     .book-sample {
-      border-radius: 0.8rem;
+      border-radius: 0.5rem;
       background-color: $white;
       box-shadow:
         0px 4px 5px rgba(0, 0, 0, 0.14),
@@ -1657,16 +1649,16 @@ body {
         0px 2px 4px rgba(0, 0, 0, 0.2);
 
       .sample-text p {
-        font-size: 1.2rem;
+        font-size: 0.75rem;
       }
 
       .sfooter-link {
         color: $green;
-        font-size: 1rem;
+        font-size: 0.625rem;
       }
 
       .sfooter-name {
-        font-size: 1.2rem;
+        font-size: 0.75rem;
         color: $gray8;
       }
     }
@@ -1675,7 +1667,7 @@ body {
 
 .feed {
   .v-container {
-    padding: 5rem 1rem;
+    padding: 3.125rem 0.625rem;
   }
 
 }
@@ -1701,7 +1693,7 @@ body {
 //Top Up Wallet
 #charge-wallet {
   p {
-    font-size: 2rem;
+    font-size: 1.25rem;
   }
 
   #select_charge_package {
@@ -1712,8 +1704,8 @@ body {
   }
 
   #credit-notice li {
-    line-height: 2rem;
-    font-size: 1.5rem;
+    line-height: 1.25rem;
+    font-size: 0.9375rem;
     font-weight: bolder;
     list-style: none;
     position: relative;
@@ -1727,7 +1719,7 @@ body {
     font-family: "Font Awesome 5 Free";
     content: "\f00c";
     color: #00d2ae;
-    font-size: 1.5rem;
+    font-size: 0.9375rem;
   }
 
   #payment-logo-list {
@@ -1746,12 +1738,12 @@ body {
 //Test maker
 .test-maker {
   span {
-    font-size: 1.5rem !important;
+    font-size: 0.9375rem !important;
   }
 
   p,
   a {
-    font-size: 1.7rem !important;
+    font-size: 1.0625rem !important;
   }
 
   #share_link {
@@ -1760,11 +1752,11 @@ body {
 }
 
 #preview-dialog {
-  font-size: 1.8rem !important;
-  padding-top: 4rem;
+  font-size: 1.125rem !important;
+  padding-top: 2.5rem;
 
   p {
-    font-size: 1.8rem !important;
+    font-size: 1.125rem !important;
   }
 }
 
@@ -1794,21 +1786,21 @@ body {
 //Test album
 #test-album {
   p {
-    font-size: 1.7rem;
+    font-size: 1.0625rem;
   }
 
   .album-card {
     .album-img {
-      border-radius: 1rem;
+      border-radius: 0.625rem;
       width: 100%;
       aspect-ratio: 3/4;
     }
 
     .price_label {
-      font-size: 1.7rem;
+      font-size: 1.0625rem;
 
       .subscription_label {
-        font-size: 1.2rem;
+        font-size: 0.75rem;
         color: gray;
       }
     }
@@ -1816,16 +1808,16 @@ body {
     .test-count-label {
       background-color: rgba(0, 139, 139, 0.1) !important;
       color: #008b8b !important;
-      padding-left: 4rem;
-      padding-right: 4rem;
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
 
       .label-text {
-        font-size: 1.6rem;
+        font-size: 1rem;
         font-weight: 200 !important;
       }
 
       .label-val {
-        font-size: 1.6rem;
+        font-size: 1rem;
         font-weight: 800 !important;
       }
     }
@@ -1838,42 +1830,42 @@ body {
 #create-test {
 
   p {
-    font-size: 1.8rem;
+    font-size: 1.125rem;
   }
 
   #test-maker-question {
     position: relative;
 
     .ck-editor__editable_inline {
-      height: 54.5rem !important;
-      max-height: 54.5rem !important;
+      height: 34.0625rem !important;
+      max-height: 34.0625rem !important;
     }
 
     @media only screen and (max-width: 960px) {
       .ck-editor__editable_inline {
-        height: 20.5rem !important;
-        max-height: 20.5rem !important;
+        height: 12.8125rem !important;
+        max-height: 12.8125rem !important;
       }
     }
 
     .image-input {
       position: absolute;
-      bottom: 2.2rem;
-      right: 2.2rem;
-      width: 7rem;
-      height: 7rem;
+      bottom: 1.375rem;
+      right: 1.375rem;
+      width: 4.375rem;
+      height: 4.375rem;
       border-radius: 5px;
 
       i {
-        font-size: 9.2rem;
+        font-size: 5.75rem;
         color: #a11333;
       }
     }
 
     .img-clear-btn {
       position: absolute;
-      bottom: 4.8rem;
-      right: 8.4rem;
+      bottom: 3rem;
+      right: 5.25rem;
       border-radius: 5px;
     }
   }
@@ -1882,35 +1874,35 @@ body {
     position: relative;
 
     .ck-editor__editable_inline {
-      height: 54.5rem !important;
-      max-height: 54.5rem !important;
+      height: 34.0625rem !important;
+      max-height: 34.0625rem !important;
     }
 
     @media only screen and (max-width: 960px) {
       .ck-editor__editable_inline {
-        height: 20.5rem !important;
-        max-height: 20.5rem !important;
+        height: 12.8125rem !important;
+        max-height: 12.8125rem !important;
       }
     }
 
     .image-input {
       position: absolute;
-      bottom: 2.2rem;
-      right: 2.2rem;
-      width: 7rem;
-      height: 7rem;
+      bottom: 1.375rem;
+      right: 1.375rem;
+      width: 4.375rem;
+      height: 4.375rem;
       border-radius: 5px;
 
       i {
-        font-size: 9.2rem;
+        font-size: 5.75rem;
         color: #a11333;
       }
     }
 
     .img-clear-btn {
       position: absolute;
-      bottom: 4.8rem;
-      right: 8.4rem;
+      bottom: 3rem;
+      right: 5.25rem;
       border-radius: 5px;
     }
   }
@@ -1919,28 +1911,28 @@ body {
     position: relative;
 
     .ck-editor__editable_inline {
-      height: 15rem !important;
-      max-height: 15rem !important;
+      height: 9.375rem !important;
+      max-height: 9.375rem !important;
     }
 
     .image-input {
       position: absolute;
-      bottom: 1.4rem;
-      right: 2.2rem;
-      width: 7rem;
-      height: 7rem;
+      bottom: 0.875rem;
+      right: 1.375rem;
+      width: 4.375rem;
+      height: 4.375rem;
       border-radius: 5px;
 
       i {
-        font-size: 9.2rem;
+        font-size: 5.75rem;
         color: #a11333;
       }
     }
 
     .img-clear-btn {
       position: absolute;
-      bottom: 2rem;
-      right: 8.4rem;
+      bottom: 1.25rem;
+      right: 5.25rem;
       border-radius: 5px;
     }
   }
@@ -1951,30 +1943,30 @@ body {
 
   #test-image-options {
     .ck-editor__editable_inline {
-      height: 8.8rem !important;
-      max-height: 8.8rem !important;
+      height: 5.5rem !important;
+      max-height: 5.5rem !important;
     }
 
     .image-holder {
       position: relative;
-      height: 12.5rem;
-      margin-left: 2rem;
+      height: 7.8125rem;
+      margin-left: 1.25rem;
 
       .image-input {
-        width: 7rem;
-        height: 7rem;
+        width: 4.375rem;
+        height: 4.375rem;
         border-radius: 5px;
 
         i {
-          font-size: 9.2rem;
+          font-size: 5.75rem;
           color: #a11333;
         }
       }
 
       .img-clear-btn {
         position: absolute;
-        bottom: 2.6rem;
-        left: 5.4rem;
+        bottom: 1.625rem;
+        left: 3.375rem;
         border-radius: 5px;
       }
     }
@@ -1987,33 +1979,33 @@ body {
 .test-list {
   #test-question {
     font-weight: bolder;
-    margin-bottom: 1rem;
-    line-height: 2.2rem;
-    font-size: 1.8rem !important;
+    margin-bottom: 0.625rem;
+    line-height: 1.375rem;
+    font-size: 1.125rem !important;
 
     p {
-      font-size: 1.8rem !important;
+      font-size: 1.125rem !important;
       display: block !important;
     }
   }
 
   .answer {
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     position: relative;
-    font-size: 1.8rem !important;
+    font-size: 1.125rem !important;
 
     span,
     div {
       p {
         display: inline;
-        font-size: 1.8rem !important;
+        font-size: 1.125rem !important;
       }
     }
 
     .true_answer {
       position: absolute;
-      top: -1rem;
-      left: -1rem;
+      top: -0.625rem;
+      left: -0.625rem;
       color: green;
     }
 

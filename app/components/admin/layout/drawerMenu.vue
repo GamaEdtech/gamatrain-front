@@ -12,7 +12,7 @@
       class="main-list"
     >
       <div class="w-100 d-flex justify-space-between align-center mt-2 px-2">
-        <span class="text-h3 text-white font-weight-bold">Dashboard</span>
+        <span class="text-h4 text-white font-weight-bold">Dashboard</span>
         <v-icon
           class="cursor-pointer d-flex d-lg-none"
           size="24"
@@ -45,7 +45,7 @@
           </template>
 
           <v-list-item-title
-            class="text-h5 font-weight-bold text-white text-item-height"
+            class="text-body-1 font-weight-bold text-white text-item-height"
           >
             {{ item.title }}
           </v-list-item-title>
@@ -74,7 +74,7 @@
               </template>
 
               <v-list-item-title
-                class="text-h5 font-weight-bold text-white text-item-height"
+                class="text-body-1 font-weight-bold text-white text-item-height"
               >
                 {{ item.title }}
               </v-list-item-title>
@@ -85,7 +85,7 @@
                   color="error"
                   variant="flat"
                   size="small"
-                  class="text-h6 font-weight-bold mr-1"
+                  class="text-caption font-weight-bold mr-1"
                   :title="`${groupCount(item)} waiting`"
                 >
                   {{ formatBadge(groupCount(item)) }}
@@ -117,7 +117,7 @@
               </v-icon>
             </template>
             <v-list-item-title
-              class="text-h5 font-weight-bold text-white text-item-height"
+              class="text-body-1 font-weight-bold text-white text-item-height"
             >
               {{ subMenuItem.title }}
             </v-list-item-title>
@@ -129,7 +129,7 @@
                 color="error"
                 variant="flat"
                 size="small"
-                class="text-h6 font-weight-bold"
+                class="text-caption font-weight-bold"
                 :title="`${attentionCount(subMenuItem.badgeKey)} waiting`"
               >
                 {{ formatBadge(attentionCount(subMenuItem.badgeKey)) }}
@@ -156,7 +156,7 @@
           >
             <span
               v-if="user"
-              class="text-h5 text-inverseSurfaceStrong"
+              class="text-body-1 text-inverseSurfaceStrong"
             >{{
               user?.firstName ? user.firstName[0].toUpperCase() : "A"
             }}</span>
@@ -164,11 +164,11 @@
           <div class="d-flex flex-column align-start justify-start">
             <span
               v-if="user"
-              class="text-h5 font-weight-medium text-white text-truncate name-user-span"
+              class="text-body-1 font-weight-medium text-white text-truncate name-user-span"
             >
               {{ !user.firstName && !user.lastName ? `Admin` : (user.firstName ? user.firstName : "") + " "+ (user.lastName ? user.lastName : "") }}
             </span>
-            <span class="text-h6 text-onInverseSurfaceMuted">
+            <span class="text-caption font-weight-medium text-onInverseSurfaceMuted">
               Admin@Gamatrain
             </span>
           </div>

@@ -12,12 +12,12 @@
       class="bg-quizFill px-6 py-5 d-flex flex-wrap align-center justify-space-between ga-4"
     >
       <div>
-        <p class="text-h6 text-white opacity-90">
+        <p class="text-caption font-weight-medium text-white opacity-90">
           Take it online
         </p>
         <p class="gama-text-h4 text-white">
           Instant score
-          <span class="text-h6 font-weight-semibold opacity-90">· with the correct answers</span>
+          <span class="text-caption font-weight-semibold opacity-90">· with the correct answers</span>
         </p>
       </div>
       <v-btn
@@ -25,7 +25,7 @@
         size="x-large"
         rounded="lg"
         flat
-        class="start-button text-h5 font-weight-heavy text-none"
+        class="start-button text-body-1 font-weight-heavy text-none"
         prepend-icon="md:play_arrow"
         @click="startExam"
       >
@@ -40,13 +40,13 @@
     >
       <h2
         id="paper-downloads-title"
-        class="text-h4 font-weight-heavy text-brandNavy"
+        class="text-h6 font-weight-heavy text-brandNavy"
       >
         Download this {{ isPaper ? 'paper' : 'file' }}
       </h2>
       <p
         v-if="rows.length > 1"
-        class="text-h6 text-grey600 mt-1"
+        class="text-caption font-weight-medium text-grey600 mt-1"
       >
         {{ rows.length }} files, each downloaded on its own
       </p>
@@ -69,14 +69,14 @@
       </div>
       <p
         v-if="!rows.length"
-        class="text-h5 text-grey600"
+        class="text-body-1 text-grey600"
       >
         No files are available for this paper yet.
       </p>
 
       <p
         v-if="answersInFile"
-        class="d-flex align-center ga-1 text-h6 font-weight-bold text-success500 mt-3"
+        class="d-flex align-center ga-1 text-caption font-weight-bold text-success500 mt-3"
       >
         <v-icon
           size="16"
@@ -87,7 +87,7 @@
         Answers are at the end of the question paper file
       </p>
 
-      <div class="d-flex justify-end flex-wrap ga-2 text-h6 text-grey600 py-2 mt-1">
+      <div class="d-flex justify-end flex-wrap ga-2 text-caption font-weight-medium text-grey600 py-2 mt-1">
         <nuxt-link
           to="/user/subscription"
           class="font-weight-bold text-generalSearchQuiz text-no-wrap"
@@ -104,7 +104,7 @@
         variant="text"
         size="small"
         color="grey600"
-        class="text-none text-h6"
+        class="text-none text-caption font-weight-medium"
         prepend-icon="md:share"
         @click="emit('share')"
       >
@@ -114,7 +114,7 @@
         variant="text"
         size="small"
         color="grey600"
-        class="text-none text-h6"
+        class="text-none text-caption font-weight-medium"
         prepend-icon="md:flag_outlined"
         @click="emit('report')"
       >

@@ -5,7 +5,7 @@
   >
     <div class="w-100 d-flex flex-column align-start">
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-h6 text-grey700 font-weight-bold ml-2">
+        <div class="text-caption text-grey700 font-weight-bold ml-2">
           Title
         </div>
         <v-text-field
@@ -26,7 +26,7 @@
       </div>
     </div>
     <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-      <div class="text-h6 text-grey700 font-weight-bold ml-2">
+      <div class="text-caption text-grey700 font-weight-bold ml-2">
         Description
       </div>
       <v-textarea
@@ -54,7 +54,7 @@
         rounded="pill"
         height="38"
         width="80"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :disabled="loadingEditItem"
         @click="closeModal"
@@ -68,7 +68,7 @@
         rounded="pill"
         height="38"
         width="220"
-        class="text-h5 font-weight-medium"
+        class="text-body-1 font-weight-medium"
         flat
         :loading="loadingEditItem"
         :disabled="!isFormValid"

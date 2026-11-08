@@ -59,7 +59,7 @@
       </v-row>
 
       <template v-if="!dashboardInfo.user.roles?.includes('Student')">
-        <p class="text-h5 text-sm-h4 font-weight-bold text-grey900 mb-1 w-100">
+        <p class="text-body-1 text-sm-h6 font-weight-bold text-grey900 mb-1 w-100">
           {{ dashboardInfo.user.roles?.includes('Teacher') ? 'Create & Share' : 'Get Involved' }}
         </p>
         <user-dashboard-create-content-button :data="dashboardInfo.stats" />

@@ -15,17 +15,17 @@
           <span :class="`${item.icon} icon-size`" />
         </v-avatar>
         <div>
-          <p class="text-h5 font-weight-bold text-grey900 mb-0">
+          <p class="text-body-1 font-weight-bold text-grey900 mb-0">
             {{ item.title }}
           </p>
-          <p class="text-h6 font-weight-medium text-grey500 mb-0">
+          <p class="text-caption font-weight-medium text-grey500 mb-0">
             {{ item.count }} {{ item.countLabel }}
           </p>
         </div>
       </div>
 
       <v-btn
-        class="text-subtitle-1 text-white font-weight-bold"
+        class="text-caption text-white font-weight-bold"
         :color="item.color"
         variant="flat"
         rounded="pill"
@@ -68,7 +68,7 @@ const button_list = reactive([
 
 <style scoped>
 .dashboard-card {
-  border-radius: 1rem;
+  border-radius: 0.625rem;
   border: 1px solid rgb(var(--v-theme-grey200));
   width : 49%
 }

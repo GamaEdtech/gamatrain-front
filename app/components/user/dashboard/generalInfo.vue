@@ -29,7 +29,7 @@
           </v-progress-circular>
         </NuxtLink>
         <div class="d-flex flex-column ga-1">
-          <p class="text-h4 text-sm-h3 font-weight-bold text-white mb-1">
+          <p class="text-h6 text-sm-h4 font-weight-bold text-white mb-1">
             <template v-if="userData?.firstName || userData?.lastName">
               {{ userData?.firstName }} {{ userData?.lastName }}
             </template>
@@ -38,7 +38,7 @@
             </template>
           </p>
           <span
-            class="text-h5 text-sm-h4 font-weight-bold text-onInverseSurfaceSubtle d-flex align-center"
+            class="text-body-1 text-sm-h6 font-weight-bold text-onInverseSurfaceSubtle d-flex align-center"
           >
             <template v-if="userData.handle">
               <nuxt-link :to="`profile/${encodeURIComponent(userData.handle)}`">@{{ userData.handle }}</nuxt-link>
@@ -65,7 +65,7 @@
       </div>
       <div class="d-flex flex-column align-end ga-2">
         <v-chip
-          class="text-h6 font-weight-bold"
+          class="text-caption font-weight-bold"
           color="primary"
           variant="flat"
           flat
@@ -73,7 +73,7 @@
         >
           Level {{ level.level }} · {{ level.title }}
         </v-chip>
-        <p class="text-h5 text-onInverseSurfaceSubtle">
+        <p class="text-body-1 text-onInverseSurfaceSubtle">
           {{ level.xpIntoLevel }} / {{ level.xpPerLevel }} XP to Level {{ level.level + 1 }}
         </p>
       </div>
@@ -83,14 +83,14 @@
       color="onInverseSurfaceSubtle"
     />
     <div class="d-flex flex-column">
-      <p class="text-h5 text-uppercase font-weight-bold text-onInverseSurfaceSubtle mb-4">
+      <p class="text-body-1 text-uppercase font-weight-bold text-onInverseSurfaceSubtle mb-4">
         Next steps
       </p>
       <div class="d-flex flex-wrap ga-2">
         <v-chip
           v-for="step in nextSteps"
           :key="step.label"
-          class="bg-onInverseSurfaceSubtle text-inverseSurface text-h6 font-weight-bold"
+          class="bg-onInverseSurfaceSubtle text-inverseSurface text-caption font-weight-bold"
           variant="flat"
           :to="step.to"
           prepend-icon="md:arrow_circle_right_outlined"
@@ -99,7 +99,7 @@
         </v-chip>
         <v-chip
           v-if="!nextSteps.length"
-          class="bg-success text-h6 font-weight-bold"
+          class="bg-success text-caption font-weight-bold"
           variant="flat"
           prepend-icon="md:check_circle_outlined"
         >

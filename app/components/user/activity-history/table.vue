@@ -2,7 +2,7 @@
   <div class="w-100 h-100 d-flex flex-column align-start justify-start">
     <div class="w-100 d-flex flex-column justify-start align-start">
       <div class="w-100 d-flex justify-space-between align-center">
-        <h1 class="text-h4 font-weight-bold text-grey700">
+        <h1 class="text-h6 font-weight-bold text-grey700">
           Activity History
         </h1>
 
@@ -25,7 +25,7 @@
         <span
           v-for="status in statusOption"
           :key="status"
-          :class="`${status == statusSelect ?`text-primary`:`text-grey500`} text-h5 font-weight-regular cursor-pointer`"
+          :class="`${status == statusSelect ?`text-primary`:`text-grey500`} text-body-1 font-weight-regular cursor-pointer`"
           @click="changeFilterStatus(status)"
         >
           {{ status }}
@@ -61,7 +61,7 @@
             <th
               v-for="(column, index) in columns"
               :key="index"
-              :class="`bg-grey100 text-grey700 text-h5 font-weight-medium pa-2 text-center
+              :class="`bg-grey100 text-grey700 text-body-1 font-weight-medium pa-2 text-center
                ${index == 0 ? `text-start` : `th-min-width`}`"
             >
               {{ column.title }}
@@ -71,7 +71,7 @@
 
         <template #[`item.description`]="{ item }">
           <div
-            class="text-grey700 text-h6 d-flex justify-start align-center font-weight-medium"
+            class="text-grey700 text-caption d-flex justify-start align-center font-weight-medium"
           >
             {{ item.description }}
           </div>
@@ -79,14 +79,14 @@
 
         <template #[`item.points`]="{ item }">
           <div
-            class="text-grey700 text-h6 d-flex justify-center align-center font-weight-bold text-center ga-1"
+            class="text-grey700 text-caption d-flex justify-center align-center font-weight-bold text-center ga-1"
           >
-            {{ $numberFormat(item.points) }}<span class="text-subtitle-1 text-grey500 font-weight-regular">{{ item.points > 1 ? 'GEMS' : 'GEM' }}</span>
+            {{ $numberFormat(item.points) }}<span class="text-caption text-grey500 font-weight-regular">{{ item.points > 1 ? 'GEMS' : 'GEM' }}</span>
           </div>
         </template>
         <template #[`item.isDebit`]="{ item }">
           <div
-            class="text-h6 d-flex justify-center align-end font-weight-regular ga-1"
+            class="text-caption d-flex justify-center align-end font-weight-regular ga-1"
           >
             <v-icon
               size="20"
@@ -102,7 +102,7 @@
 
         <template #[`item.creationDate`]="{ item }">
           <div
-            class="text-grey500 text-h6 d-flex justify-center align-center font-weight-regular ga-1"
+            class="text-grey500 text-caption d-flex justify-center align-center font-weight-regular ga-1"
           >
             <v-icon
               size="18"
@@ -173,18 +173,18 @@
           :class="`${index%2 == 0 ? `bg-grey25 border-odd`:``} card-transaction-mobile w-100 d-flex flex-column align-start justift-start ga-3 pa-4`"
         >
           <span
-            class="text-grey700 text-h6 font-weight-medium"
+            class="text-grey700 text-caption font-weight-medium"
           >
             {{ item.description }}
           </span>
           <span
-            class="text-grey700 text-h6 d-flex align-center font-weight-bold text-center ga-1"
+            class="text-grey700 text-caption d-flex align-center font-weight-bold text-center ga-1"
           >
-            {{ $numberFormat(item.points) }}<span class="text-subtitle-1 text-grey500 font-weight-regular">Points</span>
+            {{ $numberFormat(item.points) }}<span class="text-caption text-grey500 font-weight-regular">Points</span>
           </span>
           <div class="w-100 d-flex align-center justify-space-between">
             <div
-              class="text-h6 d-flex justify-center align-end font-weight-regular ga-1"
+              class="text-caption d-flex justify-center align-end font-weight-regular ga-1"
             >
               <v-icon
                 size="20"
@@ -198,7 +198,7 @@
             </div>
 
             <span
-              class="text-grey500 text-h6 d-flex justify-center align-center font-weight-regular ga-1"
+              class="text-grey500 text-caption d-flex justify-center align-center font-weight-regular ga-1"
             >
               <v-icon
                 size="18"

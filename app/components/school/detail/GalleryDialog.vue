@@ -8,7 +8,7 @@
     <v-card class="rounded-lg">
       <v-card-text class="py-6 py-md-8 px-6 px-md-8">
         <div class="d-flex align-center justify-space-between">
-          <div class="text-h3 font-weight-bold priamry-gray-700">
+          <div class="text-h4 font-weight-bold priamry-gray-700">
             School images
           </div>
           <v-btn
@@ -76,20 +76,20 @@
                   v-show="!isDefaultImage && !loadingSetDefaultImage"
                   :model-value="isDefaultImage"
                   color="primary"
-                  class="text-h4"
+                  class="text-h6 font-weight-regular"
                   hide-details
                   false-icon="md:check_box_outline_blank"
                   true-icon="md:check_box"
                   @update:model-value="(val) => changeStatusDefaultImage(val)"
                 >
                   <template #label>
-                    <span class="text-h5 font-weight-bold text-no-wrap ml-1">Set as main Image</span>
+                    <span class="text-body-1 font-weight-bold text-no-wrap ml-1">Set as main Image</span>
                   </template>
                 </v-checkbox>
 
                 <v-chip
                   v-show="isDefaultImage"
-                  class="text-h6 font-weight-bold"
+                  class="text-caption font-weight-bold"
                   color="success"
                 >
                   Default image
@@ -106,7 +106,7 @@
                   }}</span></span>
                 <v-chip
                   v-if="mainImageInformation.isPendingUpload"
-                  class="text-h6 font-weight-bold"
+                  class="text-caption font-weight-bold"
                   color="orange"
                 >
                   Pending upload

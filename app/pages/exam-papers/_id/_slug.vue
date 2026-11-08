@@ -890,7 +890,7 @@ export default {
   position: fixed !important;
   bottom: 0 !important;
   z-index: 2 !important;
-  border-top: 0.1rem solid #e1e2e3;
+  border-top: 0.0625rem solid #e1e2e3;
 }
 
 .order-btn-holder .v-btn {
@@ -898,10 +898,10 @@ export default {
 }
 
 .order-btn-holder span {
-  font-size: 1.3rem;
+  font-size: 0.8125rem;
 }
 
 p {
-  font-size: 1.3rem !important;
+  font-size: 0.8125rem !important;
 }
 </style>

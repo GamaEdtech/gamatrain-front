@@ -236,7 +236,7 @@ watch(
 
 <style scoped>
 .comment-card-header {
-  height: 8rem;
+  height: 5rem;
 }
 .profile-avatar {
   width: 100%;

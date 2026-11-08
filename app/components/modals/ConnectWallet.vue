@@ -12,7 +12,7 @@
     >
       <v-row class="d-flex align-center">
         <v-col cols="10">
-          <span class="text-h4 text-grey700">Connect</span>
+          <span class="text-h6 font-weight-regular text-grey700">Connect</span>
         </v-col>
         <v-col
           cols="2"
@@ -28,8 +28,8 @@
         </v-col>
       </v-row>
 
-      <span class="text-h4 font-weight-bold w-100 text-center mt-4 text-grey700">Connect Your Wallet</span>
-      <span class="text-h5 font-weight-normal w-100 text-center mt-4 text-grey500">Choose a wallet to connect and participate</span>
+      <span class="text-h6 font-weight-bold w-100 text-center mt-4 text-grey700">Connect Your Wallet</span>
+      <span class="text-body-1 font-weight-normal w-100 text-center mt-4 text-grey500">Choose a wallet to connect and participate</span>
       <div class="wallet-button-container d-flex w-100 align-center justify-center mt-6">
         <ClientOnly>
           <WalletMultiButton v-if="walletInitialized" />
@@ -48,7 +48,7 @@
           flat
           rounded="lg"
           max-width="150"
-          class="w-50 font-weight-bold text-h5 mt-4 mx-auto"
+          class="w-50 font-weight-bold text-body-1 mt-4 mx-auto"
           @click="closeModal"
         >
           Cancel

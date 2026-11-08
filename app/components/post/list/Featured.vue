@@ -23,7 +23,7 @@
           >
             <template #default>
               <div class="d-flex h-100 align-end">
-                <v-card-title class="w-100 background-title text-white text-h4 font-weight-bold py-4">
+                <v-card-title class="w-100 background-title text-white text-h6 font-weight-bold py-4">
                   {{ activePost.title }}
                 </v-card-title>
               </div>
@@ -33,7 +33,7 @@
       </v-col>
 
       <v-col cols="3">
-        <div class="text-h5 text-grey500 font-weight-bold mb-3">
+        <div class="text-body-1 text-grey500 font-weight-bold mb-3">
           Featured posts
         </div>
         <div class="d-flex flex-column ga-2">
@@ -75,7 +75,7 @@
                 cover
                 class="h-100 w-100 rounded-lg"
               />
-              <span class="text-subtitle-1 font-weight-semibold text-grey800">
+              <span class="text-caption font-weight-semibold text-grey800">
                 {{ truncateText(post.title, 64) }}
               </span>
             </div>
@@ -117,7 +117,7 @@
             >
               <template #default>
                 <div class="d-flex h-100 align-end">
-                  <v-card-title class="w-100 background-title text-white text-h6 font-weight-bold text-wrap py-2">
+                  <v-card-title class="w-100 background-title text-white text-caption font-weight-bold text-wrap py-2">
                     {{ truncateText(post.title, 74) }}
                   </v-card-title>
                 </div>
