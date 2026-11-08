@@ -3,9 +3,9 @@
     v-if="isLoading || schools.length != 0"
     class="w-100 d-flex flex-column"
   >
-    <h3 class="section-title">
+    <h2 class="section-title">
       Nearby schools
-    </h3>
+    </h2>
 
     <v-slide-group
       v-if="isLoading"
@@ -54,6 +54,7 @@
       >
         <school-card-mobile
           :school="school"
+          heading-tag="h3"
           class="mx-2"
         />
       </v-slide-group-item>
