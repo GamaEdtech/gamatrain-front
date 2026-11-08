@@ -36,7 +36,7 @@
           :key="item.key"
           class="w-100 d-flex justify-space-between align-center overflow-x-hidden"
         >
-          <span class="d-flex align-center ga-3 text-body-1 font-weight-bold primary-gray-700">
+          <span class="d-flex align-center ga-3 text-body-1 font-weight-bold text-grey700">
             <div class="dot-div" />
             {{ item.title }}
           </span>

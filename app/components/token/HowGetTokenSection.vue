@@ -2,12 +2,12 @@
   <div>
     <section class="can-get-section mt-10">
       <v-container>
-        <div class="d-flex justify-content-center mb-9">
+        <div class="d-flex justify-center mb-9">
           <h2 class="can-get-title">
             What Can You Do With $GET?
           </h2>
         </div>
-        <v-row class="justify-content-center align-center can-get-row">
+        <v-row class="justify-center align-center can-get-row">
           <v-col
             cols="12"
             sm="8"

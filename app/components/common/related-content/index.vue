@@ -10,7 +10,7 @@
       >
         <span :class="`icon-title ${infoMap[`paper`].icon}`" />
       </div>
-      <h2 class="text-h6 font-weight-semibold primary-gray-700">
+      <h2 class="text-h6 font-weight-semibold text-grey700">
         Related Past Papers
       </h2>
     </div>
@@ -80,7 +80,7 @@
       >
         <span :class="`icon-title ${infoMap[`multimedia`].icon}`" />
       </div>
-      <h2 class="text-h6 font-weight-semibold primary-gray-700">
+      <h2 class="text-h6 font-weight-semibold text-grey700">
         Related Multimedias
       </h2>
     </div>
@@ -150,7 +150,7 @@
       >
         <span :class="`icon-title ${infoMap[`exam`].icon}`" />
       </div>
-      <h2 class="text-h6 font-weight-semibold primary-gray-700">
+      <h2 class="text-h6 font-weight-semibold text-grey700">
         Related Exams
       </h2>
     </div>
@@ -220,7 +220,7 @@
       >
         <span :class="`icon-title ${infoMap[`tutorial`].icon}`" />
       </div>
-      <h2 class="text-h6 font-weight-semibold primary-gray-700">
+      <h2 class="text-h6 font-weight-semibold text-grey700">
         Related Tutorials
       </h2>
     </div>

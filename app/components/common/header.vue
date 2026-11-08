@@ -40,7 +40,7 @@
             <nuxt-link
               v-if="link.link"
               :to="link.link"
-              class="text-transform-none text-body-1 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
+              class="text-none text-body-1 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
               active-class="nav-link-active"
             >
               <v-icon
@@ -61,7 +61,7 @@
 
             <span
               v-else
-              class="text-transform-none text-body-1 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
+              class="text-none text-body-1 px-3 d-flex align-end ga-2 position-relative py-2 rounded-sm cursor-pointer"
               @click="link.action && link.action()"
             >
               <v-icon

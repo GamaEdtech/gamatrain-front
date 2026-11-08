@@ -129,7 +129,7 @@
             >
               <v-btn
                 :loading="mapSubmitLoader"
-                class="text-on-primary text-transform-none gtext-t4 font-weight-medium w-100"
+                class="text-on-primary text-none gtext-t4 font-weight-medium w-100"
                 rounded
                 size="x-large"
                 color="primary"
@@ -148,7 +148,7 @@
               <div class="d-flex gap-4">
                 <v-btn
                   :loading="mapSubmitLoader"
-                  class="text-on-primary text-transform-none gtext-t4 font-weight-medium flex-grow-1"
+                  class="text-on-primary text-none gtext-t4 font-weight-medium flex-grow-1"
                   rounded
                   size="x-large"
                   color="primary"

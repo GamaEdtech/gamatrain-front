@@ -47,14 +47,14 @@
               <div class="text-center">
                 <v-icon
                   size="48"
-                  class="primary-gray-300 mb-10"
+                  class="text-grey300 mb-10"
                 >
                   md:panorama
                 </v-icon>
-                <p class="gtext-t4 primary-blue-500">
+                <p class="gtext-t4 text-blue500">
                   No image
                 </p>
-                <div class="mt-2 gtext-t6 primary-gray-400">
+                <div class="mt-2 gtext-t6 text-grey400">
                   Accepted formats: JPG, PNG, WebP
                 </div>
               </div>
@@ -100,7 +100,7 @@
               >
                 <span>
                   {{ mainImageInformation.index
-                  }}<span class="primary-gray-400">/{{
+                  }}<span class="text-grey400">/{{
                     images.length
                       + (croppedUploads ? croppedUploads.length : 0)
                   }}</span></span>
@@ -229,7 +229,7 @@
                   md:add
                 </v-icon>
               </v-btn>
-              <div class="mt-2 text-caption primary-gray-400 text-center">
+              <div class="mt-2 text-caption text-grey400 text-center">
                 JPG, PNG, WebP
               </div>
               <v-file-input
@@ -248,7 +248,7 @@
       <v-card-actions class="justify-center pb-6 mt-10">
         <div class="d-flex flex-column align-center w-100">
           <v-btn
-            class="primary black--text text-transform-none gtext-t4 font-weight-medium"
+            class="bg-primary text-none gtext-t4 font-weight-medium"
             rounded
             variant="flat"
             width="100%"

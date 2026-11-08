@@ -5,9 +5,9 @@
     >
       <div
         v-if="views"
-        class="d-flex flex-column align-center justify-center ga-1 primary-gray-700 cursor-pointer text-no-wrap"
+        class="d-flex flex-column align-center justify-center ga-1 text-grey700 cursor-pointer text-no-wrap"
       >
-        <v-icon color="primary-gray-700">
+        <v-icon color="text-grey700">
           md:visibility
         </v-icon>
         <v-tooltip
@@ -20,9 +20,9 @@
       </div>
       <div
         v-if="score"
-        class="d-flex flex-column align-center justify-center ga-1 primary-gray-700 cursor-pointer text-no-wrap"
+        class="d-flex flex-column align-center justify-center ga-1 text-grey700 cursor-pointer text-no-wrap"
       >
-        <v-icon color="primary-gray-700">
+        <v-icon color="text-grey700">
           md:star
         </v-icon>
         <v-tooltip
@@ -35,9 +35,9 @@
       </div>
       <div
         v-if="pageCount"
-        class="d-flex flex-column align-center justify-center ga-1 primary-gray-700 cursor-pointer text-no-wrap"
+        class="d-flex flex-column align-center justify-center ga-1 text-grey700 cursor-pointer text-no-wrap"
       >
-        <v-icon color="primary-gray-700">
+        <v-icon color="text-grey700">
           {{ isSlideType ? 'md:slideshow' : 'md:book_ribbon' }}
         </v-icon>
         <v-tooltip
@@ -55,10 +55,10 @@
       />
       <div
         v-if="hasShare"
-        class="d-flex flex-column align-center justify-center ga-1 primary-gray-700 cursor-pointer text-no-wrap"
+        class="d-flex flex-column align-center justify-center ga-1 text-grey700 cursor-pointer text-no-wrap"
         @click="shareContent"
       >
-        <v-icon color="primary-gray-700">
+        <v-icon color="text-grey700">
           md:share
         </v-icon>
         <v-tooltip

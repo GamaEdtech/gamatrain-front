@@ -2,7 +2,7 @@
   <div>
     <section class="about-get-section">
       <v-container>
-        <div class="d-flex justify-content-center mb-4">
+        <div class="d-flex justify-center mb-4">
           <h2 class="about-get-title">
             What is <b>$GET</b>
           </h2>
@@ -15,7 +15,7 @@
             alt="$GET token about illustration"
           >
         </div>
-        <v-row class="justify-content-center about-get-row">
+        <v-row class="justify-center about-get-row">
           <v-col
             cols="12"
             sm="8"

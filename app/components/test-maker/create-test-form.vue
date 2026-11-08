@@ -662,7 +662,7 @@
                     :loading="create_loading"
                     size="large"
                     variant="flat"
-                    class="primary-gray-400"
+                    class="text-grey400"
                     density="compact"
                     block
                     :color="buttonDisabled == false ? '#009688' : 'gray'"
@@ -684,7 +684,7 @@
                     size="large"
                     variant="flat"
                     color="teal"
-                    class="primary-gray-400"
+                    class="text-grey400"
                     density="compact"
                     block
                     style="

@@ -25,7 +25,7 @@
                 >
               </v-avatar>
               <div class="ml-2">
-                <div class="gtext-t2 primary-gray-900">
+                <div class="gtext-t2 text-grey900">
                   {{ comment.creationUser }}
                 </div>
               </div>
@@ -43,7 +43,7 @@
             </div>
           </div>
           <v-divider class="mb-5" />
-          <div class="gtext-t2 primary-gray-700 mb-6">
+          <div class="gtext-t2 text-grey700 mb-6">
             "{{ comment.comment }}"
           </div>
           <div class="pb-8">
@@ -63,7 +63,7 @@
                   mdi-thumb-down
                 </v-icon>
               </v-btn>
-              <span class="gtext-t5 primary-gray-700 mr-10">{{ comment.dislikeCount ?? 0 }}</span>
+              <span class="gtext-t5 text-grey700 mr-10">{{ comment.dislikeCount ?? 0 }}</span>
               <v-btn
                 class="bg-primary-gray-700 text-white mr-2"
                 variant="flat"
@@ -79,9 +79,9 @@
                   mdi-thumb-up
                 </v-icon>
               </v-btn>
-              <span class="gtext-t5 primary-gray-700 mr-10">{{ comment.likeCount ?? 0 }}</span>
+              <span class="gtext-t5 text-grey700 mr-10">{{ comment.likeCount ?? 0 }}</span>
               <v-btn
-                class="bg-primary-blue-500 text-white"
+                class="bg-blue500"
                 variant="flat"
                 size="x-small"
                 icon
@@ -104,7 +104,7 @@
         <v-btn
           v-if="showLoadMoreButton"
           rounded
-          class="text-transform-none gtext-t4 font-weight-medium"
+          class="text-none gtext-t4 font-weight-medium"
           color="surface"
           size="x-large"
           @click="loadMoreComments"

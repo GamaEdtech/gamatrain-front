@@ -40,7 +40,7 @@
           class="rounded-circle"
           src="/images/member/avatar.svg"
         >
-        <span class="text-body-1 primary-gray-700">Hello! Big thanks to Gama for this amazing website. I'm a student at
+        <span class="text-body-1 text-grey700">Hello! Big thanks to Gama for this amazing website. I'm a student at
           this school and super happy with it.</span>
       </div> -->
       <span class="text-caption font-weight-medium position-absolute text-greenLight700 text-think">Your thoughts?</span>

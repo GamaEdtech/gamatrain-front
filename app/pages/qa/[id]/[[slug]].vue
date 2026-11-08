@@ -42,7 +42,7 @@
                     rounded
                     outlined
                     small
-                    class="primary gama-text-body2 mb-2 mx-auto text-transform-none mb-6"
+                    class="bg-primary gama-text-body2 mb-2 mx-auto text-none mb-6"
                     @click="openQuestionForm()"
                   >
                     Ask Question
@@ -1035,7 +1035,7 @@
                     outlined
                     large
                     :small="display.xs"
-                    class="primary gama-text-body2 mb-2 mx-auto text-transform-none mx-auto"
+                    class="bg-primary gama-text-body2 mb-2 mx-auto text-none mx-auto"
                     @click="openQuestionForm()"
                   >
                     Ask Question
@@ -1079,7 +1079,7 @@
                       </li>
 
                       <li
-                        class="question-item pointer gama-text-body2 primary--text mb-0"
+                        class="question-item pointer gama-text-body2 text-primary mb-0"
                         @click="openQuestionForm()"
                       >
                         Ask question

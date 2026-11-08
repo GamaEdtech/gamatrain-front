@@ -1,26 +1,7 @@
-@use "variables" as *;
-
-//‌Base style
-.v-application .primary {
-  background-color: #ffb300 !important;
-  border-color: #ffb300 !important;
-}
-
-.v-application .primary--text {
-  color: #ffb300 !important;
-}
-//Colors class
-
+// Colour helpers. Prefer Vuetify's text-*/bg-* theme classes; these remain where those would change the
+// result (no !important on the text colours, or a fill that must stay dark in both themes).
 .primary-gray-100 {
   color: rgb(var(--v-theme-grey100));
-}
-
-.primary-gray-300 {
-  color: rgb(var(--v-theme-grey300)) !important;
-}
-
-.primary-gray-400 {
-  color: rgb(var(--v-theme-grey400)) !important;
 }
 
 .primary-gray-500 {
@@ -31,25 +12,6 @@
   color: rgb(var(--v-theme-grey600));
 }
 
-.primary-gray-700 {
-  color: rgb(var(--v-theme-grey700)) !important;
-}
-
-.primary-gray-900 {
-  color: rgb(var(--v-theme-grey900)) !important;
-}
-
-.primary-blue-500 {
-  color: var(--Primary-Blue-500, #2e90fa);
-}
-
-//End colors class
-
-//Background color
-.bg-white {
-  background: #fff !important;
-}
-
 .bg-primary-gray-100 {
   background: rgb(var(--v-theme-grey100)) !important;
 }
@@ -58,32 +20,16 @@
   background: rgb(var(--v-theme-grey200)) !important;
 }
 
+// Dark fills under white text, in both themes.
 .bg-primary-gray-700 {
-  background: var(--Primary-Grey-700, #344054) !important;
+  background: rgb(var(--v-theme-inverseSurface)) !important;
 }
 
 .bg-primary-gray-800 {
-  background: var(--primary-grey-800, #1d2939) !important;
+  background: rgb(var(--v-theme-inverseSurfaceStrong)) !important;
 }
 
-.bg-primary-success-50 {
-  background: var(--Primary-Success-50, #ecfdf3) !important;
-}
-
-.bg-primary-success-500 {
-  background: var(--Primary-Success-500, #12b76a) !important;
-}
-
-.bg-primary-blue-500 {
-  background: var(--Primary-Blue-500, #2e90fa) !important;
-}
-
-//End background color
-
-//Width class
-.w-50 {
-  width: 50% !important;
-}
+// Widths Vuetify's w-* utilities don't have.
 .w-30 {
   width: 30% !important;
 }
@@ -96,72 +42,11 @@
   width: 80% !important;
 }
 
-//Alignment
-.justify-content-center {
-  justify-content: center;
-}
-
-//
-
-//Customize vuetify button
 .v-btn__content {
   font-family: Inter;
 }
 
-.text-transform-none {
-  text-transform: none !important;
-}
-
-.v-btn:not(.v-btn--round).v-size--large.gama-btn {
-  .v-btn__content {
-    color: rgb(var(--v-theme-on-primary));
-    font-family: Inter;
-    font-size: 1.25rem !important;
-    font-style: normal;
-    line-height: normal;
-    text-transform: capitalize;
-  }
-}
-
-.v-btn:not(.v-btn--round).v-size--default.gama-btn {
-  .v-btn__content {
-    color: rgb(var(--v-theme-on-primary));
-    font-family: Inter;
-    font-size: 1.125rem;
-    font-style: normal;
-    font-weight: 800;
-    line-height: normal;
-    text-transform: capitalize;
-  }
-}
-
-.v-btn:not(.v-btn--round).v-size--small.gama-btn {
-  .v-btn__content {
-    color: rgb(var(--v-theme-on-primary));
-    font-family: Inter;
-    font-size: 1rem;
-    font-style: normal;
-    font-weight: 800;
-    line-height: normal;
-    text-transform: capitalize;
-  }
-}
-
-.v-btn:not(.v-btn--round).v-size--x-small.gama-btn {
-  .v-btn__content {
-    color: rgb(var(--v-theme-on-primary));
-    font-family: Inter;
-    font-size: 0.75rem;
-    font-style: normal;
-    font-weight: 800;
-    line-height: normal;
-    text-transform: capitalize;
-  }
-}
-
-//End customize vuetify button
-
-//xs size
+// Project type scale (Figma)
 .gtext-t1 {
   font-family: Inter, sans-serif;
   font-size: 1.375rem !important;
@@ -211,18 +96,6 @@
   font-size: 1.25rem !important;
   line-height: 2rem !important;
   font-weight: 400;
-}
-
-.font-weight-medium {
-  font-weight: 500 !important;
-}
-
-.font-weight-semibold {
-  font-weight: 600 !important;
-}
-
-.font-weight-bold {
-  font-weight: 700 !important;
 }
 
 .font-weight-heavy {
@@ -381,20 +254,11 @@
 
 body {
   overflow: initial !important;
-  //direction: rtl;
   margin: 0;
   padding: 0;
   font-size: 0.875rem;
   box-sizing: border-box;
   transition: 0.5s ease-in-out;
-
-  // p {
-  //   font-size: 1.125rem;
-  // }
-
-  .font-size-10 {
-    font-size: 0.625rem !important;
-  }
 
   .font-size-12 {
     font-size: 0.75rem !important;
@@ -424,15 +288,11 @@ body {
     cursor: pointer !important;
   }
 
-  .v-item-active::before {
-    color: transparent;
-  }
-
   .v-application {
     font-family: "Inter", sans-serif !important;
 
     .v-carousel__controls__item {
-      color: $gray4 !important;
+      color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity)) !important;
     }
 
     .v-carousel__controls__item .v-icon {
@@ -459,13 +319,6 @@ body {
       display: none !important;
     }
 
-    //  .v-carousel__controls .v-item-group .v-btn::before {
-    //   background-color: unset !important;
-    //  }
-    //  .v-carousel__controls__item:focus {
-    //   color: white !important;
-    //  }
-
     .w-50 {
       width: 50%;
     }
@@ -483,7 +336,6 @@ body {
       text-decoration: none;
 
       &:hover {
-        // color: $green;
       }
     }
 
@@ -500,54 +352,31 @@ body {
       margin: 0;
     }
 
-    .v-list--dense .v-list-item .v-list-item__title {
-      font-size: $fontsize2;
-      line-height: 1.25rem;
-    }
-
-    .v-btn.v-size--default {
-      font-size: $fontsize2;
-      letter-spacing: unset;
-    }
-
     .pointer {
       cursor: pointer;
-    }
-
-    &.v-application--is-rtl .v-window__prev {
-      right: 5.5% !important;
-    }
-
-    &.v-application--is-rtl .v-window__next {
-      left: 85.5%;
     }
 
     .v-carousel__controls__item {
       margin: 0 0 !important;
     }
 
-    .v-btn.v-btn--has-bg.search-btn {
-      background-color: $search !important;
-    }
-
     .box {
       position: relative;
-      background: #fff;
+      background: rgb(var(--v-theme-white));
       box-shadow: 0 1px 2px 0 rgba(34, 36, 38, 0.15);
       margin: 0.625rem 0;
       padding: 0.625rem 0.625rem;
       border-radius: 0.1875rem;
-      border: 1px solid rgba(34, 36, 38, 0.15);
+      border: 1px solid rgba(var(--v-border-color), 0.15);
     }
 
     // Details
     .header-path {
-      color: #5870c5;
+      color: rgb(var(--v-theme-info));
     }
 
     //header
     .main-header {
-      // border-bottom: 1px solid $gray1;
 
       //navbar
 
@@ -558,307 +387,9 @@ body {
 
     // Banner
 
-    .banner .v-image {
-      height: 17.5rem !important;
-    }
-
     //search
 
     // grade-card
-
-    .grade-card-body {
-      padding: 0;
-    }
-
-    .grade-card {
-      padding: 20px 20px 20px 20px !important;
-      box-shadow:
-        0 1px 3px 0 #d4d4d5,
-        0 0 0 1px #d4d4d5 !important;
-      position: relative;
-      margin-left: 0.9375rem;
-      margin-bottom: 1.875rem;
-      max-width: 100%;
-      min-height: 20rem;
-      border-radius: 0.25rem !important;
-
-      .grade-divider {
-        border-color: rgba(0, 0, 0, 0.05) !important;
-      }
-
-      .grade-title {
-        margin-left: 2.8125rem;
-        margin-bottom: 20px !important;
-        font-size: 1.125rem;
-        font-weight: 800;
-      }
-
-      .label-tag {
-        font-size: 0.75rem;
-        color: #fff;
-        position: absolute;
-        width: 3.4375rem;
-        height: 2.25rem;
-        left: 0;
-        top: 0.875rem;
-        border-radius: 0 0.625rem 0.625rem 0;
-        //margin: -0.125rem 1.0625rem 0 0.75rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        // &:before {
-        //   position: absolute;
-        //   -webkit-transform: translateY(-50%) translateX(50%) rotate(-45deg);
-        //   transform: translateY(-50%) translateX(50%) rotate(-45deg);
-        //   top: 50%;
-        //   right: 99%;
-        //   content: "";
-        //   background-color: inherit;
-        //   background-image: none;
-        //   width: 1.0625rem;
-        //   height: 1.0625rem;
-        //   -webkit-transition: none;
-        //   transition: none;
-        // }
-
-        // &:after {
-        //   position: absolute;
-        //   content: "";
-        //   top: 50%;
-        //   left: 0;
-        //   transform: translateY(-50%);
-        //   width: 0.375rem;
-        //   height: 0.375rem;
-        //   background-color: #fff !important;
-        //   box-shadow: 0 -0.0625rem 0.0625rem 0 rgba(0, 0, 0, 0.3);
-        //   border-radius: 312.5rem;
-        // }
-      }
-
-      .content {
-        margin-left: 3px;
-
-        &:hover {
-          color: $blue6;
-        }
-      }
-
-      .v-list-item {
-        min-height: unset;
-      }
-
-      .v-icon.v-icon {
-        font-size: $fontsize4;
-      }
-
-      .type,
-      .stat {
-        font-size: $fontsize0;
-        font-weight: 400;
-      }
-
-      .stat {
-        color: $gray4;
-      }
-
-      .footer-card {
-        font-size: $fontsize0;
-
-      }
-
-      &.grade-card1 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(39, 174, 96, 0.02);
-
-        .grade-title1 {
-          color: $green4;
-        }
-
-        .label-tag1 {
-          background-color: $green4;
-        }
-      }
-
-      &.grade-card2 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(192, 57, 43, 0.02);
-
-        .grade-title2 {
-          color: $red1;
-        }
-
-        .label-tag2 {
-          background-color: $red1;
-        }
-      }
-
-      &.grade-card3 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(1, 87, 155, 0.02);
-
-        .grade-title3 {
-          color: $blue4;
-        }
-
-        .label-tag3 {
-          background-color: $blue4;
-        }
-      }
-
-      &.grade-card4 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(86, 0, 232, 0.02);
-
-        .grade-title4 {
-          color: $violet1;
-        }
-
-        .label-tag4 {
-          background-color: $violet1;
-        }
-      }
-
-      &.grade-card5 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(51, 105, 30, 0.02);
-
-        .grade-title5 {
-          color: $green8;
-        }
-
-        .label-tag5 {
-          background-color: $green8;
-        }
-      }
-
-      &.grade-card6 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(191, 54, 12, 0.02);
-
-        .grade-title6 {
-          color: $orange5;
-        }
-
-        .label-tag6 {
-          background-color: $orange5;
-        }
-      }
-
-      &.grade-card7 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(46, 125, 50, 0.02);
-
-        .grade-title7 {
-          color: $green105 !important;
-        }
-
-        .label-tag7 {
-          background-color: $green105;
-        }
-      }
-
-      &.grade-card8 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(249, 168, 37, 0.02);
-
-        .grade-title8 {
-          color: $yellow1;
-        }
-
-        .label-tag8 {
-          background-color: $yellow1;
-        }
-      }
-
-      &.grade-card9 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(86, 0, 232, 0.02);
-
-        .grade-title9 {
-          color: $violet2;
-        }
-
-        .label-tag9 {
-          background-color: $violet2;
-        }
-      }
-
-      &.grade-card10 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(39, 174, 96, 0.02);
-
-        .grade-title10 {
-          color: $green4;
-        }
-
-        .label-tag10 {
-          background-color: $green4;
-        }
-      }
-
-      &.grade-card11 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(81, 45, 168, 0.02);
-
-        .grade-title11 {
-          color: $blue8;
-        }
-
-        .label-tag11 {
-          background-color: $blue8;
-        }
-      }
-
-      &.grade-card12 {
-        box-shadow:
-          rgba(50, 50, 105, 0.15) 0px 2px 5px 0px,
-          rgba(0, 0, 0, 0.05) 0px 1px 1px 0px !important;
-        border-radius: 10px;
-        background: rgba(3, 169, 244, 0.02);
-
-        .grade-title12 {
-          color: $blue10;
-        }
-
-        .label-tag12 {
-          background-color: $blue10;
-        }
-      }
-    }
 
     // feature-card
 
@@ -870,78 +401,12 @@ body {
 
     // stat-sec
     .status {
-      border-top: 1px solid $border;
-      border-bottom: 1px solid $border;
+      border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+      border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
       filter: drop-shadow(0px 0px 1px rgba(0, 0, 0, 0.13));
     }
 
-    .stat-sec {
-      padding: 0.625rem 0;
-    }
-
-    .stat-item {
-      min-width: 10.625rem;
-
-      .stat-value {
-        font-size: 1.5rem;
-        line-height: 1.875rem;
-        font-weight: 400;
-      }
-
-      .stat-label {
-        font-weight: 400;
-        font-size: 1.25rem;
-        line-height: 1.5rem;
-        color: rgba(0, 0, 0, 0.6);
-        margin-top: 0.3125rem;
-        margin-bottom: 0.5rem;
-      }
-
-      .stat-icon {
-        width: 2.625rem;
-        height: 2.625rem;
-        border-radius: 0.75rem;
-        background-color: $green11;
-        color: $white;
-
-        .icon-g {
-          height: 1.5625rem;
-          font-size: 1.5625rem;
-        }
-      }
-    }
-
-    // .stat-sec {
-    //   background: $white;
-    //   border-top: 1px solid $border;
-    //   border-bottom: 1px solid $border;
-    // }
-
     //last view Slider
-    .last-view-holder {
-      .last-view-title {
-        font-size: 1.0625rem;
-        color: $green6;
-      }
-
-      .last-view-slider {
-        .last-view-item {
-          width: 11.0625rem;
-
-          .last-view-image {
-            width: 100%;
-            max-width: 100%;
-            height: 15rem;
-          }
-
-          .last-view-description {
-            .description-title {
-              white-space: normal;
-            }
-          }
-        }
-      }
-    }
 
     // Detail
     .test-details-content {
@@ -957,8 +422,8 @@ body {
           .label {
             display: inline-block;
             font-size: 0.75rem;
-            color: $gray4;
-            background: $gray3;
+            color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+            background: rgb(var(--v-theme-grey200));
             border-radius: 0.1875rem;
             padding: 0.1875rem 0.5625rem;
             margin-top: 0.3125rem;
@@ -970,17 +435,17 @@ body {
 
           .register,
           .login {
-            color: $blue9;
+            color: rgb(var(--v-theme-info));
             cursor: pointer;
           }
 
           .answer {
-            color: $green9;
+            color: rgb(var(--v-theme-greenLight700));
           }
         }
 
         .file-copy-right {
-          color: $red4;
+          color: rgb(var(--v-theme-error));
           margin-bottom: 1.875rem;
         }
 
@@ -992,14 +457,13 @@ body {
         }
 
         .course-title {
-          color: $pink;
+          color: rgb(var(--v-theme-lightError));
           font-size: 0.875rem;
           margin-bottom: 0.5rem;
         }
 
         .teacher {
           display: inline-block;
-          //margin-bottom: 0.3125rem;
         }
 
       }
@@ -1018,22 +482,21 @@ body {
         }
 
         .course-title {
-          color: $pink;
+          color: rgb(var(--v-theme-lightError));
           font-size: 0.875rem;
           margin-bottom: 0.5rem;
         }
 
         .teacher {
           display: inline-block;
-          //margin-bottom: 0.3125rem;
         }
 
         .suggestion {
           width: 9.375rem;
           margin: 0.5rem 0.3125rem 0 0;
           padding: 0.3125rem 0.625rem;
-          color: #efeded;
-          background: $purple;
+          color: rgb(var(--v-theme-onInverseSurfaceSubtle));
+          background: rgb(var(--v-theme-generalSearchTeacher));
           border-radius: 0.5625rem;
           text-align: center;
         }
@@ -1053,41 +516,6 @@ body {
   }
 }
 
-// .gama-d-none{
-//   display: none!important;
-// }
-// .gama-d-block{
-//   display: block!important;
-// }
-
-// @media only screen and (min-width:744px) {
-//   .container{
-//     max-width: 34rem!important;
-//   }
-
-//   .gama-d-tablet-none{
-//     display: none!important;
-//   }
-
-//   .gama-d-tablet-block{
-//     display: block!important;
-//   }
-// }
-
-// @media only screen and (min-width:1440px) {
-//   .container{
-//     max-width: 56.5rem!important;
-//   }
-
-//   .gama-d-desktop-none{
-//     display: none!important;
-//   }
-
-//   .gama-d-desktop-block{
-//     display: block!important;
-//   }
-// }
-
 .v-container--fluid {
   max-width: inherit !important;
 }
@@ -1095,26 +523,6 @@ body {
 //End new design system
 //
 @media only screen and (max-width: 600px) {
-
-  .book-no-img {
-    width: 7.5rem;
-    min-width: 5rem;
-    min-height: 6.5625rem;
-    max-height: 6.5625rem;
-
-    padding: 0 4.4px 4.4px 4.4px;
-    text-align: center;
-    background-color: rgb(var(--v-theme-grey100)) !important;
-    border-radius: 8px;
-
-    p {
-      font-size: 0.625rem !important;
-    }
-
-    a {
-      font-size: 0.625rem;
-    }
-  }
 
   .album-card {
     .album-no-img {
@@ -1291,24 +699,6 @@ body {
 }
 
 @media only screen and (min-width: 600px) and (max-width: 960px) {
-  .book-no-img {
-    width: 7.5rem;
-    height: 8.75rem;
-    min-width: 7.5rem;
-    min-height: 9.0625rem;
-    max-height: 9.0625rem;
-    padding: 5px;
-    text-align: center;
-    background-color: rgb(var(--v-theme-grey100)) !important;
-    border-radius: 8px;
-
-    p {
-    }
-
-    a {
-      font-size: 0.75rem;
-    }
-  }
 
   .album-card {
     min-height: 18.125rem;
@@ -1472,25 +862,6 @@ body {
     width: 80% !important;
   }
 
-  .book-no-img {
-    width: 7.5rem;
-    height: 8.75rem !important;
-    min-height: 9.0625rem !important;
-    padding: 5px;
-    margin: auto;
-    text-align: center;
-    background-color: rgb(var(--v-theme-grey100)) !important;
-    border-radius: 8px;
-
-    p {
-      font-size: 0.875rem !important;
-    }
-
-    a {
-      font-size: 0.875rem;
-    }
-  }
-
   .album-card {
     min-height: 18.75rem;
 
@@ -1535,14 +906,14 @@ body {
 }
 
 .cards {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(var(--v-border-color), 0.1);
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.1);
   padding: 2.5rem 0;
 
   margin: 2.5rem 0;
 
   .card {
-    outline: 1px solid $green11;
+    outline: 1px solid rgba(var(--v-theme-teal500), 0.8);
     box-shadow:
       0px 4px 5px rgba(0, 0, 0, 0.14),
       0px 1px 10px rgba(0, 0, 0, 0.12),
@@ -1557,7 +928,7 @@ body {
   .levels {
     font-size: 0.875rem;
     font-weight: 400;
-    color: $gray13;
+    color: rgb(var(--v-theme-grey600));
   }
 
 }
@@ -1567,102 +938,8 @@ body {
 }
 
 .sample {
-  background: $gray12;
+  background: rgb(var(--v-theme-grey100));
 
-  .title-icon {
-    font-size: 2.5rem;
-    color: $category-test;
-  }
-
-  .sample-title {
-    .s-title {
-      font-size: 1.5rem;
-      font-weight: 400;
-    }
-
-    .s-subtitle {
-      font-size: 0.75rem;
-      font-weight: 400;
-      color: $gray4;
-    }
-  }
-
-  .sample-width {
-    max-width: 1450px;
-  }
-
-  .sample-slider {
-    .v-slide-group__content {
-      padding-bottom: 0.625rem;
-    }
-
-    .v-slide-group__next {
-      margin-left: -0.625rem;
-    }
-
-    .v-slide-group__prev {
-      margin-right: -0.625rem;
-    }
-
-    .v-slide-group.v-item-group > .v-slide-group__prev {
-      visibility: hidden;
-    }
-
-    .v-item-group {
-      position: relative;
-
-      .v-slide-group__next {
-        height: 2.5rem !important;
-        position: absolute !important;
-        right: 5% !important;
-        top: 41% !important;
-        border-radius: 50%;
-        min-width: 2.5rem;
-        background-color: $white;
-        box-shadow:
-          0px 3px 4px rgba(0, 0, 0, 0.14),
-          0px 3px 3px rgba(0, 0, 0, 0.12),
-          0px 1px 8px rgba(0, 0, 0, 0.2);
-      }
-
-      .v-slide-group__prev {
-        height: 2.5rem !important;
-        position: absolute !important;
-        left: 5% !important;
-        top: 41% !important;
-        border-radius: 50%;
-        min-width: 2.5rem;
-        background-color: $white;
-        box-shadow:
-          0px 3px 4px rgba(0, 0, 0, 0.14),
-          0px 3px 3px rgba(0, 0, 0, 0.12),
-          0px 1px 8px rgba(0, 0, 0, 0.2);
-      }
-    }
-
-    .book-sample {
-      border-radius: 0.5rem;
-      background-color: $white;
-      box-shadow:
-        0px 4px 5px rgba(0, 0, 0, 0.14),
-        0px 1px 10px rgba(0, 0, 0, 0.12),
-        0px 2px 4px rgba(0, 0, 0, 0.2);
-
-      .sample-text p {
-        font-size: 0.75rem;
-      }
-
-      .sfooter-link {
-        color: $green;
-        font-size: 0.625rem;
-      }
-
-      .sfooter-name {
-        font-size: 0.75rem;
-        color: $gray8;
-      }
-    }
-  }
 }
 
 .feed {
@@ -1680,7 +957,7 @@ body {
 
 // Start : Teachers
 .teachers {
-  border-top: 1px solid $hashtag;
+  border-top: 1px solid rgba(var(--v-border-color), 0.08);
 
 }
 
@@ -1718,7 +995,7 @@ body {
     left: -20px;
     font-family: "Font Awesome 5 Free";
     content: "\f00c";
-    color: #00d2ae;
+    color: rgb(var(--v-theme-generalSearchPaper));
     font-size: 0.9375rem;
   }
 
@@ -1773,12 +1050,6 @@ body {
     display: none !important;
   }
 
-  .v-tabs-slider {
-    display: none !important;
-  }
-
-  //@media only screen and (min-width: 700px){
-
 }
 
 //End test maker menu
@@ -1806,8 +1077,8 @@ body {
     }
 
     .test-count-label {
-      background-color: rgba(0, 139, 139, 0.1) !important;
-      color: #008b8b !important;
+      background-color: rgba(var(--v-theme-teal500), 0.1) !important;
+      color: rgb(var(--v-theme-teal500)) !important;
       padding-left: 2.5rem;
       padding-right: 2.5rem;
 
@@ -1858,7 +1129,7 @@ body {
 
       i {
         font-size: 5.75rem;
-        color: #a11333;
+        color: rgb(var(--v-theme-error));
       }
     }
 
@@ -1895,7 +1166,7 @@ body {
 
       i {
         font-size: 5.75rem;
-        color: #a11333;
+        color: rgb(var(--v-theme-error));
       }
     }
 
@@ -1925,7 +1196,7 @@ body {
 
       i {
         font-size: 5.75rem;
-        color: #a11333;
+        color: rgb(var(--v-theme-error));
       }
     }
 
@@ -1959,7 +1230,7 @@ body {
 
         i {
           font-size: 5.75rem;
-          color: #a11333;
+          color: rgb(var(--v-theme-error));
         }
       }
 
@@ -2015,7 +1286,7 @@ body {
 //End New Exam
 
 .v-theme--light.v-app-bar.v-toolbar {
-  background-color: #f5f5f5;
+  background-color: rgb(var(--v-theme-grey100));
 }
 
 .v-application ol,
@@ -2024,8 +1295,8 @@ body {
 }
 
 .v-theme--light.v-footer {
-  background-color: #f5f5f5;
-  color: rgba(0, 0, 0, 0.87);
+  background-color: rgb(var(--v-theme-grey100));
+  color: rgba(var(--v-theme-on-surface), var(--v-high-emphasis-opacity));
 }
 .break-word {
   word-break: break-word;
@@ -2044,9 +1315,6 @@ body {
 }
 .v-breadcrumbs-item--link {
   white-space: nowrap;
-}
-.overflow-x-auto {
-  overflow-x: auto;
 }
 .center-slide-group .v-slide-group__content {
   justify-content: center;
