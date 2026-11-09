@@ -8,6 +8,8 @@ export interface PostDTO {
   imageUri: string
   visibilityType: string
   publishDate: string
+  /** The later of the publish date and the last change; the public list is ordered by it. */
+  lastUpdateDate?: string
   isFeatured: boolean
 }
 

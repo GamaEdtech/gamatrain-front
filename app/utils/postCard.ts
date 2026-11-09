@@ -26,5 +26,10 @@ export const truncateText = (text: string, length: number) => text.length > leng
   ? `${text.slice(0, length).trimEnd()}...`
   : text
 
+// The date the blog list is ordered by (newest update first), so cards and year headings follow the order. Falls back
+// to the publish date for an API without lastUpdateDate.
+export const postListDate = (post: { publishDate: string, lastUpdateDate?: string | null }) =>
+  post.lastUpdateDate || post.publishDate
+
 // Some post images are stored with http URLs, which the https site would block.
 export const secureImageUrl = (url: string | null | undefined) => (url ?? '').replace(/^http:\/\//, 'https://')
