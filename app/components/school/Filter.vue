@@ -389,7 +389,7 @@
                   route.query.lat
                     && route.query.lng
                     && route.query.distance
-                    && route.query.sort.includes('distance')
+                    && route.query.sort?.includes('distance')
                 "
                 class="text-h6 font-weight-regular pa-3"
                 size="large"
@@ -604,7 +604,7 @@
             route.query.lat
               && route.query.lng
               && route.query.distance
-              && route.query.sort.includes('distance')
+              && route.query.sort?.includes('distance')
           "
           class="text-h6 font-weight-regular pa-3"
           size="large"
