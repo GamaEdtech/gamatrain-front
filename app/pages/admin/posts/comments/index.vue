@@ -82,6 +82,7 @@
 </template>
 
 <script setup lang="ts">
+import { ADMIN_PERMISSIONS } from '~/constants'
 import type {
   CommnetPostAdminDTO,
   CommentPostAdminSearchFilter,
@@ -93,6 +94,9 @@ definePageMeta({
   layout: 'admin',
   middleware: ['auth', 'admin'],
 })
+
+// A non-admin sees the approve/reject actions only when granted them.
+const { can } = useAdminAccess()
 
 const { loadingGetData: loading, data: list, getData, totalCount, pageCount } = usePostCommentAdmin()
 
@@ -144,6 +148,7 @@ const headers: DataTableHeader<CommnetPostAdminDTO>[] = [
       {
         icon: 'md:settings',
         tooltip: 'More',
+        show: () => can(ADMIN_PERMISSIONS.postComments.confirm) || can(ADMIN_PERMISSIONS.postComments.reject),
         onClick: (item: CommnetPostAdminDTO) => openModalMoreAction(item),
       },
     ],

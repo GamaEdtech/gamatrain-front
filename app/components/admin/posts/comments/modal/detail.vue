@@ -42,7 +42,10 @@
       </div>
     </template>
 
-    <div class="w-100 d-flex flex-column align-start justify-start ga-1">
+    <div
+      v-if="can(ADMIN_PERMISSIONS.postComments.reject)"
+      class="w-100 d-flex flex-column align-start justify-start ga-1"
+    >
       <div class="text-caption font-weight-medium text-grey700 ml-2">
         You can write a message to reject.
       </div>
@@ -60,6 +63,7 @@
 
     <div class="w-100 d-flex align-center ga-2 mt-8">
       <v-btn
+        v-if="can(ADMIN_PERMISSIONS.postComments.confirm)"
         color="success"
         rounded="xl"
         variant="outlined"
@@ -73,6 +77,7 @@
         Approve
       </v-btn>
       <v-btn
+        v-if="can(ADMIN_PERMISSIONS.postComments.reject)"
         color="error"
         rounded="xl"
         variant="outlined"
@@ -90,6 +95,7 @@
 </template>
 
 <script setup lang="ts">
+import { ADMIN_PERMISSIONS } from '~/constants'
 import type { CommnetPostDetailAdminDTO } from '@/types'
 
 interface IDetailModal {
@@ -106,6 +112,8 @@ const emit = defineEmits(['changeStatusSuccessfull'])
 
 const { $toast } = useNuxtApp()
 const { getItemById, loadingGetItemById: loading, confirm, loadingConfirm, reject, loadingReject } = usePostCommentAdmin()
+// A non-admin sees only the actions they were granted.
+const { can } = useAdminAccess()
 
 const newDataFormated = ref()
 const rawData = ref<CommnetPostDetailAdminDTO>()

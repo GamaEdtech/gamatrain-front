@@ -1,17 +1,22 @@
-import { defineNuxtRouteMiddleware } from 'nuxt/app'
+import { defineNuxtRouteMiddleware, navigateTo } from 'nuxt/app'
 
-export default defineNuxtRouteMiddleware(() => {
-  const { user } = useUser()
+// Admins open every admin page. Anyone else opens only the pages they were granted (see ADMIN_PAGE_ACCESS);
+// /admin itself sends them to their first allowed page.
+export default defineNuxtRouteMiddleware(async (to) => {
+  const { isAdmin, loadPermissions, canOpenPage, firstAllowedPage } = useAdminAccess()
+  if (isAdmin.value) return
 
-  const roles = user.value?.roles || []
-  const isAdmin = roles.some(
-    role => role.toLowerCase() === 'admin',
-  )
+  await loadPermissions()
+  if (canOpenPage(to.path)) return
 
-  if (!isAdmin) {
-    showError({
-      statusCode: 403,
-      statusMessage: 'Access Denied!',
-    })
+  const isPanelHome = to.path.replace(/\/+$/, '').toLowerCase() === '/admin'
+  const landing = isPanelHome ? firstAllowedPage() : null
+  if (landing) {
+    return navigateTo(landing, { replace: true })
   }
+
+  return showError({
+    statusCode: 403,
+    statusMessage: 'Access Denied!',
+  })
 })

@@ -65,7 +65,7 @@
           <v-switch
             :model-value="item.isFeatured"
             :loading="savingFeaturedIds.includes(item.id)"
-            :disabled="savingFeaturedIds.includes(item.id)"
+            :disabled="savingFeaturedIds.includes(item.id) || !can(ADMIN_PERMISSIONS.posts.featured)"
             color="primary"
             density="compact"
             hide-details
@@ -114,6 +114,7 @@
 </template>
 
 <script setup lang="ts">
+import { ADMIN_PERMISSIONS } from '~/constants'
 import type {
   AdminPostDTO,
   AdminPostStatus,
@@ -137,6 +138,8 @@ const {
   setFeatured,
   savingFeaturedIds,
 } = usePostAdmin()
+// A non-admin (e.g. a teacher who manages posts) sees only the actions they were granted.
+const { can } = useAdminAccess()
 
 const headers: DataTableHeader<AdminPostDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '8vw', align: 'start' },
@@ -170,11 +173,13 @@ const headers: DataTableHeader<AdminPostDTO>[] = [
       {
         icon: 'md:plagiarism',
         tooltip: 'Details',
+        show: () => can(ADMIN_PERMISSIONS.posts.detail),
         onClick: (item: AdminPostDTO) => openDetailModal(item),
       },
       {
         icon: 'md:edit',
         tooltip: 'Edit',
+        show: () => can(ADMIN_PERMISSIONS.posts.detail) && can(ADMIN_PERMISSIONS.posts.update),
         to: (item: AdminPostDTO) => `/admin/posts/edit/${item.id}`,
       },
       {
