@@ -156,30 +156,11 @@ const setDefaultSort = (selectedSorts) => {
   return selectedSorts
 }
 
-const setDefaultSortToRoute = () => {
-  const currentSort = route.query.sort
-  const hasLastModify
-    = currentSort
-      && (Array.isArray(currentSort)
-        ? currentSort.includes('lastModifyDate')
-        : currentSort.split(',').includes('lastModifyDate'))
-
-  if (!hasLastModify) {
-    const newSort = currentSort
-      ? `lastModifyDate,${currentSort}`
-      : 'lastModifyDate'
-
-    router.replace({
-      query: {
-        ...route.query,
-        sort: newSort,
-      },
-    })
-  }
-}
+// The default sort stays out of the URL: setDefaultSort adds it back on load, and writing it in
+// gave every list page a `?sort=lastModifyDate` duplicate that Google crawled.
+const isDefaultSort = sort => sort.length === 1 && sort[0] === 'lastModifyDate'
 
 onMounted(() => {
-  setDefaultSortToRoute()
   const footer = document.getElementById('footer-container')
   if (footer) {
     footer.style.setProperty('display', 'none', 'important')
@@ -309,6 +290,7 @@ const changeFilterWithMapMoved = (locationParam) => {
 const updateQueryParams = () => {
   const query = {}
   Object.entries(filterForm.value).forEach(([key, value]) => {
+    if (key === 'sort' && isDefaultSort(value)) return
     if (value) {
       if (
         typeof value === 'string'
