@@ -701,12 +701,6 @@ const optionFilter = ref([
   },
 ])
 
-const setDefaultSort = (selectedSorts) => {
-  if (!selectedSorts.includes('lastModifyDate')) {
-    return ['lastModifyDate', ...selectedSorts]
-  }
-  return selectedSorts
-}
 const filterForm = reactive({
   keyword: route.query.keyword || '',
   country: Number(route.query.country) || '',
@@ -715,13 +709,7 @@ const filterForm = reactive({
   stage: route.query.stage || '',
   tuitionFeeMax: Number(route.query.tuitionFeeMax) || 0,
   tuitionFeeMin: Number(route.query.tuitionFeeMin) || 0,
-  sort: setDefaultSort(
-    Array.isArray(route.query.sort)
-      ? route.query.sort
-      : route.query.sort
-        ? route.query.sort.split(',')
-        : [],
-  ),
+  sort: parseSchoolSort(route.query.sort),
   school_type: Array.isArray(route.query.school_type)
     ? route.query.school_type
     : route.query.school_type

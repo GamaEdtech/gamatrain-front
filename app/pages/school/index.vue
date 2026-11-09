@@ -139,26 +139,11 @@ const { lgAndDown } = useDisplay()
 
 const isUserMovingMap = ref(true) // Start with loading indicator visible
 
-const sortList = [
-  {
-    value: 'lastModifyDate',
-    title: 'Recently Updated',
-  },
-  {
-    value: 'score',
-    title: 'Highest score',
-  },
-]
-const setDefaultSort = (selectedSorts) => {
-  if (!selectedSorts.includes('lastModifyDate')) {
-    return ['lastModifyDate', ...selectedSorts]
-  }
-  return selectedSorts
-}
+const sortList = SCHOOL_SORT_OPTIONS
 
-// The default sort stays out of the URL: setDefaultSort adds it back on load, and writing it in
-// gave every list page a `?sort=lastModifyDate` duplicate that Google crawled.
-const isDefaultSort = sort => sort.length === 1 && sort[0] === 'lastModifyDate'
+// The default sort (photos first, then recently updated) stays out of the URL: parseSchoolSort applies it when the
+// URL has no sort, and writing it in gave every list page a `?sort=...` duplicate that Google crawled.
+const isDefaultSort = isDefaultSchoolSort
 
 onMounted(() => {
   const footer = document.getElementById('footer-container')
@@ -183,13 +168,7 @@ const filterForm = ref({
   stage: route.query.stage || '',
   tuitionFeeMax: Number(route.query.tuitionFeeMax) || 0,
   tuitionFeeMin: Number(route.query.tuitionFeeMin) || 0,
-  sort: setDefaultSort(
-    Array.isArray(route.query.sort)
-      ? route.query.sort
-      : route.query.sort
-        ? route.query.sort.split(',')
-        : [],
-  ),
+  sort: parseSchoolSort(route.query.sort),
   school_type: Array.isArray(route.query.school_type)
     ? route.query.school_type
     : route.query.school_type
@@ -445,10 +424,7 @@ const { data: initialSchools, pending: _loadingSchoolsServer }
       params['Location.Longitude'] = filterForm.value.lng
     }
     if (filterForm.value.sort && filterForm.value.sort.length > 0) {
-      filterForm.value.sort.forEach((sortOption, index) => {
-        params[`PagingDto.SortFilter[${index}].sortType`] = sortOption == 'distance' ? 'Asc' : 'Desc'
-        params[`PagingDto.SortFilter[${index}].column`] = sortOption
-      })
+      Object.assign(params, schoolSortParams(filterForm.value.sort))
     }
 
     return useApiService.get('/api/v2/schools', params, { public: true })
@@ -478,10 +454,7 @@ const getSchoolList = async () => {
       'PagingDto.PageFilter.ReturnTotalRecordsCount': true,
     }
     if (filterForm.value.sort && filterForm.value.sort.length > 0) {
-      filterForm.value.sort.forEach((sortOption, index) => {
-        params[`PagingDto.SortFilter[${index}].sortType`] = sortOption == 'distance' ? 'Asc' : 'Desc'
-        params[`PagingDto.SortFilter[${index}].column`] = sortOption
-      })
+      Object.assign(params, schoolSortParams(filterForm.value.sort))
     }
     // The map searches the visible area on top of the filters, not instead of them: searching a name or
     // picking a country and then opening the map shows those schools, not every school in view.
