@@ -56,11 +56,9 @@ function initializeMathJax(): Promise<void> {
                     ],
                   },
                   displayAlign: 'center',
-                  // The TeX-MML-AM_CHTML config renders with the CommonHTML output, so its options go here
-                  // ('HTML-CSS' options are ignored). Long formulas wrap to fit narrow screens.
-                  CommonHTML: {
-                    linebreaks: { automatic: true },
-                  },
+                  // No CommonHTML automatic line breaking: in MathJax 2 it turns every formula, inline ones
+                  // too, into a full-width table cell, so inline math takes a line of its own and a formula
+                  // in a table cell squeezes the other columns. Wide display formulas scroll instead (app.scss).
                   showProcessingMessages: false,
                   messageStyle: 'none',
                   skipStartupTypeset: true,

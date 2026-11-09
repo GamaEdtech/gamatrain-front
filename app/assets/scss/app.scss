@@ -9,6 +9,13 @@
   --bottom-nav-height: 62px;
 }
 
+// A display formula wider than its container scrolls sideways in its own box rather than
+// widening the page (MathJax line breaking is off, see plugins/mathjax.client.ts).
+.MJXc-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 // Browser autofill paints its own light background and dark text on inputs,
 // which clashes with dark fields. Repaint it with the theme's colours.
 .v-theme--dark input:-webkit-autofill,

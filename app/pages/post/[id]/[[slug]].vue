@@ -510,6 +510,10 @@ watch(isDark, async () => {
 
 #main-post-div table{
   width: 100%;
+  /* The inherited `word-break: break-word` lets auto table layout shrink a column until its words split
+     mid-word ("Circu/it"); overflow-wrap keeps whole words and the figure scrolls if the table is too wide. */
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 #post-describe figure.table {
   display: block;
