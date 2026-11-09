@@ -24,7 +24,7 @@
       </div>
 
       <div
-        v-for="item in items"
+        v-for="item in visibleItems"
         :key="item.title"
       >
         <v-list-item
@@ -166,10 +166,10 @@
               v-if="user"
               class="text-body-1 font-weight-medium text-white text-truncate name-user-span"
             >
-              {{ !user.firstName && !user.lastName ? `Admin` : (user.firstName ? user.firstName : "") + " "+ (user.lastName ? user.lastName : "") }}
+              {{ !user.firstName && !user.lastName ? (isAdmin ? `Admin` : user.userName) : (user.firstName ? user.firstName : "") + " "+ (user.lastName ? user.lastName : "") }}
             </span>
-            <span class="text-caption font-weight-medium text-onInverseSurfaceMuted">
-              Admin@Gamatrain
+            <span class="text-caption font-weight-medium text-onInverseSurfaceMuted text-truncate name-user-span">
+              {{ isAdmin ? 'Admin@Gamatrain' : (user?.email || user?.userName) }}
             </span>
           </div>
         </div>
@@ -215,11 +215,21 @@ const route = useRoute()
 const auth = useAuth()
 
 // "Needs attention" counts on the menu (backend admin/dashboard/summary, shared with the dashboard page, refreshed every 2 minutes).
+// Only admins load the summary: it is an Admin-only endpoint, so for anyone else it would fail on every refresh.
 const { attentionCount, startSummaryRefresh, stopSummaryRefresh } = useAdminDashboard()
+const { isAdmin, canOpenPage, loadPermissions } = useAdminAccess()
 const formatBadge = count => (count > 99 ? '99+' : String(count))
 const groupCount = item => (item.subMenuList ?? []).reduce((sum, sub) => sum + (sub.badgeKey ? attentionCount(sub.badgeKey) : 0), 0)
-onMounted(startSummaryRefresh)
-onBeforeUnmount(stopSummaryRefresh)
+onMounted(async () => {
+  if (isAdmin.value) {
+    startSummaryRefresh()
+    return
+  }
+  await loadPermissions()
+})
+onBeforeUnmount(() => {
+  if (isAdmin.value) stopSummaryRefresh()
+})
 
 const items = computed(() => [
   {
@@ -378,6 +388,16 @@ const items = computed(() => [
     link: '/admin',
   },
 ])
+
+// A non-admin sees only the pages they were granted; a group with none of them left is hidden, title included.
+const visibleItems = computed(() => {
+  if (isAdmin.value) return items.value
+  return items.value
+    .map(item => (item.subMenuList
+      ? { ...item, subMenuList: item.subMenuList.filter(sub => canOpenPage(sub.link)) }
+      : item))
+    .filter(item => (item.subMenuList ? item.subMenuList.length > 0 : canOpenPage(item.link)))
+})
 
 const openedGroups = ref([])
 

@@ -32,6 +32,15 @@
       density="compact"
       class="mt-1"
     />
+    <v-select
+      v-model="searchFilter.role"
+      :items="roleList"
+      label="Role"
+      rounded="lg"
+      variant="outlined"
+      density="compact"
+      class="mt-1"
+    />
 
     <v-btn
       color="primary"
@@ -48,23 +57,30 @@
 </template>
 
 <script setup lang="ts">
+import type { SearchFilterUser } from '@/types'
+
 interface ISearchModal {
-  data: {
-    firstName: string
-    lastName: string
-    email: string
-    referralId: string
-  }
+  data: SearchFilterUser
 }
+
+const roleList: { value: SearchFilterUser['role'], title: string }[] = [
+  { value: '', title: 'All roles' },
+  { value: 'Teacher', title: 'Teacher' },
+  { value: 'Student', title: 'Student' },
+  { value: 'Admin', title: 'Admin' },
+  { value: 'Advisor', title: 'Advisor' },
+  { value: 'Finance', title: 'Finance' },
+]
 
 const props = defineProps<ISearchModal>()
 const emit = defineEmits(['Search'])
 
-const searchFilter = reactive({
+const searchFilter = reactive<SearchFilterUser>({
   firstName: '',
   lastName: '',
   email: '',
   referralId: '',
+  role: '',
 })
 
 const startSearch = () => {
@@ -76,6 +92,7 @@ onMounted(() => {
   searchFilter.lastName = props.data.lastName
   searchFilter.email = props.data.email
   searchFilter.referralId = props.data.referralId
+  searchFilter.role = props.data.role
 })
 </script>
 

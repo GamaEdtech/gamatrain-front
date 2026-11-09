@@ -97,6 +97,7 @@
 
 <script setup lang="ts">
 import dayjs from 'dayjs'
+import { ADMIN_PERMISSIONS } from '~/constants'
 import type { AdminPostDetailDTO } from '@/types'
 
 interface IDetailModal {
@@ -127,8 +128,10 @@ const postDetail = ref<AdminPostDetailDTO | null>(null)
 const commentReject = ref('')
 
 // Review can go either way; a Confirmed post can be pulled back (rejected) and a Rejected one re-approved.
-const canApprove = computed(() => ['Review', 'Rejected'].includes(postDetail.value?.status ?? ''))
-const canReject = computed(() => ['Review', 'Confirmed'].includes(postDetail.value?.status ?? ''))
+// A non-admin also needs the matching grant, or the button is hidden.
+const { can } = useAdminAccess()
+const canApprove = computed(() => ['Review', 'Rejected'].includes(postDetail.value?.status ?? '') && can(ADMIN_PERMISSIONS.posts.confirm))
+const canReject = computed(() => ['Review', 'Confirmed'].includes(postDetail.value?.status ?? '') && can(ADMIN_PERMISSIONS.posts.reject))
 
 const detailFields = computed<DetailField[]>(() => {
   if (!postDetail.value) return []
