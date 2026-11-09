@@ -57,27 +57,34 @@
         v-if="showYear"
         class="text-grey400 text-caption font-weight-bold date-container"
       >
-        {{ formatLocal(post.publishDate, 'YYYY') }}
+        {{ formatLocal(listDate, 'YYYY') }}
       </span>
       <v-sheet
         color="grey100"
         rounded="lg"
         class="post-date d-flex flex-column align-center justify-center date-container"
+        :title="isUpdated ? `Updated ${formatLocal(listDate, 'YYYY-MM-DD')}, first published ${formatLocal(post.publishDate, 'YYYY-MM-DD')}` : `Published ${formatLocal(listDate, 'YYYY-MM-DD')}`"
       >
         <span class="text-caption text-sm-body-1 font-weight-bold text-grey900">
-          {{ formatLocal(post.publishDate, 'DD') }}
+          {{ formatLocal(listDate, 'DD') }}
         </span>
         <span class="text-caption text-grey500 text-uppercase">
-          {{ formatLocal(post.publishDate, 'MMM') }}
+          {{ formatLocal(listDate, 'MMM') }}
         </span>
       </v-sheet>
+      <span
+        v-if="isUpdated"
+        class="text-caption font-weight-medium text-grey500 date-container"
+      >
+        Updated
+      </span>
     </v-col>
   </v-row>
 </template>
 
 <script setup lang="ts">
 import { contentPath } from '@/utils/contentPath'
-import { htmlToText, secureImageUrl, truncateText } from '@/utils/postCard'
+import { htmlToText, postListDate, secureImageUrl, truncateText } from '@/utils/postCard'
 import type { PostDTO } from '@/types'
 
 const props = defineProps<{
@@ -89,6 +96,9 @@ const { formatLocal } = useDateTime()
 const plainSummary = computed(() => htmlToText(props.post.summary))
 const summary = computed(() => truncateText(plainSummary.value, 150))
 const mobileSummary = computed(() => truncateText(plainSummary.value, 100))
+// The list is ordered by last update, so the card shows that date; "Updated" marks a post changed after it went live.
+const listDate = computed(() => postListDate(props.post))
+const isUpdated = computed(() => formatLocal(listDate.value, 'YYYY-MM-DD') !== formatLocal(props.post.publishDate, 'YYYY-MM-DD'))
 </script>
 
 <style scoped lang="scss">

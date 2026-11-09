@@ -119,6 +119,7 @@
 </template>
 
 <script setup lang="ts">
+import { postListDate } from '@/utils/postCard'
 import type { PostDTO } from '@/types'
 
 const props = defineProps<{
@@ -142,7 +143,7 @@ const { formatLocal } = useDateTime()
 
 const shouldShowYear = (post: PostDTO, index: number) => {
   if (index === 0) return true
-  return formatLocal(post.publishDate, 'YYYY') !== formatLocal(props.posts[index - 1]!.publishDate, 'YYYY')
+  return formatLocal(postListDate(post), 'YYYY') !== formatLocal(postListDate(props.posts[index - 1]!), 'YYYY')
 }
 
 defineExpose({ reset: () => infiniteScroll.value?.reset() })
