@@ -107,13 +107,15 @@ export const useUserManagerAdmin = () => {
     }
   }
 
-  const deleteItem = async (id: string) => {
+  // Deleting, enabling/disabling and changing roles or permissions need the admin's authenticator code (step-up).
+  const deleteItem = async (id: string, code: string) => {
     try {
       loadingDeleteItem.value = true
       const response = await useApiService.remove<
         ApiResult<boolean>
       >(
         `/api/v2/admin/identities/${id}`,
+        { code },
       )
       if (response.succeeded) {
         $toast.success('User deleted successfully!')
@@ -121,6 +123,7 @@ export const useUserManagerAdmin = () => {
       else {
         handleApiResponseError(response)
       }
+      return response
     }
     catch (err: unknown) {
       handleApiCatchError(err)
@@ -132,14 +135,14 @@ export const useUserManagerAdmin = () => {
     }
   }
 
-  const toggleStatus = async (id: string) => {
+  const toggleStatus = async (id: string, code: string) => {
     try {
       loadingToggleStatus.value = true
       const response = await useApiService.patch<
         ApiResult<boolean>
       >(
         `/api/v2/admin/identities/${id}/toggle`,
-        {},
+        { code },
       )
       if (response.succeeded) {
         $toast.success('User status change successfully!')
@@ -147,6 +150,7 @@ export const useUserManagerAdmin = () => {
       else {
         handleApiResponseError(response)
       }
+      return response
     }
     catch (err: unknown) {
       handleApiCatchError(err)
@@ -367,12 +371,15 @@ export const useUserManagerAdmin = () => {
     }
   }
 
-  const editPermission = async (roles: Role[], systemClaims: SystemClaims[], id: string) => {
+  // Replaces roles, system claims and endpoint permissions together: the backend clears any permission not sent.
+  const editPermission = async (roles: Role[], systemClaims: SystemClaims[], permissions: string[], twoFactorCode: string, id: string) => {
     try {
       loadingEditPermission.value = true
       const params = {
         roles,
         systemClaims,
+        permissions,
+        twoFactorCode,
       }
       const response = await useApiService.put<
         ApiResult<boolean>

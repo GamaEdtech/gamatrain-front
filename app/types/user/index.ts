@@ -19,15 +19,17 @@ export interface AdminTokenDTO {
   token: string
   expirationTime: string
 }
+/** One node of the grantable-endpoint tree: area -> controller -> endpoint (only endpoints carry a value). */
+export interface AdminPermissionNode {
+  text: string | null
+  value?: string | null
+  hasPermission?: boolean
+  items?: AdminPermissionNode[] | null
+}
 export interface AdminPermissionDTO {
   roles: Role[]
   systemClaims: SystemClaims[]
-  permissions: {
-    value: string
-    text: string
-    items: string[]
-    hasPermission: boolean
-  }[]
+  permissions: AdminPermissionNode[]
 }
 export interface AddUserDTO {
   username: string
@@ -60,6 +62,8 @@ export interface SearchFilterUser {
   lastName: string
   email: string
   referralId: string
+  /** '' means every role. */
+  role: Role | ''
 }
 
 export enum UserGroup {

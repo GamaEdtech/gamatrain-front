@@ -42,15 +42,6 @@
         <span class="text-primary font-weight-bold text-body-1">Add User</span>
       </v-btn>
 
-      <div class="role-filter-container">
-        <common-gombo-box
-          v-model="roleSelect"
-          label="Role"
-          :items="roleList"
-          @update:model-value="changeFilterRole"
-        />
-      </div>
-
       <admin-common-clear-filter-btn
         v-if="isShowClearFilter"
         @click="clearFilter"
@@ -112,6 +103,7 @@
     <admin-common-delete-modal
       v-model="showDeleteModal"
       :loading="loadingDeleteItem"
+      require-code
       @confirm="confirmDelete"
     />
 
@@ -119,6 +111,7 @@
       v-model="showToggleStatusModal"
       text="Are you sure you want to change status this user?"
       :loading="loadingToggleStatus"
+      require-code
       @confirm="confirmToggleStatus"
     />
 
@@ -151,7 +144,6 @@
 import type {
   AdminUserDTO,
   DataTableHeader,
-  Role,
   SearchFilterUser,
 } from '@/types'
 
@@ -235,16 +227,6 @@ const allPageSize = [
 ]
 const statusSelect = ref('All')
 const statusList = ['All', 'With Referral', 'Without Referral']
-const ROLE_ALL = 'All'
-const roleList: { id: Role | typeof ROLE_ALL, title: string }[] = [
-  { id: ROLE_ALL, title: 'All roles' },
-  { id: 'Teacher', title: 'Teacher' },
-  { id: 'Student', title: 'Student' },
-  { id: 'Admin', title: 'Admin' },
-  { id: 'Advisor', title: 'Advisor' },
-  { id: 'Finance', title: 'Finance' },
-]
-const roleSelect = ref<Role | typeof ROLE_ALL>(ROLE_ALL)
 const showDeleteModal = ref(false)
 const selectedItemIdForDelete = ref('')
 const showToggleStatusModal = ref(false)
@@ -258,6 +240,7 @@ const searchFilter = reactive<SearchFilterUser>({
   lastName: '',
   email: '',
   referralId: '',
+  role: '',
 })
 
 const fetchUsers = async () => {
@@ -265,8 +248,8 @@ const fetchUsers = async () => {
     page: page.value,
     pageSize: pageSize.value,
     hasReferral: statusSelect.value == 'All' ? null : statusSelect.value == 'With Referral' ? true : false,
-    role: roleSelect.value === ROLE_ALL ? null : roleSelect.value,
     ...searchFilter,
+    role: searchFilter.role || null,
   })
 }
 
@@ -277,12 +260,6 @@ const changeFilterStatus = async (status: string | number) => {
   else {
     statusSelect.value = status as string
   }
-  page.value = 1
-  await fetchUsers()
-}
-
-const changeFilterRole = async (role: string | number | null) => {
-  roleSelect.value = (role || ROLE_ALL) as Role | typeof ROLE_ALL
   page.value = 1
   await fetchUsers()
 }
@@ -306,8 +283,10 @@ const openModalDelete = (user: AdminUserDTO) => {
   selectedItemIdForDelete.value = user.id.toString()
   showDeleteModal.value = true
 }
-const confirmDelete = async () => {
-  await deleteItem(selectedItemIdForDelete.value)
+// The dialog stays open after a refused code (wrong, reused or 2FA not set up) so the admin can try the next one.
+const confirmDelete = async (code: string) => {
+  const response = await deleteItem(selectedItemIdForDelete.value, code)
+  if (!response?.succeeded) return
   selectedItemIdForDelete.value = ''
   showDeleteModal.value = false
   await fetchUsers()
@@ -317,8 +296,9 @@ const openModalToggleStatus = (user: AdminUserDTO) => {
   selectedItemIdForToggleStatus.value = user.id.toString()
   showToggleStatusModal.value = true
 }
-const confirmToggleStatus = async () => {
-  await toggleStatus(selectedItemIdForToggleStatus.value)
+const confirmToggleStatus = async (code: string) => {
+  const response = await toggleStatus(selectedItemIdForToggleStatus.value, code)
+  if (!response?.succeeded) return
   selectedItemIdForToggleStatus.value = ''
   showToggleStatusModal.value = false
   await fetchUsers()
@@ -348,7 +328,7 @@ const isShowClearFilter = computed(() => {
     || searchFilter.lastName.length > 0
     || searchFilter.email.length > 0
     || searchFilter.referralId.length > 0
-    || roleSelect.value !== ROLE_ALL
+    || searchFilter.role !== ''
   ) {
     return true
   }
@@ -360,7 +340,7 @@ const clearFilter = async () => {
   searchFilter.lastName = ''
   searchFilter.email = ''
   searchFilter.referralId = ''
-  roleSelect.value = ROLE_ALL
+  searchFilter.role = ''
   page.value = 1
   await fetchUsers()
 }
@@ -370,6 +350,7 @@ const startSearch = async (item: SearchFilterUser) => {
   searchFilter.lastName = item.lastName
   searchFilter.email = item.email
   searchFilter.referralId = item.referralId
+  searchFilter.role = item.role
   page.value = 1
   showSearchModal.value = false
   await fetchUsers()
@@ -384,9 +365,6 @@ const startSearch = async (item: SearchFilterUser) => {
   height : 48px;
 }
 .filter-mobile-container{
-  width: 170px;
-}
-.role-filter-container{
   width: 170px;
 }
 </style>
