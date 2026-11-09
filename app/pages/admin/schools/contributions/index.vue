@@ -148,7 +148,7 @@ interface SortOption {
 
 definePageMeta({
   layout: 'admin',
-  auth: true,
+  middleware: ['auth', 'admin'],
 })
 
 const { data: list, loadingGetData, totalCount, pageCount, getData } = useSchoolContributionAdmin()
