@@ -663,7 +663,9 @@ const sortItems = computed(() => SCHOOL_FINDER_SORTS.map(item => ({
 // ---- Map ----
 // Client-only, and on desktop only after the list has painted, so the map never delays the first view.
 const mapAllowed = ref(false)
+const mapMounted = ref(false)
 onMounted(() => {
+  mapMounted.value = true
   const start = () => {
     mapAllowed.value = true
   }
@@ -671,7 +673,8 @@ onMounted(() => {
   else setTimeout(start, 800)
 })
 const showDesktopMap = computed(() => mapAllowed.value && lgAndUp.value)
-const showMobileMap = computed(() => !lgAndUp.value && filters.value.view === 'map' && import.meta.client)
+// Also only after mounting: the server can't know the screen width, so it renders no map either way.
+const showMobileMap = computed(() => mapMounted.value && !lgAndUp.value && filters.value.view === 'map')
 
 // The map frames the schools of the area in the URL, never the map area's own results (that would chase itself).
 const regionPoints = computed(() => schools.value
@@ -811,7 +814,7 @@ useHead({
 /* The map fills the screen under the header and the pinned filters (about 104 px). */
 .finder__mobile-map {
   position: relative;
-  height: calc(100dvh - 64px - 104px);
+  height: calc(100dvh - 64px - 104px - var(--compare-tray-height, 0px));
   min-height: 320px;
   margin-left: -16px;
   margin-right: -16px;
@@ -890,7 +893,7 @@ useHead({
   .finder__map {
     position: sticky;
     top: 64px;
-    height: calc(100dvh - 64px);
+    height: calc(100dvh - 64px - var(--compare-tray-height, 0px));
     border-left: 1px solid rgb(var(--v-theme-grey100));
   }
 }

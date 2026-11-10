@@ -11,6 +11,7 @@
       <v-tooltip
         text="My location"
         location="start"
+        :open-on-focus="false"
       >
         <template #activator="{ props: tip }">
           <v-btn
@@ -29,6 +30,7 @@
         v-if="home"
         text="Back to home"
         location="start"
+        :open-on-focus="false"
       >
         <template #activator="{ props: tip }">
           <v-btn
@@ -45,6 +47,7 @@
       <v-tooltip
         text="Add a missing school here"
         location="start"
+        :open-on-focus="false"
       >
         <template #activator="{ props: tip }">
           <v-btn
