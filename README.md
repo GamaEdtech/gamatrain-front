@@ -3,7 +3,7 @@
 **Gama EdTech** is an innovative, open-source platform designed to revolutionize the education ecosystem by providing a suite of powerful tools and services tailored for students, educators, and institutions.  
 
 ## Key Features  
-- **School Finder**: Easily search and discover schools based on location, facilities, and other criteria.  
+- **School Finder**: Search schools by area, type and facilities, see the distance from your home, browse them on a map and compare up to four side by side.  
 - **Exam Builder**: Create and manage custom exams with automated grading and analytics.  
 - **Content Repository**: Access a curated list of educational resources, including past papers, multimedia content, and interactive learning materials.  
 - **Collaboration Tools**: Enable seamless collaboration between educators, students, and institutions to foster a dynamic learning environment.  
