@@ -134,6 +134,7 @@
         @open-auth-dialog="openAuthDialog"
       />
     </v-container>
+    <school-finder-compare-tray />
   </div>
 </template>
 

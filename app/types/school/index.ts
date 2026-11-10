@@ -130,6 +130,43 @@ export interface SchoolListDTO {
   countryRank: number
   stateRank: number
   cityRank: number
+
+  /** School type name (Public, Private, ...), when known. */
+  schoolType?: string | null
+  /** How many parents rated the school. */
+  reviewCount?: number
+  /** Facility tag ids (see the facets' tags), e.g. Transport Services for a school bus. */
+  tagIds?: number[]
+}
+
+/** Counts behind the school finder's filters, for the current filters (GET schools/facets). */
+export interface SchoolFacetsDTO {
+  total: number
+  withImage: number
+  withRating: number
+  withTuition: number
+  schoolTypes: { schoolType: string | null, count: number }[]
+  tags: { id: number, name: string, icon: string | null, count: number }[]
+  regionLevel: 'country' | 'state' | 'city' | null
+  regions: { id: number, title: string, count: number }[]
+}
+
+/** One web-map tile of the school finder map (GET schools/map/{z}/{x}/{y}). */
+export interface SchoolMapTileDTO {
+  total: number
+  clusters: { lat: number, lng: number, count: number }[]
+  schools: SchoolMapPointDTO[]
+}
+
+export interface SchoolMapPointDTO {
+  id: number
+  name: string
+  slug: string
+  lat: number
+  lng: number
+  rating: number | null
+  reviewCount: number
+  hasImage: boolean
 }
 
 export interface GetSchoolsParams {

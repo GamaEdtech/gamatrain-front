@@ -100,6 +100,10 @@ const props = defineProps<{
   content: SchoolDetailDTO
   ratingData?: SchoolRatingDTO | null
 }>()
+
+// Picks for the side-by-side comparison, shared with the school list.
+const compare = useSchoolCompare()
+const inCompare = computed(() => compare.has(props.content.id))
 const emit = defineEmits<{
   'leave-comment': []
 }>()
@@ -167,6 +171,12 @@ const actions = computed<QuickAction[]>(() => [
   directionsUrl.value && { key: 'directions', icon: 'mdi-directions', label: 'Directions', href: directionsUrl.value, external: true },
   firstPhone.value && { key: 'call', icon: 'mdi-phone-outline', label: 'Call', href: `tel:${firstPhone.value}` },
   websiteUrl.value && { key: 'website', icon: 'mdi-web', label: 'Website', href: websiteUrl.value, external: true },
+  {
+    key: 'compare',
+    icon: inCompare.value ? 'md:check' : 'md:compare_arrows',
+    label: inCompare.value ? 'Comparing' : 'Compare',
+    onClick: () => compare.toggle({ id: props.content.id, name: props.content.name ?? '', slug: props.content.slug }),
+  },
   { key: 'share', icon: 'mdi-share-variant-outline', label: 'Share', onClick: share },
 ].filter((action): action is QuickAction => !!action))
 </script>
