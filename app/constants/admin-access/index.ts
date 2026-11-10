@@ -17,6 +17,30 @@ export const ADMIN_PERMISSIONS = {
     confirm: 'Admin.Posts.ConfirmPostComment',
     reject: 'Admin.Posts.RejectPostComment',
   },
+  // Keyed by the admin location type (the URL segment), so a page can look up the current tab's permissions.
+  locations: {
+    countries: {
+      list: 'Admin.Locations.GetCountries',
+      detail: 'Admin.Locations.GetCountry',
+      create: 'Admin.Locations.CreateCountry',
+      update: 'Admin.Locations.UpdateCountry',
+      remove: 'Admin.Locations.RemoveCountry',
+    },
+    states: {
+      list: 'Admin.Locations.GetStates',
+      detail: 'Admin.Locations.GetState',
+      create: 'Admin.Locations.CreateState',
+      update: 'Admin.Locations.UpdateState',
+      remove: 'Admin.Locations.RemoveState',
+    },
+    cities: {
+      list: 'Admin.Locations.GetCities',
+      detail: 'Admin.Locations.GetCity',
+      create: 'Admin.Locations.CreateCity',
+      update: 'Admin.Locations.UpdateCity',
+      remove: 'Admin.Locations.RemoveCity',
+    },
+  },
 } as const
 
 /**
@@ -27,4 +51,6 @@ export const ADMIN_PAGE_ACCESS: { path: string, permissions: string[], landing?:
   { path: '/admin/posts/comments', permissions: [ADMIN_PERMISSIONS.postComments.list], landing: true },
   { path: '/admin/posts/edit', permissions: [ADMIN_PERMISSIONS.posts.detail, ADMIN_PERMISSIONS.posts.update] },
   { path: '/admin/posts', permissions: [ADMIN_PERMISSIONS.posts.list], landing: true },
+  // The country list also feeds the country picker when adding a state or city, so it opens the page.
+  { path: '/admin/locations', permissions: [ADMIN_PERMISSIONS.locations.countries.list], landing: true },
 ]

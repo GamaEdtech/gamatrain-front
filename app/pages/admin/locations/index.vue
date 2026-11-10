@@ -4,7 +4,7 @@
       <div class="d-flex align-center justify-start position-relative flex-wrap ga-2">
         <div class="btn-filter-container d-none d-md-flex align-center justify-center ga-1 bg-grey100 pa-1 rounded-pill">
           <v-btn
-            v-for="item in ADMIN_LOCATION_FILTER_LIST"
+            v-for="item in allowedFilterList"
             :key="item.id"
             rounded="pill"
             :color="item.id === selectedLocationFilter ? `primary` : `transparent`"
@@ -22,7 +22,7 @@
           <common-gombo-box
             v-model="selectedLocationFilter"
             label="Location"
-            :items="ADMIN_LOCATION_FILTER_LIST"
+            :items="allowedFilterList"
             @update:model-value="changeFilter"
           />
         </div>
@@ -31,6 +31,7 @@
 
     <div class="w-100 d-flex flex-column flex-md-row align-stretch align-md-center justify-space-between ga-2 mt-4">
       <v-btn
+        v-if="can(currentPermissions.create)"
         rounded="pill"
         color="primary"
         flat
@@ -114,7 +115,7 @@
 </template>
 
 <script setup lang="ts">
-import { ADMIN_LOCATION_FILTER_LIST } from '@/constants'
+import { ADMIN_LOCATION_FILTER_LIST, ADMIN_PERMISSIONS } from '@/constants'
 import type {
   AdminLocationFilterDTO,
   AdminLocationTypeDTO,
@@ -136,6 +137,7 @@ const {
   deleteLocation,
   loadingDeleteLocation,
 } = useLocationAdmin()
+const { can } = useAdminAccess()
 
 const headers: DataTableHeader<LocationItemDTO>[] = [
   { title: 'ID', key: 'id', sortable: false, width: '20vw' },
@@ -148,8 +150,18 @@ const headers: DataTableHeader<LocationItemDTO>[] = [
     width: '10vw',
     type: 'actions',
     actions: [
-      { icon: 'md:delete', tooltip: 'delete', onClick: (item: LocationItemDTO) => openDeleteModal(item) },
-      { icon: 'md:settings', tooltip: 'Detail', onClick: (item: LocationItemDTO) => openDetailModal(item) },
+      {
+        icon: 'md:delete',
+        tooltip: 'delete',
+        onClick: (item: LocationItemDTO) => openDeleteModal(item),
+        show: () => can(currentPermissions.value.remove),
+      },
+      {
+        icon: 'md:settings',
+        tooltip: 'Detail',
+        onClick: (item: LocationItemDTO) => openDetailModal(item),
+        show: () => can(currentPermissions.value.detail) && can(currentPermissions.value.update),
+      },
     ],
   },
 ]
@@ -162,7 +174,11 @@ const allPageSize = [
   { label: '50 Rows', value: 50 },
 ]
 
-const selectedLocationFilter = ref<AdminLocationFilterDTO>('country')
+// A user granted only some location types sees only those tabs (an Admin sees all three).
+const allowedFilterList = computed(() => ADMIN_LOCATION_FILTER_LIST
+  .filter(item => can(ADMIN_PERMISSIONS.locations[item.locationType].list)))
+
+const selectedLocationFilter = ref<AdminLocationFilterDTO>(allowedFilterList.value[0]?.id ?? 'country')
 const showDeleteModal = ref(false)
 const selectedItemIdForDelete = ref('')
 const showAddModal = ref(false)
@@ -177,6 +193,8 @@ const selectedLocationItem = computed(() => {
 const selectedLocationType = computed<AdminLocationTypeDTO>(() => {
   return selectedLocationItem.value!.locationType
 })
+
+const currentPermissions = computed(() => ADMIN_PERMISSIONS.locations[selectedLocationType.value])
 
 const selectedLocationTitle = computed(() => selectedLocationItem.value?.title)
 
