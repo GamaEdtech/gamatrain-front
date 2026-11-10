@@ -84,6 +84,42 @@
           target="blank"
         >📍 View on Google Maps</a>
       </div>
+
+      <template v-if="schoolDetailData?.imageUri">
+        <span class="w-100 text-subtitle-1 font-weight-bold text-grey700 mt-2 mb-2">
+          Submitted Photo{{ schoolDetailData.isDefaultImage ? ' (default image)' : '' }}
+        </span>
+        <a
+          class="w-100 mb-3"
+          :href="schoolDetailData.imageUri"
+          target="_blank"
+          rel="noopener"
+        >
+          <img
+            :src="schoolDetailData.imageUri"
+            class="submitted-image rounded-lg"
+            alt="Submitted school photo"
+          >
+        </a>
+      </template>
+
+      <template v-if="schoolDetailData?.comment">
+        <span class="w-100 text-subtitle-1 font-weight-bold text-grey700 mt-2 mb-2">Submitted Comment</span>
+        <p
+          v-if="schoolDetailData.comment.comment"
+          class="w-100 value description mb-3"
+        >
+          {{ schoolDetailData.comment.comment }}
+        </p>
+        <div
+          v-for="rate in commentRates"
+          :key="rate.key"
+          class="detail-item"
+        >
+          <span class="label">{{ rate.label }}</span>
+          <span class="value">{{ formatRate(schoolDetailData.comment[rate.key]) }}</span>
+        </div>
+      </template>
     </template>
 
     <span
@@ -292,7 +328,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, AppError, AdminSchoolContributionDTO, AdminSchoolContributionNewDataDTO, AdminSchoolContributionOldDataDTO, BoardDTO } from '@/types'
+import type { ApiResult, AppError, AdminSchoolContributionCommentDTO, AdminSchoolContributionDTO, AdminSchoolContributionNewDataDTO, AdminSchoolContributionOldDataDTO, BoardDTO } from '@/types'
 
 interface IDetailModal {
   contributionId?: number
@@ -409,6 +445,20 @@ const oldDataFields: FieldConfig<AdminSchoolContributionOldDataDTO>[] = [
     type: 'image',
   },
 ]
+
+const commentRates: { key: keyof AdminSchoolContributionCommentDTO, label: string }[] = [
+  { key: 'averageRate', label: 'Average :' },
+  { key: 'educationRate', label: 'Education :' },
+  { key: 'classesQualityRate', label: 'Classes Quality :' },
+  { key: 'facilitiesRate', label: 'Facilities :' },
+  { key: 'itTrainingRate', label: 'IT Training :' },
+  { key: 'artisticActivitiesRate', label: 'Artistic Activities :' },
+  { key: 'behaviorRate', label: 'Behavior :' },
+  { key: 'safetyAndHappinessRate', label: 'Safety & Happiness :' },
+  { key: 'tuitionRatioRate', label: 'Tuition Ratio :' },
+]
+
+const formatRate = (value: unknown) => typeof value === 'number' ? `${Number(value.toFixed(1))} / 5` : '-'
 
 const getData = async () => {
   try {
@@ -595,5 +645,12 @@ onMounted(async () => {
 .description {
   font-weight: 500;
   line-height: 1.7;
+}
+
+.submitted-image {
+  display: block;
+  max-width: 100%;
+  max-height: 240px;
+  object-fit: cover;
 }
 </style>

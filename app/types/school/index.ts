@@ -82,9 +82,26 @@ export interface AdminSchoolContributionOldDataDTO {
   viewCount: number
 }
 
+export interface AdminSchoolContributionCommentDTO {
+  comment: string | null
+  artisticActivitiesRate: number
+  behaviorRate: number
+  classesQualityRate: number
+  educationRate: number
+  facilitiesRate: number
+  itTrainingRate: number
+  safetyAndHappinessRate: number
+  tuitionRatioRate: number
+  averageRate: number
+}
 export interface AdminSchoolContributionDTO {
   newValues: AdminSchoolContributionNewDataDTO
   oldValues: AdminSchoolContributionOldDataDTO
+  /** Photo sent with the contribution; added to the school on approval. */
+  imageUri: string | null
+  isDefaultImage: boolean
+  /** Comment and ratings sent with the contribution; posted on approval. */
+  comment: AdminSchoolContributionCommentDTO | null
 }
 export interface SchoolListDTO {
   id: number
