@@ -4,7 +4,81 @@
       ref="mapElement"
       class="finder-map__canvas"
     />
-    <slot />
+    <slot v-if="!placing" />
+
+    <!-- Adding a school: the pin stays in the middle and the map moves under it, the way map apps pick a place. -->
+    <template v-if="placing">
+      <svg
+        class="finder-map__place-pin"
+        width="44"
+        height="56"
+        viewBox="0 0 40 50"
+        aria-hidden="true"
+      >
+        <path
+          d="M20 48S6 33 6 21a14 14 0 0 1 28 0c0 12-14 27-14 27z"
+          fill="#FFB300"
+          stroke="#1E2A44"
+          stroke-width="2.5"
+        />
+        <path
+          d="M12 22.5 20 18l8 4.5-8 4.5zM15 25v3.5c0 1.4 2.2 2.5 5 2.5s5-1.1 5-2.5V25"
+          fill="none"
+          stroke="#1E2A44"
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+      </svg>
+      <span
+        class="finder-map__place-dot"
+        aria-hidden="true"
+      />
+
+      <v-card
+        class="finder-map__place-card"
+        rounded="lg"
+        elevation="6"
+        role="dialog"
+        aria-label="Add a missing school"
+      >
+        <v-card-text class="pb-2">
+          <div class="text-body-1 font-weight-bold text-grey900">
+            Where is the school?
+          </div>
+          <div class="text-body-2 text-grey700 mt-1">
+            Move the map until the pin sits on the school.
+          </div>
+          <div
+            class="text-caption text-grey600 mt-2 d-flex align-center ga-1 finder-map__place-address"
+          >
+            <v-icon size="16">
+              md:location_on
+            </v-icon>
+            <span class="text-truncate">{{ placeAddress || 'Finding the address...' }}</span>
+          </div>
+        </v-card-text>
+        <v-card-actions class="px-4 pb-3 pt-0">
+          <v-btn
+            variant="text"
+            color="grey700"
+            class="text-none"
+            @click="stopPlacing"
+          >
+            Cancel
+          </v-btn>
+          <v-spacer />
+          <v-btn
+            variant="flat"
+            color="grey900"
+            rounded="pill"
+            class="text-none px-4"
+            @click="confirmPlace"
+          >
+            Add school here
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </template>
 
     <!-- Map tools: where am I, back home, and add a school that is missing here. -->
     <div class="finder-map__tools d-flex flex-column ga-2">
@@ -45,7 +119,7 @@
         </template>
       </v-tooltip>
       <v-tooltip
-        text="Add a missing school here"
+        text="Add a missing school"
         location="start"
         :open-on-focus="false"
       >
@@ -54,10 +128,11 @@
             v-bind="tip"
             icon="md:add_location_alt"
             size="small"
-            color="surface"
+            :color="placing ? 'grey900' : 'surface'"
             elevation="2"
-            aria-label="Add a missing school at the centre of the map"
-            @click="addSchoolHere"
+            aria-label="Add a missing school"
+            :aria-pressed="placing"
+            @click="placing ? stopPlacing() : startPlacing()"
           />
         </template>
       </v-tooltip>
@@ -146,10 +221,60 @@ const goHome = () => {
   map.flyTo([props.home.lat, props.home.lng], Math.max(15, map.getZoom()))
 }
 
-// The add form starts with the location the visitor was looking at.
-const addSchoolHere = () => {
+// ---- Adding a missing school ----
+const placing = ref(false)
+const placeAddress = ref('')
+let addressTimer: ReturnType<typeof setTimeout> | null = null
+
+// The nearest street and area under the pin, so the visitor can tell the pin is in the right place.
+const lookUpAddress = () => {
+  if (addressTimer) clearTimeout(addressTimer)
+  placeAddress.value = ''
+  addressTimer = setTimeout(async () => {
+    const center = map?.getCenter()
+    if (!center || !placing.value) return
+    try {
+      const result = await $fetch<{ display_name?: string }>('https://nominatim.openstreetmap.org/reverse', {
+        params: { lat: center.lat, lon: center.lng, format: 'json', zoom: 17 },
+        headers: { 'Accept-Language': 'en' },
+      })
+      if (placing.value) placeAddress.value = result.display_name?.split(',').slice(0, 3).join(',').trim() || 'No address here'
+    }
+    catch {
+      placeAddress.value = `${center.lat.toFixed(5)}, ${center.lng.toFixed(5)}`
+    }
+  }, 700)
+}
+
+// The whole map, down to its bottom card, must be on screen (above the compare bar) while placing the pin.
+const bringMapIntoView = () => {
+  const element = mapElement.value?.parentElement
+  if (!element) return
+  const rect = element.getBoundingClientRect()
+  const tray = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--compare-tray-height')) || 0
+  const overflow = rect.bottom - (window.innerHeight - tray)
+  if (overflow > 0) window.scrollBy({ top: overflow, behavior: 'smooth' })
+}
+
+const startPlacing = () => {
+  if (!map) return
+  placing.value = true
+  emit('select', null)
+  bringMapIntoView()
+  // Street level, so the pin can be put on the right building.
+  if (map.getZoom() < 16) map.flyTo(map.getCenter(), 16)
+  else lookUpAddress()
+}
+
+const stopPlacing = () => {
+  placing.value = false
+  placeAddress.value = ''
+}
+
+const confirmPlace = () => {
   const center = map?.getCenter()
-  navigateTo(center ? `/school/add?lat=${center.lat.toFixed(6)}&lng=${center.lng.toFixed(6)}` : '/school/add')
+  if (!center) return
+  navigateTo(`/school/add?lat=${center.lat.toFixed(6)}&lng=${center.lng.toFixed(6)}`)
 }
 let L: Leaflet | null = null
 let map: import('leaflet').Map | null = null
@@ -197,7 +322,8 @@ const render = async () => {
   const west = Math.max(-180, bounds.getWest())
   const east = Math.min(180, bounds.getEast())
   const view = { south, west, north, east }
-  const byUser = movedByUser
+  // Moving the map to place a new school is not a search: the list stays as it is.
+  const byUser = movedByUser && !placing.value
   emit('view-change', { ...view, total: 0, complete: false, loading: true, byUser })
 
   const z = Math.max(0, Math.min(18, Math.round(map.getZoom()) - TILE_ZOOM_OFFSET))
@@ -315,6 +441,7 @@ onMounted(async () => {
     if (!framing) movedByUser = true
   })
   map.on('moveend', () => {
+    if (placing.value) lookUpAddress()
     framing = false
     render().finally(() => {
       movedByUser = false
@@ -370,6 +497,43 @@ defineExpose({
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+.finder-map__place-pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -100%);
+  z-index: 550;
+  pointer-events: none;
+  filter: drop-shadow(0 4px 6px rgba(16, 24, 40, 0.35));
+}
+
+.finder-map__place-dot {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 8px;
+  height: 4px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(16, 24, 40, 0.45);
+  z-index: 549;
+  pointer-events: none;
+}
+
+.finder-map__place-card {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  max-width: 420px;
+  margin: 0 auto;
+  z-index: 600;
+}
+
+.finder-map__place-address {
+  min-width: 0;
 }
 
 .finder-map__tools {
