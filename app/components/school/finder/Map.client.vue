@@ -5,6 +5,60 @@
       class="finder-map__canvas"
     />
     <slot />
+
+    <!-- Map tools: where am I, back home, and add a school that is missing here. -->
+    <div class="finder-map__tools d-flex flex-column ga-2">
+      <v-tooltip
+        text="My location"
+        location="start"
+      >
+        <template #activator="{ props: tip }">
+          <v-btn
+            v-bind="tip"
+            icon="md:my_location"
+            size="small"
+            color="surface"
+            elevation="2"
+            aria-label="Go to my location"
+            :loading="locating"
+            @click="goToMyLocation"
+          />
+        </template>
+      </v-tooltip>
+      <v-tooltip
+        v-if="home"
+        text="Back to home"
+        location="start"
+      >
+        <template #activator="{ props: tip }">
+          <v-btn
+            v-bind="tip"
+            icon="md:home"
+            size="small"
+            color="surface"
+            elevation="2"
+            aria-label="Back to home"
+            @click="goHome"
+          />
+        </template>
+      </v-tooltip>
+      <v-tooltip
+        text="Add a missing school here"
+        location="start"
+      >
+        <template #activator="{ props: tip }">
+          <v-btn
+            v-bind="tip"
+            icon="md:add_location_alt"
+            size="small"
+            color="surface"
+            elevation="2"
+            aria-label="Add a missing school at the centre of the map"
+            @click="addSchoolHere"
+          />
+        </template>
+      </v-tooltip>
+    </div>
   </div>
 </template>
 
@@ -22,6 +76,8 @@ export interface FinderMapView {
   /** True when every school in view is shown one by one (no clusters). */
   complete: boolean
   loading: boolean
+  /** The visitor moved or zoomed the map (not the map framing the list by itself). */
+  byUser: boolean
 }
 
 type Leaflet = typeof import('leaflet')
@@ -53,12 +109,48 @@ const MAX_LATITUDE = 85.0511
 const TILE_ZOOM_OFFSET = 1
 
 const mapElement = ref<HTMLElement | null>(null)
+const { fetchLocation } = useCurrentLocation()
+const locating = ref(false)
+let youLayer: import('leaflet').LayerGroup | null = null
+
+const goToMyLocation = async () => {
+  locating.value = true
+  try {
+    const position = await fetchLocation()
+    if (!position || !L || !map || !youLayer) return
+    youLayer.clearLayers()
+    youLayer.addLayer(L.circleMarker([position.lat, position.lng], { radius: 8, color: '#fff', weight: 3, fillColor: '#175CD3', fillOpacity: 1, interactive: false }))
+    movedByUser = true
+    map.flyTo([position.lat, position.lng], 14)
+  }
+  catch {
+    // useCurrentLocation already told the visitor why.
+  }
+  finally {
+    locating.value = false
+  }
+}
+
+const goHome = () => {
+  if (!map || !props.home) return
+  movedByUser = true
+  map.flyTo([props.home.lat, props.home.lng], 14)
+}
+
+// The add form starts with the location the visitor was looking at.
+const addSchoolHere = () => {
+  const center = map?.getCenter()
+  navigateTo(center ? `/school/add?lat=${center.lat.toFixed(6)}&lng=${center.lng.toFixed(6)}` : '/school/add')
+}
 let L: Leaflet | null = null
 let map: import('leaflet').Map | null = null
 let schoolLayer: import('leaflet').LayerGroup | null = null
 let homeLayer: import('leaflet').LayerGroup | null = null
 const tileCache = new Map<string, Promise<SchoolMapTileDTO | null>>()
 let renderToken = 0
+// Set while the map frames the list by itself, so that move doesn't count as the visitor's.
+let framing = false
+let movedByUser = false
 
 const paramsKey = computed(() => JSON.stringify(props.params))
 
@@ -96,7 +188,8 @@ const render = async () => {
   const west = Math.max(-180, bounds.getWest())
   const east = Math.min(180, bounds.getEast())
   const view = { south, west, north, east }
-  emit('view-change', { ...view, total: 0, complete: false, loading: true })
+  const byUser = movedByUser
+  emit('view-change', { ...view, total: 0, complete: false, loading: true, byUser })
 
   const z = Math.max(0, Math.min(18, Math.round(map.getZoom()) - TILE_ZOOM_OFFSET))
   const n = 2 ** z
@@ -156,7 +249,7 @@ const render = async () => {
     }
   }
 
-  emit('view-change', { ...view, total, complete, loading: false })
+  emit('view-change', { ...view, total, complete, loading: false, byUser })
 }
 
 const drawHome = () => {
@@ -193,7 +286,28 @@ onMounted(async () => {
   }).addTo(map)
   schoolLayer = L.layerGroup().addTo(map)
   homeLayer = L.layerGroup().addTo(map)
+  youLayer = L.layerGroup().addTo(map)
 
+  frameMap()
+
+  // A drag or a zoom by the visitor (not a fitBounds by code) makes the next search "this area".
+  map.on('dragstart zoomstart', () => {
+    if (!framing) movedByUser = true
+  })
+  map.on('moveend', () => {
+    framing = false
+    render().finally(() => {
+      movedByUser = false
+    })
+  })
+  map.on('click', () => emit('select', null))
+  drawHome()
+  render()
+})
+
+function frameMap() {
+  if (!L || !map) return
+  framing = true
   if (props.frame.length) {
     map.fitBounds(L.latLngBounds(props.frame.map(point => [point.lat, point.lng] as [number, number])), { padding: [32, 32], maxZoom: 14 })
   }
@@ -203,12 +317,7 @@ onMounted(async () => {
   else {
     map.setView([15, 20], 2)
   }
-
-  map.on('moveend', render)
-  map.on('click', () => emit('select', null))
-  drawHome()
-  render()
-})
+}
 
 onBeforeUnmount(() => {
   map?.remove()
@@ -222,14 +331,17 @@ watch(paramsKey, () => {
 
 watch(() => props.selectedId, () => render())
 
+// A new list (other area or filters) is framed again; the visitor's own moves never are.
+watch(() => JSON.stringify(props.frame), (value, old) => {
+  if (value !== old && props.frame.length) frameMap()
+})
+
 watch(() => [props.home, props.homeRadiusKm], drawHome, { deep: true })
 
 defineExpose({
   flyTo: (lat: number, lng: number, zoom = 14) => map?.flyTo([lat, lng], zoom),
-  frame: (points: { lat: number, lng: number }[]) => {
-    if (!L || !map || !points.length) return
-    map.fitBounds(L.latLngBounds(points.map(point => [point.lat, point.lng] as [number, number])), { padding: [32, 32], maxZoom: 14 })
-  },
+  reframe: frameMap,
+  invalidateSize: () => map?.invalidateSize(),
 })
 </script>
 
@@ -240,10 +352,41 @@ defineExpose({
   height: 100%;
 }
 
+.finder-map__tools {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 500;
+}
+
 .finder-map__canvas {
   width: 100%;
   height: 100%;
   background: rgb(var(--v-theme-grey100));
+}
+
+/* Dark theme: OpenStreetMap has no dark tiles, so the light ones are inverted (hue-rotate keeps water blue, parks green). */
+.v-theme--dark .finder-map :deep(.leaflet-tile-pane) {
+  filter: invert(1) hue-rotate(180deg) brightness(0.95) contrast(0.9);
+}
+
+.v-theme--dark .finder-map :deep(.leaflet-container) {
+  background: rgb(var(--v-theme-surface));
+}
+
+.v-theme--dark .finder-map :deep(.leaflet-bar a) {
+  background-color: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-grey900));
+  border-bottom-color: rgb(var(--v-theme-borderSubtle));
+}
+
+.v-theme--dark .finder-map :deep(.leaflet-control-attribution) {
+  background-color: rgba(var(--v-theme-surface), 0.8);
+  color: rgb(var(--v-theme-grey700));
+}
+
+.v-theme--dark .finder-map :deep(.leaflet-control-attribution a) {
+  color: rgb(var(--v-theme-info));
 }
 </style>
 
@@ -295,6 +438,28 @@ defineExpose({
 
 .finder-map__pin--selected {
   background: #ffb300;
+}
+
+.v-theme--dark .finder-map__pin {
+  background: #161b26;
+  border-color: #161b26;
+  color: #ececed;
+}
+
+.v-theme--dark .finder-map__pin--dot {
+  background: #ececed;
+  border-color: #161b26;
+}
+
+.v-theme--dark .finder-map__pin--selected {
+  background: #ffb300;
+  color: #1e2a44;
+}
+
+.v-theme--dark .finder-map__cluster {
+  background: rgba(236, 236, 237, 0.92);
+  border-color: #161b26;
+  color: #161b26;
 }
 
 .finder-map__home {

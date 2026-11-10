@@ -1,100 +1,75 @@
 <template>
-  <v-card
-    variant="flat"
-    border
-    rounded="lg"
-    class="home-bar pa-3"
-  >
-    <div class="d-flex flex-wrap align-center ga-3">
-      <v-avatar
-        color="primary50"
-        rounded="lg"
-        size="40"
+  <div class="home-bar d-flex flex-wrap align-center ga-2 text-body-2">
+    <v-icon
+      size="18"
+      color="grey600"
+    >
+      md:home
+    </v-icon>
+
+    <template v-if="home && !editing">
+      <span class="text-grey700">Distances from <strong class="text-grey900">{{ home.label }}</strong></span>
+      <v-btn
+        variant="text"
+        size="small"
+        color="primaryStrong"
+        class="text-none px-1"
+        @click="editing = true"
       >
-        <v-icon color="primaryStrong">
-          md:home
-        </v-icon>
-      </v-avatar>
+        Change
+      </v-btn>
+      <v-btn
+        variant="text"
+        size="small"
+        color="grey600"
+        class="text-none px-1"
+        @click="clearHome"
+      >
+        Remove
+      </v-btn>
+    </template>
 
-      <template v-if="home && !editing">
-        <div class="flex-grow-1 home-bar__text">
-          <div class="text-body-1 font-weight-semibold text-grey800">
-            Distances from your home: {{ home.label }}
-          </div>
-          <div class="text-caption text-grey600">
-            Saved on this device only. Each school shows the distance and an estimated walk and drive.
-          </div>
-        </div>
-        <v-btn
-          variant="outlined"
-          color="grey700"
-          rounded="pill"
-          class="text-none"
-          @click="editing = true"
-        >
-          Change home
-        </v-btn>
-        <v-btn
-          variant="text"
-          color="grey700"
-          rounded="pill"
-          class="text-none"
-          @click="clearHome"
-        >
-          Remove
-        </v-btn>
-      </template>
-
-      <template v-else>
-        <div class="flex-grow-1 home-bar__text">
-          <div class="text-body-1 font-weight-semibold text-grey800">
-            How far is each school from your home?
-          </div>
-          <div class="text-caption text-grey600">
-            Set your home once to see the distance, walk and drive on every school.
-          </div>
-        </div>
-        <v-autocomplete
-          v-model="picked"
-          v-model:search="search"
-          :items="suggestions"
-          :loading="searching"
-          item-title="label"
-          return-object
-          no-filter
-          hide-no-data
-          hide-details
-          clearable
-          density="compact"
-          variant="outlined"
-          rounded="pill"
-          prepend-inner-icon="md:search"
-          label="Your street or area"
-          class="home-bar__search"
-          @update:model-value="choose"
-        />
-        <v-btn
-          color="primary"
-          rounded="pill"
-          class="text-none"
-          prepend-icon="md:my_location"
-          :loading="isLoading"
-          @click="useMyLocation"
-        >
-          Use my location
-        </v-btn>
-        <v-btn
-          v-if="home"
-          variant="text"
-          rounded="pill"
-          class="text-none"
-          @click="editing = false"
-        >
-          Cancel
-        </v-btn>
-      </template>
-    </div>
-  </v-card>
+    <template v-else>
+      <span class="text-grey700">Set your home to see how far each school is.</span>
+      <v-autocomplete
+        v-model="picked"
+        v-model:search="search"
+        :items="suggestions"
+        :loading="searching"
+        item-title="label"
+        return-object
+        no-filter
+        hide-no-data
+        hide-details
+        density="compact"
+        variant="underlined"
+        placeholder="Street or area"
+        class="home-bar__search"
+        @update:model-value="choose"
+      />
+      <v-btn
+        variant="text"
+        size="small"
+        color="primaryStrong"
+        class="text-none px-1"
+        prepend-icon="md:my_location"
+        :loading="isLoading"
+        @click="useMyLocation"
+      >
+        Use my location
+      </v-btn>
+      <v-btn
+        v-if="home"
+        variant="text"
+        size="small"
+        color="grey600"
+        class="text-none px-1"
+        @click="editing = false"
+      >
+        Cancel
+      </v-btn>
+    </template>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -103,8 +78,6 @@ import type { SchoolHome } from '@/composables/useSchoolHome'
 interface Suggestion extends SchoolHome {
   key: string
 }
-
-const emit = defineEmits<{ changed: [home: SchoolHome | null] }>()
 
 const { home, setHome } = useSchoolHome()
 const { isLoading, fetchLocation } = useCurrentLocation()
@@ -146,7 +119,6 @@ watch(search, (value) => {
 const save = (value: SchoolHome | null) => {
   setHome(value)
   editing.value = false
-  emit('changed', value)
 }
 
 const choose = (value: Suggestion | null) => {
@@ -156,7 +128,7 @@ const choose = (value: Suggestion | null) => {
 const useMyLocation = async () => {
   try {
     const position = await fetchLocation()
-    if (position) save({ lat: position.lat, lng: position.lng, label: 'my current location' })
+    if (position) save({ lat: position.lat, lng: position.lng, label: 'your current location' })
   }
   catch {
     // useCurrentLocation already told the visitor why.
@@ -168,16 +140,11 @@ const clearHome = () => save(null)
 
 <style scoped>
 .home-bar {
-  background: rgb(var(--v-theme-surface));
-}
-
-.home-bar__text {
-  flex: 1 1 260px;
-  min-width: 0;
+  min-height: 40px;
 }
 
 .home-bar__search {
-  flex: 1 1 240px;
-  min-width: 200px;
+  flex: 0 1 240px;
+  min-width: 160px;
 }
 </style>

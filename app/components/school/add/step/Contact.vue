@@ -326,7 +326,14 @@ const zipCode = ref('')
 // const localAddress = ref('')
 const faxNumber = ref('')
 const description = ref('')
-const latLng = ref([])
+// Opened from the school finder's map ("Add a school here"): start from the spot the visitor was looking at.
+const pinnedFromMap = (() => {
+  const query = useRoute().query
+  const lat = Number(query.lat)
+  const lng = Number(query.lng)
+  return Number.isFinite(lat) && Number.isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180 && (lat || lng) ? [lat, lng] : []
+})()
+const latLng = ref(pinnedFromMap)
 
 const showSelectLocationDialog = ref(false)
 const map = reactive({

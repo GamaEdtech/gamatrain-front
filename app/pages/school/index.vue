@@ -1,199 +1,208 @@
 <template>
-  <div class="school-finder mt-16">
-    <!-- List view: the default. Server-rendered, so search engines and first paint get the schools, not a map. -->
-    <v-container
-      v-if="!isMapView"
-      class="finder-container pt-4 pb-16"
-    >
-      <v-breadcrumbs
-        :items="crumbs"
-        density="compact"
-        class="px-0 text-caption text-grey600 finder-crumbs"
-      >
-        <template #divider>
-          <v-icon size="16">
-            md:chevron_right
-          </v-icon>
-        </template>
-      </v-breadcrumbs>
+  <div class="finder mt-16">
+    <div class="finder__split">
+      <section class="finder__main">
+        <div class="finder__inner">
+          <v-breadcrumbs
+            :items="crumbs"
+            density="compact"
+            class="px-0 pt-0 text-caption text-grey600 finder__crumbs"
+          >
+            <template #divider>
+              <span class="text-grey400">/</span>
+            </template>
+          </v-breadcrumbs>
 
-      <div class="d-flex flex-wrap align-end ga-3">
-        <div class="finder-title">
-          <h1 class="text-h5 text-md-h4 font-weight-bold text-grey900 ma-0">
+          <h1 class="text-h5 font-weight-bold text-grey900 ma-0">
             {{ heading }}
           </h1>
-          <p
-            v-if="summary"
-            class="text-body-1 text-grey600 mt-1 mb-0"
-          >
-            {{ summary }}
+          <p class="text-body-2 text-grey600 mt-1 mb-0">
+            <span v-if="summary">{{ summary }} · </span>
+            <nuxt-link
+              to="/school/add"
+              class="text-grey700"
+            >Add a missing school</nuxt-link>
           </p>
-        </div>
-        <v-btn
-          to="/school/add"
-          variant="outlined"
-          color="grey700"
-          rounded="pill"
-          class="text-none"
-          prepend-icon="md:add"
-        >
-          <span class="text-grey800">Add a missing school</span>
-        </v-btn>
-      </div>
 
-      <school-finder-home-bar class="mt-4" />
+          <school-finder-home-bar class="mt-3" />
 
-      <div class="finder-layout mt-4">
-        <aside
-          class="finder-layout__filters d-none d-lg-block"
-          aria-label="Filters"
-        >
-          <v-card
-            variant="flat"
-            border
-            rounded="lg"
-            class="pa-4"
-          >
-            <school-finder-filters
-              :filters="filters"
-              :facets="facets"
-              :has-home="!!home"
-              :can-clear="canClear"
-              @update="update"
-              @clear="clearFilters"
-            />
-          </v-card>
-        </aside>
-
-        <section
-          id="results"
-          class="finder-layout__results d-flex flex-column ga-3"
-          aria-label="Schools"
-        >
           <form
             role="search"
-            class="d-flex ga-2 align-center"
+            class="d-flex align-center ga-3 mt-2"
             @submit.prevent
           >
             <v-text-field
               v-model="keyword"
-              variant="outlined"
-              density="comfortable"
-              rounded="lg"
+              variant="underlined"
+              density="compact"
               hide-details
               clearable
               single-line
-              bg-color="surface"
               prepend-inner-icon="md:search"
-              label="Search a school by name"
+              placeholder="Search a school by name"
               spellcheck="false"
+              aria-label="Search a school by name"
             />
-            <v-btn
-              class="d-lg-none text-none"
-              variant="outlined"
-              color="grey700"
-              rounded="lg"
-              height="48"
-              prepend-icon="md:tune"
-              @click="filtersOpen = true"
-            >
-              <span class="text-grey800">Filters{{ activeChips.length ? ` · ${activeChips.length}` : '' }}</span>
-            </v-btn>
-          </form>
-
-          <div class="d-flex flex-wrap align-center justify-space-between ga-2">
-            <p
-              class="ma-0 text-body-2 text-grey600"
-              aria-live="polite"
-            >
-              <template v-if="listPending && !schools.length">
-                Searching...
-              </template>
-              <template v-else>
-                <strong class="text-grey800">{{ formatCount(total) }} {{ total === 1 ? 'school' : 'schools' }}</strong>
-                <template v-if="schools.length && total > schools.length">
-                  · showing {{ formatCount(firstShown) }}–{{ formatCount(lastShown) }}
-                </template>
-              </template>
-            </p>
             <v-select
               :model-value="filters.sort"
               :items="sortItems"
-              label="Sort by"
+              variant="plain"
               density="compact"
-              variant="outlined"
               hide-details
-              rounded="lg"
-              max-width="220"
+              max-width="190"
+              prefix="Sort:"
+              aria-label="Sort by"
+              class="finder__sort"
               @update:model-value="pickSort"
+            />
+          </form>
+
+          <!-- Filters stay pinned while the list scrolls, and sit right above the map on a phone. -->
+          <!-- Where the pinned toolbar sits in the page; the toolbar itself reports its pinned position. -->
+          <div
+            ref="toolbarAnchor"
+            aria-hidden="true"
+          />
+          <div class="finder__toolbar mt-2">
+            <school-finder-filter-bar
+              :filters="filters"
+              :facets="facets"
+              :has-home="!!home"
+              :can-clear="canClear"
+              :area-name="placeParts[0]"
+              @update="update"
+              @clear="clearFilters"
+            />
+
+            <!-- Phones and tablets: the list and the map share the screen width, so one shows at a time. -->
+            <v-btn-toggle
+              :model-value="filters.view"
+              mandatory
+              density="compact"
+              divided
+              variant="outlined"
+              color="grey800"
+              rounded="lg"
+              class="mt-2 d-flex d-lg-none finder__toggle"
+              @update:model-value="setView"
+            >
+              <v-btn
+                value="list"
+                class="flex-grow-1 text-none"
+                prepend-icon="md:view_list"
+              >
+                List
+              </v-btn>
+              <v-btn
+                value="map"
+                class="flex-grow-1 text-none"
+                prepend-icon="md:map"
+              >
+                Map
+              </v-btn>
+            </v-btn-toggle>
+          </div>
+
+          <div
+            v-if="showMobileMap"
+            class="finder__mobile-map"
+          >
+            <school-finder-map
+              :params="mapParams"
+              :home="home"
+              :home-radius-km="filters.within"
+              :selected-id="highlightId"
+              :frame="regionPoints"
+              @view-change="onMapView"
+              @select="onSelect"
+            >
+              <v-chip
+                class="finder__map-status"
+                color="surface"
+                variant="flat"
+                elevation="1"
+                size="small"
+              >
+                {{ mapStatus }}
+              </v-chip>
+            </school-finder-map>
+            <school-finder-map-preview
+              v-if="selectedPoint"
+              :point="selectedPoint"
+              @close="selectedPoint = null"
             />
           </div>
 
           <div
-            v-if="activeChips.length"
-            class="d-flex flex-wrap ga-2"
+            class="d-flex align-center ga-2 mt-4 pb-2 finder__count"
+            aria-live="polite"
           >
-            <v-chip
-              v-for="chip in activeChips"
-              :key="chip.key"
-              closable
-              color="primaryStrong"
-              variant="tonal"
-              :close-label="`Remove ${chip.label}`"
-              @click:close="chip.remove()"
-            >
-              {{ chip.label }}
-            </v-chip>
+            <p class="ma-0 text-body-2 text-grey600 flex-grow-1">
+              <template v-if="pending && !shown.length">
+                Searching...
+              </template>
+              <template v-else>
+                <strong class="text-grey900">{{ formatCount(shownTotal) }} {{ shownTotal === 1 ? 'school' : 'schools' }}</strong>
+                {{ areaBounds ? 'in the map area' : '' }}
+              </template>
+            </p>
             <v-btn
+              v-if="areaBounds"
               variant="text"
+              size="small"
               color="primaryStrong"
-              class="text-none"
-              @click="clearFilters"
+              class="text-none px-1"
+              prepend-icon="md:undo"
+              @click="leaveArea"
             >
-              Clear all
+              {{ placeName ? `Back to ${placeParts[0]}` : 'Back to the list' }}
             </v-btn>
           </div>
 
           <v-alert
             v-if="needsHome"
-            type="info"
-            variant="tonal"
+            variant="text"
             density="compact"
-            rounded="lg"
+            class="px-0 text-body-2 text-grey700"
+            icon="md:info"
           >
             Set your home above to sort or filter by distance.
           </v-alert>
 
-          <template v-if="listPending && !schools.length">
+          <template v-if="pending && !shown.length">
             <v-skeleton-loader
-              v-for="item in 4"
+              v-for="item in 5"
               :key="item"
-              type="list-item-avatar-three-line"
-              class="rounded-lg"
+              type="list-item-two-line"
+              class="px-0"
             />
           </template>
 
           <school-finder-result-card
-            v-for="school in schools"
+            v-for="school in shown"
+            :id="`school-${school.id}`"
             :key="school.id"
             :school="school"
             :picked="compare.has(school.id)"
-            :tag-names="tagNames"
+            :active="school.id === highlightId"
             :bus-tag-id="busTagId"
+            @mouseenter="hoveredId = school.id"
+            @mouseleave="hoveredId = null"
             @toggle-compare="compare.toggle({ id: school.id, name: school.name, slug: school.slug })"
           />
 
           <v-empty-state
-            v-if="!listPending && !schools.length"
+            v-if="!pending && !shown.length"
             icon="md:travel_explore"
-            title="No schools match these filters"
+            title="No schools match"
             text="Try a wider area or remove a filter."
+            size="64"
           >
             <template #actions>
               <v-btn
                 v-if="canClear"
-                color="primary"
-                rounded="pill"
+                variant="text"
+                color="primaryStrong"
                 class="text-none"
                 @click="clearFilters"
               >
@@ -205,26 +214,25 @@
           <!-- "Show more" is also a link to the next page, so crawlers (and visitors without JS) reach every school. -->
           <div
             v-if="hasMore"
-            class="d-flex justify-center mt-2"
+            class="d-flex justify-center mt-4"
           >
             <v-btn
-              :href="pageHref(lastLoadedPage + 1)"
+              :href="areaBounds ? undefined : pageHref(lastLoadedPage + 1)"
               :loading="loadingMore"
+              variant="outlined"
               color="grey800"
-              variant="flat"
               rounded="pill"
-              size="large"
-              class="text-none px-8"
+              class="text-none px-6"
               @click.prevent="loadMore"
             >
-              Show {{ Math.min(SCHOOL_FINDER_PAGE_SIZE, total - lastShown) }} more
+              Show more
             </v-btn>
           </div>
 
           <nav
-            v-if="pageCount > 1"
+            v-if="!areaBounds && pageCount > 1"
             aria-label="Pages"
-            class="d-flex flex-wrap justify-center align-center ga-1"
+            class="d-flex flex-wrap justify-center align-center ga-1 mt-3"
           >
             <template
               v-for="item in pageLinks"
@@ -232,398 +240,119 @@
             >
               <span
                 v-if="item.gap"
-                class="px-1 text-grey600"
+                class="px-1 text-grey500"
               >…</span>
               <v-btn
                 v-else
                 :to="item.to"
-                :variant="item.current ? 'flat' : 'text'"
-                :color="item.current ? 'grey800' : 'grey700'"
+                variant="text"
+                :color="item.current ? 'grey900' : 'grey600'"
+                :class="{ 'font-weight-bold': item.current }"
                 :aria-current="item.current ? 'page' : undefined"
                 size="small"
-                min-width="36"
-                rounded="lg"
-                class="text-none"
+                min-width="32"
+                class="text-none px-1"
               >
                 {{ item.page }}
               </v-btn>
             </template>
           </nav>
-        </section>
 
-        <aside
-          class="finder-layout__map d-none d-xl-block"
-          aria-label="Map"
-        >
-          <v-card
-            variant="flat"
-            border
-            rounded="lg"
-            class="finder-side-map"
+          <section
+            v-if="facets?.regions?.length"
+            aria-labelledby="nearby-areas"
+            class="mt-12"
           >
-            <school-finder-map
-              v-if="sideMapReady"
-              :params="mapParams"
-              :home="home"
-              :home-radius-km="filters.within"
-              :frame="listPoints"
+            <h2
+              id="nearby-areas"
+              class="text-subtitle-1 font-weight-bold text-grey900 mb-3"
             >
-              <v-btn
-                class="finder-side-map__expand text-none"
-                color="surface"
-                rounded="pill"
-                prepend-icon="md:open_in_full"
-                @click="setView('map')"
+              {{ regionsHeading }}
+            </h2>
+            <ul class="finder__areas">
+              <li
+                v-for="region in facets.regions"
+                :key="region.id"
               >
-                Expand map
-              </v-btn>
-            </school-finder-map>
-            <div
-              v-else
-              class="d-flex align-center justify-center fill-height"
-            >
-              <v-btn
-                color="surface"
-                rounded="pill"
-                class="text-none"
-                prepend-icon="md:map"
-                @click="sideMapReady = true"
-              >
-                Show map
-              </v-btn>
-            </div>
-          </v-card>
-        </aside>
-      </div>
+                <nuxt-link
+                  :to="regionLink(region.id)"
+                  class="text-body-2 text-grey800"
+                >{{ region.title }}</nuxt-link>
+                <span class="text-caption text-grey500 ml-1">{{ formatCount(region.count) }}</span>
+              </li>
+            </ul>
+          </section>
 
-      <section
-        v-if="facets?.regions?.length"
-        aria-labelledby="nearby-areas"
-        class="mt-12"
-      >
-        <h2
-          id="nearby-areas"
-          class="text-h6 font-weight-bold text-grey900 mb-3"
-        >
-          {{ regionsHeading }}
-        </h2>
-        <div class="finder-areas">
-          <v-btn
-            v-for="region in facets.regions"
-            :key="region.id"
-            :to="regionLink(region.id)"
-            variant="outlined"
-            color="grey300"
-            rounded="lg"
-            class="text-none finder-areas__item"
+          <section
+            v-if="facets && facets.total"
+            aria-labelledby="about-schools"
+            class="mt-12"
           >
-            <span class="text-grey800 text-truncate">{{ region.title }}</span>
-            <span class="text-grey600 ml-2">{{ formatCount(region.count) }}</span>
-          </v-btn>
+            <h2
+              id="about-schools"
+              class="text-subtitle-1 font-weight-bold text-grey900 mb-2"
+            >
+              About schools in {{ placeName || 'this list' }}
+            </h2>
+            <p class="text-body-2 text-grey700 mb-4">
+              {{ aboutText }}
+            </p>
+            <v-expansion-panels
+              variant="accordion"
+              flat
+              static
+              class="finder__faq"
+            >
+              <v-expansion-panel
+                v-for="item in faq"
+                :key="item.question"
+                :title="item.question"
+                :text="item.answer"
+              />
+            </v-expansion-panels>
+          </section>
         </div>
       </section>
 
-      <section
-        v-if="facets && facets.total"
-        aria-labelledby="about-schools"
-        class="mt-12 finder-about"
-      >
-        <div>
-          <h2
-            id="about-schools"
-            class="text-h6 font-weight-bold text-grey900 mb-2"
-          >
-            About schools in {{ placeName || 'this list' }}
-          </h2>
-          <p class="text-body-1 text-grey700 ma-0">
-            {{ aboutText }}
-          </p>
-        </div>
-        <v-expansion-panels variant="accordion">
-          <v-expansion-panel
-            v-for="item in faq"
-            :key="item.question"
-            :title="item.question"
-            :text="item.answer"
-            elevation="0"
-            class="border"
-          />
-        </v-expansion-panels>
-      </section>
-    </v-container>
-
-    <!-- Map view: the list beside (desktop) or under (phone) a map that searches the area it shows. -->
-    <div
-      v-else
-      class="finder-mapview"
-    >
-      <h1 class="d-sr-only">
-        {{ heading }} on the map
-      </h1>
+      <!-- Desktop: the map stays beside the list; moving it shows the schools of the area in the list. -->
       <aside
-        class="finder-mapview__panel d-none d-md-flex"
-        aria-label="Schools in this area"
+        class="finder__map d-none d-lg-block"
+        aria-label="Map"
       >
-        <div class="pa-4 border-b">
-          <div class="text-subtitle-1 font-weight-bold text-grey800">
-            {{ mapPanelTitle }}
-          </div>
-          <div class="text-caption text-grey600">
-            {{ mapPanelSubtitle }}
-          </div>
-          <v-switch
-            v-model="searchAsMove"
-            color="primaryStrong"
-            density="compact"
-            hide-details
-            inset
-            label="Search as I move the map"
-          />
-        </div>
-        <div class="finder-mapview__list pa-3 d-flex flex-column ga-2">
-          <v-skeleton-loader
-            v-if="mapList.loading && !mapList.items.length"
-            type="list-item-two-line@4"
-          />
-          <school-finder-result-card
-            v-for="school in mapList.items"
-            :key="school.id"
-            :school="school"
-            :picked="compare.has(school.id)"
-            :active="school.id === selectedPoint?.id"
-            :tag-names="tagNames"
-            :bus-tag-id="busTagId"
-            heading-tag="h3"
-            @toggle-compare="compare.toggle({ id: school.id, name: school.name, slug: school.slug })"
-          />
-          <v-btn
-            v-if="mapList.items.length < mapList.total"
-            :loading="mapList.loading"
-            variant="outlined"
-            color="grey700"
-            rounded="pill"
-            class="text-none align-self-center"
-            @click="loadMapList(true)"
-          >
-            <span class="text-grey800">Show more</span>
-          </v-btn>
-        </div>
-      </aside>
-
-      <div class="finder-mapview__map">
         <school-finder-map
+          v-if="showDesktopMap"
           :params="mapParams"
           :home="home"
           :home-radius-km="filters.within"
-          :selected-id="selectedPoint?.id ?? null"
-          :frame="listPoints"
+          :selected-id="highlightId"
+          :frame="regionPoints"
           @view-change="onMapView"
-          @select="selectedPoint = $event"
+          @select="onSelect"
         >
-          <div class="finder-mapview__top">
-            <v-chip
-              color="surface"
-              variant="flat"
-              elevation="2"
-              class="font-weight-medium"
-            >
-              <v-icon
-                start
-                size="10"
-                :color="mapView?.complete ? 'success' : 'primary'"
-              >
-                md:circle
-              </v-icon>
-              {{ mapStatus }}
-            </v-chip>
-            <v-btn
-              v-if="!searchAsMove && mapDirty"
-              color="surface"
-              rounded="pill"
-              elevation="2"
-              class="text-none ml-2"
-              @click="loadMapList(false)"
-            >
-              Search this area
-            </v-btn>
-          </div>
-
-          <v-card
-            v-if="selectedPoint"
-            class="finder-mapview__preview"
-            rounded="lg"
-            elevation="8"
-          >
-            <v-card-item>
-              <v-card-title class="text-subtitle-1 font-weight-bold text-wrap">
-                {{ selectedPoint.name }}
-              </v-card-title>
-              <v-card-subtitle class="text-wrap">
-                {{ selectedSubtitle }}
-              </v-card-subtitle>
-              <template #append>
-                <v-btn
-                  icon="md:close"
-                  variant="text"
-                  size="small"
-                  aria-label="Close"
-                  @click="selectedPoint = null"
-                />
-              </template>
-            </v-card-item>
-            <v-card-actions class="pt-0 px-4 pb-3 flex-wrap ga-2">
-              <v-btn
-                :to="`/school/${selectedPoint.id}/${selectedPoint.slug}`"
-                color="primary"
-                variant="flat"
-                rounded="pill"
-                class="text-none font-weight-bold"
-              >
-                Open school
-              </v-btn>
-              <v-btn
-                variant="outlined"
-                color="grey700"
-                rounded="pill"
-                class="text-none"
-                :prepend-icon="compare.has(selectedPoint.id) ? 'md:check' : 'md:add'"
-                @click="compare.toggle({ id: selectedPoint.id, name: selectedPoint.name, slug: selectedPoint.slug })"
-              >
-                <span class="text-grey800">Compare</span>
-              </v-btn>
-              <v-btn
-                :href="`https://www.google.com/maps/dir/?api=1&destination=${selectedPoint.lat},${selectedPoint.lng}`"
-                target="_blank"
-                rel="noopener nofollow"
-                variant="text"
-                rounded="pill"
-                class="text-none"
-                prepend-icon="md:directions"
-              >
-                Directions
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </school-finder-map>
-
-        <!-- Phones: the schools in view as a swipeable row over the map. -->
-        <v-sheet
-          class="finder-mapview__sheet d-md-none"
-          rounded="t-xl"
-          elevation="8"
-        >
-          <div class="d-flex align-center px-4 pt-3 pb-2">
-            <strong class="flex-grow-1 text-grey800">{{ mapPanelTitle }}</strong>
-            <v-btn
-              variant="text"
-              color="primaryStrong"
-              class="text-none px-1"
-              @click="setView('list')"
-            >
-              See as list
-            </v-btn>
-          </div>
-          <v-slide-group
-            v-if="mapList.items.length"
-            class="pb-3"
-          >
-            <v-slide-group-item
-              v-for="school in mapSheetItems"
-              :key="school.id"
-            >
-              <v-card
-                :to="`/school/${school.id}/${school.slug}`"
-                variant="flat"
-                border
-                rounded="lg"
-                width="260"
-                class="ml-3"
-                :class="{ 'border-primary': school.id === selectedPoint?.id }"
-              >
-                <v-card-item>
-                  <v-card-title class="text-body-1 font-weight-bold text-wrap">
-                    {{ school.name }}
-                  </v-card-title>
-                  <v-card-subtitle>
-                    {{ sheetSubtitle(school) }}
-                  </v-card-subtitle>
-                </v-card-item>
-              </v-card>
-            </v-slide-group-item>
-          </v-slide-group>
-        </v-sheet>
-      </div>
-    </div>
-
-    <!-- One switch, always in the same place, so moving between the list and the map is one tap each way. -->
-    <v-btn
-      class="finder-view-toggle text-none"
-      :class="{
-        'finder-view-toggle--list': !isMapView,
-        'finder-view-toggle--map': isMapView,
-        'finder-view-toggle--raised': !isMapView && compare.items.value.length > 0,
-      }"
-      color="grey800"
-      rounded="pill"
-      size="large"
-      elevation="6"
-      :prepend-icon="isMapView ? 'md:view_list' : 'md:map'"
-      @click="setView(isMapView ? 'list' : 'map')"
-    >
-      {{ isMapView ? 'List' : 'Map' }}
-    </v-btn>
-
-    <v-dialog
-      v-model="filtersOpen"
-      fullscreen
-      transition="dialog-bottom-transition"
-    >
-      <v-card>
-        <v-toolbar
-          color="surface"
-          density="comfortable"
-          border="b"
-        >
-          <v-btn
-            icon="md:close"
-            aria-label="Close filters"
-            @click="filtersOpen = false"
-          />
-          <v-toolbar-title class="text-subtitle-1 font-weight-bold">
-            Filters
-          </v-toolbar-title>
-        </v-toolbar>
-        <v-card-text class="pa-4">
-          <school-finder-filters
-            :filters="filters"
-            :facets="facets"
-            :has-home="!!home"
-            :can-clear="canClear"
-            @update="update"
-            @clear="clearFilters"
-          />
-        </v-card-text>
-        <v-card-actions class="pa-4 border-t">
-          <v-btn
-            block
-            color="primary"
+          <v-chip
+            class="finder__map-status"
+            color="surface"
             variant="flat"
-            rounded="pill"
-            size="large"
-            class="text-none font-weight-bold"
-            @click="filtersOpen = false"
+            elevation="1"
+            size="small"
           >
-            Show {{ formatCount(total) }} schools
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+            {{ mapStatus }}
+          </v-chip>
+        </school-finder-map>
+        <school-finder-map-preview
+          v-if="selectedPoint && showDesktopMap"
+          :point="selectedPoint"
+          @close="selectedPoint = null"
+        />
+      </aside>
+    </div>
 
     <school-finder-compare-tray />
   </div>
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify'
 import type { SchoolFacetsDTO, SchoolListDTO, SchoolMapPointDTO } from '@/types'
 import type { SchoolFinderFilters, SchoolFinderSort } from '@/composables/useSchoolFinder'
 import type { FinderMapView } from '@/components/school/finder/Map.client.vue'
@@ -633,31 +362,35 @@ interface ListResponse {
   filters?: { key: string, value: string | null }[]
 }
 
+// The site header is fixed and 64 px tall.
+const HEADER_HEIGHT = 64
+
 const route = useRoute()
 const router = useRouter()
 const compare = useSchoolCompare()
-const { home, tripFromHome } = useSchoolHome()
+const { home } = useSchoolHome()
+const { lgAndUp } = useDisplay()
 
 const filters = computed(() => parseSchoolFinderQuery(route.query))
-const isMapView = computed(() => filters.value.view === 'map')
 const formatCount = (value: number) => (value ?? 0).toLocaleString('en-US')
 
-const go = (next: SchoolFinderFilters, push = false) => {
-  const location = { query: schoolFinderQuery(next) }
-  return push ? router.push(location) : router.replace(location)
-}
+const go = (next: SchoolFinderFilters) => router.replace({ query: schoolFinderQuery(next) })
 
 /** Any filter change starts the list over at page 1. */
 const update = (patch: Partial<SchoolFinderFilters>) => go({ ...filters.value, ...patch, page: 1 })
 
 const clearFilters = () => update({ keyword: '', types: [], facilities: [], photos: false, rated: false, within: null, sort: 'best' })
 
-const selectedPoint = ref<SchoolMapPointDTO | null>(null)
+const toolbarAnchor = ref<HTMLElement | null>(null)
 
-// The view is a step the visitor may want to undo with Back, so it is pushed, not replaced.
-const setView = (view: 'list' | 'map') => {
-  selectedPoint.value = null
-  go({ ...filters.value, view, page: 1 }, true)
+// Switching views starts the new view at the top: the pinned filters, then the map (or the first school).
+const setView = async (view: 'list' | 'map') => {
+  await go({ ...filters.value, view })
+  await nextTick()
+  const anchor = toolbarAnchor.value
+  if (!anchor) return
+  const top = anchor.getBoundingClientRect().top + window.scrollY - HEADER_HEIGHT
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
 }
 
 const pickSort = (sort: SchoolFinderSort) => update({ sort })
@@ -684,7 +417,7 @@ const filterParams = computed(() => schoolFinderFilterParams(filters.value, home
 const mapParams = computed(() => schoolFinderFilterParams(filters.value, null))
 const sortParams = computed(() => schoolFinderSortParams(filters.value.sort, !!home.value))
 
-// ---- List (pages appended by "Show more") ----
+// ---- The list of the area in the URL (server-rendered; "Show more" appends pages) ----
 const listSignature = computed(() => JSON.stringify([filterParams.value, sortParams.value]))
 const listCache = useState<{ key: string, items: SchoolListDTO[], lastPage: number, total: number, titles: Record<string, string> } | null>(
   'school-finder-list-cache',
@@ -693,14 +426,15 @@ const listCache = useState<{ key: string, items: SchoolListDTO[], lastPage: numb
 
 const schools = ref<SchoolListDTO[]>([])
 const total = ref(0)
-const lastLoadedPage = ref(filters.value.page)
+const lastRegionPage = ref(filters.value.page)
 const placeTitles = ref<Record<string, string>>({})
 const loadingMore = ref(false)
 
-const fetchListPage = (page: number) => useApiService.get<ListResponse>('/api/v2/schools', {
-  ...filterParams.value,
+const fetchListPage = (page: number, extra: Record<string, number> = {}) => useApiService.get<ListResponse>('/api/v2/schools', {
+  ...(Object.keys(extra).length ? mapParams.value : filterParams.value),
   ...sortParams.value,
   ...schoolFinderPageParams(page),
+  ...extra,
 }, { public: true })
 
 const { data: listData, status: listStatus } = await useAsyncData(
@@ -722,13 +456,11 @@ const { data: listData, status: listStatus } = await useAsyncData(
   { watch: [listSignature, () => filters.value.page] },
 )
 
-const listPending = computed(() => listStatus.value === 'pending')
-
 watch(listData, (value) => {
   if (!value) return
   schools.value = [...value.items]
   total.value = value.total
-  lastLoadedPage.value = value.lastPage
+  lastRegionPage.value = value.lastPage
   placeTitles.value = value.titles
 }, { immediate: true })
 
@@ -736,26 +468,78 @@ const rememberList = () => {
   listCache.value = {
     key: `${listSignature.value}|${filters.value.page}`,
     items: schools.value,
-    lastPage: lastLoadedPage.value,
+    lastPage: lastRegionPage.value,
     total: total.value,
     titles: placeTitles.value,
   }
 }
 
+// ---- The list of the map area (after the visitor moves the map) ----
+const areaBounds = ref<FinderMapView | null>(null)
+const area = reactive({ items: [] as SchoolListDTO[], total: 0, page: 1, loading: false })
+let areaRequest = 0
+
+const boundsParams = (bounds: FinderMapView) => ({
+  'Bounds.South': bounds.south,
+  'Bounds.West': bounds.west,
+  'Bounds.North': bounds.north,
+  'Bounds.East': bounds.east,
+})
+
+const loadArea = async (more: boolean) => {
+  const bounds = areaBounds.value
+  if (!bounds) return
+  const page = more ? area.page + 1 : 1
+  const request = ++areaRequest
+  area.loading = true
+  try {
+    const response = await fetchListPage(page, boundsParams(bounds))
+    if (request !== areaRequest) return
+    const items = response?.data?.list ?? []
+    area.items = more ? [...area.items, ...items] : items
+    area.total = response?.data?.totalRecordsCount ?? 0
+    area.page = page
+  }
+  catch {
+    // Keep what is shown; the next move searches again.
+  }
+  finally {
+    if (request === areaRequest) area.loading = false
+  }
+}
+
+const leaveArea = () => {
+  areaBounds.value = null
+  area.items = []
+  selectedPoint.value = null
+}
+
+// New filters apply to the area too.
+watch(() => JSON.stringify([mapParams.value, sortParams.value]), () => {
+  if (areaBounds.value) loadArea(false)
+})
+
+// ---- What the list shows ----
+const shown = computed(() => (areaBounds.value ? area.items : schools.value))
+const shownTotal = computed(() => (areaBounds.value ? area.total : total.value))
+const pending = computed(() => (areaBounds.value ? area.loading : listStatus.value === 'pending'))
 const pageCount = computed(() => Math.ceil(total.value / SCHOOL_FINDER_PAGE_SIZE))
-const hasMore = computed(() => lastLoadedPage.value < pageCount.value)
-const firstShown = computed(() => ((filters.value.page - 1) * SCHOOL_FINDER_PAGE_SIZE) + 1)
-const lastShown = computed(() => Math.min(total.value, firstShown.value + schools.value.length - 1))
+const lastLoadedPage = computed(() => (areaBounds.value ? area.page : lastRegionPage.value))
+const hasMore = computed(() => (areaBounds.value ? area.items.length < area.total : lastRegionPage.value < pageCount.value))
 
 const loadMore = async () => {
+  if (areaBounds.value) {
+    await loadArea(true)
+    return
+  }
   if (loadingMore.value || !hasMore.value) return
   loadingMore.value = true
   try {
-    const next = lastLoadedPage.value + 1
+    const next = lastRegionPage.value + 1
     const response = await fetchListPage(next)
     const known = new Set(schools.value.map(school => school.id))
     schools.value = [...schools.value, ...(response?.data?.list ?? []).filter(school => !known.has(school.id))]
-    lastLoadedPage.value = next
+    lastRegionPage.value = next
     rememberList()
   }
   finally {
@@ -787,7 +571,6 @@ const { data: facetsData } = await useAsyncData(
   { watch: [() => JSON.stringify(filterParams.value)] },
 )
 const facets = computed(() => facetsData.value ?? null)
-const tagNames = computed<Record<number, string>>(() => Object.fromEntries((facets.value?.tags ?? []).map(tag => [tag.id, tag.name])))
 const busTagId = computed(() => facets.value?.tags.find(tag => tag.name === SCHOOL_BUS_TAG_NAME)?.id ?? null)
 
 // ---- Words for the page ----
@@ -799,9 +582,8 @@ const summary = computed(() => {
   const f = facets.value
   if (!f) return ''
   const parts = [`${formatCount(f.total)} schools`]
-  if (f.withImage) parts.push(`${formatCount(f.withImage)} with photos`)
   if (f.withRating) parts.push(`${formatCount(f.withRating)} rated by parents`)
-  return parts.join(' · ')
+  return parts.join(', ')
 })
 
 const regionsHeading = computed(() => {
@@ -811,7 +593,7 @@ const regionsHeading = computed(() => {
 
 const regionLink = (id: number) => {
   const level = facets.value?.regionLevel
-  const base: SchoolFinderFilters = { ...filters.value, keyword: '', page: 1, view: 'list' }
+  const base: SchoolFinderFilters = { ...filters.value, keyword: '', page: 1 }
   if (level === 'country') return { query: schoolFinderQuery({ ...base, country: id, state: null, city: null }) }
   if (level === 'state') return { query: schoolFinderQuery({ ...base, state: id, city: null }) }
   return { query: schoolFinderQuery({ ...base, city: id }) }
@@ -842,7 +624,7 @@ const faq = computed(() => {
   const items = [
     {
       question: `How do I find the schools nearest to my home in ${where}?`,
-      answer: 'Set your home in the box at the top of the list, then sort by "Nearest to home" or pick a distance. Every school then shows how far it is and about how long the walk and the drive take.',
+      answer: 'Set your home at the top of the list, then sort by "Nearest to home" or pick a distance. Every school then shows how far it is and about how long the walk and the drive take.',
     },
     {
       question: 'How do I compare schools?',
@@ -852,7 +634,7 @@ const faq = computed(() => {
   if (busCount.value) {
     items.push({
       question: `Which schools in ${where} have a school bus?`,
-      answer: `${formatCount(busCount.value)} schools list a school bus. Tick "School bus" in the filters to see only them.`,
+      answer: `${formatCount(busCount.value)} schools list a school bus. Pick "School bus" in the filters to see only them.`,
     })
   }
   return items
@@ -871,22 +653,6 @@ const crumbs = computed(() => {
   return items
 })
 
-// ---- Active filter chips ----
-const activeChips = computed(() => {
-  const f = filters.value
-  const chips: { key: string, label: string, remove: () => void }[] = []
-  if (f.keyword) chips.push({ key: 'keyword', label: `“${f.keyword}”`, remove: () => update({ keyword: '' }) })
-  if (f.within) chips.push({ key: 'within', label: `Within ${f.within} km of home`, remove: () => update({ within: null }) })
-  f.types.forEach(type => chips.push({ key: `type-${type}`, label: SCHOOL_TYPE_LABELS[type] ?? type, remove: () => update({ types: f.types.filter(item => item !== type) }) }))
-  f.facilities.forEach(id => chips.push({
-    key: `tag-${id}`,
-    label: id === busTagId.value ? 'School bus' : (tagNames.value[id] ?? 'Facility'),
-    remove: () => update({ facilities: f.facilities.filter(item => item !== id) }),
-  }))
-  if (f.photos) chips.push({ key: 'photos', label: 'Has photos', remove: () => update({ photos: false }) })
-  if (f.rated) chips.push({ key: 'rated', label: 'Rated by parents', remove: () => update({ rated: false }) })
-  return chips
-})
 const canClear = computed(() => hasSchoolFinderRefinements(filters.value) || filters.value.sort !== 'best')
 
 const sortItems = computed(() => SCHOOL_FINDER_SORTS.map(item => ({
@@ -894,106 +660,51 @@ const sortItems = computed(() => SCHOOL_FINDER_SORTS.map(item => ({
   props: { subtitle: item.value === 'nearest' && !home.value ? 'Set your home first' : undefined },
 })))
 
-const filtersOpen = ref(false)
-
-// ---- Side map (wide screens, list view): loaded after the page settles, so it never delays the list. ----
-const sideMapReady = ref(false)
+// ---- Map ----
+// Client-only, and on desktop only after the list has painted, so the map never delays the first view.
+const mapAllowed = ref(false)
 onMounted(() => {
-  if (!isMapView.value && window.matchMedia('(min-width: 1920px)').matches) {
-    const start = () => {
-      sideMapReady.value = true
-    }
-    if ('requestIdleCallback' in window) window.requestIdleCallback(start, { timeout: 3000 })
-    else setTimeout(start, 1500)
+  const start = () => {
+    mapAllowed.value = true
   }
+  if ('requestIdleCallback' in window) window.requestIdleCallback(start, { timeout: 1500 })
+  else setTimeout(start, 800)
 })
-const listPoints = computed(() => schools.value
+const showDesktopMap = computed(() => mapAllowed.value && lgAndUp.value)
+const showMobileMap = computed(() => !lgAndUp.value && filters.value.view === 'map' && import.meta.client)
+
+// The map frames the schools of the area in the URL, never the map area's own results (that would chase itself).
+const regionPoints = computed(() => schools.value
   .filter(school => school.lat != null && school.long != null)
   .slice(0, SCHOOL_FINDER_PAGE_SIZE)
   .map(school => ({ lat: school.lat, lng: school.long })))
 
-// ---- Map view ----
 const mapView = ref<FinderMapView | null>(null)
-const selectedSubtitle = computed(() => {
-  const point = selectedPoint.value
-  if (!point) return ''
-  const trip = tripFromHome(point.lat, point.lng)
-  return [
-    point.rating ? `★ ${point.rating.toFixed(1)} (${point.reviewCount})` : '',
-    trip ? `${trip.distance} from home · ${trip.walk} walk · ${trip.drive} drive` : '',
-  ].filter(Boolean).join(' · ')
-})
-const sheetSubtitle = (school: SchoolListDTO) => {
-  const trip = tripFromHome(school.lat, school.long)
-  return [schoolTypeLabel(school.schoolType), school.rating ? `★ ${school.rating.toFixed(1)}` : '', trip ? trip.distance : '']
-    .filter(Boolean).join(' · ')
-}
-const searchAsMove = ref(true)
-const mapDirty = ref(false)
-const mapList = reactive({ items: [] as SchoolListDTO[], total: 0, page: 1, loading: false, bounds: null as FinderMapView | null })
-let mapListTimer: ReturnType<typeof setTimeout> | null = null
-let mapListRequest = 0
-
-const loadMapList = async (more: boolean) => {
-  const bounds = more ? mapList.bounds : mapView.value
-  if (!bounds) return
-  const page = more ? mapList.page + 1 : 1
-  const request = ++mapListRequest
-  mapList.loading = true
-  try {
-    const response = await useApiService.get<ListResponse>('/api/v2/schools', {
-      ...mapParams.value,
-      ...sortParams.value,
-      ...schoolFinderPageParams(page),
-      'Bounds.South': bounds.south,
-      'Bounds.West': bounds.west,
-      'Bounds.North': bounds.north,
-      'Bounds.East': bounds.east,
-    }, { public: true })
-    if (request !== mapListRequest) return
-    const items = response?.data?.list ?? []
-    mapList.items = more ? [...mapList.items, ...items] : items
-    mapList.total = response?.data?.totalRecordsCount ?? 0
-    mapList.page = page
-    mapList.bounds = bounds
-    mapDirty.value = false
-  }
-  catch {
-    // Keep what is shown; the next move searches again.
-  }
-  finally {
-    if (request === mapListRequest) mapList.loading = false
-  }
-}
+const selectedPoint = ref<SchoolMapPointDTO | null>(null)
+const hoveredId = ref<number | null>(null)
+const highlightId = computed(() => hoveredId.value ?? selectedPoint.value?.id ?? null)
+let areaTimer: ReturnType<typeof setTimeout> | null = null
 
 const onMapView = (view: FinderMapView) => {
   mapView.value = view
-  if (view.loading) return
-  if (!searchAsMove.value) {
-    mapDirty.value = true
-    return
-  }
-  if (mapListTimer) clearTimeout(mapListTimer)
-  mapListTimer = setTimeout(() => loadMapList(false), 400)
+  if (view.loading || !view.byUser) return
+  if (areaTimer) clearTimeout(areaTimer)
+  areaTimer = setTimeout(() => {
+    areaBounds.value = view
+    loadArea(false)
+  }, 350)
 }
 
-const mapSheetItems = computed(() => {
-  const selected = selectedPoint.value
-  if (!selected) return mapList.items
-  const match = mapList.items.find(school => school.id === selected.id)
-  return match ? [match, ...mapList.items.filter(school => school.id !== selected.id)] : mapList.items
-})
+const onSelect = (point: SchoolMapPointDTO | null) => {
+  selectedPoint.value = point
+  if (point) document.getElementById(`school-${point.id}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
+}
 
-const mapPanelTitle = computed(() => {
-  if (mapList.loading && !mapList.items.length) return 'Searching this area...'
-  return `${formatCount(mapList.total)} ${mapList.total === 1 ? 'school' : 'schools'} in this area`
-})
-const mapPanelSubtitle = computed(() => SCHOOL_FINDER_SORTS.find(item => item.value === filters.value.sort)?.title ?? '')
 const mapStatus = computed(() => {
   const view = mapView.value
   if (!view || view.loading) return 'Loading schools...'
   if (!view.total) return 'No schools here: move or zoom out'
-  return view.complete ? `All ${formatCount(mapList.total || view.total)} schools in view` : 'Zoom in to see each school'
+  return view.complete ? 'Every school in view is shown' : 'Zoom in to see each school'
 })
 
 // ---- SEO ----
@@ -1017,6 +728,8 @@ const metaDescription = computed(() => {
   const count = facets.value?.total ? `${formatCount(facets.value.total)} ` : ''
   return `Compare ${count}schools in ${where}: distance from your home, school bus, parents' ratings, photos and facilities.`
 })
+
+const firstShown = computed(() => ((filters.value.page - 1) * SCHOOL_FINDER_PAGE_SIZE) + 1)
 
 const jsonLd = computed(() => ({
   '@context': 'https://schema.org',
@@ -1052,170 +765,133 @@ useHead({
     { property: 'og:title', content: metaTitle },
     { property: 'og:description', content: metaDescription },
     { property: 'og:site_name', content: 'GamaTrain' },
-    // The map view is the same list drawn differently: one indexed page per list is enough.
-    { name: 'robots', content: computed(() => (isMapView.value ? 'noindex, follow' : 'index, follow')) },
   ],
   script: [{ key: 'school-finder-ld', type: 'application/ld+json', innerHTML: () => JSON.stringify(jsonLd.value) }],
 })
 </script>
 
 <style scoped>
-.finder-container {
-  max-width: 1440px;
+.finder__split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
 }
 
-.finder-crumbs :deep(.v-breadcrumbs-item--link) {
+.finder__inner {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 16px 16px 120px;
+}
+
+.finder__crumbs :deep(.v-breadcrumbs-item--link) {
   color: inherit;
 }
 
-.finder-title {
-  min-width: 0;
-  flex: 1 1 420px;
+.finder__sort {
+  flex: 0 0 auto;
 }
 
-.finder-layout {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: 24px;
+.finder__toggle {
+  width: 100%;
 }
 
-.finder-layout__filters {
-  flex: 0 0 272px;
+.finder__toolbar {
   position: sticky;
-  top: 80px;
-  max-height: calc(100vh - 96px);
-  overflow-y: auto;
+  top: 64px;
+  z-index: 5;
+  margin-left: -16px;
+  margin-right: -16px;
+  padding: 8px 16px;
+  background: rgb(var(--v-theme-background));
 }
 
-.finder-layout__results {
-  flex: 999 1 520px;
-  min-width: 0;
+.finder__count {
+  border-bottom: 1px solid rgb(var(--v-theme-grey100));
 }
 
-.finder-layout__map {
-  flex: 0 0 400px;
-  position: sticky;
-  top: 80px;
-}
-
-.finder-side-map {
-  height: calc(100vh - 112px);
-  max-height: 760px;
+/* The map fills the screen under the header and the pinned filters (about 104 px). */
+.finder__mobile-map {
+  position: relative;
+  height: calc(100dvh - 64px - 104px);
+  min-height: 320px;
+  margin-left: -16px;
+  margin-right: -16px;
   overflow: hidden;
 }
 
-.finder-side-map__expand {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  z-index: 500;
+.finder__areas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  columns: 3 180px;
+  column-gap: 24px;
 }
 
-.finder-areas {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 8px;
+.finder__areas li {
+  padding: 3px 0;
+  break-inside: avoid;
 }
 
-.finder-areas__item {
-  height: 48px !important;
+.finder__areas a {
+  text-decoration: none;
 }
 
-.finder-areas__item :deep(.v-btn__content) {
-  width: 100%;
-  justify-content: space-between;
+.finder__areas a:hover {
+  text-decoration: underline;
 }
 
-.finder-about {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
-  gap: 24px;
+.finder__faq :deep(.v-expansion-panel) {
+  border-bottom: 1px solid rgb(var(--v-theme-grey100));
+  border-radius: 0 !important;
 }
 
-.finder-mapview {
-  display: flex;
-  height: calc(100dvh - 64px);
+.finder__faq :deep(.v-expansion-panel-title) {
+  padding-left: 0;
+  padding-right: 0;
+  font-size: 14px;
+  min-height: 48px;
 }
 
-.finder-mapview__panel {
-  flex: 0 0 400px;
-  flex-direction: column;
-  min-height: 0;
-  border-right: 1px solid rgb(var(--v-theme-grey200));
-  background: rgb(var(--v-theme-surface));
+.finder__faq :deep(.v-expansion-panel-text__wrapper) {
+  padding: 0 0 12px;
+  font-size: 14px;
+  color: rgb(var(--v-theme-grey700));
 }
 
-.finder-mapview__list {
-  flex: 1;
-  overflow-y: auto;
-}
-
-/* A scrolling column: cards keep their height instead of shrinking to fit. */
-.finder-mapview__list > * {
-  flex-shrink: 0;
-}
-
-.finder-mapview__map {
+.finder__map {
   position: relative;
-  flex: 1;
-  min-width: 0;
 }
 
-.finder-mapview__top {
+:deep(.finder__map-status) {
   position: absolute;
   top: 12px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 500;
-  display: flex;
-  align-items: center;
-  white-space: nowrap;
 }
 
-.finder-mapview__preview {
-  position: absolute;
-  left: 16px;
-  bottom: 24px;
-  width: min(420px, calc(100% - 32px));
-  z-index: 600;
-}
-
-.finder-mapview__sheet {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 550;
-}
-
-.finder-view-toggle {
-  position: fixed !important;
-  left: 50%;
-  bottom: 24px;
-  transform: translateX(-50%);
-  z-index: 1003;
-}
-
-.finder-view-toggle--raised {
-  bottom: 88px;
-}
-
-@media (max-width: 959px) {
-  /* On phones the map's school sheet sits at the bottom: the toggle and the preview go above it. */
-  .finder-view-toggle--map {
-    bottom: 176px;
+@media (min-width: 1280px) {
+  /* List on the left, the map filling the rest of the screen and staying put while the list scrolls. */
+  .finder__split {
+    grid-template-columns: minmax(560px, 46%) minmax(0, 1fr);
   }
 
-  .finder-mapview__preview {
-    bottom: 196px;
+  .finder__inner {
+    max-width: none;
+    margin: 0;
+    padding: 20px 32px 120px;
   }
-}
 
-/* Wide screens show the map beside the list, so the list view needs no toggle. */
-@media (min-width: 1920px) {
-  .finder-view-toggle--list {
-    display: none;
+  .finder__toolbar {
+    margin-left: -32px;
+    margin-right: -32px;
+    padding: 8px 32px;
+  }
+
+  .finder__map {
+    position: sticky;
+    top: 64px;
+    height: calc(100dvh - 64px);
+    border-left: 1px solid rgb(var(--v-theme-grey100));
   }
 }
 </style>
