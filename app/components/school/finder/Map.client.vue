@@ -134,10 +134,16 @@ const goToMyLocation = async () => {
   }
 }
 
+// A drop-shaped pin with a house: the visitor's own point, apart from the round school markers.
+const HOME_PIN = `<svg class="finder-map__home-pin" width="40" height="50" viewBox="0 0 40 50" aria-hidden="true">
+  <path d="M20 48S6 33 6 21a14 14 0 0 1 28 0c0 12-14 27-14 27z" fill="#1E2A44" stroke="#fff" stroke-width="3"/>
+  <path d="M12.5 21.5 20 15l7.5 6.5V29a1 1 0 0 1-1 1h-4.25v-5h-4.5v5H13.5a1 1 0 0 1-1-1z" fill="#FFB300"/>
+</svg>`
+
 const goHome = () => {
   if (!map || !props.home) return
   movedByUser = true
-  map.flyTo([props.home.lat, props.home.lng], 14)
+  map.flyTo([props.home.lat, props.home.lng], Math.max(15, map.getZoom()))
 }
 
 // The add form starts with the location the visitor was looking at.
@@ -247,7 +253,13 @@ const render = async () => {
         alt: escapeHtml(point.name),
         zIndexOffset: selected ? 1000 : 0,
       })
-      marker.on('click', () => emit('select', point))
+      // Opens the school's card and zooms in on it, so its street and neighbours are readable.
+      marker.on('click', () => {
+        emit('select', point)
+        if (!map) return
+        movedByUser = true
+        map.flyTo([point.lat, point.lng], Math.max(16, map.getZoom()))
+      })
       schoolLayer.addLayer(marker)
     }
   }
@@ -259,11 +271,16 @@ const drawHome = () => {
   if (!L || !map || !homeLayer) return
   homeLayer.clearLayers()
   if (!props.home) return
-  homeLayer.addLayer(L.marker([props.home.lat, props.home.lng], {
-    icon: L.divIcon({ className: 'finder-map__pin-wrap', html: '<span class="finder-map__home">Home</span>', iconSize: [58, 26], iconAnchor: [29, 13] }),
-    interactive: false,
+  const homeMarker = L.marker([props.home.lat, props.home.lng], {
+    icon: L.divIcon({ className: 'finder-map__pin-wrap', html: HOME_PIN, iconSize: [40, 50], iconAnchor: [20, 48] }),
+    keyboard: true,
+    title: 'Your home',
+    alt: 'Your home: zoom in',
     zIndexOffset: 2000,
-  }))
+  })
+  // Tapping home zooms to the streets around it.
+  homeMarker.on('click', goHome)
+  homeLayer.addLayer(homeMarker)
   if (props.homeRadiusKm) {
     homeLayer.addLayer(L.circle([props.home.lat, props.home.lng], {
       radius: props.homeRadiusKm * 1000,
@@ -463,6 +480,18 @@ defineExpose({
   background: rgba(236, 236, 237, 0.92);
   border-color: #161b26;
   color: #161b26;
+}
+
+.finder-map__home-pin {
+  display: block;
+  cursor: pointer;
+  filter: drop-shadow(0 3px 4px rgba(16, 24, 40, 0.35));
+  transition: transform 0.15s ease;
+  transform-origin: 50% 100%;
+}
+
+.finder-map__home-pin:hover {
+  transform: scale(1.1);
 }
 
 .finder-map__home {
