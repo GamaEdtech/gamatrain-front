@@ -290,6 +290,25 @@ const confirmPlace = () => {
 let L: Leaflet | null = null
 let map: import('leaflet').Map | null = null
 let schoolLayer: import('leaflet').LayerGroup | null = null
+// The school pins on the map by id, so highlighting one (hovering its row) changes two pins, not every marker.
+const pinById = new Map<number, import('leaflet').Marker>()
+const iconCache = new Map<boolean, import('leaflet').DivIcon>()
+
+const schoolIcon = (selected: boolean) => {
+  let icon = iconCache.get(selected)
+  if (!icon && L) {
+    const size = selected ? 46 : 34
+    icon = L.divIcon({
+      className: 'finder-map__pin-wrap',
+      html: selected ? SCHOOL_PIN_SELECTED : SCHOOL_PIN,
+      // The pin's tip (y 60 of 64) sits on the school.
+      iconSize: [size, size],
+      iconAnchor: [size / 2, Math.round(size * 60 / 64)],
+    })
+    iconCache.set(selected, icon)
+  }
+  return icon as import('leaflet').DivIcon
+}
 let homeLayer: import('leaflet').LayerGroup | null = null
 const tileCache = new Map<string, Promise<SchoolMapTileDTO | null>>()
 let renderToken = 0
@@ -351,6 +370,7 @@ const render = async () => {
   if (token !== renderToken || !L || !schoolLayer) return
 
   schoolLayer.clearLayers()
+  pinById.clear()
   let total = 0
   let complete = true
   for (const tile of tiles) {
@@ -377,15 +397,8 @@ const render = async () => {
     }
     for (const point of tile.schools ?? []) {
       const selected = point.id === props.selectedId
-      const size = selected ? 46 : 34
       const marker = L.marker([point.lat, point.lng], {
-        icon: L.divIcon({
-          className: 'finder-map__pin-wrap',
-          html: selected ? SCHOOL_PIN_SELECTED : SCHOOL_PIN,
-          // The pin's tip (y 60 of 64) sits on the school.
-          iconSize: [size, size],
-          iconAnchor: [size / 2, Math.round(size * 60 / 64)],
-        }),
+        icon: schoolIcon(selected),
         keyboard: true,
         title: point.name,
         alt: escapeHtml(point.name),
@@ -399,6 +412,7 @@ const render = async () => {
         map.flyTo([point.lat, point.lng], Math.max(16, map.getZoom()))
       })
       schoolLayer.addLayer(marker)
+      pinById.set(point.id, marker)
     }
   }
 
@@ -488,7 +502,12 @@ watch(paramsKey, () => {
   render()
 })
 
-watch(() => props.selectedId, () => render())
+watch(() => props.selectedId, (id, previous) => {
+  const before = previous != null ? pinById.get(previous) : undefined
+  before?.setIcon(schoolIcon(false)).setZIndexOffset(0)
+  const now = id != null ? pinById.get(id) : undefined
+  now?.setIcon(schoolIcon(true)).setZIndexOffset(1000)
+})
 
 // A new list (other area or filters) is framed again; the visitor's own moves never are.
 watch(() => JSON.stringify(props.frame), (value, old) => {
