@@ -276,7 +276,7 @@ const groups = computed(() => {
           label: 'Distance from home',
           cells: withBest(trips.map(trip => trip?.meters ?? null), trips.map(trip => (trip ? { text: trip.distance } : missing())), false),
         },
-        { label: 'Walk / drive (estimate)', cells: trips.map(trip => (trip ? { text: `${trip.walk} / ${trip.drive}` } : missing())) },
+        { label: 'Walk / drive (estimate)', cells: trips.map(trip => (trip ? { text: [trip.walk && `${trip.walk} walk`, trip.drive && `${trip.drive} drive`].filter(Boolean).join(' / ') || 'Too far' } : missing())) },
       ]
     : []
   gettingThere.push({

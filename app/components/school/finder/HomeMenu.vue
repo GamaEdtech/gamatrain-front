@@ -1,75 +1,59 @@
 <template>
-  <div class="home-bar d-flex flex-wrap align-center ga-2 text-body-2">
-    <v-icon
-      size="18"
-      color="grey600"
-    >
-      md:home
-    </v-icon>
-
-    <template v-if="home && !editing">
-      <span class="text-grey700">Distances from <strong class="text-grey900">{{ home.label }}</strong></span>
+  <!-- The content of the "Home" chip's menu: find the home by address, or take the current location. -->
+  <v-card
+    width="320"
+    class="pa-3"
+  >
+    <div class="text-body-2 font-weight-bold text-grey900">
+      Your home
+    </div>
+    <div class="text-caption text-grey600 mb-3">
+      Each school then shows its distance and an estimated walk and drive. Saved on this device only.
+    </div>
+    <v-autocomplete
+      v-model="picked"
+      v-model:search="search"
+      :items="suggestions"
+      :loading="searching"
+      item-title="label"
+      return-object
+      no-filter
+      hide-no-data
+      hide-details
+      autofocus
+      density="compact"
+      variant="solo-filled"
+      flat
+      rounded="lg"
+      prepend-inner-icon="md:search"
+      placeholder="Street or area"
+      @update:model-value="choose"
+    />
+    <div class="d-flex align-center ga-1 mt-2">
       <v-btn
         variant="text"
         size="small"
         color="primaryStrong"
-        class="text-none px-1"
-        @click="editing = true"
-      >
-        Change
-      </v-btn>
-      <v-btn
-        variant="text"
-        size="small"
-        color="grey600"
-        class="text-none px-1"
-        @click="clearHome"
-      >
-        Remove
-      </v-btn>
-    </template>
-
-    <template v-else>
-      <span class="text-grey700">Set your home to see how far each school is.</span>
-      <v-autocomplete
-        v-model="picked"
-        v-model:search="search"
-        :items="suggestions"
-        :loading="searching"
-        item-title="label"
-        return-object
-        no-filter
-        hide-no-data
-        hide-details
-        density="compact"
-        variant="underlined"
-        placeholder="Street or area"
-        class="home-bar__search"
-        @update:model-value="choose"
-      />
-      <v-btn
-        variant="text"
-        size="small"
-        color="primaryStrong"
-        class="text-none px-1"
+        class="text-none px-2"
         prepend-icon="md:my_location"
         :loading="isLoading"
         @click="useMyLocation"
       >
         Use my location
       </v-btn>
+      <v-spacer />
       <v-btn
         v-if="home"
         variant="text"
         size="small"
         color="grey600"
-        class="text-none px-1"
-        @click="editing = false"
+        class="text-none px-2"
+        @click="save(null)"
       >
-        Cancel
+        Remove home
       </v-btn>
-    </template>
-  </div>
+    </div>
+  </v-card>
 </template>
 
 <script setup lang="ts">
@@ -79,10 +63,11 @@ interface Suggestion extends SchoolHome {
   key: string
 }
 
+const emit = defineEmits<{ done: [] }>()
+
 const { home, setHome } = useSchoolHome()
 const { isLoading, fetchLocation } = useCurrentLocation()
 
-const editing = ref(false)
 const search = ref('')
 const picked = ref<Suggestion | null>(null)
 const suggestions = ref<Suggestion[]>([])
@@ -118,7 +103,7 @@ watch(search, (value) => {
 
 const save = (value: SchoolHome | null) => {
   setHome(value)
-  editing.value = false
+  emit('done')
 }
 
 const choose = (value: Suggestion | null) => {
@@ -128,23 +113,10 @@ const choose = (value: Suggestion | null) => {
 const useMyLocation = async () => {
   try {
     const position = await fetchLocation()
-    if (position) save({ lat: position.lat, lng: position.lng, label: 'your current location' })
+    if (position) save({ lat: position.lat, lng: position.lng, label: 'My location' })
   }
   catch {
     // useCurrentLocation already told the visitor why.
   }
 }
-
-const clearHome = () => save(null)
 </script>
-
-<style scoped>
-.home-bar {
-  min-height: 40px;
-}
-
-.home-bar__search {
-  flex: 0 1 240px;
-  min-width: 160px;
-}
-</style>

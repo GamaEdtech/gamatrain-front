@@ -5,6 +5,27 @@
     aria-label="Filters"
   >
     <v-menu
+      v-model="homeOpen"
+      :close-on-content-click="false"
+      location="bottom start"
+    >
+      <template #activator="{ props: menu }">
+        <v-chip
+          v-bind="menu"
+          :variant="home ? 'flat' : 'outlined'"
+          :color="home ? 'success' : 'grey500'"
+          prepend-icon="md:home"
+          append-icon="md:expand_more"
+          class="filter-bar__chip"
+        >
+          <span class="filter-bar__label">{{ home ? home.label : 'Set home' }}</span>
+        </v-chip>
+      </template>
+      <school-finder-home-menu @done="homeOpen = false" />
+    </v-menu>
+
+    <v-menu
+      v-model="areaOpen"
       :close-on-content-click="false"
       location="bottom start"
     >
@@ -13,57 +34,64 @@
           v-bind="menu"
           :variant="areaLabel ? 'flat' : 'outlined'"
           :color="areaLabel ? 'grey800' : 'grey500'"
+          prepend-icon="md:location_on"
           append-icon="md:expand_more"
           class="filter-bar__chip"
         >
-          {{ areaLabel || 'Area' }}
+          <span class="filter-bar__label">{{ areaLabel || 'Area' }}</span>
         </v-chip>
       </template>
       <v-card
-        width="300"
-        class="pa-3 d-flex flex-column ga-2"
+        width="320"
+        class="pa-3"
       >
+        <!-- One box for any place: a country, a region or a city, with the place it belongs to. -->
         <v-autocomplete
-          :model-value="filters.country"
-          :items="countries"
-          :loading="loading.country"
+          ref="areaField"
+          v-model:search="areaQuery"
+          :items="areaResults"
+          :loading="areaLoading"
           item-title="title"
-          item-value="id"
-          label="Country"
-          density="compact"
-          variant="outlined"
+          return-object
+          no-filter
           hide-details
-          clearable
-          @update:model-value="(country: number | null) => emit('update', { country: country ?? null, state: null, city: null })"
-        />
-        <v-autocomplete
-          :model-value="filters.state"
-          :items="states"
-          :loading="loading.state"
-          :disabled="!filters.country"
-          item-title="title"
-          item-value="id"
-          label="State / region"
+          autofocus
           density="compact"
-          variant="outlined"
-          hide-details
-          clearable
-          @update:model-value="(state: number | null) => emit('update', { state: state ?? null, city: null })"
-        />
-        <v-autocomplete
-          :model-value="filters.city"
-          :items="cities"
-          :loading="loading.city"
-          :disabled="!filters.state"
-          item-title="title"
-          item-value="id"
-          label="City / district"
-          density="compact"
-          variant="outlined"
-          hide-details
-          clearable
-          @update:model-value="(city: number | null) => emit('update', { city: city ?? null })"
-        />
+          variant="solo-filled"
+          flat
+          rounded="lg"
+          prepend-inner-icon="md:search"
+          placeholder="Country, region or city"
+          :no-data-text="areaQuery && areaQuery.length > 1 ? 'No place with that name' : 'Type at least 2 letters'"
+          @update:model-value="pickArea"
+        >
+          <template #item="{ props: item, item: { raw } }">
+            <v-list-item
+              v-bind="item"
+              :subtitle="placeContext(raw)"
+            >
+              <template #prepend>
+                <v-icon
+                  size="18"
+                  color="grey500"
+                >
+                  {{ raw.type === 'country' ? 'md:public' : raw.type === 'state' ? 'md:map' : 'md:location_city' }}
+                </v-icon>
+              </template>
+            </v-list-item>
+          </template>
+        </v-autocomplete>
+        <v-btn
+          v-if="filters.country"
+          variant="text"
+          size="small"
+          color="grey600"
+          class="text-none px-2 mt-2"
+          prepend-icon="md:public"
+          @click="clearArea"
+        >
+          All countries
+        </v-btn>
       </v-card>
     </v-menu>
 
@@ -231,11 +259,6 @@
 import type { SchoolFacetsDTO } from '@/types'
 import type { SchoolFinderFilters } from '@/composables/useSchoolFinder'
 
-interface LocationOption {
-  id: number
-  title: string
-}
-
 const props = defineProps<{
   filters: SchoolFinderFilters
   facets: SchoolFacetsDTO | null
@@ -283,37 +306,75 @@ function toggle(key: 'types' | 'facilities', value: string | number) {
   emit('update', { [key]: next } as Partial<SchoolFinderFilters>)
 }
 
-// Locations load on demand: a country's states only once it is picked.
-const countries = ref<LocationOption[]>([])
-const states = ref<LocationOption[]>([])
-const cities = ref<LocationOption[]>([])
-const loading = reactive({ country: false, state: false, city: false })
+// ---- Home ----
+const { home } = useSchoolHome()
+const homeOpen = ref(false)
 
-const loadLocations = async (kind: 'country' | 'state' | 'city', endpoint: string, target: Ref<LocationOption[]>) => {
-  loading[kind] = true
-  try {
-    const response = await useApiService.get<{ data?: { list?: LocationOption[] } }>(endpoint, { 'PagingDto.PageFilter.Size': 10000 }, { public: true })
-    target.value = response?.data?.list ?? []
-  }
-  catch {
-    target.value = []
-  }
-  finally {
-    loading[kind] = false
-  }
+// ---- Area: one search over countries, regions and cities ----
+interface PlaceResult {
+  id: number
+  title: string
+  type: 'country' | 'state' | 'city'
+  stateId: number | null
+  stateTitle: string | null
+  countryId: number | null
+  countryTitle: string | null
 }
 
-onMounted(() => {
-  loadLocations('country', '/api/v2/locations/countries', countries)
-  watch(() => props.filters.country, (country) => {
-    states.value = []
-    if (country) loadLocations('state', `/api/v2/locations/states/${country}`, states)
-  }, { immediate: true })
-  watch(() => props.filters.state, (state) => {
-    cities.value = []
-    if (state) loadLocations('city', `/api/v2/locations/cities/${state}`, cities)
-  }, { immediate: true })
+const areaOpen = ref(false)
+const areaField = ref<{ focus: () => void } | null>(null)
+
+// The box is ready to type in as soon as the menu opens.
+watch(areaOpen, async (open) => {
+  if (!open) return
+  await nextTick()
+  setTimeout(() => areaField.value?.focus(), 50)
 })
+const areaQuery = ref('')
+const areaResults = ref<PlaceResult[]>([])
+const areaLoading = ref(false)
+let areaTimer: ReturnType<typeof setTimeout> | null = null
+
+watch(areaQuery, (value) => {
+  if (areaTimer) clearTimeout(areaTimer)
+  const text = (value ?? '').trim()
+  if (text.length < 2) {
+    areaResults.value = []
+    return
+  }
+  areaTimer = setTimeout(async () => {
+    areaLoading.value = true
+    try {
+      const response = await useApiService.get<{ data?: PlaceResult[] }>('/api/v2/locations/search', { query: text, size: 10 }, { public: true })
+      if ((areaQuery.value ?? '').trim() === text) areaResults.value = response?.data ?? []
+    }
+    catch {
+      areaResults.value = []
+    }
+    finally {
+      areaLoading.value = false
+    }
+  }, 300)
+})
+
+const placeContext = (place: PlaceResult) => {
+  const kind = place.type === 'country' ? 'Country' : place.type === 'state' ? 'Region' : 'City'
+  return [kind, place.stateTitle, place.countryTitle].filter(Boolean).join(' · ')
+}
+
+const pickArea = (place: PlaceResult | null) => {
+  if (!place) return
+  if (place.type === 'country') emit('update', { country: place.id, state: null, city: null })
+  else if (place.type === 'state') emit('update', { country: place.countryId, state: place.id, city: null })
+  else emit('update', { country: place.countryId, state: place.stateId, city: place.id })
+  areaOpen.value = false
+  areaQuery.value = ''
+}
+
+const clearArea = () => {
+  emit('update', { country: null, state: null, city: null })
+  areaOpen.value = false
+}
 </script>
 
 <style scoped>
@@ -330,5 +391,14 @@ onMounted(() => {
 
 .filter-bar__chip {
   flex-shrink: 0;
+}
+
+.filter-bar__label {
+  display: inline-block;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
 }
 </style>

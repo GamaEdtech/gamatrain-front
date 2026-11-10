@@ -209,11 +209,22 @@ const goToMyLocation = async () => {
   }
 }
 
-// A drop-shaped pin with a house: the visitor's own point, apart from the round school markers.
-const HOME_PIN = `<svg class="finder-map__home-pin" width="40" height="50" viewBox="0 0 40 50" aria-hidden="true">
-  <path d="M20 48S6 33 6 21a14 14 0 0 1 28 0c0 12-14 27-14 27z" fill="#1E2A44" stroke="#fff" stroke-width="3"/>
-  <path d="M12.5 21.5 20 15l7.5 6.5V29a1 1 0 0 1-1 1h-4.25v-5h-4.5v5H13.5a1 1 0 0 1-1-1z" fill="#FFB300"/>
-</svg>`
+// The brand's location pin (public/images/gama-location.svg) marks a school; the same pin in green, with a house, marks
+// home, so the visitor's own point reads as different at a glance.
+const PIN_OUTLINE = 'M32 4C45.25 4 56 14.75 56 28C56 41.25 38 60 32 60C26 60 8 41.25 8 28C8 14.75 18.75 4 32 4ZM32 14C24.27 14 18 20.27 18 28C18 35.73 24.27 42 32 42C39.73 42 46 35.73 46 28C46 20.27 39.73 14 32 14Z'
+const GAMA_MARK = 'M33.27 26.83C34.52 28.32 35.61 31.82 36.02 35.33C36.19 36.83 37.91 37.53 39.02 36.54L39.04 36.53C40.39 35.31 40.42 24.36 38.46 22.03C36.51 19.7 26.04 18.22 24.68 19.44L24.59 19.53C23.53 20.53 23.97 22.35 25.35 22.74C28.72 23.67 32.01 25.33 33.27 26.83Z'
+const HOUSE = 'M23 29.5 32 21.5l9 8V39a1.5 1.5 0 0 1-1.5 1.5H35V34h-6v6.5h-4.5A1.5 1.5 0 0 1 23 39z'
+
+const pinSvg = (size: number, color: string, inner: string, outline = '') =>
+  `<svg class="finder-map__brand-pin" width="${size}" height="${size}" viewBox="0 0 64 64" aria-hidden="true">
+    <ellipse cx="32" cy="28" rx="15" ry="16" fill="#fff"/>
+    <path d="${PIN_OUTLINE}" fill="${color}"${outline ? ` stroke="${outline}" stroke-width="3"` : ''}/>
+    ${inner}
+  </svg>`
+
+const SCHOOL_PIN = pinSvg(34, '#FFB600', `<path d="${GAMA_MARK}" fill="#FFB600"/>`)
+const SCHOOL_PIN_SELECTED = pinSvg(46, '#FFB600', `<path d="${GAMA_MARK}" fill="#FFB600"/>`, '#1E2A44')
+const HOME_PIN = pinSvg(48, '#1E9E5A', `<path d="${HOUSE}" fill="#1E9E5A"/>`)
 
 const goHome = () => {
   if (!map || !props.home) return
@@ -366,13 +377,14 @@ const render = async () => {
     }
     for (const point of tile.schools ?? []) {
       const selected = point.id === props.selectedId
-      const label = point.rating ? `&#9733; ${point.rating.toFixed(1)}` : ''
+      const size = selected ? 46 : 34
       const marker = L.marker([point.lat, point.lng], {
         icon: L.divIcon({
           className: 'finder-map__pin-wrap',
-          html: `<span class="finder-map__pin${selected ? ' finder-map__pin--selected' : ''}${label ? '' : ' finder-map__pin--dot'}">${label}</span>`,
-          iconSize: label ? [52, 28] : [18, 18],
-          iconAnchor: label ? [26, 28] : [9, 9],
+          html: selected ? SCHOOL_PIN_SELECTED : SCHOOL_PIN,
+          // The pin's tip (y 60 of 64) sits on the school.
+          iconSize: [size, size],
+          iconAnchor: [size / 2, Math.round(size * 60 / 64)],
         }),
         keyboard: true,
         title: point.name,
@@ -398,7 +410,7 @@ const drawHome = () => {
   homeLayer.clearLayers()
   if (!props.home) return
   const homeMarker = L.marker([props.home.lat, props.home.lng], {
-    icon: L.divIcon({ className: 'finder-map__pin-wrap', html: HOME_PIN, iconSize: [40, 50], iconAnchor: [20, 48] }),
+    icon: L.divIcon({ className: 'finder-map__pin-wrap', html: HOME_PIN, iconSize: [48, 48], iconAnchor: [24, 45] }),
     keyboard: true,
     title: 'Your home',
     alt: 'Your home: zoom in',
@@ -595,67 +607,22 @@ defineExpose({
   cursor: pointer;
 }
 
-.finder-map__pin {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  height: 26px;
-  padding: 0 8px;
-  border-radius: 999px;
-  background: #fff;
-  border: 2px solid #fff;
-  color: #1e2a44;
-  font: 700 12px/1 Inter, system-ui, sans-serif;
-  box-shadow: 0 2px 6px rgba(16, 24, 40, 0.35);
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.finder-map__pin--dot {
-  min-width: 0;
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  background: #1e2a44;
-}
-
-.finder-map__pin--selected {
-  background: #ffb300;
-}
-
-.v-theme--dark .finder-map__pin {
-  background: #161b26;
-  border-color: #161b26;
-  color: #ececed;
-}
-
-.v-theme--dark .finder-map__pin--dot {
-  background: #ececed;
-  border-color: #161b26;
-}
-
-.v-theme--dark .finder-map__pin--selected {
-  background: #ffb300;
-  color: #1e2a44;
-}
-
 .v-theme--dark .finder-map__cluster {
   background: rgba(236, 236, 237, 0.92);
   border-color: #161b26;
   color: #161b26;
 }
 
-.finder-map__home-pin {
+.finder-map__brand-pin {
   display: block;
   cursor: pointer;
-  filter: drop-shadow(0 3px 4px rgba(16, 24, 40, 0.35));
+  filter: drop-shadow(0 2px 3px rgba(16, 24, 40, 0.35));
   transition: transform 0.15s ease;
-  transform-origin: 50% 100%;
+  transform-origin: 50% 94%;
 }
 
-.finder-map__home-pin:hover {
-  transform: scale(1.1);
+.finder-map__brand-pin:hover {
+  transform: scale(1.12);
 }
 
 .finder-map__home {

@@ -13,6 +13,9 @@ const ROUTE_FACTOR = 1.3
 const WALK_METERS_PER_MINUTE = 80
 const DRIVE_METERS_PER_MINUTE = 400
 const DRIVE_START_MINUTES = 2
+// Beyond these, a walk or a drive time is meaningless ("1,233 h walk"): only the distance is shown.
+const MAX_WALK_METERS = 6000
+const MAX_DRIVE_METERS = 300000
 
 const formatMinutes = (minutes: number) => {
   const rounded = Math.max(1, Math.round(minutes))
@@ -63,11 +66,16 @@ export const useSchoolHome = () => {
     if (!home.value || lat == null || lng == null) return null
     const meters = distanceInMeters(home.value, { lat, lng })
     const road = meters * ROUTE_FACTOR
+    const distance = formatSchoolDistance(meters)
+    const walk = road <= MAX_WALK_METERS ? formatMinutes(road / WALK_METERS_PER_MINUTE) : ''
+    const drive = road <= MAX_DRIVE_METERS ? formatMinutes((road / DRIVE_METERS_PER_MINUTE) + DRIVE_START_MINUTES) : ''
     return {
       meters,
-      distance: formatSchoolDistance(meters),
-      walk: formatMinutes(road / WALK_METERS_PER_MINUTE),
-      drive: formatMinutes((road / DRIVE_METERS_PER_MINUTE) + DRIVE_START_MINUTES),
+      distance,
+      walk,
+      drive,
+      /** One line: "1.6 km from home · 26 min walk · 7 min drive", the times only where they make sense. */
+      summary: [`${distance} from home`, walk && `${walk} walk`, drive && `${drive} drive`].filter(Boolean).join(' · '),
     }
   }
 

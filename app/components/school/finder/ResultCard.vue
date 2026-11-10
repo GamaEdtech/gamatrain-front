@@ -101,7 +101,7 @@ const detailLine = computed(() => [schoolTypeLabel(props.school.schoolType), loc
 
 const tripLine = computed(() => {
   const trip = tripFromHome(props.school.lat, props.school.long)
-  return trip ? `${trip.distance} from home · ${trip.walk} walk · ${trip.drive} drive` : ''
+  return trip?.summary ?? ''
 })
 </script>
 

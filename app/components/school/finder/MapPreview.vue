@@ -4,6 +4,16 @@
     rounded="lg"
     elevation="6"
   >
+    <!-- Fixed height, so the card never jumps while the photo loads. -->
+    <v-img
+      v-if="photo"
+      :src="photo"
+      :alt="point.name"
+      height="132"
+      cover
+      class="bg-grey100"
+      @error="photoFailed = true"
+    />
     <v-card-item class="pb-1">
       <v-card-title class="text-body-1 font-weight-bold text-wrap">
         {{ point.name }}
@@ -67,11 +77,17 @@ const compare = useSchoolCompare()
 const { tripFromHome } = useSchoolHome()
 
 const picked = computed(() => compare.has(props.point.id))
+
+const photoFailed = ref(false)
+watch(() => props.point.id, () => {
+  photoFailed.value = false
+})
+const photo = computed(() => (photoFailed.value ? '' : props.point.imageUri?.replace(/^http:\/\//, 'https://') ?? ''))
 const subtitle = computed(() => {
   const trip = tripFromHome(props.point.lat, props.point.lng)
   return [
     props.point.rating ? `★ ${props.point.rating.toFixed(1)} (${props.point.reviewCount})` : '',
-    trip ? `${trip.distance} from home · ${trip.walk} walk` : '',
+    trip?.summary ?? '',
   ].filter(Boolean).join(' · ')
 })
 </script>

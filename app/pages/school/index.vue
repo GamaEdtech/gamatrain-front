@@ -1,7 +1,10 @@
 <template>
   <div class="finder mt-16">
     <div class="finder__split">
-      <section class="finder__main">
+      <section
+        ref="mainRef"
+        class="finder__main"
+      >
         <div class="finder__inner">
           <v-breadcrumbs
             :items="crumbs"
@@ -24,17 +27,17 @@
             >Add a missing school</nuxt-link>
           </p>
 
-          <school-finder-home-bar class="mt-3" />
-
           <form
             role="search"
-            class="d-flex align-center ga-3 mt-2"
+            class="mt-4"
             @submit.prevent
           >
             <v-text-field
               v-model="keyword"
-              variant="underlined"
-              density="compact"
+              variant="solo-filled"
+              flat
+              rounded="lg"
+              density="comfortable"
               hide-details
               clearable
               single-line
@@ -42,19 +45,47 @@
               placeholder="Search a school by name"
               spellcheck="false"
               aria-label="Search a school by name"
-            />
-            <v-select
-              :model-value="filters.sort"
-              :items="sortItems"
-              variant="plain"
-              density="compact"
-              hide-details
-              max-width="190"
-              prefix="Sort:"
-              aria-label="Sort by"
-              class="finder__sort"
-              @update:model-value="pickSort"
-            />
+            >
+              <template #append-inner>
+                <!-- Sort sits at the end of the search box: one control row instead of two. -->
+                <v-menu location="bottom end">
+                  <template #activator="{ props: menu }">
+                    <v-btn
+                      v-bind="menu"
+                      variant="text"
+                      size="small"
+                      color="grey700"
+                      class="text-none px-2"
+                      append-icon="md:expand_more"
+                      :aria-label="`Sort: ${sortTitle}`"
+                    >
+                      <v-icon
+                        size="18"
+                        class="mr-1"
+                      >
+                        md:swap_vert
+                      </v-icon>
+                      <span class="d-none d-sm-inline">{{ sortTitle }}</span>
+                    </v-btn>
+                  </template>
+                  <v-list
+                    density="compact"
+                    min-width="220"
+                  >
+                    <v-list-subheader>Sort by</v-list-subheader>
+                    <v-list-item
+                      v-for="item in sortItems"
+                      :key="item.value"
+                      :title="item.title"
+                      :subtitle="item.props.subtitle"
+                      :active="filters.sort === item.value"
+                      color="primaryStrong"
+                      @click="pickSort(item.value)"
+                    />
+                  </v-list>
+                </v-menu>
+              </template>
+            </v-text-field>
           </form>
 
           <!-- Filters stay pinned while the list scrolls, and sit right above the map on a phone. -->
@@ -464,6 +495,18 @@ watch(listData, (value) => {
   placeTitles.value = value.titles
 }, { immediate: true })
 
+// The desktop list scrolls in its own column, which the router's scroll restore doesn't know: keep its position too.
+const mainRef = ref<HTMLElement | null>(null)
+const listScroll = useState('school-finder-list-scroll', () => ({ key: '', top: 0 }))
+onBeforeUnmount(() => {
+  if (mainRef.value) listScroll.value = { key: `${listSignature.value}|${filters.value.page}`, top: mainRef.value.scrollTop }
+})
+onMounted(() => {
+  if (listScroll.value.key === `${listSignature.value}|${filters.value.page}` && mainRef.value) {
+    nextTick(() => mainRef.value?.scrollTo({ top: listScroll.value.top }))
+  }
+})
+
 const rememberList = () => {
   listCache.value = {
     key: `${listSignature.value}|${filters.value.page}`,
@@ -655,6 +698,8 @@ const crumbs = computed(() => {
 
 const canClear = computed(() => hasSchoolFinderRefinements(filters.value) || filters.value.sort !== 'best')
 
+const sortTitle = computed(() => SCHOOL_FINDER_SORTS.find(item => item.value === filters.value.sort)?.title ?? '')
+
 const sortItems = computed(() => SCHOOL_FINDER_SORTS.map(item => ({
   ...item,
   props: { subtitle: item.value === 'nearest' && !home.value ? 'Set your home first' : undefined },
@@ -789,10 +834,6 @@ useHead({
   color: inherit;
 }
 
-.finder__sort {
-  flex: 0 0 auto;
-}
-
 .finder__toggle {
   width: 100%;
 }
@@ -873,9 +914,16 @@ useHead({
 }
 
 @media (min-width: 1280px) {
-  /* List on the left, the map filling the rest of the screen and staying put while the list scrolls. */
+  /* An app view of the screen's size: the list scrolls in its own column, the map fills the rest, no page scroll. */
   .finder__split {
     grid-template-columns: minmax(560px, 46%) minmax(0, 1fr);
+    height: calc(100dvh - 64px - var(--compare-tray-height, 0px));
+    overflow: hidden;
+  }
+
+  .finder__main {
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .finder__inner {
@@ -885,16 +933,28 @@ useHead({
   }
 
   .finder__toolbar {
+    top: 0;
     margin-left: -32px;
     margin-right: -32px;
     padding: 8px 32px;
   }
 
   .finder__map {
-    position: sticky;
-    top: 64px;
-    height: calc(100dvh - 64px - var(--compare-tray-height, 0px));
+    height: 100%;
     border-left: 1px solid rgb(var(--v-theme-grey100));
+  }
+}
+</style>
+
+<style>
+/* The desktop finder fills the screen like an app, so the site footer (and the page scroll it adds) is left out. */
+@media (min-width: 1280px) {
+  body:has(.finder) #footer-container {
+    display: none !important;
+  }
+
+  html:has(.finder) {
+    overflow-y: hidden;
   }
 }
 </style>

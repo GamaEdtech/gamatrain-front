@@ -167,6 +167,8 @@ export interface SchoolMapPointDTO {
   rating: number | null
   reviewCount: number
   hasImage: boolean
+  /** The school's photo, when it has one. */
+  imageUri?: string | null
 }
 
 export interface GetSchoolsParams {
