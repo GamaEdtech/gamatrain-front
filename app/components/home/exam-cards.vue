@@ -1,7 +1,7 @@
 <template>
   <v-container class="py-10 py-md-16">
     <h2 class="home-title">
-      Practise. Then know exactly where you stand.
+      Practise online exams. Then know exactly where you stand.
     </h2>
     <p class="home-lead">
       Every exam shows you what to study next.

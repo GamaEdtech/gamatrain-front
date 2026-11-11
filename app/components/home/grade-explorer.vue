@@ -4,7 +4,7 @@
     class="pt-6 pt-md-8 pb-2"
   >
     <h2 class="d-sr-only">
-      Browse by category
+      Explore exam resources by category
     </h2>
     <v-row dense>
       <v-col

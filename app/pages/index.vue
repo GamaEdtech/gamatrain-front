@@ -72,7 +72,7 @@
 const { themedImage } = useThemeMode()
 
 const title = 'GamaTrain: Online Exams & Past Papers for Checkpoint, IGCSE, A Level'
-const description = 'Take online exams with instant scores, and find past papers, mark schemes and study materials for Cambridge, Edexcel and more.'
+const description = 'Take online exams with instant results. Find solved past papers and mark schemes for Cambridge, Edexcel, AQA and OCR, from Checkpoint to IGCSE and A Level.'
 
 useSeoMeta({
   title,
