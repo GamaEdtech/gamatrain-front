@@ -367,6 +367,9 @@
       </v-row>
     </v-form>
 
+    <!-- Separate from the form: joining or leaving a school saves at once. -->
+    <user-profile-my-schools class="mt-6" />
+
     <CommonCropperDialog
       v-model="showCropperDialog"
       :file-url="cropAvatarUrl"

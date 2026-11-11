@@ -402,3 +402,4 @@ export interface SchoolImageDTO {
   fileUri?: string | null
   isDefault?: boolean
 }
+export * from './members'
