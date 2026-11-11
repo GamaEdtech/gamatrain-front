@@ -7,7 +7,7 @@
     <v-container class="d-flex flex-column align-center justify-center">
       <div class="w-100 d-flex align-center justify-space-between">
         <h2 class="text-h4 text-grey700 font-weight-bold">
-          Guides &amp; Insights
+          Study guides &amp; textbook concepts
         </h2>
         <v-btn
           variant="outlined"

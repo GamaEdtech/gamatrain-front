@@ -10,12 +10,13 @@
         >
           Online exams with instant scores
         </v-chip>
+        <!-- The slogan stays the big line; the subtitle under it is part of the H1 so the page's main heading also
+             says what the site is (online exams and past papers), for search engines and screen readers. -->
         <h1 class="home-hero__title">
-          Ace your <span class="text-primary">next exam.</span>
+          Ace your <span class="text-primary">next exam.</span> <span class="home-hero__lead home-hero__subtitle">Online exams and past papers for Cambridge, Edexcel and more.</span>
         </h1>
-        <p class="home-hero__lead">
-          For Cambridge, Edexcel and more.
-          <span class="d-none d-md-inline">Get your score the moment you finish, then see what to study next.</span>
+        <p class="home-hero__lead home-hero__more d-none d-md-block">
+          Get your score the moment you finish, then see what to study next.
         </p>
       </div>
       <div class="home-hero__figure">
@@ -107,6 +108,13 @@
   color: rgb(var(--v-theme-onInverseSurfaceSubtle));
   font-size: 1rem;
   line-height: 1.4;
+}
+
+.home-hero__title .home-hero__subtitle {
+  display: block;
+  margin-top: 0.5rem;
+  font-weight: 400;
+  letter-spacing: normal;
 }
 
 .home-hero__figure {
@@ -262,6 +270,14 @@
   .home-hero__lead {
     margin: 0;
     font-size: 1.1875rem;
+  }
+
+  .home-hero__title .home-hero__subtitle {
+    margin-top: 1.125rem;
+  }
+
+  .home-hero__title {
+    margin-bottom: 0.25rem;
   }
 
   .home-hero__figure {

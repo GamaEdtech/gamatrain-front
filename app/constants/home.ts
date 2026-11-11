@@ -16,7 +16,7 @@ export const HOME_EXAM_STEPS = [
 export const HOME_EXAM_CARDS = [
   {
     id: 'exam',
-    title: 'Online Exam',
+    title: 'Online Exams with Instant Results',
     text: 'Exams by board, grade and subject.',
     points: ['Score the moment you finish', 'Points for correct answers'],
     action: 'Start an exam',
@@ -31,7 +31,7 @@ export const HOME_EXAM_CARDS = [
   },
   {
     id: 'analysis',
-    title: 'Exam Analysis',
+    title: 'Exam Performance Analysis',
     text: 'Review every answer and your rank.',
     points: ['Country and state rank', 'AI study advice'],
     action: 'See my results',
