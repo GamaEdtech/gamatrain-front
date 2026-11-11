@@ -410,7 +410,7 @@ const go = (next: SchoolFinderFilters) => router.replace({ query: schoolFinderQu
 /** Any filter change starts the list over at page 1. */
 const update = (patch: Partial<SchoolFinderFilters>) => go({ ...filters.value, ...patch, page: 1 })
 
-const clearFilters = () => update({ keyword: '', types: [], facilities: [], photos: false, rated: false, within: null, sort: 'best' })
+const clearFilters = () => update({ keyword: '', country: null, state: null, city: null, types: [], facilities: [], photos: false, rated: false, within: null, sort: 'best' })
 
 const toolbarAnchor = ref<HTMLElement | null>(null)
 
@@ -696,7 +696,7 @@ const crumbs = computed(() => {
   return items
 })
 
-const canClear = computed(() => hasSchoolFinderRefinements(filters.value) || filters.value.sort !== 'best')
+const canClear = computed(() => hasSchoolFinderRefinements(filters.value) || !!filters.value.country || filters.value.sort !== 'best')
 
 const sortTitle = computed(() => SCHOOL_FINDER_SORTS.find(item => item.value === filters.value.sort)?.title ?? '')
 
