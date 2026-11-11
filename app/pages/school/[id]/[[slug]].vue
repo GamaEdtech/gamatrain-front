@@ -13,6 +13,7 @@
             :rating-data="ratingData"
             @leave-comment="openCommentDialog"
           />
+          <school-detail-join-hint :school-id="contentData.id" />
           <school-detail-exam-results :country-id="contentData.countryId" />
         </div>
 
@@ -74,6 +75,9 @@
             :comment-list="commentList"
             @reaction-updated="refreshComments()"
           />
+          <school-detail-school-people :school-id="contentData.id" />
+          <!-- Next to "Fill in the gaps": someone who joins is the person most likely to add what's missing. -->
+          <school-detail-join-school :school-id="contentData.id" />
           <!-- After the school's details, so visitors see what's known before being asked to add more. -->
           <school-detail-profile-progress
             :content="contentData"
