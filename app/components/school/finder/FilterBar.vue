@@ -35,10 +35,19 @@
           :variant="areaLabel ? 'flat' : 'outlined'"
           :color="areaLabel ? 'grey800' : 'grey500'"
           prepend-icon="md:location_on"
-          append-icon="md:expand_more"
+          :append-icon="areaLabel ? undefined : 'md:expand_more'"
           class="filter-bar__chip"
         >
           <span class="filter-bar__label">{{ areaLabel || 'Area' }}</span>
+          <v-btn
+            v-if="areaLabel"
+            icon="md:cancel"
+            size="22"
+            variant="text"
+            class="ms-1 me-n2"
+            aria-label="Remove area"
+            @click.stop="clearArea"
+          />
         </v-chip>
       </template>
       <v-card
@@ -101,10 +110,19 @@
           v-bind="menu"
           :variant="filters.within ? 'flat' : 'outlined'"
           :color="filters.within ? 'grey800' : 'grey500'"
-          append-icon="md:expand_more"
+          :append-icon="filters.within ? undefined : 'md:expand_more'"
           class="filter-bar__chip"
         >
           {{ filters.within ? `Within ${filters.within} km` : 'Distance' }}
+          <v-btn
+            v-if="filters.within"
+            icon="md:cancel"
+            size="22"
+            variant="text"
+            class="ms-1 me-n2"
+            aria-label="Remove distance"
+            @click.stop="emit('update', { within: null })"
+          />
         </v-chip>
       </template>
       <v-list
@@ -140,10 +158,19 @@
           v-bind="menu"
           :variant="filters.types.length ? 'flat' : 'outlined'"
           :color="filters.types.length ? 'grey800' : 'grey500'"
-          append-icon="md:expand_more"
+          :append-icon="filters.types.length ? undefined : 'md:expand_more'"
           class="filter-bar__chip"
         >
           {{ filters.types.length ? `Type · ${filters.types.length}` : 'Type' }}
+          <v-btn
+            v-if="filters.types.length"
+            icon="md:cancel"
+            size="22"
+            variant="text"
+            class="ms-1 me-n2"
+            aria-label="Remove school types"
+            @click.stop="emit('update', { types: [] })"
+          />
         </v-chip>
       </template>
       <v-list
@@ -182,10 +209,19 @@
           v-bind="menu"
           :variant="pickedFacilities ? 'flat' : 'outlined'"
           :color="pickedFacilities ? 'grey800' : 'grey500'"
-          append-icon="md:expand_more"
+          :append-icon="pickedFacilities ? undefined : 'md:expand_more'"
           class="filter-bar__chip"
         >
           {{ pickedFacilities ? `Facilities · ${pickedFacilities}` : 'Facilities' }}
+          <v-btn
+            v-if="pickedFacilities"
+            icon="md:cancel"
+            size="22"
+            variant="text"
+            class="ms-1 me-n2"
+            aria-label="Remove facilities"
+            @click.stop="clearFacilities"
+          />
         </v-chip>
       </template>
       <v-list
@@ -370,6 +406,9 @@ const pickArea = (place: PlaceResult | null) => {
   areaOpen.value = false
   areaQuery.value = ''
 }
+
+// The bus has its own chip, so removing "Facilities" keeps it.
+const clearFacilities = () => emit('update', { facilities: props.filters.facilities.filter(id => id === busTag.value?.id) })
 
 const clearArea = () => {
   emit('update', { country: null, state: null, city: null })
