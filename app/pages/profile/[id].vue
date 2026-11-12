@@ -28,8 +28,11 @@
       @delete="deleteExperience"
       @edit="editExperience"
     />
-    <!-- <profile-register-content class="box-shadow-div" /> -->
+    <profile-published-content />
+    <profile-activity />
     <!-- <profile-education class="box-shadow-div" /> -->
+
+    <profile-recent-teachers class="mt-4 mb-8" />
 
     <lazy-common-modal-base
       v-model:show-dialog="showBioModal"
