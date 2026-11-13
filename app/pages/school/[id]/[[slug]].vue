@@ -524,6 +524,24 @@ function openCommentDialog() {
   showLeaveCommentDialog.value = true
 }
 
+// A link from elsewhere (the profile page's school goal) can open one action: #contribute=review opens the review form,
+// any other contributeTargets key opens that editor. A fragment, not a query: the canonical-slug 301 drops the query
+// (useCanonicalContentPath) but keeps the fragment, and the server never sees it. It runs once the school and its
+// sections have rendered, then clears the fragment so a refresh doesn't open it again.
+const pendingContribute = ref(import.meta.client ? (/^#contribute=(\w+)$/.exec(route.hash)?.[1] ?? '') : '')
+watch([contentData, mediaRef], () => {
+  const key = pendingContribute.value
+  if (!key || !contentData.value || (key !== 'review' && !contributeTargets[key]?.ref.value)) return
+  pendingContribute.value = ''
+  router.replace({ query: route.query, hash: '' })
+  if (key === 'review') {
+    if (requireSignIn()) openCommentDialog()
+  }
+  else {
+    contribute(key)
+  }
+}, { immediate: true, flush: 'post' })
+
 function openReportDialog() {
   reportDialogMounted.value = true
   reportDialog.value = true
