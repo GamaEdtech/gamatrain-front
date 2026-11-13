@@ -170,3 +170,6 @@ export interface GetDashboardDataDTO {
   stats: DashboardStatsDTO
   examSuggestions: DashboardExamSuggestionsDTO
 }
+
+/** Profile fields edited in their own dialog (status, bio, skills, school history). */
+export type ProfileFieldCode = 'currentStatusSentence' | 'biography' | 'skills' | 'experience'

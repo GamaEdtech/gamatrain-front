@@ -84,6 +84,12 @@ export const useValidationRules = () => {
   const alphabetic = (v: string) =>
     !v || /^[a-zA-Z]+$/.test(v) || 'Only letters allowed'
 
+  // A person's name in any script: letters (with their accents), single spaces, hyphens, apostrophes or periods between
+  // the parts ("José", "Mary-Jane", "O'Brien", "Anna Maria", "سارا"). Surrounding spaces are ignored; save it trimmed.
+  const personName = (v: string) =>
+    !v || /^\p{L}[\p{L}\p{M}]*(?:[ '’.-]\p{L}[\p{L}\p{M}]*)*\.?$/u.test(v.trim())
+    || 'Use letters, with a space, hyphen or apostrophe between names'
+
   const numeric = (v: string) =>
     !v || /^-?\d+(\.\d+)?$/.test(v) || 'Only numbers allowed'
 
@@ -183,6 +189,7 @@ export const useValidationRules = () => {
     pattern,
     alphanumeric,
     alphabetic,
+    personName,
     numeric,
 
     // Phone
