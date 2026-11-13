@@ -47,7 +47,7 @@
           height="36"
           min-width="160"
           class="text-body-1 font-weight-bold"
-          :loading="loadingUnsubscribe"
+          :loading="loadingUnsubscribe || weeklyReport.loadingUnsubscribe.value"
           :disabled="!hasRequiredParams()"
           @click="submitUnsubscribe"
         >
@@ -74,11 +74,15 @@ useSeoMeta({
 
 const route = useRoute()
 const { unsubscribe, loadingUnsubscribe } = useNudge()
+const weeklyReport = useWeeklyReport()
+
+// The weekly report's link carries type=weekly-report and stops only that email; without a type it's a nudge email's link.
+const isWeeklyReport = computed(() => getSingleQueryValue(route.query.type) === 'weekly-report')
 
 const status = ref<UnsubscribeStatus>('loading')
 const errorMessage = ref('')
 
-const statusContent = {
+const statusContent = computed(() => ({
   loading: {
     title: 'Unsubscribing you',
     description: 'Please wait while we update your notification preferences.',
@@ -87,7 +91,9 @@ const statusContent = {
   },
   success: {
     title: 'You\'ve unsubscribed from these emails',
-    description: 'You will no longer receive these nudge email notifications from GamaTrain.',
+    description: isWeeklyReport.value
+      ? 'You will no longer get the weekly report. You can turn it back on in your settings.'
+      : 'You will no longer receive these nudge email notifications from GamaTrain.',
     icon: 'md:check_circle',
     iconColor: 'success',
   },
@@ -103,7 +109,7 @@ const statusContent = {
     icon: 'md:link_off',
     iconColor: 'error',
   },
-}
+}))
 
 const getSingleQueryValue = (value: unknown) => {
   if (Array.isArray(value)) {
@@ -134,7 +140,7 @@ const submitUnsubscribe = async () => {
   status.value = 'loading'
   errorMessage.value = ''
 
-  const result = await unsubscribe(params)
+  const result = isWeeklyReport.value ? await weeklyReport.unsubscribe(params) : await unsubscribe(params)
 
   if (result.succeeded && result.data) {
     status.value = 'success'

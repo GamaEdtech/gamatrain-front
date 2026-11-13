@@ -148,11 +148,24 @@
           density="compact"
           variant="outlined"
           rounded="lg"
-          :rules="[requiredFeatureSelection]"
+          :rules="[requiredFeatureSelection, weeklyReportAlone]"
         />
       </div>
 
-      <div class="w-100 d-flex flex-column ga-2">
+      <v-alert
+        v-if="isWeeklyReportGroup"
+        type="info"
+        variant="tonal"
+        density="compact"
+        class="w-100"
+      >
+        The weekly report has no limit: subscribers get it every week while the plan includes it, and removing it stops it.
+      </v-alert>
+
+      <div
+        v-else
+        class="w-100 d-flex flex-column ga-2"
+      >
         <div class="text-caption font-weight-medium text-grey700 ml-2">
           Limit per Billing Interval
         </div>
@@ -327,6 +340,18 @@ const selectedFeatureGroups = ref<AdminSubscriptionPlanFeatureGroupDTO[]>([])
 const selectedFeatureIds = ref<number[]>([])
 const newDescription = ref('')
 const intervalLimits = reactive<IntervalLimitState>(createDefaultIntervalLimits())
+
+// The weekly report is on/off by being on the plan: it has no limit, and pooling it would make it share another
+// feature's limit. Its group is always saved as unlimited.
+const WEEKLY_REPORT_CODE = 'WeeklyReport'
+const isWeeklyReportGroup = computed(() => selectedFeatureIds.value
+  .some(id => featureOptions.value.find(feature => feature.id === id)?.code === WEEKLY_REPORT_CODE))
+const weeklyReportAlone = (ids: number[]) =>
+  !isWeeklyReportGroup.value || (ids?.length ?? 0) <= 1 || 'Add the weekly report on its own, not pooled with other features'
+watch(isWeeklyReportGroup, (weekly) => {
+  if (!weekly) return
+  for (const interval of BILLING_INTERVALS) Object.assign(intervalLimits[interval], { unlimited: true, limit: null })
+})
 const isAddFormValid = ref(false)
 const showSyncModal = ref(false)
 // The sync applies the plan's saved features, so it's blocked while the list differs from what was loaded.

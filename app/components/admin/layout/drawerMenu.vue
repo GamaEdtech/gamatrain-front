@@ -373,6 +373,11 @@ const items = computed(() => [
         link: '/admin/nudge-email',
         icon: 'md:mark_email_read_outlined',
       },
+      {
+        title: 'Weekly Report',
+        link: '/admin/weekly-report',
+        icon: 'md:summarize_outlined',
+      },
     ],
   },
   {
