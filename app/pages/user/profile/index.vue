@@ -1,12 +1,5 @@
 <template>
   <v-container class="w-100 d-flex flex-column">
-    <!-- Level, quests, school goal and practice streak. Its quests for the photo, names and school land on this form. -->
-    <user-profile-progress-panel
-      ref="progressPanel"
-      class="mb-6"
-      @quest="onPanelQuest"
-    />
-
     <v-form
       v-model="isFormValid"
       class="w-100 d-flex flex-column"
@@ -121,7 +114,6 @@
           md="4"
         >
           <v-text-field
-            id="profile-first-name"
             v-model="userInformation.firstName"
             density="compact"
             variant="outlined"
@@ -148,7 +140,6 @@
           md="4"
         >
           <v-text-field
-            id="profile-last-name"
             v-model="userInformation.lastName"
             density="compact"
             variant="outlined"
@@ -188,7 +179,7 @@
       </v-row>
 
       <!-- Location Details -->
-      <v-row id="profile-location">
+      <v-row>
         <v-col
           cols="12"
           class="pl-5 text-h6 font-weight-regular text-grey700"
@@ -312,7 +303,6 @@
         </v-col>
 
         <v-col
-          id="profile-school"
           cols="12"
           md="4"
         >
@@ -662,24 +652,6 @@ onUnmounted(() => {
   resetSchools()
 })
 
-const progressPanel = ref<{ refresh: () => Promise<void> } | null>(null)
-
-/** Brings a form field into view and puts the cursor in it. */
-const focusField = (id: string) => {
-  const element = document.getElementById(id)
-  element?.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  const input = element?.matches('input') ? element : element?.querySelector('input')
-  ;(input as HTMLInputElement | null | undefined)?.focus({ preventScroll: true })
-}
-
-/** A quest from the progress panel that this form handles. The school list needs a city first, so it starts there. */
-const onPanelQuest = (code: 'avatar' | 'firstName' | 'lastName' | 'school') => {
-  if (code === 'avatar') changeUserAvatar()
-  else if (code === 'firstName') focusField('profile-first-name')
-  else if (code === 'lastName') focusField('profile-last-name')
-  else focusField(userInformation.value.city ? 'profile-school' : 'profile-location')
-}
-
 const submitData = async () => {
   if (isFormValid.value) {
     const data: EditProfileDTO = {
@@ -712,7 +684,6 @@ const submitData = async () => {
         gender: userInformation.value.gender as Gender,
         avatarUri: userInformation.value.avatarUrl ?? '',
       })
-      progressPanel.value?.refresh()
     }
   }
 }
