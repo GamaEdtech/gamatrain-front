@@ -301,6 +301,7 @@ const items = computed(() => [
     subMenuList: [
       { title: 'Posts ', link: '/admin/posts', icon: 'md:post_outlined', badgeKey: 'Posts' },
       { title: 'Comments ', link: '/admin/posts/comments', icon: 'md:comment_outlined', badgeKey: 'PostComments' },
+      { title: 'Reading stats', link: '/admin/activities', icon: 'md:insights_outlined' },
     ],
   },
   {
