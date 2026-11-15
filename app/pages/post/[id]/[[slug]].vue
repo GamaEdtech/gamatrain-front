@@ -145,8 +145,14 @@
       <v-col
         ref="postContentRef"
         cols="12"
-        class="d-flex flex-column mt-6"
+        class="d-flex flex-column mt-6 post-content"
       >
+        <!-- Halfway down the post: a read is counted once this comes into view (see markRead). -->
+        <div
+          ref="readMarker"
+          class="post-content__read-marker"
+          aria-hidden="true"
+        />
         <div
           id="post-describe"
           v-safe-html="bodyHtml"
@@ -229,26 +235,31 @@ const { xs, sm } = useDisplay()
 const postContentRef = ref(null)
 
 // A read is about 30 seconds on the post or half of it scrolled into view, for signed-in users (opening a tab is not a read).
+// The halfway marker is watched by an IntersectionObserver, so scrolling does no work on the page; the observed area reaches
+// far above the screen, so jumping past the middle counts too.
 const { record: recordActivity } = useUserActivity()
 const READ_AFTER_MS = 30_000
+const readMarker = ref(null)
 let readTimer
+let readObserver
 const stopReadTracking = () => {
   clearTimeout(readTimer)
-  window.removeEventListener('scroll', checkReadDepth)
+  readObserver?.disconnect()
+  readObserver = undefined
 }
 const markRead = () => {
   stopReadTracking()
   recordActivity('PostRead', Number(postId))
 }
-function checkReadDepth() {
-  const element = postContentRef.value?.$el
-  if (!element) return
-  const rect = element.getBoundingClientRect()
-  if (rect.height > 0 && window.innerHeight - rect.top >= rect.height / 2) markRead()
-}
 onMounted(() => {
   readTimer = setTimeout(markRead, READ_AFTER_MS)
-  window.addEventListener('scroll', checkReadDepth, { passive: true })
+  if (readMarker.value && 'IntersectionObserver' in window) {
+    readObserver = new IntersectionObserver(
+      entries => entries.some(entry => entry.isIntersecting) && markRead(),
+      { rootMargin: '100000px 0px 0px 0px' },
+    )
+    readObserver.observe(readMarker.value)
+  }
 })
 onBeforeUnmount(stopReadTracking)
 
@@ -528,6 +539,19 @@ watch(isDark, async () => {
 </script>
 
 <style>
+.post-content {
+  position: relative;
+}
+
+.post-content__read-marker {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
 #main-post-div {
   margin-top: 64px;
   min-height: 100vh;
