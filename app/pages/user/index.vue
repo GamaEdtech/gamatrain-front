@@ -34,6 +34,11 @@
         @update-username="updateUsername"
       />
       <user-dashboard-subscription-banner :subscription="dashboardInfo.user.subscription" />
+      <!-- Level, quests, school goal and practice streak. The photo, name and school quests are edited on the profile page. -->
+      <user-profile-progress-panel
+        class="w-100"
+        @quest="openProfilePage"
+      />
       <user-dashboard-badges-strip :earned-badge-ids="[]" />
       <user-dashboard-statistics
         :score="dashboardInfo.user.points || 0"
@@ -83,6 +88,9 @@ useHead({
 const { getDashboardData, loadingGetDashboardData } = useProfile()
 
 const dashboardInfo = ref<GetDashboardDataDTO | null>()
+
+/** The quests the panel can't open in place (photo, names, school) are fields of the profile page. */
+const openProfilePage = () => navigateTo('/user/profile')
 
 const updateUsername = (username: string) => {
   if (dashboardInfo.value) {

@@ -1,0 +1,30 @@
+/** `GET /api/v2/weeklyreports/settings`: the user's own weekly report setting. */
+export interface WeeklyReportSettingsDTO {
+  /** False once they turned it off (here or with the email's link). */
+  subscribed: boolean
+  /** Whether their current plan includes the weekly report; without it nothing is sent either way. */
+  includedInPlan: boolean
+  email: string | null
+  /** Reports go only to a confirmed address. */
+  emailConfirmed: boolean
+  lastSentDate: string | null
+}
+
+/** `GET /api/v2/admin/weeklyreports/preview`: one user's email for a week, exactly as the job would send it. */
+export interface WeeklyReportPreviewDTO {
+  hasActivity: boolean
+  wouldSend: boolean
+  notSentReason: string | null
+  kind: 'Report' | 'Reminder' | 'Skipped' | null
+  subject: string | null
+  /** The email's full HTML document. */
+  html: string | null
+}
+
+/** `GET /api/v2/admin/weeklyreports/status`: reports go out only when both allow it. */
+export interface WeeklyReportStatusDTO {
+  /** Whether this server may send it at all (`WeeklyReport:Enabled`, only production). */
+  enabledOnServer: boolean
+  /** Paused for everyone by an admin. */
+  paused: boolean
+}

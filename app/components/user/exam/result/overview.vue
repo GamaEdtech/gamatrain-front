@@ -101,28 +101,17 @@ const overviewItems = computed(() => {
   return [
     { label: 'Started at', value: data.userData.subdate_jalali || data.userData.subdate, icon: 'md:calendar_month_outlined' },
     { label: 'Duration', value: `${data.exam.azmoon_time} min`, icon: 'md:schedule_outlined' },
-    { label: 'Response time', value: formatResponseTime(data.userData.submit_time, data.exam.azmoon_time), icon: 'md:electric_bolt' },
+    { label: 'Response time', value: formatResponseTime(data.userData.submit_time), icon: 'md:electric_bolt' },
     { label: 'Result ID', value: data.userData.id, icon: 'md:article_outlined' },
   ]
 })
 
-const TEHRAN_OFFSET_SECONDS = 3.5 * 60 * 60
-
-const formatResponseTime = (value: string | number, durationMinutes: string | number) => {
+// The backend sends the time the countdown recorded, or gama-api's figure only when believable, else nothing (shown as "-").
+const formatResponseTime = (value: string | number | undefined) => {
   const totalSeconds = Number(value)
-  if (!Number.isFinite(totalSeconds) || totalSeconds < 0) return '-'
+  if (value === undefined || value === null || value === '' || !Number.isFinite(totalSeconds) || totalSeconds < 0) return '-'
   if (totalSeconds === 0) return '0 seconds'
-
-  const durationSeconds = Number(durationMinutes) * 60
-  const correctedSeconds = totalSeconds - TEHRAN_OFFSET_SECONDS
-  const shouldApplyTimezoneFix
-    = Number.isFinite(durationSeconds)
-      && durationSeconds > 0
-      && totalSeconds > durationSeconds
-      && correctedSeconds >= 0
-      && correctedSeconds <= durationSeconds
-
-  return formatSeconds(shouldApplyTimezoneFix ? correctedSeconds : totalSeconds)
+  return formatSeconds(totalSeconds)
 }
 
 const formatSeconds = (value: number) => {

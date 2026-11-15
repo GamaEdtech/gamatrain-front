@@ -445,6 +445,11 @@ const updateNextNotAnswer = () => {
 
 const endExam = async () => {
   submit_loading.value = true
+  // Time actually spent on the countdown (it pauses while the exam is closed); the backend keeps at most the duration.
+  const durationSeconds = Number(contentData.value.exam.azmoon_time) * 60
+  const timeSpentSeconds = Number.isFinite(durationSeconds)
+    ? Math.round(Math.min(durationSeconds, Math.max(0, durationSeconds - Math.max(examStats.remainTime, 0))))
+    : null
   examStats.remainTime = -1
 
   const index = allExamStats.value.findIndex(x => x.id === examStats.id)
@@ -455,23 +460,22 @@ const endExam = async () => {
     }
   }
 
+  // Submitted through our backend, which passes it to gama-api unchanged and records the time spent and the points.
   try {
     const response = await useApiService.post(
-      `/api/v1/exams/end/${contentData.value.exam.id}`,
+      `/api/v2/exams/${contentData.value.exam.id}/end`,
       {
         startID: contentData.value.startID,
         answers: examStats.answerData,
+        timeSpentSeconds,
       },
     )
-    await router.replace(`/user/exam/result/${response.data.id}`)
+    // The result id comes back also when gama-api refuses an exam already submitted.
+    if (response?.data?.id) await router.replace(`/user/exam/result/${response.data.id}`)
+    else console.error('Error submitting exam:', response?.errors)
   }
   catch (err) {
-    if (err.response?._data?.data?.id) {
-      await router.replace(`/user/exam/result/${err.response._data.data.id}`)
-    }
-    else {
-      console.error('Error submitting exam:', err)
-    }
+    console.error('Error submitting exam:', err)
   }
   finally {
     submit_loading.value = false

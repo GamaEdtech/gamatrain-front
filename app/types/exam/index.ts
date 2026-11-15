@@ -194,7 +194,8 @@ export interface ExamResultUserDataDTO {
   user_: string
   azmoon: string
   azmoon_code: string
-  submit_time: string
+  /** Seconds spent, as text; left out when no believable time is known (the backend's result proxy decides). */
+  submit_time?: string
   result_score: string
   status: string
   state: string
@@ -202,7 +203,7 @@ export interface ExamResultUserDataDTO {
   school: string
   transfer: string
   subdate: string
-  submit_time_seconds: string
+  submit_time_seconds?: string
   subdate_jalali: string
 }
 
