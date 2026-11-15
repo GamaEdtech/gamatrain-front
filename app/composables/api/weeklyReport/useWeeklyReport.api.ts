@@ -1,4 +1,4 @@
-import type { ApiResult, WeeklyReportPreviewDTO, WeeklyReportSettingsDTO } from '@/types'
+import type { ApiResult, WeeklyReportPreviewDTO, WeeklyReportSettingsDTO, WeeklyReportStatusDTO } from '@/types'
 import type { SearchParameters } from '@/composables/useApiService'
 
 /** The weekly report email (a plan feature): the user's setting, the email's unsubscribe link and the admin preview. */
@@ -9,6 +9,42 @@ export const useWeeklyReport = () => {
   const savingSettings = ref(false)
   const loadingUnsubscribe = ref(false)
   const loadingPreview = ref(false)
+  const loadingStatus = ref(false)
+  const savingStatus = ref(false)
+
+  /** Admin only: whether this server may send it at all, and whether an admin paused it. */
+  const getStatus = async () => {
+    loadingStatus.value = true
+    try {
+      const response = await useApiService.get<ApiResult<WeeklyReportStatusDTO>>('/api/v2/admin/weekly-reports/status')
+      if (!response.succeeded) handleApiResponseError(response)
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+      return createApiFailure<WeeklyReportStatusDTO>(err)
+    }
+    finally {
+      loadingStatus.value = false
+    }
+  }
+
+  /** Admin only: pauses or resumes the weekly report for everyone, from the next Monday run. */
+  const setPaused = async (paused: boolean) => {
+    savingStatus.value = true
+    try {
+      const response = await useApiService.put<ApiResult<boolean>>(`/api/v2/admin/weekly-reports/status?paused=${paused}`, {})
+      if (!response.succeeded) handleApiResponseError(response)
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+      return createApiFailure<boolean>(err, false)
+    }
+    finally {
+      savingStatus.value = false
+    }
+  }
 
   const getSettings = async () => {
     loadingSettings.value = true
@@ -76,5 +112,5 @@ export const useWeeklyReport = () => {
     }
   }
 
-  return { loadingSettings, savingSettings, loadingUnsubscribe, loadingPreview, getSettings, setSubscription, unsubscribe, getPreview }
+  return { loadingSettings, savingSettings, loadingUnsubscribe, loadingPreview, loadingStatus, savingStatus, getSettings, setSubscription, unsubscribe, getPreview, getStatus, setPaused }
 }

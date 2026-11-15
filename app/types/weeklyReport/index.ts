@@ -20,3 +20,11 @@ export interface WeeklyReportPreviewDTO {
   /** The email's full HTML document. */
   html: string | null
 }
+
+/** `GET /api/v2/admin/weekly-reports/status`: reports go out only when both allow it. */
+export interface WeeklyReportStatusDTO {
+  /** Whether this server may send it at all (`WeeklyReport:Enabled`, only production). */
+  enabledOnServer: boolean
+  /** Paused for everyone by an admin. */
+  paused: boolean
+}

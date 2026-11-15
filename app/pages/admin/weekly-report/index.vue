@@ -14,6 +14,56 @@
       flat
       rounded="lg"
       border
+      tag="section"
+      class="pa-4 weekly-report-admin__card"
+      aria-labelledby="weekly-status-title"
+    >
+      <v-skeleton-loader
+        v-if="!status"
+        type="list-item-two-line"
+      />
+      <template v-else>
+        <div class="d-flex flex-wrap align-center justify-space-between ga-3">
+          <div class="weekly-report-admin__status-text">
+            <h2
+              id="weekly-status-title"
+              class="text-h6 font-weight-bold text-grey900"
+            >
+              Send weekly reports
+            </h2>
+            <p class="ma-0 mt-1 text-body-2 text-grey700">
+              Turning it off pauses the report for everyone from the next Monday run. Nothing else changes: plans and each
+              user's own setting stay as they are.
+            </p>
+          </div>
+          <v-switch
+            :model-value="!status.paused"
+            :loading="savingStatus"
+            :disabled="savingStatus"
+            color="secondary"
+            inset
+            hide-details
+            class="flex-grow-0"
+            aria-labelledby="weekly-status-title"
+            @update:model-value="togglePaused"
+          />
+        </div>
+        <v-alert
+          v-if="!status.enabledOnServer"
+          type="info"
+          variant="tonal"
+          density="compact"
+          class="mt-3"
+        >
+          This server never sends weekly reports (its WeeklyReport:Enabled setting is off). Only production sends them.
+        </v-alert>
+      </template>
+    </v-card>
+
+    <v-card
+      flat
+      rounded="lg"
+      border
       class="pa-4 weekly-report-admin__card"
     >
       <v-form
@@ -105,7 +155,7 @@
 </template>
 
 <script setup lang="ts">
-import type { WeeklyReportPreviewDTO } from '@/types'
+import type { WeeklyReportPreviewDTO, WeeklyReportStatusDTO } from '@/types'
 
 definePageMeta({
   layout: 'admin',
@@ -116,7 +166,25 @@ useHead({
   title: 'Weekly report preview',
 })
 
-const { getPreview, loadingPreview } = useWeeklyReport()
+const { getPreview, loadingPreview, getStatus, setPaused, savingStatus } = useWeeklyReport()
+const { $toast } = useNuxtApp()
+
+const status = ref<WeeklyReportStatusDTO | null>(null)
+
+async function togglePaused(on: boolean | null) {
+  if (!status.value) return
+  const paused = !on
+  const response = await setPaused(paused)
+  if (response.succeeded) {
+    status.value = { ...status.value, paused }
+    $toast.success(paused ? 'Weekly reports paused for everyone.' : 'Weekly reports resumed.')
+  }
+}
+
+onMounted(async () => {
+  const response = await getStatus()
+  if (response.succeeded && response.data) status.value = response.data
+})
 
 const userId = ref<number | null>(null)
 const weekOf = ref<string | null>(null)
@@ -136,6 +204,11 @@ async function preview() {
 
 .weekly-report-admin__card {
   border-color: rgb(var(--v-theme-borderSubtle)) !important;
+}
+
+.weekly-report-admin__status-text {
+  flex: 1 1 320px;
+  min-width: 0;
 }
 
 .weekly-report-admin__field {
