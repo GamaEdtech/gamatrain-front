@@ -40,7 +40,7 @@
             :model-value="!status.paused"
             :loading="savingStatus"
             :disabled="savingStatus"
-            color="secondary"
+            color="success"
             inset
             hide-details
             class="flex-grow-0"
