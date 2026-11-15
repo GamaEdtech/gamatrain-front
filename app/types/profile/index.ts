@@ -170,3 +170,57 @@ export interface GetDashboardDataDTO {
   stats: DashboardStatsDTO
   examSuggestions: DashboardExamSuggestionsDTO
 }
+
+/** Profile levels, lowest first (backend `UserRateLevel`). */
+export type ProfileLevel = 'Beginner' | 'Basic' | 'Intermediate' | 'Advanced' | 'Complete'
+
+/** The profile fields as quests; the same codes as `DashboardProfileCompletionDTO.notComplete`. */
+export type ProfileQuestCode = 'avatar' | 'firstName' | 'lastName' | 'currentStatusSentence' | 'biography' | 'skills' | 'experience'
+
+export interface ProfileQuestDTO {
+  code: ProfileQuestCode
+  done: boolean
+  /** Profile percent the field is worth. */
+  percent: number
+}
+
+/** Days with at least one practice question answered, in UTC days. */
+export interface PracticeStreakDTO {
+  current: number
+  best: number
+  practisedToday: boolean
+  /** Oldest first, today last. */
+  lastSevenDays: boolean[]
+}
+
+/** The user's school and its shared review goal. Counts only: no other member is named. */
+export interface ProfileSchoolDTO {
+  id: number
+  name: string | null
+  reviews: number
+  reviewGoal: number
+  photos: number
+  students: number
+  teachers: number
+  helpersThisMonth: number
+  /** The user's own review: null (none or rejected), Review (waiting) or Confirmed. */
+  myReview: 'Review' | 'Confirmed' | null
+  reviewPoints: number
+  photoPoints: number
+  editPoints: number
+}
+
+/** `GET /api/v2/identities/profiles/progress`. */
+export interface ProfileProgressDTO {
+  level: ProfileLevel
+  /** Profile percent, 0-100. */
+  percent: number
+  nextLevel: ProfileLevel | null
+  nextLevelAtPercent: number | null
+  quests: ProfileQuestDTO[]
+  points: number
+  /** Leaderboard place; null for an admin. */
+  rank: number | null
+  practice: PracticeStreakDTO
+  school: ProfileSchoolDTO | null
+}
