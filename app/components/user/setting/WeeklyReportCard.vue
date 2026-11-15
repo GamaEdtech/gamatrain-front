@@ -30,7 +30,7 @@
           :model-value="settings.subscribed"
           :disabled="savingSettings || !settings.includedInPlan"
           :loading="savingSettings"
-          color="secondary"
+          color="success"
           inset
           hide-details
           class="flex-grow-0"
