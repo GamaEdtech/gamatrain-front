@@ -75,7 +75,7 @@
           active-color="primary"
           bg-color="transparent"
           class="w-100"
-          :rules="[required, minLength(2), maxLength(50), alphabetic]"
+          :rules="[required, minLength(2), maxLength(50), personName]"
         />
       </div>
       <div class="w-100 d-flex flex-column align-start justify-start ga-1">
@@ -95,7 +95,7 @@
           active-color="primary"
           bg-color="transparent"
           class="w-100"
-          :rules="[required, minLength(2), maxLength(50), alphabetic]"
+          :rules="[required, minLength(2), maxLength(50), personName]"
         />
       </div>
 
@@ -319,7 +319,7 @@ const {
   required,
   minLength,
   maxLength,
-  alphabetic,
+  personName,
 } = useValidationRules()
 const { editItem, loadingEditItem } = useProfile()
 const { countries,

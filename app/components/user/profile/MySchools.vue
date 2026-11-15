@@ -3,19 +3,30 @@
     flat
     rounded="lg"
     border
-    class="pa-4 my-schools"
+    class="pa-4 pa-sm-6 my-schools"
     tag="section"
     aria-labelledby="my-schools-title"
   >
-    <h2
-      id="my-schools-title"
-      class="text-h6 font-weight-bold text-grey900"
-    >
-      My schools
-    </h2>
-    <p class="ma-0 mt-1 my-schools__hint text-grey600">
-      Schools you teach or work at, study at, studied at, or your children go to. Joining as a teacher, student or parent
-      also sets that on your account.
+    <div class="d-flex flex-wrap justify-space-between align-center ga-2">
+      <h2
+        id="my-schools-title"
+        class="text-h6 font-weight-bold text-grey900"
+      >
+        My schools
+      </h2>
+      <v-btn
+        to="/school"
+        variant="tonal"
+        color="secondary"
+        class="text-none"
+        prepend-icon="mdi-magnify"
+      >
+        Join a school
+      </v-btn>
+    </div>
+    <p class="ma-0 mt-1 text-body-2 text-grey600">
+      Schools you teach or work at, study at, studied at, or your children go to. Joining saves straight away, and joining
+      as a teacher, student or parent also sets that on your account.
     </p>
 
     <v-skeleton-loader
@@ -26,18 +37,18 @@
 
     <v-list
       v-else-if="schools.length"
-      class="pa-0 mt-2"
+      class="pa-0 mt-3"
       bg-color="transparent"
     >
       <v-list-item
         v-for="school in schools"
         :key="school.schoolId"
-        class="px-0 my-schools__row"
+        class="px-0 py-3 my-schools__row"
       >
-        <v-list-item-title>
+        <v-list-item-title class="text-wrap">
           <nuxt-link
             :to="`/school/${school.schoolId}`"
-            class="font-weight-medium text-grey900 text-decoration-none"
+            class="font-weight-bold text-grey900 text-decoration-none my-schools__name"
           >
             {{ school.schoolName || `School ${school.schoolId}` }}
           </nuxt-link>
@@ -50,45 +61,82 @@
             variant="tonal"
             color="grey800"
           >
-            {{ schoolRoleLabel(item.role) }}
-            <v-icon
-              v-if="item.showName"
-              end
-              size="14"
-              aria-label="Your name shows on the school's page"
-            >
-              mdi-eye-outline
-            </v-icon>
-            <v-btn
-              icon="mdi-close"
-              size="20"
-              variant="text"
-              class="ms-1 me-n2"
-              :disabled="busy"
-              :aria-label="`Leave ${school.schoolName || 'this school'} as ${schoolRoleLabel(item.role).toLowerCase()}`"
-              @click="leaveRole(school.schoolId, item.role)"
-            />
+            {{ schoolRoleLabel(item.role) }}<template v-if="item.showName">
+              · Named on the school page
+            </template>
           </v-chip>
         </div>
+
+        <template #append>
+          <v-menu location="bottom end">
+            <template #activator="{ props: menu }">
+              <v-btn
+                v-bind="menu"
+                variant="text"
+                color="grey700"
+                class="text-none"
+                append-icon="mdi-chevron-down"
+                :disabled="busy"
+                :aria-label="`Leave ${school.schoolName || 'this school'}`"
+              >
+                Leave
+              </v-btn>
+            </template>
+            <v-list density="compact">
+              <v-list-item
+                v-for="item in school.roles"
+                :key="item.role"
+                :title="`Leave as ${schoolRoleLabel(item.role).toLowerCase()}`"
+                @click="confirmLeave(school.schoolId, school.schoolName, item.role)"
+              />
+            </v-list>
+          </v-menu>
+        </template>
       </v-list-item>
     </v-list>
 
-    <div
+    <p
       v-else
-      class="d-flex flex-wrap align-center ga-3 mt-3"
+      class="ma-0 mt-3 text-body-2 text-grey700"
     >
-      <span class="text-grey700">You haven't joined a school yet.</span>
-    </div>
+      You haven't joined a school yet. Find yours, open its page and tap Join.
+    </p>
 
-    <v-btn
-      to="/school"
-      variant="text"
-      color="info"
-      prepend-icon="mdi-magnify"
-      class="text-none mt-2 px-1"
+    <v-dialog
+      v-model="leaving.open"
+      max-width="420"
     >
-      Find your school and tap Join
-    </v-btn>
+      <v-card
+        rounded="lg"
+        class="pa-2"
+      >
+        <v-card-title class="text-h6 text-wrap">
+          Leave {{ leaving.schoolName || 'this school' }}?
+        </v-card-title>
+        <v-card-text class="text-body-1">
+          You'll no longer be listed there as {{ leaving.role ? schoolRoleLabel(leaving.role).toLowerCase() : '' }}. You can
+          join again at any time. Your account keeps its role.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            class="text-none"
+            @click="leaving.open = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="error"
+            variant="flat"
+            class="text-none"
+            :loading="busy"
+            @click="leaveRole"
+          >
+            Leave
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -101,6 +149,12 @@ const { $toast } = useNuxtApp()
 
 const loading = ref(true)
 const busy = ref(false)
+const leaving = reactive<{ open: boolean, schoolId: number, schoolName: string | null, role: SchoolMemberRole | null }>({
+  open: false,
+  schoolId: 0,
+  schoolName: null,
+  role: null,
+})
 
 onMounted(async () => {
   await loadMine(true).catch(() => {})
@@ -118,12 +172,18 @@ const schools = computed(() => {
   return [...bySchool.values()]
 })
 
-async function leaveRole(schoolId: number, role: SchoolMemberRole) {
+function confirmLeave(schoolId: number, schoolName: string | null, role: SchoolMemberRole) {
+  Object.assign(leaving, { open: true, schoolId, schoolName, role })
+}
+
+async function leaveRole() {
+  if (!leaving.role) return
   busy.value = true
-  const error = await leave(role, schoolId)
+  const error = await leave(leaving.role, leaving.schoolId)
   busy.value = false
+  leaving.open = false
   if (error) $toast.error(error)
-  else $toast.success(`You left as ${schoolRoleLabel(role).toLowerCase()}.`)
+  else $toast.success(`You left ${leaving.schoolName || 'the school'} as ${schoolRoleLabel(leaving.role).toLowerCase()}.`)
 }
 </script>
 
@@ -132,12 +192,12 @@ async function leaveRole(schoolId: number, role: SchoolMemberRole) {
   border-color: rgb(var(--v-theme-borderSubtle)) !important;
 }
 
-.my-schools__hint {
-  font-size: 14px;
-  line-height: 1.5;
-}
-
 .my-schools__row + .my-schools__row {
   border-top: 1px solid rgb(var(--v-theme-borderSubtle));
+}
+
+.my-schools__name:hover,
+.my-schools__name:focus-visible {
+  text-decoration: underline !important;
 }
 </style>
