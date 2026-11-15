@@ -21,7 +21,7 @@ export interface WeeklyReportPreviewDTO {
   html: string | null
 }
 
-/** `GET /api/v2/admin/weekly-reports/status`: reports go out only when both allow it. */
+/** `GET /api/v2/admin/weeklyreports/status`: reports go out only when both allow it. */
 export interface WeeklyReportStatusDTO {
   /** Whether this server may send it at all (`WeeklyReport:Enabled`, only production). */
   enabledOnServer: boolean

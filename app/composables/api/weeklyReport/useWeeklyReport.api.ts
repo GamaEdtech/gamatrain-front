@@ -16,7 +16,7 @@ export const useWeeklyReport = () => {
   const getStatus = async () => {
     loadingStatus.value = true
     try {
-      const response = await useApiService.get<ApiResult<WeeklyReportStatusDTO>>('/api/v2/admin/weekly-reports/status')
+      const response = await useApiService.get<ApiResult<WeeklyReportStatusDTO>>('/api/v2/admin/weeklyreports/status')
       if (!response.succeeded) handleApiResponseError(response)
       return response
     }
@@ -33,7 +33,7 @@ export const useWeeklyReport = () => {
   const setPaused = async (paused: boolean) => {
     savingStatus.value = true
     try {
-      const response = await useApiService.put<ApiResult<boolean>>(`/api/v2/admin/weekly-reports/status?paused=${paused}`, {})
+      const response = await useApiService.put<ApiResult<boolean>>(`/api/v2/admin/weeklyreports/status?paused=${paused}`, {})
       if (!response.succeeded) handleApiResponseError(response)
       return response
     }
