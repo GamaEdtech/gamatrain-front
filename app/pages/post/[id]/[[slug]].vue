@@ -138,6 +138,8 @@
           :title="contentData.title"
           :auto-play="false"
           :loop="false"
+          @started="recordActivity('PodcastPlay', Number(postId))"
+          @listened="recordActivity('PodcastListen', Number(postId))"
         />
       </v-col>
       <v-col
@@ -225,6 +227,30 @@ const route = useRoute()
 const postId = route.params.id
 const { xs, sm } = useDisplay()
 const postContentRef = ref(null)
+
+// A read is about 30 seconds on the post or half of it scrolled into view, for signed-in users (opening a tab is not a read).
+const { record: recordActivity } = useUserActivity()
+const READ_AFTER_MS = 30_000
+let readTimer
+const stopReadTracking = () => {
+  clearTimeout(readTimer)
+  window.removeEventListener('scroll', checkReadDepth)
+}
+const markRead = () => {
+  stopReadTracking()
+  recordActivity('PostRead', Number(postId))
+}
+function checkReadDepth() {
+  const element = postContentRef.value?.$el
+  if (!element) return
+  const rect = element.getBoundingClientRect()
+  if (rect.height > 0 && window.innerHeight - rect.top >= rect.height / 2) markRead()
+}
+onMounted(() => {
+  readTimer = setTimeout(markRead, READ_AFTER_MS)
+  window.addEventListener('scroll', checkReadDepth, { passive: true })
+})
+onBeforeUnmount(stopReadTracking)
 
 const { data: contentData, error } = await useAsyncData(
   `post-${postId}`,

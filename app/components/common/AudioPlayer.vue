@@ -118,7 +118,7 @@
       @ended="onAudioEnded"
       @error="onAudioError"
       @pause="isPlaying = false"
-      @play="isPlaying = true"
+      @play="onPlay"
     />
   </section>
 </template>
@@ -139,7 +139,15 @@ const props = withDefaults(defineProps<IAudioPlayer>(), {
   loop: false,
 })
 
+// started: the first play. listened: 80% of the length actually played (time heard, so jumping to the end doesn't count).
+const emit = defineEmits<{ started: [], listened: [] }>()
+
 const PLAYBACK_RATES = [1, 1.25, 1.5, 2, 0.75]
+const LISTENED_SHARE = 0.8
+let hasStarted = false
+let hasListened = false
+let heardSeconds = 0
+let lastPosition = 0
 
 const audioElement = ref<HTMLAudioElement | null>(null)
 const isPlaying = ref(false)
@@ -209,8 +217,26 @@ const onSeekEnd = (time: number) => {
   if (resumeAfterSeek) audio.play()
 }
 
+const onPlay = () => {
+  isPlaying.value = true
+  if (!hasStarted) {
+    hasStarted = true
+    emit('started')
+  }
+}
+
 const onTimeUpdate = () => {
-  if (audioElement.value && !isSeeking.value) currentTime.value = audioElement.value.currentTime
+  const audio = audioElement.value
+  if (!audio) return
+  if (!isSeeking.value) currentTime.value = audio.currentTime
+  // Only small forward steps are listening; a jump (seek) moves the position without adding heard time.
+  const step = audio.currentTime - lastPosition
+  if (!audio.paused && step > 0 && step < 2) heardSeconds += step
+  lastPosition = audio.currentTime
+  if (!hasListened && duration.value > 0 && heardSeconds >= duration.value * LISTENED_SHARE) {
+    hasListened = true
+    emit('listened')
+  }
 }
 
 const readDuration = () => {
