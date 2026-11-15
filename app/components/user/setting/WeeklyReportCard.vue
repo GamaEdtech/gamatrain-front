@@ -52,15 +52,6 @@
           class="font-weight-bold"
         >See plans</nuxt-link>
       </v-alert>
-      <v-alert
-        v-else-if="!settings.emailConfirmed"
-        type="warning"
-        variant="tonal"
-        density="compact"
-        class="mt-4"
-      >
-        Reports go only to a confirmed email address. Confirm {{ settings.email || 'your email' }} to get them.
-      </v-alert>
       <p
         v-else
         class="ma-0 mt-4 text-body-2 text-grey600"

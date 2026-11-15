@@ -5,8 +5,6 @@ export interface WeeklyReportSettingsDTO {
   /** Whether their current plan includes the weekly report; without it nothing is sent either way. */
   includedInPlan: boolean
   email: string | null
-  /** Reports go only to a confirmed address. */
-  emailConfirmed: boolean
   lastSentDate: string | null
 }
 
