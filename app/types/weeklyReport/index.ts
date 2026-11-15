@@ -1,4 +1,4 @@
-/** `GET /api/v2/weekly-reports/settings`: the user's own weekly report setting. */
+/** `GET /api/v2/weeklyreports/settings`: the user's own weekly report setting. */
 export interface WeeklyReportSettingsDTO {
   /** False once they turned it off (here or with the email's link). */
   subscribed: boolean
@@ -10,7 +10,7 @@ export interface WeeklyReportSettingsDTO {
   lastSentDate: string | null
 }
 
-/** `GET /api/v2/admin/weekly-reports/preview`: one user's email for a week, exactly as the job would send it. */
+/** `GET /api/v2/admin/weeklyreports/preview`: one user's email for a week, exactly as the job would send it. */
 export interface WeeklyReportPreviewDTO {
   hasActivity: boolean
   wouldSend: boolean

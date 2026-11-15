@@ -13,7 +13,7 @@ export const useWeeklyReport = () => {
   const getSettings = async () => {
     loadingSettings.value = true
     try {
-      const response = await useApiService.get<ApiResult<WeeklyReportSettingsDTO>>('/api/v2/weekly-reports/settings')
+      const response = await useApiService.get<ApiResult<WeeklyReportSettingsDTO>>('/api/v2/weeklyreports/settings')
       if (!response.succeeded) handleApiResponseError(response)
       return response
     }
@@ -29,7 +29,7 @@ export const useWeeklyReport = () => {
   const setSubscription = async (subscribed: boolean) => {
     savingSettings.value = true
     try {
-      const response = await useApiService.put<ApiResult<boolean>>(`/api/v2/weekly-reports/settings?subscribed=${subscribed}`, {})
+      const response = await useApiService.put<ApiResult<boolean>>(`/api/v2/weeklyreports/settings?subscribed=${subscribed}`, {})
       if (!response.succeeded) handleApiResponseError(response)
       return response
     }
@@ -46,7 +46,7 @@ export const useWeeklyReport = () => {
   const unsubscribe = async (params: { userId: string, token: string }) => {
     loadingUnsubscribe.value = true
     try {
-      return await useApiService.get<ApiResult<boolean>>('/api/v2/weekly-reports/unsubscribe', params as unknown as SearchParameters)
+      return await useApiService.get<ApiResult<boolean>>('/api/v2/weeklyreports/unsubscribe', params as unknown as SearchParameters)
     }
     catch (err: unknown) {
       handleApiCatchError(err)
@@ -63,7 +63,7 @@ export const useWeeklyReport = () => {
     try {
       const query: Record<string, string> = { UserId: String(params.userId) }
       if (params.weekOf) query.WeekOf = params.weekOf
-      const response = await useApiService.get<ApiResult<WeeklyReportPreviewDTO>>('/api/v2/admin/weekly-reports/preview', query as unknown as SearchParameters)
+      const response = await useApiService.get<ApiResult<WeeklyReportPreviewDTO>>('/api/v2/admin/weeklyreports/preview', query as unknown as SearchParameters)
       if (!response.succeeded) handleApiResponseError(response)
       return response
     }
