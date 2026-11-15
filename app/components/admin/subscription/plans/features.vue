@@ -159,7 +159,7 @@
         density="compact"
         class="w-100"
       >
-        The weekly report has no limit: subscribers get it every week while the plan includes it, and removing it stops it.
+        The weekly report has no limit and needs no "Apply to current subscribers": everyone on this plan gets it from the next Monday while the plan includes it, and removing it stops it.
       </v-alert>
 
       <div
