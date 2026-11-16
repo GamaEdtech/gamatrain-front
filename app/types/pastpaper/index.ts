@@ -196,6 +196,16 @@ export interface PastPaperCreateResponseDTO {
   repeated?: boolean
 }
 
+export interface PastPaperEditResponseDTO {
+  id: number
+  status: number
+  editMode: 'full' | 'limited'
+  /** Fields a limited edit (the paper is past review) did not save. */
+  ignoredFields?: string[]
+  /** Says what the edit left out, or that the paper is reviewed again. */
+  message?: string
+}
+
 export interface PastPaperDetailTopicDTO {
   id: string
   title: string
