@@ -310,6 +310,15 @@ const items = computed(() => [
     value: 'typeManagment',
     subMenuList: [
       { title: 'Location', link: '/admin/Locations', icon: 'md:location_on_outlined' },
+      { title: 'Paper types', link: '/admin/types', icon: 'md:category_outlined' },
+    ],
+  },
+  {
+    title: 'Past Papers',
+    icon: 'md:description_outlined',
+    value: 'pastPapers',
+    subMenuList: [
+      { title: 'Review', link: '/admin/past-papers', icon: 'md:fact_check_outlined' },
     ],
   },
   {
