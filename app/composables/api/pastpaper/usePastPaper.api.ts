@@ -5,6 +5,8 @@ import type {
   PastPaperEditDTO,
   PastPaperCreatePayloadDTO,
   PastPaperCreateResponseDTO,
+  PastPaperEditResponseDTO,
+  UploadFileDTO,
   PastPaperDetailDTO,
   PastPaperBriefDTO,
   ResponseListDTO,
@@ -20,6 +22,17 @@ const loadingEditItem = ref(false)
 const loadingGetItemById = ref(false)
 const loadingDeleteItem = ref(false)
 const NAME = 'Past Paper'
+const BASE = '/api/v2/PastPapers/mine'
+
+/**
+ * The backend answers 200 with `succeeded`/`errors` (it forwards to gama-api, or answers itself once papers are
+ * switched); the pages read gama-api's `status: 1` and its message, so give them that shape.
+ */
+const asLegacy = <T>(response: ApiResult<T>): ApiResult<T> & { message?: string } => ({
+  ...response,
+  status: response.succeeded ? 1 : 0,
+  message: response.errors?.[0]?.message,
+})
 
 export const usePastPaper = () => {
   const { $toast } = useNuxtApp()
@@ -37,9 +50,9 @@ export const usePastPaper = () => {
         lesson: lesson || '',
       }
 
-      const response = await useApiService.get<
+      const response = asLegacy(await useApiService.get<
         ApiResult<ResponseListDTO<PastPaperBriefDTO>>
-      >('/api/v1/tests', query)
+      >(BASE, query))
 
       if (response.data) {
         data.value = response.data.list
@@ -91,12 +104,12 @@ export const usePastPaper = () => {
     }
 
     try {
-      const response = await useApiService.post<
+      const response = asLegacy(await useApiService.post<
         ApiResult<PastPaperCreateResponseDTO>
       >(
-        '/api/v1/tests',
+        BASE,
         params as unknown as Record<string, never>,
-      )
+      ))
 
       if (response.data?.id === 0 && response.data.repeated) {
         $toast.info(`This ${NAME} is repetitive.`)
@@ -105,7 +118,7 @@ export const usePastPaper = () => {
         $toast.success(`${NAME} Added successfully!`)
       }
       else {
-        $toast.error(`The operation failed. Please try again later.`)
+        $toast.error(response.message || `The operation failed. Please try again later.`)
       }
 
       return response
@@ -143,9 +156,12 @@ export const usePastPaper = () => {
     loadingGetItemById.value = true
 
     try {
-      const response = await useApiService.get<
+      const response = asLegacy(await useApiService.get<
         ApiResult<PastPaperDetailDTO>
-      >(`/api/v1/tests/${id}`)
+      >(`${BASE}/${id}`))
+      if (!response.succeeded && response.message) {
+        $toast.error(response.message)
+      }
 
       return response
     }
@@ -197,21 +213,19 @@ export const usePastPaper = () => {
     const params = encodeEditPayload(item)
 
     try {
-      const response = await useApiService.put<
-        ApiResult<PastPaperCreateResponseDTO>
+      const response = asLegacy(await useApiService.put<
+        ApiResult<PastPaperEditResponseDTO>
       >(
-        `/api/v1/tests/${id}`,
+        `${BASE}/${id}`,
         params as unknown as Record<string, never>,
-      )
+      ))
 
-      if (response.data?.id === 0 && response.data.repeated) {
-        $toast.info(`This ${NAME} is repetitive.`)
-      }
-      else if (response.status === 1) {
-        $toast.success(`${NAME} Edited successfully!`)
+      if (response.status === 1) {
+        // A limited edit (the paper is past review) or one that sends it back to review says so.
+        $toast.success(response.data?.message || `${NAME} Edited successfully!`)
       }
       else {
-        $toast.error(`The operation failed. Please try again later.`)
+        $toast.error(response.message || `The operation failed. Please try again later.`)
       }
 
       return response
@@ -240,15 +254,15 @@ export const usePastPaper = () => {
     loadingDeleteItem.value = true
 
     try {
-      const response = await useApiService.remove<ApiResult<boolean>>(
-        `/api/v1/tests/${id}`,
-      )
+      const response = asLegacy(await useApiService.remove<ApiResult<boolean>>(
+        `${BASE}/${id}`,
+      ))
 
-      if (response.status === 1 || response.succeeded) {
+      if (response.status === 1) {
         $toast.success(`${NAME} deleted successfully!`)
       }
       else {
-        $toast.error(`The operation failed. Please try again later.`)
+        $toast.error(response.message || `The operation failed. Please try again later.`)
       }
 
       return response
@@ -273,7 +287,32 @@ export const usePastPaper = () => {
     }
   }
 
+  /**
+   * Uploads one of the paper's files; the add or edit then names it by the returned key. `kind` 'pdf' marks the
+   * question PDF, whose first page becomes the paper's picture.
+   */
+  const uploadItemFile = async (file: File, kind?: 'pdf') => {
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      const response = asLegacy(await useApiService.post<ApiResult<UploadFileDTO[]>>(
+        `${BASE}/uploads${kind ? `?kind=${kind}` : ''}`,
+        formData,
+      ))
+      if (response.status != 1) {
+        $toast.error(response.message || 'Upload failed. Please try again.')
+      }
+
+      return response
+    }
+    catch {
+      $toast.error('Upload failed. Please try again.')
+      return { succeeded: false, status: 0, data: [] as UploadFileDTO[] }
+    }
+  }
+
   return {
+    uploadItemFile,
     loadingGetData,
     data,
     getData,

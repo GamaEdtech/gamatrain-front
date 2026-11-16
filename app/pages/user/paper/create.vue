@@ -541,7 +541,7 @@ const {
   subjects, loadingSubject, resetSubjects, getSubjects, getClassification, resetClassifications, loadingClassification, classifications, getTopics, resetTopics, loadingTopic, topics, getExtraTypeFile, extraTypeFile, loadingExtraTypeFile,
 } = useBoard()
 const { required, minLength } = useValidationRules()
-const { uploadFile } = useUpload()
+const { uploadItemFile: uploadFile } = usePastPaper()
 const { $toast } = useNuxtApp()
 const { addItem,
   loadingAddItem } = usePastPaper()
@@ -718,7 +718,7 @@ const uploadPaperFile = async (
   setUploadingFile(fileField, true, index)
 
   try {
-    const response = await uploadFile(file)
+    const response = await uploadFile(file, fileField === 'file_pdf' ? 'pdf' : undefined)
 
     if (response.status == 1 && response.data && response.data.length > 0) {
       const uploadedFileName = response.data[0]?.file.name ?? ''
