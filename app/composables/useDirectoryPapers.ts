@@ -28,7 +28,7 @@ export const useDirectoryPapers = async (context: DirectoryPaperContext & { sele
     : Promise.resolve(null))
   // Paper types depend on the board; Year, Session and Variant are fixed lists.
   const paperTypes = useAsyncData(() => `directory-paper-types:${context.boardId}`, () => context.boardId
-    ? useApiService.get<{ data: DirectoryFilterOption[] }>('/api/v1/types/list', { type: 'test_type', section_id: context.boardId }, { public: true })
+    ? useApiService.get<{ data: DirectoryFilterOption[] }>('/api/v2/search/types', { type: 'test_type', section_id: context.boardId }, { public: true })
         .then(response => response.data.filter(item => item.is_paper === true))
     : Promise.resolve([]))
 

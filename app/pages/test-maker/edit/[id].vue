@@ -1932,7 +1932,7 @@ const getTypeList = async (type, parent = '', trigger = '') => {
       loadingTarget.value = [{ id: '', title: 'Loading...', disabled: true }]
     }
 
-    const res = await useApiService.get('/api/v1/types/list', params, { public: true })
+    const res = await useApiService.get('/api/v2/search/types', params, { public: true })
 
     if (res && res.data && Array.isArray(res.data)) {
       if (type === 'section') {
@@ -3373,7 +3373,7 @@ const handleClearTopic = () => {
 const loadExamTypes = async () => {
   try {
     // First try to get exam types from the API
-    const res = await useApiService.get('/api/v1/types/list', {
+    const res = await useApiService.get('/api/v2/search/types', {
       type: 'exam_type',
     }, { public: true })
 

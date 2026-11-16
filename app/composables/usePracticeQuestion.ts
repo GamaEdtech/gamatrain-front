@@ -56,7 +56,7 @@ export const usePracticeQuestion = () => {
     }
 
     const list = await get<ApiResult<TopicItem[]>>(
-      `/api/v1/types/list/?type=topic&lesson_id=${lesson}`,
+      `/api/v2/search/types?type=topic&lesson_id=${lesson}`,
       undefined,
       { public: true },
     )

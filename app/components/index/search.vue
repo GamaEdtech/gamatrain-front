@@ -114,7 +114,7 @@ export default {
         params.base_id = parent
       }
 
-      useApiService.get('/api/v1/types/list', {
+      useApiService.get('/api/v2/search/types', {
         params,
       }, { public: true })
         .then((res) => {

@@ -78,7 +78,7 @@ export const useSearchFilters = ({
       makeFilter({
         title: 'Level',
         disabled: true,
-        api: '/api/v1/types/list',
+        api: '/api/v2/search/types',
         extraApiParams: { type: 'base' },
         dependencies: [{ parent: index.board, targetKey: 'section_id', sourceKey: 'code' }],
         queryKey: 'base',
@@ -88,7 +88,7 @@ export const useSearchFilters = ({
       makeFilter({
         title: 'Subject',
         disabled: true,
-        api: '/api/v1/types/list',
+        api: '/api/v2/search/types',
         extraApiParams: { type: 'lesson' },
         dependencies: [{ parent: index.level, targetKey: 'base_id', sourceKey: 'id' }],
         queryKey: 'lesson',
@@ -112,7 +112,7 @@ export const useSearchFilters = ({
       'topic': () => makeFilter({
         title: 'Topic',
         disabled: true,
-        api: '/api/v1/types/list',
+        api: '/api/v2/search/types',
         extraApiParams: { type: 'topic' },
         dependencies: [{ parent: index.subject, targetKey: 'lesson_id', sourceKey: 'id' }],
         queryKey: 'topic',
@@ -144,7 +144,7 @@ export const useSearchFilters = ({
       'paper': () => makeFilter({
         title: 'Paper',
         disabled: true,
-        api: '/api/v1/types/list',
+        api: '/api/v2/search/types',
         extraApiParams: { type: 'test_type' },
         dependencies: [{ parent: index.board, targetKey: 'section_id', sourceKey: 'code' }],
         itemFilter: item => item.is_paper === true,
@@ -164,7 +164,7 @@ export const useSearchFilters = ({
       'material': () => makeFilter({
         title: 'Material Type',
         disabled: true,
-        api: '/api/v1/types/list',
+        api: '/api/v2/search/types',
         extraApiParams: { type: 'test_type' },
         dependencies: [{ parent: index.board, targetKey: 'section_id', sourceKey: 'code' }],
         itemFilter: item => item.is_paper === false,
@@ -172,7 +172,7 @@ export const useSearchFilters = ({
       }),
       'exam-type': () => makeFilter({
         title: 'Exam Type',
-        api: '/api/v1/types/list',
+        api: '/api/v2/search/types',
         extraApiParams: { type: 'exam_type' },
         queryKey: 'exam_type',
       }),

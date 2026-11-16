@@ -117,7 +117,7 @@ const fetchGradeList = async () => {
   const requestId = ++gradeRequestId
   gradeLoader.value = true
   try {
-    const response = await useApiService.get(`/api/v1/types/list`, { type: 'base', section_id: selectedBoard.value.code }, { public: true })
+    const response = await useApiService.get(`/api/v2/search/types`, { type: 'base', section_id: selectedBoard.value.code }, { public: true })
     if (requestId === gradeRequestId) gradeList.value = [{ id: null, title: 'All' }, ...response.data]
   }
   catch (error) {

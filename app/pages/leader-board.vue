@@ -359,7 +359,7 @@ const filters = [
     disabled: true,
     hasSearch: true,
     refElement: null,
-    api: '/api/v1/types/list',
+    api: '/api/v2/search/types',
     idInParams: false,
     extraApiParams: {
       type: `base`,

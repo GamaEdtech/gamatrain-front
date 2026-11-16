@@ -71,7 +71,7 @@ export const useBoard = () => {
       const response = await useApiService.get<
         ApiResult<GradeDTO[]>
       >(
-        `/api/v1/types/list/?type=base&section_id=${boardId}`,
+        `/api/v2/search/types?type=base&section_id=${boardId}`,
       )
 
       if (response.data && response.data.length > 0) {
@@ -114,7 +114,7 @@ export const useBoard = () => {
       const response = await useApiService.get<
         ApiResult<SubjectDTO[]>
       >(
-        `/api/v1/types/list/?type=lesson&base_id=${gradeId}`,
+        `/api/v2/search/types?type=lesson&base_id=${gradeId}`,
       )
 
       if (response.data && response.data.length > 0) {
@@ -157,7 +157,7 @@ export const useBoard = () => {
       const response = await useApiService.get<
         ApiResult<ClassificationDTO[]>
       >(
-        `/api/v1/types/list/?type=test_type&section_id=${boardId}`,
+        `/api/v2/search/types?type=test_type&section_id=${boardId}`,
       )
 
       if (response.data && response.data.length > 0) {
@@ -200,7 +200,7 @@ export const useBoard = () => {
       const response = await useApiService.get<
         ApiResult<TopicDTO[]>
       >(
-        `/api/v1/types/list/?type=topic&lesson_id=${subjectId}`,
+        `/api/v2/search/types?type=topic&lesson_id=${subjectId}`,
       )
 
       if (response.data && response.data.length > 0) {
@@ -243,7 +243,8 @@ export const useBoard = () => {
       const response = await useApiService.get<
         ApiResult<ExtraTypeFilePastPaperCreateDTO[]>
       >(
-        `/api/v1/types/list?type=${type}`,
+        // The backend serves the lists it copies (a paper's extra file types); others (content_type) stay on gama-api.
+        type === 'test_extra_file' ? `/api/v2/search/types?type=${type}` : `/api/v1/types/list?type=${type}`,
       )
 
       if (response.data && response.data.length > 0) {

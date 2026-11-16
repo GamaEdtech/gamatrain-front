@@ -34,10 +34,10 @@ export const useSubjectDirectoryApi = () => {
   const getBoards = () => getList<BoardDTO>('boards', useBoardApi().getBoards)
 
   const getGrades = (boardId: number | string) => getList<GradeDTO>(`grades:${boardId}`, () =>
-    useApiService.get<ApiResult<GradeDTO[]>>('/api/v1/types/list/', { type: 'base', section_id: boardId }, { public: true }))
+    useApiService.get<ApiResult<GradeDTO[]>>('/api/v2/search/types', { type: 'base', section_id: boardId }, { public: true }))
 
   const getSubjects = (gradeId: string) => getList<SubjectDTO>(`subjects:${gradeId}`, () =>
-    useApiService.get<ApiResult<SubjectDTO[]>>('/api/v1/types/list/', { type: 'lesson', base_id: gradeId }, { public: true }))
+    useApiService.get<ApiResult<SubjectDTO[]>>('/api/v2/search/types', { type: 'lesson', base_id: gradeId }, { public: true }))
 
   // gama-api's tests/search through gamatrain-back, which caches it (Redis, then Cloudflare): it took 1.4-2.2s uncached.
   const fetchPapers = (params: DirectoryPaperQuery & { page: number, perpage: number }) => nuxtApp.runWithContext(() =>
