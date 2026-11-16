@@ -270,7 +270,7 @@ export default {
       }
 
       useApiService
-        .get('/api/v1/types/list', {
+        .get('/api/v2/search/types', {
           params,
         }, { public: true })
         .then((res) => {

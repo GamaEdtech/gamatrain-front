@@ -37,7 +37,10 @@ const apiRequest = <T = unknown>(
   const router = useRouter()
   const auth = useAuth()
   const { cleanUser } = useUser()
-  const headers = authHeader(opts?.public)
+  // The backend's cached lists (search/types) are the same for everyone: no token and no cookies, so Cloudflare
+  // can serve them from its cache.
+  const sharedCache = request.startsWith('/api/v2/search/types')
+  const headers = authHeader(opts?.public || sharedCache)
 
   let baseURL = ''
   let cleanRequest = request
@@ -63,7 +66,7 @@ const apiRequest = <T = unknown>(
     // gama-api (v1) trusts its own gama_sessions cookie over the Bearer token: once that cookie's session is
     // logged out, every call answered "login first" even with a fresh token, and signing in again couldn't
     // fix it. The Bearer token is how it's authenticated, so never send it cookies.
-    credentials: isGamaApi ? 'omit' : 'include',
+    credentials: isGamaApi || sharedCache ? 'omit' : 'include',
     onResponse({ request: _request, response: _response, options: _options }) {
       // Process the response data
     },
