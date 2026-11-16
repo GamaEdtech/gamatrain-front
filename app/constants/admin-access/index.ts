@@ -17,6 +17,19 @@ export const ADMIN_PERMISSIONS = {
     confirm: 'Admin.Posts.ConfirmPostComment',
     reject: 'Admin.Posts.RejectPostComment',
   },
+  pastPapers: {
+    list: 'Admin.PastPapers.GetPapers',
+    detail: 'Admin.PastPapers.GetPaper',
+    review: 'Admin.PastPapers.Review',
+    score: 'Admin.PastPapers.SetScore',
+    remove: 'Admin.PastPapers.Delete',
+  },
+  types: {
+    list: 'Admin.Types.GetItems',
+    create: 'Admin.Types.CreateItem',
+    update: 'Admin.Types.UpdateItem',
+    remove: 'Admin.Types.RemoveItem',
+  },
   // Keyed by the admin location type (the URL segment), so a page can look up the current tab's permissions.
   locations: {
     countries: {
@@ -51,6 +64,8 @@ export const ADMIN_PAGE_ACCESS: { path: string, permissions: string[], landing?:
   { path: '/admin/posts/comments', permissions: [ADMIN_PERMISSIONS.postComments.list], landing: true },
   { path: '/admin/posts/edit', permissions: [ADMIN_PERMISSIONS.posts.detail, ADMIN_PERMISSIONS.posts.update] },
   { path: '/admin/posts', permissions: [ADMIN_PERMISSIONS.posts.list], landing: true },
+  { path: '/admin/past-papers', permissions: [ADMIN_PERMISSIONS.pastPapers.list], landing: true },
+  { path: '/admin/types', permissions: [ADMIN_PERMISSIONS.types.list], landing: true },
   // The country list also feeds the country picker when adding a state or city, so it opens the page.
   { path: '/admin/locations', permissions: [ADMIN_PERMISSIONS.locations.countries.list], landing: true },
 ]
