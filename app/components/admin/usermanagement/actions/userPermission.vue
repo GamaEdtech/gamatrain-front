@@ -77,9 +77,17 @@
           :key="group.title"
           class="w-100 mt-2"
         >
-          <div class="text-body-1 font-weight-bold text-grey700 ml-2">
-            {{ group.title }}
-          </div>
+          <!-- One tick grants (or removes) the whole group, e.g. every tutorial or past paper review action. -->
+          <v-checkbox
+            :model-value="groupState(group) === 'all'"
+            :indeterminate="groupState(group) === 'some'"
+            :label="group.title"
+            density="compact"
+            color="primary"
+            hide-details
+            class="font-weight-bold"
+            @update:model-value="toggleGroup(group, !!$event)"
+          />
           <v-checkbox
             v-for="endpoint in group.endpoints"
             :key="endpoint.value"
@@ -89,6 +97,7 @@
             density="compact"
             color="primary"
             hide-details
+            class="ml-6"
           />
         </div>
       </div>
@@ -150,6 +159,18 @@ const groups = computed(() => tree.value.flatMap(area => (area.items ?? []).map(
     .map(endpoint => ({ value: endpoint.value as string, text: endpoint.text || (endpoint.value as string) })),
 })).filter(group => group.endpoints.length)))
 
+type PermissionGroup = { title: string, endpoints: { value: string, text: string }[] }
+const groupState = (group: PermissionGroup) => {
+  const ticked = group.endpoints.filter(endpoint => permissions.value.includes(endpoint.value)).length
+  if (ticked === 0) return 'none'
+  return ticked === group.endpoints.length ? 'all' : 'some'
+}
+const toggleGroup = (group: PermissionGroup, on: boolean) => {
+  const values = group.endpoints.map(endpoint => endpoint.value)
+  permissions.value = on
+    ? [...new Set([...permissions.value, ...values])]
+    : permissions.value.filter(value => !values.includes(value))
+}
 const { loadingGetPermission, getPermission, editPermission, loadingEditPermission } = useUserManagerAdmin()
 
 onMounted(async () => {

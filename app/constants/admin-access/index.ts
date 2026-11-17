@@ -24,6 +24,23 @@ export const ADMIN_PERMISSIONS = {
     score: 'Admin.PastPapers.SetScore',
     remove: 'Admin.PastPapers.Delete',
   },
+  tutorials: {
+    list: 'Admin.Tutorials.GetTutorials',
+    detail: 'Admin.Tutorials.GetTutorial',
+    create: 'Admin.Tutorials.CreateTutorial',
+    update: 'Admin.Tutorials.UpdateTutorial',
+    status: 'Admin.Tutorials.ChangeStatus',
+    remove: 'Admin.Tutorials.DeleteTutorial',
+    keywords: 'Admin.Tutorials.GenerateKeywords',
+  },
+  topicMatches: {
+    list: 'Admin.TopicMatches.GetMatches',
+    add: 'Admin.TopicMatches.AddMatch',
+    approve: 'Admin.TopicMatches.ApproveMatch',
+    unapprove: 'Admin.TopicMatches.UnapproveMatch',
+    remove: 'Admin.TopicMatches.RemoveMatch',
+    suggest: 'Admin.TopicMatches.SuggestMatches',
+  },
   types: {
     list: 'Admin.Types.GetItems',
     create: 'Admin.Types.CreateItem',
@@ -66,6 +83,9 @@ export const ADMIN_PAGE_ACCESS: { path: string, permissions: string[], landing?:
   { path: '/admin/posts', permissions: [ADMIN_PERMISSIONS.posts.list], landing: true },
   { path: '/admin/past-papers', permissions: [ADMIN_PERMISSIONS.pastPapers.list], landing: true },
   { path: '/admin/types', permissions: [ADMIN_PERMISSIONS.types.list], landing: true },
+  { path: '/admin/tutorials/edit', permissions: [ADMIN_PERMISSIONS.tutorials.detail] },
+  { path: '/admin/tutorials', permissions: [ADMIN_PERMISSIONS.tutorials.list], landing: true },
+  { path: '/admin/topic-matches', permissions: [ADMIN_PERMISSIONS.topicMatches.list], landing: true },
   // The country list also feeds the country picker when adding a state or city, so it opens the page.
   { path: '/admin/locations', permissions: [ADMIN_PERMISSIONS.locations.countries.list], landing: true },
 ]
