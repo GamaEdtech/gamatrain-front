@@ -50,8 +50,9 @@ const ALL_FEATURES = {
   blockQuote: ['BlockQuote'],
   highlight: ['Highlight'],
   table: ['Table', 'TableToolbar'],
-  image: ['Image', 'ImageStyle', 'ImageResize', 'ImageInsert'],
-  mediaEmbed: ['MediaEmbed', 'Base64UploadAdapter'],
+  // Images are uploaded to the backend and linked, never embedded as base64 (see createEditorImageUpload).
+  image: ['Image', 'ImageStyle', 'ImageResize', 'ImageInsert', 'ImageUpload'],
+  mediaEmbed: ['MediaEmbed'],
   specialCharacters: ['SpecialCharacters', 'SpecialCharactersEssentials'],
   pasteFromOffice: ['PasteFromOffice'],
   generalHtmlSupport: ['GeneralHtmlSupport'],
@@ -139,7 +140,7 @@ const SvgPreview = function (editor) {
   })
 }
 
-const { $ensureMathJaxReady, $renderMathInElement } = useNuxtApp()
+const { $ensureMathJaxReady, $renderMathInElement, $toast } = useNuxtApp()
 
 const renderMath = async (element) => {
   try {
@@ -202,6 +203,32 @@ const createMathTexPreview = ({ toWidget }) => function (editor) {
   })
 }
 
+// Inserted and pasted images go to the backend's EditorImages endpoint (metadata removed) and the editor
+// keeps only their link. It replaces Base64UploadAdapter, which put every image inside the saved HTML.
+const createEditorImageUpload = ck => class EditorImageUpload extends ck.Plugin {
+  static get requires() {
+    return [ck.FileRepository]
+  }
+
+  init() {
+    this.editor.plugins.get('FileRepository').createUploadAdapter = loader => ({
+      upload: async () => {
+        const file = await loader.file
+        const form = new FormData()
+        form.append('file', file)
+        const response = await useApiService.post('/api/v2/EditorImages', form)
+        if (!response?.succeeded || !response?.data?.url) {
+          const message = response?.errors?.[0]?.message || 'The image could not be uploaded.'
+          $toast?.error(message)
+          throw new Error(message)
+        }
+        return { default: response.data.url }
+      },
+      abort: () => {},
+    })
+  }
+}
+
 const LazyCkeditor = defineAsyncComponent({
   loader: async () => {
     const ck = await import('ckeditor5')
@@ -223,7 +250,7 @@ const LazyCkeditor = defineAsyncComponent({
       selectedFeatures = ['bold', 'italic']
     }
 
-    const plugins = [Essentials, Paragraph, SvgPreview, ck.Widget, createMathTexPreview(ck)]
+    const plugins = [Essentials, Paragraph, SvgPreview, ck.Widget, createMathTexPreview(ck), createEditorImageUpload(ck)]
     const toolbar = ['undo', 'redo', '|']
 
     selectedFeatures.forEach((feature) => {
