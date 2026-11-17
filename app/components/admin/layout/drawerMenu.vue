@@ -322,6 +322,15 @@ const items = computed(() => [
     ],
   },
   {
+    title: 'Tutorials',
+    icon: 'md:menu_book_outlined',
+    value: 'tutorials',
+    subMenuList: [
+      { title: 'Tutorials', link: '/admin/tutorials', icon: 'md:library_books_outlined' },
+      { title: 'Topic matching', link: '/admin/topic-matches', icon: 'md:link_outlined' },
+    ],
+  },
+  {
     title: 'School',
     icon: 'md:school_outlined',
     value: 'school',
