@@ -36,7 +36,7 @@ export interface ChapterDTO {
   tutorials: {
     id: string
     title: string
-    // Not sent by the lessonTree API yet; until it is, the link is the bare /tutorial/{id}, which 301s.
+    // Sent once the tutorials are served from gamatrain-back's copy; until then the link is the bare /tutorial/{id}, which 301s.
     title_url?: string
   }[]
 }
