@@ -59,12 +59,13 @@ const {
   execute: _execute,
 } = await useAsyncData(`exam-test-${route.params.id}`, async () => {
   try {
-    const res = await useApiService.get(`/api/v1/examTests/${route.params.id}`,
+    // gamatrain-back's cached question page (from its own copy once exams are switched there).
+    const res = await useApiService.get(`/api/v2/search/examTests/${route.params.id}`,
       { full: true },
+      { public: true, credentials: 'omit' },
     ) as ApiResult<QuestionDTO>
 
-    // A missing question still answers status 1, with every field of data null.
-    return res.status === 1 && res.data?.id ? res.data : null
+    return res.succeeded && res.data?.id ? res.data : null
   }
   catch {
     return null

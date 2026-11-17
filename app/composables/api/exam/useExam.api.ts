@@ -1,6 +1,5 @@
 import type {
   ApiResult,
-  ExamDetaiDTO,
   ExamPageDetailDTO,
   ExamPageResponseDTO,
 } from '@/types'
@@ -15,30 +14,20 @@ const withTopicList = <T extends { topics: unknown }>(exam: T): T =>
 
 export const useExam = () => {
   // const { $toast } = useNuxtApp()
-  const { handleApiResponseError, handleApiCatchError, createApiFailure } = useApiErrorHandler()
+  const { handleApiCatchError, createApiFailure } = useApiErrorHandler()
   // Requests after an `await` run outside the setup context, where useApiService's own composables throw.
   const nuxtApp = useNuxtApp()
 
-  // The exam page's data from gamatrain-back, which adds sample questions and the source paper to gama-api's exam
-  // in one call. If gamatrain-back can't answer, the page falls back to gama-api directly, without the extras.
+  // The exam page's data from gamatrain-back: the exam (from its own copy once exams are switched there), its sample
+  // questions and the source paper, in one call. A missing or private exam has no data.
   const getItemById = async (id: string | number): Promise<ApiResult<ExamPageDetailDTO>> => {
     loadingGetItemById.value = true
 
     try {
       const page = await getExamPage(id)
-      if (page) return { status: 1, succeeded: true, data: withTopicList(page) }
-
-      const response = await nuxtApp.runWithContext(() => useApiService.get<ApiResult<ExamDetaiDTO>>(
-        `/api/v1/exams/${id}`,
-      ))
-      if (response.status == 0) {
-        handleApiResponseError(response)
-      }
-
-      return {
-        ...response,
-        data: response.data ? withTopicList({ ...response.data, sampleQuestions: [], paper: null }) : null,
-      }
+      return page
+        ? { status: 1, succeeded: true, data: withTopicList(page) }
+        : { status: 0, succeeded: false, data: null }
     }
     catch (err: unknown) {
       handleApiCatchError(err)

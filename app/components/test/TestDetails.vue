@@ -338,7 +338,7 @@ const loadNextTest = async () => {
   try {
     nextTestLoading.value = true
     const response = await useApiService.get<ApiResult<NextQuestionDTO>>(
-      `/api/v1/examTests/random?lesson=${props.contentData.lesson}&topic=${getQuestionField(props.contentData, 'topic')}`,
+      `/api/v2/search/examTests/random?lesson=${props.contentData.lesson}&topic=${getQuestionField(props.contentData, 'topic')}`,
       undefined,
       {
         public: true,
