@@ -322,6 +322,15 @@ const items = computed(() => [
     ],
   },
   {
+    title: 'Exams',
+    icon: 'md:quiz_outlined',
+    value: 'exams',
+    subMenuList: [
+      { title: 'Exams', link: '/admin/exams', icon: 'md:assignment_outlined' },
+      { title: 'Question bank', link: '/admin/exam-questions', icon: 'md:help_outline' },
+    ],
+  },
+  {
     title: 'Tutorials',
     icon: 'md:menu_book_outlined',
     value: 'tutorials',
