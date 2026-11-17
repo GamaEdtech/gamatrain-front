@@ -265,7 +265,7 @@ const handleExamResponse = () => {
   }
 
   // An exam already submitted answers with the attempt id in the error's value: open its result.
-  const submitted = data.value?.errors?.find((e: { reference?: string, value?: unknown }) => e.reference === 'alreadyParticipated')?.value
+  const submitted = data.value?.errors?.find(e => e.reference === 'alreadyParticipated')?.value
   if (!error.value && submitted) {
     // Replace, so the browser's Back button leaves the result for the page before the exam
     // instead of landing here again.
