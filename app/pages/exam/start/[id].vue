@@ -252,7 +252,8 @@ const { data, error, status, refresh } = await useAsyncData(
         statusMessage: 'You must be logged in to start an exam.',
       })
     }
-    return useApiService.get(`/api/v1/exams/start/${route.params.id}`)
+    // gamatrain-back starts (or resumes) the attempt, on whichever side takes exams.
+    return useApiService.get(`/api/v2/exams/${route.params.id}/start`)
   },
   { server: false },
 )
@@ -263,25 +264,25 @@ const handleExamResponse = () => {
     return
   }
 
-  if (error.value) {
-    if (error.value.statusCode === 400 && error.value.data?.data?.id) {
-      // Replace, so the browser's Back button leaves the result for the page before the exam
-      // instead of landing here again.
-      router.replace(`/user/exam/result/${error.value.data.data.id}`)
-    }
-    else {
-      fetchError.value = {
-        message:
-          error.value.data?.message
-          || error.value.statusMessage
-          || 'Could not load the exam.',
-      }
-      console.error('Failed to load exam data:', error.value)
-    }
+  // An exam already submitted answers with the attempt id in the error's value: open its result.
+  const submitted = data.value?.errors?.find((e: { reference?: string, value?: unknown }) => e.reference === 'alreadyParticipated')?.value
+  if (!error.value && submitted) {
+    // Replace, so the browser's Back button leaves the result for the page before the exam
+    // instead of landing here again.
+    router.replace(`/user/exam/result/${submitted}`)
   }
-  else if (data.value?.status !== 1) {
+  else if (error.value) {
     fetchError.value = {
-      message: data.value?.message || 'The exam data is invalid.',
+      message:
+        error.value.data?.message
+        || error.value.statusMessage
+        || 'Could not load the exam.',
+    }
+    console.error('Failed to load exam data:', error.value)
+  }
+  else if (!data.value?.succeeded) {
+    fetchError.value = {
+      message: data.value?.errors?.[0]?.message || 'The exam data is invalid.',
     }
     console.error('API returned a non-success status:', data.value)
   }

@@ -122,8 +122,8 @@ const loadAnswer = async () => {
   loading.value = true
   failed.value = false
   try {
-    const response = await useApiService.get<ApiResult<QuestionDTO>>(`/api/v1/examTests/${props.question.id}`, { full: true })
-    answer.value = response.status === 1 && response.data?.id ? response.data : null
+    const response = await useApiService.get<ApiResult<QuestionDTO>>(`/api/v2/search/examTests/${props.question.id}`, { full: true }, { public: true, credentials: 'omit' })
+    answer.value = response.succeeded && response.data?.id ? response.data : null
     failed.value = !answer.value
   }
   catch {

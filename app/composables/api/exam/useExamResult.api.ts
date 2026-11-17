@@ -24,7 +24,7 @@ export const useExamResult = () => {
     try {
       const response = await useApiService.get<
         ApiResult<ResponseListDTO<ExamResultDTO>>
-      >('/api/v1/exams/results', {
+      >('/api/v2/exams/results', {
         perpage: pageSize,
         page,
         section: section || '',
@@ -32,7 +32,7 @@ export const useExamResult = () => {
         lesson: lesson || '',
       })
 
-      if (response.data && response.status == 1) {
+      if (response.data && response.succeeded) {
         data.value = response.data.list
         totalCount.value = Number(response.data.num)
         pageCount.value = Math.ceil(totalCount.value / pageSize)

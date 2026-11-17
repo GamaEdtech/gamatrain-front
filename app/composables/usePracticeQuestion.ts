@@ -30,7 +30,7 @@ export const usePracticeQuestion = () => {
 
   const loadRandomForTopic = async (lesson: string, topic: string): Promise<ExamSampleQuestionDTO | null> => {
     const random = await get<ApiResult<{ code: string }>>(
-      `/api/v1/examTests/random?lesson=${lesson}&topic=${topic}`,
+      `/api/v2/search/examTests/random?lesson=${lesson}&topic=${topic}`,
       undefined,
       { public: true },
     )
@@ -38,9 +38,9 @@ export const usePracticeQuestion = () => {
     if (!code) return null
 
     const response = await get<ApiResult<QuestionDTO>>(
-      `/api/v1/examTests/${code}`,
+      `/api/v2/search/examTests/${code}`,
       undefined,
-      { proxy: true, public: true },
+      { public: true, credentials: 'omit' },
     )
     return response.data?.id ? toSampleQuestion(response.data, code) : null
   }
