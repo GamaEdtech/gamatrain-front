@@ -63,7 +63,7 @@ import type { User } from '@/types'
 import { useDisplay } from 'vuetify'
 
 interface IDeleteModal {
-  password: string
+  code: string
 }
 
 const emit = defineEmits(['close'])
@@ -76,10 +76,7 @@ const { mdAndUp } = useDisplay()
 const isConfrimCheckBox = ref(false)
 
 const confirmDelete = async () => {
-  const response = await deleteItem({
-    password: props.password,
-    username: user.value?.userName ?? '',
-  })
+  const response = await deleteItem({ code: props.code })
   if (response.succeeded) {
     setUser({
       ...user.value as User,

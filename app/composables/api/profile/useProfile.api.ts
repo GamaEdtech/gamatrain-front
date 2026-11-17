@@ -13,6 +13,7 @@ const loadingGetItemById = ref(false)
 const loadingEditItem = ref(false)
 const loadingDeleteItem = ref(false)
 const loadingCancelDeleteItem = ref(false)
+const loadingSendDeleteCode = ref(false)
 const loadingChangeGroup = ref(false)
 const loadingChangePassword = ref(false)
 const loadingEditUsername = ref(false)
@@ -193,6 +194,31 @@ export const useProfile = () => {
     }
   }
 
+  /** Emails the user a one-time code to confirm deleting the account. Data is the masked address it went to. */
+  const sendDeleteCode = async () => {
+    try {
+      loadingSendDeleteCode.value = true
+      const response = await useApiService.post<
+        ApiResult<string>
+      >(
+        '/api/v2/identities/profiles/delete-code',
+      )
+      if (!response.succeeded) {
+        handleApiResponseError(response)
+      }
+
+      return response
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+
+      return createApiFailure<string>(err, '')
+    }
+    finally {
+      loadingSendDeleteCode.value = false
+    }
+  }
+
   const deleteItem = async (item: DeleteProfileDTO) => {
     try {
       loadingDeleteItem.value = true
@@ -232,14 +258,14 @@ export const useProfile = () => {
     }
   }
 
-  const cancelDeleteItem = async (item: DeleteProfileDTO) => {
+  const cancelDeleteItem = async () => {
     try {
       loadingCancelDeleteItem.value = true
       const response = await useApiService.patch<
         ApiResult<boolean>
       >(
         '/api/v2/identities/profiles/recover',
-        { ...item },
+        {},
       )
       if (response.succeeded) {
         $toast.success('Canceling profile deletion was successful.')
@@ -379,6 +405,6 @@ export const useProfile = () => {
   }
 
   return {
-    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, cancelDeleteItem, loadingCancelDeleteItem, changeGroup, loadingChangeGroup, changePassword, loadingChangePassword, editUsername, loadingEditUsername, getDashboardData, loadingGetDashboardData,
+    getItemById, loadingGetItemById, editItem, loadingEditItem, deleteItem, loadingDeleteItem, sendDeleteCode, loadingSendDeleteCode, cancelDeleteItem, loadingCancelDeleteItem, changeGroup, loadingChangeGroup, changePassword, loadingChangePassword, editUsername, loadingEditUsername, getDashboardData, loadingGetDashboardData,
   }
 }

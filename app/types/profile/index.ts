@@ -88,8 +88,8 @@ export interface EditProfileDTO {
 }
 
 export interface DeleteProfileDTO {
-  username: string
-  password: string
+  /** The 6-digit code emailed by sendDeleteCode. */
+  code: string
 }
 
 export interface ChangePasswordDTO {
