@@ -234,11 +234,13 @@ const { data: contentData } = await useAsyncData(
   `tutorial-${route.params.id}`,
   async () => {
     try {
+      // gama-api's tutorials/{id} through gamatrain-back, which caches it and serves it from its own copy once the
+      // tutorials are switched there. Anonymous on purpose, so one cached copy suits everyone.
       const response = (await useApiService.get(
-        `/api/v1/tutorials/${route.params.id}`, undefined, { public: true },
+        `/api/v2/search/tutorials/${route.params.id}`, undefined, { public: true, credentials: 'omit' },
       )) as ApiResult<TutorialDTO>
 
-      return response.status === 1 && response.data ? response.data : null
+      return response.data ?? null
     }
     catch {
       return null
@@ -263,7 +265,7 @@ const { data: lessonTree } = await useAsyncData(
   async () => {
     if (!contentData.value?.lesson) return null
     const response = await useApiService.get(
-      `/api/v1/tutorials/lessonTree/${contentData.value?.lesson}`, undefined, { public: true },
+      `/api/v2/search/tutorials/lessonTree/${contentData.value?.lesson}`, undefined, { public: true, credentials: 'omit' },
     ) as ApiResult<LessonTreeDTO>
     return response.data
   },
