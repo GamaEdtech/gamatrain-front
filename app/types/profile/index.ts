@@ -98,10 +98,6 @@ export interface ChangePasswordDTO {
   confirmNewPassword: string
 }
 
-export interface EditUsernameDTO {
-  username: string
-}
-
 export interface DashboardProfileCompletionDTO {
   total: number
   num: number
