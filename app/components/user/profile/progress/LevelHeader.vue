@@ -35,6 +35,36 @@
       </v-progress-circular>
 
       <div class="flex-grow-1 level-header__main">
+        <!-- Who: the name and the public @username (one header for the whole dashboard; it used to repeat in a card above). -->
+        <p class="ma-0 text-h6 font-weight-bold text-truncate">
+          <template v-if="fullName">
+            {{ fullName }}
+          </template>
+          <nuxt-link
+            v-else
+            to="/user/profile"
+            class="level-header__link"
+          >Add your name</nuxt-link>
+        </p>
+        <div class="d-flex align-center ga-1 mb-3 text-body-2 text-onInverseSurfaceSubtle">
+          <nuxt-link
+            v-if="handle"
+            :to="`/profile/${encodeURIComponent(handle)}`"
+            class="level-header__link"
+          >@{{ handle }}</nuxt-link>
+          <span v-else>No username yet</span>
+          <v-btn
+            icon
+            variant="text"
+            size="x-small"
+            :aria-label="handle ? 'Change your username' : 'Choose a username'"
+            @click="emit('editHandle')"
+          >
+            <v-icon size="16">
+              md:edit
+            </v-icon>
+          </v-btn>
+        </div>
         <p class="ma-0 text-caption font-weight-bold text-primary level-header__eyebrow">
           LEVEL {{ levelNumber }} OF {{ PROFILE_LEVELS.length }} · {{ progress.level.toUpperCase() }}
         </p>
@@ -66,7 +96,7 @@
             {{ formatNumber(progress.points) }}
           </p>
           <p class="ma-0 text-caption text-onInverseSurfaceSubtle">
-            points
+            points · Level {{ xpLevel.level }} {{ xpLevel.title }}
           </p>
         </div>
         <div class="level-header__stat">
@@ -102,7 +132,13 @@ const props = defineProps<{
   firstName?: string | null
   lastName?: string | null
   avatarUri?: string | null
+  handle?: string | null
 }>()
+const emit = defineEmits<{ editHandle: [] }>()
+
+const fullName = computed(() => `${props.firstName?.trim() ?? ''} ${props.lastName?.trim() ?? ''}`.trim())
+// The points level (XP), shown with the points instead of in a second header.
+const xpLevel = computed(() => useLevel(props.progress.points))
 
 const { formatNumber } = useFormatNumber()
 
@@ -125,10 +161,8 @@ const stepsToNext = computed(() => {
 })
 
 const headline = computed(() => {
-  const name = props.firstName?.trim()
-  if (props.progress.nextLevel === null) return name ? `${name}, your profile is complete` : 'Your profile is complete'
-  const rest = `${stepsToNext.value} ${stepsToNext.value === 1 ? 'step' : 'steps'} from ${props.progress.nextLevel}`
-  return name ? `${name}, you're ${rest}` : `You're ${rest}`
+  if (props.progress.nextLevel === null) return 'Your profile is complete'
+  return `You're ${stepsToNext.value} ${stepsToNext.value === 1 ? 'step' : 'steps'} from ${props.progress.nextLevel}`
 })
 </script>
 
@@ -140,6 +174,15 @@ const headline = computed(() => {
 .level-header__main {
   min-width: 0;
   flex-basis: 260px;
+}
+
+.level-header__link {
+  color: inherit;
+}
+
+.level-header__link:hover,
+.level-header__link:focus-visible {
+  text-decoration: underline;
 }
 
 .level-header__eyebrow {

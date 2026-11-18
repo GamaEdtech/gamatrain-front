@@ -6,6 +6,8 @@
         :first-name="user?.firstName"
         :last-name="user?.lastName"
         :avatar-uri="user?.avatarUri"
+        :handle="user?.handle"
+        @edit-handle="usernameOpen = true"
       />
 
       <div class="d-flex flex-wrap ga-4 align-start">
@@ -77,6 +79,18 @@
       />
     </lazy-common-modal-base>
 
+    <lazy-common-modal-base
+      v-if="usernameOpen"
+      v-model:show-dialog="usernameOpen"
+      title="Username"
+    >
+      <lazy-user-dashboard-modal-username
+        :username="user?.handle"
+        @close="usernameOpen = false"
+        @success="handleSaved"
+      />
+    </lazy-common-modal-base>
+
     <lazy-user-profile-progress-level-reached-dialog
       v-if="progress && reachedOpen"
       v-model="reachedOpen"
@@ -105,6 +119,11 @@ const dialog = reactive<Record<DialogQuest, boolean>>({ currentStatusSentence: f
 // A dialog's code loads the first time it opens.
 const mounted = reactive<Record<DialogQuest, boolean>>({ currentStatusSentence: false, biography: false, skills: false, experience: false })
 const reachedOpen = ref(false)
+const usernameOpen = ref(false)
+
+function handleSaved(handle: string) {
+  if (user.value) setUser({ ...user.value, handle })
+}
 
 const isDialogQuest = (code: ProfileQuestCode): code is DialogQuest => code in dialog
 
