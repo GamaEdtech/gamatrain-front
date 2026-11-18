@@ -41,6 +41,10 @@ export const ADMIN_PERMISSIONS = {
     questions: 'Admin.Exams.SetExamQuestions',
     remove: 'Admin.Exams.DeleteExam',
   },
+  // Admins only (not delegable): the list shows participants' emails.
+  examParticipations: {
+    list: 'Admin.ExamParticipations.GetParticipations',
+  },
   examQuestions: {
     list: 'Admin.ExamQuestions.GetQuestions',
     detail: 'Admin.ExamQuestions.GetQuestion',
@@ -104,6 +108,7 @@ export const ADMIN_PAGE_ACCESS: { path: string, permissions: string[], landing?:
   { path: '/admin/exam-questions/edit', permissions: [ADMIN_PERMISSIONS.examQuestions.detail] },
   { path: '/admin/exam-questions', permissions: [ADMIN_PERMISSIONS.examQuestions.list], landing: true },
   { path: '/admin/exams', permissions: [ADMIN_PERMISSIONS.exams.list], landing: true },
+  { path: '/admin/exam-participations', permissions: [ADMIN_PERMISSIONS.examParticipations.list] },
   { path: '/admin/topic-matches', permissions: [ADMIN_PERMISSIONS.topicMatches.list], landing: true },
   // The country list also feeds the country picker when adding a state or city, so it opens the page.
   { path: '/admin/locations', permissions: [ADMIN_PERMISSIONS.locations.countries.list], landing: true },

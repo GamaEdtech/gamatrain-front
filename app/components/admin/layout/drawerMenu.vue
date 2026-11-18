@@ -327,6 +327,7 @@ const items = computed(() => [
     value: 'exams',
     subMenuList: [
       { title: 'Exams', link: '/admin/exams', icon: 'md:assignment_outlined' },
+      { title: 'Participants', link: '/admin/exam-participations', icon: 'md:groups_outlined' },
       { title: 'Question bank', link: '/admin/exam-questions', icon: 'md:help_outline' },
     ],
   },
