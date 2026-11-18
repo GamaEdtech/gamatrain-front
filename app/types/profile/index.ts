@@ -93,9 +93,9 @@ export interface DeleteProfileDTO {
 }
 
 export interface ChangePasswordDTO {
-  oldpass: string
-  newpass: string
-  repeat_newpass: string
+  currentPassword: string
+  newPassword: string
+  confirmNewPassword: string
 }
 
 export interface EditUsernameDTO {

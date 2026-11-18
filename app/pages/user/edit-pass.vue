@@ -229,9 +229,9 @@ const updatePassword = async () => {
   if (!isFormValid.value) return
 
   const response = await changePassword({
-    oldpass: currentPassword.value,
-    newpass: newPassword.value,
-    repeat_newpass: repeatNewPassword.value,
+    currentPassword: currentPassword.value,
+    newPassword: newPassword.value,
+    confirmNewPassword: repeatNewPassword.value,
   })
 
   if (response?.succeeded) {
