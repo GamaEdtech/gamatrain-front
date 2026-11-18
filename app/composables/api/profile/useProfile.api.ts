@@ -325,14 +325,15 @@ export const useProfile = () => {
     }
   }
 
+  // Our backend holds the password now; gama-api's copy is no longer used.
   const changePassword = async (item: ChangePasswordDTO) => {
     try {
       loadingChangePassword.value = true
       const response = await useApiService.put<
         ApiResult<boolean>
-      >('/api/v1/users/password', { ...item })
+      >('/api/v2/identities/password', { ...item })
 
-      if (response.status == 1) {
+      if (response.succeeded) {
         $toast.success('Password changed successfully')
       }
       else {
