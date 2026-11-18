@@ -135,3 +135,27 @@ export interface AdminExamQuestionEditDTO {
 }
 
 export type AdminListQuery = Record<string, string | number | boolean | null | undefined>
+
+/** One exam attempt in the admin participation list (admin/exam-participations). */
+export interface AdminExamParticipationDTO {
+  id: number
+  examId: number
+  examTitle: string | null
+  /** Null for an attempt copied from gama-api whose user isn't linked yet. */
+  userId: number | null
+  coreUserId: number
+  userName: string | null
+  email: string | null
+  /** 0 started, 1 finished. */
+  status: number
+  resultScore: string | null
+  submitSeconds: number | null
+  startDate: string
+}
+
+export interface AdminExamParticipationListDTO {
+  total: number
+  finished: number
+  participants: number
+  items: AdminExamParticipationDTO[]
+}

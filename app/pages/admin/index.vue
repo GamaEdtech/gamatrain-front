@@ -78,6 +78,11 @@
           />
         </v-col>
       </v-row>
+
+      <admin-dashboard-exam-participation
+        :overview="overview"
+        :loading="loadingOverview"
+      />
     </section>
 
     <!-- Payments -->

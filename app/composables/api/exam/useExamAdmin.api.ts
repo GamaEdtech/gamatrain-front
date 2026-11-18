@@ -2,6 +2,7 @@ import type {
   AdminExamDetailDTO,
   AdminExamEditDTO,
   AdminExamItemDTO,
+  AdminExamParticipationListDTO,
   AdminExamQuestionDetailDTO,
   AdminExamQuestionEditDTO,
   AdminExamQuestionItemDTO,
@@ -11,6 +12,7 @@ import type {
 
 const EXAMS = '/api/v2/admin/exams'
 const QUESTIONS = '/api/v2/admin/examquestions'
+const PARTICIPATIONS = '/api/v2/admin/exam-participations'
 
 /**
  * The admin panel's exams and question bank, from the backend's copy. Reading works at any time; changes are refused
@@ -65,6 +67,12 @@ export const useExamAdmin = () => {
     setExamStatus: (id: number, status: number) => save(() => useApiService.put<ApiResult<boolean>>(`${EXAMS}/${id}/status`, { status }), 'Status saved.'),
     setExamQuestions: (id: number, questionIds: number[]) => save(() => useApiService.put<ApiResult<boolean>>(`${EXAMS}/${id}/questions`, { questionIds }), 'Questions saved.'),
     deleteExam: (id: number) => save(() => useApiService.remove<ApiResult<boolean>>(`${EXAMS}/${id}`), 'Exam deleted.'),
+    getParticipations: async (query: AdminListQuery): Promise<AdminExamParticipationListDTO> => {
+      loading.value = true
+      const data = await call(() => useApiService.get<ApiResult<AdminExamParticipationListDTO>>(PARTICIPATIONS, clean(query)))
+      loading.value = false
+      return data ?? { total: 0, finished: 0, participants: 0, items: [] }
+    },
     getQuestions: (query: AdminListQuery) => list<AdminExamQuestionItemDTO>(QUESTIONS, query),
     getQuestion: (id: number | string) => call(() => useApiService.get<ApiResult<AdminExamQuestionDetailDTO>>(`${QUESTIONS}/${id}`)),
     saveQuestion: (id: number | null, item: AdminExamQuestionEditDTO) => id

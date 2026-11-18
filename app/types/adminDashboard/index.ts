@@ -37,6 +37,10 @@ export interface AdminDashboardOverviewDTO {
   cancellingSubscriptions: number
   newSubscriptions: number
   expiredSubscriptions: number
+  examAttempts: number
+  examsFinished: number
+  examParticipants: number
+  topExams: { examId: number, title: string | null, attempts: number, finished: number, participants: number }[]
   daily: {
     date: string
     signUps: number
@@ -44,6 +48,8 @@ export interface AdminDashboardOverviewDTO {
     revenueUsd: number
     inviteJoins: number
     invitedSignUps: number
+    examAttempts: number
+    examsFinished: number
   }[]
 }
 
