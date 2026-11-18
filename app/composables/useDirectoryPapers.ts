@@ -148,7 +148,9 @@ export const useDirectoryPapers = async (context: DirectoryPaperContext & { sele
   // the subject or filters changed is ignored.
   const loadYear = async (year: number) => {
     const key = shownKey
-    const target = yearLists[year] ??= createDirectoryPaperList()
+    // Through the reactive record: the object itself would update without Vue noticing (the spinner never stopped).
+    yearLists[year] ??= createDirectoryPaperList()
+    const target = yearLists[year]
     if (target.loading) return
     target.loading = true
     target.error = false
