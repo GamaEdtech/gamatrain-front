@@ -1,7 +1,11 @@
 <template>
   <div class="w-100 d-flex flex-column align-start justify-start ga-5">
     <template v-if="loadingGetDashboardData">
-      <user-dashboard-general-info-skeleton />
+      <v-skeleton-loader
+        type="image"
+        height="180"
+        class="w-100 rounded-lg"
+      />
       <user-dashboard-subscription-banner-skeleton />
       <user-dashboard-badges-strip-skeleton />
       <user-dashboard-statistics-skeleton />
@@ -28,17 +32,14 @@
       <user-dashboard-create-content-button-skeleton />
     </template>
     <template v-else-if="!loadingGetDashboardData && dashboardInfo">
-      <user-dashboard-general-info
-        :user-data="dashboardInfo.user"
-        :progress-data="dashboardInfo.profileCompletion"
-        @update-username="updateUsername"
-      />
-      <user-dashboard-subscription-banner :subscription="dashboardInfo.user.subscription" />
-      <!-- Level, quests, school goal and practice streak. The photo, name and school quests are edited on the profile page. -->
+      <!-- One header (name, @username, profile level, points, streak, rank), then the quests, school goal and streak. It used to
+           follow a second header card with its own avatar, level and "next steps" (the same items as the quests). The photo, name
+           and school quests are edited on the profile page. -->
       <user-profile-progress-panel
         class="w-100"
         @quest="openProfilePage"
       />
+      <user-dashboard-subscription-banner :subscription="dashboardInfo.user.subscription" />
       <user-dashboard-badges-strip :earned-badge-ids="[]" />
       <user-dashboard-statistics
         :score="dashboardInfo.user.points || 0"
@@ -91,18 +92,6 @@ const dashboardInfo = ref<GetDashboardDataDTO | null>()
 
 /** The quests the panel can't open in place (photo, names, school) are fields of the profile page. */
 const openProfilePage = () => navigateTo('/user/profile')
-
-const updateUsername = (username: string) => {
-  if (dashboardInfo.value) {
-    dashboardInfo.value = {
-      ...dashboardInfo.value,
-      user: {
-        ...dashboardInfo.value.user,
-        handle: username,
-      },
-    }
-  }
-}
 
 onMounted(async () => {
   const response = await getDashboardData()
