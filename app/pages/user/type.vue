@@ -1,99 +1,104 @@
 <template>
-  <v-container class="w-100 d-flex flex-column">
-    <h1 class="text-h4 font-weight-bold text-grey700">
-      Choose your role
-    </h1>
-    <span class="text-body-1 font-weight-regular text-grey500 mt-8">This helps us personalize GamaTrain for you.</span>
-    <div class="d-flex align-center justify-center ga-2 mt-16">
-      <div
-        :class="`box-role bg-grey50 px-6 pt-4 d-flex flex-column rounded-lg cursor-pointer ${selectedUserGroup === UserGroup.Student ? `box-role-selected`:``}`"
-        @click="selectedUserGroup = UserGroup.Student"
-      >
-        <div class="d-flex justify-center">
-          <img
-            src="@/assets/images/man-student.svg"
-            alt="Student"
-            class="mr-n4"
-          >
-          <img
-            src="@/assets/images/woman-student.svg"
-            alt="Student"
-          >
-        </div>
-        <v-checkbox
-          :model-value="selectedUserGroup === UserGroup.Student"
-          color="primary"
-          class="text-body-1"
-          hide-details
-          readonly
-          false-icon="md:radio_button_unchecked"
-          true-icon="md:radio_button_checked"
-        >
-          <template #label>
-            <span class="text-body-1 text-sm-h6 text-grey800 font-weight-regular">Student</span>
-          </template>
-        </v-checkbox>
-      </div>
+  <v-container class="role-page d-flex flex-column align-center py-8 py-sm-12">
+    <div class="text-center mb-8">
+      <h1 class="text-h5 text-sm-h4 font-weight-bold text-grey800">
+        How will you use GamaTrain?
+      </h1>
+      <p class="text-body-1 text-grey600 mt-2 mb-0">
+        Pick one, and we'll set up your dashboard for it.
+      </p>
+    </div>
 
-      <div
-        :class="`box-role bg-grey50 px-6 pt-4 d-flex flex-column rounded-lg cursor-pointer ${
-          selectedUserGroup === UserGroup.Teacher ? `box-role-selected`:``}`"
-        @click="selectedUserGroup = UserGroup.Teacher"
+    <div
+      class="role-options d-flex flex-column flex-sm-row ga-4 w-100"
+      role="radiogroup"
+      aria-label="Your role"
+    >
+      <v-card
+        v-for="role in roles"
+        :key="role.value"
+        role="radio"
+        :aria-checked="selectedUserGroup === role.value"
+        tabindex="0"
+        rounded="xl"
+        :border="selectedUserGroup === role.value ? 'primary md opacity-100' : true"
+        :color="selectedUserGroup === role.value ? 'primary' : undefined"
+        :variant="selectedUserGroup === role.value ? 'tonal' : 'flat'"
+        class="role-card flex-1-1 pa-5 d-flex flex-column align-center text-center"
+        @click="selectedUserGroup = role.value"
+        @keydown.enter.prevent="selectedUserGroup = role.value"
+        @keydown.space.prevent="selectedUserGroup = role.value"
       >
-        <div class="d-flex justify-center">
+        <div class="d-flex justify-center mb-3">
           <img
-            src="@/assets/images/man-teacher.svg"
-            alt="Teacher"
-            class="mr-n4"
-          >
-          <img
-            src="@/assets/images/woman-teacher.svg"
-            alt="Teacher"
+            v-for="(image, index) in role.images"
+            :key="image"
+            :src="image"
+            alt=""
+            width="56"
+            height="56"
+            :class="{ 'ml-n4': index > 0 }"
           >
         </div>
-        <v-checkbox
-          :model-value="selectedUserGroup === UserGroup.Teacher"
-          color="primary"
-          class="text-body-1"
-          hide-details
-          readonly
-          false-icon="md:radio_button_unchecked"
-          true-icon="md:radio_button_checked"
-        >
-          <template #label>
-            <span class="text-body-1 text-sm-h6 text-grey800 font-weight-regular">Teacher</span>
-          </template>
-        </v-checkbox>
-      </div>
+        <div class="d-flex align-center ga-2">
+          <v-icon
+            :color="selectedUserGroup === role.value ? 'primary' : 'grey500'"
+            size="20"
+          >
+            {{ selectedUserGroup === role.value ? 'md:radio_button_checked' : 'md:radio_button_unchecked' }}
+          </v-icon>
+          <span class="text-h6 font-weight-bold text-grey800">{{ role.title }}</span>
+        </div>
+        <p class="text-body-2 text-grey600 mt-2 mb-0">
+          {{ role.description }}
+        </p>
+      </v-card>
     </div>
-    <div
-      class="w-100 d-flex justify-center mt-12"
+
+    <v-btn
+      flat
+      rounded="pill"
+      height="44"
+      color="primary"
+      class="role-continue mt-8 text-body-1 font-weight-bold text-none"
+      :disabled="!selectedUserGroup"
+      :loading="loadingChangeGroup"
+      @click="save"
     >
-      <v-btn
-        flat
-        rounded="lg"
-        width="250"
-        class="text-body-1 font-weight-bold"
-        color="success"
-        :loading="loadingChangeGroup"
-        @click="save"
-      >
-        Submit
-      </v-btn>
-    </div>
+      Continue
+    </v-btn>
   </v-container>
 </template>
 
 <script setup lang="ts">
 import { UserGroup } from '@/types'
+import manStudent from '@/assets/images/man-student.svg'
+import womanStudent from '@/assets/images/woman-student.svg'
+import manTeacher from '@/assets/images/man-teacher.svg'
+import womanTeacher from '@/assets/images/woman-teacher.svg'
 
 definePageMeta({
   layout: 'dashboard-layout',
 })
 
 useSeoMeta({
-  title: 'Choose Role',
+  title: 'Choose your role',
 })
+
+const roles = [
+  {
+    value: UserGroup.Student,
+    title: 'Student',
+    description: 'Practise with past papers and online exams, and see how you improve.',
+    images: [manStudent, womanStudent],
+  },
+  {
+    value: UserGroup.Teacher,
+    title: 'Teacher',
+    description: 'Share past papers, build exams for your students, and see how they do.',
+    images: [manTeacher, womanTeacher],
+  },
+]
 
 const { user, getProfile, setUser } = useUser()
 const { changeGroup, loadingChangeGroup } = useProfile()
@@ -134,10 +139,17 @@ const save = async () => {
 </script>
 
 <style scoped>
-.box-role{
-  border : 1px solid rgb(var(--v-theme-grey200))
+.role-options {
+  max-width: 640px;
 }
-.box-role-selected{
-  border-color : rgb(var(--v-theme-primary));
+.role-card {
+  cursor: pointer;
+}
+.role-card:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+}
+.role-continue {
+  min-width: 240px;
 }
 </style>
