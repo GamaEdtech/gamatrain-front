@@ -7,6 +7,7 @@ import type {
   ChangePasswordDTO,
   GetDashboardDataDTO,
 } from '@/types'
+import { UserGroup } from '@/types'
 
 const loadingGetItemById = ref(false)
 const loadingEditItem = ref(false)
@@ -295,14 +296,15 @@ export const useProfile = () => {
     }
   }
 
-  const changeGroup = async (group: number) => {
+  // Sets the user type and its role on the new backend only (the legacy-auth route also told the old backend).
+  const changeGroup = async (group: UserGroup) => {
     try {
       loadingChangeGroup.value = true
-      const response = await useApiService.post<
+      const response = await useApiService.put<
         ApiResult<boolean>
       >(
-        '/api/v2/legacy-auth/group',
-        { group },
+        '/api/v2/identities/profiles/role',
+        { role: group === UserGroup.Teacher ? 'Teacher' : 'Student' },
       )
       if (response.succeeded) {
         $toast.success('Update group was successful.')
