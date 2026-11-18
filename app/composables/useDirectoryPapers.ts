@@ -7,13 +7,32 @@ import { PAPER_VARIANT_OPTIONS } from '~/constants/search'
 import { appendDirectoryPapers, createDirectoryPaperList, groupDirectoryPapers } from '~/utils/directoryPapers'
 import { getDirectoryStructuredData, serializeDirectoryStructuredData } from '~/utils/directorySeo'
 import type { DirectoryStructuredDataPaper } from '~/utils/directorySeo'
-import type { DirectoryFilterOption, DirectoryPaperContext, DirectoryPaperQuery, DirectoryPaperResponse, DirectorySelection } from '~/types/subject-directory'
+import type { DirectoryFilterOption, DirectoryPaperContext, DirectoryPaperList, DirectoryPaperQuery, DirectoryPaperResponse, DirectorySelection, DirectoryYearGroup } from '~/types/subject-directory'
 
 const readQuery = (value: unknown) => String((Array.isArray(value) ? value[0] : value) ?? '') || undefined
 
+// The first load: the years with their counts and the newest year's first page, or (a backend without the facet) the list.
+interface DirectoryFirstLoad {
+  years?: { year: number, count: number }[]
+  newest?: DirectoryPaperResponse
+  list?: DirectoryPaperResponse
+}
+
+// The years facet's answer ({num, years: [{edu_year, num}]}), or null when the backend answered the list instead.
+const readYears = (response: DirectoryPaperResponse): { year: number, count: number }[] | null => {
+  const years = (response?.data as { years?: unknown } | undefined)?.years
+  if (!Array.isArray(years)) return null
+  return years
+    .map(item => ({ year: Number((item as { edu_year?: unknown }).edu_year), count: Number((item as { num?: unknown }).num) || 0 }))
+    .filter(item => item.year > 0)
+}
+
 // The subject's papers, newest first, grouped into years and sessions. The filters
-// live in the URL like Search's, so the first page of any URL renders on the server;
-// "Load older papers" appends the next page.
+// live in the URL like Search's, so any URL renders on the server.
+// The backend first answers the years with their paper counts (facet=years); the newest
+// year's papers load with them, and another year's only when it is opened. A backend
+// without the facet (gama-api) answers the first page of the list instead: then the
+// page groups that list and "Load older papers" appends the next page, as before.
 export const useDirectoryPapers = async (context: DirectoryPaperContext & { selection?: DirectorySelection | null }) => {
   const route = useRoute()
   const { fetchPapers } = useSubjectDirectoryApi()
@@ -23,9 +42,15 @@ export const useDirectoryPapers = async (context: DirectoryPaperContext & { sele
   }))
   const queryKey = computed(() => JSON.stringify(query.value))
 
-  const firstPage = useAsyncData(() => `directory-papers:${queryKey.value}`, () => context.subjectId
-    ? fetchPapers({ ...query.value, page: 1, perpage: DIRECTORY_PAGE_SIZE })
-    : Promise.resolve(null))
+  const fetchYear = (year: number, page: number) => fetchPapers({ ...query.value, edu_year: String(year), page, perpage: DIRECTORY_PAGE_SIZE })
+  const firstPage = useAsyncData(() => `directory-papers:${queryKey.value}`, async (): Promise<DirectoryFirstLoad | null> => {
+    if (!context.subjectId) return null
+    const answer = await fetchPapers({ ...query.value, facet: 'years', page: 1, perpage: DIRECTORY_PAGE_SIZE })
+    const years = readYears(answer)
+    if (!years) return { list: answer }
+    const newest = years[0]
+    return { years, newest: newest ? await fetchYear(newest.year, 1) : undefined }
+  })
   // Paper types depend on the board; Year, Session and Variant are fixed lists.
   const paperTypes = useAsyncData(() => `directory-paper-types:${context.boardId}`, () => context.boardId
     ? useApiService.get<{ data: DirectoryFilterOption[] }>('/api/v2/search/types', { type: 'test_type', section_id: context.boardId }, { public: true })
@@ -56,44 +81,107 @@ export const useDirectoryPapers = async (context: DirectoryPaperContext & { sele
   }
   const clearFilters = () => setFilters(Object.fromEntries(DIRECTORY_FILTERS.map(filter => [filter.queryKey, undefined])))
 
+  const sessions = computed(() => getDirectorySessions(context.gradeId))
+
+  // Without the years facet: one list of the newest papers, grouped here.
   const list = reactive(createDirectoryPaperList())
-  const years = computed(() => groupDirectoryPapers(list.items, getDirectorySessions(context.gradeId)))
+  // With it: every year with its count, and each opened year's own list.
+  const yearCounts = ref<{ year: number, count: number }[] | null>(null)
+  const yearLists = reactive<Record<number, DirectoryPaperList>>({})
+
+  const years = computed<DirectoryYearGroup[]>(() => {
+    if (!yearCounts.value) return groupDirectoryPapers(list.items, sessions.value)
+    return yearCounts.value.map(({ year, count }) => {
+      const own = yearLists[year]
+      return {
+        id: year,
+        title: String(year),
+        count,
+        sessions: own ? (groupDirectoryPapers(own.items, sessions.value)[0]?.sessions ?? []) : [],
+        list: own ?? null,
+      }
+    })
+  })
   const expandedYears = ref<number[]>([])
   const expandedSessions = reactive<Record<number, number[]>>({})
   const expandSessions = (year: number, months: number[]) => {
     expandedSessions[year] = months
   }
+  const openNewestSession = (year: number) => {
+    const group = years.value.find(item => item.id === year)
+    if (group?.sessions[0] && !expandedSessions[year]?.length) expandedSessions[year] = [group.sessions[0].id]
+  }
 
-  const addPage = (response: DirectoryPaperResponse) => {
+  const addPage = (target: DirectoryPaperList, response: DirectoryPaperResponse) => {
     try {
-      appendDirectoryPapers(list, response, DIRECTORY_PAGE_SIZE)
+      appendDirectoryPapers(target, response, DIRECTORY_PAGE_SIZE)
     }
     catch {
-      list.error = true
+      target.error = true
     }
   }
 
-  // Show a new first page and open only its newest session.
+  // Show a new first load and open only its newest year and session.
   let shownKey = ''
   const showFirstPage = () => {
     shownKey = queryKey.value
-    Object.assign(list, createDirectoryPaperList(), { error: Boolean(firstPage.error.value) })
-    if (firstPage.data.value) addPage(firstPage.data.value)
-    const year = years.value[0]
+    const data = firstPage.data.value
     for (const key of Object.keys(expandedSessions)) Reflect.deleteProperty(expandedSessions, key)
+    for (const key of Object.keys(yearLists)) Reflect.deleteProperty(yearLists, key)
+    Object.assign(list, createDirectoryPaperList(), { error: Boolean(firstPage.error.value) })
+    yearCounts.value = data?.years ? data.years : null
+    if (data?.list) addPage(list, data.list)
+    if (data?.years?.[0] && data.newest) {
+      const newest = data.years[0].year
+      yearLists[newest] = createDirectoryPaperList()
+      addPage(yearLists[newest], data.newest)
+    }
+    // No year has papers: "No papers match", and nothing more to load.
+    if (data?.years && !data.years.length) Object.assign(list, { loaded: true, hasMore: false })
+    const year = years.value[0]
     expandedYears.value = year ? [year.id] : []
-    if (year?.sessions[0]) expandedSessions[year.id] = [year.sessions[0].id]
+    if (year) openNewestSession(year.id)
   }
   watch(firstPage.data, showFirstPage)
 
-  // A page that arrives after the subject or filters changed is ignored.
+  // One more page of a year (its first when it is opened). A page that arrives after
+  // the subject or filters changed is ignored.
+  const loadYear = async (year: number) => {
+    const key = shownKey
+    const target = yearLists[year] ??= createDirectoryPaperList()
+    if (target.loading) return
+    target.loading = true
+    target.error = false
+    try {
+      const response = await fetchYear(year, target.page + 1)
+      if (key === shownKey) {
+        addPage(target, response)
+        openNewestSession(year)
+      }
+    }
+    catch {
+      if (key === shownKey) target.error = true
+    }
+    finally {
+      target.loading = false
+    }
+  }
+  // Opening a year loads it once.
+  watch(expandedYears, (open) => {
+    if (!yearCounts.value) return
+    for (const year of open) {
+      if (!yearLists[year]) void loadYear(year)
+    }
+  })
+
+  // Without the years facet: the next page of the one list.
   const loadMore = async () => {
     const key = shownKey
     list.loading = true
     list.error = false
     try {
       const response = await fetchPapers({ ...query.value, page: list.page + 1, perpage: DIRECTORY_PAGE_SIZE })
-      if (key === shownKey) addPage(response)
+      if (key === shownKey) addPage(list, response)
     }
     catch {
       if (key === shownKey) list.error = true
@@ -122,8 +210,9 @@ export const useDirectoryPapers = async (context: DirectoryPaperContext & { sele
 
   return {
     filterButtons, years, list, expandedYears, expandedSessions,
+    byYear: computed(() => yearCounts.value !== null),
     loading: computed(() => firstPage.status.value === 'pending' || list.loading),
-    selectFilter, clearFilters, expandSessions, loadMore,
+    selectFilter, clearFilters, expandSessions, loadMore, loadYear,
     refreshPaperTypes: paperTypes.refresh,
     retry: () => list.loaded ? loadMore() : firstPage.refresh(),
   }
