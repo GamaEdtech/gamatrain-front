@@ -1,5 +1,5 @@
 import type { Ref } from 'vue'
-import type { ApiResult, AppError, AuthTokenDTO, LoginResponseDTO } from '@/types'
+import type { ApiResult, AuthTokenDTO } from '@/types'
 import { clearInviteCode, getInviteCode } from '~/utils/inviteCode'
 
 const loadingLogin = ref(false)
@@ -45,7 +45,6 @@ if (import.meta.client) {
 }
 
 export const useAuth = () => {
-  const { $toast } = useNuxtApp()
   const { normalizeApiResponseError, normalizeApiCatchError } = useApiErrorHandler()
 
   const setUserToken = (newToken: string) => {
@@ -62,7 +61,7 @@ export const useAuth = () => {
     localStorage.removeItem(TOKEN_KEY)
   }
 
-  // A token of this backend is "{userId}|{token}"; a token from the old backend (Google sign-in, older sessions) is a JWT.
+  // A token of this backend is "{userId}|{token}"; a session started on the old backend holds its JWT until it ends.
   const isBackendToken = (value: string | null) => !!value && value.split('|').length === 2
 
   const logout = async () => {
@@ -143,37 +142,13 @@ export const useAuth = () => {
       confirmPassword: data.password,
     }))
 
-  // Google stays on the old backend's sign-in for now: this backend checks Google tokens against another Google client.
-  const loginByGoogle = async (idToken: string) => {
-    try {
-      loadingLoginByGoogle.value = true
-      const response = await useApiService.post<
-        ApiResult<LoginResponseDTO>
-      >(
-        '/api/v2/legacy-auth/google',
-        // A teacher's invite code; the backend uses it only if this sign-in creates the account.
-        { idToken, referralCode: getInviteCode() ?? undefined },
-      )
-      if (!response.succeeded) {
-        $toast.error('The operation failed. Please try again later.')
-      }
-      return response
-    }
-    catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-        data: null,
-      }
-    }
-    finally {
-      loadingLoginByGoogle.value = false
-    }
-  }
+  // Google: the ID token from Google's button, checked by the new backend (signature, its client, verified email).
+  const loginByGoogle = (idToken: string) =>
+    authCall(loadingLoginByGoogle, () => post<AuthTokenDTO>('/api/v2/identities/tokens/google', {
+      code: idToken,
+      // A teacher's invite code; the backend uses it only if this sign-in creates the account.
+      referralCode: getInviteCode() ?? undefined,
+    }))
 
   // Keeps a new token and loads the user's profile; false when the profile couldn't be loaded (the token is kept).
   const completeSignIn = async (newToken: string) => {

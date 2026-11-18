@@ -1,10 +1,3 @@
-export type typeLoginResponse = 'loginByOTP' | 'register'
-export interface LoginResponseDTO {
-  type?: typeLoginResponse
-  token?: string
-  expirationTime?: string
-}
-
 export interface GoogleLoginTokenDTO {
   clientId: string
   client_id: string

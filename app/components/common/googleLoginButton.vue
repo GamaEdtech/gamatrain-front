@@ -11,7 +11,7 @@
         width="2"
         indeterminate
       />
-      <span class="font-weight-bold text-body-1 text-grey700">Loading google sign in</span>
+      <span class="font-weight-bold text-body-1 text-grey700">Loading Google sign-in</span>
     </div>
 
     <div
@@ -32,38 +32,34 @@ const {
   loading: googleLoginLoading,
   initGoogleLogin,
 } = useGoogleLogin()
-const { loginByGoogle, loadingLoginByGoogle, setUserToken } = useAuth()
-const { getProfile, setUser } = useUser()
+const { loginByGoogle, loadingLoginByGoogle, completeSignIn } = useAuth()
 
 const googleLoginBtn = ref<HTMLElement | null>(null)
 const handleCredentialResponse = async (response: GoogleLoginTokenDTO) => {
-  if (response.credential) {
-    const resposeLogin = await loginByGoogle(response.credential)
-    if (resposeLogin.succeeded && resposeLogin.data && resposeLogin.data.token) {
-      setUserToken(resposeLogin.data.token)
-      const profileData = await getProfile(resposeLogin.data.token)
-      if (profileData.data) {
-        const profile = profileData.data.data!
-        setUser(profile)
-        emit('loginSuccessfull')
-      }
-      else {
-        $toast.error('Google sign-in succeeded, but we could not load your profile. Please try again.')
-      }
-    }
-    else {
-      $toast.error('We could not sign you in with Google. Please try again.')
-    }
-  }
-  else {
+  if (!response.credential) {
     $toast.error('Google sign-in did not return a valid credential. Please try again.')
+    return
   }
+
+  const answer = await loginByGoogle(response.credential)
+  if (!answer.succeeded || !answer.data?.token) {
+    $toast.error(answer.message || 'We could not sign you in with Google. Please try again.')
+    return
+  }
+
+  if (await completeSignIn(answer.data.token)) {
+    emit('loginSuccessfull')
+    return
+  }
+
+  $toast.error('Google sign-in succeeded, but we could not load your profile. Refresh the page to continue.')
 }
 
 onMounted(() => {
   initGoogleLogin({
     buttonEl: googleLoginBtn.value,
-    clientId: '231452968451-rd7maq3v4c8ce6d1e36uk3qacep20lp8.apps.googleusercontent.com',
+    // The new backend's Google client (Authentication:Google:ClientId): its sign-in only accepts tokens issued for it.
+    clientId: '563411954301-m7nh8q1bcb7i617p1b2mp93qkjfvnfe3.apps.googleusercontent.com',
     callback: handleCredentialResponse,
   })
 })
