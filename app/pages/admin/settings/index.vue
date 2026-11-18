@@ -174,6 +174,8 @@ const form = reactive<AdminAppSettingsDTO>({
   commissionPayoutPaidEmailTemplate: '',
   twoFactorSetupEmailTemplate: '',
   deleteAccountCodeEmailTemplate: '',
+  registrationCodeEmailTemplate: '',
+  passwordResetCodeEmailTemplate: '',
   checkoutRecoveryDiscountPercent: undefined,
   checkoutRecoveryOfferDays: undefined,
   referralCommissionPercent: undefined,
@@ -234,6 +236,8 @@ const fields: FieldConfig[] = [
   { key: 'commissionPayoutRequestedEmailTemplate', label: 'Payout Request Received Email ([RECEIVER_NAME], [AMOUNT], [PAYOUT_ID], [DATE])', type: 'textarea', valueType: 'string' },
   { key: 'twoFactorSetupEmailTemplate', label: 'Admin 2FA Setup Code Email ([CODE] required; [RECEIVER_NAME], [MINUTES])', type: 'textarea', valueType: 'string' },
   { key: 'deleteAccountCodeEmailTemplate', label: 'Delete Account Code Email ([CODE] required; [RECEIVER_NAME], [MINUTES])', type: 'textarea', valueType: 'string' },
+  { key: 'registrationCodeEmailTemplate', label: 'Sign-up Code Email ([CODE] required; [MINUTES])', type: 'textarea', valueType: 'string' },
+  { key: 'passwordResetCodeEmailTemplate', label: 'Password Reset Code Email ([CODE] required; [RECEIVER_NAME], [MINUTES])', type: 'textarea', valueType: 'string' },
   { key: 'referralOfferEmailTemplate', label: 'Teacher Invite Offer Email ([PERCENT] and [JOIN_LINK] required; [FIRST_NAME], [RECEIVER_NAME], [EXPIRY_DATE])', type: 'textarea', valueType: 'string' },
   { key: 'commissionPayoutPaidEmailTemplate', label: 'Payout Sent Email ([RECEIVER_NAME], [AMOUNT], [TRANSFER_REFERENCE], [PAYOUT_ID], [DATE])', type: 'textarea', valueType: 'string' },
 ]
