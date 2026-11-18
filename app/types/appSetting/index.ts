@@ -43,6 +43,8 @@ export interface AdminAppSettingsDTO {
   commissionPayoutPaidEmailTemplate?: string
   twoFactorSetupEmailTemplate?: string
   deleteAccountCodeEmailTemplate?: string
+  registrationCodeEmailTemplate?: string
+  passwordResetCodeEmailTemplate?: string
   // Checkout recovery email: percent off the first payment (1-90, default 20) and days its offer link stays valid
   // (1-30, default 7). The email's own wording is a nudge template (NudgeType CheckoutAbandoned), not a setting.
   checkoutRecoveryDiscountPercent?: number

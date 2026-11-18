@@ -5,71 +5,68 @@
       title="Sign in"
     >
       <common-modal-auth-login
+        :email="emailForAuth"
         @login-successfull="handleLoginSuccessfull"
         @open-register="openRegisterModal"
-        @open-register-otp="openOTPModalForRegister"
         @open-forget-password="openForgetPasswordModal"
-        @open-otp-code="openOTPModalForLogin"
-        @close="closeAuthFlow"
+        @code-sent="(email: string, notice: string) => openCodeModal('login', email, notice)"
       />
     </lazy-common-modal-base>
 
     <lazy-common-modal-base
       v-model:show-dialog="showRegisterModal"
-      title="Register"
+      title="Create your account"
     >
       <common-modal-auth-register
+        :email="emailForAuth"
         @open-login="openLoginModal"
-        @open-otp-code="openOTPModalForRegister"
-        @close="closeAuthFlow"
+        @login-successfull="handleLoginSuccessfull"
+        @code-sent="openCodeModal('register', $event)"
       />
     </lazy-common-modal-base>
 
     <lazy-common-modal-base
       v-model:show-dialog="showForgetPasswordModal"
-      title="Forget"
+      title="Reset your password"
     >
       <common-modal-auth-forget-password
+        :email="emailForAuth"
         @open-login="openLoginModal"
-        @open-register="openRegisterModal"
-        @open-otp-code="openOTPModalForForgetPassword"
-        @close="closeAuthFlow"
+        @code-sent="openCodeModal('forgetPassword', $event)"
       />
     </lazy-common-modal-base>
 
     <lazy-common-modal-base
       v-model:show-dialog="showOTPModal"
-      title="Code"
+      title="Check your email"
     >
       <common-modal-auth-otp
-        :password="passwordForAuth"
-        :identity="identityForAuth"
-        :mode="modeOTP"
+        :email="emailForAuth"
+        :mode="codeMode"
+        :notice="codeNotice"
+        @change-email="changeEmail"
+        @code-confirmed="openPasswordModal"
         @login-successfull="handleLoginSuccessfull"
-        @open-login="openLoginModal"
-        @open-register="openRegisterModal"
-        @open-forget-password="openForgetPasswordModal"
-        @register-code-confirmed="openConfirmPasswordModal('register')"
-        @forget-password-code-confirmed="openConfirmPasswordModal('forgetPassword')"
       />
     </lazy-common-modal-base>
 
     <lazy-common-modal-base
       v-model:show-dialog="showConfirmPasswordModal"
-      title="Password"
+      :title="codeMode === 'register' ? 'Create a password' : 'Set a new password'"
     >
       <common-modal-auth-confirm-password
-        :identity="identityForAuth"
-        :mode="confirmPasswordMode"
-        @open-login="openLoginModal"
-        @close="closeAuthFlow"
+        :email="emailForAuth"
+        :code="codeForAuth"
+        :mode="codeMode"
+        @login-successfull="handleLoginSuccessfull"
+        @restart="codeMode === 'register' ? openRegisterModal(emailForAuth) : openForgetPasswordModal(emailForAuth)"
       />
     </lazy-common-modal-base>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ConfirmPasswordMode, OTPMode } from '@/types'
+import type { AuthCodeMode } from '@/types'
 
 interface IAuthFlow {
   showDialog?: boolean
@@ -87,10 +84,12 @@ const showRegisterModal = ref(false)
 const showForgetPasswordModal = ref(false)
 const showOTPModal = ref(false)
 const showConfirmPasswordModal = ref(false)
-const passwordForAuth = ref('')
-const identityForAuth = ref('')
-const modeOTP = ref<OTPMode>('login')
-const confirmPasswordMode = ref<ConfirmPasswordMode>('register')
+// Carried from step to step, so nobody types their email twice.
+const emailForAuth = ref('')
+const codeForAuth = ref('')
+const codeMode = ref<AuthCodeMode>('register')
+// Why the code screen opened, when it wasn't asked for (a wrong password).
+const codeNotice = ref('')
 const hasOpenModal = computed(() =>
   showLoginModal.value
   || showRegisterModal.value
@@ -105,10 +104,9 @@ const dialogModel = computed({
 })
 
 const resetAuthData = () => {
-  identityForAuth.value = ''
-  passwordForAuth.value = ''
-  modeOTP.value = 'login'
-  confirmPasswordMode.value = 'register'
+  emailForAuth.value = ''
+  codeForAuth.value = ''
+  codeMode.value = 'register'
 }
 
 const closeAllModals = () => {
@@ -119,34 +117,30 @@ const closeAllModals = () => {
   showConfirmPasswordModal.value = false
 }
 
-const openOTPModalForLogin = (identity: string, password: string) => {
-  identityForAuth.value = identity
-  passwordForAuth.value = password
-  modeOTP.value = 'login'
+const keepEmail = (email?: string) => {
+  if (typeof email === 'string') emailForAuth.value = email
+}
+
+const openCodeModal = (mode: AuthCodeMode, email: string, notice = '') => {
+  codeMode.value = mode
+  codeNotice.value = notice
+  emailForAuth.value = email
+  codeForAuth.value = ''
   closeAllModals()
   showOTPModal.value = true
 }
 
-const openOTPModalForRegister = (identity: string) => {
-  identityForAuth.value = identity
-  passwordForAuth.value = ''
-  modeOTP.value = 'register'
-  closeAllModals()
-  showOTPModal.value = true
-}
-
-const openOTPModalForForgetPassword = (identity: string) => {
-  identityForAuth.value = identity
-  passwordForAuth.value = ''
-  modeOTP.value = 'forgetPassword'
-  closeAllModals()
-  showOTPModal.value = true
-}
-
-const openConfirmPasswordModal = (mode: ConfirmPasswordMode) => {
-  confirmPasswordMode.value = mode
+const openPasswordModal = (code: string) => {
+  codeForAuth.value = code
   closeAllModals()
   showConfirmPasswordModal.value = true
+}
+
+// "Change" on the code screen goes back to the step the email came from.
+const changeEmail = (email: string) => {
+  if (codeMode.value === 'register') openRegisterModal(email)
+  else if (codeMode.value === 'forgetPassword') openForgetPasswordModal(email)
+  else openLoginModal(email)
 }
 
 const closeAuthFlow = () => {
@@ -155,24 +149,27 @@ const closeAuthFlow = () => {
   resetAuthData()
 }
 
-const openLoginModal = () => {
+const openLoginModal = (email?: string) => {
+  keepEmail(email)
   closeAllModals()
   showLoginModal.value = true
 }
 
-const openRegisterModal = () => {
+const openRegisterModal = (email?: string) => {
+  keepEmail(email)
   closeAllModals()
   showRegisterModal.value = true
 }
 
-const openForgetPasswordModal = () => {
+const openForgetPasswordModal = (email?: string) => {
+  keepEmail(email)
   closeAllModals()
   showForgetPasswordModal.value = true
 }
 
 const handleLoginSuccessfull = () => {
   closeAuthFlow()
-  $toast.success('You have signed in successfully.')
+  $toast.success('You are signed in.')
   emit('loginSuccessfull')
 }
 

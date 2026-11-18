@@ -1,116 +1,101 @@
 <template>
-  <div
-    class="w-100 d-flex flex-wrap flex-column bg-surface pa-2"
-  >
-    <v-form v-model="isFormValid">
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-        <div class="text-caption text-grey700 font-weight-bold ml-2">
-          Email
-        </div>
+  <div class="w-100 d-flex flex-column bg-surface pa-2">
+    <p class="text-body-2 text-grey600 mt-2 mb-4">
+      Enter the email of your account. We'll send you a 6-digit code to set a new password.
+    </p>
+
+    <v-form
+      v-model="isFormValid"
+      class="w-100 d-flex flex-column ga-3"
+      @submit.prevent="sendCode"
+    >
+      <div class="w-100 d-flex flex-column ga-1">
+        <label
+          for="auth-reset-email"
+          class="text-caption text-grey700 font-weight-bold ml-2"
+        >Email</label>
         <v-text-field
+          id="auth-reset-email"
           v-model="emailUser"
           rounded="lg"
           height="48"
-          placeholder="Email"
+          placeholder="you@example.com"
+          type="email"
           variant="outlined"
-          autocomplete="off"
-          persistent-clear
+          autocomplete="email"
+          hide-details="auto"
           base-color="grey300"
           color="primary"
-          active-color="primary"
           bg-color="surface"
-          class="w-100"
-          :rules="[email, required]"
+          :rules="[required, emailRule]"
+          @update:model-value="errorMessage = ''"
         />
       </div>
-    </v-form>
 
-    <v-divider
-      :thickness="2"
-      class="border-opacity-100 mt-8"
-      color="grey200"
-    />
-    <div
-      class="w-100 d-flex justify-center align-center ga-2 mt-4 text-body-1 font-weight-medium text-grey700"
-    >
-      <span
-        class="text-primaryStrong font-weight-bold cursor-pointer"
-        @click="emit('openLogin')"
+      <v-alert
+        v-if="errorMessage"
+        type="error"
+        variant="tonal"
+        density="compact"
+        class="text-body-2"
+        role="alert"
       >
-        login
-      </span>
-      <span>|</span>
-      <span
-        class="text-primaryStrong font-weight-bold cursor-pointer"
-        @click="emit('openRegister')"
-      >
-        register
-      </span>
-    </div>
-    <v-divider
-      :thickness="2"
-      class="border-opacity-100 mt-4"
-      color="grey200"
-    />
+        {{ errorMessage }}
+      </v-alert>
 
-    <div class="w-100 d-flex justify-center align-center ga-2 mt-4">
       <v-btn
-        color="grey200"
-        variant="outlined"
-        rounded="pill"
-        height="38"
-        width="120"
-        class="text-body-1 font-weight-medium"
-        flat
-        @click="emit('close')"
-      >
-        <span class="text-grey800">
-          Cancel
-        </span>
-      </v-btn>
-      <v-btn
+        type="submit"
+        block
         color="primary"
         rounded="pill"
-        height="38"
-        width="180"
-        class="text-body-1 font-weight-medium"
+        height="44"
+        class="text-body-1 font-weight-bold text-none"
         flat
         :disabled="!isFormValid"
-        :loading="loadingForgetPassword"
-        @click="requestPasswordReset"
+        :loading="loadingCode"
       >
-        Continue
+        Send code
       </v-btn>
-    </div>
+    </v-form>
+
+    <v-btn
+      variant="text"
+      color="grey700"
+      prepend-icon="md:arrow_back"
+      class="mt-3 text-caption font-weight-medium text-none"
+      @click="emit('openLogin', emailUser)"
+    >
+      Back to sign in
+    </v-btn>
   </div>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(['openLogin', 'openRegister', 'openOtpCode', 'close'])
+const props = withDefaults(defineProps<{ email?: string }>(), { email: '' })
+const emit = defineEmits<{
+  openLogin: [email: string]
+  codeSent: [email: string]
+}>()
 
 const { $toast } = useNuxtApp()
-const { email, required } = useValidationRules()
-const { forgetPassword, loadingForgetPassword } = useAuth()
+const { email: emailRule, required } = useValidationRules()
+const { sendResetCode, loadingCode } = useAuth()
 
-const emailUser = ref('')
+const emailUser = ref(props.email)
 const isFormValid = ref(false)
+const errorMessage = ref('')
 
-const requestPasswordReset = async () => {
-  const response = await forgetPassword({
-    identity: emailUser.value,
-    type: 'request',
-  })
+const sendCode = async () => {
+  if (!isFormValid.value || loadingCode.value) return
+  errorMessage.value = ''
 
+  const response = await sendResetCode(emailUser.value)
   if (response.succeeded) {
-    $toast.success('Verification code sent.')
-    emit('openOtpCode', emailUser.value)
+    $toast.success('We sent you a code. Check your email.')
+    emit('codeSent', emailUser.value.trim())
     return
   }
 
-  $toast.error('We could not start password recovery. Please try again.')
+  errorMessage.value = response.message || 'We could not send the code. Please try again.'
 }
 </script>
-
-<style scoped>
-
-</style>

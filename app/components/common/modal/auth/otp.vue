@@ -1,106 +1,109 @@
 <template>
-  <div
-    class="w-100 d-flex flex-wrap flex-column bg-surface pa-2"
-  >
-    <span
-      class="w-100 font-weight-medium text-body-1 text-grey700 mt-4 text-start"
-    >Please enter the code received on your email address:</span>
+  <div class="w-100 d-flex flex-column bg-surface pa-2">
+    <v-alert
+      v-if="notice"
+      type="info"
+      variant="tonal"
+      density="compact"
+      class="text-body-2 mt-2"
+    >
+      {{ notice }}
+    </v-alert>
+    <p class="text-body-2 text-grey600 mt-2 mb-1">
+      Enter the 6-digit code we sent to
+    </p>
+    <div class="d-flex align-center flex-wrap ga-1 mb-3">
+      <span class="text-body-1 font-weight-bold text-grey800 text-break">{{ email }}</span>
+      <v-btn
+        variant="text"
+        density="compact"
+        color="primaryStrong"
+        class="px-1 text-caption font-weight-bold text-none"
+        @click="emit('changeEmail', email)"
+      >
+        Change
+      </v-btn>
+    </div>
 
-    <v-otp-input
-      v-model="otp"
-      :disabled="isProcessing"
-      length="5"
-      :loading="isProcessing"
-      @finish="onFinish"
-    />
+    <v-form @submit.prevent="confirmCode">
+      <v-otp-input
+        v-model="otp"
+        :length="CODE_LENGTH"
+        type="number"
+        autofocus
+        :disabled="loadingCode"
+        :error="!!errorMessage"
+        class="px-0"
+        @finish="confirmCode"
+        @update:model-value="errorMessage = ''"
+      />
 
-    <v-divider
-      :thickness="2"
-      class="border-opacity-100 mt-8"
-      color="grey200"
-    />
-    <span
-      class="w-100 font-weight-medium text-body-1 text-grey700 mt-4 text-center cursor-pointer"
-      @click="checkEmail"
-    >Your email is incorrect? <span class="text-primaryStrong font-weight-bold">Recheck it.
-    </span>
-    </span>
-    <v-divider
-      :thickness="2"
-      class="border-opacity-100 mt-4"
-      color="grey200"
-    />
+      <v-alert
+        v-if="errorMessage"
+        type="error"
+        variant="tonal"
+        density="compact"
+        class="text-body-2 mt-2"
+        role="alert"
+      >
+        {{ errorMessage }}
+      </v-alert>
 
-    <div class="w-100 d-flex flex-column align-center ga-2 mt-4">
+      <v-btn
+        type="submit"
+        block
+        color="primary"
+        rounded="pill"
+        height="44"
+        class="mt-4 text-body-1 font-weight-bold text-none"
+        flat
+        :disabled="otp.length !== CODE_LENGTH"
+        :loading="loadingCode && !resending"
+      >
+        Verify
+      </v-btn>
+    </v-form>
+
+    <div class="w-100 d-flex flex-column align-center ga-1 mt-4">
       <span class="text-caption font-weight-medium text-grey600">
-        {{ canResendCode ? 'Did not receive the code?' : `You can request a new code in ${counter}s` }}
+        {{ counter > 0 ? `Didn't get it? You can ask for a new code in ${counter}s.` : "Didn't get it? Check your spam folder, or" }}
       </span>
-
       <v-btn
         variant="text"
         color="primaryStrong"
-        class="text-caption font-weight-bold"
-        :disabled="!canResendCode || isProcessing"
-        :loading="resendLoading"
+        class="text-caption font-weight-bold text-none"
+        :disabled="counter > 0 || loadingCode"
+        :loading="resending"
         @click="resendCode"
       >
-        Resend code
+        Send a new code
       </v-btn>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { LoginInformationDTO, OTPMode, OTPResponse } from '@/types'
+import type { AuthCodeMode } from '@/types'
 
-interface IOTPModal {
-  identity: string
-  password?: string
-  mode?: OTPMode
-}
+const CODE_LENGTH = 6
+// The backend accepts a new code once a minute.
+const RESEND_SECONDS = 60
 
-const props = withDefaults(defineProps<IOTPModal>(), {
-  mode: 'login',
-})
-const emit = defineEmits(['loginSuccessfull', 'registerCodeConfirmed', 'forgetPasswordCodeConfirmed', 'openLogin', 'openRegister', 'openForgetPassword'])
+const props = withDefaults(defineProps<{ email: string, mode?: AuthCodeMode, notice?: string }>(), { mode: 'register', notice: '' })
+const emit = defineEmits<{
+  changeEmail: [email: string]
+  codeConfirmed: [code: string]
+  loginSuccessfull: []
+}>()
 
 const { $toast } = useNuxtApp()
-const {
-  login,
-  loadingLogin,
-  register,
-  loadingRegister,
-  forgetPassword,
-  loadingForgetPassword,
-  setUserToken,
-} = useAuth()
-const { getProfile, setUser } = useUser()
+const { verifyRegisterCode, sendRegisterCode, verifyResetCode, sendResetCode, sendLoginCode, loginWithCode, loadingCode, completeSignIn } = useAuth()
 
 const otp = ref('')
-const counter = ref(60)
-const resendLoading = ref(false)
-const confirmLoading = ref(false)
+const errorMessage = ref('')
+const resending = ref(false)
+const counter = ref(RESEND_SECONDS)
 let counterInterval: ReturnType<typeof setInterval> | null = null
-
-const canResendCode = computed(() => counter.value === 0)
-const authLoading = computed(() =>
-  loadingRegister.value || loadingForgetPassword.value || loadingLogin.value,
-)
-const isProcessing = computed(() => authLoading.value || resendLoading.value || confirmLoading.value)
-
-const checkEmail = () => {
-  if (props.mode === 'register') {
-    emit('openRegister')
-    return
-  }
-
-  if (props.mode === 'forgetPassword') {
-    emit('openForgetPassword')
-    return
-  }
-
-  emit('openLogin')
-}
 
 const clearCounter = () => {
   if (counterInterval) {
@@ -111,138 +114,66 @@ const clearCounter = () => {
 
 const startCounter = () => {
   clearCounter()
-  counter.value = 60
-
+  counter.value = RESEND_SECONDS
   counterInterval = setInterval(() => {
-    if (counter.value <= 1) {
-      counter.value = 0
-      clearCounter()
-      return
-    }
-
-    counter.value -= 1
+    counter.value = Math.max(counter.value - 1, 0)
+    if (counter.value === 0) clearCounter()
   }, 1000)
 }
 
-const completeLogin = async (token: string) => {
-  setUserToken(token)
-  const profileData = await getProfile(token)
+const confirmCode = async () => {
+  if (otp.value.length !== CODE_LENGTH || loadingCode.value) return
+  errorMessage.value = ''
 
-  if (profileData.data) {
-    const profile = profileData.data.data!
-    setUser(profile)
-    emit('loginSuccessfull')
-    return
-  }
+  const code = otp.value
 
-  $toast.error('Sign-in succeeded, but we could not load your profile. Please try again.')
-}
-
-const getAuthAction = () => {
-  if (props.mode === 'register') {
-    return register
-  }
-
-  if (props.mode === 'forgetPassword') {
-    return forgetPassword
-  }
-
-  return login
-}
-
-const buildPayload = (type: 'confirm' | 'resend_code') => {
-  const payload: LoginInformationDTO = {
-    identity: props.identity,
-    type,
-    code: Number(otp.value),
-  }
-
+  // Signing in with the code: it is the last step, the person is signed in.
   if (props.mode === 'login') {
-    payload.password = props.password
-  }
-
-  return payload
-}
-
-const handleConfirmSuccess = async (response: OTPResponse) => {
-  if (props.mode === 'login') {
-    if (response.data && 'token' in response.data && response.data.token) {
-      await completeLogin(response.data.token)
+    const answer = await loginWithCode(props.email, code)
+    if (answer.succeeded && answer.data?.token) {
+      if (await completeSignIn(answer.data.token)) emit('loginSuccessfull')
+      else errorMessage.value = 'You are signed in, but we could not load your profile. Refresh the page to continue.'
       return
     }
 
-    $toast.error('The verification code was accepted, but sign-in could not be completed. Please try again.')
+    errorMessage.value = answer.message || 'The code is not correct. Check the email and try again.'
+    otp.value = ''
     return
   }
 
-  if (props.mode === 'register') {
-    emit('registerCodeConfirmed', response.data)
+  const response = props.mode === 'register'
+    ? await verifyRegisterCode(props.email, code)
+    : await verifyResetCode(props.email, code)
+  if (response.succeeded) {
+    emit('codeConfirmed', code)
     return
   }
 
-  emit('forgetPasswordCodeConfirmed', response.data)
-}
-
-const onFinish = async () => {
-  if (otp.value.length !== 5 || confirmLoading.value) {
-    return
-  }
-
-  const payload = buildPayload('confirm')
-  if (!payload) {
-    return
-  }
-
-  confirmLoading.value = true
-
-  try {
-    const response = await getAuthAction()(payload)
-
-    if (response.succeeded) {
-      await handleConfirmSuccess(response as OTPResponse)
-    }
-    else {
-      $toast.error('The verification code is incorrect or has expired. Please try again.')
-    }
-  }
-  finally {
-    confirmLoading.value = false
-  }
+  errorMessage.value = response.message || 'The code is not correct. Check the email and try again.'
+  otp.value = ''
 }
 
 const resendCode = async () => {
-  if (!canResendCode.value || resendLoading.value) {
-    return
-  }
-
-  resendLoading.value = true
-
+  if (counter.value > 0 || loadingCode.value) return
+  resending.value = true
+  errorMessage.value = ''
   try {
-    const payload = buildPayload('resend_code')
-    if (!payload) {
+    const send = { login: sendLoginCode, register: sendRegisterCode, forgetPassword: sendResetCode }[props.mode]
+    const response = await send(props.email)
+    if (response.succeeded) {
+      otp.value = ''
+      $toast.success('We sent you a new code.')
+      startCounter()
       return
     }
 
-    const response = await getAuthAction()(payload)
-
-    if (response.succeeded) {
-      otp.value = ''
-      $toast.success('A new verification code has been sent.')
-      startCounter()
-    }
-    else {
-      $toast.error('We could not resend the verification code. Please try again.')
-    }
+    errorMessage.value = response.message || 'We could not send a new code. Please try again.'
   }
   finally {
-    resendLoading.value = false
+    resending.value = false
   }
 }
 
 onMounted(startCounter)
 onUnmounted(clearCounter)
 </script>
-
-<style scoped>
-
-</style>
