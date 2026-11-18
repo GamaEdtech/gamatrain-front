@@ -1,10 +1,12 @@
-import type { LoginInformationDTO, LoginResponseDTO, ApiResult, AppError, RegisterResponseDTO, ForgetPasswordResponseDTO } from '@/types'
+import type { Ref } from 'vue'
+import type { ApiResult, AppError, AuthTokenDTO, LoginResponseDTO } from '@/types'
 import { clearInviteCode, getInviteCode } from '~/utils/inviteCode'
 
 const loadingLogin = ref(false)
 const loadingLoginByGoogle = ref(false)
 const loadingRegister = ref(false)
 const loadingForgetPassword = ref(false)
+const loadingCode = ref(false)
 
 // The JWT is kept in localStorage only and sent as a Bearer header. Not in a cookie: browsers send cookies with
 // every page request, and page HTML is cached by Cloudflare and shared by every visitor, so the server must not
@@ -44,6 +46,7 @@ if (import.meta.client) {
 
 export const useAuth = () => {
   const { $toast } = useNuxtApp()
+  const { normalizeApiResponseError, normalizeApiCatchError } = useApiErrorHandler()
 
   const setUserToken = (newToken: string) => {
     token.value = newToken
@@ -59,9 +62,14 @@ export const useAuth = () => {
     localStorage.removeItem(TOKEN_KEY)
   }
 
+  // A token of this backend is "{userId}|{token}"; a token from the old backend (Google sign-in, older sessions) is a JWT.
+  const isBackendToken = (value: string | null) => !!value && value.split('|').length === 2
+
   const logout = async () => {
-    useApiService.get('/api/v2/legacy-auth/logout',
-    ).catch((error) => {
+    const request = isBackendToken(token.value)
+      ? useApiService.post('/api/v2/identities/tokens/revoke')
+      : useApiService.get('/api/v2/legacy-auth/logout')
+    request.catch((error) => {
       console.warn('Logout API call failed:', error)
     })
 
@@ -85,37 +93,57 @@ export const useAuth = () => {
       await navigateTo('/')
   }
 
-  const login = async (data: LoginInformationDTO) => {
+  // Calls one of the sign-in endpoints. Never throws: a failure answers succeeded=false with the backend's own message
+  // (e.g. "This email already has an account"), which the dialogs show as it is.
+  const authCall = async <T>(loading: Ref<boolean>, request: () => Promise<ApiResult<T>>): Promise<ApiResult<T> & { message?: string }> => {
+    loading.value = true
     try {
-      loadingLogin.value = true
-      const response = await useApiService.post<
-        ApiResult<LoginResponseDTO>
-      >(
-        '/api/v2/legacy-auth/login',
-        { ...data },
-      )
-      if (!response.succeeded) {
-        $toast.error('The operation failed. Please try again later.')
-      }
-      return response
+      const response = await request()
+      return response.succeeded ? response : { ...response, message: normalizeApiResponseError(response).message }
     }
     catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-        data: null,
-        errors: [],
-      }
+      return { succeeded: false, data: null, errors: [], message: normalizeApiCatchError(err).message } as unknown as ApiResult<T> & { message?: string }
     }
     finally {
-      loadingLogin.value = false
+      loading.value = false
     }
   }
 
+  const post = <T>(url: string, body: Record<string, unknown>) => useApiService.post<ApiResult<T>>(url, body)
+
+  // Sign in with an email and password (this backend; it checks a password it doesn't hold yet with the old backend once).
+  const login = (data: { email: string, password: string }) =>
+    authCall(loadingLogin, () => post<AuthTokenDTO>('/api/v2/identities/tokens', { username: data.email.trim(), password: data.password }))
+
+  // Sign-up: 1. email a code, 2. check it, 3. code + password (answers a token: the person is signed in).
+  const sendRegisterCode = (email: string) =>
+    authCall(loadingCode, () => post<string>('/api/v2/identities/register/code', { email: email.trim() }))
+  const verifyRegisterCode = (email: string, code: string) =>
+    authCall(loadingCode, () => post<null>('/api/v2/identities/register/code/verify', { email: email.trim(), code }))
+  const register = (data: { email: string, code: string, password: string }) =>
+    authCall(loadingRegister, () => post<AuthTokenDTO>('/api/v2/identities/register', {
+      email: data.email.trim(),
+      code: data.code,
+      password: data.password,
+      confirmPassword: data.password,
+      // A teacher's invite code; the backend uses it because this request creates the account.
+      referralCode: getInviteCode() ?? undefined,
+    }))
+
+  // Forgotten password: the same three steps.
+  const sendResetCode = (email: string) =>
+    authCall(loadingCode, () => post<string>('/api/v2/identities/password/reset-code', { email: email.trim() }))
+  const verifyResetCode = (email: string, code: string) =>
+    authCall(loadingCode, () => post<null>('/api/v2/identities/password/reset-code/verify', { email: email.trim(), code }))
+  const resetPassword = (data: { email: string, code: string, password: string }) =>
+    authCall(loadingForgetPassword, () => post<AuthTokenDTO>('/api/v2/identities/password/reset', {
+      email: data.email.trim(),
+      code: data.code,
+      password: data.password,
+      confirmPassword: data.password,
+    }))
+
+  // Google stays on the old backend's sign-in for now: this backend checks Google tokens against another Google client.
   const loginByGoogle = async (idToken: string) => {
     try {
       loadingLoginByGoogle.value = true
@@ -147,65 +175,16 @@ export const useAuth = () => {
     }
   }
 
-  const register = async (data: LoginInformationDTO) => {
-    try {
-      loadingRegister.value = true
-      const response = await useApiService.post<
-        ApiResult<RegisterResponseDTO>
-      >(
-        '/api/v2/legacy-auth/register',
-        // A teacher's invite code, kept by the backend for the sign-in that creates the account.
-        { ...data, referralCode: getInviteCode() ?? undefined },
-      )
-      if (!response.succeeded) {
-        $toast.error('The operation failed. Please try again later.')
-      }
-      return response
+  // Keeps a new token and loads the user's profile; false when the profile couldn't be loaded (the token is kept).
+  const completeSignIn = async (newToken: string) => {
+    setUserToken(newToken)
+    const { getProfile, setUser } = useUser()
+    const profile = await getProfile(newToken)
+    if (profile.data?.data) {
+      setUser(profile.data.data)
+      return true
     }
-    catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-        data: null,
-      }
-    }
-    finally {
-      loadingRegister.value = false
-    }
-  }
-
-  const forgetPassword = async (data: LoginInformationDTO) => {
-    try {
-      loadingForgetPassword.value = true
-      const response = await useApiService.post<
-        ApiResult<ForgetPasswordResponseDTO>
-      >(
-        '/api/v2/legacy-auth/recovery',
-        { ...data },
-      )
-      if (!response.succeeded) {
-        $toast.error('The operation failed. Please try again later.')
-      }
-      return response
-    }
-    catch (err: unknown) {
-      const error = err as AppError
-      if (error.response?.status === 400) {
-        $toast.error(error.response.data?.message || '')
-      }
-      return {
-        succeeded: false,
-        message: 'The operation failed. Please try again later.',
-        data: null,
-      }
-    }
-    finally {
-      loadingForgetPassword.value = false
-    }
+    return false
   }
 
   const isAuthenticated = computed(() => !!token.value)
@@ -217,14 +196,20 @@ export const useAuth = () => {
 
   return {
     setUserToken,
+    completeSignIn,
     clearAuth,
     logout,
     login,
     loadingLogin,
     register,
+    sendRegisterCode,
+    verifyRegisterCode,
+    sendResetCode,
+    verifyResetCode,
+    resetPassword,
+    loadingCode,
     isAuthenticated,
     isAuthenticatedUi,
-    forgetPassword,
     getUserToken,
     loginByGoogle,
     loadingLoginByGoogle,

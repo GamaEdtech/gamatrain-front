@@ -1,158 +1,157 @@
 <template>
-  <div
-    class="w-100 d-flex flex-wrap flex-column bg-surface pa-2"
-  >
-    <v-form v-model="isFormValid">
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-        <div class="text-caption text-grey700 font-weight-bold ml-2">
-          Password
-        </div>
+  <div class="w-100 d-flex flex-column bg-surface pa-2">
+    <p class="text-body-2 text-grey600 mt-2 mb-4">
+      {{ mode === 'register'
+        ? `Choose a password for ${email}. You'll be signed in right away.`
+        : `Choose a new password for ${email}. You'll be signed in, and signed out everywhere else.` }}
+    </p>
+
+    <v-form
+      v-model="isFormValid"
+      class="w-100 d-flex flex-column ga-4"
+      @submit.prevent="submitPassword"
+    >
+      <!-- Lets password managers save the new password under the right account. -->
+      <input
+        type="email"
+        name="email"
+        autocomplete="username"
+        :value="email"
+        class="d-sr-only"
+        tabindex="-1"
+        aria-hidden="true"
+        readonly
+      >
+
+      <div class="w-100 d-flex flex-column ga-1">
+        <label
+          for="auth-new-password"
+          class="text-caption text-grey700 font-weight-bold ml-2"
+        >{{ mode === 'register' ? 'Password' : 'New password' }}</label>
         <v-text-field
+          id="auth-new-password"
           v-model="password"
           rounded="lg"
           height="48"
-          placeholder="Password"
+          placeholder="At least 8 characters"
           variant="outlined"
-          autocomplete="off"
-          persistent-clear
+          autocomplete="new-password"
+          hide-details="auto"
           base-color="grey300"
           color="primary"
-          active-color="primary"
           bg-color="surface"
-          class="w-100"
           :rules="[required, passwordRule]"
           :append-inner-icon="showPassword ? 'md:visibility' : 'md:visibility_off'"
           :type="showPassword ? 'text' : 'password'"
           @click:append-inner="showPassword = !showPassword"
+          @update:model-value="errorMessage = ''"
         />
       </div>
 
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-caption text-grey700 font-weight-bold ml-2">
-          Confirm password
-        </div>
+      <div class="w-100 d-flex flex-column ga-1">
+        <label
+          for="auth-confirm-password"
+          class="text-caption text-grey700 font-weight-bold ml-2"
+        >Confirm password</label>
         <v-text-field
+          id="auth-confirm-password"
           v-model="confirmPassword"
           rounded="lg"
           height="48"
-          placeholder="Confirm password"
+          placeholder="Type it again"
           variant="outlined"
-          autocomplete="off"
-          persistent-clear
+          autocomplete="new-password"
+          hide-details="auto"
           base-color="grey300"
           color="primary"
-          active-color="primary"
           bg-color="surface"
-          class="w-100"
           :rules="[required, confirmPasswordRule]"
-          :append-inner-icon="showConfirmPassword ? 'md:visibility' : 'md:visibility_off'"
-          :type="showConfirmPassword ? 'text' : 'password'"
-          @click:append-inner="showConfirmPassword = !showConfirmPassword"
+          :type="showPassword ? 'text' : 'password'"
+          @update:model-value="errorMessage = ''"
         />
       </div>
-    </v-form>
 
-    <v-divider
-      :thickness="2"
-      class="border-opacity-100 mt-8"
-      color="grey200"
-    />
-    <span
-      class="w-100 font-weight-medium text-body-1 text-grey700 mt-4 text-center cursor-pointer"
-      @click="emit('openLogin')"
-    >Back to <span class="text-primaryStrong font-weight-bold">login
-    </span>
-    </span>
-    <v-divider
-      :thickness="2"
-      class="border-opacity-100 mt-4"
-      color="grey200"
-    />
-
-    <div class="w-100 d-flex justify-center align-center ga-2 mt-4">
-      <v-btn
-        color="grey200"
-        variant="outlined"
-        rounded="pill"
-        height="38"
-        width="120"
-        class="text-body-1 font-weight-medium"
-        flat
-        @click="emit('close')"
+      <v-alert
+        v-if="errorMessage"
+        type="error"
+        variant="tonal"
+        density="compact"
+        class="text-body-2"
+        role="alert"
       >
-        <span class="text-grey800">
-          Cancel
-        </span>
-      </v-btn>
+        {{ errorMessage }}
+        <v-btn
+          v-if="codeExpired"
+          variant="text"
+          density="compact"
+          color="primaryStrong"
+          class="px-1 text-body-2 font-weight-bold text-none"
+          @click="emit('restart')"
+        >
+          Get a new code
+        </v-btn>
+      </v-alert>
+
       <v-btn
+        type="submit"
+        block
         color="primary"
         rounded="pill"
-        height="38"
-        width="180"
-        class="text-body-1 font-weight-medium"
+        height="44"
+        class="text-body-1 font-weight-bold text-none"
         flat
         :disabled="!isFormValid"
         :loading="loadingRegister || loadingForgetPassword"
-        @click="submitPassword"
       >
-        Continue
+        {{ mode === 'register' ? 'Create account' : 'Save password' }}
       </v-btn>
-    </div>
+    </v-form>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { ConfirmPasswordMode } from '@/types'
+import type { AuthCodeMode } from '@/types'
 
-interface IConfirmPasswordModal {
-  identity: string
-  mode: ConfirmPasswordMode
-}
+const props = defineProps<{
+  email: string
+  code: string
+  mode: AuthCodeMode
+}>()
+const emit = defineEmits<{
+  loginSuccessfull: []
+  restart: []
+}>()
 
-const props = defineProps<IConfirmPasswordModal>()
-const emit = defineEmits(['openLogin', 'close'])
-
-const { $toast } = useNuxtApp()
 const { required, password: passwordRule } = useValidationRules()
-const {
-  register,
-  loadingRegister,
-  forgetPassword,
-  loadingForgetPassword,
-} = useAuth()
+const { register, loadingRegister, resetPassword, loadingForgetPassword, completeSignIn } = useAuth()
 
 const password = ref('')
 const confirmPassword = ref('')
 const showPassword = ref(false)
-const showConfirmPassword = ref(false)
 const isFormValid = ref(false)
+const errorMessage = ref('')
+// The code lives 10 minutes: past that (or too many wrong tries) the person must ask for a new one.
+const codeExpired = computed(() => /expired|new code/i.test(errorMessage.value))
 
 const confirmPasswordRule = (value: string) =>
-  value === password.value || 'Passwords do not match.'
+  value === password.value || 'The passwords don\'t match.'
 
 const submitPassword = async () => {
-  const payload = {
-    identity: props.identity,
-    password: password.value,
-    type: props.mode === 'register' ? 'register' : 'resetpass',
-  }
+  if (!isFormValid.value || loadingRegister.value || loadingForgetPassword.value) return
+  errorMessage.value = ''
 
-  const response = props.mode === 'register'
-    ? await register(payload)
-    : await forgetPassword(payload)
-
-  if (response.succeeded) {
-    $toast.success(props.mode === 'register'
-      ? 'Your account has been created. You can now sign in.'
-      : 'Your password has been reset. You can now sign in.')
-    emit('openLogin')
+  const data = { email: props.email, code: props.code, password: password.value }
+  const response = props.mode === 'register' ? await register(data) : await resetPassword(data)
+  if (!response.succeeded || !response.data?.token) {
+    errorMessage.value = response.message || 'We could not save your password. Please try again.'
     return
   }
 
-  $toast.error('We could not update your password. Please try again.')
+  if (await completeSignIn(response.data.token)) {
+    emit('loginSuccessfull')
+    return
+  }
+
+  errorMessage.value = 'Your password is saved, but we could not load your profile. Refresh the page to continue.'
 }
 </script>
-
-<style scoped>
-
-</style>

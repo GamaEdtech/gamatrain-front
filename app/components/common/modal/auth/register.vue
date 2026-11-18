@@ -1,26 +1,34 @@
 <template>
-  <div
-    class="w-100 d-flex flex-wrap flex-column bg-surface pa-2"
-  >
-    <v-form v-model="isFormValid">
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4">
-        <div class="text-caption text-grey700 font-weight-bold ml-2">
-          Email
-        </div>
+  <div class="w-100 d-flex flex-column bg-surface pa-2">
+    <p class="text-body-2 text-grey600 mt-2 mb-4">
+      Enter your email. We'll send you a 6-digit code to confirm it's yours.
+    </p>
+
+    <v-form
+      v-model="isFormValid"
+      class="w-100 d-flex flex-column ga-3"
+      @submit.prevent="sendCode"
+    >
+      <div class="w-100 d-flex flex-column ga-1">
+        <label
+          for="auth-register-email"
+          class="text-caption text-grey700 font-weight-bold ml-2"
+        >Email</label>
         <v-text-field
+          id="auth-register-email"
           v-model="emailUser"
           rounded="lg"
           height="48"
-          placeholder="Email"
+          placeholder="you@example.com"
+          type="email"
           variant="outlined"
-          autocomplete="off"
-          persistent-clear
+          autocomplete="email"
+          hide-details="auto"
           base-color="grey300"
           color="primary"
-          active-color="primary"
           bg-color="surface"
-          class="w-100"
-          :rules="[email, required]"
+          :rules="[required, emailRule]"
+          @update:model-value="errorMessage = ''"
         />
       </div>
 
@@ -29,94 +37,107 @@
         color="primary"
         density="compact"
         hide-details="auto"
-        :rules="[required]"
-        class="mt-1"
+        :rules="[(value: boolean) => value || 'Please accept the terms to continue.']"
       >
         <template #label>
           <span class="text-caption font-weight-medium text-grey700">
-            <span class="font-weight-bold">I agree</span>
-            <span class="font-weight-bold text-primaryStrong"> terms and conditions</span>
+            I agree to the
+            <nuxt-link
+              to="/terms"
+              target="_blank"
+              class="text-primaryStrong font-weight-bold"
+              @click.stop
+            >terms and conditions</nuxt-link>
           </span>
         </template>
       </v-checkbox>
-    </v-form>
 
-    <v-divider
-      :thickness="2"
-      class="border-opacity-100 mt-8"
-      color="grey200"
-    />
-    <span
-      class="w-100 font-weight-medium text-body-1 text-grey700 mt-4 text-center cursor-pointer"
-      @click="emit('openLogin')"
-    >Already registered? <span class="text-primaryStrong font-weight-bold">login now
-    </span>
-    </span>
-    <v-divider
-      :thickness="2"
-      class="border-opacity-100 mt-4"
-      color="grey200"
-    />
-
-    <div class="w-100 d-flex justify-center align-center ga-2 mt-4">
-      <v-btn
-        color="grey200"
-        variant="outlined"
-        rounded="pill"
-        height="38"
-        width="120"
-        class="text-body-1 font-weight-medium"
-        flat
-        @click="emit('close')"
+      <v-alert
+        v-if="errorMessage"
+        type="error"
+        variant="tonal"
+        density="compact"
+        class="text-body-2"
+        role="alert"
       >
-        <span class="text-grey800">
-          Cancel
-        </span>
-      </v-btn>
+        {{ errorMessage }}
+        <v-btn
+          v-if="hasAccount"
+          variant="text"
+          density="compact"
+          color="primaryStrong"
+          class="px-1 text-body-2 font-weight-bold text-none"
+          @click="emit('openLogin', emailUser)"
+        >
+          Sign in instead
+        </v-btn>
+      </v-alert>
+
       <v-btn
+        type="submit"
+        block
         color="primary"
         rounded="pill"
-        height="38"
-        width="180"
-        class="text-body-1 font-weight-medium"
+        height="44"
+        class="text-body-1 font-weight-bold text-none"
         flat
         :disabled="!isFormValid"
-        :loading="loadingRegister"
-        @click="registerUser"
+        :loading="loadingCode"
       >
-        Register
+        Send code
       </v-btn>
+    </v-form>
+
+    <div class="w-100 d-flex align-center ga-3 my-4">
+      <v-divider color="grey200" />
+      <span class="text-caption font-weight-medium text-grey500">or</span>
+      <v-divider color="grey200" />
     </div>
+
+    <common-google-login-button @login-successfull="emit('loginSuccessfull')" />
+
+    <v-btn
+      variant="text"
+      color="grey700"
+      class="mt-3 text-caption font-weight-medium text-none"
+      @click="emit('openLogin', emailUser)"
+    >
+      Already have an account?
+      <span class="ml-1 text-primaryStrong font-weight-bold">Sign in</span>
+    </v-btn>
   </div>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(['openLogin', 'openOtpCode', 'close'])
+const props = withDefaults(defineProps<{ email?: string }>(), { email: '' })
+const emit = defineEmits<{
+  openLogin: [email: string]
+  loginSuccessfull: []
+  codeSent: [email: string]
+}>()
 
 const { $toast } = useNuxtApp()
-const { email, required } = useValidationRules()
-const { register, loadingRegister } = useAuth()
+const { email: emailRule, required } = useValidationRules()
+const { sendRegisterCode, loadingCode } = useAuth()
 
-const emailUser = ref('')
+const emailUser = ref(props.email)
 const termsAccepted = ref(false)
 const isFormValid = ref(false)
+const errorMessage = ref('')
+// The backend says so when the address already has an account: offer to sign in instead.
+const hasAccount = computed(() => /already has an account/i.test(errorMessage.value))
 
-const registerUser = async () => {
-  const response = await register({
-    identity: emailUser.value,
-    type: 'request',
-  })
+const sendCode = async () => {
+  if (!isFormValid.value || loadingCode.value) return
+  errorMessage.value = ''
 
+  const response = await sendRegisterCode(emailUser.value)
   if (response.succeeded) {
-    $toast.success('Verification code sent.')
-    emit('openOtpCode', emailUser.value)
+    $toast.success('We sent you a code. Check your email.')
+    emit('codeSent', emailUser.value.trim())
     return
   }
 
-  $toast.error('We could not start your registration. Please try again.')
+  errorMessage.value = response.message || 'We could not send the code. Please try again.'
 }
 </script>
-
-<style scoped>
-
-</style>

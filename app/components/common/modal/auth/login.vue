@@ -1,74 +1,80 @@
 <template>
-  <div
-    class="w-100 d-flex flex-wrap flex-column bg-surface pa-2"
-  >
+  <div class="w-100 d-flex flex-column bg-surface pa-2">
     <v-form
       v-model="isFormValid"
-      class="w-100"
+      class="w-100 d-flex flex-column ga-4 mt-2"
       @submit.prevent="loginUser"
     >
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-2 mb-4">
-        <div class="text-caption text-grey700 font-weight-bold ml-2">
-          Email
-        </div>
+      <div class="w-100 d-flex flex-column ga-1">
+        <label
+          for="auth-login-email"
+          class="text-caption text-grey700 font-weight-bold ml-2"
+        >Email</label>
         <v-text-field
+          id="auth-login-email"
           v-model="emailUser"
           rounded="lg"
           height="48"
-          placeholder="Email"
+          placeholder="you@example.com"
           type="email"
           variant="outlined"
           autocomplete="email"
           hide-details="auto"
-          persistent-clear
           base-color="grey300"
           color="primary"
-          active-color="primary"
           bg-color="surface"
-          class="w-100"
-          :rules="[email, required]"
+          :rules="[required, emailRule]"
+          @update:model-value="errorMessage = ''"
         />
       </div>
 
-      <div class="w-100 d-flex flex-column align-start justify-start ga-1">
-        <div class="text-caption text-grey700 font-weight-bold ml-2">
-          Password
+      <div class="w-100 d-flex flex-column ga-1">
+        <div class="d-flex align-center justify-space-between">
+          <label
+            for="auth-login-password"
+            class="text-caption text-grey700 font-weight-bold ml-2"
+          >Password</label>
+          <v-btn
+            type="button"
+            variant="text"
+            color="primaryStrong"
+            density="compact"
+            class="px-1 text-caption font-weight-bold text-none"
+            @click="emit('openForgetPassword', emailUser)"
+          >
+            Forgot password?
+          </v-btn>
         </div>
         <v-text-field
+          id="auth-login-password"
           v-model="password"
           rounded="lg"
           height="48"
-          placeholder="Password"
+          placeholder="Your password"
           variant="outlined"
           autocomplete="current-password"
           hide-details="auto"
-          persistent-clear
           base-color="grey300"
           color="primary"
-          active-color="primary"
           bg-color="surface"
-          class="w-100"
           :rules="[required]"
-          :append-inner-icon="
-            showCurrentPassword ? 'md:visibility' : 'md:visibility_off'
-          "
-          :type="showCurrentPassword ? 'text' : 'password'"
-          @click:append-inner="showCurrentPassword = !showCurrentPassword"
+          :append-inner-icon="showPassword ? 'md:visibility' : 'md:visibility_off'"
+          :type="showPassword ? 'text' : 'password'"
+          @click:append-inner="showPassword = !showPassword"
+          @update:model-value="errorMessage = ''"
         />
       </div>
 
-      <div class="w-100 d-flex justify-end mt-1">
-        <v-btn
-          type="button"
-          variant="text"
-          color="primaryStrong"
-          density="compact"
-          class="px-0 text-caption font-weight-bold"
-          @click="emit('openForgetPassword')"
-        >
-          Forgot password?
-        </v-btn>
-      </div>
+      <v-alert
+        v-if="errorMessage"
+        type="error"
+        variant="tonal"
+        density="compact"
+        class="text-body-2"
+        role="alert"
+      >
+        {{ errorMessage }}
+      </v-alert>
 
       <v-btn
         type="submit"
@@ -76,7 +82,7 @@
         color="primary"
         rounded="pill"
         height="44"
-        class="mt-2 text-body-1 font-weight-bold"
+        class="text-body-1 font-weight-bold text-none"
         flat
         :disabled="!isFormValid"
         :loading="loadingLogin"
@@ -97,61 +103,46 @@
       variant="text"
       color="grey700"
       class="mt-3 text-caption font-weight-medium text-none"
-      @click="emit('openRegister')"
+      @click="emit('openRegister', emailUser)"
     >
       New to GamaTrain?
-      <span class="ml-1 text-primaryStrong font-weight-bold">Create account</span>
+      <span class="ml-1 text-primaryStrong font-weight-bold">Create an account</span>
     </v-btn>
   </div>
 </template>
 
 <script setup lang="ts">
-const emit = defineEmits(['loginSuccessfull', 'openRegister', 'openRegisterOtp', 'openForgetPassword', 'openOtpCode', 'close'])
+const props = withDefaults(defineProps<{ email?: string }>(), { email: '' })
+const emit = defineEmits<{
+  loginSuccessfull: []
+  openRegister: [email: string]
+  openForgetPassword: [email: string]
+}>()
 
-const { $toast } = useNuxtApp()
-const { email, required } = useValidationRules()
-const { login, loadingLogin, setUserToken } = useAuth()
-const { getProfile, setUser } = useUser()
+const { email: emailRule, required } = useValidationRules()
+const { login, loadingLogin, completeSignIn } = useAuth()
 
-const emailUser = ref('')
+const emailUser = ref(props.email)
 const password = ref('')
-const showCurrentPassword = ref(false)
+const showPassword = ref(false)
 const isFormValid = ref(false)
+const errorMessage = ref('')
 
 const loginUser = async () => {
-  const response = await login({
-    identity: emailUser.value,
-    password: password.value,
-    type: 'request',
-  })
-  if (response.succeeded && response.data) {
-    if (response.data.type == 'loginByOTP') {
-      $toast.success('Otp code sent')
-      emit('openOtpCode', emailUser.value, password.value)
-    }
-    else if (response.data.type == 'register') {
-      $toast.success('Verification code sent.')
-      emit('openRegisterOtp', emailUser.value)
-    }
-    else if (response.data.token) {
-      setUserToken(response.data.token)
-      const profileData = await getProfile(response.data.token)
-      if (profileData.data) {
-        const profile = profileData.data.data!
-        setUser(profile)
-        emit('loginSuccessfull')
-      }
-      else {
-        $toast.error('You are signed in, but we could not load your profile details. Please refresh the page or try again.')
-      }
-    }
+  if (!isFormValid.value || loadingLogin.value) return
+  errorMessage.value = ''
+
+  const response = await login({ email: emailUser.value, password: password.value })
+  if (!response.succeeded || !response.data?.token) {
+    errorMessage.value = response.message || 'We could not sign you in. Check your email and password, then try again.'
+    return
   }
-  else {
-    $toast.error('We could not sign you in. Please check your email and password, then try again.')
+
+  if (await completeSignIn(response.data.token)) {
+    emit('loginSuccessfull')
+    return
   }
+
+  errorMessage.value = 'You are signed in, but we could not load your profile. Refresh the page to continue.'
 }
 </script>
-
-<style scoped>
-
-</style>

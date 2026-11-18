@@ -1,18 +1,3 @@
-import type { ApiResult } from '@/types'
-
-// type request for login by username and password
-// type confirm for login by otpCode
-// type resend_code for send otp code again
-
-export type TypeAuth = 'request' | 'resetpass' | 'resend_code' | 'confirm'
-
-export interface LoginInformationDTO {
-  identity: string
-  password?: string
-  type: string
-  code?: number
-}
-
 export type typeLoginResponse = 'loginByOTP' | 'register'
 export interface LoginResponseDTO {
   type?: typeLoginResponse
@@ -26,13 +11,11 @@ export interface GoogleLoginTokenDTO {
   credential: string
   select_by: string
 }
-export interface RegisterResponseDTO {
-  message: string
+/** Which flow an emailed code belongs to: signing up, or setting a new password. */
+export type AuthCodeMode = 'register' | 'forgetPassword'
+
+/** This backend's sign-in answer (identities/tokens, register, password/reset). */
+export interface AuthTokenDTO {
+  token?: string | null
+  expirationTime?: string | null
 }
-export interface ForgetPasswordResponseDTO {
-  message: string
-}
-export type OTPMode = 'login' | 'register' | 'forgetPassword'
-export type OTPResponseData = LoginResponseDTO | RegisterResponseDTO | ForgetPasswordResponseDTO
-export type OTPResponse = ApiResult<OTPResponseData>
-export type ConfirmPasswordMode = 'register' | 'forgetPassword'
