@@ -85,7 +85,7 @@
         class="text-body-1 font-weight-bold text-none"
         flat
         :disabled="!isFormValid"
-        :loading="loadingLogin"
+        :loading="loadingLogin || loadingCode"
       >
         Sign in
       </v-btn>
@@ -117,10 +117,11 @@ const emit = defineEmits<{
   loginSuccessfull: []
   openRegister: [email: string]
   openForgetPassword: [email: string]
+  codeSent: [email: string, notice: string]
 }>()
 
 const { email: emailRule, required } = useValidationRules()
-const { login, loadingLogin, completeSignIn } = useAuth()
+const { login, loadingLogin, sendLoginCode, loadingCode, completeSignIn } = useAuth()
 
 const emailUser = ref(props.email)
 const password = ref('')
@@ -134,6 +135,18 @@ const loginUser = async () => {
 
   const response = await login({ email: emailUser.value, password: password.value })
   if (!response.succeeded || !response.data?.token) {
+    // A wrong password (or too many of them): email a sign-in code instead, as the old backend did. An email with no account
+    // gets no code, and the password error stays.
+    if (response.reference === 'wrongPassword' || response.reference === 'lockedOut') {
+      const code = await sendLoginCode(emailUser.value)
+      if (code.succeeded) {
+        emit('codeSent', emailUser.value.trim(), response.reference === 'lockedOut'
+          ? 'Too many wrong passwords. We emailed you a code to sign in instead.'
+          : 'Wrong password. We emailed you a code to sign in instead.')
+        return
+      }
+    }
+
     errorMessage.value = response.message || 'We could not sign you in. Check your email and password, then try again.'
     return
   }

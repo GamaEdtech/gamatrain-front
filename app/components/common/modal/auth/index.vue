@@ -9,6 +9,7 @@
         @login-successfull="handleLoginSuccessfull"
         @open-register="openRegisterModal"
         @open-forget-password="openForgetPasswordModal"
+        @code-sent="(email: string, notice: string) => openCodeModal('login', email, notice)"
       />
     </lazy-common-modal-base>
 
@@ -42,8 +43,10 @@
       <common-modal-auth-otp
         :email="emailForAuth"
         :mode="codeMode"
-        @change-email="codeMode === 'register' ? openRegisterModal($event) : openForgetPasswordModal($event)"
+        :notice="codeNotice"
+        @change-email="changeEmail"
         @code-confirmed="openPasswordModal"
+        @login-successfull="handleLoginSuccessfull"
       />
     </lazy-common-modal-base>
 
@@ -85,6 +88,8 @@ const showConfirmPasswordModal = ref(false)
 const emailForAuth = ref('')
 const codeForAuth = ref('')
 const codeMode = ref<AuthCodeMode>('register')
+// Why the code screen opened, when it wasn't asked for (a wrong password).
+const codeNotice = ref('')
 const hasOpenModal = computed(() =>
   showLoginModal.value
   || showRegisterModal.value
@@ -116,8 +121,9 @@ const keepEmail = (email?: string) => {
   if (typeof email === 'string') emailForAuth.value = email
 }
 
-const openCodeModal = (mode: AuthCodeMode, email: string) => {
+const openCodeModal = (mode: AuthCodeMode, email: string, notice = '') => {
   codeMode.value = mode
+  codeNotice.value = notice
   emailForAuth.value = email
   codeForAuth.value = ''
   closeAllModals()
@@ -128,6 +134,13 @@ const openPasswordModal = (code: string) => {
   codeForAuth.value = code
   closeAllModals()
   showConfirmPasswordModal.value = true
+}
+
+// "Change" on the code screen goes back to the step the email came from.
+const changeEmail = (email: string) => {
+  if (codeMode.value === 'register') openRegisterModal(email)
+  else if (codeMode.value === 'forgetPassword') openForgetPasswordModal(email)
+  else openLoginModal(email)
 }
 
 const closeAuthFlow = () => {

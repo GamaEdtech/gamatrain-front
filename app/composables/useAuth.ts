@@ -94,14 +94,18 @@ export const useAuth = () => {
 
   // Calls one of the sign-in endpoints. Never throws: a failure answers succeeded=false with the backend's own message
   // (e.g. "This email already has an account"), which the dialogs show as it is.
-  const authCall = async <T>(loading: Ref<boolean>, request: () => Promise<ApiResult<T>>): Promise<ApiResult<T> & { message?: string }> => {
+  // `reference` names the failure when the backend gives one (e.g. "wrongPassword"), so a dialog can act on it.
+  type AuthAnswer<T> = ApiResult<T> & { message?: string, reference?: string }
+  const authCall = async <T>(loading: Ref<boolean>, request: () => Promise<ApiResult<T>>): Promise<AuthAnswer<T>> => {
     loading.value = true
     try {
       const response = await request()
-      return response.succeeded ? response : { ...response, message: normalizeApiResponseError(response).message }
+      if (response.succeeded) return response
+      const error = normalizeApiResponseError(response)
+      return { ...response, message: error.message, reference: error.errors[0]?.reference }
     }
     catch (err: unknown) {
-      return { succeeded: false, data: null, errors: [], message: normalizeApiCatchError(err).message } as unknown as ApiResult<T> & { message?: string }
+      return { succeeded: false, data: null, errors: [], message: normalizeApiCatchError(err).message } as unknown as AuthAnswer<T>
     }
     finally {
       loading.value = false
@@ -113,6 +117,12 @@ export const useAuth = () => {
   // Sign in with an email and password (this backend; it checks a password it doesn't hold yet with the old backend once).
   const login = (data: { email: string, password: string }) =>
     authCall(loadingLogin, () => post<AuthTokenDTO>('/api/v2/identities/tokens', { username: data.email.trim(), password: data.password }))
+
+  // Sign-in with an emailed code instead of the password (offered after a wrong password, as the old backend did).
+  const sendLoginCode = (email: string) =>
+    authCall(loadingCode, () => post<string>('/api/v2/identities/login/code', { email: email.trim() }))
+  const loginWithCode = (email: string, code: string) =>
+    authCall(loadingCode, () => post<AuthTokenDTO>('/api/v2/identities/tokens/code', { email: email.trim(), code }))
 
   // Sign-up: 1. email a code, 2. check it, 3. code + password (answers a token: the person is signed in).
   const sendRegisterCode = (email: string) =>
@@ -177,6 +187,8 @@ export const useAuth = () => {
     login,
     loadingLogin,
     register,
+    sendLoginCode,
+    loginWithCode,
     sendRegisterCode,
     verifyRegisterCode,
     sendResetCode,

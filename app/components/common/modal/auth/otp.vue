@@ -1,5 +1,14 @@
 <template>
   <div class="w-100 d-flex flex-column bg-surface pa-2">
+    <v-alert
+      v-if="notice"
+      type="info"
+      variant="tonal"
+      density="compact"
+      class="text-body-2 mt-2"
+    >
+      {{ notice }}
+    </v-alert>
     <p class="text-body-2 text-grey600 mt-2 mb-1">
       Enter the 6-digit code we sent to
     </p>
@@ -80,14 +89,15 @@ const CODE_LENGTH = 6
 // The backend accepts a new code once a minute.
 const RESEND_SECONDS = 60
 
-const props = withDefaults(defineProps<{ email: string, mode?: AuthCodeMode }>(), { mode: 'register' })
+const props = withDefaults(defineProps<{ email: string, mode?: AuthCodeMode, notice?: string }>(), { mode: 'register', notice: '' })
 const emit = defineEmits<{
   changeEmail: [email: string]
   codeConfirmed: [code: string]
+  loginSuccessfull: []
 }>()
 
 const { $toast } = useNuxtApp()
-const { verifyRegisterCode, sendRegisterCode, verifyResetCode, sendResetCode, loadingCode } = useAuth()
+const { verifyRegisterCode, sendRegisterCode, verifyResetCode, sendResetCode, sendLoginCode, loginWithCode, loadingCode, completeSignIn } = useAuth()
 
 const otp = ref('')
 const errorMessage = ref('')
@@ -116,6 +126,21 @@ const confirmCode = async () => {
   errorMessage.value = ''
 
   const code = otp.value
+
+  // Signing in with the code: it is the last step, the person is signed in.
+  if (props.mode === 'login') {
+    const answer = await loginWithCode(props.email, code)
+    if (answer.succeeded && answer.data?.token) {
+      if (await completeSignIn(answer.data.token)) emit('loginSuccessfull')
+      else errorMessage.value = 'You are signed in, but we could not load your profile. Refresh the page to continue.'
+      return
+    }
+
+    errorMessage.value = answer.message || 'The code is not correct. Check the email and try again.'
+    otp.value = ''
+    return
+  }
+
   const response = props.mode === 'register'
     ? await verifyRegisterCode(props.email, code)
     : await verifyResetCode(props.email, code)
@@ -133,9 +158,8 @@ const resendCode = async () => {
   resending.value = true
   errorMessage.value = ''
   try {
-    const response = props.mode === 'register'
-      ? await sendRegisterCode(props.email)
-      : await sendResetCode(props.email)
+    const send = { login: sendLoginCode, register: sendRegisterCode, forgetPassword: sendResetCode }[props.mode]
+    const response = await send(props.email)
     if (response.succeeded) {
       otp.value = ''
       $toast.success('We sent you a new code.')
