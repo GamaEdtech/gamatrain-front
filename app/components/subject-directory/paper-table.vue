@@ -38,6 +38,7 @@
           :key="year.id"
           :value="year.id"
           elevation="0"
+          eager
         >
           <h3 class="directory-accordion-heading ma-0 pa-0">
             <v-expansion-panel-title
@@ -49,9 +50,45 @@
               collapse-icon="md:keyboard_arrow_down"
             >
               {{ year.title }}
+              <span
+                v-if="year.count"
+                class="directory-year-count text-grey500 font-weight-medium ml-2"
+              >{{ year.count }} {{ year.count === 1 ? 'paper' : 'papers' }}</span>
             </v-expansion-panel-title>
           </h3>
           <v-expansion-panel-text :id="`${accordionId}-year-${year.id}-panel`">
+            <!-- A year not loaded yet: a real link to the page that renders it (crawlable), loaded here when opened. -->
+            <div
+              v-if="byYear && !year.sessions.length"
+              class="d-flex align-center flex-wrap ga-3 pa-4 text-grey600"
+            >
+              <template v-if="year.list?.error">
+                <span role="alert">Unable to load {{ year.title }} papers.</span>
+                <v-btn
+                  variant="text"
+                  color="brandNavy"
+                  class="text-none"
+                  @click="loadYear(year.id)"
+                >
+                  Retry
+                </v-btn>
+              </template>
+              <template v-else>
+                <v-progress-circular
+                  v-if="year.list?.loading"
+                  indeterminate
+                  size="20"
+                  width="2"
+                  color="primary"
+                />
+                <nuxt-link
+                  :to="{ query: { ...route.query, edu_year: String(year.id) } }"
+                  class="text-brandNavy"
+                >
+                  {{ year.title }} past papers{{ year.count ? ` (${year.count})` : '' }}
+                </nuxt-link>
+              </template>
+            </div>
             <v-expansion-panels
               :model-value="expandedSessions[year.id]"
               class="directory-sessions"
@@ -90,6 +127,21 @@
                 </v-expansion-panel-text>
               </v-expansion-panel>
             </v-expansion-panels>
+            <!-- A year with more papers than one page. -->
+            <div
+              v-if="byYear && year.list?.loaded && year.list.hasMore && year.sessions.length"
+              class="d-flex justify-center py-3"
+            >
+              <v-btn
+                variant="text"
+                color="brandNavy"
+                class="text-none"
+                :loading="year.list.loading"
+                @click="loadYear(year.id)"
+              >
+                More {{ year.title }} papers
+              </v-btn>
+            </div>
           </v-expansion-panel-text>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -216,14 +268,16 @@ const props = defineProps({
   subjectTitle: { type: String, default: '' },
 })
 
+const route = useRoute()
 const {
-  filterButtons, years, list, expandedYears, expandedSessions,
-  selectFilter, clearFilters, refreshPaperTypes, expandSessions, loadMore, retry, loading,
+  filterButtons, years, list, expandedYears, expandedSessions, byYear,
+  selectFilter, clearFilters, refreshPaperTypes, expandSessions, loadMore, loadYear, retry, loading,
 } = await useDirectoryPapers(props)
 
 const downloads = reactive(useDirectoryPaperDownloads())
 
-// Users saw only the newest two years and had to find "Load older papers"; the rest now follows as they scroll.
+// Without the years facet, older papers follow as the user scrolls ("Load older papers" is the fallback).
+// With it, every year is listed from the start and loads when opened.
 const loadMoreArea = ref<HTMLElement | null>(null)
 useAutoLoadMore(loadMoreArea, {
   canLoad: () => list.loaded && list.hasMore && !list.loading && !list.error,
@@ -263,6 +317,10 @@ useAutoLoadMore(loadMoreArea, {
   width: var(--directory-chevron-size);
   height: var(--directory-chevron-size);
   font-size: var(--directory-chevron-size);
+}
+
+.directory-year-count {
+  font-size: 13px;
 }
 
 .directory-accordion-heading {

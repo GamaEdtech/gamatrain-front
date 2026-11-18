@@ -61,6 +61,8 @@ export interface DirectoryPaperDownload {
 // edu_year/edu_month; Paper and Variant as test_type/variant.
 export interface DirectoryPaperQuery {
   lesson: string | number
+  /** 'years': only each year with its paper count (the new backend; gama-api answers the list). */
+  facet?: 'years'
   edu_year?: string
   edu_month?: string
   test_type?: string
@@ -88,6 +90,10 @@ export interface DirectoryYearGroup {
   id: number
   title: string
   sessions: { id: number, title: string, papers: DirectoryPaper[] }[]
+  /** The year's paper count, when the backend answered the years first. */
+  count?: number
+  /** The year's own loaded papers, when the years came first (null until it is opened). */
+  list?: DirectoryPaperList | null
 }
 
 export interface DirectoryFilterOption {
