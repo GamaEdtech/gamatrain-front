@@ -148,6 +148,25 @@
             {{ hasDraft ? 'md:cleaning_services' : 'md:wand_stars' }}
           </v-icon>
         </v-btn>
+
+        <!-- Account findings for the admin only; never part of the reply. Rendered as text, not HTML. -->
+        <v-alert
+          v-if="aiNotes.length"
+          type="info"
+          variant="tonal"
+          density="compact"
+          class="w-100 mt-2"
+          title="Customer account (only you see this)"
+        >
+          <ul class="ml-4">
+            <li
+              v-for="(note, index) in aiNotes"
+              :key="index"
+            >
+              {{ note }}
+            </li>
+          </ul>
+        </v-alert>
       </div>
     </div>
     <v-btn
@@ -240,6 +259,8 @@ const getReplyAuthor = (reply: AdminReplyTicketListDTO) => {
 }
 
 // The editor holds HTML, so an "empty" one can still be "<p></p>" or "<p>&nbsp;</p>": check its text.
+const aiNotes = ref<string[]>([])
+
 const hasDraft = computed(() => bodyReply.value.replace(/<[^>]*>|&nbsp;/g, '').trim().length > 0)
 
 // The prompt and the support handbook live on the backend (POST admin/tickets/{id}/ai-replies).
@@ -250,12 +271,13 @@ const runAiReply = async () => {
   const polish = hasDraft.value
   try {
     loadingAiReply.value = true
-    const reply = await generateAiResponse(contactData.value.id, polish
+    const result = await generateAiResponse(contactData.value.id, polish
       ? { mode: 'Polish', draft: bodyReply.value }
       : { mode: 'Generate' })
 
-    if (reply) {
-      bodyReply.value = reply
+    if (result?.reply) {
+      bodyReply.value = result.reply
+      aiNotes.value = result.notes
       $toast.success(polish ? 'Reply polished successfully!' : 'AI reply generated successfully!')
     }
   }

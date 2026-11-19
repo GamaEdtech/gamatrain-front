@@ -316,7 +316,7 @@ export const useContactUsAdmin = () => {
     }
   }
 
-  // Returns the suggested reply HTML, or null when it failed (an error toast is already shown).
+  // Returns the suggested reply HTML and the account notes, or null when it failed (an error toast is already shown).
   const generateAiResponse = async (id: string | number, payload: AdminContactUsAiReplyDTO) => {
     loadingGenerateAiResponse.value = true
 
@@ -331,7 +331,7 @@ export const useContactUsAdmin = () => {
         return null
       }
 
-      return response.data.reply
+      return { reply: response.data.reply, notes: response.data.notes ?? [] }
     }
     catch (err: unknown) {
       handleError(err)
