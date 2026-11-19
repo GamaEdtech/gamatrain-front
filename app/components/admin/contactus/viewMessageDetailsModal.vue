@@ -130,41 +130,22 @@
           :features="['bold', 'italic', 'list', 'link', 'image', 'mediaEmbed']"
           :rules="[required]"
         />
-        <v-btn
-          size="x-small"
-          height="40"
-          width="40"
-          icon
-          color="primary"
-          flat
-          :loading="loadingAiReply"
-          :disabled="loadingData || loadingReplyList || !contactData"
-          class="position-absolute position-button-ai"
-          @click="generateAiReply"
-        >
-          <v-icon
-            size="x-large"
-            color="white"
-          >
-            md:wand_stars
-          </v-icon>
-        </v-btn>
-
+        <!-- One AI button: an empty editor gets a new reply, typed text gets polished. -->
         <v-btn
           color="primary"
           variant="outlined"
           flat
-          class="text-body-1 font-weight-bold"
-          :loading="loadingPolishReply"
-          :disabled="!bodyReply.trim() || loadingPolishReply || !contactData"
-          @click="polishReplyWithAi"
+          class="text-h5 font-weight-bold"
+          :loading="loadingAiReply"
+          :disabled="loadingAiReply || loadingData || loadingReplyList || !contactData"
+          @click="runAiReply"
         >
-          Polish with AI
+          {{ hasDraft ? 'Polish with AI' : 'Generate with AI' }}
           <v-icon
             color="primary"
             class="ml-1"
           >
-            md:cleaning_services
+            {{ hasDraft ? 'md:cleaning_services' : 'md:wand_stars' }}
           </v-icon>
         </v-btn>
       </div>
@@ -220,7 +201,6 @@ const contactData = ref<AdminContactUsDetailDTO>()
 const bodyReply = ref('')
 const selectedFromEmail = ref('')
 const loadingAiReply = ref(false)
-const loadingPolishReply = ref(false)
 
 const replyValid = computed(() => {
   if (bodyReply.value.length == 0 || selectedFromEmail.value == null || selectedFromEmail.value.length == 0) {
@@ -259,43 +239,28 @@ const getReplyAuthor = (reply: AdminReplyTicketListDTO) => {
   return reply.creationUser || contactData.value?.fullName || 'Customer'
 }
 
+// The editor holds HTML, so an "empty" one can still be "<p></p>" or "<p>&nbsp;</p>": check its text.
+const hasDraft = computed(() => bodyReply.value.replace(/<[^>]*>|&nbsp;/g, '').trim().length > 0)
+
 // The prompt and the support handbook live on the backend (POST admin/tickets/{id}/ai-replies).
-const generateAiReply = async () => {
+const runAiReply = async () => {
   if (!contactData.value)
     return
 
+  const polish = hasDraft.value
   try {
     loadingAiReply.value = true
-    const reply = await generateAiResponse(contactData.value.id, { mode: 'Generate' })
+    const reply = await generateAiResponse(contactData.value.id, polish
+      ? { mode: 'Polish', draft: bodyReply.value }
+      : { mode: 'Generate' })
 
     if (reply) {
       bodyReply.value = reply
-      $toast.success('AI reply generated successfully!')
+      $toast.success(polish ? 'Reply polished successfully!' : 'AI reply generated successfully!')
     }
   }
   finally {
     loadingAiReply.value = false
-  }
-}
-
-const polishReplyWithAi = async () => {
-  if (!contactData.value || !bodyReply.value.trim())
-    return
-
-  try {
-    loadingPolishReply.value = true
-    const reply = await generateAiResponse(contactData.value.id, {
-      mode: 'Polish',
-      draft: bodyReply.value,
-    })
-
-    if (reply) {
-      bodyReply.value = reply
-      $toast.success('Reply polished successfully!')
-    }
-  }
-  finally {
-    loadingPolishReply.value = false
   }
 }
 
@@ -363,10 +328,6 @@ onMounted(async () => {
 }
 .reply-bubble {
   max-width: 80%;
-}
-.position-button-ai {
-  right: 10px;
-  bottom: 60px;
 }
 :deep(.container-body img){
   width : 100% !important;
