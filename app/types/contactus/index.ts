@@ -78,4 +78,6 @@ export interface AdminContactUsAiReplyDTO {
 
 export interface AdminContactUsAiResponseDTO {
   reply: string | null
+  /** What the backend found on the customer's account (plans, payments, quota), with ids. Admin only, plain text. */
+  notes?: string[] | null
 }
