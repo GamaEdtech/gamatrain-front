@@ -99,6 +99,11 @@ function handleUpdate() {
     nuxtApp.$toast?.error('Please enter a valid Tuition Fee')
     return
   }
+  if (hasTuition.value && Number(tuitionFee.value) === Number(tuition.value)) {
+    nuxtApp.$toast?.info('Nothing changed.')
+    isEditMode.value = false
+    return
+  }
   submitLoader.value = true
   useApiService
     .post(`/api/v2/schools/${route.params.id}/contributions`, { tuition: tuitionFee.value })

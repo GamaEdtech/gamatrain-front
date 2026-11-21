@@ -101,6 +101,11 @@ function handleUpdate() {
     nuxtApp.$toast?.error('Please enter a valid Description')
     return
   }
+  if (value === description.value) {
+    nuxtApp.$toast?.info('Nothing changed.')
+    cancel()
+    return
+  }
   decSubmitLoader.value = true
   useApiService
     .post(`/api/v2/schools/${route.params.id}/contributions`, { description: value })

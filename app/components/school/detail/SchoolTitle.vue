@@ -82,6 +82,11 @@ function handleUpdate() {
     nuxtApp.$toast?.error('Please enter a valid Name')
     return
   }
+  if (name === contentData.value.name?.trim()) {
+    nuxtApp.$toast?.info('Nothing changed.')
+    isEditing.value = false
+    return
+  }
   nameSubmitLoader.value = true
   useApiService
     .post(`/api/v2/schools/${route.params.id}/contributions`, { name })
