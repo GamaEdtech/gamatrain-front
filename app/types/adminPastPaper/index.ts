@@ -17,6 +17,57 @@ export interface AdminPastPaperDTO {
   edu_month?: string
 }
 
+/** The file types of a paper the admin review can open. */
+export type AdminPastPaperFileType = 'pdf' | 'word' | 'answer' | 'extra'
+
+/** A main file of a paper (question, Word, answer), as the paper detail lists it. */
+export interface AdminPastPaperMainFileDTO {
+  exist: boolean
+  size: string | number
+  ext: string | false
+}
+
+/** An extra file of a paper. */
+export interface AdminPastPaperExtraFileDTO {
+  id: string
+  type_title?: string | null
+  size?: string
+  ext?: string
+}
+
+/** One paper for the admin review (GET admin/pastpapers/{id}): gama-api's paper detail plus the review's fields. */
+export interface AdminPastPaperDetailDTO {
+  id: string
+  title: string
+  status: string
+  /** HTML-escaped text. */
+  description?: string
+  section_title?: string
+  base_title?: string
+  course_title?: string
+  lesson_title?: string
+  test_type_title?: string
+  edu_year?: string
+  edu_month?: string
+  edu_month_title?: string
+  edu_session?: string
+  variant?: string
+  ref_score?: string
+  subdate?: string
+  up_date?: string | null
+  q_file_pages?: string
+  a_file_pages?: string
+  ownerUserId?: number | null
+  /** The last review's notes ("- " lines). */
+  reviewNote?: string | null
+  files?: {
+    pdf?: AdminPastPaperMainFileDTO | null
+    word?: AdminPastPaperMainFileDTO | null
+    answer?: AdminPastPaperMainFileDTO | null
+    extra?: AdminPastPaperExtraFileDTO[]
+  }
+}
+
 export interface GetAdminPastPaperParams {
   page: number
   pageSize: number

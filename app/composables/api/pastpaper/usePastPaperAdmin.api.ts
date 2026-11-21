@@ -1,5 +1,7 @@
 import type {
+  AdminPastPaperDetailDTO,
   AdminPastPaperDTO,
+  AdminPastPaperFileType,
   ApiResult,
   GetAdminPastPaperParams,
   ReviewPastPaperDTO,
@@ -101,5 +103,47 @@ export const usePastPaperAdmin = () => {
     }
   }
 
-  return { data, totalCount, pageCount, loadingGetData, loadingReview, loadingDeleteItem, getData, review, setScore, deleteItem }
+  /** One paper in any status, for the review: its fields, which files it has and the last review's note. */
+  const getPaper = async (id: string | number) => {
+    try {
+      const response = await useApiService.get<ApiResult<AdminPastPaperDetailDTO>>(`${BASE}/${id}`)
+      if (response.succeeded && response.data) return response.data
+      handleApiResponseError(response)
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+    }
+    return null
+  }
+
+  /** A short signed link to one of a paper's files, in any status; nothing is charged. */
+  const getFileLink = async (id: string | number, type: AdminPastPaperFileType, extraId?: string | number) => {
+    try {
+      const response = await useApiService.get<ApiResult<{ url: string }>>(
+        `${BASE}/${id}/files/${type}`,
+        extraId === undefined ? undefined : { extraId },
+      )
+      if (response.succeeded && response.data?.url) return response.data.url
+      handleApiResponseError(response)
+    }
+    catch (err: unknown) {
+      handleApiCatchError(err)
+    }
+    return null
+  }
+
+  return {
+    data,
+    totalCount,
+    pageCount,
+    loadingGetData,
+    loadingReview,
+    loadingDeleteItem,
+    getData,
+    getPaper,
+    getFileLink,
+    review,
+    setScore,
+    deleteItem,
+  }
 }
