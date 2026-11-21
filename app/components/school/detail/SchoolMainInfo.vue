@@ -189,30 +189,44 @@ function startEdit(field) {
 const urlPattern = /^(https?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-// Builds the contribution body and the matching field on the school, or returns an error message.
+const FIELD_LABELS = { website: 'website', email: 'email', phone: 'phone number', address: 'address' }
+
+// Builds the contribution body and the matching field on the school, or returns an error message. An empty value can't
+// remove a detail (the review would keep the school's), and an unchanged one changes nothing: neither is sent.
 function buildPayload(field) {
+  let key = 'address'
+  let value = form.address.trim()
   if (field === 'website') {
-    const value = form.website.trim()
+    key = 'webSite'
+    value = form.website.trim()
     if (value && !urlPattern.test(value)) return { error: 'Please enter a valid website URL' }
-    return { body: { webSite: value || null }, update: { webSite: value } }
   }
-  if (field === 'email') {
-    const value = form.email.trim()
+  else if (field === 'email') {
+    key = 'email'
+    value = form.email.trim()
     if (value && !emailPattern.test(value)) return { error: 'Please enter a valid Email' }
-    return { body: { email: value || null }, update: { email: value } }
   }
-  if (field === 'phone') {
-    const value = form.phones.map(p => p.trim()).filter(Boolean).join('/')
-    return { body: { phoneNumber: value || null }, update: { phoneNumber: value } }
+  else if (field === 'phone') {
+    key = 'phoneNumber'
+    value = form.phones.map(p => p.trim()).filter(Boolean).join('/')
   }
-  const value = form.address.trim()
-  return { body: { address: value || null }, update: { address: value } }
+  if (!value) {
+    return { error: `Please enter the ${FIELD_LABELS[field]}. If the current one is wrong, use "Report a problem with this page" below.` }
+  }
+  const current = field === 'phone' ? phones.value.join('/') : (props.content[key] || '').trim()
+  if (value === current) return { unchanged: true }
+  return { body: { [key]: value }, update: { [key]: value } }
 }
 
 function submit() {
-  const { body, update, error } = buildPayload(editing.value)
+  const { body, update, error, unchanged } = buildPayload(editing.value)
   if (error) {
     nuxtApp.$toast?.error(error)
+    return
+  }
+  if (unchanged) {
+    nuxtApp.$toast?.info('Nothing changed.')
+    editing.value = null
     return
   }
   saving.value = true
