@@ -65,12 +65,12 @@ export const useAuth = () => {
   const isBackendToken = (value: string | null) => !!value && value.split('|').length === 2
 
   const logout = async () => {
-    const request = isBackendToken(token.value)
-      ? useApiService.post('/api/v2/identities/tokens/revoke')
-      : useApiService.get('/api/v2/legacy-auth/logout')
-    request.catch((error) => {
-      console.warn('Logout API call failed:', error)
-    })
+    // A session started on the old backend can't be revoked here: forgetting its JWT is enough, it expires on its own.
+    if (isBackendToken(token.value)) {
+      useApiService.post('/api/v2/identities/tokens/revoke').catch((error) => {
+        console.warn('Logout API call failed:', error)
+      })
+    }
 
     clearAuth()
 
