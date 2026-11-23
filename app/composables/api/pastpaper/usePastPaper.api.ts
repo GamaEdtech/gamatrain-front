@@ -102,6 +102,7 @@ export const usePastPaper = (options: { admin?: boolean } = {}) => {
       file_answer: item.file_answer,
       edu_year: item.edu_year,
       edu_month: item.edu_month,
+      ...(item.variant ? { variant: item.variant } : {}),
       file_extra: item.file_extra ?? [],
       state: item.state,
       area: item.area,
@@ -205,6 +206,7 @@ export const usePastPaper = (options: { admin?: boolean } = {}) => {
     if (item.file_answer !== undefined) params.file_answer = item.file_answer
     if (item.edu_year !== undefined) params.edu_year = item.edu_year
     if (item.edu_month !== undefined) params.edu_month = item.edu_month
+    if (item.variant !== undefined) params.variant = item.variant
     if (item.file_extra !== undefined) params.file_extra = item.file_extra
     if (item.state !== undefined) params.state = item.state
     if (item.area !== undefined) params.area = item.area

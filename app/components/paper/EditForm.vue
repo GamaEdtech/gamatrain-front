@@ -194,6 +194,22 @@
 
         <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
           <common-gombo-box
+            v-model="paper.variant"
+            label="Variant (optional)"
+            :items="variants"
+            :loading-value="loadingGetItemById"
+            rounded="pill"
+            height="48"
+            base-color="grey400"
+            color="primary"
+            density="compact"
+            :defalut-lable="false"
+            :disabled="!areMainFieldsEditable"
+          />
+        </div>
+
+        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
+          <common-gombo-box
             v-model="paper.holding_level"
             label="Testing Scope"
             :items="HOLDING_LEVEL_LIST"
@@ -624,6 +640,18 @@ const { required, minLength } = useValidationRules()
 const { uploadItemFile: uploadFile } = usePastPaper({ admin: props.admin })
 const { $toast } = useNuxtApp()
 
+// The variants (nv, 1, 2, A...), from the types list.
+const variants = ref<{ id: string, title: string }[]>([])
+const loadVariants = async () => {
+  try {
+    const response = await useApiService.get<ApiResult<{ id: string, title: string }[]>>('/api/v2/search/types', { type: 'variant' })
+    variants.value = response.succeeded && Array.isArray(response.data) ? response.data.map(item => ({ id: String(item.id), title: item.title })) : []
+  }
+  catch {
+    variants.value = []
+  }
+}
+
 const isFormValid = ref(false)
 const hasUploadInProgress = computed(() => uploadingFileKeys.value.length > 0)
 const paperStatus = ref('')
@@ -644,6 +672,7 @@ const paper = ref<PaperForm>({
   level: '',
   edu_year: '',
   edu_month: '',
+  variant: '',
   holding_level: '',
   title: '',
   description: '',
@@ -922,6 +951,8 @@ const applyPaperData = (item: PastPaperDetailDTO) => {
   paper.value.level = getNumber(item.level, 2)
   paper.value.edu_year = item.edu_year || ''
   paper.value.edu_month = item.edu_month || ''
+  // 0 means no variant on gama-api.
+  paper.value.variant = item.variant && String(item.variant) !== '0' ? String(item.variant) : ''
   paper.value.holding_level = getNumber(item.holding_level, 4)
   paper.value.title = item.title || ''
   paper.value.description = item.description || ''
@@ -984,6 +1015,7 @@ const initData = async () => {
     getItemById(paperId.value),
     getBoards(),
     getExtraTypeFile('test_extra_file'),
+    loadVariants(),
   ])
 
   if (paperResponse.data) {

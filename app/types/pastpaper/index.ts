@@ -141,6 +141,7 @@ export interface PastPaperCreateDTO {
   file_answer: string
   edu_year: string | number
   edu_month: string | number
+  variant?: string | number
   file_extra?: PastPaperExtraFileCreateDTO[]
   state: string
   area: string
@@ -163,6 +164,7 @@ export interface PastPaperEditDTO {
   file_answer?: string
   edu_year?: string | number
   edu_month?: string | number
+  variant?: string | number
   file_extra?: PastPaperExtraFileCreateDTO[]
   state?: string
   area?: string
@@ -185,6 +187,7 @@ export interface PastPaperCreatePayloadDTO {
   file_answer: string
   edu_year: string | number
   edu_month: string | number
+  variant?: string | number
   file_extra: PastPaperExtraFileCreateDTO[]
   state: string
   area: string

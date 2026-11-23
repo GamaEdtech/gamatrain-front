@@ -74,6 +74,21 @@ export interface GetAdminPastPaperParams {
   status?: number | null
   title?: string
   uid?: string | number | null
+  /** Exact filters, as the backend names them: board, grade, subject, paper type, year, month, variant. */
+  section?: string | number | null
+  base?: string | number | null
+  lesson?: string | number | null
+  test_type?: string | number | null
+  edu_year?: string | number | null
+  edu_month?: string | number | null
+  variant?: string | number | null
+  id?: string | number | null
+  code?: string | null
+  /** 1 a paper, 0 not one. */
+  is_paper?: number | null
+  refScore?: number | null
+  /** idasc or iddesc; newest first when unset. */
+  order?: string | null
 }
 
 export interface ReviewPastPaperDTO {
