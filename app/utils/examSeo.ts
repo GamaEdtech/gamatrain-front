@@ -1,4 +1,4 @@
-import type { ExamPageDetailDTO } from '@/types'
+import type { ExamPageDetailDTO, ExamReviewsDTO } from '@/types'
 import { contentPath } from '@/utils/contentPath'
 
 // The exam page's title, H1 and meta description, worded the way people search.
@@ -84,7 +84,7 @@ const toIsoDate = (value?: string) => {
 
 // The fields of the page's Quiz node (merged over the LearningResource node by useSeoSchema().buildSchema):
 // the sample questions without their answers, the paper it's based on, how often it's viewed and taken.
-export const examQuizSchema = (exam: ExamPageDetailDTO): Record<string, unknown> => {
+export const examQuizSchema = (exam: ExamPageDetailDTO, reviews?: ExamReviewsDTO | null): Record<string, unknown> => {
   const minutes = Number(exam.azmoon_time) || 0
   const author = [exam.first_name, exam.last_name].filter(Boolean).join(' ')
   return {
@@ -105,6 +105,19 @@ export const examQuizSchema = (exam: ExamPageDetailDTO): Record<string, unknown>
         'name': exam.paper.title,
         'url': `${SITE_URL}${contentPath('paper', exam.paper.id, exam.paper.slug)}`,
       },
+    }),
+    // The rating of students who took it (shown reviews only), and a few of their comments.
+    ...(reviews?.count && reviews.average && {
+      aggregateRating: { '@type': 'AggregateRating', 'ratingValue': reviews.average, 'ratingCount': reviews.count, 'bestRating': 5, 'worstRating': 1 },
+    }),
+    ...(reviews?.items?.length && {
+      review: reviews.items.slice(0, 5).map(item => ({
+        '@type': 'Review',
+        'author': { '@type': 'Person', 'name': item.name || 'Student' },
+        'datePublished': toIsoDate(item.date),
+        'reviewBody': item.comment || undefined,
+        'reviewRating': { '@type': 'Rating', 'ratingValue': item.rating, 'bestRating': 5, 'worstRating': 1 },
+      })),
     }),
     'interactionStatistic': [
       { '@type': 'InteractionCounter', 'interactionType': 'https://schema.org/ViewAction', 'userInteractionCount': Number(exam.views) || 0 },

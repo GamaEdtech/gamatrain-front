@@ -324,6 +324,7 @@ const items = computed(() => [
       { title: 'Exams', link: '/admin/exams', icon: 'md:assignment_outlined', badgeKey: 'Exams' },
       { title: 'Participants', link: '/admin/exam-participations', icon: 'md:groups_outlined' },
       { title: 'Question bank', link: '/admin/exam-questions', icon: 'md:help_outline', badgeKey: 'ExamQuestions' },
+      { title: 'Reviews', link: '/admin/exam-reviews', icon: 'md:star_outline' },
     ],
   },
   {
