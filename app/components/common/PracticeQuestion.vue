@@ -28,16 +28,22 @@
       />
     </v-card>
 
-    <v-btn
+    <div
       v-if="examId"
-      color="primary"
-      size="large"
-      rounded="lg"
-      class="mt-4 text-none start-test-btn"
-      @click="startExam"
+      class="d-flex flex-column flex-sm-row align-sm-center ga-2 ga-sm-4 mt-4"
     >
-      Start the full test for your score
-    </v-btn>
+      <v-btn
+        color="primary"
+        size="large"
+        rounded="lg"
+        class="text-none"
+        prepend-icon="md:play_arrow"
+        @click="startExam"
+      >
+        Start the full test
+      </v-btn>
+      <span class="text-body-2 text-medium-emphasis">See your score</span>
+    </div>
   </section>
 </template>
 
@@ -92,25 +98,3 @@ onMounted(async () => {
   }
 })
 </script>
-
-<style scoped>
-/* A long label wraps instead of running past the button, and the button fills the width on a phone. */
-.start-test-btn {
-  height: auto !important;
-  min-height: 44px;
-  max-width: 100%;
-  padding-block: 10px;
-}
-
-.start-test-btn :deep(.v-btn__content) {
-  white-space: normal;
-  line-height: 1.35;
-  text-align: center;
-}
-
-@media (max-width: 600px) {
-  .start-test-btn {
-    width: 100%;
-  }
-}
-</style>
