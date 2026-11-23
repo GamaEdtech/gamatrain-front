@@ -634,8 +634,7 @@ const {
   loadingExtraTypeFile,
 } = useBoard()
 const { getItemById, loadingGetItemById, editItem, loadingEditItem } = usePastPaper({ admin: props.admin })
-const { downloadFile, loadingDownloadPastPaperFile } = usePastPaperDownload()
-const { getFileLink } = usePastPaperAdmin()
+const { getFileLink, loadingFileLink } = usePastPaper({ admin: props.admin })
 const { required, minLength } = useValidationRules()
 const { uploadItemFile: uploadFile } = usePastPaper({ admin: props.admin })
 const { $toast } = useNuxtApp()
@@ -730,17 +729,13 @@ const downloadExistingFile = async (
   type: 'q_word' | 'q_pdf' | 'a_file' | 'extra',
   extraId?: string | number | null,
 ) => {
-  if (loadingDownloadPastPaperFile.value || (type === 'extra' && !extraId)) return
+  if (loadingFileLink.value || (type === 'extra' && !extraId)) return
 
-  // An admin opens the stored file through the review link (any status, nothing charged).
-  if (props.admin) {
-    const kinds = { q_pdf: 'pdf', q_word: 'word', a_file: 'answer', extra: 'extra' } as const
-    const url = await getFileLink(paperId.value, kinds[type], extraId || undefined)
-    if (url && import.meta.client) window.open(url, '_blank', 'noopener')
-    return
-  }
-
-  await downloadFile(paperId.value, type, extraId || undefined)
+  // The stored file, through a short signed link from this backend: the teacher's own paper, or any paper for an admin.
+  // Any status, nothing charged (until 2026-11-23 a teacher's download went to gama-api).
+  const kinds = { q_pdf: 'pdf', q_word: 'word', a_file: 'answer', extra: 'extra' } as const
+  const url = await getFileLink(paperId.value, kinds[type], extraId || undefined)
+  if (url && import.meta.client) window.open(url, '_blank', 'noopener')
 }
 
 const getTopicsFromItem = (item: PastPaperDetailDTO) => {
