@@ -656,7 +656,10 @@ const isFormValid = ref(false)
 const hasUploadInProgress = computed(() => uploadingFileKeys.value.length > 0)
 const paperStatus = ref('')
 const editableStatusList = ['0', '2', '3']
+// A teacher changes the main fields only while the paper waits for review or was sent back; an admin, in any status
+// (the admin edit keeps the paper's status).
 const areMainFieldsEditable = computed(() => {
+  if (props.admin) return true
   return paperStatus.value
     ? editableStatusList.includes(paperStatus.value)
     : true
