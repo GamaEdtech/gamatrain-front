@@ -59,53 +59,13 @@
       </v-btn>
     </div>
 
-    <!-- The papers' own details: board, grade and subject narrow each other; then type, session, variant and review. -->
+    <!-- The papers' own details: board, grade and subject (the shared type filters), then type, session, variant and review. -->
     <div class="w-100 d-flex flex-wrap align-center ga-2 mt-2">
-      <v-autocomplete
-        v-model="filters.section"
-        :items="boards"
-        item-title="title"
-        item-value="id"
-        label="Board"
-        density="compact"
-        hide-details
-        clearable
-        rounded="pill"
-        variant="outlined"
-        class="filter-field"
-        @update:model-value="changeBoard"
-      />
-      <v-autocomplete
-        v-model="filters.base"
-        :items="grades"
-        item-title="title"
-        item-value="id"
-        label="Grade"
-        density="compact"
-        hide-details
-        clearable
-        rounded="pill"
-        variant="outlined"
-        class="filter-field"
-        :disabled="!filters.section"
-        :loading="loadingGrade"
-        @update:model-value="changeGrade"
-      />
-      <v-autocomplete
-        v-model="filters.lesson"
-        :items="subjects"
-        item-title="title"
-        item-value="id"
-        label="Subject"
-        density="compact"
-        hide-details
-        clearable
-        rounded="pill"
-        variant="outlined"
-        class="filter-field"
-        :disabled="!filters.base"
-        :loading="loadingSubject"
-        @update:model-value="search"
+      <admin-common-type-filters
+        v-model:board-id="filters.section"
+        v-model:grade-id="filters.base"
+        v-model:subject-id="filters.lesson"
+        @change="changeTypes"
       />
       <v-autocomplete
         v-model="filters.test_type"
@@ -507,9 +467,9 @@ const title = ref('')
 const codeOrId = ref('')
 
 const emptyFilters = () => ({
-  section: null as string | number | null,
-  base: null as string | number | null,
-  lesson: null as string | number | null,
+  section: null as string | null,
+  base: null as string | null,
+  lesson: null as string | null,
   test_type: null as string | number | null,
   edu_year: null as string | number | null,
   edu_month: null as string | number | null,
@@ -520,22 +480,8 @@ const emptyFilters = () => ({
 })
 const filters = ref(emptyFilters())
 
-const {
-  data: boards,
-  getData: getBoards,
-  grades,
-  getGrades,
-  resetGrades,
-  loadingGrade,
-  subjects,
-  getSubjects,
-  resetSubjects,
-  loadingSubject,
-  classifications,
-  getClassification,
-  resetClassifications,
-  loadingClassification,
-} = useBoard()
+// The paper types belong to a board: they follow the board picked in the type filters.
+const { classifications, getClassification, resetClassifications, loadingClassification } = useBoard()
 
 // The variants (nv, 1, 2, A...), from the types list.
 const variants = ref<{ id: string, title: string }[]>([])
@@ -565,21 +511,14 @@ const fetchPapers = async () => {
   })
 }
 
-const changeBoard = async (value: string | number | null) => {
-  filters.value.base = null
-  filters.value.lesson = null
-  filters.value.test_type = null
-  resetGrades()
-  resetSubjects()
-  resetClassifications()
-  if (value) await Promise.all([getGrades(value), getClassification(value)])
-  await search()
-}
-
-const changeGrade = async (value: string | number | null) => {
-  filters.value.lesson = null
-  resetSubjects()
-  if (value) await getSubjects(value)
+let typesBoard: string | null = null
+const changeTypes = async () => {
+  if (filters.value.section !== typesBoard) {
+    typesBoard = filters.value.section
+    filters.value.test_type = null
+    resetClassifications()
+    if (typesBoard) await getClassification(typesBoard)
+  }
   await search()
 }
 
@@ -591,8 +530,7 @@ const clearCodeOrId = async () => {
 const clearFilters = async () => {
   codeOrId.value = ''
   filters.value = emptyFilters()
-  resetGrades()
-  resetSubjects()
+  typesBoard = null
   resetClassifications()
   await search()
 }
@@ -737,7 +675,7 @@ const confirmDelete = async () => {
 }
 
 onMounted(async () => {
-  await Promise.all([fetchPapers(), getBoards(), loadVariants()])
+  await Promise.all([fetchPapers(), loadVariants()])
 })
 </script>
 
