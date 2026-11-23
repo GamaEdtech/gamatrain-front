@@ -184,7 +184,7 @@ const fetch = async () => {
     if (role.value) query.role = role.value
     if (text.value) query.text = text.value
     if (schoolId.value) query.schoolId = schoolId.value
-    const response = await useApiService.get<ApiResult<SchoolMemberList>>('/api/v2/admin/school-members', query)
+    const response = await useApiService.get<ApiResult<SchoolMemberList>>('/api/v2/admin/schools/members', query)
     if (response.succeeded && response.data) {
       items.value = response.data.items
       total.value = response.data.total
