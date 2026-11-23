@@ -364,6 +364,8 @@ export interface ExamReviewDTO {
   status: string | null
   rejectionComment: string | null
   date: string
+  /** Only on the caller's own review: until when it can be changed (30 minutes after posting). */
+  editableUntil?: string | null
 }
 
 export interface ExamReviewsDTO {

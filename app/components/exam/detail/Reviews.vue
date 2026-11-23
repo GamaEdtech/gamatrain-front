@@ -53,7 +53,7 @@
       </div>
     </v-card>
 
-    <!-- The caller's own review: write or change it once they finished the exam. -->
+    <!-- The caller's own review: write it once they finished the exam; change it for 30 minutes after posting. -->
     <v-card
       v-if="summary?.canReview || summary?.mine"
       rounded="xl"
@@ -70,46 +70,56 @@
       >
         Your review is hidden{{ summary.mine.rejectionComment ? `: ${summary.mine.rejectionComment}` : '.' }}
       </v-alert>
-      <v-rating
-        v-model="rating"
-        hover
-        color="warning"
-        active-color="warning"
-        aria-label="Your rating"
-      />
-      <v-textarea
-        v-model="comment"
-        label="What did you think? (optional)"
-        variant="outlined"
-        rounded="lg"
-        rows="3"
-        auto-grow
-        counter="1000"
-        maxlength="1000"
-        hide-details="auto"
-      />
-      <div class="d-flex flex-wrap ga-2">
-        <v-btn
-          color="primary"
-          rounded="lg"
-          class="text-none"
-          :disabled="!rating"
-          :loading="saving"
-          @click="save"
+      <!-- Posted and no longer changeable: shown as it stands. -->
+      <template v-if="locked">
+        <v-rating
+          :model-value="summary?.mine?.rating ?? 0"
+          readonly
+          density="compact"
+          color="warning"
+          active-color="warning"
+          aria-label="Your rating"
+        />
+        <p
+          v-if="summary?.mine?.comment"
+          class="text-body-2 text-grey700 comment"
         >
-          {{ summary?.mine ? 'Update review' : 'Post review' }}
-        </v-btn>
-        <v-btn
-          v-if="summary?.mine"
-          variant="text"
+          {{ summary.mine.comment }}
+        </p>
+      </template>
+      <template v-else>
+        <v-rating
+          v-model="rating"
+          hover
+          color="warning"
+          active-color="warning"
+          aria-label="Your rating"
+        />
+        <v-textarea
+          v-model="comment"
+          label="What did you think? (optional)"
+          variant="outlined"
           rounded="lg"
-          class="text-none"
-          :disabled="saving"
-          @click="remove"
-        >
-          Delete
-        </v-btn>
-      </div>
+          rows="3"
+          auto-grow
+          counter="1000"
+          maxlength="1000"
+          hide-details="auto"
+        />
+        <div class="d-flex flex-wrap align-center ga-3">
+          <v-btn
+            color="primary"
+            rounded="lg"
+            class="text-none"
+            :disabled="!rating"
+            :loading="saving"
+            @click="save"
+          >
+            {{ summary?.mine ? 'Update review' : 'Post review' }}
+          </v-btn>
+          <span class="text-caption text-grey500">{{ windowHint }}</span>
+        </div>
+      </template>
     </v-card>
     <span
       v-else-if="!isAuthenticated"
@@ -192,7 +202,7 @@ const emit = defineEmits<{ changed: [] }>()
 
 const route = useRoute()
 const { isAuthenticated } = useAuth()
-const { getReviews, saveReview, deleteReview, saving } = useExamReviews()
+const { getReviews, saveReview, saving } = useExamReviews()
 const { $toast } = useNuxtApp()
 
 const summary = ref<ExamReviewsDTO | null>(props.initial)
@@ -201,6 +211,21 @@ const page = ref(1)
 const loadingMore = ref(false)
 const rating = ref(0)
 const comment = ref('')
+
+// A review can be changed for 30 minutes after posting, then it stands (and can't be deleted). `now` ticks so the form
+// closes on its own when the window ends.
+const now = ref(Date.now())
+let timer: ReturnType<typeof setInterval> | undefined
+const editableUntil = computed(() => {
+  const until = summary.value?.mine?.editableUntil
+  return until ? new Date(until).getTime() : null
+})
+const locked = computed(() => !!summary.value?.mine && (editableUntil.value === null || editableUntil.value <= now.value))
+const windowHint = computed(() => {
+  if (!summary.value?.mine || editableUntil.value === null) return 'You can change it for 30 minutes after posting.'
+  const minutes = Math.max(1, Math.ceil((editableUntil.value - now.value) / 60000))
+  return minutes === 1 ? 'You can change it for 1 more minute.' : `You can change it for ${minutes} more minutes.`
+})
 
 const countLabel = computed(() => {
   const count = summary.value?.count ?? 0
@@ -243,16 +268,11 @@ const save = async () => {
   }
 }
 
-const remove = async () => {
-  if (await deleteReview(props.examId)) {
-    await refresh()
-    emit('changed')
-  }
-}
-
 onMounted(() => {
   if (isAuthenticated.value) void refresh()
+  timer = setInterval(() => (now.value = Date.now()), 30000)
 })
+onBeforeUnmount(() => clearInterval(timer))
 watch(isAuthenticated, (signedIn) => {
   if (signedIn) void refresh()
 })
