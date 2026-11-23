@@ -7,6 +7,3 @@ Allow: /
 
 Sitemap: https://gamatrain.com/sitemap/sitemap
 Sitemap: https://gamatrain.com/sitemap/sitemap-general.xml
-Sitemap: https://gamatrain.com/sitemap/paper
-Sitemap: https://gamatrain.com/sitemap/exam
-Sitemap: https://gamatrain.com/sitemap/tutorial
