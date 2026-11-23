@@ -70,76 +70,6 @@
   </div>
 
   <div
-    v-if="shows(`file`) && (loading || multimedias.length > 0)"
-    class="mx-4 my-6"
-  >
-    <div class="d-flex align-center mb-4 ga-2">
-      <div
-        class="d-flex align-center justify-center rounded-circle pa-2"
-        :style="`background-color : ${infoMap[`multimedia`].color}`"
-      >
-        <span :class="`icon-title ${infoMap[`multimedia`].icon}`" />
-      </div>
-      <h2 class="text-h6 font-weight-semibold text-grey700">
-        Related Multimedias
-      </h2>
-    </div>
-    <v-slide-group v-if="loading">
-      <v-slide-group-item
-        v-for="item in 10"
-        :key="item"
-      >
-        <lazy-common-related-content-card-skeleton type="paper" />
-      </v-slide-group-item>
-    </v-slide-group>
-    <v-slide-group
-      v-else
-      show-arrows
-      class="related-content position-relative"
-      :style="{ height: `${CardHeight}` }"
-    >
-      <template #prev>
-        <v-btn
-          icon
-          size="sm"
-        >
-          <v-icon color="#000000">
-            md:chevron_backward
-          </v-icon>
-        </v-btn>
-      </template>
-
-      <template #next>
-        <v-btn
-          icon
-          size="sm"
-        >
-          <v-icon color="#000000">
-            md:chevron_forward
-          </v-icon>
-        </v-btn>
-      </template>
-
-      <v-slide-group-item
-        v-for="item in multimedias"
-        :key="item.id"
-      >
-        <nuxt-link :to="contentPath('multimedia', item.id, item.title_url)">
-          <lazy-common-related-content-card
-            :picture="item.poster || fallbackImage"
-            :title="item.title"
-            :score="item.type_title"
-            :avatar="item.avatar"
-            :first-name="item.first_name"
-            :last-name="item.last_name"
-            type="multimedia"
-          />
-        </nuxt-link>
-      </v-slide-group-item>
-    </v-slide-group>
-  </div>
-
-  <div
     v-if="shows(`exam`) && (loading || exams.length > 0)"
     class="mx-4 my-6"
   >
@@ -268,7 +198,7 @@
 import type { RelatedContentSource } from '~/composables/useRelatedContent'
 
 type sourceType = RelatedContentSource
-type requestType = 'test' | 'file' | 'exam' | 'question' | 'tutorial'
+type requestType = 'test' | 'exam' | 'question' | 'tutorial'
 // type content = 'paper' | 'exam' | 'question' | 'tutorial'
 
 interface IRelatedPortraitContent {
@@ -287,11 +217,6 @@ const infoMap = {
     icon: 'icon-paper',
     color: '#2e90fa',
     keyResponse: 'tests',
-  },
-  multimedia: {
-    icon: 'icon-multimedia',
-    color: '#02b719',
-    keyResponse: 'files',
   },
   exam: {
     icon: 'icon-exam',
@@ -312,7 +237,6 @@ const infoMap = {
 const { data: related, status } = useRelatedContent(props.source, () => props.id)
 const pastpaper = computed(() => related.value?.tests ?? [])
 const tutorials = computed(() => related.value?.tutorials ?? [])
-const multimedias = computed(() => related.value?.files ?? [])
 const exams = computed(() => related.value?.exams ?? [])
 
 const loading = computed(() => status.value === 'pending' || status.value === 'idle')
