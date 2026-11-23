@@ -34,7 +34,12 @@ const asLegacy = <T>(response: ApiResult<T>): ApiResult<T> & { message?: string 
   message: response.errors?.[0]?.message,
 })
 
-export const usePastPaper = () => {
+/**
+ * A teacher's own papers. With `admin`, one paper's read, edit, delete and uploads go to the admin endpoints instead (any
+ * paper, any status), so the same edit form serves admin / past papers.
+ */
+export const usePastPaper = (options: { admin?: boolean } = {}) => {
+  const paperBase = options.admin ? '/api/v2/admin/pastpapers' : BASE
   const { $toast } = useNuxtApp()
 
   const getData = async (params: GetPastPaperParams) => {
@@ -158,7 +163,7 @@ export const usePastPaper = () => {
     try {
       const response = asLegacy(await useApiService.get<
         ApiResult<PastPaperDetailDTO>
-      >(`${BASE}/${id}`))
+      >(`${paperBase}/${id}`))
       if (!response.succeeded && response.message) {
         $toast.error(response.message)
       }
@@ -216,7 +221,7 @@ export const usePastPaper = () => {
       const response = asLegacy(await useApiService.put<
         ApiResult<PastPaperEditResponseDTO>
       >(
-        `${BASE}/${id}`,
+        `${paperBase}/${id}`,
         params as unknown as Record<string, never>,
       ))
 
@@ -255,7 +260,7 @@ export const usePastPaper = () => {
 
     try {
       const response = asLegacy(await useApiService.remove<ApiResult<boolean>>(
-        `${BASE}/${id}`,
+        `${paperBase}/${id}`,
       ))
 
       if (response.status === 1) {
@@ -296,7 +301,7 @@ export const usePastPaper = () => {
       const formData = new FormData()
       formData.append('file', file)
       const response = asLegacy(await useApiService.post<ApiResult<UploadFileDTO[]>>(
-        `${BASE}/uploads${kind ? `?kind=${kind}` : ''}`,
+        `${paperBase}/uploads${kind ? `?kind=${kind}` : ''}`,
         formData,
       ))
       if (response.status != 1) {
