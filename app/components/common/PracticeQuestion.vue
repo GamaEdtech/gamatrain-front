@@ -28,16 +28,22 @@
       />
     </v-card>
 
-    <v-btn
+    <div
       v-if="examId"
-      color="primary"
-      size="large"
-      rounded="lg"
-      class="mt-4 text-none"
-      @click="startExam"
+      class="d-flex flex-column flex-sm-row align-sm-center ga-2 ga-sm-4 mt-4"
     >
-      Start the full test for your score
-    </v-btn>
+      <v-btn
+        color="primary"
+        size="large"
+        rounded="lg"
+        class="text-none"
+        prepend-icon="md:play_arrow"
+        @click="startExam"
+      >
+        Start the full test
+      </v-btn>
+      <span class="text-body-2 text-medium-emphasis">See your score</span>
+    </div>
   </section>
 </template>
 

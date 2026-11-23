@@ -32,16 +32,25 @@
       </li>
     </ol>
 
-    <v-btn
+    <!-- A short action on the button; what it gives sits beside it (below it on a phone), so nothing has to wrap. -->
+    <div
       v-if="canStart"
-      color="primary"
-      size="large"
-      rounded="lg"
-      class="mt-4 text-none"
-      @click="startExam"
+      class="d-flex flex-column flex-sm-row align-sm-center ga-2 ga-sm-4 mt-4"
     >
-      Start the full {{ total || '' }}-question test for your score and rank
-    </v-btn>
+      <v-btn
+        color="primary"
+        size="large"
+        rounded="lg"
+        class="text-none"
+        prepend-icon="md:play_arrow"
+        @click="startExam"
+      >
+        Start the full test
+      </v-btn>
+      <span class="text-body-2 text-medium-emphasis">
+        <template v-if="total">{{ total }} questions · </template>see your score and rank
+      </span>
+    </div>
   </section>
 </template>
 
