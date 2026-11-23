@@ -65,7 +65,7 @@
 </template>
 
 <script setup lang="ts">
-import type { AppError } from '@/types'
+import type { ApiResult, AppError } from '@/types'
 
 interface CrashReportTypeItem {
   value: number
@@ -128,13 +128,17 @@ const sendReport = async () => {
 
   loading.value = true
   try {
-    const payload = new URLSearchParams({
-      id: props.id,
-      type: props.typeCrashReport,
-      report_type: String(reportType.value!),
+    // The backend's own reports (gama-api's are gone with it); typeCrashReport is the item's kind (paper, exam, ...).
+    const response = await useApiService.post<ApiResult<number>>('/api/v2/reports', {
+      contentType: props.typeCrashReport,
+      contentId: Number(props.id),
+      reportType: reportType.value,
       message: textReport.value.trim(),
-    }) as unknown
-    await useApiService.post('/api/v1/reports', payload as SearchParameters)
+    })
+    if (!response.succeeded) {
+      $toast.error(response.errors?.[0]?.message || 'The report was not sent.')
+      return
+    }
 
     $toast.success('Report sent successfully')
     emit('close')
@@ -143,7 +147,7 @@ const sendReport = async () => {
   }
   catch (err: unknown) {
     const error = err as AppError
-    if (error.response?.status === 403) {
+    if (error.response?.status === 401 || error.response?.status === 403) {
       router.push({ query: { auth_form: 'login' } })
     }
     else if (error.response?.status === 400) {

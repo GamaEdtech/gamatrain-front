@@ -168,7 +168,7 @@
     >
       <lazy-common-modal-crash-report
         :id="contentData.id"
-        type-crash-report="test"
+        type-crash-report="exam"
         @close="openCrashReport = false"
       />
     </lazy-common-modal-base>

@@ -154,7 +154,7 @@
         v-if="selectedQuestion"
         :id="selectedQuestion.id"
         :report-type-list="reportTypeList"
-        type-crash-report="examTest"
+        type-crash-report="examQuestion"
         @close="showCrashReportModal = false"
       />
     </common-modal-base>

@@ -238,6 +238,11 @@ const items = computed(() => [
         icon: 'md:archive_outlined',
       },
       {
+        title: 'Problem reports',
+        link: '/admin/reports', badgeKey: 'Reports',
+        icon: 'md:report_outlined',
+      },
+      {
         title: 'User Managment ',
         link: '/admin/users',
         icon: 'md:groups_3_outlined',
