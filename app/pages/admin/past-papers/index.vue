@@ -303,6 +303,7 @@ const headers: DataTableHeader<AdminPastPaperDTO>[] = [
     type: 'actions',
     actions: [
       { icon: 'md:fact_check', tooltip: 'Details and review', onClick: item => openReview(item) },
+      { icon: 'md:edit', tooltip: 'Edit details and files', to: item => `/admin/past-papers/${item.id}/edit` },
       { icon: 'md:visibility', tooltip: 'View', href: item => `/paper/${item.id}`, target: '_blank', show: item => Number(item.status) === 1 },
       { icon: 'md:delete', tooltip: 'Delete', onClick: item => openDelete(item) },
     ],
