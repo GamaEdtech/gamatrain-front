@@ -1,11 +1,3 @@
-const SITEMAP_MAP: Record<string, string> = {
-  paper: '/data/sitemaps/sitemap-tests.xml',
-  multimedia: '/data/sitemaps/sitemap-learnfiles.xml',
-  qa: '/data/sitemaps/sitemap-questions.xml',
-  exam: '/data/sitemaps/sitemap-azmoons.xml',
-  tutorial: '/data/sitemaps/sitemap-dars.xml',
-}
-
 const OWN_TYPES = new Set(['paper', 'exam', 'tutorial'])
 
 // A sitemap index of the backend's files for one type, taken from its main index; null when it has none.
@@ -34,21 +26,23 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig()
 
-  // Papers, exams and tutorials: the backend's own generated files (sitemap-paper0.xml, ...), listed from its index, which
-  // include what is made there since the move off gama-api. Until they exist (the daily job hasn't run yet) gama-api's file.
+  // Papers, exams and tutorials: an index of the backend's own files for that type (sitemap-paper0.xml, ...), taken from its
+  // main index. gama-api's sitemap files are gone with it.
   if (OWN_TYPES.has(type)) {
     const own = await ownSitemapIndex(String(config.public.BaseUrl2), type)
-    if (own) {
-      event.node.res.setHeader('Content-Type', 'application/xml; charset=utf-8')
-      event.node.res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600')
-      return own
+    if (!own) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Sitemap not found',
+      })
     }
+
+    event.node.res.setHeader('Content-Type', 'application/xml; charset=utf-8')
+    event.node.res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600')
+    return own
   }
 
-  const sitemapUrl
-    = SITEMAP_MAP[type]
-      ? config.public.BaseUrl1 + SITEMAP_MAP[type]
-      : `${config.public.BaseUrl2}/sitemap/${type}.xml`
+  const sitemapUrl = `${config.public.BaseUrl2}/sitemap/${type}.xml`
 
   try {
     const xml = await $fetch<string>(sitemapUrl, {
