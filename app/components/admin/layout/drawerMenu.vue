@@ -214,22 +214,17 @@ const { mdAndDown } = useDisplay()
 const route = useRoute()
 const auth = useAuth()
 
-// "Needs attention" counts on the menu (backend admin/dashboard/summary, shared with the dashboard page, refreshed every 2 minutes).
-// Only admins load the summary: it is an Admin-only endpoint, so for anyone else it would fail on every refresh.
+// "Needs attention" counts on the menu (backend identities/attention, shared with the dashboard page, refreshed every 2
+// minutes): an admin gets every queue, delegated staff only the queues of the lists they were granted.
 const { attentionCount, startSummaryRefresh, stopSummaryRefresh } = useAdminDashboard()
 const { isAdmin, canOpenPage, loadPermissions } = useAdminAccess()
 const formatBadge = count => (count > 99 ? '99+' : String(count))
 const groupCount = item => (item.subMenuList ?? []).reduce((sum, sub) => sum + (sub.badgeKey ? attentionCount(sub.badgeKey) : 0), 0)
 onMounted(async () => {
-  if (isAdmin.value) {
-    startSummaryRefresh()
-    return
-  }
-  await loadPermissions()
+  startSummaryRefresh()
+  if (!isAdmin.value) await loadPermissions()
 })
-onBeforeUnmount(() => {
-  if (isAdmin.value) stopSummaryRefresh()
-})
+onBeforeUnmount(stopSummaryRefresh)
 
 const items = computed(() => [
   {

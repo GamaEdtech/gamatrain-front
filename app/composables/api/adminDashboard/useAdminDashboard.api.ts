@@ -33,7 +33,8 @@ export const useAdminDashboard = () => {
     loadingSummary.value = !summary.value
     summaryRequest = (async () => {
       try {
-        const response = await useApiService.get<ApiResult<AdminDashboardSummaryDTO>>(`${BASE_URL}/summary`)
+        // The counts the caller may see: all for an admin, only their granted lists' queues for delegated staff.
+        const response = await useApiService.get<ApiResult<AdminDashboardSummaryDTO>>('/api/v2/identities/attention')
         if (response.succeeded && response.data) summary.value = response.data
         else if (showErrors) handleApiResponseError(response)
       }

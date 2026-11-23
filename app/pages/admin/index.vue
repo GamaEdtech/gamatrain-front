@@ -7,7 +7,7 @@
           {{ greeting }}{{ user?.firstName ? `, ${user.firstName}` : '' }}
         </h1>
         <span class="text-caption font-weight-medium text-grey500">
-          Here's what needs you and how {{ monthLabel }} is going.
+          {{ hasFinanceRole ? `Here's what needs you and how ${monthLabel} is going.` : "Here's what is waiting for you." }}
         </span>
       </div>
       <v-btn
@@ -40,8 +40,11 @@
       />
     </section>
 
-    <!-- Performance -->
-    <section class="d-flex flex-column ga-4">
+    <!-- Performance, payments and the invite program: money, so Finance only. -->
+    <section
+      v-if="hasFinanceRole"
+      class="d-flex flex-column ga-4"
+    >
       <div class="d-flex align-center justify-space-between flex-wrap ga-3">
         <div class="d-flex flex-column">
           <h2 class="text-h6 font-weight-bold text-grey700">
@@ -87,6 +90,7 @@
 
     <!-- Payments -->
     <v-card
+      v-if="hasFinanceRole"
       tag="section"
       border
       flat
@@ -138,7 +142,10 @@
     </v-card>
 
     <!-- Invite program -->
-    <section class="d-flex flex-column ga-3">
+    <section
+      v-if="hasFinanceRole"
+      class="d-flex flex-column ga-3"
+    >
       <div class="d-flex flex-column">
         <h2 class="text-h6 font-weight-bold text-grey700">
           Teacher invite program
@@ -171,14 +178,17 @@ import type {
   PaymentSummaryGetParams,
 } from '@/types'
 
+// Everyone in the panel sees what waits for them (Needs attention, only the queues of the lists they can open); the money
+// sections (performance, payments, invite program) are for the Finance role only, as the whole page was before.
 definePageMeta({
   layout: 'admin',
-  middleware: ['auth', 'admin', 'finance'],
+  middleware: ['auth', 'admin'],
 })
 
 useHead({ title: 'Admin dashboard' })
 
 const { user } = useUser()
+const hasFinanceRole = computed(() => (user.value?.roles ?? []).some(role => role.toLowerCase() === 'finance'))
 const { formatLocal } = useDateTime()
 const { paymentSummary, getPaymentSummary, loadingPaymentSummary: loadingPayments } = usePayment()
 const {
@@ -300,7 +310,7 @@ const refreshing = ref(false)
 const refreshAll = async () => {
   refreshing.value = true
   try {
-    await Promise.all([fetchSummary(true), loadPeriod()])
+    await Promise.all([fetchSummary(true), hasFinanceRole.value ? loadPeriod() : Promise.resolve()])
   }
   finally {
     refreshing.value = false
@@ -309,7 +319,7 @@ const refreshAll = async () => {
 
 onMounted(async () => {
   startSummaryRefresh()
-  await loadPeriod()
+  if (hasFinanceRole.value) await loadPeriod()
 })
 
 onBeforeUnmount(stopSummaryRefresh)
