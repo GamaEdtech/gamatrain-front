@@ -370,6 +370,11 @@ const items = computed(() => [
         link: '/admin/schools/comments', badgeKey: 'SchoolComments',
         icon: 'md:comment_outlined',
       },
+      {
+        title: 'Members',
+        link: '/admin/schools/members',
+        icon: 'md:groups_outlined',
+      },
     ],
   },
   {
