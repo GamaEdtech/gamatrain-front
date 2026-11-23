@@ -21,6 +21,7 @@ const loadingAddItem = ref(false)
 const loadingEditItem = ref(false)
 const loadingGetItemById = ref(false)
 const loadingDeleteItem = ref(false)
+const loadingFileLink = ref(false)
 const NAME = 'Past Paper'
 const BASE = '/api/v2/PastPapers/mine'
 
@@ -318,7 +319,32 @@ export const usePastPaper = (options: { admin?: boolean } = {}) => {
     }
   }
 
+  /**
+   * A short signed link to one of the paper's stored files, to open what was uploaded: the teacher's own paper, or with
+   * `admin` any paper (the review link). Any status, nothing charged. `type` is pdf, word, answer or extra (with `extraId`).
+   */
+  const getFileLink = async (id: string | number, type: 'pdf' | 'word' | 'answer' | 'extra', extraId?: string | number) => {
+    loadingFileLink.value = true
+    try {
+      const response = await useApiService.get<ApiResult<{ url: string }>>(
+        `${paperBase}/${id}/files/${type}`,
+        extraId === undefined ? undefined : { extraId },
+      )
+      if (response.succeeded && response.data?.url) return response.data.url
+      $toast.error(response.errors?.[0]?.message === 'fileNotExist' ? 'This file is not available.' : 'The file could not be opened.')
+    }
+    catch {
+      $toast.error('The file could not be opened.')
+    }
+    finally {
+      loadingFileLink.value = false
+    }
+    return null
+  }
+
   return {
+    getFileLink,
+    loadingFileLink,
     uploadItemFile,
     loadingGetData,
     data,
