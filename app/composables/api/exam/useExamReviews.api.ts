@@ -20,6 +20,7 @@ export const useExamReviews = () => {
     }
   }
 
+  /** Posts the review, or changes it within 30 minutes of posting (a review can't be deleted). */
   const saveReview = async (examId: string | number, rating: number, comment: string) => {
     saving.value = true
     try {
@@ -36,21 +37,5 @@ export const useExamReviews = () => {
     return null
   }
 
-  const deleteReview = async (examId: string | number) => {
-    saving.value = true
-    try {
-      const response = await useApiService.remove<ApiResult<boolean>>(`/api/v2/exams/${examId}/reviews`)
-      if (response.succeeded) return true
-      handleApiResponseError(response)
-    }
-    catch (err: unknown) {
-      handleApiCatchError(err)
-    }
-    finally {
-      saving.value = false
-    }
-    return false
-  }
-
-  return { getReviews, saveReview, deleteReview, saving }
+  return { getReviews, saveReview, saving }
 }
