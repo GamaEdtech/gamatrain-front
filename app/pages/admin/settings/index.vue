@@ -137,6 +137,7 @@ const form = reactive<AdminAppSettingsDTO>({
   postContributionPoints: undefined,
   schoolIssuesContributionPoints: undefined,
   removeSchoolImageContributionPoints: undefined,
+  examReviewContributionPoints: undefined,
 
   easterEggBronzePoints: undefined,
   easterEggSilverPoints: undefined,
@@ -193,6 +194,7 @@ const fields: FieldConfig[] = [
   { key: 'postContributionPoints', label: 'Post Contribution Points', type: 'text', valueType: 'number' },
   { key: 'schoolIssuesContributionPoints', label: 'School Issues Points', type: 'text', valueType: 'number' },
   { key: 'removeSchoolImageContributionPoints', label: 'Remove Image Points', type: 'text', valueType: 'number' },
+  { key: 'examReviewContributionPoints', label: 'Exam Review Points (with a comment)', type: 'text', valueType: 'number' },
 
   { key: 'easterEggBronzePoints', label: 'Easter Egg Bronze', type: 'text', valueType: 'number' },
   { key: 'easterEggSilverPoints', label: 'Easter Egg Silver', type: 'text', valueType: 'number' },

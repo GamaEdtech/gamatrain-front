@@ -7,6 +7,8 @@ export interface AdminAppSettingsDTO {
   postContributionPoints?: number
   schoolIssuesContributionPoints?: number
   removeSchoolImageContributionPoints?: number
+  /** Points for an exam review with a comment (default 2; 0 turns it off). */
+  examReviewContributionPoints?: number
   easterEggBronzePoints?: number
   easterEggSilverPoints?: number
   easterEggGoldPoints?: number
