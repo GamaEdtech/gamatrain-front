@@ -11,6 +11,10 @@ export const ATTENTION_QUEUES: Record<AttentionKey, { label: string, icon: strin
   Posts: { label: 'Posts', icon: 'md:post_outlined', link: '/admin/posts' },
   PostComments: { label: 'Post comments', icon: 'md:comment_outlined', link: '/admin/posts/comments' },
   Payouts: { label: 'Payout requests', icon: 'md:account_balance_wallet_outlined', link: '/admin/commission/payouts' },
+  PastPapers: { label: 'Papers to review', icon: 'md:fact_check_outlined', link: '/admin/past-papers' },
+  Exams: { label: 'Exams to confirm', icon: 'md:assignment_outlined', link: '/admin/exams' },
+  ExamQuestions: { label: 'Questions to review', icon: 'md:help_outline', link: '/admin/exam-questions' },
+  Tutorials: { label: 'Tutorials to review', icon: 'md:library_books_outlined', link: '/admin/tutorials' },
 }
 
 /** An item waiting longer than this is shown as overdue. */

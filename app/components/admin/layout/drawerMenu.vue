@@ -318,7 +318,7 @@ const items = computed(() => [
     icon: 'md:description_outlined',
     value: 'pastPapers',
     subMenuList: [
-      { title: 'Review', link: '/admin/past-papers', icon: 'md:fact_check_outlined' },
+      { title: 'Review', link: '/admin/past-papers', icon: 'md:fact_check_outlined', badgeKey: 'PastPapers' },
     ],
   },
   {
@@ -326,9 +326,9 @@ const items = computed(() => [
     icon: 'md:quiz_outlined',
     value: 'exams',
     subMenuList: [
-      { title: 'Exams', link: '/admin/exams', icon: 'md:assignment_outlined' },
+      { title: 'Exams', link: '/admin/exams', icon: 'md:assignment_outlined', badgeKey: 'Exams' },
       { title: 'Participants', link: '/admin/exam-participations', icon: 'md:groups_outlined' },
-      { title: 'Question bank', link: '/admin/exam-questions', icon: 'md:help_outline' },
+      { title: 'Question bank', link: '/admin/exam-questions', icon: 'md:help_outline', badgeKey: 'ExamQuestions' },
     ],
   },
   {
@@ -336,7 +336,7 @@ const items = computed(() => [
     icon: 'md:menu_book_outlined',
     value: 'tutorials',
     subMenuList: [
-      { title: 'Tutorials', link: '/admin/tutorials', icon: 'md:library_books_outlined' },
+      { title: 'Tutorials', link: '/admin/tutorials', icon: 'md:library_books_outlined', badgeKey: 'Tutorials' },
       { title: 'Topic matching', link: '/admin/topic-matches', icon: 'md:link_outlined' },
     ],
   },

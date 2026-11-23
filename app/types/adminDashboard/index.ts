@@ -9,6 +9,10 @@ export type AttentionKey
     | 'Posts'
     | 'PostComments'
     | 'Payouts'
+    | 'PastPapers'
+    | 'Exams'
+    | 'ExamQuestions'
+    | 'Tutorials'
 
 export interface AttentionItemDTO {
   key: AttentionKey
