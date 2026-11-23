@@ -382,6 +382,8 @@ const ORDERS = [
   { title: 'Newest first', value: null },
   { title: 'ID, high to low', value: 'iddesc' },
   { title: 'ID, low to high', value: 'idasc' },
+  { title: 'Most downloaded', value: 'downloadsdesc' },
+  { title: 'Least downloaded', value: 'downloadsasc' },
 ]
 const SCORES = [
   { title: 'None', value: 0 },
@@ -430,6 +432,13 @@ const headers: DataTableHeader<AdminPastPaperDTO>[] = [
   { title: 'Subject', key: 'lesson_title', sortable: false, width: '14vw' },
   { title: 'Owner', key: 'owner_name', sortable: false, width: '12vw', emptyText: '-' },
   { title: 'Score', key: 'ref_score', sortable: false, width: '5vw' },
+  {
+    title: 'Downloads',
+    key: 'downloads',
+    sortable: false,
+    width: '7vw',
+    getText: item => Number(item.downloads || 0).toLocaleString('en-US'),
+  },
   { title: 'Date', key: 'subdate', sortable: false, width: '12vw', type: 'date', dateFormat: 'DD/MM/YYYY HH:mm' },
   {
     title: 'Status',
