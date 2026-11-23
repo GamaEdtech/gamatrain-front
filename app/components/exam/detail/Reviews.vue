@@ -126,7 +126,7 @@
       class="text-body-2 text-grey600"
     >
       Took this exam?
-      <nuxt-link :to="{ query: { ...route.query, auth_form: 'login', auth_noredirect: 'true' } }">Sign in</nuxt-link>
+      <nuxt-link :to="{ query: { ...route.query, auth_form: 'login', auth_noredirect: 'true' }, hash: '#reviews' }">Sign in</nuxt-link>
       to rate it.
     </span>
 
@@ -268,7 +268,15 @@ const save = async () => {
   }
 }
 
+// The review reminder email links to #reviews: once the page has settled (content above it may still be loading), bring
+// the section into view so the form is right there.
+const scrollToReviews = () => {
+  if (route.hash !== '#reviews') return
+  setTimeout(() => document.getElementById('reviews')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300)
+}
+
 onMounted(() => {
+  scrollToReviews()
   if (isAuthenticated.value) void refresh()
   timer = setInterval(() => (now.value = Date.now()), 30000)
 })
@@ -279,6 +287,11 @@ watch(isAuthenticated, (signedIn) => {
 </script>
 
 <style scoped>
+/* Clears the sticky header when the page is opened at #reviews. */
+#reviews {
+  scroll-margin-top: 80px;
+}
+
 .summary {
   min-width: 140px;
 }
