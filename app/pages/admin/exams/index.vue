@@ -20,6 +20,60 @@
         v-model:subject-id="subjectId"
         @change="search"
       />
+      <v-autocomplete
+        v-model="examTypeId"
+        :items="examTypes"
+        item-title="title"
+        item-value="id"
+        label="Exam type"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @update:model-value="search"
+      />
+      <v-select
+        v-model="combination"
+        :items="COMBINATIONS"
+        item-title="title"
+        item-value="value"
+        label="Questions"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @update:model-value="search"
+      />
+      <v-select
+        v-model="open"
+        :items="OPEN_STATES"
+        item-title="title"
+        item-value="value"
+        label="Open now"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @update:model-value="search"
+      />
+      <v-select
+        v-model="year"
+        :items="YEAR_LIST"
+        label="Year"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @update:model-value="search"
+      />
       <v-text-field
         v-model="text"
         label="Title, code or id"
@@ -77,6 +131,7 @@
 import type { AdminExamItemDTO, DataTableHeader } from '@/types'
 import { EXAM_STATUSES } from '@/types'
 import { ADMIN_PERMISSIONS } from '~/constants'
+import { YEAR_LIST } from '~/constants/pastpaper'
 
 definePageMeta({
   layout: 'admin',
@@ -135,6 +190,27 @@ const gradeId = ref<string | null>(null)
 const subjectId = ref<string | null>(null)
 const text = ref('')
 const includeDeleted = ref(false)
+const examTypeId = ref<string | null>(null)
+const combination = ref<number | null>(null)
+const open = ref<boolean | null>(null)
+const year = ref<number | null>(null)
+
+// gama-api's question combination: from albums (other teachers' questions), the owner's own, or both.
+const COMBINATIONS = [{ title: 'From albums', value: 1 }, { title: 'Own questions', value: 2 }, { title: 'Mixed', value: 3 }]
+// Open: no dates, or now between its start and end.
+const OPEN_STATES = [{ title: 'Open now', value: true }, { title: 'Not open now', value: false }]
+
+// The exam types (Multiple Choice, Paper 1...), from the types list.
+const examTypes = ref<{ id: string, title: string }[]>([])
+const loadExamTypes = async () => {
+  try {
+    const response = await useApiService.get<ApiResult<{ id: string, title: string }[]>>('/api/v2/search/types', { type: 'exam_type' })
+    examTypes.value = response.succeeded && Array.isArray(response.data) ? response.data.map(item => ({ id: String(item.id), title: item.title })) : []
+  }
+  catch {
+    examTypes.value = []
+  }
+}
 
 const fetch = async () => {
   const data = await getExams({
@@ -145,6 +221,10 @@ const fetch = async () => {
     gradeId: gradeId.value,
     subjectId: subjectId.value,
     text: text.value,
+    examTypeId: examTypeId.value,
+    combination: combination.value,
+    open: open.value,
+    year: year.value,
     includeDeleted: includeDeleted.value || null,
   })
   items.value = data.items
@@ -174,10 +254,17 @@ const confirmDelete = async () => {
   }
 }
 
-onMounted(fetch)
+onMounted(async () => {
+  await Promise.all([fetch(), loadExamTypes()])
+})
 </script>
 
 <style scoped>
+.filter-field--small {
+  min-width: 150px;
+  max-width: 180px;
+}
+
 .filter-field {
   min-width: 170px;
   max-width: 250px;
