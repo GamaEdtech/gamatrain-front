@@ -4,7 +4,7 @@ export type RelatedContentSource = 'test' | 'file' | 'question' | 'exam' | 'exam
 
 // Every type is asked for: the answer has all of them whatever `request` says, and asking the same way lets two rows
 // on one page share a single request.
-const ALL_TYPES = 'test,file,exam,question,tutorial'
+const ALL_TYPES = 'test,exam,question,tutorial'
 
 // Content related to a page's item, for its "related" rows, through the new backend, which caches it (Redis and
 // Cloudflare) and serves a paper page's related papers itself once past papers move there. The same for every

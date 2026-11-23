@@ -145,7 +145,7 @@
         <lazy-common-related-content
           :id="contentData.id"
           source="tutorial"
-          :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+          :request="[`test`, `exam`, `question`, `tutorial`]"
         />
       </v-col>
 

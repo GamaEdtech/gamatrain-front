@@ -69,7 +69,7 @@
     <lazy-common-related-content
       :id="contentData.id"
       source="file"
-      :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+      :request="[`test`, `exam`, `question`, `tutorial`]"
     />
 
     <span

@@ -132,7 +132,7 @@
       <lazy-common-related-content
         :id="contentData.id"
         source="test"
-        :request="[`test`, `file`, `exam`, `question`, `tutorial`]"
+        :request="[`test`, `exam`, `question`, `tutorial`]"
       />
     </div>
 
