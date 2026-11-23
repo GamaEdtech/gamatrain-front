@@ -1,11 +1,3 @@
-const SITEMAP_MAP: Record<string, string> = {
-  paper: '/data/sitemaps/sitemap-tests.xml',
-  multimedia: '/data/sitemaps/sitemap-learnfiles.xml',
-  qa: '/data/sitemaps/sitemap-questions.xml',
-  exam: '/data/sitemaps/sitemap-azmoons.xml',
-  tutorial: '/data/sitemaps/sitemap-dars.xml',
-}
-
 export default defineEventHandler(async (event) => {
   const { type } = event.context.params as { type: string }
 
@@ -17,10 +9,8 @@ export default defineEventHandler(async (event) => {
   }
 
   const config = useRuntimeConfig()
-  const sitemapUrl
-    = SITEMAP_MAP[type]
-      ? config.public.BaseUrl1 + SITEMAP_MAP[type]
-      : `${config.public.BaseUrl2}/sitemap/${type}.xml`
+  // Every sitemap file is the backend's (the index and sitemap-school0, -post0, -paper0, -exam0, -tutorial0...).
+  const sitemapUrl = `${config.public.BaseUrl2}/sitemap/${type}.xml`
 
   try {
     const xml = await $fetch<string>(sitemapUrl, {
