@@ -118,7 +118,8 @@ const headers: DataTableHeader<AdminExamQuestionItemDTO>[] = [
   { title: 'Topic', key: 'topicTitle', sortable: false, width: '11vw', emptyText: '-' },
   { title: 'Type', key: 'type', sortable: false, width: '7vw', emptyText: '-' },
   { title: 'Answer', key: 'trueAnswer', sortable: false, width: '4vw', emptyText: '-' },
-  { title: 'Changed', key: 'lastModifyDate', sortable: false, width: '9vw', type: 'date', dateFormat: 'DD/MM/YYYY' },
+  { title: 'Created', key: 'creationDate', sortable: false, width: '9vw', type: 'date', dateFormat: 'DD/MM/YYYY HH:mm' },
+  { title: 'Changed', key: 'lastModifyDate', sortable: false, width: '9vw', type: 'date', dateFormat: 'DD/MM/YYYY HH:mm', emptyText: '-' },
   {
     title: 'Status',
     key: 'status',
