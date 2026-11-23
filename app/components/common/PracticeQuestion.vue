@@ -33,7 +33,7 @@
       color="primary"
       size="large"
       rounded="lg"
-      class="mt-4 text-none"
+      class="mt-4 text-none start-test-btn"
       @click="startExam"
     >
       Start the full test for your score
@@ -92,3 +92,25 @@ onMounted(async () => {
   }
 })
 </script>
+
+<style scoped>
+/* A long label wraps instead of running past the button, and the button fills the width on a phone. */
+.start-test-btn {
+  height: auto !important;
+  min-height: 44px;
+  max-width: 100%;
+  padding-block: 10px;
+}
+
+.start-test-btn :deep(.v-btn__content) {
+  white-space: normal;
+  line-height: 1.35;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .start-test-btn {
+    width: 100%;
+  }
+}
+</style>
