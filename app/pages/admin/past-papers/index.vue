@@ -280,7 +280,16 @@ const statusColor = (value: string) => {
 }
 
 const headers: DataTableHeader<AdminPastPaperDTO>[] = [
-  { title: 'ID', key: 'id', sortable: false, width: '7vw' },
+  // A published paper's ID opens its public page; an unpublished one has none (its page answers 404).
+  {
+    title: 'ID',
+    key: 'id',
+    sortable: false,
+    width: '7vw',
+    type: 'link',
+    target: '_blank',
+    getTo: item => (Number(item.status) === 1 ? `/paper/${item.id}` : undefined),
+  },
   { title: 'Title', key: 'title', sortable: false, width: '25vw' },
   { title: 'Subject', key: 'lesson_title', sortable: false, width: '14vw' },
   { title: 'Owner', key: 'owner_name', sortable: false, width: '12vw', emptyText: '-' },

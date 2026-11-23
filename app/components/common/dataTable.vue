@@ -79,6 +79,7 @@
             class="d-flex justify-center align-center"
           >
             <NuxtLink
+              v-if="getLinkTo(slotProps.item, header)"
               :to="getLinkTo(slotProps.item, header)"
               :target="header.target"
               :rel="header.target === '_blank' ? 'noopener noreferrer' : undefined"
@@ -86,6 +87,12 @@
             >
               {{ getCellText(slotProps.item, header) }}
             </NuxtLink>
+            <span
+              v-else
+              class="text-grey600 text-body-1 text-center"
+            >
+              {{ getCellText(slotProps.item, header) }}
+            </span>
           </div>
           <div
             v-else-if="header.type === 'actions'"
@@ -300,8 +307,9 @@ const getChipColor = (item: TItem, header: TableHeader) => {
   return header.getChipColor?.(item) || 'primary'
 }
 
+// A row without a target (e.g. an unpublished paper has no public page) shows plain text, not a dead "#" link.
 const getLinkTo = (item: TItem, header: TableHeader) => {
-  return header.getTo?.(item) || '#'
+  return header.getTo?.(item)
 }
 
 const getRowIndex = (index: number) => {
