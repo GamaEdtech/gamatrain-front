@@ -9,6 +9,7 @@ export type AttentionKey
     | 'Posts'
     | 'PostComments'
     | 'Payouts'
+    | 'Reports'
     | 'PastPapers'
     | 'Exams'
     | 'ExamQuestions'

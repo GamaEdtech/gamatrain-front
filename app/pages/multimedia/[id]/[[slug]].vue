@@ -89,7 +89,7 @@
     >
       <lazy-common-modal-crash-report
         :id="contentData.id"
-        type-crash-report="test"
+        type-crash-report="multimedia"
         @close="openCrashReport = false"
       />
     </lazy-common-modal-base>

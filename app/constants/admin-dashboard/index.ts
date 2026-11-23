@@ -10,6 +10,7 @@ export const ATTENTION_QUEUES: Record<AttentionKey, { label: string, icon: strin
   SchoolComments: { label: 'School reviews', icon: 'md:rate_review_outlined', link: '/admin/schools/comments' },
   Posts: { label: 'Posts', icon: 'md:post_outlined', link: '/admin/posts' },
   PostComments: { label: 'Post comments', icon: 'md:comment_outlined', link: '/admin/posts/comments' },
+  Reports: { label: 'Problem reports', icon: 'md:report_outlined', link: '/admin/reports' },
   Payouts: { label: 'Payout requests', icon: 'md:account_balance_wallet_outlined', link: '/admin/commission/payouts' },
   PastPapers: { label: 'Papers to review', icon: 'md:fact_check_outlined', link: '/admin/past-papers' },
   Exams: { label: 'Exams to confirm', icon: 'md:assignment_outlined', link: '/admin/exams' },

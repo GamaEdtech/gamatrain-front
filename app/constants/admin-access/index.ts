@@ -43,6 +43,10 @@ export const ADMIN_PERMISSIONS = {
     reviews: 'Admin.Exams.GetReviews',
     moderateReview: 'Admin.Exams.ModerateReview',
   },
+  reports: {
+    list: 'Admin.Reports.GetReports',
+    status: 'Admin.Reports.SetStatus',
+  },
   // Admins only (not delegable): the list shows participants' emails.
   examParticipations: {
     list: 'Admin.ExamParticipations.GetParticipations',
@@ -110,6 +114,7 @@ export const ADMIN_PAGE_ACCESS: { path: string, permissions: string[], landing?:
   { path: '/admin/exam-questions/edit', permissions: [ADMIN_PERMISSIONS.examQuestions.detail] },
   { path: '/admin/exam-questions', permissions: [ADMIN_PERMISSIONS.examQuestions.list], landing: true },
   { path: '/admin/exam-reviews', permissions: [ADMIN_PERMISSIONS.exams.reviews], landing: true },
+  { path: '/admin/reports', permissions: [ADMIN_PERMISSIONS.reports.list], landing: true },
   { path: '/admin/exams', permissions: [ADMIN_PERMISSIONS.exams.list], landing: true },
   { path: '/admin/exam-participations', permissions: [ADMIN_PERMISSIONS.examParticipations.list] },
   { path: '/admin/topic-matches', permissions: [ADMIN_PERMISSIONS.topicMatches.list], landing: true },
