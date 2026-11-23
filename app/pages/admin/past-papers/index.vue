@@ -26,6 +26,18 @@
         @keyup.enter="search"
         @click:clear="clearTitle"
       />
+      <v-text-field
+        v-model="codeOrId"
+        label="Code or ID"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @keyup.enter="search"
+        @click:clear="clearCodeOrId"
+      />
       <v-btn
         rounded="pill"
         color="primary"
@@ -35,6 +47,123 @@
       >
         Search
       </v-btn>
+      <v-btn
+        rounded="pill"
+        variant="text"
+        height="40"
+        prepend-icon="md:filter_alt_off"
+        :disabled="!hasFilters"
+        @click="clearFilters"
+      >
+        Clear
+      </v-btn>
+    </div>
+
+    <!-- The papers' own details: board, grade and subject (the shared type filters), then type, session, variant and review. -->
+    <div class="w-100 d-flex flex-wrap align-center ga-2 mt-2">
+      <admin-common-type-filters
+        v-model:board-id="filters.section"
+        v-model:grade-id="filters.base"
+        v-model:subject-id="filters.lesson"
+        @change="changeTypes"
+      />
+      <v-autocomplete
+        v-model="filters.test_type"
+        :items="classifications"
+        item-title="title"
+        item-value="id"
+        label="Paper type"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field"
+        :disabled="!filters.section"
+        :loading="loadingClassification"
+        @update:model-value="search"
+      />
+      <v-select
+        v-model="filters.edu_year"
+        :items="YEAR_LIST"
+        label="Year"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @update:model-value="search"
+      />
+      <v-select
+        v-model="filters.edu_month"
+        :items="MONTH_LIST"
+        item-title="title"
+        item-value="id"
+        label="Month"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @update:model-value="search"
+      />
+      <v-autocomplete
+        v-model="filters.variant"
+        :items="variants"
+        item-title="title"
+        item-value="id"
+        label="Variant"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @update:model-value="search"
+      />
+      <v-select
+        v-model="filters.is_paper"
+        :items="PAPER_KINDS"
+        item-title="title"
+        item-value="value"
+        label="Paper or not"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @update:model-value="search"
+      />
+      <v-select
+        v-model="filters.refScore"
+        :items="SCORES"
+        item-title="title"
+        item-value="value"
+        label="Referee score"
+        density="compact"
+        hide-details
+        clearable
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @update:model-value="search"
+      />
+      <v-select
+        v-model="filters.order"
+        :items="ORDERS"
+        item-title="title"
+        item-value="value"
+        label="Sort"
+        density="compact"
+        hide-details
+        rounded="pill"
+        variant="outlined"
+        class="filter-field filter-field--small"
+        @update:model-value="search"
+      />
     </div>
 
     <common-data-table
@@ -230,6 +359,7 @@
 
 <script setup lang="ts">
 import type { AdminPastPaperDetailDTO, AdminPastPaperDTO, AdminPastPaperFileType, DataTableHeader } from '@/types'
+import { MONTH_LIST, YEAR_LIST } from '~/constants/pastpaper'
 
 definePageMeta({
   layout: 'admin',
@@ -247,6 +377,12 @@ const STATUS_TITLES: Record<number, string> = {
 }
 const STATUS_FILTERS = [{ title: 'All', value: null }, ...[0, 6, 3, 1, 2, 4].map(value => ({ title: STATUS_TITLES[value]!, value }))]
 const REVIEW_STATUSES = [1, 3, 2, 4, 0].map(value => ({ title: STATUS_TITLES[value]!, value }))
+const PAPER_KINDS = [{ title: 'Papers', value: 1 }, { title: 'Not papers', value: 0 }]
+const ORDERS = [
+  { title: 'Newest first', value: null },
+  { title: 'ID, high to low', value: 'iddesc' },
+  { title: 'ID, low to high', value: 'idasc' },
+]
 const SCORES = [
   { title: 'None', value: 0 },
   { title: 'D', value: 1 },
@@ -328,9 +464,75 @@ const allPageSize = [
 ]
 const status = ref<number | null>(0)
 const title = ref('')
+const codeOrId = ref('')
+
+const emptyFilters = () => ({
+  section: null as string | null,
+  base: null as string | null,
+  lesson: null as string | null,
+  test_type: null as string | number | null,
+  edu_year: null as string | number | null,
+  edu_month: null as string | number | null,
+  variant: null as string | number | null,
+  is_paper: null as number | null,
+  refScore: null as number | null,
+  order: null as string | null,
+})
+const filters = ref(emptyFilters())
+
+// The paper types belong to a board: they follow the board picked in the type filters.
+const { classifications, getClassification, resetClassifications, loadingClassification } = useBoard()
+
+// The variants (nv, 1, 2, A...), from the types list.
+const variants = ref<{ id: string, title: string }[]>([])
+const loadVariants = async () => {
+  try {
+    const response = await useApiService.get<ApiResult<{ id: string, title: string }[]>>('/api/v2/search/types', { type: 'variant' })
+    variants.value = response.succeeded && Array.isArray(response.data) ? response.data : []
+  }
+  catch {
+    variants.value = []
+  }
+}
+
+const hasFilters = computed(() => !!codeOrId.value || Object.values(filters.value).some(value => value !== null && value !== ''))
 
 const fetchPapers = async () => {
-  await getData({ page: page.value, pageSize: pageSize.value, status: status.value, title: title.value })
+  // A number is a paper's id, anything else its code.
+  const key = codeOrId.value?.trim() || ''
+  await getData({
+    page: page.value,
+    pageSize: pageSize.value,
+    status: status.value,
+    title: title.value,
+    ...filters.value,
+    id: /^\d+$/.test(key) ? key : null,
+    code: key && !/^\d+$/.test(key) ? key : null,
+  })
+}
+
+let typesBoard: string | null = null
+const changeTypes = async () => {
+  if (filters.value.section !== typesBoard) {
+    typesBoard = filters.value.section
+    filters.value.test_type = null
+    resetClassifications()
+    if (typesBoard) await getClassification(typesBoard)
+  }
+  await search()
+}
+
+const clearCodeOrId = async () => {
+  codeOrId.value = ''
+  await search()
+}
+
+const clearFilters = async () => {
+  codeOrId.value = ''
+  filters.value = emptyFilters()
+  typesBoard = null
+  resetClassifications()
+  await search()
 }
 
 const search = async () => {
@@ -472,13 +674,20 @@ const confirmDelete = async () => {
   }
 }
 
-onMounted(fetchPapers)
+onMounted(async () => {
+  await Promise.all([fetchPapers(), loadVariants()])
+})
 </script>
 
 <style scoped>
 .filter-field {
   min-width: 200px;
   max-width: 280px;
+}
+
+.filter-field--small {
+  min-width: 150px;
+  max-width: 180px;
 }
 
 .description {

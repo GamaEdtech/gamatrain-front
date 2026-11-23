@@ -30,6 +30,10 @@ export const usePastPaperAdmin = () => {
       if (params.status !== null && params.status !== undefined) query.status = params.status
       if (params.title) query.title = params.title
       if (params.uid) query.uid = params.uid
+      for (const key of ['section', 'base', 'lesson', 'test_type', 'edu_year', 'edu_month', 'variant', 'id', 'code', 'is_paper', 'refScore', 'order'] as const) {
+        const value = params[key]
+        if (value !== null && value !== undefined && value !== '') query[key] = value
+      }
 
       const response = await useApiService.get<ApiResult<{ list: AdminPastPaperDTO[], num: number }>>(BASE, query)
       if (response.succeeded && response.data) {
