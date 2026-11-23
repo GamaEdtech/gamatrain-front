@@ -351,3 +351,31 @@ export interface ExamAnalyzeDetailResponseDTO extends DownloadResponseDTO {
   result: string
   points: number
 }
+
+/** A review of an exam by someone who finished it (GET/POST exams/{id}/reviews). */
+export interface ExamReviewDTO {
+  id: number
+  /** First name and last initial ("Ana L."). */
+  name: string | null
+  avatarUrl: string | null
+  rating: number
+  comment: string | null
+  /** Confirmed (shown) or Rejected (hidden by an admin). */
+  status: string | null
+  rejectionComment: string | null
+  date: string
+}
+
+export interface ExamReviewsDTO {
+  /** Average of the shown ratings, one decimal; null with none. */
+  average: number | null
+  count: number
+  /** Shown ratings of 1, 2, 3, 4 and 5 stars. */
+  distribution: number[]
+  items: ExamReviewDTO[]
+  commentCount: number
+  /** The signed-in caller's own review. */
+  mine: ExamReviewDTO | null
+  /** The signed-in caller finished the exam and may review it. */
+  canReview: boolean
+}

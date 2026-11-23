@@ -103,6 +103,10 @@
           :total="Number(contentData.tests_num) || 0"
           :can-start="!!contentData.price?.participation"
         />
+        <exam-detail-reviews
+          :exam-id="contentData.id"
+          :initial="reviews"
+        />
         <v-card
           v-if="contentData.paper"
           :to="contentPath('paper', contentData.paper.id, contentData.paper.slug)"
@@ -212,6 +216,10 @@ const { data: contentData } = await useAsyncData(
   },
 )
 
+// The public review summary, rendered on the server so the structured data carries the rating (no token: cacheable).
+const { getReviews } = useExamReviews()
+const { data: reviews } = await useAsyncData(`exam-reviews-${route.params.id}`, () => getReviews(route.params.id as string, 1, true))
+
 // showError inside the handler only lands in useAsyncData's error, so SSR answered 200 with an empty page.
 // Throwing from setup makes Nuxt render the error page with a real 404.
 if (!contentData.value) {
@@ -317,7 +325,7 @@ const schema = computed(() => {
     description: examDescription.value,
     breadcrumbs: breads.value,
     types: ['webpage', 'learning', 'breadcrumb'],
-    learning: examQuizSchema(exam),
+    learning: examQuizSchema(exam, reviews.value),
   })
 })
 
