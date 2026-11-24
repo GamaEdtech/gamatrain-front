@@ -35,12 +35,12 @@
           v-model="form.question"
           mode="full"
         />
-        <img
-          v-if="images.question"
-          :src="images.question"
-          alt="Question image"
-          class="old-image"
-        >
+        <admin-exam-question-image
+          label="Question image"
+          :url="images.question"
+          :change="imageChanges.question"
+          @change="imageChanges.question = $event"
+        />
         <template v-if="optionCount">
           <div
             v-for="letter in OPTIONS.slice(0, optionCount)"
@@ -51,12 +51,12 @@
               Option {{ letter.toUpperCase() }}
             </div>
             <common-rich-editor v-model="form[`answer${letter.toUpperCase()}` as OptionKey]" />
-            <img
-              v-if="images[letter]"
-              :src="images[letter]"
-              :alt="`Option ${letter} image`"
-              class="old-image"
-            >
+            <admin-exam-question-image
+              :label="`Option ${letter.toUpperCase()} image`"
+              :url="images[letter]"
+              :change="imageChanges[letter]"
+              @change="imageChanges[letter] = $event"
+            />
           </div>
         </template>
         <div class="text-caption text-grey700">
@@ -65,6 +65,12 @@
         <common-rich-editor
           v-model="form.answerFull"
           mode="full"
+        />
+        <admin-exam-question-image
+          label="Worked answer image"
+          :url="images.answerFull"
+          :change="imageChanges.answerFull"
+          @change="imageChanges.answerFull = $event"
         />
       </v-col>
       <v-col
@@ -134,7 +140,7 @@
         <v-btn
           color="success"
           variant="flat"
-          :loading="saving"
+          :loading="saving || imageSaving"
           @click="submit"
         >
           {{ isNew ? 'Add question' : 'Save' }}
@@ -162,7 +168,7 @@ const id = computed(() => String(route.params.id))
 const isNew = computed(() => id.value === 'new')
 useHead({ title: () => (isNew.value ? 'Add question' : 'Edit question') })
 
-const { saving, getQuestion, saveQuestion } = useExamAdmin()
+const { saving, getQuestion, saveQuestion, setQuestionImage, removeQuestionImage } = useExamAdmin()
 const loading = ref(true)
 const current = ref<AdminExamQuestionDetailDTO | null>(null)
 const boardId = ref<string | null>(null)
@@ -170,6 +176,9 @@ const gradeId = ref<string | null>(null)
 const subjectId = ref<string | null>(null)
 const topicId = ref<string | null>(null)
 const images = reactive<Record<string, string | null>>({})
+// Image changes queued until Save, per slot: a new file, null to remove, undefined for no change.
+const imageChanges = reactive<Record<string, File | null | undefined>>({})
+const imageSaving = ref(false)
 const form = reactive({
   type: 1,
   question: '',
@@ -196,7 +205,38 @@ const submit = async () => {
     subjectId: subjectId.value ? Number(subjectId.value) : current.value?.subjectId ?? null,
     coreTopicIds: topicId.value ?? current.value?.coreTopicIds ?? null,
   })
-  if (result && isNew.value) await router.replace(`/admin/exam-questions/edit/${result}`)
+  if (!result) return
+
+  const questionId = isNew.value ? Number(result) : Number(id.value)
+  await saveImages(questionId)
+  if (isNew.value) await router.replace(`/admin/exam-questions/edit/${questionId}`)
+}
+
+// Sends the queued image changes once the question is saved (a new question needs its id first). A failed one stays
+// queued, with the error shown, so Save can try it again.
+const saveImages = async (questionId: number) => {
+  imageSaving.value = true
+  try {
+    for (const [slot, change] of Object.entries(imageChanges)) {
+      if (change === undefined) continue
+      if (change === null) {
+        if (await removeQuestionImage(questionId, slot)) {
+          images[slot] = null
+          imageChanges[slot] = undefined
+        }
+      }
+      else {
+        const url = await setQuestionImage(questionId, slot, change)
+        if (url) {
+          images[slot] = url
+          imageChanges[slot] = undefined
+        }
+      }
+    }
+  }
+  finally {
+    imageSaving.value = false
+  }
 }
 
 onMounted(async () => {
@@ -222,17 +262,9 @@ onMounted(async () => {
       resource: question.resource ?? '',
     })
     // gama-api's separate image files, shown under the text they belong to.
-    Object.assign(images, { question: question.questionImage, a: question.answerAImage, b: question.answerBImage, c: question.answerCImage, d: question.answerDImage })
+    Object.assign(images, { question: question.questionImage, a: question.answerAImage, b: question.answerBImage, c: question.answerCImage, d: question.answerDImage, answerFull: question.answerFullImage })
   }
 
   loading.value = false
 })
 </script>
-
-<style scoped>
-.old-image {
-  max-width: 320px;
-  max-height: 180px;
-  object-fit: contain;
-}
-</style>
