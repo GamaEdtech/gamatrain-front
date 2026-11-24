@@ -1,8 +1,11 @@
 <template>
+  <!-- Built to take about the same room as the usual hero text, so swapping it in after the page has painted doesn't
+       push the exam finder down (CLS): on phones only the title and one line; the countdown boxes and the button sit on
+       one row on desktop; on phones the opened gift is the way to the plans. -->
   <div class="campaign-hero-text">
     <v-chip
       variant="outlined"
-      class="campaign-hero-text__badge font-weight-bold"
+      class="campaign-hero-text__badge d-none d-md-inline-flex font-weight-bold"
       prepend-icon="md:sell_outlined"
     >
       {{ fill(style.badge) }}
@@ -11,30 +14,35 @@
       <span :class="{ 'campaign-hero-text__shine': theme === 'BlackFriday' }">{{ fill(style.titleLines[0]) }}</span>
       <span class="campaign-hero-text__accent">{{ fill(style.titleLines[1]) }}</span>
     </h1>
-    <p class="campaign-hero-text__lead">
+    <p class="campaign-hero-text__line d-md-none">
+      <strong>-{{ campaign.discountPercent }}% first payment</strong> ·
+      <campaign-countdown
+        :ends-at="campaign.endsAt"
+        variant="inline"
+      />
+    </p>
+    <p class="campaign-hero-text__lead d-none d-md-block">
       {{ campaign.headline || fill(style.lead) }}
     </p>
-    <span class="campaign-hero-text__ends">Sale ends in</span>
-    <campaign-countdown
-      :ends-at="campaign.endsAt"
-      class="campaign-hero-text__countdown"
-    />
-    <div class="campaign-hero-text__actions">
-      <v-btn
-        to="/user/subscription"
-        size="x-large"
-        rounded="lg"
-        class="campaign-hero-text__cta font-weight-bold text-none"
-        flat
-      >
-        See the plans
-      </v-btn>
-      <span
-        v-if="style.playHint"
-        class="campaign-hero-text__play"
-      >
-        {{ style.playHint }}<template v-if="plays > 0"> · {{ plays }}</template>
-      </span>
+    <div class="campaign-hero-text__row d-none d-md-flex">
+      <campaign-countdown :ends-at="campaign.endsAt" />
+      <div class="d-flex flex-column ga-1">
+        <v-btn
+          to="/user/subscription"
+          size="x-large"
+          rounded="lg"
+          class="campaign-hero-text__cta font-weight-bold text-none"
+          flat
+        >
+          See the plans
+        </v-btn>
+        <span
+          v-if="style.playHint"
+          class="campaign-hero-text__play"
+        >
+          {{ style.playHint }}<template v-if="plays > 0"> · {{ plays }}</template>
+        </span>
+      </div>
     </div>
   </div>
 </template>
@@ -60,7 +68,8 @@ defineProps<{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
+  animation: campaign-fade-in 0.4s ease-out;
 }
 
 .campaign-hero-text__badge {
@@ -70,11 +79,12 @@ defineProps<{
   text-transform: uppercase;
 }
 
+/* Same size as the usual hero title on phones. */
 .campaign-hero-text__title {
   display: flex;
   flex-direction: column;
   margin: 0;
-  font-size: clamp(1.75rem, 8vw, 2.25rem);
+  font-size: clamp(1.5rem, 7.4vw, 2rem);
   font-weight: 900;
   line-height: 1.05;
   letter-spacing: -0.03em;
@@ -93,29 +103,29 @@ defineProps<{
   animation: campaign-shine 4s linear infinite;
 }
 
+.campaign-hero-text__line {
+  margin: 0;
+  color: var(--campaign-muted);
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.campaign-hero-text__line strong {
+  color: var(--campaign-highlight);
+}
+
 .campaign-hero-text__lead {
   max-width: 32.5rem;
   margin: 0;
   color: var(--campaign-muted);
-  font-size: 1rem;
+  font-size: 1.1875rem;
   line-height: 1.45;
 }
 
-.campaign-hero-text__ends {
-  color: var(--campaign-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.campaign-hero-text__actions {
-  display: flex;
+.campaign-hero-text__row {
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: 0.75rem 1rem;
-  margin-top: 0.25rem;
+  gap: 1rem 1.5rem;
 }
 
 .campaign-hero-text__cta {
@@ -129,6 +139,12 @@ defineProps<{
   font-weight: 600;
 }
 
+@media (min-width: 600px) {
+  .campaign-hero-text__title {
+    font-size: 2.5rem;
+  }
+}
+
 @media (min-width: 960px) {
   .campaign-hero-text {
     align-items: flex-start;
@@ -138,14 +154,11 @@ defineProps<{
   .campaign-hero-text__title {
     font-size: 3.5rem;
   }
+}
 
-  .campaign-hero-text__lead {
-    font-size: 1.1875rem;
-  }
-
-  .campaign-hero-text__actions {
-    justify-content: flex-start;
-  }
+@keyframes campaign-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes campaign-shine {
@@ -154,6 +167,7 @@ defineProps<{
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .campaign-hero-text,
   .campaign-hero-text__shine {
     animation: none;
   }

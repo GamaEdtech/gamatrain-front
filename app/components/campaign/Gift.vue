@@ -87,14 +87,17 @@
           />
         </span>
       </span>
-      <span
+      <nuxt-link
+        to="/user/subscription"
         class="campaign-gift__badge"
         :class="{ 'campaign-gift__badge--pop': justOpened }"
         :style="{ background: colors.badge, color: colors.onBadge }"
+        :aria-label="`${percent}% off unlocked: see the plans`"
       >
         <span class="campaign-gift__percent">-{{ percent }}%</span>
         <span class="campaign-gift__unlocked">unlocked</span>
-      </span>
+      </nuxt-link>
+      <span class="campaign-gift__hint campaign-gift__see">See the plans</span>
     </div>
   </div>
 </template>
@@ -177,6 +180,7 @@ const open = () => {
 .campaign-gift__opened {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 6.5rem;
@@ -185,6 +189,7 @@ const open = () => {
 
 .campaign-gift__badge {
   display: flex;
+  text-decoration: none;
   flex-direction: column;
   align-items: center;
   justify-content: center;
@@ -211,9 +216,13 @@ const open = () => {
   text-transform: uppercase;
 }
 
+.campaign-gift__see {
+  margin-top: 0.25rem;
+}
+
 .campaign-gift__confetti {
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
 }
 

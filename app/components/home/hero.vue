@@ -14,7 +14,11 @@
       @launch="plays++"
     />
     <v-container class="home-hero__grid">
-      <div class="home-hero__text">
+      <div
+        ref="textBlock"
+        class="home-hero__text"
+        :style="live && textHeight ? { minHeight: `${textHeight}px` } : undefined"
+      >
         <lazy-campaign-hero-text
           v-if="live && campaign"
           :campaign="campaign"
@@ -111,7 +115,15 @@ const { campaign, isLive: live, theme, style, fill, load } = useCampaign()
 const plays = ref(0)
 const themeClass = computed(() => theme.value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase())
 
-onMounted(load)
+// The usual text's height, measured before a campaign can swap in: the campaign text keeps at least that much room, so
+// the swap never makes the hero shorter (and is built to be no taller), keeping the page from jumping (CLS).
+const textBlock = ref<HTMLElement | null>(null)
+const textHeight = ref(0)
+
+onMounted(() => {
+  textHeight.value = textBlock.value?.offsetHeight ?? 0
+  load()
+})
 </script>
 
 <style scoped lang="scss">
