@@ -2,7 +2,7 @@
   <v-navigation-drawer
     v-model="drawerModel"
     :temporary="mdAndDown"
-    expand-on-hover
+    :rail="isRail"
     class="bg-inverseSurfaceStrong"
   >
     <v-list
@@ -11,8 +11,35 @@
       nav
       class="main-list"
     >
-      <div class="w-100 d-flex justify-space-between align-center mt-2 px-2">
+      <div
+        v-if="isRail"
+        class="w-100 d-flex justify-center mt-2"
+      >
+        <v-btn
+          icon="md:menu"
+          variant="text"
+          color="white"
+          size="small"
+          title="Expand menu"
+          aria-label="Expand menu"
+          @click="collapsed = false"
+        />
+      </div>
+      <div
+        v-else
+        class="w-100 d-flex justify-space-between align-center mt-2 px-2"
+      >
         <span class="text-h4 text-white font-weight-bold">Dashboard</span>
+        <v-btn
+          v-if="!mdAndDown"
+          icon="md:chevron_left"
+          variant="text"
+          color="white"
+          size="small"
+          title="Collapse menu"
+          aria-label="Collapse menu"
+          @click="collapsed = true"
+        />
         <v-icon
           class="cursor-pointer d-flex d-lg-none"
           size="24"
@@ -34,6 +61,7 @@
           class="rounded-lg mt-3"
           role="listitem"
           :disabled="item.status"
+          :title="isRail ? item.title : undefined"
         >
           <template #prepend>
             <v-icon
@@ -63,14 +91,22 @@
               }
                rounded-lg mt-3`"
               role="listitem"
+              :title="isRail ? item.title : undefined"
+              @click="expandFromRail"
             >
               <template #prepend>
-                <v-icon
-                  color="white"
-                  size="24"
+                <v-badge
+                  :model-value="isRail && !!groupCount(item)"
+                  color="error"
+                  dot
                 >
-                  {{ item.icon }}
-                </v-icon>
+                  <v-icon
+                    color="white"
+                    size="24"
+                  >
+                    {{ item.icon }}
+                  </v-icon>
+                </v-badge>
               </template>
 
               <v-list-item-title
@@ -141,7 +177,31 @@
     </v-list>
 
     <template #append>
-      <div class="d-flex justify-space-between align-center ga-3 px-4 py-4">
+      <div
+        v-if="isRail"
+        class="d-flex justify-center py-4"
+      >
+        <v-btn
+          flat
+          icon
+          color="error"
+          size="small"
+          title="Log out"
+          aria-label="Log out"
+          @click="logout"
+        >
+          <v-icon
+            color="white"
+            size="24"
+          >
+            md:exit_to_app
+          </v-icon>
+        </v-btn>
+      </div>
+      <div
+        v-else
+        class="d-flex justify-space-between align-center ga-3 px-4 py-4"
+      >
         <div class="d-flex align-center ga-1">
           <v-avatar
             v-if="user && user.avatarUri"
@@ -440,6 +500,16 @@ const visibleItems = computed(() => {
 })
 
 const openedGroups = ref([])
+
+// On a desktop the menu starts as a narrow strip of icons (rail) and the admin widens it with its button; the choice is
+// kept in a cookie so the server renders the same width. On a phone or tablet it is a full-width overlay as before.
+const collapsed = useCookie('admin-menu-collapsed', { default: () => true, maxAge: 60 * 60 * 24 * 365, sameSite: 'lax' })
+const isRail = computed(() => !mdAndDown.value && collapsed.value)
+
+// Opening a group from the icon strip (the list itself opens it) also widens the menu so its pages can be read.
+const expandFromRail = () => {
+  if (isRail.value) collapsed.value = false
+}
 
 const isParentActive = (item) => {
   if (!item.subMenuList) return false
