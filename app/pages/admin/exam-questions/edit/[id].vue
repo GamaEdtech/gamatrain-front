@@ -66,6 +66,12 @@
           v-model="form.answerFull"
           mode="full"
         />
+        <img
+          v-if="images.answerFull"
+          :src="images.answerFull"
+          alt="Worked answer image"
+          class="old-image"
+        >
       </v-col>
       <v-col
         cols="12"
@@ -222,7 +228,7 @@ onMounted(async () => {
       resource: question.resource ?? '',
     })
     // gama-api's separate image files, shown under the text they belong to.
-    Object.assign(images, { question: question.questionImage, a: question.answerAImage, b: question.answerBImage, c: question.answerCImage, d: question.answerDImage })
+    Object.assign(images, { question: question.questionImage, a: question.answerAImage, b: question.answerBImage, c: question.answerCImage, d: question.answerDImage, answerFull: question.answerFullImage })
   }
 
   loading.value = false
