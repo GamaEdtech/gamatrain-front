@@ -159,15 +159,19 @@
           />
         </div>
         <v-list
+          ref="questionList"
           density="compact"
           class="border rounded"
         >
           <v-list-item
             v-for="(question, index) in questions"
             :key="question.id"
-            :title="`${index + 1}. ${question.excerpt || question.code}`"
             :subtitle="[question.type, question.topicTitle, `answer ${question.trueAnswer ?? '-'}`, statusTitle(question.status)].filter(Boolean).join(' · ')"
           >
+            <!-- The excerpt keeps the question's TeX ($...$), typeset by MathJax (see renderQuestions). -->
+            <template #title>
+              {{ index + 1 }}. <span :key="`${question.id}:${question.excerpt}`">{{ question.excerpt || question.code }}</span>
+            </template>
             <template #append>
               <v-btn
                 size="small"
@@ -234,6 +238,13 @@ const exam = ref<AdminExamDetailDTO | null>(null)
 const status = ref(0)
 const questions = ref<AdminExamQuestionItemDTO[]>([])
 const addId = ref('')
+const renderMath = useMathJaxRender()
+const questionList = useTemplateRef<{ $el: HTMLElement }>('questionList')
+// Draws the formulas of any question that was loaded or added since the last pass; ones already drawn are left alone.
+watch(() => questions.value.map(t => t.id).join(), async () => {
+  await nextTick()
+  await renderMath(questionList.value?.$el)
+})
 const form = reactive({ title: '', durationMinutes: null as number | null, scoreType: 1 as number | null, level: 0 as number | null, eduYear: null as number | null, eduMonth: null as number | null })
 
 const load = async () => {
