@@ -145,6 +145,9 @@ export interface ActiveSubscriptionPlanPriceDTO {
   currency: SubscriptionCurrency
   currencySymbol: string
   price: number
+  /** The first payment during a live sale campaign, when the caller's purchase would get it (no active subscription);
+   *  null otherwise. Renewals are `price`. The backend charges exactly this (gamatrain-back#1104). */
+  campaignPrice?: number | null
 }
 
 export interface SubscriptionPlanDTO {
