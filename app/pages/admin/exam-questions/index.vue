@@ -71,6 +71,7 @@
     </div>
 
     <common-data-table
+      ref="table"
       v-model:page="page"
       v-model:page-size="pageSize"
       :headers="headers"
@@ -83,7 +84,13 @@
       class="mt-4"
       @update:page="fetch"
       @update:page-size="search"
-    />
+    >
+      <!-- The excerpt keeps the question's TeX ($...$), typeset by MathJax after each load. Keyed by its text so a new
+           page gets a fresh element: MathJax replaces the text node Vue would otherwise update. -->
+      <template #[`item.excerpt`]="{ item }">
+        <span :key="`${item.id}:${item.excerpt}`">{{ item.excerpt || '-' }}</span>
+      </template>
+    </common-data-table>
 
     <admin-common-delete-modal
       v-model="showDelete"
@@ -107,6 +114,8 @@ useHead({ title: 'Question bank' })
 
 const { can } = useAdminAccess()
 const { loading, saving, getQuestions, setQuestionStatus, deleteQuestion } = useExamAdmin()
+const renderMath = useMathJaxRender()
+const table = useTemplateRef<{ $el: HTMLElement }>('table')
 
 const statusFilters = [{ title: 'All', value: null }, ...Object.entries(QUESTION_STATUSES).map(([value, title]) => ({ title, value: Number(value) }))]
 const statusColor = (status: number) => (status === 1 ? 'success' : status === 2 ? 'error' : 'warning')
@@ -170,6 +179,8 @@ const fetch = async () => {
   })
   items.value = data.items
   total.value = data.total
+  await nextTick()
+  await renderMath(table.value?.$el)
 }
 
 const search = async () => {
