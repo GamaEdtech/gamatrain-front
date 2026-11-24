@@ -138,6 +138,7 @@
       </div>
       <common-rich-editor
         v-model="localData.content"
+        with-math
         mode="full"
         :rules="[required]"
         @update:model-value="emitUpdate"
