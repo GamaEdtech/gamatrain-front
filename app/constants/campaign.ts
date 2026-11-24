@@ -10,6 +10,9 @@ export interface CampaignThemeStyle {
   badge: string
   /** Hero title: first line, then the accented line. `{percent}` is replaced. */
   titleLines: [string, string]
+  /** The short line under the title on phones (with the countdown after it). `{percent}` is replaced. Never repeats
+   *  what the title already says. */
+  phoneLine: string
   /** Hero line under the title. `{percent}` is replaced. */
   lead: string
   /** Accent for prices, buttons and badges on light surfaces (≥ 4.5:1 on white). */
@@ -27,6 +30,7 @@ export interface CampaignThemeStyle {
 
 export const CAMPAIGN_THEMES: Record<CampaignTheme, CampaignThemeStyle> = {
   BlackFriday: {
+    phoneLine: 'Every plan, this week only',
     label: 'Black Friday',
     badge: 'Black Friday week',
     titleLines: ['BLACK FRIDAY', '{percent}% off your first payment'],
@@ -39,6 +43,7 @@ export const CAMPAIGN_THEMES: Record<CampaignTheme, CampaignThemeStyle> = {
     playHint: null,
   },
   Christmas: {
+    phoneLine: '-{percent}% first payment',
     label: 'Christmas',
     badge: 'Christmas sale',
     titleLines: ['Exams don\'t take a holiday.', 'Your wallet can.'],
@@ -51,6 +56,7 @@ export const CAMPAIGN_THEMES: Record<CampaignTheme, CampaignThemeStyle> = {
     playHint: 'Tap the snow',
   },
   NewYear: {
+    phoneLine: '-{percent}% first payment',
     label: 'New Year',
     badge: 'New Year sale',
     titleLines: ['New year. Same syllabus.', 'Better grades.'],
@@ -63,6 +69,7 @@ export const CAMPAIGN_THEMES: Record<CampaignTheme, CampaignThemeStyle> = {
     playHint: 'Tap the sky',
   },
   Generic: {
+    phoneLine: 'Every plan, limited time',
     label: 'Sale',
     badge: '{title}',
     titleLines: ['Ace your next exam', 'for {percent}% less'],

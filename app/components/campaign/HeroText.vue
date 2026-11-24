@@ -15,7 +15,7 @@
       <span class="campaign-hero-text__accent">{{ fill(style.titleLines[1]) }}</span>
     </h1>
     <p class="campaign-hero-text__line d-md-none">
-      <strong>-{{ campaign.discountPercent }}% first payment</strong> ·
+      <strong>{{ fill(style.phoneLine) }}</strong>
       <campaign-countdown
         :ends-at="campaign.endsAt"
         variant="inline"
@@ -79,15 +79,24 @@ defineProps<{
   text-transform: uppercase;
 }
 
-/* Same size as the usual hero title on phones. */
+/* On phones every line stays one line, sized to the screen: the page first paints with a fallback font and the site's
+   font is wider, so text that wraps would gain a line when it loads and push the page down (CLS). */
 .campaign-hero-text__title {
   display: flex;
   flex-direction: column;
   margin: 0;
-  font-size: clamp(1.5rem, 7.4vw, 2rem);
+  font-size: clamp(1rem, 5.4vw, 2rem);
   font-weight: 900;
-  line-height: 1.05;
+  line-height: 1.1;
   letter-spacing: -0.03em;
+}
+
+.campaign-hero-text__title > span {
+  white-space: nowrap;
+}
+
+.campaign-hero-text__title > .campaign-hero-text__shine {
+  font-size: 1.45em;
 }
 
 .campaign-hero-text__accent {
@@ -104,10 +113,13 @@ defineProps<{
 }
 
 .campaign-hero-text__line {
+  display: flex;
+  flex-direction: column;
   margin: 0;
   color: var(--campaign-muted);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   line-height: 1.4;
+  white-space: nowrap;
 }
 
 .campaign-hero-text__line strong {
@@ -141,7 +153,11 @@ defineProps<{
 
 @media (min-width: 600px) {
   .campaign-hero-text__title {
-    font-size: 2.5rem;
+    font-size: 2.25rem;
+  }
+
+  .campaign-hero-text__title > .campaign-hero-text__shine {
+    font-size: 1em;
   }
 }
 
@@ -153,6 +169,10 @@ defineProps<{
 
   .campaign-hero-text__title {
     font-size: 3.5rem;
+  }
+
+  .campaign-hero-text__title > span {
+    white-space: normal;
   }
 }
 

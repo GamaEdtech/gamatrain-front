@@ -152,8 +152,8 @@ const open = () => {
 }
 
 .campaign-gift__box {
-  width: 5.5rem;
-  height: 5.5rem;
+  width: 4.75rem;
+  height: 4.75rem;
   padding: 0;
   border: 0;
   background: transparent;
@@ -163,6 +163,8 @@ const open = () => {
 .campaign-gift__box svg {
   width: 100%;
   height: 100%;
+  /* A glow in the theme's colour, so a dark box still stands out on a dark hero. */
+  filter: drop-shadow(0 0 0.625rem var(--campaign-glow, rgba(255, 179, 0, 0.45)));
 }
 
 .campaign-gift__shake {
@@ -170,11 +172,14 @@ const open = () => {
   animation: gift-shake 2.6s ease-in-out infinite;
 }
 
+/* Wraps on narrow phones ("Tap to open / your gift") instead of running off the screen. */
 .campaign-gift__hint {
+  max-width: 6.5rem;
   color: var(--campaign-highlight, #fff);
   font-size: 0.8125rem;
   font-weight: 800;
-  white-space: nowrap;
+  line-height: 1.25;
+  text-align: center;
 }
 
 .campaign-gift__opened {
@@ -243,6 +248,11 @@ const open = () => {
 }
 
 @media (min-width: 960px) {
+  .campaign-gift__hint {
+    max-width: none;
+    white-space: nowrap;
+  }
+
   .campaign-gift__box {
     width: 8rem;
     height: 8rem;

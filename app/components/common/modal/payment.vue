@@ -226,10 +226,10 @@ const propsData = withDefaults(defineProps<IPaymentModal>(),
 const emit = defineEmits(['switchSuccessfully', 'dismiss'])
 
 const { discountPercent } = useBillingIntervalPricing()
-const { campaign, isLive: campaignLive, style: campaignStyle, load: loadCampaign } = useCampaign()
+const { campaign, isLive: campaignLive, style: campaignStyle, refresh: refreshCampaign } = useCampaign()
 const showCampaign = computed(() => campaignLive.value
   && propsData.plans.some(plan => plan.prices.some(price => price.campaignPrice !== null && price.campaignPrice !== undefined)))
-onMounted(loadCampaign)
+onMounted(refreshCampaign)
 
 const skeletonCount = 3
 const activeSkeletonIndex = 1

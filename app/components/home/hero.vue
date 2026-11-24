@@ -1,5 +1,5 @@
 <template>
-  <!-- A live sale campaign (useCampaign, browser only) restyles the hero: theme colours, its text and countdown, an
+  <!-- A live sale campaign (useCampaign: rendered on the server, re-checked in the browser) restyles the hero: theme colours, its text and countdown, an
        outfit for the mascot, a gift to open, and snow or fireworks to play with. Without one it is the usual hero. -->
   <div
     class="home-hero"
@@ -19,7 +19,7 @@
         class="home-hero__text"
         :style="live && textHeight ? { minHeight: `${textHeight}px` } : undefined"
       >
-        <lazy-campaign-hero-text
+        <campaign-hero-text
           v-if="live && campaign"
           :campaign="campaign"
           :theme="theme"
@@ -111,18 +111,20 @@
 </template>
 
 <script setup lang="ts">
-const { campaign, isLive: live, theme, style, fill, load } = useCampaign()
+const { campaign, isLive: live, theme, style, fill, loadForPage, refresh } = useCampaign()
+loadForPage()
 const plays = ref(0)
 const themeClass = computed(() => theme.value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase())
 
-// The usual text's height, measured before a campaign can swap in: the campaign text keeps at least that much room, so
-// the swap never makes the hero shorter (and is built to be no taller), keeping the page from jumping (CLS).
+// The campaign is in the server's HTML, so the page normally arrives themed. When the browser's re-check swaps it in or
+// out (a cached page older than an admin's change), the text keeps at least the room it had, and the campaign text is
+// built to be about as tall as the usual one, so the page doesn't jump (CLS).
 const textBlock = ref<HTMLElement | null>(null)
 const textHeight = ref(0)
 
 onMounted(() => {
   textHeight.value = textBlock.value?.offsetHeight ?? 0
-  load()
+  refresh()
 })
 </script>
 
@@ -393,6 +395,7 @@ onMounted(() => {
 }
 
 .home-hero.home-hero--black-friday {
+  --campaign-glow: rgba(255, 179, 0, 0.55);
   --campaign-highlight: #ffb300;
   --campaign-muted: #c9ced8;
   --campaign-accent: #ffffff;
@@ -404,6 +407,7 @@ onMounted(() => {
 }
 
 .home-hero.home-hero--christmas {
+  --campaign-glow: rgba(255, 255, 255, 0.45);
   --campaign-accent: #ff6b6b;
   --campaign-cta-bg: #e5484d;
   --campaign-cta-text: #ffffff;
@@ -413,6 +417,7 @@ onMounted(() => {
 }
 
 .home-hero.home-hero--new-year {
+  --campaign-glow: rgba(94, 234, 212, 0.5);
   --campaign-highlight: #5eead4;
   --campaign-muted: #c3cae0;
   --campaign-accent: #ffb300;
@@ -423,20 +428,24 @@ onMounted(() => {
 }
 
 .home-hero.home-hero--generic {
+  --campaign-glow: rgba(255, 179, 0, 0.45);
   --campaign-highlight: rgb(var(--v-theme-primary));
 }
 
+/* Beside the mascot on phones, in a column narrow enough to stay on screen at 320px. */
 .home-hero__gift {
   position: absolute;
   z-index: 2;
-  top: 0.5rem;
-  left: calc(100% + 0.5rem);
+  top: 1.75rem;
+  left: calc(100% + 0.25rem);
+  width: 6.5rem;
 }
 
 @media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
   .home-hero__gift {
     top: 0.5rem;
     left: calc(100% - 4.5rem);
+    width: auto;
   }
 }
 </style>

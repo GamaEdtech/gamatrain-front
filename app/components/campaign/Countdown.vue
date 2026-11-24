@@ -61,6 +61,7 @@ const left = useCampaignCountdown(() => props.endsAt)
 
 .campaign-countdown--inline {
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 @media (min-width: 960px) {
