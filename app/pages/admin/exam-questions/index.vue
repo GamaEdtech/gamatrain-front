@@ -145,7 +145,7 @@ const headers: DataTableHeader<AdminExamQuestionItemDTO>[] = [
     width: '10vw',
     type: 'actions',
     actions: [
-      { icon: 'md:edit', tooltip: 'Edit', href: item => `/admin/exam-questions/edit/${item.id}`, show: () => can(ADMIN_PERMISSIONS.examQuestions.detail) },
+      { icon: 'md:edit', tooltip: 'Edit', href: item => `/admin/exam-questions/edit/${item.id}`, target: '_blank', show: () => can(ADMIN_PERMISSIONS.examQuestions.detail) },
       { icon: 'md:check_circle', tooltip: 'Confirm', onClick: item => changeStatus(item, 1), show: item => item.status !== 1 && can(ADMIN_PERMISSIONS.examQuestions.status) },
       { icon: 'md:visibility', tooltip: 'View', href: item => `/test/${item.code}`, target: '_blank', show: item => item.status === 1 && !!item.code },
       { icon: 'md:delete', tooltip: 'Delete', onClick: item => openDelete(item), show: () => can(ADMIN_PERMISSIONS.examQuestions.remove) },
