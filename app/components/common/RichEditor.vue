@@ -1,5 +1,8 @@
 <template>
-  <div class="w-100">
+  <div
+    class="w-100"
+    :style="{ '--rich-editor-min-height': minHeight }"
+  >
     <div
       v-if="loading"
       class="d-flex flex-column align-center justify-center ga-2 pa-2 border-grey200 rounded-lg border-md"
@@ -160,6 +163,11 @@ const props = defineProps({
   withMath: {
     type: Boolean,
     default: false,
+  },
+  // The writing area's minimum height (any CSS length); short fields such as answer options use less.
+  minHeight: {
+    type: String,
+    default: '300px',
   },
   rules: {
     type: Array,
@@ -534,7 +542,7 @@ const changeEditor = (event) => {
 :deep(.ck.ck-editor__main > .ck-editor__editable) {
     border-radius: 0 0 8px 8px !important;
     border : 1px solid rgb(var(--v-theme-grey400)) !important;
-    min-height : 300px;
+    min-height : var(--rich-editor-min-height, 300px);
     background-color: rgb(var(--v-theme-surface)) !important;
     color :  rgb(var(--v-theme-brandNavy)) ;
 }

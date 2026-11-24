@@ -1,42 +1,74 @@
 <template>
-  <div class="d-flex flex-column ga-1">
-    <img
-      v-if="preview"
-      :src="preview"
-      :alt="label"
-      class="question-image"
+  <div class="question-image d-flex align-center flex-wrap ga-3">
+    <div
+      v-if="shown"
+      class="question-image__frame rounded-lg border-md"
+      :class="{ 'question-image__frame--removed': removed }"
     >
-    <div class="d-flex align-center flex-wrap ga-2">
-      <v-file-input
-        :key="inputKey"
-        :label="preview ? `Replace ${label.toLowerCase()}` : `Add ${label.toLowerCase()}`"
-        accept="image/png,image/jpeg,image/webp"
-        prepend-icon="md:image"
-        variant="outlined"
-        density="compact"
-        hide-details
-        class="image-input"
-        @update:model-value="pick"
-      />
+      <img
+        :src="shown"
+        :alt="label"
+      >
+      <v-chip
+        v-if="pending || removed"
+        :color="removed ? 'error' : 'primary'"
+        size="x-small"
+        variant="flat"
+        class="question-image__badge"
+      >
+        {{ removed ? 'Will be removed' : 'New' }}
+      </v-chip>
+    </div>
+
+    <div class="d-flex align-center flex-wrap ga-1">
       <v-btn
-        v-if="preview && !pending"
+        v-if="!removed"
+        :prepend-icon="shown ? 'md:sync' : 'md:add_photo_alternate'"
+        :variant="shown ? 'tonal' : 'text'"
+        :color="shown ? 'primary' : 'grey700'"
+        size="small"
+        class="text-none"
+        @click="picker?.click()"
+      >
+        {{ shown ? 'Replace' : label }}
+      </v-btn>
+      <v-btn
+        v-if="shown && !pending && !removed"
+        prepend-icon="md:delete"
         variant="text"
         color="error"
         size="small"
-        prepend-icon="md:delete"
+        class="text-none"
         @click="emit('change', null)"
       >
         Remove
       </v-btn>
       <v-btn
         v-if="change !== undefined"
+        prepend-icon="md:undo"
         variant="text"
         size="small"
+        class="text-none"
         @click="emit('change', undefined)"
       >
         Undo
       </v-btn>
+      <span
+        v-if="change !== undefined"
+        class="text-caption text-grey600"
+      >
+        Saved with the question
+      </span>
     </div>
+
+    <input
+      ref="picker"
+      type="file"
+      accept="image/png,image/jpeg,image/webp"
+      hidden
+      @change="pick"
+    >
+
     <!-- The test maker's cropper: the admin crops the picked image, which comes back as WebP. -->
     <common-cropper-dialog
       v-model="cropping"
@@ -61,12 +93,12 @@ const props = defineProps<{
 
 const emit = defineEmits<{ change: [File | null | undefined] }>()
 
+const picker = ref<HTMLInputElement | null>(null)
 const pending = computed(() => (props.change instanceof File ? props.change : null))
+const removed = computed(() => props.change === null && !!props.url)
 const objectUrl = ref<string | null>(null)
 const cropUrl = ref('')
 const cropping = ref(false)
-// Re-created after each pick, so picking the same file again opens the cropper again.
-const inputKey = ref(0)
 
 watch(pending, (file) => {
   if (objectUrl.value) URL.revokeObjectURL(objectUrl.value)
@@ -85,11 +117,14 @@ onBeforeUnmount(() => {
   if (cropUrl.value) URL.revokeObjectURL(cropUrl.value)
 })
 
-const preview = computed(() => (props.change === null ? null : objectUrl.value ?? props.url ?? null))
+// The new image, or the saved one (faded while it is marked for removal).
+const shown = computed(() => objectUrl.value ?? props.url ?? null)
 
-const pick = (value: File | File[] | null) => {
-  const file = Array.isArray(value) ? value[0] : value
-  inputKey.value++
+const pick = (event: Event) => {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  // Cleared, so picking the same file again opens the cropper again.
+  input.value = ''
   if (!file) return
   cropUrl.value = URL.createObjectURL(file)
   cropping.value = true
@@ -102,14 +137,28 @@ const cropped = (blob: Blob | null) => {
 </script>
 
 <style scoped>
-.question-image {
-  max-width: 320px;
-  max-height: 180px;
-  object-fit: contain;
-  align-self: flex-start;
+.question-image__frame {
+  position: relative;
+  padding: 6px;
+  background: rgb(var(--v-theme-surface));
+  border-color: rgb(var(--v-theme-grey200)) !important;
 }
 
-.image-input {
-  max-width: 320px;
+.question-image__frame img {
+  display: block;
+  max-width: 260px;
+  max-height: 150px;
+  object-fit: contain;
+}
+
+.question-image__frame--removed img {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.question-image__badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
 }
 </style>

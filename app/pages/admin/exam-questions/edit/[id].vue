@@ -1,6 +1,6 @@
 <template>
-  <div class="w-100 d-flex flex-column ga-4 pb-8">
-    <div class="d-flex align-center ga-2">
+  <div class="question-edit w-100 d-flex flex-column ga-4 pb-8">
+    <div class="question-edit__header d-flex align-center flex-wrap ga-2 py-2">
       <v-btn
         variant="text"
         prepend-icon="md:arrow_back"
@@ -8,9 +8,36 @@
       >
         Question bank
       </v-btn>
-      <h1 class="text-h6">
-        {{ isNew ? 'Add question' : `Edit question #${id}` }}
+      <h1 class="text-h6 font-weight-bold">
+        {{ isNew ? 'New question' : `Question #${id}` }}
       </h1>
+      <v-chip
+        v-if="current?.code"
+        size="small"
+        variant="outlined"
+        prepend-icon="md:tag"
+      >
+        {{ current.code }}
+      </v-chip>
+      <v-chip
+        v-if="!isNew && form.status !== null"
+        size="small"
+        variant="flat"
+        :color="STATUS_COLORS[form.status]"
+      >
+        {{ QUESTION_STATUSES[form.status] }}
+      </v-chip>
+      <v-spacer />
+      <v-btn
+        color="primary"
+        variant="flat"
+        prepend-icon="md:save"
+        :loading="saving || imageSaving"
+        :disabled="loading"
+        @click="submit"
+      >
+        {{ isNew ? 'Add question' : 'Save changes' }}
+      </v-btn>
     </div>
 
     <v-progress-linear
@@ -19,137 +46,289 @@
       color="primary"
     />
 
-    <v-row
-      v-else
-      dense
-    >
+    <v-row v-else>
       <v-col
         cols="12"
         md="8"
-        class="d-flex flex-column ga-3"
+        class="d-flex flex-column ga-4"
       >
-        <div class="text-caption text-grey700">
-          Question
-        </div>
-        <common-rich-editor
-          v-model="form.question"
-          with-math
-          mode="full"
-        />
-        <admin-exam-question-image
-          label="Question image"
-          :url="images.question"
-          :change="imageChanges.question"
-          @change="imageChanges.question = $event"
-        />
-        <template v-if="optionCount">
-          <div
-            v-for="letter in OPTIONS.slice(0, optionCount)"
-            :key="letter"
-            class="d-flex flex-column ga-1"
-          >
-            <div class="text-caption text-grey700">
-              Option {{ letter.toUpperCase() }}
-            </div>
+        <v-card
+          variant="outlined"
+          rounded="lg"
+          class="question-edit__card"
+        >
+          <v-card-item
+            prepend-icon="md:quiz"
+            title="Question"
+            subtitle="The text students read, and its picture if it has one"
+          />
+          <v-card-text class="d-flex flex-column ga-3">
             <common-rich-editor
-              v-model="form[`answer${letter.toUpperCase()}` as OptionKey]"
+              v-model="form.question"
               with-math
+              mode="full"
+              min-height="180px"
             />
             <admin-exam-question-image
-              :label="`Option ${letter.toUpperCase()} image`"
-              :url="images[letter]"
-              :change="imageChanges[letter]"
-              @change="imageChanges[letter] = $event"
+              label="Add an image"
+              :url="images.question"
+              :change="imageChanges.question"
+              @change="imageChanges.question = $event"
             />
-          </div>
-        </template>
-        <div class="text-caption text-grey700">
-          Worked answer (optional)
-        </div>
-        <common-rich-editor
-          v-model="form.answerFull"
-          with-math
-          mode="full"
-        />
-        <admin-exam-question-image
-          label="Worked answer image"
-          :url="images.answerFull"
-          :change="imageChanges.answerFull"
-          @change="imageChanges.answerFull = $event"
-        />
+          </v-card-text>
+        </v-card>
+
+        <v-card
+          v-if="optionCount"
+          variant="outlined"
+          rounded="lg"
+          class="question-edit__card"
+        >
+          <v-card-item
+            prepend-icon="md:checklist"
+            title="Answer options"
+            subtitle="Click a letter to mark the correct answer"
+          />
+          <v-card-text class="d-flex flex-column ga-4">
+            <div
+              v-for="(letter, index) in OPTIONS.slice(0, optionCount)"
+              :key="letter"
+              class="question-edit__option d-flex ga-3 pa-3 rounded-lg"
+              :class="{ 'question-edit__option--correct': form.trueAnswer === index + 1 }"
+            >
+              <v-btn
+                :color="form.trueAnswer === index + 1 ? 'success' : undefined"
+                :variant="form.trueAnswer === index + 1 ? 'flat' : 'tonal'"
+                :aria-label="`Mark option ${letter.toUpperCase()} as correct`"
+                icon
+                size="40"
+                class="flex-shrink-0"
+                @click="form.trueAnswer = index + 1"
+              >
+                <v-icon
+                  v-if="form.trueAnswer === index + 1"
+                  icon="md:check"
+                />
+                <span
+                  v-else
+                  class="font-weight-bold"
+                >{{ letter.toUpperCase() }}</span>
+              </v-btn>
+              <div class="d-flex flex-column ga-2 flex-grow-1 question-edit__option-body">
+                <common-rich-editor
+                  v-model="form[`answer${letter.toUpperCase()}` as OptionKey]"
+                  with-math
+                  min-height="64px"
+                />
+                <admin-exam-question-image
+                  label="Add an image"
+                  :url="images[letter]"
+                  :change="imageChanges[letter]"
+                  @change="imageChanges[letter] = $event"
+                />
+              </div>
+            </div>
+            <div
+              v-if="!form.trueAnswer"
+              class="text-caption text-error d-flex align-center ga-1"
+            >
+              <v-icon
+                icon="md:error"
+                size="16"
+              />
+              No correct answer marked yet.
+            </div>
+          </v-card-text>
+        </v-card>
+
+        <v-card
+          variant="outlined"
+          rounded="lg"
+          class="question-edit__card"
+        >
+          <v-card-item
+            prepend-icon="md:lightbulb"
+            title="Worked answer"
+            subtitle="Optional: how to reach the answer, shown after the exam"
+          />
+          <v-card-text class="d-flex flex-column ga-3">
+            <common-rich-editor
+              v-model="form.answerFull"
+              with-math
+              mode="full"
+              min-height="140px"
+            />
+            <admin-exam-question-image
+              label="Add an image"
+              :url="images.answerFull"
+              :change="imageChanges.answerFull"
+              @change="imageChanges.answerFull = $event"
+            />
+          </v-card-text>
+        </v-card>
       </v-col>
+
       <v-col
         cols="12"
         md="4"
-        class="d-flex flex-column ga-3"
       >
-        <v-select
-          v-model="form.type"
-          :items="QUESTION_TYPES"
-          item-title="title"
-          item-value="value"
-          label="Type"
-          variant="outlined"
-          density="compact"
-        />
-        <v-select
-          v-if="optionCount"
-          v-model="form.trueAnswer"
-          :items="OPTIONS.slice(0, optionCount).map((letter, i) => ({ title: letter.toUpperCase(), value: i + 1 }))"
-          item-title="title"
-          item-value="value"
-          label="Correct option"
-          variant="outlined"
-          density="compact"
-        />
-        <v-select
-          v-model="form.status"
-          :items="Object.entries(QUESTION_STATUSES).map(([value, title]) => ({ title, value: Number(value) }))"
-          item-title="title"
-          item-value="value"
-          label="Status"
-          variant="outlined"
-          density="compact"
-        />
-        <v-select
-          v-model="form.level"
-          :items="[{ title: 'None', value: 0 }, { title: 'Easy', value: 1 }, { title: 'Medium', value: 2 }, { title: 'Hard', value: 3 }]"
-          item-title="title"
-          item-value="value"
-          label="Level"
-          variant="outlined"
-          density="compact"
-        />
-        <div class="d-flex flex-wrap ga-2">
-          <admin-common-type-filters
-            v-model:board-id="boardId"
-            v-model:grade-id="gradeId"
-            v-model:subject-id="subjectId"
-            v-model:topic-id="topicId"
-            with-topic
-          />
+        <div class="question-edit__side d-flex flex-column ga-4">
+          <v-card
+            variant="outlined"
+            rounded="lg"
+            class="question-edit__card"
+          >
+            <v-card-item
+              prepend-icon="md:tune"
+              title="Details"
+            />
+            <v-card-text class="d-flex flex-column ga-4">
+              <v-select
+                v-model="form.type"
+                :items="QUESTION_TYPES"
+                item-title="title"
+                item-value="value"
+                label="Type"
+                variant="outlined"
+                density="compact"
+                hide-details
+              />
+              <div>
+                <div class="text-caption text-grey700 mb-1">
+                  Status
+                </div>
+                <v-chip-group
+                  v-model="form.status"
+                  mandatory
+                  selected-class="font-weight-bold"
+                >
+                  <v-chip
+                    v-for="(title, value) in QUESTION_STATUSES"
+                    :key="value"
+                    :value="Number(value)"
+                    :color="STATUS_COLORS[Number(value)]"
+                    :variant="form.status === Number(value) ? 'flat' : 'outlined'"
+                    size="small"
+                  >
+                    {{ title }}
+                  </v-chip>
+                </v-chip-group>
+              </div>
+              <div>
+                <div class="text-caption text-grey700 mb-1">
+                  Level
+                </div>
+                <v-btn-toggle
+                  v-model="form.level"
+                  mandatory
+                  divided
+                  density="compact"
+                  variant="outlined"
+                  color="primary"
+                  class="w-100"
+                >
+                  <v-btn
+                    v-for="level in LEVELS"
+                    :key="level.value"
+                    :value="level.value"
+                    class="flex-grow-1"
+                    size="small"
+                  >
+                    {{ level.title }}
+                  </v-btn>
+                </v-btn-toggle>
+              </div>
+            </v-card-text>
+          </v-card>
+
+          <v-card
+            variant="outlined"
+            rounded="lg"
+            class="question-edit__card"
+          >
+            <v-card-item
+              prepend-icon="md:account_tree"
+              title="Classification"
+            />
+            <v-card-text class="d-flex flex-column ga-3">
+              <div
+                v-if="!isNew && currentTypes"
+                class="d-flex align-center ga-2 text-body-2"
+              >
+                <v-icon
+                  icon="md:folder"
+                  size="18"
+                  color="grey600"
+                />
+                <span>{{ currentTypes }}</span>
+              </div>
+              <div class="question-edit__types d-flex flex-column ga-2">
+                <admin-common-type-filters
+                  v-model:board-id="boardId"
+                  v-model:grade-id="gradeId"
+                  v-model:subject-id="subjectId"
+                  v-model:topic-id="topicId"
+                  with-topic
+                />
+              </div>
+              <div
+                v-if="!isNew"
+                class="text-caption text-grey600"
+              >
+                Leave empty to keep the current classification.
+              </div>
+            </v-card-text>
+          </v-card>
+
+          <v-card
+            variant="outlined"
+            rounded="lg"
+            class="question-edit__card"
+          >
+            <v-card-item
+              prepend-icon="md:menu_book"
+              title="Source"
+            />
+            <v-card-text>
+              <v-text-field
+                v-model="form.resource"
+                placeholder="e.g. Cambridge 2023, paper 1"
+                variant="outlined"
+                density="compact"
+                counter="200"
+              />
+            </v-card-text>
+          </v-card>
+
+          <v-card
+            v-if="current"
+            variant="tonal"
+            rounded="lg"
+            color="grey600"
+          >
+            <v-list
+              density="compact"
+              bg-color="transparent"
+              class="py-1"
+            >
+              <v-list-item
+                prepend-icon="md:person"
+                :title="current.ownerName || 'Unknown'"
+                subtitle="Owner"
+              />
+              <v-list-item
+                prepend-icon="md:assignment"
+                :title="`${current.usedPublish} published exam${current.usedPublish === 1 ? '' : 's'}`"
+                subtitle="Used in"
+              />
+              <v-list-item
+                prepend-icon="md:schedule"
+                :title="formatDate(current.lastModifyDate ?? current.creationDate)"
+                :subtitle="`Last change · created ${formatDate(current.creationDate)}`"
+              />
+            </v-list>
+          </v-card>
         </div>
-        <div
-          v-if="!isNew && currentTypes"
-          class="text-caption text-grey600"
-        >
-          Now: {{ currentTypes }}. Choose above to change.
-        </div>
-        <v-text-field
-          v-model="form.resource"
-          label="Source"
-          variant="outlined"
-          density="compact"
-          counter="200"
-        />
-        <v-btn
-          color="success"
-          variant="flat"
-          :loading="saving || imageSaving"
-          @click="submit"
-        >
-          {{ isNew ? 'Add question' : 'Save' }}
-        </v-btn>
       </v-col>
     </v-row>
   </div>
@@ -167,6 +346,8 @@ definePageMeta({
 })
 
 const OPTIONS = ['a', 'b', 'c', 'd'] as const
+const STATUS_COLORS: Record<number, string> = { 0: 'warning', 1: 'success', 2: 'error' }
+const LEVELS = [{ title: 'None', value: 0 }, { title: 'Easy', value: 1 }, { title: 'Medium', value: 2 }, { title: 'Hard', value: 3 }]
 const route = useRoute()
 const router = useRouter()
 const id = computed(() => String(route.params.id))
@@ -200,6 +381,11 @@ const form = reactive({
 
 // Four-choice and two-choice questions have options; true/false uses two fixed ones gama-api stores the same way.
 const optionCount = computed(() => ({ 1: 4, 4: 2, 8: 2 } as Record<number, number>)[form.type] ?? 0)
+const formatDate = (value: string | null | undefined) => {
+  if (!value) return '-'
+  const date = new Date(value)
+  return Number.isNaN(date.getTime()) ? value : date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+}
 const currentTypes = computed(() => [current.value?.subjectTitle, current.value?.topicTitle].filter(Boolean).join(' › '))
 
 const submit = async () => {
@@ -273,3 +459,44 @@ onMounted(async () => {
   loading.value = false
 })
 </script>
+
+<style scoped>
+.question-edit__header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: rgb(var(--v-theme-background));
+  border-bottom: 1px solid rgb(var(--v-theme-grey200));
+}
+
+.question-edit__card {
+  border-color: rgb(var(--v-theme-grey200)) !important;
+  background: rgb(var(--v-theme-surface));
+}
+
+.question-edit__side {
+  position: sticky;
+  top: 72px;
+}
+
+.question-edit__option {
+  border: 1px solid rgb(var(--v-theme-grey200));
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.question-edit__option--correct {
+  border-color: rgb(var(--v-theme-success));
+  background: rgba(var(--v-theme-success), 0.06);
+}
+
+.question-edit__option-body {
+  min-width: 0;
+}
+
+/* The shared type filters sit in a row on list pages; here each takes the panel's full width. */
+.question-edit__types :deep(.v-input) {
+  width: 100%;
+  max-width: none !important;
+  flex: none;
+}
+</style>
