@@ -76,21 +76,19 @@
               :rules="[v => (v >= 1 && v <= 90) || '1 to 90']"
             />
             <div class="d-flex flex-wrap ga-3">
-              <v-text-field
+              <common-date-time-field
                 v-model="form.startsAt"
-                :label="`Starts (${timeZone})`"
-                type="datetime-local"
-                variant="outlined"
+                label="Starts"
+                :hint="timeZone"
                 class="date-field"
-                :rules="[v => !!v || 'Required']"
+                :rules="[(v: string) => !!v || 'Required']"
               />
-              <v-text-field
+              <common-date-time-field
                 v-model="form.endsAt"
-                :label="`Ends (${timeZone})`"
-                type="datetime-local"
-                variant="outlined"
+                label="Ends"
+                :hint="timeZone"
                 class="date-field"
-                :rules="[v => !!v || 'Required', v => !form.startsAt || v > form.startsAt || 'After the start']"
+                :rules="[(v: string) => !!v || 'Required', (v: string) => !form.startsAt || v > form.startsAt || 'After the start']"
               />
             </div>
             <v-switch
