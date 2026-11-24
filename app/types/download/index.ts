@@ -35,6 +35,8 @@ export interface UpgradeSuggestionsPrice {
   monthlyEquivalentPrice: number
   /** null when this entry is itself the Monthly price, or the plan has no Monthly price to compare against. */
   discountPercent: number | null
+  /** The first payment during a live sale campaign, when the caller's purchase would get it; null otherwise. */
+  campaignPrice?: number | null
   /** The suggested plan's limit for the feature that failed, at this billing interval; null means unlimited. */
   limit: number | null
   // gamatrain-back#580. Every plan+interval offering the failed feature is always in the response now

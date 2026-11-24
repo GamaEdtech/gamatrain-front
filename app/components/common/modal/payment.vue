@@ -1,5 +1,25 @@
 <template>
   <div class="w-100 d-flex flex-column pt-2">
+    <!-- A live sale campaign the caller's purchase would get (the backend only sends campaignPrice then). -->
+    <div
+      v-if="showCampaign && campaign"
+      class="campaign-strip w-100 d-flex flex-wrap align-center justify-space-between ga-2 px-4 py-3 mb-4 rounded-lg"
+      :style="{ background: campaignStyle.stripBackground, color: campaignStyle.stripText }"
+    >
+      <span class="d-flex align-center ga-2 text-body-2 font-weight-bold">
+        <span
+          class="campaign-strip__pill px-2 rounded"
+          :style="{ background: campaignStyle.stripText, color: campaignStyle.stripBackground }"
+        >-{{ campaign.discountPercent }}%</span>
+        {{ campaign.title }}: {{ campaign.discountPercent }}% off your first payment
+      </span>
+      <campaign-countdown
+        :ends-at="campaign.endsAt"
+        variant="inline"
+        class="text-caption font-weight-medium"
+      />
+    </div>
+
     <v-alert
       v-if="currentPlanId !== null && currentPlanTitle"
       type="info"
@@ -206,6 +226,10 @@ const propsData = withDefaults(defineProps<IPaymentModal>(),
 const emit = defineEmits(['switchSuccessfully', 'dismiss'])
 
 const { discountPercent } = useBillingIntervalPricing()
+const { campaign, isLive: campaignLive, style: campaignStyle, load: loadCampaign } = useCampaign()
+const showCampaign = computed(() => campaignLive.value
+  && propsData.plans.some(plan => plan.prices.some(price => price.campaignPrice !== null && price.campaignPrice !== undefined)))
+onMounted(loadCampaign)
 
 const skeletonCount = 3
 const activeSkeletonIndex = 1
@@ -287,5 +311,8 @@ watch(() => propsData.billingInterval, (intervals) => {
 :deep(.v-slide-group__next--disabled .slider-arrow-button) {
   opacity: 0.45;
   box-shadow: none;
+}
+.campaign-strip__pill {
+  font-weight: 900;
 }
 </style>

@@ -51,6 +51,27 @@
       >
         billed ${{ formatPrice(card.selectedPrice.price) }} {{ billingSuffix[billingInterval] }}
       </div>
+      <!-- A live sale campaign: the backend sends campaignPrice only when this purchase would get it, and charges
+           exactly that for the first payment. -->
+      <div
+        v-if="campaignPrice !== null && card.selectedPrice && card.action.type === 'choose'"
+        class="campaign-price d-flex flex-column ga-1 mt-3 pa-2 rounded-lg"
+      >
+        <v-chip
+          size="small"
+          label
+          class="align-self-start font-weight-bold"
+          :style="{ background: campaignStyle.stripBackground, color: campaignStyle.stripText }"
+        >
+          {{ campaignLabel }} -{{ campaignPercent }}%
+        </v-chip>
+        <span class="text-body-2 text-grey900">
+          First payment
+          <strong :style="{ color: campaignStyle.accent }">${{ formatPrice(campaignPrice) }}</strong>
+          <span class="text-grey500 text-decoration-line-through ml-1">${{ formatPrice(card.selectedPrice.price) }}</span>
+        </span>
+        <span class="text-caption text-grey500">then ${{ formatPrice(card.selectedPrice.price) }} {{ billingSuffix[billingInterval] }}</span>
+      </div>
     </div>
     <span
       v-if="card.gemsBalance !== null"
@@ -208,6 +229,8 @@ const props = withDefaults(defineProps<ICard>(), {
 
 const emit = defineEmits(['switchSuccessfully'])
 
+const { campaign, style: campaignStyle } = useCampaign()
+
 const route = useRoute()
 const { $toast } = useNuxtApp()
 const { trackPayment } = useGtmEvents()
@@ -250,6 +273,13 @@ const card = computed(() => {
     currentBillingInterval: props.currentBillingInterval,
   })
 })
+
+const campaignPrice = computed(() => card.value.selectedPrice?.campaignPrice ?? null)
+const campaignPercent = computed(() => {
+  const price = card.value.selectedPrice?.price
+  return price && campaignPrice.value !== null ? Math.round((1 - campaignPrice.value / price) * 100) : 0
+})
+const campaignLabel = computed(() => campaign.value?.title || 'Sale')
 
 const switchTargetDescription = computed(() => {
   return card.value.isSamePlanIntervalMove ? `${props.billingInterval} billing` : `the ${card.value.title} plan`
@@ -502,5 +532,8 @@ const confirmResumeSubscription = async () => {
    min-width: 220px;
    min-height : 360px;
  }
+}
+.campaign-price {
+  background: rgba(var(--v-theme-primary), 0.08);
 }
 </style>

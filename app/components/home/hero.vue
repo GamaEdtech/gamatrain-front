@@ -1,26 +1,50 @@
 <template>
-  <div class="home-hero">
+  <!-- A live sale campaign (useCampaign, browser only) restyles the hero: theme colours, its text and countdown, an
+       outfit for the mascot, a gift to open, and snow or fireworks to play with. Without one it is the usual hero. -->
+  <div
+    class="home-hero"
+    :class="live ? ['home-hero--campaign', `home-hero--${themeClass}`] : []"
+  >
+    <lazy-campaign-snowfall
+      v-if="live && style.play === 'snow'"
+      @pop="plays++"
+    />
+    <lazy-campaign-fireworks
+      v-if="live && style.play === 'fireworks'"
+      @launch="plays++"
+    />
     <v-container class="home-hero__grid">
       <div class="home-hero__text">
-        <v-chip
-          color="primary"
-          variant="tonal"
-          prepend-icon="mdi-star-four-points"
-          class="d-none d-sm-inline-flex font-weight-bold"
-        >
-          Online exams with instant scores
-        </v-chip>
-        <!-- The slogan stays the big line; the subtitle under it is part of the H1 so the page's main heading also
-             says what the site is (online exams and past papers), for search engines and screen readers. -->
-        <h1 class="home-hero__title">
-          Ace your <span class="text-primary">next exam.</span> <span class="home-hero__lead home-hero__subtitle">Online exams and past papers for Cambridge, Edexcel and more.</span>
-        </h1>
-        <p class="home-hero__lead home-hero__more d-none d-md-block">
-          Get your score the moment you finish, then see what to study next.
-        </p>
+        <lazy-campaign-hero-text
+          v-if="live && campaign"
+          :campaign="campaign"
+          :theme="theme"
+          :style="style"
+          :fill="fill"
+          :plays="plays"
+        />
+        <template v-else>
+          <v-chip
+            color="primary"
+            variant="tonal"
+            prepend-icon="mdi-star-four-points"
+            class="d-none d-sm-inline-flex font-weight-bold"
+          >
+            Online exams with instant scores
+          </v-chip>
+          <!-- The slogan stays the big line; the subtitle under it is part of the H1 so the page's main heading also
+               says what the site is (online exams and past papers), for search engines and screen readers. -->
+          <h1 class="home-hero__title">
+            Ace your <span class="text-primary">next exam.</span> <span class="home-hero__lead home-hero__subtitle">Online exams and past papers for Cambridge, Edexcel and more.</span>
+          </h1>
+          <p class="home-hero__lead home-hero__more d-none d-md-block">
+            Get your score the moment you finish, then see what to study next.
+          </p>
+        </template>
       </div>
       <div class="home-hero__figure">
         <v-chip
+          v-if="!live"
           class="home-hero__tag home-hero__tag--score d-md-none d-lg-inline-flex"
           color="white"
           variant="flat"
@@ -31,6 +55,7 @@
           <span class="d-none d-sm-inline">Score in seconds</span>
         </v-chip>
         <v-chip
+          v-if="!live"
           class="home-hero__tag home-hero__tag--advice d-md-none d-lg-inline-flex"
           color="white"
           variant="flat"
@@ -41,6 +66,7 @@
           <span class="d-none d-sm-inline">AI study advice</span>
         </v-chip>
         <v-chip
+          v-if="!live"
           class="home-hero__tag home-hero__tag--rank d-md-none d-lg-inline-flex"
           color="white"
           variant="flat"
@@ -59,11 +85,34 @@
           alt="The GamaTrain student floating under a glowing light bulb"
           fetchpriority="high"
         >
+        <lazy-campaign-mascot-outfit
+          v-if="live"
+          :theme="theme"
+        />
+        <div
+          v-if="live && campaign"
+          class="home-hero__gift"
+        >
+          <lazy-campaign-gift
+            :campaign-id="campaign.id"
+            :theme="theme"
+            :percent="campaign.discountPercent"
+            :label="style.label"
+          />
+        </div>
       </div>
       <home-exam-finder class="home-hero__finder" />
     </v-container>
   </div>
 </template>
+
+<script setup lang="ts">
+const { campaign, isLive: live, theme, style, fill, load } = useCampaign()
+const plays = ref(0)
+const themeClass = computed(() => theme.value.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase())
+
+onMounted(load)
+</script>
 
 <style scoped lang="scss">
 @use 'sass:map';
@@ -309,6 +358,72 @@
   .home-hero__tag--rank {
     top: 16.25rem;
     right: auto;
+    left: calc(100% - 4.5rem);
+  }
+}
+
+/* ---- Sale campaign themes (useCampaign). Colours for the campaign pieces come in as --campaign-* variables. ---- */
+.home-hero--campaign {
+  --campaign-highlight: #ffffff;
+  --campaign-muted: #c9d2e3;
+  --campaign-accent: rgb(var(--v-theme-primary));
+  --campaign-cta-bg: rgb(var(--v-theme-primary));
+  --campaign-cta-text: #1e2a44;
+  --campaign-box-bg: rgba(255, 255, 255, 0.08);
+  --campaign-box-border: rgba(255, 255, 255, 0.18);
+  position: relative;
+  overflow-x: clip;
+}
+
+.home-hero--campaign .home-hero__grid {
+  position: relative;
+  z-index: 1;
+}
+
+.home-hero.home-hero--black-friday {
+  --campaign-highlight: #ffb300;
+  --campaign-muted: #c9ced8;
+  --campaign-accent: #ffffff;
+  --campaign-box-bg: #17171e;
+  --campaign-box-border: #2e2a1c;
+  background:
+    radial-gradient(40rem 26rem at 72% 40%, rgba(255, 179, 0, 0.16), transparent 70%),
+    #0b0b0f;
+}
+
+.home-hero.home-hero--christmas {
+  --campaign-accent: #ff6b6b;
+  --campaign-cta-bg: #e5484d;
+  --campaign-cta-text: #ffffff;
+  background:
+    radial-gradient(40rem 26rem at 70% 40%, rgba(255, 255, 255, 0.1), transparent 70%),
+    linear-gradient(180deg, #15203a 0%, #1e2a44 100%);
+}
+
+.home-hero.home-hero--new-year {
+  --campaign-highlight: #5eead4;
+  --campaign-muted: #c3cae0;
+  --campaign-accent: #ffb300;
+  --campaign-box-border: rgba(94, 234, 212, 0.3);
+  background:
+    radial-gradient(45rem 28rem at 70% 30%, rgba(94, 234, 212, 0.12), transparent 70%),
+    linear-gradient(180deg, #0d1226 0%, #1a2142 100%);
+}
+
+.home-hero.home-hero--generic {
+  --campaign-highlight: rgb(var(--v-theme-primary));
+}
+
+.home-hero__gift {
+  position: absolute;
+  z-index: 2;
+  top: 0.5rem;
+  left: calc(100% + 0.5rem);
+}
+
+@media #{map.get(vuetify.$display-breakpoints, 'md-and-up')} {
+  .home-hero__gift {
+    top: 0.5rem;
     left: calc(100% - 4.5rem);
   }
 }

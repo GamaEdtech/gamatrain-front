@@ -352,6 +352,11 @@ const items = computed(() => [
         link: '/admin/subscription/usage',
         icon: 'md:query_stats',
       },
+      {
+        title: 'Campaigns',
+        link: '/admin/campaigns',
+        icon: 'md:celebration_outlined',
+      },
     ],
   },
   {
