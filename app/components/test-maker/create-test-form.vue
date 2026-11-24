@@ -157,6 +157,7 @@
                 >
                   <rich-editor-content
                     v-model="form.question"
+                    with-math
                     :rules="contentRules"
                     required
                   />
@@ -293,6 +294,7 @@
                       >
                         <rich-editor-content
                           v-model="form.answer_a"
+                          with-math
                           :rules="contentRules"
                           required
                         />
@@ -373,6 +375,7 @@
                       >
                         <rich-editor-content
                           v-model="form.answer_b"
+                          with-math
                           :rules="contentRules"
                           required
                         />
@@ -451,6 +454,7 @@
                       >
                         <rich-editor-content
                           v-model="form.answer_c"
+                          with-math
                           :rules="contentRules"
                           required
                         />
@@ -529,6 +533,7 @@
                       >
                         <rich-editor-content
                           v-model="form.answer_d"
+                          with-math
                           :rules="contentRules"
                           required
                         />
@@ -602,6 +607,7 @@
 
               <rich-editor-content
                 v-model="form.answer_full"
+                with-math
                 :rules="contentRules"
               />
               <img

@@ -30,11 +30,73 @@
     >
       {{ errorMessage }}
     </div>
+
+    <!-- The toolbar's formula button (and a double-click on a formula): TeX with a live MathJax preview. -->
+    <v-dialog
+      v-model="formula.open"
+      max-width="560"
+    >
+      <v-card :title="formula.editing ? 'Edit formula' : 'Insert formula'">
+        <v-card-text class="d-flex flex-column ga-3">
+          <v-textarea
+            v-model="formula.tex"
+            label="TeX, e.g. \frac{a}{b} or x^{2}"
+            variant="outlined"
+            density="compact"
+            rows="2"
+            auto-grow
+            autofocus
+            hide-details
+            class="formula-input"
+            @keydown.enter.ctrl.prevent="insertFormula"
+          />
+          <div class="d-flex flex-wrap ga-1">
+            <v-chip
+              v-for="snippet in FORMULA_SNIPPETS"
+              :key="snippet.tex"
+              size="small"
+              variant="outlined"
+              @click="formula.tex += snippet.tex"
+            >
+              {{ snippet.title }}
+            </v-chip>
+          </div>
+          <v-switch
+            v-model="formula.display"
+            label="On its own line"
+            color="primary"
+            density="compact"
+            hide-details
+          />
+          <div
+            ref="formulaPreview"
+            class="formula-preview pa-3 rounded-lg border-md border-grey200"
+          />
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            variant="text"
+            @click="formula.open = false"
+          >
+            Cancel
+          </v-btn>
+          <v-btn
+            color="primary"
+            variant="flat"
+            :disabled="!formula.tex.trim()"
+            @click="insertFormula"
+          >
+            {{ formula.editing ? 'Save' : 'Insert' }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, defineAsyncComponent } from 'vue'
+import { ref, reactive, defineAsyncComponent } from 'vue'
 
 const ALL_FEATURES = {
   heading: ['Heading'],
@@ -92,6 +154,12 @@ const props = defineProps({
   mode: {
     type: String, // 'basic' | 'custom' | 'full'
     default: 'basic',
+  },
+  // Adds the formula button (TeX with a live MathJax preview), in any mode. Off by default: only the editors where
+  // math is written (exam questions, the test maker, posts) turn it on.
+  withMath: {
+    type: Boolean,
+    default: false,
   },
   rules: {
     type: Array,
@@ -155,7 +223,7 @@ const renderMath = async (element) => {
 // Draws <span class="math-tex">\(...\)</span> formulas with the same MathJax the post page uses. Each one becomes an
 // inline object in the editor, and is written back as exactly the same span, so the saved HTML does not change. Spans
 // that carry anything else (extra attributes, styles, nested markup) are left as ordinary content. To change a
-// formula, use the Source view.
+// formula, double-click it where the formula button is on (withMath), or use the Source view.
 const createMathTexPreview = ({ toWidget }) => function (editor) {
   // CKEditor writes the space in front of an inline object as &nbsp;; put it back so saving a post does not rewrite
   // every "word \(x\)" in the stored HTML.
@@ -200,6 +268,102 @@ const createMathTexPreview = ({ toWidget }) => function (editor) {
       })
       return toWidget(writer.createContainerElement('span', { class: 'math-tex' }, [preview]), writer)
     },
+  })
+}
+
+// Formulas are inserted as the same <span class="math-tex">\\(...\\)</span> (or \\[...\\] on its own line) that
+// createMathTexPreview reads, so nothing else changes: the saved HTML, the sanitizer and every page that shows it.
+// No plugin or package is added; the preview uses the MathJax the site already loads on demand.
+const FORMULA_SNIPPETS = [
+  { title: 'a/b', tex: '\\frac{a}{b}' },
+  { title: '√x', tex: '\\sqrt{x}' },
+  { title: 'xⁿ', tex: 'x^{n}' },
+  { title: 'xᵢ', tex: 'x_{i}' },
+  { title: '×', tex: '\\times ' },
+  { title: '÷', tex: '\\div ' },
+  { title: '±', tex: '\\pm ' },
+  { title: '≤', tex: '\\le ' },
+  { title: '≥', tex: '\\ge ' },
+  { title: '≠', tex: '\\neq ' },
+  { title: 'π', tex: '\\pi ' },
+  { title: 'θ', tex: '\\theta ' },
+  { title: '∑', tex: '\\sum_{i=1}^{n} ' },
+  { title: '∫', tex: '\\int_{a}^{b} ' },
+  { title: '°', tex: '^{\\circ}' },
+]
+const SIGMA_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M4 3h12v3h-1.5l-.5-1.5H7.6l4.4 5.5-4.4 5.5H14l.5-1.5H16v3H4v-1.2L9.4 10 4 4.2z"/></svg>'
+
+const formula = reactive({ open: false, tex: '', display: false, editing: false })
+// The editor and the formula being edited stay out of Vue's reactivity: a reactive proxy breaks CKEditor's own objects.
+let formulaTarget = { editor: null, element: null }
+const formulaPreview = ref(null)
+
+const wrapFormula = (tex, display) => (display ? `\\[${tex}\\]` : `\\(${tex}\\)`)
+
+// Opens the dialog for the formula selected in the editor, or for a new one at the cursor.
+const openFormula = (editor) => {
+  const selected = editor.model.document.selection.getSelectedElement()
+  const element = selected?.name === 'mathTex' ? selected : null
+  const equation = element?.getAttribute('equation')?.trim() ?? ''
+  const match = equation.match(/^\\([[(])([\s\S]*)\\[\])]$/)
+  formulaTarget = { editor, element }
+  Object.assign(formula, {
+    open: true,
+    editing: !!element,
+    display: match?.[1] === '[',
+    tex: match ? match[2].trim() : equation,
+  })
+}
+
+const insertFormula = () => {
+  const { editor, element } = formulaTarget
+  const tex = formula.tex.trim()
+  if (!editor || !tex) return
+  editor.model.change((writer) => {
+    if (element) writer.setSelection(element, 'on')
+    // Replaces a selected formula, or goes in at the cursor.
+    editor.model.insertObject(writer.createElement('mathTex', { equation: wrapFormula(tex, formula.display) }), null, null, { setSelection: 'after' })
+  })
+  formula.open = false
+  editor.editing.view.focus()
+}
+
+let previewTimer = null
+watch(() => [formula.open, formula.tex, formula.display], () => {
+  clearTimeout(previewTimer)
+  previewTimer = setTimeout(async () => {
+    await nextTick()
+    const element = formulaPreview.value
+    if (!element || !formula.open) return
+    element.textContent = formula.tex.trim() ? wrapFormula(formula.tex.trim(), formula.display) : ''
+    if (element.textContent) renderMath(element)
+  }, 250)
+})
+
+onBeforeUnmount(() => clearTimeout(previewTimer))
+
+// The toolbar button, and a double-click on a formula to edit it.
+const createMathFormulaButton = ck => function (editor) {
+  editor.ui.componentFactory.add('mathFormula', (locale) => {
+    const button = new ck.ButtonView(locale)
+    button.set({ label: 'Formula', icon: SIGMA_ICON, tooltip: true })
+    button.on('execute', () => openFormula(editor))
+    return button
+  })
+
+  class DoubleClickObserver extends ck.DomEventObserver {
+    constructor(view) {
+      super(view)
+      this.domEventType = 'dblclick'
+    }
+
+    onDomEvent(domEvent) {
+      this.fire(domEvent.type, domEvent)
+    }
+  }
+  editor.editing.view.addObserver(DoubleClickObserver)
+  editor.listenTo(editor.editing.view.document, 'dblclick', () => {
+    if (editor.model.document.selection.getSelectedElement()?.name === 'mathTex') openFormula(editor)
   })
 }
 
@@ -251,7 +415,12 @@ const LazyCkeditor = defineAsyncComponent({
     }
 
     const plugins = [Essentials, Paragraph, SvgPreview, ck.Widget, createMathTexPreview(ck), createEditorImageUpload(ck)]
+    // Right after undo/redo, so it is never folded into the toolbar's "more" menu.
     const toolbar = ['undo', 'redo', '|']
+    if (props.withMath) {
+      plugins.push(createMathFormulaButton(ck))
+      toolbar.push('mathFormula', '|')
+    }
 
     selectedFeatures.forEach((feature) => {
       const pluginNames = ALL_FEATURES[feature] || []
@@ -372,6 +541,14 @@ const changeEditor = (event) => {
 :deep(.ck.ck-editor__top) {
   border-radius: 8px 8px 0 0 !important;
   border : 1px solid rgb(var(--v-theme-grey400)) !important;
+}
+.formula-preview {
+  min-height: 56px;
+  overflow-x: auto;
+}
+.formula-input :deep(textarea) {
+  font-family: monospace;
+  direction: ltr;
 }
 :deep(.ck.ck-editor__top .ck-sticky-panel .ck-sticky-panel__content){
   border: none !important;

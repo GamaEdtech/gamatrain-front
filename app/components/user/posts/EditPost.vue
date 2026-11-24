@@ -130,6 +130,7 @@
           </div>
           <common-rich-editor
             v-model="post.content"
+            with-math
             mode="full"
             :rules="[required]"
           />

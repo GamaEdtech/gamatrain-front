@@ -33,6 +33,7 @@
         </div>
         <common-rich-editor
           v-model="form.question"
+          with-math
           mode="full"
         />
         <admin-exam-question-image
@@ -50,7 +51,10 @@
             <div class="text-caption text-grey700">
               Option {{ letter.toUpperCase() }}
             </div>
-            <common-rich-editor v-model="form[`answer${letter.toUpperCase()}` as OptionKey]" />
+            <common-rich-editor
+              v-model="form[`answer${letter.toUpperCase()}` as OptionKey]"
+              with-math
+            />
             <admin-exam-question-image
               :label="`Option ${letter.toUpperCase()} image`"
               :url="images[letter]"
@@ -64,6 +68,7 @@
         </div>
         <common-rich-editor
           v-model="form.answerFull"
+          with-math
           mode="full"
         />
         <admin-exam-question-image
