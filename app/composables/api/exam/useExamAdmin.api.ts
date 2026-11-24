@@ -79,6 +79,13 @@ export const useExamAdmin = () => {
       ? save(() => useApiService.put<ApiResult<boolean>>(`${QUESTIONS}/${id}`, item), 'Question saved.')
       : save(() => useApiService.post<ApiResult<number>>(QUESTIONS, item), 'Question added.'),
     setQuestionStatus: (id: number, status: number) => save(() => useApiService.put<ApiResult<boolean>>(`${QUESTIONS}/${id}/status`, { status }), 'Status saved.'),
+    // A question's separate image for one slot: question, a-d or answerFull (gama-api keeps one image file per text).
+    setQuestionImage: (id: number, slot: string, file: File) => {
+      const form = new FormData()
+      form.append('file', file)
+      return call(() => useApiService.put<ApiResult<string>>(`${QUESTIONS}/${id}/images/${slot}`, form))
+    },
+    removeQuestionImage: (id: number, slot: string) => call(() => useApiService.remove<ApiResult<boolean>>(`${QUESTIONS}/${id}/images/${slot}`)),
     deleteQuestion: (id: number) => save(() => useApiService.remove<ApiResult<boolean>>(`${QUESTIONS}/${id}`), 'Question deleted.'),
   }
 }
