@@ -90,7 +90,7 @@ const RETRY_DELAY_MS = 3000
 const route = useRoute()
 const router = useRouter()
 const { verifyPayment, getPathRedirect, removePathRedirect } = usePayment()
-const { trackVerifyPayment } = useGtmEvents()
+const { trackVerifyPayment, trackPurchase } = useGtmEvents()
 
 const status = ref<Status>('loading')
 
@@ -105,6 +105,7 @@ const verify = async () => {
       trackVerifyPayment({
         status: 'success',
       })
+      trackPurchase({ transaction_id: paymentId })
       return
     }
 

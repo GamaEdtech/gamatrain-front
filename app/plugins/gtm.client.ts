@@ -1,3 +1,6 @@
+// How long after the page has loaded GTM is loaded when the visitor hasn't scrolled or clicked yet.
+const GTM_IDLE_DELAY_MS = 4000
+
 export default defineNuxtPlugin((nuxtApp) => {
   const config = useRuntimeConfig()
   const gtmId = config.public.gtmId
@@ -10,7 +13,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (document.getElementById('gtm-script')) return
 
   let isLoaded = false
-  const queue: { event: string }[] = []
+  const queue: Record<string, unknown>[] = []
 
   const loadGTM = () => {
     if (isLoaded) return
@@ -43,13 +46,21 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   window.addEventListener('scroll', trigger, { once: true })
   window.addEventListener('click', trigger, { once: true })
+  // A visitor who neither scrolls nor clicks (a landing page read without touching it, the payment page
+  // after the Stripe redirect) would otherwise never load GTM, so their visit and events were never counted.
+  // Load it a few seconds after the page has loaded instead: still well after the page is painted.
+  const loadWhenIdle = () => setTimeout(trigger, GTM_IDLE_DELAY_MS)
+  if (document.readyState === 'complete') loadWhenIdle()
+  else window.addEventListener('load', loadWhenIdle, { once: true })
 
   const gtm = {
     push(event: string, data: Record<string, unknown> = {}) {
-      if (typeof window === 'undefined' || !window.dataLayer) return
+      if (typeof window === 'undefined') return
       const payload = { event, ...data }
 
-      if (!isLoaded) {
+      // Before GTM loads, window.dataLayer doesn't exist yet: queue the event (it used to be dropped here,
+      // so e.g. a payment confirmed before the first scroll or click was never sent).
+      if (!isLoaded || !window.dataLayer) {
         queue.push(payload)
         return
       }

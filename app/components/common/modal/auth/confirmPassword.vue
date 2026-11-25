@@ -124,6 +124,7 @@ const emit = defineEmits<{
 
 const { required, password: passwordRule } = useValidationRules()
 const { register, loadingRegister, resetPassword, loadingForgetPassword, completeSignIn } = useAuth()
+const { trackSignUp } = useGtmEvents()
 
 const password = ref('')
 const confirmPassword = ref('')
@@ -146,6 +147,7 @@ const submitPassword = async () => {
     errorMessage.value = response.message || 'We could not save your password. Please try again.'
     return
   }
+  if (props.mode === 'register') trackSignUp({ method: 'email' })
 
   if (await completeSignIn(response.data.token)) {
     emit('loginSuccessfull')
