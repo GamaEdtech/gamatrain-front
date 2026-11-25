@@ -297,19 +297,6 @@ const items = computed(() => [
         status: !canAddEducationalContent.value,
       },
       {
-        title: 'Multimedia',
-        link: '/user/multimedia',
-        icon: 'icon-multimedia',
-        icon_type: 'custom',
-        status: !canAddEducationalContent.value,
-      },
-      {
-        title: 'Q & A',
-        link: '/user/question',
-        icon: 'icon-q-a',
-        icon_type: 'custom',
-      },
-      {
         title: 'Posts',
         link: '/user/posts',
         icon: 'md:art_track',
