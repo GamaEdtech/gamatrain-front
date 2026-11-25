@@ -127,24 +127,25 @@ const toPrice = (value: number | string | null | undefined): number | null =>
   value == null || value === '' ? null : Number(value)
 
 export const getDirectoryPaperDownloads = (paper: DirectoryPaper): DirectoryPaperDownload[] => {
-  const { pdf, answer, extra } = paper.files ?? {}
+  const files = paper.files ?? []
   const downloads: DirectoryPaperDownload[] = []
-  if (pdf?.exist) {
-    downloads.push({ type: 'pdf', title: 'Question Paper', shortTitle: 'Paper', icon: 'md:download', style: 'question', price: toPrice(pdf.price) })
+  const question = files.find(file => file.role === 'question')
+  if (question) {
+    downloads.push({ fileId: question.id, title: 'Question Paper', shortTitle: 'Paper', icon: 'md:download', style: 'question', price: toPrice(question.price) })
   }
-  if (answer?.exist) {
-    downloads.push({ type: 'answer', title: 'Mark Scheme', shortTitle: 'MS', icon: 'md:check_box_outlined', style: 'answer', price: toPrice(answer.price) })
+  const answer = files.find(file => file.role === 'answer')
+  if (answer) {
+    downloads.push({ fileId: answer.id, title: 'Mark Scheme', shortTitle: 'MS', icon: 'md:check_box_outlined', style: 'answer', price: toPrice(answer.price) })
   }
-  const extras = [...(extra ?? [])].sort((first, second) =>
-    (extraFileOrder[String(first.type)] ?? Number.MAX_SAFE_INTEGER) - (extraFileOrder[String(second.type)] ?? Number.MAX_SAFE_INTEGER))
+  const extras = files.filter(file => file.role === 'extra').sort((first, second) =>
+    (extraFileOrder[String(first.type_id)] ?? Number.MAX_SAFE_INTEGER) - (extraFileOrder[String(second.type_id)] ?? Number.MAX_SAFE_INTEGER))
   for (const file of extras) {
     const title = file.type_title || 'Extra File'
     downloads.push({
-      type: `extra:${file.id}`,
-      extraId: String(file.id),
+      fileId: file.id,
       title,
-      shortTitle: extraFileShortTitles[String(file.type)] || title,
-      icon: extraFileIcons[String(file.type)] || 'md:draft_outlined',
+      shortTitle: extraFileShortTitles[String(file.type_id)] || title,
+      icon: extraFileIcons[String(file.type_id)] || 'md:draft_outlined',
       style: 'extra',
       price: toPrice(file.price),
     })

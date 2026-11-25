@@ -4,11 +4,11 @@
          The fixed 496:702 box (the thumbnails' own shape) keeps the space before the image loads. -->
     <!-- Tapping the paper opens the preview too, so a tap on the picture isn't a dead click. -->
     <component
-      :is="files?.pdf?.exist ? 'button' : 'div'"
-      :type="files?.pdf?.exist ? 'button' : undefined"
-      :aria-label="files?.pdf?.exist ? 'Preview the paper' : undefined"
+      :is="question ? 'button' : 'div'"
+      :type="question ? 'button' : undefined"
+      :aria-label="question ? 'Preview the paper' : undefined"
       class="sheet position-relative overflow-hidden rounded-lg pa-0"
-      @click="files?.pdf?.exist && requestPreview()"
+      @click="question && requestPreview()"
     >
       <img
         :src="thumbPic"
@@ -26,7 +26,7 @@
       <!-- Phones and tablets show the paper's facts here, under the page; desktop shows them under the title. -->
       <slot />
       <v-btn
-        v-if="files?.pdf?.exist"
+        v-if="question"
         color="secondary"
         size="large"
         rounded="lg"
@@ -101,18 +101,21 @@
 </template>
 
 <script setup lang="ts">
-import type { ApiResult, DownloadResponseDTO, FilesDTO, UpgradeSuggestionsDTO, BillingInterval } from '@/types'
+import type { ApiResult, DownloadResponseDTO, PaperFileDTO, UpgradeSuggestionsDTO, BillingInterval } from '@/types'
+import { paperFileOf } from '~/utils/paperFiles'
 
 interface IPreviewActionCard {
   thumbPic: string
   id: string
   title: string
   alt: string
-  files?: FilesDTO
-  qFilePages?: string | number
+  files?: PaperFileDTO[]
 }
 
 const props = defineProps<IPreviewActionCard>()
+
+// The question paper is what the preview opens.
+const question = computed(() => paperFileOf(props.files, 'question'))
 
 const auth = useAuth()
 const router = useRouter()
@@ -123,8 +126,8 @@ const previewPdfUrl = ref('')
 const previewFileName = ref('')
 const previewTitle = ref('')
 const loadingPreview = ref(false)
-const previewPrice = computed(() => props.files?.pdf?.price ?? 0)
-const pagesLabel = computed(() => (Number(props.qFilePages) ? `all ${props.qFilePages} pages` : 'the full paper'))
+const previewPrice = computed(() => question.value?.price ?? 0)
+const pagesLabel = computed(() => (question.value?.pages ? `all ${question.value.pages} pages` : 'the full paper'))
 
 const showCoinPaymentModal = ref(false)
 const paymentPlans = ref<UpgradeSuggestionsDTO[]>([])
@@ -143,8 +146,8 @@ const redirectToLogin = () => {
 }
 
 const requestPreview = async () => {
-  if (!props.id) {
-    console.warn('No paper ID provided for PDF preview')
+  if (!props.id || !question.value) {
+    console.warn('No paper ID or question paper for the PDF preview')
     return
   }
 
@@ -158,7 +161,7 @@ const requestPreview = async () => {
   try {
     const response = await downloadFile({
       contentType: 'PastPaper',
-      fileType: 'pdf',
+      fileId: question.value.id,
       id: Number(props.id),
     }) as ApiResult<DownloadResponseDTO>
 

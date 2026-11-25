@@ -1,4 +1,4 @@
-import type { FilesDTO, PastPaperDTO } from '@/types'
+import type { PaperFileDTO, PastPaperDTO } from '@/types'
 import { CAMBRIDGE_BOARD_ID } from '@/constants'
 
 type CambridgeSessionSet = Record<string, { display: string, code: string }>
@@ -67,23 +67,24 @@ const getCambridgeFilenameSessionCode = (seoSessionCode: string) =>
   CAMBRIDGE_FILENAME_SESSION_CODES[seoSessionCode]
 
 const getCambridgeAvailableFiles = (
-  files: FilesDTO | undefined,
+  files: PaperFileDTO[] | undefined,
   filenamePrefix: string,
   paperVariantCode: string,
 ) => {
   const availableFiles: string[] = []
 
-  if (files?.pdf?.exist) {
+  if (files?.some(file => file.role === 'question')) {
     availableFiles.push(`question paper (QP) ${filenamePrefix}_qp_${paperVariantCode}`)
   }
 
-  if (files?.answer?.exist && String(files.answer.ext).toLowerCase() !== 'word') {
+  const answer = files?.find(file => file.role === 'answer')
+  if (answer && !['doc', 'docx', 'word'].includes(String(answer.ext).toLowerCase())) {
     availableFiles.push(`mark scheme (MS) ${filenamePrefix}_ms_${paperVariantCode}`)
   }
 
   const addedExtraFileCodes = new Set<string>()
 
-  for (const extraFile of files?.extra ?? []) {
+  for (const extraFile of files?.filter(file => file.role === 'extra') ?? []) {
     const normalizedTypeTitle = extraFile.type_title
       ?.trim()
       .toLowerCase()

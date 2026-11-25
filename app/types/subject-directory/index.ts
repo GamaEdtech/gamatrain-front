@@ -1,4 +1,5 @@
 import type { BoardDTO, GradeDTO, SubjectDTO } from '~/types/board'
+import type { PaperFileDTO } from '~/types/pastpaper'
 
 export type DirectorySelectorStage = 'board' | 'grade' | 'subject'
 
@@ -27,14 +28,9 @@ export interface DirectorySelectorSnapshot {
   error: boolean
 }
 
-type DirectoryFile = { exist?: boolean, price?: number | string | null }
-
 export interface DirectoryPaper {
-  files?: {
-    pdf?: DirectoryFile
-    answer?: DirectoryFile
-    extra?: (DirectoryFile & { id: string | number, type?: string | number | null, type_title?: string | null })[] | null
-  } | null
+  /** The paper's files, each by its own id (see `PaperFileDTO`). */
+  files?: PaperFileDTO[] | null
   id: string | number
   title?: string
   title_url?: string
@@ -48,13 +44,13 @@ export interface DirectoryPaper {
 }
 
 export interface DirectoryPaperDownload {
-  type: string
+  /** The file's id, which the download asks for. */
+  fileId: number
   title: string
   shortTitle: string
   icon: string
   style: 'question' | 'answer' | 'extra'
   price: number | null
-  extraId?: string
 }
 
 // Filters for the directory's paper search. Year and Session are sent as

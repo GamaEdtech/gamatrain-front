@@ -1,11 +1,13 @@
-import type { FileInfo, FilesDTO, TypeFileExtentionMultimedia } from '@/types'
+import type { PaperFileDTO, PaperFileRole, TypeFileExtentionMultimedia } from '@/types'
+import { paperFileLabel } from '~/utils/paperFiles'
 
 /** What one shared download row (`common/download/FileRow`) shows for a file. */
 export interface DownloadFileRowData {
   key: string
-  /** The file type the download call asks for. */
+  /** The file type the download call asks for (multimedia), or `file` for a past paper file. */
   type: string
-  extraId?: string
+  /** A past paper file's id, which the download asks for. */
+  fileId?: number
   /** The extension on the file icon. */
   badge: string
   /** A Vuetify theme color for the file icon. */
@@ -18,68 +20,34 @@ export interface DownloadFileRowData {
 const summaryOf = (...parts: (string | number | false | null | undefined)[]) =>
   parts.filter(part => part !== undefined && part !== null && part !== false && part !== '' && part !== 0).join(' · ')
 
-// gama-api names Word files `word`; the icon shows the real extension.
-const badgeFor = (ext: FileInfo['ext']) => (ext === 'word' ? 'DOCX' : String(ext || 'file').toUpperCase())
-const kindFor = (ext: FileInfo['ext']) => (ext === 'word' ? 'Word' : ext ? String(ext).toUpperCase() : '')
+const isWord = (ext?: string | null) => ['doc', 'docx', 'word'].includes(String(ext ?? '').toLowerCase())
+const badgeFor = (ext?: string | null) => (isWord(ext) ? 'DOCX' : String(ext || 'file').toUpperCase())
+const kindFor = (ext?: string | null) => (isWord(ext) ? 'Word' : ext ? String(ext).toUpperCase() : '')
 
-/** A past paper's files as download rows: question file(s), answer file, then the extra files. */
-export const buildPaperFileRows = (
-  files: FilesDTO | undefined,
-  isPaper: boolean,
-  qFilePages?: string | number | null,
-): DownloadFileRowData[] => {
-  const { pdf, word, answer, extra } = files ?? {}
-  const pages = Number(qFilePages) ? `${qFilePages} pages` : ''
-  const rows: DownloadFileRowData[] = []
-
-  if (pdf?.exist) {
-    rows.push({
-      key: 'pdf',
-      type: 'pdf',
-      badge: 'PDF',
-      color: 'lightError',
-      label: isPaper ? 'Question paper' : 'PDF',
-      points: pdf.price,
-      summary: summaryOf('PDF', pdf.size, pages),
-    })
-  }
-  if (word?.exist) {
-    rows.push({
-      key: 'word',
-      type: 'word',
-      badge: 'DOCX',
-      color: 'blue500',
-      label: isPaper ? 'Question paper (Word)' : 'Word',
-      points: word.price,
-      summary: summaryOf('Word', word.size, 'Editable'),
-    })
-  }
-  if (answer?.exist) {
-    rows.push({
-      key: 'answer',
-      type: 'answer',
-      badge: badgeFor(answer.ext),
-      color: 'teal500',
-      label: answer.ext === 'word' ? 'Answer key (Word)' : 'Mark scheme',
-      points: answer.price,
-      summary: summaryOf(kindFor(answer.ext), answer.size),
-    })
-  }
-  for (const file of extra ?? []) {
-    rows.push({
-      key: `extra-${file.id}`,
-      type: 'extra',
-      extraId: file.id,
-      badge: badgeFor(file.ext),
-      color: 'generalSearchQuiz',
-      label: file.type_title || 'Extra file',
-      points: file.price,
-      summary: summaryOf(kindFor(file.ext), file.size),
-    })
-  }
-
-  return rows
+const ROLE_COLORS: Record<PaperFileRole, string> = {
+  question: 'lightError',
+  word: 'blue500',
+  answer: 'teal500',
+  extra: 'generalSearchQuiz',
 }
+
+/** A past paper's files as download rows, in the order the API lists them (question, Word, answer, extra files). */
+export const buildPaperFileRows = (files: PaperFileDTO[] | undefined, isPaper: boolean): DownloadFileRowData[] =>
+  (files ?? []).map(file => ({
+    key: `file-${file.id}`,
+    type: 'file',
+    fileId: file.id,
+    badge: file.role === 'word' ? 'DOCX' : badgeFor(file.ext),
+    color: ROLE_COLORS[file.role],
+    label: paperFileLabel(file, isPaper),
+    points: file.price,
+    summary: summaryOf(
+      file.role === 'word' ? 'Word' : kindFor(file.ext),
+      file.size,
+      file.pages ? `${file.pages} pages` : '',
+      file.role === 'word' ? 'Editable' : '',
+    ),
+  }))
 
 // The exam export rows' colors, so a PowerPoint looks the same everywhere.
 const MULTIMEDIA_KINDS: Record<TypeFileExtentionMultimedia, { badge: string, color: string, label: string }> = {

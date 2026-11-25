@@ -18,10 +18,6 @@ export const useDirectoryPaperDownloads = () => {
   const showDownload = ref(false)
   const downloadLink = ref('')
 
-  const params = (file: DirectoryPaperDownload) => file.extraId
-    ? { type: 'extra' as const, extraId: file.extraId }
-    : { type: file.type as 'pdf' | 'answer' }
-
   const { getDownloadProgress, startDownload } = useDownloadWithProgress({
     contentType: 'PastPaper',
     get id() { return active.value?.paper.id || 0 },
@@ -48,7 +44,7 @@ export const useDirectoryPaperDownloads = () => {
     if (active.value) return
     active.value = last.value = { paper, file }
     try {
-      await startDownload(params(file))
+      await startDownload({ type: 'file', fileId: file.fileId })
     }
     finally {
       active.value = null
@@ -56,9 +52,9 @@ export const useDirectoryPaperDownloads = () => {
   }
 
   const isActive = (paper: DirectoryPaper, file: DirectoryPaperDownload) =>
-    active.value?.paper.id === paper.id && active.value.file.type === file.type
+    active.value?.paper.id === paper.id && active.value.file.fileId === file.fileId
   const progress = (paper: DirectoryPaper, file: DirectoryPaperDownload) =>
-    isActive(paper, file) ? getDownloadProgress(params(file).type, file.extraId) : 0
+    isActive(paper, file) ? getDownloadProgress('file', file.fileId) : 0
 
   return {
     active, isActive, progress, download, upgrade, showPayment, showCoinAnimation, isStartWalletAnimation,

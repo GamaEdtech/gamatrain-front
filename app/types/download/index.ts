@@ -5,8 +5,8 @@ export type ContentTypeDownload = 'PastPaper' | 'Multimedia' | 'Exam'
 export interface BodyRequestDownloadDTO {
   id: string | number
   contentType: ContentTypeDownload
-  fileType: string
-  extraId?: string | number
+  /** A past paper file's id, from the paper's `files` list. */
+  fileId?: number
 }
 
 export type PaidByDownloadResponseDTO = 'SubscriptionQuota' | 'Points'

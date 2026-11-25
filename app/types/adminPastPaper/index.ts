@@ -1,3 +1,5 @@
+import type { PaperFileDTO, PaperPendingEditDTO } from '@/types/pastpaper'
+
 /** A paper in the admin list (the backend's copy, in gama-api's shape). */
 export interface AdminPastPaperDTO {
   id: string
@@ -15,24 +17,8 @@ export interface AdminPastPaperDTO {
   owner_name: string | null
   edu_year?: string
   edu_month?: string
-}
-
-/** The file types of a paper the admin review can open. */
-export type AdminPastPaperFileType = 'pdf' | 'word' | 'answer' | 'extra'
-
-/** A main file of a paper (question, Word, answer), as the paper detail lists it. */
-export interface AdminPastPaperMainFileDTO {
-  exist: boolean
-  size: string | number
-  ext: string | false
-}
-
-/** An extra file of a paper. */
-export interface AdminPastPaperExtraFileDTO {
-  id: string
-  type_title?: string | null
-  size?: string
-  ext?: string
+  /** The owner's edit of this published paper waits for review. */
+  pending_edit?: boolean
 }
 
 /** One paper for the admin review (GET admin/pastpapers/{id}): gama-api's paper detail plus the review's fields. */
@@ -60,18 +46,17 @@ export interface AdminPastPaperDetailDTO {
   ownerUserId?: number | null
   /** The last review's notes ("- " lines). */
   reviewNote?: string | null
-  files?: {
-    pdf?: AdminPastPaperMainFileDTO | null
-    word?: AdminPastPaperMainFileDTO | null
-    answer?: AdminPastPaperMainFileDTO | null
-    extra?: AdminPastPaperExtraFileDTO[]
-  }
+  files?: PaperFileDTO[]
+  /** The owner's edit of the published paper waiting for review. */
+  pending_edit?: PaperPendingEditDTO | null
 }
 
 export interface GetAdminPastPaperParams {
   page: number
   pageSize: number
   status?: number | null
+  /** Only papers whose owner's edit waits for review. */
+  pendingEdit?: boolean
   title?: string
   uid?: string | number | null
   /** Exact filters, as the backend names them: board, grade, subject, paper type, year, month, variant. */
