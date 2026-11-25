@@ -1,289 +1,26 @@
 <template>
-  <v-container class="w-100 d-flex flex-column">
+  <v-container class="paper-form d-flex flex-column ga-6">
+    <div>
+      <h1 class="text-h5 font-weight-medium text-grey900">
+        Edit past paper
+      </h1>
+      <p class="text-body-2 text-grey600 mt-1">
+        {{ areMainFieldsEditable
+          ? 'Change the files or the details. A new question paper can fill in the details for you.'
+          : 'This paper is published: you can change its files and description, and they are reviewed before they go live.' }}
+      </p>
+    </div>
+
     <v-form
       v-model="isFormValid"
-      class="w-100 d-flex flex-column"
+      class="d-flex flex-column ga-6"
     >
-      <h1 class="text-h6 text-grey700 font-weight-regular">
-        Past Papers Edit Form
-      </h1>
-
-      <div class="d-flex flex-wrap justify-space-between">
-        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <common-gombo-box
-            v-model="paper.board"
-            label="Board"
-            :items="boards?.map((board) => {
-              return {
-                id: board.code,
-                title: board.title,
-              }
-            })"
-            :data-loading="loadingBoards"
-            :loading-value="loadingGetItemById"
-            rounded="pill"
-            height="48"
-            base-color="grey400"
-            color="primary"
-            :defalut-lable="false"
-            density="compact"
-            :disabled="!areMainFieldsEditable"
-            :rules="[required]"
-            @update:model-value="boardChange"
-          />
+      <section>
+        <div class="section-title">
+          <span class="section-step">1</span> Files
         </div>
-
-        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <common-gombo-box
-            v-model="paper.grade"
-            label="Grade"
-            :items="grades?.map((item) => {
-              return {
-                id: item.id,
-                title: item.title,
-              }
-            })"
-            :data-loading="loadingBoards || loadingGrade"
-            :loading-value="loadingGetItemById"
-            rounded="pill"
-            height="48"
-            base-color="grey400"
-            color="primary"
-            density="compact"
-            :defalut-lable="false"
-            :disabled="!areMainFieldsEditable || !paper.board || loadingGrade"
-            :rules="[required]"
-            @update:model-value="gradeChange"
-          />
-        </div>
-
-        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <common-gombo-box
-            v-model="paper.subject"
-            label="Subject"
-            :items="subjects?.map((item) => {
-              return {
-                id: item.id,
-                title: item.title,
-              }
-            })"
-            :data-loading="loadingBoards || loadingGrade || loadingSubject"
-            :loading-value="loadingGetItemById"
-            rounded="pill"
-            height="48"
-            base-color="grey400"
-            color="primary"
-            density="compact"
-            :defalut-lable="false"
-            :disabled="!areMainFieldsEditable || !paper.board || !paper.grade || loadingSubject"
-            :rules="[required]"
-            @update:model-value="subjectChange"
-          />
-        </div>
-
-        <div class="container-topics w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
-          <common-multi-choice-check-box-list
-            v-model:choices="paper.topics"
-            title="Topics"
-            :loading-get-data="loadingGetItemById || loadingTopic"
-            :data="topics?.map((item) => {
-              return {
-                id: item.id,
-                title: item.title,
-              }
-            })"
-            :disabled="!areMainFieldsEditable || !paper.subject"
-          />
-        </div>
-
-        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <common-gombo-box
-            v-model="paper.classification"
-            label="Classification"
-            :items="classifications?.map((item) => {
-              return {
-                id: item.id,
-                title: item.title,
-              }
-            })"
-            :data-loading="loadingBoards || loadingClassification"
-            :loading-value="loadingGetItemById"
-            rounded="pill"
-            height="48"
-            base-color="grey400"
-            color="primary"
-            density="compact"
-            :defalut-lable="false"
-            :disabled="!areMainFieldsEditable || !paper.board || loadingClassification"
-          />
-        </div>
-
-        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <common-gombo-box
-            v-model="paper.answer_type"
-            label="Solution Availability"
-            :items="ANSWER_STATUS_LIST"
-            :loading-value="loadingGetItemById"
-            rounded="pill"
-            height="48"
-            base-color="grey400"
-            color="primary"
-            density="compact"
-            :defalut-lable="false"
-            :has-search="false"
-            :disabled="!areMainFieldsEditable"
-            :rules="[required]"
-          />
-        </div>
-
-        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <common-gombo-box
-            v-model="paper.level"
-            label="Difficulty Level"
-            :items="TEST_LEVEL_LIST"
-            :loading-value="loadingGetItemById"
-            rounded="pill"
-            height="48"
-            base-color="grey400"
-            color="primary"
-            density="compact"
-            :defalut-lable="false"
-            :has-search="false"
-            :disabled="!areMainFieldsEditable"
-          />
-        </div>
-
-        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <common-gombo-box
-            v-model="paper.edu_year"
-            label="Year"
-            :loading-value="loadingGetItemById"
-            :items="YEAR_LIST.map((item) => {
-              return {
-                id: item.toString(),
-                title: item.toString(),
-              }
-            })"
-            rounded="pill"
-            height="48"
-            base-color="grey400"
-            color="primary"
-            density="compact"
-            :defalut-lable="false"
-            :disabled="!areMainFieldsEditable"
-            :rules="[required]"
-          />
-        </div>
-
-        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <common-gombo-box
-            v-model="paper.edu_month"
-            label="Month"
-            :items="MONTH_LIST"
-            :loading-value="loadingGetItemById"
-            rounded="pill"
-            height="48"
-            base-color="grey400"
-            color="primary"
-            density="compact"
-            :defalut-lable="false"
-            :disabled="!areMainFieldsEditable"
-            :rules="[required]"
-          />
-        </div>
-
-        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <common-gombo-box
-            v-model="paper.variant"
-            label="Variant (optional)"
-            :items="variants"
-            :loading-value="loadingGetItemById"
-            rounded="pill"
-            height="48"
-            base-color="grey400"
-            color="primary"
-            density="compact"
-            :defalut-lable="false"
-            :disabled="!areMainFieldsEditable"
-          />
-        </div>
-
-        <div class="each-item d-flex flex-column align-start justify-start ga-1 mt-4">
-          <common-gombo-box
-            v-model="paper.holding_level"
-            label="Testing Scope"
-            :items="HOLDING_LEVEL_LIST"
-            :loading-value="loadingGetItemById"
-            rounded="pill"
-            height="48"
-            base-color="grey400"
-            color="primary"
-            density="compact"
-            :defalut-lable="false"
-            :has-search="false"
-            :disabled="!areMainFieldsEditable"
-          />
-        </div>
-
-        <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
-          <span class="text-caption text-grey700 font-weight-medium">Title</span>
-          <v-text-field
-            v-model="paper.title"
-            density="compact"
-            variant="outlined"
-            label=""
-            outlined
-            rounded="pill"
-            color="primary"
-            height="48"
-            base-color="grey400"
-            class="w-100"
-            :disabled="!areMainFieldsEditable"
-            :rules="[required]"
-          >
-            <template #prepend-inner>
-              <v-progress-circular
-                v-if="loadingGetItemById"
-                indeterminate
-                size="20"
-                color="primary"
-                class="mx-2"
-              />
-            </template>
-          </v-text-field>
-        </div>
-
-        <div class="w-100 d-flex flex-column align-start justify-start ga-1 mt-4 rounded-lg pa-2">
-          <span class="text-caption text-grey700 font-weight-medium">Description</span>
-          <v-textarea
-            v-model="paper.description"
-            density="compact"
-            variant="outlined"
-            label=""
-            outlined
-            rounded="lg"
-            color="primary"
-            base-color="grey400"
-            class="w-100"
-            placeholder="Type your description"
-            persistent-clear
-            no-resize
-            rows="7"
-            :rules="[required, minLength(70)]"
-          >
-            <template #prepend-inner>
-              <v-progress-circular
-                v-if="loadingGetItemById"
-                indeterminate
-                size="20"
-                color="primary"
-                class="mx-2"
-              />
-            </template>
-          </v-textarea>
-        </div>
-
         <paper-files-editor
+          ref="filesEditor"
           v-model:changes="fileChanges"
           v-model:uploading="filesUploading"
           :files="existingFiles"
@@ -291,16 +28,324 @@
           :paper-id="paperId"
           :admin="admin"
           :can-remove="canRemoveFiles"
-          class="mt-6"
+          @detected="detected"
         />
-      </div>
+      </section>
+
+      <section>
+        <div class="section-title">
+          <span class="section-step">2</span> Paper details
+        </div>
+        <v-card
+          variant="outlined"
+          rounded="lg"
+          class="pa-4 d-flex flex-column ga-4"
+        >
+          <paper-detected-banner
+            v-if="detection && areMainFieldsEditable"
+            :detection="detection"
+            :applied="detectionApplied"
+            :loading="applyingDetection"
+            @apply="applyDetected"
+          />
+          <v-alert
+            v-if="!areMainFieldsEditable"
+            type="info"
+            variant="tonal"
+            density="compact"
+            icon="md:lock"
+          >
+            The details of a published paper are locked. To change them, contact support.
+          </v-alert>
+
+          <v-row dense>
+            <v-col
+              cols="12"
+              md="4"
+            >
+              <common-gombo-box
+                v-model="paper.board"
+                label="Board"
+                :items="boards?.map((board) => ({ id: board.code, title: board.title }))"
+                :data-loading="loadingBoards"
+                rounded="pill"
+                height="48"
+                base-color="grey400"
+                color="primary"
+                density="compact"
+                :defalut-lable="false"
+                :loading-value="loadingGetItemById"
+                :bg-color="fieldTint('board')"
+                :disabled="!areMainFieldsEditable"
+                :rules="[required]"
+                @update:model-value="boardChange"
+              />
+              <paper-auto-hint v-if="isFilled('board')" />
+            </v-col>
+            <v-col
+              cols="12"
+              md="4"
+            >
+              <common-gombo-box
+                v-model="paper.grade"
+                label="Grade"
+                :items="grades?.map((item) => ({ id: item.id, title: item.title }))"
+                :data-loading="loadingBoards || loadingGrade"
+                rounded="pill"
+                height="48"
+                base-color="grey400"
+                color="primary"
+                density="compact"
+                :defalut-lable="false"
+                :loading-value="loadingGetItemById"
+                :bg-color="fieldTint('grade')"
+                :disabled="!areMainFieldsEditable || !paper.board || loadingGrade"
+                :rules="[required]"
+                @update:model-value="gradeChange"
+              />
+              <paper-auto-hint v-if="isFilled('grade')" />
+            </v-col>
+            <v-col
+              cols="12"
+              md="4"
+            >
+              <common-gombo-box
+                v-model="paper.subject"
+                label="Subject"
+                :items="subjects?.map((item) => ({ id: item.id, title: item.title }))"
+                :data-loading="loadingBoards || loadingGrade || loadingSubject"
+                rounded="pill"
+                height="48"
+                base-color="grey400"
+                color="primary"
+                density="compact"
+                :defalut-lable="false"
+                :loading-value="loadingGetItemById"
+                :bg-color="fieldTint('subject')"
+                :disabled="!areMainFieldsEditable || !paper.board || !paper.grade || loadingSubject"
+                :rules="[required]"
+                @update:model-value="subjectChange"
+              />
+              <paper-auto-hint v-if="isFilled('subject')" />
+            </v-col>
+
+            <v-col
+              cols="12"
+              md="4"
+            >
+              <common-gombo-box
+                v-model="paper.classification"
+                label="Paper type"
+                :items="classifications?.map((item) => ({ id: item.id, title: item.title }))"
+                :data-loading="loadingBoards || loadingClassification"
+                rounded="pill"
+                height="48"
+                base-color="grey400"
+                color="primary"
+                density="compact"
+                :defalut-lable="false"
+                :loading-value="loadingGetItemById"
+                :bg-color="fieldTint('classification')"
+                :disabled="!areMainFieldsEditable || !paper.board || loadingClassification"
+                @update:model-value="forget('classification')"
+              />
+              <paper-auto-hint v-if="isFilled('classification')" />
+            </v-col>
+            <v-col
+              cols="12"
+              md="4"
+            >
+              <common-gombo-box
+                v-model="paper.variant"
+                label="Variant"
+                :items="variants"
+                rounded="pill"
+                height="48"
+                base-color="grey400"
+                color="primary"
+                density="compact"
+                :defalut-lable="false"
+                :loading-value="loadingGetItemById"
+                :bg-color="fieldTint('variant')"
+                :disabled="!areMainFieldsEditable"
+                @update:model-value="forget('variant')"
+              />
+              <paper-auto-hint v-if="isFilled('variant')" />
+            </v-col>
+            <v-col
+              cols="6"
+              md="2"
+            >
+              <common-gombo-box
+                v-model="paper.edu_year"
+                label="Year"
+                :items="YEAR_LIST.map((item) => ({ id: item.toString(), title: item.toString() }))"
+                rounded="pill"
+                height="48"
+                base-color="grey400"
+                color="primary"
+                density="compact"
+                :defalut-lable="false"
+                :loading-value="loadingGetItemById"
+                :bg-color="fieldTint('edu_year')"
+                :disabled="!areMainFieldsEditable"
+                :rules="[required]"
+                @update:model-value="forget('edu_year')"
+              />
+              <paper-auto-hint v-if="isFilled('edu_year')" />
+            </v-col>
+            <v-col
+              cols="6"
+              md="2"
+            >
+              <common-gombo-box
+                v-model="paper.edu_month"
+                label="Month"
+                :items="MONTH_LIST"
+                rounded="pill"
+                height="48"
+                base-color="grey400"
+                color="primary"
+                density="compact"
+                :defalut-lable="false"
+                :loading-value="loadingGetItemById"
+                :bg-color="fieldTint('edu_month')"
+                :disabled="!areMainFieldsEditable"
+                :rules="[required]"
+                @update:model-value="forget('edu_month')"
+              />
+              <paper-auto-hint v-if="isFilled('edu_month')" />
+            </v-col>
+
+            <v-col cols="12">
+              <v-text-field
+                v-model="paper.title"
+                label="Title"
+                density="compact"
+                variant="outlined"
+                rounded="pill"
+                color="primary"
+                base-color="grey400"
+                :bg-color="fieldTint('title')"
+                :loading="loadingGetItemById"
+                :disabled="!areMainFieldsEditable"
+                :rules="[required]"
+                hide-details="auto"
+                @update:model-value="forget('title')"
+              />
+              <paper-auto-hint v-if="isFilled('title')" />
+            </v-col>
+
+            <v-col
+              cols="12"
+              md="4"
+            >
+              <common-gombo-box
+                v-model="paper.answer_type"
+                label="Solution availability"
+                :items="ANSWER_STATUS_LIST"
+                rounded="pill"
+                height="48"
+                base-color="grey400"
+                color="primary"
+                density="compact"
+                :defalut-lable="false"
+                :loading-value="loadingGetItemById"
+                :has-search="false"
+                :disabled="!areMainFieldsEditable"
+                :rules="[required]"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+              md="4"
+            >
+              <common-gombo-box
+                v-model="paper.level"
+                label="Difficulty level"
+                :items="TEST_LEVEL_LIST"
+                rounded="pill"
+                height="48"
+                base-color="grey400"
+                color="primary"
+                density="compact"
+                :defalut-lable="false"
+                :loading-value="loadingGetItemById"
+                :has-search="false"
+                :disabled="!areMainFieldsEditable"
+              />
+            </v-col>
+            <v-col
+              cols="12"
+              md="4"
+            >
+              <common-gombo-box
+                v-model="paper.holding_level"
+                label="Testing scope"
+                :items="HOLDING_LEVEL_LIST"
+                rounded="pill"
+                height="48"
+                base-color="grey400"
+                color="primary"
+                density="compact"
+                :defalut-lable="false"
+                :loading-value="loadingGetItemById"
+                :has-search="false"
+                :disabled="!areMainFieldsEditable"
+              />
+            </v-col>
+
+            <v-col cols="12">
+              <div class="container-topics rounded-lg pa-2">
+                <common-multi-choice-check-box-list
+                  v-model:choices="paper.topics"
+                  title="Topics"
+                  :loading-get-data="loadingGetItemById || loadingTopic"
+                  :data="topics?.map((item) => ({ id: item.id, title: item.title }))"
+                  :disabled="!areMainFieldsEditable || !paper.subject"
+                />
+              </div>
+            </v-col>
+          </v-row>
+        </v-card>
+      </section>
+
+      <section>
+        <div class="section-title">
+          <span class="section-step">3</span> Description
+        </div>
+        <v-card
+          variant="outlined"
+          rounded="lg"
+          class="pa-4"
+        >
+          <v-textarea
+            v-model="paper.description"
+            density="compact"
+            variant="outlined"
+            rounded="lg"
+            color="primary"
+            base-color="grey400"
+            placeholder="What is in this paper, and what is it good for? (at least 70 characters)"
+            :loading="loadingGetItemById"
+            no-resize
+            rows="6"
+            counter
+            :rules="[required, minLength(70)]"
+          />
+        </v-card>
+      </section>
     </v-form>
 
-    <div class="d-flex align-center justify-center mt-8 ga-2">
+    <div class="form-actions d-flex align-center justify-end flex-wrap ga-3 pa-3 rounded-lg">
+      <span
+        v-if="submitHint"
+        class="text-caption text-grey600 mr-auto"
+      >{{ submitHint }}</span>
       <v-btn
         variant="outlined"
         color="lightError"
-        to="/user/paper"
+        :to="admin ? '/admin/past-papers' : '/user/paper'"
         flat
         rounded="pill"
         height="40"
@@ -316,10 +361,10 @@
         class="text-body-1 font-weight-medium"
         color="primary"
         :loading="loadingEditItem"
-        :disabled="!isFormValid || hasUploadInProgress"
+        :disabled="!canSubmit"
         @click="submitPaper"
       >
-        Submit
+        {{ admin || areMainFieldsEditable ? 'Save' : 'Submit for review' }}
       </v-btn>
     </div>
   </v-container>
@@ -327,7 +372,8 @@
 
 <script setup lang="ts">
 import { ANSWER_STATUS_LIST, TEST_LEVEL_LIST, YEAR_LIST, MONTH_LIST, HOLDING_LEVEL_LIST } from '@/constants'
-import type { PaperFileChangeDTO, PaperFileDTO, PaperPendingEditDTO, PastPaperCreateDTO, PastPaperDetailDTO } from '@/types'
+import type { PaperDetectionDTO, PaperFileChangeDTO, PaperFileDTO, PaperPendingEditDTO, PastPaperCreateDTO, PastPaperDetailDTO } from '@/types'
+import type { DetectedField } from '~/composables/usePaperDetection'
 
 type PaperForm = Omit<PastPaperCreateDTO, 'files'>
 
@@ -380,6 +426,7 @@ const pendingEdit = ref<PaperPendingEditDTO | null>(null)
 const fileChanges = ref<PaperFileChangeDTO[]>([])
 const filesUploading = ref(false)
 const hasUploadInProgress = computed(() => filesUploading.value)
+const filesEditor = ref<{ hasQuestion: boolean, missingKind: boolean } | null>(null)
 const paperStatus = ref('')
 const editableStatusList = ['0', '2', '3']
 // A teacher changes the main fields only while the paper waits for review or was sent back; an admin, in any status
@@ -412,6 +459,31 @@ const paper = ref<PaperForm>({
 
 const paperId = computed(() => String(route.params.id || ''))
 
+// A new question paper's cover can fill in the details; on an edit the user's own values come first, so it is applied only
+// when they ask (Apply details), and each filled field is marked until they change it.
+const { detection, apply: applyDetection, applying: applyingDetection, isFilled, forget } = usePaperDetection(paper, { getGrades, getClassification, getSubjects, getTopics })
+const detectionApplied = ref(false)
+const detected = (found: PaperDetectionDTO) => {
+  detection.value = found
+  detectionApplied.value = false
+}
+const applyDetected = async () => {
+  if (!detection.value) return
+  await applyDetection(detection.value)
+  detectionApplied.value = true
+}
+const fieldTint = (field: DetectedField) => (isFilled(field) ? 'blue-lighten-5' : undefined)
+
+const canSubmit = computed(() => isFormValid.value && !hasUploadInProgress.value && !filesEditor.value?.missingKind
+  && (filesEditor.value?.hasQuestion ?? true))
+const submitHint = computed(() => {
+  if (hasUploadInProgress.value) return 'Waiting for the files to finish uploading...'
+  if (filesEditor.value && !filesEditor.value.hasQuestion) return 'The paper needs its question paper (PDF).'
+  if (filesEditor.value?.missingKind) return 'Choose the kind of each other file.'
+  if (!isFormValid.value) return 'Fill in the required details.'
+  return ''
+})
+
 const getNumber = (value: string | number | undefined, fallback: number) => {
   const parsedValue = Number(value)
 
@@ -434,6 +506,7 @@ const getTopicsFromItem = (item: PastPaperDetailDTO) => {
 }
 
 const boardChange = async (boardId: number | string) => {
+  for (const field of ['board', 'grade', 'subject', 'classification'] as const) forget(field)
   paper.value.board = boardId
   paper.value.grade = ''
   paper.value.subject = ''
@@ -450,6 +523,8 @@ const boardChange = async (boardId: number | string) => {
 }
 
 const gradeChange = async (gradeId: number | string) => {
+  forget('grade')
+  forget('subject')
   paper.value.grade = gradeId
   paper.value.subject = ''
   paper.value.topics = []
@@ -461,6 +536,7 @@ const gradeChange = async (gradeId: number | string) => {
 }
 
 const subjectChange = async (subjectId: number | string) => {
+  forget('subject')
   paper.value.subject = subjectId
   paper.value.topics = []
   resetTopics()
@@ -539,15 +615,36 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.each-item{
-  width : 33%
+.paper-form {
+  max-width: 1100px;
 }
-.container-topics{
-  border : 2px solid rgb(var(--v-theme-grey200))
+.container-topics {
+  border: 1px solid rgb(var(--v-theme-grey200));
 }
-@media screen and (max-width: 960px) {
-  .each-item{
-    width: 100%;
-  }
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+.section-step {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  color: rgb(var(--v-theme-on-primary));
+  background: rgb(var(--v-theme-primary));
+}
+.form-actions {
+  position: sticky;
+  bottom: 8px;
+  z-index: 2;
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid rgb(var(--v-theme-grey200));
 }
 </style>

@@ -39,6 +39,33 @@ export interface PaperPendingEditDTO {
   reviewNotes: string[]
 }
 
+/** A lookup item the detection found (board, grade, subject, paper type, variant, extra file type). */
+export interface DetectedItemDTO {
+  id: number
+  title: string
+}
+
+/**
+ * What an uploaded past paper PDF says about itself, read by the backend from its first page: which file it is (any PDF),
+ * and for the question paper the paper's details, for the form to fill in and the user to confirm.
+ */
+export interface PaperDetectionDTO {
+  /** `pattern`: from the cover's printed codes; `ai`: an AI model read it. */
+  source: 'pattern' | 'ai'
+  isMarkScheme: boolean
+  fileRole: PaperFileRole | null
+  fileType: DetectedItemDTO | null
+  board: DetectedItemDTO | null
+  grade: DetectedItemDTO | null
+  subject: DetectedItemDTO | null
+  classification: DetectedItemDTO | null
+  variant: DetectedItemDTO | null
+  year: number | null
+  month: number | null
+  code: string | null
+  title: string | null
+}
+
 /**
  * One change in an add or edit's `files`: `{role, upload, type_id}` adds a file (for question/word/answer it replaces the
  * paper's file of that role), `{id, upload}` replaces one, `{id, type_id}` changes an extra file's type, `{id, remove}`
