@@ -76,7 +76,7 @@
 
 <script setup lang="ts">
 const typeSelect = ref('Past Paper')
-const typeList = ['Past Paper', 'Multimedia', 'Online Exam', 'Forum']
+const typeList = ['Past Paper', 'Online Exam']
 
 const changeFilterType = async (type: string) => {
   if (type == '') {

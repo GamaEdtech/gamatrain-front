@@ -94,20 +94,6 @@ const categories = ref<Category[]>([
     icon: 'icon-tutorial',
   },
   {
-    type: 'question',
-    key: 'questions',
-    stat: '--',
-    title: 'Forum',
-    icon: 'icon-q-a',
-  },
-  {
-    type: 'learnfiles',
-    key: 'files',
-    stat: '--',
-    title: 'Multimedia',
-    icon: 'icon-multimedia',
-  },
-  {
     type: 'school',
     key: 'schools',
     stat: '+600K',
@@ -148,14 +134,8 @@ const fetchCategoryCounts = async () => {
       categories.value.find((cat, _i) => cat.key == 'papers')!.stat
         = parseInt(response.data.types_stats.papers) || 0
 
-      categories.value.find((cat, _i) => cat.key == 'files')!.stat
-        = parseInt(response.data.types_stats.learnfiles) || 0
-
       categories.value.find((cat, _i) => cat.key == 'exams')!.stat
         = parseInt(response.data.types_stats.exams) || 0
-
-      categories.value.find((cat, _i) => cat.key == 'questions')!.stat
-        = parseInt(response.data.types_stats.question) || 0
 
       categories.value.find((cat, _i) => cat.key == 'tutorial')!.stat
         = parseInt(response.data.types_stats.tutorials) || 0
@@ -184,17 +164,11 @@ onMounted(async () => {
 .stat-icon {
   font-size: 1.4375rem;
 }
-.icon-multimedia {
-  color: rgb(var(--v-theme-greenLight700));
-}
 .icon-paper {
   color: rgb(var(--v-theme-blue500));
 }
 .icon-exam {
   color: rgb(var(--v-theme-generalSearchQuiz));
-}
-.icon-q-a {
-  color: rgb(var(--v-theme-warning400));
 }
 .icon-tutorial {
   color: rgb(var(--v-theme-blue500));

@@ -60,20 +60,6 @@ export default {
         link: '/search?type=paper',
       },
       {
-        class: 'content',
-        color: '#2e7d32',
-        text: 'Multimedia',
-        icon: 'icon-multimedia',
-        link: '/search?type=multimedia',
-      },
-      {
-        class: 'faq',
-        color: '#bf360c',
-        text: 'Forum',
-        icon: 'icon-q-a',
-        link: '/search?type=forum',
-      },
-      {
         class: 'exam',
         color: '#5600e8',
         text: 'QuizHub',

@@ -465,11 +465,6 @@ const changeSlider = (index) => {
 
 const services = [
   {
-    icon: 'icon-multimedia',
-    link: '/search?type=multimedia',
-    title: 'Multimedia',
-  },
-  {
     icon: 'icon-paper',
     link: '/search?type=paper',
     title: 'Paper',
@@ -483,11 +478,6 @@ const services = [
     icon: 'icon-teacher',
     link: '/services',
     title: 'Teacher',
-  },
-  {
-    icon: 'icon-q-a',
-    link: '/search?type=forum',
-    title: 'Q&A',
   },
   {
     icon: 'icon-exam',
