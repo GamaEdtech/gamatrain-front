@@ -74,6 +74,39 @@
             Choose files
           </v-btn>
         </v-sheet>
+
+        <div class="mt-4">
+          <div class="text-caption text-grey700 font-weight-medium mb-2">
+            What you can add
+          </div>
+          <div class="d-flex flex-wrap ga-2">
+            <v-chip
+              v-for="main in mainSlots"
+              :key="main.role"
+              :color="main.done ? 'success' : main.required ? 'error' : undefined"
+              :variant="main.done ? 'tonal' : 'outlined'"
+              :prepend-icon="main.done ? 'md:check_circle' : 'md:add'"
+              @click="pickSlot(main.role)"
+            >
+              {{ main.title }}<span
+                v-if="main.required && !main.done"
+                class="ml-1"
+              >(required)</span>
+            </v-chip>
+            <v-chip
+              v-for="type in extraTypes"
+              :key="type.id"
+              variant="outlined"
+              prepend-icon="md:add"
+              @click="pickSlot('extra', type.id)"
+            >
+              {{ type.title }}
+            </v-chip>
+          </div>
+          <div class="text-caption text-grey600 mt-2">
+            Pick a kind to add that file, or drop several files above and we sort them.
+          </div>
+        </div>
       </div>
 
       <div
@@ -210,8 +243,8 @@
       ref="fileInput"
       type="file"
       class="d-none"
-      :multiple="!replacing"
-      :accept="replacing ? paperFileAccepts[replacing.role] : allAccepted"
+      :multiple="!replacing && !slot"
+      :accept="pickerAccept"
       @change="onPicked"
     >
   </div>
@@ -392,13 +425,42 @@ const open = async (row: Row) => {
   }
 }
 
-// One hidden input: several new files, or one replacement for a row.
+// One hidden input: several new files (sorted by reading them), one file of a chosen kind, or one replacement for a row.
 const fileInput = ref<HTMLInputElement | null>(null)
 const replacing = ref<Row | null>(null)
+type Slot = { role: PaperFileRole, typeId: number | null }
+const slot = ref<Slot | null>(null)
 const dragging = ref(false)
+const pickerAccept = computed(() => {
+  const role = replacing.value?.role ?? slot.value?.role
+  return role ? paperFileAccepts[role] : allAccepted
+})
+
+// The kinds of file a paper can have, so the user sees what else to add: its three main files (ticked once there) and the
+// other kinds.
+const mainSlots = computed(() => (['question', 'answer', 'word'] as const).map(role => ({
+  role,
+  title: ROLE_TITLES[role],
+  required: role === 'question',
+  done: Boolean(live(role)),
+})))
 
 const browse = async (row?: Row) => {
   replacing.value = row && 'key' in row ? row : null
+  slot.value = null
+  await nextTick()
+  fileInput.value?.click()
+}
+
+// A main file the paper already has is replaced; otherwise a new file of that kind is added.
+const pickSlot = async (role: PaperFileRole, typeId: number | null = null) => {
+  const existing = role === 'extra' ? undefined : live(role)
+  if (existing) {
+    await browse(existing)
+    return
+  }
+  replacing.value = null
+  slot.value = { role, typeId }
   await nextTick()
   fileInput.value?.click()
 }
@@ -408,9 +470,11 @@ const onPicked = async (event: Event) => {
   const picked = [...(input.files ?? [])]
   input.value = ''
   const target = replacing.value
+  const chosen = slot.value
   replacing.value = null
+  slot.value = null
   if (target && picked[0]) await replace(target, picked[0])
-  else await addFiles(picked)
+  else await addFiles(picked, chosen)
 }
 
 const onDrop = async (event: DragEvent) => {
@@ -451,16 +515,17 @@ const upload = async (row: Row, file: File) => {
 }
 
 // What the file said about itself: its role and kind, and for the question paper the paper's details.
-const applyDetection = (row: Row, detected: PaperDetectionDTO | null) => {
+const applyDetection = (row: Row, detected: PaperDetectionDTO | null, chosen = false) => {
   row.warning = undefined
   if (!detected) return
   const role = detected.fileRole
-  // A file read as another role moves there, unless that role is taken (a replacement keeps its row's role).
-  if (row.id === undefined && role && role !== row.role && (role === 'extra' || !live(role, row))) {
+  // A file read as another role moves there, unless the user chose its kind or that role is taken (a replacement keeps
+  // its row's role).
+  if (!chosen && row.id === undefined && role && role !== row.role && (role === 'extra' || !live(role, row))) {
     row.role = role
     row.auto = true
   }
-  if (row.role === 'extra' && detected.fileType) {
+  if (!chosen && row.role === 'extra' && detected.fileType) {
     row.typeId = detected.fileType.id
     row.auto = true
   }
@@ -470,22 +535,21 @@ const applyDetection = (row: Row, detected: PaperDetectionDTO | null) => {
   }
 }
 
-const addFiles = async (files: File[]) => {
+const addFiles = async (files: File[], chosen: Slot | null = null) => {
   for (const file of files) {
-    const role = guessRole(file)
-    if (!fits(role, file) && role !== 'extra') continue
-    if (!fits('extra', file) && role === 'extra') {
-      $toast.error(`${file.name}: this file type isn't accepted.`)
+    const role = chosen?.role ?? guessRole(file)
+    if (!fits(role, file)) {
+      $toast.error(`${file.name}: this file type doesn't fit ${ROLE_TITLES[role].toLowerCase()} (${paperFileAccepts[role].replaceAll(',', ', ')}).`)
       continue
     }
-    rows.value.push({ key: `new-${++keySeed}`, role, typeId: null, originalTypeId: null, ext: extOf(file), size: null, pages: null })
+    rows.value.push({ key: `new-${++keySeed}`, role, typeId: chosen?.typeId ?? null, originalTypeId: null, ext: extOf(file), size: null, pages: null })
     const row = rows.value[rows.value.length - 1]!
     const detected = await upload(row, file)
     if (!row.upload) {
       rows.value = rows.value.filter(item => item !== row)
       continue
     }
-    applyDetection(row, detected)
+    applyDetection(row, detected, chosen !== null)
   }
 }
 
