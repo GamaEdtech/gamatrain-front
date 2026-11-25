@@ -60,7 +60,7 @@
       <div class="directory-downloads">
         <v-btn
           v-for="file in files"
-          :key="file.type"
+          :key="file.fileId"
           class="directory-action directory-download text-none font-weight-regular flex-shrink-0"
           :color="file.style === 'question' ? 'secondary' : 'surfaceTertiary'"
           variant="flat"

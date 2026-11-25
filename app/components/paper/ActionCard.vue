@@ -62,8 +62,8 @@
           :owned="isOwned(row)"
           :summary="row.summary"
           :status="rowStatus(row)"
-          :busy="isDownloading(row.type, row.extraId)"
-          :progress="getDownloadProgress(row.type, row.extraId)"
+          :busy="isDownloading(row.type, row.fileId)"
+          :progress="getDownloadProgress(row.type, row.fileId)"
           @click="handleDownloadClick(row)"
         />
       </div>
@@ -168,7 +168,7 @@ import type {
   ApiResult,
   BillingInterval,
   DownloadResponseDTO,
-  FilesDTO,
+  PaperFileDTO,
   UpgradeSuggestionsDTO,
 } from '@/types'
 import { buildPaperFileRows } from '@/utils/downloadFileRows'
@@ -178,10 +178,8 @@ const props = defineProps<{
   id: string
   title: string
   titleUrl: string
-  files: FilesDTO
+  files: PaperFileDTO[]
   isPaper: boolean
-  /** Page count of the question file. */
-  qFilePages?: string | number | null
   /** The paper's published online test, when there is one. */
   onlineExamId?: string
   /** The answers sit at the end of the question file rather than in a file of their own. */
@@ -195,28 +193,28 @@ const emit = defineEmits<{
 
 const { startExam } = useExamStart(() => props.onlineExamId ?? '')
 
-const rows = computed(() => buildPaperFileRows(props.files, props.isPaper, props.qFilePages))
+const rows = computed(() => buildPaperFileRows(props.files, props.isPaper))
 
-// Which files the signed-in viewer already owns (downloading them again is free), asked per user after load: the page
-// itself is cached for everyone, so it can't carry this. gama-api only reports pdf/word/answer, not the extra files.
+// Which files the signed-in viewer already owns (downloading them again is free), by file id, asked per user after load:
+// the page itself is cached for everyone, so it can't carry this.
 const { isAuthenticatedUi } = useAuth()
 const { user } = useUser()
-const owned = ref<Partial<Record<'pdf' | 'word' | 'answer', boolean>>>({})
-const isOwned = (row: DownloadFileRowData) => owned.value[row.type as 'pdf' | 'word' | 'answer'] === true
+const owned = ref<Set<number>>(new Set())
+const isOwned = (row: DownloadFileRowData) => row.fileId !== undefined && owned.value.has(row.fileId)
 
 const loadOwnership = async () => {
   if (!isAuthenticatedUi.value || !props.id) {
-    owned.value = {}
+    owned.value = new Set()
     return
   }
   try {
-    const response = await useApiService.get<ApiResult<{ pdf: boolean, word: boolean, answer: boolean }>>(
+    const response = await useApiService.get<ApiResult<{ fileIds: number[] }>>(
       `/api/v2/downloads/papers/${props.id}/owned`,
     )
-    owned.value = response.succeeded && response.data ? response.data : {}
+    owned.value = new Set(response.succeeded ? response.data?.fileIds ?? [] : [])
   }
   catch {
-    owned.value = {}
+    owned.value = new Set()
   }
 }
 
@@ -246,8 +244,8 @@ const { getDownloadProgress, isDownloading, startDownload } = useDownloadWithPro
   }),
   onDownloaded: (data) => {
     // Just bought, so it is owned now.
-    if (pendingDownload.value && pendingDownload.value.type !== 'extra') {
-      owned.value = { ...owned.value, [pendingDownload.value.type]: true }
+    if (pendingDownload.value?.fileId !== undefined) {
+      owned.value = new Set([...owned.value, pendingDownload.value.fileId])
     }
     downloadIssueLink.value = data.url || ''
     if (data.spent) {
@@ -271,15 +269,15 @@ const { getDownloadProgress, isDownloading, startDownload } = useDownloadWithPro
 })
 
 const rowStatus = (row: DownloadFileRowData) => {
-  if (!isDownloading(row.type, row.extraId)) return null
-  return { text: `Downloading ${Math.round(getDownloadProgress(row.type, row.extraId))}%`, color: 'text-grey600' }
+  if (!isDownloading(row.type, row.fileId)) return null
+  return { text: `Downloading ${Math.round(getDownloadProgress(row.type, row.fileId))}%`, color: 'text-grey600' }
 }
 
 const handleDownloadClick = (row: DownloadFileRowData) => {
-  if (isDownloading(row.type, row.extraId)) return
+  if (isDownloading(row.type, row.fileId)) return
   priceFile.value = row.points
   pendingDownload.value = row
-  startDownload({ type: row.type, extraId: row.extraId })
+  startDownload({ type: row.type, fileId: row.fileId })
 }
 
 const handleAnimationComplete = () => {
@@ -295,7 +293,7 @@ const completeWalletAnimation = () => {
 const upgradePlanSuccessfully = () => {
   showCoinPaymentModal.value = false
   if (pendingDownload.value) {
-    startDownload({ type: pendingDownload.value.type, extraId: pendingDownload.value.extraId })
+    startDownload({ type: pendingDownload.value.type, fileId: pendingDownload.value.fileId })
   }
 }
 </script>

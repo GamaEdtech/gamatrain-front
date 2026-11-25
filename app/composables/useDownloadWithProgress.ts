@@ -23,11 +23,12 @@ interface UseDownloadWithProgressOptions {
 
 interface StartDownloadParams {
   type: DownloadType
-  extraId?: string
+  /** A past paper file's id, from the paper's `files` list. */
+  fileId?: string | number
 }
 
-const getDownloadKey = (type: DownloadType, extraId?: string) =>
-  extraId ? `${type}-${extraId}` : type
+const getDownloadKey = (type: DownloadType, fileId?: string | number) =>
+  fileId ? `${type}-${fileId}` : type
 
 const getDownloadErrorMessage = (status: number) => {
   switch (status) {
@@ -62,17 +63,17 @@ export const useDownloadWithProgress = (options: UseDownloadWithProgressOptions)
   const downloadProgress = ref<Record<string, number>>({})
   const downloadingItems = ref<Set<string>>(new Set())
 
-  const clearDownload = (type: DownloadType, extraId?: string) => {
-    const key = getDownloadKey(type, extraId)
+  const clearDownload = (type: DownloadType, fileId?: string | number) => {
+    const key = getDownloadKey(type, fileId)
     downloadingItems.value.delete(key)
     Reflect.deleteProperty(downloadProgress.value, key)
   }
 
-  const getDownloadProgress = (type: DownloadType, extraId?: string) =>
-    downloadProgress.value[getDownloadKey(type, extraId)] || 0
+  const getDownloadProgress = (type: DownloadType, fileId?: string | number) =>
+    downloadProgress.value[getDownloadKey(type, fileId)] || 0
 
-  const isDownloading = (type: DownloadType, extraId?: string) =>
-    downloadingItems.value.has(getDownloadKey(type, extraId))
+  const isDownloading = (type: DownloadType, fileId?: string | number) =>
+    downloadingItems.value.has(getDownloadKey(type, fileId))
 
   const redirectToLogin = () => {
     router.push({})
@@ -120,13 +121,13 @@ export const useDownloadWithProgress = (options: UseDownloadWithProgressOptions)
       xhr.send()
     })
 
-  const startDownload = async ({ type, extraId }: StartDownloadParams) => {
-    const downloadKey = getDownloadKey(type, extraId)
+  const startDownload = async ({ type, fileId }: StartDownloadParams) => {
+    const downloadKey = getDownloadKey(type, fileId)
     downloadingItems.value.add(downloadKey)
     downloadProgress.value[downloadKey] = 0
 
     if (!auth.isAuthenticated.value) {
-      clearDownload(type, extraId)
+      clearDownload(type, fileId)
       redirectToLogin()
       return
     }
@@ -145,9 +146,9 @@ export const useDownloadWithProgress = (options: UseDownloadWithProgressOptions)
 
       const request: BodyRequestDownloadDTO = {
         contentType: options.contentType,
-        fileType: type,
         id: Number(options.id),
-        extraId: extraId ? Number(extraId) : undefined,
+        // A past paper file goes by its id; other content needs no file.
+        fileId: fileId ? Number(fileId) : undefined,
       }
       const response = await downloadFile(request)
 
@@ -166,12 +167,12 @@ export const useDownloadWithProgress = (options: UseDownloadWithProgressOptions)
           options.onDownloaded?.(response.data)
 
           setTimeout(() => {
-            clearDownload(type, extraId)
+            clearDownload(type, fileId)
           }, 1000)
         }
 
         if (!hasDownloadUrl) {
-          clearDownload(type, extraId)
+          clearDownload(type, fileId)
         }
 
         return
@@ -179,7 +180,7 @@ export const useDownloadWithProgress = (options: UseDownloadWithProgressOptions)
 
       if (response.data && response.data.upgradeSuggestions && response.data.upgradeSuggestions.length > 0) {
         options.onUpgradeSuggestions?.(response.data)
-        clearDownload(type, extraId)
+        clearDownload(type, fileId)
         return
       }
 
@@ -187,10 +188,10 @@ export const useDownloadWithProgress = (options: UseDownloadWithProgressOptions)
       if (message === 'InsufficientBalance') {
         options.onInsufficientBalance?.()
       }
-      clearDownload(type, extraId)
+      clearDownload(type, fileId)
     }
     catch (error: unknown) {
-      clearDownload(type, extraId)
+      clearDownload(type, fileId)
       const status = (error as { status?: number }).status
       $toast.error(status ? getDownloadErrorMessage(status) : 'Download failed. Please try again.')
     }

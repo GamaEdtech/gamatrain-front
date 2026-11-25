@@ -71,7 +71,6 @@
           :title="contentData.title"
           :alt="pageTitle"
           :files="contentData.files"
-          :q-file-pages="contentData.q_file_pages"
         >
           <ul class="paper-stats paper-stats--compact d-md-none pa-0 text-caption font-weight-medium text-grey600">
             <li
@@ -91,7 +90,6 @@
           :title-url="contentData.title_url"
           :files="contentData.files"
           :is-paper="contentData.is_paper"
-          :q-file-pages="contentData.q_file_pages"
           :online-exam-id="onlineExamId"
           :answers-in-file="answersInFile"
           @share="openShare = true"
@@ -270,7 +268,7 @@ const isOwner = computed(() =>
 
 // The answers are in the question file itself (answer type 1/2 with no separate answer file).
 const answersInFile = computed(() =>
-  ['1', '2'].includes(String(contentData.value?.answer_type)) && !contentData.value?.files?.answer?.exist,
+  ['1', '2'].includes(String(contentData.value?.answer_type)) && !contentData.value?.files?.some(file => file.role === 'answer'),
 )
 
 // Board, grade, subject and year link to the matching paper search; the session and paper type are labels.

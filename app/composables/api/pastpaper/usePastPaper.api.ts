@@ -98,13 +98,10 @@ export const usePastPaper = (options: { admin?: boolean } = {}) => {
       holding_level: item.holding_level,
       title: item.title,
       description: item.description,
-      file_pdf: item.file_pdf,
-      file_word: item.file_word,
-      file_answer: item.file_answer,
       edu_year: item.edu_year,
       edu_month: item.edu_month,
       ...(item.variant ? { variant: item.variant } : {}),
-      file_extra: item.file_extra ?? [],
+      files: item.files ?? [],
       state: item.state,
       area: item.area,
       school: item.school,
@@ -202,13 +199,10 @@ export const usePastPaper = (options: { admin?: boolean } = {}) => {
     if (item.holding_level !== undefined) params.holding_level = item.holding_level
     if (item.title !== undefined) params.title = item.title
     if (item.description !== undefined) params.description = item.description
-    if (item.file_pdf !== undefined) params.file_pdf = item.file_pdf
-    if (item.file_word !== undefined) params.file_word = item.file_word
-    if (item.file_answer !== undefined) params.file_answer = item.file_answer
     if (item.edu_year !== undefined) params.edu_year = item.edu_year
     if (item.edu_month !== undefined) params.edu_month = item.edu_month
     if (item.variant !== undefined) params.variant = item.variant
-    if (item.file_extra !== undefined) params.file_extra = item.file_extra
+    if (item.files !== undefined && item.files.length > 0) params.files = item.files
     if (item.state !== undefined) params.state = item.state
     if (item.area !== undefined) params.area = item.area
     if (item.school !== undefined) params.school = item.school
@@ -321,14 +315,15 @@ export const usePastPaper = (options: { admin?: boolean } = {}) => {
 
   /**
    * A short signed link to one of the paper's stored files, to open what was uploaded: the teacher's own paper, or with
-   * `admin` any paper (the review link). Any status, nothing charged. `type` is pdf, word, answer or extra (with `extraId`).
+   * `admin` any paper (the review link). Any status, nothing charged. `fileId` is the file's id in the paper's `files`;
+   * with `pending`, the file of the edit waiting for review (a new file of it has a negative id).
    */
-  const getFileLink = async (id: string | number, type: 'pdf' | 'word' | 'answer' | 'extra', extraId?: string | number) => {
+  const getFileLink = async (id: string | number, fileId: number, pending = false) => {
     loadingFileLink.value = true
     try {
       const response = await useApiService.get<ApiResult<{ url: string }>>(
-        `${paperBase}/${id}/files/${type}`,
-        extraId === undefined ? undefined : { extraId },
+        `${paperBase}/${id}/files/${fileId}`,
+        pending ? { pending: true } : undefined,
       )
       if (response.succeeded && response.data?.url) return response.data.url
       $toast.error(response.errors?.[0]?.message === 'fileNotExist' ? 'This file is not available.' : 'The file could not be opened.')

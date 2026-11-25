@@ -1,18 +1,55 @@
-export interface FileInfo {
-  exist: boolean
-  size: string | number
-  ext: string | false
+/**
+ * A past paper file's role: the question paper (a PDF, required), its Word copy, the mark scheme, or any other file
+ * (its kind in `type_id`).
+ */
+export type PaperFileRole = 'question' | 'word' | 'answer' | 'extra'
+
+/** One of a paper's files, by its own id: downloads, file links and edits name it by `id`. In role order. */
+export interface PaperFileDTO {
+  id: number
+  role: PaperFileRole
+  ext: string | null
+  size: string
+  pages: number | null
+  /** An extra file's length (e.g. an audio file's duration). */
+  length: number | null
+  /** An extra file's type (Insert, Listening audio, ...). */
+  type_id: number | null
+  type_title: string | null
   price: number
-  type_title?: string
-  id?: string
-  type?: string | number
 }
 
-export interface FilesDTO {
-  word: FileInfo
-  pdf: FileInfo
-  answer: FileInfo
-  extra?: FileInfo[]
+/** A file change in an edit waiting for review: `id` is the published file's, or negative for a new file of the edit. */
+export interface PaperPendingFileDTO {
+  id: number
+  role: PaperFileRole
+  change: 'added' | 'replaced' | 'changed' | 'removed'
+  type_id: number | null
+  ext: string | null
+  size: string | null
+  pages: number | null
+}
+
+/** The owner's edit of a published paper waiting for review, or a rejected one's notes. */
+export interface PaperPendingEditDTO {
+  waiting: boolean
+  date: string | null
+  description: string | null
+  files: PaperPendingFileDTO[]
+  reviewNotes: string[]
+}
+
+/**
+ * One change in an add or edit's `files`: `{role, upload, type_id}` adds a file (for question/word/answer it replaces the
+ * paper's file of that role), `{id, upload}` replaces one, `{id, type_id}` changes an extra file's type, `{id, remove}`
+ * removes one. `upload` is the key the upload answered.
+ */
+export interface PaperFileChangeDTO {
+  id?: number
+  role?: PaperFileRole
+  upload?: string
+  type_id?: number
+  remove?: boolean
 }
 
 export interface PastPaperDTO {
@@ -40,7 +77,7 @@ export interface PastPaperDTO {
     id: string
     status: string
   }[]
-  files: FilesDTO
+  files: PaperFileDTO[]
   lesson_title: string
   base_title: string
   section_title: string
@@ -120,11 +157,6 @@ export interface PDFResponseDTO {
   name?: string
 }
 
-export interface PastPaperExtraFileCreateDTO {
-  type: number
-  file: string
-}
-
 export interface PastPaperCreateDTO {
   board: string | number
   grade: string | number
@@ -136,13 +168,10 @@ export interface PastPaperCreateDTO {
   holding_level: string | number
   title: string
   description: string
-  file_pdf: string
-  file_word: string
-  file_answer: string
   edu_year: string | number
   edu_month: string | number
   variant?: string | number
-  file_extra?: PastPaperExtraFileCreateDTO[]
+  files?: PaperFileChangeDTO[]
   state: string
   area: string
   school: string
@@ -159,13 +188,10 @@ export interface PastPaperEditDTO {
   holding_level?: string | number
   title?: string
   description?: string
-  file_pdf?: string
-  file_word?: string
-  file_answer?: string
   edu_year?: string | number
   edu_month?: string | number
   variant?: string | number
-  file_extra?: PastPaperExtraFileCreateDTO[]
+  files?: PaperFileChangeDTO[]
   state?: string
   area?: string
   school?: string
@@ -182,13 +208,10 @@ export interface PastPaperCreatePayloadDTO {
   holding_level: string | number
   title: string
   description: string
-  file_pdf: string
-  file_word: string
-  file_answer: string
   edu_year: string | number
   edu_month: string | number
   variant?: string | number
-  file_extra: PastPaperExtraFileCreateDTO[]
+  files: PaperFileChangeDTO[]
   state: string
   area: string
   school: string
@@ -274,7 +297,9 @@ export interface PastPaperDetailDTO {
   referee: boolean
   refereeAccess: boolean
   teacher: boolean
-  files: FilesDTO
+  files: PaperFileDTO[]
+  /** The owner's edit waiting for review (the edit form and the admin review). */
+  pending_edit?: PaperPendingEditDTO | null
   singleSell: boolean
 }
 

@@ -292,6 +292,71 @@
               </div>
             </div>
 
+            <div v-if="pendingEdit">
+              <div class="text-subtitle-2 mb-1">
+                Edit waiting for review
+              </div>
+              <v-alert
+                type="warning"
+                variant="tonal"
+                density="compact"
+                class="mb-2"
+              >
+                The teacher changed this published paper. Confirm approves the edit, Rejected or Needs changes keeps the
+                published version and sends them your notes.
+              </v-alert>
+              <div
+                v-if="pendingEdit.description !== null"
+                class="mb-2"
+              >
+                <div class="text-caption text-medium-emphasis">
+                  New description
+                </div>
+                <v-sheet
+                  border
+                  rounded
+                  class="pa-3 text-body-2 description"
+                >
+                  {{ pendingEdit.description }}
+                </v-sheet>
+              </div>
+              <v-list
+                v-if="pendingFiles.length"
+                density="compact"
+                border
+                rounded
+              >
+                <v-list-item
+                  v-for="file in pendingFiles"
+                  :key="file.key"
+                  :title="file.label"
+                >
+                  <template #prepend>
+                    <v-chip
+                      :color="file.status.color"
+                      size="small"
+                      variant="tonal"
+                      class="mr-3"
+                    >
+                      {{ file.status.text }}
+                    </v-chip>
+                  </template>
+                  <template #append>
+                    <v-btn
+                      v-if="file.change === 'added' || file.change === 'replaced'"
+                      variant="text"
+                      size="small"
+                      prepend-icon="md:open_in_new"
+                      :loading="openingFile === file.key"
+                      @click="openFile({ key: file.key, label: file.label, fileId: file.id, pending: true })"
+                    >
+                      Open new
+                    </v-btn>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </div>
+
             <v-alert
               v-if="detail.reviewNote"
               type="info"
@@ -358,7 +423,8 @@
 </template>
 
 <script setup lang="ts">
-import type { AdminPastPaperDetailDTO, AdminPastPaperDTO, AdminPastPaperFileType, DataTableHeader } from '@/types'
+import type { AdminPastPaperDetailDTO, AdminPastPaperDTO, DataTableHeader, PaperPendingFileDTO } from '@/types'
+import { paperFileLabel } from '~/utils/paperFiles'
 import { MONTH_LIST, YEAR_LIST } from '~/constants/pastpaper'
 
 definePageMeta({
@@ -375,7 +441,14 @@ const STATUS_TITLES: Record<number, string> = {
   5: 'Deleted',
   6: 'Edited',
 }
-const STATUS_FILTERS = [{ title: 'All', value: null }, ...[0, 6, 3, 1, 2, 4].map(value => ({ title: STATUS_TITLES[value]!, value }))]
+// -1 is not a status: published papers whose owner's edit waits for review.
+const EDIT_WAITING = -1
+const STATUS_FILTERS = [
+  { title: 'All', value: null },
+  ...[0, 6].map(value => ({ title: STATUS_TITLES[value]!, value })),
+  { title: 'Edit waiting', value: EDIT_WAITING },
+  ...[3, 1, 2, 4].map(value => ({ title: STATUS_TITLES[value]!, value })),
+]
 const REVIEW_STATUSES = [1, 3, 2, 4, 0].map(value => ({ title: STATUS_TITLES[value]!, value }))
 const PAPER_KINDS = [{ title: 'Papers', value: 1 }, { title: 'Not papers', value: 0 }]
 const ORDERS = [
@@ -446,8 +519,8 @@ const headers: DataTableHeader<AdminPastPaperDTO>[] = [
     sortable: false,
     width: '10vw',
     type: 'chip',
-    getText: item => STATUS_TITLES[Number(item.status)] ?? 'Unknown',
-    getChipColor: item => statusColor(item.status),
+    getText: item => `${STATUS_TITLES[Number(item.status)] ?? 'Unknown'}${item.pending_edit ? ' · edit waiting' : ''}`,
+    getChipColor: item => (item.pending_edit ? 'warning' : statusColor(item.status)),
   },
   {
     title: 'Action',
@@ -512,7 +585,8 @@ const fetchPapers = async () => {
   await getData({
     page: page.value,
     pageSize: pageSize.value,
-    status: status.value,
+    status: status.value === EDIT_WAITING ? null : status.value,
+    pendingEdit: status.value === EDIT_WAITING,
     title: title.value,
     ...filters.value,
     id: /^\d+$/.test(key) ? key : null,
@@ -618,27 +692,34 @@ const description = computed(() => {
 interface PaperFileLink {
   key: string
   label: string
-  type: AdminPastPaperFileType
-  extraId?: string
+  fileId: number
+  /** A file of the owner's edit waiting for review. */
+  pending?: boolean
 }
 
-const paperFiles = computed<PaperFileLink[]>(() => {
-  const files = detail.value?.files
-  if (!files) return []
-  const pages = (value?: string) => (value && value !== '0' ? ` (${value} pages)` : '')
-  const main: PaperFileLink[] = [
-    files.pdf?.exist ? { key: 'pdf', label: `Question paper${pages(detail.value?.q_file_pages)}`, type: 'pdf' } : null,
-    files.word?.exist ? { key: 'word', label: 'Question paper (Word)', type: 'word' } : null,
-    files.answer?.exist ? { key: 'answer', label: `Answers${pages(detail.value?.a_file_pages)}`, type: 'answer' } : null,
-  ].filter((file): file is PaperFileLink => file !== null)
-  const extras = (files.extra ?? []).map(extra => ({
-    key: `extra-${extra.id}`,
-    label: extra.type_title || `Extra file ${extra.id}`,
-    type: 'extra' as const,
-    extraId: extra.id,
-  }))
-  return [...main, ...extras]
-})
+const pages = (value?: number | null) => (value ? ` (${value} pages)` : '')
+
+const paperFiles = computed<PaperFileLink[]>(() =>
+  (detail.value?.files ?? []).map(file => ({
+    key: `file-${file.id}`,
+    label: `${paperFileLabel(file)}${pages(file.pages)}`,
+    fileId: file.id,
+  })))
+
+// The owner's edit of the published paper, waiting for review: what each file becomes once it is approved.
+const CHANGE_LABELS: Record<PaperPendingFileDTO['change'], { text: string, color: string }> = {
+  added: { text: 'Added', color: 'success' },
+  replaced: { text: 'Replaced', color: 'warning' },
+  changed: { text: 'Type changed', color: 'info' },
+  removed: { text: 'Removed', color: 'error' },
+}
+const pendingEdit = computed(() => detail.value?.pending_edit?.waiting ? detail.value.pending_edit : null)
+const pendingFiles = computed(() => (pendingEdit.value?.files ?? []).map(file => ({
+  ...file,
+  key: `pending-${file.id}`,
+  label: `${paperFileLabel(file)}${pages(file.pages)}`,
+  status: CHANGE_LABELS[file.change],
+})))
 
 const openingFile = ref<string | null>(null)
 
@@ -649,7 +730,7 @@ const openFile = async (file: PaperFileLink) => {
   const tab = window.open('', '_blank')
   openingFile.value = file.key
   try {
-    const url = await getFileLink(selected.value.id, file.type, file.extraId)
+    const url = await getFileLink(selected.value.id, file.fileId, file.pending)
     if (url && tab) tab.location.href = url
     else if (url) window.open(url, '_blank', 'noopener')
     else tab?.close()

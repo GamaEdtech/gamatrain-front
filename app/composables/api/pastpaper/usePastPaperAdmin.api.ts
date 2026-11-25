@@ -1,7 +1,6 @@
 import type {
   AdminPastPaperDetailDTO,
   AdminPastPaperDTO,
-  AdminPastPaperFileType,
   ApiResult,
   GetAdminPastPaperParams,
   ReviewPastPaperDTO,
@@ -28,6 +27,7 @@ export const usePastPaperAdmin = () => {
     try {
       const query: Record<string, string | number> = { page: params.page, perpage: params.pageSize }
       if (params.status !== null && params.status !== undefined) query.status = params.status
+      if (params.pendingEdit) query.pending_edit = 1
       if (params.title) query.title = params.title
       if (params.uid) query.uid = params.uid
       for (const key of ['section', 'base', 'lesson', 'test_type', 'edu_year', 'edu_month', 'variant', 'id', 'code', 'is_paper', 'refScore', 'order'] as const) {
@@ -120,12 +120,15 @@ export const usePastPaperAdmin = () => {
     return null
   }
 
-  /** A short signed link to one of a paper's files, in any status; nothing is charged. */
-  const getFileLink = async (id: string | number, type: AdminPastPaperFileType, extraId?: string | number) => {
+  /**
+   * A short signed link to one of a paper's files (its id in the paper's `files`), in any status; nothing is charged. With
+   * `pending`, the file of the owner's edit waiting for review.
+   */
+  const getFileLink = async (id: string | number, fileId: number, pending = false) => {
     try {
       const response = await useApiService.get<ApiResult<{ url: string }>>(
-        `${BASE}/${id}/files/${type}`,
-        extraId === undefined ? undefined : { extraId },
+        `${BASE}/${id}/files/${fileId}`,
+        pending ? { pending: true } : undefined,
       )
       if (response.succeeded && response.data?.url) return response.data.url
       handleApiResponseError(response)
