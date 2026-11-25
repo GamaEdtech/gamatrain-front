@@ -5,10 +5,17 @@
       class="question-image__frame rounded-lg border-md"
       :class="{ 'question-image__frame--removed': removed }"
     >
-      <img
-        :src="shown"
-        :alt="label"
+      <button
+        type="button"
+        class="question-image__zoom"
+        :aria-label="`View ${label} at full size`"
+        @click="zoom = true"
       >
+        <img
+          :src="shown"
+          :alt="label"
+        >
+      </button>
       <v-chip
         v-if="pending || removed"
         :color="removed ? 'error' : 'primary'"
@@ -60,6 +67,39 @@
         Saved with the question
       </span>
     </div>
+
+    <!-- The image at its real size (never scaled up); a bigger one scrolls inside the dialog. -->
+    <v-dialog
+      v-model="zoom"
+      width="auto"
+      max-width="95vw"
+      scrollable
+    >
+      <v-card>
+        <v-card-title class="d-flex align-center ga-2 py-2">
+          <span class="text-body-1">{{ label }}</span>
+          <span
+            v-if="size"
+            class="text-caption text-grey600"
+          >{{ size }}</span>
+          <v-spacer />
+          <v-btn
+            icon="md:close"
+            size="small"
+            variant="text"
+            aria-label="Close"
+            @click="zoom = false"
+          />
+        </v-card-title>
+        <v-card-text class="question-image__full pa-3">
+          <img
+            :src="shown ?? ''"
+            :alt="label"
+            @load="measure"
+          >
+        </v-card-text>
+      </v-card>
+    </v-dialog>
 
     <input
       ref="picker"
@@ -120,6 +160,17 @@ onBeforeUnmount(() => {
 // The new image, or the saved one (faded while it is marked for removal).
 const shown = computed(() => objectUrl.value ?? props.url ?? null)
 
+const zoom = ref(false)
+// The image's own pixel size, shown in the full-size view.
+const size = ref('')
+const measure = (event: Event) => {
+  const img = event.target as HTMLImageElement
+  size.value = `${img.naturalWidth} × ${img.naturalHeight} px`
+}
+watch(shown, () => {
+  size.value = ''
+})
+
 const pick = (event: Event) => {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
@@ -149,6 +200,22 @@ const cropped = (blob: Blob | null) => {
   max-width: 260px;
   max-height: 150px;
   object-fit: contain;
+}
+
+.question-image__zoom {
+  display: block;
+  cursor: zoom-in;
+}
+
+/* Real size: no max-width, so the image is never scaled down; the dialog body scrolls instead. */
+.question-image__full {
+  overflow: auto;
+  background: rgb(var(--v-theme-surface));
+}
+
+.question-image__full img {
+  display: block;
+  max-width: none;
 }
 
 .question-image__frame--removed img {
