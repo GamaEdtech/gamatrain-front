@@ -7,6 +7,11 @@ import type {
 
 const loadingDownload = ref(false)
 
+// Out of gems: the caller opens the plans dialog, which says so. A toast of the raw "InsufficientBalance" on top of it
+// only added noise (as the exam export and analysis already do).
+const isPaymentRefusal = (response: ApiResult<DownloadResponseDTO>) =>
+  !!response.data?.upgradeSuggestions?.length || response.errors?.[0]?.message === 'InsufficientBalance'
+
 export const useDownload = () => {
   const { $toast } = useNuxtApp()
 
@@ -28,7 +33,7 @@ export const useDownload = () => {
           FileSaver.saveAs(response.data.url, response.data.name)
         }
       }
-      else {
+      else if (!isPaymentRefusal(response)) {
         if (response.errors && response.errors.length > 0) {
           $toast.error(response.errors[0].message || '')
         }
