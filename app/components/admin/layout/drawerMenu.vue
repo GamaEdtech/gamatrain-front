@@ -384,6 +384,8 @@ const items = computed(() => [
     value: 'pastPapers',
     subMenuList: [
       { title: 'Review', link: '/admin/past-papers', icon: 'md:fact_check_outlined', badgeKey: 'PastPapers' },
+      // Admin only: not in ADMIN_PAGE_ACCESS, so delegated staff never see it.
+      { title: 'Prices', link: '/admin/paper-prices', icon: 'md:sell_outlined' },
     ],
   },
   {
