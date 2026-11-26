@@ -5,7 +5,7 @@
     </p>
 
     <v-form
-      v-model="isFormValid"
+      ref="formRef"
       class="w-100 d-flex flex-column ga-3"
       @submit.prevent="sendCode"
     >
@@ -51,7 +51,6 @@
         height="44"
         class="text-body-1 font-weight-bold text-none"
         flat
-        :disabled="!isFormValid"
         :loading="loadingCode"
       >
         Send code
@@ -71,6 +70,8 @@
 </template>
 
 <script setup lang="ts">
+import type { VForm } from 'vuetify/components'
+
 const props = withDefaults(defineProps<{ email?: string }>(), { email: '' })
 const emit = defineEmits<{
   openLogin: [email: string]
@@ -82,11 +83,14 @@ const { email: emailRule, required } = useValidationRules()
 const { sendResetCode, loadingCode } = useAuth()
 
 const emailUser = ref(props.email)
-const isFormValid = ref(false)
+// The button stays enabled: a click on an incomplete form shows what is missing instead of doing nothing, which
+// visitors read as a broken button.
+const formRef = ref<VForm | null>(null)
 const errorMessage = ref('')
 
 const sendCode = async () => {
-  if (!isFormValid.value || loadingCode.value) return
+  if (loadingCode.value) return
+  if (!(await formRef.value?.validate())?.valid) return
   errorMessage.value = ''
 
   const response = await sendResetCode(emailUser.value)

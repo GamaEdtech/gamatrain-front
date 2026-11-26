@@ -7,7 +7,7 @@
     </p>
 
     <v-form
-      v-model="isFormValid"
+      ref="formRef"
       class="w-100 d-flex flex-column ga-4"
       @submit.prevent="submitPassword"
     >
@@ -100,7 +100,6 @@
         height="44"
         class="text-body-1 font-weight-bold text-none"
         flat
-        :disabled="!isFormValid"
         :loading="loadingRegister || loadingForgetPassword"
       >
         {{ mode === 'register' ? 'Create account' : 'Save password' }}
@@ -110,6 +109,7 @@
 </template>
 
 <script setup lang="ts">
+import type { VForm } from 'vuetify/components'
 import type { AuthCodeMode } from '@/types'
 
 const props = defineProps<{
@@ -129,7 +129,9 @@ const { trackSignUp } = useGtmEvents()
 const password = ref('')
 const confirmPassword = ref('')
 const showPassword = ref(false)
-const isFormValid = ref(false)
+// The button stays enabled: a click on an incomplete form shows what is missing instead of doing nothing, which
+// visitors read as a broken button.
+const formRef = ref<VForm | null>(null)
 const errorMessage = ref('')
 // The code lives 10 minutes: past that (or too many wrong tries) the person must ask for a new one.
 const codeExpired = computed(() => /expired|new code/i.test(errorMessage.value))
@@ -138,7 +140,8 @@ const confirmPasswordRule = (value: string) =>
   value === password.value || 'The passwords don\'t match.'
 
 const submitPassword = async () => {
-  if (!isFormValid.value || loadingRegister.value || loadingForgetPassword.value) return
+  if (loadingRegister.value || loadingForgetPassword.value) return
+  if (!(await formRef.value?.validate())?.valid) return
   errorMessage.value = ''
 
   const data = { email: props.email, code: props.code, password: password.value }

@@ -1,7 +1,7 @@
 <template>
   <div class="w-100 d-flex flex-column bg-surface pa-2">
     <v-form
-      v-model="isFormValid"
+      ref="formRef"
       class="w-100 d-flex flex-column ga-4 mt-2"
       @submit.prevent="loginUser"
     >
@@ -13,6 +13,7 @@
         <v-text-field
           id="auth-login-email"
           v-model="emailUser"
+          name="email"
           rounded="lg"
           height="48"
           placeholder="you@example.com"
@@ -48,6 +49,7 @@
         <v-text-field
           id="auth-login-password"
           v-model="password"
+          name="password"
           rounded="lg"
           height="48"
           placeholder="Your password"
@@ -84,7 +86,6 @@
         height="44"
         class="text-body-1 font-weight-bold text-none"
         flat
-        :disabled="!isFormValid"
         :loading="loadingLogin || loadingCode"
       >
         Sign in
@@ -112,6 +113,8 @@
 </template>
 
 <script setup lang="ts">
+import type { VForm } from 'vuetify/components'
+
 const props = withDefaults(defineProps<{ email?: string }>(), { email: '' })
 const emit = defineEmits<{
   loginSuccessfull: []
@@ -126,11 +129,30 @@ const { login, loadingLogin, sendLoginCode, loadingCode, completeSignIn } = useA
 const emailUser = ref(props.email)
 const password = ref('')
 const showPassword = ref(false)
-const isFormValid = ref(false)
+// The button stays enabled: a click on an incomplete form shows what is missing instead of doing nothing, which
+// visitors read as a broken button.
+const formRef = ref<VForm | null>(null)
 const errorMessage = ref('')
 
-const loginUser = async () => {
-  if (!isFormValid.value || loadingLogin.value) return
+// A browser that autofills the email and password often doesn't fire an input event until the person interacts, so
+// the fields look filled while the models are still empty. Read what the inputs actually hold before validating.
+const syncAutofill = (event: Event) => {
+  const form = event.target
+  if (!(form instanceof HTMLFormElement)) return
+  const filled = (name: string) => {
+    const input = form.elements.namedItem(name)
+    return input instanceof HTMLInputElement ? input.value : ''
+  }
+  if (!emailUser.value) emailUser.value = filled('email')
+  if (!password.value) password.value = filled('password')
+}
+
+const loginUser = async (event: Event) => {
+  if (loadingLogin.value) return
+  syncAutofill(event)
+  // Let the fields receive the synced values before their rules run.
+  await nextTick()
+  if (!(await formRef.value?.validate())?.valid) return
   errorMessage.value = ''
 
   const response = await login({ email: emailUser.value, password: password.value })
