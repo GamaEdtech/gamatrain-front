@@ -84,26 +84,30 @@
       >{{ priceNote }}</span>
     </div>
 
-    <!-- What this plan's gems buy, as pills: the gem icon where it spends gems (as on the download buttons), the
-         infinity sign where it is unlimited. -->
+    <!-- What this plan's gems buy: the gem icon where it spends gems (as on the download buttons), the infinity sign
+         where it is unlimited. -->
     <div
       v-if="ownFeatures.length"
       role="list"
-      class="d-flex flex-wrap ga-2"
+      class="d-flex flex-column ga-2"
     >
-      <v-chip
+      <div
         v-for="feature in ownFeatures"
         :key="feature.line"
         role="listitem"
-        label
-        variant="tonal"
-        :color="card.highlight ? 'primary' : 'primaryStrong'"
-        :prepend-icon="feature.unlimited ? 'md:all_inclusive' : 'md:diamond_outlined'"
         :aria-label="feature.line"
-        class="h-auto py-1 text-wrap text-body-2 font-weight-medium"
+        class="d-flex align-start ga-2 text-body-2 font-weight-medium"
       >
+        <v-icon
+          size="18"
+          color="primary"
+          class="flex-shrink-0"
+          aria-hidden="true"
+        >
+          {{ feature.unlimited ? 'md:all_inclusive' : 'md:diamond_outlined' }}
+        </v-icon>
         {{ feature.unlimited ? feature.line : feature.description }}
-      </v-chip>
+      </div>
     </div>
 
     <!-- The plan they're on: said plainly, with no dead "Current Plan" button to click. -->

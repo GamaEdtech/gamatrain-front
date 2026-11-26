@@ -124,35 +124,44 @@
               </v-sheet>
             </v-slide-group-item>
           </v-slide-group>
-          <v-row
+          <!-- Capped so a pack keeps a card's proportions on the wide subscription page. -->
+          <v-sheet
             v-else
-            justify="center"
-            class="mt-1"
+            max-width="1040"
+            color="transparent"
+            class="w-100 mx-auto"
           >
-            <v-col
-              v-for="plan in filteredPlans"
-              :key="plan.id"
-              cols="12"
-              sm="6"
-              md="4"
-              class="pt-6"
+            <v-row
+              justify="center"
+              class="mt-1"
             >
-              <subscription-card
-                :plan="plan"
-                :billing-interval="intervalSelect"
-                :current-plan-id="currentPlanId"
-                :current-billing-interval="currentBillingInterval"
-                :level="levelOf(plan)"
-                :shared-feature-lines="sharedFeatureLines"
-                @switch-successfully="emit('switchSuccessfully')"
-              />
-            </v-col>
-          </v-row>
+              <v-col
+                v-for="plan in filteredPlans"
+                :key="plan.id"
+                cols="12"
+                sm="6"
+                md="4"
+                class="pt-6"
+              >
+                <subscription-card
+                  :plan="plan"
+                  :billing-interval="intervalSelect"
+                  :current-plan-id="currentPlanId"
+                  :current-billing-interval="currentBillingInterval"
+                  :level="levelOf(plan)"
+                  :shared-feature-lines="sharedFeatureLines"
+                  @switch-successfully="emit('switchSuccessfully')"
+                />
+              </v-col>
+            </v-row>
+          </v-sheet>
 
           <!-- Said once instead of on every card: these lines were the same on all of them. -->
-          <div
+          <v-sheet
             v-if="sharedFeatureLines.length"
-            class="w-100 d-flex flex-column ga-3 pa-4 pa-sm-5 rounded-xl bg-softGold"
+            max-width="1040"
+            color="transparent"
+            class="w-100 mx-auto mt-2 d-flex flex-column ga-3 px-1"
           >
             <span class="text-body-1 font-weight-black text-grey900">Every plan unlocks</span>
             <v-row
@@ -177,7 +186,7 @@
                 {{ line }}
               </v-col>
             </v-row>
-          </div>
+          </v-sheet>
         </div>
       </template>
     </div>
