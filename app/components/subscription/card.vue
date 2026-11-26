@@ -84,26 +84,26 @@
       >{{ priceNote }}</span>
     </div>
 
+    <!-- What this plan's gems buy, as pills: the gem icon where it spends gems (as on the download buttons), the
+         infinity sign where it is unlimited. -->
     <div
-      v-if="ownFeatureLines.length"
+      v-if="ownFeatures.length"
       role="list"
-      class="d-flex flex-column ga-1"
+      class="d-flex flex-wrap ga-2"
     >
-      <div
-        v-for="(featureLine, lineIndex) in ownFeatureLines"
-        :key="lineIndex"
+      <v-chip
+        v-for="feature in ownFeatures"
+        :key="feature.line"
         role="listitem"
-        class="d-flex align-start ga-2 text-body-2"
+        label
+        variant="tonal"
+        :color="card.highlight ? 'primary' : 'primaryStrong'"
+        :prepend-icon="feature.unlimited ? 'md:all_inclusive' : 'md:diamond_outlined'"
+        :aria-label="feature.line"
+        class="h-auto py-1 text-wrap text-body-2 font-weight-medium"
       >
-        <v-icon
-          size="18"
-          color="success"
-          class="flex-shrink-0"
-        >
-          md:check
-        </v-icon>
-        {{ featureLine }}
-      </div>
+        {{ feature.unlimited ? feature.line : feature.description }}
+      </v-chip>
     </div>
 
     <!-- The plan they're on: said plainly, with no dead "Current Plan" button to click. -->
@@ -321,7 +321,14 @@ const priceNote = computed(() => {
   if (props.billingInterval !== 'Monthly') return `Billed ${amount} · cancel anytime`
   return 'Billed monthly · cancel anytime'
 })
-const ownFeatureLines = computed(() => card.value.featureLines.filter(line => !props.sharedFeatureLines.includes(line)))
+// featureLines[i] is featureGroups[i] in words ("Unlimited …" or "Use Gems for …"); lines every shown plan has are
+// listed once under the cards instead.
+const ownFeatures = computed(() => card.value.featureGroups
+  .map((group, index) => {
+    const line = card.value.featureLines[index] ?? ''
+    return { line, description: group.description, unlimited: line === `Unlimited ${group.description}` }
+  })
+  .filter(feature => !props.sharedFeatureLines.includes(feature.line)))
 const buttonLabel = computed(() => {
   const { action, title, isSamePlanIntervalMove } = card.value
   if (action.type === 'choose') return `Get ${title}`
