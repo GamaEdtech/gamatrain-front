@@ -40,11 +40,11 @@
         class="rounded-pill"
       />
       <div
-        v-else
+        v-else-if="shownIntervals.length > 0"
         class="btn-filter-container d-flex align-center justify-start ga-1 bg-grey50 pa-1 rounded-pill overflow-x-auto overflow-y-hidden "
       >
         <v-btn
-          v-for="item in billingInterval"
+          v-for="item in shownIntervals"
           :key="item"
           rounded="pill"
           :color="item == intervalSelect ? `surface`:`transparent`"
@@ -119,6 +119,17 @@
           </v-slide-group-item>
         </v-slide-group>
       </template>
+
+      <!-- Out of gems on the biggest pack already: nothing to sell, say what happens instead. -->
+      <v-alert
+        v-else-if="isUpgradeContext && filteredPlans.length === 0"
+        type="info"
+        variant="tonal"
+        color="primaryStrong"
+        class="text-body-2"
+      >
+        You're already on the biggest plan, so there's nothing to upgrade to. Your gems refill when your plan renews.
+      </v-alert>
 
       <template v-else>
         <v-slide-group
@@ -235,13 +246,27 @@ const skeletonCount = 3
 const activeSkeletonIndex = 1
 const intervalSelect = ref<BillingInterval>('Monthly')
 
+// Out-of-gems responses (UpgradeSuggestionsDTO) say per price whether it is a real upgrade; the general plans list
+// doesn't. In that upgrade context only real upgrades are offered: the caller's own plan and smaller ones used to
+// show as disabled "Current Plan" / "Not an Upgrade" cards, often the one in focus.
+const isUpgradeContext = computed(() => propsData.plans.some(plan => plan.prices.some(price => 'canUpgrade' in price)))
+const isOffered = (price: (SubscriptionPlanDTO | UpgradeSuggestionsDTO)['prices'][number]) =>
+  !('canUpgrade' in price) || price.canUpgrade
+
+// Only the periods that have something to offer get a tab.
+const shownIntervals = computed(() => isUpgradeContext.value
+  ? propsData.billingInterval.filter(interval =>
+      propsData.plans.some(plan => plan.prices.some(price => price.billingInterval === interval && isOffered(price))))
+  : propsData.billingInterval)
+
 const filteredPlans = computed(() => {
   return propsData.plans.filter((plan) => {
-    return plan.prices.some(price => price.billingInterval === intervalSelect.value)
+    return plan.prices.some(price => price.billingInterval === intervalSelect.value && isOffered(price))
   })
 })
 
-const activePlanIndex = computed(() => Math.floor(filteredPlans.value.length / 2))
+// An upgrade starts from the smallest step up; the general list centres on the middle plan.
+const activePlanIndex = computed(() => isUpgradeContext.value ? 0 : Math.floor(filteredPlans.value.length / 2))
 
 const bestDiscountByInterval = computed(() => {
   return Object.fromEntries(propsData.billingInterval.map((interval) => {
@@ -261,10 +286,19 @@ const changeFilterInterval = async (status: BillingInterval) => {
   intervalSelect.value = status
 }
 
-watch(() => propsData.billingInterval, (intervals) => {
-  if (intervals.length > 0 && !intervals.includes(intervalSelect.value)) {
-    intervalSelect.value = intervals[0]!
-  }
+// The tab to open on: a subscriber's own billing period (a Monthly subscriber out of gems was shown another period),
+// else Monthly, else the first one offered. Chosen again whenever new plans arrive, so a tab picked the last time
+// the dialog was open doesn't carry over.
+const ownInterval = computed<BillingInterval | null>(() => propsData.currentBillingInterval
+  ?? propsData.plans.flatMap(plan => plan.prices).find(price => 'isCurrent' in price && price.isCurrent)?.billingInterval
+  ?? null)
+
+watch(() => [propsData.plans, shownIntervals.value, ownInterval.value] as const, () => {
+  const intervals = shownIntervals.value
+  if (intervals.length === 0) return
+  const preferred = [ownInterval.value, 'Monthly' as BillingInterval].find(
+    (interval): interval is BillingInterval => !!interval && intervals.includes(interval))
+  intervalSelect.value = preferred ?? intervals[0]!
 }, { immediate: true })
 </script>
 
