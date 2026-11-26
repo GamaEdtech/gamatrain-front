@@ -25,11 +25,12 @@
           :width="filter.selectedItem && filter.closable ? 118 : 112"
           :ripple="false"
           class="mobile-quick-filter__control text-none text-brandNavy px-3"
+          :class="{ 'mobile-quick-filter__control--locked': filter.disabled }"
           aria-haspopup="dialog"
           :aria-expanded="activeKey === undefined ? undefined : activeKey === itemKey(filter)"
           :aria-label="getAriaLabel(filter)"
           :aria-pressed="Boolean(filter.selectedItem)"
-          :disabled="filter.disabled"
+          :aria-disabled="filter.disabled || undefined"
           @click="emit('open', filter)"
         >
           <template
@@ -138,6 +139,11 @@ defineExpose({
 /* Only what Vuetify has no prop or utility for: stacking, a hidden scrollbar,
    left-aligned button content, and px font sizes (the app's 10px root font
    size shrinks Vuetify's rem-based typography classes). */
+/* A filter waiting for another one looks disabled but still emits open: the parent decides what a click on it does
+   (the search list opens the filter it waits for). */
+.mobile-quick-filter__control--locked {
+  opacity: var(--v-disabled-opacity);
+}
 .mobile-quick-filter-bar {
   z-index: 10;
 }

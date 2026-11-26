@@ -32,12 +32,13 @@
     :class="{
       'search-filter-selected bg-borderSubtle': selectedItem,
       'search-filter-empty': !selectedItem,
+      'filter-control-locked': disabled,
     }"
     min-height="56"
     prepend-gap="8"
     rounded="0"
-    :disabled="disabled"
-    @click="isShowSelectModal = !isShowSelectModal"
+    :aria-disabled="disabled || undefined"
+    @click="onControlClick"
   >
     <template #prepend>
       <!-- Rendered even without an icon so every row's text lines up -->
@@ -110,8 +111,9 @@
     :variant="selectedItem ? 'flat' : 'outlined'"
     :color="selectedItem ? 'borderSubtle' : isShowSelectModal ? 'brandNavy' : 'grey200'"
     size="large"
-    :disabled="disabled"
-    @click="isShowSelectModal = !isShowSelectModal"
+    :class="{ 'filter-control-locked': disabled }"
+    :aria-disabled="disabled || undefined"
+    @click="onControlClick"
   >
     <v-progress-circular
       v-if="loading"
@@ -263,11 +265,21 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['UpdateSelectedItem', 'clear'])
+const emit = defineEmits(['UpdateSelectedItem', 'clear', 'lockedClick'])
 
 const items = ref([...props.staticList])
 const isShowSelectModal = ref(false)
 const loading = ref(false)
+
+// A filter waiting for another one (e.g. Subject before a Board is chosen) still takes the click and reports it, so the
+// list can open the filter it waits for. A disabled control swallowed the click, which visitors read as a dead button.
+const onControlClick = () => {
+  if (props.disabled) {
+    emit('lockedClick')
+    return
+  }
+  isShowSelectModal.value = !isShowSelectModal.value
+}
 
 const onFilterUpdate = (itemSelected) => {
   isShowSelectModal.value = false
@@ -372,6 +384,10 @@ defineExpose({
 </script>
 
 <style scoped>
+/* Looks disabled, but still takes the click (see onControlClick) */
+.filter-control-locked {
+  opacity: var(--v-disabled-opacity);
+}
 /* px sizes: the app's 10px root font size makes Vuetify's rem-based list typography too small */
 /* Line-heights too: Vuetify's are rem-based (0.625rem = 10px here), which collapses long values */
 .search-filter-label {
