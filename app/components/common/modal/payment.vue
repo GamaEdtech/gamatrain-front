@@ -267,8 +267,11 @@ const filteredPlans = computed(() => {
 // smallest first), else on the highlighted plan. Declared below ownInterval, which it reads.
 const { smAndDown } = useDisplay()
 
-// A plan's level is its rank among all plans, so it stays the same when smaller plans are hidden.
-const levelOf = (plan: Plan) => rankedPlans.value.findIndex(item => item.id === plan.id) + 1
+// A plan's level is its rank among the plans sold at the selected period (a plan sold only Daily doesn't push the
+// Monthly ones up a level), counting the ones the upgrade dialog hides, so a level never changes when they're hidden.
+const levelOf = (plan: Plan) => rankedPlans.value
+  .filter(item => item.prices.some(price => price.billingInterval === intervalSelect.value))
+  .findIndex(item => item.id === plan.id) + 1
 
 const { buildSubscriptionPlanCard } = useSubscriptionPlanCard()
 // Feature lines that every shown plan has: listed once under the cards instead of on each one.
