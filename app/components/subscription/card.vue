@@ -8,7 +8,7 @@
     :class="[
       'h-100 position-relative overflow-visible d-flex flex-column ga-4 pa-5 border-md border-opacity-100',
       card.highlight ? 'border-secondary pack-card--main' : 'border-borderSubtle pack-card',
-      { 'opacity-60': card.action.disabled },
+      { 'opacity-60': card.action.type === 'locked' },
     ]"
   >
     <v-chip
@@ -106,14 +106,31 @@
       </div>
     </div>
 
+    <!-- The plan they're on: said plainly, with no dead "Current Plan" button to click. -->
+    <v-sheet
+      v-if="card.action.type === 'current'"
+      height="52"
+      rounded="lg"
+      color="transparent"
+      class="mt-auto flex-grow-0 d-flex align-center justify-center ga-2 border-md border-opacity-100 border-success text-success text-body-1 font-weight-black"
+    >
+      <v-icon
+        size="20"
+        aria-hidden="true"
+      >
+        md:check_circle
+      </v-icon>
+      Your plan
+    </v-sheet>
     <v-btn
+      v-else
       block
       flat
       height="52"
       rounded="lg"
       :variant="card.highlight ? 'flat' : 'outlined'"
       :color="card.action.disabled ? 'grey400' : card.highlight ? 'primary' : 'brandNavy'"
-      :class="['mt-auto text-body-1 font-weight-black text-none', card.action.disabled ? '' : card.highlight ? 'pack-card__cta--main' : 'pack-card__cta']"
+      :class="['mt-auto flex-grow-0 text-body-1 font-weight-black text-none', card.action.disabled ? '' : card.highlight ? 'pack-card__cta--main' : 'pack-card__cta']"
       :disabled="card.action.disabled"
       :loading="loadingStartPaymentSubscription || loadingSwitchSubscriptionPlan"
       @click="selectPlan"

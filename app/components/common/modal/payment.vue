@@ -94,8 +94,38 @@
 
       <template v-else>
         <div class="w-100 d-flex flex-column ga-4">
-          <!-- Every plan at once: side by side where they fit, stacked on a phone (not a sideways slider). -->
+          <!-- A phone keeps the sideways slider (one plan at a time, swipe for the next), opening on the most useful
+               plan; wider screens show every plan side by side. -->
+          <v-slide-group
+            v-if="smAndDown"
+            :model-value="focusIndex"
+            center-active
+            class="mx-n4"
+          >
+            <v-slide-group-item
+              v-for="plan in filteredPlans"
+              :key="plan.id"
+            >
+              <v-sheet
+                width="78vw"
+                max-width="300"
+                color="transparent"
+                class="pt-6 pb-3 px-2"
+              >
+                <subscription-card
+                  :plan="plan"
+                  :billing-interval="intervalSelect"
+                  :current-plan-id="currentPlanId"
+                  :current-billing-interval="currentBillingInterval"
+                  :level="levelOf(plan)"
+                  :shared-feature-lines="sharedFeatureLines"
+                  @switch-successfully="emit('switchSuccessfully')"
+                />
+              </v-sheet>
+            </v-slide-group-item>
+          </v-slide-group>
           <v-row
+            v-else
             justify="center"
             class="mt-1"
           >
@@ -174,6 +204,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify'
 import type { BillingInterval, SubscriptionPlanDTO, UpgradeSuggestionsDTO } from '@/types'
 
 interface IPaymentModal {
@@ -218,14 +249,26 @@ const shownIntervals = computed(() => isUpgradeContext.value
       propsData.plans.some(plan => plan.prices.some(price => price.billingInterval === interval && isOffered(price))))
   : propsData.billingInterval)
 
+type Plan = SubscriptionPlanDTO | UpgradeSuggestionsDTO
+
+// Plans ranked by what they cost (their Monthly price, else their cheapest one): the API's order isn't by size, and a
+// $20 plan showed as Level 1 next to a $5 Level 3. The rank is the plan's level and the order the cards are shown in.
+const rankPrice = (plan: Plan) => plan.prices.find(price => price.billingInterval === 'Monthly')?.price
+  ?? Math.min(...plan.prices.map(price => price.price ?? Number.POSITIVE_INFINITY))
+const rankedPlans = computed(() => [...propsData.plans].sort((a, b) => rankPrice(a) - rankPrice(b)))
+
 const filteredPlans = computed(() => {
-  return propsData.plans.filter((plan) => {
+  return rankedPlans.value.filter((plan) => {
     return plan.prices.some(price => price.billingInterval === intervalSelect.value && isOffered(price))
   })
 })
 
-// A plan's level is its place in the whole list (smallest first), so it stays the same when smaller plans are hidden.
-const levelOf = (plan: SubscriptionPlanDTO | UpgradeSuggestionsDTO) => propsData.plans.findIndex(item => item.id === plan.id) + 1
+// The phone slider opens on the smallest upgrade for someone who already has a plan (only upgrades are shown,
+// smallest first), else on the highlighted plan. Declared below ownInterval, which it reads.
+const { smAndDown } = useDisplay()
+
+// A plan's level is its rank among all plans, so it stays the same when smaller plans are hidden.
+const levelOf = (plan: Plan) => rankedPlans.value.findIndex(item => item.id === plan.id) + 1
 
 const { buildSubscriptionPlanCard } = useSubscriptionPlanCard()
 // Feature lines that every shown plan has: listed once under the cards instead of on each one.
@@ -259,6 +302,9 @@ const changeFilterInterval = async (status: BillingInterval) => {
 const ownInterval = computed<BillingInterval | null>(() => propsData.currentBillingInterval
   ?? propsData.plans.flatMap(plan => plan.prices).find(price => 'isCurrent' in price && price.isCurrent)?.billingInterval
   ?? null)
+
+const hasPlan = computed(() => propsData.currentPlanId !== null || ownInterval.value !== null)
+const focusIndex = computed(() => hasPlan.value ? 0 : Math.max(filteredPlans.value.findIndex(plan => plan.highlight), 0))
 
 watch(() => [propsData.plans, shownIntervals.value, ownInterval.value] as const, () => {
   const intervals = shownIntervals.value
