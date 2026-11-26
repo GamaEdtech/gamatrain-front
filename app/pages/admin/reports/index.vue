@@ -45,7 +45,8 @@
       @update:page-size="search"
     />
 
-    <!-- Closing (or reopening) takes an optional note on what was done. -->
+    <!-- Closing (or reopening) takes an optional note on what was done. Closing an open report emails the reporter the
+         outcome (Settings > Report Fixed / Dismissed Email); the note stays with staff. -->
     <v-dialog
       v-model="showClose"
       max-width="480"
@@ -61,9 +62,22 @@
           <p class="text-body-2 text-grey700 mb-3 message">
             {{ closing?.message }}
           </p>
+          <v-alert
+            v-if="closingStatus !== 'Open' && closing && name(closing.status) === 'Open'"
+            type="info"
+            variant="tonal"
+            density="compact"
+            class="mb-3"
+          >
+            {{ closingStatus === 'Resolved'
+              ? 'The reporter gets an email that the problem was fixed.'
+              : 'The reporter gets an email that nothing needed to change.' }}
+          </v-alert>
           <v-textarea
             v-model="note"
             label="Note (optional)"
+            hint="For staff only. It is not sent to the reporter."
+            persistent-hint
             variant="outlined"
             rows="2"
             counter="500"
