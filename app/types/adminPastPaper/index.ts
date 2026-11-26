@@ -118,3 +118,19 @@ export interface GetAdminTypeItemParams {
   title?: string
   includeDeleted?: boolean
 }
+
+/** One row of the past paper base price list (gamatrain-back api/v1/admin/pastpaperfileprices, Admin only). */
+export interface AdminPaperFilePriceDTO {
+  id: number
+  /** Lower case, comma-separated: "doc,docx". */
+  extensions: string
+  /** The base price before pages, referee score and multipliers. */
+  basePrice: number
+  /** ISO UTC: when the row was last written. */
+  syncDate: string
+}
+
+export interface ManagePaperFilePricePayload {
+  extensions: string
+  basePrice: number
+}
