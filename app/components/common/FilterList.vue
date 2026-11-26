@@ -166,6 +166,7 @@
                       :has-search="filter.hasSearch"
                       @update-selected-item="updateSelectedItem($event, index)"
                       @clear="clearFilter(index)"
+                      @locked-click="openFilterSelectModal(filter)"
                     />
                   </template>
                 </div>
@@ -400,6 +401,7 @@
 import { useDisplay } from 'vuetify'
 
 const { mdAndUp } = useDisplay()
+const { $toast } = useNuxtApp()
 const searchHeaderReady = ref(false)
 
 const props = defineProps({
@@ -481,8 +483,28 @@ onMounted(async () => {
   await syncFiltersFromQuery()
 })
 
+// The filter a disabled one is waiting for: its first parent with nothing chosen (Board for Subject when neither Board
+// nor Level is set). Null when every parent is chosen and the filter is off because of their values.
+const findBlockingFilter = (filter, seen = new Set()) => {
+  if (seen.has(filter)) return null
+  seen.add(filter)
+  for (const dependency of filter.dependencies || []) {
+    const parent = filters.value[dependency.parent]
+    if (!parent || parent.selectedItem) continue
+    return parent.disabled ? findBlockingFilter(parent, seen) : parent
+  }
+  return null
+}
+
 const openFilterSelectModal = (filter) => {
-  if (filter.disabled) return
+  if (filter.disabled) {
+    // A click on a filter that can't be used yet opens the one it waits for, instead of doing nothing.
+    const blocking = findBlockingFilter(filter)
+    if (!blocking?.refElement) return
+    $toast.info(`Choose the ${blocking.title.toLowerCase()} first`)
+    blocking.refElement.openSelectModal()
+    return
+  }
 
   filter.refElement.openSelectModal()
 }
@@ -498,7 +520,7 @@ const setMobileFilterSectionRef = (filter, element) => {
 }
 
 const openMobileQuickFilter = (filter) => {
-  if (filter.inlineOptions) {
+  if (filter.inlineOptions && !filter.disabled) {
     filter.refElement.openInlineOptionsModal()
     return
   }
