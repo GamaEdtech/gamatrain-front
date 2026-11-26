@@ -1,119 +1,124 @@
 <template>
-  <!-- A tap anywhere on the card does what its button does: people tapped the feature lines expecting that (Clarity
-       dead clicks). The button stays the control for keyboard and screen readers. -->
-  <div
-    :class="`d-flex flex-column align-center justify-space-between plan-card rounded-xl pa-3 pa-md-4 elevation-3 ${card.highlight ? `hightlight-card`:`simple-card`} ${card.action.disabled ? `disabled-card`:`selectable-card`}`"
-    @click="onCardClick"
+  <!-- A plan as a "pack": its level, a chest that grows with it, its gems (with the same gem icon the download buttons
+       use), the price and one button. Only the button acts: a tap anywhere on the card used to start checkout. -->
+  <v-card
+    flat
+    rounded="xl"
+    :color="card.highlight ? 'secondary' : 'surface'"
+    :class="[
+      'h-100 position-relative overflow-visible d-flex flex-column ga-4 pa-5 border-md border-opacity-100',
+      card.highlight ? 'border-secondary pack-card--main' : 'border-borderSubtle pack-card',
+      { 'opacity-60': card.action.disabled },
+    ]"
   >
-    <div class="price-div w-100 d-flex flex-column aligh-start justify-start pa-3 pa-md-4 rounded-lg">
-      <div class="d-flex align-center justify-space-between mb-2">
-        <span class="text-caption text-md-h6 font-weight-bold text-grey700">
-          {{ card.title }}
-        </span>
-        <v-chip
-          v-if="card.highlight"
-          color="success"
-          variant="tonal"
-          size="small"
-          prepend-icon="md:favorite"
-          class="font-weight-bold flex-shrink-0"
-        >
-          Popular
-        </v-chip>
-      </div>
-      <span
-        v-if="card.strikeThroughMonthlyPrice"
-        class="text-caption font-weight-medium text-md-body-1 text-grey400 text-decoration-line-through"
-      >
-        ${{ formatPrice(card.strikeThroughMonthlyPrice) }}
-      </span>
-      <div
-        v-if="card.selectedPrice"
-        class="d-flex align-center justify-space-between mt-2"
-      >
-        <div class="d-flex align-center">
-          <span class="text-caption font-weight-medium text-md-h6 text-grey400">$</span>
-          <span class="text-h6 text-md-h4 font-weight-bold">
-            {{ formatPrice(card.displayMonthlyPrice) }}</span>
-          <span class="text-caption font-weight-medium text-grey400">/mo</span>
-        </div>
+    <v-chip
+      v-if="card.highlight"
+      color="primary"
+      variant="flat"
+      size="small"
+      class="position-absolute font-weight-black pack-card__badge"
+    >
+      &#9733; Most picked
+    </v-chip>
 
-        <v-icon
-          size="36"
-          color="grey400"
+    <v-chip
+      label
+      size="small"
+      variant="tonal"
+      :color="card.highlight ? 'primary' : 'grey600'"
+      class="align-self-start font-weight-black"
+    >
+      LEVEL {{ level }}
+    </v-chip>
+
+    <div class="d-flex align-center ga-4">
+      <subscription-pack-chest :level="level" />
+      <div class="d-flex flex-column ga-1">
+        <span class="text-h5 font-weight-black">{{ card.title }}</span>
+        <span
+          v-if="card.gemsBalance !== null"
+          class="d-flex align-center ga-1 text-body-2"
+          :class="card.highlight ? 'text-onInverseSurfaceSubtle' : 'text-grey600'"
         >
-          md:diamond
-        </v-icon>
-      </div>
-      <div
-        v-if="card.selectedPrice && billingInterval !== 'Monthly'"
-        class="text-caption font-weight-medium text-grey400 mt-1"
-      >
-        billed ${{ formatPrice(card.selectedPrice.price) }} {{ billingSuffix[billingInterval] }}
-      </div>
-      <!-- A live sale campaign: the backend sends campaignPrice only when this purchase would get it, and charges
-           exactly that for the first payment. -->
-      <div
-        v-if="campaignPrice !== null && card.selectedPrice && card.action.type === 'choose'"
-        class="campaign-price d-flex flex-column ga-1 mt-3 pa-2 rounded-lg"
-      >
-        <v-chip
-          size="small"
-          label
-          class="align-self-start font-weight-bold"
-          :style="{ background: campaignStyle.stripBackground, color: campaignStyle.stripText }"
-        >
-          {{ campaignLabel }} -{{ campaignPercent }}%
-        </v-chip>
-        <span class="text-body-2 text-grey900">
-          First payment
-          <strong :style="{ color: campaignStyle.accent }">${{ formatPrice(campaignPrice) }}</strong>
-          <span class="text-grey500 text-decoration-line-through ml-1">${{ formatPrice(card.selectedPrice.price) }}</span>
+          <strong
+            class="d-inline-flex align-center ga-1 text-h6 font-weight-black"
+            :class="card.highlight ? 'text-white' : 'text-grey900'"
+            :aria-label="`${formatPrice(card.gemsBalance)} gems`"
+          >
+            {{ formatPrice(card.gemsBalance) }}
+            <v-icon
+              size="20"
+              color="primary"
+              aria-hidden="true"
+            >md:diamond_outlined</v-icon>
+          </strong>
+          <span class="text-no-wrap">a {{ periodWord }}</span>
         </span>
-        <span class="text-caption text-grey500">then ${{ formatPrice(card.selectedPrice.price) }} {{ billingSuffix[billingInterval] }}</span>
       </div>
     </div>
-    <span
-      v-if="card.gemsBalance !== null"
-      class="w-100 d-flex align-center jusify-start mt-2 text-body-1 font-weight-bold text-grey900"
-    >
-      <v-icon
-        size="20"
-        class="mr-2"
-        color="primary"
-      >
-        md:diamond
-      </v-icon>
-      {{ formatPrice(card.gemsBalance) }} Gems
-    </span>
 
-    <ul class="features text-left mt-4 pa-0">
-      <li
-        v-for="(featureLine, groupIndex) in card.featureLines"
-        :key="groupIndex"
-        class="d-flex align-center mb-2 text-caption font-weight-medium text-md-body-1"
+    <!-- Live sale: the backend sends campaignPrice only when this purchase gets it, and charges exactly that. -->
+    <div
+      v-if="card.selectedPrice"
+      class="d-flex flex-column ga-1"
+    >
+      <div class="d-flex align-baseline ga-2">
+        <span
+          class="text-h4 font-weight-black"
+          :class="card.highlight ? 'text-primary' : 'text-grey900'"
+        >${{ formatPrice(showCampaign ? campaignPrice! : card.displayMonthlyPrice) }}</span>
+        <span
+          v-if="!showCampaign"
+          class="text-body-2"
+          :class="card.highlight ? 'text-onInverseSurfaceSubtle' : 'text-grey500'"
+        >/mo</span>
+        <span
+          v-if="struckPrice !== null"
+          class="text-body-1 text-decoration-line-through"
+          :class="card.highlight ? 'text-onInverseSurfaceMuted' : 'text-grey400'"
+        >${{ formatPrice(struckPrice) }}</span>
+      </div>
+      <span
+        class="text-caption"
+        :class="card.highlight ? 'text-onInverseSurfaceSubtle' : 'text-grey500'"
+      >{{ priceNote }}</span>
+    </div>
+
+    <div
+      v-if="ownFeatureLines.length"
+      role="list"
+      class="d-flex flex-column ga-1"
+    >
+      <div
+        v-for="(featureLine, lineIndex) in ownFeatureLines"
+        :key="lineIndex"
+        role="listitem"
+        class="d-flex align-start ga-2 text-body-2"
       >
         <v-icon
           size="18"
-          class="mr-2 flex-shrink-0"
           color="success"
+          class="flex-shrink-0"
         >
           md:check
         </v-icon>
         {{ featureLine }}
-      </li>
-    </ul>
+      </div>
+    </div>
 
     <v-btn
-      class="w-100 text-caption text-md-body-1 font-weight-bold mt-6 rounded-lg"
-      :color="card.action.disabled ? `grey300` : `secondary`"
-      variant="flat"
-      height="44"
+      block
+      flat
+      height="52"
+      rounded="lg"
+      :variant="card.highlight ? 'flat' : 'outlined'"
+      :color="card.action.disabled ? 'grey400' : card.highlight ? 'primary' : 'brandNavy'"
+      :class="['mt-auto text-body-1 font-weight-black text-none', card.action.disabled ? '' : card.highlight ? 'pack-card__cta--main' : 'pack-card__cta']"
       :disabled="card.action.disabled"
       :loading="loadingStartPaymentSubscription || loadingSwitchSubscriptionPlan"
       @click="selectPlan"
     >
-      {{ card.action.label }}
+      {{ buttonLabel }}
     </v-btn>
 
     <common-modal-base
@@ -202,7 +207,7 @@
         @confirm="confirmResumeSubscription"
       />
     </common-modal-base>
-  </div>
+  </v-card>
 </template>
 
 <script setup lang="ts">
@@ -213,23 +218,29 @@ import type {
   UpgradeSuggestionsDTO,
   PaymentGateway,
 } from '@/types'
-import { SWITCH_NOT_ALLOWED_WHILE_CANCELLATION_PENDING_ERROR } from '@/constants'
+import { BILLING_INTERVAL_PERIOD_LABEL, SWITCH_NOT_ALLOWED_WHILE_CANCELLATION_PENDING_ERROR } from '@/constants'
 
 interface ICard {
   plan: SubscriptionPlanDTO | UpgradeSuggestionsDTO
   billingInterval: BillingInterval
   currentPlanId?: number | null
   currentBillingInterval?: BillingInterval | null
+  /** The plan's place in the plan list, 1 for the smallest: drives the "LEVEL n" label and the chest. */
+  level?: number
+  /** Feature lines every shown plan has: the list says them once, so the card leaves them out. */
+  sharedFeatureLines?: string[]
 }
 
 const props = withDefaults(defineProps<ICard>(), {
   currentPlanId: null,
   currentBillingInterval: null,
+  level: 1,
+  sharedFeatureLines: () => [],
 })
 
 const emit = defineEmits(['switchSuccessfully'])
 
-const { campaign, style: campaignStyle } = useCampaign()
+const { campaign } = useCampaign()
 
 const route = useRoute()
 const { $toast } = useNuxtApp()
@@ -280,6 +291,29 @@ const campaignPercent = computed(() => {
   return price && campaignPrice.value !== null ? Math.round((1 - campaignPrice.value / price) * 100) : 0
 })
 const campaignLabel = computed(() => campaign.value?.title || 'Sale')
+
+const periodWord = computed(() => BILLING_INTERVAL_PERIOD_LABEL[props.billingInterval])
+// The sale price is the first payment of a new subscription only, never of a switch.
+const showCampaign = computed(() => campaignPrice.value !== null && !!card.value.selectedPrice && card.value.action.type === 'choose')
+const struckPrice = computed(() => showCampaign.value ? card.value.selectedPrice!.price : card.value.strikeThroughMonthlyPrice)
+const priceNote = computed(() => {
+  const price = card.value.selectedPrice?.price
+  if (price === undefined) return ''
+  const amount = `$${formatPrice(price)} ${billingSuffix[props.billingInterval]}`
+  if (showCampaign.value) return `${campaignLabel.value} -${campaignPercent.value}%: first ${periodWord.value}, then ${amount}`
+  if (props.billingInterval !== 'Monthly') return `Billed ${amount} · cancel anytime`
+  return 'Billed monthly · cancel anytime'
+})
+const ownFeatureLines = computed(() => card.value.featureLines.filter(line => !props.sharedFeatureLines.includes(line)))
+const buttonLabel = computed(() => {
+  const { action, title, isSamePlanIntervalMove } = card.value
+  if (action.type === 'choose') return `Get ${title}`
+  if (action.type !== 'switch') return action.label
+  if (isSamePlanIntervalMove) return `Switch to ${props.billingInterval}`
+  // The out-of-gems dialog only offers plans that give more gems: call it what it is.
+  const isUpgrade = card.value.selectedPrice && 'canUpgrade' in card.value.selectedPrice && card.value.selectedPrice.canUpgrade
+  return isUpgrade ? `Upgrade to ${title}` : `Switch to ${title}`
+})
 
 const switchTargetDescription = computed(() => {
   return card.value.isSamePlanIntervalMove ? `${props.billingInterval} billing` : `the ${card.value.title} plan`
@@ -426,13 +460,6 @@ const confirmUpgrade = async () => {
   }
 }
 
-const onCardClick = (event: MouseEvent) => {
-  // The button and links handle their own clicks; the open confirm dialog is teleported, but guard anyway.
-  if ((event.target as HTMLElement | null)?.closest('button, a, .v-overlay')) return
-  if (showConfirmUpgradeModal.value) return
-  selectPlan()
-}
-
 const selectPlan = async () => {
   if (card.value.action.disabled) return
 
@@ -484,56 +511,23 @@ const confirmResumeSubscription = async () => {
 </script>
 
 <style scoped>
-.plan-card {
-  max-width : 260px;
-  min-width: 260px;
-  height : fit-content;
-  min-height : 380px;
-  cursor: pointer;
-  transition: all 0.5s;
+/* Only what Vuetify has no utility for: the solid "ledge" under the card and its button that makes them feel
+   game-like, and the tilted badge sitting on the card's edge. */
+.pack-card {
+  box-shadow: 0 6px 0 rgb(var(--v-theme-borderSubtle));
 }
-.plan-card:hover{
-  background-color : rgb(var(--v-theme-grey100));
+.pack-card--main {
+  box-shadow: 0 8px 0 rgb(var(--v-theme-primary));
 }
-.selectable-card {
-  cursor: pointer;
+.pack-card__badge {
+  top: -14px;
+  right: 20px;
+  transform: rotate(3deg);
 }
-.disabled-card{
-  opacity: 0.6;
-  cursor: not-allowed;
+.pack-card__cta {
+  box-shadow: 0 4px 0 rgb(var(--v-theme-brandNavy)) !important;
 }
-.hightlight-card{
-  border : 2px solid rgb(var(--v-theme-primary));
-}
-.simple-card{
-  border : 2px solid rgb(var(--v-theme-grey300));
-}
-.features {
-  list-style: none;
-}
-
-.price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-grey100)) 100%);
-}
-.plan-card:nth-of-type(3n+1) .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-planTintBlue)) 100%);
-}
-.plan-card:nth-of-type(3n+2) .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-planTintPurple)) 100%);
-}
-.plan-card:nth-of-type(3n+3) .price-div {
-  background: linear-gradient(135deg, rgb(var(--v-theme-surface)) 0%, rgb(var(--v-theme-planTintGold)) 100%);
-}
-
-@media screen and (max-width: 600px) {
- .plan-card {
-   width : 100% !important;
-   max-width : 220px;
-   min-width: 220px;
-   min-height : 360px;
- }
-}
-.campaign-price {
-  background: rgba(var(--v-theme-primary), 0.08);
+.pack-card__cta--main {
+  box-shadow: 0 5px 0 rgb(var(--v-theme-primaryStrong)) !important;
 }
 </style>
