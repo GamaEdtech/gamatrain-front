@@ -43,6 +43,9 @@ export interface AdminAppSettingsDTO {
   contentOwnerCommissionPayoutThresholdUsd?: number
   commissionPayoutRequestedEmailTemplate?: string
   commissionPayoutPaidEmailTemplate?: string
+  // To the reporter when staff resolve or dismiss their "report a problem" (the staff note is never sent).
+  contentReportResolvedEmailTemplate?: string
+  contentReportDismissedEmailTemplate?: string
   twoFactorSetupEmailTemplate?: string
   deleteAccountCodeEmailTemplate?: string
   registrationCodeEmailTemplate?: string

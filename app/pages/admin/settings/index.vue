@@ -173,6 +173,8 @@ const form = reactive<AdminAppSettingsDTO>({
   contentOwnerCommissionPayoutThresholdUsd: undefined,
   commissionPayoutRequestedEmailTemplate: '',
   commissionPayoutPaidEmailTemplate: '',
+  contentReportResolvedEmailTemplate: '',
+  contentReportDismissedEmailTemplate: '',
   twoFactorSetupEmailTemplate: '',
   deleteAccountCodeEmailTemplate: '',
   registrationCodeEmailTemplate: '',
@@ -242,6 +244,8 @@ const fields: FieldConfig[] = [
   { key: 'passwordResetCodeEmailTemplate', label: 'Password Reset Code Email ([CODE] required; [RECEIVER_NAME], [MINUTES])', type: 'textarea', valueType: 'string' },
   { key: 'referralOfferEmailTemplate', label: 'Teacher Invite Offer Email ([PERCENT] and [JOIN_LINK] required; [FIRST_NAME], [RECEIVER_NAME], [EXPIRY_DATE])', type: 'textarea', valueType: 'string' },
   { key: 'commissionPayoutPaidEmailTemplate', label: 'Payout Sent Email ([RECEIVER_NAME], [AMOUNT], [TRANSFER_REFERENCE], [PAYOUT_ID], [DATE])', type: 'textarea', valueType: 'string' },
+  { key: 'contentReportResolvedEmailTemplate', label: 'Report Fixed Email, to the reporter ([RECEIVER_NAME] and [CONTENT_TITLE] required; [CONTENT_LINK]; empty sends nothing)', type: 'textarea', valueType: 'string' },
+  { key: 'contentReportDismissedEmailTemplate', label: 'Report Dismissed Email, to the reporter ([RECEIVER_NAME] and [CONTENT_TITLE] required; [CONTENT_LINK]; empty sends nothing)', type: 'textarea', valueType: 'string' },
 ]
 const showModalPreview = ref(false)
 const previewMessageHtml = ref('')
