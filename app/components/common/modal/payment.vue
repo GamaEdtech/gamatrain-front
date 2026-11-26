@@ -68,56 +68,17 @@
       <template
         v-if="loading"
       >
-        <v-slide-group
-          :model-value="activeSkeletonIndex"
-          class="payment-plan-slider pt-4 d-flex position-relative"
-          show-arrows
-          center-active
-        >
-          <template #prev>
-            <v-btn
-              aria-label="Previous plans"
-              icon
-              flat
-              size="30"
-              class="slider-arrow-button"
-              color="surface"
-            >
-              <v-icon
-                size="24"
-                color="grey700"
-              >
-                md:chevron_left
-              </v-icon>
-            </v-btn>
-          </template>
-
-          <template #next>
-            <v-btn
-              aria-label="Next plans"
-              icon
-              flat
-              size="30"
-              class="slider-arrow-button"
-              color="surface"
-            >
-              <v-icon
-                size="24"
-                color="grey700"
-              >
-                md:chevron_right
-              </v-icon>
-            </v-btn>
-          </template>
-
-          <v-slide-group-item
-            v-for="(item, index) in skeletonCount"
+        <v-row class="w-100 mt-2">
+          <v-col
+            v-for="item in skeletonCount"
             :key="item"
-            :value="index"
+            cols="12"
+            sm="6"
+            md="4"
           >
-            <subscription-card-skeleton class="mr-4 mb-1" />
-          </v-slide-group-item>
-        </v-slide-group>
+            <subscription-card-skeleton />
+          </v-col>
+        </v-row>
       </template>
 
       <!-- Out of gems on the biggest pack already: nothing to sell, say what happens instead. -->
@@ -132,63 +93,101 @@
       </v-alert>
 
       <template v-else>
-        <v-slide-group
-          :model-value="activePlanIndex"
-          class="payment-plan-slider pt-4 d-flex align-center position-relative"
-          show-arrows
-          center-active
-        >
-          <template #prev>
-            <v-btn
-              aria-label="Previous plans"
-              icon
-              flat
-              size="30"
-              class="slider-arrow-button"
-              color="surface"
-            >
-              <v-icon
-                size="24"
-                color="grey700"
-              >
-                md:chevron_left
-              </v-icon>
-            </v-btn>
-          </template>
-
-          <template #next>
-            <v-btn
-              aria-label="Next plans"
-              icon
-              flat
-              size="30"
-              class="slider-arrow-button"
-              color="surface"
-            >
-              <v-icon
-                size="24"
-                color="grey700"
-              >
-                md:chevron_right
-              </v-icon>
-            </v-btn>
-          </template>
-
-          <v-slide-group-item
-            v-for="(plan, index) in filteredPlans"
-            :key="plan.id"
-            :value="index"
+        <div class="w-100 d-flex flex-column ga-4">
+          <!-- A phone keeps the sideways slider (one plan at a time, swipe for the next), opening on the most useful
+               plan; wider screens show every plan side by side. -->
+          <v-slide-group
+            v-if="smAndDown"
+            :model-value="focusIndex"
+            center-active
+            class="mx-n4"
           >
-            <subscription-card
-              :plan="plan"
-              :billing-interval="intervalSelect"
-              :current-plan-id="currentPlanId"
-              :current-billing-interval="currentBillingInterval"
-              class="mr-4 mb-1"
-              @switch-successfully="emit('switchSuccessfully')"
-            />
-          </v-slide-group-item>
-        </v-slide-group>
+            <v-slide-group-item
+              v-for="plan in filteredPlans"
+              :key="plan.id"
+            >
+              <v-sheet
+                width="78vw"
+                max-width="300"
+                color="transparent"
+                class="pt-6 pb-3 px-2"
+              >
+                <subscription-card
+                  :plan="plan"
+                  :billing-interval="intervalSelect"
+                  :current-plan-id="currentPlanId"
+                  :current-billing-interval="currentBillingInterval"
+                  :level="levelOf(plan)"
+                  :shared-feature-lines="sharedFeatureLines"
+                  @switch-successfully="emit('switchSuccessfully')"
+                />
+              </v-sheet>
+            </v-slide-group-item>
+          </v-slide-group>
+          <!-- Capped so a pack keeps a card's proportions on the wide subscription page. -->
+          <v-sheet
+            v-else
+            max-width="1040"
+            color="transparent"
+            class="w-100 mx-auto"
+          >
+            <v-row
+              justify="center"
+              class="mt-1"
+            >
+              <v-col
+                v-for="plan in filteredPlans"
+                :key="plan.id"
+                cols="12"
+                sm="6"
+                md="4"
+                class="pt-6"
+              >
+                <subscription-card
+                  :plan="plan"
+                  :billing-interval="intervalSelect"
+                  :current-plan-id="currentPlanId"
+                  :current-billing-interval="currentBillingInterval"
+                  :level="levelOf(plan)"
+                  :shared-feature-lines="sharedFeatureLines"
+                  @switch-successfully="emit('switchSuccessfully')"
+                />
+              </v-col>
+            </v-row>
+          </v-sheet>
+
+          <!-- Said once instead of on every card: these lines were the same on all of them. -->
+          <v-sheet
+            v-if="sharedFeatureLines.length"
+            max-width="1040"
+            color="transparent"
+            class="w-100 mx-auto mt-2 d-flex flex-column ga-3 px-1"
+          >
+            <span class="text-body-1 font-weight-black text-grey900">Every plan unlocks</span>
+            <v-row
+              dense
+              role="list"
+            >
+              <v-col
+                v-for="line in sharedFeatureLines"
+                :key="line"
+                cols="12"
+                sm="6"
+                role="listitem"
+                class="d-flex align-start ga-2 text-body-2 text-grey800"
+              >
+                <v-icon
+                  size="20"
+                  color="primaryStrong"
+                  class="flex-shrink-0"
+                >
+                  md:check_circle
+                </v-icon>
+                {{ line }}
+              </v-col>
+            </v-row>
+          </v-sheet>
+        </div>
       </template>
     </div>
 
@@ -214,6 +213,7 @@
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify'
 import type { BillingInterval, SubscriptionPlanDTO, UpgradeSuggestionsDTO } from '@/types'
 
 interface IPaymentModal {
@@ -243,7 +243,6 @@ const showCampaign = computed(() => campaignLive.value
 onMounted(refreshCampaign)
 
 const skeletonCount = 3
-const activeSkeletonIndex = 1
 const intervalSelect = ref<BillingInterval>('Monthly')
 
 // Out-of-gems responses (UpgradeSuggestionsDTO) say per price whether it is a real upgrade; the general plans list
@@ -259,14 +258,37 @@ const shownIntervals = computed(() => isUpgradeContext.value
       propsData.plans.some(plan => plan.prices.some(price => price.billingInterval === interval && isOffered(price))))
   : propsData.billingInterval)
 
+type Plan = SubscriptionPlanDTO | UpgradeSuggestionsDTO
+
+// Plans ranked by what they cost (their Monthly price, else their cheapest one): the API's order isn't by size, and a
+// $20 plan showed as Level 1 next to a $5 Level 3. The rank is the plan's level and the order the cards are shown in.
+const rankPrice = (plan: Plan) => plan.prices.find(price => price.billingInterval === 'Monthly')?.price
+  ?? Math.min(...plan.prices.map(price => price.price ?? Number.POSITIVE_INFINITY))
+const rankedPlans = computed(() => [...propsData.plans].sort((a, b) => rankPrice(a) - rankPrice(b)))
+
 const filteredPlans = computed(() => {
-  return propsData.plans.filter((plan) => {
+  return rankedPlans.value.filter((plan) => {
     return plan.prices.some(price => price.billingInterval === intervalSelect.value && isOffered(price))
   })
 })
 
-// An upgrade starts from the smallest step up; the general list centres on the middle plan.
-const activePlanIndex = computed(() => isUpgradeContext.value ? 0 : Math.floor(filteredPlans.value.length / 2))
+// The phone slider opens on the smallest upgrade for someone who already has a plan (only upgrades are shown,
+// smallest first), else on the highlighted plan. Declared below ownInterval, which it reads.
+const { smAndDown } = useDisplay()
+
+// A plan's level is its rank among the plans sold at the selected period (a plan sold only Daily doesn't push the
+// Monthly ones up a level), counting the ones the upgrade dialog hides, so a level never changes when they're hidden.
+const levelOf = (plan: Plan) => rankedPlans.value
+  .filter(item => item.prices.some(price => price.billingInterval === intervalSelect.value))
+  .findIndex(item => item.id === plan.id) + 1
+
+const { buildSubscriptionPlanCard } = useSubscriptionPlanCard()
+// Feature lines that every shown plan has: listed once under the cards instead of on each one.
+const sharedFeatureLines = computed(() => {
+  const lineSets = filteredPlans.value.map(plan => buildSubscriptionPlanCard({ plan, billingInterval: intervalSelect.value }).featureLines)
+  if (lineSets.length < 2) return []
+  return lineSets[0]!.filter(line => lineSets.every(lines => lines.includes(line)))
+})
 
 const bestDiscountByInterval = computed(() => {
   return Object.fromEntries(propsData.billingInterval.map((interval) => {
@@ -293,6 +315,9 @@ const ownInterval = computed<BillingInterval | null>(() => propsData.currentBill
   ?? propsData.plans.flatMap(plan => plan.prices).find(price => 'isCurrent' in price && price.isCurrent)?.billingInterval
   ?? null)
 
+const hasPlan = computed(() => propsData.currentPlanId !== null || ownInterval.value !== null)
+const focusIndex = computed(() => hasPlan.value ? 0 : Math.max(filteredPlans.value.findIndex(plan => plan.highlight), 0))
+
 watch(() => [propsData.plans, shownIntervals.value, ownInterval.value] as const, () => {
   const intervals = shownIntervals.value
   if (intervals.length === 0) return
@@ -315,37 +340,7 @@ watch(() => [propsData.plans, shownIntervals.value, ownInterval.value] as const,
   border: none;
   cursor: pointer;
 }
-:deep(.v-slide-group__content){
-  align-items: flex-end;
-}
 
-:deep(.payment-plan-slider > .v-slide-group__prev),
-:deep(.payment-plan-slider > .v-slide-group__next) {
-  position: absolute;
-  top: 50%;
-  z-index: 2;
-  min-width: 30px;
-  transform: translateY(-50%);
-}
-
-:deep(.payment-plan-slider > .v-slide-group__prev) {
-  left: 0;
-}
-
-:deep(.payment-plan-slider > .v-slide-group__next) {
-  right: 0;
-}
-
-.slider-arrow-button {
-  border: 1px solid rgb(var(--v-theme-grey300));
-  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.12);
-}
-
-:deep(.v-slide-group__prev--disabled .slider-arrow-button),
-:deep(.v-slide-group__next--disabled .slider-arrow-button) {
-  opacity: 0.45;
-  box-shadow: none;
-}
 .campaign-strip__pill {
   font-weight: 900;
 }
